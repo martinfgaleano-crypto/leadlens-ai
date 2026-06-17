@@ -63,6 +63,115 @@
 
 ---
 
+## Public website deploy (Vercel)
+
+### Status
+| # | Item | Status | Notes |
+|---|------|--------|-------|
+| D1 | Git repository initialized | ✅ | `main` branch, 60 files committed |
+| D2 | `.env.local` protected by `.gitignore` | ✅ | Confirmed — no secrets in repo |
+| D3 | `app/page.tsx` → redirects to `/demo-pipeline` | ✅ | Old landing replaced |
+| D4 | `layout.tsx` metadata in English | ✅ | `lang="en"`, international title |
+| D5 | Next.js build passes | ✅ | 16 routes, 0 errors |
+| D6 | TypeScript 0 errors | ✅ | Confirmed |
+| D7 | GitHub remote repo | ⬜ | See steps below |
+| D8 | Vercel deploy | ⬜ | See steps below |
+| D9 | `NEXT_PUBLIC_APP_URL` updated to Vercel URL | ⬜ | After deploy |
+
+### Step 1 — Create GitHub repo
+
+Go to: **github.com/new**
+- Repository name: `leadlens-ai`
+- Visibility: **Private** (keep private until ready for public launch)
+- Do NOT initialize with README (repo already has content)
+- Click "Create repository"
+
+Then run in terminal:
+```bash
+cd "/Users/martingaleano/Desktop/LeadLens /ai-agent-project"
+git remote add origin https://github.com/martingaleano/leadlens-ai.git
+git branch -M main
+git push -u origin main
+```
+(Replace `martingaleano` with your actual GitHub username if different)
+
+### Step 2 — Deploy to Vercel
+
+**Option A — Vercel Dashboard (recommended, no CLI needed):**
+1. Go to [vercel.com/new](https://vercel.com/new)
+2. Click "Import Git Repository" → connect GitHub → select `leadlens-ai`
+3. Framework Preset: **Next.js** (auto-detected)
+4. Root Directory: leave as `.` (project root)
+5. Add these Environment Variables:
+   ```
+   DEMO_MODE = true
+   ALLOW_MOCK_LEADS_WITH_REAL_AI = false
+   NEXT_PUBLIC_APP_URL = https://your-project.vercel.app
+   ```
+   (Update `NEXT_PUBLIC_APP_URL` after seeing the preview URL Vercel assigns)
+6. Click **Deploy**
+
+**Option B — Vercel CLI:**
+```bash
+npm install -g vercel
+vercel login
+cd "/Users/martingaleano/Desktop/LeadLens /ai-agent-project"
+vercel
+# Follow prompts: Yes to detected Next.js, default settings
+vercel env add DEMO_MODE production   # → true
+vercel env add ALLOW_MOCK_LEADS_WITH_REAL_AI production  # → false
+vercel env add NEXT_PUBLIC_APP_URL production  # → https://your-project.vercel.app
+vercel --prod
+```
+
+### Step 3 — Post-deploy QA checklist
+
+Run this after the Vercel URL is live:
+
+| # | Check | Expected |
+|---|-------|----------|
+| 1 | `https://your-url.vercel.app/` | Redirects to `/demo-pipeline` |
+| 2 | `/demo-pipeline` loads | Full landing visible |
+| 3 | Language selector: EN | All copy in English |
+| 4 | Language selector: ES | All copy in Spanish |
+| 5 | Language selector: PT | All copy in Portuguese |
+| 6 | Language selector: JA | All copy in Japanese |
+| 7 | Pricing section visible | $29 / $97 / $197 cards |
+| 8 | "Monthly plans coming soon" visible | Below pricing grid |
+| 9 | No "DEMO_MODE" text visible | Not exposed in public UI |
+| 10 | "Get started" button → form opens | Form loads correctly |
+| 11 | Submit form → demo generates | Mock leads appear (DEMO_MODE=true) |
+| 12 | Mobile layout | Pricing stacks to 1 column |
+| 13 | `/success` page | Loads without error |
+| 14 | `/cancel` page | Loads without error |
+| 15 | `/api/provider-status` | Returns `demo_mode: true` |
+
+### Step 4 — Update NEXT_PUBLIC_APP_URL
+
+After deploy, go to Vercel → Project Settings → Environment Variables:
+- Update `NEXT_PUBLIC_APP_URL` to the actual URL (e.g. `https://leadlens-ai.vercel.app`)
+- Redeploy (Vercel → Deployments → Redeploy latest)
+
+### Important: do NOT add to Vercel env vars yet
+- `ANTHROPIC_API_KEY` — not needed in DEMO_MODE
+- `LEMONSQUEEZY_API_KEY` — not configured yet
+- `STRIPE_SECRET_KEY` — paused
+- `APOLLO_API_KEY` — not connected yet
+- Any Supabase or Resend keys
+
+The public site runs entirely on `DEMO_MODE=true` — zero external API calls.
+
+### Use this URL for Lemon Squeezy verification
+
+Once deployed:
+- Lemon Squeezy store verification requires a public website URL
+- The Vercel URL (`https://leadlens-ai.vercel.app`) is sufficient
+- The landing communicates: what the product does, pricing, delivery expectations, contact
+- No prohibited claims (no "guaranteed meetings", no auto-send promises)
+- Use a custom domain later if LS requires it (Vercel makes this easy)
+
+---
+
 ## Before taking first payment — verify these
 
 ### 1. Hybrid mode test
