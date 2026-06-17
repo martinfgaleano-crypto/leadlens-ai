@@ -137,6 +137,48 @@ const COPY = {
     switchToDemo: "Try sample demo instead →",
     sampleBadge: "Sample demo report",
     sampleNote: "This is a sample output. Paid beta batches are delivered after checkout and manual review.",
+    problemTag: "The problem",
+    problemTitle: "Most B2B teams waste time on outreach that doesn't work",
+    problemItems: [
+      "Hours lost researching prospects that turn out to be a poor fit for your offer.",
+      "Generic cold emails get ignored or flagged as spam — hurting your sender reputation.",
+      "No time to personalize at scale without a dedicated SDR.",
+      "Expensive lead lists that are stale before you even open them.",
+      "No clear signal on which prospects are actually worth pursuing right now.",
+    ],
+    receiveTag: "What you receive",
+    receiveTitle: "Everything you need to start outreach — in one report",
+    receiveItems: [
+      ["HOT / WARM / COLD score", "0–10 ICP fit score + tier label so you know where to focus first."],
+      ["Fit reason", "A clear explanation of why this specific lead matches your offer."],
+      ["Personalization trigger", "A unique hook based on real context: news, growth signals, tech stack."],
+      ["Initial cold email", "Subject line + full body, written in your tone and ready to send."],
+      ["LinkedIn DM", "A concise message built for direct connection requests."],
+      ["Follow-up 1 (day 3–4)", "A value-add nudge — not just 'just checking in'."],
+      ["Follow-up 2 (day 7–8)", "A well-timed final touch before you move on."],
+      ["Executive summary", "Overview of batch quality, best segments, and next steps."],
+      ["Patterns observed", "What LeadLens noticed across the batch — helps refine your ICP."],
+      ["CSV + Markdown export", "Full report in two formats, ready to use in any tool immediately."],
+    ] as [string, string][],
+    samplePreviewTag: "Sample output",
+    samplePreviewTitle: "This is what your report looks like",
+    samplePreviewSub: "Every lead in your batch includes full qualification, personalized outreach, and a complete sequence — ready to review before you send anything.",
+    faqTag: "FAQ",
+    faqTitle: "Common questions",
+    faqs: [
+      ["What exactly do I get?", "A CSV + Markdown report with 10–100 leads (by plan). Each lead includes a fit score, fit reason, personalization trigger, cold email (subject + body), LinkedIn DM, and 2 follow-ups. Plus an executive summary and batch-level patterns."],
+      ["How long does delivery take?", "Typically 24–48 hours after you submit your onboarding form. Every batch is reviewed manually before delivery."],
+      ["Do you send the emails for me?", "No. You receive draft messages you review and send yourself. Nothing goes out automatically. You stay in full control."],
+      ["How are leads sourced?", "Our agents identify prospects matching your ICP using publicly available business data. No personal data is used beyond what's publicly accessible."],
+      ["What if the leads don't match my ICP?", "If leads consistently miss your ICP and we can't resolve it, you're eligible for a refund within 7 days. See our refund policy."],
+      ["Is there a subscription or contract?", "No. Beta batches are one-time purchases. No recurring charges, no commitments, no hidden fees."],
+      ["What happens after I purchase?", "We collect your onboarding details (if not already submitted), process your batch, and deliver via email within 24–48 hours."],
+      ["Can I target a specific industry or region?", "Yes. The onboarding form lets you specify your ICP, target market region, tone, and any specific constraints — and we optimize the batch accordingly."],
+    ] as [string, string][],
+    ctaTag: "Get started",
+    ctaTitle: "Ready to fill your pipeline?",
+    ctaSub: "One batch. 24–48h delivery. You review every message before sending.",
+    ctaCTA: "Start your first batch — $29 →",
   },
   es: {
     announcement: "Acceso beta abierto — solicita tu primer lote de leads.",
@@ -269,6 +311,48 @@ const COPY = {
     switchToDemo: "Probar demo de muestra →",
     sampleBadge: "Reporte demo de muestra",
     sampleNote: "Este es un resultado de muestra. Los lotes beta pagos se entregan después del checkout y revisión.",
+    problemTag: "El problema",
+    problemTitle: "La mayoría de los equipos B2B pierden tiempo en outreach que no funciona",
+    problemItems: [
+      "Horas perdidas investigando prospectos que no encajan con tu oferta.",
+      "Correos genéricos ignorados o marcados como spam — dañando tu reputación de envío.",
+      "Sin tiempo para personalizar a escala sin un SDR dedicado.",
+      "Listas de leads costosas que ya están desactualizadas cuando las abres.",
+      "Sin señales claras de qué prospectos vale la pena perseguir ahora mismo.",
+    ],
+    receiveTag: "Qué recibes",
+    receiveTitle: "Todo lo que necesitas para empezar outreach — en un solo reporte",
+    receiveItems: [
+      ["Calificación HOT / WARM / COLD", "Puntaje de fit ICP de 0–10 + etiqueta de categoría para saber dónde enfocarte primero."],
+      ["Motivo de fit", "Explicación clara de por qué este lead específico encaja con tu oferta."],
+      ["Trigger de personalización", "Un gancho único basado en contexto real: noticias, señales de crecimiento, stack tecnológico."],
+      ["Correo frío inicial", "Asunto + cuerpo completo, escrito en tu tono y listo para enviar."],
+      ["LinkedIn DM", "Mensaje conciso diseñado para solicitudes de conexión directa."],
+      ["Seguimiento 1 (día 3–4)", "Un recordatorio que aporta valor — no solo 'te escribo para saber si lo viste'."],
+      ["Seguimiento 2 (día 7–8)", "Un último contacto bien cronometrado antes de pasar al siguiente prospecto."],
+      ["Resumen ejecutivo", "Visión general de la calidad del lote, mejores segmentos y próximos pasos."],
+      ["Patrones observados", "Lo que LeadLens detectó en el lote — útil para refinar tu ICP."],
+      ["Exportación CSV + Markdown", "Reporte completo en dos formatos, listo para usar en cualquier herramienta."],
+    ] as [string, string][],
+    samplePreviewTag: "Ejemplo de salida",
+    samplePreviewTitle: "Así se ve tu reporte",
+    samplePreviewSub: "Cada lead en tu lote incluye calificación completa, outreach personalizado y una secuencia completa — para revisar antes de enviar cualquier cosa.",
+    faqTag: "Preguntas frecuentes",
+    faqTitle: "Preguntas comunes",
+    faqs: [
+      ["¿Qué recibo exactamente?", "Un reporte en CSV + Markdown con 10–100 leads (según el plan). Cada lead incluye puntaje de fit, motivo de fit, trigger de personalización, correo frío (asunto + cuerpo), LinkedIn DM y 2 seguimientos. Más un resumen ejecutivo y patrones del lote."],
+      ["¿Cuánto tarda la entrega?", "Típicamente 24–48 horas después de enviar tu formulario de onboarding. Cada lote es revisado manualmente antes de la entrega."],
+      ["¿Envían los correos por mí?", "No. Recibes borradores que revisas y envías tú mismo. Nada se envía automáticamente. Tú tienes el control total."],
+      ["¿Cómo se obtienen los leads?", "Nuestros agentes identifican prospectos que coinciden con tu ICP usando datos empresariales públicos. No se usan datos personales más allá de lo que es públicamente accesible."],
+      ["¿Qué pasa si los leads no encajan con mi ICP?", "Si los leads no coinciden con tu ICP de forma consistente y no podemos resolverlo, tienes derecho a un reembolso dentro de 7 días. Ver política de devoluciones."],
+      ["¿Hay suscripción o contrato?", "No. Los lotes beta son compras de pago único. Sin cargos recurrentes, sin compromisos, sin tarifas ocultas."],
+      ["¿Qué pasa después de comprar?", "Recopilamos los detalles de tu onboarding (si no los enviaste), procesamos tu lote y entregamos por correo en 24–48 horas."],
+      ["¿Puedo apuntar a una industria o región específica?", "Sí. El formulario de onboarding te permite especificar tu ICP, región objetivo, tono y cualquier criterio adicional — y optimizamos el lote con esos parámetros."],
+    ] as [string, string][],
+    ctaTag: "Comenzar",
+    ctaTitle: "¿Listo para llenar tu pipeline?",
+    ctaSub: "Un lote. Entrega en 24–48h. Tú revisas cada mensaje antes de enviarlo.",
+    ctaCTA: "Inicia tu primer lote — $29 →",
   },
   pt: {
     announcement: "Acesso beta aberto — solicite seu primeiro lote de leads.",
@@ -401,6 +485,48 @@ const COPY = {
     switchToDemo: "Testar demo de exemplo →",
     sampleBadge: "Relatório demo de exemplo",
     sampleNote: "Este é um resultado de exemplo. Lotes beta pagos são entregues após o checkout e revisão.",
+    problemTag: "O problema",
+    problemTitle: "A maioria das equipes B2B perde tempo com outreach que não funciona",
+    problemItems: [
+      "Horas perdidas pesquisando prospects que não se encaixam na sua oferta.",
+      "E-mails genéricos ignorados ou marcados como spam — prejudicando sua reputação de envio.",
+      "Sem tempo para personalizar em escala sem um SDR dedicado.",
+      "Listas de leads caras que já estão desatualizadas quando você as abre.",
+      "Sem sinais claros de quais prospects valem a pena agora.",
+    ],
+    receiveTag: "O que você recebe",
+    receiveTitle: "Tudo que você precisa para começar o outreach — em um único relatório",
+    receiveItems: [
+      ["Pontuação HOT / WARM / COLD", "Score de fit ICP de 0–10 + rótulo de categoria para saber onde focar primeiro."],
+      ["Motivo do fit", "Explicação clara de por que este lead específico se encaixa na sua oferta."],
+      ["Trigger de personalização", "Um gancho único baseado em contexto real: notícias, sinais de crescimento, stack tecnológico."],
+      ["E-mail frio inicial", "Assunto + corpo completo, escrito no seu tom e pronto para enviar."],
+      ["LinkedIn DM", "Mensagem concisa projetada para pedidos de conexão direta."],
+      ["Follow-up 1 (dia 3–4)", "Um lembrete que agrega valor — não apenas 'só passando para checar'."],
+      ["Follow-up 2 (dia 7–8)", "Um toque final bem cronometrado antes de avançar para o próximo prospect."],
+      ["Resumo executivo", "Visão geral da qualidade do lote, melhores segmentos e próximos passos."],
+      ["Padrões observados", "O que a LeadLens detectou no lote — útil para refinar seu ICP."],
+      ["Exportação CSV + Markdown", "Relatório completo em dois formatos, pronto para usar em qualquer ferramenta."],
+    ] as [string, string][],
+    samplePreviewTag: "Exemplo de saída",
+    samplePreviewTitle: "É assim que seu relatório parece",
+    samplePreviewSub: "Cada lead no seu lote inclui qualificação completa, outreach personalizado e uma sequência completa — para revisar antes de enviar qualquer coisa.",
+    faqTag: "Perguntas frequentes",
+    faqTitle: "Dúvidas comuns",
+    faqs: [
+      ["O que exatamente eu recebo?", "Um relatório em CSV + Markdown com 10–100 leads (por plano). Cada lead inclui score de fit, motivo de fit, trigger de personalização, e-mail frio (assunto + corpo), LinkedIn DM e 2 follow-ups. Mais um resumo executivo e padrões do lote."],
+      ["Quanto tempo demora a entrega?", "Tipicamente 24–48 horas após enviar seu formulário de onboarding. Cada lote é revisado manualmente antes da entrega."],
+      ["Vocês enviam os e-mails por mim?", "Não. Você recebe rascunhos que revisa e envia você mesmo. Nada é enviado automaticamente. Você mantém controle total."],
+      ["Como os leads são obtidos?", "Nossos agentes identificam prospects que combinam com seu ICP usando dados empresariais públicos. Nenhum dado pessoal é usado além do que é publicamente acessível."],
+      ["E se os leads não combinarem com meu ICP?", "Se os leads consistentemente não combinarem com seu ICP e não conseguirmos resolver, você tem direito a reembolso em 7 dias. Consulte nossa política de reembolso."],
+      ["Há assinatura ou contrato?", "Não. Lotes beta são compras únicas. Sem cobranças recorrentes, sem compromissos, sem taxas ocultas."],
+      ["O que acontece após a compra?", "Coletamos seus detalhes de onboarding (se ainda não enviados), processamos seu lote e entregamos por e-mail em 24–48 horas."],
+      ["Posso segmentar uma indústria ou região específica?", "Sim. O formulário de onboarding permite especificar seu ICP, região-alvo, tom e qualquer critério adicional — e otimizamos o lote com esses parâmetros."],
+    ] as [string, string][],
+    ctaTag: "Começar",
+    ctaTitle: "Pronto para preencher seu pipeline?",
+    ctaSub: "Um lote. Entrega em 24–48h. Você revisa cada mensagem antes de enviar.",
+    ctaCTA: "Inicie seu primeiro lote — $29 →",
   },
   ja: {
     announcement: "ベータ版アクセス公開中 — 最初のリードバッチをリクエストできます。",
@@ -533,6 +659,48 @@ const COPY = {
     switchToDemo: "サンプルデモを試す →",
     sampleBadge: "サンプルデモレポート",
     sampleNote: "これはサンプル出力です。有料ベータバッチはチェックアウトと確認後に納品されます。",
+    problemTag: "問題点",
+    problemTitle: "多くのB2Bチームが機能しないアウトリーチに時間を無駄にしています",
+    problemItems: [
+      "自社オファーに合わないプロスペクトの調査に何時間も費やしてしまう。",
+      "汎用的なコールドメールが無視されるかスパム判定され、送信者評価を傷つける。",
+      "専任SDRなしではスケールでのパーソナライズが困難。",
+      "購入時には既に古くなっている高価なリード一覧。",
+      "今すぐ追うべきプロスペクトが誰なのかを判断できる明確なシグナルがない。",
+    ],
+    receiveTag: "受け取るもの",
+    receiveTitle: "アウトリーチを始めるのに必要なものすべてが1つのレポートに",
+    receiveItems: [
+      ["HOT / WARM / COLD スコア", "0〜10のICPフィットスコアとティアラベルで、どこに優先的に集中すべきかがわかります。"],
+      ["フィット理由", "この特定のリードがなぜあなたのオファーに合っているのかの明確な説明。"],
+      ["パーソナライズトリガー", "ニュース、成長シグナル、テックスタックなど実際のコンテキストに基づくユニークなフック。"],
+      ["初回コールドメール", "件名＋本文一式。あなたのトーンで書かれ、送信準備完了。"],
+      ["LinkedIn DM", "ダイレクトコネクションリクエスト向けの簡潔なメッセージ。"],
+      ["フォローアップ1（3〜4日目）", "「確認のため連絡」ではなく、価値を追加するリマインダー。"],
+      ["フォローアップ2（7〜8日目）", "次のプロスペクトに移る前の、タイミング良い最後の連絡。"],
+      ["エグゼクティブサマリー", "バッチ品質、ベストセグメント、次のステップの概要。"],
+      ["観察されたパターン", "LeadLensがバッチ全体で気づいたこと — ICPの絞り込みに活用できます。"],
+      ["CSV + Markdownエクスポート", "2つの形式で提供されるフルレポート。どんなツールでもすぐに使えます。"],
+    ] as [string, string][],
+    samplePreviewTag: "サンプル出力",
+    samplePreviewTitle: "レポートはこのような内容です",
+    samplePreviewSub: "バッチ内の各リードには、完全な評価、パーソナライズされたアウトリーチ、シーケンス全体が含まれます — 何かを送信する前に必ず確認できます。",
+    faqTag: "よくある質問",
+    faqTitle: "よくいただく質問",
+    faqs: [
+      ["具体的に何が届きますか？", "CSV＋Markdownレポートに10〜100件のリード（プランによる）。各リードにフィットスコア、フィット理由、パーソナライズトリガー、コールドメール（件名＋本文）、LinkedIn DM、フォローアップ2通が含まれます。エグゼクティブサマリーとバッチ全体のパターン分析も付属します。"],
+      ["納品までどのくらいかかりますか？", "オンボーディングフォーム送信後、通常24〜48時間以内に納品します。全バッチを手動でレビューしてから納品します。"],
+      ["メールを代わりに送ってもらえますか？", "いいえ。お届けするのは下書きです。確認・送信はご自身で行っていただきます。自動送信は一切ありません。完全にコントロールを維持できます。"],
+      ["リードはどのように調達しますか？", "公開されているビジネスデータを使用して、ICPに合致するプロスペクトを特定します。公開情報以外の個人データは使用しません。"],
+      ["リードが自社のICPに合わなかった場合は？", "リードが一貫してICPに合わず解決できない場合、7日以内に返金を申請できます。返金ポリシーをご確認ください。"],
+      ["サブスクリプションや契約はありますか？", "いいえ。ベータバッチは1回限りの購入です。継続課金なし、コミットメントなし、隠れた費用もありません。"],
+      ["購入後はどうなりますか？", "オンボーディング情報を収集し（未提出の場合）、バッチを処理して、24〜48時間以内にメールで納品します。"],
+      ["特定の業界や地域を指定できますか？", "はい。オンボーディングフォームでICP、ターゲット市場、トーン、その他の条件を指定でき、それに合わせてバッチを最適化します。"],
+    ] as [string, string][],
+    ctaTag: "始める",
+    ctaTitle: "パイプラインを埋める準備ができましたか？",
+    ctaSub: "1回のバッチ。24〜48時間で納品。送信前に全メッセージを確認できます。",
+    ctaCTA: "最初のバッチを始める — $29 →",
   },
 };
 
@@ -779,6 +947,26 @@ export default function DemoPipelinePage() {
         </div>
       </div>
 
+      {/* Problem */}
+      <section style={{ background: "#0f172a", padding: "5rem 1.5rem" }}>
+        <div style={{ ...innerStyle, textAlign: "center" }}>
+          <div style={{ display: "inline-block", background: "rgba(255,255,255,.1)", color: "#94a3b8", fontSize: ".75rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".06em", padding: ".25rem .875rem", borderRadius: 999, marginBottom: "1.25rem" }}>
+            {copy.problemTag}
+          </div>
+          <h2 style={{ fontSize: "clamp(1.75rem,3.5vw,2.25rem)", fontWeight: 800, color: "#f8fafc", letterSpacing: "-.02em", marginBottom: "3rem", maxWidth: "38rem", margin: "0 auto 3rem" }}>
+            {copy.problemTitle}
+          </h2>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: "1rem", textAlign: "left" }}>
+            {copy.problemItems.map((item, i) => (
+              <div key={i} style={{ display: "flex", gap: ".875rem", alignItems: "flex-start", background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.08)", borderRadius: ".875rem", padding: "1.25rem 1.375rem" }}>
+                <span style={{ color: "#f87171", fontWeight: 700, flexShrink: 0, fontSize: ".95rem", marginTop: ".1rem" }}>✗</span>
+                <span style={{ fontSize: ".9rem", color: "#94a3b8", lineHeight: 1.6 }}>{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* How it works */}
       <section style={sectionStyle}>
         <div style={innerStyle}>
@@ -798,8 +986,100 @@ export default function DemoPipelinePage() {
         </div>
       </section>
 
+      {/* What you receive */}
+      <section style={{ ...sectionStyle, background: "#fff" }}>
+        <div style={{ ...innerStyle, textAlign: "center" }}>
+          <Tag>{copy.receiveTag}</Tag>
+          <h2 style={sectionTitleStyle}>{copy.receiveTitle}</h2>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: "1rem", marginTop: "2.5rem", textAlign: "left" }}>
+            {copy.receiveItems.map(([title, desc], i) => (
+              <div key={i} style={{ display: "flex", gap: ".875rem", alignItems: "flex-start", background: "#f8fafc", border: "1px solid #f1f5f9", borderRadius: ".875rem", padding: "1.25rem" }}>
+                <div style={{ width: "1.625rem", height: "1.625rem", background: "#0ea5e9", color: "#fff", borderRadius: ".5rem", display: "flex", alignItems: "center", justifyContent: "center", fontSize: ".7rem", fontWeight: 800, flexShrink: 0, marginTop: ".05rem" }}>
+                  {i + 1}
+                </div>
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: ".875rem", color: "#0f172a", marginBottom: ".25rem" }}>{title}</div>
+                  <div style={{ fontSize: ".82rem", color: "#64748b", lineHeight: 1.55 }}>{desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Sample report preview */}
+      <section style={{ ...sectionStyle, background: "#f8fafc" }}>
+        <div style={{ ...innerStyle, textAlign: "center" }}>
+          <Tag>{copy.samplePreviewTag}</Tag>
+          <h2 style={sectionTitleStyle}>{copy.samplePreviewTitle}</h2>
+          <p style={{ color: "#64748b", fontSize: "1.05rem", maxWidth: "36rem", margin: "0 auto 3rem", lineHeight: 1.6 }}>
+            {copy.samplePreviewSub}
+          </p>
+          {/* Mock lead card */}
+          <div style={{ maxWidth: "52rem", margin: "0 auto", background: "#fff", border: "2px solid #e2e8f0", borderRadius: "1.25rem", overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,.08)", textAlign: "left" }}>
+            {/* Card header */}
+            <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #f1f5f9", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap" as const, gap: "1rem", background: "#fff" }}>
+              <div>
+                <div style={{ fontWeight: 800, fontSize: "1rem", color: "#0f172a" }}>
+                  Sarah Chen <span style={{ fontWeight: 400, color: "#64748b" }}>— Momentum Analytics</span>
+                </div>
+                <div style={{ fontSize: ".8rem", color: "#94a3b8", marginTop: ".2rem" }}>
+                  VP Sales · sarah.chen@momentumanalytics.io · SaaS / Analytics · 38 employees
+                </div>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: ".75rem", flexShrink: 0 }}>
+                <span style={{ padding: ".3rem .875rem", borderRadius: 999, fontSize: ".78rem", fontWeight: 700, background: "#fee2e2", color: "#991b1b" }}>🔥 HOT</span>
+                <span style={{ fontSize: ".9rem", fontWeight: 700, color: "#0284c7" }}>9/10</span>
+                <span style={{ fontSize: ".85rem", color: "#16a34a" }}>✅ APPROVED</span>
+              </div>
+            </div>
+            {/* Card body */}
+            <div style={{ padding: "1.5rem", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: "1.5rem" }}>
+              {/* Why fit */}
+              <div>
+                <div style={{ fontSize: ".7rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", color: "#94a3b8", marginBottom: ".625rem" }}>Why good fit</div>
+                {[
+                  "Scaling outbound — posted 3 SDR job openings this month.",
+                  "VP Sales at 38-person SaaS, exact ICP size ($3k–8k/month range).",
+                  "No outbound tooling visible — likely running a manual process.",
+                ].map((r, i) => (
+                  <div key={i} style={{ display: "flex", gap: ".5rem", fontSize: ".855rem", color: "#334155", padding: ".2rem 0", lineHeight: 1.5 }}>
+                    <span style={{ color: "#16a34a", fontWeight: 700, flexShrink: 0 }}>✓</span>{r}
+                  </div>
+                ))}
+              </div>
+              {/* Personalization trigger */}
+              <div>
+                <div style={{ fontSize: ".7rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", color: "#94a3b8", marginBottom: ".625rem" }}>Personalization trigger</div>
+                <div style={{ background: "#e0f2fe", borderLeft: "3px solid #0ea5e9", borderRadius: "0 .5rem .5rem 0", padding: ".875rem 1rem", fontSize: ".855rem", color: "#0284c7", fontStyle: "italic" as const, lineHeight: 1.6 }}>
+                  Sarah posted about hiring 3 SDRs and said the team is &ldquo;finally ready to go outbound.&rdquo; Perfect timing window — active buying intent.
+                </div>
+              </div>
+            </div>
+            {/* Email preview */}
+            <div style={{ padding: "0 1.5rem 1.5rem" }}>
+              <div style={{ fontSize: ".7rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", color: "#94a3b8", marginBottom: ".625rem" }}>Initial cold email</div>
+              <div style={{ background: "#f8fafc", borderRadius: ".75rem", padding: "1rem 1.125rem", border: "1px solid #f1f5f9" }}>
+                <div style={{ fontSize: ".68rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", color: "#94a3b8", marginBottom: ".3rem" }}>Subject</div>
+                <div style={{ fontSize: ".875rem", fontWeight: 700, color: "#0284c7", marginBottom: ".875rem", background: "#fff", border: "1px solid #e2e8f0", borderRadius: ".375rem", padding: ".4rem .625rem" }}>
+                  Re: scaling outbound at Momentum — a shortcut on the research side
+                </div>
+                <div style={{ fontSize: ".68rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", color: "#94a3b8", marginBottom: ".4rem" }}>Body</div>
+                <div style={{ fontSize: ".875rem", color: "#334155", lineHeight: 1.7 }}>
+                  Hi Sarah,<br /><br />
+                  Saw you&rsquo;re hiring SDRs at Momentum — great signal that outbound is becoming a priority.<br /><br />
+                  The problem most teams hit at your stage: SDRs spend 60% of their time on research, not selling. By the time they&rsquo;ve found and qualified a lead, half a day is gone.<br /><br />
+                  We built LeadLens to fix exactly that. We deliver pre-qualified leads with personalized email + DM sequences already written — so your reps can spend their time actually reaching out.<br /><br />
+                  Would 10 leads matching your ICP be useful to review?
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Pricing */}
-      <section id="pricing" style={{ ...sectionStyle, background: "#f8fafc" }}>
+      <section id="pricing" style={{ ...sectionStyle, background: "#fff" }}>
         <div style={{ ...innerStyle, textAlign: "center" }}>
           <Tag>{copy.pricingTag}</Tag>
           <h2 style={sectionTitleStyle}>{copy.pricingTitle}</h2>
@@ -837,6 +1117,55 @@ export default function DemoPipelinePage() {
                 <span style={{ fontSize: ".875rem", color: "#64748b", lineHeight: 1.55 }}>{item}</span>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section style={{ ...sectionStyle, background: "#fff" }}>
+        <div style={{ maxWidth: "48rem", margin: "0 auto", padding: "0 1.5rem" }}>
+          <div style={{ textAlign: "center", marginBottom: "3rem" }}>
+            <Tag>{copy.faqTag}</Tag>
+            <h2 style={sectionTitleStyle}>{copy.faqTitle}</h2>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column" as const, gap: ".75rem" }}>
+            {copy.faqs.map(([q, a], i) => (
+              <div key={i} style={{ background: "#f8fafc", border: "1px solid #f1f5f9", borderRadius: ".875rem", padding: "1.25rem 1.375rem" }}>
+                <div style={{ fontWeight: 700, fontSize: ".95rem", color: "#0f172a", marginBottom: ".5rem" }}>{q}</div>
+                <div style={{ fontSize: ".875rem", color: "#64748b", lineHeight: 1.65 }}>{a}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section style={{ background: "linear-gradient(135deg,#0c4a6e 0%,#0284c7 100%)", padding: "5rem 1.5rem" }}>
+        <div style={{ maxWidth: "42rem", margin: "0 auto", textAlign: "center" }}>
+          <div style={{ display: "inline-block", background: "rgba(255,255,255,.15)", color: "#e0f2fe", fontSize: ".75rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".06em", padding: ".25rem .875rem", borderRadius: 999, marginBottom: "1.25rem" }}>
+            {copy.ctaTag}
+          </div>
+          <h2 style={{ fontSize: "clamp(1.75rem,4vw,2.5rem)", fontWeight: 800, color: "#fff", letterSpacing: "-.02em", marginBottom: "1rem", lineHeight: 1.15 }}>
+            {copy.ctaTitle}
+          </h2>
+          <p style={{ fontSize: "1.1rem", color: "#bae6fd", marginBottom: "2.5rem", lineHeight: 1.6 }}>
+            {copy.ctaSub}
+          </p>
+          <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" as const }}>
+            <button onClick={() => goToForm("starter")}
+              style={{ background: "#fff", color: "#0284c7", border: "none", borderRadius: ".75rem", padding: "1rem 2rem", fontWeight: 700, fontSize: "1rem", cursor: "pointer", boxShadow: "0 4px 14px rgba(0,0,0,.15)", transition: "all .15s" }}
+              onMouseOver={e => { e.currentTarget.style.background = "#f0f9ff"; e.currentTarget.style.transform = "translateY(-1px)"; }}
+              onMouseOut={e => { e.currentTarget.style.background = "#fff"; e.currentTarget.style.transform = ""; }}
+            >
+              {copy.ctaCTA}
+            </button>
+            <button onClick={goToDemo}
+              style={{ background: "rgba(255,255,255,.15)", color: "#fff", border: "1.5px solid rgba(255,255,255,.3)", borderRadius: ".75rem", padding: "1rem 2rem", fontWeight: 600, fontSize: "1rem", cursor: "pointer", transition: "all .15s" }}
+              onMouseOver={e => { e.currentTarget.style.background = "rgba(255,255,255,.22)"; }}
+              onMouseOut={e => { e.currentTarget.style.background = "rgba(255,255,255,.15)"; }}
+            >
+              {copy.tryDemoCTA} →
+            </button>
           </div>
         </div>
       </section>
