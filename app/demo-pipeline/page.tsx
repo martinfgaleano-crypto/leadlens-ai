@@ -947,28 +947,8 @@ export default function DemoPipelinePage() {
         </div>
       </div>
 
-      {/* Problem */}
-      <section style={{ background: "#0f172a", padding: "5rem 1.5rem" }}>
-        <div style={{ ...innerStyle, textAlign: "center" }}>
-          <div style={{ display: "inline-block", background: "rgba(255,255,255,.1)", color: "#94a3b8", fontSize: ".75rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".06em", padding: ".25rem .875rem", borderRadius: 999, marginBottom: "1.25rem" }}>
-            {copy.problemTag}
-          </div>
-          <h2 style={{ fontSize: "clamp(1.75rem,3.5vw,2.25rem)", fontWeight: 800, color: "#f8fafc", letterSpacing: "-.02em", marginBottom: "3rem", maxWidth: "38rem", margin: "0 auto 3rem" }}>
-            {copy.problemTitle}
-          </h2>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: "1rem", textAlign: "left" }}>
-            {copy.problemItems.map((item, i) => (
-              <div key={i} style={{ display: "flex", gap: ".875rem", alignItems: "flex-start", background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.08)", borderRadius: ".875rem", padding: "1.25rem 1.375rem" }}>
-                <span style={{ color: "#f87171", fontWeight: 700, flexShrink: 0, fontSize: ".95rem", marginTop: ".1rem" }}>✗</span>
-                <span style={{ fontSize: ".9rem", color: "#94a3b8", lineHeight: 1.6 }}>{item}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* How it works */}
-      <section style={sectionStyle}>
+      <section style={{ ...sectionStyle, background: "#f8fafc" }}>
         <div style={innerStyle}>
           <div style={{ textAlign: "center", marginBottom: "3rem" }}>
             <Tag>{copy.howTag}</Tag>
@@ -986,29 +966,8 @@ export default function DemoPipelinePage() {
         </div>
       </section>
 
-      {/* What you receive */}
-      <section style={{ ...sectionStyle, background: "#fff" }}>
-        <div style={{ ...innerStyle, textAlign: "center" }}>
-          <Tag>{copy.receiveTag}</Tag>
-          <h2 style={sectionTitleStyle}>{copy.receiveTitle}</h2>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: "1rem", marginTop: "2.5rem", textAlign: "left" }}>
-            {copy.receiveItems.map(([title, desc], i) => (
-              <div key={i} style={{ display: "flex", gap: ".875rem", alignItems: "flex-start", background: "#f8fafc", border: "1px solid #f1f5f9", borderRadius: ".875rem", padding: "1.25rem" }}>
-                <div style={{ width: "1.625rem", height: "1.625rem", background: "#0ea5e9", color: "#fff", borderRadius: ".5rem", display: "flex", alignItems: "center", justifyContent: "center", fontSize: ".7rem", fontWeight: 800, flexShrink: 0, marginTop: ".05rem" }}>
-                  {i + 1}
-                </div>
-                <div>
-                  <div style={{ fontWeight: 700, fontSize: ".875rem", color: "#0f172a", marginBottom: ".25rem" }}>{title}</div>
-                  <div style={{ fontSize: ".82rem", color: "#64748b", lineHeight: 1.55 }}>{desc}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Sample report preview */}
-      <section style={{ ...sectionStyle, background: "#f8fafc" }}>
+      <section style={{ ...sectionStyle, background: "#fff" }}>
         <div style={{ ...innerStyle, textAlign: "center" }}>
           <Tag>{copy.samplePreviewTag}</Tag>
           <h2 style={sectionTitleStyle}>{copy.samplePreviewTitle}</h2>
@@ -1079,7 +1038,7 @@ export default function DemoPipelinePage() {
       </section>
 
       {/* Pricing */}
-      <section id="pricing" style={{ ...sectionStyle, background: "#fff" }}>
+      <section id="pricing" style={{ ...sectionStyle, background: "#f8fafc" }}>
         <div style={{ ...innerStyle, textAlign: "center" }}>
           <Tag>{copy.pricingTag}</Tag>
           <h2 style={sectionTitleStyle}>{copy.pricingTitle}</h2>
@@ -1093,7 +1052,7 @@ export default function DemoPipelinePage() {
           </div>
 
           {/* Monthly plans coming soon */}
-          <div style={{ marginTop: "3rem", background: "linear-gradient(135deg,#f8fafc,#f0f9ff)", border: "1px solid #e2e8f0", borderRadius: "1.25rem", padding: "2rem 2.5rem", textAlign: "center", maxWidth: "44rem", margin: "3rem auto 0" }}>
+          <div style={{ marginTop: "3rem", background: "linear-gradient(135deg,#f0f9ff,#e0f2fe)", border: "1px solid #bae6fd", borderRadius: "1.25rem", padding: "2rem 2.5rem", textAlign: "center", maxWidth: "44rem", margin: "3rem auto 0" }}>
             <span style={{ display: "inline-block", background: "#0ea5e9", color: "#fff", fontSize: ".68rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", padding: ".2rem .75rem", borderRadius: 999, marginBottom: "1rem" }}>
               {copy.monthlyTag}
             </span>
@@ -1103,8 +1062,49 @@ export default function DemoPipelinePage() {
         </div>
       </section>
 
-      {/* Beta delivery expectations */}
+      {/* Problem — LeadLens blue/white premium */}
+      <section style={{ background: "#eff6ff", padding: "5rem 1.5rem" }}>
+        <div style={{ ...innerStyle, textAlign: "center" }}>
+          <div style={{ display: "inline-block", background: "#dbeafe", color: "#1d4ed8", fontSize: ".75rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".06em", padding: ".25rem .875rem", borderRadius: 999, marginBottom: "1.25rem" }}>
+            {copy.problemTag}
+          </div>
+          <h2 style={{ fontSize: "clamp(1.75rem,3.5vw,2.25rem)", fontWeight: 800, color: "#0f172a", letterSpacing: "-.02em", maxWidth: "38rem", margin: "0 auto 3rem" }}>
+            {copy.problemTitle}
+          </h2>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: "1rem", textAlign: "left" }}>
+            {copy.problemItems.map((item, i) => (
+              <div key={i} style={{ display: "flex", gap: ".875rem", alignItems: "flex-start", background: "#fff", border: "1px solid #bfdbfe", borderRadius: ".875rem", padding: "1.25rem 1.375rem", boxShadow: "0 1px 4px rgba(14,165,233,.07)" }}>
+                <span style={{ color: "#f87171", fontWeight: 700, flexShrink: 0, fontSize: ".95rem", marginTop: ".1rem" }}>✗</span>
+                <span style={{ fontSize: ".9rem", color: "#334155", lineHeight: 1.6 }}>{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* What you receive */}
       <section style={{ ...sectionStyle, background: "#fff" }}>
+        <div style={{ ...innerStyle, textAlign: "center" }}>
+          <Tag>{copy.receiveTag}</Tag>
+          <h2 style={sectionTitleStyle}>{copy.receiveTitle}</h2>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: ".875rem", marginTop: "2.5rem", textAlign: "left" }}>
+            {copy.receiveItems.map(([title, desc], i) => (
+              <div key={i} style={{ display: "flex", gap: ".75rem", alignItems: "flex-start", background: "#f8fafc", border: "1px solid #f1f5f9", borderRadius: ".75rem", padding: "1rem 1.125rem" }}>
+                <div style={{ width: "1.5rem", height: "1.5rem", background: "#0ea5e9", color: "#fff", borderRadius: ".4rem", display: "flex", alignItems: "center", justifyContent: "center", fontSize: ".68rem", fontWeight: 800, flexShrink: 0, marginTop: ".05rem" }}>
+                  {i + 1}
+                </div>
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: ".855rem", color: "#0f172a", marginBottom: ".15rem" }}>{title}</div>
+                  <div style={{ fontSize: ".8rem", color: "#64748b", lineHeight: 1.5 }}>{desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Beta delivery expectations */}
+      <section style={{ ...sectionStyle, background: "#f8fafc" }}>
         <div style={{ ...innerStyle, maxWidth: "48rem" }}>
           <div style={{ textAlign: "center", marginBottom: "2rem" }}>
             <Tag>{copy.expectationsTag}</Tag>
@@ -1112,7 +1112,7 @@ export default function DemoPipelinePage() {
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: ".75rem" }}>
             {copy.expectationsItems.map((item, i) => (
-              <div key={i} style={{ display: "flex", gap: ".75rem", alignItems: "flex-start", background: "#f8fafc", borderRadius: ".75rem", padding: "1rem 1.125rem" }}>
+              <div key={i} style={{ display: "flex", gap: ".75rem", alignItems: "flex-start", background: "#fff", border: "1px solid #e2e8f0", borderRadius: ".75rem", padding: "1rem 1.125rem" }}>
                 <span style={{ color: "#0ea5e9", fontWeight: 700, flexShrink: 0, fontSize: ".875rem" }}>✓</span>
                 <span style={{ fontSize: ".875rem", color: "#64748b", lineHeight: 1.55 }}>{item}</span>
               </div>
