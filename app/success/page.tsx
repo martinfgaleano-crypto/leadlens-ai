@@ -5,109 +5,112 @@ import { useSearchParams } from "next/navigation";
 
 function SuccessContent() {
   const params = useSearchParams();
-  const sessionId = params.get("session_id");
-  const jobId = params.get("job_id");
+  const jobId    = params.get("job_id");
+  const orderId  = params.get("order_id");    // Lemon Squeezy
+  const checkoutId = params.get("checkout_id"); // Lemon Squeezy alternate
+
+  const refCode = jobId ?? orderId ?? checkoutId;
 
   return (
     <div style={{
       minHeight: "100vh",
-      background: "#0a0f1e",
+      background: "#f8fafc",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
       padding: "2rem",
-      fontFamily: "system-ui, -apple-system, sans-serif",
+      fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",
     }}>
       <div style={{
         maxWidth: "520px",
         width: "100%",
-        background: "rgba(255,255,255,0.03)",
-        border: "1px solid rgba(255,255,255,0.08)",
-        borderRadius: "16px",
+        background: "#fff",
+        border: "1px solid #e2e8f0",
+        borderRadius: "1.25rem",
         padding: "3rem 2.5rem",
         textAlign: "center",
+        boxShadow: "0 4px 24px rgba(0,0,0,.06)",
       }}>
-        <div style={{ fontSize: "3rem", marginBottom: "1.25rem" }}>✅</div>
+        <div style={{ fontSize: "2.75rem", marginBottom: "1.25rem" }}>✅</div>
 
         <h1 style={{
-          color: "#f1f5f9",
+          color: "#0f172a",
           fontSize: "1.75rem",
-          fontWeight: 700,
-          margin: "0 0 0.75rem",
+          fontWeight: 800,
+          letterSpacing: "-.02em",
+          margin: "0 0 .75rem",
         }}>
-          Payment confirmed
+          Payment received
         </h1>
 
         <p style={{
-          color: "#94a3b8",
-          fontSize: "1.05rem",
-          lineHeight: 1.6,
-          margin: "0 0 2rem",
+          color: "#64748b",
+          fontSize: "1rem",
+          lineHeight: 1.65,
+          margin: "0 0 1.75rem",
         }}>
-          Your LeadLens batch has been created. We&rsquo;re reviewing your ICP and preparing your
-          lead report. You&rsquo;ll receive it at the email you provided.
+          Your LeadLens beta batch has been created. We will review your order
+          and prepare your lead report within 24–48 hours.
         </p>
 
-        {jobId && (
+        {refCode && (
           <div style={{
-            background: "rgba(99,102,241,0.08)",
-            border: "1px solid rgba(99,102,241,0.2)",
-            borderRadius: "8px",
-            padding: "0.75rem 1rem",
+            background: "#f0f9ff",
+            border: "1px solid #bae6fd",
+            borderRadius: ".75rem",
+            padding: ".875rem 1rem",
             marginBottom: "1.5rem",
             textAlign: "left",
           }}>
-            <div style={{ color: "#64748b", fontSize: "0.75rem", marginBottom: "0.25rem" }}>
-              Job reference
+            <div style={{ color: "#64748b", fontSize: ".75rem", fontWeight: 600, marginBottom: ".25rem", textTransform: "uppercase", letterSpacing: ".05em" }}>
+              Order reference
             </div>
-            <code style={{ color: "#a5b4fc", fontSize: "0.85rem", wordBreak: "break-all" }}>
-              {jobId}
-            </code>
-          </div>
-        )}
-
-        {sessionId && (
-          <div style={{
-            color: "#475569",
-            fontSize: "0.8rem",
-            marginBottom: "2rem",
-          }}>
-            Checkout session:{" "}
-            <code style={{ color: "#64748b" }}>
-              {sessionId.slice(0, 24)}…
+            <code style={{ color: "#0284c7", fontSize: ".85rem", wordBreak: "break-all" }}>
+              {refCode}
             </code>
           </div>
         )}
 
         <div style={{
-          background: "rgba(34,197,94,0.06)",
-          border: "1px solid rgba(34,197,94,0.15)",
-          borderRadius: "8px",
-          padding: "1rem",
+          background: "#f0fdf4",
+          border: "1px solid #bbf7d0",
+          borderRadius: ".75rem",
+          padding: "1rem 1.125rem",
           marginBottom: "2rem",
-          fontSize: "0.875rem",
-          color: "#86efac",
-          lineHeight: 1.5,
+          fontSize: ".875rem",
+          color: "#15803d",
+          lineHeight: 1.55,
+          textAlign: "left",
         }}>
-          This is a beta batch — your report is prepared manually and reviewed before delivery.
-          Typical turnaround is 24–48 hours.
+          <strong>What happens next:</strong> your report is prepared manually
+          and reviewed before delivery. You will receive it at the email you
+          provided. Nothing is sent automatically on your behalf.
         </div>
 
         <a
           href="/demo-pipeline"
           style={{
             display: "inline-block",
-            padding: "0.75rem 1.75rem",
-            background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+            padding: ".875rem 2rem",
+            background: "#0ea5e9",
             color: "#fff",
-            borderRadius: "8px",
+            borderRadius: ".75rem",
             textDecoration: "none",
-            fontWeight: 600,
-            fontSize: "0.95rem",
+            fontWeight: 700,
+            fontSize: ".95rem",
+            boxShadow: "0 4px 14px rgba(14,165,233,.3)",
+            marginBottom: "1.5rem",
           }}
         >
-          ← Return to LeadLens
+          ← Return to LeadLens AI
         </a>
+
+        <p style={{ color: "#94a3b8", fontSize: ".8rem", margin: 0 }}>
+          Questions?{" "}
+          <a href="mailto:martinfgaleano@gmail.com" style={{ color: "#0ea5e9" }}>
+            martinfgaleano@gmail.com
+          </a>
+        </p>
       </div>
     </div>
   );
@@ -118,12 +121,13 @@ export default function SuccessPage() {
     <Suspense fallback={
       <div style={{
         minHeight: "100vh",
-        background: "#0a0f1e",
+        background: "#f8fafc",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        color: "#94a3b8",
-        fontFamily: "system-ui, sans-serif",
+        color: "#64748b",
+        fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",
+        fontSize: "1rem",
       }}>
         Loading…
       </div>

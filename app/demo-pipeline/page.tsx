@@ -518,6 +518,9 @@ const PLANS = {
   pro:      { price: "$197", leads: 100 },
 } as const;
 
+// Checkout links are public direct-pay URLs from Lemon Squeezy's product "Share" button.
+// NEXT_PUBLIC_* is intentional and safe — these URLs contain no secrets; they are the
+// same links you would paste in a tweet. No API key or webhook is needed for this flow.
 const LS_URLS: Partial<Record<PlanType, string>> = {
   starter:  process.env.NEXT_PUBLIC_LEMONSQUEEZY_STARTER_URL || undefined,
   standard: process.env.NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_URL || undefined,

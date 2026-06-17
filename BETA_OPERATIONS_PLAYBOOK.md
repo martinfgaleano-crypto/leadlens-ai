@@ -1,0 +1,192 @@
+# LeadLens AI — Beta Operations Playbook
+
+This document describes the exact steps to go from Lemon Squeezy approval to accepting real
+payments and delivering the first batch reports.
+
+---
+
+## PHASE A — Lemon Squeezy activation
+
+### A1. Store approved → Create 3 products
+
+In **app.lemonsqueezy.com → Products → New product**:
+
+| Product name | Price | Type |
+|---|---|---|
+| LeadLens Beta Starter | $29 USD | One-time |
+| LeadLens Beta Standard | $97 USD | One-time |
+| LeadLens Beta Pro | $197 USD | One-time |
+
+For each product:
+- Payment type: **one-time**
+- No trial, no subscription
+- Description: brief mention of lead count and delivery time (e.g. "10 qualified B2B leads + personalized outreach sequences. Delivered in 24–48h.")
+
+### A2. Copy checkout links
+
+For each product, go to **Products → [product] → Share** and copy the direct checkout URL.
+
+These links are public and safe — they contain no secret. They are the same URLs you
+would share on social media.
+
+### A3. Add checkout links to Vercel
+
+Go to **vercel.com → leadlens-ai project → Settings → Environment Variables** and add:
+
+```
+NEXT_PUBLIC_LEMONSQUEEZY_STARTER_URL   = https://leadlens.lemonsqueezy.com/checkout/...
+NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_URL  = https://leadlens.lemonsqueezy.com/checkout/...
+NEXT_PUBLIC_LEMONSQUEEZY_PRO_URL       = https://leadlens.lemonsqueezy.com/checkout/...
+```
+
+Set scope: **Production** (and Preview if desired).
+
+### A4. Redeploy
+
+Go to **Vercel → Deployments → Redeploy** (latest production deployment).  
+Wait ~60 seconds for build to complete.
+
+### A5. Test each checkout link
+
+Open the live site and click each pricing card button:
+- Starter → should open Lemon Squeezy checkout at $29
+- Standard → should open Lemon Squeezy checkout at $97
+- Pro → should open Lemon Squeezy checkout at $197
+
+Verify the price, currency (USD), and product name are correct.
+
+### A6. Test purchase (if Lemon Squeezy allows)
+
+Complete one test order (refund yourself afterward if needed) to confirm:
+- Payment goes through
+- You receive a Lemon Squeezy order confirmation email
+- Customer lands on `/success` page
+- `/success` page shows professional copy (no errors, no dark theme)
+
+---
+
+## PHASE B — First real order
+
+When you receive the first order notification from Lemon Squeezy:
+
+### B1. Confirm the order details
+- Plan purchased (Starter / Standard / Pro)
+- Customer email
+- Order ID / reference number
+- Save these in a simple order log (spreadsheet is fine)
+
+### B2. Run the LeadLens pipeline
+
+Go to the local dev environment or the Vercel demo:
+
+```bash
+# Locally (with DEMO_MODE=false + ANTHROPIC_API_KEY set):
+DEMO_MODE=false
+ANTHROPIC_API_KEY=sk-ant-...
+ALLOW_MOCK_LEADS_WITH_REAL_AI=false  # use real leads when Apollo is connected
+# or:
+ALLOW_MOCK_LEADS_WITH_REAL_AI=true   # hybrid mode until Apollo is connected
+```
+
+Fill in the onboarding form with the customer's business details (you may need to
+email them to collect this info if you don't have a form intake yet).
+
+Run the pipeline → generate report.
+
+### B3. Review output manually
+
+Before sending:
+- Read the executive summary
+- Check 3–5 lead cards for ICP fit
+- Verify email copy has no hard claims ("guaranteed meetings", revenue promises)
+- Verify outreach is written in appropriate language/tone
+- Fix any obvious errors in the Markdown export
+
+### B4. Export and deliver
+
+- Download CSV
+- Download Markdown
+- Email both files to the customer email from the order
+
+Email template (adapt as needed):
+```
+Subject: Your LeadLens report is ready
+
+Hi [name],
+
+Your LeadLens [Starter/Standard/Pro] batch is attached.
+
+The report includes:
+- [N] qualified B2B leads scored and segmented (HOT/WARM/COLD)
+- Personalized email, LinkedIn DM, and 2 follow-ups per lead
+- Executive summary and patterns observed
+
+Next steps: review the leads, pick your top targets, and send when ready.
+All messages are drafts — nothing goes out automatically.
+
+Let me know if you have any questions.
+
+Martin
+LeadLens AI
+martinfgaleano@gmail.com
+```
+
+### B5. Update your order log
+
+Mark: delivered, date, any notes on output quality.
+
+---
+
+## PHASE C — Delivery SLA
+
+- **Target**: 24–48 hours after order confirmation
+- **Communicate delays proactively**: if you need more time, email the customer before the 48h mark
+- **Refund policy**: see `/refund` — non-delivery, ICP mismatch, or technical failure within 7 days
+
+---
+
+## Operational constraints (permanent)
+
+These rules apply to every order, forever:
+
+- **Do NOT send emails automatically** on behalf of customers — they review and send manually
+- **Do NOT automate LinkedIn messaging** for customers
+- **Do NOT use aggressive scraping** to source leads
+- **Do NOT include hard outcome claims** in outreach copy ("guaranteed meetings", "X demos per month")
+- **Do NOT expose API keys** in logs, client code, or emails
+- **Keep customer data minimal** — collect only what's needed to run the pipeline
+- **Do NOT resell or share** customer business information with third parties
+
+---
+
+## PHASE D — Lemon Squeezy API + webhooks (optional, later)
+
+This phase is NOT required to accept payments or deliver reports.  
+Enable only when you want automated order confirmation or job queue integration.
+
+When ready:
+1. Go to **app.lemonsqueezy.com → Settings → API Keys** → create key → add to Vercel as `LEMONSQUEEZY_API_KEY`
+2. Go to **Settings → Webhooks** → create webhook → URL: `https://leadlens-ai-xi.vercel.app/api/lemon-webhook`
+3. Copy signing secret → add to Vercel as `LEMONSQUEEZY_WEBHOOK_SECRET`
+4. Implement `app/api/lemon-webhook/route.ts` to process `order_created` events
+5. Test with a real order
+
+---
+
+## Quick reference: Vercel env vars by phase
+
+| Var | Phase | Required for |
+|---|---|---|
+| `DEMO_MODE=true` | Now | Public site |
+| `NEXT_PUBLIC_APP_URL` | Now | Public site |
+| `NEXT_PUBLIC_LEMONSQUEEZY_STARTER_URL` | After LS approval | Checkout buttons |
+| `NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_URL` | After LS approval | Checkout buttons |
+| `NEXT_PUBLIC_LEMONSQUEEZY_PRO_URL` | After LS approval | Checkout buttons |
+| `ANTHROPIC_API_KEY` | When hybrid/real mode | AI pipeline |
+| `LEMONSQUEEZY_API_KEY` | Optional later | API/webhook integration |
+| `LEMONSQUEEZY_WEBHOOK_SECRET` | Optional later | Automated order processing |
+| `APOLLO_API_KEY` | Optional later | Real lead sourcing |
+
+---
+
+*Last updated: June 2026*
