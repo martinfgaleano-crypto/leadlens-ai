@@ -878,26 +878,29 @@ export default function DemoPipelinePage() {
   if (view === "landing") return (
     <div style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", color: "#0f172a", background: "#fff", lineHeight: 1.5 }}>
       <style>{`
-        .ll-pricing-grid { display: grid; gap: 1.5rem; max-width: 56rem; margin: 0 auto; align-items: start; grid-template-columns: repeat(3, 1fr); }
+        .ll-pricing-grid { display: grid; gap: 1.5rem; max-width: 56rem; margin: 0 auto; align-items: stretch; grid-template-columns: repeat(3, 1fr); }
         @media (max-width: 900px) { .ll-pricing-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 580px) { .ll-pricing-grid { grid-template-columns: 1fr; } }
       `}</style>
 
       {/* Announcement bar */}
-      <div style={{ background: "linear-gradient(135deg,#0c4a6e,#0284c7)", color: "#fff", textAlign: "center", padding: ".5rem 1rem", fontSize: ".8rem", fontWeight: 500 }}>
+      <div style={{ background: "linear-gradient(135deg,#075985,#0284c7)", color: "#fff", textAlign: "center", padding: ".55rem 1rem", fontSize: ".8rem", fontWeight: 500, letterSpacing: ".01em" }}>
         {copy.announcement}{" "}
-        <button onClick={() => goToForm("starter")} style={{ background: "rgba(255,255,255,.2)", border: "none", color: "#fff", fontSize: ".78rem", fontWeight: 700, borderRadius: 4, padding: "2px 10px", cursor: "pointer", marginLeft: 8 }}>
+        <button onClick={() => goToForm("starter")} style={{ background: "rgba(255,255,255,.18)", border: "1px solid rgba(255,255,255,.3)", color: "#fff", fontSize: ".78rem", fontWeight: 700, borderRadius: 5, padding: "2px 12px", cursor: "pointer", marginLeft: 8, transition: "background .15s" }}
+          onMouseOver={e => (e.currentTarget.style.background = "rgba(255,255,255,.28)")}
+          onMouseOut={e => (e.currentTarget.style.background = "rgba(255,255,255,.18)")}
+        >
           {copy.announcementCTA}
         </button>
       </div>
 
       {/* Nav */}
-      <div style={{ borderBottom: "1px solid #e2e8f0", position: "sticky", top: 0, background: "rgba(255,255,255,.95)", backdropFilter: "blur(8px)", zIndex: 40 }}>
+      <div style={{ borderBottom: "1px solid #e8f4fd", position: "sticky", top: 0, background: "rgba(255,255,255,.96)", backdropFilter: "blur(12px)", zIndex: 40, boxShadow: "0 1px 0 #e8f4fd" }}>
         <nav style={{ padding: ".875rem 1.5rem", display: "flex", justifyContent: "space-between", alignItems: "center", maxWidth: "72rem", margin: "0 auto" }}>
-          <span style={{ fontWeight: 800, fontSize: "1.15rem", letterSpacing: "-.02em" }}>
-            Lead<span style={{ color: "#0ea5e9" }}>Lens</span> AI
+          <span style={{ fontWeight: 800, fontSize: "1.2rem", letterSpacing: "-.03em", color: "#0f172a" }}>
+            Lead<span style={{ color: "#0ea5e9" }}>Lens</span><span style={{ color: "#94a3b8", fontWeight: 500, fontSize: ".9rem", marginLeft: ".25rem" }}>AI</span>
           </span>
-          <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "1.25rem", flexWrap: "wrap" as const }}>
             <button onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" })} style={navLinkStyle}>
               {copy.navPricing}
             </button>
@@ -908,28 +911,28 @@ export default function DemoPipelinePage() {
       </div>
 
       {/* Hero */}
-      <div style={{ background: "linear-gradient(180deg,#f0f9ff 0%,#fff 100%)" }}>
-        <div style={{ maxWidth: "56rem", margin: "0 auto", padding: "5.5rem 1.5rem 4.5rem", textAlign: "center" }}>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: ".5rem", background: "#fff", border: "1px solid #e2e8f0", borderRadius: 999, padding: ".3rem .9rem .3rem .5rem", fontSize: ".8rem", fontWeight: 600, color: "#64748b", marginBottom: "1.75rem", boxShadow: "0 1px 4px rgba(0,0,0,.06)" }}>
-            <span style={{ width: ".5rem", height: ".5rem", background: "#16a34a", borderRadius: "50%", display: "inline-block" }} />
+      <div style={{ background: "linear-gradient(170deg,#e0f2fe 0%,#f0f9ff 35%,#fff 75%)" }}>
+        <div style={{ maxWidth: "56rem", margin: "0 auto", padding: "5.5rem 1.5rem 5rem", textAlign: "center" }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: ".5rem", background: "#fff", border: "1px solid #bae6fd", borderRadius: 999, padding: ".35rem 1rem .35rem .6rem", fontSize: ".8rem", fontWeight: 600, color: "#0284c7", marginBottom: "2rem", boxShadow: "0 2px 8px rgba(14,165,233,.12)" }}>
+            <span style={{ width: ".5rem", height: ".5rem", background: "#16a34a", borderRadius: "50%", display: "inline-block", flexShrink: 0 }} />
             {copy.heroBadge}
           </div>
-          <h1 style={{ fontSize: "clamp(2.1rem,5.5vw,3.6rem)", fontWeight: 800, lineHeight: 1.12, marginBottom: "1.4rem", letterSpacing: "-.03em" }}>
+          <h1 style={{ fontSize: "clamp(2.2rem,5.5vw,3.75rem)", fontWeight: 800, lineHeight: 1.1, marginBottom: "1.5rem", letterSpacing: "-.03em" }}>
             {copy.heroH1pre}<br />
             <span style={{ color: "#0ea5e9" }}>{copy.heroH1hi}</span>{copy.heroH1post}
           </h1>
-          <p style={{ fontSize: "1.2rem", color: "#64748b", maxWidth: "38rem", margin: "0 auto 2.75rem", lineHeight: 1.65 }}>
+          <p style={{ fontSize: "1.15rem", color: "#475569", maxWidth: "37rem", margin: "0 auto 2.75rem", lineHeight: 1.7 }}>
             {copy.heroSub}
           </p>
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: ".875rem" }}>
-            <div style={{ display: "flex", gap: ".875rem", flexWrap: "wrap", justifyContent: "center" }}>
+          <div style={{ display: "flex", flexDirection: "column" as const, alignItems: "center", gap: "1.125rem" }}>
+            <div style={{ display: "flex", gap: ".875rem", flexWrap: "wrap" as const, justifyContent: "center" }}>
               <Btn lg onClick={() => goToForm("starter")}>{copy.heroCTA}</Btn>
               <BtnOutline lg onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" })}>{copy.heroSeeAll}</BtnOutline>
             </div>
-            <p style={{ fontSize: ".82rem", color: "#94a3b8" }}>
-              <strong style={{ color: "#64748b" }}>{copy.heroNote}</strong>
+            <p style={{ fontSize: ".82rem", color: "#64748b", background: "#f0f9ff", border: "1px solid #e0f2fe", borderRadius: 999, padding: ".375rem 1rem" }}>
+              {copy.heroNote}
             </p>
-            <button onClick={goToDemo} style={{ background: "none", border: "none", color: "#64748b", fontSize: ".82rem", cursor: "pointer", textDecoration: "underline", padding: ".25rem" }}>
+            <button onClick={goToDemo} style={{ background: "none", border: "none", color: "#94a3b8", fontSize: ".82rem", cursor: "pointer", textDecoration: "underline", padding: ".25rem" }}>
               {copy.tryDemoCTA} →
             </button>
           </div>
@@ -937,11 +940,17 @@ export default function DemoPipelinePage() {
       </div>
 
       {/* Proof bar */}
-      <div style={{ borderTop: "1px solid #f1f5f9", borderBottom: "1px solid #f1f5f9", padding: "1.25rem 1.5rem" }}>
-        <div style={{ maxWidth: "64rem", margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center", gap: "2.5rem", flexWrap: "wrap" }}>
-          {copy.proofLabels.map(([v, l]) => (
-            <div key={l} style={{ display: "flex", alignItems: "center", gap: ".5rem", fontSize: ".875rem", color: "#64748b" }}>
-              <strong style={{ color: "#334155" }}>{v}</strong> {l}
+      <div style={{ background: "#fff", borderTop: "1px solid #e2e8f0", borderBottom: "1px solid #e2e8f0", padding: "1.75rem 1.5rem" }}>
+        <div style={{ maxWidth: "56rem", margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center", gap: "0", flexWrap: "wrap" }}>
+          {copy.proofLabels.map(([v, l], i) => (
+            <div key={l} style={{ display: "flex", alignItems: "center" }}>
+              <div style={{ display: "flex", flexDirection: "column" as const, alignItems: "center", gap: ".2rem", padding: "0 2.25rem" }}>
+                <span style={{ fontSize: "1.625rem", fontWeight: 800, color: "#0f172a", letterSpacing: "-.02em", lineHeight: 1 }}>{v}</span>
+                <span style={{ fontSize: ".78rem", color: "#64748b", fontWeight: 500, whiteSpace: "nowrap" as const }}>{l}</span>
+              </div>
+              {i < copy.proofLabels.length - 1 && (
+                <div style={{ width: "1px", height: "2rem", background: "#e2e8f0", flexShrink: 0 }} />
+              )}
             </div>
           ))}
         </div>
@@ -1024,13 +1033,14 @@ export default function DemoPipelinePage() {
                   Re: scaling outbound at Momentum — a shortcut on the research side
                 </div>
                 <div style={{ fontSize: ".68rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", color: "#94a3b8", marginBottom: ".4rem" }}>Body</div>
-                <div style={{ fontSize: ".875rem", color: "#334155", lineHeight: 1.7 }}>
-                  Hi Sarah,<br /><br />
-                  Saw you&rsquo;re hiring SDRs at Momentum — great signal that outbound is becoming a priority.<br /><br />
-                  The problem most teams hit at your stage: SDRs spend 60% of their time on research, not selling. By the time they&rsquo;ve found and qualified a lead, half a day is gone.<br /><br />
-                  We built LeadLens to fix exactly that. We deliver pre-qualified leads with personalized email + DM sequences already written — so your reps can spend their time actually reaching out.<br /><br />
-                  Would 10 leads matching your ICP be useful to review?
+                <div style={{ position: "relative" as const, overflow: "hidden", maxHeight: "5.5rem" }}>
+                  <div style={{ fontSize: ".875rem", color: "#334155", lineHeight: 1.7 }}>
+                    Hi Sarah,<br /><br />
+                    Saw you&rsquo;re hiring SDRs at Momentum — great signal that outbound is becoming a priority. The problem most teams hit at your stage: SDRs spend 60% of their time on research, not selling...
+                  </div>
+                  <div style={{ position: "absolute" as const, bottom: 0, left: 0, right: 0, height: "2.5rem", background: "linear-gradient(transparent,#f8fafc)", pointerEvents: "none" as const }} />
                 </div>
+                <div style={{ marginTop: ".625rem", fontSize: ".78rem", color: "#0284c7", fontWeight: 600 }}>+ LinkedIn DM · Follow-up 1 · Follow-up 2 included in full report</div>
               </div>
             </div>
           </div>
@@ -1123,16 +1133,19 @@ export default function DemoPipelinePage() {
 
       {/* FAQ */}
       <section style={{ ...sectionStyle, background: "#fff" }}>
-        <div style={{ maxWidth: "48rem", margin: "0 auto", padding: "0 1.5rem" }}>
+        <div style={{ maxWidth: "46rem", margin: "0 auto", padding: "0 1.5rem" }}>
           <div style={{ textAlign: "center", marginBottom: "3rem" }}>
             <Tag>{copy.faqTag}</Tag>
             <h2 style={sectionTitleStyle}>{copy.faqTitle}</h2>
           </div>
-          <div style={{ display: "flex", flexDirection: "column" as const, gap: ".75rem" }}>
+          <div style={{ border: "1px solid #e2e8f0", borderRadius: "1rem", overflow: "hidden" }}>
             {copy.faqs.map(([q, a], i) => (
-              <div key={i} style={{ background: "#f8fafc", border: "1px solid #f1f5f9", borderRadius: ".875rem", padding: "1.25rem 1.375rem" }}>
-                <div style={{ fontWeight: 700, fontSize: ".95rem", color: "#0f172a", marginBottom: ".5rem" }}>{q}</div>
-                <div style={{ fontSize: ".875rem", color: "#64748b", lineHeight: 1.65 }}>{a}</div>
+              <div key={i} style={{ padding: "1.25rem 1.5rem", borderBottom: i < copy.faqs.length - 1 ? "1px solid #f1f5f9" : "none", background: i % 2 === 0 ? "#fff" : "#fafbfc" }}>
+                <div style={{ fontWeight: 700, fontSize: ".925rem", color: "#0f172a", marginBottom: ".5rem", display: "flex", gap: ".75rem", alignItems: "flex-start" }}>
+                  <span style={{ color: "#0ea5e9", fontWeight: 800, flexShrink: 0, fontSize: ".85rem", marginTop: ".1rem" }}>Q</span>
+                  {q}
+                </div>
+                <div style={{ fontSize: ".875rem", color: "#64748b", lineHeight: 1.65, paddingLeft: "1.375rem" }}>{a}</div>
               </div>
             ))}
           </div>
@@ -1662,33 +1675,84 @@ function PricingCard({ plan, featured, copy, onSelect }: {
   plan: PlanType; featured: boolean; copy: Copy; onSelect: (p: PlanType) => void;
 }) {
   const p = PLANS[plan];
+  const featuredShadow = "0 4px 24px rgba(14,165,233,.18)";
   return (
-    <div style={{ border: `1.5px solid ${featured ? "#0ea5e9" : "#e2e8f0"}`, borderRadius: "1.125rem", padding: "2rem", background: "#fff", position: "relative" as const, transition: "box-shadow .2s" }}
-      onMouseOver={el => (el.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,.09)")}
-      onMouseOut={el => (el.currentTarget.style.boxShadow = "none")}
+    <div
+      style={{
+        border: `1.5px solid ${featured ? "#0ea5e9" : "#e2e8f0"}`,
+        borderRadius: "1.125rem",
+        padding: "2rem",
+        background: featured ? "linear-gradient(180deg,#f0f9ff 0%,#fff 55%)" : "#fff",
+        position: "relative" as const,
+        transition: "box-shadow .2s, transform .2s",
+        display: "flex",
+        flexDirection: "column" as const,
+        height: "100%",
+        boxSizing: "border-box" as const,
+        boxShadow: featured ? featuredShadow : "none",
+      }}
+      onMouseOver={el => {
+        el.currentTarget.style.boxShadow = featured ? "0 8px 36px rgba(14,165,233,.26)" : "0 8px 24px rgba(0,0,0,.09)";
+        el.currentTarget.style.transform = "translateY(-2px)";
+      }}
+      onMouseOut={el => {
+        el.currentTarget.style.boxShadow = featured ? featuredShadow : "none";
+        el.currentTarget.style.transform = "";
+      }}
     >
       {featured && (
-        <div style={{ position: "absolute" as const, top: -13, left: "50%", transform: "translateX(-50%)", background: "#0ea5e9", color: "#fff", fontSize: ".72rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".06em", padding: ".25rem .875rem", borderRadius: 999, whiteSpace: "nowrap" as const }}>
+        <div style={{ position: "absolute" as const, top: -13, left: "50%", transform: "translateX(-50%)", background: "linear-gradient(135deg,#0ea5e9,#0284c7)", color: "#fff", fontSize: ".72rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", padding: ".3rem 1rem", borderRadius: 999, whiteSpace: "nowrap" as const, boxShadow: "0 2px 8px rgba(14,165,233,.35)" }}>
           {copy.mostPopular}
         </div>
       )}
-      <div style={{ fontSize: ".8rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".06em", color: "#94a3b8", marginBottom: ".5rem" }}>{copy.planNames[plan]}</div>
-      <div style={{ fontSize: "2.75rem", fontWeight: 800, letterSpacing: "-.03em", lineHeight: 1, marginBottom: ".25rem" }}>{p.price}</div>
-      <div style={{ fontSize: ".875rem", color: "#64748b", marginBottom: ".75rem" }}>{copy.planDescs[plan]}</div>
-      <div style={{ display: "inline-block", fontSize: ".7rem", fontWeight: 600, color: "#64748b", background: "#f1f5f9", border: "1px solid #e2e8f0", borderRadius: 4, padding: "2px 8px", marginBottom: "1.25rem" }}>{copy.oneBatch}</div>
-      <div style={{ borderTop: "1px solid #f1f5f9", paddingTop: "1.25rem", marginBottom: "1.25rem" }} />
-      <div style={{ fontSize: "1rem", fontWeight: 700, color: "#0284c7", marginBottom: "1.25rem" }}>{copy.leadsFoundBy(p.leads)}</div>
-      <div style={{ marginBottom: "1.75rem" }}>
+
+      {/* Plan name + price block */}
+      <div style={{ marginBottom: "1.25rem" }}>
+        <div style={{ fontSize: ".72rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".08em", color: featured ? "#0284c7" : "#94a3b8", marginBottom: ".625rem" }}>
+          {copy.planNames[plan]}
+        </div>
+        <div style={{ display: "flex", alignItems: "baseline", gap: ".25rem", marginBottom: ".375rem" }}>
+          <span style={{ fontSize: "2.75rem", fontWeight: 800, letterSpacing: "-.03em", lineHeight: 1, color: "#0f172a" }}>{p.price}</span>
+        </div>
+        <div style={{ fontSize: ".875rem", color: "#64748b", lineHeight: 1.45, marginBottom: ".875rem" }}>{copy.planDescs[plan]}</div>
+        <div style={{ display: "inline-block", fontSize: ".7rem", fontWeight: 600, color: "#64748b", background: "#f1f5f9", borderRadius: ".375rem", padding: "3px 10px" }}>
+          {copy.oneBatch}
+        </div>
+      </div>
+
+      {/* Divider + lead count */}
+      <div style={{ borderTop: `1px solid ${featured ? "#bae6fd" : "#f1f5f9"}`, paddingTop: "1.125rem", marginBottom: "1rem" }}>
+        <div style={{ fontSize: ".9rem", fontWeight: 700, color: "#0284c7" }}>{copy.leadsFoundBy(p.leads)}</div>
+      </div>
+
+      {/* Features — flex:1 pushes button to bottom */}
+      <div style={{ flex: 1, marginBottom: "1.5rem" }}>
         {copy.planFeatures[plan].map(f => (
-          <div key={f} style={{ fontSize: ".875rem", color: "#64748b", padding: ".3rem 0", display: "flex", gap: ".6rem", alignItems: "flex-start" }}>
-            <span style={{ color: "#0ea5e9", fontWeight: 700, flexShrink: 0 }}>✓</span>{f}
+          <div key={f} style={{ fontSize: ".855rem", color: "#64748b", padding: ".3rem 0", display: "flex", gap: ".6rem", alignItems: "flex-start", lineHeight: 1.45 }}>
+            <span style={{ color: "#0ea5e9", fontWeight: 700, flexShrink: 0, marginTop: ".1rem" }}>✓</span>{f}
           </div>
         ))}
       </div>
-      <button onClick={() => onSelect(plan)}
-        style={{ width: "100%", background: "#0ea5e9", color: "#fff", border: "none", borderRadius: ".625rem", padding: ".875rem", fontWeight: 700, fontSize: ".9rem", cursor: "pointer", transition: "background .15s" }}
-        onMouseOver={e => (e.currentTarget.style.background = "#0284c7")}
-        onMouseOut={e => (e.currentTarget.style.background = "#0ea5e9")}
+
+      {/* CTA — always at bottom */}
+      <button
+        onClick={() => onSelect(plan)}
+        style={{
+          width: "100%",
+          background: "#0ea5e9",
+          color: "#fff",
+          border: "none",
+          borderRadius: ".75rem",
+          padding: ".9rem",
+          fontWeight: 700,
+          fontSize: ".9rem",
+          cursor: "pointer",
+          transition: "background .15s, transform .15s",
+          boxShadow: featured ? "0 4px 14px rgba(14,165,233,.35)" : "none",
+          marginTop: "auto",
+        }}
+        onMouseOver={e => { e.currentTarget.style.background = "#0284c7"; e.currentTarget.style.transform = "translateY(-1px)"; }}
+        onMouseOut={e => { e.currentTarget.style.background = "#0ea5e9"; e.currentTarget.style.transform = ""; }}
       >
         {copy.getStarted} — {p.price} →
       </button>
