@@ -7,8 +7,8 @@ import type { LeadLensReport, ProcessedLead, PlanType, QCStatus, OutputLanguage,
 
 const COPY = {
   en: {
-    announcement: "Beta preview — generate a sample lead report before launch.",
-    announcementCTA: "Try it now →",
+    announcement: "Beta access open — request your first lead batch.",
+    announcementCTA: "Request your batch →",
     navPricing: "Pricing",
     navCTA: "Get started — $29",
     heroBadge: "Beta open — limited spots",
@@ -117,12 +117,23 @@ const COPY = {
     sFollowup1: "Follow-up 1 (day 3–4)",
     sFollowup2: "Follow-up 2 (day 7–8)",
     sQcNotes: "QC notes",
-    footerCopy: "© 2025 LeadLens AI. Human-reviewed. No automatic sending. You review and approve every message.",
-    footerLinks: ["Privacy", "Terms", "Contact"],
+    footerCopy: "© 2026 LeadLens AI. Human-reviewed. No automatic sending. You review and approve every message.",
+    footerLinks: ["Privacy", "Terms", "Refund Policy", "Contact"],
+    footerContact: "Questions? Email us: martinfgaleano@gmail.com",
+    expectationsTag: "Beta delivery",
+    expectationsTitle: "What to expect from your batch",
+    expectationsItems: [
+      "We process your form and build your ICP profile.",
+      "Our AI agents research and qualify leads that match your offer.",
+      "Each lead gets a personalized email, LinkedIn DM, and 2 follow-ups.",
+      "You receive a CSV + Markdown report ready to review and use.",
+      "Typical delivery: 24–48 hours after submission.",
+      "You review every message before sending — nothing goes out automatically.",
+    ],
   },
   es: {
-    announcement: "Vista previa beta — genera un reporte de leads de muestra antes del lanzamiento.",
-    announcementCTA: "Pruébalo ahora →",
+    announcement: "Acceso beta abierto — solicita tu primer lote de leads.",
+    announcementCTA: "Solicitar mi lote →",
     navPricing: "Precios",
     navCTA: "Comenzar — $29",
     heroBadge: "Beta abierta — cupos limitados",
@@ -231,12 +242,23 @@ const COPY = {
     sFollowup1: "Seguimiento 1 (día 3–4)",
     sFollowup2: "Seguimiento 2 (día 7–8)",
     sQcNotes: "Notas de QC",
-    footerCopy: "© 2025 LeadLens AI. Revisión humana. Sin envíos automáticos. Tú revisas y apruebas cada mensaje.",
-    footerLinks: ["Privacidad", "Términos", "Contacto"],
+    footerCopy: "© 2026 LeadLens AI. Revisión humana. Sin envíos automáticos. Tú revisas y apruebas cada mensaje.",
+    footerLinks: ["Privacidad", "Términos", "Política de devolución", "Contacto"],
+    footerContact: "¿Preguntas? Escríbenos: martinfgaleano@gmail.com",
+    expectationsTag: "Entrega beta",
+    expectationsTitle: "Qué esperar de tu lote",
+    expectationsItems: [
+      "Procesamos tu formulario y construimos tu perfil de cliente ideal.",
+      "Nuestros agentes de IA investigan y califican leads que coincidan con tu oferta.",
+      "Cada lead recibe un correo personalizado, LinkedIn DM y 2 seguimientos.",
+      "Recibes un reporte en CSV + Markdown listo para revisar y usar.",
+      "Entrega típica: 24–48 horas después del envío.",
+      "Tú revisas cada mensaje antes de enviarlo — nada se envía automáticamente.",
+    ],
   },
   pt: {
-    announcement: "Prévia beta — gere um relatório de leads de exemplo antes do lançamento.",
-    announcementCTA: "Experimente agora →",
+    announcement: "Acesso beta aberto — solicite seu primeiro lote de leads.",
+    announcementCTA: "Solicitar meu lote →",
     navPricing: "Preços",
     navCTA: "Começar — $29",
     heroBadge: "Beta aberta — vagas limitadas",
@@ -345,12 +367,23 @@ const COPY = {
     sFollowup1: "Follow-up 1 (dia 3–4)",
     sFollowup2: "Follow-up 2 (dia 7–8)",
     sQcNotes: "Notas de QC",
-    footerCopy: "© 2025 LeadLens AI. Revisão humana. Sem envio automático. Você revisa e aprova cada mensagem.",
-    footerLinks: ["Privacidade", "Termos", "Contato"],
+    footerCopy: "© 2026 LeadLens AI. Revisão humana. Sem envio automático. Você revisa e aprova cada mensagem.",
+    footerLinks: ["Privacidade", "Termos", "Política de Reembolso", "Contato"],
+    footerContact: "Dúvidas? Fale conosco: martinfgaleano@gmail.com",
+    expectationsTag: "Entrega beta",
+    expectationsTitle: "O que esperar do seu lote",
+    expectationsItems: [
+      "Processamos seu formulário e construímos seu perfil de cliente ideal.",
+      "Nossos agentes de IA pesquisam e qualificam leads que combinam com sua oferta.",
+      "Cada lead recebe um e-mail personalizado, LinkedIn DM e 2 follow-ups.",
+      "Você recebe um relatório em CSV + Markdown pronto para revisar e usar.",
+      "Entrega típica: 24–48 horas após o envio.",
+      "Você revisa cada mensagem antes de enviar — nada é enviado automaticamente.",
+    ],
   },
   ja: {
-    announcement: "ベータ版プレビュー — サンプルのリードレポートを生成できます。",
-    announcementCTA: "今すぐ試す →",
+    announcement: "ベータ版アクセス公開中 — 最初のリードバッチをリクエストできます。",
+    announcementCTA: "バッチをリクエスト →",
     navPricing: "料金",
     navCTA: "開始する — $29",
     heroBadge: "ベータ版公開中 — 限定枠",
@@ -459,8 +492,19 @@ const COPY = {
     sFollowup1: "フォローアップ1（3〜4日目）",
     sFollowup2: "フォローアップ2（7〜8日目）",
     sQcNotes: "QCメモ",
-    footerCopy: "© 2025 LeadLens AI. 人による確認あり。自動送信なし。すべてのメッセージを確認してから使用できます。",
-    footerLinks: ["プライバシー", "利用規約", "お問い合わせ"],
+    footerCopy: "© 2026 LeadLens AI. 人による確認あり。自動送信なし。すべてのメッセージを確認してから使用できます。",
+    footerLinks: ["プライバシー", "利用規約", "返金ポリシー", "お問い合わせ"],
+    footerContact: "ご質問は: martinfgaleano@gmail.com",
+    expectationsTag: "ベータ版の納品について",
+    expectationsTitle: "リードバッチに期待できること",
+    expectationsItems: [
+      "フォームの内容を処理し、理想の顧客プロフィールを作成します。",
+      "AIエージェントがあなたのオファーに合うリードを調査・評価します。",
+      "各リードにパーソナライズされたメール・LinkedIn DM・フォローアップ2通を作成します。",
+      "CSV＋Markdownのレポートが届きます。すぐに確認してご利用いただけます。",
+      "通常の納品時間：送信後24〜48時間。",
+      "送信前にすべてのメッセージをご確認いただけます。自動送信は一切行いません。",
+    ],
   },
 };
 
@@ -473,6 +517,12 @@ const PLANS = {
   standard: { price: "$97",  leads: 50  },
   pro:      { price: "$197", leads: 100 },
 } as const;
+
+const LS_URLS: Partial<Record<PlanType, string>> = {
+  starter:  process.env.NEXT_PUBLIC_LEMONSQUEEZY_STARTER_URL || undefined,
+  standard: process.env.NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_URL || undefined,
+  pro:      process.env.NEXT_PUBLIC_LEMONSQUEEZY_PRO_URL || undefined,
+};
 
 const LANG_OPTIONS: { value: OutputLanguage; label: string }[] = [
   { value: "en", label: "English" },
@@ -544,6 +594,11 @@ export default function DemoPipelinePage() {
   }
 
   function goToForm(p: PlanType) {
+    const lsUrl = LS_URLS[p];
+    if (lsUrl) {
+      window.location.href = lsUrl;
+      return;
+    }
     setPlan(p);
     setView("form");
     setTimeout(() => formRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
@@ -721,15 +776,42 @@ export default function DemoPipelinePage() {
         </div>
       </section>
 
+      {/* Beta delivery expectations */}
+      <section style={{ ...sectionStyle, background: "#fff" }}>
+        <div style={{ ...innerStyle, maxWidth: "48rem" }}>
+          <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+            <Tag>{copy.expectationsTag}</Tag>
+            <h2 style={{ ...sectionTitleStyle, fontSize: "clamp(1.5rem,3vw,1.875rem)" }}>{copy.expectationsTitle}</h2>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: ".75rem" }}>
+            {copy.expectationsItems.map((item, i) => (
+              <div key={i} style={{ display: "flex", gap: ".75rem", alignItems: "flex-start", background: "#f8fafc", borderRadius: ".75rem", padding: "1rem 1.125rem" }}>
+                <span style={{ color: "#0ea5e9", fontWeight: 700, flexShrink: 0, fontSize: ".875rem" }}>✓</span>
+                <span style={{ fontSize: ".875rem", color: "#64748b", lineHeight: 1.55 }}>{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer style={{ borderTop: "1px solid #f1f5f9", padding: "2.5rem 1.5rem", textAlign: "center" }}>
-        <p style={{ color: "#94a3b8", fontSize: ".875rem", marginBottom: ".5rem" }}>
+        <p style={{ color: "#94a3b8", fontSize: ".875rem", marginBottom: ".35rem" }}>
           {copy.footerCopy}
         </p>
-        <div style={{ display: "flex", justifyContent: "center", gap: "1.5rem" }}>
-          {copy.footerLinks.map(l => (
-            <span key={l} style={{ color: "#94a3b8", fontSize: ".82rem", cursor: "pointer" }}>{l}</span>
-          ))}
+        <p style={{ color: "#94a3b8", fontSize: ".82rem", marginBottom: ".875rem" }}>
+          {copy.footerContact}
+        </p>
+        <div style={{ display: "flex", justifyContent: "center", gap: "1.5rem", flexWrap: "wrap" }}>
+          {copy.footerLinks.map((l, i) => {
+            const hrefs = ["/privacy", "/terms", "/refund", "mailto:martinfgaleano@gmail.com"];
+            return (
+              <a key={l} href={hrefs[i] ?? "#"} style={{ color: "#94a3b8", fontSize: ".82rem", textDecoration: "none" }}
+                onMouseOver={e => (e.currentTarget.style.color = "#64748b")}
+                onMouseOut={e => (e.currentTarget.style.color = "#94a3b8")}
+              >{l}</a>
+            );
+          })}
         </div>
       </footer>
     </div>
