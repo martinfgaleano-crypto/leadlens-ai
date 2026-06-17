@@ -43,7 +43,7 @@ const COPY = {
       pro:      ["Everything in Standard","2 campaign angles","Priority manual review","CSV + Markdown export","Delivery in 24–48h"],
     },
     leadsFoundBy: (n: number) => `${n} leads found by LeadLens`,
-    getStarted: "Get started",
+    getStarted: "Start beta batch",
     mostPopular: "Most popular",
     formTag: "Start your campaign",
     formTitle: "Tell LeadLens about your business",
@@ -130,6 +130,13 @@ const COPY = {
       "Typical delivery: 24–48 hours after submission.",
       "You review every message before sending — nothing goes out automatically.",
     ],
+    tryDemoCTA: "Try sample demo",
+    checkoutPendingTitle: "Online checkout is almost ready.",
+    checkoutPendingBody: "Lemon Squeezy is currently reviewing our store. This beta batch cannot be purchased yet.",
+    checkoutPendingDemoHint: "You can still try a sample demo report below.",
+    switchToDemo: "Try sample demo instead →",
+    sampleBadge: "Sample demo report",
+    sampleNote: "This is a sample output. Paid beta batches are delivered after checkout and manual review.",
   },
   es: {
     announcement: "Acceso beta abierto — solicita tu primer lote de leads.",
@@ -168,7 +175,7 @@ const COPY = {
       pro:      ["Todo lo de Beta Estándar","2 ángulos de campaña","Revisión manual prioritaria","Exportación CSV + Markdown","Entrega en 24–48h"],
     },
     leadsFoundBy: (n: number) => `${n} leads encontrados por LeadLens`,
-    getStarted: "Comenzar",
+    getStarted: "Iniciar lote beta",
     mostPopular: "Más popular",
     formTag: "Inicia tu campaña",
     formTitle: "Cuéntale a LeadLens sobre tu negocio",
@@ -255,6 +262,13 @@ const COPY = {
       "Entrega típica: 24–48 horas después del envío.",
       "Tú revisas cada mensaje antes de enviarlo — nada se envía automáticamente.",
     ],
+    tryDemoCTA: "Probar demo de muestra",
+    checkoutPendingTitle: "El checkout online está casi listo.",
+    checkoutPendingBody: "Lemon Squeezy está revisando nuestra tienda. Este lote beta todavía no se puede comprar.",
+    checkoutPendingDemoHint: "Mientras tanto, puedes probar un reporte demo de muestra abajo.",
+    switchToDemo: "Probar demo de muestra →",
+    sampleBadge: "Reporte demo de muestra",
+    sampleNote: "Este es un resultado de muestra. Los lotes beta pagos se entregan después del checkout y revisión.",
   },
   pt: {
     announcement: "Acesso beta aberto — solicite seu primeiro lote de leads.",
@@ -293,7 +307,7 @@ const COPY = {
       pro:      ["Tudo do Beta Padrão","2 ângulos de campanha","Revisão manual prioritária","Exportação CSV + Markdown","Entrega em 24–48h"],
     },
     leadsFoundBy: (n: number) => `${n} leads encontrados pela LeadLens`,
-    getStarted: "Começar",
+    getStarted: "Iniciar lote beta",
     mostPopular: "Mais popular",
     formTag: "Inicie sua campanha",
     formTitle: "Conte à LeadLens sobre seu negócio",
@@ -380,6 +394,13 @@ const COPY = {
       "Entrega típica: 24–48 horas após o envio.",
       "Você revisa cada mensagem antes de enviar — nada é enviado automaticamente.",
     ],
+    tryDemoCTA: "Testar demo de exemplo",
+    checkoutPendingTitle: "O checkout online está quase pronto.",
+    checkoutPendingBody: "A Lemon Squeezy está revisando nossa loja. Este lote beta ainda não pode ser comprado.",
+    checkoutPendingDemoHint: "Você ainda pode testar um relatório demo de exemplo abaixo.",
+    switchToDemo: "Testar demo de exemplo →",
+    sampleBadge: "Relatório demo de exemplo",
+    sampleNote: "Este é um resultado de exemplo. Lotes beta pagos são entregues após o checkout e revisão.",
   },
   ja: {
     announcement: "ベータ版アクセス公開中 — 最初のリードバッチをリクエストできます。",
@@ -418,7 +439,7 @@ const COPY = {
       pro:      ["スタンダードの全機能","2つのキャンペーンアングル","優先マニュアルレビュー","CSV + Markdownエクスポート","24〜48時間で納品"],
     },
     leadsFoundBy: (n: number) => `${n}件のリードをLeadLensが発掘`,
-    getStarted: "始める",
+    getStarted: "ベータバッチを開始",
     mostPopular: "最も人気",
     formTag: "キャンペーンを開始",
     formTitle: "LeadLensにビジネスについて教えてください",
@@ -505,6 +526,13 @@ const COPY = {
       "通常の納品時間：送信後24〜48時間。",
       "送信前にすべてのメッセージをご確認いただけます。自動送信は一切行いません。",
     ],
+    tryDemoCTA: "サンプルデモを試す",
+    checkoutPendingTitle: "オンライン決済はまもなく利用可能になります。",
+    checkoutPendingBody: "現在 Lemon Squeezy がストアを審査中のため、このベータバッチはまだ購入できません。",
+    checkoutPendingDemoHint: "代わりに、以下でサンプルデモレポートをお試しいただけます。",
+    switchToDemo: "サンプルデモを試す →",
+    sampleBadge: "サンプルデモレポート",
+    sampleNote: "これはサンプル出力です。有料ベータバッチはチェックアウトと確認後に納品されます。",
   },
 };
 
@@ -578,15 +606,17 @@ const QC_META: Record<QCStatus, { icon: string; color: string }> = {
 // ─── Root page ────────────────────────────────────────────────────────────────
 
 export default function DemoPipelinePage() {
-  const [lang, setLang]      = useState<OutputLanguage>("en");
-  const [view, setView]      = useState<View>("landing");
-  const [plan, setPlan]      = useState<PlanType>("starter");
-  const [form, setForm]      = useState(SAMPLE);
-  const [agentStep, setStep] = useState(-1);
-  const [progress, setProg]  = useState(0);
-  const [report, setReport]  = useState<LeadLensReport | null>(null);
-  const [error, setError]    = useState<string | null>(null);
-  const [expanded, setExp]   = useState<number | null>(null);
+  const [lang, setLang]           = useState<OutputLanguage>("en");
+  const [view, setView]           = useState<View>("landing");
+  const [plan, setPlan]           = useState<PlanType>("starter");
+  const [form, setForm]           = useState(SAMPLE);
+  const [agentStep, setStep]      = useState(-1);
+  const [progress, setProg]       = useState(0);
+  const [report, setReport]       = useState<LeadLensReport | null>(null);
+  const [error, setError]         = useState<string | null>(null);
+  const [expanded, setExp]        = useState<number | null>(null);
+  const [formMode, setFormMode]   = useState<"paid_batch" | "sample_demo">("paid_batch");
+  const [isSampleDemo, setIsSampleDemo] = useState(false);
   const formRef = useRef<HTMLDivElement>(null);
 
   const copy = COPY[lang];
@@ -603,13 +633,24 @@ export default function DemoPipelinePage() {
       return;
     }
     setPlan(p);
+    setFormMode("paid_batch");
+    setView("form");
+    setTimeout(() => formRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
+  }
+
+  function goToDemo() {
+    setFormMode("sample_demo");
+    setIsSampleDemo(false);
     setView("form");
     setTimeout(() => formRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
   }
 
   async function runPipeline(e: React.FormEvent) {
     e.preventDefault();
+    // Payment gate: never run pipeline for paid_batch mode without a checkout link
+    if (formMode === "paid_batch") return;
     setError(null);
+    setIsSampleDemo(true);
     setView("processing");
     setStep(0);
     setProg(0);
@@ -720,6 +761,9 @@ export default function DemoPipelinePage() {
             <p style={{ fontSize: ".82rem", color: "#94a3b8" }}>
               <strong style={{ color: "#64748b" }}>{copy.heroNote}</strong>
             </p>
+            <button onClick={goToDemo} style={{ background: "none", border: "none", color: "#64748b", fontSize: ".82rem", cursor: "pointer", textDecoration: "underline", padding: ".25rem" }}>
+              {copy.tryDemoCTA} →
+            </button>
           </div>
         </div>
       </div>
@@ -844,6 +888,14 @@ export default function DemoPipelinePage() {
       </header>
 
       <div style={{ maxWidth: "42rem", margin: "0 auto", padding: "3rem 1.5rem" }} ref={formRef}>
+        {/* Sample demo badge — shown when in demo mode */}
+        {formMode === "sample_demo" && (
+          <div style={{ background: "#fef9c3", border: "1px solid #fde047", borderRadius: ".75rem", padding: ".75rem 1rem", marginBottom: "1.5rem", display: "flex", alignItems: "center", gap: ".625rem" }}>
+            <span style={{ fontSize: ".85rem", fontWeight: 700, color: "#713f12" }}>Demo</span>
+            <span style={{ fontSize: ".82rem", color: "#713f12" }}>{copy.sampleNote}</span>
+          </div>
+        )}
+
         <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
           <div style={{ display: "inline-block", background: "#e0f2fe", color: "#0284c7", fontSize: ".75rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".06em", padding: ".25rem .75rem", borderRadius: 999, marginBottom: "1rem" }}>
             {copy.formTag}
@@ -917,13 +969,32 @@ export default function DemoPipelinePage() {
 
             <FormField label={copy.fEmail} value={form.contact_email} onChange={v => setForm(f => ({ ...f, contact_email: v }))} type="email" placeholder="you@company.com" />
 
-            <button type="submit"
-              style={{ width: "100%", background: "#0ea5e9", color: "#fff", border: "none", borderRadius: ".75rem", padding: "1rem 1.5rem", fontSize: "1.05rem", fontWeight: 700, cursor: "pointer", marginTop: ".5rem", boxShadow: "0 4px 14px rgba(14,165,233,.35)", transition: "background .15s" }}
-              onMouseOver={e => (e.currentTarget.style.background = "#0284c7")}
-              onMouseOut={e => (e.currentTarget.style.background = "#0ea5e9")}
-            >
-              {copy.submitBtn(PLANS[plan].leads)}
-            </button>
+            {formMode === "paid_batch" ? (
+              /* Checkout-pending gate — no LS URL set yet */
+              <div style={{ marginTop: ".5rem" }}>
+                <div style={{ background: "#fffbeb", border: "1px solid #fde68a", borderRadius: ".75rem", padding: "1rem 1.125rem", marginBottom: "1rem" }}>
+                  <p style={{ fontWeight: 700, fontSize: ".9rem", color: "#92400e", marginBottom: ".35rem" }}>{copy.checkoutPendingTitle}</p>
+                  <p style={{ fontSize: ".85rem", color: "#78350f", lineHeight: 1.55, marginBottom: ".5rem" }}>{copy.checkoutPendingBody}</p>
+                  <p style={{ fontSize: ".82rem", color: "#92400e" }}>{copy.checkoutPendingDemoHint}</p>
+                </div>
+                <button type="button" onClick={() => setFormMode("sample_demo")}
+                  style={{ width: "100%", background: "#f8fafc", color: "#334155", border: "1.5px solid #e2e8f0", borderRadius: ".75rem", padding: "1rem 1.5rem", fontSize: "1rem", fontWeight: 600, cursor: "pointer", transition: "background .15s" }}
+                  onMouseOver={e => (e.currentTarget.style.background = "#f1f5f9")}
+                  onMouseOut={e => (e.currentTarget.style.background = "#f8fafc")}
+                >
+                  {copy.switchToDemo}
+                </button>
+              </div>
+            ) : (
+              /* Sample demo submit */
+              <button type="submit"
+                style={{ width: "100%", background: "#0ea5e9", color: "#fff", border: "none", borderRadius: ".75rem", padding: "1rem 1.5rem", fontSize: "1.05rem", fontWeight: 700, cursor: "pointer", marginTop: ".5rem", boxShadow: "0 4px 14px rgba(14,165,233,.35)", transition: "background .15s" }}
+                onMouseOver={e => (e.currentTarget.style.background = "#0284c7")}
+                onMouseOut={e => (e.currentTarget.style.background = "#0ea5e9")}
+              >
+                {copy.submitBtn(PLANS[plan].leads)}
+              </button>
+            )}
           </div>
         </form>
       </div>
@@ -1005,6 +1076,18 @@ export default function DemoPipelinePage() {
         </header>
 
         <div style={{ maxWidth: "58rem", margin: "0 auto", padding: "2.5rem 1.5rem" }}>
+
+          {/* Sample demo banner */}
+          {isSampleDemo && (
+            <div style={{ background: "#fffbeb", border: "1px solid #fde68a", borderRadius: ".875rem", padding: "1rem 1.25rem", marginBottom: "1.5rem", display: "flex", alignItems: "flex-start", gap: ".75rem" }}>
+              <span style={{ fontSize: "1rem", flexShrink: 0 }}>⚠️</span>
+              <div>
+                <strong style={{ fontSize: ".875rem", color: "#92400e" }}>{copy.sampleBadge}</strong>
+                <span style={{ fontSize: ".82rem", color: "#78350f", marginLeft: ".5rem" }}>{copy.sampleNote}</span>
+              </div>
+            </div>
+          )}
+
           {/* Title */}
           <div style={{ marginBottom: "2rem" }}>
             <h1 style={{ fontSize: "1.875rem", fontWeight: 800, letterSpacing: "-.02em", marginBottom: ".25rem" }}>{copy.reportTitle}</h1>
