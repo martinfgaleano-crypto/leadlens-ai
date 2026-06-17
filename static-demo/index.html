@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LeadLens AI — Find leads. Write outreach. Close deals.</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --sky: #0ea5e9;
+    --sky-dark: #0284c7;
+    --sky-light: #e0f2fe;
+    --indigo: #6366f1;
+    --indigo-dark: #4f46e5;
+    --gray-50: #f8fafc;
+    --gray-100: #f1f5f9;
+    --gray-200: #e2e8f0;
+    --gray-300: #cbd5e1;
+    --gray-400: #94a3b8;
+    --gray-500: #64748b;
+    --gray-700: #334155;
+    --gray-900: #0f172a;
+    --green: #16a34a;
+    --green-light: #f0fdf4;
+    --amber: #d97706;
+  }
+
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--gray-900); background: #fff; line-height: 1.5; }
+
+  /* ─── SCREENS ─── */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ─── NAV ─── */
+  .nav-wrap { border-bottom: 1px solid var(--gray-200); position: sticky; top: 0; background: rgba(255,255,255,.95); backdrop-filter: blur(8px); z-index: 40; }
+  nav { padding: .875rem 1.5rem; display: flex; justify-content: space-between; align-items: center; max-width: 72rem; margin: 0 auto; }
+  .logo { font-weight: 800; font-size: 1.15rem; color: var(--gray-900); letter-spacing: -.02em; }
+  .logo span { color: var(--sky); }
+  .nav-right { display: flex; align-items: center; gap: 1rem; }
+  .nav-link { font-size: .875rem; color: var(--gray-500); text-decoration: none; cursor: pointer; }
+  .nav-link:hover { color: var(--gray-900); }
+
+  /* ─── BUTTONS ─── */
+  .btn { display: inline-flex; align-items: center; gap: .4rem; padding: .6rem 1.2rem; border-radius: .6rem; font-weight: 600; font-size: .9rem; cursor: pointer; border: none; transition: all .15s; text-decoration: none; white-space: nowrap; }
+  .btn-primary { background: var(--sky); color: #fff; }
+  .btn-primary:hover { background: var(--sky-dark); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(14,165,233,.4); }
+  .btn-indigo { background: var(--indigo); color: #fff; }
+  .btn-indigo:hover { background: var(--indigo-dark); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(99,102,241,.4); }
+  .btn-outline { background: #fff; color: var(--gray-700); border: 1.5px solid var(--gray-200); }
+  .btn-outline:hover { background: var(--gray-50); border-color: var(--gray-300); }
+  .btn-lg { padding: 1rem 2rem; font-size: 1.05rem; border-radius: .75rem; }
+  .btn-sm { padding: .4rem .85rem; font-size: .8rem; border-radius: .5rem; }
+  .btn-green { background: var(--green); color: #fff; }
+  .btn-green:hover { background: #15803d; }
+  .btn-full { width: 100%; justify-content: center; }
+
+  /* ─── BADGE ─── */
+  .badge { display: inline-block; padding: .25rem .75rem; border-radius: 999px; font-size: .78rem; font-weight: 700; letter-spacing: .02em; text-transform: uppercase; }
+  .badge-hot { background: #fee2e2; color: #991b1b; }
+  .badge-warm { background: #fef3c7; color: #92400e; }
+  .badge-cold { background: #dbeafe; color: #1e40af; }
+  .badge-discard { background: var(--gray-100); color: var(--gray-500); }
+
+  /* ─── DEMO BANNER ─── */
+  .demo-banner { background: linear-gradient(135deg, #0c4a6e, #0284c7); color: #fff; text-align: center; padding: .55rem 1rem; font-size: .8rem; font-weight: 500; }
+  .demo-banner strong { font-weight: 700; }
+
+  /* ─── HERO ─── */
+  .hero-wrap { background: linear-gradient(180deg, #f0f9ff 0%, #fff 100%); }
+  .hero { max-width: 56rem; margin: 0 auto; padding: 5.5rem 1.5rem 4.5rem; text-align: center; }
+  .hero-eyebrow { display: inline-flex; align-items: center; gap: .5rem; background: #fff; border: 1px solid var(--gray-200); border-radius: 999px; padding: .3rem .9rem .3rem .5rem; font-size: .8rem; font-weight: 600; color: var(--gray-600); margin-bottom: 1.75rem; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+  .hero-eyebrow .dot { width: .5rem; height: .5rem; background: var(--green); border-radius: 50%; flex-shrink: 0; }
+  .hero h1 { font-size: clamp(2.1rem, 5.5vw, 3.75rem); font-weight: 800; line-height: 1.12; margin-bottom: 1.4rem; letter-spacing: -.03em; color: var(--gray-900); }
+  .hero h1 em { font-style: normal; color: var(--sky); }
+  .hero p { font-size: 1.2rem; color: var(--gray-500); max-width: 38rem; margin: 0 auto 2.75rem; line-height: 1.65; }
+  .hero-cta { display: flex; flex-direction: column; align-items: center; gap: .875rem; }
+  .hero-cta-row { display: flex; gap: .875rem; flex-wrap: wrap; justify-content: center; }
+  .hero-note { font-size: .82rem; color: var(--gray-400); }
+  .hero-note strong { color: var(--gray-600); }
+
+  /* ─── SOCIAL PROOF BAR ─── */
+  .proof-bar { border-top: 1px solid var(--gray-100); border-bottom: 1px solid var(--gray-100); padding: 1.25rem 1.5rem; }
+  .proof-inner { max-width: 64rem; margin: 0 auto; display: flex; align-items: center; justify-content: center; gap: 2.5rem; flex-wrap: wrap; }
+  .proof-item { display: flex; align-items: center; gap: .5rem; font-size: .875rem; color: var(--gray-500); }
+  .proof-item strong { color: var(--gray-700); font-weight: 700; }
+
+  /* ─── SECTIONS ─── */
+  section { padding: 5rem 1.5rem; }
+  .section-inner { max-width: 64rem; margin: 0 auto; }
+  .section-tag { display: inline-block; background: var(--sky-light); color: var(--sky-dark); font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; padding: .25rem .75rem; border-radius: 999px; margin-bottom: 1rem; }
+  .section-title { font-size: clamp(1.75rem, 3.5vw, 2.25rem); font-weight: 800; margin-bottom: .75rem; letter-spacing: -.02em; }
+  .section-sub { color: var(--gray-500); font-size: 1.05rem; max-width: 40rem; line-height: 1.6; margin-bottom: 3rem; }
+  .bg-gray { background: var(--gray-50); }
+  .text-center { text-align: center; }
+  .mx-auto { margin-left: auto; margin-right: auto; }
+
+  /* ─── GRIDS ─── */
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; }
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; }
+  .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 1.25rem; }
+
+  /* ─── CARDS ─── */
+  .card { background: #fff; border: 1px solid var(--gray-200); border-radius: 1rem; padding: 1.5rem; }
+  .card-icon { font-size: 1.5rem; margin-bottom: .75rem; }
+  .card h3 { font-weight: 700; font-size: .975rem; margin-bottom: .4rem; }
+  .card p { color: var(--gray-500); font-size: .875rem; line-height: 1.55; }
+
+  /* ─── CHECK LIST ─── */
+  .check-item { display: flex; align-items: flex-start; gap: .75rem; background: var(--green-light); border-radius: .625rem; padding: .875rem 1rem; }
+  .check-icon { color: var(--green); font-weight: 700; font-size: 1rem; flex-shrink: 0; margin-top: .1rem; }
+  .check-item span { font-size: .9rem; color: var(--gray-700); }
+
+  /* ─── HOW IT WORKS ─── */
+  .step { text-align: center; }
+  .step-num { width: 3rem; height: 3rem; background: var(--sky); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; font-weight: 800; margin: 0 auto 1rem; box-shadow: 0 4px 12px rgba(14,165,233,.35); }
+  .step h3 { font-weight: 700; margin-bottom: .4rem; font-size: .975rem; }
+  .step p { color: var(--gray-500); font-size: .865rem; line-height: 1.55; }
+
+  /* ─── PRICING ─── */
+  .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; max-width: 56rem; margin: 0 auto; align-items: start; }
+  .plan { border: 1.5px solid var(--gray-200); border-radius: 1.125rem; padding: 2rem; background: #fff; position: relative; transition: box-shadow .2s; }
+  .plan:hover { box-shadow: 0 8px 24px rgba(0,0,0,.09); }
+  .plan-featured { border-color: var(--sky); background: #fff; }
+  .plan-featured-label { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); background: var(--sky); color: #fff; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; padding: .25rem .875rem; border-radius: 999px; white-space: nowrap; }
+  .plan-name { font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--gray-400); margin-bottom: .5rem; }
+  .plan-price { font-size: 2.75rem; font-weight: 800; letter-spacing: -.03em; line-height: 1; margin-bottom: .25rem; }
+  .plan-desc { font-size: .875rem; color: var(--gray-500); margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--gray-100); }
+  .plan-leads { font-size: 1rem; font-weight: 700; color: var(--sky-dark); margin-bottom: 1.25rem; }
+  .plan-items { margin-bottom: 1.75rem; }
+  .plan-item { font-size: .875rem; color: var(--gray-600); padding: .3rem 0; display: flex; gap: .6rem; align-items: flex-start; }
+  .plan-item::before { content: '✓'; color: var(--sky); font-weight: 700; flex-shrink: 0; }
+  .plan-note { font-size: .75rem; color: var(--gray-400); text-align: center; margin-top: .75rem; }
+
+  /* ─── FAQ ─── */
+  .faq-grid { display: grid; gap: .875rem; }
+  .faq-item { background: #fff; border: 1px solid var(--gray-100); border-radius: .875rem; }
+  .faq-btn { width: 100%; text-align: left; background: none; border: none; padding: 1.1rem 1.25rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+  .faq-btn h3 { font-weight: 600; font-size: .95rem; color: var(--gray-900); }
+  .faq-chevron { color: var(--gray-400); font-size: .75rem; flex-shrink: 0; transition: transform .2s; }
+  .faq-chevron.open { transform: rotate(180deg); }
+  .faq-answer { display: none; padding: 0 1.25rem 1.1rem; font-size: .875rem; color: var(--gray-500); line-height: 1.65; }
+  .faq-answer.open { display: block; }
+
+  /* ─── MODAL ─── */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,.55); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 1rem; opacity: 0; pointer-events: none; transition: opacity .2s; }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal { background: #fff; border-radius: 1.25rem; max-width: 36rem; width: 100%; max-height: 90vh; overflow-y: auto; padding: 2rem; box-shadow: 0 24px 60px rgba(0,0,0,.18); }
+  .modal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: .5rem; gap: 1rem; }
+  .modal-header div { flex: 1; }
+  .modal-header h2 { font-size: 1.35rem; font-weight: 800; letter-spacing: -.02em; }
+  .modal-header p { font-size: .875rem; color: var(--gray-500); margin-top: .25rem; }
+  .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--gray-400); line-height: 1; padding: .25rem; flex-shrink: 0; }
+  .modal-close:hover { color: var(--gray-700); }
+  .modal-divider { height: 1px; background: var(--gray-100); margin: 1.25rem 0; }
+
+  /* ─── PLAN SELECTOR IN MODAL ─── */
+  .plan-pills { display: grid; grid-template-columns: repeat(3, 1fr); gap: .625rem; margin-bottom: 1.5rem; }
+  .plan-pill { border: 1.5px solid var(--gray-200); border-radius: .75rem; padding: .75rem .5rem; text-align: center; cursor: pointer; transition: all .15s; background: #fff; }
+  .plan-pill:hover { border-color: var(--sky); }
+  .plan-pill.selected { border-color: var(--sky); background: var(--sky-light); }
+  .plan-pill .pp-price { font-size: 1.1rem; font-weight: 800; color: var(--gray-900); }
+  .plan-pill .pp-name { font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--gray-400); margin-top: .2rem; }
+  .plan-pill .pp-leads { font-size: .78rem; color: var(--sky-dark); font-weight: 600; margin-top: .3rem; }
+
+  /* ─── FORM ─── */
+  .form-group { margin-bottom: 1rem; }
+  label { display: block; font-size: .84rem; font-weight: 600; color: var(--gray-700); margin-bottom: .35rem; }
+  input, textarea, select { width: 100%; border: 1.5px solid var(--gray-200); border-radius: .625rem; padding: .65rem .875rem; font-size: .9rem; font-family: inherit; color: var(--gray-900); transition: border-color .15s; outline: none; background: #fff; }
+  input:focus, textarea:focus, select:focus { border-color: var(--sky); box-shadow: 0 0 0 3px rgba(14,165,233,.12); }
+  textarea { resize: vertical; }
+
+  /* ─── UPLOAD PAGE ─── */
+  #upload { min-height: 100vh; background: var(--gray-50); padding: 2rem; }
+  #upload.active { display: flex; align-items: center; justify-content: center; }
+  .upload-box { background: #fff; border-radius: 1.25rem; max-width: 42rem; width: 100%; padding: 2.5rem; border: 1px solid var(--gray-100); box-shadow: 0 4px 24px rgba(0,0,0,.06); }
+  .upload-box h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -.02em; margin-bottom: .4rem; }
+  .upload-box .subtitle { color: var(--gray-500); margin-bottom: 2rem; }
+  .info-box { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: .75rem; padding: 1rem 1.25rem; margin-bottom: 1.5rem; font-size: .85rem; color: #1e40af; line-height: 1.65; }
+  .info-box code { background: #dbeafe; padding: .1rem .35rem; border-radius: .3rem; font-family: monospace; }
+  .drop-zone { border: 2px dashed var(--gray-200); border-radius: .875rem; padding: 2.75rem 2rem; text-align: center; cursor: pointer; transition: all .2s; }
+  .drop-zone:hover { border-color: var(--sky); background: var(--sky-light); }
+  .drop-zone .icon { font-size: 2.5rem; margin-bottom: .75rem; }
+  .drop-zone p { font-weight: 600; color: var(--gray-600); }
+  .drop-zone small { color: var(--gray-400); font-size: .82rem; }
+  .divider-text { text-align: center; color: var(--gray-400); font-size: .85rem; margin: 1.1rem 0; position: relative; }
+  .divider-text::before, .divider-text::after { content:''; position:absolute; top:50%; width:calc(50% - 1.5rem); height:1px; background:var(--gray-100); }
+  .divider-text::before { left:0; }
+  .divider-text::after { right:0; }
+
+  /* ─── PROCESSING ─── */
+  #processing { min-height: 100vh; background: var(--gray-50); }
+  #processing.active { display: flex; align-items: center; justify-content: center; }
+  .processing-inner { text-align: center; max-width: 30rem; padding: 2rem; }
+  .processing-icon { font-size: 3.5rem; margin-bottom: 1.25rem; }
+  .processing-inner h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -.02em; margin-bottom: .6rem; }
+  .processing-inner p { color: var(--gray-500); font-size: .9rem; }
+  .progress-wrap { background: var(--gray-100); border-radius: 999px; height: .625rem; margin: 2rem 0 1.5rem; overflow: hidden; }
+  .progress-bar { height: 100%; background: linear-gradient(90deg, var(--sky), #38bdf8); border-radius: 999px; transition: width .5s ease; width: 0%; }
+  .step-list { text-align: left; margin-top: 1.25rem; background: #fff; border: 1px solid var(--gray-100); border-radius: .875rem; padding: .75rem 1rem; }
+  .step-row { display: flex; align-items: center; gap: .75rem; padding: .5rem 0; font-size: .875rem; color: var(--gray-400); transition: color .3s; border-bottom: 1px solid var(--gray-50); }
+  .step-row:last-child { border-bottom: none; }
+  .step-row.done { color: var(--gray-600); }
+  .step-row.active { color: var(--sky-dark); font-weight: 600; }
+  .step-dot { width: 1.375rem; height: 1.375rem; border-radius: 50%; background: var(--gray-100); display: flex; align-items: center; justify-content: center; font-size: .68rem; flex-shrink: 0; transition: background .3s; font-weight: 700; }
+  .step-dot.done { background: var(--green); color: #fff; }
+  .step-dot.active { background: var(--sky); color: #fff; animation: pulse 1.2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
+
+  /* ─── RESULTS ─── */
+  #results { min-height: 100vh; background: var(--gray-50); padding: 2.5rem 1.5rem; }
+  .results-inner { max-width: 58rem; margin: 0 auto; }
+  .results-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; }
+  .results-header h1 { font-size: 1.875rem; font-weight: 800; letter-spacing: -.02em; }
+  .results-header p { color: var(--gray-500); font-size: .9rem; margin-top: .25rem; }
+  .export-btns { display: flex; gap: .75rem; flex-wrap: wrap; }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: .875rem; margin-bottom: 1.75rem; }
+  .stat-card { background: #fff; border: 1px solid var(--gray-100); border-radius: .875rem; padding: 1rem; text-align: center; }
+  .stat-card .stat-num { font-size: 1.75rem; font-weight: 800; letter-spacing: -.02em; }
+  .stat-card .stat-label { font-size: .78rem; color: var(--gray-400); margin-top: .2rem; }
+  .insights-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.75rem; }
+  @media(max-width:580px){ .insights-grid{grid-template-columns:1fr;} }
+  .insight-card { background: #fff; border: 1px solid var(--gray-100); border-radius: .875rem; padding: 1.25rem; }
+  .insight-card h3 { font-weight: 700; font-size: .875rem; margin-bottom: .875rem; color: var(--gray-700); }
+  .insight-item { font-size: .85rem; color: var(--gray-600); display: flex; gap: .5rem; padding: .3rem 0; line-height: 1.5; }
+
+  /* ─── LEAD CARDS ─── */
+  .lead-card { background: #fff; border: 1px solid var(--gray-100); border-radius: .875rem; overflow: hidden; margin-bottom: .75rem; transition: box-shadow .15s; }
+  .lead-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.07); }
+  .lead-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; cursor: pointer; gap: 1rem; }
+  .lead-left { display: flex; align-items: center; gap: .875rem; }
+  .lead-priority { font-size: .78rem; color: var(--gray-300); font-family: monospace; font-weight: 700; min-width: 1.5rem; }
+  .lead-name { font-weight: 700; font-size: .95rem; }
+  .lead-meta { font-size: .82rem; color: var(--gray-500); margin-top: .1rem; }
+  .lead-right { display: flex; align-items: center; gap: .875rem; flex-shrink: 0; }
+  .lead-score { font-size: .875rem; color: var(--gray-400); font-weight: 600; }
+  .lead-body { border-top: 1px solid var(--gray-100); padding: 1.5rem; display: none; }
+  .lead-body.open { display: block; }
+  .lead-section { margin-bottom: 1.25rem; }
+  .lead-section-title { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--gray-400); margin-bottom: .625rem; }
+  .fit-reason { display: flex; gap: .5rem; font-size: .875rem; color: var(--gray-700); padding: .25rem 0; line-height: 1.5; }
+  .fit-reason::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+  .trigger-box { background: var(--sky-light); border-left: 3px solid var(--sky); border-radius: 0 .5rem .5rem 0; padding: .875rem 1rem; font-size: .9rem; color: var(--sky-dark); font-style: italic; }
+  .message-box { background: var(--gray-50); border-radius: .625rem; padding: 1rem 1.1rem; }
+  .message-label { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--gray-400); margin-bottom: .4rem; }
+  .message-subject { font-size: .85rem; font-weight: 700; color: var(--sky-dark); margin-bottom: .625rem; background: #fff; border: 1px solid var(--gray-200); border-radius: .375rem; padding: .4rem .625rem; }
+  .message-body { font-size: .855rem; color: var(--gray-700); white-space: pre-line; line-height: 1.65; }
+  .msgs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: .75rem; margin-top: .875rem; }
+  .qc-pass { font-size: .82rem; color: var(--green); font-weight: 600; margin-top: .875rem; display: flex; align-items: center; gap: .4rem; }
+
+  /* ─── FOOTER ─── */
+  footer { border-top: 1px solid var(--gray-100); padding: 2.5rem 1.5rem; text-align: center; }
+  footer p { color: var(--gray-400); font-size: .85rem; margin-bottom: .5rem; }
+  .footer-links { display: flex; justify-content: center; gap: 1.5rem; }
+  .footer-links a { color: var(--gray-400); font-size: .82rem; text-decoration: none; cursor: pointer; }
+  .footer-links a:hover { color: var(--gray-600); }
+</style>
+</head>
+<body>
+
+<div class="demo-banner"><strong>STATIC DEMO</strong> — No APIs, no dependencies, no install needed.</div>
+
+<!-- ════════════════════════════════════════
+     SCREEN 1: LANDING
+════════════════════════════════════════ -->
+<div id="landing" class="screen active">
+
+  <!-- Sticky Nav -->
+  <div class="nav-wrap">
+    <nav>
+      <span class="logo">Lead<span>Lens</span> AI</span>
+      <div class="nav-right">
+        <span class="nav-link" onclick="scrollToPricing()">Pricing</span>
+        <button class="btn btn-primary" onclick="openOnboarding('starter')">Start free trial — $29</button>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero-wrap">
+    <div class="hero">
+      <div class="hero-eyebrow"><span class="dot"></span> Beta open — limited spots</div>
+      <h1>Tell us your ideal customer.<br><em>We find the leads</em> and write the outreach.</h1>
+      <p>LeadLens researches qualified B2B leads that match your offer and writes personalized emails, DMs, and follow-ups for each one. You review and send.</p>
+      <div class="hero-cta">
+        <div class="hero-cta-row">
+          <button class="btn btn-primary btn-lg" onclick="openOnboarding('starter')">Try Beta Starter — $29 →</button>
+          <button class="btn btn-outline btn-lg" onclick="scrollToPricing()">See all plans</button>
+        </div>
+        <p class="hero-note"><strong>10 qualified leads + full outreach sequences.</strong> No subscription. No contract.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Social Proof Bar -->
+  <div class="proof-bar">
+    <div class="proof-inner">
+      <div class="proof-item"><strong>48h</strong> delivery</div>
+      <div class="proof-item"><strong>0</strong> subscriptions required</div>
+      <div class="proof-item"><strong>7</strong> AI agents working for you</div>
+      <div class="proof-item"><strong>100%</strong> human-reviewed output</div>
+    </div>
+  </div>
+
+  <!-- Problem -->
+  <section>
+    <div class="section-inner">
+      <div class="section-tag">The problem</div>
+      <h2 class="section-title">Personalized outreach at scale is expensive, slow, or mediocre.</h2>
+      <div class="grid-3" style="margin-top:2rem;">
+        <div class="card"><div class="card-icon">⏳</div><h3>Days of manual work</h3><p>Writing personalized outreach for 50 prospects takes 3–5 days of research and copywriting with inconsistent results.</p></div>
+        <div class="card"><div class="card-icon">📭</div><h3>Generic emails get ignored</h3><p>Templates are immediately recognizable. Reply rates collapse when a message could have been sent to anyone.</p></div>
+        <div class="card"><div class="card-icon">💸</div><h3>SDRs cost $4k–6k/month</h3><p>Hiring a sales rep is out of budget for most founders and consultants — and they still need ramp time.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="bg-gray">
+    <div class="section-inner text-center">
+      <div class="section-tag mx-auto">How it works</div>
+      <h2 class="section-title">Four steps. No integrations. No installs.</h2>
+      <div class="grid-4" style="margin-top:2.5rem;">
+        <div class="step"><div class="step-num">1</div><h3>Describe your offer</h3><p>Tell us who you are, what you sell, and who your ideal customer is. 5 minutes.</p></div>
+        <div class="step"><div class="step-num">2</div><h3>We find the leads</h3><p>Our system identifies qualified B2B leads that match your ICP. No list needed from you.</p></div>
+        <div class="step"><div class="step-num">3</div><h3>AI writes the outreach</h3><p>7 specialized agents research, qualify, and write personalized sequences for each lead.</p></div>
+        <div class="step"><div class="step-num">4</div><h3>You receive your report</h3><p>CSV + Markdown with everything ready. You decide who to contact and when.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Deliverables -->
+  <section>
+    <div class="section-inner">
+      <div class="section-tag">Deliverables</div>
+      <h2 class="section-title">What you get for every lead</h2>
+      <p class="section-sub">A complete, export-ready report — no CRM access, no integrations, no setup.</p>
+      <div class="grid-2">
+        <div class="check-item"><span class="check-icon">✓</span><span>Fit score 1–10 with specific reasoning</span></div>
+        <div class="check-item"><span class="check-icon">✓</span><span>HOT / WARM / COLD classification</span></div>
+        <div class="check-item"><span class="check-icon">✓</span><span>Unique personalization trigger for that lead</span></div>
+        <div class="check-item"><span class="check-icon">✓</span><span>Initial email (subject + full body)</span></div>
+        <div class="check-item"><span class="check-icon">✓</span><span>LinkedIn DM ready to copy and paste</span></div>
+        <div class="check-item"><span class="check-icon">✓</span><span>Follow-up 1 and Follow-up 2 written</span></div>
+        <div class="check-item"><span class="check-icon">✓</span><span>Recommended contact priority</span></div>
+        <div class="check-item"><span class="check-icon">✓</span><span>Executive summary + CSV export</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="bg-gray" id="pricing">
+    <div class="section-inner text-center">
+      <div class="section-tag mx-auto">Pricing</div>
+      <h2 class="section-title">Start small. Scale when it works.</h2>
+      <p class="section-sub mx-auto">Beta pricing. No subscriptions. No contracts. Pay per batch.</p>
+
+      <div class="pricing-grid">
+
+        <!-- Starter -->
+        <div class="plan">
+          <div class="plan-name">Beta Starter</div>
+          <div class="plan-price">$29</div>
+          <div class="plan-desc">Try the service risk-free. Perfect for validating the approach before scaling.</div>
+          <div class="plan-leads">10 leads found by LeadLens</div>
+          <div class="plan-items">
+            <div class="plan-item">HOT / WARM / COLD qualification</div>
+            <div class="plan-item">Fit reason per lead</div>
+            <div class="plan-item">Personalization trigger</div>
+            <div class="plan-item">Initial email + LinkedIn DM</div>
+            <div class="plan-item">2 follow-ups per lead</div>
+            <div class="plan-item">CSV + Markdown export</div>
+            <div class="plan-item">Delivery in 24–48h</div>
+          </div>
+          <button class="btn btn-primary btn-full" onclick="openOnboarding('starter')">Get started — $29 →</button>
+          <div class="plan-note">Best for testing the service</div>
+        </div>
+
+        <!-- Standard — featured -->
+        <div class="plan plan-featured">
+          <div class="plan-featured-label">Most popular</div>
+          <div class="plan-name">Beta Standard</div>
+          <div class="plan-price">$97</div>
+          <div class="plan-desc">Run a full small campaign. Enough volume to see real results.</div>
+          <div class="plan-leads">50 leads found by LeadLens</div>
+          <div class="plan-items">
+            <div class="plan-item">Everything in Starter</div>
+            <div class="plan-item">Higher lead volume for campaigns</div>
+            <div class="plan-item">Better for A/B testing messages</div>
+            <div class="plan-item">Executive summary with patterns</div>
+            <div class="plan-item">CSV + Markdown export</div>
+            <div class="plan-item">Delivery in 24–48h</div>
+          </div>
+          <button class="btn btn-primary btn-full" onclick="openOnboarding('standard')">Get started — $97 →</button>
+          <div class="plan-note">Best for small campaigns</div>
+        </div>
+
+        <!-- Pro -->
+        <div class="plan">
+          <div class="plan-name">Beta Pro</div>
+          <div class="plan-price">$197</div>
+          <div class="plan-desc">Full campaigns with two angles. Includes priority manual review.</div>
+          <div class="plan-leads">100 leads found by LeadLens</div>
+          <div class="plan-items">
+            <div class="plan-item">Everything in Standard</div>
+            <div class="plan-item">2 campaign angles written</div>
+            <div class="plan-item">Priority manual review</div>
+            <div class="plan-item">Deeper executive report</div>
+            <div class="plan-item">CSV + Markdown export</div>
+            <div class="plan-item">Delivery in 24–48h</div>
+          </div>
+          <button class="btn btn-outline btn-full" onclick="openOnboarding('pro')">Get started — $197 →</button>
+          <div class="plan-note">Best for full campaigns</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section>
+    <div class="section-inner" style="max-width:48rem;">
+      <div class="section-tag">FAQ</div>
+      <h2 class="section-title">Common questions</h2>
+      <div class="faq-grid" style="margin-top:2rem;">
+        <div class="faq-item">
+          <button class="faq-btn" onclick="toggleFAQ(this)">
+            <h3>Do you send the emails for me?</h3><span class="faq-chevron">▼</span>
+          </button>
+          <div class="faq-answer">No. You have full control. We deliver the messages ready to go — you review them, adjust if needed, and send on your timeline. Nothing goes out without your approval.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-btn" onclick="toggleFAQ(this)">
+            <h3>Do I need to provide my own lead list?</h3><span class="faq-chevron">▼</span>
+          </button>
+          <div class="faq-answer">No. LeadLens finds the leads for you based on your ICP. Just describe your ideal customer and we do the research. You can also upload your own list if you already have one.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-btn" onclick="toggleFAQ(this)">
+            <h3>Why not just use ChatGPT?</h3><span class="faq-chevron">▼</span>
+          </button>
+          <div class="faq-answer">ChatGPT doesn't find real leads, doesn't maintain consistency across 50 prospects, doesn't generate an exportable report, and doesn't have a structured B2B qualification framework. LeadLens saves hours of prompt engineering and produces a complete, client-ready deliverable.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-btn" onclick="toggleFAQ(this)">
+            <h3>How personalized is the output really?</h3><span class="faq-chevron">▼</span>
+          </button>
+          <div class="faq-answer">Every message is generated using the specific context of that person's role, company stage, industry, and inferred pain points. They are not templates with a name inserted — they open with triggers specific to each prospect.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-btn" onclick="toggleFAQ(this)">
+            <h3>What if the output isn't good enough?</h3><span class="faq-chevron">▼</span>
+          </button>
+          <div class="faq-answer">During beta, if you're not satisfied with the quality of the output, contact us and we'll either redo the batch or refund you. We're actively improving the system with every order.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-btn" onclick="toggleFAQ(this)">
+            <h3>Do I need to give access to my CRM or email?</h3><span class="faq-chevron">▼</span>
+          </button>
+          <div class="faq-answer">No. We deliver a CSV and Markdown file. You import them into whatever tool you use to send — no integrations, no permissions, no access to your accounts.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section style="text-align:center;background:linear-gradient(135deg,#0c4a6e,#0369a1);color:#fff;padding:5rem 1.5rem;">
+    <h2 style="font-size:clamp(1.75rem,4vw,2.5rem);font-weight:800;letter-spacing:-.03em;margin-bottom:1rem;">Ready to fill your pipeline in 48 hours?</h2>
+    <p style="color:#bae6fd;font-size:1.05rem;max-width:32rem;margin:0 auto 2.25rem;line-height:1.6;">Start with 10 leads for $29. No subscription. No risk.</p>
+    <button class="btn btn-lg" style="background:#fff;color:var(--sky-dark);font-weight:700;" onclick="openOnboarding('starter')">Try Beta Starter — $29 →</button>
+    <p style="color:#7dd3fc;font-size:.82rem;margin-top:1rem;">Delivery in 24–48 hours · CSV + Markdown export · Cancel anytime</p>
+  </section>
+
+  <footer>
+    <p>© 2025 LeadLens AI — AI-assisted B2B outreach research</p>
+    <div class="footer-links">
+      <a onclick="scrollToPricing()">Pricing</a>
+      <a onclick="openOnboarding('starter')">Get started</a>
+    </div>
+  </footer>
+</div><!-- /landing -->
+
+<!-- ════════════════════════════════════════
+     SCREEN 2: UPLOAD / ONBOARDING
+════════════════════════════════════════ -->
+<div id="upload" class="screen">
+  <div class="upload-box">
+    <div style="text-align:center;margin-bottom:2rem;">
+      <div style="font-size:2.75rem;margin-bottom:.75rem;">✅</div>
+      <h1>Payment confirmed</h1>
+      <p class="subtitle">Now tell us about your business so we can find the right leads.</p>
+    </div>
+
+    <!-- Plan summary -->
+    <div id="selected-plan-box" style="background:var(--sky-light);border:1.5px solid var(--sky);border-radius:.875rem;padding:1rem 1.25rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--sky-dark);" id="plan-label-top">Beta Starter</div>
+        <div style="font-size:.875rem;color:var(--gray-700);margin-top:.2rem;" id="plan-desc-top">10 leads · $29</div>
+      </div>
+      <div style="font-size:1.75rem;font-weight:800;color:var(--sky);" id="plan-price-top">$29</div>
+    </div>
+
+    <form onsubmit="submitOnboarding(event)">
+      <div class="form-group">
+        <label>Your company name</label>
+        <input type="text" placeholder="e.g. Acme Consulting" value="My B2B Consulting" required>
+      </div>
+      <div class="form-group">
+        <label>What does your company do?</label>
+        <textarea rows="2" placeholder="e.g. We help SaaS companies improve their B2B sales pipeline" required>We help SaaS companies build and optimize their B2B sales pipeline</textarea>
+      </div>
+      <div class="form-group">
+        <label>What exactly are you selling?</label>
+        <textarea rows="2" placeholder="e.g. Outreach strategy service, $2k–5k/month engagements" required>Outreach strategy and execution service, $2k–5k/month</textarea>
+      </div>
+      <div class="form-group">
+        <label>Your main value proposition</label>
+        <textarea rows="2" placeholder="e.g. We generate 20+ qualified meetings per month without hiring an SDR" required>We generate 20+ qualified meetings per month without an internal SDR</textarea>
+      </div>
+      <div class="form-group">
+        <label>Describe your ideal customer</label>
+        <textarea rows="2" placeholder="e.g. SaaS founders, 20–100 employees, validated product but no structured sales team" required>SaaS founders and VPs, 20–100 employees, validated product but no structured sales team</textarea>
+      </div>
+      <div class="form-group">
+        <label>Message tone</label>
+        <select>
+          <option value="direct">Direct — straight to the point</option>
+          <option value="consultative">Consultative — curious, asks questions</option>
+          <option value="casual">Casual — conversational, warm</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Your contact email</label>
+        <input type="email" placeholder="you@company.com" value="demo@company.com" required>
+      </div>
+      <div style="display:flex;gap:.875rem;margin-top:1.5rem;">
+        <button type="button" class="btn btn-outline" style="flex:1" onclick="showScreen('landing')">← Back</button>
+        <button type="submit" class="btn btn-primary" style="flex:2;justify-content:center;padding:.875rem;">Start processing →</button>
+      </div>
+      <p style="text-align:center;font-size:.78rem;color:var(--gray-400);margin-top:.875rem;">Payment simulated in this demo. In production, you'd checkout via Stripe first.</p>
+    </form>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     SCREEN 3: PROCESSING
+════════════════════════════════════════ -->
+<div id="processing" class="screen">
+  <div class="processing-inner">
+    <div class="processing-icon" id="proc-icon">⚙️</div>
+    <h1>Finding and processing your leads…</h1>
+    <p>Our agents are researching prospects and writing personalized outreach.</p>
+    <p style="font-size:.8rem;margin-top:.35rem;color:var(--gray-400);">In production this takes 15–45 min. In demo: a few seconds.</p>
+    <div class="progress-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+    <div class="step-list" id="step-list">
+      <div class="step-row" id="s0"><div class="step-dot" id="d0">1</div>ICP Analyzer — Mapping your ideal customer profile</div>
+      <div class="step-row" id="s1"><div class="step-dot" id="d1">2</div>Lead Finder — Sourcing qualified prospects</div>
+      <div class="step-row" id="s2"><div class="step-dot" id="d2">3</div>Research Agent — Investigating each lead</div>
+      <div class="step-row" id="s3"><div class="step-dot" id="d3">4</div>Qualification Agent — Scoring fit (1–10)</div>
+      <div class="step-row" id="s4"><div class="step-dot" id="d4">5</div>Personalization Agent — Writing unique triggers</div>
+      <div class="step-row" id="s5"><div class="step-dot" id="d5">6</div>Outreach Copy Agent — Drafting emails & DMs</div>
+      <div class="step-row" id="s6"><div class="step-dot" id="d6">7</div>QC + Report Generator — Final review & export</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     SCREEN 4: RESULTS
+════════════════════════════════════════ -->
+<div id="results" class="screen">
+  <div class="results-inner">
+    <div class="results-header">
+      <div>
+        <h1>Your report is ready</h1>
+        <p>5 leads processed · Generated by LeadLens AI · Beta Starter demo</p>
+      </div>
+      <div class="export-btns">
+        <button class="btn btn-outline btn-sm" onclick="downloadCSV()">⬇ Download CSV</button>
+        <button class="btn btn-primary btn-sm" onclick="downloadMarkdown()">⬇ Download Markdown</button>
+        <button class="btn btn-outline btn-sm" onclick="showScreen('landing')">← New demo</button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-num">5</div><div class="stat-label">Total leads</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:#991b1b;">2</div><div class="stat-label">HOT 🔥</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:#92400e;">2</div><div class="stat-label">WARM 🟡</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:#1e40af;">1</div><div class="stat-label">COLD 🔵</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:var(--sky);">7.4</div><div class="stat-label">Avg score</div></div>
+    </div>
+
+    <!-- Insights -->
+    <div class="insights-grid">
+      <div class="insight-card">
+        <h3>Patterns observed</h3>
+        <div class="insight-item"><span>→</span><span>Leads with VP or Head titles scored 40% higher on average than managers</span></div>
+        <div class="insight-item"><span>→</span><span>Series A/B stage companies showed the clearest pain signals for this offer</span></div>
+        <div class="insight-item"><span>→</span><span>SaaS B2B sector dominated the HOT category — 2 out of 2</span></div>
+      </div>
+      <div class="insight-card">
+        <h3>Recommendations</h3>
+        <div class="insight-item"><span>✓</span><span>Prioritize Ana García and Carlos Ruiz this week — clear timing signals</span></div>
+        <div class="insight-item"><span>✓</span><span>For WARM leads, lean into the team growth angle in your opening</span></div>
+        <div class="insight-item"><span>✓</span><span>Review the COLD lead manually — reachable at Director level instead</span></div>
+      </div>
+    </div>
+
+    <!-- Lead list -->
+    <div id="lead-list"></div>
+
+    <!-- Upsell -->
+    <div style="background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border:1.5px solid var(--sky);border-radius:1rem;padding:1.75rem;text-align:center;margin-top:2rem;">
+      <p style="font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--sky-dark);margin-bottom:.5rem;">Want more leads?</p>
+      <h3 style="font-size:1.2rem;font-weight:800;margin-bottom:.5rem;">Upgrade to Beta Standard — 50 leads for $97</h3>
+      <p style="color:var(--gray-500);font-size:.875rem;margin-bottom:1.25rem;">Same quality. 5× the volume. Better for real campaigns.</p>
+      <button class="btn btn-primary" onclick="openOnboarding('standard')">Get Beta Standard — $97 →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ONBOARDING MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeOnboarding(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div>
+        <h2>Get started with LeadLens</h2>
+        <p>Choose a plan, then tell us about your offer.</p>
+      </div>
+      <button class="modal-close" onclick="closeOnboarding()">×</button>
+    </div>
+
+    <!-- Plan pills -->
+    <div class="plan-pills" id="plan-pills">
+      <div class="plan-pill selected" id="pill-starter" onclick="selectPlan('starter')">
+        <div class="pp-price">$29</div>
+        <div class="pp-name">Starter</div>
+        <div class="pp-leads">10 leads</div>
+      </div>
+      <div class="plan-pill" id="pill-standard" onclick="selectPlan('standard')">
+        <div class="pp-price">$97</div>
+        <div class="pp-name">Standard</div>
+        <div class="pp-leads">50 leads</div>
+      </div>
+      <div class="plan-pill" id="pill-pro" onclick="selectPlan('pro')">
+        <div class="pp-price">$197</div>
+        <div class="pp-name">Pro</div>
+        <div class="pp-leads">100 leads</div>
+      </div>
+    </div>
+
+    <div class="modal-divider"></div>
+
+    <form onsubmit="submitModal(event)">
+      <div class="form-group">
+        <label>Your company name</label>
+        <input type="text" placeholder="e.g. Acme Consulting" value="My B2B Consulting" required>
+      </div>
+      <div class="form-group">
+        <label>What does your company do?</label>
+        <textarea rows="2" placeholder="e.g. B2B consulting for SaaS companies" required>We help SaaS companies build and optimize their B2B sales pipeline</textarea>
+      </div>
+      <div class="form-group">
+        <label>Describe your ideal customer</label>
+        <textarea rows="2" placeholder="e.g. SaaS founders, 20–100 employees, no structured sales team" required>SaaS founders and VPs, 20–100 employees, validated product but no structured sales team</textarea>
+      </div>
+      <div class="form-group">
+        <label>Your contact email</label>
+        <input type="email" placeholder="you@company.com" value="demo@company.com" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full" style="padding:.9rem;font-size:.95rem;margin-top:.5rem;" id="modal-cta">Continue to payment — $29 →</button>
+      <p style="text-align:center;font-size:.78rem;color:var(--gray-400);margin-top:.625rem;">Payment simulated in this demo.</p>
+    </form>
+  </div>
+</div>
+
+<script>
+// ─── DEMO DATA ─────────────────────────────────────────────────────────────
+const DEMO_LEADS = [
+  {
+    priority:1, category:"HOT", score:9.1,
+    name:"Ana García", company:"TechFlow SaaS", title:"Head of Sales",
+    email:"ana@techflow.io", linkedin:"linkedin.com/in/anagarcia",
+    fit_reasons:[
+      "Series A SaaS B2B with an actively growing sales team — perfect timing",
+      "Role has direct budget ownership over sales tools and pipeline resources",
+      "35-person company — our service ticket is well within reach",
+    ],
+    trigger:"I saw TechFlow just closed its Series A and is scaling the sales team — exactly the moment when manual outreach becomes the bottleneck.",
+    email_subject:"TechFlow pipeline post-Series A",
+    email_body:`I saw TechFlow just closed its Series A and is scaling the sales team — exactly the moment when manual outreach becomes the bottleneck.
+
+We help SaaS companies generate 20+ qualified meetings per month without hiring SDRs. Our clients typically see their first new pipeline in the first 3 weeks.
+
+Would it make sense to talk for 20 minutes this week?`,
+    linkedin_dm:`Hi Ana, congrats on TechFlow's Series A. I work with SaaS companies at this stage to structure their outreach without adding headcount. Worth a quick chat?`,
+    followup1:`Hi Ana, following up on my email from last week about pipeline for TechFlow.\n\nI shared a case study of a similar client (SaaS B2B, 40 people, post-Series A) that went from 5 to 22 monthly meetings in 6 weeks. When do you have 20 minutes?`,
+    followup2:`Ana, last message before I close this thread. If the timing isn't right, no problem at all — I can reach out again in Q2. Or is there someone else at TechFlow I should speak with?`,
+    qc:true
+  },
+  {
+    priority:2, category:"HOT", score:8.7,
+    name:"Carlos Ruiz", company:"ScaleUp B2B", title:"CEO & Co-founder",
+    email:"carlos@scaleup.io", linkedin:"linkedin.com/in/carlosruiz",
+    fit_reasons:[
+      "CEO makes purchasing decisions unilaterally — short sales cycle",
+      "'ScaleUp' in the name signals explicit focus on growth and scalability",
+      "Co-founder stage means high ROI sensitivity and fast decisions",
+    ],
+    trigger:"ScaleUp B2B is clearly in growth mode — and the biggest bottleneck usually appears exactly when manual outreach can't keep up with the team you're building.",
+    email_subject:"ScaleUp: still doing outreach manually?",
+    email_body:`Carlos, ScaleUp B2B looks like it's in growth mode — and the biggest bottleneck usually appears when manual outreach can't keep up with where you're heading.
+
+We work with founders like you to build pipeline without adding headcount. No internal SDRs, no mass automation — personalized outreach that converts.
+
+Does a quick call this week make sense?`,
+    linkedin_dm:`Hi Carlos, saw ScaleUp B2B and your focus on growth. I help founders at this stage build pipeline without adding a sales team. 15 minutes?`,
+    followup1:`Carlos, following up on my earlier email. One direct question: how many qualified meetings are you generating per month right now? That would help me gauge if it's worth talking.`,
+    followup2:`Last message, Carlos. If outreach isn't a priority right now, I get it. Let me know if that changes in the next few months.`,
+    qc:true
+  },
+  {
+    priority:3, category:"WARM", score:7.2,
+    name:"María López", company:"GrowthCo Consulting", title:"VP Marketing",
+    email:"maria@growthco.com", linkedin:"linkedin.com/in/marialopez",
+    fit_reasons:[
+      "VP Marketing at a consultancy — influences tool decisions and can be internal champion",
+      "Consulting firms need constant new client pipeline — recurring pain point",
+    ],
+    trigger:"For consulting firms like GrowthCo, pipeline pressure is constant — and well-executed personalized outreach is usually what separates irregular quarters from predictable growth.",
+    email_subject:"GrowthCo: more predictable pipeline",
+    email_body:`María, for consulting firms like GrowthCo pipeline pressure is constant — and personalized outreach done well is usually what separates irregular quarters from predictable growth.
+
+We help B2B consultancies generate qualified meetings with prospects that actually fit, without mass automation that hurts the brand.
+
+Is it worth 20 minutes to explore whether this makes sense for GrowthCo?`,
+    linkedin_dm:`Hi María, I work with B2B consultancies to make their outreach more predictable. Would love to explore if it's relevant for GrowthCo.`,
+    followup1:`María, quick follow-up. I understand the timing might not be ideal — what's GrowthCo's biggest pipeline challenge right now?`,
+    followup2:`María, last message. If it's not the right time, no problem. Is there someone else at GrowthCo who handles business development?`,
+    qc:true
+  },
+  {
+    priority:4, category:"WARM", score:6.8,
+    name:"Roberto Fernández", company:"DevShop Agency", title:"Business Development Manager",
+    email:"roberto@devshop.io", linkedin:"",
+    fit_reasons:[
+      "BDM role means direct responsibility for lead generation and outreach",
+      "Dev agency — typically sells B2B services with medium-high ticket sizes",
+    ],
+    trigger:"Dev agencies that have moved beyond referral-only growth usually hit the same wall: generic outreach doesn't convert when the ticket is high.",
+    email_subject:"DevShop: outreach for premium services",
+    email_body:`Roberto, dev agencies that have moved beyond referral-only growth usually hit the same wall: generic outreach doesn't convert when the ticket is high.
+
+We help agencies like DevShop personalize their outreach at scale — messages that sound human because they're written with real context on each prospect.
+
+Do you have 20 minutes this week to see if it fits?`,
+    linkedin_dm:`Hi Roberto, I work with B2B agencies to get more qualified meetings from their outreach. Does it make sense to chat?`,
+    followup1:`Roberto, following up on my email. One question: how much time does your team spend on personalized outreach each week?`,
+    followup2:`Last message Roberto. If it's not a priority right now, no problem. I'll be here when the timing works.`,
+    qc:true
+  },
+  {
+    priority:5, category:"COLD", score:4.3,
+    name:"Patricia Sánchez", company:"MegaCorp Enterprise", title:"Marketing Coordinator",
+    email:"patricia@megacorp.com", linkedin:"linkedin.com/in/patriciasanchez",
+    fit_reasons:[],
+    disqualification_reasons:[
+      "Enterprise company — long sales cycle, multiple approvers, centralized budgets",
+      "Coordinator title has no purchasing authority — would need VP or Director access",
+      "500+ employee company is outside the SMB/mid-market target segment",
+    ],
+    trigger:"Marketing coordinators at enterprises often influence tool evaluations even when the final call goes up the chain.",
+    email_subject:"MegaCorp: outreach tool evaluation",
+    email_body:`Patricia, I know decisions at MegaCorp go through several layers — but they usually start with someone who identifies the need.
+
+We help marketing teams generate personalized B2B outreach without adding resources. Is this something MegaCorp is exploring right now?`,
+    linkedin_dm:`Hi Patricia, I work with marketing teams in B2B to improve their outreach. Do you have visibility on whether this is a priority at MegaCorp?`,
+    followup1:`Patricia, short follow-up. Is there someone at MegaCorp I should speak with about outbound pipeline generation?`,
+    followup2:`Patricia, last message. If it's not relevant for MegaCorp right now, no worries at all.`,
+    qc:false,
+    qc_notes:"COLD lead — enterprise and no purchasing authority. Consider reaching out directly to a Director or VP level before sending this sequence."
+  }
+];
+
+// ─── PLAN STATE ─────────────────────────────────────────────────────────────
+const PLANS = {
+  starter:  { name:'Beta Starter',  price:'$29',  leads:'10 leads',  desc:'10 leads · $29' },
+  standard: { name:'Beta Standard', price:'$97',  leads:'50 leads',  desc:'50 leads · $97' },
+  pro:      { name:'Beta Pro',      price:'$197', leads:'100 leads', desc:'100 leads · $197' },
+};
+let currentPlan = 'starter';
+
+// ─── SCREENS ─────────────────────────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ─── PRICING NAV ─────────────────────────────────────────────────────────────
+function scrollToPricing() {
+  const el = document.getElementById('pricing');
+  if (el) el.scrollIntoView({ behavior:'smooth' });
+}
+
+// ─── PLAN SELECTION ──────────────────────────────────────────────────────────
+function selectPlan(plan) {
+  currentPlan = plan;
+  document.querySelectorAll('.plan-pill').forEach(p => p.classList.remove('selected'));
+  document.getElementById('pill-' + plan).classList.add('selected');
+  const p = PLANS[plan];
+  document.getElementById('modal-cta').textContent = `Continue to payment — ${p.price} →`;
+}
+
+// ─── MODAL ───────────────────────────────────────────────────────────────────
+function openOnboarding(plan) {
+  plan = plan || 'starter';
+  selectPlan(plan);
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeOnboarding(e) {
+  if (!e || e.target === document.getElementById('modal-overlay')) {
+    document.getElementById('modal-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+function submitModal(e) {
+  e.preventDefault();
+  closeOnboarding();
+  // Update upload page plan info
+  const p = PLANS[currentPlan];
+  document.getElementById('plan-label-top').textContent = p.name;
+  document.getElementById('plan-desc-top').textContent = p.desc;
+  document.getElementById('plan-price-top').textContent = p.price;
+  showScreen('processing');
+  animateProcessing();
+}
+
+// ─── PROCESSING ANIMATION ─────────────────────────────────────────────────────
+function animateProcessing() {
+  const steps = [
+    { delay:400,  pct:14 },
+    { delay:1100, pct:28 },
+    { delay:1900, pct:42 },
+    { delay:2700, pct:57 },
+    { delay:3600, pct:71 },
+    { delay:4400, pct:85 },
+    { delay:5200, pct:100 },
+  ];
+  steps.forEach(({ delay, pct }, i) => {
+    setTimeout(() => {
+      const row = document.getElementById('s'+i);
+      const dot = document.getElementById('d'+i);
+      row.classList.add('active');
+      dot.classList.add('active');
+      dot.textContent = '●';
+      document.getElementById('progress-bar').style.width = pct + '%';
+      if (i > 0) {
+        document.getElementById('s'+(i-1)).classList.replace('active','done');
+        const pd = document.getElementById('d'+(i-1));
+        pd.classList.replace('active','done');
+        pd.textContent = '✓';
+      }
+      if (i === 6) {
+        setTimeout(() => {
+          document.getElementById('s6').classList.replace('active','done');
+          const ld = document.getElementById('d6');
+          ld.classList.replace('active','done');
+          ld.textContent = '✓';
+          document.getElementById('proc-icon').textContent = '✅';
+          setTimeout(() => { renderResults(); showScreen('results'); }, 600);
+        }, 700);
+      }
+    }, delay);
+  });
+}
+
+// ─── RESULTS ──────────────────────────────────────────────────────────────────
+function renderResults() {
+  document.getElementById('lead-list').innerHTML = DEMO_LEADS.map((l,i) => buildLeadCard(l,i)).join('');
+}
+
+function buildLeadCard(lead, i) {
+  const catClass = { HOT:'badge-hot', WARM:'badge-warm', COLD:'badge-cold' }[lead.category] || 'badge-discard';
+  const disqualHTML = (lead.disqualification_reasons||[]).length
+    ? `<div class="lead-section">
+        <div class="lead-section-title">Disqualification flags</div>
+        ${lead.disqualification_reasons.map(r=>`<div class="fit-reason" style="color:#dc2626;"><span style="color:#dc2626">✗</span> ${r}</div>`).join('')}
+       </div>` : '';
+  const fitHTML = lead.fit_reasons.length
+    ? `<div class="lead-section">
+        <div class="lead-section-title">Why this is a good fit</div>
+        ${lead.fit_reasons.map(r=>`<div class="fit-reason">${r}</div>`).join('')}
+       </div>` : '';
+
+  return `
+<div class="lead-card">
+  <div class="lead-header" onclick="toggleLead(${i})">
+    <div class="lead-left">
+      <span class="lead-priority">#${lead.priority}</span>
+      <div>
+        <div class="lead-name">${lead.name} <span style="font-weight:500;color:var(--gray-500)">— ${lead.company}</span></div>
+        <div class="lead-meta">${lead.title} · ${lead.email}</div>
+      </div>
+    </div>
+    <div class="lead-right">
+      <span class="badge ${catClass}">${lead.category}</span>
+      <span class="lead-score">${lead.score}/10</span>
+      <span style="color:var(--gray-300);font-size:.75rem;" id="toggle-${i}">▼</span>
+    </div>
+  </div>
+  <div class="lead-body" id="body-${i}">
+    ${fitHTML}
+    ${disqualHTML}
+    <div class="lead-section">
+      <div class="lead-section-title">Personalization trigger</div>
+      <div class="trigger-box">${lead.trigger}</div>
+    </div>
+    <div class="lead-section">
+      <div class="lead-section-title">Initial email</div>
+      <div class="message-box">
+        <div class="message-label">Subject line</div>
+        <div class="message-subject">${lead.email_subject}</div>
+        <div class="message-label" style="margin-top:.75rem;">Body</div>
+        <div class="message-body">${lead.email_body}</div>
+      </div>
+    </div>
+    <div class="lead-section">
+      <div class="lead-section-title">Full outreach sequence</div>
+      <div class="msgs-grid">
+        <div class="message-box">
+          <div class="message-label">LinkedIn DM</div>
+          <div class="message-body" style="font-size:.82rem;">${lead.linkedin_dm}</div>
+        </div>
+        <div class="message-box">
+          <div class="message-label">Follow-up 1 (day 3–4)</div>
+          <div class="message-body" style="font-size:.82rem;">${lead.followup1}</div>
+        </div>
+        <div class="message-box">
+          <div class="message-label">Follow-up 2 (day 7–8)</div>
+          <div class="message-body" style="font-size:.82rem;">${lead.followup2}</div>
+        </div>
+      </div>
+    </div>
+    ${lead.qc
+      ? '<div class="qc-pass">✅ QC passed — output ready to send</div>'
+      : `<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:.5rem;padding:.75rem 1rem;font-size:.85rem;color:#92400e;margin-top:.875rem;">⚠️ Needs review — ${lead.qc_notes}</div>`}
+  </div>
+</div>`;
+}
+
+function toggleLead(i) {
+  const body = document.getElementById('body-'+i);
+  const tog = document.getElementById('toggle-'+i);
+  const open = body.classList.toggle('open');
+  tog.textContent = open ? '▲' : '▼';
+}
+
+// ─── FAQ ─────────────────────────────────────────────────────────────────────
+function toggleFAQ(btn) {
+  const answer = btn.nextElementSibling;
+  const chevron = btn.querySelector('.faq-chevron');
+  const open = answer.classList.toggle('open');
+  chevron.classList.toggle('open', open);
+}
+
+// ─── EXPORTS ─────────────────────────────────────────────────────────────────
+function downloadCSV() {
+  const headers = ['Priority','Category','Score','Name','Company','Title','Email','LinkedIn','Fit Reasons','Disqualification','Email Subject','Email Body','LinkedIn DM','Follow-up 1','Follow-up 2','QC'];
+  const rows = DEMO_LEADS.map(l => [
+    l.priority, l.category, l.score, l.name, l.company, l.title, l.email, l.linkedin||'',
+    (l.fit_reasons||[]).join(' | '),
+    (l.disqualification_reasons||[]).join(' | '),
+    l.email_subject, l.email_body, l.linkedin_dm, l.followup1, l.followup2,
+    l.qc ? 'Approved' : 'Review needed'
+  ]);
+  const esc = v => { const s=String(v); return (s.includes(',')||s.includes('"')||s.includes('\n')) ? `"${s.replace(/"/g,'""')}"` : s; };
+  const csv = [headers,...rows].map(r=>r.map(esc).join(',')).join('\n');
+  dl('leadlens-demo-report.csv', csv, 'text/csv');
+}
+
+function downloadMarkdown() {
+  const cat = { HOT:'🔥 HOT', WARM:'🟡 WARM', COLD:'🔵 COLD' };
+  let md = `# LeadLens AI — Demo Report\n\n## Summary\n\n| Metric | Value |\n|---|---|\n| Total | 5 |\n| HOT | 2 |\n| WARM | 2 |\n| COLD | 1 |\n| Avg score | 7.4/10 |\n\n---\n\n`;
+  DEMO_LEADS.forEach(l => {
+    md += `## #${l.priority} ${l.name} — ${l.company}\n\n`;
+    md += `**Title:** ${l.title} | **Email:** ${l.email}\n\n`;
+    md += `**FIT SCORE: ${l.score}/10 ${cat[l.category]||'⛔ DISCARD'}**\n\n`;
+    if (l.fit_reasons?.length) md += `**Why good fit:**\n${l.fit_reasons.map(r=>`- ${r}`).join('\n')}\n\n`;
+    if (l.disqualification_reasons?.length) md += `**Flags:**\n${l.disqualification_reasons.map(r=>`- ⚠ ${r}`).join('\n')}\n\n`;
+    md += `**Trigger:** *${l.trigger}*\n\n`;
+    md += `**INITIAL EMAIL**\nSubject: ${l.email_subject}\n\n${l.email_body}\n\n`;
+    md += `**LINKEDIN DM**\n${l.linkedin_dm}\n\n`;
+    md += `**FOLLOW-UP 1**\n${l.followup1}\n\n`;
+    md += `**FOLLOW-UP 2**\n${l.followup2}\n\n`;
+    md += `${l.qc ? '✅ QC Passed' : `⚠️ ${l.qc_notes}`}\n\n---\n\n`;
+  });
+  dl('leadlens-demo-report.md', md, 'text/markdown');
+}
+
+function dl(name, content, type) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([content], { type }));
+  a.download = name;
+  a.click();
+}
+</script>
+</body>
+</html>

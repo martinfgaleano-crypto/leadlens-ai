@@ -1,0 +1,1287 @@
+"use client";
+
+import { useState, useRef } from "react";
+import type { LeadLensReport, ProcessedLead, PlanType, QCStatus, OutputLanguage, MarketRegion } from "@/types";
+
+// ─── Localization dictionary ──────────────────────────────────────────────────
+
+const COPY = {
+  en: {
+    announcement: "Beta preview — generate a sample lead report before launch.",
+    announcementCTA: "Try it now →",
+    navPricing: "Pricing",
+    navCTA: "Get started — $29",
+    heroBadge: "Beta open — limited spots",
+    heroH1pre: "Tell us your ideal customer.",
+    heroH1hi: "We find the leads",
+    heroH1post: " and write the outreach.",
+    heroSub: "LeadLens researches qualified B2B leads that match your offer and writes personalized emails, DMs, and follow-ups for each one. You review and send.",
+    heroCTA: "Start with one batch — $29 →",
+    heroSeeAll: "See all plans",
+    heroNote: "10 qualified leads + full outreach sequences. No long-term contracts.",
+    proofLabels: [["48h","delivery"],["1","batch to start"],["7","AI agents"],["100%","human-reviewed"]] as [string,string][],
+    howTag: "How it works",
+    howTitle: "Four steps. No integrations. No installs.",
+    steps: [
+      ["1","Describe your offer","Tell us who you sell to and what you offer. Takes 5 minutes."],
+      ["2","We find the leads","Our system identifies qualified B2B leads that match your ICP — no list needed."],
+      ["3","AI writes outreach","7 specialized agents research, qualify, and write personalized sequences per lead."],
+      ["4","You get the report","CSV + Markdown with everything ready. You decide who to contact and when."],
+    ] as [string,string,string][],
+    pricingTag: "Beta Batch Pricing",
+    pricingTitle: "Start with one batch. Upgrade to monthly when ready.",
+    pricingSub: "No long-term contracts. Use LeadLens once, or run monthly lead batches when your team needs ongoing pipeline.",
+    oneBatch: "One-time beta batch",
+    monthlyTitle: "Need leads every month?",
+    monthlySub: "Monthly plans are coming for agencies, SaaS teams, and consultants that need recurring lead batches, multi-market campaigns, and priority review.",
+    monthlyTag: "Monthly plans coming soon",
+    planNames: { starter: "Beta Starter", standard: "Beta Standard", pro: "Beta Pro" },
+    planDescs: { starter: "Try the service risk-free.", standard: "Run a small campaign.", pro: "Full campaign + 2 angles." },
+    planFeatures: {
+      starter:  ["HOT / WARM / COLD qualification","Fit reason per lead","Personalization trigger","Email + LinkedIn DM","2 follow-ups per lead","CSV + Markdown export","Delivery in 24–48h"],
+      standard: ["Everything in Starter","Higher volume for campaigns","A/B testing messages","Executive summary + patterns","CSV + Markdown export","Delivery in 24–48h"],
+      pro:      ["Everything in Standard","2 campaign angles","Priority manual review","CSV + Markdown export","Delivery in 24–48h"],
+    },
+    leadsFoundBy: (n: number) => `${n} leads found by LeadLens`,
+    getStarted: "Get started",
+    mostPopular: "Most popular",
+    formTag: "Start your campaign",
+    formTitle: "Tell LeadLens about your business",
+    formSub: "The more context you give, the better the leads and outreach.",
+    step1: "1. Select plan",
+    step2: "2. Describe your business",
+    useSampleData: "Use sample data",
+    fCompanyName: "Company name",
+    fCompanyDesc: "What does your company do?",
+    fOffer: "Your offer",
+    fValue: "Your main value proposition",
+    fCustomer: "Ideal customer description",
+    fTicket: "Average deal size (optional)",
+    fTone: "Message tone",
+    fRegion: "Target market",
+    fEmail: "Your email",
+    toneDirect: "Direct — straight to the point, no fluff",
+    toneConsultative: "Consultative — curious, asks questions",
+    toneCasual: "Casual — conversational, warm",
+    regionNA: "North America",
+    regionLA: "Latin America",
+    regionEU: "Europe",
+    regionAS: "Asia",
+    regionGL: "Global",
+    submitBtn: (n: number) => `Generate ${n} leads →`,
+    backBtn: "← Back",
+    processingTitle: "Generating your lead report…",
+    processingNote: "Production: 15–45 min. Preview: ~5 seconds.",
+    processingStatus: "LeadLens is researching and scoring your leads.",
+    agents: [
+      "ICP Analysis — mapping your ideal customer profile",
+      "Lead Discovery — sourcing qualified prospects",
+      "Research — investigating each company",
+      "Qualification — scoring ICP fit (0–10)",
+      "Personalization — writing unique triggers",
+      "Outreach — drafting emails & DMs",
+      "Quality Check + Report — final review & export",
+    ],
+    reportReady: "Report ready",
+    reportTitle: "Your report is ready",
+    dlCSV: (n: number) => `⬇ Download CSV (${n} leads)`,
+    dlMD: "⬇ Download Markdown",
+    newRun: "← New run",
+    statTotal: "Total",
+    statAvg: "Avg score",
+    execSummary: "Executive Summary",
+    patternsObserved: "Patterns Observed",
+    recommendations: "Recommendations",
+    leadBreakdown: "Lead-by-lead breakdown",
+    showingOf: (shown: number, total: number) => `Showing first ${shown} of ${total} generated leads. Export includes all ${total} leads.`,
+    moreInExport: (n: number) => `+ ${n} more leads in your export`,
+    dlAll: (n: number) => `⬇ Download all ${n} leads as CSV`,
+    mCompanySize: "Company size",
+    mEmailStatus: "Email status",
+    mConfidence: "Confidence",
+    mSource: "Source",
+    mLocation: "Location",
+    mSourceUrl: "Source URL",
+    mLinkedin: "LinkedIn",
+    sCompanyContext: "Company context",
+    sTimingSignals: "Timing signals",
+    sWhyFit: "Why good fit",
+    sFlags: "Flags",
+    sDataGaps: "Data gaps",
+    sPersonalization: "Personalization trigger",
+    sInitialEmail: "Initial email",
+    sSubject: "Subject",
+    sBody: "Body",
+    sFullSequence: "Full outreach sequence",
+    sLinkedinDM: "LinkedIn DM",
+    sFollowup1: "Follow-up 1 (day 3–4)",
+    sFollowup2: "Follow-up 2 (day 7–8)",
+    sQcNotes: "QC notes",
+    footerCopy: "© 2025 LeadLens AI. Human-reviewed. No automatic sending. You review and approve every message.",
+    footerLinks: ["Privacy", "Terms", "Contact"],
+  },
+  es: {
+    announcement: "Vista previa beta — genera un reporte de leads de muestra antes del lanzamiento.",
+    announcementCTA: "Pruébalo ahora →",
+    navPricing: "Precios",
+    navCTA: "Comenzar — $29",
+    heroBadge: "Beta abierta — cupos limitados",
+    heroH1pre: "Cuéntanos cuál es tu cliente ideal.",
+    heroH1hi: "Encontramos los leads",
+    heroH1post: " y redactamos el outreach.",
+    heroSub: "LeadLens investiga leads B2B calificados que coinciden con tu oferta y redacta correos, DMs y seguimientos personalizados para cada uno. Tú revisas y decides cuándo enviar.",
+    heroCTA: "Empezar con un lote — $29 →",
+    heroSeeAll: "Ver todos los planes",
+    heroNote: "10 leads calificados + secuencias de outreach completas. Sin contratos largos.",
+    proofLabels: [["48h","entrega"],["1","lote para empezar"],["7","agentes IA"],["100%","revisión humana"]] as [string,string][],
+    howTag: "Cómo funciona",
+    howTitle: "Cuatro pasos. Sin integraciones. Sin instalaciones.",
+    steps: [
+      ["1","Describe tu oferta","Cuéntanos a quién le vendes y qué ofreces. Toma 5 minutos."],
+      ["2","Encontramos los leads","Nuestro sistema identifica leads B2B calificados que coinciden con tu ICP. Sin listas."],
+      ["3","La IA redacta el outreach","7 agentes especializados investigan, califican y crean secuencias personalizadas por lead."],
+      ["4","Recibes el reporte","CSV + Markdown listo para usar. Tú decides a quién contactar y cuándo."],
+    ] as [string,string,string][],
+    pricingTag: "Precios Beta por Lote",
+    pricingTitle: "Empieza con un lote. Pasa a un plan mensual cuando estés listo.",
+    pricingSub: "Sin contratos largos. Usa LeadLens una vez o genera lotes mensuales cuando tu equipo necesite pipeline recurrente.",
+    oneBatch: "Lote beta de pago único",
+    monthlyTitle: "¿Necesitas leads todos los meses?",
+    monthlySub: "Pronto habrá planes mensuales para agencias, equipos SaaS y consultores que necesitan lotes recurrentes de leads, campañas en varios mercados y revisión prioritaria.",
+    monthlyTag: "Planes mensuales próximamente",
+    planNames: { starter: "Beta Inicial", standard: "Beta Estándar", pro: "Beta Pro" },
+    planDescs: { starter: "Prueba el servicio sin riesgo.", standard: "Ejecuta una campaña pequeña.", pro: "Campaña completa + 2 ángulos." },
+    planFeatures: {
+      starter:  ["Calificación HOT / WARM / COLD","Motivo de fit por lead","Trigger de personalización","Correo + LinkedIn DM","2 seguimientos por lead","Exportación CSV + Markdown","Entrega en 24–48h"],
+      standard: ["Todo lo de Beta Inicial","Mayor volumen para campañas","Test A/B de mensajes","Resumen ejecutivo + patrones","Exportación CSV + Markdown","Entrega en 24–48h"],
+      pro:      ["Todo lo de Beta Estándar","2 ángulos de campaña","Revisión manual prioritaria","Exportación CSV + Markdown","Entrega en 24–48h"],
+    },
+    leadsFoundBy: (n: number) => `${n} leads encontrados por LeadLens`,
+    getStarted: "Comenzar",
+    mostPopular: "Más popular",
+    formTag: "Inicia tu campaña",
+    formTitle: "Cuéntale a LeadLens sobre tu negocio",
+    formSub: "Cuanto más contexto des, mejores serán los leads y el outreach.",
+    step1: "1. Selecciona tu plan",
+    step2: "2. Describe tu negocio",
+    useSampleData: "Usar datos de ejemplo",
+    fCompanyName: "Nombre de la empresa",
+    fCompanyDesc: "¿Qué hace tu empresa?",
+    fOffer: "Tu oferta",
+    fValue: "Tu propuesta de valor principal",
+    fCustomer: "Descripción del cliente ideal",
+    fTicket: "Tamaño promedio de negocio (opcional)",
+    fTone: "Tono del mensaje",
+    fRegion: "Mercado objetivo",
+    fEmail: "Tu email",
+    toneDirect: "Directo — al grano, sin rodeos",
+    toneConsultative: "Consultivo — curioso, hace preguntas",
+    toneCasual: "Casual — conversacional, cercano",
+    regionNA: "Norteamérica",
+    regionLA: "América Latina",
+    regionEU: "Europa",
+    regionAS: "Asia",
+    regionGL: "Global",
+    submitBtn: (n: number) => `Generar ${n} leads →`,
+    backBtn: "← Volver",
+    processingTitle: "Generando tu reporte de leads…",
+    processingNote: "Producción: 15–45 min. Vista previa: ~5 segundos.",
+    processingStatus: "LeadLens está investigando y calificando tus leads.",
+    agents: [
+      "Análisis de cliente ideal — definiendo tu perfil",
+      "Búsqueda de leads — identificando prospectos calificados",
+      "Investigación — analizando cada empresa",
+      "Calificación — puntuando el fit ICP (0–10)",
+      "Personalización — creando triggers únicos",
+      "Outreach — redactando emails y DMs",
+      "Revisión de calidad + Reporte — revisión final y exportación",
+    ],
+    reportReady: "Reporte listo",
+    reportTitle: "Tu reporte está listo",
+    dlCSV: (n: number) => `⬇ Descargar CSV (${n} leads)`,
+    dlMD: "⬇ Descargar Markdown",
+    newRun: "← Nueva búsqueda",
+    statTotal: "Total",
+    statAvg: "Puntaje prom.",
+    execSummary: "Resumen ejecutivo",
+    patternsObserved: "Patrones observados",
+    recommendations: "Recomendaciones",
+    leadBreakdown: "Desglose por lead",
+    showingOf: (shown: number, total: number) => `Mostrando ${shown} de ${total} leads generados. La exportación incluye los ${total} leads.`,
+    moreInExport: (n: number) => `+ ${n} leads más en tu exportación`,
+    dlAll: (n: number) => `⬇ Descargar los ${n} leads como CSV`,
+    mCompanySize: "Tamaño de empresa",
+    mEmailStatus: "Estado del email",
+    mConfidence: "Confianza",
+    mSource: "Fuente",
+    mLocation: "Ubicación",
+    mSourceUrl: "URL de fuente",
+    mLinkedin: "LinkedIn",
+    sCompanyContext: "Contexto de la empresa",
+    sTimingSignals: "Señales de timing",
+    sWhyFit: "Por qué es un buen fit",
+    sFlags: "Alertas",
+    sDataGaps: "Datos faltantes",
+    sPersonalization: "Trigger de personalización",
+    sInitialEmail: "Email inicial",
+    sSubject: "Asunto",
+    sBody: "Cuerpo",
+    sFullSequence: "Secuencia de outreach completa",
+    sLinkedinDM: "LinkedIn DM",
+    sFollowup1: "Seguimiento 1 (día 3–4)",
+    sFollowup2: "Seguimiento 2 (día 7–8)",
+    sQcNotes: "Notas de QC",
+    footerCopy: "© 2025 LeadLens AI. Revisión humana. Sin envíos automáticos. Tú revisas y apruebas cada mensaje.",
+    footerLinks: ["Privacidad", "Términos", "Contacto"],
+  },
+  pt: {
+    announcement: "Prévia beta — gere um relatório de leads de exemplo antes do lançamento.",
+    announcementCTA: "Experimente agora →",
+    navPricing: "Preços",
+    navCTA: "Começar — $29",
+    heroBadge: "Beta aberta — vagas limitadas",
+    heroH1pre: "Diga quem é seu cliente ideal.",
+    heroH1hi: "Encontramos os leads",
+    heroH1post: " e escrevemos as mensagens.",
+    heroSub: "LeadLens pesquisa leads B2B qualificados que combinam com sua oferta e escreve e-mails, DMs e follow-ups personalizados para cada um. Você revisa e decide quando enviar.",
+    heroCTA: "Começar com um lote — $29 →",
+    heroSeeAll: "Ver todos os planos",
+    heroNote: "10 leads qualificados + sequências de outreach completas. Sem contratos longos.",
+    proofLabels: [["48h","entrega"],["1","lote para começar"],["7","agentes de IA"],["100%","revisão humana"]] as [string,string][],
+    howTag: "Como funciona",
+    howTitle: "Quatro passos. Sem integrações. Sem instalações.",
+    steps: [
+      ["1","Descreva sua oferta","Nos diga para quem você vende e o que oferece. Leva 5 minutos."],
+      ["2","Encontramos os leads","Nosso sistema identifica leads B2B qualificados que combinam com seu ICP. Sem listas."],
+      ["3","A IA escreve o outreach","7 agentes especializados pesquisam, qualificam e criam sequências personalizadas por lead."],
+      ["4","Você recebe o relatório","CSV + Markdown pronto para usar. Você decide com quem falar e quando."],
+    ] as [string,string,string][],
+    pricingTag: "Preços Beta por Lote",
+    pricingTitle: "Comece com um lote. Migre para um plano mensal quando estiver pronto.",
+    pricingSub: "Sem contratos longos. Use a LeadLens uma vez ou gere lotes mensais quando sua equipe precisar de pipeline recorrente.",
+    oneBatch: "Lote beta de pagamento único",
+    monthlyTitle: "Precisa de leads todos os meses?",
+    monthlySub: "Em breve teremos planos mensais para agências, equipes SaaS e consultores que precisam de lotes recorrentes de leads, campanhas em vários mercados e revisão prioritária.",
+    monthlyTag: "Planos mensais em breve",
+    planNames: { starter: "Beta Inicial", standard: "Beta Padrão", pro: "Beta Pro" },
+    planDescs: { starter: "Experimente o serviço sem risco.", standard: "Execute uma campanha pequena.", pro: "Campanha completa + 2 ângulos." },
+    planFeatures: {
+      starter:  ["Qualificação HOT / WARM / COLD","Motivo de fit por lead","Trigger de personalização","Email + LinkedIn DM","2 follow-ups por lead","Exportação CSV + Markdown","Entrega em 24–48h"],
+      standard: ["Tudo do Beta Inicial","Maior volume para campanhas","Teste A/B de mensagens","Resumo executivo + padrões","Exportação CSV + Markdown","Entrega em 24–48h"],
+      pro:      ["Tudo do Beta Padrão","2 ângulos de campanha","Revisão manual prioritária","Exportação CSV + Markdown","Entrega em 24–48h"],
+    },
+    leadsFoundBy: (n: number) => `${n} leads encontrados pela LeadLens`,
+    getStarted: "Começar",
+    mostPopular: "Mais popular",
+    formTag: "Inicie sua campanha",
+    formTitle: "Conte à LeadLens sobre seu negócio",
+    formSub: "Quanto mais contexto você der, melhores serão os leads e o outreach.",
+    step1: "1. Selecione seu plano",
+    step2: "2. Descreva seu negócio",
+    useSampleData: "Usar dados de exemplo",
+    fCompanyName: "Nome da empresa",
+    fCompanyDesc: "O que sua empresa faz?",
+    fOffer: "Sua oferta",
+    fValue: "Sua proposta de valor principal",
+    fCustomer: "Descrição do cliente ideal",
+    fTicket: "Tamanho médio do negócio (opcional)",
+    fTone: "Tom da mensagem",
+    fRegion: "Mercado-alvo",
+    fEmail: "Seu email",
+    toneDirect: "Direto — sem rodeios",
+    toneConsultative: "Consultivo — curioso, faz perguntas",
+    toneCasual: "Casual — conversacional, acolhedor",
+    regionNA: "América do Norte",
+    regionLA: "América Latina",
+    regionEU: "Europa",
+    regionAS: "Ásia",
+    regionGL: "Global",
+    submitBtn: (n: number) => `Gerar ${n} leads →`,
+    backBtn: "← Voltar",
+    processingTitle: "Gerando seu relatório de leads…",
+    processingNote: "Produção: 15–45 min. Prévia: ~5 segundos.",
+    processingStatus: "A LeadLens está pesquisando e qualificando seus leads.",
+    agents: [
+      "Análise do cliente ideal — mapeando seu perfil",
+      "Busca de leads — identificando prospects qualificados",
+      "Pesquisa — investigando cada empresa",
+      "Qualificação — pontuando o fit ICP (0–10)",
+      "Personalização — criando triggers únicos",
+      "Outreach — redigindo emails e DMs",
+      "Revisão de qualidade + Relatório — revisão final e exportação",
+    ],
+    reportReady: "Relatório pronto",
+    reportTitle: "Seu relatório está pronto",
+    dlCSV: (n: number) => `⬇ Baixar CSV (${n} leads)`,
+    dlMD: "⬇ Baixar Markdown",
+    newRun: "← Nova busca",
+    statTotal: "Total",
+    statAvg: "Pontuação méd.",
+    execSummary: "Resumo executivo",
+    patternsObserved: "Padrões observados",
+    recommendations: "Recomendações",
+    leadBreakdown: "Detalhamento por lead",
+    showingOf: (shown: number, total: number) => `Mostrando ${shown} de ${total} leads gerados. A exportação inclui todos os ${total} leads.`,
+    moreInExport: (n: number) => `+ ${n} leads a mais na sua exportação`,
+    dlAll: (n: number) => `⬇ Baixar todos os ${n} leads como CSV`,
+    mCompanySize: "Tamanho da empresa",
+    mEmailStatus: "Status do email",
+    mConfidence: "Confiança",
+    mSource: "Fonte",
+    mLocation: "Localização",
+    mSourceUrl: "URL da fonte",
+    mLinkedin: "LinkedIn",
+    sCompanyContext: "Contexto da empresa",
+    sTimingSignals: "Sinais de timing",
+    sWhyFit: "Por que é um bom fit",
+    sFlags: "Alertas",
+    sDataGaps: "Lacunas de dados",
+    sPersonalization: "Trigger de personalização",
+    sInitialEmail: "Email inicial",
+    sSubject: "Assunto",
+    sBody: "Corpo",
+    sFullSequence: "Sequência de outreach completa",
+    sLinkedinDM: "LinkedIn DM",
+    sFollowup1: "Follow-up 1 (dia 3–4)",
+    sFollowup2: "Follow-up 2 (dia 7–8)",
+    sQcNotes: "Notas de QC",
+    footerCopy: "© 2025 LeadLens AI. Revisão humana. Sem envio automático. Você revisa e aprova cada mensagem.",
+    footerLinks: ["Privacidade", "Termos", "Contato"],
+  },
+  ja: {
+    announcement: "ベータ版プレビュー — サンプルのリードレポートを生成できます。",
+    announcementCTA: "今すぐ試す →",
+    navPricing: "料金",
+    navCTA: "開始する — $29",
+    heroBadge: "ベータ版公開中 — 限定枠",
+    heroH1pre: "理想の顧客像を入力してください。",
+    heroH1hi: "LeadLensが見込み客を発掘し、",
+    heroH1post: "営業メッセージを作成します。",
+    heroSub: "LeadLensはあなたのオファーに合う質の高いB2Bリードを調査し、各リードに合わせたメール・DM・フォローアップを作成します。送信前に内容をご確認いただけます。",
+    heroCTA: "1回のバッチから始める — $29 →",
+    heroSeeAll: "すべてのプランを見る",
+    heroNote: "10件の厳選リード + 完全なアウトリーチシーケンス。長期契約なし。",
+    proofLabels: [["48h","配信"],["1回","バッチから"],["7","AIエージェント"],["100%","人による確認"]] as [string,string][],
+    howTag: "使い方",
+    howTitle: "4ステップ。連携不要。インストール不要。",
+    steps: [
+      ["1","オファーを入力","売り先と提供内容を入力してください。約5分で完了します。"],
+      ["2","リードを探索","ICPに合う質の高いB2Bリードを自動で特定します。リスト不要。"],
+      ["3","AIがメッセージを作成","7つの専門エージェントが各リードを調査・評価し、パーソナライズされたシーケンスを作成。"],
+      ["4","レポートを受け取る","CSV＋Markdownですぐに使えます。誰に・いつ連絡するかはあなたが決めます。"],
+    ] as [string,string,string][],
+    pricingTag: "ベータ版バッチ料金",
+    pricingTitle: "まずは1回のリードバッチから。必要になったら月額プランへ。",
+    pricingSub: "長期契約は不要です。LeadLensを1回だけ使うことも、継続的なパイプラインが必要になったら月次バッチに移行することもできます。",
+    oneBatch: "1回限りのベータ版バッチ",
+    monthlyTitle: "毎月リードが必要ですか？",
+    monthlySub: "継続的なリードバッチ、複数市場向けキャンペーン、優先レビューが必要な代理店、SaaSチーム、コンサルタント向けに月額プランを準備中です。",
+    monthlyTag: "月額プラン近日公開",
+    planNames: { starter: "Beta スターター", standard: "Beta スタンダード", pro: "Beta プロ" },
+    planDescs: { starter: "リスクなしでお試し。", standard: "小規模キャンペーンを実行。", pro: "フルキャンペーン + 2つのアングル。" },
+    planFeatures: {
+      starter:  ["HOT/WARM/COLD評価","各リードのfit理由","パーソナライズトリガー","メール + LinkedIn DM","各リードに2回フォローアップ","CSV + Markdownエクスポート","24〜48時間で納品"],
+      standard: ["スターターの全機能","キャンペーン向け大容量","A/Bテストメッセージ","エグゼクティブサマリー","CSV + Markdownエクスポート","24〜48時間で納品"],
+      pro:      ["スタンダードの全機能","2つのキャンペーンアングル","優先マニュアルレビュー","CSV + Markdownエクスポート","24〜48時間で納品"],
+    },
+    leadsFoundBy: (n: number) => `${n}件のリードをLeadLensが発掘`,
+    getStarted: "始める",
+    mostPopular: "最も人気",
+    formTag: "キャンペーンを開始",
+    formTitle: "LeadLensにビジネスについて教えてください",
+    formSub: "詳しく入力するほど、より質の高いリードとメッセージが生成されます。",
+    step1: "1. プランを選択",
+    step2: "2. ビジネスについて入力",
+    useSampleData: "サンプルデータを使用",
+    fCompanyName: "会社名",
+    fCompanyDesc: "会社の概要",
+    fOffer: "提供サービス",
+    fValue: "主な価値提案",
+    fCustomer: "理想の顧客像",
+    fTicket: "平均取引額（任意）",
+    fTone: "メッセージのトーン",
+    fRegion: "ターゲット市場",
+    fEmail: "メールアドレス",
+    toneDirect: "ダイレクト — 簡潔に要点を伝える",
+    toneConsultative: "コンサルタティブ — 質問を通じて関心を示す",
+    toneCasual: "カジュアル — 親しみやすい会話スタイル",
+    regionNA: "北米",
+    regionLA: "ラテンアメリカ",
+    regionEU: "ヨーロッパ",
+    regionAS: "アジア",
+    regionGL: "グローバル",
+    submitBtn: (n: number) => `${n}件のリードを生成 →`,
+    backBtn: "← 戻る",
+    processingTitle: "リードレポートを生成中…",
+    processingNote: "本番環境: 15〜45分。プレビュー: 約5秒。",
+    processingStatus: "LeadLensが見込み客を調査し、スコアリングしています。",
+    agents: [
+      "理想顧客分析 — プロフィールのマッピング",
+      "リード探索 — 見込み客の発掘",
+      "調査 — 各企業の情報収集",
+      "評価 — ICPフィットスコアリング（0〜10）",
+      "パーソナライズ — 独自トリガーの作成",
+      "メッセージ作成 — メール・DM下書き",
+      "品質チェック + レポート — 最終確認とエクスポート",
+    ],
+    reportReady: "レポート完成",
+    reportTitle: "レポートが完成しました",
+    dlCSV: (n: number) => `⬇ CSVをダウンロード（${n}件）`,
+    dlMD: "⬇ Markdownをダウンロード",
+    newRun: "← 新規実行",
+    statTotal: "合計",
+    statAvg: "平均スコア",
+    execSummary: "エグゼクティブサマリー",
+    patternsObserved: "観察されたパターン",
+    recommendations: "推奨事項",
+    leadBreakdown: "リード別詳細",
+    showingOf: (shown: number, total: number) => `${total}件中${shown}件を表示。エクスポートには全${total}件が含まれます。`,
+    moreInExport: (n: number) => `他${n}件はエクスポートに含まれます`,
+    dlAll: (n: number) => `⬇ 全${n}件をCSVでダウンロード`,
+    mCompanySize: "企業規模",
+    mEmailStatus: "メール状況",
+    mConfidence: "信頼度",
+    mSource: "ソース",
+    mLocation: "所在地",
+    mSourceUrl: "ソースURL",
+    mLinkedin: "LinkedIn",
+    sCompanyContext: "企業コンテキスト",
+    sTimingSignals: "タイミングシグナル",
+    sWhyFit: "フィットする理由",
+    sFlags: "フラグ",
+    sDataGaps: "データ不足",
+    sPersonalization: "パーソナライズトリガー",
+    sInitialEmail: "初回メール",
+    sSubject: "件名",
+    sBody: "本文",
+    sFullSequence: "アウトリーチシーケンス全体",
+    sLinkedinDM: "LinkedIn DM",
+    sFollowup1: "フォローアップ1（3〜4日目）",
+    sFollowup2: "フォローアップ2（7〜8日目）",
+    sQcNotes: "QCメモ",
+    footerCopy: "© 2025 LeadLens AI. 人による確認あり。自動送信なし。すべてのメッセージを確認してから使用できます。",
+    footerLinks: ["プライバシー", "利用規約", "お問い合わせ"],
+  },
+};
+
+type Copy = typeof COPY["en"];
+
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+const PLANS = {
+  starter:  { price: "$29",  leads: 10  },
+  standard: { price: "$97",  leads: 50  },
+  pro:      { price: "$197", leads: 100 },
+} as const;
+
+const LANG_OPTIONS: { value: OutputLanguage; label: string }[] = [
+  { value: "en", label: "English" },
+  { value: "es", label: "Español" },
+  { value: "pt", label: "Português" },
+  { value: "ja", label: "日本語" },
+];
+
+const SAMPLE = {
+  company_name: "GrowthForge Studio",
+  company_description: "We help B2B SaaS companies improve outbound conversion with better lead research and personalized cold outreach.",
+  offer_description: "Done-for-you outbound research and personalized email sequences for B2B SaaS and agencies.",
+  value_proposition: "We help founders and VP Sales build a qualified pipeline without hiring a full-time SDR.",
+  target_customer_description: "Founders, CEOs, and VP Sales at B2B SaaS companies and software agencies selling high-ticket services ($2k–10k/month).",
+  average_ticket: "$2,000–$10,000/month",
+  tone: "direct" as const,
+  contact_email: "demo@growthforge.io",
+  output_language: "en" as OutputLanguage,
+  target_market_region: "north_america" as MarketRegion,
+};
+
+const EMPTY = {
+  company_name: "",
+  company_description: "",
+  offer_description: "",
+  value_proposition: "",
+  target_customer_description: "",
+  average_ticket: "",
+  tone: "direct" as const,
+  contact_email: "",
+  output_language: "en" as OutputLanguage,
+  target_market_region: "global" as MarketRegion,
+};
+
+type View = "landing" | "form" | "processing" | "results";
+
+function catInfo(score: number) {
+  if (score >= 8) return { label: "HOT",     emoji: "🔥", bg: "#fee2e2", color: "#991b1b" };
+  if (score >= 6) return { label: "WARM",    emoji: "🟡", bg: "#fef3c7", color: "#92400e" };
+  if (score >= 4) return { label: "COLD",    emoji: "🔵", bg: "#dbeafe", color: "#1e40af" };
+  return             { label: "DISCARD", emoji: "⛔", bg: "#f1f5f9", color: "#64748b" };
+}
+
+const QC_META: Record<QCStatus, { icon: string; color: string }> = {
+  APPROVED:      { icon: "✅", color: "#16a34a" },
+  REVIEW_NEEDED: { icon: "⚠️", color: "#d97706" },
+  FAILED:        { icon: "❌", color: "#dc2626" },
+};
+
+// ─── Root page ────────────────────────────────────────────────────────────────
+
+export default function DemoPipelinePage() {
+  const [lang, setLang]      = useState<OutputLanguage>("en");
+  const [view, setView]      = useState<View>("landing");
+  const [plan, setPlan]      = useState<PlanType>("starter");
+  const [form, setForm]      = useState(SAMPLE);
+  const [agentStep, setStep] = useState(-1);
+  const [progress, setProg]  = useState(0);
+  const [report, setReport]  = useState<LeadLensReport | null>(null);
+  const [error, setError]    = useState<string | null>(null);
+  const [expanded, setExp]   = useState<number | null>(null);
+  const formRef = useRef<HTMLDivElement>(null);
+
+  const copy = COPY[lang];
+
+  function changeLang(l: OutputLanguage) {
+    setLang(l);
+    setForm(f => ({ ...f, output_language: l }));
+  }
+
+  function goToForm(p: PlanType) {
+    setPlan(p);
+    setView("form");
+    setTimeout(() => formRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
+  }
+
+  async function runPipeline(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setView("processing");
+    setStep(0);
+    setProg(0);
+
+    for (let i = 0; i < copy.agents.length; i++) {
+      await delay(620);
+      setStep(i);
+      setProg(Math.round(((i + 1) / copy.agents.length) * 100));
+    }
+
+    try {
+      const res = await fetch("/api/demo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan, onboarding: form }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? `Server error ${res.status}`);
+      if (!data.report) throw new Error("No report returned from server");
+      setReport(data.report as LeadLensReport);
+      await delay(300);
+      setView("results");
+      setExp(null);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setError(msg);
+      setView("form");
+    }
+  }
+
+  function dlCSV() {
+    if (!report) return;
+    import("@/lib/utils/export").then(({ exportToCSV }) =>
+      saveFile(exportToCSV(report), `leadlens-${report.job_id}.csv`, "text/csv")
+    );
+  }
+
+  function dlMD() {
+    if (!report) return;
+    import("@/lib/utils/export").then(({ exportToMarkdown }) =>
+      saveFile(exportToMarkdown(report), `leadlens-${report.job_id}.md`, "text/markdown")
+    );
+  }
+
+  // Shared lang selector rendered in each view's nav
+  const LangSelect = () => (
+    <select
+      value={lang}
+      onChange={e => changeLang(e.target.value as OutputLanguage)}
+      style={{ background: "transparent", border: "1px solid #e2e8f0", color: "#64748b", padding: "4px 8px", borderRadius: 6, cursor: "pointer", fontSize: ".82rem", fontFamily: "inherit" }}
+    >
+      {LANG_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+    </select>
+  );
+
+  // ─── LANDING ──────────────────────────────────────────────────────────────
+  if (view === "landing") return (
+    <div style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", color: "#0f172a", background: "#fff", lineHeight: 1.5 }}>
+      <style>{`
+        .ll-pricing-grid { display: grid; gap: 1.5rem; max-width: 56rem; margin: 0 auto; align-items: start; grid-template-columns: repeat(3, 1fr); }
+        @media (max-width: 900px) { .ll-pricing-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 580px) { .ll-pricing-grid { grid-template-columns: 1fr; } }
+      `}</style>
+
+      {/* Announcement bar */}
+      <div style={{ background: "linear-gradient(135deg,#0c4a6e,#0284c7)", color: "#fff", textAlign: "center", padding: ".5rem 1rem", fontSize: ".8rem", fontWeight: 500 }}>
+        {copy.announcement}{" "}
+        <button onClick={() => goToForm("starter")} style={{ background: "rgba(255,255,255,.2)", border: "none", color: "#fff", fontSize: ".78rem", fontWeight: 700, borderRadius: 4, padding: "2px 10px", cursor: "pointer", marginLeft: 8 }}>
+          {copy.announcementCTA}
+        </button>
+      </div>
+
+      {/* Nav */}
+      <div style={{ borderBottom: "1px solid #e2e8f0", position: "sticky", top: 0, background: "rgba(255,255,255,.95)", backdropFilter: "blur(8px)", zIndex: 40 }}>
+        <nav style={{ padding: ".875rem 1.5rem", display: "flex", justifyContent: "space-between", alignItems: "center", maxWidth: "72rem", margin: "0 auto" }}>
+          <span style={{ fontWeight: 800, fontSize: "1.15rem", letterSpacing: "-.02em" }}>
+            Lead<span style={{ color: "#0ea5e9" }}>Lens</span> AI
+          </span>
+          <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
+            <button onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" })} style={navLinkStyle}>
+              {copy.navPricing}
+            </button>
+            <LangSelect />
+            <Btn onClick={() => goToForm("starter")}>{copy.navCTA}</Btn>
+          </div>
+        </nav>
+      </div>
+
+      {/* Hero */}
+      <div style={{ background: "linear-gradient(180deg,#f0f9ff 0%,#fff 100%)" }}>
+        <div style={{ maxWidth: "56rem", margin: "0 auto", padding: "5.5rem 1.5rem 4.5rem", textAlign: "center" }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: ".5rem", background: "#fff", border: "1px solid #e2e8f0", borderRadius: 999, padding: ".3rem .9rem .3rem .5rem", fontSize: ".8rem", fontWeight: 600, color: "#64748b", marginBottom: "1.75rem", boxShadow: "0 1px 4px rgba(0,0,0,.06)" }}>
+            <span style={{ width: ".5rem", height: ".5rem", background: "#16a34a", borderRadius: "50%", display: "inline-block" }} />
+            {copy.heroBadge}
+          </div>
+          <h1 style={{ fontSize: "clamp(2.1rem,5.5vw,3.6rem)", fontWeight: 800, lineHeight: 1.12, marginBottom: "1.4rem", letterSpacing: "-.03em" }}>
+            {copy.heroH1pre}<br />
+            <span style={{ color: "#0ea5e9" }}>{copy.heroH1hi}</span>{copy.heroH1post}
+          </h1>
+          <p style={{ fontSize: "1.2rem", color: "#64748b", maxWidth: "38rem", margin: "0 auto 2.75rem", lineHeight: 1.65 }}>
+            {copy.heroSub}
+          </p>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: ".875rem" }}>
+            <div style={{ display: "flex", gap: ".875rem", flexWrap: "wrap", justifyContent: "center" }}>
+              <Btn lg onClick={() => goToForm("starter")}>{copy.heroCTA}</Btn>
+              <BtnOutline lg onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" })}>{copy.heroSeeAll}</BtnOutline>
+            </div>
+            <p style={{ fontSize: ".82rem", color: "#94a3b8" }}>
+              <strong style={{ color: "#64748b" }}>{copy.heroNote}</strong>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Proof bar */}
+      <div style={{ borderTop: "1px solid #f1f5f9", borderBottom: "1px solid #f1f5f9", padding: "1.25rem 1.5rem" }}>
+        <div style={{ maxWidth: "64rem", margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center", gap: "2.5rem", flexWrap: "wrap" }}>
+          {copy.proofLabels.map(([v, l]) => (
+            <div key={l} style={{ display: "flex", alignItems: "center", gap: ".5rem", fontSize: ".875rem", color: "#64748b" }}>
+              <strong style={{ color: "#334155" }}>{v}</strong> {l}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* How it works */}
+      <section style={sectionStyle}>
+        <div style={innerStyle}>
+          <div style={{ textAlign: "center", marginBottom: "3rem" }}>
+            <Tag>{copy.howTag}</Tag>
+            <h2 style={sectionTitleStyle}>{copy.howTitle}</h2>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: "1.5rem" }}>
+            {copy.steps.map(([n, t, d]) => (
+              <div key={n} style={{ textAlign: "center" }}>
+                <div style={{ width: "3rem", height: "3rem", background: "#0ea5e9", color: "#fff", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.15rem", fontWeight: 800, margin: "0 auto 1rem", boxShadow: "0 4px 12px rgba(14,165,233,.35)" }}>{n}</div>
+                <h3 style={{ fontWeight: 700, marginBottom: ".4rem", fontSize: ".975rem" }}>{t}</h3>
+                <p style={{ color: "#64748b", fontSize: ".865rem", lineHeight: 1.55 }}>{d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing */}
+      <section id="pricing" style={{ ...sectionStyle, background: "#f8fafc" }}>
+        <div style={{ ...innerStyle, textAlign: "center" }}>
+          <Tag>{copy.pricingTag}</Tag>
+          <h2 style={sectionTitleStyle}>{copy.pricingTitle}</h2>
+          <p style={{ color: "#64748b", fontSize: "1.05rem", maxWidth: "36rem", margin: "0 auto 3rem", lineHeight: 1.6 }}>
+            {copy.pricingSub}
+          </p>
+          <div className="ll-pricing-grid">
+            {(["starter", "standard", "pro"] as PlanType[]).map(p => (
+              <PricingCard key={p} plan={p} featured={p === "standard"} copy={copy} onSelect={goToForm} />
+            ))}
+          </div>
+
+          {/* Monthly plans coming soon */}
+          <div style={{ marginTop: "3rem", background: "linear-gradient(135deg,#f8fafc,#f0f9ff)", border: "1px solid #e2e8f0", borderRadius: "1.25rem", padding: "2rem 2.5rem", textAlign: "center", maxWidth: "44rem", margin: "3rem auto 0" }}>
+            <span style={{ display: "inline-block", background: "#0ea5e9", color: "#fff", fontSize: ".68rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", padding: ".2rem .75rem", borderRadius: 999, marginBottom: "1rem" }}>
+              {copy.monthlyTag}
+            </span>
+            <h3 style={{ fontSize: "1.2rem", fontWeight: 800, letterSpacing: "-.02em", marginBottom: ".75rem", color: "#0f172a" }}>{copy.monthlyTitle}</h3>
+            <p style={{ color: "#64748b", fontSize: ".9rem", lineHeight: 1.7, maxWidth: "32rem", margin: "0 auto" }}>{copy.monthlySub}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer style={{ borderTop: "1px solid #f1f5f9", padding: "2.5rem 1.5rem", textAlign: "center" }}>
+        <p style={{ color: "#94a3b8", fontSize: ".875rem", marginBottom: ".5rem" }}>
+          {copy.footerCopy}
+        </p>
+        <div style={{ display: "flex", justifyContent: "center", gap: "1.5rem" }}>
+          {copy.footerLinks.map(l => (
+            <span key={l} style={{ color: "#94a3b8", fontSize: ".82rem", cursor: "pointer" }}>{l}</span>
+          ))}
+        </div>
+      </footer>
+    </div>
+  );
+
+  // ─── FORM ─────────────────────────────────────────────────────────────────
+  if (view === "form") return (
+    <div style={{ minHeight: "100vh", background: "#f8fafc", fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif", color: "#0f172a" }}>
+      {/* Top bar */}
+      <div style={{ background: "linear-gradient(135deg,#0c4a6e,#0284c7)", color: "#fff", textAlign: "center", padding: ".5rem 1rem", fontSize: ".8rem", fontWeight: 500 }}>
+        {copy.announcement}
+      </div>
+      <header style={{ background: "#fff", borderBottom: "1px solid #e2e8f0", padding: ".875rem 1.5rem", display: "flex", justifyContent: "space-between", alignItems: "center", position: "sticky", top: 0, zIndex: 30 }}>
+        <button onClick={() => setView("landing")} style={{ fontWeight: 800, fontSize: "1.1rem", background: "none", border: "none", cursor: "pointer", letterSpacing: "-.02em" }}>
+          Lead<span style={{ color: "#0ea5e9" }}>Lens</span> AI
+        </button>
+        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+          <select
+            value={lang}
+            onChange={e => changeLang(e.target.value as OutputLanguage)}
+            style={{ background: "transparent", border: "1px solid #e2e8f0", color: "#64748b", padding: "4px 8px", borderRadius: 6, cursor: "pointer", fontSize: ".82rem", fontFamily: "inherit" }}
+          >
+            {LANG_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+          </select>
+          <button onClick={() => setView("landing")} style={navLinkStyle}>{copy.backBtn}</button>
+        </div>
+      </header>
+
+      <div style={{ maxWidth: "42rem", margin: "0 auto", padding: "3rem 1.5rem" }} ref={formRef}>
+        <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
+          <div style={{ display: "inline-block", background: "#e0f2fe", color: "#0284c7", fontSize: ".75rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".06em", padding: ".25rem .75rem", borderRadius: 999, marginBottom: "1rem" }}>
+            {copy.formTag}
+          </div>
+          <h1 style={{ fontSize: "clamp(1.75rem,4vw,2.25rem)", fontWeight: 800, letterSpacing: "-.02em", marginBottom: ".75rem" }}>
+            {copy.formTitle}
+          </h1>
+          <p style={{ color: "#64748b", fontSize: "1rem", lineHeight: 1.6 }}>
+            {copy.formSub}
+          </p>
+        </div>
+
+        {/* Plan pills */}
+        <div style={{ background: "#fff", borderRadius: "1rem", border: "1px solid #e2e8f0", padding: "1.5rem", marginBottom: "1.5rem", boxShadow: "0 1px 4px rgba(0,0,0,.05)" }}>
+          <p style={{ fontSize: ".84rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" as const, letterSpacing: ".06em", marginBottom: "1rem" }}>{copy.step1}</p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: ".625rem" }}>
+            {(Object.entries(PLANS) as [PlanType, typeof PLANS.starter][]).map(([key, p]) => (
+              <button key={key} type="button" onClick={() => setPlan(key)}
+                style={{ border: `1.5px solid ${plan === key ? "#0ea5e9" : "#e2e8f0"}`, borderRadius: ".75rem", padding: ".75rem .5rem", textAlign: "center" as const, cursor: "pointer", transition: "all .15s", background: plan === key ? "#e0f2fe" : "#fff" }}>
+                <div style={{ fontSize: "1.1rem", fontWeight: 800, color: "#0f172a" }}>{p.price}</div>
+                <div style={{ fontSize: ".72rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".04em", color: "#94a3b8", marginTop: ".2rem" }}>{copy.planNames[key]}</div>
+                <div style={{ fontSize: ".78rem", color: "#0284c7", fontWeight: 600, marginTop: ".3rem" }}>{p.leads} leads</div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={runPipeline}>
+          <div style={{ background: "#fff", borderRadius: "1rem", border: "1px solid #e2e8f0", padding: "1.5rem", boxShadow: "0 1px 4px rgba(0,0,0,.05)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
+              <p style={{ fontSize: ".84rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" as const, letterSpacing: ".06em" }}>{copy.step2}</p>
+              <button type="button" onClick={() => setForm({ ...SAMPLE, output_language: lang })}
+                style={{ fontSize: ".78rem", fontWeight: 600, color: "#0ea5e9", background: "#e0f2fe", border: "none", borderRadius: 6, padding: "4px 12px", cursor: "pointer" }}>
+                {copy.useSampleData}
+              </button>
+            </div>
+
+            {error && (
+              <div style={{ background: "#fef2f2", border: "1px solid #fecaca", borderRadius: ".75rem", padding: "1rem", marginBottom: "1.25rem", fontSize: ".875rem", color: "#dc2626" }}>
+                <strong>Error:</strong> {error}
+              </div>
+            )}
+
+            <FormField label={copy.fCompanyName} value={form.company_name} onChange={v => setForm(f => ({ ...f, company_name: v }))} placeholder="e.g. GrowthForge Studio" />
+            <FormField label={copy.fCompanyDesc} value={form.company_description} onChange={v => setForm(f => ({ ...f, company_description: v }))} multiline placeholder="2–3 sentences about your business" />
+            <FormField label={copy.fOffer} value={form.offer_description} onChange={v => setForm(f => ({ ...f, offer_description: v }))} multiline placeholder="What exactly are you selling and at what price?" />
+            <FormField label={copy.fValue} value={form.value_proposition} onChange={v => setForm(f => ({ ...f, value_proposition: v }))} multiline placeholder="What specific outcome do you deliver?" />
+            <FormField label={copy.fCustomer} value={form.target_customer_description} onChange={v => setForm(f => ({ ...f, target_customer_description: v }))} multiline placeholder="Company size, titles, industries, signals..." />
+            <FormField label={copy.fTicket} value={form.average_ticket ?? ""} onChange={v => setForm(f => ({ ...f, average_ticket: v }))} placeholder="e.g. $3,000/month" />
+
+            <div style={{ marginBottom: "1rem" }}>
+              <label style={labelStyle}>{copy.fTone}</label>
+              <select value={form.tone} onChange={e => setForm(f => ({ ...f, tone: e.target.value as typeof f.tone }))} style={inputStyle}>
+                <option value="direct">{copy.toneDirect}</option>
+                <option value="consultative">{copy.toneConsultative}</option>
+                <option value="casual">{copy.toneCasual}</option>
+              </select>
+            </div>
+
+            <div style={{ marginBottom: "1rem" }}>
+              <label style={labelStyle}>{copy.fRegion}</label>
+              <select value={form.target_market_region ?? "global"} onChange={e => setForm(f => ({ ...f, target_market_region: e.target.value as MarketRegion }))} style={inputStyle}>
+                <option value="north_america">{copy.regionNA}</option>
+                <option value="latin_america">{copy.regionLA}</option>
+                <option value="europe">{copy.regionEU}</option>
+                <option value="asia">{copy.regionAS}</option>
+                <option value="global">{copy.regionGL}</option>
+              </select>
+            </div>
+
+            <FormField label={copy.fEmail} value={form.contact_email} onChange={v => setForm(f => ({ ...f, contact_email: v }))} type="email" placeholder="you@company.com" />
+
+            <button type="submit"
+              style={{ width: "100%", background: "#0ea5e9", color: "#fff", border: "none", borderRadius: ".75rem", padding: "1rem 1.5rem", fontSize: "1.05rem", fontWeight: 700, cursor: "pointer", marginTop: ".5rem", boxShadow: "0 4px 14px rgba(14,165,233,.35)", transition: "background .15s" }}
+              onMouseOver={e => (e.currentTarget.style.background = "#0284c7")}
+              onMouseOut={e => (e.currentTarget.style.background = "#0ea5e9")}
+            >
+              {copy.submitBtn(PLANS[plan].leads)}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+
+  // ─── PROCESSING ───────────────────────────────────────────────────────────
+  if (view === "processing") return (
+    <div style={{ minHeight: "100vh", background: "#f8fafc", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem", fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" }}>
+      <div style={{ textAlign: "center", maxWidth: "30rem", width: "100%" }}>
+        <div style={{ fontSize: "3.5rem", marginBottom: "1.25rem" }}>⚙️</div>
+        <h1 style={{ fontSize: "1.6rem", fontWeight: 800, letterSpacing: "-.02em", marginBottom: ".6rem" }}>{copy.processingTitle}</h1>
+        <p style={{ color: "#64748b", fontSize: ".9rem", marginBottom: ".35rem" }}>
+          {PLANS[plan].leads} leads · {copy.planNames[plan]}
+        </p>
+        <p style={{ color: "#94a3b8", fontSize: ".82rem", marginBottom: ".5rem" }}>{copy.processingStatus}</p>
+        <p style={{ color: "#94a3b8", fontSize: ".8rem", marginBottom: "2rem" }}>{copy.processingNote}</p>
+
+        {/* Progress bar */}
+        <div style={{ background: "#e2e8f0", borderRadius: 999, height: ".625rem", overflow: "hidden", marginBottom: "1.5rem" }}>
+          <div style={{ height: "100%", background: "linear-gradient(90deg,#0ea5e9,#38bdf8)", borderRadius: 999, transition: "width .5s ease", width: `${progress}%` }} />
+        </div>
+
+        {/* Agent steps */}
+        <div style={{ background: "#fff", border: "1px solid #f1f5f9", borderRadius: ".875rem", padding: ".75rem 1rem", textAlign: "left" }}>
+          {copy.agents.map((agent, i) => {
+            const done   = i < agentStep;
+            const active = i === agentStep;
+            return (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: ".75rem", padding: ".5rem 0", borderBottom: i < copy.agents.length - 1 ? "1px solid #f8fafc" : "none" }}>
+                <div style={{ width: "1.375rem", height: "1.375rem", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: ".68rem", fontWeight: 700, flexShrink: 0, background: done ? "#16a34a" : active ? "#0ea5e9" : "#f1f5f9", color: done || active ? "#fff" : "#94a3b8" }}>
+                  {done ? "✓" : i + 1}
+                </div>
+                <span style={{ fontSize: ".875rem", color: done ? "#64748b" : active ? "#0284c7" : "#94a3b8", fontWeight: active ? 600 : 400 }}>
+                  {agent}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+
+  // ─── RESULTS ──────────────────────────────────────────────────────────────
+  if (view === "results" && report) {
+    const sorted       = [...report.processed_leads].sort((a, b) => b.qualification.fit_score - a.qualification.fit_score);
+    const visibleLeads = sorted.slice(0, 20);
+    const hiddenCount  = sorted.length - visibleLeads.length;
+
+    return (
+      <div style={{ minHeight: "100vh", background: "#f8fafc", fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif", color: "#0f172a" }}>
+        {/* Header */}
+        <header style={{ background: "#fff", borderBottom: "1px solid #e2e8f0", padding: "1rem 1.5rem", position: "sticky", top: 0, zIndex: 30 }}>
+          <div style={{ maxWidth: "58rem", margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
+            <div>
+              <span style={{ fontWeight: 800, fontSize: "1.1rem", letterSpacing: "-.02em" }}>Lead<span style={{ color: "#0ea5e9" }}>Lens</span> AI</span>
+              <span style={{ marginLeft: ".75rem", fontSize: ".78rem", background: "#f0fdf4", color: "#16a34a", fontWeight: 700, padding: "2px 8px", borderRadius: 999 }}>{copy.reportReady}</span>
+            </div>
+            <div style={{ display: "flex", gap: ".75rem", flexWrap: "wrap", alignItems: "center" }}>
+              <select
+                value={lang}
+                onChange={e => changeLang(e.target.value as OutputLanguage)}
+                style={{ background: "transparent", border: "1px solid #e2e8f0", color: "#64748b", padding: "4px 8px", borderRadius: 6, cursor: "pointer", fontSize: ".82rem", fontFamily: "inherit" }}
+              >
+                {LANG_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+              </select>
+              <button onClick={dlCSV} style={{ background: "#fff", border: "1.5px solid #e2e8f0", color: "#334155", borderRadius: ".625rem", padding: ".55rem 1rem", fontSize: ".875rem", fontWeight: 600, cursor: "pointer" }}>
+                {copy.dlCSV(report.total_leads)}
+              </button>
+              <button onClick={dlMD} style={{ background: "#0ea5e9", border: "none", color: "#fff", borderRadius: ".625rem", padding: ".55rem 1rem", fontSize: ".875rem", fontWeight: 600, cursor: "pointer", boxShadow: "0 2px 8px rgba(14,165,233,.3)" }}>
+                {copy.dlMD}
+              </button>
+              <button onClick={() => { setView("landing"); setReport(null); }} style={{ background: "none", border: "1.5px solid #e2e8f0", color: "#64748b", borderRadius: ".625rem", padding: ".55rem 1rem", fontSize: ".875rem", cursor: "pointer" }}>
+                {copy.newRun}
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <div style={{ maxWidth: "58rem", margin: "0 auto", padding: "2.5rem 1.5rem" }}>
+          {/* Title */}
+          <div style={{ marginBottom: "2rem" }}>
+            <h1 style={{ fontSize: "1.875rem", fontWeight: 800, letterSpacing: "-.02em", marginBottom: ".25rem" }}>{copy.reportTitle}</h1>
+            <p style={{ color: "#64748b", fontSize: ".9rem" }}>
+              {report.total_leads} leads · {copy.planNames[report.plan as PlanType] ?? report.plan} · {new Date(report.created_at).toLocaleString()}
+            </p>
+          </div>
+
+          {/* Stats */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(90px,1fr))", gap: ".875rem", marginBottom: "1.75rem" }}>
+            {[
+              { label: copy.statTotal,   val: report.total_leads,          color: "#0f172a" },
+              { label: "HOT 🔥",         val: report.hot_count,            color: "#991b1b" },
+              { label: "WARM 🟡",        val: report.warm_count,           color: "#92400e" },
+              { label: "COLD 🔵",        val: report.cold_count,           color: "#1e40af" },
+              { label: "Discard",        val: report.discard_count,        color: "#64748b" },
+              { label: copy.statAvg,     val: `${report.avg_score}/10`,    color: "#0284c7" },
+            ].map(s => (
+              <div key={s.label} style={{ background: "#fff", border: "1px solid #f1f5f9", borderRadius: ".875rem", padding: "1rem", textAlign: "center" }}>
+                <div style={{ fontSize: "1.75rem", fontWeight: 800, letterSpacing: "-.02em", color: s.color }}>{s.val}</div>
+                <div style={{ fontSize: ".78rem", color: "#94a3b8", marginTop: ".2rem" }}>{s.label}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Executive summary */}
+          <div style={{ background: "#fff", border: "1px solid #f1f5f9", borderRadius: ".875rem", padding: "1.25rem", marginBottom: "1rem" }}>
+            <h3 style={{ fontWeight: 700, fontSize: ".875rem", marginBottom: ".75rem", color: "#334155" }}>{copy.execSummary}</h3>
+            <p style={{ fontSize: ".9rem", color: "#64748b", lineHeight: 1.65 }}>{report.executive_summary}</p>
+          </div>
+
+          {/* Patterns + Recommendations */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: "1rem", marginBottom: "1.75rem" }}>
+            <div style={{ background: "#fff", border: "1px solid #f1f5f9", borderRadius: ".875rem", padding: "1.25rem" }}>
+              <h3 style={{ fontWeight: 700, fontSize: ".875rem", marginBottom: ".875rem", color: "#334155" }}>{copy.patternsObserved}</h3>
+              {report.patterns_observed.map((p, i) => (
+                <div key={i} style={{ fontSize: ".85rem", color: "#64748b", display: "flex", gap: ".5rem", padding: ".3rem 0", lineHeight: 1.5 }}>
+                  <span style={{ color: "#0ea5e9", fontWeight: 700, flexShrink: 0 }}>→</span>{p}
+                </div>
+              ))}
+            </div>
+            <div style={{ background: "#fff", border: "1px solid #f1f5f9", borderRadius: ".875rem", padding: "1.25rem" }}>
+              <h3 style={{ fontWeight: 700, fontSize: ".875rem", marginBottom: ".875rem", color: "#334155" }}>{copy.recommendations}</h3>
+              {report.recommendations.map((r, i) => (
+                <div key={i} style={{ fontSize: ".85rem", color: "#64748b", display: "flex", gap: ".5rem", padding: ".3rem 0", lineHeight: 1.5 }}>
+                  <span style={{ color: "#16a34a", fontWeight: 700, flexShrink: 0 }}>✓</span>{r}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Export row */}
+          <div style={{ display: "flex", gap: ".75rem", marginBottom: "1.75rem", flexWrap: "wrap" }}>
+            <button onClick={dlCSV} style={{ background: "#fff", border: "1.5px solid #e2e8f0", color: "#334155", borderRadius: ".625rem", padding: ".65rem 1.25rem", fontSize: ".875rem", fontWeight: 600, cursor: "pointer" }}>
+              {copy.dlCSV(report.total_leads)}
+            </button>
+            <button onClick={dlMD} style={{ background: "#0ea5e9", border: "none", color: "#fff", borderRadius: ".625rem", padding: ".65rem 1.25rem", fontSize: ".875rem", fontWeight: 600, cursor: "pointer", boxShadow: "0 2px 8px rgba(14,165,233,.3)" }}>
+              {copy.dlMD}
+            </button>
+          </div>
+
+          {/* Lead cards */}
+          <div style={{ marginBottom: ".5rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <h2 style={{ fontSize: "1.1rem", fontWeight: 700, letterSpacing: "-.01em" }}>
+              {copy.leadBreakdown}{" "}
+              {hiddenCount > 0 && <span style={{ fontSize: ".8rem", fontWeight: 400, color: "#64748b" }}>({visibleLeads.length} / {sorted.length})</span>}
+            </h2>
+          </div>
+
+          {hiddenCount > 0 && (
+            <div style={{ background: "#e0f2fe", border: "1px solid #bae6fd", borderRadius: ".75rem", padding: ".875rem 1.25rem", marginBottom: "1rem", fontSize: ".875rem", color: "#0284c7" }}>
+              ℹ️ {copy.showingOf(visibleLeads.length, sorted.length)}
+            </div>
+          )}
+
+          <div>
+            {visibleLeads.map((lead, i) => (
+              <LeadCard key={lead.id} lead={lead} index={i} isOpen={expanded === i} onToggle={() => setExp(expanded === i ? null : i)} copy={copy} />
+            ))}
+          </div>
+
+          {hiddenCount > 0 && (
+            <div style={{ background: "#fff", border: "1px solid #f1f5f9", borderRadius: ".875rem", padding: "1.5rem", textAlign: "center", marginTop: "1rem" }}>
+              <p style={{ color: "#64748b", fontSize: ".9rem", marginBottom: "1rem" }}>
+                {copy.moreInExport(hiddenCount)}
+              </p>
+              <button onClick={dlCSV} style={{ background: "#0ea5e9", color: "#fff", border: "none", borderRadius: ".625rem", padding: ".65rem 1.5rem", fontWeight: 700, fontSize: ".9rem", cursor: "pointer" }}>
+                {copy.dlAll(sorted.length)}
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+}
+
+// ─── Lead card ────────────────────────────────────────────────────────────────
+
+function LeadCard({ lead, index, isOpen, onToggle, copy }: {
+  lead: ProcessedLead; index: number; isOpen: boolean; onToggle: () => void; copy: Copy;
+}) {
+  const { candidate: c, qualification: q, outreach: o, enrichment: e } = lead;
+  const cat      = catInfo(q.fit_score);
+  const qcMeta   = QC_META[o.qc_status];
+  const isDiscard = q.fit_score < 4;
+
+  return (
+    <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: ".875rem", overflow: "hidden", marginBottom: ".75rem", transition: "box-shadow .15s" }}
+      onMouseOver={el => (el.currentTarget.style.boxShadow = "0 4px 16px rgba(0,0,0,.07)")}
+      onMouseOut={el => (el.currentTarget.style.boxShadow = "none")}
+    >
+      <div onClick={onToggle} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1rem 1.25rem", cursor: "pointer", gap: "1rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: ".875rem", minWidth: 0 }}>
+          <span style={{ fontSize: ".78rem", color: "#cbd5e1", fontFamily: "monospace", fontWeight: 700, minWidth: "1.5rem" }}>#{index + 1}</span>
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontWeight: 700, fontSize: ".95rem" }}>
+              {c.name ?? "Unknown"} <span style={{ fontWeight: 400, color: "#64748b" }}>— {c.company}</span>
+            </div>
+            <div style={{ fontSize: ".82rem", color: "#94a3b8", marginTop: ".1rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              {c.title ?? "?"} · {c.email ?? "no email"} · {c.industry ?? "?"}
+            </div>
+          </div>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: ".875rem", flexShrink: 0 }}>
+          <span style={{ display: "inline-block", padding: ".25rem .75rem", borderRadius: 999, fontSize: ".78rem", fontWeight: 700, background: cat.bg, color: cat.color }}>
+            {cat.emoji} {cat.label}
+          </span>
+          <span style={{ fontSize: ".875rem", color: "#94a3b8", fontWeight: 600 }}>{q.fit_score}/10</span>
+          <span style={{ fontSize: ".8rem", color: qcMeta.color }}>{qcMeta.icon}</span>
+          <span style={{ color: "#cbd5e1", fontSize: ".75rem" }}>{isOpen ? "▲" : "▼"}</span>
+        </div>
+      </div>
+
+      {isOpen && (
+        <div style={{ borderTop: "1px solid #f1f5f9", padding: "1.5rem" }}>
+          {/* Meta grid */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(140px,1fr))", gap: ".75rem", marginBottom: "1.25rem" }}>
+            <MetaCell label={copy.mCompanySize} val={c.company_size ?? "?"} />
+            <MetaCell label={copy.mEmailStatus} val={c.email_status ?? "?"} />
+            <MetaCell label={copy.mConfidence}  val={`${Math.round(c.confidence_score * 100)}%`} />
+            <MetaCell label={copy.mSource}       val={c.source} />
+            {c.location    && <MetaCell label={copy.mLocation}  val={c.location} />}
+            {c.source_url  && <MetaCell label={copy.mSourceUrl} val={<a href={c.source_url} target="_blank" rel="noreferrer" style={{ color: "#0ea5e9", textDecoration: "none", fontSize: ".82rem" }}>{c.source_url.slice(0, 35)}…</a>} />}
+            {c.linkedin_url && <MetaCell label={copy.mLinkedin} val={<a href={`https://${c.linkedin_url.replace(/^https?:\/\//,"")}`} target="_blank" rel="noreferrer" style={{ color: "#0ea5e9", textDecoration: "none", fontSize: ".82rem" }}>View profile</a>} />}
+          </div>
+
+          {e.company_summary && (
+            <LeadSection title={copy.sCompanyContext}>
+              <p style={{ fontSize: ".875rem", color: "#64748b", lineHeight: 1.65 }}>{e.company_summary}</p>
+              {e.role_relevance && <p style={{ fontSize: ".875rem", color: "#94a3b8", lineHeight: 1.65, marginTop: ".5rem", fontStyle: "italic" }}>{e.role_relevance}</p>}
+            </LeadSection>
+          )}
+
+          {e.timing_signals.length > 0 && (
+            <LeadSection title={copy.sTimingSignals}>
+              {e.timing_signals.map((s, i) => (
+                <div key={i} style={{ display: "flex", gap: ".5rem", fontSize: ".875rem", color: "#64748b", padding: ".2rem 0" }}>
+                  <span style={{ color: "#d97706" }}>⚡</span>{s}
+                </div>
+              ))}
+            </LeadSection>
+          )}
+
+          {q.fit_reasons.length > 0 && (
+            <LeadSection title={copy.sWhyFit}>
+              {q.fit_reasons.map((r, i) => (
+                <div key={i} style={{ display: "flex", gap: ".5rem", fontSize: ".875rem", color: "#334155", padding: ".25rem 0" }}>
+                  <span style={{ color: "#16a34a", fontWeight: 700, flexShrink: 0 }}>✓</span>{r}
+                </div>
+              ))}
+            </LeadSection>
+          )}
+
+          {q.disqualification_reasons.length > 0 && (
+            <LeadSection title={copy.sFlags}>
+              {q.disqualification_reasons.map((r, i) => (
+                <div key={i} style={{ display: "flex", gap: ".5rem", fontSize: ".875rem", color: "#dc2626", padding: ".2rem 0" }}>
+                  <span>⚠</span>{r}
+                </div>
+              ))}
+            </LeadSection>
+          )}
+
+          {o.qc_notes.length > 0 && (
+            <div style={{ background: o.qc_status === "APPROVED" ? "#f0fdf4" : o.qc_status === "REVIEW_NEEDED" ? "#fffbeb" : "#fef2f2", border: `1px solid ${o.qc_status === "APPROVED" ? "#bbf7d0" : o.qc_status === "REVIEW_NEEDED" ? "#fde68a" : "#fecaca"}`, borderRadius: ".625rem", padding: ".875rem 1rem", fontSize: ".875rem", color: o.qc_status === "APPROVED" ? "#16a34a" : o.qc_status === "REVIEW_NEEDED" ? "#92400e" : "#dc2626", marginBottom: "1.25rem" }}>
+              {qcMeta.icon} {o.qc_notes.join(" · ")}
+            </div>
+          )}
+
+          {e.missing_data.length > 0 && (
+            <div style={{ fontSize: ".78rem", color: "#94a3b8", borderTop: "1px solid #f1f5f9", paddingTop: ".875rem", marginBottom: "1.25rem" }}>
+              <strong>{copy.sDataGaps}:</strong> {e.missing_data.join(" · ")}
+            </div>
+          )}
+
+          {!isDiscard && (
+            <>
+              <LeadSection title={copy.sPersonalization}>
+                <div style={{ background: "#e0f2fe", borderLeft: "3px solid #0ea5e9", borderRadius: "0 .5rem .5rem 0", padding: ".875rem 1rem", fontSize: ".9rem", color: "#0284c7", fontStyle: "italic" }}>
+                  {o.personalization_trigger}
+                </div>
+              </LeadSection>
+
+              <LeadSection title={copy.sInitialEmail}>
+                <div style={{ background: "#f8fafc", borderRadius: ".625rem", padding: "1rem 1.1rem" }}>
+                  <div style={{ fontSize: ".7rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", color: "#94a3b8", marginBottom: ".4rem" }}>{copy.sSubject}</div>
+                  <div style={{ fontSize: ".85rem", fontWeight: 700, color: "#0284c7", marginBottom: ".875rem", background: "#fff", border: "1px solid #e2e8f0", borderRadius: ".375rem", padding: ".4rem .625rem" }}>
+                    {o.subject}
+                  </div>
+                  <div style={{ fontSize: ".7rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", color: "#94a3b8", marginBottom: ".4rem" }}>{copy.sBody}</div>
+                  <div style={{ fontSize: ".875rem", color: "#334155", whiteSpace: "pre-line" as const, lineHeight: 1.65 }}>{o.email_body}</div>
+                </div>
+              </LeadSection>
+
+              <LeadSection title={copy.sFullSequence}>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: ".75rem" }}>
+                  {[
+                    { label: copy.sLinkedinDM,  content: o.linkedin_dm },
+                    { label: copy.sFollowup1, content: o.followup_1 },
+                    { label: copy.sFollowup2, content: o.followup_2 },
+                  ].map(item => (
+                    <div key={item.label} style={{ background: "#f8fafc", borderRadius: ".625rem", padding: ".875rem" }}>
+                      <div style={{ fontSize: ".7rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", color: "#94a3b8", marginBottom: ".4rem" }}>{item.label}</div>
+                      <div style={{ fontSize: ".82rem", color: "#334155", whiteSpace: "pre-line" as const, lineHeight: 1.65 }}>{item.content}</div>
+                    </div>
+                  ))}
+                </div>
+              </LeadSection>
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Pricing card ─────────────────────────────────────────────────────────────
+
+function PricingCard({ plan, featured, copy, onSelect }: {
+  plan: PlanType; featured: boolean; copy: Copy; onSelect: (p: PlanType) => void;
+}) {
+  const p = PLANS[plan];
+  return (
+    <div style={{ border: `1.5px solid ${featured ? "#0ea5e9" : "#e2e8f0"}`, borderRadius: "1.125rem", padding: "2rem", background: "#fff", position: "relative" as const, transition: "box-shadow .2s" }}
+      onMouseOver={el => (el.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,.09)")}
+      onMouseOut={el => (el.currentTarget.style.boxShadow = "none")}
+    >
+      {featured && (
+        <div style={{ position: "absolute" as const, top: -13, left: "50%", transform: "translateX(-50%)", background: "#0ea5e9", color: "#fff", fontSize: ".72rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".06em", padding: ".25rem .875rem", borderRadius: 999, whiteSpace: "nowrap" as const }}>
+          {copy.mostPopular}
+        </div>
+      )}
+      <div style={{ fontSize: ".8rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".06em", color: "#94a3b8", marginBottom: ".5rem" }}>{copy.planNames[plan]}</div>
+      <div style={{ fontSize: "2.75rem", fontWeight: 800, letterSpacing: "-.03em", lineHeight: 1, marginBottom: ".25rem" }}>{p.price}</div>
+      <div style={{ fontSize: ".875rem", color: "#64748b", marginBottom: ".75rem" }}>{copy.planDescs[plan]}</div>
+      <div style={{ display: "inline-block", fontSize: ".7rem", fontWeight: 600, color: "#64748b", background: "#f1f5f9", border: "1px solid #e2e8f0", borderRadius: 4, padding: "2px 8px", marginBottom: "1.25rem" }}>{copy.oneBatch}</div>
+      <div style={{ borderTop: "1px solid #f1f5f9", paddingTop: "1.25rem", marginBottom: "1.25rem" }} />
+      <div style={{ fontSize: "1rem", fontWeight: 700, color: "#0284c7", marginBottom: "1.25rem" }}>{copy.leadsFoundBy(p.leads)}</div>
+      <div style={{ marginBottom: "1.75rem" }}>
+        {copy.planFeatures[plan].map(f => (
+          <div key={f} style={{ fontSize: ".875rem", color: "#64748b", padding: ".3rem 0", display: "flex", gap: ".6rem", alignItems: "flex-start" }}>
+            <span style={{ color: "#0ea5e9", fontWeight: 700, flexShrink: 0 }}>✓</span>{f}
+          </div>
+        ))}
+      </div>
+      <button onClick={() => onSelect(plan)}
+        style={{ width: "100%", background: "#0ea5e9", color: "#fff", border: "none", borderRadius: ".625rem", padding: ".875rem", fontWeight: 700, fontSize: ".9rem", cursor: "pointer", transition: "background .15s" }}
+        onMouseOver={e => (e.currentTarget.style.background = "#0284c7")}
+        onMouseOut={e => (e.currentTarget.style.background = "#0ea5e9")}
+      >
+        {copy.getStarted} — {p.price} →
+      </button>
+    </div>
+  );
+}
+
+// ─── Shared components ────────────────────────────────────────────────────────
+
+function Btn({ children, onClick, lg }: { children: React.ReactNode; onClick?: () => void; lg?: boolean }) {
+  return (
+    <button onClick={onClick}
+      style={{ display: "inline-flex", alignItems: "center", gap: ".4rem", padding: lg ? "1rem 2rem" : ".6rem 1.2rem", borderRadius: lg ? ".75rem" : ".6rem", fontWeight: 600, fontSize: lg ? "1.05rem" : ".9rem", cursor: "pointer", border: "none", background: "#0ea5e9", color: "#fff", transition: "all .15s", whiteSpace: "nowrap" as const }}
+      onMouseOver={e => { e.currentTarget.style.background = "#0284c7"; e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 4px 14px rgba(14,165,233,.4)"; }}
+      onMouseOut={e => { e.currentTarget.style.background = "#0ea5e9"; e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; }}
+    >
+      {children}
+    </button>
+  );
+}
+
+function BtnOutline({ children, onClick, lg }: { children: React.ReactNode; onClick?: () => void; lg?: boolean }) {
+  return (
+    <button onClick={onClick}
+      style={{ display: "inline-flex", alignItems: "center", gap: ".4rem", padding: lg ? "1rem 2rem" : ".6rem 1.2rem", borderRadius: lg ? ".75rem" : ".6rem", fontWeight: 600, fontSize: lg ? "1.05rem" : ".9rem", cursor: "pointer", border: "1.5px solid #e2e8f0", background: "#fff", color: "#334155", transition: "all .15s", whiteSpace: "nowrap" as const }}
+      onMouseOver={e => { e.currentTarget.style.background = "#f8fafc"; e.currentTarget.style.borderColor = "#cbd5e1"; }}
+      onMouseOut={e => { e.currentTarget.style.background = "#fff"; e.currentTarget.style.borderColor = "#e2e8f0"; }}
+    >
+      {children}
+    </button>
+  );
+}
+
+function Tag({ children }: { children: React.ReactNode }) {
+  return (
+    <div style={{ display: "inline-block", background: "#e0f2fe", color: "#0284c7", fontSize: ".75rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".06em", padding: ".25rem .75rem", borderRadius: 999, marginBottom: "1rem" }}>
+      {children}
+    </div>
+  );
+}
+
+function FormField({ label, value, onChange, multiline, type = "text", placeholder = "" }: {
+  label: string; value: string; onChange: (v: string) => void;
+  multiline?: boolean; type?: string; placeholder?: string;
+}) {
+  return (
+    <div style={{ marginBottom: "1rem" }}>
+      <label style={labelStyle}>{label}</label>
+      {multiline
+        ? <textarea value={value} onChange={e => onChange(e.target.value)} rows={2} placeholder={placeholder} style={inputStyle} />
+        : <input type={type} value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} style={inputStyle} />
+      }
+    </div>
+  );
+}
+
+function LeadSection({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div style={{ marginBottom: "1.25rem" }}>
+      <div style={{ fontSize: ".72rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", color: "#94a3b8", marginBottom: ".625rem" }}>{title}</div>
+      {children}
+    </div>
+  );
+}
+
+function MetaCell({ label, val }: { label: string; val: React.ReactNode }) {
+  return (
+    <div>
+      <div style={{ fontSize: ".72rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".06em", color: "#94a3b8", marginBottom: ".2rem" }}>{label}</div>
+      <div style={{ fontSize: ".85rem", color: "#334155" }}>{val}</div>
+    </div>
+  );
+}
+
+// ─── Shared styles ────────────────────────────────────────────────────────────
+
+const sectionStyle:      React.CSSProperties = { padding: "5rem 1.5rem" };
+const innerStyle:        React.CSSProperties = { maxWidth: "64rem", margin: "0 auto" };
+const sectionTitleStyle: React.CSSProperties = { fontSize: "clamp(1.75rem,3.5vw,2.25rem)", fontWeight: 800, marginBottom: ".75rem", letterSpacing: "-.02em" };
+const navLinkStyle:      React.CSSProperties = { fontSize: ".875rem", color: "#64748b", textDecoration: "none", cursor: "pointer", background: "none", border: "none" };
+const labelStyle:        React.CSSProperties = { display: "block", fontSize: ".84rem", fontWeight: 600, color: "#334155", marginBottom: ".35rem" };
+const inputStyle:        React.CSSProperties = { width: "100%", border: "1.5px solid #e2e8f0", borderRadius: ".625rem", padding: ".65rem .875rem", fontSize: ".9rem", fontFamily: "inherit", color: "#0f172a", outline: "none", background: "#fff", boxSizing: "border-box" as const, resize: "vertical" as const };
+
+// ─── Utils ────────────────────────────────────────────────────────────────────
+
+function delay(ms: number) { return new Promise(r => setTimeout(r, ms)); }
+
+function saveFile(content: string, name: string, type: string) {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([content], { type }));
+  a.download = name;
+  a.click();
+}
