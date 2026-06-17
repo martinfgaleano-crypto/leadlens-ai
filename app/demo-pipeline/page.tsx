@@ -888,10 +888,27 @@ export default function DemoPipelinePage() {
       <style>{`
         .ll-pricing-grid { display: grid; gap: 1.5rem; max-width: 56rem; margin: 0 auto; align-items: stretch; grid-template-columns: repeat(3, 1fr); }
         @media (max-width: 900px) { .ll-pricing-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 580px) { .ll-pricing-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 580px) { .ll-pricing-grid { grid-template-columns: 1fr; gap: 1.25rem; padding-top: .875rem; } }
         .ll-hero-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 3rem; align-items: center; }
         @media (max-width: 840px) { .ll-hero-grid { grid-template-columns: 1fr; gap: 2rem; } .ll-hero-left { text-align: center; display: flex; flex-direction: column; align-items: center; } .ll-hero-mock { margin-top: .5rem; width: 100%; } }
         @media (max-width: 480px) { .ll-hero-mock { overflow: hidden; max-width: 100%; } }
+        @media (max-width: 520px) { .ll-nav-pricing { display: none; } .ll-nav-r { gap: .75rem !important; } }
+        @media (max-width: 600px) {
+          .ll-proof-outer { flex-wrap: wrap; }
+          .ll-proof-item { width: 50%; justify-content: center; }
+          .ll-proof-div { display: none; }
+          .ll-proof-stat { padding: .75rem .625rem !important; }
+          .ll-proof-label { white-space: normal !important; text-align: center; font-size: .72rem; }
+          .ll-proof-val { font-size: 1.375rem !important; }
+        }
+        @media (max-width: 640px) {
+          .ll-section { padding: 3rem 1rem !important; }
+          .ll-problem-sec { padding: 3rem 1rem !important; }
+          .ll-cta-sec { padding: 3.5rem 1rem !important; }
+          .ll-hero-outer { padding: 2.5rem 1rem 2rem !important; }
+          .ll-faq-inner { padding: 0 1rem !important; }
+          .ll-monthly-card { padding: 1.5rem 1.125rem !important; }
+        }
       `}</style>
 
       {/* Announcement bar */}
@@ -911,8 +928,8 @@ export default function DemoPipelinePage() {
           <span style={{ fontWeight: 800, fontSize: "1.2rem", letterSpacing: "-.03em", color: "#0f172a" }}>
             Lead<span style={{ color: "#0ea5e9" }}>Lens</span><span style={{ color: "#94a3b8", fontWeight: 500, fontSize: ".9rem", marginLeft: ".25rem" }}>AI</span>
           </span>
-          <div style={{ display: "flex", alignItems: "center", gap: "1.25rem", flexWrap: "wrap" as const }}>
-            <button onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" })} style={navLinkStyle}>
+          <div className="ll-nav-r" style={{ display: "flex", alignItems: "center", gap: "1.25rem", flexWrap: "wrap" as const }}>
+            <button className="ll-nav-pricing" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" })} style={navLinkStyle}>
               {copy.navPricing}
             </button>
             <LangSelect />
@@ -923,7 +940,7 @@ export default function DemoPipelinePage() {
 
       {/* Hero */}
       <div style={{ background: "linear-gradient(170deg,#e0f2fe 0%,#f0f9ff 35%,#fff 75%)" }}>
-        <div style={{ maxWidth: "74rem", margin: "0 auto", padding: "4.5rem 1.5rem 4rem" }}>
+        <div className="ll-hero-outer" style={{ maxWidth: "74rem", margin: "0 auto", padding: "4.5rem 1.5rem 4rem" }}>
           <div className="ll-hero-grid">
             {/* Left column — text + CTAs */}
             <div className="ll-hero-left">
@@ -959,15 +976,15 @@ export default function DemoPipelinePage() {
 
       {/* Proof bar */}
       <div style={{ background: "#fff", borderTop: "1px solid #e2e8f0", borderBottom: "1px solid #e2e8f0", padding: "1.75rem 1.5rem" }}>
-        <div style={{ maxWidth: "56rem", margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center", gap: "0", flexWrap: "wrap" }}>
+        <div className="ll-proof-outer" style={{ maxWidth: "56rem", margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center", gap: "0" }}>
           {copy.proofLabels.map(([v, l], i) => (
-            <div key={l} style={{ display: "flex", alignItems: "center" }}>
-              <div style={{ display: "flex", flexDirection: "column" as const, alignItems: "center", gap: ".2rem", padding: "0 2.25rem" }}>
-                <span style={{ fontSize: "1.625rem", fontWeight: 800, color: "#0f172a", letterSpacing: "-.02em", lineHeight: 1 }}>{v}</span>
-                <span style={{ fontSize: ".78rem", color: "#64748b", fontWeight: 500, whiteSpace: "nowrap" as const }}>{l}</span>
+            <div key={l} className="ll-proof-item" style={{ display: "flex", alignItems: "center" }}>
+              <div className="ll-proof-stat" style={{ display: "flex", flexDirection: "column" as const, alignItems: "center", gap: ".2rem", padding: "0 2.25rem" }}>
+                <span className="ll-proof-val" style={{ fontSize: "1.625rem", fontWeight: 800, color: "#0f172a", letterSpacing: "-.02em", lineHeight: 1 }}>{v}</span>
+                <span className="ll-proof-label" style={{ fontSize: ".78rem", color: "#64748b", fontWeight: 500, whiteSpace: "nowrap" as const }}>{l}</span>
               </div>
               {i < copy.proofLabels.length - 1 && (
-                <div style={{ width: "1px", height: "2rem", background: "#e2e8f0", flexShrink: 0 }} />
+                <div className="ll-proof-div" style={{ width: "1px", height: "2rem", background: "#e2e8f0", flexShrink: 0 }} />
               )}
             </div>
           ))}
@@ -975,7 +992,7 @@ export default function DemoPipelinePage() {
       </div>
 
       {/* How it works */}
-      <section style={{ ...sectionStyle, background: "#f8fafc" }}>
+      <section className="ll-section" style={{ ...sectionStyle, background: "#f8fafc" }}>
         <div style={innerStyle}>
           <div style={{ textAlign: "center", marginBottom: "3rem" }}>
             <Tag>{copy.howTag}</Tag>
@@ -994,7 +1011,7 @@ export default function DemoPipelinePage() {
       </section>
 
       {/* Sample report preview */}
-      <section style={{ ...sectionStyle, background: "#fff" }}>
+      <section className="ll-section" style={{ ...sectionStyle, background: "#fff" }}>
         <div style={{ ...innerStyle, textAlign: "center" }}>
           <Tag>{copy.samplePreviewTag}</Tag>
           <h2 style={sectionTitleStyle}>{copy.samplePreviewTitle}</h2>
@@ -1012,12 +1029,12 @@ export default function DemoPipelinePage() {
           {/* Mock lead card */}
           <div style={{ maxWidth: "52rem", margin: "0 auto", background: "#fff", border: "2px solid #e2e8f0", borderRadius: "1.25rem", overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,.08)", textAlign: "left" }}>
             {/* Card header */}
-            <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #f1f5f9", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap" as const, gap: "1rem", background: "#fff" }}>
+            <div style={{ padding: "1.25rem 1rem", borderBottom: "1px solid #f1f5f9", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap" as const, gap: ".75rem", background: "#fff" }}>
               <div>
                 <div style={{ fontWeight: 800, fontSize: "1rem", color: "#0f172a" }}>
                   Sarah Chen <span style={{ fontWeight: 400, color: "#64748b" }}>— Momentum Analytics</span>
                 </div>
-                <div style={{ fontSize: ".8rem", color: "#94a3b8", marginTop: ".2rem" }}>
+                <div style={{ fontSize: ".8rem", color: "#94a3b8", marginTop: ".2rem", overflowWrap: "break-word" as const, wordBreak: "break-all" as const }}>
                   VP Sales · sarah.chen@momentumanalytics.io · SaaS / Analytics · 38 employees
                 </div>
               </div>
@@ -1060,7 +1077,7 @@ export default function DemoPipelinePage() {
               <div style={{ fontSize: ".7rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", color: "#94a3b8", marginBottom: ".625rem" }}>Initial cold email</div>
               <div style={{ background: "#f8fafc", borderRadius: ".75rem", padding: "1rem 1.125rem", border: "1px solid #f1f5f9" }}>
                 <div style={{ fontSize: ".68rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", color: "#94a3b8", marginBottom: ".3rem" }}>Subject</div>
-                <div style={{ fontSize: ".875rem", fontWeight: 700, color: "#0284c7", marginBottom: ".875rem", background: "#fff", border: "1px solid #e2e8f0", borderRadius: ".375rem", padding: ".4rem .625rem" }}>
+                <div style={{ fontSize: ".875rem", fontWeight: 700, color: "#0284c7", marginBottom: ".875rem", background: "#fff", border: "1px solid #e2e8f0", borderRadius: ".375rem", padding: ".4rem .625rem", overflowWrap: "break-word" as const }}>
                   Re: scaling outbound at Momentum — a shortcut on the research side
                 </div>
                 <div style={{ fontSize: ".68rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", color: "#94a3b8", marginBottom: ".4rem" }}>Body</div>
@@ -1079,7 +1096,7 @@ export default function DemoPipelinePage() {
       </section>
 
       {/* Pricing */}
-      <section id="pricing" style={{ ...sectionStyle, background: "#f8fafc" }}>
+      <section id="pricing" className="ll-section" style={{ ...sectionStyle, background: "#f8fafc" }}>
         <div style={{ ...innerStyle, textAlign: "center" }}>
           <Tag>{copy.pricingTag}</Tag>
           <h2 style={sectionTitleStyle}>{copy.pricingTitle}</h2>
@@ -1093,7 +1110,7 @@ export default function DemoPipelinePage() {
           </div>
 
           {/* Monthly plans coming soon */}
-          <div style={{ marginTop: "3rem", background: "linear-gradient(135deg,#f0f9ff,#e0f2fe)", border: "1px solid #bae6fd", borderRadius: "1.25rem", padding: "2rem 2.5rem", textAlign: "center", maxWidth: "44rem", margin: "3rem auto 0" }}>
+          <div className="ll-monthly-card" style={{ marginTop: "3rem", background: "linear-gradient(135deg,#f0f9ff,#e0f2fe)", border: "1px solid #bae6fd", borderRadius: "1.25rem", padding: "2rem 2.5rem", textAlign: "center", maxWidth: "44rem", margin: "3rem auto 0" }}>
             <span style={{ display: "inline-block", background: "#0ea5e9", color: "#fff", fontSize: ".68rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", padding: ".2rem .75rem", borderRadius: 999, marginBottom: "1rem" }}>
               {copy.monthlyTag}
             </span>
@@ -1104,7 +1121,7 @@ export default function DemoPipelinePage() {
       </section>
 
       {/* Problem — LeadLens blue/white premium */}
-      <section style={{ background: "#eff6ff", padding: "5rem 1.5rem" }}>
+      <section className="ll-problem-sec" style={{ background: "#eff6ff", padding: "5rem 1.5rem" }}>
         <div style={{ ...innerStyle, textAlign: "center" }}>
           <div style={{ display: "inline-block", background: "#dbeafe", color: "#1d4ed8", fontSize: ".75rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".06em", padding: ".25rem .875rem", borderRadius: 999, marginBottom: "1.25rem" }}>
             {copy.problemTag}
@@ -1124,7 +1141,7 @@ export default function DemoPipelinePage() {
       </section>
 
       {/* What you receive */}
-      <section style={{ ...sectionStyle, background: "#fff" }}>
+      <section className="ll-section" style={{ ...sectionStyle, background: "#fff" }}>
         <div style={{ ...innerStyle, textAlign: "center" }}>
           <Tag>{copy.receiveTag}</Tag>
           <h2 style={sectionTitleStyle}>{copy.receiveTitle}</h2>
@@ -1145,7 +1162,7 @@ export default function DemoPipelinePage() {
       </section>
 
       {/* Beta delivery expectations */}
-      <section style={{ ...sectionStyle, background: "#f8fafc" }}>
+      <section className="ll-section" style={{ ...sectionStyle, background: "#f8fafc" }}>
         <div style={{ ...innerStyle, maxWidth: "48rem" }}>
           <div style={{ textAlign: "center", marginBottom: "2rem" }}>
             <Tag>{copy.expectationsTag}</Tag>
@@ -1163,8 +1180,8 @@ export default function DemoPipelinePage() {
       </section>
 
       {/* FAQ */}
-      <section style={{ ...sectionStyle, background: "#fff" }}>
-        <div style={{ maxWidth: "46rem", margin: "0 auto", padding: "0 1.5rem" }}>
+      <section className="ll-section" style={{ ...sectionStyle, background: "#fff" }}>
+        <div className="ll-faq-inner" style={{ maxWidth: "46rem", margin: "0 auto", padding: "0 1.5rem" }}>
           <div style={{ textAlign: "center", marginBottom: "3rem" }}>
             <Tag>{copy.faqTag}</Tag>
             <h2 style={sectionTitleStyle}>{copy.faqTitle}</h2>
@@ -1184,7 +1201,7 @@ export default function DemoPipelinePage() {
       </section>
 
       {/* Final CTA */}
-      <section style={{ background: "linear-gradient(135deg,#0c4a6e 0%,#0284c7 100%)", padding: "5rem 1.5rem" }}>
+      <section className="ll-cta-sec" style={{ background: "linear-gradient(135deg,#0c4a6e 0%,#0284c7 100%)", padding: "5rem 1.5rem" }}>
         <div style={{ maxWidth: "42rem", margin: "0 auto", textAlign: "center" }}>
           <div style={{ display: "inline-block", background: "rgba(255,255,255,.15)", color: "#e0f2fe", fontSize: ".75rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".06em", padding: ".25rem .875rem", borderRadius: 999, marginBottom: "1.25rem" }}>
             {copy.ctaTag}
@@ -1219,7 +1236,7 @@ export default function DemoPipelinePage() {
         <p style={{ color: "#94a3b8", fontSize: ".875rem", marginBottom: ".35rem" }}>
           {copy.footerCopy}
         </p>
-        <p style={{ color: "#94a3b8", fontSize: ".82rem", marginBottom: ".875rem" }}>
+        <p style={{ color: "#94a3b8", fontSize: ".82rem", marginBottom: ".875rem", overflowWrap: "break-word" as const }}>
           {copy.footerContact}
         </p>
         <div style={{ display: "flex", justifyContent: "center", gap: "1.5rem", flexWrap: "wrap" }}>
