@@ -179,6 +179,8 @@ const COPY = {
     ctaTitle: "Ready to fill your pipeline?",
     ctaSub: "One batch. 24–48h delivery. You review every message before sending.",
     ctaCTA: "Start your first batch — $29 →",
+    sampleTabs: ["Email", "LinkedIn DM", "Follow-up 1", "Follow-up 2"],
+    pricePerLead: { starter: "$2.90 / lead", standard: "$1.94 / lead", pro: "$1.64 / lead" },
   },
   es: {
     announcement: "Acceso beta abierto — solicita tu primer lote de leads.",
@@ -353,6 +355,8 @@ const COPY = {
     ctaTitle: "¿Listo para llenar tu pipeline?",
     ctaSub: "Un lote. Entrega en 24–48h. Tú revisas cada mensaje antes de enviarlo.",
     ctaCTA: "Inicia tu primer lote — $29 →",
+    sampleTabs: ["Email", "LinkedIn DM", "Seguimiento 1", "Seguimiento 2"],
+    pricePerLead: { starter: "$2.90 / lead", standard: "$1.94 / lead", pro: "$1.64 / lead" },
   },
   pt: {
     announcement: "Acesso beta aberto — solicite seu primeiro lote de leads.",
@@ -527,6 +531,8 @@ const COPY = {
     ctaTitle: "Pronto para preencher seu pipeline?",
     ctaSub: "Um lote. Entrega em 24–48h. Você revisa cada mensagem antes de enviar.",
     ctaCTA: "Inicie seu primeiro lote — $29 →",
+    sampleTabs: ["Email", "LinkedIn DM", "Follow-up 1", "Follow-up 2"],
+    pricePerLead: { starter: "$2.90 / lead", standard: "$1.94 / lead", pro: "$1.64 / lead" },
   },
   ja: {
     announcement: "ベータ版アクセス公開中 — 最初のリードバッチをリクエストできます。",
@@ -701,6 +707,8 @@ const COPY = {
     ctaTitle: "パイプラインを埋める準備ができましたか？",
     ctaSub: "1回のバッチ。24〜48時間で納品。送信前に全メッセージを確認できます。",
     ctaCTA: "最初のバッチを始める — $29 →",
+    sampleTabs: ["メール", "LinkedIn DM", "フォローアップ 1", "フォローアップ 2"],
+    pricePerLead: { starter: "$2.90 / リード", standard: "$1.94 / リード", pro: "$1.64 / リード" },
   },
 };
 
@@ -881,6 +889,9 @@ export default function DemoPipelinePage() {
         .ll-pricing-grid { display: grid; gap: 1.5rem; max-width: 56rem; margin: 0 auto; align-items: stretch; grid-template-columns: repeat(3, 1fr); }
         @media (max-width: 900px) { .ll-pricing-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 580px) { .ll-pricing-grid { grid-template-columns: 1fr; } }
+        .ll-hero-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 3rem; align-items: center; }
+        @media (max-width: 840px) { .ll-hero-grid { grid-template-columns: 1fr; gap: 2rem; } .ll-hero-left { text-align: center; display: flex; flex-direction: column; align-items: center; } .ll-hero-mock { margin-top: .5rem; width: 100%; } }
+        @media (max-width: 480px) { .ll-hero-mock { overflow: hidden; max-width: 100%; } }
       `}</style>
 
       {/* Announcement bar */}
@@ -912,29 +923,36 @@ export default function DemoPipelinePage() {
 
       {/* Hero */}
       <div style={{ background: "linear-gradient(170deg,#e0f2fe 0%,#f0f9ff 35%,#fff 75%)" }}>
-        <div style={{ maxWidth: "56rem", margin: "0 auto", padding: "5.5rem 1.5rem 5rem", textAlign: "center" }}>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: ".5rem", background: "#fff", border: "1px solid #bae6fd", borderRadius: 999, padding: ".35rem 1rem .35rem .6rem", fontSize: ".8rem", fontWeight: 600, color: "#0284c7", marginBottom: "2rem", boxShadow: "0 2px 8px rgba(14,165,233,.12)" }}>
-            <span style={{ width: ".5rem", height: ".5rem", background: "#16a34a", borderRadius: "50%", display: "inline-block", flexShrink: 0 }} />
-            {copy.heroBadge}
-          </div>
-          <h1 style={{ fontSize: "clamp(2.2rem,5.5vw,3.75rem)", fontWeight: 800, lineHeight: 1.1, marginBottom: "1.5rem", letterSpacing: "-.03em" }}>
-            {copy.heroH1pre}<br />
-            <span style={{ color: "#0ea5e9" }}>{copy.heroH1hi}</span>{copy.heroH1post}
-          </h1>
-          <p style={{ fontSize: "1.15rem", color: "#475569", maxWidth: "37rem", margin: "0 auto 2.75rem", lineHeight: 1.7 }}>
-            {copy.heroSub}
-          </p>
-          <div style={{ display: "flex", flexDirection: "column" as const, alignItems: "center", gap: "1.125rem" }}>
-            <div style={{ display: "flex", gap: ".875rem", flexWrap: "wrap" as const, justifyContent: "center" }}>
-              <Btn lg onClick={() => goToForm("starter")}>{copy.heroCTA}</Btn>
-              <BtnOutline lg onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" })}>{copy.heroSeeAll}</BtnOutline>
+        <div style={{ maxWidth: "74rem", margin: "0 auto", padding: "4.5rem 1.5rem 4rem" }}>
+          <div className="ll-hero-grid">
+            {/* Left column — text + CTAs */}
+            <div className="ll-hero-left">
+              <div style={{ display: "inline-flex", alignItems: "center", gap: ".5rem", background: "#fff", border: "1px solid #bae6fd", borderRadius: 999, padding: ".35rem 1rem .35rem .6rem", fontSize: ".8rem", fontWeight: 600, color: "#0284c7", marginBottom: "1.75rem", boxShadow: "0 2px 8px rgba(14,165,233,.12)" }}>
+                <span style={{ width: ".5rem", height: ".5rem", background: "#16a34a", borderRadius: "50%", display: "inline-block", flexShrink: 0 }} />
+                {copy.heroBadge}
+              </div>
+              <h1 style={{ fontSize: "clamp(2.1rem,4.5vw,3.5rem)", fontWeight: 800, lineHeight: 1.1, marginBottom: "1.25rem", letterSpacing: "-.03em" }}>
+                {copy.heroH1pre}<br />
+                <span style={{ color: "#0ea5e9" }}>{copy.heroH1hi}</span>{copy.heroH1post}
+              </h1>
+              <p style={{ fontSize: "1.1rem", color: "#475569", marginBottom: "2.25rem", lineHeight: 1.7, maxWidth: "34rem" }}>
+                {copy.heroSub}
+              </p>
+              <div style={{ display: "flex", gap: ".875rem", flexWrap: "wrap" as const, marginBottom: "1rem" }}>
+                <Btn lg onClick={() => goToForm("starter")}>{copy.heroCTA}</Btn>
+                <BtnOutline lg onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" })}>{copy.heroSeeAll}</BtnOutline>
+              </div>
+              <p style={{ display: "inline-block", fontSize: ".82rem", color: "#64748b", background: "#f0f9ff", border: "1px solid #e0f2fe", borderRadius: 999, padding: ".375rem 1rem", marginBottom: ".75rem" }}>
+                {copy.heroNote}
+              </p>
+              <button onClick={goToDemo} style={{ display: "block", background: "none", border: "none", color: "#94a3b8", fontSize: ".82rem", cursor: "pointer", textDecoration: "underline", padding: ".25rem 0" }}>
+                {copy.tryDemoCTA} →
+              </button>
             </div>
-            <p style={{ fontSize: ".82rem", color: "#64748b", background: "#f0f9ff", border: "1px solid #e0f2fe", borderRadius: 999, padding: ".375rem 1rem" }}>
-              {copy.heroNote}
-            </p>
-            <button onClick={goToDemo} style={{ background: "none", border: "none", color: "#94a3b8", fontSize: ".82rem", cursor: "pointer", textDecoration: "underline", padding: ".25rem" }}>
-              {copy.tryDemoCTA} →
-            </button>
+            {/* Right column — product mockup */}
+            <div className="ll-hero-mock">
+              <LeadMockupHero />
+            </div>
           </div>
         </div>
       </div>
@@ -983,6 +1001,14 @@ export default function DemoPipelinePage() {
           <p style={{ color: "#64748b", fontSize: "1.05rem", maxWidth: "36rem", margin: "0 auto 3rem", lineHeight: 1.6 }}>
             {copy.samplePreviewSub}
           </p>
+          {/* Decorative message tabs */}
+          <div style={{ display: "flex", gap: ".5rem", flexWrap: "wrap" as const, maxWidth: "52rem", margin: "0 auto 1rem" }}>
+            {copy.sampleTabs.map((tab, i) => (
+              <div key={tab} style={{ padding: ".4rem 1rem", borderRadius: ".625rem", fontSize: ".78rem", fontWeight: 600, background: i === 0 ? "#0ea5e9" : "#f1f5f9", color: i === 0 ? "#fff" : "#64748b", whiteSpace: "nowrap" as const }}>
+                {tab}
+              </div>
+            ))}
+          </div>
           {/* Mock lead card */}
           <div style={{ maxWidth: "52rem", margin: "0 auto", background: "#fff", border: "2px solid #e2e8f0", borderRadius: "1.25rem", overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,.08)", textAlign: "left" }}>
             {/* Card header */}
@@ -997,7 +1023,12 @@ export default function DemoPipelinePage() {
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: ".75rem", flexShrink: 0 }}>
                 <span style={{ padding: ".3rem .875rem", borderRadius: 999, fontSize: ".78rem", fontWeight: 700, background: "#fee2e2", color: "#991b1b" }}>🔥 HOT</span>
-                <span style={{ fontSize: ".9rem", fontWeight: 700, color: "#0284c7" }}>9/10</span>
+                <div style={{ display: "flex", flexDirection: "column" as const, alignItems: "flex-end", gap: ".25rem" }}>
+                  <span style={{ fontSize: ".9rem", fontWeight: 700, color: "#0284c7", lineHeight: 1 }}>9/10</span>
+                  <div style={{ width: "3.5rem", background: "#e0f2fe", borderRadius: 999, height: 5, overflow: "hidden" }}>
+                    <div style={{ background: "#0ea5e9", height: "100%", width: "90%", borderRadius: 999 }} />
+                  </div>
+                </div>
                 <span style={{ fontSize: ".85rem", color: "#16a34a" }}>✅ APPROVED</span>
               </div>
             </div>
@@ -1669,6 +1700,48 @@ function LeadCard({ lead, index, isOpen, onToggle, copy }: {
   );
 }
 
+// ─── Hero product mockup ──────────────────────────────────────────────────────
+
+function LeadMockupHero() {
+  const rows = [
+    { name: "Sarah Chen",   co: "Momentum Analytics", role: "VP Sales",      score: 9, badge: "HOT",  bg: "#fee2e2", color: "#991b1b", trigger: "Hiring 3 SDRs — outbound intent"   },
+    { name: "David Park",   co: "Scalify Inc.",        role: "Head of Growth", score: 8, badge: "HOT",  bg: "#fee2e2", color: "#991b1b", trigger: "Raised Series A — team expanding" },
+    { name: "Maria Santos", co: "CloudBase Pro",       role: "CEO",            score: 7, badge: "WARM", bg: "#fef3c7", color: "#92400e", trigger: "Launched new product line"         },
+  ];
+  return (
+    <div style={{ background: "#fff", border: "1.5px solid #bae6fd", borderRadius: "1.25rem", boxShadow: "0 20px 60px rgba(14,165,233,.12), 0 4px 16px rgba(0,0,0,.06)", overflow: "hidden" }}>
+      {/* Header bar */}
+      <div style={{ background: "linear-gradient(135deg,#075985,#0284c7)", padding: ".75rem 1.25rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <span style={{ color: "#fff", fontWeight: 700, fontSize: ".875rem", letterSpacing: "-.01em" }}>LeadLens Report</span>
+        <span style={{ background: "rgba(255,255,255,.18)", color: "#bae6fd", fontSize: ".68rem", fontWeight: 600, padding: ".2rem .625rem", borderRadius: 999 }}>Preview</span>
+      </div>
+      {/* Lead rows */}
+      {rows.map((r, i) => (
+        <div key={r.name} style={{ padding: ".875rem 1.25rem", borderBottom: i < rows.length - 1 ? "1px solid #f1f5f9" : "none" }}>
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: ".375rem", gap: ".5rem" }}>
+            <div style={{ minWidth: 0 }}>
+              <span style={{ fontWeight: 700, fontSize: ".875rem", color: "#0f172a" }}>{r.name}</span>
+              <span style={{ color: "#94a3b8", fontSize: ".78rem" }}> · {r.co}</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: ".5rem", flexShrink: 0 }}>
+              <span style={{ padding: ".2rem .625rem", borderRadius: 999, fontSize: ".7rem", fontWeight: 700, background: r.bg, color: r.color }}>{r.badge}</span>
+              <span style={{ fontSize: ".78rem", fontWeight: 700, color: "#0284c7" }}>{r.score}/10</span>
+            </div>
+          </div>
+          <div style={{ background: "#e0f2fe", borderRadius: 999, height: 4, marginBottom: ".35rem", overflow: "hidden" }}>
+            <div style={{ background: "#0ea5e9", height: "100%", width: `${r.score * 10}%`, borderRadius: 999 }} />
+          </div>
+          <div style={{ fontSize: ".75rem", color: "#64748b" }}>{r.role} · {r.trigger}</div>
+        </div>
+      ))}
+      {/* Footer */}
+      <div style={{ padding: ".625rem 1.25rem", background: "#f8fafc", borderTop: "1px solid #f1f5f9", fontSize: ".72rem", color: "#94a3b8" }}>
+        Email · LinkedIn DM · 2 Follow-ups per lead
+      </div>
+    </div>
+  );
+}
+
 // ─── Pricing card ─────────────────────────────────────────────────────────────
 
 function PricingCard({ plan, featured, copy, onSelect }: {
@@ -1711,8 +1784,11 @@ function PricingCard({ plan, featured, copy, onSelect }: {
         <div style={{ fontSize: ".72rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".08em", color: featured ? "#0284c7" : "#94a3b8", marginBottom: ".625rem" }}>
           {copy.planNames[plan]}
         </div>
-        <div style={{ display: "flex", alignItems: "baseline", gap: ".25rem", marginBottom: ".375rem" }}>
+        <div style={{ display: "flex", alignItems: "baseline", gap: ".25rem", marginBottom: ".2rem" }}>
           <span style={{ fontSize: "2.75rem", fontWeight: 800, letterSpacing: "-.03em", lineHeight: 1, color: "#0f172a" }}>{p.price}</span>
+        </div>
+        <div style={{ fontSize: ".72rem", color: "#94a3b8", marginBottom: ".5rem", letterSpacing: "-.01em" }}>
+          {copy.pricePerLead[plan]}
         </div>
         <div style={{ fontSize: ".875rem", color: "#64748b", lineHeight: 1.45, marginBottom: ".875rem" }}>{copy.planDescs[plan]}</div>
         <div style={{ display: "inline-block", fontSize: ".7rem", fontWeight: 600, color: "#64748b", background: "#f1f5f9", borderRadius: ".375rem", padding: "3px 10px" }}>
