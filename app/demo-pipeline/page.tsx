@@ -890,7 +890,7 @@ export default function DemoPipelinePage() {
         @media (max-width: 900px) { .ll-pricing-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 580px) { .ll-pricing-grid { grid-template-columns: 1fr; gap: 1.25rem; padding-top: .875rem; } }
         .ll-hero-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 3rem; align-items: center; }
-        @media (max-width: 840px) { .ll-hero-grid { grid-template-columns: 1fr; gap: 2rem; } .ll-hero-left { text-align: center; display: flex; flex-direction: column; align-items: center; } .ll-hero-mock { margin-top: .5rem; width: 100%; } }
+        @media (max-width: 840px) { .ll-hero-grid { grid-template-columns: 1fr; gap: 1.5rem; } .ll-hero-left { text-align: center; display: flex; flex-direction: column; align-items: center; } .ll-hero-mock { margin-top: 0; width: 100%; } }
         @media (max-width: 480px) { .ll-hero-mock { overflow: hidden; max-width: 100%; } }
         @media (max-width: 520px) { .ll-nav-pricing { display: none; } .ll-nav-r { gap: .75rem !important; } }
         @media (max-width: 600px) {
@@ -905,9 +905,30 @@ export default function DemoPipelinePage() {
           .ll-section { padding: 3rem 1rem !important; }
           .ll-problem-sec { padding: 3rem 1rem !important; }
           .ll-cta-sec { padding: 3.5rem 1rem !important; }
-          .ll-hero-outer { padding: 2.5rem 1rem 2rem !important; }
+          .ll-hero-outer { padding: 2rem 1rem 1.75rem !important; }
           .ll-faq-inner { padding: 0 1rem !important; }
           .ll-monthly-card { padding: 1.5rem 1.125rem !important; }
+          /* Hero text */
+          .ll-hero-badge  { margin-bottom: 1rem !important; font-size: .75rem !important; padding: .3rem .875rem .3rem .55rem !important; }
+          .ll-hero-h1     { font-size: 1.875rem !important; line-height: 1.15 !important; letter-spacing: -.02em !important; margin-bottom: .875rem !important; }
+          .ll-hero-sub    { font-size: .9375rem !important; line-height: 1.6 !important; margin-bottom: 1.25rem !important; }
+          .ll-hero-cta-row { flex-direction: column !important; gap: .575rem !important; margin-bottom: .75rem !important; }
+          .ll-hero-cta-row button { width: 100% !important; justify-content: center !important; box-sizing: border-box !important; padding-left: 1rem !important; padding-right: 1rem !important; }
+          .ll-hero-note   { font-size: .775rem !important; padding: .3rem .875rem !important; margin-bottom: .5rem !important; }
+          .ll-hero-demo-link { font-size: .8rem !important; }
+          /* Mockup compact */
+          .ll-mock-hdr    { padding: .65rem .9rem !important; }
+          .ll-mock-metrics { display: none !important; }
+          .ll-mock-row    { padding: .75rem .9rem !important; }
+          .ll-mock-row-last { display: none !important; }
+          .ll-mock-footer { padding: .5rem .9rem !important; gap: .3rem !important; }
+        }
+        @media (max-width: 430px) {
+          .ll-hero-h1  { font-size: 1.75rem !important; }
+          .ll-hero-sub { font-size: .9rem !important; }
+        }
+        @media (max-width: 375px) {
+          .ll-hero-h1  { font-size: 1.625rem !important; }
         }
       `}</style>
 
@@ -944,25 +965,25 @@ export default function DemoPipelinePage() {
           <div className="ll-hero-grid">
             {/* Left column — text + CTAs */}
             <div className="ll-hero-left">
-              <div style={{ display: "inline-flex", alignItems: "center", gap: ".5rem", background: "#fff", border: "1px solid #bae6fd", borderRadius: 999, padding: ".35rem 1rem .35rem .6rem", fontSize: ".8rem", fontWeight: 600, color: "#0284c7", marginBottom: "1.75rem", boxShadow: "0 2px 8px rgba(14,165,233,.12)" }}>
+              <div className="ll-hero-badge" style={{ display: "inline-flex", alignItems: "center", gap: ".5rem", background: "#fff", border: "1px solid #bae6fd", borderRadius: 999, padding: ".35rem 1rem .35rem .6rem", fontSize: ".8rem", fontWeight: 600, color: "#0284c7", marginBottom: "1.75rem", boxShadow: "0 2px 8px rgba(14,165,233,.12)" }}>
                 <span style={{ width: ".5rem", height: ".5rem", background: "#16a34a", borderRadius: "50%", display: "inline-block", flexShrink: 0 }} />
                 {copy.heroBadge}
               </div>
-              <h1 style={{ fontSize: "clamp(2.1rem,4.5vw,3.5rem)", fontWeight: 800, lineHeight: 1.1, marginBottom: "1.25rem", letterSpacing: "-.03em" }}>
+              <h1 className="ll-hero-h1" style={{ fontSize: "clamp(2.1rem,4.5vw,3.5rem)", fontWeight: 800, lineHeight: 1.1, marginBottom: "1.25rem", letterSpacing: "-.03em" }}>
                 {copy.heroH1pre}<br />
                 <span style={{ color: "#0ea5e9" }}>{copy.heroH1hi}</span>{copy.heroH1post}
               </h1>
-              <p style={{ fontSize: "1.1rem", color: "#475569", marginBottom: "2.25rem", lineHeight: 1.7, maxWidth: "34rem" }}>
+              <p className="ll-hero-sub" style={{ fontSize: "1.1rem", color: "#475569", marginBottom: "2.25rem", lineHeight: 1.7, maxWidth: "34rem" }}>
                 {copy.heroSub}
               </p>
-              <div style={{ display: "flex", gap: ".875rem", flexWrap: "wrap" as const, marginBottom: "1rem" }}>
+              <div className="ll-hero-cta-row" style={{ display: "flex", gap: ".875rem", flexWrap: "wrap" as const, marginBottom: "1rem" }}>
                 <Btn lg onClick={() => goToForm("starter")}>{copy.heroCTA}</Btn>
                 <BtnOutline lg onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" })}>{copy.heroSeeAll}</BtnOutline>
               </div>
-              <p style={{ display: "inline-block", fontSize: ".82rem", color: "#64748b", background: "#f0f9ff", border: "1px solid #e0f2fe", borderRadius: 999, padding: ".375rem 1rem", marginBottom: ".75rem" }}>
+              <p className="ll-hero-note" style={{ display: "inline-block", fontSize: ".82rem", color: "#64748b", background: "#f0f9ff", border: "1px solid #e0f2fe", borderRadius: 999, padding: ".375rem 1rem", marginBottom: ".75rem" }}>
                 {copy.heroNote}
               </p>
-              <button onClick={goToDemo} style={{ display: "block", background: "none", border: "none", color: "#94a3b8", fontSize: ".82rem", cursor: "pointer", textDecoration: "underline", padding: ".25rem 0" }}>
+              <button className="ll-hero-demo-link" onClick={goToDemo} style={{ display: "block", background: "none", border: "none", color: "#94a3b8", fontSize: ".82rem", cursor: "pointer", textDecoration: "underline", padding: ".25rem 0" }}>
                 {copy.tryDemoCTA} →
               </button>
             </div>
@@ -1737,7 +1758,7 @@ function LeadMockupHero() {
     <div style={{ background: "#fff", border: "1px solid #e0f2fe", borderRadius: "1rem", boxShadow: "0 24px 64px rgba(14,165,233,.10), 0 4px 20px rgba(0,0,0,.06), 0 1px 4px rgba(0,0,0,.04)", overflow: "hidden" }}>
 
       {/* ── Header ── */}
-      <div style={{ background: "linear-gradient(180deg,#f0f9ff 0%,#fff 100%)", borderBottom: "1px solid #e0f2fe", padding: ".75rem 1.125rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: ".75rem" }}>
+      <div className="ll-mock-hdr" style={{ background: "linear-gradient(180deg,#f0f9ff 0%,#fff 100%)", borderBottom: "1px solid #e0f2fe", padding: ".75rem 1.125rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: ".75rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: ".5rem" }}>
           <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#22c55e", boxShadow: "0 0 0 2px #dcfce7", flexShrink: 0 }} />
           <span style={{ fontWeight: 700, fontSize: ".8rem", color: "#0f172a", letterSpacing: "-.01em" }}>LeadLens Report</span>
@@ -1747,7 +1768,7 @@ function LeadMockupHero() {
       </div>
 
       {/* ── Metrics strip ── */}
-      <div style={{ padding: ".5rem 1.125rem", background: "#f8fafc", borderBottom: "1px solid #f1f5f9", display: "flex", gap: ".375rem", flexWrap: "wrap" as const }}>
+      <div className="ll-mock-metrics" style={{ padding: ".5rem 1.125rem", background: "#f8fafc", borderBottom: "1px solid #f1f5f9", display: "flex", gap: ".375rem", flexWrap: "wrap" as const }}>
         {metrics.map(m => (
           <div key={m.label} style={{ display: "flex", alignItems: "center", gap: ".3rem", background: m.bg, border: `1px solid ${m.border}`, borderRadius: ".375rem", padding: ".2rem .55rem" }}>
             <span style={{ fontWeight: 700, fontSize: ".72rem", color: m.color }}>{m.val}</span>
@@ -1758,7 +1779,7 @@ function LeadMockupHero() {
 
       {/* ── Lead rows ── */}
       {rows.map((r, i) => (
-        <div key={r.name} style={{ padding: ".875rem 1.125rem", borderBottom: i < rows.length - 1 ? "1px solid #f8fafc" : "none", background: "#fff" }}>
+        <div key={r.name} className={`ll-mock-row${i === rows.length - 1 ? " ll-mock-row-last" : ""}`} style={{ padding: ".875rem 1.125rem", borderBottom: i < rows.length - 1 ? "1px solid #f8fafc" : "none", background: "#fff" }}>
           {/* Name + badge + score */}
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: ".5rem", marginBottom: ".3rem" }}>
             <div style={{ minWidth: 0 }}>
@@ -1790,7 +1811,7 @@ function LeadMockupHero() {
       ))}
 
       {/* ── Delivery strip ── */}
-      <div style={{ padding: ".575rem 1.125rem", background: "#f8fafc", borderTop: "1px solid #f1f5f9", display: "flex", gap: ".325rem", flexWrap: "wrap" as const, alignItems: "center" }}>
+      <div className="ll-mock-footer" style={{ padding: ".575rem 1.125rem", background: "#f8fafc", borderTop: "1px solid #f1f5f9", display: "flex", gap: ".325rem", flexWrap: "wrap" as const, alignItems: "center" }}>
         {delivery.map(label => (
           <span key={label} style={{ fontSize: ".63rem", fontWeight: 600, color: "#0284c7", background: "#f0f9ff", border: "1px solid #e0f2fe", borderRadius: ".3rem", padding: ".175rem .475rem" }}>
             {label}
