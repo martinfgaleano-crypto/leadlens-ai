@@ -890,7 +890,7 @@ export default function DemoPipelinePage() {
         @media (max-width: 900px) { .ll-pricing-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 580px) { .ll-pricing-grid { grid-template-columns: 1fr; gap: 1.25rem; padding-top: .875rem; } }
         .ll-hero-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 3rem; align-items: center; }
-        @media (max-width: 840px) { .ll-hero-grid { grid-template-columns: 1fr; gap: 1.5rem; } .ll-hero-left { text-align: center; display: flex; flex-direction: column; align-items: center; } .ll-hero-mock { margin-top: 0; width: 100%; } }
+        @media (max-width: 840px) { .ll-hero-grid { grid-template-columns: 1fr; gap: 1.25rem; } .ll-hero-left { text-align: center; display: flex; flex-direction: column; align-items: center; } .ll-hero-mock { margin-top: 0; width: 100%; } }
         @media (max-width: 480px) { .ll-hero-mock { overflow: hidden; max-width: 100%; } }
         @media (max-width: 520px) { .ll-nav-pricing { display: none; } .ll-nav-r { gap: .75rem !important; } }
         @media (max-width: 600px) {
@@ -901,34 +901,36 @@ export default function DemoPipelinePage() {
           .ll-proof-label { white-space: normal !important; text-align: center; font-size: .72rem; }
           .ll-proof-val { font-size: 1.375rem !important; }
         }
+        /* Desktop: show full mockup, hide mobile card */
+        .ll-hero-mock-desktop { display: block; }
+        .ll-hero-mock-mobile  { display: none; }
         @media (max-width: 640px) {
+          /* Sections */
           .ll-section { padding: 3rem 1rem !important; }
           .ll-problem-sec { padding: 3rem 1rem !important; }
           .ll-cta-sec { padding: 3.5rem 1rem !important; }
-          .ll-hero-outer { padding: 2rem 1rem 1.75rem !important; }
+          .ll-hero-outer { padding: 1.75rem 1rem 1.5rem !important; }
           .ll-faq-inner { padding: 0 1rem !important; }
           .ll-monthly-card { padding: 1.5rem 1.125rem !important; }
           /* Hero text */
-          .ll-hero-badge  { margin-bottom: 1rem !important; font-size: .75rem !important; padding: .3rem .875rem .3rem .55rem !important; }
-          .ll-hero-h1     { font-size: 1.875rem !important; line-height: 1.15 !important; letter-spacing: -.02em !important; margin-bottom: .875rem !important; }
-          .ll-hero-sub    { font-size: .9375rem !important; line-height: 1.6 !important; margin-bottom: 1.25rem !important; }
-          .ll-hero-cta-row { flex-direction: column !important; gap: .575rem !important; margin-bottom: .75rem !important; }
+          .ll-hero-badge   { margin-bottom: .875rem !important; font-size: .74rem !important; padding: .3rem .875rem .3rem .55rem !important; }
+          .ll-hero-h1      { font-size: 1.875rem !important; line-height: 1.15 !important; letter-spacing: -.02em !important; margin-bottom: .75rem !important; }
+          .ll-hero-sub     { font-size: .9rem !important; line-height: 1.55 !important; margin-bottom: 1rem !important; }
+          .ll-hero-cta-row { flex-direction: column !important; gap: .5rem !important; margin-bottom: .75rem !important; }
           .ll-hero-cta-row button { width: 100% !important; justify-content: center !important; box-sizing: border-box !important; padding-left: 1rem !important; padding-right: 1rem !important; }
-          .ll-hero-note   { font-size: .775rem !important; padding: .3rem .875rem !important; margin-bottom: .5rem !important; }
-          .ll-hero-demo-link { font-size: .8rem !important; }
-          /* Mockup compact */
-          .ll-mock-hdr    { padding: .65rem .9rem !important; }
-          .ll-mock-metrics { display: none !important; }
-          .ll-mock-row    { padding: .75rem .9rem !important; }
-          .ll-mock-row-last { display: none !important; }
-          .ll-mock-footer { padding: .5rem .9rem !important; gap: .3rem !important; }
+          .ll-hero-note    { font-size: .75rem !important; padding: .275rem .875rem !important; margin-bottom: .4rem !important; }
+          .ll-hero-demo-link { font-size: .78rem !important; }
+          /* Swap mockups */
+          .ll-hero-mock-desktop { display: none !important; }
+          .ll-hero-mock-mobile  { display: block !important; }
         }
         @media (max-width: 430px) {
           .ll-hero-h1  { font-size: 1.75rem !important; }
-          .ll-hero-sub { font-size: .9rem !important; }
+          .ll-hero-sub { font-size: .875rem !important; }
         }
         @media (max-width: 375px) {
           .ll-hero-h1  { font-size: 1.625rem !important; }
+          .ll-hero-sub { font-size: .85rem !important; }
         }
       `}</style>
 
@@ -987,9 +989,10 @@ export default function DemoPipelinePage() {
                 {copy.tryDemoCTA} →
               </button>
             </div>
-            {/* Right column — product mockup */}
+            {/* Right column — product mockup (desktop) / preview card (mobile) */}
             <div className="ll-hero-mock">
-              <LeadMockupHero />
+              <div className="ll-hero-mock-desktop"><LeadMockupHero /></div>
+              <div className="ll-hero-mock-mobile"><LeadMockupMobile /></div>
             </div>
           </div>
         </div>
@@ -1816,6 +1819,56 @@ function LeadMockupHero() {
           <span key={label} style={{ fontSize: ".63rem", fontWeight: 600, color: "#0284c7", background: "#f0f9ff", border: "1px solid #e0f2fe", borderRadius: ".3rem", padding: ".175rem .475rem" }}>
             {label}
           </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── Mobile hero preview card (replaces full mockup on small screens) ─────────
+
+function LeadMockupMobile() {
+  const leads = [
+    { name: "Sarah C.", co: "Momentum Analytics", role: "VP Sales",       score: 92, badge: "HOT",  badgeBg: "#fef2f2", badgeColor: "#b91c1c", badgeBorder: "#fecaca" },
+    { name: "David P.", co: "Scalify Inc.",        role: "Head of Growth", score: 86, badge: "HOT",  badgeBg: "#fef2f2", badgeColor: "#b91c1c", badgeBorder: "#fecaca" },
+    { name: "Maria S.", co: "CloudBase Pro",       role: "CEO",            score: 74, badge: "WARM", badgeBg: "#fffbeb", badgeColor: "#92400e", badgeBorder: "#fde68a" },
+  ];
+  const chips = ["Email ✓", "LinkedIn DM ✓", "CSV + MD ✓", "QC reviewed ✓"];
+
+  return (
+    <div style={{ background: "#fff", border: "1px solid #e0f2fe", borderRadius: "1rem", boxShadow: "0 8px 28px rgba(14,165,233,.08), 0 2px 8px rgba(0,0,0,.04)", overflow: "hidden" }}>
+      {/* Header */}
+      <div style={{ background: "linear-gradient(180deg,#f0f9ff,#fff)", borderBottom: "1px solid #e0f2fe", padding: ".6rem 1rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: ".4rem" }}>
+          <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e", boxShadow: "0 0 0 2px #dcfce7", flexShrink: 0 }} />
+          <span style={{ fontWeight: 700, fontSize: ".78rem", color: "#0f172a", letterSpacing: "-.01em" }}>LeadLens Report</span>
+          <span style={{ fontSize: ".68rem", color: "#94a3b8" }}>· 3 qualified leads</span>
+        </div>
+        <span style={{ fontSize: ".6rem", fontWeight: 700, letterSpacing: ".05em", textTransform: "uppercase" as const, background: "#eff6ff", border: "1px solid #bfdbfe", color: "#3b82f6", padding: ".15rem .475rem", borderRadius: 999 }}>Preview</span>
+      </div>
+
+      {/* Lead rows */}
+      {leads.map((r, i) => (
+        <div key={r.name} style={{ padding: ".6rem 1rem", borderBottom: i < leads.length - 1 ? "1px solid #f8fafc" : "none", display: "flex", alignItems: "center", justifyContent: "space-between", gap: ".5rem" }}>
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontWeight: 700, fontSize: ".8rem", color: "#0f172a", lineHeight: 1.2 }}>{r.name}</div>
+            <div style={{ fontSize: ".68rem", marginTop: ".1rem", color: "#64748b" }}>
+              <span style={{ color: "#0284c7", fontWeight: 600 }}>{r.co}</span>{" · "}{r.role}
+            </div>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: ".375rem", flexShrink: 0 }}>
+            <span style={{ fontSize: ".6rem", fontWeight: 700, letterSpacing: ".04em", background: r.badgeBg, color: r.badgeColor, border: `1px solid ${r.badgeBorder}`, borderRadius: ".3rem", padding: ".13rem .38rem" }}>{r.badge}</span>
+            <span style={{ fontSize: ".72rem", fontWeight: 800, color: "#0284c7", letterSpacing: "-.01em" }}>
+              {r.score}<span style={{ fontSize: ".58rem", fontWeight: 400, color: "#94a3b8" }}> fit</span>
+            </span>
+          </div>
+        </div>
+      ))}
+
+      {/* Delivery chips */}
+      <div style={{ padding: ".5rem 1rem", background: "#f8fafc", borderTop: "1px solid #f1f5f9", display: "flex", gap: ".3rem", flexWrap: "wrap" as const }}>
+        {chips.map(c => (
+          <span key={c} style={{ fontSize: ".6rem", fontWeight: 600, color: "#0284c7", background: "#f0f9ff", border: "1px solid #e0f2fe", borderRadius: ".3rem", padding: ".15rem .4rem" }}>{c}</span>
         ))}
       </div>
     </div>
