@@ -1721,39 +1721,81 @@ function LeadCard({ lead, index, isOpen, onToggle, copy }: {
 
 function LeadMockupHero() {
   const rows = [
-    { name: "Sarah Chen",   co: "Momentum Analytics", role: "VP Sales",      score: 9, badge: "HOT",  bg: "#fee2e2", color: "#991b1b", trigger: "Hiring 3 SDRs — outbound intent"   },
-    { name: "David Park",   co: "Scalify Inc.",        role: "Head of Growth", score: 8, badge: "HOT",  bg: "#fee2e2", color: "#991b1b", trigger: "Raised Series A — team expanding" },
-    { name: "Maria Santos", co: "CloudBase Pro",       role: "CEO",            score: 7, badge: "WARM", bg: "#fef3c7", color: "#92400e", trigger: "Launched new product line"         },
+    { name: "Sarah Chen",   co: "Momentum Analytics", role: "VP Sales",       score: 92, badge: "HOT",  badgeBg: "#fef2f2", badgeColor: "#b91c1c", badgeBorder: "#fecaca", barColor: "#ef4444", trigger: "Hiring 3 SDRs — outbound intent"   },
+    { name: "David Park",   co: "Scalify Inc.",        role: "Head of Growth", score: 86, badge: "HOT",  badgeBg: "#fef2f2", badgeColor: "#b91c1c", badgeBorder: "#fecaca", barColor: "#ef4444", trigger: "Raised Series A — team expanding" },
+    { name: "Maria Santos", co: "CloudBase Pro",       role: "CEO",            score: 74, badge: "WARM", badgeBg: "#fffbeb", badgeColor: "#92400e", badgeBorder: "#fde68a", barColor: "#f59e0b", trigger: "Launched new product line"         },
   ];
+  const metrics = [
+    { val: "3",   label: "HOT",    bg: "#fef2f2", color: "#b91c1c", border: "#fecaca" },
+    { val: "4",   label: "WARM",   bg: "#fffbeb", color: "#92400e", border: "#fde68a" },
+    { val: "2",   label: "REVIEW", bg: "#f1f5f9", color: "#475569", border: "#e2e8f0" },
+    { val: "9.1", label: "avg fit",bg: "#f0f9ff", color: "#0284c7", border: "#bae6fd" },
+  ];
+  const delivery = ["Email draft ✓", "LinkedIn DM ✓", "2 follow-ups ✓", "QC reviewed ✓"];
+
   return (
-    <div style={{ background: "#fff", border: "1.5px solid #bae6fd", borderRadius: "1.25rem", boxShadow: "0 20px 60px rgba(14,165,233,.12), 0 4px 16px rgba(0,0,0,.06)", overflow: "hidden" }}>
-      {/* Header bar */}
-      <div style={{ background: "linear-gradient(135deg,#075985,#0284c7)", padding: ".75rem 1.25rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <span style={{ color: "#fff", fontWeight: 700, fontSize: ".875rem", letterSpacing: "-.01em" }}>LeadLens Report</span>
-        <span style={{ background: "rgba(255,255,255,.18)", color: "#bae6fd", fontSize: ".68rem", fontWeight: 600, padding: ".2rem .625rem", borderRadius: 999 }}>Preview</span>
+    <div style={{ background: "#fff", border: "1px solid #e0f2fe", borderRadius: "1rem", boxShadow: "0 24px 64px rgba(14,165,233,.10), 0 4px 20px rgba(0,0,0,.06), 0 1px 4px rgba(0,0,0,.04)", overflow: "hidden" }}>
+
+      {/* ── Header ── */}
+      <div style={{ background: "linear-gradient(180deg,#f0f9ff 0%,#fff 100%)", borderBottom: "1px solid #e0f2fe", padding: ".75rem 1.125rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: ".75rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: ".5rem" }}>
+          <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#22c55e", boxShadow: "0 0 0 2px #dcfce7", flexShrink: 0 }} />
+          <span style={{ fontWeight: 700, fontSize: ".8rem", color: "#0f172a", letterSpacing: "-.01em" }}>LeadLens Report</span>
+          <span style={{ fontSize: ".72rem", color: "#94a3b8", fontWeight: 400 }}>· Qualified batch</span>
+        </div>
+        <span style={{ background: "#eff6ff", border: "1px solid #bfdbfe", color: "#3b82f6", fontSize: ".62rem", fontWeight: 700, letterSpacing: ".05em", textTransform: "uppercase" as const, padding: ".175rem .55rem", borderRadius: 999 }}>Preview</span>
       </div>
-      {/* Lead rows */}
+
+      {/* ── Metrics strip ── */}
+      <div style={{ padding: ".5rem 1.125rem", background: "#f8fafc", borderBottom: "1px solid #f1f5f9", display: "flex", gap: ".375rem", flexWrap: "wrap" as const }}>
+        {metrics.map(m => (
+          <div key={m.label} style={{ display: "flex", alignItems: "center", gap: ".3rem", background: m.bg, border: `1px solid ${m.border}`, borderRadius: ".375rem", padding: ".2rem .55rem" }}>
+            <span style={{ fontWeight: 700, fontSize: ".72rem", color: m.color }}>{m.val}</span>
+            <span style={{ fontSize: ".63rem", fontWeight: 500, color: m.color, opacity: .75 }}>{m.label}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* ── Lead rows ── */}
       {rows.map((r, i) => (
-        <div key={r.name} style={{ padding: ".875rem 1.25rem", borderBottom: i < rows.length - 1 ? "1px solid #f1f5f9" : "none" }}>
-          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: ".375rem", gap: ".5rem" }}>
+        <div key={r.name} style={{ padding: ".875rem 1.125rem", borderBottom: i < rows.length - 1 ? "1px solid #f8fafc" : "none", background: "#fff" }}>
+          {/* Name + badge + score */}
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: ".5rem", marginBottom: ".3rem" }}>
             <div style={{ minWidth: 0 }}>
-              <span style={{ fontWeight: 700, fontSize: ".875rem", color: "#0f172a" }}>{r.name}</span>
-              <span style={{ color: "#94a3b8", fontSize: ".78rem" }}> · {r.co}</span>
+              <div style={{ fontWeight: 700, fontSize: ".875rem", color: "#0f172a", lineHeight: 1.3 }}>{r.name}</div>
+              <div style={{ fontSize: ".73rem", marginTop: ".1rem" }}>
+                <span style={{ color: "#0284c7", fontWeight: 600 }}>{r.co}</span>
+                <span style={{ color: "#cbd5e1" }}> · </span>
+                <span style={{ color: "#64748b" }}>{r.role}</span>
+              </div>
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: ".5rem", flexShrink: 0 }}>
-              <span style={{ padding: ".2rem .625rem", borderRadius: 999, fontSize: ".7rem", fontWeight: 700, background: r.bg, color: r.color }}>{r.badge}</span>
-              <span style={{ fontSize: ".78rem", fontWeight: 700, color: "#0284c7" }}>{r.score}/10</span>
+            <div style={{ display: "flex", flexDirection: "column" as const, alignItems: "flex-end", gap: ".2rem", flexShrink: 0 }}>
+              <span style={{ padding: ".15rem .45rem", borderRadius: ".3rem", fontSize: ".62rem", fontWeight: 700, letterSpacing: ".04em", background: r.badgeBg, color: r.badgeColor, border: `1px solid ${r.badgeBorder}` }}>{r.badge}</span>
+              <span style={{ fontSize: ".77rem", fontWeight: 800, color: "#0284c7", letterSpacing: "-.01em", lineHeight: 1 }}>
+                {r.score}<span style={{ fontSize: ".58rem", fontWeight: 500, color: "#94a3b8" }}> fit</span>
+              </span>
             </div>
           </div>
-          <div style={{ background: "#e0f2fe", borderRadius: 999, height: 4, marginBottom: ".35rem", overflow: "hidden" }}>
-            <div style={{ background: "#0ea5e9", height: "100%", width: `${r.score * 10}%`, borderRadius: 999 }} />
+          {/* Score bar — 2px, subtle */}
+          <div style={{ background: "#f1f5f9", borderRadius: 999, height: 2, margin: ".35rem 0", overflow: "hidden" }}>
+            <div style={{ background: r.barColor, height: "100%", width: `${r.score}%`, borderRadius: 999, opacity: .7 }} />
           </div>
-          <div style={{ fontSize: ".75rem", color: "#64748b" }}>{r.role} · {r.trigger}</div>
+          {/* Trigger chip */}
+          <div>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: ".275rem", background: "#f0f9ff", border: "1px solid #e0f2fe", borderRadius: ".375rem", padding: ".175rem .5rem", fontSize: ".67rem", color: "#0369a1", fontWeight: 500 }}>
+              <span style={{ color: "#0ea5e9", fontSize: ".65rem" }}>⚡</span>{r.trigger}
+            </span>
+          </div>
         </div>
       ))}
-      {/* Footer */}
-      <div style={{ padding: ".625rem 1.25rem", background: "#f8fafc", borderTop: "1px solid #f1f5f9", fontSize: ".72rem", color: "#94a3b8" }}>
-        Email · LinkedIn DM · 2 Follow-ups per lead
+
+      {/* ── Delivery strip ── */}
+      <div style={{ padding: ".575rem 1.125rem", background: "#f8fafc", borderTop: "1px solid #f1f5f9", display: "flex", gap: ".325rem", flexWrap: "wrap" as const, alignItems: "center" }}>
+        {delivery.map(label => (
+          <span key={label} style={{ fontSize: ".63rem", fontWeight: 600, color: "#0284c7", background: "#f0f9ff", border: "1px solid #e0f2fe", borderRadius: ".3rem", padding: ".175rem .475rem" }}>
+            {label}
+          </span>
+        ))}
       </div>
     </div>
   );
