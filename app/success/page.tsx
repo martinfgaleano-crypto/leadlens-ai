@@ -82,9 +82,12 @@ function SuccessContent() {
           lineHeight: 1.55,
           textAlign: "left",
         }}>
-          <strong>What happens next:</strong> your report is prepared manually
-          and reviewed before delivery. You will receive it at the email you
-          provided. Nothing is sent automatically on your behalf.
+          <strong>What happens next:</strong>
+          <ol style={{ margin: ".5rem 0 0", paddingLeft: "1.25rem", lineHeight: 1.7 }}>
+            <li>We&apos;ll email you within a few hours to collect your targeting details (ICP brief).</li>
+            <li>Once we receive your brief, we&apos;ll prepare your report within 24–48 hours.</li>
+            <li>You&apos;ll receive a CSV + Markdown report — all outreach sequences are drafts for your review. Nothing is sent on your behalf automatically.</li>
+          </ol>
         </div>
 
         <a

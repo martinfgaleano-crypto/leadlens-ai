@@ -3,6 +3,9 @@
 This document describes the exact steps to go from Lemon Squeezy approval to accepting real
 payments and delivering the first batch reports.
 
+> **First customer?** See the complete step-by-step guide: [FIRST_CUSTOMER_OPERATIONS.md](FIRST_CUSTOMER_OPERATIONS.md)  
+> It covers: order confirmation, customer intake, pipeline run, QA checklist, delivery templates (EN/ES), refund handling, and order tracking.
+
 ---
 
 ## PHASE A — Lemon Squeezy activation
@@ -67,73 +70,46 @@ Complete one test order (refund yourself afterward if needed) to confirm:
 
 ## PHASE B — First real order
 
+> Full step-by-step detail in [FIRST_CUSTOMER_OPERATIONS.md](FIRST_CUSTOMER_OPERATIONS.md). This section is a quick reference.
+
 When you receive the first order notification from Lemon Squeezy:
 
 ### B1. Confirm the order details
 - Plan purchased (Starter / Standard / Pro)
-- Customer email
+- Customer email and name
 - Order ID / reference number
-- Save these in a simple order log (spreadsheet is fine)
+- Log in your order tracking table (see FIRST_CUSTOMER_OPERATIONS.md §11)
 
-### B2. Run the LeadLens pipeline
+### B2. Send intake email within 2 hours
 
-Go to the local dev environment or the Vercel demo:
+**Do not start the pipeline without the customer's targeting brief.**  
+Send the post-payment intake email (EN or ES template in FIRST_CUSTOMER_OPERATIONS.md §5).  
+Required fields: company, offer, buyer titles, industry, geography, company size, examples, tone, language.
 
+### B3. Run the pipeline (after receiving complete brief)
+
+Use **hybrid mode** for paying customers:
 ```bash
-# Locally (with DEMO_MODE=false + ANTHROPIC_API_KEY set):
 DEMO_MODE=false
 ANTHROPIC_API_KEY=sk-ant-...
-ALLOW_MOCK_LEADS_WITH_REAL_AI=false  # use real leads when Apollo is connected
-# or:
-ALLOW_MOCK_LEADS_WITH_REAL_AI=true   # hybrid mode until Apollo is connected
+ALLOW_MOCK_LEADS_WITH_REAL_AI=true   # hybrid: mock leads + real AI outreach
 ```
 
-Fill in the onboarding form with the customer's business details (you may need to
-email them to collect this info if you don't have a form intake yet).
+Run via local form at `http://localhost:3000/demo-pipeline` or via `POST /api/process`.
 
-Run the pipeline → generate report.
+### B4. QA before delivery
 
-### B3. Review output manually
+Run the full QA checklist (FIRST_CUSTOMER_OPERATIONS.md §7) — mandatory, no exceptions.
 
-Before sending:
-- Read the executive summary
-- Check 3–5 lead cards for ICP fit
-- Verify email copy has no hard claims ("guaranteed meetings", revenue promises)
-- Verify outreach is written in appropriate language/tone
-- Fix any obvious errors in the Markdown export
+### B5. Export and deliver
 
-### B4. Export and deliver
+- Download CSV (`POST /api/report?format=csv`)
+- Download Markdown (`POST /api/report?format=md`)
+- Send delivery email from Gmail with both attachments (template in FIRST_CUSTOMER_OPERATIONS.md §5)
 
-- Download CSV
-- Download Markdown
-- Email both files to the customer email from the order
+### B6. Update your order log
 
-Email template (adapt as needed):
-```
-Subject: Your LeadLens report is ready
-
-Hi [name],
-
-Your LeadLens [Starter/Standard/Pro] batch is attached.
-
-The report includes:
-- [N] qualified B2B leads scored and segmented (HOT/WARM/COLD)
-- Personalized email, LinkedIn DM, and 2 follow-ups per lead
-- Executive summary and patterns observed
-
-Next steps: review the leads, pick your top targets, and send when ready.
-All messages are drafts — nothing goes out automatically.
-
-Let me know if you have any questions.
-
-Martin
-LeadLens AI
-martinfgaleano@gmail.com
-```
-
-### B5. Update your order log
-
-Mark: delivered, date, any notes on output quality.
+Mark: delivered, date, any notes on output quality, feedback received.
 
 ---
 
@@ -186,6 +162,18 @@ When ready:
 | `LEMONSQUEEZY_API_KEY` | Optional later | API/webhook integration |
 | `LEMONSQUEEZY_WEBHOOK_SECRET` | Optional later | Automated order processing |
 | `APOLLO_API_KEY` | Optional later | Real lead sourcing |
+
+---
+
+---
+
+## Key operational documents
+
+| Document | Purpose |
+|---|---|
+| [FIRST_CUSTOMER_OPERATIONS.md](FIRST_CUSTOMER_OPERATIONS.md) | Complete first-order guide: intake, pipeline, QA, email templates, tracking |
+| [BETA_LAUNCH_CHECKLIST.md](BETA_LAUNCH_CHECKLIST.md) | Pre-launch checklist (LS setup, Vercel, test purchase) |
+| [PRODUCTION_CHECKLIST.md](PRODUCTION_CHECKLIST.md) | When connecting real APIs (Supabase, Apollo, Resend) |
 
 ---
 
