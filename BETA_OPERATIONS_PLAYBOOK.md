@@ -14,8 +14,8 @@ In **app.lemonsqueezy.com → Products → New product**:
 | Product name | Price | Type |
 |---|---|---|
 | LeadLens Beta Starter | $29 USD | One-time |
-| LeadLens Beta Standard | $97 USD | One-time |
-| LeadLens Beta Pro | $197 USD | One-time |
+| LeadLens Beta Standard | $79 USD | One-time |
+| LeadLens Beta Pro | $149 USD | One-time |
 
 For each product:
 - Payment type: **one-time**
@@ -50,8 +50,8 @@ Wait ~60 seconds for build to complete.
 
 Open the live site and click each pricing card button:
 - Starter → should open Lemon Squeezy checkout at $29
-- Standard → should open Lemon Squeezy checkout at $97
-- Pro → should open Lemon Squeezy checkout at $197
+- Standard → should open Lemon Squeezy checkout at $79
+- Pro → should open Lemon Squeezy checkout at $149
 
 Verify the price, currency (USD), and product name are correct.
 

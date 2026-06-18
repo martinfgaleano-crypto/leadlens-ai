@@ -136,7 +136,7 @@ Run this after the Vercel URL is live:
 | 4 | Language selector: ES | All copy in Spanish |
 | 5 | Language selector: PT | All copy in Portuguese |
 | 6 | Language selector: JA | All copy in Japanese |
-| 7 | Pricing section visible | $29 / $97 / $197 cards |
+| 7 | Pricing section visible | $29 / $79 / $149 cards |
 | 8 | "Monthly plans coming soon" visible | Below pricing grid |
 | 9 | No "DEMO_MODE" text visible | Not exposed in public UI |
 | 10 | "Get started" button → form opens | Form loads correctly |
@@ -201,8 +201,8 @@ curl http://localhost:3000/api/provider-status
 ```
 https://dashboard.stripe.com/test/products
 → Create product "LeadLens Beta Starter" → Add price: $29 USD one-time → copy Price ID (price_...)
-→ Create product "LeadLens Beta Standard" → Add price: $97 USD one-time → copy Price ID
-→ Create product "LeadLens Beta Pro" → Add price: $197 USD one-time → copy Price ID
+→ Create product "LeadLens Beta Standard" → Add price: $79 USD one-time → copy Price ID
+→ Create product "LeadLens Beta Pro" → Add price: $149 USD one-time → copy Price ID
 ```
 
 #### 4b. Configure .env.local with Stripe test keys
@@ -282,8 +282,8 @@ curl http://localhost:3000/api/provider-status | jq '{
 | Plan | Price | Leads | Type |
 |------|-------|-------|------|
 | Beta Starter | $29 | 10 | One-time batch |
-| Beta Standard | $97 | 50 | One-time batch |
-| Beta Pro | $197 | 100 | One-time batch |
+| Beta Standard | $79 | 50 | One-time batch |
+| Beta Pro | $149 | 100 | One-time batch |
 
 **Rationale:** Pay-per-batch removes commitment friction for first-time buyers. Customers can evaluate the quality of leads and outreach before deciding on recurring investment.
 

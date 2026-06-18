@@ -180,7 +180,7 @@ const COPY = {
     ctaSub: "One batch. 24–48h delivery. You review every message before sending.",
     ctaCTA: "Start your first batch — $29 →",
     sampleTabs: ["Email", "LinkedIn DM", "Follow-up 1", "Follow-up 2"],
-    pricePerLead: { starter: "$2.90 / lead", standard: "$1.94 / lead", pro: "$1.64 / lead" },
+    pricePerLead: { starter: "$2.90 / lead", standard: "$1.58 / lead", pro: "$1.49 / lead" },
   },
   es: {
     announcement: "Acceso beta abierto — solicita tu primer lote de leads.",
@@ -356,7 +356,7 @@ const COPY = {
     ctaSub: "Un lote. Entrega en 24–48h. Tú revisas cada mensaje antes de enviarlo.",
     ctaCTA: "Inicia tu primer lote — $29 →",
     sampleTabs: ["Email", "LinkedIn DM", "Seguimiento 1", "Seguimiento 2"],
-    pricePerLead: { starter: "$2.90 / lead", standard: "$1.94 / lead", pro: "$1.64 / lead" },
+    pricePerLead: { starter: "$2.90 / lead", standard: "$1.58 / lead", pro: "$1.49 / lead" },
   },
   pt: {
     announcement: "Acesso beta aberto — solicite seu primeiro lote de leads.",
@@ -532,7 +532,7 @@ const COPY = {
     ctaSub: "Um lote. Entrega em 24–48h. Você revisa cada mensagem antes de enviar.",
     ctaCTA: "Inicie seu primeiro lote — $29 →",
     sampleTabs: ["Email", "LinkedIn DM", "Follow-up 1", "Follow-up 2"],
-    pricePerLead: { starter: "$2.90 / lead", standard: "$1.94 / lead", pro: "$1.64 / lead" },
+    pricePerLead: { starter: "$2.90 / lead", standard: "$1.58 / lead", pro: "$1.49 / lead" },
   },
   ja: {
     announcement: "ベータ版アクセス公開中 — 最初のリードバッチをリクエストできます。",
@@ -708,7 +708,7 @@ const COPY = {
     ctaSub: "1回のバッチ。24〜48時間で納品。送信前に全メッセージを確認できます。",
     ctaCTA: "最初のバッチを始める — $29 →",
     sampleTabs: ["メール", "LinkedIn DM", "フォローアップ 1", "フォローアップ 2"],
-    pricePerLead: { starter: "$2.90 / リード", standard: "$1.94 / リード", pro: "$1.64 / リード" },
+    pricePerLead: { starter: "$2.90 / リード", standard: "$1.58 / リード", pro: "$1.49 / リード" },
   },
 };
 
@@ -718,8 +718,8 @@ type Copy = typeof COPY["en"];
 
 const PLANS = {
   starter:  { price: "$29",  leads: 10  },
-  standard: { price: "$97",  leads: 50  },
-  pro:      { price: "$197", leads: 100 },
+  standard: { price: "$79",  leads: 50  },
+  pro:      { price: "$149", leads: 100 },
 } as const;
 
 // Checkout links are public direct-pay URLs from Lemon Squeezy's product "Share" button.

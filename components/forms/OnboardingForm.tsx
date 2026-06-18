@@ -137,7 +137,7 @@ export default function OnboardingForm({ onClose }: Props) {
             disabled={loading}
             className="w-full bg-sky-600 text-white py-3 rounded-xl font-semibold hover:bg-sky-700 transition-colors disabled:opacity-50"
           >
-            {loading ? "Procesando..." : "Continuar al pago — $97 →"}
+            {loading ? "Procesando..." : "Continuar al pago — $79 →"}
           </button>
 
           <p className="text-xs text-gray-400 text-center">

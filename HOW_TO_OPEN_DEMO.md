@@ -19,7 +19,7 @@ El archivo simula el flujo completo del producto:
 | Pantalla | Cómo llegar |
 |---|---|
 | Landing page | Se abre automáticamente |
-| Formulario de onboarding | Click en "Empezar — $97" |
+| Formulario de onboarding | Click en "Empezar — $79" |
 | Upload de leads | Llenar el formulario y hacer click en "Continuar al pago" |
 | Processing (animación) | Click en "Usar leads de demo" |
 | Resultados con 5 leads | Aparece automáticamente después del processing |

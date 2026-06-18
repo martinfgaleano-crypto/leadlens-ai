@@ -90,8 +90,8 @@ STRIPE_SECRET_KEY=sk_test_...
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
 STRIPE_WEBHOOK_SECRET=whsec_...
 STRIPE_PRICE_STARTER=price_...    # $29
-STRIPE_PRICE_STANDARD=price_...   # $97
-STRIPE_PRICE_PRO=price_...        # $197
+STRIPE_PRICE_STANDARD=price_...   # $79
+STRIPE_PRICE_PRO=price_...        # $149
 
 # Database
 NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
@@ -105,7 +105,7 @@ Then restart: `npm run dev`
 
 ## Production checklist
 
-### To accept real payments ($29/$97/$197)
+### To accept real payments ($29/$79/$149)
 - [ ] Create Stripe account + 3 products (Starter / Standard / Pro)
 - [ ] Set STRIPE_* keys in .env
 - [ ] Wire Stripe Checkout to onboarding flow

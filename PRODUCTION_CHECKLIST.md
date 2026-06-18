@@ -54,8 +54,8 @@ STRIPE_SECRET_KEY=sk_live_...
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_...
 STRIPE_WEBHOOK_SECRET=whsec_...
 STRIPE_PRICE_STARTER=price_...      # $29
-STRIPE_PRICE_STANDARD=price_...     # $97
-STRIPE_PRICE_PRO=price_...          # $197
+STRIPE_PRICE_STANDARD=price_...     # $79
+STRIPE_PRICE_PRO=price_...          # $149
 ```
 - Create products and prices in the Stripe dashboard first
 - Set up a webhook pointing to `{app_url}/api/webhook`

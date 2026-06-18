@@ -25,8 +25,8 @@ export const PLAN_SEARCH_POOL: Record<PlanType, number> = {
 
 export const PLAN_PRICE: Record<PlanType, number> = {
   starter: 29,
-  standard: 97,
-  pro: 197,
+  standard: 79,
+  pro: 149,
 };
 
 // ─── Onboarding (from user form) ─────────────────────────────────────────────
