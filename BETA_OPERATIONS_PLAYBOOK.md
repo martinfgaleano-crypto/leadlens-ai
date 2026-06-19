@@ -25,7 +25,7 @@ Descriptions:
 - **Sample Pack**: "2 qualified B2B leads with research, fit scoring and personalized outreach drafts. Human-reviewed. Limited-time beta offer."
 - **Starter**: "10 qualified B2B leads with research, fit scoring and personalized outreach sequences. Delivered in 24–48h."
 - **Standard**: "50 qualified B2B leads with research, fit scoring and personalized outreach sequences. Delivered in 24–48h."
-- **Pro**: "100 qualified B2B leads with research, fit scoring, 2 campaign angles and personalized outreach sequences. Delivered in 24–48h."
+- **Pro**: "100 qualified B2B leads with research, fit scoring, expanded research notes and personalized outreach sequences. Priority manual review. Delivered in 24–48h."
 
 For each product:
 - Payment type: **one-time**
@@ -173,6 +173,23 @@ When ready:
 | `APOLLO_API_KEY` | Optional later | Real lead sourcing |
 
 ---
+
+---
+
+## Analytics
+
+LeadLens does **not** use any third-party analytics by default. No Google Analytics, no Mixpanel, no tracking pixels.
+
+If you want basic page-view data, add **Vercel Analytics** (zero-config, privacy-friendly):
+1. Run `npm install @vercel/analytics` in the project root
+2. Import and render `<Analytics />` in `app/layout.tsx`:
+   ```tsx
+   import { Analytics } from "@vercel/analytics/react";
+   // inside RootLayout: <body>...{children}<Analytics /></body>
+   ```
+3. Redeploy to Vercel — data appears in the Vercel dashboard under **Analytics**.
+
+No cookies, no GDPR modal required for Vercel Analytics (aggregated, IP-free).
 
 ---
 

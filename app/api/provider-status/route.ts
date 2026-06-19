@@ -6,6 +6,10 @@ import { NextResponse } from "next/server";
  * Safe to call publicly — only exposes booleans, never actual key values.
  */
 export async function GET() {
+  if (process.env.NODE_ENV === "production") {
+    return new NextResponse(null, { status: 404 });
+  }
+
   const demo_mode = process.env.DEMO_MODE === "true";
 
   const anthropic_configured = !!process.env.ANTHROPIC_API_KEY;

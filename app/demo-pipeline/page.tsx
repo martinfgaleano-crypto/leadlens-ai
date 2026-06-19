@@ -40,8 +40,8 @@ const COPY = {
     planFeatures: {
       sample:   ["2 qualified B2B leads","Fit score + category","Research notes","Personalization trigger","Email + LinkedIn DM draft","Human-reviewed delivery"],
       starter:  ["HOT / WARM / COLD qualification","Fit reason per lead","Personalization trigger","Email + LinkedIn DM","2 follow-ups per lead","CSV + Markdown export","Delivery in 24–48h"],
-      standard: ["Everything in Starter","Higher volume for campaigns","A/B testing messages","Executive summary + patterns","CSV + Markdown export","Delivery in 24–48h"],
-      pro:      ["Everything in Standard","2 campaign angles","Priority manual review","CSV + Markdown export","Delivery in 24–48h"],
+      standard: ["Everything in Starter","Higher volume for campaigns","Full outreach sequence per lead","Executive summary + patterns","CSV + Markdown export","Delivery in 24–48h"],
+      pro:      ["Everything in Standard","Expanded research notes","Priority manual review","CSV + Markdown export","Delivery in 24–48h"],
     },
     leadsFoundBy: (n: number) => `${n} leads found by LeadLens`,
     getStarted: "Start beta batch",
@@ -221,8 +221,8 @@ const COPY = {
     planFeatures: {
       sample:   ["2 leads B2B calificados","Score de ajuste + categoría","Notas de investigación","Trigger de personalización","Email + borrador de LinkedIn DM","Entrega revisada manualmente"],
       starter:  ["Calificación HOT / WARM / COLD","Motivo de fit por lead","Trigger de personalización","Correo + LinkedIn DM","2 seguimientos por lead","Exportación CSV + Markdown","Entrega en 24–48h"],
-      standard: ["Todo lo de Beta Inicial","Mayor volumen para campañas","Test A/B de mensajes","Resumen ejecutivo + patrones","Exportación CSV + Markdown","Entrega en 24–48h"],
-      pro:      ["Todo lo de Beta Estándar","2 ángulos de campaña","Revisión manual prioritaria","Exportación CSV + Markdown","Entrega en 24–48h"],
+      standard: ["Todo lo de Beta Inicial","Mayor volumen para campañas","Secuencia completa de outreach por lead","Resumen ejecutivo + patrones","Exportación CSV + Markdown","Entrega en 24–48h"],
+      pro:      ["Todo lo de Beta Estándar","Notas de investigación ampliadas","Revisión manual prioritaria","Exportación CSV + Markdown","Entrega en 24–48h"],
     },
     leadsFoundBy: (n: number) => `${n} leads encontrados por LeadLens`,
     getStarted: "Iniciar lote beta",
@@ -402,8 +402,8 @@ const COPY = {
     planFeatures: {
       sample:   ["2 leads B2B qualificados","Score de fit + categoria","Notas de pesquisa","Trigger de personalização","Email + rascunho de LinkedIn DM","Entrega revisada manualmente"],
       starter:  ["Qualificação HOT / WARM / COLD","Motivo de fit por lead","Trigger de personalização","Email + LinkedIn DM","2 follow-ups por lead","Exportação CSV + Markdown","Entrega em 24–48h"],
-      standard: ["Tudo do Beta Inicial","Maior volume para campanhas","Teste A/B de mensagens","Resumo executivo + padrões","Exportação CSV + Markdown","Entrega em 24–48h"],
-      pro:      ["Tudo do Beta Padrão","2 ângulos de campanha","Revisão manual prioritária","Exportação CSV + Markdown","Entrega em 24–48h"],
+      standard: ["Tudo do Beta Inicial","Maior volume para campanhas","Sequência completa de outreach por lead","Resumo executivo + padrões","Exportação CSV + Markdown","Entrega em 24–48h"],
+      pro:      ["Tudo do Beta Padrão","Notas de pesquisa ampliadas","Revisão manual prioritária","Exportação CSV + Markdown","Entrega em 24–48h"],
     },
     leadsFoundBy: (n: number) => `${n} leads encontrados pela LeadLens`,
     getStarted: "Iniciar lote beta",
@@ -583,8 +583,8 @@ const COPY = {
     planFeatures: {
       sample:   ["2件の厳選B2Bリード","フィットスコア＋カテゴリー","調査メモ","パーソナライズトリガー","メール＋LinkedIn DMドラフト","人によるレビュー済み納品"],
       starter:  ["HOT/WARM/COLD評価","各リードのfit理由","パーソナライズトリガー","メール + LinkedIn DM","各リードに2回フォローアップ","CSV + Markdownエクスポート","24〜48時間で納品"],
-      standard: ["スターターの全機能","キャンペーン向け大容量","A/Bテストメッセージ","エグゼクティブサマリー","CSV + Markdownエクスポート","24〜48時間で納品"],
-      pro:      ["スタンダードの全機能","2つのキャンペーンアングル","優先マニュアルレビュー","CSV + Markdownエクスポート","24〜48時間で納品"],
+      standard: ["スターターの全機能","キャンペーン向け大容量","各リードへの完全アウトリーチシーケンス","エグゼクティブサマリー","CSV + Markdownエクスポート","24〜48時間で納品"],
+      pro:      ["スタンダードの全機能","詳細な調査メモ","優先マニュアルレビュー","CSV + Markdownエクスポート","24〜48時間で納品"],
     },
     leadsFoundBy: (n: number) => `${n}件のリードをLeadLensが発掘`,
     getStarted: "ベータバッチを開始",
