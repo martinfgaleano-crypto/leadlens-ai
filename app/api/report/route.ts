@@ -50,12 +50,55 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  const jobId = req.nextUrl.searchParams.get("job_id");
-  if (!jobId) return NextResponse.json({ error: "Missing job_id" }, { status: 400 });
+  const jobId  = req.nextUrl.searchParams.get("job_id") ?? req.nextUrl.searchParams.get("jobId");
+  const format = req.nextUrl.searchParams.get("format") ?? "json";
 
-  // TODO (production): query Supabase for this job's stored report
-  return NextResponse.json(
-    { error: "Supabase persistence not implemented yet. Run the pipeline via POST /api/process and pass the returned report to POST /api/report for export." },
-    { status: 501 }
-  );
+  if (!jobId) {
+    return NextResponse.json({ error: "Missing job_id query parameter" }, { status: 400 });
+  }
+
+  // Supabase required for report retrieval
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    return NextResponse.json(
+      {
+        error: "Report retrieval requires Supabase. Configure NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY, or use POST /api/report with a report body for on-demand export.",
+      },
+      { status: 503 }
+    );
+  }
+
+  const { getReportByJobId } = await import("@/lib/storage/saas-store");
+  const stored = await getReportByJobId(jobId);
+
+  if (!stored) {
+    return NextResponse.json(
+      { error: `No report found for job_id=${jobId}` },
+      { status: 404 }
+    );
+  }
+
+  const report = stored.report_json;
+
+  if (format === "csv") {
+    // Use pre-generated CSV if available, otherwise generate on the fly
+    const csv = stored.csv_content ?? exportToCSV(report);
+    return new NextResponse(csv, {
+      headers: {
+        "Content-Type": "text/csv",
+        "Content-Disposition": `attachment; filename="leadlens-${jobId}.csv"`,
+      },
+    });
+  }
+
+  if (format === "md" || format === "markdown") {
+    const md = stored.markdown_content ?? exportToMarkdown(report);
+    return new NextResponse(md, {
+      headers: {
+        "Content-Type": "text/markdown",
+        "Content-Disposition": `attachment; filename="leadlens-${jobId}.md"`,
+      },
+    });
+  }
+
+  return NextResponse.json({ success: true, report, report_id: stored.id });
 }

@@ -62,16 +62,37 @@ STRIPE_PRICE_PRO=price_...          # $149
 
 ---
 
-### Priority 4 — Required for async job delivery
+### Priority 4 — Required for order persistence and admin dashboard
 
-**5. Supabase**
+**5. Supabase + SaaS Foundation schema**
 ```
 NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
 SUPABASE_SERVICE_ROLE_KEY=eyJ...
 ```
-- Why: Stores batch jobs, enables async processing, email delivery after payment
-- Create a `batch_jobs` table using the schema in `lib/supabase/`
+- Why: Stores orders, intakes, jobs, reports, and events; enables admin dashboard
+- Schema: run `supabase/migrations/001_saas_foundation.sql` in the Supabase SQL Editor
+- This creates tables: orders, customer_intakes, jobs, reports, job_events, admin_notes
+
+**6. Admin API token**
+```
+ADMIN_SECRET_TOKEN=<openssl rand -hex 32>
+```
+- Protects all `/api/admin/*` routes
+- Pass as header: `x-admin-token: <token>` in API calls
+- Not required for public site; required to use admin API in production
+
+**7. Lemon Squeezy webhook secret**
+```
+LEMONSQUEEZY_WEBHOOK_SECRET=<from LS dashboard>
+LEMONSQUEEZY_VARIANT_SAMPLE=<variant_id>
+LEMONSQUEEZY_VARIANT_STARTER=<variant_id>
+LEMONSQUEEZY_VARIANT_STANDARD=<variant_id>
+LEMONSQUEEZY_VARIANT_PRO=<variant_id>
+```
+- Webhook URL to add in LS: `https://leadlens-ai-xi.vercel.app/api/lemon-webhook`
+- LEMONSQUEEZY_VARIANT_* = numeric variant IDs from LS product dashboard
+- Without these, variant → plan mapping falls back to "starter"
 
 ---
 

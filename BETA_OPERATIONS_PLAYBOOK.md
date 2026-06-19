@@ -143,7 +143,83 @@ These rules apply to every order, forever:
 
 ---
 
-## PHASE D — Lemon Squeezy API + webhooks (optional, later)
+## PHASE D — SaaS Foundation Setup (Supabase + Admin API)
+
+This phase enables automatic order tracking and the admin API. Complete after Lemon Squeezy approval.
+
+### D1. Create Supabase project
+
+1. Go to **supabase.com → New project**
+2. Choose a region close to your users (US East or EU West)
+3. Save the database password somewhere secure
+
+### D2. Run schema migration
+
+1. In Supabase: **SQL Editor → New query**
+2. Paste the contents of `supabase/migrations/001_saas_foundation.sql`
+3. Click **Run**
+4. Verify tables created: orders, customer_intakes, jobs, reports, job_events, admin_notes
+
+### D3. Get credentials
+
+In Supabase: **Settings → API**:
+- `NEXT_PUBLIC_SUPABASE_URL` — Project URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` — anon/public key
+- `SUPABASE_SERVICE_ROLE_KEY` — service_role key (keep secret, server-only)
+
+### D4. Add to Vercel environment variables
+
+In Vercel: **Settings → Environment Variables** (Production scope):
+```
+NEXT_PUBLIC_SUPABASE_URL       = https://xxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY  = eyJ...
+SUPABASE_SERVICE_ROLE_KEY      = eyJ...
+ADMIN_SECRET_TOKEN             = <openssl rand -hex 32>
+```
+
+### D5. Configure Lemon Squeezy webhook
+
+In **app.lemonsqueezy.com → Settings → Webhooks → Add webhook**:
+- URL: `https://leadlens-ai-xi.vercel.app/api/lemon-webhook`
+- Events: check **order_created**
+- Copy the signing secret → add to Vercel as `LEMONSQUEEZY_WEBHOOK_SECRET`
+
+Get variant IDs from **Products → [product] → Edit → Variants**:
+```
+LEMONSQUEEZY_VARIANT_SAMPLE    = <numeric id>
+LEMONSQUEEZY_VARIANT_STARTER   = <numeric id>
+LEMONSQUEEZY_VARIANT_STANDARD  = <numeric id>
+LEMONSQUEEZY_VARIANT_PRO       = <numeric id>
+```
+
+### D6. Redeploy and test
+
+1. Vercel → Redeploy (latest production deployment)
+2. Test admin API: `curl -H "x-admin-token: YOUR_TOKEN" https://leadlens-ai-xi.vercel.app/api/admin/orders`
+3. Simulate a LS webhook (see test payload in FIRST_CUSTOMER_OPERATIONS.md)
+4. Verify order appears in Supabase → Table Editor → orders
+
+### D7. Admin API reference
+
+All routes require header: `x-admin-token: YOUR_ADMIN_SECRET_TOKEN`
+
+| Route | Method | Description |
+|---|---|---|
+| `/api/admin/orders` | GET | List all orders (filterable by status) |
+| `/api/admin/orders/[id]` | GET | Order detail + intake + job + notes |
+| `/api/admin/orders/[id]` | PATCH | Update status/delivery_status/notes |
+| `/api/admin/jobs` | GET | List all jobs (filterable by status) |
+| `/api/admin/jobs/[id]` | GET | Job detail + events + report metadata |
+| `/api/admin/jobs/[id]` | PATCH | Update status/admin_approved |
+| `/api/admin/jobs/[id]/run` | POST | Trigger pipeline for a job |
+| `/api/admin/report/[jobId]` | GET | Report in JSON/CSV/MD (?format=csv) |
+| `/api/admin/notes` | POST | Add admin note to order or job |
+| `/api/admin/notes` | GET | List notes by order_id or job_id |
+| `/api/lemon-webhook` | POST | Lemon Squeezy webhook receiver |
+
+---
+
+## PHASE E — Lemon Squeezy API + webhooks (optional, later)
 
 This phase is NOT required to accept payments or deliver reports.  
 Enable only when you want automated order confirmation or job queue integration.

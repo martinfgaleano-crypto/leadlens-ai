@@ -9,7 +9,7 @@ import { runLeadLensPipeline } from "@/lib/pipeline";
  */
 
 const bodySchema = z.object({
-  plan: z.enum(["starter", "standard", "pro"]).default("starter"),
+  plan: z.enum(["sample", "starter", "standard", "pro"]).default("starter"),
   onboarding: z.object({
     company_name: z.string().min(1),
     company_description: z.string().min(1),

@@ -4,7 +4,7 @@ import { createJob } from "@/lib/storage/job-store";
 import type { PlanType, OnboardingData } from "@/types";
 
 const onboardingSchema = z.object({
-  plan: z.enum(["starter", "standard", "pro"]).default("starter"),
+  plan: z.enum(["sample", "starter", "standard", "pro"]).default("starter"),
   company_name: z.string().min(1),
   company_description: z.string().min(5),
   offer_description: z.string().min(5),

@@ -6,7 +6,7 @@ import type { PlanType, OnboardingData } from "@/types";
 import { PLAN_PRICE, PLAN_LEAD_COUNT } from "@/types";
 
 const checkoutSchema = z.object({
-  plan: z.enum(["starter", "standard", "pro"]),
+  plan: z.enum(["sample", "starter", "standard", "pro"]),
   onboarding: z.object({
     company_name: z.string().min(1),
     company_description: z.string().min(5),
