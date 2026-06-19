@@ -35,9 +35,10 @@ const COPY = {
     monthlyTitle: "Need leads every month?",
     monthlySub: "Monthly plans are coming for agencies, SaaS teams, and consultants that need recurring lead batches, multi-market campaigns, and priority review.",
     monthlyTag: "Monthly plans coming soon",
-    planNames: { starter: "Beta Starter", standard: "Beta Standard", pro: "Beta Pro" },
-    planDescs: { starter: "Try the service risk-free.", standard: "Run a small campaign.", pro: "Full campaign + 2 angles." },
+    planNames: { sample: "Beta Sample Pack", starter: "Beta Starter", standard: "Beta Standard", pro: "Beta Pro" },
+    planDescs: { sample: "Try 2 leads before committing to a full batch.", starter: "Try the service risk-free.", standard: "Run a small campaign.", pro: "Full campaign + 2 angles." },
     planFeatures: {
+      sample:   ["2 qualified B2B leads","Fit score + category","Research notes","Personalization trigger","Email + LinkedIn DM draft","Human-reviewed delivery"],
       starter:  ["HOT / WARM / COLD qualification","Fit reason per lead","Personalization trigger","Email + LinkedIn DM","2 follow-ups per lead","CSV + Markdown export","Delivery in 24–48h"],
       standard: ["Everything in Starter","Higher volume for campaigns","A/B testing messages","Executive summary + patterns","CSV + Markdown export","Delivery in 24–48h"],
       pro:      ["Everything in Standard","2 campaign angles","Priority manual review","CSV + Markdown export","Delivery in 24–48h"],
@@ -180,7 +181,11 @@ const COPY = {
     ctaSub: "One batch. 24–48h delivery. You review every message before sending.",
     ctaCTA: "Start your first batch — $29 →",
     sampleTabs: ["Email", "LinkedIn DM", "Follow-up 1", "Follow-up 2"],
-    pricePerLead: { starter: "$2.90 / lead", standard: "$1.58 / lead", pro: "$1.49 / lead" },
+    pricePerLead: { sample: "$3.50 / lead", starter: "$2.90 / lead", standard: "$1.58 / lead", pro: "$1.49 / lead" },
+    samplePackTitle: "New to LeadLens?",
+    samplePackCopy: "Try a 2-lead paid sample batch for $7 before choosing a larger plan.",
+    samplePackBadge: "Limited-time beta offer",
+    samplePackCTA: "Try 2 leads — $7",
   },
   es: {
     announcement: "Acceso beta abierto — solicita tu primer lote de leads.",
@@ -211,9 +216,10 @@ const COPY = {
     monthlyTitle: "¿Necesitas leads todos los meses?",
     monthlySub: "Pronto habrá planes mensuales para agencias, equipos SaaS y consultores que necesitan lotes recurrentes de leads, campañas en varios mercados y revisión prioritaria.",
     monthlyTag: "Planes mensuales próximamente",
-    planNames: { starter: "Beta Inicial", standard: "Beta Estándar", pro: "Beta Pro" },
-    planDescs: { starter: "Prueba el servicio sin riesgo.", standard: "Ejecuta una campaña pequeña.", pro: "Campaña completa + 2 ángulos." },
+    planNames: { sample: "Beta Muestra", starter: "Beta Inicial", standard: "Beta Estándar", pro: "Beta Pro" },
+    planDescs: { sample: "Prueba 2 leads antes de elegir un lote más grande.", starter: "Prueba el servicio sin riesgo.", standard: "Ejecuta una campaña pequeña.", pro: "Campaña completa + 2 ángulos." },
     planFeatures: {
+      sample:   ["2 leads B2B calificados","Score de ajuste + categoría","Notas de investigación","Trigger de personalización","Email + borrador de LinkedIn DM","Entrega revisada manualmente"],
       starter:  ["Calificación HOT / WARM / COLD","Motivo de fit por lead","Trigger de personalización","Correo + LinkedIn DM","2 seguimientos por lead","Exportación CSV + Markdown","Entrega en 24–48h"],
       standard: ["Todo lo de Beta Inicial","Mayor volumen para campañas","Test A/B de mensajes","Resumen ejecutivo + patrones","Exportación CSV + Markdown","Entrega en 24–48h"],
       pro:      ["Todo lo de Beta Estándar","2 ángulos de campaña","Revisión manual prioritaria","Exportación CSV + Markdown","Entrega en 24–48h"],
@@ -356,7 +362,11 @@ const COPY = {
     ctaSub: "Un lote. Entrega en 24–48h. Tú revisas cada mensaje antes de enviarlo.",
     ctaCTA: "Inicia tu primer lote — $29 →",
     sampleTabs: ["Email", "LinkedIn DM", "Seguimiento 1", "Seguimiento 2"],
-    pricePerLead: { starter: "$2.90 / lead", standard: "$1.58 / lead", pro: "$1.49 / lead" },
+    pricePerLead: { sample: "$3.50 / lead", starter: "$2.90 / lead", standard: "$1.58 / lead", pro: "$1.49 / lead" },
+    samplePackTitle: "¿Nuevo en LeadLens?",
+    samplePackCopy: "Prueba un lote pagado de 2 leads por $7 antes de elegir un plan más grande.",
+    samplePackBadge: "Oferta beta por tiempo limitado",
+    samplePackCTA: "Probar 2 leads — $7",
   },
   pt: {
     announcement: "Acesso beta aberto — solicite seu primeiro lote de leads.",
@@ -387,9 +397,10 @@ const COPY = {
     monthlyTitle: "Precisa de leads todos os meses?",
     monthlySub: "Em breve teremos planos mensais para agências, equipes SaaS e consultores que precisam de lotes recorrentes de leads, campanhas em vários mercados e revisão prioritária.",
     monthlyTag: "Planos mensais em breve",
-    planNames: { starter: "Beta Inicial", standard: "Beta Padrão", pro: "Beta Pro" },
-    planDescs: { starter: "Experimente o serviço sem risco.", standard: "Execute uma campanha pequena.", pro: "Campanha completa + 2 ângulos." },
+    planNames: { sample: "Beta Amostra", starter: "Beta Inicial", standard: "Beta Padrão", pro: "Beta Pro" },
+    planDescs: { sample: "Experimente 2 leads antes de escolher um lote maior.", starter: "Experimente o serviço sem risco.", standard: "Execute uma campanha pequena.", pro: "Campanha completa + 2 ângulos." },
     planFeatures: {
+      sample:   ["2 leads B2B qualificados","Score de fit + categoria","Notas de pesquisa","Trigger de personalização","Email + rascunho de LinkedIn DM","Entrega revisada manualmente"],
       starter:  ["Qualificação HOT / WARM / COLD","Motivo de fit por lead","Trigger de personalização","Email + LinkedIn DM","2 follow-ups por lead","Exportação CSV + Markdown","Entrega em 24–48h"],
       standard: ["Tudo do Beta Inicial","Maior volume para campanhas","Teste A/B de mensagens","Resumo executivo + padrões","Exportação CSV + Markdown","Entrega em 24–48h"],
       pro:      ["Tudo do Beta Padrão","2 ângulos de campanha","Revisão manual prioritária","Exportação CSV + Markdown","Entrega em 24–48h"],
@@ -532,7 +543,11 @@ const COPY = {
     ctaSub: "Um lote. Entrega em 24–48h. Você revisa cada mensagem antes de enviar.",
     ctaCTA: "Inicie seu primeiro lote — $29 →",
     sampleTabs: ["Email", "LinkedIn DM", "Follow-up 1", "Follow-up 2"],
-    pricePerLead: { starter: "$2.90 / lead", standard: "$1.58 / lead", pro: "$1.49 / lead" },
+    pricePerLead: { sample: "$3.50 / lead", starter: "$2.90 / lead", standard: "$1.58 / lead", pro: "$1.49 / lead" },
+    samplePackTitle: "Novo no LeadLens?",
+    samplePackCopy: "Experimente um lote pago de 2 leads por $7 antes de escolher um plano maior.",
+    samplePackBadge: "Oferta beta por tempo limitado",
+    samplePackCTA: "Experimentar 2 leads — $7",
   },
   ja: {
     announcement: "ベータ版アクセス公開中 — 最初のリードバッチをリクエストできます。",
@@ -563,9 +578,10 @@ const COPY = {
     monthlyTitle: "毎月リードが必要ですか？",
     monthlySub: "継続的なリードバッチ、複数市場向けキャンペーン、優先レビューが必要な代理店、SaaSチーム、コンサルタント向けに月額プランを準備中です。",
     monthlyTag: "月額プラン近日公開",
-    planNames: { starter: "Beta スターター", standard: "Beta スタンダード", pro: "Beta プロ" },
-    planDescs: { starter: "リスクなしでお試し。", standard: "小規模キャンペーンを実行。", pro: "フルキャンペーン + 2つのアングル。" },
+    planNames: { sample: "Beta サンプル", starter: "Beta スターター", standard: "Beta スタンダード", pro: "Beta プロ" },
+    planDescs: { sample: "大きなプランを選ぶ前に2件のリードをお試しください。", starter: "リスクなしでお試し。", standard: "小規模キャンペーンを実行。", pro: "フルキャンペーン + 2つのアングル。" },
     planFeatures: {
+      sample:   ["2件の厳選B2Bリード","フィットスコア＋カテゴリー","調査メモ","パーソナライズトリガー","メール＋LinkedIn DMドラフト","人によるレビュー済み納品"],
       starter:  ["HOT/WARM/COLD評価","各リードのfit理由","パーソナライズトリガー","メール + LinkedIn DM","各リードに2回フォローアップ","CSV + Markdownエクスポート","24〜48時間で納品"],
       standard: ["スターターの全機能","キャンペーン向け大容量","A/Bテストメッセージ","エグゼクティブサマリー","CSV + Markdownエクスポート","24〜48時間で納品"],
       pro:      ["スタンダードの全機能","2つのキャンペーンアングル","優先マニュアルレビュー","CSV + Markdownエクスポート","24〜48時間で納品"],
@@ -708,7 +724,11 @@ const COPY = {
     ctaSub: "1回のバッチ。24〜48時間で納品。送信前に全メッセージを確認できます。",
     ctaCTA: "最初のバッチを始める — $29 →",
     sampleTabs: ["メール", "LinkedIn DM", "フォローアップ 1", "フォローアップ 2"],
-    pricePerLead: { starter: "$2.90 / リード", standard: "$1.58 / リード", pro: "$1.49 / リード" },
+    pricePerLead: { sample: "$3.50 / リード", starter: "$2.90 / リード", standard: "$1.58 / リード", pro: "$1.49 / リード" },
+    samplePackTitle: "LeadLensは初めてですか？",
+    samplePackCopy: "大きなプランを選ぶ前に、$7で2件の有料サンプルバッチをお試しください。",
+    samplePackBadge: "期間限定ベータオファー",
+    samplePackCTA: "2件を試す — $7",
   },
 };
 
@@ -717,6 +737,7 @@ type Copy = typeof COPY["en"];
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const PLANS = {
+  sample:   { price: "$7",   leads: 2   },
   starter:  { price: "$29",  leads: 10  },
   standard: { price: "$79",  leads: 50  },
   pro:      { price: "$149", leads: 100 },
@@ -726,6 +747,7 @@ const PLANS = {
 // NEXT_PUBLIC_* is intentional and safe — these URLs contain no secrets; they are the
 // same links you would paste in a tweet. No API key or webhook is needed for this flow.
 const LS_URLS: Partial<Record<PlanType, string>> = {
+  sample:   process.env.NEXT_PUBLIC_LEMONSQUEEZY_SAMPLE_URL || undefined,
   starter:  process.env.NEXT_PUBLIC_LEMONSQUEEZY_STARTER_URL || undefined,
   standard: process.env.NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_URL || undefined,
   pro:      process.env.NEXT_PUBLIC_LEMONSQUEEZY_PRO_URL || undefined,
@@ -1127,6 +1149,27 @@ export default function DemoPipelinePage() {
           <p style={{ color: "#64748b", fontSize: "1.05rem", maxWidth: "36rem", margin: "0 auto 3rem", lineHeight: 1.6 }}>
             {copy.pricingSub}
           </p>
+          {/* Beta Sample Pack callout — low-risk entry point above main pricing cards */}
+          <div style={{ background: "linear-gradient(135deg,#fffbeb,#fef3c7)", border: "1.5px solid #fde68a", borderRadius: "1.125rem", padding: "1.375rem 2rem", maxWidth: "48rem", margin: "0 auto 2.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1.25rem", flexWrap: "wrap" as const, textAlign: "left" as const }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <span style={{ display: "inline-block", fontSize: ".68rem", fontWeight: 700, letterSpacing: ".05em", textTransform: "uppercase" as const, background: "#92400e", color: "#fff", padding: ".2rem .625rem", borderRadius: 999, marginBottom: ".625rem" }}>
+                {copy.samplePackBadge}
+              </span>
+              <h3 style={{ fontSize: "1.05rem", fontWeight: 800, color: "#0f172a", letterSpacing: "-.02em", marginBottom: ".3rem" }}>
+                {copy.samplePackTitle}
+              </h3>
+              <p style={{ fontSize: ".875rem", color: "#78350f", lineHeight: 1.55, margin: 0 }}>
+                {copy.samplePackCopy}
+              </p>
+            </div>
+            <button onClick={() => goToForm("sample")}
+              style={{ background: "#d97706", color: "#fff", border: "none", borderRadius: ".75rem", padding: ".8rem 1.625rem", fontWeight: 700, fontSize: ".9rem", cursor: "pointer", whiteSpace: "nowrap" as const, flexShrink: 0, boxShadow: "0 2px 10px rgba(217,119,6,.3)", transition: "all .15s" }}
+              onMouseOver={e => { e.currentTarget.style.background = "#b45309"; e.currentTarget.style.transform = "translateY(-1px)"; }}
+              onMouseOut={e => { e.currentTarget.style.background = "#d97706"; e.currentTarget.style.transform = ""; }}
+            >
+              {copy.samplePackCTA}
+            </button>
+          </div>
           <div className="ll-pricing-grid">
             {(["starter", "standard", "pro"] as PlanType[]).map(p => (
               <PricingCard key={p} plan={p} featured={p === "standard"} copy={copy} onSelect={goToForm} />
@@ -1325,7 +1368,7 @@ export default function DemoPipelinePage() {
         {/* Plan pills */}
         <div style={{ background: "#fff", borderRadius: "1rem", border: "1px solid #e2e8f0", padding: "1.5rem", marginBottom: "1.5rem", boxShadow: "0 1px 4px rgba(0,0,0,.05)" }}>
           <p style={{ fontSize: ".84rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" as const, letterSpacing: ".06em", marginBottom: "1rem" }}>{copy.step1}</p>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: ".625rem" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: ".625rem" }}>
             {(Object.entries(PLANS) as [PlanType, typeof PLANS.starter][]).map(([key, p]) => (
               <button key={key} type="button" onClick={() => setPlan(key)}
                 style={{ border: `1.5px solid ${plan === key ? "#0ea5e9" : "#e2e8f0"}`, borderRadius: ".75rem", padding: ".75rem .5rem", textAlign: "center" as const, cursor: "pointer", transition: "all .15s", background: plan === key ? "#e0f2fe" : "#fff" }}>

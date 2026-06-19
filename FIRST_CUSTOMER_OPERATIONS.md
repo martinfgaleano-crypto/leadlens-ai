@@ -29,8 +29,8 @@ Every step is manual, every report is reviewed, and nothing is sent to anyone au
 1. Go to [app.lemonsqueezy.com](https://app.lemonsqueezy.com) → **Orders**.
 2. Confirm:
    - Status: **Paid**
-   - Product name matches a LeadLens Beta plan (Starter / Standard / Pro)
-   - Amount is correct ($29 / $79 / $149)
+   - Product name matches a LeadLens Beta plan (Sample Pack / Starter / Standard / Pro)
+   - Amount is correct ($7 / $29 / $79 / $149)
    - Customer email is real and readable
 3. Copy and save: **Order ID**, **customer email**, **customer name**, **plan**, **amount paid**, **order date**.
 4. If status is **Pending** or **Refunded**, do not start the batch — email the customer to confirm.
@@ -124,7 +124,7 @@ Use **hybrid mode** for paying customers — it uses real AI for outreach copy w
 ### 6.2 Running the pipeline
 
 Option A — via the local demo form at `http://localhost:3000/demo-pipeline`:
-1. Select the customer's plan (Starter / Standard / Pro)
+1. Select the customer's plan (Sample Pack / Starter / Standard / Pro)
 2. Fill onboarding form with customer's ICP details
 3. Click "Run Demo Pipeline"
 4. Let it complete
@@ -189,7 +189,7 @@ Run this checklist **before every delivery**. Do not skip.
 - [ ] No duplicate company names in the batch
 - [ ] No leads from excluded companies/sectors
 - [ ] No hallucinated companies (must be verifiable)
-- [ ] Lead count matches the plan (10 / 50 / 100)
+- [ ] Lead count matches the plan (2 / 10 / 50 / 100)
 
 ### Outreach quality
 
@@ -207,7 +207,7 @@ Run this checklist **before every delivery**. Do not skip.
 
 - [ ] CSV opens correctly in Excel/Google Sheets
 - [ ] Markdown report is readable and complete
-- [ ] Plan lead count in report matches paid plan
+- [ ] Plan lead count in report matches paid plan (Sample=2, Starter=10, Standard=50, Pro=100)
 - [ ] Customer name in email is correct
 - [ ] Customer email address is the one from the order
 - [ ] Delivery email has been reviewed before sending
@@ -323,7 +323,7 @@ Subject: Your LeadLens order is confirmed — quick targeting brief needed
 
 Hi [Customer Name],
 
-Thank you for your LeadLens [Starter / Standard / Pro] order.
+Thank you for your LeadLens [Sample Pack / Starter / Standard / Pro] order.
 
 To prepare your batch of [10 / 50 / 100] qualified leads, I need a brief targeting
 summary from you. This takes about 5–10 minutes and makes a huge difference in quality.
@@ -364,7 +364,7 @@ Asunto: Tu pedido en LeadLens está confirmado — necesito tu brief de targetin
 
 Hola [Nombre del cliente],
 
-Gracias por tu pedido de LeadLens [Starter / Standard / Pro].
+Gracias por tu pedido de LeadLens [Sample Pack / Starter / Standard / Pro].
 
 Para preparar tu batch de [10 / 50 / 100] leads calificados, necesito un breve resumen
 de tu targeting. Toma 5–10 minutos y hace una diferencia enorme en la calidad del resultado.
@@ -412,13 +412,13 @@ Subject: Your LeadLens report is ready — [N] leads inside
 
 Hi [Customer Name],
 
-Your LeadLens [Starter / Standard / Pro] batch is ready. Find attached:
+Your LeadLens [Sample Pack / Starter / Standard / Pro] batch is ready. Find attached:
 
 📎 leadlens-[plan]-[date].csv     — for CRM import or direct use
 📎 leadlens-[plan]-[date].md      — full report with executive summary
 
 Batch summary:
-- Plan: [Starter / Standard / Pro]
+- Plan: [Sample Pack / Starter / Standard / Pro]
 - Total leads: [N]
 - HOT leads (score 8–10): [N]
 - WARM leads (score 6–7): [N]
@@ -457,13 +457,13 @@ Asunto: Tu reporte de LeadLens está listo — [N] leads adentro
 
 Hola [Nombre del cliente],
 
-Tu batch de LeadLens [Starter / Standard / Pro] está listo. Adjunto encontrarás:
+Tu batch de LeadLens [Sample Pack / Starter / Standard / Pro] está listo. Adjunto encontrarás:
 
 📎 leadlens-[plan]-[fecha].csv    — para importar a CRM o usar directamente
 📎 leadlens-[plan]-[fecha].md     — reporte completo con resumen ejecutivo
 
 Resumen del batch:
-- Plan: [Starter / Standard / Pro]
+- Plan: [Sample Pack / Starter / Standard / Pro]
 - Leads totales: [N]
 - HOT leads (score 8–10): [N]
 - WARM leads (score 6–7): [N]
@@ -501,7 +501,7 @@ Keep this table in a private spreadsheet (Google Sheets or Notion). Update it af
 
 | # | Order date | Customer | Email | Plan | Amount paid | ICP received | Batch started | Batch delivered | Status | Feedback | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| 001 | YYYY-MM-DD | Name | email | Starter/Standard/Pro | $29/$79/$149 | ✅/❌ | YYYY-MM-DD | YYYY-MM-DD | pending/running/delivered/refunded | yes/no/partial | — |
+| 001 | YYYY-MM-DD | Name | email | Sample/Starter/Standard/Pro | $7/$29/$79/$149 | ✅/❌ | YYYY-MM-DD | YYYY-MM-DD | pending/running/delivered/refunded | yes/no/partial | — |
 
 **Status values:**
 - `awaiting_icp` — payment received, waiting for customer brief

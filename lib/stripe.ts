@@ -39,6 +39,14 @@ export const PLAN_PRICE_IDS: Record<string, string | undefined> = {
 
 /** Inline price_data for plans — used when Price IDs are not configured yet. */
 export const PLAN_PRICE_DATA: Record<PlanType, { unit_amount: number; currency: string; product_data: { name: string; description: string } }> = {
+  sample: {
+    unit_amount: PLAN_PRICE.sample * 100,
+    currency: "usd",
+    product_data: {
+      name: "LeadLens Beta Sample Pack",
+      description: `${PLAN_LEAD_COUNT.sample} qualified leads + outreach drafts — human-reviewed`,
+    },
+  },
   starter:  {
     unit_amount: PLAN_PRICE.starter * 100,
     currency: "usd",

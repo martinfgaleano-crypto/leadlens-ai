@@ -1,6 +1,6 @@
 // ─── Core enums ──────────────────────────────────────────────────────────────
 
-export type PlanType = "starter" | "standard" | "pro";
+export type PlanType = "starter" | "standard" | "pro" | "sample";
 export type LeadStatus = "pending" | "processing" | "completed" | "error";
 export type LeadCategory = "HOT" | "WARM" | "COLD" | "DISCARD";
 export type QCStatus = "APPROVED" | "REVIEW_NEEDED" | "FAILED";
@@ -12,18 +12,21 @@ export type MarketRegion = "north_america" | "latin_america" | "europe" | "asia"
 // ─── Plan config ──────────────────────────────────────────────────────────────
 
 export const PLAN_LEAD_COUNT: Record<PlanType, number> = {
+  sample: 2,
   starter: 10,
   standard: 50,
   pro: 100,
 };
 
 export const PLAN_SEARCH_POOL: Record<PlanType, number> = {
+  sample: 6,
   starter: 30,
   standard: 120,
   pro: 250,
 };
 
 export const PLAN_PRICE: Record<PlanType, number> = {
+  sample: 7,
   starter: 29,
   standard: 79,
   pro: 149,

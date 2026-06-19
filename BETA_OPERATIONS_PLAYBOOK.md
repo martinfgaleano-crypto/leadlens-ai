@@ -10,20 +10,26 @@ payments and delivering the first batch reports.
 
 ## PHASE A — Lemon Squeezy activation
 
-### A1. Store approved → Create 3 products
+### A1. Store approved → Create 4 products
 
 In **app.lemonsqueezy.com → Products → New product**:
 
-| Product name | Price | Type |
-|---|---|---|
-| LeadLens Beta Starter | $29 USD | One-time |
-| LeadLens Beta Standard | $79 USD | One-time |
-| LeadLens Beta Pro | $149 USD | One-time |
+| Product name | Price | Type | Leads |
+|---|---|---|---|
+| LeadLens Beta Sample Pack | $7 USD | One-time | 2 |
+| LeadLens Beta Starter | $29 USD | One-time | 10 |
+| LeadLens Beta Standard | $79 USD | One-time | 50 |
+| LeadLens Beta Pro | $149 USD | One-time | 100 |
+
+Descriptions:
+- **Sample Pack**: "2 qualified B2B leads with research, fit scoring and personalized outreach drafts. Human-reviewed. Limited-time beta offer."
+- **Starter**: "10 qualified B2B leads with research, fit scoring and personalized outreach sequences. Delivered in 24–48h."
+- **Standard**: "50 qualified B2B leads with research, fit scoring and personalized outreach sequences. Delivered in 24–48h."
+- **Pro**: "100 qualified B2B leads with research, fit scoring, 2 campaign angles and personalized outreach sequences. Delivered in 24–48h."
 
 For each product:
 - Payment type: **one-time**
 - No trial, no subscription
-- Description: brief mention of lead count and delivery time (e.g. "10 qualified B2B leads + personalized outreach sequences. Delivered in 24–48h.")
 
 ### A2. Copy checkout links
 
@@ -37,6 +43,7 @@ would share on social media.
 Go to **vercel.com → leadlens-ai project → Settings → Environment Variables** and add:
 
 ```
+NEXT_PUBLIC_LEMONSQUEEZY_SAMPLE_URL    = https://leadlens.lemonsqueezy.com/checkout/...
 NEXT_PUBLIC_LEMONSQUEEZY_STARTER_URL   = https://leadlens.lemonsqueezy.com/checkout/...
 NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_URL  = https://leadlens.lemonsqueezy.com/checkout/...
 NEXT_PUBLIC_LEMONSQUEEZY_PRO_URL       = https://leadlens.lemonsqueezy.com/checkout/...
@@ -51,7 +58,8 @@ Wait ~60 seconds for build to complete.
 
 ### A5. Test each checkout link
 
-Open the live site and click each pricing card button:
+Open the live site and click each pricing button:
+- Sample Pack callout → should open Lemon Squeezy checkout at $7
 - Starter → should open Lemon Squeezy checkout at $29
 - Standard → should open Lemon Squeezy checkout at $79
 - Pro → should open Lemon Squeezy checkout at $149
@@ -75,7 +83,7 @@ Complete one test order (refund yourself afterward if needed) to confirm:
 When you receive the first order notification from Lemon Squeezy:
 
 ### B1. Confirm the order details
-- Plan purchased (Starter / Standard / Pro)
+- Plan purchased (Sample Pack / Starter / Standard / Pro)
 - Customer email and name
 - Order ID / reference number
 - Log in your order tracking table (see FIRST_CUSTOMER_OPERATIONS.md §11)
@@ -155,6 +163,7 @@ When ready:
 |---|---|---|
 | `DEMO_MODE=true` | Now | Public site |
 | `NEXT_PUBLIC_APP_URL` | Now | Public site |
+| `NEXT_PUBLIC_LEMONSQUEEZY_SAMPLE_URL` | After LS approval | Sample Pack checkout |
 | `NEXT_PUBLIC_LEMONSQUEEZY_STARTER_URL` | After LS approval | Checkout buttons |
 | `NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_URL` | After LS approval | Checkout buttons |
 | `NEXT_PUBLIC_LEMONSQUEEZY_PRO_URL` | After LS approval | Checkout buttons |

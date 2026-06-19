@@ -136,7 +136,7 @@ Run this after the Vercel URL is live:
 | 4 | Language selector: ES | All copy in Spanish |
 | 5 | Language selector: PT | All copy in Portuguese |
 | 6 | Language selector: JA | All copy in Japanese |
-| 7 | Pricing section visible | $29 / $79 / $149 cards |
+| 7 | Pricing section visible | $7 callout + $29 / $79 / $149 cards |
 | 8 | "Monthly plans coming soon" visible | Below pricing grid |
 | 9 | No "DEMO_MODE" text visible | Not exposed in public UI |
 | 10 | "Get started" button → form opens | Form loads correctly |
@@ -281,6 +281,7 @@ curl http://localhost:3000/api/provider-status | jq '{
 
 | Plan | Price | Leads | Type |
 |------|-------|-------|------|
+| Beta Sample Pack | $7 | 2 | One-time batch (limited-time beta offer) |
 | Beta Starter | $29 | 10 | One-time batch |
 | Beta Standard | $79 | 50 | One-time batch |
 | Beta Pro | $149 | 100 | One-time batch |
