@@ -67,20 +67,23 @@ STRIPE_PRICE_PRO=price_...          # $149
 **5. Supabase + SaaS Foundation schema**
 ```
 NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
 SUPABASE_SERVICE_ROLE_KEY=eyJ...
 ```
 - Why: Stores orders, intakes, jobs, reports, and events; enables admin dashboard
 - Schema: run `supabase/migrations/001_saas_foundation.sql` in the Supabase SQL Editor
 - This creates tables: orders, customer_intakes, jobs, reports, job_events, admin_notes
+- Note: uses service role key directly — no anon key needed for server-side access
 
 **6. Admin API token**
 ```
-ADMIN_SECRET_TOKEN=<openssl rand -hex 32>
+ADMIN_SECRET_TOKEN=$(openssl rand -hex 32)
 ```
-- Protects all `/api/admin/*` routes
-- Pass as header: `x-admin-token: <token>` in API calls
-- Not required for public site; required to use admin API in production
+- Protects all `/api/admin/*` routes via `x-admin-token` header
+- Set in `.env.local` for local dev, then **restart the dev server** for it to take effect
+- Add same value to Vercel env vars for production
+- Local admin dashboard: `http://localhost:3000/admin/login`
+- Production admin dashboard: `https://your-domain.com/admin/login`
+- Dev mode behavior: if token is NOT set, routes are open (console warning only). Always set it in production.
 
 **7. Lemon Squeezy webhook secret**
 ```
@@ -93,6 +96,13 @@ LEMONSQUEEZY_VARIANT_PRO=<variant_id>
 - Webhook URL to add in LS: `https://leadlens-ai-xi.vercel.app/api/lemon-webhook`
 - LEMONSQUEEZY_VARIANT_* = numeric variant IDs from LS product dashboard
 - Without these, variant → plan mapping falls back to "starter"
+
+**Admin dashboard QA (run after setting items 5–7)**
+1. `ADMIN_SECRET_TOKEN` set + server restarted → no "dev bypass" banner in `/admin`
+2. `/admin/settings` shows `admin_token_configured: ✓`
+3. `/admin/settings` shows `supabase_configured: ✓` after Supabase is connected
+4. `/admin/settings` shows `lemonsqueezy_webhook_secret_configured: ✓` after webhook is set
+5. `/admin` shows green "Core admin configuration ready" banner when all 3 are set
 
 ---
 

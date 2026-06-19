@@ -269,6 +269,55 @@ No cookies, no GDPR modal required for Vercel Analytics (aggregated, IP-free).
 
 ---
 
+## PHASE E — Admin Dashboard QA
+
+### Local setup
+
+1. Add to `.env.local`:
+   ```
+   ADMIN_SECRET_TOKEN=your-strong-random-token
+   ```
+2. Restart the dev server (`npm run dev`). The token is read on server startup.
+3. Open `http://localhost:3000/admin/login`.
+4. Enter the same token you set above.
+
+### Expected behavior by state
+
+| State | What you should see |
+|---|---|
+| Token set, server restarted | Login succeeds. Overview loads. No admin token warning. |
+| Token set, server NOT restarted | Dev bypass active banner appears. Warning: "admin routes are open without authentication." |
+| Token not set (dev) | Dev bypass active — routes open, login accepts any input. |
+| Supabase not configured | "Supabase not configured" warning in Overview. Empty states in Orders/Jobs. Settings shows ✗ for Supabase. |
+| Supabase configured | Orders/Jobs show real data. Seed test order button appears in Overview. |
+| LS webhook not set | Warning in Overview. Settings shows ✗ for webhook secret. |
+| All critical items set | Green "Core admin configuration ready" banner in Overview. Settings shows 5/5. |
+
+### Warning accuracy rules
+
+- Admin token warning: only shows when server explicitly reports `admin_token_configured: false`.
+- Never shows when settings failed to load (avoids false alarm).
+- Dev bypass banner is separate from the config warnings block.
+
+### Quick QA checklist
+
+- [ ] `/admin/login` loads
+- [ ] Correct token → enters dashboard
+- [ ] Wrong token → shows "Invalid token" error
+- [ ] Logout clears token, redirects to login
+- [ ] `/admin` shows overview with correct warning state
+- [ ] `/admin/orders` shows empty state or real orders
+- [ ] `/admin/jobs` shows empty state or real jobs
+- [ ] `/admin/settings` loads and shows accurate booleans
+- [ ] Invalid order ID → "Order not found" state
+- [ ] Invalid job ID → "Error 404" state
+- [ ] Public landing page still works
+- [ ] Demo pipeline still works
+- [ ] Pricing unchanged ($7/$29/$79/$149)
+- [ ] Payment gate unchanged
+
+---
+
 ## Key operational documents
 
 | Document | Purpose |
