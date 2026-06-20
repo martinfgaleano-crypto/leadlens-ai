@@ -3,21 +3,34 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getAdminToken, setAdminToken, clearAdminToken, adminFetch } from "@/lib/admin/admin-client";
 
+async function validateToken(token: string): Promise<"ok" | "invalid" | "unreachable"> {
+  const res = await adminFetch("/api/admin/auth-check");
+  if (res.ok) return "ok";
+  if (res.status === 401 || res.status === 403) { clearAdminToken(); return "invalid"; }
+  if (res.status === 503) return "unreachable";
+  return "invalid";
+}
+
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [token, setToken]     = useState("");
-  const [error, setError]     = useState("");
-  const [loading, setLoading] = useState(false);
+  const [token, setToken]       = useState("");
+  const [error, setError]       = useState("");
+  const [loading, setLoading]   = useState(false);
   const [checking, setChecking] = useState(true);
 
-  // If already have a valid token, go straight to admin
+  // If already have a stored token, validate it silently and redirect
   useEffect(() => {
     const existing = getAdminToken();
     if (!existing) { setChecking(false); return; }
-    adminFetch("/api/admin/orders?limit=1")
+
+    adminFetch("/api/admin/auth-check")
       .then((r) => {
-        if (r.ok) { router.replace("/admin"); }
-        else { clearAdminToken(); setChecking(false); }
+        if (r.ok) {
+          router.replace("/admin");
+        } else {
+          clearAdminToken();
+          setChecking(false);
+        }
       })
       .catch(() => setChecking(false));
   }, [router]);
@@ -31,21 +44,17 @@ export default function AdminLoginPage() {
     setLoading(true);
     setAdminToken(t);
 
-    try {
-      const res = await adminFetch("/api/admin/orders?limit=1");
-      if (res.ok) {
-        router.replace("/admin");
-      } else if (res.status === 401 || res.status === 403) {
-        clearAdminToken();
-        setError("Invalid token. Check your ADMIN_SECRET_TOKEN env var.");
-      } else {
-        setError(`Server responded with ${res.status}. Try again.`);
-      }
-    } catch {
+    const result = await validateToken(t);
+    setLoading(false);
+
+    if (result === "ok") {
+      router.replace("/admin");
+    } else if (result === "unreachable") {
       clearAdminToken();
-      setError("Could not reach the server. Check your connection.");
-    } finally {
-      setLoading(false);
+      setError("Could not reach the server. Make sure the dev server is running.");
+    } else {
+      clearAdminToken();
+      setError("Invalid token. Check your ADMIN_SECRET_TOKEN in .env.local.");
     }
   }
 
@@ -122,7 +131,7 @@ export default function AdminLoginPage() {
                 fontFamily: "inherit",
               }}
               onFocus={(e) => { e.target.style.borderColor = "#0ea5e9"; e.target.style.boxShadow = "0 0 0 3px rgba(14,165,233,0.12)"; }}
-              onBlur={(e) => { e.target.style.borderColor = "#e2e8f0"; e.target.style.boxShadow = "none"; }}
+              onBlur={(e)  => { e.target.style.borderColor = "#e2e8f0"; e.target.style.boxShadow = "none"; }}
             />
           </label>
 

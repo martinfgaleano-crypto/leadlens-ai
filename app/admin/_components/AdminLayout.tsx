@@ -107,12 +107,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    if (!getAdminToken()) {
+    const token = getAdminToken();
+    if (!token) {
       router.replace("/admin/login");
     } else {
       setReady(true);
     }
-  }, [router]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function handleLogout() {
     clearAdminToken();
