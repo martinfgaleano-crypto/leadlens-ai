@@ -4,6 +4,7 @@
 -- ═══════════════════════════════════════════════════════════════════════════════
 
 -- ─── updated_at trigger function ──────────────────────────────────────────────
+-- Safe to run multiple times (CREATE OR REPLACE).
 
 CREATE OR REPLACE FUNCTION set_updated_at()
 RETURNS TRIGGER AS $$
@@ -45,6 +46,7 @@ CREATE INDEX IF NOT EXISTS orders_status_idx            ON orders(status);
 CREATE INDEX IF NOT EXISTS orders_delivery_status_idx   ON orders(delivery_status);
 CREATE INDEX IF NOT EXISTS orders_created_at_idx        ON orders(created_at DESC);
 
+DROP TRIGGER IF EXISTS orders_set_updated_at ON orders;
 CREATE TRIGGER orders_set_updated_at
   BEFORE UPDATE ON orders
   FOR EACH ROW EXECUTE FUNCTION set_updated_at();
@@ -82,6 +84,7 @@ CREATE INDEX IF NOT EXISTS customer_intakes_order_id_idx ON customer_intakes(ord
 CREATE INDEX IF NOT EXISTS customer_intakes_email_idx    ON customer_intakes(customer_email);
 CREATE INDEX IF NOT EXISTS customer_intakes_status_idx   ON customer_intakes(status);
 
+DROP TRIGGER IF EXISTS customer_intakes_set_updated_at ON customer_intakes;
 CREATE TRIGGER customer_intakes_set_updated_at
   BEFORE UPDATE ON customer_intakes
   FOR EACH ROW EXECUTE FUNCTION set_updated_at();
@@ -112,6 +115,7 @@ CREATE INDEX IF NOT EXISTS jobs_order_id_idx   ON jobs(order_id);
 CREATE INDEX IF NOT EXISTS jobs_status_idx     ON jobs(status);
 CREATE INDEX IF NOT EXISTS jobs_created_at_idx ON jobs(created_at DESC);
 
+DROP TRIGGER IF EXISTS jobs_set_updated_at ON jobs;
 CREATE TRIGGER jobs_set_updated_at
   BEFORE UPDATE ON jobs
   FOR EACH ROW EXECUTE FUNCTION set_updated_at();
@@ -138,6 +142,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS reports_job_id_idx ON reports(job_id);
 CREATE INDEX IF NOT EXISTS reports_order_id_idx      ON reports(order_id);
 CREATE INDEX IF NOT EXISTS reports_status_idx        ON reports(status);
 
+DROP TRIGGER IF EXISTS reports_set_updated_at ON reports;
 CREATE TRIGGER reports_set_updated_at
   BEFORE UPDATE ON reports
   FOR EACH ROW EXECUTE FUNCTION set_updated_at();

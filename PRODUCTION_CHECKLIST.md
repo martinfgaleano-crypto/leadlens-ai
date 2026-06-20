@@ -48,17 +48,28 @@ Recommendation: **Start with Apollo** — best coverage for B2B SaaS + agencies,
 
 ### Priority 3 — Required to accept payments
 
-**4. Stripe**
+**4. Lemon Squeezy checkout links**
 ```
-STRIPE_SECRET_KEY=sk_live_...
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-STRIPE_PRICE_STARTER=price_...      # $29
-STRIPE_PRICE_STANDARD=price_...     # $79
-STRIPE_PRICE_PRO=price_...          # $149
+NEXT_PUBLIC_LEMONSQUEEZY_SAMPLE_URL=https://leadlens.lemonsqueezy.com/checkout/...
+NEXT_PUBLIC_LEMONSQUEEZY_STARTER_URL=https://leadlens.lemonsqueezy.com/checkout/...
+NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_URL=https://leadlens.lemonsqueezy.com/checkout/...
+NEXT_PUBLIC_LEMONSQUEEZY_PRO_URL=https://leadlens.lemonsqueezy.com/checkout/...
 ```
-- Create products and prices in the Stripe dashboard first
-- Set up a webhook pointing to `{app_url}/api/webhook`
+- Get these from: app.lemonsqueezy.com → Products → [product] → Share
+- These are public URLs — no secret, safe for `NEXT_PUBLIC_` exposure
+- When set, pricing buttons redirect to Lemon Squeezy checkout
+
+**Lemon Squeezy webhook (for automatic order persistence)**
+```
+LEMONSQUEEZY_WEBHOOK_SECRET=<from LS dashboard>
+LEMONSQUEEZY_VARIANT_SAMPLE=<numeric variant id>
+LEMONSQUEEZY_VARIANT_STARTER=<numeric variant id>
+LEMONSQUEEZY_VARIANT_STANDARD=<numeric variant id>
+LEMONSQUEEZY_VARIANT_PRO=<numeric variant id>
+```
+- Webhook URL: `https://leadlens-ai-xi.vercel.app/api/lemon-webhook`
+- Events: check **order_created** only
+- Without variant IDs, all orders fall back to plan "starter"
 
 ---
 
@@ -157,9 +168,10 @@ curl http://localhost:3001/api/provider-status
 
 ### Step 3 — Payments + persistence
 
-1. `STRIPE_*` keys — enables real checkout
-2. `SUPABASE_*` keys — enables job storage + async email delivery
-3. `HUNTER_API_KEY` (optional) — improves email coverage
+1. `NEXT_PUBLIC_LEMONSQUEEZY_*_URL` keys — enables real checkout (Lemon Squeezy)
+2. `SUPABASE_*` keys — enables order/job persistence and admin dashboard
+3. `LEMONSQUEEZY_WEBHOOK_SECRET` + variant IDs — enables automatic order creation
+4. `HUNTER_API_KEY` (optional) — improves email coverage
 
 ---
 

@@ -164,15 +164,17 @@ This phase enables automatic order tracking and the admin API. Complete after Le
 
 In Supabase: **Settings → API**:
 - `NEXT_PUBLIC_SUPABASE_URL` — Project URL
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY` — anon/public key
 - `SUPABASE_SERVICE_ROLE_KEY` — service_role key (keep secret, server-only)
+
+> **Note:** `NEXT_PUBLIC_SUPABASE_ANON_KEY` is NOT required. The admin dashboard
+> uses the service role key server-side only. The anon key is reserved for future
+> customer auth — leave it blank for now.
 
 ### D4. Add to Vercel environment variables
 
 In Vercel: **Settings → Environment Variables** (Production scope):
 ```
 NEXT_PUBLIC_SUPABASE_URL       = https://xxx.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY  = eyJ...
 SUPABASE_SERVICE_ROLE_KEY      = eyJ...
 ADMIN_SECRET_TOKEN             = <openssl rand -hex 32>
 ```
@@ -269,7 +271,7 @@ No cookies, no GDPR modal required for Vercel Analytics (aggregated, IP-free).
 
 ---
 
-## PHASE E — Admin Dashboard QA
+## PHASE F — Admin Dashboard QA
 
 ### Local setup
 
