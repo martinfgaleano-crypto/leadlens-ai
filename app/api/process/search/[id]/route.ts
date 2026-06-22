@@ -9,6 +9,7 @@ import { computeBuyerFit } from "@/lib/enrichment/buyer-fit";
 import { computeTemperature } from "@/lib/enrichment/temperature";
 import { computeOpportunityScore } from "@/lib/enrichment/opportunity-score";
 import { computeStrengths, computeWeaknesses, generateReasoning } from "@/lib/enrichment/reasoning";
+import { upsertVaultLead } from "@/lib/vault/upsert-vault-lead";
 
 /**
  * POST /api/process/search/[id]
@@ -234,6 +235,42 @@ export async function POST(
       insertError = insErr.message;
     } else {
       insertedCount = inserted?.length ?? toInsert.length;
+    }
+
+    // ── 7b. Upsert inserted leads into the Vault (best-effort, non-blocking) ──
+    if (!insErr) {
+      for (const row of rows) {
+        try {
+          await upsertVaultLead(client, {
+            company_name:       row.company_name,
+            normalized_company: row.normalized_company,
+            website:            row.website,
+            domain:             row.domain,
+            contact_name:       row.contact_name,
+            title:              row.title,
+            normalized_title:   row.normalized_title,
+            seniority:          row.seniority,
+            email:              row.email,
+            email_quality:      row.email_quality,
+            email_type:         row.email_type,
+            linkedin_url:       row.linkedin_url,
+            country:            row.country,
+            industry:           null,
+            company_size:       null,
+            source:             row.source ?? "apollo",
+            lead_score:         row.lead_score,
+            confidence_score:   row.confidence_score,
+            opportunity_score:  row.opportunity_score,
+            buyer_fit:          row.buyer_fit,
+            temperature:        row.temperature,
+            ai_reasoning:       row.ai_reasoning,
+            strengths:          row.strengths,
+            weaknesses:         row.weaknesses,
+          });
+        } catch {
+          // Vault upsert failure must never block lead delivery
+        }
+      }
     }
   }
 
