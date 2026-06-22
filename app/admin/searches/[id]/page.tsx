@@ -70,6 +70,26 @@ type LeadForm = {
   notes: string;
 };
 
+type GenerateLog = {
+  success: boolean;
+  requested?: number;
+  apollo_returned?: number;
+  total_available?: number;
+  inserted?: number;
+  skipped?: number;
+  errors?: string[];
+  duration_ms?: number;
+  final_status?: string;
+  error?: string;
+  params_used?: {
+    job_titles: string[];
+    industries: string[];
+    countries: string[];
+    company_sizes: string[];
+    keywords: string[];
+  };
+};
+
 const EMPTY_FORM: LeadForm = {
   company_name: "", website: "", contact_name: "",
   title: "", email: "", linkedin_url: "",
@@ -100,7 +120,11 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-function Card({ title, children, action }: { title: string; children: React.ReactNode; action?: React.ReactNode }) {
+function Card({
+  title, children, action,
+}: {
+  title: string; children: React.ReactNode; action?: React.ReactNode;
+}) {
   return (
     <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "0.75rem", overflow: "hidden", marginBottom: "1.25rem" }}>
       <div style={{ padding: "1rem 1.25rem", borderBottom: "1px solid #f1f5f9", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -132,12 +156,7 @@ function ArrRow({ label, arr }: { label: string; arr: string[] }) {
 // ─── Lead modal ───────────────────────────────────────────────────────────────
 
 function LeadModal({
-  mode,
-  initial,
-  onSave,
-  onClose,
-  saving,
-  error,
+  mode, initial, onSave, onClose, saving, error,
 }: {
   mode: "add" | "edit";
   initial: LeadForm;
@@ -167,16 +186,8 @@ function LeadModal({
   };
 
   return (
-    <div style={{
-      position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)",
-      display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50,
-    }}>
-      <div style={{
-        background: "#fff", borderRadius: "0.75rem",
-        width: "min(680px, 95vw)", maxHeight: "90vh",
-        overflow: "auto", boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
-      }}>
-        {/* Header */}
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50 }}>
+      <div style={{ background: "#fff", borderRadius: "0.75rem", width: "min(680px, 95vw)", maxHeight: "90vh", overflow: "auto", boxShadow: "0 20px 60px rgba(0,0,0,0.2)" }}>
         <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #f1f5f9", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <span style={{ fontWeight: 800, fontSize: "1rem", color: "#0f172a" }}>
             {mode === "add" ? "Add Lead" : "Edit Lead"}
@@ -184,9 +195,7 @@ function LeadModal({
           <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "1.2rem", color: "#94a3b8", lineHeight: 1 }}>×</button>
         </div>
 
-        {/* Body */}
         <div style={{ padding: "1.5rem", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-          {/* Company name spans full width */}
           <div style={{ gridColumn: "1/-1" }}>
             <label style={labelStyle}>Company name *</label>
             <input value={form.company_name} onChange={field("company_name")} style={inputStyle} placeholder="Acme Corp" />
@@ -217,32 +226,22 @@ function LeadModal({
           </div>
           <div>
             <label style={labelStyle}>Source</label>
-            <input value={form.source} onChange={field("source")} style={inputStyle} placeholder="Apollo, manual, LinkedIn..." />
+            <input value={form.source} onChange={field("source")} style={inputStyle} placeholder="Apollo, manual, LinkedIn…" />
           </div>
           <div style={{ gridColumn: "1/-1" }}>
             <label style={labelStyle}>Internal notes</label>
-            <textarea
-              value={form.notes}
-              onChange={field("notes")}
-              rows={2}
-              style={{ ...inputStyle, resize: "vertical" } as React.CSSProperties}
-              placeholder="Internal notes about this lead…"
-            />
+            <textarea value={form.notes} onChange={field("notes")} rows={2} style={{ ...inputStyle, resize: "vertical" } as React.CSSProperties} placeholder="Internal notes about this lead…" />
           </div>
         </div>
 
-        {/* Footer */}
         {error && (
-          <div style={{ margin: "0 1.5rem", padding: "0.5rem 0.75rem", background: "#fee2e2", borderRadius: "0.4rem", fontSize: "0.78rem", color: "#dc2626", marginBottom: "0.75rem" }}>
+          <div style={{ margin: "0 1.5rem 0.75rem", padding: "0.5rem 0.75rem", background: "#fee2e2", borderRadius: "0.4rem", fontSize: "0.78rem", color: "#dc2626" }}>
             {error}
           </div>
         )}
+
         <div style={{ padding: "1rem 1.5rem", borderTop: "1px solid #f1f5f9", display: "flex", gap: "0.75rem", justifyContent: "flex-end" }}>
-          <button
-            onClick={onClose}
-            disabled={saving}
-            style={{ background: "#f1f5f9", color: "#374151", border: "none", borderRadius: "0.5rem", padding: "0.55rem 1.1rem", fontWeight: 600, fontSize: "0.8rem", cursor: "pointer", fontFamily: "inherit" }}
-          >
+          <button onClick={onClose} disabled={saving} style={{ background: "#f1f5f9", color: "#374151", border: "none", borderRadius: "0.5rem", padding: "0.55rem 1.1rem", fontWeight: 600, fontSize: "0.8rem", cursor: "pointer", fontFamily: "inherit" }}>
             Cancel
           </button>
           <button
@@ -250,9 +249,9 @@ function LeadModal({
             disabled={saving || !form.company_name.trim()}
             style={{
               background: saving || !form.company_name.trim() ? "#e2e8f0" : "#0f172a",
-              color: saving || !form.company_name.trim() ? "#94a3b8" : "#fff",
-              border: "none", borderRadius: "0.5rem",
-              padding: "0.55rem 1.25rem", fontWeight: 700, fontSize: "0.8rem",
+              color:      saving || !form.company_name.trim() ? "#94a3b8" : "#fff",
+              border: "none", borderRadius: "0.5rem", padding: "0.55rem 1.25rem",
+              fontWeight: 700, fontSize: "0.8rem",
               cursor: saving || !form.company_name.trim() ? "not-allowed" : "pointer",
               fontFamily: "inherit",
             }}
@@ -265,18 +264,78 @@ function LeadModal({
   );
 }
 
+// ─── Apollo log display ───────────────────────────────────────────────────────
+
+function ApolloLogPanel({ log }: { log: GenerateLog }) {
+  const isError = !log.success;
+
+  return (
+    <div style={{
+      marginTop: "0.75rem",
+      background: isError ? "#fff8f8" : "#f0fdf4",
+      border: `1px solid ${isError ? "#fca5a5" : "#bbf7d0"}`,
+      borderRadius: "0.5rem",
+      padding: "0.875rem 1rem",
+      fontSize: "0.8rem",
+      fontFamily: "monospace",
+      lineHeight: 1.7,
+      color: "#1e293b",
+    }}>
+      {/* Top-level Apollo error (e.g. bad key, timeout) */}
+      {log.error && (
+        <div style={{ color: "#dc2626", fontWeight: 700, marginBottom: "0.5rem" }}>
+          Error: {log.error}
+        </div>
+      )}
+
+      {/* Run stats */}
+      {log.requested !== undefined && (
+        <>
+          <div><span style={{ color: "#64748b" }}>Requested: </span>{log.requested}</div>
+          <div><span style={{ color: "#64748b" }}>Apollo returned: </span>{log.apollo_returned} {log.total_available !== undefined && log.total_available > (log.apollo_returned ?? 0) && <span style={{ color: "#64748b" }}>(of {log.total_available} available)</span>}</div>
+          <div><span style={{ color: "#64748b" }}>Inserted: </span><strong style={{ color: log.inserted ? "#15803d" : "#94a3b8" }}>{log.inserted}</strong></div>
+          <div><span style={{ color: "#64748b" }}>Duplicates skipped: </span>{log.skipped}</div>
+          <div><span style={{ color: "#64748b" }}>Duration: </span>{log.duration_ms}ms</div>
+          <div><span style={{ color: "#64748b" }}>Final status: </span><strong>{log.final_status}</strong></div>
+        </>
+      )}
+
+      {/* Insert errors */}
+      {log.errors && log.errors.length > 0 && (
+        <div style={{ marginTop: "0.5rem", color: "#dc2626" }}>
+          {log.errors.map((e, i) => <div key={i}>Insert error: {e}</div>)}
+        </div>
+      )}
+
+      {/* Params used */}
+      {log.params_used && (
+        <details style={{ marginTop: "0.75rem" }}>
+          <summary style={{ cursor: "pointer", color: "#64748b", fontSize: "0.75rem" }}>Params sent to Apollo</summary>
+          <div style={{ marginTop: "0.4rem", paddingLeft: "0.5rem", borderLeft: "2px solid #e2e8f0" }}>
+            {log.params_used.job_titles.length > 0  && <div><span style={{ color: "#64748b" }}>Titles: </span>{log.params_used.job_titles.join(", ")}</div>}
+            {log.params_used.industries.length > 0   && <div><span style={{ color: "#64748b" }}>Industries/keywords: </span>{log.params_used.industries.join(", ")}</div>}
+            {log.params_used.countries.length > 0    && <div><span style={{ color: "#64748b" }}>Countries: </span>{log.params_used.countries.join(", ")}</div>}
+            {log.params_used.company_sizes.length > 0 && <div><span style={{ color: "#64748b" }}>Co. sizes: </span>{log.params_used.company_sizes.join(", ")}</div>}
+            {log.params_used.keywords.length > 0     && <div><span style={{ color: "#64748b" }}>Keywords: </span>{log.params_used.keywords.join(", ")}</div>}
+          </div>
+        </details>
+      )}
+    </div>
+  );
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function AdminSearchDetailPage() {
   const { id } = useParams<{ id: string }>();
 
-  const [search, setSearch]       = useState<LeadSearch | null>(null);
-  const [profile, setProfile]     = useState<Profile | null>(null);
-  const [icp, setIcp]             = useState<Icp | null>(null);
-  const [leads, setLeads]         = useState<LeadResult[]>([]);
-  const [loading, setLoading]     = useState(true);
+  const [search, setSearch]   = useState<LeadSearch | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [icp, setIcp]         = useState<Icp | null>(null);
+  const [leads, setLeads]     = useState<LeadResult[]>([]);
+  const [loading, setLoading] = useState(true);
   const [leadsLoading, setLeadsLoading] = useState(false);
-  const [error, setError]         = useState("");
+  const [error, setError]     = useState("");
 
   // Status
   const [statusValue, setStatusValue]   = useState("");
@@ -293,6 +352,10 @@ export default function AdminSearchDetailPage() {
   const [editingLead, setEditingLead] = useState<LeadResult | null>(null);
   const [modalSaving, setModalSaving] = useState(false);
   const [modalError, setModalError]   = useState("");
+
+  // Apollo generation
+  const [generating, setGenerating] = useState(false);
+  const [genLog, setGenLog]         = useState<GenerateLog | null>(null);
 
   // ─── Data loading ──────────────────────────────────────────────────────────
 
@@ -319,7 +382,7 @@ export default function AdminSearchDetailPage() {
     const d = await res.json();
     setSearch(d.search   as LeadSearch);
     setProfile(d.profile as Profile | null);
-    setIcp(d.icp         as Icp     | null);
+    setIcp(d.icp         as Icp | null);
     setStatusValue(d.search.status);
     setNotesValue(d.search.admin_notes ?? "");
     setLoading(false);
@@ -330,7 +393,7 @@ export default function AdminSearchDetailPage() {
     loadLeads();
   }, [load, loadLeads]);
 
-  // ─── Status update ─────────────────────────────────────────────────────────
+  // ─── Status ────────────────────────────────────────────────────────────────
 
   async function handleSaveStatus() {
     if (!search || statusValue === search.status) return;
@@ -371,23 +434,9 @@ export default function AdminSearchDetailPage() {
 
   // ─── Lead CRUD ─────────────────────────────────────────────────────────────
 
-  function openAdd() {
-    setModalMode("add");
-    setEditingLead(null);
-    setModalError("");
-  }
-
-  function openEdit(lead: LeadResult) {
-    setModalMode("edit");
-    setEditingLead(lead);
-    setModalError("");
-  }
-
-  function closeModal() {
-    setModalMode(null);
-    setEditingLead(null);
-    setModalError("");
-  }
+  function openAdd()            { setModalMode("add"); setEditingLead(null);  setModalError(""); }
+  function openEdit(l: LeadResult) { setModalMode("edit"); setEditingLead(l); setModalError(""); }
+  function closeModal()         { setModalMode(null);  setEditingLead(null);  setModalError(""); }
 
   async function handleSaveLead(form: LeadForm) {
     setModalSaving(true);
@@ -405,24 +454,13 @@ export default function AdminSearchDetailPage() {
       notes:        form.notes.trim()        || null,
     };
 
-    let res: Response;
-    if (modalMode === "add") {
-      res = await adminFetch(`/api/admin/searches/${id}/results`, {
-        method: "POST",
-        body: JSON.stringify(payload),
-      });
-    } else {
-      res = await adminFetch(`/api/admin/results/${editingLead!.id}`, {
-        method: "PATCH",
-        body: JSON.stringify(payload),
-      });
-    }
+    const res = modalMode === "add"
+      ? await adminFetch(`/api/admin/searches/${id}/results`, { method: "POST", body: JSON.stringify(payload) })
+      : await adminFetch(`/api/admin/results/${editingLead!.id}`, { method: "PATCH", body: JSON.stringify(payload) });
 
     setModalSaving(false);
-    if (res.ok) {
-      closeModal();
-      await loadLeads();
-    } else {
+    if (res.ok) { closeModal(); await loadLeads(); }
+    else {
       const d = await res.json().catch(() => ({}));
       setModalError(d.error ?? "Save failed.");
     }
@@ -431,12 +469,31 @@ export default function AdminSearchDetailPage() {
   async function handleDeleteLead(lead: LeadResult) {
     if (!confirm(`Delete "${lead.company_name}"? This cannot be undone.`)) return;
     const res = await adminFetch(`/api/admin/results/${lead.id}`, { method: "DELETE" });
-    if (res.ok || res.status === 204) {
-      await loadLeads();
-    } else {
-      const d = await res.json().catch(() => ({}));
-      alert(d.error ?? "Delete failed.");
-    }
+    if (res.ok || res.status === 204) await loadLeads();
+    else { const d = await res.json().catch(() => ({})); alert(d.error ?? "Delete failed."); }
+  }
+
+  // ─── Apollo generation ─────────────────────────────────────────────────────
+
+  async function handleGenerate() {
+    if (!confirm(
+      "Run Apollo lead search?\n\n" +
+      "• Status will be set to 'processing'\n" +
+      "• Apollo API credits will be consumed\n" +
+      "• Results are inserted directly into leads\n\n" +
+      "Proceed?"
+    )) return;
+
+    setGenerating(true);
+    setGenLog(null);
+
+    const res = await adminFetch(`/api/admin/searches/${id}/generate`, { method: "POST" });
+    const d = await res.json().catch(() => ({ success: false, error: "Invalid response from server." }));
+    setGenLog(d as GenerateLog);
+    setGenerating(false);
+
+    // Reload search (status may have changed) + leads
+    await Promise.all([load(), loadLeads()]);
   }
 
   // ─── Render states ─────────────────────────────────────────────────────────
@@ -458,23 +515,20 @@ export default function AdminSearchDetailPage() {
 
   const statusChanged = statusValue !== search.status;
 
-  const modalInitial: LeadForm = editingLead
-    ? {
-        company_name: editingLead.company_name,
-        website:      editingLead.website      ?? "",
-        contact_name: editingLead.contact_name ?? "",
-        title:        editingLead.title        ?? "",
-        email:        editingLead.email        ?? "",
-        linkedin_url: editingLead.linkedin_url ?? "",
-        country:      editingLead.country      ?? "",
-        source:       editingLead.source       ?? "",
-        notes:        editingLead.notes        ?? "",
-      }
-    : EMPTY_FORM;
+  const modalInitial: LeadForm = editingLead ? {
+    company_name: editingLead.company_name,
+    website:      editingLead.website      ?? "",
+    contact_name: editingLead.contact_name ?? "",
+    title:        editingLead.title        ?? "",
+    email:        editingLead.email        ?? "",
+    linkedin_url: editingLead.linkedin_url ?? "",
+    country:      editingLead.country      ?? "",
+    source:       editingLead.source       ?? "",
+    notes:        editingLead.notes        ?? "",
+  } : EMPTY_FORM;
 
   return (
     <AdminLayout>
-      {/* Modal */}
       {modalMode && (
         <LeadModal
           mode={modalMode}
@@ -486,7 +540,7 @@ export default function AdminSearchDetailPage() {
         />
       )}
 
-      {/* Back link + header */}
+      {/* Header */}
       <div style={{ marginBottom: "1.5rem" }}>
         <Link href="/admin/searches" style={{ color: "#0ea5e9", fontSize: "0.8rem", fontWeight: 600, textDecoration: "none" }}>← Back to searches</Link>
         <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginTop: "0.75rem" }}>
@@ -500,7 +554,7 @@ export default function AdminSearchDetailPage() {
 
       <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: "1.25rem", alignItems: "start" }}>
 
-        {/* ── LEFT COLUMN ── */}
+        {/* ── LEFT ── */}
         <div>
           {/* Customer */}
           <Card title="Customer">
@@ -544,18 +598,13 @@ export default function AdminSearchDetailPage() {
             )}
           </Card>
 
-          {/* ── LEADS TABLE ── */}
+          {/* Leads table */}
           <Card
             title={`Leads (${leads.length})`}
             action={
               <button
                 onClick={openAdd}
-                style={{
-                  background: "#0ea5e9", color: "#fff", border: "none",
-                  borderRadius: "0.4rem", padding: "0.35rem 0.85rem",
-                  fontWeight: 700, fontSize: "0.75rem", cursor: "pointer",
-                  fontFamily: "inherit",
-                }}
+                style={{ background: "#0ea5e9", color: "#fff", border: "none", borderRadius: "0.4rem", padding: "0.35rem 0.85rem", fontWeight: 700, fontSize: "0.75rem", cursor: "pointer", fontFamily: "inherit" }}
               >
                 + Add lead
               </button>
@@ -567,7 +616,7 @@ export default function AdminSearchDetailPage() {
               <div style={{ textAlign: "center", padding: "2rem 0.5rem" }}>
                 <div style={{ fontSize: "1.1rem", marginBottom: "0.5rem" }}>📋</div>
                 <div style={{ fontWeight: 600, fontSize: "0.875rem", color: "#0f172a", marginBottom: "0.25rem" }}>No leads yet</div>
-                <div style={{ color: "#64748b", fontSize: "0.78rem" }}>Click "+ Add lead" to manually add the first lead for this search.</div>
+                <div style={{ color: "#64748b", fontSize: "0.78rem" }}>Use "Generate Leads with Apollo" or "+ Add lead" to add leads manually.</div>
               </div>
             ) : (
               <div style={{ overflowX: "auto", margin: "-1.25rem" }}>
@@ -594,20 +643,14 @@ export default function AdminSearchDetailPage() {
                         <td style={{ padding: "0.65rem 1rem", fontSize: "0.78rem", color: "#64748b", whiteSpace: "nowrap" }}>{lead.title ?? <span style={{ color: "#cbd5e1" }}>—</span>}</td>
                         <td style={{ padding: "0.65rem 1rem", fontSize: "0.78rem", color: "#64748b", whiteSpace: "nowrap" }}>{lead.email ?? <span style={{ color: "#cbd5e1" }}>—</span>}</td>
                         <td style={{ padding: "0.65rem 1rem", fontSize: "0.78rem", color: "#64748b", whiteSpace: "nowrap" }}>{lead.country ?? <span style={{ color: "#cbd5e1" }}>—</span>}</td>
-                        <td style={{ padding: "0.65rem 1rem", fontSize: "0.78rem", color: "#64748b", whiteSpace: "nowrap" }}>{lead.source ?? <span style={{ color: "#cbd5e1" }}>—</span>}</td>
+                        <td style={{ padding: "0.65rem 1rem", fontSize: "0.78rem", color: "#64748b", whiteSpace: "nowrap" }}>
+                          {lead.source
+                            ? <span style={{ background: "#f1f5f9", borderRadius: "99px", padding: "0.1rem 0.5rem", fontSize: "0.68rem", fontWeight: 600 }}>{lead.source}</span>
+                            : <span style={{ color: "#cbd5e1" }}>—</span>}
+                        </td>
                         <td style={{ padding: "0.65rem 1rem", whiteSpace: "nowrap" }}>
-                          <button
-                            onClick={() => openEdit(lead)}
-                            style={{ background: "none", border: "none", color: "#0ea5e9", fontWeight: 600, fontSize: "0.75rem", cursor: "pointer", marginRight: "0.5rem", fontFamily: "inherit" }}
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleDeleteLead(lead)}
-                            style={{ background: "none", border: "none", color: "#ef4444", fontWeight: 600, fontSize: "0.75rem", cursor: "pointer", fontFamily: "inherit" }}
-                          >
-                            Delete
-                          </button>
+                          <button onClick={() => openEdit(lead)} style={{ background: "none", border: "none", color: "#0ea5e9", fontWeight: 600, fontSize: "0.75rem", cursor: "pointer", marginRight: "0.5rem", fontFamily: "inherit" }}>Edit</button>
+                          <button onClick={() => handleDeleteLead(lead)} style={{ background: "none", border: "none", color: "#ef4444", fontWeight: 600, fontSize: "0.75rem", cursor: "pointer", fontFamily: "inherit" }}>Delete</button>
                         </td>
                       </tr>
                     ))}
@@ -618,14 +661,55 @@ export default function AdminSearchDetailPage() {
           </Card>
         </div>
 
-        {/* ── RIGHT COLUMN ── */}
+        {/* ── RIGHT ── */}
         <div>
-          {/* Update status */}
+          {/* Apollo generation */}
+          <Card title="Apollo lead generation">
+            <p style={{ color: "#64748b", fontSize: "0.78rem", margin: "0 0 0.75rem", lineHeight: 1.5 }}>
+              Searches Apollo using this ICP's job titles, industries, company sizes, countries, and keywords. Results are inserted directly into the leads table and status is set to <strong>completed</strong>.
+            </p>
+
+            {!icp && (
+              <div style={{ marginBottom: "0.75rem", padding: "0.5rem 0.75rem", background: "#fef3c7", border: "1px solid #fde68a", borderRadius: "0.4rem", fontSize: "0.78rem", color: "#92400e" }}>
+                No ICP linked — Apollo search will use search-level countries/industries only and may return broad results.
+              </div>
+            )}
+
+            <button
+              onClick={handleGenerate}
+              disabled={generating}
+              style={{
+                display: "flex", alignItems: "center", justifyContent: "center", gap: "0.4rem",
+                width: "100%", padding: "0.65rem 1rem",
+                background: generating ? "#e2e8f0" : "#6366f1",
+                color: generating ? "#94a3b8" : "#fff",
+                border: "none", borderRadius: "0.5rem",
+                fontWeight: 700, fontSize: "0.85rem",
+                cursor: generating ? "not-allowed" : "pointer",
+                fontFamily: "inherit",
+              }}
+            >
+              {generating ? (
+                <>
+                  <span style={{ display: "inline-block", animation: "spin 1s linear infinite" }}>⏳</span>
+                  Searching Apollo…
+                </>
+              ) : (
+                "⚡ Generate Leads with Apollo"
+              )}
+            </button>
+
+            <p style={{ color: "#94a3b8", fontSize: "0.7rem", margin: "0.5rem 0 0", textAlign: "center" }}>
+              Consumes Apollo API credits · Max 100 leads per run
+            </p>
+
+            {genLog && <ApolloLogPanel log={genLog} />}
+          </Card>
+
+          {/* Status */}
           <Card title="Update status">
             <div style={{ marginBottom: "0.75rem" }}>
-              <label style={{ display: "block", fontSize: "0.72rem", fontWeight: 700, color: "#374151", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "0.4rem" }}>
-                Status
-              </label>
+              <label style={{ display: "block", fontSize: "0.72rem", fontWeight: 700, color: "#374151", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "0.4rem" }}>Status</label>
               <select
                 value={statusValue}
                 onChange={e => { setStatusValue(e.target.value); setStatusMsg(null); }}
@@ -634,21 +718,19 @@ export default function AdminSearchDetailPage() {
                 {STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
               </select>
             </div>
-
             {statusMsg && (
               <div style={{ marginBottom: "0.75rem", padding: "0.5rem 0.75rem", background: statusMsg.ok ? "#dcfce7" : "#fee2e2", borderRadius: "0.4rem", fontSize: "0.78rem", color: statusMsg.ok ? "#15803d" : "#dc2626" }}>
                 {statusMsg.text}
               </div>
             )}
-
             <button
               onClick={handleSaveStatus}
               disabled={savingStatus || !statusChanged}
               style={{
                 background: savingStatus || !statusChanged ? "#e2e8f0" : "#0f172a",
                 color:      savingStatus || !statusChanged ? "#94a3b8" : "#fff",
-                border: "none", borderRadius: "0.5rem",
-                padding: "0.6rem 1rem", fontWeight: 700, fontSize: "0.8rem",
+                border: "none", borderRadius: "0.5rem", padding: "0.6rem 1rem",
+                fontWeight: 700, fontSize: "0.8rem",
                 cursor: savingStatus || !statusChanged ? "not-allowed" : "pointer",
                 fontFamily: "inherit", width: "100%",
               }}
@@ -665,47 +747,33 @@ export default function AdminSearchDetailPage() {
             <textarea
               value={notesValue}
               onChange={e => { setNotesValue(e.target.value); setNotesMsg(null); }}
-              rows={6}
-              placeholder="Add internal notes about this search, issues found, delivery plan…"
-              style={{
-                display: "block", width: "100%", padding: "0.65rem 0.75rem",
-                border: "1px solid #e2e8f0", borderRadius: "0.5rem",
-                fontSize: "0.85rem", fontFamily: "inherit",
-                resize: "vertical", boxSizing: "border-box", outline: "none",
-                marginBottom: "0.75rem", color: "#0f172a",
-              } as React.CSSProperties}
+              rows={5}
+              placeholder="Add internal notes about this search…"
+              style={{ display: "block", width: "100%", padding: "0.65rem 0.75rem", border: "1px solid #e2e8f0", borderRadius: "0.5rem", fontSize: "0.85rem", fontFamily: "inherit", resize: "vertical", boxSizing: "border-box", outline: "none", marginBottom: "0.75rem", color: "#0f172a" } as React.CSSProperties}
             />
-
             {notesMsg && (
               <div style={{ marginBottom: "0.75rem", padding: "0.5rem 0.75rem", background: notesMsg.ok ? "#dcfce7" : "#fee2e2", borderRadius: "0.4rem", fontSize: "0.78rem", color: notesMsg.ok ? "#15803d" : "#dc2626" }}>
                 {notesMsg.text}
               </div>
             )}
-
             <button
               onClick={handleSaveNotes}
               disabled={savingNotes}
-              style={{
-                background: savingNotes ? "#7dd3fc" : "#0ea5e9",
-                color: "#fff", border: "none", borderRadius: "0.5rem",
-                padding: "0.6rem 1rem", fontWeight: 700, fontSize: "0.8rem",
-                cursor: savingNotes ? "not-allowed" : "pointer",
-                fontFamily: "inherit", width: "100%",
-              }}
+              style={{ background: savingNotes ? "#7dd3fc" : "#0ea5e9", color: "#fff", border: "none", borderRadius: "0.5rem", padding: "0.6rem 1rem", fontWeight: 700, fontSize: "0.8rem", cursor: savingNotes ? "not-allowed" : "pointer", fontFamily: "inherit", width: "100%" }}
             >
               {savingNotes ? "Saving…" : "Save notes"}
             </button>
           </Card>
 
-          {/* Lead count summary */}
+          {/* Delivery summary */}
           <Card title="Delivery summary">
-            <Row label="Requested"  value={search.requested_lead_count} />
-            <Row label="Delivered"  value={
+            <Row label="Requested" value={search.requested_lead_count} />
+            <Row label="Delivered" value={
               <span style={{ fontWeight: 700, color: leads.length >= search.requested_lead_count ? "#15803d" : "#0f172a" }}>
                 {leads.length}
               </span>
             } />
-            <Row label="Remaining"  value={
+            <Row label="Remaining" value={
               <span style={{ color: "#64748b" }}>
                 {Math.max(0, search.requested_lead_count - leads.length)}
               </span>
