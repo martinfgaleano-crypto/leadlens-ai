@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import DashboardShell from "@/app/dashboard/_components/DashboardShell";
@@ -42,33 +42,38 @@ const EMPTY_FORM: SearchForm = {
   notes: "",
 };
 
+const POLL_INTERVAL_MS = 15_000;
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function toArr(s: string): string[] {
   return s.split(",").map(v => v.trim()).filter(Boolean);
 }
 
-const STATUS_STYLES: Record<string, React.CSSProperties> = {
-  pending:    { background: "#fef9c3", color: "#854d0e", border: "1px solid #fde047" },
-  processing: { background: "#e0f2fe", color: "#075985", border: "1px solid #7dd3fc" },
-  completed:  { background: "#dcfce7", color: "#14532d", border: "1px solid #86efac" },
-  failed:     { background: "#fee2e2", color: "#7f1d1d", border: "1px solid #fca5a5" },
+// Customer-facing status labels and styles
+const STATUS_CONFIG: Record<string, { label: string; bg: string; color: string; border: string }> = {
+  pending:    { label: "Queued",            bg: "#fef9c3", color: "#854d0e", border: "#fde047" },
+  processing: { label: "Generating leads…", bg: "#e0f2fe", color: "#075985", border: "#7dd3fc" },
+  completed:  { label: "Completed",         bg: "#dcfce7", color: "#14532d", border: "#86efac" },
+  failed:     { label: "Failed",            bg: "#fee2e2", color: "#7f1d1d", border: "#fca5a5" },
 };
 
 function StatusBadge({ status }: { status: string }) {
-  const style = STATUS_STYLES[status] ?? STATUS_STYLES.pending;
+  const cfg = STATUS_CONFIG[status] ?? STATUS_CONFIG.pending;
   return (
     <span style={{
-      ...style,
-      display: "inline-block",
-      borderRadius: "99px",
-      padding: "0.15rem 0.65rem",
-      fontSize: "0.68rem",
-      fontWeight: 700,
-      textTransform: "uppercase",
-      letterSpacing: "0.04em",
+      background: cfg.bg, color: cfg.color,
+      border: `1px solid ${cfg.border}`,
+      display: "inline-flex", alignItems: "center", gap: "0.3rem",
+      borderRadius: "99px", padding: "0.15rem 0.65rem",
+      fontSize: "0.68rem", fontWeight: 700,
+      textTransform: "uppercase", letterSpacing: "0.04em",
+      whiteSpace: "nowrap",
     } as React.CSSProperties}>
-      {status}
+      {status === "processing" && (
+        <span style={{ display: "inline-block", animation: "spin 1.2s linear infinite", fontSize: "0.65rem" }}>⟳</span>
+      )}
+      {cfg.label}
     </span>
   );
 }
@@ -77,18 +82,25 @@ function StatusBadge({ status }: { status: string }) {
 
 export default function SearchesPage() {
   const router = useRouter();
-  const [userEmail, setUserEmail]   = useState("");
-  const [userId, setUserId]         = useState("");
-  const [icps, setIcps]             = useState<Icp[]>([]);
-  const [searches, setSearches]     = useState<LeadSearch[]>([]);
-  const [loading, setLoading]       = useState(true);
-  const [error, setError]           = useState("");
-  const [formOpen, setFormOpen]     = useState(false);
-  const [form, setForm]             = useState<SearchForm>(EMPTY_FORM);
-  const [saving, setSaving]         = useState(false);
-  const [formError, setFormError]   = useState("");
+  const [userEmail, setUserEmail] = useState("");
+  const [userId, setUserId]       = useState("");
+  const [icps, setIcps]           = useState<Icp[]>([]);
+  const [searches, setSearches]   = useState<LeadSearch[]>([]);
+  const [loading, setLoading]     = useState(true);
+  const [error, setError]         = useState("");
+  const [formOpen, setFormOpen]   = useState(false);
+  const [form, setForm]           = useState<SearchForm>(EMPTY_FORM);
+  const [saving, setSaving]       = useState(false);
+  const [formError, setFormError] = useState("");
 
-  // ─── Load data ──────────────────────────────────────────────────────────
+  // Track whether any search is actively being processed
+  const hasActiveSearches = searches.some(
+    s => s.status === "pending" || s.status === "processing"
+  );
+  const userIdRef = useRef(userId);
+  useEffect(() => { userIdRef.current = userId; }, [userId]);
+
+  // ─── Load data ──────────────────────────────────────────────────────────────
 
   const loadData = useCallback(async (uid: string) => {
     const supabase = getSupabaseClient();
@@ -102,6 +114,8 @@ export default function SearchesPage() {
     if (!icpRes.error)    setIcps((icpRes.data ?? []) as Icp[]);
     if (!searchRes.error) setSearches((searchRes.data ?? []) as LeadSearch[]);
   }, []);
+
+  // ─── Init ───────────────────────────────────────────────────────────────────
 
   useEffect(() => {
     let cancelled = false;
@@ -124,7 +138,20 @@ export default function SearchesPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ─── Logout ─────────────────────────────────────────────────────────────
+  // ─── Auto-refresh: poll every 15 s while any search is active ───────────────
+
+  useEffect(() => {
+    if (!hasActiveSearches || !userId) return;
+
+    const interval = setInterval(() => {
+      const uid = userIdRef.current;
+      if (uid) loadData(uid);
+    }, POLL_INTERVAL_MS);
+
+    return () => clearInterval(interval);
+  }, [hasActiveSearches, userId, loadData]);
+
+  // ─── Logout ─────────────────────────────────────────────────────────────────
 
   async function handleLogout() {
     const supabase = getSupabaseClient();
@@ -132,7 +159,7 @@ export default function SearchesPage() {
     router.replace("/login");
   }
 
-  // ─── Form ───────────────────────────────────────────────────────────────
+  // ─── Form ───────────────────────────────────────────────────────────────────
 
   function openForm() {
     setForm({ ...EMPTY_FORM, icp_id: icps[0]?.id ?? "" });
@@ -148,8 +175,8 @@ export default function SearchesPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.name.trim())  { setFormError("Search name is required."); return; }
-    if (!form.icp_id)       { setFormError("Please select an ICP."); return; }
+    if (!form.name.trim()) { setFormError("Search name is required."); return; }
+    if (!form.icp_id)      { setFormError("Please select an ICP."); return; }
 
     const leadCount = parseInt(form.requested_lead_count, 10);
     if (isNaN(leadCount) || leadCount < 1 || leadCount > 500) {
@@ -163,25 +190,37 @@ export default function SearchesPage() {
     setSaving(true);
     setFormError("");
 
-    const { error: insertErr } = await supabase.from("lead_searches").insert({
-      user_id:              userId,
-      icp_id:               form.icp_id || null,
-      name:                 form.name.trim(),
-      status:               "pending",
-      requested_lead_count: leadCount,
-      countries:            toArr(form.countries),
-      industries:           toArr(form.industries),
-      notes:                form.notes.trim() || null,
-    });
+    // Insert and get back the id so we can trigger processing
+    const { data: inserted, error: insertErr } = await supabase
+      .from("lead_searches")
+      .insert({
+        user_id:              userId,
+        icp_id:               form.icp_id || null,
+        name:                 form.name.trim(),
+        status:               "pending",
+        requested_lead_count: leadCount,
+        countries:            toArr(form.countries),
+        industries:           toArr(form.industries),
+        notes:                form.notes.trim() || null,
+      })
+      .select("id")
+      .single();
 
-    if (insertErr) { setFormError(insertErr.message); setSaving(false); return; }
+    if (insertErr || !inserted) {
+      setFormError(insertErr?.message ?? "Failed to create search.");
+      setSaving(false);
+      return;
+    }
+
+    // Fire processing — do NOT await. UI returns immediately; server runs async.
+    fetch(`/api/process/search/${inserted.id}`, { method: "POST" }).catch(() => {});
 
     await loadData(userId);
     setSaving(false);
     closeForm();
   }
 
-  // ─── Render ─────────────────────────────────────────────────────────────
+  // ─── Render ─────────────────────────────────────────────────────────────────
 
   if (loading) {
     return (
@@ -203,11 +242,18 @@ export default function SearchesPage() {
 
   return (
     <DashboardShell email={userEmail} onLogout={handleLogout}>
+      {/* Spin keyframe — injected once */}
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "2rem" }}>
         <div>
           <h1 style={S.pageTitle}>Lead Searches</h1>
-          <p style={S.pageSub}>Request a lead batch from a saved ICP. We&apos;ll process it and notify you when ready.</p>
+          <p style={S.pageSub}>
+            {hasActiveSearches
+              ? "Leads are being generated automatically — this page refreshes every 15 seconds."
+              : "Submit a search request. Leads are generated automatically."}
+          </p>
         </div>
         {hasIcps && !formOpen && (
           <button onClick={openForm} style={S.btnPrimary}>+ New Search</button>
@@ -315,7 +361,7 @@ export default function SearchesPage() {
             <div style={S.emptyState}>
               <div style={S.emptyIcon}>🔍</div>
               <div style={S.emptyTitle}>No searches yet</div>
-              <div style={S.emptySub}>Submit your first lead search request above. Once processed, results will appear here.</div>
+              <div style={S.emptySub}>Submit your first lead search. Leads are generated automatically — no waiting on manual processing.</div>
             </div>
           </div>
         ) : (
@@ -323,7 +369,7 @@ export default function SearchesPage() {
             <div style={S.tableHeader}>
               <span style={{ ...S.col, flex: 3 }}>Search</span>
               <span style={{ ...S.col, flex: 1 }}>Leads</span>
-              <span style={{ ...S.col, flex: 1 }}>Status</span>
+              <span style={{ ...S.col, flex: 1.5 }}>Status</span>
               <span style={{ ...S.col, flex: 1.5 }}>Requested</span>
               <span style={{ ...S.col, flex: 1 }}></span>
             </div>
@@ -333,7 +379,7 @@ export default function SearchesPage() {
                   {s.name}
                 </span>
                 <span style={{ ...S.col, flex: 1, color: "#64748b" }}>{s.requested_lead_count}</span>
-                <span style={{ ...S.col, flex: 1 }}><StatusBadge status={s.status} /></span>
+                <span style={{ ...S.col, flex: 1.5 }}><StatusBadge status={s.status} /></span>
                 <span style={{ ...S.col, flex: 1.5, color: "#94a3b8", fontSize: "0.78rem" }}>
                   {new Date(s.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                 </span>
@@ -352,15 +398,15 @@ export default function SearchesPage() {
 // ─── Styles ──────────────────────────────────────────────────────────────────
 
 const S = {
-  pageTitle: { color: "#0f172a", fontSize: "1.5rem", fontWeight: 800, margin: 0, letterSpacing: "-0.02em" } as React.CSSProperties,
-  pageSub:   { color: "#64748b", margin: "0.25rem 0 0", fontSize: "0.875rem" } as React.CSSProperties,
+  pageTitle:   { color: "#0f172a", fontSize: "1.5rem", fontWeight: 800, margin: 0, letterSpacing: "-0.02em" } as React.CSSProperties,
+  pageSub:     { color: "#64748b", margin: "0.25rem 0 0", fontSize: "0.875rem" } as React.CSSProperties,
 
-  formCard: { background: "#fff", border: "1px solid #e2e8f0", borderRadius: "0.75rem", padding: "1.5rem", marginBottom: "1.5rem" } as React.CSSProperties,
-  formTitle: { color: "#0f172a", fontSize: "1rem", fontWeight: 700, margin: 0 } as React.CSSProperties,
-  formGrid:  { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "0.875rem", marginBottom: "1.25rem" } as React.CSSProperties,
+  formCard:    { background: "#fff", border: "1px solid #e2e8f0", borderRadius: "0.75rem", padding: "1.5rem", marginBottom: "1.5rem" } as React.CSSProperties,
+  formTitle:   { color: "#0f172a", fontSize: "1rem", fontWeight: 700, margin: 0 } as React.CSSProperties,
+  formGrid:    { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "0.875rem", marginBottom: "1.25rem" } as React.CSSProperties,
 
-  labelBlock: { display: "block" } as React.CSSProperties,
-  labelText:  { display: "block", fontSize: "0.72rem", fontWeight: 700, color: "#374151", letterSpacing: "0.04em", textTransform: "uppercase" as const, marginBottom: "0.3rem" },
+  labelBlock:  { display: "block" } as React.CSSProperties,
+  labelText:   { display: "block", fontSize: "0.72rem", fontWeight: 700, color: "#374151", letterSpacing: "0.04em", textTransform: "uppercase" as const, marginBottom: "0.3rem" },
 
   input: {
     display: "block", width: "100%", padding: "0.6rem 0.75rem",
@@ -369,28 +415,22 @@ const S = {
     outline: "none", boxSizing: "border-box" as const, fontFamily: "inherit",
   } as React.CSSProperties,
 
-  section:    { background: "#fff", border: "1px solid #e2e8f0", borderRadius: "0.75rem", overflow: "hidden" } as React.CSSProperties,
-  emptyState: { padding: "3rem 2rem", textAlign: "center" as const },
-  emptyIcon:  { fontSize: "2rem", marginBottom: "0.75rem" } as React.CSSProperties,
-  emptyTitle: { color: "#0f172a", fontWeight: 700, fontSize: "0.95rem", marginBottom: "0.5rem" } as React.CSSProperties,
-  emptySub:   { color: "#64748b", fontSize: "0.825rem", lineHeight: 1.6, maxWidth: 440, margin: "0 auto 1.5rem" } as React.CSSProperties,
+  section:     { background: "#fff", border: "1px solid #e2e8f0", borderRadius: "0.75rem", overflow: "hidden" } as React.CSSProperties,
+  emptyState:  { padding: "3rem 2rem", textAlign: "center" as const },
+  emptyIcon:   { fontSize: "2rem", marginBottom: "0.75rem" } as React.CSSProperties,
+  emptyTitle:  { color: "#0f172a", fontWeight: 700, fontSize: "0.95rem", marginBottom: "0.5rem" } as React.CSSProperties,
+  emptySub:    { color: "#64748b", fontSize: "0.825rem", lineHeight: 1.6, maxWidth: 440, margin: "0 auto 1.5rem" } as React.CSSProperties,
 
-  tableHeader: {
-    display: "flex", padding: "0.625rem 1.25rem",
-    borderBottom: "1px solid #f1f5f9", background: "#f8fafc",
-  } as React.CSSProperties,
-  tableRow: {
-    display: "flex", padding: "0.875rem 1.25rem", alignItems: "center",
-    borderBottom: "1px solid #f8fafc",
-  } as React.CSSProperties,
-  col:      { fontSize: "0.8rem", color: "#64748b", fontWeight: 600, letterSpacing: "0.02em", paddingRight: "0.75rem" } as React.CSSProperties,
+  tableHeader: { display: "flex", padding: "0.625rem 1.25rem", borderBottom: "1px solid #f1f5f9", background: "#f8fafc" } as React.CSSProperties,
+  tableRow:    { display: "flex", padding: "0.875rem 1.25rem", alignItems: "center", borderBottom: "1px solid #f8fafc" } as React.CSSProperties,
+  col:         { fontSize: "0.8rem", color: "#64748b", fontWeight: 600, letterSpacing: "0.02em", paddingRight: "0.75rem" } as React.CSSProperties,
 
-  errorBox: { background: "#fee2e2", border: "1px solid #fca5a5", borderRadius: "0.75rem", padding: "1rem 1.25rem", color: "#dc2626", fontSize: "0.85rem", lineHeight: 1.5 } as React.CSSProperties,
+  errorBox:    { background: "#fee2e2", border: "1px solid #fca5a5", borderRadius: "0.75rem", padding: "1rem 1.25rem", color: "#dc2626", fontSize: "0.85rem", lineHeight: 1.5 } as React.CSSProperties,
 
-  btnPrimary: { background: "#0ea5e9", color: "#fff", border: "none", borderRadius: "0.5rem", padding: "0.6rem 1.25rem", fontWeight: 700, fontSize: "0.875rem", cursor: "pointer", fontFamily: "inherit" } as React.CSSProperties,
-  btnGhost:   { background: "transparent", color: "#64748b", border: "1px solid #e2e8f0", borderRadius: "0.5rem", padding: "0.5rem 1rem", fontWeight: 600, fontSize: "0.8rem", cursor: "pointer", fontFamily: "inherit" } as React.CSSProperties,
-  btnDisabled:{ background: "#7dd3fc", color: "#fff", border: "none", borderRadius: "0.5rem", padding: "0.6rem 1.25rem", fontWeight: 700, fontSize: "0.875rem", cursor: "not-allowed", fontFamily: "inherit" } as React.CSSProperties,
+  btnPrimary:  { background: "#0ea5e9", color: "#fff", border: "none", borderRadius: "0.5rem", padding: "0.6rem 1.25rem", fontWeight: 700, fontSize: "0.875rem", cursor: "pointer", fontFamily: "inherit" } as React.CSSProperties,
+  btnGhost:    { background: "transparent", color: "#64748b", border: "1px solid #e2e8f0", borderRadius: "0.5rem", padding: "0.5rem 1rem", fontWeight: 600, fontSize: "0.8rem", cursor: "pointer", fontFamily: "inherit" } as React.CSSProperties,
+  btnDisabled: { background: "#7dd3fc", color: "#fff", border: "none", borderRadius: "0.5rem", padding: "0.6rem 1.25rem", fontWeight: 700, fontSize: "0.875rem", cursor: "not-allowed", fontFamily: "inherit" } as React.CSSProperties,
 
-  linkBtn: { display: "inline-block", background: "#0ea5e9", color: "#fff", borderRadius: "0.5rem", padding: "0.6rem 1.25rem", fontWeight: 700, fontSize: "0.875rem", textDecoration: "none" } as React.CSSProperties,
-  viewLink: { color: "#0ea5e9", fontWeight: 600, fontSize: "0.8rem", textDecoration: "none" } as React.CSSProperties,
+  linkBtn:     { display: "inline-block", background: "#0ea5e9", color: "#fff", borderRadius: "0.5rem", padding: "0.6rem 1.25rem", fontWeight: 700, fontSize: "0.875rem", textDecoration: "none" } as React.CSSProperties,
+  viewLink:    { color: "#0ea5e9", fontWeight: 600, fontSize: "0.8rem", textDecoration: "none" } as React.CSSProperties,
 };

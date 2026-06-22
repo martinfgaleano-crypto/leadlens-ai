@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import DashboardShell from "@/app/dashboard/_components/DashboardShell";
@@ -34,6 +34,8 @@ interface LeadResult {
   source: string | null;
 }
 
+const POLL_INTERVAL_MS = 15_000;
+
 // ─── CSV export ───────────────────────────────────────────────────────────────
 
 function exportCsv(leads: LeadResult[], filename: string) {
@@ -54,12 +56,11 @@ function exportCsv(leads: LeadResult[], filename: string) {
   const header = COLS.join(",");
   const rows   = leads.map(l => COLS.map(c => escape(l[c] as string | null)).join(","));
   const csv    = [header, ...rows].join("\n");
-
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement("a");
-  a.href     = url;
-  a.download = filename;
+  const blob   = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url    = URL.createObjectURL(blob);
+  const a      = document.createElement("a");
+  a.href       = url;
+  a.download   = filename;
   a.click();
   URL.revokeObjectURL(url);
 }
@@ -73,18 +74,29 @@ const STATUS_STYLES: Record<string, { bg: string; color: string; border: string 
   failed:     { bg: "#fee2e2", color: "#7f1d1d", border: "#fca5a5" },
 };
 
+const STATUS_LABELS: Record<string, string> = {
+  pending:    "Queued",
+  processing: "Generating leads…",
+  completed:  "Completed",
+  failed:     "Failed",
+};
+
 function StatusBadge({ status }: { status: string }) {
-  const st = STATUS_STYLES[status] ?? STATUS_STYLES.pending;
+  const st  = STATUS_STYLES[status] ?? STATUS_STYLES.pending;
+  const lbl = STATUS_LABELS[status] ?? status;
   return (
     <span style={{
-      display: "inline-block",
+      display: "inline-flex", alignItems: "center", gap: "0.3rem",
       background: st.bg, color: st.color,
       border: `1px solid ${st.border}`,
       borderRadius: "99px", padding: "0.2rem 0.85rem",
       fontSize: "0.75rem", fontWeight: 700,
       textTransform: "uppercase", letterSpacing: "0.05em",
     } as React.CSSProperties}>
-      {status}
+      {status === "processing" && (
+        <span style={{ display: "inline-block", animation: "spin 1.2s linear infinite" }}>⟳</span>
+      )}
+      {lbl}
     </span>
   );
 }
@@ -102,22 +114,63 @@ export default function SearchDetailPage() {
   const params   = useParams();
   const searchId = typeof params?.id === "string" ? params.id : "";
 
-  const [userEmail, setUserEmail] = useState("");
-  const [search, setSearch]       = useState<LeadSearch | null>(null);
-  const [icpName, setIcpName]     = useState<string | null>(null);
-  const [leads, setLeads]         = useState<LeadResult[]>([]);
+  const [userEmail, setUserEmail]     = useState("");
+  const [userId, setUserId]           = useState("");
+  const [search, setSearch]           = useState<LeadSearch | null>(null);
+  const [icpName, setIcpName]         = useState<string | null>(null);
+  const [leads, setLeads]             = useState<LeadResult[]>([]);
   const [leadsLoading, setLeadsLoading] = useState(false);
-  const [loading, setLoading]     = useState(true);
-  const [notFound, setNotFound]   = useState(false);
-  const [error, setError]         = useState("");
+  const [loading, setLoading]         = useState(true);
+  const [notFound, setNotFound]       = useState(false);
+  const [error, setError]             = useState("");
+
+  const supabaseRef = useRef(getSupabaseClient());
+  const userIdRef   = useRef(userId);
+  useEffect(() => { userIdRef.current = userId; }, [userId]);
+
+  // ─── Fetch leads for completed search ─────────────────────────────────────
+
+  const fetchLeads = useCallback(async () => {
+    const supabase = supabaseRef.current;
+    if (!supabase || !searchId) return;
+    setLeadsLoading(true);
+    const { data } = await supabase
+      .from("lead_results")
+      .select("id, company_name, website, contact_name, title, email, linkedin_url, country, source")
+      .eq("search_id", searchId)
+      .order("created_at", { ascending: true });
+    setLeads((data ?? []) as LeadResult[]);
+    setLeadsLoading(false);
+  }, [searchId]);
+
+  // ─── Fetch search record ───────────────────────────────────────────────────
+
+  const fetchSearch = useCallback(async (uid: string): Promise<string | null> => {
+    const supabase = supabaseRef.current;
+    if (!supabase || !searchId) return null;
+
+    const { data, error: fetchErr } = await supabase
+      .from("lead_searches")
+      .select("*")
+      .eq("id", searchId)
+      .eq("user_id", uid)
+      .single();
+
+    if (fetchErr || !data) { setNotFound(true); return null; }
+
+    setSearch(data as LeadSearch);
+    return data.status as string;
+  }, [searchId]);
+
+  // ─── Init ─────────────────────────────────────────────────────────────────
 
   useEffect(() => {
     let cancelled = false;
 
     async function init() {
-      if (!searchId) { if (!cancelled) setNotFound(true); setLoading(false); return; }
+      if (!searchId) { setNotFound(true); setLoading(false); return; }
 
-      const supabase = getSupabaseClient();
+      const supabase = supabaseRef.current;
       if (!supabase) {
         if (!cancelled) { setError("Supabase is not configured."); setLoading(false); }
         return;
@@ -128,47 +181,32 @@ export default function SearchDetailPage() {
 
       const uid   = session.user.id;
       const email = session.user.email ?? "";
-      if (!cancelled) setUserEmail(email);
+      if (!cancelled) { setUserId(uid); setUserEmail(email); }
 
-      // Fetch search — RLS ensures only own rows are visible
-      const { data, error: fetchErr } = await supabase
+      const status = await fetchSearch(uid);
+      if (cancelled) return;
+
+      if (status === null) { setLoading(false); return; }
+
+      // Fetch ICP name
+      const searchData = await supabase
         .from("lead_searches")
-        .select("*")
+        .select("icp_id")
         .eq("id", searchId)
-        .eq("user_id", uid)  // explicit ownership check on top of RLS
         .single();
 
-      if (fetchErr || !data) {
-        if (!cancelled) { setNotFound(true); setLoading(false); }
-        return;
-      }
-
-      if (!cancelled) setSearch(data as LeadSearch);
-
-      // Fetch linked ICP name if available
-      if (data.icp_id) {
+      if (!cancelled && searchData.data?.icp_id) {
         const { data: icpData } = await supabase
           .from("icps")
           .select("name")
-          .eq("id", data.icp_id)
+          .eq("id", searchData.data.icp_id as string)
           .eq("user_id", uid)
           .single();
         if (!cancelled && icpData) setIcpName(icpData.name as string);
       }
 
-      // Fetch leads if search is completed
-      if (data.status === "completed") {
-        if (!cancelled) setLeadsLoading(true);
-        const { data: leadData } = await supabase
-          .from("lead_results")
-          .select("id, company_name, website, contact_name, title, email, linkedin_url, country, source")
-          .eq("search_id", searchId)
-          .order("created_at", { ascending: true });
-        if (!cancelled) {
-          setLeads((leadData ?? []) as LeadResult[]);
-          setLeadsLoading(false);
-        }
-      }
+      // Fetch leads if already completed
+      if (status === "completed") await fetchLeads();
 
       if (!cancelled) setLoading(false);
     }
@@ -178,8 +216,33 @@ export default function SearchDetailPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchId]);
 
+  // ─── Polling: refresh every 15 s while pending or processing ──────────────
+
+  useEffect(() => {
+    const status = search?.status;
+    if (status !== "pending" && status !== "processing") return;
+
+    const uid = userIdRef.current;
+
+    const interval = setInterval(async () => {
+      const currentUid = userIdRef.current;
+      if (!currentUid) return;
+
+      const newStatus = await fetchSearch(currentUid);
+
+      // When status transitions to completed, load leads
+      if (newStatus === "completed") {
+        await fetchLeads();
+      }
+    }, POLL_INTERVAL_MS);
+
+    return () => clearInterval(interval);
+  }, [search?.status, fetchSearch, fetchLeads]);
+
+  // ─── Handlers ─────────────────────────────────────────────────────────────
+
   async function handleLogout() {
-    const supabase = getSupabaseClient();
+    const supabase = supabaseRef.current;
     if (supabase) await supabase.auth.signOut();
     router.replace("/login");
   }
@@ -190,7 +253,7 @@ export default function SearchDetailPage() {
     exportCsv(leads, `leadlens-${slug}.csv`);
   }
 
-  // ─── Loading ────────────────────────────────────────────────────────────
+  // ─── Loading ──────────────────────────────────────────────────────────────
 
   if (loading) {
     return (
@@ -200,8 +263,6 @@ export default function SearchDetailPage() {
     );
   }
 
-  // ─── Error ──────────────────────────────────────────────────────────────
-
   if (error) {
     return (
       <DashboardShell email={userEmail} onLogout={handleLogout}>
@@ -209,8 +270,6 @@ export default function SearchDetailPage() {
       </DashboardShell>
     );
   }
-
-  // ─── Not found ──────────────────────────────────────────────────────────
 
   if (notFound || !search) {
     return (
@@ -235,9 +294,13 @@ export default function SearchDetailPage() {
   const isCompleted  = search.status === "completed";
   const isFailed     = search.status === "failed";
   const isProcessing = search.status === "processing";
+  const isPending    = search.status === "pending";
+  const isActive     = isPending || isProcessing;
 
   return (
     <DashboardShell email={userEmail} onLogout={handleLogout}>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+
       {/* Back link */}
       <div style={{ marginBottom: "1.5rem" }}>
         <Link href="/dashboard/searches" style={S.backLink}>← Back to searches</Link>
@@ -247,8 +310,13 @@ export default function SearchDetailPage() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.5rem" }}>
         <div>
           <h1 style={S.pageTitle}>{search.name}</h1>
-          <div style={{ marginTop: "0.5rem" }}>
+          <div style={{ marginTop: "0.5rem", display: "flex", alignItems: "center", gap: "0.75rem" }}>
             <StatusBadge status={search.status} />
+            {isActive && (
+              <span style={{ fontSize: "0.72rem", color: "#94a3b8" }}>
+                Auto-refreshing every 15 s
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -280,22 +348,37 @@ export default function SearchDetailPage() {
             {isCompleted ? `Lead Results (${leads.length})` : "Lead Results"}
           </span>
           {isCompleted && leads.length > 0 && (
-            <button onClick={handleExportCsv} style={S.exportBtn}>
-              ↓ Export CSV
-            </button>
+            <button onClick={handleExportCsv} style={S.exportBtn}>↓ Export CSV</button>
           )}
         </div>
 
-        {/* ── Pending / Processing ── */}
-        {!isCompleted && !isFailed && (
+        {/* ── Queued ── */}
+        {isPending && (
           <div style={{ padding: "2.5rem 2rem", textAlign: "center" }}>
-            <div style={{ fontSize: "1.5rem", marginBottom: "0.75rem" }}>⏳</div>
-            <div style={{ color: "#0f172a", fontWeight: 700, marginBottom: "0.5rem" }}>
-              {isProcessing ? "Search in progress" : "Search queued"}
+            <div style={{ fontSize: "1.75rem", marginBottom: "0.75rem" }}>🕐</div>
+            <div style={{ color: "#0f172a", fontWeight: 700, fontSize: "1rem", marginBottom: "0.5rem" }}>
+              Queued
             </div>
-            <div style={{ color: "#64748b", fontSize: "0.85rem" }}>
-              Lead results will appear here when this search is completed.
-              {!isProcessing && " We typically process requests within 24–48 hours."}
+            <div style={{ color: "#64748b", fontSize: "0.875rem", maxWidth: 360, margin: "0 auto" }}>
+              Your search is queued for automatic processing. Lead generation will begin shortly — this page updates automatically.
+            </div>
+          </div>
+        )}
+
+        {/* ── Generating ── */}
+        {isProcessing && (
+          <div style={{ padding: "2.5rem 2rem", textAlign: "center" }}>
+            <div style={{ fontSize: "1.75rem", marginBottom: "0.75rem", display: "inline-block", animation: "spin 2s linear infinite" }}>⚙️</div>
+            <div style={{ color: "#0f172a", fontWeight: 700, fontSize: "1rem", marginBottom: "0.5rem" }}>
+              Generating leads…
+            </div>
+            <div style={{ color: "#64748b", fontSize: "0.875rem", maxWidth: 380, margin: "0 auto" }}>
+              Apollo is running your search. Results will appear here automatically — no need to refresh.
+            </div>
+            <div style={{ marginTop: "1.25rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
+              <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#0ea5e9", animation: "pulse 1.5s ease-in-out infinite" }} />
+              <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#0ea5e9", animation: "pulse 1.5s ease-in-out 0.3s infinite" }} />
+              <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#0ea5e9", animation: "pulse 1.5s ease-in-out 0.6s infinite" }} />
             </div>
           </div>
         )}
@@ -305,26 +388,29 @@ export default function SearchDetailPage() {
           <div style={{ padding: "2.5rem 2rem", textAlign: "center" }}>
             <div style={{ fontSize: "1.5rem", marginBottom: "0.75rem" }}>❌</div>
             <div style={{ color: "#0f172a", fontWeight: 700, marginBottom: "0.5rem" }}>Search failed</div>
-            <div style={{ color: "#64748b", fontSize: "0.85rem" }}>
-              There was a problem processing this search. Please contact support.
+            <div style={{ color: "#64748b", fontSize: "0.85rem", maxWidth: 360, margin: "0 auto" }}>
+              Something went wrong while generating leads for this search. Please contact support and reference your search ID.
             </div>
+            {search.admin_notes && (
+              <div style={{ marginTop: "1rem", padding: "0.75rem 1rem", background: "#fef3c7", border: "1px solid #fde68a", borderRadius: "0.5rem", fontSize: "0.8rem", color: "#92400e", textAlign: "left", maxWidth: 420, margin: "1rem auto 0" }}>
+                {search.admin_notes}
+              </div>
+            )}
           </div>
         )}
 
         {/* ── Completed — loading ── */}
         {isCompleted && leadsLoading && (
-          <div style={{ padding: "2rem 1.25rem", color: "#64748b", fontSize: "0.875rem" }}>
-            Loading leads…
-          </div>
+          <div style={{ padding: "2rem 1.25rem", color: "#64748b", fontSize: "0.875rem" }}>Loading leads…</div>
         )}
 
-        {/* ── Completed — no leads yet ── */}
+        {/* ── Completed — no leads ── */}
         {isCompleted && !leadsLoading && leads.length === 0 && (
           <div style={{ padding: "2.5rem 2rem", textAlign: "center" }}>
             <div style={{ fontSize: "1.5rem", marginBottom: "0.75rem" }}>📋</div>
             <div style={{ color: "#0f172a", fontWeight: 700, marginBottom: "0.5rem" }}>Leads coming soon</div>
             <div style={{ color: "#64748b", fontSize: "0.85rem" }}>
-              Your search is marked complete. Leads will appear here shortly or contact support.
+              Your search completed. Leads will appear here shortly — contact support if they don't arrive.
             </div>
           </div>
         )}

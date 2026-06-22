@@ -20,6 +20,13 @@ type LeadSearch = {
   admin_notes: string | null;
   created_at: string;
   updated_at: string;
+  // Process log columns (added by migration 005)
+  process_started_at?: string | null;
+  process_finished_at?: string | null;
+  process_duration_ms?: number | null;
+  process_generated_count?: number | null;
+  process_duplicates_skipped?: number | null;
+  process_error_message?: string | null;
 };
 
 type Profile = {
@@ -779,6 +786,32 @@ export default function AdminSearchDetailPage() {
               </span>
             } />
           </Card>
+
+          {/* Auto-process log */}
+          {(search.process_started_at || search.process_error_message) && (
+            <Card title="Auto-process log">
+              {search.process_started_at && (
+                <Row label="Started"   value={new Date(search.process_started_at).toLocaleString()} />
+              )}
+              {search.process_finished_at && (
+                <Row label="Finished"  value={new Date(search.process_finished_at).toLocaleString()} />
+              )}
+              {search.process_duration_ms != null && (
+                <Row label="Duration"  value={`${search.process_duration_ms} ms`} />
+              )}
+              {search.process_generated_count != null && (
+                <Row label="Generated" value={search.process_generated_count} />
+              )}
+              {search.process_duplicates_skipped != null && (
+                <Row label="Skipped"   value={search.process_duplicates_skipped} />
+              )}
+              {search.process_error_message && (
+                <div style={{ marginTop: "0.5rem", padding: "0.6rem 0.75rem", background: "#fee2e2", borderRadius: "0.4rem", fontSize: "0.78rem", color: "#dc2626", fontFamily: "monospace", lineHeight: 1.5 }}>
+                  {search.process_error_message}
+                </div>
+              )}
+            </Card>
+          )}
         </div>
       </div>
     </AdminLayout>
