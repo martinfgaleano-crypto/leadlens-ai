@@ -13,6 +13,7 @@ import { upsertCompanyProfile } from "@/lib/company/upsert-company";
 import { executeSourceSearch } from "@/lib/sources/orchestrator";
 import { listActiveProviders } from "@/lib/sources/source-registry";
 import { consumeCredits } from "@/lib/credits/consume-credits";
+import { createNotification } from "@/lib/notifications/create-notification";
 
 /**
  * POST /api/process/search/[id]
@@ -124,6 +125,17 @@ export async function POST(
       })
       .eq("id", searchId);
 
+    // Notify customer (best-effort)
+    try {
+      await createNotification(client, {
+        userId,
+        type:    "search_failed",
+        title:   "Search failed",
+        message: `Your search "${search.name as string}" could not be processed: insufficient credits (${currentBalance} available, ${requestedCount} required).`,
+        metadata: { search_id: searchId, required: requestedCount, available: currentBalance },
+      });
+    } catch { /* never block */ }
+
     return NextResponse.json(
       { success: false, error: "Insufficient credits", required: requestedCount, available: currentBalance },
       { status: 402 }
@@ -195,6 +207,17 @@ export async function POST(
         admin_notes:               existingNotes ? `${existingNotes}\n\n${errorNote}` : errorNote,
       })
       .eq("id", searchId);
+
+    // Notify customer (best-effort)
+    try {
+      await createNotification(client, {
+        userId,
+        type:    "search_failed",
+        title:   "Search failed",
+        message: `Your search "${search.name as string}" failed: ${msg}`,
+        metadata: { search_id: searchId, error: msg },
+      });
+    } catch { /* never block */ }
 
     return NextResponse.json(
       { success: false, error: msg, duration_ms: durationMs },
@@ -372,7 +395,47 @@ export async function POST(
     }
   }
 
-  // ── 11. Update final status + observability columns ───────────────────────────
+  // ── 11. Notifications (best-effort) ──────────────────────────────────────────
+
+  try {
+    if (finalStatus === "completed") {
+      await createNotification(client, {
+        userId,
+        type:    "search_completed",
+        title:   "Search completed",
+        message: `Your search "${search.name as string}" has been completed successfully. ${insertedCount} lead${insertedCount !== 1 ? "s" : ""} delivered.`,
+        metadata: { search_id: searchId, leads_delivered: insertedCount },
+      });
+      // Alert customer when balance drops below 20
+      if (creditsConsumed > 0) {
+        const { data: updatedCredit } = await client
+          .from("customer_credits")
+          .select("credit_balance")
+          .eq("user_id", userId)
+          .maybeSingle();
+        const newBalance = (updatedCredit?.credit_balance as number) ?? 0;
+        if (newBalance < 20) {
+          await createNotification(client, {
+            userId,
+            type:    "credits_low",
+            title:   "Credits running low",
+            message: `Your credit balance is ${newBalance}. Purchase more credits to continue running searches.`,
+            metadata: { balance: newBalance },
+          });
+        }
+      }
+    } else {
+      await createNotification(client, {
+        userId,
+        type:    "search_failed",
+        title:   "Search failed",
+        message: `Your search "${search.name as string}" could not be completed. ${insertError ?? "Unknown error."}`,
+        metadata: { search_id: searchId, error: insertError },
+      });
+    }
+  } catch { /* never block */ }
+
+  // ── 12. Update final status + observability columns ───────────────────────────
 
   const updatePayload: Record<string, unknown> = {
     status:                    finalStatus,
@@ -399,7 +462,7 @@ export async function POST(
     .update(updatePayload)
     .eq("id", searchId);
 
-  // ── 12. Return log ─────────────────────────────────────────────────────────────
+  // ── 13. Return log ─────────────────────────────────────────────────────────────
 
   return NextResponse.json({
     success:          finalStatus === "completed",

@@ -27,8 +27,9 @@ export default function DashboardShell({ email, onLogout, children }: Props) {
           <div style={S.navSection}>Workspace</div>
           <NavItem href="/dashboard"          label="Dashboard"     active={pathname === "/dashboard"} />
           <NavItem href="/dashboard/icp"      label="ICP Builder"   active={pathname.startsWith("/dashboard/icp")} />
-          <NavItem href="/dashboard/searches" label="Lead Searches" active={pathname.startsWith("/dashboard/searches")} />
-          <NavItem href="/dashboard/account"  label="Account"       active={false} disabled />
+          <NavItem href="/dashboard/searches"      label="Lead Searches"  active={pathname.startsWith("/dashboard/searches")} />
+          <NavItem href="/dashboard/notifications" label="Notifications"  active={pathname.startsWith("/dashboard/notifications")} />
+          <NavItem href="/dashboard/account"       label="Account"        active={false} disabled />
         </nav>
 
         {/* Footer */}

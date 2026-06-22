@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import DashboardShell from "@/app/dashboard/_components/DashboardShell";
 import { getSupabaseClient } from "@/lib/supabase/client";
+import { buildTimeline } from "@/lib/activity/build-timeline";
+import type { ActivityEvent } from "@/lib/activity/build-timeline";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -41,6 +43,15 @@ interface CompletedSearch {
   created_at:              string;
 }
 
+interface DashboardNotification {
+  id:         string;
+  type:       string;
+  title:      string;
+  message:    string;
+  is_read:    boolean;
+  created_at: string;
+}
+
 // ─── Status badge (inline, minimal) ──────────────────────────────────────────
 
 const STATUS_COLORS: Record<string, { bg: string; color: string }> = {
@@ -74,6 +85,9 @@ export default function DashboardPage() {
   const [creditTxns, setCreditTxns]         = useState<CreditTransaction[]>([]);
   const [completedSearches, setCompletedSearches] = useState<CompletedSearch[]>([]);
   const [totalCreditsSpent, setTotalCreditsSpent] = useState(0);
+  const [dashNotifs, setDashNotifs]   = useState<DashboardNotification[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [timeline, setTimeline]       = useState<ActivityEvent[]>([]);
   const [loading, setLoading]             = useState(true);
   const [error, setError]                 = useState("");
 
@@ -125,8 +139,9 @@ export default function DashboardPage() {
 
       if (!cancelled) setProfile(prof);
 
-      // Fetch ICP count, search count, recent searches, credits, and search stats in parallel
-      const [icpRes, searchRes, recentRes, creditsRes, txnRes, completedRes, consumeRes] = await Promise.all([
+      // Fetch all data in parallel — notifications query is gracefully degraded
+      // (returns { data: null } if migration 014 hasn't been run yet)
+      const [icpRes, searchRes, recentRes, creditsRes, txnRes, completedRes, consumeRes, notifRes] = await Promise.all([
         supabase.from("icps").select("id", { count: "exact", head: true }).eq("user_id", uid),
         supabase.from("lead_searches").select("id", { count: "exact", head: true }).eq("user_id", uid),
         supabase.from("lead_searches")
@@ -142,7 +157,7 @@ export default function DashboardPage() {
           .select("id, type, amount, description, created_at")
           .eq("user_id", uid)
           .order("created_at", { ascending: false })
-          .limit(5),
+          .limit(10),
         supabase.from("lead_searches")
           .select("id, process_generated_count, process_finished_at, created_at")
           .eq("user_id", uid)
@@ -153,20 +168,47 @@ export default function DashboardPage() {
           .select("amount")
           .eq("user_id", uid)
           .eq("type", "consume"),
+        supabase.from("notifications")
+          .select("id, type, title, message, is_read, created_at")
+          .eq("user_id", uid)
+          .order("created_at", { ascending: false })
+          .limit(10),
       ]);
 
       if (!cancelled) {
         setIcpCount(icpRes.count ?? 0);
         setSearchCount(searchRes.count ?? 0);
-        setRecentSearches((recentRes.data ?? []) as RecentSearch[]);
+
+        const recent = (recentRes.data ?? []) as RecentSearch[];
+        setRecentSearches(recent);
+
         const cred = creditsRes.data as { credit_balance: number; lifetime_credits: number } | null;
         setCreditBalance(cred?.credit_balance ?? 0);
         setCreditLifetime(cred?.lifetime_credits ?? 0);
-        setCreditTxns((txnRes.data ?? []) as CreditTransaction[]);
-        setCompletedSearches((completedRes.data ?? []) as CompletedSearch[]);
+
+        const txns = (txnRes.data ?? []) as CreditTransaction[];
+        setCreditTxns(txns.slice(0, 5));
+
+        const completed = (completedRes.data ?? []) as CompletedSearch[];
+        setCompletedSearches(completed);
+
         const spent = ((consumeRes.data ?? []) as { amount: number }[])
           .reduce((sum, t) => sum + Math.abs(t.amount), 0);
         setTotalCreditsSpent(spent);
+
+        const notifs = (notifRes.data ?? []) as DashboardNotification[];
+        setDashNotifs(notifs);
+        setUnreadCount(notifs.filter(n => !n.is_read).length);
+
+        // Build unified activity timeline
+        const tl = buildTimeline(
+          recent.map(s => ({ id: s.id, name: s.name, status: s.status, created_at: s.created_at })),
+          txns.map(t => ({ id: t.id, type: t.type, amount: t.amount, description: t.description, created_at: t.created_at })),
+          notifs.map(n => ({ id: n.id, type: n.type, title: n.title, created_at: n.created_at })),
+          10,
+        );
+        setTimeline(tl);
+
         setLoading(false);
       }
     }
@@ -323,6 +365,89 @@ export default function DashboardPage() {
           </div>
         );
       })()}
+
+      {/* Notifications widget */}
+      <div style={{ ...S.section, marginBottom: "1.25rem" }}>
+        <div style={S.sectionHeader}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <span style={S.sectionTitle}>Notifications</span>
+            {unreadCount > 0 && (
+              <span style={{ background: "#0ea5e9", color: "#fff", borderRadius: "99px", padding: "0.05rem 0.5rem", fontSize: "0.65rem", fontWeight: 800 }}>
+                {unreadCount}
+              </span>
+            )}
+          </div>
+          <Link href="/dashboard/notifications" style={{ color: "#0ea5e9", fontSize: "0.8rem", fontWeight: 600, textDecoration: "none" }}>
+            View all →
+          </Link>
+        </div>
+        {dashNotifs.length === 0 ? (
+          <div style={{ padding: "1rem 1.25rem", color: "#94a3b8", fontSize: "0.82rem" }}>No notifications yet.</div>
+        ) : (
+          dashNotifs.slice(0, 3).map((n, i) => {
+            const notifColors: Record<string, string> = {
+              search_completed: "#16a34a",
+              search_failed:    "#dc2626",
+              credits_low:      "#d97706",
+              credits_added:    "#0ea5e9",
+            };
+            const dot = notifColors[n.type] ?? "#94a3b8";
+            return (
+              <div key={n.id} style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem", padding: "0.75rem 1.25rem", borderBottom: i < 2 && i < dashNotifs.length - 1 ? "1px solid #f8fafc" : "none", background: n.is_read ? "#fff" : "#f0f9ff" }}>
+                <div style={{ width: 7, height: 7, borderRadius: "50%", background: n.is_read ? "#e2e8f0" : dot, flexShrink: 0, marginTop: "0.35rem" }} />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontWeight: n.is_read ? 500 : 700, fontSize: "0.82rem", color: "#0f172a", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{n.title}</div>
+                  <div style={{ fontSize: "0.7rem", color: "#94a3b8", marginTop: "0.1rem" }}>
+                    {new Date(n.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Recent Activity timeline */}
+      {timeline.length > 0 && (
+        <div style={{ ...S.section, marginBottom: "1.25rem" }}>
+          <div style={S.sectionHeader}>
+            <span style={S.sectionTitle}>Recent Activity</span>
+          </div>
+          <div style={{ padding: "0.25rem 0" }}>
+            {timeline.map(ev => {
+              const actColors: Record<string, string> = {
+                search_completed: "#16a34a",
+                search_failed:    "#dc2626",
+                credits_consumed: "#d97706",
+                credits_added:    "#0ea5e9",
+                notification:     "#7c3aed",
+              };
+              const color = actColors[ev.type] ?? "#94a3b8";
+              const meta = ev.meta ?? {};
+              const sub =
+                ev.type === "search_completed"  ? `${meta.leads ?? 0} lead${meta.leads !== 1 ? "s" : ""} delivered` :
+                ev.type === "search_failed"      ? "Search failed" :
+                ev.type === "credits_consumed"   ? `-${meta.amount ?? 0} credits` :
+                ev.type === "credits_added"      ? `+${meta.amount ?? 0} credits` :
+                "";
+              return (
+                <div key={ev.id} style={{ display: "flex", alignItems: "center", gap: "0.75rem", padding: "0.6rem 1.25rem", borderBottom: "1px solid #f8fafc" }}>
+                  <div style={{ width: 8, height: 8, borderRadius: "50%", background: color, flexShrink: 0 }} />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <span style={{ fontSize: "0.82rem", color: "#1e293b", fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "block" }}>
+                      {ev.title}
+                    </span>
+                    {sub && <span style={{ fontSize: "0.72rem", color: color, fontWeight: 600 }}>{sub}</span>}
+                  </div>
+                  <div style={{ fontSize: "0.7rem", color: "#94a3b8", whiteSpace: "nowrap" }}>
+                    {new Date(ev.timestamp).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Recent searches */}
       <div style={S.section}>

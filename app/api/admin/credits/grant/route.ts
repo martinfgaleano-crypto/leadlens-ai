@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { addCredits } from "@/lib/credits/add-credits";
+import { createNotification } from "@/lib/notifications/create-notification";
 
 async function db() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) return null;
@@ -51,10 +52,21 @@ export async function POST(req: NextRequest) {
 
   const result = await addCredits(client, user_id, amount, description.trim(), "manual");
 
+  // Notify customer (best-effort)
+  try {
+    await createNotification(client, {
+      userId:  user_id,
+      type:    "credits_added",
+      title:   "Credits added",
+      message: `${amount} credit${amount !== 1 ? "s" : ""} have been added to your account. ${description.trim()}`,
+      metadata: { amount, new_balance: result.credit_balance },
+    });
+  } catch { /* never block */ }
+
   return NextResponse.json({
-    success:       true,
+    success:        true,
     user_id,
-    granted:       amount,
+    granted:        amount,
     credit_balance: result.credit_balance,
   });
 }
