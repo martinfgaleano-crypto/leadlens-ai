@@ -1,0 +1,88 @@
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import { requireAdmin } from "@/lib/auth/require-admin";
+
+async function db() {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    return null;
+  }
+  const { createServerClient } = await import("@/lib/supabase/server");
+  return createServerClient();
+}
+
+const patchSchema = z.object({
+  company_name: z.string().min(1).optional(),
+  website:      z.string().nullable().optional(),
+  contact_name: z.string().nullable().optional(),
+  title:        z.string().nullable().optional(),
+  email:        z.string().nullable().optional(),
+  linkedin_url: z.string().nullable().optional(),
+  country:      z.string().nullable().optional(),
+  source:       z.string().nullable().optional(),
+  notes:        z.string().nullable().optional(),
+});
+
+// ─── PATCH /api/admin/results/[id] ───────────────────────────────────────────
+
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const deny = requireAdmin(req);
+  if (deny) return deny;
+
+  let body: unknown;
+  try { body = await req.json(); } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
+
+  const parsed = patchSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+  }
+
+  if (Object.keys(parsed.data).length === 0) {
+    return NextResponse.json({ error: "No fields to update" }, { status: 400 });
+  }
+
+  const client = await db();
+  if (!client) return NextResponse.json({ error: "Supabase not configured." }, { status: 503 });
+
+  const { data, error } = await client
+    .from("lead_results")
+    .update(parsed.data)
+    .eq("id", params.id)
+    .select()
+    .single();
+
+  if (error || !data) {
+    return NextResponse.json(
+      { error: error?.message ?? "Update failed or result not found" },
+      { status: error ? 500 : 404 }
+    );
+  }
+
+  return NextResponse.json(data);
+}
+
+// ─── DELETE /api/admin/results/[id] ──────────────────────────────────────────
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const deny = requireAdmin(req);
+  if (deny) return deny;
+
+  const client = await db();
+  if (!client) return NextResponse.json({ error: "Supabase not configured." }, { status: 503 });
+
+  const { error } = await client
+    .from("lead_results")
+    .delete()
+    .eq("id", params.id);
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  return new NextResponse(null, { status: 204 });
+}

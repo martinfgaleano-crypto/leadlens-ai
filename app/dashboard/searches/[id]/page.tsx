@@ -22,6 +22,48 @@ interface LeadSearch {
   updated_at: string;
 }
 
+interface LeadResult {
+  id: string;
+  company_name: string;
+  website: string | null;
+  contact_name: string | null;
+  title: string | null;
+  email: string | null;
+  linkedin_url: string | null;
+  country: string | null;
+  source: string | null;
+}
+
+// ─── CSV export ───────────────────────────────────────────────────────────────
+
+function exportCsv(leads: LeadResult[], filename: string) {
+  const COLS: (keyof LeadResult)[] = [
+    "company_name", "website", "contact_name", "title",
+    "email", "linkedin_url", "country", "source",
+  ];
+
+  function escape(v: string | null | undefined): string {
+    if (v == null || v === "") return "";
+    const s = String(v);
+    if (s.includes(",") || s.includes('"') || s.includes("\n")) {
+      return `"${s.replace(/"/g, '""')}"`;
+    }
+    return s;
+  }
+
+  const header = COLS.join(",");
+  const rows   = leads.map(l => COLS.map(c => escape(l[c] as string | null)).join(","));
+  const csv    = [header, ...rows].join("\n");
+
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement("a");
+  a.href     = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const STATUS_STYLES: Record<string, { bg: string; color: string; border: string }> = {
@@ -56,13 +98,15 @@ function formatDate(iso: string) {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function SearchDetailPage() {
-  const router  = useRouter();
-  const params  = useParams();
+  const router   = useRouter();
+  const params   = useParams();
   const searchId = typeof params?.id === "string" ? params.id : "";
 
   const [userEmail, setUserEmail] = useState("");
   const [search, setSearch]       = useState<LeadSearch | null>(null);
   const [icpName, setIcpName]     = useState<string | null>(null);
+  const [leads, setLeads]         = useState<LeadResult[]>([]);
+  const [leadsLoading, setLeadsLoading] = useState(false);
   const [loading, setLoading]     = useState(true);
   const [notFound, setNotFound]   = useState(false);
   const [error, setError]         = useState("");
@@ -112,6 +156,20 @@ export default function SearchDetailPage() {
         if (!cancelled && icpData) setIcpName(icpData.name as string);
       }
 
+      // Fetch leads if search is completed
+      if (data.status === "completed") {
+        if (!cancelled) setLeadsLoading(true);
+        const { data: leadData } = await supabase
+          .from("lead_results")
+          .select("id, company_name, website, contact_name, title, email, linkedin_url, country, source")
+          .eq("search_id", searchId)
+          .order("created_at", { ascending: true });
+        if (!cancelled) {
+          setLeads((leadData ?? []) as LeadResult[]);
+          setLeadsLoading(false);
+        }
+      }
+
       if (!cancelled) setLoading(false);
     }
 
@@ -124,6 +182,12 @@ export default function SearchDetailPage() {
     const supabase = getSupabaseClient();
     if (supabase) await supabase.auth.signOut();
     router.replace("/login");
+  }
+
+  function handleExportCsv() {
+    if (!search) return;
+    const slug = search.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    exportCsv(leads, `leadlens-${slug}.csv`);
   }
 
   // ─── Loading ────────────────────────────────────────────────────────────
@@ -168,7 +232,9 @@ export default function SearchDetailPage() {
     );
   }
 
-  // ─── Detail view ────────────────────────────────────────────────────────
+  const isCompleted  = search.status === "completed";
+  const isFailed     = search.status === "failed";
+  const isProcessing = search.status === "processing";
 
   return (
     <DashboardShell email={userEmail} onLogout={handleLogout}>
@@ -193,55 +259,128 @@ export default function SearchDetailPage() {
           <span style={S.sectionTitle}>Search Details</span>
         </div>
         <div style={S.detailGrid}>
-          <DetailRow label="Status"              value={<StatusBadge status={search.status} />} />
-          <DetailRow label="Requested Leads"     value={search.requested_lead_count} />
-          <DetailRow label="ICP"                 value={icpName ?? (search.icp_id ? "ICP no longer exists" : "None")} />
-          <DetailRow label="Countries"           value={search.countries.length > 0 ? search.countries.join(", ") : "—"} />
-          <DetailRow label="Industries"          value={search.industries.length > 0 ? search.industries.join(", ") : "—"} />
-          <DetailRow label="Notes"               value={search.notes ?? "—"} />
-          <DetailRow label="Requested"           value={formatDate(search.created_at)} />
-          <DetailRow label="Last Updated"        value={formatDate(search.updated_at)} />
+          <DetailRow label="Status"           value={<StatusBadge status={search.status} />} />
+          <DetailRow label="Requested Leads"  value={search.requested_lead_count} />
+          <DetailRow label="ICP"              value={icpName ?? (search.icp_id ? "ICP no longer exists" : "None")} />
+          <DetailRow label="Countries"        value={search.countries.length > 0 ? search.countries.join(", ") : "—"} />
+          <DetailRow label="Industries"       value={search.industries.length > 0 ? search.industries.join(", ") : "—"} />
+          <DetailRow label="Notes"            value={search.notes ?? "—"} />
+          <DetailRow label="Requested"        value={formatDate(search.created_at)} />
+          <DetailRow label="Last Updated"     value={formatDate(search.updated_at)} />
           {search.admin_notes && (
-            <DetailRow label="Admin Notes" value={search.admin_notes} highlight />
+            <DetailRow label="Note from us" value={search.admin_notes} highlight />
           )}
         </div>
       </div>
 
-      {/* Lead results placeholder */}
+      {/* Lead results */}
       <div style={S.section}>
         <div style={S.sectionHeader}>
-          <span style={S.sectionTitle}>Lead Results</span>
-        </div>
-        <div style={{ padding: "2.5rem 2rem", textAlign: "center" }}>
-          {search.status === "completed" ? (
-            <>
-              <div style={{ fontSize: "1.5rem", marginBottom: "0.75rem" }}>✅</div>
-              <div style={{ color: "#0f172a", fontWeight: 700, marginBottom: "0.5rem" }}>Search completed</div>
-              <div style={{ color: "#64748b", fontSize: "0.85rem" }}>
-                Lead results display is coming in the next phase. Contact support if you need your leads now.
-              </div>
-            </>
-          ) : search.status === "failed" ? (
-            <>
-              <div style={{ fontSize: "1.5rem", marginBottom: "0.75rem" }}>❌</div>
-              <div style={{ color: "#0f172a", fontWeight: 700, marginBottom: "0.5rem" }}>Search failed</div>
-              <div style={{ color: "#64748b", fontSize: "0.85rem" }}>
-                There was a problem processing this search. Please contact support.
-              </div>
-            </>
-          ) : (
-            <>
-              <div style={{ fontSize: "1.5rem", marginBottom: "0.75rem" }}>⏳</div>
-              <div style={{ color: "#0f172a", fontWeight: 700, marginBottom: "0.5rem" }}>
-                {search.status === "processing" ? "Search in progress" : "Search queued"}
-              </div>
-              <div style={{ color: "#64748b", fontSize: "0.85rem" }}>
-                Lead results will appear here when this search is completed.
-                {search.status === "pending" && " We'll process your request within 24–48 hours."}
-              </div>
-            </>
+          <span style={S.sectionTitle}>
+            {isCompleted ? `Lead Results (${leads.length})` : "Lead Results"}
+          </span>
+          {isCompleted && leads.length > 0 && (
+            <button onClick={handleExportCsv} style={S.exportBtn}>
+              ↓ Export CSV
+            </button>
           )}
         </div>
+
+        {/* ── Pending / Processing ── */}
+        {!isCompleted && !isFailed && (
+          <div style={{ padding: "2.5rem 2rem", textAlign: "center" }}>
+            <div style={{ fontSize: "1.5rem", marginBottom: "0.75rem" }}>⏳</div>
+            <div style={{ color: "#0f172a", fontWeight: 700, marginBottom: "0.5rem" }}>
+              {isProcessing ? "Search in progress" : "Search queued"}
+            </div>
+            <div style={{ color: "#64748b", fontSize: "0.85rem" }}>
+              Lead results will appear here when this search is completed.
+              {!isProcessing && " We typically process requests within 24–48 hours."}
+            </div>
+          </div>
+        )}
+
+        {/* ── Failed ── */}
+        {isFailed && (
+          <div style={{ padding: "2.5rem 2rem", textAlign: "center" }}>
+            <div style={{ fontSize: "1.5rem", marginBottom: "0.75rem" }}>❌</div>
+            <div style={{ color: "#0f172a", fontWeight: 700, marginBottom: "0.5rem" }}>Search failed</div>
+            <div style={{ color: "#64748b", fontSize: "0.85rem" }}>
+              There was a problem processing this search. Please contact support.
+            </div>
+          </div>
+        )}
+
+        {/* ── Completed — loading ── */}
+        {isCompleted && leadsLoading && (
+          <div style={{ padding: "2rem 1.25rem", color: "#64748b", fontSize: "0.875rem" }}>
+            Loading leads…
+          </div>
+        )}
+
+        {/* ── Completed — no leads yet ── */}
+        {isCompleted && !leadsLoading && leads.length === 0 && (
+          <div style={{ padding: "2.5rem 2rem", textAlign: "center" }}>
+            <div style={{ fontSize: "1.5rem", marginBottom: "0.75rem" }}>📋</div>
+            <div style={{ color: "#0f172a", fontWeight: 700, marginBottom: "0.5rem" }}>Leads coming soon</div>
+            <div style={{ color: "#64748b", fontSize: "0.85rem" }}>
+              Your search is marked complete. Leads will appear here shortly or contact support.
+            </div>
+          </div>
+        )}
+
+        {/* ── Completed — leads table ── */}
+        {isCompleted && !leadsLoading && leads.length > 0 && (
+          <>
+            <div style={{ padding: "0.75rem 1.25rem", background: "#f0fdf4", borderBottom: "1px solid #bbf7d0" }}>
+              <span style={{ fontSize: "0.82rem", fontWeight: 600, color: "#15803d" }}>
+                {leads.length} lead{leads.length !== 1 ? "s" : ""} found
+                {search.requested_lead_count > 0 && ` of ${search.requested_lead_count} requested`}
+              </span>
+            </div>
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 640 }}>
+                <thead>
+                  <tr style={{ background: "#f8fafc" }}>
+                    {["Company", "Website", "Contact", "Title", "Email", "Country"].map(h => (
+                      <th key={h} style={{ padding: "0.65rem 1.25rem", textAlign: "left", fontSize: "0.7rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid #e2e8f0", whiteSpace: "nowrap" }}>
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {leads.map((lead, i) => (
+                    <tr key={lead.id} style={{ borderBottom: i < leads.length - 1 ? "1px solid #f1f5f9" : "none" }}>
+                      <td style={{ padding: "0.75rem 1.25rem", fontSize: "0.85rem", fontWeight: 600, color: "#0f172a", whiteSpace: "nowrap" }}>
+                        {lead.company_name}
+                      </td>
+                      <td style={{ padding: "0.75rem 1.25rem", fontSize: "0.8rem", maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                        {lead.website
+                          ? <a href={lead.website} target="_blank" rel="noreferrer" style={{ color: "#0ea5e9", textDecoration: "none" }}>{lead.website.replace(/^https?:\/\//, "")}</a>
+                          : <span style={{ color: "#cbd5e1" }}>—</span>}
+                      </td>
+                      <td style={{ padding: "0.75rem 1.25rem", fontSize: "0.82rem", color: "#0f172a", whiteSpace: "nowrap" }}>
+                        {lead.contact_name ?? <span style={{ color: "#cbd5e1" }}>—</span>}
+                      </td>
+                      <td style={{ padding: "0.75rem 1.25rem", fontSize: "0.8rem", color: "#64748b", whiteSpace: "nowrap" }}>
+                        {lead.title ?? <span style={{ color: "#cbd5e1" }}>—</span>}
+                      </td>
+                      <td style={{ padding: "0.75rem 1.25rem", fontSize: "0.8rem", color: "#64748b", whiteSpace: "nowrap" }}>
+                        {lead.email
+                          ? <a href={`mailto:${lead.email}`} style={{ color: "#0ea5e9", textDecoration: "none" }}>{lead.email}</a>
+                          : <span style={{ color: "#cbd5e1" }}>—</span>}
+                      </td>
+                      <td style={{ padding: "0.75rem 1.25rem", fontSize: "0.8rem", color: "#64748b", whiteSpace: "nowrap" }}>
+                        {lead.country ?? <span style={{ color: "#cbd5e1" }}>—</span>}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
       </div>
     </DashboardShell>
   );
@@ -259,7 +398,7 @@ function DetailRow({ label, value, highlight }: { label: string; value: React.Re
       <span style={{ minWidth: 140, color: "#64748b", fontSize: "0.78rem", fontWeight: 600, letterSpacing: "0.03em", textTransform: "uppercase", paddingTop: "0.1rem" }}>
         {label}
       </span>
-      <span style={{ color: "#0f172a", fontSize: "0.875rem", flex: 1 }}>
+      <span style={{ color: highlight ? "#854d0e" : "#0f172a", fontSize: "0.875rem", flex: 1 }}>
         {value}
       </span>
     </div>
@@ -269,12 +408,13 @@ function DetailRow({ label, value, highlight }: { label: string; value: React.Re
 // ─── Styles ──────────────────────────────────────────────────────────────────
 
 const S = {
-  pageTitle:   { color: "#0f172a", fontSize: "1.5rem", fontWeight: 800, margin: 0, letterSpacing: "-0.02em" } as React.CSSProperties,
-  backLink:    { color: "#64748b", fontSize: "0.825rem", fontWeight: 600, textDecoration: "none" } as React.CSSProperties,
-  section:     { background: "#fff", border: "1px solid #e2e8f0", borderRadius: "0.75rem", overflow: "hidden" } as React.CSSProperties,
+  pageTitle:    { color: "#0f172a", fontSize: "1.5rem", fontWeight: 800, margin: 0, letterSpacing: "-0.02em" } as React.CSSProperties,
+  backLink:     { color: "#64748b", fontSize: "0.825rem", fontWeight: 600, textDecoration: "none" } as React.CSSProperties,
+  section:      { background: "#fff", border: "1px solid #e2e8f0", borderRadius: "0.75rem", overflow: "hidden" } as React.CSSProperties,
   sectionHeader:{ padding: "1rem 1.25rem", borderBottom: "1px solid #f1f5f9", display: "flex", justifyContent: "space-between", alignItems: "center" } as React.CSSProperties,
   sectionTitle: { fontWeight: 700, fontSize: "0.875rem", color: "#0f172a" } as React.CSSProperties,
-  detailGrid:  { display: "flex", flexDirection: "column" as const },
-  errorBox:    { background: "#fee2e2", border: "1px solid #fca5a5", borderRadius: "0.75rem", padding: "1rem 1.25rem", color: "#dc2626", fontSize: "0.85rem", lineHeight: 1.5 } as React.CSSProperties,
-  linkBtn:     { display: "inline-block", background: "#0ea5e9", color: "#fff", borderRadius: "0.5rem", padding: "0.6rem 1.25rem", fontWeight: 700, fontSize: "0.875rem", textDecoration: "none" } as React.CSSProperties,
+  detailGrid:   { display: "flex", flexDirection: "column" as const },
+  errorBox:     { background: "#fee2e2", border: "1px solid #fca5a5", borderRadius: "0.75rem", padding: "1rem 1.25rem", color: "#dc2626", fontSize: "0.85rem", lineHeight: 1.5 } as React.CSSProperties,
+  linkBtn:      { display: "inline-block", background: "#0ea5e9", color: "#fff", borderRadius: "0.5rem", padding: "0.6rem 1.25rem", fontWeight: 700, fontSize: "0.875rem", textDecoration: "none" } as React.CSSProperties,
+  exportBtn:    { background: "#0f172a", color: "#f0f9ff", border: "none", borderRadius: "0.45rem", padding: "0.4rem 1rem", fontWeight: 700, fontSize: "0.78rem", cursor: "pointer", fontFamily: "inherit" } as React.CSSProperties,
 };
