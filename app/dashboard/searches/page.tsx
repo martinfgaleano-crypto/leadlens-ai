@@ -1,0 +1,396 @@
+"use client";
+import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import DashboardShell from "@/app/dashboard/_components/DashboardShell";
+import { getSupabaseClient } from "@/lib/supabase/client";
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+interface Icp {
+  id: string;
+  name: string;
+}
+
+interface LeadSearch {
+  id: string;
+  name: string;
+  status: string;
+  requested_lead_count: number;
+  countries: string[];
+  industries: string[];
+  notes: string | null;
+  icp_id: string | null;
+  created_at: string;
+}
+
+interface SearchForm {
+  name: string;
+  icp_id: string;
+  requested_lead_count: string;
+  countries: string;
+  industries: string;
+  notes: string;
+}
+
+const EMPTY_FORM: SearchForm = {
+  name: "",
+  icp_id: "",
+  requested_lead_count: "25",
+  countries: "",
+  industries: "",
+  notes: "",
+};
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function toArr(s: string): string[] {
+  return s.split(",").map(v => v.trim()).filter(Boolean);
+}
+
+const STATUS_STYLES: Record<string, React.CSSProperties> = {
+  pending:    { background: "#fef9c3", color: "#854d0e", border: "1px solid #fde047" },
+  processing: { background: "#e0f2fe", color: "#075985", border: "1px solid #7dd3fc" },
+  completed:  { background: "#dcfce7", color: "#14532d", border: "1px solid #86efac" },
+  failed:     { background: "#fee2e2", color: "#7f1d1d", border: "1px solid #fca5a5" },
+};
+
+function StatusBadge({ status }: { status: string }) {
+  const style = STATUS_STYLES[status] ?? STATUS_STYLES.pending;
+  return (
+    <span style={{
+      ...style,
+      display: "inline-block",
+      borderRadius: "99px",
+      padding: "0.15rem 0.65rem",
+      fontSize: "0.68rem",
+      fontWeight: 700,
+      textTransform: "uppercase",
+      letterSpacing: "0.04em",
+    } as React.CSSProperties}>
+      {status}
+    </span>
+  );
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
+
+export default function SearchesPage() {
+  const router = useRouter();
+  const [userEmail, setUserEmail]   = useState("");
+  const [userId, setUserId]         = useState("");
+  const [icps, setIcps]             = useState<Icp[]>([]);
+  const [searches, setSearches]     = useState<LeadSearch[]>([]);
+  const [loading, setLoading]       = useState(true);
+  const [error, setError]           = useState("");
+  const [formOpen, setFormOpen]     = useState(false);
+  const [form, setForm]             = useState<SearchForm>(EMPTY_FORM);
+  const [saving, setSaving]         = useState(false);
+  const [formError, setFormError]   = useState("");
+
+  // ─── Load data ──────────────────────────────────────────────────────────
+
+  const loadData = useCallback(async (uid: string) => {
+    const supabase = getSupabaseClient();
+    if (!supabase) return;
+
+    const [icpRes, searchRes] = await Promise.all([
+      supabase.from("icps").select("id, name").eq("user_id", uid).order("name"),
+      supabase.from("lead_searches").select("*").eq("user_id", uid).order("created_at", { ascending: false }),
+    ]);
+
+    if (!icpRes.error)    setIcps((icpRes.data ?? []) as Icp[]);
+    if (!searchRes.error) setSearches((searchRes.data ?? []) as LeadSearch[]);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function init() {
+      const supabase = getSupabaseClient();
+      if (!supabase) {
+        if (!cancelled) { setError("Supabase is not configured."); setLoading(false); }
+        return;
+      }
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) { router.replace("/login"); return; }
+      const uid   = session.user.id;
+      const email = session.user.email ?? "";
+      if (!cancelled) { setUserId(uid); setUserEmail(email); }
+      await loadData(uid);
+      if (!cancelled) setLoading(false);
+    }
+    init();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // ─── Logout ─────────────────────────────────────────────────────────────
+
+  async function handleLogout() {
+    const supabase = getSupabaseClient();
+    if (supabase) await supabase.auth.signOut();
+    router.replace("/login");
+  }
+
+  // ─── Form ───────────────────────────────────────────────────────────────
+
+  function openForm() {
+    setForm({ ...EMPTY_FORM, icp_id: icps[0]?.id ?? "" });
+    setFormError("");
+    setFormOpen(true);
+  }
+
+  function closeForm() { setFormOpen(false); setFormError(""); }
+
+  function setField(k: keyof SearchForm, v: string) {
+    setForm(f => ({ ...f, [k]: v }));
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!form.name.trim())  { setFormError("Search name is required."); return; }
+    if (!form.icp_id)       { setFormError("Please select an ICP."); return; }
+
+    const leadCount = parseInt(form.requested_lead_count, 10);
+    if (isNaN(leadCount) || leadCount < 1 || leadCount > 500) {
+      setFormError("Lead count must be between 1 and 500.");
+      return;
+    }
+
+    const supabase = getSupabaseClient();
+    if (!supabase) return;
+
+    setSaving(true);
+    setFormError("");
+
+    const { error: insertErr } = await supabase.from("lead_searches").insert({
+      user_id:              userId,
+      icp_id:               form.icp_id || null,
+      name:                 form.name.trim(),
+      status:               "pending",
+      requested_lead_count: leadCount,
+      countries:            toArr(form.countries),
+      industries:           toArr(form.industries),
+      notes:                form.notes.trim() || null,
+    });
+
+    if (insertErr) { setFormError(insertErr.message); setSaving(false); return; }
+
+    await loadData(userId);
+    setSaving(false);
+    closeForm();
+  }
+
+  // ─── Render ─────────────────────────────────────────────────────────────
+
+  if (loading) {
+    return (
+      <DashboardShell email="" onLogout={handleLogout}>
+        <div style={{ color: "#64748b", fontSize: "0.9rem" }}>Loading…</div>
+      </DashboardShell>
+    );
+  }
+
+  if (error) {
+    return (
+      <DashboardShell email={userEmail} onLogout={handleLogout}>
+        <div style={S.errorBox}>{error}</div>
+      </DashboardShell>
+    );
+  }
+
+  const hasIcps = icps.length > 0;
+
+  return (
+    <DashboardShell email={userEmail} onLogout={handleLogout}>
+      {/* Header */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "2rem" }}>
+        <div>
+          <h1 style={S.pageTitle}>Lead Searches</h1>
+          <p style={S.pageSub}>Request a lead batch from a saved ICP. We&apos;ll process it and notify you when ready.</p>
+        </div>
+        {hasIcps && !formOpen && (
+          <button onClick={openForm} style={S.btnPrimary}>+ New Search</button>
+        )}
+      </div>
+
+      {/* No ICP CTA */}
+      {!hasIcps && (
+        <div style={{ ...S.section, marginBottom: "1.5rem" }}>
+          <div style={S.emptyState}>
+            <div style={S.emptyIcon}>🎯</div>
+            <div style={S.emptyTitle}>Create an ICP first</div>
+            <div style={S.emptySub}>
+              You need at least one Ideal Customer Profile before you can request a lead search.
+            </div>
+            <Link href="/dashboard/icp" style={S.linkBtn}>Go to ICP Builder →</Link>
+          </div>
+        </div>
+      )}
+
+      {/* New search form */}
+      {formOpen && (
+        <div style={S.formCard}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
+            <h2 style={S.formTitle}>New Lead Search</h2>
+            <button onClick={closeForm} style={S.btnGhost}>Cancel</button>
+          </div>
+
+          <form onSubmit={handleSubmit}>
+            <div style={S.formGrid}>
+              <div>
+                <label style={S.labelBlock}>
+                  <span style={S.labelText}>Search Name *</span>
+                  <input style={S.input} value={form.name}
+                    onChange={e => setField("name", e.target.value)}
+                    placeholder="e.g. US SaaS CTOs — June 2026" required />
+                </label>
+              </div>
+
+              <div>
+                <label style={S.labelBlock}>
+                  <span style={S.labelText}>ICP *</span>
+                  <select style={S.input} value={form.icp_id} onChange={e => setField("icp_id", e.target.value)} required>
+                    <option value="">Select an ICP…</option>
+                    {icps.map(icp => (
+                      <option key={icp.id} value={icp.id}>{icp.name}</option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+
+              <div>
+                <label style={S.labelBlock}>
+                  <span style={S.labelText}>Requested Lead Count</span>
+                  <input style={S.input} type="number" min={1} max={500}
+                    value={form.requested_lead_count}
+                    onChange={e => setField("requested_lead_count", e.target.value)} />
+                </label>
+              </div>
+
+              <div>
+                <label style={S.labelBlock}>
+                  <span style={S.labelText}>Countries Override <span style={{ fontWeight: 400, textTransform: "none", fontSize: "0.7rem" }}>(optional — overrides ICP)</span></span>
+                  <input style={S.input} value={form.countries}
+                    onChange={e => setField("countries", e.target.value)}
+                    placeholder="United States, Canada" />
+                </label>
+              </div>
+
+              <div>
+                <label style={S.labelBlock}>
+                  <span style={S.labelText}>Industries Override <span style={{ fontWeight: 400, textTransform: "none", fontSize: "0.7rem" }}>(optional)</span></span>
+                  <input style={S.input} value={form.industries}
+                    onChange={e => setField("industries", e.target.value)}
+                    placeholder="SaaS, FinTech" />
+                </label>
+              </div>
+
+              <div>
+                <label style={S.labelBlock}>
+                  <span style={S.labelText}>Notes <span style={{ fontWeight: 400, textTransform: "none", fontSize: "0.7rem" }}>(optional)</span></span>
+                  <textarea style={{ ...S.input, resize: "vertical", minHeight: "3.5rem" }}
+                    value={form.notes} onChange={e => setField("notes", e.target.value)}
+                    placeholder="Anything special about this search batch…" />
+                </label>
+              </div>
+            </div>
+
+            {formError && <div style={{ ...S.errorBox, marginBottom: "1rem" }}>{formError}</div>}
+
+            <div style={{ display: "flex", gap: "0.75rem", justifyContent: "flex-end" }}>
+              <button type="button" onClick={closeForm} style={S.btnGhost}>Cancel</button>
+              <button type="submit" disabled={saving} style={saving ? S.btnDisabled : S.btnPrimary}>
+                {saving ? "Submitting…" : "Submit Search Request"}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Searches list */}
+      {hasIcps && (
+        searches.length === 0 ? (
+          <div style={S.section}>
+            <div style={S.emptyState}>
+              <div style={S.emptyIcon}>🔍</div>
+              <div style={S.emptyTitle}>No searches yet</div>
+              <div style={S.emptySub}>Submit your first lead search request above. Once processed, results will appear here.</div>
+            </div>
+          </div>
+        ) : (
+          <div style={S.section}>
+            <div style={S.tableHeader}>
+              <span style={{ ...S.col, flex: 3 }}>Search</span>
+              <span style={{ ...S.col, flex: 1 }}>Leads</span>
+              <span style={{ ...S.col, flex: 1 }}>Status</span>
+              <span style={{ ...S.col, flex: 1.5 }}>Requested</span>
+              <span style={{ ...S.col, flex: 1 }}></span>
+            </div>
+            {searches.map(s => (
+              <div key={s.id} style={S.tableRow}>
+                <span style={{ ...S.col, flex: 3, fontWeight: 600, color: "#0f172a", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {s.name}
+                </span>
+                <span style={{ ...S.col, flex: 1, color: "#64748b" }}>{s.requested_lead_count}</span>
+                <span style={{ ...S.col, flex: 1 }}><StatusBadge status={s.status} /></span>
+                <span style={{ ...S.col, flex: 1.5, color: "#94a3b8", fontSize: "0.78rem" }}>
+                  {new Date(s.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                </span>
+                <span style={{ ...S.col, flex: 1 }}>
+                  <Link href={`/dashboard/searches/${s.id}`} style={S.viewLink}>View →</Link>
+                </span>
+              </div>
+            ))}
+          </div>
+        )
+      )}
+    </DashboardShell>
+  );
+}
+
+// ─── Styles ──────────────────────────────────────────────────────────────────
+
+const S = {
+  pageTitle: { color: "#0f172a", fontSize: "1.5rem", fontWeight: 800, margin: 0, letterSpacing: "-0.02em" } as React.CSSProperties,
+  pageSub:   { color: "#64748b", margin: "0.25rem 0 0", fontSize: "0.875rem" } as React.CSSProperties,
+
+  formCard: { background: "#fff", border: "1px solid #e2e8f0", borderRadius: "0.75rem", padding: "1.5rem", marginBottom: "1.5rem" } as React.CSSProperties,
+  formTitle: { color: "#0f172a", fontSize: "1rem", fontWeight: 700, margin: 0 } as React.CSSProperties,
+  formGrid:  { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "0.875rem", marginBottom: "1.25rem" } as React.CSSProperties,
+
+  labelBlock: { display: "block" } as React.CSSProperties,
+  labelText:  { display: "block", fontSize: "0.72rem", fontWeight: 700, color: "#374151", letterSpacing: "0.04em", textTransform: "uppercase" as const, marginBottom: "0.3rem" },
+
+  input: {
+    display: "block", width: "100%", padding: "0.6rem 0.75rem",
+    border: "1px solid #e2e8f0", borderRadius: "0.5rem",
+    fontSize: "0.875rem", color: "#0f172a", background: "#fff",
+    outline: "none", boxSizing: "border-box" as const, fontFamily: "inherit",
+  } as React.CSSProperties,
+
+  section:    { background: "#fff", border: "1px solid #e2e8f0", borderRadius: "0.75rem", overflow: "hidden" } as React.CSSProperties,
+  emptyState: { padding: "3rem 2rem", textAlign: "center" as const },
+  emptyIcon:  { fontSize: "2rem", marginBottom: "0.75rem" } as React.CSSProperties,
+  emptyTitle: { color: "#0f172a", fontWeight: 700, fontSize: "0.95rem", marginBottom: "0.5rem" } as React.CSSProperties,
+  emptySub:   { color: "#64748b", fontSize: "0.825rem", lineHeight: 1.6, maxWidth: 440, margin: "0 auto 1.5rem" } as React.CSSProperties,
+
+  tableHeader: {
+    display: "flex", padding: "0.625rem 1.25rem",
+    borderBottom: "1px solid #f1f5f9", background: "#f8fafc",
+  } as React.CSSProperties,
+  tableRow: {
+    display: "flex", padding: "0.875rem 1.25rem", alignItems: "center",
+    borderBottom: "1px solid #f8fafc",
+  } as React.CSSProperties,
+  col:      { fontSize: "0.8rem", color: "#64748b", fontWeight: 600, letterSpacing: "0.02em", paddingRight: "0.75rem" } as React.CSSProperties,
+
+  errorBox: { background: "#fee2e2", border: "1px solid #fca5a5", borderRadius: "0.75rem", padding: "1rem 1.25rem", color: "#dc2626", fontSize: "0.85rem", lineHeight: 1.5 } as React.CSSProperties,
+
+  btnPrimary: { background: "#0ea5e9", color: "#fff", border: "none", borderRadius: "0.5rem", padding: "0.6rem 1.25rem", fontWeight: 700, fontSize: "0.875rem", cursor: "pointer", fontFamily: "inherit" } as React.CSSProperties,
+  btnGhost:   { background: "transparent", color: "#64748b", border: "1px solid #e2e8f0", borderRadius: "0.5rem", padding: "0.5rem 1rem", fontWeight: 600, fontSize: "0.8rem", cursor: "pointer", fontFamily: "inherit" } as React.CSSProperties,
+  btnDisabled:{ background: "#7dd3fc", color: "#fff", border: "none", borderRadius: "0.5rem", padding: "0.6rem 1.25rem", fontWeight: 700, fontSize: "0.875rem", cursor: "not-allowed", fontFamily: "inherit" } as React.CSSProperties,
+
+  linkBtn: { display: "inline-block", background: "#0ea5e9", color: "#fff", borderRadius: "0.5rem", padding: "0.6rem 1.25rem", fontWeight: 700, fontSize: "0.875rem", textDecoration: "none" } as React.CSSProperties,
+  viewLink: { color: "#0ea5e9", fontWeight: 600, fontSize: "0.8rem", textDecoration: "none" } as React.CSSProperties,
+};

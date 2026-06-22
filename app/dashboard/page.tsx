@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import DashboardShell from "@/app/dashboard/_components/DashboardShell";
 import { getSupabaseClient } from "@/lib/supabase/client";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -17,73 +18,110 @@ interface Profile {
   created_at: string;
 }
 
+interface RecentSearch {
+  id: string;
+  name: string;
+  status: string;
+  requested_lead_count: number;
+  created_at: string;
+}
+
+// ─── Status badge (inline, minimal) ──────────────────────────────────────────
+
+const STATUS_COLORS: Record<string, { bg: string; color: string }> = {
+  pending:    { bg: "#fef9c3", color: "#854d0e" },
+  processing: { bg: "#e0f2fe", color: "#075985" },
+  completed:  { bg: "#dcfce7", color: "#14532d" },
+  failed:     { bg: "#fee2e2", color: "#7f1d1d" },
+};
+
+function StatusBadge({ status }: { status: string }) {
+  const { bg, color } = STATUS_COLORS[status] ?? STATUS_COLORS.pending;
+  return (
+    <span style={{ background: bg, color, borderRadius: "99px", padding: "0.1rem 0.55rem", fontSize: "0.65rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em" } as React.CSSProperties}>
+      {status}
+    </span>
+  );
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [profile, setProfile]   = useState<Profile | null>(null);
-  const [userEmail, setEmail]   = useState<string | null>(null);
-  const [loading, setLoading]   = useState(true);
-  const [error, setError]       = useState("");
+
+  const [profile, setProfile]             = useState<Profile | null>(null);
+  const [userEmail, setEmail]             = useState<string | null>(null);
+  const [icpCount, setIcpCount]           = useState(0);
+  const [searchCount, setSearchCount]     = useState(0);
+  const [recentSearches, setRecentSearches] = useState<RecentSearch[]>([]);
+  const [loading, setLoading]             = useState(true);
+  const [error, setError]                 = useState("");
 
   useEffect(() => {
     let cancelled = false;
 
     async function init() {
       const supabase = getSupabaseClient();
-
-      // No anon client = Supabase not configured
       if (!supabase) {
-        if (!cancelled) setError("Supabase is not configured. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to your environment.");
-        if (!cancelled) setLoading(false);
+        if (!cancelled) { setError("Supabase is not configured. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to your environment."); setLoading(false); }
         return;
       }
 
-      // Check auth session
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        router.replace("/login");
-        return;
-      }
+      if (!session) { router.replace("/login"); return; }
 
       const uid   = session.user.id;
       const email = session.user.email ?? null;
       if (!cancelled) setEmail(email);
 
-      // Fetch profile — create it lazily if it doesn't exist yet
+      // Fetch profile (create lazily on first visit)
       const { data: existing, error: fetchError } = await supabase
         .from("profiles")
         .select("*")
         .eq("id", uid)
         .single();
 
+      let prof: Profile | null = null;
+
       if (fetchError && fetchError.code !== "PGRST116") {
-        // PGRST116 = "no rows found" — that's expected on first login
-        if (!cancelled) setError("Could not load profile. Please refresh.");
-        if (!cancelled) setLoading(false);
+        if (!cancelled) { setError("Could not load profile. Please refresh."); setLoading(false); }
         return;
       }
 
       if (existing) {
-        if (!cancelled) { setProfile(existing as Profile); setLoading(false); }
-        return;
+        prof = existing as Profile;
+      } else {
+        const { data: created, error: createError } = await supabase
+          .from("profiles")
+          .insert({ id: uid, email: email ?? "" })
+          .select()
+          .single();
+        if (createError) {
+          if (!cancelled) { setError("Could not create your profile. Please try refreshing."); setLoading(false); }
+          return;
+        }
+        prof = created as Profile;
       }
 
-      // Profile doesn't exist yet (first login after email confirmation, or
-      // profile creation failed during signup) — create it now.
-      const { data: created, error: createError } = await supabase
-        .from("profiles")
-        .insert({ id: uid, email: email ?? "" })
-        .select()
-        .single();
+      if (!cancelled) setProfile(prof);
 
-      if (createError) {
-        if (!cancelled) setError("Could not create your profile. Please try refreshing.");
-        if (!cancelled) setLoading(false);
-        return;
+      // Fetch ICP count, search count, and 5 most recent searches in parallel
+      const [icpRes, searchRes, recentRes] = await Promise.all([
+        supabase.from("icps").select("id", { count: "exact", head: true }).eq("user_id", uid),
+        supabase.from("lead_searches").select("id", { count: "exact", head: true }).eq("user_id", uid),
+        supabase.from("lead_searches")
+          .select("id, name, status, requested_lead_count, created_at")
+          .eq("user_id", uid)
+          .order("created_at", { ascending: false })
+          .limit(5),
+      ]);
+
+      if (!cancelled) {
+        setIcpCount(icpRes.count ?? 0);
+        setSearchCount(searchRes.count ?? 0);
+        setRecentSearches((recentRes.data ?? []) as RecentSearch[]);
+        setLoading(false);
       }
-
-      if (!cancelled) { setProfile(created as Profile); setLoading(false); }
     }
 
     init();
@@ -101,164 +139,166 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div style={S.root}>
-        <div style={S.sidebar}>
-          <SidebarBrand />
-        </div>
-        <main style={S.main}>
-          <div style={{ color: "#64748b", fontSize: "0.9rem" }}>Loading your dashboard…</div>
-        </main>
-      </div>
+      <DashboardShell email="" onLogout={handleLogout}>
+        <div style={{ color: "#64748b", fontSize: "0.9rem" }}>Loading your dashboard…</div>
+      </DashboardShell>
     );
   }
 
-  // ─── Error (unconfigured or auth failure) ────────────────────────────────
+  // ─── Error ───────────────────────────────────────────────────────────────
 
   if (error) {
     return (
-      <div style={S.root}>
-        <div style={S.sidebar}>
-          <SidebarBrand />
+      <DashboardShell email={userEmail ?? ""} onLogout={handleLogout}>
+        <div style={S.errorBox}>{error}</div>
+        <div style={{ marginTop: "1rem", display: "flex", gap: "0.75rem" }}>
+          <button onClick={() => window.location.reload()} style={S.btnSecondary}>Retry</button>
+          <button onClick={handleLogout} style={S.btnGhost}>Log out</button>
         </div>
-        <main style={S.main}>
-          <div style={S.errorBox}>{error}</div>
-          <div style={{ marginTop: "1rem", display: "flex", gap: "0.75rem" }}>
-            <button onClick={() => window.location.reload()} style={S.btnSecondary}>Retry</button>
-            <button onClick={handleLogout} style={S.btnGhost}>Log out</button>
-          </div>
-        </main>
-      </div>
+      </DashboardShell>
     );
   }
 
   // ─── Dashboard ───────────────────────────────────────────────────────────
 
-  const planLabel = PLAN_LABELS[profile?.plan ?? "free"] ?? profile?.plan ?? "Free";
+  const planLabel    = PLAN_LABELS[profile?.plan ?? "free"] ?? profile?.plan ?? "Free";
   const displayEmail = profile?.email ?? userEmail ?? "—";
 
   return (
-    <div style={S.root}>
-      {/* Sidebar */}
-      <aside style={S.sidebar}>
-        <SidebarBrand />
-        <nav style={S.nav}>
-          <div style={S.navSection}>Workspace</div>
-          <NavItem href="/dashboard" label="Dashboard" active />
-          {/* Future nav items added in Phase 2+ */}
-          <NavItem href="/dashboard/searches" label="Lead Searches" active={false} disabled />
-          <NavItem href="/dashboard/account" label="Account" active={false} disabled />
-        </nav>
-        <div style={S.sidebarFooter}>
-          <div style={{ color: "#94a3b8", fontSize: "0.72rem", marginBottom: "0.5rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-            {displayEmail}
-          </div>
-          <button onClick={handleLogout} style={S.logoutBtn}>Log out</button>
-        </div>
-      </aside>
+    <DashboardShell email={displayEmail} onLogout={handleLogout}>
+      {/* Page header */}
+      <div style={{ marginBottom: "2rem" }}>
+        <h1 style={S.pageTitle}>Dashboard</h1>
+        <p style={S.pageSub}>Welcome to LeadLens — your B2B lead generation workspace.</p>
+      </div>
 
-      {/* Main content */}
-      <main style={S.main}>
-        {/* Page header */}
-        <div style={{ marginBottom: "2rem" }}>
-          <h1 style={S.pageTitle}>Dashboard</h1>
-          <p style={S.pageSub}>Welcome to LeadLens — your B2B lead generation workspace.</p>
+      {/* Account + plan stat cards */}
+      <div style={S.statsGrid}>
+        <StatCard label="Account"    value={displayEmail} small />
+        <StatCard label="Plan"       value={planLabel}  color={profile?.plan === "free" ? "#64748b" : "#0ea5e9"} />
+        <StatCard label="Credits"    value={profile?.credits_remaining ?? 0} />
+        <StatCard label="ICPs"       value={icpCount}   color="#7c3aed" />
+        <StatCard label="Searches"   value={searchCount} />
+        <StatCard
+          label="Onboarding"
+          value={profile?.onboarding_completed ? "Complete" : "Pending"}
+          color={profile?.onboarding_completed ? "#16a34a" : "#d97706"}
+        />
+      </div>
+
+      {/* Quick links */}
+      <div style={S.quickGrid}>
+        <QuickLink
+          href="/dashboard/icp"
+          icon="🎯"
+          title="ICP Builder"
+          desc={icpCount > 0 ? `${icpCount} profile${icpCount !== 1 ? "s" : ""} saved` : "Define your ideal customer"}
+          cta="Open ICP Builder →"
+        />
+        <QuickLink
+          href="/dashboard/searches"
+          icon="🔍"
+          title="Lead Searches"
+          desc={searchCount > 0 ? `${searchCount} search${searchCount !== 1 ? "es" : ""} submitted` : "Request qualified B2B leads"}
+          cta="Open Lead Searches →"
+        />
+      </div>
+
+      {/* Recent searches */}
+      <div style={S.section}>
+        <div style={S.sectionHeader}>
+          <span style={S.sectionTitle}>Recent Searches</span>
+          {searchCount > 0 && (
+            <Link href="/dashboard/searches" style={{ color: "#0ea5e9", fontSize: "0.8rem", fontWeight: 600, textDecoration: "none" }}>
+              View all →
+            </Link>
+          )}
         </div>
 
-        {/* Profile summary cards */}
-        <div style={S.statsGrid}>
-          <StatCard label="Account" value={displayEmail} small />
-          <StatCard label="Plan" value={planLabel} color={profile?.plan === "free" ? "#64748b" : "#0ea5e9"} />
-          <StatCard label="Credits" value={profile?.credits_remaining ?? 0} />
-          <StatCard
-            label="Onboarding"
-            value={profile?.onboarding_completed ? "Complete" : "Pending"}
-            color={profile?.onboarding_completed ? "#16a34a" : "#d97706"}
-          />
-        </div>
-
-        {/* Lead searches — empty state */}
-        <div style={S.section}>
-          <div style={S.sectionHeader}>
-            <span style={S.sectionTitle}>Lead Searches</span>
-          </div>
+        {recentSearches.length === 0 ? (
           <div style={S.emptyState}>
             <div style={S.emptyIcon}>🔍</div>
             <div style={S.emptyTitle}>No lead searches yet</div>
             <div style={S.emptySub}>
-              Create your first search by defining your Ideal Customer Profile.
-              LeadLens will find qualified B2B leads and write personalized outreach for each one.
+              {icpCount === 0
+                ? "Start by creating an ICP, then submit a lead search request."
+                : "You have ICPs ready. Submit your first lead search request."}
             </div>
-            {/* CTA — disabled until Phase 2 implements ICP builder */}
-            <button
-              disabled
-              title="ICP builder coming in the next release"
-              style={S.ctaDisabled}
+            <Link
+              href={icpCount === 0 ? "/dashboard/icp" : "/dashboard/searches"}
+              style={S.ctaLink}
             >
-              + Create Lead Search
-              <span style={{ display: "block", fontSize: "0.65rem", fontWeight: 400, marginTop: "0.2rem", opacity: 0.8 }}>
-                Coming soon — ICP builder in progress
-              </span>
-            </button>
+              {icpCount === 0 ? "→ Create your first ICP" : "→ Create Lead Search"}
+            </Link>
+          </div>
+        ) : (
+          <>
+            <div style={S.tableHeader}>
+              <span style={{ ...S.col, flex: 3 }}>Search</span>
+              <span style={{ ...S.col, flex: 1 }}>Leads</span>
+              <span style={{ ...S.col, flex: 1 }}>Status</span>
+              <span style={{ ...S.col, flex: 1.5 }}>Date</span>
+              <span style={{ ...S.col, flex: 1 }}></span>
+            </div>
+            {recentSearches.map(s => (
+              <div key={s.id} style={S.tableRow}>
+                <span style={{ ...S.col, flex: 3, fontWeight: 600, color: "#0f172a", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {s.name}
+                </span>
+                <span style={{ ...S.col, flex: 1, color: "#64748b" }}>{s.requested_lead_count}</span>
+                <span style={{ ...S.col, flex: 1 }}><StatusBadge status={s.status} /></span>
+                <span style={{ ...S.col, flex: 1.5, color: "#94a3b8", fontSize: "0.78rem" }}>
+                  {new Date(s.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                </span>
+                <span style={{ ...S.col, flex: 1 }}>
+                  <Link href={`/dashboard/searches/${s.id}`} style={{ color: "#0ea5e9", fontWeight: 600, fontSize: "0.8rem", textDecoration: "none" }}>
+                    View →
+                  </Link>
+                </span>
+              </div>
+            ))}
+          </>
+        )}
+      </div>
+
+      {/* Plan upgrade hint (only for free plan) */}
+      {profile?.plan === "free" && (
+        <div style={{ ...S.upgradeHint, marginTop: "1.25rem" }}>
+          <div style={{ fontWeight: 700, color: "#0f172a", fontSize: "0.875rem" }}>Ready to get leads?</div>
+          <div style={{ color: "#64748b", fontSize: "0.8rem", marginTop: "0.2rem" }}>
+            Purchase a batch from the{" "}
+            <Link href="/demo-pipeline" style={{ color: "#0ea5e9", fontWeight: 600, textDecoration: "none" }}>
+              pricing page
+            </Link>{" "}
+            to get started.
           </div>
         </div>
-
-        {/* Plan upgrade hint (only for free plan) */}
-        {profile?.plan === "free" && (
-          <div style={S.upgradeHint}>
-            <div>
-              <div style={{ fontWeight: 700, color: "#0f172a", fontSize: "0.875rem" }}>Ready to get leads?</div>
-              <div style={{ color: "#64748b", fontSize: "0.8rem", marginTop: "0.2rem" }}>
-                Purchase a batch from the{" "}
-                <Link href="/demo-pipeline" style={{ color: "#0ea5e9", fontWeight: 600, textDecoration: "none" }}>
-                  pricing page
-                </Link>{" "}
-                to get started.
-              </div>
-            </div>
-          </div>
-        )}
-      </main>
-    </div>
+      )}
+    </DashboardShell>
   );
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-function SidebarBrand() {
-  return (
-    <div style={S.brand}>
-      <Link href="/dashboard" style={{ textDecoration: "none" }}>
-        <span style={S.brandName}>LeadLens</span>
-        <span style={S.brandTag}>AI</span>
-      </Link>
-    </div>
-  );
-}
-
-function NavItem({ href, label, active, disabled }: { href: string; label: string; active: boolean; disabled?: boolean }) {
-  if (disabled) {
-    return (
-      <div style={{ ...S.navLink, color: "#475569", cursor: "default", opacity: 0.5 }}>
-        {label}
-        <span style={{ fontSize: "0.6rem", marginLeft: "0.4rem", opacity: 0.7 }}>soon</span>
-      </div>
-    );
-  }
-  return (
-    <Link href={href} style={{ ...S.navLink, ...(active ? S.navLinkActive : {}) }}>
-      {label}
-    </Link>
-  );
-}
-
 function StatCard({ label, value, color = "#0f172a", small }: { label: string; value: string | number; color?: string; small?: boolean }) {
   return (
     <div style={S.statCard}>
       <div style={S.statLabel}>{label}</div>
-      <div style={{ ...S.statValue, color, fontSize: small ? "0.85rem" : "1.5rem", fontWeight: small ? 500 : 800, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+      <div style={{ color, fontSize: small ? "0.85rem" : "1.5rem", fontWeight: small ? 500 : 800, lineHeight: 1.2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
         {value}
       </div>
     </div>
+  );
+}
+
+function QuickLink({ href, icon, title, desc, cta }: { href: string; icon: string; title: string; desc: string; cta: string }) {
+  return (
+    <Link href={href} style={S.quickCard}>
+      <div style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>{icon}</div>
+      <div style={{ fontWeight: 700, color: "#0f172a", fontSize: "0.95rem", marginBottom: "0.25rem" }}>{title}</div>
+      <div style={{ color: "#64748b", fontSize: "0.8rem", marginBottom: "0.75rem", flex: 1 }}>{desc}</div>
+      <div style={{ color: "#0ea5e9", fontSize: "0.8rem", fontWeight: 700 }}>{cta}</div>
+    </Link>
   );
 }
 
@@ -275,217 +315,39 @@ const PLAN_LABELS: Record<string, string> = {
 // ─── Styles ──────────────────────────────────────────────────────────────────
 
 const S = {
-  root: {
-    display: "flex",
-    minHeight: "100vh",
-    fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",
-    background: "#f8fafc",
+  pageTitle: { color: "#0f172a", fontSize: "1.5rem", fontWeight: 800, margin: 0, letterSpacing: "-0.02em" } as React.CSSProperties,
+  pageSub:   { color: "#64748b", margin: "0.25rem 0 0", fontSize: "0.875rem" } as React.CSSProperties,
+
+  statsGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "1rem", marginBottom: "1.25rem" } as React.CSSProperties,
+  statCard:  { background: "#fff", border: "1px solid #e2e8f0", borderRadius: "0.75rem", padding: "1.25rem 1.5rem" } as React.CSSProperties,
+  statLabel: { color: "#64748b", fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase" as const, marginBottom: "0.4rem" },
+
+  quickGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem", marginBottom: "1.25rem" } as React.CSSProperties,
+  quickCard: {
+    display: "flex", flexDirection: "column" as const,
+    background: "#fff", border: "1px solid #e2e8f0", borderRadius: "0.75rem",
+    padding: "1.25rem 1.5rem", textDecoration: "none",
+    transition: "border-color 0.15s",
   } as React.CSSProperties,
-  sidebar: {
-    width: 220,
-    minWidth: 220,
-    background: "#0f172a",
-    display: "flex",
-    flexDirection: "column" as const,
-    padding: "1.5rem 0",
-    position: "fixed" as const,
-    top: 0,
-    left: 0,
-    bottom: 0,
-    zIndex: 10,
-  },
-  brand: {
-    padding: "0 1.25rem 1.5rem",
-    borderBottom: "1px solid rgba(255,255,255,0.08)",
-    marginBottom: "1rem",
-  } as React.CSSProperties,
-  brandName: {
-    color: "#f0f9ff",
-    fontWeight: 800,
-    fontSize: "1.05rem",
-    letterSpacing: "-0.02em",
-  } as React.CSSProperties,
-  brandTag: {
-    color: "#38bdf8",
-    fontSize: "0.65rem",
-    fontWeight: 700,
-    letterSpacing: "0.1em",
-    textTransform: "uppercase" as const,
-    marginLeft: "0.3rem",
-  },
-  nav: { flex: 1, padding: "0 0.75rem" } as React.CSSProperties,
-  navSection: {
-    color: "#475569",
-    fontSize: "0.625rem",
-    fontWeight: 700,
-    letterSpacing: "0.1em",
-    textTransform: "uppercase" as const,
-    padding: "0.5rem 0.5rem 0.25rem",
-    marginTop: "0.5rem",
-  },
-  navLink: {
-    display: "block",
-    padding: "0.5rem 0.75rem",
-    borderRadius: "0.5rem",
-    color: "#94a3b8",
-    fontWeight: 400,
-    fontSize: "0.875rem",
-    textDecoration: "none",
-    background: "transparent",
-    borderLeft: "2px solid transparent",
-    marginBottom: "0.125rem",
-  } as React.CSSProperties,
-  navLinkActive: {
-    color: "#f0f9ff",
-    fontWeight: 600,
-    background: "rgba(14,165,233,0.15)",
-    borderLeft: "2px solid #0ea5e9",
-  } as React.CSSProperties,
-  sidebarFooter: {
-    padding: "1rem 1.25rem 0.5rem",
-    borderTop: "1px solid rgba(255,255,255,0.08)",
-    marginTop: "auto",
-  } as React.CSSProperties,
-  logoutBtn: {
-    background: "transparent",
-    border: "1px solid rgba(255,255,255,0.12)",
-    color: "#94a3b8",
-    borderRadius: "0.4rem",
-    padding: "0.4rem 0.75rem",
-    fontSize: "0.75rem",
-    cursor: "pointer",
-    width: "100%",
-    textAlign: "left" as const,
-    fontFamily: "inherit",
-  },
-  main: {
-    marginLeft: 220,
-    flex: 1,
-    padding: "2rem 2.5rem",
-    maxWidth: "calc(100vw - 220px)",
-  } as React.CSSProperties,
-  pageTitle: {
-    color: "#0f172a",
-    fontSize: "1.5rem",
-    fontWeight: 800,
-    margin: 0,
-    letterSpacing: "-0.02em",
-  } as React.CSSProperties,
-  pageSub: {
-    color: "#64748b",
-    margin: "0.25rem 0 0",
-    fontSize: "0.875rem",
-  } as React.CSSProperties,
-  statsGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
-    gap: "1rem",
-    marginBottom: "2rem",
-  } as React.CSSProperties,
-  statCard: {
-    background: "#fff",
-    border: "1px solid #e2e8f0",
-    borderRadius: "0.75rem",
-    padding: "1.25rem 1.5rem",
-  } as React.CSSProperties,
-  statLabel: {
-    color: "#64748b",
-    fontSize: "0.72rem",
-    fontWeight: 600,
-    letterSpacing: "0.05em",
-    textTransform: "uppercase" as const,
-    marginBottom: "0.4rem",
-  },
-  statValue: {
-    lineHeight: 1.2,
-  } as React.CSSProperties,
-  section: {
-    background: "#fff",
-    border: "1px solid #e2e8f0",
-    borderRadius: "0.75rem",
-    overflow: "hidden",
-    marginBottom: "1.25rem",
-  } as React.CSSProperties,
-  sectionHeader: {
-    padding: "1rem 1.25rem",
-    borderBottom: "1px solid #f1f5f9",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  } as React.CSSProperties,
-  sectionTitle: {
-    fontWeight: 700,
-    fontSize: "0.875rem",
-    color: "#0f172a",
-  } as React.CSSProperties,
-  emptyState: {
-    padding: "3rem 2rem",
-    textAlign: "center" as const,
-  },
-  emptyIcon: {
-    fontSize: "2rem",
-    marginBottom: "0.75rem",
-  } as React.CSSProperties,
-  emptyTitle: {
-    color: "#0f172a",
-    fontWeight: 700,
-    fontSize: "0.95rem",
-    marginBottom: "0.5rem",
-  } as React.CSSProperties,
-  emptySub: {
-    color: "#64748b",
-    fontSize: "0.825rem",
-    lineHeight: 1.6,
-    maxWidth: 440,
-    margin: "0 auto 1.5rem",
-  } as React.CSSProperties,
-  ctaDisabled: {
-    background: "#e2e8f0",
-    color: "#94a3b8",
-    border: "none",
-    borderRadius: "0.625rem",
-    padding: "0.75rem 1.5rem",
-    fontWeight: 700,
-    fontSize: "0.875rem",
-    cursor: "not-allowed",
-    fontFamily: "inherit",
-    lineHeight: 1.3,
-  } as React.CSSProperties,
-  upgradeHint: {
-    background: "#f0f9ff",
-    border: "1px solid #bae6fd",
-    borderRadius: "0.75rem",
-    padding: "1rem 1.25rem",
-  } as React.CSSProperties,
-  errorBox: {
-    background: "#fee2e2",
-    border: "1px solid #fca5a5",
-    borderRadius: "0.75rem",
-    padding: "1rem 1.25rem",
-    color: "#dc2626",
-    fontSize: "0.85rem",
-    lineHeight: 1.5,
-  } as React.CSSProperties,
-  btnSecondary: {
-    background: "#0ea5e9",
-    color: "#fff",
-    border: "none",
-    borderRadius: "0.5rem",
-    padding: "0.5rem 1rem",
-    fontWeight: 600,
-    fontSize: "0.8rem",
-    cursor: "pointer",
-    fontFamily: "inherit",
-  } as React.CSSProperties,
-  btnGhost: {
-    background: "transparent",
-    color: "#64748b",
-    border: "1px solid #e2e8f0",
-    borderRadius: "0.5rem",
-    padding: "0.5rem 1rem",
-    fontWeight: 600,
-    fontSize: "0.8rem",
-    cursor: "pointer",
-    fontFamily: "inherit",
-  } as React.CSSProperties,
+
+  section:       { background: "#fff", border: "1px solid #e2e8f0", borderRadius: "0.75rem", overflow: "hidden" } as React.CSSProperties,
+  sectionHeader: { padding: "1rem 1.25rem", borderBottom: "1px solid #f1f5f9", display: "flex", justifyContent: "space-between", alignItems: "center" } as React.CSSProperties,
+  sectionTitle:  { fontWeight: 700, fontSize: "0.875rem", color: "#0f172a" } as React.CSSProperties,
+
+  emptyState: { padding: "2.5rem 2rem", textAlign: "center" as const },
+  emptyIcon:  { fontSize: "2rem", marginBottom: "0.75rem" } as React.CSSProperties,
+  emptyTitle: { color: "#0f172a", fontWeight: 700, fontSize: "0.95rem", marginBottom: "0.5rem" } as React.CSSProperties,
+  emptySub:   { color: "#64748b", fontSize: "0.825rem", lineHeight: 1.6, maxWidth: 440, margin: "0 auto 1rem" } as React.CSSProperties,
+
+  tableHeader: { display: "flex", padding: "0.625rem 1.25rem", borderBottom: "1px solid #f1f5f9", background: "#f8fafc" } as React.CSSProperties,
+  tableRow:    { display: "flex", padding: "0.875rem 1.25rem", alignItems: "center", borderBottom: "1px solid #f8fafc" } as React.CSSProperties,
+  col:         { fontSize: "0.8rem", color: "#64748b", fontWeight: 600, paddingRight: "0.75rem" } as React.CSSProperties,
+
+  ctaLink: { display: "inline-block", color: "#0ea5e9", fontWeight: 700, fontSize: "0.875rem", textDecoration: "none" } as React.CSSProperties,
+
+  upgradeHint: { background: "#f0f9ff", border: "1px solid #bae6fd", borderRadius: "0.75rem", padding: "1rem 1.25rem" } as React.CSSProperties,
+  errorBox:    { background: "#fee2e2", border: "1px solid #fca5a5", borderRadius: "0.75rem", padding: "1rem 1.25rem", color: "#dc2626", fontSize: "0.85rem", lineHeight: 1.5 } as React.CSSProperties,
+
+  btnSecondary: { background: "#0ea5e9", color: "#fff", border: "none", borderRadius: "0.5rem", padding: "0.5rem 1rem", fontWeight: 600, fontSize: "0.8rem", cursor: "pointer", fontFamily: "inherit" } as React.CSSProperties,
+  btnGhost:     { background: "transparent", color: "#64748b", border: "1px solid #e2e8f0", borderRadius: "0.5rem", padding: "0.5rem 1rem", fontWeight: 600, fontSize: "0.8rem", cursor: "pointer", fontFamily: "inherit" } as React.CSSProperties,
 };
