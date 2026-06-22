@@ -11,6 +11,7 @@ import { computeOpportunityScore } from "@/lib/enrichment/opportunity-score";
 import { computeStrengths, computeWeaknesses, generateReasoning } from "@/lib/enrichment/reasoning";
 import { upsertVaultLead } from "@/lib/vault/upsert-vault-lead";
 import { upsertCompanyProfile } from "@/lib/company/upsert-company";
+import { startSourceRun, completeSourceRun } from "@/lib/sources/source-run-tracker";
 
 /**
  * POST /api/process/search/[id]
@@ -123,10 +124,15 @@ export async function POST(
 
   let apolloResult: { results: ApolloLeadResult[]; total_available: number };
 
+  const apolloCallStartMs = Date.now();
+  const sourceRunId = await startSourceRun(client, searchId, "apollo");
+
   try {
     apolloResult = await searchPeople(apolloParams);
+    await completeSourceRun(client, sourceRunId, "completed", Date.now() - apolloCallStartMs, apolloResult.results.length);
   } catch (err: unknown) {
     const msg        = err instanceof Error ? err.message : String(err);
+    await completeSourceRun(client, sourceRunId, "failed", Date.now() - apolloCallStartMs, 0, msg);
     const durationMs = Date.now() - startMs;
 
     const existingNotes = (search.admin_notes as string | null) ?? "";
