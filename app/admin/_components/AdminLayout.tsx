@@ -126,17 +126,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   const nav = [
-    { href: "/admin",           label: "Overview" },
-    { href: "/admin/orders",    label: "Orders" },
-    { href: "/admin/jobs",      label: "Jobs" },
-    { href: "/admin/searches",  label: "Searches" },
-    { href: "/admin/vault",      label: "Vault" },
-    { href: "/admin/companies",  label: "Companies" },
-    { href: "/admin/credits",      label: "Credits" },
+    { href: "/admin",               label: "Overview" },
+    { href: "/admin/orders",        label: "Orders" },
+    { href: "/admin/jobs",          label: "Jobs" },
+    { href: "/admin/searches",      label: "Searches" },
+    { href: "/admin/vault",         label: "Vault" },
+    { href: "/admin/companies",     label: "Companies" },
+    { href: "/admin/credits",       label: "Credits" },
+    { href: "/admin/analytics",     label: "Analytics" },
     { href: "/admin/sources",       label: "Sources" },
     { href: "/admin/source-config", label: "Source Config" },
     { href: "/admin/source-runs",   label: "Source Runs" },
-    { href: "/admin/settings",    label: "Settings" },
+    { href: "/admin/settings",      label: "Settings" },
   ];
 
   return (

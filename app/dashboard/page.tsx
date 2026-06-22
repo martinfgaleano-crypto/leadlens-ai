@@ -34,6 +34,13 @@ interface CreditTransaction {
   created_at:  string;
 }
 
+interface CompletedSearch {
+  id:                      string;
+  process_generated_count: number | null;
+  process_finished_at:     string | null;
+  created_at:              string;
+}
+
 // ─── Status badge (inline, minimal) ──────────────────────────────────────────
 
 const STATUS_COLORS: Record<string, { bg: string; color: string }> = {
@@ -65,6 +72,8 @@ export default function DashboardPage() {
   const [creditBalance, setCreditBalance]   = useState<number | null>(null);
   const [creditLifetime, setCreditLifetime] = useState<number | null>(null);
   const [creditTxns, setCreditTxns]         = useState<CreditTransaction[]>([]);
+  const [completedSearches, setCompletedSearches] = useState<CompletedSearch[]>([]);
+  const [totalCreditsSpent, setTotalCreditsSpent] = useState(0);
   const [loading, setLoading]             = useState(true);
   const [error, setError]                 = useState("");
 
@@ -116,8 +125,8 @@ export default function DashboardPage() {
 
       if (!cancelled) setProfile(prof);
 
-      // Fetch ICP count, search count, recent searches, and credits in parallel
-      const [icpRes, searchRes, recentRes, creditsRes, txnRes] = await Promise.all([
+      // Fetch ICP count, search count, recent searches, credits, and search stats in parallel
+      const [icpRes, searchRes, recentRes, creditsRes, txnRes, completedRes, consumeRes] = await Promise.all([
         supabase.from("icps").select("id", { count: "exact", head: true }).eq("user_id", uid),
         supabase.from("lead_searches").select("id", { count: "exact", head: true }).eq("user_id", uid),
         supabase.from("lead_searches")
@@ -134,6 +143,16 @@ export default function DashboardPage() {
           .eq("user_id", uid)
           .order("created_at", { ascending: false })
           .limit(5),
+        supabase.from("lead_searches")
+          .select("id, process_generated_count, process_finished_at, created_at")
+          .eq("user_id", uid)
+          .eq("status", "completed")
+          .order("created_at", { ascending: false })
+          .limit(50),
+        supabase.from("credit_transactions")
+          .select("amount")
+          .eq("user_id", uid)
+          .eq("type", "consume"),
       ]);
 
       if (!cancelled) {
@@ -144,6 +163,10 @@ export default function DashboardPage() {
         setCreditBalance(cred?.credit_balance ?? 0);
         setCreditLifetime(cred?.lifetime_credits ?? 0);
         setCreditTxns((txnRes.data ?? []) as CreditTransaction[]);
+        setCompletedSearches((completedRes.data ?? []) as CompletedSearch[]);
+        const spent = ((consumeRes.data ?? []) as { amount: number }[])
+          .reduce((sum, t) => sum + Math.abs(t.amount), 0);
+        setTotalCreditsSpent(spent);
         setLoading(false);
       }
     }
@@ -262,6 +285,44 @@ export default function DashboardPage() {
           )}
         </div>
       </div>
+
+      {/* Search statistics */}
+      {searchCount > 0 && (() => {
+        const avgLeads = completedSearches.length > 0
+          ? Math.round(
+              completedSearches.reduce((s, r) => s + (r.process_generated_count ?? 0), 0)
+              / completedSearches.length
+            )
+          : null;
+        const lastCompleted = completedSearches[0]?.process_finished_at ?? null;
+        return (
+          <div style={{ ...S.section, marginBottom: "1.25rem" }}>
+            <div style={S.sectionHeader}>
+              <span style={S.sectionTitle}>Search Statistics</span>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: "0", borderBottom: "none" }}>
+              {[
+                { label: "Total Searches",     value: searchCount },
+                { label: "Completed",          value: completedSearches.length },
+                { label: "Credits Spent",      value: totalCreditsSpent },
+                { label: "Avg Leads",          value: avgLeads ?? "—" },
+              ].map((item, i) => (
+                <div key={item.label} style={{ padding: "1rem 1.25rem", borderRight: i < 3 ? "1px solid #f1f5f9" : "none" }}>
+                  <div style={{ fontSize: "0.68rem", fontWeight: 700, color: "#94a3b8", letterSpacing: "0.07em", textTransform: "uppercase" as const, marginBottom: "0.3rem" }}>
+                    {item.label}
+                  </div>
+                  <div style={{ fontSize: "1.35rem", fontWeight: 800, color: "#0f172a" }}>{item.value}</div>
+                </div>
+              ))}
+            </div>
+            {lastCompleted && (
+              <div style={{ padding: "0.6rem 1.25rem", borderTop: "1px solid #f1f5f9", fontSize: "0.75rem", color: "#94a3b8" }}>
+                Last completed: {new Date(lastCompleted).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {/* Recent searches */}
       <div style={S.section}>

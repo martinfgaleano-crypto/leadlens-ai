@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { searchPeople } from "@/lib/apollo/client";
-import type { ApolloLeadResult } from "@/lib/apollo/client";
+import type { StandardLead, SourceSearchParams } from "@/lib/sources/source-provider";
 import { classifyEmail } from "@/lib/quality/email-quality";
 import { normalizeTitle, detectSeniority } from "@/lib/quality/title-normalizer";
 import { normalizeCompany, extractDomain } from "@/lib/quality/company-normalizer";
@@ -11,14 +10,16 @@ import { computeOpportunityScore } from "@/lib/enrichment/opportunity-score";
 import { computeStrengths, computeWeaknesses, generateReasoning } from "@/lib/enrichment/reasoning";
 import { upsertVaultLead } from "@/lib/vault/upsert-vault-lead";
 import { upsertCompanyProfile } from "@/lib/company/upsert-company";
-import { startSourceRun, completeSourceRun } from "@/lib/sources/source-run-tracker";
+import { executeSourceSearch } from "@/lib/sources/orchestrator";
+import { listActiveProviders } from "@/lib/sources/source-registry";
+import { consumeCredits } from "@/lib/credits/consume-credits";
 
 /**
  * POST /api/process/search/[id]
  *
  * Auto-processing endpoint. Called by the customer dashboard (fire-and-forget)
- * immediately after a lead_search is inserted. Runs the full Apollo pipeline
- * server-side and returns when complete. The browser never awaits the response.
+ * immediately after a lead_search is inserted. Runs the full pipeline via the
+ * multi-source orchestrator and returns when complete.
  *
  * Security model:
  *   - Uses service role key for all DB operations.
@@ -61,7 +62,6 @@ export async function POST(
   }
 
   // ── 2. Duplicate-run guard: only process pending searches ────────────────────
-  // Use an atomic UPDATE with status filter so concurrent calls are safe.
 
   if (search.status !== "pending") {
     return NextResponse.json({
@@ -70,26 +70,67 @@ export async function POST(
     });
   }
 
+  const requestedCount = (search.requested_lead_count as number) ?? 10;
+  const userId         = search.user_id as string;
+  const now            = new Date().toISOString();
+
   // Atomic transition: WHERE status='pending' ensures only one process wins.
   const { data: claimed } = await client
     .from("lead_searches")
     .update({
-      status:             "processing",
-      process_started_at: new Date().toISOString(),
+      status:                 "processing",
+      process_started_at:     now,
+      processing_started_at:  now,
     })
     .eq("id", searchId)
-    .eq("status", "pending")   // guard: only claim if still pending
+    .eq("status", "pending")
     .select("id");
 
   if (!claimed || claimed.length === 0) {
-    // Another process already claimed it or status changed
     return NextResponse.json({
       skipped: true,
       reason:  "Another process already started this search.",
     });
   }
 
-  // ── 3. Fetch linked ICP ──────────────────────────────────────────────────────
+  // ── 3. Credit pre-check ───────────────────────────────────────────────────────
+  // Abort early if the customer does not have enough credits.
+
+  const { data: creditRow } = await client
+    .from("customer_credits")
+    .select("credit_balance")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  const currentBalance = (creditRow?.credit_balance as number) ?? 0;
+
+  if (currentBalance < requestedCount) {
+    const durationMs   = Date.now() - startMs;
+    const errMsg       = `Insufficient credits — required: ${requestedCount}, available: ${currentBalance}`;
+    const existingNotes = (search.admin_notes as string | null) ?? "";
+    const creditNote   = `[Insufficient credits — ${now}]\nRequired: ${requestedCount}, Available: ${currentBalance}`;
+
+    await client
+      .from("lead_searches")
+      .update({
+        status:                    "failed",
+        process_finished_at:       new Date().toISOString(),
+        processing_completed_at:   new Date().toISOString(),
+        process_duration_ms:       durationMs,
+        process_generated_count:   0,
+        process_error_message:     errMsg,
+        error_message:             errMsg,
+        admin_notes:               existingNotes ? `${existingNotes}\n\n${creditNote}` : creditNote,
+      })
+      .eq("id", searchId);
+
+    return NextResponse.json(
+      { success: false, error: "Insufficient credits", required: requestedCount, available: currentBalance },
+      { status: 402 }
+    );
+  }
+
+  // ── 4. Fetch linked ICP ──────────────────────────────────────────────────────
 
   let icp: Record<string, unknown> | null = null;
   if (search.icp_id) {
@@ -101,7 +142,7 @@ export async function POST(
     icp = data ?? null;
   }
 
-  // ── 4. Build Apollo params (search fields take priority over ICP fields) ─────
+  // ── 5. Build search params ───────────────────────────────────────────────────
 
   const jobTitles      = (icp?.target_job_titles as string[] | null) ?? [];
   const icpCountries   = (icp?.target_countries  as string[] | null) ?? [];
@@ -111,44 +152,47 @@ export async function POST(
   const searchCountries  = (search.countries  as string[] | null) ?? [];
   const searchIndustries = (search.industries as string[] | null) ?? [];
 
-  const apolloParams = {
+  const sourceParams: SourceSearchParams = {
     job_titles:    jobTitles,
     industries:    searchIndustries.length > 0 ? searchIndustries : icpIndustries,
     company_sizes: companySizes,
     countries:     searchCountries.length  > 0 ? searchCountries  : icpCountries,
     keywords,
-    limit:         (search.requested_lead_count as number) ?? 10,
+    limit:         requestedCount,
   };
 
-  // ── 5. Call Apollo ────────────────────────────────────────────────────────────
+  // ── 6. Run orchestrator ───────────────────────────────────────────────────────
+  // Apollo is the only active source today. Future sources activate by setting
+  // active=true in their provider — no changes needed here.
 
-  let apolloResult: { results: ApolloLeadResult[]; total_available: number };
+  const activeSources = listActiveProviders().map(p => p.name);
 
-  const apolloCallStartMs = Date.now();
-  const sourceRunId = await startSourceRun(client, searchId, "apollo");
+  let orchestratorResult: Awaited<ReturnType<typeof executeSourceSearch>>;
 
   try {
-    apolloResult = await searchPeople(apolloParams);
-    await completeSourceRun(client, sourceRunId, "completed", Date.now() - apolloCallStartMs, apolloResult.results.length);
+    orchestratorResult = await executeSourceSearch(client, {
+      searchId,
+      requestedCount,
+      params:        sourceParams,
+      activeSources,
+    });
   } catch (err: unknown) {
     const msg        = err instanceof Error ? err.message : String(err);
-    await completeSourceRun(client, sourceRunId, "failed", Date.now() - apolloCallStartMs, 0, msg);
     const durationMs = Date.now() - startMs;
-
     const existingNotes = (search.admin_notes as string | null) ?? "";
-    const errorNote     = `[Auto-process error — ${new Date().toISOString()}]\n${msg}`;
-    const newNotes      = existingNotes ? `${existingNotes}\n\n${errorNote}` : errorNote;
+    const errorNote     = `[Orchestrator error — ${new Date().toISOString()}]\n${msg}`;
 
     await client
       .from("lead_searches")
       .update({
-        status:                   "failed",
-        process_finished_at:      new Date().toISOString(),
-        process_duration_ms:      durationMs,
-        process_generated_count:  0,
-        process_duplicates_skipped: 0,
-        process_error_message:    msg,
-        admin_notes:              newNotes,
+        status:                    "failed",
+        process_finished_at:       new Date().toISOString(),
+        processing_completed_at:   new Date().toISOString(),
+        process_duration_ms:       durationMs,
+        process_generated_count:   0,
+        process_error_message:     msg,
+        error_message:             msg,
+        admin_notes:               existingNotes ? `${existingNotes}\n\n${errorNote}` : errorNote,
       })
       .eq("id", searchId);
 
@@ -158,7 +202,9 @@ export async function POST(
     );
   }
 
-  // ── 6. Dedup against existing leads ──────────────────────────────────────────
+  const leads = orchestratorResult.leads;
+
+  // ── 7. Dedup against existing leads ──────────────────────────────────────────
 
   const { data: existing } = await client
     .from("lead_results")
@@ -172,26 +218,26 @@ export async function POST(
     )
   );
 
-  const toInsert = apolloResult.results.filter((r) => {
+  const toInsert = leads.filter((r: StandardLead) => {
     const key = `${r.company_name.toLowerCase()}|${(r.email ?? "").toLowerCase()}`;
     return !existingKeys.has(key);
   });
 
-  const skipped = apolloResult.results.length - toInsert.length;
+  const skipped = leads.length - toInsert.length;
 
-  // ── 7. Insert lead_results ────────────────────────────────────────────────────
+  // ── 8. Insert lead_results ────────────────────────────────────────────────────
 
   let insertedCount = 0;
   let insertError: string | null = null;
 
   if (toInsert.length > 0) {
-    const rows = toInsert.map((r) => {
+    const rows = toInsert.map((r: StandardLead) => {
       const { email_type, email_quality } = classifyEmail(r.email);
-      const seniority        = detectSeniority(r.title);
+      const seniority          = detectSeniority(r.title);
       const normalized_title   = normalizeTitle(r.title);
       const normalized_company = normalizeCompany(r.company_name);
       const domain             = extractDomain(r.website);
-      const lead_score       = computeLeadScore({
+      const lead_score         = computeLeadScore({
         seniority, email_type, website: r.website,
         linkedin_url: r.linkedin_url, country: r.country,
       });
@@ -200,9 +246,9 @@ export async function POST(
         linkedin_url: r.linkedin_url, title: r.title,
       });
 
-      // ── AI enrichment layer ──────────────────────────────────────────────
-      const buyer_fit        = computeBuyerFit(lead_score);
-      const temperature      = computeTemperature({ seniority, email_type, linkedin_url: r.linkedin_url });
+      // ── AI enrichment layer ──────────────────────────────────────────────────
+      const buyer_fit         = computeBuyerFit(lead_score);
+      const temperature       = computeTemperature({ seniority, email_type, linkedin_url: r.linkedin_url });
       const opportunity_score = computeOpportunityScore({ lead_score, confidence_score, seniority });
 
       const reasoningInput = {
@@ -210,8 +256,8 @@ export async function POST(
         website: r.website, linkedin_url: r.linkedin_url,
         country: r.country, temperature, buyer_fit,
       };
-      const strengths   = computeStrengths(reasoningInput);
-      const weaknesses  = computeWeaknesses(reasoningInput);
+      const strengths    = computeStrengths(reasoningInput);
+      const weaknesses   = computeWeaknesses(reasoningInput);
       const ai_reasoning = generateReasoning(reasoningInput, strengths, weaknesses);
 
       return {
@@ -233,6 +279,7 @@ export async function POST(
         ai_reasoning,
       };
     });
+
     const { data: inserted, error: insErr } = await client
       .from("lead_results")
       .insert(rows)
@@ -244,7 +291,7 @@ export async function POST(
       insertedCount = inserted?.length ?? toInsert.length;
     }
 
-    // ── 7b. Upsert inserted leads into the Vault (best-effort, non-blocking) ──
+    // ── 8b. Upsert into Vault and Company profiles (best-effort) ─────────────
     if (!insErr) {
       for (const row of rows) {
         try {
@@ -278,7 +325,6 @@ export async function POST(
           // Vault upsert failure must never block lead delivery
         }
 
-        // ── Company profile upsert (best-effort, non-blocking) ───────────────
         if (row.normalized_company) {
           try {
             await upsertCompanyProfile(client, {
@@ -299,23 +345,50 @@ export async function POST(
     }
   }
 
-  // ── 8. Update final status + log fields ──────────────────────────────────────
+  // ── 9. Determine final status ─────────────────────────────────────────────────
 
   const durationMs  = Date.now() - startMs;
   const finalStatus = insertError && insertedCount === 0 ? "failed" : "completed";
+  const completedAt = new Date().toISOString();
+
+  // ── 10. Deduct credits on success ────────────────────────────────────────────
+  // Best effort — credit deduction failure must never block lead delivery.
+
+  let creditsConsumed = 0;
+  if (finalStatus === "completed") {
+    try {
+      const creditResult = await consumeCredits(
+        client,
+        userId,
+        requestedCount,
+        "Lead search completed",
+        searchId,
+      );
+      if (creditResult.success) {
+        creditsConsumed = requestedCount;
+      }
+    } catch {
+      // Non-blocking
+    }
+  }
+
+  // ── 11. Update final status + observability columns ───────────────────────────
 
   const updatePayload: Record<string, unknown> = {
     status:                    finalStatus,
-    process_finished_at:       new Date().toISOString(),
+    process_finished_at:       completedAt,
+    processing_completed_at:   completedAt,
     process_duration_ms:       durationMs,
     process_generated_count:   insertedCount,
     process_duplicates_skipped: skipped,
     process_error_message:     insertError ?? null,
+    error_message:             insertError ?? null,
+    credits_consumed:          creditsConsumed,
   };
 
   if (insertError) {
     const existingNotes = (search.admin_notes as string | null) ?? "";
-    const errNote = `[Insert error — ${new Date().toISOString()}]\n${insertError}`;
+    const errNote = `[Insert error — ${completedAt}]\n${insertError}`;
     updatePayload.admin_notes = existingNotes
       ? `${existingNotes}\n\n${errNote}`
       : errNote;
@@ -326,17 +399,19 @@ export async function POST(
     .update(updatePayload)
     .eq("id", searchId);
 
-  // ── 9. Return log ─────────────────────────────────────────────────────────────
+  // ── 12. Return log ─────────────────────────────────────────────────────────────
 
   return NextResponse.json({
-    success:         finalStatus === "completed",
-    search_id:       searchId,
-    requested:       apolloParams.limit,
-    apollo_returned: apolloResult.results.length,
-    inserted:        insertedCount,
+    success:          finalStatus === "completed",
+    search_id:        searchId,
+    requested:        requestedCount,
+    total_found:      orchestratorResult.totalResults,
+    inserted:         insertedCount,
     skipped,
-    errors:          insertError ? [insertError] : [],
-    duration_ms:     durationMs,
-    final_status:    finalStatus,
+    credits_consumed: creditsConsumed,
+    errors:           insertError ? [insertError] : [],
+    duration_ms:      durationMs,
+    final_status:     finalStatus,
+    source_breakdown: orchestratorResult.sourceBreakdown,
   });
 }
