@@ -1,18 +1,42 @@
 "use client";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { getSupabaseClient } from "@/lib/supabase/client";
 
+function friendlyAuthError(msg: string): string {
+  const m = msg.toLowerCase();
+  if (m.includes("invalid login") || m.includes("invalid credentials") || m.includes("wrong password"))
+    return "Incorrect email or password. Please try again.";
+  if (m.includes("email not confirmed"))
+    return "Please verify your email before signing in. Check your inbox.";
+  if (m.includes("too many requests") || m.includes("rate limit"))
+    return "Too many attempts. Please wait a moment and try again.";
+  if (m.includes("user not found"))
+    return "No account found with that email. Would you like to create one?";
+  return msg;
+}
+
 export default function LoginPage() {
-  const router = useRouter();
+  return (
+    <Suspense fallback={<div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", color: "#64748b", fontFamily: "-apple-system,sans-serif", fontSize: "0.9rem" }}>Loading…</div>}>
+      <LoginContent />
+    </Suspense>
+  );
+}
+
+function LoginContent() {
+  const router        = useRouter();
+  const searchParams  = useSearchParams();
+  const verified      = searchParams.get("verified") === "1";
+  const verifyFailed  = searchParams.get("error") === "verification-failed";
+
   const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
   const [error, setError]       = useState("");
   const [loading, setLoading]   = useState(false);
   const [checking, setChecking] = useState(true);
 
-  // On mount: if already authenticated, go straight to dashboard
   useEffect(() => {
     const supabase = getSupabaseClient();
     if (!supabase) { setChecking(false); return; }
@@ -27,7 +51,7 @@ export default function LoginPage() {
     e.preventDefault();
     const supabase = getSupabaseClient();
     if (!supabase) {
-      setError("Auth service is not configured. Add NEXT_PUBLIC_SUPABASE_ANON_KEY to your environment.");
+      setError("Auth service is not configured.");
       return;
     }
     setError("");
@@ -38,16 +62,14 @@ export default function LoginPage() {
     });
     setLoading(false);
     if (authError) {
-      setError(authError.message);
+      setError(friendlyAuthError(authError.message));
     } else {
       router.replace("/dashboard");
     }
   }
 
   if (checking) {
-    return (
-      <div style={S.fullCenter}>Verifying session…</div>
-    );
+    return <div style={S.fullCenter}>Verifying session…</div>;
   }
 
   return (
@@ -59,6 +81,24 @@ export default function LoginPage() {
           <h1 style={S.h1}>Sign in to LeadLens</h1>
           <p style={S.sub}>Your B2B lead generation dashboard</p>
         </div>
+
+        {/* Verification success banner */}
+        {verified && (
+          <div style={S.successBox}>
+            <span style={{ fontSize: "1rem", marginRight: "0.5rem" }}>✓</span>
+            <span>
+              <strong>Account verified successfully.</strong>
+              {" "}Sign in below to continue to your dashboard.
+            </span>
+          </div>
+        )}
+
+        {/* Verification error banner */}
+        {verifyFailed && (
+          <div style={S.errorBox}>
+            Email verification failed or link has expired. Please try signing up again or contact support.
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
           <label style={S.label}>
@@ -179,6 +219,19 @@ const S = {
     boxSizing: "border-box",
     fontFamily: "inherit",
     transition: "border-color 0.15s",
+  } as React.CSSProperties,
+  successBox: {
+    background: "#f0fdf4",
+    border: "1px solid #bbf7d0",
+    borderRadius: "0.5rem",
+    padding: "0.75rem 0.875rem",
+    color: "#15803d",
+    fontSize: "0.82rem",
+    marginBottom: "1.25rem",
+    display: "flex",
+    alignItems: "flex-start",
+    gap: "0.25rem",
+    lineHeight: 1.5,
   } as React.CSSProperties,
   errorBox: {
     background: "#fee2e2",

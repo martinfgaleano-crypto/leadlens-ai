@@ -4,6 +4,7 @@ import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { getAdminToken, clearAdminToken } from "@/lib/admin/admin-client";
 
+
 const S = {
   root: {
     display: "flex",
@@ -76,12 +77,61 @@ const S = {
     fontFamily: "-apple-system,sans-serif",
     fontSize: "0.9rem",
   },
+  topBar: {
+    position: "fixed" as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 52,
+    background: "#0f172a",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: "0 1rem",
+    zIndex: 40,
+  },
+  hamburger: {
+    background: "transparent",
+    border: "none",
+    color: "#f0f9ff",
+    fontSize: "1.3rem",
+    cursor: "pointer",
+    padding: "0.35rem 0.5rem",
+    lineHeight: 1,
+    fontFamily: "inherit",
+  },
+  backdrop: {
+    position: "fixed" as const,
+    inset: 0,
+    background: "rgba(0,0,0,0.45)",
+    zIndex: 45,
+  },
+  drawer: {
+    position: "fixed" as const,
+    top: 0,
+    left: 0,
+    bottom: 0,
+    width: 240,
+    background: "#0f172a",
+    display: "flex",
+    flexDirection: "column" as const,
+    padding: "1.5rem 0",
+    zIndex: 50,
+    transition: "transform 0.25s ease",
+    overflowY: "auto" as const,
+  },
+  mobileMain: {
+    marginTop: 52,
+    padding: "1.25rem 1rem",
+    minHeight: "calc(100vh - 52px)",
+  },
 } as const;
 
-function NavLink({ href, label, active }: { href: string; label: string; active: boolean }) {
+function NavLink({ href, label, active, onClick }: { href: string; label: string; active: boolean; onClick?: () => void }) {
   return (
     <Link
       href={href}
+      onClick={onClick}
       style={{
         display: "block",
         padding: "0.5rem 0.75rem",
@@ -102,9 +152,11 @@ function NavLink({ href, label, active }: { href: string; label: string; active:
 }
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
+  const router   = useRouter();
   const pathname = usePathname();
-  const [ready, setReady] = useState(false);
+  const [ready, setReady]       = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const token = getAdminToken();
@@ -115,6 +167,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  useEffect(() => { setMenuOpen(false); }, [pathname]);
 
   function handleLogout() {
     clearAdminToken();
@@ -142,53 +203,61 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { href: "/admin/settings",      label: "Settings" },
   ];
 
-  return (
-    <div style={S.root}>
-      <aside style={S.sidebar}>
-        <div style={S.brand}>
-          <span style={S.brandName}>LeadLens</span>
-          <span style={S.brandTag}>Admin — Internal</span>
-        </div>
-        <nav style={S.nav}>
-          <div style={S.navSection}>Operations</div>
-          {nav.map((item) => (
-            <NavLink
-              key={item.href}
-              href={item.href}
-              label={item.label}
-              active={
-                item.href === "/admin"
-                  ? pathname === "/admin"
-                  : pathname.startsWith(item.href)
-              }
-            />
-          ))}
-        </nav>
-        <div style={S.footer}>
-          <Link
-            href="/"
-            style={{ display: "block", color: "#475569", fontSize: "0.75rem", marginBottom: "0.5rem", textDecoration: "none" }}
-          >
-            ← Public site
-          </Link>
-          <button
-            onClick={handleLogout}
-            style={{
-              background: "transparent",
-              border: "1px solid rgba(255,255,255,0.12)",
-              color: "#94a3b8",
-              borderRadius: "0.4rem",
-              padding: "0.4rem 0.75rem",
-              fontSize: "0.75rem",
-              cursor: "pointer",
-              width: "100%",
-              textAlign: "left",
-            }}
-          >
-            Logout
+  const close = () => setMenuOpen(false);
+
+  const sidebarContent = (
+    <>
+      <div style={S.brand}>
+        <span style={S.brandName}>LeadLens</span>
+        <span style={S.brandTag}>Admin — Internal</span>
+      </div>
+      <nav style={S.nav}>
+        <div style={S.navSection}>Operations</div>
+        {nav.map((item) => (
+          <NavLink
+            key={item.href}
+            href={item.href}
+            label={item.label}
+            active={item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href)}
+            onClick={close}
+          />
+        ))}
+      </nav>
+      <div style={S.footer}>
+        <Link href="/" style={{ display: "block", color: "#475569", fontSize: "0.75rem", marginBottom: "0.5rem", textDecoration: "none" }}>
+          ← Public site
+        </Link>
+        <button
+          onClick={handleLogout}
+          style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.12)", color: "#94a3b8", borderRadius: "0.4rem", padding: "0.4rem 0.75rem", fontSize: "0.75rem", cursor: "pointer", width: "100%", textAlign: "left" }}
+        >
+          Logout
+        </button>
+      </div>
+    </>
+  );
+
+  if (isMobile) {
+    return (
+      <div style={{ minHeight: "100vh", fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif", background: "#f8fafc" }}>
+        <div style={S.topBar}>
+          <span style={{ ...S.brandName, fontSize: "0.95rem" }}>LeadLens Admin</span>
+          <button onClick={() => setMenuOpen(o => !o)} style={S.hamburger} aria-label="Toggle menu">
+            {menuOpen ? "✕" : "☰"}
           </button>
         </div>
-      </aside>
+        {menuOpen && <div style={S.backdrop} onClick={close} />}
+        <div style={{ ...S.drawer, transform: menuOpen ? "translateX(0)" : "translateX(-100%)" }}>
+          {sidebarContent}
+        </div>
+        <main style={S.mobileMain}>{children}</main>
+      </div>
+    );
+  }
+
+  return (
+    <div style={S.root}>
+      <aside style={S.sidebar}>{sidebarContent}</aside>
       <main style={S.main}>{children}</main>
     </div>
   );

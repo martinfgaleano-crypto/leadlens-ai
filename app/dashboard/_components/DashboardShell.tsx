@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
 
 interface Props {
   email: string;
@@ -9,44 +10,88 @@ interface Props {
 }
 
 export default function DashboardShell({ email, onLogout, children }: Props) {
-  const pathname = usePathname() ?? "";
+  const pathname   = usePathname() ?? "";
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
-  return (
-    <div style={S.root}>
-      <aside style={S.sidebar}>
-        {/* Brand */}
-        <div style={S.brand}>
-          <Link href="/dashboard" style={{ textDecoration: "none" }}>
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  // Close drawer on route change
+  useEffect(() => { setMenuOpen(false); }, [pathname]);
+
+  const close = () => setMenuOpen(false);
+
+  const sidebarContent = (
+    <>
+      <div style={S.brand}>
+        <Link href="/dashboard" style={{ textDecoration: "none" }} onClick={close}>
+          <span style={S.brandName}>LeadLens</span>
+          <span style={S.brandTag}>AI</span>
+        </Link>
+      </div>
+      <nav style={S.nav}>
+        <div style={S.navSection}>Workspace</div>
+        <NavItem href="/dashboard"               label="Dashboard"     active={pathname === "/dashboard"}                       onClick={close} />
+        <NavItem href="/dashboard/icp"           label="ICP Builder"   active={pathname.startsWith("/dashboard/icp")}           onClick={close} />
+        <NavItem href="/dashboard/searches"      label="Lead Searches" active={pathname.startsWith("/dashboard/searches")}      onClick={close} />
+        <NavItem href="/dashboard/notifications" label="Notifications" active={pathname.startsWith("/dashboard/notifications")} onClick={close} />
+        <NavItem href="/dashboard/account"       label="Account"       active={false} disabled onClick={close} />
+      </nav>
+      <div style={S.sidebarFooter}>
+        <div style={{ color: "#94a3b8", fontSize: "0.72rem", marginBottom: "0.5rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+          {email}
+        </div>
+        <button onClick={onLogout} style={S.logoutBtn}>Log out</button>
+      </div>
+    </>
+  );
+
+  if (isMobile) {
+    return (
+      <div style={{ minHeight: "100vh", fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif", background: "#f8fafc" }}>
+        {/* Mobile top bar */}
+        <div style={S.topBar}>
+          <Link href="/dashboard" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "0.3rem" }}>
             <span style={S.brandName}>LeadLens</span>
             <span style={S.brandTag}>AI</span>
           </Link>
+          <button onClick={() => setMenuOpen(o => !o)} style={S.hamburger} aria-label="Toggle menu">
+            {menuOpen ? "✕" : "☰"}
+          </button>
         </div>
 
-        {/* Nav */}
-        <nav style={S.nav}>
-          <div style={S.navSection}>Workspace</div>
-          <NavItem href="/dashboard"          label="Dashboard"     active={pathname === "/dashboard"} />
-          <NavItem href="/dashboard/icp"      label="ICP Builder"   active={pathname.startsWith("/dashboard/icp")} />
-          <NavItem href="/dashboard/searches"      label="Lead Searches"  active={pathname.startsWith("/dashboard/searches")} />
-          <NavItem href="/dashboard/notifications" label="Notifications"  active={pathname.startsWith("/dashboard/notifications")} />
-          <NavItem href="/dashboard/account"       label="Account"        active={false} disabled />
-        </nav>
+        {/* Backdrop */}
+        {menuOpen && <div style={S.backdrop} onClick={close} />}
 
-        {/* Footer */}
-        <div style={S.sidebarFooter}>
-          <div style={{ color: "#94a3b8", fontSize: "0.72rem", marginBottom: "0.5rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-            {email}
-          </div>
-          <button onClick={onLogout} style={S.logoutBtn}>Log out</button>
+        {/* Slide-out drawer */}
+        <div style={{ ...S.drawer, transform: menuOpen ? "translateX(0)" : "translateX(-100%)" }}>
+          {sidebarContent}
         </div>
-      </aside>
 
+        <main style={S.mobileMain}>{children}</main>
+      </div>
+    );
+  }
+
+  // Desktop
+  return (
+    <div style={S.root}>
+      <aside style={S.sidebar}>{sidebarContent}</aside>
       <main style={S.main}>{children}</main>
     </div>
   );
 }
 
-function NavItem({ href, label, active, disabled }: { href: string; label: string; active: boolean; disabled?: boolean }) {
+function NavItem({
+  href, label, active, disabled, onClick,
+}: {
+  href: string; label: string; active: boolean; disabled?: boolean; onClick?: () => void;
+}) {
   if (disabled) {
     return (
       <div style={{ ...S.navLink, color: "#475569", cursor: "default", opacity: 0.5 }}>
@@ -56,7 +101,7 @@ function NavItem({ href, label, active, disabled }: { href: string; label: strin
     );
   }
   return (
-    <Link href={href} style={{ ...S.navLink, ...(active ? S.navLinkActive : {}) }}>
+    <Link href={href} onClick={onClick} style={{ ...S.navLink, ...(active ? S.navLinkActive : {}) }}>
       {label}
     </Link>
   );
@@ -82,6 +127,54 @@ const S = {
     bottom: 0,
     zIndex: 10,
   },
+  topBar: {
+    position: "fixed" as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 52,
+    background: "#0f172a",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: "0 1rem",
+    zIndex: 40,
+  } as React.CSSProperties,
+  hamburger: {
+    background: "transparent",
+    border: "none",
+    color: "#f0f9ff",
+    fontSize: "1.3rem",
+    cursor: "pointer",
+    padding: "0.35rem 0.5rem",
+    lineHeight: 1,
+    fontFamily: "inherit",
+  } as React.CSSProperties,
+  backdrop: {
+    position: "fixed" as const,
+    inset: 0,
+    background: "rgba(0,0,0,0.45)",
+    zIndex: 45,
+  },
+  drawer: {
+    position: "fixed" as const,
+    top: 0,
+    left: 0,
+    bottom: 0,
+    width: 240,
+    background: "#0f172a",
+    display: "flex",
+    flexDirection: "column" as const,
+    padding: "1.5rem 0",
+    zIndex: 50,
+    transition: "transform 0.25s ease",
+    overflowY: "auto" as const,
+  },
+  mobileMain: {
+    marginTop: 52,
+    padding: "1.25rem 1rem",
+    minHeight: "calc(100vh - 52px)",
+  } as React.CSSProperties,
   brand: {
     padding: "0 1.25rem 1.5rem",
     borderBottom: "1px solid rgba(255,255,255,0.08)",

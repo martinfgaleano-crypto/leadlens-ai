@@ -448,14 +448,23 @@ export async function POST(
   }
 
   // ── 9. Determine final status ─────────────────────────────────────────────────
+  // A search with zero delivered leads is always failed — never completed.
+  // This prevents charging credits when Apollo returns nothing.
 
   const durationMs    = Date.now() - startMs;
   const totalInserted = vaultInsertedCount + insertedCount;
-  const finalStatus   = insertError && totalInserted === 0 ? "failed" : "completed";
-  const completedAt = new Date().toISOString();
+  const noLeadsFound  = totalInserted === 0;
+  const finalStatus   = noLeadsFound ? "failed" : "completed";
+  const completedAt   = new Date().toISOString();
+
+  // When 0 leads were found, record a clear error message.
+  if (noLeadsFound && !insertError) {
+    insertError = "No leads found";
+  }
 
   // ── 10. Deduct credits on success ────────────────────────────────────────────
-  // Best effort — credit deduction failure must never block lead delivery.
+  // Charge only for leads actually delivered, never for requested count.
+  // Zero-lead searches pay nothing.
 
   let creditsConsumed = 0;
   if (finalStatus === "completed") {
@@ -463,12 +472,12 @@ export async function POST(
       const creditResult = await consumeCredits(
         client,
         userId,
-        requestedCount,
-        "Lead search completed",
+        totalInserted,
+        `Lead search completed — ${totalInserted} lead${totalInserted !== 1 ? "s" : ""} delivered`,
         searchId,
       );
       if (creditResult.success) {
-        creditsConsumed = requestedCount;
+        creditsConsumed = totalInserted;
       }
     } catch {
       // Non-blocking
@@ -505,12 +514,15 @@ export async function POST(
         }
       }
     } else {
+      const failMsg = noLeadsFound
+        ? `Your search "${search.name as string}" returned no leads. Try broadening your filters or contact support.`
+        : `Your search "${search.name as string}" could not be completed. ${insertError ?? "Unknown error."}`;
       await createNotification(client, {
         userId,
         type:    "search_failed",
-        title:   "Search failed",
-        message: `Your search "${search.name as string}" could not be completed. ${insertError ?? "Unknown error."}`,
-        metadata: { search_id: searchId, error: insertError },
+        title:   noLeadsFound ? "No leads found" : "Search failed",
+        message: failMsg,
+        metadata: { search_id: searchId, error: insertError, no_leads_found: noLeadsFound },
       });
     }
   } catch { /* never block */ }
@@ -537,7 +549,8 @@ export async function POST(
 
   if (insertError) {
     const existingNotes = (search.admin_notes as string | null) ?? "";
-    const errNote = `[Insert error — ${completedAt}]\n${insertError}`;
+    const label    = noLeadsFound ? "No leads found" : "Insert error";
+    const errNote  = `[${label} — ${completedAt}]\n${insertError}`;
     updatePayload.admin_notes = existingNotes
       ? `${existingNotes}\n\n${errNote}`
       : errNote;

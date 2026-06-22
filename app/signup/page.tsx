@@ -8,12 +8,13 @@ type SignupState = "form" | "check-email";
 
 export default function SignupPage() {
   const router = useRouter();
-  const [email, setEmail]       = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError]       = useState("");
-  const [loading, setLoading]   = useState(false);
-  const [checking, setChecking] = useState(true);
-  const [view, setView]         = useState<SignupState>("form");
+  const [email, setEmail]         = useState("");
+  const [password, setPassword]   = useState("");
+  const [error, setError]         = useState("");
+  const [isDuplicate, setIsDuplicate] = useState(false);
+  const [loading, setLoading]     = useState(false);
+  const [checking, setChecking]   = useState(true);
+  const [view, setView]           = useState<SignupState>("form");
 
   // If already logged in, skip to dashboard
   useEffect(() => {
@@ -35,6 +36,7 @@ export default function SignupPage() {
     }
 
     setError("");
+    setIsDuplicate(false);
     setLoading(true);
 
     const { data, error: authError } = await supabase.auth.signUp({
@@ -44,7 +46,21 @@ export default function SignupPage() {
 
     if (authError) {
       setLoading(false);
-      setError(authError.message);
+      // "User already registered" can come back as an error in some Supabase configs
+      if (authError.message.toLowerCase().includes("already registered") ||
+          authError.message.toLowerCase().includes("already exists")) {
+        setIsDuplicate(true);
+      } else {
+        setError(authError.message);
+      }
+      return;
+    }
+
+    // Supabase returns identities: [] when email confirmation is ON and email already exists.
+    // They don't surface an error to avoid leaking which emails are registered.
+    if (data.user && (!data.user.identities || data.user.identities.length === 0)) {
+      setLoading(false);
+      setIsDuplicate(true);
       return;
     }
 
@@ -140,7 +156,17 @@ export default function SignupPage() {
             />
           </label>
 
-          {error && <div style={S.errorBox}>{error}</div>}
+          {isDuplicate && (
+            <div style={S.errorBox}>
+              <strong>This email is already registered.</strong>
+              {" "}
+              <Link href="/login" style={{ color: "#dc2626", fontWeight: 700 }}>
+                Log in instead →
+              </Link>
+            </div>
+          )}
+
+          {error && !isDuplicate && <div style={S.errorBox}>{error}</div>}
 
           <button type="submit" disabled={loading} style={loading ? S.btnDisabled : S.btn}>
             {loading ? "Creating account…" : "Create account"}

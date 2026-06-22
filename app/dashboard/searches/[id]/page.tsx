@@ -528,20 +528,45 @@ export default function SearchDetailPage() {
         )}
 
         {/* ── Failed ── */}
-        {isFailed && (
-          <div style={{ padding: "2.5rem 2rem", textAlign: "center" }}>
-            <div style={{ fontSize: "1.5rem", marginBottom: "0.75rem" }}>❌</div>
-            <div style={{ color: "#0f172a", fontWeight: 700, marginBottom: "0.5rem" }}>Search failed</div>
-            <div style={{ color: "#64748b", fontSize: "0.85rem", maxWidth: 360, margin: "0 auto" }}>
-              Something went wrong while generating leads. Please contact support and reference your search ID.
-            </div>
-            {search.admin_notes && (
-              <div style={{ marginTop: "1rem", padding: "0.75rem 1rem", background: "#fef3c7", border: "1px solid #fde68a", borderRadius: "0.5rem", fontSize: "0.8rem", color: "#92400e", textAlign: "left", maxWidth: 420, margin: "1rem auto 0" }}>
-                {search.admin_notes}
+        {isFailed && (() => {
+          const isNoLeads = search.admin_notes?.includes("No leads found") ||
+                            search.notes?.includes("No leads found");
+          return (
+            <div style={{ padding: "2.5rem 2rem", textAlign: "center" }}>
+              <div style={{ fontSize: "1.75rem", marginBottom: "0.75rem" }}>
+                {isNoLeads ? "🔍" : "⚠️"}
               </div>
-            )}
-          </div>
-        )}
+              <div style={{ color: "#0f172a", fontWeight: 700, fontSize: "1rem", marginBottom: "0.5rem" }}>
+                {isNoLeads ? "No leads found" : "Search could not be completed"}
+              </div>
+              <div style={{ color: "#64748b", fontSize: "0.85rem", maxWidth: 400, margin: "0 auto" }}>
+                {isNoLeads
+                  ? "Our search returned no results for your criteria. No credits were charged."
+                  : "Something went wrong during lead generation. Our team has been notified."}
+              </div>
+
+              {isNoLeads && (
+                <div style={{ marginTop: "1.25rem", padding: "1rem 1.25rem", background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "0.625rem", textAlign: "left", maxWidth: 380, margin: "1.25rem auto 0" }}>
+                  <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "#374151", marginBottom: "0.5rem", textTransform: "uppercase", letterSpacing: "0.04em" }}>Possible reasons</div>
+                  <ul style={{ margin: 0, paddingLeft: "1.25rem", color: "#64748b", fontSize: "0.82rem", lineHeight: 1.8 }}>
+                    <li>Filters may be too restrictive — try broadening countries or industries</li>
+                    <li>No available leads matching your ICP in this region</li>
+                    <li>Data provider returned no results for this query</li>
+                  </ul>
+                  <div style={{ marginTop: "0.875rem", fontSize: "0.8rem", color: "#0ea5e9", fontWeight: 600 }}>
+                    Try creating a new search with different parameters.
+                  </div>
+                </div>
+              )}
+
+              {!isNoLeads && (
+                <div style={{ marginTop: "1rem", fontSize: "0.78rem", color: "#94a3b8" }}>
+                  Reference ID: <span style={{ fontFamily: "monospace" }}>{search.id}</span>
+                </div>
+              )}
+            </div>
+          );
+        })()}
 
         {/* ── Loading leads ── */}
         {isCompleted && leadsLoading && (
