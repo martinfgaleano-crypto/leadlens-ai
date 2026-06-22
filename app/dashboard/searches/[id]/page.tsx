@@ -32,9 +32,37 @@ interface LeadResult {
   linkedin_url: string | null;
   country: string | null;
   source: string | null;
+  // Quality layer (Phase 7)
+  lead_score: number | null;
+  confidence_score: number | null;
+  seniority: string | null;
+  email_quality: string | null;
+  normalized_title: string | null;
 }
 
 const POLL_INTERVAL_MS = 15_000;
+
+// ─── Score badge ──────────────────────────────────────────────────────────────
+
+function ScoreBadge({ score }: { score: number | null }) {
+  if (score == null) return <span style={{ color: "#cbd5e1" }}>—</span>;
+
+  let bg: string, color: string;
+  if (score >= 90)      { bg = "#dcfce7"; color = "#15803d"; }
+  else if (score >= 70) { bg = "#dbeafe"; color = "#1d4ed8"; }
+  else if (score >= 50) { bg = "#fef9c3"; color = "#854d0e"; }
+  else                  { bg = "#f1f5f9"; color = "#64748b"; }
+
+  return (
+    <span style={{
+      display: "inline-block", background: bg, color,
+      borderRadius: 999, padding: "0.15rem 0.55rem",
+      fontSize: "0.72rem", fontWeight: 700, minWidth: 28, textAlign: "center",
+    }}>
+      {score}
+    </span>
+  );
+}
 
 // ─── CSV export ───────────────────────────────────────────────────────────────
 
@@ -42,9 +70,10 @@ function exportCsv(leads: LeadResult[], filename: string) {
   const COLS: (keyof LeadResult)[] = [
     "company_name", "website", "contact_name", "title",
     "email", "linkedin_url", "country", "source",
+    "lead_score", "confidence_score", "seniority", "email_quality",
   ];
 
-  function escape(v: string | null | undefined): string {
+  function escape(v: string | number | null | undefined): string {
     if (v == null || v === "") return "";
     const s = String(v);
     if (s.includes(",") || s.includes('"') || s.includes("\n")) {
@@ -114,19 +143,36 @@ export default function SearchDetailPage() {
   const params   = useParams();
   const searchId = typeof params?.id === "string" ? params.id : "";
 
-  const [userEmail, setUserEmail]     = useState("");
-  const [userId, setUserId]           = useState("");
-  const [search, setSearch]           = useState<LeadSearch | null>(null);
-  const [icpName, setIcpName]         = useState<string | null>(null);
-  const [leads, setLeads]             = useState<LeadResult[]>([]);
+  const [userEmail, setUserEmail]       = useState("");
+  const [userId, setUserId]             = useState("");
+  const [search, setSearch]             = useState<LeadSearch | null>(null);
+  const [icpName, setIcpName]           = useState<string | null>(null);
+  const [leads, setLeads]               = useState<LeadResult[]>([]);
+  const [sortedLeads, setSortedLeads]   = useState<LeadResult[]>([]);
+  const [sortByScore, setSortByScore]   = useState(true);
   const [leadsLoading, setLeadsLoading] = useState(false);
-  const [loading, setLoading]         = useState(true);
-  const [notFound, setNotFound]       = useState(false);
-  const [error, setError]             = useState("");
+  const [loading, setLoading]           = useState(true);
+  const [notFound, setNotFound]         = useState(false);
+  const [error, setError]               = useState("");
 
   const supabaseRef = useRef(getSupabaseClient());
   const userIdRef   = useRef(userId);
   useEffect(() => { userIdRef.current = userId; }, [userId]);
+
+  // ─── Sort leads ───────────────────────────────────────────────────────────
+
+  useEffect(() => {
+    if (!sortByScore) {
+      setSortedLeads([...leads]);
+      return;
+    }
+    const sorted = [...leads].sort((a, b) => {
+      const sa = a.lead_score ?? -1;
+      const sb = b.lead_score ?? -1;
+      return sb - sa;
+    });
+    setSortedLeads(sorted);
+  }, [leads, sortByScore]);
 
   // ─── Fetch leads for completed search ─────────────────────────────────────
 
@@ -136,7 +182,7 @@ export default function SearchDetailPage() {
     setLeadsLoading(true);
     const { data } = await supabase
       .from("lead_results")
-      .select("id, company_name, website, contact_name, title, email, linkedin_url, country, source")
+      .select("id, company_name, website, contact_name, title, email, linkedin_url, country, source, lead_score, confidence_score, seniority, email_quality, normalized_title")
       .eq("search_id", searchId)
       .order("created_at", { ascending: true });
     setLeads((data ?? []) as LeadResult[]);
@@ -205,7 +251,6 @@ export default function SearchDetailPage() {
         if (!cancelled && icpData) setIcpName(icpData.name as string);
       }
 
-      // Fetch leads if already completed
       if (status === "completed") await fetchLeads();
 
       if (!cancelled) setLoading(false);
@@ -222,18 +267,11 @@ export default function SearchDetailPage() {
     const status = search?.status;
     if (status !== "pending" && status !== "processing") return;
 
-    const uid = userIdRef.current;
-
     const interval = setInterval(async () => {
       const currentUid = userIdRef.current;
       if (!currentUid) return;
-
       const newStatus = await fetchSearch(currentUid);
-
-      // When status transitions to completed, load leads
-      if (newStatus === "completed") {
-        await fetchLeads();
-      }
+      if (newStatus === "completed") await fetchLeads();
     }, POLL_INTERVAL_MS);
 
     return () => clearInterval(interval);
@@ -250,7 +288,7 @@ export default function SearchDetailPage() {
   function handleExportCsv() {
     if (!search) return;
     const slug = search.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-    exportCsv(leads, `leadlens-${slug}.csv`);
+    exportCsv(sortedLeads, `leadlens-${slug}.csv`);
   }
 
   // ─── Loading ──────────────────────────────────────────────────────────────
@@ -296,10 +334,14 @@ export default function SearchDetailPage() {
   const isProcessing = search.status === "processing";
   const isPending    = search.status === "pending";
   const isActive     = isPending || isProcessing;
+  const hasScores    = leads.some(l => l.lead_score != null);
 
   return (
     <DashboardShell email={userEmail} onLogout={handleLogout}>
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      <style>{`
+        @keyframes spin  { to { transform: rotate(360deg); } }
+        @keyframes pulse { 0%,100% { opacity:0.3; } 50% { opacity:1; } }
+      `}</style>
 
       {/* Back link */}
       <div style={{ marginBottom: "1.5rem" }}>
@@ -347,9 +389,26 @@ export default function SearchDetailPage() {
           <span style={S.sectionTitle}>
             {isCompleted ? `Lead Results (${leads.length})` : "Lead Results"}
           </span>
-          {isCompleted && leads.length > 0 && (
-            <button onClick={handleExportCsv} style={S.exportBtn}>↓ Export CSV</button>
-          )}
+          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+            {isCompleted && hasScores && (
+              <button
+                onClick={() => setSortByScore(s => !s)}
+                style={{
+                  background: sortByScore ? "#0f172a" : "#f1f5f9",
+                  color: sortByScore ? "#fff" : "#64748b",
+                  border: "none", borderRadius: "0.4rem",
+                  padding: "0.35rem 0.8rem",
+                  fontWeight: 600, fontSize: "0.72rem",
+                  cursor: "pointer", fontFamily: "inherit",
+                }}
+              >
+                {sortByScore ? "↓ By Score" : "By Date"}
+              </button>
+            )}
+            {isCompleted && leads.length > 0 && (
+              <button onClick={handleExportCsv} style={S.exportBtn}>↓ Export CSV</button>
+            )}
+          </div>
         </div>
 
         {/* ── Queued ── */}
@@ -410,25 +469,33 @@ export default function SearchDetailPage() {
             <div style={{ fontSize: "1.5rem", marginBottom: "0.75rem" }}>📋</div>
             <div style={{ color: "#0f172a", fontWeight: 700, marginBottom: "0.5rem" }}>Leads coming soon</div>
             <div style={{ color: "#64748b", fontSize: "0.85rem" }}>
-              Your search completed. Leads will appear here shortly — contact support if they don't arrive.
+              Your search completed. Leads will appear here shortly — contact support if they don&apos;t arrive.
             </div>
           </div>
         )}
 
         {/* ── Completed — leads table ── */}
-        {isCompleted && !leadsLoading && leads.length > 0 && (
+        {isCompleted && !leadsLoading && sortedLeads.length > 0 && (
           <>
-            <div style={{ padding: "0.75rem 1.25rem", background: "#f0fdf4", borderBottom: "1px solid #bbf7d0" }}>
+            <div style={{ padding: "0.75rem 1.25rem", background: "#f0fdf4", borderBottom: "1px solid #bbf7d0", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <span style={{ fontSize: "0.82rem", fontWeight: 600, color: "#15803d" }}>
-                {leads.length} lead{leads.length !== 1 ? "s" : ""} found
+                {leads.length} lead{leads.length !== 1 ? "s" : ""}
                 {search.requested_lead_count > 0 && ` of ${search.requested_lead_count} requested`}
               </span>
+              {hasScores && (
+                <span style={{ fontSize: "0.72rem", color: "#64748b" }}>
+                  Scores: &nbsp;
+                  <ScoreLegend />
+                </span>
+              )}
             </div>
             <div style={{ overflowX: "auto" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 640 }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", minWidth: hasScores ? 780 : 640 }}>
                 <thead>
                   <tr style={{ background: "#f8fafc" }}>
-                    {["Company", "Website", "Contact", "Title", "Email", "Country"].map(h => (
+                    {["Company", "Contact", "Title", "Email", "Country",
+                      ...(hasScores ? ["Score", "Confidence"] : [])
+                    ].map(h => (
                       <th key={h} style={{ padding: "0.65rem 1.25rem", textAlign: "left", fontSize: "0.7rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid #e2e8f0", whiteSpace: "nowrap" }}>
                         {h}
                       </th>
@@ -436,21 +503,22 @@ export default function SearchDetailPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {leads.map((lead, i) => (
-                    <tr key={lead.id} style={{ borderBottom: i < leads.length - 1 ? "1px solid #f1f5f9" : "none" }}>
+                  {sortedLeads.map((lead, i) => (
+                    <tr key={lead.id} style={{ borderBottom: i < sortedLeads.length - 1 ? "1px solid #f1f5f9" : "none" }}>
                       <td style={{ padding: "0.75rem 1.25rem", fontSize: "0.85rem", fontWeight: 600, color: "#0f172a", whiteSpace: "nowrap" }}>
                         {lead.company_name}
-                      </td>
-                      <td style={{ padding: "0.75rem 1.25rem", fontSize: "0.8rem", maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                        {lead.website
-                          ? <a href={lead.website} target="_blank" rel="noreferrer" style={{ color: "#0ea5e9", textDecoration: "none" }}>{lead.website.replace(/^https?:\/\//, "")}</a>
-                          : <span style={{ color: "#cbd5e1" }}>—</span>}
+                        {lead.website && (
+                          <a href={lead.website} target="_blank" rel="noreferrer" style={{ marginLeft: "0.4rem", color: "#0ea5e9", fontSize: "0.72rem", fontWeight: 400, textDecoration: "none" }}>↗</a>
+                        )}
                       </td>
                       <td style={{ padding: "0.75rem 1.25rem", fontSize: "0.82rem", color: "#0f172a", whiteSpace: "nowrap" }}>
                         {lead.contact_name ?? <span style={{ color: "#cbd5e1" }}>—</span>}
+                        {lead.linkedin_url && (
+                          <a href={lead.linkedin_url} target="_blank" rel="noreferrer" style={{ marginLeft: "0.4rem", color: "#0ea5e9", fontSize: "0.7rem", textDecoration: "none" }}>in</a>
+                        )}
                       </td>
                       <td style={{ padding: "0.75rem 1.25rem", fontSize: "0.8rem", color: "#64748b", whiteSpace: "nowrap" }}>
-                        {lead.title ?? <span style={{ color: "#cbd5e1" }}>—</span>}
+                        {lead.normalized_title ?? lead.title ?? <span style={{ color: "#cbd5e1" }}>—</span>}
                       </td>
                       <td style={{ padding: "0.75rem 1.25rem", fontSize: "0.8rem", color: "#64748b", whiteSpace: "nowrap" }}>
                         {lead.email
@@ -460,6 +528,16 @@ export default function SearchDetailPage() {
                       <td style={{ padding: "0.75rem 1.25rem", fontSize: "0.8rem", color: "#64748b", whiteSpace: "nowrap" }}>
                         {lead.country ?? <span style={{ color: "#cbd5e1" }}>—</span>}
                       </td>
+                      {hasScores && (
+                        <>
+                          <td style={{ padding: "0.75rem 1.25rem", whiteSpace: "nowrap" }}>
+                            <ScoreBadge score={lead.lead_score} />
+                          </td>
+                          <td style={{ padding: "0.75rem 1.25rem", whiteSpace: "nowrap" }}>
+                            <ScoreBadge score={lead.confidence_score} />
+                          </td>
+                        </>
+                      )}
                     </tr>
                   ))}
                 </tbody>
@@ -469,6 +547,26 @@ export default function SearchDetailPage() {
         )}
       </div>
     </DashboardShell>
+  );
+}
+
+// ─── Score legend chip row ─────────────────────────────────────────────────────
+
+function ScoreLegend() {
+  const items = [
+    { label: "90+",   bg: "#dcfce7", color: "#15803d" },
+    { label: "70–89", bg: "#dbeafe", color: "#1d4ed8" },
+    { label: "50–69", bg: "#fef9c3", color: "#854d0e" },
+    { label: "<50",   bg: "#f1f5f9", color: "#64748b" },
+  ];
+  return (
+    <span style={{ display: "inline-flex", gap: "0.3rem", alignItems: "center" }}>
+      {items.map(it => (
+        <span key={it.label} style={{ background: it.bg, color: it.color, borderRadius: 999, padding: "0.1rem 0.45rem", fontSize: "0.68rem", fontWeight: 700 }}>
+          {it.label}
+        </span>
+      ))}
+    </span>
   );
 }
 

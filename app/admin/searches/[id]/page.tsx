@@ -63,6 +63,15 @@ type LeadResult = {
   source: string | null;
   notes: string | null;
   created_at: string;
+  // Quality layer (Phase 7)
+  lead_score: number | null;
+  confidence_score: number | null;
+  seniority: string | null;
+  email_quality: string | null;
+  email_type: string | null;
+  normalized_title: string | null;
+  normalized_company: string | null;
+  domain: string | null;
 };
 
 type LeadForm = {
@@ -158,6 +167,36 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
 
 function ArrRow({ label, arr }: { label: string; arr: string[] }) {
   return <Row label={label} value={arr.length > 0 ? arr.join(", ") : null} />;
+}
+
+function ScoreBadge({ score }: { score: number | null }) {
+  if (score == null) return <span style={{ color: "#cbd5e1" }}>—</span>;
+  let bg: string, color: string;
+  if      (score >= 90) { bg = "#dcfce7"; color = "#15803d"; }
+  else if (score >= 70) { bg = "#dbeafe"; color = "#1d4ed8"; }
+  else if (score >= 50) { bg = "#fef9c3"; color = "#854d0e"; }
+  else                  { bg = "#f1f5f9"; color = "#64748b"; }
+  return (
+    <span style={{ display: "inline-block", background: bg, color, borderRadius: 999, padding: "0.1rem 0.5rem", fontSize: "0.7rem", fontWeight: 700, minWidth: 26, textAlign: "center" }}>
+      {score}
+    </span>
+  );
+}
+
+function QualityPill({ value }: { value: string | null }) {
+  if (!value) return <span style={{ color: "#cbd5e1" }}>—</span>;
+  const map: Record<string, { bg: string; color: string }> = {
+    high:    { bg: "#dcfce7", color: "#15803d" },
+    medium:  { bg: "#fef9c3", color: "#854d0e" },
+    low:     { bg: "#fee2e2", color: "#dc2626" },
+    missing: { bg: "#f1f5f9", color: "#94a3b8" },
+  };
+  const s = map[value] ?? { bg: "#f1f5f9", color: "#64748b" };
+  return (
+    <span style={{ background: s.bg, color: s.color, borderRadius: 999, padding: "0.1rem 0.5rem", fontSize: "0.7rem", fontWeight: 700, textTransform: "capitalize" }}>
+      {value}
+    </span>
+  );
 }
 
 // ─── Lead modal ───────────────────────────────────────────────────────────────
@@ -627,10 +666,10 @@ export default function AdminSearchDetailPage() {
               </div>
             ) : (
               <div style={{ overflowX: "auto", margin: "-1.25rem" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 600 }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 780 }}>
                   <thead>
                     <tr style={{ background: "#f8fafc" }}>
-                      {["Company", "Website", "Contact", "Title", "Email", "Country", "Source", ""].map(h => (
+                      {["Company", "Contact", "Title", "Email", "Seniority", "Email Quality", "Score", "Conf.", ""].map(h => (
                         <th key={h} style={{ padding: "0.65rem 1rem", textAlign: "left", fontSize: "0.68rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid #e2e8f0", whiteSpace: "nowrap" }}>
                           {h}
                         </th>
@@ -640,20 +679,37 @@ export default function AdminSearchDetailPage() {
                   <tbody>
                     {leads.map((lead, i) => (
                       <tr key={lead.id} style={{ borderBottom: i < leads.length - 1 ? "1px solid #f1f5f9" : "none" }}>
-                        <td style={{ padding: "0.65rem 1rem", fontSize: "0.82rem", fontWeight: 600, color: "#0f172a", whiteSpace: "nowrap" }}>{lead.company_name}</td>
-                        <td style={{ padding: "0.65rem 1rem", fontSize: "0.78rem", color: "#64748b", maxWidth: 140, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                          {lead.website
-                            ? <a href={lead.website} target="_blank" rel="noreferrer" style={{ color: "#0ea5e9", textDecoration: "none" }}>{lead.website.replace(/^https?:\/\//, "")}</a>
+                        <td style={{ padding: "0.65rem 1rem", fontSize: "0.82rem", fontWeight: 600, color: "#0f172a", whiteSpace: "nowrap" }}>
+                          {lead.normalized_company ?? lead.company_name}
+                          {lead.website && (
+                            <a href={lead.website} target="_blank" rel="noreferrer" style={{ marginLeft: "0.3rem", color: "#0ea5e9", fontSize: "0.7rem", textDecoration: "none" }}>↗</a>
+                          )}
+                        </td>
+                        <td style={{ padding: "0.65rem 1rem", fontSize: "0.78rem", color: "#0f172a", whiteSpace: "nowrap" }}>
+                          {lead.contact_name ?? <span style={{ color: "#cbd5e1" }}>—</span>}
+                          {lead.linkedin_url && (
+                            <a href={lead.linkedin_url} target="_blank" rel="noreferrer" style={{ marginLeft: "0.3rem", color: "#0ea5e9", fontSize: "0.68rem", textDecoration: "none" }}>in</a>
+                          )}
+                        </td>
+                        <td style={{ padding: "0.65rem 1rem", fontSize: "0.78rem", color: "#64748b", whiteSpace: "nowrap" }}>
+                          {lead.normalized_title ?? lead.title ?? <span style={{ color: "#cbd5e1" }}>—</span>}
+                        </td>
+                        <td style={{ padding: "0.65rem 1rem", fontSize: "0.78rem", color: "#64748b", whiteSpace: "nowrap" }}>
+                          {lead.email
+                            ? <a href={`mailto:${lead.email}`} style={{ color: "#0ea5e9", textDecoration: "none" }}>{lead.email}</a>
                             : <span style={{ color: "#cbd5e1" }}>—</span>}
                         </td>
-                        <td style={{ padding: "0.65rem 1rem", fontSize: "0.78rem", color: "#0f172a", whiteSpace: "nowrap" }}>{lead.contact_name ?? <span style={{ color: "#cbd5e1" }}>—</span>}</td>
-                        <td style={{ padding: "0.65rem 1rem", fontSize: "0.78rem", color: "#64748b", whiteSpace: "nowrap" }}>{lead.title ?? <span style={{ color: "#cbd5e1" }}>—</span>}</td>
-                        <td style={{ padding: "0.65rem 1rem", fontSize: "0.78rem", color: "#64748b", whiteSpace: "nowrap" }}>{lead.email ?? <span style={{ color: "#cbd5e1" }}>—</span>}</td>
-                        <td style={{ padding: "0.65rem 1rem", fontSize: "0.78rem", color: "#64748b", whiteSpace: "nowrap" }}>{lead.country ?? <span style={{ color: "#cbd5e1" }}>—</span>}</td>
-                        <td style={{ padding: "0.65rem 1rem", fontSize: "0.78rem", color: "#64748b", whiteSpace: "nowrap" }}>
-                          {lead.source
-                            ? <span style={{ background: "#f1f5f9", borderRadius: "99px", padding: "0.1rem 0.5rem", fontSize: "0.68rem", fontWeight: 600 }}>{lead.source}</span>
-                            : <span style={{ color: "#cbd5e1" }}>—</span>}
+                        <td style={{ padding: "0.65rem 1rem", fontSize: "0.75rem", color: "#64748b", whiteSpace: "nowrap" }}>
+                          {lead.seniority ?? <span style={{ color: "#cbd5e1" }}>—</span>}
+                        </td>
+                        <td style={{ padding: "0.65rem 1rem", whiteSpace: "nowrap" }}>
+                          <QualityPill value={lead.email_quality} />
+                        </td>
+                        <td style={{ padding: "0.65rem 1rem", whiteSpace: "nowrap" }}>
+                          <ScoreBadge score={lead.lead_score} />
+                        </td>
+                        <td style={{ padding: "0.65rem 1rem", whiteSpace: "nowrap" }}>
+                          <ScoreBadge score={lead.confidence_score} />
                         </td>
                         <td style={{ padding: "0.65rem 1rem", whiteSpace: "nowrap" }}>
                           <button onClick={() => openEdit(lead)} style={{ background: "none", border: "none", color: "#0ea5e9", fontWeight: 600, fontSize: "0.75rem", cursor: "pointer", marginRight: "0.5rem", fontFamily: "inherit" }}>Edit</button>
@@ -786,6 +842,24 @@ export default function AdminSearchDetailPage() {
               </span>
             } />
           </Card>
+
+          {/* Quality summary */}
+          {leads.some(l => l.lead_score != null) && (() => {
+            const scored   = leads.filter(l => l.lead_score != null);
+            const avgScore = Math.round(scored.reduce((s, l) => s + (l.lead_score ?? 0), 0) / scored.length);
+            const maxScore = Math.max(...scored.map(l => l.lead_score ?? 0));
+            const corpCount    = leads.filter(l => l.email_type === "corporate").length;
+            const genericCount = leads.filter(l => l.email_type === "generic").length;
+            return (
+              <Card title="Quality summary">
+                <Row label="Avg score"        value={<ScoreBadge score={avgScore} />} />
+                <Row label="Highest score"    value={<ScoreBadge score={maxScore} />} />
+                <Row label="Corporate emails" value={<span style={{ fontWeight: 700, color: "#15803d" }}>{corpCount}</span>} />
+                <Row label="Generic emails"   value={<span style={{ color: "#64748b" }}>{genericCount}</span>} />
+                <Row label="Scored leads"     value={`${scored.length} of ${leads.length}`} />
+              </Card>
+            );
+          })()}
 
           {/* Auto-process log */}
           {(search.process_started_at || search.process_error_message) && (

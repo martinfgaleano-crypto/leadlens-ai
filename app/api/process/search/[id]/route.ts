@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { searchPeople } from "@/lib/apollo/client";
 import type { ApolloLeadResult } from "@/lib/apollo/client";
+import { classifyEmail } from "@/lib/quality/email-quality";
+import { normalizeTitle, detectSeniority } from "@/lib/quality/title-normalizer";
+import { normalizeCompany, extractDomain } from "@/lib/quality/company-normalizer";
+import { computeLeadScore, computeConfidenceScore } from "@/lib/quality/scoring";
 
 /**
  * POST /api/process/search/[id]
@@ -169,7 +173,33 @@ export async function POST(
   let insertError: string | null = null;
 
   if (toInsert.length > 0) {
-    const rows = toInsert.map((r) => ({ ...r, search_id: searchId }));
+    const rows = toInsert.map((r) => {
+      const { email_type, email_quality } = classifyEmail(r.email);
+      const seniority        = detectSeniority(r.title);
+      const normalized_title   = normalizeTitle(r.title);
+      const normalized_company = normalizeCompany(r.company_name);
+      const domain             = extractDomain(r.website);
+      const lead_score         = computeLeadScore({
+        seniority, email_type, website: r.website,
+        linkedin_url: r.linkedin_url, country: r.country,
+      });
+      const confidence_score = computeConfidenceScore({
+        email: r.email, website: r.website,
+        linkedin_url: r.linkedin_url, title: r.title,
+      });
+      return {
+        ...r,
+        search_id:          searchId,
+        email_type,
+        email_quality,
+        seniority,
+        normalized_title,
+        normalized_company,
+        domain,
+        lead_score,
+        confidence_score,
+      };
+    });
     const { data: inserted, error: insErr } = await client
       .from("lead_results")
       .insert(rows)
