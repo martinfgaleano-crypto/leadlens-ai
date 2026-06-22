@@ -20,6 +20,10 @@ interface LeadSearch {
   admin_notes: string | null;
   created_at: string;
   updated_at: string;
+  // Vault-first metrics (added by migration 015)
+  vault_leads_used?:  number | null;
+  apollo_leads_used?: number | null;
+  vault_hit_rate?:    number | null;
 }
 
 interface LeadResult {
@@ -444,6 +448,31 @@ export default function SearchDetailPage() {
           )}
         </div>
       </div>
+
+      {/* Lead Source Summary — only when vault data exists */}
+      {search.status === "completed" && (
+        (search.vault_leads_used != null || search.apollo_leads_used != null) &&
+        ((search.vault_leads_used ?? 0) + (search.apollo_leads_used ?? 0)) > 0
+      ) && (
+        <div style={{ ...S.section, marginBottom: "1.25rem" }}>
+          <div style={S.sectionHeader}>
+            <span style={S.sectionTitle}>Lead Source Summary</span>
+          </div>
+          <div style={{ padding: "1rem 1.25rem", display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
+            {[
+              { label: "Requested", value: search.requested_lead_count, color: "#0f172a" },
+              { label: "From Vault", value: search.vault_leads_used ?? 0, color: "#15803d" },
+              { label: "From Apollo", value: search.apollo_leads_used ?? 0, color: "#1d4ed8" },
+              { label: "Vault Hit Rate", value: `${Math.round((search.vault_hit_rate ?? 0) * 100)}%`, color: "#0f172a" },
+            ].map(item => (
+              <div key={item.label} style={{ textAlign: "center", padding: "0.875rem", background: "#f8fafc", borderRadius: "0.5rem" }}>
+                <div style={{ fontSize: "0.68rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "0.4rem" }}>{item.label}</div>
+                <div style={{ fontSize: "1.35rem", fontWeight: 800, color: item.color, letterSpacing: "-0.02em" }}>{item.value}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Lead results */}
       <div style={S.section}>

@@ -10,6 +10,8 @@ import { computeOpportunityScore } from "@/lib/enrichment/opportunity-score";
 import { computeStrengths, computeWeaknesses, generateReasoning } from "@/lib/enrichment/reasoning";
 import { upsertVaultLead } from "@/lib/vault/upsert-vault-lead";
 import { upsertCompanyProfile } from "@/lib/company/upsert-company";
+import { searchVault, type VaultCandidate } from "@/lib/vault/search-vault";
+import { allocateLeads } from "@/lib/vault/reuse-engine";
 import { executeSourceSearch } from "@/lib/sources/orchestrator";
 import { listActiveProviders } from "@/lib/sources/source-registry";
 import { consumeCredits } from "@/lib/credits/consume-credits";
@@ -164,7 +166,7 @@ export async function POST(
   const searchCountries  = (search.countries  as string[] | null) ?? [];
   const searchIndustries = (search.industries as string[] | null) ?? [];
 
-  const sourceParams: SourceSearchParams = {
+  let sourceParams: SourceSearchParams = {
     job_titles:    jobTitles,
     industries:    searchIndustries.length > 0 ? searchIndustries : icpIndustries,
     company_sizes: companySizes,
@@ -172,6 +174,32 @@ export async function POST(
     keywords,
     limit:         requestedCount,
   };
+
+  // ── 5.5. Vault-first search ──────────────────────────────────────────────────
+  // Reuse matching leads from the vault before calling Apollo.
+  // Vault failure always falls through to Apollo — never blocks lead generation.
+
+  let vaultLeadsToUse: VaultCandidate[] = [];
+  let apolloRequestedCount = requestedCount;
+  let vaultSearchDurationMs = 0;
+
+  try {
+    const vaultStart = Date.now();
+    const vaultCandidates = await searchVault(client, sourceParams, requestedCount);
+    vaultSearchDurationMs = Date.now() - vaultStart;
+
+    const allocation     = allocateLeads(vaultCandidates, requestedCount);
+    vaultLeadsToUse      = allocation.vaultResultsToUse;
+    apolloRequestedCount = allocation.remainingCount;
+
+    // Update Apollo limit to only fetch what vault couldn't provide
+    sourceParams = { ...sourceParams, limit: apolloRequestedCount };
+  } catch {
+    // Vault failure → full Apollo run
+    vaultLeadsToUse      = [];
+    apolloRequestedCount = requestedCount;
+    sourceParams         = { ...sourceParams, limit: requestedCount };
+  }
 
   // ── 6. Run orchestrator ───────────────────────────────────────────────────────
   // Apollo is the only active source today. Future sources activate by setting
@@ -247,6 +275,57 @@ export async function POST(
   });
 
   const skipped = leads.length - toInsert.length;
+
+  // ── 7.5. Insert vault leads (best-effort; source="vault") ────────────────────
+
+  let vaultInsertedCount = 0;
+
+  if (vaultLeadsToUse.length > 0) {
+    const vaultToInsert = vaultLeadsToUse.filter(v => {
+      const key = `${v.company_name.toLowerCase()}|${(v.email ?? "").toLowerCase()}`;
+      if (existingKeys.has(key)) return false;
+      existingKeys.add(key); // mark consumed so Apollo dedup excludes it
+      return true;
+    });
+
+    if (vaultToInsert.length > 0) {
+      const vaultRows = vaultToInsert.map(v => ({
+        search_id:          searchId,
+        company_name:       v.company_name,
+        normalized_company: v.normalized_company,
+        website:            v.website,
+        domain:             v.domain,
+        contact_name:       v.contact_name,
+        title:              v.title,
+        normalized_title:   v.normalized_title,
+        seniority:          v.seniority,
+        email:              v.email,
+        email_quality:      v.email_quality,
+        email_type:         v.email_type,
+        linkedin_url:       v.linkedin_url,
+        country:            v.country,
+        lead_score:         v.lead_score,
+        confidence_score:   v.confidence_score,
+        opportunity_score:  v.opportunity_score,
+        buyer_fit:          v.buyer_fit,
+        temperature:        v.temperature,
+        ai_reasoning:       v.ai_reasoning,
+        strengths:          v.strengths,
+        weaknesses:         v.weaknesses,
+        source:             "vault",
+      }));
+
+      try {
+        const { data: vaultInserted } = await client
+          .from("lead_results")
+          .insert(vaultRows)
+          .select("id");
+        vaultInsertedCount = vaultInserted?.length ?? 0;
+      } catch {
+        // Vault insert failure must never block Apollo delivery
+      }
+    }
+  }
 
   // ── 8. Insert lead_results ────────────────────────────────────────────────────
 
@@ -370,8 +449,9 @@ export async function POST(
 
   // ── 9. Determine final status ─────────────────────────────────────────────────
 
-  const durationMs  = Date.now() - startMs;
-  const finalStatus = insertError && insertedCount === 0 ? "failed" : "completed";
+  const durationMs    = Date.now() - startMs;
+  const totalInserted = vaultInsertedCount + insertedCount;
+  const finalStatus   = insertError && totalInserted === 0 ? "failed" : "completed";
   const completedAt = new Date().toISOString();
 
   // ── 10. Deduct credits on success ────────────────────────────────────────────
@@ -403,8 +483,8 @@ export async function POST(
         userId,
         type:    "search_completed",
         title:   "Search completed",
-        message: `Your search "${search.name as string}" has been completed successfully. ${insertedCount} lead${insertedCount !== 1 ? "s" : ""} delivered.`,
-        metadata: { search_id: searchId, leads_delivered: insertedCount },
+        message: `Your search "${search.name as string}" has been completed successfully. ${totalInserted} lead${totalInserted !== 1 ? "s" : ""} delivered.`,
+        metadata: { search_id: searchId, leads_delivered: totalInserted, vault_leads: vaultInsertedCount, apollo_leads: insertedCount },
       });
       // Alert customer when balance drops below 20
       if (creditsConsumed > 0) {
@@ -437,16 +517,22 @@ export async function POST(
 
   // ── 12. Update final status + observability columns ───────────────────────────
 
+  const vaultHitRate =
+    requestedCount > 0 ? Math.round((vaultInsertedCount / requestedCount) * 100) / 100 : 0;
+
   const updatePayload: Record<string, unknown> = {
     status:                    finalStatus,
     process_finished_at:       completedAt,
     processing_completed_at:   completedAt,
     process_duration_ms:       durationMs,
-    process_generated_count:   insertedCount,
+    process_generated_count:   totalInserted,
     process_duplicates_skipped: skipped,
     process_error_message:     insertError ?? null,
     error_message:             insertError ?? null,
     credits_consumed:          creditsConsumed,
+    vault_leads_used:          vaultInsertedCount,
+    apollo_leads_used:         insertedCount,
+    vault_hit_rate:            vaultHitRate,
   };
 
   if (insertError) {
@@ -465,16 +551,20 @@ export async function POST(
   // ── 13. Return log ─────────────────────────────────────────────────────────────
 
   return NextResponse.json({
-    success:          finalStatus === "completed",
-    search_id:        searchId,
-    requested:        requestedCount,
-    total_found:      orchestratorResult.totalResults,
-    inserted:         insertedCount,
+    success:            finalStatus === "completed",
+    search_id:          searchId,
+    requested:          requestedCount,
+    total_found:        orchestratorResult.totalResults,
+    inserted:           totalInserted,
+    vault_leads:        vaultInsertedCount,
+    apollo_leads:       insertedCount,
+    vault_hit_rate:     vaultHitRate,
+    vault_search_ms:    vaultSearchDurationMs,
     skipped,
-    credits_consumed: creditsConsumed,
-    errors:           insertError ? [insertError] : [],
-    duration_ms:      durationMs,
-    final_status:     finalStatus,
-    source_breakdown: orchestratorResult.sourceBreakdown,
+    credits_consumed:   creditsConsumed,
+    errors:             insertError ? [insertError] : [],
+    duration_ms:        durationMs,
+    final_status:       finalStatus,
+    source_breakdown:   orchestratorResult.sourceBreakdown,
   });
 }

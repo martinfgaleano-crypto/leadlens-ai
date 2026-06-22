@@ -27,6 +27,10 @@ type LeadSearch = {
   process_generated_count?: number | null;
   process_duplicates_skipped?: number | null;
   process_error_message?: string | null;
+  // Vault-first metrics (added by migration 015)
+  vault_leads_used?:  number | null;
+  apollo_leads_used?: number | null;
+  vault_hit_rate?:    number | null;
 };
 
 type Profile = {
@@ -882,6 +886,39 @@ export default function AdminSearchDetailPage() {
               </span>
             } />
           </Card>
+
+          {/* Vault reuse */}
+          {(search.vault_leads_used != null || search.apollo_leads_used != null) && (
+            <Card title="Vault reuse">
+              <Row label="Requested"      value={search.requested_lead_count} />
+              <Row label="Vault leads"    value={
+                <span style={{ fontWeight: 700, color: (search.vault_leads_used ?? 0) > 0 ? "#15803d" : "#64748b" }}>
+                  {search.vault_leads_used ?? 0}
+                </span>
+              } />
+              <Row label="Apollo leads"   value={
+                <span style={{ fontWeight: 600, color: "#1d4ed8" }}>
+                  {search.apollo_leads_used ?? 0}
+                </span>
+              } />
+              <Row label="Vault hit rate" value={
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  {(() => {
+                    const pct = Math.round((search.vault_hit_rate ?? 0) * 100);
+                    const color = pct >= 60 ? "#15803d" : pct >= 30 ? "#854d0e" : "#64748b";
+                    return (
+                      <>
+                        <div style={{ width: 80, height: 6, background: "#f1f5f9", borderRadius: 3, overflow: "hidden" }}>
+                          <div style={{ width: `${Math.min(100, pct)}%`, height: "100%", background: color, borderRadius: 3 }} />
+                        </div>
+                        <span style={{ fontSize: "0.78rem", fontWeight: 700, color }}>{pct}%</span>
+                      </>
+                    );
+                  })()}
+                </div>
+              } />
+            </Card>
+          )}
 
           {/* AI enrichment summary */}
           {leads.some(l => l.temperature != null) && (() => {
