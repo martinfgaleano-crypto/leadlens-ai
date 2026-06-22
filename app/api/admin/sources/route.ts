@@ -88,6 +88,18 @@ export async function GET(req: NextRequest) {
     }
   });
 
+  // Additional orchestrator metrics
+  const completedRuns  = allRuns.filter(r => r.status === "completed");
+  const avgDurationMs  = completedRuns.length > 0
+    ? Math.round(completedRuns.reduce((s, r) => s + (r.duration_ms ?? 0), 0) / completedRuns.length)
+    : null;
+  const avgResultsPerRun = completedRuns.length > 0
+    ? Math.round((completedRuns.reduce((s, r) => s + r.results_found, 0) / completedRuns.length) * 10) / 10
+    : null;
+  const healthySources = enriched.filter(s =>
+    (s.success_rate ?? 0) >= 80 && s.total_runs > 0 && (s as { active: boolean }).active
+  ).length;
+
   return NextResponse.json({
     sources: enriched,
     stats: {
@@ -96,6 +108,9 @@ export async function GET(req: NextRequest) {
       fastest_ms:           fastestMs,
       slowest_ms:           slowestMs,
       most_productive:      mostProductiveSource,
+      avg_duration_ms:      avgDurationMs,
+      avg_results_per_run:  avgResultsPerRun,
+      healthy_sources:      healthySources,
     },
   });
 }

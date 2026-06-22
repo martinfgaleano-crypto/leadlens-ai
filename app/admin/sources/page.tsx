@@ -18,11 +18,14 @@ interface SourceRow {
 }
 
 interface GlobalStats {
-  total_runs:          number;
-  global_success_rate: number;
-  fastest_ms:          number | null;
-  slowest_ms:          number | null;
-  most_productive:     string | null;
+  total_runs:           number;
+  global_success_rate:  number;
+  fastest_ms:           number | null;
+  slowest_ms:           number | null;
+  most_productive:      string | null;
+  avg_duration_ms:      number | null;
+  avg_results_per_run:  number | null;
+  healthy_sources:      number;
 }
 
 /* ── Helpers ─────────────────────────────────────────────────────────────────── */
@@ -101,11 +104,14 @@ export default function SourcesPage() {
       {/* Global stats */}
       {stats && (
         <div style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem", flexWrap: "wrap" }}>
-          <StatCard label="Total Runs"    value={stats.total_runs.toLocaleString()} />
-          <StatCard label="Success Rate"  value={`${stats.global_success_rate}%`} />
-          <StatCard label="Fastest Run"   value={fmtDuration(stats.fastest_ms)} />
-          <StatCard label="Slowest Run"   value={fmtDuration(stats.slowest_ms)} />
-          <StatCard label="Top Source"    value={stats.most_productive ? SOURCE_LABELS[stats.most_productive] ?? stats.most_productive : "—"} />
+          <StatCard label="Total Runs"         value={stats.total_runs.toLocaleString()} />
+          <StatCard label="Success Rate"       value={`${stats.global_success_rate}%`} />
+          <StatCard label="Avg Duration"       value={fmtDuration(stats.avg_duration_ms)} />
+          <StatCard label="Avg Leads / Run"    value={stats.avg_results_per_run ?? "—"} />
+          <StatCard label="Top Source"         value={stats.most_productive ? SOURCE_LABELS[stats.most_productive] ?? stats.most_productive : "—"} />
+          <StatCard label="Fastest Run"        value={fmtDuration(stats.fastest_ms)} />
+          <StatCard label="Slowest Run"        value={fmtDuration(stats.slowest_ms)} />
+          <StatCard label="Healthy Sources"    value={stats.healthy_sources} />
         </div>
       )}
 
