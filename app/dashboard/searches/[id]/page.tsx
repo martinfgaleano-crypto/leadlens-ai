@@ -38,28 +38,59 @@ interface LeadResult {
   seniority: string | null;
   email_quality: string | null;
   normalized_title: string | null;
+  // AI enrichment layer (Phase 8)
+  opportunity_score: number | null;
+  buyer_fit: string | null;
+  temperature: string | null;
+  strengths: string[] | null;
+  weaknesses: string[] | null;
+  ai_reasoning: string | null;
 }
 
 const POLL_INTERVAL_MS = 15_000;
 
-// ─── Score badge ──────────────────────────────────────────────────────────────
+// ─── Badges ───────────────────────────────────────────────────────────────────
 
 function ScoreBadge({ score }: { score: number | null }) {
   if (score == null) return <span style={{ color: "#cbd5e1" }}>—</span>;
-
   let bg: string, color: string;
-  if (score >= 90)      { bg = "#dcfce7"; color = "#15803d"; }
+  if      (score >= 90) { bg = "#dcfce7"; color = "#15803d"; }
   else if (score >= 70) { bg = "#dbeafe"; color = "#1d4ed8"; }
   else if (score >= 50) { bg = "#fef9c3"; color = "#854d0e"; }
   else                  { bg = "#f1f5f9"; color = "#64748b"; }
-
   return (
-    <span style={{
-      display: "inline-block", background: bg, color,
-      borderRadius: 999, padding: "0.15rem 0.55rem",
-      fontSize: "0.72rem", fontWeight: 700, minWidth: 28, textAlign: "center",
-    }}>
+    <span style={{ display: "inline-block", background: bg, color, borderRadius: 999, padding: "0.15rem 0.55rem", fontSize: "0.72rem", fontWeight: 700, minWidth: 28, textAlign: "center" }}>
       {score}
+    </span>
+  );
+}
+
+function TempBadge({ value }: { value: string | null }) {
+  if (!value) return <span style={{ color: "#cbd5e1" }}>—</span>;
+  const map: Record<string, { bg: string; color: string }> = {
+    Hot:  { bg: "#fee2e2", color: "#dc2626" },
+    Warm: { bg: "#fef9c3", color: "#854d0e" },
+    Cold: { bg: "#f1f5f9", color: "#64748b" },
+  };
+  const s = map[value] ?? { bg: "#f1f5f9", color: "#64748b" };
+  return (
+    <span style={{ display: "inline-block", background: s.bg, color: s.color, borderRadius: 999, padding: "0.15rem 0.55rem", fontSize: "0.72rem", fontWeight: 700 }}>
+      {value}
+    </span>
+  );
+}
+
+function FitBadge({ value }: { value: string | null }) {
+  if (!value) return <span style={{ color: "#cbd5e1" }}>—</span>;
+  const map: Record<string, { bg: string; color: string }> = {
+    "Excellent fit": { bg: "#dcfce7", color: "#15803d" },
+    "Good fit":      { bg: "#dbeafe", color: "#1d4ed8" },
+    "Weak fit":      { bg: "#f1f5f9", color: "#64748b" },
+  };
+  const s = map[value] ?? { bg: "#f1f5f9", color: "#64748b" };
+  return (
+    <span style={{ display: "inline-block", background: s.bg, color: s.color, borderRadius: 999, padding: "0.15rem 0.55rem", fontSize: "0.72rem", fontWeight: 700, whiteSpace: "nowrap" }}>
+      {value}
     </span>
   );
 }
@@ -67,10 +98,11 @@ function ScoreBadge({ score }: { score: number | null }) {
 // ─── CSV export ───────────────────────────────────────────────────────────────
 
 function exportCsv(leads: LeadResult[], filename: string) {
-  const COLS: (keyof LeadResult)[] = [
+  const SCALAR_COLS: (keyof LeadResult)[] = [
     "company_name", "website", "contact_name", "title",
     "email", "linkedin_url", "country", "source",
     "lead_score", "confidence_score", "seniority", "email_quality",
+    "opportunity_score", "buyer_fit", "temperature", "ai_reasoning",
   ];
 
   function escape(v: string | number | null | undefined): string {
@@ -82,19 +114,28 @@ function exportCsv(leads: LeadResult[], filename: string) {
     return s;
   }
 
-  const header = COLS.join(",");
-  const rows   = leads.map(l => COLS.map(c => escape(l[c] as string | null)).join(","));
-  const csv    = [header, ...rows].join("\n");
-  const blob   = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-  const url    = URL.createObjectURL(blob);
-  const a      = document.createElement("a");
-  a.href       = url;
-  a.download   = filename;
+  const header = [
+    ...SCALAR_COLS,
+    "strengths", "weaknesses",
+  ].join(",");
+
+  const rows = leads.map(l => [
+    ...SCALAR_COLS.map(c => escape(l[c] as string | number | null)),
+    escape((l.strengths ?? []).join("; ")),
+    escape((l.weaknesses ?? []).join("; ")),
+  ].join(","));
+
+  const csv  = [header, ...rows].join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement("a");
+  a.href     = url;
+  a.download = filename;
   a.click();
   URL.revokeObjectURL(url);
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// ─── Status helpers ───────────────────────────────────────────────────────────
 
 const STATUS_STYLES: Record<string, { bg: string; color: string; border: string }> = {
   pending:    { bg: "#fef9c3", color: "#854d0e", border: "#fde047" },
@@ -116,8 +157,7 @@ function StatusBadge({ status }: { status: string }) {
   return (
     <span style={{
       display: "inline-flex", alignItems: "center", gap: "0.3rem",
-      background: st.bg, color: st.color,
-      border: `1px solid ${st.border}`,
+      background: st.bg, color: st.color, border: `1px solid ${st.border}`,
       borderRadius: "99px", padding: "0.2rem 0.85rem",
       fontSize: "0.75rem", fontWeight: 700,
       textTransform: "uppercase", letterSpacing: "0.05em",
@@ -136,6 +176,54 @@ function formatDate(iso: string) {
   });
 }
 
+// ─── AI Insight panel (expandable) ────────────────────────────────────────────
+
+function AiInsightPanel({ lead }: { lead: LeadResult }) {
+  const hasEnrichment = lead.ai_reasoning || (lead.strengths?.length ?? 0) > 0 || (lead.weaknesses?.length ?? 0) > 0;
+  if (!hasEnrichment) {
+    return (
+      <div style={{ padding: "0.75rem 1.25rem", color: "#94a3b8", fontSize: "0.8rem", fontStyle: "italic" }}>
+        AI insights not available for this lead.
+      </div>
+    );
+  }
+  return (
+    <div style={{ padding: "0.85rem 1.25rem", background: "#f8fafc", display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem" }}>
+      {/* Reasoning */}
+      <div>
+        <div style={{ fontSize: "0.68rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "0.4rem" }}>AI Reasoning</div>
+        <div style={{ fontSize: "0.8rem", color: "#0f172a", lineHeight: 1.5 }}>
+          {lead.ai_reasoning ?? "—"}
+        </div>
+      </div>
+      {/* Strengths */}
+      <div>
+        <div style={{ fontSize: "0.68rem", fontWeight: 700, color: "#15803d", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "0.4rem" }}>Strengths</div>
+        {(lead.strengths?.length ?? 0) === 0
+          ? <div style={{ color: "#94a3b8", fontSize: "0.8rem" }}>None identified</div>
+          : (lead.strengths ?? []).map(s => (
+              <div key={s} style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.78rem", color: "#15803d", marginBottom: "0.2rem" }}>
+                <span>✓</span>{s}
+              </div>
+            ))
+        }
+      </div>
+      {/* Weaknesses */}
+      <div>
+        <div style={{ fontSize: "0.68rem", fontWeight: 700, color: "#dc2626", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "0.4rem" }}>Weaknesses</div>
+        {(lead.weaknesses?.length ?? 0) === 0
+          ? <div style={{ color: "#94a3b8", fontSize: "0.8rem" }}>None identified</div>
+          : (lead.weaknesses ?? []).map(w => (
+              <div key={w} style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.78rem", color: "#dc2626", marginBottom: "0.2rem" }}>
+                <span>✗</span>{w}
+              </div>
+            ))
+        }
+      </div>
+    </div>
+  );
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function SearchDetailPage() {
@@ -150,6 +238,7 @@ export default function SearchDetailPage() {
   const [leads, setLeads]               = useState<LeadResult[]>([]);
   const [sortedLeads, setSortedLeads]   = useState<LeadResult[]>([]);
   const [sortByScore, setSortByScore]   = useState(true);
+  const [expandedId, setExpandedId]     = useState<string | null>(null);
   const [leadsLoading, setLeadsLoading] = useState(false);
   const [loading, setLoading]           = useState(true);
   const [notFound, setNotFound]         = useState(false);
@@ -162,19 +251,16 @@ export default function SearchDetailPage() {
   // ─── Sort leads ───────────────────────────────────────────────────────────
 
   useEffect(() => {
-    if (!sortByScore) {
-      setSortedLeads([...leads]);
-      return;
-    }
+    if (!sortByScore) { setSortedLeads([...leads]); return; }
     const sorted = [...leads].sort((a, b) => {
-      const sa = a.lead_score ?? -1;
-      const sb = b.lead_score ?? -1;
+      const sa = a.opportunity_score ?? a.lead_score ?? -1;
+      const sb = b.opportunity_score ?? b.lead_score ?? -1;
       return sb - sa;
     });
     setSortedLeads(sorted);
   }, [leads, sortByScore]);
 
-  // ─── Fetch leads for completed search ─────────────────────────────────────
+  // ─── Fetch leads ──────────────────────────────────────────────────────────
 
   const fetchLeads = useCallback(async () => {
     const supabase = supabaseRef.current;
@@ -182,28 +268,25 @@ export default function SearchDetailPage() {
     setLeadsLoading(true);
     const { data } = await supabase
       .from("lead_results")
-      .select("id, company_name, website, contact_name, title, email, linkedin_url, country, source, lead_score, confidence_score, seniority, email_quality, normalized_title")
+      .select("id, company_name, website, contact_name, title, email, linkedin_url, country, source, lead_score, confidence_score, seniority, email_quality, normalized_title, opportunity_score, buyer_fit, temperature, strengths, weaknesses, ai_reasoning")
       .eq("search_id", searchId)
       .order("created_at", { ascending: true });
     setLeads((data ?? []) as LeadResult[]);
     setLeadsLoading(false);
   }, [searchId]);
 
-  // ─── Fetch search record ───────────────────────────────────────────────────
+  // ─── Fetch search ─────────────────────────────────────────────────────────
 
   const fetchSearch = useCallback(async (uid: string): Promise<string | null> => {
     const supabase = supabaseRef.current;
     if (!supabase || !searchId) return null;
-
-    const { data, error: fetchErr } = await supabase
+    const { data, error: err } = await supabase
       .from("lead_searches")
       .select("*")
       .eq("id", searchId)
       .eq("user_id", uid)
       .single();
-
-    if (fetchErr || !data) { setNotFound(true); return null; }
-
+    if (err || !data) { setNotFound(true); return null; }
     setSearch(data as LeadSearch);
     return data.status as string;
   }, [searchId]);
@@ -212,68 +295,46 @@ export default function SearchDetailPage() {
 
   useEffect(() => {
     let cancelled = false;
-
     async function init() {
       if (!searchId) { setNotFound(true); setLoading(false); return; }
-
       const supabase = supabaseRef.current;
       if (!supabase) {
         if (!cancelled) { setError("Supabase is not configured."); setLoading(false); }
         return;
       }
-
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { router.replace("/login"); return; }
-
       const uid   = session.user.id;
       const email = session.user.email ?? "";
       if (!cancelled) { setUserId(uid); setUserEmail(email); }
-
       const status = await fetchSearch(uid);
       if (cancelled) return;
-
       if (status === null) { setLoading(false); return; }
-
-      // Fetch ICP name
-      const searchData = await supabase
-        .from("lead_searches")
-        .select("icp_id")
-        .eq("id", searchId)
-        .single();
-
+      // ICP name
+      const searchData = await supabase.from("lead_searches").select("icp_id").eq("id", searchId).single();
       if (!cancelled && searchData.data?.icp_id) {
-        const { data: icpData } = await supabase
-          .from("icps")
-          .select("name")
-          .eq("id", searchData.data.icp_id as string)
-          .eq("user_id", uid)
-          .single();
+        const { data: icpData } = await supabase.from("icps").select("name").eq("id", searchData.data.icp_id as string).eq("user_id", uid).single();
         if (!cancelled && icpData) setIcpName(icpData.name as string);
       }
-
       if (status === "completed") await fetchLeads();
-
       if (!cancelled) setLoading(false);
     }
-
     init();
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchId]);
 
-  // ─── Polling: refresh every 15 s while pending or processing ──────────────
+  // ─── Polling ──────────────────────────────────────────────────────────────
 
   useEffect(() => {
     const status = search?.status;
     if (status !== "pending" && status !== "processing") return;
-
     const interval = setInterval(async () => {
-      const currentUid = userIdRef.current;
-      if (!currentUid) return;
-      const newStatus = await fetchSearch(currentUid);
+      const uid = userIdRef.current;
+      if (!uid) return;
+      const newStatus = await fetchSearch(uid);
       if (newStatus === "completed") await fetchLeads();
     }, POLL_INTERVAL_MS);
-
     return () => clearInterval(interval);
   }, [search?.status, fetchSearch, fetchLeads]);
 
@@ -291,7 +352,11 @@ export default function SearchDetailPage() {
     exportCsv(sortedLeads, `leadlens-${slug}.csv`);
   }
 
-  // ─── Loading ──────────────────────────────────────────────────────────────
+  function toggleInsight(id: string) {
+    setExpandedId(prev => prev === id ? null : id);
+  }
+
+  // ─── Loading / error states ───────────────────────────────────────────────
 
   if (loading) {
     return (
@@ -334,7 +399,8 @@ export default function SearchDetailPage() {
   const isProcessing = search.status === "processing";
   const isPending    = search.status === "pending";
   const isActive     = isPending || isProcessing;
-  const hasScores    = leads.some(l => l.lead_score != null);
+  const hasScores    = leads.some(l => l.opportunity_score != null || l.lead_score != null);
+  const hasEnrichment = leads.some(l => l.temperature != null);
 
   return (
     <DashboardShell email={userEmail} onLogout={handleLogout}>
@@ -343,22 +409,18 @@ export default function SearchDetailPage() {
         @keyframes pulse { 0%,100% { opacity:0.3; } 50% { opacity:1; } }
       `}</style>
 
-      {/* Back link */}
+      {/* Back */}
       <div style={{ marginBottom: "1.5rem" }}>
         <Link href="/dashboard/searches" style={S.backLink}>← Back to searches</Link>
       </div>
 
-      {/* Page header */}
+      {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.5rem" }}>
         <div>
           <h1 style={S.pageTitle}>{search.name}</h1>
           <div style={{ marginTop: "0.5rem", display: "flex", alignItems: "center", gap: "0.75rem" }}>
             <StatusBadge status={search.status} />
-            {isActive && (
-              <span style={{ fontSize: "0.72rem", color: "#94a3b8" }}>
-                Auto-refreshing every 15 s
-              </span>
-            )}
+            {isActive && <span style={{ fontSize: "0.72rem", color: "#94a3b8" }}>Auto-refreshing every 15 s</span>}
           </div>
         </div>
       </div>
@@ -369,14 +431,14 @@ export default function SearchDetailPage() {
           <span style={S.sectionTitle}>Search Details</span>
         </div>
         <div style={S.detailGrid}>
-          <DetailRow label="Status"           value={<StatusBadge status={search.status} />} />
-          <DetailRow label="Requested Leads"  value={search.requested_lead_count} />
-          <DetailRow label="ICP"              value={icpName ?? (search.icp_id ? "ICP no longer exists" : "None")} />
-          <DetailRow label="Countries"        value={search.countries.length > 0 ? search.countries.join(", ") : "—"} />
-          <DetailRow label="Industries"       value={search.industries.length > 0 ? search.industries.join(", ") : "—"} />
-          <DetailRow label="Notes"            value={search.notes ?? "—"} />
-          <DetailRow label="Requested"        value={formatDate(search.created_at)} />
-          <DetailRow label="Last Updated"     value={formatDate(search.updated_at)} />
+          <DetailRow label="Status"          value={<StatusBadge status={search.status} />} />
+          <DetailRow label="Requested Leads" value={search.requested_lead_count} />
+          <DetailRow label="ICP"             value={icpName ?? (search.icp_id ? "ICP no longer exists" : "None")} />
+          <DetailRow label="Countries"       value={search.countries.length > 0 ? search.countries.join(", ") : "—"} />
+          <DetailRow label="Industries"      value={search.industries.length > 0 ? search.industries.join(", ") : "—"} />
+          <DetailRow label="Notes"           value={search.notes ?? "—"} />
+          <DetailRow label="Requested"       value={formatDate(search.created_at)} />
+          <DetailRow label="Last Updated"    value={formatDate(search.updated_at)} />
           {search.admin_notes && (
             <DetailRow label="Note from us" value={search.admin_notes} highlight />
           )}
@@ -396,10 +458,8 @@ export default function SearchDetailPage() {
                 style={{
                   background: sortByScore ? "#0f172a" : "#f1f5f9",
                   color: sortByScore ? "#fff" : "#64748b",
-                  border: "none", borderRadius: "0.4rem",
-                  padding: "0.35rem 0.8rem",
-                  fontWeight: 600, fontSize: "0.72rem",
-                  cursor: "pointer", fontFamily: "inherit",
+                  border: "none", borderRadius: "0.4rem", padding: "0.35rem 0.8rem",
+                  fontWeight: 600, fontSize: "0.72rem", cursor: "pointer", fontFamily: "inherit",
                 }}
               >
                 {sortByScore ? "↓ By Score" : "By Date"}
@@ -415,9 +475,7 @@ export default function SearchDetailPage() {
         {isPending && (
           <div style={{ padding: "2.5rem 2rem", textAlign: "center" }}>
             <div style={{ fontSize: "1.75rem", marginBottom: "0.75rem" }}>🕐</div>
-            <div style={{ color: "#0f172a", fontWeight: 700, fontSize: "1rem", marginBottom: "0.5rem" }}>
-              Queued
-            </div>
+            <div style={{ color: "#0f172a", fontWeight: 700, fontSize: "1rem", marginBottom: "0.5rem" }}>Queued</div>
             <div style={{ color: "#64748b", fontSize: "0.875rem", maxWidth: 360, margin: "0 auto" }}>
               Your search is queued for automatic processing. Lead generation will begin shortly — this page updates automatically.
             </div>
@@ -428,16 +486,14 @@ export default function SearchDetailPage() {
         {isProcessing && (
           <div style={{ padding: "2.5rem 2rem", textAlign: "center" }}>
             <div style={{ fontSize: "1.75rem", marginBottom: "0.75rem", display: "inline-block", animation: "spin 2s linear infinite" }}>⚙️</div>
-            <div style={{ color: "#0f172a", fontWeight: 700, fontSize: "1rem", marginBottom: "0.5rem" }}>
-              Generating leads…
-            </div>
+            <div style={{ color: "#0f172a", fontWeight: 700, fontSize: "1rem", marginBottom: "0.5rem" }}>Generating leads…</div>
             <div style={{ color: "#64748b", fontSize: "0.875rem", maxWidth: 380, margin: "0 auto" }}>
               Apollo is running your search. Results will appear here automatically — no need to refresh.
             </div>
             <div style={{ marginTop: "1.25rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
-              <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#0ea5e9", animation: "pulse 1.5s ease-in-out infinite" }} />
-              <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#0ea5e9", animation: "pulse 1.5s ease-in-out 0.3s infinite" }} />
-              <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#0ea5e9", animation: "pulse 1.5s ease-in-out 0.6s infinite" }} />
+              {[0, 0.3, 0.6].map(delay => (
+                <div key={delay} style={{ width: 8, height: 8, borderRadius: "50%", background: "#0ea5e9", animation: `pulse 1.5s ease-in-out ${delay}s infinite` }} />
+              ))}
             </div>
           </div>
         )}
@@ -448,7 +504,7 @@ export default function SearchDetailPage() {
             <div style={{ fontSize: "1.5rem", marginBottom: "0.75rem" }}>❌</div>
             <div style={{ color: "#0f172a", fontWeight: 700, marginBottom: "0.5rem" }}>Search failed</div>
             <div style={{ color: "#64748b", fontSize: "0.85rem", maxWidth: 360, margin: "0 auto" }}>
-              Something went wrong while generating leads for this search. Please contact support and reference your search ID.
+              Something went wrong while generating leads. Please contact support and reference your search ID.
             </div>
             {search.admin_notes && (
               <div style={{ marginTop: "1rem", padding: "0.75rem 1rem", background: "#fef3c7", border: "1px solid #fde68a", borderRadius: "0.5rem", fontSize: "0.8rem", color: "#92400e", textAlign: "left", maxWidth: 420, margin: "1rem auto 0" }}>
@@ -458,12 +514,12 @@ export default function SearchDetailPage() {
           </div>
         )}
 
-        {/* ── Completed — loading ── */}
+        {/* ── Loading leads ── */}
         {isCompleted && leadsLoading && (
           <div style={{ padding: "2rem 1.25rem", color: "#64748b", fontSize: "0.875rem" }}>Loading leads…</div>
         )}
 
-        {/* ── Completed — no leads ── */}
+        {/* ── No leads ── */}
         {isCompleted && !leadsLoading && leads.length === 0 && (
           <div style={{ padding: "2.5rem 2rem", textAlign: "center" }}>
             <div style={{ fontSize: "1.5rem", marginBottom: "0.75rem" }}>📋</div>
@@ -474,7 +530,7 @@ export default function SearchDetailPage() {
           </div>
         )}
 
-        {/* ── Completed — leads table ── */}
+        {/* ── Leads table ── */}
         {isCompleted && !leadsLoading && sortedLeads.length > 0 && (
           <>
             <div style={{ padding: "0.75rem 1.25rem", background: "#f0fdf4", borderBottom: "1px solid #bbf7d0", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -482,19 +538,20 @@ export default function SearchDetailPage() {
                 {leads.length} lead{leads.length !== 1 ? "s" : ""}
                 {search.requested_lead_count > 0 && ` of ${search.requested_lead_count} requested`}
               </span>
-              {hasScores && (
+              {hasEnrichment && (
                 <span style={{ fontSize: "0.72rem", color: "#64748b" }}>
-                  Scores: &nbsp;
-                  <ScoreLegend />
+                  Click any row for AI insight
                 </span>
               )}
             </div>
             <div style={{ overflowX: "auto" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", minWidth: hasScores ? 780 : 640 }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", minWidth: hasEnrichment ? 860 : 640 }}>
                 <thead>
                   <tr style={{ background: "#f8fafc" }}>
-                    {["Company", "Contact", "Title", "Email", "Country",
-                      ...(hasScores ? ["Score", "Confidence"] : [])
+                    {[
+                      "Company", "Contact", "Title", "Email", "Country",
+                      ...(hasScores ? ["Opportunity"] : []),
+                      ...(hasEnrichment ? ["Buyer Fit", "Temperature"] : []),
                     ].map(h => (
                       <th key={h} style={{ padding: "0.65rem 1.25rem", textAlign: "left", fontSize: "0.7rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid #e2e8f0", whiteSpace: "nowrap" }}>
                         {h}
@@ -503,43 +560,69 @@ export default function SearchDetailPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {sortedLeads.map((lead, i) => (
-                    <tr key={lead.id} style={{ borderBottom: i < sortedLeads.length - 1 ? "1px solid #f1f5f9" : "none" }}>
-                      <td style={{ padding: "0.75rem 1.25rem", fontSize: "0.85rem", fontWeight: 600, color: "#0f172a", whiteSpace: "nowrap" }}>
-                        {lead.company_name}
-                        {lead.website && (
-                          <a href={lead.website} target="_blank" rel="noreferrer" style={{ marginLeft: "0.4rem", color: "#0ea5e9", fontSize: "0.72rem", fontWeight: 400, textDecoration: "none" }}>↗</a>
-                        )}
-                      </td>
-                      <td style={{ padding: "0.75rem 1.25rem", fontSize: "0.82rem", color: "#0f172a", whiteSpace: "nowrap" }}>
-                        {lead.contact_name ?? <span style={{ color: "#cbd5e1" }}>—</span>}
-                        {lead.linkedin_url && (
-                          <a href={lead.linkedin_url} target="_blank" rel="noreferrer" style={{ marginLeft: "0.4rem", color: "#0ea5e9", fontSize: "0.7rem", textDecoration: "none" }}>in</a>
-                        )}
-                      </td>
-                      <td style={{ padding: "0.75rem 1.25rem", fontSize: "0.8rem", color: "#64748b", whiteSpace: "nowrap" }}>
-                        {lead.normalized_title ?? lead.title ?? <span style={{ color: "#cbd5e1" }}>—</span>}
-                      </td>
-                      <td style={{ padding: "0.75rem 1.25rem", fontSize: "0.8rem", color: "#64748b", whiteSpace: "nowrap" }}>
-                        {lead.email
-                          ? <a href={`mailto:${lead.email}`} style={{ color: "#0ea5e9", textDecoration: "none" }}>{lead.email}</a>
-                          : <span style={{ color: "#cbd5e1" }}>—</span>}
-                      </td>
-                      <td style={{ padding: "0.75rem 1.25rem", fontSize: "0.8rem", color: "#64748b", whiteSpace: "nowrap" }}>
-                        {lead.country ?? <span style={{ color: "#cbd5e1" }}>—</span>}
-                      </td>
-                      {hasScores && (
-                        <>
-                          <td style={{ padding: "0.75rem 1.25rem", whiteSpace: "nowrap" }}>
-                            <ScoreBadge score={lead.lead_score} />
+                  {sortedLeads.map((lead, i) => {
+                    const isExpanded = expandedId === lead.id;
+                    const isLast     = i === sortedLeads.length - 1;
+                    return (
+                      <>
+                        <tr
+                          key={lead.id}
+                          onClick={() => toggleInsight(lead.id)}
+                          style={{
+                            borderBottom: isExpanded ? "none" : (isLast ? "none" : "1px solid #f1f5f9"),
+                            cursor: hasEnrichment ? "pointer" : "default",
+                            background: isExpanded ? "#f0f9ff" : undefined,
+                          }}
+                        >
+                          <td style={{ padding: "0.75rem 1.25rem", fontSize: "0.85rem", fontWeight: 600, color: "#0f172a", whiteSpace: "nowrap" }}>
+                            {lead.company_name}
+                            {lead.website && (
+                              <a href={lead.website} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()} style={{ marginLeft: "0.4rem", color: "#0ea5e9", fontSize: "0.72rem", fontWeight: 400, textDecoration: "none" }}>↗</a>
+                            )}
                           </td>
-                          <td style={{ padding: "0.75rem 1.25rem", whiteSpace: "nowrap" }}>
-                            <ScoreBadge score={lead.confidence_score} />
+                          <td style={{ padding: "0.75rem 1.25rem", fontSize: "0.82rem", color: "#0f172a", whiteSpace: "nowrap" }}>
+                            {lead.contact_name ?? <span style={{ color: "#cbd5e1" }}>—</span>}
+                            {lead.linkedin_url && (
+                              <a href={lead.linkedin_url} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()} style={{ marginLeft: "0.4rem", color: "#0ea5e9", fontSize: "0.7rem", textDecoration: "none" }}>in</a>
+                            )}
                           </td>
-                        </>
-                      )}
-                    </tr>
-                  ))}
+                          <td style={{ padding: "0.75rem 1.25rem", fontSize: "0.8rem", color: "#64748b", whiteSpace: "nowrap" }}>
+                            {lead.normalized_title ?? lead.title ?? <span style={{ color: "#cbd5e1" }}>—</span>}
+                          </td>
+                          <td style={{ padding: "0.75rem 1.25rem", fontSize: "0.8rem", color: "#64748b", whiteSpace: "nowrap" }}>
+                            {lead.email
+                              ? <a href={`mailto:${lead.email}`} onClick={e => e.stopPropagation()} style={{ color: "#0ea5e9", textDecoration: "none" }}>{lead.email}</a>
+                              : <span style={{ color: "#cbd5e1" }}>—</span>}
+                          </td>
+                          <td style={{ padding: "0.75rem 1.25rem", fontSize: "0.8rem", color: "#64748b", whiteSpace: "nowrap" }}>
+                            {lead.country ?? <span style={{ color: "#cbd5e1" }}>—</span>}
+                          </td>
+                          {hasScores && (
+                            <td style={{ padding: "0.75rem 1.25rem", whiteSpace: "nowrap" }}>
+                              <ScoreBadge score={lead.opportunity_score ?? lead.lead_score} />
+                            </td>
+                          )}
+                          {hasEnrichment && (
+                            <>
+                              <td style={{ padding: "0.75rem 1.25rem", whiteSpace: "nowrap" }}>
+                                <FitBadge value={lead.buyer_fit} />
+                              </td>
+                              <td style={{ padding: "0.75rem 1.25rem", whiteSpace: "nowrap" }}>
+                                <TempBadge value={lead.temperature} />
+                              </td>
+                            </>
+                          )}
+                        </tr>
+                        {isExpanded && (
+                          <tr key={`${lead.id}-insight`} style={{ borderBottom: isLast ? "none" : "1px solid #e2e8f0" }}>
+                            <td colSpan={5 + (hasScores ? 1 : 0) + (hasEnrichment ? 2 : 0)} style={{ padding: 0 }}>
+                              <AiInsightPanel lead={lead} />
+                            </td>
+                          </tr>
+                        )}
+                      </>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -547,26 +630,6 @@ export default function SearchDetailPage() {
         )}
       </div>
     </DashboardShell>
-  );
-}
-
-// ─── Score legend chip row ─────────────────────────────────────────────────────
-
-function ScoreLegend() {
-  const items = [
-    { label: "90+",   bg: "#dcfce7", color: "#15803d" },
-    { label: "70–89", bg: "#dbeafe", color: "#1d4ed8" },
-    { label: "50–69", bg: "#fef9c3", color: "#854d0e" },
-    { label: "<50",   bg: "#f1f5f9", color: "#64748b" },
-  ];
-  return (
-    <span style={{ display: "inline-flex", gap: "0.3rem", alignItems: "center" }}>
-      {items.map(it => (
-        <span key={it.label} style={{ background: it.bg, color: it.color, borderRadius: 999, padding: "0.1rem 0.45rem", fontSize: "0.68rem", fontWeight: 700 }}>
-          {it.label}
-        </span>
-      ))}
-    </span>
   );
 }
 
@@ -589,7 +652,7 @@ function DetailRow({ label, value, highlight }: { label: string; value: React.Re
   );
 }
 
-// ─── Styles ──────────────────────────────────────────────────────────────────
+// ─── Styles ───────────────────────────────────────────────────────────────────
 
 const S = {
   pageTitle:    { color: "#0f172a", fontSize: "1.5rem", fontWeight: 800, margin: 0, letterSpacing: "-0.02em" } as React.CSSProperties,

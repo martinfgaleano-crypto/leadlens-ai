@@ -5,6 +5,10 @@ import { classifyEmail } from "@/lib/quality/email-quality";
 import { normalizeTitle, detectSeniority } from "@/lib/quality/title-normalizer";
 import { normalizeCompany, extractDomain } from "@/lib/quality/company-normalizer";
 import { computeLeadScore, computeConfidenceScore } from "@/lib/quality/scoring";
+import { computeBuyerFit } from "@/lib/enrichment/buyer-fit";
+import { computeTemperature } from "@/lib/enrichment/temperature";
+import { computeOpportunityScore } from "@/lib/enrichment/opportunity-score";
+import { computeStrengths, computeWeaknesses, generateReasoning } from "@/lib/enrichment/reasoning";
 
 /**
  * POST /api/process/search/[id]
@@ -179,7 +183,7 @@ export async function POST(
       const normalized_title   = normalizeTitle(r.title);
       const normalized_company = normalizeCompany(r.company_name);
       const domain             = extractDomain(r.website);
-      const lead_score         = computeLeadScore({
+      const lead_score       = computeLeadScore({
         seniority, email_type, website: r.website,
         linkedin_url: r.linkedin_url, country: r.country,
       });
@@ -187,6 +191,21 @@ export async function POST(
         email: r.email, website: r.website,
         linkedin_url: r.linkedin_url, title: r.title,
       });
+
+      // ── AI enrichment layer ──────────────────────────────────────────────
+      const buyer_fit        = computeBuyerFit(lead_score);
+      const temperature      = computeTemperature({ seniority, email_type, linkedin_url: r.linkedin_url });
+      const opportunity_score = computeOpportunityScore({ lead_score, confidence_score, seniority });
+
+      const reasoningInput = {
+        seniority, email_type, email_quality,
+        website: r.website, linkedin_url: r.linkedin_url,
+        country: r.country, temperature, buyer_fit,
+      };
+      const strengths   = computeStrengths(reasoningInput);
+      const weaknesses  = computeWeaknesses(reasoningInput);
+      const ai_reasoning = generateReasoning(reasoningInput, strengths, weaknesses);
+
       return {
         ...r,
         search_id:          searchId,
@@ -198,6 +217,12 @@ export async function POST(
         domain,
         lead_score,
         confidence_score,
+        buyer_fit,
+        temperature,
+        opportunity_score,
+        strengths,
+        weaknesses,
+        ai_reasoning,
       };
     });
     const { data: inserted, error: insErr } = await client

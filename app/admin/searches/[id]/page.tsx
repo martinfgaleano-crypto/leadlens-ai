@@ -72,6 +72,13 @@ type LeadResult = {
   normalized_title: string | null;
   normalized_company: string | null;
   domain: string | null;
+  // AI enrichment layer (Phase 8)
+  opportunity_score: number | null;
+  buyer_fit: string | null;
+  temperature: string | null;
+  strengths: string[] | null;
+  weaknesses: string[] | null;
+  ai_reasoning: string | null;
 };
 
 type LeadForm = {
@@ -194,6 +201,36 @@ function QualityPill({ value }: { value: string | null }) {
   const s = map[value] ?? { bg: "#f1f5f9", color: "#64748b" };
   return (
     <span style={{ background: s.bg, color: s.color, borderRadius: 999, padding: "0.1rem 0.5rem", fontSize: "0.7rem", fontWeight: 700, textTransform: "capitalize" }}>
+      {value}
+    </span>
+  );
+}
+
+function TempPill({ value }: { value: string | null }) {
+  if (!value) return <span style={{ color: "#cbd5e1" }}>—</span>;
+  const map: Record<string, { bg: string; color: string }> = {
+    Hot:  { bg: "#fee2e2", color: "#dc2626" },
+    Warm: { bg: "#fef9c3", color: "#854d0e" },
+    Cold: { bg: "#f1f5f9", color: "#64748b" },
+  };
+  const s = map[value] ?? { bg: "#f1f5f9", color: "#64748b" };
+  return (
+    <span style={{ background: s.bg, color: s.color, borderRadius: 999, padding: "0.1rem 0.5rem", fontSize: "0.7rem", fontWeight: 700 }}>
+      {value}
+    </span>
+  );
+}
+
+function FitPill({ value }: { value: string | null }) {
+  if (!value) return <span style={{ color: "#cbd5e1" }}>—</span>;
+  const map: Record<string, { bg: string; color: string }> = {
+    "Excellent fit": { bg: "#dcfce7", color: "#15803d" },
+    "Good fit":      { bg: "#dbeafe", color: "#1d4ed8" },
+    "Weak fit":      { bg: "#f1f5f9", color: "#64748b" },
+  };
+  const s = map[value] ?? { bg: "#f1f5f9", color: "#64748b" };
+  return (
+    <span style={{ background: s.bg, color: s.color, borderRadius: 999, padding: "0.1rem 0.5rem", fontSize: "0.7rem", fontWeight: 700, whiteSpace: "nowrap" }}>
       {value}
     </span>
   );
@@ -666,10 +703,10 @@ export default function AdminSearchDetailPage() {
               </div>
             ) : (
               <div style={{ overflowX: "auto", margin: "-1.25rem" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 780 }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 960 }}>
                   <thead>
                     <tr style={{ background: "#f8fafc" }}>
-                      {["Company", "Contact", "Title", "Email", "Seniority", "Email Quality", "Score", "Conf.", ""].map(h => (
+                      {["Company", "Contact", "Title", "Email", "Seniority", "Email Quality", "Opportunity", "Buyer Fit", "Temp", ""].map(h => (
                         <th key={h} style={{ padding: "0.65rem 1rem", textAlign: "left", fontSize: "0.68rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid #e2e8f0", whiteSpace: "nowrap" }}>
                           {h}
                         </th>
@@ -706,10 +743,13 @@ export default function AdminSearchDetailPage() {
                           <QualityPill value={lead.email_quality} />
                         </td>
                         <td style={{ padding: "0.65rem 1rem", whiteSpace: "nowrap" }}>
-                          <ScoreBadge score={lead.lead_score} />
+                          <ScoreBadge score={lead.opportunity_score ?? lead.lead_score} />
                         </td>
                         <td style={{ padding: "0.65rem 1rem", whiteSpace: "nowrap" }}>
-                          <ScoreBadge score={lead.confidence_score} />
+                          <FitPill value={lead.buyer_fit} />
+                        </td>
+                        <td style={{ padding: "0.65rem 1rem", whiteSpace: "nowrap" }}>
+                          <TempPill value={lead.temperature} />
                         </td>
                         <td style={{ padding: "0.65rem 1rem", whiteSpace: "nowrap" }}>
                           <button onClick={() => openEdit(lead)} style={{ background: "none", border: "none", color: "#0ea5e9", fontWeight: 600, fontSize: "0.75rem", cursor: "pointer", marginRight: "0.5rem", fontFamily: "inherit" }}>Edit</button>
@@ -842,6 +882,30 @@ export default function AdminSearchDetailPage() {
               </span>
             } />
           </Card>
+
+          {/* AI enrichment summary */}
+          {leads.some(l => l.temperature != null) && (() => {
+            const enriched = leads.filter(l => l.temperature != null);
+            const hotCount  = enriched.filter(l => l.temperature === "Hot").length;
+            const warmCount = enriched.filter(l => l.temperature === "Warm").length;
+            const coldCount = enriched.filter(l => l.temperature === "Cold").length;
+            const withOpp   = enriched.filter(l => l.opportunity_score != null);
+            const avgOpp    = withOpp.length > 0
+              ? Math.round(withOpp.reduce((s, l) => s + (l.opportunity_score ?? 0), 0) / withOpp.length)
+              : null;
+            const topOpp    = withOpp.length > 0
+              ? Math.max(...withOpp.map(l => l.opportunity_score ?? 0))
+              : null;
+            return (
+              <Card title="AI enrichment summary">
+                <Row label="Hot leads"  value={<span style={{ fontWeight: 700, color: "#dc2626" }}>{hotCount}</span>} />
+                <Row label="Warm leads" value={<span style={{ fontWeight: 700, color: "#854d0e" }}>{warmCount}</span>} />
+                <Row label="Cold leads" value={<span style={{ color: "#64748b" }}>{coldCount}</span>} />
+                <Row label="Avg opportunity" value={avgOpp != null ? <ScoreBadge score={avgOpp} /> : null} />
+                <Row label="Top opportunity" value={topOpp != null ? <ScoreBadge score={topOpp} /> : null} />
+              </Card>
+            );
+          })()}
 
           {/* Quality summary */}
           {leads.some(l => l.lead_score != null) && (() => {
