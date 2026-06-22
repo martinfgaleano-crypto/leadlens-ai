@@ -26,6 +26,14 @@ interface RecentSearch {
   created_at: string;
 }
 
+interface CreditTransaction {
+  id:          string;
+  type:        string;
+  amount:      number;
+  description: string | null;
+  created_at:  string;
+}
+
 // ─── Status badge (inline, minimal) ──────────────────────────────────────────
 
 const STATUS_COLORS: Record<string, { bg: string; color: string }> = {
@@ -54,6 +62,9 @@ export default function DashboardPage() {
   const [icpCount, setIcpCount]           = useState(0);
   const [searchCount, setSearchCount]     = useState(0);
   const [recentSearches, setRecentSearches] = useState<RecentSearch[]>([]);
+  const [creditBalance, setCreditBalance]   = useState<number | null>(null);
+  const [creditLifetime, setCreditLifetime] = useState<number | null>(null);
+  const [creditTxns, setCreditTxns]         = useState<CreditTransaction[]>([]);
   const [loading, setLoading]             = useState(true);
   const [error, setError]                 = useState("");
 
@@ -105,12 +116,21 @@ export default function DashboardPage() {
 
       if (!cancelled) setProfile(prof);
 
-      // Fetch ICP count, search count, and 5 most recent searches in parallel
-      const [icpRes, searchRes, recentRes] = await Promise.all([
+      // Fetch ICP count, search count, recent searches, and credits in parallel
+      const [icpRes, searchRes, recentRes, creditsRes, txnRes] = await Promise.all([
         supabase.from("icps").select("id", { count: "exact", head: true }).eq("user_id", uid),
         supabase.from("lead_searches").select("id", { count: "exact", head: true }).eq("user_id", uid),
         supabase.from("lead_searches")
           .select("id, name, status, requested_lead_count, created_at")
+          .eq("user_id", uid)
+          .order("created_at", { ascending: false })
+          .limit(5),
+        supabase.from("customer_credits")
+          .select("credit_balance, lifetime_credits")
+          .eq("user_id", uid)
+          .maybeSingle(),
+        supabase.from("credit_transactions")
+          .select("id, type, amount, description, created_at")
           .eq("user_id", uid)
           .order("created_at", { ascending: false })
           .limit(5),
@@ -120,6 +140,10 @@ export default function DashboardPage() {
         setIcpCount(icpRes.count ?? 0);
         setSearchCount(searchRes.count ?? 0);
         setRecentSearches((recentRes.data ?? []) as RecentSearch[]);
+        const cred = creditsRes.data as { credit_balance: number; lifetime_credits: number } | null;
+        setCreditBalance(cred?.credit_balance ?? 0);
+        setCreditLifetime(cred?.lifetime_credits ?? 0);
+        setCreditTxns((txnRes.data ?? []) as CreditTransaction[]);
         setLoading(false);
       }
     }
@@ -202,6 +226,41 @@ export default function DashboardPage() {
           desc={searchCount > 0 ? `${searchCount} search${searchCount !== 1 ? "es" : ""} submitted` : "Request qualified B2B leads"}
           cta="Open Lead Searches →"
         />
+      </div>
+
+      {/* Credits card */}
+      <div style={{ ...S.section, marginBottom: "1.25rem" }}>
+        <div style={S.sectionHeader}>
+          <span style={S.sectionTitle}>Credits</span>
+          <span style={{ fontSize: "0.75rem", color: "#94a3b8" }}>Lifetime: {creditLifetime ?? 0}</span>
+        </div>
+        <div style={{ padding: "1rem 1.25rem" }}>
+          {/* Balance */}
+          <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: creditTxns.length > 0 ? "1rem" : 0 }}>
+            <div>
+              <div style={{ fontSize: "2.5rem", fontWeight: 900, color: (creditBalance ?? 0) >= 50 ? "#16a34a" : (creditBalance ?? 0) >= 10 ? "#d97706" : "#dc2626", lineHeight: 1 }}>
+                {creditBalance ?? 0}
+              </div>
+              <div style={{ fontSize: "0.72rem", color: "#94a3b8", marginTop: "0.2rem" }}>available credits</div>
+            </div>
+          </div>
+          {/* Recent transactions */}
+          {creditTxns.length > 0 && (
+            <div>
+              <div style={{ fontSize: "0.7rem", fontWeight: 700, color: "#94a3b8", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: "0.5rem" }}>
+                Recent Activity
+              </div>
+              {creditTxns.map(t => (
+                <div key={t.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.4rem 0", borderBottom: "1px solid #f8fafc", fontSize: "0.8rem" }}>
+                  <span style={{ color: "#64748b" }}>{t.description ?? t.type}</span>
+                  <span style={{ fontWeight: 700, color: t.amount >= 0 ? "#16a34a" : "#dc2626" }}>
+                    {t.amount >= 0 ? "+" : ""}{t.amount}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Recent searches */}
