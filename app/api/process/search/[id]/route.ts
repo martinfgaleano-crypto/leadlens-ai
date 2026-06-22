@@ -10,6 +10,7 @@ import { computeTemperature } from "@/lib/enrichment/temperature";
 import { computeOpportunityScore } from "@/lib/enrichment/opportunity-score";
 import { computeStrengths, computeWeaknesses, generateReasoning } from "@/lib/enrichment/reasoning";
 import { upsertVaultLead } from "@/lib/vault/upsert-vault-lead";
+import { upsertCompanyProfile } from "@/lib/company/upsert-company";
 
 /**
  * POST /api/process/search/[id]
@@ -269,6 +270,24 @@ export async function POST(
           });
         } catch {
           // Vault upsert failure must never block lead delivery
+        }
+
+        // ── Company profile upsert (best-effort, non-blocking) ───────────────
+        if (row.normalized_company) {
+          try {
+            await upsertCompanyProfile(client, {
+              normalized_company: row.normalized_company,
+              company_name:       row.company_name,
+              domain:             row.domain ?? null,
+              industry:           null,
+              company_size:       null,
+              country:            row.country ?? null,
+              title:              row.title ?? null,
+              opportunity_score:  row.opportunity_score ?? null,
+            });
+          } catch {
+            // Company upsert failure must never block lead delivery
+          }
         }
       }
     }
