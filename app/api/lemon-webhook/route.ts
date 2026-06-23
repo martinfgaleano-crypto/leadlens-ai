@@ -229,6 +229,40 @@ export async function POST(req: NextRequest) {
             message: `Payment confirmed — ${amount} lead credit${amount !== 1 ? "s" : ""} have been added. Your search will begin shortly.`,
             metadata: { amount, plan: resolvedPlan, order_id: order.id },
           });
+
+          // ── Trigger processing on the most recent pending search ────────────
+          // Find their newest pending search and kick off the canonical pipeline.
+          // Fire-and-forget: webhook must return 200 immediately; processing runs async.
+          const { data: pendingSearch } = await client
+            .from("lead_searches")
+            .select("id")
+            .eq("user_id", customerUserId)
+            .eq("status", "pending")
+            .order("created_at", { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
+          if (pendingSearch?.id) {
+            // Mark processing_trigger_source before delegating
+            await client
+              .from("lead_searches")
+              .update({ processing_trigger_source: "webhook" })
+              .eq("id", pendingSearch.id as string);
+
+            const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000").replace(/=+$/, "");
+            const searchIdToProcess = pendingSearch.id as string;
+
+            // Non-blocking: webhook cannot wait for Apollo (30s timeout)
+            void fetch(`${appUrl}/api/process/search/${searchIdToProcess}`, {
+              method: "POST",
+            }).catch((err: unknown) => {
+              console.error(`[lemon-webhook] processing trigger failed for search ${searchIdToProcess}:`, err instanceof Error ? err.message : err);
+            });
+
+            console.log(`[lemon-webhook] processing triggered for search ${searchIdToProcess}`);
+          } else {
+            console.log(`[lemon-webhook] no pending search found for user ${customerUserId} — processing not triggered`);
+          }
         } else {
           console.warn(`[lemon-webhook] no profile found for email=${customerEmail} — credits not granted (customer may not have submitted the form yet)`);
         }

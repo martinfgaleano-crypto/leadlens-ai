@@ -532,6 +532,8 @@ export async function POST(
   const vaultHitRate =
     requestedCount > 0 ? Math.round((vaultInsertedCount / requestedCount) * 100) / 100 : 0;
 
+  const deliveryReady = finalStatus === "completed" && totalInserted > 0;
+
   const updatePayload: Record<string, unknown> = {
     status:                    finalStatus,
     process_finished_at:       completedAt,
@@ -545,6 +547,8 @@ export async function POST(
     vault_leads_used:          vaultInsertedCount,
     apollo_leads_used:         insertedCount,
     vault_hit_rate:            vaultHitRate,
+    delivery_ready:            deliveryReady,
+    delivery_ready_at:         deliveryReady ? completedAt : null,
   };
 
   if (insertError) {
@@ -578,6 +582,7 @@ export async function POST(
     errors:             insertError ? [insertError] : [],
     duration_ms:        durationMs,
     final_status:       finalStatus,
+    delivery_ready:     deliveryReady,
     source_breakdown:   orchestratorResult.sourceBreakdown,
   });
 }

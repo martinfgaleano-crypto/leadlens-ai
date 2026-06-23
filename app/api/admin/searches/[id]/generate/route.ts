@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/require-admin";
-import { searchPeople } from "@/lib/apollo/client";
-import type { ApolloLeadResult } from "@/lib/apollo/client";
 
 async function db() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
@@ -12,9 +10,13 @@ async function db() {
 }
 
 // ─── POST /api/admin/searches/[id]/generate ───────────────────────────────────
-// Admin-triggered Apollo lead generation.
-// Flow: fetch ICP → call Apollo → dedup → insert lead_results → update status.
-// Uses service role throughout — no customer RLS involved.
+//
+// Admin-triggered lead generation. Delegates to the canonical pipeline at
+// POST /api/process/search/[id] to guarantee vault → source orchestrator →
+// quality → enrichment → credits → notifications are all applied.
+//
+// Pre-flight: resets search to "pending" so the canonical route's duplicate-
+// run guard lets it through. Marks processing_trigger_source = "admin".
 
 export async function POST(
   req: NextRequest,
@@ -23,7 +25,6 @@ export async function POST(
   const deny = requireAdmin(req);
   if (deny) return deny;
 
-  const startMs = Date.now();
   const searchId = params.id;
 
   const client = await db();
@@ -33,182 +34,74 @@ export async function POST(
 
   // ── 1. Fetch search ──────────────────────────────────────────────────────────
 
-  const { data: search, error: searchErr } = await client
+  const { data: search, error: fetchErr } = await client
     .from("lead_searches")
-    .select("*")
+    .select("id, status, user_id")
     .eq("id", searchId)
     .single();
 
-  if (searchErr || !search) {
+  if (fetchErr || !search) {
     return NextResponse.json({ error: "Search not found." }, { status: 404 });
   }
 
-  // ── 2. Fetch linked ICP ──────────────────────────────────────────────────────
+  // ── 2. Reset to pending so canonical pipeline will process it ────────────────
+  // Canonical route skips anything that isn't "pending". Admin retrigger resets
+  // completed/failed searches so they can be re-run.
 
-  let icp: Record<string, unknown> | null = null;
-  if (search.icp_id) {
-    const { data } = await client
-      .from("icps")
-      .select("*")
-      .eq("id", search.icp_id as string)
-      .single();
-    icp = data ?? null;
-  }
-
-  // ── 3. Mark as processing ────────────────────────────────────────────────────
-
-  await client
+  const { error: resetErr } = await client
     .from("lead_searches")
-    .update({ status: "processing" })
+    .update({
+      status:                     "pending",
+      processing_trigger_source:  "admin",
+      // Clear stale processing artifacts from previous runs
+      process_started_at:         null,
+      process_finished_at:        null,
+      processing_started_at:      null,
+      processing_completed_at:    null,
+      process_duration_ms:        null,
+      process_generated_count:    null,
+      process_duplicates_skipped: null,
+      process_error_message:      null,
+      error_message:              null,
+      delivery_ready:             false,
+      delivery_ready_at:          null,
+    })
     .eq("id", searchId);
 
-  // ── 4. Build Apollo params from ICP + search fields ──────────────────────────
-  // Priority for countries/industries: lead_searches fields first (customer-chosen),
-  // fall back to ICP fields.
+  if (resetErr) {
+    return NextResponse.json(
+      { error: `Failed to reset search: ${resetErr.message}` },
+      { status: 500 }
+    );
+  }
 
-  const jobTitles    = (icp?.target_job_titles as string[] | null) ?? [];
-  const icpCountries = (icp?.target_countries  as string[] | null) ?? [];
-  const icpIndustries = (icp?.industries        as string[] | null) ?? [];
-  const companySizes  = (icp?.company_sizes     as string[] | null) ?? [];
-  const keywords      = (icp?.keywords          as string[] | null) ?? [];
+  // ── 3. Delegate to canonical pipeline ────────────────────────────────────────
+  // Uses request origin so this works in both local dev and production.
 
-  const searchCountries   = (search.countries  as string[] | null) ?? [];
-  const searchIndustries  = (search.industries as string[] | null) ?? [];
+  const origin = req.nextUrl.origin;
 
-  const countries  = searchCountries.length > 0  ? searchCountries  : icpCountries;
-  const industries = searchIndustries.length > 0 ? searchIndustries : icpIndustries;
-
-  const apolloParams = {
-    job_titles:    jobTitles,
-    industries,
-    company_sizes: companySizes,
-    countries,
-    keywords,
-    limit:         (search.requested_lead_count as number) ?? 10,
-  };
-
-  // ── 5. Call Apollo ───────────────────────────────────────────────────────────
-
-  let apolloResult: { results: ApolloLeadResult[]; total_available: number };
-
+  let pipelineRes: Response;
   try {
-    apolloResult = await searchPeople(apolloParams);
+    pipelineRes = await fetch(`${origin}/api/process/search/${searchId}`, {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
-    const durationMs = Date.now() - startMs;
-
-    // Append error to admin_notes so admin sees it in the detail page
-    const existingNotes = (search.admin_notes as string | null) ?? "";
-    const errorNote = `[Apollo error — ${new Date().toISOString()}]\n${msg}\nDuration: ${durationMs}ms`;
-    const newNotes  = existingNotes ? `${existingNotes}\n\n${errorNote}` : errorNote;
-
-    await client
-      .from("lead_searches")
-      .update({ status: "failed", admin_notes: newNotes })
-      .eq("id", searchId);
-
     return NextResponse.json(
-      {
-        success:     false,
-        error:       msg,
-        duration_ms: durationMs,
-        final_status: "failed",
-      },
+      { error: `Pipeline request failed: ${msg}` },
       { status: 502 }
     );
   }
 
-  // ── 6. Dedup against existing leads for this search ──────────────────────────
+  // ── 4. Forward canonical response ────────────────────────────────────────────
 
-  const { data: existing } = await client
-    .from("lead_results")
-    .select("company_name, email")
-    .eq("search_id", searchId);
-
-  const existingKeys = new Set(
-    (existing ?? []).map(
-      (r: { company_name: string; email: string | null }) =>
-        `${r.company_name.toLowerCase()}|${(r.email ?? "").toLowerCase()}`
-    )
-  );
-
-  const toInsert = apolloResult.results.filter((r) => {
-    const key = `${r.company_name.toLowerCase()}|${(r.email ?? "").toLowerCase()}`;
-    return !existingKeys.has(key);
-  });
-
-  const skipped = apolloResult.results.length - toInsert.length;
-
-  // ── 7. Insert lead_results ────────────────────────────────────────────────────
-
-  let insertedCount = 0;
-  let insertError: string | null = null;
-
-  if (toInsert.length > 0) {
-    const rows = toInsert.map((r) => ({ ...r, search_id: searchId }));
-    const { data: inserted, error: insErr } = await client
-      .from("lead_results")
-      .insert(rows)
-      .select("id");
-
-    if (insErr) {
-      insertError = insErr.message;
-    } else {
-      insertedCount = inserted?.length ?? toInsert.length;
-    }
+  let body: unknown;
+  try {
+    body = await pipelineRes.json();
+  } catch {
+    body = { error: "Pipeline returned non-JSON response" };
   }
 
-  // ── 8. Update final status ───────────────────────────────────────────────────
-  // Zero delivered leads is always "failed" — same logic as the auto-pipeline.
-
-  const durationMs  = Date.now() - startMs;
-  const noLeadsDelivered = insertedCount === 0;
-  const finalStatus = (insertError || noLeadsDelivered) ? "failed" : "completed";
-
-  const existingNotes = (search.admin_notes as string | null) ?? "";
-  let noteToAppend: string | null = null;
-
-  if (insertError) {
-    noteToAppend = `[Insert error — ${new Date().toISOString()}]\n${insertError}`;
-  } else if (noLeadsDelivered) {
-    noteToAppend = `[No leads — ${new Date().toISOString()}]\nApollo returned ${apolloResult.results.length} results, all were duplicates or filtered.`;
-  }
-
-  const updatedNotes = noteToAppend
-    ? (existingNotes ? `${existingNotes}\n\n${noteToAppend}` : noteToAppend)
-    : existingNotes || null;
-
-  await client
-    .from("lead_searches")
-    .update({
-      status:                  finalStatus,
-      process_finished_at:     new Date().toISOString(),
-      process_duration_ms:     durationMs,
-      process_generated_count: insertedCount,
-      process_duplicates_skipped: skipped,
-      process_error_message:   insertError ?? (noLeadsDelivered ? "No leads found" : null),
-      ...(updatedNotes !== existingNotes ? { admin_notes: updatedNotes } : {}),
-    })
-    .eq("id", searchId);
-
-  // ── 9. Return log ─────────────────────────────────────────────────────────────
-
-  return NextResponse.json({
-    success:          finalStatus === "completed",
-    requested:        apolloParams.limit,
-    apollo_returned:  apolloResult.results.length,
-    total_available:  apolloResult.total_available,
-    inserted:         insertedCount,
-    skipped,
-    errors:           insertError ? [insertError] : [],
-    duration_ms:      durationMs,
-    final_status:     finalStatus,
-    params_used: {
-      job_titles:    apolloParams.job_titles,
-      industries:    apolloParams.industries,
-      countries:     apolloParams.countries,
-      company_sizes: apolloParams.company_sizes,
-      keywords:      apolloParams.keywords,
-    },
-  });
+  return NextResponse.json(body, { status: pipelineRes.status });
 }
