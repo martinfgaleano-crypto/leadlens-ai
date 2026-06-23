@@ -81,6 +81,25 @@ export async function POST(req: NextRequest) {
       if (profileError) throw new Error(`[${step}] ${profileError.message}`);
     }
 
+    // ── 2b. Magic link for new customers ─────────────────────────────────────
+    // Customer was created with a random password — they cannot log in until
+    // we send them a magic link. generateLink triggers Supabase to email them.
+    let loginUrl: string | null = null;
+    if (isNewUser) {
+      step = "magic-link";
+      try {
+        const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000").replace(/=+$/, "");
+        const { data: linkData } = await client.auth.admin.generateLink({
+          type:    "magiclink",
+          email:   emailNorm,
+          options: { redirectTo: `${appUrl}/dashboard` },
+        });
+        loginUrl = (linkData as { properties?: { action_link?: string } } | null)?.properties?.action_link ?? null;
+      } catch {
+        // Best-effort — never block onboarding over a link generation failure
+      }
+    }
+
     // ── 3. ICP ───────────────────────────────────────────────────────────────
     step = "icp-insert";
     const icpNotes = [
@@ -177,6 +196,8 @@ export async function POST(req: NextRequest) {
         user_id:                userId,
         icp_id:                 icp.id,
         search_id:              search.id,
+        // Login link for admin to forward to new customers
+        admin_notes:            loginUrl ? `[Login link]\n${loginUrl}` : null,
       })
       .select("id")
       .single();
@@ -189,6 +210,7 @@ export async function POST(req: NextRequest) {
       plan:           resolvedPlan,
       lead_count:     resolvedLeads,
       delivery_email: resolvedDelivery,
+      is_new_user:    isNewUser,
     });
 
   } catch (err: unknown) {

@@ -7,6 +7,16 @@ import {
   addJobEvent,
   getOrderByExternalId,
 } from "@/lib/storage/saas-store";
+import { addCredits } from "@/lib/credits/add-credits";
+import { createNotification } from "@/lib/notifications/create-notification";
+
+// Credits granted per plan on confirmed payment.
+const PLAN_CREDITS: Record<PlanType, number> = {
+  sample:   5,
+  starter:  25,
+  standard: 50,
+  pro:      100,
+};
 
 // ─── Lemon Squeezy variant → PlanType mapping ─────────────────────────────────
 // Set LEMONSQUEEZY_VARIANT_* in env after LS store is approved.
@@ -179,10 +189,61 @@ export async function POST(req: NextRequest) {
     console.log(`[lemon-webhook] job created: ${job.id} status=awaiting_intake`);
   }
 
+  // ── Grant credits to the matching customer ─────────────────────────────────
+  // Look up the profile by email, grant plan credits, notify customer.
+  // Best-effort — never block webhook response over a credit failure.
+
+  let creditsGranted = 0;
+  let customerUserId: string | null = null;
+
+  if (customerEmail && process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    try {
+      const { createServerClient } = await import("@/lib/supabase/server");
+      const client = createServerClient();
+
+      if (client) {
+        const { data: profile } = await client
+          .from("profiles")
+          .select("id")
+          .eq("email", customerEmail.trim().toLowerCase())
+          .maybeSingle();
+
+        if (profile?.id) {
+          customerUserId   = profile.id as string;
+          const amount     = PLAN_CREDITS[resolvedPlan];
+          const result     = await addCredits(
+            client,
+            customerUserId,
+            amount,
+            `${resolvedPlan} plan — order ${lsOrderId}`,
+            "grant",
+          );
+          creditsGranted = amount;
+          console.log(`[lemon-webhook] granted ${amount} credits to ${customerUserId}, new balance=${result.credit_balance}`);
+
+          // Notify customer their credits are ready
+          await createNotification(client, {
+            userId:  customerUserId,
+            type:    "credits_added",
+            title:   "Your leads are being prepared",
+            message: `Payment confirmed — ${amount} lead credit${amount !== 1 ? "s" : ""} have been added. Your search will begin shortly.`,
+            metadata: { amount, plan: resolvedPlan, order_id: order.id },
+          });
+        } else {
+          console.warn(`[lemon-webhook] no profile found for email=${customerEmail} — credits not granted (customer may not have submitted the form yet)`);
+        }
+      }
+    } catch (creditErr) {
+      console.error("[lemon-webhook] credit grant failed (non-blocking):", creditErr instanceof Error ? creditErr.message : creditErr);
+    }
+  }
+
   return NextResponse.json({
-    received: true,
-    order_id: order.id,
-    job_id:   job?.id ?? null,
-    plan:     resolvedPlan,
+    received:       true,
+    order_id:       order.id,
+    job_id:         job?.id ?? null,
+    plan:           resolvedPlan,
+    credits_granted: creditsGranted,
+    customer_user_id: customerUserId,
   });
 }

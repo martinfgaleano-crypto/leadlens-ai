@@ -159,25 +159,37 @@ export async function POST(
   }
 
   // ── 8. Update final status ───────────────────────────────────────────────────
+  // Zero delivered leads is always "failed" — same logic as the auto-pipeline.
 
   const durationMs  = Date.now() - startMs;
-  const finalStatus = insertError && insertedCount === 0 ? "failed" : "completed";
+  const noLeadsDelivered = insertedCount === 0;
+  const finalStatus = (insertError || noLeadsDelivered) ? "failed" : "completed";
 
-  // Only write to admin_notes on insert failure — preserve admin's own notes otherwise.
+  const existingNotes = (search.admin_notes as string | null) ?? "";
+  let noteToAppend: string | null = null;
+
   if (insertError) {
-    const existingNotes = (search.admin_notes as string | null) ?? "";
-    const errNote = `[Insert error — ${new Date().toISOString()}]\n${insertError}`;
-    const newNotes = existingNotes ? `${existingNotes}\n\n${errNote}` : errNote;
-    await client
-      .from("lead_searches")
-      .update({ status: finalStatus, admin_notes: newNotes })
-      .eq("id", searchId);
-  } else {
-    await client
-      .from("lead_searches")
-      .update({ status: finalStatus })
-      .eq("id", searchId);
+    noteToAppend = `[Insert error — ${new Date().toISOString()}]\n${insertError}`;
+  } else if (noLeadsDelivered) {
+    noteToAppend = `[No leads — ${new Date().toISOString()}]\nApollo returned ${apolloResult.results.length} results, all were duplicates or filtered.`;
   }
+
+  const updatedNotes = noteToAppend
+    ? (existingNotes ? `${existingNotes}\n\n${noteToAppend}` : noteToAppend)
+    : existingNotes || null;
+
+  await client
+    .from("lead_searches")
+    .update({
+      status:                  finalStatus,
+      process_finished_at:     new Date().toISOString(),
+      process_duration_ms:     durationMs,
+      process_generated_count: insertedCount,
+      process_duplicates_skipped: skipped,
+      process_error_message:   insertError ?? (noLeadsDelivered ? "No leads found" : null),
+      ...(updatedNotes !== existingNotes ? { admin_notes: updatedNotes } : {}),
+    })
+    .eq("id", searchId);
 
   // ── 9. Return log ─────────────────────────────────────────────────────────────
 
