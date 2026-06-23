@@ -31,10 +31,12 @@ async function db() {
 }
 
 export async function POST(req: NextRequest) {
-  // Allow both admin key auth and Vercel cron secret
-  const cronSecret  = process.env.CRON_SECRET;
-  const cronHeader  = req.headers.get("x-vercel-cron-secret") ?? req.headers.get("authorization");
-  const isCronCall  = cronSecret && cronHeader === cronSecret;
+  // Allow both admin key auth and Vercel cron secret.
+  // Vercel Cron sends: Authorization: Bearer <CRON_SECRET>
+  const cronSecret = process.env.CRON_SECRET;
+  const rawCronHeader = req.headers.get("x-vercel-cron-secret") ?? req.headers.get("authorization") ?? "";
+  const cronHeader    = rawCronHeader.startsWith("Bearer ") ? rawCronHeader.slice(7) : rawCronHeader;
+  const isCronCall    = !!cronSecret && cronHeader === cronSecret;
 
   if (!isCronCall) {
     const deny = requireAdmin(req);
