@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase/server";
 
 export async function POST(req: NextRequest) {
+  let step = "parse";
   try {
     const body = await req.json();
 
@@ -25,10 +26,12 @@ export async function POST(req: NextRequest) {
     const resolvedLeads   = Number(lead_count) || 50;
     const resolvedDelivery = ((delivery_email as string) || emailNorm).trim().toLowerCase();
 
+    step = "supabase-client";
     const client = createServerClient();
     if (!client) return NextResponse.json({ error: "Service unavailable." }, { status: 503 });
 
-    // ── 1. Auth user: create new, or find existing on duplicate ───────────────
+    // ── 1. Auth user: create new, or reuse existing ──────────────────────────
+    step = "auth-create-user";
     let userId: string;
     let isNewUser = false;
 
@@ -42,7 +45,7 @@ export async function POST(req: NextRequest) {
     if (authError) {
       const msg = authError.message.toLowerCase();
       if (msg.includes("already") || msg.includes("duplicate") || msg.includes("exists")) {
-        // Find existing profile by email
+        step = "auth-lookup-existing";
         const { data: existing, error: lookupErr } = await client
           .from("profiles")
           .select("id")
@@ -57,15 +60,16 @@ export async function POST(req: NextRequest) {
         }
         userId = existing.id;
       } else {
-        throw authError;
+        throw new Error(`[${step}] ${authError.message}`);
       }
     } else {
       userId    = authData.user.id;
       isNewUser = true;
     }
 
-    // ── 2. Profile (new users only) ───────────────────────────────────────────
+    // ── 2. Profile (new users only) ──────────────────────────────────────────
     if (isNewUser) {
+      step = "profile-insert";
       const { error: profileError } = await client.from("profiles").insert({
         id:                   userId,
         email:                emailNorm,
@@ -74,10 +78,11 @@ export async function POST(req: NextRequest) {
         plan:                 resolvedPlan,
         onboarding_completed: false,
       });
-      if (profileError) throw profileError;
+      if (profileError) throw new Error(`[${step}] ${profileError.message}`);
     }
 
-    // ── 3. ICP ────────────────────────────────────────────────────────────────
+    // ── 3. ICP ───────────────────────────────────────────────────────────────
+    step = "icp-insert";
     const icpNotes = [
       ideal_customer ? `Target customer: ${ideal_customer}` : "",
       buyer_persona  ? `Buyer persona: ${buyer_persona}`    : "",
@@ -96,19 +101,20 @@ export async function POST(req: NextRequest) {
         target_job_titles: target_job_titles     || [],
         keywords:          [],
         exclusions:        exclusions ? [exclusions as string] : [],
-        priority:          1,
+        priority:          "balance",
         notes:             icpNotes || null,
       })
       .select("id")
       .single();
-    if (icpError) throw icpError;
+    if (icpError) throw new Error(`[${step}] ${icpError.message}`);
 
-    // ── 4. Lead search ────────────────────────────────────────────────────────
+    // ── 4. Lead search ───────────────────────────────────────────────────────
+    step = "lead-search-insert";
     const searchNotes = [
-      what_you_sell       ? `Product/service: ${what_you_sell}`            : "",
-      value_proposition   ? `Value proposition: ${value_proposition}`      : "",
-      credibility_statement ? `Credibility: ${credibility_statement}`      : "",
-      notes               ? `Customer notes: ${notes}`                     : "",
+      what_you_sell         ? `Product/service: ${what_you_sell}`        : "",
+      value_proposition     ? `Value proposition: ${value_proposition}`  : "",
+      credibility_statement ? `Credibility: ${credibility_statement}`    : "",
+      notes                 ? `Customer notes: ${notes}`                 : "",
     ].filter(Boolean).join("\n\n");
 
     const { data: search, error: searchError } = await client
@@ -126,9 +132,10 @@ export async function POST(req: NextRequest) {
       })
       .select("id")
       .single();
-    if (searchError) throw searchError;
+    if (searchError) throw new Error(`[${step}] ${searchError.message}`);
 
-    // ── 5. Onboarding request record ──────────────────────────────────────────
+    // ── 5. Onboarding request ────────────────────────────────────────────────
+    step = "onboarding-request-insert";
     const { data: onboarding, error: onboardingError } = await client
       .from("onboarding_requests")
       .insert({
@@ -173,7 +180,7 @@ export async function POST(req: NextRequest) {
       })
       .select("id")
       .single();
-    if (onboardingError) throw onboardingError;
+    if (onboardingError) throw new Error(`[${step}] ${onboardingError.message}`);
 
     return NextResponse.json({
       success:        true,
@@ -183,9 +190,13 @@ export async function POST(req: NextRequest) {
       lead_count:     resolvedLeads,
       delivery_email: resolvedDelivery,
     });
+
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    console.error("[onboarding/submit]", msg);
-    return NextResponse.json({ error: "Submission failed. Please try again." }, { status: 500 });
+    const detail = err instanceof Error ? err.message : String(err);
+    console.error("[onboarding/submit] FAILED at step:", step, "|", detail);
+    return NextResponse.json(
+      { error: "Submission failed. Please try again.", detail, step },
+      { status: 500 }
+    );
   }
 }

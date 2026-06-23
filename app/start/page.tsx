@@ -263,7 +263,14 @@ export default function StartPage() {
         body: JSON.stringify(form),
       });
       const json = await res.json();
-      if (!res.ok) { setSubErr(json.error ?? "Submission failed. Please try again."); setSub(false); return; }
+      if (!res.ok) {
+        const msg = json.detail
+          ? `${json.error ?? "Submission failed."} (${json.step}: ${json.detail})`
+          : (json.error ?? "Submission failed. Please try again.");
+        setSubErr(msg);
+        setSub(false);
+        return;
+      }
       const q = new URLSearchParams({
         id:    json.request_id,
         plan:  json.plan,
