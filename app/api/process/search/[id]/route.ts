@@ -16,6 +16,8 @@ import { executeSourceSearch } from "@/lib/sources/orchestrator";
 import { listActiveProviders } from "@/lib/sources/source-registry";
 import { consumeCredits } from "@/lib/credits/consume-credits";
 import { createNotification } from "@/lib/notifications/create-notification";
+import { generateDeliveryPackage } from "@/lib/delivery/generate-package";
+import { sendDeliveryAccessEmail } from "@/lib/delivery/send-access-email";
 
 /**
  * POST /api/process/search/[id]
@@ -565,7 +567,69 @@ export async function POST(
     .update(updatePayload)
     .eq("id", searchId);
 
-  // ── 13. Return log ─────────────────────────────────────────────────────────────
+  // ── 13. Generate delivery package + send access email (best-effort) ───────────
+  // Runs synchronously so the signed URL is ready before we return.
+  // Any failure here is non-blocking — the search is already marked completed.
+
+  let packageId:  string | null = null;
+  let signedUrl:  string | null = null;
+  let emailSent                 = false;
+
+  if (deliveryReady) {
+    try {
+      const searchName = search.name as string;
+      const pkg = await generateDeliveryPackage(client, searchId, searchName);
+      packageId = pkg.packageId;
+      signedUrl = pkg.signedUrl;
+
+      // Fetch delivery_email from the onboarding_request linked to this search
+      const { data: onboarding } = await client
+        .from("onboarding_requests")
+        .select("delivery_email, full_name")
+        .eq("search_id", searchId)
+        .maybeSingle();
+
+      const deliveryEmail = (onboarding?.delivery_email as string | null) ?? null;
+      const customerName  = (onboarding?.full_name     as string | null) ?? null;
+
+      if (deliveryEmail && signedUrl) {
+        const emailResult = await sendDeliveryAccessEmail({
+          toEmail:    deliveryEmail,
+          toName:     customerName,
+          searchName,
+          signedUrl,
+          leadCount:  pkg.leadCount,
+        });
+        emailSent = emailResult.sent;
+
+        if (emailSent) {
+          // Mark email_sent on the delivery package
+          await client
+            .from("delivery_packages")
+            .update({ email_sent: true, email_sent_at: new Date().toISOString() })
+            .eq("id", packageId);
+        }
+
+        // Notify customer via in-app too (best-effort)
+        try {
+          await createNotification(client, {
+            userId:   userId,
+            type:     "search_completed",
+            title:    "Your leads are ready to download",
+            message:  emailSent
+              ? `Your leads have been emailed to ${deliveryEmail}. Check your inbox.`
+              : `Your ${pkg.leadCount} leads are ready. Contact support to receive your file.`,
+            metadata: { search_id: searchId, lead_count: pkg.leadCount, package_id: packageId },
+          });
+        } catch { /* never block */ }
+      }
+    } catch (pkgErr: unknown) {
+      const msg = pkgErr instanceof Error ? pkgErr.message : String(pkgErr);
+      console.error(`[process/search/${searchId}] delivery package failed (non-blocking):`, msg);
+    }
+  }
+
+  // ── 14. Return log ─────────────────────────────────────────────────────────────
 
   return NextResponse.json({
     success:            finalStatus === "completed",
@@ -583,6 +647,8 @@ export async function POST(
     duration_ms:        durationMs,
     final_status:       finalStatus,
     delivery_ready:     deliveryReady,
+    package_id:         packageId,
+    email_sent:         emailSent,
     source_breakdown:   orchestratorResult.sourceBreakdown,
   });
 }

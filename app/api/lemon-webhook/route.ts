@@ -243,23 +243,31 @@ export async function POST(req: NextRequest) {
             .maybeSingle();
 
           if (pendingSearch?.id) {
-            // Mark processing_trigger_source before delegating
-            await client
-              .from("lead_searches")
-              .update({ processing_trigger_source: "webhook" })
-              .eq("id", pendingSearch.id as string);
-
-            const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000").replace(/=+$/, "");
             const searchIdToProcess = pendingSearch.id as string;
 
-            // Non-blocking: webhook cannot wait for Apollo (30s timeout)
+            // Mark processing_ready = true BEFORE the fire-and-forget.
+            // This is the reliable state — even if the fetch below dies when
+            // Vercel freezes the function, POST /api/admin/process-ready will
+            // pick this search up on the next cron invocation.
+            await client
+              .from("lead_searches")
+              .update({
+                processing_trigger_source: "webhook",
+                processing_ready:          true,
+              })
+              .eq("id", searchIdToProcess);
+
+            const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000").replace(/=+$/, "");
+
+            // Attempt immediate processing. May be killed by Vercel after 200 response.
+            // Fallback: POST /api/admin/process-ready (wire to Vercel Cron if needed).
             void fetch(`${appUrl}/api/process/search/${searchIdToProcess}`, {
               method: "POST",
             }).catch((err: unknown) => {
-              console.error(`[lemon-webhook] processing trigger failed for search ${searchIdToProcess}:`, err instanceof Error ? err.message : err);
+              console.error(`[lemon-webhook] processing trigger failed (fallback via /admin/process-ready):`, err instanceof Error ? err.message : err);
             });
 
-            console.log(`[lemon-webhook] processing triggered for search ${searchIdToProcess}`);
+            console.log(`[lemon-webhook] processing triggered for search ${searchIdToProcess} (processing_ready=true as fallback)`);
           } else {
             console.log(`[lemon-webhook] no pending search found for user ${customerUserId} — processing not triggered`);
           }
