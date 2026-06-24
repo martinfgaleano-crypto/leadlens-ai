@@ -198,6 +198,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { href: "/admin/analytics",          label: "Analytics" },
     { href: "/admin/notifications",      label: "Notifications" },
     { href: "/admin/vault-performance",  label: "Vault Performance" },
+    { href: "/admin/vault-candidates",   label: "Vault Candidates" },
     { href: "/admin/sources",            label: "Sources" },
     { href: "/admin/source-config", label: "Source Config" },
     { href: "/admin/source-runs",   label: "Source Runs" },

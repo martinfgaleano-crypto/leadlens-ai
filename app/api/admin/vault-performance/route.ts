@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/require-admin";
+import { getCandidateStats } from "@/lib/vault-candidates/stats";
 
 async function db() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) return null;
@@ -84,6 +85,25 @@ export async function GET(req: NextRequest) {
     profiles: undefined,
   }));
 
+  // ── Candidate pipeline stats ─────────────────────────────────────────────────
+  let candidateStats = null;
+  try {
+    candidateStats = await getCandidateStats(client);
+  } catch {
+    // Table may not exist yet if migration 022 hasn't run
+  }
+
+  // ── Vault leads by source ─────────────────────────────────────────────────
+  const { data: sourceCounts } = await client
+    .from("vault_leads")
+    .select("source")
+    .not("source", "is", null);
+
+  const bySource: Record<string, number> = {};
+  for (const row of (sourceCounts ?? []) as { source: string }[]) {
+    bySource[row.source] = (bySource[row.source] ?? 0) + 1;
+  }
+
   return NextResponse.json({
     stats: {
       total_searches:     totalSearches,
@@ -92,6 +112,8 @@ export async function GET(req: NextRequest) {
       total_apollo_leads: totalApolloLeads,
       avg_hit_rate:       avgHitRate,
     },
+    candidates: candidateStats,
+    vault_leads_by_source: bySource,
     searches,
     total:    count ?? 0,
     page,
