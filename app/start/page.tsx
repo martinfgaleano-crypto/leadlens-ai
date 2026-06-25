@@ -1,6 +1,6 @@
 "use client";
-import { useState, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useRef, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const TOTAL_STEPS = 6;
 
@@ -171,9 +171,20 @@ function ReviewRow({ label, value }: { label: string; value: string }) {
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
+import { Suspense } from "react";
+
 export default function StartPage() {
-  const router  = useRouter();
-  const fileRef = useRef<HTMLInputElement>(null);
+  return (
+    <Suspense fallback={<div style={{ minHeight: "100vh", background: "#f1f5f9" }} />}>
+      <StartPageContent />
+    </Suspense>
+  );
+}
+
+function StartPageContent() {
+  const router       = useRouter();
+  const searchParams = useSearchParams();
+  const fileRef      = useRef<HTMLInputElement>(null);
 
   const [step, setStep]           = useState(1);
   const [form, setForm]           = useState<FormState>(INITIAL);
@@ -181,6 +192,19 @@ export default function StartPage() {
   const [submitting, setSub]      = useState(false);
   const [submitErr, setSubErr]    = useState("");
   const [uploading, setUploading] = useState(false);
+  const [offerBanner, setOfferBanner] = useState("");
+
+  useEffect(() => {
+    const planParam  = searchParams.get("plan");
+    const offerParam = searchParams.get("offer");
+    if (planParam && ["starter", "standard", "pro"].includes(planParam)) {
+      const found = PLANS.find(p => p.id === planParam);
+      if (found) setForm(f => ({ ...f, plan: found.id, lead_count: found.leads }));
+    }
+    if (offerParam === "trial-2-leads") {
+      setOfferBanner("You're on the introductory plan — 2 leads for $7. Place your order and our team will apply trial pricing.");
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function set<K extends keyof FormState>(field: K, value: FormState[K]) {
     setForm(f => ({ ...f, [field]: value }));
@@ -341,6 +365,11 @@ export default function StartPage() {
             {/* ── STEP 1: Plan ──────────────────────────────────────────── */}
             {step === 1 && (
               <div>
+                {offerBanner && (
+                  <div style={{ background: "linear-gradient(135deg,#fffbeb,#fef3c7)", border: "1.5px solid #fde68a", borderRadius: "0.75rem", padding: "0.875rem 1rem", marginBottom: "1.25rem", fontSize: "0.875rem", color: "#92400e", lineHeight: 1.55 }}>
+                    🎉 <strong>Special offer:</strong> {offerBanner}
+                  </div>
+                )}
                 <p style={S.stepIntro}>
                   Choose your first lead batch. This is a <strong>one-time purchase</strong> — no
                   subscription, no commitment. Start small, scale when you&apos;re ready.
