@@ -101,16 +101,17 @@ Return only valid JSON.`;
 Company: ${candidate.company}
 Industry: ${candidate.industry ?? "unknown"} | Size: ${candidate.company_size ?? "unknown"} | Location: ${candidate.location ?? "unknown"}
 Public source: ${candidate.source} | Confidence: ${Math.round(candidate.confidence_score * 100)}%
-Web context: ${webContext || "none available"}
+${candidate.raw_context ? `Raw context (public signals observed): ${candidate.raw_context}` : "Raw context: none"}
+Web context (live search): ${webContext || "none available"}
 
 Return JSON:
 {
   "company_summary": "2-3 sentences about this company — its market, scale, and what makes it commercially interesting",
   "role_relevance": "Why this account (not a person) is a relevant opportunity for the offer — segment fit, stage, likely priorities",
   "inferred_pain": "1 sentence on the most plausible company-level challenge or gap relevant to this offer",
-  "timing_signals": ["confirmed public signals only — hiring patterns, announcements, expansions, etc. Empty array if none confirmed"],
-  "evidence": ["what public signals or sources support this account's relevance"],
-  "missing_data": ["what we couldn't confirm from public record"],
+  "timing_signals": ["Extract specific buying signals from raw context (hiring, expansions, launches, partnerships). Use exact details from raw_context when available. Empty array only if truly no signals present."],
+  "evidence": ["what public signals or sources support this account's relevance — cite raw_context details specifically"],
+  "missing_data": ["what we couldn't confirm from public record beyond the provided context"],
   "research_confidence": 0.0
 }`;
 

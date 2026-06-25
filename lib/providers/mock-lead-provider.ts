@@ -1,679 +1,503 @@
 import type { LeadProvider } from "./lead-provider";
-import type { LeadCandidate, LeadSearchCriteria, EmailFindResult } from "@/types";
+import type { LeadCandidate, LeadSearchCriteria } from "@/types";
 
-// ─── Mock lead pool ───────────────────────────────────────────────────────────
-// 40 realistic B2B leads across industries, sizes, and decision-maker levels.
-// Used in DEMO_MODE to simulate what real providers would return.
+// ─── Account-level mock pool ──────────────────────────────────────────────────
+// 32 company/account records across 12 sectors.
+// No personal data: no names, titles, emails, or personal LinkedIn URLs.
+// Each account includes a raw_context with simulated public buying signals.
+// Used in DEMO_MODE and ALLOW_MOCK_LEADS_WITH_REAL_AI hybrid mode.
 
-const MOCK_POOL: Omit<LeadCandidate, "id">[] = [
-  {
-    name: "Sarah Chen", title: "VP of Sales", company: "Stackify SaaS",
-    domain: "stackify.io", website_url: "https://stackify.io",
-    linkedin_url: "linkedin.com/in/sarah-chen-stackify",
-    email: "schen@stackify.io", email_status: "verified",
-    location: "San Francisco, CA", industry: "B2B SaaS", company_size: "51-200",
-    source: "mock", source_url: "https://linkedin.com/company/stackify", confidence_score: 0.91,
-    raw_context: "Recently posted about hitting SDR capacity limits. Team of 3 AEs, no dedicated BDR.",
-  },
-  {
-    name: "Marcus Webb", title: "CEO", company: "Revvenue AI",
-    domain: "revvenue.ai", website_url: "https://revvenue.ai",
-    linkedin_url: "linkedin.com/in/marcus-webb",
-    email: "marcus@revvenue.ai", email_status: "verified",
-    location: "Austin, TX", industry: "B2B SaaS", company_size: "11-50",
-    source: "mock", source_url: "https://linkedin.com/company/revvenue-ai", confidence_score: 0.88,
-    raw_context: "Seed-funded AI startup. Marcus wears multiple hats including sales. No dedicated SDR.",
-  },
-  {
-    name: "Priya Nair", title: "Head of Growth", company: "Funnelwise",
-    domain: "funnelwise.com", website_url: "https://funnelwise.com",
-    linkedin_url: "linkedin.com/in/priya-nair-growth",
-    email: "priya@funnelwise.com", email_status: "verified",
-    location: "New York, NY", industry: "Marketing / Agency", company_size: "11-50",
-    source: "mock", source_url: "https://funnelwise.com/about", confidence_score: 0.85,
-    raw_context: "Agency that resells pipeline services. Looking to add B2B outbound for own clients.",
-  },
-  {
-    name: "James Okafor", title: "Founder", company: "Portsmith Consulting",
-    domain: "portsmithconsulting.com",
-    linkedin_url: "linkedin.com/in/james-okafor",
-    email: "james@portsmithconsulting.com", email_status: "unknown",
-    location: "Chicago, IL", industry: "Consulting", company_size: "1-10",
-    source: "mock", confidence_score: 0.79,
-    raw_context: "Solo founder doing B2B consulting. Actively looking to scale outbound.",
-  },
-  {
-    name: "Elena Vasquez", title: "VP Revenue", company: "CloudMorph",
-    domain: "cloudmorph.io", website_url: "https://cloudmorph.io",
-    linkedin_url: "linkedin.com/in/elena-vasquez-cloudmorph",
-    email: "evasquez@cloudmorph.io", email_status: "verified",
-    location: "Denver, CO", industry: "B2B SaaS", company_size: "51-200",
-    source: "mock", source_url: "https://cloudmorph.io/team", confidence_score: 0.93,
-    raw_context: "Series A. New VP Revenue hired 3 months ago. Building outbound motion from scratch.",
-  },
-  {
-    name: "Tom Brandt", title: "CEO", company: "Nexbridge Partners",
-    domain: "nexbridge.com",
-    linkedin_url: "linkedin.com/in/tom-brandt-nexbridge",
-    email: "tbrandt@nexbridge.com", email_status: "verified",
-    location: "Boston, MA", industry: "Consulting", company_size: "11-50",
-    source: "mock", confidence_score: 0.82,
-    raw_context: "B2B consulting firm. 12-person team. Tom handles BD personally, wants to delegate.",
-  },
-  {
-    name: "Aisha Kamara", title: "Head of Sales", company: "Launchpad CRM",
-    domain: "launchpadcrm.com", website_url: "https://launchpadcrm.com",
-    linkedin_url: "linkedin.com/in/aisha-kamara",
-    email: "akamara@launchpadcrm.com", email_status: "verified",
-    location: "Seattle, WA", industry: "B2B SaaS", company_size: "51-200",
-    source: "mock", source_url: "https://linkedin.com/company/launchpadcrm", confidence_score: 0.87,
-    raw_context: "CRM startup competing with HubSpot in the SMB space. Growing 3x YoY.",
-  },
-  {
-    name: "Daniel Park", title: "Co-founder & CTO", company: "DataSync Labs",
-    domain: "datasync.io", website_url: "https://datasync.io",
-    linkedin_url: "linkedin.com/in/daniel-park-datasync",
-    email: "dpark@datasync.io", email_status: "unknown",
-    location: "San Jose, CA", industry: "B2B SaaS", company_size: "11-50",
-    source: "mock", confidence_score: 0.72,
-    raw_context: "Technical co-founder. They raised a seed round and need to build sales. CTO-led sales.",
-  },
-  {
-    name: "Rachel Torres", title: "Director of BD", company: "Meridian Advisors",
-    domain: "meridianadvisors.com",
-    linkedin_url: "linkedin.com/in/rachel-torres-meridian",
-    email: "rtorres@meridianadvisors.com", email_status: "verified",
-    location: "Miami, FL", industry: "Consulting", company_size: "11-50",
-    source: "mock", confidence_score: 0.83,
-    raw_context: "Management consulting firm. Rachel owns BD. They're piloting outbound for first time.",
-  },
-  {
-    name: "Liam Murphy", title: "CEO", company: "Qualiflow",
-    domain: "qualiflow.app", website_url: "https://qualiflow.app",
-    linkedin_url: "linkedin.com/in/liam-murphy-qualiflow",
-    email: "liam@qualiflow.app", email_status: "verified",
-    location: "Toronto, ON", industry: "B2B SaaS", company_size: "11-50",
-    source: "mock", source_url: "https://qualiflow.app/blog", confidence_score: 0.86,
-    raw_context: "B2B SaaS for ops teams. Liam closes all deals himself. Looking to hire first SDR.",
-  },
-  {
-    name: "Nina Johansson", title: "CMO", company: "Brightloop Digital",
-    domain: "brightloop.io",
-    linkedin_url: "linkedin.com/in/nina-johansson-brightloop",
-    email: "nina@brightloop.io", email_status: "verified",
-    location: "London, UK", industry: "Marketing / Agency", company_size: "11-50",
-    source: "mock", confidence_score: 0.80,
-    raw_context: "Digital agency. Nina is CMO but also runs BD for the agency itself.",
-  },
-  {
-    name: "Carlos Mendez", title: "VP Sales", company: "Pulseway SaaS",
-    domain: "pulseway.io",
-    linkedin_url: "linkedin.com/in/carlos-mendez-pulseway",
-    email: "cmendez@pulseway.io", email_status: "not_found",
-    location: "Austin, TX", industry: "B2B SaaS", company_size: "201-500",
-    source: "mock", confidence_score: 0.65,
-    raw_context: "Enterprise SaaS. Carlos recently posted about pipeline forecasting challenges.",
-  },
-  {
-    name: "Fatima Al-Hassan", title: "Founder & CEO", company: "GrowthCraft",
-    domain: "growthcraft.co", website_url: "https://growthcraft.co",
-    linkedin_url: "linkedin.com/in/fatima-alhassan",
-    email: "fatima@growthcraft.co", email_status: "verified",
-    location: "Dubai, UAE", industry: "Marketing / Agency", company_size: "1-10",
-    source: "mock", confidence_score: 0.77,
-    raw_context: "Solo agency founder. Sells B2B growth services. Wants outbound for her own biz.",
-  },
-  {
-    name: "Ben Hartley", title: "Head of Revenue", company: "Veridian Logistics Tech",
-    domain: "veridianlt.com",
-    linkedin_url: "linkedin.com/in/ben-hartley-veridian",
-    email: "bhartley@veridianlt.com", email_status: "verified",
-    location: "Chicago, IL", industry: "Logistics", company_size: "51-200",
-    source: "mock", confidence_score: 0.76,
-    raw_context: "Logistics SaaS. Ben closed last 5 deals himself. Wants to systemize sales.",
-  },
-  {
-    name: "Ingrid Svensson", title: "CEO", company: "NorthEdge Advisory",
-    domain: "northedge.se",
-    linkedin_url: "linkedin.com/in/ingrid-svensson-northedge",
-    email: "ingrid@northedge.se", email_status: "unknown",
-    location: "Stockholm, Sweden", industry: "Consulting", company_size: "1-10",
-    source: "mock", confidence_score: 0.60,
-    raw_context: "Nordic B2B consultancy. Small team. Limited outbound motion so far.",
-  },
-  {
-    name: "Omar Shaikh", title: "VP Growth", company: "Sentio Health",
-    domain: "sentiohealth.com",
-    linkedin_url: "linkedin.com/in/omar-shaikh-sentio",
-    email: "oshaikh@sentiohealth.com", email_status: "verified",
-    location: "San Francisco, CA", industry: "HealthTech", company_size: "51-200",
-    source: "mock", confidence_score: 0.81,
-    raw_context: "Health SaaS. Series B. Omar leads growth with 2 AEs but no BDR/SDR support.",
-  },
-  {
-    name: "Claire Dupont", title: "Director of Sales", company: "Agility Suite",
-    domain: "agilitysuite.com",
-    linkedin_url: "linkedin.com/in/claire-dupont-agility",
-    email: "cdupont@agilitysuite.com", email_status: "verified",
-    location: "Paris, France", industry: "B2B SaaS", company_size: "51-200",
-    source: "mock", confidence_score: 0.83,
-    raw_context: "Project management SaaS. Claire joined 6 months ago. Rethinking outbound strategy.",
-  },
-  {
-    name: "Jake Williams", title: "Founder", company: "Clearline Finance",
-    domain: "clearlinefinance.com",
-    linkedin_url: "linkedin.com/in/jake-williams-clearline",
-    email: "jake@clearlinefinance.com", email_status: "unknown",
-    location: "New York, NY", industry: "FinTech", company_size: "11-50",
-    source: "mock", confidence_score: 0.68,
-    raw_context: "FinTech startup. Jake is the only salesperson. No structured outbound yet.",
-  },
-  {
-    name: "Maya Russo", title: "COO", company: "BrandWave Agency",
-    domain: "brandwave.agency",
-    email: "mrusso@brandwave.agency", email_status: "invalid",
-    location: "Los Angeles, CA", industry: "Marketing / Agency", company_size: "11-50",
-    source: "mock", confidence_score: 0.45,
-    raw_context: "Marketing agency. COO not typically a sales buyer. Email bounced.",
-  },
-  {
-    name: "Theo Jensen", title: "Procurement Manager", company: "Stellarco Manufacturing",
-    domain: "stellarco.com",
-    email: "tjensen@stellarco.com", email_status: "verified",
-    location: "Detroit, MI", industry: "Manufacturing", company_size: "501-1000",
-    source: "mock", confidence_score: 0.30,
-    raw_context: "Large manufacturer. Procurement role unlikely to buy SDR services.",
-  },
-  {
-    name: "Rosa Kim", title: "VP Marketing", company: "Optico SaaS",
-    domain: "opticosaas.com", website_url: "https://opticosaas.com",
-    linkedin_url: "linkedin.com/in/rosa-kim-optico",
-    email: "rkim@opticosaas.com", email_status: "verified",
-    location: "Seattle, WA", industry: "B2B SaaS", company_size: "51-200",
-    source: "mock", confidence_score: 0.74,
-    raw_context: "Rosa owns pipeline for marketing channel. Shared responsibility with sales.",
-  },
-  {
-    name: "Alex Fontaine", title: "CEO", company: "Brightpath Consulting",
-    domain: "brightpath.co",
-    linkedin_url: "linkedin.com/in/alex-fontaine-brightpath",
-    email: "alex@brightpath.co", email_status: "verified",
-    location: "Vancouver, BC", industry: "Consulting", company_size: "11-50",
-    source: "mock", confidence_score: 0.84,
-    raw_context: "B2B strategy consulting. 14-person team. Alex runs all client acquisition himself.",
-  },
-  {
-    name: "Simone Bauer", title: "Head of Business Development", company: "FinLoop",
-    domain: "finloop.io",
-    linkedin_url: "linkedin.com/in/simone-bauer-finloop",
-    email: "sbauer@finloop.io", email_status: "verified",
-    location: "Berlin, Germany", industry: "FinTech", company_size: "51-200",
-    source: "mock", confidence_score: 0.79,
-    raw_context: "FinTech SaaS for SMBs. Series A. BD head building first structured pipeline.",
-  },
-  {
-    name: "Patrick O'Brien", title: "Founder & CEO", company: "Stealth Ventures",
-    domain: "stealthventures.io",
-    email: undefined, email_status: "not_found",
-    location: "Dublin, Ireland", industry: "Consulting", company_size: "1-10",
-    source: "mock", confidence_score: 0.50,
-    raw_context: "Founder-led consultancy. No public email. LinkedIn only.",
-  },
-  {
-    name: "Yu Zhang", title: "VP Sales", company: "Cloudpeak Analytics",
-    domain: "cloudpeak.ai", website_url: "https://cloudpeak.ai",
-    linkedin_url: "linkedin.com/in/yu-zhang-cloudpeak",
-    email: "yzhang@cloudpeak.ai", email_status: "verified",
-    location: "San Francisco, CA", industry: "B2B SaaS", company_size: "51-200",
-    source: "mock", source_url: "https://cloudpeak.ai/team", confidence_score: 0.89,
-    raw_context: "Analytics SaaS. Yu inherited a team of 4 AEs. Wants to add outbound BDRs.",
-  },
-  {
-    name: "Diana Osei", title: "CEO", company: "Elevate HR Tech",
-    domain: "elevatehr.com",
-    linkedin_url: "linkedin.com/in/diana-osei-elevate",
-    email: "diana@elevatehr.com", email_status: "verified",
-    location: "Atlanta, GA", industry: "B2B SaaS", company_size: "11-50",
-    source: "mock", confidence_score: 0.85,
-    raw_context: "HR tech startup. Diana is closing deals manually. Needs a scalable pipeline.",
-  },
-  {
-    name: "Felix Kern", title: "CRO", company: "Monoloop B2B",
-    domain: "monoloop.com",
-    linkedin_url: "linkedin.com/in/felix-kern-monoloop",
-    email: "fkern@monoloop.com", email_status: "verified",
-    location: "Munich, Germany", industry: "B2B SaaS", company_size: "201-500",
-    source: "mock", confidence_score: 0.78,
-    raw_context: "B2B SaaS. Felix is new CRO (6 months). Building outbound function from scratch.",
-  },
-  {
-    name: "Nadia Popov", title: "Founder", company: "GridLock Cyber",
-    domain: "gridlockcyber.com",
-    email: "nadia@gridlockcyber.com", email_status: "unknown",
-    location: "Tel Aviv, Israel", industry: "B2B SaaS", company_size: "11-50",
-    source: "mock", confidence_score: 0.67,
-    raw_context: "Cybersecurity SaaS. Founder-led sales. Nadia does all outreach herself.",
-  },
-  {
-    name: "Ryan Cho", title: "Sales Director", company: "Parallax Media",
-    domain: "parallaxmedia.com",
-    email: "rcho@parallaxmedia.com", email_status: "not_found",
-    location: "Los Angeles, CA", industry: "Marketing / Agency", company_size: "51-200",
-    source: "mock", confidence_score: 0.55,
-    raw_context: "Media agency. Director-level, not VP or founder. Mid-level buyer at best.",
-  },
-  {
-    name: "Olivia Grant", title: "CEO", company: "PivotLayer",
-    domain: "pivotlayer.io", website_url: "https://pivotlayer.io",
-    linkedin_url: "linkedin.com/in/olivia-grant-pivot",
-    email: "olivia@pivotlayer.io", email_status: "verified",
-    location: "Austin, TX", industry: "B2B SaaS", company_size: "11-50",
-    source: "mock", source_url: "https://pivotlayer.io/about", confidence_score: 0.90,
-    raw_context: "SaaS startup for operations teams. Olivia is pre-revenue on outbound. Seed-funded.",
-  },
-  {
-    name: "Hugo Laurent", title: "Managing Director", company: "Arco Strategy Group",
-    domain: "arcostrategy.fr",
-    linkedin_url: "linkedin.com/in/hugo-laurent-arco",
-    email: "hugo.laurent@arcostrategy.fr", email_status: "verified",
-    location: "Lyon, France", industry: "Consulting", company_size: "11-50",
-    source: "mock", confidence_score: 0.81,
-    raw_context: "Management consulting. Hugo manages 10 consultants. Personally handles all new client acquisition.",
-  },
-  {
-    name: "Tara Benson", title: "COO", company: "Axiom Fintech",
-    domain: "axiomfintech.com",
-    email: "tbenson@axiomfintech.com", email_status: "unknown",
-    location: "New York, NY", industry: "FinTech", company_size: "51-200",
-    source: "mock", confidence_score: 0.61,
-    raw_context: "COO at FinTech startup. Not a direct sales buyer — may redirect to CRO or CEO.",
-  },
-  {
-    name: "Ivan Petrov", title: "CEO", company: "DevBoost Labs",
-    domain: "devboost.io",
-    linkedin_url: "linkedin.com/in/ivan-petrov-devboost",
-    email: "ivan@devboost.io", email_status: "verified",
-    location: "Kyiv, Ukraine", industry: "B2B SaaS", company_size: "11-50",
-    source: "mock", confidence_score: 0.75,
-    raw_context: "Dev tooling SaaS. Ivan is CEO and AE. Wants to build a predictable sales machine.",
-  },
-  {
-    name: "Mei Lin", title: "VP of Revenue", company: "Synapse AI",
-    domain: "synapseai.com", website_url: "https://synapseai.com",
-    linkedin_url: "linkedin.com/in/mei-lin-synapse",
-    email: "mlin@synapseai.com", email_status: "verified",
-    location: "San Francisco, CA", industry: "B2B SaaS", company_size: "51-200",
-    source: "mock", source_url: "https://synapseai.com/team", confidence_score: 0.92,
-    raw_context: "AI SaaS. Series B. Mei joined as VP Revenue to build outbound from scratch.",
-  },
-  {
-    name: "Samuel Obi", title: "Founder", company: "Traction Consulting",
-    domain: "tractionco.ng",
-    email: "samuel@tractionco.ng", email_status: "unknown",
-    location: "Lagos, Nigeria", industry: "Consulting", company_size: "1-10",
-    source: "mock", confidence_score: 0.58,
-    raw_context: "B2B consultant in emerging market. Small operation, niche geography.",
-  },
-  {
-    name: "Chloe Martin", title: "Head of Sales", company: "Luminary SaaS",
-    domain: "luminarysaas.com", website_url: "https://luminarysaas.com",
-    linkedin_url: "linkedin.com/in/chloe-martin-luminary",
-    email: "cmartin@luminarysaas.com", email_status: "verified",
-    location: "Toronto, ON", industry: "B2B SaaS", company_size: "51-200",
-    source: "mock", confidence_score: 0.86,
-    raw_context: "Enterprise SaaS. Chloe manages 3 AEs. No BDR/SDR layer — feeling the pipeline gap.",
-  },
-  {
-    name: "Roberto Marin", title: "CEO", company: "Optor Agency",
-    domain: "optoragency.com",
-    email: "roberto@optoragency.com", email_status: "verified",
-    location: "Buenos Aires, Argentina", industry: "Marketing / Agency", company_size: "11-50",
-    source: "mock", confidence_score: 0.70,
-    raw_context: "B2B marketing agency in LATAM. Roberto wants to expand into US market.",
-  },
-  {
-    name: "Hannah Yip", title: "Co-founder & CEO", company: "Bridgepoint SaaS",
-    domain: "bridgepointsaas.com", website_url: "https://bridgepointsaas.com",
-    linkedin_url: "linkedin.com/in/hannah-yip-bridgepoint",
-    email: "hannah@bridgepointsaas.com", email_status: "verified",
-    location: "New York, NY", industry: "B2B SaaS", company_size: "11-50",
-    source: "mock", source_url: "https://bridgepointsaas.com/about", confidence_score: 0.88,
-    raw_context: "Pre-Series A SaaS. Hannah and co-founder both selling. Want to hand off outbound.",
-  },
-  {
-    name: "Mark Andersen", title: "Chief Revenue Officer", company: "Flux Commerce",
-    domain: "fluxcommerce.com",
-    linkedin_url: "linkedin.com/in/mark-andersen-flux",
-    email: "mandersen@fluxcommerce.com", email_status: "verified",
-    location: "Minneapolis, MN", industry: "E-commerce", company_size: "51-200",
-    source: "mock", confidence_score: 0.74,
-    raw_context: "B2B E-commerce platform. Mark is new CRO (2 months). Building first outbound team.",
-  },
-  {
-    name: "Leila Ahmadi", title: "Founder", company: "IranianTech Exports",
-    domain: "iraniantechexports.com",
-    email: undefined, email_status: "not_found",
-    location: "Tehran, Iran", industry: "B2B SaaS", company_size: "1-10",
-    source: "mock", confidence_score: 0.20,
-    raw_context: "Strong sanctions compliance risk. Do not contact.",
-  },
-  // ─── Additional high-quality leads for Standard/Pro plans ─────────────────
-  {
-    name: "Jason Kim", title: "VP of Sales", company: "SkyBridge SaaS",
-    domain: "skybridgesaas.com", website_url: "https://skybridgesaas.com",
-    linkedin_url: "linkedin.com/in/jason-kim-skybridge",
-    email: "jkim@skybridgesaas.com", email_status: "verified",
-    location: "San Francisco, CA", industry: "B2B SaaS", company_size: "51-200",
-    source: "mock", source_url: "https://linkedin.com/company/skybridgesaas", confidence_score: 0.90,
-    raw_context: "VP Sales hired 4 months ago to rebuild outbound motion. Team of 2 AEs, no BDR layer yet.",
-  },
-  {
-    name: "Maria Santos", title: "Founder & CEO", company: "Flowpath Agency",
-    domain: "flowpathagency.com", website_url: "https://flowpathagency.com",
-    linkedin_url: "linkedin.com/in/maria-santos-flowpath",
-    email: "maria@flowpathagency.com", email_status: "verified",
-    location: "Miami, FL", industry: "Marketing / Agency", company_size: "11-50",
-    source: "mock", source_url: "https://flowpathagency.com/about", confidence_score: 0.87,
-    raw_context: "Agency founder doing outbound for her own firm. Posted about needing a more systematic approach to new client acquisition.",
-  },
-  {
-    name: "Thomas Wright", title: "CRO", company: "Nexgen SaaS",
-    domain: "nexgensaas.com", website_url: "https://nexgensaas.com",
-    linkedin_url: "linkedin.com/in/thomas-wright-nexgen",
-    email: "twright@nexgensaas.com", email_status: "verified",
-    location: "Austin, TX", industry: "B2B SaaS", company_size: "51-200",
-    source: "mock", source_url: "https://nexgensaas.com/team", confidence_score: 0.89,
-    raw_context: "New CRO (3 months). Building first structured outbound function. Company is Series A, 45-person team.",
-  },
-  {
-    name: "Amara Okonkwo", title: "Head of Growth", company: "Productify",
-    domain: "productify.io", website_url: "https://productify.io",
-    linkedin_url: "linkedin.com/in/amara-okonkwo-productify",
-    email: "amara@productify.io", email_status: "verified",
-    location: "London, UK", industry: "B2B SaaS", company_size: "11-50",
-    source: "mock", source_url: "https://productify.io/blog", confidence_score: 0.86,
-    raw_context: "Head of Growth at seed-stage SaaS. Currently running outbound manually with no dedicated tooling.",
-  },
-  {
-    name: "David Chen", title: "CEO", company: "Automata Labs",
-    domain: "automatalabs.io", website_url: "https://automatalabs.io",
-    linkedin_url: "linkedin.com/in/david-chen-automata",
-    email: "david@automatalabs.io", email_status: "verified",
-    location: "Seattle, WA", industry: "B2B SaaS", company_size: "11-50",
-    source: "mock", source_url: "https://automatalabs.io/about", confidence_score: 0.91,
-    raw_context: "CEO closing all deals himself. Just raised pre-Series A. Ready to delegate outbound to free up time for enterprise deals.",
-  },
-  // ─── Extended pool for Standard/Pro plan coverage ─────────────────────────
-  // HOT-eligible (strong role + B2B SaaS/agency + verified email)
-  {
-    name: "Sofia Reyes", title: "VP of Sales", company: "Vantage CRM",
-    domain: "vantagecrm.io", website_url: "https://vantagecrm.io",
-    linkedin_url: "linkedin.com/in/sofia-reyes-vantage",
-    email: "sreyes@vantagecrm.io", email_status: "verified",
-    location: "Dallas, TX", industry: "B2B SaaS", company_size: "51-200",
-    source: "mock", source_url: "https://vantagecrm.io/team", confidence_score: 0.88,
-    raw_context: "Recently posted job listing for BDR. Current team has no dedicated outbound role.",
-  },
-  {
-    name: "Ethan Blake", title: "Founder & CEO", company: "Deckly",
-    domain: "deckly.io", website_url: "https://deckly.io",
-    linkedin_url: "linkedin.com/in/ethan-blake-deckly",
-    email: "ethan@deckly.io", email_status: "verified",
-    location: "Austin, TX", industry: "B2B SaaS", company_size: "11-50",
-    source: "mock", source_url: "https://deckly.io/about", confidence_score: 0.91,
-    raw_context: "Just closed seed round. Wants to build pipeline systematically before hiring first AE.",
-  },
-  {
-    name: "Preet Sharma", title: "CRO", company: "Stackline Analytics",
-    domain: "stacklineanalytics.com", website_url: "https://stacklineanalytics.com",
-    linkedin_url: "linkedin.com/in/preet-sharma-stackline",
-    email: "psharma@stacklineanalytics.com", email_status: "verified",
-    location: "Chicago, IL", industry: "B2B SaaS", company_size: "51-200",
-    source: "mock", source_url: "https://stacklineanalytics.com/leadership", confidence_score: 0.89,
-    raw_context: "New CRO building outbound function. Currently 4 AEs with no BDR layer. Wants pipeline before Q4.",
-  },
-  {
-    name: "Keara Flynn", title: "Head of Sales", company: "Workloop",
-    domain: "workloop.co", website_url: "https://workloop.co",
-    linkedin_url: "linkedin.com/in/keara-flynn-workloop",
-    email: "kflynn@workloop.co", email_status: "verified",
-    location: "New York, NY", industry: "B2B SaaS", company_size: "11-50",
-    source: "mock", source_url: "https://workloop.co/about", confidence_score: 0.87,
-    raw_context: "Recently joined as first Head of Sales. No formal BDR motion exists yet. Building from scratch.",
-  },
-  {
-    name: "Luca Ferraro", title: "Founder & CEO", company: "Brandkit Agency",
-    domain: "brandkitagency.com", website_url: "https://brandkitagency.com",
-    linkedin_url: "linkedin.com/in/luca-ferraro-brandkit",
-    email: "luca@brandkitagency.com", email_status: "verified",
-    location: "Los Angeles, CA", industry: "Marketing / Agency", company_size: "11-50",
-    source: "mock", source_url: "https://brandkitagency.com/team", confidence_score: 0.86,
-    raw_context: "Agency founder. Looking to systematize outbound for his own book of business rather than relying on referrals.",
-  },
-  {
-    name: "Anisha Patel", title: "VP Revenue", company: "Loopback SaaS",
-    domain: "loopbacksaas.com", website_url: "https://loopbacksaas.com",
-    linkedin_url: "linkedin.com/in/anisha-patel-loopback",
-    email: "apatel@loopbacksaas.com", email_status: "verified",
-    location: "San Jose, CA", industry: "B2B SaaS", company_size: "51-200",
-    source: "mock", source_url: "https://loopbacksaas.com/team", confidence_score: 0.90,
-    raw_context: "Series B. VP Revenue joined 2 months ago to rebuild sales motion from scratch. No structured outbound currently.",
-  },
-  {
-    name: "Jordan Lee", title: "Co-founder", company: "Gridpoint Software",
-    domain: "gridpointsoftware.com", website_url: "https://gridpointsoftware.com",
-    linkedin_url: "linkedin.com/in/jordan-lee-gridpoint",
-    email: "jordan@gridpointsoftware.com", email_status: "verified",
-    location: "Seattle, WA", industry: "B2B SaaS", company_size: "11-50",
-    source: "mock", source_url: "https://gridpointsoftware.com/about", confidence_score: 0.88,
-    raw_context: "Technical co-founder who handles all sales. Recently started thinking about delegating outbound to free up engineering time.",
-  },
-  {
-    name: "Marcus Bell", title: "CEO", company: "Pathfinder Tools",
-    domain: "pathfindertools.io", website_url: "https://pathfindertools.io",
-    linkedin_url: "linkedin.com/in/marcus-bell-pathfinder",
-    email: "marcus@pathfindertools.io", email_status: "verified",
-    location: "Denver, CO", industry: "B2B SaaS", company_size: "11-50",
-    source: "mock", source_url: "https://pathfindertools.io/about", confidence_score: 0.87,
-    raw_context: "Bootstrapped SaaS. CEO personally closing every deal. Ready to systematize outbound and hand off prospecting.",
-  },
-  {
-    name: "Vanessa Ortega", title: "VP of Sales", company: "Clearview SaaS",
-    domain: "clearviewsaas.com",
-    linkedin_url: "linkedin.com/in/vanessa-ortega-clearview",
-    email: "vortega@clearviewsaas.com", email_status: "verified",
-    location: "Miami, FL", industry: "B2B SaaS", company_size: "51-200",
-    source: "mock", confidence_score: 0.85,
-    raw_context: "Recently promoted to VP Sales. First priority is building a repeatable outbound process.",
-  },
-  {
-    name: "Ryan Foster", title: "Head of Growth", company: "Launchcraft",
-    domain: "launchcraft.io", website_url: "https://launchcraft.io",
-    linkedin_url: "linkedin.com/in/ryan-foster-launchcraft",
-    email: "ryan@launchcraft.io", email_status: "verified",
-    location: "Boston, MA", industry: "B2B SaaS", company_size: "11-50",
-    source: "mock", source_url: "https://launchcraft.io/team", confidence_score: 0.86,
-    raw_context: "Series A SaaS. Head of Growth owns full funnel including outbound. Experimenting with AI-assisted lead research.",
-  },
-  // WARM-eligible (good role/industry, minor gaps in signal or reachability)
-  {
-    name: "Isabelle Dumont", title: "Sales Director", company: "Meridian Partners",
-    domain: "meridianpartners.fr",
-    linkedin_url: "linkedin.com/in/isabelle-dumont-meridian",
-    email: "idumont@meridianpartners.fr", email_status: "verified",
-    location: "Paris, France", industry: "Consulting", company_size: "11-50",
-    source: "mock", confidence_score: 0.82,
-    raw_context: "Director leading BD for consulting firm. First structured attempt at outbound.",
-  },
-  {
-    name: "Paul Watkins", title: "Revenue Operations Lead", company: "Operify",
-    domain: "operify.com",
-    linkedin_url: "linkedin.com/in/paul-watkins-operify",
-    email: "paul@operify.com", email_status: "unknown",
-    location: "Nashville, TN", industry: "B2B SaaS", company_size: "11-50",
-    source: "mock", confidence_score: 0.80,
-    raw_context: "RevOps lead building outbound infrastructure. Evaluating tools for lead research and sequence automation.",
-  },
-  {
-    name: "Anika Fischer", title: "Growth Lead", company: "Keystone Agency",
-    domain: "keystoneagency.de",
-    linkedin_url: "linkedin.com/in/anika-fischer-keystone",
-    email: "anika@keystoneagency.de", email_status: "verified",
-    location: "Berlin, Germany", industry: "Marketing / Agency", company_size: "11-50",
-    source: "mock", confidence_score: 0.79,
-    raw_context: "Growth lead at a B2B marketing agency. Runs outbound for agency's own client acquisition.",
-  },
-  {
-    name: "Derek Moss", title: "VP Sales", company: "Tandem Consulting",
-    domain: "tandemconsulting.com",
-    linkedin_url: "linkedin.com/in/derek-moss-tandem",
-    email: "dmoss@tandemconsulting.com", email_status: "verified",
-    location: "Atlanta, GA", industry: "Consulting", company_size: "51-200",
-    source: "mock", confidence_score: 0.81,
-    raw_context: "VP Sales at professional services firm. Building first structured outbound motion for the firm.",
-  },
-  {
-    name: "Sophie Laurent", title: "Partnerships Lead", company: "Nexflow SaaS",
-    domain: "nexflowsaas.com",
-    linkedin_url: "linkedin.com/in/sophie-laurent-nexflow",
-    email: "slaurent@nexflowsaas.com", email_status: "verified",
-    location: "Toronto, ON", industry: "B2B SaaS", company_size: "51-200",
-    source: "mock", confidence_score: 0.76,
-    raw_context: "Partnerships lead running outbound for strategic accounts. Looking to improve lead quality.",
-  },
-  {
-    name: "Nathan Cruz", title: "Demand Gen Lead", company: "PipelineOS",
-    domain: "pipelineos.io",
-    linkedin_url: "linkedin.com/in/nathan-cruz-pipelineos",
-    email: "ncruz@pipelineos.io", email_status: "verified",
-    location: "San Diego, CA", industry: "B2B SaaS", company_size: "51-200",
-    source: "mock", confidence_score: 0.77,
-    raw_context: "Demand gen lead evaluating outbound to supplement paid acquisition. Testing new channels for H2.",
-  },
-  {
-    name: "Tina Marchetti", title: "Founder", company: "Craftline Agency",
-    domain: "craftlineagency.com",
-    linkedin_url: "linkedin.com/in/tina-marchetti-craftline",
-    email: "tina@craftlineagency.com", email_status: "verified",
-    location: "Chicago, IL", industry: "Marketing / Agency", company_size: "1-10",
-    source: "mock", confidence_score: 0.83,
-    raw_context: "Solo agency founder. Wants help scaling new client acquisition beyond warm referrals.",
-  },
-  {
-    name: "Kevin Park", title: "Director of Business Development", company: "Runway SaaS",
-    domain: "runwaysaas.com",
-    linkedin_url: "linkedin.com/in/kevin-park-runway",
-    email: "kpark@runwaysaas.com", email_status: "unknown",
-    location: "San Francisco, CA", industry: "B2B SaaS", company_size: "51-200",
-    source: "mock", confidence_score: 0.79,
-    raw_context: "BD Director expanding into new verticals. Needs better lead lists and personalized first-touch messaging.",
-  },
-  {
-    name: "Lena Wolf", title: "Head of Business Development", company: "Kapital FinTech",
-    domain: "kapitalfintech.com",
-    linkedin_url: "linkedin.com/in/lena-wolf-kapital",
-    email: "lwolf@kapitalfintech.com", email_status: "verified",
-    location: "Zurich, Switzerland", industry: "FinTech", company_size: "11-50",
-    source: "mock", confidence_score: 0.75,
-    raw_context: "Head of BD at FinTech Series A startup. Running outbound manually, wants to scale without adding headcount.",
-  },
-  {
-    name: "Oliver Nash", title: "VP Business Development", company: "Corelink SaaS",
-    domain: "corelinksaas.com",
-    linkedin_url: "linkedin.com/in/oliver-nash-corelink",
-    email: "onash@corelinksaas.com", email_status: "verified",
-    location: "London, UK", industry: "B2B SaaS", company_size: "51-200",
-    source: "mock", confidence_score: 0.78,
-    raw_context: "VP BD running outbound for enterprise accounts. Wants to improve lead research quality and personalization.",
-  },
-  {
-    name: "Camille Beaumont", title: "CMO", company: "Zephyr SaaS",
-    domain: "zephyrsaas.com",
-    linkedin_url: "linkedin.com/in/camille-beaumont-zephyr",
-    email: "cbeaumont@zephyrsaas.com", email_status: "verified",
-    location: "Montreal, QC", industry: "B2B SaaS", company_size: "51-200",
-    source: "mock", confidence_score: 0.74,
-    raw_context: "CMO owns pipeline at small SaaS company. Wants to add outbound layer on top of existing inbound.",
-  },
-  {
-    name: "Darius Cole", title: "Founder", company: "Apex Digital Agency",
-    domain: "apexdigitalagency.com",
-    linkedin_url: "linkedin.com/in/darius-cole-apex",
-    email: "darius@apexdigitalagency.com", email_status: "unknown",
-    location: "Houston, TX", industry: "Marketing / Agency", company_size: "11-50",
-    source: "mock", confidence_score: 0.76,
-    raw_context: "Agency founder. Wants to add B2B outbound for their own firm alongside client work.",
-  },
-  {
-    name: "Anya Petrova", title: "Sales Director", company: "Medi-Insight",
-    domain: "medi-insight.com",
-    linkedin_url: "linkedin.com/in/anya-petrova-mediinsight",
-    email: "apetrova@medi-insight.com", email_status: "verified",
-    location: "Stockholm, Sweden", industry: "HealthTech", company_size: "51-200",
-    source: "mock", confidence_score: 0.72,
-    raw_context: "Sales Director at HealthTech startup. Expanding beyond inbound-led motion for the first time.",
-  },
-  {
-    name: "Brett Lawson", title: "Head of Growth", company: "Forgepoint",
-    domain: "forgepointsaas.com",
-    linkedin_url: "linkedin.com/in/brett-lawson-forgepoint",
-    email: "blawson@forgepointsaas.com", email_status: "verified",
-    location: "Portland, OR", industry: "B2B SaaS", company_size: "11-50",
-    source: "mock", confidence_score: 0.80,
-    raw_context: "Head of Growth at bootstrapped SaaS. Evaluating LeadLens vs. building an internal outbound process.",
-  },
-  {
-    name: "Miriam Goldstein", title: "CEO", company: "Bloom Consulting Group",
-    domain: "bloomconsulting.com",
-    linkedin_url: "linkedin.com/in/miriam-goldstein-bloom",
-    email: "miriam@bloomconsulting.com", email_status: "verified",
-    location: "New York, NY", industry: "Consulting", company_size: "11-50",
-    source: "mock", confidence_score: 0.82,
-    raw_context: "CEO of consulting group. Wants to reduce dependence on referrals and add structured new business outreach.",
-  },
-  // COLD-eligible (role or industry mismatch, missing signals, or weaker fit)
-  {
-    name: "Trevor Mills", title: "Product Manager", company: "CloudBase SaaS",
-    domain: "cloudbasesaas.com",
-    email: "tmills@cloudbasesaas.com", email_status: "not_found",
-    location: "San Francisco, CA", industry: "B2B SaaS", company_size: "51-200",
-    source: "mock", confidence_score: 0.55,
-    raw_context: "PM at SaaS. Not a direct buyer but close to the sales leadership team.",
-  },
-  {
-    name: "Alexis Nguyen", title: "VP Engineering", company: "Buildflow",
-    domain: "buildflow.io",
-    email: "anguyen@buildflow.io", email_status: "verified",
-    location: "Austin, TX", industry: "B2B SaaS", company_size: "51-200",
-    source: "mock", confidence_score: 0.58,
-    raw_context: "Engineering VP at B2B SaaS. Technical role — unlikely to be primary buyer for outbound services.",
-  },
-  {
-    name: "Chris Delano", title: "Account Executive", company: "Patchwork SaaS",
-    domain: "patchworksaas.com",
-    email: undefined, email_status: "not_found",
-    location: "Denver, CO", industry: "B2B SaaS", company_size: "11-50",
-    source: "mock", confidence_score: 0.52,
-    raw_context: "AE doing outbound themselves. Could be an advocate but not the decision maker.",
-  },
-  {
-    name: "Sandra Lloyd", title: "CFO", company: "Pinnacle Advisors",
-    domain: "pinnacleadvisors.com",
-    email: "slloyd@pinnacleadvisors.com", email_status: "verified",
-    location: "Boston, MA", industry: "Consulting", company_size: "51-200",
-    source: "mock", confidence_score: 0.60,
-    raw_context: "CFO at consulting firm. Influences budget but doesn't own outbound strategy.",
-  },
-  // DISCARD-eligible
-  {
-    name: "Harold Barnes", title: "HR Manager", company: "Centrifuge Manufacturing",
-    domain: "centrifugemfg.com",
-    email: "hbarnes@centrifugemfg.com", email_status: "verified",
-    location: "Detroit, MI", industry: "Manufacturing", company_size: "501-1000",
-    source: "mock", confidence_score: 0.35,
-    raw_context: "HR role at large manufacturer. Not a buyer for B2B outbound services.",
+type MockAccount = Omit<LeadCandidate, "id">;
+
+const MOCK_POOL: MockAccount[] = [
+
+  // ─── Logistics / Supply Chain ───────────────────────────────────────────────
+
+  {
+    company: "Midwest Freight Solutions",
+    domain: "midwestfreightsolutions.com",
+    website_url: "https://midwestfreightsolutions.com",
+    linkedin_url: "linkedin.com/company/midwest-freight-solutions",
+    location: "Chicago, IL",
+    industry: "Logistics",
+    company_size: "51-200",
+    source: "mock",
+    source_url: "https://midwestfreightsolutions.com/careers",
+    confidence_score: 0.88,
+    raw_context: "Careers page lists 9 open roles including operations coordinators, dispatch supervisors, and a regional account executive across Illinois and Indiana. Company blog post from last month mentions plans to add two new distribution hubs in the Midwest by Q4 of this year.",
+  },
+  {
+    company: "SunCoast Logistics Group",
+    domain: "suncoastlogisticsgroup.com",
+    website_url: "https://suncoastlogisticsgroup.com",
+    linkedin_url: "linkedin.com/company/suncoast-logistics",
+    location: "Tampa, FL",
+    industry: "Logistics",
+    company_size: "51-200",
+    source: "mock",
+    source_url: "https://suncoastlogisticsgroup.com/about",
+    confidence_score: 0.85,
+    raw_context: "Company website mentions fleet expansion — 40% more delivery vehicles added in the past 12 months. LinkedIn company page highlights new same-day coverage in 14 ZIP codes across the Tampa Bay region. Press release dated 3 months ago references plans to expand into the Orlando corridor.",
+  },
+  {
+    company: "ColdRoute Distribution",
+    domain: "coldroutedistribution.com",
+    website_url: "https://coldroutedistribution.com",
+    linkedin_url: "linkedin.com/company/coldroute-distribution",
+    location: "Denver, CO",
+    industry: "Supply Chain",
+    company_size: "51-200",
+    source: "mock",
+    confidence_score: 0.82,
+    raw_context: "Specializes in cold chain logistics for food and pharma clients. Company recently added pharmaceutical cold storage capacity to its Denver hub. Careers page lists an open supply chain solutions manager role. Website references new compliance certifications for multi-temperature transport.",
+  },
+  {
+    company: "Apex 3PL Services",
+    domain: "apex3pl.com",
+    website_url: "https://apex3pl.com",
+    linkedin_url: "linkedin.com/company/apex-3pl-services",
+    location: "Dallas, TX",
+    industry: "Logistics",
+    company_size: "51-200",
+    source: "mock",
+    source_url: "https://apex3pl.com/news",
+    confidence_score: 0.87,
+    raw_context: "News section of company website announces expansion from 2 to 5 distribution centers, with new facilities opening in Dallas, Houston, and Phoenix. Company is actively hiring warehouse operations and logistics technology roles. LinkedIn company updates mention a new client win in the food retail sector.",
+  },
+  {
+    company: "TransLink Freight Brokers",
+    domain: "translinkfreight.com",
+    website_url: "https://translinkfreight.com",
+    location: "Atlanta, GA",
+    industry: "Logistics",
+    company_size: "11-50",
+    source: "mock",
+    confidence_score: 0.74,
+    raw_context: "Regional freight broker serving Southeast US. Website recently added a digital load tracking feature and mentions technology-enabled freight matching as a competitive differentiator. Company appears to be transitioning from manual brokerage to a tech-assisted model.",
+  },
+
+  // ─── Regional Food Distributors ─────────────────────────────────────────────
+
+  {
+    company: "Heartland Specialty Foods",
+    domain: "heartlandspecialtyfoods.com",
+    website_url: "https://heartlandspecialtyfoods.com",
+    linkedin_url: "linkedin.com/company/heartland-specialty-foods",
+    location: "Kansas City, MO",
+    industry: "Food Distribution",
+    company_size: "51-200",
+    source: "mock",
+    source_url: "https://heartlandspecialtyfoods.com/wholesale",
+    confidence_score: 0.86,
+    raw_context: "Wholesale page on company website recently relaunched with a new application form for B2B buyers. LinkedIn company update from 6 weeks ago announces new supplier partnerships with 4 regional producers. Company is expanding B2B delivery zones to cover Missouri, Kansas, and Nebraska.",
+  },
+  {
+    company: "Pacific Rim Distributors",
+    domain: "pacificrimdistributors.com",
+    website_url: "https://pacificrimdistributors.com",
+    location: "Los Angeles, CA",
+    industry: "Food Distribution",
+    company_size: "51-200",
+    source: "mock",
+    confidence_score: 0.83,
+    raw_context: "Specialty food importer and distributor focused on Asian and Latin American products for grocery chains and foodservice operators. Company website mentions expansion into the Pacific Northwest distribution territory. Careers listing for a business development associate posted 8 weeks ago.",
+  },
+  {
+    company: "NorthStar Produce",
+    domain: "northstarproduceco.com",
+    website_url: "https://northstarproduceco.com",
+    linkedin_url: "linkedin.com/company/northstar-produce",
+    location: "Minneapolis, MN",
+    industry: "Food Distribution",
+    company_size: "51-200",
+    source: "mock",
+    source_url: "https://northstarproduceco.com/blog",
+    confidence_score: 0.80,
+    raw_context: "Regional produce distributor serving grocery chains and institutional buyers across the Upper Midwest. Blog post from last month announces launch of a wholesale ordering program for restaurant operators. Company is hiring procurement operations roles and references digital transformation of its ordering process.",
+  },
+
+  // ─── Healthcare / Clinics ───────────────────────────────────────────────────
+
+  {
+    company: "Cornerstone Physical Therapy Group",
+    domain: "cornerstonept.com",
+    website_url: "https://cornerstonept.com",
+    linkedin_url: "linkedin.com/company/cornerstone-physical-therapy",
+    location: "Phoenix, AZ",
+    industry: "Healthcare",
+    company_size: "51-200",
+    source: "mock",
+    source_url: "https://cornerstonept.com/locations",
+    confidence_score: 0.81,
+    raw_context: "Multi-location physical therapy group with 7 existing clinics and 3 new locations announced on the website. Careers page shows open roles for physical therapists, front desk coordinators, and a clinic operations manager. Company has added digital scheduling and telehealth intake in the past year.",
+  },
+  {
+    company: "Summit Dental Partners",
+    domain: "summitdentalpartners.com",
+    website_url: "https://summitdentalpartners.com",
+    linkedin_url: "linkedin.com/company/summit-dental-partners",
+    location: "Nashville, TN",
+    industry: "Healthcare",
+    company_size: "51-200",
+    source: "mock",
+    confidence_score: 0.76,
+    raw_context: "Dental group with 12 locations across Tennessee expanding into suburban markets. Website mentions 2 new locations opening in Franklin and Murfreesboro. Careers page includes roles for dental office managers and patient experience coordinators. Company recently launched online booking across all locations.",
+  },
+  {
+    company: "Clarity Mental Health Network",
+    domain: "claritymentalhealth.com",
+    website_url: "https://claritymentalhealth.com",
+    location: "Seattle, WA",
+    industry: "Healthcare",
+    company_size: "11-50",
+    source: "mock",
+    confidence_score: 0.70,
+    raw_context: "Growing mental health clinic network adding digital intake and teletherapy services. Company website references expansion to 3 new clinic locations in the Puget Sound area. Hiring patient operations coordinators and billing specialists. Insurance panels recently expanded to include 6 additional providers.",
+  },
+
+  // ─── B2B SaaS ───────────────────────────────────────────────────────────────
+
+  {
+    company: "Workstream HR",
+    domain: "workstreamhr.com",
+    website_url: "https://workstreamhr.com",
+    linkedin_url: "linkedin.com/company/workstream-hr",
+    location: "Austin, TX",
+    industry: "B2B SaaS",
+    company_size: "51-200",
+    source: "mock",
+    source_url: "https://workstreamhr.com/careers",
+    confidence_score: 0.90,
+    raw_context: "HR tech SaaS company actively hiring SDRs and a revenue operations manager. Careers page lists 7 open GTM roles. Pricing page recently updated with a new SMB tier. LinkedIn company updates from last month reference an upcoming product expansion into performance management for the SMB market.",
+  },
+  {
+    company: "Buildflow Construction Tech",
+    domain: "buildflowtech.com",
+    website_url: "https://buildflowtech.com",
+    linkedin_url: "linkedin.com/company/buildflow-construction-tech",
+    location: "Denver, CO",
+    industry: "B2B SaaS",
+    company_size: "51-200",
+    source: "mock",
+    source_url: "https://buildflowtech.com/news",
+    confidence_score: 0.84,
+    raw_context: "Construction project management SaaS company that recently announced a Series A and is expanding into enterprise accounts. News section references a new partner program with construction supply chains. Company is hiring enterprise account executives and a channel partner manager.",
+  },
+  {
+    company: "Nexflow RevOps",
+    domain: "nexflowrevops.com",
+    website_url: "https://nexflowrevops.com",
+    location: "San Francisco, CA",
+    industry: "B2B SaaS",
+    company_size: "11-50",
+    source: "mock",
+    confidence_score: 0.78,
+    raw_context: "Revenue operations SaaS platform recently launched a new pricing tier for small sales teams. Company blog posts reference outbound prospecting and account prioritization as core use cases. LinkedIn company page highlights a new customer success hire and mentions expanding into mid-market accounts.",
+  },
+  {
+    company: "FleetEdge Software",
+    domain: "fleetedgesoftware.com",
+    website_url: "https://fleetedgesoftware.com",
+    linkedin_url: "linkedin.com/company/fleetedge-software",
+    location: "Columbus, OH",
+    industry: "Logistics",
+    company_size: "51-200",
+    source: "mock",
+    source_url: "https://fleetedgesoftware.com/about",
+    confidence_score: 0.89,
+    raw_context: "Fleet management software company specifically serving regional trucking operators and last-mile delivery companies. Company recently expanded integrations with major TMS platforms. Careers page lists a solutions engineer for logistics accounts. Blog post mentions growing demand from food distribution clients.",
+  },
+
+  // ─── Fintech ────────────────────────────────────────────────────────────────
+
+  {
+    company: "Meridian SMB Lending",
+    domain: "meridiansmblending.com",
+    website_url: "https://meridiansmblending.com",
+    linkedin_url: "linkedin.com/company/meridian-smb-lending",
+    location: "Charlotte, NC",
+    industry: "FinTech",
+    company_size: "51-200",
+    source: "mock",
+    confidence_score: 0.82,
+    raw_context: "SMB lending platform expanding from 3 to 7 states with new regulatory licenses announced on company website. LinkedIn company update references new partnerships with 2 regional banks. Company is hiring compliance operations and SMB outreach roles. New product launch for invoice factoring added to website last month.",
+  },
+  {
+    company: "TradePass Payments",
+    domain: "tradepasspayments.com",
+    website_url: "https://tradepasspayments.com",
+    location: "Miami, FL",
+    industry: "FinTech",
+    company_size: "11-50",
+    source: "mock",
+    confidence_score: 0.75,
+    raw_context: "Cross-border payments company serving import/export businesses with US-Latin America trade flows. Website recently added compliance documentation for Mexico and Colombia payment corridors. Careers page lists a business development manager for distributor partnerships.",
+  },
+  {
+    company: "Kapital Trade Finance",
+    domain: "kapitaltradefinance.com",
+    website_url: "https://kapitaltradefinance.com",
+    linkedin_url: "linkedin.com/company/kapital-trade-finance",
+    location: "New York, NY",
+    industry: "FinTech",
+    company_size: "51-200",
+    source: "mock",
+    confidence_score: 0.79,
+    raw_context: "Trade finance platform serving importers and exporters. Company recently launched a digital application portal for supply chain financing. LinkedIn updates reference new integrations with freight forwarders and customs brokers. Expanding into food and agricultural commodity financing as a new vertical.",
+  },
+
+  // ─── Industrial Suppliers ───────────────────────────────────────────────────
+
+  {
+    company: "Vanguard Industrial Supply",
+    domain: "vanguardindustrialsupply.com",
+    website_url: "https://vanguardindustrialsupply.com",
+    linkedin_url: "linkedin.com/company/vanguard-industrial-supply",
+    location: "Detroit, MI",
+    industry: "Industrial Supply",
+    company_size: "51-200",
+    source: "mock",
+    source_url: "https://vanguardindustrialsupply.com/distributors",
+    confidence_score: 0.77,
+    raw_context: "MRO and industrial equipment distributor that recently launched a B2B e-commerce ordering portal. Distributor page on website updated with new application for regional partnerships. Company is attending 3 upcoming trade shows and has listed sales engineer roles on careers page.",
+  },
+  {
+    company: "SafeGuard Workplace Solutions",
+    domain: "safeguardworkplace.com",
+    website_url: "https://safeguardworkplace.com",
+    location: "Houston, TX",
+    industry: "Industrial Supply",
+    company_size: "51-200",
+    source: "mock",
+    confidence_score: 0.71,
+    raw_context: "Safety equipment manufacturer expanding its distributor network in the Gulf Coast region. Company website mentions new OSHA-compliant product line launched this year. Careers page lists regional sales representative roles in Texas and Louisiana.",
+  },
+
+  // ─── Hospitality / Hotels ───────────────────────────────────────────────────
+
+  {
+    company: "Pinnacle Hotel Group",
+    domain: "pinnaclehotelgroup.com",
+    website_url: "https://pinnaclehotelgroup.com",
+    linkedin_url: "linkedin.com/company/pinnacle-hotel-group",
+    location: "Phoenix, AZ",
+    industry: "Hospitality",
+    company_size: "51-200",
+    source: "mock",
+    confidence_score: 0.68,
+    raw_context: "Regional hotel group with 8 properties adding a corporate accounts program for business travel clients. Website recently added a 'Corporate Partnerships' page with an inquiry form. Hiring a corporate sales manager and group events coordinator. LinkedIn update mentions expanded group booking capacity.",
+  },
+  {
+    company: "Crestview Boutique Hotels",
+    domain: "crestviewboutique.com",
+    website_url: "https://crestviewboutique.com",
+    location: "Nashville, TN",
+    industry: "Hospitality",
+    company_size: "11-50",
+    source: "mock",
+    confidence_score: 0.60,
+    raw_context: "Independent boutique hotel operator with 4 properties exploring B2B partnerships with corporate travel managers and event planners. Website added a new partnerships section. Smaller operator with limited outbound sales infrastructure.",
+  },
+
+  // ─── Education / Training ───────────────────────────────────────────────────
+
+  {
+    company: "Catalyst Corporate Training",
+    domain: "catalystcorptraining.com",
+    website_url: "https://catalystcorptraining.com",
+    linkedin_url: "linkedin.com/company/catalyst-corporate-training",
+    location: "Chicago, IL",
+    industry: "Education",
+    company_size: "11-50",
+    source: "mock",
+    confidence_score: 0.73,
+    raw_context: "Corporate training and professional development provider expanding B2B sales to mid-market companies. Website recently added an enterprise training inquiry form. LinkedIn company page highlights new compliance training modules for food safety and supply chain operations. Hiring an account executive for B2B outreach.",
+  },
+  {
+    company: "LearnPath Enterprise",
+    domain: "learnpathenterprise.com",
+    website_url: "https://learnpathenterprise.com",
+    location: "Austin, TX",
+    industry: "Education",
+    company_size: "51-200",
+    source: "mock",
+    confidence_score: 0.69,
+    raw_context: "Online learning platform recently launched an enterprise tier targeting companies with 50–500 employees. Pricing page updated 4 weeks ago with team licensing options. Company is hiring a customer success manager for enterprise accounts.",
+  },
+
+  // ─── Agencies / Consulting ──────────────────────────────────────────────────
+
+  {
+    company: "Brightpath Strategy Group",
+    domain: "brightpathstrategy.com",
+    website_url: "https://brightpathstrategy.com",
+    linkedin_url: "linkedin.com/company/brightpath-strategy-group",
+    location: "Boston, MA",
+    industry: "Consulting",
+    company_size: "11-50",
+    source: "mock",
+    confidence_score: 0.76,
+    raw_context: "B2B management consulting firm with 12 consultants that recently moved from 100% referral-based business to adding structured outbound for new client acquisition. Company website added a 'Work With Us' inquiry page. LinkedIn company posts from last 6 weeks show increased content about supply chain and operations strategy.",
+  },
+  {
+    company: "Arco Growth Agency",
+    domain: "arcogrowthagency.com",
+    website_url: "https://arcogrowthagency.com",
+    location: "New York, NY",
+    industry: "Marketing / Agency",
+    company_size: "11-50",
+    source: "mock",
+    confidence_score: 0.65,
+    raw_context: "B2B digital marketing agency that serves logistics and supply chain companies. Agency website features case studies for 3PL and freight clients. Company recently published a guide on B2B lead generation for logistics operators, suggesting active content marketing for client acquisition.",
+  },
+
+  // ─── Ecommerce / Retail Operators ───────────────────────────────────────────
+
+  {
+    company: "Bluestone Specialty Retail",
+    domain: "bluestonespecialty.com",
+    website_url: "https://bluestonespecialty.com",
+    linkedin_url: "linkedin.com/company/bluestone-specialty-retail",
+    location: "Portland, OR",
+    industry: "Retail",
+    company_size: "51-200",
+    source: "mock",
+    confidence_score: 0.67,
+    raw_context: "Multi-location specialty retail operator expanding into wholesale B2B distribution. Company website added a wholesale inquiry page last month. LinkedIn update mentions new partnerships with regional food and beverage brands. Operates 12 retail locations and is exploring national wholesale distribution.",
+  },
+  {
+    company: "Cascade Direct Commerce",
+    domain: "cascadedirectcommerce.com",
+    website_url: "https://cascadedirectcommerce.com",
+    location: "Seattle, WA",
+    industry: "E-commerce",
+    company_size: "11-50",
+    source: "mock",
+    confidence_score: 0.62,
+    raw_context: "D2C brand that recently launched a B2B distribution channel for independent retailers and foodservice operators. Website added a wholesale ordering portal 6 weeks ago. Looking to onboard 50 new wholesale accounts in Q3.",
+  },
+
+  // ─── Exporters / Importers ──────────────────────────────────────────────────
+
+  {
+    company: "Andean Food Exports",
+    domain: "andeanfoodexports.com",
+    website_url: "https://andeanfoodexports.com",
+    linkedin_url: "linkedin.com/company/andean-food-exports",
+    location: "Miami, FL",
+    industry: "Food Distribution",
+    company_size: "11-50",
+    source: "mock",
+    source_url: "https://andeanfoodexports.com/distributors",
+    confidence_score: 0.84,
+    raw_context: "Colombian and Peruvian food exporter actively seeking US distributor partners. Company distributor page recently updated with application form. Attended the Fancy Food Show in New York last quarter. Export certifications for USDA and FDA listed on website. Actively expanding B2B presence in the US specialty food market.",
+  },
+  {
+    company: "Pacific Gateway Imports",
+    domain: "pacificgatewayimports.com",
+    website_url: "https://pacificgatewayimports.com",
+    linkedin_url: "linkedin.com/company/pacific-gateway-imports",
+    location: "Los Angeles, CA",
+    industry: "Food Distribution",
+    company_size: "51-200",
+    source: "mock",
+    confidence_score: 0.81,
+    raw_context: "Import/export broker specializing in agricultural and food commodities from Asia and Latin America. Website mentions expansion of distributor search to 5 new US states. Company recently joined the US Food Export Association and posted about expanding their US wholesale buyer network. Careers listing for an import operations coordinator posted recently.",
+  },
+  {
+    company: "GlobalTrade Connect",
+    domain: "globaltradeconnect.us",
+    website_url: "https://globaltradeconnect.us",
+    location: "Chicago, IL",
+    industry: "Supply Chain",
+    company_size: "11-50",
+    source: "mock",
+    confidence_score: 0.72,
+    raw_context: "Trade intermediary connecting Latin American suppliers with US wholesale buyers. Company website recently added export certification documentation and a buyer inquiry page. LinkedIn company posts highlight new supplier relationships in Colombia, Mexico, and Chile.",
+  },
+
+  // ─── Construction / Real Estate B2B ─────────────────────────────────────────
+
+  {
+    company: "Meridian Building Supply Co.",
+    domain: "meridianbuilding.com",
+    website_url: "https://meridianbuilding.com",
+    linkedin_url: "linkedin.com/company/meridian-building-supply",
+    location: "Dallas, TX",
+    industry: "Construction",
+    company_size: "51-200",
+    source: "mock",
+    confidence_score: 0.73,
+    raw_context: "Commercial construction materials supplier expanding product catalog with new sustainable building materials line. Company is attending 2 regional construction trade shows in Q3. Careers page lists a commercial accounts manager role and a sales engineer position.",
+  },
+  {
+    company: "Clearview Property Tech",
+    domain: "clearviewpropertytech.com",
+    website_url: "https://clearviewpropertytech.com",
+    location: "Atlanta, GA",
+    industry: "B2B SaaS",
+    company_size: "11-50",
+    source: "mock",
+    confidence_score: 0.66,
+    raw_context: "Property management SaaS for commercial real estate operators. Company recently added a new tenant communication module and is hiring a business development manager. LinkedIn company update from 3 weeks ago references expanding from residential to commercial property management clients.",
   },
 ];
+
+// ─── ICP match scoring ────────────────────────────────────────────────────────
+// Scores each account against the ICP/criteria to surface the most relevant
+// accounts first, rather than returning a random cross-section every time.
+
+function scoreIcpMatch(account: MockAccount, criteria: LeadSearchCriteria): number {
+  const text = [
+    account.industry ?? "",
+    account.raw_context ?? "",
+    account.location ?? "",
+    account.company ?? "",
+  ].join(" ").toLowerCase();
+
+  let score = 0;
+
+  // Industry keyword match — most important signal
+  for (const ind of criteria.target_industries) {
+    const keywords = ind.toLowerCase().split(/[\s/,\-&]+/).filter(k => k.length > 3);
+    for (const kw of keywords) {
+      if (text.includes(kw)) score += 4;
+    }
+  }
+
+  // Offer/value-prop keyword match — pulls in accounts by problem context
+  const offerText = [
+    criteria.offer_summary,
+    criteria.value_proposition,
+    ...(criteria.buying_signals ?? []),
+  ].join(" ").toLowerCase();
+  const offerKeywords = offerText.match(/\b[a-z]{4,}\b/g) ?? [];
+  const uniqueOfferKws = offerKeywords.filter((kw, i, arr) => arr.indexOf(kw) === i);
+  for (const kw of uniqueOfferKws) {
+    if (text.includes(kw)) score += 1;
+  }
+
+  // Geography match — boost US accounts for north_america ICP
+  const geoText = (criteria.target_geography ?? []).join(" ").toLowerCase();
+  if (geoText.includes("united states") || geoText.includes("north america")) {
+    // All mock accounts are US-based — give a baseline geography boost
+    score += 2;
+  } else {
+    for (const geo of criteria.target_geography ?? []) {
+      if (text.includes(geo.toLowerCase())) score += 3;
+    }
+  }
+
+  // Company size match
+  if (account.company_size && criteria.target_company_size.includes(account.company_size)) {
+    score += 2;
+  }
+
+  // Confidence as a tiebreaker (higher confidence = slightly preferred)
+  score += account.confidence_score * 0.5;
+
+  return score;
+}
 
 // ─── Provider ─────────────────────────────────────────────────────────────────
 
@@ -681,74 +505,56 @@ export const mockLeadProvider: LeadProvider = {
   name: "mock",
 
   async searchLeads(criteria: LeadSearchCriteria, limit: number): Promise<LeadCandidate[]> {
-    // Seed-based deterministic shuffle for reproducible demo output
+    // Score accounts against ICP, then apply seeded shuffle within score bands
+    // so results are deterministic for the same offer but prioritize relevant accounts
+    const scored = MOCK_POOL.map(account => ({
+      account,
+      score: scoreIcpMatch(account, criteria),
+    }));
+
+    // Sort by ICP match score (desc), with seeded shuffle as tiebreaker within same score band
     const seed = (criteria.offer_summary?.length ?? 0) + criteria.target_industries.join("").length;
-    const shuffled = seededShuffle([...MOCK_POOL], seed);
-    const filtered = shuffled.filter(l => l.confidence_score >= 0.40);
+    let s = seed;
+    const nextRand = () => {
+      s = (s * 1664525 + 1013904223) & 0xffffffff;
+      return (s >>> 0) / 0xffffffff;
+    };
 
-    // Pad with synthetic variants when limit exceeds real pool (Standard/Pro plans)
-    const pool: Omit<LeadCandidate, "id">[] = [...filtered];
-    if (limit > filtered.length) {
-      const CITIES = ["Portland, OR", "Nashville, TN", "Salt Lake City, UT", "Phoenix, AZ", "Philadelphia, PA", "San Diego, CA", "Columbus, OH", "Charlotte, NC"];
-      const SIZES = ["11-50", "51-200", "11-50", "51-200", "51-200", "201-500", "11-50", "51-200"];
-      const SYNTH_CONTEXTS = [
-        "Growing team looking to scale outbound systematically.",
-        "Founder-led sales. Wants to delegate outbound and focus on closing.",
-        "Building first structured pipeline. No BDR layer yet.",
-        "Recently evaluated outbound tools. Ready to move forward.",
-        "Runs BD personally. Looking for a more systematic approach.",
-      ];
-      let extra = 0;
-      while (pool.length < limit) {
-        const base = filtered[extra % filtered.length];
-        const idx = extra % filtered.length;
-        const round = Math.floor(extra / filtered.length);
-        const synthConfidence = Math.max(0.50, base.confidence_score - 0.10 - round * 0.03);
-        const keepEmail = extra % 5 !== 0 && !!base.email; // 80% of synthetics keep email
-        const addContext = extra % 5 < 3; // 60% get a raw_context signal
-        pool.push({
-          ...base,
-          name: base.name ? `${base.name.split(" ")[0]} ${["J.", "M.", "A.", "L.", "R.", "D.", "S.", "C."][idx % 8]}` : undefined,
-          company: `${["Growth", "Scale", "Peak", "Apex", "Nord", "Bridge", "Core", "Arc"][idx % 8]}${base.company.replace(/\s+\w+$/, "")}`,
-          domain: undefined,
-          email: keepEmail ? base.email?.replace("@", `+${round}@`) : undefined,
-          email_status: keepEmail ? "unknown" : "not_found",
-          location: CITIES[extra % CITIES.length],
-          company_size: SIZES[extra % SIZES.length],
-          confidence_score: synthConfidence,
-          source_url: undefined,
-          raw_context: addContext ? SYNTH_CONTEXTS[extra % SYNTH_CONTEXTS.length] : undefined,
-          linkedin_url: undefined,
-        });
-        extra++;
-      }
-    }
+    scored.sort((a, b) => {
+      const diff = b.score - a.score;
+      if (Math.abs(diff) > 1) return diff;
+      // Same band — shuffle
+      return nextRand() - 0.5;
+    });
 
-    return pool.slice(0, limit).map((l, i) => ({
-      ...l,
-      id: `mock-${i + 1}-${l.company.toLowerCase().replace(/[\s/]/g, "-")}`,
+    // Filter out very low confidence (likely DISCARD regardless of ICP)
+    // but keep a few so the demo has realistic score distribution
+    const pool = scored.map(s => s.account);
+
+    // Ensure realistic HOT/WARM/COLD/DISCARD mix:
+    // Take the best ICP-matched accounts first, then pad with lower-confidence ones
+    const highRelevance = pool.filter(a => a.confidence_score >= 0.75);
+    const lowRelevance  = pool.filter(a => a.confidence_score < 0.75);
+
+    const combined = [
+      ...highRelevance,
+      ...lowRelevance,
+    ].slice(0, limit);
+
+    return combined.map((account, i): LeadCandidate => ({
+      ...account,
+      id: `mock-${i + 1}-${account.company.toLowerCase().replace(/[\s/.'&,]+/g, "-").slice(0, 30)}`,
     }));
   },
 
-  async findEmail(candidate: LeadCandidate): Promise<{ email?: string; email_status: import("@/types").EmailStatus; confidence_score: number; source?: string }> {
-    // Mock email finding — in production this calls Hunter
+  async findEmail(): Promise<{ email?: string; email_status: import("@/types").EmailStatus; confidence_score: number; source?: string }> {
+    // Account-level mock: no personal emails to find
     return {
-      email: candidate.email,
-      email_status: candidate.email_status ?? "unknown",
-      confidence_score: candidate.confidence_score * 0.9,
+      email: undefined,
+      email_status: "not_found",
+      confidence_score: 0,
       source: "mock",
     };
   },
 };
 
-// ─── Deterministic shuffle ────────────────────────────────────────────────────
-
-function seededShuffle<T>(arr: T[], seed: number): T[] {
-  let s = seed;
-  const next = () => { s = (s * 1664525 + 1013904223) & 0xffffffff; return (s >>> 0) / 0xffffffff; };
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(next() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-}
