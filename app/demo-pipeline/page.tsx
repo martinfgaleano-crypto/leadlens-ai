@@ -147,14 +147,14 @@ const COPY = {
     switchToDemo: "Preview sample report format →",
     sampleBadge: "Sample report preview",
     sampleNote: "This preview uses sample data to show the format of a real Opportunity Snapshot. For a real Snapshot with researched companies and verified signals, purchase an Opportunity Snapshot.",
-    problemTag: "The problem",
-    problemTitle: "You have access to data. You don't have commercial intelligence.",
+    problemTag: "The challenge",
+    problemTitle: "Your team has access to more signals than ever. The hard part is knowing which opportunities deserve attention first — and why now.",
     problemItems: [
-      "Apollo gives you 500 contacts. You still don't know which 10 to call this week — or why.",
-      "LinkedIn shows you companies. It doesn't tell you which ones are signaling buying intent right now.",
-      "Google gives you results. It doesn't rank opportunities by fit, timing, and urgency.",
-      "Your team spends 60% of research time on companies that turn out to be a poor fit.",
-      "Generic cold outreach gets ignored. Signal-led, contextual outreach gets replies.",
+      "Market data, job postings, funding news, LinkedIn activity — signals are everywhere. But they don't come pre-ranked for your ICP.",
+      "Every week your team researches companies that turn out to be the wrong fit, the wrong timing, or already committed to another vendor.",
+      "Generic outreach gets ignored because it isn't grounded in what's actually happening at that company right now.",
+      "The gap isn't information — it's the analysis layer that turns scattered signals into a prioritized list of accounts worth calling.",
+      "That's what LeadLens builds: a prioritized commercial brief, grounded in evidence, delivered before the first conversation.",
     ],
     receiveTag: "What you get",
     receiveTitle: "Five company briefs. Each one a reason to pick up the phone.",
@@ -229,6 +229,9 @@ const COPY = {
     b2cTeaserSub: "Customer acquisition playbooks with channel ideas, conversion tactics, competitor insights, and 30-day action plans — for consumer-facing businesses and local operators.",
     b2cTeaserNote: "B2B only for now. Join the waitlist to be notified when B2C launches.",
     b2cTeaserCTA: "Join B2C waitlist",
+    vizTag: "From scattered signals to clear priorities",
+    vizTitle: "Visual decision tools, not just data.",
+    vizSub: "LeadLens turns public market signals into visual decision tools your team can act on before the first outreach.",
     complianceNote: "LeadLens analyzes publicly available company information and commercial signals. We do not sell contact databases, email lists, or personal data.",
   },
   es: {
@@ -372,14 +375,14 @@ const COPY = {
     switchToDemo: "Ver formato del Snapshot de muestra →",
     sampleBadge: "Vista previa del Opportunity Snapshot",
     sampleNote: "Este reporte usa datos de ejemplo para mostrar el formato. Para un Snapshot real con señales verificadas, compra un Opportunity Snapshot.",
-    problemTag: "El problema",
-    problemTitle: "Tienes acceso a datos. No tienes inteligencia comercial.",
+    problemTag: "El desafío",
+    problemTitle: "Tu equipo tiene acceso a más señales que nunca. Lo difícil es saber qué oportunidades merecen atención primero — y por qué ahora.",
     problemItems: [
-      "Apollo te da 500 contactos. Sigues sin saber cuáles 10 llamar esta semana — ni por qué.",
-      "LinkedIn te muestra empresas. No te dice cuáles están señalando intención de compra ahora mismo.",
-      "Google te da resultados. No rankea oportunidades por fit, timing y urgencia.",
-      "Tu equipo pasa el 60% del tiempo de research en empresas que resultan no ser un buen fit.",
-      "El outreach genérico se ignora. El outreach basado en señales y contextual genera respuestas.",
+      "Datos de mercado, ofertas de trabajo, noticias de financiamiento, actividad en LinkedIn — las señales están en todos lados. Pero no vienen rankeadas para tu ICP.",
+      "Cada semana tu equipo investiga empresas que resultan no ser el fit correcto, el momento incorrecto o ya comprometidas con otro proveedor.",
+      "El outreach genérico se ignora porque no está fundamentado en lo que está pasando ahora mismo en esa empresa.",
+      "El vacío no es información — es la capa de análisis que convierte señales dispersas en una lista priorizada de cuentas que vale la pena contactar.",
+      "Eso es lo que LeadLens construye: un brief comercial priorizado, basado en evidencia, entregado antes de la primera conversación.",
     ],
     receiveTag: "Qué recibes",
     receiveTitle: "Cinco briefs de empresa. Cada uno, una razón para hacer la llamada.",
@@ -454,6 +457,9 @@ const COPY = {
     b2cTeaserSub: "Playbooks de adquisición de clientes con ideas de canales, tácticas de conversión, análisis de competidores y planes de acción de 30 días — para negocios orientados al consumidor y operadores locales.",
     b2cTeaserNote: "Solo B2B por ahora. Únete a la lista de espera para ser notificado cuando se lance B2C.",
     b2cTeaserCTA: "Unirse a la lista de espera B2C",
+    vizTag: "De señales dispersas a prioridades claras",
+    vizTitle: "Herramientas visuales de decisión, no solo datos.",
+    vizSub: "LeadLens convierte señales públicas de mercado en herramientas visuales que tu equipo puede usar antes del primer outreach.",
     complianceNote: "LeadLens analiza información empresarial y señales comerciales públicamente disponibles. No vendemos bases de datos de contactos, listas de emails ni datos personales.",
   },
   pt: {
@@ -597,14 +603,14 @@ const COPY = {
     switchToDemo: "Visualizar formato do Snapshot →",
     sampleBadge: "Prévia do Opportunity Snapshot",
     sampleNote: "Este relatório usa dados de exemplo para mostrar o formato. Para um Snapshot real com sinais verificados, compre um Opportunity Snapshot.",
-    problemTag: "O problema",
-    problemTitle: "Você tem acesso a dados. Mas não tem inteligência comercial.",
+    problemTag: "O desafio",
+    problemTitle: "Sua equipe tem acesso a mais sinais do que nunca. O difícil é saber quais oportunidades merecem atenção primeiro — e por quê agora.",
     problemItems: [
-      "Apollo te dá 500 contatos. Você ainda não sabe quais 10 ligar esta semana — nem por quê.",
-      "LinkedIn te mostra empresas. Não te diz quais estão sinalizando intenção de compra agora.",
-      "Google te dá resultados. Não ranqueia oportunidades por fit, timing e urgência.",
-      "Sua equipe passa 60% do tempo de pesquisa em empresas que não são um bom fit.",
-      "Outreach genérico é ignorado. Outreach liderado por sinais e contextual gera respostas.",
+      "Dados de mercado, vagas, notícias de financiamento, atividade no LinkedIn — sinais estão em todo lugar. Mas não chegam ranqueados para seu ICP.",
+      "Toda semana sua equipe pesquisa empresas que acabam sendo o fit errado, o momento errado ou já comprometidas com outro fornecedor.",
+      "Outreach genérico é ignorado porque não está fundamentado no que está acontecendo agora naquela empresa.",
+      "A lacuna não é informação — é a camada de análise que transforma sinais dispersos em uma lista priorizada de contas que valem a pena contatar.",
+      "É isso que a LeadLens constrói: um brief comercial priorizado, baseado em evidências, entregue antes da primeira conversa.",
     ],
     receiveTag: "O que você recebe",
     receiveTitle: "Cinco briefs de empresa. Cada um, um motivo para fazer a ligação.",
@@ -679,6 +685,9 @@ const COPY = {
     b2cTeaserSub: "Playbooks de aquisição de clientes com ideias de canais, táticas de conversão, análise de concorrentes e planos de ação de 30 dias — para negócios voltados ao consumidor e operadores locais.",
     b2cTeaserNote: "Apenas B2B por agora. Entre na lista de espera para ser notificado quando o B2C for lançado.",
     b2cTeaserCTA: "Entrar na lista de espera B2C",
+    vizTag: "De sinais dispersos a prioridades claras",
+    vizTitle: "Ferramentas visuais de decisão, não apenas dados.",
+    vizSub: "LeadLens transforma sinais públicos de mercado em ferramentas visuais que sua equipe pode usar antes do primeiro outreach.",
     complianceNote: "LeadLens analisa informações empresariais e sinais comerciais publicamente disponíveis. Não vendemos bancos de dados de contatos, listas de e-mails nem dados pessoais.",
   },
   ja: {
@@ -822,14 +831,14 @@ const COPY = {
     switchToDemo: "サンプルSnapshot形式を見る →",
     sampleBadge: "Opportunity Snapshotプレビュー",
     sampleNote: "このレポートはサンプルデータを使用してフォーマットを示しています。検証済みシグナル付きの実際のSnapshotには、Opportunity Snapshotをご購入ください。",
-    problemTag: "問題点",
-    problemTitle: "データへのアクセスはあります。コマーシャルインテリジェンスはありません。",
+    problemTag: "課題",
+    problemTitle: "チームはこれまで以上に多くのシグナルにアクセスできます。難しいのは、どのオポチュニティを最初に優先すべきか、そして今なぜかを知ることです。",
     problemItems: [
-      "Apolloは500件のコンタクトを提供します。それでも今週電話すべき10社と理由がわかりません。",
-      "LinkedInは企業を表示します。今まさに購買意図を示している企業はわかりません。",
-      "Googleは検索結果を提供します。フィット・タイミング・緊急性でオポチュニティをランク付けしません。",
-      "チームの調査時間の60%は、後になって不適切とわかる企業に費やされています。",
-      "汎用的なコールドアウトリーチは無視されます。シグナルに基づいたコンテキスト豊かなアウトリーチは返信を得ます。",
+      "市場データ、求人情報、資金調達ニュース、LinkedIn活動 — シグナルはどこにでもあります。しかし、あなたのICPに合わせてランク付けされてはいません。",
+      "毎週、チームはフィットが悪かった、タイミングが悪かった、または既に他社と契約済みだった企業を調査することになります。",
+      "汎用的なアウトリーチが無視されるのは、今その企業で実際に起きていることに基づいていないからです。",
+      "ギャップは情報ではありません — 散在するシグナルを、コンタクトする価値のあるアカウントのランク付きリストに変える分析レイヤーです。",
+      "それがLeadLensの提供するものです：エビデンスに基づいた優先順位付けされたコマーシャルブリーフ、最初の会話の前に届きます。",
     ],
     receiveTag: "受け取るもの",
     receiveTitle: "5つの企業ブリーフ。それぞれが電話をかける理由になります。",
@@ -904,6 +913,9 @@ const COPY = {
     b2cTeaserSub: "チャネルアイデア、コンバージョン戦術、競合分析、30日アクションプランを含む顧客獲得プレイブック — 消費者向けビジネスおよびローカルオペレーター向け。",
     b2cTeaserNote: "現在はB2Bのみ。B2Cのローンチ時に通知を受け取るにはウェイトリストにご登録ください。",
     b2cTeaserCTA: "B2Cウェイトリストに登録",
+    vizTag: "散在するシグナルから明確な優先順位へ",
+    vizTitle: "データだけでなく、視覚的な意思決定ツール。",
+    vizSub: "LeadLensは公開市場シグナルを、最初のアウトリーチ前にチームが活用できる視覚的な意思決定ツールに変換します。",
     complianceNote: "LeadLensは公開されている企業情報とビジネスシグナルを分析します。コンタクトデータベース、メールリスト、個人データは販売していません。",
   },
 };
@@ -1397,6 +1409,28 @@ export default function DemoPipelinePage() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Visualizations */}
+      <section className="ll-section" style={{ ...sectionStyle, background: "#fff" }}>
+        <div style={{ ...innerStyle }}>
+          <div style={{ textAlign: "center" as const, marginBottom: "2.5rem" }}>
+            <Tag>{copy.vizTag}</Tag>
+            <h2 style={sectionTitleStyle}>{copy.vizTitle}</h2>
+            <p style={{ color: "#64748b", fontSize: "1.05rem", maxWidth: "38rem", margin: "0 auto", lineHeight: 1.6 }}>
+              {copy.vizSub}
+            </p>
+          </div>
+
+          {/* Market Map — full width */}
+          <MarketMapMatrix />
+
+          {/* Score Breakdown + Priority Quadrant — side by side */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))", gap: "1.375rem", marginTop: "1.375rem" }}>
+            <ScoreBreakdown />
+            <PriorityQuadrant />
           </div>
         </div>
       </section>
@@ -2383,6 +2417,200 @@ function BriefSection({ label, children, style }: { label: string; children: Rea
     <div style={style}>
       <div style={{ fontSize: ".68rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", color: "#94a3b8", marginBottom: ".5rem" }}>{label}</div>
       {children}
+    </div>
+  );
+}
+
+// ─── Visualization components ─────────────────────────────────────────────────
+
+function VizLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <div style={{ fontSize: ".68rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", color: "#94a3b8", marginBottom: ".3rem" }}>
+      {children}
+    </div>
+  );
+}
+
+function MarketMapMatrix() {
+  const segments = [
+    { label: "Mid-market logistics",      x: 72, y: 81, priority: "hot"     },
+    { label: "Regional food distributors", x: 65, y: 74, priority: "hot"     },
+    { label: "Multi-location clinics",     x: 58, y: 66, priority: "warm"    },
+    { label: "B2B agencies",               x: 79, y: 51, priority: "warm"    },
+    { label: "Industrial suppliers",       x: 37, y: 70, priority: "monitor" },
+  ];
+  const colors = {
+    hot:     { bg: "#fef2f2", border: "#fca5a5", dot: "#ef4444", text: "#b91c1c" },
+    warm:    { bg: "#fffbeb", border: "#fde68a", dot: "#f59e0b", text: "#92400e" },
+    monitor: { bg: "#f0f9ff", border: "#bae6fd", dot: "#0ea5e9", text: "#0369a1" },
+  };
+  const legend = [
+    { key: "hot",     label: "Priority — attack first"    },
+    { key: "warm",    label: "Secondary — build pipeline" },
+    { key: "monitor", label: "Monitor — watch signals"    },
+  ] as const;
+
+  return (
+    <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "1.125rem", padding: "1.5rem", boxShadow: "0 2px 12px rgba(0,0,0,.04)" }}>
+      <VizLabel>Market Map — Segment Matrix</VizLabel>
+      <div style={{ fontSize: ".9rem", fontWeight: 700, color: "#0f172a", marginBottom: ".2rem" }}>Which segment to attack first?</div>
+      <div style={{ fontSize: ".78rem", color: "#64748b", marginBottom: "1rem" }}>Segments plotted by commercial potential vs. ease of entry</div>
+
+      <div style={{ position: "relative" as const, height: 260, background: "linear-gradient(180deg,#f8fafc 0%,#fff 100%)", border: "1px solid #f1f5f9", borderRadius: ".75rem", overflow: "hidden" as const }}>
+        {/* Grid lines */}
+        <div style={{ position: "absolute" as const, left: "50%", top: 0, bottom: 0, width: 1, background: "#f1f5f9" }} />
+        <div style={{ position: "absolute" as const, top: "50%", left: 0, right: 0, height: 1, background: "#f1f5f9" }} />
+
+        {/* Corner labels */}
+        <div style={{ position: "absolute" as const, left: 6, top: 5, fontSize: ".58rem", fontWeight: 600, color: "#94a3b8", textTransform: "uppercase" as const, letterSpacing: ".04em" }}>High potential ↑</div>
+        <div style={{ position: "absolute" as const, left: 6, bottom: 5, fontSize: ".58rem", fontWeight: 600, color: "#cbd5e1", textTransform: "uppercase" as const, letterSpacing: ".04em" }}>Lower potential</div>
+        <div style={{ position: "absolute" as const, right: 6, bottom: 5, fontSize: ".58rem", fontWeight: 600, color: "#94a3b8", textTransform: "uppercase" as const, letterSpacing: ".04em" }}>Easier to enter →</div>
+        <div style={{ position: "absolute" as const, left: 6, bottom: 5, fontSize: ".58rem", fontWeight: 600, color: "#cbd5e1", textTransform: "uppercase" as const, letterSpacing: ".04em", lineHeight: 1.3, paddingBottom: "1rem" }}>← Harder</div>
+
+        {/* HOT zone hint */}
+        <div style={{ position: "absolute" as const, right: 0, top: 0, width: "50%", height: "50%", background: "rgba(239,68,68,.04)", pointerEvents: "none" as const }}>
+          <div style={{ position: "absolute" as const, right: 7, top: 5, fontSize: ".6rem", fontWeight: 700, color: "#ef4444", opacity: .5, textTransform: "uppercase" as const, letterSpacing: ".04em" }}>Priority zone</div>
+        </div>
+
+        {/* Segment bubbles */}
+        {segments.map(s => {
+          const c = colors[s.priority as keyof typeof colors];
+          return (
+            <div key={s.label} style={{ position: "absolute" as const, left: `${s.x}%`, top: `${100 - s.y}%`, transform: "translate(-50%,-50%)" }}>
+              <div style={{ background: c.bg, border: `1.5px solid ${c.border}`, borderRadius: "2rem", padding: ".28rem .65rem", whiteSpace: "nowrap" as const, boxShadow: "0 2px 8px rgba(0,0,0,.07)", display: "flex", alignItems: "center", gap: ".3rem" }}>
+                <div style={{ width: 7, height: 7, borderRadius: "50%", background: c.dot, flexShrink: 0 }} />
+                <span style={{ fontSize: ".64rem", fontWeight: 600, color: c.text, lineHeight: 1.2 }}>{s.label}</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div style={{ display: "flex", gap: "1rem", marginTop: ".875rem", flexWrap: "wrap" as const }}>
+        {legend.map(l => {
+          const c = colors[l.key];
+          return (
+            <div key={l.key} style={{ display: "flex", alignItems: "center", gap: ".35rem" }}>
+              <div style={{ width: 8, height: 8, borderRadius: "50%", background: c.dot, flexShrink: 0 }} />
+              <span style={{ fontSize: ".72rem", color: "#64748b" }}>{l.label}</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function ScoreBreakdown() {
+  const dims = [
+    { label: "ICP Fit",          score: 88 },
+    { label: "Timing",           score: 86 },
+    { label: "Signal Strength",  score: 82 },
+    { label: "Strategic Value",  score: 79 },
+    { label: "Confidence",       score: 78 },
+    { label: "Evidence Quality", score: 74 },
+  ];
+  const overall = Math.round(dims.reduce((sum, d) => sum + d.score, 0) / dims.length);
+  const barColor = (s: number) => s >= 85 ? "#22c55e" : s >= 75 ? "#0ea5e9" : "#f59e0b";
+  const textColor = (s: number) => s >= 85 ? "#16a34a" : s >= 75 ? "#0284c7" : "#d97706";
+
+  return (
+    <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "1.125rem", padding: "1.5rem", boxShadow: "0 2px 12px rgba(0,0,0,.04)" }}>
+      <VizLabel>Opportunity Score Breakdown</VizLabel>
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: ".75rem", marginBottom: "1.25rem" }}>
+        <div>
+          <div style={{ fontSize: ".9rem", fontWeight: 700, color: "#0f172a" }}>Northstar Logistics</div>
+          <div style={{ fontSize: ".75rem", color: "#64748b", marginTop: ".15rem" }}>Sample account · Mid-market logistics</div>
+        </div>
+        <div style={{ textAlign: "right" as const, flexShrink: 0 }}>
+          <div style={{ fontSize: "2rem", fontWeight: 800, color: "#0284c7", letterSpacing: "-.04em", lineHeight: 1 }}>{overall}</div>
+          <div style={{ fontSize: ".62rem", color: "#94a3b8", fontWeight: 600, textTransform: "uppercase" as const, letterSpacing: ".04em" }}>Overall</div>
+        </div>
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column" as const, gap: ".6rem" }}>
+        {dims.map(d => (
+          <div key={d.label}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: ".2rem" }}>
+              <span style={{ fontSize: ".8rem", color: "#475569", fontWeight: 500 }}>{d.label}</span>
+              <span style={{ fontSize: ".8rem", fontWeight: 700, color: textColor(d.score) }}>{d.score}</span>
+            </div>
+            <div style={{ background: "#f1f5f9", borderRadius: 999, height: 6, overflow: "hidden" as const }}>
+              <div style={{ background: barColor(d.score), height: "100%", width: `${d.score}%`, borderRadius: 999 }} />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ marginTop: "1rem", padding: ".6rem .875rem", background: "#f0f9ff", border: "1px solid #e0f2fe", borderRadius: ".625rem" }}>
+        <div style={{ fontSize: ".75rem", color: "#0369a1", lineHeight: 1.55 }}>
+          <span style={{ fontWeight: 700 }}>Strong ICP Fit + Timing</span> — this account is a priority for immediate outreach. Evidence Quality at 74 suggests verifying one additional source before contacting.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PriorityQuadrant() {
+  const accounts = [
+    { name: "Northstar",  x: 82, y: 84, color: "#ef4444" },
+    { name: "FreshRoute", x: 76, y: 79, color: "#ef4444" },
+    { name: "Atlas",      x: 71, y: 61, color: "#f59e0b" },
+    { name: "Pinebridge", x: 62, y: 55, color: "#f59e0b" },
+    { name: "Clearpoint", x: 44, y: 38, color: "#94a3b8" },
+  ];
+  const quadrants = [
+    { label: "HOT",          sub: "Act now",         top: "0",    left: "50%", right: "0",    bottom: "50%", bg: "rgba(239,68,68,.04)",   tc: "#b91c1c" },
+    { label: "WARM",         sub: "Build pipeline",  top: "0",    left: "0",   right: "50%",  bottom: "50%", bg: "rgba(245,158,11,.03)",  tc: "#92400e" },
+    { label: "MONITOR",      sub: "Watch signals",   top: "50%",  left: "50%", right: "0",    bottom: "0",   bg: "rgba(14,165,233,.03)",  tc: "#0369a1" },
+    { label: "LOW PRIORITY", sub: "Deprioritize",    top: "50%",  left: "0",   right: "50%",  bottom: "0",   bg: "rgba(148,163,184,.04)", tc: "#94a3b8" },
+  ];
+
+  return (
+    <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "1.125rem", padding: "1.5rem", boxShadow: "0 2px 12px rgba(0,0,0,.04)" }}>
+      <VizLabel>Priority Quadrant</VizLabel>
+      <div style={{ fontSize: ".9rem", fontWeight: 700, color: "#0f172a", marginBottom: ".2rem" }}>Where do your accounts land?</div>
+      <div style={{ fontSize: ".78rem", color: "#64748b", marginBottom: "1rem" }}>ICP Fit × Signal Strength / Timing — sample data</div>
+
+      <div style={{ position: "relative" as const, height: 256, border: "1px solid #e2e8f0", borderRadius: ".625rem", overflow: "hidden" as const }}>
+        {quadrants.map(q => (
+          <div key={q.label} style={{ position: "absolute" as const, top: q.top, left: q.left, right: q.right, bottom: q.bottom, background: q.bg }}>
+            <div style={{ position: "absolute" as const, top: 5, left: 5 }}>
+              <div style={{ fontSize: ".6rem", fontWeight: 700, color: q.tc, textTransform: "uppercase" as const, letterSpacing: ".04em" }}>{q.label}</div>
+              <div style={{ fontSize: ".56rem", color: q.tc, opacity: .7 }}>{q.sub}</div>
+            </div>
+          </div>
+        ))}
+
+        {/* Axis dividers */}
+        <div style={{ position: "absolute" as const, left: "50%", top: 0, bottom: 0, width: 1, background: "#e2e8f0", pointerEvents: "none" as const }} />
+        <div style={{ position: "absolute" as const, top: "50%",  left: 0, right: 0, height: 1, background: "#e2e8f0", pointerEvents: "none" as const }} />
+
+        {/* Axis labels */}
+        <div style={{ position: "absolute" as const, bottom: 4, left: "50%", transform: "translateX(-50%)", fontSize: ".57rem", color: "#94a3b8", fontWeight: 500, whiteSpace: "nowrap" as const, pointerEvents: "none" as const }}>← ICP Fit →</div>
+        <div style={{ position: "absolute" as const, top: "50%", left: 3, transform: "translateY(-50%) rotate(-90deg)", transformOrigin: "center center", fontSize: ".57rem", color: "#94a3b8", fontWeight: 500, whiteSpace: "nowrap" as const, pointerEvents: "none" as const }}>Signal</div>
+
+        {/* Account dots */}
+        {accounts.map(a => (
+          <div key={a.name} style={{ position: "absolute" as const, left: `${a.x}%`, top: `${100 - a.y}%`, transform: "translate(-50%,-50%)", zIndex: 2 }}>
+            <div style={{ position: "relative" as const }}>
+              <div style={{ width: 12, height: 12, borderRadius: "50%", background: a.color, border: "2px solid #fff", boxShadow: "0 1px 5px rgba(0,0,0,.22)" }} />
+              <div style={{ position: "absolute" as const, left: "50%", bottom: "calc(100% + 3px)", transform: "translateX(-50%)", background: "#1e293b", color: "#fff", fontSize: ".56rem", fontWeight: 600, padding: ".15rem .35rem", borderRadius: ".25rem", whiteSpace: "nowrap" as const, pointerEvents: "none" as const }}>
+                {a.name}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ display: "flex", gap: ".875rem", marginTop: ".75rem", flexWrap: "wrap" as const }}>
+        {[{ c: "#ef4444", l: "HOT" }, { c: "#f59e0b", l: "WARM" }, { c: "#94a3b8", l: "MONITOR / LOW" }].map(l => (
+          <div key={l.l} style={{ display: "flex", alignItems: "center", gap: ".3rem" }}>
+            <div style={{ width: 8, height: 8, borderRadius: "50%", background: l.c, flexShrink: 0 }} />
+            <span style={{ fontSize: ".7rem", color: "#64748b" }}>{l.l}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
