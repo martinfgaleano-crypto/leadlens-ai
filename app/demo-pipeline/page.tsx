@@ -2113,12 +2113,12 @@ function LeadCard({ lead, index, isOpen, onToggle, copy }: {
           {/* Meta grid */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(140px,1fr))", gap: ".75rem", marginBottom: "1.25rem" }}>
             <MetaCell label={copy.mCompanySize} val={c.company_size ?? "?"} />
-            <MetaCell label={copy.mEmailStatus} val={c.email_status ?? "?"} />
+            <MetaCell label={copy.mEmailStatus} val={`${Math.round(e.research_confidence * 100)}%`} />
             <MetaCell label={copy.mConfidence}  val={`${Math.round(c.confidence_score * 100)}%`} />
             <MetaCell label={copy.mSource}       val={c.source} />
             {c.location    && <MetaCell label={copy.mLocation}  val={c.location} />}
             {c.source_url  && <MetaCell label={copy.mSourceUrl} val={<a href={c.source_url} target="_blank" rel="noreferrer" style={{ color: "#0ea5e9", textDecoration: "none", fontSize: ".82rem" }}>{c.source_url.slice(0, 35)}…</a>} />}
-            {c.linkedin_url && <MetaCell label={copy.mLinkedin} val={<a href={`https://${c.linkedin_url.replace(/^https?:\/\//,"")}`} target="_blank" rel="noreferrer" style={{ color: "#0ea5e9", textDecoration: "none", fontSize: ".82rem" }}>View profile</a>} />}
+            {c.website_url && <MetaCell label={copy.mLinkedin} val={<a href={c.website_url} target="_blank" rel="noreferrer" style={{ color: "#0ea5e9", textDecoration: "none", fontSize: ".82rem" }}>Visit</a>} />}
           </div>
 
           {e.company_summary && (

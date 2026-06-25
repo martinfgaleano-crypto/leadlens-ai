@@ -5,9 +5,9 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 const APP_URL = "https://leadlens-ai-xi.vercel.app";
-const OG_TITLE = "LeadLens AI — Qualified B2B leads and outreach drafts";
+const OG_TITLE = "LeadLens AI — Commercial Intelligence & Opportunity Snapshots";
 const OG_DESC =
-  "Tell us your ideal customer. LeadLens researches qualified B2B leads and writes personalized outreach drafts for each one.";
+  "Tell us your ideal customer. LeadLens identifies which accounts to contact first based on public buying signals — and generates evidence-based outreach strategy for each one.";
 
 export const metadata: Metadata = {
   title: OG_TITLE,
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
         url: `${APP_URL}/api/og`,
         width: 1200,
         height: 630,
-        alt: "LeadLens AI — Qualified B2B leads and outreach drafts",
+        alt: "LeadLens AI — Commercial Intelligence & Opportunity Snapshots",
       },
     ],
   },
