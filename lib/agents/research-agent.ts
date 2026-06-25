@@ -24,28 +24,26 @@ function buildDemoEnrichment(
   criteria: LeadSearchCriteria
 ): EnrichedLead {
   const industry = candidate.industry ?? "their industry";
-  const title = candidate.title ?? "their role";
   const company = candidate.company;
   const size = candidate.company_size ?? "a small team";
 
   return {
     candidate,
-    company_summary: `${company} is a ${size} company in the ${industry} space. They serve B2B clients and appear to be at a growth stage based on available signals.`,
-    role_relevance: `As ${title}, this person likely has decision-making authority over sales tools and pipeline strategy. They would be responsible for building or approving new vendor relationships.`,
-    inferred_pain: `Growing companies in ${industry} at the ${size} stage often struggle with consistent outbound — not enough headcount to scale prospecting manually.`,
+    company_summary: `${company} is a ${size} company operating in the ${industry} space. Based on available public signals, the company appears to be at an active growth stage with characteristics that align with the target ICP.`,
+    role_relevance: `${company} operates in ${industry} at the ${size} stage — a profile associated with active commercial investment and vendor evaluation cycles. This account matches the ICP on industry fit and company scale.`,
+    inferred_pain: `Companies in ${industry} at the ${size} stage often lack a systematic way to identify and prioritize which accounts to approach — signals exist publicly but aren't organized into actionable intelligence.`,
     timing_signals: candidate.raw_context
       ? [extractKeySignal(candidate.raw_context)]
-      : ["No live timing signals available — role and industry used for outreach angle"],
+      : ["No confirmed public timing signals — company profile and segment used for opportunity angle"],
     evidence: [
-      `Source: ${candidate.source}`,
-      candidate.source_url ? `Source URL available` : "No direct source URL",
-      candidate.email ? `Email available (${candidate.email_status ?? "status unknown"})` : "No email found",
+      `Signal source: ${candidate.source}`,
+      candidate.source_url ? `Source reference available` : "No direct source reference",
+      `Source confidence: ${Math.round(candidate.confidence_score * 100)}%`,
     ],
     missing_data: [
-      ...(!candidate.email ? ["Email not found"] : []),
-      ...(!candidate.linkedin_url ? ["LinkedIn URL not found"] : []),
-      "Recent news or hiring signals not verified",
-      "Funding status not confirmed",
+      "No confirmed recent news or announcements verified",
+      "Funding status not confirmed from public record",
+      ...(!candidate.raw_context ? ["No direct public signal context available — segment inference used"] : []),
     ],
     research_confidence: candidate.confidence_score * 0.8,
   };
@@ -82,34 +80,37 @@ async function buildClaudeEnrichment(
   if (process.env.TAVILY_API_KEY && candidate.company) {
     try {
       const { searchTavilyForLead } = await import("@/lib/providers/tavily-lead-provider");
-      webContext = await searchTavilyForLead(candidate.company, candidate.title);
+      webContext = await searchTavilyForLead(candidate.company, candidate.industry);
     } catch {
       // Tavily failure is non-blocking
     }
   }
 
-  const SYSTEM = `You are a B2B commercial intelligence analyst. Enrich this lead with context.
+  const SYSTEM = `You are a B2B commercial intelligence analyst building account-level opportunity research.
+Focus on the company as a whole — not on any individual contact or decision-maker.
 Rules:
-- Never invent specific news, funding rounds, or hiring data you cannot confirm.
-- If you are inferring from role/industry, say so explicitly in missing_data.
-- Only put confirmed signals in timing_signals.
+- Never invent specific news, funding rounds, or hiring data you cannot confirm from the provided context.
+- If you are inferring from industry/segment patterns, say so explicitly in missing_data.
+- Only put confirmed or clearly evidenced signals in timing_signals.
+- company_summary and role_relevance describe the COMPANY, not a person.
+- role_relevance should explain why this account (company/segment) is a relevant opportunity for the offer — not why a specific person would buy.
 - research_confidence is 0–1.
 Return only valid JSON.`;
 
   const userMsg = `Offer: ${criteria.offer_summary}
-Lead: ${candidate.name ?? "Unknown"}, ${candidate.title ?? "Unknown title"} at ${candidate.company}
-Industry: ${candidate.industry ?? "unknown"} | Size: ${candidate.company_size ?? "unknown"}
-LinkedIn: ${candidate.linkedin_url ?? "N/A"}
+Company: ${candidate.company}
+Industry: ${candidate.industry ?? "unknown"} | Size: ${candidate.company_size ?? "unknown"} | Location: ${candidate.location ?? "unknown"}
+Public source: ${candidate.source} | Confidence: ${Math.round(candidate.confidence_score * 100)}%
 Web context: ${webContext || "none available"}
 
 Return JSON:
 {
-  "company_summary": "2-3 sentences about the company",
-  "role_relevance": "Why this role matters for the offer",
-  "inferred_pain": "1 sentence on most likely pain point",
-  "timing_signals": ["confirmed signals only — empty array if none"],
-  "evidence": ["what we actually know"],
-  "missing_data": ["what we couldn't confirm"],
+  "company_summary": "2-3 sentences about this company — its market, scale, and what makes it commercially interesting",
+  "role_relevance": "Why this account (not a person) is a relevant opportunity for the offer — segment fit, stage, likely priorities",
+  "inferred_pain": "1 sentence on the most plausible company-level challenge or gap relevant to this offer",
+  "timing_signals": ["confirmed public signals only — hiring patterns, announcements, expansions, etc. Empty array if none confirmed"],
+  "evidence": ["what public signals or sources support this account's relevance"],
+  "missing_data": ["what we couldn't confirm from public record"],
   "research_confidence": 0.0
 }`;
 

@@ -28,8 +28,8 @@ function scoreDemoLead(enriched: EnrichedLead, icp: ICP): QualifiedLead {
   const industry = (candidate.industry ?? "").toLowerCase();
   const size = candidate.company_size ?? "";
 
-  // ── 1. Decision-making authority (0–3.0) ─────────────────────────────────
-  // Determines if this person can actually buy outbound services
+  // ── 1. Commercial relevance score (0–3.0) ────────────────────────────────
+  // How commercially active does this company's profile suggest they are?
   const roleSc =
     /\b(ceo|co-?founder|founder|owner|president)\b/.test(title) ? 3.0 :
     /\b(cro|chief revenue officer)\b/.test(title) ? 2.8 :
@@ -41,7 +41,7 @@ function scoreDemoLead(enriched: EnrichedLead, icp: ICP): QualifiedLead {
     /\b(manager|lead|senior)\b/.test(title) ? 1.2 :
     0.5;
 
-  // ── 2. Industry fit for B2B outbound offer (0–2.5) ────────────────────────
+  // ── 2. Industry fit for B2B offer (0–2.5) ────────────────────────────────
   const industrySc =
     /\bsaas\b/.test(industry) ? 2.5 :
     /\b(agency|marketing)\b/.test(industry) ? 1.5 :
@@ -49,11 +49,13 @@ function scoreDemoLead(enriched: EnrichedLead, icp: ICP): QualifiedLead {
     /\b(fintech|healthtech|analytics|e-?commerce|logistics)\b/.test(industry) ? 1.0 :
     0.4;
 
-  // ── 3. Email reachability (0–1.5) ────────────────────────────────────────
-  const emailSc =
-    candidate.email_status === "verified" ? 1.5 :
-    (candidate.email_status === "unknown" && !!candidate.email) ? 0.8 :
-    0; // not_found or invalid = 0
+  // ── 3. Evidence/signal coverage (0–1.5) ───────────────────────────────────
+  // Based on source confidence and signal availability — not email reachability
+  const evidenceSc =
+    candidate.confidence_score >= 0.85 ? 1.5 :
+    candidate.confidence_score >= 0.65 ? 0.9 :
+    candidate.confidence_score >= 0.45 ? 0.5 :
+    0.2;
 
   // ── 4. Company size fit (target 11–200) (0–1.0) ──────────────────────────
   const sizeSc =
@@ -64,7 +66,7 @@ function scoreDemoLead(enriched: EnrichedLead, icp: ICP): QualifiedLead {
 
   // ── 5. Timing signal present (0–0.5) ──────────────────────────────────────
   const hasMeaningfulSignal = enriched.timing_signals.some(s =>
-    !s.toLowerCase().startsWith("no live") && !s.toLowerCase().includes("inferred")
+    !s.toLowerCase().startsWith("no confirmed") && !s.toLowerCase().includes("inferred")
   );
   const timingSc = hasMeaningfulSignal ? 0.5 : 0;
 
@@ -72,12 +74,12 @@ function scoreDemoLead(enriched: EnrichedLead, icp: ICP): QualifiedLead {
   const confBoost = (candidate.confidence_score - 0.65) * 1.6;
 
   // Max theoretical: 3.0 + 2.5 + 1.5 + 1.0 + 0.5 + 0.8 = 9.3
-  const raw = roleSc + industrySc + emailSc + sizeSc + timingSc + confBoost;
+  const raw = roleSc + industrySc + evidenceSc + sizeSc + timingSc + confBoost;
   const fit_score = parseFloat(Math.min(10, Math.max(0, raw)).toFixed(1));
   const category = scoreToCategory(fit_score);
 
-  const fit_reasons = buildDemoFitReasons(candidate, enriched, { roleSc, industrySc, emailSc, timingSc });
-  const disqualification_reasons = buildDemoDisqualReasons(candidate, enriched, fit_score);
+  const fit_reasons = buildDemoFitReasons(candidate, enriched, { roleSc, industrySc, evidenceSc, timingSc });
+  const disqualification_reasons = buildDemoDisqualReasons(candidate, enriched, fit_score, hasMeaningfulSignal);
 
   return {
     enrichment: enriched,
@@ -91,7 +93,7 @@ function scoreDemoLead(enriched: EnrichedLead, icp: ICP): QualifiedLead {
       company_fit: parseFloat(Math.min(2, industrySc / 1.25).toFixed(2)),
       pain_fit: hasMeaningfulSignal ? 1.5 : 0.8,
       timing_signal: timingSc * 4,
-      reachability: emailSc / 1.5,
+      reachability: parseFloat(Math.min(1, evidenceSc / 1.5).toFixed(2)),
       strategic_relevance: parseFloat(Math.min(1, (confBoost + 0.8) / 1.6).toFixed(2)),
     },
   };
@@ -103,41 +105,42 @@ async function scoreLeadWithClaude(enriched: EnrichedLead, icp: ICP): Promise<Qu
   const { callClaudeJSON } = await import("@/lib/anthropic");
   const { candidate } = enriched;
 
-  const SYSTEM = `You are a senior B2B SDR qualifying leads against an ICP. Score calibrated — neither inflate nor over-penalize.
+  const SYSTEM = `You are a senior B2B commercial intelligence analyst scoring account-level opportunities against an ICP. Score calibrated — neither inflate nor over-penalize.
+Focus on the COMPANY as a whole, not on any individual contact.
 
 Scoring dimensions (max 10 total):
-- role_fit 0–2: Is this person the economic buyer or key influencer for this offer?
+- role_fit 0–2: Does the company's commercial profile match the ICP? (active commercial investment, right stage, right function)
 - company_fit 0–2: Does the company industry and size match the ICP?
-- pain_fit 0–2: Is the inferred pain plausible and specific to this offer?
-- timing_signal 0–2: Are there confirmed signals (hiring, funding, growth events)? 0 if none — but absence does NOT disqualify a HOT lead.
-- reachability 0–1: Email verified = 1, unknown = 0.5, not found = 0
-- strategic_relevance 0–1: Is this a high-value account type for the offer?
+- pain_fit 0–2: Is the inferred company-level pain plausible and specific to this offer?
+- timing_signal 0–2: Are there confirmed public signals (hiring patterns, expansion, announcements)? 0 if none — absence does NOT disqualify a HOT account.
+- reachability 0–1: How strong is the evidence coverage? High confidence source = 1, moderate = 0.5, thin/inferred only = 0
+- strategic_relevance 0–1: Is this a high-value account type for long-term commercial fit?
 
 Category thresholds: HOT ≥8, WARM 6–7.9, COLD 4–5.9, DISCARD <4
 
 Calibration guidance:
-- HOT is appropriate when role + company + pain all score strongly, even with timing_signal = 0. Confirmed timing signals are a bonus, not a requirement.
-- WARM is appropriate when 2 of 3 (role, company, pain) are strong but 1 is weak or unconfirmed.
-- COLD when there are real ICP mismatches (wrong company size, partially wrong title, thin data).
-- DISCARD only when there is a clear hard disqualifier: wrong industry, wrong title with no buyer path, bad email, or out-of-scope geography.
-- Do not penalize a lead twice for the same missing data. Missing web context is a research limitation, not a disqualifier.
+- HOT is appropriate when company_fit + pain_fit + role_fit all score strongly, even with timing_signal = 0.
+- WARM when 2 of 3 core dimensions are strong but 1 is weak or unconfirmed.
+- COLD when there are real ICP mismatches (wrong industry, wrong size, thin evidence).
+- DISCARD only for clear hard disqualifiers: wrong industry, out-of-scope geography, no viable opportunity path.
+- Do not penalize an account twice for the same missing data. Missing signals is a research limitation, not a disqualifier.
 
 Return only valid JSON.`;
 
   const userMsg = `ICP:
 - Industries: ${icp.target_industries.join(", ")}
-- Titles: ${icp.target_titles.join(", ")}
+- Key roles at target companies: ${icp.target_titles.join(", ")}
 - Size: ${icp.company_size_range}
 - Pain points: ${icp.pain_points.join("; ")}
 - Disqualifiers: ${icp.disqualifiers.join("; ")}
 
-Lead: ${candidate.name ?? "Unknown"}, ${candidate.title ?? "?"} at ${candidate.company}
-Industry: ${candidate.industry ?? "?"} | Size: ${candidate.company_size ?? "?"}
-Email: ${candidate.email ?? "none"} (${candidate.email_status ?? "unknown"})
-Company summary: ${enriched.company_summary ?? "none"}
-Role relevance: ${enriched.role_relevance ?? "none"}
+Account: ${candidate.company}
+Industry: ${candidate.industry ?? "?"} | Size: ${candidate.company_size ?? "?"} | Location: ${candidate.location ?? "?"}
+Source confidence: ${Math.round(candidate.confidence_score * 100)}%
+Company context: ${enriched.company_summary ?? "none"}
+Account fit context: ${enriched.role_relevance ?? "none"}
 Inferred pain: ${enriched.inferred_pain ?? "none"}
-Timing signals: ${enriched.timing_signals.join("; ") || "none"}
+Timing signals: ${enriched.timing_signals.join("; ") || "none confirmed"}
 Missing data: ${enriched.missing_data.join("; ") || "none"}
 
 Return JSON:
@@ -167,29 +170,26 @@ function scoreToCategory(score: number): LeadCategory {
 function buildDemoFitReasons(
   candidate: LeadCandidate,
   enriched: EnrichedLead,
-  scores: { roleSc: number; industrySc: number; emailSc: number; timingSc: number }
+  scores: { roleSc: number; industrySc: number; evidenceSc: number; timingSc: number }
 ): string[] {
   const reasons: string[] = [];
   const title = candidate.title ?? "this role";
   const industry = candidate.industry ?? "their industry";
   const company = candidate.company;
 
-  if (scores.roleSc >= 2.5) reasons.push(`${title} is a primary decision-maker for outbound tools and pipeline strategy`);
-  else if (scores.roleSc >= 2.0) reasons.push(`${title} has direct authority over sales process and vendor selection`);
-  else if (scores.roleSc >= 1.5) reasons.push(`${title} is involved in growth decisions, though not the sole decision-maker`);
+  if (scores.roleSc >= 2.5) reasons.push(`${company} profile suggests strong commercial activity — leadership roles indicate active vendor evaluation`);
+  else if (scores.roleSc >= 2.0) reasons.push(`${company} shows characteristics of an account with active go-to-market investment`);
+  else if (scores.roleSc >= 1.5) reasons.push(`${company} indicates commercial growth stage — relevant but not primary buyer profile yet`);
 
-  if (scores.industrySc >= 2.5) reasons.push(`${industry} companies are LeadLens's primary ICP — high offer relevance`);
-  else if (scores.industrySc >= 1.4) reasons.push(`${industry} businesses regularly buy outbound research services`);
-
-  if (scores.emailSc >= 1.5) reasons.push(`Email verified — direct outreach possible at highest deliverability`);
-  else if (scores.emailSc > 0) reasons.push(`Email on file — needs verification before high-volume send`);
+  if (scores.industrySc >= 2.5) reasons.push(`${industry} is a primary ICP segment — high offer relevance`);
+  else if (scores.industrySc >= 1.4) reasons.push(`${industry} companies frequently prioritize this type of commercial investment`);
 
   if (scores.timingSc > 0 && enriched.timing_signals[0]) {
     const signal = enriched.timing_signals[0].slice(0, 80);
-    reasons.push(`Timing signal detected: ${signal}`);
+    reasons.push(`Buying signal detected: ${signal}`);
   }
 
-  if (candidate.confidence_score >= 0.85) reasons.push(`High source confidence (${Math.round(candidate.confidence_score * 100)}%) — data quality strong`);
+  if (candidate.confidence_score >= 0.85) reasons.push(`High signal confidence (${Math.round(candidate.confidence_score * 100)}%) — strong evidence quality`);
 
   return reasons.length > 0 ? reasons : [`${company} matches target company profile for this offer`];
 }
@@ -197,15 +197,16 @@ function buildDemoFitReasons(
 function buildDemoDisqualReasons(
   candidate: LeadCandidate,
   enriched: EnrichedLead,
-  score: number
+  score: number,
+  hasMeaningfulSignal: boolean
 ): string[] {
   const reasons: string[] = [];
 
-  if (!candidate.email || candidate.email_status === "not_found") reasons.push("No email found — LinkedIn DM is the only reachable channel");
-  if (candidate.email_status === "invalid") reasons.push("Email marked invalid — do not send before re-verifying");
-  if (score < 4) reasons.push("Overall profile does not meet minimum ICP criteria for this offer");
-  if (/\b(procurement|hr|it|legal|finance)\b/i.test(candidate.title ?? "")) reasons.push("Role is not typically the buyer for outbound services");
-  if (/\b(manufacturing|government|non-?profit|education)\b/i.test(candidate.industry ?? "")) reasons.push("Industry is outside primary ICP — lower conversion likelihood");
+  if (candidate.confidence_score < 0.4) reasons.push("Low signal confidence — evidence base is thin; manual research recommended before outreach");
+  if (!hasMeaningfulSignal) reasons.push("No confirmed buying signals — outreach angle based on company profile and segment pattern only");
+  if (score < 4) reasons.push("Overall account profile does not meet minimum ICP criteria for this offer");
+  if (/\b(procurement|hr|it|legal|finance)\b/i.test(candidate.title ?? "")) reasons.push("Account's primary commercial role may not align with this offer's buyer profile");
+  if (/\b(manufacturing|government|non-?profit|education)\b/i.test(candidate.industry ?? "")) reasons.push("Industry is outside primary ICP — lower opportunity likelihood");
 
   return reasons;
 }

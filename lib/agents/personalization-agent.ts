@@ -21,38 +21,28 @@ export async function runPersonalizationAgent(
 function buildDemoTrigger(qualified: QualifiedLead, criteria: LeadSearchCriteria): string {
   const enrichment = qualified.enrichment;
   const { candidate } = enrichment;
-  const firstName = candidate.name?.split(" ")[0] ?? "there";
   const company = candidate.company;
-  const role = candidate.title ?? "your role";
   const industry = candidate.industry ?? "your industry";
 
   // Use timing signal if it's clean and specific (not a generic fallback)
   const liveSignal = enrichment.timing_signals[0];
   const isCleanSignal = liveSignal &&
-    !liveSignal.toLowerCase().startsWith("no live") &&
+    !liveSignal.toLowerCase().startsWith("no confirmed") &&
     !liveSignal.toLowerCase().includes("inferred") &&
     liveSignal.length > 20;
 
   if (isCleanSignal) {
-    const isPersonal = /\b(recently|just|new\b|hired|raised|joined|launched|growing|building|looking|posted|no\s+dedic|ready to|wants to)\b/i.test(liveSignal);
-    if (isPersonal) {
-      // Strip 3rd-person references to the lead ("Marcus wears..." → use context differently)
-      const startsWithName = new RegExp(`^${firstName}\\s+`, "i").test(liveSignal);
-      if (!startsWithName) {
-        const signal = liveSignal.replace(/\.$/, "");
-        return `${firstName} — noticed that ${signal.charAt(0).toLowerCase()}${signal.slice(1)} at ${company}. That usually signals it's worth thinking more seriously about systematic outbound.`;
-      }
-    }
-    // Signal is a company descriptor — use role/industry angle instead
+    const signal = liveSignal.replace(/\.$/, "");
+    return `Noticed that ${company} ${signal.charAt(0).toLowerCase()}${signal.slice(1)}. That kind of signal often correlates with commercial evaluation activity — wanted to reach out while the timing looks relevant.`;
   }
 
-  // Use ICP-aligned pain angle
+  // Use ICP-aligned company-level pain angle
   if (enrichment.inferred_pain) {
-    return `${firstName} — most ${role}s in ${industry} tell us that building a consistent outbound pipeline without adding headcount is one of the harder problems at the ${candidate.company_size ?? "growth"} stage. Curious if that's true for ${company}.`;
+    return `${company} fits the profile of ${industry} teams we work with at this stage: strong commercial foundation, but identifying which accounts to prioritize — and why now — tends to become a bottleneck before the team scales.`;
   }
 
-  // Fallback: role + company context
-  return `${firstName} — saw that ${company} fits the profile of ${industry} teams we work with: strong product, growth-stage, outbound is becoming a bottleneck. Thought LeadLens might be worth a quick look.`;
+  // Fallback: segment + company context
+  return `${company} caught our attention as an ${industry} company at a stage where commercial focus tends to matter most. Thought it might be worth a quick conversation.`;
 }
 
 // ─── Claude trigger ───────────────────────────────────────────────────────────
@@ -67,26 +57,27 @@ async function buildClaudeTrigger(
 
   // The trigger is an INTERNAL insight for the outreach writer — not a copyable email line.
   // The outreach agent uses this as context to write its own natural opener.
-  const SYSTEM = `You are a B2B SDR research assistant writing internal lead notes.
-Write a concise analytical insight about this lead — NOT a public-facing email sentence.
+  const SYSTEM = `You are a B2B commercial intelligence analyst writing an internal opportunity note.
+Write a concise analytical insight about this COMPANY/ACCOUNT — NOT about any individual contact.
 Rules:
 - 1–2 sentences, written as internal context for an outreach writer
-- Capture the most specific thing about their role, stage, or likely pain
-- If no confirmed signals exist, frame clearly as pattern-based inference
+- Focus on the company's stage, segment fit, public signals, or likely commercial priorities
+- If no confirmed signals exist, frame clearly as pattern-based inference from segment/industry
 - Never invent news, funding rounds, or hiring events
-- Do NOT write something that starts with the person's first name
-- Do NOT write something that sounds like an email opener
+- Do NOT mention a person's name, title, email, or LinkedIn
+- Do NOT write something that sounds like a direct email opener to a person
+- The note should answer: "Why is this company worth reaching out to, and why now?"
 Return only JSON.`;
 
-  const userMsg = `Lead: ${candidate.name ?? "?"}, ${candidate.title ?? "?"} at ${candidate.company}
-Industry: ${candidate.industry ?? "?"} | Size: ${candidate.company_size ?? "?"}
+  const userMsg = `Company: ${candidate.company}
+Industry: ${candidate.industry ?? "?"} | Size: ${candidate.company_size ?? "?"} | Location: ${candidate.location ?? "?"}
 Timing signals: ${enrichment.timing_signals.join("; ") || "none confirmed"}
 Inferred pain: ${enrichment.inferred_pain ?? "none"}
 Company summary: ${enrichment.company_summary ?? "none"}
 Fit reasons: ${qualified.fit_reasons.join("; ")}
 Offer context: ${criteria.offer_summary}
 
-Return JSON: { "trigger_insight": "1–2 sentence internal note" }`;
+Return JSON: { "trigger_insight": "1–2 sentence internal note about this company opportunity" }`;
 
   const result = await callClaudeJSON<{ trigger_insight: string }>(SYSTEM, userMsg, 300);
   return result.trigger_insight;

@@ -22,12 +22,9 @@ export async function runReportAgent(
     ? parseFloat((leads.reduce((s, l) => s + l.qualification.fit_score, 0) / leads.length).toFixed(1))
     : 0;
 
-  const verifiedEmails = leads.filter(l => l.candidate.email_status === "verified").length;
-  const warmAvg = warm.length > 0
-    ? parseFloat((warm.reduce((s, l) => s + l.qualification.fit_score, 0) / warm.length).toFixed(1))
-    : 0;
+  const highConfidence = leads.filter(l => l.candidate.confidence_score >= 0.75).length;
 
-  const patterns = buildPatterns(leads, hot, warm, verifiedEmails);
+  const patterns = buildPatterns(leads, hot, warm, highConfidence);
   const recommendations = buildRecommendations(leads, hot, warm, cold);
 
   const executive_summary = IS_DEMO || !process.env.ANTHROPIC_API_KEY
@@ -71,16 +68,16 @@ function buildDemoSummary(
 
   let actionLine: string;
   if (hot.length > 0) {
-    const topNames = hot.slice(0, 3).map(l => `${l.candidate.name ?? l.candidate.company} (${l.candidate.company})`).join(", ");
-    actionLine = `${hot.length} HOT lead${hot.length > 1 ? "s" : ""} should go out this week — outreach sequences are ready. Top prospects: ${topNames}.`;
+    const topAccounts = hot.slice(0, 3).map(l => l.candidate.company).join(", ");
+    actionLine = `${hot.length} HOT opportunit${hot.length > 1 ? "ies" : "y"} identified — outreach drafts are ready. Top accounts: ${topAccounts}.`;
   } else if (warm.length > 0) {
-    const topNames = warm.slice(0, 3).map(l => `${l.candidate.name ?? l.candidate.company} at ${l.candidate.company}`).join(", ");
-    actionLine = `Focus on the ${warm.length} WARM lead${warm.length > 1 ? "s" : ""} — review the personalization trigger for each before sending. Strongest: ${topNames}.`;
+    const topAccounts = warm.slice(0, 3).map(l => l.candidate.company).join(", ");
+    actionLine = `Focus on the ${warm.length} WARM opportunit${warm.length > 1 ? "ies" : "y"} — review the recommended angle for each before outreach. Strongest accounts: ${topAccounts}.`;
   } else {
-    actionLine = `All leads in this batch need manual review before outreach. Consider refining your ICP or switching to a larger plan for more variety.`;
+    actionLine = `All accounts in this batch need manual review before outreach. Consider refining your ICP or switching to a larger plan for more signal coverage.`;
   }
 
-  return `LeadLens processed ${leads.length} leads for your ${plan} plan: ${hot.length} HOT, ${warm.length} WARM, ${cold.length} COLD, ${discard.length} DISCARD. ${qualityLine} ${actionLine}`;
+  return `LeadLens processed ${leads.length} accounts for your ${plan} plan: ${hot.length} HOT, ${warm.length} WARM, ${cold.length} COLD, ${discard.length} low-priority. ${qualityLine} ${actionLine}`;
 }
 
 // ─── Claude summary ───────────────────────────────────────────────────────────
@@ -94,10 +91,10 @@ async function buildClaudeSummary(
 ): Promise<string> {
   const { callClaude } = await import("@/lib/anthropic");
 
-  const SYSTEM = `You are a B2B sales analyst. Write a concise 3-sentence executive summary for a lead report. Be specific, no fluff.`;
-  const userMsg = `Total: ${leads.length} leads | HOT: ${hot.length} | WARM: ${warm.length} | COLD: ${cold.length} | Avg score: ${avgScore}
-Top HOT leads: ${hot.slice(0, 3).map(l => `${l.candidate.name ?? "?"} at ${l.candidate.company}`).join(", ")}
-Write a 3-sentence executive summary.`;
+  const SYSTEM = `You are a B2B commercial intelligence analyst. Write a concise 3-sentence executive summary for an Opportunity Snapshot report. Focus on accounts and signals, not individual contacts. Be specific, no fluff.`;
+  const userMsg = `Total accounts: ${leads.length} | HOT: ${hot.length} | WARM: ${warm.length} | COLD: ${cold.length} | Avg opportunity score: ${avgScore}
+Top HOT accounts: ${hot.slice(0, 3).map(l => `${l.candidate.company} (${l.candidate.industry ?? "?"})`).join(", ")}
+Write a 3-sentence executive summary focused on account-level opportunity quality and recommended next steps.`;
 
   return callClaude(SYSTEM, userMsg, 200);
 }
@@ -108,43 +105,39 @@ function buildPatterns(
   leads: ProcessedLead[],
   hot: ProcessedLead[],
   warm: ProcessedLead[],
-  verifiedEmails: number
+  highConfidenceCount: number
 ): string[] {
-  if (leads.length === 0) return ["No leads to analyze."];
+  if (leads.length === 0) return ["No accounts to analyze."];
 
   const patterns: string[] = [];
   const primaryGroup = hot.length > 0 ? hot : warm;
 
-  // Top industry in best leads
+  // Top industry in best accounts
   const primaryIndustries = primaryGroup.map(l => l.candidate.industry).filter(Boolean) as string[];
   const topIndustry = mode(primaryIndustries);
   if (topIndustry) {
     const label = hot.length > 0 ? "HOT" : "WARM";
-    patterns.push(`Most ${label} leads are in ${topIndustry} — prioritize this vertical for best response rates`);
-  }
-
-  // Top titles in best leads
-  const primaryTitles = primaryGroup.map(l => l.candidate.title).filter(Boolean) as string[];
-  const topTitle = mode(primaryTitles);
-  if (topTitle) {
-    patterns.push(`${topTitle} is the most common high-fit title — adjust subject lines for this persona`);
+    patterns.push(`Most ${label} accounts are in ${topIndustry} — prioritize this segment for the highest-signal outreach`);
   }
 
   // WARM average score
   if (warm.length > 0) {
     const warmAvg = parseFloat((warm.reduce((s, l) => s + l.qualification.fit_score, 0) / warm.length).toFixed(1));
-    patterns.push(`WARM leads average ${warmAvg}/10 — personalized follow-up could convert several into active conversations`);
+    patterns.push(`WARM accounts average ${warmAvg}/10 — a well-timed, signal-led outreach could move several into active conversations`);
   }
 
-  // Email coverage
-  const withEmail = leads.filter(l => l.candidate.email).length;
-  const emailPct = Math.round((withEmail / leads.length) * 100);
-  patterns.push(`${emailPct}% of leads have email addresses — ${verifiedEmails} verified for highest deliverability`);
+  // Evidence coverage
+  const evidencePct = Math.round((highConfidenceCount / leads.length) * 100);
+  patterns.push(`${evidencePct}% of accounts have high-confidence signal evidence — strongest basis for outreach timing`);
 
-  // LinkedIn-only leads
-  const missingEmail = leads.filter(l => !l.candidate.email).length;
-  if (missingEmail > 0) {
-    patterns.push(`${missingEmail} lead${missingEmail > 1 ? "s" : ""} have no email — use the included LinkedIn DM sequence for these`);
+  // Accounts with confirmed buying signals
+  const withSignals = leads.filter(l =>
+    l.enrichment.timing_signals.some(s =>
+      !s.toLowerCase().startsWith("no confirmed") && !s.toLowerCase().includes("inferred")
+    )
+  ).length;
+  if (withSignals > 0) {
+    patterns.push(`${withSignals} account${withSignals > 1 ? "s" : ""} have confirmed public buying signals — prioritize these for first outreach wave`);
   }
 
   return patterns;
@@ -159,22 +152,22 @@ function buildRecommendations(
   const recs: string[] = [];
 
   if (hot.length > 0) {
-    recs.push(`Send HOT leads this week using the personalized email sequence — follow up with the LinkedIn DM on day 2–3 if no reply`);
-    if (hot.length > 5) recs.push(`If sending manually, prioritize the top ${Math.min(hot.length, 5)} HOT leads first — freshest timing signals`);
+    recs.push(`Prioritize HOT accounts this week — outreach drafts are ready and buying signals are strongest. Start with the top ${Math.min(hot.length, 5)} by opportunity score.`);
+    if (hot.length > 5) recs.push(`If reaching out manually, work through HOT accounts in order of score — fresher signals first`);
   } else if (warm.length > 0) {
-    recs.push(`Start with the WARM leads — review the personalization trigger for each before sending to improve reply rates`);
-    recs.push(`For WARM leads, the LinkedIn DM is a lower-commitment first touch than email`);
+    recs.push(`Start with WARM accounts — review the recommended angle for each before outreach. Signal-led openers will outperform generic templates.`);
+    recs.push(`For WARM accounts, a LinkedIn company message is often a lower-friction first touch than cold email`);
   }
 
   if (hot.length > 0 && warm.length > 0) {
-    recs.push(`Run WARM leads in parallel with a softer, educational angle — don't wait until HOT responses come in`);
+    recs.push(`Run WARM accounts in parallel with a softer, educational angle — don't wait for HOT responses before engaging WARM ones`);
   }
 
   if (cold.length > 0) {
-    recs.push(`Review COLD leads manually — some may be worth contacting with a lighter two-touch sequence`);
+    recs.push(`Review COLD accounts manually before outreach — some may be worth a lighter two-touch sequence if the segment fit is strong`);
   }
 
-  recs.push(`Do not include DISCARD leads in this campaign — save send volume for higher-fit prospects`);
+  recs.push(`Exclude low-priority (DISCARD) accounts from this outreach wave — focus commercial energy on HOT and WARM accounts first`);
 
   return recs;
 }

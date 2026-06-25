@@ -32,9 +32,7 @@ function runDemoQC(qualified: QualifiedLead, outreach: OutreachSequence): QCResu
     return { status: "FAILED", notes };
   }
 
-  if (!candidate.email) notes.push("No email found — LinkedIn DM only");
-  if (candidate.email_status === "invalid") notes.push("Email marked invalid — verify before sending");
-  if (candidate.email_status === "not_found") notes.push("Email not found — enrich before outreach");
+  if (candidate.confidence_score < 0.4) notes.push("Low signal confidence — manual research recommended before outreach");
 
   if (!outreach.personalization_trigger || outreach.personalization_trigger.length < 20) {
     notes.push("Personalization trigger is too short or generic");
@@ -85,9 +83,9 @@ Return only valid JSON.`;
   const triggerPreview = outreach.personalization_trigger.slice(0, 100);
   const emailStart = outreach.email_body.slice(0, 120);
 
-  const userMsg = `Lead: ${candidate.name ?? "?"}, ${candidate.title ?? "?"} at ${candidate.company}
-Fit score: ${qualified.fit_score} (${category})
-Email status: ${candidate.email_status ?? "unknown"}
+  const userMsg = `Account: ${candidate.company} (${candidate.industry ?? "?"})
+Opportunity score: ${qualified.fit_score} (${category})
+Signal confidence: ${Math.round(candidate.confidence_score * 100)}%
 
 Trigger insight: "${triggerPreview}"
 Email opening (first 120 chars): "${emailStart}"
