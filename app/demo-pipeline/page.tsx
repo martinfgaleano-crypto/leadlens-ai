@@ -107,7 +107,7 @@ const COPY = {
     moreInExport: (n: number) => `+ ${n} more companies in the full export`,
     dlAll: (n: number) => `⬇ Download all ${n} companies as CSV`,
     mCompanySize: "Company size",
-    mEmailStatus: "Email status",
+    mEmailStatus: "Signal quality",
     mConfidence: "Confidence",
     mSource: "Source",
     mLocation: "Location",
@@ -335,7 +335,7 @@ const COPY = {
     moreInExport: (n: number) => `+ ${n} oportunidades más en tu exportación`,
     dlAll: (n: number) => `⬇ Descargar las ${n} oportunidades como CSV`,
     mCompanySize: "Tamaño de empresa",
-    mEmailStatus: "Estado del contacto",
+    mEmailStatus: "Calidad de señal",
     mConfidence: "Confianza",
     mSource: "Fuente",
     mLocation: "Ubicación",
@@ -563,7 +563,7 @@ const COPY = {
     moreInExport: (n: number) => `+ ${n} oportunidades a mais na sua exportação`,
     dlAll: (n: number) => `⬇ Baixar todas as ${n} oportunidades como CSV`,
     mCompanySize: "Tamanho da empresa",
-    mEmailStatus: "Status do contato",
+    mEmailStatus: "Qualidade do sinal",
     mConfidence: "Confiança",
     mSource: "Fonte",
     mLocation: "Localização",
@@ -791,7 +791,7 @@ const COPY = {
     moreInExport: (n: number) => `他${n}件はエクスポートに含まれます`,
     dlAll: (n: number) => `⬇ 全${n}件をCSVでダウンロード`,
     mCompanySize: "企業規模",
-    mEmailStatus: "コンタクト状況",
+    mEmailStatus: "シグナル品質",
     mConfidence: "信頼度",
     mSource: "ソース",
     mLocation: "所在地",
@@ -1874,7 +1874,7 @@ export default function DemoPipelinePage() {
         <div style={{ fontSize: "3.5rem", marginBottom: "1.25rem" }}>⚙️</div>
         <h1 style={{ fontSize: "1.6rem", fontWeight: 800, letterSpacing: "-.02em", marginBottom: ".6rem" }}>{copy.processingTitle}</h1>
         <p style={{ color: "#64748b", fontSize: ".9rem", marginBottom: ".35rem" }}>
-          {PLANS[plan].leads} leads · {copy.planNames[plan]}
+          {copy.planNames[plan]}
         </p>
         <p style={{ color: "#94a3b8", fontSize: ".82rem", marginBottom: ".5rem" }}>{copy.processingStatus}</p>
         <p style={{ color: "#94a3b8", fontSize: ".8rem", marginBottom: "2rem" }}>{copy.processingNote}</p>
@@ -1958,7 +1958,7 @@ export default function DemoPipelinePage() {
           <div style={{ marginBottom: "2rem" }}>
             <h1 style={{ fontSize: "1.875rem", fontWeight: 800, letterSpacing: "-.02em", marginBottom: ".25rem" }}>{copy.reportTitle}</h1>
             <p style={{ color: "#64748b", fontSize: ".9rem" }}>
-              {report.total_leads} leads · {copy.planNames[report.plan as PlanType] ?? report.plan} · {new Date(report.created_at).toLocaleString()}
+              {report.total_leads} opportunities · {copy.planNames[report.plan as PlanType] ?? report.plan} · {new Date(report.created_at).toLocaleString()}
             </p>
           </div>
 
@@ -2091,10 +2091,10 @@ function LeadCard({ lead, index, isOpen, onToggle, copy }: {
           <span style={{ fontSize: ".78rem", color: "#cbd5e1", fontFamily: "monospace", fontWeight: 700, minWidth: "1.5rem" }}>#{index + 1}</span>
           <div style={{ minWidth: 0 }}>
             <div style={{ fontWeight: 700, fontSize: ".95rem" }}>
-              {c.name ?? "Unknown"} <span style={{ fontWeight: 400, color: "#64748b" }}>— {c.company}</span>
+              {c.company ?? "Unknown"}
             </div>
             <div style={{ fontSize: ".82rem", color: "#94a3b8", marginTop: ".1rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-              {c.title ?? "?"} · {c.email ?? "no email"} · {c.industry ?? "?"}
+              {[c.industry, c.location].filter(Boolean).join(" · ") || "—"}
             </div>
           </div>
         </div>
