@@ -10,14 +10,14 @@ const COPY = {
     announcement: "B2B Opportunity Snapshots now available — commercial intelligence for your first real outreach.",
     announcementCTA: "Get your Snapshot →",
     navPricing: "Pricing",
-    navCTA: "Get Opportunity Snapshot — $97",
+    navCTA: "See pricing →",
     heroBadge: "Beta open — B2B commercial intelligence",
     heroH1pre: "Find the B2B accounts",
     heroH1hi: "worth contacting this week",
     heroH1post: ".",
     heroH2: "And know exactly why.",
     heroSub: "LeadLens maps your market, detects public buying signals, and delivers a ranked list of high-intent accounts — with the context and strategy your team needs to make the first call count.",
-    heroCTA: "Get your first Opportunity Snapshot — $97 →",
+    heroCTA: "Get your first Opportunity Snapshot — $59 →",
     heroSeeAll: "See what's included",
     heroNote: "No contact databases. No email lists. Just commercial intelligence.",
     proofLabels: [["5","opportunity briefs"],["6–8","market segments"],["24–48h","delivery"],["100%","source-verified"]] as [string,string][],
@@ -30,23 +30,31 @@ const COPY = {
       ["4","You get ranked briefs","5 Opportunity Briefs — ranked by score. Each one explains why this company, why now, and how to approach them."],
     ] as [string,string,string][],
     pricingTag: "Pricing",
-    pricingTitle: "One Snapshot. All the intelligence you need to start.",
-    pricingSub: "No subscription. No contract. One-time payment — get your ranked opportunities and outreach strategy in 24–48h.",
-    oneBatch: "Opportunity Snapshot",
-    monthlyTitle: "Need ongoing market intelligence?",
-    monthlySub: "Monthly plans are coming for teams that need continuous market monitoring, updated buying signals, and fresh opportunity batches every month.",
-    monthlyTag: "Monthly plans coming soon",
-    planNames: { sample: "Signal Preview", starter: "Starter", standard: "Opportunity Snapshot", pro: "Pro Intelligence" },
-    planDescs: { sample: "See the format — no payment required.", starter: "3 opportunity briefs to start.", standard: "Your ICP → 5 ranked companies with signals, scores, and outreach strategy.", pro: "Full intelligence — 10 briefs, 10+ segments, priority review." },
+    pricingTitle: "Commercial intelligence at every depth.",
+    pricingSub: "Three focused products. No subscription. Start with what fits your stage.",
+    oneBatch: "One-time payment",
+    monthlyTag: "Coming soon — Pilot access",
+    monthlyTitle: "Opportunity Monitor",
+    monthlySub: "Monthly refreshed opportunities, signal updates, weekly opportunity digest, and recurring briefs — for teams that need continuous market intelligence.",
+    monitorCTA: "Join pilot waitlist",
+    monitorPrice: "From $99/mo",
+    planNames: { sample: "Signal Preview", starter: "Market Map Preview", standard: "Opportunity Snapshot", pro: "Market Intelligence Report" },
+    planDescs: {
+      sample:   "See the format — no payment required.",
+      starter:  "A paid diagnostic that maps your market and shows you where to focus before committing to a deeper report.",
+      standard: "A focused report that turns one ICP into a ranked list of companies worth contacting — with signals, scores, and outreach strategy.",
+      pro:      "A deeper report for businesses that want broader market visibility, more opportunities, and a stronger strategic direction.",
+    },
     planFeatures: {
       sample:   ["Sample Market Map","Sample company briefs","No real research — format only","See the output before committing"],
-      starter:  ["ICP analysis","Market Map (5 segments)","Account Discovery","3 Opportunity Briefs","Buying signals per account","Opportunity Score","Email + LinkedIn DM","PDF + CSV","Delivery in 24–48h"],
-      standard: ["ICP analysis","Market Map — 6–8 buyer segments","Account Discovery — 10–15 companies/segment","5 full Opportunity Briefs","Buying signals with verified sources","Opportunity Score + Confidence Score","Why Now — timing analysis per account","Recommended sales angle","Email + LinkedIn DM + cold call opener","PDF + CSV download","Delivery in 24–48h"],
-      pro:      ["Everything in Snapshot","10 Opportunity Briefs","Expanded Market Map (10+ segments)","Priority manual review","Delivery in 24h"],
+      starter:  ["1 ICP","5–8 buyer segments","Segment ranking preview","Signals to watch by segment","Example opportunity types","Recommended first segment to test","PDF delivery"],
+      standard: ["1 ICP","Market Map — 6–8 buyer segments","10–15 ranked opportunities","Top 5 Opportunity Briefs","Public buying signals with sources","Opportunity Score + Confidence Score","Why now — timing analysis","Recommended sales angle","Outreach assets included","PDF + CSV download","Delivery in 24–48h"],
+      pro:      ["1 ICP","Expanded Market Map","20–30 ranked opportunities","Top 10 Opportunity Briefs","Segment-level recommendations","Evidence and source list","Outreach sequence","Risks and weaknesses analysis","PDF + CSV download","Delivery in 24–48h"],
     },
+    planCTAs: { sample: "Preview sample format →", starter: "Generate Market Map Preview →", standard: "Start Opportunity Snapshot →", pro: "Get Market Intelligence Report →" },
     leadsFoundBy: (n: number) => `${n} opportunities found by LeadLens`,
-    getStarted: "Get Opportunity Snapshot — $97",
-    mostPopular: "Best value",
+    getStarted: "Start Opportunity Snapshot →",
+    mostPopular: "Best starting point",
     formTag: "Start your Opportunity Snapshot",
     formTitle: "Tell LeadLens about your business",
     formSub: "The more context you give, the better the opportunities and outreach strategy we can find for you.",
@@ -134,11 +142,11 @@ const COPY = {
     ],
     tryDemoCTA: "Preview sample report",
     checkoutPendingTitle: "Online checkout is almost ready.",
-    checkoutPendingBody: "Our checkout is currently in final review before launch. Beta batches cannot be purchased yet.",
+    checkoutPendingBody: "Our checkout is currently in final review. Opportunity Snapshots are not yet available for purchase.",
     checkoutPendingDemoHint: "You can still preview the sample report format below.",
     switchToDemo: "Preview sample report format →",
     sampleBadge: "Sample report preview",
-    sampleNote: "This report uses sample data to show the format. For real researched leads, start with the $7 Sample Pack.",
+    sampleNote: "This preview uses sample data to show the format of a real Opportunity Snapshot. For a real Snapshot with researched companies and verified signals, purchase an Opportunity Snapshot.",
     problemTag: "The problem",
     problemTitle: "You have access to data. You don't have commercial intelligence.",
     problemItems: [
@@ -181,16 +189,16 @@ const COPY = {
     ctaTag: "Get started",
     ctaTitle: "Know which accounts to call this week.",
     ctaSub: "One Opportunity Snapshot. 24–48h delivery. Real signals, real companies, real strategy.",
-    ctaCTA: "Get your first Opportunity Snapshot — $97 →",
+    ctaCTA: "Get your first Opportunity Snapshot — $59 →",
     sampleTabs: ["Email", "LinkedIn DM", "Follow-up 1", "Follow-up 2"],
-    pricePerLead: { sample: "$3.50 / lead", starter: "$2.90 / lead", standard: "$1.58 / lead", pro: "$1.49 / lead" },
+    pricePerLead: { sample: "Free", starter: "One-time payment", standard: "One-time payment", pro: "One-time payment" },
     samplePackTitle: "Not ready to commit?",
     samplePackCopy: "Preview the sample report format first — free, no payment required.",
     samplePackBadge: "Free preview",
     samplePackCTA: "Preview sample report →",
     samplePackBridge: "Want the real thing? An Opportunity Snapshot delivers 5 researched company briefs with buying signals and outreach strategy.",
     sampleBridgeFreeDemo: "Preview the report format",
-    sampleBridgeSamplePack: "Get an Opportunity Snapshot — $97",
+    sampleBridgeSamplePack: "Get an Opportunity Snapshot — $59",
     samplePreviewDisclaimer: "This preview uses sample data to show the report format. Real Opportunity Snapshots include researched companies, verified buying signals, and scored briefs.",
     trustItems: ["Source-verified signals", "Human-reviewed output", "No contact databases", "7-day refund policy"] as string[],
     afterPurchaseTitle: "After you buy:",
@@ -204,7 +212,7 @@ const COPY = {
     faqCtaBridge: "Still not sure? Preview the sample report format first — free, no payment required.",
     resultsUpgradeTitle: "Ready for real commercial intelligence?",
     resultsUpgradeSub: "An Opportunity Snapshot delivers 5 company briefs with buying signals, opportunity scores, and outreach strategy — researched and reviewed by our team in 24–48h.",
-    resultsUpgradeCTA: "Get your Opportunity Snapshot — $97 →",
+    resultsUpgradeCTA: "Get your Opportunity Snapshot — $59 →",
     checkoutEarlyBanner: "Checkout is in final review. Preview the sample report format while you wait.",
     comparisonTag: "How we compare",
     comparisonTitle: "LeadLens is not a database. It's a decision.",
@@ -227,14 +235,14 @@ const COPY = {
     announcement: "Opportunity Snapshots disponibles — inteligencia comercial B2B para tu primer outreach real.",
     announcementCTA: "Obtener mi Snapshot →",
     navPricing: "Precios",
-    navCTA: "Obtener Opportunity Snapshot — $97",
+    navCTA: "Ver precios →",
     heroBadge: "Beta abierta — inteligencia comercial B2B",
     heroH1pre: "Encuentra las cuentas B2B",
     heroH1hi: "que vale la pena contactar esta semana",
     heroH1post: ".",
     heroH2: "Y sabe exactamente por qué.",
     heroSub: "LeadLens mapea tu mercado, detecta señales públicas de compra y entrega un ranking de cuentas de alta intención — con el contexto y la estrategia que tu equipo necesita para que la primera conversación cuente.",
-    heroCTA: "Obtener tu primer Opportunity Snapshot — $97 →",
+    heroCTA: "Obtener tu primer Opportunity Snapshot — $59 →",
     heroSeeAll: "Ver qué incluye",
     heroNote: "Sin bases de datos de contactos. Sin listas de emails. Solo inteligencia comercial.",
     proofLabels: [["5","briefs de oportunidad"],["6–8","segmentos de mercado"],["24–48h","entrega"],["100%","fuentes verificadas"]] as [string,string][],
@@ -247,23 +255,31 @@ const COPY = {
       ["4","Recibes briefs priorizados","5 Opportunity Briefs rankeados por score. Cada uno explica por qué esta empresa, por qué ahora y cómo acercarte."],
     ] as [string,string,string][],
     pricingTag: "Precios",
-    pricingTitle: "Un Snapshot. Toda la inteligencia que necesitas para empezar.",
-    pricingSub: "Sin suscripción. Sin contrato. Pago único — recibe tus oportunidades rankeadas y estrategia de outreach en 24–48h.",
-    oneBatch: "Opportunity Snapshot",
-    monthlyTitle: "¿Necesitas inteligencia de mercado continua?",
-    monthlySub: "Pronto habrá planes mensuales para equipos que necesitan monitoreo continuo del mercado, señales actualizadas y nuevos lotes de oportunidades cada mes.",
-    monthlyTag: "Planes mensuales próximamente",
-    planNames: { sample: "Vista Previa", starter: "Starter", standard: "Opportunity Snapshot", pro: "Pro Intelligence" },
-    planDescs: { sample: "Ve el formato — sin pago requerido.", starter: "3 briefs de oportunidad para empezar.", standard: "Tu ICP → 5 empresas rankeadas con señales, scores y estrategia de outreach.", pro: "Inteligencia completa — 10 briefs, 10+ segmentos, revisión prioritaria." },
+    pricingTitle: "Inteligencia comercial en cada profundidad.",
+    pricingSub: "Tres productos enfocados. Sin suscripción. Empieza donde tenga sentido para tu negocio.",
+    oneBatch: "Pago único",
+    monthlyTag: "Próximamente — Acceso piloto",
+    monthlyTitle: "Opportunity Monitor",
+    monthlySub: "Oportunidades actualizadas mensualmente, señales nuevas, resumen semanal de oportunidades y briefs recurrentes — para equipos que necesitan inteligencia de mercado continua.",
+    monitorCTA: "Unirse a la lista piloto",
+    monitorPrice: "Desde $99/mes",
+    planNames: { sample: "Vista Previa", starter: "Market Map Preview", standard: "Opportunity Snapshot", pro: "Market Intelligence Report" },
+    planDescs: {
+      sample:   "Ve el formato — sin pago requerido.",
+      starter:  "Un diagnóstico pagado que mapea tu mercado y te muestra dónde enfocarte antes de comprometerte con un reporte más profundo.",
+      standard: "Un reporte enfocado que convierte un ICP en una lista de empresas rankeadas que vale la pena contactar — con señales, scores y estrategia.",
+      pro:      "Un reporte más profundo para negocios que quieren mayor visibilidad de mercado, más oportunidades y una dirección estratégica más sólida.",
+    },
     planFeatures: {
       sample:   ["Market Map de muestra","Briefs de empresa de muestra","Sin investigación real — solo formato","Ve el output antes de comprometerte"],
-      starter:  ["Análisis de ICP","Market Map (5 segmentos)","Account Discovery","3 Opportunity Briefs","Señales de compra por cuenta","Opportunity Score","Email + LinkedIn DM","PDF + CSV","Entrega en 24–48h"],
-      standard: ["Análisis de ICP","Market Map — 6–8 segmentos de compradores","Account Discovery — 10–15 empresas/segmento","5 Opportunity Briefs completos","Señales de compra con fuentes verificadas","Opportunity Score + Confidence Score","Por qué ahora — análisis de timing por cuenta","Ángulo de venta recomendado","Email + LinkedIn DM + cold call opener","Descarga PDF + CSV","Entrega en 24–48h"],
-      pro:      ["Todo lo del Snapshot","10 Opportunity Briefs","Market Map ampliado (10+ segmentos)","Revisión manual prioritaria","Entrega en 24h"],
+      starter:  ["1 ICP","5–8 segmentos de compradores","Ranking de segmentos","Señales a seguir por segmento","Tipos de oportunidades ejemplo","Primer segmento recomendado","Entrega en PDF"],
+      standard: ["1 ICP","Market Map — 6–8 segmentos","10–15 oportunidades rankeadas","Top 5 Opportunity Briefs","Señales de compra públicas con fuentes","Opportunity Score + Confidence Score","Por qué ahora — análisis de timing","Ángulo de venta recomendado","Activos de outreach incluidos","Descarga PDF + CSV","Entrega en 24–48h"],
+      pro:      ["1 ICP","Market Map ampliado","20–30 oportunidades rankeadas","Top 10 Opportunity Briefs","Recomendaciones por segmento","Lista de evidencias y fuentes","Secuencia de outreach","Análisis de riesgos y debilidades","Descarga PDF + CSV","Entrega en 24–48h"],
     },
+    planCTAs: { sample: "Ver formato de muestra →", starter: "Generar Market Map Preview →", standard: "Iniciar Opportunity Snapshot →", pro: "Obtener Market Intelligence Report →" },
     leadsFoundBy: (n: number) => `${n} oportunidades encontradas por LeadLens`,
-    getStarted: "Obtener Opportunity Snapshot — $97",
-    mostPopular: "Mejor valor",
+    getStarted: "Iniciar Opportunity Snapshot →",
+    mostPopular: "Mejor punto de entrada",
     formTag: "Inicia tu Opportunity Snapshot",
     formTitle: "Cuéntale a LeadLens sobre tu negocio",
     formSub: "Cuanto más contexto des, mejores serán las oportunidades y la estrategia que encontremos para ti.",
@@ -398,16 +414,16 @@ const COPY = {
     ctaTag: "Comenzar",
     ctaTitle: "Sabe qué cuentas llamar esta semana.",
     ctaSub: "Un Opportunity Snapshot. Entrega en 24–48h. Señales reales, empresas reales, estrategia real.",
-    ctaCTA: "Obtener tu primer Opportunity Snapshot — $97 →",
+    ctaCTA: "Obtener tu primer Opportunity Snapshot — $59 →",
     sampleTabs: ["Email", "LinkedIn DM", "Seguimiento 1", "Seguimiento 2"],
-    pricePerLead: { sample: "Gratis", starter: "$29", standard: "$97", pro: "$197" },
+    pricePerLead: { sample: "Gratis", starter: "Pago único", standard: "Pago único", pro: "Pago único" },
     samplePackTitle: "¿No estás listo para comprometerte?",
     samplePackCopy: "Ve primero el formato del Snapshot — gratis, sin pago requerido.",
     samplePackBadge: "Vista previa gratuita",
     samplePackCTA: "Ver Snapshot de muestra →",
     samplePackBridge: "¿Quieres el real? Un Opportunity Snapshot entrega 5 briefs de empresa investigados con señales de compra y estrategia de outreach.",
     sampleBridgeFreeDemo: "Ver el formato del Snapshot",
-    sampleBridgeSamplePack: "Obtener Opportunity Snapshot — $97",
+    sampleBridgeSamplePack: "Obtener Opportunity Snapshot — $59",
     samplePreviewDisclaimer: "Esta vista previa usa datos de ejemplo para mostrar la estructura del Snapshot. Para un Snapshot real con señales verificadas, compra un Opportunity Snapshot.",
     trustItems: ["Señales verificadas en fuentes", "Output revisado por humanos", "Sin bases de datos de contactos", "Política de reembolso de 7 días"] as string[],
     afterPurchaseTitle: "Después de comprar:",
@@ -421,7 +437,7 @@ const COPY = {
     faqCtaBridge: "¿Aún no estás seguro? Ve primero el formato del Snapshot — gratis, sin pago requerido.",
     resultsUpgradeTitle: "¿Listo para inteligencia comercial real?",
     resultsUpgradeSub: "Un Opportunity Snapshot entrega 5 briefs de empresa con señales de compra, scores de oportunidad y estrategia de outreach — investigado y revisado por nuestro equipo en 24–48h.",
-    resultsUpgradeCTA: "Obtener tu Opportunity Snapshot — $97 →",
+    resultsUpgradeCTA: "Obtener tu Opportunity Snapshot — $59 →",
     checkoutEarlyBanner: "El checkout está en revisión final. Puedes ver el formato del Snapshot de muestra mientras esperas.",
     comparisonTag: "Cómo nos comparamos",
     comparisonTitle: "LeadLens no es una base de datos. Es una decisión.",
@@ -444,14 +460,14 @@ const COPY = {
     announcement: "Opportunity Snapshots disponíveis — inteligência comercial B2B para seu primeiro outreach real.",
     announcementCTA: "Obter meu Snapshot →",
     navPricing: "Preços",
-    navCTA: "Obter Opportunity Snapshot — $97",
+    navCTA: "Ver preços →",
     heroBadge: "Beta aberta — inteligência comercial B2B",
     heroH1pre: "Encontre as contas B2B",
     heroH1hi: "que valem a pena contatar esta semana",
     heroH1post: ".",
     heroH2: "E saiba exatamente por quê.",
     heroSub: "LeadLens mapeia seu mercado, detecta sinais públicos de compra e entrega uma lista ranqueada de contas de alta intenção — com o contexto e a estratégia que sua equipe precisa para a primeira conversa contar.",
-    heroCTA: "Obter seu primeiro Opportunity Snapshot — $97 →",
+    heroCTA: "Obter seu primeiro Opportunity Snapshot — $59 →",
     heroSeeAll: "Ver o que está incluído",
     heroNote: "Sem bancos de dados de contatos. Sem listas de e-mails. Apenas inteligência comercial.",
     proofLabels: [["5","briefs de oportunidade"],["6–8","segmentos de mercado"],["24–48h","entrega"],["100%","fontes verificadas"]] as [string,string][],
@@ -464,23 +480,31 @@ const COPY = {
       ["4","Você recebe briefs ranqueados","5 Opportunity Briefs — ranqueados por score. Cada um explica por que esta empresa, por que agora e como abordá-la."],
     ] as [string,string,string][],
     pricingTag: "Preços",
-    pricingTitle: "Um Snapshot. Toda a inteligência que você precisa para começar.",
-    pricingSub: "Sem assinatura. Sem contrato. Pagamento único — receba suas oportunidades ranqueadas e estratégia de outreach em 24–48h.",
-    oneBatch: "Opportunity Snapshot",
-    monthlyTitle: "Precisa de inteligência de mercado contínua?",
-    monthlySub: "Em breve haverá planos mensais para equipes que precisam de monitoramento contínuo do mercado, sinais atualizados e novos lotes de oportunidades todo mês.",
-    monthlyTag: "Planos mensais em breve",
-    planNames: { sample: "Prévia", starter: "Starter", standard: "Opportunity Snapshot", pro: "Pro Intelligence" },
-    planDescs: { sample: "Veja o formato — sem pagamento necessário.", starter: "3 briefs de oportunidade para começar.", standard: "Seu ICP → 5 empresas ranqueadas com sinais, scores e estratégia de outreach.", pro: "Inteligência completa — 10 briefs, 10+ segmentos, revisão prioritária." },
+    pricingTitle: "Inteligência comercial em cada profundidade.",
+    pricingSub: "Três produtos focados. Sem assinatura. Comece onde faz sentido para o seu negócio.",
+    oneBatch: "Pagamento único",
+    monthlyTag: "Em breve — Acesso piloto",
+    monthlyTitle: "Opportunity Monitor",
+    monthlySub: "Oportunidades atualizadas mensalmente, novos sinais, resumo semanal e briefs recorrentes — para equipes que precisam de inteligência de mercado contínua.",
+    monitorCTA: "Entrar na lista piloto",
+    monitorPrice: "A partir de $99/mês",
+    planNames: { sample: "Prévia", starter: "Market Map Preview", standard: "Opportunity Snapshot", pro: "Market Intelligence Report" },
+    planDescs: {
+      sample:   "Veja o formato — sem pagamento necessário.",
+      starter:  "Um diagnóstico pago que mapeia seu mercado e mostra onde focar antes de se comprometer com um relatório mais profundo.",
+      standard: "Um relatório focado que transforma um ICP em uma lista ranqueada de empresas que valem a pena contatar — com sinais, scores e estratégia.",
+      pro:      "Um relatório mais profundo para empresas que querem maior visibilidade de mercado, mais oportunidades e uma direção estratégica mais sólida.",
+    },
     planFeatures: {
       sample:   ["Market Map de exemplo","Briefs de empresa de exemplo","Sem pesquisa real — apenas formato","Veja o output antes de se comprometer"],
-      starter:  ["Análise de ICP","Market Map (5 segmentos)","Account Discovery","3 Opportunity Briefs","Sinais de compra por conta","Opportunity Score","Email + LinkedIn DM","PDF + CSV","Entrega em 24–48h"],
-      standard: ["Análise de ICP","Market Map — 6–8 segmentos de compradores","Account Discovery — 10–15 empresas/segmento","5 Opportunity Briefs completos","Sinais de compra com fontes verificadas","Opportunity Score + Confidence Score","Por que agora — análise de timing por conta","Ângulo de venda recomendado","Email + LinkedIn DM + cold call opener","Download PDF + CSV","Entrega em 24–48h"],
-      pro:      ["Tudo do Snapshot","10 Opportunity Briefs","Market Map ampliado (10+ segmentos)","Revisão manual prioritária","Entrega em 24h"],
+      starter:  ["1 ICP","5–8 segmentos de compradores","Ranking de segmentos","Sinais a acompanhar por segmento","Tipos de oportunidades exemplo","Primeiro segmento recomendado","Entrega em PDF"],
+      standard: ["1 ICP","Market Map — 6–8 segmentos","10–15 oportunidades ranqueadas","Top 5 Opportunity Briefs","Sinais de compra públicos com fontes","Opportunity Score + Confidence Score","Por que agora — análise de timing","Ângulo de venda recomendado","Ativos de outreach incluídos","Download PDF + CSV","Entrega em 24–48h"],
+      pro:      ["1 ICP","Market Map ampliado","20–30 oportunidades ranqueadas","Top 10 Opportunity Briefs","Recomendações por segmento","Lista de evidências e fontes","Sequência de outreach","Análise de riscos e fraquezas","Download PDF + CSV","Entrega em 24–48h"],
     },
+    planCTAs: { sample: "Ver formato de exemplo →", starter: "Gerar Market Map Preview →", standard: "Iniciar Opportunity Snapshot →", pro: "Obter Market Intelligence Report →" },
     leadsFoundBy: (n: number) => `${n} oportunidades encontradas pela LeadLens`,
-    getStarted: "Obter Opportunity Snapshot — $97",
-    mostPopular: "Melhor valor",
+    getStarted: "Iniciar Opportunity Snapshot →",
+    mostPopular: "Melhor ponto de entrada",
     formTag: "Inicie seu Opportunity Snapshot",
     formTitle: "Conte à LeadLens sobre seu negócio",
     formSub: "Quanto mais contexto você der, melhores serão as oportunidades e a estratégia que encontraremos para você.",
@@ -615,16 +639,16 @@ const COPY = {
     ctaTag: "Começar",
     ctaTitle: "Saiba quais contas ligar esta semana.",
     ctaSub: "Um Opportunity Snapshot. Entrega em 24–48h. Sinais reais, empresas reais, estratégia real.",
-    ctaCTA: "Obter seu primeiro Opportunity Snapshot — $97 →",
+    ctaCTA: "Obter seu primeiro Opportunity Snapshot — $59 →",
     sampleTabs: ["Email", "LinkedIn DM", "Follow-up 1", "Follow-up 2"],
-    pricePerLead: { sample: "Grátis", starter: "$29", standard: "$97", pro: "$197" },
+    pricePerLead: { sample: "Grátis", starter: "Pagamento único", standard: "Pagamento único", pro: "Pagamento único" },
     samplePackTitle: "Ainda não está pronto para se comprometer?",
     samplePackCopy: "Veja o formato do Snapshot primeiro — gratuito, sem pagamento necessário.",
     samplePackBadge: "Prévia gratuita",
     samplePackCTA: "Ver Snapshot de exemplo →",
     samplePackBridge: "Quer o real? Um Opportunity Snapshot entrega 5 briefs de empresa pesquisados com sinais de compra e estratégia de outreach.",
     sampleBridgeFreeDemo: "Visualizar o formato do Snapshot",
-    sampleBridgeSamplePack: "Obter Opportunity Snapshot — $97",
+    sampleBridgeSamplePack: "Obter Opportunity Snapshot — $59",
     samplePreviewDisclaimer: "Esta prévia usa dados de exemplo para mostrar a estrutura do Snapshot. Para um Snapshot real com sinais verificados, compre um Opportunity Snapshot.",
     trustItems: ["Sinais verificados em fontes", "Output revisado por humanos", "Sem bancos de dados de contatos", "Política de reembolso de 7 dias"] as string[],
     afterPurchaseTitle: "Após a compra:",
@@ -638,7 +662,7 @@ const COPY = {
     faqCtaBridge: "Ainda não tem certeza? Veja o formato do Snapshot primeiro — gratuito, sem pagamento necessário.",
     resultsUpgradeTitle: "Pronto para inteligência comercial real?",
     resultsUpgradeSub: "Um Opportunity Snapshot entrega 5 briefs de empresa com sinais de compra, scores de oportunidade e estratégia de outreach — pesquisado e revisado pela nossa equipe em 24–48h.",
-    resultsUpgradeCTA: "Obter seu Opportunity Snapshot — $97 →",
+    resultsUpgradeCTA: "Obter seu Opportunity Snapshot — $59 →",
     checkoutEarlyBanner: "O checkout está em revisão final. Visualize o formato do Snapshot de exemplo enquanto espera.",
     comparisonTag: "Como nos comparamos",
     comparisonTitle: "LeadLens não é um banco de dados. É uma decisão.",
@@ -661,14 +685,14 @@ const COPY = {
     announcement: "Opportunity Snapshots提供開始 — B2Bコマーシャルインテリジェンスで最初の本格的アウトリーチを。",
     announcementCTA: "Snapshotを取得 →",
     navPricing: "料金",
-    navCTA: "Opportunity Snapshotを取得 — $97",
+    navCTA: "料金を見る →",
     heroBadge: "ベータ版公開中 — B2Bコマーシャルインテリジェンス",
     heroH1pre: "今週コンタクトする価値のある",
     heroH1hi: "B2Bアカウントを見つけましょう",
     heroH1post: "。",
     heroH2: "そして、その理由を正確に把握しましょう。",
     heroSub: "LeadLensは市場をマッピングし、公開されている購買シグナルを検出し、高い意図を持つアカウントのランク付きリストをお届けします — チームが最初の会話を成功させるために必要なコンテキストと戦略とともに。",
-    heroCTA: "最初のOpportunity Snapshotを取得 — $97 →",
+    heroCTA: "最初のOpportunity Snapshotを取得 — $59 →",
     heroSeeAll: "含まれる内容を見る",
     heroNote: "コンタクトデータベースなし。メールリストなし。コマーシャルインテリジェンスのみ。",
     proofLabels: [["5件","オポチュニティブリーフ"],["6〜8","市場セグメント"],["24〜48h","納品"],["100%","ソース検証済み"]] as [string,string][],
@@ -681,23 +705,31 @@ const COPY = {
       ["4","ランク付きブリーフを受け取る","スコアでランク付けされた5件のOpportunity Brief。各ブリーフは、この企業が選ばれた理由、今なぜか、どうアプローチするかを説明します。"],
     ] as [string,string,string][],
     pricingTag: "料金",
-    pricingTitle: "1回のSnapshot。始めるために必要なすべてのインテリジェンス。",
-    pricingSub: "サブスクリプションなし。契約なし。1回払い — ランク付きオポチュニティとアウトリーチ戦略を24〜48時間で受け取れます。",
-    oneBatch: "Opportunity Snapshot",
-    monthlyTitle: "継続的な市場インテリジェンスが必要ですか？",
-    monthlySub: "継続的な市場モニタリング、最新シグナル、毎月の新しいオポチュニティバッチが必要なチーム向けに月額プランを準備中です。",
-    monthlyTag: "月額プラン近日公開",
-    planNames: { sample: "プレビュー", starter: "スターター", standard: "Opportunity Snapshot", pro: "Proインテリジェンス" },
-    planDescs: { sample: "フォーマットを確認 — 支払い不要。", starter: "オポチュニティブリーフ3件から始める。", standard: "あなたのICP → シグナル・スコア・アウトリーチ戦略付きのランク付き企業5社。", pro: "フルインテリジェンス — ブリーフ10件、10+セグメント、優先レビュー。" },
+    pricingTitle: "それぞれの深さで提供するコマーシャルインテリジェンス。",
+    pricingSub: "3つの集中型プロダクト。サブスクリプションなし。自分のステージに合ったところから始めましょう。",
+    oneBatch: "1回払い",
+    monthlyTag: "近日公開 — パイロットアクセス",
+    monthlyTitle: "Opportunity Monitor",
+    monthlySub: "毎月更新されるオポチュニティ、シグナル更新、週次オポチュニティダイジェスト、定期ブリーフ — 継続的な市場インテリジェンスを必要とするチーム向け。",
+    monitorCTA: "パイロットウェイトリストに登録",
+    monitorPrice: "$99/月から",
+    planNames: { sample: "プレビュー", starter: "Market Map Preview", standard: "Opportunity Snapshot", pro: "Market Intelligence Report" },
+    planDescs: {
+      sample:   "フォーマットを確認 — 支払い不要。",
+      starter:  "より深いレポートにコミットする前に、市場をマッピングしてどこに集中すべきかを示す有料の診断ツール。",
+      standard: "1つのICPを、コンタクトする価値のある企業のランク付きリストに変える集中型レポート — シグナル・スコア・戦略付き。",
+      pro:      "より広い市場の可視性、より多くのオポチュニティ、より強い戦略的方向性を必要とするビジネス向けの深いレポート。",
+    },
     planFeatures: {
       sample:   ["サンプルマーケットマップ","サンプル企業ブリーフ","実際の調査なし — フォーマットのみ","コミットする前に出力を確認"],
-      starter:  ["ICP分析","マーケットマップ（5セグメント）","アカウントディスカバリー","オポチュニティブリーフ3件","アカウントごとの購買シグナル","オポチュニティスコア","メール + LinkedIn DM","PDF + CSV","24〜48時間で納品"],
-      standard: ["ICP分析","マーケットマップ — 6〜8購買者セグメント","アカウントディスカバリー — セグメントごと10〜15社","フルオポチュニティブリーフ5件","検証済みソース付き購買シグナル","オポチュニティスコア + 信頼スコア","今なぜか — アカウントごとのタイミング分析","推奨セールスアングル","メール + LinkedIn DM + コールドコールオープナー","PDF + CSVダウンロード","24〜48時間で納品"],
-      pro:      ["Snapshotのすべての機能","オポチュニティブリーフ10件","拡張マーケットマップ（10+セグメント）","優先マニュアルレビュー","24時間で納品"],
+      starter:  ["1 ICP","5〜8購買者セグメント","セグメントランキングプレビュー","セグメントごとの注目シグナル","オポチュニティタイプ例","テスト推奨の最初のセグメント","PDF納品"],
+      standard: ["1 ICP","マーケットマップ — 6〜8セグメント","ランク付きオポチュニティ10〜15件","トップ5オポチュニティブリーフ","ソース付き公開購買シグナル","オポチュニティスコア + 信頼スコア","今なぜか — タイミング分析","推奨セールスアングル","アウトリーチアセット含む","PDF + CSVダウンロード","24〜48時間で納品"],
+      pro:      ["1 ICP","拡張マーケットマップ","ランク付きオポチュニティ20〜30件","トップ10オポチュニティブリーフ","セグメントレベルの推奨","証拠とソースリスト","アウトリーチシーケンス","リスクと弱点分析","PDF + CSVダウンロード","24〜48時間で納品"],
     },
+    planCTAs: { sample: "サンプル形式を確認 →", starter: "Market Map Previewを生成 →", standard: "Opportunity Snapshotを開始 →", pro: "Market Intelligence Reportを取得 →" },
     leadsFoundBy: (n: number) => `${n}件のオポチュニティをLeadLensが発見`,
-    getStarted: "Opportunity Snapshotを取得 — $97",
-    mostPopular: "最もお得",
+    getStarted: "Opportunity Snapshotを開始 →",
+    mostPopular: "最初のステップとして最適",
     formTag: "Opportunity Snapshotを開始",
     formTitle: "LeadLensにビジネスについて教えてください",
     formSub: "詳しく入力するほど、より質の高いオポチュニティと戦略が見つかります。",
@@ -832,16 +864,16 @@ const COPY = {
     ctaTag: "始める",
     ctaTitle: "今週コンタクトすべきアカウントを把握しましょう。",
     ctaSub: "1回のOpportunity Snapshot。24〜48時間で納品。実際のシグナル、実際の企業、実際の戦略。",
-    ctaCTA: "最初のOpportunity Snapshotを取得 — $97 →",
+    ctaCTA: "最初のOpportunity Snapshotを取得 — $59 →",
     sampleTabs: ["メール", "LinkedIn DM", "フォローアップ 1", "フォローアップ 2"],
-    pricePerLead: { sample: "無料", starter: "$29", standard: "$97", pro: "$197" },
+    pricePerLead: { sample: "無料", starter: "1回払い", standard: "1回払い", pro: "1回払い" },
     samplePackTitle: "コミットする準備ができていませんか？",
     samplePackCopy: "まずSnapshotの形式を確認してください — 無料、支払い不要。",
     samplePackBadge: "無料プレビュー",
     samplePackCTA: "サンプルSnapshotを見る →",
     samplePackBridge: "本物をご希望ですか？Opportunity Snapshotは購買シグナルとアウトリーチ戦略付きの5件の調査済み企業ブリーフをお届けします。",
     sampleBridgeFreeDemo: "Snapshot形式を確認する",
-    sampleBridgeSamplePack: "Opportunity Snapshotを取得 — $97",
+    sampleBridgeSamplePack: "Opportunity Snapshotを取得 — $59",
     samplePreviewDisclaimer: "このプレビューはサンプルデータを使用してSnapshotの構造を示しています。検証済みシグナル付きの実際のSnapshotには、Opportunity Snapshotをご購入ください。",
     trustItems: ["ソース検証済みシグナル", "人によるレビュー済み出力", "コンタクトデータベースなし", "7日間返金ポリシー"] as string[],
     afterPurchaseTitle: "購入後の流れ：",
@@ -855,7 +887,7 @@ const COPY = {
     faqCtaBridge: "まだ迷っていますか？まずSnapshotの形式をご確認ください — 無料、支払い不要です。",
     resultsUpgradeTitle: "実際のコマーシャルインテリジェンスを試す準備ができましたか？",
     resultsUpgradeSub: "Opportunity Snapshotは購買シグナル、オポチュニティスコア、アウトリーチ戦略付きの5件の企業ブリーフをお届けします — チームによる調査とレビュー済み、24〜48時間で。",
-    resultsUpgradeCTA: "Opportunity Snapshotを取得 — $97 →",
+    resultsUpgradeCTA: "Opportunity Snapshotを取得 — $59 →",
     checkoutEarlyBanner: "チェックアウトはローンチ前の最終審査中です。お待ちの間、サンプルSnapshotのフォーマットをご確認いただけます。",
     comparisonTag: "比較",
     comparisonTitle: "LeadLensはデータベースではありません。意思決定のツールです。",
@@ -884,10 +916,10 @@ type Copy = typeof COPY["en"];
 const LANDING_VERSION = "landing-integration-v2-fix-copy";
 
 const PLANS = {
-  sample:   { price: "$7",   leads: 2   },
-  starter:  { price: "$29",  leads: 10  },
-  standard: { price: "$79",  leads: 50  },
-  pro:      { price: "$149", leads: 100 },
+  sample:   { price: "Free", leads: 0  },
+  starter:  { price: "$19",  leads: 0  },
+  standard: { price: "$59",  leads: 5  },
+  pro:      { price: "$149", leads: 10 },
 } as const;
 
 // Checkout links are public direct-pay URLs from Lemon Squeezy's product "Share" button.
@@ -1106,7 +1138,7 @@ export default function DemoPipelinePage() {
       {/* Announcement bar */}
       <div style={{ background: "linear-gradient(135deg,#075985,#0284c7)", color: "#fff", textAlign: "center", padding: ".55rem 1rem", fontSize: ".8rem", fontWeight: 500, letterSpacing: ".01em" }}>
         {copy.announcement}{" "}
-        <button onClick={() => goToForm("starter")} style={{ background: "rgba(255,255,255,.18)", border: "1px solid rgba(255,255,255,.3)", color: "#fff", fontSize: ".78rem", fontWeight: 700, borderRadius: 5, padding: "2px 12px", cursor: "pointer", marginLeft: 8, transition: "background .15s" }}
+        <button onClick={() => goToForm("standard")} style={{ background: "rgba(255,255,255,.18)", border: "1px solid rgba(255,255,255,.3)", color: "#fff", fontSize: ".78rem", fontWeight: 700, borderRadius: 5, padding: "2px 12px", cursor: "pointer", marginLeft: 8, transition: "background .15s" }}
           onMouseOver={e => (e.currentTarget.style.background = "rgba(255,255,255,.28)")}
           onMouseOut={e => (e.currentTarget.style.background = "rgba(255,255,255,.18)")}
         >
@@ -1125,7 +1157,7 @@ export default function DemoPipelinePage() {
               {copy.navPricing}
             </button>
             <LangSelect />
-            <Btn onClick={() => goToForm("starter")}>{copy.navCTA}</Btn>
+            <Btn onClick={() => goToForm("standard")}>{copy.navCTA}</Btn>
           </div>
         </nav>
       </div>
@@ -1140,15 +1172,18 @@ export default function DemoPipelinePage() {
                 <span style={{ width: ".5rem", height: ".5rem", background: "#16a34a", borderRadius: "50%", display: "inline-block", flexShrink: 0 }} />
                 {copy.heroBadge}
               </div>
-              <h1 className="ll-hero-h1" style={{ fontSize: "clamp(2.1rem,4.5vw,3.5rem)", fontWeight: 800, lineHeight: 1.1, marginBottom: "1.25rem", letterSpacing: "-.03em" }}>
+              <h1 className="ll-hero-h1" style={{ fontSize: "clamp(2.1rem,4.5vw,3.5rem)", fontWeight: 800, lineHeight: 1.1, marginBottom: ".5rem", letterSpacing: "-.03em" }}>
                 {copy.heroH1pre}<br />
                 <span style={{ color: "#0ea5e9" }}>{copy.heroH1hi}</span>{copy.heroH1post}
               </h1>
+              <p style={{ fontSize: "clamp(1.25rem,2.5vw,1.75rem)", fontWeight: 700, color: "#334155", marginBottom: "1.25rem", letterSpacing: "-.02em", lineHeight: 1.2 }}>
+                {copy.heroH2}
+              </p>
               <p className="ll-hero-sub" style={{ fontSize: "1.1rem", color: "#475569", marginBottom: "2.25rem", lineHeight: 1.7, maxWidth: "34rem" }}>
                 {copy.heroSub}
               </p>
               <div className="ll-hero-cta-row" style={{ display: "flex", gap: ".875rem", flexWrap: "wrap" as const, marginBottom: "1rem" }}>
-                <Btn lg onClick={() => goToForm("starter")}>{copy.heroCTA}</Btn>
+                <Btn lg onClick={() => goToForm("standard")}>{copy.heroCTA}</Btn>
                 <BtnOutline lg onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" })}>{copy.heroSeeAll}</BtnOutline>
               </div>
               <p className="ll-hero-note" style={{ display: "inline-block", fontSize: ".82rem", color: "#64748b", background: "#f0f9ff", border: "1px solid #e0f2fe", borderRadius: 999, padding: ".375rem 1rem", marginBottom: ".75rem" }}>
@@ -1311,38 +1346,37 @@ export default function DemoPipelinePage() {
           <p style={{ color: "#64748b", fontSize: "1.05rem", maxWidth: "36rem", margin: "0 auto 3rem", lineHeight: 1.6 }}>
             {copy.pricingSub}
           </p>
-          {/* Beta Sample Pack callout — low-risk entry point above main pricing cards */}
-          <div style={{ background: "linear-gradient(135deg,#fffbeb,#fef3c7)", border: "1.5px solid #fde68a", borderRadius: "1.125rem", padding: "1.375rem 2rem", maxWidth: "48rem", margin: "0 auto 2.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1.25rem", flexWrap: "wrap" as const, textAlign: "left" as const }}>
+
+          {/* Pricing ladder — 3 cards */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: "1.375rem", maxWidth: "62rem", margin: "0 auto", alignItems: "stretch" }}>
+            <PricingCard plan="starter"  featured={false} copy={copy} onSelect={goToForm} />
+            <PricingCard plan="standard" featured={true}  copy={copy} onSelect={goToForm} />
+            <PricingCard plan="pro"      featured={false} copy={copy} onSelect={goToForm} />
+          </div>
+
+          {/* Opportunity Monitor strip — coming soon */}
+          <div style={{ marginTop: "2rem", maxWidth: "62rem", margin: "2rem auto 0", background: "linear-gradient(135deg,#f0f9ff,#e0f2fe)", border: "1px solid #bae6fd", borderRadius: "1.125rem", padding: "1.5rem 2rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1.5rem", flexWrap: "wrap" as const }}>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <span style={{ display: "inline-block", fontSize: ".68rem", fontWeight: 700, letterSpacing: ".05em", textTransform: "uppercase" as const, background: "#92400e", color: "#fff", padding: ".2rem .625rem", borderRadius: 999, marginBottom: ".625rem" }}>
-                {copy.samplePackBadge}
-              </span>
-              <h3 style={{ fontSize: "1.05rem", fontWeight: 800, color: "#0f172a", letterSpacing: "-.02em", marginBottom: ".3rem" }}>
-                {copy.samplePackTitle}
-              </h3>
-              <p style={{ fontSize: ".875rem", color: "#78350f", lineHeight: 1.55, margin: "0 0 .3rem" }}>
-                {copy.samplePackCopy}
-              </p>
-              <p style={{ fontSize: ".78rem", color: "#92400e", margin: 0, lineHeight: 1.5 }}>
-                {copy.samplePackBridge}
-              </p>
+              <div style={{ display: "flex", alignItems: "center", gap: ".625rem", marginBottom: ".625rem", flexWrap: "wrap" as const }}>
+                <span style={{ display: "inline-block", background: "#0ea5e9", color: "#fff", fontSize: ".65rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", padding: ".2rem .65rem", borderRadius: 999 }}>
+                  {copy.monthlyTag}
+                </span>
+                <span style={{ fontSize: ".8rem", fontWeight: 600, color: "#0284c7" }}>{copy.monitorPrice}</span>
+              </div>
+              <h3 style={{ fontSize: "1.1rem", fontWeight: 800, color: "#0f172a", letterSpacing: "-.02em", marginBottom: ".375rem" }}>{copy.monthlyTitle}</h3>
+              <p style={{ fontSize: ".875rem", color: "#475569", lineHeight: 1.6, margin: 0, maxWidth: "40rem" }}>{copy.monthlySub}</p>
             </div>
             <button onClick={() => goToForm("sample")}
-              style={{ background: "#d97706", color: "#fff", border: "none", borderRadius: ".75rem", padding: ".8rem 1.625rem", fontWeight: 700, fontSize: ".9rem", cursor: "pointer", whiteSpace: "nowrap" as const, flexShrink: 0, boxShadow: "0 2px 10px rgba(217,119,6,.3)", transition: "all .15s" }}
-              onMouseOver={e => { e.currentTarget.style.background = "#b45309"; e.currentTarget.style.transform = "translateY(-1px)"; }}
-              onMouseOut={e => { e.currentTarget.style.background = "#d97706"; e.currentTarget.style.transform = ""; }}
+              style={{ background: "none", border: "1.5px solid #0ea5e9", color: "#0284c7", borderRadius: ".75rem", padding: ".7rem 1.375rem", fontWeight: 600, fontSize: ".875rem", cursor: "pointer", whiteSpace: "nowrap" as const, flexShrink: 0, transition: "all .15s", fontFamily: "inherit" }}
+              onMouseOver={e => { e.currentTarget.style.background = "#e0f2fe"; }}
+              onMouseOut={e => { e.currentTarget.style.background = "none"; }}
             >
-              {copy.samplePackCTA}
+              {copy.monitorCTA}
             </button>
-          </div>
-          <div className="ll-pricing-grid">
-            {(["starter", "standard", "pro"] as PlanType[]).map(p => (
-              <PricingCard key={p} plan={p} featured={p === "standard"} copy={copy} onSelect={goToForm} />
-            ))}
           </div>
 
           {/* Trust row */}
-          <div style={{ display: "flex", justifyContent: "center", gap: "1.5rem", flexWrap: "wrap" as const, marginTop: "1.75rem" }}>
+          <div style={{ display: "flex", justifyContent: "center", gap: "1.5rem", flexWrap: "wrap" as const, marginTop: "2rem" }}>
             {copy.trustItems.map((item, i) => (
               <span key={i} style={{ fontSize: ".78rem", color: "#64748b", display: "flex", alignItems: "center", gap: ".3rem" }}>
                 <span style={{ color: "#16a34a", fontWeight: 700 }}>✓</span>{item}
@@ -1350,7 +1384,7 @@ export default function DemoPipelinePage() {
             ))}
           </div>
 
-          {/* After you buy — post-purchase flow */}
+          {/* After you buy */}
           <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "1rem", padding: "1.5rem 2rem", maxWidth: "44rem", margin: "1.5rem auto 0", textAlign: "left" as const }}>
             <p style={{ fontSize: ".72rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", color: "#94a3b8", marginBottom: "1rem" }}>
               {copy.afterPurchaseTitle}
@@ -1368,15 +1402,6 @@ export default function DemoPipelinePage() {
             <p style={{ fontSize: ".78rem", color: "#94a3b8", marginTop: "1rem", marginBottom: 0, textAlign: "center" as const, lineHeight: 1.5 }}>
               {copy.afterPurchaseNote}
             </p>
-          </div>
-
-          {/* Monthly plans coming soon */}
-          <div className="ll-monthly-card" style={{ marginTop: "3rem", background: "linear-gradient(135deg,#f0f9ff,#e0f2fe)", border: "1px solid #bae6fd", borderRadius: "1.25rem", padding: "2rem 2.5rem", textAlign: "center", maxWidth: "44rem", margin: "3rem auto 0" }}>
-            <span style={{ display: "inline-block", background: "#0ea5e9", color: "#fff", fontSize: ".68rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", padding: ".2rem .75rem", borderRadius: 999, marginBottom: "1rem" }}>
-              {copy.monthlyTag}
-            </span>
-            <h3 style={{ fontSize: "1.2rem", fontWeight: 800, letterSpacing: "-.02em", marginBottom: ".75rem", color: "#0f172a" }}>{copy.monthlyTitle}</h3>
-            <p style={{ color: "#64748b", fontSize: ".9rem", lineHeight: 1.7, maxWidth: "32rem", margin: "0 auto" }}>{copy.monthlySub}</p>
           </div>
         </div>
       </section>
@@ -1661,7 +1686,7 @@ export default function DemoPipelinePage() {
                 onMouseOver={e => (e.currentTarget.style.background = "#0284c7")}
                 onMouseOut={e => (e.currentTarget.style.background = "#0ea5e9")}
               >
-                {copy.submitBtn(PLANS[plan].leads)}
+                {copy.planCTAs[plan]}
               </button>
             )}
           </div>
@@ -2016,35 +2041,49 @@ function LeadCard({ lead, index, isOpen, onToggle, copy }: {
 
 // ─── Hero product mockup ──────────────────────────────────────────────────────
 
-function LeadMockupHero() {
-  const rows = [
-    { name: "Sarah Chen",   co: "Momentum Analytics", role: "VP Sales",       score: 92, badge: "HOT",  badgeBg: "#fef2f2", badgeColor: "#b91c1c", badgeBorder: "#fecaca", barColor: "#ef4444", trigger: "Hiring 3 SDRs — outbound intent"   },
-    { name: "David Park",   co: "Scalify Inc.",        role: "Head of Growth", score: 86, badge: "HOT",  badgeBg: "#fef2f2", badgeColor: "#b91c1c", badgeBorder: "#fecaca", barColor: "#ef4444", trigger: "Raised Series A — team expanding" },
-    { name: "Maria Santos", co: "CloudBase Pro",       role: "CEO",            score: 74, badge: "WARM", badgeBg: "#fffbeb", badgeColor: "#92400e", badgeBorder: "#fde68a", barColor: "#f59e0b", trigger: "Launched new product line"         },
+function OpportunityMockupHero() {
+  const accounts = [
+    {
+      name: "Northstar Logistics", segment: "Mid-market logistics",
+      score: 84, confidence: 78, badge: "HOT",
+      badgeBg: "#fef2f2", badgeColor: "#b91c1c", badgeBorder: "#fecaca", barColor: "#ef4444",
+      signal: "Hiring 4 operations roles — regional expansion"
+    },
+    {
+      name: "FreshRoute Foods", segment: "Regional food distribution",
+      score: 77, confidence: 72, badge: "HOT",
+      badgeBg: "#fef2f2", badgeColor: "#b91c1c", badgeBorder: "#fecaca", barColor: "#ef4444",
+      signal: "New supplier deal + B2B delivery expansion"
+    },
+    {
+      name: "Atlas Clinics Group", segment: "Multi-location healthcare",
+      score: 63, confidence: 68, badge: "WARM",
+      badgeBg: "#fffbeb", badgeColor: "#92400e", badgeBorder: "#fde68a", barColor: "#f59e0b",
+      signal: "Adding 2 new locations — ops hiring underway"
+    },
   ];
   const metrics = [
-    { val: "3",   label: "HOT",    bg: "#fef2f2", color: "#b91c1c", border: "#fecaca" },
-    { val: "4",   label: "WARM",   bg: "#fffbeb", color: "#92400e", border: "#fde68a" },
-    { val: "2",   label: "REVIEW", bg: "#f1f5f9", color: "#475569", border: "#e2e8f0" },
-    { val: "9.1", label: "avg fit",bg: "#f0f9ff", color: "#0284c7", border: "#bae6fd" },
+    { val: "5",  label: "Briefs",    bg: "#f0f9ff", color: "#0284c7", border: "#bae6fd" },
+    { val: "2",  label: "HOT",       bg: "#fef2f2", color: "#b91c1c", border: "#fecaca" },
+    { val: "2",  label: "WARM",      bg: "#fffbeb", color: "#92400e", border: "#fde68a" },
+    { val: "75", label: "avg score", bg: "#f8fafc", color: "#475569", border: "#e2e8f0" },
   ];
-  const delivery = ["Email draft ✓", "LinkedIn DM ✓", "2 follow-ups ✓", "QC reviewed ✓"];
+  const deliverables = ["Market Map ✓", "Signals Verified ✓", "Scored Briefs ✓", "PDF + CSV ✓"];
 
   return (
     <div style={{ background: "#fff", border: "1px solid #e0f2fe", borderRadius: "1rem", boxShadow: "0 24px 64px rgba(14,165,233,.10), 0 4px 20px rgba(0,0,0,.06), 0 1px 4px rgba(0,0,0,.04)", overflow: "hidden" }}>
-
-      {/* ── Header ── */}
-      <div className="ll-mock-hdr" style={{ background: "linear-gradient(180deg,#f0f9ff 0%,#fff 100%)", borderBottom: "1px solid #e0f2fe", padding: ".75rem 1.125rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: ".75rem" }}>
+      {/* Header */}
+      <div style={{ background: "linear-gradient(180deg,#f0f9ff 0%,#fff 100%)", borderBottom: "1px solid #e0f2fe", padding: ".75rem 1.125rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: ".75rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: ".5rem" }}>
           <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#22c55e", boxShadow: "0 0 0 2px #dcfce7", flexShrink: 0 }} />
-          <span style={{ fontWeight: 700, fontSize: ".8rem", color: "#0f172a", letterSpacing: "-.01em" }}>LeadLens Report</span>
-          <span style={{ fontSize: ".72rem", color: "#94a3b8", fontWeight: 400 }}>· Qualified batch</span>
+          <span style={{ fontWeight: 700, fontSize: ".8rem", color: "#0f172a", letterSpacing: "-.01em" }}>Opportunity Snapshot</span>
+          <span style={{ fontSize: ".72rem", color: "#94a3b8", fontWeight: 400 }}>· 5 accounts ranked</span>
         </div>
         <span style={{ background: "#eff6ff", border: "1px solid #bfdbfe", color: "#3b82f6", fontSize: ".62rem", fontWeight: 700, letterSpacing: ".05em", textTransform: "uppercase" as const, padding: ".175rem .55rem", borderRadius: 999 }}>Preview</span>
       </div>
 
-      {/* ── Metrics strip ── */}
-      <div className="ll-mock-metrics" style={{ padding: ".5rem 1.125rem", background: "#f8fafc", borderBottom: "1px solid #f1f5f9", display: "flex", gap: ".375rem", flexWrap: "wrap" as const }}>
+      {/* Metrics strip */}
+      <div style={{ padding: ".5rem 1.125rem", background: "#f8fafc", borderBottom: "1px solid #f1f5f9", display: "flex", gap: ".375rem", flexWrap: "wrap" as const }}>
         {metrics.map(m => (
           <div key={m.label} style={{ display: "flex", alignItems: "center", gap: ".3rem", background: m.bg, border: `1px solid ${m.border}`, borderRadius: ".375rem", padding: ".2rem .55rem" }}>
             <span style={{ fontWeight: 700, fontSize: ".72rem", color: m.color }}>{m.val}</span>
@@ -2053,42 +2092,35 @@ function LeadMockupHero() {
         ))}
       </div>
 
-      {/* ── Lead rows ── */}
-      {rows.map((r, i) => (
-        <div key={r.name} className={`ll-mock-row${i === rows.length - 1 ? " ll-mock-row-last" : ""}`} style={{ padding: ".875rem 1.125rem", borderBottom: i < rows.length - 1 ? "1px solid #f8fafc" : "none", background: "#fff" }}>
-          {/* Name + badge + score */}
+      {/* Account rows */}
+      {accounts.map((a, i) => (
+        <div key={a.name} style={{ padding: ".875rem 1.125rem", borderBottom: i < accounts.length - 1 ? "1px solid #f8fafc" : "none", background: "#fff" }}>
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: ".5rem", marginBottom: ".3rem" }}>
             <div style={{ minWidth: 0 }}>
-              <div style={{ fontWeight: 700, fontSize: ".875rem", color: "#0f172a", lineHeight: 1.3 }}>{r.name}</div>
-              <div style={{ fontSize: ".73rem", marginTop: ".1rem" }}>
-                <span style={{ color: "#0284c7", fontWeight: 600 }}>{r.co}</span>
-                <span style={{ color: "#cbd5e1" }}> · </span>
-                <span style={{ color: "#64748b" }}>{r.role}</span>
-              </div>
+              <div style={{ fontWeight: 700, fontSize: ".875rem", color: "#0f172a", lineHeight: 1.3 }}>{a.name}</div>
+              <div style={{ fontSize: ".73rem", marginTop: ".1rem", color: "#64748b" }}>{a.segment}</div>
             </div>
             <div style={{ display: "flex", flexDirection: "column" as const, alignItems: "flex-end", gap: ".2rem", flexShrink: 0 }}>
-              <span style={{ padding: ".15rem .45rem", borderRadius: ".3rem", fontSize: ".62rem", fontWeight: 700, letterSpacing: ".04em", background: r.badgeBg, color: r.badgeColor, border: `1px solid ${r.badgeBorder}` }}>{r.badge}</span>
+              <span style={{ padding: ".15rem .45rem", borderRadius: ".3rem", fontSize: ".62rem", fontWeight: 700, letterSpacing: ".04em", background: a.badgeBg, color: a.badgeColor, border: `1px solid ${a.badgeBorder}` }}>{a.badge}</span>
               <span style={{ fontSize: ".77rem", fontWeight: 800, color: "#0284c7", letterSpacing: "-.01em", lineHeight: 1 }}>
-                {r.score}<span style={{ fontSize: ".58rem", fontWeight: 500, color: "#94a3b8" }}> fit</span>
+                {a.score}<span style={{ fontSize: ".58rem", fontWeight: 400, color: "#94a3b8" }}> / {a.confidence}</span>
               </span>
             </div>
           </div>
-          {/* Score bar — 2px, subtle */}
           <div style={{ background: "#f1f5f9", borderRadius: 999, height: 2, margin: ".35rem 0", overflow: "hidden" }}>
-            <div style={{ background: r.barColor, height: "100%", width: `${r.score}%`, borderRadius: 999, opacity: .7 }} />
+            <div style={{ background: a.barColor, height: "100%", width: `${a.score}%`, borderRadius: 999, opacity: .7 }} />
           </div>
-          {/* Trigger chip */}
           <div>
             <span style={{ display: "inline-flex", alignItems: "center", gap: ".275rem", background: "#f0f9ff", border: "1px solid #e0f2fe", borderRadius: ".375rem", padding: ".175rem .5rem", fontSize: ".67rem", color: "#0369a1", fontWeight: 500 }}>
-              <span style={{ color: "#0ea5e9", fontSize: ".65rem" }}>⚡</span>{r.trigger}
+              <span style={{ color: "#0ea5e9", fontSize: ".6rem" }}>📡</span>{a.signal}
             </span>
           </div>
         </div>
       ))}
 
-      {/* ── Delivery strip ── */}
-      <div className="ll-mock-footer" style={{ padding: ".575rem 1.125rem", background: "#f8fafc", borderTop: "1px solid #f1f5f9", display: "flex", gap: ".325rem", flexWrap: "wrap" as const, alignItems: "center" }}>
-        {delivery.map(label => (
+      {/* Deliverables strip */}
+      <div style={{ padding: ".575rem 1.125rem", background: "#f8fafc", borderTop: "1px solid #f1f5f9", display: "flex", gap: ".325rem", flexWrap: "wrap" as const, alignItems: "center" }}>
+        {deliverables.map(label => (
           <span key={label} style={{ fontSize: ".63rem", fontWeight: 600, color: "#0284c7", background: "#f0f9ff", border: "1px solid #e0f2fe", borderRadius: ".3rem", padding: ".175rem .475rem" }}>
             {label}
           </span>
@@ -2098,47 +2130,45 @@ function LeadMockupHero() {
   );
 }
 
+// Keep old name as alias so JSX call sites below still compile during transition
+const LeadMockupHero = OpportunityMockupHero;
+
 // ─── Mobile hero preview card (replaces full mockup on small screens) ─────────
 
-function LeadMockupMobile() {
-  const leads = [
-    { name: "Sarah C.", co: "Momentum Analytics", role: "VP Sales",       score: 92, badge: "HOT",  badgeBg: "#fef2f2", badgeColor: "#b91c1c", badgeBorder: "#fecaca" },
-    { name: "David P.", co: "Scalify Inc.",        role: "Head of Growth", score: 86, badge: "HOT",  badgeBg: "#fef2f2", badgeColor: "#b91c1c", badgeBorder: "#fecaca" },
-    { name: "Maria S.", co: "CloudBase Pro",       role: "CEO",            score: 74, badge: "WARM", badgeBg: "#fffbeb", badgeColor: "#92400e", badgeBorder: "#fde68a" },
+function OpportunityMockupMobile() {
+  const accounts = [
+    { name: "Northstar Logistics", segment: "Logistics",    score: 84, badge: "HOT",  badgeBg: "#fef2f2", badgeColor: "#b91c1c", badgeBorder: "#fecaca" },
+    { name: "FreshRoute Foods",    segment: "Food Dist.",   score: 77, badge: "HOT",  badgeBg: "#fef2f2", badgeColor: "#b91c1c", badgeBorder: "#fecaca" },
+    { name: "Atlas Clinics",       segment: "Healthcare",   score: 63, badge: "WARM", badgeBg: "#fffbeb", badgeColor: "#92400e", badgeBorder: "#fde68a" },
   ];
-  const chips = ["Email ✓", "LinkedIn DM ✓", "CSV + MD ✓", "QC reviewed ✓"];
+  const chips = ["Market Map ✓", "Signals ✓", "5 Briefs ✓", "PDF + CSV ✓"];
 
   return (
-    <div style={{ background: "#fff", border: "1px solid #e0f2fe", borderRadius: "1rem", boxShadow: "0 8px 28px rgba(14,165,233,.08), 0 2px 8px rgba(0,0,0,.04)", overflow: "hidden" }}>
-      {/* Header */}
+    <div style={{ background: "#fff", border: "1px solid #e0f2fe", borderRadius: "1rem", boxShadow: "0 8px 28px rgba(14,165,233,.08)", overflow: "hidden" }}>
       <div style={{ background: "linear-gradient(180deg,#f0f9ff,#fff)", borderBottom: "1px solid #e0f2fe", padding: ".6rem 1rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center", gap: ".4rem" }}>
-          <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e", boxShadow: "0 0 0 2px #dcfce7", flexShrink: 0 }} />
-          <span style={{ fontWeight: 700, fontSize: ".78rem", color: "#0f172a", letterSpacing: "-.01em" }}>LeadLens Report</span>
-          <span style={{ fontSize: ".68rem", color: "#94a3b8" }}>· 3 qualified leads</span>
+          <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e", flexShrink: 0 }} />
+          <span style={{ fontWeight: 700, fontSize: ".78rem", color: "#0f172a" }}>Opportunity Snapshot</span>
+          <span style={{ fontSize: ".68rem", color: "#94a3b8" }}>· 5 accounts</span>
         </div>
         <span style={{ fontSize: ".6rem", fontWeight: 700, letterSpacing: ".05em", textTransform: "uppercase" as const, background: "#eff6ff", border: "1px solid #bfdbfe", color: "#3b82f6", padding: ".15rem .475rem", borderRadius: 999 }}>Preview</span>
       </div>
 
-      {/* Lead rows */}
-      {leads.map((r, i) => (
-        <div key={r.name} style={{ padding: ".6rem 1rem", borderBottom: i < leads.length - 1 ? "1px solid #f8fafc" : "none", display: "flex", alignItems: "center", justifyContent: "space-between", gap: ".5rem" }}>
+      {accounts.map((a, i) => (
+        <div key={a.name} style={{ padding: ".6rem 1rem", borderBottom: i < accounts.length - 1 ? "1px solid #f8fafc" : "none", display: "flex", alignItems: "center", justifyContent: "space-between", gap: ".5rem" }}>
           <div style={{ minWidth: 0 }}>
-            <div style={{ fontWeight: 700, fontSize: ".8rem", color: "#0f172a", lineHeight: 1.2 }}>{r.name}</div>
-            <div style={{ fontSize: ".68rem", marginTop: ".1rem", color: "#64748b" }}>
-              <span style={{ color: "#0284c7", fontWeight: 600 }}>{r.co}</span>{" · "}{r.role}
-            </div>
+            <div style={{ fontWeight: 700, fontSize: ".8rem", color: "#0f172a", lineHeight: 1.2 }}>{a.name}</div>
+            <div style={{ fontSize: ".68rem", marginTop: ".1rem", color: "#64748b" }}>{a.segment}</div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: ".375rem", flexShrink: 0 }}>
-            <span style={{ fontSize: ".6rem", fontWeight: 700, letterSpacing: ".04em", background: r.badgeBg, color: r.badgeColor, border: `1px solid ${r.badgeBorder}`, borderRadius: ".3rem", padding: ".13rem .38rem" }}>{r.badge}</span>
-            <span style={{ fontSize: ".72rem", fontWeight: 800, color: "#0284c7", letterSpacing: "-.01em" }}>
-              {r.score}<span style={{ fontSize: ".58rem", fontWeight: 400, color: "#94a3b8" }}> fit</span>
+            <span style={{ fontSize: ".6rem", fontWeight: 700, letterSpacing: ".04em", background: a.badgeBg, color: a.badgeColor, border: `1px solid ${a.badgeBorder}`, borderRadius: ".3rem", padding: ".13rem .38rem" }}>{a.badge}</span>
+            <span style={{ fontSize: ".72rem", fontWeight: 800, color: "#0284c7" }}>
+              {a.score}<span style={{ fontSize: ".58rem", fontWeight: 400, color: "#94a3b8" }}> score</span>
             </span>
           </div>
         </div>
       ))}
 
-      {/* Delivery chips */}
       <div style={{ padding: ".5rem 1rem", background: "#f8fafc", borderTop: "1px solid #f1f5f9", display: "flex", gap: ".3rem", flexWrap: "wrap" as const }}>
         {chips.map(c => (
           <span key={c} style={{ fontSize: ".6rem", fontWeight: 600, color: "#0284c7", background: "#f0f9ff", border: "1px solid #e0f2fe", borderRadius: ".3rem", padding: ".15rem .4rem" }}>{c}</span>
@@ -2147,6 +2177,9 @@ function LeadMockupMobile() {
     </div>
   );
 }
+
+// Keep old name as alias
+const LeadMockupMobile = OpportunityMockupMobile;
 
 // ─── Pricing card ─────────────────────────────────────────────────────────────
 
@@ -2197,15 +2230,13 @@ function PricingCard({ plan, featured, copy, onSelect }: {
           {copy.pricePerLead[plan]}
         </div>
         <div style={{ fontSize: ".875rem", color: "#64748b", lineHeight: 1.45, marginBottom: ".875rem" }}>{copy.planDescs[plan]}</div>
-        <div style={{ display: "inline-block", fontSize: ".7rem", fontWeight: 600, color: "#64748b", background: "#f1f5f9", borderRadius: ".375rem", padding: "3px 10px" }}>
+        <div style={{ display: "inline-block", fontSize: ".7rem", fontWeight: 600, color: featured ? "#0284c7" : "#64748b", background: featured ? "#e0f2fe" : "#f1f5f9", borderRadius: ".375rem", padding: "3px 10px" }}>
           {copy.oneBatch}
         </div>
       </div>
 
-      {/* Divider + lead count */}
-      <div style={{ borderTop: `1px solid ${featured ? "#bae6fd" : "#f1f5f9"}`, paddingTop: "1.125rem", marginBottom: "1rem" }}>
-        <div style={{ fontSize: ".9rem", fontWeight: 700, color: "#0284c7" }}>{copy.leadsFoundBy(p.leads)}</div>
-      </div>
+      {/* Divider */}
+      <div style={{ borderTop: `1px solid ${featured ? "#bae6fd" : "#f1f5f9"}`, marginBottom: "1rem" }} />
 
       {/* Features — flex:1 pushes button to bottom */}
       <div style={{ flex: 1, marginBottom: "1.5rem" }}>
@@ -2236,7 +2267,7 @@ function PricingCard({ plan, featured, copy, onSelect }: {
         onMouseOver={e => { e.currentTarget.style.background = "#0284c7"; e.currentTarget.style.transform = "translateY(-1px)"; }}
         onMouseOut={e => { e.currentTarget.style.background = "#0ea5e9"; e.currentTarget.style.transform = ""; }}
       >
-        {copy.getStarted} — {p.price} →
+        {copy.planCTAs[plan]}
       </button>
     </div>
   );
