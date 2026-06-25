@@ -30,13 +30,13 @@ const COPY = {
     ] as [string,string,string][],
     pricingTag: "Beta Batch Pricing",
     pricingTitle: "Start with one batch. Upgrade to monthly when ready.",
-    pricingSub: "No long-term contracts. Use LeadLens once, or run monthly lead batches when your team needs ongoing pipeline.",
+    pricingSub: "No subscription. No contract. One-time payment per batch — start with 2 leads or scale to 100.",
     oneBatch: "One-time beta batch",
     monthlyTitle: "Need leads every month?",
     monthlySub: "Monthly plans are coming for agencies, SaaS teams, and consultants that need recurring lead batches, multi-market campaigns, and priority review.",
     monthlyTag: "Monthly plans coming soon",
     planNames: { sample: "Beta Sample Pack", starter: "Beta Starter", standard: "Beta Standard", pro: "Beta Pro" },
-    planDescs: { sample: "Try 2 leads before committing to a full batch.", starter: "Try the service risk-free.", standard: "Run a small campaign.", pro: "Full campaign + 2 angles." },
+    planDescs: { sample: "Try 2 leads before committing to a full batch.", starter: "Try the service risk-free.", standard: "Run a small campaign.", pro: "Full campaign — 100 leads, priority review." },
     planFeatures: {
       sample:   ["2 qualified B2B leads","Fit score + category","Research notes","Personalization trigger","Email + LinkedIn DM draft","Human-reviewed delivery"],
       starter:  ["HOT / WARM / COLD qualification","Fit reason per lead","Personalization trigger","Email + LinkedIn DM","2 follow-ups per lead","CSV + Markdown export","Delivery in 24–48h"],
@@ -231,13 +231,13 @@ const COPY = {
     ] as [string,string,string][],
     pricingTag: "Precios Beta por Lote",
     pricingTitle: "Empieza con un lote. Pasa a un plan mensual cuando estés listo.",
-    pricingSub: "Sin contratos largos. Usa LeadLens una vez o genera lotes mensuales cuando tu equipo necesite pipeline recurrente.",
+    pricingSub: "Sin suscripción. Sin contrato. Pago único por lote — empieza con 2 leads o escala a 100.",
     oneBatch: "Lote beta de pago único",
     monthlyTitle: "¿Necesitas leads todos los meses?",
     monthlySub: "Pronto habrá planes mensuales para agencias, equipos SaaS y consultores que necesitan lotes recurrentes de leads, campañas en varios mercados y revisión prioritaria.",
     monthlyTag: "Planes mensuales próximamente",
     planNames: { sample: "Beta Muestra", starter: "Beta Inicial", standard: "Beta Estándar", pro: "Beta Pro" },
-    planDescs: { sample: "Prueba 2 leads antes de elegir un lote más grande.", starter: "Prueba el servicio sin riesgo.", standard: "Ejecuta una campaña pequeña.", pro: "Campaña completa + 2 ángulos." },
+    planDescs: { sample: "Prueba 2 leads antes de elegir un lote más grande.", starter: "Prueba el servicio sin riesgo.", standard: "Ejecuta una campaña pequeña.", pro: "Campaña completa — 100 leads, revisión prioritaria." },
     planFeatures: {
       sample:   ["2 leads B2B calificados","Score de ajuste + categoría","Notas de investigación","Trigger de personalización","Email + borrador de LinkedIn DM","Entrega revisada manualmente"],
       starter:  ["Calificación HOT / WARM / COLD","Motivo de fit por lead","Trigger de personalización","Correo + LinkedIn DM","2 seguimientos por lead","Exportación CSV + Markdown","Entrega en 24–48h"],
@@ -432,13 +432,13 @@ const COPY = {
     ] as [string,string,string][],
     pricingTag: "Preços Beta por Lote",
     pricingTitle: "Comece com um lote. Migre para um plano mensal quando estiver pronto.",
-    pricingSub: "Sem contratos longos. Use a LeadLens uma vez ou gere lotes mensais quando sua equipe precisar de pipeline recorrente.",
+    pricingSub: "Sem assinatura. Sem contrato. Pagamento único por lote — comece com 2 leads ou escale para 100.",
     oneBatch: "Lote beta de pagamento único",
     monthlyTitle: "Precisa de leads todos os meses?",
     monthlySub: "Em breve teremos planos mensais para agências, equipes SaaS e consultores que precisam de lotes recorrentes de leads, campanhas em vários mercados e revisão prioritária.",
     monthlyTag: "Planos mensais em breve",
     planNames: { sample: "Beta Amostra", starter: "Beta Inicial", standard: "Beta Padrão", pro: "Beta Pro" },
-    planDescs: { sample: "Experimente 2 leads antes de escolher um lote maior.", starter: "Experimente o serviço sem risco.", standard: "Execute uma campanha pequena.", pro: "Campanha completa + 2 ângulos." },
+    planDescs: { sample: "Experimente 2 leads antes de escolher um lote maior.", starter: "Experimente o serviço sem risco.", standard: "Execute uma campanha pequena.", pro: "Campanha completa — 100 leads, revisão prioritária." },
     planFeatures: {
       sample:   ["2 leads B2B qualificados","Score de fit + categoria","Notas de pesquisa","Trigger de personalização","Email + rascunho de LinkedIn DM","Entrega revisada manualmente"],
       starter:  ["Qualificação HOT / WARM / COLD","Motivo de fit por lead","Trigger de personalização","Email + LinkedIn DM","2 follow-ups por lead","Exportação CSV + Markdown","Entrega em 24–48h"],
@@ -633,13 +633,13 @@ const COPY = {
     ] as [string,string,string][],
     pricingTag: "ベータ版バッチ料金",
     pricingTitle: "まずは1回のリードバッチから。必要になったら月額プランへ。",
-    pricingSub: "長期契約は不要です。LeadLensを1回だけ使うことも、継続的なパイプラインが必要になったら月次バッチに移行することもできます。",
+    pricingSub: "サブスクリプションなし。契約なし。バッチごとの1回払い — 2件から始めて100件までスケール。",
     oneBatch: "1回限りのベータ版バッチ",
     monthlyTitle: "毎月リードが必要ですか？",
     monthlySub: "継続的なリードバッチ、複数市場向けキャンペーン、優先レビューが必要な代理店、SaaSチーム、コンサルタント向けに月額プランを準備中です。",
     monthlyTag: "月額プラン近日公開",
     planNames: { sample: "Beta サンプル", starter: "Beta スターター", standard: "Beta スタンダード", pro: "Beta プロ" },
-    planDescs: { sample: "大きなプランを選ぶ前に2件のリードをお試しください。", starter: "リスクなしでお試し。", standard: "小規模キャンペーンを実行。", pro: "フルキャンペーン + 2つのアングル。" },
+    planDescs: { sample: "大きなプランを選ぶ前に2件のリードをお試しください。", starter: "リスクなしでお試し。", standard: "小規模キャンペーンを実行。", pro: "フルキャンペーン — 100件のリード、優先レビュー。" },
     planFeatures: {
       sample:   ["2件の厳選B2Bリード","フィットスコア＋カテゴリー","調査メモ","パーソナライズトリガー","メール＋LinkedIn DMドラフト","人によるレビュー済み納品"],
       starter:  ["HOT/WARM/COLD評価","各リードのfit理由","パーソナライズトリガー","メール + LinkedIn DM","各リードに2回フォローアップ","CSV + Markdownエクスポート","24〜48時間で納品"],
@@ -815,6 +815,9 @@ const COPY = {
 type Copy = typeof COPY["en"];
 
 // ─── Constants ────────────────────────────────────────────────────────────────
+
+// Internal build marker — not rendered publicly. Check browser console (dev only) or grep this file to identify deployed version.
+const LANDING_VERSION = "landing-integration-v2-fix-copy";
 
 const PLANS = {
   sample:   { price: "$7",   leads: 2   },
