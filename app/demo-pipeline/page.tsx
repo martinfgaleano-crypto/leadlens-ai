@@ -1261,77 +1261,140 @@ export default function DemoPipelinePage() {
             </button>
           </div>
 
-          {/* Decorative message tabs */}
-          <div style={{ display: "flex", gap: ".5rem", flexWrap: "wrap" as const, maxWidth: "52rem", margin: "0 auto 1rem" }}>
-            {copy.sampleTabs.map((tab, i) => (
-              <div key={tab} style={{ padding: ".4rem 1rem", borderRadius: ".625rem", fontSize: ".78rem", fontWeight: 600, background: i === 0 ? "#0ea5e9" : "#f1f5f9", color: i === 0 ? "#fff" : "#64748b", whiteSpace: "nowrap" as const }}>
-                {tab}
-              </div>
-            ))}
-          </div>
-          {/* Mock lead card */}
-          <div style={{ maxWidth: "52rem", margin: "0 auto", background: "#fff", border: "2px solid #e2e8f0", borderRadius: "1.25rem", overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,.08)", textAlign: "left" }}>
-            {/* Card header */}
-            <div style={{ padding: "1.25rem 1rem", borderBottom: "1px solid #f1f5f9", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap" as const, gap: ".75rem", background: "#fff" }}>
+          {/* Sample Opportunity Brief */}
+          <div style={{ maxWidth: "56rem", margin: "0 auto", background: "#fff", border: "2px solid #e2e8f0", borderRadius: "1.25rem", overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,.07)", textAlign: "left" as const }}>
+
+            {/* Brief header */}
+            <div style={{ padding: "1.125rem 1.5rem", borderBottom: "1px solid #f1f5f9", background: "linear-gradient(180deg,#f8fafc 0%,#fff 100%)", display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap" as const, gap: "1rem" }}>
               <div>
-                <div style={{ fontWeight: 800, fontSize: "1rem", color: "#0f172a" }}>
-                  Sarah Chen <span style={{ fontWeight: 400, color: "#64748b" }}>— Momentum Analytics</span>
+                <div style={{ display: "flex", alignItems: "center", gap: ".5rem", marginBottom: ".3rem", flexWrap: "wrap" as const }}>
+                  <span style={{ fontSize: ".65rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", background: "#e0f2fe", color: "#0284c7", padding: ".15rem .5rem", borderRadius: 999 }}>Sample Data</span>
+                  <span style={{ fontSize: ".65rem", color: "#94a3b8" }}>Opportunity Brief #1 of 5</span>
                 </div>
-                <div style={{ fontSize: ".8rem", color: "#94a3b8", marginTop: ".2rem", overflowWrap: "break-word" as const, wordBreak: "break-all" as const }}>
-                  VP Sales · sarah.chen@momentumanalytics.io · SaaS / Analytics · 38 employees
-                </div>
+                <div style={{ fontWeight: 800, fontSize: "1.2rem", color: "#0f172a", letterSpacing: "-.02em", lineHeight: 1.2 }}>Northstar Logistics</div>
+                <div style={{ fontSize: ".8rem", color: "#64748b", marginTop: ".2rem" }}>northstar-logistics.example · Mid-market logistics / regional freight</div>
               </div>
-              <div style={{ display: "flex", alignItems: "center", gap: ".75rem", flexShrink: 0 }}>
-                <span style={{ padding: ".3rem .875rem", borderRadius: 999, fontSize: ".78rem", fontWeight: 700, background: "#fee2e2", color: "#991b1b" }}>🔥 HOT</span>
-                <div style={{ display: "flex", flexDirection: "column" as const, alignItems: "flex-end", gap: ".25rem" }}>
-                  <span style={{ fontSize: ".9rem", fontWeight: 700, color: "#0284c7", lineHeight: 1 }}>9/10</span>
-                  <div style={{ width: "3.5rem", background: "#e0f2fe", borderRadius: 999, height: 5, overflow: "hidden" }}>
-                    <div style={{ background: "#0ea5e9", height: "100%", width: "90%", borderRadius: 999 }} />
+              <div style={{ display: "flex", flexDirection: "column" as const, alignItems: "flex-end", gap: ".375rem", flexShrink: 0 }}>
+                <span style={{ padding: ".3rem .875rem", borderRadius: 999, fontSize: ".75rem", fontWeight: 700, background: "#fef2f2", color: "#b91c1c", border: "1px solid #fecaca" }}>🔥 HOT</span>
+                <div style={{ display: "flex", gap: "1rem" }}>
+                  <div style={{ textAlign: "center" as const }}>
+                    <div style={{ fontSize: "1.6rem", fontWeight: 800, color: "#0284c7", lineHeight: 1, letterSpacing: "-.03em" }}>84</div>
+                    <div style={{ fontSize: ".6rem", fontWeight: 600, color: "#94a3b8", textTransform: "uppercase" as const, letterSpacing: ".05em" }}>Opp. Score</div>
+                  </div>
+                  <div style={{ textAlign: "center" as const }}>
+                    <div style={{ fontSize: "1.6rem", fontWeight: 800, color: "#475569", lineHeight: 1, letterSpacing: "-.03em" }}>78</div>
+                    <div style={{ fontSize: ".6rem", fontWeight: 600, color: "#94a3b8", textTransform: "uppercase" as const, letterSpacing: ".05em" }}>Confidence</div>
                   </div>
                 </div>
-                <span style={{ fontSize: ".85rem", color: "#16a34a" }}>✅ APPROVED</span>
               </div>
             </div>
-            {/* Card body */}
-            <div style={{ padding: "1.5rem", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: "1.5rem" }}>
-              {/* Why fit */}
+
+            {/* Brief body */}
+            <div style={{ padding: "1.375rem 1.5rem", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: "1.5rem" }}>
+
+              {/* Detected Signals */}
               <div>
-                <div style={{ fontSize: ".7rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", color: "#94a3b8", marginBottom: ".625rem" }}>Why good fit</div>
+                <BriefSection label="Detected Signals">
+                  {[
+                    "Hiring 4 operations roles in Q2 — regional expansion signals",
+                    "New warehouse lease announced in company press release",
+                    `CEO posted: "scaling last-mile delivery capacity this year"`,
+                  ].map((s, i) => (
+                    <div key={i} style={{ display: "flex", gap: ".5rem", fontSize: ".845rem", color: "#334155", padding: ".2rem 0", lineHeight: 1.5 }}>
+                      <span style={{ color: "#0ea5e9", fontWeight: 700, flexShrink: 0 }}>📡</span>{s}
+                    </div>
+                  ))}
+                </BriefSection>
+                <BriefSection label="Evidence / Sources" style={{ marginTop: "1.125rem" }}>
+                  {[
+                    "[LinkedIn job posting — operations roles, sample date]",
+                    "[Company press release — warehouse lease, sample source]",
+                    "[LinkedIn post — CEO, sample date]",
+                  ].map((s, i) => (
+                    <div key={i} style={{ fontSize: ".78rem", color: "#94a3b8", padding: ".15rem 0", fontStyle: "italic" as const, lineHeight: 1.45 }}>{s}</div>
+                  ))}
+                </BriefSection>
+              </div>
+
+              {/* Why It Fits + Why Now */}
+              <div>
+                <BriefSection label="Why It Fits">
+                  {[
+                    "Growing logistics company in active regional expansion phase",
+                    "Operations-heavy growth indicates new vendor and partner needs",
+                    "Decision-making likely centralized in ops leadership",
+                  ].map((r, i) => (
+                    <div key={i} style={{ display: "flex", gap: ".5rem", fontSize: ".845rem", color: "#334155", padding: ".2rem 0", lineHeight: 1.5 }}>
+                      <span style={{ color: "#16a34a", fontWeight: 700, flexShrink: 0 }}>✓</span>{r}
+                    </div>
+                  ))}
+                </BriefSection>
+                <BriefSection label="Why Now" style={{ marginTop: "1.125rem" }}>
+                  <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", borderLeft: "3px solid #16a34a", borderRadius: "0 .5rem .5rem 0", padding: ".75rem .875rem", fontSize: ".845rem", color: "#166534", lineHeight: 1.6 }}>
+                    Regional expansion underway with 4 new hires and a warehouse announcement in the same month. Timing window is open — they&rsquo;re building capacity and evaluating vendors before the next growth phase locks in.
+                  </div>
+                </BriefSection>
+              </div>
+
+            </div>
+
+            {/* Pain + Angle + Next Step */}
+            <div style={{ padding: "0 1.5rem", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: "1.5rem", paddingBottom: "1.375rem" }}>
+              <BriefSection label="Pain Hypothesis">
+                <div style={{ fontSize: ".845rem", color: "#334155", lineHeight: 1.6 }}>
+                  As they scale regionally, they&rsquo;ll face route optimization, carrier management, and ops coordination gaps. Companies at this stage often need new tooling before they realize they need it.
+                </div>
+              </BriefSection>
+              <BriefSection label="Recommended Sales Angle">
+                <div style={{ background: "#e0f2fe", borderLeft: "3px solid #0ea5e9", borderRadius: "0 .5rem .5rem 0", padding: ".75rem .875rem", fontSize: ".845rem", color: "#0284c7", lineHeight: 1.6 }}>
+                  Lead with their expansion context. Reference the warehouse announcement and frame your offer as built for companies scaling regionally. Avoid generic pitches — they&rsquo;ve heard them.
+                </div>
+              </BriefSection>
+            </div>
+
+            {/* Outreach preview */}
+            <div style={{ padding: "0 1.5rem 1.375rem" }}>
+              <BriefSection label="Outreach Preview">
+                <div style={{ background: "#f8fafc", borderRadius: ".75rem", padding: "1rem 1.125rem", border: "1px solid #f1f5f9" }}>
+                  <div style={{ fontSize: ".68rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", color: "#94a3b8", marginBottom: ".3rem" }}>Subject</div>
+                  <div style={{ fontSize: ".875rem", fontWeight: 700, color: "#0284c7", marginBottom: ".875rem", background: "#fff", border: "1px solid #e2e8f0", borderRadius: ".375rem", padding: ".4rem .625rem" }}>
+                    Re: Northstar&rsquo;s Q2 expansion — one thing to solve before you scale
+                  </div>
+                  <div style={{ fontSize: ".68rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", color: "#94a3b8", marginBottom: ".4rem" }}>Body</div>
+                  <div style={{ position: "relative" as const, overflow: "hidden", maxHeight: "5rem" }}>
+                    <div style={{ fontSize: ".875rem", color: "#334155", lineHeight: 1.7 }}>
+                      Hi [Name],<br /><br />
+                      Saw Northstar is opening a new warehouse and adding ops headcount this quarter — right timing to ask: what does your current vendor evaluation process look like during an expansion like this?
+                    </div>
+                    <div style={{ position: "absolute" as const, bottom: 0, left: 0, right: 0, height: "2.5rem", background: "linear-gradient(transparent,#f8fafc)", pointerEvents: "none" as const }} />
+                  </div>
+                  <div style={{ marginTop: ".625rem", fontSize: ".75rem", color: "#0284c7", fontWeight: 600 }}>+ LinkedIn DM · Follow-up 1 (day 3) · Follow-up 2 (day 7) · included in full report</div>
+                </div>
+              </BriefSection>
+            </div>
+
+            {/* Risks + footer */}
+            <div style={{ padding: "1rem 1.5rem", background: "#f8fafc", borderTop: "1px solid #f1f5f9", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: "1.25rem" }}>
+              <BriefSection label="Risks / Weaknesses">
                 {[
-                  "Scaling outbound — posted 3 SDR job openings this month.",
-                  "VP Sales at 38-person SaaS, exact ICP size ($3k–8k/month range).",
-                  "No outbound tooling visible — likely running a manual process.",
+                  "Ops team may already have vendor partnerships locked in",
+                  "Timing signal is based on public data only — no direct confirmation of procurement cycle",
+                  "Key contact not yet identified — requires manual research",
                 ].map((r, i) => (
-                  <div key={i} style={{ display: "flex", gap: ".5rem", fontSize: ".855rem", color: "#334155", padding: ".2rem 0", lineHeight: 1.5 }}>
-                    <span style={{ color: "#16a34a", fontWeight: 700, flexShrink: 0 }}>✓</span>{r}
+                  <div key={i} style={{ display: "flex", gap: ".5rem", fontSize: ".8rem", color: "#64748b", padding: ".15rem 0", lineHeight: 1.45 }}>
+                    <span style={{ color: "#f59e0b", fontWeight: 700, flexShrink: 0 }}>⚠</span>{r}
                   </div>
                 ))}
-              </div>
-              {/* Personalization trigger */}
-              <div>
-                <div style={{ fontSize: ".7rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", color: "#94a3b8", marginBottom: ".625rem" }}>Personalization trigger</div>
-                <div style={{ background: "#e0f2fe", borderLeft: "3px solid #0ea5e9", borderRadius: "0 .5rem .5rem 0", padding: ".875rem 1rem", fontSize: ".855rem", color: "#0284c7", fontStyle: "italic" as const, lineHeight: 1.6 }}>
-                  Sarah posted about hiring 3 SDRs and said the team is &ldquo;finally ready to go outbound.&rdquo; Perfect timing window — active buying intent.
-                </div>
-              </div>
-            </div>
-            {/* Email preview */}
-            <div style={{ padding: "0 1.5rem 1.5rem" }}>
-              <div style={{ fontSize: ".7rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", color: "#94a3b8", marginBottom: ".625rem" }}>Initial cold email</div>
-              <div style={{ background: "#f8fafc", borderRadius: ".75rem", padding: "1rem 1.125rem", border: "1px solid #f1f5f9" }}>
-                <div style={{ fontSize: ".68rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", color: "#94a3b8", marginBottom: ".3rem" }}>Subject</div>
-                <div style={{ fontSize: ".875rem", fontWeight: 700, color: "#0284c7", marginBottom: ".875rem", background: "#fff", border: "1px solid #e2e8f0", borderRadius: ".375rem", padding: ".4rem .625rem", overflowWrap: "break-word" as const }}>
-                  Re: scaling outbound at Momentum — a shortcut on the research side
-                </div>
-                <div style={{ fontSize: ".68rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", color: "#94a3b8", marginBottom: ".4rem" }}>Body</div>
-                <div style={{ position: "relative" as const, overflow: "hidden", maxHeight: "5.5rem" }}>
-                  <div style={{ fontSize: ".875rem", color: "#334155", lineHeight: 1.7 }}>
-                    Hi Sarah,<br /><br />
-                    Saw you&rsquo;re hiring SDRs at Momentum — great signal that outbound is becoming a priority. The problem most teams hit at your stage: SDRs spend 60% of their time on research, not selling...
+              </BriefSection>
+              <div style={{ display: "flex", flexDirection: "column" as const, justifyContent: "space-between", gap: ".75rem" }}>
+                <BriefSection label="Suggested Next Step">
+                  <div style={{ fontSize: ".845rem", color: "#334155", lineHeight: 1.5 }}>
+                    Reach VP of Operations or COO via LinkedIn. Mention the regional expansion in the first line. Avoid leading with product features.
                   </div>
-                  <div style={{ position: "absolute" as const, bottom: 0, left: 0, right: 0, height: "2.5rem", background: "linear-gradient(transparent,#f8fafc)", pointerEvents: "none" as const }} />
+                </BriefSection>
+                <div style={{ fontSize: ".72rem", color: "#94a3b8", borderTop: "1px solid #e2e8f0", paddingTop: ".75rem" }}>
+                  <span style={{ fontWeight: 600 }}>Brief valid until:</span> [sample date + 30 days] · <span style={{ fontStyle: "italic" as const }}>Signal freshness not guaranteed beyond this date</span>
                 </div>
-                <div style={{ marginTop: ".625rem", fontSize: ".78rem", color: "#0284c7", fontWeight: 600 }}>+ LinkedIn DM · Follow-up 1 · Follow-up 2 included in full report</div>
               </div>
             </div>
           </div>
@@ -2047,26 +2110,48 @@ function OpportunityMockupHero() {
       name: "Northstar Logistics", segment: "Mid-market logistics",
       score: 84, confidence: 78, badge: "HOT",
       badgeBg: "#fef2f2", badgeColor: "#b91c1c", badgeBorder: "#fecaca", barColor: "#ef4444",
-      signal: "Hiring 4 operations roles — regional expansion"
+      signal: "Hiring 4 ops roles — regional expansion",
+      whyNow: "New warehouse lease + ops headcount added this month",
+      angle: "Lead with regional scale context",
     },
     {
       name: "FreshRoute Foods", segment: "Regional food distribution",
       score: 77, confidence: 72, badge: "HOT",
       badgeBg: "#fef2f2", badgeColor: "#b91c1c", badgeBorder: "#fecaca", barColor: "#ef4444",
-      signal: "New supplier deal + B2B delivery expansion"
+      signal: "New supplier contract + B2B delivery expansion",
+      whyNow: "Supplier deal signed 3 weeks ago — vendor window open",
+      angle: "Focus on delivery ops complexity at this scale",
     },
     {
       name: "Atlas Clinics Group", segment: "Multi-location healthcare",
       score: 63, confidence: 68, badge: "WARM",
       badgeBg: "#fffbeb", badgeColor: "#92400e", badgeBorder: "#fde68a", barColor: "#f59e0b",
-      signal: "Adding 2 new locations — ops hiring underway"
+      signal: "Adding 2 new clinic locations — ops hiring underway",
+      whyNow: "Expansion phase started — evaluating vendors now",
+      angle: "Ops efficiency at multi-location scale",
+    },
+    {
+      name: "Pinebridge Advisors", segment: "Mid-market financial services",
+      score: 57, confidence: 61, badge: "WARM",
+      badgeBg: "#fffbeb", badgeColor: "#92400e", badgeBorder: "#fde68a", barColor: "#f59e0b",
+      signal: "Leadership change — new COO, ops team restructuring",
+      whyNow: "New COO hired 6 weeks ago — reviewing vendor stack",
+      angle: "Frame as quick win for new leadership",
+    },
+    {
+      name: "Clearpoint Builders", segment: "Commercial construction",
+      score: 41, confidence: 49, badge: "COOL",
+      badgeBg: "#f0f9ff", badgeColor: "#0369a1", badgeBorder: "#bae6fd", barColor: "#0ea5e9",
+      signal: "New project pipeline announced — 3 contracts signed",
+      whyNow: "Pipeline growth but no ops signal yet — monitor",
+      angle: "Check back in 45–60 days",
     },
   ];
   const metrics = [
-    { val: "5",  label: "Briefs",    bg: "#f0f9ff", color: "#0284c7", border: "#bae6fd" },
-    { val: "2",  label: "HOT",       bg: "#fef2f2", color: "#b91c1c", border: "#fecaca" },
-    { val: "2",  label: "WARM",      bg: "#fffbeb", color: "#92400e", border: "#fde68a" },
-    { val: "75", label: "avg score", bg: "#f8fafc", color: "#475569", border: "#e2e8f0" },
+    { val: "5",  label: "Briefs",       bg: "#f0f9ff", color: "#0284c7", border: "#bae6fd" },
+    { val: "2",  label: "HOT",          bg: "#fef2f2", color: "#b91c1c", border: "#fecaca" },
+    { val: "2",  label: "WARM",         bg: "#fffbeb", color: "#92400e", border: "#fde68a" },
+    { val: "69", label: "avg score",    bg: "#f8fafc", color: "#475569", border: "#e2e8f0" },
   ];
   const deliverables = ["Market Map ✓", "Signals Verified ✓", "Scored Briefs ✓", "PDF + CSV ✓"];
 
@@ -2079,7 +2164,7 @@ function OpportunityMockupHero() {
           <span style={{ fontWeight: 700, fontSize: ".8rem", color: "#0f172a", letterSpacing: "-.01em" }}>Opportunity Snapshot</span>
           <span style={{ fontSize: ".72rem", color: "#94a3b8", fontWeight: 400 }}>· 5 accounts ranked</span>
         </div>
-        <span style={{ background: "#eff6ff", border: "1px solid #bfdbfe", color: "#3b82f6", fontSize: ".62rem", fontWeight: 700, letterSpacing: ".05em", textTransform: "uppercase" as const, padding: ".175rem .55rem", borderRadius: 999 }}>Preview</span>
+        <span style={{ background: "#eff6ff", border: "1px solid #bfdbfe", color: "#3b82f6", fontSize: ".62rem", fontWeight: 700, letterSpacing: ".05em", textTransform: "uppercase" as const, padding: ".175rem .55rem", borderRadius: 999 }}>Sample</span>
       </div>
 
       {/* Metrics strip */}
@@ -2094,34 +2179,47 @@ function OpportunityMockupHero() {
 
       {/* Account rows */}
       {accounts.map((a, i) => (
-        <div key={a.name} style={{ padding: ".875rem 1.125rem", borderBottom: i < accounts.length - 1 ? "1px solid #f8fafc" : "none", background: "#fff" }}>
-          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: ".5rem", marginBottom: ".3rem" }}>
+        <div key={a.name} style={{ padding: ".75rem 1.125rem", borderBottom: i < accounts.length - 1 ? "1px solid #f8fafc" : "none", background: "#fff" }}>
+          {/* Name + scores row */}
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: ".5rem", marginBottom: ".25rem" }}>
             <div style={{ minWidth: 0 }}>
-              <div style={{ fontWeight: 700, fontSize: ".875rem", color: "#0f172a", lineHeight: 1.3 }}>{a.name}</div>
-              <div style={{ fontSize: ".73rem", marginTop: ".1rem", color: "#64748b" }}>{a.segment}</div>
+              <div style={{ fontWeight: 700, fontSize: ".825rem", color: "#0f172a", lineHeight: 1.25 }}>{a.name}</div>
+              <div style={{ fontSize: ".68rem", marginTop: ".1rem", color: "#64748b" }}>{a.segment}</div>
             </div>
             <div style={{ display: "flex", flexDirection: "column" as const, alignItems: "flex-end", gap: ".2rem", flexShrink: 0 }}>
-              <span style={{ padding: ".15rem .45rem", borderRadius: ".3rem", fontSize: ".62rem", fontWeight: 700, letterSpacing: ".04em", background: a.badgeBg, color: a.badgeColor, border: `1px solid ${a.badgeBorder}` }}>{a.badge}</span>
-              <span style={{ fontSize: ".77rem", fontWeight: 800, color: "#0284c7", letterSpacing: "-.01em", lineHeight: 1 }}>
-                {a.score}<span style={{ fontSize: ".58rem", fontWeight: 400, color: "#94a3b8" }}> / {a.confidence}</span>
-              </span>
+              <span style={{ padding: ".13rem .4rem", borderRadius: ".275rem", fontSize: ".6rem", fontWeight: 700, letterSpacing: ".04em", background: a.badgeBg, color: a.badgeColor, border: `1px solid ${a.badgeBorder}` }}>{a.badge}</span>
+              <div style={{ display: "flex", gap: ".25rem", alignItems: "baseline" }}>
+                <span style={{ fontSize: ".68rem", color: "#94a3b8", fontWeight: 500 }}>Score</span>
+                <span style={{ fontSize: ".8rem", fontWeight: 800, color: "#0284c7", letterSpacing: "-.01em", lineHeight: 1 }}>{a.score}</span>
+                <span style={{ fontSize: ".62rem", color: "#cbd5e1" }}>·</span>
+                <span style={{ fontSize: ".68rem", color: "#94a3b8", fontWeight: 500 }}>Conf</span>
+                <span style={{ fontSize: ".75rem", fontWeight: 700, color: "#475569", lineHeight: 1 }}>{a.confidence}</span>
+              </div>
             </div>
           </div>
-          <div style={{ background: "#f1f5f9", borderRadius: 999, height: 2, margin: ".35rem 0", overflow: "hidden" }}>
+          {/* Score bar */}
+          <div style={{ background: "#f1f5f9", borderRadius: 999, height: 2, margin: ".3rem 0", overflow: "hidden" }}>
             <div style={{ background: a.barColor, height: "100%", width: `${a.score}%`, borderRadius: 999, opacity: .7 }} />
           </div>
-          <div>
-            <span style={{ display: "inline-flex", alignItems: "center", gap: ".275rem", background: "#f0f9ff", border: "1px solid #e0f2fe", borderRadius: ".375rem", padding: ".175rem .5rem", fontSize: ".67rem", color: "#0369a1", fontWeight: 500 }}>
-              <span style={{ color: "#0ea5e9", fontSize: ".6rem" }}>📡</span>{a.signal}
+          {/* Signal + why now + angle */}
+          <div style={{ display: "flex", flexDirection: "column" as const, gap: ".18rem", marginTop: ".25rem" }}>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: ".25rem", background: "#f0f9ff", border: "1px solid #e0f2fe", borderRadius: ".3rem", padding: ".15rem .45rem", fontSize: ".63rem", color: "#0369a1", fontWeight: 500 }}>
+              <span style={{ fontSize: ".58rem" }}>📡</span>{a.signal}
+            </span>
+            <span style={{ fontSize: ".62rem", color: "#64748b", paddingLeft: ".15rem" }}>
+              <span style={{ fontWeight: 600, color: "#475569" }}>Why now:</span> {a.whyNow}
+            </span>
+            <span style={{ fontSize: ".62rem", color: "#64748b", paddingLeft: ".15rem" }}>
+              <span style={{ fontWeight: 600, color: "#475569" }}>Angle:</span> {a.angle}
             </span>
           </div>
         </div>
       ))}
 
       {/* Deliverables strip */}
-      <div style={{ padding: ".575rem 1.125rem", background: "#f8fafc", borderTop: "1px solid #f1f5f9", display: "flex", gap: ".325rem", flexWrap: "wrap" as const, alignItems: "center" }}>
+      <div style={{ padding: ".5rem 1.125rem", background: "#f8fafc", borderTop: "1px solid #f1f5f9", display: "flex", gap: ".3rem", flexWrap: "wrap" as const, alignItems: "center" }}>
         {deliverables.map(label => (
-          <span key={label} style={{ fontSize: ".63rem", fontWeight: 600, color: "#0284c7", background: "#f0f9ff", border: "1px solid #e0f2fe", borderRadius: ".3rem", padding: ".175rem .475rem" }}>
+          <span key={label} style={{ fontSize: ".63rem", fontWeight: 600, color: "#0284c7", background: "#f0f9ff", border: "1px solid #e0f2fe", borderRadius: ".3rem", padding: ".15rem .45rem" }}>
             {label}
           </span>
         ))}
@@ -2130,16 +2228,16 @@ function OpportunityMockupHero() {
   );
 }
 
-// Keep old name as alias so JSX call sites below still compile during transition
 const LeadMockupHero = OpportunityMockupHero;
 
 // ─── Mobile hero preview card (replaces full mockup on small screens) ─────────
 
 function OpportunityMockupMobile() {
   const accounts = [
-    { name: "Northstar Logistics", segment: "Logistics",    score: 84, badge: "HOT",  badgeBg: "#fef2f2", badgeColor: "#b91c1c", badgeBorder: "#fecaca" },
-    { name: "FreshRoute Foods",    segment: "Food Dist.",   score: 77, badge: "HOT",  badgeBg: "#fef2f2", badgeColor: "#b91c1c", badgeBorder: "#fecaca" },
-    { name: "Atlas Clinics",       segment: "Healthcare",   score: 63, badge: "WARM", badgeBg: "#fffbeb", badgeColor: "#92400e", badgeBorder: "#fde68a" },
+    { name: "Northstar Logistics", segment: "Logistics",      score: 84, confidence: 78, badge: "HOT",  badgeBg: "#fef2f2", badgeColor: "#b91c1c", badgeBorder: "#fecaca", signal: "Hiring 4 ops roles" },
+    { name: "FreshRoute Foods",    segment: "Food Dist.",     score: 77, confidence: 72, badge: "HOT",  badgeBg: "#fef2f2", badgeColor: "#b91c1c", badgeBorder: "#fecaca", signal: "New supplier deal" },
+    { name: "Atlas Clinics",       segment: "Healthcare",     score: 63, confidence: 68, badge: "WARM", badgeBg: "#fffbeb", badgeColor: "#92400e", badgeBorder: "#fde68a", signal: "Adding 2 locations" },
+    { name: "Pinebridge Advisors", segment: "Fin. Services",  score: 57, confidence: 61, badge: "WARM", badgeBg: "#fffbeb", badgeColor: "#92400e", badgeBorder: "#fde68a", signal: "New COO — vendor review" },
   ];
   const chips = ["Market Map ✓", "Signals ✓", "5 Briefs ✓", "PDF + CSV ✓"];
 
@@ -2155,16 +2253,21 @@ function OpportunityMockupMobile() {
       </div>
 
       {accounts.map((a, i) => (
-        <div key={a.name} style={{ padding: ".6rem 1rem", borderBottom: i < accounts.length - 1 ? "1px solid #f8fafc" : "none", display: "flex", alignItems: "center", justifyContent: "space-between", gap: ".5rem" }}>
-          <div style={{ minWidth: 0 }}>
-            <div style={{ fontWeight: 700, fontSize: ".8rem", color: "#0f172a", lineHeight: 1.2 }}>{a.name}</div>
-            <div style={{ fontSize: ".68rem", marginTop: ".1rem", color: "#64748b" }}>{a.segment}</div>
+        <div key={a.name} style={{ padding: ".55rem 1rem", borderBottom: i < accounts.length - 1 ? "1px solid #f8fafc" : "none" }}>
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: ".5rem", marginBottom: ".2rem" }}>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontWeight: 700, fontSize: ".75rem", color: "#0f172a", lineHeight: 1.2 }}>{a.name}</div>
+              <div style={{ fontSize: ".65rem", marginTop: ".08rem", color: "#64748b" }}>{a.segment}</div>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: ".3rem", flexShrink: 0 }}>
+              <span style={{ fontSize: ".58rem", fontWeight: 700, letterSpacing: ".04em", background: a.badgeBg, color: a.badgeColor, border: `1px solid ${a.badgeBorder}`, borderRadius: ".275rem", padding: ".1rem .35rem" }}>{a.badge}</span>
+              <span style={{ fontSize: ".7rem", fontWeight: 800, color: "#0284c7" }}>
+                {a.score}<span style={{ fontSize: ".56rem", fontWeight: 500, color: "#94a3b8" }}> · {a.confidence}</span>
+              </span>
+            </div>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: ".375rem", flexShrink: 0 }}>
-            <span style={{ fontSize: ".6rem", fontWeight: 700, letterSpacing: ".04em", background: a.badgeBg, color: a.badgeColor, border: `1px solid ${a.badgeBorder}`, borderRadius: ".3rem", padding: ".13rem .38rem" }}>{a.badge}</span>
-            <span style={{ fontSize: ".72rem", fontWeight: 800, color: "#0284c7" }}>
-              {a.score}<span style={{ fontSize: ".58rem", fontWeight: 400, color: "#94a3b8" }}> score</span>
-            </span>
+          <div style={{ fontSize: ".6rem", color: "#0369a1", background: "#f0f9ff", border: "1px solid #e0f2fe", borderRadius: ".275rem", padding: ".12rem .4rem", display: "inline-flex", gap: ".2rem", alignItems: "center" }}>
+            <span style={{ fontSize: ".55rem" }}>📡</span>{a.signal}
           </div>
         </div>
       ))}
@@ -2274,6 +2377,15 @@ function PricingCard({ plan, featured, copy, onSelect }: {
 }
 
 // ─── Shared components ────────────────────────────────────────────────────────
+
+function BriefSection({ label, children, style }: { label: string; children: React.ReactNode; style?: React.CSSProperties }) {
+  return (
+    <div style={style}>
+      <div style={{ fontSize: ".68rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", color: "#94a3b8", marginBottom: ".5rem" }}>{label}</div>
+      {children}
+    </div>
+  );
+}
 
 function Btn({ children, onClick, lg }: { children: React.ReactNode; onClick?: () => void; lg?: boolean }) {
   return (
