@@ -131,13 +131,13 @@ const COPY = {
       "Typical delivery: 24–48 hours after submission.",
       "You review every message before sending — nothing goes out automatically.",
     ],
-    tryDemoCTA: "Try free sample demo",
+    tryDemoCTA: "Preview sample report",
     checkoutPendingTitle: "Online checkout is almost ready.",
     checkoutPendingBody: "Our checkout is currently in final review before launch. Beta batches cannot be purchased yet.",
-    checkoutPendingDemoHint: "You can still try a sample demo report below.",
-    switchToDemo: "Try sample demo instead →",
-    sampleBadge: "Sample demo report",
-    sampleNote: "This is a sample output. Paid beta batches are delivered after checkout and manual review.",
+    checkoutPendingDemoHint: "You can still preview the sample report format below.",
+    switchToDemo: "Preview sample report format →",
+    sampleBadge: "Sample report preview",
+    sampleNote: "This report uses sample data to show the format. For real researched leads, start with the $7 Sample Pack.",
     problemTag: "The problem",
     problemTitle: "Most B2B teams waste time on outreach that doesn't work",
     problemItems: [
@@ -175,7 +175,7 @@ const COPY = {
       ["Is there a subscription or contract?", "No. Beta batches are one-time purchases. No recurring charges, no commitments, no hidden fees."],
       ["What happens after I purchase?", "We collect your onboarding details (if not already submitted), process your batch, and deliver via email within 24–48 hours."],
       ["Can I target a specific industry or region?", "Yes. The onboarding form lets you specify your ICP, target market region, tone, and any specific constraints — and we optimize the batch accordingly."],
-      ["Is the free sample demo using real leads?", "No. The free demo generates a simulated report using fictional data — it lets you see the output format, structure, and quality before paying anything. Real leads are only included in paid batches, starting with the $7 Sample Pack (2 real leads, real research, 24–48h delivery)."],
+      ["Does the free preview use real leads?", "No. The free preview uses sample data to show the structure and format of a LeadLens report — not real researched leads. If you want real leads, start with the $7 Beta Sample Pack: 2 real B2B leads, researched and reviewed by our team, delivered in 24–48h."],
       ["Is this like Apollo or ZoomInfo?", "No. Apollo and ZoomInfo are databases — they give you contact records to filter and export. LeadLens is a research and outreach service: we identify leads specifically matched to your offer, qualify each one, and write personalized emails, LinkedIn DMs, and follow-ups for every lead. You don't get a database — you get a ready-to-use outreach batch."],
     ] as [string, string][],
     ctaTag: "Get started",
@@ -188,6 +188,24 @@ const COPY = {
     samplePackCopy: "See real LeadLens output with 2 leads for $7 — before committing to a full batch.",
     samplePackBadge: "Limited-time beta offer",
     samplePackCTA: "Try 2 leads — $7",
+    samplePackBridge: "Already saw the format preview? The $7 Sample Pack delivers 2 real leads — researched, scored, and human-reviewed.",
+    sampleBridgeFreeDemo: "Preview the report format",
+    sampleBridgeSamplePack: "Get 2 real leads for $7",
+    samplePreviewDisclaimer: "This preview uses sample data to show the report structure. For real researched leads, start with the $7 Sample Pack.",
+    trustItems: ["Human-reviewed", "No automatic sending", "No LinkedIn automation", "7-day refund window"] as string[],
+    afterPurchaseTitle: "After you buy:",
+    afterPurchaseSteps: [
+      "Tell us your ICP and targeting details.",
+      "LeadLens reviews your brief manually.",
+      "Our agents research, qualify, and write outreach for each lead.",
+      "You receive a CSV + Markdown report — ready to review and send.",
+    ] as string[],
+    afterPurchaseNote: "Typical delivery: 24–48h. Nothing is sent automatically. You approve every message.",
+    faqCtaBridge: "Not sure yet? Preview the report format first — free, no payment required.",
+    resultsUpgradeTitle: "Ready for real leads?",
+    resultsUpgradeSub: "The $7 Sample Pack runs the real LeadLens process: 2 qualified B2B leads, human-reviewed, delivered in 24–48h. Same format. Real data.",
+    resultsUpgradeCTA: "Get 2 real leads — $7 →",
+    checkoutEarlyBanner: "Checkout is in final review. You can preview the sample report format while you wait.",
   },
   es: {
     announcement: "Acceso beta abierto — solicita tu primer lote de leads.",
@@ -314,13 +332,13 @@ const COPY = {
       "Entrega típica: 24–48 horas después del envío.",
       "Tú revisas cada mensaje antes de enviarlo — nada se envía automáticamente.",
     ],
-    tryDemoCTA: "Probar demo gratuito de muestra",
+    tryDemoCTA: "Ver reporte de muestra",
     checkoutPendingTitle: "El checkout online está casi listo.",
     checkoutPendingBody: "Nuestro checkout está en revisión final antes del lanzamiento. Los lotes beta aún no están disponibles para compra.",
-    checkoutPendingDemoHint: "Mientras tanto, puedes probar un reporte demo de muestra abajo.",
-    switchToDemo: "Probar demo de muestra →",
-    sampleBadge: "Reporte demo de muestra",
-    sampleNote: "Este es un resultado de muestra. Los lotes beta pagos se entregan después del checkout y revisión.",
+    checkoutPendingDemoHint: "Mientras tanto, puedes ver el formato del reporte de muestra abajo.",
+    switchToDemo: "Ver formato del reporte de muestra →",
+    sampleBadge: "Vista previa del reporte de muestra",
+    sampleNote: "Este reporte usa datos de ejemplo para mostrar el formato. Para leads reales investigados, empieza con el Sample Pack de $7.",
     problemTag: "El problema",
     problemTitle: "La mayoría de los equipos B2B pierden tiempo en outreach que no funciona",
     problemItems: [
@@ -358,7 +376,7 @@ const COPY = {
       ["¿Hay suscripción o contrato?", "No. Los lotes beta son compras de pago único. Sin cargos recurrentes, sin compromisos, sin tarifas ocultas."],
       ["¿Qué pasa después de comprar?", "Recopilamos los detalles de tu onboarding (si no los enviaste), procesamos tu lote y entregamos por correo en 24–48 horas."],
       ["¿Puedo apuntar a una industria o región específica?", "Sí. El formulario de onboarding te permite especificar tu ICP, región objetivo, tono y cualquier criterio adicional — y optimizamos el lote con esos parámetros."],
-      ["¿El demo gratuito usa leads reales?", "No. El demo gratuito genera un reporte simulado con datos ficticios — te permite ver el formato, la estructura y la calidad de los resultados antes de pagar. Los leads reales solo se incluyen en lotes de pago, empezando por el Sample Pack de $7 (2 leads reales, investigación real, entrega en 24–48h)."],
+      ["¿La vista previa gratuita usa leads reales?", "No. La vista previa gratuita usa datos de ejemplo para mostrar la estructura y el formato de un reporte de LeadLens — no son leads investigados reales. Si quieres leads reales, empieza con el Beta Sample Pack de $7: 2 leads B2B reales, investigados y revisados por nuestro equipo, entregados en 24–48h."],
       ["¿Es esto como Apollo o ZoomInfo?", "No. Apollo y ZoomInfo son bases de datos — te dan registros de contactos para filtrar y exportar. LeadLens es un servicio de investigación y redacción de outreach: identificamos leads específicamente adaptados a tu oferta, calificamos cada uno y redactamos correos personalizados, LinkedIn DMs y seguimientos por cada lead. No recibes una base de datos — recibes un lote de outreach listo para usar."],
     ] as [string, string][],
     ctaTag: "Comenzar",
@@ -371,6 +389,24 @@ const COPY = {
     samplePackCopy: "Prueba el servicio real con 2 leads por $7 — antes de elegir un lote completo.",
     samplePackBadge: "Oferta beta por tiempo limitado",
     samplePackCTA: "Probar 2 leads — $7",
+    samplePackBridge: "¿Ya viste el formato del reporte? El Sample Pack de $7 entrega 2 leads reales — investigados, calificados y revisados manualmente.",
+    sampleBridgeFreeDemo: "Ver el formato del reporte",
+    sampleBridgeSamplePack: "Conseguir 2 leads reales por $7",
+    samplePreviewDisclaimer: "Esta vista previa usa datos de ejemplo para mostrar la estructura del reporte. Para leads reales investigados, empieza con el Sample Pack de $7.",
+    trustItems: ["Revisión humana", "Sin envíos automáticos", "Sin automatización de LinkedIn", "Reembolso en 7 días"] as string[],
+    afterPurchaseTitle: "Después de comprar:",
+    afterPurchaseSteps: [
+      "Cuéntanos tu ICP y criterios de targeting.",
+      "LeadLens revisa tu brief manualmente.",
+      "Nuestros agentes investigan, califican y redactan el outreach por cada lead.",
+      "Recibes un reporte en CSV + Markdown — listo para revisar y enviar.",
+    ] as string[],
+    afterPurchaseNote: "Entrega típica: 24–48h. Nada se envía automáticamente. Tú apruebas cada mensaje.",
+    faqCtaBridge: "¿Aún no estás seguro? Ve primero el formato del reporte — gratis, sin pago requerido.",
+    resultsUpgradeTitle: "¿Listo para leads reales?",
+    resultsUpgradeSub: "El Sample Pack de $7 ejecuta el proceso real de LeadLens: 2 leads B2B calificados, revisión humana, entrega en 24–48h. Mismo formato. Datos reales.",
+    resultsUpgradeCTA: "Conseguir 2 leads reales — $7 →",
+    checkoutEarlyBanner: "El checkout está en revisión final. Puedes ver el formato del reporte de muestra mientras esperas.",
   },
   pt: {
     announcement: "Acesso beta aberto — solicite seu primeiro lote de leads.",
@@ -497,13 +533,13 @@ const COPY = {
       "Entrega típica: 24–48 horas após o envio.",
       "Você revisa cada mensagem antes de enviar — nada é enviado automaticamente.",
     ],
-    tryDemoCTA: "Testar demo grátis de exemplo",
+    tryDemoCTA: "Visualizar relatório de exemplo",
     checkoutPendingTitle: "O checkout online está quase pronto.",
     checkoutPendingBody: "Nosso checkout está em revisão final antes do lançamento. Os lotes beta ainda não estão disponíveis para compra.",
-    checkoutPendingDemoHint: "Você ainda pode testar um relatório demo de exemplo abaixo.",
-    switchToDemo: "Testar demo de exemplo →",
-    sampleBadge: "Relatório demo de exemplo",
-    sampleNote: "Este é um resultado de exemplo. Lotes beta pagos são entregues após o checkout e revisão.",
+    checkoutPendingDemoHint: "Você ainda pode visualizar o formato do relatório de exemplo abaixo.",
+    switchToDemo: "Visualizar formato do relatório →",
+    sampleBadge: "Prévia do relatório de exemplo",
+    sampleNote: "Este relatório usa dados de exemplo para mostrar o formato. Para leads reais pesquisados, comece com o Sample Pack de US$7.",
     problemTag: "O problema",
     problemTitle: "A maioria das equipes B2B perde tempo com outreach que não funciona",
     problemItems: [
@@ -541,7 +577,7 @@ const COPY = {
       ["Há assinatura ou contrato?", "Não. Lotes beta são compras únicas. Sem cobranças recorrentes, sem compromissos, sem taxas ocultas."],
       ["O que acontece após a compra?", "Coletamos seus detalhes de onboarding (se ainda não enviados), processamos seu lote e entregamos por e-mail em 24–48 horas."],
       ["Posso segmentar uma indústria ou região específica?", "Sim. O formulário de onboarding permite especificar seu ICP, região-alvo, tom e qualquer critério adicional — e otimizamos o lote com esses parâmetros."],
-      ["O demo gratuito usa leads reais?", "Não. O demo gratuito gera um relatório simulado com dados fictícios — permite ver o formato, a estrutura e a qualidade dos resultados antes de pagar qualquer coisa. Leads reais só estão incluídos em lotes pagos, a partir do Sample Pack de $7 (2 leads reais, pesquisa real, entrega em 24–48h)."],
+      ["A prévia gratuita usa leads reais?", "Não. A prévia gratuita usa dados de exemplo para mostrar a estrutura e o formato de um relatório da LeadLens — não são leads pesquisados reais. Se quiser leads reais, comece com o Beta Sample Pack de US$7: 2 leads B2B reais, pesquisados e revisados pela nossa equipe, entregues em 24–48h."],
       ["Isso é como Apollo ou ZoomInfo?", "Não. Apollo e ZoomInfo são bancos de dados — fornecem registros de contatos para filtrar e exportar. LeadLens é um serviço de pesquisa e redação de outreach: identificamos leads especificamente correspondentes à sua oferta, qualificamos cada um e escrevemos e-mails personalizados, LinkedIn DMs e follow-ups para cada lead. Você não recebe um banco de dados — recebe um lote de outreach pronto para usar."],
     ] as [string, string][],
     ctaTag: "Começar",
@@ -554,6 +590,24 @@ const COPY = {
     samplePackCopy: "Experimente o serviço real com 2 leads por $7 — antes de escolher um lote completo.",
     samplePackBadge: "Oferta beta por tempo limitado",
     samplePackCTA: "Experimentar 2 leads — $7",
+    samplePackBridge: "Já viu o formato do relatório? O Sample Pack de US$7 entrega 2 leads reais — pesquisados, qualificados e revisados manualmente.",
+    sampleBridgeFreeDemo: "Visualizar o formato do relatório",
+    sampleBridgeSamplePack: "Obter 2 leads reais por US$7",
+    samplePreviewDisclaimer: "Esta prévia usa dados de exemplo para mostrar a estrutura do relatório. Para leads reais pesquisados, comece com o Sample Pack de US$7.",
+    trustItems: ["Revisão humana", "Sem envio automático", "Sem automação no LinkedIn", "Reembolso em 7 dias"] as string[],
+    afterPurchaseTitle: "Após a compra:",
+    afterPurchaseSteps: [
+      "Informe seu ICP e critérios de targeting.",
+      "A LeadLens revisa seu brief manualmente.",
+      "Nossos agentes pesquisam, qualificam e redigem o outreach para cada lead.",
+      "Você recebe um relatório em CSV + Markdown — pronto para revisar e enviar.",
+    ] as string[],
+    afterPurchaseNote: "Entrega típica: 24–48h. Nada é enviado automaticamente. Você aprova cada mensagem.",
+    faqCtaBridge: "Ainda não tem certeza? Visualize o formato do relatório primeiro — gratuito, sem pagamento necessário.",
+    resultsUpgradeTitle: "Pronto para leads reais?",
+    resultsUpgradeSub: "O Sample Pack de $7 executa o processo real da LeadLens: 2 leads B2B qualificados, revisão humana, entrega em 24–48h. Mesmo formato. Dados reais.",
+    resultsUpgradeCTA: "Obter 2 leads reais — $7 →",
+    checkoutEarlyBanner: "O checkout está em revisão final. Visualize o formato do relatório de exemplo enquanto espera.",
   },
   ja: {
     announcement: "ベータ版アクセス公開中 — 最初のリードバッチをリクエストできます。",
@@ -680,13 +734,13 @@ const COPY = {
       "通常の納品時間：送信後24〜48時間。",
       "送信前にすべてのメッセージをご確認いただけます。自動送信は一切行いません。",
     ],
-    tryDemoCTA: "無料サンプルデモを試す",
+    tryDemoCTA: "サンプルレポートを見る",
     checkoutPendingTitle: "オンライン決済はまもなく利用可能になります。",
     checkoutPendingBody: "現在チェックアウトはローンチ前の最終審査中です。ベータバッチはまだ購入できません。",
-    checkoutPendingDemoHint: "代わりに、以下でサンプルデモレポートをお試しいただけます。",
-    switchToDemo: "サンプルデモを試す →",
-    sampleBadge: "サンプルデモレポート",
-    sampleNote: "これはサンプル出力です。有料ベータバッチはチェックアウトと確認後に納品されます。",
+    checkoutPendingDemoHint: "以下でサンプルレポートのフォーマットをご確認いただけます。",
+    switchToDemo: "サンプルレポート形式を見る →",
+    sampleBadge: "サンプルレポートプレビュー",
+    sampleNote: "このレポートはサンプルデータを使用してフォーマットを示しています。実際に調査されたリードには、$7のサンプルパックをご利用ください。",
     problemTag: "問題点",
     problemTitle: "多くのB2Bチームが機能しないアウトリーチに時間を無駄にしています",
     problemItems: [
@@ -724,7 +778,7 @@ const COPY = {
       ["サブスクリプションや契約はありますか？", "いいえ。ベータバッチは1回限りの購入です。継続課金なし、コミットメントなし、隠れた費用もありません。"],
       ["購入後はどうなりますか？", "オンボーディング情報を収集し（未提出の場合）、バッチを処理して、24〜48時間以内にメールで納品します。"],
       ["特定の業界や地域を指定できますか？", "はい。オンボーディングフォームでICP、ターゲット市場、トーン、その他の条件を指定でき、それに合わせてバッチを最適化します。"],
-      ["無料サンプルデモは実際のリードを使っていますか？", "いいえ。無料デモは架空のデータを使ったシミュレーションレポートを生成します。支払い前に出力形式・構造・品質を確認できます。実際のリードは有料バッチにのみ含まれます。$7のサンプルパック（2件の実リード、実際の調査、24〜48時間で納品）からお試しいただけます。"],
+      ["無料プレビューは実際のリードを使っていますか？", "いいえ。無料プレビューはサンプルデータを使用して、LeadLensレポートの構造とフォーマットを示しています。実際に調査されたリードではありません。実際のリードが必要な場合は、$7のベータサンプルパックからお始めください：実際のB2Bリード2件、チームによる調査とレビュー済み、24〜48時間で納品します。"],
       ["ApolloやZoomInfoと何が違いますか？", "ApolloやZoomInfoはデータベースです。フィルタリングしてエクスポートするための連絡先レコードを提供します。LeadLensは調査とアウトリーチ作成のサービスです。あなたのオファーに特化したリードを特定し、各リードを評価し、パーソナライズされたメール・LinkedIn DM・フォローアップを作成します。データベースではなく、すぐに使えるアウトリーチバッチをお届けします。"],
     ] as [string, string][],
     ctaTag: "始める",
@@ -737,6 +791,24 @@ const COPY = {
     samplePackCopy: "大きなバッチを選ぶ前に、$7で2件の本物のリードをお試しください。",
     samplePackBadge: "期間限定ベータオファー",
     samplePackCTA: "2件を試す — $7",
+    samplePackBridge: "レポートの形式をご確認いただけましたか？$7のサンプルパックでは実際のリード2件をお届けします — 調査・評価済み、人によるレビュー済み。",
+    sampleBridgeFreeDemo: "レポート形式を確認する",
+    sampleBridgeSamplePack: "$7で2件の実際のリードを取得",
+    samplePreviewDisclaimer: "このプレビューはサンプルデータを使用してレポートの構造を示しています。実際に調査されたリードには、$7のサンプルパックから始めてください。",
+    trustItems: ["人によるレビュー", "自動送信なし", "LinkedInオートメーションなし", "7日間返金保証"] as string[],
+    afterPurchaseTitle: "購入後の流れ：",
+    afterPurchaseSteps: [
+      "ICPとターゲティング情報をお知らせください。",
+      "LeadLensがブリーフを手動でレビューします。",
+      "エージェントが各リードを調査・評価し、アウトリーチを作成します。",
+      "CSV + Markdownのレポートが届きます — 確認して送信できます。",
+    ] as string[],
+    afterPurchaseNote: "通常の納品時間：24〜48時間。自動送信は一切ありません。すべてのメッセージを確認してから使用できます。",
+    faqCtaBridge: "まだ迷っていますか？まずレポートの形式をご確認ください — 無料、支払い不要です。",
+    resultsUpgradeTitle: "実際のリードを試す準備ができましたか？",
+    resultsUpgradeSub: "$7のサンプルパックはLeadLensの本物のプロセスを実行します：2件の厳選B2Bリード、人によるレビュー、24〜48時間で納品。同じ出力形式。実際のデータです。",
+    resultsUpgradeCTA: "2件の実際のリードを取得 — $7 →",
+    checkoutEarlyBanner: "チェックアウトはローンチ前の最終審査中です。お待ちの間、サンプルレポートのフォーマットをご確認いただけます。",
   },
 };
 
@@ -1072,6 +1144,21 @@ export default function DemoPipelinePage() {
           <p style={{ color: "#64748b", fontSize: "1.05rem", maxWidth: "36rem", margin: "0 auto 3rem", lineHeight: 1.6 }}>
             {copy.samplePreviewSub}
           </p>
+          {/* Sample data disclaimer */}
+          <p style={{ fontSize: ".8rem", color: "#94a3b8", maxWidth: "36rem", margin: "0 auto 1.5rem", lineHeight: 1.55, background: "#f8fafc", border: "1px solid #f1f5f9", borderRadius: ".5rem", padding: ".5rem .875rem", display: "inline-block" }}>
+            ℹ️ {copy.samplePreviewDisclaimer}
+          </p>
+
+          {/* Report Preview / Sample Pack bridge */}
+          <div style={{ display: "flex", gap: ".75rem", justifyContent: "center", flexWrap: "wrap" as const, marginBottom: "2rem" }}>
+            <button onClick={goToDemo} style={{ display: "inline-flex", alignItems: "center", gap: ".4rem", background: "#f0f9ff", border: "1.5px solid #bae6fd", color: "#0284c7", borderRadius: 999, padding: ".4rem 1.125rem", fontSize: ".8rem", fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
+              📄 {copy.sampleBridgeFreeDemo} →
+            </button>
+            <button onClick={() => goToForm("sample")} style={{ display: "inline-flex", alignItems: "center", gap: ".4rem", background: "#fffbeb", border: "1.5px solid #fde68a", color: "#92400e", borderRadius: 999, padding: ".4rem 1.125rem", fontSize: ".8rem", fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
+              ⭐ {copy.sampleBridgeSamplePack} →
+            </button>
+          </div>
+
           {/* Decorative message tabs */}
           <div style={{ display: "flex", gap: ".5rem", flexWrap: "wrap" as const, maxWidth: "52rem", margin: "0 auto 1rem" }}>
             {copy.sampleTabs.map((tab, i) => (
@@ -1166,8 +1253,11 @@ export default function DemoPipelinePage() {
               <h3 style={{ fontSize: "1.05rem", fontWeight: 800, color: "#0f172a", letterSpacing: "-.02em", marginBottom: ".3rem" }}>
                 {copy.samplePackTitle}
               </h3>
-              <p style={{ fontSize: ".875rem", color: "#78350f", lineHeight: 1.55, margin: 0 }}>
+              <p style={{ fontSize: ".875rem", color: "#78350f", lineHeight: 1.55, margin: "0 0 .3rem" }}>
                 {copy.samplePackCopy}
+              </p>
+              <p style={{ fontSize: ".78rem", color: "#92400e", margin: 0, lineHeight: 1.5 }}>
+                {copy.samplePackBridge}
               </p>
             </div>
             <button onClick={() => goToForm("sample")}
@@ -1182,6 +1272,35 @@ export default function DemoPipelinePage() {
             {(["starter", "standard", "pro"] as PlanType[]).map(p => (
               <PricingCard key={p} plan={p} featured={p === "standard"} copy={copy} onSelect={goToForm} />
             ))}
+          </div>
+
+          {/* Trust row */}
+          <div style={{ display: "flex", justifyContent: "center", gap: "1.5rem", flexWrap: "wrap" as const, marginTop: "1.75rem" }}>
+            {copy.trustItems.map((item, i) => (
+              <span key={i} style={{ fontSize: ".78rem", color: "#64748b", display: "flex", alignItems: "center", gap: ".3rem" }}>
+                <span style={{ color: "#16a34a", fontWeight: 700 }}>✓</span>{item}
+              </span>
+            ))}
+          </div>
+
+          {/* After you buy — post-purchase flow */}
+          <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "1rem", padding: "1.5rem 2rem", maxWidth: "44rem", margin: "1.5rem auto 0", textAlign: "left" as const }}>
+            <p style={{ fontSize: ".72rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", color: "#94a3b8", marginBottom: "1rem" }}>
+              {copy.afterPurchaseTitle}
+            </p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: ".875rem" }}>
+              {copy.afterPurchaseSteps.map((step, i) => (
+                <div key={i} style={{ display: "flex", gap: ".625rem", alignItems: "flex-start" }}>
+                  <span style={{ width: "1.375rem", height: "1.375rem", minWidth: "1.375rem", background: "#0ea5e9", color: "#fff", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: ".68rem", fontWeight: 800 }}>
+                    {i + 1}
+                  </span>
+                  <span style={{ fontSize: ".83rem", color: "#475569", lineHeight: 1.5 }}>{step}</span>
+                </div>
+              ))}
+            </div>
+            <p style={{ fontSize: ".78rem", color: "#94a3b8", marginTop: "1rem", marginBottom: 0, textAlign: "center" as const, lineHeight: 1.5 }}>
+              {copy.afterPurchaseNote}
+            </p>
           </div>
 
           {/* Monthly plans coming soon */}
@@ -1272,6 +1391,13 @@ export default function DemoPipelinePage() {
               </div>
             ))}
           </div>
+          {/* FAQ → CTA bridge */}
+          <div style={{ marginTop: "1.75rem", textAlign: "center" }}>
+            <span style={{ fontSize: ".875rem", color: "#64748b" }}>{copy.faqCtaBridge}{" "}</span>
+            <button onClick={goToDemo} style={{ background: "none", border: "none", color: "#0ea5e9", fontSize: ".875rem", fontWeight: 600, cursor: "pointer", textDecoration: "underline", padding: 0, fontFamily: "inherit" }}>
+              {copy.tryDemoCTA} →
+            </button>
+          </div>
         </div>
       </section>
 
@@ -1353,10 +1479,21 @@ export default function DemoPipelinePage() {
       </header>
 
       <div style={{ maxWidth: "42rem", margin: "0 auto", padding: "3rem 1.5rem" }} ref={formRef}>
+        {/* Checkout pending early notice — shown before form when no LS URL */}
+        {formMode === "paid_batch" && (
+          <div style={{ background: "#fffbeb", border: "1px solid #fde68a", borderRadius: ".75rem", padding: ".75rem 1rem", marginBottom: "1.5rem", display: "flex", alignItems: "flex-start", gap: ".625rem" }}>
+            <span style={{ flexShrink: 0, fontSize: ".9rem" }}>⏳</span>
+            <div>
+              <span style={{ fontSize: ".85rem", fontWeight: 700, color: "#92400e" }}>{copy.checkoutPendingTitle}{" "}</span>
+              <span style={{ fontSize: ".82rem", color: "#78350f" }}>{copy.checkoutEarlyBanner}</span>
+            </div>
+          </div>
+        )}
+
         {/* Sample demo badge — shown when in demo mode */}
         {formMode === "sample_demo" && (
           <div style={{ background: "#fef9c3", border: "1px solid #fde047", borderRadius: ".75rem", padding: ".75rem 1rem", marginBottom: "1.5rem", display: "flex", alignItems: "center", gap: ".625rem" }}>
-            <span style={{ fontSize: ".85rem", fontWeight: 700, color: "#713f12" }}>Demo</span>
+            <span style={{ fontSize: ".85rem", fontWeight: 700, color: "#713f12" }}>Preview</span>
             <span style={{ fontSize: ".82rem", color: "#713f12" }}>{copy.sampleNote}</span>
           </div>
         )}
@@ -1641,6 +1778,24 @@ export default function DemoPipelinePage() {
               </p>
               <button onClick={dlCSV} style={{ background: "#0ea5e9", color: "#fff", border: "none", borderRadius: ".625rem", padding: ".65rem 1.5rem", fontWeight: 700, fontSize: ".9rem", cursor: "pointer" }}>
                 {copy.dlAll(sorted.length)}
+              </button>
+            </div>
+          )}
+
+          {/* Upgrade CTA — shown only after free preview */}
+          {isSampleDemo && (
+            <div style={{ background: "linear-gradient(135deg,#fffbeb,#fef3c7)", border: "1.5px solid #fde68a", borderRadius: "1rem", padding: "1.5rem 2rem", marginTop: "2rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1.25rem", flexWrap: "wrap" as const }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <p style={{ fontWeight: 800, fontSize: ".95rem", color: "#92400e", marginBottom: ".25rem" }}>
+                  {copy.resultsUpgradeTitle}
+                </p>
+                <p style={{ fontSize: ".84rem", color: "#78350f", lineHeight: 1.6, margin: 0 }}>
+                  {copy.resultsUpgradeSub}
+                </p>
+              </div>
+              <button onClick={() => { setView("landing"); setTimeout(() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" }), 100); }}
+                style={{ background: "#d97706", color: "#fff", border: "none", borderRadius: ".75rem", padding: ".8rem 1.5rem", fontWeight: 700, fontSize: ".9rem", cursor: "pointer", whiteSpace: "nowrap" as const, flexShrink: 0, boxShadow: "0 2px 10px rgba(217,119,6,.3)" }}>
+                {copy.resultsUpgradeCTA}
               </button>
             </div>
           )}
