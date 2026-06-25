@@ -1523,6 +1523,52 @@ export default function DemoPipelinePage() {
         </div>
       </section>
 
+      {/* Comparison */}
+      <section className="ll-section" style={{ ...sectionStyle, background: "#fff" }}>
+        <div style={{ ...innerStyle }}>
+          <Tag>{copy.comparisonTag}</Tag>
+          <h2 style={{ ...sectionTitleStyle, maxWidth: "36rem" }}>{copy.comparisonTitle}</h2>
+          <div style={{ overflowX: "auto" as const, marginTop: "2.5rem", borderRadius: "1rem", border: "1px solid #e2e8f0", boxShadow: "0 1px 4px rgba(0,0,0,.05)" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse" as const, minWidth: "520px", fontSize: ".875rem" }}>
+              <thead>
+                <tr style={{ background: "#f8fafc", borderBottom: "2px solid #e2e8f0" }}>
+                  {copy.comparisonHeaders.map((h, i) => (
+                    <th key={i} style={{
+                      padding: ".875rem 1.125rem",
+                      textAlign: i === 0 ? "left" as const : "center" as const,
+                      fontWeight: 700,
+                      color: i === copy.comparisonHeaders.length - 1 ? "#0284c7" : "#475569",
+                      fontSize: i === copy.comparisonHeaders.length - 1 ? ".875rem" : ".8rem",
+                      letterSpacing: ".03em",
+                      background: i === copy.comparisonHeaders.length - 1 ? "#f0f9ff" : "transparent",
+                      borderLeft: i === copy.comparisonHeaders.length - 1 ? "2px solid #bae6fd" : "none",
+                    }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {copy.comparisonRows.map((row, ri) => (
+                  <tr key={ri} style={{ borderBottom: ri < copy.comparisonRows.length - 1 ? "1px solid #f1f5f9" : "none", background: ri % 2 === 0 ? "#fff" : "#fafbfc" }}>
+                    {row.map((cell, ci) => (
+                      <td key={ci} style={{
+                        padding: ".875rem 1.125rem",
+                        textAlign: ci === 0 ? "left" as const : "center" as const,
+                        color: ci === 0 ? "#0f172a" : ci === row.length - 1 ? "#0f172a" : "#94a3b8",
+                        fontWeight: ci === 0 ? 600 : ci === row.length - 1 ? 600 : 400,
+                        background: ci === row.length - 1 ? "#f0f9ff" : "transparent",
+                        borderLeft: ci === row.length - 1 ? "2px solid #bae6fd" : "none",
+                        fontSize: ".875rem",
+                        lineHeight: 1.5,
+                      }}>{cell}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
       {/* What you receive */}
       <section className="ll-section" style={{ ...sectionStyle, background: "#fff" }}>
         <div style={{ ...innerStyle, textAlign: "center" }}>
@@ -1590,6 +1636,32 @@ export default function DemoPipelinePage() {
         </div>
       </section>
 
+      {/* B2C Teaser */}
+      <section className="ll-section" style={{ ...sectionStyle, background: "#f8fafc" }}>
+        <div style={{ ...innerStyle, maxWidth: "48rem", textAlign: "center" }}>
+          <div style={{ display: "inline-block", background: "#fef3c7", color: "#92400e", fontSize: ".72rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", padding: ".25rem .875rem", borderRadius: 999, marginBottom: "1.25rem" }}>
+            {copy.b2cTeaserTag}
+          </div>
+          <h2 style={{ fontSize: "clamp(1.375rem,3vw,1.875rem)", fontWeight: 800, color: "#0f172a", letterSpacing: "-.02em", marginBottom: ".875rem", lineHeight: 1.25 }}>
+            {copy.b2cTeaserTitle}
+          </h2>
+          <p style={{ fontSize: ".975rem", color: "#475569", lineHeight: 1.65, maxWidth: "38rem", margin: "0 auto .875rem" }}>
+            {copy.b2cTeaserSub}
+          </p>
+          <p style={{ fontSize: ".82rem", color: "#94a3b8", marginBottom: "1.5rem" }}>
+            {copy.b2cTeaserNote}
+          </p>
+          <button
+            style={{ background: "#f59e0b", color: "#fff", border: "none", borderRadius: ".75rem", padding: ".75rem 1.75rem", fontWeight: 700, fontSize: ".9rem", cursor: "pointer", transition: "background .15s" }}
+            onMouseOver={e => { e.currentTarget.style.background = "#d97706"; }}
+            onMouseOut={e => { e.currentTarget.style.background = "#f59e0b"; }}
+            onClick={() => { /* waitlist — no flow yet */ }}
+          >
+            {copy.b2cTeaserCTA}
+          </button>
+        </div>
+      </section>
+
       {/* Final CTA */}
       <section className="ll-cta-sec" style={{ background: "linear-gradient(135deg,#0c4a6e 0%,#0284c7 100%)", padding: "5rem 1.5rem" }}>
         <div style={{ maxWidth: "42rem", margin: "0 auto", textAlign: "center" }}>
@@ -1640,6 +1712,9 @@ export default function DemoPipelinePage() {
             );
           })}
         </div>
+        <p style={{ color: "#cbd5e1", fontSize: ".75rem", marginTop: "1.25rem", maxWidth: "38rem", margin: "1.25rem auto 0", lineHeight: 1.6 }}>
+          {copy.complianceNote}
+        </p>
       </footer>
     </div>
   );
