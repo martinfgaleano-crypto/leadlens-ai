@@ -127,6 +127,11 @@ const COPY = {
     sFollowup1: "Follow-up 1 (day 3–4)",
     sFollowup2: "Follow-up 2 (day 7–8)",
     sQcNotes: "QC notes",
+    sScoreBreakdown: "Score breakdown",
+    sWhyNow: "Why now",
+    sEvidenceDiscipline: "Evidence discipline",
+    sIntelligenceNotes: "Intelligence quality",
+    sLearningMeta: "Signal patterns",
     footerCopy: "© 2026 LeadLens AI — B2B Commercial Intelligence. We analyze public signals, not personal data.",
     footerLinks: ["Privacy", "Terms", "Refund Policy", "Contact"],
     footerContact: "Questions? Email us: martinfgaleano@gmail.com",
@@ -355,6 +360,11 @@ const COPY = {
     sFollowup1: "Seguimiento 1 (día 3–4)",
     sFollowup2: "Seguimiento 2 (día 7–8)",
     sQcNotes: "Notas de revisión",
+    sScoreBreakdown: "Desglose de puntuación",
+    sWhyNow: "Por qué ahora",
+    sEvidenceDiscipline: "Disciplina de evidencia",
+    sIntelligenceNotes: "Calidad de la inteligencia",
+    sLearningMeta: "Patrones de señal",
     footerCopy: "© 2026 LeadLens AI — Inteligencia Comercial B2B. Analizamos señales públicas, no datos personales.",
     footerLinks: ["Privacidad", "Términos", "Política de devolución", "Contacto"],
     footerContact: "¿Preguntas? Escríbenos: martinfgaleano@gmail.com",
@@ -583,6 +593,11 @@ const COPY = {
     sFollowup1: "Follow-up 1 (dia 3–4)",
     sFollowup2: "Follow-up 2 (dia 7–8)",
     sQcNotes: "Notas de revisão",
+    sScoreBreakdown: "Detalhamento da pontuação",
+    sWhyNow: "Por que agora",
+    sEvidenceDiscipline: "Disciplina de evidência",
+    sIntelligenceNotes: "Qualidade da inteligência",
+    sLearningMeta: "Padrões de sinal",
     footerCopy: "© 2026 LeadLens AI — Inteligência Comercial B2B. Analisamos sinais públicos, não dados pessoais.",
     footerLinks: ["Privacidade", "Termos", "Política de Reembolso", "Contato"],
     footerContact: "Dúvidas? Fale conosco: martinfgaleano@gmail.com",
@@ -811,6 +826,11 @@ const COPY = {
     sFollowup1: "フォローアップ1（3〜4日目）",
     sFollowup2: "フォローアップ2（7〜8日目）",
     sQcNotes: "レビューメモ",
+    sScoreBreakdown: "スコア内訳",
+    sWhyNow: "なぜ今か",
+    sEvidenceDiscipline: "エビデンス規律",
+    sIntelligenceNotes: "インテリジェンス品質",
+    sLearningMeta: "シグナルパターン",
     footerCopy: "© 2026 LeadLens AI — B2Bコマーシャルインテリジェンス。公開シグナルを分析します。個人データは使用しません。",
     footerLinks: ["プライバシー", "利用規約", "返金ポリシー", "お問い合わせ"],
     footerContact: "ご質問は: martinfgaleano@gmail.com",
@@ -2121,6 +2141,43 @@ function LeadCard({ lead, index, isOpen, onToggle, copy }: {
             {c.website_url && <MetaCell label={copy.mLinkedin} val={<a href={c.website_url} target="_blank" rel="noreferrer" style={{ color: "#0ea5e9", textDecoration: "none", fontSize: ".82rem" }}>Visit</a>} />}
           </div>
 
+          {/* Score breakdown — multi-axis dimensions */}
+          {q.score_dimensions && (() => {
+            const dims = q.score_dimensions!;
+            const axes: [string, number, boolean][] = [
+              ["ICP Fit",       dims.icp_fit,              false],
+              ["Signal",        dims.signal_strength,      false],
+              ["Timing",        dims.timing,               false],
+              ["Evidence",      dims.evidence_quality,     false],
+              ["Strategic",     dims.strategic_value,      false],
+              ["Confidence",    dims.confidence,           false],
+              ["Disqual. Risk", dims.disqualification_risk, true],
+            ];
+            return (
+              <LeadSection title={copy.sScoreBreakdown}>
+                <div style={{ display: "flex", flexDirection: "column" as const, gap: ".35rem" }}>
+                  {axes.map(([label, val, isRisk]) => {
+                    const color = isRisk
+                      ? (val > 60 ? "#ef4444" : val > 35 ? "#f59e0b" : "#22c55e")
+                      : (val >= 70 ? "#22c55e" : val >= 45 ? "#f59e0b" : "#94a3b8");
+                    return (
+                      <div key={label} style={{ display: "flex", alignItems: "center", gap: ".625rem" }}>
+                        <div style={{ fontSize: ".7rem", color: "#64748b", width: "88px", flexShrink: 0 }}>{label}</div>
+                        <div style={{ flex: 1, background: "#f1f5f9", borderRadius: 999, height: 4, overflow: "hidden" }}>
+                          <div style={{ width: `${val}%`, height: "100%", background: color, borderRadius: 999, transition: "width .4s" }} />
+                        </div>
+                        <div style={{ fontSize: ".7rem", fontWeight: 700, color, width: "26px", textAlign: "right" as const, flexShrink: 0 }}>{val}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+                {q.score_explanation && (
+                  <p style={{ fontSize: ".78rem", color: "#94a3b8", marginTop: ".625rem", lineHeight: 1.55, fontStyle: "italic" as const }}>{q.score_explanation}</p>
+                )}
+              </LeadSection>
+            );
+          })()}
+
           {e.company_summary && (
             <LeadSection title={copy.sCompanyContext}>
               <p style={{ fontSize: ".875rem", color: "#64748b", lineHeight: 1.65 }}>{e.company_summary}</p>
@@ -2135,6 +2192,13 @@ function LeadCard({ lead, index, isOpen, onToggle, copy }: {
                   <span style={{ color: "#d97706" }}>⚡</span>{s}
                 </div>
               ))}
+            </LeadSection>
+          )}
+
+          {/* Why Now */}
+          {e.why_now && (
+            <LeadSection title={copy.sWhyNow}>
+              <p style={{ fontSize: ".875rem", color: "#334155", lineHeight: 1.65, borderLeft: "3px solid #d97706", paddingLeft: ".75rem", margin: 0 }}>{e.why_now}</p>
             </LeadSection>
           )}
 
@@ -2168,6 +2232,85 @@ function LeadCard({ lead, index, isOpen, onToggle, copy }: {
             <div style={{ fontSize: ".78rem", color: "#94a3b8", borderTop: "1px solid #f1f5f9", paddingTop: ".875rem", marginBottom: "1.25rem" }}>
               <strong>{copy.sDataGaps}:</strong> {e.missing_data.join(" · ")}
             </div>
+          )}
+
+          {/* Evidence Discipline */}
+          {e.evidence_discipline && e.evidence_discipline.length > 0 && (
+            <LeadSection title={copy.sEvidenceDiscipline}>
+              <div style={{ display: "flex", flexDirection: "column" as const, gap: ".3rem" }}>
+                {e.evidence_discipline.map((claim, i) => {
+                  const meta: Record<string, { label: string; bg: string; color: string }> = {
+                    verified_public_signal: { label: "Verified",  bg: "#f0fdf4", color: "#16a34a" },
+                    inferred_from_context:  { label: "Inferred",  bg: "#eff6ff", color: "#2563eb" },
+                    weak_inference:         { label: "Weak",      bg: "#fffbeb", color: "#d97706" },
+                    missing_evidence:       { label: "Missing",   bg: "#f8fafc", color: "#94a3b8" },
+                  };
+                  const m = meta[claim.type] ?? meta.missing_evidence;
+                  return (
+                    <div key={i} style={{ display: "flex", gap: ".5rem", alignItems: "flex-start" }}>
+                      <span style={{ fontSize: ".65rem", fontWeight: 700, background: m.bg, color: m.color, border: `1px solid ${m.color}30`, borderRadius: ".25rem", padding: ".1rem .4rem", flexShrink: 0, whiteSpace: "nowrap" as const }}>{m.label}</span>
+                      <span style={{ fontSize: ".82rem", color: "#475569", lineHeight: 1.45 }}>{claim.claim}</span>
+                    </div>
+                  );
+                })}
+              </div>
+              {lead.learning?.evidence_discipline_summary && (
+                <div style={{ marginTop: ".625rem", fontSize: ".72rem", color: "#64748b" }}>
+                  Summary: <strong style={{ color: lead.learning.evidence_discipline_summary === "verified" ? "#16a34a" : lead.learning.evidence_discipline_summary === "weak" ? "#d97706" : "#2563eb" }}>{lead.learning.evidence_discipline_summary.replace(/_/g, " ")}</strong>
+                </div>
+              )}
+            </LeadSection>
+          )}
+
+          {/* Intelligence quality — genericness, hallucination, confusion risk, improvement notes */}
+          {(o.improvement_notes?.length || o.genericness_risk || o.hallucination_risk || o.buyer_seller_confusion_risk) && (
+            <LeadSection title={copy.sIntelligenceNotes}>
+              <div style={{ display: "flex", gap: ".4rem", flexWrap: "wrap" as const, marginBottom: ".625rem" }}>
+                {([
+                  { label: "Genericness", val: o.genericness_risk },
+                  { label: "Hallucination", val: o.hallucination_risk },
+                  { label: "Evidence", val: o.evidence_weakness },
+                  { label: "Sender/Recipient", val: o.buyer_seller_confusion_risk },
+                ] as { label: string; val: string | undefined }[]).filter(r => r.val).map(({ label, val }) => {
+                  const riskColor = val === "high" ? { bg: "#fef2f2", color: "#dc2626", border: "#fecaca" }
+                    : val === "medium" ? { bg: "#fffbeb", color: "#d97706", border: "#fde68a" }
+                    : { bg: "#f0fdf4", color: "#16a34a", border: "#bbf7d0" };
+                  return (
+                    <span key={label} style={{ fontSize: ".65rem", fontWeight: 600, background: riskColor.bg, color: riskColor.color, border: `1px solid ${riskColor.border}`, borderRadius: ".375rem", padding: ".175rem .55rem" }}>
+                      {label}: {val}
+                    </span>
+                  );
+                })}
+              </div>
+              {o.improvement_notes && o.improvement_notes.length > 0 && (
+                <div style={{ display: "flex", flexDirection: "column" as const, gap: ".2rem" }}>
+                  {o.improvement_notes.map((note, i) => (
+                    <div key={i} style={{ display: "flex", gap: ".5rem", fontSize: ".82rem", color: "#64748b", lineHeight: 1.5 }}>
+                      <span style={{ color: "#d97706", flexShrink: 0 }}>→</span>{note}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </LeadSection>
+          )}
+
+          {/* Learning / Signal Patterns */}
+          {lead.learning && (lead.learning.signal_patterns.length > 0 || lead.learning.reusable_pattern) && (
+            <LeadSection title={copy.sLearningMeta}>
+              {lead.learning.reusable_pattern && (
+                <div style={{ fontSize: ".82rem", color: "#334155", marginBottom: ".4rem" }}>
+                  <strong style={{ color: "#0284c7" }}>Pattern:</strong> {lead.learning.reusable_pattern}
+                </div>
+              )}
+              {lead.learning.signal_patterns.map((s, i) => (
+                <div key={i} style={{ display: "flex", gap: ".4rem", fontSize: ".82rem", color: "#475569", padding: ".1rem 0" }}>
+                  <span style={{ color: "#16a34a", flexShrink: 0 }}>✓</span>{s}
+                </div>
+              ))}
+              <div style={{ fontSize: ".7rem", color: "#94a3b8", marginTop: ".4rem" }}>
+                Agent confidence: <strong>{Math.round(lead.learning.agent_confidence * 100)}%</strong>
+              </div>
+            </LeadSection>
           )}
 
           {!isDiscard && (

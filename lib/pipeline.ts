@@ -84,8 +84,8 @@ async function processOneLead(
   // Agent 6: Outreach — receives full PersonalizationResult
   const outreach = await runOutreachAgent(qualification, personalization, criteria);
 
-  // Agent 7: QC
-  const checkedOutreach = await runQCAgent(qualification, outreach);
+  // Agent 7: QC — criteria passed for buyer/seller confusion detection
+  const checkedOutreach = await runQCAgent(qualification, outreach, criteria);
 
   // Build learning metadata from all agent outputs
   const learning = buildLearningMetadata(candidate, enrichment, qualification, checkedOutreach, personalization);

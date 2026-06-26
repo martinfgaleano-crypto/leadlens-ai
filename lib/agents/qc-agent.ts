@@ -1,4 +1,4 @@
-import type { QualifiedLead, OutreachSequence, QCResult, QCStatus, RiskLevel } from "@/types";
+import type { QualifiedLead, OutreachSequence, QCResult, QCStatus, RiskLevel, LeadSearchCriteria } from "@/types";
 
 const IS_DEMO = process.env.DEMO_MODE === "true";
 
@@ -46,11 +46,12 @@ const CONTACT_LEAK_PATTERNS = [
  */
 export async function runQCAgent(
   qualified: QualifiedLead,
-  outreach: OutreachSequence
+  outreach: OutreachSequence,
+  criteria?: LeadSearchCriteria
 ): Promise<OutreachSequence> {
   const qcResult = IS_DEMO || !process.env.ANTHROPIC_API_KEY
-    ? runDemoQC(qualified, outreach)
-    : await runClaudeQC(qualified, outreach);
+    ? runDemoQC(qualified, outreach, criteria)
+    : await runClaudeQC(qualified, outreach, criteria);
 
   return {
     ...outreach,
@@ -59,13 +60,14 @@ export async function runQCAgent(
     genericness_risk: qcResult.genericness_risk,
     hallucination_risk: qcResult.hallucination_risk,
     evidence_weakness: qcResult.evidence_weakness,
+    buyer_seller_confusion_risk: qcResult.buyer_seller_confusion_risk,
     improvement_notes: qcResult.improvement_notes,
   };
 }
 
 // ─── Demo QC ──────────────────────────────────────────────────────────────────
 
-function runDemoQC(qualified: QualifiedLead, outreach: OutreachSequence): QCResult {
+function runDemoQC(qualified: QualifiedLead, outreach: OutreachSequence, criteria?: LeadSearchCriteria): QCResult {
   const notes: string[] = [];
   const improvement_notes: string[] = [];
   const { candidate } = qualified.enrichment;
@@ -81,6 +83,7 @@ function runDemoQC(qualified: QualifiedLead, outreach: OutreachSequence): QCResu
       genericness_risk: "high",
       hallucination_risk: "low",
       evidence_weakness: "high",
+      buyer_seller_confusion_risk: "low",
       improvement_notes: ["Discard this account — ICP mismatch too significant to outreach"],
     };
   }
@@ -136,6 +139,7 @@ function runDemoQC(qualified: QualifiedLead, outreach: OutreachSequence): QCResu
       status: "FAILED", notes,
       genericness_risk, hallucination_risk,
       evidence_weakness: "high",
+      buyer_seller_confusion_risk: "low",
       improvement_notes: ["Remove all personal contact data — LeadLens does not include personal emails, phone numbers, or personal LinkedIn URLs"],
     };
   }
@@ -166,8 +170,22 @@ function runDemoQC(qualified: QualifiedLead, outreach: OutreachSequence): QCResu
     genericness_risk = "high" as RiskLevel;
   }
 
+  // ── Buyer/seller confusion check ──────────────────────────────────────────
+  // Flags if the email body pitches LeadLens (the tool) when the sender isn't selling LeadLens
+  const LEADLENS_SELF_PITCH = ["LeadLens builds", "LeadLens construye", "LeadLens constrói", "LeadLensは"];
+  const hasSelfPitch = LEADLENS_SELF_PITCH.some(p => outreach.email_body.includes(p));
+  const senderIsLeadLens = criteria?.offer_summary?.toLowerCase().includes("leadlens") ?? false;
+  const buyer_seller_confusion_risk: RiskLevel =
+    hasSelfPitch && !senderIsLeadLens ? "high" :
+    hasSelfPitch ? "low" :
+    "low";
+  if (buyer_seller_confusion_risk === "high") {
+    notes.push("AUDIENCE MISMATCH (critical): outreach body pitches LeadLens when the sender is not LeadLens — outreach must be written FROM the customer TO the target account using the customer's offer");
+    improvement_notes.push("Rewrite email body to use the sender's actual offer as the value proposition — do not pitch LeadLens capabilities as if the sender is LeadLens");
+  }
+
   // ── Determine final status ────────────────────────────────────────────────
-  const hasCritical = overclaims.length > 0 || contactLeaks.length > 0;
+  const hasCritical = overclaims.length > 0 || contactLeaks.length > 0 || buyer_seller_confusion_risk === "high";
   const hasMajor = notes.filter(n => !n.includes("manually")).length > 2;
 
   let status: QCStatus;
@@ -179,12 +197,12 @@ function runDemoQC(qualified: QualifiedLead, outreach: OutreachSequence): QCResu
     status = "APPROVED";
   }
 
-  return { status, notes, genericness_risk, hallucination_risk, evidence_weakness, improvement_notes };
+  return { status, notes, genericness_risk, hallucination_risk, evidence_weakness, buyer_seller_confusion_risk, improvement_notes };
 }
 
 // ─── Claude QC ────────────────────────────────────────────────────────────────
 
-async function runClaudeQC(qualified: QualifiedLead, outreach: OutreachSequence): Promise<QCResult> {
+async function runClaudeQC(qualified: QualifiedLead, outreach: OutreachSequence, criteria?: LeadSearchCriteria): Promise<QCResult> {
   const { callClaudeJSON } = await import("@/lib/anthropic");
   const { candidate } = qualified.enrichment;
 
@@ -212,14 +230,20 @@ Check specifically for:
 6. WEAK WHY NOW: if there's no timing anchor (signal OR explicit hypothesis) → improvement_note
 7. SCORE INCONSISTENCY: HOT/WARM lead with generic outreach, or COLD lead with aggressive CTA
 8. MISSING EVIDENCE HEDGE: if no confirmed signal, outreach should use "appears to", "based on public patterns", "if this matches..." — flag if it speaks with false certainty
+9. BUYER/SELLER CONFUSION (critical): Does the outreach pitch a third-party tool or brand (not the sender's offer) as the value proposition? Does it write as if LeadLens is the sender when the sender is a different company? Is the message FROM the sender TO the recipient, or does it confuse the two roles?
 
 For each issue, include "REVISION: [suggested safer version]" when applicable.
 Return only valid JSON.`;
 
   const triggerPreview = outreach.personalization_trigger.slice(0, 100);
   const emailStart = outreach.email_body.slice(0, 150);
+  const senderName = criteria?.sender_company_name ?? "the LeadLens customer";
+  const senderOffer = criteria?.offer_summary ?? "not specified";
 
-  const userMsg = `Account: ${candidate.company} (${candidate.industry ?? "?"})
+  const userMsg = `SENDER (who is writing this outreach): ${senderName}
+Sender offer: ${senderOffer}
+RECIPIENT (target account): ${candidate.company} (${candidate.industry ?? "?"})
+
 Opportunity score: ${qualified.fit_score} (${category})
 Signal confidence: ${Math.round(candidate.confidence_score * 100)}%
 Confirmed signals: ${hasConfirmedSignal ? qualified.enrichment.timing_signals.filter(s => !s.includes("inferred") && !s.includes("no confirmed")).join("; ") : "none"}
@@ -240,6 +264,7 @@ Return JSON:
   "genericness_risk": "low|medium|high",
   "hallucination_risk": "low|medium|high",
   "evidence_weakness": "low|medium|high",
+  "buyer_seller_confusion_risk": "low|medium|high",
   "improvement_notes": ["specific, actionable improvement for this account's outreach"]
 }`;
 

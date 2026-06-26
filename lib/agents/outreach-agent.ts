@@ -48,34 +48,35 @@ function buildDemoOutreach(
   // Email body — signal-led if evidence supports it, hypothesis-led if not
   const signalLine = hasSignal
     ? `${trigger}\n\n`
-    : `${trigger}\n\nThis message is based on ${company}'s public profile and ${industry} segment patterns — not a specific claim about your internal priorities.\n\n`;
+    : `${trigger}\n\nThis is based on ${company}'s public profile and ${industry} segment patterns — not a specific claim about your internal priorities.\n\n`;
 
   const emailBody = lang === "es"
-    ? buildSpanishEmail(company, industry, trigger, cta, hasSignal)
+    ? buildSpanishEmail(company, industry, trigger, cta, hasSignal, criteria.offer_summary, criteria.value_proposition)
     : lang === "pt"
-    ? buildPortugueseEmail(company, industry, trigger, cta, hasSignal)
+    ? buildPortugueseEmail(company, industry, trigger, cta, hasSignal, criteria.offer_summary, criteria.value_proposition)
     : lang === "ja"
-    ? buildJapaneseEmail(company, industry, trigger)
+    ? buildJapaneseEmail(company, industry, trigger, criteria.offer_summary)
     : buildEnglishEmail(company, industry, signalLine, cta, criteria.offer_summary, criteria.value_proposition);
 
-  // LinkedIn DM — different angle (based on recommended_angle)
+  // LinkedIn DM — different angle (based on recommended_angle + offer)
   const ldm = lang === "es"
-    ? `Pregunta rápida para ${company}: ¿cómo priorizan actualmente qué cuentas abordar primero en ${industry}? Ayudamos a equipos de esta industria a mapear señales públicas de compra y enfocar más rápido. Con gusto compartimos más si es relevante.`
+    ? `Pregunta rápida para ${company}: ¿cómo priorizan actualmente su expansión en ${industry}? ${criteria.offer_summary.slice(0, 80)} — diseñado para equipos en esta etapa. Con gusto compartimos más si es relevante.`
     : lang === "pt"
-    ? `Pergunta rápida para ${company}: como priorizam quais contas abordar primeiro em ${industry}? Ajudamos equipes dessa indústria a mapear sinais de compra e focar mais rápido. Posso compartilhar mais.`
+    ? `Pergunta rápida para ${company}: como priorizam sua expansão em ${industry}? ${criteria.offer_summary.slice(0, 80)} — pensado para equipes nessa fase. Posso compartilhar mais.`
     : lang === "ja"
-    ? `${company}様への質問：${industry}において最初にアプローチするアカウントをどのように優先順位付けされていますか？この業界のチームが公開購買シグナルをマッピングし、より迅速に集中できるよう支援してきました。`
-    : buildLinkedInDM(company, industry, personalization.strongest_hook);
+    ? `${company}様への質問：${industry}における事業展開をどのように優先されていますか？${criteria.offer_summary.slice(0, 60)}について、お役に立てる可能性があります。`
+    : buildLinkedInDM(company, industry, personalization.strongest_hook, criteria.offer_summary);
 
-  // Follow-up 1 — different angle (use account_reasoning for context)
+  // Follow-up 1 — different angle
+  const offerShort = criteria.offer_summary.slice(0, 70).replace(/\.$/, "");
   const fu1 = lang !== "en"
-    ? buildFollowUp1Localized(company, industry, lang)
-    : `Circling back in case this got buried. We work with ${industry} teams to identify which accounts have public buying signals before the first outreach wave — the difference in response rates is usually significant. Happy to show a relevant example if useful.`;
+    ? buildFollowUp1Localized(company, industry, lang, offerShort)
+    : `Circling back in case this got buried. ${offerShort} — specifically relevant for ${industry} teams at your stage. Happy to share a relevant example if useful.`;
 
   // Follow-up 2 — breakup
   const fu2 = lang !== "en"
     ? buildFollowUp2Localized(company, lang)
-    : `Last note on this one. If this isn't a priority right now, no problem — reply "later" and I'll circle back next quarter. If this fits something you're thinking about for ${industry} accounts, happy to go deeper.`;
+    : `Last note on this one. If this isn't a priority right now, no problem — reply "later" and I'll check back. If there's someone else at ${company} handling this area, happy to reach them instead.`;
 
   const subject = lang === "es" ? `Pregunta rápida para ${company}`
     : lang === "pt" ? `Pergunta rápida para ${company}`
@@ -83,7 +84,7 @@ function buildDemoOutreach(
     : buildSubject(company, industry, hasSignal);
 
   // Call opener — phone first-touch
-  const call_opener = `Hi, I'm reaching out because ${company} came up as a strong match for something we built for ${industry} teams. I'll be quick — do you have 90 seconds for a 1-sentence pitch?`;
+  const call_opener = `Hi, reaching out because ${company} came up as a match for what we do — ${criteria.offer_summary.slice(0, 60).replace(/\.$/, "")}. Do you have 90 seconds for a one-sentence overview?`;
 
   // CTA recommendation
   const cta_recommendation = hasSignal
@@ -109,12 +110,12 @@ function buildDemoOutreach(
 }
 
 function buildEnglishEmail(company: string, industry: string, signalLine: string, cta: string, offerSummary: string, valueProp: string): string {
-  return `${signalLine}LeadLens builds commercial intelligence for ${industry} companies — detecting public buying signals, ranking accounts by opportunity, and generating evidence-based outreach strategy. Most teams use it to focus their commercial energy on the right accounts before the first conversation.\n\n${cta}`;
+  return `${signalLine}${offerSummary.slice(0, 120)} — specifically for ${industry} companies at this scale.\n\n${valueProp.slice(0, 100)}\n\n${cta}`;
 }
 
-function buildLinkedInDM(company: string, industry: string, hook: string): string {
-  const hookLine = hook.length > 20 ? `${hook.slice(0, 120)}.` : `How does ${company} currently prioritize which accounts to approach first in ${industry}?`;
-  return `${hookLine} We've been helping ${industry} teams map public buying signals and identify the right accounts before the first call. Happy to share more if it's relevant.`;
+function buildLinkedInDM(company: string, industry: string, hook: string, offerSummary: string): string {
+  const hookLine = hook.length > 20 ? `${hook.slice(0, 120)}.` : `Quick question for ${company}: how are you currently approaching [key priority] in ${industry}?`;
+  return `${hookLine} ${offerSummary.slice(0, 80).replace(/\.$/, "")} — relevant for ${industry} teams at this stage. Happy to share more if it fits.`;
 }
 
 function buildSubject(company: string, industry: string, hasSignal: boolean): string {
@@ -122,25 +123,25 @@ function buildSubject(company: string, industry: string, hasSignal: boolean): st
   return `Quick question for ${company}`;
 }
 
-function buildSpanishEmail(company: string, industry: string, trigger: string, cta: string, hasSignal: boolean): string {
+function buildSpanishEmail(company: string, industry: string, trigger: string, cta: string, hasSignal: boolean, offerSummary: string, valueProp: string): string {
   const opening = hasSignal ? trigger : `${company} apareció como una cuenta relevante dentro del segmento ${industry}.`;
-  return `${opening}\n\nLeadLens construye inteligencia comercial para empresas en ${industry} — detectando señales públicas de compra, priorizando cuentas por oportunidad y generando estrategia de outreach basada en evidencia.\n\n¿Tendría sentido una llamada de 15 minutos esta semana?`;
+  return `${opening}\n\n${offerSummary.slice(0, 120)} — especialmente relevante para empresas en ${industry} en esta etapa.\n\n${valueProp.slice(0, 100)}\n\n¿Tendría sentido una llamada de 15 minutos esta semana?`;
 }
 
-function buildPortugueseEmail(company: string, industry: string, trigger: string, cta: string, hasSignal: boolean): string {
+function buildPortugueseEmail(company: string, industry: string, trigger: string, cta: string, hasSignal: boolean, offerSummary: string, valueProp: string): string {
   const opening = hasSignal ? trigger : `${company} apareceu como uma conta relevante no segmento ${industry}.`;
-  return `${opening}\n\nLeadLens constrói inteligência comercial para empresas em ${industry} — detectando sinais públicos de compra, priorizando contas por oportunidade e gerando estratégia de outreach baseada em evidências.\n\nValeria uma chamada de 15 minutos esta semana?`;
+  return `${opening}\n\n${offerSummary.slice(0, 120)} — especialmente relevante para empresas em ${industry} nessa fase.\n\n${valueProp.slice(0, 100)}\n\nValeria uma chamada de 15 minutos esta semana?`;
 }
 
-function buildJapaneseEmail(company: string, industry: string, trigger: string): string {
-  return `${trigger}\n\nLeadLensは${industry}企業向けに商業インテリジェンスを構築します — 公開購買シグナルの検出、機会別のアカウント優先順位付け、エビデンスベースのアウトリーチ戦略の生成。\n\n今週15分ほどお話しできますか？`;
+function buildJapaneseEmail(company: string, industry: string, trigger: string, offerSummary: string): string {
+  return `${trigger}\n\n${offerSummary.slice(0, 100)} — ${industry}企業に特に関連性が高いと考えています。\n\n今週15分ほどお話しできますか？`;
 }
 
-function buildFollowUp1Localized(company: string, industry: string, lang: string): string {
-  if (lang === "es") return `Retomo por si se perdió entre los correos. Recientemente trabajamos con un equipo de ${industry} que identificó cuentas de alta señal que no habían considerado — y una de ellas se convirtió en conversación en la primera semana. ¿Te comparto el detalle?`;
-  if (lang === "pt") return `Retomando caso tenha ficado perdido. Recentemente trabalhamos com uma equipe de ${industry} que identificou contas de alto sinal que não tinham considerado — uma delas gerou conversa na primeira semana. Posso compartilhar os detalhes?`;
-  if (lang === "ja") return `先日のメッセージを念のため再送します。最近、${industry}のチームがLeadLensを使って見落としていた高シグナルのアカウントを特定しました。詳細をシェアできますか？`;
-  return `Circling back in case this got buried. We work with ${industry} teams to identify which accounts have public buying signals before the first outreach wave. Happy to show a relevant example.`;
+function buildFollowUp1Localized(company: string, industry: string, lang: string, offerShort = ""): string {
+  if (lang === "es") return `Retomo por si se perdió entre los correos. ${offerShort ? offerShort + " —" : ""} relevante para equipos de ${industry} en esta etapa. ¿Te comparto un ejemplo?`;
+  if (lang === "pt") return `Retomando caso tenha ficado perdido. ${offerShort ? offerShort + " —" : ""} relevante para equipes de ${industry} nessa fase. Posso compartilhar um exemplo?`;
+  if (lang === "ja") return `先日のメッセージを念のため再送します。${offerShort ? offerShort + " —" : ""}${industry}チームに関連性が高いと思っています。詳細をシェアできますか？`;
+  return `Circling back in case this got buried. ${offerShort ? offerShort + " —" : ""} relevant for ${industry} teams at your stage. Happy to share an example if useful.`;
 }
 
 function buildFollowUp2Localized(company: string, lang: string): string {
@@ -165,8 +166,19 @@ async function buildClaudeOutreach(
   const locNotes = criteria.localization_notes ?? "";
   const hasConfirmedSignal = personalization.personalization_confidence >= 0.75;
 
+  const senderName = criteria.sender_company_name ?? "the company using this system";
+  const senderDesc = criteria.sender_company_description ?? criteria.offer_summary;
+
   const SYSTEM = `You write B2B commercial outreach at the company/account level — not to a named individual.
-Messages are addressed to the company or "your team" based on public signals and account fit.
+
+CRITICAL ROLE CLARITY — READ BEFORE WRITING:
+- SENDER (who writes this message): ${senderName} — ${senderDesc.slice(0, 120)}
+- RECIPIENT (who receives this message): the target account described in the user message
+- Write as if you ARE the sender company reaching out to the recipient
+- The value proposition is what the SENDER offers to the RECIPIENT — use the "Sender offer" field
+- NEVER mention "LeadLens" in any outreach copy — LeadLens generates this output but is NOT the sender
+- Use "we", "our", "us" from the SENDER's perspective
+- The message is FROM the sender TO the recipient — never confuse these roles
 
 Evidence discipline in outreach:
 - If a confirmed signal exists (personalization_confidence ≥ 0.75): reference it directly in the opener
@@ -175,13 +187,13 @@ Evidence discipline in outreach:
 - NEVER invent or embellish events not provided in the evidence
 
 Structure rules:
-- Email: (1) honest signal/pattern opener — specific to this company, (2) one-sentence pain hypothesis at company level, (3) what the offer helps with in ONE sentence, (4) low-friction CTA
+- Email: (1) honest signal/pattern opener — specific to the recipient company, (2) one-sentence pain hypothesis at company level, (3) what the SENDER's offer helps with in ONE sentence, (4) low-friction CTA
 - Max 120 words for email body
 - LinkedIn: max 3 lines, completely different angle, start with a question or observation
-- call_opener: 1-sentence cold call intro — reference company + industry, ask for 90 seconds
+- call_opener: 1-sentence cold call intro — reference recipient company + industry, ask for 90 seconds
 - cta_recommendation: explain what CTA works best for this account and why
-- outreach_assumptions: what key assumption does this outreach make about the company?
-- what_to_avoid_in_outreach: specific to this company — what would make this outreach feel generic or wrong?
+- outreach_assumptions: what key assumption does this outreach make about the recipient company?
+- what_to_avoid_in_outreach: specific to this recipient — what would make this outreach feel generic or wrong?
 
 Compliance rules:
 - No "Hi [Name]", no fake familiarity
@@ -191,10 +203,13 @@ Compliance rules:
 - ${locNotes ? `LOCALIZATION: ${locNotes}` : `Write in ${criteria.outreach_language ?? "English"}`}
 Return only valid JSON.`;
 
-  const userMsg = `Offer: ${criteria.offer_summary}
-Value prop: ${criteria.value_proposition}
+  const userMsg = `SENDER (the company writing this message): ${senderName}
+Sender description: ${senderDesc.slice(0, 150)}
+Sender offer: ${criteria.offer_summary}
+Sender value prop: ${criteria.value_proposition}
 Tone: ${toneGuide}
 
+RECIPIENT (the target account this message is sent TO):
 Account: ${candidate.company}
 Industry: ${qualified.enrichment.candidate.industry ?? "?"} | Size: ${qualified.enrichment.candidate.company_size ?? "?"}
 Fit score: ${qualified.fit_score}/10 (${qualified.category})

@@ -89,6 +89,9 @@ export interface LeadSearchCriteria {
   target_market_region?: MarketRegion;
   outreach_language?: string;
   localization_notes?: string;
+  // Sender context — who is sending this outreach (the LeadLens customer)
+  sender_company_name?: string;
+  sender_company_description?: string;
 }
 
 // ─── Lead Candidate (raw from provider) ──────────────────────────────────────
@@ -204,6 +207,7 @@ export interface OutreachSequence {
   genericness_risk?: RiskLevel;
   hallucination_risk?: RiskLevel;
   evidence_weakness?: RiskLevel;
+  buyer_seller_confusion_risk?: RiskLevel;
   improvement_notes?: string[];
 }
 
@@ -287,6 +291,7 @@ export interface QCResult {
   genericness_risk?: RiskLevel;
   hallucination_risk?: RiskLevel;
   evidence_weakness?: RiskLevel;
+  buyer_seller_confusion_risk?: RiskLevel;
   improvement_notes?: string[];
 }
 

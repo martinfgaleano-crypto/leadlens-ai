@@ -70,6 +70,8 @@ export function buildDeterministicICP(
     target_market_region: onboarding.target_market_region ?? "global",
     outreach_language: languageLabel(onboarding.output_language),
     localization_notes: buildLocalizationNotes(onboarding.output_language, onboarding.target_market_region),
+    sender_company_name: onboarding.company_name,
+    sender_company_description: onboarding.company_description,
   };
 
   return { icp, criteria };
@@ -145,7 +147,11 @@ Return JSON:
   }
 }`;
 
-  return callClaudeJSON<{ icp: ICP; criteria: LeadSearchCriteria }>(SYSTEM, prompt, 2500);
+  const result = await callClaudeJSON<{ icp: ICP; criteria: LeadSearchCriteria }>(SYSTEM, prompt, 2500);
+  // Inject sender identity — Claude doesn't know to include these
+  result.criteria.sender_company_name = onboarding.company_name;
+  result.criteria.sender_company_description = onboarding.company_description;
+  return result;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
