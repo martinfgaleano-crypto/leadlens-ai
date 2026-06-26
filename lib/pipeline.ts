@@ -10,8 +10,11 @@ import type {
   FeedbackSignal,
 } from "@/types";
 import { PLAN_LEAD_COUNT } from "@/types";
+// Learning hints — stub active; wires into discovery when Vault has ≥3 patterns
+import { applyLearningHints } from "@/lib/learning";
 
 export type { PipelineInput };
+export { applyLearningHints };
 
 const IS_DEMO = process.env.DEMO_MODE === "true";
 

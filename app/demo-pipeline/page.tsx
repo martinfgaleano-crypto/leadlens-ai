@@ -238,6 +238,8 @@ const COPY = {
     vizTitle: "Visual decision tools, not just data.",
     vizSub: "LeadLens turns public market signals into visual decision tools your team can act on before the first outreach.",
     complianceNote: "LeadLens analyzes publicly available company information and commercial signals. We do not sell contact databases, email lists, or personal data.",
+    sFeedbackHook: "Was this opportunity useful?",
+    sFeedbackSaved: "Feedback saved — thank you",
   },
   es: {
     announcement: "Opportunity Snapshots disponibles — inteligencia comercial B2B para tu primer outreach real.",
@@ -471,6 +473,8 @@ const COPY = {
     vizTitle: "Herramientas visuales de decisión, no solo datos.",
     vizSub: "LeadLens convierte señales públicas de mercado en herramientas visuales que tu equipo puede usar antes del primer outreach.",
     complianceNote: "LeadLens analiza información empresarial y señales comerciales públicamente disponibles. No vendemos bases de datos de contactos, listas de emails ni datos personales.",
+    sFeedbackHook: "¿Fue útil esta oportunidad?",
+    sFeedbackSaved: "Feedback guardado — gracias",
   },
   pt: {
     announcement: "Opportunity Snapshots disponíveis — inteligência comercial B2B para seu primeiro outreach real.",
@@ -704,6 +708,8 @@ const COPY = {
     vizTitle: "Ferramentas visuais de decisão, não apenas dados.",
     vizSub: "LeadLens transforma sinais públicos de mercado em ferramentas visuais que sua equipe pode usar antes do primeiro outreach.",
     complianceNote: "LeadLens analisa informações empresariais e sinais comerciais publicamente disponíveis. Não vendemos bancos de dados de contatos, listas de e-mails nem dados pessoais.",
+    sFeedbackHook: "Esta oportunidade foi útil?",
+    sFeedbackSaved: "Feedback salvo — obrigado",
   },
   ja: {
     announcement: "Opportunity Snapshots提供開始 — B2Bコマーシャルインテリジェンスで最初の本格的アウトリーチを。",
@@ -937,6 +943,8 @@ const COPY = {
     vizTitle: "データだけでなく、視覚的な意思決定ツール。",
     vizSub: "LeadLensは公開市場シグナルを、最初のアウトリーチ前にチームが活用できる視覚的な意思決定ツールに変換します。",
     complianceNote: "LeadLensは公開されている企業情報とビジネスシグナルを分析します。コンタクトデータベース、メールリスト、個人データは販売していません。",
+    sFeedbackHook: "この機会は役に立ちましたか？",
+    sFeedbackSaved: "フィードバックを保存しました",
   },
 };
 
@@ -2093,6 +2101,23 @@ export default function DemoPipelinePage() {
 
 // ─── Lead card ────────────────────────────────────────────────────────────────
 
+// ─── Feedback button config ───────────────────────────────────────────────────
+
+const PRIMARY_FEEDBACK: { signal: import("@/types").FeedbackSignal; label: string }[] = [
+  { signal: "useful",       label: "👍 Useful"       },
+  { signal: "not_useful",   label: "👎 Not useful"   },
+  { signal: "wrong_fit",    label: "❌ Wrong fit"    },
+  { signal: "generic",      label: "📋 Too generic"  },
+  { signal: "add_to_vault", label: "📌 Watchlist"    },
+];
+
+const SECONDARY_FEEDBACK: { signal: import("@/types").FeedbackSignal; label: string }[] = [
+  { signal: "contacted",     label: "Contacted"      },
+  { signal: "replied",       label: "Replied"        },
+  { signal: "meeting_booked",label: "Meeting booked" },
+  { signal: "exclude_similar",label: "Exclude similar"},
+];
+
 function LeadCard({ lead, index, isOpen, onToggle, copy }: {
   lead: ProcessedLead; index: number; isOpen: boolean; onToggle: () => void; copy: Copy;
 }) {
@@ -2100,6 +2125,38 @@ function LeadCard({ lead, index, isOpen, onToggle, copy }: {
   const cat      = catInfo(q.fit_score);
   const qcMeta   = QC_META[o.qc_status];
   const isDiscard = q.fit_score < 4;
+
+  // Feedback state — local per card, resets if card is closed/reopened
+  const [feedbackSent, setFeedbackSent] = useState<import("@/types").FeedbackSignal | null>(null);
+  const [feedbackPending, setFeedbackPending] = useState(false);
+
+  async function sendFeedback(signal: import("@/types").FeedbackSignal) {
+    if (feedbackPending || feedbackSent) return;
+    setFeedbackPending(true);
+    try {
+      await fetch("/api/feedback/opportunity", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          job_id:             lead.id,
+          company:            c.company,
+          domain:             c.domain,
+          industry:           c.industry,
+          opportunity_score:  q.fit_score,
+          category:           q.category,
+          recommended_action: e.recommended_action,
+          signal_patterns:    lead.learning?.signal_patterns?.slice(0, 5),
+          buying_window:      e.buying_window,
+          feedback_signal:    signal,
+        }),
+      });
+    } catch {
+      // Best-effort — don't block UI on network errors
+    } finally {
+      setFeedbackSent(signal);
+      setFeedbackPending(false);
+    }
+  }
 
   return (
     <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: ".875rem", overflow: "hidden", marginBottom: ".75rem", transition: "box-shadow .15s" }}
@@ -2314,6 +2371,51 @@ function LeadCard({ lead, index, isOpen, onToggle, copy }: {
               </div>
             </LeadSection>
           )}
+
+          {/* ── Feedback — Learning hook ─────────────────────────────────────── */}
+          <div style={{ background: "#f8fafc", borderRadius: ".625rem", padding: ".875rem 1rem", marginTop: ".5rem" }}>
+            {feedbackSent === null ? (
+              <div>
+                <div style={{ fontSize: ".68rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", color: "#94a3b8", marginBottom: ".6rem" }}>
+                  {copy.sFeedbackHook}
+                </div>
+                <div style={{ display: "flex", flexWrap: "wrap" as const, gap: ".35rem", marginBottom: ".35rem" }}>
+                  {PRIMARY_FEEDBACK.map(({ signal, label }) => (
+                    <button
+                      key={signal}
+                      onClick={() => sendFeedback(signal)}
+                      disabled={feedbackPending}
+                      style={{ padding: ".28rem .65rem", fontSize: ".78rem", fontWeight: 500, borderRadius: 999, border: "1px solid #e2e8f0", background: "#fff", color: "#334155", cursor: feedbackPending ? "wait" : "pointer", transition: "background .12s, border-color .12s" }}
+                      onMouseOver={el => { el.currentTarget.style.background = "#f1f5f9"; el.currentTarget.style.borderColor = "#94a3b8"; }}
+                      onMouseOut={el => { el.currentTarget.style.background = "#fff"; el.currentTarget.style.borderColor = "#e2e8f0"; }}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+                <div style={{ display: "flex", flexWrap: "wrap" as const, gap: ".3rem" }}>
+                  {SECONDARY_FEEDBACK.map(({ signal, label }) => (
+                    <button
+                      key={signal}
+                      onClick={() => sendFeedback(signal)}
+                      disabled={feedbackPending}
+                      style={{ padding: ".2rem .55rem", fontSize: ".72rem", fontWeight: 400, borderRadius: 999, border: "1px solid #e2e8f0", background: "transparent", color: "#94a3b8", cursor: feedbackPending ? "wait" : "pointer", transition: "color .12s, border-color .12s" }}
+                      onMouseOver={el => { el.currentTarget.style.color = "#475569"; el.currentTarget.style.borderColor = "#94a3b8"; }}
+                      onMouseOut={el => { el.currentTarget.style.color = "#94a3b8"; el.currentTarget.style.borderColor = "#e2e8f0"; }}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div style={{ fontSize: ".8rem", color: "#16a34a", display: "flex", alignItems: "center", gap: ".4rem" }}>
+                <span>✓</span>
+                <span>{copy.sFeedbackSaved}</span>
+                <span style={{ color: "#94a3b8", fontSize: ".72rem", marginLeft: ".25rem" }}>({feedbackSent.replace(/_/g, " ")})</span>
+              </div>
+            )}
+          </div>
 
           {!isDiscard && (
             <>
