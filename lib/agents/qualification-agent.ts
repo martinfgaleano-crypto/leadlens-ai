@@ -104,6 +104,8 @@ function scoreDemoLead(enriched: EnrichedLead, icp: ICP): QualifiedLead {
   };
 
   const score_explanation = buildScoreExplanation(fit_score, category, score_dimensions, candidate.company, hasMeaningfulSignal);
+  const signal_interpretation = buildDemoSignalInterpretation(enriched, score_dimensions, hasMeaningfulSignal);
+  const opportunity_tier_reason = buildDemoTierReason(category, score_dimensions, hasMeaningfulSignal, fit_score);
 
   return {
     enrichment: enriched,
@@ -122,6 +124,8 @@ function scoreDemoLead(enriched: EnrichedLead, icp: ICP): QualifiedLead {
     },
     score_dimensions,
     score_explanation,
+    signal_interpretation,
+    opportunity_tier_reason,
   };
 }
 
@@ -151,17 +155,20 @@ Multi-axis dimensions (0–100 per axis):
 - confidence: aggregate confidence in the opportunity score
 - disqualification_risk: risk that this account should be EXCLUDED (ICP mismatch, bad geography, etc.)
 
-Category thresholds: HOT ≥8, WARM 6–7.9, COLD 4–5.9, DISCARD <4
+CATEGORY THRESHOLDS AND STRICT CALIBRATION:
+- HOT ≥8: REQUIRES ALL FOUR: icp_fit ≥70 AND signal_strength ≥50 AND evidence_quality ≥60 AND disqualification_risk ≤35. If any fails, maximum is WARM even if total score ≥8.
+- WARM 6–7.9: strong on 2 of 3 core dimensions (icp_fit, signal_strength, evidence_quality), 1 is weak. Outreach is justifiable but needs careful framing.
+- COLD 4–5.9: real ICP mismatches or missing evidence. Monitor only — do not outreach without manual validation.
+- DISCARD <4: hard disqualifiers — wrong industry, wrong geography, explicit exclusion, or no viable commercial path.
 
-Calibration:
-- HOT: strong on icp_fit + evidence_quality + strategic_value, even with timing=20
-- WARM: strong on 2 of 3 core dimensions, 1 is weak
-- COLD: real ICP mismatches present
-- DISCARD: hard disqualifiers only (wrong industry, geography, no viable path)
+Additional calibration rules:
+- An account with strong ICP fit but ZERO signals and thin evidence = WARM at most (not HOT)
+- An account with a strong signal but weak ICP fit = WARM at most
+- COLD accounts with confirmed signals should be noted but remain COLD — signal alone doesn't override a weak fit
 - Do NOT penalize twice for the same missing data
 
 score_explanation must say:
-"Score is [HOT/WARM/COLD] because [ICP Fit: X/100 — reason], [Signal: X/100 — reason], [Timing: X/100 — reason]. [Key risk if any]."
+"Score is [HOT/WARM/COLD/DISCARD] because [ICP Fit: X/100 — reason], [Signal: X/100 — reason], [Timing: X/100 — reason]. [Key risk if any]."
 
 Return only valid JSON.`;
 
@@ -183,6 +190,7 @@ Why now: ${enriched.why_now ?? "not determined"}
 Timing signals: ${enriched.timing_signals.join("; ") || "none confirmed"}
 Risks: ${enriched.risks_weaknesses?.join("; ") ?? "none noted"}
 Missing data: ${enriched.missing_data.join("; ") || "none"}
+Account thesis: ${enriched.account_thesis ?? "not yet determined"}
 
 Return JSON:
 {
@@ -196,15 +204,65 @@ Return JSON:
   "fit_reasons": ["specific reason backed by evidence"],
   "disqualification_reasons": ["only real concerns — empty if none"],
   "qualification_confidence": 0.0,
-  "score_explanation": "Score is [category] because [ICP Fit: X/100 — reason]. [Signal: X/100 — reason]. [Timing: X/100 — reason]. [Key risk]."
+  "score_explanation": "Score is [category] because [ICP Fit: X/100 — reason]. [Signal: X/100 — reason]. [Timing: X/100 — reason]. [Key risk].",
+  "signal_interpretation": "1-2 sentences: what the score pattern MEANS commercially — not just what the signals are. If HOT: why this is high priority. If DISCARD: why to skip. If WARM/COLD: what's blocking and what would unlock it.",
+  "opportunity_tier_reason": "1 sentence: the specific reason this account is HOT/WARM/COLD/DISCARD — what dimension is the deciding factor"
 }`;
 
   type ClaudeResult = Omit<QualifiedLead, "enrichment">;
-  const result = await callClaudeJSON<ClaudeResult>(SYSTEM, userMsg, 2000);
+  const result = await callClaudeJSON<ClaudeResult>(SYSTEM, userMsg, 2200);
   return { enrichment: enriched, ...result };
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function buildDemoSignalInterpretation(
+  enriched: EnrichedLead,
+  dims: ScoreDimensions,
+  hasMeaningfulSignal: boolean
+): string {
+  const company = enriched.candidate.company;
+  const industry = enriched.candidate.industry ?? "their segment";
+
+  if (!hasMeaningfulSignal) {
+    if (dims.icp_fit >= 70) {
+      return `${company} has strong ICP fit (${dims.icp_fit}/100) but no confirmed timing signal — outreach is justified on segment patterns alone, but should be framed as hypothesis-led rather than signal-led`;
+    }
+    return `No confirmed signal for ${company} — opportunity is based entirely on ${industry} profile fit. Consider monitoring for a public trigger before investing outreach resources`;
+  }
+
+  const signalText = enriched.timing_signals.join(" ").toLowerCase();
+  if (/hir|recruit/.test(signalText) && /expand|grow|open|new/.test(signalText)) {
+    return `${company} is hiring and expanding simultaneously — this pattern typically signals a 60–90 day window where companies actively evaluate vendors to support operational scaling`;
+  }
+  if (/raised|funded|series|investment/.test(signalText)) {
+    return `Post-funding phase at ${company} — companies in this state actively buy capabilities. This is a high-urgency window; contact within 60 days of the funding announcement`;
+  }
+  if (/warehouse|facilit|distribut/.test(signalText)) {
+    return `${company}'s infrastructure expansion signals an operational scaling phase — the period when account prioritization and vendor evaluation gaps typically emerge`;
+  }
+  return `${company} has confirmed buying signals (signal_strength: ${dims.signal_strength}/100) — this increases outreach relevance vs comparable accounts without signals`;
+}
+
+function buildDemoTierReason(
+  category: LeadCategory,
+  dims: ScoreDimensions,
+  hasSignal: boolean,
+  fitScore: number
+): string {
+  switch (category) {
+    case "HOT":
+      return `HOT: meets all key criteria — icp_fit: ${dims.icp_fit}/100, signal_strength: ${dims.signal_strength}/100, evidence_quality: ${dims.evidence_quality}/100`;
+    case "WARM":
+      if (!hasSignal) return `WARM: strong ICP fit but missing a confirmed timing signal — outreach is justified with a hypothesis-framed opener`;
+      if (dims.icp_fit < 70) return `WARM: confirmed signal but ICP fit is partial (${dims.icp_fit}/100) — validate the specific pain hypothesis before full outreach`;
+      return `WARM: close to HOT but one key dimension is below threshold — not enough evidence for top-tier priority`;
+    case "COLD":
+      return `COLD: ${hasSignal ? "signal exists but ICP fit or evidence quality too weak for Wave 1" : "no confirmed signal and fit score below WARM threshold"} — monitor list, not outreach list`;
+    case "DISCARD":
+      return `DISCARD: fails on hard ICP criteria at score ${fitScore}/10 — do not include in any outreach sequence`;
+  }
+}
 
 function scoreToCategory(score: number): LeadCategory {
   if (score >= 8) return "HOT";

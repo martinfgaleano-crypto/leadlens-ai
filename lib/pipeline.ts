@@ -7,6 +7,7 @@ import type {
   PipelineInput,
   LearningMetadata,
   RiskLevel,
+  FeedbackSignal,
 } from "@/types";
 import { PLAN_LEAD_COUNT } from "@/types";
 
@@ -141,6 +142,37 @@ function buildLearningMetadata(
     reusable_pattern = `HOT/WARM ${candidate.industry} account with signal: ${signal_patterns[0]?.slice(0, 80)}`;
   }
 
+  // Offer-market fit pattern — what this account teaches about ICP-offer alignment
+  let offer_market_fit_pattern: string | undefined;
+  if (signal_patterns.length > 0 && candidate.industry) {
+    const signalSummary = signal_patterns[0]?.slice(0, 60) ?? "confirmed signal";
+    offer_market_fit_pattern = `${candidate.industry} account + "${signalSummary}" → ICP fit score ${qualification.fit_score}/10`;
+  }
+
+  // Reason for priority / demotion
+  const isPriority = qualification.fit_score >= 7.0;
+  const reason_for_priority = isPriority
+    ? (qualification.opportunity_tier_reason ?? `Score ${qualification.fit_score}/10 with ${signal_patterns.length > 0 ? "confirmed signal" : "strong ICP fit"}`)
+    : undefined;
+  const reason_for_demotion = !isPriority
+    ? (qualification.disqualification_reasons[0] ?? `Score ${qualification.fit_score}/10 — below priority threshold`)
+    : undefined;
+
+  // Predicted learning value
+  const predicted_learning_value: "high" | "medium" | "low" =
+    qualification.fit_score >= 7 && signal_patterns.length > 0 ? "high" :
+    qualification.fit_score >= 5 ? "medium" :
+    "low";
+
+  // Feedback hooks — which feedback signals make sense for this account
+  const feedback_hooks: FeedbackSignal[] = ["useful", "not_useful", "wrong_fit"];
+  if (qualification.category === "HOT" || qualification.category === "WARM") {
+    feedback_hooks.push("contacted", "meeting_booked", "replied", "add_to_vault");
+  }
+  if (qualification.category === "COLD" || qualification.category === "DISCARD") {
+    feedback_hooks.push("exclude_similar");
+  }
+
   return {
     agent_confidence: parseFloat(agentConfidence.toFixed(2)),
     qc_flags: outreach.qc_notes,
@@ -151,7 +183,12 @@ function buildLearningMetadata(
     segment_pattern: candidate.industry,
     improvement_notes,
     reusable_pattern,
-    // Future feedback hooks — not yet populated; connected when user feedback UI is built
+    offer_market_fit_pattern,
+    reason_for_priority,
+    reason_for_demotion,
+    predicted_learning_value,
+    feedback_hooks,
+    // Future feedback fields — not yet collected in UI
     user_feedback: undefined,
     feedback_notes: undefined,
     rejected_reason: undefined,

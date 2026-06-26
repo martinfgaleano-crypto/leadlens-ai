@@ -1,4 +1,5 @@
-import type { ProcessedLead, LeadLensReport, PlanType, OnboardingData, ICP } from "@/types";
+import type { ProcessedLead, LeadLensReport, PlanType, OnboardingData, ICP, OpportunityRanking } from "@/types";
+import { computeRanking } from "@/lib/ranking";
 
 const IS_DEMO = process.env.DEMO_MODE === "true";
 
@@ -24,6 +25,9 @@ export async function runReportAgent(
     )
   );
 
+  // Ranking — applies rank/ranking_explanation back to each lead's qualification in-place
+  const ranked_opportunities: OpportunityRanking[] = computeRanking(leads);
+
   const patterns = buildPatterns(leads, hot, warm, highConfidence, withConfirmedSignals.length);
   const recommendations = buildRecommendations(leads, hot, warm, cold);
   const segment_insights = buildSegmentInsights(leads, hot, warm);
@@ -32,9 +36,12 @@ export async function runReportAgent(
   const strategic_warnings = buildStrategicWarnings(leads, hot, warm, cold, highConfidence, avgScore, icp);
   const evidence_quality_summary = buildEvidenceQualitySummary(leads, highConfidence, withConfirmedSignals.length);
 
+  // Report-level QC
+  const reportQC = runReportQC(leads, hot, warm, cold, discard, avgScore, withConfirmedSignals.length, icp);
+
   const executive_summary = IS_DEMO || !process.env.ANTHROPIC_API_KEY
     ? buildDemoSummary(leads, hot, warm, cold, discard, avgScore, plan, withConfirmedSignals.length)
-    : await buildClaudeSummary(leads, hot, warm, cold, avgScore, icp, withConfirmedSignals.length);
+    : await buildClaudeSummary(leads, hot, warm, cold, avgScore, icp, withConfirmedSignals.length, ranked_opportunities);
 
   return {
     job_id: jobId,
@@ -55,6 +62,11 @@ export async function runReportAgent(
     first_actions,
     strategic_warnings,
     evidence_quality_summary,
+    ranked_opportunities,
+    report_quality_score: reportQC.score,
+    report_quality_notes: reportQC.notes,
+    report_risks: reportQC.risks,
+    recommended_fix_before_delivery: reportQC.fix,
   };
 }
 
@@ -132,45 +144,70 @@ async function buildClaudeSummary(
   cold: ProcessedLead[],
   avgScore: number,
   icp: ICP,
-  signalCount: number
+  signalCount: number,
+  ranked: OpportunityRanking[]
 ): Promise<string> {
   const { callClaude } = await import("@/lib/anthropic");
 
-  const { priority, monitor, excluded } = computeTiers(hot, warm, cold, []);
+  const discard = leads.filter(l => l.qualification.fit_score < 4);
+  const { priority, monitor, excluded } = computeTiers(hot, warm, cold, discard);
 
-  const SYSTEM = `You are a senior B2B commercial intelligence analyst. Write a concise 3-sentence executive summary for an Opportunity Snapshot report.
+  const SYSTEM = `You are a senior B2B commercial intelligence analyst delivering a strategic opportunity assessment.
+Write a 4-sentence executive summary that sounds like a seasoned analyst — not a report generator.
+
 Rules:
-- Lead with a curated count: "X priority accounts ready for outreach, Y accounts to monitor, Z excluded" — not the total raw count
-- Be specific — cite actual account names and industries for top priority accounts
-- Distinguish confirmed signals from inferences honestly
-- Recommend ONE specific next action
-- Do NOT say "impressive results", "great batch", or any promotional language
-- Do NOT mention individual people, emails, or contact data`;
+- Sentence 1: Lead with curated counts — "X priority accounts, Y to monitor, Z excluded" — name top 1-2 priority accounts specifically
+- Sentence 2: Name the strongest signal pattern observed across the batch (or honestly state there are none)
+- Sentence 3: Identify the strongest segment and the weakest area in this batch — what should be avoided or monitored vs. pursued
+- Sentence 4: One specific next action this week — concrete, not generic. "Contact [company] using the warehouse expansion angle" not "send outreach"
+- Never say: "impressive results", "strong batch", "promising", or any promotional filler
+- Never mention individual people, phone numbers, emails, or personal LinkedIn URLs
+- Distinguish confirmed signals from inferences explicitly`;
 
-  const priorityAccounts = priority.slice(0, 3).map(l =>
+  const priorityAccounts = priority.slice(0, 2).map(l =>
     `${l.candidate.company} (${l.candidate.industry ?? "?"}, ${l.qualification.fit_score}/10)`
   ).join(", ");
 
-  const topSignals = priority.concat(monitor).flatMap(l =>
+  const topRanked = ranked.slice(0, 1)[0];
+  const topSignalPattern = priority.concat(monitor).flatMap(l =>
     l.enrichment.timing_signals.filter(s =>
       !s.toLowerCase().includes("no confirmed") && !s.toLowerCase().includes("inferred")
     )
-  ).slice(0, 3);
+  ).slice(0, 2).join("; ");
+
+  const industryScores: Record<string, number[]> = {};
+  for (const l of leads) {
+    const ind = l.candidate.industry ?? "Unknown";
+    (industryScores[ind] = industryScores[ind] ?? []).push(l.qualification.fit_score);
+  }
+  const industryAvgs = Object.entries(industryScores).map(([ind, scores]) => ({
+    ind,
+    avg: scores.reduce((a, b) => a + b, 0) / scores.length,
+  })).sort((a, b) => b.avg - a.avg);
+
+  const bestSegment = industryAvgs[0]?.ind ?? "unknown";
+  const worstSegment = industryAvgs[industryAvgs.length - 1]?.ind ?? "unknown";
 
   const userMsg = `ICP target industries: ${icp.target_industries.join(", ")}
 Total accounts analyzed: ${leads.length}
-CURATED TIERS — use these, not the raw totals:
+
+CURATED TIERS (use these — not raw counts):
   Priority (ready for outreach): ${priority.length} accounts
-  Monitor (needs validation first): ${monitor.length} accounts
-  Excluded (low fit / insufficient evidence): ${excluded.length + (leads.filter(l => l.qualification.fit_score < 4).length)} accounts
-Priority accounts: ${priorityAccounts || "none above threshold"}
-Avg score across full batch: ${avgScore}
-Confirmed public signals: ${signalCount}/${leads.length}
-Top confirmed signals: ${topSignals.join("; ") || "none — all outreach is hypothesis-led"}
+  Monitor (validate first): ${monitor.length} accounts
+  Excluded (low fit / weak evidence): ${excluded.length} accounts
 
-Write a 3-sentence executive summary: (1) curated tier counts + top priority accounts, (2) evidence quality and signal availability, (3) specific next action.`;
+Priority accounts: ${priorityAccounts || "none above priority threshold"}
+Top ranked account: ${topRanked ? `${topRanked.company} — ${topRanked.top_priority_reason}` : "none"}
+Avg score: ${avgScore}/10
+Confirmed buying signals: ${signalCount}/${leads.length}
+Strongest signal pattern: ${topSignalPattern || "none confirmed — all outreach is hypothesis-led"}
+Strongest segment by avg score: ${bestSegment}
+Weakest segment by avg score: ${worstSegment}
+HOT accounts: ${hot.length} | WARM: ${warm.length} | COLD: ${cold.length} | DISCARD: ${discard.length}
 
-  return callClaude(SYSTEM, userMsg, 300);
+Write a 4-sentence strategic executive summary following the rules exactly.`;
+
+  return callClaude(SYSTEM, userMsg, 400);
 }
 
 // ─── Segment insights ─────────────────────────────────────────────────────────
@@ -349,6 +386,112 @@ function buildEvidenceQualitySummary(leads: ProcessedLead[], highConfCount: numb
     return `Moderate evidence quality: ${pct}% high-confidence, ${signalPct}% with confirmed signals. Mix of signal-led and hypothesis-led outreach recommended.`;
   }
   return `Thin evidence base: ${pct}% high-confidence, ${signalPct}% with confirmed signals. Most outreach must be framed as hypothesis-led — avoid asserting knowledge of internal priorities.`;
+}
+
+// ─── Report-level QC ─────────────────────────────────────────────────────────
+// Self-assessment of the batch quality before delivery. Deterministic — no extra API call.
+
+function runReportQC(
+  leads: ProcessedLead[],
+  hot: ProcessedLead[],
+  warm: ProcessedLead[],
+  cold: ProcessedLead[],
+  discard: ProcessedLead[],
+  avgScore: number,
+  signalCount: number,
+  icp: ICP
+): { score: number; notes: string[]; risks: string[]; fix: string | undefined } {
+  const notes: string[] = [];
+  const risks: string[] = [];
+  let deductions = 0;
+
+  const total = leads.length;
+  if (total === 0) {
+    return { score: 0, notes: ["No accounts processed — empty batch"], risks: ["Empty report — cannot deliver"], fix: "Re-run with a broader ICP or different target industries" };
+  }
+
+  // ── Check 1: No actionable accounts ────────────────────────────────────────
+  if (hot.length === 0 && warm.length === 0) {
+    notes.push("No HOT or WARM accounts in batch — nothing ready for outreach or monitoring");
+    risks.push("All accounts are COLD or DISCARD — this report cannot support a Wave 1 campaign");
+    deductions += 30;
+  } else if (hot.length === 0) {
+    notes.push("No HOT accounts — strongest tier is WARM. Manage expectations on reply rates");
+    deductions += 10;
+  }
+
+  // ── Check 2: Too many COLD as actionable ───────────────────────────────────
+  const coldFraction = cold.length / total;
+  if (coldFraction > 0.6) {
+    notes.push(`${cold.length}/${total} accounts are COLD — over 60% of the batch is below the outreach threshold`);
+    risks.push("High COLD concentration suggests ICP criteria may be too broad or the source pool is misaligned");
+    deductions += 15;
+  }
+
+  // ── Check 3: No confirmed signals ─────────────────────────────────────────
+  if (signalCount === 0) {
+    notes.push("Zero confirmed buying signals across the entire batch — all outreach is hypothesis-led");
+    risks.push("Hypothesis-led outreach without any signal anchor typically underperforms by 40–60% vs signal-led campaigns");
+    deductions += 15;
+  }
+
+  // ── Check 4: Low evidence confidence ──────────────────────────────────────
+  const lowConfCount = leads.filter(l => l.candidate.confidence_score < 0.5).length;
+  if (lowConfCount > total * 0.5) {
+    notes.push(`${lowConfCount}/${total} accounts have low evidence confidence (<50%) — majority of claims are inferred`);
+    risks.push("Low evidence base increases hallucination risk in outreach copy");
+    deductions += 10;
+  }
+
+  // ── Check 5: High genericness across report ────────────────────────────────
+  const highGenericCount = leads.filter(l => l.outreach.genericness_risk === "high").length;
+  if (highGenericCount > total * 0.3) {
+    notes.push(`${highGenericCount} accounts have high-genericness outreach — review before sending`);
+    deductions += 10;
+  }
+
+  // ── Check 6: Repeated outreach language ──────────────────────────────────
+  const subjects = leads.map(l => l.outreach.subject).filter(Boolean);
+  const uniqueSubjects = new Set(subjects);
+  if (subjects.length > 2 && uniqueSubjects.size < subjects.length * 0.6) {
+    notes.push("Multiple accounts share nearly identical email subjects — outreach variety is too low");
+    risks.push("Repeated subject lines and copy patterns suggest template usage rather than account-specific intelligence");
+    deductions += 15;
+  }
+
+  // ── Check 7: DISCARD accounts with outreach sequences ────────────────────
+  const discardWithOutreach = discard.filter(l =>
+    l.outreach.email_body && !l.outreach.email_body.toLowerCase().startsWith("do not send")
+  );
+  if (discardWithOutreach.length > 0) {
+    notes.push(`${discardWithOutreach.length} DISCARD account(s) have outreach sequences — these should show DO NOT SEND notices only`);
+    risks.push("Sending outreach to DISCARD accounts wastes rep capacity and can damage sender reputation");
+    deductions += 20;
+  }
+
+  // ── Check 8: Very low avg score ───────────────────────────────────────────
+  if (avgScore < 4.0) {
+    notes.push(`Average batch score is ${avgScore}/10 — below COLD threshold across the board`);
+    risks.push("Report quality is insufficient for a commercial campaign — ICP and source criteria need revision");
+    deductions += 20;
+  }
+
+  // ── Check 9: ICP clarity ─────────────────────────────────────────────────
+  if (icp.icp_clarity_score !== undefined && icp.icp_clarity_score < 45) {
+    notes.push(`ICP clarity score is ${icp.icp_clarity_score}/100 — low specificity likely explains weak account matching`);
+    deductions += 5;
+  }
+
+  const score = Math.max(0, 100 - deductions);
+
+  let fix: string | undefined;
+  if (score < 60) {
+    fix = "Before delivery: review ICP criteria and consider re-running with narrower target industries and stronger signal requirements. The current batch does not support a first outreach wave.";
+  } else if (score < 80) {
+    fix = "Review COLD accounts and high-genericness outreach before delivery. Confirm all WARM accounts have a specific recommended angle before contacting.";
+  }
+
+  return { score, notes, risks, fix };
 }
 
 // ─── Shared helpers ───────────────────────────────────────────────────────────

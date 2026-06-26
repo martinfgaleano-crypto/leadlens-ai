@@ -3,36 +3,55 @@ import type { LeadLensReport, ProcessedLead } from "@/types";
 // ─── CSV export ───────────────────────────────────────────────────────────────
 
 const CSV_HEADERS = [
-  "Priority", "Priority Label", "Opportunity Score", "Evidence Status",
-  "Company", "Industry", "Company Size", "Location", "Source", "Source URL", "Confidence Score",
+  "Rank", "Priority", "Score", "Buying Window",
+  "Recommended Action", "Evidence Quality",
+  "Company", "Industry", "Size", "Location", "Confidence",
+  "Account Thesis", "Signal Interpretation", "Tier Reason",
+  "Timing Signals", "Opportunity Risks", "Next Best Question",
   "Why It Fits", "Flags",
-  "Timing Signals", "Company Context",
-  "Recommended Angle", "Outreach Subject", "Outreach Draft",
-  "LinkedIn Message", "Follow-up 1", "Follow-up 2", "QC Notes",
+  "Outreach Subject", "Outreach Draft",
+  "QC Status", "QC Notes",
 ];
 
 export function exportToCSV(report: LeadLensReport): string {
-  const sorted = [...report.processed_leads].sort(
-    (a, b) => b.qualification.fit_score - a.qualification.fit_score
-  );
+  const sorted = report.ranked_opportunities
+    ? [...report.processed_leads].sort((a, b) => (a.qualification.rank ?? 99) - (b.qualification.rank ?? 99))
+    : [...report.processed_leads].sort((a, b) => b.qualification.fit_score - a.qualification.fit_score);
 
   const rows = sorted.map((lead, i) => {
     const c = lead.candidate;
     const e = lead.enrichment;
     const q = lead.qualification;
     const o = lead.outreach;
-    const category = q.fit_score >= 8 ? "HOT" : q.fit_score >= 6 ? "WARM" : q.fit_score >= 4 ? "COLD" : "DISCARD";
+
+    const confirmedSignals = e.timing_signals.filter(
+      s => !s.toLowerCase().startsWith("no confirmed") && !s.toLowerCase().includes("inferred")
+    );
 
     return [
-      i + 1, category, q.fit_score, c.email_status ?? "",
-      c.company, c.industry ?? "", c.company_size ?? "", c.location ?? "",
-      c.source, c.source_url ?? "", c.confidence_score.toFixed(2),
-      q.fit_reasons.join(" | "), q.disqualification_reasons.join(" | "),
-      e.timing_signals.join(" | "), e.company_summary ?? "",
-      o.personalization_trigger, o.subject,
-      o.email_body.replace(/\n/g, " "), o.linkedin_dm.replace(/\n/g, " "),
-      o.followup_1.replace(/\n/g, " "), o.followup_2.replace(/\n/g, " "),
-      o.qc_notes.join(" | "),
+      q.rank ?? (i + 1),
+      q.category,
+      q.fit_score,
+      e.buying_window ?? "",
+      (e.recommended_action ?? "").replace(/_/g, " "),
+      e.evidence_quality_grade ?? "",
+      c.company,
+      c.industry ?? "",
+      c.company_size ?? "",
+      c.location ?? "",
+      c.confidence_score.toFixed(2),
+      e.account_thesis ?? "",
+      q.signal_interpretation ?? "",
+      q.opportunity_tier_reason ?? "",
+      confirmedSignals.join(" | "),
+      (e.opportunity_risks ?? []).join(" | "),
+      e.next_best_question ?? "",
+      q.fit_reasons.join(" | "),
+      q.disqualification_reasons.join(" | "),
+      o.subject,
+      o.email_body.toLowerCase().startsWith("do not send") ? "DO NOT SEND" : o.email_body.replace(/\n/g, " "),
+      o.qc_status,
+      o.qc_notes.slice(0, 2).join(" | "),
     ].map(csvCell).join(",");
   });
 
@@ -50,67 +69,200 @@ function csvCell(value: string | number | undefined): string {
 // ─── Markdown export ──────────────────────────────────────────────────────────
 
 export function exportToMarkdown(report: LeadLensReport): string {
-  const sorted = [...report.processed_leads].sort(
-    (a, b) => b.qualification.fit_score - a.qualification.fit_score
-  );
+  // Use ranking order if available, otherwise sort by score
+  const sorted = report.ranked_opportunities
+    ? [...report.processed_leads].sort((a, b) => (a.qualification.rank ?? 99) - (b.qualification.rank ?? 99))
+    : [...report.processed_leads].sort((a, b) => b.qualification.fit_score - a.qualification.fit_score);
+
   const lines: string[] = [];
 
   lines.push(`# LeadLens AI — Opportunity Snapshot`);
   lines.push(`**Plan:** ${report.plan} · **Opportunities:** ${report.total_leads} · **Generated:** ${new Date(report.created_at).toLocaleString()}`);
-  lines.push(`**Job ID:** \`${report.job_id}\``);
+  if (report.report_quality_score !== undefined) {
+    lines.push(`**Report Quality Score:** ${report.report_quality_score}/100`);
+  }
   lines.push("");
 
+  // ── Executive Summary ────────────────────────────────────────────────────────
   lines.push(`## Executive Summary`);
   lines.push(report.executive_summary);
   lines.push("");
 
-  lines.push(`## Summary Stats`);
+  // ── Opportunity Tiers ────────────────────────────────────────────────────────
+  const hot   = sorted.filter(l => l.qualification.category === "HOT");
+  const warm  = sorted.filter(l => l.qualification.category === "WARM");
+  const cold  = sorted.filter(l => l.qualification.category === "COLD");
+  const disc  = sorted.filter(l => l.qualification.category === "DISCARD");
+
+  if (hot.length > 0 || warm.length > 0) {
+    lines.push(`## Priority Opportunities`);
+    lines.push(`*Ready for outreach — these accounts have the strongest ICP fit and/or confirmed buying signals.*`);
+    lines.push("");
+    for (const l of [...hot, ...warm.filter(w => w.qualification.fit_score >= 7)]) {
+      const rec = l.enrichment.recommended_action ?? "";
+      lines.push(`- **${l.candidate.company}** (${l.candidate.industry ?? "?"}, ${l.qualification.fit_score}/10 ${l.qualification.category})${rec ? ` → ${rec.replace(/_/g, " ")}` : ""}`);
+      if (l.enrichment.account_thesis) lines.push(`  *${l.enrichment.account_thesis}*`);
+    }
+    lines.push("");
+  }
+
+  const monitorList = warm.filter(w => w.qualification.fit_score < 7).concat(
+    cold.filter(c => c.enrichment.timing_signals.some(
+      s => !s.toLowerCase().startsWith("no confirmed") && !s.toLowerCase().includes("inferred")
+    ))
+  );
+  if (monitorList.length > 0) {
+    lines.push(`## Monitor List`);
+    lines.push(`*These accounts need further validation before outreach — confirm signal fit manually.*`);
+    lines.push("");
+    for (const l of monitorList) {
+      lines.push(`- **${l.candidate.company}** (${l.candidate.industry ?? "?"}, ${l.qualification.fit_score}/10 ${l.qualification.category})`);
+      if (l.enrichment.next_best_question) lines.push(`  Next question: *${l.enrichment.next_best_question}*`);
+    }
+    lines.push("");
+  }
+
+  if (disc.length > 0) {
+    lines.push(`## Excluded / Do Not Pursue`);
+    lines.push(`*These accounts did not meet ICP criteria — do not include in outreach sequences.*`);
+    lines.push("");
+    for (const l of disc) {
+      lines.push(`- **${l.candidate.company}** (${l.candidate.industry ?? "?"}) — ${l.qualification.disqualification_reasons[0]?.slice(0, 80) ?? "hard ICP disqualifier"}`);
+    }
+    lines.push("");
+  }
+
+  // ── Signal Patterns ──────────────────────────────────────────────────────────
+  if (report.top_signals_observed && report.top_signals_observed.length > 0 && !report.top_signals_observed[0]?.includes("No confirmed")) {
+    lines.push(`## Signal Patterns`);
+    for (const s of report.top_signals_observed) lines.push(`- ⚡ ${s}`);
+    lines.push("");
+  }
+
+  // ── Segment Insights ─────────────────────────────────────────────────────────
+  if (report.segment_insights && report.segment_insights.length > 0) {
+    lines.push(`## Segment Insights`);
+    for (const s of report.segment_insights) lines.push(`- ${s}`);
+    lines.push("");
+  }
+
+  // ── First Actions ────────────────────────────────────────────────────────────
+  if (report.first_actions && report.first_actions.length > 0) {
+    lines.push(`## Recommended First Actions`);
+    for (const a of report.first_actions) lines.push(`- ${a}`);
+    lines.push("");
+  }
+
+  // ── Strategic Warnings ───────────────────────────────────────────────────────
+  if (report.strategic_warnings && report.strategic_warnings.length > 0) {
+    lines.push(`## Strategic Warnings`);
+    for (const w of report.strategic_warnings) lines.push(`- ⚠ ${w}`);
+    lines.push("");
+  }
+
+  // ── Report QC ────────────────────────────────────────────────────────────────
+  if (report.report_quality_notes && report.report_quality_notes.length > 0) {
+    lines.push(`## Report Quality Notes`);
+    for (const n of report.report_quality_notes) lines.push(`- ${n}`);
+    if (report.recommended_fix_before_delivery) {
+      lines.push(`> **Recommended fix:** ${report.recommended_fix_before_delivery}`);
+    }
+    lines.push("");
+  }
+
+  // ── Stats table ───────────────────────────────────────────────────────────────
+  lines.push(`## Batch Statistics`);
   lines.push(`| Category | Count |`);
   lines.push(`|---|---|`);
-  lines.push(`| 🔥 HOT | ${report.hot_count} |`);
-  lines.push(`| 🟡 WARM | ${report.warm_count} |`);
-  lines.push(`| 🔵 COLD | ${report.cold_count} |`);
-  lines.push(`| ⛔ DISCARD | ${report.discard_count} |`);
+  lines.push(`| HOT | ${report.hot_count} |`);
+  lines.push(`| WARM | ${report.warm_count} |`);
+  lines.push(`| COLD | ${report.cold_count} |`);
+  lines.push(`| DISCARD | ${report.discard_count} |`);
   lines.push(`| Avg Score | ${report.avg_score}/10 |`);
   lines.push("");
 
-  lines.push(`## Patterns Observed`);
-  for (const p of report.patterns_observed) lines.push(`- ${p}`);
-  lines.push("");
-
-  lines.push(`## Recommendations`);
-  for (const r of report.recommendations) lines.push(`- ${r}`);
-  lines.push("");
-
-  lines.push(`## Opportunity Breakdown`);
+  // ── Per-account detail ────────────────────────────────────────────────────────
+  lines.push(`## Account Intelligence — Full Detail`);
   lines.push("---");
 
-  for (let i = 0; i < sorted.length; i++) {
-    const lead = sorted[i];
+  for (const lead of sorted) {
     const c = lead.candidate;
     const q = lead.qualification;
+    const e = lead.enrichment;
     const o = lead.outreach;
-    const cat = q.fit_score >= 8 ? "🔥 HOT" : q.fit_score >= 6 ? "🟡 WARM" : q.fit_score >= 4 ? "🔵 COLD" : "⛔ DISCARD";
+    const tierLabel = q.category === "HOT" ? "HOT" : q.category === "WARM" ? "WARM" : q.category === "COLD" ? "COLD" : "DISCARD";
     const qcIcon = o.qc_status === "APPROVED" ? "✅" : o.qc_status === "REVIEW_NEEDED" ? "⚠️" : "❌";
 
-    lines.push(`### ${i + 1}. ${c.company ?? "Unknown"}`);
-    lines.push(`**${c.industry ?? "?"}** · ${c.company_size ?? "?"}`);
-    lines.push(`**Opportunity Score:** ${q.fit_score}/10 ${cat} · **Evidence:** ${qcIcon} ${o.qc_status}`);
+    const rankLabel = q.rank !== undefined ? `#${q.rank} · ` : "";
+    lines.push(`### ${rankLabel}${c.company ?? "Unknown"}`);
+    lines.push(`**${c.industry ?? "?"}** · ${c.company_size ?? "?"} · Score: ${q.fit_score}/10 **${tierLabel}** · QC: ${qcIcon} ${o.qc_status}`);
     lines.push("");
 
-    if (c.location) lines.push(`- Location: ${c.location}`);
-    lines.push(`- Source: ${c.source}${c.source_url ? ` — ${c.source_url}` : ""}`);
-    lines.push(`- Confidence: ${Math.round(c.confidence_score * 100)}%`);
-    lines.push("");
-
-    if (lead.enrichment.company_summary) {
-      lines.push(`**Company Context:** ${lead.enrichment.company_summary}`);
+    // Account thesis + buying window
+    if (e.account_thesis) {
+      lines.push(`**Account Thesis:** ${e.account_thesis}`);
+      lines.push("");
+    }
+    if (e.buying_window && e.buying_window !== "unclear") {
+      lines.push(`**Buying Window:** ${e.buying_window.replace("_", " ")}${e.buying_window_reason ? ` — ${e.buying_window_reason}` : ""}`);
       lines.push("");
     }
 
-    if (lead.enrichment.timing_signals.length > 0) {
-      lines.push(`**Timing Signals / Buying Signals**`);
-      for (const s of lead.enrichment.timing_signals) lines.push(`- ⚡ ${s}`);
+    // Signal interpretation
+    if (q.signal_interpretation) {
+      lines.push(`**Signal Interpretation:** ${q.signal_interpretation}`);
+      lines.push("");
+    }
+
+    // Tier reason
+    if (q.opportunity_tier_reason) {
+      lines.push(`**Tier Reasoning:** ${q.opportunity_tier_reason}`);
+      lines.push("");
+    }
+
+    // Recommended action
+    const action = e.recommended_action;
+    const actionReason = e.recommended_action_reason;
+    if (action) {
+      lines.push(`**Recommended Action:** ${action.replace(/_/g, " ")}${actionReason ? ` — ${actionReason}` : ""}`);
+      lines.push("");
+    }
+
+    // Next best question
+    if (e.next_best_question) {
+      lines.push(`**Next Best Question:** *${e.next_best_question}*`);
+      lines.push("");
+    }
+
+    // Ranking explanation
+    if (q.ranking_explanation) {
+      lines.push(`**Ranking:** ${q.ranking_explanation}`);
+      lines.push("");
+    }
+
+    // Company details
+    if (c.location) lines.push(`- Location: ${c.location}`);
+    lines.push(`- Source: ${c.source} · Confidence: ${Math.round(c.confidence_score * 100)}%`);
+    lines.push(`- Evidence quality: ${e.evidence_quality_grade ?? "?"}`);
+    lines.push("");
+
+    if (e.company_summary) {
+      lines.push(`**Company Context:** ${e.company_summary}`);
+      lines.push("");
+    }
+
+    const confirmedSignals = e.timing_signals.filter(
+      s => !s.toLowerCase().startsWith("no confirmed") && !s.toLowerCase().includes("inferred")
+    );
+    if (confirmedSignals.length > 0) {
+      lines.push(`**Confirmed Signals**`);
+      for (const s of confirmedSignals) lines.push(`- ⚡ ${s}`);
+      lines.push("");
+    }
+
+    if (e.opportunity_risks && e.opportunity_risks.length > 0) {
+      lines.push(`**Opportunity Risks**`);
+      for (const r of e.opportunity_risks) lines.push(`- ⚠ ${r}`);
       lines.push("");
     }
 
@@ -127,22 +279,23 @@ export function exportToMarkdown(report: LeadLensReport): string {
     }
 
     if (o.qc_notes.length > 0) {
-      lines.push(`**QC Notes:** ${o.qc_notes.join(" · ")}`);
+      lines.push(`**QC Notes:** ${o.qc_notes.slice(0, 2).join(" · ")}`);
       lines.push("");
     }
 
-    if (q.fit_score >= 4) {
+    if (q.fit_score >= 4 && !o.email_body.toLowerCase().startsWith("do not send")) {
       lines.push(`**Outreach Sequence**`);
       lines.push(`> *Trigger:* ${o.personalization_trigger}`);
       lines.push("");
-      lines.push(`**Outreach Draft** — *Subject: ${o.subject}*`);
+      lines.push(`**Draft** — *Subject: ${o.subject}*`);
       lines.push(o.email_body);
       lines.push("");
-      lines.push(`**LinkedIn Message**`);
-      lines.push(o.linkedin_dm);
-      lines.push("");
-      lines.push(`**Follow-up 1 (Day 3–4):** ${o.followup_1}`);
-      lines.push(`**Follow-up 2 (Day 7–8):** ${o.followup_2}`);
+      if (o.linkedin_dm && !o.linkedin_dm.toLowerCase().startsWith("do not")) {
+        lines.push(`**LinkedIn:** ${o.linkedin_dm}`);
+        lines.push("");
+      }
+      if (o.followup_1) lines.push(`**Follow-up 1:** ${o.followup_1}`);
+      if (o.followup_2) lines.push(`**Follow-up 2:** ${o.followup_2}`);
       lines.push("");
     }
 
@@ -150,6 +303,6 @@ export function exportToMarkdown(report: LeadLensReport): string {
     lines.push("");
   }
 
-  lines.push(`*Generated by LeadLens AI — Opportunity Snapshot*`);
+  lines.push(`*Generated by LeadLens AI — Opportunity Intelligence Platform*`);
   return lines.join("\n");
 }

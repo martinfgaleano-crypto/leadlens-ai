@@ -1,4 +1,7 @@
-import type { LeadCandidate, EnrichedLead, LeadSearchCriteria, EvidenceClaim } from "@/types";
+import type {
+  LeadCandidate, EnrichedLead, LeadSearchCriteria, EvidenceClaim,
+  BuyingWindow, EvidenceQualityGrade, RecommendedActionType,
+} from "@/types";
 
 const IS_DEMO = process.env.DEMO_MODE === "true";
 
@@ -48,12 +51,20 @@ function buildDemoEnrichment(
   // Risks / weaknesses
   const risks = buildRisks(candidate, hasStrongSignal);
 
+  const timingSignals = buildTimingSignals(candidate, keySignal, hasStrongSignal);
+  const { window: buying_window, reason: buying_window_reason } = classifyBuyingWindow(timingSignals, conf);
+  const evidence_quality_grade = classifyEvidenceQuality(hasStrongSignal, conf, candidate.raw_context ? 1 : 0);
+  const opportunity_risks = buildOpportunityRisks(company, industry, hasStrongSignal, conf, criteria);
+  const { action: recommended_action, reason: recommended_action_reason } = deriveResearchRecommendedAction(
+    hasStrongSignal, conf, industry, criteria
+  );
+
   return {
     candidate,
     company_summary: buildCompanySummary(company, industry, size, candidate.location, candidate.raw_context),
     role_relevance: buildRoleRelevance(company, industry, size, criteria.offer_summary),
     inferred_pain: painHypothesis,
-    timing_signals: buildTimingSignals(candidate, keySignal, hasStrongSignal),
+    timing_signals: timingSignals,
     evidence: buildEvidence(candidate, hasStrongSignal),
     missing_data: buildMissingData(candidate, hasStrongSignal),
     research_confidence: conf * 0.8,
@@ -62,6 +73,16 @@ function buildDemoEnrichment(
     risks_weaknesses: risks,
     evidence_discipline: evidenceDiscipline,
     segment_fit_note: buildSegmentFitNote(company, industry, criteria),
+    // Account Intelligence layer
+    account_thesis: buildAccountThesis(company, industry, keySignal, criteria.offer_summary, hasStrongSignal, conf),
+    signal_interpretation: interpretSignalMeaning(timingSignals, company, industry),
+    buying_window,
+    buying_window_reason,
+    evidence_quality_grade,
+    opportunity_risks,
+    recommended_action,
+    recommended_action_reason,
+    next_best_question: buildNextBestQuestion(company, industry, hasStrongSignal, painHypothesis),
   };
 }
 
@@ -197,6 +218,179 @@ function buildSegmentFitNote(company: string, industry: string, criteria: LeadSe
   return `${company}'s industry (${industry}) is adjacent to the target segments. Validate whether this account type has historically converted for similar offers.`;
 }
 
+// ─── Account Intelligence helpers ────────────────────────────────────────────
+
+function buildAccountThesis(
+  company: string,
+  industry: string,
+  keySignal: string | null,
+  offerSummary: string,
+  hasSignal: boolean,
+  conf: number
+): string {
+  if (hasSignal && keySignal) {
+    const signal = keySignal.slice(0, 80).replace(/\.$/, "").toLowerCase();
+    return `${company} surfaced based on a confirmed public signal — ${signal} — which typically precedes an active vendor evaluation window. The ${industry} profile aligns with accounts that evaluate: ${offerSummary.slice(0, 60)}.`;
+  }
+  if (conf >= 0.65) {
+    return `${company} is a ${industry} account matching the ICP profile based on company stage and segment characteristics. No confirmed buying signal yet, but the account fits the pattern of companies that have historically evaluated this type of offer.`;
+  }
+  return `${company} matches the ${industry} segment criteria but lacks confirmed timing signals. Commercial relevance is inferred from the company profile — validate before investing outreach resources.`;
+}
+
+function interpretSignalMeaning(signals: string[], company: string, industry: string): string {
+  const confirmed = signals.filter(
+    s => !s.toLowerCase().startsWith("no confirmed") && !s.toLowerCase().includes("inferred")
+  );
+
+  if (confirmed.length === 0) {
+    return `No confirmed signals for ${company} — opportunity is hypothesis-led from ${industry} segment profile. Lower expected response rate without a timing anchor.`;
+  }
+
+  const text = confirmed.join(" ").toLowerCase();
+
+  if (/hir|recruit/.test(text) && /expand|new|grow|open|facilit|warehouse/.test(text)) {
+    return `${company} is simultaneously hiring and expanding — a combination that typically signals an active operational scaling phase where companies identify and evaluate vendors to fill capability gaps. Higher urgency window.`;
+  }
+  if (/raised|funded|series|seed|investment|capital/.test(text)) {
+    return `Post-funding phase at ${company} typically triggers a 3–12 month vendor evaluation cycle. Companies in this phase are actively buying capabilities. Contact within 60 days of the announcement for best timing.`;
+  }
+  if (/warehouse|facilit|distribut.?center|capacity|storage/.test(text)) {
+    return `Physical infrastructure expansion at ${company} suggests operational scaling that typically exposes account management and prioritization gaps. The 30–90 day post-announcement window is the optimal outreach timing.`;
+  }
+  if (/trade.?show|expo|fair|conference|exhibit|fancy food/.test(text)) {
+    return `${company}'s trade show or industry event participation signals active market engagement — companies attend these events when in buying or partner-discovery mode. Window typically lasts 30–60 days post-event.`;
+  }
+  if (/launch|new product|announced|platform|new service/.test(text)) {
+    return `${company}'s recent announcement suggests active go-to-market investment. Post-launch phases create demand for adjacent vendor capabilities that support distribution, sales, or operations.`;
+  }
+  if (/hir|recruit|joined|headcount/.test(text)) {
+    return `${company}'s hiring activity signals commercial growth investment — new hires often drive vendor evaluation within 60 days as they build or reshape their operational stack.`;
+  }
+
+  return `${company} shows active public signals — ${confirmed[0]?.slice(0, 80) ?? ""}. This type of observable event typically correlates with a 30–90 day evaluation window.`;
+}
+
+function classifyBuyingWindow(
+  signals: string[],
+  conf: number
+): { window: BuyingWindow; reason: string } {
+  const confirmed = signals.filter(
+    s => !s.toLowerCase().startsWith("no confirmed") && !s.toLowerCase().includes("inferred")
+  );
+
+  if (confirmed.length === 0) {
+    return { window: "unclear", reason: "No confirmed buying signal — timing is hypothetical based on segment profile" };
+  }
+
+  const text = confirmed.join(" ").toLowerCase();
+
+  if (/just|this week|this month|recently raised|just hired|just launched/.test(text)) {
+    return { window: "immediate", reason: "Recent high-signal event suggests active evaluation window within 30 days" };
+  }
+  if (/raised|funded|hired|launch|expand|new market|announced/.test(text) && conf >= 0.55) {
+    return { window: "near_term", reason: "Active expansion or growth signals suggest 30–90 day evaluation window" };
+  }
+  if (confirmed.length > 0) {
+    return { window: "monitor", reason: "Signal exists but timing is indirect — monitor for a more specific trigger before full outreach" };
+  }
+
+  return { window: "unclear", reason: "Signals are inferred rather than confirmed from public record" };
+}
+
+function classifyEvidenceQuality(
+  hasSignal: boolean,
+  conf: number,
+  contextItems: number
+): EvidenceQualityGrade {
+  if (hasSignal && conf >= 0.8) return "strong_verified";
+  if (hasSignal && conf >= 0.5) return "moderate_public";
+  if (!hasSignal && conf >= 0.6 && contextItems > 0) return "inferred";
+  if (conf >= 0.3) return "weak";
+  return "missing";
+}
+
+function buildOpportunityRisks(
+  company: string,
+  industry: string,
+  hasSignal: boolean,
+  conf: number,
+  criteria: LeadSearchCriteria
+): string[] {
+  const risks: string[] = [];
+
+  if (!hasSignal) {
+    risks.push("No confirmed timing signal — outreach is hypothesis-led; expected response rate is lower than signal-led campaigns");
+  }
+  if (conf < 0.5) {
+    risks.push(`Low evidence confidence (${Math.round(conf * 100)}%) — key assumptions about this company's priorities may be wrong; manual research recommended first`);
+  }
+
+  const targetInds = criteria.target_industries.map(i => i.toLowerCase());
+  const isDirectMatch = targetInds.some(t => industry.toLowerCase().includes(t) || t.includes(industry.toLowerCase().split(" ")[0]));
+  if (!isDirectMatch) {
+    risks.push(`${industry} is adjacent to the target segment, not a direct match — validate ICP alignment before investing outreach resources`);
+  }
+
+  if (criteria.excluded_industries?.some(excl => industry.toLowerCase().includes(excl.toLowerCase()))) {
+    risks.push(`${industry} may overlap with an excluded industry category — verify this account isn't in a disqualified segment`);
+  }
+
+  return risks;
+}
+
+function deriveResearchRecommendedAction(
+  hasSignal: boolean,
+  conf: number,
+  industry: string,
+  criteria: LeadSearchCriteria
+): { action: RecommendedActionType; reason: string } {
+  // These are preliminary research-stage recommendations — ranking layer finalizes
+  if (conf < 0.35) {
+    return { action: "enrich_manually", reason: "Evidence quality is too low for outreach — manual research required to validate basic company context" };
+  }
+  if (!hasSignal && conf < 0.5) {
+    return { action: "monitor_for_new_signal", reason: "Weak evidence and no confirmed trigger — add to watchlist and revisit when a public signal appears" };
+  }
+  if (hasSignal) {
+    return { action: "validate_source_first", reason: "Confirmed signal exists — validate that the trigger is recent and the pain hypothesis holds before sending outreach" };
+  }
+  return { action: "monitor_for_new_signal", reason: "No confirmed buying signal — monitor this account for 30–60 days before committing outreach resources" };
+}
+
+function buildNextBestQuestion(
+  company: string,
+  industry: string,
+  hasSignal: boolean,
+  painHypothesis: string
+): string {
+  if (!hasSignal) {
+    return `Is ${company} actively evaluating vendors in this category, or is the opportunity purely based on segment profile fit?`;
+  }
+
+  const pain = painHypothesis.toLowerCase();
+
+  if (/expansion|new market|grow|open/.test(pain)) {
+    return `Is ${company}'s expansion creating operational complexity that isn't solved internally yet, or do they already have vendor relationships in place?`;
+  }
+  if (/hiring|headcount|team|recruit/.test(pain)) {
+    return `Are the new hires at ${company} expected to build their own process, or are they inheriting an evaluation of external solutions?`;
+  }
+  if (/distribut|import|export|supplier|sourcing/.test(pain)) {
+    return `Is ${company} actively sourcing new suppliers or managing existing portfolio capacity — are they in buying mode or consolidating?`;
+  }
+  if (/billing|revenue.?cycle|denial|claim/.test(pain)) {
+    return `Is ${company}'s billing workflow centralized across locations or managed independently per site — which affects where the decision gets made?`;
+  }
+  if (/account|priorit|outbound|pipeline|lead/.test(pain)) {
+    return `Does ${company} have a formal process for identifying which accounts to contact first, or are reps currently self-selecting based on intuition?`;
+  }
+
+  return `What specific business outcome is ${company} trying to achieve in the next 60–90 days that would make this offer timely for them?`;
+}
+
+// ─── Signal extractor ─────────────────────────────────────────────────────────
+
 // Extracts the most actionable timing signal from raw_context.
 function extractKeySignal(rawContext: string): string {
   const sentences = rawContext
@@ -268,7 +462,16 @@ Return JSON:
   "pain_hypothesis": "A specific, falsifiable hypothesis about what challenge this company faces that this offer addresses",
   "risks_weaknesses": ["Real risks: thin evidence, wrong industry segment, overextended team, etc."],
   "evidence_discipline": [{ "claim": "string", "type": "verified_public_signal|inferred_from_context|weak_inference|missing_evidence" }],
-  "segment_fit_note": "1 sentence on whether this company's industry/stage genuinely fits the target segment or is adjacent"
+  "segment_fit_note": "1 sentence on whether this company's industry/stage genuinely fits the target segment or is adjacent",
+  "account_thesis": "1-2 sentences: WHY this account may be commercially relevant NOW — the core commercial thesis. Be honest if it's inferred.",
+  "signal_interpretation": "1-2 sentences: What the confirmed signals MEAN commercially — not just what they are. If no signal, explain the hypothesis basis.",
+  "buying_window": "immediate|near_term|monitor|unclear",
+  "buying_window_reason": "1 sentence: why this buying window classification",
+  "evidence_quality_grade": "strong_verified|moderate_public|inferred|weak|missing",
+  "opportunity_risks": ["2-4 specific risks in pursuing this account — thin evidence, wrong segment, low urgency, unclear buyer, possible mismatch"],
+  "recommended_action": "send_outreach_now|validate_source_first|monitor_for_new_signal|enrich_manually|exclude|add_to_watchlist",
+  "recommended_action_reason": "1 sentence: why this action is recommended at this research stage",
+  "next_best_question": "The single most important question the user should validate before contacting or during the first conversation"
 }`;
 
   const result = await callClaudeJSON<Omit<EnrichedLead, "candidate">>(SYSTEM, userMsg, 2500);

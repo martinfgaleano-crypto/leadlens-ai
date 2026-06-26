@@ -8,9 +8,61 @@ export type EmailStatus = "verified" | "unknown" | "not_found" | "invalid";
 export type LeadSource = "mock" | "apollo" | "tavily" | "hunter" | "people_data_labs" | "manual";
 export type OutputLanguage = "en" | "es" | "pt" | "ja";
 export type MarketRegion = "north_america" | "latin_america" | "europe" | "asia" | "global";
-export type FeedbackSignal = "useful" | "not_useful" | "irrelevant" | "contacted" | "meeting_booked" | "wrong_fit" | "generic";
 export type EvidenceDisciplineType = "verified_public_signal" | "inferred_from_context" | "weak_inference" | "missing_evidence";
 export type RiskLevel = "low" | "medium" | "high";
+
+// ─── New intelligence types ───────────────────────────────────────────────────
+
+/** How imminent the buying window appears based on available signals */
+export type BuyingWindow = "immediate" | "near_term" | "monitor" | "unclear";
+
+/** Granular evidence quality grade — more specific than RiskLevel */
+export type EvidenceQualityGrade = "strong_verified" | "moderate_public" | "inferred" | "weak" | "missing";
+
+/** What the system recommends doing with this account */
+export type RecommendedActionType =
+  | "send_outreach_now"
+  | "validate_source_first"
+  | "monitor_for_new_signal"
+  | "enrich_manually"
+  | "exclude"
+  | "add_to_watchlist";
+
+// ─── Feedback ─────────────────────────────────────────────────────────────────
+
+/**
+ * User feedback signals on processed accounts.
+ * Hooks for future Vault + adaptive scoring.
+ * UI not built yet — fields are left undefined until the feedback loop is wired.
+ */
+export type FeedbackSignal =
+  | "useful"
+  | "not_useful"
+  | "irrelevant"
+  | "contacted"
+  | "meeting_booked"
+  | "wrong_fit"
+  | "generic"
+  | "replied"
+  | "add_to_vault"
+  | "exclude_similar";
+
+/**
+ * How a feedback signal should affect the learning system.
+ * Not yet applied — designed for the future LeadLens Vault.
+ *
+ * When user marks "meeting_booked":
+ *   direction = "strengthen", save_as_reusable = true
+ * When user marks "wrong_fit":
+ *   direction = "weaken", affected_segment = the mismatch segment
+ */
+export interface FeedbackEffect {
+  signal: FeedbackSignal;
+  affects_pattern: string;          // e.g. "warehouse_expansion + ops_hiring"
+  direction: "strengthen" | "weaken";
+  affected_segment?: string;        // Which segment this feedback applies to
+  save_as_reusable?: boolean;       // If true, save the outreach angle to Vault
+}
 
 // ─── Plan config ──────────────────────────────────────────────────────────────
 
@@ -60,13 +112,13 @@ export interface ICP {
   disqualifiers: string[];
   ideal_signals: string[];
   // Enhanced ICP intelligence (optional — populated by Claude path)
-  product_detected?: string;          // What the seller's product actually does
-  problem_solved?: string;            // The specific problem it solves
-  buyer_profile?: string;             // Likely buyer role/team at target company
-  icp_clarity_score?: number;         // 0–100: how specific/actionable this ICP is
-  icp_risks?: string[];               // Risks in the ICP definition
-  exclusions_explicit?: string[];     // Hard exclusions beyond standard disqualifiers
-  top_priority_signals?: string[];    // Signals that most strongly predict opportunity
+  product_detected?: string;
+  problem_solved?: string;
+  buyer_profile?: string;
+  icp_clarity_score?: number;         // 0–100
+  icp_risks?: string[];
+  exclusions_explicit?: string[];
+  top_priority_signals?: string[];
 }
 
 // ─── Lead Search Criteria (input to Lead Finder) ─────────────────────────────
@@ -89,7 +141,6 @@ export interface LeadSearchCriteria {
   target_market_region?: MarketRegion;
   outreach_language?: string;
   localization_notes?: string;
-  // Sender context — who is sending this outreach (the LeadLens customer)
   sender_company_name?: string;
   sender_company_description?: string;
 }
@@ -115,7 +166,7 @@ export interface LeadCandidate {
   confidence_score: number; // 0–1
 }
 
-// ─── Evidence discipline (how well-supported a claim is) ─────────────────────
+// ─── Evidence discipline ──────────────────────────────────────────────────────
 
 export interface EvidenceClaim {
   claim: string;
@@ -133,31 +184,42 @@ export interface EnrichedLead {
   evidence: string[];
   missing_data: string[];
   research_confidence: number; // 0–1
-  // Enhanced intelligence fields (optional — populated when evidence allows)
-  why_now?: string;             // Why this account is relevant *at this moment*
-  pain_hypothesis?: string;    // Specific, falsifiable pain hypothesis — not generic
-  risks_weaknesses?: string[]; // Real risks: weak evidence, wrong segment, etc.
-  evidence_discipline?: EvidenceClaim[]; // Classification of key claims
-  segment_fit_note?: string;   // Why this company fits/doesn't fit the ICP segment
+  // Enhanced intelligence fields
+  why_now?: string;
+  pain_hypothesis?: string;
+  risks_weaknesses?: string[];
+  evidence_discipline?: EvidenceClaim[];
+  segment_fit_note?: string;
+  // ── Account Intelligence layer ──────────────────────────────────────────────
+  // Populated by Research Agent — answers "why does this account matter, and what do we do now?"
+  account_thesis?: string;           // "Why this account may be commercially relevant now"
+  signal_interpretation?: string;    // What the signals MEAN, not just what they are
+  buying_window?: BuyingWindow;      // Timing classification: immediate/near_term/monitor/unclear
+  buying_window_reason?: string;     // Why this window classification
+  evidence_quality_grade?: EvidenceQualityGrade; // Granular grade: strong_verified → missing
+  opportunity_risks?: string[];      // Specific risks in pursuing this account
+  recommended_action?: RecommendedActionType;    // Preliminary action recommendation
+  recommended_action_reason?: string;
+  next_best_question?: string;       // What to validate before contacting
 }
 
 // ─── Score dimensions (0–100 per axis) ───────────────────────────────────────
 
 export interface ScoreDimensions {
-  icp_fit: number;              // How well company/segment matches ICP (0–100)
-  signal_strength: number;      // Strength of detected buying signals (0–100)
-  timing: number;               // Timing relevance — confirmed signals = high (0–100)
-  evidence_quality: number;     // Confidence in the evidence base (0–100)
-  strategic_value: number;      // Long-term commercial value of this account type (0–100)
-  confidence: number;           // Aggregate confidence in the opportunity score (0–100)
-  disqualification_risk: number; // Risk this account should be excluded (0–100, higher = riskier)
+  icp_fit: number;
+  signal_strength: number;
+  timing: number;
+  evidence_quality: number;
+  strategic_value: number;
+  confidence: number;
+  disqualification_risk: number;
 }
 
 // ─── Qualified Lead (from Qualification Agent) ────────────────────────────────
 
 export interface QualifiedLead {
   enrichment: EnrichedLead;
-  fit_score: number; // 0–10 (sum of subscores, backward-compat)
+  fit_score: number; // 0–10
   category: LeadCategory;
   fit_reasons: string[];
   disqualification_reasons: string[];
@@ -170,19 +232,25 @@ export interface QualifiedLead {
     reachability: number;        // 0–1
     strategic_relevance: number; // 0–1
   };
-  // Enhanced scoring (optional)
-  score_dimensions?: ScoreDimensions;   // Multi-axis 0–100 scoring
-  score_explanation?: string;           // Why the score is what it is (human-readable)
+  // Enhanced scoring
+  score_dimensions?: ScoreDimensions;
+  score_explanation?: string;
+  // ── Ranking intelligence (populated after all leads scored) ─────────────────
+  signal_interpretation?: string;    // What the score pattern means commercially
+  opportunity_tier_reason?: string;  // Why HOT/WARM/COLD/DISCARD at this score
+  rank?: number;                     // Position in ranked list (1 = best in batch)
+  ranking_explanation?: string;      // "A ranks above B because..."
+  comparative_notes?: string;        // Observations vs adjacent accounts
 }
 
 // ─── Personalization Result (from Personalization Agent) ─────────────────────
 
 export interface PersonalizationResult {
-  personalization_trigger: string;  // Core insight used to inform outreach angle
-  recommended_angle: string;        // Specific sales angle based on signals
-  account_reasoning: string;        // Why this angle fits this account right now
-  what_to_avoid: string;            // What NOT to say/assume in outreach
-  strongest_hook: string;           // Single strongest first-touch hook
+  personalization_trigger: string;
+  recommended_angle: string;
+  account_reasoning: string;
+  what_to_avoid: string;
+  strongest_hook: string;
   personalization_confidence: number; // 0–1
 }
 
@@ -196,37 +264,56 @@ export interface OutreachSequence {
   linkedin_dm: string;
   followup_1: string;
   followup_2: string;
-  call_opener?: string;               // Cold call opening line
-  cta_recommendation?: string;       // Recommended CTA and why
-  outreach_assumptions?: string;     // What assumptions this outreach makes
-  what_to_avoid_in_outreach?: string; // What to avoid in this specific outreach
+  call_opener?: string;
+  cta_recommendation?: string;
+  outreach_assumptions?: string;
+  what_to_avoid_in_outreach?: string;
   tone: string;
   qc_status: QCStatus;
   qc_notes: string[];
-  // QC analysis fields (set by QC Agent)
   genericness_risk?: RiskLevel;
   hallucination_risk?: RiskLevel;
   evidence_weakness?: RiskLevel;
   buyer_seller_confusion_risk?: RiskLevel;
   improvement_notes?: string[];
-  was_repaired?: boolean;  // true when post-QC deterministic repair was applied
+  was_repaired?: boolean;
+}
+
+// ─── Opportunity Ranking (computed after all leads scored) ────────────────────
+// Explains WHY accounts rank where they do relative to each other.
+
+export interface OpportunityRanking {
+  lead_id: string;
+  company: string;
+  rank: number;
+  fit_score: number;
+  category: LeadCategory;
+  top_priority_reason: string;     // Main reason this account is at this rank
+  ranking_explanation: string;     // Comparative: "A ranks above B because..."
+  opportunity_tier_reason: string; // Why HOT/WARM/COLD/DISCARD
+  comparative_notes?: string;      // Contextual observations vs adjacent accounts
+  recommended_action: RecommendedActionType;
 }
 
 // ─── Learning / Feedback Metadata ────────────────────────────────────────────
-// Populated by the pipeline after all agents complete.
-// User feedback fields are hooks for future UI + DB integration.
 
 export interface LearningMetadata {
-  agent_confidence: number;                  // 0–1 aggregate across research + qualification
-  qc_flags: string[];                        // All QC notes for this account
+  agent_confidence: number;                       // 0–1 aggregate
+  qc_flags: string[];
   genericness_risk: RiskLevel;
   hallucination_risk: RiskLevel;
   evidence_discipline_summary: "verified" | "mostly_inferred" | "weak";
-  signal_patterns: string[];                 // Confirmed buying signals extracted
-  segment_pattern?: string;                  // Industry/segment this account belongs to
-  improvement_notes: string[];              // What could make this entry better
-  reusable_pattern?: string;               // A pattern worth storing for future runs
-  // Future feedback hooks (not yet collected in UI — leave undefined until connected):
+  signal_patterns: string[];                      // Confirmed buying signals
+  segment_pattern?: string;
+  improvement_notes: string[];
+  reusable_pattern?: string;                      // A pattern worth storing
+  // ── Learning Intelligence MVP 2 ─────────────────────────────────────────────
+  offer_market_fit_pattern?: string;              // e.g. "warehouse expansion → logistics ICP match"
+  reason_for_priority?: string;                   // Why this account was priority tier
+  reason_for_demotion?: string;                   // Why NOT priority (if applicable)
+  predicted_learning_value?: "high" | "medium" | "low"; // How much this entry teaches
+  feedback_hooks?: FeedbackSignal[];              // Which feedback signals apply to this account
+  // Future feedback fields (not collected yet — hooks for Vault integration):
   user_feedback?: FeedbackSignal;
   feedback_notes?: string;
   rejected_reason?: string;
@@ -259,12 +346,19 @@ export interface LeadLensReport {
   recommendations: string[];
   processed_leads: ProcessedLead[];
   created_at: string;
-  // Enhanced report intelligence (optional)
-  segment_insights?: string[];         // Which segments performed best and why
-  top_signals_observed?: string[];     // Buying signals that appeared most across accounts
-  first_actions?: string[];           // Specific "do this first" recommendations
-  strategic_warnings?: string[];      // Risks in the overall batch (thin evidence, wrong ICP, etc.)
-  evidence_quality_summary?: string;  // How trustworthy is the evidence in this batch
+  // Enhanced report intelligence
+  segment_insights?: string[];
+  top_signals_observed?: string[];
+  first_actions?: string[];
+  strategic_warnings?: string[];
+  evidence_quality_summary?: string;
+  // ── Ranking Intelligence ────────────────────────────────────────────────────
+  ranked_opportunities?: OpportunityRanking[];    // All accounts ranked with explanations
+  // ── Report-level QC ────────────────────────────────────────────────────────
+  report_quality_score?: number;                  // 0–100 self-assessed quality
+  report_quality_notes?: string[];                // Issues found at batch level
+  report_risks?: string[];                        // Risks in the overall report
+  recommended_fix_before_delivery?: string;       // If quality issues detected, what to fix
 }
 
 // ─── Pipeline I/O ─────────────────────────────────────────────────────────────
