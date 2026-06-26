@@ -87,15 +87,19 @@ async function processOneLead(
   // Agent 7: QC — criteria passed for buyer/seller confusion detection
   const checkedOutreach = await runQCAgent(qualification, outreach, criteria);
 
+  // Post-QC repair — deterministic fix for common known issues (max 1 pass, no extra API call)
+  const { repairOutreachIfNeeded } = await import("./agents/outreach-agent");
+  const repairedOutreach = repairOutreachIfNeeded(checkedOutreach, criteria, qualification);
+
   // Build learning metadata from all agent outputs
-  const learning = buildLearningMetadata(candidate, enrichment, qualification, checkedOutreach, personalization);
+  const learning = buildLearningMetadata(candidate, enrichment, qualification, repairedOutreach, personalization);
 
   return {
     id: candidate.id,
     candidate,
     enrichment,
     qualification,
-    outreach: checkedOutreach,
+    outreach: repairedOutreach,
     learning,
   };
 }

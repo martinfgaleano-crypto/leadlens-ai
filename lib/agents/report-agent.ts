@@ -58,6 +58,34 @@ export async function runReportAgent(
   };
 }
 
+// ─── Curation tiers ───────────────────────────────────────────────────────────
+
+function computeTiers(
+  hot: ProcessedLead[],
+  warm: ProcessedLead[],
+  cold: ProcessedLead[],
+  discard: ProcessedLead[]
+): { priority: ProcessedLead[]; monitor: ProcessedLead[]; excluded: ProcessedLead[] } {
+  // Priority = HOT + top-scoring WARM (≥7.0)
+  const topWarm = warm.filter(l => l.qualification.fit_score >= 7.0);
+  const lowerWarm = warm.filter(l => l.qualification.fit_score < 7.0);
+  const priority = [...hot, ...topWarm];
+
+  // Monitor = lower WARM + COLD accounts that have at least one confirmed signal
+  const coldWithSignal = cold.filter(l =>
+    l.enrichment.timing_signals.some(
+      s => !s.toLowerCase().startsWith("no confirmed") && !s.toLowerCase().includes("inferred")
+    )
+  );
+  const coldWithoutSignal = cold.filter(l => !coldWithSignal.includes(l));
+  const monitor = [...lowerWarm, ...coldWithSignal];
+
+  // Excluded = DISCARD + signal-weak COLD
+  const excluded = [...coldWithoutSignal, ...discard];
+
+  return { priority, monitor, excluded };
+}
+
 // ─── Demo summary ─────────────────────────────────────────────────────────────
 
 function buildDemoSummary(
@@ -70,29 +98,29 @@ function buildDemoSummary(
   plan: PlanType,
   signalCount: number
 ): string {
-  const qualityLine =
-    avgScore >= 7.0
-      ? `Average opportunity score is ${avgScore}/10 — strong batch quality with evidence-backed accounts.`
-      : avgScore >= 5.5
-      ? `Average opportunity score is ${avgScore}/10 — solid foundation with several accounts worth prioritizing.`
-      : `Average opportunity score is ${avgScore}/10 — consider refining your ICP description for tighter segment matching.`;
+  const { priority, monitor, excluded } = computeTiers(hot, warm, cold, discard);
 
-  const signalLine = signalCount > 0
-    ? `${signalCount} of ${leads.length} accounts have confirmed public buying signals — prioritize these for the first outreach wave.`
-    : `No confirmed buying signals detected in this batch — all outreach is hypothesis-led. Consider adding more specific signal criteria to your ICP.`;
-
-  let actionLine: string;
-  if (hot.length > 0) {
-    const topAccounts = hot.slice(0, 3).map(l => l.candidate.company).join(", ");
-    actionLine = `${hot.length} HOT opportunit${hot.length > 1 ? "ies" : "y"} identified. Top accounts: ${topAccounts}.`;
-  } else if (warm.length > 0) {
-    const topAccounts = warm.slice(0, 3).map(l => l.candidate.company).join(", ");
-    actionLine = `Focus on ${warm.length} WARM opportunit${warm.length > 1 ? "ies" : "y"} — review recommended angle for each before outreach. Strongest: ${topAccounts}.`;
-  } else {
-    actionLine = `All accounts need manual review before outreach. Consider refining your ICP or reviewing the signal criteria.`;
+  if (priority.length === 0 && monitor.length === 0) {
+    return `LeadLens analyzed ${leads.length} accounts for your ${plan} plan. No accounts reached the priority or monitor threshold — all ${leads.length} are excluded from the first outreach wave. Average score: ${avgScore}/10. Consider narrowing your ICP description or reviewing target industry criteria.`;
   }
 
-  return `LeadLens analyzed ${leads.length} accounts for your ${plan} plan: ${hot.length} HOT, ${warm.length} WARM, ${cold.length} COLD, ${discard.length} low-priority. ${qualityLine} ${signalLine} ${actionLine}`;
+  const priorityNames = priority.slice(0, 3).map(l => l.candidate.company).join(", ");
+  const exclusionNote = excluded.length > 0
+    ? ` ${excluded.length} account${excluded.length > 1 ? "s are" : " is"} excluded from the first wave (low fit or insufficient evidence).`
+    : "";
+
+  if (priority.length === 0) {
+    const signalNote = signalCount > 0
+      ? `${signalCount} account${signalCount > 1 ? "s have" : " has"} confirmed buying signals but remain in the monitor tier — validate fit before outreach.`
+      : `No confirmed buying signals in this batch — all outreach would be hypothesis-led. Consider narrowing your ICP criteria.`;
+    return `LeadLens identified ${monitor.length} account${monitor.length > 1 ? "s" : ""} worth monitoring, but none cleared the priority threshold for immediate outreach.${exclusionNote} All require manual validation before contact. Average score: ${avgScore}/10. ${signalNote}`;
+  }
+
+  const signalNote = signalCount > 0
+    ? `${signalCount} account${signalCount > 1 ? "s have" : " has"} confirmed buying signals — lead with these in Wave 1.`
+    : `No confirmed buying signals — use hypothesis-framed openers and look for a timing anchor before sending.`;
+
+  return `LeadLens identified ${priority.length} priority account${priority.length > 1 ? "s" : ""} ready for outreach and ${monitor.length} account${monitor.length > 1 ? "s" : ""} to monitor.${exclusionNote} Priority accounts: ${priorityNames}. Average score: ${avgScore}/10. ${signalNote}`;
 }
 
 // ─── Claude summary ───────────────────────────────────────────────────────────
@@ -108,26 +136,39 @@ async function buildClaudeSummary(
 ): Promise<string> {
   const { callClaude } = await import("@/lib/anthropic");
 
-  const SYSTEM = `You are a senior B2B commercial intelligence analyst. Write a concise 3-4 sentence executive summary for an Opportunity Snapshot report.
+  const { priority, monitor, excluded } = computeTiers(hot, warm, cold, []);
+
+  const SYSTEM = `You are a senior B2B commercial intelligence analyst. Write a concise 3-sentence executive summary for an Opportunity Snapshot report.
 Rules:
-- Be specific about what was found — cite actual account names, industries, or signals if available
-- Note evidence quality honestly — distinguish verified signals from inferences
-- Focus on what the user should DO, not just what was found
-- Do NOT use phrases like "impressive results" or "great batch" — be analytical, not promotional
+- Lead with a curated count: "X priority accounts ready for outreach, Y accounts to monitor, Z excluded" — not the total raw count
+- Be specific — cite actual account names and industries for top priority accounts
+- Distinguish confirmed signals from inferences honestly
+- Recommend ONE specific next action
+- Do NOT say "impressive results", "great batch", or any promotional language
 - Do NOT mention individual people, emails, or contact data`;
 
-  const hotAccounts = hot.slice(0, 3).map(l => `${l.candidate.company} (${l.candidate.industry ?? "?"}, score ${l.qualification.fit_score})`).join(", ");
-  const topSignals = hot.concat(warm).flatMap(l =>
-    l.enrichment.timing_signals.filter(s => !s.toLowerCase().includes("no confirmed") && !s.toLowerCase().includes("inferred"))
+  const priorityAccounts = priority.slice(0, 3).map(l =>
+    `${l.candidate.company} (${l.candidate.industry ?? "?"}, ${l.qualification.fit_score}/10)`
+  ).join(", ");
+
+  const topSignals = priority.concat(monitor).flatMap(l =>
+    l.enrichment.timing_signals.filter(s =>
+      !s.toLowerCase().includes("no confirmed") && !s.toLowerCase().includes("inferred")
+    )
   ).slice(0, 3);
 
   const userMsg = `ICP target industries: ${icp.target_industries.join(", ")}
-Total accounts: ${leads.length} | HOT: ${hot.length} | WARM: ${warm.length} | COLD: ${cold.length} | Avg score: ${avgScore}
-Accounts with confirmed public signals: ${signalCount}/${leads.length}
-Top HOT accounts: ${hotAccounts || "none"}
+Total accounts analyzed: ${leads.length}
+CURATED TIERS — use these, not the raw totals:
+  Priority (ready for outreach): ${priority.length} accounts
+  Monitor (needs validation first): ${monitor.length} accounts
+  Excluded (low fit / insufficient evidence): ${excluded.length + (leads.filter(l => l.qualification.fit_score < 4).length)} accounts
+Priority accounts: ${priorityAccounts || "none above threshold"}
+Avg score across full batch: ${avgScore}
+Confirmed public signals: ${signalCount}/${leads.length}
 Top confirmed signals: ${topSignals.join("; ") || "none — all outreach is hypothesis-led"}
 
-Write a 3-4 sentence executive summary focused on: (1) overall batch quality and what it means, (2) top opportunities and why they're the strongest, (3) honest evidence quality assessment, (4) specific recommended next action.`;
+Write a 3-sentence executive summary: (1) curated tier counts + top priority accounts, (2) evidence quality and signal availability, (3) specific next action.`;
 
   return callClaude(SYSTEM, userMsg, 300);
 }
@@ -215,24 +256,34 @@ function buildFirstActions(
   withSignals: ProcessedLead[]
 ): string[] {
   const actions: string[] = [];
+  const { priority, monitor } = computeTiers(hot, warm, cold, []);
 
-  if (withSignals.length > 0) {
-    const top = withSignals.slice(0, 3).map(l => l.candidate.company).join(", ");
-    actions.push(`This week: reach out to the ${withSignals.length} account${withSignals.length > 1 ? "s" : ""} with confirmed buying signals first — they have a likely 30–90 day evaluation window. Start with: ${top}`);
-  } else if (hot.length > 0) {
-    const top = hot.slice(0, 3).map(l => l.candidate.company).join(", ");
-    actions.push(`This week: contact HOT accounts with the recommended angle from each Opportunity Snapshot — even without a signal, these have the strongest ICP fit. Start with: ${top}`);
+  // Wave 1: signal-led priority accounts
+  const signalPriority = withSignals.filter(l => priority.includes(l));
+  if (signalPriority.length > 0) {
+    const top = signalPriority.slice(0, 3).map(l => l.candidate.company).join(", ");
+    actions.push(`Wave 1 — this week: contact the ${signalPriority.length} priority account${signalPriority.length > 1 ? "s" : ""} with confirmed buying signals first. These have a likely 30–90 day evaluation window. Start with: ${top}`);
+  } else if (priority.length > 0) {
+    const top = priority.slice(0, 3).map(l => l.candidate.company).join(", ");
+    actions.push(`Wave 1 — this week: contact ${priority.length} priority account${priority.length > 1 ? "s" : ""} using the recommended angle from each brief. No confirmed signals, so use hypothesis-framed openers. Start with: ${top}`);
   }
 
-  if (warm.length > 0) {
-    actions.push(`Parallel track: send LinkedIn company messages to WARM accounts (lower friction than email when there's no confirmed signal)`);
+  // Wave 2: monitor accounts (lower friction)
+  if (monitor.length > 0) {
+    actions.push(`Wave 2 — parallel track: send LinkedIn company messages to the ${monitor.length} monitor account${monitor.length > 1 ? "s" : ""} (lower friction than email when signal is weak). Review fit before sending.`);
   }
 
-  if (cold.length > 0) {
-    actions.push(`Review COLD accounts before discarding — some may become relevant if ICP criteria shift or if you refine the segment`);
+  // COLD explicitly excluded from outreach
+  const coldNoSignal = cold.filter(l =>
+    !l.enrichment.timing_signals.some(
+      s => !s.toLowerCase().startsWith("no confirmed") && !s.toLowerCase().includes("inferred")
+    )
+  );
+  if (coldNoSignal.length > 0) {
+    actions.push(`Do NOT outreach to ${coldNoSignal.length} COLD account${coldNoSignal.length > 1 ? "s" : ""} without manual research first — they lack confirmed signals and sufficient evidence. Validate pain hypothesis before any contact.`);
   }
 
-  actions.push("Log which accounts respond and why — this feedback should inform the next ICP refinement");
+  actions.push("Log which accounts respond and the reply reason — this is the most valuable input for the next ICP refinement cycle.");
 
   return actions;
 }
@@ -345,24 +396,24 @@ function buildRecommendations(
   cold: ProcessedLead[]
 ): string[] {
   const recs: string[] = [];
+  const { priority, monitor } = computeTiers(hot, warm, cold, []);
 
-  if (hot.length > 0) {
-    recs.push(`Prioritize HOT accounts this week — outreach drafts and recommended angles are ready. Start with the top ${Math.min(hot.length, 5)} by opportunity score.`);
-    if (hot.length > 5) recs.push(`Work through HOT accounts in score order — fresher signals first, since signal relevance decays within 30–60 days`);
-  } else if (warm.length > 0) {
-    recs.push(`Start with WARM accounts — review the recommended angle for each before outreach. Signal-led openers outperform generic templates significantly.`);
-    recs.push(`For WARM accounts without confirmed signals, a LinkedIn company message is lower-friction than cold email`);
+  if (priority.length > 0) {
+    const topCount = Math.min(priority.length, 5);
+    recs.push(`Send outreach to the ${topCount} highest-scoring priority accounts first — outreach drafts and recommended angles are ready. Work in score order; signal relevance decays within 30–60 days.`);
   }
 
-  if (hot.length > 0 && warm.length > 0) {
-    recs.push(`Run WARM accounts in parallel with a softer, educational angle — don't wait for HOT responses`);
+  if (priority.length > 0 && monitor.length > 0) {
+    recs.push(`Run monitor accounts in parallel with a softer angle — LinkedIn company message is lower friction than cold email when signal confidence is low.`);
+  } else if (monitor.length > 0 && priority.length === 0) {
+    recs.push(`No priority accounts in this batch. Use monitor accounts as your starting point — but validate fit manually before sending. LinkedIn first, email only after a signal is confirmed.`);
   }
 
   if (cold.length > 0) {
-    recs.push(`Review COLD accounts manually — some may warrant a lighter two-touch sequence if segment fit is strong despite low evidence`);
+    recs.push(`COLD accounts (${cold.length}) are excluded from Wave 1. Do not send outreach until you've validated the pain hypothesis and confirmed there's a decision-maker to reach. These accounts need research, not a pitch.`);
   }
 
-  recs.push(`Exclude DISCARD accounts from this wave — focus commercial energy on HOT and WARM first`);
+  recs.push(`After the first wave, log responses and signal quality — this feedback directly improves the next ICP run.`);
 
   return recs;
 }

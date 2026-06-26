@@ -209,6 +209,7 @@ export interface OutreachSequence {
   evidence_weakness?: RiskLevel;
   buyer_seller_confusion_risk?: RiskLevel;
   improvement_notes?: string[];
+  was_repaired?: boolean;  // true when post-QC deterministic repair was applied
 }
 
 // ─── Learning / Feedback Metadata ────────────────────────────────────────────
