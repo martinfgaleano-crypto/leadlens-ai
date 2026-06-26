@@ -1,9 +1,10 @@
 // Delivery package generator. Server-side only.
-// Fetches lead_results, generates CSV, uploads to Supabase Storage,
-// inserts a delivery_packages row, and returns a signed URL.
+// Fetches opportunity results, generates Opportunity Snapshot CSV,
+// uploads to Supabase Storage, inserts a delivery_packages row,
+// and returns a signed URL.
 // All errors surface as thrown exceptions — callers must wrap in try/catch.
 
-import { generateLeadsCSV, type LeadResultRow } from "./generate-csv";
+import { generateLeadsCSV, type OpportunityResultRow } from "./generate-csv";
 
 const BUCKET       = "deliveries";
 const SIGNED_URL_TTL = 60 * 60 * 24 * 7; // 7 days
@@ -22,10 +23,12 @@ async function ensureBucket(client: any): Promise<void> {
 }
 
 export interface DeliveryPackageResult {
-  packageId:  string;
-  fileUrl:    string;   // internal storage path
-  signedUrl:  string;   // time-limited download URL
-  leadCount:  number;
+  packageId:        string;
+  fileUrl:          string;   // internal storage path
+  signedUrl:        string;   // time-limited download URL
+  opportunityCount: number;
+  /** @deprecated Use opportunityCount — kept for callers that read leadCount before migrating. */
+  leadCount:        number;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -35,25 +38,27 @@ export async function generateDeliveryPackage(
   searchName: string,
 ): Promise<DeliveryPackageResult> {
 
-  // ── 1. Fetch leads from DB ─────────────────────────────────────────────────
+  // ── 1. Fetch opportunity results from DB ──────────────────────────────────
+  // Intentionally omits personal fields (contact_name, email, linkedin_url,
+  // title, seniority, email_quality, email_type) — Opportunity Snapshot export.
   const { data: leads, error: leadsErr } = await client
     .from("lead_results")
     .select([
-      "company_name", "contact_name", "title", "email", "email_quality",
-      "email_type", "linkedin_url", "website", "country", "seniority",
-      "source", "lead_score", "confidence_score", "opportunity_score",
+      "company_name", "website", "country",
+      "source", "confidence_score", "opportunity_score",
       "buyer_fit", "temperature", "ai_reasoning", "strengths", "weaknesses",
     ].join(", "))
     .eq("search_id", searchId)
-    .order("lead_score", { ascending: false });
+    .order("opportunity_score", { ascending: false });
 
-  if (leadsErr) throw new Error(`fetch leads: ${leadsErr.message}`);
-  if (!leads || leads.length === 0) throw new Error("No leads to package");
+  if (leadsErr) throw new Error(`fetch opportunities: ${leadsErr.message}`);
+  if (!leads || leads.length === 0) throw new Error("No opportunity results to package");
 
   // ── 2. Generate CSV bytes ──────────────────────────────────────────────────
-  const csv       = generateLeadsCSV(leads as LeadResultRow[]);
-  const csvBytes  = new TextEncoder().encode(csv);
-  const leadCount = leads.length;
+  const csv             = generateLeadsCSV(leads as OpportunityResultRow[]);
+  const csvBytes        = new TextEncoder().encode(csv);
+  const opportunityCount = leads.length;
+  const leadCount        = opportunityCount; // back-compat
 
   // ── 3. Ensure storage bucket exists ───────────────────────────────────────
   await ensureBucket(client);
@@ -108,6 +113,7 @@ export async function generateDeliveryPackage(
     packageId: pkg.id as string,
     fileUrl,
     signedUrl,
+    opportunityCount,
     leadCount,
   };
 }

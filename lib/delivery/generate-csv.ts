@@ -1,49 +1,38 @@
-// Pure CSV generation from lead_results rows.
-// Shared by the delivery package generator and the admin export route.
-// Server-side only.
+// Opportunity Snapshot CSV generator. Server-side only.
+// Used by the delivery package generator and the admin export route.
+// Exports company/account-level intelligence — no personal contact data.
 
-export interface LeadResultRow {
+export interface OpportunityResultRow {
   company_name:       string;
-  contact_name:       string | null;
-  title:              string | null;
-  email:              string | null;
-  email_quality:      string | null;
-  email_type:         string | null;
-  linkedin_url:       string | null;
   website:            string | null;
   country:            string | null;
-  seniority:          string | null;
   source:             string | null;
-  lead_score:         number | null;
-  confidence_score:   number | null;
   opportunity_score:  number | null;
-  buyer_fit:          string | null;
-  temperature:        string | null;
-  strengths:          string[] | null;
-  weaknesses:         string[] | null;
-  ai_reasoning:       string | null;
+  confidence_score:   number | null;
+  buyer_fit:          string | null;   // HOT / WARM / COLD / DISCARD
+  temperature:        string | null;   // signal warmth label
+  ai_reasoning:       string | null;  // account-level context paragraph
+  strengths:          string[] | null; // why this account fits
+  weaknesses:         string[] | null; // gaps / risks
 }
 
-const COLUMNS: Array<{ header: string; key: keyof LeadResultRow }> = [
-  { header: "Company",           key: "company_name" },
-  { header: "Contact Name",      key: "contact_name" },
-  { header: "Title",             key: "title" },
-  { header: "Email",             key: "email" },
-  { header: "Email Quality",     key: "email_quality" },
-  { header: "Email Type",        key: "email_type" },
-  { header: "LinkedIn",          key: "linkedin_url" },
-  { header: "Website",           key: "website" },
-  { header: "Country",           key: "country" },
-  { header: "Seniority",         key: "seniority" },
-  { header: "Source",            key: "source" },
-  { header: "Lead Score",        key: "lead_score" },
-  { header: "Confidence Score",  key: "confidence_score" },
-  { header: "Opportunity Score", key: "opportunity_score" },
-  { header: "Buyer Fit",         key: "buyer_fit" },
-  { header: "Temperature",       key: "temperature" },
-  { header: "Strengths",         key: "strengths" },
-  { header: "Weaknesses",        key: "weaknesses" },
-  { header: "AI Reasoning",      key: "ai_reasoning" },
+// Back-compat alias — callers that import LeadResultRow continue to compile.
+/** @deprecated Use OpportunityResultRow for new code. */
+export type LeadResultRow = OpportunityResultRow;
+
+const COLUMNS: Array<{ header: string; key: keyof OpportunityResultRow | "_generated_at" }> = [
+  { header: "Company",            key: "company_name" },
+  { header: "Website",            key: "website" },
+  { header: "Region",             key: "country" },
+  { header: "Opportunity Score",  key: "opportunity_score" },
+  { header: "Confidence Score",   key: "confidence_score" },
+  { header: "Priority",           key: "buyer_fit" },
+  { header: "Signal Status",      key: "temperature" },
+  { header: "Company Context",    key: "ai_reasoning" },
+  { header: "Why This Account",   key: "strengths" },
+  { header: "Risks / Weaknesses", key: "weaknesses" },
+  { header: "Evidence Source",    key: "source" },
+  { header: "Generated At",       key: "_generated_at" },
 ];
 
 function cell(value: unknown): string {
@@ -55,10 +44,18 @@ function cell(value: unknown): string {
   return str;
 }
 
-export function generateLeadsCSV(leads: LeadResultRow[]): string {
+export function generateLeadsCSV(rows: OpportunityResultRow[]): string {
+  const generatedAt = new Date().toISOString();
   const header = COLUMNS.map(c => cell(c.header)).join(",");
-  const rows   = leads
-    .sort((a, b) => (b.lead_score ?? 0) - (a.lead_score ?? 0))
-    .map(row => COLUMNS.map(c => cell(row[c.key])).join(","));
-  return [header, ...rows].join("\n");
+
+  const dataRows = rows
+    .sort((a, b) => (b.opportunity_score ?? 0) - (a.opportunity_score ?? 0))
+    .map(row =>
+      COLUMNS.map(c => {
+        if (c.key === "_generated_at") return cell(generatedAt);
+        return cell(row[c.key as keyof OpportunityResultRow]);
+      }).join(",")
+    );
+
+  return [header, ...dataRows].join("\n");
 }

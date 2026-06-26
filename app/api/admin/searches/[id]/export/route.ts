@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/require-admin";
-import { generateLeadsCSV, type LeadResultRow } from "@/lib/delivery/generate-csv";
+import { generateLeadsCSV, type OpportunityResultRow } from "@/lib/delivery/generate-csv";
 
 async function db() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) return null;
@@ -9,10 +9,12 @@ async function db() {
 }
 
 // ─── GET /api/admin/searches/[id]/export ─────────────────────────────────────
-// Returns a CSV of all lead_results using the shared delivery CSV generator.
-// Fields: company, contact, title, email, quality, linkedin, website, country,
-//         seniority, source, lead_score, confidence, opportunity, buyer_fit,
-//         temperature, strengths, weaknesses, ai_reasoning.
+// Returns an Opportunity Snapshot CSV using the shared delivery CSV generator.
+// Fields: company, website, region, opportunity_score, confidence_score,
+//         priority (buyer_fit), signal_status (temperature), company_context
+//         (ai_reasoning), why_this_account (strengths), risks (weaknesses),
+//         evidence_source (source), generated_at.
+// Personal contact fields are intentionally excluded.
 
 export async function GET(
   req: NextRequest,
@@ -37,20 +39,19 @@ export async function GET(
   const { data: leads, error: leadsErr } = await client
     .from("lead_results")
     .select([
-      "company_name", "contact_name", "title", "email", "email_quality",
-      "email_type", "linkedin_url", "website", "country", "seniority",
-      "source", "lead_score", "confidence_score", "opportunity_score",
+      "company_name", "website", "country",
+      "source", "confidence_score", "opportunity_score",
       "buyer_fit", "temperature", "ai_reasoning", "strengths", "weaknesses",
     ].join(", "))
     .eq("search_id", params.id)
-    .order("lead_score", { ascending: false });
+    .order("opportunity_score", { ascending: false });
 
   if (leadsErr) return NextResponse.json({ error: leadsErr.message }, { status: 500 });
   if (!leads || leads.length === 0) {
-    return NextResponse.json({ error: "No leads found for this search." }, { status: 404 });
+    return NextResponse.json({ error: "No opportunity results found for this search." }, { status: 404 });
   }
 
-  const csv      = generateLeadsCSV(leads as unknown as LeadResultRow[]);
+  const csv      = generateLeadsCSV(leads as unknown as OpportunityResultRow[]);
   const safeName = (search.name as string)
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
@@ -60,7 +61,7 @@ export async function GET(
   return new NextResponse(csv, {
     headers: {
       "Content-Type":        "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="leadlens-${safeName}.csv"`,
+      "Content-Disposition": `attachment; filename="opportunity-snapshot-${safeName}.csv"`,
     },
   });
 }
