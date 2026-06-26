@@ -127,11 +127,11 @@ const COPY = {
     sFollowup1: "Follow-up 1 (day 3–4)",
     sFollowup2: "Follow-up 2 (day 7–8)",
     sQcNotes: "QC notes",
-    sScoreBreakdown: "Score breakdown",
+    sScoreBreakdown: "Score detail",
     sWhyNow: "Why now",
-    sEvidenceDiscipline: "Evidence discipline",
-    sIntelligenceNotes: "Intelligence quality",
-    sLearningMeta: "Signal patterns",
+    sEvidenceDiscipline: "Evidence quality",
+    sIntelligenceNotes: "Quality checks",
+    sLearningMeta: "Learning signals",
     footerCopy: "© 2026 LeadLens AI — B2B Commercial Intelligence. We analyze public signals, not personal data.",
     footerLinks: ["Privacy", "Terms", "Refund Policy", "Contact"],
     footerContact: "Questions? Email us: martinfgaleano@gmail.com",
@@ -360,11 +360,11 @@ const COPY = {
     sFollowup1: "Seguimiento 1 (día 3–4)",
     sFollowup2: "Seguimiento 2 (día 7–8)",
     sQcNotes: "Notas de revisión",
-    sScoreBreakdown: "Desglose de puntuación",
+    sScoreBreakdown: "Detalle del score",
     sWhyNow: "Por qué ahora",
-    sEvidenceDiscipline: "Disciplina de evidencia",
-    sIntelligenceNotes: "Calidad de la inteligencia",
-    sLearningMeta: "Patrones de señal",
+    sEvidenceDiscipline: "Calidad de evidencia",
+    sIntelligenceNotes: "Control de calidad",
+    sLearningMeta: "Señales de aprendizaje",
     footerCopy: "© 2026 LeadLens AI — Inteligencia Comercial B2B. Analizamos señales públicas, no datos personales.",
     footerLinks: ["Privacidad", "Términos", "Política de devolución", "Contacto"],
     footerContact: "¿Preguntas? Escríbenos: martinfgaleano@gmail.com",
@@ -593,11 +593,11 @@ const COPY = {
     sFollowup1: "Follow-up 1 (dia 3–4)",
     sFollowup2: "Follow-up 2 (dia 7–8)",
     sQcNotes: "Notas de revisão",
-    sScoreBreakdown: "Detalhamento da pontuação",
+    sScoreBreakdown: "Detalhe do score",
     sWhyNow: "Por que agora",
-    sEvidenceDiscipline: "Disciplina de evidência",
-    sIntelligenceNotes: "Qualidade da inteligência",
-    sLearningMeta: "Padrões de sinal",
+    sEvidenceDiscipline: "Qualidade da evidência",
+    sIntelligenceNotes: "Controle de qualidade",
+    sLearningMeta: "Sinais de aprendizado",
     footerCopy: "© 2026 LeadLens AI — Inteligência Comercial B2B. Analisamos sinais públicos, não dados pessoais.",
     footerLinks: ["Privacidade", "Termos", "Política de Reembolso", "Contato"],
     footerContact: "Dúvidas? Fale conosco: martinfgaleano@gmail.com",
@@ -826,11 +826,11 @@ const COPY = {
     sFollowup1: "フォローアップ1（3〜4日目）",
     sFollowup2: "フォローアップ2（7〜8日目）",
     sQcNotes: "レビューメモ",
-    sScoreBreakdown: "スコア内訳",
+    sScoreBreakdown: "スコア詳細",
     sWhyNow: "なぜ今か",
-    sEvidenceDiscipline: "エビデンス規律",
-    sIntelligenceNotes: "インテリジェンス品質",
-    sLearningMeta: "シグナルパターン",
+    sEvidenceDiscipline: "エビデンス品質",
+    sIntelligenceNotes: "品質チェック",
+    sLearningMeta: "学習シグナル",
     footerCopy: "© 2026 LeadLens AI — B2Bコマーシャルインテリジェンス。公開シグナルを分析します。個人データは使用しません。",
     footerLinks: ["プライバシー", "利用規約", "返金ポリシー", "お問い合わせ"],
     footerContact: "ご質問は: martinfgaleano@gmail.com",
@@ -2262,31 +2262,32 @@ function LeadCard({ lead, index, isOpen, onToggle, copy }: {
             </LeadSection>
           )}
 
-          {/* Intelligence quality — genericness, hallucination, confusion risk, improvement notes */}
+          {/* Quality Checks — specificity, claim risk, evidence coverage, role clarity */}
           {(o.improvement_notes?.length || o.genericness_risk || o.hallucination_risk || o.buyer_seller_confusion_risk) && (
             <LeadSection title={copy.sIntelligenceNotes}>
-              <div style={{ display: "flex", gap: ".4rem", flexWrap: "wrap" as const, marginBottom: ".625rem" }}>
+              <div style={{ display: "flex", gap: ".4rem", flexWrap: "wrap" as const, marginBottom: o.improvement_notes?.length ? ".625rem" : 0 }}>
                 {([
-                  { label: "Genericness", val: o.genericness_risk },
-                  { label: "Hallucination", val: o.hallucination_risk },
-                  { label: "Evidence", val: o.evidence_weakness },
-                  { label: "Sender/Recipient", val: o.buyer_seller_confusion_risk },
+                  { label: "Specificity", val: o.genericness_risk },
+                  { label: "Claim risk",  val: o.hallucination_risk },
+                  { label: "Evidence gap", val: o.evidence_weakness },
+                  { label: "Role clarity", val: o.buyer_seller_confusion_risk },
                 ] as { label: string; val: string | undefined }[]).filter(r => r.val).map(({ label, val }) => {
-                  const riskColor = val === "high" ? { bg: "#fef2f2", color: "#dc2626", border: "#fecaca" }
-                    : val === "medium" ? { bg: "#fffbeb", color: "#d97706", border: "#fde68a" }
-                    : { bg: "#f0fdf4", color: "#16a34a", border: "#bbf7d0" };
+                  const riskColor = val === "high"   ? { bg: "#fef2f2", color: "#dc2626", border: "#fecaca" }
+                                  : val === "medium" ? { bg: "#fffbeb", color: "#d97706", border: "#fde68a" }
+                                  :                   { bg: "#f0fdf4", color: "#16a34a", border: "#bbf7d0" };
                   return (
                     <span key={label} style={{ fontSize: ".65rem", fontWeight: 600, background: riskColor.bg, color: riskColor.color, border: `1px solid ${riskColor.border}`, borderRadius: ".375rem", padding: ".175rem .55rem" }}>
-                      {label}: {val}
+                      {label} <span style={{ opacity: .75 }}>·</span> {val}
                     </span>
                   );
                 })}
               </div>
               {o.improvement_notes && o.improvement_notes.length > 0 && (
-                <div style={{ display: "flex", flexDirection: "column" as const, gap: ".2rem" }}>
-                  {o.improvement_notes.map((note, i) => (
-                    <div key={i} style={{ display: "flex", gap: ".5rem", fontSize: ".82rem", color: "#64748b", lineHeight: 1.5 }}>
-                      <span style={{ color: "#d97706", flexShrink: 0 }}>→</span>{note}
+                <div style={{ display: "flex", flexDirection: "column" as const, gap: ".3rem" }}>
+                  {o.improvement_notes.slice(0, 3).map((note, i) => (
+                    <div key={i} style={{ display: "flex", gap: ".5rem", fontSize: ".82rem", color: "#64748b", lineHeight: 1.55 }}>
+                      <span style={{ color: "#94a3b8", flexShrink: 0, marginTop: ".1rem" }}>›</span>
+                      <span>{note}</span>
                     </div>
                   ))}
                 </div>
@@ -2294,21 +2295,22 @@ function LeadCard({ lead, index, isOpen, onToggle, copy }: {
             </LeadSection>
           )}
 
-          {/* Learning / Signal Patterns */}
+          {/* Learning Signals — reusable pattern + confirmed signal history */}
           {lead.learning && (lead.learning.signal_patterns.length > 0 || lead.learning.reusable_pattern) && (
             <LeadSection title={copy.sLearningMeta}>
               {lead.learning.reusable_pattern && (
-                <div style={{ fontSize: ".82rem", color: "#334155", marginBottom: ".4rem" }}>
-                  <strong style={{ color: "#0284c7" }}>Pattern:</strong> {lead.learning.reusable_pattern}
+                <div style={{ fontSize: ".82rem", color: "#334155", marginBottom: ".5rem", lineHeight: 1.5 }}>
+                  <span style={{ fontSize: ".65rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".05em", color: "#0284c7", marginRight: ".4rem" }}>Pattern</span>
+                  {lead.learning.reusable_pattern}
                 </div>
               )}
-              {lead.learning.signal_patterns.map((s, i) => (
+              {lead.learning.signal_patterns.slice(0, 3).map((s, i) => (
                 <div key={i} style={{ display: "flex", gap: ".4rem", fontSize: ".82rem", color: "#475569", padding: ".1rem 0" }}>
                   <span style={{ color: "#16a34a", flexShrink: 0 }}>✓</span>{s}
                 </div>
               ))}
-              <div style={{ fontSize: ".7rem", color: "#94a3b8", marginTop: ".4rem" }}>
-                Agent confidence: <strong>{Math.round(lead.learning.agent_confidence * 100)}%</strong>
+              <div style={{ fontSize: ".7rem", color: "#94a3b8", marginTop: ".5rem" }}>
+                Analysis confidence: <strong style={{ color: "#64748b" }}>{Math.round(lead.learning.agent_confidence * 100)}%</strong>
               </div>
             </LeadSection>
           )}
