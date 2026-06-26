@@ -5,6 +5,8 @@ import type {
   ProcessedLead,
   LeadCandidate,
   PipelineInput,
+  LearningMetadata,
+  RiskLevel,
 } from "@/types";
 import { PLAN_LEAD_COUNT } from "@/types";
 
@@ -20,17 +22,14 @@ export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLen
 
   console.log(`[pipeline] starting — plan=${plan} demo=${IS_DEMO}`);
 
-  // Agent 1: ICP
   const { runICPAgent } = await import("./agents/icp-agent");
   const { icp, criteria } = await runICPAgent(onboardingData, plan);
-  console.log(`[pipeline] ICP built — industries=${icp.target_industries.join(", ")}`);
+  console.log(`[pipeline] ICP built — industries=${icp.target_industries.join(", ")} clarity=${icp.icp_clarity_score ?? "?"}/100`);
 
-  // Agent 2: Lead Finder
   const { runLeadFinderAgent } = await import("./agents/lead-finder-agent");
   const candidates: LeadCandidate[] = await runLeadFinderAgent(criteria);
   console.log(`[pipeline] found ${candidates.length} candidates`);
 
-  // Agents 3–7: Process each lead (research → qualify → personalize → outreach → QC)
   const processedLeads: ProcessedLead[] = [];
   const targetCount = PLAN_LEAD_COUNT[plan];
 
@@ -39,22 +38,23 @@ export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLen
     try {
       const lead = await processOneLead(candidate, criteria, icp, onboardingData);
       processedLeads.push(lead);
-      console.log(`[pipeline] processed lead ${i + 1}/${targetCount}: ${candidate.company}`);
+      console.log(`[pipeline] lead ${i + 1}/${targetCount}: ${candidate.company} → ${lead.qualification.category} (${lead.qualification.fit_score}) gen=${lead.outreach.genericness_risk ?? "?"} hal=${lead.outreach.hallucination_risk ?? "?"}`);
     } catch (err) {
-      // One lead failure never kills the batch — add as REVIEW_NEEDED stub
       const errMsg = err instanceof Error ? err.message : String(err);
       console.error(`[pipeline] failed to process ${candidate.company}: ${errMsg.slice(0, 120)}`);
       processedLeads.push(buildFailedLead(candidate, errMsg));
     }
   }
 
-  console.log(`[pipeline] ${processedLeads.length} leads processed successfully`);
+  console.log(`[pipeline] ${processedLeads.length} leads processed`);
 
-  // Agent 8: Report
   const { runReportAgent } = await import("./agents/report-agent");
   const report = await runReportAgent(processedLeads, plan, onboardingData, icp, id);
 
-  console.log(`[pipeline] report ready — hot=${report.hot_count} warm=${report.warm_count}`);
+  const hotCount = report.hot_count;
+  const warnCount = report.strategic_warnings?.length ?? 0;
+  console.log(`[pipeline] report ready — hot=${hotCount} warm=${report.warm_count} avg=${report.avg_score} warnings=${warnCount}`);
+
   return report;
 }
 
@@ -78,14 +78,17 @@ async function processOneLead(
   // Agent 4: Qualify
   const qualification = await runQualificationAgent(enrichment, icp);
 
-  // Agent 5: Personalize
-  const trigger = await runPersonalizationAgent(qualification, criteria);
+  // Agent 5: Personalize — now returns PersonalizationResult
+  const personalization = await runPersonalizationAgent(qualification, criteria);
 
-  // Agent 6: Outreach
-  const outreach = await runOutreachAgent(qualification, trigger, criteria);
+  // Agent 6: Outreach — receives full PersonalizationResult
+  const outreach = await runOutreachAgent(qualification, personalization, criteria);
 
   // Agent 7: QC
   const checkedOutreach = await runQCAgent(qualification, outreach);
+
+  // Build learning metadata from all agent outputs
+  const learning = buildLearningMetadata(candidate, enrichment, qualification, checkedOutreach, personalization);
 
   return {
     id: candidate.id,
@@ -93,6 +96,61 @@ async function processOneLead(
     enrichment,
     qualification,
     outreach: checkedOutreach,
+    learning,
+  };
+}
+
+// ─── Learning metadata builder ────────────────────────────────────────────────
+
+function buildLearningMetadata(
+  candidate: LeadCandidate,
+  enrichment: import("@/types").EnrichedLead,
+  qualification: import("@/types").QualifiedLead,
+  outreach: import("@/types").OutreachSequence,
+  personalization: import("@/types").PersonalizationResult
+): LearningMetadata {
+  const agentConfidence = (enrichment.research_confidence + qualification.qualification_confidence) / 2;
+
+  // Evidence discipline summary
+  const discipline = enrichment.evidence_discipline ?? [];
+  const verifiedCount = discipline.filter(e => e.type === "verified_public_signal").length;
+  const missingCount = discipline.filter(e => e.type === "missing_evidence").length;
+  const evidence_discipline_summary: "verified" | "mostly_inferred" | "weak" =
+    verifiedCount >= 1 ? "verified" :
+    missingCount >= 2 ? "weak" :
+    "mostly_inferred";
+
+  // Confirmed timing signals (non-generic)
+  const signal_patterns = enrichment.timing_signals.filter(
+    s => !s.toLowerCase().startsWith("no confirmed") && !s.toLowerCase().includes("inferred")
+  );
+
+  // Aggregate improvement notes from QC
+  const improvement_notes = [
+    ...(outreach.improvement_notes ?? []),
+    ...(enrichment.risks_weaknesses ?? []).slice(0, 1),
+  ].filter(Boolean);
+
+  // Pattern worth reusing (if high score + confirmed signal)
+  let reusable_pattern: string | undefined;
+  if (qualification.fit_score >= 7 && signal_patterns.length > 0 && candidate.industry) {
+    reusable_pattern = `HOT/WARM ${candidate.industry} account with signal: ${signal_patterns[0]?.slice(0, 80)}`;
+  }
+
+  return {
+    agent_confidence: parseFloat(agentConfidence.toFixed(2)),
+    qc_flags: outreach.qc_notes,
+    genericness_risk: (outreach.genericness_risk ?? "medium") as RiskLevel,
+    hallucination_risk: (outreach.hallucination_risk ?? "low") as RiskLevel,
+    evidence_discipline_summary,
+    signal_patterns,
+    segment_pattern: candidate.industry,
+    improvement_notes,
+    reusable_pattern,
+    // Future feedback hooks — not yet populated; connected when user feedback UI is built
+    user_feedback: undefined,
+    feedback_notes: undefined,
+    rejected_reason: undefined,
   };
 }
 
@@ -108,6 +166,10 @@ function buildFailedLead(candidate: LeadCandidate, errorMsg: string): ProcessedL
     evidence: [],
     missing_data: ["Lead processing failed — see qc_notes for details"],
     research_confidence: 0,
+    why_now: undefined,
+    pain_hypothesis: undefined,
+    risks_weaknesses: ["Processing error — data not available"],
+    evidence_discipline: [],
   };
 
   const qualification: import("@/types").QualifiedLead = {
@@ -121,6 +183,12 @@ function buildFailedLead(candidate: LeadCandidate, errorMsg: string): ProcessedL
       role_fit: 0, company_fit: 0, pain_fit: 0,
       timing_signal: 0, reachability: 0, strategic_relevance: 0,
     },
+    score_dimensions: {
+      icp_fit: 0, signal_strength: 0, timing: 0,
+      evidence_quality: 0, strategic_value: 0, confidence: 0,
+      disqualification_risk: 100,
+    },
+    score_explanation: `Score 0/10 → DISCARD. Processing error — could not analyze this account.`,
   };
 
   const outreach: import("@/types").OutreachSequence = {
@@ -133,7 +201,23 @@ function buildFailedLead(candidate: LeadCandidate, errorMsg: string): ProcessedL
     tone: "direct",
     qc_status: "REVIEW_NEEDED",
     qc_notes: [`Processing error: ${errorMsg.slice(0, 200)}`],
+    genericness_risk: "high",
+    hallucination_risk: "low",
+    evidence_weakness: "high",
+    improvement_notes: ["Retry processing this account — it encountered an error"],
   };
 
-  return { id: candidate.id, candidate, enrichment: stub, qualification, outreach };
+  const learning: LearningMetadata = {
+    agent_confidence: 0,
+    qc_flags: outreach.qc_notes,
+    genericness_risk: "high",
+    hallucination_risk: "low",
+    evidence_discipline_summary: "weak",
+    signal_patterns: [],
+    segment_pattern: candidate.industry,
+    improvement_notes: ["Processing error — retry or investigate"],
+    rejected_reason: `Processing error: ${errorMsg.slice(0, 100)}`,
+  };
+
+  return { id: candidate.id, candidate, enrichment: stub, qualification, outreach, learning };
 }

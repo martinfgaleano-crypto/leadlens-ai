@@ -1,10 +1,48 @@
-import type { QualifiedLead, OutreachSequence, QCResult, QCStatus } from "@/types";
+import type { QualifiedLead, OutreachSequence, QCResult, QCStatus, RiskLevel } from "@/types";
 
 const IS_DEMO = process.env.DEMO_MODE === "true";
 
+// Generic phrases that signal low-quality outreach — no specific evidence backing them
+const GENERIC_PHRASES = [
+  "could benefit from",
+  "may be interested in",
+  "fits your icp",
+  "as a growing company",
+  "improve efficiency",
+  "streamline operations",
+  "scale their sales team",
+  "drive more revenue",
+  "boost productivity",
+  "take your business to the next level",
+  "i hope this finds you",
+  "i hope you're doing well",
+  "i wanted to reach out",
+  "i came across your profile",
+  "touching base",
+  "circling back",
+  "i know you're busy",
+  "just following up",
+];
+
+// Overclaiming patterns — hard outcome promises
+const OVERCLAIM_PATTERNS = [
+  /\d+[\-–]\d+\s*(demos?|meetings?|leads?)\s*(per|a)\s*(month|week|day)/i,
+  /guaranteed?\s*(meetings?|demos?|results?|clients?)/i,
+  /we('ll|will)\s+get\s+you\s+\d+/i,
+  /\d+\s*x\s*(more|increase|growth|roi)/i,
+  /100\s*%\s*(guaranteed?|success|delivery)/i,
+];
+
+// Personal data leak patterns
+const CONTACT_LEAK_PATTERNS = [
+  /\b[a-z]+@[a-z]+\.[a-z]{2,}\b/i,  // email addresses
+  /linkedin\.com\/in\//i,              // personal LinkedIn URLs
+  /\+\d{1,3}[\s\-]?\d{6,}/,          // phone numbers
+];
+
 /**
- * Reviews the lead + outreach for quality flags.
- * Returns an updated OutreachSequence with qc_status and qc_notes set.
+ * Reviews the outreach for quality, genericness, hallucination risk, and compliance.
+ * Returns an updated OutreachSequence with qc_status, qc_notes, and analysis fields set.
  */
 export async function runQCAgent(
   qualified: QualifiedLead,
@@ -18,6 +56,10 @@ export async function runQCAgent(
     ...outreach,
     qc_status: qcResult.status,
     qc_notes: qcResult.notes,
+    genericness_risk: qcResult.genericness_risk,
+    hallucination_risk: qcResult.hallucination_risk,
+    evidence_weakness: qcResult.evidence_weakness,
+    improvement_notes: qcResult.improvement_notes,
   };
 }
 
@@ -25,33 +67,119 @@ export async function runQCAgent(
 
 function runDemoQC(qualified: QualifiedLead, outreach: OutreachSequence): QCResult {
   const notes: string[] = [];
+  const improvement_notes: string[] = [];
   const { candidate } = qualified.enrichment;
+  const emailLower = outreach.email_body.toLowerCase();
+  const fullText = [outreach.email_body, outreach.subject, outreach.linkedin_dm].join(" ").toLowerCase();
 
+  // ── Hard fail: DISCARD lead ───────────────────────────────────────────────
   if (qualified.fit_score < 4) {
-    notes.push("Fit score below minimum threshold — consider discarding");
-    return { status: "FAILED", notes };
+    notes.push("Fit score below minimum threshold (4/10) — recommend excluding from outreach sequence");
+    return {
+      status: "FAILED",
+      notes,
+      genericness_risk: "high",
+      hallucination_risk: "low",
+      evidence_weakness: "high",
+      improvement_notes: ["Discard this account — ICP mismatch too significant to outreach"],
+    };
   }
 
-  if (candidate.confidence_score < 0.4) notes.push("Low signal confidence — manual research recommended before outreach");
+  // ── Genericness detection ─────────────────────────────────────────────────
+  const genericCount = GENERIC_PHRASES.filter(phrase => emailLower.includes(phrase)).length;
+  let genericness_risk: RiskLevel = genericCount >= 2 ? "high" : genericCount === 1 ? "medium" : "low";
 
-  if (!outreach.personalization_trigger || outreach.personalization_trigger.length < 20) {
-    notes.push("Personalization trigger is too short or generic");
+  if (genericCount > 0) {
+    const found = GENERIC_PHRASES.filter(p => emailLower.includes(p));
+    notes.push(`Generic phrases detected: "${found.join('", "')}" — these phrases could be sent to any company in the segment`);
+    improvement_notes.push(`Replace generic phrases with signal-specific language. Instead of "${found[0]}", reference a specific observable fact about ${candidate.company} or ${candidate.industry ?? "their industry"}`);
   }
 
-  if (outreach.email_body.toLowerCase().includes("i hope you")) {
-    notes.push("Email contains filler phrase — revise opening");
+  // ── Trigger text copied verbatim ──────────────────────────────────────────
+  if (outreach.personalization_trigger && outreach.personalization_trigger.length > 30) {
+    const triggerWords = outreach.personalization_trigger.toLowerCase().split(" ").slice(0, 8).join(" ");
+    if (emailLower.includes(triggerWords)) {
+      notes.push("Email opener appears to copy the trigger insight verbatim — paraphrase for a more natural tone");
+      genericness_risk = "medium" as RiskLevel;
+    }
   }
 
-  if (qualified.fit_score < 6) {
-    notes.push("COLD lead — review manually before including in active sequence");
-    return { status: "REVIEW_NEEDED", notes };
+  // ── Overclaiming detection ────────────────────────────────────────────────
+  const overclaims = OVERCLAIM_PATTERNS.filter(p => p.test(outreach.email_body));
+  if (overclaims.length > 0) {
+    notes.push("Hard outcome claims detected — remove specific numbers or guarantees; use directional language instead");
+    improvement_notes.push('Replace outcome claims with directional language: "identify which accounts to contact first" instead of "10–20 demos per month"');
   }
 
-  if (notes.length > 1) {
-    return { status: "REVIEW_NEEDED", notes };
+  // ── Hallucination risk ────────────────────────────────────────────────────
+  const hasConfirmedSignal = qualified.enrichment.timing_signals.some(
+    s => !s.toLowerCase().startsWith("no confirmed") && !s.toLowerCase().includes("inferred")
+  );
+  const confidence = candidate.confidence_score;
+  const hallucination_risk: RiskLevel =
+    confidence < 0.4 ? "high" :
+    !hasConfirmedSignal && confidence < 0.65 ? "medium" :
+    "low";
+
+  if (hallucination_risk === "high") {
+    notes.push(`Low evidence confidence (${Math.round(confidence * 100)}%) — claims about this company's priorities may be unsupported`);
+    improvement_notes.push("Add explicit hedging: 'based on available public signals' or 'if this matches what you're working on'");
+  } else if (hallucination_risk === "medium") {
+    notes.push("Moderate hallucination risk — outreach makes assumptions without confirmed signals; ensure language is hypothesis-framed");
   }
 
-  return { status: "APPROVED", notes };
+  // ── Contact/personal data leak ────────────────────────────────────────────
+  const contactLeaks = CONTACT_LEAK_PATTERNS.filter(p => p.test(fullText));
+  if (contactLeaks.length > 0) {
+    notes.push("Personal contact data detected in outreach (email, personal LinkedIn, or phone) — remove immediately");
+    return {
+      status: "FAILED", notes,
+      genericness_risk, hallucination_risk,
+      evidence_weakness: "high",
+      improvement_notes: ["Remove all personal contact data — LeadLens does not include personal emails, phone numbers, or personal LinkedIn URLs"],
+    };
+  }
+
+  // ── Evidence weakness ─────────────────────────────────────────────────────
+  const evidence_weakness: RiskLevel =
+    !hasConfirmedSignal && confidence < 0.5 ? "high" :
+    !hasConfirmedSignal ? "medium" :
+    "low";
+
+  if (evidence_weakness === "high") {
+    improvement_notes.push(`Strengthen outreach by explicitly framing it as hypothesis-led: "We noticed ${candidate.company ?? "companies in your space"} fits a pattern we've seen in similar ${candidate.industry ?? "industry"} accounts..."`);
+  }
+
+  // ── Missing why now ───────────────────────────────────────────────────────
+  if (!hasConfirmedSignal && !outreach.email_body.includes("pattern") && !outreach.email_body.includes("stage")) {
+    improvement_notes.push("No timing anchor in the email — add a reference to why now, even if inferred: 'companies at your stage' or 'based on the hiring patterns we've observed in your segment'");
+  }
+
+  // ── Score inconsistency check ─────────────────────────────────────────────
+  if (qualified.fit_score < 5 && outreach.qc_status !== "FAILED") {
+    notes.push(`Score is ${qualified.fit_score}/10 (COLD) — review manually before including in primary outreach sequence`);
+  }
+
+  // ── Low personalization trigger ───────────────────────────────────────────
+  if (!outreach.personalization_trigger || outreach.personalization_trigger.length < 30) {
+    notes.push("Personalization trigger is missing or too short — outreach lacks account-specific context");
+    genericness_risk = "high" as RiskLevel;
+  }
+
+  // ── Determine final status ────────────────────────────────────────────────
+  const hasCritical = overclaims.length > 0 || contactLeaks.length > 0;
+  const hasMajor = notes.filter(n => !n.includes("manually")).length > 2;
+
+  let status: QCStatus;
+  if (hasCritical) {
+    status = "FAILED";
+  } else if (hasMajor || genericness_risk === "high" || qualified.fit_score < 6) {
+    status = "REVIEW_NEEDED";
+  } else {
+    status = "APPROVED";
+  }
+
+  return { status, notes, genericness_risk, hallucination_risk, evidence_weakness, improvement_notes };
 }
 
 // ─── Claude QC ────────────────────────────────────────────────────────────────
@@ -61,43 +189,59 @@ async function runClaudeQC(qualified: QualifiedLead, outreach: OutreachSequence)
   const { candidate } = qualified.enrichment;
 
   const category = qualified.fit_score >= 8 ? "HOT" : qualified.fit_score >= 6 ? "WARM" : qualified.fit_score >= 4 ? "COLD" : "DISCARD";
+  const hasConfirmedSignal = qualified.enrichment.timing_signals.some(
+    s => !s.toLowerCase().startsWith("no confirmed") && !s.toLowerCase().includes("inferred")
+  );
 
-  const SYSTEM = `You are a B2B outreach QC reviewer. Flag real problems only — don't reject for perfection.
+  const SYSTEM = `You are a senior B2B outreach QC reviewer. Your job is to be CRITICAL, not just permissive.
+Flag real problems — don't reject for perfection, but don't approve generic outreach either.
 
 Status rules:
-- APPROVED: ready to send as-is
-- REVIEW_NEEDED: has fixable issues — provide a suggested revision in your note
-- FAILED: do not send (DISCARD lead, bad email, false claims, or no useful personalization)
+- APPROVED: ready to send — specific, evidence-backed, not generic, no false claims
+- REVIEW_NEEDED: fixable issues — provide a suggested revision in your note
+- FAILED: do not send — DISCARD lead, false claims, contact data leak, or completely generic
 
 Check specifically for:
-1. Trigger text copied verbatim as email opener — if the first sentence of email_body matches the trigger almost word-for-word, flag it and suggest a rewritten opener
-2. Hard outcome claims: "10–20 demos per month", "guaranteed meetings", "we will get you X clients" — flag and provide a softer revision
-3. Invented facts: hiring news, funding, or events not in evidence — flag as hallucination risk
-4. Overly generic messaging: could be sent unchanged to any company in the industry — flag
-5. Spam indicators: ALL CAPS, excessive exclamation, pushy language
-6. DISCARD leads with outreach written — always FAILED
+1. GENERICNESS (most important): Could this email be sent to ANY company in the segment? If yes → high genericness_risk + REVIEW_NEEDED
+   Generic red flags: "could benefit from", "fits your ICP", "as a growing company", "improve efficiency", "streamline operations"
+   Non-generic: references a specific signal, a specific company characteristic, or a specific segment behavior
+2. OVERCLAIMING: "10–20 demos per month", "guaranteed meetings", specific outcome promises → FAILED
+3. HALLUCINATION: claims about this company's behavior or internal priorities not supported by evidence → flag + suggest hedge language
+4. CONTACT DATA LEAK: email address, personal LinkedIn (/in/), phone number → FAILED immediately
+5. OLD LEAD-GEN LANGUAGE: "verified contact", "qualified leads", "10x your pipeline" → flag
+6. WEAK WHY NOW: if there's no timing anchor (signal OR explicit hypothesis) → improvement_note
+7. SCORE INCONSISTENCY: HOT/WARM lead with generic outreach, or COLD lead with aggressive CTA
+8. MISSING EVIDENCE HEDGE: if no confirmed signal, outreach should use "appears to", "based on public patterns", "if this matches..." — flag if it speaks with false certainty
 
-For each flagged issue, include "REVISION: [suggested safer version]" within the note when applicable.
+For each issue, include "REVISION: [suggested safer version]" when applicable.
 Return only valid JSON.`;
 
   const triggerPreview = outreach.personalization_trigger.slice(0, 100);
-  const emailStart = outreach.email_body.slice(0, 120);
+  const emailStart = outreach.email_body.slice(0, 150);
 
   const userMsg = `Account: ${candidate.company} (${candidate.industry ?? "?"})
 Opportunity score: ${qualified.fit_score} (${category})
 Signal confidence: ${Math.round(candidate.confidence_score * 100)}%
+Confirmed signals: ${hasConfirmedSignal ? qualified.enrichment.timing_signals.filter(s => !s.includes("inferred") && !s.includes("no confirmed")).join("; ") : "none"}
+Score explanation: ${qualified.score_explanation ?? "not provided"}
 
 Trigger insight: "${triggerPreview}"
-Email opening (first 120 chars): "${emailStart}"
-Subject: ${outreach.subject}
+Email subject: ${outreach.subject}
+Email opening (first 150 chars): "${emailStart}"
 Full email body: ${outreach.email_body}
+Recommended angle: ${outreach.recommended_angle ?? "not provided"}
 Missing data flags: ${qualified.enrichment.missing_data.slice(0, 3).join("; ") || "none"}
+Hallucination risk context: ${qualified.enrichment.evidence_discipline?.slice(0, 3).map(e => `${e.type}: ${e.claim}`).join("; ") ?? "not classified"}
 
 Return JSON:
 {
   "status": "APPROVED|REVIEW_NEEDED|FAILED",
-  "notes": ["issue description — REVISION: suggested fix if applicable"]
+  "notes": ["issue description — REVISION: suggested fix if applicable"],
+  "genericness_risk": "low|medium|high",
+  "hallucination_risk": "low|medium|high",
+  "evidence_weakness": "low|medium|high",
+  "improvement_notes": ["specific, actionable improvement for this account's outreach"]
 }`;
 
-  return callClaudeJSON<QCResult>(SYSTEM, userMsg, 600);
+  return callClaudeJSON<QCResult>(SYSTEM, userMsg, 1200);
 }

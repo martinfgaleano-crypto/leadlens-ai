@@ -13,7 +13,7 @@ export async function runICPAgent(
   return buildClaudeICP(onboarding, plan);
 }
 
-// ─── Deterministic ICP (no AI needed) ────────────────────────────────────────
+// ─── Deterministic ICP ────────────────────────────────────────────────────────
 
 export function buildDeterministicICP(
   onboarding: OnboardingData,
@@ -31,6 +31,7 @@ export function buildDeterministicICP(
   const titles = inferTitles(text);
   const sizeRange = inferCompanySize(text);
   const pains = inferPainPoints(onboarding.offer_description + " " + onboarding.value_proposition);
+  const signals = inferBuyingSignals(text);
 
   const icp: ICP = {
     target_industries: industries,
@@ -42,12 +43,13 @@ export function buildDeterministicICP(
       "Government or non-profit",
       "In-house SDR team already at scale",
     ],
-    ideal_signals: [
-      "Recently posted about pipeline challenges",
-      "Job postings for SDR or BDR roles",
-      "Recently hired VP Sales or Head of Growth",
-      "Recently raised seed or Series A funding",
-    ],
+    ideal_signals: signals,
+    product_detected: onboarding.offer_description.slice(0, 120),
+    problem_solved: onboarding.value_proposition.slice(0, 120),
+    buyer_profile: titles.slice(0, 3).join(", ") + " at target company",
+    icp_clarity_score: computeICPClarityScore(onboarding),
+    icp_risks: buildICPRisks(onboarding, industries),
+    top_priority_signals: signals.slice(0, 3),
   };
 
   const criteria: LeadSearchCriteria = {
@@ -56,7 +58,7 @@ export function buildDeterministicICP(
     target_job_titles: titles,
     target_geography: regionToGeography(onboarding.target_market_region),
     excluded_industries: ["Government", "Non-profit", "Education"],
-    buying_signals: icp.ideal_signals,
+    buying_signals: signals,
     disqualification_criteria: icp.disqualifiers,
     average_ticket: onboarding.average_ticket,
     offer_summary: onboarding.offer_description,
@@ -81,10 +83,19 @@ async function buildClaudeICP(
 ): Promise<{ icp: ICP; criteria: LeadSearchCriteria }> {
   const { callClaudeJSON } = await import("@/lib/anthropic");
 
-  const SYSTEM = `You are a B2B sales strategist. Extract a precise ICP and lead search criteria from the business inputs. Be specific. No vague categories. Return only valid JSON.`;
-
   const lang = onboarding.output_language ?? "en";
   const region = onboarding.target_market_region ?? "global";
+
+  const SYSTEM = `You are a B2B commercial intelligence strategist building an Ideal Customer Profile.
+Your job is to extract a SPECIFIC, ACTIONABLE ICP from the business inputs — not generic categories.
+Rules:
+- Be specific: "Logistics software companies with 50–200 employees actively expanding their fleet tracking" beats "Logistics"
+- Identify the real buyer (role, responsibility, pain) — not just a job title
+- Detect what buying signals actually predict this company will buy — e.g. "recently hired SDR" not "growing company"
+- Rate ICP clarity honestly — if the user's description is vague, say so in icp_risks
+- Never invent specific company names or made-up examples
+- Identify hard exclusions that would waste outreach effort
+Return only valid JSON.`;
 
   const prompt = `Business: ${onboarding.company_name}
 Description: ${onboarding.company_description}
@@ -100,18 +111,25 @@ Target market region: ${region}
 Return JSON:
 {
   "icp": {
-    "target_industries": ["string"],
-    "target_titles": ["string"],
-    "company_size_range": "string",
-    "pain_points": ["string"],
-    "disqualifiers": ["string"],
-    "ideal_signals": ["string"]
+    "target_industries": ["specific industry segment — not just 'SaaS'"],
+    "target_titles": ["buyer role that would evaluate this offer"],
+    "company_size_range": "X–Y employees",
+    "pain_points": ["specific company-level pain that this offer solves"],
+    "disqualifiers": ["hard exclusions — company types that cannot benefit"],
+    "ideal_signals": ["specific observable event that predicts purchase intent"],
+    "product_detected": "1 sentence: what the seller actually sells",
+    "problem_solved": "1 sentence: the specific problem it eliminates",
+    "buyer_profile": "1 sentence: who at the target company evaluates this offer and why",
+    "icp_clarity_score": 0,
+    "icp_risks": ["risks in this ICP definition — vague segment, over-broad geography, etc."],
+    "top_priority_signals": ["top 3 signals that most strongly predict opportunity"],
+    "exclusions_explicit": ["additional hard exclusions beyond obvious ones"]
   },
   "criteria": {
     "target_industries": ["string"],
     "target_company_size": ["string"],
     "target_job_titles": ["string"],
-    "target_geography": ["string — match the target_market_region"],
+    "target_geography": ["string — match target_market_region: ${region}"],
     "excluded_industries": ["string"],
     "buying_signals": ["string"],
     "disqualification_criteria": ["string"],
@@ -123,14 +141,50 @@ Return JSON:
     "output_language": "${lang}",
     "target_market_region": "${region}",
     "outreach_language": "${languageLabel(lang)}",
-    "localization_notes": "string"
+    "localization_notes": "${buildLocalizationNotes(lang, region)}"
   }
 }`;
 
-  return callClaudeJSON<{ icp: ICP; criteria: LeadSearchCriteria }>(SYSTEM, prompt, 2000);
+  return callClaudeJSON<{ icp: ICP; criteria: LeadSearchCriteria }>(SYSTEM, prompt, 2500);
 }
 
-// ─── Keyword helpers ──────────────────────────────────────────────────────────
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function computeICPClarityScore(onboarding: OnboardingData): number {
+  let score = 0;
+  if (onboarding.offer_description.length > 50) score += 25;
+  if (onboarding.value_proposition.length > 40) score += 20;
+  if (onboarding.target_customer_description.length > 60) score += 25;
+  if (onboarding.average_ticket) score += 15;
+  if (onboarding.target_market_region && onboarding.target_market_region !== "global") score += 15;
+  return Math.min(100, score);
+}
+
+function buildICPRisks(onboarding: OnboardingData, industries: string[]): string[] {
+  const risks: string[] = [];
+  if (industries.length > 4) risks.push("Too many target industries — consider narrowing to 2–3 primary segments");
+  if (onboarding.target_customer_description.length < 60) risks.push("Target customer description is vague — more specificity improves matching accuracy");
+  if (!onboarding.average_ticket) risks.push("No average ticket defined — harder to calibrate account size fit");
+  if (onboarding.target_market_region === "global") risks.push("Global geography broadens the pool but reduces signal specificity — consider narrowing");
+  return risks;
+}
+
+function inferBuyingSignals(text: string): string[] {
+  const signals: string[] = [];
+  if (/pipeline|lead|prospect|outbound/.test(text)) signals.push("Job postings for SDR, BDR, or sales development roles");
+  if (/sdr|hire|headcount|team|sales rep/.test(text)) signals.push("Recently hired VP Sales, CRO, or Head of Revenue");
+  if (/meeting|book|appoint|convert/.test(text)) signals.push("Company posted about pipeline or conversion challenges");
+  if (/personaliz|generic|cold email|reply/.test(text)) signals.push("Visible intent to improve outbound or outreach quality");
+  if (/time|manual|slow|efficiency/.test(text)) signals.push("Hiring automation, RevOps, or growth operations roles");
+  if (/logistic|supply chain|distribut/.test(text)) signals.push("Expanding fleet, new warehouse, or new distribution routes announced");
+  if (/food|export|import|commodity/.test(text)) signals.push("Attending trade shows or seeking new supplier/buyer relationships");
+  if (signals.length === 0) {
+    signals.push("Hiring patterns suggesting commercial growth");
+    signals.push("Recent product launch or expansion announcement");
+    signals.push("Raised funding in the last 12 months");
+  }
+  return signals.slice(0, 5);
+}
 
 function inferIndustries(text: string): string[] {
   const map: [RegExp, string][] = [
@@ -141,7 +195,8 @@ function inferIndustries(text: string): string[] {
     [/\bfinance\b|\bfintech\b/, "FinTech"],
     [/\bhealth|\bmedic/, "HealthTech"],
     [/\bmanufactur/, "Manufacturing"],
-    [/\blogistic|\bsupply chain/, "Logistics"],
+    [/\blogistic|\bsupply chain|\btransport|\bfreight/, "Logistics / Supply Chain"],
+    [/\bfood|\bfmcg|\bgrocery|\bdistribut|\bimport|\bexport/, "Food & Distribution"],
   ];
   const found = map.filter(([re]) => re.test(text)).map(([, label]) => label);
   return found.length > 0 ? found : ["B2B SaaS", "Professional Services"];
@@ -154,6 +209,8 @@ function inferTitles(text: string): string[] {
     [/\bmarketing\b/, ["VP of Marketing", "CMO", "Head of Marketing"]],
     [/\bgrowth\b/, ["Head of Growth", "Growth Lead"]],
     [/\brevenue\b/, ["CRO", "VP Revenue"]],
+    [/\blogistic|\bsupply|\boperations\b/, ["VP Operations", "Director of Logistics", "Head of Supply Chain"]],
+    [/\bimport|\bexport|\btrade\b/, ["Purchasing Manager", "Import/Export Director", "Head of Procurement"]],
   ];
   const found = map.filter(([re]) => re.test(text)).flatMap(([, labels]) => labels);
   const unique = Array.from(new Set(found));
@@ -164,6 +221,7 @@ function inferCompanySize(text: string): string {
   if (/\bstartup\b|\bearly.stage\b|\bpre.seed\b/.test(text)) return "5–50 employees";
   if (/\benterprise\b|\blarge\b/.test(text)) return "500–5000 employees";
   if (/\bsmb\b|\bsmall business\b/.test(text)) return "10–100 employees";
+  if (/20.500|50.500|20 to 500|50 to 500/.test(text)) return "20–500 employees";
   return "20–200 employees";
 }
 
@@ -175,6 +233,8 @@ function inferPainPoints(text: string): string[] {
   if (/meeting|book|appoint/.test(lower)) pains.push("Low qualified meeting booking rate");
   if (/personaliz|generic|reply/.test(lower)) pains.push("Generic outreach with poor reply rates");
   if (/time|manual|slow/.test(lower)) pains.push("Too much time on manual prospecting");
+  if (/distribut|supplier|buyer|import|export/.test(lower)) pains.push("Difficulty finding qualified distributors or buyers in target markets");
+  if (/market intel|intelligence|signal/.test(lower)) pains.push("No structured way to identify high-intent accounts before outreach");
   return pains.length > 0 ? pains : [
     "Inconsistent outbound pipeline",
     "Low reply rates on cold outreach",
@@ -186,6 +246,8 @@ function sizeRangeToArray(range: string): string[] {
   if (range.includes("5–50")) return ["1-10", "11-50"];
   if (range.includes("10–100")) return ["11-50", "51-200"];
   if (range.includes("20–200")) return ["11-50", "51-200"];
+  if (range.includes("20–500")) return ["11-50", "51-200", "201-500"];
+  if (range.includes("50–500")) return ["51-200", "201-500"];
   if (range.includes("500–5000")) return ["501-1000", "1001-5000"];
   return ["11-50", "51-200"];
 }

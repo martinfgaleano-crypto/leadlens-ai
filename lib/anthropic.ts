@@ -3,8 +3,8 @@ import Anthropic from "@anthropic-ai/sdk";
 // Model to use across all agents. Change here to update everywhere.
 export const MODEL = "claude-sonnet-4-6";
 
-// Per-request timeout. Claude rarely needs >25s on short prompts.
-const REQUEST_TIMEOUT_MS = 30_000;
+// Per-request timeout. Intelligence agents can use long prompts — 60s is safe.
+const REQUEST_TIMEOUT_MS = 60_000;
 // Max attempts for retryable failures (network glitches, 529 overload)
 const MAX_RETRIES = 2;
 

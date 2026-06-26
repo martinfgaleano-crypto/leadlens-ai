@@ -8,6 +8,9 @@ export type EmailStatus = "verified" | "unknown" | "not_found" | "invalid";
 export type LeadSource = "mock" | "apollo" | "tavily" | "hunter" | "people_data_labs" | "manual";
 export type OutputLanguage = "en" | "es" | "pt" | "ja";
 export type MarketRegion = "north_america" | "latin_america" | "europe" | "asia" | "global";
+export type FeedbackSignal = "useful" | "not_useful" | "irrelevant" | "contacted" | "meeting_booked" | "wrong_fit" | "generic";
+export type EvidenceDisciplineType = "verified_public_signal" | "inferred_from_context" | "weak_inference" | "missing_evidence";
+export type RiskLevel = "low" | "medium" | "high";
 
 // ─── Plan config ──────────────────────────────────────────────────────────────
 
@@ -56,6 +59,14 @@ export interface ICP {
   pain_points: string[];
   disqualifiers: string[];
   ideal_signals: string[];
+  // Enhanced ICP intelligence (optional — populated by Claude path)
+  product_detected?: string;          // What the seller's product actually does
+  problem_solved?: string;            // The specific problem it solves
+  buyer_profile?: string;             // Likely buyer role/team at target company
+  icp_clarity_score?: number;         // 0–100: how specific/actionable this ICP is
+  icp_risks?: string[];               // Risks in the ICP definition
+  exclusions_explicit?: string[];     // Hard exclusions beyond standard disqualifiers
+  top_priority_signals?: string[];    // Signals that most strongly predict opportunity
 }
 
 // ─── Lead Search Criteria (input to Lead Finder) ─────────────────────────────
@@ -101,6 +112,13 @@ export interface LeadCandidate {
   confidence_score: number; // 0–1
 }
 
+// ─── Evidence discipline (how well-supported a claim is) ─────────────────────
+
+export interface EvidenceClaim {
+  claim: string;
+  type: EvidenceDisciplineType;
+}
+
 // ─── Enriched Lead (from Research Agent) ─────────────────────────────────────
 
 export interface EnrichedLead {
@@ -112,39 +130,101 @@ export interface EnrichedLead {
   evidence: string[];
   missing_data: string[];
   research_confidence: number; // 0–1
+  // Enhanced intelligence fields (optional — populated when evidence allows)
+  why_now?: string;             // Why this account is relevant *at this moment*
+  pain_hypothesis?: string;    // Specific, falsifiable pain hypothesis — not generic
+  risks_weaknesses?: string[]; // Real risks: weak evidence, wrong segment, etc.
+  evidence_discipline?: EvidenceClaim[]; // Classification of key claims
+  segment_fit_note?: string;   // Why this company fits/doesn't fit the ICP segment
+}
+
+// ─── Score dimensions (0–100 per axis) ───────────────────────────────────────
+
+export interface ScoreDimensions {
+  icp_fit: number;              // How well company/segment matches ICP (0–100)
+  signal_strength: number;      // Strength of detected buying signals (0–100)
+  timing: number;               // Timing relevance — confirmed signals = high (0–100)
+  evidence_quality: number;     // Confidence in the evidence base (0–100)
+  strategic_value: number;      // Long-term commercial value of this account type (0–100)
+  confidence: number;           // Aggregate confidence in the opportunity score (0–100)
+  disqualification_risk: number; // Risk this account should be excluded (0–100, higher = riskier)
 }
 
 // ─── Qualified Lead (from Qualification Agent) ────────────────────────────────
 
 export interface QualifiedLead {
   enrichment: EnrichedLead;
-  fit_score: number; // 0–10 (sum of subscores)
+  fit_score: number; // 0–10 (sum of subscores, backward-compat)
   category: LeadCategory;
   fit_reasons: string[];
   disqualification_reasons: string[];
   qualification_confidence: number;
   score_breakdown: {
-    role_fit: number;       // 0–2
-    company_fit: number;    // 0–2
-    pain_fit: number;       // 0–2
-    timing_signal: number;  // 0–2
-    reachability: number;   // 0–1
+    role_fit: number;            // 0–2
+    company_fit: number;         // 0–2
+    pain_fit: number;            // 0–2
+    timing_signal: number;       // 0–2
+    reachability: number;        // 0–1
     strategic_relevance: number; // 0–1
   };
+  // Enhanced scoring (optional)
+  score_dimensions?: ScoreDimensions;   // Multi-axis 0–100 scoring
+  score_explanation?: string;           // Why the score is what it is (human-readable)
+}
+
+// ─── Personalization Result (from Personalization Agent) ─────────────────────
+
+export interface PersonalizationResult {
+  personalization_trigger: string;  // Core insight used to inform outreach angle
+  recommended_angle: string;        // Specific sales angle based on signals
+  account_reasoning: string;        // Why this angle fits this account right now
+  what_to_avoid: string;            // What NOT to say/assume in outreach
+  strongest_hook: string;           // Single strongest first-touch hook
+  personalization_confidence: number; // 0–1
 }
 
 // ─── Outreach Sequence (from Outreach Agent) ─────────────────────────────────
 
 export interface OutreachSequence {
   personalization_trigger: string;
+  recommended_angle?: string;
   subject: string;
   email_body: string;
   linkedin_dm: string;
   followup_1: string;
   followup_2: string;
+  call_opener?: string;               // Cold call opening line
+  cta_recommendation?: string;       // Recommended CTA and why
+  outreach_assumptions?: string;     // What assumptions this outreach makes
+  what_to_avoid_in_outreach?: string; // What to avoid in this specific outreach
   tone: string;
   qc_status: QCStatus;
   qc_notes: string[];
+  // QC analysis fields (set by QC Agent)
+  genericness_risk?: RiskLevel;
+  hallucination_risk?: RiskLevel;
+  evidence_weakness?: RiskLevel;
+  improvement_notes?: string[];
+}
+
+// ─── Learning / Feedback Metadata ────────────────────────────────────────────
+// Populated by the pipeline after all agents complete.
+// User feedback fields are hooks for future UI + DB integration.
+
+export interface LearningMetadata {
+  agent_confidence: number;                  // 0–1 aggregate across research + qualification
+  qc_flags: string[];                        // All QC notes for this account
+  genericness_risk: RiskLevel;
+  hallucination_risk: RiskLevel;
+  evidence_discipline_summary: "verified" | "mostly_inferred" | "weak";
+  signal_patterns: string[];                 // Confirmed buying signals extracted
+  segment_pattern?: string;                  // Industry/segment this account belongs to
+  improvement_notes: string[];              // What could make this entry better
+  reusable_pattern?: string;               // A pattern worth storing for future runs
+  // Future feedback hooks (not yet collected in UI — leave undefined until connected):
+  user_feedback?: FeedbackSignal;
+  feedback_notes?: string;
+  rejected_reason?: string;
 }
 
 // ─── Processed Lead (final pipeline output) ──────────────────────────────────
@@ -155,6 +235,7 @@ export interface ProcessedLead {
   enrichment: EnrichedLead;
   qualification: QualifiedLead;
   outreach: OutreachSequence;
+  learning?: LearningMetadata;
 }
 
 // ─── Report (final output of full pipeline) ──────────────────────────────────
@@ -173,6 +254,12 @@ export interface LeadLensReport {
   recommendations: string[];
   processed_leads: ProcessedLead[];
   created_at: string;
+  // Enhanced report intelligence (optional)
+  segment_insights?: string[];         // Which segments performed best and why
+  top_signals_observed?: string[];     // Buying signals that appeared most across accounts
+  first_actions?: string[];           // Specific "do this first" recommendations
+  strategic_warnings?: string[];      // Risks in the overall batch (thin evidence, wrong ICP, etc.)
+  evidence_quality_summary?: string;  // How trustworthy is the evidence in this batch
 }
 
 // ─── Pipeline I/O ─────────────────────────────────────────────────────────────
@@ -197,6 +284,10 @@ export interface EmailFindResult {
 export interface QCResult {
   status: QCStatus;
   notes: string[];
+  genericness_risk?: RiskLevel;
+  hallucination_risk?: RiskLevel;
+  evidence_weakness?: RiskLevel;
+  improvement_notes?: string[];
 }
 
 // ─── Raw lead (legacy upload flow) ───────────────────────────────────────────
