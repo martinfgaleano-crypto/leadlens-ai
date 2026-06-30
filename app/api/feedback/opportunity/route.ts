@@ -73,6 +73,17 @@ export async function POST(req: NextRequest) {
           .single();
 
         if (!error && row) {
+          if (data.feedback_signal === "exclude_similar") {
+            const { markAccountDoNotShowFromFeedback } = await import("@/lib/memory/account-memory");
+            markAccountDoNotShowFromFeedback({
+              job_id:          data.job_id,
+              company:         data.company,
+              domain:          data.domain,
+              industry:        data.industry,
+              segment:         data.segment,
+              feedback_signal: data.feedback_signal,
+            }).catch(() => {});
+          }
           return NextResponse.json({ success: true, id: (row as { id: string }).id });
         }
         console.log("[feedback] Supabase insert failed:", error?.message);

@@ -16,6 +16,92 @@ export interface AccountMemoryRecord {
   last_fit_score: number | null;
   state: AccountMemoryState;
   do_not_show: boolean;
+  company?: string | null;
+  industry?: string | null;
+  segment?: string | null;
+  do_not_show_reason?: string | null;
+  last_feedback_signal?: string | null;
+}
+
+// ─── Mark do_not_show from feedback ────────────────────────────────────────────
+
+export interface DoNotShowFeedbackPayload {
+  job_id?: string;
+  company: string;
+  domain?: string;
+  industry?: string;
+  segment?: string;
+  feedback_signal: string;
+}
+
+/**
+ * Best-effort: never throws. Called after exclude_similar feedback is saved.
+ * Looks up account_memory by client_id + normalized_domain (if domain exists),
+ * falling back to client_id + normalized_company. Updates do_not_show=true on
+ * a match, or creates a minimal company-level row if no match exists.
+ */
+export async function markAccountDoNotShowFromFeedback(
+  payload: DoNotShowFeedbackPayload
+): Promise<void> {
+  try {
+    const { createServerClient } = await import("@/lib/supabase/server");
+    const supabase = createServerClient();
+    if (!supabase) return;
+
+    const clientKey = getClientKey(payload.job_id);
+    if (clientKey === "demo") return;
+
+    const domain  = normalizeDomain(payload.domain);
+    const company = normalizeCompanyName(payload.company);
+    const now     = new Date().toISOString();
+
+    let query = supabase.from("account_memory").select("*").eq("client_id", clientKey);
+    query = domain
+      ? query.eq("normalized_domain", domain)
+      : query.eq("normalized_company", company);
+
+    const { data, error } = await query.limit(1);
+    if (error) {
+      console.warn("[account-memory] do_not_show lookup failed:", error.message);
+      return;
+    }
+
+    const existing = (data as AccountMemoryRecord[] | null)?.[0];
+
+    if (existing) {
+      await supabase
+        .from("account_memory")
+        .update({
+          do_not_show:           true,
+          state:                 "do_not_show",
+          last_feedback_signal:  payload.feedback_signal,
+          do_not_show_reason:    "exclude_similar feedback",
+          company:               payload.company,
+          industry:              payload.industry ?? existing.industry ?? null,
+          segment:               payload.segment  ?? existing.segment  ?? null,
+          updated_at:            now,
+        })
+        .eq("id", existing.id);
+      return;
+    }
+
+    await supabase.from("account_memory").insert({
+      client_id:             clientKey,
+      company:                payload.company,
+      normalized_company:    company,
+      normalized_domain:     domain ?? null,
+      industry:               payload.industry ?? null,
+      segment:                payload.segment  ?? null,
+      last_job_id:            payload.job_id   ?? null,
+      state:                  "do_not_show",
+      do_not_show:            true,
+      do_not_show_reason:     "exclude_similar feedback",
+      last_feedback_signal:   payload.feedback_signal,
+      times_seen:             1,
+    });
+  } catch (err) {
+    console.warn("[account-memory] markAccountDoNotShowFromFeedback failed:", err instanceof Error ? err.message : err);
+  }
 }
 
 // ─── Normalization ────────────────────────────────────────────────────────────
