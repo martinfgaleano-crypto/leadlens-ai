@@ -4,7 +4,9 @@ import type {
   ProcessedLead,
   LeadSearchCriteria,
   LeadCandidate,
+  VaultPattern,
 } from "@/types";
+import { matchVaultPatterns } from "@/lib/vault/feedback-vault";
 
 // ─── deriveFeedbackEffects ────────────────────────────────────────────────────
 // Converts a user feedback signal on a specific account into a structured
@@ -120,7 +122,66 @@ export function applyLearningHints(
   candidates: LeadCandidate[],
   _feedbackPatterns: FeedbackEffect[]
 ): LeadCandidate[] {
-  // Stub — returns candidates unchanged until Vault has enough signal volume.
-  // Replace this body when vault pattern queries are wired in lib/vault/.
+  // Stub — pre-discovery filter, not yet active.
+  // Post-qualification vault hints are applied by applyVaultHints() instead.
   return candidates;
+}
+
+// ─── applyVaultHints ──────────────────────────────────────────────────────────
+// Post-qualification pass: enriches ProcessedLead.learning with vault metadata.
+// NEVER changes fit_score, category, or outreach content.
+// Safe to call with empty patterns — returns leads unchanged.
+
+export function applyVaultHints(
+  leads: ProcessedLead[],
+  vaultPatterns: VaultPattern[]
+): ProcessedLead[] {
+  if (vaultPatterns.length === 0) return leads;
+
+  return leads.map(lead => {
+    const industry = lead.candidate.industry ?? "";
+    if (!industry || !lead.learning) return lead;
+
+    const { positive, negative } = matchVaultPatterns(industry, vaultPatterns);
+
+    // Only apply hints from vault_ready patterns (meets minimum threshold)
+    const readyPositive = positive?.vault_ready ? positive : undefined;
+    const readyNegative = negative?.vault_ready ? negative : undefined;
+
+    if (!readyPositive && !readyNegative) return lead;
+
+    const parts: string[] = [];
+    if (readyPositive) {
+      parts.push(
+        `Vault: ${readyPositive.signal_count} positive signal${readyPositive.signal_count !== 1 ? "s" : ""} ` +
+        `for "${readyPositive.industry}" (${readyPositive.confidence} confidence)`
+      );
+    }
+    if (readyNegative) {
+      parts.push(
+        `Vault caution: ${readyNegative.signal_count} negative signal${readyNegative.signal_count !== 1 ? "s" : ""} ` +
+        `for "${readyNegative.industry}" — review before outreach`
+      );
+    }
+
+    const vault_matched_patterns = [
+      ...(readyPositive?.top_signals ?? []),
+      ...(readyNegative?.top_signals.map(s => `⚠ ${s}`) ?? []),
+    ];
+
+    const vault_confidence = readyPositive?.confidence ?? readyNegative?.confidence ?? "low";
+
+    return {
+      ...lead,
+      learning: {
+        ...lead.learning,
+        vault_hint_applied: true,
+        vault_positive_match: !!readyPositive,
+        vault_negative_match: !!readyNegative,
+        vault_reason: parts.join(". "),
+        vault_confidence,
+        vault_matched_patterns,
+      },
+    };
+  });
 }

@@ -4,6 +4,11 @@ import { requireAdmin } from "@/lib/auth/require-admin";
 const REUSABLE = new Set(["meeting_booked", "replied", "add_to_vault", "useful"]);
 const NEGATIVE  = new Set(["wrong_fit", "not_useful", "generic", "exclude_similar", "irrelevant"]);
 
+const POS_MEDIUM = 3;
+const POS_HIGH   = 6;
+const NEG_MEDIUM = 2;
+const NEG_HIGH   = 4;
+
 async function getDb() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) return null;
   const { createServerClient } = await import("@/lib/supabase/server");
@@ -44,8 +49,8 @@ export async function GET(req: NextRequest) {
   const signalMap:   Record<string, number> = {};
   const industryMap: Record<string, number> = {};
   const categoryMap: Record<string, number> = {};
-  const posMap:      Record<string, number> = {};
-  const negMap:      Record<string, number> = {};
+  const posMap:      Record<string, { count: number; signals: string[] }> = {};
+  const negMap:      Record<string, { count: number; signals: string[] }> = {};
   let reusable_feedback_count = 0;
   let negative_feedback_count = 0;
 
@@ -58,8 +63,18 @@ export async function GET(req: NextRequest) {
     industryMap[ind] = (industryMap[ind] ?? 0) + 1;
     categoryMap[cat] = (categoryMap[cat] ?? 0) + 1;
 
-    if (REUSABLE.has(sig)) { reusable_feedback_count++; posMap[ind] = (posMap[ind] ?? 0) + 1; }
-    if (NEGATIVE.has(sig))  { negative_feedback_count++; negMap[ind] = (negMap[ind] ?? 0) + 1; }
+    if (REUSABLE.has(sig)) {
+      reusable_feedback_count++;
+      if (!posMap[ind]) posMap[ind] = { count: 0, signals: [] };
+      posMap[ind].count++;
+      if (!posMap[ind].signals.includes(sig)) posMap[ind].signals.push(sig);
+    }
+    if (NEGATIVE.has(sig)) {
+      negative_feedback_count++;
+      if (!negMap[ind]) negMap[ind] = { count: 0, signals: [] };
+      negMap[ind].count++;
+      if (!negMap[ind].signals.includes(sig)) negMap[ind].signals.push(sig);
+    }
   }
 
   const byCount = (map: Record<string, number>) =>
@@ -73,13 +88,40 @@ export async function GET(req: NextRequest) {
 
   const feedback_by_category = byCount(categoryMap).map(([category, count]) => ({ category, count }));
 
-  const top_positive_segments = byCount(posMap)
-    .slice(0, 5)
-    .map(([industry, count]) => ({ industry, count }));
+  const byCountObj = (map: Record<string, { count: number; signals: string[] }>) =>
+    Object.entries(map).sort((a, b) => b[1].count - a[1].count);
 
-  const top_negative_segments = byCount(negMap)
+  const top_positive_segments = byCountObj(posMap)
     .slice(0, 5)
-    .map(([industry, count]) => ({ industry, count }));
+    .map(([industry, { count }]) => ({ industry, count }));
+
+  const top_negative_segments = byCountObj(negMap)
+    .slice(0, 5)
+    .map(([industry, { count }]) => ({ industry, count }));
+
+  // Vault patterns — aggregated view for admin auditing
+  const vault_patterns = {
+    positive: byCountObj(posMap).map(([industry, { count, signals }]) => ({
+      industry,
+      signal_count: count,
+      top_signals:  signals.slice(0, 3),
+      confidence:   count >= POS_HIGH ? "high" : count >= POS_MEDIUM ? "medium" : "low",
+      vault_ready:  count >= POS_MEDIUM,
+    })),
+    negative: byCountObj(negMap).map(([industry, { count, signals }]) => ({
+      industry,
+      signal_count: count,
+      top_signals:  signals.slice(0, 3),
+      confidence:   count >= NEG_HIGH ? "high" : count >= NEG_MEDIUM ? "medium" : "low",
+      vault_ready:  count >= NEG_MEDIUM,
+    })),
+    thresholds: {
+      positive_medium: POS_MEDIUM,
+      positive_high:   POS_HIGH,
+      negative_medium: NEG_MEDIUM,
+      negative_high:   NEG_HIGH,
+    },
+  };
 
   // Recent rows — company names are company-level (not personal)
   const recent_feedback = all.slice(0, 20).map(r => ({
@@ -101,6 +143,7 @@ export async function GET(req: NextRequest) {
     negative_feedback_count,
     top_positive_segments,
     top_negative_segments,
+    vault_patterns,
     recent_feedback,
   });
 }

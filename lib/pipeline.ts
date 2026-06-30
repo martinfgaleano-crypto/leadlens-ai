@@ -10,11 +10,10 @@ import type {
   FeedbackSignal,
 } from "@/types";
 import { PLAN_LEAD_COUNT } from "@/types";
-// Learning hints — stub active; wires into discovery when Vault has ≥3 patterns
-import { applyLearningHints } from "@/lib/learning";
+import { applyLearningHints, applyVaultHints } from "@/lib/learning";
 
 export type { PipelineInput };
-export { applyLearningHints };
+export { applyLearningHints, applyVaultHints };
 
 const IS_DEMO = process.env.DEMO_MODE === "true";
 
@@ -34,6 +33,13 @@ export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLen
   const candidates: LeadCandidate[] = await runLeadFinderAgent(criteria);
   console.log(`[pipeline] found ${candidates.length} candidates`);
 
+  // Load vault patterns once — fails gracefully, never blocks the pipeline
+  const { loadVaultPatterns } = await import("./vault/feedback-vault");
+  const vaultPatterns = await loadVaultPatterns().catch(() => []);
+  if (vaultPatterns.length > 0) {
+    console.log(`[pipeline] vault: ${vaultPatterns.length} patterns loaded (${vaultPatterns.filter(p => p.vault_ready).length} vault-ready)`);
+  }
+
   const processedLeads: ProcessedLead[] = [];
   const targetCount = PLAN_LEAD_COUNT[plan];
 
@@ -52,8 +58,15 @@ export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLen
 
   console.log(`[pipeline] ${processedLeads.length} leads processed`);
 
+  // Post-qualification vault hint pass — enriches learning metadata, never changes scores
+  const leadsForReport = applyVaultHints(processedLeads, vaultPatterns);
+  const hintCount = leadsForReport.filter(l => l.learning?.vault_hint_applied).length;
+  if (hintCount > 0) {
+    console.log(`[pipeline] vault hints applied to ${hintCount}/${leadsForReport.length} leads`);
+  }
+
   const { runReportAgent } = await import("./agents/report-agent");
-  const report = await runReportAgent(processedLeads, plan, onboardingData, icp, id);
+  const report = await runReportAgent(leadsForReport, plan, onboardingData, icp, id);
 
   const hotCount = report.hot_count;
   const warnCount = report.strategic_warnings?.length ?? 0;

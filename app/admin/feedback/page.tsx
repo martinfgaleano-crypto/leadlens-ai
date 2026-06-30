@@ -19,6 +19,20 @@ interface RecentRow {
   created_at:      string;
 }
 
+interface VaultPatternRow {
+  industry:     string;
+  signal_count: number;
+  top_signals:  string[];
+  confidence:   "low" | "medium" | "high";
+  vault_ready:  boolean;
+}
+
+interface VaultPatterns {
+  positive:   VaultPatternRow[];
+  negative:   VaultPatternRow[];
+  thresholds: { positive_medium: number; positive_high: number; negative_medium: number; negative_high: number };
+}
+
 interface FeedbackStats {
   total_feedback:          number;
   reusable_feedback_count: number;
@@ -28,6 +42,7 @@ interface FeedbackStats {
   feedback_by_category:    CategoryCount[];
   top_positive_segments:   IndustryCount[];
   top_negative_segments:   IndustryCount[];
+  vault_patterns:          VaultPatterns;
   recent_feedback:         RecentRow[];
 }
 
@@ -92,6 +107,20 @@ function CategoryBadge({ category }: { category: string | null }) {
   return (
     <span style={{ display: "inline-block", background: s.bg, color: s.color, borderRadius: 999, padding: "0.18rem 0.55rem", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.04em" }}>
       {cat}
+    </span>
+  );
+}
+
+function ConfidenceBadge({ confidence, vault_ready }: { confidence: string; vault_ready: boolean }) {
+  const map: Record<string, { bg: string; color: string }> = {
+    high:   { bg: "#dcfce7", color: "#15803d" },
+    medium: { bg: "#fef3c7", color: "#92400e" },
+    low:    { bg: "#f1f5f9", color: "#64748b" },
+  };
+  const s = map[confidence] ?? map.low;
+  return (
+    <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", background: s.bg, color: s.color, borderRadius: 999, padding: "0.18rem 0.6rem", fontSize: "0.68rem", fontWeight: 700 }}>
+      {vault_ready ? "✓" : "○"} {confidence}
     </span>
   );
 }
@@ -259,6 +288,51 @@ export default function FeedbackAnalyticsPage() {
                 }
               </Section>
             </div>
+
+            {/* Vault patterns */}
+            {stats.vault_patterns && (
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem", marginBottom: "1.5rem" }}>
+                <Section title={`Positive Vault Patterns (threshold ≥${stats.vault_patterns.thresholds.positive_medium})`}>
+                  {stats.vault_patterns.positive.length === 0 ? (
+                    <div style={{ color: "#94a3b8", fontSize: "0.85rem" }}>No positive patterns yet.</div>
+                  ) : stats.vault_patterns.positive.map(p => (
+                    <div key={p.industry} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.6rem", padding: "0.5rem 0.75rem", background: p.vault_ready ? "#f0fdf4" : "#f8fafc", borderRadius: "0.5rem", border: `1px solid ${p.vault_ready ? "#bbf7d0" : "#e2e8f0"}` }}>
+                      <div>
+                        <div style={{ fontSize: "0.82rem", fontWeight: 600, color: "#0f172a" }}>{p.industry}</div>
+                        <div style={{ fontSize: "0.7rem", color: "#64748b", marginTop: "0.1rem" }}>{p.top_signals.join(" · ")}</div>
+                      </div>
+                      <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.25rem" }}>
+                        <ConfidenceBadge confidence={p.confidence} vault_ready={p.vault_ready} />
+                        <span style={{ fontSize: "0.7rem", color: "#94a3b8" }}>{p.signal_count} signal{p.signal_count !== 1 ? "s" : ""}</span>
+                      </div>
+                    </div>
+                  ))}
+                  <div style={{ marginTop: "0.5rem", fontSize: "0.7rem", color: "#94a3b8" }}>
+                    ✓ = vault-ready (applied to pipeline) · ○ = insufficient volume
+                  </div>
+                </Section>
+
+                <Section title={`Caution Patterns (threshold ≥${stats.vault_patterns.thresholds.negative_medium})`}>
+                  {stats.vault_patterns.negative.length === 0 ? (
+                    <div style={{ color: "#94a3b8", fontSize: "0.85rem" }}>No caution patterns yet.</div>
+                  ) : stats.vault_patterns.negative.map(p => (
+                    <div key={p.industry} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.6rem", padding: "0.5rem 0.75rem", background: p.vault_ready ? "#fff7f7" : "#f8fafc", borderRadius: "0.5rem", border: `1px solid ${p.vault_ready ? "#fecaca" : "#e2e8f0"}` }}>
+                      <div>
+                        <div style={{ fontSize: "0.82rem", fontWeight: 600, color: "#0f172a" }}>{p.industry}</div>
+                        <div style={{ fontSize: "0.7rem", color: "#64748b", marginTop: "0.1rem" }}>{p.top_signals.join(" · ")}</div>
+                      </div>
+                      <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.25rem" }}>
+                        <ConfidenceBadge confidence={p.confidence} vault_ready={p.vault_ready} />
+                        <span style={{ fontSize: "0.7rem", color: "#94a3b8" }}>{p.signal_count} signal{p.signal_count !== 1 ? "s" : ""}</span>
+                      </div>
+                    </div>
+                  ))}
+                  <div style={{ marginTop: "0.5rem", fontSize: "0.7rem", color: "#94a3b8" }}>
+                    ✓ = active caution (injected as warning in pipeline metadata)
+                  </div>
+                </Section>
+              </div>
+            )}
 
             {/* Recent feedback table */}
             <Section title={`Recent Feedback (last ${stats.recent_feedback.length})`}>

@@ -64,6 +64,18 @@ export interface FeedbackEffect {
   save_as_reusable?: boolean;       // If true, save the outreach angle to Vault
 }
 
+// ─── Vault pattern (aggregated from opportunity_feedback) ─────────────────────
+
+export interface VaultPattern {
+  industry: string;
+  direction: "strengthen" | "weaken";
+  signal_count: number;
+  top_signals: string[];
+  confidence: "low" | "medium" | "high";
+  vault_ready: boolean;               // meets minimum threshold for pipeline use
+  example_buying_windows: string[];
+}
+
 // ─── Plan config ──────────────────────────────────────────────────────────────
 
 export const PLAN_LEAD_COUNT: Record<PlanType, number> = {
@@ -317,6 +329,13 @@ export interface LearningMetadata {
   user_feedback?: FeedbackSignal;
   feedback_notes?: string;
   rejected_reason?: string;
+  // ── Vault hints (applied post-qualification, never change score/category) ─────
+  vault_hint_applied?: boolean;
+  vault_positive_match?: boolean;
+  vault_negative_match?: boolean;
+  vault_reason?: string;
+  vault_confidence?: "insufficient_volume" | "low" | "medium" | "high";
+  vault_matched_patterns?: string[];
 }
 
 // ─── Processed Lead (final pipeline output) ──────────────────────────────────
