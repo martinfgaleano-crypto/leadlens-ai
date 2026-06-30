@@ -210,51 +210,18 @@ export async function updateAccountMemoryFromReport(
     if (!supabase) return;
     const now = new Date().toISOString();
 
-    const withDomain: ProcessedLead[]    = [];
-    const withoutDomain: ProcessedLead[] = [];
+    // Partial unique index (WHERE normalized_domain IS NOT NULL) is not compatible
+    // with PostgREST ON CONFLICT. Use select-then-insert/update instead.
+    // memoryMap already tells us which leads have existing records.
+    const newLeads      = leads.filter(l => !memoryMap.has(l.id));
+    const existingLeads = leads.filter(l =>  memoryMap.has(l.id));
 
-    for (const lead of leads) {
-      if (normalizeDomain(lead.candidate.domain)) {
-        withDomain.push(lead);
-      } else {
-        withoutDomain.push(lead);
-      }
-    }
-
-    // Batch upsert domain-keyed leads
-    if (withDomain.length > 0) {
-      const rows = withDomain.map(lead => {
-        const existing = memoryMap.get(lead.id);
-        return {
-          client_id:          clientKey,
-          normalized_domain:  normalizeDomain(lead.candidate.domain)!,
-          normalized_company: normalizeCompanyName(lead.candidate.company),
-          country:            extractCountry(lead.candidate.location),
-          first_seen_at:      existing?.first_seen_at ?? now,
-          last_seen_at:       now,
-          last_job_id:        jobId,
-          last_category:      lead.qualification.category,
-          last_fit_score:     lead.qualification.fit_score,
-          state:              lead.learning?.account_memory_state ?? "new_opportunity",
-          times_seen:         (existing?.times_seen ?? 0) + 1,
-          updated_at:         now,
-        };
-      });
-
-      await supabase
-        .from("account_memory")
-        .upsert(rows, { onConflict: "client_id,normalized_domain" });
-    }
-
-    // Insert new company-only leads; update existing ones by id
-    const newCompanyLeads      = withoutDomain.filter(l => !memoryMap.has(l.id));
-    const existingCompanyLeads = withoutDomain.filter(l =>  memoryMap.has(l.id));
-
-    if (newCompanyLeads.length > 0) {
+    // Batch insert new leads (first-time appearances)
+    if (newLeads.length > 0) {
       await supabase.from("account_memory").insert(
-        newCompanyLeads.map(lead => ({
+        newLeads.map(lead => ({
           client_id:          clientKey,
-          normalized_domain:  null,
+          normalized_domain:  normalizeDomain(lead.candidate.domain) ?? null,
           normalized_company: normalizeCompanyName(lead.candidate.company),
           country:            extractCountry(lead.candidate.location),
           last_job_id:        jobId,
@@ -266,7 +233,8 @@ export async function updateAccountMemoryFromReport(
       );
     }
 
-    for (const lead of existingCompanyLeads) {
+    // Update existing records by id (times_seen + 1)
+    for (const lead of existingLeads) {
       const existing = memoryMap.get(lead.id)!;
       await supabase
         .from("account_memory")
