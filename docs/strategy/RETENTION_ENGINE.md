@@ -35,22 +35,15 @@ Documentar la lógica de negocio que justifica por qué un cliente debería reno
 - Vault MVP conservador (`applyVaultHints()`) que agrega metadata explicable sin cambiar scoring agresivamente.
 - Vault Memory UI dentro de Opportunity Cards (validated pattern / caution pattern / insufficient feedback).
 - Feedback linkage: `opportunity_feedback.job_id` apunta al snapshot real del run.
+- **Account Memory / Anti-Repetition** (commit `377f9cd`): tabla `account_memory`, clasificación de 8 estados, integración en pipeline (best-effort), badge en LeadCard en 4 idiomas. Demo jobs no escriben. Supabase failure no bloquea pipeline.
 
 ---
 
 ## E. Qué falta
 
-**Account Memory / Anti-Repetition:** clasificación de cuentas como:
-- `new` — primera vez que aparece
-- `previously_seen` — apareció en reportes anteriores
-- `repeated_without_new_signal` — repite sin evidencia nueva (causa #1 de churn)
-- `reactivated_with_new_signal` — vuelve con señal nueva (positivo)
-- `upgraded` — sube de categoría vs. reporte anterior
-- `downgraded` — baja de categoría
-- `dropped` — ya no cumple criterios
-- `do_not_show` — excluida por feedback del cliente
-
 **"What changed since last report":** vista comparativa explícita entre el reporte actual y el anterior — pendiente.
+
+**Exclusión por feedback (`do_not_show`):** el flag existe y el pipeline lo respeta, pero el mecanismo para activarlo desde `exclude_similar` feedback aún no está conectado.
 
 **Medición real** de churn y conversión (no hay datos de clientes reales aún).
 

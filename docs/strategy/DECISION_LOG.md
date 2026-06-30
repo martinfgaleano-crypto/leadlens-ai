@@ -136,4 +136,4 @@
 
 **Implicaciones:** Antes de implementar, diseñar la taxonomía completa de estados de cuenta (ver `RETENTION_ENGINE.md` sección E) en términos de negocio, no solo como especificación técnica.
 
-**Estado:** Vigente — pendiente de implementación.
+**Estado:** Implementado — commit `377f9cd`. Ver `RETENTION_ENGINE.md` sección D para detalle.
