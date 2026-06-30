@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
         if (!error && row) {
           return NextResponse.json({ success: true, id: (row as { id: string }).id });
         }
-        console.warn("[feedback] Supabase insert failed, using in-memory:", error?.message);
+        console.log("[feedback] Supabase insert failed:", error?.message);
       }
     } catch (err) {
       console.warn("[feedback] Supabase error, falling back to in-memory:", err);
