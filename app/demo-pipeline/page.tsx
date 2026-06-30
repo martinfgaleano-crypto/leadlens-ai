@@ -240,6 +240,15 @@ const COPY = {
     complianceNote: "LeadLens analyzes publicly available company information and commercial signals. We do not sell contact databases, email lists, or personal data.",
     sFeedbackHook: "Was this opportunity useful?",
     sFeedbackSaved: "Feedback saved — thank you",
+    sVaultMemory: "Vault Memory",
+    sVaultValidated: "Validated pattern",
+    sVaultCaution: "Caution pattern",
+    sVaultInsufficient: "Insufficient feedback",
+    sVaultPositiveText: "Similar opportunities have received positive feedback before.",
+    sVaultNegativeText: "Similar opportunities have previously been marked as weak fit or not useful.",
+    sVaultInsufficientText: "LeadLens is still collecting feedback for this segment.",
+    sVaultConfidence: "Confidence",
+    sVaultMatchedPatterns: "Matched patterns",
   },
   es: {
     announcement: "Opportunity Snapshots disponibles — inteligencia comercial B2B para tu primer outreach real.",
@@ -475,6 +484,15 @@ const COPY = {
     complianceNote: "LeadLens analiza información empresarial y señales comerciales públicamente disponibles. No vendemos bases de datos de contactos, listas de emails ni datos personales.",
     sFeedbackHook: "¿Fue útil esta oportunidad?",
     sFeedbackSaved: "Feedback guardado — gracias",
+    sVaultMemory: "Memoria Vault",
+    sVaultValidated: "Patrón validado",
+    sVaultCaution: "Patrón de precaución",
+    sVaultInsufficient: "Feedback insuficiente",
+    sVaultPositiveText: "Oportunidades similares han recibido feedback positivo anteriormente.",
+    sVaultNegativeText: "Oportunidades similares fueron marcadas como poco adecuadas o no útiles.",
+    sVaultInsufficientText: "LeadLens todavía está recopilando feedback para este segmento.",
+    sVaultConfidence: "Confianza",
+    sVaultMatchedPatterns: "Patrones coincidentes",
   },
   pt: {
     announcement: "Opportunity Snapshots disponíveis — inteligência comercial B2B para seu primeiro outreach real.",
@@ -710,6 +728,15 @@ const COPY = {
     complianceNote: "LeadLens analisa informações empresariais e sinais comerciais publicamente disponíveis. Não vendemos bancos de dados de contatos, listas de e-mails nem dados pessoais.",
     sFeedbackHook: "Esta oportunidade foi útil?",
     sFeedbackSaved: "Feedback salvo — obrigado",
+    sVaultMemory: "Memória Vault",
+    sVaultValidated: "Padrão validado",
+    sVaultCaution: "Padrão de cautela",
+    sVaultInsufficient: "Feedback insuficiente",
+    sVaultPositiveText: "Oportunidades semelhantes receberam feedback positivo anteriormente.",
+    sVaultNegativeText: "Oportunidades semelhantes foram marcadas como inadequadas ou não úteis.",
+    sVaultInsufficientText: "O LeadLens ainda está coletando feedback para este segmento.",
+    sVaultConfidence: "Confiança",
+    sVaultMatchedPatterns: "Padrões correspondentes",
   },
   ja: {
     announcement: "Opportunity Snapshots提供開始 — B2Bコマーシャルインテリジェンスで最初の本格的アウトリーチを。",
@@ -945,6 +972,15 @@ const COPY = {
     complianceNote: "LeadLensは公開されている企業情報とビジネスシグナルを分析します。コンタクトデータベース、メールリスト、個人データは販売していません。",
     sFeedbackHook: "この機会は役に立ちましたか？",
     sFeedbackSaved: "フィードバックを保存しました",
+    sVaultMemory: "Vault メモリ",
+    sVaultValidated: "検証済みパターン",
+    sVaultCaution: "注意パターン",
+    sVaultInsufficient: "フィードバック不足",
+    sVaultPositiveText: "類似の機会について以前にポジティブなフィードバックがあります。",
+    sVaultNegativeText: "類似の機会は以前、適合しないまたは有用でないとマークされました。",
+    sVaultInsufficientText: "LeadLensはこのセグメントのフィードバックを収集中です。",
+    sVaultConfidence: "信頼度",
+    sVaultMatchedPatterns: "一致したパターン",
   },
 };
 
@@ -2371,6 +2407,57 @@ function LeadCard({ lead, index, isOpen, onToggle, copy }: {
               </div>
             </LeadSection>
           )}
+
+          {/* ── Vault Memory — subtle hint from accumulated feedback ─────────── */}
+          {lead.learning?.vault_hint_applied && (() => {
+            const vl = lead.learning!;
+            const isPositive    = vl.vault_positive_match && !vl.vault_negative_match;
+            const isNegative    = vl.vault_negative_match;
+            const isInsufficient = !isPositive && !isNegative;
+            const conf          = vl.vault_confidence ?? "low";
+            const confColor     = conf === "high" ? "#15803d" : conf === "medium" ? "#92400e" : "#64748b";
+
+            return (
+              <div style={{ border: "1px solid #e2e8f0", borderRadius: ".625rem", padding: ".75rem 1rem", marginBottom: ".5rem", background: isPositive ? "#f0fdf4" : isNegative ? "#fff7f7" : "#f8fafc" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: ".5rem", marginBottom: ".4rem" }}>
+                  <span style={{ fontSize: ".65rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", color: "#94a3b8" }}>{copy.sVaultMemory}</span>
+                  <span style={{
+                    fontSize: ".65rem", fontWeight: 700, borderRadius: 999,
+                    padding: ".12rem .5rem",
+                    background: isPositive ? "#dcfce7" : isNegative ? "#fee2e2" : "#f1f5f9",
+                    color:      isPositive ? "#15803d" : isNegative ? "#dc2626" : "#64748b",
+                  }}>
+                    {isPositive ? copy.sVaultValidated : isNegative ? copy.sVaultCaution : copy.sVaultInsufficient}
+                  </span>
+                </div>
+
+                <div style={{ fontSize: ".8rem", color: "#475569", lineHeight: 1.5, marginBottom: ".35rem" }}>
+                  {isPositive
+                    ? copy.sVaultPositiveText
+                    : isNegative
+                    ? copy.sVaultNegativeText
+                    : copy.sVaultInsufficientText}
+                </div>
+
+                {vl.vault_reason && !isInsufficient && (
+                  <div style={{ fontSize: ".75rem", color: "#64748b", fontStyle: "italic", marginBottom: ".35rem" }}>
+                    {vl.vault_reason}
+                  </div>
+                )}
+
+                <div style={{ display: "flex", alignItems: "center", gap: ".75rem", flexWrap: "wrap" as const }}>
+                  <span style={{ fontSize: ".7rem", color: "#94a3b8" }}>
+                    {copy.sVaultConfidence}: <strong style={{ color: confColor }}>{conf.replace(/_/g, " ")}</strong>
+                  </span>
+                  {vl.vault_matched_patterns && vl.vault_matched_patterns.length > 0 && (
+                    <span style={{ fontSize: ".7rem", color: "#94a3b8" }}>
+                      {copy.sVaultMatchedPatterns}: {vl.vault_matched_patterns.join(", ")}
+                    </span>
+                  )}
+                </div>
+              </div>
+            );
+          })()}
 
           {/* ── Feedback — Learning hook ─────────────────────────────────────── */}
           <div style={{ background: "#f8fafc", borderRadius: ".625rem", padding: ".875rem 1rem", marginTop: ".5rem" }}>
