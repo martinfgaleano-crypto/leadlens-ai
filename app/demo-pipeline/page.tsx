@@ -2095,7 +2095,7 @@ export default function DemoPipelinePage() {
 
           <div>
             {visibleLeads.map((lead, i) => (
-              <LeadCard key={lead.id} lead={lead} index={i} isOpen={expanded === i} onToggle={() => setExp(expanded === i ? null : i)} copy={copy} />
+              <LeadCard key={lead.id} lead={lead} index={i} isOpen={expanded === i} onToggle={() => setExp(expanded === i ? null : i)} copy={copy} jobId={report?.job_id} />
             ))}
           </div>
 
@@ -2154,8 +2154,8 @@ const SECONDARY_FEEDBACK: { signal: import("@/types").FeedbackSignal; label: str
   { signal: "exclude_similar",label: "Exclude similar"},
 ];
 
-function LeadCard({ lead, index, isOpen, onToggle, copy }: {
-  lead: ProcessedLead; index: number; isOpen: boolean; onToggle: () => void; copy: Copy;
+function LeadCard({ lead, index, isOpen, onToggle, copy, jobId }: {
+  lead: ProcessedLead; index: number; isOpen: boolean; onToggle: () => void; copy: Copy; jobId?: string;
 }) {
   const { candidate: c, qualification: q, outreach: o, enrichment: e } = lead;
   const cat      = catInfo(q.fit_score);
@@ -2174,7 +2174,7 @@ function LeadCard({ lead, index, isOpen, onToggle, copy }: {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          job_id:             lead.id,
+          job_id:             jobId ?? undefined,
           company:            c.company,
           domain:             c.domain,
           industry:           c.industry,

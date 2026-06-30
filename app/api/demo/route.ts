@@ -36,12 +36,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const jobId = `demo_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+
     const report = await runLeadLensPipeline({
       onboardingData: parsed.data.onboarding,
       plan: parsed.data.plan,
+      jobId,
     });
 
-    return NextResponse.json({ success: true, report });
+    return NextResponse.json({ success: true, job_id: jobId, report });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     console.error("[/api/demo]", message);
