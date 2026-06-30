@@ -17,6 +17,26 @@ export async function GET(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
+  // Processing — return 202 with status only; no report yet
+  if (snapshot.status === "processing") {
+    return NextResponse.json(
+      { job_id: snapshot.job_id, status: "processing", plan: snapshot.plan, created_at: snapshot.created_at },
+      { status: 202 },
+    );
+  }
+
+  // Failed — return 200 with safe summary; no secrets, no personal data
+  if (snapshot.status === "failed") {
+    return NextResponse.json({
+      job_id:     snapshot.job_id,
+      status:     "failed",
+      plan:       snapshot.plan,
+      created_at: snapshot.created_at,
+      // user_id intentionally omitted
+    });
+  }
+
+  // Completed — full response
   return NextResponse.json({
     job_id:     snapshot.job_id,
     plan:       snapshot.plan,
@@ -27,6 +47,6 @@ export async function GET(
     avg_score:  snapshot.avg_score,
     created_at: snapshot.created_at,
     report:     snapshot.report_json,
-    // user_id intentionally omitted from public response
+    // user_id intentionally omitted
   });
 }

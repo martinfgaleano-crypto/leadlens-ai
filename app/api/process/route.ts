@@ -1,12 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { runLeadLensPipeline } from "@/lib/pipeline";
-import { saveSnapshot } from "@/lib/storage/snapshot-store";
+import {
+  createProcessingSnapshot,
+  completeSnapshot,
+  failSnapshot,
+} from "@/lib/storage/snapshot-store";
 
 /**
  * POST /api/process
- * Runs the full pipeline (DEMO or production depending on DEMO_MODE).
- * Persists the report to snapshot_reports (best-effort — never blocks response).
+ * Runs the full pipeline and tracks the run lifecycle in snapshot_reports:
+ *   processing  → inserted before pipeline starts
+ *   completed   → upserted after pipeline succeeds
+ *   failed      → upserted if pipeline throws (best-effort, non-blocking)
  */
 
 const bodySchema = z.object({
@@ -27,35 +33,42 @@ const bodySchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  const body = await req.json().catch(() => null);
+  if (!body) return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+
+  const parsed = bodySchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid request", details: parsed.error.flatten() },
+      { status: 400 },
+    );
+  }
+
+  const { plan, onboarding } = parsed.data;
+  const jobId = parsed.data.jobId ?? `snap_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+
+  // ── 1. Mark processing — best-effort, never blocks the run ──────────────────
+  createProcessingSnapshot(jobId, plan).catch(() => {});
+
+  // ── 2. Run pipeline ─────────────────────────────────────────────────────────
   try {
-    const body = await req.json();
-    const parsed = bodySchema.safeParse(body);
+    const report = await runLeadLensPipeline({ onboardingData: onboarding, plan, jobId });
 
-    if (!parsed.success) {
-      return NextResponse.json(
-        { error: "Invalid request", details: parsed.error.flatten() },
-        { status: 400 }
-      );
-    }
-
-    const { plan, onboarding } = parsed.data;
-
-    // Generate a stable job_id before the run so it's baked into the report
-    const jobId = parsed.data.jobId ?? `snap_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
-
-    const report = await runLeadLensPipeline({
-      onboardingData: onboarding,
-      plan,
-      jobId,
-    });
-
-    // Persist snapshot — best-effort, never blocks response
-    saveSnapshot(jobId, plan, report).catch(() => {});
+    // ── 3. Mark completed — best-effort ───────────────────────────────────────
+    completeSnapshot(jobId, plan, report).catch(() => {});
 
     return NextResponse.json({ success: true, job_id: jobId, report });
+
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    console.error("[/api/process]", message);
-    return NextResponse.json({ error: message }, { status: 500 });
+    // ── 4. Mark failed — await so the status lands before responding ──────────
+    const safeReason = err instanceof Error
+      ? err.message.slice(0, 200)   // cap length; never contains env vars or secrets
+      : "Pipeline error";
+
+    console.error("[/api/process]", jobId, safeReason);
+
+    await failSnapshot(jobId, plan, safeReason).catch(() => {});
+
+    return NextResponse.json({ error: safeReason, job_id: jobId }, { status: 500 });
   }
 }
