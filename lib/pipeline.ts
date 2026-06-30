@@ -59,14 +59,32 @@ export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLen
   console.log(`[pipeline] ${processedLeads.length} leads processed`);
 
   // Post-qualification vault hint pass — enriches learning metadata, never changes scores
-  const leadsForReport = applyVaultHints(processedLeads, vaultPatterns);
-  const hintCount = leadsForReport.filter(l => l.learning?.vault_hint_applied).length;
+  const leadsAfterVault = applyVaultHints(processedLeads, vaultPatterns);
+  const hintCount = leadsAfterVault.filter(l => l.learning?.vault_hint_applied).length;
   if (hintCount > 0) {
-    console.log(`[pipeline] vault hints applied to ${hintCount}/${leadsForReport.length} leads`);
+    console.log(`[pipeline] vault hints applied to ${hintCount}/${leadsAfterVault.length} leads`);
+  }
+
+  // Account Memory pass — classifies novelty, excludes do_not_show (best-effort, never blocks)
+  const { loadAccountMemory, applyAccountMemoryHints, updateAccountMemoryFromReport, getClientKey } =
+    await import("./memory/account-memory");
+  const clientKey  = getClientKey(id);
+  const memoryMap  = IS_DEMO
+    ? new Map()
+    : await loadAccountMemory(candidates, clientKey).catch(() => new Map());
+  const leadsForReport = applyAccountMemoryHints(leadsAfterVault, memoryMap);
+  const memorizedCount = leadsForReport.filter(l => l.learning?.account_memory_state && l.learning.account_memory_state !== "new_opportunity").length;
+  if (memorizedCount > 0) {
+    console.log(`[pipeline] account memory: ${memorizedCount} previously-seen accounts classified`);
   }
 
   const { runReportAgent } = await import("./agents/report-agent");
   const report = await runReportAgent(leadsForReport, plan, onboardingData, icp, id);
+
+  // Write account memory updates after report is built (best-effort, fire-and-forget)
+  if (!IS_DEMO) {
+    updateAccountMemoryFromReport(leadsForReport, id, clientKey, memoryMap).catch(() => {});
+  }
 
   const hotCount = report.hot_count;
   const warnCount = report.strategic_warnings?.length ?? 0;

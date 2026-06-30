@@ -249,6 +249,16 @@ const COPY = {
     sVaultInsufficientText: "LeadLens is still collecting feedback for this segment.",
     sVaultConfidence: "Confidence",
     sVaultMatchedPatterns: "Matched patterns",
+    sAccountMemory: "Account Memory",
+    sAccountMemoryNew: "New opportunity",
+    sAccountMemorySeen: "Seen before",
+    sAccountMemoryRepeat: "Repeated — no new signal",
+    sAccountMemoryReactivated: "Reactivated — new signal",
+    sAccountMemoryUpgraded: "Upgraded",
+    sAccountMemoryDowngraded: "Downgraded",
+    sAccountMemoryDropped: "Dropped",
+    sAccountMemoryTimesSeen: "times seen",
+    sAccountMemoryLastCat: "Last",
   },
   es: {
     announcement: "Opportunity Snapshots disponibles — inteligencia comercial B2B para tu primer outreach real.",
@@ -493,6 +503,16 @@ const COPY = {
     sVaultInsufficientText: "LeadLens todavía está recopilando feedback para este segmento.",
     sVaultConfidence: "Confianza",
     sVaultMatchedPatterns: "Patrones coincidentes",
+    sAccountMemory: "Account Memory",
+    sAccountMemoryNew: "Nueva oportunidad",
+    sAccountMemorySeen: "Vista anteriormente",
+    sAccountMemoryRepeat: "Repetida — sin señal nueva",
+    sAccountMemoryReactivated: "Reactivada — nueva señal",
+    sAccountMemoryUpgraded: "Mejorada",
+    sAccountMemoryDowngraded: "Bajó de prioridad",
+    sAccountMemoryDropped: "Descartada",
+    sAccountMemoryTimesSeen: "veces vista",
+    sAccountMemoryLastCat: "Última categoría",
   },
   pt: {
     announcement: "Opportunity Snapshots disponíveis — inteligência comercial B2B para seu primeiro outreach real.",
@@ -737,6 +757,16 @@ const COPY = {
     sVaultInsufficientText: "O LeadLens ainda está coletando feedback para este segmento.",
     sVaultConfidence: "Confiança",
     sVaultMatchedPatterns: "Padrões correspondentes",
+    sAccountMemory: "Account Memory",
+    sAccountMemoryNew: "Nova oportunidade",
+    sAccountMemorySeen: "Vista anteriormente",
+    sAccountMemoryRepeat: "Repetida — sem novo sinal",
+    sAccountMemoryReactivated: "Reativada — novo sinal",
+    sAccountMemoryUpgraded: "Melhorada",
+    sAccountMemoryDowngraded: "Rebaixada",
+    sAccountMemoryDropped: "Descartada",
+    sAccountMemoryTimesSeen: "vezes vista",
+    sAccountMemoryLastCat: "Última cat.",
   },
   ja: {
     announcement: "Opportunity Snapshots提供開始 — B2Bコマーシャルインテリジェンスで最初の本格的アウトリーチを。",
@@ -981,6 +1011,16 @@ const COPY = {
     sVaultInsufficientText: "LeadLensはこのセグメントのフィードバックを収集中です。",
     sVaultConfidence: "信頼度",
     sVaultMatchedPatterns: "一致したパターン",
+    sAccountMemory: "アカウントメモリ",
+    sAccountMemoryNew: "新規オポチュニティ",
+    sAccountMemorySeen: "以前に確認済み",
+    sAccountMemoryRepeat: "繰り返し — 新シグナルなし",
+    sAccountMemoryReactivated: "再活性化 — 新シグナル検出",
+    sAccountMemoryUpgraded: "優先度アップ",
+    sAccountMemoryDowngraded: "優先度ダウン",
+    sAccountMemoryDropped: "対象外へ",
+    sAccountMemoryTimesSeen: "回確認",
+    sAccountMemoryLastCat: "前回カテゴリ",
   },
 };
 
@@ -2455,6 +2495,38 @@ function LeadCard({ lead, index, isOpen, onToggle, copy, jobId }: {
                     </span>
                   )}
                 </div>
+              </div>
+            );
+          })()}
+
+          {/* ── Account Memory — novelty / repetition badge ──────────────────── */}
+          {lead.learning?.account_memory_state && lead.learning.account_memory_state !== "new_opportunity" && (() => {
+            const amState = lead.learning!.account_memory_state!;
+            const timesSeen = lead.learning!.account_memory_times_seen ?? 0;
+            const lastCat   = lead.learning!.account_memory_last_category;
+
+            const AM_META: Record<string, { label: string; bg: string; color: string; border: string }> = {
+              previously_seen:               { label: copy.sAccountMemorySeen,        bg: "#f8fafc", color: "#64748b", border: "#e2e8f0" },
+              repeated_without_new_signal:   { label: copy.sAccountMemoryRepeat,      bg: "#fffbeb", color: "#92400e", border: "#fde68a" },
+              reactivated_with_new_signal:   { label: copy.sAccountMemoryReactivated, bg: "#f0fdf4", color: "#15803d", border: "#bbf7d0" },
+              upgraded_priority:             { label: copy.sAccountMemoryUpgraded,    bg: "#eff6ff", color: "#1d4ed8", border: "#bfdbfe" },
+              downgraded_priority:           { label: copy.sAccountMemoryDowngraded,  bg: "#fff7ed", color: "#9a3412", border: "#fed7aa" },
+              dropped:                       { label: copy.sAccountMemoryDropped,     bg: "#fef2f2", color: "#dc2626", border: "#fecaca" },
+            };
+
+            const meta = AM_META[amState];
+            if (!meta) return null;
+
+            return (
+              <div style={{ border: `1px solid ${meta.border}`, borderRadius: ".5rem", padding: ".5rem .875rem", marginBottom: ".5rem", background: meta.bg, display: "flex", alignItems: "center", gap: ".625rem", flexWrap: "wrap" as const }}>
+                <span style={{ fontSize: ".6rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", color: "#94a3b8", flexShrink: 0 }}>{copy.sAccountMemory}</span>
+                <span style={{ fontSize: ".7rem", fontWeight: 700, color: meta.color }}>{meta.label}</span>
+                {timesSeen > 0 && (
+                  <span style={{ fontSize: ".68rem", color: "#94a3b8" }}>{timesSeen} {copy.sAccountMemoryTimesSeen}</span>
+                )}
+                {lastCat && (
+                  <span style={{ fontSize: ".68rem", color: "#94a3b8" }}>{copy.sAccountMemoryLastCat}: <strong style={{ color: "#64748b" }}>{lastCat}</strong></span>
+                )}
               </div>
             );
           })()}

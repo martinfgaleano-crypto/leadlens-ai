@@ -11,6 +11,19 @@ export type MarketRegion = "north_america" | "latin_america" | "europe" | "asia"
 export type EvidenceDisciplineType = "verified_public_signal" | "inferred_from_context" | "weak_inference" | "missing_evidence";
 export type RiskLevel = "low" | "medium" | "high";
 
+// ─── Account Memory ───────────────────────────────────────────────────────────
+
+/** Novelty / repetition state of an account across pipeline runs. */
+export type AccountMemoryState =
+  | "new_opportunity"
+  | "previously_seen"
+  | "repeated_without_new_signal"
+  | "reactivated_with_new_signal"
+  | "upgraded_priority"
+  | "downgraded_priority"
+  | "dropped"
+  | "do_not_show";
+
 // ─── New intelligence types ───────────────────────────────────────────────────
 
 /** How imminent the buying window appears based on available signals */
@@ -336,6 +349,11 @@ export interface LearningMetadata {
   vault_reason?: string;
   vault_confidence?: "insufficient_volume" | "low" | "medium" | "high";
   vault_matched_patterns?: string[];
+  // ── Account Memory (applied post-vault, never changes scores) ────────────────
+  account_memory_state?: AccountMemoryState;
+  account_memory_times_seen?: number;          // 0 = never seen before
+  account_memory_last_seen_at?: string;        // ISO timestamp of previous appearance
+  account_memory_last_category?: string;       // HOT/WARM/COLD/DISCARD from last run
 }
 
 // ─── Processed Lead (final pipeline output) ──────────────────────────────────
