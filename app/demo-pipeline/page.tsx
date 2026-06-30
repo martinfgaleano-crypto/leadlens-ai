@@ -259,6 +259,12 @@ const COPY = {
     sAccountMemoryDropped: "Dropped",
     sAccountMemoryTimesSeen: "times seen",
     sAccountMemoryLastCat: "Last",
+    sEvidenceQuality: "Evidence Quality",
+    sEvidenceHigh: "High",
+    sEvidenceMedium: "Medium",
+    sEvidenceLow: "Low",
+    sEvidenceInsufficient: "Insufficient evidence",
+    sEvidenceGuardrail: "Recommendation adjusted due to evidence quality.",
   },
   es: {
     announcement: "Opportunity Snapshots disponibles — inteligencia comercial B2B para tu primer outreach real.",
@@ -513,6 +519,12 @@ const COPY = {
     sAccountMemoryDropped: "Descartada",
     sAccountMemoryTimesSeen: "veces vista",
     sAccountMemoryLastCat: "Última categoría",
+    sEvidenceQuality: "Calidad de evidencia",
+    sEvidenceHigh: "Alta",
+    sEvidenceMedium: "Media",
+    sEvidenceLow: "Baja",
+    sEvidenceInsufficient: "Evidencia insuficiente",
+    sEvidenceGuardrail: "Recomendación ajustada por calidad de evidencia.",
   },
   pt: {
     announcement: "Opportunity Snapshots disponíveis — inteligência comercial B2B para seu primeiro outreach real.",
@@ -767,6 +779,12 @@ const COPY = {
     sAccountMemoryDropped: "Descartada",
     sAccountMemoryTimesSeen: "vezes vista",
     sAccountMemoryLastCat: "Última cat.",
+    sEvidenceQuality: "Qualidade de evidência",
+    sEvidenceHigh: "Alta",
+    sEvidenceMedium: "Média",
+    sEvidenceLow: "Baixa",
+    sEvidenceInsufficient: "Evidência insuficiente",
+    sEvidenceGuardrail: "Recomendação ajustada pela qualidade de evidência.",
   },
   ja: {
     announcement: "Opportunity Snapshots提供開始 — B2Bコマーシャルインテリジェンスで最初の本格的アウトリーチを。",
@@ -1021,6 +1039,12 @@ const COPY = {
     sAccountMemoryDropped: "対象外へ",
     sAccountMemoryTimesSeen: "回確認",
     sAccountMemoryLastCat: "前回カテゴリ",
+    sEvidenceQuality: "エビデンス品質",
+    sEvidenceHigh: "高",
+    sEvidenceMedium: "中",
+    sEvidenceLow: "低",
+    sEvidenceInsufficient: "エビデンス不十分",
+    sEvidenceGuardrail: "エビデンス品質に基づいて推奨アクションを調整しました。",
   },
 };
 
@@ -2526,6 +2550,32 @@ function LeadCard({ lead, index, isOpen, onToggle, copy, jobId }: {
                 )}
                 {lastCat && (
                   <span style={{ fontSize: ".68rem", color: "#94a3b8" }}>{copy.sAccountMemoryLastCat}: <strong style={{ color: "#64748b" }}>{lastCat}</strong></span>
+                )}
+              </div>
+            );
+          })()}
+
+          {/* ── Evidence Quality — guardrail badge ──────────────────────────── */}
+          {lead.learning?.evidence_quality && (() => {
+            const eq = lead.learning!.evidence_quality!;
+            const guardrailApplied = lead.learning!.recommended_action_guardrail_applied;
+
+            const EQ_META: Record<string, { label: string; bg: string; color: string; border: string }> = {
+              high:         { label: copy.sEvidenceHigh,        bg: "#f0fdf4", color: "#15803d", border: "#bbf7d0" },
+              medium:       { label: copy.sEvidenceMedium,      bg: "#fffbeb", color: "#92400e", border: "#fde68a" },
+              low:          { label: copy.sEvidenceLow,         bg: "#fff7ed", color: "#9a3412", border: "#fed7aa" },
+              insufficient: { label: copy.sEvidenceInsufficient, bg: "#fef2f2", color: "#dc2626", border: "#fecaca" },
+            };
+
+            const meta = EQ_META[eq];
+            if (!meta) return null;
+
+            return (
+              <div style={{ border: `1px solid ${meta.border}`, borderRadius: ".5rem", padding: ".5rem .875rem", marginBottom: ".5rem", background: meta.bg, display: "flex", alignItems: "center", gap: ".625rem", flexWrap: "wrap" as const }}>
+                <span style={{ fontSize: ".6rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", color: "#94a3b8", flexShrink: 0 }}>{copy.sEvidenceQuality}</span>
+                <span style={{ fontSize: ".7rem", fontWeight: 700, color: meta.color }}>{meta.label}</span>
+                {guardrailApplied && (
+                  <span style={{ fontSize: ".68rem", color: "#94a3b8", fontStyle: "italic" }}>{copy.sEvidenceGuardrail}</span>
                 )}
               </div>
             );

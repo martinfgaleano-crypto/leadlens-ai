@@ -78,12 +78,23 @@ export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLen
     console.log(`[pipeline] account memory: ${memorizedCount} previously-seen accounts classified`);
   }
 
+  // Evidence Quality pass — classifies evidence level, applies recommended_action guardrails
+  // (best-effort, never blocks; must run after Account Memory, before report agent)
+  const { applyEvidenceQualityHints, applyEvidenceQualityToReport } = await import("./quality/evidence-quality");
+  const leadsWithQuality = applyEvidenceQualityHints(leadsForReport);
+  const qualityCount = leadsWithQuality.filter(l => l.learning?.evidence_quality).length;
+  const insufficientCount = leadsWithQuality.filter(l => l.learning?.evidence_quality === "insufficient").length;
+  if (qualityCount > 0) {
+    console.log(`[pipeline] evidence quality: ${qualityCount} leads classified, ${insufficientCount} insufficient`);
+  }
+
   const { runReportAgent } = await import("./agents/report-agent");
-  const report = await runReportAgent(leadsForReport, plan, onboardingData, icp, id);
+  const rawReport = await runReportAgent(leadsWithQuality, plan, onboardingData, icp, id);
+  const report = applyEvidenceQualityToReport(rawReport);
 
   // Write account memory updates after report is built (best-effort, fire-and-forget)
   if (!IS_DEMO) {
-    updateAccountMemoryFromReport(leadsForReport, id, clientKey, memoryMap).catch(() => {});
+    updateAccountMemoryFromReport(leadsWithQuality, id, clientKey, memoryMap).catch(() => {});
   }
 
   const hotCount = report.hot_count;

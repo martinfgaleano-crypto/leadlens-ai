@@ -137,3 +137,20 @@
 **Implicaciones:** Antes de implementar, diseñar la taxonomía completa de estados de cuenta (ver `RETENTION_ENGINE.md` sección E) en términos de negocio, no solo como especificación técnica.
 
 **Estado:** Implementado — commit `377f9cd`. Ver `RETENTION_ENGINE.md` sección D para detalle.
+
+---
+
+### [2026-06-30] Evidence Quality actúa como guardrail sobre recommended_action, no como reemplazo de scoring
+
+**Decisión:** Evidence Quality es una capa conservadora de metadata que puede bajar (nunca subir) la `recommended_action` según la fuerza de la evidencia disponible. Nunca modifica `fit_score`, `category` ni el orden de ranking.
+
+**Por qué:** La alternativa de modificar el score numérico habría roto invariantes del pipeline (el ranking ya está computado cuando se aplica EQ). Además, evidencia débil no implica que la cuenta no sea un buen fit — solo implica que no está lista para outreach directo hoy.
+
+**Implicaciones:**
+- `source_count = 0` → `insufficient` (techo: `add_to_watchlist`)
+- Sin `signal_date` en schema hoy → `fresh_signal_count` siempre 0 → nivel `high` inalcanzable hasta implementar Source Access Layer
+- Orden de pipeline: Vault → Account Memory → Evidence Quality → report agent → `applyEvidenceQualityToReport`
+- `do_not_show` (exclusión por Account Memory) ocurre antes de Evidence Quality — correcto, ya excluida antes de llegar a EQ
+- Best-effort: si EQ falla, el pipeline continúa sin modificación
+
+**Estado:** Implementado — `lib/quality/evidence-quality.ts`. Ver `QUALITY_STANDARD.md` sección D para detalle.

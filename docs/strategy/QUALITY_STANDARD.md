@@ -34,13 +34,20 @@ Establecer qué hace que un Opportunity Snapshot o Market Intelligence Report se
 - Estructura de `snapshot_reports` con lifecycle (processing / completed / failed).
 - Vault Memory UI que distingue entre validated pattern, caution pattern e insufficient feedback.
 - Feedback job_id linkage que conecta oportunidades con el snapshot real.
+- **Sistema de Evidence Quality** (`high | medium | low | insufficient`) por oportunidad — implementado en `lib/quality/evidence-quality.ts` como capa conservadora de guardrails sobre `recommended_action`. Nunca modifica score, categoría ni ranking. Aplicado después de Account Memory, antes del report final.
+- **Guardrails sobre recommended_action** — bajada automática de acción recomendada según nivel de evidencia:
+  - `high`: sin cambio
+  - `medium`: `send_outreach_now` → `validate_source_first`
+  - `low`: `send_outreach_now` / `validate_source_first` → `monitor_for_new_signal`
+  - `insufficient`: toda acción activa → `add_to_watchlist` (excepto `exclude`)
+- **Badge de Evidence Quality** en UI (`app/demo-pipeline/page.tsx`) con texto de guardrail cuando aplica. Copy en EN/ES/PT/JA.
 
 ---
 
 ## E. Qué falta
 
-- **Sistema explícito de Evidence Quality** (Low/Medium/High) por oportunidad — pendiente, hoy es conceptual.
-- **Mecanismo formal de "Insufficient Evidence"** con razón explicada al cliente — pendiente.
+- **Freshness real de señales** — `signal_date` / `discovered_at` no existen todavía en el schema. Mientras tanto, `fresh_signal_count` siempre es 0 → nivel `high` es inalcanzable en producción real (conservador por diseño). Requiere Source Access & Freshness Layer.
+- **Source Access Layer** — sin él, `region_confidence` nunca puede ser `"high"` (máximo `"medium"` para las 4 regiones prioritarias). Ver `SOURCE_STRATEGY.md`.
 - **Mecanismo de detección de genericidad** (ver definición abajo) — no implementado.
 - **Checklist de QA** aplicado de forma sistemática antes de cada entrega — no formalizado aún como proceso.
 

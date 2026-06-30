@@ -32,6 +32,11 @@ export type BuyingWindow = "immediate" | "near_term" | "monitor" | "unclear";
 /** Granular evidence quality grade — more specific than RiskLevel */
 export type EvidenceQualityGrade = "strong_verified" | "moderate_public" | "inferred" | "weak" | "missing";
 
+/** Conservative evidence quality tier used by the Evidence Quality guardrails layer.
+ * Distinct from EvidenceQualityGrade (agent-level granular grade) and
+ * ScoreDimensions.evidence_quality (0-100 numeric). Never changes score or ranking. */
+export type EvidenceQualityLevel = "high" | "medium" | "low" | "insufficient";
+
 /** What the system recommends doing with this account */
 export type RecommendedActionType =
   | "send_outreach_now"
@@ -318,6 +323,9 @@ export interface OpportunityRanking {
   opportunity_tier_reason: string; // Why HOT/WARM/COLD/DISCARD
   comparative_notes?: string;      // Contextual observations vs adjacent accounts
   recommended_action: RecommendedActionType;
+  evidence_quality?: EvidenceQualityLevel;
+  original_recommended_action?: RecommendedActionType;
+  recommended_action_guardrail_applied?: boolean;
 }
 
 // ─── Learning / Feedback Metadata ────────────────────────────────────────────
@@ -354,6 +362,22 @@ export interface LearningMetadata {
   account_memory_times_seen?: number;          // 0 = never seen before
   account_memory_last_seen_at?: string;        // ISO timestamp of previous appearance
   account_memory_last_category?: string;       // HOT/WARM/COLD/DISCARD from last run
+  // ── Evidence Quality (applied post-account-memory, never changes scores) ─────
+  evidence_quality?: EvidenceQualityLevel;
+  source_count?: number;
+  signal_count?: number;
+  fresh_signal_count?: number;
+  source_types?: string[];
+  signal_age_days?: number | null;
+  freshness_score?: number;
+  evidence_confidence?: number;
+  source_confidence?: "high" | "medium" | "low";
+  region_confidence?: "high" | "medium" | "low";
+  insufficient_evidence_reason?: string;
+  evidence_summary?: string;
+  recommended_action_guardrail_applied?: boolean;
+  original_recommended_action?: string;
+  guardrailed_recommended_action?: string;
 }
 
 // ─── Processed Lead (final pipeline output) ──────────────────────────────────
@@ -389,6 +413,7 @@ export interface LeadLensReport {
   first_actions?: string[];
   strategic_warnings?: string[];
   evidence_quality_summary?: string;
+  evidence_quality_counts?: { high: number; medium: number; low: number; insufficient: number };
   // ── Ranking Intelligence ────────────────────────────────────────────────────
   ranked_opportunities?: OpportunityRanking[];    // All accounts ranked with explanations
   // ── Report-level QC ────────────────────────────────────────────────────────
