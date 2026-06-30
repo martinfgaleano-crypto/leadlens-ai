@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { runLeadLensPipeline } from "@/lib/pipeline";
+import { saveSnapshot } from "@/lib/storage/snapshot-store";
 
 /**
  * POST /api/process
  * Runs the full pipeline (DEMO or production depending on DEMO_MODE).
+ * Persists the report to snapshot_reports (best-effort — never blocks response).
  */
 
 const bodySchema = z.object({
@@ -36,7 +38,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { plan, onboarding, jobId } = parsed.data;
+    const { plan, onboarding } = parsed.data;
+
+    // Generate a stable job_id before the run so it's baked into the report
+    const jobId = parsed.data.jobId ?? `snap_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
 
     const report = await runLeadLensPipeline({
       onboardingData: onboarding,
@@ -44,7 +49,10 @@ export async function POST(req: NextRequest) {
       jobId,
     });
 
-    return NextResponse.json({ success: true, report });
+    // Persist snapshot — best-effort, never blocks response
+    saveSnapshot(jobId, plan, report).catch(() => {});
+
+    return NextResponse.json({ success: true, job_id: jobId, report });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     console.error("[/api/process]", message);
