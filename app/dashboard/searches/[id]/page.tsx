@@ -51,6 +51,28 @@ interface LeadResult {
   ai_reasoning: string | null;
 }
 
+interface MonitorRun {
+  job_id: string;
+  status: "processing" | "completed" | "failed";
+  created_at: string;
+  lead_count: number | null;
+  hot_count: number | null;
+  warm_count: number | null;
+  avg_score: number | null;
+  is_baseline: boolean;
+  visible_changes: number | null;
+}
+
+interface MonitorHistory {
+  search_id: string;
+  total_runs: number;
+  latest_status: string | null;
+  latest_completed_at: string | null;
+  latest_report_job_id: string | null;
+  has_processing_run: boolean;
+  runs: MonitorRun[];
+}
+
 const POLL_INTERVAL_MS = 15_000;
 
 // ─── Badges ───────────────────────────────────────────────────────────────────
@@ -247,6 +269,7 @@ export default function SearchDetailPage() {
   const [loading, setLoading]           = useState(true);
   const [notFound, setNotFound]         = useState(false);
   const [error, setError]               = useState("");
+  const [monitor, setMonitor]           = useState<MonitorHistory | null>(null);
 
   const supabaseRef = useRef(getSupabaseClient());
   const userIdRef   = useRef(userId);
@@ -321,6 +344,16 @@ export default function SearchDetailPage() {
         if (!cancelled && icpData) setIcpName(icpData.name as string);
       }
       if (status === "completed") await fetchLeads();
+      // Monitor run history — best-effort; the section stays hidden on failure
+      try {
+        const res = await fetch(`/api/monitor/${searchId}/runs`, {
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        });
+        if (res.ok && !cancelled) {
+          const d = await res.json().catch(() => null);
+          if (d?.runs) setMonitor(d as MonitorHistory);
+        }
+      } catch { /* best-effort */ }
       if (!cancelled) setLoading(false);
     }
     init();
@@ -448,6 +481,82 @@ export default function SearchDetailPage() {
           )}
         </div>
       </div>
+
+      {/* Monthly Monitor — account opportunity runs for this search series */}
+      {monitor && (
+        <div style={{ ...S.section, marginBottom: "1.25rem" }}>
+          <div style={S.sectionHeader}>
+            <span style={S.sectionTitle}>Monthly Monitor</span>
+            {monitor.latest_report_job_id && (
+              <Link
+                href={`/results/${monitor.latest_report_job_id}`}
+                style={{ background: "#0ea5e9", color: "#fff", borderRadius: "0.45rem", padding: "0.4rem 1rem", fontWeight: 700, fontSize: "0.78rem", textDecoration: "none" }}
+              >
+                Open latest report →
+              </Link>
+            )}
+          </div>
+
+          {monitor.total_runs === 0 ? (
+            <div style={{ padding: "1.25rem", color: "#64748b", fontSize: "0.85rem", lineHeight: 1.6 }}>
+              LeadLens monitors this search as a recurring series. No monitor runs yet —
+              once your first account opportunity report is generated, it will appear here
+              as the baseline, and future runs will show what changed.
+            </div>
+          ) : (
+            <>
+              <div style={{ padding: "0.85rem 1.25rem", display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem", borderBottom: "1px solid #f1f5f9" }}>
+                {[
+                  { label: "Total runs", value: String(monitor.total_runs) },
+                  { label: "Latest run", value: monitor.latest_status ?? "—" },
+                  { label: "Last completed", value: monitor.latest_completed_at ? new Date(monitor.latest_completed_at).toLocaleDateString() : "—" },
+                ].map(item => (
+                  <div key={item.label} style={{ textAlign: "center", padding: "0.6rem", background: "#f8fafc", borderRadius: "0.5rem" }}>
+                    <div style={{ fontSize: "0.68rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "0.3rem" }}>{item.label}</div>
+                    <div style={{ fontSize: "0.95rem", fontWeight: 800, color: "#0f172a", textTransform: "capitalize" }}>{item.value}</div>
+                  </div>
+                ))}
+              </div>
+
+              {monitor.has_processing_run && (
+                <div style={{ margin: "0.75rem 1.25rem 0", padding: "0.5rem 0.75rem", background: "#fef3c7", border: "1px solid #fde68a", borderRadius: "0.4rem", fontSize: "0.78rem", color: "#92400e" }}>
+                  A monitor run is currently in progress.
+                </div>
+              )}
+
+              <div style={{ padding: "0.85rem 1.25rem", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                {monitor.runs.map(run => (
+                  <div key={run.job_id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.75rem", border: "1px solid #f1f5f9", borderRadius: "0.5rem", padding: "0.6rem 0.85rem", fontSize: "0.8rem" }}>
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{ fontWeight: 600, color: "#0f172a" }}>
+                        {new Date(run.created_at).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
+                        {run.is_baseline && (
+                          <span style={{ marginLeft: "0.5rem", background: "#e0e7ff", color: "#4338ca", borderRadius: 999, padding: "0.1rem 0.5rem", fontSize: "0.65rem", fontWeight: 700 }}>BASELINE</span>
+                        )}
+                        {!run.is_baseline && run.status === "completed" && (
+                          <span style={{ marginLeft: "0.5rem", background: "#f0fdf4", color: "#15803d", borderRadius: 999, padding: "0.1rem 0.5rem", fontSize: "0.65rem", fontWeight: 700 }}>COMPARED</span>
+                        )}
+                      </div>
+                      <div style={{ color: "#64748b", fontSize: "0.75rem", marginTop: "0.15rem" }}>
+                        {run.status === "completed"
+                          ? <>{run.lead_count ?? "—"} accounts · {run.hot_count ?? 0} hot · {run.warm_count ?? 0} warm{run.visible_changes != null && <> · {run.visible_changes} change{run.visible_changes === 1 ? "" : "s"}</>}</>
+                          : run.status === "processing" ? "In progress…" : "Run did not complete"}
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexShrink: 0 }}>
+                      {run.status === "completed" && (
+                        <Link href={`/results/${run.job_id}`} style={{ color: "#0ea5e9", fontWeight: 600, fontSize: "0.75rem", textDecoration: "none" }}>
+                          View report
+                        </Link>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      )}
 
       {/* Lead Source Summary — only when vault data exists */}
       {search.status === "completed" && (
