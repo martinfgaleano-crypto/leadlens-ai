@@ -1,10 +1,40 @@
-import type { LeadLensReport, ProcessedLead } from "@/types";
+import type { ChangeType, LeadLensReport, OpportunityRanking } from "@/types";
+import { CHANGE_TYPE_LABELS } from "@/lib/memory/change-classifier";
+
+// ─── Change presentation helpers (What Changed v0) ────────────────────────────
+// Copy safety rules:
+//   - "Since last report" language only when previous_* fields are actually
+//     populated (true snapshot comparison ran).
+//   - Baseline / proxy runs are labeled "Current change signals" instead.
+//   - Per-account change labels only shown when client_visible is true.
+
+function rankingByLeadId(report: LeadLensReport): Map<string, OpportunityRanking> {
+  const map = new Map<string, OpportunityRanking>();
+  for (const opp of report.ranked_opportunities ?? []) {
+    if (opp.lead_id) map.set(opp.lead_id, opp);
+  }
+  return map;
+}
+
+function hasTrueComparison(report: LeadLensReport): boolean {
+  return (report.ranked_opportunities ?? []).some(o =>
+    o.previous_action != null ||
+    o.previous_evidence_quality != null ||
+    o.previous_source_freshness != null ||
+    o.previous_signal_date != null,
+  );
+}
+
+function visibleChangeLabel(opp: OpportunityRanking | undefined): string {
+  if (!opp?.change_label || opp.client_visible !== true) return "";
+  return opp.change_label;
+}
 
 // ─── CSV export ───────────────────────────────────────────────────────────────
 
 const CSV_HEADERS = [
   "Rank", "Priority", "Score", "Buying Window",
-  "Recommended Action", "Evidence Quality", "Evidence Strength", "Source Freshness", "Source Coverage", "Source Name",
+  "Recommended Action", "Evidence Quality", "Evidence Strength", "Source Freshness", "Source Coverage", "Source Name", "Change",
   "Company", "Industry", "Size", "Location", "Confidence",
   "Account Thesis", "Signal Interpretation", "Tier Reason",
   "Timing Signals", "Opportunity Risks", "Next Best Question",
@@ -17,6 +47,8 @@ export function exportToCSV(report: LeadLensReport): string {
   const sorted = report.ranked_opportunities
     ? [...report.processed_leads].sort((a, b) => (a.qualification.rank ?? 99) - (b.qualification.rank ?? 99))
     : [...report.processed_leads].sort((a, b) => b.qualification.fit_score - a.qualification.fit_score);
+
+  const rankingMap = rankingByLeadId(report);
 
   const rows = sorted.map((lead, i) => {
     const c = lead.candidate;
@@ -35,6 +67,7 @@ export function exportToCSV(report: LeadLensReport): string {
     const sourceFreshness = lm?.freshness_label ?? "";
     const sourceCoverage = lm?.limited_region_coverage ? "Limited region coverage" : "";
     const sourceName = lm?.source_name ?? "";
+    const changeLabel = visibleChangeLabel(rankingMap.get(lead.id));
 
     return [
       q.rank ?? (i + 1),
@@ -47,6 +80,7 @@ export function exportToCSV(report: LeadLensReport): string {
       sourceFreshness,
       sourceCoverage,
       sourceName,
+      changeLabel,
       c.company,
       c.industry ?? "",
       c.company_size ?? "",
@@ -86,6 +120,8 @@ export function exportToMarkdown(report: LeadLensReport): string {
     ? [...report.processed_leads].sort((a, b) => (a.qualification.rank ?? 99) - (b.qualification.rank ?? 99))
     : [...report.processed_leads].sort((a, b) => b.qualification.fit_score - a.qualification.fit_score);
 
+  const rankingMap = rankingByLeadId(report);
+
   const lines: string[] = [];
 
   lines.push(`# LeadLens AI — Opportunity Snapshot`);
@@ -99,6 +135,30 @@ export function exportToMarkdown(report: LeadLensReport): string {
   lines.push(`## Executive Summary`);
   lines.push(report.executive_summary);
   lines.push("");
+
+  // ── What Changed ─────────────────────────────────────────────────────────────
+  // Only rendered when change classification ran. Title depends on whether a
+  // real previous snapshot was compared — never claim "since last report" on
+  // baseline/proxy runs.
+  const changeSummary = report.change_summary;
+  const isComparison = hasTrueComparison(report);
+  if (changeSummary && changeSummary.client_visible_count > 0) {
+    if (isComparison) {
+      lines.push(`## What Changed Since Last Report`);
+    } else {
+      lines.push(`## Current Change Signals`);
+      lines.push(`*Baseline run — no previous report was available for comparison. These classifications reflect current-run signals only.*`);
+    }
+    lines.push("");
+    const byType = changeSummary.by_type ?? {};
+    for (const [type, count] of Object.entries(byType)) {
+      if (!count || count <= 0) continue;
+      if (type === "no_meaningful_change" || type === "repeated_no_change") continue;
+      const label = CHANGE_TYPE_LABELS[type as ChangeType] ?? type.replace(/_/g, " ");
+      lines.push(`- ${label}: ${count}`);
+    }
+    lines.push("");
+  }
 
   // ── Opportunity Tiers ────────────────────────────────────────────────────────
   const hot   = sorted.filter(l => l.qualification.category === "HOT");
@@ -229,6 +289,14 @@ export function exportToMarkdown(report: LeadLensReport): string {
     // Tier reason
     if (q.opportunity_tier_reason) {
       lines.push(`**Tier Reasoning:** ${q.opportunity_tier_reason}`);
+      lines.push("");
+    }
+
+    // Change classification (only when client-visible; label copy is
+    // customer-safe by construction — CHANGE_TYPE_LABELS)
+    const changeLabel = visibleChangeLabel(rankingMap.get(lead.id));
+    if (changeLabel) {
+      lines.push(`**Change:** ${changeLabel}`);
       lines.push("");
     }
 
