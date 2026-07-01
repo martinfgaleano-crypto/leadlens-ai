@@ -140,3 +140,21 @@ A definir formalmente junto con el sistema de Evidence Quality. Mientras no exis
 - [ ] Las oportunidades con evidencia insuficiente están marcadas como tal, no presentadas como recomendación fuerte.
 - [ ] El reporte no expone datos personales (emails, teléfonos, nombres individuales, LinkedIn personal).
 - [ ] El Results Page/UI se ve terminado, sin estados de carga rotos o JSON crudo visible.
+
+### Product Readiness QA Checklist v0 (Monthly Monitor — pre-entrega por run)
+
+Aplicar antes de exponer cualquier run de monitor a un cliente. Los primeros tres
+puntos tienen chips automáticos en la vista admin de run history ("NEEDS REVIEW");
+el resto es revisión manual hasta que se automatice.
+
+- [ ] **Sin datos de contacto personales** — ni en report page, ni en exports CSV/Markdown, ni en feedback payloads.
+- [ ] **Ninguna cuenta low/insufficient evidence con acción "Contact this week"** — los guardrails de Evidence Quality deben haber degradado la acción; verificar que no se saltaron.
+- [ ] **Ninguna freshness desconocida etiquetada como fresh** — `signal_date` null ⇒ "Signal date not confirmed", nunca "fresh".
+- [ ] **Ninguna señal stale presentada como urgencia** — stale ⇒ monitor/watchlist, no outreach inmediato.
+- [ ] **Ninguna cuenta `do_not_show` visible** — feedback `exclude_similar` respetado por el pipeline.
+- [ ] **Ninguna cuenta `repeated_no_change` como top opportunity** — si el run está dominado por repetición, el chip "Mostly repeated / no meaningful change" lo marca; no entregar sin revisar.
+- [ ] **El reporte tiene labels de evidencia** (`evidence_strength_label` o fallback "Not available" visible, nunca en blanco).
+- [ ] **El reporte tiene labels de freshness** (`freshness_label` o "Signal date not confirmed").
+- [ ] **Los controles de feedback están disponibles** en cada account card del report.
+- [ ] **El lenguaje baseline/comparación es correcto** — "What Changed Since Last Report" solo con `previous_*` poblados; baseline dice "Current Change Signals".
+- [ ] **El run está scoped por `search_id`** — verificar en `snapshot_reports` que la fila tiene el `search_id` correcto, no null.
