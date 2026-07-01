@@ -336,3 +336,23 @@
 - `app/admin/searches/[id]/page.tsx` — Card "Monthly Monitor — AI report" en sidebar derecho (tipo RerunLog, handler handleRerun, inline result log)
 
 **Estado:** Implementado. TypeScript: 0 errores. No cron/scheduler. No UI rediseño. No billing. No Apollo. No datos personales.
+
+---
+
+### [2026-07-01] Monthly Monitor Sprint — Run History Backend + Admin UI + Change Presentation
+
+**Decisión:** Completar el ciclo mínimo de Monthly Monitor admin-controlado en un sprint controlado (P0–P5): índice de performance, historia de runs backend, vista admin de historia de runs, columna Source Coverage en CSV, y presentación de "What Changed" en exports.
+
+**Implementación:**
+- **P0** — `028_onboarding_search_id_idx.sql`: índice parcial sobre `onboarding_requests(search_id)` para el lookup del rerun endpoint.
+- **P1** — `GET /api/admin/searches/[id]/runs`: historia de runs admin-only, scoped por `.eq("search_id")` (sin fallback global). Extrae `change_summary` vía JSON-path select (`report_json->change_summary`) — el `report_json` completo nunca sale de la BD para listados. Deriva `is_baseline` (primer run completed, oldest-first) y `run_index`. Respuesta: `{ search_id, total_runs, latest_status, latest_completed_at, has_processing_run, runs[] }`.
+- **P2** — Card "Monthly Monitor — AI report" en admin search detail ahora muestra: resumen de serie (latest status, total runs, last completed), warning de run en processing, e historia compacta con badges BASELINE/COMPARED, conteos por run y visible changes. El botón de rerun se preserva; la historia se recarga tras cada rerun.
+- **P3** — CSV export gana columna "Source Coverage" ("Limited region coverage" cuando `limited_region_coverage`). Único campo P3 ausente; evidence strength, freshness y recommended action ya estaban en ambos exports.
+- **P4** — Presentación de What Changed en exports:
+  - Markdown: sección con conteos de change types client-visible. Título "What Changed Since Last Report" **solo** cuando algún `previous_*` field está poblado (comparación real); si no, "Current Change Signals" con nota explícita de baseline. Línea "Change:" por cuenta solo cuando `client_visible === true`.
+  - CSV: columna "Change" con `change_label` (copy customer-safe de `CHANGE_TYPE_LABELS`), vacía cuando no es client-visible.
+  - `no_meaningful_change` / `repeated_no_change` se omiten de los conteos de la sección (ruido).
+
+**Reglas de seguridad respetadas:** sin scheduler, sin comparación global de snapshots, sin cross-search history, sin cambios de score/ranking, sin datos personales en UI/exports nuevos, demo mode intacto, `/api/process` one-off intacto.
+
+**Estado:** Implementado. TypeScript: 0 errores en cada bloque. Commits: P0 `3bca76b`, P1 `38d583a`, P2 `9a959c1`, P3 `209a3a8`, P4 `5f0deed`.

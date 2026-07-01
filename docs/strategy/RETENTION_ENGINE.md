@@ -57,6 +57,8 @@ Documentar la lógica de negocio que justifica por qué un cliente debería reno
 
 **Monthly Monitor Manual Rerun v0:** `POST /api/admin/searches/[id]/rerun` permite ejecutar manualmente el AI pipeline para un `lead_searches.id` existente. Guards: dedup (409 si hay processing), onboarding data (422 si no hay `onboarding_requests.search_id`), baseline detection (`is_baseline=true` en respuesta cuando no hay snapshots completados previos). `listSnapshotsForSearch(searchId)` disponible en `snapshot-store.ts` para consultar historia de runs por series.
 
+**Monitor Run History (implementado):** `GET /api/admin/searches/[id]/runs` devuelve la historia de runs de una serie (same-search only, nunca global), con `is_baseline`/`run_index` derivados de runs completados y `change_summary` (conteos, sin datos de cuentas) extraído por JSON-path. El admin search detail muestra la serie: latest status, total runs, last completed, warning de processing, y lista de runs con badges BASELINE/COMPARED. **Sin scheduler y sin automatización customer-facing todavía** — todos los runs son manuales y admin-only por diseño en esta etapa. Regla de copy en exports: "What Changed Since Last Report" solo cuando existe comparación real con snapshot previo; baseline/proxy se etiqueta "Current Change Signals".
+
 ---
 
 ## F. Riesgos
