@@ -40,18 +40,22 @@ export async function GET(
     return NextResponse.json({ error: "Search not found" }, { status: 404 });
   }
 
-  // Fetch profile and ICP in parallel
-  const [profileRes, icpRes] = await Promise.all([
+  // Fetch profile, ICP, and onboarding linkage in parallel
+  const [profileRes, icpRes, onboardingRes] = await Promise.all([
     client.from("profiles").select("id, email, plan, credits_remaining").eq("id", search.user_id).single(),
     search.icp_id
       ? client.from("icps").select("*").eq("id", search.icp_id).single()
       : Promise.resolve({ data: null, error: null }),
+    client.from("onboarding_requests").select("id", { count: "exact", head: true }).eq("search_id", params.id),
   ]);
 
   return NextResponse.json({
     search,
     profile: profileRes.data ?? null,
     icp:     icpRes.data     ?? null,
+    // Monitor reruns reconstruct pipeline input from onboarding_requests —
+    // without this linkage, POST .../rerun returns 422.
+    has_onboarding_request: (onboardingRes.count ?? 0) > 0,
   });
 }
 

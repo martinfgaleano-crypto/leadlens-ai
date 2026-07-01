@@ -485,6 +485,7 @@ export default function AdminSearchDetailPage() {
   // Monthly Monitor run history
   const [runHistory, setRunHistory]   = useState<RunHistory | null>(null);
   const [runsLoading, setRunsLoading] = useState(false);
+  const [hasOnboarding, setHasOnboarding] = useState<boolean | null>(null);
 
   // ─── Data loading ──────────────────────────────────────────────────────────
 
@@ -512,6 +513,7 @@ export default function AdminSearchDetailPage() {
     setSearch(d.search   as LeadSearch);
     setProfile(d.profile as Profile | null);
     setIcp(d.icp         as Icp | null);
+    setHasOnboarding(typeof d.has_onboarding_request === "boolean" ? d.has_onboarding_request : null);
     setStatusValue(d.search.status);
     setNotesValue(d.search.admin_notes ?? "");
     setLoading(false);
@@ -917,29 +919,44 @@ export default function AdminSearchDetailPage() {
               </div>
             )}
 
-            <button
-              onClick={handleRerun}
-              disabled={rerunning}
-              style={{
-                display: "flex", alignItems: "center", justifyContent: "center", gap: "0.4rem",
-                width: "100%", padding: "0.65rem 1rem",
-                background: rerunning ? "#e2e8f0" : "#0f172a",
-                color: rerunning ? "#94a3b8" : "#fff",
-                border: "none", borderRadius: "0.5rem",
-                fontWeight: 700, fontSize: "0.85rem",
-                cursor: rerunning ? "not-allowed" : "pointer",
-                fontFamily: "inherit",
-              }}
-            >
-              {rerunning ? (
-                <>
-                  <span style={{ display: "inline-block", animation: "spin 1s linear infinite" }}>⏳</span>
-                  Running AI pipeline…
-                </>
-              ) : (
-                "Run AI Report"
-              )}
-            </button>
+            {hasOnboarding === false && (
+              <div style={{ marginBottom: "0.75rem", padding: "0.5rem 0.75rem", background: "#fee2e2", border: "1px solid #fca5a5", borderRadius: "0.4rem", fontSize: "0.78rem", color: "#dc2626" }}>
+                No onboarding request is linked to this search — the AI pipeline cannot
+                reconstruct its input, so monitor runs are unavailable. Searches created
+                through the normal onboarding flow have this linkage automatically.
+              </div>
+            )}
+
+            {(() => {
+              const rerunBlocked = rerunning || hasOnboarding === false;
+              return (
+                <button
+                  onClick={handleRerun}
+                  disabled={rerunBlocked}
+                  style={{
+                    display: "flex", alignItems: "center", justifyContent: "center", gap: "0.4rem",
+                    width: "100%", padding: "0.65rem 1rem",
+                    background: rerunBlocked ? "#e2e8f0" : "#0f172a",
+                    color: rerunBlocked ? "#94a3b8" : "#fff",
+                    border: "none", borderRadius: "0.5rem",
+                    fontWeight: 700, fontSize: "0.85rem",
+                    cursor: rerunBlocked ? "not-allowed" : "pointer",
+                    fontFamily: "inherit",
+                  }}
+                >
+                  {rerunning ? (
+                    <>
+                      <span style={{ display: "inline-block", animation: "spin 1s linear infinite" }}>⏳</span>
+                      Running AI pipeline…
+                    </>
+                  ) : hasOnboarding === false ? (
+                    "Monitor runs unavailable"
+                  ) : (
+                    "Run AI Report"
+                  )}
+                </button>
+              );
+            })()}
 
             <p style={{ color: "#94a3b8", fontSize: "0.7rem", margin: "0.5rem 0 0", textAlign: "center" }}>
               Uses AI credits · ~30–60 seconds
