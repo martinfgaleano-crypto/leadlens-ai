@@ -350,6 +350,14 @@ export interface OpportunityRanking {
   evidence_quality?: EvidenceQualityLevel;
   original_recommended_action?: RecommendedActionType;
   recommended_action_guardrail_applied?: boolean;
+  // ── Source & Freshness metadata (Source Layer — metadata only, never changes ranking) ──
+  evidence_strength_label?: string;   // "Strong evidence" / "Moderate evidence" / "Limited evidence" / "Insufficient evidence"
+  source_freshness_label?: string;    // "Context-only source · No timing signal" / "No signal date available · Freshness unknown"
+  is_context_only?: boolean;          // True when all sources are context-only
+  signal_role?: SignalRole;           // timing_signal | context_only | unknown
+  source_coverage_note?: string;      // Set when region coverage is limited
+  source_name?: string | null;        // Source domain (hostname only — never personal data)
+  source_type?: SourceType;           // Primary source type classification
 }
 
 // ─── Learning / Feedback Metadata ────────────────────────────────────────────

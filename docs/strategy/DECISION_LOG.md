@@ -172,3 +172,23 @@
 - Nombres de archivos: `signal-taxonomy.ts` y `signal-freshness.ts` (no "source-registry" — ya existe para providers)
 
 **Estado:** Implementado — `lib/sources/signal-taxonomy.ts`, `lib/sources/signal-freshness.ts`.
+
+---
+
+### [2026-06-30] Report Source Metadata Integration v0: source metadata en ranked_opportunities y exports
+
+**Decisión:** Implementar `applySourceFreshnessToReport()` para que el Source Layer v0 escriba metadata de fuentes y freshness en `ranked_opportunities` y en los exports (CSV/Markdown). No cambia scores, ranking, ni EQ guardrails.
+
+**Por qué:** Después de Source Layer v0 e EQ, `ranked_opportunities` tenía metadata de EQ (`evidence_quality`, `recommended_action` corregida) pero no tenía metadata de fuentes ni freshness. El cliente no podía ver en el reporte si la evidencia tenía fecha confirmada o no, ni qué tipo de fuente respaldaba cada oportunidad.
+
+**Implicaciones:**
+- `OpportunityRanking` ahora incluye 6 campos opcionales: `evidence_strength_label`, `source_freshness_label`, `is_context_only`, `signal_role`, `source_coverage_note`, `source_name`, `source_type`
+- `applySourceFreshnessToReport()` corre antes de `applyEvidenceQualityToReport()` en pipeline — EQ spreads encima sin perder campos de Source Layer
+- `evidence_strength_label` derivado de `lm.evidence_quality` (ya calculado por EQ en el lead): "Strong / Moderate / Limited / Insufficient evidence"
+- `source_freshness_label` viene de `lm.freshness_label` — en v0 siempre es "Context-only source · No timing signal" o "No signal date available · Freshness unknown" (nunca "Fresh signal")
+- CSV export: 3 nuevas columnas — "Evidence Strength", "Source Freshness", "Source Name"
+- Markdown export: líneas adicionales por cuenta — evidence strength, signal freshness, coverage note, source name
+- Ningún dato personal introducido — `source_name` es solo hostname de dominio
+- Scores, ranking y EQ guardrails sin cambio
+
+**Estado:** Implementado — `applySourceFreshnessToReport()` en `lib/sources/signal-freshness.ts`, pipeline en `lib/pipeline.ts`, exports en `lib/utils/export.ts`.

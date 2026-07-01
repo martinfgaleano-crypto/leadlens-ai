@@ -4,7 +4,7 @@ import type { LeadLensReport, ProcessedLead } from "@/types";
 
 const CSV_HEADERS = [
   "Rank", "Priority", "Score", "Buying Window",
-  "Recommended Action", "Evidence Quality",
+  "Recommended Action", "Evidence Quality", "Evidence Strength", "Source Freshness", "Source Name",
   "Company", "Industry", "Size", "Location", "Confidence",
   "Account Thesis", "Signal Interpretation", "Tier Reason",
   "Timing Signals", "Opportunity Risks", "Next Best Question",
@@ -28,6 +28,13 @@ export function exportToCSV(report: LeadLensReport): string {
       s => !s.toLowerCase().startsWith("no confirmed") && !s.toLowerCase().includes("inferred")
     );
 
+    const lm = lead.learning;
+    const evidenceStrength = lm?.evidence_quality
+      ? { high: "Strong evidence", medium: "Moderate evidence", low: "Limited evidence", insufficient: "Insufficient evidence" }[lm.evidence_quality] ?? ""
+      : "";
+    const sourceFreshness = lm?.freshness_label ?? "";
+    const sourceName = lm?.source_name ?? "";
+
     return [
       q.rank ?? (i + 1),
       q.category,
@@ -35,6 +42,9 @@ export function exportToCSV(report: LeadLensReport): string {
       e.buying_window ?? "",
       (e.recommended_action ?? "").replace(/_/g, " "),
       e.evidence_quality_grade ?? "",
+      evidenceStrength,
+      sourceFreshness,
+      sourceName,
       c.company,
       c.industry ?? "",
       c.company_size ?? "",
@@ -240,10 +250,24 @@ export function exportToMarkdown(report: LeadLensReport): string {
       lines.push("");
     }
 
-    // Company details
+    // Company details + source/freshness metadata
     if (c.location) lines.push(`- Location: ${c.location}`);
     lines.push(`- Source: ${c.source} · Confidence: ${Math.round(c.confidence_score * 100)}%`);
     lines.push(`- Evidence quality: ${e.evidence_quality_grade ?? "?"}`);
+    const lm = lead.learning;
+    if (lm?.evidence_quality) {
+      const strengthLabels: Record<string, string> = { high: "Strong evidence", medium: "Moderate evidence", low: "Limited evidence", insufficient: "Insufficient evidence" };
+      lines.push(`- Evidence strength: ${strengthLabels[lm.evidence_quality] ?? lm.evidence_quality}`);
+    }
+    if (lm?.freshness_label) {
+      lines.push(`- Signal freshness: ${lm.freshness_label}`);
+    }
+    if (lm?.limited_region_coverage) {
+      lines.push(`- ⚠ Source coverage limited for this region`);
+    }
+    if (lm?.source_name) {
+      lines.push(`- Source name: ${lm.source_name}`);
+    }
     lines.push("");
 
     if (e.company_summary) {

@@ -80,7 +80,7 @@ export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLen
 
   // Source Access & Freshness Layer v0 — normalizes source metadata per opportunity
   // (best-effort, never blocks; must run after Account Memory, before Evidence Quality)
-  const { applySourceFreshnessToLeads } = await import("./sources/signal-freshness");
+  const { applySourceFreshnessToLeads, applySourceFreshnessToReport } = await import("./sources/signal-freshness");
   const leadsWithSources = applySourceFreshnessToLeads(leadsForReport);
   const sourceCount = leadsWithSources.filter(l => l.learning?.source_layer_applied).length;
   if (sourceCount > 0) {
@@ -99,7 +99,10 @@ export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLen
 
   const { runReportAgent } = await import("./agents/report-agent");
   const rawReport = await runReportAgent(leadsWithQuality, plan, onboardingData, icp, id);
-  const report = applyEvidenceQualityToReport(rawReport);
+  // Source Layer metadata → ranked_opportunities (must run before EQ-to-report so
+  // EQ can spread over the already-enriched entries without losing source fields)
+  const reportWithSources = applySourceFreshnessToReport(rawReport);
+  const report = applyEvidenceQualityToReport(reportWithSources);
 
   // Write account memory updates after report is built (best-effort, fire-and-forget)
   if (!IS_DEMO) {

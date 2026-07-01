@@ -21,6 +21,7 @@ import type {
   SourceFreshness,
   SignalRole,
   RegionConfidence,
+  EvidenceQualityLevel,
 } from "@/types";
 
 import {
@@ -335,27 +336,73 @@ export function applySourceFreshnessToLeads(leads: ProcessedLead[]): ProcessedLe
   return leads.map(applySourceFreshnessToLead);
 }
 
+// ─── Evidence strength label (customer-facing, not a raw enum) ────────────────
+
+function buildEvidenceStrengthLabel(level?: EvidenceQualityLevel): string | undefined {
+  switch (level) {
+    case "high":         return "Strong evidence";
+    case "medium":       return "Moderate evidence";
+    case "low":          return "Limited evidence";
+    case "insufficient": return "Insufficient evidence";
+    default:             return undefined;
+  }
+}
+
 // ─── Apply to report (patches ranked_opportunities with source metadata) ───────
 
 export function applySourceFreshnessToReport(report: LeadLensReport): LeadLensReport {
   try {
     if (!report.ranked_opportunities?.length) return report;
 
-    // Build map from lead_id → source layer metadata
-    const sourceMap = new Map<string, { region_confidence: string; source_count: number; is_context_only: boolean }>();
+    // Build map from lead_id → relevant learning metadata fields
+    type SourceEntry = {
+      freshness_label?: string;
+      evidence_quality?: EvidenceQualityLevel;
+      is_context_only?: boolean;
+      signal_role?: import("@/types").SignalRole;
+      limited_region_coverage?: boolean;
+      source_name?: string | null;
+      source_type?: SourceType;
+    };
+    const sourceMap = new Map<string, SourceEntry>();
+
     for (const lead of report.processed_leads) {
       const lm = lead.learning;
       if (lm?.source_layer_applied) {
         sourceMap.set(lead.id, {
-          region_confidence: lm.region_confidence ?? "unknown",
-          source_count:      lm.source_count ?? 0,
-          is_context_only:   lm.is_context_only ?? true,
+          freshness_label:        lm.freshness_label,
+          evidence_quality:       lm.evidence_quality,
+          is_context_only:        lm.is_context_only,
+          signal_role:            lm.signal_role,
+          limited_region_coverage: lm.limited_region_coverage,
+          source_name:            lm.source_name,
+          source_type:            lm.source_type,
         });
       }
     }
 
-    // No changes to ranked_opportunities scores/ranking — Source Layer is metadata only
-    return report;
+    if (sourceMap.size === 0) return report;
+
+    // Patch each ranked opportunity — metadata only, never changes score or rank
+    const patched = report.ranked_opportunities.map(opp => {
+      const src = sourceMap.get(opp.lead_id);
+      if (!src) return opp;
+
+      return {
+        ...opp,
+        evidence_strength_label: buildEvidenceStrengthLabel(src.evidence_quality),
+        source_freshness_label:  src.freshness_label,
+        is_context_only:         src.is_context_only,
+        signal_role:             src.signal_role,
+        source_coverage_note:    src.limited_region_coverage
+          ? "Source coverage limited for this region"
+          : undefined,
+        source_name:  src.source_name,
+        source_type:  src.source_type,
+      };
+    });
+
+    return { ...report, ranked_opportunities: patched };
   } catch {
     return report;
   }

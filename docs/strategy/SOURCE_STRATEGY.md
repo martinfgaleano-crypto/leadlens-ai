@@ -42,6 +42,13 @@ Documentar qué fuentes públicas existen por región, su confiabilidad y limita
 
 **Comportamiento actual (v0):** `signal_date` siempre null (campo no existe en schema aún). `fresh_signal_count` siempre 0. `discovered_at` siempre disponible. `source_freshness` siempre "unknown".
 
+**Report Source Metadata Integration v0** también implementado:
+
+- `applySourceFreshnessToReport()` en `lib/sources/signal-freshness.ts` — ya no es no-op. Escribe metadata de fuentes en cada `OpportunityRanking`: `evidence_strength_label`, `source_freshness_label`, `is_context_only`, `signal_role`, `source_coverage_note`, `source_name`, `source_type`.
+- `lib/utils/export.ts` — CSV añade columnas "Evidence Strength", "Source Freshness", "Source Name". Markdown añade líneas por cuenta con la misma metadata.
+- Orden en pipeline: Source Layer (leads) → EQ (leads) → Report Agent → `applySourceFreshnessToReport` → `applyEvidenceQualityToReport`.
+- "Fresh signal" nunca aparece en reporte porque `source_freshness` siempre es "unknown" en v0.
+
 ---
 
 ## E. Qué falta
