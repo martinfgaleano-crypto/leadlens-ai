@@ -38,6 +38,7 @@ const MOCK_POOL: MockAccount[] = [
     source_url: "https://suncoastlogisticsgroup.com/about",
     confidence_score: 0.85,
     raw_context: "Company website mentions fleet expansion — 40% more delivery vehicles added in the past 12 months. LinkedIn company page highlights new same-day coverage in 14 ZIP codes across the Tampa Bay region. Press release dated 3 months ago references plans to expand into the Orlando corridor.",
+    signal_date: "2026-04-01", // "Press release dated 3 months ago" — pinned explicitly for demo
   },
   {
     company: "ColdRoute Distribution",
@@ -182,6 +183,7 @@ const MOCK_POOL: MockAccount[] = [
     source_url: "https://buildflowtech.com/news",
     confidence_score: 0.84,
     raw_context: "Construction project management SaaS company that recently announced a Series A and is expanding into enterprise accounts. News section references a new partner program with construction supply chains. Company is hiring enterprise account executives and a channel partner manager.",
+    signal_date: "2026-05-15", // Series A announced ~6 weeks ago — pinned explicitly for demo
   },
   {
     company: "Nexflow RevOps",

@@ -434,6 +434,13 @@ Evidence discipline rules — this is critical:
 - weak_inference: a guess with thin supporting evidence — be honest about this
 - missing_evidence: something we don't know and shouldn't pretend to know
 
+Signal date rules — strictly enforced:
+- The "date" field in evidence_discipline is OPTIONAL and must only be set for verified_public_signal claims
+- Set "date" ONLY when the source text contains an explicit, unambiguous calendar date (e.g. "announced March 2024", "press release from January 15, 2024", "Series A closed Q1 2024")
+- Format: ISO date string "YYYY-MM-DD". If only month/year known, use the first of that month (e.g. "2024-03-01" for "March 2024")
+- NEVER estimate or approximate a date. NEVER use today's date. NEVER set date when only a relative term appears (e.g. "recently", "last month", "a few weeks ago")
+- If no explicit calendar date is present: omit the "date" field entirely or set it to null
+
 Language discipline:
 - For verified signals: "Recently hired...", "Announced...", "Reports indicate..."
 - For inferences: "appears to", "suggests", "based on available public signals", "may indicate"
@@ -461,7 +468,7 @@ Return JSON:
   "why_now": "Why this account is relevant *right now* — confirmed timing or honest inference. State which.",
   "pain_hypothesis": "A specific, falsifiable hypothesis about what challenge this company faces that this offer addresses",
   "risks_weaknesses": ["Real risks: thin evidence, wrong industry segment, overextended team, etc."],
-  "evidence_discipline": [{ "claim": "string", "type": "verified_public_signal|inferred_from_context|weak_inference|missing_evidence" }],
+  "evidence_discipline": [{ "claim": "string", "type": "verified_public_signal|inferred_from_context|weak_inference|missing_evidence", "date": "YYYY-MM-DD or null — ONLY when an explicit calendar date appears in the source. Omit or null if none." }],
   "segment_fit_note": "1 sentence on whether this company's industry/stage genuinely fits the target segment or is adjacent",
   "account_thesis": "1-2 sentences: WHY this account may be commercially relevant NOW — the core commercial thesis. Be honest if it's inferred.",
   "signal_interpretation": "1-2 sentences: What the confirmed signals MEAN commercially — not just what they are. If no signal, explain the hypothesis basis.",

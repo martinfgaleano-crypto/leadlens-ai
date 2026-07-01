@@ -192,3 +192,30 @@
 - Scores, ranking y EQ guardrails sin cambio
 
 **Estado:** Implementado — `applySourceFreshnessToReport()` en `lib/sources/signal-freshness.ts`, pipeline en `lib/pipeline.ts`, exports en `lib/utils/export.ts`.
+
+---
+
+### [2026-07-01] Signal Date v0: soporte estructurado conservador de signal_date
+
+**Decisión:** Implementar soporte conservador de `signal_date` en el Source Layer. `signal_date` se lee exclusivamente de campos estructurados existentes — nunca de texto libre, nunca inventada, nunca de `discovered_at`.
+
+**Por qué:** Con `signal_date` siempre null, `fresh_signal_count` era siempre 0 y Evidence Quality `"high"` era inalcanzable en producción. Esta limitación era artificial — algunos providers y el research agent SÍ tienen fechas explícitas disponibles. Signal Date v0 las usa cuando existen, sin cambiar el comportamiento cuando no existen.
+
+**Fuentes aceptadas (en orden de prioridad):**
+1. `LeadCandidate.signal_date` — fecha explícita del provider (ej. Apollo funding date en futuro, mock/manual)
+2. `EvidenceClaim.date` — fecha explícita en claims de tipo `verified_public_signal`, solo cuando el research agent la extrae de una fecha de calendario literal en raw_context/web_context
+
+**Validación estricta (`validateSignalDate`):**
+- Debe ser parseable como fecha real
+- No puede ser fecha futura
+- No puede ser mayor a 3 años (señal demasiado antigua para ser accionable)
+- Inválido → null
+
+**Implicaciones:**
+- `signal_date` permanece null cuando no hay fecha estructurada — sin cambio de comportamiento
+- `fresh_signal_count > 0` solo cuando `signal_date` válida Y `source_freshness === "fresh"`
+- Evidence Quality `"high"` ahora es alcanzable con fecha válida + `source_count >= 2`
+- Nunca se extrae fecha de expresiones como "recently", "last month", "a few weeks ago"
+- Research agent recibe instrucciones explícitas: solo `date` cuando hay fecha de calendario literal en la fuente
+
+**Estado:** Implementado — `validateSignalDate()`, `extractSignalDate()` en `lib/sources/signal-freshness.ts`; `EvidenceClaim.date` y `LeadCandidate.signal_date` en `types/index.ts`; prompt actualizado en `lib/agents/research-agent.ts`; datos de prueba en `lib/providers/mock-lead-provider.ts`.

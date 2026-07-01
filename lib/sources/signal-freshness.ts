@@ -2,10 +2,12 @@
  * Signal Freshness — normalizes source metadata and freshness for
  * the Source Access & Freshness Layer v0.
  *
- * Rules (v0):
- * - signal_date is NEVER invented. If not available, it stays null.
+ * Rules:
+ * - signal_date is NEVER invented or extracted from free text. If not available, it stays null.
+ * - signal_date comes only from structured fields: LeadCandidate.signal_date or
+ *   EvidenceClaim.date (verified_public_signal claims only).
  * - discovered_at is always set to the current run timestamp.
- * - fresh_signal_count is always 0 in v0 (no signal_date in schema yet).
+ * - fresh_signal_count > 0 only when signal_date is valid AND source_freshness === "fresh".
  * - Context-only sources never contribute to fresh_signal_count.
  * - "unknown" source type → reliability "unknown", not counted as fresh signal.
  * - This layer never changes fit_score, category, or ranking.
@@ -47,7 +49,7 @@ export interface SourceLayerInputs {
   source_name: string | null;
   source_count: number;
   signal_count: number;
-  fresh_signal_count: number;       // Always 0 in v0
+  fresh_signal_count: number;       // > 0 only when signal_date is valid and source_freshness === "fresh"
   is_context_only: boolean;
   is_timing_signal: boolean;
   signal_role: SignalRole;
@@ -55,6 +57,62 @@ export interface SourceLayerInputs {
   freshness_score: number;
   region_confidence: RegionConfidence;
   limited_region_coverage: boolean;
+}
+
+// ─── Signal date validation ────────────────────────────────────────────────────
+
+const MAX_SIGNAL_AGE_MS = 3 * 365 * 24 * 60 * 60 * 1000; // 3 years — older signals are not actionable
+
+/**
+ * Validate a raw date string from structured data.
+ * Returns a normalized ISO date (YYYY-MM-DD) or null.
+ *
+ * Rules:
+ * - Must be parseable as a real calendar date
+ * - Must not be in the future (no invented "upcoming" dates)
+ * - Must be within the last 3 years (older signals are not fresh)
+ * - Invalid → null (never throws)
+ */
+export function validateSignalDate(raw: string | null | undefined): string | null {
+  if (!raw) return null;
+  try {
+    const parsed = new Date(raw);
+    if (isNaN(parsed.getTime())) return null;
+    const now = Date.now();
+    if (parsed.getTime() > now) return null;                    // No future dates
+    if (now - parsed.getTime() > MAX_SIGNAL_AGE_MS) return null; // Too old to be actionable
+    return parsed.toISOString().slice(0, 10);                   // Normalize to YYYY-MM-DD
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Extract the best available signal_date for a lead from structured fields only.
+ * Priority:
+ *   1. lead.candidate.signal_date — explicit date from the lead provider (highest trust)
+ *   2. evidence_discipline claims of type "verified_public_signal" with a .date field
+ * Returns the most recent valid date, or null.
+ * Never extracts from free text, never invents a date.
+ */
+export function extractSignalDate(lead: ProcessedLead): string | null {
+  // 1. Provider-level date (e.g. Apollo funding_date, mock explicit date)
+  const candidateDate = validateSignalDate(lead.candidate.signal_date);
+  if (candidateDate !== null) return candidateDate;
+
+  // 2. Evidence discipline claims with explicit structured dates
+  const discipline = lead.enrichment.evidence_discipline ?? [];
+  const validDates: string[] = [];
+  for (const claim of discipline) {
+    if (claim.type === "verified_public_signal" && claim.date) {
+      const validated = validateSignalDate(claim.date);
+      if (validated !== null) validDates.push(validated);
+    }
+  }
+  if (validDates.length === 0) return null;
+
+  // Most recent valid date wins
+  return validDates.sort().reverse()[0] ?? null;
 }
 
 // ─── Normalization ─────────────────────────────────────────────────────────────
@@ -176,16 +234,18 @@ export function extractSourceInputs(lead: ProcessedLead): SourceLayerInputs {
   const signal_count = confirmedSignals.length;
 
   // ── Freshness ────────────────────────────────────────────────────────────────
-  // signal_date is always null in v0 — no structured date field exists yet.
+  // signal_date: read from structured fields only — never invented, never from free text.
   // discovered_at is the run timestamp (always available).
-  // fresh_signal_count is always 0 in v0.
+  // fresh_signal_count > 0 only when signal_date is valid AND the signal is "fresh"
+  // by the source type's threshold (see signal-taxonomy.ts).
 
-  const signal_date: string | null = null;     // v0: no signal_date in schema
+  const signal_date = extractSignalDate(lead);
   const discovered_at = new Date().toISOString();
   const signal_age_days = calculateSignalAgeDays(signal_date);
   const source_freshness = classifySourceFreshness(signal_age_days, source_type);
   const freshness_score  = calculateFreshnessScore(source_freshness);
-  const fresh_signal_count = 0;                // v0: no date = no confirmed fresh signal
+  // fresh_signal_count > 0 only when we have a confirmed, fresh, dated timing signal
+  const fresh_signal_count = (signal_date !== null && source_freshness === "fresh") ? 1 : 0;
 
   // ── Timing vs context ────────────────────────────────────────────────────────
   const has_timing_source = source_types.some(t => isTimingSource(t));

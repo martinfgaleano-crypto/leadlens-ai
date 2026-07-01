@@ -47,7 +47,17 @@ Documentar qué fuentes públicas existen por región, su confiabilidad y limita
 - `applySourceFreshnessToReport()` en `lib/sources/signal-freshness.ts` — ya no es no-op. Escribe metadata de fuentes en cada `OpportunityRanking`: `evidence_strength_label`, `source_freshness_label`, `is_context_only`, `signal_role`, `source_coverage_note`, `source_name`, `source_type`.
 - `lib/utils/export.ts` — CSV añade columnas "Evidence Strength", "Source Freshness", "Source Name". Markdown añade líneas por cuenta con la misma metadata.
 - Orden en pipeline: Source Layer (leads) → EQ (leads) → Report Agent → `applySourceFreshnessToReport` → `applyEvidenceQualityToReport`.
-- "Fresh signal" nunca aparece en reporte porque `source_freshness` siempre es "unknown" en v0.
+- "Fresh signal" solo aparece en reporte cuando `source_freshness === "fresh"` con una `signal_date` real y válida.
+
+**Signal Date v0** también implementado:
+
+- `LeadCandidate.signal_date?: string | null` — campo opcional para fecha explícita del provider.
+- `EvidenceClaim.date?: string | null` — campo opcional para fecha explícita en claims de tipo `verified_public_signal`.
+- `validateSignalDate()` — validación estricta: parseable, no futuro, dentro de 3 años. Inválido → null.
+- `extractSignalDate()` — lee de `candidate.signal_date` primero, luego de `evidence_discipline` claims. Nunca extrae de texto libre.
+- `fresh_signal_count > 0` solo cuando `signal_date` válida Y `source_freshness === "fresh"`.
+- Evidence Quality `"high"` ahora es alcanzable (requiere `fresh_signal_count >= 1`, `signal_date` no null, `source_count >= 2`).
+- 2 mock leads con `signal_date` explícita para testing: SunCoast Logistics Group (`"2026-04-01"`, press release) y Buildflow Construction Tech (`"2026-05-15"`, Series A).
 
 ---
 

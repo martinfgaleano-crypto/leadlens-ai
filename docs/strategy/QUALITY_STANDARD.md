@@ -46,7 +46,7 @@ Establecer qué hace que un Opportunity Snapshot o Market Intelligence Report se
 
 ## E. Qué falta
 
-- **Freshness real de señales** — `signal_date` / `discovered_at` no existen todavía en el schema. Mientras tanto, `fresh_signal_count` siempre es 0 → nivel `high` es inalcanzable en producción real (conservador por diseño). Requiere Source Access & Freshness Layer.
+- **Freshness real de señales** — `signal_date` implementado de forma conservadora (Signal Date v0). Se lee de `LeadCandidate.signal_date` (fecha explícita del provider) y de `EvidenceClaim.date` (fecha explícita en claims de tipo `verified_public_signal`). Cuando existe una fecha válida y fresca, `fresh_signal_count > 0` y el nivel `high` de Evidence Quality se vuelve alcanzable. Cuando no hay fecha estructurada, `signal_date` permanece null y el comportamiento es idéntico al v0 anterior (conservador por diseño). Nunca se extrae fecha de texto libre ni se inventa.
 - **Source Access Layer** — sin él, `region_confidence` nunca puede ser `"high"` (máximo `"medium"` para las 4 regiones prioritarias). Ver `SOURCE_STRATEGY.md`.
 - **Mecanismo de detección de genericidad** (ver definición abajo) — no implementado.
 - **Checklist de QA** aplicado de forma sistemática antes de cada entrega — no formalizado aún como proceso.

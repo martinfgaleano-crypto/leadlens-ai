@@ -218,6 +218,9 @@ export interface LeadCandidate {
   source_url?: string;
   raw_context?: string;
   confidence_score: number; // 0–1
+  /** Structured signal date from the lead provider (ISO date string, null if unknown).
+   *  Never inferred — only set when the source explicitly carries a date. */
+  signal_date?: string | null;
 }
 
 // ─── Evidence discipline ──────────────────────────────────────────────────────
@@ -225,6 +228,10 @@ export interface LeadCandidate {
 export interface EvidenceClaim {
   claim: string;
   type: EvidenceDisciplineType;
+  /** Explicit structured date for this claim (ISO YYYY-MM-DD).
+   *  Only populated by the research agent when the source text contains an
+   *  unambiguous calendar date. Never estimated or inferred. */
+  date?: string | null;
 }
 
 // ─── Enriched Lead (from Research Agent) ─────────────────────────────────────
