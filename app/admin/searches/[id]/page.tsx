@@ -127,6 +127,30 @@ type RerunLog = {
   error?: string;
 };
 
+type MonitorRun = {
+  job_id: string;
+  plan: string;
+  status: "processing" | "completed" | "failed";
+  created_at: string;
+  lead_count: number | null;
+  hot_count: number | null;
+  warm_count: number | null;
+  avg_score: number | null;
+  has_report: boolean;
+  is_baseline: boolean;
+  run_index: number | null;
+  change_summary: { by_type?: Record<string, number>; client_visible_count?: number } | null;
+};
+
+type RunHistory = {
+  search_id: string;
+  total_runs: number;
+  latest_status: string | null;
+  latest_completed_at: string | null;
+  has_processing_run: boolean;
+  runs: MonitorRun[];
+};
+
 const EMPTY_FORM: LeadForm = {
   company_name: "", website: "", contact_name: "",
   title: "", email: "", linkedin_url: "",
@@ -458,6 +482,10 @@ export default function AdminSearchDetailPage() {
   const [rerunning, setRerunning] = useState(false);
   const [rerunLog, setRerunLog]   = useState<RerunLog | null>(null);
 
+  // Monthly Monitor run history
+  const [runHistory, setRunHistory]   = useState<RunHistory | null>(null);
+  const [runsLoading, setRunsLoading] = useState(false);
+
   // ─── Data loading ──────────────────────────────────────────────────────────
 
   const loadLeads = useCallback(async () => {
@@ -489,10 +517,21 @@ export default function AdminSearchDetailPage() {
     setLoading(false);
   }, [id]);
 
+  const loadRuns = useCallback(async () => {
+    setRunsLoading(true);
+    const res = await adminFetch(`/api/admin/searches/${id}/runs`);
+    if (res.ok) {
+      const d = await res.json().catch(() => null);
+      if (d?.runs) setRunHistory(d as RunHistory);
+    }
+    setRunsLoading(false);
+  }, [id]);
+
   useEffect(() => {
     load();
     loadLeads();
-  }, [load, loadLeads]);
+    loadRuns();
+  }, [load, loadLeads, loadRuns]);
 
   // ─── Status ────────────────────────────────────────────────────────────────
 
@@ -615,6 +654,8 @@ export default function AdminSearchDetailPage() {
     const d = await res.json().catch(() => ({ success: false, error: "Invalid response from server." }));
     setRerunLog(d as RerunLog);
     setRerunning(false);
+
+    await loadRuns();
   }
 
   // ─── Render states ─────────────────────────────────────────────────────────
@@ -850,8 +891,31 @@ export default function AdminSearchDetailPage() {
           {/* Monthly Monitor — AI pipeline rerun */}
           <Card title="Monthly Monitor — AI report">
             <p style={{ color: "#64748b", fontSize: "0.78rem", margin: "0 0 0.75rem", lineHeight: 1.5 }}>
-              Runs the full AI opportunity pipeline scoped to this search series. Snapshot is saved and used for change classification on future runs.
+              Manual admin-controlled monitor runs for this search. Snapshots are saved per series and used for change classification on future runs.
             </p>
+
+            {/* Series summary */}
+            {runHistory && runHistory.total_runs > 0 && (
+              <div style={{ marginBottom: "0.75rem", padding: "0.6rem 0.75rem", background: "#f8fafc", border: "1px solid #f1f5f9", borderRadius: "0.5rem", fontSize: "0.78rem", color: "#334155", lineHeight: 1.7 }}>
+                <div>
+                  <span style={{ color: "#64748b" }}>Latest run: </span>
+                  <StatusBadge status={runHistory.latest_status ?? "—"} />
+                </div>
+                <div><span style={{ color: "#64748b" }}>Total runs: </span><strong>{runHistory.total_runs}</strong></div>
+                <div>
+                  <span style={{ color: "#64748b" }}>Last completed: </span>
+                  {runHistory.latest_completed_at
+                    ? new Date(runHistory.latest_completed_at).toLocaleString()
+                    : <span style={{ color: "#94a3b8" }}>never</span>}
+                </div>
+              </div>
+            )}
+
+            {runHistory?.has_processing_run && (
+              <div style={{ marginBottom: "0.75rem", padding: "0.5rem 0.75rem", background: "#fef3c7", border: "1px solid #fde68a", borderRadius: "0.4rem", fontSize: "0.78rem", color: "#92400e" }}>
+                A run is currently processing — a new run will be rejected until it finishes.
+              </div>
+            )}
 
             <button
               onClick={handleRerun}
@@ -939,6 +1003,57 @@ export default function AdminSearchDetailPage() {
                 )}
               </div>
             )}
+
+            {/* Run history */}
+            <div style={{ marginTop: "1rem" }}>
+              <div style={{ fontSize: "0.72rem", fontWeight: 700, color: "#374151", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "0.5rem" }}>
+                Run history
+              </div>
+              {runsLoading ? (
+                <div style={{ color: "#94a3b8", fontSize: "0.78rem" }}>Loading runs…</div>
+              ) : !runHistory || runHistory.runs.length === 0 ? (
+                <div style={{ color: "#94a3b8", fontSize: "0.78rem" }}>No monitor runs yet. The first run establishes the baseline.</div>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                  {runHistory.runs.map(run => {
+                    const visibleChanges = run.change_summary?.client_visible_count ?? null;
+                    return (
+                      <div key={run.job_id} style={{ border: "1px solid #f1f5f9", borderRadius: "0.5rem", padding: "0.6rem 0.75rem", fontSize: "0.75rem", color: "#334155" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.5rem", marginBottom: "0.3rem" }}>
+                          <span style={{ fontWeight: 600 }}>{new Date(run.created_at).toLocaleString()}</span>
+                          <span style={{ display: "flex", gap: "0.35rem", alignItems: "center" }}>
+                            {run.is_baseline && (
+                              <span style={{ background: "#e0e7ff", color: "#4338ca", borderRadius: 999, padding: "0.1rem 0.45rem", fontSize: "0.65rem", fontWeight: 700 }}>
+                                BASELINE
+                              </span>
+                            )}
+                            {!run.is_baseline && run.status === "completed" && (
+                              <span style={{ background: "#f0fdf4", color: "#15803d", borderRadius: 999, padding: "0.1rem 0.45rem", fontSize: "0.65rem", fontWeight: 700 }}>
+                                COMPARED
+                              </span>
+                            )}
+                            <StatusBadge status={run.status} />
+                          </span>
+                        </div>
+                        {run.status === "completed" ? (
+                          <div style={{ color: "#64748b", lineHeight: 1.6 }}>
+                            {run.lead_count ?? "—"} leads · <span style={{ color: "#dc2626", fontWeight: 600 }}>{run.hot_count ?? 0} hot</span> · <span style={{ color: "#854d0e", fontWeight: 600 }}>{run.warm_count ?? 0} warm</span> · avg {run.avg_score ?? "—"}
+                            {visibleChanges != null && (
+                              <> · {visibleChanges} visible change{visibleChanges === 1 ? "" : "s"}</>
+                            )}
+                          </div>
+                        ) : (
+                          <div style={{ color: "#94a3b8" }}>
+                            {run.status === "processing" ? "Run in progress…" : "Run failed — no report produced."}
+                          </div>
+                        )}
+                        <div style={{ marginTop: "0.2rem", color: "#cbd5e1", fontFamily: "monospace", fontSize: "0.65rem" }}>{run.job_id}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           </Card>
 
           {/* Status */}
