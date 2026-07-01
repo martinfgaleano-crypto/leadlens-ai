@@ -272,6 +272,8 @@ export function applyAccountMemoryHints(
             account_memory_times_seen: existing?.times_seen ?? 0,
             account_memory_last_seen_at: existing?.last_seen_at,
             account_memory_last_category: existing?.last_category ?? undefined,
+            account_memory_last_fit_score: existing?.last_fit_score ?? null,
+            account_memory_last_feedback_signal: existing?.last_feedback_signal ?? null,
           }
         : lead.learning,
     });

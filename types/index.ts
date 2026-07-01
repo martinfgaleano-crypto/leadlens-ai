@@ -24,6 +24,44 @@ export type AccountMemoryState =
   | "dropped"
   | "do_not_show";
 
+// ─── Change Classification ("What Changed Since Last Report") ─────────────────
+
+/**
+ * Phase 1A — simple display tag derived from Account Memory only.
+ * Computed before Source Layer and EQ run.
+ * Preserved for backwards compatibility.
+ */
+export type ChangeTag =
+  | "new"         // First appearance for this client
+  | "promoted"    // Category improved (COLD/DISCARD → WARM/HOT, or WARM → HOT)
+  | "demoted"     // Category dropped (HOT → WARM, or HOT/WARM → COLD/DISCARD)
+  | "score_up"    // Same category, fit_score raised ≥ 1.5 pts vs last run
+  | "score_down"  // Same category, fit_score dropped ≥ 1.5 pts vs last run
+  | "unchanged";  // Previously seen, category stable, score stable
+
+/**
+ * Phase 1B — richer, commercially meaningful change type.
+ * Computed after Source Layer and EQ, using current evidence/freshness + AM proxy.
+ * Never changes score, ranking, or Evidence Quality.
+ *
+ * v0 limitation: previous EQ/freshness/action are not stored in account_memory
+ * and no previous snapshot is fetched. "Previous" comparisons that require snapshot
+ * data are stubbed as null until Phase 2 adds snapshot comparison.
+ */
+export type ChangeType =
+  | "new_account"               // First appearance, not blocked by feedback
+  | "new_evidence"              // Quality evidence present, seen before, not repeated_no_change
+  | "fresh_signal_added"        // Fresh signal with valid signal_date, seen before, timing source
+  | "signal_became_stale"       // Current signal stale, seen ≥2x, timing source
+  | "priority_increased"        // Category/score improved, supported by evidence
+  | "priority_decreased"        // Category/score dropped, or stale/weak evidence
+  | "repeated_with_new_evidence"// Seen before, fresh signal this run
+  | "repeated_no_change"        // Repeated without new signal or evidence improvement
+  | "excluded_by_feedback"      // Negative feedback signal on record
+  | "revived_account"           // Was COLD/DISCARD, now HOT/WARM, seen before
+  | "still_relevant"            // Seen before, vault positive match, maintains quality
+  | "no_meaningful_change";     // Technical changes only; no commercial decision changed
+
 // ─── New intelligence types ───────────────────────────────────────────────────
 
 /** How imminent the buying window appears based on available signals */
@@ -365,6 +403,25 @@ export interface OpportunityRanking {
   source_coverage_note?: string;      // Set when region coverage is limited
   source_name?: string | null;        // Source domain (hostname only — never personal data)
   source_type?: SourceType;           // Primary source type classification
+  // ── Change Classification (What Changed Since Last Report — metadata only) ──
+  // Phase 1A (simple tag, preserved for backwards compat)
+  change_tag?: ChangeTag;
+  change_score_delta?: number | null;   // Signed delta vs previous run (null when new)
+  change_prev_category?: string | null; // Previous category (null when new)
+  // Phase 1B (richer fields, computed after EQ+Source Layer)
+  change_type?: ChangeType;
+  change_label?: string;
+  change_reason?: string;
+  client_visible?: boolean;
+  suppression_reason?: string;
+  previous_action?: RecommendedActionType | null;
+  current_action?: RecommendedActionType | null;
+  previous_evidence_quality?: EvidenceQualityLevel | null;
+  current_evidence_quality?: EvidenceQualityLevel | null;
+  previous_source_freshness?: SourceFreshness | null;
+  current_source_freshness?: SourceFreshness | null;
+  previous_signal_date?: string | null;
+  current_signal_date?: string | null;
 }
 
 // ─── Learning / Feedback Metadata ────────────────────────────────────────────
@@ -401,6 +458,30 @@ export interface LearningMetadata {
   account_memory_times_seen?: number;          // 0 = never seen before
   account_memory_last_seen_at?: string;        // ISO timestamp of previous appearance
   account_memory_last_category?: string;       // HOT/WARM/COLD/DISCARD from last run
+  account_memory_last_fit_score?: number | null;     // fit_score from previous run (null = first time)
+  account_memory_last_feedback_signal?: string | null; // Last feedback signal from user (null = none)
+  // ── Change Classification Phase 1A (applied after AM, before Source Layer) ──
+  // Simple tag computed from Account Memory only. Preserved for backwards compat.
+  change_tag?: ChangeTag;
+  change_score_delta?: number | null;     // currentFitScore − prevFitScore, signed, 1 decimal
+  change_prev_category?: string | null;   // Previous LeadCategory (null when new)
+  change_prev_score?: number | null;      // Previous fit_score (null when new)
+  // ── Change Classification Phase 1B (applied after EQ+Source Layer, at report level) ──
+  // Richer fields computed after all pipeline stages. Requires current EQ/freshness.
+  // "previous_*" fields are null in v0 — no snapshot comparison yet.
+  change_type?: ChangeType;
+  change_label?: string;              // Customer-friendly label (e.g. "Fresh signal added")
+  change_reason?: string;             // Internal reason string for debugging/audit
+  client_visible?: boolean;           // Whether this change is worth surfacing in UI
+  suppression_reason?: string;        // Why this account is suppressed from highlights
+  previous_action?: RecommendedActionType | null;       // null in v0 (no snapshot)
+  current_action?: RecommendedActionType | null;
+  previous_evidence_quality?: EvidenceQualityLevel | null; // null in v0 (no snapshot)
+  current_evidence_quality?: EvidenceQualityLevel | null;
+  previous_source_freshness?: SourceFreshness | null;   // null in v0 (no snapshot)
+  current_source_freshness?: SourceFreshness | null;
+  previous_signal_date?: string | null;                 // null in v0 (no snapshot)
+  current_signal_date?: string | null;
   // ── Source Access & Freshness Layer (applied before EQ, never changes scores) ─
   source_layer_applied?: boolean;
   discovered_at?: string;            // ISO timestamp of pipeline run (always set)
@@ -469,6 +550,19 @@ export interface LeadLensReport {
   evidence_quality_counts?: { high: number; medium: number; low: number; insufficient: number };
   // ── Ranking Intelligence ────────────────────────────────────────────────────
   ranked_opportunities?: OpportunityRanking[];    // All accounts ranked with explanations
+  // ── Change Classification summary (What Changed Since Last Report) ──────────
+  change_summary?: {
+    // Phase 1A counts (preserved for backwards compat)
+    new_count: number;
+    promoted_count: number;
+    demoted_count: number;
+    score_up_count: number;
+    score_down_count: number;
+    unchanged_count: number;
+    // Phase 1B richer breakdown
+    by_type: Partial<Record<ChangeType, number>>;
+    client_visible_count: number;   // Accounts with client_visible = true
+  };
   // ── Report-level QC ────────────────────────────────────────────────────────
   report_quality_score?: number;                  // 0–100 self-assessed quality
   report_quality_notes?: string[];                // Issues found at batch level
@@ -482,6 +576,8 @@ export interface PipelineInput {
   onboardingData: OnboardingData;
   plan: PlanType;
   jobId?: string;
+  /** lead_searches.id — scopes previous-snapshot lookup to the same monitor series. */
+  searchId?: string;
 }
 
 // ─── Provider result ──────────────────────────────────────────────────────────

@@ -117,6 +117,16 @@ type GenerateLog = {
   };
 };
 
+type RerunLog = {
+  success: boolean;
+  job_id?: string;
+  search_id?: string;
+  is_baseline?: boolean;
+  message?: string;
+  stats?: { hot_count: number; warm_count: number; total_leads: number; avg_score: number };
+  error?: string;
+};
+
 const EMPTY_FORM: LeadForm = {
   company_name: "", website: "", contact_name: "",
   title: "", email: "", linkedin_url: "",
@@ -444,6 +454,10 @@ export default function AdminSearchDetailPage() {
   const [generating, setGenerating] = useState(false);
   const [genLog, setGenLog]         = useState<GenerateLog | null>(null);
 
+  // Monthly Monitor AI rerun
+  const [rerunning, setRerunning] = useState(false);
+  const [rerunLog, setRerunLog]   = useState<RerunLog | null>(null);
+
   // ─── Data loading ──────────────────────────────────────────────────────────
 
   const loadLeads = useCallback(async () => {
@@ -581,6 +595,26 @@ export default function AdminSearchDetailPage() {
 
     // Reload search (status may have changed) + leads
     await Promise.all([load(), loadLeads()]);
+  }
+
+  // ─── Monthly Monitor rerun ─────────────────────────────────────────────────
+
+  async function handleRerun() {
+    if (!confirm(
+      "Run AI opportunity report for this search?\n\n" +
+      "• Uses AI pipeline credits (~30–60 seconds)\n" +
+      "• Snapshot saved and scoped to this search series\n" +
+      "• Previous snapshot comparison active if baseline exists\n\n" +
+      "Proceed?"
+    )) return;
+
+    setRerunning(true);
+    setRerunLog(null);
+
+    const res = await adminFetch(`/api/admin/searches/${id}/rerun`, { method: "POST" });
+    const d = await res.json().catch(() => ({ success: false, error: "Invalid response from server." }));
+    setRerunLog(d as RerunLog);
+    setRerunning(false);
   }
 
   // ─── Render states ─────────────────────────────────────────────────────────
@@ -811,6 +845,100 @@ export default function AdminSearchDetailPage() {
             </p>
 
             {genLog && <ApolloLogPanel log={genLog} />}
+          </Card>
+
+          {/* Monthly Monitor — AI pipeline rerun */}
+          <Card title="Monthly Monitor — AI report">
+            <p style={{ color: "#64748b", fontSize: "0.78rem", margin: "0 0 0.75rem", lineHeight: 1.5 }}>
+              Runs the full AI opportunity pipeline scoped to this search series. Snapshot is saved and used for change classification on future runs.
+            </p>
+
+            <button
+              onClick={handleRerun}
+              disabled={rerunning}
+              style={{
+                display: "flex", alignItems: "center", justifyContent: "center", gap: "0.4rem",
+                width: "100%", padding: "0.65rem 1rem",
+                background: rerunning ? "#e2e8f0" : "#0f172a",
+                color: rerunning ? "#94a3b8" : "#fff",
+                border: "none", borderRadius: "0.5rem",
+                fontWeight: 700, fontSize: "0.85rem",
+                cursor: rerunning ? "not-allowed" : "pointer",
+                fontFamily: "inherit",
+              }}
+            >
+              {rerunning ? (
+                <>
+                  <span style={{ display: "inline-block", animation: "spin 1s linear infinite" }}>⏳</span>
+                  Running AI pipeline…
+                </>
+              ) : (
+                "Run AI Report"
+              )}
+            </button>
+
+            <p style={{ color: "#94a3b8", fontSize: "0.7rem", margin: "0.5rem 0 0", textAlign: "center" }}>
+              Uses AI credits · ~30–60 seconds
+            </p>
+
+            {rerunLog && (
+              <div style={{
+                marginTop: "0.75rem",
+                background: rerunLog.success ? "#f0fdf4" : "#fff8f8",
+                border: `1px solid ${rerunLog.success ? "#bbf7d0" : "#fca5a5"}`,
+                borderRadius: "0.5rem",
+                padding: "0.875rem 1rem",
+                fontSize: "0.8rem",
+                fontFamily: "monospace",
+                lineHeight: 1.7,
+                color: "#1e293b",
+              }}>
+                {rerunLog.error && (
+                  <div style={{ color: "#dc2626", fontWeight: 700, marginBottom: "0.5rem" }}>
+                    Error: {rerunLog.error}
+                  </div>
+                )}
+                {rerunLog.success && (
+                  <>
+                    <div>
+                      <span style={{ color: "#64748b" }}>Status: </span>
+                      <strong style={{ color: "#15803d" }}>Complete</strong>
+                      {rerunLog.is_baseline && (
+                        <span style={{ marginLeft: "0.5rem", background: "#e0e7ff", color: "#4338ca", borderRadius: 999, padding: "0.1rem 0.45rem", fontSize: "0.68rem", fontWeight: 700 }}>
+                          BASELINE
+                        </span>
+                      )}
+                    </div>
+                    {rerunLog.message && (
+                      <div style={{ marginTop: "0.25rem", color: "#374151", fontFamily: "inherit", fontSize: "0.78rem" }}>
+                        {rerunLog.message}
+                      </div>
+                    )}
+                    {rerunLog.stats && (
+                      <>
+                        <div style={{ marginTop: "0.5rem" }}>
+                          <span style={{ color: "#64748b" }}>Hot: </span>
+                          <strong style={{ color: "#dc2626" }}>{rerunLog.stats.hot_count}</strong>
+                          <span style={{ color: "#64748b", marginLeft: "0.75rem" }}>Warm: </span>
+                          <strong style={{ color: "#854d0e" }}>{rerunLog.stats.warm_count}</strong>
+                          <span style={{ color: "#64748b", marginLeft: "0.75rem" }}>Total: </span>
+                          {rerunLog.stats.total_leads}
+                        </div>
+                        <div>
+                          <span style={{ color: "#64748b" }}>Avg score: </span>
+                          {rerunLog.stats.avg_score}
+                        </div>
+                      </>
+                    )}
+                    {rerunLog.job_id && (
+                      <div style={{ marginTop: "0.25rem", color: "#94a3b8", fontSize: "0.72rem" }}>
+                        job_id: {rerunLog.job_id}
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
           </Card>
 
           {/* Status */}

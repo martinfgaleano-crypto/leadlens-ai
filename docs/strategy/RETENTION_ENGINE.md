@@ -36,16 +36,26 @@ Documentar la lógica de negocio que justifica por qué un cliente debería reno
 - Vault Memory UI dentro de Opportunity Cards (validated pattern / caution pattern / insufficient feedback).
 - Feedback linkage: `opportunity_feedback.job_id` apunta al snapshot real del run.
 - **Account Memory / Anti-Repetition** (commit `377f9cd`): tabla `account_memory`, clasificación de 8 estados, integración en pipeline (best-effort), badge en LeadCard en 4 idiomas. Demo jobs no escriben. Supabase failure no bloquea pipeline.
+- **What Changed Since Last Report v0 — Phase 1A + 1B** (`lib/memory/change-classifier.ts`): clasificación de cambios a nivel de cuenta en dos capas:
+  - *Phase 1A* (`ChangeTag`): `new | promoted | demoted | score_up | score_down | unchanged` — derivado de Account Memory únicamente (pre-Source Layer).
+  - *Phase 1B* (`ChangeType`): 12 tipos comercialmente significativos (`new_account`, `new_evidence`, `fresh_signal_added`, `signal_became_stale`, `priority_increased`, `priority_decreased`, `repeated_with_new_evidence`, `repeated_no_change`, `excluded_by_feedback`, `revived_account`, `still_relevant`, `no_meaningful_change`) — derivado de AM + EQ + Source Freshness + Signal Date + Vault + Feedback.
+  - *Phase 2* (`previous_*` fields): infraestructura completa construida y scope seguro implementado. `snapshot_reports` ahora tiene columna `search_id UUID REFERENCES lead_searches(id)` (migration 027). `getPreviousCompletedSnapshot(currentJobId, searchId?)` requiere `searchId` explícito — sin él devuelve null, nunca hace query global. Cuando `searchId` es provisto (Monthly Monitor trigger), busca `.eq("search_id", searchId).eq("status","completed").neq("job_id", currentJobId)` — garantiza mismo-search scope. `PipelineInput` tiene `searchId?`; `/api/process` lo acepta en body. Cuando no hay snapshot previo disponible o `searchId` no se provee, Phase 1B proxy activo como fallback.
+  - Ambas capas son metadata-only: nunca cambian fit_score, category ni ranking.
+  - `change_summary` en `LeadLensReport` incluye conteos por tipo y `client_visible_count`.
+  - `client_visible` y `suppression_reason` disponibles por oportunidad.
+  - `account_memory_last_feedback_signal` propagado a `lead.learning` para detección de feedback negativo.
 
 ---
 
 ## E. Qué falta
 
-**"What changed since last report":** vista comparativa explícita entre el reporte actual y el anterior — pendiente.
-
 **Exclusión por feedback (`do_not_show`):** el flag existe y el pipeline lo respeta, pero el mecanismo para activarlo desde `exclude_similar` feedback aún no está conectado.
 
 **Medición real** de churn y conversión (no hay datos de clientes reales aún).
+
+**scope activo desde migration 027:** `snapshot_reports.search_id` existe y se escribe cuando el caller proporciona `searchId`. El Monthly Monitor trigger debe pasar `searchId` (lead_searches.id) en el body de `/api/process` para que el scope funcione. Runs sin `searchId` (demo, admin legacy) devuelven null seguro — Phase 1B proxy activo. `user_id` sigue sin escribirse; si se desea scope por usuario adicional en futuro, requiere pasar `userId` por `PipelineInput`.
+
+**Monthly Monitor Manual Rerun v0:** `POST /api/admin/searches/[id]/rerun` permite ejecutar manualmente el AI pipeline para un `lead_searches.id` existente. Guards: dedup (409 si hay processing), onboarding data (422 si no hay `onboarding_requests.search_id`), baseline detection (`is_baseline=true` en respuesta cuando no hay snapshots completados previos). `listSnapshotsForSearch(searchId)` disponible en `snapshot-store.ts` para consultar historia de runs por series.
 
 ---
 

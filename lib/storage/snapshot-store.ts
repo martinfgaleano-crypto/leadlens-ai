@@ -19,6 +19,7 @@ export interface SnapshotRecord {
   job_id:      string;
   plan:        string;
   user_id:     string | null;
+  search_id:   string | null;   // lead_searches.id — safe scope for previous-snapshot lookup
   status:      "processing" | "completed" | "failed";
   lead_count:  number | null;
   hot_count:   number | null;
@@ -33,8 +34,9 @@ export interface SnapshotRecord {
 // report_json gets a safe placeholder — never contains real leads or PII.
 
 export async function createProcessingSnapshot(
-  jobId: string,
-  plan:  string,
+  jobId:    string,
+  plan:     string,
+  searchId?: string | null,
 ): Promise<string | null> {
   const db = await getDb();
   if (!db) return null;
@@ -47,6 +49,7 @@ export async function createProcessingSnapshot(
         plan,
         status:      "processing",
         report_json: { _status: "processing", job_id: jobId },
+        ...(searchId ? { search_id: searchId } : {}),
       })
       .select("id")
       .single();
@@ -62,9 +65,10 @@ export async function createProcessingSnapshot(
 // Upserts full report data once the pipeline finishes successfully.
 
 export async function completeSnapshot(
-  jobId:  string,
-  plan:   string,
-  report: LeadLensReport,
+  jobId:    string,
+  plan:     string,
+  report:   LeadLensReport,
+  searchId?: string | null,
 ): Promise<string | null> {
   const db = await getDb();
   if (!db) return null;
@@ -82,6 +86,7 @@ export async function completeSnapshot(
           warm_count:  report.warm_count,
           avg_score:   report.avg_score,
           report_json: report,
+          ...(searchId ? { search_id: searchId } : {}),
         },
         { onConflict: "job_id" },
       )
@@ -100,9 +105,10 @@ export async function completeSnapshot(
 // reason must be a sanitized internal message — never a raw error with secrets.
 
 export async function failSnapshot(
-  jobId:  string,
-  plan:   string,
-  reason: string,
+  jobId:    string,
+  plan:     string,
+  reason:   string,
+  searchId?: string | null,
 ): Promise<string | null> {
   const db = await getDb();
   if (!db) return null;
@@ -116,6 +122,7 @@ export async function failSnapshot(
           plan,
           status:      "failed",
           report_json: { _status: "failed", job_id: jobId, _reason: reason },
+          ...(searchId ? { search_id: searchId } : {}),
         },
         { onConflict: "job_id" },
       )
@@ -150,12 +157,60 @@ export async function getSnapshot(jobId: string): Promise<SnapshotRecord | null>
   try {
     const { data, error } = await db
       .from("snapshot_reports")
-      .select("id, job_id, plan, user_id, status, lead_count, hot_count, warm_count, avg_score, report_json, created_at")
+      .select("id, job_id, plan, user_id, search_id, status, lead_count, hot_count, warm_count, avg_score, report_json, created_at")
       .eq("job_id", jobId)
       .single();
 
     if (error || !data) return null;
     return data as SnapshotRecord;
+  } catch {
+    return null;
+  }
+}
+
+// ─── getPreviousCompletedSnapshot ─────────────────────────────────────────────
+// Returns the most recent completed snapshot for the same search series, for
+// "What Changed Since Last Report" true-delta comparison.
+//
+// Safe scope: requires searchId (lead_searches.id). Without it, returns null
+// immediately — never falls back to a global "most recent" query, which would
+// risk cross-customer or cross-search comparisons (unsafe for SaaS).
+//
+// Typical flow:
+//   1. Monthly Monitor trigger calls /api/process with { jobId, searchId }.
+//   2. pipeline.ts passes searchId to this function.
+//   3. Query: search_id = searchId AND status = completed AND job_id != currentJobId,
+//      ordered newest first, limit 1.
+//   4. Returns report_json cast to LeadLensReport, or null on any failure.
+//
+// When null is returned, applyChangeSinceLastReportToReport uses Phase 1B proxy
+// classification — safe and correct as a fallback.
+
+export async function getPreviousCompletedSnapshot(
+  currentJobId: string,
+  searchId?: string | null,
+): Promise<LeadLensReport | null> {
+  // Hard requirement: scope must be established before any query runs.
+  if (!searchId) return null;
+
+  const db = await getDb();
+  if (!db) return null;
+
+  try {
+    const { data, error } = await db
+      .from("snapshot_reports")
+      .select("report_json")
+      .eq("search_id", searchId)
+      .eq("status", "completed")
+      .neq("job_id", currentJobId)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .single();
+
+    if (error || !data) return null;
+    const rec = data as { report_json: unknown };
+    if (!rec.report_json || typeof rec.report_json !== "object") return null;
+    return rec.report_json as LeadLensReport;
   } catch {
     return null;
   }
@@ -170,7 +225,32 @@ export async function listSnapshots(limit = 20): Promise<Omit<SnapshotRecord, "r
   try {
     const { data } = await db
       .from("snapshot_reports")
-      .select("id, job_id, plan, user_id, status, lead_count, hot_count, warm_count, avg_score, created_at")
+      .select("id, job_id, plan, user_id, search_id, status, lead_count, hot_count, warm_count, avg_score, created_at")
+      .order("created_at", { ascending: false })
+      .limit(limit);
+
+    return (data ?? []) as Omit<SnapshotRecord, "report_json">[];
+  } catch {
+    return [];
+  }
+}
+
+// ─── listSnapshotsForSearch ───────────────────────────────────────────────────
+// Run history for a single Monthly Monitor series (scoped to search_id).
+
+export async function listSnapshotsForSearch(
+  searchId: string,
+  limit = 20,
+): Promise<Omit<SnapshotRecord, "report_json">[]> {
+  if (!searchId) return [];
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    const { data } = await db
+      .from("snapshot_reports")
+      .select("id, job_id, plan, user_id, search_id, status, lead_count, hot_count, warm_count, avg_score, created_at")
+      .eq("search_id", searchId)
       .order("created_at", { ascending: false })
       .limit(limit);
 

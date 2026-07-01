@@ -30,6 +30,8 @@ const bodySchema = z.object({
     target_market_region: z.enum(["north_america", "latin_america", "europe", "asia", "global"]).optional(),
   }),
   jobId: z.string().optional(),
+  /** lead_searches.id — enables safe previous-snapshot scope for Monthly Monitor runs. */
+  searchId: z.string().uuid().optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -45,17 +47,18 @@ export async function POST(req: NextRequest) {
   }
 
   const { plan, onboarding } = parsed.data;
-  const jobId = parsed.data.jobId ?? `snap_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+  const jobId    = parsed.data.jobId    ?? `snap_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+  const searchId = parsed.data.searchId ?? undefined;
 
   // ── 1. Mark processing — best-effort, never blocks the run ──────────────────
-  createProcessingSnapshot(jobId, plan).catch(() => {});
+  createProcessingSnapshot(jobId, plan, searchId).catch(() => {});
 
   // ── 2. Run pipeline ─────────────────────────────────────────────────────────
   try {
-    const report = await runLeadLensPipeline({ onboardingData: onboarding, plan, jobId });
+    const report = await runLeadLensPipeline({ onboardingData: onboarding, plan, jobId, searchId });
 
     // ── 3. Mark completed — best-effort ───────────────────────────────────────
-    completeSnapshot(jobId, plan, report).catch(() => {});
+    completeSnapshot(jobId, plan, report, searchId).catch(() => {});
 
     return NextResponse.json({ success: true, job_id: jobId, report });
 
@@ -67,7 +70,7 @@ export async function POST(req: NextRequest) {
 
     console.error("[/api/process]", jobId, safeReason);
 
-    await failSnapshot(jobId, plan, safeReason).catch(() => {});
+    await failSnapshot(jobId, plan, safeReason, searchId).catch(() => {});
 
     return NextResponse.json({ error: safeReason, job_id: jobId }, { status: 500 });
   }

@@ -20,7 +20,7 @@ const IS_DEMO = process.env.DEMO_MODE === "true";
 // ─── Public entry point ───────────────────────────────────────────────────────
 
 export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLensReport> {
-  const { onboardingData, plan, jobId } = input;
+  const { onboardingData, plan, jobId, searchId } = input;
   const id = jobId ?? `job-${Date.now()}`;
 
   console.log(`[pipeline] starting — plan=${plan} demo=${IS_DEMO}`);
@@ -78,10 +78,18 @@ export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLen
     console.log(`[pipeline] account memory: ${memorizedCount} previously-seen accounts classified`);
   }
 
+  // Change Classification — derives ChangeTag from Account Memory (best-effort, never blocks)
+  const { applyChangeTagsToLeads, applyChangeSinceLastReportToReport } = await import("./memory/change-classifier");
+  const leadsAfterChange = applyChangeTagsToLeads(leadsForReport);
+  const changedCount = leadsAfterChange.filter(l => l.learning?.change_tag && l.learning.change_tag !== "new" && l.learning.change_tag !== "unchanged").length;
+  if (changedCount > 0) {
+    console.log(`[pipeline] change classifier: ${changedCount} accounts with notable change tagged`);
+  }
+
   // Source Access & Freshness Layer v0 — normalizes source metadata per opportunity
   // (best-effort, never blocks; must run after Account Memory, before Evidence Quality)
   const { applySourceFreshnessToLeads, applySourceFreshnessToReport } = await import("./sources/signal-freshness");
-  const leadsWithSources = applySourceFreshnessToLeads(leadsForReport);
+  const leadsWithSources = applySourceFreshnessToLeads(leadsAfterChange);
   const sourceCount = leadsWithSources.filter(l => l.learning?.source_layer_applied).length;
   if (sourceCount > 0) {
     console.log(`[pipeline] source layer: ${sourceCount} leads classified`);
@@ -102,7 +110,26 @@ export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLen
   // Source Layer metadata → ranked_opportunities (must run before EQ-to-report so
   // EQ can spread over the already-enriched entries without losing source fields)
   const reportWithSources = applySourceFreshnessToReport(rawReport);
-  const report = applyEvidenceQualityToReport(reportWithSources);
+  const reportWithEQ = applyEvidenceQualityToReport(reportWithSources);
+
+  // Phase 2: previous snapshot comparison for true "what changed" deltas.
+  // Requires searchId (lead_searches.id) — without it getPreviousCompletedSnapshot
+  // returns null and Phase 1B proxy classification takes over. Never does a global
+  // lookup; cross-customer/cross-search comparisons are not possible.
+  let prevSnapshot: import("@/types").LeadLensReport | null = null;
+  if (!IS_DEMO && searchId) {
+    try {
+      const { getPreviousCompletedSnapshot } = await import("./storage/snapshot-store");
+      prevSnapshot = await getPreviousCompletedSnapshot(id, searchId);
+      if (prevSnapshot) {
+        console.log(`[pipeline] previous snapshot found for search ${searchId} — enabling true change deltas`);
+      }
+    } catch {
+      // best-effort — null is safe; proxy classification takes over
+    }
+  }
+
+  const report = applyChangeSinceLastReportToReport(reportWithEQ, prevSnapshot);
 
   // Write account memory updates after report is built (best-effort, fire-and-forget)
   if (!IS_DEMO) {

@@ -219,3 +219,120 @@
 - Research agent recibe instrucciones explícitas: solo `date` cuando hay fecha de calendario literal en la fuente
 
 **Estado:** Implementado — `validateSignalDate()`, `extractSignalDate()` en `lib/sources/signal-freshness.ts`; `EvidenceClaim.date` y `LeadCandidate.signal_date` en `types/index.ts`; prompt actualizado en `lib/agents/research-agent.ts`; datos de prueba en `lib/providers/mock-lead-provider.ts`.
+
+---
+
+### [2026-07-01] What Changed Since Last Report v0 — Phase 1A + 1B
+
+**Decisión:** Implementar clasificación de cambios a nivel de cuenta en dos fases. Phase 1A: tag simple derivado de Account Memory. Phase 1B: tipo rico derivado de AM + EQ + Source Freshness + Signal Date + Vault + Feedback.
+
+**Por qué:** El cliente necesita saber QUÉ cambió entre el reporte actual y el anterior para que el Monthly Monitor tenga valor. Sin esta capa, reportes repetidos parecen genéricos. La clasificación de cambios es el componente que convierte "mismo score" en "mismo score pero con nueva señal fresca" o "visto 3 veces sin novedad".
+
+**Decisiones técnicas clave:**
+- Phase 1A corre DESPUÉS de Account Memory hints, ANTES de Source Layer — solo necesita category y score previos.
+- Phase 1B corre dentro de `applyChangeSinceLastReportToReport`, DESPUÉS de EQ y Source Layer — necesita EQ, freshness, signal_date, vault actuales.
+- `account_memory_last_feedback_signal` propagado a `lead.learning` para que Phase 1B pueda detectar `excluded_by_feedback`.
+- `change_tag` (Phase 1A) preservado para backwards compatibility; `change_type` (Phase 1B) es la taxonomía rica.
+- Orden de prioridad: feedback negativo > new_account > revived > fresh_signal > stale > priority up/down > repeated_no_change > new_evidence > repeated_with_new_evidence > still_relevant > no_meaningful_change.
+
+**Implicaciones:**
+- `ChangeType`: 12 tipos en `types/index.ts`
+- `change_summary.by_type` y `change_summary.client_visible_count` en `LeadLensReport`
+- `client_visible`, `suppression_reason`, `change_label`, `change_reason` por oportunidad en `ranked_opportunities` y `lead.learning`
+- `previous_*` campos definidos en tipos pero null en v0 — sin snapshot comparison todavía
+- Feedback negativo (`not_useful`, `irrelevant`, `wrong_fit`, `exclude_similar`) prevalece sobre score
+- Score bajo con evidencia insuficiente NO puede ser `priority_increased`
+- Contexto-only nunca genera `fresh_signal_added`
+- Sin `signal_date` → nunca `fresh_signal_added`
+
+**Estado:** Implementado — `lib/memory/change-classifier.ts` (Phase 1A + 1B), `types/index.ts` (`ChangeType`, campos nuevos en `LearningMetadata`, `OpportunityRanking`, `change_summary`), `lib/memory/account-memory.ts` (`account_memory_last_feedback_signal`), `lib/pipeline.ts` (wiring). No UI built. No scoring changes. No personal data.
+
+---
+
+### [2026-07-01] What Changed Since Last Report v0 — Phase 2: Previous Snapshot Comparison (Infrastructure Ready, Safely Disabled)
+
+**Decisión:** Construir la infraestructura completa de comparación de snapshot previo (`PreviousOpportunitySnapshot`, `buildPreviousOpportunityMap`, `classifyRichAccountChange` con `prev`, pipeline wiring), pero deshabilitar el lookup del snapshot de manera segura hasta que exista un scope identifier válido en el schema de `snapshot_reports`.
+
+**Problema identificado (Scope Safety Audit — 2026-07-01):** `getPreviousCompletedSnapshot` en su implementación inicial hacía un query global (`status=completed AND job_id != currentJobId`) sin ningún filtro de cliente, búsqueda o ICP. Esto significaba que LeadLens podría comparar el reporte actual de un cliente contra el reporte de otro cliente. Inaceptable para SaaS.
+
+**Auditoría de scope disponible:**
+| Identificador | ¿Existe en `snapshot_reports`? | ¿Disponible en `PipelineInput`? | Apto para scope |
+|---|---|---|---|
+| `user_id` | Sí (columna) | No | No — nunca escrito por `createProcessingSnapshot` ni `completeSnapshot` |
+| `search_id` | **No** (no es columna) | No | No |
+| `icp_id` | **No** (no es columna) | No | No |
+| `customer_id` / `workspace_id` | **No** | No | No |
+| `job_id` prefix | No encoding de cliente | N/A | No |
+
+**Decisión técnica:** Ningún scope seguro disponible → `getPreviousCompletedSnapshot` devuelve `null` incondicionalmente. El pipeline y el clasificador ya manejan `null` de forma segura (proxy Phase 1B se activa). No se hace query a la BD.
+
+**Infraestructura lista pero en espera:**
+- `PreviousOpportunitySnapshot` interface — definida, lista para usar
+- `buildPreviousOpportunityMap(prevReport)` — implementada, cero errores TS
+- `classifyRichAccountChange(lm, action, prev?)` — acepta prev opcional; deltas verdaderos cuando `prev !== null`
+- `applyChangeSinceLastReportToReport(report, prevReport?)` — acepta snapshot previo; cero cambios de comportamiento cuando `prevReport = null`
+- `pipeline.ts` — llama `getPreviousCompletedSnapshot(id)` (best-effort); recibe null; pasa null al clasificador → proxy Phase 1B activo
+
+**Cómo habilitar (upgrade path):**
+- **Opción A (recomendada):** Agregar columna `search_id UUID REFERENCES lead_searches(id)` a `snapshot_reports`. Escribirla desde `PipelineInput` (agregar `searchId?: string`). En `getPreviousCompletedSnapshot(currentJobId, searchId)`, hacer query: `.eq("search_id", searchId).neq("job_id", currentJobId)`. Un snapshot se puede comparar si y solo si pertenece a la misma serie de búsqueda del mismo cliente.
+- **Opción B (parcial):** Empezar a escribir `user_id` en `completeSnapshot`. Requiere pasar `userId` por `PipelineInput`. Sola, esta opción mezcla búsquedas distintas del mismo usuario. Solo segura si también se agrega `search_id` o `icp_id`.
+
+**Estado:** Infraestructura implementada, lookup deshabilitado de forma segura hasta migration 027.
+
+---
+
+### [2026-07-01] Safe Snapshot Scope v0 — search_id en snapshot_reports
+
+**Decisión:** Agregar `search_id UUID REFERENCES lead_searches(id)` a `snapshot_reports` como el scope identifier seguro para "What Changed" Phase 2. Este es el identificador mínimo que garantiza que un snapshot previo pertenece al mismo search/monitor series del mismo cliente.
+
+**Por qué `search_id` y no `user_id`:**
+- `user_id` solo acota por cliente pero mezcla todas sus búsquedas distintas. Un cliente que hizo dos búsquedas para ICPs diferentes tendría snapshots de distintos ICPs comparándose entre sí — inútil e incorrecto.
+- `search_id` (lead_searches.id) representa una búsqueda específica con su propio ICP, países, industrias y nombre — garantiza que comparamos el mismo monitor series.
+- Adicionalmente, `user_id` nunca se escribe actualmente, mientras que `search_id` sí se puede propagar desde el caller que ya lo tiene.
+
+**Implementación:**
+- `supabase/migrations/027_snapshot_search_scope.sql`: columna nullable + índice compuesto `(search_id, created_at DESC)` con `WHERE search_id IS NOT NULL`.
+- `SnapshotRecord` interface: campo `search_id: string | null`.
+- `createProcessingSnapshot(jobId, plan, searchId?)`, `completeSnapshot(..., searchId?)`, `failSnapshot(..., searchId?)`: todos aceptan `searchId` opcional y lo escriben cuando está disponible.
+- `getPreviousCompletedSnapshot(currentJobId, searchId?)`: devuelve null si `searchId` es falsy (nunca hace query global); cuando `searchId` está provisto, query `.eq("search_id", searchId).eq("status","completed").neq("job_id", currentJobId).order("created_at",{desc}).limit(1)`.
+- `PipelineInput`: agrega `searchId?: string`.
+- `pipeline.ts`: destructura `searchId` de input; solo llama `getPreviousCompletedSnapshot` cuando `!IS_DEMO && searchId`.
+- `/api/process/route.ts`: acepta `searchId: z.string().uuid().optional()` en body; propaga a `runLeadLensPipeline`, `createProcessingSnapshot`, `completeSnapshot`, `failSnapshot`.
+
+**Callers que NO pasan searchId (safe by default):**
+- `/api/demo/route.ts`: demo mode — `IS_DEMO` guard bloquea el lookup igualmente.
+- `/api/admin/jobs/[id]/run/route.ts`: legacy SaaS admin flow — sin searchId → `getPreviousCompletedSnapshot` devuelve null → Phase 1B proxy activo.
+
+**Cómo activarlo en el Monthly Monitor:** El trigger que llama `/api/process` con `searchId = lead_search.id` activa automáticamente el scope. No se necesita código adicional.
+
+**Estado:** Implementado. `supabase/migrations/027_snapshot_search_scope.sql`, `lib/storage/snapshot-store.ts`, `types/index.ts` (`PipelineInput`), `lib/pipeline.ts`, `app/api/process/route.ts`. TypeScript: 0 errores. No UI. No scoring. No datos personales.
+
+---
+
+### [2026-07-01] Monthly Monitor Manual Rerun v0 — POST /api/admin/searches/[id]/rerun
+
+**Decisión:** Implementar el plumbing backend mínimo para ejecutar manualmente un run del AI pipeline asociado a un `lead_searches.id` existente, usando `search_id` como scope para la historia de snapshots y la comparación de "What Changed".
+
+**Por qué este approach:**
+- El endpoint `/api/admin/searches/[id]/generate` ya existente usa el flow de Apollo (generación de leads), no el AI pipeline (`runLeadLensPipeline`). Un nuevo endpoint separado evita contaminar ese flow.
+- Admin-only (requiere `x-admin-token`) — no hay superficie de ataque pública.
+- El scope via `search_id` (migration 027) garantiza que cada run queda scoped al mismo monitor series y puede participar en "What Changed" comparisons.
+
+**Guards implementados:**
+1. **Dedup guard:** Si ya existe un snapshot con `status=processing` para el mismo `search_id`, el endpoint retorna HTTP 409 en lugar de iniciar otro run.
+2. **Onboarding data required:** Si no existe `onboarding_requests.search_id = searchId`, retorna HTTP 422 con mensaje claro — el pipeline no se puede ejecutar sin datos de entrada.
+3. **Baseline detection:** Si no hay snapshots `completed` para el `search_id`, el run se marca como `is_baseline=true` en la respuesta.
+
+**Reconstrucción de OnboardingData desde onboarding_requests:**
+- `company_name` → `onboarding_requests.company_name`
+- `offer_description`, `company_description`, `value_proposition` → `onboarding_requests.what_you_sell` (misma fuente, mejor disponible)
+- `target_customer_description` → `onboarding_requests.ideal_customer` (nullable, fallback a texto genérico)
+- `tone` → `"direct"` (default)
+- `contact_email` → `onboarding_requests.email`
+
+**Archivos creados/modificados:**
+- `app/api/admin/searches/[id]/rerun/route.ts` — nuevo endpoint POST admin-only
+- `lib/storage/snapshot-store.ts` — agrega `listSnapshotsForSearch(searchId, limit?)`
+- `app/admin/searches/[id]/page.tsx` — Card "Monthly Monitor — AI report" en sidebar derecho (tipo RerunLog, handler handleRerun, inline result log)
+
+**Estado:** Implementado. TypeScript: 0 errores. No cron/scheduler. No UI rediseño. No billing. No Apollo. No datos personales.
