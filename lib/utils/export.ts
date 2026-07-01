@@ -4,7 +4,7 @@ import type { LeadLensReport, ProcessedLead } from "@/types";
 
 const CSV_HEADERS = [
   "Rank", "Priority", "Score", "Buying Window",
-  "Recommended Action", "Evidence Quality", "Evidence Strength", "Source Freshness", "Source Name",
+  "Recommended Action", "Evidence Quality", "Evidence Strength", "Source Freshness", "Source Coverage", "Source Name",
   "Company", "Industry", "Size", "Location", "Confidence",
   "Account Thesis", "Signal Interpretation", "Tier Reason",
   "Timing Signals", "Opportunity Risks", "Next Best Question",
@@ -33,6 +33,7 @@ export function exportToCSV(report: LeadLensReport): string {
       ? { high: "Strong evidence", medium: "Moderate evidence", low: "Limited evidence", insufficient: "Insufficient evidence" }[lm.evidence_quality] ?? ""
       : "";
     const sourceFreshness = lm?.freshness_label ?? "";
+    const sourceCoverage = lm?.limited_region_coverage ? "Limited region coverage" : "";
     const sourceName = lm?.source_name ?? "";
 
     return [
@@ -44,6 +45,7 @@ export function exportToCSV(report: LeadLensReport): string {
       e.evidence_quality_grade ?? "",
       evidenceStrength,
       sourceFreshness,
+      sourceCoverage,
       sourceName,
       c.company,
       c.industry ?? "",
