@@ -59,6 +59,8 @@ Documentar la lógica de negocio que justifica por qué un cliente debería reno
 
 **Monitor Run History (implementado):** `GET /api/admin/searches/[id]/runs` devuelve la historia de runs de una serie (same-search only, nunca global), con `is_baseline`/`run_index` derivados de runs completados y `change_summary` (conteos, sin datos de cuentas) extraído por JSON-path. El admin search detail muestra la serie: latest status, total runs, last completed, warning de processing, y lista de runs con badges BASELINE/COMPARED. **Sin scheduler y sin automatización customer-facing todavía** — todos los runs son manuales y admin-only por diseño en esta etapa. Regla de copy en exports: "What Changed Since Last Report" solo cuando existe comparación real con snapshot previo; baseline/proxy se etiqueta "Current Change Signals".
 
+**Superficies customer-facing (SaaS Readiness Sprint v0):** `/results/[jobId]` es ahora un Account Opportunity Report account-level (sin contactos personales) con What Changed, evidence/freshness labels y barra de feedback por cuenta — el loop de retención (feedback → Vault → mejor próximo reporte) es visible y usable desde el reporte mismo. `GET /api/monitor/[id]/runs` (Bearer JWT + ownership check) alimenta la sección Monthly Monitor del dashboard del cliente: el cliente ve que LeadLens es un monitor recurrente con baseline y comparaciones, no un reporte one-off. Guardrail de onboarding: el admin ve cuándo una search no puede correr como monitor por falta de `onboarding_requests.search_id`. QA gate: chips NEEDS REVIEW por run antes de exponer a cliente.
+
 ---
 
 ## F. Riesgos

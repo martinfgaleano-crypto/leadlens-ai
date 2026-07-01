@@ -356,3 +356,23 @@
 **Reglas de seguridad respetadas:** sin scheduler, sin comparación global de snapshots, sin cross-search history, sin cambios de score/ranking, sin datos personales en UI/exports nuevos, demo mode intacto, `/api/process` one-off intacto.
 
 **Estado:** Implementado. TypeScript: 0 errores en cada bloque. Commits: P0 `3bca76b`, P1 `38d583a`, P2 `9a959c1`, P3 `209a3a8`, P4 `5f0deed`.
+
+---
+
+### [2026-07-01] SaaS Readiness Sprint v0 — Customer-Facing Account-Level Surfaces
+
+**Decisión:** Convertir la inteligencia backend existente en superficies de producto customer/admin coherentes, sin scheduler, billing ni automatización customer-facing.
+
+**Implementación (commits P0–P8):**
+- **P0 (`00a1b0e`)** — Rewrite completo de `/results/[jobId]` como Account Opportunity Report. Eliminados todos los campos de contacto personales (nombres, emails, LinkedIn, títulos de persona); el contact data legacy en `report_json` nunca se renderiza. El mismo rewrite entrega las partes page-level de P1, P3 y P4 (un solo archivo coherente):
+  - *P1 — Customer Report View:* cards por cuenta con recommended action (labels legibles, no enums), why-it-fits (account thesis + fit reasons), why-now (why_now + confirmed signals), evidence strength, signal freshness, source context, coverage note. Fallbacks seguros: "Not available", "Signal date not confirmed". Orden = ranking existente, nunca re-ordenado client-side.
+  - *P3 — Customer What Changed:* sección con chips de conteos client-visible. "What Changed Since Last Report" solo cuando `previous_*` fields poblados; baseline muestra "Current Change Signals" con nota. Noise types sin label customer (omitidos). `change_label` por cuenta solo con `client_visible === true`.
+  - *P4 — Feedback UX:* barra de feedback account-level por card → `POST /api/feedback/opportunity` existente (job_id + company + domain + score + category). Mapeo: Good fit→useful, Not relevant→irrelevant, Already contacted→contacted, Weak evidence→generic, Show more like this→add_to_vault, Do not show again→exclude_similar.
+- **P2 (`be5333a`)** — `GET /api/monitor/[id]/runs`: run history customer-scoped con patrón Bearer-JWT existente (`/api/credits`). Ownership check contra `lead_searches.user_id` ANTES de cualquier query a snapshots; searches ajenas devuelven 404. Dashboard search detail gana sección Monthly Monitor (total runs, latest status, last completed, BASELINE/COMPARED, links a reports).
+- **P5 (`0f0b88a`)** — `GET /api/admin/searches/[id]` devuelve `has_onboarding_request`; el admin ve warning explícito y botón de rerun deshabilitado cuando falta el linkage (el 422 ya no es sorpresa).
+- **P6 (`a91a10c`)** — QA flags por run en el endpoint admin de runs, derivados de agregados existentes: "Run failed", "Low/insufficient evidence dominates" (`evidence_quality_counts`, débil >50%), "Mostly repeated / no meaningful change" (noise types >50% de lead_count). Chips NEEDS REVIEW en admin UI. **Sin flag de freshness dominance:** el reporte no tiene agregado de freshness; agregarlo requiere un cambio pipeline-side (futuro).
+- **P7 (`65bd451`)** — Product Readiness QA Checklist v0 en QUALITY_STANDARD.md.
+
+**Decisión pendiente (flagged, NO tocada):** la tabla de leads del dashboard customer (`app/dashboard/searches/[id]`) y su CSV export siguen mostrando contact_name/email/linkedin de `lead_results` — es el deliverable pagado del flow Apollo legacy. Removerlo es una decisión de producto del founder (afecta lo que clientes existentes compraron), no una limpieza técnica. Recomendado como bloque propio.
+
+**Estado:** Implementado. TypeScript: 0 errores tras cada bloque.
