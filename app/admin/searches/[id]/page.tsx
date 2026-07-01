@@ -139,6 +139,8 @@ type MonitorRun = {
   has_report: boolean;
   is_baseline: boolean;
   run_index: number | null;
+  qa_flags?: string[];
+  needs_review?: boolean;
   change_summary: { by_type?: Record<string, number>; client_visible_count?: number } | null;
 };
 
@@ -1062,6 +1064,18 @@ export default function AdminSearchDetailPage() {
                         ) : (
                           <div style={{ color: "#94a3b8" }}>
                             {run.status === "processing" ? "Run in progress…" : "Run failed — no report produced."}
+                          </div>
+                        )}
+                        {(run.qa_flags?.length ?? 0) > 0 && (
+                          <div style={{ marginTop: "0.35rem", display: "flex", flexWrap: "wrap", gap: "0.3rem" }}>
+                            <span style={{ background: "#fee2e2", color: "#dc2626", borderRadius: 999, padding: "0.1rem 0.5rem", fontSize: "0.65rem", fontWeight: 700 }}>
+                              NEEDS REVIEW
+                            </span>
+                            {run.qa_flags!.map(flag => (
+                              <span key={flag} style={{ background: "#fef3c7", color: "#92400e", borderRadius: 999, padding: "0.1rem 0.5rem", fontSize: "0.65rem", fontWeight: 600 }}>
+                                ⚠ {flag}
+                              </span>
+                            ))}
                           </div>
                         )}
                         <div style={{ marginTop: "0.2rem", color: "#cbd5e1", fontFamily: "monospace", fontSize: "0.65rem" }}>{run.job_id}</div>

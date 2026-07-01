@@ -39,6 +39,33 @@ interface RunRow {
     by_type?: Partial<Record<ChangeType, number>>;
     client_visible_count?: number;
   } | null;
+  evidence_quality_counts: { high?: number; medium?: number; low?: number; insufficient?: number } | null;
+}
+
+// ── QA flags (admin review aid) ───────────────────────────────────────────────
+// Derived from aggregates the pipeline already writes into report_json.
+// No freshness-dominance flag yet: the report has no freshness aggregate and
+// computing one here would require shipping full ranked_opportunities per run.
+
+function deriveQaFlags(r: RunRow): { qa_flags: string[]; needs_review: boolean } {
+  const flags: string[] = [];
+
+  if (r.status === "failed") flags.push("Run failed");
+
+  const eq = r.evidence_quality_counts;
+  if (r.status === "completed" && eq && typeof eq === "object") {
+    const weak = (eq.low ?? 0) + (eq.insufficient ?? 0);
+    const total = weak + (eq.high ?? 0) + (eq.medium ?? 0);
+    if (total > 0 && weak / total > 0.5) flags.push("Low/insufficient evidence dominates");
+  }
+
+  const byType = r.change_summary?.by_type;
+  if (r.status === "completed" && byType && r.lead_count && r.lead_count > 0) {
+    const noise = (byType.no_meaningful_change ?? 0) + (byType.repeated_no_change ?? 0);
+    if (noise / r.lead_count > 0.5) flags.push("Mostly repeated / no meaningful change");
+  }
+
+  return { qa_flags: flags, needs_review: flags.length > 0 };
 }
 
 export async function GET(
@@ -68,7 +95,7 @@ export async function GET(
 
   const { data, error } = await db
     .from("snapshot_reports")
-    .select("job_id, plan, status, lead_count, hot_count, warm_count, avg_score, created_at, change_summary:report_json->change_summary")
+    .select("job_id, plan, status, lead_count, hot_count, warm_count, avg_score, created_at, change_summary:report_json->change_summary, evidence_quality_counts:report_json->evidence_quality_counts")
     .eq("search_id", searchId)
     .order("created_at", { ascending: true })
     .limit(100);
@@ -85,6 +112,7 @@ export async function GET(
   const enriched = rows.map((r) => {
     const isCompleted = r.status === "completed";
     if (isCompleted) completedSeen++;
+    const { qa_flags, needs_review } = deriveQaFlags(r);
     return {
       job_id:      r.job_id,
       plan:        r.plan,
@@ -97,6 +125,8 @@ export async function GET(
       has_report:  isCompleted,   // processing/failed rows only hold a placeholder
       is_baseline: isCompleted && completedSeen === 1,
       run_index:   isCompleted ? completedSeen : null,
+      qa_flags,
+      needs_review,
       change_summary: r.change_summary && typeof r.change_summary === "object"
         ? {
             by_type:              r.change_summary.by_type ?? {},
