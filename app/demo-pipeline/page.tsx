@@ -265,6 +265,13 @@ const COPY = {
     sEvidenceLow: "Low",
     sEvidenceInsufficient: "Insufficient evidence",
     sEvidenceGuardrail: "Recommendation adjusted due to evidence quality.",
+    sSourceLayer: "Sources",
+    sSourceContextOnly: "Context only",
+    sSourceTimingSignal: "Timing signal",
+    sSourceNoDate: "No signal date",
+    sSourceFreshLabel: "Freshness",
+    sSourceLimitedCoverage: "Limited regional coverage",
+    sSourceDiscovered: "Discovered",
   },
   es: {
     announcement: "Opportunity Snapshots disponibles — inteligencia comercial B2B para tu primer outreach real.",
@@ -525,6 +532,13 @@ const COPY = {
     sEvidenceLow: "Baja",
     sEvidenceInsufficient: "Evidencia insuficiente",
     sEvidenceGuardrail: "Recomendación ajustada por calidad de evidencia.",
+    sSourceLayer: "Fuentes",
+    sSourceContextOnly: "Solo contexto",
+    sSourceTimingSignal: "Señal de timing",
+    sSourceNoDate: "Sin fecha de señal",
+    sSourceFreshLabel: "Frescura",
+    sSourceLimitedCoverage: "Cobertura regional limitada",
+    sSourceDiscovered: "Descubierto",
   },
   pt: {
     announcement: "Opportunity Snapshots disponíveis — inteligência comercial B2B para seu primeiro outreach real.",
@@ -785,6 +799,13 @@ const COPY = {
     sEvidenceLow: "Baixa",
     sEvidenceInsufficient: "Evidência insuficiente",
     sEvidenceGuardrail: "Recomendação ajustada pela qualidade de evidência.",
+    sSourceLayer: "Fontes",
+    sSourceContextOnly: "Apenas contexto",
+    sSourceTimingSignal: "Sinal de timing",
+    sSourceNoDate: "Sem data de sinal",
+    sSourceFreshLabel: "Frescor",
+    sSourceLimitedCoverage: "Cobertura regional limitada",
+    sSourceDiscovered: "Descoberto",
   },
   ja: {
     announcement: "Opportunity Snapshots提供開始 — B2Bコマーシャルインテリジェンスで最初の本格的アウトリーチを。",
@@ -1045,6 +1066,13 @@ const COPY = {
     sEvidenceLow: "低",
     sEvidenceInsufficient: "エビデンス不十分",
     sEvidenceGuardrail: "エビデンス品質に基づいて推奨アクションを調整しました。",
+    sSourceLayer: "ソース",
+    sSourceContextOnly: "コンテキストのみ",
+    sSourceTimingSignal: "タイミングシグナル",
+    sSourceNoDate: "シグナル日付なし",
+    sSourceFreshLabel: "鮮度",
+    sSourceLimitedCoverage: "地域カバレッジ限定",
+    sSourceDiscovered: "発見",
   },
 };
 
@@ -2550,6 +2578,40 @@ function LeadCard({ lead, index, isOpen, onToggle, copy, jobId }: {
                 )}
                 {lastCat && (
                   <span style={{ fontSize: ".68rem", color: "#94a3b8" }}>{copy.sAccountMemoryLastCat}: <strong style={{ color: "#64748b" }}>{lastCat}</strong></span>
+                )}
+              </div>
+            );
+          })()}
+
+          {/* ── Source Layer — source type / freshness badge ─────────────── */}
+          {lead.learning?.source_layer_applied && (() => {
+            const sl = lead.learning!;
+            const isContextOnly   = sl.is_context_only;
+            const isTimingSignal  = sl.is_timing_signal;
+            const isLimitedRegion = sl.limited_region_coverage;
+            const freshLabel      = sl.freshness_label;
+            const sourceTypes     = sl.source_types ?? [];
+            const primaryType     = sl.source_type ?? "unknown";
+            const displayTypes    = sourceTypes.filter(t => t !== "unknown").slice(0, 3);
+            const typeStr         = displayTypes.length > 0
+              ? displayTypes.map(t => t.replace(/_/g, " ")).join(", ")
+              : primaryType.replace(/_/g, " ");
+
+            return (
+              <div style={{ border: "1px solid #e2e8f0", borderRadius: ".5rem", padding: ".45rem .875rem", marginBottom: ".5rem", background: "#f8fafc", display: "flex", alignItems: "center", gap: ".5rem", flexWrap: "wrap" as const }}>
+                <span style={{ fontSize: ".6rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", color: "#94a3b8", flexShrink: 0 }}>{copy.sSourceLayer}</span>
+                <span style={{ fontSize: ".68rem", color: "#475569" }}>{typeStr}</span>
+                {isContextOnly && !isTimingSignal && (
+                  <span style={{ fontSize: ".62rem", color: "#94a3b8", background: "#f1f5f9", borderRadius: 999, padding: ".1rem .45rem" }}>{copy.sSourceContextOnly}</span>
+                )}
+                {isTimingSignal && (
+                  <span style={{ fontSize: ".62rem", color: "#15803d", background: "#f0fdf4", borderRadius: 999, padding: ".1rem .45rem" }}>{copy.sSourceTimingSignal}</span>
+                )}
+                {freshLabel && (
+                  <span style={{ fontSize: ".62rem", color: "#64748b" }}>· {freshLabel}</span>
+                )}
+                {isLimitedRegion && (
+                  <span style={{ fontSize: ".62rem", color: "#92400e", background: "#fffbeb", borderRadius: 999, padding: ".1rem .45rem" }}>{copy.sSourceLimitedCoverage}</span>
                 )}
               </div>
             );

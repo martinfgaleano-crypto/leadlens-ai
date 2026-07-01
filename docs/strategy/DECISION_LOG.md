@@ -154,3 +154,21 @@
 - Best-effort: si EQ falla, el pipeline continúa sin modificación
 
 **Estado:** Implementado — `lib/quality/evidence-quality.ts`. Ver `QUALITY_STANDARD.md` sección D para detalle.
+
+---
+
+### [2026-06-30] Source Access & Freshness Layer v0: metadata interna, no nuevas fuentes
+
+**Decisión:** Implementar Source Layer v0 como capa de normalización de metadata de fuentes existentes — sin nuevas APIs, sin scraping, sin nuevas integraciones. El objetivo es estructurar lo que ya tenemos (LeadCandidate.source, source_url, evidence_discipline) en tipos explícitos con taxonomy definida.
+
+**Por qué:** Sin Source Layer, Evidence Quality computa source_count y region_confidence con heurísticas duplicadas y source_types se llenaba con texto crudo. Esta capa centraliza esa lógica, elimina duplicación, y prepara la estructura para v1 cuando se agregue signal_date real.
+
+**Implicaciones:**
+- `signal_date` sigue siendo null en v0 — no existe campo estructurado en schema todavía
+- `fresh_signal_count` sigue siendo 0 en v0 — requiere signal_date para ser > 0
+- `evidence_quality = "high"` sigue siendo inalcanzable en v0 (fresh_signal_count = 0)
+- `region_confidence` ahora puede ser "high" para US/Canada/UK (antes max "medium")
+- Source Layer corre antes de EQ en pipeline — EQ consume sus campos cuando `source_layer_applied = true`
+- Nombres de archivos: `signal-taxonomy.ts` y `signal-freshness.ts` (no "source-registry" — ya existe para providers)
+
+**Estado:** Implementado — `lib/sources/signal-taxonomy.ts`, `lib/sources/signal-freshness.ts`.

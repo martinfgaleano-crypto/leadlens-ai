@@ -4,27 +4,17 @@ import type {
   RecommendedActionType,
   EvidenceQualityLevel,
   AccountMemoryState,
+  SourceType,
+  RegionConfidence,
 } from "@/types";
 
-// ─── Region confidence ─────────────────────────────────────────────────────────
-// Max "medium" for 4 priority regions (Source Access Layer not yet implemented).
-// "high" is intentionally never assigned until that layer exists.
+import { getRegionConfidence as getRegionConf } from "../sources/signal-taxonomy";
 
-const PRIORITY_REGION_PATTERNS = [
-  /\b(united states|u\.s\.a?|usa|us)\b/i,
-  /\b(canada|canadian)\b/i,
-  /\b(colombia|colombian)\b/i,
-  /\b(m[eé]xico|mexico|mexican)\b/i,
-  /\b(united kingdom|u\.k\.|uk|england|scotland|wales|london|manchester|birmingham)\b/i,
-  // US cities / states as proxies
-  /\b(new york|california|texas|florida|chicago|los angeles|san francisco|seattle|boston|austin)\b/i,
-];
+// ─── Region confidence (delegates to signal-taxonomy) ─────────────────────────
+// Exported for backward compatibility — prefer importing from signal-taxonomy directly.
 
-export function getRegionConfidence(location?: string): "high" | "medium" | "low" {
-  if (!location) return "low";
-  const isPriority = PRIORITY_REGION_PATTERNS.some(re => re.test(location));
-  return isPriority ? "medium" : "low";
-  // "high" reserved for when Source Access Layer is implemented (SOURCE_STRATEGY.md §D)
+export function getRegionConfidence(location?: string | null): RegionConfidence {
+  return getRegionConf(location);
 }
 
 // ─── Evidence inputs ──────────────────────────────────────────────────────────
@@ -32,87 +22,111 @@ export function getRegionConfidence(location?: string): "high" | "medium" | "low
 export interface EvidenceInputs {
   source_count: number;
   signal_count: number;
-  fresh_signal_count: number;         // always 0 today — signal_date/discovered_at not in schema
-  source_types: string[];
+  fresh_signal_count: number;
+  source_types?: SourceType[];
   signal_age_days: number | null;
   freshness_score: number;
   evidence_confidence: number;
   source_confidence: "high" | "medium" | "low";
-  region_confidence: "high" | "medium" | "low";
+  region_confidence: RegionConfidence;
   buyer_seller_confusion_risk: "low" | "medium" | "high" | undefined;
   account_memory_state: AccountMemoryState | undefined;
+  is_context_only?: boolean;
+  signal_date?: string | null;
 }
 
+/**
+ * Extract evidence quality inputs for a lead.
+ * If the Source Access & Freshness Layer has already run (source_layer_applied),
+ * consume its pre-computed fields instead of re-deriving them.
+ */
 export function extractEvidenceInputs(lead: ProcessedLead): EvidenceInputs {
-  const discipline = lead.enrichment.evidence_discipline ?? [];
+  const discipline    = lead.enrichment.evidence_discipline ?? [];
   const timingSignals = lead.enrichment.timing_signals ?? [];
+  const lm            = lead.learning;
 
-  // Only verified_public_signal counts as an independent source.
-  // website/directory/context-only entries never count here.
-  const verified = discipline.filter(e => e.type === "verified_public_signal");
-  const inferred = discipline.filter(e => e.type === "inferred_from_context");
+  // evidence_confidence is always computed by EQ (not Source Layer)
+  const verified  = discipline.filter(e => e.type === "verified_public_signal");
+  const inferred  = discipline.filter(e => e.type === "inferred_from_context");
+  const rc        = lead.enrichment.research_confidence ?? 0;
+  const evidence_confidence = parseFloat(
+    (rc * 0.6 + (verified.length > 0 ? 0.4 : inferred.length > 0 ? 0.15 : 0)).toFixed(3)
+  );
 
+  if (lm?.source_layer_applied) {
+    // Source Layer has run — consume its pre-computed fields.
+    const sc = lm.source_count ?? 0;
+    return {
+      source_count:              sc,
+      signal_count:              lm.signal_count ?? 0,
+      fresh_signal_count:        lm.fresh_signal_count ?? 0,
+      source_types:              lm.source_types,
+      signal_age_days:           lm.signal_age_days ?? null,
+      freshness_score:           lm.freshness_score ?? 0,
+      evidence_confidence,
+      source_confidence:         sc >= 2 ? "high" : sc === 1 ? "medium" : "low",
+      region_confidence:         (lm.region_confidence as RegionConfidence | undefined) ?? "unknown",
+      buyer_seller_confusion_risk: lead.outreach.buyer_seller_confusion_risk,
+      account_memory_state:      lm.account_memory_state,
+      is_context_only:           lm.is_context_only,
+      signal_date:               lm.signal_date,
+    };
+  }
+
+  // Fallback: Source Layer hasn't run — derive from raw enrichment.
   const source_count = verified.length;
-  const source_types = verified.map(e => e.claim.slice(0, 60));
 
-  // Non-generic, non-inferred timing signals
   const confirmSignals = timingSignals.filter(
     s => !s.toLowerCase().startsWith("no confirmed") && !s.toLowerCase().includes("inferred")
   );
   const signal_count = confirmSignals.length;
 
-  // fresh_signal_count is always 0 — signal_date/discovered_at fields don't exist
+  // v0: signal_date not yet in schema — always null/0
   const fresh_signal_count = 0;
-  const signal_age_days = null;
-  const freshness_score = 0;
-
-  // evidence_confidence: weighted combination of research_confidence + source quality
-  const rc = lead.enrichment.research_confidence ?? 0;
-  const evidence_confidence = parseFloat(
-    (rc * 0.6 + (verified.length > 0 ? 0.4 : inferred.length > 0 ? 0.15 : 0)).toFixed(3)
-  );
+  const signal_age_days    = null;
+  const freshness_score    = 0;
 
   const source_confidence: "high" | "medium" | "low" =
-    verified.length >= 2 ? "high" :
-    verified.length === 1 ? "medium" :
-    "low";
+    source_count >= 2 ? "high" : source_count === 1 ? "medium" : "low";
 
-  const region_confidence = getRegionConfidence(lead.candidate.location);
-
-  const buyer_seller_confusion_risk = lead.outreach.buyer_seller_confusion_risk;
-  const account_memory_state = lead.learning?.account_memory_state;
+  const region_confidence = getRegionConf(lead.candidate.location);
 
   return {
     source_count,
     signal_count,
     fresh_signal_count,
-    source_types,
+    source_types:              undefined, // set by Source Layer, not EQ fallback
     signal_age_days,
     freshness_score,
     evidence_confidence,
     source_confidence,
     region_confidence,
-    buyer_seller_confusion_risk,
-    account_memory_state,
+    buyer_seller_confusion_risk: lead.outreach.buyer_seller_confusion_risk,
+    account_memory_state:      lm?.account_memory_state,
+    is_context_only:           undefined, // unknown in fallback
+    signal_date:               null,
   };
 }
 
 // ─── Classification ───────────────────────────────────────────────────────────
 
 export function classifyEvidenceQuality(inputs: EvidenceInputs): EvidenceQualityLevel {
-  const { source_count, fresh_signal_count, evidence_confidence,
-          buyer_seller_confusion_risk, account_memory_state, region_confidence } = inputs;
+  const {
+    source_count, fresh_signal_count, evidence_confidence,
+    buyer_seller_confusion_risk, account_memory_state,
+    region_confidence, is_context_only, signal_date,
+  } = inputs;
 
   // Hard floor: no verified sources → insufficient
   if (source_count === 0) return "insufficient";
 
   let level: EvidenceQualityLevel;
 
-  if (fresh_signal_count >= 1) {
-    // Fresh timing signal path (unreachable today — kept for future Source Access Layer)
+  if (fresh_signal_count >= 1 && signal_date) {
+    // Fresh timing signal with confirmed date — enabled by Source Layer v1+
     level = source_count >= 2 ? "high" : "medium";
   } else {
-    // No verified fresh signal — best possible is "medium"
+    // No confirmed fresh signal — best possible today is "medium"
     level = (source_count >= 2 && evidence_confidence >= 0.6) ? "medium" : "low";
   }
 
@@ -120,13 +134,18 @@ export function classifyEvidenceQuality(inputs: EvidenceInputs): EvidenceQuality
   if (buyer_seller_confusion_risk === "high") {
     level = cap(level, "low");
   }
+  // Context-only sources cannot support "high" regardless of other signals
+  if (is_context_only) {
+    level = cap(level, "medium");
+  }
   if (account_memory_state === "repeated_without_new_signal") {
     level = cap(level, "medium");
   }
   if (buyer_seller_confusion_risk === "medium") {
     level = cap(level, "medium");
   }
-  if (region_confidence === "low") {
+  // Low or unknown region confidence is conservative
+  if (region_confidence === "low" || region_confidence === "unknown") {
     level = cap(level, "medium");
   }
 
@@ -170,10 +189,10 @@ export function applyRecommendedActionGuardrail(
   }
 }
 
-// ─── Evidence summary text ─────────────────────────────────────────────────────
+// ─── Evidence summary ─────────────────────────────────────────────────────────
 
 export function buildEvidenceSummary(level: EvidenceQualityLevel, inputs: EvidenceInputs): string {
-  const { source_count, signal_count, region_confidence, source_confidence } = inputs;
+  const { source_count, signal_count, region_confidence } = inputs;
 
   switch (level) {
     case "high":
@@ -193,13 +212,13 @@ export function applyEvidenceQualityHints(leads: ProcessedLead[]): ProcessedLead
   return leads.map(lead => {
     try {
       const inputs = extractEvidenceInputs(lead);
-      const level = classifyEvidenceQuality(inputs);
+      const level  = classifyEvidenceQuality(inputs);
       const summary = buildEvidenceSummary(level, inputs);
+      const sourceLayerApplied = lead.learning?.source_layer_applied ?? false;
 
       const originalAction = lead.enrichment.recommended_action;
       let guardrailApplied = false;
       let guardrailedAction: RecommendedActionType | undefined;
-
       if (originalAction) {
         const result = applyRecommendedActionGuardrail(level, originalAction);
         guardrailApplied = result.applied;
@@ -214,33 +233,38 @@ export function applyEvidenceQualityHints(leads: ProcessedLead[]): ProcessedLead
       return {
         ...lead,
         learning: {
-          ...lead.learning,
-          agent_confidence: lead.learning?.agent_confidence ?? 0,
-          qc_flags: lead.learning?.qc_flags ?? [],
-          genericness_risk: lead.learning?.genericness_risk ?? "medium",
-          hallucination_risk: lead.learning?.hallucination_risk ?? "low",
+          // Required fields
+          agent_confidence:            lead.learning?.agent_confidence ?? 0,
+          qc_flags:                    lead.learning?.qc_flags ?? [],
+          genericness_risk:            lead.learning?.genericness_risk ?? "medium",
+          hallucination_risk:          lead.learning?.hallucination_risk ?? "low",
           evidence_discipline_summary: lead.learning?.evidence_discipline_summary ?? "weak",
-          signal_patterns: lead.learning?.signal_patterns ?? [],
-          improvement_notes: lead.learning?.improvement_notes ?? [],
-          evidence_quality: level,
-          source_count: inputs.source_count,
-          signal_count: inputs.signal_count,
-          fresh_signal_count: inputs.fresh_signal_count,
-          source_types: inputs.source_types,
-          signal_age_days: inputs.signal_age_days,
-          freshness_score: inputs.freshness_score,
-          evidence_confidence: inputs.evidence_confidence,
-          source_confidence: inputs.source_confidence,
-          region_confidence: inputs.region_confidence,
+          signal_patterns:             lead.learning?.signal_patterns ?? [],
+          improvement_notes:           lead.learning?.improvement_notes ?? [],
+          // Spread all prior layers (Vault, Account Memory, Source Layer, etc.)
+          ...lead.learning,
+          // EQ-owned fields — always set by this pass
+          evidence_quality:            level,
+          evidence_confidence:         inputs.evidence_confidence,
+          source_confidence:           inputs.source_confidence,
           insufficient_evidence_reason: insufficientReason,
-          evidence_summary: summary,
+          evidence_summary:            summary,
           recommended_action_guardrail_applied: guardrailApplied,
           original_recommended_action: originalAction,
           guardrailed_recommended_action: guardrailedAction,
+          // Source/freshness fields: set only when Source Layer hasn't run
+          // (Source Layer values are more accurate; roundtrip via inputs when it has run)
+          ...(sourceLayerApplied ? {} : {
+            source_count:       inputs.source_count,
+            signal_count:       inputs.signal_count,
+            fresh_signal_count: inputs.fresh_signal_count,
+            signal_age_days:    inputs.signal_age_days,
+            freshness_score:    inputs.freshness_score,
+            region_confidence:  inputs.region_confidence,
+          }),
         },
       };
     } catch {
-      // Best-effort — never block the pipeline
       return lead;
     }
   });
@@ -250,7 +274,6 @@ export function applyEvidenceQualityHints(leads: ProcessedLead[]): ProcessedLead
 
 export function applyEvidenceQualityToReport(report: LeadLensReport): LeadLensReport {
   try {
-    // Build a map from lead_id → evidence quality metadata
     const qualityMap = new Map<string, {
       level: EvidenceQualityLevel;
       originalAction?: RecommendedActionType;
@@ -268,35 +291,27 @@ export function applyEvidenceQualityToReport(report: LeadLensReport): LeadLensRe
       }
     }
 
-    // Patch ranked_opportunities recommended_action
     const patched = (report.ranked_opportunities ?? []).map(opp => {
       const qm = qualityMap.get(opp.lead_id);
       if (!qm) return opp;
-
       const result = applyRecommendedActionGuardrail(qm.level, opp.recommended_action);
       return {
         ...opp,
-        recommended_action: result.action,
-        evidence_quality: qm.level,
-        original_recommended_action: result.applied ? opp.recommended_action : undefined,
+        recommended_action:                  result.action,
+        evidence_quality:                    qm.level,
+        original_recommended_action:         result.applied ? opp.recommended_action : undefined,
         recommended_action_guardrail_applied: result.applied,
       };
     });
 
-    // Count by level
     const counts = { high: 0, medium: 0, low: 0, insufficient: 0 };
     for (const lead of report.processed_leads) {
       const level = lead.learning?.evidence_quality;
       if (level) counts[level]++;
     }
 
-    return {
-      ...report,
-      ranked_opportunities: patched,
-      evidence_quality_counts: counts,
-    };
+    return { ...report, ranked_opportunities: patched, evidence_quality_counts: counts };
   } catch {
-    // Best-effort — return original report unchanged
     return report;
   }
 }

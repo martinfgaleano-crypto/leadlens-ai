@@ -32,7 +32,15 @@ Documentar qué fuentes públicas existen por región, su confiabilidad y limita
 
 ## D. Qué está implementado
 
-Ninguna pieza del Source Access & Freshness Layer está implementada técnicamente todavía. Este documento es la base de research que debe preceder esa implementación.
+**Source Access & Freshness Layer v0** implementado en:
+
+- `lib/sources/signal-taxonomy.ts` — taxonomía de `SourceType` (14 tipos), reliability, freshness expectation, is_timing_source / is_context_source, region confidence (US/Canada/UK → high, Colombia/México → medium, otros → low), patrones de inferencia de URL y claim text.
+- `lib/sources/signal-freshness.ts` — extrae source inputs por opportunity, clasifica source_type, asigna discovered_at, produce freshness_label y source_summary. Best-effort.
+- Pipeline: Source Layer corre después de Account Memory hints, antes de Evidence Quality hints.
+- Evidence Quality consume campos de Source Layer cuando `source_layer_applied = true`.
+- Badge de Source Layer en UI con copy EN/ES/PT/JA.
+
+**Comportamiento actual (v0):** `signal_date` siempre null (campo no existe en schema aún). `fresh_signal_count` siempre 0. `discovered_at` siempre disponible. `source_freshness` siempre "unknown".
 
 ---
 

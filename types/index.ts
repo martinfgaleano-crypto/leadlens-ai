@@ -37,6 +37,30 @@ export type EvidenceQualityGrade = "strong_verified" | "moderate_public" | "infe
  * ScoreDimensions.evidence_quality (0-100 numeric). Never changes score or ranking. */
 export type EvidenceQualityLevel = "high" | "medium" | "low" | "insufficient";
 
+// ─── Source Access & Freshness Layer types ────────────────────────────────────
+
+/** Normalized source type — single source of truth in source-registry.ts */
+export type SourceType =
+  | "company_website" | "news" | "job_posting" | "press_release" | "funding"
+  | "directory" | "social" | "public_registry" | "trade_association"
+  | "chamber_of_commerce" | "export_import_resource" | "customer_memory"
+  | "demo" | "unknown";
+
+/** Source reliability tier (from source-registry.ts, not invented per-lead) */
+export type SourceReliability = "high" | "medium" | "low" | "unknown";
+
+/** Actual freshness state of a signal, computed from signal_age_days */
+export type SourceFreshness = "fresh" | "recent" | "stale" | "unknown";
+
+/** Expected freshness category for a source type (from source-registry.ts) */
+export type FreshnessExpectation = "high" | "medium" | "low" | "not_applicable";
+
+/** Role of a source: does it indicate timing, or just company context? */
+export type SignalRole = "timing_signal" | "context_only" | "memory_signal" | "unknown";
+
+/** Regional data coverage confidence — drives EQ caps; "unknown" = conservative */
+export type RegionConfidence = "high" | "medium" | "low" | "unknown";
+
 /** What the system recommends doing with this account */
 export type RecommendedActionType =
   | "send_outreach_now"
@@ -362,17 +386,31 @@ export interface LearningMetadata {
   account_memory_times_seen?: number;          // 0 = never seen before
   account_memory_last_seen_at?: string;        // ISO timestamp of previous appearance
   account_memory_last_category?: string;       // HOT/WARM/COLD/DISCARD from last run
-  // ── Evidence Quality (applied post-account-memory, never changes scores) ─────
+  // ── Source Access & Freshness Layer (applied before EQ, never changes scores) ─
+  source_layer_applied?: boolean;
+  discovered_at?: string;            // ISO timestamp of pipeline run (always set)
+  signal_date?: string | null;       // Actual date of signal origin (null = unknown)
+  signal_age_days?: number | null;   // Days since signal_date (null when date unknown)
+  source_type?: SourceType;          // Primary source type for this opportunity
+  source_types?: SourceType[];       // All unique source types found
+  source_name?: string | null;       // Human-readable source name (null = not available)
+  source_reliability?: SourceReliability;
+  source_freshness?: SourceFreshness; // fresh/recent/stale/unknown (computed from age)
+  signal_role?: SignalRole;
+  is_context_only?: boolean;         // True when all sources are context-only
+  is_timing_signal?: boolean;        // True when at least one timing source is present
+  freshness_label?: string;          // Human-readable freshness summary for UI
+  source_summary?: string;           // Human-readable source description for UI
+  limited_region_coverage?: boolean; // True when region_confidence is low/unknown
+  // ── Evidence Quality (applied post-source-layer, never changes scores) ────────
   evidence_quality?: EvidenceQualityLevel;
   source_count?: number;
   signal_count?: number;
   fresh_signal_count?: number;
-  source_types?: string[];
-  signal_age_days?: number | null;
   freshness_score?: number;
   evidence_confidence?: number;
   source_confidence?: "high" | "medium" | "low";
-  region_confidence?: "high" | "medium" | "low";
+  region_confidence?: RegionConfidence;
   insufficient_evidence_reason?: string;
   evidence_summary?: string;
   recommended_action_guardrail_applied?: boolean;

@@ -78,10 +78,19 @@ export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLen
     console.log(`[pipeline] account memory: ${memorizedCount} previously-seen accounts classified`);
   }
 
+  // Source Access & Freshness Layer v0 — normalizes source metadata per opportunity
+  // (best-effort, never blocks; must run after Account Memory, before Evidence Quality)
+  const { applySourceFreshnessToLeads } = await import("./sources/signal-freshness");
+  const leadsWithSources = applySourceFreshnessToLeads(leadsForReport);
+  const sourceCount = leadsWithSources.filter(l => l.learning?.source_layer_applied).length;
+  if (sourceCount > 0) {
+    console.log(`[pipeline] source layer: ${sourceCount} leads classified`);
+  }
+
   // Evidence Quality pass — classifies evidence level, applies recommended_action guardrails
-  // (best-effort, never blocks; must run after Account Memory, before report agent)
+  // (best-effort, never blocks; reads Source Layer metadata when available)
   const { applyEvidenceQualityHints, applyEvidenceQualityToReport } = await import("./quality/evidence-quality");
-  const leadsWithQuality = applyEvidenceQualityHints(leadsForReport);
+  const leadsWithQuality = applyEvidenceQualityHints(leadsWithSources);
   const qualityCount = leadsWithQuality.filter(l => l.learning?.evidence_quality).length;
   const insufficientCount = leadsWithQuality.filter(l => l.learning?.evidence_quality === "insufficient").length;
   if (qualityCount > 0) {
