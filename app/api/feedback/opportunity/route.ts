@@ -12,6 +12,8 @@ const VALID_SIGNALS = [
 
 const schema = z.object({
   job_id:             z.string().max(200).optional(),
+  /** lead_searches.id — monitor series context from report.search_id (P2). */
+  search_id:          z.string().uuid().optional(),
   company:            z.string().min(1).max(200),
   domain:             z.string().max(200).optional(),
   industry:           z.string().max(100).optional(),
@@ -56,6 +58,9 @@ export async function POST(req: NextRequest) {
         // Dedup guard: identical feedback (same run + same account + same
         // signal) must not accumulate duplicate rows. Return the existing row
         // as already_saved — the signal meaning is unchanged by repetition.
+        // Key stays job_id + company + signal: job_id is unique per run, so it
+        // subsumes search_id; filtering on search_id would miss legacy rows
+        // written before search context existed and re-create duplicates.
         if (data.job_id) {
           const { data: existing } = await db
             .from("opportunity_feedback")
@@ -79,6 +84,7 @@ export async function POST(req: NextRequest) {
           .from("opportunity_feedback")
           .insert({
             job_id:             data.job_id             ?? null,
+            search_id:          data.search_id          ?? null,
             company:            data.company,
             domain:             data.domain             ?? null,
             industry:           data.industry           ?? null,

@@ -266,6 +266,7 @@ export default function ResultsPage() {
               lead={lead}
               ranking={rankingMap.get(lead.id)}
               jobId={jobId}
+              searchId={report.search_id}
               expanded={expanded === lead.id}
               onToggle={() => setExpanded(prev => (prev === lead.id ? null : lead.id))}
             />
@@ -376,11 +377,12 @@ const ACTION_LABELS: Record<string, string> = {
 };
 
 function AccountCard({
-  lead, ranking, jobId, expanded, onToggle,
+  lead, ranking, jobId, searchId, expanded, onToggle,
 }: {
   lead: ProcessedLead;
   ranking: OpportunityRanking | undefined;
   jobId: string;
+  searchId: string | undefined;
   expanded: boolean;
   onToggle: () => void;
 }) {
@@ -509,7 +511,7 @@ function AccountCard({
           )}
 
           {/* Feedback */}
-          <FeedbackBar lead={lead} jobId={jobId} />
+          <FeedbackBar lead={lead} jobId={jobId} searchId={searchId} />
         </div>
       )}
     </div>
@@ -528,7 +530,7 @@ const FEEDBACK_OPTIONS: { label: string; signal: string }[] = [
   { label: "Do not show again",  signal: "exclude_similar" },
 ];
 
-function FeedbackBar({ lead, jobId }: { lead: ProcessedLead; jobId: string }) {
+function FeedbackBar({ lead, jobId, searchId }: { lead: ProcessedLead; jobId: string; searchId: string | undefined }) {
   const [sent, setSent] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -543,6 +545,7 @@ function FeedbackBar({ lead, jobId }: { lead: ProcessedLead; jobId: string }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           job_id:             jobId,
+          search_id:          searchId,
           company:            lead.candidate.company,
           domain:             lead.candidate.domain ?? undefined,
           industry:           lead.candidate.industry ?? undefined,
