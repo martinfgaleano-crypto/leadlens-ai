@@ -37,3 +37,29 @@ Signup/Onboarding → lead_search + onboarding_request (setup completo)
 ```
 
 Pasos que siguen siendo manuales/asistidos: cadencia mensual (sin scheduler), QA interno pre-entrega (checklist + banners), linking de onboarding a searches creadas por dashboard, billing/upgrades.
+
+## Scheduler readiness (P10 — sin automatización activa)
+
+Estado actual: **cadencia manual**. El dashboard lo comunica honestamente
+("Monthly cadence is manual for now… Automatic scheduling is not enabled yet").
+No hay cron, no hay background jobs, no hay next_run_at en el schema.
+
+Camino de integración futuro (cuando se decida activar):
+1. Migration: `lead_searches.monitor_frequency TEXT` (`manual | monthly`) y
+   `lead_searches.next_run_at TIMESTAMPTZ` — nullable, inertes hasta que exista runner.
+2. Runner: Vercel Cron (o similar) llamando un endpoint admin-only idempotente
+   que reutilice exactamente el path de `POST /api/monitor/[id]/run` (mismos guards:
+   onboarding, dedup, entitlement) — nunca un path paralelo sin guards.
+3. Entitlement: el scheduler consulta `getEntitlements` antes de cada run;
+   clientes sin entitlement se saltan con log, sin error visible.
+4. Copy: solo cuando el runner exista se cambia "not enabled yet" por fecha real.
+   **Nunca prometer scheduling antes de que corra.**
+
+## Billing readiness (referencia)
+
+- Datos reales existentes: `plans` (catálogo con precios), `customer_credits`,
+  `credit_transactions` (ledger), `profiles.plan`, webhook Lemon Squeezy para orders.
+- `lib/usage/entitlements.ts` es el único punto de decisión de acceso por plan —
+  cuando billing exista, solo ese helper cambia (suscripción activa → can_run_monitor,
+  monthly_run_limit real, deducción por run vía `credit_transactions type='consume'`).
+- Proveedor decidido: **Lemon Squeezy** (no Stripe) — compatible Colombia.
