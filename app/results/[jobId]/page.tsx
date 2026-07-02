@@ -531,10 +531,12 @@ const FEEDBACK_OPTIONS: { label: string; signal: string }[] = [
 function FeedbackBar({ lead, jobId }: { lead: ProcessedLead; jobId: string }) {
   const [sent, setSent] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
+  const [failed, setFailed] = useState(false);
 
   async function send(signal: string, label: string) {
     if (sending || sent) return;
     setSending(true);
+    setFailed(false);
     try {
       const res = await fetch("/api/feedback/opportunity", {
         method: "POST",
@@ -549,9 +551,14 @@ function FeedbackBar({ lead, jobId }: { lead: ProcessedLead; jobId: string }) {
           feedback_signal:    signal,
         }),
       });
-      if (res.ok) setSent(label);
+      if (res.ok) {
+        const d = await res.json().catch(() => ({}));
+        setSent(d.already_saved ? `${label} (already recorded)` : label);
+      } else {
+        setFailed(true);
+      }
     } catch {
-      // best-effort — leave buttons enabled on failure
+      setFailed(true);
     }
     setSending(false);
   }
@@ -579,6 +586,9 @@ function FeedbackBar({ lead, jobId }: { lead: ProcessedLead; jobId: string }) {
           </button>
         ))}
       </div>
+      {failed && (
+        <p className="text-xs text-red-500 mt-2">Could not save feedback — please try again.</p>
+      )}
     </div>
   );
 }

@@ -53,6 +53,28 @@ export async function POST(req: NextRequest) {
       const { createServerClient } = await import("@/lib/supabase/server");
       const db = createServerClient();
       if (db) {
+        // Dedup guard: identical feedback (same run + same account + same
+        // signal) must not accumulate duplicate rows. Return the existing row
+        // as already_saved — the signal meaning is unchanged by repetition.
+        if (data.job_id) {
+          const { data: existing } = await db
+            .from("opportunity_feedback")
+            .select("id")
+            .eq("job_id", data.job_id)
+            .eq("company", data.company)
+            .eq("feedback_signal", data.feedback_signal)
+            .limit(1)
+            .maybeSingle();
+
+          if (existing) {
+            return NextResponse.json({
+              success: true,
+              already_saved: true,
+              id: (existing as { id: string }).id,
+            });
+          }
+        }
+
         const { data: row, error } = await db
           .from("opportunity_feedback")
           .insert({
