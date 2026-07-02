@@ -47,9 +47,12 @@ No hay cron, no hay background jobs, no hay next_run_at en el schema.
 Camino de integración futuro (cuando se decida activar):
 1. Migration: `lead_searches.monitor_frequency TEXT` (`manual | monthly`) y
    `lead_searches.next_run_at TIMESTAMPTZ` — nullable, inertes hasta que exista runner.
-2. Runner: Vercel Cron (o similar) llamando un endpoint admin-only idempotente
-   que reutilice exactamente el path de `POST /api/monitor/[id]/run` (mismos guards:
-   onboarding, dedup, entitlement) — nunca un path paralelo sin guards.
+2. Runner: Vercel Cron (o similar) que drene jobs de forma idempotente usando la
+   infraestructura async ya construida: `createMonitorRunJob` (mismos guards de
+   dedup/staleness) + `POST /api/internal/monitor-runs/[jobId]/process` (secret-
+   protected) — nunca un path paralelo sin guards. Ver ASYNC_RUN_EXECUTION.md.
+   Bonus ya disponible: el mismo cron puede re-disparar jobs `processing` stale
+   sin worker (auto-recovery), exactamente lo que hace el admin retry hoy.
 3. Entitlement: el scheduler consulta `getEntitlements` antes de cada run;
    clientes sin entitlement se saltan con log, sin error visible.
 4. Copy: solo cuando el runner exista se cambia "not enabled yet" por fecha real.
