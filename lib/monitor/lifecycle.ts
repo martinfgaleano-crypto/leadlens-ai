@@ -43,7 +43,7 @@ export function deriveMonitorLifecycle(input: LifecycleInput): MonitorLifecycleS
 export const LIFECYCLE_CUSTOMER_LABELS: Record<MonitorLifecycleState, string> = {
   setup_incomplete: "Setup incomplete",
   processing:       "Processing",
-  stale_processing: "Run stalled — you can start a new run",
+  stale_processing: "Taking longer than expected — you can start a new run",
   failed:           "Needs internal review",
   needs_review:     "Needs internal review",
   ready_to_run:     "Ready to run",

@@ -646,7 +646,7 @@ export default function SearchDetailPage() {
                         {run.status === "completed"
                           ? <>{run.lead_count ?? "—"} accounts · {run.hot_count ?? 0} hot · {run.warm_count ?? 0} warm{run.visible_changes != null && <> · {run.visible_changes} change{run.visible_changes === 1 ? "" : "s"}</>}</>
                           : run.status === "processing"
-                            ? (run.is_stale ? "Stalled — you can start a new run" : "In progress…")
+                            ? (run.is_stale ? "Taking longer than expected — you can start a new run" : "In progress…")
                             : "Run did not complete"}
                       </div>
                     </div>
