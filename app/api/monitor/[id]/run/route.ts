@@ -6,6 +6,11 @@ import {
   failSnapshot,
 } from "@/lib/storage/snapshot-store";
 import { runLeadLensPipeline } from "@/lib/pipeline";
+import { processingCutoffIso } from "@/lib/storage/snapshot-store";
+
+// Pipeline runs take minutes — raise the serverless function limit where the
+// hosting plan allows it (ignored/clamped otherwise).
+export const maxDuration = 300;
 
 // ── POST /api/monitor/[id]/run ────────────────────────────────────────────────
 // Customer-triggered monitor run for THEIR OWN search series.
@@ -90,11 +95,14 @@ export async function POST(
   }
 
   // ── Duplicate-run guard ─────────────────────────────────────────────────────
+  // Stale processing rows (killed functions that never reached failSnapshot)
+  // are ignored — otherwise one dead run would block the series forever.
   const { data: inflight } = await db
     .from("snapshot_reports")
     .select("job_id")
     .eq("search_id", searchId)
     .eq("status", "processing")
+    .gte("created_at", processingCutoffIso())
     .limit(1)
     .maybeSingle();
 

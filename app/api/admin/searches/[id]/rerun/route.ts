@@ -7,6 +7,11 @@ import {
   failSnapshot,
 } from "@/lib/storage/snapshot-store";
 import { runLeadLensPipeline } from "@/lib/pipeline";
+import { processingCutoffIso } from "@/lib/storage/snapshot-store";
+
+// Pipeline runs take minutes — raise the serverless function limit where the
+// hosting plan allows it (ignored/clamped otherwise).
+export const maxDuration = 300;
 
 // ── POST /api/admin/searches/[id]/rerun ───────────────────────────────────────
 // Manually triggers an AI pipeline run for an existing lead_searches.id as a
@@ -90,14 +95,16 @@ export async function POST(
 
   // ── 4. Dedup guard ────────────────────────────────────────────────────────
 
+  // Stale processing rows (killed functions) are ignored — see snapshot-store.
   const { data: inflight } = await client
     .from("snapshot_reports")
     .select("job_id, created_at")
     .eq("search_id", searchId)
     .eq("status", "processing")
+    .gte("created_at", processingCutoffIso())
     .order("created_at", { ascending: false })
     .limit(1)
-    .single();
+    .maybeSingle();
 
   if (inflight) {
     return NextResponse.json(

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { isProcessingFresh } from "@/lib/storage/snapshot-store";
 
 // ── GET /api/monitor/[id]/runs ────────────────────────────────────────────────
 // Customer-facing monitor run history for one of THEIR searches.
@@ -117,7 +118,7 @@ export async function GET(
     latest_status:       newestFirst[0]?.status ?? null,
     latest_completed_at: latestCompleted?.created_at ?? null,
     latest_report_job_id: latestCompleted?.job_id ?? null,
-    has_processing_run:  enriched.some((r) => r.status === "processing"),
+    has_processing_run:  enriched.some((r) => r.status === "processing" && isProcessingFresh(r.created_at)),
     has_onboarding_link: hasOnboardingLink,
     runs:                newestFirst,
   });

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { isProcessingFresh } from "@/lib/storage/snapshot-store";
 
 // ── GET /api/monitor/overview ─────────────────────────────────────────────────
 // Monitor center summary for ALL of the authenticated user's searches.
@@ -92,7 +93,7 @@ export async function GET(req: NextRequest) {
       latest_run_status:    latest?.status ?? null,
       latest_completed_at:  latestCompleted?.created_at ?? null,
       latest_report_job_id: latestCompleted?.job_id ?? null,
-      has_processing_run:   runs.some(r => r.status === "processing"),
+      has_processing_run:   runs.some(r => r.status === "processing" && isProcessingFresh(r.created_at)),
       has_onboarding_link:  linkedSearchIds.has(s.id as string),
       is_baseline_only:     completed.length === 1,
       has_comparison:       completed.length >= 2,

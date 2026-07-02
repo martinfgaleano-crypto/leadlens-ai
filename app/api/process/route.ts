@@ -15,6 +15,10 @@ import {
  *   failed      → upserted if pipeline throws (best-effort, non-blocking)
  */
 
+// Pipeline runs take minutes — raise the serverless function limit where the
+// hosting plan allows it (ignored/clamped otherwise).
+export const maxDuration = 300;
+
 const bodySchema = z.object({
   plan: z.enum(["sample", "starter", "standard", "pro"]).default("starter"),
   onboarding: z.object({

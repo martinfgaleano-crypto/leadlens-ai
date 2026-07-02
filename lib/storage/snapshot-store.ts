@@ -14,6 +14,21 @@ async function getDb() {
   return createServerClient();
 }
 
+// A `processing` row older than this is considered abandoned (the serverless
+// function was killed before failSnapshot could run). Duplicate-run guards and
+// "run in progress" displays must ignore stale rows, or a single killed run
+// would block the series forever.
+export const PROCESSING_STALE_MS = 15 * 60 * 1000;
+
+export function processingCutoffIso(): string {
+  return new Date(Date.now() - PROCESSING_STALE_MS).toISOString();
+}
+
+export function isProcessingFresh(createdAt: string): boolean {
+  const t = new Date(createdAt).getTime();
+  return Number.isFinite(t) && t > Date.now() - PROCESSING_STALE_MS;
+}
+
 export interface SnapshotRecord {
   id:          string;
   job_id:      string;

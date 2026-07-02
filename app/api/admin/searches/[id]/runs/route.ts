@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import type { ChangeType } from "@/types";
+import { isProcessingFresh } from "@/lib/storage/snapshot-store";
 
 // ── GET /api/admin/searches/[id]/runs ─────────────────────────────────────────
 // Monitor run history for one search series (lead_searches.id = series ID).
@@ -144,7 +145,7 @@ export async function GET(
     total_runs:         enriched.length,
     latest_status:      newestFirst[0]?.status ?? null,
     latest_completed_at: latestCompleted?.created_at ?? null,
-    has_processing_run: enriched.some((r) => r.status === "processing"),
+    has_processing_run: enriched.some((r) => r.status === "processing" && isProcessingFresh(r.created_at)),
     runs:               newestFirst,
   });
 }
