@@ -115,4 +115,11 @@ Full checklist: docs/strategy/BETA_SMOKE_QA.md\n`);
 const failed = results.filter(r => r.pass === false).length;
 const skipped = results.filter(r => r.pass === null).length;
 console.log(`Result: ${results.length - failed - skipped} passed, ${failed} failed, ${skipped} skipped.`);
+
+if (!OWNER_TOKEN && !OTHER_TOKEN && !ADMIN_TOKEN) {
+  console.log(`\nWARNING: no tokens provided — only anonymous-auth checks ran.
+This does NOT validate ownership or the report auth matrix. Set OWNER_TOKEN,
+OTHER_TOKEN, ADMIN_TOKEN, SEARCH_ID and JOB_ID for meaningful coverage.`);
+}
+
 process.exit(failed > 0 ? 1 : 0);
