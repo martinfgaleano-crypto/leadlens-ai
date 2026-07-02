@@ -122,6 +122,7 @@ type RerunLog = {
   success: boolean;
   job_id?: string;
   search_id?: string;
+  status?: string;
   is_baseline?: boolean;
   message?: string;
   stats?: { hot_count: number; warm_count: number; total_leads: number; avg_score: number };
@@ -978,7 +979,7 @@ export default function AdminSearchDetailPage() {
                   {rerunning ? (
                     <>
                       <span style={{ display: "inline-block", animation: "spin 1s linear infinite" }}>⏳</span>
-                      Running AI pipeline…
+                      Starting run…
                     </>
                   ) : hasOnboarding === false ? (
                     "Monitor runs unavailable"
@@ -1014,7 +1015,9 @@ export default function AdminSearchDetailPage() {
                   <>
                     <div>
                       <span style={{ color: "#64748b" }}>Status: </span>
-                      <strong style={{ color: "#15803d" }}>Complete</strong>
+                      {rerunLog.status === "processing"
+                        ? <strong style={{ color: "#075985" }}>Processing — run history updates when done</strong>
+                        : <strong style={{ color: "#15803d" }}>Complete</strong>}
                       {rerunLog.is_baseline && (
                         <span style={{ marginLeft: "0.5rem", background: "#e0e7ff", color: "#4338ca", borderRadius: 999, padding: "0.1rem 0.45rem", fontSize: "0.68rem", fontWeight: 700 }}>
                           BASELINE

@@ -1,17 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/auth/require-admin";
-import {
-  createProcessingSnapshot,
-  completeSnapshot,
-  failSnapshot,
-} from "@/lib/storage/snapshot-store";
-import { runLeadLensPipeline } from "@/lib/pipeline";
-import { processingCutoffIso } from "@/lib/storage/snapshot-store";
-
-// Pipeline runs take minutes — raise the serverless function limit where the
-// hosting plan allows it (ignored/clamped otherwise).
-export const maxDuration = 300;
+import { createMonitorRunJob, normalizeRunPlan, triggerProcessor } from "@/lib/monitor/run-jobs";
 
 // ── POST /api/admin/searches/[id]/rerun ───────────────────────────────────────
 // Manually triggers an AI pipeline run for an existing lead_searches.id as a
@@ -71,106 +61,50 @@ export async function POST(
     .eq("id", search.user_id)
     .single();
 
-  const validPlans = ["sample", "starter", "standard", "pro"] as const;
-  type PlanType = typeof validPlans[number];
-  const rawPlan = profile?.plan ?? "starter";
-  const plan: PlanType = validPlans.includes(rawPlan as PlanType) ? (rawPlan as PlanType) : "starter";
+  const plan = normalizeRunPlan(profile?.plan);
 
-  // ── 3. Fetch onboarding data (required for pipeline input) ────────────────
+  // ── 3. Onboarding linkage guard (pipeline input is reconstructed by the
+  //       internal processor at execution time) ────────────────────────────────
 
-  const { data: onboardingReq } = await client
+  const { count: onboardingCount } = await client
     .from("onboarding_requests")
-    .select("company_name, email, what_you_sell, ideal_customer")
-    .eq("search_id", searchId)
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .single();
+    .select("id", { count: "exact", head: true })
+    .eq("search_id", searchId);
 
-  if (!onboardingReq) {
+  if ((onboardingCount ?? 0) === 0) {
     return NextResponse.json(
       { error: "No onboarding data found for this search. Cannot reconstruct pipeline input." },
       { status: 422 },
     );
   }
 
-  // ── 4. Dedup guard ────────────────────────────────────────────────────────
+  // ── 4. Create job + return fast (async v0 — see ASYNC_RUN_EXECUTION.md) ────
 
-  // Stale processing rows (killed functions) are ignored — see snapshot-store.
-  const { data: inflight } = await client
-    .from("snapshot_reports")
-    .select("job_id, created_at")
-    .eq("search_id", searchId)
-    .eq("status", "processing")
-    .gte("created_at", processingCutoffIso())
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+  const job = await createMonitorRunJob(client, { searchId, plan });
 
-  if (inflight) {
-    return NextResponse.json(
-      {
-        error: `A run is already in progress (job_id: ${inflight.job_id}). Wait for it to complete before starting another.`,
-      },
-      { status: 409 },
-    );
+  if (!job.ok) {
+    if (job.code === "duplicate") {
+      return NextResponse.json(
+        { error: `A run is already in progress (job_id: ${job.inflight_job_id}). Wait for it to complete before starting another.` },
+        { status: 409 },
+      );
+    }
+    return NextResponse.json({ error: "The run could not be started." }, { status: 500 });
   }
 
-  // ── 5. Baseline check ─────────────────────────────────────────────────────
+  triggerProcessor(job.job_id);
 
-  const { count: completedCount } = await client
-    .from("snapshot_reports")
-    .select("id", { count: "exact", head: true })
-    .eq("search_id", searchId)
-    .eq("status", "completed");
-
-  const isBaseline = (completedCount ?? 0) === 0;
-
-  // ── 6. Reconstruct OnboardingData from onboarding_request ─────────────────
-  // onboarding_requests stores what_you_sell / ideal_customer as free-text
-  // description fields. They map cleanly to the pipeline's offer/customer inputs.
-  // company_description, value_proposition default to what_you_sell as best available.
-
-  const onboardingData = {
-    company_name:                onboardingReq.company_name,
-    company_description:         onboardingReq.what_you_sell,
-    offer_description:           onboardingReq.what_you_sell,
-    value_proposition:           onboardingReq.what_you_sell,
-    target_customer_description: onboardingReq.ideal_customer ?? "Target customer not specified",
-    tone:                        "direct" as const,
-    contact_email:               onboardingReq.email,
-  };
-
-  // ── 7. Generate jobId + kick off pipeline ─────────────────────────────────
-
-  const jobId = `snap_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
-
-  createProcessingSnapshot(jobId, plan, searchId).catch(() => {});
-
-  try {
-    const report = await runLeadLensPipeline({ onboardingData, plan, jobId, searchId });
-
-    completeSnapshot(jobId, plan, report, searchId).catch(() => {});
-
-    return NextResponse.json({
-      success: true,
-      job_id:     jobId,
-      search_id:  searchId,
-      is_baseline: isBaseline,
-      message: isBaseline
-        ? "Baseline run complete. Future runs will compare against this snapshot."
-        : "Run complete. Change classification active — compared against previous snapshot.",
-      stats: {
-        hot_count:   report.hot_count,
-        warm_count:  report.warm_count,
-        total_leads: report.total_leads,
-        avg_score:   report.avg_score,
-      },
-    });
-
-  } catch (err) {
-    const reason = err instanceof Error ? err.message.slice(0, 200) : "Pipeline error";
-    console.error("[rerun]", searchId, jobId, reason);
-    await failSnapshot(jobId, plan, reason, searchId).catch(() => {});
-    return NextResponse.json({ error: reason, job_id: jobId }, { status: 500 });
-  }
+  return NextResponse.json(
+    {
+      success:     true,
+      job_id:      job.job_id,
+      search_id:   searchId,
+      status:      "processing",
+      is_baseline: job.is_baseline,
+      message: job.is_baseline
+        ? "Baseline run started — processing. Run history will show completion."
+        : "Run started — processing. Change classification will compare against the previous snapshot.",
+    },
+    { status: 202 },
+  );
 }
