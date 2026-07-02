@@ -28,14 +28,20 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Invalid or expired token." }, { status: 401 });
   }
 
-  const [balance, transactions] = await Promise.all([
+  const { getEntitlements } = await import("@/lib/usage/entitlements");
+
+  const [balance, transactions, entitlements] = await Promise.all([
     getCreditBalance(client, user.id),
     getCreditHistory(client, user.id, 10),
+    getEntitlements(client, user.id),
   ]);
 
   return NextResponse.json({
     credit_balance:      balance?.credit_balance   ?? 0,
     lifetime_credits:    balance?.lifetime_credits  ?? 0,
     recent_transactions: transactions,
+    // Usage/entitlement status (no billing integration — derived from
+    // plan + credit data; see lib/usage/entitlements.ts)
+    entitlements,
   });
 }
