@@ -162,6 +162,9 @@ export default function ResultsPage() {
   });
 
   const changeSection = buildChangeSection(report);
+  const isComparisonRun = hasTrueComparison(report);
+  const evidenceSummary = buildEvidenceSummary(report);
+  const freshnessSummary = buildFreshnessSummary(report);
 
   return (
     <main className="min-h-screen bg-gray-50 py-12 px-6">
@@ -169,7 +172,12 @@ export default function ResultsPage() {
         <div className="flex justify-between items-start mb-8">
           <div>
             <h1 className="text-3xl font-bold mb-1">Account Opportunity Report</h1>
-            <p className="text-gray-500">{report.total_leads} accounts analyzed · {PLANS[report.plan] ?? report.plan} · {new Date(report.created_at).toLocaleString()}</p>
+            <p className="text-gray-500">
+              {report.total_leads} accounts analyzed · {PLANS[report.plan] ?? report.plan} · {new Date(report.created_at).toLocaleString()}
+            </p>
+            <span className={`inline-block mt-2 text-xs font-semibold px-2.5 py-1 rounded-full ${isComparisonRun ? "bg-green-50 text-green-700" : "bg-indigo-50 text-indigo-700"}`}>
+              {isComparisonRun ? "Compared with your previous report" : "Baseline run — first report in this monitor"}
+            </span>
           </div>
           <div className="flex gap-3">
             <button onClick={() => download("csv")} className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50">
@@ -202,6 +210,36 @@ export default function ResultsPage() {
           <div className="bg-white border border-gray-100 rounded-xl p-5 mb-4">
             <h3 className="font-semibold mb-2 text-sm">Executive Summary</h3>
             <p className="text-sm text-gray-700">{report.executive_summary}</p>
+          </div>
+        )}
+
+        {/* Evidence & freshness summary — counts of existing labels only */}
+        {(evidenceSummary || freshnessSummary) && (
+          <div className="grid md:grid-cols-2 gap-4 mb-4">
+            {evidenceSummary && (
+              <div className="bg-white border border-gray-100 rounded-xl p-5">
+                <h3 className="font-semibold mb-2 text-sm">Evidence Quality</h3>
+                <div className="flex flex-wrap gap-2">
+                  {evidenceSummary.map(item => (
+                    <span key={item.label} className="inline-flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-full px-3 py-1 text-xs text-gray-700">
+                      <span className="font-semibold">{item.count}</span> {item.label}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {freshnessSummary && (
+              <div className="bg-white border border-gray-100 rounded-xl p-5">
+                <h3 className="font-semibold mb-2 text-sm">Signal Freshness</h3>
+                <div className="flex flex-wrap gap-2">
+                  {freshnessSummary.map(item => (
+                    <span key={item.label} className="inline-flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-full px-3 py-1 text-xs text-gray-700">
+                      <span className="font-semibold">{item.count}</span> {item.label}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -255,6 +293,49 @@ const CUSTOMER_CHANGE_LABELS: Record<string, string> = {
   still_relevant:             "Still relevant",
 };
 
+function hasTrueComparison(report: LeadLensReport): boolean {
+  return (report.ranked_opportunities ?? []).some(o =>
+    o.previous_action != null ||
+    o.previous_evidence_quality != null ||
+    o.previous_source_freshness != null ||
+    o.previous_signal_date != null,
+  );
+}
+
+// Counts of existing evidence_quality_counts — customer-safe labels, no enums.
+function buildEvidenceSummary(report: LeadLensReport): { label: string; count: number }[] | null {
+  const counts = report.evidence_quality_counts;
+  if (!counts) return null;
+  const items = [
+    { label: "Strong evidence", count: counts.high ?? 0 },
+    { label: "Moderate evidence", count: counts.medium ?? 0 },
+    { label: "Limited evidence", count: counts.low ?? 0 },
+    { label: "Evidence insufficient", count: counts.insufficient ?? 0 },
+  ].filter(i => i.count > 0);
+  return items.length > 0 ? items : null;
+}
+
+// Counts of existing per-account source_freshness values. Unknown stays
+// unknown — never upgraded, never hidden.
+function buildFreshnessSummary(report: LeadLensReport): { label: string; count: number }[] | null {
+  const counts: Record<string, number> = {};
+  for (const lead of report.processed_leads) {
+    const f = lead.learning?.source_freshness;
+    if (!f) continue;
+    counts[f] = (counts[f] ?? 0) + 1;
+  }
+  const LABELS: Record<string, string> = {
+    fresh:   "Fresh signals",
+    recent:  "Recent signals",
+    stale:   "Stale signals",
+    unknown: "Freshness unknown",
+  };
+  const items = Object.entries(counts)
+    .map(([k, count]) => ({ label: LABELS[k] ?? k, count }))
+    .filter(i => i.count > 0);
+  return items.length > 0 ? items : null;
+}
+
 function buildChangeSection(report: LeadLensReport): {
   title: string;
   note: string | null;
@@ -263,12 +344,7 @@ function buildChangeSection(report: LeadLensReport): {
   const summary = report.change_summary;
   if (!summary || summary.client_visible_count <= 0) return null;
 
-  const isComparison = (report.ranked_opportunities ?? []).some(o =>
-    o.previous_action != null ||
-    o.previous_evidence_quality != null ||
-    o.previous_source_freshness != null ||
-    o.previous_signal_date != null,
-  );
+  const isComparison = hasTrueComparison(report);
 
   const items: { label: string; count: number }[] = [];
   for (const [type, count] of Object.entries(summary.by_type ?? {})) {
