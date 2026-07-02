@@ -150,6 +150,13 @@ export async function GET(req: NextRequest) {
     }
     const report = snapshot.report_json as LeadLensReport;
     if (!report || !("processed_leads" in report)) return NOT_FOUND();
+    // Consistency check: report.search_id is context-only; the snapshot row is
+    // authoritative. A mismatch indicates a bug worth logging — never served
+    // to a customer whose ownership was verified against a different series.
+    if (report.search_id && snapshot.search_id && report.search_id !== snapshot.search_id) {
+      console.error(`[/api/report] search_id mismatch for job ${jobId}: report=${report.search_id} snapshot=${snapshot.search_id}`);
+      if (!isAdmin) return NOT_FOUND();
+    }
     return formatResponse(report, jobId, format);
   }
 

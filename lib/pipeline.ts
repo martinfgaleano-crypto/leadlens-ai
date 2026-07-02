@@ -131,6 +131,11 @@ export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLen
 
   const report = applyChangeSinceLastReportToReport(reportWithEQ, prevSnapshot);
 
+  // Monitor series context — never affects scoring/ranking. Snapshot rows keep
+  // the authoritative search_id; carrying it in the payload gives feedback and
+  // debugging the same context without extra lookups.
+  if (searchId) report.search_id = searchId;
+
   // Write account memory updates after report is built (best-effort, fire-and-forget)
   if (!IS_DEMO) {
     updateAccountMemoryFromReport(leadsWithQuality, id, clientKey, memoryMap).catch(() => {});

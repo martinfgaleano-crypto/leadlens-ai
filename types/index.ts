@@ -530,6 +530,13 @@ export interface ProcessedLead {
 export interface LeadLensReport {
   job_id: string;
   plan: PlanType;
+  /**
+   * lead_searches.id when the run belongs to a monitor series. Context only —
+   * never used for ranking. Ownership checks always use snapshot_reports.search_id
+   * as the source of truth; this field supports feedback context, debugging,
+   * and future usage attribution. Absent on legacy and one-off reports.
+   */
+  search_id?: string;
   total_leads: number;
   hot_count: number;
   warm_count: number;
