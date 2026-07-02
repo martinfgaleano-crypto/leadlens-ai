@@ -33,6 +33,19 @@ interface SearchForm {
   notes: string;
 }
 
+interface MonitorOverviewRow {
+  search_id: string;
+  name: string;
+  search_status: string;
+  total_runs: number;
+  latest_run_status: string | null;
+  latest_completed_at: string | null;
+  latest_report_job_id: string | null;
+  has_processing_run: boolean;
+  is_baseline_only: boolean;
+  has_comparison: boolean;
+}
+
 const EMPTY_FORM: SearchForm = {
   name: "",
   icp_id: "",
@@ -86,6 +99,7 @@ export default function SearchesPage() {
   const [userId, setUserId]       = useState("");
   const [icps, setIcps]           = useState<Icp[]>([]);
   const [searches, setSearches]   = useState<LeadSearch[]>([]);
+  const [monitorMap, setMonitorMap] = useState<Map<string, MonitorOverviewRow>>(new Map());
   const [loading, setLoading]     = useState(true);
   const [error, setError]         = useState("");
   const [formOpen, setFormOpen]   = useState(false);
@@ -113,6 +127,24 @@ export default function SearchesPage() {
 
     if (!icpRes.error)    setIcps((icpRes.data ?? []) as Icp[]);
     if (!searchRes.error) setSearches((searchRes.data ?? []) as LeadSearch[]);
+
+    // Monitor overview — best-effort; list still works without it
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.access_token) {
+        const res = await fetch("/api/monitor/overview", {
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        });
+        if (res.ok) {
+          const d = await res.json().catch(() => null);
+          if (d?.monitors) {
+            setMonitorMap(new Map(
+              (d.monitors as MonitorOverviewRow[]).map(m => [m.search_id, m]),
+            ));
+          }
+        }
+      }
+    } catch { /* best-effort */ }
   }, []);
 
   // ─── Init ───────────────────────────────────────────────────────────────────
@@ -370,6 +402,7 @@ export default function SearchesPage() {
               <span style={{ ...S.col, flex: 3 }}>Search</span>
               <span style={{ ...S.col, flex: 1 }}>Accounts</span>
               <span style={{ ...S.col, flex: 1.5 }}>Status</span>
+              <span style={{ ...S.col, flex: 2 }}>Monitor</span>
               <span style={{ ...S.col, flex: 1.5 }}>Requested</span>
               <span style={{ ...S.col, flex: 1 }}></span>
             </div>
@@ -380,6 +413,35 @@ export default function SearchesPage() {
                 </span>
                 <span style={{ ...S.col, flex: 1, color: "#64748b" }}>{s.requested_lead_count}</span>
                 <span style={{ ...S.col, flex: 1.5 }}><StatusBadge status={s.status} /></span>
+                <span style={{ ...S.col, flex: 2 }}>
+                  {(() => {
+                    const m = monitorMap.get(s.id);
+                    if (!m || m.total_runs === 0) {
+                      return <span style={{ color: "#cbd5e1", fontSize: "0.75rem" }}>No runs yet</span>;
+                    }
+                    if (m.has_processing_run) {
+                      return <span style={{ color: "#075985", fontSize: "0.75rem", fontWeight: 600 }}>⟳ Run in progress</span>;
+                    }
+                    if (m.latest_report_job_id) {
+                      return (
+                        <span style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}>
+                          <Link href={`/results/${m.latest_report_job_id}`} style={{ color: "#0ea5e9", fontWeight: 600, fontSize: "0.75rem", textDecoration: "none" }}>
+                            Latest report →
+                          </Link>
+                          <span style={{
+                            background: m.has_comparison ? "#f0fdf4" : "#e0e7ff",
+                            color: m.has_comparison ? "#15803d" : "#4338ca",
+                            borderRadius: 999, padding: "0.1rem 0.45rem",
+                            fontSize: "0.62rem", fontWeight: 700,
+                          }}>
+                            {m.has_comparison ? "COMPARED" : "BASELINE"}
+                          </span>
+                        </span>
+                      );
+                    }
+                    return <span style={{ color: "#94a3b8", fontSize: "0.75rem" }}>{m.total_runs} run{m.total_runs === 1 ? "" : "s"}</span>;
+                  })()}
+                </span>
                 <span style={{ ...S.col, flex: 1.5, color: "#94a3b8", fontSize: "0.78rem" }}>
                   {new Date(s.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                 </span>
