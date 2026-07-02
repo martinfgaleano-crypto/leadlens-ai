@@ -421,3 +421,20 @@
 **Self-review adversarial:** (1) admin-detection en /api/report hereda el modo dev-sin-token de requireAdmin — consistente con el resto del admin API; (2) entitlement falla cerrado ante error de DB (bloquea run con copy de upgrade — trade-off aceptado); (3) fix aplicado: check no-op en smoke script; (4) runs customer-triggered comparten el riesgo de timeout serverless del path admin (pre-existente, documentado); (5) sin leaks encontrados en overview/runs/run (todo filtrado por user_id antes de tocar snapshots).
 
 **Estado:** Implementado. TypeScript: 0 errores tras cada bloque.
+
+---
+
+### [2026-07-02] Smoke QA + Bugfix Sprint v0
+
+**Decisión:** Validar la fundación self-serve por inspección adversarial y corregir solo bugs de alta confianza antes del próximo sprint de arquitectura.
+
+**Bugs encontrados y corregidos (commits):**
+1. **`c0f3d44`** — Results page esperaba 5s antes del primer fetch (setInterval sin llamada inicial): los reportes completados mostraban spinner innecesario. Ahora fetch inmediato + cleanup seguro contra updates post-unmount.
+2. **`57db77b`** — **Deadlock de processing rows:** un run matado por el serverless deja un snapshot `processing` que `failSnapshot` nunca actualiza → dedup 409 permanente y botones deshabilitados para siempre. Fix: guards y derivaciones `has_processing_run` ignoran rows `processing` con más de 15 min (`processingCutoffIso`/`isProcessingFresh` en snapshot-store). Además `maxDuration = 300` en los 3 pipeline routes (inerte donde el plan no lo permite) y `.maybeSingle()` en el dedup del admin rerun.
+3. **`ecfdb14`** — Smoke script sin tokens salía 0 con cobertura mínima; ahora advierte explícitamente.
+
+**No encontrado (verificado OK):** matriz de auth de /api/report (incl. token admin inválido en prod), dedup de feedback con shapes reales, manejo de demo mode, overview con 0 monitores, validación uuid de search_id en feedback.
+
+**Riesgo aceptado (documentado, no tocado):** ejecución síncrona del pipeline en request/response — el fix real es arquitectura async (próximo bloque), fuera del alcance de este sprint.
+
+**Estado:** TypeScript 0 errores; `node --check` OK; BETA_SMOKE_QA actualizado con pasos self-serve y estado verificado-vs-manual.

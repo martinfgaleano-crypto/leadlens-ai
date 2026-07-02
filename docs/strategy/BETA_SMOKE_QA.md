@@ -50,3 +50,34 @@ SELECT job_id, status, created_at FROM snapshot_reports WHERE search_id IS NULL;
 - **PASS total** → entorno beta-ready.
 - **FAIL en 8/11/13/15** → bloqueo: no exponer a clientes hasta arreglar.
 - **FAIL en otros** → evaluar severidad; documentar en DECISION_LOG.
+
+## Self-serve additions (Smoke QA + Bugfix Sprint v0 — 2026-07-02)
+
+Pasos adicionales para el flujo self-serve (complementan la tabla principal;
+los pasos 3–4 de arriba pueden ejecutarse también como customer):
+
+| # | Paso | Cómo verificar | Pass |
+|---|---|---|---|
+| 16 | Run self-serve (owner) | `curl -X POST .../api/monitor/<SEARCH_ID>/run -H "Authorization: Bearer <OWNER_JWT>"` → 200, `is_baseline` correcto | ☐ |
+| 17 | Run self-serve (no-owner) | Mismo curl con JWT de otro usuario → **404** | ☐ |
+| 18 | Entitlement gate | Usuario plan free + 0 créditos → **403** con copy de upgrade | ☐ |
+| 19 | Setup incomplete | Search sin onboarding_request → **422** | ☐ |
+| 20 | Stale processing no bloquea | Insertar snapshot `processing` con `created_at` > 15 min atrás (SQL) → run devuelve 200, no 409 | ☐ |
+| 21 | `report.search_id` presente | Report de un run nuevo → `report_json->>'search_id'` = SEARCH_ID | ☐ |
+| 22 | Feedback con search context | Fila de `opportunity_feedback` del run nuevo tiene `search_id` no-null | ☐ |
+| 23 | Script automatizado | `npm run smoke:selfserve` con todos los env vars → 0 failed | ☐ |
+
+## Estado de verificación (2026-07-02)
+
+**Verificado por inspección de código + TypeScript (0 errores):** auth chains,
+ownership antes de acceso a snapshots, dedup con cutoff de staleness, copy
+customer-safe, ausencia de campos de contacto en superficies customer, guards
+del run endpoint, dedup de feedback.
+
+**Requiere QA en vivo (browser + Supabase real) — NO verificado:**
+- Sintaxis PostgREST del JSON-path select (`report_json->change_summary`) con datos reales.
+- Flujo completo de run self-serve end-to-end (incl. duración del pipeline).
+- Descargas CSV/MD autenticadas desde el browser.
+- Renderizado del report page con un `report_json` real (shapes legacy incluidos).
+- Comportamiento del token refresh de Supabase durante runs largos.
+- `maxDuration = 300` solo aplica en planes Vercel que lo permiten — verificar en deploy.
