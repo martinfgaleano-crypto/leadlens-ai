@@ -41,32 +41,49 @@ export default function ResultsPage() {
   }, []);
 
   useEffect(() => {
-    const poll = setInterval(async () => {
+    let stopped = false;
+    let poll: ReturnType<typeof setInterval> | null = null;
+
+    const stop = () => {
+      stopped = true;
+      if (poll) clearInterval(poll);
+    };
+
+    async function fetchOnce() {
+      if (stopped) return;
       try {
         const headers = await authHeaders();
         const res = await fetch(`/api/report?job_id=${jobId}`, { headers });
+        if (stopped) return;
         if (res.status === 401) {
           setStatus("unauthorized");
-          clearInterval(poll);
+          stop();
           return;
         }
         if (res.status === 404) {
           setStatus("error");
           setError("This report does not exist or is not accessible from your account.");
-          clearInterval(poll);
+          stop();
           return;
         }
         const data = await res.json();
+        if (stopped) return;
         setStatus(data.status ?? (data.report ? "completed" : "error"));
         if (data.report) setReport(data.report);
-        if (data.report || data.status === "completed" || data.status === "failed" || data.status === "error") clearInterval(poll);
+        if (data.report || data.status === "completed" || data.status === "failed" || data.status === "error") stop();
       } catch {
+        if (stopped) return;
         setStatus("error");
         setError("Could not reach the server.");
-        clearInterval(poll);
+        stop();
       }
-    }, 5000);
-    return () => clearInterval(poll);
+    }
+
+    // Immediate first fetch — completed reports render right away instead of
+    // waiting for the first 5s polling tick.
+    fetchOnce();
+    poll = setInterval(fetchOnce, 5000);
+    return stop;
   }, [jobId, authHeaders]);
 
   async function download(format: "csv" | "md") {
