@@ -9,6 +9,14 @@
 // values come straight from the plan/credits tables.
 //
 // Admin routes are never gated by this helper.
+//
+// Async run model (ASYNC_RUN_EXECUTION.md):
+//   - Entitlement is checked ONCE, at job creation time, by the route that
+//     creates the processing snapshot. The internal processor does not
+//     re-check — the snapshot is the authorization token.
+//   - Future credit deduction point: on successful completion
+//     (completeSnapshot), via credit_transactions type='consume'. Never on
+//     job creation (dead runs must not charge) — no deduction exists today.
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
