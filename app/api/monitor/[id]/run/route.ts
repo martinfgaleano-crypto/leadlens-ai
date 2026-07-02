@@ -1,16 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import {
-  createProcessingSnapshot,
-  completeSnapshot,
-  failSnapshot,
-} from "@/lib/storage/snapshot-store";
-import { runLeadLensPipeline } from "@/lib/pipeline";
-import { processingCutoffIso } from "@/lib/storage/snapshot-store";
-
-// Pipeline runs take minutes — raise the serverless function limit where the
-// hosting plan allows it (ignored/clamped otherwise).
-export const maxDuration = 300;
+import { createMonitorRunJob, normalizeRunPlan, triggerProcessor } from "@/lib/monitor/run-jobs";
 
 // ── POST /api/monitor/[id]/run ────────────────────────────────────────────────
 // Customer-triggered monitor run for THEIR OWN search series.
@@ -94,78 +84,40 @@ export async function POST(
     );
   }
 
-  // ── Duplicate-run guard ─────────────────────────────────────────────────────
-  // Stale processing rows (killed functions that never reached failSnapshot)
-  // are ignored — otherwise one dead run would block the series forever.
-  const { data: inflight } = await db
-    .from("snapshot_reports")
-    .select("job_id")
-    .eq("search_id", searchId)
-    .eq("status", "processing")
-    .gte("created_at", processingCutoffIso())
-    .limit(1)
-    .maybeSingle();
+  // ── Create job + return fast (async v0 — see ASYNC_RUN_EXECUTION.md) ───────
+  // The pipeline runs in the internal processor, not in this request. The UI
+  // polls the runs endpoint / report status for completion.
+  const plan = normalizeRunPlan(entitlement.plan_name);
 
-  if (inflight) {
+  const job = await createMonitorRunJob(db, { searchId, plan });
+
+  if (!job.ok) {
+    if (job.code === "duplicate") {
+      return NextResponse.json(
+        { error: "A run is already in progress for this monitor. Wait for it to finish." },
+        { status: 409 },
+      );
+    }
     return NextResponse.json(
-      { error: "A run is already in progress for this monitor. Wait for it to finish." },
-      { status: 409 },
-    );
-  }
-
-  // ── Plan + baseline ─────────────────────────────────────────────────────────
-  const validPlans = ["sample", "starter", "standard", "pro"] as const;
-  type PlanType = typeof validPlans[number];
-  const rawPlan = entitlement.plan_name ?? "starter";
-  const plan: PlanType = (validPlans as readonly string[]).includes(rawPlan) ? (rawPlan as PlanType) : "starter";
-
-  const { count: completedCount } = await db
-    .from("snapshot_reports")
-    .select("id", { count: "exact", head: true })
-    .eq("search_id", searchId)
-    .eq("status", "completed");
-
-  const isBaseline = (completedCount ?? 0) === 0;
-
-  const onboardingData = {
-    company_name:                onboardingReq.company_name,
-    company_description:         onboardingReq.what_you_sell,
-    offer_description:           onboardingReq.what_you_sell,
-    value_proposition:           onboardingReq.what_you_sell,
-    target_customer_description: onboardingReq.ideal_customer ?? "Target customer not specified",
-    tone:                        "direct" as const,
-    contact_email:               onboardingReq.email,
-  };
-
-  // ── Run ─────────────────────────────────────────────────────────────────────
-  const jobId = `snap_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
-
-  createProcessingSnapshot(jobId, plan, searchId).catch(() => {});
-
-  try {
-    const report = await runLeadLensPipeline({ onboardingData, plan, jobId, searchId });
-
-    completeSnapshot(jobId, plan, report, searchId).catch(() => {});
-
-    return NextResponse.json({
-      success:     true,
-      job_id:      jobId,
-      search_id:   searchId,
-      status:      "completed",
-      is_baseline: isBaseline,
-      readiness:   "report_ready",
-      message: isBaseline
-        ? "Baseline report ready. Your next run will show what changed."
-        : "Report ready — compared against your previous report.",
-    });
-
-  } catch (err) {
-    const reason = err instanceof Error ? err.message.slice(0, 200) : "Pipeline error";
-    console.error("[monitor/run]", searchId, jobId, reason);
-    await failSnapshot(jobId, plan, reason, searchId).catch(() => {});
-    return NextResponse.json(
-      { error: "The run could not be completed. Our team has visibility into failed runs.", job_id: jobId, status: "failed" },
+      { error: "The run could not be started. Please try again." },
       { status: 500 },
     );
   }
+
+  triggerProcessor(job.job_id);
+
+  return NextResponse.json(
+    {
+      success:     true,
+      job_id:      job.job_id,
+      search_id:   searchId,
+      status:      "processing",
+      is_baseline: job.is_baseline,
+      readiness:   "processing",
+      message: job.is_baseline
+        ? "Your baseline report is being generated. This page will update when it's ready."
+        : "Your report is being generated and will be compared against the previous one.",
+    },
+    { status: 202 },
+  );
 }
