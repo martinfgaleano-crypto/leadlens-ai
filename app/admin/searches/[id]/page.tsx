@@ -540,6 +540,14 @@ export default function AdminSearchDetailPage() {
     loadRuns();
   }, [load, loadLeads, loadRuns]);
 
+  // Async runs return 202 immediately — poll run history while one is
+  // processing so completion shows without a manual reload.
+  useEffect(() => {
+    if (!runHistory?.has_processing_run) return;
+    const interval = setInterval(() => { loadRuns(); }, 15_000);
+    return () => clearInterval(interval);
+  }, [runHistory?.has_processing_run, loadRuns]);
+
   // ─── Status ────────────────────────────────────────────────────────────────
 
   async function handleSaveStatus() {

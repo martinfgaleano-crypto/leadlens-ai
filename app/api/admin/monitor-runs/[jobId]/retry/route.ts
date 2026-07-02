@@ -53,6 +53,25 @@ export async function POST(
     if (isProcessingFresh(snapshot.created_at)) {
       return NextResponse.json({ error: "Job is still running — retry is available after the stale cutoff." }, { status: 409 });
     }
+    // Never reprocess a stale job while a FRESH run is in flight for the same
+    // series — two concurrent pipelines for one search must not race.
+    const dbCheck = await getDb();
+    if (!dbCheck) return NextResponse.json({ error: "Supabase not configured." }, { status: 503 });
+    const { processingCutoffIso } = await import("@/lib/storage/snapshot-store");
+    const { data: freshRun } = await dbCheck
+      .from("snapshot_reports")
+      .select("job_id")
+      .eq("search_id", snapshot.search_id)
+      .eq("status", "processing")
+      .gte("created_at", processingCutoffIso())
+      .limit(1)
+      .maybeSingle();
+    if (freshRun) {
+      return NextResponse.json(
+        { error: `A newer run is already in progress (job_id: ${(freshRun as { job_id: string }).job_id}).` },
+        { status: 409 },
+      );
+    }
     // Stale: re-process the same job. The processor accepts processing rows of
     // any age; completeSnapshot/failSnapshot upsert on job_id.
     triggerProcessor(jobId);

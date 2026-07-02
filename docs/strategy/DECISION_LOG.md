@@ -438,3 +438,27 @@
 **Riesgo aceptado (documentado, no tocado):** ejecución síncrona del pipeline en request/response — el fix real es arquitectura async (próximo bloque), fuera del alcance de este sprint.
 
 **Estado:** TypeScript 0 errores; `node --check` OK; BETA_SMOKE_QA actualizado con pasos self-serve y estado verificado-vs-manual.
+
+---
+
+### [2026-07-02] Production-Grade Self-Serve Reliability Sprint v0 — Async Run Execution
+
+**Decisión:** Separar la ejecución del pipeline del request/response. Los runs ahora son jobs: la ruta crea el snapshot `processing` y responde 202 en segundos; un processor interno protegido ejecuta el pipeline; las UIs hacen polling.
+
+**Implementación (commits P0–P11):**
+- **P0 (`3a40c20`)** — `ASYNC_RUN_EXECUTION.md`: lifecycle, seguridad del processor, matriz de fallo/recovery, limitación del trigger, paths futuros.
+- **P1 (`abdd3ff`)** — `lib/monitor/run-jobs.ts`: creator compartido (dedup con cutoff, is_baseline, snapshot scoped), reconstrucción de onboardingData, `triggerProcessor` fire-and-forget cuyos fallos dejan un job stale recuperable.
+- **P2 (`0460333`)** — `POST /api/internal/monitor-runs/[jobId]/process`: secret-protected (INTERNAL_RUN_SECRET, fallback ADMIN_SECRET_TOKEN; producción sin secret = fail closed), solo jobs `processing` con `search_id`, onboarding faltante = job FAILED (nunca stuck), maxDuration 300.
+- **P3 (`b814b63`)** — Customer run responde **202 processing** con la misma cadena de guards; el pipeline ya no corre en el request.
+- **P4 (`55ea64c`)** — Admin rerun migrado al mismo patrón (202 + run history); UI admin muestra "Processing".
+- **P5 (`795bc20`)** — `is_stale` por run en ambos runs endpoints; polling automático del monitor customer mientras hay run processing; copy "Stalled" en customer y badge STALLED en admin.
+- **P6 (`a8b9faa`)** — `POST /api/admin/monitor-runs/[jobId]/retry`: stale → reprocesa el MISMO job; failed → job NUEVO (dedup aplica); fresh/completed → 409; unscoped → 422. Botón Retry en admin run rows.
+- **P7 (`361dd61`)** — `stale_processing` en lifecycle (customer: "Run stalled — you can start a new run") y readiness (admin: "STALLED — RETRY AVAILABLE"); mismo cutoff en dedup, display y retry.
+- **P8 (`b2a3c9e`)** — Scheduler futuro apunta al creator + processor reales; sin cron.
+- **P9 (`0e68ea5`)** — Entitlement una sola vez en creación de job (el snapshot processing es el token de autorización); punto de deducción futuro: en completion.
+- **P10 (`0c72bec`)** — Smoke script prueba la seguridad del processor read-only; BETA_SMOKE_QA pasos 24–33 async.
+- **P11** — Self-review adversarial con 2 fixes: (a) admin page ahora hace polling de run history mientras hay processing (sin eso, el 202 dejaba al admin mirando "processing" para siempre); (b) retry de stale verifica que no exista un run FRESH en vuelo para la misma serie (evita dos pipelines concurrentes).
+
+**Limitación aceptada del v0:** el trigger es fire-and-forget — puede perderse en serverless tras responder. Mitigado por diseño: el snapshot processing es el estado durable, stale a los 15 min, retry admin lo reprocesa. Upgrade futuro: cron/queue drenando jobs stale (auto-recovery) con el mismo processor.
+
+**Estado:** TypeScript 0 errores tras cada bloque; `node --check` OK.
