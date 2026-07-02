@@ -665,6 +665,22 @@ export default function AdminSearchDetailPage() {
     await loadRuns();
   }
 
+  const [retryingJob, setRetryingJob] = useState<string | null>(null);
+  const [retryMsg, setRetryMsg] = useState<{ ok: boolean; text: string } | null>(null);
+
+  async function handleRetry(jobId: string) {
+    if (retryingJob) return;
+    setRetryingJob(jobId);
+    setRetryMsg(null);
+    const res = await adminFetch(`/api/admin/monitor-runs/${jobId}/retry`, { method: "POST" });
+    const d = await res.json().catch(() => ({}));
+    setRetryMsg(res.ok
+      ? { ok: true, text: d.message ?? "Retry started." }
+      : { ok: false, text: d.error ?? "Retry failed." });
+    setRetryingJob(null);
+    await loadRuns();
+  }
+
   // ─── Render states ─────────────────────────────────────────────────────────
 
   if (loading) {
@@ -1061,6 +1077,11 @@ export default function AdminSearchDetailPage() {
               <div style={{ fontSize: "0.72rem", fontWeight: 700, color: "#374151", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "0.5rem" }}>
                 Run history
               </div>
+              {retryMsg && (
+                <div style={{ marginBottom: "0.5rem", padding: "0.45rem 0.7rem", background: retryMsg.ok ? "#dcfce7" : "#fee2e2", borderRadius: "0.4rem", fontSize: "0.75rem", color: retryMsg.ok ? "#15803d" : "#dc2626" }}>
+                  {retryMsg.text}
+                </div>
+              )}
               {runsLoading ? (
                 <div style={{ color: "#94a3b8", fontSize: "0.78rem" }}>Loading runs…</div>
               ) : !runHistory || runHistory.runs.length === 0 ? (
@@ -1118,7 +1139,18 @@ export default function AdminSearchDetailPage() {
                             ))}
                           </div>
                         )}
-                        <div style={{ marginTop: "0.2rem", color: "#cbd5e1", fontFamily: "monospace", fontSize: "0.65rem" }}>{run.job_id}</div>
+                        <div style={{ marginTop: "0.2rem", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.5rem" }}>
+                          <span style={{ color: "#cbd5e1", fontFamily: "monospace", fontSize: "0.65rem" }}>{run.job_id}</span>
+                          {(run.status === "failed" || run.is_stale) && (
+                            <button
+                              onClick={() => handleRetry(run.job_id)}
+                              disabled={retryingJob != null}
+                              style={{ background: "#0f172a", color: "#fff", border: "none", borderRadius: "0.35rem", padding: "0.25rem 0.7rem", fontWeight: 700, fontSize: "0.68rem", cursor: retryingJob != null ? "not-allowed" : "pointer", fontFamily: "inherit", opacity: retryingJob != null ? 0.6 : 1 }}
+                            >
+                              {retryingJob === run.job_id ? "Retrying…" : "Retry run"}
+                            </button>
+                          )}
+                        </div>
                       </div>
                     );
                   })}
