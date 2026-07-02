@@ -439,6 +439,10 @@ export default function SearchesPage() {
                         </span>
                       );
                     }
+                    if (m.latest_run_status === "failed") {
+                      // Customer-safe copy — internal QA language stays internal
+                      return <span style={{ color: "#854d0e", fontSize: "0.75rem", fontWeight: 600 }}>Needs internal review</span>;
+                    }
                     return <span style={{ color: "#94a3b8", fontSize: "0.75rem" }}>{m.total_runs} run{m.total_runs === 1 ? "" : "s"}</span>;
                   })()}
                 </span>
