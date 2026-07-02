@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import type { LeadLensReport, OpportunityRanking, ProcessedLead } from "@/types";
+import { getSupabaseClient } from "@/lib/supabase/client";
 
 /**
  * /results/[jobId] — Account-level Opportunity Report (customer-facing).
@@ -25,14 +26,40 @@ export default function ResultsPage() {
   const [error, setError] = useState<string | null>(null);
   const [expanded, setExpanded] = useState<string | null>(null);
 
+  // Reports are ownership-protected: attach the Supabase session token when a
+  // session exists. Without a session (and outside demo mode) the API returns
+  // 401 and we show a sign-in prompt instead of polling forever.
+  const authHeaders = useCallback(async (): Promise<Record<string, string>> => {
+    try {
+      const supabase = getSupabaseClient();
+      if (!supabase) return {};
+      const { data: { session } } = await supabase.auth.getSession();
+      return session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
+    } catch {
+      return {};
+    }
+  }, []);
+
   useEffect(() => {
     const poll = setInterval(async () => {
       try {
-        const res = await fetch(`/api/report?job_id=${jobId}`);
+        const headers = await authHeaders();
+        const res = await fetch(`/api/report?job_id=${jobId}`, { headers });
+        if (res.status === 401) {
+          setStatus("unauthorized");
+          clearInterval(poll);
+          return;
+        }
+        if (res.status === 404) {
+          setStatus("error");
+          setError("This report does not exist or is not accessible from your account.");
+          clearInterval(poll);
+          return;
+        }
         const data = await res.json();
         setStatus(data.status ?? (data.report ? "completed" : "error"));
         if (data.report) setReport(data.report);
-        if (data.report || data.status === "completed" || data.status === "error") clearInterval(poll);
+        if (data.report || data.status === "completed" || data.status === "failed" || data.status === "error") clearInterval(poll);
       } catch {
         setStatus("error");
         setError("Could not reach the server.");
@@ -40,7 +67,22 @@ export default function ResultsPage() {
       }
     }, 5000);
     return () => clearInterval(poll);
-  }, [jobId]);
+  }, [jobId, authHeaders]);
+
+  async function download(format: "csv" | "md") {
+    try {
+      const headers = await authHeaders();
+      const res = await fetch(`/api/report?job_id=${jobId}&format=${format}`, { headers });
+      if (!res.ok) return;
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `leadlens-${jobId}.${format}`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch { /* best-effort */ }
+  }
 
   const rankingMap = useMemo(() => {
     const map = new Map<string, OpportunityRanking>();
@@ -59,6 +101,32 @@ export default function ResultsPage() {
           <p className="text-gray-500 mb-2">The AI agents are researching accounts and gathering evidence.</p>
           <p className="text-gray-400 text-sm">This takes 15–45 minutes. You can close this page and come back.</p>
           <p className="text-gray-300 text-xs mt-6">Report ID: {jobId}</p>
+        </div>
+      </main>
+    );
+  }
+
+  if (status === "unauthorized") {
+    return (
+      <main className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-6xl mb-4">🔒</div>
+          <h1 className="text-xl font-bold mb-2">Sign in to view this report</h1>
+          <p className="text-gray-500 mb-4">Reports are private to the account that owns the monitor.</p>
+          <a href="/login" className="inline-block bg-sky-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-sky-700">Go to sign in</a>
+        </div>
+      </main>
+    );
+  }
+
+  if (status === "failed") {
+    return (
+      <main className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-6xl mb-4">⚠️</div>
+          <h1 className="text-xl font-bold mb-2">This run did not complete</h1>
+          <p className="text-gray-500 mb-4">The monitor run failed before producing a report. Our team has visibility into failed runs.</p>
+          <p className="text-gray-400 text-sm">Reference ID: <code className="bg-gray-100 px-1 rounded">{jobId}</code></p>
         </div>
       </main>
     );
@@ -104,12 +172,12 @@ export default function ResultsPage() {
             <p className="text-gray-500">{report.total_leads} accounts analyzed · {PLANS[report.plan] ?? report.plan} · {new Date(report.created_at).toLocaleString()}</p>
           </div>
           <div className="flex gap-3">
-            <a href={`/api/report?job_id=${jobId}&format=csv`} className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50">
+            <button onClick={() => download("csv")} className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50">
               ⬇ CSV
-            </a>
-            <a href={`/api/report?job_id=${jobId}&format=md`} className="bg-sky-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-sky-700">
+            </button>
+            <button onClick={() => download("md")} className="bg-sky-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-sky-700">
               ⬇ Markdown
-            </a>
+            </button>
           </div>
         </div>
 
