@@ -72,6 +72,18 @@ function StatusBadge({ status }: { status: string }) {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
+interface MonitorOverviewRow {
+  search_id: string;
+  name: string;
+  total_runs: number;
+  latest_run_status: string | null;
+  latest_completed_at: string | null;
+  latest_report_job_id: string | null;
+  has_processing_run: boolean;
+  has_onboarding_link?: boolean;
+  has_comparison: boolean;
+}
+
 export default function DashboardPage() {
   const router = useRouter();
 
@@ -88,6 +100,7 @@ export default function DashboardPage() {
   const [dashNotifs, setDashNotifs]   = useState<DashboardNotification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [timeline, setTimeline]       = useState<ActivityEvent[]>([]);
+  const [monitors, setMonitors]       = useState<MonitorOverviewRow[]>([]);
   const [loading, setLoading]             = useState(true);
   const [error, setError]                 = useState("");
 
@@ -107,6 +120,17 @@ export default function DashboardPage() {
       const uid   = session.user.id;
       const email = session.user.email ?? null;
       if (!cancelled) setEmail(email);
+
+      // Monitor overview — best-effort, section hides on failure
+      try {
+        const res = await fetch("/api/monitor/overview", {
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        });
+        if (res.ok && !cancelled) {
+          const d = await res.json().catch(() => null);
+          if (d?.monitors) setMonitors(d.monitors as MonitorOverviewRow[]);
+        }
+      } catch { /* best-effort */ }
 
       // Fetch profile (create lazily on first visit)
       const { data: existing, error: fetchError } = await supabase
@@ -292,6 +316,46 @@ export default function DashboardPage() {
           cta="Open Account Searches →"
         />
       </div>
+
+      {/* Monitor command center */}
+      {monitors.length > 0 && (() => {
+        const reportsReady   = monitors.filter(m => m.latest_report_job_id != null);
+        const processing     = monitors.filter(m => m.has_processing_run);
+        const setupIncomplete = monitors.filter(m => m.has_onboarding_link === false);
+        const needsAttention = monitors.filter(m => !m.has_processing_run && m.latest_run_status === "failed" && !m.latest_report_job_id);
+        const latestReport = reportsReady
+          .slice()
+          .sort((a, b) => (b.latest_completed_at ?? "").localeCompare(a.latest_completed_at ?? ""))[0] ?? null;
+        return (
+          <div style={{ ...S.section, marginBottom: "1.25rem" }}>
+            <div style={S.sectionHeader}>
+              <span style={S.sectionTitle}>Monitors</span>
+              {latestReport?.latest_report_job_id && (
+                <Link href={`/results/${latestReport.latest_report_job_id}`} style={{ background: "#0ea5e9", color: "#fff", borderRadius: "0.45rem", padding: "0.4rem 1rem", fontWeight: 700, fontSize: "0.78rem", textDecoration: "none" }}>
+                  Open latest report →
+                </Link>
+              )}
+            </div>
+            <div style={{ padding: "1rem 1.25rem", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: "0.75rem" }}>
+              {[
+                { label: "Monitors", value: monitors.length, color: "#0f172a" },
+                { label: "Reports ready", value: reportsReady.length, color: "#15803d" },
+                { label: "Processing", value: processing.length, color: "#075985" },
+                { label: "Needs attention", value: needsAttention.length, color: needsAttention.length > 0 ? "#dc2626" : "#64748b" },
+                { label: "Setup incomplete", value: setupIncomplete.length, color: setupIncomplete.length > 0 ? "#d97706" : "#64748b" },
+              ].map(item => (
+                <div key={item.label} style={{ textAlign: "center", padding: "0.75rem 0.5rem", background: "#f8fafc", borderRadius: "0.5rem" }}>
+                  <div style={{ fontSize: "1.35rem", fontWeight: 800, color: item.color }}>{item.value}</div>
+                  <div style={{ fontSize: "0.68rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", marginTop: "0.2rem" }}>{item.label}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ padding: "0 1.25rem 1rem", fontSize: "0.75rem", color: "#94a3b8" }}>
+              Monthly cadence is manual for now — open a monitor and use “Run monitor” when you want a fresh report. Automatic scheduling is not enabled yet.
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Credits card */}
       <div style={{ ...S.section, marginBottom: "1.25rem" }}>
