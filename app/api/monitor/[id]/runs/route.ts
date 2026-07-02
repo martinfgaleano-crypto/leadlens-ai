@@ -68,6 +68,13 @@ export async function GET(
     return NextResponse.json({ error: "Search not found." }, { status: 404 });
   }
 
+  // Setup completeness — the run CTA disables itself when the linkage is missing.
+  const { count: onboardingCount } = await db
+    .from("onboarding_requests")
+    .select("id", { count: "exact", head: true })
+    .eq("search_id", searchId);
+  const hasOnboardingLink = (onboardingCount ?? 0) > 0;
+
   const { data, error } = await db
     .from("snapshot_reports")
     .select("job_id, status, lead_count, hot_count, warm_count, avg_score, created_at, change_summary:report_json->change_summary")
@@ -111,6 +118,7 @@ export async function GET(
     latest_completed_at: latestCompleted?.created_at ?? null,
     latest_report_job_id: latestCompleted?.job_id ?? null,
     has_processing_run:  enriched.some((r) => r.status === "processing"),
+    has_onboarding_link: hasOnboardingLink,
     runs:                newestFirst,
   });
 }

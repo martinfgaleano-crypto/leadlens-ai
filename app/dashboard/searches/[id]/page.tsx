@@ -65,6 +65,7 @@ interface MonitorHistory {
   latest_completed_at: string | null;
   latest_report_job_id: string | null;
   has_processing_run: boolean;
+  has_onboarding_link?: boolean;
   runs: MonitorRun[];
 }
 
@@ -266,6 +267,8 @@ export default function SearchDetailPage() {
   const [notFound, setNotFound]         = useState(false);
   const [error, setError]               = useState("");
   const [monitor, setMonitor]           = useState<MonitorHistory | null>(null);
+  const [runningMonitor, setRunningMonitor] = useState(false);
+  const [runMsg, setRunMsg]             = useState<{ ok: boolean; text: string } | null>(null);
 
   const supabaseRef = useRef(getSupabaseClient());
   const userIdRef   = useRef(userId);
@@ -370,6 +373,49 @@ export default function SearchDetailPage() {
     }, POLL_INTERVAL_MS);
     return () => clearInterval(interval);
   }, [search?.status, fetchSearch, fetchLeads]);
+
+  // ─── Monitor run (self-serve) ─────────────────────────────────────────────
+
+  const refreshMonitor = useCallback(async () => {
+    const supabase = supabaseRef.current;
+    if (!supabase || !searchId) return;
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      const res = await fetch(`/api/monitor/${searchId}/runs`, {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+      if (res.ok) {
+        const d = await res.json().catch(() => null);
+        if (d?.runs) setMonitor(d as MonitorHistory);
+      }
+    } catch { /* best-effort */ }
+  }, [searchId]);
+
+  async function handleRunMonitor() {
+    const supabase = supabaseRef.current;
+    if (!supabase || runningMonitor) return;
+    setRunningMonitor(true);
+    setRunMsg(null);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) { setRunMsg({ ok: false, text: "Please sign in again." }); setRunningMonitor(false); return; }
+      const res = await fetch(`/api/monitor/${searchId}/run`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+      const d = await res.json().catch(() => ({}));
+      if (res.ok) {
+        setRunMsg({ ok: true, text: d.message ?? "Report ready." });
+      } else {
+        setRunMsg({ ok: false, text: d.error ?? "The run could not be started." });
+      }
+    } catch {
+      setRunMsg({ ok: false, text: "The run could not be started. Please try again." });
+    }
+    setRunningMonitor(false);
+    await refreshMonitor();
+  }
 
   // ─── Handlers ─────────────────────────────────────────────────────────────
 
@@ -483,15 +529,50 @@ export default function SearchDetailPage() {
         <div style={{ ...S.section, marginBottom: "1.25rem" }}>
           <div style={S.sectionHeader}>
             <span style={S.sectionTitle}>Monthly Monitor</span>
-            {monitor.latest_report_job_id && (
-              <Link
-                href={`/results/${monitor.latest_report_job_id}`}
-                style={{ background: "#0ea5e9", color: "#fff", borderRadius: "0.45rem", padding: "0.4rem 1rem", fontWeight: 700, fontSize: "0.78rem", textDecoration: "none" }}
-              >
-                Open latest report →
-              </Link>
-            )}
+            <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+              {(() => {
+                const setupIncomplete = monitor.has_onboarding_link === false;
+                const blocked = runningMonitor || monitor.has_processing_run || setupIncomplete;
+                return (
+                  <button
+                    onClick={handleRunMonitor}
+                    disabled={blocked}
+                    title={setupIncomplete ? "Monitor setup is incomplete — contact us to activate runs." : undefined}
+                    style={{
+                      background: blocked ? "#e2e8f0" : "#0f172a",
+                      color: blocked ? "#94a3b8" : "#fff",
+                      border: "none", borderRadius: "0.45rem", padding: "0.4rem 1rem",
+                      fontWeight: 700, fontSize: "0.78rem",
+                      cursor: blocked ? "not-allowed" : "pointer", fontFamily: "inherit",
+                    }}
+                  >
+                    {runningMonitor ? "Running…" : monitor.has_processing_run ? "Run in progress" : setupIncomplete ? "Setup incomplete" : "Run monitor"}
+                  </button>
+                );
+              })()}
+              {monitor.latest_report_job_id && (
+                <Link
+                  href={`/results/${monitor.latest_report_job_id}`}
+                  style={{ background: "#0ea5e9", color: "#fff", borderRadius: "0.45rem", padding: "0.4rem 1rem", fontWeight: 700, fontSize: "0.78rem", textDecoration: "none" }}
+                >
+                  Open latest report →
+                </Link>
+              )}
+            </div>
           </div>
+
+          {runMsg && (
+            <div style={{ margin: "0.75rem 1.25rem 0", padding: "0.5rem 0.75rem", background: runMsg.ok ? "#dcfce7" : "#fee2e2", border: `1px solid ${runMsg.ok ? "#86efac" : "#fca5a5"}`, borderRadius: "0.4rem", fontSize: "0.78rem", color: runMsg.ok ? "#15803d" : "#dc2626" }}>
+              {runMsg.text}
+            </div>
+          )}
+
+          {monitor.has_onboarding_link === false && (
+            <div style={{ margin: "0.75rem 1.25rem 0", padding: "0.5rem 0.75rem", background: "#fef3c7", border: "1px solid #fde68a", borderRadius: "0.4rem", fontSize: "0.78rem", color: "#92400e" }}>
+              Monitor setup is incomplete: this search was created without business
+              context, so opportunity reports can&apos;t run yet. Contact us to complete setup.
+            </div>
+          )}
 
           {monitor.total_runs === 0 ? (
             <div style={{ padding: "1.25rem", color: "#64748b", fontSize: "0.85rem", lineHeight: 1.6 }}>
