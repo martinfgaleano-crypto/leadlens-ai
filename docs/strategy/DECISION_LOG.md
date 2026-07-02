@@ -376,3 +376,25 @@
 **Decisión pendiente (flagged, NO tocada):** la tabla de leads del dashboard customer (`app/dashboard/searches/[id]`) y su CSV export siguen mostrando contact_name/email/linkedin de `lead_results` — es el deliverable pagado del flow Apollo legacy. Removerlo es una decisión de producto del founder (afecta lo que clientes existentes compraron), no una limpieza técnica. Recomendado como bloque propio.
 
 **Estado:** Implementado. TypeScript: 0 errores tras cada bloque.
+
+---
+
+### [2026-07-02] Beta-Ready Product Sprint v0 — Coherencia, Seguridad y Operabilidad
+
+**Decisión:** Endurecer el shell de producto alrededor de la inteligencia del Monthly Monitor: posicionamiento account-level consistente, acceso a reportes con ownership, monitor center, feedback durable, QA operable.
+
+**Implementación (commits P0–P10):**
+- **P0 (`7c44207`)** — `BETA_READINESS_SURFACE_MAP.md`: clasificación de cada superficie. Hallazgo crítico: `GET /api/report` solo leía la tabla legacy `reports` — los links de monitor runs devolvían 404.
+- **P1 (`baff8a2`)** — Dashboard customer account-level: la tabla y CSV de `/dashboard/searches/[id]` ya no seleccionan/muestran/exportan contact_name, email, linkedin_url, title, seniority ni email_quality. Copy "leads/contacts" → "accounts/opportunities" en dashboard home, searches list y detail. Data en DB intacta; tooling admin intacto.
+- **P2 (`ab707b3`)** — Acceso a reportes protegido: `GET /api/report` resuelve `snapshot_reports` primero (arregla los links de monitor), y aplica: demo abierto / admin token total / customer Bearer JWT con ownership `search_id → lead_searches.user_id` / unscoped y legacy `reports` admin-only / no-owner → 404 sin confirmar existencia. Report page usa token de sesión y descargas blob autenticadas.
+- **P3 (`aa3b6f3`)** — Monitor center: `GET /api/monitor/overview` (2 queries batched, user-scoped) + columna Monitor en searches list con link a latest report y badge BASELINE/COMPARED.
+- **P4 (`eaf38d9`)** — Report v2: badge de contexto de run en header (comparación real vs baseline, probado por `previous_*`), strips de Evidence Quality (de `evidence_quality_counts`) y Signal Freshness (conteo de labels existentes; unknown visible como unknown).
+- **P5 (`b2d9bb3`)** — Feedback hardening: dedup API (job_id+company+feedback_signal → `already_saved`), estado de error en UI, "already recorded" cuando aplica. **Pendiente futuro:** escribir `search_id` en feedback requiere que el reporte lleve search context (LeadLensReport no tiene search_id hoy).
+- **P6 (`8790a65`)** — `lib/monitor/readiness.ts`: verdict único por serie (6 estados) derivado de estado existente, sin schema. Banner color-coded en admin.
+- **P7 (`e4fe310`)** — Copy customer-safe de readiness en monitor center ("Needs internal review" cuando el último run falló sin reporte).
+- **P8 (`1ef6339`)** — `REPORT_ACCESS_MODEL.md`: lookup, reglas por caller, estados, superficies de delivery, y lo que no existe por diseño (sin public sharing, sin email delivery, sin scheduler, sin acceso customer a legacy).
+- **P9 (`45a1de5`)** — `BETA_SMOKE_QA.md`: 15 pasos con verificación curl/SQL y pasos de seguridad bloqueantes.
+
+**Límites intactos:** sin scheduler, sin billing, sin CRM, sin email automation, sin contact database, sin cambios de scoring/ranking, demo mode aislado, `/api/process` one-off sin cambios de comportamiento (solo el GET de reportes cambió).
+
+**Estado:** Implementado. TypeScript: 0 errores tras cada bloque.
