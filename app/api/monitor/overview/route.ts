@@ -51,12 +51,24 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ monitors: [] });
   }
 
-  const { data: snaps } = await db
-    .from("snapshot_reports")
-    .select("search_id, job_id, status, created_at")
-    .in("search_id", searchIds)
-    .order("created_at", { ascending: true })
-    .limit(1000);
+  const [{ data: snaps }, { data: onboardingRows }] = await Promise.all([
+    db
+      .from("snapshot_reports")
+      .select("search_id, job_id, status, created_at")
+      .in("search_id", searchIds)
+      .order("created_at", { ascending: true })
+      .limit(1000),
+    db
+      .from("onboarding_requests")
+      .select("search_id")
+      .in("search_id", searchIds),
+  ]);
+
+  const linkedSearchIds = new Set(
+    ((onboardingRows ?? []) as { search_id: string | null }[])
+      .map(r => r.search_id)
+      .filter(Boolean) as string[],
+  );
 
   const bySearch = new Map<string, SnapRow[]>();
   for (const row of (snaps ?? []) as SnapRow[]) {
@@ -81,6 +93,7 @@ export async function GET(req: NextRequest) {
       latest_completed_at:  latestCompleted?.created_at ?? null,
       latest_report_job_id: latestCompleted?.job_id ?? null,
       has_processing_run:   runs.some(r => r.status === "processing"),
+      has_onboarding_link:  linkedSearchIds.has(s.id as string),
       is_baseline_only:     completed.length === 1,
       has_comparison:       completed.length >= 2,
     };

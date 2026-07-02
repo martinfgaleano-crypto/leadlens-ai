@@ -42,6 +42,7 @@ interface MonitorOverviewRow {
   latest_completed_at: string | null;
   latest_report_job_id: string | null;
   has_processing_run: boolean;
+  has_onboarding_link?: boolean;
   is_baseline_only: boolean;
   has_comparison: boolean;
 }
@@ -314,6 +315,13 @@ export default function SearchesPage() {
             <button onClick={closeForm} style={S.btnGhost}>Cancel</button>
           </div>
 
+          <div style={{ marginBottom: "1rem", padding: "0.6rem 0.85rem", background: "#f0f9ff", border: "1px solid #bae6fd", borderRadius: "0.5rem", fontSize: "0.78rem", color: "#075985", lineHeight: 1.5 }}>
+            Searches created here run account discovery right away. Monitor
+            reports (monthly opportunity intelligence with change tracking)
+            require the full onboarding setup — if you want this search as a
+            monitor, complete onboarding or contact us after creating it.
+          </div>
+
           <form onSubmit={handleSubmit}>
             <div style={S.formGrid}>
               <div>
@@ -416,6 +424,9 @@ export default function SearchesPage() {
                 <span style={{ ...S.col, flex: 2 }}>
                   {(() => {
                     const m = monitorMap.get(s.id);
+                    if (m && m.has_onboarding_link === false) {
+                      return <span style={{ color: "#dc2626", fontSize: "0.75rem", fontWeight: 600 }}>Setup incomplete</span>;
+                    }
                     if (!m || m.total_runs === 0) {
                       return <span style={{ color: "#cbd5e1", fontSize: "0.75rem" }}>No runs yet</span>;
                     }
