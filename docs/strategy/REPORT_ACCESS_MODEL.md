@@ -38,6 +38,13 @@ legacy `reports` (flow admin jobs pre-monitor).
 - **Admin** (`/admin/searches/[id]`): run history con QA chips y readiness banner; el reporte completo se consulta vía `GET /api/admin/report/[jobId]` (admin token).
 - **Descargas CSV/Markdown**: botones en el report page que hacen fetch autenticado (Bearer token) y descargan blob — los links directos sin auth ya no funcionan para datos reales.
 
+## Readiness gates (decisión de producto — Self-Serve Sprint P8)
+
+- **Admin ve detalle**: verdicts de `lib/monitor/readiness.ts` (READY TO REVIEW / REVIEW RECOMMENDED / etc.) + QA chips por run (evidencia débil dominante, repetición dominante, run failed).
+- **Customer ve resumen seguro**: estados de `lib/monitor/lifecycle.ts` (Setup incomplete / Processing / Report ready / Needs internal review) — nunca lenguaje interno de QA.
+- **Un reporte con `needs_review` NO se bloquea al customer.** El QA admin es advisory pre-entrega, no un approval workflow. Razón: bloquear acceso rompería el flow self-serve actual (el customer dispara el run y espera su reporte); un workflow de aprobación explícito es una decisión futura que requiere estados persistidos, no derivados. Si un run está tan mal que no debe verse, el camino operativo hoy es admin-side (borrar/regenerar el snapshot).
+- Estados `failed` sí se comunican al customer con copy seguro y sin stack traces.
+
 ## Lo que NO existe todavía (por diseño)
 
 - **Sin public share links.** Un URL de reporte no es un secreto compartible; requiere sesión del owner o admin.
