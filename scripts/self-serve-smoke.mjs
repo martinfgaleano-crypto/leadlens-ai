@@ -102,9 +102,37 @@ if (JOB_ID) {
   record("customer run route exists (405 on GET)", res?.status === 405, `got ${res?.status}`);
 }
 
+// 6. Internal processor security (async v0). POSTing a bogus jobId without a
+//    secret must be rejected BEFORE any job lookup — 401 (secret configured)
+//    or 403 (production without secret). In dev without secrets it returns
+//    404 (allowed through, job not found) — flagged as dev-only.
+{
+  const res = await fetch(`${BASE}/api/internal/monitor-runs/smoke_probe_nonexistent/process`, { method: "POST" }).catch(() => null);
+  const st = res?.status;
+  if (st === 401 || st === 403) {
+    record("internal processor rejects missing secret", true, `got ${st}`);
+  } else if (st === 404) {
+    record("internal processor rejects missing secret", true, "got 404 — dev mode without secret (job lookup ran); MUST be 401/403 in production");
+  } else {
+    record("internal processor rejects missing secret", false, `got ${st}`);
+  }
+}
+{
+  const res = await fetch(`${BASE}/api/internal/monitor-runs/smoke_probe_nonexistent/process`, {
+    method: "POST",
+    headers: { "x-internal-secret": "definitely-wrong-secret" },
+  }).catch(() => null);
+  const st = res?.status;
+  record("internal processor rejects wrong secret", st === 401 || st === 403 || st === 404,
+    st === 404 ? "got 404 — dev mode without secret; MUST be 401 in production" : `got ${st}`);
+}
+
 console.log(`\nManual steps (mutating — not automated here):
-  - Trigger run as owner; expect 200 + is_baseline correct.
+  - Trigger run as owner; expect 202 + status "processing" + is_baseline correct.
+  - Poll runs endpoint; expect the job to reach "completed" (async processor).
   - Trigger again while processing; expect 409.
+  - Insert a stale processing row (created_at > 15 min ago); expect new run 200
+    and admin retry (POST /api/admin/monitor-runs/<jobId>/retry) to reprocess it.
   - Trigger with free-plan/zero-credit user; expect 403 with upgrade copy.
   - Submit identical feedback twice; expect already_saved on second call.
   - Verify feedback row has search_id when the report carries it.

@@ -81,3 +81,18 @@ del run endpoint, dedup de feedback.
 - Renderizado del report page con un `report_json` real (shapes legacy incluidos).
 - Comportamiento del token refresh de Supabase durante runs largos.
 - `maxDuration = 300` solo aplica en planes Vercel que lo permiten — verificar en deploy.
+
+## Async run additions (Reliability Sprint v0 — 2026-07-02)
+
+| # | Paso | Cómo verificar | Pass |
+|---|---|---|---|
+| 24 | Run devuelve rápido | POST run (customer o admin) → **202** con `status: "processing"` en segundos, no minutos | ☐ |
+| 25 | Snapshot processing existe | SQL inmediato: fila `processing` con `search_id` correcto | ☐ |
+| 26 | Processor rechaza sin secret | `curl -X POST .../api/internal/monitor-runs/<JOB>/process` sin header → 401/403 (producción) | ☐ |
+| 27 | Processor completa un job | Mismo curl con `x-internal-secret` válido → 200 `status: "completed"`; snapshot pasa a completed | ☐ |
+| 28 | Fallo marca failed | Job cuyo pipeline falla → snapshot `failed`, nunca stuck | ☐ |
+| 29 | UI muestra processing | Monitor detail: botón "Run in progress", polling actualiza solo | ☐ |
+| 30 | Report disponible al completar | El link "View report" del run aparece y abre tras completion | ☐ |
+| 31 | Retry de stale | Row processing > 15 min → badge STALLED en admin → "Retry run" → job reprocesado | ☐ |
+| 32 | Retry de failed | Run failed → "Retry run" → job NUEVO creado y procesado | ☐ |
+| 33 | Trigger perdido es recuperable | Matar el processor antes de completar → job queda processing → tras 15 min: stale + retriable | ☐ |
