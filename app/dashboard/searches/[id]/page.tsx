@@ -4,6 +4,7 @@ import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import DashboardShell from "@/app/dashboard/_components/DashboardShell";
 import { getSupabaseClient } from "@/lib/supabase/client";
+import { deriveMonitorLifecycle, LIFECYCLE_CUSTOMER_LABELS, LIFECYCLE_BADGE_COLORS } from "@/lib/monitor/lifecycle";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -528,7 +529,24 @@ export default function SearchDetailPage() {
       {monitor && (
         <div style={{ ...S.section, marginBottom: "1.25rem" }}>
           <div style={S.sectionHeader}>
-            <span style={S.sectionTitle}>Monthly Monitor</span>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: "0.6rem" }}>
+              <span style={S.sectionTitle}>Monthly Monitor</span>
+              {(() => {
+                const state = deriveMonitorLifecycle({
+                  hasOnboardingLink: monitor.has_onboarding_link ?? null,
+                  totalRuns: monitor.total_runs,
+                  hasProcessingRun: monitor.has_processing_run,
+                  latestRunStatus: (monitor.latest_status as "processing" | "completed" | "failed" | null) ?? null,
+                  completedRuns: monitor.runs.filter(r => r.status === "completed").length,
+                });
+                const c = LIFECYCLE_BADGE_COLORS[state];
+                return (
+                  <span style={{ background: c.bg, color: c.color, borderRadius: 999, padding: "0.15rem 0.6rem", fontSize: "0.65rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                    {LIFECYCLE_CUSTOMER_LABELS[state]}
+                  </span>
+                );
+              })()}
+            </span>
             <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
               {(() => {
                 const setupIncomplete = monitor.has_onboarding_link === false;
