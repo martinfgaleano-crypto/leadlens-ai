@@ -67,7 +67,8 @@ if (SEARCH_ID && OWNER_TOKEN) {
   const r = await probe(`/api/monitor/${SEARCH_ID}/runs`, { token: OWNER_TOKEN });
   record("owner reads runs", r.status === 200, `got ${r.status}`);
   if (r.status === 200) {
-    record("runs response is same-search only", (r.body?.runs ?? []).every(x => true) && r.body?.search_id === SEARCH_ID, "search_id echo matches");
+    record("runs response scoped to requested search", r.body?.search_id === SEARCH_ID,
+      `echo=${r.body?.search_id}`);
   }
 } else record("owner reads runs", null, "SEARCH_ID/OWNER_TOKEN not set");
 

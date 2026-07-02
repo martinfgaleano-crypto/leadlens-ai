@@ -398,3 +398,26 @@
 **Límites intactos:** sin scheduler, sin billing, sin CRM, sin email automation, sin contact database, sin cambios de scoring/ranking, demo mode aislado, `/api/process` one-off sin cambios de comportamiento (solo el GET de reportes cambió).
 
 **Estado:** Implementado. TypeScript: 0 errores tras cada bloque.
+
+---
+
+### [2026-07-02] Fully Self-Serve SaaS Foundation Sprint v0
+
+**Decisión:** Habilitar el journey self-serve completo: el customer crea, corre, lee, da feedback y vuelve a correr su monitor sin admin — con guards idénticos a los del path admin.
+
+**Implementación (commits P0–P11):**
+- **P0 (`b225cc4`)** — `SELF_SERVE_SAAS_ARCHITECTURE.md`: mapa implemented/partial/admin-only/self-serve/future.
+- **P1 (`8a4414a`)** — `LeadLensReport.search_id` (contexto, nunca ranking); pipeline lo setea con `searchId`; `/api/report` loguea mismatches snapshot/report y los oculta a no-admins. Legacy y one-off intactos.
+- **P2 (`befacc1`)** — Feedback con `search_id` (columna existía desde 023 — sin migración); results page lo propaga desde `report.search_id`. Dedup se mantiene en job_id+company+signal (job_id subsume search scope; filtrar por search_id duplicaría legacy rows).
+- **P3 (`7391fe2`)** — **`POST /api/monitor/[id]/run`**: Bearer JWT → ownership (404) → entitlement (403) → onboarding linkage (422) → dedup (409) → pipeline con searchId → snapshots scoped → respuesta con is_baseline + copy customer-safe. CTA "Run monitor" en el detail (deshabilitado processing/setup incompleto). Admin rerun y `/api/process` intactos.
+- **P4 (`544e099`)** — `lib/monitor/lifecycle.ts`: 7 estados customer-journey derivados, labels seguros, badge en el monitor section.
+- **P5 (`46bdda0`)** — `lib/usage/entitlements.ts` (creado en P3): gate honesto = plan no-free O credit_balance > 0, sin deducción por run, sin Stripe, sin fake paid. `/api/credits` expone entitlements.
+- **P6 (`4d23cfb`)** — Overview con `has_onboarding_link` batched; lista muestra "Setup incomplete"; el form de creación declara honestamente que los searches de dashboard no son monitores completos.
+- **P7 (`de18689`)** — Command center en dashboard home: totales (monitors/ready/processing/attention/setup), CTA al reporte más reciente, copy honesto de cadencia manual.
+- **P8 (`edc423c`)** — Decisión de gates: QA admin es advisory; `needs_review` no bloquea acceso customer (approval workflow = futuro con estado persistido).
+- **P9 (`5f79b98`)** — `npm run smoke:selfserve`: probe read-only de auth/ownership (matriz de reporte anon/owner/non-owner/admin, leak check de LinkedIn personal, search_id en payload); pasos mutantes quedan manuales.
+- **P10 (`b2d47de`)** — Docs de scheduler/billing readiness: camino futuro con guards idénticos, Lemon Squeezy como proveedor, entitlements.ts como único punto de decisión.
+
+**Self-review adversarial:** (1) admin-detection en /api/report hereda el modo dev-sin-token de requireAdmin — consistente con el resto del admin API; (2) entitlement falla cerrado ante error de DB (bloquea run con copy de upgrade — trade-off aceptado); (3) fix aplicado: check no-op en smoke script; (4) runs customer-triggered comparten el riesgo de timeout serverless del path admin (pre-existente, documentado); (5) sin leaks encontrados en overview/runs/run (todo filtrado por user_id antes de tocar snapshots).
+
+**Estado:** Implementado. TypeScript: 0 errores tras cada bloque.
