@@ -140,6 +140,7 @@ type MonitorRun = {
   avg_score: number | null;
   has_report: boolean;
   is_baseline: boolean;
+  is_stale?: boolean;
   run_index: number | null;
   qa_flags?: string[];
   needs_review?: boolean;
@@ -1083,6 +1084,11 @@ export default function AdminSearchDetailPage() {
                                 COMPARED
                               </span>
                             )}
+                            {run.is_stale && (
+                              <span style={{ background: "#fee2e2", color: "#dc2626", borderRadius: 999, padding: "0.1rem 0.45rem", fontSize: "0.65rem", fontWeight: 700 }}>
+                                STALLED
+                              </span>
+                            )}
                             <StatusBadge status={run.status} />
                           </span>
                         </div>
@@ -1095,7 +1101,9 @@ export default function AdminSearchDetailPage() {
                           </div>
                         ) : (
                           <div style={{ color: "#94a3b8" }}>
-                            {run.status === "processing" ? "Run in progress…" : "Run failed — no report produced."}
+                            {run.status === "processing"
+                              ? (run.is_stale ? "Stale processing detected — worker likely died. Retry available." : "Run in progress…")
+                              : "Run failed — no report produced."}
                           </div>
                         )}
                         {(run.qa_flags?.length ?? 0) > 0 && (

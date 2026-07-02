@@ -103,6 +103,8 @@ export async function GET(
       warm_count:  r.warm_count,
       avg_score:   r.avg_score,
       is_baseline: isCompleted && completedSeen === 1,
+      // processing row past the stale cutoff — worker died or trigger was lost
+      is_stale:    r.status === "processing" && !isProcessingFresh(r.created_at),
       visible_changes: r.change_summary && typeof r.change_summary === "object"
         ? r.change_summary.client_visible_count ?? null
         : null,

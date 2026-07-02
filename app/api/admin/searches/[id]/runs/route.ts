@@ -125,6 +125,8 @@ export async function GET(
       avg_score:   r.avg_score,
       has_report:  isCompleted,   // processing/failed rows only hold a placeholder
       is_baseline: isCompleted && completedSeen === 1,
+      // processing row past the stale cutoff — worker died or trigger was lost
+      is_stale:    r.status === "processing" && !isProcessingFresh(r.created_at),
       run_index:   isCompleted ? completedSeen : null,
       qa_flags,
       needs_review,

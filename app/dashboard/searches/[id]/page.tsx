@@ -56,6 +56,7 @@ interface MonitorRun {
   warm_count: number | null;
   avg_score: number | null;
   is_baseline: boolean;
+  is_stale?: boolean;
   visible_changes: number | null;
 }
 
@@ -418,6 +419,14 @@ export default function SearchDetailPage() {
     await refreshMonitor();
   }
 
+  // Poll run history while a run is processing so completion appears without
+  // a manual refresh (async runs return 202 immediately).
+  useEffect(() => {
+    if (!monitor?.has_processing_run) return;
+    const interval = setInterval(() => { refreshMonitor(); }, POLL_INTERVAL_MS);
+    return () => clearInterval(interval);
+  }, [monitor?.has_processing_run, refreshMonitor]);
+
   // ─── Handlers ─────────────────────────────────────────────────────────────
 
   async function handleLogout() {
@@ -635,7 +644,9 @@ export default function SearchDetailPage() {
                       <div style={{ color: "#64748b", fontSize: "0.75rem", marginTop: "0.15rem" }}>
                         {run.status === "completed"
                           ? <>{run.lead_count ?? "—"} accounts · {run.hot_count ?? 0} hot · {run.warm_count ?? 0} warm{run.visible_changes != null && <> · {run.visible_changes} change{run.visible_changes === 1 ? "" : "s"}</>}</>
-                          : run.status === "processing" ? "In progress…" : "Run did not complete"}
+                          : run.status === "processing"
+                            ? (run.is_stale ? "Stalled — you can start a new run" : "In progress…")
+                            : "Run did not complete"}
                       </div>
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexShrink: 0 }}>
