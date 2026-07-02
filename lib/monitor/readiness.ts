@@ -14,6 +14,7 @@ export type MonitorReadiness =
   | "missing_onboarding_link"
   | "no_runs"
   | "processing"
+  | "stale_processing"
   | "failed"
   | "needs_review"
   | "ready";
@@ -23,6 +24,8 @@ export interface ReadinessInput {
   hasOnboardingLink: boolean | null;
   totalRuns: number;
   hasProcessingRun: boolean;
+  /** a processing run past the stale cutoff exists */
+  hasStaleProcessingRun?: boolean;
   /** status of the newest run in the series (any status) */
   latestRunStatus: "processing" | "completed" | "failed" | null;
   /** true when the latest COMPLETED run carries QA flags */
@@ -35,6 +38,7 @@ export function deriveMonitorReadiness(input: ReadinessInput): MonitorReadiness 
   if (input.hasOnboardingLink === false) return "missing_onboarding_link";
   if (input.totalRuns === 0) return "no_runs";
   if (input.hasProcessingRun) return "processing";
+  if (input.hasStaleProcessingRun) return "stale_processing";
   if (input.latestRunStatus === "failed" && !input.hasCompletedRun) return "failed";
   if (input.latestRunStatus === "failed") return "needs_review"; // newer run failed after a completed one
   if (input.latestCompletedNeedsReview) return "needs_review";
@@ -46,6 +50,7 @@ export const READINESS_ADMIN_LABELS: Record<MonitorReadiness, string> = {
   missing_onboarding_link: "SETUP INCOMPLETE — no onboarding linkage",
   no_runs:                 "NO RUNS YET",
   processing:              "PROCESSING",
+  stale_processing:        "STALLED — RETRY AVAILABLE",
   failed:                  "FAILED",
   needs_review:            "REVIEW RECOMMENDED",
   ready:                   "READY TO REVIEW",
@@ -57,6 +62,7 @@ export const READINESS_CUSTOMER_LABELS: Record<MonitorReadiness, string> = {
   missing_onboarding_link: "Setup incomplete",
   no_runs:                 "No reports yet",
   processing:              "Processing",
+  stale_processing:        "Needs internal review",
   failed:                  "Needs internal review",
   needs_review:            "Needs internal review",
   ready:                   "Report ready",

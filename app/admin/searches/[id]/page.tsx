@@ -925,12 +925,14 @@ export default function AdminSearchDetailPage() {
                 hasOnboardingLink: hasOnboarding,
                 totalRuns: runHistory.total_runs,
                 hasProcessingRun: runHistory.has_processing_run,
+                hasStaleProcessingRun: runHistory.runs.some(r => r.is_stale === true),
                 latestRunStatus: latestRun?.status ?? null,
                 latestCompletedNeedsReview: latestCompleted?.needs_review === true,
                 hasCompletedRun: latestCompleted != null,
               });
               const palette: Record<string, { bg: string; color: string; border: string }> = {
                 ready:                   { bg: "#f0fdf4", color: "#15803d", border: "#bbf7d0" },
+                stale_processing:        { bg: "#fef3c7", color: "#92400e", border: "#fde68a" },
                 needs_review:            { bg: "#fef3c7", color: "#92400e", border: "#fde68a" },
                 failed:                  { bg: "#fee2e2", color: "#dc2626", border: "#fca5a5" },
                 processing:              { bg: "#e0f2fe", color: "#075985", border: "#7dd3fc" },

@@ -545,6 +545,7 @@ export default function SearchDetailPage() {
                   hasOnboardingLink: monitor.has_onboarding_link ?? null,
                   totalRuns: monitor.total_runs,
                   hasProcessingRun: monitor.has_processing_run,
+                  hasStaleProcessingRun: monitor.runs.some(r => r.is_stale === true),
                   latestRunStatus: (monitor.latest_status as "processing" | "completed" | "failed" | null) ?? null,
                   completedRuns: monitor.runs.filter(r => r.status === "completed").length,
                 });
