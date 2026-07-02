@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import AdminLayout from "../../_components/AdminLayout";
 import { adminFetch } from "@/lib/admin/admin-client";
+import { deriveMonitorReadiness, READINESS_ADMIN_LABELS } from "@/lib/monitor/readiness";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -897,6 +898,34 @@ export default function AdminSearchDetailPage() {
             <p style={{ color: "#64748b", fontSize: "0.78rem", margin: "0 0 0.75rem", lineHeight: 1.5 }}>
               Manual admin-controlled monitor runs for this search. Snapshots are saved per series and used for change classification on future runs.
             </p>
+
+            {/* Readiness banner — single QA verdict for this monitor series */}
+            {runHistory && (() => {
+              const latestRun = runHistory.runs[0] ?? null;
+              const latestCompleted = runHistory.runs.find(r => r.status === "completed") ?? null;
+              const readiness = deriveMonitorReadiness({
+                hasOnboardingLink: hasOnboarding,
+                totalRuns: runHistory.total_runs,
+                hasProcessingRun: runHistory.has_processing_run,
+                latestRunStatus: latestRun?.status ?? null,
+                latestCompletedNeedsReview: latestCompleted?.needs_review === true,
+                hasCompletedRun: latestCompleted != null,
+              });
+              const palette: Record<string, { bg: string; color: string; border: string }> = {
+                ready:                   { bg: "#f0fdf4", color: "#15803d", border: "#bbf7d0" },
+                needs_review:            { bg: "#fef3c7", color: "#92400e", border: "#fde68a" },
+                failed:                  { bg: "#fee2e2", color: "#dc2626", border: "#fca5a5" },
+                processing:              { bg: "#e0f2fe", color: "#075985", border: "#7dd3fc" },
+                no_runs:                 { bg: "#f8fafc", color: "#64748b", border: "#e2e8f0" },
+                missing_onboarding_link: { bg: "#fee2e2", color: "#dc2626", border: "#fca5a5" },
+              };
+              const p = palette[readiness];
+              return (
+                <div style={{ marginBottom: "0.75rem", padding: "0.55rem 0.75rem", background: p.bg, border: `1px solid ${p.border}`, borderRadius: "0.5rem", fontSize: "0.75rem", fontWeight: 700, color: p.color, letterSpacing: "0.03em" }}>
+                  {READINESS_ADMIN_LABELS[readiness]}
+                </div>
+              );
+            })()}
 
             {/* Series summary */}
             {runHistory && runHistory.total_runs > 0 && (
