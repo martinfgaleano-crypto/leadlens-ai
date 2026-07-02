@@ -192,6 +192,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { href: "/admin/orders",        label: "Orders" },
     { href: "/admin/jobs",          label: "Jobs" },
     { href: "/admin/searches",      label: "Searches" },
+    { href: "/admin/monitor-runs",  label: "Monitor Ops" },
     { href: "/admin/vault",         label: "Vault" },
     { href: "/admin/companies",     label: "Companies" },
     { href: "/admin/credits",       label: "Credits" },
