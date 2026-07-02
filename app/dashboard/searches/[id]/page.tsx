@@ -26,23 +26,18 @@ interface LeadSearch {
   vault_hit_rate?:    number | null;
 }
 
-interface LeadResult {
+// Account-level view of lead_results — personal contact columns
+// (contact_name, email, linkedin_url, title, seniority, email_quality) are
+// intentionally NOT selected or displayed. LeadLens is account-level.
+interface AccountResult {
   id: string;
   company_name: string;
   website: string | null;
-  contact_name: string | null;
-  title: string | null;
-  email: string | null;
-  linkedin_url: string | null;
   country: string | null;
   source: string | null;
-  // Quality layer (Phase 7)
   lead_score: number | null;
   confidence_score: number | null;
-  seniority: string | null;
-  email_quality: string | null;
-  normalized_title: string | null;
-  // AI enrichment layer (Phase 8)
+  // AI enrichment layer (account-level)
   opportunity_score: number | null;
   buyer_fit: string | null;
   temperature: string | null;
@@ -122,12 +117,13 @@ function FitBadge({ value }: { value: string | null }) {
 }
 
 // ─── CSV export ───────────────────────────────────────────────────────────────
+// Account-level only: no contact_name, email, linkedin_url, title,
+// seniority, or email_quality columns.
 
-function exportCsv(leads: LeadResult[], filename: string) {
-  const SCALAR_COLS: (keyof LeadResult)[] = [
-    "company_name", "website", "contact_name", "title",
-    "email", "linkedin_url", "country", "source",
-    "lead_score", "confidence_score", "seniority", "email_quality",
+function exportCsv(accounts: AccountResult[], filename: string) {
+  const SCALAR_COLS: (keyof AccountResult)[] = [
+    "company_name", "website", "country", "source",
+    "lead_score", "confidence_score",
     "opportunity_score", "buyer_fit", "temperature", "ai_reasoning",
   ];
 
@@ -145,7 +141,7 @@ function exportCsv(leads: LeadResult[], filename: string) {
     "strengths", "weaknesses",
   ].join(",");
 
-  const rows = leads.map(l => [
+  const rows = accounts.map(l => [
     ...SCALAR_COLS.map(c => escape(l[c] as string | number | null)),
     escape((l.strengths ?? []).join("; ")),
     escape((l.weaknesses ?? []).join("; ")),
@@ -172,7 +168,7 @@ const STATUS_STYLES: Record<string, { bg: string; color: string; border: string 
 
 const STATUS_LABELS: Record<string, string> = {
   pending:    "Queued",
-  processing: "Generating leads…",
+  processing: "Analyzing accounts…",
   completed:  "Completed",
   failed:     "Failed",
 };
@@ -204,12 +200,12 @@ function formatDate(iso: string) {
 
 // ─── AI Insight panel (expandable) ────────────────────────────────────────────
 
-function AiInsightPanel({ lead }: { lead: LeadResult }) {
+function AiInsightPanel({ lead }: { lead: AccountResult }) {
   const hasEnrichment = lead.ai_reasoning || (lead.strengths?.length ?? 0) > 0 || (lead.weaknesses?.length ?? 0) > 0;
   if (!hasEnrichment) {
     return (
       <div style={{ padding: "0.75rem 1.25rem", color: "#94a3b8", fontSize: "0.8rem", fontStyle: "italic" }}>
-        AI insights not available for this lead.
+        AI insights not available for this account.
       </div>
     );
   }
@@ -261,8 +257,8 @@ export default function SearchDetailPage() {
   const [userId, setUserId]             = useState("");
   const [search, setSearch]             = useState<LeadSearch | null>(null);
   const [icpName, setIcpName]           = useState<string | null>(null);
-  const [leads, setLeads]               = useState<LeadResult[]>([]);
-  const [sortedLeads, setSortedLeads]   = useState<LeadResult[]>([]);
+  const [leads, setLeads]               = useState<AccountResult[]>([]);
+  const [sortedLeads, setSortedLeads]   = useState<AccountResult[]>([]);
   const [sortByScore, setSortByScore]   = useState(true);
   const [expandedId, setExpandedId]     = useState<string | null>(null);
   const [leadsLoading, setLeadsLoading] = useState(false);
@@ -295,10 +291,10 @@ export default function SearchDetailPage() {
     setLeadsLoading(true);
     const { data } = await supabase
       .from("lead_results")
-      .select("id, company_name, website, contact_name, title, email, linkedin_url, country, source, lead_score, confidence_score, seniority, email_quality, normalized_title, opportunity_score, buyer_fit, temperature, strengths, weaknesses, ai_reasoning")
+      .select("id, company_name, website, country, source, lead_score, confidence_score, opportunity_score, buyer_fit, temperature, strengths, weaknesses, ai_reasoning")
       .eq("search_id", searchId)
       .order("created_at", { ascending: true });
-    setLeads((data ?? []) as LeadResult[]);
+    setLeads((data ?? []) as AccountResult[]);
     setLeadsLoading(false);
   }, [searchId]);
 
@@ -469,7 +465,7 @@ export default function SearchDetailPage() {
         </div>
         <div style={S.detailGrid}>
           <DetailRow label="Status"          value={<StatusBadge status={search.status} />} />
-          <DetailRow label="Requested Leads" value={search.requested_lead_count} />
+          <DetailRow label="Requested Accounts" value={search.requested_lead_count} />
           <DetailRow label="ICP"             value={icpName ?? (search.icp_id ? "ICP no longer exists" : "None")} />
           <DetailRow label="Countries"       value={search.countries.length > 0 ? search.countries.join(", ") : "—"} />
           <DetailRow label="Industries"      value={search.industries.length > 0 ? search.industries.join(", ") : "—"} />
@@ -565,7 +561,7 @@ export default function SearchDetailPage() {
       ) && (
         <div style={{ ...S.section, marginBottom: "1.25rem" }}>
           <div style={S.sectionHeader}>
-            <span style={S.sectionTitle}>Lead Source Summary</span>
+            <span style={S.sectionTitle}>Account Source Summary</span>
           </div>
           <div style={{ padding: "1rem 1.25rem", display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
             {[
@@ -583,11 +579,11 @@ export default function SearchDetailPage() {
         </div>
       )}
 
-      {/* Lead results */}
+      {/* Account results */}
       <div style={S.section}>
         <div style={S.sectionHeader}>
           <span style={S.sectionTitle}>
-            {isCompleted ? `Lead Results (${leads.length})` : "Lead Results"}
+            {isCompleted ? `Account Results (${leads.length})` : "Account Results"}
           </span>
           <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
             {isCompleted && hasScores && (
@@ -615,7 +611,7 @@ export default function SearchDetailPage() {
             <div style={{ fontSize: "1.75rem", marginBottom: "0.75rem" }}>🕐</div>
             <div style={{ color: "#0f172a", fontWeight: 700, fontSize: "1rem", marginBottom: "0.5rem" }}>Queued</div>
             <div style={{ color: "#64748b", fontSize: "0.875rem", maxWidth: 360, margin: "0 auto" }}>
-              Your search is queued for automatic processing. Lead generation will begin shortly — this page updates automatically.
+              Your search is queued for automatic processing. Account analysis will begin shortly — this page updates automatically.
             </div>
           </div>
         )}
@@ -624,9 +620,9 @@ export default function SearchDetailPage() {
         {isProcessing && (
           <div style={{ padding: "2.5rem 2rem", textAlign: "center" }}>
             <div style={{ fontSize: "1.75rem", marginBottom: "0.75rem", display: "inline-block", animation: "spin 2s linear infinite" }}>⚙️</div>
-            <div style={{ color: "#0f172a", fontWeight: 700, fontSize: "1rem", marginBottom: "0.5rem" }}>Generating leads…</div>
+            <div style={{ color: "#0f172a", fontWeight: 700, fontSize: "1rem", marginBottom: "0.5rem" }}>Analyzing accounts…</div>
             <div style={{ color: "#64748b", fontSize: "0.875rem", maxWidth: 380, margin: "0 auto" }}>
-              Apollo is running your search. Results will appear here automatically — no need to refresh.
+              We are gathering and scoring accounts for your search. Results will appear here automatically — no need to refresh.
             </div>
             <div style={{ marginTop: "1.25rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
               {[0, 0.3, 0.6].map(delay => (
@@ -646,11 +642,11 @@ export default function SearchDetailPage() {
                 {isNoLeads ? "🔍" : "⚠️"}
               </div>
               <div style={{ color: "#0f172a", fontWeight: 700, fontSize: "1rem", marginBottom: "0.5rem" }}>
-                {isNoLeads ? "No leads found" : "Search could not be completed"}
+                {isNoLeads ? "No accounts found" : "Search could not be completed"}
               </div>
               <div style={{ color: "#64748b", fontSize: "0.85rem", maxWidth: 400, margin: "0 auto" }}>
                 {isNoLeads
-                  ? "Our search returned no results for your criteria. No credits were charged."
+                  ? "Our search returned no matching accounts for your criteria. No credits were charged."
                   : "Something went wrong during lead generation. Our team has been notified."}
               </div>
 
@@ -659,7 +655,7 @@ export default function SearchDetailPage() {
                   <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "#374151", marginBottom: "0.5rem", textTransform: "uppercase", letterSpacing: "0.04em" }}>Possible reasons</div>
                   <ul style={{ margin: 0, paddingLeft: "1.25rem", color: "#64748b", fontSize: "0.82rem", lineHeight: 1.8 }}>
                     <li>Filters may be too restrictive — try broadening countries or industries</li>
-                    <li>No available leads matching your ICP in this region</li>
+                    <li>No available accounts matching your ICP in this region</li>
                     <li>Data provider returned no results for this query</li>
                   </ul>
                   <div style={{ marginTop: "0.875rem", fontSize: "0.8rem", color: "#0ea5e9", fontWeight: 600 }}>
@@ -686,19 +682,19 @@ export default function SearchDetailPage() {
         {isCompleted && !leadsLoading && leads.length === 0 && (
           <div style={{ padding: "2.5rem 2rem", textAlign: "center" }}>
             <div style={{ fontSize: "1.5rem", marginBottom: "0.75rem" }}>📋</div>
-            <div style={{ color: "#0f172a", fontWeight: 700, marginBottom: "0.5rem" }}>Leads coming soon</div>
+            <div style={{ color: "#0f172a", fontWeight: 700, marginBottom: "0.5rem" }}>Accounts coming soon</div>
             <div style={{ color: "#64748b", fontSize: "0.85rem" }}>
-              Your search completed. Leads will appear here shortly — contact support if they don&apos;t arrive.
+              Your search completed. Accounts will appear here shortly — contact support if they don&apos;t arrive.
             </div>
           </div>
         )}
 
-        {/* ── Leads table ── */}
+        {/* ── Accounts table (account-level: no contact columns) ── */}
         {isCompleted && !leadsLoading && sortedLeads.length > 0 && (
           <>
             <div style={{ padding: "0.75rem 1.25rem", background: "#f0fdf4", borderBottom: "1px solid #bbf7d0", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <span style={{ fontSize: "0.82rem", fontWeight: 600, color: "#15803d" }}>
-                {leads.length} lead{leads.length !== 1 ? "s" : ""}
+                {leads.length} account{leads.length !== 1 ? "s" : ""}
                 {search.requested_lead_count > 0 && ` of ${search.requested_lead_count} requested`}
               </span>
               {hasEnrichment && (
@@ -708,11 +704,11 @@ export default function SearchDetailPage() {
               )}
             </div>
             <div style={{ overflowX: "auto" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", minWidth: hasEnrichment ? 860 : 640 }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", minWidth: hasEnrichment ? 720 : 520 }}>
                 <thead>
                   <tr style={{ background: "#f8fafc" }}>
                     {[
-                      "Company", "Contact", "Title", "Email", "Country",
+                      "Company", "Country", "Source",
                       ...(hasScores ? ["Opportunity"] : []),
                       ...(hasEnrichment ? ["Buyer Fit", "Temperature"] : []),
                     ].map(h => (
@@ -743,22 +739,11 @@ export default function SearchDetailPage() {
                               <a href={lead.website} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()} style={{ marginLeft: "0.4rem", color: "#0ea5e9", fontSize: "0.72rem", fontWeight: 400, textDecoration: "none" }}>↗</a>
                             )}
                           </td>
-                          <td style={{ padding: "0.75rem 1.25rem", fontSize: "0.82rem", color: "#0f172a", whiteSpace: "nowrap" }}>
-                            {lead.contact_name ?? <span style={{ color: "#cbd5e1" }}>—</span>}
-                            {lead.linkedin_url && (
-                              <a href={lead.linkedin_url} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()} style={{ marginLeft: "0.4rem", color: "#0ea5e9", fontSize: "0.7rem", textDecoration: "none" }}>in</a>
-                            )}
-                          </td>
-                          <td style={{ padding: "0.75rem 1.25rem", fontSize: "0.8rem", color: "#64748b", whiteSpace: "nowrap" }}>
-                            {lead.normalized_title ?? lead.title ?? <span style={{ color: "#cbd5e1" }}>—</span>}
-                          </td>
-                          <td style={{ padding: "0.75rem 1.25rem", fontSize: "0.8rem", color: "#64748b", whiteSpace: "nowrap" }}>
-                            {lead.email
-                              ? <a href={`mailto:${lead.email}`} onClick={e => e.stopPropagation()} style={{ color: "#0ea5e9", textDecoration: "none" }}>{lead.email}</a>
-                              : <span style={{ color: "#cbd5e1" }}>—</span>}
-                          </td>
                           <td style={{ padding: "0.75rem 1.25rem", fontSize: "0.8rem", color: "#64748b", whiteSpace: "nowrap" }}>
                             {lead.country ?? <span style={{ color: "#cbd5e1" }}>—</span>}
+                          </td>
+                          <td style={{ padding: "0.75rem 1.25rem", fontSize: "0.8rem", color: "#64748b", whiteSpace: "nowrap" }}>
+                            {lead.source ?? <span style={{ color: "#cbd5e1" }}>—</span>}
                           </td>
                           {hasScores && (
                             <td style={{ padding: "0.75rem 1.25rem", whiteSpace: "nowrap" }}>
@@ -778,7 +763,7 @@ export default function SearchDetailPage() {
                         </tr>
                         {isExpanded && (
                           <tr key={`${lead.id}-insight`} style={{ borderBottom: isLast ? "none" : "1px solid #e2e8f0" }}>
-                            <td colSpan={5 + (hasScores ? 1 : 0) + (hasEnrichment ? 2 : 0)} style={{ padding: 0 }}>
+                            <td colSpan={3 + (hasScores ? 1 : 0) + (hasEnrichment ? 2 : 0)} style={{ padding: 0 }}>
                               <AiInsightPanel lead={lead} />
                             </td>
                           </tr>

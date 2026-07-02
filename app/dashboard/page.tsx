@@ -258,7 +258,7 @@ export default function DashboardPage() {
       {/* Page header */}
       <div style={{ marginBottom: "2rem" }}>
         <h1 style={S.pageTitle}>Dashboard</h1>
-        <p style={S.pageSub}>Welcome to LeadLens — your B2B lead generation workspace.</p>
+        <p style={S.pageSub}>Welcome to LeadLens — your account opportunity monitor.</p>
       </div>
 
       {/* Account + plan stat cards */}
@@ -287,9 +287,9 @@ export default function DashboardPage() {
         <QuickLink
           href="/dashboard/searches"
           icon="🔍"
-          title="Lead Searches"
+          title="Account Searches"
           desc={searchCount > 0 ? `${searchCount} search${searchCount !== 1 ? "es" : ""} submitted` : "Request qualified B2B leads"}
-          cta="Open Lead Searches →"
+          cta="Open Account Searches →"
         />
       </div>
 
@@ -425,7 +425,7 @@ export default function DashboardPage() {
               const color = actColors[ev.type] ?? "#94a3b8";
               const meta = ev.meta ?? {};
               const sub =
-                ev.type === "search_completed"  ? `${meta.leads ?? 0} lead${meta.leads !== 1 ? "s" : ""} delivered` :
+                ev.type === "search_completed"  ? `${meta.leads ?? 0} account${meta.leads !== 1 ? "s" : ""} delivered` :
                 ev.type === "search_failed"      ? "Search failed" :
                 ev.type === "credits_consumed"   ? `-${meta.amount ?? 0} credits` :
                 ev.type === "credits_added"      ? `+${meta.amount ?? 0} credits` :
@@ -463,17 +463,17 @@ export default function DashboardPage() {
         {recentSearches.length === 0 ? (
           <div style={S.emptyState}>
             <div style={S.emptyIcon}>🔍</div>
-            <div style={S.emptyTitle}>No lead searches yet</div>
+            <div style={S.emptyTitle}>No account searches yet</div>
             <div style={S.emptySub}>
               {icpCount === 0
-                ? "Start by creating an ICP, then submit a lead search request."
-                : "You have ICPs ready. Submit your first lead search request."}
+                ? "Start by creating an ICP, then submit an account search request."
+                : "You have ICPs ready. Submit your first account search request."}
             </div>
             <Link
               href={icpCount === 0 ? "/dashboard/icp" : "/dashboard/searches"}
               style={S.ctaLink}
             >
-              {icpCount === 0 ? "→ Create your first ICP" : "→ Create Lead Search"}
+              {icpCount === 0 ? "→ Create your first ICP" : "→ Create Account Search"}
             </Link>
           </div>
         ) : (

@@ -53,7 +53,7 @@ function toArr(s: string): string[] {
 // Customer-facing status labels and styles
 const STATUS_CONFIG: Record<string, { label: string; bg: string; color: string; border: string }> = {
   pending:    { label: "Queued",            bg: "#fef9c3", color: "#854d0e", border: "#fde047" },
-  processing: { label: "Generating leads…", bg: "#e0f2fe", color: "#075985", border: "#7dd3fc" },
+  processing: { label: "Analyzing accounts…", bg: "#e0f2fe", color: "#075985", border: "#7dd3fc" },
   completed:  { label: "Completed",         bg: "#dcfce7", color: "#14532d", border: "#86efac" },
   failed:     { label: "Failed",            bg: "#fee2e2", color: "#7f1d1d", border: "#fca5a5" },
 };
@@ -180,7 +180,7 @@ export default function SearchesPage() {
 
     const leadCount = parseInt(form.requested_lead_count, 10);
     if (isNaN(leadCount) || leadCount < 1 || leadCount > 500) {
-      setFormError("Lead count must be between 1 and 500.");
+      setFormError("Account count must be between 1 and 500.");
       return;
     }
 
@@ -248,11 +248,11 @@ export default function SearchesPage() {
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "2rem" }}>
         <div>
-          <h1 style={S.pageTitle}>Lead Searches</h1>
+          <h1 style={S.pageTitle}>Account Searches</h1>
           <p style={S.pageSub}>
             {hasActiveSearches
-              ? "Leads are being generated automatically — this page refreshes every 15 seconds."
-              : "Submit a search request. Leads are generated automatically."}
+              ? "Accounts are being analyzed automatically — this page refreshes every 15 seconds."
+              : "Submit a search request. Account opportunities are generated automatically."}
           </p>
         </div>
         {hasIcps && !formOpen && (
@@ -267,7 +267,7 @@ export default function SearchesPage() {
             <div style={S.emptyIcon}>🎯</div>
             <div style={S.emptyTitle}>Create an ICP first</div>
             <div style={S.emptySub}>
-              You need at least one Ideal Customer Profile before you can request a lead search.
+              You need at least one Ideal Customer Profile before you can request an account search.
             </div>
             <Link href="/dashboard/icp" style={S.linkBtn}>Go to ICP Builder →</Link>
           </div>
@@ -278,7 +278,7 @@ export default function SearchesPage() {
       {formOpen && (
         <div style={S.formCard}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
-            <h2 style={S.formTitle}>New Lead Search</h2>
+            <h2 style={S.formTitle}>New Account Search</h2>
             <button onClick={closeForm} style={S.btnGhost}>Cancel</button>
           </div>
 
@@ -307,7 +307,7 @@ export default function SearchesPage() {
 
               <div>
                 <label style={S.labelBlock}>
-                  <span style={S.labelText}>Requested Lead Count</span>
+                  <span style={S.labelText}>Requested Account Count</span>
                   <input style={S.input} type="number" min={1} max={500}
                     value={form.requested_lead_count}
                     onChange={e => setField("requested_lead_count", e.target.value)} />
@@ -361,14 +361,14 @@ export default function SearchesPage() {
             <div style={S.emptyState}>
               <div style={S.emptyIcon}>🔍</div>
               <div style={S.emptyTitle}>No searches yet</div>
-              <div style={S.emptySub}>Submit your first lead search. Leads are generated automatically — no waiting on manual processing.</div>
+              <div style={S.emptySub}>Submit your first account search. Account opportunities are generated automatically — no waiting on manual processing.</div>
             </div>
           </div>
         ) : (
           <div style={S.section}>
             <div style={S.tableHeader}>
               <span style={{ ...S.col, flex: 3 }}>Search</span>
-              <span style={{ ...S.col, flex: 1 }}>Leads</span>
+              <span style={{ ...S.col, flex: 1 }}>Accounts</span>
               <span style={{ ...S.col, flex: 1.5 }}>Status</span>
               <span style={{ ...S.col, flex: 1.5 }}>Requested</span>
               <span style={{ ...S.col, flex: 1 }}></span>
