@@ -63,9 +63,11 @@ export async function createMonitorRunJob(
 
   const created = await createProcessingSnapshot(jobId, plan, searchId);
   if (!created) {
+    console.error(`[run-jobs] job_create_failed search=${searchId} plan=${plan}`);
     return { ok: false, code: "store_error", message: "Could not create the run job." };
   }
 
+  console.log(`[run-jobs] job_created job=${jobId} search=${searchId} plan=${plan} baseline=${isBaseline}`);
   return { ok: true, job_id: jobId, search_id: searchId, plan, is_baseline: isBaseline };
 }
 

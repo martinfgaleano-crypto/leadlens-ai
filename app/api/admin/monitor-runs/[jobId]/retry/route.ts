@@ -35,6 +35,8 @@ export async function POST(
     return NextResponse.json({ error: "Invalid job ID." }, { status: 400 });
   }
 
+  console.log(`[retry] retry_requested job=${jobId}`);
+
   const snapshot = await getSnapshot(jobId);
   if (!snapshot) return NextResponse.json({ error: "Job not found." }, { status: 404 });
 
@@ -67,6 +69,7 @@ export async function POST(
       .limit(1)
       .maybeSingle();
     if (freshRun) {
+      console.log(`[retry] retry_rejected job=${jobId} reason=fresh_run_in_flight`);
       return NextResponse.json(
         { error: `A newer run is already in progress (job_id: ${(freshRun as { job_id: string }).job_id}).` },
         { status: 409 },
@@ -74,6 +77,7 @@ export async function POST(
     }
     // Stale: re-process the same job. The processor accepts processing rows of
     // any age; completeSnapshot/failSnapshot upsert on job_id.
+    console.log(`[retry] retry_started job=${jobId} search=${snapshot.search_id} mode=reprocess_stale`);
     triggerProcessor(jobId);
     return NextResponse.json(
       { job_id: jobId, search_id: snapshot.search_id, action: "reprocessing", status: "processing", message: "Stale job re-sent to the processor." },
@@ -100,6 +104,7 @@ export async function POST(
     return NextResponse.json({ error: "The retry could not be started." }, { status: 500 });
   }
 
+  console.log(`[retry] retry_started job=${job.job_id} search=${snapshot.search_id} mode=new_run_after_failed prev_job=${jobId}`);
   triggerProcessor(job.job_id);
   return NextResponse.json(
     { job_id: job.job_id, search_id: snapshot.search_id, action: "new_run", status: "processing", is_baseline: job.is_baseline, message: "New run started for this monitor." },
