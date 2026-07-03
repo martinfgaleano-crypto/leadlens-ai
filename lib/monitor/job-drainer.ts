@@ -20,6 +20,7 @@
 import {
   failSnapshot,
   isProcessingFresh,
+  processingCutoffIso,
 } from "@/lib/storage/snapshot-store";
 import { triggerProcessor } from "@/lib/monitor/run-jobs";
 
@@ -132,7 +133,31 @@ export async function drainMonitorJobs(
         continue;
       }
 
-      // Newest stale job in a series with no fresh run → re-trigger.
+      // Newest stale job in a series with no fresh run IN THE BATCH. The batch
+      // is bounded and oldest-first, so a fresh run for this series may exist
+      // OUTSIDE the batch window — verify per series before retriggering, or
+      // two pipelines could race (same rule as the retry route).
+      const { data: freshOutsideBatch } = await db
+        .from("snapshot_reports")
+        .select("job_id")
+        .eq("search_id", searchId)
+        .eq("status", "processing")
+        .gte("created_at", processingCutoffIso())
+        .neq("job_id", row.job_id)
+        .limit(1)
+        .maybeSingle();
+
+      if (freshOutsideBatch) {
+        summary.superseded++;
+        summary.actions.push({ job_id: row.job_id, search_id: searchId, action: "supersede" });
+        if (!dryRun) {
+          console.log(`[drainer] supersede job=${row.job_id} search=${searchId} reason=fresh_run_outside_batch`);
+          await failSnapshot(row.job_id, row.plan, "Superseded by a newer run (auto-recovery)", searchId)
+            .catch((e: unknown) => summary.errors.push(`supersede ${row.job_id}: ${e instanceof Error ? e.message : "error"}`));
+        }
+        continue;
+      }
+
       summary.retriggered++;
       summary.actions.push({ job_id: row.job_id, search_id: searchId, action: "retrigger" });
       if (!dryRun) {
