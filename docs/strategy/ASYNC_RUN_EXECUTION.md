@@ -59,8 +59,10 @@ El trigger es un fetch fire-and-forget server-side (mismo patrón que
 morir si la función se congela tras responder. Aceptado en v0 porque:
 (1) el snapshot `processing` ya existe y es visible, (2) el cutoff de 15 min
 lo convierte en recuperable, (3) el admin retry re-procesa sin crear duplicados.
-El upgrade real (futuro): queue externa o Vercel Cron drenando jobs `processing`
-frescos sin worker — ambos llamarían exactamente al mismo processor.
+**Update 2026-07-02:** el drainer existe (`lib/monitor/job-drainer.ts` +
+`/api/internal/monitor-runs/drain` + cron diario) — re-dispara jobs stale,
+supersede duplicados y abandona jobs > 6h. Ver SELF_HEALING_MONITOR_INFRASTRUCTURE.md.
+El upgrade restante es frecuencia (Pro: */15) o queue externa.
 
 ## Scheduler futuro
 

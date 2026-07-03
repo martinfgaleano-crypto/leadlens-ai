@@ -38,6 +38,15 @@ Signup/Onboarding → lead_search + onboarding_request (setup completo)
 
 Pasos que siguen siendo manuales/asistidos: cadencia mensual (sin scheduler), QA interno pre-entrega (checklist + banners), linking de onboarding a searches creadas por dashboard, billing/upgrades.
 
+## Self-healing y operación (Production Sprint v0 — 2026-07-02)
+
+Drainer + cron diario + ops center + env health implementados — ver
+`SELF_HEALING_MONITOR_INFRASTRUCTURE.md`, `PRODUCTION_ARCHITECTURE.md`,
+`DEPLOYMENT_READINESS_CHECKLIST.md` y `BETA_OPERATIONS_PLAYBOOK.md`.
+Fundaciones inertes: `lib/monitor/scheduling.ts` (scheduler),
+`lib/usage/usage-events.ts` (deducción futura), `lib/sources/source-engine-types.ts`
+(source engine). Nada de eso ejecuta automatización ni cobra.
+
 ## Scheduler readiness (P10 — sin automatización activa)
 
 Estado actual: **cadencia manual**. El dashboard lo comunica honestamente

@@ -462,3 +462,25 @@
 **Limitación aceptada del v0:** el trigger es fire-and-forget — puede perderse en serverless tras responder. Mitigado por diseño: el snapshot processing es el estado durable, stale a los 15 min, retry admin lo reprocesa. Upgrade futuro: cron/queue drenando jobs stale (auto-recovery) con el mismo processor.
 
 **Estado:** TypeScript 0 errores tras cada bloque; `node --check` OK.
+
+---
+
+### [2026-07-02] Production-Grade SaaS Architecture Sprint v0 — Self-Healing + Operabilidad
+
+**Decisión:** Cerrar la capa de infraestructura de producción: recovery automático de jobs, centro de operaciones admin, health de entorno, y fundaciones inertes de scheduler/billing/source engine.
+
+**Implementación (commits):**
+- **Self-healing (`11849c2`–`b27b31e`)** — `lib/monitor/job-drainer.ts` (stale-only retrigger, supersede de duplicados, techo de recovery 6h anti-loop, batch 10/25, dry_run), `POST|GET /api/internal/monitor-runs/drain` (secret interno / admin token / Bearer CRON_SECRET; fail closed en prod), cron diario en `vercel.json` (hobby-safe; Pro → */15), `/admin/monitor-runs` ops center (totales, STALLED, Retry, Run drainer), nav item, copy customer "Taking longer than expected".
+- **P0 (`d8a55f8`)** — `PRODUCTION_ARCHITECTURE.md`: mapa implemented/manual/futuro + matriz riesgo/mitigación.
+- **P7 (`eb2db2b`)** — `lib/config/env-health.ts` + `env_health` en `/api/admin/system-health`: presencia de secrets (booleans, nunca valores) + readiness derivada (processor/drainer/cron/production_safe).
+- **P8 (`62b42d5`)** — `lib/monitor/scheduling.ts`: contrato inerte del scheduler (SCHEDULING_ENABLED hard-false, algoritmo del runner futuro, migración diferida default-inactive). Sin automatización.
+- **P9 (`f15595b`)** — `lib/usage/usage-events.ts`: soft tracking sin deducción. Regla decidida: deducir en completion exitosa, job_id como idempotency key (retry de stale no re-cobra; retry de failed = job nuevo), failed nunca cobra, recovery admin no cobra por default.
+- **P10 (`32ed378`)** — `SOURCE_ENGINE_ARCHITECTURE.md` + type skeletons (`lib/sources/source-engine-types.ts`): fuentes permitidas/prohibidas (sin scraping, sin contactos), adapter pattern con reliability "unproven" por default y QA gate pre-exposición, prioridad LATAM en registros públicos.
+- **P11 (`8463006`)** — Cadena de logs completa: job_created, trigger, processor start/complete/fail, drainer actions/summary, retry requested/rejected/started, usage events, env health — ids/status/reason únicamente.
+- **P12 (`47125ec`)** — Smoke: probes read-only de seguridad del drainer + env health; pasos 34–45 en BETA_SMOKE_QA.
+- **P13 (`5e2e9ce`)** — `DEPLOYMENT_READINESS_CHECKLIST.md`.
+- **P14 (`5df34ea`)** — `BETA_OPERATIONS_PLAYBOOK.md`.
+
+**Límites intactos:** sin scheduling activo de customers, sin billing/checkout, sin scraping ni enrichment, sin cambios de scoring/ranking, demo mode y `/api/process` intactos, reportes ownership-protected.
+
+**Estado:** TypeScript 0 errores tras cada bloque; `node --check` OK.
