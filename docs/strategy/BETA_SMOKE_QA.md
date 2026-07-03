@@ -96,3 +96,20 @@ del run endpoint, dedup de feedback.
 | 31 | Retry de stale | Row processing > 15 min → badge STALLED en admin → "Retry run" → job reprocesado | ☐ |
 | 32 | Retry de failed | Run failed → "Retry run" → job NUEVO creado y procesado | ☐ |
 | 33 | Trigger perdido es recuperable | Matar el processor antes de completar → job queda processing → tras 15 min: stale + retriable | ☐ |
+
+## Production architecture additions (Production Sprint v0 — 2026-07-02)
+
+| # | Paso | Cómo verificar | Pass |
+|---|---|---|---|
+| 34 | Drainer rechaza sin secret | `curl -X POST .../api/internal/monitor-runs/drain` sin headers → 401/403 (producción) | ☐ |
+| 35 | Drainer dry_run | Mismo curl con `x-internal-secret` + `?dry_run=true` → 200 con summary `{scanned, retriggered, superseded, abandoned, skipped_fresh}` sin mutar nada | ☐ |
+| 36 | Drainer bounded | `?limit=100` se clampa a 25 (revisar summary vs filas processing) | ☐ |
+| 37 | Drainer ignora completed/unscoped | Insertar snapshot processing SIN search_id (SQL) → dry_run no lo lista en actions | ☐ |
+| 38 | Drainer recupera stale | Snapshot processing > 15 min con search_id → drain real lo re-dispara; > 6 h → lo marca failed (abandoned) | ☐ |
+| 39 | Ops center carga | `/admin/monitor-runs` → totales + runs recientes + botones Retry/drain | ☐ |
+| 40 | Retry rechaza completed | `POST .../api/admin/monitor-runs/<JOB_COMPLETED>/retry` → 409 | ☐ |
+| 41 | Retry 409 con fresh en vuelo | Retry de stale mientras existe run fresh en la misma serie → 409 | ☐ |
+| 42 | Env health | `GET /api/admin/system-health` con admin token → `env_health.production_safe` + `missing_for_production` (booleans, nunca valores) | ☐ |
+| 43 | Scheduler inactivo | Grep `SCHEDULING_ENABLED` = false; ninguna ruta crea runs sin acción humana (el cron del drainer solo recupera jobs existentes) | ☐ |
+| 44 | Fail-closed sin secrets | Deploy de prueba SIN INTERNAL_RUN_SECRET/ADMIN_SECRET_TOKEN/CRON_SECRET → processor y drainer devuelven 403 en producción | ☐ |
+| 45 | Cron config | `vercel.json` tiene el drain path; con `CRON_SECRET` seteado, Vercel manda `Authorization: Bearer` automáticamente | ☐ |

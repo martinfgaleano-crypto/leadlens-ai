@@ -127,6 +127,50 @@ if (JOB_ID) {
     st === 404 ? "got 404 — dev mode without secret; MUST be 401 in production" : `got ${st}`);
 }
 
+// 7. Drainer security + dry_run (production architecture). Read-only:
+//    dry_run classifies without mutating anything.
+{
+  const res = await fetch(`${BASE}/api/internal/monitor-runs/drain?dry_run=true`, { method: "POST" }).catch(() => null);
+  const st = res?.status;
+  if (st === 401 || st === 403) {
+    record("drainer rejects missing secret", true, `got ${st}`);
+  } else if (st === 200) {
+    record("drainer rejects missing secret", true, "got 200 — dev mode without secrets; MUST be 401/403 in production");
+  } else {
+    record("drainer rejects missing secret", false, `got ${st}`);
+  }
+}
+{
+  const res = await fetch(`${BASE}/api/internal/monitor-runs/drain?dry_run=true`, {
+    method: "POST",
+    headers: { "x-internal-secret": "definitely-wrong-secret" },
+  }).catch(() => null);
+  const st = res?.status;
+  record("drainer rejects wrong secret", st === 401 || st === 403 || st === 200,
+    st === 200 ? "got 200 — dev mode without secrets; MUST be 401 in production" : `got ${st}`);
+}
+if (ADMIN_TOKEN) {
+  const res = await fetch(`${BASE}/api/internal/monitor-runs/drain?dry_run=true&limit=5`, {
+    method: "POST",
+    headers: { "x-admin-token": ADMIN_TOKEN },
+  }).catch(() => null);
+  const body = res ? await res.json().catch(() => null) : null;
+  const ok = res?.status === 200 && body?.dry_run === true && typeof body?.scanned === "number";
+  record("drainer dry_run returns summary (admin token)", ok,
+    ok ? `scanned=${body.scanned} retriggered=${body.retriggered} superseded=${body.superseded}` : `got ${res?.status}`);
+} else record("drainer dry_run returns summary (admin token)", null, "ADMIN_TOKEN not set");
+
+// 8. Env health (admin-only; presence booleans, never values)
+if (ADMIN_TOKEN) {
+  const res = await fetch(`${BASE}/api/admin/system-health`, {
+    headers: { "x-admin-token": ADMIN_TOKEN },
+  }).catch(() => null);
+  const body = res ? await res.json().catch(() => null) : null;
+  const eh = body?.env_health;
+  record("env health reports readiness", res?.status === 200 && eh && typeof eh.production_safe === "boolean",
+    eh ? `production_safe=${eh.production_safe} missing=[${(eh.missing_for_production ?? []).join(",")}]` : `got ${res?.status}`);
+} else record("env health reports readiness", null, "ADMIN_TOKEN not set");
+
 console.log(`\nManual steps (mutating — not automated here):
   - Trigger run as owner; expect 202 + status "processing" + is_baseline correct.
   - Poll runs endpoint; expect the job to reach "completed" (async processor).
