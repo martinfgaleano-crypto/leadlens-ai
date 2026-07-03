@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { runLeadLensPipeline } from "@/lib/pipeline";
 import { completeSnapshot, failSnapshot, getSnapshot } from "@/lib/storage/snapshot-store";
 import { fetchOnboardingDataForSearch, normalizeRunPlan } from "@/lib/monitor/run-jobs";
+import { recordMonitorRunUsage } from "@/lib/usage/usage-events";
 
 // ── POST /api/internal/monitor-runs/[jobId]/process ───────────────────────────
 // Internal processor: executes the pipeline for an EXISTING processing
@@ -112,6 +113,10 @@ export async function POST(
     const report = await runLeadLensPipeline({ onboardingData, plan, jobId, searchId });
     await completeSnapshot(jobId, plan, report, searchId);
     console.log(`[internal/process] completed job=${jobId} hot=${report.hot_count} total=${report.total_leads}`);
+    // Soft usage tracking — no deduction (see lib/usage/usage-events.ts).
+    // initiated_by is unknown at processor level in v0; recorded as "customer"
+    // until jobs carry an initiator field.
+    recordMonitorRunUsage({ job_id: jobId, search_id: searchId, plan, initiated_by: "customer", outcome: "completed" });
     return NextResponse.json({
       job_id: jobId,
       search_id: searchId,
@@ -123,6 +128,7 @@ export async function POST(
     const reason = err instanceof Error ? err.message.slice(0, 200) : "Pipeline error";
     console.error(`[internal/process] failed job=${jobId}:`, reason);
     await failSnapshot(jobId, plan, reason, searchId).catch(() => {});
+    recordMonitorRunUsage({ job_id: jobId, search_id: searchId, plan, initiated_by: "customer", outcome: "failed" });
     return NextResponse.json({ job_id: jobId, search_id: searchId, status: "failed", error: reason }, { status: 500 });
   }
 }
