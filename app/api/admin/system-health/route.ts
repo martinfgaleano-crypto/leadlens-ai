@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/require-admin";
+import { getEnvHealth } from "@/lib/config/env-health";
 
 async function db() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) return null;
@@ -39,6 +40,11 @@ export async function GET(req: NextRequest) {
   results.resend_key_set         = resendKeySet;
   results.resend_from_set        = resendFromSet;
   results.cron_secret_set        = cronSecretSet;
+
+  // Monitor infrastructure env health (presence + derived readiness — never
+  // secret values). See lib/config/env-health.ts and the deployment checklist.
+  results.env_health = getEnvHealth();
+  console.log("[env-health] checked — production_safe:", (results.env_health as { production_safe: boolean }).production_safe);
 
   if (!client) {
     results.supabase_reachable = false;
