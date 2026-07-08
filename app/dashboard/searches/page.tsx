@@ -399,9 +399,15 @@ export default function SearchesPage() {
         searches.length === 0 ? (
           <div style={S.section}>
             <div style={S.emptyState}>
-              <div style={S.emptyIcon}>🔍</div>
-              <div style={S.emptyTitle}>No searches yet</div>
-              <div style={S.emptySub}>Submit your first account search. Account opportunities are generated automatically — no waiting on manual processing.</div>
+              <div style={S.emptyIcon}>📡</div>
+              <div style={S.emptyTitle}>No monitors yet</div>
+              <div style={S.emptySub}>
+                A monitor tracks one target market for you: it finds the companies worth
+                contacting, explains why they fit, and shows what changed each time it runs.
+                Create your first search to get started — your first report becomes the
+                baseline, and every run after that highlights what&apos;s new.
+              </div>
+              <button onClick={openForm} style={S.linkBtn as React.CSSProperties}>+ Create your first search</button>
             </div>
           </div>
         ) : (
