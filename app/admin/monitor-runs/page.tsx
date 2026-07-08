@@ -71,6 +71,7 @@ export default function MonitorOpsPage() {
   const [drainResult, setDrainResult] = useState<DrainSummary | null>(null);
   const [retryingJob, setRetryingJob] = useState<string | null>(null);
   const [actionMsg, setActionMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [envWarnings, setEnvWarnings] = useState<string[]>([]);
 
   const load = useCallback(async () => {
     const res = await adminFetch("/api/admin/monitor-runs/overview");
@@ -86,6 +87,22 @@ export default function MonitorOpsPage() {
   }, []);
 
   useEffect(() => { load(); }, [load]);
+
+  // Env health — surface missing secrets that break processing/recovery
+  useEffect(() => {
+    (async () => {
+      const res = await adminFetch("/api/admin/system-health");
+      if (!res.ok) return;
+      const d = await res.json().catch(() => null);
+      const eh = d?.env_health;
+      if (!eh) return;
+      const warnings: string[] = [];
+      if (!eh.internal_run_secret_set) warnings.push("INTERNAL_RUN_SECRET is not set — the processor relies on the ADMIN_SECRET_TOKEN fallback.");
+      if (!eh.cron_secret_set) warnings.push("CRON_SECRET is not set — the daily drainer cron cannot authenticate; recovery is manual-only.");
+      if (!eh.admin_secret_set) warnings.push("ADMIN_SECRET_TOKEN is not set — admin routes are open in dev and dead in production.");
+      setEnvWarnings(warnings);
+    })();
+  }, []);
 
   // Refresh while anything is processing
   useEffect(() => {
@@ -146,6 +163,13 @@ export default function MonitorOpsPage() {
           </button>
         </div>
       </div>
+
+      {envWarnings.length > 0 && (
+        <div style={{ marginBottom: "1rem", padding: "0.75rem 1rem", background: "#fef3c7", border: "1px solid #fde68a", borderRadius: "0.5rem", color: "#92400e", fontSize: "0.8rem", lineHeight: 1.6 }}>
+          <strong>Environment warnings:</strong>
+          {envWarnings.map(w => <div key={w}>⚠ {w}</div>)}
+        </div>
+      )}
 
       {error && (
         <div style={{ marginBottom: "1rem", padding: "0.75rem 1rem", background: "#fee2e2", border: "1px solid #fca5a5", borderRadius: "0.5rem", color: "#dc2626", fontSize: "0.85rem" }}>{error}</div>
