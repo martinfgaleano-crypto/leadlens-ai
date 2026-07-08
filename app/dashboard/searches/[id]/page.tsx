@@ -419,6 +419,39 @@ export default function SearchDetailPage() {
     await refreshMonitor();
   }
 
+  // ─── Setup completion (self-serve) ────────────────────────────────────────
+
+  const [setupForm, setSetupForm] = useState({ company_name: "", what_you_sell: "", ideal_customer: "" });
+  const [setupSaving, setSetupSaving] = useState(false);
+  const [setupMsg, setSetupMsg] = useState<{ ok: boolean; text: string } | null>(null);
+
+  async function handleCompleteSetup(e: React.FormEvent) {
+    e.preventDefault();
+    const supabase = supabaseRef.current;
+    if (!supabase || setupSaving) return;
+    setSetupSaving(true);
+    setSetupMsg(null);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) { setSetupMsg({ ok: false, text: "Please sign in again." }); setSetupSaving(false); return; }
+      const res = await fetch(`/api/monitor/${searchId}/setup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
+        body: JSON.stringify(setupForm),
+      });
+      const d = await res.json().catch(() => ({}));
+      if (res.ok) {
+        setSetupMsg({ ok: true, text: d.message ?? "Setup complete." });
+        await refreshMonitor();
+      } else {
+        setSetupMsg({ ok: false, text: d.error ?? "Setup could not be saved." });
+      }
+    } catch {
+      setSetupMsg({ ok: false, text: "Setup could not be saved. Please try again." });
+    }
+    setSetupSaving(false);
+  }
+
   // Poll run history while a run is processing so completion appears without
   // a manual refresh (async runs return 202 immediately).
   useEffect(() => {
@@ -589,6 +622,36 @@ export default function SearchDetailPage() {
             </div>
           </div>
 
+          {/* Customer journey progress */}
+          {(() => {
+            const completedRuns = monitor.runs.filter(r => r.status === "completed").length;
+            const steps = [
+              { label: "Define target", done: monitor.has_onboarding_link !== false },
+              { label: "Run monitor", done: monitor.total_runs > 0 },
+              { label: "Review report", done: completedRuns > 0 },
+              { label: "Give feedback", done: false },
+              { label: "Improve next run", done: completedRuns > 1 },
+            ];
+            return (
+              <div style={{ margin: "0.85rem 1.25rem 0", display: "flex", flexWrap: "wrap", gap: "0.4rem", alignItems: "center" }}>
+                {steps.map((st, i) => (
+                  <span key={st.label} style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem" }}>
+                    <span style={{
+                      display: "inline-flex", alignItems: "center", gap: "0.3rem",
+                      background: st.done ? "#f0fdf4" : "#f8fafc",
+                      border: `1px solid ${st.done ? "#bbf7d0" : "#e2e8f0"}`,
+                      color: st.done ? "#15803d" : "#94a3b8",
+                      borderRadius: 999, padding: "0.2rem 0.6rem", fontSize: "0.7rem", fontWeight: 600,
+                    }}>
+                      {st.done ? "✓" : i + 1} {st.label}
+                    </span>
+                    {i < steps.length - 1 && <span style={{ color: "#cbd5e1", fontSize: "0.7rem" }}>→</span>}
+                  </span>
+                ))}
+              </div>
+            );
+          })()}
+
           {runMsg && (
             <div style={{ margin: "0.75rem 1.25rem 0", padding: "0.5rem 0.75rem", background: runMsg.ok ? "#dcfce7" : "#fee2e2", border: `1px solid ${runMsg.ok ? "#86efac" : "#fca5a5"}`, borderRadius: "0.4rem", fontSize: "0.78rem", color: runMsg.ok ? "#15803d" : "#dc2626" }}>
               {runMsg.text}
@@ -596,9 +659,50 @@ export default function SearchDetailPage() {
           )}
 
           {monitor.has_onboarding_link === false && (
-            <div style={{ margin: "0.75rem 1.25rem 0", padding: "0.5rem 0.75rem", background: "#fef3c7", border: "1px solid #fde68a", borderRadius: "0.4rem", fontSize: "0.78rem", color: "#92400e" }}>
-              Monitor setup is incomplete: this search was created without business
-              context, so opportunity reports can&apos;t run yet. Contact us to complete setup.
+            <div style={{ margin: "0.75rem 1.25rem 0", padding: "0.85rem 1rem", background: "#fffbeb", border: "1px solid #fde68a", borderRadius: "0.5rem" }}>
+              <div style={{ fontSize: "0.82rem", fontWeight: 700, color: "#92400e", marginBottom: "0.25rem" }}>Complete your monitor setup</div>
+              <div style={{ fontSize: "0.78rem", color: "#92400e", marginBottom: "0.75rem", lineHeight: 1.5 }}>
+                To find the right opportunities, this monitor needs a little context
+                about your business. Two minutes — then you can run your first report.
+              </div>
+              <form onSubmit={handleCompleteSetup}>
+                <div style={{ display: "grid", gap: "0.6rem", marginBottom: "0.75rem" }}>
+                  <input
+                    value={setupForm.company_name}
+                    onChange={e => setSetupForm(f => ({ ...f, company_name: e.target.value }))}
+                    placeholder="Your company name *"
+                    required
+                    style={{ width: "100%", padding: "0.55rem 0.7rem", border: "1px solid #e2e8f0", borderRadius: "0.4rem", fontSize: "0.82rem", fontFamily: "inherit", boxSizing: "border-box", outline: "none", color: "#0f172a" }}
+                  />
+                  <textarea
+                    value={setupForm.what_you_sell}
+                    onChange={e => setSetupForm(f => ({ ...f, what_you_sell: e.target.value }))}
+                    placeholder="What do you sell? (product/service, in a sentence or two) *"
+                    required
+                    rows={2}
+                    style={{ width: "100%", padding: "0.55rem 0.7rem", border: "1px solid #e2e8f0", borderRadius: "0.4rem", fontSize: "0.82rem", fontFamily: "inherit", boxSizing: "border-box", outline: "none", resize: "vertical", color: "#0f172a" }}
+                  />
+                  <textarea
+                    value={setupForm.ideal_customer}
+                    onChange={e => setSetupForm(f => ({ ...f, ideal_customer: e.target.value }))}
+                    placeholder="Who is your ideal customer? (optional but recommended)"
+                    rows={2}
+                    style={{ width: "100%", padding: "0.55rem 0.7rem", border: "1px solid #e2e8f0", borderRadius: "0.4rem", fontSize: "0.82rem", fontFamily: "inherit", boxSizing: "border-box", outline: "none", resize: "vertical", color: "#0f172a" }}
+                  />
+                </div>
+                {setupMsg && (
+                  <div style={{ marginBottom: "0.6rem", padding: "0.45rem 0.7rem", background: setupMsg.ok ? "#dcfce7" : "#fee2e2", borderRadius: "0.4rem", fontSize: "0.75rem", color: setupMsg.ok ? "#15803d" : "#dc2626" }}>
+                    {setupMsg.text}
+                  </div>
+                )}
+                <button
+                  type="submit"
+                  disabled={setupSaving}
+                  style={{ background: setupSaving ? "#e2e8f0" : "#0f172a", color: setupSaving ? "#94a3b8" : "#fff", border: "none", borderRadius: "0.45rem", padding: "0.5rem 1.1rem", fontWeight: 700, fontSize: "0.78rem", cursor: setupSaving ? "not-allowed" : "pointer", fontFamily: "inherit" }}
+                >
+                  {setupSaving ? "Saving…" : "Complete setup"}
+                </button>
+              </form>
             </div>
           )}
 
