@@ -120,6 +120,15 @@ function mapContact(c: ApolloContact): ApolloLeadResult {
 export async function searchPeople(
   params: ApolloSearchParams
 ): Promise<ApolloSearchResult> {
+  // Compliance gate: Apollo is licensed-only for customer deliverables.
+  // API key presence alone never activates it — see provider-registry.ts and
+  // LEADLENS_DATA_SOURCING_COMPLIANCE.md.
+  const { apolloCustomerFacingBlockReason } = await import("@/lib/providers/provider-registry");
+  const blockReason = apolloCustomerFacingBlockReason();
+  if (blockReason) {
+    throw new Error(`Apollo disabled: ${blockReason}`);
+  }
+
   const apiKey = process.env.APOLLO_API_KEY;
   if (!apiKey) {
     throw new Error(
