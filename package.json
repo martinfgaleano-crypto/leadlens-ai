@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "smoke:selfserve": "node scripts/self-serve-smoke.mjs"
+    "smoke:selfserve": "node scripts/self-serve-smoke.mjs",
+    "smoke:vault": "node scripts/smoke-vault-foundation.mjs"
   },
   "dependencies": {
     "next": "14.2.5",
