@@ -10,6 +10,7 @@ const COPY = {
     announcement: "B2B Opportunity Snapshots now available — commercial intelligence for your first real outreach.",
     announcementCTA: "Get your Snapshot →",
     navPricing: "Pricing",
+    navSignIn: "Sign in",
     navCTA: "See pricing →",
     heroBadge: "Beta open — B2B commercial intelligence",
     heroH1pre: "Find the B2B accounts",
@@ -277,6 +278,7 @@ const COPY = {
     announcement: "Opportunity Snapshots disponibles — inteligencia comercial B2B para tu primer outreach real.",
     announcementCTA: "Obtener mi Snapshot →",
     navPricing: "Precios",
+    navSignIn: "Iniciar sesión",
     navCTA: "Ver precios →",
     heroBadge: "Beta abierta — inteligencia comercial B2B",
     heroH1pre: "Encuentra las cuentas B2B",
@@ -544,6 +546,7 @@ const COPY = {
     announcement: "Opportunity Snapshots disponíveis — inteligência comercial B2B para seu primeiro outreach real.",
     announcementCTA: "Obter meu Snapshot →",
     navPricing: "Preços",
+    navSignIn: "Entrar",
     navCTA: "Ver preços →",
     heroBadge: "Beta aberta — inteligência comercial B2B",
     heroH1pre: "Encontre as contas B2B",
@@ -811,6 +814,7 @@ const COPY = {
     announcement: "Opportunity Snapshots提供開始 — B2Bコマーシャルインテリジェンスで最初の本格的アウトリーチを。",
     announcementCTA: "Snapshotを取得 →",
     navPricing: "料金",
+    navSignIn: "ログイン",
     navCTA: "料金を見る →",
     heroBadge: "ベータ版公開中 — B2Bコマーシャルインテリジェンス",
     heroH1pre: "今週コンタクトする価値のある",
@@ -1324,6 +1328,9 @@ export default function DemoPipelinePage() {
             <button className="ll-nav-pricing" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" })} style={navLinkStyle}>
               {copy.navPricing}
             </button>
+            <a href="/login" style={{ ...navLinkStyle, textDecoration: "none" }}>
+              {copy.navSignIn}
+            </a>
             <LangSelect />
             <Btn onClick={() => goToForm("standard")}>{copy.navCTA}</Btn>
           </div>
