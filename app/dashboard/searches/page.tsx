@@ -407,7 +407,7 @@ export default function SearchesPage() {
                 Create your first search to get started — your first report becomes the
                 baseline, and every run after that highlights what&apos;s new.
               </div>
-              <button onClick={openForm} style={S.linkBtn as React.CSSProperties}>+ Create your first search</button>
+              <button onClick={openForm} style={{ ...(S.linkBtn as React.CSSProperties), border: "none", cursor: "pointer", fontFamily: "inherit" }}>+ Create your first search</button>
             </div>
           </div>
         ) : (
