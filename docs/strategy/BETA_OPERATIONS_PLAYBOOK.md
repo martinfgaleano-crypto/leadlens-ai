@@ -64,3 +64,14 @@ alguien del equipo, confundirá al cliente.
 - Upgrades de plan/créditos (Supabase admin o Lemon orders).
 - Linking de onboarding para searches creadas por dashboard.
 - Recovery más rápido que el cron diario (botones de Monitor Ops).
+
+## 9. Vault Foundation (intake manual)
+
+- Toda cuenta/señal descubierta de fuente pública permitida entra por
+  `/admin/vault-foundation/candidates/new` — source URL + type obligatorios.
+- Nada sale de pending_review hacia un cliente sin revisión humana.
+- Antes de usar cualquier contacto: verificar `usage_rights_status` y supresión.
+- Apollo: SOLO prospección interna de LeadLens salvo licensing
+  (ver LEADLENS_DATA_SOURCING_COMPLIANCE.md). El flag
+  `APOLLO_LICENSED_PROVIDER_ENABLED` nunca se activa sin acuerdo firmado.
+- Chequeo previo a beta: `/admin/beta-readiness` en READY.

@@ -132,3 +132,19 @@ Recorrido de cliente real, en orden, en browser:
 | 55 | Mobile | Landing, dashboard, monitor detail y report legibles en ~390px; sin overflow horizontal grave | ☐ |
 
 (Pasos de auth de reporte, dedup de feedback, admin recovery y env health ya cubiertos en 8–45.)
+
+## Vault Foundation + Beta Command additions (2026-07-02)
+
+| # | Paso | Cómo verificar | Pass |
+|---|---|---|---|
+| 56 | Beta readiness panel | `/admin/beta-readiness` carga; verdict banner + critical config live + checklists manuales persisten al recargar | ☐ |
+| 57 | Vault empty state | `/admin/vault-foundation` carga con Supabase vacío/sin migración sin crashear | ☐ |
+| 58 | Crear company manual | Companies → + Add manually → aparece en la lista | ☐ |
+| 59 | Crear source manual | Sources → source_url y source_type obligatorios; sin URL → error claro | ☐ |
+| 60 | Crear signal manual | Signals → signal_type obligatorio; queda pending_review | ☐ |
+| 61 | Intake de candidato | /admin/vault-foundation/candidates/new → bundle crea source+company(+contact)(+signal); segunda vez con mismo domain → "matched by domain" | ☐ |
+| 62 | Suppression | Agregar entrada email/domain con reason; aparece en la lista | ☐ |
+| 63 | Sin ruta pública de Vault | `curl /api/admin/vault-foundation/companies` sin x-admin-token → 401/403 | ☐ |
+| 64 | Apollo deshabilitado | Con APOLLO_API_KEY seteado pero sin licensed flag: run del flow Apollo falla con mensaje de licensing (no silencioso) | ☐ |
+| 65 | Setup completion | Search creada desde dashboard → form "Complete your monitor setup" → guardar → botón Run se habilita | ☐ |
+| 66 | smoke:vault | `npm run smoke:vault` → 11/11 PASS | ☐ |

@@ -61,3 +61,11 @@ Verificación rápida post-deploy: `GET /api/admin/system-health` con admin toke
 - `[run-jobs] processor trigger failed` — triggers perdidos (esperable ocasional; el drainer los cubre).
 - `[retry] retry_rejected` frecuente — admin luchando contra races.
 - 401/403 inesperados en `/api/report` — problemas de sesión/token de clientes reales.
+
+## Vault Foundation (actualización 2026-07-02)
+
+- Migración **029_vault_foundation.sql** se aplica DESPUÉS de 001–028, en orden.
+- Env nuevo: `APOLLO_LICENSED_PROVIDER_ENABLED=false` (default). Nunca true sin
+  acuerdo de licensing — ver LEADLENS_DATA_SOURCING_COMPLIANCE.md.
+- `npm run smoke:vault` debe pasar 11/11 antes de deploy.
+- `/admin/beta-readiness` debe mostrar READY antes de dar acceso a un beta customer.
