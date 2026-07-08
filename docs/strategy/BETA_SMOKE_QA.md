@@ -113,3 +113,22 @@ del run endpoint, dedup de feedback.
 | 43 | Scheduler inactivo | Grep `SCHEDULING_ENABLED` = false; ninguna ruta crea runs sin acción humana (el cron del drainer solo recupera jobs existentes) | ☐ |
 | 44 | Fail-closed sin secrets | Deploy de prueba SIN INTERNAL_RUN_SECRET/ADMIN_SECRET_TOKEN/CRON_SECRET → processor y drainer devuelven 403 en producción | ☐ |
 | 45 | Cron config | `vercel.json` tiene el drain path; con `CRON_SECRET` seteado, Vercel manda `Authorization: Bearer` automáticamente | ☐ |
+
+## Customer experience additions (Customer-Ready Sprint v0 — 2026-07-02)
+
+Recorrido de cliente real, en orden, en browser:
+
+| # | Paso | Cómo verificar | Pass |
+|---|---|---|---|
+| 46 | Website explica el producto | Landing en 10 segundos: qué es, para quién, promesa central, sin lenguaje de contactos. Link "Sign in" visible en nav | ☐ |
+| 47 | Signup/login | Crear cuenta + login; subtítulos hablan de opportunity monitor, no lead generation | ☐ |
+| 48 | Dashboard vacío | Usuario nuevo: empty states explican qué es un monitor y qué hacer (crear ICP → crear search) | ☐ |
+| 49 | Setup states | Search sin business context muestra "Setup incomplete" (lista + detail + botón deshabilitado) con explicación en lenguaje de cliente | ☐ |
+| 50 | Run → confirmación inmediata | Click "Run monitor" → mensaje de confirmación en segundos, botón pasa a "Run in progress" | ☐ |
+| 51 | Processing visible | Badge "Processing", polling actualiza solo, sin refresh manual | ☐ |
+| 52 | Report aparece | Al completar: link "View report" en el run + "Open latest report" en header | ☐ |
+| 53 | Feedback UX | Chips claros, línea "Your feedback helps future reports improve", estados saved/already recorded/error | ☐ |
+| 54 | Stalled comprensible | Run stalled: "Taking longer than expected — you can start a new run" (nunca jerga interna) | ☐ |
+| 55 | Mobile | Landing, dashboard, monitor detail y report legibles en ~390px; sin overflow horizontal grave | ☐ |
+
+(Pasos de auth de reporte, dedup de feedback, admin recovery y env health ya cubiertos en 8–45.)

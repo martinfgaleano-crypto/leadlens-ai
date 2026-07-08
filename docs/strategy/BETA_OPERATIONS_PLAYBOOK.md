@@ -50,6 +50,13 @@ Checklist corto (el completo está en QUALITY_STANDARD.md):
 
 Nunca reenviar al cliente el tooling admin (la tabla de leads admin sí tiene contactos del flow Apollo legacy — es interno). Todo lo customer-facing es account-level; si algo personal aparece en una superficie de cliente, es un bug bloqueante.
 
+## 7b. Recorrido de experiencia pre-beta
+
+Antes de dar acceso a un cliente, hacer una vez el recorrido completo de cliente
+(pasos 46–55 de BETA_SMOKE_QA.md): landing → signup → dashboard vacío → setup →
+run → processing → report → feedback → segunda run. Si algún paso confunde a
+alguien del equipo, confundirá al cliente.
+
 ## 8. Lo que sigue siendo manual
 
 - Disparar runs (sin scheduling mensual — copy honesto en el dashboard).
