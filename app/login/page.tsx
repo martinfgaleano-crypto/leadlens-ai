@@ -79,7 +79,7 @@ function LoginContent() {
         <div style={{ textAlign: "center", marginBottom: "2rem" }}>
           <div style={S.logoBox}>L</div>
           <h1 style={S.h1}>Sign in to LeadLens</h1>
-          <p style={S.sub}>Your B2B lead generation dashboard</p>
+          <p style={S.sub}>Your B2B opportunity monitor</p>
         </div>
 
         {/* Verification success banner */}

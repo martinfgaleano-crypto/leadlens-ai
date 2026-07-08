@@ -121,7 +121,7 @@ export default function SignupPage() {
         <div style={{ textAlign: "center", marginBottom: "2rem" }}>
           <div style={S.logoBox}>L</div>
           <h1 style={S.h1}>Create your account</h1>
-          <p style={S.sub}>Start generating qualified B2B leads</p>
+          <p style={S.sub}>Find the B2B accounts worth contacting — and know exactly why</p>
         </div>
 
         <form onSubmit={handleSubmit}>
