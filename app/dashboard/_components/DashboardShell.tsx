@@ -90,7 +90,7 @@ export default function DashboardShell({ email, onLogout, children }: Props) {
 
   if (isMobile) {
     return (
-      <div style={pageBackground}>
+      <div style={pageBackground} data-workspace-version="premium-workspace-v0">
         <header style={{ position: "sticky", top: 0, zIndex: 40, background: "rgba(255,255,255,0.96)", backdropFilter: "blur(10px)", borderBottom: "1px solid #e8f4fd" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0.75rem 1rem" }}>
             {brand}
@@ -134,7 +134,7 @@ export default function DashboardShell({ email, onLogout, children }: Props) {
   }
 
   return (
-    <div style={pageBackground}>
+    <div style={pageBackground} data-workspace-version="premium-workspace-v0">
       <header style={{ position: "sticky", top: 0, zIndex: 40, background: "rgba(255,255,255,0.96)", backdropFilter: "blur(10px)", borderBottom: "1px solid #e8f4fd", boxShadow: "0 1px 0 #e8f4fd" }}>
         <div style={{ maxWidth: "72rem", margin: "0 auto", padding: "0.8rem 1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1.5rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "2.25rem", minWidth: 0 }}>
