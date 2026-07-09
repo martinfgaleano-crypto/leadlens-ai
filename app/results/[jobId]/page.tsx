@@ -183,43 +183,70 @@ export default function ResultsPage() {
   const evidenceSummary = buildEvidenceSummary(report);
   const freshnessSummary = buildFreshnessSummary(report);
 
+  // Derived next action — counts existing recommended_action values, invents nothing.
+  const contactNow = (report.ranked_opportunities ?? []).filter(o => o.recommended_action === "send_outreach_now").length;
+  const validateFirst = (report.ranked_opportunities ?? []).filter(o => o.recommended_action === "validate_source_first").length;
+  const nextAction = contactNow > 0
+    ? `Contact ${contactNow} account${contactNow === 1 ? "" : "s"} this week`
+    : validateFirst > 0
+      ? `Validate signals on ${validateFirst} account${validateFirst === 1 ? "" : "s"}`
+      : report.hot_count + report.warm_count > 0
+        ? "Review your priority accounts below"
+        : "Monitor — no immediate outreach recommended";
+
   return (
     <main className="min-h-screen bg-gray-50 py-12 px-6">
       <div className="max-w-5xl mx-auto">
-        <div className="flex justify-between items-start mb-8">
-          <div>
-            <h1 className="text-3xl font-bold mb-1">Account Opportunity Report</h1>
-            <p className="text-gray-500">
-              {report.total_leads} accounts analyzed · {PLANS[report.plan] ?? report.plan} · {new Date(report.created_at).toLocaleString()}
-            </p>
-            <span className={`inline-block mt-2 text-xs font-semibold px-2.5 py-1 rounded-full ${isComparisonRun ? "bg-green-50 text-green-700" : "bg-indigo-50 text-indigo-700"}`}>
-              {isComparisonRun ? "Compared with your previous report" : "Baseline run — first report in this monitor"}
-            </span>
-          </div>
-          <div className="flex gap-3">
-            <button onClick={() => download("csv")} className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50">
-              ⬇ CSV
-            </button>
-            <button onClick={() => download("md")} className="bg-sky-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-sky-700">
-              ⬇ Markdown
-            </button>
+        {/* Report header — the deliverable's cover */}
+        <div className="rounded-2xl mb-8 p-6 md:p-8 text-white shadow-lg" style={{ background: "linear-gradient(135deg, #0f172a 0%, #1e3a5f 60%, #0c4a6e 100%)" }}>
+          <div className="flex flex-wrap justify-between items-start gap-4">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
+                <span className="text-[0.65rem] font-bold tracking-widest uppercase text-sky-300">LeadLens · Account Intelligence</span>
+                <span className="text-[0.65rem] font-bold px-2 py-0.5 rounded-full bg-green-400/20 text-green-300 uppercase tracking-wide">Report ready</span>
+              </div>
+              <h1 className="text-2xl md:text-3xl font-bold mb-1">Account Opportunity Report</h1>
+              <p className="text-sky-200/80 text-sm">
+                {report.total_leads} accounts analyzed · {PLANS[report.plan] ?? report.plan} · {new Date(report.created_at).toLocaleString()}
+              </p>
+              <span className={`inline-block mt-3 text-xs font-semibold px-2.5 py-1 rounded-full ${isComparisonRun ? "bg-green-400/20 text-green-300" : "bg-indigo-400/20 text-indigo-200"}`}>
+                {isComparisonRun ? "↔ Compared with your previous report" : "◆ Baseline run — first report in this monitor"}
+              </span>
+            </div>
+            <div className="flex gap-3 flex-shrink-0">
+              <button onClick={() => download("csv")} className="bg-white/10 border border-white/20 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-white/20">
+                ⬇ CSV
+              </button>
+              <button onClick={() => download("md")} className="bg-sky-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-sky-400">
+                ⬇ Markdown
+              </button>
+            </div>
           </div>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
           {[
-            { label: "Accounts",  value: report.total_leads,  color: "bg-white" },
-            { label: "HOT 🔥",    value: report.hot_count,    color: "bg-red-50" },
-            { label: "WARM 🟡",   value: report.warm_count,   color: "bg-yellow-50" },
-            { label: "COLD 🔵",   value: report.cold_count,   color: "bg-blue-50" },
-            { label: "Avg fit",   value: `${report.avg_score}/10`, color: "bg-green-50" },
+            { label: "Accounts",  value: report.total_leads,  accent: "border-gray-200" },
+            { label: "Hot", value: report.hot_count, accent: "border-red-200" },
+            { label: "Warm", value: report.warm_count, accent: "border-amber-200" },
+            { label: "Cold", value: report.cold_count, accent: "border-blue-200" },
+            { label: "Avg fit", value: `${report.avg_score}/10`, accent: "border-green-200" },
           ].map(s => (
-            <div key={s.label} className={`${s.color} border border-gray-100 rounded-xl p-4 text-center`}>
-              <div className="text-2xl font-bold">{s.value}</div>
-              <div className="text-gray-500 text-sm">{s.label}</div>
+            <div key={s.label} className={`bg-white border ${s.accent} rounded-xl p-4 text-center shadow-sm`}>
+              <div className="text-2xl font-bold text-gray-900">{s.value}</div>
+              <div className="text-gray-500 text-xs font-semibold uppercase tracking-wide mt-0.5">{s.label}</div>
             </div>
           ))}
+        </div>
+
+        {/* Recommended next action — derived from existing actions only */}
+        <div className="bg-sky-50 border border-sky-200 rounded-xl px-5 py-3.5 mb-6 flex items-center gap-3">
+          <span className="text-lg">🎯</span>
+          <div>
+            <div className="text-[0.65rem] font-bold uppercase tracking-widest text-sky-600">Recommended next action</div>
+            <div className="text-sm font-semibold text-sky-900">{nextAction}</div>
+          </div>
         </div>
 
         {/* Executive summary */}
@@ -415,6 +442,12 @@ function AccountCard({
     COLD: "bg-blue-100 text-blue-700",
     DISCARD: "bg-gray-100 text-gray-500",
   }[cat] ?? "bg-gray-100 text-gray-500";
+  const catAccent = {
+    HOT: "border-l-red-400",
+    WARM: "border-l-amber-400",
+    COLD: "border-l-blue-300",
+    DISCARD: "border-l-gray-200",
+  }[cat] ?? "border-l-gray-200";
 
   const action = ranking?.recommended_action ?? e.recommended_action;
   const actionLabel = action ? (ACTION_LABELS[action] ?? action.replace(/_/g, " ")) : null;
@@ -434,7 +467,7 @@ function AccountCard({
   );
 
   return (
-    <div className="bg-white border border-gray-100 rounded-xl overflow-hidden">
+    <div className={`bg-white border border-gray-100 border-l-4 ${catAccent} rounded-xl overflow-hidden shadow-sm hover:shadow transition-shadow`}>
       <button onClick={onToggle} className="w-full flex items-center justify-between p-5 text-left hover:bg-gray-50">
         <div className="flex items-center gap-4 min-w-0">
           <span className="text-gray-300 font-mono text-sm w-8 flex-shrink-0">
