@@ -350,6 +350,26 @@ export default function DashboardPage() {
                 </div>
               ))}
             </div>
+            {(() => {
+              const suggestion = setupIncomplete.length > 0
+                ? { icon: "⚙️", text: `Complete setup on ${setupIncomplete.length} monitor${setupIncomplete.length === 1 ? "" : "s"} to unlock reports.`, href: "/dashboard/searches" }
+                : processing.length > 0
+                  ? { icon: "⏳", text: "A report is being generated — it will appear here when ready.", href: "/dashboard/searches" }
+                  : latestReport?.latest_report_job_id
+                    ? { icon: "📊", text: "Your latest report is ready to review.", href: `/results/${latestReport.latest_report_job_id}` }
+                    : { icon: "🚀", text: "Run your first monitor to get your first opportunity report.", href: "/dashboard/searches" };
+              return (
+                <Link href={suggestion.href} style={{ textDecoration: "none" }}>
+                  <div style={{ margin: "0 1.25rem 0.85rem", padding: "0.65rem 0.9rem", background: "#f0f9ff", border: "1px solid #bae6fd", borderRadius: "0.55rem", display: "flex", alignItems: "center", gap: "0.6rem" }}>
+                    <span style={{ fontSize: "1rem" }}>{suggestion.icon}</span>
+                    <div>
+                      <div style={{ fontSize: "0.62rem", fontWeight: 700, color: "#0284c7", textTransform: "uppercase", letterSpacing: "0.08em" }}>Next suggested action</div>
+                      <div style={{ fontSize: "0.82rem", fontWeight: 600, color: "#075985" }}>{suggestion.text}</div>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })()}
             <div style={{ padding: "0 1.25rem 1rem", fontSize: "0.75rem", color: "#94a3b8" }}>
               Monthly cadence is manual for now — open a monitor and use “Run monitor” when you want a fresh report. Automatic scheduling is not enabled yet.
             </div>
