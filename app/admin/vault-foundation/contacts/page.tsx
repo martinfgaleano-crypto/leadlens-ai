@@ -13,6 +13,7 @@ export default function Page() {
         { key: "review_status", label: "Review" }, { key: "vault_status", label: "Status" },
         { key: "suppression_status", label: "Suppression" }, { key: "region", label: "Region" },
       ]}
+      emptyHint="Contacts live here only when sourcing is permitted and usage rights are tracked. Most contacts arrive through candidate intake alongside their company — never through automatic discovery."
       createFields={[
         { key: "full_name", label: "Full name" },
         { key: "title", label: "Title" },

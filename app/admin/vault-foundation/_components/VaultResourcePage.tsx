@@ -17,13 +17,15 @@ export interface VaultField {
 }
 
 export default function VaultResourcePage({
-  title, description, endpoint, columns, createFields,
+  title, description, endpoint, columns, createFields, emptyHint,
 }: {
   title: string;
   description: string;
   endpoint: string; // /api/admin/vault-foundation/<resource>
   columns: { key: string; label: string }[];
   createFields: VaultField[];
+  /** what this table stores + what to add first (empty-state guidance) */
+  emptyHint?: string;
 }) {
   const [items, setItems] = useState<Record<string, unknown>[]>([]);
   const [loading, setLoading] = useState(true);
@@ -142,8 +144,15 @@ export default function VaultResourcePage({
         ) : error ? (
           <div style={{ padding: "1.25rem", color: "#dc2626", fontSize: "0.85rem" }}>{error}</div>
         ) : items.length === 0 ? (
-          <div style={{ padding: "2rem", color: "#94a3b8", fontSize: "0.85rem", textAlign: "center" }}>
-            Nothing here yet. If Supabase is configured and migration 029 is applied, use “+ Add manually”.
+          <div style={{ padding: "2.5rem 2rem", textAlign: "center" }}>
+            <div style={{ fontSize: "1.5rem", marginBottom: "0.6rem" }}>🗄️</div>
+            <div style={{ fontWeight: 700, fontSize: "0.9rem", color: "#0f172a", marginBottom: "0.4rem" }}>Nothing here yet</div>
+            <div style={{ color: "#64748b", fontSize: "0.82rem", maxWidth: 460, margin: "0 auto 1rem", lineHeight: 1.6 }}>
+              {emptyHint ?? "If Supabase is configured and migration 029 is applied, use “+ Add manually”."}
+            </div>
+            <Link href="/admin/vault-foundation/candidates/new" style={{ display: "inline-block", background: "#0f172a", color: "#fff", borderRadius: "0.5rem", padding: "0.5rem 1.1rem", fontWeight: 700, fontSize: "0.78rem", textDecoration: "none" }}>
+              + Add via candidate intake
+            </Link>
           </div>
         ) : (
           <div style={{ overflowX: "auto" }}>

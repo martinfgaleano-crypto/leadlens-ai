@@ -12,6 +12,7 @@ export default function Page() {
         { key: "reason", label: "Reason" }, { key: "source", label: "Source" },
         { key: "created_at", label: "Created" },
       ]}
+      emptyHint="Opt-outs and do-not-use entries. Nothing in this list will ever be used, regardless of what the Vault contains. Add an email, domain, or company with the reason."
       createFields={[
         { key: "suppression_type", label: "Type", required: true, options: ["email", "domain", "company"] },
         { key: "value", label: "Value", required: true, placeholder: "person@acme.com or acme.com" },

@@ -105,6 +105,24 @@ export default function BetaReadinessPage() {
   const manualTotal = BUSINESS_ITEMS.length + OPERATIONAL_ITEMS.length;
   const manualDone = [...BUSINESS_ITEMS, ...OPERATIONAL_ITEMS].filter(i => manual[i]).length;
 
+  // Launch readiness score: live critical checks + Lemon config + manual items.
+  const liveChecks: boolean[] = eh ? [
+    eh.supabase_url_set && eh.supabase_service_role_set,
+    eh.supabase_anon_key_set,
+    eh.admin_secret_set,
+    eh.internal_run_secret_set,
+    eh.cron_secret_set,
+    eh.app_url_set,
+    !eh.demo_mode,
+    !!health?.ls_secret_set,
+    !!health?.ls_variants_configured,
+  ] : [];
+  const liveDone = liveChecks.filter(Boolean).length;
+  const totalChecks = liveChecks.length + manualTotal;
+  const doneChecks = liveDone + manualDone;
+  const readinessPct = totalChecks > 0 ? Math.round((doneChecks / totalChecks) * 100) : 0;
+  const meterColor = readinessPct === 100 ? "#16a34a" : readinessPct >= 70 ? "#d97706" : "#dc2626";
+
   const sectionStyle: React.CSSProperties = { background: "#fff", border: "1px solid #e2e8f0", borderRadius: "0.75rem", padding: "1.1rem 1.25rem", marginBottom: "1.25rem" };
   const titleStyle: React.CSSProperties = { fontWeight: 700, fontSize: "0.9rem", color: "#0f172a", marginBottom: "0.6rem" };
 
@@ -115,6 +133,20 @@ export default function BetaReadinessPage() {
         <p style={{ color: "#64748b", fontSize: "0.85rem", margin: "0.35rem 0 0" }}>
           One answer to: can we put a real beta customer on this deploy?
         </p>
+      </div>
+
+      {/* Launch readiness meter */}
+      <div style={{ marginBottom: "1rem", background: "#fff", border: "1px solid #e2e8f0", borderRadius: "0.75rem", padding: "1.1rem 1.25rem" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "0.5rem" }}>
+          <span style={{ fontWeight: 700, fontSize: "0.85rem", color: "#0f172a" }}>Launch readiness</span>
+          <span style={{ fontWeight: 800, fontSize: "1.4rem", color: meterColor }}>{eh ? `${readinessPct}%` : "…"}</span>
+        </div>
+        <div style={{ height: 10, background: "#f1f5f9", borderRadius: 999, overflow: "hidden" }}>
+          <div style={{ width: `${readinessPct}%`, height: "100%", background: meterColor, borderRadius: 999, transition: "width 0.4s ease" }} />
+        </div>
+        <div style={{ marginTop: "0.5rem", fontSize: "0.72rem", color: "#94a3b8" }}>
+          {eh ? `${doneChecks}/${totalChecks} checks — ${liveDone}/${liveChecks.length} live config · ${manualDone}/${manualTotal} manual` : "Loading live configuration…"}
+        </div>
       </div>
 
       {/* Verdict banner */}

@@ -13,6 +13,7 @@ export default function Page() {
         { key: "confidence_score", label: "Confidence" }, { key: "freshness_status", label: "Freshness" },
         { key: "created_at", label: "Created" },
       ]}
+      emptyHint="Every Vault record traces back to a source: where it came from, when, and what we may do with it. Sources are usually created automatically by candidate intake."
       createFields={[
         { key: "source_type", label: "Source type", required: true, options: ["customer_provided", "company_website", "public_directory", "public_job_post", "public_event", "public_news", "business_registry", "licensed_provider", "other_public"] },
         { key: "source_url", label: "Source URL", required: true },

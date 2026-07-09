@@ -13,6 +13,7 @@ export default function Page() {
         { key: "industry", label: "Industry" }, { key: "vault_status", label: "Status" },
         { key: "suppression_status", label: "Suppression" }, { key: "created_at", label: "Created" },
       ]}
+      emptyHint="Companies are the account-level backbone of the Vault. Start by adding your first candidate from a permitted public source — the intake form creates the company, its source, and any signal in one step."
       createFields={[
         { key: "name", label: "Company name", required: true },
         { key: "domain", label: "Domain", placeholder: "acme.com" },

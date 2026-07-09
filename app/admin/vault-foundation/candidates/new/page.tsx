@@ -76,6 +76,13 @@ export default function NewCandidatePage() {
         </p>
       </div>
 
+      <div style={{ marginBottom: "1rem", padding: "0.7rem 1rem", background: "#f0f9ff", border: "1px solid #bae6fd", borderRadius: "0.5rem", fontSize: "0.78rem", color: "#075985", lineHeight: 1.6, maxWidth: 860 }}>
+        <strong>Permitted sources only:</strong> company websites, public directories,
+        public job posts, event pages, business news, business registries, or
+        customer-provided lists. Never LinkedIn scraping, paywalled content, or
+        unlicensed provider data — see LEADLENS_DATA_SOURCING_COMPLIANCE.md.
+      </div>
+
       {result && (
         <div style={{ marginBottom: "1rem", padding: "0.7rem 1rem", background: result.ok ? "#dcfce7" : "#fee2e2", border: `1px solid ${result.ok ? "#86efac" : "#fca5a5"}`, borderRadius: "0.5rem", fontSize: "0.82rem", color: result.ok ? "#15803d" : "#dc2626" }}>
           {result.text}
