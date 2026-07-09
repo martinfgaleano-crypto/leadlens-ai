@@ -75,3 +75,11 @@ alguien del equipo, confundirá al cliente.
   (ver LEADLENS_DATA_SOURCING_COMPLIANCE.md). El flag
   `APOLLO_LICENSED_PROVIDER_ENABLED` nunca se activa sin acuerdo firmado.
 - Chequeo previo a beta: `/admin/beta-readiness` en READY.
+
+## 10. Lead Hunter (descubrimiento para el Vault)
+
+1. `/admin/lead-hunter/briefs` → crear brief (mercado, región, señales).
+2. "Start run" → agregar sources (URL permitida + contexto `Company — evidence`).
+3. "Generate candidates" → revisar en la cola: aprobar/rechazar/reservar.
+4. Aprobados con rights resueltos → "→ Vault".
+5. Regla: nada con safety BLOCKED o rights unverified llega al Vault — el sistema lo impide, no lo intentes rodear.

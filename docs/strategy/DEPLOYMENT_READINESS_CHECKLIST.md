@@ -69,3 +69,9 @@ Verificación rápida post-deploy: `GET /api/admin/system-health` con admin toke
   acuerdo de licensing — ver LEADLENS_DATA_SOURCING_COMPLIANCE.md.
 - `npm run smoke:vault` debe pasar 11/11 antes de deploy.
 - `/admin/beta-readiness` debe mostrar READY antes de dar acceso a un beta customer.
+
+## Lead Hunter (actualización 2026-07-09)
+
+- Migración **030_lead_hunter.sql** después de 029.
+- `npm run smoke:lead-hunter` debe pasar 14/14.
+- Seed opcional local: `BASE_URL=http://localhost:3000 ADMIN_TOKEN=... npm run seed:lead-hunter` (rechaza deploys sin FORCE=true).

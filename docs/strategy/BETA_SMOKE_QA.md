@@ -148,3 +148,16 @@ Recorrido de cliente real, en orden, en browser:
 | 64 | Apollo deshabilitado | Con APOLLO_API_KEY seteado pero sin licensed flag: run del flow Apollo falla con mensaje de licensing (no silencioso) | ☐ |
 | 65 | Setup completion | Search creada desde dashboard → form "Complete your monitor setup" → guardar → botón Run se habilita | ☐ |
 | 66 | smoke:vault | `npm run smoke:vault` → 11/11 PASS | ☐ |
+
+## Lead Hunter additions (2026-07-09)
+
+| # | Paso | Cómo verificar | Pass |
+|---|---|---|---|
+| 67 | Migración 030 aplicada | `SELECT COUNT(*) FROM lead_hunter_briefs;` → 0 sin error | ☐ |
+| 68 | Crear brief + run | /admin/lead-hunter/briefs → crear → Start run | ☐ |
+| 69 | Source con formato | Run detail → agregar source con "Company — evidence" → Generate → 1 candidato pending_review | ☐ |
+| 70 | Source LinkedIn bloqueada | Agregar URL linkedin.com → safety BLOCKED; Generate no crea candidato de ella | ☐ |
+| 71 | Rights gate | Candidato con rights unverified → Approve/→Vault devuelven error 422 claro | ☐ |
+| 72 | Promote to Vault | Candidato permitted → →Vault → aparece en /admin/vault-foundation/companies con source y signal | ☐ |
+| 73 | Sin rutas públicas | `curl /api/admin/lead-hunter/briefs` sin token → 401/403 | ☐ |
+| 74 | smoke:lead-hunter | `npm run smoke:lead-hunter` → 14/14 | ☐ |

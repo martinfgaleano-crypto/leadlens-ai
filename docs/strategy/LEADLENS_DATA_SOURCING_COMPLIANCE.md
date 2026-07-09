@@ -62,3 +62,11 @@ Todo lead/contact/signal en la Vault debe tener:
 
 Ver: `supabase/migrations/029_vault_foundation.sql`, `lib/vault/vault-types.ts`,
 `SOURCE_ENGINE_ARCHITECTURE.md` (adapter pattern futuro).
+
+## Lead Hunter (actualización 2026-07-09)
+
+Lead Hunter implementa esta política en código (`lib/lead-hunter/lead-hunter-policy.ts`):
+categorías restringidas → blocked (jamás promovibles al Vault); rights unverified →
+approve/promote bloqueados con 422 hasta resolución; URLs de LinkedIn/Apollo/ZoomInfo
+se clasifican automáticamente como restringidas. v0 es manual-sources: cero fetching,
+cero scraping. Ver LEADLENS_LEAD_HUNTER_ARCHITECTURE.md.
