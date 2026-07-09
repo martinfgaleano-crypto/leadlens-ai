@@ -180,8 +180,7 @@ export default function ResultsPage() {
 
   const changeSection = buildChangeSection(report);
   const isComparisonRun = hasTrueComparison(report);
-  const evidenceSummary = buildEvidenceSummary(report);
-  const freshnessSummary = buildFreshnessSummary(report);
+  const insights = buildInsights(report);
 
   // Derived next action — counts existing recommended_action values, invents nothing.
   const contactNow = (report.ranked_opportunities ?? []).filter(o => o.recommended_action === "send_outreach_now").length;
@@ -261,35 +260,50 @@ export default function ResultsPage() {
           </div>
         )}
 
-        {/* Evidence & freshness summary — counts of existing labels only */}
-        {(evidenceSummary || freshnessSummary) && (
-          <div className="grid md:grid-cols-2 gap-4 mb-4">
-            {evidenceSummary && (
-              <div className="bg-white border border-gray-100 rounded-xl p-5">
-                <h3 className="font-semibold mb-2 text-sm">Evidence Quality</h3>
-                <div className="flex flex-wrap gap-2">
-                  {evidenceSummary.map(item => (
-                    <span key={item.label} className="inline-flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-full px-3 py-1 text-xs text-gray-700">
-                      <span className="font-semibold">{item.count}</span> {item.label}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-            {freshnessSummary && (
-              <div className="bg-white border border-gray-100 rounded-xl p-5">
-                <h3 className="font-semibold mb-2 text-sm">Signal Freshness</h3>
-                <div className="flex flex-wrap gap-2">
-                  {freshnessSummary.map(item => (
-                    <span key={item.label} className="inline-flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-full px-3 py-1 text-xs text-gray-700">
-                      <span className="font-semibold">{item.count}</span> {item.label}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
+        {/* ── Visual Insights — every chart is computed from real report data;
+             charts with no underlying data render a fallback note instead ── */}
+        <div className="mb-6">
+          <div className="flex items-baseline justify-between mb-3">
+            <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wide">Visual insights</h2>
+            <span className="text-xs text-gray-400">Based on this run&apos;s accounts and evidence</span>
           </div>
-        )}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <BreakdownChart
+              title="Fit distribution"
+              explainer="How your analyzed accounts split by ICP fit."
+              data={insights.fit}
+              fallback="Fit distribution will appear once accounts are scored."
+            />
+            <BreakdownChart
+              title="Signal freshness"
+              explainer="How recent the buying signals behind these accounts are."
+              data={insights.freshness}
+              fallback="Freshness breakdown will appear once signal dates are available."
+            />
+            <BreakdownChart
+              title="Evidence strength"
+              explainer="How well each recommendation is backed by verifiable sources."
+              data={insights.evidence}
+              fallback="Not enough evidence data yet to visualize this breakdown."
+            />
+            <BreakdownChart
+              title="Recommended actions"
+              explainer="What to do next across the whole account list."
+              data={insights.actions}
+              fallback="Action mix will appear once recommendations are generated."
+            />
+          </div>
+          {insights.industries && (
+            <div className="mt-4">
+              <BreakdownChart
+                title="Industry mix"
+                explainer="Where the opportunities in this run are concentrated."
+                data={insights.industries}
+                fallback=""
+              />
+            </div>
+          )}
+        </div>
 
         {/* What Changed */}
         {changeSection && (
@@ -351,38 +365,134 @@ function hasTrueComparison(report: LeadLensReport): boolean {
   );
 }
 
-// Counts of existing evidence_quality_counts — customer-safe labels, no enums.
-function buildEvidenceSummary(report: LeadLensReport): { label: string; count: number }[] | null {
-  const counts = report.evidence_quality_counts;
-  if (!counts) return null;
-  const items = [
-    { label: "Strong evidence", count: counts.high ?? 0 },
-    { label: "Moderate evidence", count: counts.medium ?? 0 },
-    { label: "Limited evidence", count: counts.low ?? 0 },
-    { label: "Evidence insufficient", count: counts.insufficient ?? 0 },
-  ].filter(i => i.count > 0);
-  return items.length > 0 ? items : null;
-}
+// ─── Visual Insights builders ─────────────────────────────────────────────────
+// Every segment counts REAL fields from the report payload — nothing invented.
+// A breakdown with no data returns null and the chart shows its fallback.
 
-// Counts of existing per-account source_freshness values. Unknown stays
-// unknown — never upgraded, never hidden.
-function buildFreshnessSummary(report: LeadLensReport): { label: string; count: number }[] | null {
-  const counts: Record<string, number> = {};
+interface BreakdownSegment { label: string; count: number; color: string }
+
+function buildInsights(report: LeadLensReport): {
+  fit: BreakdownSegment[] | null;
+  freshness: BreakdownSegment[] | null;
+  evidence: BreakdownSegment[] | null;
+  actions: BreakdownSegment[] | null;
+  industries: BreakdownSegment[] | null;
+} {
+  // Fit: report-level category counts.
+  const fitRaw: BreakdownSegment[] = [
+    { label: "Hot — strong fit", count: report.hot_count, color: "#ef4444" },
+    { label: "Warm — good fit", count: report.warm_count, color: "#f59e0b" },
+    { label: "Cold — weak fit", count: report.cold_count, color: "#60a5fa" },
+    { label: "Not a fit", count: report.discard_count, color: "#cbd5e1" },
+  ].filter(x => x.count > 0);
+
+  // Freshness: per-account source_freshness. Unknown stays visible as unknown.
+  const fCounts: Record<string, number> = {};
   for (const lead of report.processed_leads) {
     const f = lead.learning?.source_freshness;
-    if (!f) continue;
-    counts[f] = (counts[f] ?? 0) + 1;
+    if (f) fCounts[f] = (fCounts[f] ?? 0) + 1;
   }
-  const LABELS: Record<string, string> = {
-    fresh:   "Fresh signals",
-    recent:  "Recent signals",
-    stale:   "Stale signals",
-    unknown: "Freshness unknown",
+  const freshnessRaw: BreakdownSegment[] = [
+    { label: "Fresh", count: fCounts.fresh ?? 0, color: "#10b981" },
+    { label: "Recent", count: fCounts.recent ?? 0, color: "#38bdf8" },
+    { label: "Aging / stale", count: fCounts.stale ?? 0, color: "#f59e0b" },
+    { label: "Date unknown", count: fCounts.unknown ?? 0, color: "#cbd5e1" },
+  ].filter(x => x.count > 0);
+
+  // Evidence: report-level evidence_quality_counts.
+  const eq = report.evidence_quality_counts;
+  const evidenceRaw: BreakdownSegment[] = eq ? [
+    { label: "Strong", count: eq.high ?? 0, color: "#10b981" },
+    { label: "Moderate", count: eq.medium ?? 0, color: "#38bdf8" },
+    { label: "Limited", count: eq.low ?? 0, color: "#f59e0b" },
+    { label: "Insufficient", count: eq.insufficient ?? 0, color: "#cbd5e1" },
+  ].filter(x => x.count > 0) : [];
+
+  // Actions: ranked_opportunities recommended_action values.
+  const aCounts: Record<string, number> = {};
+  for (const opp of report.ranked_opportunities ?? []) {
+    if (opp.recommended_action) aCounts[opp.recommended_action] = (aCounts[opp.recommended_action] ?? 0) + 1;
+  }
+  const ACTION_META: [string, string, string][] = [
+    ["send_outreach_now", "Contact now", "#0ea5e9"],
+    ["validate_source_first", "Validate first", "#6366f1"],
+    ["monitor_for_new_signal", "Monitor", "#94a3b8"],
+    ["enrich_manually", "Research further", "#a78bfa"],
+    ["add_to_watchlist", "Watchlist", "#cbd5e1"],
+    ["exclude", "Do not pursue", "#e2e8f0"],
+  ];
+  const actionsRaw: BreakdownSegment[] = ACTION_META
+    .map(([key, label, color]) => ({ label, count: aCounts[key] ?? 0, color }))
+    .filter(x => x.count > 0);
+
+  // Industry mix (optional): only when at least 2 distinct real industries exist.
+  const iCounts: Record<string, number> = {};
+  for (const lead of report.processed_leads) {
+    const ind = lead.candidate.industry?.trim();
+    if (ind) iCounts[ind] = (iCounts[ind] ?? 0) + 1;
+  }
+  const PALETTE = ["#0ea5e9", "#6366f1", "#10b981", "#f59e0b", "#a78bfa", "#94a3b8"];
+  const industryEntries = Object.entries(iCounts).sort((a, b) => b[1] - a[1]);
+  const topIndustries = industryEntries.slice(0, 5).map(([label, count], i) => ({ label, count, color: PALETTE[i % PALETTE.length] }));
+  const otherCount = industryEntries.slice(5).reduce((sum, [, c]) => sum + c, 0);
+  if (otherCount > 0) topIndustries.push({ label: "Other", count: otherCount, color: "#e2e8f0" });
+
+  return {
+    fit: fitRaw.length > 0 ? fitRaw : null,
+    freshness: freshnessRaw.length > 0 ? freshnessRaw : null,
+    evidence: evidenceRaw.length > 0 ? evidenceRaw : null,
+    actions: actionsRaw.length > 0 ? actionsRaw : null,
+    industries: industryEntries.length >= 2 ? topIndustries : null,
   };
-  const items = Object.entries(counts)
-    .map(([k, count]) => ({ label: LABELS[k] ?? k, count }))
-    .filter(i => i.count > 0);
-  return items.length > 0 ? items : null;
+}
+
+// ─── BreakdownChart — CSS-only stacked bar + legend. No chart library. ────────
+
+function BreakdownChart({
+  title, explainer, data, fallback,
+}: {
+  title: string;
+  explainer: string;
+  data: BreakdownSegment[] | null;
+  fallback: string;
+}) {
+  if (!data || data.length === 0) {
+    if (!fallback) return null;
+    return (
+      <div className="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
+        <h3 className="font-semibold text-sm text-gray-900">{title}</h3>
+        <p className="text-xs text-gray-400 mt-0.5 mb-3">{explainer}</p>
+        <p className="text-xs text-gray-400 italic">{fallback}</p>
+      </div>
+    );
+  }
+  const total = data.reduce((sum, d) => sum + d.count, 0);
+  return (
+    <div className="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
+      <h3 className="font-semibold text-sm text-gray-900">{title}</h3>
+      <p className="text-xs text-gray-400 mt-0.5 mb-3">{explainer}</p>
+      {/* Stacked bar */}
+      <div className="flex h-3 rounded-full overflow-hidden bg-gray-100 mb-3" role="img" aria-label={`${title}: ${data.map(d => `${d.label} ${d.count}`).join(", ")}`}>
+        {data.map(d => (
+          <div key={d.label} style={{ width: `${(d.count / total) * 100}%`, background: d.color, minWidth: d.count > 0 ? 4 : 0 }} />
+        ))}
+      </div>
+      {/* Legend */}
+      <div className="space-y-1.5">
+        {data.map(d => (
+          <div key={d.label} className="flex items-center justify-between text-xs">
+            <span className="flex items-center gap-2 text-gray-600 min-w-0">
+              <span className="w-2.5 h-2.5 rounded-sm flex-shrink-0" style={{ background: d.color }} />
+              <span className="truncate">{d.label}</span>
+            </span>
+            <span className="text-gray-900 font-semibold flex-shrink-0 ml-3">
+              {d.count} <span className="text-gray-400 font-normal">({Math.round((d.count / total) * 100)}%)</span>
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 function buildChangeSection(report: LeadLensReport): {
