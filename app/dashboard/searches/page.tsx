@@ -208,7 +208,7 @@ export default function SearchesPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.name.trim()) { setFormError("Search name is required."); return; }
+    if (!form.name.trim()) { setFormError("Monitor name is required."); return; }
     if (!form.icp_id)      { setFormError("Please select an ICP."); return; }
 
     const leadCount = parseInt(form.requested_lead_count, 10);
@@ -281,15 +281,15 @@ export default function SearchesPage() {
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "2rem" }}>
         <div>
-          <h1 style={S.pageTitle}>Account Searches</h1>
+          <h1 style={S.pageTitle}>Your monitors</h1>
           <p style={S.pageSub}>
             {hasActiveSearches
-              ? "Accounts are being analyzed automatically — this page refreshes every 15 seconds."
-              : "Submit a search request. Account opportunities are generated automatically."}
+              ? "Accounts are being analyzed — this page refreshes automatically."
+              : "Monitors track your target market and produce account-level opportunity reports."}
           </p>
         </div>
         {hasIcps && !formOpen && (
-          <button onClick={openForm} style={S.btnPrimary}>+ New Search</button>
+          <button onClick={openForm} style={S.btnPrimary}>+ New monitor</button>
         )}
       </div>
 
@@ -300,7 +300,7 @@ export default function SearchesPage() {
             <div style={S.emptyIcon}>🎯</div>
             <div style={S.emptyTitle}>Create an ICP first</div>
             <div style={S.emptySub}>
-              You need at least one Ideal Customer Profile before you can request an account search.
+              You need a target profile (ICP) before creating a monitor — it tells LeadLens who your ideal customers are.
             </div>
             <Link href="/dashboard/icp" style={S.linkBtn}>Go to ICP Builder →</Link>
           </div>
@@ -311,7 +311,7 @@ export default function SearchesPage() {
       {formOpen && (
         <div style={S.formCard}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
-            <h2 style={S.formTitle}>New Account Search</h2>
+            <h2 style={S.formTitle}>New monitor</h2>
             <button onClick={closeForm} style={S.btnGhost}>Cancel</button>
           </div>
 
@@ -326,7 +326,7 @@ export default function SearchesPage() {
             <div style={S.formGrid}>
               <div>
                 <label style={S.labelBlock}>
-                  <span style={S.labelText}>Search Name *</span>
+                  <span style={S.labelText}>Monitor name *</span>
                   <input style={S.input} value={form.name}
                     onChange={e => setField("name", e.target.value)}
                     placeholder="e.g. US SaaS CTOs — June 2026" required />
@@ -387,7 +387,7 @@ export default function SearchesPage() {
             <div style={{ display: "flex", gap: "0.75rem", justifyContent: "flex-end" }}>
               <button type="button" onClick={closeForm} style={S.btnGhost}>Cancel</button>
               <button type="submit" disabled={saving} style={saving ? S.btnDisabled : S.btnPrimary}>
-                {saving ? "Submitting…" : "Submit Search Request"}
+                {saving ? "Creating…" : "Create monitor"}
               </button>
             </div>
           </form>
@@ -407,13 +407,13 @@ export default function SearchesPage() {
                 Create your first search to get started — your first report becomes the
                 baseline, and every run after that highlights what&apos;s new.
               </div>
-              <button onClick={openForm} style={{ ...(S.linkBtn as React.CSSProperties), border: "none", cursor: "pointer", fontFamily: "inherit" }}>+ Create your first search</button>
+              <button onClick={openForm} style={{ ...(S.linkBtn as React.CSSProperties), border: "none", cursor: "pointer", fontFamily: "inherit" }}>+ Create your first monitor</button>
             </div>
           </div>
         ) : (
           <div style={S.section}>
             <div style={S.tableHeader}>
-              <span style={{ ...S.col, flex: 3 }}>Search</span>
+              <span style={{ ...S.col, flex: 3 }}>Monitor</span>
               <span style={{ ...S.col, flex: 1 }}>Accounts</span>
               <span style={{ ...S.col, flex: 1.5 }}>Status</span>
               <span style={{ ...S.col, flex: 2 }}>Monitor</span>

@@ -197,6 +197,10 @@ export default function ResultsPage() {
   return (
     <main className="min-h-screen bg-gray-50 py-12 px-6">
       <div className="max-w-5xl mx-auto">
+        <a href="/dashboard" className="inline-block text-sm text-gray-500 hover:text-gray-700 mb-4 no-underline">
+          ← Back to workspace
+        </a>
+
         {/* Report header — the deliverable's cover */}
         <div className="rounded-2xl mb-8 p-6 md:p-8 text-white shadow-lg" style={{ background: "linear-gradient(135deg, #0f172a 0%, #1e3a5f 60%, #0c4a6e 100%)" }}>
           <div className="flex flex-wrap justify-between items-start gap-4">

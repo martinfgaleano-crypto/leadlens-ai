@@ -78,7 +78,7 @@ function LoginContent() {
         {/* Brand */}
         <div style={{ textAlign: "center", marginBottom: "2rem" }}>
           <div style={S.logoBox}>L</div>
-          <h1 style={S.h1}>Sign in to LeadLens</h1>
+          <h1 style={S.h1}>Sign in to your LeadLens workspace</h1>
           <p style={S.sub}>Your B2B opportunity monitor</p>
         </div>
 

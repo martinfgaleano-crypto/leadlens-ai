@@ -483,7 +483,7 @@ export default function SearchDetailPage() {
   if (loading) {
     return (
       <DashboardShell email="" onLogout={handleLogout}>
-        <div style={{ color: "#64748b", fontSize: "0.9rem" }}>Loading search…</div>
+        <div style={{ color: "#64748b", fontSize: "0.9rem" }}>Loading monitor…</div>
       </DashboardShell>
     );
   }
@@ -500,16 +500,16 @@ export default function SearchDetailPage() {
     return (
       <DashboardShell email={userEmail} onLogout={handleLogout}>
         <div style={{ marginBottom: "1.5rem" }}>
-          <Link href="/dashboard/searches" style={S.backLink}>← Back to searches</Link>
+          <Link href="/dashboard/searches" style={S.backLink}>← Back to monitors</Link>
         </div>
         <div style={S.section}>
           <div style={{ padding: "3rem 2rem", textAlign: "center" }}>
             <div style={{ fontSize: "2rem", marginBottom: "0.75rem" }}>🔍</div>
-            <div style={{ color: "#0f172a", fontWeight: 700, marginBottom: "0.5rem" }}>Search not found</div>
+            <div style={{ color: "#0f172a", fontWeight: 700, marginBottom: "0.5rem" }}>Monitor not found</div>
             <div style={{ color: "#64748b", fontSize: "0.85rem", marginBottom: "1.5rem" }}>
-              This search does not exist or does not belong to your account.
+              This monitor does not exist or does not belong to your account.
             </div>
-            <Link href="/dashboard/searches" style={S.linkBtn}>Back to searches</Link>
+            <Link href="/dashboard/searches" style={S.linkBtn}>Back to monitors</Link>
           </div>
         </div>
       </DashboardShell>
@@ -550,7 +550,7 @@ export default function SearchDetailPage() {
       {/* Detail card */}
       <div style={{ ...S.section, marginBottom: "1.25rem" }}>
         <div style={S.sectionHeader}>
-          <span style={S.sectionTitle}>Search Details</span>
+          <span style={S.sectionTitle}>Monitor details</span>
         </div>
         <div style={S.detailGrid}>
           <DetailRow label="Status"          value={<StatusBadge status={search.status} />} />

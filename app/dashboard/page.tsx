@@ -279,10 +279,17 @@ export default function DashboardPage() {
 
   return (
     <DashboardShell email={displayEmail} onLogout={handleLogout}>
-      {/* Page header */}
-      <div style={{ marginBottom: "2rem" }}>
-        <h1 style={S.pageTitle}>Dashboard</h1>
-        <p style={S.pageSub}>Welcome to LeadLens — your account opportunity monitor.</p>
+      {/* Workspace hero */}
+      <div style={{ marginBottom: "2rem", background: "linear-gradient(135deg, #0f172a 0%, #1e3a5f 65%, #0c4a6e 100%)", borderRadius: "1rem", padding: "1.75rem 2rem", color: "#fff", boxShadow: "0 8px 24px rgba(15,23,42,0.12)" }}>
+        <div style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#7dd3fc", marginBottom: "0.4rem" }}>
+          Your LeadLens Workspace
+        </div>
+        <h1 style={{ fontSize: "1.5rem", fontWeight: 800, margin: 0, letterSpacing: "-0.02em" }}>
+          Find the accounts worth contacting — and know exactly why.
+        </h1>
+        <p style={{ color: "rgba(224,242,254,0.75)", margin: "0.45rem 0 0", fontSize: "0.875rem", maxWidth: 560 }}>
+          Monitor your target market, review account intelligence, and improve every run with feedback.
+        </p>
       </div>
 
       {/* Account + plan stat cards */}
@@ -291,7 +298,7 @@ export default function DashboardPage() {
         <StatCard label="Plan"       value={planLabel}  color={profile?.plan === "free" ? "#64748b" : "#0ea5e9"} />
         <StatCard label="Credits"    value={profile?.credits_remaining ?? 0} />
         <StatCard label="ICPs"       value={icpCount}   color="#7c3aed" />
-        <StatCard label="Searches"   value={searchCount} />
+        <StatCard label="Monitors"   value={searchCount} />
         <StatCard
           label="Onboarding"
           value={profile?.onboarding_completed ? "Complete" : "Pending"}
@@ -311,9 +318,9 @@ export default function DashboardPage() {
         <QuickLink
           href="/dashboard/searches"
           icon="🔍"
-          title="Account Searches"
-          desc={searchCount > 0 ? `${searchCount} search${searchCount !== 1 ? "es" : ""} submitted` : "Request qualified B2B leads"}
-          cta="Open Account Searches →"
+          title="Monitors"
+          desc={searchCount > 0 ? `${searchCount} monitor${searchCount !== 1 ? "s" : ""} created` : "Track a target market for opportunities"}
+          cta="Open Monitors →"
         />
       </div>
 
@@ -547,17 +554,17 @@ export default function DashboardPage() {
         {recentSearches.length === 0 ? (
           <div style={S.emptyState}>
             <div style={S.emptyIcon}>🔍</div>
-            <div style={S.emptyTitle}>No account searches yet</div>
+            <div style={S.emptyTitle}>No monitors yet</div>
             <div style={S.emptySub}>
               {icpCount === 0
-                ? "Start by creating an ICP, then submit an account search request."
-                : "You have ICPs ready. Submit your first account search request."}
+                ? "Start by defining a target profile, then create your first monitor."
+                : "Your target profile is ready. Create your first monitor."}
             </div>
             <Link
               href={icpCount === 0 ? "/dashboard/icp" : "/dashboard/searches"}
               style={S.ctaLink}
             >
-              {icpCount === 0 ? "→ Create your first ICP" : "→ Create Account Search"}
+              {icpCount === 0 ? "→ Define your target profile" : "→ Create your first monitor"}
             </Link>
           </div>
         ) : (

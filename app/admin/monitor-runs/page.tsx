@@ -237,6 +237,14 @@ export default function MonitorOpsPage() {
                       <div style={{ color: "#cbd5e1", fontFamily: "monospace", fontSize: "0.65rem", marginTop: "0.15rem" }}>{job.job_id}</div>
                     </div>
                     <div style={{ flexShrink: 0, display: "flex", gap: "0.5rem" }}>
+                      {job.status === "completed" && (
+                        <button
+                          onClick={() => { navigator.clipboard?.writeText(`${window.location.origin}/results/${job.job_id}`).catch(() => {}); setActionMsg({ ok: true, text: `Report link copied — only the owning customer (or admin API) can open it.` }); }}
+                          style={{ background: "#f1f5f9", color: "#374151", border: "1px solid #e2e8f0", borderRadius: "0.4rem", padding: "0.35rem 0.85rem", fontWeight: 600, fontSize: "0.72rem", cursor: "pointer", fontFamily: "inherit" }}
+                        >
+                          Copy report link
+                        </button>
+                      )}
                       {(job.status === "failed" || job.is_stale) && !job.is_unscoped && (
                         <button
                           onClick={() => handleRetry(job.job_id)}
