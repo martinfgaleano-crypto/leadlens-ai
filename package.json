@@ -10,7 +10,8 @@
     "smoke:selfserve": "node scripts/self-serve-smoke.mjs",
     "smoke:vault": "node scripts/smoke-vault-foundation.mjs",
     "smoke:lead-hunter": "node scripts/smoke-lead-hunter.mjs",
-    "seed:lead-hunter": "node scripts/seed-lead-hunter-demo.mjs"
+    "seed:lead-hunter": "node scripts/seed-lead-hunter-demo.mjs",
+    "smoke:vault-bridge": "node scripts/smoke-vault-report-bridge.mjs"
   },
   "dependencies": {
     "next": "14.2.5",

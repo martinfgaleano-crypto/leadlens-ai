@@ -48,3 +48,9 @@ Nunca LinkedIn, nunca paywall, nunca enrichment de contactos.
 ## Sin exposición customer-facing
 
 Todo es `/admin/lead-hunter/*` + `/api/admin/lead-hunter/*` con x-admin-token. Cero rutas públicas. El bridge Vault→reportes es un sprint futuro.
+
+## Actualización 2026-07-11 — Vault → Report bridge
+
+El eslabón "futuro" ya existe en v0: `/admin/vault-report-bridge` selecciona
+oportunidades aprobadas del Vault para un ICP y produce payload LeadCandidate[]
+dry-run. Ver LEADLENS_VAULT_REPORT_BRIDGE.md.

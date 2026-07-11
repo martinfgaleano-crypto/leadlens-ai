@@ -41,3 +41,9 @@
 ## Qué NO es este documento
 
 No es un plan de scraping. No es una integración de APIs externas nuevas (eso requiere decisión de provider + contrato). No cambia scoring/ranking. Es el contrato para que, cuando se elija el primer adapter real, encaje en la arquitectura existente sin improvisación.
+
+## Actualización 2026-07-11 — Vault como fuente de reportes
+
+Nueva fuente interna compliant: el Vault → Report bridge (`source: "vault"` en
+LeadSource). Selección exclusion-first de companies/signals aprobados + adapter
+account-level a LeadCandidate[]. Ver LEADLENS_VAULT_REPORT_BRIDGE.md.

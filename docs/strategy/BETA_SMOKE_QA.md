@@ -161,3 +161,14 @@ Recorrido de cliente real, en orden, en browser:
 | 72 | Promote to Vault | Candidato permitted → →Vault → aparece en /admin/vault-foundation/companies con source y signal | ☐ |
 | 73 | Sin rutas públicas | `curl /api/admin/lead-hunter/briefs` sin token → 401/403 | ☐ |
 | 74 | smoke:lead-hunter | `npm run smoke:lead-hunter` → 14/14 | ☐ |
+
+## Vault → Report bridge additions (2026-07-11)
+
+| # | Paso | Cómo verificar | Pass |
+|---|---|---|---|
+| 75 | Preview con Vault vacío | /admin/vault-report-bridge → Preview → estado claro "not enough approved Vault opportunities yet" | ☐ |
+| 76 | Preview con datos | Promover 1+ candidato al Vault → Preview → aparece con match score y razones | ☐ |
+| 77 | Exclusión por rights | Company cuyo source tiene rights unverified → contada en exclusiones, no seleccionada | ☐ |
+| 78 | Dry-run payload | "Dry-run report payload" → JSON LeadCandidate[] con source "vault", sin email/name/title | ☐ |
+| 79 | Sin ruta pública | curl /api/admin/vault-report-bridge/preview sin token → 401/403 | ☐ |
+| 80 | smoke:vault-bridge | npm run smoke:vault-bridge → todo verde | ☐ |

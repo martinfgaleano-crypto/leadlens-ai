@@ -75,3 +75,9 @@ Verificación rápida post-deploy: `GET /api/admin/system-health` con admin toke
 - Migración **030_lead_hunter.sql** después de 029.
 - `npm run smoke:lead-hunter` debe pasar 14/14.
 - Seed opcional local: `BASE_URL=http://localhost:3000 ADMIN_TOKEN=... npm run seed:lead-hunter` (rechaza deploys sin FORCE=true).
+
+## Vault → Report bridge (actualización 2026-07-11)
+
+- Sin migración nueva — el bridge lee tablas de 029 (vault_*).
+- `npm run smoke:vault-bridge` debe pasar completo.
+- Verificar que /api/admin/vault-report-bridge/* devuelve 401/403 sin token.

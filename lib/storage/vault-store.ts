@@ -315,3 +315,82 @@ export async function listSuppressionEntries(): Promise<VaultSuppressionEntry[]>
   const { data } = await db.from("vault_suppression_list").select("*").order("created_at", { ascending: false }).limit(LIST_LIMIT);
   return (data ?? []) as VaultSuppressionEntry[];
 }
+
+// ─── Vault → Report bridge helpers ────────────────────────────────────────────
+// Higher-level usage/reservation operations for the Vault → report pipeline
+// bridge. Preview and dry-run NEVER call these — usage is recorded only when a
+// real customer deliverable is generated. See LEADLENS_VAULT_REPORT_BRIDGE.md.
+
+export interface VaultRunContext {
+  customer_email?: string | null;
+  order_id?: string | null;
+  job_id?: string | null;
+}
+
+/** Reserve a set of companies for an in-flight run (default 24h TTL). */
+export async function reserveVaultOpportunitiesForRun(
+  companyIds: string[],
+  context: VaultRunContext,
+  ttlHours = 24,
+): Promise<VaultReservation[]> {
+  const created: VaultReservation[] = [];
+  const expiresAt = new Date(Date.now() + ttlHours * 3_600_000).toISOString();
+  for (const companyId of companyIds) {
+    const reservation = await createVaultReservation({
+      company_id: companyId,
+      reserved_for_customer_email: context.customer_email ?? null,
+      reserved_for_order_id: context.order_id ?? null,
+      reservation_reason: context.job_id ? `report run ${context.job_id}` : "report run",
+      expires_at: expiresAt,
+    });
+    if (reservation) created.push(reservation);
+  }
+  return created;
+}
+
+/** Record delivered usage AFTER a report is successfully generated. */
+export async function recordVaultOpportunitiesUsed(
+  companyIds: string[],
+  context: VaultRunContext,
+): Promise<number> {
+  let recorded = 0;
+  for (const companyId of companyIds) {
+    const row = await recordVaultUsage({
+      company_id: companyId,
+      customer_email: context.customer_email ?? null,
+      order_id: context.order_id ?? null,
+      job_id: context.job_id ?? null,
+      usage_type: "report_delivery",
+      delivered_at: new Date().toISOString(),
+    });
+    if (row) recorded++;
+  }
+  return recorded;
+}
+
+/** Release every active reservation tied to a failed run's context. */
+export async function releaseVaultReservationsForFailedRun(context: VaultRunContext): Promise<number> {
+  const active = await listActiveReservations();
+  let released = 0;
+  for (const r of active) {
+    const matches =
+      (context.order_id && r.reserved_for_order_id === context.order_id) ||
+      (context.job_id && r.reservation_reason === `report run ${context.job_id}`) ||
+      (!context.order_id && !context.job_id && context.customer_email &&
+        r.reserved_for_customer_email?.toLowerCase() === context.customer_email.toLowerCase());
+    if (matches && (await releaseVaultReservation(r.id))) released++;
+  }
+  return released;
+}
+
+/** All recorded Vault usage for one customer (for "already used" explanations). */
+export async function listVaultUsageForCustomer(customerEmail: string): Promise<VaultUsageHistory[]> {
+  const db = await getDb();
+  if (!db) return [];
+  const { data } = await db.from("vault_usage_history")
+    .select("*")
+    .eq("customer_email", customerEmail.toLowerCase().trim())
+    .order("created_at", { ascending: false })
+    .limit(LIST_LIMIT);
+  return (data ?? []) as VaultUsageHistory[];
+}

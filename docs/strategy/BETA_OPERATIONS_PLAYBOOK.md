@@ -83,3 +83,11 @@ alguien del equipo, confundirá al cliente.
 3. "Generate candidates" → revisar en la cola: aprobar/rechazar/reservar.
 4. Aprobados con rights resueltos → "→ Vault".
 5. Regla: nada con safety BLOCKED o rights unverified llega al Vault — el sistema lo impide, no lo intentes rodear.
+
+## 11. Vault → Report bridge (preview de oportunidades)
+
+1. /admin/vault-report-bridge → definir ICP (mercado, región, industria, freshness).
+2. "Preview Vault opportunities" → revisar scores, razones y exclusiones contadas.
+3. "Dry-run report payload" → inspeccionar el LeadCandidate[] exacto.
+4. Preview/dry-run NO registran usage ni crean reservas — seguro de usar siempre.
+5. Si sale "not enough approved Vault opportunities yet": correr Lead Hunter, aprobar y promover más candidatos.
