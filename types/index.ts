@@ -585,6 +585,9 @@ export interface PipelineInput {
   jobId?: string;
   /** lead_searches.id — scopes previous-snapshot lookup to the same monitor series. */
   searchId?: string;
+  /** Pre-selected candidates (e.g. approved Vault opportunities). When set, the
+   *  pipeline skips provider discovery entirely and processes exactly these. */
+  candidatesOverride?: LeadCandidate[];
 }
 
 // ─── Provider result ──────────────────────────────────────────────────────────

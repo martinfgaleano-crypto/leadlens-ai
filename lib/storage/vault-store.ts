@@ -188,6 +188,7 @@ export async function createVaultSignal(input: Partial<VaultSignal> & { signal_t
     expires_at: input.expires_at ?? null,
     strength_score: input.strength_score ?? null,
     confidence_score: input.confidence_score ?? null,
+    review_status: input.review_status ?? "pending_review",
   }).select("*").single();
   if (error) { console.error("[vault-store] createVaultSignal:", error.message); return null; }
   return data as VaultSignal;
@@ -349,19 +350,25 @@ export async function reserveVaultOpportunitiesForRun(
 }
 
 /** Record delivered usage AFTER a report is successfully generated. */
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export async function recordVaultOpportunitiesUsed(
   companyIds: string[],
   context: VaultRunContext,
 ): Promise<number> {
   let recorded = 0;
+  // vault_usage_history.job_id is UUID; pipeline jobIds like "vault-<ts>-<rand>"
+  // are text — those travel in notes so the row still traces back to the run.
+  const jobIsUuid = !!context.job_id && UUID_RE.test(context.job_id);
   for (const companyId of companyIds) {
     const row = await recordVaultUsage({
       company_id: companyId,
       customer_email: context.customer_email ?? null,
       order_id: context.order_id ?? null,
-      job_id: context.job_id ?? null,
+      job_id: jobIsUuid ? context.job_id! : null,
       usage_type: "report_delivery",
       delivered_at: new Date().toISOString(),
+      notes: jobIsUuid || !context.job_id ? null : `job ${context.job_id}`,
     });
     if (row) recorded++;
   }

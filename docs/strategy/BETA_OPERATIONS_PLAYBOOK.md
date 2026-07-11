@@ -91,3 +91,11 @@ alguien del equipo, confundirá al cliente.
 3. "Dry-run report payload" → inspeccionar el LeadCandidate[] exacto.
 4. Preview/dry-run NO registran usage ni crean reservas — seguro de usar siempre.
 5. Si sale "not enough approved Vault opportunities yet": correr Lead Hunter, aprobar y promover más candidatos.
+
+## 12. Generar reporte de cliente desde el Vault
+
+1. /admin/vault-report-bridge → criterios + customer email → Preview.
+2. "Generate customer report from Vault (N)" → confirmar el warning.
+3. Copiar el link /results/<jobId> y entregarlo al cliente.
+4. Regla: usage se registra solo si el reporte se creó; si falla, las reservas se liberan solas.
+5. Requiere créditos de Anthropic API activos.

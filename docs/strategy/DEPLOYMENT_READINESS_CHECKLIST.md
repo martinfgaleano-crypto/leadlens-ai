@@ -86,3 +86,9 @@ Verificación rápida post-deploy: `GET /api/admin/system-health` con admin toke
 
 Antes de cada deploy: `npm run check:supabase` (0 FAIL) y `npm run probe:supabase`
 (0 MISSING). Ver SUPABASE_SETUP.md y MIGRATION_READINESS_SUMMARY.md.
+
+## Vault-powered generation (actualización 2026-07-11)
+
+- `npm run smoke:vault-report-generation` 16/16.
+- Créditos de Anthropic API activos (el generate corre el pipeline real).
+- Sin migración nueva.

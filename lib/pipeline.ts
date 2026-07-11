@@ -29,9 +29,16 @@ export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLen
   const { icp, criteria } = await runICPAgent(onboardingData, plan);
   console.log(`[pipeline] ICP built — industries=${icp.target_industries.join(", ")} clarity=${icp.icp_clarity_score ?? "?"}/100`);
 
-  const { runLeadFinderAgent } = await import("./agents/lead-finder-agent");
-  const candidates: LeadCandidate[] = await runLeadFinderAgent(criteria);
-  console.log(`[pipeline] found ${candidates.length} candidates`);
+  let candidates: LeadCandidate[];
+  if (input.candidatesOverride && input.candidatesOverride.length > 0) {
+    // Vault bridge (or other pre-approved source): no provider discovery at all.
+    candidates = input.candidatesOverride;
+    console.log(`[pipeline] using ${candidates.length} pre-selected candidates (source=${candidates[0].source}) — provider discovery skipped`);
+  } else {
+    const { runLeadFinderAgent } = await import("./agents/lead-finder-agent");
+    candidates = await runLeadFinderAgent(criteria);
+    console.log(`[pipeline] found ${candidates.length} candidates`);
+  }
 
   // Load vault patterns once — fails gracefully, never blocks the pipeline
   const { loadVaultPatterns } = await import("./vault/feedback-vault");

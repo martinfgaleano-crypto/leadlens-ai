@@ -59,3 +59,8 @@ dry-run. Ver LEADLENS_VAULT_REPORT_BRIDGE.md.
 
 `probe:supabase` verifica que 029/030 estén aplicadas; `seed:vault-bridge-demo`
 ejercita brief→run→sources→candidates→approve→promote→bridge sin pasos manuales.
+
+## Actualización 2026-07-11 — Circuito cerrado
+
+Promote ahora crea signals approved. El circuito completo Hunter → Vault → Bridge →
+reporte real → cliente está operativo vía /admin/vault-report-bridge (Generate).

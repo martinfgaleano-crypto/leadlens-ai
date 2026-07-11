@@ -181,3 +181,13 @@ Recorrido de cliente real, en orden, en browser:
 | 82 | Schema probe | `npm run probe:supabase` → 0 MISSING (o dice exactamente qué migración aplicar) | ☐ |
 | 83 | Seed E2E local | dev server + `npm run seed:vault-bridge-demo` → 8 pasos OK y URLs impresas | ☐ |
 | 84 | Bridge payload contract | `npm run test:vault-bridge` → todo verde (source vault, confidence 0–1, sin contactos) | ☐ |
+
+## Vault-powered generation additions (2026-07-11)
+
+| # | Paso | Cómo verificar | Pass |
+|---|---|---|---|
+| 85 | Generate sin email | Generate sin customer_email → 400 claro | ☐ |
+| 86 | Generate feliz | Preview con selección → Generate → link /results/<jobId> abre reporte completo | ☐ |
+| 87 | Usage post-éxito | Preview de nuevo mismo cliente → excluidos already_used | ☐ |
+| 88 | Failure lifecycle | (simulado) run fallido → snapshot failed + reservas released + 0 usage | ☐ |
+| 89 | smoke generation | npm run smoke:vault-report-generation → 16/16 | ☐ |

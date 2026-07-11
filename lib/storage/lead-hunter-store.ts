@@ -315,6 +315,9 @@ export async function promoteLeadHunterCandidateToVault(candidateId: string): Pr
       signal_summary: candidate.signal_summary ?? null,
       signal_date: candidate.signal_date ?? null,
       confidence_score: candidate.confidence_score ?? null,
+      // Promotion happens only after human review approved the candidate —
+      // the signal arrives in the Vault already approved.
+      review_status: "approved",
     });
     signalId = signal?.id;
   }

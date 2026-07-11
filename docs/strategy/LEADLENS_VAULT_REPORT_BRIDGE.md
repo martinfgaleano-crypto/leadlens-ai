@@ -64,3 +64,10 @@ Supabase/migración ausente.
 `npm run seed:vault-bridge-demo` siembra la cadena completa localmente ([DEMO],
 solo localhost sin FORCE) y `npm run test:vault-bridge` valida el contrato del
 payload dry-run. Readiness previa: `check:supabase` + `probe:supabase`.
+
+## Actualización 2026-07-11 — Generate real
+
+`POST /api/admin/vault-report-bridge/generate` cierra el circuito: reserva → pipeline
+real con `candidatesOverride` → snapshot → usage. Ver LEADLENS_VAULT_POWERED_REPORT_GENERATION.md.
+Fix incluido: la promoción del Lead Hunter ahora crea signals `approved` (antes quedaban
+pending_review y el selector no los veía).

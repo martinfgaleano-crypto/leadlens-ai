@@ -60,8 +60,10 @@ export default function VaultReportBridgePage() {
   });
   const [result, setResult] = useState<SelectionResult | null>(null);
   const [dryRunPayload, setDryRunPayload] = useState<unknown[] | null>(null);
-  const [loading, setLoading] = useState<"preview" | "dry_run" | null>(null);
+  const [loading, setLoading] = useState<"preview" | "dry_run" | "generate" | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [generated, setGenerated] = useState<{ report_url: string; job_id: string; lead_count: number; usage_recorded: number; reservations_created: number } | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -92,6 +94,24 @@ export default function VaultReportBridgePage() {
       if (mode === "dry_run") setDryRunPayload(data.lead_candidates ?? []);
     } catch {
       setError("Network error — is the server running?");
+    } finally {
+      setLoading(null);
+    }
+  }
+
+  async function generate() {
+    if (!form.customer_email.trim()) { setError("customer_email is required to generate a real report."); return; }
+    if (!window.confirm("This reserves the selected Vault opportunities and creates a customer-accessible report. Continue?")) return;
+    setLoading("generate"); setError(null); setGenerated(null);
+    try {
+      const res = await adminFetch("/api/admin/vault-report-bridge/generate", {
+        method: "POST", body: JSON.stringify(criteria()),
+      });
+      const data = await res.json();
+      if (!res.ok) { setError(data.error ? `${data.error}${data.reason ? ` (${data.reason})` : ""}` : `Generate failed (${res.status})`); return; }
+      setGenerated(data);
+    } catch {
+      setError("Network error during generation — check /admin/monitor-runs and Vault reservations.");
     } finally {
       setLoading(null);
     }
@@ -138,6 +158,31 @@ export default function VaultReportBridgePage() {
             {loading === "dry_run" ? "Building payload…" : "Dry-run report payload"}
           </button>
         </div>
+        {result && result.selected.length > 0 && (
+          <div style={{ marginTop: "1rem", borderTop: "1px solid #f1f5f9", paddingTop: "1rem" }} data-vault-generation-version="vault-generation-v0">
+            <p style={{ fontSize: "0.78rem", color: "#92400e", background: "#fffbeb", border: "1px solid #fde68a", borderRadius: "0.5rem", padding: "0.6rem 0.8rem", marginBottom: "0.7rem" }}>
+              ⚠ This reserves the {result.selected.length} selected Vault opportunities and creates a <strong>customer-accessible report</strong> for the customer email above. Usage is recorded on success; reservations are released on failure. Sources/rights/freshness shown above apply.
+            </p>
+            <button style={{ ...S.btn, background: "#166534" }} onClick={generate} disabled={loading !== null || !form.customer_email.trim()}>
+              {loading === "generate" ? "Generating report… (can take a few minutes)" : `Generate customer report from Vault (${result.selected.length})`}
+            </button>
+            {!form.customer_email.trim() && <span style={{ fontSize: "0.72rem", color: "#b91c1c", marginLeft: "0.6rem" }}>customer email required</span>}
+          </div>
+        )}
+        {generated && (
+          <div style={{ marginTop: "0.9rem", background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: "0.6rem", padding: "0.8rem 1rem", fontSize: "0.82rem", color: "#166534" }}>
+            <strong>Report created.</strong> {generated.lead_count} opportunities · job <code>{generated.job_id}</code> · usage recorded for {generated.usage_recorded} companies · {generated.reservations_created} reservations kept (24h TTL).
+            <div style={{ marginTop: "0.45rem" }}>
+              <a href={generated.report_url} target="_blank" rel="noreferrer" style={{ color: "#0369a1", fontWeight: 700 }}>Open report →</a>
+              <button
+                style={{ ...S.btnAlt, marginLeft: "0.75rem", padding: "0.25rem 0.7rem", fontSize: "0.72rem" }}
+                onClick={() => { navigator.clipboard.writeText(`${window.location.origin}${generated.report_url}`).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); }); }}
+              >
+                {copied ? "Copied ✓" : "Copy customer link"}
+              </button>
+            </div>
+          </div>
+        )}
         {error && <p style={{ color: "#b91c1c", fontSize: "0.8rem", marginTop: "0.75rem" }}>{error}</p>}
       </div>
 
