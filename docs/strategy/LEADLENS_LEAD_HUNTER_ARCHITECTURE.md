@@ -54,3 +54,8 @@ Todo es `/admin/lead-hunter/*` + `/api/admin/lead-hunter/*` con x-admin-token. C
 El eslabón "futuro" ya existe en v0: `/admin/vault-report-bridge` selecciona
 oportunidades aprobadas del Vault para un ICP y produce payload LeadCandidate[]
 dry-run. Ver LEADLENS_VAULT_REPORT_BRIDGE.md.
+
+## Actualización 2026-07-11 — Readiness scripts
+
+`probe:supabase` verifica que 029/030 estén aplicadas; `seed:vault-bridge-demo`
+ejercita brief→run→sources→candidates→approve→promote→bridge sin pasos manuales.

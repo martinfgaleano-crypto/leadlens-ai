@@ -172,3 +172,12 @@ Recorrido de cliente real, en orden, en browser:
 | 78 | Dry-run payload | "Dry-run report payload" → JSON LeadCandidate[] con source "vault", sin email/name/title | ☐ |
 | 79 | Sin ruta pública | curl /api/admin/vault-report-bridge/preview sin token → 401/403 | ☐ |
 | 80 | smoke:vault-bridge | npm run smoke:vault-bridge → todo verde | ☐ |
+
+## Readiness automation additions (2026-07-11)
+
+| # | Paso | Cómo verificar | Pass |
+|---|---|---|---|
+| 81 | Env readiness | `npm run check:supabase` → 0 FAIL | ☐ |
+| 82 | Schema probe | `npm run probe:supabase` → 0 MISSING (o dice exactamente qué migración aplicar) | ☐ |
+| 83 | Seed E2E local | dev server + `npm run seed:vault-bridge-demo` → 8 pasos OK y URLs impresas | ☐ |
+| 84 | Bridge payload contract | `npm run test:vault-bridge` → todo verde (source vault, confidence 0–1, sin contactos) | ☐ |

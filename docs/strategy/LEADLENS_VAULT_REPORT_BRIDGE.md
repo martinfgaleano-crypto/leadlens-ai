@@ -58,3 +58,9 @@ Supabase/migración ausente.
   `source: "vault"` y llamar reserve → generate → recordUsed/releaseOnFail).
 - Selección lee hasta LIST_LIMIT (100) signals/companies — suficiente para beta.
 - ICP matching es keyword-overlap; un matcher semántico llega cuando haya volumen.
+
+## Actualización 2026-07-11 — Testing automatizado
+
+`npm run seed:vault-bridge-demo` siembra la cadena completa localmente ([DEMO],
+solo localhost sin FORCE) y `npm run test:vault-bridge` valida el contrato del
+payload dry-run. Readiness previa: `check:supabase` + `probe:supabase`.

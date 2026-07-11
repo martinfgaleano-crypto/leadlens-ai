@@ -81,3 +81,8 @@ Verificación rápida post-deploy: `GET /api/admin/system-health` con admin toke
 - Sin migración nueva — el bridge lee tablas de 029 (vault_*).
 - `npm run smoke:vault-bridge` debe pasar completo.
 - Verificar que /api/admin/vault-report-bridge/* devuelve 401/403 sin token.
+
+## Readiness automation (actualización 2026-07-11)
+
+Antes de cada deploy: `npm run check:supabase` (0 FAIL) y `npm run probe:supabase`
+(0 MISSING). Ver SUPABASE_SETUP.md y MIGRATION_READINESS_SUMMARY.md.

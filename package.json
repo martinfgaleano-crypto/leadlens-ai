@@ -11,7 +11,11 @@
     "smoke:vault": "node scripts/smoke-vault-foundation.mjs",
     "smoke:lead-hunter": "node scripts/smoke-lead-hunter.mjs",
     "seed:lead-hunter": "node scripts/seed-lead-hunter-demo.mjs",
-    "smoke:vault-bridge": "node scripts/smoke-vault-report-bridge.mjs"
+    "smoke:vault-bridge": "node scripts/smoke-vault-report-bridge.mjs",
+    "check:supabase": "node scripts/check-supabase-readiness.mjs",
+    "probe:supabase": "node scripts/probe-supabase-schema.mjs",
+    "seed:vault-bridge-demo": "node scripts/seed-vault-bridge-demo.mjs",
+    "test:vault-bridge": "node scripts/test-vault-bridge-dry-run.mjs"
   },
   "dependencies": {
     "next": "14.2.5",
