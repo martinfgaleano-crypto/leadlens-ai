@@ -43,3 +43,9 @@ serie del monitor del cliente (el workspace lo levanta como cualquier snapshot).
   onboarding real) salvo que se pase `search_id`; suficiente para entrega admin-driven.
 - Signals promovidos antes del fix 2026-07-11 quedaron `pending_review` — aprobar en
   /admin/vault-foundation o re-promover.
+
+## Actualización 2026-07-11 — Async (ops v0)
+
+Generate ahora responde 202 y el pipeline corre en el processor interno
+(`/api/internal/vault-report-bridge/process`). Mismo ciclo de reservas/usage,
+ahora con runs view, retry seguro y release manual. Ver LEADLENS_VAULT_GENERATION_OPS.md.

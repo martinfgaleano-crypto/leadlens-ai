@@ -4,7 +4,7 @@
 // report-compatible LeadCandidate[] payload (dry-run). Nothing here records
 // usage or creates customer reports.
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AdminLayout from "../_components/AdminLayout";
 import { adminFetch } from "@/lib/admin/admin-client";
 
@@ -43,6 +43,20 @@ type Opp = {
   match_reasons: string[];
 };
 
+type RunRow = {
+  job_id: string;
+  status: string;
+  plan: string;
+  created_at: string;
+  customer_email: string | null;
+  selected_count: number;
+  lead_count: number | null;
+  error: string | null;
+  usage_recorded: number | null;
+  stale_processing: boolean;
+  retried_from: string | null;
+};
+
 type SelectionResult = {
   ok: boolean;
   selected: Opp[];
@@ -62,8 +76,32 @@ export default function VaultReportBridgePage() {
   const [dryRunPayload, setDryRunPayload] = useState<unknown[] | null>(null);
   const [loading, setLoading] = useState<"preview" | "dry_run" | "generate" | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [generated, setGenerated] = useState<{ report_url: string; job_id: string; lead_count: number; usage_recorded: number; reservations_created: number } | null>(null);
+  const [generated, setGenerated] = useState<{ report_url: string; job_id: string; selected_count: number; reservation_count: number; anthropic_key_present?: boolean; note?: string } | null>(null);
   const [copied, setCopied] = useState(false);
+  const [runs, setRuns] = useState<RunRow[]>([]);
+  const [runsBusy, setRunsBusy] = useState<string | null>(null);
+
+  const loadRuns = useCallback(async () => {
+    try {
+      const res = await adminFetch("/api/admin/vault-report-bridge/runs");
+      if (res.ok) setRuns((await res.json()).items ?? []);
+    } catch { /* runs list is best-effort */ }
+  }, []);
+  useEffect(() => { loadRuns(); }, [loadRuns]);
+
+  async function runAction(jobId: string, action: "retry" | "release-reservations") {
+    if (action === "retry" && !window.confirm("Retry re-validates the selection from scratch and queues a NEW generation. Continue?")) return;
+    setRunsBusy(jobId);
+    try {
+      const res = await adminFetch(`/api/admin/vault-report-bridge/runs/${jobId}/${action}`, { method: "POST", body: JSON.stringify({}) });
+      const data = await res.json();
+      if (!res.ok) setError(data.error ?? `${action} failed (${res.status})`);
+      else setError(null);
+      await loadRuns();
+    } finally {
+      setRunsBusy(null);
+    }
+  }
 
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -110,8 +148,9 @@ export default function VaultReportBridgePage() {
       const data = await res.json();
       if (!res.ok) { setError(data.error ? `${data.error}${data.reason ? ` (${data.reason})` : ""}` : `Generate failed (${res.status})`); return; }
       setGenerated(data);
+      loadRuns();
     } catch {
-      setError("Network error during generation — check /admin/monitor-runs and Vault reservations.");
+      setError("Network error while queueing — check the runs list below and Vault reservations.");
     } finally {
       setLoading(null);
     }
@@ -164,16 +203,20 @@ export default function VaultReportBridgePage() {
               ⚠ This reserves the {result.selected.length} selected Vault opportunities and creates a <strong>customer-accessible report</strong> for the customer email above. Usage is recorded on success; reservations are released on failure. Sources/rights/freshness shown above apply.
             </p>
             <button style={{ ...S.btn, background: "#166534" }} onClick={generate} disabled={loading !== null || !form.customer_email.trim()}>
-              {loading === "generate" ? "Generating report… (can take a few minutes)" : `Generate customer report from Vault (${result.selected.length})`}
+              {loading === "generate" ? "Queueing generation…" : `Queue Vault report generation (${result.selected.length})`}
             </button>
             {!form.customer_email.trim() && <span style={{ fontSize: "0.72rem", color: "#b91c1c", marginLeft: "0.6rem" }}>customer email required</span>}
           </div>
         )}
         {generated && (
-          <div style={{ marginTop: "0.9rem", background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: "0.6rem", padding: "0.8rem 1rem", fontSize: "0.82rem", color: "#166534" }}>
-            <strong>Report created.</strong> {generated.lead_count} opportunities · job <code>{generated.job_id}</code> · usage recorded for {generated.usage_recorded} companies · {generated.reservations_created} reservations kept (24h TTL).
+          <div style={{ marginTop: "0.9rem", background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: "0.6rem", padding: "0.8rem 1rem", fontSize: "0.82rem", color: "#1e40af" }}>
+            <strong>Generation queued (202).</strong> {generated.selected_count} opportunities reserved ({generated.reservation_count} reservations, 24h TTL) · job <code>{generated.job_id}</code>.
+            <div style={{ marginTop: "0.3rem" }}>Report is processing. Open the link to watch status — it flips to the full report when the processor finishes.</div>
+            {generated.anthropic_key_present === false && (
+              <div style={{ color: "#b91c1c", marginTop: "0.3rem" }}>⚠ ANTHROPIC_API_KEY missing — the processor will fail. Configure it before expecting results.</div>
+            )}
             <div style={{ marginTop: "0.45rem" }}>
-              <a href={generated.report_url} target="_blank" rel="noreferrer" style={{ color: "#0369a1", fontWeight: 700 }}>Open report →</a>
+              <a href={generated.report_url} target="_blank" rel="noreferrer" style={{ color: "#0369a1", fontWeight: 700 }}>Open report (processing) →</a>
               <button
                 style={{ ...S.btnAlt, marginLeft: "0.75rem", padding: "0.25rem 0.7rem", fontSize: "0.72rem" }}
                 onClick={() => { navigator.clipboard.writeText(`${window.location.origin}${generated.report_url}`).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); }); }}
@@ -224,6 +267,53 @@ export default function VaultReportBridgePage() {
           )}
         </div>
       )}
+
+      <div style={S.card} data-vault-generation-ops-version="vault-generation-ops-v0">
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.6rem" }}>
+          <h2 style={{ fontSize: "0.95rem", fontWeight: 700, color: "#0f172a", margin: 0 }}>Recent Vault generation runs</h2>
+          <button style={{ ...S.btnAlt, padding: "0.3rem 0.7rem", fontSize: "0.72rem" }} onClick={loadRuns}>Refresh</button>
+        </div>
+        <p style={{ fontSize: "0.72rem", color: "#64748b", marginBottom: "0.6rem" }}>
+          Generation depends on active Anthropic API credits (console.anthropic.com → Plans &amp; Billing). Retry re-validates the selection and queues a new job; it never touches completed runs.
+        </p>
+        {runs.length === 0 ? (
+          <p style={{ fontSize: "0.8rem", color: "#94a3b8" }}>No Vault generation runs yet.</p>
+        ) : runs.map((r) => (
+          <div key={r.job_id} style={{ borderTop: "1px solid #f1f5f9", padding: "0.6rem 0", fontSize: "0.78rem" }}>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", alignItems: "center" }}>
+              <span style={
+                r.status === "completed" ? S.pill("#dcfce7", "#166534")
+                : r.status === "failed" ? S.pill("#fee2e2", "#991b1b")
+                : r.stale_processing ? S.pill("#fef3c7", "#92400e")
+                : S.pill("#e0f2fe", "#075985")
+              }>
+                {r.status === "processing" && r.stale_processing ? "stuck (stale)" : r.status}
+              </span>
+              <code style={{ color: "#334155" }}>{r.job_id}</code>
+              <span style={{ color: "#64748b" }}>{r.customer_email ?? "—"} · {r.selected_count} selected{r.lead_count != null ? ` · ${r.lead_count} leads` : ""}{r.usage_recorded != null ? ` · usage ${r.usage_recorded}` : ""}</span>
+              {r.retried_from && <span style={S.pill("#f1f5f9", "#64748b")}>retry of {r.retried_from.slice(0, 18)}…</span>}
+            </div>
+            {r.error && <div style={{ color: "#991b1b", marginTop: "0.2rem" }}>{r.error}</div>}
+            <div style={{ marginTop: "0.35rem", display: "flex", gap: "0.5rem" }}>
+              <a href={`/results/${r.job_id}`} target="_blank" rel="noreferrer" style={{ color: "#0369a1", fontSize: "0.72rem", fontWeight: 600 }}>Open report</a>
+              <button
+                style={{ ...S.btnAlt, padding: "0.15rem 0.55rem", fontSize: "0.68rem" }}
+                onClick={() => navigator.clipboard.writeText(`${window.location.origin}/results/${r.job_id}`)}
+              >Copy link</button>
+              {(r.status === "failed" || r.stale_processing) && (
+                <>
+                  <button style={{ ...S.btnAlt, padding: "0.15rem 0.55rem", fontSize: "0.68rem", color: "#166534" }} disabled={runsBusy === r.job_id} onClick={() => runAction(r.job_id, "retry")}>
+                    {runsBusy === r.job_id ? "…" : "Retry"}
+                  </button>
+                  <button style={{ ...S.btnAlt, padding: "0.15rem 0.55rem", fontSize: "0.68rem", color: "#92400e" }} disabled={runsBusy === r.job_id} onClick={() => runAction(r.job_id, "release-reservations")}>
+                    Release reservations
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
 
       {dryRunPayload && (
         <div style={S.card}>

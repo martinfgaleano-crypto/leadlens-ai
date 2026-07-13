@@ -92,3 +92,11 @@ Antes de cada deploy: `npm run check:supabase` (0 FAIL) y `npm run probe:supabas
 - `npm run smoke:vault-report-generation` 16/16.
 - Créditos de Anthropic API activos (el generate corre el pipeline real).
 - Sin migración nueva.
+
+## Generation ops (actualización 2026-07-11)
+
+- smoke:vault-generation-ops 22/22 y smoke:vault-report-generation 16/16.
+- INTERNAL_RUN_SECRET recomendado en Vercel (fallback ADMIN_SECRET_TOKEN).
+- NEXT_PUBLIC_APP_URL EXACTA (sin caracteres colgando) — un typo aquí rompe el
+  trigger fire-and-forget del processor (bug real encontrado en local).
+- Créditos Anthropic activos antes de generar.

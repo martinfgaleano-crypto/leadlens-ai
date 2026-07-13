@@ -29,3 +29,10 @@ npm run probe:supabase    # tablas reales vs. esperadas → qué migración falt
 5. Con el dev server corriendo: `npm run seed:vault-bridge-demo` (solo localhost; targets remotos requieren FORCE=true; todo marcado [DEMO], sin contactos).
 6. Abrir `/admin/vault-report-bridge` → Preview y Dry-run.
 7. Validación automática del payload: `npm run test:vault-bridge`.
+
+## Actualización 2026-07-11 — AI readiness
+
+`check:supabase` ahora chequea ANTHROPIC_API_KEY. Presencia ≠ créditos:
+`ALLOW_AI_HEALTH_PROBE=true npm run check:supabase` hace un probe de 1 token y
+reporta el estado real de billing. Cuidado con NEXT_PUBLIC_APP_URL: debe ser la
+URL exacta (el trigger interno la usa para invocar el processor).

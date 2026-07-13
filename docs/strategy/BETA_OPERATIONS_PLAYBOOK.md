@@ -99,3 +99,11 @@ alguien del equipo, confundirá al cliente.
 3. Copiar el link /results/<jobId> y entregarlo al cliente.
 4. Regla: usage se registra solo si el reporte se creó; si falla, las reservas se liberan solas.
 5. Requiere créditos de Anthropic API activos.
+
+## 13. Ops de generación Vault (async)
+
+1. Queue → 202 con link inmediato; el reporte aparece al terminar el processor.
+2. Runs list en /admin/vault-report-bridge: processing/completed/failed/stuck.
+3. Failed/stuck → Retry (re-valida selección, job nuevo) o Release reservations.
+4. Antes de generar: créditos Anthropic activos (`ALLOW_AI_HEALTH_PROBE=true npm run check:supabase` los verifica de verdad).
+5. Signals viejos pendientes: `npm run approve:demo-signals` (solo demo; no-demo se revisan a mano).

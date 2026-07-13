@@ -26,6 +26,29 @@ for (const [key, level, impact, action] of presence) {
   add(present ? "PASS" : level, `${key} ${present ? "present" : "MISSING"}`, impact, action);
 }
 
+// ── AI readiness (key presence ≠ credits; probe is opt-in and tiny) ──
+if (!has(env, "ANTHROPIC_API_KEY")) {
+  add("WARN", "ANTHROPIC_API_KEY MISSING", "Report generation (monitor runs + Vault generate) will fail — the pipeline uses Claude.", "Set ANTHROPIC_API_KEY in .env.local and Vercel.");
+} else if (process.env.ALLOW_AI_HEALTH_PROBE === "true") {
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json" },
+      body: JSON.stringify({ model: "claude-haiku-4-5-20251001", max_tokens: 1, messages: [{ role: "user", content: "ping" }] }),
+    });
+    if (res.ok) add("PASS", "Anthropic API reachable — credits active (probe ok)", "", "");
+    else {
+      const detail = await res.json().catch(() => ({}));
+      const msg = detail?.error?.message ?? `HTTP ${res.status}`;
+      add("FAIL", "Anthropic API probe failed", `Report generation will fail: ${String(msg).slice(0, 120)}`, "Check credits/billing at console.anthropic.com → Plans & Billing.");
+    }
+  } catch {
+    add("WARN", "Anthropic API probe errored (network?)", "Could not verify credits.", "Retry, or verify manually at console.anthropic.com.");
+  }
+} else {
+  add("PASS", "ANTHROPIC_API_KEY present (credits NOT verified — run with ALLOW_AI_HEALTH_PROBE=true for a 1-token probe)", "", "");
+}
+
 // ── Apollo must be off by default ──
 const apollo = (env.APOLLO_LICENSED_PROVIDER_ENABLED ?? "").toLowerCase();
 if (apollo === "" || apollo === "false") {

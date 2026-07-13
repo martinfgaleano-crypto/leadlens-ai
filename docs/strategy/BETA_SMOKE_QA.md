@@ -191,3 +191,15 @@ Recorrido de cliente real, en orden, en browser:
 | 87 | Usage post-éxito | Preview de nuevo mismo cliente → excluidos already_used | ☐ |
 | 88 | Failure lifecycle | (simulado) run fallido → snapshot failed + reservas released + 0 usage | ☐ |
 | 89 | smoke generation | npm run smoke:vault-report-generation → 16/16 | ☐ |
+
+## Generation ops additions (2026-07-11)
+
+| # | Paso | Cómo verificar | Pass |
+|---|---|---|---|
+| 90 | Queue 202 | Generate → 202 inmediato con job_id y link processing | ☐ |
+| 91 | Processor auto | El reporte pasa a completed (con créditos) o failed limpio (sin créditos) solo | ☐ |
+| 92 | Failure release | Job failed → reservations_released > 0 en runs list | ☐ |
+| 93 | Retry seguro | Retry de failed → 202 job nuevo; retry de completed → 409 | ☐ |
+| 94 | Idempotencia | POST interno con job completed → skipped, sin doble usage | ☐ |
+| 95 | AI probe | ALLOW_AI_HEALTH_PROBE=true npm run check:supabase → estado real de créditos | ☐ |
+| 96 | smoke ops | npm run smoke:vault-generation-ops → 22/22 | ☐ |

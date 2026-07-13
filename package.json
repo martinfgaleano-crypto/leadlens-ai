@@ -16,7 +16,9 @@
     "probe:supabase": "node scripts/probe-supabase-schema.mjs",
     "seed:vault-bridge-demo": "node scripts/seed-vault-bridge-demo.mjs",
     "test:vault-bridge": "node scripts/test-vault-bridge-dry-run.mjs",
-    "smoke:vault-report-generation": "node scripts/smoke-vault-report-generation.mjs"
+    "smoke:vault-report-generation": "node scripts/smoke-vault-report-generation.mjs",
+    "smoke:vault-generation-ops": "node scripts/smoke-vault-generation-ops.mjs",
+    "approve:demo-signals": "node scripts/approve-demo-vault-signals.mjs"
   },
   "dependencies": {
     "next": "14.2.5",
