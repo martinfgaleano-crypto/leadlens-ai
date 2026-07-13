@@ -280,7 +280,7 @@ export default function DashboardPage() {
   return (
     <DashboardShell email={displayEmail} onLogout={handleLogout}>
       {/* Workspace hero */}
-      <div style={{ marginBottom: "2rem", background: "linear-gradient(135deg, #0f172a 0%, #1e3a5f 65%, #0c4a6e 100%)", borderRadius: "1rem", padding: "1.75rem 2rem", color: "#fff", boxShadow: "0 8px 24px rgba(15,23,42,0.12)" }}>
+      <div data-customer-vault-delivery-version="customer-vault-delivery-v1" style={{ marginBottom: "2rem", background: "linear-gradient(135deg, #0f172a 0%, #1e3a5f 65%, #0c4a6e 100%)", borderRadius: "1rem", padding: "1.75rem 2rem", color: "#fff", boxShadow: "0 8px 24px rgba(15,23,42,0.12)" }}>
         <div style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#7dd3fc", marginBottom: "0.4rem" }}>
           Your LeadLens Workspace
         </div>

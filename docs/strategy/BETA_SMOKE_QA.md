@@ -203,3 +203,14 @@ Recorrido de cliente real, en orden, en browser:
 | 94 | Idempotencia | POST interno con job completed → skipped, sin doble usage | ☐ |
 | 95 | AI probe | ALLOW_AI_HEALTH_PROBE=true npm run check:supabase → estado real de créditos | ☐ |
 | 96 | smoke ops | npm run smoke:vault-generation-ops → 22/22 | ☐ |
+
+## Customer delivery additions (2026-07-13)
+
+| # | Paso | Cómo verificar | Pass |
+|---|---|---|---|
+| 97 | Linked delivery | Generate con search_id → aparece en dashboard + monitor history del cliente | ☐ |
+| 98 | Link-only señalado | Generate sin search_id → 202 con warning y pill "link-only" en runs | ☐ |
+| 99 | Notificación | Job linkeado completado → notificación "Your report is ready" en /dashboard/notifications | ☐ |
+| 100 | Cross-user | Usuario B no ve monitores/reportes de A (overview filtra por user_id) | ☐ |
+| 101 | Failed safe | Reporte failed → cliente ve copy genérico, sin error técnico | ☐ |
+| 102 | smoke delivery | npm run smoke:customer-vault-delivery → 20/20 | ☐ |

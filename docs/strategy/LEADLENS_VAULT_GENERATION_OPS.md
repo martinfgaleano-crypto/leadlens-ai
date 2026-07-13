@@ -69,3 +69,10 @@ signals approved, así que esto es solo limpieza histórica.
   particionado o el drainer; sample/starter caben bien.
 - El claim de concurrencia es best-effort (ventana de carrera pequeña aceptada en v0).
 - Sin cron drainer propio para jobs vault stuck — visibles y retryables manualmente.
+
+## Actualización 2026-07-13 — Delivery al workspace
+
+El generate acepta search_id (campo "Link to monitor" en la UI) → el reporte aparece
+solo en el workspace del cliente; sin search_id es link-only y el admin lo ve señalado
+(202 delivery_note + pill en runs list). Al completar un job linkeado se crea una
+notificación in-app. Ver LEADLENS_CUSTOMER_VAULT_DELIVERY.md.

@@ -55,6 +55,8 @@ type RunRow = {
   usage_recorded: number | null;
   stale_processing: boolean;
   retried_from: string | null;
+  search_id: string | null;
+  delivery: "workspace" | "link_only";
 };
 
 type SelectionResult = {
@@ -70,13 +72,13 @@ type SelectionResult = {
 export default function VaultReportBridgePage() {
   const [form, setForm] = useState({
     target_market: "", icp_notes: "", region: "", country: "", industry: "",
-    customer_email: "", max_candidates: "10", min_confidence: "0", freshness_preference: "any",
+    customer_email: "", search_id: "", max_candidates: "10", min_confidence: "0", freshness_preference: "any",
   });
   const [result, setResult] = useState<SelectionResult | null>(null);
   const [dryRunPayload, setDryRunPayload] = useState<unknown[] | null>(null);
   const [loading, setLoading] = useState<"preview" | "dry_run" | "generate" | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [generated, setGenerated] = useState<{ report_url: string; job_id: string; selected_count: number; reservation_count: number; anthropic_key_present?: boolean; note?: string } | null>(null);
+  const [generated, setGenerated] = useState<{ report_url: string; job_id: string; selected_count: number; reservation_count: number; anthropic_key_present?: boolean; workspace_visible?: boolean; delivery_note?: string; note?: string } | null>(null);
   const [copied, setCopied] = useState(false);
   const [runs, setRuns] = useState<RunRow[]>([]);
   const [runsBusy, setRunsBusy] = useState<string | null>(null);
@@ -114,6 +116,7 @@ export default function VaultReportBridgePage() {
       country: form.country || null,
       industry: form.industry || null,
       customer_email: form.customer_email || null,
+      search_id: form.search_id.trim() || null,
       max_candidates: parseInt(form.max_candidates, 10) || 10,
       min_confidence: parseInt(form.min_confidence, 10) || 0,
       freshness_preference: form.freshness_preference,
@@ -174,6 +177,7 @@ export default function VaultReportBridgePage() {
           <div><label style={S.label}>Country</label><input style={S.input} value={form.country} onChange={set("country")} placeholder="Colombia" /></div>
           <div><label style={S.label}>Industry</label><input style={S.input} value={form.industry} onChange={set("industry")} placeholder="logistics" /></div>
           <div><label style={S.label}>Customer email (optional)</label><input style={S.input} value={form.customer_email} onChange={set("customer_email")} placeholder="cliente@empresa.com" /></div>
+          <div><label style={S.label}>Link to monitor — search_id (optional)</label><input style={S.input} value={form.search_id} onChange={set("search_id")} placeholder="uuid from /admin/searches" title="With a search_id the report appears in the customer's workspace and monitor history. Without it, the report is link-only." /></div>
           <div><label style={S.label}>Max candidates</label><input style={S.input} type="number" min={1} max={25} value={form.max_candidates} onChange={set("max_candidates")} /></div>
           <div><label style={S.label}>Min confidence (0–100)</label><input style={S.input} type="number" min={0} max={100} value={form.min_confidence} onChange={set("min_confidence")} /></div>
           <div>
@@ -212,6 +216,11 @@ export default function VaultReportBridgePage() {
           <div style={{ marginTop: "0.9rem", background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: "0.6rem", padding: "0.8rem 1rem", fontSize: "0.82rem", color: "#1e40af" }}>
             <strong>Generation queued (202).</strong> {generated.selected_count} opportunities reserved ({generated.reservation_count} reservations, 24h TTL) · job <code>{generated.job_id}</code>.
             <div style={{ marginTop: "0.3rem" }}>Report is processing. Open the link to watch status — it flips to the full report when the processor finishes.</div>
+            {generated.delivery_note && (
+              <div style={{ marginTop: "0.3rem", color: generated.workspace_visible ? "#166534" : "#92400e" }}>
+                {generated.workspace_visible ? "🏠 " : "🔗 "}{generated.delivery_note}
+              </div>
+            )}
             {generated.anthropic_key_present === false && (
               <div style={{ color: "#b91c1c", marginTop: "0.3rem" }}>⚠ ANTHROPIC_API_KEY missing — the processor will fail. Configure it before expecting results.</div>
             )}
@@ -290,6 +299,9 @@ export default function VaultReportBridgePage() {
                 {r.status === "processing" && r.stale_processing ? "stuck (stale)" : r.status}
               </span>
               <code style={{ color: "#334155" }}>{r.job_id}</code>
+              <span style={r.delivery === "workspace" ? S.pill("#f0fdf4", "#166534") : S.pill("#fffbeb", "#92400e")} title={r.delivery === "workspace" ? `Appears in the customer's workspace (monitor ${r.search_id})` : "Link-only: visible via the copied /results link, not in workspace lists"}>
+                {r.delivery === "workspace" ? "workspace" : "link-only"}
+              </span>
               <span style={{ color: "#64748b" }}>{r.customer_email ?? "—"} · {r.selected_count} selected{r.lead_count != null ? ` · ${r.lead_count} leads` : ""}{r.usage_recorded != null ? ` · usage ${r.usage_recorded}` : ""}</span>
               {r.retried_from && <span style={S.pill("#f1f5f9", "#64748b")}>retry of {r.retried_from.slice(0, 18)}…</span>}
             </div>

@@ -49,3 +49,8 @@ serie del monitor del cliente (el workspace lo levanta como cualquier snapshot).
 Generate ahora responde 202 y el pipeline corre en el processor interno
 (`/api/internal/vault-report-bridge/process`). Mismo ciclo de reservas/usage,
 ahora con runs view, retry seguro y release manual. Ver LEADLENS_VAULT_GENERATION_OPS.md.
+
+## Actualización 2026-07-13 — Ownership/delivery
+
+Con search_id el reporte pertenece a la serie del monitor del cliente y el workspace
+lo muestra automáticamente. Ver LEADLENS_CUSTOMER_VAULT_DELIVERY.md.

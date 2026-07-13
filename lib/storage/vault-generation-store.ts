@@ -131,7 +131,8 @@ export async function completeVaultGenerationJob(
     hot_count: report.hot_count,
     warm_count: report.warm_count,
     avg_score: report.avg_score,
-    report_json: { ...report, _vault_generation: { source_mode: "vault", generated_by: "admin", completed_at: new Date().toISOString(), usage_recorded: usageRecorded } },
+    // Minimal marker only: recipient email (their own), never criteria/vault ids.
+    report_json: { ...report, _vault_generation: { source_mode: "vault", generated_by: "admin", completed_at: new Date().toISOString(), usage_recorded: usageRecorded, customer_email: meta.customer_email } },
     ...(meta.search_id ? { search_id: meta.search_id } : {}),
   }, { onConflict: "job_id" });
   if (error) { console.error("[vault-generation-store] complete:", error.message); return false; }
@@ -177,6 +178,9 @@ export interface VaultGenerationRunSummary {
   reservations_released: number | null;
   stale_processing: boolean;
   retried_from: string | null;
+  search_id: string | null;
+  /** "workspace" when linked to a monitor (search_id), else "link_only". */
+  delivery: "workspace" | "link_only";
 }
 
 /** Recent Vault generation runs (jobIds prefixed "vault-"), admin ops view. */
@@ -184,7 +188,7 @@ export async function listVaultGenerationRuns(limit = 20): Promise<VaultGenerati
   const db = await getDb();
   if (!db) return [];
   const { data } = await db.from("snapshot_reports")
-    .select("job_id, status, plan, created_at, lead_count, report_json")
+    .select("job_id, status, plan, created_at, lead_count, search_id, report_json")
     .like("job_id", "vault-%")
     .order("created_at", { ascending: false })
     .limit(limit);
@@ -204,6 +208,9 @@ export async function listVaultGenerationRuns(limit = 20): Promise<VaultGenerati
       reservations_released: meta.reservations_released ?? null,
       stale_processing: row.status === "processing" && !isProcessingFresh(row.created_at),
       retried_from: meta.retried_from ?? null,
+      // search_id survives completion as a column even though meta is reduced
+      search_id: (row.search_id as string | null) ?? meta.search_id ?? null,
+      delivery: (row.search_id ?? meta.search_id) ? "workspace" : "link_only",
     };
   });
 }

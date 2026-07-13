@@ -83,6 +83,28 @@ export async function POST(req: NextRequest) {
     }
     await completeVaultGenerationJob(jobId, report, meta, usageRecorded); // refresh marker with final count
 
+    // Workspace notification — best-effort, only when the report is linked to
+    // a monitor (search_id → owner). Customer-safe copy, no internal details.
+    if (meta.search_id) {
+      try {
+        const { createServerClient } = await import("@/lib/supabase/server");
+        const db = createServerClient();
+        const { data: search } = db
+          ? await db.from("lead_searches").select("user_id, name").eq("id", meta.search_id).maybeSingle()
+          : { data: null };
+        if (db && search?.user_id) {
+          const { createNotification } = await import("@/lib/notifications/create-notification");
+          await createNotification(db, {
+            userId: search.user_id,
+            type: "search_completed",
+            title: "Your report is ready",
+            message: `A new opportunity report for “${search.name ?? "your monitor"}” is ready to review.`,
+            metadata: { job_id: jobId, report_url: `/results/${jobId}` },
+          });
+        }
+      } catch { /* notifications never block delivery */ }
+    }
+
     console.log(`[vault-bridge/process] completed job=${jobId} leads=${report.total_leads} usage=${usageRecorded}`);
     return NextResponse.json({ ok: true, job_id: jobId, lead_count: report.total_leads, usage_recorded: usageRecorded });
   } catch (err) {

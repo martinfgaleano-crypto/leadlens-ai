@@ -107,3 +107,11 @@ alguien del equipo, confundirá al cliente.
 3. Failed/stuck → Retry (re-valida selección, job nuevo) o Release reservations.
 4. Antes de generar: créditos Anthropic activos (`ALLOW_AI_HEALTH_PROBE=true npm run check:supabase` los verifica de verdad).
 5. Signals viejos pendientes: `npm run approve:demo-signals` (solo demo; no-demo se revisan a mano).
+
+## 14. Entregar un reporte Vault dentro del workspace del cliente
+
+1. /admin/searches → copiar search_id del monitor del cliente.
+2. Bridge → criterios + customer email + search_id → Queue.
+3. Runs list debe decir "workspace" (si dice "link-only", faltó el search_id).
+4. El cliente lo ve en su dashboard/monitor + notificación "Your report is ready".
+5. Sin search_id: entregar el link /results manualmente (Copy customer link).

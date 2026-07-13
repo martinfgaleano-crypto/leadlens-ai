@@ -34,6 +34,10 @@ export async function POST(req: NextRequest) {
     selection_summary: result.selection_summary,
     anthropic_key_present: !!process.env.ANTHROPIC_API_KEY,
     internal_processor_configured: internalProcessorConfigured(),
+    workspace_visible: !!body.search_id,
+    delivery_note: body.search_id
+      ? "Linked to the customer's monitor — the report will appear in their workspace and monitor history automatically."
+      : "No search_id provided — the report is link-only. The customer opens it via the copied /results link; it will not appear in their workspace lists.",
     note: "Report is processing. Open the report URL to watch status; failed or stuck runs are retryable from the runs view.",
   }, { status: 202 });
 }

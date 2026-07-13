@@ -100,3 +100,8 @@ Antes de cada deploy: `npm run check:supabase` (0 FAIL) y `npm run probe:supabas
 - NEXT_PUBLIC_APP_URL EXACTA (sin caracteres colgando) — un typo aquí rompe el
   trigger fire-and-forget del processor (bug real encontrado en local).
 - Créditos Anthropic activos antes de generar.
+
+## Customer delivery (actualización 2026-07-13)
+
+- smoke:customer-vault-delivery 20/20.
+- Al generar para un cliente real: SIEMPRE pasar search_id para visibilidad en workspace.
