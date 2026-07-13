@@ -55,6 +55,16 @@ export async function POST(req: NextRequest) {
       const { createServerClient } = await import("@/lib/supabase/server");
       const db = createServerClient();
       if (db) {
+        // Attach the authenticated user when a valid JWT is present — feedback
+        // still works anonymously (demo mode), but signed-in feedback keeps
+        // its owner for future learning/reporting. Never client-supplied.
+        let feedbackUserId: string | null = null;
+        const authHeader = req.headers.get("authorization") ?? "";
+        const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : null;
+        if (token) {
+          const { data: { user } } = await db.auth.getUser(token).catch(() => ({ data: { user: null } }));
+          if (user) feedbackUserId = user.id;
+        }
         // Dedup guard: identical feedback (same run + same account + same
         // signal) must not accumulate duplicate rows. Return the existing row
         // as already_saved — the signal meaning is unchanged by repetition.
@@ -83,6 +93,7 @@ export async function POST(req: NextRequest) {
         const { data: row, error } = await db
           .from("opportunity_feedback")
           .insert({
+            user_id:            feedbackUserId,
             job_id:             data.job_id             ?? null,
             search_id:          data.search_id          ?? null,
             company:            data.company,

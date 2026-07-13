@@ -52,3 +52,9 @@ source_mode/generated_by/completed_at/usage_recorded/su propio email.
 - El label del reporte en el workspace es el genérico de la serie (no distingue
   "vault-generated" de un run de monitor — decisión deliberada: para el cliente es
   simplemente su opportunity report).
+
+## Actualización 2026-07-13 — Trial E2E
+
+Delivery validado con un cliente auth real ([DEMO BETA E2E]): workspace scoping,
+aislamiento, feedback con user_id (fix), y dedupe de cuentas en selección (fix).
+Ver LEADLENS_BETA_E2E_TRIAL_RUN.md.

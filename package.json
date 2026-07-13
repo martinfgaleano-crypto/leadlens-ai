@@ -19,7 +19,8 @@
     "smoke:vault-report-generation": "node scripts/smoke-vault-report-generation.mjs",
     "smoke:vault-generation-ops": "node scripts/smoke-vault-generation-ops.mjs",
     "approve:demo-signals": "node scripts/approve-demo-vault-signals.mjs",
-    "smoke:customer-vault-delivery": "node scripts/smoke-customer-vault-delivery.mjs"
+    "smoke:customer-vault-delivery": "node scripts/smoke-customer-vault-delivery.mjs",
+    "test:beta-e2e-readiness": "node scripts/test-beta-e2e-readiness.mjs"
   },
   "dependencies": {
     "next": "14.2.5",

@@ -115,3 +115,8 @@ alguien del equipo, confundirá al cliente.
 3. Runs list debe decir "workspace" (si dice "link-only", faltó el search_id).
 4. El cliente lo ve en su dashboard/monitor + notificación "Your report is ready".
 5. Sin search_id: entregar el link /results manualmente (Copy customer link).
+
+## 15. Trial run E2E antes de cada entrega beta
+
+`npm run test:beta-e2e-readiness` + `ALLOW_AI_HEALTH_PROBE=true npm run check:supabase`.
+Runbook completo: LEADLENS_BETA_E2E_TRIAL_RUN.md.

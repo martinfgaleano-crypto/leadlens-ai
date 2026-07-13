@@ -264,7 +264,20 @@ export async function selectVaultOpportunities(
     passing.push(opp);
   }
 
-  result.selected = rankVaultOpportunities(passing, criteria).slice(0, criteria.max_candidates);
+  // One opportunity per account in a single selection — the same account can
+  // appear as several approved signals or even duplicate Vault companies
+  // (promotions without a domain cannot dedupe on insert). A report must not
+  // list the same company twice; ranking first keeps the best-scoring one.
+  // Key: domain when present, else normalized company name.
+  const ranked = rankVaultOpportunities(passing, criteria);
+  const seenAccounts = new Set<string>();
+  const deduped = ranked.filter((o) => {
+    const key = (o.domain?.toLowerCase().trim() || o.company_name.toLowerCase().trim());
+    if (seenAccounts.has(key)) return false;
+    seenAccounts.add(key);
+    return true;
+  });
+  result.selected = deduped.slice(0, criteria.max_candidates);
   result.sparse = result.selected.length < (criteria.max_candidates ?? DEFAULT_MAX_CANDIDATES);
   result.message = result.selected.length === 0
     ? "No approved Vault opportunities match this ICP yet. Add or promote more candidates, or relax the criteria."

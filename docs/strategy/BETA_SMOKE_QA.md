@@ -214,3 +214,11 @@ Recorrido de cliente real, en orden, en browser:
 | 100 | Cross-user | Usuario B no ve monitores/reportes de A (overview filtra por user_id) | ☐ |
 | 101 | Failed safe | Reporte failed → cliente ve copy genérico, sin error técnico | ☐ |
 | 102 | smoke delivery | npm run smoke:customer-vault-delivery → 20/20 | ☐ |
+
+## Beta E2E trial additions (2026-07-13)
+
+| # | Paso | Cómo verificar | Pass |
+|---|---|---|---|
+| 103 | Readiness script | npm run test:beta-e2e-readiness → 16/16 + ítems manuales listados | ☐ |
+| 104 | Dedupe de cuentas | Preview con señales duplicadas → cada company aparece una sola vez | ☐ |
+| 105 | Feedback con dueño | Feedback autenticado → user_id poblado en opportunity_feedback | ☐ |

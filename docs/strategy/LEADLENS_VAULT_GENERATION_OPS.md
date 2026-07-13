@@ -76,3 +76,8 @@ El generate acepta search_id (campo "Link to monitor" en la UI) → el reporte a
 solo en el workspace del cliente; sin search_id es link-only y el admin lo ve señalado
 (202 delivery_note + pill en runs list). Al completar un job linkeado se crea una
 notificación in-app. Ver LEADLENS_CUSTOMER_VAULT_DELIVERY.md.
+
+## Actualización 2026-07-13 — Trial E2E
+
+El selector dedupea cuentas (domain o nombre normalizado) — señales duplicadas o
+companies duplicadas en el Vault ya no producen reportes con la misma empresa dos veces.

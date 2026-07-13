@@ -105,3 +105,8 @@ Antes de cada deploy: `npm run check:supabase` (0 FAIL) y `npm run probe:supabas
 
 - smoke:customer-vault-delivery 20/20.
 - Al generar para un cliente real: SIEMPRE pasar search_id para visibilidad en workspace.
+
+## Beta E2E (actualización 2026-07-13)
+
+- test:beta-e2e-readiness 16/16 antes de cada entrega.
+- AI probe sin FAIL (créditos activos) — requisito NO negociable para generar.
