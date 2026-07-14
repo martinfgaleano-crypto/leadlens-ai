@@ -20,6 +20,14 @@ export interface VaultGenerationMeta {
   vault_company_ids: string[];
   candidates: LeadCandidate[];
   reservation_count: number;
+  /** Aggregate selection funnel (counts + reason keys only — no company names).
+   *  Merged into report_intelligence on completion so the customer sees the
+   *  real "considered → rejected → selected" numbers. */
+  selection_stats?: {
+    total_considered: number;
+    selected: number;
+    rejection_reasons: Record<string, number>;
+  };
   started_at: string;
   processor_started_at?: string | null;
   completed_at?: string | null;

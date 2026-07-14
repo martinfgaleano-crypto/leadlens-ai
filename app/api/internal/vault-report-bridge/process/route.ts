@@ -72,6 +72,20 @@ export async function POST(req: NextRequest) {
       candidatesOverride: meta.candidates,
     });
 
+    // Vault selection funnel → executive report intelligence (aggregates only —
+    // reason keys and counts; rejected company names never reach the report).
+    if (meta.selection_stats) {
+      report.report_intelligence = {
+        ...(report.report_intelligence ?? { companies_considered: 0, companies_selected: 0, companies_rejected: 0, rejection_reasons: {} }),
+        companies_considered: meta.selection_stats.total_considered,
+        companies_selected: report.total_leads,
+        companies_rejected: Math.max(meta.selection_stats.total_considered - meta.selection_stats.selected, 0),
+        rejection_reasons: meta.selection_stats.rejection_reasons,
+        signals_analyzed: meta.selection_stats.total_considered,
+        source_mode: "vault",
+      };
+    }
+
     // Usage first would risk usage-without-report; persist the report, then
     // record usage. If usage write fails we log loudly but keep the report.
     const persisted = await completeVaultGenerationJob(jobId, report, meta, 0);

@@ -422,6 +422,47 @@ export interface OpportunityRanking {
   current_source_freshness?: SourceFreshness | null;
   previous_signal_date?: string | null;
   current_signal_date?: string | null;
+  // ── Decision Intelligence (deterministic post-pass — derived only from real
+  //    signals/enrichment already in the lead; never invented) ────────────────
+  decision?: OpportunityDecision;
+  playbook?: ExecutivePlaybook; // HOT accounts only
+}
+
+// ─── Decision Intelligence (Opportunity Decision Engine v1) ──────────────────
+// Explainable decision per opportunity. Every field is assembled from data the
+// pipeline actually produced; when evidence is missing the field says so
+// honestly instead of fabricating a claim.
+
+export interface OpportunityDecision {
+  thesis: string;
+  why_now: string;
+  why_this_company: string;
+  why_this_quarter: string;
+  risk_factors: string[];
+  confidence_drivers: string[];
+  /** True when the decision rests on dated, sourced evidence (not fallbacks). */
+  evidence_grounded: boolean;
+}
+
+/** Consultant-style next-step plan for HOT accounts — available info only. */
+export interface ExecutivePlaybook {
+  recommended_stakeholder: string;
+  suggested_timing: string;
+  primary_value_hypothesis: string;
+  main_objection_expected: string;
+  first_conversation_angle: string;
+}
+
+/** Executive funnel — real pipeline numbers only (no estimated figures). */
+export interface ReportIntelligence {
+  companies_considered: number;
+  companies_selected: number;
+  companies_rejected: number;
+  /** Aggregate rejection reasons (raw keys; UI maps to customer-safe labels).
+   *  Aggregates only — rejected company names are never included. */
+  rejection_reasons: Record<string, number>;
+  signals_analyzed?: number;
+  source_mode?: "vault" | "provider";
 }
 
 // ─── Learning / Feedback Metadata ────────────────────────────────────────────
@@ -557,6 +598,8 @@ export interface LeadLensReport {
   evidence_quality_counts?: { high: number; medium: number; low: number; insufficient: number };
   // ── Ranking Intelligence ────────────────────────────────────────────────────
   ranked_opportunities?: OpportunityRanking[];    // All accounts ranked with explanations
+  // ── Decision Intelligence (executive funnel — real pipeline numbers only) ──
+  report_intelligence?: ReportIntelligence;
   // ── Change Classification summary (What Changed Since Last Report) ──────────
   change_summary?: {
     // Phase 1A counts (preserved for backwards compat)

@@ -94,6 +94,13 @@ export async function queueVaultGeneration(input: QueueVaultGenerationInput): Pr
     vault_company_ids: companyIds,
     candidates: adapted.candidates,
     reservation_count: reservations.length,
+    selection_stats: {
+      total_considered: selection.total_considered,
+      selected: selection.selected.length,
+      rejection_reasons: Object.fromEntries(
+        Object.entries(selection.rejected_counts).filter(([, v]) => typeof v === "number" && v > 0),
+      ) as Record<string, number>,
+    },
     started_at: new Date().toISOString(),
     retried_from: input.retried_from ?? null,
   };

@@ -254,9 +254,48 @@ export default function ResultsPage() {
 
         {/* Executive summary */}
         {report.executive_summary && (
-          <div className="bg-white border border-gray-100 rounded-xl p-5 mb-4">
-            <h3 className="font-semibold mb-2 text-sm">Executive Summary</h3>
-            <p className="text-sm text-gray-700">{report.executive_summary}</p>
+          <div className="bg-white border border-gray-100 rounded-xl p-6 mb-4">
+            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-2.5">Executive Summary</h3>
+            <p className="text-[0.925rem] leading-relaxed text-gray-700">{report.executive_summary}</p>
+          </div>
+        )}
+
+        {/* ── Why this report is different — the real selection funnel.
+             Every number comes from the pipeline; aggregates only (rejected
+             companies are never named). Renders only when data exists. ── */}
+        {report.report_intelligence && report.report_intelligence.companies_considered > 0 && (
+          <div className="bg-white border border-gray-100 rounded-xl p-6 mb-4">
+            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-1">Why this report is different</h3>
+            <p className="text-xs text-gray-400 mb-4">
+              Every account below survived a real selection funnel — nothing here is an unfiltered list.
+            </p>
+            <div className="flex items-stretch gap-2 flex-wrap">
+              {[
+                { label: "Considered", value: report.report_intelligence.companies_considered, tone: "text-gray-900" },
+                { label: "Rejected", value: report.report_intelligence.companies_rejected, tone: "text-gray-400" },
+                { label: "Selected for you", value: report.report_intelligence.companies_selected, tone: "text-sky-700" },
+              ].map((step, i, arr) => (
+                <div key={step.label} className="flex items-center gap-2 flex-1 min-w-[110px]">
+                  <div className="flex-1 bg-gray-50 border border-gray-100 rounded-lg px-4 py-3 text-center">
+                    <div className={`text-xl font-bold ${step.tone}`}>{step.value}</div>
+                    <div className="text-[0.62rem] font-semibold uppercase tracking-widest text-gray-400 mt-0.5">{step.label}</div>
+                  </div>
+                  {i < arr.length - 1 && <span className="text-gray-300 flex-shrink-0">→</span>}
+                </div>
+              ))}
+            </div>
+            {Object.keys(report.report_intelligence.rejection_reasons).length > 0 && (
+              <div className="mt-4">
+                <div className="text-[0.65rem] font-semibold uppercase tracking-widest text-gray-400 mb-2">Why accounts were rejected</div>
+                <div className="flex flex-wrap gap-2">
+                  {Object.entries(report.report_intelligence.rejection_reasons).map(([reason, count]) => (
+                    <span key={reason} className="inline-flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-full px-3 py-1 text-xs text-gray-600">
+                      <span className="font-semibold text-gray-800">{count}</span> {REJECTION_LABELS[reason] ?? reason.replace(/_/g, " ")}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -446,6 +485,22 @@ function buildInsights(report: LeadLensReport): {
   };
 }
 
+// Customer-safe labels for aggregate rejection reasons (raw pipeline keys).
+const REJECTION_LABELS: Record<string, string> = {
+  too_stale: "signals too old",
+  already_used: "already delivered to you",
+  below_min_confidence: "confidence below our bar",
+  low_confidence: "confidence below our bar",
+  insufficient_evidence: "insufficient verified evidence",
+  usage_rights_unresolved: "source rights not cleared",
+  usage_rights_restricted: "source rights not cleared",
+  suppressed: "on an exclusion list",
+  not_approved: "pending human review",
+  reserved_for_other: "reserved",
+  excluded_domain: "excluded by request",
+  missing_company: "insufficient data",
+};
+
 // ─── BreakdownChart — CSS-only stacked bar + legend. No chart library. ────────
 
 function BreakdownChart({
@@ -614,8 +669,73 @@ function AccountCard({
             </div>
           )}
 
-          {/* Why it fits */}
-          {(e.account_thesis || q.fit_reasons.length > 0) && (
+          {/* ── Opportunity analysis — Decision Engine narrative. Every line is
+               derived from real signals; missing evidence is stated, not filled. ── */}
+          {ranking?.decision && (
+            <div className="border border-gray-100 rounded-xl p-5 bg-gradient-to-b from-gray-50/60 to-white">
+              <div className="flex items-baseline justify-between mb-3">
+                <h4 className="text-xs font-bold text-gray-900 uppercase tracking-widest">Opportunity analysis</h4>
+                <span className={`text-[0.62rem] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full ${ranking.decision.evidence_grounded ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>
+                  {ranking.decision.evidence_grounded ? "Evidence-grounded" : "Validate before acting"}
+                </span>
+              </div>
+              <p className="text-[0.925rem] leading-relaxed text-gray-800 mb-4">{ranking.decision.thesis}</p>
+              <div className="grid md:grid-cols-3 gap-4 mb-4">
+                {[
+                  { label: "Why now", text: ranking.decision.why_now },
+                  { label: "Why this company", text: ranking.decision.why_this_company },
+                  { label: "Why this quarter", text: ranking.decision.why_this_quarter },
+                ].map(({ label, text }) => (
+                  <div key={label}>
+                    <div className="text-[0.62rem] font-bold uppercase tracking-widest text-gray-400 mb-1">{label}</div>
+                    <p className="text-sm leading-relaxed text-gray-600">{text}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="grid md:grid-cols-2 gap-4 pt-3 border-t border-gray-100">
+                <div>
+                  <div className="text-[0.62rem] font-bold uppercase tracking-widest text-gray-400 mb-1.5">Confidence drivers</div>
+                  <ul className="space-y-1">
+                    {ranking.decision.confidence_drivers.map((d, j) => (
+                      <li key={j} className="text-xs text-gray-600 flex gap-1.5"><span className="text-emerald-500 flex-shrink-0">●</span>{d}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <div className="text-[0.62rem] font-bold uppercase tracking-widest text-gray-400 mb-1.5">Risk factors</div>
+                  <ul className="space-y-1">
+                    {ranking.decision.risk_factors.map((r, j) => (
+                      <li key={j} className="text-xs text-gray-600 flex gap-1.5"><span className="text-amber-500 flex-shrink-0">▲</span>{r}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── Executive playbook — HOT accounts only, available info only ── */}
+          {ranking?.playbook && (
+            <div className="border border-red-100 rounded-xl p-5 bg-red-50/40">
+              <h4 className="text-xs font-bold text-red-800 uppercase tracking-widest mb-3">Executive playbook · Hot account</h4>
+              <div className="space-y-2.5">
+                {[
+                  { label: "Talk to", text: ranking.playbook.recommended_stakeholder },
+                  { label: "When", text: ranking.playbook.suggested_timing },
+                  { label: "Value hypothesis", text: ranking.playbook.primary_value_hypothesis },
+                  { label: "Expect the objection", text: ranking.playbook.main_objection_expected },
+                  { label: "Open with", text: ranking.playbook.first_conversation_angle },
+                ].map(({ label, text }) => (
+                  <div key={label} className="flex gap-3">
+                    <span className="text-[0.62rem] font-bold uppercase tracking-widest text-red-400 w-28 flex-shrink-0 pt-0.5">{label}</span>
+                    <p className="text-sm leading-relaxed text-gray-700">{text}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Why it fits (legacy layout — hidden when the Decision Engine narrative is present) */}
+          {!ranking?.decision && (e.account_thesis || q.fit_reasons.length > 0) && (
             <div>
               <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Why this account fits</h4>
               {e.account_thesis && <p className="text-sm text-gray-700 mb-2 italic">{e.account_thesis}</p>}
@@ -627,8 +747,8 @@ function AccountCard({
             </div>
           )}
 
-          {/* Why now */}
-          {(e.why_now || confirmedSignals.length > 0) && (
+          {/* Why now (legacy layout — hidden when the Decision Engine narrative is present) */}
+          {!ranking?.decision && (e.why_now || confirmedSignals.length > 0) && (
             <div>
               <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Why now</h4>
               {e.why_now && <p className="text-sm text-gray-700 mb-2">{e.why_now}</p>}

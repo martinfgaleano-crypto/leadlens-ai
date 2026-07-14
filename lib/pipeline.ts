@@ -143,6 +143,10 @@ export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLen
   // debugging the same context without extra lookups.
   if (searchId) report.search_id = searchId;
 
+  // Decision Intelligence — deterministic, explains but never re-decides.
+  const { applyDecisionIntelligence } = await import("./quality/opportunity-decision");
+  applyDecisionIntelligence(report, leadsWithQuality, candidates.length);
+
   // Write account memory updates after report is built (best-effort, fire-and-forget)
   if (!IS_DEMO) {
     updateAccountMemoryFromReport(leadsWithQuality, id, clientKey, memoryMap).catch(() => {});
