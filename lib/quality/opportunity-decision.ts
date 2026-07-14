@@ -17,6 +17,9 @@ import type {
   ReportIntelligence,
 } from "@/types";
 
+// Version identifier for the report _versions block. Bump on logic changes.
+export const DECISION_ENGINE_VERSION = 1;
+
 const clean = (s: string | null | undefined): string | null => {
   const t = (s ?? "").trim();
   return t.length >= 8 ? t : null;

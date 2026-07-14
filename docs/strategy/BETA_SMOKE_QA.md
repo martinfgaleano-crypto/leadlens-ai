@@ -222,3 +222,16 @@ Recorrido de cliente real, en orden, en browser:
 | 103 | Readiness script | npm run test:beta-e2e-readiness → 16/16 + ítems manuales listados | ☐ |
 | 104 | Dedupe de cuentas | Preview con señales duplicadas → cada company aparece una sola vez | ☐ |
 | 105 | Feedback con dueño | Feedback autenticado → user_id poblado en opportunity_feedback | ☐ |
+
+## Intelligence Foundation additions (2026-07-14)
+
+| # | Paso | Cómo verificar | Pass |
+|---|---|---|---|
+| 106 | Feedback 2 gestos | Reporte → Useful/Partially/Not useful → chips opcionales → "Feedback saved" | ☐ |
+| 107 | Compat legacy | POST feedback sin reason_codes → 200 igual que antes | ☐ |
+| 108 | Snapshot server-side | Evento nuevo en reporte post-031 → feature_snapshot y versions poblados | ☐ |
+| 109 | Learner idempotente | Run learner ×2 seguidas → segunda corrida "0 created, 0 updated, N unchanged" | ☐ |
+| 110 | Observation only | /admin/intelligence → banner + todas las filas "ranking: Off" | ☐ |
+| 111 | Freeze/Revoke | Acciones auditan (version++, trail) y nunca habilitan ranking | ☐ |
+| 112 | Ranking intacto | Bridge preview con criterios fijos → mismas companies/scores/reasons que pre-sprint | ☐ |
+| 113 | smoke + fixtures | npm run smoke:intelligence y npm run test:intelligence → todo verde | ☐ |

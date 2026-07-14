@@ -259,6 +259,11 @@ export interface LeadCandidate {
   /** Structured signal date from the lead provider (ISO date string, null if unknown).
    *  Never inferred — only set when the source explicitly carries a date. */
   signal_date?: string | null;
+  /** Structured signal type when the provider carries one (e.g. Vault bridge).
+   *  Metadata for snapshots/analytics — never used by scoring. */
+  signal_type?: string | null;
+  region?: string | null;
+  country?: string | null;
 }
 
 // ─── Evidence discipline ──────────────────────────────────────────────────────
@@ -426,6 +431,9 @@ export interface OpportunityRanking {
   //    signals/enrichment already in the lead; never invented) ────────────────
   decision?: OpportunityDecision;
   playbook?: ExecutivePlaybook; // HOT accounts only
+  /** Immutable feature snapshot frozen at report time (Intelligence Foundation).
+   *  Metadata only — never read by scoring/ranking. */
+  feature_snapshot?: Record<string, unknown>;
 }
 
 // ─── Decision Intelligence (Opportunity Decision Engine v1) ──────────────────
@@ -600,6 +608,8 @@ export interface LeadLensReport {
   ranked_opportunities?: OpportunityRanking[];    // All accounts ranked with explanations
   // ── Decision Intelligence (executive funnel — real pipeline numbers only) ──
   report_intelligence?: ReportIntelligence;
+  /** Decision-versions block frozen at generation time (identifiers only). */
+  _versions?: Record<string, string | number>;
   // ── Change Classification summary (What Changed Since Last Report) ──────────
   change_summary?: {
     // Phase 1A counts (preserved for backwards compat)

@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { normalizeSentiment, validateReasonCodes } from "@/lib/intelligence/feedback-taxonomy";
 
 // ─── Validation schema ────────────────────────────────────────────────────────
 // Strict: no personal data fields (email, phone, name, linkedin personal).
 // Only company-level and signal-level information.
 
 const VALID_SIGNALS = [
-  "useful", "not_useful", "irrelevant", "contacted", "meeting_booked",
+  "useful", "partially_useful", "not_useful", "irrelevant", "contacted", "meeting_booked",
   "wrong_fit", "generic", "replied", "add_to_vault", "exclude_similar",
 ] as const;
 
@@ -25,7 +26,39 @@ const schema = z.object({
   buying_window:      z.string().max(50).optional(),
   feedback_signal:    z.enum(VALID_SIGNALS),
   feedback_notes:     z.string().max(500).optional(),
+  /** Optional structured reason codes (closed enum, re-validated below). */
+  reason_codes:       z.array(z.string().max(40)).max(10).optional(),
 });
+
+// ── Server-side intelligence enrichment ──────────────────────────────────────
+// The browser is NEVER the source of truth for snapshots/versions: both are
+// copied from the persisted report (frozen at generation time). If the report
+// predates snapshots, we store null — history is never reconstructed from
+// live data and passed off as what the system knew back then.
+async function loadFrozenIntelligence(jobId: string | undefined, company: string): Promise<{
+  feature_snapshot: Record<string, unknown> | null;
+  versions: Record<string, unknown> | null;
+}> {
+  if (!jobId) return { feature_snapshot: null, versions: null };
+  try {
+    const { getSnapshot } = await import("@/lib/storage/snapshot-store");
+    const snapshot = await getSnapshot(jobId);
+    const report = snapshot?.report_json as {
+      _versions?: Record<string, unknown>;
+      ranked_opportunities?: Array<{ company?: string; feature_snapshot?: Record<string, unknown> }>;
+    } | null;
+    if (!report) return { feature_snapshot: null, versions: null };
+    const { companyKey } = await import("@/lib/intelligence/feature-snapshot");
+    const wanted = companyKey(company);
+    const opp = (report.ranked_opportunities ?? []).find((o) => o.company && companyKey(o.company) === wanted);
+    return {
+      feature_snapshot: opp?.feature_snapshot ?? null,
+      versions: report._versions ?? null,
+    };
+  } catch {
+    return { feature_snapshot: null, versions: null };
+  }
+}
 
 // In-memory fallback when Supabase is not configured
 type FeedbackRow = z.infer<typeof schema> & { id: string; created_at: string };
@@ -48,6 +81,14 @@ export async function POST(req: NextRequest) {
   }
 
   const data = parsed.data;
+
+  // Closed-enum re-validation of reason codes (unknown code → 400).
+  const reasonCheck = validateReasonCodes(data.reason_codes);
+  if (!reasonCheck.ok) {
+    return NextResponse.json({ error: reasonCheck.error }, { status: 400 });
+  }
+  const reasonCodes = reasonCheck.codes;
+  const normalizedSentiment = normalizeSentiment(data.feedback_signal);
 
   // Try Supabase first
   if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
@@ -82,6 +123,18 @@ export async function POST(req: NextRequest) {
             .maybeSingle();
 
           if (existing) {
+            // Same sentiment resubmitted with reason chips → enrich the
+            // existing row instead of losing the structured reasons.
+            if (reasonCodes.length > 0) {
+              await db.from("opportunity_feedback")
+                .update({ reason_codes: reasonCodes })
+                .eq("id", (existing as { id: string }).id)
+                .then(({ error: upErr }) => {
+                  if (upErr && !/column|schema cache/i.test(upErr.message)) {
+                    console.warn("[feedback] reason enrich failed:", upErr.message);
+                  }
+                });
+            }
             return NextResponse.json({
               success: true,
               already_saved: true,
@@ -90,26 +143,46 @@ export async function POST(req: NextRequest) {
           }
         }
 
-        const { data: row, error } = await db
+        const baseRow = {
+          user_id:            feedbackUserId,
+          job_id:             data.job_id             ?? null,
+          search_id:          data.search_id          ?? null,
+          company:            data.company,
+          domain:             data.domain             ?? null,
+          industry:           data.industry           ?? null,
+          segment:            data.segment            ?? null,
+          opportunity_score:  data.opportunity_score  ?? null,
+          category:           data.category           ?? null,
+          recommended_action: data.recommended_action ?? null,
+          signal_patterns:    data.signal_patterns    ?? null,
+          buying_window:      data.buying_window      ?? null,
+          feedback_signal:    data.feedback_signal,
+          feedback_notes:     data.feedback_notes     ?? null,
+        };
+
+        // Server-side enrichment: frozen snapshot + versions from the report.
+        const frozen = await loadFrozenIntelligence(data.job_id, data.company);
+        const intelligenceRow = {
+          ...baseRow,
+          reason_codes:            reasonCodes,
+          feature_snapshot:        frozen.feature_snapshot,
+          versions:                frozen.versions,
+          normalized_sentiment:    normalizedSentiment,
+          feedback_schema_version: 2,
+        };
+
+        let { data: row, error } = await db
           .from("opportunity_feedback")
-          .insert({
-            user_id:            feedbackUserId,
-            job_id:             data.job_id             ?? null,
-            search_id:          data.search_id          ?? null,
-            company:            data.company,
-            domain:             data.domain             ?? null,
-            industry:           data.industry           ?? null,
-            segment:            data.segment            ?? null,
-            opportunity_score:  data.opportunity_score  ?? null,
-            category:           data.category           ?? null,
-            recommended_action: data.recommended_action ?? null,
-            signal_patterns:    data.signal_patterns    ?? null,
-            buying_window:      data.buying_window      ?? null,
-            feedback_signal:    data.feedback_signal,
-            feedback_notes:     data.feedback_notes     ?? null,
-          })
+          .insert(intelligenceRow)
           .select("id")
           .single();
+
+        // Migration 031 not applied yet → retry without intelligence columns
+        // so the customer flow never breaks. Warning is actionable, not silent.
+        if (error && /column|schema cache/i.test(error.message)) {
+          console.warn("[feedback] intelligence columns missing (apply migration 031) — storing legacy row");
+          ({ data: row, error } = await db.from("opportunity_feedback").insert(baseRow).select("id").single());
+        }
 
         if (!error && row) {
           if (data.feedback_signal === "exclude_similar") {

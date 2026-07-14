@@ -35,6 +35,10 @@ export function convertVaultOpportunityToLeadCandidate(
     website_url: opp.website_url ?? undefined,
     location: [opp.region, opp.country].filter(Boolean).join(", ") || undefined,
     industry: opp.industry ?? undefined,
+    // Structured metadata for feature snapshots — scoring never reads these.
+    signal_type: opp.signal_type ?? null,
+    region: opp.region ?? null,
+    country: opp.country ?? null,
     source: "vault",
     source_url: opp.source_url ?? undefined,
     raw_context: contextLines.join("\n"),

@@ -147,6 +147,11 @@ export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLen
   const { applyDecisionIntelligence } = await import("./quality/opportunity-decision");
   applyDecisionIntelligence(report, leadsWithQuality, candidates.length);
 
+  // Intelligence Foundation — freeze per-opportunity feature snapshots and the
+  // decision-versions block into the report. Metadata only; never reordering.
+  const { applyIntelligenceFoundation } = await import("./intelligence/feature-snapshot");
+  await applyIntelligenceFoundation(report, leadsWithQuality);
+
   // Write account memory updates after report is built (best-effort, fire-and-forget)
   if (!IS_DEMO) {
     updateAccountMemoryFromReport(leadsWithQuality, id, clientKey, memoryMap).catch(() => {});

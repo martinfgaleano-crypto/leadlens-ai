@@ -110,3 +110,11 @@ Antes de cada deploy: `npm run check:supabase` (0 FAIL) y `npm run probe:supabas
 
 - test:beta-e2e-readiness 16/16 antes de cada entrega.
 - AI probe sin FAIL (créditos activos) — requisito NO negociable para generar.
+
+## Intelligence Foundation (actualización 2026-07-14)
+
+- Migración **031_intelligence_foundation.sql** después de 030 (aditiva; sin ella el
+  feedback opera en modo legacy con warning, nada se rompe).
+- `npm run smoke:intelligence` y `npm run test:intelligence` verdes.
+- Verificar en /admin/intelligence el banner de observation mode — ninguna preferencia
+  con ranking On existe en esta versión.

@@ -805,78 +805,135 @@ function AccountCard({
 // ─── Feedback bar (account-level) ─────────────────────────────────────────────
 // Wires to the existing POST /api/feedback/opportunity — company-level only.
 
-const FEEDBACK_OPTIONS: { label: string; signal: string }[] = [
-  { label: "Good fit",           signal: "useful" },
-  { label: "Not relevant",       signal: "irrelevant" },
-  { label: "Already contacted",  signal: "contacted" },
-  { label: "Weak evidence",      signal: "generic" },
-  { label: "Show more like this", signal: "add_to_vault" },
-  { label: "Do not show again",  signal: "exclude_similar" },
+// Two-gesture structured feedback: sentiment first (required), then optional
+// contextual reason chips. Sends immediately on sentiment (never lost) and
+// enriches with reasons on the second gesture. "Do not show again" keeps its
+// existing account-memory behavior as a separate action.
+const POSITIVE_CHIPS: { code: string; label: string }[] = [
+  { code: "strong_fit", label: "Strong fit" },
+  { code: "good_timing", label: "Good timing" },
+  { code: "useful_evidence", label: "Useful evidence" },
+  { code: "relevant_industry_region", label: "Relevant industry / region" },
 ];
+const NEGATIVE_CHIPS: { code: string; label: string }[] = [
+  { code: "wrong_fit", label: "Wrong fit" },
+  { code: "weak_or_old_signal", label: "Weak or old signal" },
+  { code: "not_now", label: "Interesting, but not now" },
+  { code: "already_known", label: "Already knew this company" },
+  { code: "already_contacted", label: "Already contacted" },
+  { code: "insufficient_evidence", label: "Insufficient evidence" },
+];
+const ALWAYS_CHIP = { code: "bad_explanation", label: "Analysis was weak" };
 
 function FeedbackBar({ lead, jobId, searchId }: { lead: ProcessedLead; jobId: string; searchId: string | undefined }) {
-  const [sent, setSent] = useState<string | null>(null);
+  const [sentiment, setSentiment] = useState<string | null>(null);
+  const [chips, setChips] = useState<string[]>([]);
+  const [phase, setPhase] = useState<"rate" | "reasons" | "done">("rate");
   const [sending, setSending] = useState(false);
   const [failed, setFailed] = useState(false);
 
-  async function send(signal: string, label: string) {
-    if (sending || sent) return;
-    setSending(true);
-    setFailed(false);
-    try {
-      const res = await fetch("/api/feedback/opportunity", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          job_id:             jobId,
-          search_id:          searchId,
-          company:            lead.candidate.company,
-          domain:             lead.candidate.domain ?? undefined,
-          industry:           lead.candidate.industry ?? undefined,
-          opportunity_score:  lead.qualification.fit_score,
-          category:           lead.qualification.category,
-          feedback_signal:    signal,
-        }),
-      });
-      if (res.ok) {
-        const d = await res.json().catch(() => ({}));
-        setSent(d.already_saved ? `${label} (already recorded)` : label);
-      } else {
-        setFailed(true);
-      }
-    } catch {
-      setFailed(true);
-    }
-    setSending(false);
+  async function post(signal: string, reasonCodes: string[]) {
+    const res = await fetch("/api/feedback/opportunity", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        job_id: jobId,
+        search_id: searchId,
+        company: lead.candidate.company,
+        domain: lead.candidate.domain ?? undefined,
+        industry: lead.candidate.industry ?? undefined,
+        opportunity_score: lead.qualification.fit_score,
+        category: lead.qualification.category,
+        feedback_signal: signal,
+        ...(reasonCodes.length > 0 ? { reason_codes: reasonCodes } : {}),
+      }),
+    });
+    return res.ok;
   }
 
-  if (sent) {
+  async function rate(signal: string) {
+    if (sending) return;
+    setSending(true); setFailed(false);
+    const ok = await post(signal, []).catch(() => false);
+    setSending(false);
+    if (!ok) { setFailed(true); return; }
+    setSentiment(signal);
+    setPhase("reasons");
+  }
+
+  async function sendReasons() {
+    if (sending || !sentiment) return;
+    if (chips.length === 0) { setPhase("done"); return; }
+    setSending(true);
+    await post(sentiment, chips).catch(() => false); // enriches the saved row
+    setSending(false);
+    setPhase("done");
+  }
+
+  if (phase === "done") {
     return (
-      <div className="text-xs text-green-600 bg-green-50 border border-green-100 rounded-lg px-3 py-2">
-        ✓ Feedback saved: {sent}. Your feedback helps future reports improve.
+      <div className="text-xs text-green-700 bg-green-50 border border-green-100 rounded-lg px-3 py-2">
+        ✓ Feedback saved. This helps LeadLens understand what was useful about this opportunity.
+      </div>
+    );
+  }
+
+  if (phase === "reasons") {
+    const contextChips = sentiment === "useful" ? POSITIVE_CHIPS
+      : sentiment === "not_useful" ? NEGATIVE_CHIPS
+      : [...POSITIVE_CHIPS.slice(0, 2), ...NEGATIVE_CHIPS.slice(0, 3)];
+    const toggle = (code: string) => setChips((c) => c.includes(code) ? c.filter((x) => x !== code) : c.length < 6 ? [...c, code] : c);
+    return (
+      <div>
+        <p className="text-xs text-gray-500 mb-2">Saved. Optionally, why? <span className="text-gray-400">(pick any that apply)</span></p>
+        <div className="flex flex-wrap gap-2 mb-2">
+          {[...contextChips, ALWAYS_CHIP].map((chip) => (
+            <button
+              key={chip.code}
+              onClick={() => toggle(chip.code)}
+              aria-pressed={chips.includes(chip.code)}
+              className={`text-xs rounded-full px-3 py-1.5 border transition-colors ${chips.includes(chip.code)
+                ? "bg-sky-50 border-sky-300 text-sky-800 font-semibold"
+                : "border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300"}`}
+            >
+              {chip.label}
+            </button>
+          ))}
+        </div>
+        <div className="flex items-center gap-3">
+          <button onClick={sendReasons} disabled={sending}
+            className="text-xs bg-gray-900 text-white rounded-full px-4 py-1.5 font-semibold disabled:opacity-50">
+            {sending ? "Saving…" : chips.length > 0 ? "Save reasons" : "Skip"}
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
     <div>
-      <h4 className="text-xs font-semibold text-gray-500 uppercase mb-1">Feedback on this account</h4>
-      <p className="text-xs text-gray-400 mb-2">Your feedback helps future reports improve.</p>
-      <div className="flex flex-wrap gap-2">
-        {FEEDBACK_OPTIONS.map(opt => (
-          <button
-            key={opt.signal}
-            onClick={() => send(opt.signal, opt.label)}
-            disabled={sending}
-            className="text-xs border border-gray-200 text-gray-600 rounded-full px-3 py-1.5 hover:bg-gray-50 hover:border-gray-300 disabled:opacity-50"
-          >
+      <h4 className="text-xs font-semibold text-gray-500 uppercase mb-1">Was this opportunity useful?</h4>
+      <div className="flex flex-wrap gap-2 items-center">
+        {[
+          { signal: "useful", label: "Useful", cls: "border-green-200 text-green-700 hover:bg-green-50" },
+          { signal: "partially_useful", label: "Partially useful", cls: "border-amber-200 text-amber-700 hover:bg-amber-50" },
+          { signal: "not_useful", label: "Not useful", cls: "border-gray-200 text-gray-600 hover:bg-gray-50" },
+        ].map((opt) => (
+          <button key={opt.signal} onClick={() => rate(opt.signal)} disabled={sending}
+            className={`text-xs border rounded-full px-3.5 py-1.5 font-medium disabled:opacity-50 ${opt.cls}`}>
             {opt.label}
           </button>
         ))}
+        <button
+          onClick={() => rate("exclude_similar")}
+          disabled={sending}
+          className="text-[0.68rem] text-gray-400 underline decoration-dotted hover:text-gray-600 ml-1"
+          title="Excludes this account from future reports"
+        >
+          Do not show again
+        </button>
       </div>
-      {failed && (
-        <p className="text-xs text-red-500 mt-2">Could not save feedback — please try again.</p>
-      )}
+      {failed && <p className="text-xs text-red-500 mt-2">Could not save feedback — please try again.</p>}
     </div>
   );
 }

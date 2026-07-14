@@ -30,6 +30,8 @@ const EXPECTED = {
   lead_hunter_runs: { migration: "030", area: "Lead Hunter runs" },
   lead_hunter_candidates: { migration: "030", area: "review queue / Vault promotion" },
   lead_hunter_source_inputs: { migration: "030", area: "manual source intake" },
+  // Intelligence Foundation (031)
+  learned_preferences: { migration: "031", area: "observation-only learned patterns (admin Intelligence)" },
 };
 
 if (!has(env, "NEXT_PUBLIC_SUPABASE_URL") || !has(env, "SUPABASE_SERVICE_ROLE_KEY")) {

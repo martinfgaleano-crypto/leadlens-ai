@@ -20,7 +20,9 @@
     "smoke:vault-generation-ops": "node scripts/smoke-vault-generation-ops.mjs",
     "approve:demo-signals": "node scripts/approve-demo-vault-signals.mjs",
     "smoke:customer-vault-delivery": "node scripts/smoke-customer-vault-delivery.mjs",
-    "test:beta-e2e-readiness": "node scripts/test-beta-e2e-readiness.mjs"
+    "test:beta-e2e-readiness": "node scripts/test-beta-e2e-readiness.mjs",
+    "smoke:intelligence": "node scripts/smoke-intelligence-foundation.mjs",
+    "test:intelligence": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/intelligence-learner.test.ts"
   },
   "dependencies": {
     "next": "14.2.5",

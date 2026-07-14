@@ -26,6 +26,12 @@ import {
 export const DEFAULT_MAX_CANDIDATES = 10;
 export const HARD_MAX_CANDIDATES = 25;
 
+// Version identifiers for the report _versions block (Intelligence Foundation).
+// Bump on any change to selection gates or scoring weights. This module never
+// reads learner output — selection stays deterministic and rule-based.
+export const SELECTOR_VERSION = 1;
+export const SCORING_VERSION = 1;
+
 const PERMITTED_RIGHTS = ["permitted", "licensed", "customer_provided"];
 const STRONG_SIGNALS = ["funding", "expansion", "hiring", "product_launch"];
 

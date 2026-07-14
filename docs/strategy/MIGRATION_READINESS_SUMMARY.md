@@ -32,3 +32,13 @@ NO colisionan con 029/030 — tablas distintas, ambas familias conviven.
    (todas usan `IF NOT EXISTS` — re-ejecutar una ya aplicada es inofensivo).
 3. Para la cadena nueva basta: `029_vault_foundation.sql` y luego `030_lead_hunter.sql`.
 4. Confirmar: `npm run probe:supabase` → todo ✅.
+
+## Actualización 2026-07-14 — Migración 031 (Intelligence Foundation)
+
+| Migración | Hace | Depende de ella |
+|---|---|---|
+| **031_intelligence_foundation.sql** | Extiende opportunity_feedback (reason_codes, feature_snapshot, versions, normalized_sentiment) y crea learned_preferences (observation-only) | Structured feedback v2, learner, /admin/intelligence |
+
+Aditiva e idempotente. Sin ella: el feedback sigue funcionando en modo legacy (el API
+hace fallback automático y loguea el aviso) y /admin/intelligence muestra el estado
+"migration missing". El ranking no depende de esta migración en ningún caso.
