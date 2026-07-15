@@ -10,18 +10,23 @@ export async function GET(req: NextRequest) {
   if (deny) return deny;
   const health = await Promise.all(ALL_PROVIDERS.map((p) => p.health()));
 
-  // Latest validation-benchmark summary (local artifact; honest absence note).
+  // Latest validation-benchmark summaries (local artifacts; honest absence note).
   let validation: unknown = null;
+  let recency: unknown = null;
   try {
     const { readFileSync, existsSync } = await import("node:fs");
     if (existsSync("ml/data/source-benchmark/latest.json")) {
       validation = JSON.parse(readFileSync("ml/data/source-benchmark/latest.json", "utf8")).summary;
+    }
+    if (existsSync("ml/data/source-benchmark/latest-recency.json")) {
+      recency = JSON.parse(readFileSync("ml/data/source-benchmark/latest-recency.json", "utf8")).summary;
     }
   } catch { /* honest null */ }
 
   return NextResponse.json({
     providers: health.map((h) => ({ ...h, capabilities: getProvider(h.provider)?.capabilities() })),
     validation_benchmark: validation ?? { status: "not_run_in_this_environment", note: "Run npm run sources:benchmark locally." },
+    recency_benchmark: recency,
     note: "Credentials are reported by presence only — values never leave the server.",
   });
 }

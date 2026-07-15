@@ -9,6 +9,8 @@ export interface SearchQuery {
   region?: string | null;
   language?: string | null;
   max_results?: number;
+  /** Restrict to recent results (provider-native operators; approximate). */
+  freshness_days?: number | null;
   /** Query intent for routing/benchmark attribution. */
   query_type?: "company_specific" | "signal_specific" | "industry_discovery" | "regional_discovery" | "official_domain" | "news" | "careers" | "regulatory" | "generic";
 }

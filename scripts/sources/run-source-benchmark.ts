@@ -78,10 +78,15 @@ async function main() {
   const perQuery: Record<string, unknown>[] = [];
   let extractCalls = 0, firecrawlFallbacks = 0, braveCalls = 0, serperCalls = 0;
 
+  // Recency operators (next-step b): FRESHNESS_DAYS applies provider-native
+  // date filters (Brave freshness=, Serper tbs=qdr:) to test if the 25% fresh
+  // rate rises. Unset = the original wide benchmark, so runs stay comparable.
+  const freshnessDays = process.env.FRESHNESS_DAYS ? parseInt(process.env.FRESHNESS_DAYS, 10) : null;
+
   for (const q of QUERIES) {
     const [brave, serper] = await Promise.all([
-      braveProvider.search({ query: q.query, language: q.language, region: q.gl, max_results: 8, query_type: "signal_specific" }),
-      serperProvider.search({ query: q.query, language: q.language, region: q.gl, max_results: 8, query_type: "signal_specific" }),
+      braveProvider.search({ query: q.query, language: q.language, region: q.gl, max_results: 8, query_type: "signal_specific", freshness_days: freshnessDays }),
+      serperProvider.search({ query: q.query, language: q.language, region: q.gl, max_results: 8, query_type: "signal_specific", freshness_days: freshnessDays }),
     ]);
     braveCalls++; serperCalls++;
 
@@ -168,6 +173,8 @@ async function main() {
     ran_at: new Date().toISOString(),
     banner: "SOURCE QUALITY VALIDATION — auto-assessed heuristic flags pending human review; costs are LIST-PRICE ESTIMATES, not billed amounts; no customer performance claims",
     policy: "Brave+Serper search → dedupe → top-3 combined → Tavily Extract (Firecrawl per-URL fallback only)",
+    freshness_days: freshnessDays,
+    freshness_mode: freshnessDays ? `recency operators (≤${freshnessDays}d)` : "wide (no recency filter)",
     queries: totalQueries,
     search_calls: { brave: braveCalls, serper: serperCalls },
     extract_calls: { total: extractCalls, tavily_primary: extractCalls - firecrawlFallbacks, firecrawl_fallbacks: firecrawlFallbacks },
@@ -190,9 +197,12 @@ async function main() {
     },
   };
 
-  writeFileSync(`ml/data/source-benchmark/results-${stamp}.jsonl`, rows.map((r) => JSON.stringify(r)).join("\n") + "\n");
-  writeFileSync(`ml/data/source-benchmark/summary-${stamp}.json`, JSON.stringify({ summary, per_query: perQuery }, null, 2));
-  writeFileSync(`ml/data/source-benchmark/latest.json`, JSON.stringify({ summary, results_file: `results-${stamp}.jsonl` }, null, 2));
+  const tag = freshnessDays ? `fresh${freshnessDays}` : "wide";
+  writeFileSync(`ml/data/source-benchmark/results-${tag}-${stamp}.jsonl`, rows.map((r) => JSON.stringify(r)).join("\n") + "\n");
+  writeFileSync(`ml/data/source-benchmark/summary-${tag}-${stamp}.json`, JSON.stringify({ summary, per_query: perQuery }, null, 2));
+  // Only the wide run drives the admin UI's headline table; recency runs write
+  // a comparison file so the original evidence is never clobbered.
+  writeFileSync(freshnessDays ? `ml/data/source-benchmark/latest-recency.json` : `ml/data/source-benchmark/latest.json`, JSON.stringify({ summary, results_file: `results-${tag}-${stamp}.jsonl` }, null, 2));
   console.log(JSON.stringify(summary, null, 2));
 }
 

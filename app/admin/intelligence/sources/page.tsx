@@ -17,6 +17,7 @@ const S = {
 type Health = { provider: string; status: string; reason: string | null; credentials_present: boolean };
 type ValidationSummary = {
   ran_at?: string; banner?: string; queries?: number; status?: string; note?: string;
+  freshness_mode?: string; freshness_days?: number | null;
   overall?: Record<string, number | null>;
   by_region?: Record<string, Record<string, number | null>>;
   search_comparison?: Record<string, number>;
@@ -28,6 +29,7 @@ type BenchRow = { provider: string; ok: boolean; error: string | null; results_r
 export default function SourcesPage() {
   const [providers, setProviders] = useState<Health[]>([]);
   const [validation, setValidation] = useState<ValidationSummary | null>(null);
+  const [recency, setRecency] = useState<ValidationSummary | null>(null);
   const [query, setQuery] = useState("logistics company expansion Colombia announcement");
   const [bench, setBench] = useState<{ rows: BenchRow[]; notes: string[] } | null>(null);
   const [busy, setBusy] = useState(false);
@@ -39,6 +41,7 @@ export default function SourcesPage() {
       const d = await res.json();
       setProviders(d.providers ?? []);
       setValidation(d.validation_benchmark ?? null);
+      setRecency(d.recency_benchmark ?? null);
     }
   }, []);
   useEffect(() => { load(); }, [load]);
@@ -107,6 +110,33 @@ export default function SourcesPage() {
               )}
             </>
           )}
+        </div>
+      )}
+
+      {recency?.overall && validation?.overall && (
+        <div style={S.card}>
+          <h2 style={{ fontSize: "0.95rem", fontWeight: 700, color: "#0f172a", marginBottom: "0.25rem" }}>Recency lever — freshness bottleneck test</h2>
+          <p style={{ fontSize: "0.72rem", color: "#64748b", marginBottom: "0.6rem" }}>
+            Same 24 queries with provider recency operators vs the wide run. Tests whether the ~25% fresh rate rises.
+          </p>
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", fontSize: "0.72rem", borderCollapse: "collapse" }}>
+              <thead><tr style={{ textAlign: "left", color: "#94a3b8" }}>
+                {["run", "fresh", "resolved-date", "valid-signal", "qualified", "extract-ok"].map((h) => <th key={h} style={{ padding: "0.25rem 0.45rem", borderBottom: "1px solid #e2e8f0" }}>{h}</th>)}
+              </tr></thead>
+              <tbody>
+                {[["wide", validation.overall], [(recency.freshness_mode as unknown as string) ?? "recency", recency.overall]].map(([label, m]) => (
+                  <tr key={label as string} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                    <td style={{ padding: "0.25rem 0.45rem", fontWeight: 700 }}>{label as string}</td>
+                    {["fresh_rate", "resolved_date_rate", "valid_signal_yield", "qualified_opportunity_yield", "extraction_success_rate"].map((k) => {
+                      const v = (m as Record<string, number | null>)[k];
+                      return <td key={k} style={{ padding: "0.25rem 0.45rem" }}>{v === null || v === undefined ? "—" : `${Math.round(v * 100)}%`}</td>;
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 

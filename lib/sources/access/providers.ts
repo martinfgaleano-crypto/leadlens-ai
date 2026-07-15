@@ -77,6 +77,8 @@ export const braveProvider: SearchProvider = {
     try {
       const params = new URLSearchParams({ q: query.query, count: String(Math.min(query.max_results ?? 8, 20)) });
       if (query.language) params.set("search_lang", query.language);
+      // Brave freshness buckets: pd/pw/pm/py — nearest bucket ≥ requested window.
+      if (query.freshness_days) params.set("freshness", query.freshness_days <= 1 ? "pd" : query.freshness_days <= 7 ? "pw" : query.freshness_days <= 31 ? "pm" : "py");
       const res = await fetch(`https://api.search.brave.com/res/v1/web/search?${params}`, {
         headers: { "X-Subscription-Token": braveKey()!, accept: "application/json" },
         signal: AbortSignal.timeout(15_000),
@@ -119,7 +121,12 @@ export const serperProvider: SearchProvider = {
       const res = await fetch("https://google.serper.dev/search", {
         method: "POST",
         headers: { "X-API-KEY": process.env.SERPER_API_KEY, "content-type": "application/json" },
-        body: JSON.stringify({ q: query.query, num: Math.min(query.max_results ?? 8, 20), ...(query.language ? { hl: query.language } : {}), ...(query.region ? { gl: query.region } : {}) }),
+        body: JSON.stringify({
+          q: query.query, num: Math.min(query.max_results ?? 8, 20),
+          ...(query.language ? { hl: query.language } : {}), ...(query.region ? { gl: query.region } : {}),
+          // Serper tbs buckets: qdr:d/w/m/y — nearest bucket ≥ requested window.
+          ...(query.freshness_days ? { tbs: query.freshness_days <= 1 ? "qdr:d" : query.freshness_days <= 7 ? "qdr:w" : query.freshness_days <= 31 ? "qdr:m" : "qdr:y" } : {}),
+        }),
         signal: AbortSignal.timeout(15_000),
       });
       const latency = Date.now() - started;
