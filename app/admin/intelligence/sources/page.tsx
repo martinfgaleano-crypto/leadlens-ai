@@ -15,10 +15,19 @@ const S = {
 };
 
 type Health = { provider: string; status: string; reason: string | null; credentials_present: boolean };
+type ValidationSummary = {
+  ran_at?: string; banner?: string; queries?: number; status?: string; note?: string;
+  overall?: Record<string, number | null>;
+  by_region?: Record<string, Record<string, number | null>>;
+  search_comparison?: Record<string, number>;
+  extract_calls?: { total: number; tavily_primary: number; firecrawl_fallbacks: number };
+  cost_estimates_usd?: { note: string; total: number; per_valid_signal: number | null; per_qualified_opportunity: number | null };
+};
 type BenchRow = { provider: string; ok: boolean; error: string | null; results_returned: number; unique_urls: number; unique_domains: number; dated_result_ratio: number | null; official_source_ratio: number | null; latency_ms: number; marginal_unique_urls: number; overlap_with_others_ratio: number | null };
 
 export default function SourcesPage() {
   const [providers, setProviders] = useState<Health[]>([]);
+  const [validation, setValidation] = useState<ValidationSummary | null>(null);
   const [query, setQuery] = useState("logistics company expansion Colombia announcement");
   const [bench, setBench] = useState<{ rows: BenchRow[]; notes: string[] } | null>(null);
   const [busy, setBusy] = useState(false);
@@ -26,7 +35,11 @@ export default function SourcesPage() {
 
   const load = useCallback(async () => {
     const res = await adminFetch("/api/admin/intelligence/sources");
-    if (res.ok) setProviders((await res.json()).providers ?? []);
+    if (res.ok) {
+      const d = await res.json();
+      setProviders(d.providers ?? []);
+      setValidation(d.validation_benchmark ?? null);
+    }
   }, []);
   useEffect(() => { load(); }, [load]);
 
@@ -56,6 +69,46 @@ export default function SourcesPage() {
           </div>
         ))}
       </div>
+
+      {validation && (
+        <div style={S.card}>
+          <h2 style={{ fontSize: "0.95rem", fontWeight: 700, color: "#0f172a", marginBottom: "0.25rem" }}>Source Quality Validation (última corrida)</h2>
+          {validation.status === "not_run_in_this_environment" ? (
+            <p style={{ fontSize: "0.78rem", color: "#94a3b8" }}>{validation.note}</p>
+          ) : (
+            <>
+              <p style={{ fontSize: "0.68rem", color: "#92400e", background: "#fffbeb", border: "1px solid #fde68a", borderRadius: "0.4rem", padding: "0.4rem 0.6rem", marginBottom: "0.7rem" }}>{validation.banner}</p>
+              <p style={{ fontSize: "0.72rem", color: "#64748b", marginBottom: "0.6rem" }}>
+                {validation.queries} queries · {validation.ran_at?.slice(0, 16)} · extract: {validation.extract_calls?.tavily_primary} Tavily + {validation.extract_calls?.firecrawl_fallbacks} Firecrawl fallbacks
+              </p>
+              <div style={{ overflowX: "auto" }}>
+                <table style={{ width: "100%", fontSize: "0.72rem", borderCollapse: "collapse" }}>
+                  <thead><tr style={{ textAlign: "left", color: "#94a3b8" }}>
+                    {["scope", "n", "relevant", "company", "official", "prov-date", "resolved-date", "fresh", "extract-ok", "grounded", "valid-signal", "qualified"].map((h) => <th key={h} style={{ padding: "0.25rem 0.45rem", borderBottom: "1px solid #e2e8f0" }}>{h}</th>)}
+                  </tr></thead>
+                  <tbody>
+                    {[["overall", validation.overall], ...Object.entries(validation.by_region ?? {})].map(([scope, m]) => m && (
+                      <tr key={scope as string} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                        <td style={{ padding: "0.25rem 0.45rem", fontWeight: 700 }}>{scope as string}</td>
+                        <td style={{ padding: "0.25rem 0.45rem" }}>{(m as Record<string, number | null>).sample_size}</td>
+                        {["relevant_rate", "company_match_rate", "official_source_rate", "provider_date_rate", "resolved_date_rate", "fresh_rate", "extraction_success_rate", "grounded_claim_rate", "valid_signal_yield", "qualified_opportunity_yield"].map((k) => {
+                          const v = (m as Record<string, number | null>)[k];
+                          return <td key={k} style={{ padding: "0.25rem 0.45rem" }}>{v === null || v === undefined ? "—" : `${Math.round(v * 100)}%`}</td>;
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {validation.cost_estimates_usd && (
+                <p style={{ fontSize: "0.7rem", color: "#64748b", marginTop: "0.5rem" }}>
+                  Costo estimado (lista, no facturado): ${validation.cost_estimates_usd.total} total · ${validation.cost_estimates_usd.per_valid_signal ?? "—"}/señal válida · ${validation.cost_estimates_usd.per_qualified_opportunity ?? "—"}/oportunidad calificada
+                </p>
+              )}
+            </>
+          )}
+        </div>
+      )}
 
       <div style={S.card}>
         <h2 style={{ fontSize: "0.95rem", fontWeight: 700, color: "#0f172a", marginBottom: "0.5rem" }}>Multiprovider benchmark</h2>

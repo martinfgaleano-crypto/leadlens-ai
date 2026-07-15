@@ -28,5 +28,24 @@ export async function GET(req: NextRequest) {
       predictions = count ?? 0;
     }
   }
-  return NextResponse.json({ growth, ml: { status: mlStatus, models, datasets, shadow_predictions: predictions } });
+  // Source validation benchmark (local artifact — honest absence in prod).
+  let sourceValidation: unknown = { status: "insufficient_sample", note: "Benchmark not run in this environment." };
+  try {
+    const { readFileSync, existsSync } = await import("node:fs");
+    if (existsSync("ml/data/source-benchmark/latest.json")) {
+      const s = JSON.parse(readFileSync("ml/data/source-benchmark/latest.json", "utf8")).summary;
+      sourceValidation = {
+        ran_at: s.ran_at, queries: s.queries,
+        regional_coverage: Object.keys(s.by_region ?? {}),
+        resolved_date_rate: s.overall?.resolved_date_rate ?? null,
+        extraction_success_rate: s.overall?.extraction_success_rate ?? null,
+        valid_signal_yield: s.overall?.valid_signal_yield ?? null,
+        qualified_opportunity_yield: s.overall?.qualified_opportunity_yield ?? null,
+        estimated_cost_usd: s.cost_estimates_usd?.total ?? null,
+        note: "auto-assessed sample — no customer performance evidence",
+      };
+    }
+  } catch { /* honest default */ }
+
+  return NextResponse.json({ growth, ml: { status: mlStatus, models, datasets, shadow_predictions: predictions }, source_validation: sourceValidation });
 }
