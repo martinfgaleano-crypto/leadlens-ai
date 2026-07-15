@@ -39,6 +39,8 @@ const EXPECTED = {
   ml_models: { migration: "032", area: "model registry (no auto-champion)" },
   ml_predictions: { migration: "032", area: "shadow predictions" },
   ml_jobs: { migration: "032", area: "async ML jobs" },
+  // Source Review (033)
+  source_benchmark_reviews: { migration: "033", area: "human calibration of source auto-flags" },
 };
 
 if (!has(env, "NEXT_PUBLIC_SUPABASE_URL") || !has(env, "SUPABASE_SERVICE_ROLE_KEY")) {

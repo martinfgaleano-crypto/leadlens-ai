@@ -101,6 +101,7 @@ export default function IntelligencePage() {
           { href: "/admin/intelligence/growth", label: "📈 Growth Observatory" },
           { href: "/admin/intelligence/review", label: "🧑‍⚖️ Review Queue" },
           { href: "/admin/intelligence/sources", label: "🔎 Source Access" },
+          { href: "/admin/intelligence/source-review", label: "✅ Source Review" },
         ].map((l) => (
           <a key={l.href} href={l.href} style={{ background: "#fff", border: "1px solid #cbd5e1", borderRadius: "0.5rem", padding: "0.4rem 0.9rem", fontSize: "0.78rem", fontWeight: 600, color: "#0f172a", textDecoration: "none" }}>{l.label}</a>
         ))}
