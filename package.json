@@ -28,7 +28,8 @@
     "ml:train:demo": "cd ml && PYTHONPATH=src .venv/bin/python -m leadlens_ml .",
     "ml:shadow": "npx -y tsx --tsconfig tsconfig.json scripts/ml/shadow-score.ts",
     "ml:test": "cd ml && .venv/bin/python -m pytest tests/ -q",
-    "smoke:intelligence-expansion": "node scripts/smoke-intelligence-expansion.mjs"
+    "smoke:intelligence-expansion": "node scripts/smoke-intelligence-expansion.mjs",
+    "sources:benchmark": "npx -y tsx --tsconfig tsconfig.json scripts/sources/run-source-benchmark.ts"
   },
   "dependencies": {
     "next": "14.2.5",
