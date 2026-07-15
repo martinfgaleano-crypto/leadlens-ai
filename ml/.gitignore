@@ -1,0 +1,8 @@
+artifacts/
+reports/
+fixtures/*.csv
+fixtures/*.parquet
+.venv/
+__pycache__/
+.pytest_cache/
+data/

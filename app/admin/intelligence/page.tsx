@@ -96,6 +96,15 @@ export default function IntelligencePage() {
     <AdminLayout>
       <h1 style={S.h1}>Customer Intelligence</h1>
       <p style={S.sub}>Structured feedback observability and observation-only learned patterns.</p>
+      <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "1rem" }}>
+        {[
+          { href: "/admin/intelligence/growth", label: "📈 Growth Observatory" },
+          { href: "/admin/intelligence/review", label: "🧑‍⚖️ Review Queue" },
+          { href: "/admin/intelligence/sources", label: "🔎 Source Access" },
+        ].map((l) => (
+          <a key={l.href} href={l.href} style={{ background: "#fff", border: "1px solid #cbd5e1", borderRadius: "0.5rem", padding: "0.4rem 0.9rem", fontSize: "0.78rem", fontWeight: 600, color: "#0f172a", textDecoration: "none" }}>{l.label}</a>
+        ))}
+      </div>
       <div style={S.banner}>⚠ Observation mode — learned preferences are not affecting rankings.</div>
 
       {error && <div style={{ ...S.banner, background: "#fef2f2", borderColor: "#fecaca", color: "#991b1b" }}>{error}</div>}

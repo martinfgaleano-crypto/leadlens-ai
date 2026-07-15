@@ -1,0 +1,19 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"leadlens/opportunity-feature-snapshot/v1",
+  "type":"object",
+  "required":["schema_version","company_key_hash","monitor_key","snapshot_at","candidate_group"],
+  "properties":{
+    "schema_version":{"const":1},
+    "company_key_hash":{"type":"string","minLength":8},
+    "monitor_key":{"type":"string"},
+    "snapshot_at":{"type":"string","format":"date-time"},
+    "primary_signal_type":{"type":["string","null"]},
+    "signal_age_days":{"type":["number","null"],"minimum":0},
+    "evidence_quality":{"type":["number","null"],"minimum":0,"maximum":1},
+    "soft_fit_score":{"type":["number","null"],"minimum":0,"maximum":1},
+    "candidate_group":{"type":"string"},
+    "demo_only":{"type":"boolean"}
+  },
+  "additionalProperties":true
+}
