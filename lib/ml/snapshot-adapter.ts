@@ -75,6 +75,8 @@ export interface LabRecord {
   region: string | null;
   company_size_bucket: string | null;
   hard_gate_violation_count: number;
+  /** Run lineage group (job id) — excluded from model features; used for splits. */
+  candidate_group: string;
   soft_fit_score: number | null; // deliberately null on real data: qualification fit is baseline-derived
   // passthrough (excluded from features by the lab EXCLUDE list):
   demo_only: boolean;
@@ -117,6 +119,7 @@ export function adaptRealSnapshot(
     region: snap.region ?? snap.country ?? null,
     company_size_bucket: snap.size_bucket ?? null,
     hard_gate_violation_count: 0,    // gated candidates never reach reports; pools pending (documented gap)
+    candidate_group: ctx.job_id,
     soft_fit_score: null,            // baseline-derived (qualification) → prohibited as independent feature
     demo_only: false,
     job_id: ctx.job_id,

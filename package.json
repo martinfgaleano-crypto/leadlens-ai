@@ -22,7 +22,13 @@
     "smoke:customer-vault-delivery": "node scripts/smoke-customer-vault-delivery.mjs",
     "test:beta-e2e-readiness": "node scripts/test-beta-e2e-readiness.mjs",
     "smoke:intelligence": "node scripts/smoke-intelligence-foundation.mjs",
-    "test:intelligence": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/intelligence-learner.test.ts"
+    "test:intelligence": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/intelligence-learner.test.ts",
+    "ml:dataset": "npx -y tsx --tsconfig tsconfig.json scripts/ml/build-dataset.ts",
+    "ml:train": "ml/.venv/bin/python -m leadlens_ml.run_real",
+    "ml:train:demo": "cd ml && PYTHONPATH=src .venv/bin/python -m leadlens_ml .",
+    "ml:shadow": "npx -y tsx --tsconfig tsconfig.json scripts/ml/shadow-score.ts",
+    "ml:test": "cd ml && .venv/bin/python -m pytest tests/ -q",
+    "smoke:intelligence-expansion": "node scripts/smoke-intelligence-expansion.mjs"
   },
   "dependencies": {
     "next": "14.2.5",

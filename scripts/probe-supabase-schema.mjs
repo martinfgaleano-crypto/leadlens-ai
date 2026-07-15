@@ -32,6 +32,13 @@ const EXPECTED = {
   lead_hunter_source_inputs: { migration: "030", area: "manual source intake" },
   // Intelligence Foundation (031)
   learned_preferences: { migration: "031", area: "observation-only learned patterns (admin Intelligence)" },
+  // ML Foundation (032)
+  ml_training_examples: { migration: "032", area: "real training examples (shadow ML)" },
+  ml_labels: { migration: "032", area: "label provenance" },
+  ml_dataset_versions: { migration: "032", area: "dataset manifests" },
+  ml_models: { migration: "032", area: "model registry (no auto-champion)" },
+  ml_predictions: { migration: "032", area: "shadow predictions" },
+  ml_jobs: { migration: "032", area: "async ML jobs" },
 };
 
 if (!has(env, "NEXT_PUBLIC_SUPABASE_URL") || !has(env, "SUPABASE_SERVICE_ROLE_KEY")) {
