@@ -43,6 +43,8 @@ const EXPECTED = {
   source_benchmark_reviews: { migration: "033", area: "human calibration of source auto-flags" },
   // Vault Signal Review (034)
   vault_signal_reviews: { migration: "034", area: "governed human review of Vault signals" },
+  // Institutional Snapshots (035)
+  institutional_report_snapshots: { migration: "035", area: "reproducible assembled Institutional Reports" },
 };
 
 if (!has(env, "NEXT_PUBLIC_SUPABASE_URL") || !has(env, "SUPABASE_SERVICE_ROLE_KEY")) {

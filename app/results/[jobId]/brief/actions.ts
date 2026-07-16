@@ -54,5 +54,25 @@ export async function getBriefForViewer(jobId: string, accessToken: string | nul
     customer_ref: null,
     created_at: snapshot.created_at,
   });
+
+  // Reproducible persistence (best-effort; requires migration 035). Upsert per
+  // (job_id, schema_version) with a checksum over the stable parts — the
+  // assembler is pure over an immutable snapshot, so re-assembly is identical.
+  try {
+    const db = await serverDb();
+    if (db) {
+      const { createHash } = await import("node:crypto");
+      const stable = { ...report, metadata: { ...report.metadata, assembled_at: "-" } };
+      const checksum = createHash("sha256").update(JSON.stringify(stable)).digest("hex");
+      await db.from("institutional_report_snapshots").upsert({
+        job_id: report.metadata.job_id,
+        schema_version: report.schema_version,
+        report: report as unknown as Record<string, unknown>,
+        checksum,
+        source_versions: report.metadata.source_versions,
+      }, { onConflict: "job_id,schema_version" });
+    }
+  } catch { /* honest best-effort: 035 pending → assembly still serves */ }
+
   return { state: "ok", report };
 }
