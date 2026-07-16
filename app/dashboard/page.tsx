@@ -338,9 +338,14 @@ export default function DashboardPage() {
             <div style={S.sectionHeader}>
               <span style={S.sectionTitle}>Monitors</span>
               {latestReport?.latest_report_job_id && (
-                <Link href={`/results/${latestReport.latest_report_job_id}`} style={{ background: "#0ea5e9", color: "#fff", borderRadius: "0.45rem", padding: "0.4rem 1rem", fontWeight: 700, fontSize: "0.78rem", textDecoration: "none" }}>
-                  Open latest report →
-                </Link>
+                <span style={{ display: "inline-flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                  <Link href={`/results/${latestReport.latest_report_job_id}`} style={{ background: "#0ea5e9", color: "#fff", borderRadius: "0.45rem", padding: "0.4rem 1rem", fontWeight: 700, fontSize: "0.78rem", textDecoration: "none" }}>
+                    Open latest report →
+                  </Link>
+                  <Link href={`/results/${latestReport.latest_report_job_id}/brief`} style={{ background: "#0f172a", color: "#fff", borderRadius: "0.45rem", padding: "0.4rem 1rem", fontWeight: 700, fontSize: "0.78rem", textDecoration: "none" }}>
+                    Institutional brief →
+                  </Link>
+                </span>
               )}
             </div>
             <div style={{ padding: "1rem 1.25rem", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: "0.75rem" }}>
