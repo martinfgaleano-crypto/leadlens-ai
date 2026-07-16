@@ -47,10 +47,16 @@ function sha24(s: string): string {
   return h.toString(16).padStart(8, "0") + s.length.toString(16);
 }
 
-function companyName(title: string | null): string | null {
+import { resolveCanonicalCompanyFromSignal } from "@/lib/vault/entity-resolution";
+
+function companyName(title: string | null, url?: string | null): string | null {
   if (!title) return null;
-  const name = title.split(/[|\-–—:]/)[0].trim();
-  return name.length >= 3 && name.length <= 80 ? name : null;
+  const raw = title.split(/[|]/)[0].trim();
+  if (raw.length < 3 || raw.length > 120) return null;
+  // Entity resolution: article titles become canonical names; unresolved
+  // suspects are kept but will be flagged in review (never invented).
+  const res = resolveCanonicalCompanyFromSignal({ currentCompanyName: raw, sourceUrl: url });
+  return res.canonical_name.length >= 3 && res.canonical_name.length <= 80 ? res.canonical_name : null;
 }
 
 function domainOf(url: string): string | null {
@@ -74,7 +80,7 @@ export function benchmarkRowToPromotionCandidate(row: BenchmarkResultRow, benchm
   if (!f.relevant || !f.grounded_claim || !row.extraction?.ok) return null;
   if (!date || conf === "low" || conf === "none") return null;
 
-  const name = companyName(row.title);
+  const name = companyName(row.title, row.canonical_url);
   if (!name) return null; // never invent a company name
 
   const rc = REGION_COUNTRY[row.region] ?? { region: "unknown", country: null as unknown as string };

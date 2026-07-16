@@ -23,7 +23,7 @@ type Sig = {
   rights_status: string; proposed_tier: string; cluster_size: number; cluster_role: string; signal_status: string;
   active_review: { review_status: string; rights_status: string | null; evidence_tier: string | null } | null;
 };
-type Group = { company_id: string; company: string; region: string | null; country: string | null; signals: Sig[] };
+type Group = { company_id: string; company: string; region: string | null; country: string | null; identity_suspect?: boolean; entity_repaired?: boolean; signals: Sig[] };
 
 const RIGHTS = ["", "customer_display_allowed", "link_and_summary_allowed", "short_excerpt_allowed", "internal_only", "metadata_only", "restricted", "unknown"];
 const TIERS = ["", "A", "B", "C", "D", "E"];
@@ -74,7 +74,11 @@ export default function SignalReviewPage() {
 
       {data.groups.slice(0, 20).map((g) => (
         <div key={g.company_id} style={S.card}>
-          <div style={{ fontSize: "0.9rem", fontWeight: 700, color: "#0f172a" }}>{g.company}</div>
+          <div style={{ fontSize: "0.9rem", fontWeight: 700, color: "#0f172a" }}>
+            {g.company}
+            {g.identity_suspect && <span style={{ ...S.pill("#fee2e2", "#991b1b"), marginLeft: "0.4rem" }}>⚠ identity suspect — fix before approving</span>}
+            {g.entity_repaired && !g.identity_suspect && <span style={{ ...S.pill("#e0f2fe", "#075985"), marginLeft: "0.4rem" }}>entity repaired — verify name</span>}
+          </div>
           <div style={{ fontSize: "0.7rem", color: "#94a3b8", marginBottom: "0.4rem" }}>{[g.region, g.country].filter(Boolean).join(" · ")}</div>
           {g.signals.map((s) => {
             const active = s.active_review?.review_status;

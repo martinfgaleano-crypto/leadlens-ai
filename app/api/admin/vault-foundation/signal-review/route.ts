@@ -28,7 +28,8 @@ export async function GET(req: NextRequest) {
   if (!db) return NextResponse.json({ error: "Supabase not configured." }, { status: 503 });
 
   // Provider-search companies + their pending signals + sources.
-  const { data: companies } = await db.from("vault_companies").select("id, name, region, country").eq("source_status", "provider_search").limit(200);
+  const { data: companies } = await db.from("vault_companies").select("id, name, region, country, description").eq("source_status", "provider_search").limit(200);
+  const { isTitleLikeName } = await import("@/lib/vault/entity-resolution");
   const coIds = (companies ?? []).map((c) => c.id);
   if (coIds.length === 0) return NextResponse.json({ groups: [], progress: { reviewed: 0, total: 0 } });
 
@@ -72,8 +73,16 @@ export async function GET(req: NextRequest) {
         active_review: activeReview.get(s.id) ?? null,
       };
     });
-    return { company_id: co.id, company: co.name, region: co.region, country: co.country, signals: coSignals };
-  }).filter((g) => g.signals.length > 0);
+    return {
+      company_id: co.id, company: co.name, region: co.region, country: co.country,
+      identity_suspect: isTitleLikeName(co.name),
+      entity_repaired: !!co.description?.includes("[entity-repair]"),
+      signals: coSignals,
+    };
+  }).filter((g) => g.signals.length > 0)
+    // Review priority: suspect identities first (must be fixed before approval),
+    // then repaired (verify the rename), then clean.
+    .sort((a, b) => Number(b.identity_suspect) - Number(a.identity_suspect) || Number(b.entity_repaired) - Number(a.entity_repaired));
 
   const totalSignals = (signals ?? []).length;
   const reviewedSignals = (signals ?? []).filter((s) => activeReview.has(s.id)).length;
