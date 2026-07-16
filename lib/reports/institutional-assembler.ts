@@ -173,6 +173,21 @@ export function assembleInstitutionalReport(
       "Hypotheses and inferences require validation before outreach.",
       ...(reportJson._versions ? [] : ["This snapshot predates decision-versioning; provenance metadata is partial."]),
     ],
+    quality: (() => {
+      const n = dossiers.length || 1;
+      const withSrc = dossiers.filter((d) => d.evidence_chain.some((e) => e.url)).length;
+      const withDate = dossiers.filter((d) => d.evidence_chain.some((e) => e.date)).length;
+      const grounded = dossiers.filter((d) => d.evidence_grounded === true).length;
+      const evPct = Math.round((withSrc / n) * 100);
+      const datePct = Math.round((withDate / n) * 100);
+      const groundedPct = Math.round((grounded / n) * 100);
+      const grade = evPct >= 70 && datePct >= 50 ? "strong" : evPct >= 40 ? "moderate" : "developing";
+      return {
+        grade: grade as "strong" | "moderate" | "developing",
+        evidence_coverage_pct: evPct, dated_coverage_pct: datePct, grounded_pct: groundedPct,
+        note: `${withSrc}/${dossiers.length} accounts have a source link, ${withDate} have a validated date. Confidence reflects evidence coverage, not commercial certainty.`,
+      };
+    })(),
     versions: reportJson._versions ?? { report_schema: "legacy", institutional_report: INSTITUTIONAL_REPORT_VERSION },
   };
 }

@@ -86,5 +86,13 @@ export interface InstitutionalOpportunityReportV1 {
   };
   methodology: string[];
   limitations: string[];
+  /** Report-level confidence assessment (derived from evidence coverage). */
+  quality?: {
+    grade: "strong" | "moderate" | "developing";
+    evidence_coverage_pct: number;   // % of dossiers with a source link
+    dated_coverage_pct: number;      // % with a dated signal
+    grounded_pct: number;            // % marked evidence-grounded (when Decision Engine present)
+    note: string;
+  };
   versions: Record<string, string | number>;
 }
