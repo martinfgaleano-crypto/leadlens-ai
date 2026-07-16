@@ -71,6 +71,9 @@ export default function VaultFoundationHub() {
         </div>
       </div>
 
+      <Link href="/admin/vault-foundation/signal-review" style={{ display: "inline-block", background: "#166534", color: "#fff", borderRadius: "0.5rem", padding: "0.6rem 1.25rem", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginRight: "0.6rem" }}>
+        Signal Review (provider-search) →
+      </Link>
       <Link href="/admin/vault-foundation/candidates/new" style={{ display: "inline-block", background: "#0f172a", color: "#fff", borderRadius: "0.5rem", padding: "0.6rem 1.25rem", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none" }}>
         + Add candidate (manual intake)
       </Link>
