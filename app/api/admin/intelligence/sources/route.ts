@@ -23,10 +23,24 @@ export async function GET(req: NextRequest) {
     }
   } catch { /* honest null */ }
 
+  // Observation-mode bridge visibility: provider-search signals promoted to the
+  // Vault as pending_review (never in the approved selector pool).
+  let vaultBridge: unknown = null;
+  try {
+    const { createServerClient } = await import("@/lib/supabase/server");
+    const db = createServerClient();
+    if (db) {
+      const { count } = await db.from("vault_signals").select("id", { count: "exact", head: true }).eq("review_status", "pending_review").not("signal_date", "is", null);
+      const { count: coCount } = await db.from("vault_companies").select("id", { count: "exact", head: true }).eq("source_status", "provider_search");
+      vaultBridge = { pending_dated_signals: count ?? 0, provider_search_companies: coCount ?? null, mode: "observation — pending_review, not in approved selector" };
+    }
+  } catch { /* honest null */ }
+
   return NextResponse.json({
     providers: health.map((h) => ({ ...h, capabilities: getProvider(h.provider)?.capabilities() })),
     validation_benchmark: validation ?? { status: "not_run_in_this_environment", note: "Run npm run sources:benchmark locally." },
     recency_benchmark: recency,
+    vault_bridge: vaultBridge,
     note: "Credentials are reported by presence only — values never leave the server.",
   });
 }

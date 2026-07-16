@@ -30,6 +30,7 @@ export default function SourcesPage() {
   const [providers, setProviders] = useState<Health[]>([]);
   const [validation, setValidation] = useState<ValidationSummary | null>(null);
   const [recency, setRecency] = useState<ValidationSummary | null>(null);
+  const [vaultBridge, setVaultBridge] = useState<{ pending_dated_signals: number; provider_search_companies: number | null; mode: string } | null>(null);
   const [query, setQuery] = useState("logistics company expansion Colombia announcement");
   const [bench, setBench] = useState<{ rows: BenchRow[]; notes: string[] } | null>(null);
   const [busy, setBusy] = useState(false);
@@ -42,6 +43,7 @@ export default function SourcesPage() {
       setProviders(d.providers ?? []);
       setValidation(d.validation_benchmark ?? null);
       setRecency(d.recency_benchmark ?? null);
+      setVaultBridge(d.vault_bridge ?? null);
     }
   }, []);
   useEffect(() => { load(); }, [load]);
@@ -60,6 +62,16 @@ export default function SourcesPage() {
     <AdminLayout>
       <h1 style={S.h1}>Source Access Layer</h1>
       <p style={{ color: "#64748b", fontSize: "0.85rem", marginBottom: "1.25rem" }}>Provider-agnostic search access. Value = unique grounded contribution, never call volume.</p>
+
+      {vaultBridge && (
+        <div style={{ ...S.card, background: "#f0fdf4", border: "1px solid #bbf7d0" }}>
+          <h2 style={{ fontSize: "0.95rem", fontWeight: 700, color: "#166534", marginBottom: "0.4rem" }}>Provider-search → Vault (observation mode)</h2>
+          <p style={{ fontSize: "0.82rem", color: "#334155" }}>
+            <strong>{vaultBridge.pending_dated_signals}</strong> dated signals · <strong>{vaultBridge.provider_search_companies ?? "—"}</strong> companies promoted from provider search. {vaultBridge.mode}.
+          </p>
+          <p style={{ fontSize: "0.72rem", color: "#94a3b8", marginTop: "0.3rem" }}>Run <code>npm run sources:bridge</code> to promote qualified benchmark results (idempotent).</p>
+        </div>
+      )}
 
       <div style={S.card}>
         <h2 style={{ fontSize: "0.95rem", fontWeight: 700, color: "#0f172a", marginBottom: "0.75rem" }}>Provider health</h2>
