@@ -33,12 +33,18 @@ function buildDossier(opp: Json, lead: Json | undefined): AccountDossier {
   const e = lead?.enrichment ?? {};
   const q = lead?.qualification ?? {};
   const decision = opp?.decision ?? null;
-  const days = daysSince(c.signal_date);
+  // Resolve the signal date from the candidate first, then the frozen feature
+  // snapshot (Source Access Layer / Intelligence Foundation). Never invented.
+  const fsnap = opp?.feature_snapshot ?? {};
+  const signalDate: string | null = c.signal_date ?? fsnap.signal_date ?? null;
+  const freshnessBucket: string | null = fsnap.freshness_bucket ?? null;
+  const days = daysSince(signalDate);
+  const freshLabel = freshnessBucket ? ` · ${freshnessBucket} signal` : days !== null ? ` · ${days}d old` : "";
 
   // Why now: a fact only when a dated, sourced signal exists; otherwise inference.
   const whyNowText = clean(decision?.why_now) ?? clean(e.why_now);
   const why_now: Claim = whyNowText
-    ? { basis: days !== null && c.source_url ? "fact" : "inference", text: whyNowText, evidence: c.source_url ?? (c.signal_date ? `signal dated ${c.signal_date}` : null) }
+    ? { basis: days !== null && c.source_url ? "fact" : "inference", text: whyNowText, evidence: (c.source_url ?? null) ? `source${signalDate ? ` · dated ${signalDate}` : ""}` : (signalDate ? `signal dated ${signalDate}` : null) }
     : { basis: "unknown", text: "No dated timing signal was captured — recency is unverified.", evidence: null };
 
   const thesisText = clean(decision?.thesis) ?? clean(e.account_thesis) ?? clean(q.fit_reasons?.[0]);
@@ -72,7 +78,7 @@ function buildDossier(opp: Json, lead: Json | undefined): AccountDossier {
   ].filter(Boolean) as Claim[];
 
   const evidence_chain: EvidenceLink[] = [];
-  if (c.source_url) evidence_chain.push({ label: clean(e.timing_signals?.[0]) ?? "Primary source", url: c.source_url, date: c.signal_date ?? null, date_basis: c.signal_date ? "fact" : "unknown" });
+  if (c.source_url) evidence_chain.push({ label: (clean(e.timing_signals?.[0]) ?? "Primary source") + freshLabel, url: c.source_url, date: signalDate, date_basis: signalDate ? "fact" : "unknown" });
   for (const ev of (Array.isArray(e.evidence) ? e.evidence : []).slice(0, 3)) {
     if (typeof ev === "string" && ev.trim()) evidence_chain.push({ label: ev.slice(0, 160), url: null, date: null, date_basis: "unknown" });
   }
