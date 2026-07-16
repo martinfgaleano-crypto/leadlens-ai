@@ -41,6 +41,8 @@ const EXPECTED = {
   ml_jobs: { migration: "032", area: "async ML jobs" },
   // Source Review (033)
   source_benchmark_reviews: { migration: "033", area: "human calibration of source auto-flags" },
+  // Vault Signal Review (034)
+  vault_signal_reviews: { migration: "034", area: "governed human review of Vault signals" },
 };
 
 if (!has(env, "NEXT_PUBLIC_SUPABASE_URL") || !has(env, "SUPABASE_SERVICE_ROLE_KEY")) {
