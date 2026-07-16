@@ -29,7 +29,8 @@
     "ml:shadow": "npx -y tsx --tsconfig tsconfig.json scripts/ml/shadow-score.ts",
     "ml:test": "cd ml && .venv/bin/python -m pytest tests/ -q",
     "smoke:intelligence-expansion": "node scripts/smoke-intelligence-expansion.mjs",
-    "sources:benchmark": "npx -y tsx --tsconfig tsconfig.json scripts/sources/run-source-benchmark.ts"
+    "sources:benchmark": "npx -y tsx --tsconfig tsconfig.json scripts/sources/run-source-benchmark.ts",
+    "sources:bridge": "npx -y tsx --tsconfig tsconfig.json scripts/sources/bridge-to-vault.ts"
   },
   "dependencies": {
     "next": "14.2.5",
