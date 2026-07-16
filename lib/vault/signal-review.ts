@@ -32,9 +32,17 @@ export const REASON_CODES = [
 ] as const;
 export type ReviewReasonCode = (typeof REASON_CODES)[number];
 
+export type ReviewOrigin = "human" | "ai_assisted" | "system_auto";
+
 export interface ReviewInput {
   signalId: string;
   reviewerId: string;
+  /** Who adjudicated. AI reviews must NEVER be recorded as human. */
+  origin?: ReviewOrigin;                     // default "human" (UI path)
+  reviewerAgent?: string | null;             // e.g. "claude-fable-5" when ai_assisted
+  policyVersion?: string | null;
+  confidence?: number | null;
+  requiresHumanConfirmation?: boolean;
   decision: ReviewDecision;
   rightsStatus?: RightsStatus | null;
   evidenceTier?: EvidenceTier | null;
@@ -108,10 +116,34 @@ export async function reviewVaultSignal(input: ReviewInput): Promise<ReviewResul
     reason_codes: (input.reasonCodes ?? []).slice(0, 12),
     reviewer_note: input.note ?? null,
     review_version: version,
+    // Origin columns (036). AI-assisted is explicit and always flagged for
+    // human confirmation; pre-036 DBs fail here → caller sees migration hint.
+    review_origin: input.origin ?? "human",
+    reviewer_agent: input.reviewerAgent ?? null,
+    review_policy_version: input.policyVersion ?? null,
+    review_confidence: input.confidence ?? null,
+    requires_human_confirmation: input.origin === "ai_assisted" ? true : (input.requiresHumanConfirmation ?? false),
   });
   if (insErr) {
-    const missing = /relation|does not exist|schema cache/i.test(insErr.message);
-    return { ok: false, signalId: input.signalId, effective_status: "unknown", customer_eligible: false, reason: missing ? "Migration 034 not applied" : insErr.message.slice(0, 120) };
+    const originMissing = /review_origin|reviewer_agent|schema cache/i.test(insErr.message) && (input.origin ?? "human") === "human";
+    if (originMissing) {
+      // Pre-036 fallback for HUMAN reviews only: retry without origin columns.
+      // AI-assisted reviews fail closed — they must never be recorded unmarked.
+      const { error: retryErr } = await db.from("vault_signal_reviews").insert({
+        signal_id: input.signalId, reviewer_user_id: input.reviewerId, review_status: effectiveDecision,
+        rights_status: input.rightsStatus ?? null, evidence_tier: input.evidenceTier ?? null,
+        company_match_verdict: input.verdicts?.company_match ?? null, date_verdict: input.verdicts?.date_valid ?? null,
+        claim_verdict: input.verdicts?.claim ?? null, signal_verdict: input.verdicts?.signal ?? null,
+        opportunity_verdict: input.verdicts?.opportunity ?? null,
+        duplicate_cluster_id: input.duplicateClusterId ?? null, canonical_signal_id: input.canonicalSignalId ?? null,
+        reason_codes: (input.reasonCodes ?? []).slice(0, 12), reviewer_note: input.note ?? null, review_version: version,
+      });
+      if (retryErr) return { ok: false, signalId: input.signalId, effective_status: "unknown", customer_eligible: false, reason: retryErr.message.slice(0, 120) };
+    } else {
+      const missing = /relation|does not exist|schema cache/i.test(insErr.message);
+      const aiBlocked = (input.origin ?? "human") !== "human" && /review_origin|schema cache|column/i.test(insErr.message);
+      return { ok: false, signalId: input.signalId, effective_status: "unknown", customer_eligible: false, reason: aiBlocked ? "Migration 036 required for AI-assisted reviews (origin must be recorded)" : missing ? "Migration 034 not applied" : insErr.message.slice(0, 120) };
+    }
   }
 
   // Apply terminal effects on the coarse signal status + source rights.

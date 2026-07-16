@@ -32,7 +32,8 @@
     "sources:benchmark": "npx -y tsx --tsconfig tsconfig.json scripts/sources/run-source-benchmark.ts",
     "sources:bridge": "npx -y tsx --tsconfig tsconfig.json scripts/sources/bridge-to-vault.ts",
     "test:signal-review": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/signal-review.test.ts",
-    "sources:repair-entities": "npx -y tsx --tsconfig tsconfig.json scripts/sources/repair-entities.ts"
+    "sources:repair-entities": "npx -y tsx --tsconfig tsconfig.json scripts/sources/repair-entities.ts",
+    "sources:adjudicate": "npx -y tsx --tsconfig tsconfig.json scripts/sources/ai-adjudication-v1.ts"
   },
   "dependencies": {
     "next": "14.2.5",

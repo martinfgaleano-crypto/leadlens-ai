@@ -45,6 +45,12 @@ const EXPECTED = {
   vault_signal_reviews: { migration: "034", area: "governed human review of Vault signals" },
   // Institutional Snapshots (035)
   institutional_report_snapshots: { migration: "035", area: "reproducible assembled Institutional Reports" },
+  // Review Origin (036) — column probe via select
+};
+
+// Column-level probes (additive columns on existing tables)
+export const EXPECTED_COLUMNS = {
+  "vault_signal_reviews.review_origin": { migration: "036", area: "AI vs human review provenance" },
 };
 
 if (!has(env, "NEXT_PUBLIC_SUPABASE_URL") || !has(env, "SUPABASE_SERVICE_ROLE_KEY")) {
