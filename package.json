@@ -38,7 +38,8 @@
     "test:production-eligibility": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/production-eligibility.test.ts",
     "test:entity-v3": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/entity-resolution-v3.test.ts",
     "sources:taxonomy": "node scripts/sources/build-adjudication-taxonomy.mjs",
-    "sources:recalc-eligibility": "npx -y tsx --tsconfig tsconfig.json scripts/sources/recalc-eligibility.ts"
+    "sources:recalc-eligibility": "npx -y tsx --tsconfig tsconfig.json scripts/sources/recalc-eligibility.ts",
+    "sources:adjudicate-v2": "npx -y tsx --tsconfig tsconfig.json scripts/sources/ai-adjudication-v2.ts"
   },
   "dependencies": {
     "next": "14.2.5",

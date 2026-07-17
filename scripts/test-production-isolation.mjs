@@ -18,7 +18,7 @@ const read = (p) => readFileSync(p, "utf8");
 // ── Static contract checks ──
 const store = read("lib/storage/vault-store.ts");
 check("createVaultSignal fails closed (legacy_unknown default)", store.includes('input.data_origin ?? "legacy_unknown"'));
-check("production_eligible only when origin=production", store.includes('origin === "production" && input.production_eligible === true'));
+check("inserts are never eligible (eligibility-v1 grants it later)", store.includes("const eligible = false") && store.includes("recalculateProductionEligibility"));
 check("[DEMO] marker forces demo origin", /demoMarked \? "demo"/.test(store));
 const selector = read("lib/vault/vault-opportunity-selector.ts");
 check("selector gates production origin pre-ranking", selector.includes('reject(opp, "not_production_eligible")'));

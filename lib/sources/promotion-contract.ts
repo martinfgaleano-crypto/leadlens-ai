@@ -78,8 +78,14 @@ function freshnessOf(dateIso: string | null): string {
 export const PROMOTION_GATES_VERSION = "promotion-gates-v2";
 
 const JOB_PAGE = /\b(jobs?|careers?|vacanc|hiring-now|glassdoor|indeed)\b|\/(jobs?|careers?)(\/|$)/i;
-const SEO_LISTICLE = /\b(top|best)[- ]\d+|\bhow[- ]to\b|\bguide\b|\blisticle\b|\btrends\b|\branking(s)?\b|\bdirectory\b/i;
+const SEO_LISTICLE = /\b(top|best)[- ]\d+|\bhow[- ]to\b|\bguide\b|\blisticle\b|\btrends\b|\branking(s)?\b|\bdirectory\b|\bgu[ií]a\b|\bcasos de uso\b|\btendencias\b|\bclaves?\b|\btecnolog[ií]as clave\b/i;
 const INDEX_PAGE = /\/(news|newsroom|blog|press|category|tag)\/?$/i;
+// Public-sector / intergovernmental bodies are never B2B customer accounts.
+const GOV_URL = /\.(gov|gob|mil)(\.[a-z]{2})?(\/|$)|\b(paho|who\.int|un\.org)\b/i;
+const GOV_NAME = /^(usdot|u\.?s\.? department( of .*)?|department of .*|ministry of .*|ministerio .*|secretar[ií]a .*|gobierno .*|ops|paho|oms|onu|un)$/i;
+function isRootPage(url: string): boolean {
+  try { const u = new URL(url); return (u.pathname === "/" || u.pathname === "") && !u.search; } catch { return false; }
+}
 const CATEGORY_NAME = /\b(compan(y|ies)|agenc(y|ies)|staffing|providers?|vendors?|solutions)\s*$/i;
 const NON_TARGET_GEO_TLD = /\.(uk|co\.uk|de|fr|it|es|jp|cn|in|au)(\/|$)/i;
 const NON_TARGET_CURRENCY = /[£€¥]/;
@@ -140,13 +146,86 @@ export function evaluatePromotionGates(row: BenchmarkResultRow): PromotionGateVe
   return { pass: reasons.length === 0, reasons };
 }
 
-/** Quality gate (rule 12: never promote weak). Returns null when the result
- *  fails any promotion-gates-v2 precision gate. */
+// ─── Promotion gates v3 (promotion-gates-v3) ─────────────────────────────────
+// Four explicit states instead of pass/fail, informed by the retro adjudication
+// (75% precision, n=8) and entity-resolution-v3:
+//   reject       — unusable (categories, publishers, job/SEO pages, ungrounded)
+//   quarantine   — valid-looking event, but identity/geography/corroboration
+//                  needs resolution (composites, low date confidence, TLD/currency mismatch)
+//   monitor_only — real signal + correct company, but stale or weak commercial timing
+//   review_ready — canonical account + concrete dated event + acceptable page +
+//                  grounded claim; ONLY this state may become a candidate.
+// Recall fix vs v2: the compound qualified_opportunity flag (which conflated
+// freshness and date confidence) no longer hard-rejects; its components gate
+// individually into the right state.
+export const PROMOTION_GATES_V3_VERSION = "promotion-gates-v3";
+
+export type PromotionGateStatus = "review_ready" | "monitor_only" | "quarantine" | "reject";
+export interface PromotionGateVerdictV3 { status: PromotionGateStatus; reasons: string[]; entity_class: string; primary_account: string | null }
+
+import { classifyEntity } from "@/lib/vault/entity-resolution";
+
+export function evaluatePromotionGatesV3(row: BenchmarkResultRow): PromotionGateVerdictV3 {
+  const f = row.auto_flags as Record<string, boolean>;
+  const date = row.resolved_date?.date ?? null;
+  const conf = row.resolved_date?.confidence ?? "none";
+  const url = row.canonical_url ?? row.url ?? "";
+  const title = row.title ?? "";
+  const rejects: string[] = [], quarantines: string[] = [], monitors: string[] = [];
+
+  // Hard rejects — unusable regardless of anything else.
+  if (!f.relevant) rejects.push("not_relevant");
+  if (!f.grounded_claim) rejects.push("ungrounded_claim");
+  if (!row.extraction?.ok) rejects.push("extraction_failed");
+  if (JOB_PAGE.test(url) || /job posting|now hiring/i.test(title)) rejects.push("job_posting_page");
+  if (SEO_LISTICLE.test(url) || SEO_LISTICLE.test(title)) rejects.push("seo_listicle_page");
+  if (INDEX_PAGE.test(url) || isRootPage(url)) rejects.push("index_page");
+
+  // Entity gate via entity-resolution-v3.
+  const rawName = companyName(title, url);
+  if (rawName && (GOV_NAME.test(rawName.trim()) || GOV_URL.test(url))) rejects.push("government_entity_not_account");
+  const ent = classifyEntity({ name: rawName ?? title, sourceUrl: url, sourceType: row.source_type, signalType: row.signal });
+  if (!rawName) rejects.push("no_company_name");
+  switch (ent.entity_class) {
+    case "category": case "publisher": case "generic_phrase": case "product": case "unresolved":
+      rejects.push(`entity_${ent.entity_class}`); break;
+    case "multiple_companies":
+      quarantines.push("composite_entity_target_unresolved"); break;
+    case "ambiguous":
+      quarantines.push("entity_ambiguous"); break;
+    case "facility":
+      if (ent.primary_account) quarantines.push("facility_identity_needs_confirmation");
+      else rejects.push("entity_facility_unresolved");
+      break;
+    // single_company passes
+  }
+
+  // Date/event gate: no date at all → reject; low-confidence date on an
+  // otherwise concrete event → quarantine (corroborate, don't discard).
+  if (!date) rejects.push("no_date");
+  else if (conf === "low" || conf === "none") quarantines.push("low_date_confidence");
+  if (date && freshnessOf(date) === "stale") monitors.push("stale_event");
+
+  // Geography gate: contradiction is resolvable → quarantine.
+  if (NON_TARGET_GEO_TLD.test(url)) quarantines.push("geography_mismatch_tld");
+  if (NON_TARGET_CURRENCY.test(title)) quarantines.push("geography_mismatch_currency");
+
+  // Commercial timing: weak-but-real relevance monitors instead of dying.
+  if (!f.company_match) quarantines.push("company_content_match_unverified");
+
+  if (rejects.length) return { status: "reject", reasons: rejects.concat(quarantines, monitors), entity_class: ent.entity_class, primary_account: ent.primary_account };
+  if (quarantines.length) return { status: "quarantine", reasons: quarantines.concat(monitors), entity_class: ent.entity_class, primary_account: ent.primary_account };
+  if (monitors.length) return { status: "monitor_only", reasons: monitors, entity_class: ent.entity_class, primary_account: ent.primary_account };
+  return { status: "review_ready", reasons: [], entity_class: ent.entity_class, primary_account: ent.primary_account };
+}
+
+/** Quality gate (rule 12: never promote weak). Only gates-v3 review_ready
+ *  rows become candidates — everything else stays out of the Vault. */
 export function benchmarkRowToPromotionCandidate(row: BenchmarkResultRow, benchmarkRun: string | null): ProviderSearchPromotionCandidate | null {
   const f = row.auto_flags as Record<string, boolean>;
   const date = row.resolved_date?.date ?? null;
   const conf = row.resolved_date?.confidence ?? "none";
-  if (!evaluatePromotionGates(row).pass) return null;
+  if (evaluatePromotionGatesV3(row).status !== "review_ready") return null;
 
   const name = companyName(row.title, row.canonical_url);
   if (!name) return null; // never invent a company name

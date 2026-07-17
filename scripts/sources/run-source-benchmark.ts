@@ -27,39 +27,40 @@ const EST_COST = { brave: 0.003, serper: 0.001, tavily_extract: 0.008, firecrawl
 interface BenchQuery { id: string; region: "US" | "CO" | "MX"; signal: string; query: string; language: string; gl: string }
 
 const QUERIES: BenchQuery[] = [
+  // ─── query-policy-v3 ───────────────────────────────────────────────────────
+  // Event-anchored templates (actor + concrete action), derived from the
+  // adjudication taxonomy: favor "opened/expanded/announced/launched/invested/
+  // awarded/deployed" headlines with a specific company; exclude trends, lists,
+  // jobs, directories, roundups and category pages. Reputable news allowed —
+  // official source not required when identity+event+date are concrete.
+  // Types per region: 2 expansion, 2 partnership, 2 launch, 2 operational investment.
   // US — 8
-  { id: "us-exp-1", region: "US", signal: "expansion", language: "en", gl: "us", query: "logistics company announces new distribution center opening Texas" },
-  { id: "us-exp-2", region: "US", signal: "expansion", language: "en", gl: "us", query: "industrial manufacturer opens new facility announcement Ohio 2026" },
-  // query-policy-v2: hiring templates produced staffing/SEO/job-post pages —
-  // pin to company announcements and exclude job boards and guide content.
-  { id: "us-hir-1", region: "US", signal: "hiring", language: "en", gl: "us", query: "B2B software company announces sales team expansion press release -jobs -careers -staffing -agency -guide -\"how to\"" },
-  { id: "us-hir-2", region: "US", signal: "hiring", language: "en", gl: "us", query: "freight brokerage company announces operations hiring expansion news -jobs -careers -indeed -glassdoor -staffing" },
-  { id: "us-par-1", region: "US", signal: "partnership", language: "en", gl: "us", query: "supply chain software company strategic partnership announcement 2026" },
-  { id: "us-par-2", region: "US", signal: "partnership", language: "en", gl: "us", query: "warehouse automation company partners with 3PL announcement" },
-  // query-policy-v2: us-lau-1 pulled UK-market results and newsroom index
-  // pages; both launch templates pulled stale launches — pin geography + year.
-  { id: "us-lau-1", region: "US", signal: "product_launch", language: "en", gl: "us", query: "B2B SaaS company launches procurement platform announcement \"United States\" 2026 -UK -Europe -newsroom" },
-  { id: "us-lau-2", region: "US", signal: "product_launch", language: "en", gl: "us", query: "logistics technology company launches freight visibility product 2026" },
+  { id: "us-exp-1", region: "US", signal: "expansion", language: "en", gl: "us", query: "company \"opened a new distribution center\" announcement 2026 -jobs -careers -trends -\"top 10\" -directory" },
+  { id: "us-exp-2", region: "US", signal: "expansion", language: "en", gl: "us", query: "manufacturer \"opens new manufacturing facility\" 2026 announcement -jobs -trends -list" },
+  { id: "us-par-1", region: "US", signal: "partnership", language: "en", gl: "us", query: "\"announced a strategic partnership\" supply chain technology 2026 -webinar -trends -roundup" },
+  { id: "us-par-2", region: "US", signal: "partnership", language: "en", gl: "us", query: "\"partners with\" warehouse automation deployment announcement 2026 -trends -guide" },
+  { id: "us-lau-1", region: "US", signal: "product_launch", language: "en", gl: "us", query: "company \"launches\" B2B procurement platform \"United States\" 2026 -UK -Europe -newsroom -guide -trends" },
+  { id: "us-lau-2", region: "US", signal: "product_launch", language: "en", gl: "us", query: "logistics company \"launches\" freight visibility platform 2026 -guide -trends" },
+  { id: "us-inv-1", region: "US", signal: "expansion", language: "en", gl: "us", query: "company \"invests in\" warehouse automation expansion 2026 -trends -\"market report\" -forecast" },
+  { id: "us-inv-2", region: "US", signal: "partnership", language: "en", gl: "us", query: "\"awarded\" logistics services contract company 2026 announcement -rfp -trends" },
   // CO — 8
-  // query-policy-v2: stale (2025) results observed — pin year.
-  { id: "co-exp-1", region: "CO", signal: "expansion", language: "es", gl: "co", query: "empresa logística Colombia anuncia nueva bodega expansión 2026" },
-  { id: "co-exp-2", region: "CO", signal: "expansion", language: "es", gl: "co", query: "empresa manufactura Colombia abre nueva planta anuncio" },
-  { id: "co-hir-1", region: "CO", signal: "hiring", language: "es", gl: "co", query: "empresa Colombia contratación equipo comercial crecimiento" },
-  { id: "co-hir-2", region: "CO", signal: "hiring", language: "es", gl: "co", query: "compañía tecnología Bogotá contrata gerentes operaciones expansión" },
-  { id: "co-par-1", region: "CO", signal: "partnership", language: "es", gl: "co", query: "empresa logística colombiana firma alianza estratégica anuncio" },
-  { id: "co-par-2", region: "CO", signal: "partnership", language: "es", gl: "co", query: "empresa colombiana alianza tecnología B2B anuncio 2026" },
-  // query-policy-v2: pulled a stale trade-fair (event) page — pin year, drop ferias.
-  { id: "co-lau-1", region: "CO", signal: "product_launch", language: "es", gl: "co", query: "empresa Colombia lanza plataforma B2B logística anuncio 2026 -feria -evento" },
-  { id: "co-lau-2", region: "CO", signal: "product_launch", language: "es", gl: "co", query: "empresa colombiana lanza nuevo servicio empresarial anuncio" },
+  { id: "co-exp-1", region: "CO", signal: "expansion", language: "es", gl: "co", query: "empresa \"abre\" nueva bodega log\u00edstica Colombia 2026 -tendencias -empleo -feria -listado" },
+  { id: "co-exp-2", region: "CO", signal: "expansion", language: "es", gl: "co", query: "empresa \"inaugura\" planta producci\u00f3n Colombia 2026 anuncio -feria -tendencias" },
+  { id: "co-par-1", region: "CO", signal: "partnership", language: "es", gl: "co", query: "empresa \"firma alianza\" log\u00edstica tecnolog\u00eda Colombia 2026 -tendencias -evento" },
+  { id: "co-par-2", region: "CO", signal: "partnership", language: "es", gl: "co", query: "empresa colombiana \"anuncia acuerdo\" distribuci\u00f3n B2B 2026 -tendencias" },
+  { id: "co-lau-1", region: "CO", signal: "product_launch", language: "es", gl: "co", query: "empresa \"lanza\" plataforma B2B log\u00edstica Colombia 2026 -feria -evento -tendencias" },
+  { id: "co-lau-2", region: "CO", signal: "product_launch", language: "es", gl: "co", query: "empresa colombiana \"lanza\" nuevo servicio log\u00edstico 2026 anuncio -tendencias" },
+  { id: "co-inv-1", region: "CO", signal: "expansion", language: "es", gl: "co", query: "empresa \"invierte\" centro distribuci\u00f3n Colombia 2026 -tendencias -informe" },
+  { id: "co-inv-2", region: "CO", signal: "expansion", language: "es", gl: "co", query: "empresa \"moderniza\" operaci\u00f3n log\u00edstica Colombia 2026 automatizaci\u00f3n -tendencias" },
   // MX — 8
-  { id: "mx-exp-1", region: "MX", signal: "expansion", language: "es", gl: "mx", query: "empresa logística México anuncia nuevo centro distribución" },
-  { id: "mx-exp-2", region: "MX", signal: "expansion", language: "es", gl: "mx", query: "empresa manufactura México abre nueva planta Monterrey anuncio" },
-  { id: "mx-hir-1", region: "MX", signal: "hiring", language: "es", gl: "mx", query: "empresa México contratación personal operaciones expansión nearshoring" },
-  { id: "mx-hir-2", region: "MX", signal: "hiring", language: "es", gl: "mx", query: "compañía tecnología México contrata equipo ventas B2B crecimiento" },
-  { id: "mx-par-1", region: "MX", signal: "partnership", language: "es", gl: "mx", query: "empresa mexicana firma alianza estratégica logística anuncio" },
-  { id: "mx-par-2", region: "MX", signal: "partnership", language: "es", gl: "mx", query: "empresa México alianza tecnología cadena suministro anuncio" },
-  { id: "mx-lau-1", region: "MX", signal: "product_launch", language: "es", gl: "mx", query: "empresa México lanza plataforma logística B2B anuncio" },
-  { id: "mx-lau-2", region: "MX", signal: "product_launch", language: "es", gl: "mx", query: "empresa mexicana lanza nuevo producto industrial anuncio 2026" },
+  { id: "mx-exp-1", region: "MX", signal: "expansion", language: "es", gl: "mx", query: "empresa \"inaugura\" centro log\u00edstico M\u00e9xico 2026 -tendencias -empleo -listado" },
+  { id: "mx-exp-2", region: "MX", signal: "expansion", language: "es", gl: "mx", query: "empresa \"abre nueva planta\" M\u00e9xico Monterrey 2026 anuncio -tendencias -feria" },
+  { id: "mx-par-1", region: "MX", signal: "partnership", language: "es", gl: "mx", query: "empresa mexicana \"firma alianza\" log\u00edstica 2026 anuncio -tendencias" },
+  { id: "mx-par-2", region: "MX", signal: "partnership", language: "es", gl: "mx", query: "empresa \"anuncia acuerdo\" cadena suministro M\u00e9xico 2026 -tendencias -informe" },
+  { id: "mx-lau-1", region: "MX", signal: "product_launch", language: "es", gl: "mx", query: "empresa \"lanza\" plataforma log\u00edstica B2B M\u00e9xico 2026 -tendencias -gu\u00eda" },
+  { id: "mx-lau-2", region: "MX", signal: "product_launch", language: "es", gl: "mx", query: "empresa mexicana \"lanza\" nuevo producto industrial 2026 anuncio -tendencias" },
+  { id: "mx-inv-1", region: "MX", signal: "expansion", language: "es", gl: "mx", query: "empresa \"invierte\" nearshoring operaciones M\u00e9xico 2026 -tendencias -informe" },
+  { id: "mx-inv-2", region: "MX", signal: "expansion", language: "es", gl: "mx", query: "empresa \"ampl\u00eda\" capacidad log\u00edstica M\u00e9xico 2026 automatizaci\u00f3n -tendencias" },
 ];
 
 const SIGNAL_WORDS: Record<string, RegExp> = {
@@ -188,7 +189,7 @@ async function main() {
     ran_at: new Date().toISOString(),
     banner: "SOURCE QUALITY VALIDATION — auto-assessed heuristic flags pending human review; costs are LIST-PRICE ESTIMATES, not billed amounts; no customer performance claims",
     policy: "Brave+Serper search → dedupe → top-3 combined → Tavily Extract (Firecrawl per-URL fallback only)",
-    query_policy_version: "query-policy-v2",
+    query_policy_version: "query-policy-v3",
     query_filter: queryFilter.length ? queryFilter : null,
     max_extractions: maxExtractions,
     freshness_days: freshnessDays,

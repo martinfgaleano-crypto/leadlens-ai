@@ -91,9 +91,10 @@ export default function VaultReportBridgePage() {
   }, []);
   useEffect(() => { loadRuns(); }, [loadRuns]);
 
-  type QualityGroup = Record<string, { review_ready: number; judged: number; correct: number; precision: number | null }>;
+  type QualityGroup = Record<string, { review_ready: number; judged: number; approve?: number; correct?: number; precision: number | null }>;
   type Quality = {
-    benchmark: { run: string; gates_version: string; funnel: { adjudicated: number; review_ready: number; gated_out: number }; top_rejection_reasons: { reason: string; n: number }[]; precision: { overall: number | null; target: number; met: boolean | null; judged: number }; by_provider: QualityGroup; by_region: QualityGroup } | null;
+    benchmark: { run: string; gates_version: string; funnel: Record<string, number>; top_rejection_reasons: { reason: string; n: number }[]; precision: { overall: number | null; target: number; met: boolean | null; judged: number; sample_note?: string }; by_provider: QualityGroup; by_region: QualityGroup; by_signal_type?: QualityGroup | null; v2_vs_v3?: { v2_pass: number; v3_review_ready: number; v3_near_pass: number } | null; entity_class_distribution?: Record<string, number> | null; useful_yield?: { queries: number; likely_good_total: number; per_10_queries: number | null } | null } | null;
+    eligibility: { total_signals: number; production_origin: number; production_eligible: number; production_approved_coarse: number; pending: number; note: string } | null;
     clean_report: { job_id: string; status: string; companies_used: number; non_production_companies: number | null; clean: boolean | null } | null;
   };
   const [quality, setQuality] = useState<Quality | null>(null);
@@ -180,19 +181,29 @@ export default function VaultReportBridgePage() {
         Selection excludes by default: unapproved records, non-production data (demo/fixture/synthetic/internal QA — fail-closed), suppressed companies, restricted or unresolved usage rights, reserved-for-other, and accounts already used for the same customer/order/monitor.
       </div>
 
-      {quality && (quality.benchmark || quality.clean_report) && (
+      {quality && (quality.benchmark || quality.clean_report || quality.eligibility) && (
         <div style={S.card}>
           <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "#0f172a", marginBottom: "0.3rem" }}>Discovery quality (latest high-precision benchmark)</div>
+          {quality.eligibility && (
+            <div style={{ fontSize: "0.74rem", color: "#334155", marginBottom: "0.3rem", background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "0.4rem", padding: "0.3rem 0.5rem" }}>
+              <strong>Governance funnel:</strong> {quality.eligibility.total_signals} signals → {quality.eligibility.production_origin} production-origin → {quality.eligibility.production_approved_coarse} approved (coarse) → <strong>{quality.eligibility.production_eligible} production-eligible</strong> · {quality.eligibility.pending} pending
+              <div style={{ color: "#94a3b8" }}>{quality.eligibility.note}</div>
+            </div>
+          )}
           {quality.benchmark && (
             <div style={{ fontSize: "0.74rem", color: "#334155" }}>
-              <div><strong>Funnel:</strong> {quality.benchmark.funnel.adjudicated} adjudicated → {quality.benchmark.funnel.review_ready} review-ready · {quality.benchmark.funnel.gated_out} gated out ({quality.benchmark.gates_version})</div>
+              <div><strong>Funnel ({quality.benchmark.gates_version}):</strong> {quality.benchmark.funnel.adjudicated} adjudicated → {quality.benchmark.funnel.review_ready ?? 0} review-ready · {quality.benchmark.funnel.monitor_only ?? 0} monitor-only · {quality.benchmark.funnel.quarantine ?? 0} quarantine · {quality.benchmark.funnel.reject ?? quality.benchmark.funnel.gated_out ?? 0} reject</div>
+              {quality.benchmark.v2_vs_v3 && <div><strong>v2 vs v3:</strong> v2 pass {quality.benchmark.v2_vs_v3.v2_pass} · v3 review-ready {quality.benchmark.v2_vs_v3.v3_review_ready} + {quality.benchmark.v2_vs_v3.v3_near_pass} near-pass (recoverable)</div>}
               <div><strong>Top exclusions:</strong> {quality.benchmark.top_rejection_reasons.map((r) => `${r.reason}:${r.n}`).join(" · ") || "—"}</div>
+              {quality.benchmark.entity_class_distribution && <div><strong>Entity classes:</strong> {Object.entries(quality.benchmark.entity_class_distribution).map(([k, n]) => `${k}:${n}`).join(" · ")}</div>}
               <div>
                 <strong>Precision (review-ready, benchmark-only labels):</strong>{" "}
-                {quality.benchmark.precision.overall === null ? "not yet judged" : `${Math.round(quality.benchmark.precision.overall * 100)}% (target ≥${Math.round(quality.benchmark.precision.target * 100)}%, ${quality.benchmark.precision.met ? "met" : "NOT met"}, n=${quality.benchmark.precision.judged})`}
+                {quality.benchmark.precision.overall === null ? "not yet judged" : `${Math.round(quality.benchmark.precision.overall * 100)}% (target ≥${Math.round(quality.benchmark.precision.target * 100)}%, ${quality.benchmark.precision.met === true ? "met" : quality.benchmark.precision.met === false ? "NOT met" : "sample too small"}, n=${quality.benchmark.precision.judged})`}
               </div>
-              <div><strong>By provider:</strong> {Object.entries(quality.benchmark.by_provider).map(([k, g]) => `${k}: ${g.review_ready} ready${g.precision !== null ? `, ${Math.round(g.precision * 100)}%` : ""}`).join(" · ") || "—"}</div>
-              <div><strong>By region:</strong> {Object.entries(quality.benchmark.by_region).map(([k, g]) => `${k}: ${g.review_ready} ready${g.precision !== null ? `, ${Math.round(g.precision * 100)}%` : ""}`).join(" · ") || "—"}</div>
+              {quality.benchmark.useful_yield && <div><strong>Useful yield:</strong> {quality.benchmark.useful_yield.likely_good_total} likely-good over {quality.benchmark.useful_yield.queries} queries ({quality.benchmark.useful_yield.per_10_queries ?? "—"} per 10 queries)</div>}
+              <div><strong>By provider:</strong> {Object.entries(quality.benchmark.by_provider).map(([k, g]) => `${k}: ${g.review_ready} ready${g.precision !== null ? `, ${Math.round(g.precision * 100)}% (n=${g.judged})` : ""}`).join(" · ") || "—"}</div>
+              <div><strong>By region:</strong> {Object.entries(quality.benchmark.by_region).map(([k, g]) => `${k}: ${g.review_ready} ready${g.precision !== null ? `, ${Math.round(g.precision * 100)}% (n=${g.judged})` : ""}`).join(" · ") || "—"}</div>
+              {quality.benchmark.by_signal_type && <div><strong>By signal type:</strong> {Object.entries(quality.benchmark.by_signal_type).map(([k, g]) => `${k}: ${g.review_ready} ready${g.precision !== null ? `, ${Math.round(g.precision * 100)}% (n=${g.judged})` : ""}`).join(" · ")}</div>}
             </div>
           )}
           {quality.clean_report && (
