@@ -10,6 +10,7 @@ export type VaultFreshnessPreference = "fresh_only" | "fresh_or_recent" | "any";
 
 export type VaultOpportunityRejectionReason =
   | "not_approved"
+  | "not_production_eligible"
   | "suppressed"
   | "usage_rights_restricted"
   | "usage_rights_unresolved"
@@ -77,6 +78,11 @@ export interface VaultOpportunitySelectionCriteria {
   include_reserved?: boolean; // default false
   exclude_used?: boolean; // default true
   require_approved?: boolean; // default true
+  /** Default true. Only production-origin signals (037) enter customer-like
+   *  selection; demo/fixture/synthetic/internal_qa/benchmark/legacy_unknown are
+   *  excluded fail-closed. Opting out requires BOTH this flag set false AND
+   *  env VAULT_ALLOW_NON_PRODUCTION_SELECTION=true (internal QA only). */
+  require_production_origin?: boolean;
   require_permitted_usage_rights?: boolean; // default true
 }
 

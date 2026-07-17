@@ -91,6 +91,16 @@ export default function VaultReportBridgePage() {
   }, []);
   useEffect(() => { loadRuns(); }, [loadRuns]);
 
+  type QualityGroup = Record<string, { review_ready: number; judged: number; correct: number; precision: number | null }>;
+  type Quality = {
+    benchmark: { run: string; gates_version: string; funnel: { adjudicated: number; review_ready: number; gated_out: number }; top_rejection_reasons: { reason: string; n: number }[]; precision: { overall: number | null; target: number; met: boolean | null; judged: number }; by_provider: QualityGroup; by_region: QualityGroup } | null;
+    clean_report: { job_id: string; status: string; companies_used: number; non_production_companies: number | null; clean: boolean | null } | null;
+  };
+  const [quality, setQuality] = useState<Quality | null>(null);
+  useEffect(() => {
+    adminFetch("/api/admin/vault-report-bridge/quality").then(async (res) => { if (res.ok) setQuality(await res.json()); }).catch(() => {});
+  }, []);
+
   async function runAction(jobId: string, action: "retry" | "release-reservations") {
     if (action === "retry" && !window.confirm("Retry re-validates the selection from scratch and queues a NEW generation. Continue?")) return;
     setRunsBusy(jobId);
@@ -167,8 +177,33 @@ export default function VaultReportBridgePage() {
       <h1 style={S.h1}>Vault → Report Bridge</h1>
       <p style={S.sub}>Control room: select approved Vault opportunities for an ICP and preview the exact report-compatible payload. Preview and dry-run record no usage and create no reports.</p>
       <div style={S.banner}>
-        Selection excludes by default: unapproved records, suppressed companies, restricted or unresolved usage rights, reserved-for-other, and accounts already used for the same customer/order/monitor.
+        Selection excludes by default: unapproved records, non-production data (demo/fixture/synthetic/internal QA — fail-closed), suppressed companies, restricted or unresolved usage rights, reserved-for-other, and accounts already used for the same customer/order/monitor.
       </div>
+
+      {quality && (quality.benchmark || quality.clean_report) && (
+        <div style={S.card}>
+          <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "#0f172a", marginBottom: "0.3rem" }}>Discovery quality (latest high-precision benchmark)</div>
+          {quality.benchmark && (
+            <div style={{ fontSize: "0.74rem", color: "#334155" }}>
+              <div><strong>Funnel:</strong> {quality.benchmark.funnel.adjudicated} adjudicated → {quality.benchmark.funnel.review_ready} review-ready · {quality.benchmark.funnel.gated_out} gated out ({quality.benchmark.gates_version})</div>
+              <div><strong>Top exclusions:</strong> {quality.benchmark.top_rejection_reasons.map((r) => `${r.reason}:${r.n}`).join(" · ") || "—"}</div>
+              <div>
+                <strong>Precision (review-ready, benchmark-only labels):</strong>{" "}
+                {quality.benchmark.precision.overall === null ? "not yet judged" : `${Math.round(quality.benchmark.precision.overall * 100)}% (target ≥${Math.round(quality.benchmark.precision.target * 100)}%, ${quality.benchmark.precision.met ? "met" : "NOT met"}, n=${quality.benchmark.precision.judged})`}
+              </div>
+              <div><strong>By provider:</strong> {Object.entries(quality.benchmark.by_provider).map(([k, g]) => `${k}: ${g.review_ready} ready${g.precision !== null ? `, ${Math.round(g.precision * 100)}%` : ""}`).join(" · ") || "—"}</div>
+              <div><strong>By region:</strong> {Object.entries(quality.benchmark.by_region).map(([k, g]) => `${k}: ${g.review_ready} ready${g.precision !== null ? `, ${Math.round(g.precision * 100)}%` : ""}`).join(" · ") || "—"}</div>
+            </div>
+          )}
+          {quality.clean_report && (
+            <div style={{ fontSize: "0.74rem", color: "#334155", marginTop: "0.25rem" }}>
+              <strong>Latest report:</strong> {quality.clean_report.job_id} · {quality.clean_report.status} · {quality.clean_report.companies_used} companies ·{" "}
+              {quality.clean_report.clean === true ? "✓ production-only" : quality.clean_report.clean === false ? `✗ ${quality.clean_report.non_production_companies} non-production` : "origin check unavailable (apply migration 037)"}
+            </div>
+          )}
+          <div style={{ fontSize: "0.68rem", color: "#94a3b8", marginTop: "0.25rem" }}>Benchmark-only adjudication labels — never customer performance, never auto-promoted.</div>
+        </div>
+      )}
 
       <div style={S.card}>
         <div style={S.grid}>

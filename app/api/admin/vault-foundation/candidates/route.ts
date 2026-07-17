@@ -88,6 +88,11 @@ export async function POST(req: NextRequest) {
       signal_summary: body.signal_summary ?? null,
       signal_date: body.signal_date ?? null,
       confidence_score: body.confidence_score ?? null,
+      // Manual intake requires source_url + source_type provenance → real data.
+      data_origin: "production",
+      production_eligible: true,
+      origin_reason: "manual candidate intake with mandatory provenance",
+      origin_version: "origin-v1",
     });
     signalId = signal?.id ?? null;
   }

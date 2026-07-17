@@ -51,6 +51,7 @@ const EXPECTED = {
 // Column-level probes (additive columns on existing tables)
 export const EXPECTED_COLUMNS = {
   "vault_signal_reviews.review_origin": { migration: "036", area: "AI vs human review provenance" },
+  "vault_signals.data_origin": { migration: "037", area: "production data isolation (demo/fixture never customer-like)" },
 };
 
 if (!has(env, "NEXT_PUBLIC_SUPABASE_URL") || !has(env, "SUPABASE_SERVICE_ROLE_KEY")) {

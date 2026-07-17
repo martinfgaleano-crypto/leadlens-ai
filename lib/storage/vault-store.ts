@@ -178,7 +178,13 @@ export async function listVaultSources(): Promise<VaultSource[]> {
 export async function createVaultSignal(input: Partial<VaultSignal> & { signal_type: string }): Promise<VaultSignal | null> {
   const db = await getDb();
   if (!db) { warnNoDb("createVaultSignal"); return null; }
-  const { data, error } = await db.from("vault_signals").insert({
+  // Origin contract (037), fail-closed: unknown origin is never production-
+  // eligible; only explicit production data may be eligible. "[DEMO]"-marked
+  // content is forced to demo regardless of what the caller claims.
+  const demoMarked = /\[DEMO\]/i.test(input.signal_summary ?? "");
+  const origin = demoMarked ? "demo" : (input.data_origin ?? "legacy_unknown");
+  const eligible = origin === "production" && input.production_eligible === true;
+  const base = {
     company_id: input.company_id ?? null,
     contact_id: input.contact_id ?? null,
     source_id: input.source_id ?? null,
@@ -189,9 +195,26 @@ export async function createVaultSignal(input: Partial<VaultSignal> & { signal_t
     strength_score: input.strength_score ?? null,
     confidence_score: input.confidence_score ?? null,
     review_status: input.review_status ?? "pending_review",
+  };
+  const { data, error } = await db.from("vault_signals").insert({
+    ...base,
+    data_origin: origin,
+    production_eligible: eligible,
+    origin_reason: demoMarked ? "[DEMO] marker in signal content" : (input.origin_reason ?? null),
+    origin_version: input.origin_version ?? "origin-v1",
   }).select("*").single();
-  if (error) { console.error("[vault-store] createVaultSignal:", error.message); return null; }
-  return data as VaultSignal;
+  if (!error) return data as VaultSignal;
+  // Pre-037 compatibility: retry without origin columns. Safe because the 037
+  // backfill classifies pre-037 rows, and the selector fails closed on rows
+  // without production_eligible=true.
+  if (/data_origin|production_eligible|schema cache|column/i.test(error.message)) {
+    const { data: retry, error: retryErr } = await db.from("vault_signals").insert(base).select("*").single();
+    if (retryErr) { console.error("[vault-store] createVaultSignal:", retryErr.message); return null; }
+    console.warn("[vault-store] createVaultSignal: origin columns missing (apply migration 037) — row is NOT production-eligible until backfilled");
+    return retry as VaultSignal;
+  }
+  console.error("[vault-store] createVaultSignal:", error.message);
+  return null;
 }
 
 export async function listVaultSignals(filters: { review_status?: string; signal_type?: string } = {}): Promise<VaultSignal[]> {

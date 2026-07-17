@@ -45,6 +45,12 @@ function normalizeCriteria(input: VaultOpportunitySelectionCriteria): Required<P
     exclude_used: input.exclude_used ?? true,
     require_approved: input.require_approved ?? true,
     require_permitted_usage_rights: input.require_permitted_usage_rights ?? true,
+    // Fail-closed: disabling production-origin enforcement needs an explicit
+    // criteria opt-out AND the internal-QA env flag. Never off by default.
+    require_production_origin:
+      input.require_production_origin === false && process.env.VAULT_ALLOW_NON_PRODUCTION_SELECTION === "true"
+        ? false
+        : true,
   };
 }
 
@@ -240,6 +246,11 @@ export async function selectVaultOpportunities(
     };
 
     // ── Exclusion-first gates (each names its reason) ──
+    // Production integrity runs BEFORE everything else and never touches
+    // scoring/ordering. Fail-closed: a signal without production_eligible=true
+    // (missing 037 columns, legacy_unknown, demo, fixture, synthetic,
+    // internal_qa, benchmark) never enters a customer-like selection.
+    if (criteria.require_production_origin && signal && signal.production_eligible !== true) reject(opp, "not_production_eligible");
     if (criteria.require_approved && signal && signal.review_status !== "approved") reject(opp, "not_approved");
     if (opp.suppression_status === "suppressed" || suppressedDomains.has(domain) || suppressedCompanies.has(company.name.toLowerCase())) reject(opp, "suppressed");
     if (criteria.require_permitted_usage_rights) {

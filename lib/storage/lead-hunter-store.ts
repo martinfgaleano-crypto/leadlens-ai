@@ -308,6 +308,9 @@ export async function promoteLeadHunterCandidateToVault(candidateId: string): Pr
   // 3. Signal (only when the candidate actually carries one).
   let signalId: string | undefined;
   if (candidate.signal_type || candidate.signal_summary) {
+    // Origin: demo/seed markers force isolation; otherwise this is a real,
+    // human-approved candidate with a traceable source → production.
+    const demoMarked = /\[DEMO\]/i.test(candidate.signal_summary ?? "") || /example\.com/i.test(candidate.source_url ?? "");
     const signal = await createVaultSignal({
       company_id: company.id,
       source_id: source.id,
@@ -318,6 +321,10 @@ export async function promoteLeadHunterCandidateToVault(candidateId: string): Pr
       // Promotion happens only after human review approved the candidate —
       // the signal arrives in the Vault already approved.
       review_status: "approved",
+      data_origin: demoMarked ? "demo" : "production",
+      production_eligible: !demoMarked,
+      origin_reason: demoMarked ? "[DEMO]/seed marker on promoted candidate" : "lead-hunter candidate promoted after human review",
+      origin_version: "origin-v1",
     });
     signalId = signal?.id;
   }

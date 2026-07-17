@@ -47,7 +47,7 @@ function sha24(s: string): string {
   return h.toString(16).padStart(8, "0") + s.length.toString(16);
 }
 
-import { resolveCanonicalCompanyFromSignal } from "@/lib/vault/entity-resolution";
+import { resolveCanonicalCompanyFromSignal, isTitleLikeName } from "@/lib/vault/entity-resolution";
 
 function companyName(title: string | null, url?: string | null): string | null {
   if (!title) return null;
@@ -70,15 +70,83 @@ function freshnessOf(dateIso: string | null): string {
   return days <= 30 ? "fresh" : days <= 90 ? "recent" : "stale";
 }
 
-/** Quality gate (rule 12: never promote weak). Returns null when the result is
- *  not a valid, dated, grounded, relevant signal with usable confidence. */
+// ─── Promotion gates v2 (promotion-gates-v2) ─────────────────────────────────
+// Deterministic pre-Vault precision gates derived from adjudication-taxonomy-v1
+// error classes. Pure and observable: every rejection names its reason.
+// Never touches ranking/scoring — a rejected row simply never becomes a
+// candidate. Fail-closed on missing evidence.
+export const PROMOTION_GATES_VERSION = "promotion-gates-v2";
+
+const JOB_PAGE = /\b(jobs?|careers?|vacanc|hiring-now|glassdoor|indeed)\b|\/(jobs?|careers?)(\/|$)/i;
+const SEO_LISTICLE = /\b(top|best)[- ]\d+|\bhow[- ]to\b|\bguide\b|\blisticle\b|\btrends\b|\branking(s)?\b|\bdirectory\b/i;
+const INDEX_PAGE = /\/(news|newsroom|blog|press|category|tag)\/?$/i;
+const CATEGORY_NAME = /\b(compan(y|ies)|agenc(y|ies)|staffing|providers?|vendors?|solutions)\s*$/i;
+const NON_TARGET_GEO_TLD = /\.(uk|co\.uk|de|fr|it|es|jp|cn|in|au)(\/|$)/i;
+const NON_TARGET_CURRENCY = /[£€¥]/;
+
+export interface PromotionGateVerdict { pass: boolean; reasons: string[] }
+
+export function evaluatePromotionGates(row: BenchmarkResultRow): PromotionGateVerdict {
+  const f = row.auto_flags as Record<string, boolean>;
+  const date = row.resolved_date?.date ?? null;
+  const conf = row.resolved_date?.confidence ?? "none";
+  const url = row.canonical_url ?? row.url ?? "";
+  const title = row.title ?? "";
+  const reasons: string[] = [];
+  // Feature flag (safe default ON): PROMOTION_GATES_DISABLE_V2=true reverts to
+  // the v1 baseline gates only — an operational escape hatch, never the default.
+  const v2 = process.env.PROMOTION_GATES_DISABLE_V2 !== "true";
+
+  // Baseline evidence gates (v1, kept)
+  if (!f.relevant) reasons.push("not_relevant");
+  if (!f.grounded_claim) reasons.push("ungrounded_claim");
+  if (!row.extraction?.ok) reasons.push("extraction_failed");
+  if (!date || conf === "low" || conf === "none") reasons.push("no_confident_date");
+
+  // Entity gate: never promote headline/publisher/category-like identities.
+  const name = companyName(title, url);
+  if (!name) reasons.push("no_company_name");
+  else if (v2) {
+    if (isTitleLikeName(name)) reasons.push("headline_like_identity");
+    if (CATEGORY_NAME.test(name)) reasons.push("category_like_identity");
+    const host = domainOf(url) ?? "";
+    const nameToken = name.toLowerCase().replace(/[^a-z0-9]/g, "");
+    const hostCore = host.split(".")[0].replace(/[^a-z0-9]/g, "");
+    // Publisher-as-company: name equals the publisher host for news/editorial pages.
+    if (nameToken && hostCore && nameToken === hostCore && row.source_type !== "official" && row.source_type !== "company_website") {
+      reasons.push("publisher_like_identity");
+    }
+  }
+
+  if (v2) {
+    // Page-type gate: job boards, SEO/listicles, bare index pages.
+    if (JOB_PAGE.test(url) || /job posting|now hiring/i.test(title)) reasons.push("job_posting_page");
+    if (SEO_LISTICLE.test(url) || SEO_LISTICLE.test(title)) reasons.push("seo_listicle_page");
+    if (INDEX_PAGE.test(url)) reasons.push("index_page");
+
+    // Event gate: a dated, non-stale canonical event (fresh90 policy).
+    if (date && freshnessOf(date) === "stale") reasons.push("stale_event");
+    if (!f.valid_date) reasons.push("invalid_date");
+
+    // Opportunity gate: qualified commercial opportunity required for promotion.
+    if (!f.qualified_opportunity) reasons.push("no_qualified_opportunity");
+    if (!f.company_match) reasons.push("company_mismatch");
+
+    // Geography gate: evidence must not contradict the query's target region.
+    if (NON_TARGET_GEO_TLD.test(url)) reasons.push("geography_mismatch_tld");
+    if (NON_TARGET_CURRENCY.test(title)) reasons.push("geography_mismatch_currency");
+  }
+
+  return { pass: reasons.length === 0, reasons };
+}
+
+/** Quality gate (rule 12: never promote weak). Returns null when the result
+ *  fails any promotion-gates-v2 precision gate. */
 export function benchmarkRowToPromotionCandidate(row: BenchmarkResultRow, benchmarkRun: string | null): ProviderSearchPromotionCandidate | null {
   const f = row.auto_flags as Record<string, boolean>;
   const date = row.resolved_date?.date ?? null;
   const conf = row.resolved_date?.confidence ?? "none";
-  // Gate: relevant + grounded + a real (non-low-confidence) publication date + extraction ok.
-  if (!f.relevant || !f.grounded_claim || !row.extraction?.ok) return null;
-  if (!date || conf === "low" || conf === "none") return null;
+  if (!evaluatePromotionGates(row).pass) return null;
 
   const name = companyName(row.title, row.canonical_url);
   if (!name) return null; // never invent a company name

@@ -96,9 +96,20 @@ export interface VaultSignal {
   strength_score: number | null;
   confidence_score: number | null;
   review_status: VaultReviewStatus;
+  // Production data isolation (037). Fail-closed: unknown origin is never
+  // production-eligible. Optional in type for pre-037 rows/DBs.
+  data_origin?: DataOrigin;
+  production_eligible?: boolean;
+  origin_reason?: string | null;
+  origin_version?: string | null;
   created_at: string;
   updated_at: string;
 }
+
+export const DATA_ORIGINS = [
+  "production", "benchmark", "demo", "fixture", "synthetic", "internal_qa", "legacy_unknown",
+] as const;
+export type DataOrigin = (typeof DATA_ORIGINS)[number];
 
 export interface VaultUsageHistory {
   id: string;

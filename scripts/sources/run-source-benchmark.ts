@@ -30,20 +30,26 @@ const QUERIES: BenchQuery[] = [
   // US — 8
   { id: "us-exp-1", region: "US", signal: "expansion", language: "en", gl: "us", query: "logistics company announces new distribution center opening Texas" },
   { id: "us-exp-2", region: "US", signal: "expansion", language: "en", gl: "us", query: "industrial manufacturer opens new facility announcement Ohio 2026" },
-  { id: "us-hir-1", region: "US", signal: "hiring", language: "en", gl: "us", query: "B2B software company expanding sales team hiring announcement" },
-  { id: "us-hir-2", region: "US", signal: "hiring", language: "en", gl: "us", query: "freight brokerage hiring operations managers growth" },
+  // query-policy-v2: hiring templates produced staffing/SEO/job-post pages —
+  // pin to company announcements and exclude job boards and guide content.
+  { id: "us-hir-1", region: "US", signal: "hiring", language: "en", gl: "us", query: "B2B software company announces sales team expansion press release -jobs -careers -staffing -agency -guide -\"how to\"" },
+  { id: "us-hir-2", region: "US", signal: "hiring", language: "en", gl: "us", query: "freight brokerage company announces operations hiring expansion news -jobs -careers -indeed -glassdoor -staffing" },
   { id: "us-par-1", region: "US", signal: "partnership", language: "en", gl: "us", query: "supply chain software company strategic partnership announcement 2026" },
   { id: "us-par-2", region: "US", signal: "partnership", language: "en", gl: "us", query: "warehouse automation company partners with 3PL announcement" },
-  { id: "us-lau-1", region: "US", signal: "product_launch", language: "en", gl: "us", query: "B2B SaaS company launches procurement platform announcement" },
-  { id: "us-lau-2", region: "US", signal: "product_launch", language: "en", gl: "us", query: "logistics technology company launches freight visibility product" },
+  // query-policy-v2: us-lau-1 pulled UK-market results and newsroom index
+  // pages; both launch templates pulled stale launches — pin geography + year.
+  { id: "us-lau-1", region: "US", signal: "product_launch", language: "en", gl: "us", query: "B2B SaaS company launches procurement platform announcement \"United States\" 2026 -UK -Europe -newsroom" },
+  { id: "us-lau-2", region: "US", signal: "product_launch", language: "en", gl: "us", query: "logistics technology company launches freight visibility product 2026" },
   // CO — 8
-  { id: "co-exp-1", region: "CO", signal: "expansion", language: "es", gl: "co", query: "empresa logística Colombia anuncia nueva bodega expansión" },
+  // query-policy-v2: stale (2025) results observed — pin year.
+  { id: "co-exp-1", region: "CO", signal: "expansion", language: "es", gl: "co", query: "empresa logística Colombia anuncia nueva bodega expansión 2026" },
   { id: "co-exp-2", region: "CO", signal: "expansion", language: "es", gl: "co", query: "empresa manufactura Colombia abre nueva planta anuncio" },
   { id: "co-hir-1", region: "CO", signal: "hiring", language: "es", gl: "co", query: "empresa Colombia contratación equipo comercial crecimiento" },
   { id: "co-hir-2", region: "CO", signal: "hiring", language: "es", gl: "co", query: "compañía tecnología Bogotá contrata gerentes operaciones expansión" },
   { id: "co-par-1", region: "CO", signal: "partnership", language: "es", gl: "co", query: "empresa logística colombiana firma alianza estratégica anuncio" },
   { id: "co-par-2", region: "CO", signal: "partnership", language: "es", gl: "co", query: "empresa colombiana alianza tecnología B2B anuncio 2026" },
-  { id: "co-lau-1", region: "CO", signal: "product_launch", language: "es", gl: "co", query: "empresa Colombia lanza plataforma B2B logística anuncio" },
+  // query-policy-v2: pulled a stale trade-fair (event) page — pin year, drop ferias.
+  { id: "co-lau-1", region: "CO", signal: "product_launch", language: "es", gl: "co", query: "empresa Colombia lanza plataforma B2B logística anuncio 2026 -feria -evento" },
   { id: "co-lau-2", region: "CO", signal: "product_launch", language: "es", gl: "co", query: "empresa colombiana lanza nuevo servicio empresarial anuncio" },
   // MX — 8
   { id: "mx-exp-1", region: "MX", signal: "expansion", language: "es", gl: "mx", query: "empresa logística México anuncia nuevo centro distribución" },
@@ -83,7 +89,14 @@ async function main() {
   // rate rises. Unset = the original wide benchmark, so runs stay comparable.
   const freshnessDays = process.env.FRESHNESS_DAYS ? parseInt(process.env.FRESHNESS_DAYS, 10) : null;
 
-  for (const q of QUERIES) {
+  // High-precision runs: QUERY_FILTER=id,id,… restricts the query set;
+  // MAX_EXTRACTIONS caps total adjudicated (extracted) results.
+  const queryFilter = (process.env.QUERY_FILTER ?? "").split(",").map((s) => s.trim()).filter(Boolean);
+  const activeQueries = queryFilter.length ? QUERIES.filter((q) => queryFilter.includes(q.id)) : QUERIES;
+  const maxExtractions = process.env.MAX_EXTRACTIONS ? parseInt(process.env.MAX_EXTRACTIONS, 10) : null;
+
+  for (const q of activeQueries) {
+    if (maxExtractions && extractCalls >= maxExtractions) break;
     const [brave, serper] = await Promise.all([
       braveProvider.search({ query: q.query, language: q.language, region: q.gl, max_results: 8, query_type: "signal_specific", freshness_days: freshnessDays }),
       serperProvider.search({ query: q.query, language: q.language, region: q.gl, max_results: 8, query_type: "signal_specific", freshness_days: freshnessDays }),
@@ -101,8 +114,10 @@ async function main() {
     const braveSet = new Set(brave.results.map((r) => r.canonical_url));
     const serperSet = new Set(serper.results.map((r) => r.canonical_url));
 
-    const top = pickTopUrls(combined, 3);
+    const topN = process.env.TOP_PER_QUERY ? Math.max(1, parseInt(process.env.TOP_PER_QUERY, 10)) : 3;
+    const top = pickTopUrls(combined, topN);
     for (const item of top) {
+      if (maxExtractions && extractCalls >= maxExtractions) break;
       const ext = await extractWithFallback(item.url);
       extractCalls++;
       if (ext.fallback_used) firecrawlFallbacks++;
@@ -141,7 +156,7 @@ async function main() {
       brave_only: combined.filter((r) => braveSet.has(r.canonical_url) && !serperSet.has(r.canonical_url)).length,
       serper_only: combined.filter((r) => serperSet.has(r.canonical_url) && !braveSet.has(r.canonical_url)).length,
     });
-    console.log(`${q.id}: brave=${brave.results.length} serper=${serper.results.length} unique=${combined.length} extracted=3`);
+    console.log(`${q.id}: brave=${brave.results.length} serper=${serper.results.length} unique=${combined.length} extracted=${Math.min(topN, top.length)}`);
   }
 
   // ── Aggregate metrics ──
@@ -164,7 +179,7 @@ async function main() {
     };
   };
 
-  const totalQueries = QUERIES.length;
+  const totalQueries = activeQueries.length;
   const estCost = braveCalls * EST_COST.brave + serperCalls * EST_COST.serper + (extractCalls - firecrawlFallbacks) * EST_COST.tavily_extract + firecrawlFallbacks * (EST_COST.tavily_extract + EST_COST.firecrawl_scrape);
   const validSignals = rows.filter((r) => (r.auto_flags as { grounded_claim: boolean; valid_date: boolean }).grounded_claim && (r.auto_flags as { valid_date: boolean }).valid_date).length;
   const qualified = rows.filter((r) => (r.auto_flags as { qualified_opportunity: boolean }).qualified_opportunity).length;
@@ -173,6 +188,9 @@ async function main() {
     ran_at: new Date().toISOString(),
     banner: "SOURCE QUALITY VALIDATION — auto-assessed heuristic flags pending human review; costs are LIST-PRICE ESTIMATES, not billed amounts; no customer performance claims",
     policy: "Brave+Serper search → dedupe → top-3 combined → Tavily Extract (Firecrawl per-URL fallback only)",
+    query_policy_version: "query-policy-v2",
+    query_filter: queryFilter.length ? queryFilter : null,
+    max_extractions: maxExtractions,
     freshness_days: freshnessDays,
     freshness_mode: freshnessDays ? `recency operators (≤${freshnessDays}d)` : "wide (no recency filter)",
     queries: totalQueries,

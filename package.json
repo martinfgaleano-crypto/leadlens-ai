@@ -33,7 +33,9 @@
     "sources:bridge": "npx -y tsx --tsconfig tsconfig.json scripts/sources/bridge-to-vault.ts",
     "test:signal-review": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/signal-review.test.ts",
     "sources:repair-entities": "npx -y tsx --tsconfig tsconfig.json scripts/sources/repair-entities.ts",
-    "sources:adjudicate": "npx -y tsx --tsconfig tsconfig.json scripts/sources/ai-adjudication-v1.ts"
+    "sources:adjudicate": "npx -y tsx --tsconfig tsconfig.json scripts/sources/ai-adjudication-v1.ts",
+    "test:production-isolation": "node scripts/test-production-isolation.mjs",
+    "sources:taxonomy": "node scripts/sources/build-adjudication-taxonomy.mjs"
   },
   "dependencies": {
     "next": "14.2.5",
