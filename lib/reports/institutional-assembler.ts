@@ -16,7 +16,10 @@ import {
 type Json = Record<string, any>;
 
 const clean = (s: unknown): string | null => {
-  const t = typeof s === "string" ? s.trim() : "";
+  let t = typeof s === "string" ? s.trim() : "";
+  // Model prose sometimes cites internal field NAMES (never payloads) —
+  // customer-safe wording only.
+  t = t.replace(/\braw[_ ]context\b/gi, "the source record").replace(/\bprocessed[_ ]leads\b/gi, "the report").replace(/\b_vault_generation\b/gi, "the generation record");
   return t.length >= 3 ? t : null;
 };
 
@@ -80,7 +83,7 @@ function buildDossier(opp: Json, lead: Json | undefined): AccountDossier {
   const evidence_chain: EvidenceLink[] = [];
   if (c.source_url) evidence_chain.push({ label: (clean(e.timing_signals?.[0]) ?? "Primary source") + freshLabel, url: c.source_url, date: signalDate, date_basis: signalDate ? "fact" : "unknown" });
   for (const ev of (Array.isArray(e.evidence) ? e.evidence : []).slice(0, 3)) {
-    if (typeof ev === "string" && ev.trim()) evidence_chain.push({ label: ev.slice(0, 160), url: null, date: null, date_basis: "unknown" });
+    if (typeof ev === "string" && ev.trim()) evidence_chain.push({ label: (clean(ev) ?? "").slice(0, 160), url: null, date: null, date_basis: "unknown" });
   }
 
   const actionText = clean(decision?.recommended_action) ?? clean(e.recommended_action) ?? clean(opp?.recommended_action);

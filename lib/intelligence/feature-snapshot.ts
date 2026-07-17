@@ -138,6 +138,8 @@ export async function getVersionsBlock(): Promise<Record<string, string | number
     scoring: SCORING_VERSION,
     decision_engine: DECISION_ENGINE_VERSION,
     pipeline: 1,
+    data_origin_contract: "origin-v1",
+    promotion_gates: "promotion-gates-v2",
     research_prompt: "unversioned",
     qualification_prompt: "unversioned",
     report_prompt: "unversioned",
