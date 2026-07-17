@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import type { LeadLensReport, ProcessedLead, PlanType, QCStatus, OutputLanguage, MarketRegion } from "@/types";
 
 // ─── Localization dictionary ──────────────────────────────────────────────────
@@ -31,31 +31,46 @@ const COPY = {
       ["4","You get ranked briefs","5 Opportunity Briefs — ranked by score. Each one explains why this company, why now, and how to approach them."],
     ] as [string,string,string][],
     pricingTag: "Pricing",
-    pricingTitle: "Commercial intelligence at every depth.",
-    pricingSub: "Three focused products. No subscription. Start with what fits your stage.",
+    pricingTitle: "Buy a decision, not a list.",
+    pricingSub: "Four one-time products: validate the quality, select accounts, prioritize the portfolio, or build the strategy.",
     oneBatch: "One-time payment",
     monthlyTag: "Coming soon — Pilot access",
     monthlyTitle: "Opportunity Monitor",
     monthlySub: "Monthly refreshed opportunities, signal updates, weekly opportunity digest, and recurring briefs — for teams that need continuous market intelligence.",
     monitorCTA: "Join pilot waitlist",
     monitorPrice: "From $99/mo",
-    planNames: { sample: "Signal Preview", starter: "Market Map Preview", standard: "Opportunity Snapshot", pro: "Market Intelligence Report" },
+    planNames: { sample: "Preview", starter: "Brief", standard: "Intelligence", pro: "Premium" },
     planDescs: {
-      sample:   "See the format — no payment required.",
-      starter:  "A paid diagnostic that maps your market and shows you where to focus before committing to a deeper report.",
-      standard: "A focused report that turns one ICP into a ranked list of companies worth contacting — with signals, scores, and outreach strategy.",
-      pro:      "A deeper report for businesses that want broader market visibility, more opportunities, and a stronger strategic direction.",
+      sample:   "See whether LeadLens can find defensible opportunities for your business — validate the quality before committing.",
+      starter:  "Get a focused set of accounts worth investigating now, compared and ranked.",
+      standard: "Know which accounts deserve priority and how to allocate your commercial effort.",
+      pro:      "Turn opportunity intelligence into a focused commercial strategy.",
     },
+    planFor: {
+      sample:   "For teams who want proof before spending real budget.",
+      starter:  "For teams who need a short, defensible list to act on this week.",
+      standard: "For B2B teams deciding where to concentrate limited commercial effort.",
+      pro:      "For teams turning a prioritized portfolio into an account strategy.",
+    },
+    planDiff: {
+      sample:   "Validates: is this worth it for my ICP?",
+      starter:  "Adds selection: a compared set with initial ranking and statuses.",
+      standard: "Adds prioritization: full portfolio ranking, allocation and risk.",
+      pro:      "Adds strategy: deeper corroboration and strategic sequencing on priority accounts.",
+    },
+    planBadges: { sample: "Low-risk starting point", starter: "Focused opportunity set", standard: "Recommended · Best for focused B2B growth", pro: "Deepest strategy" },
     planFeatures: {
-      sample:   ["Sample Market Map","Sample company briefs","No real research — format only","See the output before committing"],
-      starter:  ["1 ICP","5–8 buyer segments","Segment ranking preview","Signals to watch by segment","Example opportunity types","Recommended first segment to test","PDF delivery"],
-      standard: ["1 ICP","Market Map — 6–8 buyer segments","10–15 ranked opportunities","Top 5 Opportunity Briefs","Public buying signals with sources","Opportunity Score + Confidence Score","Why now — timing analysis","Recommended sales angle","Outreach assets included","PDF + CSV download","Delivery in 24–48h"],
-      pro:      ["1 ICP","Expanded Market Map","20–30 ranked opportunities","Top 10 Opportunity Briefs","Segment-level recommendations","Evidence and source list","Outreach sequence","Risks and weaknesses analysis","PDF + CSV download","Delivery in 24–48h"],
+      sample:   ["1 ICP · 1 region","2 complete opportunities","What Changed + event dates + sources","Evidence quality, Why Now, fit & timing","Risks, what to validate, next action","ICP verdict: proceed / refine / stop"],
+      starter:  ["Everything in Preview","1 ICP · 1 region","6 complete opportunities","Initial ranking + statuses (Act now / Investigate / Monitor)","Fit × Timing comparison","Key risks + recommended sequence","Executive Opportunity Brief"],
+      standard: ["Everything in Brief","1 ICP · up to 2 regions","12 complete opportunities","Complete portfolio ranking + allocation","Portfolio risk + coverage gaps","Evidence center with explained ranking","Next best investigation & action","Executive Intelligence Brief"],
+      pro:      ["Everything in Intelligence","Up to 2 ICPs · up to 3 regions","18 complete opportunities","Reinforced corroboration on priority accounts","Systematic counterevidence","Deeper clusters + market patterns","Strategic sequence + revalidation dates","Strategic Executive Brief"],
     },
-    planCTAs: { sample: "Preview sample format →", starter: "Generate Market Map Preview →", standard: "Start Opportunity Snapshot →", pro: "Get Market Intelligence Report →" },
+    planCTAs: { sample: "Preview my opportunities →", starter: "Build my opportunity brief →", standard: "Build my intelligence portfolio →", pro: "Build my opportunity strategy →" },
+    launchNote: "Founding launch pricing — these are early-access prices while LeadLens is in its first customer cohort.",
+    compareTitle: "Compare plans",
     leadsFoundBy: (n: number) => `${n} opportunities found by LeadLens`,
     getStarted: "Start Opportunity Snapshot →",
-    mostPopular: "Best starting point",
+    mostPopular: "Recommended",
     formTag: "Start your Opportunity Snapshot",
     formTitle: "Tell LeadLens about your business",
     formSub: "The more context you give, the better the opportunities and outreach strategy we can find for you.",
@@ -197,7 +212,7 @@ const COPY = {
     ctaSub: "One Opportunity Snapshot. 24–48h delivery. Real signals, real companies, real strategy.",
     ctaCTA: "Get your first Opportunity Snapshot — $59 →",
     sampleTabs: ["Email", "LinkedIn DM", "Follow-up 1", "Follow-up 2"],
-    pricePerLead: { sample: "Free", starter: "One-time payment", standard: "One-time payment", pro: "One-time payment" },
+    pricePerLead: { sample: "One-time payment", starter: "One-time payment", standard: "One-time payment", pro: "One-time payment" },
     samplePackTitle: "Not ready to commit?",
     samplePackCopy: "Preview the sample report format first — free, no payment required.",
     samplePackBadge: "Free preview",
@@ -299,15 +314,15 @@ const COPY = {
       ["4","Recibes briefs priorizados","5 Opportunity Briefs rankeados por score. Cada uno explica por qué esta empresa, por qué ahora y cómo acercarte."],
     ] as [string,string,string][],
     pricingTag: "Precios",
-    pricingTitle: "Inteligencia comercial en cada profundidad.",
-    pricingSub: "Tres productos enfocados. Sin suscripción. Empieza donde tenga sentido para tu negocio.",
+    pricingTitle: "Compra una decisión, no una lista.",
+    pricingSub: "Cuatro productos de pago único: valida la calidad, selecciona cuentas, prioriza el portafolio o construye la estrategia.",
     oneBatch: "Pago único",
     monthlyTag: "Próximamente — Acceso piloto",
     monthlyTitle: "Opportunity Monitor",
     monthlySub: "Oportunidades actualizadas mensualmente, señales nuevas, resumen semanal de oportunidades y briefs recurrentes — para equipos que necesitan inteligencia de mercado continua.",
     monitorCTA: "Unirse a la lista piloto",
     monitorPrice: "Desde $99/mes",
-    planNames: { sample: "Vista Previa", starter: "Market Map Preview", standard: "Opportunity Snapshot", pro: "Market Intelligence Report" },
+    planNames: { sample: "Preview", starter: "Brief", standard: "Intelligence", pro: "Premium" },
     planDescs: {
       sample:   "Ve el formato — sin pago requerido.",
       starter:  "Un diagnóstico pagado que mapea tu mercado y te muestra dónde enfocarte antes de comprometerte con un reporte más profundo.",
@@ -320,10 +335,25 @@ const COPY = {
       standard: ["1 ICP","Market Map — 6–8 segmentos","10–15 oportunidades rankeadas","Top 5 Opportunity Briefs","Señales de compra públicas con fuentes","Opportunity Score + Confidence Score","Por qué ahora — análisis de timing","Ángulo de venta recomendado","Activos de outreach incluidos","Descarga PDF + CSV","Entrega en 24–48h"],
       pro:      ["1 ICP","Market Map ampliado","20–30 oportunidades rankeadas","Top 10 Opportunity Briefs","Recomendaciones por segmento","Lista de evidencias y fuentes","Secuencia de outreach","Análisis de riesgos y debilidades","Descarga PDF + CSV","Entrega en 24–48h"],
     },
-    planCTAs: { sample: "Ver formato de muestra →", starter: "Generar Market Map Preview →", standard: "Iniciar Opportunity Snapshot →", pro: "Obtener Market Intelligence Report →" },
+    planCTAs: { sample: "Previsualizar mis oportunidades →", starter: "Construir mi opportunity brief →", standard: "Construir mi portafolio de inteligencia →", pro: "Construir mi estrategia de oportunidades →" },
+    planFor: {
+      sample:   "Para equipos que quieren prueba antes de invertir presupuesto real.",
+      starter:  "Para equipos que necesitan una lista corta y defendible esta semana.",
+      standard: "Para equipos B2B decidiendo dónde concentrar su esfuerzo comercial.",
+      pro:      "Para equipos que convierten un portafolio priorizado en estrategia de cuentas.",
+    },
+    planDiff: {
+      sample:   "Valida: ¿vale la pena para mi ICP?",
+      starter:  "Agrega selección: un set comparado con ranking inicial y estados.",
+      standard: "Agrega priorización: ranking completo, asignación y riesgo de portafolio.",
+      pro:      "Agrega estrategia: corroboración profunda y secuencia estratégica en cuentas prioritarias.",
+    },
+    planBadges: { sample: "Punto de entrada de bajo riesgo", starter: "Set enfocado de oportunidades", standard: "Recomendado · Ideal para crecimiento B2B enfocado", pro: "Estrategia más profunda" },
+    launchNote: "Precios de lanzamiento (founding pricing) — precios de acceso temprano durante la primera cohorte de clientes.",
+    compareTitle: "Comparar planes",
     leadsFoundBy: (n: number) => `${n} oportunidades encontradas por LeadLens`,
     getStarted: "Iniciar Opportunity Snapshot →",
-    mostPopular: "Mejor punto de entrada",
+    mostPopular: "Recomendado",
     formTag: "Inicia tu Opportunity Snapshot",
     formTitle: "Cuéntale a LeadLens sobre tu negocio",
     formSub: "Cuanto más contexto des, mejores serán las oportunidades y la estrategia que encontremos para ti.",
@@ -465,7 +495,7 @@ const COPY = {
     ctaSub: "Un Opportunity Snapshot. Entrega en 24–48h. Señales reales, empresas reales, estrategia real.",
     ctaCTA: "Obtener tu primer Opportunity Snapshot — $59 →",
     sampleTabs: ["Email", "LinkedIn DM", "Seguimiento 1", "Seguimiento 2"],
-    pricePerLead: { sample: "Gratis", starter: "Pago único", standard: "Pago único", pro: "Pago único" },
+    pricePerLead: { sample: "Pago único", starter: "Pago único", standard: "Pago único", pro: "Pago único" },
     samplePackTitle: "¿No estás listo para comprometerte?",
     samplePackCopy: "Ve primero el formato del Snapshot — gratis, sin pago requerido.",
     samplePackBadge: "Vista previa gratuita",
@@ -575,7 +605,7 @@ const COPY = {
     monthlySub: "Oportunidades atualizadas mensalmente, novos sinais, resumo semanal e briefs recorrentes — para equipes que precisam de inteligência de mercado contínua.",
     monitorCTA: "Entrar na lista piloto",
     monitorPrice: "A partir de $99/mês",
-    planNames: { sample: "Prévia", starter: "Market Map Preview", standard: "Opportunity Snapshot", pro: "Market Intelligence Report" },
+    planNames: { sample: "Preview", starter: "Brief", standard: "Intelligence", pro: "Premium" },
     planDescs: {
       sample:   "Veja o formato — sem pagamento necessário.",
       starter:  "Um diagnóstico pago que mapeia seu mercado e mostra onde focar antes de se comprometer com um relatório mais profundo.",
@@ -588,10 +618,25 @@ const COPY = {
       standard: ["1 ICP","Market Map — 6–8 segmentos","10–15 oportunidades ranqueadas","Top 5 Opportunity Briefs","Sinais de compra públicos com fontes","Opportunity Score + Confidence Score","Por que agora — análise de timing","Ângulo de venda recomendado","Ativos de outreach incluídos","Download PDF + CSV","Entrega em 24–48h"],
       pro:      ["1 ICP","Market Map ampliado","20–30 oportunidades ranqueadas","Top 10 Opportunity Briefs","Recomendações por segmento","Lista de evidências e fontes","Sequência de outreach","Análise de riscos e fraquezas","Download PDF + CSV","Entrega em 24–48h"],
     },
-    planCTAs: { sample: "Ver formato de exemplo →", starter: "Gerar Market Map Preview →", standard: "Iniciar Opportunity Snapshot →", pro: "Obter Market Intelligence Report →" },
+    planCTAs: { sample: "Pré-visualizar minhas oportunidades →", starter: "Construir meu opportunity brief →", standard: "Construir meu portfólio de inteligência →", pro: "Construir minha estratégia →" },
+    planFor: {
+      sample: "Para equipes que querem prova antes de investir.",
+      starter: "Para equipes que precisam de uma lista curta e defensável.",
+      standard: "Para equipes B2B decidindo onde concentrar esforço.",
+      pro: "Para equipes convertendo portfólio em estratégia.",
+    },
+    planDiff: {
+      sample: "Valida: vale a pena para meu ICP?",
+      starter: "Adiciona seleção: um conjunto comparado com ranking inicial.",
+      standard: "Adiciona priorização: ranking completo e alocação.",
+      pro: "Adiciona estratégia: corroboração profunda em contas prioritárias.",
+    },
+    planBadges: { sample: "Ponto de entrada de baixo risco", starter: "Conjunto focado de oportunidades", standard: "Recomendado · Ideal para crescimento B2B focado", pro: "Estratégia mais profunda" },
+    launchNote: "Preços de lançamento — acesso antecipado durante a primeira coorte de clientes.",
+    compareTitle: "Comparar planos",
     leadsFoundBy: (n: number) => `${n} oportunidades encontradas pela LeadLens`,
     getStarted: "Iniciar Opportunity Snapshot →",
-    mostPopular: "Melhor ponto de entrada",
+    mostPopular: "Recomendado",
     formTag: "Inicie seu Opportunity Snapshot",
     formTitle: "Conte à LeadLens sobre seu negócio",
     formSub: "Quanto mais contexto você der, melhores serão as oportunidades e a estratégia que encontraremos para você.",
@@ -733,7 +778,7 @@ const COPY = {
     ctaSub: "Um Opportunity Snapshot. Entrega em 24–48h. Sinais reais, empresas reais, estratégia real.",
     ctaCTA: "Obter seu primeiro Opportunity Snapshot — $59 →",
     sampleTabs: ["Email", "LinkedIn DM", "Follow-up 1", "Follow-up 2"],
-    pricePerLead: { sample: "Grátis", starter: "Pagamento único", standard: "Pagamento único", pro: "Pagamento único" },
+    pricePerLead: { sample: "Pagamento único", starter: "Pagamento único", standard: "Pagamento único", pro: "Pagamento único" },
     samplePackTitle: "Ainda não está pronto para se comprometer?",
     samplePackCopy: "Veja o formato do Snapshot primeiro — gratuito, sem pagamento necessário.",
     samplePackBadge: "Prévia gratuita",
@@ -843,7 +888,7 @@ const COPY = {
     monthlySub: "毎月更新されるオポチュニティ、シグナル更新、週次オポチュニティダイジェスト、定期ブリーフ — 継続的な市場インテリジェンスを必要とするチーム向け。",
     monitorCTA: "パイロットウェイトリストに登録",
     monitorPrice: "$99/月から",
-    planNames: { sample: "プレビュー", starter: "Market Map Preview", standard: "Opportunity Snapshot", pro: "Market Intelligence Report" },
+    planNames: { sample: "Preview", starter: "Brief", standard: "Intelligence", pro: "Premium" },
     planDescs: {
       sample:   "フォーマットを確認 — 支払い不要。",
       starter:  "より深いレポートにコミットする前に、市場をマッピングしてどこに集中すべきかを示す有料の診断ツール。",
@@ -856,10 +901,25 @@ const COPY = {
       standard: ["1 ICP","マーケットマップ — 6〜8セグメント","ランク付きオポチュニティ10〜15件","トップ5オポチュニティブリーフ","ソース付き公開購買シグナル","オポチュニティスコア + 信頼スコア","今なぜか — タイミング分析","推奨セールスアングル","アウトリーチアセット含む","PDF + CSVダウンロード","24〜48時間で納品"],
       pro:      ["1 ICP","拡張マーケットマップ","ランク付きオポチュニティ20〜30件","トップ10オポチュニティブリーフ","セグメントレベルの推奨","証拠とソースリスト","アウトリーチシーケンス","リスクと弱点分析","PDF + CSVダウンロード","24〜48時間で納品"],
     },
-    planCTAs: { sample: "サンプル形式を確認 →", starter: "Market Map Previewを生成 →", standard: "Opportunity Snapshotを開始 →", pro: "Market Intelligence Reportを取得 →" },
+    planCTAs: { sample: "機会をプレビュー →", starter: "オポチュニティ・ブリーフを作成 →", standard: "インテリジェンス・ポートフォリオを作成 →", pro: "オポチュニティ戦略を作成 →" },
+    planFor: {
+      sample: "本格投資の前に品質を確認したいチーム向け。",
+      starter: "今週行動できる短く堅実なリストが必要なチーム向け。",
+      standard: "限られた営業リソースの配分を決めるB2Bチーム向け。",
+      pro: "ポートフォリオを戦略に変えるチーム向け。",
+    },
+    planDiff: {
+      sample: "検証：自社ICPに価値があるか？",
+      starter: "選定を追加：初期ランキング付きの比較セット。",
+      standard: "優先順位付けを追加：完全なランキングと配分。",
+      pro: "戦略を追加：優先アカウントの深い裏付けと戦略的シーケンス。",
+    },
+    planBadges: { sample: "低リスクの出発点", starter: "焦点を絞った機会セット", standard: "おすすめ · 集中型B2B成長に最適", pro: "最も深い戦略" },
+    launchNote: "ローンチ価格 — 初期顧客コホート期間中のアーリーアクセス価格です。",
+    compareTitle: "プラン比較",
     leadsFoundBy: (n: number) => `${n}件のオポチュニティをLeadLensが発見`,
     getStarted: "Opportunity Snapshotを開始 →",
-    mostPopular: "最初のステップとして最適",
+    mostPopular: "おすすめ",
     formTag: "Opportunity Snapshotを開始",
     formTitle: "LeadLensにビジネスについて教えてください",
     formSub: "詳しく入力するほど、より質の高いオポチュニティと戦略が見つかります。",
@@ -1001,7 +1061,7 @@ const COPY = {
     ctaSub: "1回のOpportunity Snapshot。24〜48時間で納品。実際のシグナル、実際の企業、実際の戦略。",
     ctaCTA: "最初のOpportunity Snapshotを取得 — $59 →",
     sampleTabs: ["メール", "LinkedIn DM", "フォローアップ 1", "フォローアップ 2"],
-    pricePerLead: { sample: "無料", starter: "1回払い", standard: "1回払い", pro: "1回払い" },
+    pricePerLead: { sample: "一回払い", starter: "1回払い", standard: "1回払い", pro: "1回払い" },
     samplePackTitle: "コミットする準備ができていませんか？",
     samplePackCopy: "まずSnapshotの形式を確認してください — 無料、支払い不要。",
     samplePackBadge: "無料プレビュー",
@@ -1087,11 +1147,14 @@ type Copy = typeof COPY["en"];
 // Internal build marker — not rendered publicly. Check browser console (dev only) or grep this file to identify deployed version.
 const LANDING_VERSION = "landing-integration-v2-fix-copy";
 
+// Display prices mirror the versioned catalog (lib/products/catalog.ts,
+// launch_tier_architecture_v0). The server resolves the REAL price — these are
+// presentation only. Launch/founding prices, not permanent.
 const PLANS = {
-  sample:   { price: "Free", leads: 0  },
-  starter:  { price: "$19",  leads: 0  },
-  standard: { price: "$59",  leads: 5  },
-  pro:      { price: "$149", leads: 10 },
+  sample:   { price: "$7",   productCode: "preview_launch_v0" },
+  starter:  { price: "$25",  productCode: "brief_launch_v0" },
+  standard: { price: "$59",  productCode: "intelligence_launch_v0" },
+  pro:      { price: "$129", productCode: "premium_launch_v0" },
 } as const;
 
 // Checkout links are public direct-pay URLs from Lemon Squeezy's product "Share" button.
@@ -1103,6 +1166,11 @@ const LS_URLS: Partial<Record<PlanType, string>> = {
   standard: process.env.NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_URL || undefined,
   pro:      process.env.NEXT_PUBLIC_LEMONSQUEEZY_PRO_URL || undefined,
 };
+
+// Fire-and-forget product analytics (see app/api/events/route.ts).
+function track(event: string, data: Record<string, unknown> = {}) {
+  try { void fetch("/api/events", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ event, ...data }), keepalive: true }); } catch { /* never block UX */ }
+}
 
 const LANG_OPTIONS: { value: OutputLanguage; label: string }[] = [
   { value: "en", label: "English" },
@@ -1159,6 +1227,8 @@ export default function DemoPipelinePage() {
   const [view, setView]           = useState<View>("landing");
   const [plan, setPlan]           = useState<PlanType>("starter");
   const [form, setForm]           = useState(SAMPLE);
+  // Tier-adaptive onboarding (progressive disclosure) — optional, per product.
+  const [tierExtras, setTierExtras] = useState<Record<string, string>>({});
   const [agentStep, setStep]      = useState(-1);
   const [progress, setProg]       = useState(0);
   const [report, setReport]       = useState<LeadLensReport | null>(null);
@@ -1170,17 +1240,22 @@ export default function DemoPipelinePage() {
 
   const copy = COPY[lang];
 
+  useEffect(() => { track("pricing_page_viewed", { product_version: "launch_v0", launch_price: true }); }, []);
+
   function changeLang(l: OutputLanguage) {
     setLang(l);
     setForm(f => ({ ...f, output_language: l }));
   }
 
   function goToForm(p: PlanType) {
+    track("tier_selected", { product_code: PLANS[p].productCode, product_version: "launch_v0", launch_price: true, tier: p });
     const lsUrl = LS_URLS[p];
     if (lsUrl) {
+      track("checkout_started", { product_code: PLANS[p].productCode, product_version: "launch_v0" });
       window.location.href = lsUrl;
       return;
     }
+    track("onboarding_started", { product_code: PLANS[p].productCode, product_version: "launch_v0" });
     setPlan(p);
     setFormMode("paid_batch");
     setView("form");
@@ -1214,7 +1289,7 @@ export default function DemoPipelinePage() {
       const res = await fetch("/api/demo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan, onboarding: form }),
+        body: JSON.stringify({ plan, onboarding: { ...form, ...tierExtras, product_code: PLANS[plan].productCode } }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? `Server error ${res.status}`);
@@ -1607,12 +1682,17 @@ export default function DemoPipelinePage() {
             {copy.pricingSub}
           </p>
 
-          {/* Pricing ladder — 3 cards */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: "1.375rem", maxWidth: "62rem", margin: "0 auto", alignItems: "stretch" }}>
+          {/* Pricing ladder — 4 tiers: validate → select → prioritize → strategize */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(255px,1fr))", gap: "1.25rem", maxWidth: "80rem", margin: "0 auto", alignItems: "stretch" }}>
+            <PricingCard plan="sample"   featured={false} copy={copy} onSelect={goToForm} />
             <PricingCard plan="starter"  featured={false} copy={copy} onSelect={goToForm} />
             <PricingCard plan="standard" featured={true}  copy={copy} onSelect={goToForm} />
             <PricingCard plan="pro"      featured={false} copy={copy} onSelect={goToForm} />
           </div>
+          <p style={{ fontSize: ".8rem", color: "#94a3b8", maxWidth: "40rem", margin: "1.25rem auto 0" }}>{copy.launchNote}</p>
+
+          {/* Plan comparison */}
+          <ComparisonTable copy={copy} />
 
           {/* Opportunity Monitor strip — coming soon */}
           <div style={{ marginTop: "2rem", maxWidth: "62rem", margin: "2rem auto 0", background: "linear-gradient(135deg,#f0f9ff,#e0f2fe)", border: "1px solid #bae6fd", borderRadius: "1.125rem", padding: "1.5rem 2rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1.5rem", flexWrap: "wrap" as const }}>
@@ -1946,7 +2026,7 @@ export default function DemoPipelinePage() {
                 style={{ border: `1.5px solid ${plan === key ? "#0ea5e9" : "#e2e8f0"}`, borderRadius: ".75rem", padding: ".75rem .5rem", textAlign: "center" as const, cursor: "pointer", transition: "all .15s", background: plan === key ? "#e0f2fe" : "#fff" }}>
                 <div style={{ fontSize: "1.1rem", fontWeight: 800, color: "#0f172a" }}>{p.price}</div>
                 <div style={{ fontSize: ".72rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".04em", color: "#94a3b8", marginTop: ".2rem" }}>{copy.planNames[key]}</div>
-                <div style={{ fontSize: ".78rem", color: "#0284c7", fontWeight: 600, marginTop: ".3rem" }}>{p.leads} leads</div>
+                <div style={{ fontSize: ".78rem", color: "#0284c7", fontWeight: 600, marginTop: ".3rem" }}>{copy.oneBatch}</div>
               </button>
             ))}
           </div>
@@ -1975,6 +2055,25 @@ export default function DemoPipelinePage() {
             <FormField label={copy.fValue} value={form.value_proposition} onChange={v => setForm(f => ({ ...f, value_proposition: v }))} multiline placeholder="What specific outcome do you deliver?" />
             <FormField label={copy.fCustomer} value={form.target_customer_description} onChange={v => setForm(f => ({ ...f, target_customer_description: v }))} multiline placeholder="Company size, titles, industries, signals..." />
             <FormField label={copy.fTicket} value={form.average_ticket ?? ""} onChange={v => setForm(f => ({ ...f, average_ticket: v }))} placeholder="e.g. $3,000/month" />
+
+            {/* Tier-adaptive onboarding — progressive disclosure, all optional */}
+            {formMode === "paid_batch" && plan !== "sample" && (
+              <div style={{ borderTop: "1px solid #f1f5f9", paddingTop: "1rem", marginTop: ".5rem" }}>
+                <div style={{ fontSize: ".72rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".06em", color: "#94a3b8", marginBottom: ".75rem" }}>
+                  {lang === "es" ? `Contexto adicional para tu ${copy.planNames[plan]} (opcional)` : `Extra context for your ${copy.planNames[plan]} (optional)`}
+                </div>
+                <FormField label={lang === "es" ? "Objetivo de la campaña" : "Campaign objective"} value={tierExtras.campaign_objective ?? ""} onChange={v => setTierExtras(t => ({ ...t, campaign_objective: v }))} placeholder={lang === "es" ? "¿Qué quieres lograr con estas cuentas?" : "What do you want these accounts for?"} />
+                <FormField label={lang === "es" ? "Restricciones o exclusiones" : "Restrictions or exclusions"} value={tierExtras.restrictions ?? ""} onChange={v => setTierExtras(t => ({ ...t, restrictions: v }))} placeholder={lang === "es" ? "Industrias, competidores o cuentas a excluir" : "Industries, competitors or accounts to exclude"} />
+                {(plan === "standard" || plan === "pro") && (<>
+                  <FormField label={lang === "es" ? "Capacidad comercial" : "Sales capacity"} value={tierExtras.sales_capacity ?? ""} onChange={v => setTierExtras(t => ({ ...t, sales_capacity: v }))} placeholder={lang === "es" ? "¿Cuántas cuentas puede trabajar tu equipo a la vez?" : "How many accounts can your team work at once?"} />
+                  <FormField label={lang === "es" ? "Preferencias de priorización" : "Prioritization preferences"} value={tierExtras.prioritization_preferences ?? ""} onChange={v => setTierExtras(t => ({ ...t, prioritization_preferences: v }))} placeholder={lang === "es" ? "¿Qué pesa más: fit, timing o tamaño?" : "What matters more: fit, timing or size?"} />
+                </>)}
+                {plan === "pro" && (<>
+                  <FormField label={lang === "es" ? "Prioridades estratégicas" : "Strategic priorities"} value={tierExtras.strategic_priorities ?? ""} onChange={v => setTierExtras(t => ({ ...t, strategic_priorities: v }))} multiline placeholder={lang === "es" ? "Objetivos por región o segmento, ángulos preferidos" : "Regional/segment objectives, preferred angles"} />
+                  <FormField label={lang === "es" ? "Objeciones conocidas" : "Known objections"} value={tierExtras.known_objections ?? ""} onChange={v => setTierExtras(t => ({ ...t, known_objections: v }))} placeholder={lang === "es" ? "¿Qué suelen objetar tus prospectos?" : "What do prospects usually object to?"} />
+                </>)}
+              </div>
+            )}
 
             <div style={{ marginBottom: "1rem" }}>
               <label style={labelStyle}>{copy.fTone}</label>
@@ -2918,6 +3017,52 @@ function OpportunityMockupMobile() {
 // Keep old name as alias
 const LeadMockupMobile = OpportunityMockupMobile;
 
+// ─── Plan comparison table (launch_tier_architecture_v0) ─────────────────────
+// Capability progression, not volume. Counts appear once as operating scope.
+const COMPARE_ROWS: { label: string; v: [string, string, string, string] }[] = [
+  { label: "Scope", v: ["1 ICP · 1 region · 2 opportunities", "1 ICP · 1 region · 6 opportunities", "1 ICP · 1–2 regions · 12 opportunities", "1–2 ICPs · 2–3 regions · 18 opportunities"] },
+  { label: "What Changed + sources + freshness", v: ["✓", "✓", "✓", "✓"] },
+  { label: "Evidence quality", v: ["Standard", "Standard", "Full", "Reinforced"] },
+  { label: "Why Now + fit + timing", v: ["Per account", "Basic comparison", "Complete", "Advanced"] },
+  { label: "Portfolio statuses & allocation", v: ["—", "Basic", "Complete", "Advanced"] },
+  { label: "Opportunity clusters", v: ["—", "Summary", "Complete", "Deep"] },
+  { label: "Portfolio risk & coverage gaps", v: ["—", "Basic risk", "Complete", "Advanced"] },
+  { label: "Momentum & decay", v: ["—", "—", "Initial", "Detailed"] },
+  { label: "Counterevidence", v: ["When found", "When found", "Included", "Systematic"] },
+  { label: "Strategic sequence & playbooks", v: ["—", "Basic sequence", "Complete sequence", "Playbooks + advanced sequence"] },
+  { label: "Executive report", v: ["Mini + ICP verdict", "Opportunity Brief", "Intelligence Brief", "Strategic Brief"] },
+];
+
+function ComparisonTable({ copy }: { copy: Copy }) {
+  const th: React.CSSProperties = { padding: ".6rem .75rem", fontSize: ".78rem", fontWeight: 800, color: "#0f172a", textAlign: "left", borderBottom: "2px solid #e2e8f0", whiteSpace: "nowrap" };
+  const td: React.CSSProperties = { padding: ".55rem .75rem", fontSize: ".8rem", color: "#475569", borderBottom: "1px solid #f1f5f9", textAlign: "left", lineHeight: 1.4 };
+  return (
+    <div style={{ maxWidth: "80rem", margin: "2.5rem auto 0", textAlign: "left" }}>
+      <h3 style={{ fontSize: "1.05rem", fontWeight: 800, color: "#0f172a", marginBottom: ".75rem", textAlign: "center" }}>{copy.compareTitle}</h3>
+      <div style={{ overflowX: "auto", background: "#fff", border: "1px solid #e2e8f0", borderRadius: "1rem" }} role="region" aria-label={copy.compareTitle} tabIndex={0}>
+        <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 720 }}>
+          <thead>
+            <tr>
+              <th style={th}></th>
+              {(["sample", "starter", "standard", "pro"] as const).map((k) => (
+                <th key={k} style={{ ...th, color: k === "standard" ? "#0284c7" : "#0f172a" }}>{copy.planNames[k]} · {PLANS[k].price}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {COMPARE_ROWS.map((row) => (
+              <tr key={row.label}>
+                <td style={{ ...td, fontWeight: 600, color: "#334155" }}>{row.label}</td>
+                {row.v.map((cell, i) => <td key={i} style={{ ...td, background: i === 2 ? "#f0f9ff" : undefined }}>{cell}</td>)}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 // ─── Pricing card ─────────────────────────────────────────────────────────────
 
 function PricingCard({ plan, featured, copy, onSelect }: {
@@ -2954,6 +3099,11 @@ function PricingCard({ plan, featured, copy, onSelect }: {
           {copy.mostPopular}
         </div>
       )}
+      {!featured && (
+        <div style={{ fontSize: ".66rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".06em", color: "#94a3b8", marginBottom: ".6rem" }}>
+          {copy.planBadges[plan]}
+        </div>
+      )}
 
       {/* Plan name + price block */}
       <div style={{ marginBottom: "1.25rem" }}>
@@ -2966,7 +3116,9 @@ function PricingCard({ plan, featured, copy, onSelect }: {
         <div style={{ fontSize: ".72rem", color: "#94a3b8", marginBottom: ".5rem", letterSpacing: "-.01em" }}>
           {copy.pricePerLead[plan]}
         </div>
-        <div style={{ fontSize: ".875rem", color: "#64748b", lineHeight: 1.45, marginBottom: ".875rem" }}>{copy.planDescs[plan]}</div>
+        <div style={{ fontSize: ".875rem", color: "#64748b", lineHeight: 1.45, marginBottom: ".5rem" }}>{copy.planDescs[plan]}</div>
+        <div style={{ fontSize: ".78rem", color: "#94a3b8", lineHeight: 1.45, marginBottom: ".5rem" }}>{copy.planFor[plan]}</div>
+        <div style={{ fontSize: ".78rem", color: featured ? "#0369a1" : "#64748b", fontWeight: 600, lineHeight: 1.45, marginBottom: ".875rem" }}>{copy.planDiff[plan]}</div>
         <div style={{ display: "inline-block", fontSize: ".7rem", fontWeight: 600, color: featured ? "#0284c7" : "#64748b", background: featured ? "#e0f2fe" : "#f1f5f9", borderRadius: ".375rem", padding: "3px 10px" }}>
           {copy.oneBatch}
         </div>

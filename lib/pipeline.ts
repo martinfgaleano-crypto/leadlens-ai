@@ -48,7 +48,12 @@ export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLen
   }
 
   const processedLeads: ProcessedLead[] = [];
-  const targetCount = PLAN_LEAD_COUNT[plan];
+  // Operating limit resolves from the versioned catalog when the job carries a
+  // product_code (launch_tier_architecture_v0); legacy jobs keep PLAN_LEAD_COUNT.
+  const { resolveProduct } = await import("@/lib/products/catalog");
+  const product = resolveProduct((onboardingData as { product_code?: string }).product_code ?? null);
+  const targetCount = product ? product.entitlements.opportunity_target : PLAN_LEAD_COUNT[plan];
+  if (product) console.log(`[pipeline] product=${product.product_code} tier=${product.tier} opportunity_target=${targetCount}`);
 
   for (let i = 0; i < Math.min(candidates.length, targetCount); i++) {
     const candidate = candidates[i];

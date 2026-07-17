@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { getStripe, isCheckoutReady, PLAN_PRICE_IDS, PLAN_PRICE_DATA } from "@/lib/stripe";
+import { getStripe, isCheckoutReady } from "@/lib/stripe";
 import { createJob } from "@/lib/storage/job-store";
 import type { PlanType, OnboardingData } from "@/types";
-import { PLAN_PRICE, PLAN_LEAD_COUNT } from "@/types";
 
 const checkoutSchema = z.object({
-  plan: z.enum(["sample", "starter", "standard", "pro"]),
+  // Accepts versioned product codes (launch_tier_architecture_v0) and legacy
+  // plan names. Price, entitlements and limits resolve SERVER-SIDE from the
+  // catalog — any amount or entitlement sent by the browser is ignored.
+  plan: z.enum([
+    "preview_launch_v0", "brief_launch_v0", "intelligence_launch_v0", "premium_launch_v0",
+    "sample", "starter", "standard", "pro",
+  ]),
   onboarding: z.object({
     company_name: z.string().min(1),
     company_description: z.string().min(5),
@@ -18,6 +23,16 @@ const checkoutSchema = z.object({
     contact_email: z.string().email(),
     output_language: z.enum(["en", "es", "pt", "ja"]).optional(),
     target_market_region: z.enum(["north_america", "latin_america", "europe", "asia", "global"]).optional(),
+    // Tier-adaptive onboarding (progressive disclosure) — optional everywhere.
+    campaign_objective: z.string().max(600).optional(),
+    opportunity_preferences: z.string().max(600).optional(),
+    restrictions: z.string().max(600).optional(),
+    sales_capacity: z.string().max(300).optional(),
+    prioritization_preferences: z.string().max(600).optional(),
+    risk_tolerance: z.string().max(300).optional(),
+    strategic_priorities: z.string().max(600).optional(),
+    known_objections: z.string().max(600).optional(),
+    decision_stakeholders: z.string().max(600).optional(),
   }),
 });
 
@@ -34,30 +49,47 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
 
-  const { plan, onboarding } = parsed.data as { plan: PlanType; onboarding: OnboardingData };
+  // Server-side product resolution: the catalog is the only pricing authority.
+  const { resolveProduct } = await import("@/lib/products/catalog");
+  const product = resolveProduct(parsed.data.plan);
+  if (!product) return NextResponse.json({ error: "Unknown product" }, { status: 400 });
+
+  const plan: PlanType = product.legacy_plan; // pipeline compatibility
+  const onboarding: OnboardingData = {
+    ...(parsed.data.onboarding as OnboardingData),
+    product_code: product.product_code,
+    product_version: "launch_v0",
+  };
 
   // Create a pending job in the store (works in-memory without Supabase)
   const job = await createJob({ plan, onboarding, customer_email: onboarding.contact_email });
 
-  // DEMO_MODE or no Stripe secret key → return mock checkout URL
+  // DEMO_MODE or no payment provider → return mock checkout URL
   if (process.env.DEMO_MODE === "true" || !isCheckoutReady()) {
     return NextResponse.json({
       checkout_url: null,
       job_id: job.id,
       demo: true,
-      message: "Stripe not configured — job created. Use /api/demo to run the pipeline directly.",
+      message: "Payment provider not configured — job created. Use /api/demo to run the pipeline directly.",
       plan,
-      price: PLAN_PRICE[plan],
+      product_code: product.product_code,
+      launch_price: product.launch_price,
+      price: product.price_amount,
     });
   }
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/=$/, "") || "http://localhost:3000";
 
-  // Use Price ID if configured, otherwise fall back to inline price_data (no Stripe dashboard required)
-  const priceId = PLAN_PRICE_IDS[plan];
-  const lineItems = priceId
-    ? [{ price: priceId, quantity: 1 }]
-    : [{ price_data: PLAN_PRICE_DATA[plan], quantity: 1 }];
+  // Price resolves from the versioned catalog (server-side), never from the
+  // browser and never from legacy PLAN_PRICE_DATA (pre-tier prices).
+  const lineItems = [{
+    price_data: {
+      currency: product.currency.toLowerCase(),
+      unit_amount: product.price_amount * 100,
+      product_data: { name: `LeadLens ${product.display_name} (launch pricing)`, description: product.one_liner },
+    },
+    quantity: 1,
+  }];
 
   try {
     const stripe = getStripe();
@@ -71,7 +103,11 @@ export async function POST(req: NextRequest) {
       metadata: {
         job_id: job.id,
         plan,
-        lead_count: String(PLAN_LEAD_COUNT[plan]),
+        product_code: product.product_code,
+        product_version: "launch_v0",
+        launch_price: "true",
+        amount_usd: String(product.price_amount),
+        opportunity_target: String(product.entitlements.opportunity_target),
         output_language: onboarding.output_language ?? "en",
         target_market_region: onboarding.target_market_region ?? "global",
       },

@@ -5,6 +5,7 @@
 // reaches the browser. No data fetching, no assembly, no auth here.
 
 import type { InstitutionalOpportunityReportV1, Claim, ClaimBasis, AccountDossier } from "@/lib/reports/institutional-report-types";
+import { deriveMiniVerdict, type ReportExperience } from "@/lib/products/report-experience";
 
 const BASIS: Record<ClaimBasis, { label: string; bg: string; fg: string }> = {
   fact: { label: "Verified", bg: "#dcfce7", fg: "#15803d" },
@@ -22,9 +23,12 @@ function ClaimP({ c }: { c: Claim }) {
 }
 const GRADE = { strong: { label: "Strong evidence", c: "#a7f3d0" }, moderate: { label: "Moderate evidence", c: "#cbd5e1" }, developing: { label: "Developing", c: "#cbd5e1" } };
 
-export default function BriefView({ report }: { report: InstitutionalOpportunityReportV1 }) {
+export default function BriefView({ report, experience }: { report: InstitutionalOpportunityReportV1; experience?: ReportExperience }) {
   const r = report;
   const q = r.quality;
+  // Tier experience (server-resolved). Legacy calls without it render everything.
+  const x = experience ?? null;
+  const miniVerdict = x?.show_mini_verdict ? deriveMiniVerdict(r.portfolio_summary) : null;
   const wrap: React.CSSProperties = { maxWidth: 880, margin: "0 auto", padding: "28px 20px 60px", fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif", color: "#0f172a" };
   const sec: React.CSSProperties = { background: "#fff", border: "1px solid #e8edf3", borderRadius: 12, padding: "22px 26px", marginBottom: 18, boxShadow: "0 1px 2px rgba(15,23,42,0.03)" };
   const h2: React.CSSProperties = { fontSize: 11, fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "#64748b", margin: "0 0 12px" };
@@ -35,7 +39,7 @@ export default function BriefView({ report }: { report: InstitutionalOpportunity
       <style>{`@media print { body { background: #fff; } button { display: none !important; } .ib-sec { box-shadow: none; break-inside: avoid; } }`}</style>
       <div style={wrap} data-institutional-brief-version="institutional-brief-v1">
         <div style={{ background: "linear-gradient(135deg,#0b1220,#12314f 60%,#0c4a6e)", color: "#fff", borderRadius: 16, padding: "34px 34px 30px", marginBottom: 20 }}>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "#7dd3fc", marginBottom: 8 }}>Opportunity Intelligence Brief</div>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "#7dd3fc", marginBottom: 8 }}>{x ? `${x.display_name} · ${x.header_label}` : "Opportunity Intelligence Brief"}</div>
           <h1 style={{ fontSize: 26, fontWeight: 800, lineHeight: 1.2, margin: "0 0 10px", maxWidth: 640 }}>{r.executive_brief.headline}</h1>
           <div style={{ display: "flex", gap: 18, flexWrap: "wrap", fontSize: 12, color: "#cbd5e1", alignItems: "center" }}>
             <span>{r.metadata.generated_at.slice(0, 10)}</span><span>·</span><span>{r.portfolio_summary.total} accounts analyzed</span>
@@ -43,6 +47,14 @@ export default function BriefView({ report }: { report: InstitutionalOpportunity
           </div>
           <button onClick={() => window.print()} style={{ marginTop: 16, background: "rgba(255,255,255,0.14)", color: "#fff", border: "1px solid rgba(255,255,255,0.28)", borderRadius: 8, padding: "7px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Download PDF</button>
         </div>
+
+        {miniVerdict && (
+          <div style={{ ...sec, borderLeft: `4px solid ${miniVerdict.verdict === "proceed" ? "#15803d" : miniVerdict.verdict === "refine" ? "#b45309" : "#dc2626"}` }} className="ib-sec">
+            <h2 style={h2}>ICP Verdict</h2>
+            <div style={{ fontSize: 20, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.06em", color: miniVerdict.verdict === "proceed" ? "#15803d" : miniVerdict.verdict === "refine" ? "#b45309" : "#dc2626" }}>{miniVerdict.verdict}</div>
+            <ClaimP c={{ basis: "recommendation", text: miniVerdict.reason, evidence: "derived from this preview's real results" }} />
+          </div>
+        )}
 
         <div style={sec} className="ib-sec">
           <h2 style={h2}>Executive Brief</h2>
@@ -54,6 +66,7 @@ export default function BriefView({ report }: { report: InstitutionalOpportunity
           </div>
         </div>
 
+        {(!x || x.show_portfolio) && (
         <div style={sec} className="ib-sec">
           <h2 style={h2}>Portfolio Intelligence</h2>
           <div style={{ display: "flex", height: 10, borderRadius: 6, overflow: "hidden", marginBottom: 10, background: "#eef2f7" }}>
@@ -67,13 +80,14 @@ export default function BriefView({ report }: { report: InstitutionalOpportunity
               <span key={k} style={{ color: "#475569" }}><span style={{ display: "inline-block", width: 8, height: 8, borderRadius: 2, background: tierColor(k.toUpperCase()), marginRight: 5 }} /><strong>{r.portfolio_summary[k]}</strong> {k}</span>
             ))}
           </div>
-          {r.portfolio_summary.funnel && (
+          {r.portfolio_summary.funnel && (!x || x.show_funnel) && (
             <p style={{ fontSize: 12.5, color: "#475569", marginTop: 12, paddingTop: 12, borderTop: "1px solid #f1f5f9" }}>
               Selection funnel: <strong>{r.portfolio_summary.funnel.considered}</strong> considered → <strong>{r.portfolio_summary.funnel.rejected}</strong> filtered out → <strong style={{ color: "#0369a1" }}>{r.portfolio_summary.funnel.selected}</strong> selected for you.
             </p>
           )}
           <p style={{ fontSize: 11, color: "#94a3b8", marginTop: 8 }}>{r.portfolio_summary.tier_note}</p>
         </div>
+        )}
 
         <h2 style={{ ...h2, fontSize: 15, margin: "26px 0 12px", color: "#0f172a" }}>Account Dossiers</h2>
         {r.account_dossiers.map((d: AccountDossier, i) => (
@@ -111,6 +125,12 @@ export default function BriefView({ report }: { report: InstitutionalOpportunity
             <div style={{ marginTop: 10, paddingTop: 10, borderTop: "1px solid #f1f5f9" }}><div style={{ fontSize: 10, fontWeight: 800, color: "#94a3b8", textTransform: "uppercase" }}>Recommended next step</div><ClaimP c={d.recommended_next_step} /></div>
           </div>
         ))}
+
+        {x?.upgrade_hint && (
+          <div style={{ ...sec, background: "#f0f9ff", border: "1px solid #bae6fd" }} className="ib-sec">
+            <p style={{ fontSize: 13, color: "#075985", margin: 0 }}>{x.upgrade_hint}</p>
+          </div>
+        )}
 
         <div style={sec} className="ib-sec">
           <h2 style={h2}>How this brief was built</h2>

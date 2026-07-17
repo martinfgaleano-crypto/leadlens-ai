@@ -9,8 +9,10 @@ import { getSnapshot } from "@/lib/storage/snapshot-store";
 import { assembleInstitutionalReport } from "@/lib/reports/institutional-assembler";
 import type { InstitutionalOpportunityReportV1 } from "@/lib/reports/institutional-report-types";
 
+import type { ReportExperience } from "@/lib/products/report-experience";
+
 export type BriefResult =
-  | { state: "ok"; report: InstitutionalOpportunityReportV1 }
+  | { state: "ok"; report: InstitutionalOpportunityReportV1; experience: ReportExperience }
   | { state: "unavailable" }        // missing / non-completed — never confirms existence
   | { state: "processing" }
   | { state: "forbidden" }          // linked report, viewer is not the owner
@@ -74,5 +76,11 @@ export async function getBriefForViewer(jobId: string, accessToken: string | nul
     }
   } catch { /* honest best-effort: 035 pending → assembly still serves */ }
 
-  return { state: "ok", report };
+  // Tier-resolved report experience: prefer the job's stored product_code
+  // (new orders), fall back to the legacy plan mapping (historic orders).
+  const { resolveReportExperience } = await import("@/lib/products/report-experience");
+  const productCode = (snapshot.report_json as { onboarding?: { product_code?: string } })?.onboarding?.product_code ?? snapshot.plan ?? null;
+  const experience = resolveReportExperience(productCode);
+
+  return { state: "ok", report, experience };
 }

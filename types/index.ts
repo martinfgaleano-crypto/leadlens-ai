@@ -192,6 +192,20 @@ export interface OnboardingData {
   contact_email: string;
   output_language?: OutputLanguage;
   target_market_region?: MarketRegion;
+  /** Versioned product code (launch_tier_architecture_v0). Legacy jobs lack it
+   *  and resolve via their PlanType. Server-side only — never priced from client. */
+  product_code?: string;
+  product_version?: string;
+  /** Tier-adaptive onboarding (progressive disclosure) — all optional. */
+  campaign_objective?: string;         // Brief+
+  opportunity_preferences?: string;    // Brief+
+  restrictions?: string;               // Brief+
+  sales_capacity?: string;             // Intelligence+
+  prioritization_preferences?: string; // Intelligence+
+  risk_tolerance?: string;             // Intelligence+
+  strategic_priorities?: string;       // Premium
+  known_objections?: string;           // Premium
+  decision_stakeholders?: string;      // Premium
 }
 
 // ─── ICP (structured output of ICP Agent) ────────────────────────────────────
