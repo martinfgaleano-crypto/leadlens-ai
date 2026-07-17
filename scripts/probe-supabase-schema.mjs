@@ -87,6 +87,24 @@ for (const [table, meta] of Object.entries(EXPECTED)) {
   }
 }
 
+for (const [probe, meta] of Object.entries(EXPECTED_COLUMNS)) {
+  const [table, column] = probe.split(".");
+  const { error } = await db.from(table).select(column).limit(0);
+  if (!error) {
+    present++;
+    console.log(`✅ ${probe}  (${meta.area})`);
+  } else if (/column .* does not exist|could not find/i.test(error.message) || error.code === "42703") {
+    missing++;
+    console.log(`❌ ${probe}  MISSING → apply migration ${meta.migration}  (${meta.area})`);
+    const list = missingByMigration.get(meta.migration) ?? [];
+    list.push(probe);
+    missingByMigration.set(meta.migration, list);
+  } else {
+    unknown++;
+    console.log(`⚠️  ${probe}  probe error (${error.code ?? "?"}): ${error.message}`);
+  }
+}
+
 console.log(`\nResult: ${present} present, ${missing} missing, ${unknown} inconclusive.`);
 if (missing > 0) {
   console.log("\nApply these migrations (in numeric order) via Supabase SQL Editor:");

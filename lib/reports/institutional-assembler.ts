@@ -172,6 +172,7 @@ export function assembleInstitutionalReport(
       "Tiers, scores and ordering come unchanged from the existing deterministic pipeline.",
       "Each statement is labeled fact, inference, hypothesis, recommendation or unknown.",
       "Signal dates are validated, never inferred; extraction time is not treated as publication time.",
+      "Signal approvals are governed reviews and may be AI-reviewed (origin recorded, flagged for human confirmation); AI-reviewed approvals are never presented as human-validated.",
     ],
     limitations: [
       "This is an internal presentation layer over one report snapshot — not a live re-analysis.",

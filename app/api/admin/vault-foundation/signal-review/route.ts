@@ -40,10 +40,25 @@ export async function GET(req: NextRequest) {
 
   // Latest review per signal (active decision).
   const sigIds = (signals ?? []).map((s) => s.id);
-  const { data: reviews, error: revErr } = sigIds.length ? await db.from("vault_signal_reviews").select("signal_id, review_status, rights_status, evidence_tier, reviewed_at").in("signal_id", sigIds).order("reviewed_at", { ascending: false }) : { data: [], error: null };
+  // Active decision = latest append-only review per signal (reviewed_at, then
+  // review_version as tiebreaker for same-timestamp rows). Includes 036 origin
+  // columns; falls back to the pre-036 select so the page still works there.
+  type ActiveReview = { review_status: string; rights_status: string | null; evidence_tier: string | null; reviewed_at: string; review_origin?: string; reviewer_agent?: string | null; requires_human_confirmation?: boolean };
+  const fetchReviews = (cols: string) => db.from("vault_signal_reviews").select(cols).in("signal_id", sigIds).order("reviewed_at", { ascending: false }).order("review_version", { ascending: false });
+  let reviews: (ActiveReview & { signal_id: string })[] = [];
+  let revErr: { message: string } | null = null;
+  if (sigIds.length) {
+    let res = await fetchReviews("signal_id, review_status, rights_status, evidence_tier, reviewed_at, review_version, review_origin, reviewer_agent, requires_human_confirmation");
+    if (res.error && /review_origin|column|schema cache/i.test(res.error.message) && !/relation|does not exist/i.test(res.error.message)) {
+      res = await fetchReviews("signal_id, review_status, rights_status, evidence_tier, reviewed_at, review_version");
+    }
+    reviews = (res.data ?? []) as unknown as (ActiveReview & { signal_id: string })[];
+    revErr = res.error;
+  }
   const migrationMissing = !!revErr && /relation|does not exist|schema cache/i.test(revErr.message);
-  const activeReview = new Map<string, { review_status: string; rights_status: string | null; evidence_tier: string | null }>();
-  for (const r of reviews ?? []) if (!activeReview.has(r.signal_id)) activeReview.set(r.signal_id, r);
+  const reviewFetchError = !!revErr && !migrationMissing ? revErr.message.slice(0, 160) : null;
+  const activeReview = new Map<string, ActiveReview>();
+  for (const r of reviews) if (!activeReview.has(r.signal_id)) activeReview.set(r.signal_id, r);
 
   // Semantic dedupe: cluster by company + signal_type + date within 7 days.
   const clusterKey = (companyId: string, type: string, date: string | null) => {
@@ -86,13 +101,30 @@ export async function GET(req: NextRequest) {
 
   const totalSignals = (signals ?? []).length;
   const reviewedSignals = (signals ?? []).filter((s) => activeReview.has(s.id)).length;
+
+  // Review provenance metrics — AI-assisted is NEVER counted as human-reviewed.
+  const PERMITTED = new Set(["permitted", "customer_display_allowed"]);
+  const metrics = { human_reviewed: 0, ai_reviewed: 0, auto_evaluated: 0, approved: 0, approved_monitor_only: 0, rejected: 0, quarantined: 0, duplicate: 0, requires_human_confirmation: 0, report_eligible: 0 };
+  for (const s of signals ?? []) {
+    const ar = activeReview.get(s.id);
+    if (!ar) continue;
+    const origin = ar.review_origin ?? "human";
+    if (origin === "human") metrics.human_reviewed++;
+    else if (origin === "ai_assisted") metrics.ai_reviewed++;
+    else metrics.auto_evaluated++;
+    if (ar.review_status in metrics) (metrics as Record<string, number>)[ar.review_status]++;
+    if (ar.requires_human_confirmation) metrics.requires_human_confirmation++;
+    const src = srcById.get(s.source_id);
+    if (ar.review_status === "approved" && PERMITTED.has(src?.usage_rights_status ?? "")) metrics.report_eligible++;
+  }
   const rightsDist: Record<string, number> = {};
   const tierDist: Record<string, number> = {};
   for (const g of groups) for (const s of g.signals) { rightsDist[s.rights_status] = (rightsDist[s.rights_status] ?? 0) + 1; tierDist[s.proposed_tier] = (tierDist[s.proposed_tier] ?? 0) + 1; }
 
   return NextResponse.json({
-    groups, migration_missing: migrationMissing,
+    groups, migration_missing: migrationMissing, review_fetch_error: reviewFetchError,
     progress: { reviewed: reviewedSignals, total: totalSignals },
+    review_metrics: metrics,
     distributions: { rights: rightsDist, proposed_tier: tierDist },
     banner: "Human review governs which modern signals become usable intelligence. Nothing is auto-approved; every decision is audited and revocable.",
   });
