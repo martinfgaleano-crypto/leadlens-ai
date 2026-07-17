@@ -90,7 +90,6 @@ export async function POST(req: NextRequest) {
       confidence_score: body.confidence_score ?? null,
       // Manual intake requires source_url + source_type provenance → real data.
       data_origin: "production",
-      production_eligible: true,
       origin_reason: "manual candidate intake with mandatory provenance",
       origin_version: "origin-v1",
     });

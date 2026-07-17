@@ -158,6 +158,7 @@ export async function reviewVaultSignal(input: ReviewInput): Promise<ReviewResul
     await updateVaultSignalReviewStatus(input.signalId, signalStatus as "approved" | "rejected" | "pending_review");
   }
 
+
   // Rights decision on the linked source: only a customer-eligible approval sets
   // the source usage rights to permitted (the reviewer's explicit rights call).
   if (effectiveDecision === "approved" && !block && input.rightsStatus && CUSTOMER_DISPLAY_RIGHTS.includes(input.rightsStatus)) {
@@ -172,6 +173,14 @@ export async function reviewVaultSignal(input: ReviewInput): Promise<ReviewResul
     const { data: sig } = await db.from("vault_signals").select("source_id").eq("id", input.signalId).maybeSingle();
     if (sig?.source_id) await db.from("vault_sources").update({ usage_rights_status: "unverified" }).eq("id", sig.source_id);
   }
+
+  // Every governance transition recalculates production eligibility via the
+  // single central function (eligibility-v1). Runs AFTER rights effects so it
+  // reads the final state. Best-effort pre-037.
+  try {
+    const { recalculateProductionEligibility } = await import("@/lib/vault/production-eligibility");
+    await recalculateProductionEligibility(input.signalId);
+  } catch (e) { console.warn("[signal-review] eligibility recalc skipped:", e instanceof Error ? e.message : e); }
 
   return { ok: true, signalId: input.signalId, effective_status: effectiveDecision, customer_eligible: customerEligible, reason: block ?? undefined };
 }

@@ -322,7 +322,6 @@ export async function promoteLeadHunterCandidateToVault(candidateId: string): Pr
       // the signal arrives in the Vault already approved.
       review_status: "approved",
       data_origin: demoMarked ? "demo" : "production",
-      production_eligible: !demoMarked,
       origin_reason: demoMarked ? "[DEMO]/seed marker on promoted candidate" : "lead-hunter candidate promoted after human review",
       origin_version: "origin-v1",
     });

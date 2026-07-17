@@ -179,11 +179,13 @@ export async function createVaultSignal(input: Partial<VaultSignal> & { signal_t
   const db = await getDb();
   if (!db) { warnNoDb("createVaultSignal"); return null; }
   // Origin contract (037), fail-closed: unknown origin is never production-
-  // eligible; only explicit production data may be eligible. "[DEMO]"-marked
-  // content is forced to demo regardless of what the caller claims.
+  // eligible; "[DEMO]"-marked content is forced to demo regardless of caller.
+  // production_eligible is ALWAYS false at insert — data_origin records real
+  // origin only; eligibility is granted exclusively by
+  // recalculateProductionEligibility once every governance gate holds.
   const demoMarked = /\[DEMO\]/i.test(input.signal_summary ?? "");
   const origin = demoMarked ? "demo" : (input.data_origin ?? "legacy_unknown");
-  const eligible = origin === "production" && input.production_eligible === true;
+  const eligible = false;
   const base = {
     company_id: input.company_id ?? null,
     contact_id: input.contact_id ?? null,

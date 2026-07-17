@@ -80,7 +80,6 @@ export async function promoteToVault(candidates: ProviderSearchPromotionCandidat
       confidence_score: c.signal.confidence,
       review_status: "pending_review",
       data_origin: "production",
-      production_eligible: true,
       origin_reason: "provider_search observation with recorded provenance",
       origin_version: "origin-v1",
     });
