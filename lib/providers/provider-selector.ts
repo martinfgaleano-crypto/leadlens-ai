@@ -15,33 +15,25 @@ export function getLeadProvider(): LeadProvider {
 
   if (isDemo || allowMockWithAI) return mockLeadProvider;
 
-  const hasApollo = !!process.env.APOLLO_API_KEY;
-  const hasPDL = !!process.env.PEOPLE_DATA_LABS_API_KEY;
+  // COMPLIANCE (permanent project rules): Apollo is banned outright, and
+  // person-data providers (PDL contact/profile data) violate the no-personal-
+  // data rule — neither is EVER auto-selected, even when their legacy API keys
+  // exist in the environment. Public-web search (Tavily) is the compliant
+  // real-discovery provider.
   const hasTavily = !!process.env.TAVILY_API_KEY;
 
-  if (hasApollo) {
-    // Lazy import to avoid loading Apollo SDK when key is absent
-    const { apolloLeadProvider } = require("./apollo-lead-provider");
-    return apolloLeadProvider as LeadProvider;
-  }
-
-  if (hasPDL) {
-    const { peopleDataLabsProvider } = require("./people-data-labs-provider");
-    return peopleDataLabsProvider as LeadProvider;
-  }
-
   if (hasTavily) {
-    // Tavily is a fallback — less structured than Apollo/PDL
     const { tavilyLeadProvider } = require("./tavily-lead-provider");
     return tavilyLeadProvider as LeadProvider;
   }
 
-  // No provider configured and not in demo/hybrid mode — throw a clear error
+  // No compliant provider configured and not in demo/hybrid mode.
   throw new Error(
-    "No lead provider configured. Options:\n" +
+    "No compliant lead provider configured. Options:\n" +
+      "  • Set TAVILY_API_KEY for real public-web lead discovery\n" +
       "  • Set DEMO_MODE=true to use mock data with no external APIs\n" +
       "  • Set ALLOW_MOCK_LEADS_WITH_REAL_AI=true to test Claude agents with mock leads\n" +
-      "  • Add APOLLO_API_KEY, PEOPLE_DATA_LABS_API_KEY, or TAVILY_API_KEY for real lead search"
+      "  (Apollo and person-data providers are excluded by project policy.)"
   );
 }
 

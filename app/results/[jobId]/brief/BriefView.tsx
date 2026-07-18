@@ -5,7 +5,7 @@
 // reaches the browser. No data fetching, no assembly, no auth here.
 
 import type { InstitutionalOpportunityReportV1, Claim, ClaimBasis, AccountDossier } from "@/lib/reports/institutional-report-types";
-import { deriveMiniVerdict, type ReportExperience } from "@/lib/products/report-experience";
+import { deriveMiniVerdict, derivePortfolioStatus, deriveDecay, deriveMomentum, deriveAllocation, type ReportExperience } from "@/lib/products/report-experience";
 
 const BASIS: Record<ClaimBasis, { label: string; bg: string; fg: string }> = {
   fact: { label: "Verified", bg: "#dcfce7", fg: "#15803d" },
@@ -29,6 +29,13 @@ export default function BriefView({ report, experience }: { report: Institutiona
   // Tier experience (server-resolved). Legacy calls without it render everything.
   const x = experience ?? null;
   const miniVerdict = x?.show_mini_verdict ? deriveMiniVerdict(r.portfolio_summary) : null;
+  // Portfolio depth (Intelligence/Premium): statuses, decay, momentum and
+  // allocation derived deterministically from REAL dates and evidence.
+  const deepPortfolio = x ? (x.portfolio_depth === "complete" || x.portfolio_depth === "advanced") : false;
+  const latestDate = (d: AccountDossier) => d.evidence_chain.map((e) => e.date).filter(Boolean).sort().reverse()[0] ?? null;
+  const statuses = deepPortfolio ? r.account_dossiers.map((d) => derivePortfolioStatus({ tier: d.tier, evidence_grounded: d.evidence_grounded, latest_date: latestDate(d) })) : [];
+  const allocation = deepPortfolio && statuses.length ? deriveAllocation(statuses) : null;
+  const STATUS_COLOR: Record<string, string> = { act_now: "#15803d", investigate: "#0369a1", monitor: "#b45309", reserve: "#64748b", reject: "#dc2626" };
   const wrap: React.CSSProperties = { maxWidth: 880, margin: "0 auto", padding: "28px 20px 60px", fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif", color: "#0f172a" };
   const sec: React.CSSProperties = { background: "#fff", border: "1px solid #e8edf3", borderRadius: 12, padding: "22px 26px", marginBottom: 18, boxShadow: "0 1px 2px rgba(15,23,42,0.03)" };
   const h2: React.CSSProperties = { fontSize: 11, fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "#64748b", margin: "0 0 12px" };
@@ -86,11 +93,22 @@ export default function BriefView({ report, experience }: { report: Institutiona
             </p>
           )}
           <p style={{ fontSize: 11, color: "#94a3b8", marginTop: 8 }}>{r.portfolio_summary.tier_note}</p>
+          {allocation && (
+            <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid #f1f5f9" }}>
+              <div style={{ fontSize: 10, fontWeight: 800, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 4 }}>Effort allocation</div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#0f172a" }}>{allocation.line}</div>
+              <p style={{ fontSize: 12.5, color: "#475569", margin: "4px 0 0", lineHeight: 1.55 }}>{allocation.detail}</p>
+            </div>
+          )}
         </div>
         )}
 
         <h2 style={{ ...h2, fontSize: 15, margin: "26px 0 12px", color: "#0f172a" }}>Account Dossiers</h2>
-        {r.account_dossiers.map((d: AccountDossier, i) => (
+        {r.account_dossiers.map((d: AccountDossier, i) => {
+          const status = deepPortfolio ? statuses[i] : null;
+          const decay = deepPortfolio ? deriveDecay(latestDate(d)) : null;
+          const momentum = deepPortfolio ? deriveMomentum(d.evidence_chain.map((e) => e.date)) : null;
+          return (
           <div key={i} style={{ ...sec, borderLeft: `4px solid ${tierColor(d.tier)}` }} className="ib-sec">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: 8 }}>
               <div><strong style={{ fontSize: 17, color: "#0f172a" }}>{d.rank ? `${d.rank}. ` : ""}{d.company}</strong>
@@ -98,6 +116,14 @@ export default function BriefView({ report, experience }: { report: Institutiona
               <div style={{ textAlign: "right" }}><span style={{ fontSize: 12, fontWeight: 800, color: tierColor(d.tier) }}>{d.tier}</span>
                 {d.evidence_grounded != null && <div style={{ fontSize: 10, fontWeight: 700, color: d.evidence_grounded ? "#15803d" : "#b45309", marginTop: 2 }}>{d.evidence_grounded ? "EVIDENCE-GROUNDED" : "VALIDATE FIRST"}</div>}</div>
             </div>
+            {status && decay && momentum && (
+              <div style={{ marginTop: 8, display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center", background: "#f8fafc", borderRadius: 8, padding: "8px 12px" }}>
+                <span style={{ fontSize: 11, fontWeight: 800, color: STATUS_COLOR[status.status], textTransform: "uppercase", letterSpacing: "0.04em" }}>{status.label}</span>
+                <span style={{ fontSize: 11.5, color: "#475569" }}>{status.because}</span>
+                <span style={{ fontSize: 11, color: "#64748b" }}>· Evidence: <strong>{decay.label}</strong> (revalidate by {decay.revalidate_by})</span>
+                <span style={{ fontSize: 11, color: "#64748b" }}>· Momentum: <strong>{momentum.label}</strong> — {momentum.factors}</span>
+              </div>
+            )}
             <div style={{ marginTop: 10 }}><ClaimP c={d.thesis} /></div>
             {([["Why now", d.why_now], ["Why this company", d.why_this_company], ["Why this quarter", d.why_this_quarter]] as const).map(([label, claim]) => (
               <div key={label} style={{ marginTop: 8 }}><div style={{ fontSize: 10, fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.05em" }}>{label}</div><ClaimP c={claim} /></div>
@@ -124,7 +150,8 @@ export default function BriefView({ report, experience }: { report: Institutiona
             )}
             <div style={{ marginTop: 10, paddingTop: 10, borderTop: "1px solid #f1f5f9" }}><div style={{ fontSize: 10, fontWeight: 800, color: "#94a3b8", textTransform: "uppercase" }}>Recommended next step</div><ClaimP c={d.recommended_next_step} /></div>
           </div>
-        ))}
+          );
+        })}
 
         {x?.upgrade_hint && (
           <div style={{ ...sec, background: "#f0f9ff", border: "1px solid #bae6fd" }} className="ib-sec">

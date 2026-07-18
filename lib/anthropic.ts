@@ -103,14 +103,27 @@ export async function callClaudeJSON<T>(
   userMessage: string,
   maxTokens = 2000
 ): Promise<T> {
-  const raw = await callClaude(
-    systemPrompt +
-      "\n\nReturn ONLY valid JSON. No markdown, no explanation, no code fences.",
-    userMessage,
-    maxTokens
-  );
-
-  return parseClaudeJSON<T>(raw);
+  const system = systemPrompt +
+    "\n\nReturn ONLY valid JSON. No markdown, no explanation, no code fences.";
+  const raw = await callClaude(system, userMessage, maxTokens);
+  try {
+    return parseClaudeJSON<T>(raw);
+  } catch (firstErr) {
+    // One retry with doubled budget — the dominant failure is max_tokens
+    // truncation (unterminated JSON), especially for Spanish outputs whose
+    // strings run longer. Bounded: single retry, capped at 8000 tokens.
+    console.warn("[anthropic] JSON parse failed — retrying once with larger budget");
+    const retryRaw = await callClaude(
+      system + "\nKeep every string concise so the FULL JSON fits in the response.",
+      userMessage,
+      Math.min(maxTokens * 2, 8000)
+    );
+    try {
+      return parseClaudeJSON<T>(retryRaw);
+    } catch {
+      throw firstErr;
+    }
+  }
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────

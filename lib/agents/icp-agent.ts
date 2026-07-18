@@ -147,7 +147,7 @@ Return JSON:
   }
 }`;
 
-  const result = await callClaudeJSON<{ icp: ICP; criteria: LeadSearchCriteria }>(SYSTEM, prompt, 2500);
+  const result = await callClaudeJSON<{ icp: ICP; criteria: LeadSearchCriteria }>(SYSTEM, prompt, 4000);
   // Inject sender identity — Claude doesn't know to include these
   result.criteria.sender_company_name = onboarding.company_name;
   result.criteria.sender_company_description = onboarding.company_description;

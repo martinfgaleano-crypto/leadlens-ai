@@ -206,6 +206,9 @@ export interface OnboardingData {
   strategic_priorities?: string;       // Premium
   known_objections?: string;           // Premium
   decision_stakeholders?: string;      // Premium
+  /** Managed complimentary pilot audit block (managed_pilot_v0) — admin-created
+   *  runs with full commercial traceability but no payment. */
+  pilot?: Record<string, unknown>;
 }
 
 // ─── ICP (structured output of ICP Agent) ────────────────────────────────────
