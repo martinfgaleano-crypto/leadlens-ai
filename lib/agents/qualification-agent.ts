@@ -6,12 +6,13 @@ const IS_DEMO = process.env.DEMO_MODE === "true";
 
 export async function runQualificationAgent(
   enriched: EnrichedLead,
-  icp: ICP
+  icp: ICP,
+  outputLanguage: string = "en"
 ): Promise<QualifiedLead> {
   if (IS_DEMO || !process.env.ANTHROPIC_API_KEY) {
     return scoreDemoLead(enriched, icp);
   }
-  return scoreLeadWithClaude(enriched, icp);
+  return scoreLeadWithClaude(enriched, icp, outputLanguage);
 }
 
 // ─── DEMO scoring ─────────────────────────────────────────────────────────────
@@ -131,11 +132,12 @@ function scoreDemoLead(enriched: EnrichedLead, icp: ICP): QualifiedLead {
 
 // ─── Claude scoring ───────────────────────────────────────────────────────────
 
-async function scoreLeadWithClaude(enriched: EnrichedLead, icp: ICP): Promise<QualifiedLead> {
+async function scoreLeadWithClaude(enriched: EnrichedLead, icp: ICP, outputLanguage: string = "en"): Promise<QualifiedLead> {
   const { callClaudeJSON } = await import("@/lib/anthropic");
   const { candidate } = enriched;
 
-  const SYSTEM = `You are a senior B2B commercial intelligence analyst scoring account-level opportunities against an ICP.
+  const qualLangRule = outputLanguage === "es" ? "\nWRITE ALL prose fields (reasons, explanations, recommendations) IN NATURAL, PROFESSIONAL SPANISH. Keep company names and original source titles in their original language.\n" : "";
+  const SYSTEM = `${qualLangRule}You are a senior B2B commercial intelligence analyst scoring account-level opportunities against an ICP.
 Score calibrated — neither inflate nor over-penalize. Focus on COMPANY fit, not individual contacts.
 
 Legacy scoring dimensions (max 10 total):

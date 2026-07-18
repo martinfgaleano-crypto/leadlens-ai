@@ -52,12 +52,12 @@ function buildDossier(opp: Json, lead: Json | undefined): AccountDossier {
 
   const thesisText = clean(decision?.thesis) ?? clean(e.account_thesis) ?? clean(q.fit_reasons?.[0]);
   const thesis: Claim = thesisText
-    ? { basis: "inference", text: thesisText, evidence: "research agent account thesis / fit reasons" }
+    ? { basis: "inference", text: thesisText, evidence: "account thesis" }
     : { basis: "unknown", text: "No account thesis was produced — treat as a lead to validate.", evidence: null };
 
   const whyCompanyText = clean(decision?.why_this_company) ?? (Array.isArray(q.fit_reasons) && q.fit_reasons.length ? q.fit_reasons.slice(0, 3).join(" · ") : null);
   const why_this_company: Claim = whyCompanyText
-    ? { basis: "inference", text: whyCompanyText, evidence: "qualification fit reasons" }
+    ? { basis: "inference", text: whyCompanyText, evidence: "fit assessment" }
     : { basis: "unknown", text: "Fit inferred from profile only — no company-specific reasons verified.", evidence: null };
 
   const whyQuarterText = clean(decision?.why_this_quarter) ?? clean(e.buying_window_reason);
@@ -71,7 +71,7 @@ function buildDossier(opp: Json, lead: Json | undefined): AccountDossier {
     ...(e.risks_weaknesses ?? []),
   ].filter((x) => typeof x === "string").slice(0, 4);
   const risks: Claim[] = riskItems.length
-    ? riskItems.map((r) => ({ basis: "inference" as const, text: r, evidence: "research agent risk assessment" }))
+    ? riskItems.map((r) => ({ basis: "inference" as const, text: r, evidence: "risk assessment" }))
     : [{ basis: "unknown", text: "No specific risks surfaced — unknowns (budget, incumbent, timing) are the risk.", evidence: null }];
 
   const hypotheses: Claim[] = [

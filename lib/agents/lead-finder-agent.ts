@@ -12,12 +12,16 @@ export async function runLeadFinderAgent(
   const pool = PLAN_SEARCH_POOL[criteria.plan];
   const target = PLAN_LEAD_COUNT[criteria.plan];
 
-  const provider = getLeadProvider();
+  // Pilot/customer-facing runs force compliant real discovery regardless of
+  // mock env flags (fail-closed for real clients).
+  const forceReal = criteria.require_real_discovery === true;
+  const provider = getLeadProvider({ forceReal });
   const candidates = await provider.searchLeads(criteria, pool);
 
   const usingMockProvider =
-    process.env.DEMO_MODE === "true" ||
-    process.env.ALLOW_MOCK_LEADS_WITH_REAL_AI === "true";
+    !forceReal &&
+    (process.env.DEMO_MODE === "true" ||
+      process.env.ALLOW_MOCK_LEADS_WITH_REAL_AI === "true");
 
   if (usingMockProvider) {
     // Preserve the seeded-shuffle order from the mock provider.

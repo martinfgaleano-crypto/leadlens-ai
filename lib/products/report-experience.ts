@@ -11,6 +11,8 @@ export interface ReportExperience {
   tier: string;
   product_code: string;
   display_name: string;
+  /** Customer-facing report language (from the job's onboarding). */
+  language: "en" | "es";
   header_label: string;            // Mini / Brief / Complete / Strategic
   show_portfolio: boolean;         // portfolio statuses + distribution
   show_funnel: boolean;
@@ -21,11 +23,18 @@ export interface ReportExperience {
 }
 
 const HEADER: Record<string, string> = { mini: "Preview Verdict", brief: "Executive Opportunity Brief", complete: "Executive Intelligence Brief", strategic: "Strategic Executive Brief" };
+const HEADER_ES: Record<string, string> = { mini: "Veredicto del Preview", brief: "Resumen Ejecutivo de Oportunidades", complete: "Resumen Ejecutivo de Inteligencia", strategic: "Resumen Ejecutivo Estratégico" };
 
-export function resolveReportExperience(planOrCode: string | null | undefined): ReportExperience {
+export function resolveReportExperience(planOrCode: string | null | undefined, language: "en" | "es" = "en"): ReportExperience {
   const p: ProductDefinition = resolveProduct(planOrCode) ?? resolveProduct("intelligence_launch_v0")!;
   const e = p.entitlements;
-  const upgrade: Record<string, string | null> = {
+  const es = language === "es";
+  const upgrade: Record<string, string | null> = es ? {
+    preview: "Validaste la calidad. Brief te da un conjunto enfocado y comparado de 6 cuentas.",
+    brief: "Ya tienes cuentas que vale la pena investigar. Intelligence prioriza el portafolio completo y dónde poner tu esfuerzo.",
+    intelligence: "Ya sabes dónde enfocarte. Premium convierte el portafolio en una estrategia comercial más profunda.",
+    premium: null,
+  } : {
     preview: "You validated the quality. Brief gives you a focused, compared set of 6 accounts.",
     brief: "You have accounts worth investigating. Intelligence prioritizes the full portfolio and where to put your effort.",
     intelligence: "You know where to focus. Premium turns the portfolio into a deeper commercial strategy.",
@@ -35,7 +44,8 @@ export function resolveReportExperience(planOrCode: string | null | undefined): 
     tier: p.tier,
     product_code: p.product_code,
     display_name: p.display_name,
-    header_label: HEADER[e.executive_report] ?? HEADER.complete,
+    language,
+    header_label: es ? (HEADER_ES[e.executive_report] ?? HEADER_ES.complete) : (HEADER[e.executive_report] ?? HEADER.complete),
     show_portfolio: e.portfolio_statuses !== "none",
     show_funnel: e.portfolio_allocation !== "none",
     show_mini_verdict: e.mini_verdict,
@@ -114,8 +124,9 @@ function daysAgo(iso: string | null | undefined): number | null {
 /** Deterministic Preview verdict — derived from REAL portfolio results, never
  *  invented: proceed (actionable accounts found), refine (real but weak fit),
  *  stop (nothing defensible for this ICP). Labeled as a recommendation. */
-export function deriveMiniVerdict(summary: { hot: number; warm: number; cold: number; discard: number; total: number }): { verdict: "proceed" | "refine" | "stop"; reason: string } {
-  if (summary.hot + summary.warm > 0) return { verdict: "proceed", reason: "LeadLens found accounts with active, defensible signals for this ICP." };
-  if (summary.cold > 0) return { verdict: "refine", reason: "Real signals were found but fit is weak — refine the ICP (industry, region or signal types) and re-validate." };
-  return { verdict: "stop", reason: "No defensible opportunities surfaced for this ICP in this region right now — do not invest outreach effort yet." };
+export function deriveMiniVerdict(summary: { hot: number; warm: number; cold: number; discard: number; total: number }, language: "en" | "es" = "en"): { verdict: "proceed" | "refine" | "stop"; reason: string } {
+  const es = language === "es";
+  if (summary.hot + summary.warm > 0) return { verdict: "proceed", reason: es ? "LeadLens encontró cuentas con señales activas y defendibles para este ICP." : "LeadLens found accounts with active, defensible signals for this ICP." };
+  if (summary.cold > 0) return { verdict: "refine", reason: es ? "Se encontraron señales reales pero el fit es débil — refina el ICP (sector, región o tipos de señal) y vuelve a validar." : "Real signals were found but fit is weak — refine the ICP (industry, region or signal types) and re-validate." };
+  return { verdict: "stop", reason: es ? "No aparecieron oportunidades defendibles para este ICP en esta región por ahora — no inviertas esfuerzo de prospección todavía." : "No defensible opportunities surfaced for this ICP in this region right now — do not invest outreach effort yet." };
 }

@@ -59,14 +59,17 @@ export async function POST(req: NextRequest) {
   const product = resolveProduct(p.product_code);
   if (!product) return NextResponse.json({ error: "Unknown product" }, { status: 400 });
 
-  // A client pilot on mock candidates would deliver fake companies — refuse
-  // unless the admin explicitly marks this as an internal QA run.
-  const mockForced = process.env.DEMO_MODE === "true" || process.env.ALLOW_MOCK_LEADS_WITH_REAL_AI === "true";
-  if (mockForced && !p.allow_mock_candidates) {
+  // Real pilots FORCE compliant public-web discovery (the pipeline overrides
+  // mock env flags for pilot runs). Creation is refused only when no compliant
+  // discovery provider is configured at all — a real client must never receive
+  // mock companies. allow_mock_candidates marks an internal QA run explicitly.
+  const realDiscoveryAvailable = (!!process.env.BRAVE_SEARCH_API_KEY && !!process.env.SERPER_API_KEY) || !!process.env.TAVILY_API_KEY;
+  if (!p.allow_mock_candidates && !realDiscoveryAvailable) {
     return NextResponse.json({
-      error: "Environment forces MOCK candidates (DEMO_MODE / ALLOW_MOCK_LEADS_WITH_REAL_AI). A real client pilot would analyze fake companies. Unset those env vars (Tavily discovery) or pass allow_mock_candidates:true for an internal QA run.",
+      error: "No compliant discovery provider configured (need BRAVE_SEARCH_API_KEY+SERPER_API_KEY or TAVILY_API_KEY). A real client pilot cannot run on mock companies — or pass allow_mock_candidates:true for an internal QA run.",
     }, { status: 409 });
   }
+  const mockForced = p.allow_mock_candidates === true;
 
   // Per-client pilot cap — the complimentary path must never become an
   // unlimited free tier.
@@ -127,10 +130,22 @@ export async function POST(req: NextRequest) {
     const { runLeadLensPipeline } = await import("@/lib/pipeline");
     const { updateJob } = await import("@/lib/storage/job-store");
     await createProcessingSnapshot(job.id, product.legacy_plan).catch(() => {});
+    const startedAt = Date.now();
     try {
       const report = await runLeadLensPipeline({ onboardingData: onboarding, plan: product.legacy_plan, jobId: job.id });
       await completeSnapshot(job.id, product.legacy_plan, report).catch(() => {});
       await updateJob(job.id, { status: "completed", completed_at: new Date().toISOString() }).catch(() => {});
+      // Observed run metrics — honest: per-call token counts are not
+      // instrumented in the agent layer yet, so API cost stays "unavailable";
+      // duration and counts are real.
+      const leads = (report as { processed_leads?: unknown[] }).processed_leads?.length ?? 0;
+      console.log(`[analytics] ${JSON.stringify({
+        event: "run_completed", pilot_id: pilotId, tier: product.tier, product_code: product.product_code,
+        duration_ms: Date.now() - startedAt, opportunities_delivered: leads,
+        opportunity_target: product.entitlements.opportunity_target,
+        estimated_cost_usd: estimatedCost, observed_llm_cost: "unavailable (tokens not instrumented)",
+        cost_per_delivered_estimate: leads ? Number((estimatedCost / leads).toFixed(2)) : null,
+      })}`);
     } catch (err) {
       console.error(`[pilot] run failed pilot=${pilotId} job=${job.id}:`, err instanceof Error ? err.message : err);
       await failSnapshot(job.id, product.legacy_plan, err instanceof Error ? err.message : String(err)).catch(() => {});

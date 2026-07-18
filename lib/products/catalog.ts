@@ -29,6 +29,8 @@ export interface TierEntitlements {
   icps: { min: 1; max: 1 | 2 };
   regions: { min: 1; max: 1 | 2 | 3 };
   opportunity_target: number;          // operating limit, not the promise
+  /** Accounts receiving deeper corroboration/dossier depth (0 = standard depth only). */
+  deep_dossiers: number;
   what_changed: true;
   sources_and_freshness: true;
   evidence_quality: "standard" | "full" | "reinforced";
@@ -93,7 +95,7 @@ export const PRODUCTS: Record<ProductCode, ProductDefinition> = {
     price_amount: 7, cta: "Preview my opportunities",
     legacy_plan: "sample",
     entitlements: {
-      icps: { min: 1, max: 1 }, regions: { min: 1, max: 1 }, opportunity_target: 2,
+      icps: { min: 1, max: 1 }, regions: { min: 1, max: 1 }, opportunity_target: 2, deep_dossiers: 0,
       what_changed: true, sources_and_freshness: true, evidence_quality: "standard",
       why_now: true, fit_timing: "per_account", portfolio_statuses: "none",
       portfolio_allocation: "none", opportunity_clusters: "none", coverage_gaps: "none",
@@ -116,7 +118,7 @@ export const PRODUCTS: Record<ProductCode, ProductDefinition> = {
     price_amount: 25, cta: "Build my opportunity brief",
     legacy_plan: "starter",
     entitlements: {
-      icps: { min: 1, max: 1 }, regions: { min: 1, max: 1 }, opportunity_target: 6,
+      icps: { min: 1, max: 1 }, regions: { min: 1, max: 1 }, opportunity_target: 6, deep_dossiers: 0,
       what_changed: true, sources_and_freshness: true, evidence_quality: "standard",
       why_now: true, fit_timing: "basic", portfolio_statuses: "basic",
       portfolio_allocation: "summary", opportunity_clusters: "summary", coverage_gaps: "none",
@@ -139,7 +141,7 @@ export const PRODUCTS: Record<ProductCode, ProductDefinition> = {
     price_amount: 59, cta: "Build my intelligence portfolio",
     legacy_plan: "standard",
     entitlements: {
-      icps: { min: 1, max: 1 }, regions: { min: 1, max: 2 }, opportunity_target: 12,
+      icps: { min: 1, max: 1 }, regions: { min: 1, max: 2 }, opportunity_target: 12, deep_dossiers: 4,
       what_changed: true, sources_and_freshness: true, evidence_quality: "full",
       why_now: true, fit_timing: "complete", portfolio_statuses: "complete",
       portfolio_allocation: "complete", opportunity_clusters: "complete", coverage_gaps: "complete",
@@ -162,7 +164,7 @@ export const PRODUCTS: Record<ProductCode, ProductDefinition> = {
     price_amount: 129, cta: "Build my opportunity strategy",
     legacy_plan: "pro",
     entitlements: {
-      icps: { min: 1, max: 2 }, regions: { min: 1, max: 3 }, opportunity_target: 18,
+      icps: { min: 1, max: 2 }, regions: { min: 1, max: 3 }, opportunity_target: 18, deep_dossiers: 6,
       what_changed: true, sources_and_freshness: true, evidence_quality: "reinforced",
       why_now: true, fit_timing: "advanced", portfolio_statuses: "complete",
       portfolio_allocation: "advanced", opportunity_clusters: "deep", coverage_gaps: "advanced",

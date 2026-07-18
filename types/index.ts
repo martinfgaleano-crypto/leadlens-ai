@@ -5,7 +5,7 @@ export type LeadStatus = "pending" | "processing" | "completed" | "error";
 export type LeadCategory = "HOT" | "WARM" | "COLD" | "DISCARD";
 export type QCStatus = "APPROVED" | "REVIEW_NEEDED" | "FAILED";
 export type EmailStatus = "verified" | "unknown" | "not_found" | "invalid";
-export type LeadSource = "mock" | "apollo" | "tavily" | "hunter" | "people_data_labs" | "manual" | "vault";
+export type LeadSource = "mock" | "apollo" | "tavily" | "hunter" | "people_data_labs" | "manual" | "vault" | "public_signal";
 export type OutputLanguage = "en" | "es" | "pt" | "ja";
 export type MarketRegion = "north_america" | "latin_america" | "europe" | "asia" | "global";
 export type EvidenceDisciplineType = "verified_public_signal" | "inferred_from_context" | "weak_inference" | "missing_evidence";
@@ -249,6 +249,9 @@ export interface LeadSearchCriteria {
   output_language?: OutputLanguage;
   target_market_region?: MarketRegion;
   outreach_language?: string;
+  /** Pilot/customer-facing runs: force compliant real public-web discovery
+   *  even when the environment enables mock candidates (fail-closed). */
+  require_real_discovery?: boolean;
   localization_notes?: string;
   sender_company_name?: string;
   sender_company_description?: string;

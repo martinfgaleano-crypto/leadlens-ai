@@ -79,8 +79,8 @@ export async function getBriefForViewer(jobId: string, accessToken: string | nul
   // Tier-resolved report experience: prefer the job's stored product_code
   // (new orders), fall back to the legacy plan mapping (historic orders).
   const { resolveReportExperience } = await import("@/lib/products/report-experience");
-  const productCode = (snapshot.report_json as { onboarding?: { product_code?: string } })?.onboarding?.product_code ?? snapshot.plan ?? null;
-  const experience = resolveReportExperience(productCode);
+  const ob = (snapshot.report_json as { onboarding?: { product_code?: string; output_language?: string } })?.onboarding;
+  const experience = resolveReportExperience(ob?.product_code ?? snapshot.plan ?? null, ob?.output_language === "es" ? "es" : "en");
 
   return { state: "ok", report, experience };
 }

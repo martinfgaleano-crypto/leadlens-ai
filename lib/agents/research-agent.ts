@@ -424,7 +424,8 @@ async function buildClaudeEnrichment(
     }
   }
 
-  const SYSTEM = `You are a senior B2B commercial intelligence analyst building account-level opportunity research.
+  const researchLangRule = criteria.output_language === "es" ? "\nWRITE ALL prose fields (thesis, hypotheses, timing, risks, evidence descriptions) IN NATURAL, PROFESSIONAL SPANISH. Keep company names and original source titles in their original language.\n" : "";
+  const SYSTEM = `${researchLangRule}You are a senior B2B commercial intelligence analyst building account-level opportunity research.
 Focus on the COMPANY as a whole — not on any individual contact or decision-maker.
 
 Evidence discipline rules — this is critical:

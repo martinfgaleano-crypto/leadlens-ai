@@ -41,7 +41,7 @@ export async function runReportAgent(
 
   const executive_summary = IS_DEMO || !process.env.ANTHROPIC_API_KEY
     ? buildDemoSummary(leads, hot, warm, cold, discard, avgScore, plan, withConfirmedSignals.length)
-    : await buildClaudeSummary(leads, hot, warm, cold, avgScore, icp, withConfirmedSignals.length, ranked_opportunities);
+    : await buildClaudeSummary(leads, hot, warm, cold, avgScore, icp, withConfirmedSignals.length, ranked_opportunities, onboarding.output_language ?? "en");
 
   return {
     job_id: jobId,
@@ -145,15 +145,17 @@ async function buildClaudeSummary(
   avgScore: number,
   icp: ICP,
   signalCount: number,
-  ranked: OpportunityRanking[]
+  ranked: OpportunityRanking[],
+  outputLanguage: string = "en"
 ): Promise<string> {
   const { callClaude } = await import("@/lib/anthropic");
 
   const discard = leads.filter(l => l.qualification.fit_score < 4);
   const { priority, monitor, excluded } = computeTiers(hot, warm, cold, discard);
 
+  const langRule = outputLanguage === "es" ? "\n- WRITE THE ENTIRE SUMMARY IN NATURAL, PROFESSIONAL SPANISH (business Spanish for a Colombian client). Keep company names and original source titles in their original language." : "";
   const SYSTEM = `You are a senior B2B commercial intelligence analyst delivering a strategic opportunity assessment.
-Write a 4-sentence executive summary that sounds like a seasoned analyst — not a report generator.
+Write a 4-sentence executive summary that sounds like a seasoned analyst — not a report generator.${langRule}
 
 Rules:
 - Sentence 1: Lead with curated counts — "X priority accounts, Y to monitor, Z excluded" — name top 1-2 priority accounts specifically

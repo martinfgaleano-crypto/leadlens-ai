@@ -19,10 +19,10 @@ const S = {
 };
 
 const TIERS = [
-  { code: "preview_launch_v0", name: "Preview", price: 7, target: 2 },
-  { code: "brief_launch_v0", name: "Brief", price: 25, target: 6 },
-  { code: "intelligence_launch_v0", name: "Intelligence", price: 59, target: 12 },
-  { code: "premium_launch_v0", name: "Premium", price: 129, target: 18 },
+  { code: "preview_launch_v0", name: "Preview", price: 7, target: 2, depth: 0, readiness: "listo para piloto (QA manual)" },
+  { code: "brief_launch_v0", name: "Brief", price: 25, target: 6, depth: 0, readiness: "listo con revisión manual" },
+  { code: "intelligence_launch_v0", name: "Intelligence", price: 59, target: 12, depth: 4, readiness: "listo con revisión manual" },
+  { code: "premium_launch_v0", name: "Premium", price: 129, target: 18, depth: 6, readiness: "SOLO INTERNO — estrategia aún no implementada" },
 ];
 
 type Pilot = {
@@ -98,7 +98,7 @@ export default function PilotConsolePage() {
           <div><label style={S.label}>País</label><input style={S.input} value={form.client_country} onChange={set("client_country")} /></div>
           <div><label style={S.label}>Tier</label>
             <select style={S.input} value={form.product_code} onChange={set("product_code")}>
-              {TIERS.map((t) => <option key={t.code} value={t.code}>{t.name} — ref ${t.price} · {t.target} oportunidades</option>)}
+              {TIERS.map((t) => <option key={t.code} value={t.code}>{t.name} — ref ${t.price} · máx {t.target} cuentas{t.depth ? ` · ${t.depth} dossiers profundos` : ""} · {t.readiness}</option>)}
             </select></div>
           <div><label style={S.label}>Idioma del reporte</label>
             <select style={S.input} value={form.output_language} onChange={set("output_language")}><option value="es">Español</option><option value="en">English</option></select></div>

@@ -27,6 +27,15 @@ export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLen
 
   const { runICPAgent } = await import("./agents/icp-agent");
   const { icp, criteria } = await runICPAgent(onboardingData, plan);
+
+  // Managed pilots (real clients) force compliant public-web discovery — mock
+  // env flags never reach a customer-facing run. Internal QA pilots explicitly
+  // mark mock_candidates and keep the mock path.
+  const pilotBlock = (onboardingData as { pilot?: { mock_candidates?: boolean } }).pilot;
+  if (pilotBlock && pilotBlock.mock_candidates !== true) {
+    criteria.require_real_discovery = true;
+    console.log("[pipeline] pilot run — forcing real public-signal discovery");
+  }
   console.log(`[pipeline] ICP built — industries=${icp.target_industries.join(", ")} clarity=${icp.icp_clarity_score ?? "?"}/100`);
 
   let candidates: LeadCandidate[];
@@ -166,6 +175,13 @@ export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLen
   const warnCount = report.strategic_warnings?.length ?? 0;
   console.log(`[pipeline] report ready — hot=${hotCount} warm=${report.warm_count} avg=${report.avg_score} warnings=${warnCount}`);
 
+  // Minimal experience block for downstream tier/language resolution (brief
+  // rendering, entitlement lookups). Only product + language — never PII.
+  (report as { onboarding?: { product_code?: string; output_language?: string } }).onboarding = {
+    product_code: (onboardingData as { product_code?: string }).product_code,
+    output_language: onboardingData.output_language ?? "en",
+  };
+
   return report;
 }
 
@@ -187,7 +203,7 @@ async function processOneLead(
   const enrichment = await runResearchAgent(candidate, criteria);
 
   // Agent 4: Qualify
-  const qualification = await runQualificationAgent(enrichment, icp);
+  const qualification = await runQualificationAgent(enrichment, icp, criteria.output_language ?? "en");
 
   // Agent 5: Personalize — now returns PersonalizationResult
   const personalization = await runPersonalizationAgent(qualification, criteria);

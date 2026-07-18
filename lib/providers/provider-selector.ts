@@ -8,12 +8,21 @@ import { mockLeadProvider } from "./mock-lead-provider";
  * Note: Apollo and PDL are better for structured B2B contact search.
  * Tavily is useful for web research but not a contact database.
  */
-export function getLeadProvider(): LeadProvider {
+export function getLeadProvider(opts: { forceReal?: boolean } = {}): LeadProvider {
   const isDemo = process.env.DEMO_MODE === "true";
   // Hybrid test mode: real Claude agents + mock leads (no real lead provider needed)
   const allowMockWithAI = process.env.ALLOW_MOCK_LEADS_WITH_REAL_AI === "true";
 
-  if (isDemo || allowMockWithAI) return mockLeadProvider;
+  // Customer-facing runs (pilots) force real discovery — mock env flags are
+  // for demos and internal QA only and must never reach a real client.
+  if (!opts.forceReal && (isDemo || allowMockWithAI)) return mockLeadProvider;
+
+  // Preferred compliant discovery: the existing multi-provider sources engine
+  // (Brave + Serper search → Tavily/Firecrawl extraction → promotion gates v3).
+  if (process.env.BRAVE_SEARCH_API_KEY && process.env.SERPER_API_KEY) {
+    const { publicSignalProvider } = require("./public-signal-provider");
+    return publicSignalProvider as LeadProvider;
+  }
 
   // COMPLIANCE (permanent project rules): Apollo is banned outright, and
   // person-data providers (PDL contact/profile data) violate the no-personal-
