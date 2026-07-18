@@ -80,6 +80,15 @@ export interface EntityClassification {
   original_value: string;
 }
 
+// Places, governments and public bodies are NEVER companies. Multi-signal:
+// (a) known geographic/governmental vocabulary (es/en), (b) bare place names
+// without any corporate marker, (c) public-program phrasing. A location INSIDE
+// a corporate name ("Cementos del Valle S.A.", "Bavaria") stays valid — only
+// the bare/leading generic entity is blocked.
+const GEO_BARE = /^(colombia|bogot[aá]|medell[ií]n|cali|barranquilla|cartagena|antioquia|cundinamarca|latinoam[eé]rica|latam|suram[eé]rica|sudam[eé]rica|am[eé]rica latina|m[eé]xico|per[uú]|chile|ecuador|argentina|brasil|venezuela|estados unidos|europa|asia|el pa[ií]s|la regi[oó]n)$/i;
+const GOV_PUBLIC = /\b(gobierno|ministerio|alcald[ií]a|gobernaci[oó]n|secretar[ií]a|superintendencia|departamento nacional|distrito|municipio|congreso|senado|presidencia|policía|ej[eé]rcito|ministry|government|city of|state of|municipality|programa nacional|plan nacional|iniciativa p[uú]blica)\b/i;
+const CORPORATE_MARKER = /\b(s\.?a\.?s?\.?|ltda|inc|corp|llc|group|grupo|holding|company|compañ[ií]a|empresa\s+[A-Z]|logistics|log[ií]stica|technologies|tech|solutions|soluciones|industrias?|cementos|alimentos|transportes)\b/i;
+
 const COMPOSITE_JOIN = /\s+(?:and|y|e|\+|&)\s+/i;
 const FACILITY_WORDS = /\b(receive center|distribution center|fulfillment center|centro de distribuci[oó]n|center|centre|facility|plant|planta|warehouse|bodega|hub|campus|terminal)\b/i;
 const CATEGORY_PHRASES = /^(b2b\s+companies|companies\s+hiring|logistics\s+trends|news\s+and\s+trends|top\s+.*companies|best\s+.*companies)$/i;
@@ -111,11 +120,34 @@ export function classifyEntity(input: {
   if (CATEGORY_PHRASES.test(original) || CATEGORY_TAIL.test(original)) {
     return { ...base, entity_class: "category", primary_account: null, target_confidence: "low", method: "category_pattern" };
   }
+  // Geographic / governmental / public entities: never companies. Signals:
+  // bare place name, government vocabulary, or place-led phrase with no
+  // corporate marker anywhere in the name.
+  if (GEO_BARE.test(original)) {
+    return { ...base, entity_class: "category", primary_account: null, target_confidence: "low", method: "geographic_entity" };
+  }
+  if (GOV_PUBLIC.test(original)) {
+    return { ...base, entity_class: "category", primary_account: null, target_confidence: "low", method: "public_entity" };
+  }
+  const firstToken = original.split(/\s+/)[0] ?? "";
+  if (GEO_BARE.test(firstToken) && !CORPORATE_MARKER.test(original)) {
+    return { ...base, entity_class: "ambiguous", primary_account: null, target_confidence: "low", method: "place_led_no_corporate_marker" };
+  }
   // Publisher-as-company: name equals the publisher host core on editorial pages.
   const nameToken = original.toLowerCase().replace(/[^a-z0-9]/g, "");
   const hostCore = host?.split(".")[0].replace(/[^a-z0-9]/g, "") ?? "";
-  if (nameToken && hostCore && nameToken === hostCore && input.sourceType !== "official" && input.sourceType !== "company_website" && NEWS_DOMAINS.test(host ?? "")) {
-    return { ...base, entity_class: "publisher", primary_account: null, target_confidence: "low", method: "publisher_host_match" };
+  const MEDIA_WORD = /^(revista|diario|peri[oó]dico|portal|noticias?|prensa|gaceta|semanario|magazine|news|journal|gazette)/i;
+  if (nameToken && hostCore && nameToken === hostCore && input.sourceType !== "official" && input.sourceType !== "company_website") {
+    // Name equals the publisher host on an editorial page. Known media domains
+    // or media-branded names → publisher outright; otherwise ambiguous (a real
+    // company first-party newsroom also matches) — never a confident account.
+    if (NEWS_DOMAINS.test(host ?? "") || MEDIA_WORD.test(original)) {
+      return { ...base, entity_class: "publisher", primary_account: null, target_confidence: "low", method: "publisher_host_match" };
+    }
+    return { ...base, entity_class: "ambiguous", primary_account: null, target_confidence: "low", method: "name_equals_host_unverified" };
+  }
+  if (MEDIA_WORD.test(original)) {
+    return { ...base, entity_class: "publisher", primary_account: null, target_confidence: "low", method: "media_branded_name" };
   }
   // Composite: two company-like tokens joined by and/y/&/+ — split, never merge.
   const parts = original.split(COMPOSITE_JOIN);

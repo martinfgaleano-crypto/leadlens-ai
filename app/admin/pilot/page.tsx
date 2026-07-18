@@ -52,7 +52,21 @@ export default function PilotConsolePage() {
   }, []);
   useEffect(() => { load(); const t = setInterval(load, 20000); return () => clearInterval(t); }, [load]);
 
+  function icpWarnings(): string[] {
+    const w: string[] = [];
+    if ((form.target_customer_description ?? "").length < 60) w.push("Describe mejor las empresas objetivo: sector, tamaño y qué señales indican que necesitan la solución (mínimo 2-3 frases).");
+    if (!/(señal|expan|bodega|inversi|flota|contrat|crecimiento|apertura|moderniz|automatiz|tecnolog)/i.test(form.target_customer_description ?? "")) w.push("Incluye qué señales buscar (ej.: apertura de bodegas, crecimiento de flota, inversión tecnológica).");
+    if ((form.offer_description ?? "").length < 30) w.push("Explica con más detalle qué vende la empresa y a qué precio aproximado.");
+    if (!form.company_name) w.push("Falta el nombre comercial de la empresa cliente.");
+    return w;
+  }
+
   async function createPilot() {
+    const warnings = icpWarnings();
+    if (warnings.length > 0) {
+      setMsg("El ICP necesita más claridad antes de ejecutar:\n• " + warnings.join("\n• "));
+      return;
+    }
     setBusy(true); setMsg(null);
     try {
       const res = await adminFetch("/api/admin/pilot", { method: "POST", body: JSON.stringify(form) });
@@ -105,22 +119,22 @@ export default function PilotConsolePage() {
           <div><label style={S.label}>Ciudad / departamento (opcional)</label><input style={S.input} value={form.city_or_department} onChange={set("city_or_department")} placeholder="Bogotá, Antioquia…" /></div>
           <div><label style={S.label}>Ticket promedio (opcional)</label><input style={S.input} value={form.average_ticket} onChange={set("average_ticket")} /></div>
         </div>
-        <label style={S.label}>Empresa del cliente — nombre comercial (para el reporte)</label>
+        <label style={S.label}>Nombre comercial de la empresa cliente (aparece en el reporte)</label>
         <input style={S.input} value={form.company_name} onChange={set("company_name")} />
         <label style={S.label}>Descripción del negocio</label>
-        <textarea style={{ ...S.input, minHeight: 44 }} value={form.company_description} onChange={set("company_description")} />
+        <textarea style={{ ...S.input, minHeight: 44 }} value={form.company_description} onChange={set("company_description")} placeholder="Ej.: Desarrollamos software de gestión de flotas para transporte de carga en Colombia." />
         <label style={S.label}>Oferta</label>
-        <textarea style={{ ...S.input, minHeight: 44 }} value={form.offer_description} onChange={set("offer_description")} />
+        <textarea style={{ ...S.input, minHeight: 44 }} value={form.offer_description} onChange={set("offer_description")} placeholder="Ej.: Plataforma SaaS de trazabilidad de flota, ~USD 700/mes por cliente." />
         <label style={S.label}>Propuesta de valor</label>
-        <textarea style={{ ...S.input, minHeight: 44 }} value={form.value_proposition} onChange={set("value_proposition")} />
-        <label style={S.label}>ICP — cliente objetivo</label>
-        <textarea style={{ ...S.input, minHeight: 56 }} value={form.target_customer_description} onChange={set("target_customer_description")} placeholder="Sector, tamaño, señales relevantes, geografía…" />
+        <textarea style={{ ...S.input, minHeight: 44 }} value={form.value_proposition} onChange={set("value_proposition")} placeholder="Ej.: Reducimos costos operativos de flota 10-15% con visibilidad en tiempo real. (¿Qué problema resuelve?)" />
+        <label style={S.label}>Empresas objetivo — a quién le vende (lo más importante)</label>
+        <textarea style={{ ...S.input, minHeight: 56 }} value={form.target_customer_description} onChange={set("target_customer_description")} placeholder="Ej.: Empresas de logística y distribución en Colombia con 50-500 empleados que estén abriendo bodegas, creciendo su flota o invirtiendo en tecnología. Incluye: sector, tamaño, geografía y las SEÑALES que indican necesidad." />
         <label style={S.label}>Objetivo comercial (opcional)</label>
         <input style={S.input} value={form.commercial_objective} onChange={set("commercial_objective")} />
-        <label style={S.label}>Exclusiones (opcional)</label>
-        <input style={S.input} value={form.restrictions} onChange={set("restrictions")} />
+        <label style={S.label}>Empresas o sectores que NO quiere recibir (opcional)</label>
+        <input style={S.input} value={form.restrictions} onChange={set("restrictions")} placeholder="Ej.: entidades públicas, competidores directos, empresas menores a 50 empleados" />
         <label style={S.label}>Contexto local (opcional)</label>
-        <textarea style={{ ...S.input, minHeight: 44 }} value={form.local_context} onChange={set("local_context")} placeholder="Fuentes locales conocidas, contexto regulatorio, cámaras de comercio…" />
+        <textarea style={{ ...S.input, minHeight: 44 }} value={form.local_context} onChange={set("local_context")} placeholder="Ej.: siguen a La República y Portafolio; regulados por Supertransporte; clientes ideales tipo Coordinadora o TCC (como referencia de perfil)" />
         <label style={S.label}>Razón del piloto gratuito</label>
         <input style={S.input} value={form.complimentary_reason} onChange={set("complimentary_reason")} />
         <button style={S.btn("#166534")} disabled={busy} onClick={createPilot}>{busy ? "Creando…" : "Crear y ejecutar piloto"}</button>
@@ -145,6 +159,27 @@ export default function PilotConsolePage() {
         </div>
       ))}
       {pilots.length === 0 && <div style={{ ...S.card, color: "#94a3b8", fontSize: "0.8rem" }}>Sin pilotos todavía. Creá el primero arriba — recomendado: empezar con Preview para el cliente colombiano.</div>}
+
+      <div style={{ ...S.card, background: "#fffbeb", border: "1px solid #fde68a" }}>
+        <strong style={{ fontSize: "0.82rem", color: "#92400e" }}>Checklist de calidad — revisar ANTES de compartir un reporte</strong>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: "0 1.5rem", fontSize: "0.75rem", color: "#92400e", marginTop: "0.4rem" }}>
+          <ul style={{ margin: 0, paddingLeft: 16, lineHeight: 1.7 }}>
+            <li>¿La empresa existe? (búscala en Google)</li>
+            <li>¿La señal corresponde realmente a esa empresa?</li>
+            <li>¿La fecha es correcta y la señal es reciente?</li>
+            <li>¿La fuente abre y dice lo que el reporte afirma?</li>
+            <li>¿La oportunidad encaja con lo que vende el cliente?</li>
+          </ul>
+          <ul style={{ margin: 0, paddingLeft: 16, lineHeight: 1.7 }}>
+            <li>¿Las inferencias están marcadas como Análisis/Hipótesis?</li>
+            <li>¿Hay una acción comercial clara por cuenta?</li>
+            <li>¿Ninguna cuenta es relleno? (mejor 1 buena que 2 flojas)</li>
+            <li>¿El reporte ahorra investigación y ayuda a priorizar?</li>
+            <li>¿El resultado justificaría el precio del tier?</li>
+          </ul>
+        </div>
+        <p style={{ fontSize: "0.72rem", color: "#b45309", margin: "0.5rem 0 0" }}>Si el veredicto es REFINAR o DETENER: ajustá la descripción de empresas objetivo (más específica, con señales) y creá un nuevo intento. Guía completa: docs/PILOT_PACK_COLOMBIA.md</p>
+      </div>
     </AdminLayout>
   );
 }

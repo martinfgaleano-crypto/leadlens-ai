@@ -59,12 +59,135 @@ const L = (es: boolean) => ({
   whatIsnt: es ? "Qué es este informe — y qué no" : "What this brief is — and isn't",
   download: es ? "Descargar PDF" : "Download PDF",
   grade: { strong: es ? "Evidencia sólida" : "Strong evidence", moderate: es ? "Evidencia moderada" : "Moderate evidence", developing: es ? "En desarrollo" : "Developing" } as Record<string, string>,
+  tierChip: { HOT: es ? "PRIORITARIA" : "HOT", WARM: es ? "POSIBLE" : "WARM", COLD: es ? "FRÍA" : "COLD", DISCARD: es ? "DESCARTADA" : "DISCARD", UNSCORED: es ? "SIN PUNTAJE" : "UNSCORED" } as Record<string, string>,
+  grounded: es ? "CON EVIDENCIA" : "EVIDENCE-GROUNDED",
+  validateFirst: es ? "VALIDAR PRIMERO" : "VALIDATE FIRST",
+  fitTiming: es ? "Fit × Timing" : "Fit × Timing",
+  fitAxis: es ? "Fit (0–10)" : "Fit (0–10)",
+  timingAxis: es ? "Días desde la señal" : "Days since signal",
+  freshnessTitle: es ? "Frescura de las señales" : "Signal freshness",
+  rankingTitle: es ? "Ranking de oportunidades" : "Opportunity ranking",
+  signalDist: es ? "Distribución por tipo de señal" : "Signal type distribution",
+  timelineTitle: es ? "Línea de tiempo de señales" : "Signal timeline",
+  regionDist: es ? "Distribución por ubicación" : "Location distribution",
+  noDatedData: es ? "Sin datos con fecha suficientes para graficar — se muestran solo los análisis." : "Not enough dated data to chart — analysis only.",
+  chartsTitle: es ? "Visualización del análisis" : "Analysis at a glance",
+  fresh: es ? "reciente (≤30d)" : "fresh (≤30d)", recent: es ? "activa (≤90d)" : "recent (≤90d)", stale: es ? "antigua (>90d)" : "stale (>90d)", undated: es ? "sin fecha" : "undated",
+  bucketWord: { hot: es ? "prioritarias" : "hot", warm: es ? "posibles" : "warm", cold: es ? "frías" : "cold", discard: es ? "descartadas" : "discard" } as Record<string, string>,
   basis: {
     fact: es ? "Verificado" : "Verified", inference: es ? "Análisis" : "Analysis",
     hypothesis: es ? "Hipótesis" : "Hypothesis", recommendation: es ? "Recomendación" : "Recommendation",
     unknown: es ? "Sin datos" : "Unknown",
   } as Record<string, string>,
 });
+
+
+// ─── Tier charts — decision-support only, real data only ─────────────────────
+// Every mark maps to a real dossier value; undated accounts are listed, never
+// plotted with invented positions. Progressive by tier: Preview gets the light
+// Fit×Timing comparison + freshness; Brief adds ranking + statuses;
+// Intelligence adds timeline + location distribution.
+function TierCharts({ dossiers, tier, t, tierColor }: {
+  dossiers: AccountDossier[]; tier: string; t: ReturnType<typeof L>; tierColor: (s: string) => string;
+}) {
+  const latest = (d: AccountDossier) => d.evidence_chain.map((e) => e.date).filter(Boolean).sort().reverse()[0] ?? null;
+  const days = (iso: string | null) => { if (!iso) return null; const v = Math.round((Date.now() - new Date(iso).getTime()) / 86_400_000); return Number.isFinite(v) && v >= 0 ? v : null; };
+  const pts = dossiers.map((d) => ({ name: d.company, fit: d.fit_score ?? null, days: days(latest(d)), tier: d.tier, location: d.location }));
+  const dated = pts.filter((p) => p.fit !== null && p.days !== null) as { name: string; fit: number; days: number; tier: string; location: string | null }[];
+  if (dossiers.length === 0) return null;
+  const showRanking = tier !== "preview";
+  const showAdvanced = tier === "intelligence" || tier === "premium";
+  const W = 560, H = 190, PAD = 42;
+  const xOf = (d: number) => PAD + Math.min(d, 120) / 120 * (W - PAD - 16);
+  const yOf = (f: number) => H - 28 - (f / 10) * (H - 48);
+  const buckets = { fresh: pts.filter((p) => p.days !== null && p.days <= 30).length, recent: pts.filter((p) => p.days !== null && p.days > 30 && p.days <= 90).length, stale: pts.filter((p) => p.days !== null && p.days > 90).length, undated: pts.filter((p) => p.days === null).length };
+  const maxB = Math.max(1, ...Object.values(buckets));
+  const chartBox: React.CSSProperties = { background: "#f8fafc", border: "1px solid #eef2f7", borderRadius: 10, padding: "12px 14px", marginBottom: 12, overflowX: "auto" };
+  const chartH4: React.CSSProperties = { fontSize: 10, fontWeight: 800, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.06em", margin: "0 0 8px" };
+  const locs = Array.from(new Map(pts.map((p) => [p.location ?? "—", pts.filter((q) => (q.location ?? "—") === (p.location ?? "—")).length])).entries());
+
+  return (
+    <div className="ib-sec" style={{ background: "#fff", border: "1px solid #e8edf3", borderRadius: 12, padding: "22px 26px", marginBottom: 18 }}>
+      <h2 style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "#64748b", margin: "0 0 12px" }}>{t.chartsTitle}</h2>
+
+      {dated.length > 0 ? (
+        <div style={chartBox}>
+          <h4 style={chartH4}>{t.fitTiming}</h4>
+          <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", maxWidth: W, display: "block" }} role="img" aria-label={t.fitTiming}>
+            <line x1={PAD} y1={H - 28} x2={W - 10} y2={H - 28} stroke="#cbd5e1" />
+            <line x1={PAD} y1={12} x2={PAD} y2={H - 28} stroke="#cbd5e1" />
+            <text x={W - 12} y={H - 10} fontSize={9.5} fill="#94a3b8" textAnchor="end">{t.timingAxis}</text>
+            <text x={10} y={20} fontSize={9.5} fill="#94a3b8">{t.fitAxis}</text>
+            {[0, 30, 60, 90, 120].map((d) => <text key={d} x={xOf(d)} y={H - 14} fontSize={8.5} fill="#94a3b8" textAnchor="middle">{d === 120 ? "120+" : d}</text>)}
+            {[0, 5, 10].map((f) => <text key={f} x={PAD - 6} y={yOf(f) + 3} fontSize={8.5} fill="#94a3b8" textAnchor="end">{f}</text>)}
+            {dated.map((p, i) => (
+              <g key={i}>
+                <circle cx={xOf(p.days)} cy={yOf(p.fit)} r={7} fill={tierColor(p.tier)} opacity={0.85} />
+                <text x={xOf(p.days) + 10} y={yOf(p.fit) + 3.5} fontSize={10} fontWeight={700} fill="#334155">{p.name.slice(0, 22)}</text>
+              </g>
+            ))}
+          </svg>
+          {pts.some((p) => p.days === null) && <p style={{ fontSize: 10.5, color: "#94a3b8", margin: "4px 0 0" }}>{t.undated}: {pts.filter((p) => p.days === null).map((p) => p.name).join(", ")}</p>}
+        </div>
+      ) : (
+        <p style={{ fontSize: 12, color: "#94a3b8" }}>{t.noDatedData}</p>
+      )}
+
+      <div style={chartBox}>
+        <h4 style={chartH4}>{t.freshnessTitle}</h4>
+        {(Object.entries(buckets) as [keyof typeof buckets, number][]).filter(([, n]) => n > 0).map(([k, n]) => (
+          <div key={k} style={{ display: "flex", alignItems: "center", gap: 8, margin: "3px 0" }}>
+            <span style={{ fontSize: 10.5, color: "#475569", width: 120 }}>{t[k]}</span>
+            <div style={{ height: 10, borderRadius: 5, width: `${(n / maxB) * 60}%`, background: k === "fresh" ? "#15803d" : k === "recent" ? "#0284c7" : k === "stale" ? "#b45309" : "#94a3b8", minWidth: 10 }} />
+            <span style={{ fontSize: 10.5, fontWeight: 700, color: "#334155" }}>{n}</span>
+          </div>
+        ))}
+      </div>
+
+      {showRanking && dossiers.filter((d) => d.fit_score !== null).length > 1 && (
+        <div style={chartBox}>
+          <h4 style={chartH4}>{t.rankingTitle}</h4>
+          {dossiers.filter((d) => d.fit_score !== null).sort((a, b) => (b.fit_score ?? 0) - (a.fit_score ?? 0)).map((d, i) => (
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, margin: "3px 0" }}>
+              <span style={{ fontSize: 10.5, color: "#475569", width: 150, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{d.company}</span>
+              <div style={{ height: 10, borderRadius: 5, width: `${((d.fit_score ?? 0) / 10) * 55}%`, background: tierColor(d.tier), minWidth: 8 }} />
+              <span style={{ fontSize: 10.5, fontWeight: 700, color: "#334155" }}>{d.fit_score}/10 · {t.tierChip[d.tier] ?? d.tier}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {showAdvanced && dated.length > 1 && (
+        <div style={chartBox}>
+          <h4 style={chartH4}>{t.timelineTitle}</h4>
+          <svg viewBox={`0 0 ${W} 70`} style={{ width: "100%", maxWidth: W, display: "block" }} role="img" aria-label={t.timelineTitle}>
+            <line x1={PAD} y1={40} x2={W - 10} y2={40} stroke="#cbd5e1" />
+            {dated.map((p, i) => (
+              <g key={i}>
+                <circle cx={xOf(p.days)} cy={40} r={6} fill={tierColor(p.tier)} />
+                <text x={xOf(p.days)} y={26 - (i % 2) * 12} fontSize={9} fill="#475569" textAnchor="middle">{p.name.slice(0, 16)}</text>
+                <text x={xOf(p.days)} y={56} fontSize={8.5} fill="#94a3b8" textAnchor="middle">{p.days}d</text>
+              </g>
+            ))}
+          </svg>
+        </div>
+      )}
+
+      {showAdvanced && locs.length > 1 && (
+        <div style={chartBox}>
+          <h4 style={chartH4}>{t.regionDist}</h4>
+          {locs.map(([loc, n]) => (
+            <div key={loc} style={{ display: "flex", alignItems: "center", gap: 8, margin: "3px 0" }}>
+              <span style={{ fontSize: 10.5, color: "#475569", width: 170, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{loc}</span>
+              <div style={{ height: 10, borderRadius: 5, width: `${(n / dossiers.length) * 55}%`, background: "#0284c7", minWidth: 8 }} />
+              <span style={{ fontSize: 10.5, fontWeight: 700, color: "#334155" }}>{n}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function BriefView({ report, experience }: { report: InstitutionalOpportunityReportV1; experience?: ReportExperience }) {
   const r = report;
@@ -118,6 +241,10 @@ export default function BriefView({ report, experience }: { report: Institutiona
           </div>
         </div>
 
+        {x && r.account_dossiers.length > 0 && (
+          <TierCharts dossiers={r.account_dossiers} tier={x.tier} t={t} tierColor={tierColor} />
+        )}
+
         {(!x || x.show_portfolio) && (
         <div style={sec} className="ib-sec">
           <h2 style={h2}>{t.portfolio}</h2>
@@ -129,7 +256,7 @@ export default function BriefView({ report, experience }: { report: Institutiona
           </div>
           <div style={{ display: "flex", gap: 14, flexWrap: "wrap", fontSize: 12 }}>
             {(["hot", "warm", "cold", "discard"] as const).map((k) => (
-              <span key={k} style={{ color: "#475569" }}><span style={{ display: "inline-block", width: 8, height: 8, borderRadius: 2, background: tierColor(k.toUpperCase()), marginRight: 5 }} /><strong>{r.portfolio_summary[k]}</strong> {k}</span>
+              <span key={k} style={{ color: "#475569" }}><span style={{ display: "inline-block", width: 8, height: 8, borderRadius: 2, background: tierColor(k.toUpperCase()), marginRight: 5 }} /><strong>{r.portfolio_summary[k]}</strong> {t.bucketWord[k] ?? k}</span>
             ))}
           </div>
           {r.portfolio_summary.funnel && (!x || x.show_funnel) && (
@@ -158,8 +285,8 @@ export default function BriefView({ report, experience }: { report: Institutiona
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: 8 }}>
               <div><strong style={{ fontSize: 17, color: "#0f172a" }}>{d.rank ? `${d.rank}. ` : ""}{d.company}</strong>
                 <div style={{ fontSize: 12, color: "#94a3b8" }}>{[d.industry, d.location, d.domain].filter(Boolean).join(" · ") || "Account details limited"}</div></div>
-              <div style={{ textAlign: "right" }}><span style={{ fontSize: 12, fontWeight: 800, color: tierColor(d.tier) }}>{d.tier}</span>
-                {d.evidence_grounded != null && <div style={{ fontSize: 10, fontWeight: 700, color: d.evidence_grounded ? "#15803d" : "#b45309", marginTop: 2 }}>{d.evidence_grounded ? "EVIDENCE-GROUNDED" : "VALIDATE FIRST"}</div>}</div>
+              <div style={{ textAlign: "right" }}><span style={{ fontSize: 12, fontWeight: 800, color: tierColor(d.tier) }}>{t.tierChip[d.tier] ?? d.tier}</span>
+                {d.evidence_grounded != null && <div style={{ fontSize: 10, fontWeight: 700, color: d.evidence_grounded ? "#15803d" : "#b45309", marginTop: 2 }}>{d.evidence_grounded ? t.grounded : t.validateFirst}</div>}</div>
             </div>
             {status && decay && momentum && (
               <div style={{ marginTop: 8, display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center", background: "#f8fafc", borderRadius: 8, padding: "8px 12px" }}>

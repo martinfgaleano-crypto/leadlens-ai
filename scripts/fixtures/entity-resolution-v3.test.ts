@@ -28,5 +28,18 @@ t("OPmobility → single_company", { name: "OPmobility" }, { cls: "single_compan
 t("Inter Rapidísimo → single_company", { name: "Inter Rapidísimo" }, { cls: "single_company", primary: "Inter Rapidísimo" });
 t("Freight Visibility Platform → product", { name: "Freight Visibility Platform" }, { cls: "product", primary: null });
 
+// ── Generic geographic / public entities (never companies) ──
+t("Colombia (país) → nunca empresa", { name: "Colombia" }, { cls: "category", primary: null });
+t("Bogotá (ciudad) → nunca empresa", { name: "Bogotá" }, { cls: "category", primary: null });
+t("Latinoamérica → nunca empresa", { name: "Latinoamérica" }, { cls: "category", primary: null });
+t("Ministerio de Transporte → entidad pública", { name: "Ministerio de Transporte" }, { cls: "category", primary: null });
+t("Gobierno Nacional → entidad pública", { name: "Gobierno Nacional" }, { cls: "category", primary: null });
+t("Alcaldía de Bogotá → entidad pública", { name: "Alcaldía de Bogotá" }, { cls: "category", primary: null });
+t("La República como publisher", { name: "Larepublica", sourceUrl: "https://www.larepublica.co/empresas/nota", sourceType: "news" }, { cls: "publisher", primary: null });
+t("empresa colombiana válida → single_company", { name: "Inter Rapidísimo" }, { cls: "single_company", primary: "Inter Rapidísimo" });
+t("multinacional en Colombia → single_company", { name: "DHL" }, { cls: "single_company", primary: "DHL" });
+t("ubicación dentro de nombre corporativo → válida", { name: "Cementos del Valle S.A." }, { cls: "single_company" });
+t("frase liderada por lugar sin marcador corporativo → ambigua", { name: "Colombia Moderna 2030" }, { cls: "ambiguous", primary: null });
+
 console.log(`\n${passed}/${passed + failed} passed`);
 process.exit(failed ? 1 : 0);
