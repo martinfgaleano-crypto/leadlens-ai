@@ -51,7 +51,9 @@ async function main() {
       needs_families: needs.relevant_signal_families,
       companies: metrics.companies_verified, universe_rejected: metrics.universe_rejected,
       queries: metrics.company_signal_queries, urls: metrics.urls, extractions: metrics.extractions,
-      opp: metrics.opp_status_counts, emitted: metrics.emitted, leaks: leaks.length,
+      opp: metrics.opp_status_counts, materiality: metrics.materiality_counts,
+      rubric: metrics.rubric_verdicts, homonyms_rejected: metrics.homonyms_rejected,
+      emitted: metrics.emitted, leaks: leaks.length,
       dur_s: Math.round(metrics.duration_ms / 1000), est_cost: metrics.est_cost_usd,
     }, null, 1));
     for (const e of emitted) console.log("  →", e.company, "|", e.date, "|", (e.signal ?? "").slice(0, 70));

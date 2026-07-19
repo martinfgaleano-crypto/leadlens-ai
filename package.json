@@ -43,7 +43,8 @@
     "test:product-catalog": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/product-catalog.test.ts",
     "test:pilot-depth": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/pilot-depth.test.ts",
     "test:company-first": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/company-first-discovery.test.ts",
-    "bench:company-first": "npx -y tsx --tsconfig tsconfig.json scripts/sources/benchmark-company-first.ts"
+    "bench:company-first": "npx -y tsx --tsconfig tsconfig.json scripts/sources/benchmark-company-first.ts",
+    "test:deep-validation": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/deep-validation.test.ts"
   },
   "dependencies": {
     "next": "14.2.5",

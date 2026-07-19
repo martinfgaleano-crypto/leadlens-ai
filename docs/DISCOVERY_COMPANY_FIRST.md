@@ -79,6 +79,40 @@ name-only pages and foreign homonyms are now gated, but final materiality
 still benefits from human QA. Company-first is a large, measurable improvement,
 not a claim of full autonomy.
 
+## Deep validation layer (v2)
+
+After a signal passes the Opportunity Test, it goes through:
+
+1. **Corporate identity** (`corporate-identity-v1`): resolves the company's real
+   corporate domain via a bounded official-site search and scores
+   `corporate_identity_confidence` (name↔domain match + .co bonus). The signal is
+   attributed to the company only when the source host / content references that
+   domain, or the content confirms the operating country AND identity confidence
+   is ≥60. This is the **homonym guard** — German "Bavaria" and US "Essentia"
+   pages no longer attach to the Colombian companies.
+2. **Materiality** (`materiality-v1`): high (new plant/warehouse/fleet/contract/
+   acquisition/investment/market entry), medium (minor alliance, hiring, pilot),
+   low (award, interview, fair, social post, directory). Only high/medium
+   advance; a low-materiality marker vetoes a medium one.
+3. **Corroboration** (`quality-rubric-v1`): tiered from independent non-syndicated
+   source domains + whether a primary/corporate source exists.
+4. **Quality rubric (0–100) + adversarial review**: identity 15, fit 15,
+   materiality 15, signal-association 15, evidence 15, causality 15, timing 5,
+   actionability 5. Verdict: ≥85 & high-materiality → prioritaria; ≥75 →
+   investigar; ≥60 → monitorear; else rechazar. Hard blockers, failed
+   association, or low materiality **always** reject regardless of score. The
+   adversarial flags are computed separately from thesis generation.
+
+## Source policy (Colombia, initial)
+
+Sources are classified for their ROLE, measured per run (not a static allow-list):
+- **corporate / regulatory / institutional / economic-media / sector-media** →
+  usable as evidence; corporate/regulatory count toward "primary".
+- **publisher / aggregator / social / reference page / promotional** → never the
+  account; social/reference pages are hard-blocked as non-events.
+Domains that repeatedly yield homonyms or non-events lose priority via the
+per-run taxonomy (measured in the benchmark output).
+
 ## Compliance
 
 Company enumeration uses only Brave/Serper search + Tavily/Firecrawl extraction

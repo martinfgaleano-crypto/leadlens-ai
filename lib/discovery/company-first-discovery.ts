@@ -8,18 +8,23 @@
 
 import type { ICP, LeadSearchCriteria, LeadCandidate } from "@/types";
 import { buildNeedsMap, type NeedsMap } from "./needs-map";
-import { buildCompanyUniverse, type UniverseCompany } from "./company-universe";
+import { buildCompanyUniverse } from "./company-universe";
 import { opportunityTest, type OppStatus } from "./opportunity-test";
+import { classifyMateriality } from "./materiality";
+import { resolveCorporateIdentity, signalMatchesIdentity, type CorporateIdentity } from "./corporate-identity";
+import { scoreOpportunity, corroborationTier } from "./quality-rubric";
 
 export const DISCOVERY_VERSION = "company-first-v1";
 
 export interface DiscoveryBudget { maxCompanies: number; queriesPerCompany: number; maxExtractions: number; }
 export const TIER_BUDGET: Record<string, DiscoveryBudget> = {
-  preview: { maxCompanies: 18, queriesPerCompany: 2, maxExtractions: 24 },
-  brief: { maxCompanies: 30, queriesPerCompany: 3, maxExtractions: 60 },
-  intelligence: { maxCompanies: 45, queriesPerCompany: 3, maxExtractions: 90 },
-  premium: { maxCompanies: 60, queriesPerCompany: 4, maxExtractions: 120 },
+  preview: { maxCompanies: 12, queriesPerCompany: 1, maxExtractions: 14 },
+  brief: { maxCompanies: 20, queriesPerCompany: 2, maxExtractions: 28 },
+  intelligence: { maxCompanies: 32, queriesPerCompany: 2, maxExtractions: 48 },
+  premium: { maxCompanies: 45, queriesPerCompany: 3, maxExtractions: 72 },
 };
+// Wall-clock cap so a pilot never runs unbounded (network latency/retries).
+const MAX_DISCOVERY_MS = 5 * 60 * 1000;
 
 export interface DiscoveryMetrics {
   needs_map_families: string[];
@@ -28,6 +33,9 @@ export interface DiscoveryMetrics {
   company_signal_queries: number; urls: number; extractions: number;
   candidates_with_valid_date: number; candidates_company_matched: number;
   opp_status_counts: Record<OppStatus, number>;
+  materiality_counts: Record<string, number>;
+  rubric_verdicts: Record<string, number>;
+  homonyms_rejected: number;
   emitted: number; error_taxonomy: Record<string, number>;
   duration_ms: number; est_cost_usd: number;
 }
@@ -103,6 +111,7 @@ export async function runCompanyFirstDiscovery(
     company_signal_queries: 0, urls: 0, extractions: 0,
     candidates_with_valid_date: 0, candidates_company_matched: 0,
     opp_status_counts: { opportunity: 0, investigate: 0, monitor: 0, reject: 0 },
+    materiality_counts: {}, rubric_verdicts: {}, homonyms_rejected: 0,
     emitted: 0, error_taxonomy: {},
     duration_ms: 0, est_cost_usd: 0,
   };
@@ -111,11 +120,15 @@ export async function runCompanyFirstDiscovery(
   const out: LeadCandidate[] = [];
   const seenUrl = new Set<string>();
 
-  for (const company of universe.companies) {
-    if (out.length >= limit || metrics.extractions >= budget.maxExtractions) break;
-    let best: { cand: LeadCandidate; status: OppStatus } | null = null;
+  const daysOld = (iso: string | null) => { if (!iso) return null; const d = Math.round((Date.now() - new Date(iso).getTime()) / 86_400_000); return Number.isFinite(d) && d >= 0 ? d : null; };
 
-    for (let round = 0; round < 2 && !best; round++) {
+  for (const company of universe.companies) {
+    if (out.length >= limit || metrics.extractions >= budget.maxExtractions || Date.now() - t0 > MAX_DISCOVERY_MS) break;
+    let best: { cand: LeadCandidate; score: number } | null = null;
+    let identity: CorporateIdentity | null = null;
+    const companyDomains = new Set<string>();  // independent source domains for corroboration
+
+    for (let round = 0; round < 2 && (!best || best.score < 85); round++) {
       const queries = companyQueries(company.name, needs, spanish, budget.queriesPerCompany, round === 1);
       const results: { url: string; canonical_url: string; title: string | null; published_date: string | null; source_type: string | null; provider: string }[] = [];
       for (const q of queries) {
@@ -129,7 +142,6 @@ export async function runCompanyFirstDiscovery(
           seenUrl.add(r.canonical_url); results.push(r); metrics.urls++;
         }
       }
-      // Extract the most promising few per company.
       for (const item of results.slice(0, 3)) {
         if (metrics.extractions >= budget.maxExtractions) break;
         const ext = await extractWithFallback(item.url).catch(() => ({ ok: false, content: "", extractor: "none", fallback_used: false }));
@@ -140,12 +152,8 @@ export async function runCompanyFirstDiscovery(
         const companyInContent = content.toLowerCase().includes(company.name.toLowerCase().slice(0, Math.min(18, company.name.length)));
         if (resolved.date) metrics.candidates_with_valid_date++;
         if (companyInContent) metrics.candidates_company_matched++;
-        // Real material-event check: a needs-family event verb must actually
-        // appear in the title/content — a bare company-name match is not an event.
         const famMatch = eventVerbPresent(hay, needs, spanish);
-        // Geography: for CO/es runs require the content/domain to confirm the
-        // region (guards against foreign homonyms like German "Bavaria").
-        const dom = (() => { try { return new URL(item.canonical_url).host; } catch { return ""; } })();
+        const dom = (() => { try { return new URL(item.canonical_url).host.replace(/^www\./, ""); } catch { return ""; } })();
         const geoConfirmed = !spanish || /\bcolombia\b|\bbogot[aá]\b|\bmedell[ií]n\b|\bcali\b|\bbarranquilla\b|\bcartagena\b|colombian[ao]/i.test(hay) || /\.co(\/|$|\.)/i.test(dom);
         const verdict = opportunityTest({
           company: company.name, company_from_universe: true,
@@ -157,17 +165,50 @@ export async function runCompanyFirstDiscovery(
         });
         metrics.opp_status_counts[verdict.status]++;
         if (verdict.status === "reject") { for (const b of verdict.hard_blockers) tax(b); continue; }
+
+        // ── Deep validation (only for signals that passed the Opportunity Test) ──
+        // 1. Resolve corporate identity once per company (bounded, cached).
+        if (!identity) { identity = await resolveCorporateIdentity(company.name, company.country, spanish); if (identity.domain) companyDomains.add(identity.domain); }
+        // 2. Homonym guard: the signal must belong to THIS corporate identity.
+        const idMatch = signalMatchesIdentity(identity, item.canonical_url, hay, spanish);
+        if (!idMatch.ok) { metrics.homonyms_rejected++; tax("homonym_wrong_identity"); continue; }
+        // 3. Materiality.
+        const mat = classifyMateriality(hay);
+        metrics.materiality_counts[mat.level] = (metrics.materiality_counts[mat.level] ?? 0) + 1;
+        // 4. Corroboration: independent source domains seen for this company.
+        if (dom) companyDomains.add(dom);
+        const hasPrimary = !!identity.domain && (dom === identity.domain || hay.includes(identity.domain.split(".")[0]));
+        const corr = corroborationTier(Math.max(0, companyDomains.size - 1), hasPrimary, identity.confidence);
+        // 5. Rubric + adversarial (separate from thesis generation).
+        const rub = scoreOpportunity({
+          corporate_identity_confidence: identity.confidence,
+          fit_from_universe: true, materiality: mat.level,
+          signal_association_ok: companyInContent && idMatch.ok,
+          corroboration: corr, causal_thesis_specific: famMatch && mat.level !== "low",
+          days_old: daysOld(resolved.date), has_next_step: true,
+          hard_blockers: verdict.hard_blockers,
+        });
+        metrics.rubric_verdicts[rub.verdict] = (metrics.rubric_verdicts[rub.verdict] ?? 0) + 1;
+        if (rub.verdict === "rechazar") { tax(`rubric_reject_${mat.level === "low" ? "low_materiality" : "score<60"}`); continue; }
+
         const cand: LeadCandidate = {
           id: `cf_${Buffer.from(item.canonical_url).toString("base64url").slice(0, 16)}`,
-          company: company.name, domain: company.domain ?? undefined, source: "public_signal",
+          company: company.name, domain: identity.domain ?? company.domain ?? undefined, source: "public_signal",
           source_url: item.canonical_url, location: company.country ?? undefined, industry: company.sector ?? undefined,
-          raw_context: `${item.title ?? ""}\nEmpresa (universo verificado): ${company.name} · ${company.fit_reason}\nEstado Opportunity Test: ${verdict.status} — ${verdict.reason}\nFecha: ${resolved.date ?? "?"} (${resolved.confidence})\n${content.slice(0, 1500)}`,
-          confidence_score: verdict.status === "opportunity" ? 0.8 : verdict.status === "investigate" ? 0.6 : 0.45,
+          raw_context: [
+            item.title ?? "",
+            `Empresa (universo verificado): ${company.name}${identity.domain ? ` · dominio ${identity.domain}` : ""} · ${company.country ?? ""}`,
+            `Identidad corporativa: confianza ${identity.confidence}/100 — ${idMatch.reason}`,
+            `Materialidad: ${mat.level}${mat.matched ? ` (${mat.matched})` : ""} · Corroboración: ${corr} (${companyDomains.size} dominios)`,
+            `Calidad: ${rub.score}/100 → ${rub.verdict}${rub.adversarial_flags.length ? ` · Objeciones: ${rub.adversarial_flags.join(" ")}` : ""}`,
+            `Fecha: ${resolved.date ?? "?"} (${resolved.confidence})`,
+            content.slice(0, 1500),
+          ].join("\n"),
+          confidence_score: Math.min(0.95, rub.score / 100),
           signal_date: resolved.date ?? null,
         };
-        const rank: Record<OppStatus, number> = { opportunity: 3, investigate: 2, monitor: 1, reject: 0 };
-        if (!best || rank[verdict.status] > rank[best.status]) best = { cand, status: verdict.status };
-        if (verdict.status === "opportunity") break;
+        if (!best || rub.score > best.score) best = { cand, score: rub.score };
+        if (rub.verdict === "prioritaria") break;
       }
     }
     if (best) { out.push(best.cand); metrics.emitted++; }
