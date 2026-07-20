@@ -16,6 +16,9 @@ t("alianza menor → medium", classifyMateriality("La empresa firmó una alianza
 t("premio → low", classifyMateriality("La empresa recibió un premio a la innovación").level === "low");
 t("feria vetoes lanzó → low", classifyMateriality("La empresa lanzó su stand en la feria Expologística").level === "low");
 t("tiktok/redes → low", classifyMateriality("Síguenos en TikTok e Instagram").level === "low");
+t("noticia negativa (aplaza pagos) → low", classifyMateriality("La empresa aplazó los pagos a sus proveedores y crece la flota").level === "low");
+t("PR de sostenibilidad → low", classifyMateriality("La empresa avanza en su ruta de sostenibilidad").level === "low");
+t("PR + evento material real → high (no vetado)", classifyMateriality("En su plan de sostenibilidad inauguró una nueva planta").level === "high");
 
 // ── Corporate identity: name↔domain ──
 t("Servientrega ↔ servientrega.com = 100", nameDomainMatch("Servientrega", "servientrega.com") === 100);

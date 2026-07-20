@@ -103,6 +103,34 @@ After a signal passes the Opportunity Test, it goes through:
    association, or low materiality **always** reject regardless of score. The
    adversarial flags are computed separately from thesis generation.
 
+## Intelligence layer v3 (org type · event-vs-metric · thesis specificity)
+
+- **organization-type-v1** (`organization-type.ts`): distinguishes commercial
+  companies from public authorities/programs/systems. Does NOT auto-reject
+  state-linked entities — Ecopetrol (state-owned commercial), EPM (mixed) and
+  Opain (private concessionaire) are valid accounts; a ministry, mayor's office,
+  a bare transit system (TransMilenio) or a state metro operator (Metro de
+  Medellín) is not `eligible_for_icp`. Runs as **Stage 1** before any signal
+  search — a runtime win AND the fix for public-service entities slipping
+  through. Fields: `organization_type`, `commercial_entity`,
+  `public_sector_relationship`, `eligible_for_icp`.
+- **event-vs-metric-v1** (`event-vs-metric.ts`): a statistic ("movilizó 17M
+  pasajeros", "creció 20%") is not a trigger — only `corporate_event`,
+  `operational_change` or `strategic_decision` can seed an opportunity. A metric
+  can add context but never triggers; it also caps materiality at low. Fixes the
+  Avianca passenger-stat false positive.
+- **thesis-specificity-v1** (`thesis-specificity.ts`): the substitution test — a
+  thesis you could paste onto any company by swapping the name is too generic. A
+  specific thesis references the concrete event + the client's product + a
+  validation condition + a next action.
+
+## Staged budget (runtime)
+
+The 36-min benchmark was driven by a too-high budget. Now: Stage 1
+(org-type/fit) rejects before any search; per-tier budgets are lean (Preview 12
+companies / 14 extractions, Brief 20 / 28); a 5-minute wall-clock cap bounds
+every run. Effort concentrates on eligible companies.
+
 ## Source policy (Colombia, initial)
 
 Sources are classified for their ROLE, measured per run (not a static allow-list):

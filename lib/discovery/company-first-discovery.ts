@@ -13,15 +13,22 @@ import { opportunityTest, type OppStatus } from "./opportunity-test";
 import { classifyMateriality } from "./materiality";
 import { resolveCorporateIdentity, signalMatchesIdentity, type CorporateIdentity } from "./corporate-identity";
 import { scoreOpportunity, corroborationTier } from "./quality-rubric";
+import { classifyOrganization } from "./organization-type";
+import { classifySignalKind } from "./event-vs-metric";
 
 export const DISCOVERY_VERSION = "company-first-v1";
 
 export interface DiscoveryBudget { maxCompanies: number; queriesPerCompany: number; maxExtractions: number; }
+// Stage-1 org rejection + the 5-min wall-clock cap protect runtime, so we can
+// afford more per-company event queries to recover recall (the lean budgets
+// alone drove recall too low: only 1 opportunity across 3 ICPs in the
+// 2026-07-20 benchmark). More queries on ELIGIBLE companies = better event
+// coverage without spending on public/ineligible ones.
 export const TIER_BUDGET: Record<string, DiscoveryBudget> = {
-  preview: { maxCompanies: 12, queriesPerCompany: 1, maxExtractions: 14 },
-  brief: { maxCompanies: 20, queriesPerCompany: 2, maxExtractions: 28 },
-  intelligence: { maxCompanies: 32, queriesPerCompany: 2, maxExtractions: 48 },
-  premium: { maxCompanies: 45, queriesPerCompany: 3, maxExtractions: 72 },
+  preview: { maxCompanies: 15, queriesPerCompany: 3, maxExtractions: 20 },
+  brief: { maxCompanies: 24, queriesPerCompany: 4, maxExtractions: 40 },
+  intelligence: { maxCompanies: 36, queriesPerCompany: 4, maxExtractions: 64 },
+  premium: { maxCompanies: 48, queriesPerCompany: 5, maxExtractions: 96 },
 };
 // Wall-clock cap so a pilot never runs unbounded (network latency/retries).
 const MAX_DISCOVERY_MS = 5 * 60 * 1000;
@@ -34,6 +41,8 @@ export interface DiscoveryMetrics {
   candidates_with_valid_date: number; candidates_company_matched: number;
   opp_status_counts: Record<OppStatus, number>;
   materiality_counts: Record<string, number>;
+  signal_kind_counts: Record<string, number>;
+  org_rejected: Record<string, number>;
   rubric_verdicts: Record<string, number>;
   homonyms_rejected: number;
   emitted: number; error_taxonomy: Record<string, number>;
@@ -111,7 +120,7 @@ export async function runCompanyFirstDiscovery(
     company_signal_queries: 0, urls: 0, extractions: 0,
     candidates_with_valid_date: 0, candidates_company_matched: 0,
     opp_status_counts: { opportunity: 0, investigate: 0, monitor: 0, reject: 0 },
-    materiality_counts: {}, rubric_verdicts: {}, homonyms_rejected: 0,
+    materiality_counts: {}, signal_kind_counts: {}, org_rejected: {}, rubric_verdicts: {}, homonyms_rejected: 0,
     emitted: 0, error_taxonomy: {},
     duration_ms: 0, est_cost_usd: 0,
   };
@@ -124,6 +133,12 @@ export async function runCompanyFirstDiscovery(
 
   for (const company of universe.companies) {
     if (out.length >= limit || metrics.extractions >= budget.maxExtractions || Date.now() - t0 > MAX_DISCOVERY_MS) break;
+
+    // Stage 1 — organization type / fit BEFORE any signal search (runtime win +
+    // fixes public-service entities like Metro de Medellín slipping through).
+    const org = classifyOrganization({ name: company.name, description: company.sector });
+    if (!org.eligible_for_icp) { metrics.org_rejected[org.organization_type] = (metrics.org_rejected[org.organization_type] ?? 0) + 1; tax(`org_${org.organization_type}`); continue; }
+
     let best: { cand: LeadCandidate; score: number } | null = null;
     let identity: CorporateIdentity | null = null;
     const companyDomains = new Set<string>();  // independent source domains for corroboration
@@ -152,7 +167,16 @@ export async function runCompanyFirstDiscovery(
         const companyInContent = content.toLowerCase().includes(company.name.toLowerCase().slice(0, Math.min(18, company.name.length)));
         if (resolved.date) metrics.candidates_with_valid_date++;
         if (companyInContent) metrics.candidates_company_matched++;
-        const famMatch = eventVerbPresent(hay, needs, spanish);
+        // Event vs metric: a statistic ("movilizó 17M pasajeros", "creció 20%")
+        // VETOES the signal; but a needs-family event phrase ("nueva bodega")
+        // that isn't a metric still counts even if it's not one of the strict
+        // CHANGE constructions. So: event present AND not a bare metric.
+        const sigKind = classifySignalKind(hay);
+        metrics.signal_kind_counts[sigKind.kind] = (metrics.signal_kind_counts[sigKind.kind] ?? 0) + 1;
+        const isBareMetric = sigKind.kind === "state_metric" || sigKind.kind === "historical_metric" || sigKind.kind === "performance_result";
+        const eventPhrase = eventVerbPresent(hay, needs, spanish);
+        const famMatch = eventPhrase && !isBareMetric;
+        if (isBareMetric && eventPhrase) tax(`metric_not_event_${sigKind.kind}`);
         const dom = (() => { try { return new URL(item.canonical_url).host.replace(/^www\./, ""); } catch { return ""; } })();
         const geoConfirmed = !spanish || /\bcolombia\b|\bbogot[aá]\b|\bmedell[ií]n\b|\bcali\b|\bbarranquilla\b|\bcartagena\b|colombian[ao]/i.test(hay) || /\.co(\/|$|\.)/i.test(dom);
         const verdict = opportunityTest({
@@ -172,8 +196,10 @@ export async function runCompanyFirstDiscovery(
         // 2. Homonym guard: the signal must belong to THIS corporate identity.
         const idMatch = signalMatchesIdentity(identity, item.canonical_url, hay, spanish);
         if (!idMatch.ok) { metrics.homonyms_rejected++; tax("homonym_wrong_identity"); continue; }
-        // 3. Materiality.
-        const mat = classifyMateriality(hay);
+        // 3. Materiality — a metric/performance/historical signal is never high
+        //    materiality even if a keyword matches (context over keyword).
+        const matRaw = classifyMateriality(hay);
+        const mat = !isBareMetric ? matRaw : { level: "low" as const, matched: matRaw.matched };
         metrics.materiality_counts[mat.level] = (metrics.materiality_counts[mat.level] ?? 0) + 1;
         // 4. Corroboration: independent source domains seen for this company.
         if (dom) companyDomains.add(dom);
@@ -197,8 +223,9 @@ export async function runCompanyFirstDiscovery(
           source_url: item.canonical_url, location: company.country ?? undefined, industry: company.sector ?? undefined,
           raw_context: [
             item.title ?? "",
-            `Empresa (universo verificado): ${company.name}${identity.domain ? ` · dominio ${identity.domain}` : ""} · ${company.country ?? ""}`,
+            `Empresa (${org.organization_type}): ${company.name}${identity.domain ? ` · dominio ${identity.domain}` : ""} · ${company.country ?? ""}`,
             `Identidad corporativa: confianza ${identity.confidence}/100 — ${idMatch.reason}`,
+            `Tipo de señal: ${sigKind.kind}${sigKind.matched ? ` (${sigKind.matched})` : ""}`,
             `Materialidad: ${mat.level}${mat.matched ? ` (${mat.matched})` : ""} · Corroboración: ${corr} (${companyDomains.size} dominios)`,
             `Calidad: ${rub.score}/100 → ${rub.verdict}${rub.adversarial_flags.length ? ` · Objeciones: ${rub.adversarial_flags.join(" ")}` : ""}`,
             `Fecha: ${resolved.date ?? "?"} (${resolved.confidence})`,

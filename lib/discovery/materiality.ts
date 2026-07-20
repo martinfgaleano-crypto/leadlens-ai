@@ -12,9 +12,19 @@ const HIGH = /\b(nueva planta|nueva f[aá]brica|nueva bodega|nuevo centro de dis
 const MEDIUM = /\b(alianza|acuerdo|partnership|firm[oó]|lanz[oó]|lanzamiento|piloto|prueba|actualiz[oó]|moderniz[oó]|contrat[oó] (personal|equipo|gerente)|hir(ed|ing)|launch(ed)?|pilot|upgrade|renov[oó]|implementa)\b/i;
 const LOW = /\b(premio|galard[oó]n|reconocimiento|entrevista|opini[oó]n|columna|feria|expo|stand|patrocin|campa[ñn]a|celebra|anivers|ranking|informe|estudio|tendencia|award|interview|webinar|sponsor|campaign|anniversary|trends?|report|profile|perfil|aplicaci[oó]n|app store|s[ií]guenos|redes sociales|tiktok|instagram)\b/i;
 
+// Negative events and pure PR are NOT commercial opportunities even if a
+// growth word appears alongside — they veto to low materiality.
+const NEGATIVE = /\b(aplaz[oó] (los )?pagos|incumpl|impag|mora|demand[oó]|demanda judicial|crisis|p[eé]rdidas|quiebra|liquidaci[oó]n|cierre de|despidos|recorte|sanci[oó]n|multa|investigaci[oó]n por|escándalo|paro|huelga)\b/i;
+const PURE_PR = /\b(sostenibilidad|responsabilidad social|huella de carbono|voluntariado|donaci[oó]n|reconoc(e|ió) a sus|d[ií]a de|celebra(ci[oó]n)?|campa[ñn]a de marca)\b/i;
+
 export function classifyMateriality(titleAndContent: string): { level: Materiality; matched: string | null } {
   const hay = titleAndContent.toLowerCase();
-  const h = hay.match(HIGH); if (h) return { level: "high", matched: h[0] };
+  const neg = hay.match(NEGATIVE); if (neg) return { level: "low", matched: `negativo: ${neg[0]}` };
+  // Pure PR vetoes UNLESS a concrete high-materiality change is also present.
+  const pr = hay.match(PURE_PR);
+  const h = hay.match(HIGH);
+  if (pr && !h) return { level: "low", matched: `pr: ${pr[0]}` };
+  if (h) return { level: "high", matched: h[0] };
   // A low-materiality marker vetoes a medium one (a "feria" mention wins over "lanzó").
   const l = hay.match(LOW);
   const m = hay.match(MEDIUM);
