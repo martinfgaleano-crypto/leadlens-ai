@@ -28,7 +28,7 @@ export interface UniverseCompany {
 
 export interface UniverseResult {
   companies: UniverseCompany[];
-  stats: { enumeration_queries: number; raw_names: number; classified_company: number; rejected: Record<string, number> };
+  stats: { enumeration_queries: number; raw_names: number; classified_company: number; rejected: Record<string, number>; degraded_seed_pack?: string | null };
 }
 
 // Publisher/media and directory hosts never seed a company name from their own
@@ -70,7 +70,7 @@ function enumerationQueries(icp: ICP, geo0: string, needs: NeedsMap, spanish: bo
 /** Extract candidate company names from enumeration result pages using the LLM
  *  (bounded), then classify each with entity-resolution-v3. Deterministic
  *  fallback mines capitalized multi-word tokens from titles/snippets. */
-async function extractCompanyNames(pages: { title: string | null; snippet: string | null; url: string }[], spanish: boolean): Promise<string[]> {
+async function extractCompanyNames(pages: { title: string | null; snippet: string | null; url: string }[], spanish: boolean): Promise<{ names: string[]; llm_ok: boolean }> {
   const corpus = pages.map((p) => `- ${p.title ?? ""} | ${p.snippet ?? ""}`).join("\n").slice(0, 6000);
   if (process.env.ANTHROPIC_API_KEY && process.env.DEMO_MODE !== "true" && corpus.length > 40) {
     try {
@@ -81,8 +81,8 @@ async function extractCompanyNames(pages: { title: string | null; snippet: strin
 - Si no estás seguro de que sea una empresa real, NO la incluyas.
 - Devuelve SOLO JSON: {"companies": ["Nombre 1","Nombre 2", ...]}`;
       const r = await callClaudeJSON<{ companies: string[] }>(SYSTEM, `Fragmentos:\n${corpus}\n\nExtrae hasta 30 nombres de empresas reales ${spanish ? "colombianas" : ""}.`, 1200);
-      return (r.companies ?? []).filter(Boolean).slice(0, 40);
-    } catch { /* fall through */ }
+      return { names: (r.companies ?? []).filter(Boolean).slice(0, 40), llm_ok: true };
+    } catch { /* fall through — key may exist but be EXHAUSTED at runtime */ }
   }
   // Fallback: capitalized 1-3 word tokens from titles (weak, flagged low).
   const names = new Set<string>();
@@ -90,7 +90,7 @@ async function extractCompanyNames(pages: { title: string | null; snippet: strin
     const m = (p.title ?? "").match(/\b([A-ZÁÉÍÓÚÑ][\wáéíóúñ&.-]+(?:\s+[A-ZÁÉÍÓÚÑ][\wáéíóúñ&.-]+){0,2})\b/g) ?? [];
     for (const n of m) if (n.length >= 4 && n.length <= 40) names.add(n.trim());
   }
-  return Array.from(names).slice(0, 40);
+  return { names: Array.from(names).slice(0, 40), llm_ok: false };
 }
 
 export async function buildCompanyUniverse(
@@ -119,7 +119,20 @@ export async function buildCompanyUniverse(
   }
 
   // 2. Mine company names from the pages.
-  const rawNames = await extractCompanyNames(pages, spanish);
+  const { names: rawNames, llm_ok } = await extractCompanyNames(pages, spanish);
+
+  // 2b. Vertical-pack seed universe (degraded mode): when the LLM extractor is
+  // unavailable AT RUNTIME (missing key OR exhausted credits — the key can
+  // exist and still fail), the regex fallback yields junk fragments ("Estas",
+  // "Carga"). A matched pack contributes real, publicly known companies in the
+  // vertical as CANDIDATES — org type, identity, association and every other
+  // gate still apply before anything is emitted.
+  let degraded_seed_pack: string | null = null;
+  if (!llm_ok) {
+    const { matchVerticalPack } = await import("./vertical-packs");
+    const pack = matchVerticalPack(icp, criteria);
+    if (pack) { degraded_seed_pack = pack.id; for (const s of pack.seed_companies) rawNames.push(s.name); }
+  }
 
   // 3. Classify + dedupe. Only single_company survives; everything else is a
   //    named rejection reason (no publisher/place/category ever advances).
@@ -148,7 +161,7 @@ export async function buildCompanyUniverse(
   const companies = Array.from(universe.values()).slice(0, opts.maxCompanies ?? 40);
   return {
     companies,
-    stats: { enumeration_queries: queries.length, raw_names: rawNames.length, classified_company: companies.length, rejected },
+    stats: { enumeration_queries: queries.length, raw_names: rawNames.length, classified_company: companies.length, rejected, degraded_seed_pack },
   };
 }
 

@@ -58,7 +58,15 @@ function fallbackMap(icp: ICP, criteria: LeadSearchCriteria): NeedsMap {
 }
 
 export async function buildNeedsMap(icp: ICP, criteria: LeadSearchCriteria): Promise<NeedsMap> {
-  if (!process.env.ANTHROPIC_API_KEY || process.env.DEMO_MODE === "true") return fallbackMap(icp, criteria);
+  // Vertical-pack degraded mode: when the LLM is unavailable (no key, demo, or
+  // exhausted), a matched vertical pack yields a REAL causal map instead of the
+  // weak generic fallback. Honest degradation, not fake success.
+  const packFallback = async (): Promise<NeedsMap> => {
+    const { matchVerticalPack, packNeedsMap } = await import("./vertical-packs");
+    const pack = matchVerticalPack(icp, criteria);
+    return pack ? packNeedsMap(pack, icp, criteria) : fallbackMap(icp, criteria);
+  };
+  if (!process.env.ANTHROPIC_API_KEY || process.env.DEMO_MODE === "true") return packFallback();
   const es = criteria.output_language === "es" || criteria.target_market_region === "latin_america";
   const SYSTEM = `Eres un estratega de inteligencia comercial B2B. Construyes un MAPA CAUSAL DE NECESIDADES que conecta lo que vende un cliente con los cambios empresariales observables públicamente que crean necesidad de su solución.
 Reglas:
@@ -91,6 +99,6 @@ Devuelve JSON:
       possible_commercial_action: r.possible_commercial_action || fallbackMap(icp, criteria).possible_commercial_action,
     };
   } catch {
-    return fallbackMap(icp, criteria);
+    return packFallback();
   }
 }

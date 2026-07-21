@@ -78,3 +78,24 @@ t("entity-role: token exacto sí funciona con boundary", assessEntityRole("Inter
 
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) process.exit(1);
+
+// ── Vertical packs (vertical-packs-v1): fallback determinístico + moat ──
+import { matchVerticalPack, packNeedsMap, VERTICAL_PACKS } from "@/lib/discovery/vertical-packs";
+{
+  const icpF = { target_industries: ["transporte de carga y logística"], target_titles: [], company_size_range: "m", pain_points: [], disqualifiers: [], ideal_signals: [] } as any;
+  const crF = { offer_summary: "software de gestión de flotas", value_proposition: "visibilidad de flota", target_geography: ["Colombia"], output_language: "es" } as any;
+  const p = matchVerticalPack(icpF, crF);
+  t("ICP flotas matchea pack fleet_software", p?.id === "fleet_software");
+  const nm = p ? packNeedsMap(p, icpF, crF) : null;
+  t("pack needs-map trae familias causales reales", !!nm && nm.relevant_signal_families.includes("fleet_growth"));
+  t("pack needs-map trae señales observables ES", !!nm && nm.observable_signals.some((s) => s.includes("flota")));
+  const icpL = { target_industries: ["operadores logísticos y retail con centros de distribución"], target_titles: [], company_size_range: "m", pain_points: [], disqualifiers: [], ideal_signals: [] } as any;
+  t("ICP logística matchea logistics_automation", matchVerticalPack(icpL, { offer_summary: "automatización de bodegas", value_proposition: "", target_geography: ["Colombia"], output_language: "es" } as any)?.id === "logistics_automation");
+  t("ICP sin match → null", matchVerticalPack({ target_industries: ["clínicas dentales"], target_titles: [], company_size_range: "m", pain_points: [], disqualifiers: [], ideal_signals: [] } as any, { offer_summary: "agendas médicas", value_proposition: "", target_geography: ["Colombia"], output_language: "es" } as any) === null);
+  t("todos los packs tienen ≥12 seeds reales", VERTICAL_PACKS.every((pk) => pk.seed_companies.length >= 12));
+  t("ningún seed es nombre ambiguo de 1 token genérico", VERTICAL_PACKS.every((pk) => pk.seed_companies.every((s) => !/^(inter|mercado|carga|estas)$/i.test(s.name))));
+}
+
+console.log(`
+${passed} passed, ${failed} failed`);
+if (failed > 0) process.exit(1);
