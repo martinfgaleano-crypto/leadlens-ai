@@ -47,5 +47,19 @@ const dis = adversarialReview({ ...base, identity_confidence: 40 });
 t("desacuerdo generador-revisor registrado", dis.disagrees_with_generator === true);
 t("objeciones listadas", dis.objections.length > 0);
 
+// ── Source utility (source-utility-v1) ──
+import { newSourceLedger, noteUrl, noteOutcome, sourceUtilityScore } from "@/lib/discovery/source-utility";
+{
+  const L = newSourceLedger();
+  t("dominio desconocido → baseline 50", sourceUtilityScore(L, "desconocido.com") === 50);
+  t("prensa observada con eventos > desconocido", sourceUtilityScore(L, "larepublica.co") > 50);
+  t("agregador observado < desconocido", sourceUtilityScore(L, "es-us.noticias.yahoo.com".split(".").slice(-2).join(".")) < 50 || sourceUtilityScore(L, "yahoo.com") < 50);
+  noteUrl(L, "bueno.com"); noteOutcome(L, "bueno.com", { extracted: true, valid_date: true, trigger_event: true, deep_candidate: true });
+  t("evidencia in-run sube el score", sourceUtilityScore(L, "bueno.com") > 50);
+  noteUrl(L, "malo.com"); noteOutcome(L, "malo.com", { extracted: true }); noteOutcome(L, "malo.com", { extracted: true });
+  t("2 extracciones sin fecha → penalizado", sourceUtilityScore(L, "malo.com") < 50);
+  t("in-run domina al prior", sourceUtilityScore(L, "bueno.com") > sourceUtilityScore(L, "larepublica.co"));
+}
+
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) process.exit(1);

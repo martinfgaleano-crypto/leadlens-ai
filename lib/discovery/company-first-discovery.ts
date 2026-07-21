@@ -20,6 +20,7 @@ import { assessEntityRole } from "./entity-role";
 import { classifyDirection } from "./sentiment";
 import { assessCounterevidence, applyCounterevidence } from "./counterevidence";
 import { adversarialReview } from "./adversarial-review";
+import { noteUrl, noteOutcome, sourceUtilityScore, type DomainStats } from "./source-utility";
 
 export const DISCOVERY_VERSION = "company-first-v1";
 
@@ -53,6 +54,7 @@ export interface DiscoveryMetrics {
   rubric_verdicts: Record<string, number>;
   homonyms_rejected: number;
   adversarial_verdicts: Record<string, number>; adversarial_disagreements: number;
+  source_stats: Record<string, DomainStats>;
   emitted: number; error_taxonomy: Record<string, number>;
   // Per-candidate trace of everything that reaches deep validation (passed the
   // Opportunity Test). Lets a human see WHY real dated events were confirmed or
@@ -165,7 +167,7 @@ export async function runCompanyFirstDiscovery(
     candidates_with_valid_date: 0, candidates_company_matched: 0,
     opp_status_counts: { opportunity: 0, investigate: 0, monitor: 0, reject: 0 },
     materiality_counts: {}, signal_kind_counts: {}, role_counts: {}, direction_counts: {}, org_rejected: {}, rubric_verdicts: {}, homonyms_rejected: 0,
-    emitted: 0, error_taxonomy: {}, deep_trace: [], adversarial_verdicts: {}, adversarial_disagreements: 0,
+    emitted: 0, error_taxonomy: {}, deep_trace: [], adversarial_verdicts: {}, adversarial_disagreements: 0, source_stats: {},
     duration_ms: 0, est_cost_usd: 0,
   };
   const tax = (k: string) => (metrics.error_taxonomy[k] = (metrics.error_taxonomy[k] ?? 0) + 1);
@@ -177,6 +179,9 @@ export async function runCompanyFirstDiscovery(
   // commercial/operational fit). Derived once from the criteria + needs map.
   const productTerms = `${criteria.offer_summary ?? ""} ${criteria.value_proposition ?? ""}`.toLowerCase().split(/[^a-záéíóúñ]+/).filter((w) => w.length >= 5).slice(0, 12);
   const opTerms = requiredOperationTerms(needs);
+  // Per-domain utility ledger — written into metrics.source_stats and USED to
+  // order extraction (see ranked below).
+  const sourceLedger = metrics.source_stats;
 
   const daysOld = (iso: string | null) => { if (!iso) return null; const d = Math.round((Date.now() - new Date(iso).getTime()) / 86_400_000); return Number.isFinite(d) && d >= 0 ? d : null; };
 
@@ -211,15 +216,21 @@ export async function runCompanyFirstDiscovery(
           seenUrl.add(r.canonical_url);
           if (isJunkUrl(r.canonical_url, spanish)) { metrics.junk_urls_skipped++; tax("prefilter_junk_or_foreign"); continue; }
           results.push(r); metrics.urls++;
+          try { noteUrl(sourceLedger, new URL(r.canonical_url).host.replace(/^www\./, "")); } catch { /* ignore */ }
         }
       }
       // Extract event-bearing pages first: a result whose TITLE already carries a
       // needs-family event verb is far likelier to be a real signal than the
-      // provider's top hit (often a homepage/about page). This lifts recall
-      // without relaxing any gate — the same tests still run on the content.
+      // provider's top hit (often a homepage/about page). Ties are broken by
+      // SOURCE UTILITY: domains that have produced dated trigger events (this
+      // run or in observed benchmarks) get the scarce extraction budget before
+      // proven date-less/noise domains. No gate is relaxed by ordering.
       const ranked = results
-        .map((r) => ({ r, hasEvent: eventVerbPresent((r.title ?? "").toLowerCase(), needs, spanish) }))
-        .sort((a, b) => Number(b.hasEvent) - Number(a.hasEvent))
+        .map((r) => {
+          const d = (() => { try { return new URL(r.canonical_url).host.replace(/^www\./, ""); } catch { return ""; } })();
+          return { r, hasEvent: eventVerbPresent((r.title ?? "").toLowerCase(), needs, spanish), util: sourceUtilityScore(sourceLedger, d) };
+        })
+        .sort((a, b) => (Number(b.hasEvent) - Number(a.hasEvent)) || (b.util - a.util))
         .map((x) => x.r);
       for (const item of ranked.slice(0, 4)) {
         if (metrics.extractions >= budget.maxExtractions) break;
@@ -243,6 +254,7 @@ export async function runCompanyFirstDiscovery(
         const famMatch = eventPhrase && !isBareMetric;
         if (isBareMetric && eventPhrase) tax(`metric_not_event_${sigKind.kind}`);
         const dom = (() => { try { return new URL(item.canonical_url).host.replace(/^www\./, ""); } catch { return ""; } })();
+        noteOutcome(sourceLedger, dom, { extracted: !!ext.ok, valid_date: !!resolved.date, trigger_event: sigKind.kind === "corporate_event" || sigKind.kind === "operational_change" || sigKind.kind === "strategic_decision" });
         const geoConfirmed = !spanish || /\bcolombia\b|\bbogot[aá]\b|\bmedell[ií]n\b|\bcali\b|\bbarranquilla\b|\bcartagena\b|colombian[ao]/i.test(hay) || /\.co(\/|$|\.)/i.test(dom);
         const verdict = opportunityTest({
           company: company.name, company_from_universe: true,
@@ -254,6 +266,7 @@ export async function runCompanyFirstDiscovery(
         });
         metrics.opp_status_counts[verdict.status]++;
         if (verdict.status === "reject") { for (const b of verdict.hard_blockers) tax(b); continue; }
+        noteOutcome(sourceLedger, dom, { deep_candidate: true });
 
         // ── Deep validation (only for signals that passed the Opportunity Test) ──
         // 1. Resolve corporate identity once per company (bounded, cached).
