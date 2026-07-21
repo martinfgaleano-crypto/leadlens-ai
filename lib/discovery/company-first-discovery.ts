@@ -21,6 +21,7 @@ import { classifyDirection } from "./sentiment";
 import { assessCounterevidence, applyCounterevidence } from "./counterevidence";
 import { adversarialReview } from "./adversarial-review";
 import { noteUrl, noteOutcome, sourceUtilityScore, type DomainStats } from "./source-utility";
+import { loadSourcePriors, persistSourceStats } from "./source-intelligence-store";
 
 export const DISCOVERY_VERSION = "company-first-v1";
 
@@ -180,8 +181,10 @@ export async function runCompanyFirstDiscovery(
   const productTerms = `${criteria.offer_summary ?? ""} ${criteria.value_proposition ?? ""}`.toLowerCase().split(/[^a-záéíóúñ]+/).filter((w) => w.length >= 5).slice(0, 12);
   const opTerms = requiredOperationTerms(needs);
   // Per-domain utility ledger — written into metrics.source_stats and USED to
-  // order extraction (see ranked below).
+  // order extraction (see ranked below). Seeded with decayed cross-run priors
+  // (compounding loop: every run teaches the next which domains yield events).
   const sourceLedger = metrics.source_stats;
+  Object.assign(sourceLedger, loadSourcePriors());
 
   const daysOld = (iso: string | null) => { if (!iso) return null; const d = Math.round((Date.now() - new Date(iso).getTime()) / 86_400_000); return Number.isFinite(d) && d >= 0 ? d : null; };
 
@@ -365,6 +368,7 @@ export async function runCompanyFirstDiscovery(
     if (best) { out.push(best.cand); metrics.emitted++; }
   }
 
+  persistSourceStats(metrics.source_stats);
   metrics.duration_ms = Date.now() - t0;
   metrics.est_cost_usd = Number((metrics.company_signal_queries * 0.002 + metrics.extractions * 0.008 + universe.stats.enumeration_queries * 0.004).toFixed(3));
   // Rank emitted by Opportunity Test strength then confidence (does NOT touch

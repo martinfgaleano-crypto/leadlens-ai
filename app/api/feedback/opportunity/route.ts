@@ -9,6 +9,10 @@ import { normalizeSentiment, validateReasonCodes } from "@/lib/intelligence/feed
 const VALID_SIGNALS = [
   "useful", "partially_useful", "not_useful", "irrelevant", "contacted", "meeting_booked",
   "wrong_fit", "generic", "replied", "add_to_vault", "exclude_similar",
+  // Outcome capture v1 (compounding loop): commercial funnel + thesis verdicts.
+  // Reuses opportunity_feedback — no migration; the learning loop reads these.
+  "investigated", "saved", "qualified", "rejected", "won", "lost",
+  "thesis_confirmed", "thesis_wrong",
 ] as const;
 
 const schema = z.object({
