@@ -273,7 +273,14 @@ export async function runCompanyFirstDiscovery(
         if (!identity) { identity = await resolveCorporateIdentity(company.name, company.country, spanish); if (identity.domain) companyDomains.add(identity.domain); }
         // 2. Homonym guard: the signal must belong to THIS corporate identity.
         const idMatch = signalMatchesIdentity(identity, item.canonical_url, hay, spanish);
-        if (!idMatch.ok) { metrics.homonyms_rejected++; tax("homonym_wrong_identity"); continue; }
+        if (!idMatch.ok) {
+          // Homonym rejections must be visible in the trace: several REAL
+          // Opportunity-Test survivors died here invisibly in the 2026-07-21
+          // precision run. conf reveals whether it was a true homonym or a
+          // failed identity resolution (conf=0 → resolution failure, not homonym).
+          metrics.deep_trace.push({ company: company.name, title: (item.title ?? "").slice(0, 90), sigKind: sigKind.kind, role: "-", direction: "-", materiality: "-", operational_fit: false, fit_score: 0, fit_blockers: [], score: null, verdict: "homonym_reject", date: resolved.date, outcome: `homonym_reject:conf=${identity.confidence}` });
+          metrics.homonyms_rejected++; tax("homonym_wrong_identity"); continue;
+        }
         // 3. Entity role: is the company the SUBJECT of the event (the account)
         //    or an incidental mention? Fixes attributing a story to the wrong firm.
         const role = assessEntityRole(company.name, hay);

@@ -38,7 +38,7 @@ const MEDIA_OR_DIRECTORY = /(revista|diario|peri[oó]dico|portal|noticias?|prens
 // fragments ("Inter" → ¿Inter Rapidísimo? ¿Banco Inter BR? ¿Inter Milan?).
 // These match anything downstream (substrings/homonyms) and produced the
 // "Inter"/Nu-bank false positive in the 2026-07-21 traced benchmark.
-const AMBIGUOUS_NAME = /^(inter|mercado|grupo|empresa|compa[ñn][ií]a|industria|comercio|log[ií]stica|transportes?|nacional|central|global|capital|digital|express|colombia|andina|caribe|pacifico|servicios?|soluciones|sistemas?|general|internacional)$/i;
+const AMBIGUOUS_NAME = /^(inter|mercado|grupo|empresa|compa[ñn][ií]a|industria|comercio|log[ií]stica|transportes?|nacional|central|global|capital|digital|express|colombia|andina|caribe|pacifico|servicios?|soluciones|sistemas?|general|internacional|carga|cargas|estas?|estos?|env[ií]os?|entregas?|empresas|sector|negocios?|econom[ií]a|pa[ií]s|ciudad|regi[oó]n|distribuci[oó]n|almacenamiento|bodegas?|flotas?|veh[ií]culos?|camiones|operador(es)?|proveedor(es)?|clientes?|productos?|ventas?|bogot[aá]|medell[ií]n|cali|barranquilla)$/i;
 
 function domainOf(url: string): string | null {
   try { return new URL(url).host.replace(/^www\./, "").toLowerCase(); } catch { return null; }
