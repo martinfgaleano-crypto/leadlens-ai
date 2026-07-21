@@ -42,6 +42,9 @@ Suites: `test:intelligence-v2` (28) · `test:intelligence-v3` (40) · `test:deep
 - esbuild/tsx transient en scripts ad-hoc concurrentes → usar harnesses commiteados.
 - Preview/Brief E2E: ejecutados en sprints previos con motor viejo; PENDIENTES con el motor actual (bloqueo: Anthropic).
 
+## 8b. Modos operativos (sin bloqueo por falta de search providers)
+`DiscoveryMetrics.operating_mode` (company-first-discovery.ts) — clasificado post-hoc: `full_discovery` (≥1 search provider dio URLs) · `targeted_discovery` (0 URLs de búsqueda → se investiga el sitio corporativo de seeds con dominio verificado; source_type company_website) · `provider_limited` (harness con URLs conocidas/evidencia previa) · `analysis_only` · `stopped`. Cada run registra providers_available/missing, coverage_limitation, fresh_search/extraction/reused counts, confidence_impact. El reporte antepone una nota honesta de cobertura en el empty-state (pipeline.ts, vía `getLastDiscoveryCoverage()` en public-signal-provider.ts → `report.coverage_context`). **Serper NO se recompra hasta validar ROI** (`lib/ops/search-provider-roi.ts` `assessSearchRoi`: do_not_buy hasta ≥3 corridas confirmadas de cada modo con ventaja ≥1/run; jamás proyecta). Consola muestra `RUN_REQUIREMENTS` y `recommendedAction`.
+
 ## 9. Decisiones vigentes
 Ranking/scorer/selector INTACTOS; ML en shadow. Hard blockers nunca se relajan; QA humana no rescata. Nada de cuotas ni relleno. Degradación siempre visible (`degraded_seed_pack`, `provider_limited`). Créditos jamás inventados.
 
