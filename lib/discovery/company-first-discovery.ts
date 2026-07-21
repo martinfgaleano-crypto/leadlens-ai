@@ -18,6 +18,8 @@ import { classifySignalKind } from "./event-vs-metric";
 import { assessCommercialFit, requiredOperationTerms } from "./commercial-fit";
 import { assessEntityRole } from "./entity-role";
 import { classifyDirection } from "./sentiment";
+import { assessCounterevidence, applyCounterevidence } from "./counterevidence";
+import { adversarialReview } from "./adversarial-review";
 
 export const DISCOVERY_VERSION = "company-first-v1";
 
@@ -50,6 +52,7 @@ export interface DiscoveryMetrics {
   org_rejected: Record<string, number>;
   rubric_verdicts: Record<string, number>;
   homonyms_rejected: number;
+  adversarial_verdicts: Record<string, number>; adversarial_disagreements: number;
   emitted: number; error_taxonomy: Record<string, number>;
   // Per-candidate trace of everything that reaches deep validation (passed the
   // Opportunity Test). Lets a human see WHY real dated events were confirmed or
@@ -162,7 +165,7 @@ export async function runCompanyFirstDiscovery(
     candidates_with_valid_date: 0, candidates_company_matched: 0,
     opp_status_counts: { opportunity: 0, investigate: 0, monitor: 0, reject: 0 },
     materiality_counts: {}, signal_kind_counts: {}, role_counts: {}, direction_counts: {}, org_rejected: {}, rubric_verdicts: {}, homonyms_rejected: 0,
-    emitted: 0, error_taxonomy: {}, deep_trace: [],
+    emitted: 0, error_taxonomy: {}, deep_trace: [], adversarial_verdicts: {}, adversarial_disagreements: 0,
     duration_ms: 0, est_cost_usd: 0,
   };
   const tax = (k: string) => (metrics.error_taxonomy[k] = (metrics.error_taxonomy[k] ?? 0) + 1);
@@ -293,8 +296,30 @@ export async function runCompanyFirstDiscovery(
         // Risk-direction caps at monitor (never prioritaria).
         if (dir.policy === "monitor" && rub.verdict === "prioritaria") rub.verdict = "monitorear";
         metrics.rubric_verdicts[rub.verdict] = (metrics.rubric_verdicts[rub.verdict] ?? 0) + 1;
-        trace(rub.verdict, { direction: dir.direction, materiality: mat.level, operational_fit: fit.operational_fit, fit_score: fit.score, fit_blockers: fit.hard_blockers, score: rub.score });
-        if (rub.verdict === "rechazar") { tax(`rubric_reject_${mat.level === "low" ? "low_materiality" : "score<60"}`); continue; }
+        if (rub.verdict === "rechazar") { trace(rub.verdict, { direction: dir.direction, materiality: mat.level, operational_fit: fit.operational_fit, fit_score: fit.score, fit_blockers: fit.hard_blockers, score: rub.score }); tax(`rubric_reject_${mat.level === "low" ? "low_materiality" : "score<60"}`); continue; }
+
+        // 9. Formal counterevidence: reasons the thesis could be wrong. Adjusts
+        //    confidence/priority — never rescues, never auto-rejects.
+        const ce = assessCounterevidence({ content: hay, event_summary: item.title, days_old: daysOld(resolved.date), operational_fit: fit.operational_fit, corroboration: corr });
+        const adjusted = applyCounterevidence(rub.verdict, rub.score, ce);
+        rub.verdict = adjusted.verdict; rub.score = adjusted.score;
+
+        // 10. Independent adversarial review — a separate reviewer tries to
+        //     reject the assembled opportunity. Reject → never emitted.
+        const adv = adversarialReview({
+          company: company.name, identity_confidence: identity.confidence, domain: identity.domain,
+          organization_eligible: org.eligible_for_icp, entity_role_is_account: role.is_account,
+          signal_association_ok: companyInContent && idMatch.ok && role.is_account,
+          materiality: mat.level === "low" ? "low" : mat.level, operational_fit: fit.operational_fit,
+          commercial_fit_score: fit.score, causal_thesis_specific: famMatch && mat.level !== "low",
+          corroboration: corr, days_old: daysOld(resolved.date), has_next_step: true,
+          counterevidence: ce, generator_verdict: rub.verdict,
+        });
+        metrics.adversarial_verdicts[adv.verdict] = (metrics.adversarial_verdicts[adv.verdict] ?? 0) + 1;
+        if (adv.disagrees_with_generator) metrics.adversarial_disagreements++;
+        trace(`${rub.verdict}·adv:${adv.verdict}`, { direction: dir.direction, materiality: mat.level, operational_fit: fit.operational_fit, fit_score: fit.score, fit_blockers: fit.hard_blockers, score: rub.score });
+        if (adv.verdict === "reject") { tax("adversarial_reject"); continue; }
+        if (adv.verdict === "monitor" && rub.verdict !== "monitorear") rub.verdict = "monitorear";
 
         const cand: LeadCandidate = {
           id: `cf_${Buffer.from(item.canonical_url).toString("base64url").slice(0, 16)}`,

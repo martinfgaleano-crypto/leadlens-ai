@@ -47,7 +47,8 @@
     "test:deep-validation": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/deep-validation.test.ts",
     "test:intelligence-v2": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/intelligence-v2.test.ts",
     "test:intelligence-v3": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/intelligence-v3.test.ts",
-    "test:date-es": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/date-resolver-es.test.ts"
+    "test:date-es": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/date-resolver-es.test.ts",
+    "test:counterevidence": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/counterevidence.test.ts"
   },
   "dependencies": {
     "next": "14.2.5",
