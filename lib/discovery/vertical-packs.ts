@@ -124,11 +124,15 @@ export function matchVerticalPack(icp: ICP, criteria: LeadSearchCriteria): Verti
 /** Deterministic vertical-aware NeedsMap from a pack (degraded-mode quality
  *  far above the generic fallback). */
 export function packNeedsMap(pack: VerticalPack, icp: ICP, criteria: LeadSearchCriteria): NeedsMap {
+  // The client's own buying signals are first-class: pack expertise complements
+  // them, never replaces them (a mixed ICP must not lose "nueva bodega" because
+  // the fleet pack won the match).
+  const clientSignals = (criteria.buying_signals ?? []).filter(Boolean).map((s) => (s.includes('"') ? s : `"${s}"`));
   return {
     version: "needs-map-v1",
     buyer_problem: pack.problems[0],
     operational_triggers: pack.triggers.slice(0, 8),
-    observable_signals: pack.observable_signals.slice(0, 10),
+    observable_signals: Array.from(new Set([...clientSignals, ...pack.observable_signals])).slice(0, 12),
     expected_need: criteria.offer_summary ?? pack.name,
     target_company_profile: `${icp.target_industries.join(" · ")} · ${pack.operations.join(" · ")}`,
     disqualifiers: [...(icp.disqualifiers ?? []), ...pack.hard_blockers],

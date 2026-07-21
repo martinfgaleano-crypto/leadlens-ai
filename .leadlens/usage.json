@@ -1,1 +1,1 @@
-{"__test__":{"calls_today":2,"calls_month":2,"errors_today":1,"last_success":"2026-07-21T16:36:58.577Z","last_failure":"2026-07-21T16:36:58.577Z","last_error":"boom","latency_avg_ms":210,"latency_n":2,"day":"2026-07-21","month":"2026-07"}}
+{"__test__":{"calls_today":4,"calls_month":4,"errors_today":2,"last_success":"2026-07-21T16:45:30.538Z","last_failure":"2026-07-21T16:45:30.540Z","last_error":"boom","latency_avg_ms":210,"latency_n":4,"day":"2026-07-21","month":"2026-07"}}

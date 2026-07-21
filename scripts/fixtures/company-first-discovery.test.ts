@@ -55,7 +55,9 @@ t("geo no requerida (EN) ignora el check", opportunityTest({ ...good, geography_
   if (orig) process.env.ANTHROPIC_API_KEY = orig;
   t("needs map: versión presente", map.version === "needs-map-v1");
   t("needs map: familias no vacías", map.relevant_signal_families.length > 0);
-  t("needs map: señales observables desde ICP", map.observable_signals.includes("nueva bodega"));
+  // Sin LLM, el vertical pack (logistics_automation) provee las señales — vienen
+  // como frases exactas de búsqueda ('"nueva bodega"'). Contención, no igualdad.
+  t("needs map: señales observables desde ICP", map.observable_signals.some((s) => s.includes("nueva bodega")));
   t("needs map: disqualifiers preservados", map.disqualifiers.includes("entidades públicas"));
 
   console.log(`\n${passed}/${passed + failed} passed`);
