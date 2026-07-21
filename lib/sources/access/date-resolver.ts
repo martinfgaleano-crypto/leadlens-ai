@@ -14,6 +14,43 @@ export interface ResolvedDate {
 
 const ISO_RE = /(\d{4})-(\d{2})-(\d{2})/;
 
+const ES_MONTHS: Record<string, number> = {
+  enero: 1, febrero: 2, marzo: 3, abril: 4, mayo: 5, junio: 6, julio: 7,
+  agosto: 8, septiembre: 9, setiembre: 9, octubre: 10, noviembre: 11, diciembre: 12,
+  ene: 1, feb: 2, mar: 3, abr: 4, jun: 6, jul: 7, ago: 8, sep: 9, sept: 9, oct: 10, nov: 11, dic: 12,
+};
+const pad = (n: number) => String(n).padStart(2, "0");
+function inRange(y: number, mo: number, d: number): string | null {
+  if (mo < 1 || mo > 12 || d < 1 || d > 31) return null;
+  const dt = new Date(`${y}-${pad(mo)}-${pad(d)}`);
+  return Number.isFinite(dt.getTime()) && dt.getTime() < Date.now() + 86_400_000 && y >= 2000 ? `${y}-${pad(mo)}-${pad(d)}` : null;
+}
+
+/** Parse Spanish absolute ("27 de marzo de 2026", "23 sept 2025") and relative
+ *  ("hace 4 meses", "hace 2 días") dates that ISO/Date.parse miss. Conservative:
+ *  returns null on anything ambiguous — never invents a date. */
+export function parseSpanishDate(raw: string | null | undefined): string | null {
+  if (!raw) return null;
+  const s = raw.toLowerCase();
+  // Relative: "hace N día(s)/semana(s)/mes(es)/año(s)"
+  const rel = s.match(/hace\s+(\d+)\s+(d[ií]as?|semanas?|meses?|a[ñn]os?)/);
+  if (rel) {
+    const n = parseInt(rel[1], 10); const unit = rel[2]; const now = new Date();
+    if (/d[ií]a/.test(unit)) now.setDate(now.getDate() - n);
+    else if (/semana/.test(unit)) now.setDate(now.getDate() - n * 7);
+    else if (/mes/.test(unit)) now.setMonth(now.getMonth() - n);
+    else now.setFullYear(now.getFullYear() - n);
+    return now.toISOString().slice(0, 10);
+  }
+  // "27 de marzo de 2026" / "27 marzo 2026" / "23 sept 2025"
+  const dmy = s.match(/(\d{1,2})\s+(?:de\s+)?([a-záéíóú]+)\.?\s+(?:de\s+)?(\d{4})/);
+  if (dmy && ES_MONTHS[dmy[2]]) return inRange(parseInt(dmy[3], 10), ES_MONTHS[dmy[2]], parseInt(dmy[1], 10));
+  // "marzo 27, 2026" / "marzo 27 de 2026"
+  const mdy = s.match(/([a-záéíóú]+)\.?\s+(\d{1,2}),?\s+(?:de\s+)?(\d{4})/);
+  if (mdy && ES_MONTHS[mdy[1]]) return inRange(parseInt(mdy[3], 10), ES_MONTHS[mdy[1]], parseInt(mdy[2], 10));
+  return null;
+}
+
 function toIso(raw: string | null | undefined): string | null {
   if (!raw) return null;
   const m = raw.match(ISO_RE);
@@ -21,6 +58,8 @@ function toIso(raw: string | null | undefined): string | null {
     const d = new Date(`${m[1]}-${m[2]}-${m[3]}`);
     return Number.isFinite(d.getTime()) && d.getTime() < Date.now() + 86_400_000 ? `${m[1]}-${m[2]}-${m[3]}` : null;
   }
+  const es = parseSpanishDate(raw);
+  if (es) return es;
   const parsed = new Date(raw);
   if (Number.isFinite(parsed.getTime()) && parsed.getFullYear() >= 2000 && parsed.getTime() < Date.now() + 86_400_000) {
     return parsed.toISOString().slice(0, 10);
@@ -60,10 +99,21 @@ export function resolvePublicationDate(input: {
   const timeIso = toIso(timeEl?.[1]);
   if (timeIso) candidates.push({ date: timeIso, source: "html_time", confidence: "medium", method: "<time datetime>" });
 
-  // 5. Visible date near publication markers (conservative: ISO-like only)
+  // 5. Visible date near publication markers (ISO-like)
   const visible = html.match(/(?:published|publicado|posted|fecha)[:\s]{0,12}(\d{4}-\d{2}-\d{2})/i);
   const visIso = toIso(visible?.[1]);
   if (visIso) candidates.push({ date: visIso, source: "visible_text", confidence: "low", method: "visible publication marker" });
+
+  // 5b. Spanish visible date in the extracted article text (markdown strips the
+  //     HTML meta/JSON-LD, so Colombian news dates only survive as body text like
+  //     "27 de marzo de 2026" or "23 sept 2025"). Scan the first 1500 chars where
+  //     the byline/dateline lives, to avoid picking up dates cited in the story.
+  if (!candidates.some((c) => c.source !== "url_pattern")) {
+    const head = html.slice(0, 1500);
+    const esMatch = head.match(/(\d{1,2}\s+(?:de\s+)?[a-zA-Záéíóú]+\.?\s+(?:de\s+)?\d{4})|(?:hace\s+\d+\s+(?:d[ií]as?|semanas?|meses?|a[ñn]os?))/i);
+    const esIso = parseSpanishDate(esMatch?.[0]);
+    if (esIso) candidates.push({ date: esIso, source: "visible_text", confidence: "low", method: "fecha visible en español (dateline)" });
+  }
 
   // 6. URL date pattern — weak evidence only
   const urlDate = input.url?.match(/\/(\d{4})\/(\d{2})(?:\/(\d{2}))?\//);

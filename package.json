@@ -46,7 +46,8 @@
     "bench:company-first": "npx -y tsx --tsconfig tsconfig.json scripts/sources/benchmark-company-first.ts",
     "test:deep-validation": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/deep-validation.test.ts",
     "test:intelligence-v2": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/intelligence-v2.test.ts",
-    "test:intelligence-v3": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/intelligence-v3.test.ts"
+    "test:intelligence-v3": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/intelligence-v3.test.ts",
+    "test:date-es": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/date-resolver-es.test.ts"
   },
   "dependencies": {
     "next": "14.2.5",

@@ -1,0 +1,14 @@
+import { parseSpanishDate, resolvePublicationDate } from "@/lib/sources/access/date-resolver";
+let p=0,f=0; const t=(n:string,ok:boolean,d="")=>{console.log(`${ok?"✅":"❌"} ${n}${ok||!d?"":`  (${d})`}`);ok?p++:f++;};
+t("27 de marzo de 2026", parseSpanishDate("27 de marzo de 2026")==="2026-03-27", String(parseSpanishDate("27 de marzo de 2026")));
+t("23 sept 2025", parseSpanishDate("23 sept 2025")==="2025-09-23", String(parseSpanishDate("23 sept 2025")));
+t("15 enero 2026", parseSpanishDate("15 enero 2026")==="2026-01-15");
+t("marzo 27, 2026", parseSpanishDate("marzo 27, 2026")==="2026-03-27");
+t("9 dic 2025", parseSpanishDate("9 dic 2025")==="2025-12-09");
+t("hace 4 meses no null", !!parseSpanishDate("hace 4 meses"));
+t("future date rejected", parseSpanishDate("27 de marzo de 2099")===null);
+t("garbage → null", parseSpanishDate("no es fecha")===null);
+t("resolver: dateline español", resolvePublicationDate({html:"Bogotá. Publicado el 27 de marzo de 2026. Coordinadora amplió su flota...",url:null,provider_date:null}).date==="2026-03-27");
+t("resolver: provider español", resolvePublicationDate({html:"texto sin fecha",url:null,provider_date:"23 sept 2025"}).date==="2025-09-23");
+t("resolver: sigue null sin evidencia", resolvePublicationDate({html:"sin ninguna fecha aqui",url:null,provider_date:null}).date===null);
+console.log(`\n${p} passed, ${f} failed`); if(f>0)process.exit(1);
