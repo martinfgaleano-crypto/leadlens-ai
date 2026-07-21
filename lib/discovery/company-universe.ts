@@ -34,6 +34,11 @@ export interface UniverseResult {
 // Publisher/media and directory hosts never seed a company name from their own
 // brand — we mine the company names FROM their content instead.
 const MEDIA_OR_DIRECTORY = /(revista|diario|peri[oó]dico|portal|noticias?|prensa|larepublica|portafolio|dinero|semana|eltiempo|elespectador|bnamericas|forbes|bloomberg|reuters|paginas?amarillas|directorio|guia|listado)/i;
+// Single-token names that are generic Spanish commercial words or ambiguous
+// fragments ("Inter" → ¿Inter Rapidísimo? ¿Banco Inter BR? ¿Inter Milan?).
+// These match anything downstream (substrings/homonyms) and produced the
+// "Inter"/Nu-bank false positive in the 2026-07-21 traced benchmark.
+const AMBIGUOUS_NAME = /^(inter|mercado|grupo|empresa|compa[ñn][ií]a|industria|comercio|log[ií]stica|transportes?|nacional|central|global|capital|digital|express|colombia|andina|caribe|pacifico|servicios?|soluciones|sistemas?|general|internacional)$/i;
 
 function domainOf(url: string): string | null {
   try { return new URL(url).host.replace(/^www\./, "").toLowerCase(); } catch { return null; }
@@ -121,6 +126,10 @@ export async function buildCompanyUniverse(
   const universe = new Map<string, UniverseCompany>();
   for (const name of rawNames) {
     if (MEDIA_OR_DIRECTORY.test(name)) { bump("media_or_directory_name"); continue; }
+    // Ambiguous single-token generic names ("Inter", "Mercado") match anything
+    // downstream (substrings, homonyms, foreign banks) — never a resolvable
+    // account on their own. Distinctive brands (Rappi, Opain) stay valid.
+    if (AMBIGUOUS_NAME.test(name.trim())) { bump("entity_ambiguous_generic_name"); continue; }
     const cls = classifyEntity({ name, signalType: null });
     if (cls.entity_class !== "single_company" || !cls.primary_account) { bump(`entity_${cls.entity_class}`); continue; }
     const key = cls.primary_account.toLowerCase();

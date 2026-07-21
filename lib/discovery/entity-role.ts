@@ -19,8 +19,20 @@ export interface RoleAssessment {
   reason: string;
 }
 
+/** Word-boundary index of the company's first token. indexOf caused the
+ *  "Inter"/Nu-bank false positive: "inter" matched inside "internacional".
+ *  The token must appear as a complete word. */
+const tokenIndex = (hay: string, company: string): number => {
+  const tok = company.toLowerCase().split(" ")[0];
+  const esc = tok.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  try {
+    const m = hay.match(new RegExp(`(^|[^\\p{L}\\p{N}])(${esc})(?=$|[^\\p{L}\\p{N}])`, "iu"));
+    return m?.index !== undefined ? m.index + m[1].length : -1;
+  } catch { return hay.indexOf(tok); }
+};
+
 const near = (hay: string, company: string, pattern: RegExp, window = 60): boolean => {
-  const idx = hay.indexOf(company.toLowerCase().split(" ")[0]);
+  const idx = tokenIndex(hay, company);
   if (idx < 0) return false;
   const seg = hay.slice(Math.max(0, idx - window), idx + company.length + window);
   return pattern.test(seg);
@@ -28,8 +40,7 @@ const near = (hay: string, company: string, pattern: RegExp, window = 60): boole
 
 export function assessEntityRole(company: string, titleAndContent: string): RoleAssessment {
   const hay = titleAndContent.toLowerCase();
-  const c = company.toLowerCase().split(" ")[0];
-  const idx = hay.indexOf(c);
+  const idx = tokenIndex(hay, company);
   if (idx < 0) return { role: "incidental_mention", is_account: false, reason: "La empresa no aparece cerca del evento." };
 
   // Acquisition roles: "<A> adquirió <B>" — A is acquirer (account), B acquired.

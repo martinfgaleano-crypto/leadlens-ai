@@ -6,6 +6,7 @@ import { assessCommercialFit, requiredOperationTerms } from "@/lib/discovery/com
 import { assessEntityRole } from "@/lib/discovery/entity-role";
 import { classifyDirection } from "@/lib/discovery/sentiment";
 import { scoreOpportunityV2 } from "@/lib/discovery/quality-rubric";
+import { companyNameInText } from "@/lib/discovery/company-first-discovery";
 import type { NeedsMap } from "@/lib/discovery/needs-map";
 
 let passed = 0, failed = 0;
@@ -66,6 +67,14 @@ t("hard blocker → rechazar aunque score alto", blocked.verdict === "rechazar")
 const mid = scoreOpportunityV2({ corporate_identity_confidence: 70, icp_fit_score: 65, operational_fit: true, signal_association_ok: true, materiality: "medium", corroboration: "medium", causal_thesis_specific: true, days_old: 40, has_next_step: true, hard_blockers: [] });
 t("caso medio → investigar/monitorear (no prioritaria)", mid.verdict === "investigar" || mid.verdict === "monitorear", `${mid.verdict} ${mid.score}`);
 t("materiality low → rechazar", scoreOpportunityV2({ corporate_identity_confidence: 80, icp_fit_score: 80, operational_fit: true, signal_association_ok: true, materiality: "low", corroboration: "high", causal_thesis_specific: true, days_old: 10, has_next_step: true, hard_blockers: [] }).verdict === "rechazar");
+
+// ── Word-boundary association (caso real: "Inter" emitido sobre nota de Nu bank) ──
+t("'Inter' NO matchea dentro de 'internacional'", !companyNameInText("Inter", "el banco brasileño nu apalanca su expansión internacional en eeuu"));
+t("'Inter Rapidísimo' sí matchea su nombre completo", companyNameInText("Inter Rapidísimo", "la empresa Inter Rapidísimo amplió su flota en Bogotá"));
+t("'Mercado' NO matchea el sustantivo común pegado", !companyNameInText("Mercado", "el mercadolibre de productos creció"));
+t("'Rappi' matchea como palabra completa", companyNameInText("Rappi", "Rappi anunció su expansión en Colombia"));
+t("entity-role: 'Inter' no es acquirer en nota de Nu (sin token exacto)", assessEntityRole("Inter", "El banco brasileño Nu adquirió una fintech para su expansión internacional en EEUU").is_account === false);
+t("entity-role: token exacto sí funciona con boundary", assessEntityRole("Inter Rapidísimo", "Inter Rapidísimo invirtió en 200 vehículos nuevos").is_account === true);
 
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) process.exit(1);

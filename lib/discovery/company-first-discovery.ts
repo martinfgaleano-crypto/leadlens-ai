@@ -96,6 +96,19 @@ function isJunkUrl(url: string, spanish: boolean): boolean {
   return false;
 }
 
+// Word-boundary company-name match. Substring matching caused the "Inter"/
+// Nu-bank false positive ("inter" ⊂ "internacional"): a company token must
+// appear as a complete word. For names longer than 18 chars the tail may be
+// truncated mid-word, so the trailing boundary only applies to full names.
+export function companyNameInText(name: string, text: string): boolean {
+  const full = name.toLowerCase();
+  const frag = full.slice(0, Math.min(18, full.length));
+  const esc = frag.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const tail = full.length <= 18 ? "(?=$|[^\\p{L}\\p{N}])" : "";
+  try { return new RegExp(`(^|[^\\p{L}\\p{N}])${esc}${tail}`, "iu").test(text.toLowerCase()); }
+  catch { return text.toLowerCase().includes(frag); }
+}
+
 // A needs-family EVENT verb must appear in the page for it to be a material
 // event (not just a page that mentions the company).
 function eventVerbPresent(hay: string, needs: NeedsMap, spanish: boolean): boolean {
@@ -212,7 +225,7 @@ export async function runCompanyFirstDiscovery(
         const content = (ext.content ?? "").slice(0, 20_000);
         const resolved = resolvePublicationDate({ provider_date: item.published_date ?? null, html: content, url: item.url });
         const hay = `${item.title ?? ""} ${content}`.toLowerCase();
-        const companyInContent = content.toLowerCase().includes(company.name.toLowerCase().slice(0, Math.min(18, company.name.length)));
+        const companyInContent = companyNameInText(company.name, content);
         if (resolved.date) metrics.candidates_with_valid_date++;
         if (companyInContent) metrics.candidates_company_matched++;
         // Event vs metric: a statistic ("movilizó 17M pasajeros", "creció 20%")
