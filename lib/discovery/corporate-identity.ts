@@ -46,11 +46,18 @@ export async function resolveCorporateIdentity(
 ): Promise<CorporateIdentity> {
   const base: CorporateIdentity = { name, domain: null, country, confidence: 0, aliases: [], resolved_from: null, reasons: [] };
   try {
-    const { braveProvider } = await import("@/lib/sources/access/providers");
+    const { braveProvider, serperProvider } = await import("@/lib/sources/access/providers");
     const q = spanish ? `"${name}" sitio oficial ${country ?? "Colombia"}` : `"${name}" official website ${country ?? ""}`;
-    const res = await braveProvider.search({ query: q, language: spanish ? "es" : "en", region: spanish ? "co" : "us", max_results: 8, query_type: "official_domain" }).catch(() => ({ results: [] }));
+    const opts = { language: spanish ? "es" : "en", region: (spanish ? "co" : "us") as string, max_results: 8, query_type: "official_domain" as const };
+    // Use Brave AND Serper: identity resolution must not silently fail when one
+    // provider is unavailable (e.g. no Brave key) — that would zero every
+    // confidence and make the homonym guard reject real accounts.
+    const [brave, serper] = await Promise.all([
+      braveProvider.search({ query: q, ...opts }).catch(() => ({ results: [] })),
+      serperProvider.search({ query: q, ...opts }).catch(() => ({ results: [] })),
+    ]);
     let best: { host: string; url: string; score: number } | null = null;
-    for (const r of res.results) {
+    for (const r of [...brave.results, ...serper.results]) {
       const host = hostOf(r.canonical_url); if (!host || NON_CORPORATE_HOST.test(host)) continue;
       let score = nameDomainMatch(name, host);
       if (score === 0) continue;

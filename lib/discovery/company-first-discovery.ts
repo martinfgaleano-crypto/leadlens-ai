@@ -40,7 +40,7 @@ export interface DiscoveryMetrics {
   needs_map_families: string[];
   companies_discovered: number; companies_verified: number;
   universe_rejected: Record<string, number>;
-  company_signal_queries: number; urls: number; extractions: number;
+  company_signal_queries: number; urls: number; extractions: number; junk_urls_skipped: number;
   candidates_with_valid_date: number; candidates_company_matched: number;
   opp_status_counts: Record<OppStatus, number>;
   materiality_counts: Record<string, number>;
@@ -77,6 +77,21 @@ const EVENT_VERBS_EN: Record<string, string[]> = {
   technology_change: ['"implements"', '"automation"'], regulatory: ['"compliance"'],
 };
 
+// Guaranteed non-event pages (social, encyclopedias, stores, directories) and
+// foreign-Spanish domains. Filtering these BEFORE extraction spends the scarce
+// extraction budget on real candidate pages instead of pages a hard blocker
+// would reject anyway — this raises effective recall without touching any gate.
+const JUNK_URL = /(facebook\.com|instagram\.com|youtube\.com|tiktok\.com|twitter\.com|x\.com\/|linkedin\.com|wikipedia\.org|\.fandom\.|play\.google\.|apps\.apple\.|tracxn\.com|crunchbase\.com|trustpilot\.|glassdoor\.|\/directorio|\/directory|paginasamarillas|pinterest\.)/i;
+// Foreign country TLDs for a Colombia run — a .cl/.ar/.mx/.es domain is almost
+// always a same-language homonym, not the Colombian account (the geography hard
+// blocker would reject it later; skip it before we pay to extract).
+const FOREIGN_CO_TLD = /\.(cl|ar|mx|pe|es|ec|uy|py|bo|ve|gt|cr|pa)(\/|$|\.)/i;
+function isJunkUrl(url: string, spanish: boolean): boolean {
+  if (JUNK_URL.test(url)) return true;
+  if (spanish) { try { const h = new URL(url).host; if (FOREIGN_CO_TLD.test(h)) return true; } catch { /* ignore */ } }
+  return false;
+}
+
 // A needs-family EVENT verb must appear in the page for it to be a material
 // event (not just a page that mentions the company).
 function eventVerbPresent(hay: string, needs: NeedsMap, spanish: boolean): boolean {
@@ -97,8 +112,12 @@ function companyQueries(company: string, needs: NeedsMap, spanish: boolean, n: n
   const uniq = Array.from(new Set(phrases));
   const excl = spanish ? "-tendencias -empleo -directorio -ranking" : "-trends -jobs -directory -ranking";
   const year = new Date().getFullYear();
-  const qs = uniq.slice(0, n).map((p) => `"${company}" ${p} ${year} ${excl}`);
-  if (round2) qs.unshift(`"${company}" ${spanish ? "anuncio comunicado" : "announcement press release"} ${year} ${excl}`);
+  // Geo-bias: gl=co alone lets Serper return .cl/.ar/.es homonyms; naming the
+  // country in the query strongly biases toward the Colombian entity. Foreign
+  // exclusions further suppress same-language homonyms.
+  const geo = spanish ? " Colombia -site:cl -site:ar -site:es -site:mx" : "";
+  const qs = uniq.slice(0, n).map((p) => `"${company}" ${p} ${year}${geo} ${excl}`);
+  if (round2) qs.unshift(`"${company}" ${spanish ? "anuncio comunicado Colombia" : "announcement press release"} ${year} ${excl}`);
   return qs.slice(0, n);
 }
 
@@ -122,7 +141,7 @@ export async function runCompanyFirstDiscovery(
     needs_map_families: needs.relevant_signal_families,
     companies_discovered: universe.companies.length, companies_verified: universe.companies.length,
     universe_rejected: universe.stats.rejected,
-    company_signal_queries: 0, urls: 0, extractions: 0,
+    company_signal_queries: 0, urls: 0, extractions: 0, junk_urls_skipped: 0,
     candidates_with_valid_date: 0, candidates_company_matched: 0,
     opp_status_counts: { opportunity: 0, investigate: 0, monitor: 0, reject: 0 },
     materiality_counts: {}, signal_kind_counts: {}, role_counts: {}, direction_counts: {}, org_rejected: {}, rubric_verdicts: {}, homonyms_rejected: 0,
@@ -164,10 +183,20 @@ export async function runCompanyFirstDiscovery(
         ]);
         for (const r of [...brave.results, ...serper.results]) {
           if (seenUrl.has(r.canonical_url)) continue;
-          seenUrl.add(r.canonical_url); results.push(r); metrics.urls++;
+          seenUrl.add(r.canonical_url);
+          if (isJunkUrl(r.canonical_url, spanish)) { metrics.junk_urls_skipped++; tax("prefilter_junk_or_foreign"); continue; }
+          results.push(r); metrics.urls++;
         }
       }
-      for (const item of results.slice(0, 3)) {
+      // Extract event-bearing pages first: a result whose TITLE already carries a
+      // needs-family event verb is far likelier to be a real signal than the
+      // provider's top hit (often a homepage/about page). This lifts recall
+      // without relaxing any gate — the same tests still run on the content.
+      const ranked = results
+        .map((r) => ({ r, hasEvent: eventVerbPresent((r.title ?? "").toLowerCase(), needs, spanish) }))
+        .sort((a, b) => Number(b.hasEvent) - Number(a.hasEvent))
+        .map((x) => x.r);
+      for (const item of ranked.slice(0, 4)) {
         if (metrics.extractions >= budget.maxExtractions) break;
         const ext = await extractWithFallback(item.url).catch(() => ({ ok: false, content: "", extractor: "none", fallback_used: false }));
         metrics.extractions++;
