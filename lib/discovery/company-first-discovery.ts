@@ -129,7 +129,7 @@ export async function runCompanyFirstDiscovery(
   const spanish = criteria.output_language === "es" || criteria.target_market_region === "latin_america";
   const gl = criteria.target_market_region === "latin_america" ? "co" : "us";
 
-  const { braveProvider, serperProvider } = await import("@/lib/sources/access/providers");
+  const { braveProvider, serperProvider, tavilyProvider } = await import("@/lib/sources/access/providers");
   const { extractWithFallback } = await import("@/lib/sources/access/extractors");
   const { resolvePublicationDate } = await import("@/lib/sources/access/date-resolver");
 
@@ -177,11 +177,16 @@ export async function runCompanyFirstDiscovery(
       const results: { url: string; canonical_url: string; title: string | null; published_date: string | null; source_type: string | null; provider: string }[] = [];
       for (const q of queries) {
         metrics.company_signal_queries++;
-        const [brave, serper] = await Promise.all([
-          braveProvider.search({ query: q, language: spanish ? "es" : "en", region: gl, max_results: 5, query_type: "company_specific", freshness_days: 180 }).catch(() => ({ results: [] })),
-          serperProvider.search({ query: q, language: spanish ? "es" : "en", region: gl, max_results: 5, query_type: "company_specific", freshness_days: 180 }).catch(() => ({ results: [] })),
+        const sOpts = { language: spanish ? "es" : "en", region: gl, max_results: 5, query_type: "company_specific" as const, freshness_days: 180 };
+        // Three complementary search sources. Tavily surfaces real editorial/news
+        // domains (Serper alone floods social media; Brave is unavailable without
+        // a key), so it materially lifts real-event recall.
+        const [brave, serper, tavily] = await Promise.all([
+          braveProvider.search({ query: q, ...sOpts }).catch(() => ({ results: [] })),
+          serperProvider.search({ query: q, ...sOpts }).catch(() => ({ results: [] })),
+          tavilyProvider.search({ query: q, ...sOpts }).catch(() => ({ results: [] })),
         ]);
-        for (const r of [...brave.results, ...serper.results]) {
+        for (const r of [...brave.results, ...serper.results, ...tavily.results]) {
           if (seenUrl.has(r.canonical_url)) continue;
           seenUrl.add(r.canonical_url);
           if (isJunkUrl(r.canonical_url, spanish)) { metrics.junk_urls_skipped++; tax("prefilter_junk_or_foreign"); continue; }
