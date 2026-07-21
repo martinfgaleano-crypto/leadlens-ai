@@ -198,6 +198,23 @@ export async function probeAll(force = false): Promise<ProviderStatus[]> {
   return out;
 }
 
+/** Which providers each run type REQUIRES vs degrades without. */
+export const RUN_REQUIREMENTS: Record<string, { requires: string[]; degraded_without: string[]; note: string }> = {
+  preview_or_brief_report: { requires: ["anthropic", "supabase"], degraded_without: ["brave", "serper", "tavily"], note: "Sin Anthropic los reportes NO corren (fail-closed). Sin search: discovery en modo packs (cobertura mínima)." },
+  discovery_benchmark: { requires: ["supabase"], degraded_without: ["anthropic", "brave", "serper", "tavily", "firecrawl"], note: "Corre degradado con packs, pero sin search providers el recall es ~0: presupuestar Serper/Tavily antes." },
+  provider_limited_validation: { requires: ["firecrawl"], degraded_without: [], note: "Valida el pipeline profundo con URLs conocidas/newsrooms — sin search ni LLM." },
+};
+
+/** Recommended action per state — shown in the console. */
+export function recommendedAction(s: ProviderStatus): string | null {
+  if (s.id === "anthropic" && s.state === "exhausted") return "Es un LÍMITE DE USO configurado (no falta de saldo): súbelo en console.anthropic.com → Settings → Limits, o espera el reset.";
+  if (s.id === "serper" && s.state === "exhausted") return "Recargar créditos en serper.dev (≈$50 = 50k queries).";
+  if (s.id === "tavily" && s.state === "exhausted") return "Límite del plan: subir plan o esperar ciclo en app.tavily.com.";
+  if (s.id === "brave" && s.state === "exhausted") return "Plan sin pago: activar suscripción en api.search.brave.com (opcional — Serper+Tavily cubren).";
+  if (s.state === "invalid") return "Revisar/rotar la credencial en .env.local.";
+  return null;
+}
+
 /** Alert derivation — pure, testable. */
 export function deriveAlerts(statuses: ProviderStatus[]): Array<{ level: "red" | "yellow"; provider: string; message: string }> {
   const alerts: Array<{ level: "red" | "yellow"; provider: string; message: string }> = [];

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/require-admin";
-import { probeAll, deriveAlerts, PROVIDER_DEFS } from "@/lib/ops/provider-health";
+import { probeAll, deriveAlerts, PROVIDER_DEFS, RUN_REQUIREMENTS, recommendedAction } from "@/lib/ops/provider-health";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
   }
   if (force) lastForced = Date.now();
   const statuses = await probeAll(force);
-  return NextResponse.json({ version: "provider-health-v1", probed: force, statuses, alerts: deriveAlerts(statuses) });
+  return NextResponse.json({ version: "provider-health-v1", probed: force, statuses: statuses.map((s) => ({ ...s, recommendation: recommendedAction(s) })), alerts: deriveAlerts(statuses), run_requirements: RUN_REQUIREMENTS });
 }
 
 /** POST /api/admin/operations/providers { provider } — test ONE provider live.

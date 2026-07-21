@@ -8,7 +8,7 @@ import AdminLayout from "@/app/admin/_components/AdminLayout";
 import { adminFetch } from "@/lib/admin/admin-client";
 
 interface Usage { calls_today: number; calls_month: number; errors_today: number; last_success: string | null; last_failure: string | null; last_error: string | null; latency_avg_ms: number; }
-interface Status { id: string; name: string; role: string; configured: boolean; state: string; detail: string | null; latency_ms: number | null; credits: { value: string | null; kind: string }; usage: Usage | null; fallback: string; impact: string; probed_at: string | null; }
+interface Status { recommendation?: string | null; id: string; name: string; role: string; configured: boolean; state: string; detail: string | null; latency_ms: number | null; credits: { value: string | null; kind: string }; usage: Usage | null; fallback: string; impact: string; probed_at: string | null; }
 interface Alert { level: "red" | "yellow"; provider: string; message: string; }
 
 const SEM: Record<string, { bg: string; label: string }> = {
@@ -109,6 +109,7 @@ export default function ProvidersPage() {
             <div style={{ marginTop: 10, padding: "0.55rem 0.75rem", background: "#f9fafb", borderRadius: 8, fontSize: "0.78rem" }}>
               <div><strong>Fallback:</strong> {s.fallback}</div>
               <div style={{ marginTop: 3 }}><strong>Impacto si falla:</strong> {s.impact}</div>
+              {s.recommendation && <div style={{ marginTop: 5, color: "#92400e", background: "#fffbeb", border: "1px solid #fde68a", borderRadius: 6, padding: "0.3rem 0.5rem" }}><strong>Acción:</strong> {s.recommendation}</div>}
             </div>
           </div>
         ))}
