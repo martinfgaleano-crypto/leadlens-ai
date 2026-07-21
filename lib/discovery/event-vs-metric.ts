@@ -9,7 +9,8 @@ export const EVENT_VS_METRIC_VERSION = "event-vs-metric-v1";
 
 export type SignalKind =
   | "corporate_event" | "operational_change" | "strategic_decision"
-  | "state_metric" | "historical_metric" | "performance_result" | "none";
+  | "state_metric" | "historical_metric" | "performance_result"
+  | "marketing_claim" | "editorial_content" | "reference_information" | "none";
 
 // A real corporate change: an action verb tied to a new asset / contract /
 // entity / market. These CAN trigger an opportunity.
@@ -19,6 +20,13 @@ const CHANGE = /(?:adquiri[oó]|compr[oó] (\d+ )?(veh[ií]culos|camiones|buses|
 const METRIC = /(?:moviliz[oó] (m[aá]s de )?[\d.,]+ (millones? de )?(pasajeros|toneladas|usuarios|clientes)|transport[oó] [\d.,]+|factur[oó] (US\$?|COP|\$)?\s?[\d.,]+|alcanz[oó] [\d.,]+ (usuarios|clientes)|tiene (m[aá]s de )?[\d.,]+ (veh[ií]culos|sedes|empleados|puntos)|cerr[oó] el a[ñn]o con|creci[oó] [\d.,]+ ?%|report[oó] (utilidades|ingresos|resultados)|resultados (del|financieros)|movilized|transported [\d.,]+|reported (revenue|earnings|results)|grew [\d.,]+ ?%)/i;
 
 const HISTORICAL = /(?:desde (hace|el a[ñn]o) [\d]{4}|fundada en|con [\d]+ a[ñn]os de|aniversario|hist[oó]ric[ao]|trayectoria|anniversary|founded in|years of history)/i;
+
+// Awards, recognition, sponsorships, event participation → promotional, never a trigger.
+const MARKETING = /(?:recibi[oó] (un |el )?(reconocimiento|premio|galard[oó]n|certificaci[oó]n)|fue (reconocid|premiad|galardonad|distinguid)|gan[oó] (el |un )?premio|particip[oó] en (la |el )?(feria|congreso|evento|foro)|patrocin[oó]|se enorgullece|l[ií]der en (el mercado|su sector)|mejor empresa|ranking de las mejores|received (an )?award|recognized as|sponsored)/i;
+// Opinion / analysis / editorial framing (not a corporate action by the company).
+const EDITORIAL = /(?:seg[uú]n (?:expertos|analistas)|opini[oó]n|editorial|an[aá]lisis del sector|columna|tendencias (?:del|de la)|c[oó]mo (?:lograr|mejorar)|gu[ií]a (?:para|de)|\d+ (?:claves|consejos|tips|razones)|entrevista con|analysis|opinion piece)/i;
+// Reference / directory / static descriptive pages (no dated event).
+const REFERENCE = /(?:perfil de la empresa|acerca de nosotros|qui[eé]nes somos|informaci[oó]n corporativa|directorio empresarial|ficha t[eé]cnica|p[aá]gina oficial de|company profile|about us|corporate information)/i;
 
 export function classifySignalKind(titleAndContent: string): { kind: SignalKind; matched: string | null; can_trigger: boolean } {
   const hay = titleAndContent.toLowerCase();
@@ -36,5 +44,11 @@ export function classifySignalKind(titleAndContent: string): { kind: SignalKind;
   if (h) return { kind: "historical_metric", matched: h[0], can_trigger: false };
   const m = hay.match(METRIC);
   if (m) return { kind: /creci[oó]|factur[oó]|report[oó]|revenue|earnings|grew/i.test(m[0]) ? "performance_result" : "state_metric", matched: m[0], can_trigger: false };
+  const mk = hay.match(MARKETING);
+  if (mk) return { kind: "marketing_claim", matched: mk[0], can_trigger: false };
+  const ed = hay.match(EDITORIAL);
+  if (ed) return { kind: "editorial_content", matched: ed[0], can_trigger: false };
+  const rf = hay.match(REFERENCE);
+  if (rf) return { kind: "reference_information", matched: rf[0], can_trigger: false };
   return { kind: "none", matched: null, can_trigger: false };
 }

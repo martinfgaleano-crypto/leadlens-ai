@@ -53,6 +53,7 @@ async function main() {
       queries: metrics.company_signal_queries, urls: metrics.urls, extractions: metrics.extractions,
       org_rejected: metrics.org_rejected, opp: metrics.opp_status_counts,
       signal_kinds: metrics.signal_kind_counts, materiality: metrics.materiality_counts,
+      roles: metrics.role_counts, directions: metrics.direction_counts,
       rubric: metrics.rubric_verdicts, homonyms_rejected: metrics.homonyms_rejected,
       emitted: metrics.emitted, leaks: leaks.length,
       dur_s: Math.round(metrics.duration_ms / 1000), est_cost: metrics.est_cost_usd,

@@ -60,6 +60,55 @@ export function scoreOpportunity(i: RubricInput): RubricResult {
   return { score, breakdown: b, verdict, adversarial_flags: adv };
 }
 
+// ─── Rubric v2 (quality-rubric-v2) ───────────────────────────────────────────
+// Adds explicit commercial + operational fit dimensions and entity-role
+// association. Hard blockers always dominate. 0-100.
+export interface RubricV2Input {
+  corporate_identity_confidence: number;   // 0-100
+  icp_fit_score: number;                    // 0-100 (commercial fit)
+  operational_fit: boolean;
+  signal_association_ok: boolean;           // right company + right role
+  materiality: Materiality;
+  corroboration: "high" | "medium" | "low" | "insufficient";
+  causal_thesis_specific: boolean;
+  days_old: number | null;
+  has_next_step: boolean;
+  hard_blockers: string[];
+}
+
+export function scoreOpportunityV2(i: RubricV2Input): RubricResult {
+  const b: Record<string, number> = {};
+  b.identidad = Math.round((Math.min(100, i.corporate_identity_confidence) / 100) * 10);
+  b.icp_fit = Math.round((Math.min(100, i.icp_fit_score) / 100) * 15);
+  b.operational_fit = i.operational_fit ? 10 : 0;
+  b.asociacion = i.signal_association_ok ? 10 : 0;
+  b.evento_materialidad = i.materiality === "high" ? 10 : i.materiality === "medium" ? 6 : 2;
+  b.evidencia = i.corroboration === "high" ? 15 : i.corroboration === "medium" ? 11 : i.corroboration === "low" ? 6 : 1;
+  b.causalidad = i.causal_thesis_specific ? 15 : 4;
+  b.especificidad = i.causal_thesis_specific ? 5 : 1;
+  b.timing = i.days_old === null ? 0 : i.days_old <= 60 ? 5 : i.days_old <= 90 ? 3 : 1;
+  b.accionabilidad = i.has_next_step ? 5 : 1;
+  const score = Object.values(b).reduce((s, v) => s + v, 0);
+
+  const adv: string[] = [];
+  if (i.corporate_identity_confidence < 60) adv.push("Identidad corporativa poco confirmada.");
+  if (!i.operational_fit) adv.push("Sin evidencia de la operación relevante (posible fit superficial).");
+  if (!i.signal_association_ok) adv.push("La señal podría no pertenecer a esta empresa/rol.");
+  if (i.materiality === "low") adv.push("Baja materialidad.");
+  if (i.corroboration === "insufficient") adv.push("Corroboración insuficiente.");
+  if (!i.causal_thesis_specific) adv.push("Tesis no específica/causal.");
+  if (i.days_old !== null && i.days_old > 90) adv.push("Señal envejecida.");
+
+  let verdict: RubricResult["verdict"];
+  if (i.hard_blockers.length > 0 || !i.signal_association_ok || !i.operational_fit || i.materiality === "low") verdict = "rechazar";
+  else if (score >= 85 && i.materiality === "high") verdict = "prioritaria";
+  else if (score >= 75 || (score >= 85 && i.materiality === "medium")) verdict = "investigar";
+  else if (score >= 60) verdict = "monitorear";
+  else verdict = "rechazar";
+
+  return { score, breakdown: b, verdict, adversarial_flags: adv };
+}
+
 /** Corroboration tier from independent, non-syndicated corroborating sources. */
 export function corroborationTier(independentSources: number, hasPrimary: boolean, identityConfidence: number): RubricInput["corroboration"] {
   if (hasPrimary && independentSources >= 1) return "high";

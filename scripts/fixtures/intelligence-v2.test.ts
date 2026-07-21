@@ -31,6 +31,10 @@ t("lidera ranking → NO evento", !classifySignalKind("La empresa lidera el rank
 t("ganó contrato de 5 años → evento material", classifySignalKind("Ganó un contrato de cinco años con el operador").can_trigger);
 t("adquisición → strategic_decision", classifySignalKind("Bergé adquirió el 100% de Transportes Vigía").kind === "strategic_decision");
 t("aniversario → historical_metric", classifySignalKind("La compañía celebró su aniversario número 50").kind === "historical_metric");
+t("recibió reconocimiento → marketing_claim (no trigger)", classifySignalKind("La empresa recibió un reconocimiento a la sostenibilidad").kind === "marketing_claim" && !classifySignalKind("La empresa recibió un reconocimiento a la sostenibilidad").can_trigger);
+t("participó en feria → marketing_claim", classifySignalKind("La compañía participó en la feria logística de Bogotá").kind === "marketing_claim");
+t("análisis del sector → editorial_content", classifySignalKind("5 claves para mejorar la logística según expertos del sector").kind === "editorial_content");
+t("perfil de empresa → reference_information", classifySignalKind("Quiénes somos: perfil de la empresa y su información corporativa").kind === "reference_information");
 
 // ── Thesis specificity (substitution test) ──
 const generic = thesisSpecificityTest({ thesis: "Esta expansión podría requerir mejores soluciones tecnológicas.", company: "TCC", event_keyword: "nueva bodega", product_terms: ["WMS", "inventario"] });

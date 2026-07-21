@@ -12,9 +12,12 @@ import { buildCompanyUniverse } from "./company-universe";
 import { opportunityTest, type OppStatus } from "./opportunity-test";
 import { classifyMateriality } from "./materiality";
 import { resolveCorporateIdentity, signalMatchesIdentity, type CorporateIdentity } from "./corporate-identity";
-import { scoreOpportunity, corroborationTier } from "./quality-rubric";
+import { scoreOpportunityV2, corroborationTier } from "./quality-rubric";
 import { classifyOrganization } from "./organization-type";
 import { classifySignalKind } from "./event-vs-metric";
+import { assessCommercialFit, requiredOperationTerms } from "./commercial-fit";
+import { assessEntityRole } from "./entity-role";
+import { classifyDirection } from "./sentiment";
 
 export const DISCOVERY_VERSION = "company-first-v1";
 
@@ -42,6 +45,8 @@ export interface DiscoveryMetrics {
   opp_status_counts: Record<OppStatus, number>;
   materiality_counts: Record<string, number>;
   signal_kind_counts: Record<string, number>;
+  role_counts: Record<string, number>;
+  direction_counts: Record<string, number>;
   org_rejected: Record<string, number>;
   rubric_verdicts: Record<string, number>;
   homonyms_rejected: number;
@@ -120,7 +125,7 @@ export async function runCompanyFirstDiscovery(
     company_signal_queries: 0, urls: 0, extractions: 0,
     candidates_with_valid_date: 0, candidates_company_matched: 0,
     opp_status_counts: { opportunity: 0, investigate: 0, monitor: 0, reject: 0 },
-    materiality_counts: {}, signal_kind_counts: {}, org_rejected: {}, rubric_verdicts: {}, homonyms_rejected: 0,
+    materiality_counts: {}, signal_kind_counts: {}, role_counts: {}, direction_counts: {}, org_rejected: {}, rubric_verdicts: {}, homonyms_rejected: 0,
     emitted: 0, error_taxonomy: {},
     duration_ms: 0, est_cost_usd: 0,
   };
@@ -128,6 +133,11 @@ export async function runCompanyFirstDiscovery(
 
   const out: LeadCandidate[] = [];
   const seenUrl = new Set<string>();
+
+  // Client product capability terms + the operation the ICP requires (for
+  // commercial/operational fit). Derived once from the criteria + needs map.
+  const productTerms = `${criteria.offer_summary ?? ""} ${criteria.value_proposition ?? ""}`.toLowerCase().split(/[^a-záéíóúñ]+/).filter((w) => w.length >= 5).slice(0, 12);
+  const opTerms = requiredOperationTerms(needs);
 
   const daysOld = (iso: string | null) => { if (!iso) return null; const d = Math.round((Date.now() - new Date(iso).getTime()) / 86_400_000); return Number.isFinite(d) && d >= 0 ? d : null; };
 
@@ -173,7 +183,8 @@ export async function runCompanyFirstDiscovery(
         // CHANGE constructions. So: event present AND not a bare metric.
         const sigKind = classifySignalKind(hay);
         metrics.signal_kind_counts[sigKind.kind] = (metrics.signal_kind_counts[sigKind.kind] ?? 0) + 1;
-        const isBareMetric = sigKind.kind === "state_metric" || sigKind.kind === "historical_metric" || sigKind.kind === "performance_result";
+        // Metrics, marketing/editorial/reference content are context, never a trigger.
+        const isBareMetric = sigKind.kind === "state_metric" || sigKind.kind === "historical_metric" || sigKind.kind === "performance_result" || sigKind.kind === "marketing_claim" || sigKind.kind === "editorial_content" || sigKind.kind === "reference_information";
         const eventPhrase = eventVerbPresent(hay, needs, spanish);
         const famMatch = eventPhrase && !isBareMetric;
         if (isBareMetric && eventPhrase) tax(`metric_not_event_${sigKind.kind}`);
@@ -196,24 +207,39 @@ export async function runCompanyFirstDiscovery(
         // 2. Homonym guard: the signal must belong to THIS corporate identity.
         const idMatch = signalMatchesIdentity(identity, item.canonical_url, hay, spanish);
         if (!idMatch.ok) { metrics.homonyms_rejected++; tax("homonym_wrong_identity"); continue; }
-        // 3. Materiality — a metric/performance/historical signal is never high
-        //    materiality even if a keyword matches (context over keyword).
+        // 3. Entity role: is the company the SUBJECT of the event (the account)
+        //    or an incidental mention? Fixes attributing a story to the wrong firm.
+        const role = assessEntityRole(company.name, hay);
+        metrics.role_counts[role.role] = (metrics.role_counts[role.role] ?? 0) + 1;
+        if (!role.is_account) { tax(`role_${role.role}`); continue; }
+        // 4. Direction/sentiment: distress blocks (no budget); risk → monitor;
+        //    regulatory/disruption depend on the product. Replaces blanket veto.
+        const dir = classifyDirection(hay, { productSolvesCompliance: /cumplimiento|complian|regulatori/i.test(productTerms.join(" ")), productSolvesMonitoring: /visibilidad|monitoreo|telemetr|trazabilidad|tracking/i.test(productTerms.join(" ")) });
+        metrics.direction_counts[dir.direction] = (metrics.direction_counts[dir.direction] ?? 0) + 1;
+        if (dir.policy === "block") { tax(`direction_${dir.direction}`); continue; }
+        // 5. Materiality — a metric/performance/historical signal is never high.
         const matRaw = classifyMateriality(hay);
         const mat = !isBareMetric ? matRaw : { level: "low" as const, matched: matRaw.matched };
         metrics.materiality_counts[mat.level] = (metrics.materiality_counts[mat.level] ?? 0) + 1;
-        // 4. Corroboration: independent source domains seen for this company.
+        // 6. Commercial + operational fit (the #1 residual).
+        const fit = assessCommercialFit({ needs, company: company.name, sector: company.sector, content: hay, event_keyword: mat.matched, disqualifiers: criteria.disqualification_criteria ?? [], product_terms: productTerms, required_operation_terms: opTerms });
+        if (fit.hard_blockers.length) { for (const b of fit.hard_blockers) tax(b); continue; }
+        // 7. Corroboration: independent source domains seen for this company.
         if (dom) companyDomains.add(dom);
         const hasPrimary = !!identity.domain && (dom === identity.domain || hay.includes(identity.domain.split(".")[0]));
         const corr = corroborationTier(Math.max(0, companyDomains.size - 1), hasPrimary, identity.confidence);
-        // 5. Rubric + adversarial (separate from thesis generation).
-        const rub = scoreOpportunity({
+        // 8. Rubric v2 (adds commercial + operational fit).
+        const rub = scoreOpportunityV2({
           corporate_identity_confidence: identity.confidence,
-          fit_from_universe: true, materiality: mat.level,
-          signal_association_ok: companyInContent && idMatch.ok,
-          corroboration: corr, causal_thesis_specific: famMatch && mat.level !== "low",
+          icp_fit_score: fit.score, operational_fit: fit.operational_fit,
+          signal_association_ok: companyInContent && idMatch.ok && role.is_account,
+          materiality: mat.level, corroboration: corr,
+          causal_thesis_specific: famMatch && mat.level !== "low",
           days_old: daysOld(resolved.date), has_next_step: true,
           hard_blockers: verdict.hard_blockers,
         });
+        // Risk-direction caps at monitor (never prioritaria).
+        if (dir.policy === "monitor" && rub.verdict === "prioritaria") rub.verdict = "monitorear";
         metrics.rubric_verdicts[rub.verdict] = (metrics.rubric_verdicts[rub.verdict] ?? 0) + 1;
         if (rub.verdict === "rechazar") { tax(`rubric_reject_${mat.level === "low" ? "low_materiality" : "score<60"}`); continue; }
 
