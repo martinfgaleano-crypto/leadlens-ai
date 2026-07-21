@@ -60,10 +60,12 @@ export async function callClaude(
         throw new Error("[anthropic] Unexpected content type: " + block.type);
       }
 
+      try { const { recordProviderCall } = await import("@/lib/ops/usage-ledger"); recordProviderCall("anthropic", true, 0); } catch { /* ledger best-effort */ }
       return block.text;
     } catch (err) {
       lastError = err instanceof Error ? err : new Error(String(err));
       const msg = lastError.message;
+      try { const { recordProviderCall } = await import("@/lib/ops/usage-ledger"); recordProviderCall("anthropic", false, 0, msg); } catch { /* ledger best-effort */ }
 
       const isRetryable =
         msg.includes("timeout") ||

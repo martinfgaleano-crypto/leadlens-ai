@@ -198,6 +198,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { href: "/admin/lead-hunter",   label: "Lead Hunter" },
     { href: "/admin/vault-report-bridge", label: "Vault Bridge" },
     { href: "/admin/intelligence",  label: "Intelligence" },
+    { href: "/admin/operations/providers", label: "Provider Health" },
     { href: "/admin/vault",         label: "Vault" },
     { href: "/admin/companies",     label: "Companies" },
     { href: "/admin/credits",       label: "Credits" },

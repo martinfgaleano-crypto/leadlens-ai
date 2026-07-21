@@ -12,8 +12,10 @@ import {
   type SearchQuery,
   type SearchResultItem,
 } from "./provider-contract";
+import { recordProviderCall } from "@/lib/ops/usage-ledger";
 
 function emptyResponse(provider: string, query: SearchQuery, error: string, latency = 0): SearchProviderResponse {
+  try { recordProviderCall(provider, false, latency, error); } catch { /* ledger best-effort */ }
   return { ok: false, provider, query, results: [], latency_ms: latency, cost_estimate_usd: null, error };
 }
 
@@ -53,6 +55,7 @@ export const tavilyProvider: SearchProvider = {
       }));
       // Tavily prices per request; published pricing ≈ credits — recorded as null
       // until a real cost table is configured (never guessed).
+      try { recordProviderCall("tavily", true, latency); } catch { /* ledger */ }
       return { ok: true, provider: "tavily", query, results, latency_ms: latency, cost_estimate_usd: null, error: null };
     } catch (err) {
       return emptyResponse("tavily", query, err instanceof Error ? err.message.slice(0, 120) : "request failed", Date.now() - started);
@@ -99,6 +102,7 @@ export const braveProvider: SearchProvider = {
         rank: i + 1,
         locale: query.language ?? null,
       }));
+      try { recordProviderCall("brave", true, latency); } catch { /* ledger */ }
       return { ok: true, provider: "brave", query, results, latency_ms: latency, cost_estimate_usd: null, error: null };
     } catch (err) {
       return emptyResponse("brave", query, err instanceof Error ? err.message.slice(0, 120) : "request failed", Date.now() - started);
@@ -145,6 +149,7 @@ export const serperProvider: SearchProvider = {
         rank: i + 1,
         locale: query.language ?? null,
       }));
+      try { recordProviderCall("serper", true, latency); } catch { /* ledger */ }
       return { ok: true, provider: "serper", query, results, latency_ms: latency, cost_estimate_usd: null, error: null };
     } catch (err) {
       return emptyResponse("serper", query, err instanceof Error ? err.message.slice(0, 120) : "request failed", Date.now() - started);
@@ -186,6 +191,7 @@ export const firecrawlProvider: SearchProvider = {
         rank: i + 1,
         locale: query.language ?? null,
       }));
+      try { recordProviderCall("firecrawl", true, latency); } catch { /* ledger */ }
       return { ok: true, provider: "firecrawl", query, results, latency_ms: latency, cost_estimate_usd: null, error: null };
     } catch (err) {
       return emptyResponse("firecrawl", query, err instanceof Error ? err.message.slice(0, 120) : "request failed", Date.now() - started);
