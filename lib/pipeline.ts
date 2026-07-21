@@ -171,9 +171,26 @@ export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLen
     updateAccountMemoryFromReport(leadsWithQuality, id, clientKey, memoryMap).catch(() => {});
   }
 
+  // Honest coverage context: attach the discovery operating mode so the report
+  // (esp. the empty state) can explain WHY coverage was limited — companies
+  // investigated, which providers were down — instead of implying the market
+  // was fully searched. Never inflates results; only adds honest context.
+  try {
+    const { getLastDiscoveryCoverage } = await import("./providers/public-signal-provider");
+    const cov = getLastDiscoveryCoverage();
+    if (cov && !input.candidatesOverride) {
+      (report as { coverage_context?: unknown }).coverage_context = cov;
+      if (report.ranked_opportunities?.length === 0 && cov.operating_mode !== "full_discovery") {
+        const modeEs: Record<string, string> = { targeted_discovery: "investigación dirigida de empresas verificadas (sin proveedores de búsqueda de mercado)", provider_limited: "packs verticales + URLs conocidas + evidencia previa", stopped: "sin evidencia suficiente", analysis_only: "análisis de evidencia aportada" };
+        const note = `Cobertura limitada: esta corrida operó en modo «${modeEs[cov.operating_mode] ?? cov.operating_mode}». Se investigaron ${cov.companies_investigated} empresas verificadas mediante ${cov.fresh_extraction_count} extracciones de fuentes corporativas directas; ninguna presentó un evento material fechado en el período. Esto NO es una búsqueda completa del mercado: sin proveedores de búsqueda (${cov.providers_missing.join(", ")}) es probable que existan señales no vistas. La ausencia de hallazgos no implica ausencia de eventos.`;
+        report.executive_summary = `${note}\n\n${report.executive_summary ?? ""}`.trim();
+      }
+    }
+  } catch { /* coverage context is best-effort */ }
+
   const hotCount = report.hot_count;
   const warnCount = report.strategic_warnings?.length ?? 0;
-  console.log(`[pipeline] report ready — hot=${hotCount} warm=${report.warm_count} avg=${report.avg_score} warnings=${warnCount}`);
+  console.log(`[pipeline] report ready — hot=${hotCount} warm=${report.warm_count} avg=${report.avg_score} warnings=${warnCount} mode=${(report as { coverage_context?: { operating_mode?: string } }).coverage_context?.operating_mode ?? "?"}`);
 
   // Minimal experience block for downstream tier/language resolution (brief
   // rendering, entitlement lookups). Only product + language — never PII.

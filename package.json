@@ -49,7 +49,8 @@
     "test:intelligence-v3": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/intelligence-v3.test.ts",
     "test:date-es": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/date-resolver-es.test.ts",
     "test:counterevidence": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/counterevidence.test.ts",
-    "test:provider-health": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/provider-health.test.ts"
+    "test:provider-health": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/provider-health.test.ts",
+    "test:ops-modes": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/ops-modes.test.ts"
   },
   "dependencies": {
     "next": "14.2.5",

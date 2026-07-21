@@ -89,8 +89,8 @@ export const PROVIDER_DEFS: ProviderDef[] = [
   },
   {
     id: "serper", name: "Serper (Google)", role: "Búsqueda de señales + identidad (2 de 3)",
-    fallback: "Brave + Tavily.",
-    impact: "Menos resultados por query; recall de señales baja.",
+    fallback: "Vertical Packs + targeted corporate research + reused verified evidence.",
+    impact: "Menor cobertura de mercado — NO bloqueo total (modos targeted/provider_limited operan sin search).",
     envKeys: ["SERPER_API_KEY"],
     probe: async () => {
       const k = key("SERPER_API_KEY"); if (!k) return { state: "missing", detail: null, latency_ms: null };
@@ -208,7 +208,7 @@ export const RUN_REQUIREMENTS: Record<string, { requires: string[]; degraded_wit
 /** Recommended action per state — shown in the console. */
 export function recommendedAction(s: ProviderStatus): string | null {
   if (s.id === "anthropic" && s.state === "exhausted") return "Es un LÍMITE DE USO configurado (no falta de saldo): súbelo en console.anthropic.com → Settings → Limits, o espera el reset.";
-  if (s.id === "serper" && s.state === "exhausted") return "Recargar créditos en serper.dev (≈$50 = 50k queries).";
+  if (s.id === "serper" && s.state === "exhausted") return "Optional — do not recharge until search-provider ROI is validated. Coste mínimo conocido: $50 (dato manual 2026-07-22, no consultado por API).";
   if (s.id === "tavily" && s.state === "exhausted") return "Límite del plan: subir plan o esperar ciclo en app.tavily.com.";
   if (s.id === "brave" && s.state === "exhausted") return "Plan sin pago: activar suscripción en api.search.brave.com (opcional — Serper+Tavily cubren).";
   if (s.state === "invalid") return "Revisar/rotar la credencial en .env.local.";

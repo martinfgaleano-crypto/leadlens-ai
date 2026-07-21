@@ -1,6 +1,18 @@
 import type { LeadProvider } from "./lead-provider";
 import type { LeadCandidate, LeadSearchCriteria, ICP } from "@/types";
 
+/** Coverage context of the most recent discovery run — read by the pipeline to
+ *  let the report explain limited coverage honestly. Per-process; the pilot
+ *  pipeline runs discovery then reads this synchronously. */
+export interface DiscoveryCoverage {
+  operating_mode: string; providers_available: string[]; providers_missing: string[];
+  coverage_limitation: string | null; companies_investigated: number;
+  fresh_search_count: number; fresh_extraction_count: number; reused_evidence_count: number;
+  confidence_impact: string | null;
+}
+export let lastDiscoveryCoverage: DiscoveryCoverage | null = null;
+export function getLastDiscoveryCoverage(): DiscoveryCoverage | null { return lastDiscoveryCoverage; }
+
 // ─── Public-signal lead provider (company-first-v1) ──────────────────────────
 // Compliant real discovery, now COMPANY-FIRST: build a needs map from the ICP,
 // enumerate a universe of plausible real companies from permitted public
@@ -30,6 +42,19 @@ export const publicSignalProvider: LeadProvider = {
       ?? (limit <= 2 ? "preview" : limit <= 6 ? "brief" : limit <= 12 ? "intelligence" : "premium");
     const { candidates, metrics } = await runCompanyFirstDiscovery(icp, criteria, tier, limit);
     console.log(`[analytics] ${JSON.stringify({ event: "discovery_completed", version: "company-first-v1", tier, ...metrics })}`);
+    // Stash coverage context so the report can HONESTLY explain limited coverage
+    // (which providers were down, how many companies were actually investigated).
+    lastDiscoveryCoverage = {
+      operating_mode: metrics.operating_mode,
+      providers_available: metrics.providers_available,
+      providers_missing: metrics.providers_missing,
+      coverage_limitation: metrics.coverage_limitation,
+      companies_investigated: metrics.companies_verified,
+      fresh_search_count: metrics.fresh_search_count,
+      fresh_extraction_count: metrics.fresh_extraction_count,
+      reused_evidence_count: metrics.reused_evidence_count,
+      confidence_impact: metrics.confidence_impact,
+    };
     return candidates;
   },
 };

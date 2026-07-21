@@ -1,0 +1,65 @@
+{
+ "grupoexito.com.co": {
+  "urls": 0,
+  "extractions": 1,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "alkosto.com": {
+  "urls": 0,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "olimpica.com": {
+  "urls": 0,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "falabella.com.co": {
+  "urls": 0,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "homecenter.com.co": {
+  "urls": 0,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "alpina.com": {
+  "urls": 0,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "colombina.com": {
+  "urls": 0,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "bavaria.co": {
+  "urls": 0,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "postobon.com": {
+  "urls": 0,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ }
+}

@@ -57,6 +57,12 @@ export interface DiscoveryMetrics {
   adversarial_verdicts: Record<string, number>; adversarial_disagreements: number;
   source_stats: Record<string, DomainStats>;
   emitted: number; error_taxonomy: Record<string, number>;
+  // Operating-mode honesty: how this run actually obtained evidence.
+  operating_mode: "full_discovery" | "targeted_discovery" | "provider_limited" | "analysis_only" | "stopped";
+  providers_available: string[]; providers_missing: string[];
+  coverage_limitation: string | null;
+  fresh_search_count: number; fresh_extraction_count: number; reused_evidence_count: number;
+  confidence_impact: string | null;
   // Per-candidate trace of everything that reaches deep validation (passed the
   // Opportunity Test). Lets a human see WHY real dated events were confirmed or
   // rejected downstream — the substrate for calibration/human review.
@@ -169,6 +175,8 @@ export async function runCompanyFirstDiscovery(
     opp_status_counts: { opportunity: 0, investigate: 0, monitor: 0, reject: 0 },
     materiality_counts: {}, signal_kind_counts: {}, role_counts: {}, direction_counts: {}, org_rejected: {}, rubric_verdicts: {}, homonyms_rejected: 0,
     emitted: 0, error_taxonomy: {}, deep_trace: [], adversarial_verdicts: {}, adversarial_disagreements: 0, source_stats: {},
+    operating_mode: "provider_limited", providers_available: [], providers_missing: [], coverage_limitation: null,
+    fresh_search_count: 0, fresh_extraction_count: 0, reused_evidence_count: 0, confidence_impact: null,
     duration_ms: 0, est_cost_usd: 0,
   };
   const tax = (k: string) => (metrics.error_taxonomy[k] = (metrics.error_taxonomy[k] ?? 0) + 1);
@@ -186,6 +194,7 @@ export async function runCompanyFirstDiscovery(
   const sourceLedger = metrics.source_stats;
   Object.assign(sourceLedger, loadSourcePriors());
 
+  const provYield: Record<string, number> = {};
   const daysOld = (iso: string | null) => { if (!iso) return null; const d = Math.round((Date.now() - new Date(iso).getTime()) / 86_400_000); return Number.isFinite(d) && d >= 0 ? d : null; };
 
   for (const company of universe.companies) {
@@ -214,6 +223,9 @@ export async function runCompanyFirstDiscovery(
           serperProvider.search({ query: q, ...sOpts }).catch(() => ({ results: [] })),
           tavilyProvider.search({ query: q, ...sOpts }).catch(() => ({ results: [] })),
         ]);
+        if (brave.results.length) provYield.brave = (provYield.brave ?? 0) + brave.results.length;
+        if (serper.results.length) provYield.serper = (provYield.serper ?? 0) + serper.results.length;
+        if (tavily.results.length) provYield.tavily = (provYield.tavily ?? 0) + tavily.results.length;
         for (const r of [...brave.results, ...serper.results, ...tavily.results]) {
           if (seenUrl.has(r.canonical_url)) continue;
           seenUrl.add(r.canonical_url);
@@ -221,6 +233,14 @@ export async function runCompanyFirstDiscovery(
           results.push(r); metrics.urls++;
           try { noteUrl(sourceLedger, new URL(r.canonical_url).host.replace(/^www\./, "")); } catch { /* ignore */ }
         }
+      }
+      // Targeted corporate research: when search yields NOTHING for a company
+      // that has a verified corporate domain, inspect the corporate site itself
+      // (1 extraction). Honest: source_type company_website; the date/material
+      // gates still decide — this adds coverage, never fabricates events.
+      if (results.length === 0 && company.domain && round === 1) {
+        results.push({ url: `https://${company.domain}`, canonical_url: `https://${company.domain}`, title: company.name, published_date: null, source_type: "company_website", provider: "targeted_corporate" });
+        metrics.reused_evidence_count += 0; // corporate fetch is fresh, tracked via extractions
       }
       // Extract event-bearing pages first: a result whose TITLE already carries a
       // needs-family event verb is far likelier to be a real signal than the
@@ -382,6 +402,23 @@ export async function runCompanyFirstDiscovery(
   }
 
   persistSourceStats(metrics.source_stats);
+  // Operating-mode classification (post-hoc, from what actually happened).
+  metrics.fresh_search_count = metrics.urls;
+  metrics.fresh_extraction_count = metrics.extractions;
+  metrics.providers_available = Object.keys(provYield);
+  metrics.providers_missing = ["brave", "serper", "tavily"].filter((x) => !provYield[x]);
+  if (metrics.urls > 0) {
+    metrics.operating_mode = "full_discovery";
+    metrics.confidence_impact = metrics.providers_missing.length ? `Cobertura parcial: sin ${metrics.providers_missing.join("/")}.` : null;
+  } else if (metrics.extractions > 0) {
+    metrics.operating_mode = "targeted_discovery";
+    metrics.coverage_limitation = "Sin search providers: solo investigación dirigida de sitios corporativos verificados — NO es cobertura de mercado.";
+    metrics.confidence_impact = "Alta probabilidad de señales no vistas; los hallazgos son válidos pero la ausencia de hallazgos no implica ausencia de eventos.";
+  } else {
+    metrics.operating_mode = "stopped";
+    metrics.coverage_limitation = "Sin search providers ni URLs objetivo: no hay evidencia suficiente para un reporte defendible.";
+    metrics.confidence_impact = "Run detenido honestamente.";
+  }
   metrics.duration_ms = Date.now() - t0;
   metrics.est_cost_usd = Number((metrics.company_signal_queries * 0.002 + metrics.extractions * 0.008 + universe.stats.enumeration_queries * 0.004).toFixed(3));
   // Rank emitted by Opportunity Test strength then confidence (does NOT touch
