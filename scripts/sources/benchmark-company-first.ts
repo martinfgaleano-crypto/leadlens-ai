@@ -59,6 +59,9 @@ async function main() {
       dur_s: Math.round(metrics.duration_ms / 1000), est_cost: metrics.est_cost_usd,
     }, null, 1));
     for (const e of emitted) console.log("  →", e.company, "|", e.date, "|", (e.signal ?? "").slice(0, 70));
+    // Deep-validation trace: every signal that passed the Opportunity Test and
+    // reached the intelligence gates — the human-review substrate.
+    if (metrics.deep_trace.length) { console.log("  deep-validation trace:"); for (const d of metrics.deep_trace) console.log(`   • [${d.outcome}] ${d.company} | ${d.sigKind}/${d.role} | mat=${d.materiality} opfit=${d.operational_fit}(${d.fit_score}) score=${d.score ?? "-"} | ${d.date ?? "?"} | ${d.title}${d.fit_blockers.length ? ` | blockers=${d.fit_blockers.join(",")}` : ""}`); }
     results.push({ id, needs, metrics, emitted, leaks, review_ready: reviewReady });
   }
   mkdirSync("ml/data/company-first", { recursive: true });

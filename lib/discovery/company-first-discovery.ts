@@ -51,6 +51,10 @@ export interface DiscoveryMetrics {
   rubric_verdicts: Record<string, number>;
   homonyms_rejected: number;
   emitted: number; error_taxonomy: Record<string, number>;
+  // Per-candidate trace of everything that reaches deep validation (passed the
+  // Opportunity Test). Lets a human see WHY real dated events were confirmed or
+  // rejected downstream — the substrate for calibration/human review.
+  deep_trace: Array<{ company: string; title: string; sigKind: string; role: string; direction: string; materiality: string; operational_fit: boolean; fit_score: number; fit_blockers: string[]; score: number | null; verdict: string; date: string | null; outcome: string }>;
   duration_ms: number; est_cost_usd: number;
 }
 
@@ -145,7 +149,7 @@ export async function runCompanyFirstDiscovery(
     candidates_with_valid_date: 0, candidates_company_matched: 0,
     opp_status_counts: { opportunity: 0, investigate: 0, monitor: 0, reject: 0 },
     materiality_counts: {}, signal_kind_counts: {}, role_counts: {}, direction_counts: {}, org_rejected: {}, rubric_verdicts: {}, homonyms_rejected: 0,
-    emitted: 0, error_taxonomy: {},
+    emitted: 0, error_taxonomy: {}, deep_trace: [],
     duration_ms: 0, est_cost_usd: 0,
   };
   const tax = (k: string) => (metrics.error_taxonomy[k] = (metrics.error_taxonomy[k] ?? 0) + 1);
@@ -245,19 +249,20 @@ export async function runCompanyFirstDiscovery(
         //    or an incidental mention? Fixes attributing a story to the wrong firm.
         const role = assessEntityRole(company.name, hay);
         metrics.role_counts[role.role] = (metrics.role_counts[role.role] ?? 0) + 1;
-        if (!role.is_account) { tax(`role_${role.role}`); continue; }
+        const trace = (outcome: string, extra: Partial<DiscoveryMetrics["deep_trace"][number]> = {}) => metrics.deep_trace.push({ company: company.name, title: (item.title ?? "").slice(0, 90), sigKind: sigKind.kind, role: role.role, direction: "-", materiality: "-", operational_fit: false, fit_score: 0, fit_blockers: [], score: null, verdict: outcome, date: resolved.date, outcome, ...extra });
+        if (!role.is_account) { trace(`role_reject:${role.role}`); tax(`role_${role.role}`); continue; }
         // 4. Direction/sentiment: distress blocks (no budget); risk → monitor;
         //    regulatory/disruption depend on the product. Replaces blanket veto.
         const dir = classifyDirection(hay, { productSolvesCompliance: /cumplimiento|complian|regulatori/i.test(productTerms.join(" ")), productSolvesMonitoring: /visibilidad|monitoreo|telemetr|trazabilidad|tracking/i.test(productTerms.join(" ")) });
         metrics.direction_counts[dir.direction] = (metrics.direction_counts[dir.direction] ?? 0) + 1;
-        if (dir.policy === "block") { tax(`direction_${dir.direction}`); continue; }
+        if (dir.policy === "block") { trace(`direction_block:${dir.direction}`, { direction: dir.direction }); tax(`direction_${dir.direction}`); continue; }
         // 5. Materiality — a metric/performance/historical signal is never high.
         const matRaw = classifyMateriality(hay);
         const mat = !isBareMetric ? matRaw : { level: "low" as const, matched: matRaw.matched };
         metrics.materiality_counts[mat.level] = (metrics.materiality_counts[mat.level] ?? 0) + 1;
         // 6. Commercial + operational fit (the #1 residual).
         const fit = assessCommercialFit({ needs, company: company.name, sector: company.sector, content: hay, event_keyword: mat.matched, disqualifiers: criteria.disqualification_criteria ?? [], product_terms: productTerms, required_operation_terms: opTerms });
-        if (fit.hard_blockers.length) { for (const b of fit.hard_blockers) tax(b); continue; }
+        if (fit.hard_blockers.length) { trace(`fit_block:${fit.hard_blockers.join("+")}`, { direction: dir.direction, materiality: mat.level, operational_fit: fit.operational_fit, fit_score: fit.score, fit_blockers: fit.hard_blockers }); for (const b of fit.hard_blockers) tax(b); continue; }
         // 7. Corroboration: independent source domains seen for this company.
         if (dom) companyDomains.add(dom);
         const hasPrimary = !!identity.domain && (dom === identity.domain || hay.includes(identity.domain.split(".")[0]));
@@ -275,6 +280,7 @@ export async function runCompanyFirstDiscovery(
         // Risk-direction caps at monitor (never prioritaria).
         if (dir.policy === "monitor" && rub.verdict === "prioritaria") rub.verdict = "monitorear";
         metrics.rubric_verdicts[rub.verdict] = (metrics.rubric_verdicts[rub.verdict] ?? 0) + 1;
+        trace(rub.verdict, { direction: dir.direction, materiality: mat.level, operational_fit: fit.operational_fit, fit_score: fit.score, fit_blockers: fit.hard_blockers, score: rub.score });
         if (rub.verdict === "rechazar") { tax(`rubric_reject_${mat.level === "low" ? "low_materiality" : "score<60"}`); continue; }
 
         const cand: LeadCandidate = {
