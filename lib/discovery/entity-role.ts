@@ -63,6 +63,14 @@ export function assessEntityRole(company: string, titleAndContent: string): Role
   if (near(hay, company, /(inaugur[oó]|abri[oó]|construy[oó]|ampl[ií][oó])\s+(su |una |un |la |el |nuev)/i)) {
     return { role: "asset_owner", is_account: true, reason: "La empresa abrió/amplió una instalación propia." };
   }
+  // Facility attributed BY NAME to the company: "CEDI Falabella", "planta de
+  // Postobón", "bodega para Alkosto" — third-party project/showcase pages name
+  // the facility after its owner. The named owner is the asset_owner (still
+  // subject to date/materiality/fit gates — this is attribution, not approval).
+  if (near(hay, company, /(cedi|planta|bodega|centro de distribuci[oó]n|centro log[ií]stico|instalaci[oó]n)\s+(de |para |del grupo )?$/i, 45)
+      || new RegExp(`(cedi|planta|bodega|centro de distribuci[oó]n|centro log[ií]stico)\\s+(de\\s+|para\\s+)?${company.toLowerCase().split(" ")[0].replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?=$|[^\\p{L}\\p{N}])`, "iu").test(hay)) {
+    return { role: "asset_owner", is_account: true, reason: "Instalación atribuida por nombre a la empresa (CEDI/planta/bodega de la empresa)." };
+  }
   // Partnership: "<company> firma alianza / anuncia acuerdo con".
   if (near(hay, company, /(firm[oó] (una )?alianza|anunci[oó] (un )?acuerdo|se ali[oó]) con/i)) {
     return { role: "partner", is_account: true, reason: "La empresa es parte de la alianza (validar cuál parte tiene la necesidad)." };

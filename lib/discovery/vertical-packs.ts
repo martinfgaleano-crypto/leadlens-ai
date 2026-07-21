@@ -29,7 +29,7 @@ export interface VerticalPack {
   thesis_pattern: string;              // hecho→cambio→fricción→capacidad→condición→acción
   /** Real, publicly known companies operating in the vertical (Colombia).
    *  Candidates only — all verification gates still apply. */
-  seed_companies: Array<{ name: string; sector: string }>;
+  seed_companies: Array<{ name: string; sector: string; domain?: string }>;
 }
 
 const FLEET: VerticalPack = {
@@ -46,11 +46,11 @@ const FLEET: VerticalPack = {
   hard_blockers: ["sin flota propia", "operación tercerizada", "entidad pública de transporte"],
   thesis_pattern: "La empresa {evento_flota} el {fecha}; esto aumenta la complejidad de rutas/mantenimiento; un software de flotas aporta {capacidad}; validar que la flota sea propia y quién decide tecnología; acción: investigar tamaño de flota y stack antes de contactar.",
   seed_companies: [
-    { name: "Coordinadora", sector: "logística y paquetería" }, { name: "Servientrega", sector: "logística y paquetería" },
-    { name: "Inter Rapidísimo", sector: "logística y paquetería" }, { name: "TCC", sector: "transporte de carga" },
+    { name: "Coordinadora", sector: "logística y paquetería", domain: "coordinadora.com" }, { name: "Servientrega", sector: "logística y paquetería" },
+    { name: "Inter Rapidísimo", sector: "logística y paquetería", domain: "interrapidisimo.com" }, { name: "TCC", sector: "transporte de carga", domain: "tcc.com.co" },
     { name: "Envía", sector: "logística y paquetería" }, { name: "Coltanques", sector: "transporte de carga líquida" },
-    { name: "Ditransa", sector: "transporte de carga" }, { name: "Copetran", sector: "transporte terrestre" },
-    { name: "Expreso Bolivariano", sector: "transporte de pasajeros" }, { name: "Rápido Ochoa", sector: "transporte terrestre" },
+    { name: "Ditransa", sector: "transporte de carga", domain: "ditransa.com.co" }, { name: "Copetran", sector: "transporte terrestre" },
+    { name: "Expreso Bolivariano", sector: "transporte de pasajeros", domain: "bolivariano.com.co" }, { name: "Rápido Ochoa", sector: "transporte terrestre" },
     { name: "Transportes Vigía", sector: "transporte refrigerado" }, { name: "Colvanes", sector: "logística y mensajería" },
     { name: "Berlinas del Fonce", sector: "transporte terrestre" }, { name: "Cootransmagdalena", sector: "transporte de carga" },
     { name: "Transportes Botero Soto", sector: "transporte de carga" }, { name: "Logística de Distribución Sánchez Polo", sector: "transporte de carga" },
@@ -71,13 +71,13 @@ const LOGISTICS: VerticalPack = {
   hard_blockers: ["sin operación logística propia", "operación 100% tercerizada"],
   thesis_pattern: "La empresa {evento_logistico} el {fecha}; esto aumenta la complejidad de inventario y picking entre instalaciones; un WMS/automatización aporta {capacidad}; validar que la instalación sea operada directamente; acción: investigar infraestructura y stack antes de contacto.",
   seed_companies: [
-    { name: "Grupo Éxito", sector: "retail" }, { name: "Alkosto", sector: "retail" },
-    { name: "Olímpica", sector: "retail" }, { name: "Falabella de Colombia", sector: "retail" },
-    { name: "Sodimac Colombia", sector: "retail hogar y construcción" }, { name: "PriceSmart Colombia", sector: "retail mayorista" },
+    { name: "Grupo Éxito", sector: "retail", domain: "grupoexito.com.co" }, { name: "Alkosto", sector: "retail", domain: "alkosto.com" },
+    { name: "Olímpica", sector: "retail", domain: "olimpica.com" }, { name: "Falabella de Colombia", sector: "retail", domain: "falabella.com.co" },
+    { name: "Sodimac Colombia", sector: "retail hogar y construcción", domain: "homecenter.com.co" }, { name: "PriceSmart Colombia", sector: "retail mayorista" },
     { name: "Makro Colombia", sector: "retail mayorista" }, { name: "Koba Colombia", sector: "retail descuento (D1)" },
-    { name: "Jerónimo Martins Colombia", sector: "retail descuento (Ara)" }, { name: "Alpina", sector: "alimentos" },
-    { name: "Nutresa", sector: "alimentos" }, { name: "Colombina", sector: "alimentos" },
-    { name: "Bavaria", sector: "bebidas" }, { name: "Postobón", sector: "bebidas" },
+    { name: "Jerónimo Martins Colombia", sector: "retail descuento (Ara)" }, { name: "Alpina", sector: "alimentos", domain: "alpina.com" },
+    { name: "Nutresa", sector: "alimentos" }, { name: "Colombina", sector: "alimentos", domain: "colombina.com" },
+    { name: "Bavaria", sector: "bebidas", domain: "bavaria.co" }, { name: "Postobón", sector: "bebidas", domain: "postobon.com" },
     { name: "Quala", sector: "consumo masivo" }, { name: "Corona", sector: "manufactura cerámica" },
     { name: "Solla", sector: "alimentos balanceados" }, { name: "Ramo", sector: "alimentos" },
   ],
@@ -97,11 +97,11 @@ const OPERATIONAL_SW: VerticalPack = {
   hard_blockers: ["empresa sin operación productiva o de distribución"],
   thesis_pattern: "La empresa {evento_operativo} el {fecha}; esto multiplica la complejidad de coordinación entre unidades; un software de {capacidad} reduce esa fricción; validar la unidad que ejecuta y su stack; acción: mapear sistemas actuales antes de contacto.",
   seed_companies: [
-    { name: "Nutresa", sector: "alimentos" }, { name: "Alpina", sector: "alimentos" },
-    { name: "Colombina", sector: "alimentos" }, { name: "Corona", sector: "manufactura" },
-    { name: "Cementos Argos", sector: "cemento y construcción" }, { name: "Tecnoglass", sector: "manufactura de vidrio" },
+    { name: "Nutresa", sector: "alimentos" }, { name: "Alpina", sector: "alimentos", domain: "alpina.com" },
+    { name: "Colombina", sector: "alimentos", domain: "colombina.com" }, { name: "Corona", sector: "manufactura" },
+    { name: "Cementos Argos", sector: "cemento y construcción", domain: "argos.co" }, { name: "Tecnoglass", sector: "manufactura de vidrio", domain: "tecnoglass.com" },
     { name: "Auteco", sector: "ensamble de motocicletas" }, { name: "Fanalca", sector: "manufactura y movilidad" },
-    { name: "Leonisa", sector: "confección" }, { name: "Crystal", sector: "textil y confección" },
+    { name: "Leonisa", sector: "confección", domain: "leonisa.com" }, { name: "Crystal", sector: "textil y confección" },
     { name: "Nalsani", sector: "manufactura y retail (Totto)" }, { name: "Manuelita", sector: "agroindustria" },
     { name: "Riopaila Castilla", sector: "agroindustria" }, { name: "Incauca", sector: "agroindustria" },
     { name: "Enka de Colombia", sector: "manufactura de polímeros" }, { name: "Fabricato", sector: "textil" },

@@ -76,9 +76,6 @@ t("'Rappi' matchea como palabra completa", companyNameInText("Rappi", "Rappi anu
 t("entity-role: 'Inter' no es acquirer en nota de Nu (sin token exacto)", assessEntityRole("Inter", "El banco brasileño Nu adquirió una fintech para su expansión internacional en EEUU").is_account === false);
 t("entity-role: token exacto sí funciona con boundary", assessEntityRole("Inter Rapidísimo", "Inter Rapidísimo invirtió en 200 vehículos nuevos").is_account === true);
 
-console.log(`\n${passed} passed, ${failed} failed`);
-if (failed > 0) process.exit(1);
-
 // ── Vertical packs (vertical-packs-v1): fallback determinístico + moat ──
 import { matchVerticalPack, packNeedsMap, VERTICAL_PACKS } from "@/lib/discovery/vertical-packs";
 {
@@ -98,4 +95,12 @@ import { matchVerticalPack, packNeedsMap, VERTICAL_PACKS } from "@/lib/discovery
 
 console.log(`
 ${passed} passed, ${failed} failed`);
+if (failed > 0) process.exit(1);
+
+// ── Rol por atribución de instalación (caso real CEDI Falabella, run provider-limited 2026-07-22) ──
+t("'CEDI Falabella' → asset_owner", assessEntityRole("Falabella de Colombia", "Proyecto: pavimento industrial para el CEDI Falabella en Cota, Cundinamarca").role === "asset_owner");
+t("'planta de Postobón' → asset_owner", assessEntityRole("Postobón", "Ampliación de la planta de Postobón en Malambo").role === "asset_owner");
+t("atribución NO rescata otras empresas (Claro sponsor sigue incidental)", assessEntityRole("Inter Rapidísimo", "Claro, de Carlos Slim, es el nuevo patrocinador de la Selección Colombia").is_account === false);
+
+console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) process.exit(1);

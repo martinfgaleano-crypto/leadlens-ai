@@ -273,7 +273,20 @@ export async function runCompanyFirstDiscovery(
 
         // ── Deep validation (only for signals that passed the Opportunity Test) ──
         // 1. Resolve corporate identity once per company (bounded, cached).
-        if (!identity) { identity = await resolveCorporateIdentity(company.name, company.country, spanish); if (identity.domain) companyDomains.add(identity.domain); }
+        if (!identity) {
+          // Pack-verified domain short-circuit: seeds carry HTTP-verified
+          // corporate domains, so identity does not depend on search providers
+          // (which can be exhausted). Confidence from name↔domain match, capped
+          // at 85 — a live official-site search can still score higher.
+          if (company.domain) {
+            const { nameDomainMatch } = await import("./corporate-identity");
+            const score = Math.min(85, nameDomainMatch(company.name, company.domain));
+            identity = { name: company.name, domain: company.domain, country: company.country, confidence: score, aliases: [], resolved_from: `vertical-pack (dominio verificado HTTP): ${company.domain}`, reasons: [`Dominio ${company.domain} del vertical pack, verificado por HTTP.`] };
+          } else {
+            identity = await resolveCorporateIdentity(company.name, company.country, spanish);
+          }
+          if (identity.domain) companyDomains.add(identity.domain);
+        }
         // 2. Homonym guard: the signal must belong to THIS corporate identity.
         const idMatch = signalMatchesIdentity(identity, item.canonical_url, hay, spanish);
         if (!idMatch.ok) {

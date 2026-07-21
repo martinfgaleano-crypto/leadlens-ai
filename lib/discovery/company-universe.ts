@@ -128,10 +128,14 @@ export async function buildCompanyUniverse(
   // vertical as CANDIDATES — org type, identity, association and every other
   // gate still apply before anything is emitted.
   let degraded_seed_pack: string | null = null;
+  const packDomains = new Map<string, string>();   // HTTP-verified pack domains
   if (!llm_ok) {
     const { matchVerticalPack } = await import("./vertical-packs");
     const pack = matchVerticalPack(icp, criteria);
-    if (pack) { degraded_seed_pack = pack.id; for (const s of pack.seed_companies) rawNames.push(s.name); }
+    if (pack) {
+      degraded_seed_pack = pack.id;
+      for (const s of pack.seed_companies) { rawNames.push(s.name); if (s.domain) packDomains.set(s.name.toLowerCase(), s.domain); }
+    }
   }
 
   // 3. Classify + dedupe. Only single_company survives; everything else is a
@@ -148,7 +152,7 @@ export async function buildCompanyUniverse(
     const key = cls.primary_account.toLowerCase();
     if (universe.has(key)) continue;
     universe.set(key, {
-      name: cls.primary_account, domain: null,
+      name: cls.primary_account, domain: packDomains.get(cls.primary_account.toLowerCase()) ?? null,
       country: gl === "co" ? "Colombia" : (criteria.target_geography[0] ?? null),
       region: criteria.target_market_region ?? null,
       sector: icp.target_industries[0] ?? null,
