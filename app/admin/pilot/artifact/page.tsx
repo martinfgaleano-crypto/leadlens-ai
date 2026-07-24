@@ -80,6 +80,30 @@ function ScatterMatrix({ accounts }: { accounts: Any[] }) {
   );
 }
 
+function SegmentMatrix({ segments }: { segments: Any[] }) {
+  const W = 300, H = 220, pad = 34;
+  const maxCount = Math.max(1, ...segments.map((s) => s.count));
+  return (
+    <Card>
+      <div style={{ fontWeight: 700, fontSize: ".9rem", color: C.ink }}>Segment Attractiveness Matrix</div>
+      <div style={{ fontSize: ".72rem", color: C.sub, marginBottom: 6 }}>Facilidad de entrada (X) × Potencial comercial (Y) · tamaño = # cuentas</div>
+      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", maxWidth: 360 }}>
+        <line x1={pad} y1={H - pad} x2={W - 6} y2={H - pad} stroke={C.line} />
+        <line x1={pad} y1={6} x2={pad} y2={H - pad} stroke={C.line} />
+        <text x={W / 2} y={H - 6} fontSize="9" fill={C.sub} textAnchor="middle">Facilidad de entrada →</text>
+        <text x={12} y={H / 2} fontSize="9" fill={C.sub} textAnchor="middle" transform={`rotate(-90 12 ${H / 2})`}>Potencial comercial →</text>
+        {segments.length === 0 && <text x={W / 2} y={H / 2} fontSize="11" fill={C.sub} textAnchor="middle">Sin segmentos</text>}
+        {segments.map((s, i) => {
+          const cx = pad + (s.ease_of_entry / 100) * (W - pad - 12);
+          const cy = (H - pad) - (s.commercial_potential / 100) * (H - pad - 12);
+          const r = 5 + (s.count / maxCount) * 12;
+          return <g key={i}><circle cx={cx} cy={cy} r={r} fill={C.channel + "aa"} stroke={C.channel} /><text x={cx} y={cy - r - 2} fontSize="8" fill={C.ink} textAnchor="middle">{s.id}</text></g>;
+        })}
+      </svg>
+    </Card>
+  );
+}
+
 export default function PilotArtifactPage() {
   const [d, setD] = useState<Any | null>(null);
   const [err, setErr] = useState<string | null>(null);
@@ -96,6 +120,7 @@ export default function PilotArtifactPage() {
   if (d.error === "no_artifacts") return <AdminLayout><div style={{ padding: 16 }}>No hay artefactos de Amor de Gea en <code>ml/data/pilot-amor-de-gea/</code>. Corre <code>npm run pilot:amor-de-gea</code>.</div></AdminLayout>;
 
   const m = d.manifest ?? {}, met = d.metrics ?? {}, cands: Any[] = d.candidates ?? [];
+  const land = d.marketLandscape ?? null, ranked: Any[] = d.ranked ?? [], shortlist: Any[] = d.shortlist ?? [];
   const roles = met.universe_role_counts ?? m.universe_role_counts ?? {};
   const tax = met.error_taxonomy ?? m.error_taxonomy ?? {};
   const opp = met.opp_status_counts ?? {};
@@ -158,10 +183,65 @@ export default function PilotArtifactPage() {
         </Card>
       </Section>
 
+      {/* Market Landscape & Buyer Segments (Market-to-Account architecture) */}
+      {land && (
+        <Section title="Market Landscape & Buyer Segments" sub="El mercado primero: segmentos de comprador, atractivo estructural y dónde concentrar esfuerzo. El universo entra sin exigir un evento reciente.">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))", gap: 12, marginBottom: 12 }}>
+            <BarChart title="Buyer Segment Map" sub={`Universo verificado: ${land.total_accounts} cuentas · ${land.verified_with_domain} con dominio`} data={land.segments.map((s: any) => ({ label: s.label, value: s.count, color: C.investigate }))} />
+            <SegmentMatrix segments={land.segments} />
+            <BarChart title="Market Funnel" sub="De mercado a oportunidad — timing es un eje aparte, no puerta de entrada." data={[
+              { label: "Descubiertas", value: land.funnel.discovered, color: C.investigate },
+              { label: "Verificadas (dominio)", value: land.funnel.verified, color: C.monitor },
+              { label: "High fit (≥65)", value: land.funnel.high_fit, color: C.channel },
+              { label: "Shortlist", value: land.funnel.shortlisted, color: C.validate },
+              { label: "Validation candidates", value: land.funnel.validation_candidates, color: C.validate },
+              { label: "Dynamic opportunities", value: land.funnel.dynamic_opportunities, color: land.funnel.dynamic_opportunities > 0 ? C.ok : C.act },
+            ]} />
+            <BarChart title="Buyer Type Distribution" sub="Quién decide la compra en cada cuenta" data={land.buyer_types.map((b: any) => ({ label: b.type, value: b.count, color: C.monitor }))} />
+          </div>
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: ".78rem" }}>
+              <thead><tr style={{ textAlign: "left", color: C.sub, borderBottom: `2px solid ${C.line}` }}>{["Segmento", "Cuentas", "High fit", "Facilidad entrada", "Potencial comercial", "Nota"].map((h) => <th key={h} style={{ padding: "6px 8px" }}>{h}</th>)}</tr></thead>
+              <tbody>{land.segments.map((s: any, i: number) => (
+                <tr key={i} style={{ borderBottom: `1px solid ${C.line}` }}>
+                  <td style={{ padding: "7px 8px", fontWeight: 700 }}>{s.label}</td>
+                  <td style={{ padding: "7px 8px" }}>{s.count}</td><td style={{ padding: "7px 8px" }}>{s.high_fit}</td>
+                  <td style={{ padding: "7px 8px" }}>{s.ease_of_entry}/100</td><td style={{ padding: "7px 8px" }}>{s.commercial_potential}/100</td>
+                  <td style={{ padding: "7px 8px", color: C.sub, maxWidth: 300 }}>{s.note}</td>
+                </tr>
+              ))}</tbody>
+            </table>
+          </div>
+        </Section>
+      )}
+
+      {/* Structural Ranking (separate scores) */}
+      {ranked.length > 0 && (
+        <Section title="Structural Account Ranking" sub="Scores SEPARADOS — un fit alto con timing bajo no es una oportunidad fuerte. Ordenado por atractivo estructural.">
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: ".78rem" }}>
+              <thead><tr style={{ textAlign: "left", color: C.sub, borderBottom: `2px solid ${C.line}` }}>{["Empresa", "Segmento", "Fit", "Attractiveness", "Timing", "Evidence", "Acción"].map((h) => <th key={h} style={{ padding: "6px 8px" }}>{h}</th>)}</tr></thead>
+              <tbody>{[...ranked].sort((a: any, b: any) => (b.scores.attractiveness + b.scores.fit) - (a.scores.attractiveness + a.scores.fit)).map((a: any, i: number) => (
+                <tr key={i} style={{ borderBottom: `1px solid ${C.line}` }}>
+                  <td style={{ padding: "7px 8px", fontWeight: 700 }}>{a.company}<div style={{ fontSize: ".66rem", color: C.sub, fontWeight: 400 }}>{a.domain ?? "sin dominio"}</div></td>
+                  <td style={{ padding: "7px 8px" }}>{a.segment.primarySegment}</td>
+                  <td style={{ padding: "7px 8px", fontWeight: 700 }}>{a.scores.fit}</td>
+                  <td style={{ padding: "7px 8px" }}>{a.scores.attractiveness}</td>
+                  <td style={{ padding: "7px 8px", color: a.scores.timing < 40 ? C.act : C.ink }}>{a.scores.timing}</td>
+                  <td style={{ padding: "7px 8px" }}>{a.scores.evidence}</td>
+                  <td style={{ padding: "7px 8px" }}><Pill text={a.scores.actionability} color={STATUS_COLOR[a.scores.actionability === "act_now" ? "act_now" : a.scores.actionability === "validate_first" ? "validate_first" : a.scores.actionability === "monitor" ? "monitor" : "rechazar"] ?? C.investigate} /></td>
+                </tr>
+              ))}</tbody>
+            </table>
+          </div>
+          {shortlist.length > 0 && <p style={{ fontSize: ".78rem", color: C.sub, marginTop: 8 }}><b>Shortlist para deep research ({shortlist.length}, con diversidad de segmento):</b> {shortlist.map((s: any) => s.company).join(" · ")}.</p>}
+        </Section>
+      )}
+
       {/* Charts */}
       <Section title="Research Coverage & Diagnóstico" sub="Todos los gráficos derivan de los mismos datos de la corrida (fuente única).">
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))", gap: 12 }}>
-          <BarChart title="Research Funnel" sub={`Cobertura: ${m.operating_mode}. Providers: ${(met.providers_available ?? []).join("/") || "—"}${(met.providers_missing ?? []).length ? " · agotado: " + met.providers_missing.join("/") : ""}`} data={funnel} />
+          <BarChart title="Research Funnel (extracción)" sub={`Cobertura: ${m.operating_mode}. Providers: ${(met.providers_available ?? []).join("/") || "—"}${(met.providers_missing ?? []).length ? " · agotado: " + met.providers_missing.join("/") : ""}`} data={funnel} />
           <ScatterMatrix accounts={cands} />
           <BarChart title="Account Role Mix" sub={`Universo verificado: ${met.companies_verified ?? 0} cuentas`} data={roleData} />
           <BarChart title="Rejection Reasons" sub={`${Object.values(tax).reduce((a: number, b: any) => a + Number(b), 0)} descartes (los gates funcionaron)`} data={rejData} />
