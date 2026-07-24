@@ -141,8 +141,24 @@ export default function PilotArtifactPage() {
 
   const badge = (t: string, c: string) => <span style={{ background: c + "16", color: c, border: `1px solid ${c}33`, borderRadius: 6, padding: "0.15rem 0.5rem", fontSize: ".72rem", fontWeight: 700 }}>{t}</span>;
 
+  // Print-to-PDF: clone the fully-rendered report (inline styles + SVG charts)
+  // into a clean window without the admin chrome, then print → "Save as PDF".
+  const printPdf = () => {
+    const el = document.getElementById("pilot-report");
+    if (!el) { window.print(); return; }
+    const w = window.open("", "_blank", "width=1000,height=800");
+    if (!w) { window.print(); return; }
+    w.document.write(`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>LeadLens — ${d.client} — Pilot Report ${d.run_id}</title><style>@page{margin:12mm}*{box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#0f172a;margin:0;padding:20px;background:#fff}section{break-inside:avoid;page-break-inside:avoid}table{width:100%;border-collapse:collapse}svg{max-width:100%}h1,h2{break-after:avoid}</style></head><body>${el.outerHTML}</body></html>`);
+    w.document.close(); w.focus();
+    setTimeout(() => { try { w.print(); } catch { /* user can print manually */ } }, 500);
+  };
+
   return (
     <AdminLayout>
+      <div className="no-print" style={{ display: "flex", justifyContent: "flex-end", marginBottom: 10 }}>
+        <button onClick={printPdf} style={{ background: "#0f172a", color: "#fff", border: "none", borderRadius: 8, padding: "0.5rem 1rem", fontWeight: 700, fontSize: ".82rem", cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>⬇ Descargar PDF</button>
+      </div>
+      <div id="pilot-report">
       {/* Cover */}
       <div style={{ background: `linear-gradient(135deg,${C.ink},#1e293b)`, color: "#fff", borderRadius: 14, padding: "1.3rem 1.5rem", marginBottom: 18 }}>
         <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 10, alignItems: "flex-start" }}>
@@ -311,6 +327,7 @@ export default function PilotArtifactPage() {
         </Card>
       </Section>
       <div style={{ fontSize: ".7rem", color: C.sub, textAlign: "center", marginTop: 10 }}>Run {d.run_id} · {d.origin} · datos reales, sin promoción artificial.</div>
+      </div>
     </AdminLayout>
   );
 }
