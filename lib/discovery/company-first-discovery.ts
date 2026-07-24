@@ -168,10 +168,25 @@ export function buildCompanyQueries(company: string, domain: string | null, need
   const phrases: string[] = [];
   for (const fam of needs.relevant_signal_families) for (const v of (verbs[fam] ?? [])) phrases.push(v);
   const wellnessContext = spanish && /bienestar|bebidas? funcional|productos? naturales|spa|hotel|retail/i.test(`${needs.buyer_problem} ${needs.expected_need}`);
+  // Event-first families for physical/retail/hospitality/wellness ICPs: prioritise
+  // DATED events (openings, new programs, supplier onboarding, partnerships,
+  // gifting, renovation) over static portfolio/catalog pages — the diagnosed
+  // Amor de Gea bottleneck (fit estático → channel_access → investigate).
   const wellnessSpecific = wellnessContext
     ? accountRole === "hospitality_operator"
-      ? ['("apertura de hotel" OR "nuevo hotel" OR "abre hotel")', '("nuevo spa" OR "amplió su spa" OR "programa de bienestar")', '("nuevo menú" OR "nueva experiencia wellness" OR "alianza de bienestar")']
-      : ['("nueva tienda" OR "abre nueva" OR "abrirá")', '("amplió su surtido" OR "nueva categoría" OR "Mundo Fit")', '("programa de bienestar" OR "alianza wellness" OR "nuevo spa")']
+      ? [
+          '("apertura de hotel" OR "nuevo hotel" OR "abre hotel" OR "inauguró" OR "nueva sede")',
+          '("nuevo spa" OR "renovación de spa" OR "programa de bienestar" OR "wellness amenities" OR "nueva experiencia de bienestar")',
+          '("nuevo menú" OR "nueva carta" OR "alianza de bienestar" OR "productos locales" OR "marca invitada")',
+          '("convocatoria de proveedores" OR "abastecimiento local" OR "compras sostenibles" OR "nuevos aliados")',
+        ]
+      : [
+          '("nueva tienda" OR "abre nueva" OR "abrirá" OR "inauguró" OR "nueva sede" OR "expansión")',
+          '("amplió su surtido" OR "nueva categoría" OR "nueva línea" OR "bebidas funcionales" OR "productos naturales")',
+          '("programa de bienestar" OR "alianza wellness" OR "convenio" OR "partnership" OR "marca invitada")',
+          '("registro de proveedores" OR "convocatoria de proveedores" OR "proveedores locales" OR "sourcing")',
+          '("regalos corporativos" OR "kits de bienestar" OR "employee gifting" OR "renovación" OR "relanzamiento")',
+        ]
     : [];
   const uniq = Array.from(new Set([...wellnessSpecific, ...phrases]));
   const excl = spanish ? "-tendencias -empleo -directorio -ranking" : "-trends -jobs -directory -ranking";
