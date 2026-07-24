@@ -1,37 +1,25 @@
-# Checkpoint — Provider Coverage Recovery + Pilot Readiness (2026-07-24)
+# Checkpoint — Primera corrida full_discovery de Amor de Gea (2026-07-24)
 
 ## Estado
-- Rama `main`, tree limpio. Último commit: **`4f...` (ver `git log -1`)** sobre `d781660`.
-- `npm run release:check` → **exit 0** (tsc + ~28 suites + build, todo verde).
-- Decisiones de producto APROBADAS y protegidas (NO reabrir): ranking actionability-first (capa sobre fit→signal→evidence, empates conservan orden) + carril channel_access (solo físico/retail/hospitality/wellness; produce investigate/validate_first con flag `channel_fit_not_buying_intent`; nunca act_now solo).
+- Rama `main`, tree limpio. Último commit de código: `9ab0c0a` (+ checkpoint `9c638b4`). ESTA sesión NO modificó código (solo probes + corrida), así que no se corrió release:check.
+- Decisiones protegidas (NO reabrir): ranking actionability-first; channel_access (investigate/validate_first, `channel_fit_not_buying_intent`, nunca act_now solo).
 
-## Providers (probe en vivo 2026-07-24)
-- anthropic: OK · supabase: OK · firecrawl: OK (~600 cr)
-- **brave: RECUPERADO (200)** · serper: agotado (400 "not enough credits") · tavily: agotado
-- Consecuencia: solo 1 search saludable → `searchCoverageReadiness().sufficient = false` (requiere ≥2). Amor de Gea se AUTO-BLOQUEA antes de gastar LLM.
+## Providers (probe 2026-07-24, post-recarga Tavily)
+- anthropic OK · supabase OK · firecrawl OK (~600cr) · **brave OK · tavily OK** · serper agotado (400 "not enough credits").
+- `searchCoverageReadiness().sufficient = true` (brave+tavily). El gate del harness dejó pasar la corrida.
 
-## Cambios de esta sesión (todos commiteados, verdes)
-1. `lib/ops/provider-health.ts`: `classifyProviderError()` (taxonomía compartida: exhausted/invalid/rate_limited/unknown) + `searchCoverageReadiness()` (≥2 search saludables).
-2. `lib/discovery/company-first-discovery.ts`: search `.catch` preserva `{ok,error}`; `metrics.provider_status` por-run distingue available / healthy_no_results / exhausted / etc.; `providers_missing` = solo los que ERRARON; `coverage_limitation` nombra agotados.
-3. `scripts/sources/run-amor-de-gea-pilot.ts`: gate de cobertura ANTES de gastar LLM → `STOPPED_INSUFFICIENT_SEARCH_COVERAGE` (exit 3) salvo `AMOR_ALLOW_LIMITED_COVERAGE=true`. (Ya tenía el fix de budget-split 60/40 de la sesión anterior.)
-4. `scripts/fixtures/provider-error-taxonomy.test.ts` (9 tests) + en `release:check`.
+## Corrida full_discovery (dir ml/data/pilot-amor-de-gea/2026-07-24T18-36-23-380Z)
+- operating_mode: **full_discovery** (provider_status {brave:available, tavily:available, serper:unknown}).
+- Funnel: 15 empresas verificadas → 29 queries → 82 URLs (42 junk-prefiltradas) → 15 extracciones → 3 investigate / 12 reject → **2 candidatos emitidos**, 1 novel, **0 dynamic**.
+- Rechazos (correctos): no_valid_date 10, no_material_event 7, historical_metric 3, stale 2, geography 2.
+- Candidatos (ambos channel_access / investigar, do_not_deliver):
+  1. GHL Hoteles (hotelería) — señal = informe sostenibilidad 2024, SIN fecha, historical_metric, corr low, 69/100 → useful validation candidate.
+  2. Alimentos Sostenibles (distribuidor) — fecha 2024-09-07 (envejecida), materiality medium, 72/100 → useful validation candidate.
+- status: **insufficient_dynamic_opportunities** · delivery: **do_not_deliver** · costo ~$0.22 ($0.198 discovery + $0.023 LLM) · 85s.
 
-## Cómo ejecutar Amor de Gea válido (cuando ≥2 search se recuperen)
-```
-# 1. recargar serper (o tavily) hasta tener ≥2 search en verde
-# 2. verificar: el harness ya no se auto-bloquea
-PILOT_E2E_MAX_USD=3 AMOR_PILOT_PHASE=discovery npm run pilot:amor-de-gea
-# → debería entrar en full_discovery (urls>0, ≥2 providers), no provider_limited
-```
-Forzar modo limitado (entrega do_not_deliver, solo para probar el flujo):
-```
-AMOR_ALLOW_LIMITED_COVERAGE=true PILOT_E2E_MAX_USD=3 npm run pilot:amor-de-gea
-```
+## Hallazgo clave
+Con cobertura de búsqueda REAL (29 queries, 82 URLs), el sistema encontró 0 eventos de compra fechados/dinámicos para este ICP → el bloqueo ya NO es de providers sino de MERCADO/QUERY: la niche wellness-beverage colombiana no arroja eventos públicos frescos, solo páginas estáticas de canal. Diagnóstico honesto pasó de "no pudimos buscar" (provider_coverage_insufficient) a "buscamos bien y no hay evento fresco" (insufficient_dynamic_opportunities).
 
-## Próximo paso exacto (siguiente sesión)
-Objetivo: primera corrida Amor de Gea en `full_discovery`.
-1. Probe barato de providers (curl, sin llamadas costosas): confirmar ≥2 search en verde. Si no, NO correr.
-2. Con ≥2 verdes: `PILOT_E2E_MAX_USD=3 AMOR_PILOT_PHASE=discovery npm run pilot:amor-de-gea`.
-3. Revisar manifest: `operating_mode` debe ser `full_discovery`; validar candidatos con el trace; channel_access sigue en investigate, no opportunity.
-4. Si el manifest sale bien → fase `full` con budget acotado para generar el reporte piloto real.
-NO re-auditar el repo. NO reabrir ranking/channel_access. Leer este checkpoint primero.
+## Próximo paso recomendado
+El lever ya no es recargar providers. Es la ESTRATEGIA DE QUERY para canal/wellness: probar queries orientadas a EVENTO (aperturas de tienda/resort, nuevos programas wellness, alianzas de marca, expansión de surtido) en vez de páginas de portafolio de canal — para que channel_access encuentre eventos dinámicos, no solo fit estático. Requiere: revisar EVENT_VERBS/channel query builder para el vertical wellness, correr de nuevo full_discovery, comparar dynamic_opportunity_count. (Opcional menor: el manifest del harness no copia provider_status/coverage desde discovery.metrics — está en discovery.json; surfacearlo mejoraría auditoría.)
+NO re-auditar. NO reabrir ranking/channel_access. Leer este checkpoint primero.
