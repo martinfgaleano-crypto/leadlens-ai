@@ -209,6 +209,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { href: "/admin/vault-report-bridge", label: "Vault Bridge" },
     { href: "/admin/intelligence",  label: "Intelligence" },
     { href: "/admin/operations/providers", label: "Provider Health" },
+    { href: "/admin/pilot/artifact", label: "Pilot Report (Amor de Gea)" },
     { href: "/admin/vault",         label: "Vault" },
     { href: "/admin/companies",     label: "Companies" },
     { href: "/admin/credits",       label: "Credits" },
