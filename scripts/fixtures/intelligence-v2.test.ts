@@ -28,6 +28,9 @@ t("compró 120 vehículos → evento material", classifySignalKind("La empresa c
 t("creció 20% → insuficiente sin causa", !classifySignalKind("La empresa creció 20% en el último año").can_trigger);
 t("nueva planta que aumenta capacidad → evento", classifySignalKind("Abrió una nueva planta que aumenta la capacidad").can_trigger);
 t("lidera ranking → NO evento", !classifySignalKind("La empresa lidera el ranking del sector").can_trigger);
+t("retiro de gerente y renovación directiva → NO evento comercial", !classifySignalKind("El gerente anunció su retiro y la junta busca renovación").can_trigger);
+t("abre nueva tienda → evento operativo", classifySignalKind("Olímpica abre una nueva tienda en Chía").can_trigger);
+t("plan concreto de 16 aperturas → evento operativo", classifySignalKind("Grupo Éxito abrirá 16 nuevas tiendas en Colombia").can_trigger);
 t("ganó contrato de 5 años → evento material", classifySignalKind("Ganó un contrato de cinco años con el operador").can_trigger);
 t("adquisición → strategic_decision", classifySignalKind("Bergé adquirió el 100% de Transportes Vigía").kind === "strategic_decision");
 t("aniversario → historical_metric", classifySignalKind("La compañía celebró su aniversario número 50").kind === "historical_metric");

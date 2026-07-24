@@ -12,6 +12,10 @@ export interface ProviderUsage {
   last_success: string | null; last_failure: string | null; last_error: string | null;
   latency_avg_ms: number; latency_n: number;
   day: string; month: string;      // rollover keys
+  input_tokens_today?: number; output_tokens_today?: number;
+  input_tokens_month?: number; output_tokens_month?: number;
+  calculated_cost_usd_today?: number; calculated_cost_usd_month?: number;
+  pricing_source?: string; pricing_model?: string;
 }
 
 type Ledger = Record<string, ProviderUsage>;
@@ -39,6 +43,31 @@ export function recordProviderCall(provider: string, ok: boolean, latencyMs: num
   if (ok) u.last_success = new Date().toISOString();
   else { u.errors_today++; u.last_failure = new Date().toISOString(); u.last_error = (error ?? "unknown").slice(0, 200); }
   if (Number.isFinite(latencyMs) && latencyMs >= 0) { u.latency_avg_ms = Math.round((u.latency_avg_ms * u.latency_n + latencyMs) / (u.latency_n + 1)); u.latency_n++; }
+  persist();
+}
+
+export function recordLLMUsage(input: {
+  provider: string; model: string; inputTokens: number; outputTokens: number;
+  calculatedCostUsd: number | null; pricingSource: string;
+}): void {
+  const L = load();
+  const u = (L[input.provider] ??= { calls_today: 0, calls_month: 0, errors_today: 0, last_success: null, last_failure: null, last_error: null, latency_avg_ms: 0, latency_n: 0, day: today(), month: thisMonth() });
+  if (u.day !== today()) {
+    u.calls_today = 0; u.errors_today = 0; u.input_tokens_today = 0; u.output_tokens_today = 0; u.calculated_cost_usd_today = 0; u.day = today();
+  }
+  if (u.month !== thisMonth()) {
+    u.calls_month = 0; u.input_tokens_month = 0; u.output_tokens_month = 0; u.calculated_cost_usd_month = 0; u.month = thisMonth();
+  }
+  u.input_tokens_today = (u.input_tokens_today ?? 0) + input.inputTokens;
+  u.output_tokens_today = (u.output_tokens_today ?? 0) + input.outputTokens;
+  u.input_tokens_month = (u.input_tokens_month ?? 0) + input.inputTokens;
+  u.output_tokens_month = (u.output_tokens_month ?? 0) + input.outputTokens;
+  if (input.calculatedCostUsd !== null) {
+    u.calculated_cost_usd_today = Number(((u.calculated_cost_usd_today ?? 0) + input.calculatedCostUsd).toFixed(8));
+    u.calculated_cost_usd_month = Number(((u.calculated_cost_usd_month ?? 0) + input.calculatedCostUsd).toFixed(8));
+  }
+  u.pricing_model = input.model;
+  u.pricing_source = input.pricingSource;
   persist();
 }
 

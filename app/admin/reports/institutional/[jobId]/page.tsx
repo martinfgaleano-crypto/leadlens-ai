@@ -30,6 +30,55 @@ function ClaimLine({ c }: { c: Claim }) {
   );
 }
 
+function HorizontalBars({ items, max }: { items: Array<{ label: string; value: number; color: string; note?: string }>; max?: number }) {
+  const ceiling = Math.max(max ?? 0, ...items.map((item) => item.value), 1);
+  return (
+    <div role="img" aria-label={items.map((item) => `${item.label}: ${item.value}`).join(", ")} style={{ display: "grid", gap: 9 }}>
+      {items.map((item) => (
+        <div key={item.label}>
+          <div style={{ display: "flex", justifyContent: "space-between", gap: 10, fontSize: 11, marginBottom: 3 }}>
+            <span style={{ color: "#334155", fontWeight: 650 }}>{item.label}</span>
+            <span style={{ color: "#64748b" }}>{item.value}{item.note ? ` · ${item.note}` : ""}</span>
+          </div>
+          <div style={{ height: 9, background: "#f1f5f9", borderRadius: 999, overflow: "hidden" }}>
+            <div style={{ width: `${Math.max(item.value > 0 ? 3 : 0, (item.value / ceiling) * 100)}%`, height: "100%", background: item.color, borderRadius: 999 }} />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function DonutChart({ segments, center, sublabel }: { segments: Array<{ label: string; value: number; color: string }>; center: string; sublabel: string }) {
+  const total = Math.max(segments.reduce((sum, segment) => sum + segment.value, 0), 1);
+  let offset = 0;
+  const radius = 42;
+  const circumference = 2 * Math.PI * radius;
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
+      <svg width="132" height="132" viewBox="0 0 120 120" role="img" aria-label={segments.map((segment) => `${segment.label}: ${segment.value}`).join(", ")}>
+        <circle cx="60" cy="60" r={radius} fill="none" stroke="#f1f5f9" strokeWidth="15" />
+        {segments.filter((segment) => segment.value > 0).map((segment) => {
+          const length = (segment.value / total) * circumference;
+          const node = <circle key={segment.label} cx="60" cy="60" r={radius} fill="none" stroke={segment.color} strokeWidth="15" strokeDasharray={`${length} ${circumference - length}`} strokeDashoffset={-offset} transform="rotate(-90 60 60)" />;
+          offset += length;
+          return node;
+        })}
+        <text x="60" y="57" textAnchor="middle" fontSize="17" fontWeight="800" fill="#0f172a">{center}</text>
+        <text x="60" y="72" textAnchor="middle" fontSize="8" fill="#64748b">{sublabel}</text>
+      </svg>
+      <div style={{ display: "grid", gap: 6 }}>
+        {segments.map((segment) => (
+          <div key={segment.label} style={{ fontSize: 11, color: "#475569" }}>
+            <span style={{ display: "inline-block", width: 9, height: 9, borderRadius: 2, background: segment.color, marginRight: 6 }} />
+            {segment.label}: <strong>{segment.value}</strong>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function InstitutionalReportPage() {
   const params = useParams();
   const jobId = params?.jobId as string;
@@ -48,6 +97,13 @@ export default function InstitutionalReportPage() {
   if (!report) return <AdminLayout><p style={{ color: "#64748b" }}>Assembling report…</p></AdminLayout>;
 
   const r = report;
+  const landscapeStages = r.market_landscape?.accounts.reduce<Record<string, number>>((counts, account) => {
+    counts[account.stage] = (counts[account.stage] ?? 0) + 1;
+    return counts;
+  }, {}) ?? {};
+  const fitItems = r.account_dossiers
+    .filter((dossier) => dossier.fit_score != null)
+    .map((dossier) => ({ label: dossier.company, value: dossier.fit_score ?? 0, color: dossier.tier === "HOT" ? "#ef4444" : dossier.tier === "WARM" ? "#f59e0b" : "#38bdf8", note: dossier.tier }));
   const sec: React.CSSProperties = { background: "#fff", border: "1px solid #e2e8f0", borderRadius: 8, padding: "18px 22px", marginBottom: 16 };
   const h2: React.CSSProperties = { fontSize: 12, fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", color: "#0f172a", margin: "0 0 10px" };
 
@@ -76,6 +132,42 @@ export default function InstitutionalReportPage() {
           </div>
         </div>
 
+        {/* Decision dashboard */}
+        <div style={sec}>
+          <h2 style={h2}>Decision Dashboard</h2>
+          <p style={{ fontSize: 12, color: "#64748b", margin: "0 0 14px" }}>Vista comparativa del embudo, calidad de evidencia y fortaleza relativa de las oportunidades.</p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))", gap: 22 }}>
+            <div>
+              <div style={{ fontSize: 10, fontWeight: 800, color: "#64748b", textTransform: "uppercase", marginBottom: 9 }}>Portfolio por tier</div>
+              <DonutChart
+                center={String(r.portfolio_summary.total)}
+                sublabel="analizadas"
+                segments={[
+                  { label: "HOT", value: r.portfolio_summary.hot, color: "#ef4444" },
+                  { label: "WARM", value: r.portfolio_summary.warm, color: "#f59e0b" },
+                  { label: "COLD", value: r.portfolio_summary.cold, color: "#38bdf8" },
+                  { label: "DESCARTADAS", value: r.portfolio_summary.discard, color: "#cbd5e1" },
+                ]}
+              />
+            </div>
+            <div>
+              <div style={{ fontSize: 10, fontWeight: 800, color: "#64748b", textTransform: "uppercase", marginBottom: 9 }}>Cobertura de evidencia</div>
+              <HorizontalBars items={[
+                { label: "Con fuente", value: r.quality?.evidence_coverage_pct ?? 0, color: "#0284c7", note: "%" },
+                { label: "Con señal fechada", value: r.quality?.dated_coverage_pct ?? 0, color: "#7c3aed", note: "%" },
+                { label: "Evidence-grounded", value: r.quality?.grounded_pct ?? 0, color: "#16a34a", note: "%" },
+              ]} max={100} />
+              <p style={{ fontSize: 10, color: "#94a3b8", marginTop: 10 }}>La cobertura mide trazabilidad, no confirma intención de compra.</p>
+            </div>
+          </div>
+          {fitItems.length > 0 && (
+            <div style={{ borderTop: "1px solid #f1f5f9", marginTop: 16, paddingTop: 14 }}>
+              <div style={{ fontSize: 10, fontWeight: 800, color: "#64748b", textTransform: "uppercase", marginBottom: 9 }}>Comparación de fit entre finalistas</div>
+              <HorizontalBars items={fitItems} max={10} />
+            </div>
+          )}
+        </div>
+
         {/* Portfolio summary */}
         <div style={sec}>
           <h2 style={h2}>Portfolio Summary</h2>
@@ -94,6 +186,49 @@ export default function InstitutionalReportPage() {
           )}
         </div>
 
+        {/* Market landscape */}
+        {r.market_landscape && (
+          <div style={sec}>
+            <h2 style={h2}>Market Landscape & Selection Funnel</h2>
+            <p style={{ fontSize: 13, color: "#334155", margin: "0 0 5px" }}>
+              <strong>Category:</strong> {r.market_landscape.category_query} · <strong>Region:</strong> {r.market_landscape.geography.join(", ") || "—"}
+            </p>
+            <p style={{ fontSize: 12, color: "#475569", lineHeight: 1.5 }}>{r.market_landscape.explanation}</p>
+            <div style={{ display: "flex", gap: 18, margin: "10px 0", flexWrap: "wrap" }}>
+              {[["Market references + investigated", r.market_landscape.considered_count], ["Investigated", r.market_landscape.investigated_count], ["Finalists", r.market_landscape.selected_count]].map(([label, value]) => (
+                <div key={label as string}><strong style={{ fontSize: 18 }}>{value as number}</strong><div style={{ fontSize: 10, color: "#94a3b8", textTransform: "uppercase" }}>{label as string}</div></div>
+              ))}
+            </div>
+            <div style={{ margin: "14px 0 18px" }}>
+              <div style={{ fontSize: 10, fontWeight: 800, color: "#64748b", textTransform: "uppercase", marginBottom: 9 }}>Embudo de selección</div>
+              <HorizontalBars items={[
+                { label: "Universo documentado", value: r.market_landscape.considered_count, color: "#94a3b8" },
+                { label: "Investigadas", value: r.market_landscape.investigated_count, color: "#0ea5e9" },
+                { label: "Preliminares", value: landscapeStages.preliminary ?? 0, color: "#8b5cf6" },
+                { label: "Finalistas", value: r.market_landscape.selected_count, color: "#16a34a" },
+              ]} />
+            </div>
+            <p style={{ background: "#eff6ff", borderLeft: "3px solid #38bdf8", padding: "8px 10px", fontSize: 12, color: "#0c4a6e" }}>
+              {r.market_landscape.known_accounts_policy}
+            </p>
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11 }}>
+                <thead><tr style={{ textAlign: "left", color: "#64748b", borderBottom: "1px solid #cbd5e1" }}>
+                  <th style={{ padding: "6px 5px" }}>Company</th><th>Stage</th><th>Origin / role</th><th>Selection outcome</th>
+                </tr></thead>
+                <tbody>{r.market_landscape.accounts.map((account) => (
+                  <tr key={`${account.company}-${account.stage}`} style={{ borderBottom: "1px solid #f1f5f9", verticalAlign: "top" }}>
+                    <td style={{ padding: "7px 5px", minWidth: 130 }}><strong>{account.company}</strong>{account.domain && <div style={{ color: "#94a3b8" }}>{account.domain}</div>}</td>
+                    <td style={{ padding: "7px 5px", whiteSpace: "nowrap", fontWeight: 700, color: account.stage === "finalist" ? "#166534" : account.stage === "known_reference" ? "#075985" : "#64748b" }}>{account.stage.replace(/_/g, " ")}</td>
+                    <td style={{ padding: "7px 5px", color: "#64748b", minWidth: 110 }}>{account.origin.replace(/_/g, " ")}{account.role ? ` · ${account.role.replace(/_/g, " ")}` : ""}</td>
+                    <td style={{ padding: "7px 5px", color: "#334155", lineHeight: 1.4 }}>{account.outcome_reason}</td>
+                  </tr>
+                ))}</tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
         {/* Priority opportunities */}
         {r.priority_opportunities.length > 0 && (
           <div style={sec}>
@@ -108,6 +243,31 @@ export default function InstitutionalReportPage() {
         )}
 
         {/* Account dossiers */}
+        {r.account_dossiers.length > 0 && (
+          <div style={sec}>
+            <h2 style={h2}>Finalist Comparison Matrix</h2>
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11 }}>
+                <thead><tr style={{ textAlign: "left", color: "#64748b", borderBottom: "1px solid #cbd5e1" }}>
+                  <th style={{ padding: "7px 5px" }}>Empresa</th><th>Fit</th><th>Tier</th><th>Acción</th><th>Fuente</th><th>Fecha</th><th>Riesgos</th><th>Siguiente paso</th>
+                </tr></thead>
+                <tbody>{r.account_dossiers.map((dossier) => (
+                  <tr key={dossier.company} style={{ borderBottom: "1px solid #f1f5f9", verticalAlign: "top" }}>
+                    <td style={{ padding: "8px 5px", minWidth: 120 }}><strong>{dossier.company}</strong></td>
+                    <td style={{ padding: "8px 5px" }}>{dossier.fit_score ?? "—"}</td>
+                    <td style={{ padding: "8px 5px", fontWeight: 700 }}>{dossier.tier}</td>
+                    <td style={{ padding: "8px 5px" }}>{dossier.actionability_status?.replace(/_/g, " ") ?? "—"}</td>
+                    <td style={{ padding: "8px 5px" }}>{dossier.evidence_chain.some((evidence) => evidence.url) ? "Sí" : "No"}</td>
+                    <td style={{ padding: "8px 5px" }}>{dossier.evidence_chain.some((evidence) => evidence.date) ? "Sí" : "No"}</td>
+                    <td style={{ padding: "8px 5px", minWidth: 140 }}>{dossier.risks.map((risk) => risk.text).slice(0, 2).join(" · ")}</td>
+                    <td style={{ padding: "8px 5px", minWidth: 150 }}>{dossier.recommended_next_step.text}</td>
+                  </tr>
+                ))}</tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
         <h2 style={{ ...h2, fontSize: 14, marginTop: 22 }}>Account Dossiers</h2>
         {r.account_dossiers.map((d: AccountDossier, i) => (
           <div key={i} style={{ ...sec, borderLeft: `3px solid ${d.tier === "HOT" ? "#ef4444" : d.tier === "WARM" ? "#f59e0b" : "#cbd5e1"}` }}>

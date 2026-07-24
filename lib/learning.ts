@@ -15,7 +15,7 @@ import { matchVaultPatterns } from "@/lib/vault/feedback-vault";
 export function deriveFeedbackEffects(
   signal: FeedbackSignal,
   lead: ProcessedLead
-): FeedbackEffect {
+): FeedbackEffect | null {
   const industry       = lead.candidate.industry ?? "unknown";
   const signalPatterns = lead.learning?.signal_patterns ?? [];
   const patternSummary = signalPatterns[0]?.slice(0, 60) ?? "no confirmed signal";
@@ -30,40 +30,22 @@ export function deriveFeedbackEffects(
         save_as_reusable: false,
       };
 
-    case "meeting_booked":
+    case "thesis_confirmed":
       return {
         signal,
-        affects_pattern:  `${industry} + "${patternSummary}" → meeting booked`,
-        direction:        "strengthen",
-        affected_segment: industry,
-        save_as_reusable: true,
-      };
-
-    case "replied":
-      return {
-        signal,
-        affects_pattern:  `${industry} + "${patternSummary}" → reply received`,
-        direction:        "strengthen",
-        affected_segment: industry,
-        save_as_reusable: true,
-      };
-
-    case "contacted":
-      return {
-        signal,
-        affects_pattern:  `${industry} + "${patternSummary}" → contacted`,
+        affects_pattern:  `${industry} + "${patternSummary}" → thesis confirmed`,
         direction:        "strengthen",
         affected_segment: industry,
         save_as_reusable: false,
       };
 
-    case "add_to_vault":
+    case "thesis_wrong":
       return {
         signal,
-        affects_pattern:  `${industry} + "${patternSummary}" → vault-worthy angle`,
-        direction:        "strengthen",
+        affects_pattern:  `${industry} + "${patternSummary}" → thesis disproved`,
+        direction:        "weaken",
         affected_segment: industry,
-        save_as_reusable: true,
+        save_as_reusable: false,
       };
 
     case "wrong_fit":
@@ -102,6 +84,21 @@ export function deriveFeedbackEffects(
         affected_segment: industry,
         save_as_reusable: false,
       };
+
+    // Neutral quality and workflow/commercial outcomes are valuable analytics,
+    // but they do not prove that the account pattern itself is good or bad.
+    case "partially_useful":
+    case "contacted":
+    case "meeting_booked":
+    case "replied":
+    case "investigated":
+    case "saved":
+    case "qualified":
+    case "rejected":
+    case "won":
+    case "lost":
+    case "add_to_vault":
+      return null;
   }
 }
 

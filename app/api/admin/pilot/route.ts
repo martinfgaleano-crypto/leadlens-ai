@@ -24,6 +24,8 @@ const pilotSchema = z.object({
   complimentary_reason: z.string().min(5).max(300),
   output_language: z.enum(["es", "en"]).default("es"),
   target_market_region: z.enum(["latin_america", "north_america", "europe", "asia", "global"]).default("latin_america"),
+  target_countries: z.array(z.string().min(2).max(60)).min(1).default(["Colombia"]),
+  known_accounts: z.array(z.string().min(2).max(160)).max(100).default([]),
   // Regional context (Colombia-aware, not Colombia-limited)
   city_or_department: z.string().max(120).optional(),
   local_context: z.string().max(800).optional(),
@@ -55,6 +57,16 @@ export async function POST(req: NextRequest) {
   const parsed = pilotSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   const p = parsed.data;
+
+  const { assertGeographyContract } = await import("@/lib/quality/geography-contract");
+  try {
+    assertGeographyContract(
+      { company_name: p.company_name, company_description: p.company_description, offer_description: p.offer_description, value_proposition: p.value_proposition, target_customer_description: p.target_customer_description, tone: "consultative", contact_email: p.client_email, target_market_region: p.target_market_region, target_countries: p.target_countries },
+      { target_industries: [], target_company_size: [], target_job_titles: [], target_geography: p.target_countries, excluded_industries: [], buying_signals: [], disqualification_criteria: [], offer_summary: p.offer_description, value_proposition: p.value_proposition, tone: "consultative", plan: "sample", lead_count: 0 },
+    );
+  } catch (error) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Invalid geography" }, { status: 400 });
+  }
 
   const product = resolveProduct(p.product_code);
   if (!product) return NextResponse.json({ error: "Unknown product" }, { status: 400 });
@@ -100,6 +112,8 @@ export async function POST(req: NextRequest) {
     contact_email: p.client_email,
     output_language: p.output_language,
     target_market_region: p.target_market_region,
+    target_countries: p.target_countries,
+    known_accounts: p.known_accounts,
     product_code: product.product_code,
     product_version: "launch_v0",
     campaign_objective: p.commercial_objective,
@@ -110,6 +124,8 @@ export async function POST(req: NextRequest) {
       client_name: p.client_name,
       client_company: p.client_company,
       client_country: p.client_country,
+      target_countries: p.target_countries,
+      known_accounts: p.known_accounts,
       reference_price: product.price_amount,
       currency: product.currency,
       complimentary: true,

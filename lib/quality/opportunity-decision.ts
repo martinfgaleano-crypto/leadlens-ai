@@ -162,7 +162,9 @@ export function applyDecisionIntelligence(
     const lead = byId.get(opp.lead_id);
     if (!lead) continue;
     opp.decision = buildOpportunityDecision(lead);
-    if (opp.category === "HOT") opp.playbook = buildExecutivePlaybook(lead);
+    // A raw HOT score is not permission to act. Playbooks are only generated
+    // when the evidence-aware actionability gate explicitly clears outreach.
+    if (opp.actionability_status === "act_now") opp.playbook = buildExecutivePlaybook(lead);
     applied++;
   }
 

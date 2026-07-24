@@ -91,6 +91,14 @@ function buildDossier(opp: Json, lead: Json | undefined, es = false): AccountDos
     ? { basis: "recommendation", text: (actionText).replace(/_/g, " "), evidence: clean(e.recommended_action_reason) ?? (es ? "acción recomendada por control de calidad" : "recommended action guardrail") }
     : { basis: "recommendation", text: es ? "Validar la señal y el fit antes de cualquier contacto." : "Validate the signal and fit before any outreach.", evidence: es ? "control por defecto" : "default guardrail" };
 
+  const legacyAction = opp?.recommended_action ?? e.recommended_action ?? null;
+  const actionabilityStatus = opp?.actionability_status ?? (
+    legacyAction === "send_outreach_now" ? "act_now" :
+    legacyAction === "validate_source_first" || legacyAction === "enrich_manually" ? "validate_first" :
+    legacyAction === "exclude" ? "exclude" :
+    legacyAction ? "monitor" : null
+  );
+
   return {
     rank: opp?.rank ?? q?.rank ?? null,
     company: c.company ?? opp?.company ?? (es ? "Cuenta sin identificar" : "Unknown account"),
@@ -98,6 +106,9 @@ function buildDossier(opp: Json, lead: Json | undefined, es = false): AccountDos
     location: c.location ?? null,
     domain: c.domain ?? null,
     tier: opp?.category ?? q?.category ?? "UNSCORED",
+    actionability_status: actionabilityStatus,
+    actionability_reasons: Array.isArray(opp?.actionability_reasons) ? opp.actionability_reasons : [],
+    actionability_blockers: Array.isArray(opp?.actionability_blockers) ? opp.actionability_blockers : [],
     fit_score: opp?.fit_score ?? q?.fit_score ?? null,
     thesis, why_now, why_this_company, why_this_quarter, risks,
     confidence_drivers: Array.isArray(decision?.confidence_drivers) ? decision.confidence_drivers : [],
@@ -121,10 +132,11 @@ export function assembleInstitutionalReport(
 
   const regions = Array.from(new Set(dossiers.map((d) => d.location).filter(Boolean))) as string[];
   const industries = Array.from(new Set(dossiers.map((d) => d.industry).filter(Boolean))) as string[];
-  const priority = dossiers.filter((d) => d.tier === "HOT" || d.tier === "WARM");
+  const priority = dossiers.filter((d) => d.actionability_status === "act_now");
 
   const summaryText = clean(reportJson.executive_summary);
   const ri = reportJson.report_intelligence ?? null;
+  const landscape = reportJson.market_landscape ?? null;
 
   return {
     schema_version: INSTITUTIONAL_REPORT_VERSION,
@@ -165,8 +177,29 @@ export function assembleInstitutionalReport(
       tier_note: "Tiers are the pipeline's existing categories — unchanged by this presentation layer.",
       funnel: ri ? { considered: ri.companies_considered, rejected: ri.companies_rejected, selected: ri.companies_selected, rejection_reasons: ri.rejection_reasons ?? {} } : null,
     },
+    market_landscape: landscape ? {
+      category_query: clean(landscape.category_query) ?? (es ? "Categoría no registrada" : "Category not recorded"),
+      geography: Array.isArray(landscape.geography) ? landscape.geography.filter((x: unknown) => typeof x === "string") : [],
+      explanation: clean(landscape.explanation) ?? "",
+      known_accounts_policy: clean(landscape.known_accounts_policy) ?? "",
+      considered_count: Number(landscape.considered_count) || 0,
+      investigated_count: Number(landscape.investigated_count) || 0,
+      selected_count: Number(landscape.selected_count) || 0,
+      accounts: (Array.isArray(landscape.accounts) ? landscape.accounts : []).slice(0, 40).map((account: Json) => ({
+        company: clean(account.company) ?? (es ? "Empresa sin identificar" : "Unknown company"),
+        domain: clean(account.domain),
+        sector: clean(account.sector),
+        origin: clean(account.origin) ?? "unknown",
+        visibility: clean(account.visibility),
+        role: clean(account.role),
+        stage: ["known_reference", "investigated", "finalist", "preliminary"].includes(account.stage) ? account.stage : "investigated",
+        fit_score: typeof account.fit_score === "number" ? account.fit_score : null,
+        outcome_reason: clean(account.outcome_reason) ?? (es ? "Resultado no registrado." : "Outcome not recorded."),
+      })),
+    } : null,
     priority_opportunities: priority.map((d) => ({
       rank: d.rank, company: d.company, tier: d.tier,
+      actionability_status: d.actionability_status,
       one_line: d.thesis.basis !== "unknown" ? d.thesis.text.slice(0, 140) : d.why_now.text.slice(0, 140),
     })),
     account_dossiers: dossiers,
@@ -177,12 +210,14 @@ export function assembleInstitutionalReport(
       industries_covered: industries,
     },
     methodology: es ? [
+      "La exploración comienza por categoría de producto + región para construir el universo de empresas antes de aplicar filtros y ranking.",
       "Las cuentas y señales provienen de fuentes públicas permitidas, con procedencia registrada; sin scraping autenticado.",
       "Las categorías, puntajes y el orden provienen sin cambios del proceso de análisis determinístico.",
       "Cada afirmación está etiquetada como hecho verificado, análisis, hipótesis, recomendación o sin datos.",
       "Las fechas de las señales se validan, nunca se infieren; la fecha de extracción no se trata como fecha de publicación.",
       "Las aprobaciones de señales pasan por revisión gobernada y pueden ser revisadas por IA (con origen registrado y confirmación humana pendiente); nunca se presentan como validadas por humanos cuando no lo están.",
     ] : [
+      "Discovery begins with product category + region to construct the company universe before filtering and ranking.",
       "Accounts and signals were discovered from permitted public sources with provenance; no authenticated scraping.",
       "Tiers, scores and ordering come unchanged from the existing deterministic pipeline.",
       "Each statement is labeled fact, inference, hypothesis, recommendation or unknown.",
@@ -193,11 +228,13 @@ export function assembleInstitutionalReport(
       "Este informe presenta una fotografía del análisis en una fecha concreta — no es un re-análisis en vivo.",
       "No se afirma intención de compra, presupuesto ni búsqueda activa de proveedor; el timing comercial se infiere de señales públicas.",
       "Las hipótesis e inferencias requieren validación antes de cualquier contacto comercial.",
+      ...(!landscape ? ["Esta corrida no conservó un inventario auditable del universo de mercado considerado."] : []),
       ...(reportJson._versions ? [] : ["Esta versión es anterior al versionado de decisiones; los metadatos de procedencia son parciales."]),
     ] : [
       "This is an internal presentation layer over one report snapshot — not a live re-analysis.",
       "No purchase intent, budget, or vendor-search claims are made; commercial timing is inferred from public signals.",
       "Hypotheses and inferences require validation before outreach.",
+      ...(!landscape ? ["This run did not preserve an auditable inventory of the market universe considered."] : []),
       ...(reportJson._versions ? [] : ["This snapshot predates decision-versioning; provenance metadata is partial."]),
     ],
     quality: (() => {

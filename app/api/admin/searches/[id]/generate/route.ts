@@ -84,7 +84,10 @@ export async function POST(
   try {
     pipelineRes = await fetch(`${origin}/api/process/search/${searchId}`, {
       method:  "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "x-admin-token": req.headers.get("x-admin-token") ?? "",
+      },
     });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);

@@ -14,7 +14,7 @@ export async function runOutreachAgent(
   criteria: LeadSearchCriteria
 ): Promise<OutreachSequence> {
   if (IS_DEMO || !process.env.ANTHROPIC_API_KEY) {
-    return buildDemoOutreach(qualified, personalization, criteria);
+    return buildDeterministicOutreach(qualified, personalization, criteria);
   }
   return buildClaudeOutreach(qualified, personalization, criteria);
 }
@@ -314,7 +314,7 @@ function buildColdMonitorEmail(company: string, industry: string, offerLine: str
 
 // ─── Demo outreach builder ────────────────────────────────────────────────────
 
-function buildDemoOutreach(
+export function buildDeterministicOutreach(
   qualified: QualifiedLead,
   personalization: PersonalizationResult,
   criteria: LeadSearchCriteria

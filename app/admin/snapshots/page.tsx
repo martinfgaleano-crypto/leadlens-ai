@@ -115,6 +115,18 @@ export default function SnapshotsPage() {
   const [statusFilter, setStatusFilter] = useState("");
   const [planFilter,   setPlanFilter]   = useState("");
 
+  async function viewSnapshotJson(jobId: string) {
+    const res = await adminFetch(`/api/results/${encodeURIComponent(jobId)}`);
+    if (!res.ok) {
+      setError(`Could not open snapshot (${res.status}).`);
+      return;
+    }
+    const blob = new Blob([await res.text()], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    window.open(url, "_blank", "noopener,noreferrer");
+    window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+  }
+
   async function load() {
     setLoading(true);
     setError(null);
@@ -264,14 +276,23 @@ export default function SnapshotsPage() {
                         {formatDate(row.created_at)}
                       </td>
                       <td style={{ padding: "0.75rem 1rem" }}>
-                        <a
-                          href={`/api/results/${row.job_id}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{ fontSize: "0.75rem", color: "#0ea5e9", fontWeight: 600, textDecoration: "none", padding: "0.25rem 0.6rem", border: "1px solid #bae6fd", borderRadius: "0.35rem", background: "#f0f9ff", whiteSpace: "nowrap" }}
-                        >
-                          View JSON →
-                        </a>
+                        <div style={{ display: "flex", gap: "0.4rem", alignItems: "center" }}>
+                          {row.status === "completed" && (
+                            <a
+                              href={`/admin/reports/institutional/${encodeURIComponent(row.job_id)}`}
+                              style={{ fontSize: "0.75rem", color: "#fff", fontWeight: 700, textDecoration: "none", padding: "0.3rem 0.65rem", border: "1px solid #0284c7", borderRadius: "0.35rem", background: "#0284c7", whiteSpace: "nowrap" }}
+                            >
+                              View report →
+                            </a>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => void viewSnapshotJson(row.job_id)}
+                            style={{ fontSize: "0.7rem", color: "#64748b", fontWeight: 600, padding: "0.3rem 0.5rem", border: "1px solid #cbd5e1", borderRadius: "0.35rem", background: "#fff", whiteSpace: "nowrap" }}
+                          >
+                            JSON
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}

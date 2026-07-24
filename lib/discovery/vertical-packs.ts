@@ -11,6 +11,7 @@
 
 import type { ICP, LeadSearchCriteria } from "@/types";
 import type { NeedsMap, SignalFamily } from "./needs-map";
+import type { AccountCommercialRole } from "./account-role";
 
 export const VERTICAL_PACKS_VERSION = "vertical-packs-v1";
 
@@ -18,6 +19,7 @@ export interface VerticalPack {
   id: string;
   name: string;
   match: RegExp;                       // matched against ICP industries + offer
+  target_countries?: string[];         // absent = generic; exact country packs never cross markets
   operations: string[];                // operations the buyer must run
   problems: string[];                  // problems the product solves
   triggers: string[];                  // operational triggers that create need
@@ -29,7 +31,7 @@ export interface VerticalPack {
   thesis_pattern: string;              // hecho→cambio→fricción→capacidad→condición→acción
   /** Real, publicly known companies operating in the vertical (Colombia).
    *  Candidates only — all verification gates still apply. */
-  seed_companies: Array<{ name: string; sector: string; domain?: string }>;
+  seed_companies: Array<{ name: string; sector: string; domain?: string; visibility_tier?: "emerging" | "established" | "obvious"; account_role?: AccountCommercialRole }>;
 }
 
 const FLEET: VerticalPack = {
@@ -108,13 +110,73 @@ const OPERATIONAL_SW: VerticalPack = {
   ],
 };
 
-export const VERTICAL_PACKS: VerticalPack[] = [FLEET, LOGISTICS, OPERATIONAL_SW];
+const WELLNESS_CHANNELS_US: VerticalPack = {
+  id: "wellness_channels_us",
+  name: "Canales retail y hospitality para bebidas de bienestar",
+  match: /(wellness|wellbeing|bienestar|herbal|botanical|infusion|tea|beverage|natural products?|spa|hotel|resort|whole foods?)/i,
+  target_countries: ["United States"],
+  operations: ["retail de productos naturales", "programas de spa y bienestar", "hospitality con oferta de alimentos y bebidas", "curaduría de productos wellness"],
+  problems: ["diferenciar la oferta de bienestar", "ampliar surtido funcional", "crear experiencias de wellness", "incorporar bebidas naturales para rutinas de sueño, energía y digestión"],
+  triggers: ["apertura de nuevas tiendas", "expansión de resorts o spas", "lanzamiento de programas de bienestar", "ampliación de surtido natural", "alianzas con marcas wellness", "entrada a nuevos mercados"],
+  observable_signals: ['"opened a new store"', '"new wellness program"', '"expanded spa"', '"wellness partnership"', '"new resort opening"', '"expanded natural products assortment"'],
+  signal_families: ["expansion", "new_facility", "partnership", "new_market", "capacity"],
+  required_operation_terms: ["wellness", "natural", "spa", "resort", "hotel", "grocery", "beverage", "retail"],
+  counterevidence_hints: ["private label only", "closed locations", "does not accept new suppliers", "food and beverage operated by third party"],
+  hard_blockers: ["no consumer wellness or hospitality channel", "defunct or permanently closed", "does not sell or serve ingestible products"],
+  thesis_pattern: "La empresa {evento_canal} el {fecha}; el cambio puede crear espacio para una oferta diferenciada de bebidas herbales; validar política de proveedores, requisitos regulatorios y ownership de F&B; acción: investigar el proceso de procurement antes de contactar.",
+  seed_companies: [
+    { name: "Whole Foods Market", sector: "natural grocery retail", domain: "wholefoodsmarket.com" },
+    { name: "Sprouts Farmers Market", sector: "natural grocery retail", domain: "sprouts.com" },
+    { name: "Natural Grocers", sector: "natural grocery retail", domain: "naturalgrocers.com" },
+    { name: "The Vitamin Shoppe", sector: "wellness retail", domain: "vitaminshoppe.com" },
+    { name: "Thrive Market", sector: "online natural products retail", domain: "thrivemarket.com" },
+    { name: "Fresh Thyme Market", sector: "natural grocery retail", domain: "freshthyme.com" },
+    { name: "Earth Fare", sector: "natural grocery retail", domain: "earthfare.com" },
+    { name: "Canyon Ranch", sector: "wellness resorts and spas", domain: "canyonranch.com" },
+    { name: "Miraval Resorts", sector: "wellness resorts and spas", domain: "miravalresorts.com" },
+    { name: "Auberge Resorts Collection", sector: "luxury hospitality and wellness", domain: "aubergeresorts.com" },
+    { name: "Life Time", sector: "health clubs and wellness", domain: "lifetime.life" },
+    { name: "Equinox", sector: "fitness and wellness clubs", domain: "equinox.com" },
+  ],
+};
+
+const WELLNESS_CHANNELS_COLOMBIA: VerticalPack = {
+  ...WELLNESS_CHANNELS_US,
+  id: "wellness_channels_colombia",
+  name: "Canales retail y hospitality para bebidas de bienestar en Colombia",
+  target_countries: ["Colombia"],
+  observable_signals: ['"abrió nueva tienda"', '"nuevo programa de bienestar"', '"amplió su spa"', '"alianza de bienestar"', '"apertura de hotel"', '"amplió su portafolio natural"'],
+  seed_companies: [
+    { name: "BioPlaza", sector: "mercado y distribución de productos saludables", domain: "bioplaza.com.co", visibility_tier: "emerging", account_role: "buyer_channel" },
+    { name: "Supernat", sector: "cadena de supermercados naturistas", domain: "supermercadonaturista.com", visibility_tier: "emerging", account_role: "buyer_channel" },
+    { name: "Fitt Global", sector: "distribución de nutrición y productos naturales", domain: "fittglobal.com", visibility_tier: "emerging", account_role: "buyer_channel" },
+    { name: "Alimentos Sostenibles", sector: "mercado saludable y distribución", domain: "alimentossostenibles.co", visibility_tier: "emerging", account_role: "buyer_channel" },
+    { name: "Tu Tienda Saludable", sector: "retail de alimentos naturales", domain: "tutiendasaludable.com.co", visibility_tier: "emerging", account_role: "buyer_channel" },
+    { name: "MasVital Distribuciones", sector: "distribución de productos de bienestar", domain: "mas-vital.com", visibility_tier: "emerging", account_role: "buyer_channel" },
+    { name: "Osana Nutraceutica", sector: "distribución naturista", domain: "osananutraceutica.com", visibility_tier: "emerging", account_role: "buyer_channel" },
+    { name: "Fedco", sector: "cadena especializada de belleza y bienestar", domain: "fedco.com.co", visibility_tier: "established", account_role: "buyer_channel" },
+    { name: "Laboratorios Funat", sector: "fabricante y marca naturista con distribución nacional", domain: "funat.co", visibility_tier: "established", account_role: "brand_owner" },
+    { name: "Evok", sector: "retail de productos naturales y experiencias", domain: "evok.com.co", visibility_tier: "established", account_role: "buyer_channel" },
+    { name: "GHL Hoteles", sector: "hotelería", domain: "ghlhoteles.com", visibility_tier: "established", account_role: "hospitality_operator" },
+    { name: "Movich Hotels", sector: "hotelería", domain: "movichhotels.com", visibility_tier: "established", account_role: "hospitality_operator" },
+    { name: "Grupo Éxito", sector: "retail y supermercados", domain: "grupoexito.com.co", visibility_tier: "obvious", account_role: "buyer_channel" },
+    { name: "Carulla", sector: "supermercados premium", domain: "carulla.com", visibility_tier: "obvious", account_role: "buyer_channel" },
+    { name: "Olímpica", sector: "retail y supermercados", domain: "olimpica.com", visibility_tier: "obvious", account_role: "buyer_channel" },
+    { name: "Farmatodo Colombia", sector: "retail de salud y bienestar", domain: "farmatodo.com.co", visibility_tier: "obvious", account_role: "buyer_channel" },
+    { name: "Locatel Colombia", sector: "retail de salud y bienestar", domain: "locatelcolombia.com", visibility_tier: "established", account_role: "buyer_channel" },
+    { name: "Cruz Verde Colombia", sector: "retail farmacéutico y bienestar", domain: "cruzverde.com.co", visibility_tier: "obvious", account_role: "buyer_channel" },
+  ],
+};
+
+export const VERTICAL_PACKS: VerticalPack[] = [FLEET, LOGISTICS, OPERATIONAL_SW, WELLNESS_CHANNELS_COLOMBIA, WELLNESS_CHANNELS_US];
 
 /** Match the best pack for an ICP (industries + offer text). Null if none. */
 export function matchVerticalPack(icp: ICP, criteria: LeadSearchCriteria): VerticalPack | null {
   const hay = `${icp.target_industries.join(" ")} ${criteria.offer_summary ?? ""} ${criteria.value_proposition ?? ""}`.toLowerCase();
+  const targetCountries = new Set((criteria.target_geography ?? []).map(c => c.trim().toLowerCase()));
   let best: { pack: VerticalPack; hits: number } | null = null;
   for (const p of VERTICAL_PACKS) {
+    if (p.target_countries?.length && !p.target_countries.some(c => targetCountries.has(c.toLowerCase()))) continue;
     const hits = (hay.match(new RegExp(p.match.source, "gi")) ?? []).length;
     if (hits > 0 && (!best || hits > best.hits)) best = { pack: p, hits };
   }

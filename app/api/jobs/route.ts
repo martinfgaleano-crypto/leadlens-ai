@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createJob, listRecentJobs } from "@/lib/storage/job-store";
 import { z } from "zod";
 import type { PlanType, OnboardingData } from "@/types";
+import { requireAdmin } from "@/lib/auth/require-admin";
 
 const createSchema = z.object({
   plan: z.enum(["sample", "starter", "standard", "pro"]),
@@ -16,11 +17,15 @@ const createSchema = z.object({
     contact_email: z.string().email(),
     output_language: z.enum(["en", "es", "pt", "ja"]).optional(),
     target_market_region: z.enum(["north_america", "latin_america", "europe", "asia", "global"]).optional(),
+    target_countries: z.array(z.string().min(2).max(60)).min(1).optional(),
   }),
   customer_email: z.string().email().optional(),
 });
 
 export async function POST(req: NextRequest) {
+  const deny = requireAdmin(req);
+  if (deny) return deny;
+
   let body: unknown;
   try {
     body = await req.json();
@@ -43,7 +48,10 @@ export async function POST(req: NextRequest) {
   return NextResponse.json(job, { status: 201 });
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const deny = requireAdmin(req);
+  if (deny) return deny;
+
   const jobs = await listRecentJobs(20);
   return NextResponse.json({ jobs, count: jobs.length });
 }

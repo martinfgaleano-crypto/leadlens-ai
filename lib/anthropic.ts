@@ -2,6 +2,35 @@ import Anthropic from "@anthropic-ai/sdk";
 
 // Model to use across all agents. Change here to update everywhere.
 export const MODEL = "claude-sonnet-4-6";
+// Standard API list price verified 2026-07-22. Env overrides make pricing
+// explicit and auditable when Anthropic changes rates. This calculates token
+// usage at list price; it is NOT a provider invoice or proof of billed spend.
+export const ANTHROPIC_PRICING = {
+  inputUsdPerMillion: Number(process.env.ANTHROPIC_INPUT_USD_PER_MTOK ?? "3"),
+  outputUsdPerMillion: Number(process.env.ANTHROPIC_OUTPUT_USD_PER_MTOK ?? "15"),
+  source: "Anthropic Sonnet 4.6 public list price, verified 2026-07-22",
+};
+
+export function calculateAnthropicListCost(inputTokens: number, outputTokens: number): number | null {
+  const p = ANTHROPIC_PRICING;
+  if (![p.inputUsdPerMillion, p.outputUsdPerMillion].every(Number.isFinite)) return null;
+  return Number(((inputTokens * p.inputUsdPerMillion + outputTokens * p.outputUsdPerMillion) / 1_000_000).toFixed(8));
+}
+
+async function assertRunBudget(systemPrompt: string, userMessage: string, maxTokens: number): Promise<void> {
+  const cap = Number(process.env.LEADLENS_LLM_BUDGET_USD ?? "");
+  const baseline = Number(process.env.LEADLENS_LLM_COST_BASELINE_USD ?? "0");
+  if (!Number.isFinite(cap) || cap <= 0) return;
+  const { getUsage } = await import("@/lib/ops/usage-ledger");
+  const observed = Math.max(0, (getUsage().anthropic?.calculated_cost_usd_today ?? 0) - baseline);
+  // Conservative pre-call ceiling: input chars/4 plus the requested maximum
+  // output. This can stop early, but cannot silently authorize extra spend.
+  const estimatedInputTokens = Math.ceil((systemPrompt.length + userMessage.length) / 4);
+  const projected = calculateAnthropicListCost(estimatedInputTokens, maxTokens) ?? 0;
+  if (observed + projected > cap) {
+    throw new Error(`[anthropic] RUN_BUDGET_GUARD: observed_list_cost=$${observed.toFixed(4)} projected_call_ceiling=$${projected.toFixed(4)} cap=$${cap.toFixed(4)}`);
+  }
+}
 
 // Per-request timeout. Intelligence agents can use long prompts — 60s is safe.
 const REQUEST_TIMEOUT_MS = 60_000;
@@ -40,10 +69,12 @@ export async function callClaude(
   userMessage: string,
   maxTokens = 2000
 ): Promise<string> {
+  await assertRunBudget(systemPrompt, userMessage, maxTokens);
   const client = getClient();
   let lastError: Error | null = null;
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    const startedAt = Date.now();
     try {
       const result = await withTimeout(
         client.messages.create({
@@ -60,7 +91,13 @@ export async function callClaude(
         throw new Error("[anthropic] Unexpected content type: " + block.type);
       }
 
-      try { const { recordProviderCall } = await import("@/lib/ops/usage-ledger"); recordProviderCall("anthropic", true, 0); } catch { /* ledger best-effort */ }
+      try {
+        const { recordProviderCall, recordLLMUsage } = await import("@/lib/ops/usage-ledger");
+        const inputTokens = result.usage.input_tokens ?? 0;
+        const outputTokens = result.usage.output_tokens ?? 0;
+        recordProviderCall("anthropic", true, Date.now() - startedAt);
+        recordLLMUsage({ provider: "anthropic", model: MODEL, inputTokens, outputTokens, calculatedCostUsd: calculateAnthropicListCost(inputTokens, outputTokens), pricingSource: ANTHROPIC_PRICING.source });
+      } catch { /* ledger best-effort */ }
       return block.text;
     } catch (err) {
       lastError = err instanceof Error ? err : new Error(String(err));

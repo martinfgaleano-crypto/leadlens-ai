@@ -18,6 +18,8 @@ import { consumeCredits } from "@/lib/credits/consume-credits";
 import { createNotification } from "@/lib/notifications/create-notification";
 import { generateDeliveryPackage } from "@/lib/delivery/generate-package";
 import { sendDeliveryAccessEmail } from "@/lib/delivery/send-access-email";
+import { authorizeSearchProcessing, hasProcessingCredential } from "@/lib/auth/authorize-processing";
+import { z } from "zod";
 
 /**
  * POST /api/process/search/[id]
@@ -27,11 +29,11 @@ import { sendDeliveryAccessEmail } from "@/lib/delivery/send-access-email";
  * multi-source orchestrator and returns when complete.
  *
  * Security model:
+ *   - Requires owning-customer JWT, x-admin-token, or INTERNAL_RUN_SECRET.
  *   - Uses service role key for all DB operations.
  *   - Only operates on searches with status = "pending".
  *   - Atomic status transition (pending → processing) prevents double-runs.
- *   - No customer secret required: the worst an unauthenticated caller can do
- *     is trigger processing on an already-pending search (idempotent).
+ *   - A UUID alone is never authorization.
  */
 
 async function db() {
@@ -43,11 +45,21 @@ async function db() {
 }
 
 export async function POST(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   const searchId = params.id;
   const startMs  = Date.now();
+
+  if (!z.string().uuid().safeParse(searchId).success) {
+    return NextResponse.json({ error: "Invalid search ID." }, { status: 400 });
+  }
+
+  // Reject anonymous calls before touching the service-role database. A UUID
+  // is not a credential and missing auth must not trigger any DB/provider work.
+  if (!hasProcessingCredential(req.headers)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   const client = await db();
   if (!client) {
@@ -64,6 +76,11 @@ export async function POST(
 
   if (fetchErr || !search) {
     return NextResponse.json({ error: "Search not found." }, { status: 404 });
+  }
+
+  const auth = await authorizeSearchProcessing(req.headers, client, search.user_id as string);
+  if (!auth.ok) {
+    return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
 
   // ── 2. Duplicate-run guard: only process pending searches ────────────────────

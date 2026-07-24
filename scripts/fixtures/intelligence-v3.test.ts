@@ -2,7 +2,7 @@
 // Exact cases from the intelligence-quality sprint prompt.
 // Run: npm run test:intelligence-v3
 
-import { assessCommercialFit, requiredOperationTerms } from "@/lib/discovery/commercial-fit";
+import { assessCommercialFit, disqualifierMatches, requiredOperationTerms } from "@/lib/discovery/commercial-fit";
 import { assessEntityRole } from "@/lib/discovery/entity-role";
 import { classifyDirection } from "@/lib/discovery/sentiment";
 import { scoreOpportunityV2 } from "@/lib/discovery/quality-rubric";
@@ -37,9 +37,18 @@ const outsourced = assessCommercialFit({ needs: fleetNeeds, company: "RetailX", 
 t("flota tercerizada → hard blocker operation_outsourced", outsourced.hard_blockers.includes("operation_outsourced") && !outsourced.operational_fit);
 const noOp = assessCommercialFit({ needs: fleetNeeds, company: "BancoX", sector: "financiero", content: "bancox abrió una nueva oficina de atención al cliente en bogotá".toLowerCase(), event_keyword: null, disqualifiers: [], product_terms: ["flota"], required_operation_terms: requiredOperationTerms(fleetNeeds) });
 t("sin operación relevante → hard blocker no_relevant_operation_evidenced", noOp.hard_blockers.includes("no_relevant_operation_evidenced"));
+t("familia de necesidades no rescata oferta sin relación explícita", noOp.hard_blockers.includes("product_unrelated_to_event"));
+const categoryBacked = assessCommercialFit({ needs: fleetNeeds, company: "CanalX", sector: "retail", content: "canalx opera distribución nacional en colombia", event_keyword: "distribución", disqualifiers: [], product_terms: ["bebida funcional"], required_operation_terms: ["distribución"], channel_category_alignment: "confirmed", geography_confirmed: true });
+t("evidencia de categoría confirmada sustenta relación de producto", !categoryBacked.hard_blockers.includes("product_unrelated_to_event"));
+const noGeo = assessCommercialFit({ needs: fleetNeeds, company: "CanalY", sector: "retail", content: "canaly opera flota y rutas", event_keyword: "flota", disqualifiers: [], product_terms: ["flota"], required_operation_terms: ["flota"], geography_confirmed: false });
+t("fit no concede puntos geográficos sin evidencia", noGeo.hard_blockers.includes("geography_not_evidenced_for_fit") && noGeo.breakdown.geography === 0);
 const disq = assessCommercialFit({ needs: fleetNeeds, company: "Competidor", sector: "software", content: "competidor es una empresa de software de logística".toLowerCase(), event_keyword: null, disqualifiers: ["software de logística"], product_terms: ["flota"], required_operation_terms: requiredOperationTerms(fleetNeeds) });
 t("disqualifier del ICP → hard blocker", disq.hard_blockers.some((h) => h.startsWith("icp_disqualifier")));
 t("score no compensa hard blocker (score alto pero bloqueado)", outsourced.hard_blockers.length > 0);
+t("compound disqualifier does not fire on one generic word", !disqualifierMatches("sprouts opened a food store in florida", "food and beverage fully controlled by an unrelated third party"));
+t("compound disqualifier fires on substantive evidence", disqualifierMatches("the food and beverage program is controlled by a third party operator", "food and beverage fully controlled by an unrelated third party"));
+const wellnessNeeds = { target_company_profile: "US wellness retailers, spas and resorts", expected_need: "functional beverages", relevant_signal_families: ["new_facility", "expansion"] } as unknown as NeedsMap;
+t("wellness new-facility requires channel terms, not warehouse terms", requiredOperationTerms(wellnessNeeds).includes("store") && !requiredOperationTerms(wellnessNeeds).includes("bodega"));
 
 // ── Entity role: adquirente vs adquirida vs incidental ──
 t("adquirente (aparece antes de 'adquirió')", assessEntityRole("Bergé", "Bergé adquirió el 100% de Transportes Vigía").role === "acquirer");
@@ -48,9 +57,15 @@ t("asset_owner (abrió su planta)", assessEntityRole("Postobón", "Postobón ina
 t("contratista (recibió contrato)", assessEntityRole("Coordinadora", "La ANI adjudicó el contrato a Coordinadora").is_account === true);
 t("mención incidental → no cuenta", assessEntityRole("Cementos Argos", "El evento contó con presencia de Cementos Argos entre los asistentes").is_account === false);
 t("sujeto de cambio (invirtió)", assessEntityRole("Bavaria", "Bavaria invirtió 115.000 millones en su red de tiendas").role === "subject_of_change");
+t("English store opening → asset_owner", assessEntityRole("Sprouts Farmers Market", "Sprouts Farmers Market Opens New Store in Daytona Beach, Florida").role === "asset_owner");
+t("English partnership → partner", assessEntityRole("Canyon Ranch", "Canyon Ranch announced a wellness partnership with a botanical beverage brand").role === "partner");
+t("English incidental mention remains rejected", assessEntityRole("Sprouts Farmers Market", "Analysts discussed retail expansion and later compared margins at Sprouts Farmers Market").is_account === false);
+t("apertura en presente → asset_owner", assessEntityRole("Olímpica", "Olímpica abre una nueva tienda en Chía").role === "asset_owner");
 
 // ── Sentiment / direction (ICP decide) ──
 t("insolvencia → block (hard)", classifyDirection("La empresa entró en proceso de insolvencia bajo la ley 1116").policy === "block");
+t("liquidación de inventario retail no simula quiebra", classifyDirection("Productos en liquidación de temporada").policy !== "block");
+t("liquidación judicial de la empresa sí bloquea", classifyDirection("Comenzó la liquidación judicial de la empresa").policy === "block");
 t("aplaza pagos → risk/monitor", classifyDirection("Consorcio Express aplazó los pagos a sus proveedores").policy === "monitor");
 t("regulación + producto de cumplimiento → proceed", classifyDirection("Nueva regulación exige reportes de emisiones", { productSolvesCompliance: true }).policy === "proceed");
 t("regulación sin producto de cumplimiento → monitor", classifyDirection("Nueva regulación exige reportes de emisiones").policy === "monitor");

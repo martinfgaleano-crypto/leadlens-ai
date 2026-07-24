@@ -74,6 +74,7 @@ export async function POST(req: NextRequest) {
     contact_email:               d.customer_email,
     output_language:             d.output_language,
     target_market_region:        d.target_market_region,
+    target_countries:            d.target_geography ? [d.target_geography] : undefined,
   };
 
   // Create intake

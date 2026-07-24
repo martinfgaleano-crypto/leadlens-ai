@@ -29,6 +29,7 @@ const S = {
     padding: "0 1.25rem 1.5rem",
     borderBottom: "1px solid rgba(255,255,255,0.08)",
     marginBottom: "1rem",
+    flexShrink: 0,
   },
   brandName: {
     color: "#f0f9ff",
@@ -46,7 +47,14 @@ const S = {
     marginTop: "0.15rem",
     display: "block",
   },
-  nav: { flex: 1, padding: "0 0.75rem" },
+  nav: {
+    flex: 1,
+    minHeight: 0,
+    padding: "0 0.75rem",
+    overflowY: "auto" as const,
+    overscrollBehavior: "contain" as const,
+    scrollbarGutter: "stable" as const,
+  },
   navSection: {
     color: "#475569",
     fontSize: "0.625rem",
@@ -60,6 +68,7 @@ const S = {
     padding: "1rem 1.25rem 0.5rem",
     borderTop: "1px solid rgba(255,255,255,0.08)",
     marginTop: "auto",
+    flexShrink: 0,
   },
   main: {
     marginLeft: 220,
@@ -192,6 +201,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { href: "/admin/onboarding",    label: "Onboarding" },
     { href: "/admin/orders",        label: "Orders" },
     { href: "/admin/jobs",          label: "Jobs" },
+    { href: "/admin/snapshots",     label: "Snapshots" },
     { href: "/admin/searches",      label: "Searches" },
     { href: "/admin/monitor-runs",  label: "Monitor Ops" },
     { href: "/admin/vault-foundation", label: "Vault Foundation" },
@@ -203,7 +213,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { href: "/admin/companies",     label: "Companies" },
     { href: "/admin/credits",       label: "Credits" },
     { href: "/admin/feedback",            label: "Feedback Analytics" },
-    { href: "/admin/snapshots",           label: "Snapshots" },
     { href: "/admin/analytics",          label: "Analytics" },
     { href: "/admin/notifications",      label: "Notifications" },
     { href: "/admin/vault-performance",  label: "Vault Performance" },

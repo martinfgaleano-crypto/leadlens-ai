@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { checkRateLimit, requestClientKey } from "@/lib/security/rate-limit";
 
 // ─── Product analytics intake (launch_tier_architecture_v0) ──────────────────
 // Foundation: validates and structured-logs tier/product events server-side so
@@ -19,6 +20,12 @@ const EVENT_NAMES = [
   "refund_requested", "redelivery_requested",
 ] as const;
 
+// Browser telemetry is untrusted. Payment completion, refunds and redelivery
+// are server/domain events and must never be accepted from a public caller.
+const SERVER_ONLY_EVENTS = new Set<string>([
+  "purchase_completed", "upgrade_completed", "refund_requested", "redelivery_requested",
+]);
+
 const eventSchema = z.object({
   event: z.enum(EVENT_NAMES),
   product_code: z.string().max(60).optional(),
@@ -35,9 +42,23 @@ const eventSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  const contentLength = Number(req.headers.get("content-length") ?? "0");
+  if (Number.isFinite(contentLength) && contentLength > 8_000) {
+    return NextResponse.json({ ok: false }, { status: 413 });
+  }
+  const rate = checkRateLimit(`events:${requestClientKey(req.headers)}`, 60, 60_000);
+  if (!rate.allowed) {
+    return NextResponse.json(
+      { ok: false },
+      { status: 429, headers: { "Retry-After": String(rate.retryAfterSeconds) } },
+    );
+  }
   const body = await req.json().catch(() => null);
   const parsed = eventSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ ok: false }, { status: 400 });
+  if (SERVER_ONLY_EVENTS.has(parsed.data.event) || parsed.data.amount_paid !== undefined) {
+    return NextResponse.json({ ok: false }, { status: 403 });
+  }
   // Structured log — the analytics sink of record until a warehouse exists.
   console.log(`[analytics] ${JSON.stringify({ ts: new Date().toISOString(), ...parsed.data })}`);
   return NextResponse.json({ ok: true });

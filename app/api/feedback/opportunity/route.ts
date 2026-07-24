@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { normalizeSentiment, validateReasonCodes } from "@/lib/intelligence/feedback-taxonomy";
+import { commercialOutcomeValue, feedbackDimension, normalizeSentiment, validateReasonCodes } from "@/lib/intelligence/feedback-taxonomy";
 
 // ─── Validation schema ────────────────────────────────────────────────────────
 // Strict: no personal data fields (email, phone, name, linkedin personal).
@@ -32,6 +32,9 @@ const schema = z.object({
   feedback_notes:     z.string().max(500).optional(),
   /** Optional structured reason codes (closed enum, re-validated below). */
   reason_codes:       z.array(z.string().max(40)).max(10).optional(),
+  /** Stable client-generated key for safe retries. When absent, the semantic
+   * job+company+signal identity remains the idempotency key. */
+  idempotency_key:    z.string().min(8).max(100).regex(/^[A-Za-z0-9:_-]+$/).optional(),
 });
 
 // ── Server-side intelligence enrichment ──────────────────────────────────────
@@ -93,6 +96,8 @@ export async function POST(req: NextRequest) {
   }
   const reasonCodes = reasonCheck.codes;
   const normalizedSentiment = normalizeSentiment(data.feedback_signal);
+  const dimension = feedbackDimension(data.feedback_signal);
+  const outcomeValue = commercialOutcomeValue(data.feedback_signal);
 
   // Try Supabase first
   if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
@@ -116,15 +121,15 @@ export async function POST(req: NextRequest) {
         // Key stays job_id + company + signal: job_id is unique per run, so it
         // subsumes search_id; filtering on search_id would miss legacy rows
         // written before search context existed and re-create duplicates.
-        if (data.job_id) {
-          const { data: existing } = await db
+        if (data.job_id || data.idempotency_key) {
+          let existingQuery = db
             .from("opportunity_feedback")
             .select("id")
-            .eq("job_id", data.job_id)
-            .eq("company", data.company)
-            .eq("feedback_signal", data.feedback_signal)
-            .limit(1)
-            .maybeSingle();
+            .limit(1);
+          existingQuery = data.idempotency_key
+            ? existingQuery.eq("idempotency_key", data.idempotency_key)
+            : existingQuery.eq("job_id", data.job_id!).eq("company", data.company).eq("feedback_signal", data.feedback_signal);
+          const { data: existing } = await existingQuery.maybeSingle();
 
           if (existing) {
             // Same sentiment resubmitted with reason chips → enrich the
@@ -173,6 +178,9 @@ export async function POST(req: NextRequest) {
           versions:                frozen.versions,
           normalized_sentiment:    normalizedSentiment,
           feedback_schema_version: 2,
+          feedback_dimension:      dimension,
+          commercial_outcome:      outcomeValue,
+          idempotency_key:         data.idempotency_key ?? null,
         };
 
         let { data: row, error } = await db
@@ -186,6 +194,13 @@ export async function POST(req: NextRequest) {
         if (error && /column|schema cache/i.test(error.message)) {
           console.warn("[feedback] intelligence columns missing (apply migration 031) — storing legacy row");
           ({ data: row, error } = await db.from("opportunity_feedback").insert(baseRow).select("id").single());
+        }
+
+        // Concurrent retry can pass the read-before-write check. Database
+        // uniqueness is authoritative; return success instead of spilling a
+        // duplicate into the in-memory fallback.
+        if (error && (error as { code?: string }).code === "23505") {
+          return NextResponse.json({ success: true, already_saved: true });
         }
 
         if (!error && row) {

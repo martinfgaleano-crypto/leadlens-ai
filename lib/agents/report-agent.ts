@@ -1,5 +1,7 @@
 import type { ProcessedLead, LeadLensReport, PlanType, OnboardingData, ICP, OpportunityRanking } from "@/types";
 import { computeRanking } from "@/lib/ranking";
+import { evaluateActionability } from "@/lib/quality/actionability-gate";
+import { evaluateReportDeliveryReadiness } from "@/lib/quality/report-delivery-gate";
 
 const IS_DEMO = process.env.DEMO_MODE === "true";
 
@@ -27,6 +29,8 @@ export async function runReportAgent(
 
   // Ranking — applies rank/ranking_explanation back to each lead's qualification in-place
   const ranked_opportunities: OpportunityRanking[] = computeRanking(leads);
+  const actionability_summary = { act_now: 0, validate_first: 0, monitor: 0, exclude: 0 };
+  for (const lead of leads) actionability_summary[evaluateActionability(lead).status]++;
 
   const patterns = buildPatterns(leads, hot, warm, highConfidence, withConfirmedSignals.length);
   const recommendations = buildRecommendations(leads, hot, warm, cold);
@@ -38,6 +42,25 @@ export async function runReportAgent(
 
   // Report-level QC
   const reportQC = runReportQC(leads, hot, warm, cold, discard, avgScore, withConfirmedSignals.length, icp);
+  const evidenceCounts = { high: 0, medium: 0, low: 0, insufficient: 0 };
+  for (const lead of leads) {
+    const level = lead.learning?.evidence_quality;
+    if (level) evidenceCounts[level]++;
+  }
+  const delivery_readiness = evaluateReportDeliveryReadiness({
+    total_accounts: leads.length,
+    report_quality_score: reportQC.score,
+    ...actionability_summary,
+    insufficient_evidence: evidenceCounts.insufficient,
+    failed_qc: leads.filter(l => l.outreach.qc_status === "FAILED").length,
+    novel_accounts: leads.filter(l => l.candidate.account_visibility !== "obvious" && l.candidate.discovery_value !== "low").length,
+    obvious_accounts: leads.filter(l => l.candidate.account_visibility === "obvious").length,
+    low_discovery_value: leads.filter(l => l.candidate.discovery_value === "low").length,
+    defensible_opportunities: leads.filter(l => l.candidate.opportunity_kind !== "channel_fit"
+      || (l.candidate.opportunity_kind === "channel_fit" && ["strong", "moderate"].includes(l.candidate.channel_evidence_grade ?? ""))).length,
+    preliminary_channel_accounts: leads.filter(l => l.candidate.opportunity_kind === "channel_fit"
+      && ["preliminary", "insufficient"].includes(l.candidate.channel_evidence_grade ?? "insufficient")).length,
+  });
 
   const executive_summary = IS_DEMO || !process.env.ANTHROPIC_API_KEY
     ? buildDemoSummary(leads, hot, warm, cold, discard, avgScore, plan, withConfirmedSignals.length)
@@ -62,6 +85,8 @@ export async function runReportAgent(
     first_actions,
     strategic_warnings,
     evidence_quality_summary,
+    actionability_summary,
+    delivery_readiness,
     ranked_opportunities,
     report_quality_score: reportQC.score,
     report_quality_notes: reportQC.notes,
@@ -78,22 +103,10 @@ function computeTiers(
   cold: ProcessedLead[],
   discard: ProcessedLead[]
 ): { priority: ProcessedLead[]; monitor: ProcessedLead[]; excluded: ProcessedLead[] } {
-  // Priority = HOT + top-scoring WARM (≥7.0)
-  const topWarm = warm.filter(l => l.qualification.fit_score >= 7.0);
-  const lowerWarm = warm.filter(l => l.qualification.fit_score < 7.0);
-  const priority = [...hot, ...topWarm];
-
-  // Monitor = lower WARM + COLD accounts that have at least one confirmed signal
-  const coldWithSignal = cold.filter(l =>
-    l.enrichment.timing_signals.some(
-      s => !s.toLowerCase().startsWith("no confirmed") && !s.toLowerCase().includes("inferred")
-    )
-  );
-  const coldWithoutSignal = cold.filter(l => !coldWithSignal.includes(l));
-  const monitor = [...lowerWarm, ...coldWithSignal];
-
-  // Excluded = DISCARD + signal-weak COLD
-  const excluded = [...coldWithoutSignal, ...discard];
+  const all = [...hot, ...warm, ...cold, ...discard];
+  const priority = all.filter(l => evaluateActionability(l).status === "act_now");
+  const monitor = all.filter(l => ["validate_first", "monitor"].includes(evaluateActionability(l).status));
+  const excluded = all.filter(l => evaluateActionability(l).status === "exclude");
 
   return { priority, monitor, excluded };
 }
@@ -123,14 +136,14 @@ function buildDemoSummary(
 
   if (priority.length === 0) {
     const signalNote = signalCount > 0
-      ? `${signalCount} account${signalCount > 1 ? "s have" : " has"} confirmed buying signals but remain in the monitor tier — validate fit before outreach.`
-      : `No confirmed buying signals in this batch — all outreach would be hypothesis-led. Consider narrowing your ICP criteria.`;
+      ? `${signalCount} account${signalCount > 1 ? "s have" : " has"} dated company events but remain in the monitor tier — these events do not prove purchase intent; validate fit before outreach.`
+      : `No confirmed timing signals in this batch — all outreach would be hypothesis-led. Consider narrowing your ICP criteria.`;
     return `LeadLens identified ${monitor.length} account${monitor.length > 1 ? "s" : ""} worth monitoring, but none cleared the priority threshold for immediate outreach.${exclusionNote} All require manual validation before contact. Average score: ${avgScore}/10. ${signalNote}`;
   }
 
   const signalNote = signalCount > 0
-    ? `${signalCount} account${signalCount > 1 ? "s have" : " has"} confirmed buying signals — lead with these in Wave 1.`
-    : `No confirmed buying signals — use hypothesis-framed openers and look for a timing anchor before sending.`;
+    ? `${signalCount} account${signalCount > 1 ? "s have" : " has"} dated company events — use them as timing context, not as claims of purchase intent.`
+    : `No confirmed timing signals — use hypothesis-framed openers and look for a timing anchor before sending.`;
 
   return `LeadLens identified ${priority.length} priority account${priority.length > 1 ? "s" : ""} ready for outreach and ${monitor.length} account${monitor.length > 1 ? "s" : ""} to monitor.${exclusionNote} Priority accounts: ${priorityNames}. Average score: ${avgScore}/10. ${signalNote}`;
 }
@@ -301,7 +314,7 @@ function buildFirstActions(
   const signalPriority = withSignals.filter(l => priority.includes(l));
   if (signalPriority.length > 0) {
     const top = signalPriority.slice(0, 3).map(l => l.candidate.company).join(", ");
-    actions.push(`Wave 1 — this week: contact the ${signalPriority.length} priority account${signalPriority.length > 1 ? "s" : ""} with confirmed buying signals first. These have a likely 30–90 day evaluation window. Start with: ${top}`);
+    actions.push(`Wave 1 — this week: consider the ${signalPriority.length} priority account${signalPriority.length > 1 ? "s" : ""} with dated company events first. Validate buyer relevance and purchase timing before sending. Start with: ${top}`);
   } else if (priority.length > 0) {
     const top = priority.slice(0, 3).map(l => l.candidate.company).join(", ");
     actions.push(`Wave 1 — this week: contact ${priority.length} priority account${priority.length > 1 ? "s" : ""} using the recommended angle from each brief. No confirmed signals, so use hypothesis-framed openers. Start with: ${top}`);

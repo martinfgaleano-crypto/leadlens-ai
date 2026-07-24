@@ -183,8 +183,8 @@ export default function ResultsPage() {
   const insights = buildInsights(report);
 
   // Derived next action — counts existing recommended_action values, invents nothing.
-  const contactNow = (report.ranked_opportunities ?? []).filter(o => o.recommended_action === "send_outreach_now").length;
-  const validateFirst = (report.ranked_opportunities ?? []).filter(o => o.recommended_action === "validate_source_first").length;
+  const contactNow = report.actionability_summary?.act_now ?? (report.ranked_opportunities ?? []).filter(o => o.actionability_status === "act_now" || (!o.actionability_status && o.recommended_action === "send_outreach_now")).length;
+  const validateFirst = report.actionability_summary?.validate_first ?? (report.ranked_opportunities ?? []).filter(o => o.actionability_status === "validate_first" || (!o.actionability_status && o.recommended_action === "validate_source_first")).length;
   const nextAction = contactNow > 0
     ? `Contact ${contactNow} account${contactNow === 1 ? "" : "s"} this week`
     : validateFirst > 0
@@ -227,6 +227,22 @@ export default function ResultsPage() {
           </div>
         </div>
 
+        {report.actionability_summary && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+            {[
+              { label: "Act now", value: report.actionability_summary.act_now, style: "border-emerald-200 text-emerald-700" },
+              { label: "Validate first", value: report.actionability_summary.validate_first, style: "border-indigo-200 text-indigo-700" },
+              { label: "Monitor", value: report.actionability_summary.monitor, style: "border-amber-200 text-amber-700" },
+              { label: "Exclude", value: report.actionability_summary.exclude, style: "border-gray-200 text-gray-500" },
+            ].map(item => (
+              <div key={item.label} className={`bg-white border rounded-xl p-3 ${item.style}`}>
+                <div className="text-xl font-bold">{item.value}</div>
+                <div className="text-[0.65rem] font-bold uppercase tracking-wider">{item.label}</div>
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
           {[
@@ -244,6 +260,12 @@ export default function ResultsPage() {
         </div>
 
         {/* Recommended next action — derived from existing actions only */}
+        {report.delivery_readiness && (
+          <div className={`border rounded-xl px-5 py-4 mb-4 ${report.delivery_readiness.status === "ready" ? "bg-emerald-50 border-emerald-200" : report.delivery_readiness.status === "review_required" ? "bg-amber-50 border-amber-200" : "bg-red-50 border-red-200"}`}>
+            <div className="text-[0.65rem] font-bold uppercase tracking-widest mb-1">Delivery readiness · {report.delivery_readiness.status.replace(/_/g, " ")}</div>
+            {report.delivery_readiness.reasons.map((reason, i) => <p key={i} className="text-sm text-gray-700">{reason}</p>)}
+          </div>
+        )}
         <div className="bg-sky-50 border border-sky-200 rounded-xl px-5 py-3.5 mb-6 flex items-center gap-3">
           <span className="text-lg">🎯</span>
           <div>
@@ -630,6 +652,13 @@ function AccountCard({
   const coverageNote = ranking?.source_coverage_note ?? (lm?.limited_region_coverage ? "Source coverage limited for this region" : null);
   const sourceName = ranking?.source_name ?? lm?.source_name ?? null;
   const changeLabel = ranking?.client_visible === true && ranking.change_label ? ranking.change_label : null;
+  const actionability = ranking?.actionability_status;
+  const actionabilityMeta = actionability ? {
+    act_now: { label: "ACT NOW", cls: "bg-emerald-100 text-emerald-800" },
+    validate_first: { label: "VALIDATE FIRST", cls: "bg-indigo-100 text-indigo-800" },
+    monitor: { label: "MONITOR", cls: "bg-amber-100 text-amber-800" },
+    exclude: { label: "EXCLUDE", cls: "bg-gray-200 text-gray-600" },
+  }[actionability] : null;
 
   const confirmedSignals = e.timing_signals.filter(
     s => !s.toLowerCase().startsWith("no confirmed") && !s.toLowerCase().includes("inferred"),
@@ -653,6 +682,7 @@ function AccountCard({
           {changeLabel && (
             <span className="text-xs bg-indigo-50 text-indigo-700 px-2 py-1 rounded-full hidden md:inline">{changeLabel}</span>
           )}
+          {actionabilityMeta && <span className={`text-xs font-bold px-2 py-1 rounded-full ${actionabilityMeta.cls}`}>{actionabilityMeta.label}</span>}
           <span className={`text-xs font-medium px-2 py-1 rounded-full ${catColor}`}>{cat}</span>
           <span className="text-gray-500 text-sm">{q.fit_score}/10</span>
           <span className="text-gray-300">{expanded ? "▲" : "▼"}</span>
@@ -666,6 +696,32 @@ function AccountCard({
             <div className="bg-sky-50 border border-sky-100 rounded-lg p-3">
               <h4 className="text-xs font-semibold text-sky-700 uppercase mb-1">Recommended action</h4>
               <p className="text-sm text-sky-900 font-medium">{actionLabel}</p>
+            </div>
+          )}
+          {ranking && ((ranking.actionability_reasons?.length ?? 0) > 0 || (ranking.actionability_blockers?.length ?? 0) > 0) && (
+            <div className="border border-gray-200 rounded-lg p-3">
+              <h4 className="text-xs font-semibold text-gray-600 uppercase mb-1">Why this action</h4>
+              {[...(ranking.actionability_reasons ?? []), ...(ranking.actionability_blockers ?? []).map(b => `Blocker: ${b}`)].map((reason, i) => (
+                <p key={i} className="text-sm text-gray-700">{reason}</p>
+              ))}
+            </div>
+          )}
+          {c.account_role && (
+            <div className="border border-emerald-100 bg-emerald-50/50 rounded-lg p-3">
+              <h4 className="text-xs font-semibold text-emerald-700 uppercase mb-1">Commercial account role</h4>
+              <p className="text-sm font-medium text-emerald-950">{c.account_role.replace(/_/g, " ")} <span className="font-normal text-emerald-700">· {c.account_role_confidence ?? "unknown"} confidence</span></p>
+              {(c.account_role_evidence ?? []).map((evidence, i) => <p key={i} className="text-xs text-emerald-900 mt-1">• {evidence}</p>)}
+            </div>
+          )}
+          {c.opportunity_kind === "channel_fit" && (
+            <div className="border border-indigo-100 bg-indigo-50/50 rounded-lg p-3">
+              <h4 className="text-xs font-semibold text-indigo-700 uppercase mb-2">Channel evidence contract</h4>
+              <div className="flex flex-wrap gap-2 text-xs mb-2">
+                <span className="bg-white border border-indigo-100 rounded-full px-2 py-1">Grade: {c.channel_evidence_grade ?? "ungraded"}</span>
+                <span className="bg-white border border-indigo-100 rounded-full px-2 py-1">Proof: {(c.channel_proof_type ?? "unknown").replace(/_/g, " ")}</span>
+                <span className="bg-white border border-indigo-100 rounded-full px-2 py-1">Category: {c.channel_category_alignment ?? "unknown"}</span>
+              </div>
+              {(c.channel_limitations ?? []).map((limitation, i) => <p key={i} className="text-xs text-indigo-900">• {limitation.replace(/_/g, " ")}</p>)}
             </div>
           )}
 
@@ -796,8 +852,69 @@ function AccountCard({
 
           {/* Feedback */}
           <FeedbackBar lead={lead} jobId={jobId} searchId={searchId} />
+          <OutcomeBar lead={lead} jobId={jobId} searchId={searchId} />
         </div>
       )}
+    </div>
+  );
+}
+
+const OUTCOME_OPTIONS = [
+  { signal: "investigated", label: "Investigated" },
+  { signal: "contacted", label: "Contacted" },
+  { signal: "replied", label: "Replied" },
+  { signal: "meeting_booked", label: "Meeting booked" },
+  { signal: "qualified", label: "Qualified" },
+  { signal: "won", label: "Won" },
+  { signal: "rejected", label: "Rejected" },
+  { signal: "lost", label: "Lost" },
+] as const;
+
+function OutcomeBar({ lead, jobId, searchId }: { lead: ProcessedLead; jobId: string; searchId: string | undefined }) {
+  const [saved, setSaved] = useState<string[]>([]);
+  const [sending, setSending] = useState<string | null>(null);
+  const [failed, setFailed] = useState<string | null>(null);
+
+  async function save(signal: string) {
+    if (sending || saved.includes(signal)) return;
+    setSending(signal); setFailed(null);
+    const key = `${jobId}:${lead.id}:${signal}`.replace(/[^A-Za-z0-9:_-]/g, "_").slice(0, 100);
+    const ok = await fetch("/api/feedback/opportunity", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        job_id: jobId, search_id: searchId, company: lead.candidate.company,
+        domain: lead.candidate.domain ?? undefined, industry: lead.candidate.industry ?? undefined,
+        opportunity_score: lead.qualification.fit_score, category: lead.qualification.category,
+        feedback_signal: signal, idempotency_key: key,
+      }),
+    }).then(r => r.ok).catch(() => false);
+    setSending(null);
+    if (ok) setSaved(current => [...current, signal]); else setFailed(signal);
+  }
+
+  return (
+    <div className="mt-3 pt-3 border-t border-gray-100">
+      <h4 className="text-xs font-semibold text-gray-500 uppercase mb-1">What happened next?</h4>
+      <p className="text-[0.68rem] text-gray-400 mb-2">Commercial outcomes are tracked separately from research quality.</p>
+      <div className="flex flex-wrap gap-2">
+        {OUTCOME_OPTIONS.map(opt => (
+          <button key={opt.signal} onClick={() => save(opt.signal)} disabled={!!sending || saved.includes(opt.signal)}
+            className={`text-xs border rounded-full px-3 py-1.5 ${saved.includes(opt.signal) ? "bg-sky-50 border-sky-200 text-sky-700" : "border-gray-200 text-gray-600 hover:bg-gray-50"} disabled:opacity-60`}>
+            {sending === opt.signal ? "Saving…" : saved.includes(opt.signal) ? `✓ ${opt.label}` : opt.label}
+          </button>
+        ))}
+      </div>
+      <div className="flex flex-wrap gap-2 mt-2">
+        <span className="text-[0.68rem] text-gray-400 self-center mr-1">Was the thesis right?</span>
+        {[{ signal: "thesis_confirmed", label: "Confirmed" }, { signal: "thesis_wrong", label: "Wrong" }].map(opt => (
+          <button key={opt.signal} onClick={() => save(opt.signal)} disabled={!!sending || saved.includes(opt.signal)}
+            className={`text-xs border rounded-full px-3 py-1.5 ${saved.includes(opt.signal) ? "bg-violet-50 border-violet-200 text-violet-700" : "border-gray-200 text-gray-600 hover:bg-gray-50"} disabled:opacity-60`}>
+            {saved.includes(opt.signal) ? `✓ ${opt.label}` : opt.label}
+          </button>
+        ))}
+      </div>
+      {failed && <p className="text-xs text-red-500 mt-2">Could not save “{failed}” — please try again.</p>}
     </div>
   );
 }

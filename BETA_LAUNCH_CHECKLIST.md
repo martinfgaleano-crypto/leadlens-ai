@@ -1,4 +1,6 @@
-# LeadLens AI — Beta Launch Checklist
+# LeadLens AI — Beta Launch Checklist (HISTÓRICO)
+
+> **Obsoleto para decisiones de lanzamiento.** Este archivo describe el producto legacy de listas/contactos, precios y Stripe. La fuente vigente es [`docs/GO_TO_MARKET_MASTER_CHECKLIST.md`](docs/GO_TO_MARKET_MASTER_CHECKLIST.md).
 
 **Goal:** Accept first real paying customers. Full pipeline works. Payments flow. Report delivered.
 

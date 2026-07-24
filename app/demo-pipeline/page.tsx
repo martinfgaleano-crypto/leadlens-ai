@@ -1160,12 +1160,13 @@ const PLANS = {
 // Checkout links are public direct-pay URLs from Lemon Squeezy's product "Share" button.
 // NEXT_PUBLIC_* is intentional and safe — these URLs contain no secrets; they are the
 // same links you would paste in a tweet. No API key or webhook is needed for this flow.
-const LS_URLS: Partial<Record<PlanType, string>> = {
+const PUBLIC_PAYMENTS_ENABLED = process.env.NEXT_PUBLIC_PAYMENTS_ENABLED === "true";
+const LS_URLS: Partial<Record<PlanType, string>> = PUBLIC_PAYMENTS_ENABLED ? {
   sample:   process.env.NEXT_PUBLIC_LEMONSQUEEZY_SAMPLE_URL || undefined,
   starter:  process.env.NEXT_PUBLIC_LEMONSQUEEZY_STARTER_URL || undefined,
   standard: process.env.NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_URL || undefined,
   pro:      process.env.NEXT_PUBLIC_LEMONSQUEEZY_PRO_URL || undefined,
-};
+} : {};
 
 // Fire-and-forget product analytics (see app/api/events/route.ts).
 function track(event: string, data: Record<string, unknown> = {}) {

@@ -1,7 +1,7 @@
 {
  "grupoexito.com.co": {
-  "urls": 0,
-  "extractions": 1,
+  "urls": 5,
+  "extractions": 3,
   "valid_dates": 1,
   "trigger_events": 0,
   "deep_candidates": 0
@@ -14,10 +14,10 @@
   "deep_candidates": 0
  },
  "olimpica.com": {
-  "urls": 0,
-  "extractions": 1,
-  "valid_dates": 0,
-  "trigger_events": 0,
+  "urls": 20,
+  "extractions": 6,
+  "valid_dates": 1,
+  "trigger_events": 1,
   "deep_candidates": 0
  },
  "falabella.com.co": {
@@ -28,7 +28,7 @@
   "deep_candidates": 0
  },
  "homecenter.com.co": {
-  "urls": 0,
+  "urls": 3,
   "extractions": 1,
   "valid_dates": 0,
   "trigger_events": 0,
@@ -36,14 +36,14 @@
  },
  "alpina.com": {
   "urls": 0,
-  "extractions": 1,
+  "extractions": 141,
   "valid_dates": 0,
   "trigger_events": 0,
   "deep_candidates": 0
  },
  "colombina.com": {
   "urls": 0,
-  "extractions": 1,
+  "extractions": 141,
   "valid_dates": 0,
   "trigger_events": 0,
   "deep_candidates": 0
@@ -59,6 +59,2967 @@
   "urls": 0,
   "extractions": 1,
   "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "argos.co": {
+  "urls": 0,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "tecnoglass.com": {
+  "urls": 0,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "leonisa.com": {
+  "urls": 0,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "search.google.com": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "ihg.com": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "hotels.com": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "hilton.com": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "tripadvisor.com": {
+  "urls": 244,
+  "extractions": 141,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "spiwak-chipichape.cali-best-hotels.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "booking.com": {
+  "urls": 94,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "expedia.com": {
+  "urls": 211,
+  "extractions": 141,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "spiwak.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "reddit.com": {
+  "urls": 2,
+  "extractions": 0,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "en.planetofhotels.com": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "es.planetofhotels.com": {
+  "urls": 94,
+  "extractions": 1,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "hoteltonight.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "tripadvisor.co": {
+  "urls": 94,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "boutique-ciudad-jardin.cali-best-hotels.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "boutique-ciudad-jardin.hotelsincali.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "easemytrip.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "co.computrabajo.com": {
+  "urls": 2,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "investuramerica.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "getaroom.co.nz": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "sec.gov": {
+  "urls": 73,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 1,
+  "deep_candidates": 0
+ },
+ "ir.herbalife.com": {
+  "urls": 316,
+  "extractions": 211,
+  "valid_dates": 63,
+  "trigger_events": 63,
+  "deep_candidates": 0
+ },
+ "stocktitan.net": {
+  "urls": 70,
+  "extractions": 24,
+  "valid_dates": 1,
+  "trigger_events": 1,
+  "deep_candidates": 1
+ },
+ "mitchellake.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "aol.com": {
+  "urls": 2,
+  "extractions": 1,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "businesswire.com": {
+  "urls": 63,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "levels.fyi": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "worldofdirectselling.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "mapquest.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "moomoo.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "uk.finance.yahoo.com": {
+  "urls": 73,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "nasdaq.com": {
+  "urls": 2,
+  "extractions": 1,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "naukri.com": {
+  "urls": 63,
+  "extractions": 63,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "foundit.my": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "us.expertini.com": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "indeed.com": {
+  "urls": 63,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "infinitestrength.org": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "amazon.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "bbb.org": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "unionstagepresents.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "gigabyte.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "insomniac.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "tuckerciviccenter.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "infiniteage.wiki": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "ebay.com": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "deviantart.com": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "legistorm.com": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "press.levelinfinite.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "coursehero.com": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "cashbook.com": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "proactiveinvestors.com": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "shopwellness.co.nz": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "us.shaklee.com": {
+  "urls": 63,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "vimeo.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "events.shaklee.com": {
+  "urls": 63,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "oag.ca.gov": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "go.shaklee.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "companies.jrank.org": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "coastalpoint.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "prnewswire.com": {
+  "urls": 229,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "zoominfo.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "finance.yahoo.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "owler.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "ca.finance.yahoo.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "rcreader.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "images.shaklee.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "wholefoodsmarket.com": {
+  "urls": 316,
+  "extractions": 231,
+  "valid_dates": 181,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "etymonline.com": {
+  "urls": 42,
+  "extractions": 42,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "dictionary.com": {
+  "urls": 45,
+  "extractions": 45,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "seekingalpha.com": {
+  "urls": 24,
+  "extractions": 24,
+  "valid_dates": 24,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "progressivegrocer.com": {
+  "urls": 42,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "yelp.com": {
+  "urls": 96,
+  "extractions": 24,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "wholefoods.coop": {
+  "urls": 42,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "cmbteam.com": {
+  "urls": 42,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "ryancompanies.com": {
+  "urls": 42,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "stockhouse.com": {
+  "urls": 42,
+  "extractions": 1,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "delimarketnews.com": {
+  "urls": 42,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "sherwood.news": {
+  "urls": 42,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "today.com": {
+  "urls": 42,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "grantedai.com": {
+  "urls": 42,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "koalagains.com": {
+  "urls": 42,
+  "extractions": 42,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "globaldata.com": {
+  "urls": 42,
+  "extractions": 42,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "grocerydive.com": {
+  "urls": 42,
+  "extractions": 42,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "relexsolutions.com": {
+  "urls": 42,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "modernretail.co": {
+  "urls": 94,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "click2houston.com": {
+  "urls": 42,
+  "extractions": 42,
+  "valid_dates": 42,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "massmarketretailers.com": {
+  "urls": 256,
+  "extractions": 42,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "communityimpact.com": {
+  "urls": 42,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "theshelbyreport.com": {
+  "urls": 94,
+  "extractions": 42,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "breakroom.cc": {
+  "urls": 141,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "leadiq.com": {
+  "urls": 42,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "ainvest.com": {
+  "urls": 46,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "p2pi.com": {
+  "urls": 42,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "s206.q4cdn.com": {
+  "urls": 42,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "investors.sprouts.com": {
+  "urls": 141,
+  "extractions": 121,
+  "valid_dates": 94,
+  "trigger_events": 42,
+  "deep_candidates": 42
+ },
+ "sprouts.com": {
+  "urls": 94,
+  "extractions": 49,
+  "valid_dates": 49,
+  "trigger_events": 0,
+  "deep_candidates": 49
+ },
+ "about.sprouts.com": {
+  "urls": 42,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "stockinsights.ai": {
+  "urls": 42,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "pgcedc.com": {
+  "urls": 42,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "finsee.ai": {
+  "urls": 42,
+  "extractions": 42,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "bluebookservices.com": {
+  "urls": 42,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "naturalgrocers.com": {
+  "urls": 94,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "wholefoodsmagazine.com": {
+  "urls": 42,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "freshplaza.com": {
+  "urls": 42,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "perplexity.ai": {
+  "urls": 42,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "tricitiesbusinessnews.com": {
+  "urls": 42,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "markets.ft.com": {
+  "urls": 42,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "investors.naturalgrocers.com": {
+  "urls": 211,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "semana.com": {
+  "urls": 31,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "pulzo.com": {
+  "urls": 65,
+  "extractions": 22,
+  "valid_dates": 14,
+  "trigger_events": 8,
+  "deep_candidates": 0
+ },
+ "caracol.com.co": {
+  "urls": 49,
+  "extractions": 1,
+  "valid_dates": 1,
+  "trigger_events": 1,
+  "deep_candidates": 0
+ },
+ "lanotaeconomica.com.co": {
+  "urls": 35,
+  "extractions": 6,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "americaretail-malls.com": {
+  "urls": 30,
+  "extractions": 24,
+  "valid_dates": 23,
+  "trigger_events": 9,
+  "deep_candidates": 13
+ },
+ "valoraanalitik.com": {
+  "urls": 29,
+  "extractions": 22,
+  "valid_dates": 13,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "colombiaretail.com": {
+  "urls": 11,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "elpais.com.co": {
+  "urls": 19,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "redmas.com.co": {
+  "urls": 2,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "elempleo.com": {
+  "urls": 2,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "elcorrillo.co": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "colombia.as.com": {
+  "urls": 14,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "elsalvador.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "infobae.com": {
+  "urls": 49,
+  "extractions": 3,
+  "valid_dates": 3,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "pluralidadz.com": {
+  "urls": 19,
+  "extractions": 13,
+  "valid_dates": 13,
+  "trigger_events": 0,
+  "deep_candidates": 1
+ },
+ "lafm.com.co": {
+  "urls": 34,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "elcolombiano.com": {
+  "urls": 31,
+  "extractions": 11,
+  "valid_dates": 10,
+  "trigger_events": 2,
+  "deep_candidates": 0
+ },
+ "open.spotify.com": {
+  "urls": 13,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "collinsdictionary.com": {
+  "urls": 13,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "es.scribd.com": {
+  "urls": 7,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "eltiempo.com": {
+  "urls": 31,
+  "extractions": 24,
+  "valid_dates": 23,
+  "trigger_events": 4,
+  "deep_candidates": 0
+ },
+ "es-us.noticias.yahoo.com": {
+  "urls": 49,
+  "extractions": 8,
+  "valid_dates": 3,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "justretail.news": {
+  "urls": 37,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "mallyretail.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "cronista.com": {
+  "urls": 3,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "larepublica.co": {
+  "urls": 21,
+  "extractions": 20,
+  "valid_dates": 20,
+  "trigger_events": 6,
+  "deep_candidates": 6
+ },
+ "threads.com": {
+  "urls": 25,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "amp.larepublica.co": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "olympics.com": {
+  "urls": 14,
+  "extractions": 1,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "educacionbogota.edu.co": {
+  "urls": 13,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "olimpicastereo.com.co": {
+  "urls": 13,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "elespectador.com": {
+  "urls": 30,
+  "extractions": 15,
+  "valid_dates": 13,
+  "trigger_events": 0,
+  "deep_candidates": 1
+ },
+ "unicef.org": {
+  "urls": 13,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "cartagena.gov.co": {
+  "urls": 13,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "marketersbyadlatina.com": {
+  "urls": 6,
+  "extractions": 6,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "notasynoticiasenred.com": {
+  "urls": 6,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "halconesypalomas.com": {
+  "urls": 15,
+  "extractions": 6,
+  "valid_dates": 6,
+  "trigger_events": 6,
+  "deep_candidates": 0
+ },
+ "dictionary.reverso.net": {
+  "urls": 6,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "novalnet.com": {
+  "urls": 6,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "groupe-casino.fr": {
+  "urls": 6,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "colombiawellnessweek.co": {
+  "urls": 9,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "globalwellnessday.org": {
+  "urls": 9,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "portafolio.co": {
+  "urls": 31,
+  "extractions": 9,
+  "valid_dates": 7,
+  "trigger_events": 9,
+  "deep_candidates": 7
+ },
+ "olimpicocol.co": {
+  "urls": 7,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "grupoideas.co": {
+  "urls": 6,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "emisoraatlantico.com.co": {
+  "urls": 6,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "gestionsolidaria.com": {
+  "urls": 6,
+  "extractions": 1,
+  "valid_dates": 1,
+  "trigger_events": 1,
+  "deep_candidates": 0
+ },
+ "peru-retail.com": {
+  "urls": 78,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "farmatodo.com.co": {
+  "urls": 20,
+  "extractions": 2,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "beneficios.smartfitcolombia.com": {
+  "urls": 6,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "portalgeek.co": {
+  "urls": 6,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "pharmabiz.net": {
+  "urls": 23,
+  "extractions": 15,
+  "valid_dates": 0,
+  "trigger_events": 15,
+  "deep_candidates": 0
+ },
+ "emis.com": {
+  "urls": 11,
+  "extractions": 3,
+  "valid_dates": 3,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "locatelcolombia.com": {
+  "urls": 38,
+  "extractions": 16,
+  "valid_dates": 13,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "cambiocolombia.com": {
+  "urls": 6,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "latinrootstravel.com": {
+  "urls": 6,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "activewellness.com": {
+  "urls": 6,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "revistapym.com.co": {
+  "urls": 12,
+  "extractions": 6,
+  "valid_dates": 6,
+  "trigger_events": 6,
+  "deep_candidates": 0
+ },
+ "boletines.latinoinsurance.com": {
+  "urls": 6,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "cruzverde.com.co": {
+  "urls": 6,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "es-us.finanzas.yahoo.com": {
+  "urls": 6,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "pe.fashionnetwork.com": {
+  "urls": 38,
+  "extractions": 9,
+  "valid_dates": 0,
+  "trigger_events": 9,
+  "deep_candidates": 0
+ },
+ "pricesmart.com": {
+  "urls": 42,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "importgenius.com": {
+  "urls": 10,
+  "extractions": 4,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "pricesmart.org": {
+  "urls": 6,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "investors.pricesmart.com": {
+  "urls": 6,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "tradeyretail.com": {
+  "urls": 6,
+  "extractions": 1,
+  "valid_dates": 1,
+  "trigger_events": 1,
+  "deep_candidates": 1
+ },
+ "cencosud.com": {
+  "urls": 6,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "elpaisvallenato.com": {
+  "urls": 6,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "cpaxtra.com": {
+  "urls": 6,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "colombiasmartfit.com.co": {
+  "urls": 6,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "iadb.org": {
+  "urls": 6,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "yu-track.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "forbes.co": {
+  "urls": 11,
+  "extractions": 3,
+  "valid_dates": 2,
+  "trigger_events": 1,
+  "deep_candidates": 0
+ },
+ "blog-bt.bodytech.co": {
+  "urls": 15,
+  "extractions": 6,
+  "valid_dates": 6,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "mercadofitness.com": {
+  "urls": 15,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 1,
+  "deep_candidates": 0
+ },
+ "reveliolabs.com": {
+  "urls": 6,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "rocketreach.co": {
+  "urls": 6,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "noticiasrcn.com": {
+  "urls": 15,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "viarteria.com": {
+  "urls": 6,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "ladob.info": {
+  "urls": 6,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "palco23.mundodeportivo.com": {
+  "urls": 6,
+  "extractions": 1,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "mundodeportivo.com": {
+  "urls": 8,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "colombiacorre.com.co": {
+  "urls": 6,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "dxtcapital.com": {
+  "urls": 6,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "diariolasamericas.com": {
+  "urls": 3,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "amp.lafm.com.co": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "es.investing.com": {
+  "urls": 4,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "pressreader.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "adecaff.cat": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "esecartagenadeindias.gov.co": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "laprensa.hn": {
+  "urls": 4,
+  "extractions": 3,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "reportur.com": {
+  "urls": 4,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "irotama.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "digitk.areandina.edu.co": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "news.griinstitute.org": {
+  "urls": 2,
+  "extractions": 1,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "partner.expediagroup.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "en.ghlgrandbarranquilla.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "ar.hoteles.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "plazacapital.co": {
+  "urls": 5,
+  "extractions": 2,
+  "valid_dates": 2,
+  "trigger_events": 2,
+  "deep_candidates": 0
+ },
+ "manpowergroupcolombia.co": {
+  "urls": 16,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "thecitypaperbogota.com": {
+  "urls": 2,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "happycow.net": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "dw.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "metro.pr": {
+  "urls": 2,
+  "extractions": 1,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "consultorsalud.com": {
+  "urls": 4,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "centromayor.com.co": {
+  "urls": 2,
+  "extractions": 2,
+  "valid_dates": 2,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "sciencedirect.com": {
+  "urls": 2,
+  "extractions": 1,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "prensa-latina.cu": {
+  "urls": 2,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "fittglobal.com": {
+  "urls": 39,
+  "extractions": 17,
+  "valid_dates": 7,
+  "trigger_events": 0,
+  "deep_candidates": 5
+ },
+ "flexfit.com": {
+  "urls": 4,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "jobs.fitt.co": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "researchgate.net": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "wellnessforum.pro": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "puntacana-bavaro.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "centro-cohesia.com": {
+  "urls": 2,
+  "extractions": 2,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "vertiv.com": {
+  "urls": 2,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "vipzus.com": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 1,
+  "deep_candidates": 0
+ },
+ "prontonoticias.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "ica.gov.co": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "olade.org": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "agroecology-coalition.org": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "swissinfo.ch": {
+  "urls": 3,
+  "extractions": 3,
+  "valid_dates": 3,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "translate.google.com": {
+  "urls": 3,
+  "extractions": 2,
+  "valid_dates": 2,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "fenavi.org": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "es.wfp.org": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "merriam-webster.com": {
+  "urls": 4,
+  "extractions": 1,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "kuvingscolombia.com": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "onceonceagency.com": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "infoagro.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "rappi.com.co": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "masvital.pet": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "elpais.com": {
+  "urls": 3,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "masvital.co": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "mas-vital.com": {
+  "urls": 4,
+  "extractions": 10,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "osananutraceutica.com": {
+  "urls": 30,
+  "extractions": 15,
+  "valid_dates": 5,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "behance.net": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "ir.usana.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "asana.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "empresasana.co": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "sweetpress.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "yelu.com.co": {
+  "urls": 4,
+  "extractions": 4,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "fedco-usa.com": {
+  "urls": 8,
+  "extractions": 4,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "teamfedco.com": {
+  "urls": 4,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "fedco.com.co": {
+  "urls": 9,
+  "extractions": 2,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "reuters.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "feriaalimentec.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "kimbino.com.co": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "provenexpert.com": {
+  "urls": 2,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "smartwatermagazine.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "waze.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "fedco.com.gh": {
+  "urls": 2,
+  "extractions": 2,
+  "valid_dates": 2,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "unicentrobogota.com": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "tiendeo.com.co": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "hastingsfirm.com": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "scrippsamg.com": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "mayo.edu": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "datanyze.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "lanota.com": {
+  "urls": 4,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "lasempresas.com.co": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "lusha.com": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "cazvid.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "drogueriascafam.com.co": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "catalogo.funat.co": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "app.invima.gov.co": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "funat.co": {
+  "urls": 8,
+  "extractions": 2,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "evok.com.co": {
+  "urls": 17,
+  "extractions": 8,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "accivalores.com": {
+  "urls": 4,
+  "extractions": 1,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "buick.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "hasselblad.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "wellnessworkdays.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "axios.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "tipranks.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "registerguard.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "quartr.com": {
+  "urls": 2,
+  "extractions": 1,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "idealista.pt": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "bioplaza.com.co": {
+  "urls": 44,
+  "extractions": 16,
+  "valid_dates": 10,
+  "trigger_events": 0,
+  "deep_candidates": 1
+ },
+ "supermercadonaturista.com": {
+  "urls": 38,
+  "extractions": 11,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 6
+ },
+ "alimentossostenibles.co": {
+  "urls": 36,
+  "extractions": 11,
+  "valid_dates": 7,
+  "trigger_events": 0,
+  "deep_candidates": 3
+ },
+ "tutiendasaludable.com.co": {
+  "urls": 34,
+  "extractions": 14,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "dimins.com": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "knack.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "theportalwiki.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "techtarget.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "ghlhoteles.com": {
+  "urls": 24,
+  "extractions": 3,
+  "valid_dates": 2,
+  "trigger_events": 0,
+  "deep_candidates": 1
+ },
+ "proveedores.com": {
+  "urls": 6,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "wordreference.com": {
+  "urls": 6,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "m.interglot.com": {
+  "urls": 5,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "egixia.com": {
+  "urls": 4,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "revistaequipar.com": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 1,
+  "deep_candidates": 0
+ },
+ "paquetes.ghlhoteles.com": {
+  "urls": 3,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "bionaturales.co": {
+  "urls": 8,
+  "extractions": 3,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "modelosdeplandenegocios.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "sedeelectronica.sic.gov.co": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "doscadesa.com": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "presidencia.gov.co": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "madretierra.online": {
+  "urls": 30,
+  "extractions": 14,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 1
+ },
+ "cgfmanet.org": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "naturalmente.com.co": {
+  "urls": 5,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 1
+ },
+ "dian.gov.co": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "incp.org.co": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "overshoot.footprintnetwork.org": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "bbc.com": {
+  "urls": 2,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "cancilleria.gov.co": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "bancolombia.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "buenosaires.consulado.gov.co": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "bienestar-natural.com": {
+  "urls": 6,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "jumbocolombia.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "naturallight.com.co": {
+  "urls": 6,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "anheuser-busch.com": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "promigas.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "blogs.nvidia.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "dailycoffeenews.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "hitachienergy.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "fifa.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "mincit.gov.co": {
+  "urls": 6,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "eje21.com.co": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "bluradio.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "noticiascaracol.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "ambitojuridico.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "inatural.com.co": {
+  "urls": 5,
+  "extractions": 1,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "colombia.unir.net": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "abasto.com": {
+  "urls": 9,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "theportugalnews.com": {
+  "urls": 7,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "webstersdictionary1828.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "revistaaral.com": {
+  "urls": 2,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "molinatural.com": {
+  "urls": 30,
+  "extractions": 7,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 4
+ },
+ "msnaturals.co": {
+  "urls": 25,
+  "extractions": 9,
+  "valid_dates": 7,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "tiendanaturistacolombia.com": {
+  "urls": 5,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "py.maptons.com": {
+  "urls": 3,
+  "extractions": 3,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "tiendaneem.com": {
+  "urls": 9,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "bogota.spahotels.guru": {
+  "urls": 2,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "xcaret.com": {
+  "urls": 3,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "liveonsat.com": {
+  "urls": 3,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "technocio.com": {
+  "urls": 3,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "donde.co": {
+  "urls": 3,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "petfriendly.io": {
+  "urls": 3,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "tuclothing.sainsburys.co.uk": {
+  "urls": 3,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "en.wiktionary.org": {
+  "urls": 3,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "towson.edu": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "idpc.gov.co": {
+  "urls": 3,
+  "extractions": 3,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "pe.fashionjobs.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "fitt.co": {
+  "urls": 3,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "podcasts.apple.com": {
+  "urls": 3,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "gofitt.com": {
+  "urls": 3,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "healthline.com": {
+  "urls": 3,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "news.un.org": {
+  "urls": 3,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "ser-national.org": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "serrestaurant.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "ser.org": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "casonadelporvenir.co-bolivar.co": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "w-bogota-hotel.hotelsbogota.net": {
+  "urls": 2,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "hosteltur.com": {
+  "urls": 2,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "eldirectorio.co": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "ipmark.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "qualityfoodscol.com": {
+  "urls": 6,
+  "extractions": 3,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "getdaytrends.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "caribbeannewsdigital.com": {
+  "urls": 7,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "revistaialimentos.com": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "grupodiana.co": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "spawellnessmexico.com": {
+  "urls": 3,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "fanyf.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "takeyourbackpack.com": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "cuerpomente.com": {
+  "urls": 2,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "vercalendario.info": {
+  "urls": 5,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "prensa.disneylatino.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "essentiall.com.co": {
+  "urls": 8,
+  "extractions": 2,
+  "valid_dates": 2,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "axa.com": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "banrep.gov.co": {
+  "urls": 2,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "colombiaencifras.com": {
+  "urls": 2,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "bancomundial.org": {
+  "urls": 2,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "latinpyme.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "mallorcawellness.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "ramedicas.com": {
+  "urls": 2,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "ennuestrocampo.co": {
+  "urls": 2,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "elestimulo.com": {
+  "urls": 2,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "weedmaps.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "revistaeconomia.com": {
+  "urls": 2,
+  "extractions": 2,
+  "valid_dates": 2,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "eluniversal.com.co": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "despegar.com.co": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "hotelsmag.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "lodgingmagazine.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "franchise.sonesta.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "hotelinvestmenttoday.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "turismosuper.com": {
+  "urls": 2,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "msn.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "de.scribd.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "destinostop.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "slh.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "travel.usnews.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "bravodescuento.com.co": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "spa-awards.com": {
+  "urls": 2,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "movich-hotels.myprosandcons.com": {
+  "urls": 2,
+  "extractions": 1,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "lagrannoticia.com": {
+  "urls": 2,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "revistadc.com": {
+  "urls": 3,
+  "extractions": 2,
+  "valid_dates": 2,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "movich-buro-26.hotels-bogota.net": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "colombia.ladevi.info": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "investingnews.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "latamfintech.co": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "bevnet.com": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "thegrocer.co.uk": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "mobiletime.la": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "cnn.com": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "millerind.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "bolavip.com": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "prensamercosur.org": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "einpresswire.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "marketbeat.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "mycentraljersey.com": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "mioriente.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "carulla.com": {
+  "urls": 5,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "unicentro.com": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 1,
   "trigger_events": 0,
   "deep_candidates": 0
  }

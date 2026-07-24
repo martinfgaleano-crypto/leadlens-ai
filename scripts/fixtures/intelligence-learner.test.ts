@@ -4,7 +4,7 @@
 // Run: npm run test:intelligence
 import { aggregateEvents, computePreference, featureKeysForEvent, wilsonLowerBound, decayFactor, type FeedbackEventRow } from "@/lib/intelligence/preference-learner";
 import { buildOpportunityFeatureSnapshot, comboKey, sizeBucket, freshnessBucket } from "@/lib/intelligence/feature-snapshot";
-import { normalizeSentiment, validateReasonCodes } from "@/lib/intelligence/feedback-taxonomy";
+import { commercialOutcomeValue, feedbackDimension, normalizeSentiment, validateReasonCodes } from "@/lib/intelligence/feedback-taxonomy";
 
 const now = new Date("2026-07-13T12:00:00Z");
 const snap = (over: Record<string, unknown> = {}) => ({
@@ -27,6 +27,9 @@ ck("decay: fresh ≈ 1", Math.abs(decayFactor("2026-07-13T00:00:00Z", 90, now) -
 ck("decay: 90d = 0.5", Math.abs(decayFactor("2026-04-14T12:00:00Z", 90, now) - 0.5) < 0.01);
 ck("sentiment: useful=1 partial=0 not=-1", normalizeSentiment("useful") === 1 && normalizeSentiment("partially_useful") === 0 && normalizeSentiment("not_useful") === -1);
 ck("sentiment: operational=null", ["contacted","replied","meeting_booked","add_to_vault","exclude_similar"].every((s) => normalizeSentiment(s) === null));
+ck("commercial outcomes never become fit sentiment", ["investigated","qualified","rejected","won","lost"].every((s) => normalizeSentiment(s) === null));
+ck("feedback dimensions stay separated", feedbackDimension("useful") === "research_quality" && feedbackDimension("won") === "commercial_outcome" && feedbackDimension("saved") === "workflow");
+ck("commercial outcome distinguishes progress and terminal result", commercialOutcomeValue("meeting_booked") === "progressed" && commercialOutcomeValue("won") === "terminal_positive" && commercialOutcomeValue("lost") === "terminal_negative");
 ck("legacy mapping documented", normalizeSentiment("irrelevant") === -1 && normalizeSentiment("generic") === -1);
 ck("reason validation rejects unknown", validateReasonCodes(["nonsense"]).ok === false);
 ck("reason validation dedupes", (() => { const r = validateReasonCodes(["not_now","not_now"]); return r.ok && r.codes.length === 1; })());

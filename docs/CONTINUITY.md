@@ -54,3 +54,36 @@ Ranking/scorer/selector INTACTOS; ML en shadow. Hard blockers nunca se relajan; 
 3. Preview E2E → Brief E2E mismo ICP (runbook de piloto) → comparación $7 vs $25 → segunda corrida (consistencia).
 4. Primer piloto real (docs/FIRST_PILOT_RUNBOOK.md) + outcomes en opportunity_feedback.
 5. Persistir calibración humana acumulada (true/false positives por banda de score) — base del moat.
+
+## 11. Hardening local 2026-07-21 (sin deploy)
+
+- `/api/process/search/[id]`: ya no acepta UUID como autorización. Owner JWT,
+  `INTERNAL_RUN_SECRET` o admin explícito; dashboard, cron, webhook y admin
+  actualizados. Tests 7/7.
+- Retirados con HTTP 410: `/api/upload`, `/api/onboarding`,
+  `/api/onboarding/submit`, `/api/onboarding/upload-logo`; eran superficies
+  legacy de contactos/PII sin callers vigentes.
+- `/api/demo` falla cerrado salvo `DEMO_MODE=true`, limita input y marca la
+  respuesta `demo`/`data_origin=demo`.
+- Checkout tiene doble gate explícito y no crea jobs cuando está cerrado. Una
+  secret antigua por sí sola no lo reactiva. No se eligió ni activó provider.
+- `npm run release:check`: 238/238 assertions y build 130/130 páginas verdes.
+- Demo/eventos ahora tienen payload caps y rate limit por instancia; eventos de
+  pago/refund y `amount_paid` no se aceptan desde navegador. Antes de self-serve
+  se requiere rate limiting distribuido.
+- `npm run pilot:e2e:preflight` carga `.env.local`, no llama providers y falla
+  antes de gasto. Estado observado: credenciales base presentes, pero
+  `ALLOW_MOCK_LEADS_WITH_REAL_AI=true` e `INTERNAL_RUN_SECRET` ausente; por eso
+  el E2E real quedó correctamente detenido.
+- HTTP integration local: `test:http-security` 12/12; rutas retiradas,
+  checkout/demo cerrados y auth legacy verificadas sin DB/provider.
+- Preflight v2 registra commit/dirty state, presupuesto explícito (cap USD 5),
+  pagos cerrados y health `not_checked`; jamás equipara key presente con health.
+- Harness `npm run pilot:e2e:run`: requiere preflight verde + confirmación exacta,
+  hace probes mínimos, exige Anthropic/Supabase + search/extraction verdes y solo
+  entonces corre benchmark. Guarda health, usage, benchmark, deep trace,
+  adjudication.csv y comparación Preview/Brief. Validado que hoy se detiene antes
+  de probes con `provider_calls_made=false`.
+- Rúbrica humana v1 y runbook de piloto v2: critical → HOLD/FAIL; SLA inicial 2
+  días hábiles, máximo 1 piloto, soporte/incident/refund/seguimiento definidos.
+- `npm run release:check` vigente: 263/263 assertions; build 130/130.

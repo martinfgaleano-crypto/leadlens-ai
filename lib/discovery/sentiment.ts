@@ -20,7 +20,9 @@ export interface DirectionResult {
 }
 
 const POSITIVE = /\b(invirti[oó]|invierte|inaugur[oó]|abri[oó]|amplí[oó]|adquiri[oó]|expansi[oó]n|crecimiento|nuevo contrato|adjudic[oó]|moderniz[oó]|implement[oó]|nueva (planta|bodega|sede|ruta|flota))\b/i;
-const DISTRESS = /\b(insolvencia|quiebra|liquidaci[oó]n|ley 1116|reorganizaci[oó]n empresarial|cesaci[oó]n de pagos|default|impago|embargo)\b/i;
+// Bare "liquidación" is common retail language for clearance merchandise. It
+// is corporate distress only with an insolvency/legal subject or process.
+const DISTRESS = /\b(insolvencia|quiebra|liquidaci[oó]n (?:judicial|obligatoria|de (?:la )?(?:empresa|sociedad|compa[ñn][ií]a))|proceso de liquidaci[oó]n|ley 1116|reorganizaci[oó]n empresarial|cesaci[oó]n de pagos|default|impago|embargo)\b/i;
 const RISK = /\b(aplaz[oó] (los )?pagos|mora|deuda|p[eé]rdidas|recorte|despidos|crisis|demanda judicial)\b/i;
 const REGULATORY = /\b(nueva regulaci[oó]n|normativa|decreto|resoluci[oó]n \d+|cumplimiento (normativo|regulatorio)|sanci[oó]n|superintendencia orden|exigencia legal)\b/i;
 const DISRUPTION = /\b(incidente|falla operativa|accidente|interrupci[oó]n del servicio|ciberataque|colapso operativo|derrame|siniestro)\b/i;

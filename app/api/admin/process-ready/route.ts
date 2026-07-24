@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/require-admin";
+import { internalProcessingHeaders } from "@/lib/auth/authorize-processing";
 
 // ─── POST /api/admin/process-ready ───────────────────────────────────────────
 //
@@ -65,6 +66,13 @@ export async function POST(req: NextRequest) {
   }
 
   const origin  = req.nextUrl.origin;
+  const processingHeaders = internalProcessingHeaders();
+  if (!processingHeaders) {
+    return NextResponse.json(
+      { error: "INTERNAL_RUN_SECRET is required to dispatch processing." },
+      { status: 503 },
+    );
+  }
   const results: Array<{ id: string; status: number; success: boolean; error?: string }> = [];
 
   for (const search of readySearches) {
@@ -72,7 +80,7 @@ export async function POST(req: NextRequest) {
     try {
       const res = await fetch(`${origin}/api/process/search/${searchId}`, {
         method:  "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: processingHeaders,
       });
       const body = await res.json().catch(() => ({})) as { success?: boolean };
       results.push({ id: searchId, status: res.status, success: !!body.success });

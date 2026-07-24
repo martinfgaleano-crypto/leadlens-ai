@@ -5,6 +5,24 @@
 // sentiment signals and optional reason codes.
 
 export const SENTIMENT_SIGNALS = ["useful", "partially_useful", "not_useful"] as const;
+export type FeedbackDimension = "research_quality" | "commercial_outcome" | "workflow";
+export type CommercialOutcomeValue = "progressed" | "terminal_positive" | "terminal_negative" | null;
+
+const COMMERCIAL_SIGNALS = new Set(["investigated", "contacted", "replied", "meeting_booked", "qualified", "rejected", "won", "lost"]);
+const QUALITY_SIGNALS = new Set(["useful", "partially_useful", "not_useful", "irrelevant", "wrong_fit", "generic", "thesis_confirmed", "thesis_wrong"]);
+
+export function feedbackDimension(signal: string): FeedbackDimension {
+  if (COMMERCIAL_SIGNALS.has(signal)) return "commercial_outcome";
+  if (QUALITY_SIGNALS.has(signal)) return "research_quality";
+  return "workflow";
+}
+
+export function commercialOutcomeValue(signal: string): CommercialOutcomeValue {
+  if (["investigated", "contacted", "replied", "meeting_booked", "qualified"].includes(signal)) return "progressed";
+  if (signal === "won") return "terminal_positive";
+  if (["rejected", "lost"].includes(signal)) return "terminal_negative";
+  return null;
+}
 
 /** Structured reason codes — closed enum, validated server-side. */
 export const REASON_CODES = [
@@ -51,6 +69,8 @@ export function normalizeSentiment(signal: string): -1 | 0 | 1 | null {
     case "generic": return -1;      // legacy "Weak evidence"
     // Operational / commercial — never a fit sentiment:
     case "contacted": case "replied": case "meeting_booked":
+    case "investigated": case "qualified": case "rejected": case "won": case "lost":
+    case "saved": case "thesis_confirmed": case "thesis_wrong":
     case "add_to_vault": case "exclude_similar":
     default:
       return null;

@@ -1,4 +1,6 @@
-# LeadLens AI — Production Checklist
+# LeadLens AI — Production Checklist (HISTÓRICO)
+
+> **Obsoleto para decisiones de lanzamiento.** Conservado como historial de la arquitectura anterior. Usar [`docs/GO_TO_MARKET_MASTER_CHECKLIST.md`](docs/GO_TO_MARKET_MASTER_CHECKLIST.md) y [`docs/CONTINUITY.md`](docs/CONTINUITY.md).
 
 ## Current status in DEMO_MODE
 

@@ -25,8 +25,16 @@ export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLen
 
   console.log(`[pipeline] starting — plan=${plan} demo=${IS_DEMO}`);
 
-  const { runICPAgent } = await import("./agents/icp-agent");
-  const { icp, criteria } = await runICPAgent(onboardingData, plan);
+  const precomputedIntelligence = input.icpOverride && input.criteriaOverride
+    ? { icp: input.icpOverride, criteria: input.criteriaOverride }
+    : null;
+  const { icp, criteria } = precomputedIntelligence ?? await (async () => {
+    const { runICPAgent } = await import("./agents/icp-agent");
+    return runICPAgent(onboardingData, plan);
+  })();
+  if (precomputedIntelligence) console.log("[pipeline] reusing prevalidated ICP and criteria — duplicate ICP inference skipped");
+  const { assertGeographyContract, enforceCandidateGeography } = await import("./quality/geography-contract");
+  assertGeographyContract(onboardingData, criteria);
 
   // Managed pilots (real clients) force compliant public-web discovery — mock
   // env flags never reach a customer-facing run. Internal QA pilots explicitly
@@ -48,6 +56,17 @@ export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLen
     candidates = await runLeadFinderAgent(criteria);
     console.log(`[pipeline] found ${candidates.length} candidates`);
   }
+  if (onboardingData.target_countries?.length) {
+    const before = candidates.length;
+    candidates = enforceCandidateGeography(candidates, onboardingData.target_countries);
+    console.log(`[pipeline] geography gate — target=${onboardingData.target_countries.join(",")} kept=${candidates.length}/${before}`);
+  }
+  if (onboardingData.known_accounts?.length) {
+    const known = new Set(onboardingData.known_accounts.map(name => name.trim().toLowerCase()));
+    const before = candidates.length;
+    candidates = candidates.filter(candidate => !known.has(candidate.company.trim().toLowerCase()));
+    console.log(`[pipeline] novelty gate — excluded_known_accounts=${before - candidates.length}`);
+  }
 
   // Load vault patterns once — fails gracefully, never blocks the pipeline
   const { loadVaultPatterns } = await import("./vault/feedback-vault");
@@ -67,9 +86,11 @@ export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLen
   for (let i = 0; i < Math.min(candidates.length, targetCount); i++) {
     const candidate = candidates[i];
     try {
-      const lead = await processOneLead(candidate, criteria, icp, onboardingData);
+      const checkpoint = input.checkpointDir ? await readLeadCheckpoint(input.checkpointDir, candidate.id) : null;
+      const lead = checkpoint ?? await processOneLead(candidate, criteria, icp, onboardingData, input.decisionOnly === true);
+      if (!checkpoint && input.checkpointDir) await writeLeadCheckpoint(input.checkpointDir, candidate.id, lead);
       processedLeads.push(lead);
-      console.log(`[pipeline] lead ${i + 1}/${targetCount}: ${candidate.company} → ${lead.qualification.category} (${lead.qualification.fit_score}) gen=${lead.outreach.genericness_risk ?? "?"} hal=${lead.outreach.hallucination_risk ?? "?"}`);
+      console.log(`[pipeline] lead ${i + 1}/${targetCount}: ${candidate.company} → ${lead.qualification.category} (${lead.qualification.fit_score}) gen=${lead.outreach.genericness_risk ?? "?"} hal=${lead.outreach.hallucination_risk ?? "?"}${checkpoint ? " checkpoint=reused" : ""}`);
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : String(err);
       console.error(`[pipeline] failed to process ${candidate.company}: ${errMsg.slice(0, 120)}`);
@@ -202,18 +223,36 @@ export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLen
   return report;
 }
 
+async function readLeadCheckpoint(dir: string, candidateId: string): Promise<ProcessedLead | null> {
+  try {
+    const { existsSync, readFileSync } = await import("node:fs");
+    const { join } = await import("node:path");
+    const file = join(dir, `${candidateId.replace(/[^a-zA-Z0-9_-]/g, "_")}.json`);
+    return existsSync(file) ? JSON.parse(readFileSync(file, "utf8")) as ProcessedLead : null;
+  } catch { return null; }
+}
+
+async function writeLeadCheckpoint(dir: string, candidateId: string, lead: ProcessedLead): Promise<void> {
+  const { mkdirSync, writeFileSync } = await import("node:fs");
+  const { join } = await import("node:path");
+  mkdirSync(dir, { recursive: true });
+  const file = join(dir, `${candidateId.replace(/[^a-zA-Z0-9_-]/g, "_")}.json`);
+  writeFileSync(file, `${JSON.stringify(lead, null, 2)}\n`);
+}
+
 // ─── Single-lead processing ───────────────────────────────────────────────────
 
 async function processOneLead(
   candidate: LeadCandidate,
   criteria: import("@/types").LeadSearchCriteria,
   icp: import("@/types").ICP,
-  onboarding: OnboardingData
+  onboarding: OnboardingData,
+  decisionOnly = false,
 ): Promise<ProcessedLead> {
   const { runResearchAgent } = await import("./agents/research-agent");
   const { runQualificationAgent } = await import("./agents/qualification-agent");
-  const { runPersonalizationAgent } = await import("./agents/personalization-agent");
-  const { runOutreachAgent } = await import("./agents/outreach-agent");
+  const { runPersonalizationAgent, buildDeterministicPersonalization } = await import("./agents/personalization-agent");
+  const { runOutreachAgent, buildDeterministicOutreach } = await import("./agents/outreach-agent");
   const { runQCAgent } = await import("./agents/qc-agent");
 
   // Agent 3: Research
@@ -223,13 +262,17 @@ async function processOneLead(
   const qualification = await runQualificationAgent(enrichment, icp, criteria.output_language ?? "en");
 
   // Agent 5: Personalize — now returns PersonalizationResult
-  const personalization = await runPersonalizationAgent(qualification, criteria);
+  const personalization = decisionOnly
+    ? buildDeterministicPersonalization(qualification, criteria)
+    : await runPersonalizationAgent(qualification, criteria);
 
   // Agent 6: Outreach — receives full PersonalizationResult
-  const outreach = await runOutreachAgent(qualification, personalization, criteria);
+  const outreach = decisionOnly
+    ? buildDeterministicOutreach(qualification, personalization, criteria)
+    : await runOutreachAgent(qualification, personalization, criteria);
 
   // Agent 7: QC — criteria passed for buyer/seller confusion detection
-  const checkedOutreach = await runQCAgent(qualification, outreach, criteria);
+  const checkedOutreach = decisionOnly ? outreach : await runQCAgent(qualification, outreach, criteria);
 
   // Post-QC repair — deterministic fix for common known issues (max 1 pass, no extra API call)
   const { repairOutreachIfNeeded } = await import("./agents/outreach-agent");

@@ -6,6 +6,7 @@ import {
   completeSnapshot,
   failSnapshot,
 } from "@/lib/storage/snapshot-store";
+import { requireAdmin } from "@/lib/auth/require-admin";
 
 /**
  * POST /api/process
@@ -32,6 +33,7 @@ const bodySchema = z.object({
     contact_email: z.string().email(),
     output_language: z.enum(["en", "es", "pt", "ja"]).optional(),
     target_market_region: z.enum(["north_america", "latin_america", "europe", "asia", "global"]).optional(),
+    target_countries: z.array(z.string().min(2).max(60)).min(1).optional(),
   }),
   jobId: z.string().optional(),
   /** lead_searches.id — enables safe previous-snapshot scope for Monthly Monitor runs. */
@@ -39,6 +41,11 @@ const bodySchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  // This legacy endpoint can invoke paid providers and persist a real report.
+  // Public demos use /api/demo; production processing must be admin-authorized.
+  const deny = requireAdmin(req);
+  if (deny) return deny;
+
   const body = await req.json().catch(() => null);
   if (!body) return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
 

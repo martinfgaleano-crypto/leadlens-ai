@@ -12,14 +12,14 @@ export async function runPersonalizationAgent(
   criteria: LeadSearchCriteria
 ): Promise<PersonalizationResult> {
   if (IS_DEMO || !process.env.ANTHROPIC_API_KEY) {
-    return buildDemoPersonalization(qualified, criteria);
+    return buildDeterministicPersonalization(qualified, criteria);
   }
   return buildClaudePersonalization(qualified, criteria);
 }
 
 // ─── Deterministic personalization ───────────────────────────────────────────
 
-function buildDemoPersonalization(
+export function buildDeterministicPersonalization(
   qualified: QualifiedLead,
   criteria: LeadSearchCriteria
 ): PersonalizationResult {

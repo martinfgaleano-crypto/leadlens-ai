@@ -1,0 +1,20 @@
+ae60088 docs: modos operativos + ROI de search en CONTINUITY
+c8af65e Modos operativos honestos + targeted_discovery + reporte explica cobertura + ROI de search
+0d74733 Estado final: .leadlens ledger de la validación provider-limited
+097b7d2 Consola: acciones recomendadas + requisitos por run; runbooks de piloto y continuidad
+3ea09f1 Validación provider-limited E2E + dominios verificados + rol por atribución
+caed844 Runbook de operaciones + merge de señales del cliente en pack needs-map
+b31803f Moat + outcome capture + coherencia visible de pricing
+b168f01 Provider Health & Credits Console (/admin/operations/providers)
+5bf97e7 Vertical Intelligence Packs v1: moat + fallback determinístico sin LLM
+8c0a0c7 Universe stoplist ampliada + visibilidad de rechazos por homónimo en trace
+f678a9f Source utility aplicada: per-domain ledger que ordena la extracción
+28fa6af Counterevidence formal + revisión adversarial independiente
+6152108 Precision fixes from traced benchmark: kill the Inter/Nu-bank false positive
+7a9da4e Instrument deep-validation with per-candidate trace
+eaee1a9 Parse Spanish publication dates — fixes the dominant no_valid_date blocker
+b1812d0 Add Tavily as third search source for signal search + identity resolution
+b422105 Recall fixes: identity Serper fallback, event-title extraction, junk prefilter, geo-bias
+9b8a571 Intelligence quality: commercial fit, entity roles, sentiment, rubric v2
+b5f9c47 Intelligence layer v3: org-type gate, event-vs-metric, thesis specificity, negative/PR veto, runtime fix
+e6c14f7 Deep validation layer: corporate-identity homonym guard, materiality, corroboration, quality rubric

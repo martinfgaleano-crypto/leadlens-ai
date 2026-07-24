@@ -49,6 +49,7 @@ t("objeciones listadas", dis.objections.length > 0);
 
 // ── Source utility (source-utility-v1) ──
 import { newSourceLedger, noteUrl, noteOutcome, sourceUtilityScore } from "@/lib/discovery/source-utility";
+import { compactSourceStats, computeRunSourceDeltas } from "@/lib/discovery/source-intelligence-store";
 {
   const L = newSourceLedger();
   t("dominio desconocido → baseline 50", sourceUtilityScore(L, "desconocido.com") === 50);
@@ -59,6 +60,13 @@ import { newSourceLedger, noteUrl, noteOutcome, sourceUtilityScore } from "@/lib
   noteUrl(L, "malo.com"); noteOutcome(L, "malo.com", { extracted: true }); noteOutcome(L, "malo.com", { extracted: true });
   t("2 extracciones sin fecha → penalizado", sourceUtilityScore(L, "malo.com") < 50);
   t("in-run domina al prior", sourceUtilityScore(L, "bueno.com") > sourceUtilityScore(L, "larepublica.co"));
+  const priors = { "bueno.com": { urls: 10, extractions: 6, valid_dates: 3, trigger_events: 2, deep_candidates: 1 } };
+  const current = { "bueno.com": { urls: 12, extractions: 7, valid_dates: 4, trigger_events: 3, deep_candidates: 2 } };
+  const delta = computeRunSourceDeltas(current, priors, ["bueno.com"])["bueno.com"];
+  t("memoria persiste sólo observaciones nuevas", delta.urls === 2 && delta.extractions === 1 && delta.valid_dates === 1);
+  t("memoria no vuelve a sumar priors", delta.trigger_events === 1 && delta.deep_candidates === 1);
+  const compact = compactSourceStats({ urls: 280, extractions: 140, valid_dates: 70, trigger_events: 35, deep_candidates: 14 });
+  t("historial inflado se compacta preservando tasas", compact.extractions === 24 && compact.valid_dates === 12 && compact.trigger_events === 6);
 }
 
 console.log(`\n${passed} passed, ${failed} failed`);

@@ -38,6 +38,15 @@ const near = (hay: string, company: string, pattern: RegExp, window = 60): boole
   return pattern.test(seg);
 };
 
+/** Strict subject→verb relation for English corporate releases. */
+const actionAfterCompany = (hay: string, company: string, pattern: RegExp, window = 100): boolean => {
+  const idx = tokenIndex(hay, company);
+  if (idx < 0) return false;
+  const seg = hay.slice(idx, idx + company.length + window);
+  const actionIdx = seg.search(pattern);
+  return actionIdx >= 0 && actionIdx >= Math.min(company.length, seg.length) - 4;
+};
+
 export function assessEntityRole(company: string, titleAndContent: string): RoleAssessment {
   const hay = titleAndContent.toLowerCase();
   const idx = tokenIndex(hay, company);
@@ -53,6 +62,11 @@ export function assessEntityRole(company: string, titleAndContent: string): Role
       return { role: "acquired_company", is_account: true, reason: "La empresa fue adquirida — el cambio de control la afecta directamente (cuenta válida, validar quién opera)." };
     }
   }
+  const acquiredIdx = hay.search(/\b(acquired|bought|purchased)\b/i);
+  if (acquiredIdx >= 0) {
+    if (idx < acquiredIdx && acquiredIdx - idx <= company.length + 80) return { role: "acquirer", is_account: true, reason: "The company is the acquirer (subject of the ownership change)." };
+    if (idx > acquiredIdx && idx - acquiredIdx <= 120) return { role: "acquired_company", is_account: true, reason: "The company was acquired and is directly affected by the ownership change." };
+  }
   // Contract roles.
   if (near(hay, company, /(adjudic[oó]|otorg[oó] (el|un) contrato a|contrat[oó] a)/i)) {
     const awardIdx = hay.search(/(adjudic[oó]|otorg[oó]|contrat[oó] a)/);
@@ -60,8 +74,11 @@ export function assessEntityRole(company: string, titleAndContent: string): Role
     return { role: "contract_awarder", is_account: true, reason: "La empresa adjudicó el contrato." };
   }
   // Facility/asset owner: "<company> inauguró/abrió su planta/bodega".
-  if (near(hay, company, /(inaugur[oó]|abri[oó]|construy[oó]|ampl[ií][oó])\s+(su |una |un |la |el |nuev)/i)) {
+  if (near(hay, company, /(inaugur[oó]|abri[oó]|abre|abrir[aá]?|construy[oó]|ampl[ií][oó])\s+(su |una |un |la |el |\d+ |nuev)/i)) {
     return { role: "asset_owner", is_account: true, reason: "La empresa abrió/amplió una instalación propia." };
+  }
+  if (actionAfterCompany(hay, company, /\b(opened|opens|opening|expanded|expands|unveiled|launched)\b/i)) {
+    return { role: "asset_owner", is_account: true, reason: "The company is the subject opening, expanding or launching the facility/program." };
   }
   // Facility attributed BY NAME to the company: "CEDI Falabella", "planta de
   // Postobón", "bodega para Alkosto" — third-party project/showcase pages name
@@ -75,9 +92,18 @@ export function assessEntityRole(company: string, titleAndContent: string): Role
   if (near(hay, company, /(firm[oó] (una )?alianza|anunci[oó] (un )?acuerdo|se ali[oó]) con/i)) {
     return { role: "partner", is_account: true, reason: "La empresa es parte de la alianza (validar cuál parte tiene la necesidad)." };
   }
+  if (actionAfterCompany(hay, company, /\b(partnered|partners|signed .{0,40}\b(?:partnership|agreement)|announced .{0,40}\b(?:partnership|agreement))\b/i)) {
+    return { role: "partner", is_account: true, reason: "The company is a named party to the partnership." };
+  }
   // Investment/operation by the company.
   if (near(hay, company, /(invirti[oó]|invierte|inaugur|amplí|moderniz|implement|inici[oó])/i)) {
     return { role: "subject_of_change", is_account: true, reason: "La empresa es el sujeto del cambio operativo." };
+  }
+  if (actionAfterCompany(hay, company, /\b(invested|invests|implemented|implements|entered|enters|announced|introduces|introduced)\b/i)) {
+    return { role: "subject_of_change", is_account: true, reason: "The company is the grammatical subject of the corporate change." };
+  }
+  if (actionAfterCompany(hay, company, /\b(acelera|inicia|contin[uú]a|ejecuta)\b.{0,50}\b(expansi[oó]n|reconversi[oó]n|transformaci[oó]n)\b/i)) {
+    return { role: "subject_of_change", is_account: true, reason: "La empresa es el sujeto explícito de la expansión o reconversión." };
   }
   // Company appears but not tied to an action verb near it → incidental.
   return { role: "incidental_mention", is_account: false, reason: "La empresa se menciona pero no como sujeto del evento (posible mención incidental)." };

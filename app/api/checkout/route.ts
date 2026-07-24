@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getStripe, isCheckoutReady } from "@/lib/stripe";
 import { createJob } from "@/lib/storage/job-store";
 import type { PlanType, OnboardingData } from "@/types";
+import { paymentGate } from "@/lib/payments/payment-gate";
 
 const checkoutSchema = z.object({
   // Accepts versioned product codes (launch_tier_architecture_v0) and legacy
@@ -23,6 +24,7 @@ const checkoutSchema = z.object({
     contact_email: z.string().email(),
     output_language: z.enum(["en", "es", "pt", "ja"]).optional(),
     target_market_region: z.enum(["north_america", "latin_america", "europe", "asia", "global"]).optional(),
+    target_countries: z.array(z.string().min(2).max(60)).min(1).optional(),
     // Tier-adaptive onboarding (progressive disclosure) — optional everywhere.
     campaign_objective: z.string().max(600).optional(),
     opportunity_preferences: z.string().max(600).optional(),
@@ -37,6 +39,14 @@ const checkoutSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  const gate = paymentGate();
+  if (!gate.enabled) {
+    return NextResponse.json(
+      { error: "Self-serve checkout is not open.", code: "CHECKOUT_CLOSED" },
+      { status: 503 },
+    );
+  }
+
   let body: unknown;
   try {
     body = await req.json();
@@ -61,7 +71,8 @@ export async function POST(req: NextRequest) {
     product_version: "launch_v0",
   };
 
-  // Create a pending job in the store (works in-memory without Supabase)
+  // Create a pending job only after the explicit payment gate is open. Closed
+  // checkout attempts must never leave PII-bearing orphan jobs behind.
   const job = await createJob({ plan, onboarding, customer_email: onboarding.contact_email });
 
   // DEMO_MODE or no payment provider → return mock checkout URL

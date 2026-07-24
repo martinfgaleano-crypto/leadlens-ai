@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSnapshot } from "@/lib/storage/snapshot-store";
+import { requireAdmin } from "@/lib/auth/require-admin";
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: { jobId: string } },
 ) {
+  // Customer report access lives at /api/report and verifies Supabase ownership.
+  // This legacy raw-snapshot endpoint is retained for operations only.
+  const deny = requireAdmin(req);
+  if (deny) return deny;
+
   const { jobId } = params;
 
   if (!jobId || typeof jobId !== "string") {

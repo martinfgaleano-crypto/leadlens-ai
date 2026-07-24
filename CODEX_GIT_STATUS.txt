@@ -1,0 +1,113 @@
+ M .env.example
+ M .leadlens/source-intelligence.json
+ M .leadlens/usage.json
+ M BETA_LAUNCH_CHECKLIST.md
+ M PRODUCTION_CHECKLIST.md
+ M app/admin/_components/AdminLayout.tsx
+ M app/admin/reports/institutional/[jobId]/page.tsx
+ M app/admin/snapshots/page.tsx
+ M app/api/admin/intakes/route.ts
+ M app/api/admin/pilot/route.ts
+ M app/api/admin/process-ready/route.ts
+ M app/api/admin/searches/[id]/generate/route.ts
+ M app/api/checkout/route.ts
+ M app/api/demo/route.ts
+ M app/api/events/route.ts
+ M app/api/feedback/opportunity/route.ts
+ M app/api/jobs/[jobId]/route.ts
+ M app/api/jobs/route.ts
+ M app/api/lemon-webhook/route.ts
+ M app/api/onboarding/route.ts
+ M app/api/onboarding/submit/route.ts
+ M app/api/onboarding/upload-logo/route.ts
+ M app/api/process/route.ts
+ M app/api/process/search/[id]/route.ts
+ M app/api/results/[jobId]/route.ts
+ M app/api/upload/route.ts
+ M app/dashboard/searches/page.tsx
+ M app/demo-pipeline/page.tsx
+ M app/results/[jobId]/page.tsx
+ M app/upload/[jobId]/page.tsx
+ M docs/CONTINUITY.md
+ M docs/FIRST_PILOT_RUNBOOK.md
+ M lib/agents/icp-agent.ts
+ M lib/agents/outreach-agent.ts
+ M lib/agents/personalization-agent.ts
+ M lib/agents/report-agent.ts
+ M lib/anthropic.ts
+ M lib/discovery/commercial-fit.ts
+ M lib/discovery/company-first-discovery.ts
+ M lib/discovery/company-universe.ts
+ M lib/discovery/entity-role.ts
+ M lib/discovery/event-vs-metric.ts
+ M lib/discovery/materiality.ts
+ M lib/discovery/opportunity-test.ts
+ M lib/discovery/sentiment.ts
+ M lib/discovery/source-intelligence-store.ts
+ M lib/discovery/vertical-packs.ts
+ M lib/intelligence/feedback-taxonomy.ts
+ M lib/learning.ts
+ M lib/ops/usage-ledger.ts
+ M lib/pipeline.ts
+ M lib/quality/opportunity-decision.ts
+ M lib/ranking.ts
+ M lib/reports/institutional-assembler.ts
+ M lib/reports/institutional-report-types.ts
+ M lib/utils/export.ts
+ M package.json
+ M scripts/fixtures/company-first-discovery.test.ts
+ M scripts/fixtures/counterevidence.test.ts
+ M scripts/fixtures/intelligence-learner.test.ts
+ M scripts/fixtures/intelligence-v2.test.ts
+ M scripts/fixtures/intelligence-v3.test.ts
+ M types/index.ts
+?? .github/
+?? CODEX_GIT_STATUS.txt
+?? docs/ACCOUNT_QUALITY_ACCELERATION_PROMPT.md
+?? docs/API_AUTHORIZATION_MATRIX.md
+?? docs/GO_TO_MARKET_MASTER_CHECKLIST.md
+?? docs/HUMAN_OPPORTUNITY_ADJUDICATION.md
+?? docs/MASTER_EXECUTION_PROMPT.md
+?? docs/PILOT_VALIDATION_EXECUTION_PROMPT.md
+?? docs/SEARCH_QUALITY_PANORAMA.md
+?? lib/auth/authorize-processing.ts
+?? lib/demo/
+?? lib/discovery/account-role.ts
+?? lib/discovery/account-thesis.ts
+?? lib/discovery/channel-access.ts
+?? lib/discovery/channel-evidence-contract.ts
+?? lib/discovery/trace-replay.ts
+?? lib/discovery/universe-quality.ts
+?? lib/legacy/
+?? lib/ops/pilot-preflight.ts
+?? lib/ops/pilot-run-gate.ts
+?? lib/payments/
+?? lib/quality/actionability-gate.ts
+?? lib/quality/geography-contract.ts
+?? lib/quality/pilot-scorecard.ts
+?? lib/quality/report-delivery-gate.ts
+?? lib/reports/market-landscape.ts
+?? lib/security/
+?? scripts/fixtures/actionability-gate.test.ts
+?? scripts/fixtures/demo-safety.test.ts
+?? scripts/fixtures/discovery-value.test.ts
+?? scripts/fixtures/geography-contract.test.ts
+?? scripts/fixtures/http-surface-security.test.ts
+?? scripts/fixtures/llm-cost-meter.test.ts
+?? scripts/fixtures/payment-gate.test.ts
+?? scripts/fixtures/pilot-preflight.test.ts
+?? scripts/fixtures/pilot-run-gate.test.ts
+?? scripts/fixtures/pilot-scorecard.test.ts
+?? scripts/fixtures/processing-authorization.test.ts
+?? scripts/fixtures/public-content-sanitizer.test.ts
+?? scripts/fixtures/rate-limit.test.ts
+?? scripts/fixtures/report-delivery-gate.test.ts
+?? scripts/fixtures/retired-surfaces.test.ts
+?? scripts/fixtures/wellness-vertical.test.ts
+?? scripts/sources/backfill-amor-market-landscape.ts
+?? scripts/sources/build-pilot-scorecard.ts
+?? scripts/sources/pilot-e2e-preflight.ts
+?? scripts/sources/replay-discovery-trace.ts
+?? scripts/sources/run-amor-de-gea-pilot.ts
+?? scripts/sources/run-pilot-e2e.ts
+?? supabase/migrations/039_feedback_outcomes.sql

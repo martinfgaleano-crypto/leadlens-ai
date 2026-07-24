@@ -56,7 +56,7 @@ export function buildDeterministicICP(
     target_industries: industries,
     target_company_size: sizeRangeToArray(sizeRange),
     target_job_titles: titles,
-    target_geography: regionToGeography(onboarding.target_market_region),
+    target_geography: exactOrRegionalGeography(onboarding.target_countries, onboarding.target_market_region),
     excluded_industries: ["Government", "Non-profit", "Education"],
     buying_signals: signals,
     disqualification_criteria: icp.disqualifiers,
@@ -109,6 +109,7 @@ Tone: ${onboarding.tone}
 Plan: ${plan} (${PLAN_LEAD_COUNT[plan]} leads)
 Output language: ${languageLabel(lang)}
 Target market region: ${region}
+Exact target countries (authoritative): ${(onboarding.target_countries ?? []).join(", ") || "not supplied"}
 
 Return JSON:
 {
@@ -148,6 +149,10 @@ Return JSON:
 }`;
 
   const result = await callClaudeJSON<{ icp: ICP; criteria: LeadSearchCriteria }>(SYSTEM, prompt, 4000);
+  // Geography is user input, never an LLM decision. Prevent the model from
+  // broadening Colombia into LATAM or silently substituting another market.
+  result.criteria.target_geography = exactOrRegionalGeography(onboarding.target_countries, onboarding.target_market_region);
+  result.criteria.target_market_region = onboarding.target_market_region ?? "global";
   // Inject sender identity — Claude doesn't know to include these
   result.criteria.sender_company_name = onboarding.company_name;
   result.criteria.sender_company_description = onboarding.company_description;
@@ -258,7 +263,9 @@ function sizeRangeToArray(range: string): string[] {
   return ["11-50", "51-200"];
 }
 
-function regionToGeography(region?: string): string[] {
+export function exactOrRegionalGeography(countries?: string[], region?: string): string[] {
+  const exact = (countries ?? []).map(c => c.trim()).filter(Boolean);
+  if (exact.length > 0) return Array.from(new Set(exact));
   switch (region) {
     case "north_america": return ["United States", "Canada"];
     case "latin_america": return ["Mexico", "Brazil", "Argentina", "Colombia", "Chile"];

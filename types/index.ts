@@ -117,6 +117,7 @@ export type RecommendedActionType =
  */
 export type FeedbackSignal =
   | "useful"
+  | "partially_useful"
   | "not_useful"
   | "irrelevant"
   | "contacted"
@@ -125,7 +126,17 @@ export type FeedbackSignal =
   | "generic"
   | "replied"
   | "add_to_vault"
-  | "exclude_similar";
+  | "exclude_similar"
+  | "investigated"
+  | "saved"
+  | "qualified"
+  | "rejected"
+  | "won"
+  | "lost"
+  | "thesis_confirmed"
+  | "thesis_wrong";
+
+export type FeedbackDimension = "research_quality" | "commercial_outcome" | "workflow";
 
 /**
  * How a feedback signal should affect the learning system.
@@ -192,6 +203,12 @@ export interface OnboardingData {
   contact_email: string;
   output_language?: OutputLanguage;
   target_market_region?: MarketRegion;
+  /** Exact countries where prospect accounts must operate. This is the
+   * authoritative geography; region is only a provider/localization hint. */
+  target_countries?: string[];
+  /** Accounts the client already knows or is already pursuing. They are
+   * excluded from discovery delivery so the product cannot charge for obvious duplicates. */
+  known_accounts?: string[];
   /** Versioned product code (launch_tier_architecture_v0). Legacy jobs lack it
    *  and resolve via their PlanType. Server-side only — never priced from client. */
   product_code?: string;
@@ -255,6 +272,9 @@ export interface LeadSearchCriteria {
   localization_notes?: string;
   sender_company_name?: string;
   sender_company_description?: string;
+  /** Accounts already delivered or recently investigated without a new signal.
+   * Removed before per-company provider spend; distinct from customer-known accounts. */
+  excluded_account_names?: string[];
 }
 
 // ─── Lead Candidate (raw from provider) ──────────────────────────────────────
@@ -284,6 +304,30 @@ export interface LeadCandidate {
   signal_type?: string | null;
   region?: string | null;
   country?: string | null;
+  account_visibility?: "emerging" | "established" | "obvious" | "unknown";
+  discovery_value?: "high" | "medium" | "low";
+  discovery_value_reason?: string;
+  /** Why the account entered discovery. Channel-fit is verified access/capability,
+   * not a dated buying-intent event and must remain validate-first. */
+  opportunity_kind?: "timing_signal" | "channel_fit";
+  opportunity_kind_reason?: string;
+  channel_evidence_grade?: "strong" | "moderate" | "preliminary" | "insufficient";
+  channel_proof_type?: "supplier_intake" | "external_brand_portfolio" | "category_distribution" | "unknown";
+  channel_category_alignment?: "confirmed" | "plausible" | "unknown";
+  channel_limitations?: string[];
+  observed_fact?: string;
+  client_relevance?: string;
+  evidence_limit?: string;
+  validation_question?: string;
+  replicability_edge?: string;
+  discovery_origin?: "vertical_seed" | "dynamic_enumeration" | "unknown";
+  discovery_source_detail?: string;
+  universe_score?: number;
+  country_confidence?: "verified_pack" | "high" | "medium" | "unknown";
+  country_evidence?: string;
+  account_role?: "buyer_channel" | "hospitality_operator" | "end_user_operator" | "brand_owner" | "seller_network" | "service_provider" | "unknown";
+  account_role_confidence?: "high" | "medium" | "low";
+  account_role_evidence?: string[];
 }
 
 // ─── Evidence discipline ──────────────────────────────────────────────────────
@@ -420,6 +464,12 @@ export interface OpportunityRanking {
   evidence_quality?: EvidenceQualityLevel;
   original_recommended_action?: RecommendedActionType;
   recommended_action_guardrail_applied?: boolean;
+  actionability_status?: "act_now" | "validate_first" | "monitor" | "exclude";
+  actionability_reasons?: string[];
+  actionability_blockers?: string[];
+  account_visibility?: "emerging" | "established" | "obvious" | "unknown";
+  discovery_value?: "high" | "medium" | "low";
+  discovery_value_reason?: string;
   // ── Source & Freshness metadata (Source Layer — metadata only, never changes ranking) ──
   evidence_strength_label?: string;   // "Strong evidence" / "Moderate evidence" / "Limited evidence" / "Insufficient evidence"
   source_freshness_label?: string;    // "Context-only source · No timing signal" / "No signal date available · Freshness unknown"
@@ -624,6 +674,12 @@ export interface LeadLensReport {
   strategic_warnings?: string[];
   evidence_quality_summary?: string;
   evidence_quality_counts?: { high: number; medium: number; low: number; insufficient: number };
+  actionability_summary?: { act_now: number; validate_first: number; monitor: number; exclude: number };
+  delivery_readiness?: {
+    status: "ready" | "review_required" | "blocked";
+    reasons: string[];
+    required_actions: string[];
+  };
   // ── Ranking Intelligence ────────────────────────────────────────────────────
   ranked_opportunities?: OpportunityRanking[];    // All accounts ranked with explanations
   // ── Decision Intelligence (executive funnel — real pipeline numbers only) ──
@@ -661,6 +717,18 @@ export interface PipelineInput {
   /** Pre-selected candidates (e.g. approved Vault opportunities). When set, the
    *  pipeline skips provider discovery entirely and processes exactly these. */
   candidatesOverride?: LeadCandidate[];
+  /** Managed pipelines may reuse the exact ICP/criteria that produced the
+   * approved candidates. This avoids paying to reinterpret the same brief and
+   * prevents discovery/report semantic drift. Both overrides must be supplied. */
+  icpOverride?: ICP;
+  criteriaOverride?: LeadSearchCriteria;
+  /** Build a decision report without spending LLM budget on outreach copy.
+   * Research and qualification remain AI-assisted; messaging is conservative
+   * and deterministic until the account is approved for outreach. */
+  decisionOnly?: boolean;
+  /** Local managed-run resilience only. Completed lead chains are reused after
+   * interruption; public/serverless callers omit this. */
+  checkpointDir?: string;
 }
 
 // ─── Provider result ──────────────────────────────────────────────────────────

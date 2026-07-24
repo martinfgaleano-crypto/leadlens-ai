@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getJob, updateJob } from "@/lib/storage/job-store";
 import { z } from "zod";
+import { requireAdmin } from "@/lib/auth/require-admin";
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: { jobId: string } }
 ) {
+  const deny = requireAdmin(req);
+  if (deny) return deny;
+
   const job = await getJob(params.jobId);
   if (!job) return NextResponse.json({ error: "Job not found" }, { status: 404 });
   return NextResponse.json(job);
@@ -21,6 +25,9 @@ export async function PATCH(
   req: NextRequest,
   { params }: { params: { jobId: string } }
 ) {
+  const deny = requireAdmin(req);
+  if (deny) return deny;
+
   let body: unknown;
   try {
     body = await req.json();

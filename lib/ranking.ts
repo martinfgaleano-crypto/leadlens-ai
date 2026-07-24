@@ -15,14 +15,18 @@ import type {
   RecommendedActionType,
   LeadCategory,
 } from "@/types";
+import { compareActionability, evaluateActionability } from "@/lib/quality/actionability-gate";
 
 // ─── Public entry point ───────────────────────────────────────────────────────
 
 export function computeRanking(leads: ProcessedLead[]): OpportunityRanking[] {
   if (leads.length === 0) return [];
 
-  // Sort: fit_score desc → signal_strength desc → evidence_quality desc
+  // Commercial actionability wins before raw fit: missing evidence or failed
+  // QC can never outrank an account that is safe to act on.
   const sorted = [...leads].sort((a, b) => {
+    const actionabilityDiff = compareActionability(a, b);
+    if (actionabilityDiff !== 0) return actionabilityDiff;
     const scoreDiff = b.qualification.fit_score - a.qualification.fit_score;
     if (Math.abs(scoreDiff) > 0.05) return scoreDiff;
     const aSignal = a.qualification.score_dimensions?.signal_strength ?? 0;
@@ -71,7 +75,8 @@ function buildRankingForLead(
   const category = q.category;
 
   const hasSignal = confirmedSignal(lead);
-  const recommended_action = deriveRecommendedAction(category, hasSignal, q.qualification_confidence, q.fit_score);
+  const actionability = evaluateActionability(lead);
+  const recommended_action = actionability.recommended_action;
   const top_priority_reason = buildTopPriorityReason(lead, hasSignal, rank, total);
   const opportunity_tier_reason = buildTierReason(lead, dims, hasSignal);
   const ranking_explanation = buildRankingExplanation(lead, above, rank);
@@ -88,6 +93,12 @@ function buildRankingForLead(
     opportunity_tier_reason,
     comparative_notes,
     recommended_action,
+    actionability_status: actionability.status,
+    actionability_reasons: actionability.reasons,
+    actionability_blockers: actionability.blockers,
+    account_visibility: lead.candidate.account_visibility ?? "unknown",
+    discovery_value: lead.candidate.discovery_value,
+    discovery_value_reason: lead.candidate.discovery_value_reason,
   };
 }
 
@@ -137,7 +148,7 @@ function buildTopPriorityReason(
   }
 
   if (rank === 1 && q.category === "HOT") {
-    return `Top account in this batch — ${hasSignal ? "confirmed buying signal + " : ""}strongest ICP fit (${q.fit_score}/10)`;
+    return `Top account in this batch — ${hasSignal ? "confirmed company event + " : ""}strongest ICP fit (${q.fit_score}/10)`;
   }
   if (rank === 1 && q.category === "WARM") {
     return `Highest-scoring account in the batch (${q.fit_score}/10, WARM) — ${hasSignal ? "confirmed signal" : "strong segment fit"} makes this the best starting point`;
@@ -147,7 +158,7 @@ function buildTopPriorityReason(
   }
 
   if (hasSignal && dims && dims.signal_strength >= 60) {
-    return `${company} has a confirmed buying signal in ${ind} — signal strength (${dims.signal_strength}/100) lifts it above lower-signal accounts at similar scores`;
+    return `${company} has a confirmed company event in ${ind} — signal strength (${dims.signal_strength}/100) lifts it above lower-signal accounts at similar scores; purchase intent remains unverified`;
   }
 
   if (dims && dims.icp_fit >= 75) {
@@ -178,7 +189,7 @@ function buildTierReason(
         return `WARM (7+): Strong ICP fit but missing a confirmed timing signal — outreach is justifiable with a hypothesis-framed opener`;
       }
       if (q.fit_score < 7.0 && hasSignal) {
-        return `WARM (<7): Has a confirmed buying signal but ICP fit is partial — validate the specific pain hypothesis before outreach`;
+        return `WARM (<7): Has a confirmed company event but ICP fit is partial — validate commercial relevance and purchase intent before outreach`;
       }
       return `WARM: Meets 2 of 3 HOT criteria — one key dimension (${dims?.signal_strength ?? 0 < 50 ? "signal" : dims?.evidence_quality ?? 0 < 60 ? "evidence" : "ICP fit"}) is below HOT threshold`;
 
@@ -207,7 +218,10 @@ function buildRankingExplanation(
 
   if (rank === 1) {
     if (hasSignal) {
-      return `${company} leads the batch because it combines a confirmed buying signal with the strongest ICP fit (${q.fit_score}/10). Signal-led outreach has measurably higher reply rates — this is the account to contact first.`;
+      if (q.category === "HOT") {
+        return `${company} leads the batch because it combines a confirmed company event with the strongest ICP fit (${q.fit_score}/10). It is the first account to consider for outreach, subject to the stated evidence guardrails.`;
+      }
+      return `${company} ranks first only within this limited batch (${q.fit_score}/10), but remains ${q.category}. The dated company event is not evidence of purchase intent; validate commercial relevance before any outreach.`;
     }
     return `${company} ranks #1 in this batch on overall score (${q.fit_score}/10) and ICP alignment. No confirmed signal, but segment fit makes it the best available starting point — use a hypothesis-framed opener.`;
   }
@@ -229,7 +243,7 @@ function buildRankingExplanation(
 
   // Same score tier, different differentiators
   if (aboveHasSignal && !hasSignal) {
-    return `${company} ranks below ${above_company} because ${above_company} has a confirmed buying signal while ${company} does not — at similar score levels, signal presence is the tiebreaker. ${company} should be outreached after ${above_company} if budget allows.`;
+    return `${company} ranks below ${above_company} because ${above_company} has a confirmed company event while ${company} does not — at similar score levels, signal presence is the tiebreaker. This ordering does not establish purchase intent or outreach readiness.`;
   }
 
   if (dims && aboveDims) {

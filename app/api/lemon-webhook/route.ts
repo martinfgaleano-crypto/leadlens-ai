@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { internalProcessingHeaders } from "@/lib/auth/authorize-processing";
 import crypto from "crypto";
 import type { PlanType } from "@/types";
 import {
@@ -261,13 +262,18 @@ export async function POST(req: NextRequest) {
 
             // Attempt immediate processing. May be killed by Vercel after 200 response.
             // Fallback: POST /api/admin/process-ready (wire to Vercel Cron if needed).
-            void fetch(`${appUrl}/api/process/search/${searchIdToProcess}`, {
-              method: "POST",
-            }).catch((err: unknown) => {
-              console.error(`[lemon-webhook] processing trigger failed (fallback via /admin/process-ready):`, err instanceof Error ? err.message : err);
-            });
-
-            console.log(`[lemon-webhook] processing triggered for search ${searchIdToProcess} (processing_ready=true as fallback)`);
+            const processingHeaders = internalProcessingHeaders();
+            if (processingHeaders) {
+              void fetch(`${appUrl}/api/process/search/${searchIdToProcess}`, {
+                method: "POST",
+                headers: processingHeaders,
+              }).catch((err: unknown) => {
+                console.error(`[lemon-webhook] processing trigger failed (fallback via /admin/process-ready):`, err instanceof Error ? err.message : err);
+              });
+              console.log(`[lemon-webhook] processing triggered for search ${searchIdToProcess} (processing_ready=true as fallback)`);
+            } else {
+              console.error("[lemon-webhook] INTERNAL_RUN_SECRET missing — search left processing_ready for recovery");
+            }
           } else {
             console.log(`[lemon-webhook] no pending search found for user ${customerUserId} — processing not triggered`);
           }

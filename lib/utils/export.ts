@@ -33,9 +33,10 @@ function visibleChangeLabel(opp: OpportunityRanking | undefined): string {
 // ─── CSV export ───────────────────────────────────────────────────────────────
 
 const CSV_HEADERS = [
-  "Rank", "Priority", "Score", "Buying Window",
+  "Rank", "Actionability", "Actionability Reasons", "Actionability Blockers", "Priority", "Score", "Buying Window",
   "Recommended Action", "Evidence Quality", "Evidence Strength", "Source Freshness", "Source Coverage", "Source Name", "Change",
-  "Company", "Industry", "Size", "Location", "Confidence",
+  "Company", "Industry", "Size", "Location", "Confidence", "Account Role", "Account Role Confidence", "Account Role Evidence", "Account Visibility", "Discovery Value", "Discovery Value Reason",
+  "Opportunity Kind", "Channel Evidence Grade", "Channel Proof Type", "Channel Category Alignment", "Channel Limitations", "Discovery Origin", "Discovery Source", "Universe Score", "Observed Fact", "Client Relevance", "Evidence Limit", "Validation Question", "LeadLens Edge",
   "Account Thesis", "Signal Interpretation", "Tier Reason",
   "Timing Signals", "Opportunity Risks", "Next Best Question",
   "Why It Fits", "Flags",
@@ -67,10 +68,14 @@ export function exportToCSV(report: LeadLensReport): string {
     const sourceFreshness = lm?.freshness_label ?? "";
     const sourceCoverage = lm?.limited_region_coverage ? "Limited region coverage" : "";
     const sourceName = lm?.source_name ?? "";
-    const changeLabel = visibleChangeLabel(rankingMap.get(lead.id));
+    const ranking = rankingMap.get(lead.id);
+    const changeLabel = visibleChangeLabel(ranking);
 
     return [
       q.rank ?? (i + 1),
+      (ranking?.actionability_status ?? "").replace(/_/g, " "),
+      (ranking?.actionability_reasons ?? []).join(" | "),
+      (ranking?.actionability_blockers ?? []).join(" | "),
       q.category,
       q.fit_score,
       e.buying_window ?? "",
@@ -86,6 +91,25 @@ export function exportToCSV(report: LeadLensReport): string {
       c.company_size ?? "",
       c.location ?? "",
       c.confidence_score.toFixed(2),
+      (c.account_role ?? "unknown").replace(/_/g, " "),
+      c.account_role_confidence ?? "",
+      (c.account_role_evidence ?? []).join(" | "),
+      c.account_visibility ?? "unknown",
+      c.discovery_value ?? "",
+      c.discovery_value_reason ?? "",
+      (c.opportunity_kind ?? "").replace(/_/g, " "),
+      c.channel_evidence_grade ?? "",
+      (c.channel_proof_type ?? "").replace(/_/g, " "),
+      c.channel_category_alignment ?? "",
+      (c.channel_limitations ?? []).join(" | "),
+      (c.discovery_origin ?? "unknown").replace(/_/g, " "),
+      c.discovery_source_detail ?? "",
+      c.universe_score ?? "",
+      c.observed_fact ?? "",
+      c.client_relevance ?? "",
+      c.evidence_limit ?? "",
+      c.validation_question ?? "",
+      c.replicability_edge ?? "",
       e.account_thesis ?? "",
       q.signal_interpretation ?? "",
       q.opportunity_tier_reason ?? "",
@@ -131,6 +155,12 @@ export function exportToMarkdown(report: LeadLensReport): string {
   }
   lines.push("");
 
+  if (report.actionability_summary) {
+    const a = report.actionability_summary;
+    lines.push(`**Actionability:** ${a.act_now} act now · ${a.validate_first} validate first · ${a.monitor} monitor · ${a.exclude} exclude`);
+    lines.push("");
+  }
+
   // ── Executive Summary ────────────────────────────────────────────────────────
   lines.push(`## Executive Summary`);
   lines.push(report.executive_summary);
@@ -174,6 +204,7 @@ export function exportToMarkdown(report: LeadLensReport): string {
       const rec = l.enrichment.recommended_action ?? "";
       lines.push(`- **${l.candidate.company}** (${l.candidate.industry ?? "?"}, ${l.qualification.fit_score}/10 ${l.qualification.category})${rec ? ` → ${rec.replace(/_/g, " ")}` : ""}`);
       if (l.enrichment.account_thesis) lines.push(`  *${l.enrichment.account_thesis}*`);
+      if (l.candidate.opportunity_kind === "channel_fit") lines.push(`  Channel proof: **${l.candidate.channel_evidence_grade ?? "ungraded"}** · ${(l.candidate.channel_proof_type ?? "unknown").replace(/_/g, " ")} · category ${(l.candidate.channel_category_alignment ?? "unknown")}`);
     }
     lines.push("");
   }
@@ -190,6 +221,7 @@ export function exportToMarkdown(report: LeadLensReport): string {
     for (const l of monitorList) {
       lines.push(`- **${l.candidate.company}** (${l.candidate.industry ?? "?"}, ${l.qualification.fit_score}/10 ${l.qualification.category})`);
       if (l.enrichment.next_best_question) lines.push(`  Next question: *${l.enrichment.next_best_question}*`);
+      if (l.candidate.opportunity_kind === "channel_fit") lines.push(`  Channel proof: **${l.candidate.channel_evidence_grade ?? "ungraded"}** · limitations: ${(l.candidate.channel_limitations ?? []).join("; ") || "not stated"}`);
     }
     lines.push("");
   }
@@ -275,6 +307,14 @@ export function exportToMarkdown(report: LeadLensReport): string {
       lines.push(`**Account Thesis:** ${e.account_thesis}`);
       lines.push("");
     }
+    if (c.observed_fact) {
+      lines.push(`**Observed Fact:** ${c.observed_fact}`);
+      lines.push(`**Why It Matters for This Client:** ${c.client_relevance ?? "Requires validation."}`);
+      lines.push(`**Evidence Limit:** ${c.evidence_limit ?? "No purchase intent should be inferred."}`);
+      if (c.validation_question) lines.push(`**Falsifiable Question:** *${c.validation_question}*`);
+      if (c.replicability_edge) lines.push(`**LeadLens Edge:** ${c.replicability_edge}`);
+      lines.push("");
+    }
     if (e.buying_window && e.buying_window !== "unclear") {
       lines.push(`**Buying Window:** ${e.buying_window.replace("_", " ")}${e.buying_window_reason ? ` — ${e.buying_window_reason}` : ""}`);
       lines.push("");
@@ -300,8 +340,16 @@ export function exportToMarkdown(report: LeadLensReport): string {
       lines.push("");
     }
 
-    // Recommended action
-    const action = e.recommended_action;
+    const ranking = rankingMap.get(lead.id);
+    if (ranking?.actionability_status) {
+      lines.push(`**Actionability:** ${ranking.actionability_status.replace(/_/g, " ")}`);
+      for (const reason of ranking.actionability_reasons ?? []) lines.push(`- ${reason}`);
+      for (const blocker of ranking.actionability_blockers ?? []) lines.push(`- Blocker: ${blocker}`);
+      lines.push("");
+    }
+
+    // Recommended action — evidence-aware ranking is authoritative.
+    const action = ranking?.recommended_action ?? e.recommended_action;
     const actionReason = e.recommended_action_reason;
     if (action) {
       lines.push(`**Recommended Action:** ${action.replace(/_/g, " ")}${actionReason ? ` — ${actionReason}` : ""}`);

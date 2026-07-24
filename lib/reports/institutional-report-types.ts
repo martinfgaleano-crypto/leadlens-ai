@@ -30,6 +30,9 @@ export interface AccountDossier {
   location: string | null;
   domain: string | null;
   tier: string;               // HOT/WARM/COLD/DISCARD (baseline category — unchanged)
+  actionability_status: "act_now" | "validate_first" | "monitor" | "exclude" | null;
+  actionability_reasons: string[];
+  actionability_blockers: string[];
   fit_score: number | null;
   thesis: Claim;              // inference
   why_now: Claim;             // fact-or-inference depending on dated evidence
@@ -76,7 +79,27 @@ export interface InstitutionalOpportunityReportV1 {
     tier_note: string;
     funnel: { considered: number; rejected: number; selected: number; rejection_reasons: Record<string, number> } | null;
   };
-  priority_opportunities: Array<{ rank: number | null; company: string; tier: string; one_line: string }>;
+  market_landscape: {
+    category_query: string;
+    geography: string[];
+    explanation: string;
+    known_accounts_policy: string;
+    considered_count: number;
+    investigated_count: number;
+    selected_count: number;
+    accounts: Array<{
+      company: string;
+      domain: string | null;
+      sector: string | null;
+      origin: string;
+      visibility: string | null;
+      role: string | null;
+      stage: "known_reference" | "investigated" | "finalist" | "preliminary";
+      fit_score: number | null;
+      outcome_reason: string;
+    }>;
+  } | null;
+  priority_opportunities: Array<{ rank: number | null; company: string; tier: string; actionability_status: string | null; one_line: string }>;
   account_dossiers: AccountDossier[];
   coverage: {
     accounts_with_dated_evidence: number;

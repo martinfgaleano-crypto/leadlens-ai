@@ -12,8 +12,10 @@
 import type { ICP, LeadSearchCriteria } from "@/types";
 import type { NeedsMap } from "./needs-map";
 import { classifyEntity } from "@/lib/vault/entity-resolution";
+import { classifyOrganization } from "./organization-type";
+import { inferAccountCommercialRole, rolePriority, type AccountCommercialRole } from "./account-role";
 
-export const COMPANY_UNIVERSE_VERSION = "company-first-v1";
+export const COMPANY_UNIVERSE_VERSION = "company-universe-v2";
 
 export interface UniverseCompany {
   name: string;
@@ -24,6 +26,14 @@ export interface UniverseCompany {
   discovery_source: string;       // the enumeration URL/title the name came from
   confidence: "verified" | "plausible";
   fit_reason: string;
+  visibility_tier?: "emerging" | "established" | "obvious";
+  universe_origin?: "vertical_seed" | "dynamic_enumeration";
+  universe_score?: number;
+  country_confidence?: "verified_pack" | "high" | "medium" | "unknown";
+  country_evidence?: string | null;
+  account_role?: AccountCommercialRole;
+  account_role_confidence?: "high" | "medium" | "low";
+  account_role_evidence?: string[];
 }
 
 export interface UniverseResult {
@@ -38,33 +48,133 @@ const MEDIA_OR_DIRECTORY = /(revista|diario|peri[oó]dico|portal|noticias?|prens
 // fragments ("Inter" → ¿Inter Rapidísimo? ¿Banco Inter BR? ¿Inter Milan?).
 // These match anything downstream (substrings/homonyms) and produced the
 // "Inter"/Nu-bank false positive in the 2026-07-21 traced benchmark.
-const AMBIGUOUS_NAME = /^(inter|mercado|grupo|empresa|compa[ñn][ií]a|industria|comercio|log[ií]stica|transportes?|nacional|central|global|capital|digital|express|colombia|andina|caribe|pacifico|servicios?|soluciones|sistemas?|general|internacional|carga|cargas|estas?|estos?|env[ií]os?|entregas?|empresas|sector|negocios?|econom[ií]a|pa[ií]s|ciudad|regi[oó]n|distribuci[oó]n|almacenamiento|bodegas?|flotas?|veh[ií]culos?|camiones|operador(es)?|proveedor(es)?|clientes?|productos?|ventas?|bogot[aá]|medell[ií]n|cali|barranquilla)$/i;
+const AMBIGUOUS_NAME = /^(inter|natural|mente|mercado|grupo|empresa|compa[ñn][ií]a|industria|comercio|log[ií]stica|transportes?|nacional|central|global|capital|digital|express|colombia|andina|caribe|pacifico|servicios?|soluciones|sistemas?|general|internacional|carga|cargas|estas?|estos?|env[ií]os?|entregas?|empresas|sector|negocios?|econom[ií]a|pa[ií]s|ciudad|regi[oó]n|distribuci[oó]n|almacenamiento|bodegas?|flotas?|veh[ií]culos?|camiones|operador(es)?|proveedor(es)?|clientes?|productos?|ventas?|bogot[aá]|medell[ií]n|cali|barranquilla)$/i;
+const GENERIC_COMPANY_WORD = new Set([
+  "producto", "productos", "natural", "naturales", "naturista", "naturistas", "saludable", "saludables",
+  "tienda", "mercado", "supermercado", "distribuidor", "distribuidores", "hotel", "hoteles", "spa", "resort",
+  "empresa", "grupo", "colombia", "bogota", "medellin", "cali", "barranquilla", "cartagena", "global", "servicios",
+]);
+
+export function rejectEnumeratedName(name: string): string | null {
+  const clean = name.trim();
+  const normalized = clean.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
+  if (!normalized || normalized.length < 4) return "name_too_short";
+  if (/^(quienes|enes) somos$|^(inicio|contacto|nosotros|home|about us)$/i.test(normalized)) return "navigation_fragment";
+  const words = normalized.split(" ").filter(Boolean);
+  if (words.every(w => GENERIC_COMPANY_WORD.has(w))) return "generic_commercial_phrase";
+  if (AMBIGUOUS_NAME.test(clean)) return "entity_ambiguous_generic_name";
+  return null;
+}
 
 function domainOf(url: string): string | null {
   try { return new URL(url).host.replace(/^www\./, "").toLowerCase(); } catch { return null; }
 }
 
+function norm(value: string): string { return value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, ""); }
+
+/** Infers a corporate domain only when the host itself carries a distinctive
+ * company token. A page mentioning a company on a directory/news host remains
+ * provenance, never an asserted official domain. */
+export function inferEnumeratedDomain(company: string, pages: { title: string | null; snippet: string | null; url: string }[]): { domain: string | null; source: string | null } {
+  const companyNorm = norm(company);
+  const tokens = company.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(/[^a-z0-9]+/).filter(t => t.length >= 5 && !GENERIC_COMPANY_WORD.has(t) && !/^(company|compania|internacional)$/.test(t));
+  const mentioned = pages.filter(p => norm(`${p.title ?? ""} ${p.snippet ?? ""}`).includes(companyNorm) || tokens.some(t => norm(`${p.title ?? ""} ${p.snippet ?? ""}`).includes(t)));
+  for (const p of mentioned) {
+    const domain = domainOf(p.url);
+    if (!domain || MEDIA_OR_DIRECTORY.test(domain)) continue;
+    const hostNorm = norm(domain.split(".").slice(0, -1).join(""));
+    if ((companyNorm.length >= 5 && hostNorm.includes(companyNorm)) || tokens.some(t => hostNorm.includes(t))) return { domain, source: p.url };
+  }
+  return { domain: null, source: mentioned[0]?.url ?? null };
+}
+
+export function inferEnumeratedCountry(company: string, pages: { title: string | null; snippet: string | null; url: string }[], targetCountry: string): { country: string | null; confidence: "high" | "medium" | "unknown"; evidence: string | null } {
+  const companyNorm = norm(company);
+  const country = targetCountry.trim();
+  if (!country) return { country: null, confidence: "unknown", evidence: null };
+  const geoPattern = /^colombia$/i.test(country)
+    ? /\bcolombia\b|\bbogot[aá]\b|\bmedell[ií]n\b|\bcali\b|\bbarranquilla\b|\bcartagena\b|\bbucaramanga\b|\bpereira\b/i
+    : new RegExp(`\\b${country.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i");
+  for (const p of pages) {
+    const text = `${p.title ?? ""} ${p.snippet ?? ""}`;
+    if (!norm(text).includes(companyNorm)) continue;
+    const domain = domainOf(p.url);
+    if (geoPattern.test(text)) return { country, confidence: "high", evidence: p.url };
+    if (/^colombia$/i.test(country) && domain && /\.co$/i.test(domain)) return { country, confidence: "medium", evidence: p.url };
+  }
+  return { country: null, confidence: "unknown", evidence: null };
+}
+
 /** Enumeration queries: find PAGES THAT LIST companies matching the ICP —
  *  rankings, association members, sector directories — plus a few
  *  official-domain probes. Region/vertical aware, from the needs map. */
-function enumerationQueries(icp: ICP, geo0: string, needs: NeedsMap, spanish: boolean): string[] {
+export function enumerationQueries(icp: ICP, geo0: string, needs: NeedsMap, spanish: boolean): string[] {
   const industry = (icp.target_industries[0] ?? "").slice(0, 60);
   const geo = (geo0 || (spanish ? "Colombia" : "United States")).slice(0, 40);
+  const wellness = /wellness|bienestar|productos? naturales|bebidas? funcional|spa|hotel|resort|retail/i.test(`${industry} ${needs.target_company_profile} ${needs.expected_need}`);
   if (spanish) {
+    if (wellness) return [
+      `empresas compran venden distribuyen ${needs.expected_need.slice(0, 70)} ${geo}`,
+      `cadenas tiendas naturistas independientes ${geo} Bogotá Medellín Cali`,
+      `distribuidores multimarca productos naturales suplementos ${geo}`,
+      `hoteles boutique spa bienestar proveedores alimentos bebidas ${geo}`,
+      `resorts centros de bienestar hospitality ${geo} empresas`,
+    ];
     return [
-      `principales empresas de ${industry} en ${geo} ranking`,
-      `empresas de ${industry} en ${geo} listado asociación gremio`,
-      `mayores operadores de ${industry} ${geo} directorio empresarial`,
-      `${industry} ${geo} empresas líderes cámara de comercio`,
-      `top empresas ${industry} ${geo} 2026`,
+      `distribuidores especializados ${industry} ${geo}`,
+      `miembros asociación gremio ${industry} ${geo}`,
+      `expositores feria ${industry} ${geo} empresas`,
+      `cadenas regionales empresas independientes ${industry} ${geo}`,
+      `proveedores y operadores especializados ${industry} ${geo}`,
     ];
   }
   return [
-    `largest ${industry} companies in ${geo} ranking`,
-    `${industry} companies ${geo} association members directory`,
-    `top ${industry} operators ${geo} 2026`,
-    `leading ${industry} firms ${geo} industry list`,
+    `specialist ${industry} distributors ${geo}`,
+    `${industry} association members ${geo}`,
+    `${industry} trade show exhibitors ${geo} companies`,
+    `regional independent ${industry} operators ${geo}`,
+    `${industry} suppliers and specialist operators ${geo}`,
   ];
+}
+
+/** Portfolio construction is deliberately unlike a search-results page:
+ * dynamic discoveries receive protected capacity, curated knowledge provides
+ * a quality prior, and obvious accounts are only backfill/benchmarks. */
+export function prioritizeUniverse(companies: UniverseCompany[], limit: number): UniverseCompany[] {
+  const score = (c: UniverseCompany) => {
+    const origin = c.universe_origin === "dynamic_enumeration" ? 18 : 12;
+    const identity = c.domain ? 18 : 7;
+    const novelty = c.visibility_tier === "emerging" ? 18 : c.visibility_tier === "obvious" ? -25 : c.visibility_tier === "established" ? 8 : 14;
+    return origin + identity + novelty + rolePriority(c.account_role);
+  };
+  const ranked = companies.map(c => ({ ...c, universe_score: score(c) }));
+  const dynamic = ranked.filter(c => c.universe_origin === "dynamic_enumeration" && c.visibility_tier !== "obvious").sort((a, b) => (b.universe_score ?? 0) - (a.universe_score ?? 0));
+  const seeds = ranked.filter(c => c.universe_origin !== "dynamic_enumeration" && c.visibility_tier !== "obvious").sort((a, b) => (b.universe_score ?? 0) - (a.universe_score ?? 0));
+  const obvious = ranked.filter(c => c.visibility_tier === "obvious").sort((a, b) => (b.universe_score ?? 0) - (a.universe_score ?? 0));
+  const selected: UniverseCompany[] = [];
+  // Reserve up to 40% for new discoveries. If enumeration is weak, seeds fill
+  // the capacity; dynamic names never displace all verified priors.
+  const dynamicTarget = Math.min(dynamic.length, Math.max(1, Math.floor(limit * 0.4)));
+  selected.push(...dynamic.slice(0, dynamicTarget));
+  // Preserve buyer-route diversity before filling by raw score. This prevents
+  // ten distributors from crowding hospitality out of a wellness portfolio.
+  const protectedRoleMinimums: Array<[AccountCommercialRole, number]> = [["buyer_channel", 2], ["hospitality_operator", 2], ["end_user_operator", 1]];
+  for (const [protectedRole, desired] of protectedRoleMinimums) {
+    const pool = [...seeds, ...dynamic].filter(c => c.account_role === protectedRole);
+    while (selected.filter(c => c.account_role === protectedRole).length < desired && selected.length < limit) {
+      const anchor = pool.find(c => !selected.some(s => s.name.toLowerCase() === c.name.toLowerCase()));
+      if (!anchor) break;
+      selected.push(anchor);
+    }
+  }
+  const selectedKeys = new Set(selected.map(c => c.name.toLowerCase()));
+  let si = 0, di = dynamicTarget;
+  while (selected.length < limit && (si < seeds.length || di < dynamic.length)) {
+    if (si < seeds.length) { const c = seeds[si++]; if (!selectedKeys.has(c.name.toLowerCase())) { selected.push(c); selectedKeys.add(c.name.toLowerCase()); } }
+    if (selected.length < limit && di < dynamic.length) { const c = dynamic[di++]; if (!selectedKeys.has(c.name.toLowerCase())) { selected.push(c); selectedKeys.add(c.name.toLowerCase()); } }
+  }
+  for (const c of obvious) if (selected.length < limit) selected.push(c);
+  return selected.slice(0, limit);
 }
 
 /** Extract candidate company names from enumeration result pages using the LLM
@@ -120,49 +230,98 @@ export async function buildCompanyUniverse(
 
   // 2. Mine company names from the pages.
   const { names: rawNames, llm_ok } = await extractCompanyNames(pages, spanish);
+  const enumeratedEvidence = new Map(rawNames.map(name => [name.toLowerCase(), inferEnumeratedDomain(name, pages)]));
+  const targetCountry = criteria.target_geography[0] ?? "";
+  const enumeratedGeography = new Map(rawNames.map(name => [name.toLowerCase(), inferEnumeratedCountry(name, pages, targetCountry)]));
 
-  // 2b. Vertical-pack seed universe (degraded mode): when the LLM extractor is
-  // unavailable AT RUNTIME (missing key OR exhausted credits — the key can
-  // exist and still fail), the regex fallback yields junk fragments ("Estas",
-  // "Carga"). A matched pack contributes real, publicly known companies in the
-  // vertical as CANDIDATES — org type, identity, association and every other
-  // gate still apply before anything is emitted.
+  // 2b. Vertical-pack seed universe. A matched pack is a curated candidate
+  // prior, not merely an outage fallback: LLM enumeration can return famous but
+  // commercially wrong companies (observed in the Amor de Gea US wellness
+  // pilot). Pack candidates go first, while every downstream identity, event,
+  // fit and evidence gate remains fully active.
   let degraded_seed_pack: string | null = null;
   const packDomains = new Map<string, string>();   // HTTP-verified pack domains
-  if (!llm_ok) {
-    const { matchVerticalPack } = await import("./vertical-packs");
-    const pack = matchVerticalPack(icp, criteria);
-    if (pack) {
-      degraded_seed_pack = pack.id;
-      for (const s of pack.seed_companies) { rawNames.push(s.name); if (s.domain) packDomains.set(s.name.toLowerCase(), s.domain); }
+  const packVisibility = new Map<string, "emerging" | "established" | "obvious">();
+  const packRoles = new Map<string, AccountCommercialRole>();
+  const packSectors = new Map<string, string>();
+  const packSeedNames: string[] = [];
+  const { matchVerticalPack } = await import("./vertical-packs");
+  const pack = matchVerticalPack(icp, criteria);
+  if (pack) {
+    if (!llm_ok) degraded_seed_pack = pack.id;
+    for (const s of pack.seed_companies) {
+      packSeedNames.push(s.name);
+      if (s.domain) packDomains.set(s.name.toLowerCase(), s.domain);
+      if (s.visibility_tier) packVisibility.set(s.name.toLowerCase(), s.visibility_tier);
+      if (s.account_role) packRoles.set(s.name.toLowerCase(), s.account_role);
+      packSectors.set(s.name.toLowerCase(), s.sector);
     }
   }
 
   // 3. Classify + dedupe. Only single_company survives; everything else is a
   //    named rejection reason (no publisher/place/category ever advances).
   const universe = new Map<string, UniverseCompany>();
-  for (const name of rawNames) {
+  const claimedDomains = new Map<string, string>();
+  const seedKeys = new Set(packSeedNames.map(name => name.toLowerCase()));
+  const excludedAccountKeys = new Set((criteria.excluded_account_names ?? []).map(name => norm(name)));
+  for (const name of [...packSeedNames, ...rawNames]) {
     if (MEDIA_OR_DIRECTORY.test(name)) { bump("media_or_directory_name"); continue; }
     // Ambiguous single-token generic names ("Inter", "Mercado") match anything
     // downstream (substrings, homonyms, foreign banks) — never a resolvable
     // account on their own. Distinctive brands (Rappi, Opain) stay valid.
-    if (AMBIGUOUS_NAME.test(name.trim())) { bump("entity_ambiguous_generic_name"); continue; }
+    const isSeedName = seedKeys.has(name.toLowerCase());
+    const nameRejection = isSeedName ? null : rejectEnumeratedName(name);
+    if (nameRejection) { bump(nameRejection); continue; }
     const cls = classifyEntity({ name, signalType: null });
     if (cls.entity_class !== "single_company" || !cls.primary_account) { bump(`entity_${cls.entity_class}`); continue; }
+    if (excludedAccountKeys.has(norm(cls.primary_account))) {
+      bump("excluded_previous_account_before_search");
+      continue;
+    }
+    const org = classifyOrganization({ name: cls.primary_account, description: icp.target_industries[0] ?? "" });
+    if (!org.eligible_for_icp) { bump(`org_${org.organization_type}`); continue; }
     const key = cls.primary_account.toLowerCase();
-    if (universe.has(key)) continue;
+    if (universe.has(key)) {
+      // Appearing independently in enumeration strengthens a seed's provenance.
+      if (!seedKeys.has(name.toLowerCase())) universe.get(key)!.universe_score = (universe.get(key)!.universe_score ?? 0) + 5;
+      continue;
+    }
+    const isSeed = seedKeys.has(name.toLowerCase());
+    const enumerated = enumeratedEvidence.get(name.toLowerCase());
+    const geography = enumeratedGeography.get(name.toLowerCase());
+    const resolvedDomain = packDomains.get(cls.primary_account.toLowerCase()) ?? (!isSeed ? enumerated?.domain : null) ?? null;
+    if (!isSeed && resolvedDomain && claimedDomains.has(resolvedDomain)) { bump("duplicate_domain_identity"); continue; }
+    if (!isSeed && targetCountry && geography?.country !== targetCountry) { bump("dynamic_geography_unverified"); continue; }
+    const roleText = isSeed
+      ? `${pack?.seed_companies.find(s => s.name.toLowerCase() === name.toLowerCase())?.sector ?? ""} ${name}`
+      : pages.filter(p => norm(`${p.title ?? ""} ${p.snippet ?? ""}`).includes(norm(name))).map(p => `${p.title ?? ""} ${p.snippet ?? ""}`).join(" ");
+    const inferredRole = inferAccountCommercialRole(roleText);
+    const accountRole = packRoles.get(cls.primary_account.toLowerCase()) ?? inferredRole.role;
     universe.set(key, {
-      name: cls.primary_account, domain: packDomains.get(cls.primary_account.toLowerCase()) ?? null,
-      country: gl === "co" ? "Colombia" : (criteria.target_geography[0] ?? null),
+      name: cls.primary_account, domain: resolvedDomain,
+      country: isSeed ? (targetCountry || (gl === "co" ? "Colombia" : null)) : (geography?.country ?? null),
       region: criteria.target_market_region ?? null,
-      sector: icp.target_industries[0] ?? null,
-      discovery_source: "sector enumeration (rankings/associations/directories)",
-      confidence: "plausible",
-      fit_reason: `Aparece en listados del sector ${icp.target_industries[0] ?? ""} en ${criteria.target_geography[0] ?? ""}.`,
+      // A hotel, specialist retailer and distributor must not all inherit the
+      // same broad ICP label: their own sector drives role-aware queries and
+      // commercial-fit reasoning downstream.
+      sector: isSeed ? (packSectors.get(cls.primary_account.toLowerCase()) ?? icp.target_industries[0] ?? null) : (icp.target_industries[0] ?? null),
+      discovery_source: isSeed ? `vertical intelligence pack: ${pack?.id ?? "unknown"}` : (enumerated?.source ?? "dynamic sector enumeration (associations/exhibitors/specialists)"),
+      confidence: resolvedDomain ? "verified" : "plausible",
+      fit_reason: isSeed
+        ? `Prior sectorial de LeadLens para ${icp.target_industries[0] ?? ""}; aún requiere señal y evidencia comercial.`
+        : `Descubierta dinámicamente en fuentes de asociaciones, expositores u operadores especializados de ${icp.target_industries[0] ?? ""} en ${criteria.target_geography[0] ?? ""}.`,
+      visibility_tier: packVisibility.get(cls.primary_account.toLowerCase()),
+      universe_origin: isSeed ? "vertical_seed" : "dynamic_enumeration",
+      country_confidence: isSeed ? "verified_pack" : (geography?.confidence ?? "unknown"),
+      country_evidence: isSeed ? `vertical intelligence pack: ${pack?.id ?? "unknown"}` : (geography?.evidence ?? null),
+      account_role: accountRole,
+      account_role_confidence: packRoles.has(cls.primary_account.toLowerCase()) ? "high" : inferredRole.confidence,
+      account_role_evidence: packRoles.has(cls.primary_account.toLowerCase()) ? [`curated vertical role: ${accountRole}`] : inferredRole.evidence,
     });
+    if (resolvedDomain) claimedDomains.set(resolvedDomain, key);
   }
 
-  const companies = Array.from(universe.values()).slice(0, opts.maxCompanies ?? 40);
+  const companies = prioritizeUniverse(Array.from(universe.values()), opts.maxCompanies ?? 40);
   return {
     companies,
     stats: { enumeration_queries: queries.length, raw_names: rawNames.length, classified_company: companies.length, rejected, degraded_seed_pack },

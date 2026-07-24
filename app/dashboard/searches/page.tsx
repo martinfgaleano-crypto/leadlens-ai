@@ -245,8 +245,17 @@ export default function SearchesPage() {
       return;
     }
 
-    // Fire processing — do NOT await. UI returns immediately; server runs async.
-    fetch(`/api/process/search/${inserted.id}`, { method: "POST" }).catch(() => {});
+    // Fire processing with the owning customer's JWT. The processor verifies
+    // search.user_id server-side; a UUID alone is never authorization.
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.access_token) {
+      fetch(`/api/process/search/${inserted.id}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      }).catch(() => {});
+    } else {
+      setFormError("Search created, but processing could not start. Please sign in again.");
+    }
 
     await loadData(userId);
     setSaving(false);
