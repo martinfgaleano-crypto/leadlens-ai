@@ -12,6 +12,18 @@ export const PROVIDER_HEALTH_VERSION = "provider-health-v1";
 export type ProviderState = "ok" | "degraded" | "exhausted" | "invalid" | "rate_limited" | "missing" | "unknown" | "not_tested";
 export type DataKind = "confirmed_by_provider" | "observed_by_leadlens" | "estimated" | "unavailable";
 
+/** Classify a failed search/extraction response into the shared ProviderState,
+ *  from the error string a provider adapter returns (no HTTP status in-band).
+ *  Lets discovery distinguish quota_exhausted from a plain request_failure so
+ *  coverage diagnosis never conflates "provider down" with "no results". */
+export function classifyProviderError(error: string | null | undefined): Extract<ProviderState, "exhausted" | "invalid" | "rate_limited" | "unknown"> {
+  const e = (error ?? "").toLowerCase();
+  if (/not enough credits|quota|exhaust|payment required|\b402\b|\b432\b|insufficient (balance|credit)|usage limit/.test(e)) return "exhausted";
+  if (/unauthor|forbidden|invalid (api )?key|auth|\b401\b|\b403\b/.test(e)) return "invalid";
+  if (/rate.?limit|too many requests|\b429\b/.test(e)) return "rate_limited";
+  return "unknown"; // request_failed / transport / timeout
+}
+
 export interface ProviderStatus {
   id: string; name: string; role: string;
   configured: boolean;
@@ -213,6 +225,26 @@ export function recommendedAction(s: ProviderStatus): string | null {
   if (s.id === "brave" && s.state === "exhausted") return "Plan sin pago: activar suscripción en api.search.brave.com (opcional — Serper+Tavily cubren).";
   if (s.state === "invalid") return "Revisar/rotar la credencial en .env.local.";
   return null;
+}
+
+/** Search-coverage readiness: how many of the 3 web-search providers are
+ *  actually HEALTHY right now (not merely configured). Used to decide whether a
+ *  pilot run would reach full_discovery or waste LLM spend in provider_limited.
+ *  Reuses the cached probe sweep (no extra calls within the 5-min window). */
+export async function searchCoverageReadiness(force = false): Promise<{
+  healthy_search: string[]; exhausted_search: string[]; sufficient: boolean; detail: string;
+}> {
+  const statuses = await probeAll(force);
+  const search = statuses.filter((s) => ["brave", "serper", "tavily"].includes(s.id));
+  const healthy = search.filter((s) => s.state === "ok").map((s) => s.id);
+  const exhausted = search.filter((s) => s.state === "exhausted" || s.state === "rate_limited" || s.state === "invalid").map((s) => s.id);
+  const sufficient = healthy.length >= 2; // matches full_discovery threshold
+  return {
+    healthy_search: healthy, exhausted_search: exhausted, sufficient,
+    detail: sufficient
+      ? `Cobertura de búsqueda suficiente: ${healthy.join("/")} saludables.`
+      : `Cobertura insuficiente para full_discovery: ${healthy.length} saludable(s) [${healthy.join("/") || "ninguno"}], agotados: ${exhausted.join("/") || "ninguno"}. Se requieren ≥2.`,
+  };
 }
 
 /** Alert derivation — pure, testable. */

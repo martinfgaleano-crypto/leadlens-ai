@@ -21,6 +21,7 @@ import { classifyDirection } from "./sentiment";
 import { assessCounterevidence, applyCounterevidence } from "./counterevidence";
 import { adversarialReview } from "./adversarial-review";
 import { noteUrl, noteOutcome, sourceUtilityScore, type DomainStats } from "./source-utility";
+import { classifyProviderError } from "@/lib/ops/provider-health";
 import { computeRunSourceDeltas, loadSourcePriors, persistSourceStats } from "./source-intelligence-store";
 import { sanitizePublicContent } from "@/lib/security/public-content-sanitizer";
 import { assessCatalogChannel, assessChannelAccess, buildChannelAccessQuery, channelAccessRelevant, channelAccessSearchHint, channelPageContentUsable, prioritizeChannelProofUrls } from "./channel-access";
@@ -76,7 +77,7 @@ export interface DiscoveryMetrics {
   dynamic_emitted: number; dynamic_defensible_emitted: number; error_taxonomy: Record<string, number>;
   // Operating-mode honesty: how this run actually obtained evidence.
   operating_mode: "full_discovery" | "targeted_discovery" | "provider_limited" | "analysis_only" | "stopped";
-  providers_available: string[]; providers_missing: string[];
+  providers_available: string[]; providers_missing: string[]; provider_status: Record<string, string>;
   coverage_limitation: string | null;
   fresh_search_count: number; fresh_extraction_count: number; reused_evidence_count: number;
   confidence_impact: string | null;
@@ -299,7 +300,7 @@ export async function runCompanyFirstDiscovery(
     opp_status_counts: { opportunity: 0, investigate: 0, monitor: 0, reject: 0 },
     materiality_counts: {}, signal_kind_counts: {}, role_counts: {}, direction_counts: {}, channel_evidence_grades: {}, org_rejected: {}, rubric_verdicts: {}, homonyms_rejected: 0,
     emitted: 0, defensible_emitted: 0, preliminary_emitted: 0, dynamic_emitted: 0, dynamic_defensible_emitted: 0, error_taxonomy: {}, deep_trace: [], search_trace: [], adversarial_verdicts: {}, adversarial_disagreements: 0, source_stats: {},
-    operating_mode: "provider_limited", providers_available: [], providers_missing: [], coverage_limitation: null,
+    operating_mode: "provider_limited", providers_available: [], providers_missing: [], provider_status: {}, coverage_limitation: null,
     fresh_search_count: 0, fresh_extraction_count: 0, reused_evidence_count: 0, confidence_impact: null,
     duration_ms: 0, est_cost_usd: 0,
   };
@@ -334,6 +335,7 @@ export async function runCompanyFirstDiscovery(
   const touchedDomains = new Set<string>();
 
   const provYield: Record<string, number> = {};
+  const providerRunStatus: Record<string, string> = {};
   const daysOld = (iso: string | null) => { if (!iso) return null; const d = Math.round((Date.now() - new Date(iso).getTime()) / 86_400_000); return Number.isFinite(d) && d >= 0 ? d : null; };
 
   for (const company of universe.companies) {
@@ -368,14 +370,20 @@ export async function runCompanyFirstDiscovery(
         // Three complementary search sources. Tavily surfaces real editorial/news
         // domains (Serper alone floods social media; Brave is unavailable without
         // a key), so it materially lifts real-event recall.
+        const catchErr = (e: unknown) => ({ results: [] as never[], ok: false, error: e instanceof Error ? e.message : String(e) });
         const [brave, serper, tavily] = await Promise.all([
-          braveProvider.search({ query: q, ...sOpts }).catch(() => ({ results: [] })),
-          serperProvider.search({ query: q, ...sOpts }).catch(() => ({ results: [] })),
-          tavilyProvider.search({ query: q, ...sOpts }).catch(() => ({ results: [] })),
+          braveProvider.search({ query: q, ...sOpts }).catch(catchErr),
+          serperProvider.search({ query: q, ...sOpts }).catch(catchErr),
+          tavilyProvider.search({ query: q, ...sOpts }).catch(catchErr),
         ]);
-        if (brave.results.length) provYield.brave = (provYield.brave ?? 0) + brave.results.length;
-        if (serper.results.length) provYield.serper = (provYield.serper ?? 0) + serper.results.length;
-        if (tavily.results.length) provYield.tavily = (provYield.tavily ?? 0) + tavily.results.length;
+        // Per-run provider status: a provider that ever returns results is
+        // "available"; one that only ever errors is recorded with WHY (quota vs
+        // auth vs request), so coverage never conflates "down" with "no hits".
+        for (const [name, resp] of [["brave", brave], ["serper", serper], ["tavily", tavily]] as const) {
+          if (resp.results.length) { provYield[name] = (provYield[name] ?? 0) + resp.results.length; providerRunStatus[name] = "available"; }
+          else if ((resp as { ok?: boolean }).ok === false && providerRunStatus[name] !== "available") providerRunStatus[name] = classifyProviderError((resp as { error?: string }).error);
+          else if (!providerRunStatus[name]) providerRunStatus[name] = "healthy_no_results";
+        }
         for (const r of [...brave.results, ...serper.results, ...tavily.results]) {
           const dedupeKey = companyUrlKey(company.name, r.canonical_url);
           if (seenCompanyUrl.has(dedupeKey)) continue;
@@ -686,18 +694,25 @@ export async function runCompanyFirstDiscovery(
   // Operating-mode classification (post-hoc, from what actually happened).
   metrics.fresh_search_count = metrics.urls;
   metrics.fresh_extraction_count = metrics.extractions;
+  metrics.provider_status = providerRunStatus;
   metrics.providers_available = Object.keys(provYield);
-  metrics.providers_missing = ["brave", "serper", "tavily"].filter((x) => !provYield[x]);
+  // "missing" = a search provider that ERRORED (quota/auth/request), NOT one that
+  // was healthy but returned nothing. This is what coverage diagnosis needs.
+  const searchProviders = ["brave", "serper", "tavily"];
+  metrics.providers_missing = searchProviders.filter((x) => provYield[x] === undefined && providerRunStatus[x] !== undefined && providerRunStatus[x] !== "healthy_no_results");
+  // Actionable provider breakdown, e.g. "serper/tavily: exhausted; brave: available".
+  const providerBreakdown = searchProviders.map((p) => `${p}: ${providerRunStatus[p] ?? "not_called"}`).join("; ");
+  const exhausted = searchProviders.filter((p) => providerRunStatus[p] === "exhausted");
   if (metrics.urls > 0 && metrics.providers_available.length >= 2) {
     metrics.operating_mode = "full_discovery";
-    metrics.confidence_impact = metrics.providers_missing.length ? `Cobertura parcial: sin ${metrics.providers_missing.join("/")}.` : null;
+    metrics.confidence_impact = metrics.providers_missing.length ? `Cobertura parcial: sin ${metrics.providers_missing.join("/")} (${providerBreakdown}).` : null;
   } else if (metrics.urls > 0) {
     metrics.operating_mode = "provider_limited";
-    metrics.coverage_limitation = `Solo respondió ${metrics.providers_available.join("/") || "un proveedor desconocido"}; no representa cobertura suficiente del mercado.`;
+    metrics.coverage_limitation = `Solo respondió ${metrics.providers_available.join("/") || "un proveedor desconocido"}; cobertura de mercado insuficiente${exhausted.length ? ` (agotados: ${exhausted.join("/")})` : ""}. [${providerBreakdown}]`;
     metrics.confidence_impact = "Los hallazgos individuales pueden validarse, pero la ausencia de resultados no es interpretable y el reporte piloto debe permanecer bloqueado.";
   } else if (metrics.extractions > 0) {
     metrics.operating_mode = "targeted_discovery";
-    metrics.coverage_limitation = "Sin search providers: solo investigación dirigida de sitios corporativos verificados — NO es cobertura de mercado.";
+    metrics.coverage_limitation = `Sin search providers${exhausted.length ? ` (agotados: ${exhausted.join("/")})` : ""}: solo investigación dirigida de sitios corporativos verificados — NO es cobertura de mercado. [${providerBreakdown}]`;
     metrics.confidence_impact = "Alta probabilidad de señales no vistas; los hallazgos son válidos pero la ausencia de hallazgos no implica ausencia de eventos.";
   } else {
     metrics.operating_mode = "stopped";

@@ -59,6 +59,20 @@ const criteria: LeadSearchCriteria = {
 
 async function main() {
   const { getUsage } = await import("@/lib/ops/usage-ledger");
+  // Search-coverage gate BEFORE any LLM spend: a live-but-cached probe decides
+  // whether search coverage would reach full_discovery. Without ≥2 healthy
+  // search providers the run would burn LLM tokens only to land in
+  // provider_limited/do_not_deliver — so stop early unless explicitly forced.
+  if (process.env.AMOR_ALLOW_LIMITED_COVERAGE !== "true") {
+    const { searchCoverageReadiness } = await import("@/lib/ops/provider-health");
+    const readiness = await searchCoverageReadiness();
+    if (!readiness.sufficient) {
+      console.error(`STOPPED_INSUFFICIENT_SEARCH_COVERAGE: ${readiness.detail}`);
+      console.error("Recarga ≥2 search providers, o fuerza modo limitado con AMOR_ALLOW_LIMITED_COVERAGE=true (entregará do_not_deliver).");
+      process.exit(3);
+    }
+    console.log(`[preflight] ${readiness.detail}`);
+  }
   const knownAccounts = ["Grupo Éxito", "Carulla", "Olímpica", "Farmatodo Colombia", "Cruz Verde Colombia", "PriceSmart Colombia", "Makro Colombia"];
   const previousPilotAccounts = criteria.excluded_account_names ?? [];
   const targetCountries = ["Colombia"];
