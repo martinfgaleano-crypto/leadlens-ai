@@ -1603,11 +1603,11 @@
   "deep_candidates": 0
  },
  "fittglobal.com": {
-  "urls": 39,
-  "extractions": 17,
-  "valid_dates": 7,
+  "urls": 44,
+  "extractions": 19,
+  "valid_dates": 8,
   "trigger_events": 0,
-  "deep_candidates": 5
+  "deep_candidates": 6
  },
  "flexfit.com": {
   "urls": 4,
@@ -2072,11 +2072,11 @@
   "deep_candidates": 0
  },
  "bioplaza.com.co": {
-  "urls": 44,
-  "extractions": 16,
-  "valid_dates": 10,
+  "urls": 49,
+  "extractions": 18,
+  "valid_dates": 11,
   "trigger_events": 0,
-  "deep_candidates": 1
+  "deep_candidates": 2
  },
  "supermercadonaturista.com": {
   "urls": 38,
@@ -2086,15 +2086,15 @@
   "deep_candidates": 6
  },
  "alimentossostenibles.co": {
-  "urls": 36,
-  "extractions": 11,
-  "valid_dates": 7,
+  "urls": 41,
+  "extractions": 13,
+  "valid_dates": 8,
   "trigger_events": 0,
   "deep_candidates": 3
  },
  "tutiendasaludable.com.co": {
-  "urls": 34,
-  "extractions": 14,
+  "urls": 39,
+  "extractions": 16,
   "valid_dates": 0,
   "trigger_events": 0,
   "deep_candidates": 0
@@ -2128,11 +2128,11 @@
   "deep_candidates": 0
  },
  "ghlhoteles.com": {
-  "urls": 24,
-  "extractions": 3,
-  "valid_dates": 2,
+  "urls": 29,
+  "extractions": 4,
+  "valid_dates": 3,
   "trigger_events": 0,
-  "deep_candidates": 1
+  "deep_candidates": 2
  },
  "proveedores.com": {
   "urls": 6,
@@ -2212,8 +2212,8 @@
   "deep_candidates": 0
  },
  "madretierra.online": {
-  "urls": 30,
-  "extractions": 14,
+  "urls": 34,
+  "extractions": 16,
   "valid_dates": 0,
   "trigger_events": 0,
   "deep_candidates": 1
@@ -3020,6 +3020,34 @@
   "urls": 1,
   "extractions": 1,
   "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "tiendasersaludable.com": {
+  "urls": 5,
+  "extractions": 2,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "dondeirdecompras.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "arecoa.com": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 1,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "movichhotels.com": {
+  "urls": 0,
+  "extractions": 1,
+  "valid_dates": 0,
   "trigger_events": 0,
   "deep_candidates": 0
  }

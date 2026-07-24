@@ -66,7 +66,13 @@ async function main() {
   const beforeInput = usageBefore?.input_tokens_today ?? 0;
   const beforeOutput = usageBefore?.output_tokens_today ?? 0;
   const beforeCost = usageBefore?.calculated_cost_usd_today ?? 0;
-  const llmBudget = Number(process.env.PILOT_LLM_MAX_USD ?? budget);
+  // Default split reserves headroom for search/extraction providers. The prior
+  // default (llmBudget = full budget) left provider_budget_usd = 0, so discovery
+  // got a $0 cost cap and ANY non-zero discovery cost tripped failed_budget_guard
+  // — the run could never complete unless PILOT_LLM_MAX_USD was set manually.
+  // 60% LLM / 40% providers matches the tested value-contract pattern (LLM is the
+  // smaller, bounded cost in discovery; providers/extraction are the variable part).
+  const llmBudget = Number(process.env.PILOT_LLM_MAX_USD ?? Number((budget * 0.6).toFixed(6)));
   if (!Number.isFinite(llmBudget) || llmBudget < 0 || llmBudget > budget) throw new Error("PILOT_LLM_MAX_USD must be between 0 and the total pilot cap.");
   const { evaluatePilotValueContract } = await import("@/lib/ops/pilot-preflight");
   const valueContract = evaluatePilotValueContract({ target_countries: targetCountries, known_accounts: knownAccounts, minimum_novel_opportunities: 2, minimum_dynamic_opportunities: 1, maximum_obvious_accounts: 0, total_budget_usd: budget, llm_budget_usd: llmBudget });
