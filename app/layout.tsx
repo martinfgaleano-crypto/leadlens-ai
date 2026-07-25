@@ -4,14 +4,18 @@ import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
-const APP_URL = "https://leadlens-ai-xi.vercel.app";
+// Canonical production domain. Env-driven so preview/prod resolve correctly;
+// fallback is the production domain (leadlensintel.com), NOT the Vercel URL.
+const APP_URL = (process.env.NEXT_PUBLIC_APP_URL || "https://leadlensintel.com").replace(/\/$/, "");
 const OG_TITLE = "LeadLens AI — Commercial Intelligence & Opportunity Snapshots";
 const OG_DESC =
   "Tell us your ideal customer. LeadLens identifies which accounts to contact first based on public buying signals — and generates evidence-based outreach strategy for each one.";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(APP_URL),
   title: OG_TITLE,
   description: OG_DESC,
+  alternates: { canonical: "/" },
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",

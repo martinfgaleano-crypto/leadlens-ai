@@ -3,6 +3,13 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ["@anthropic-ai/sdk"],
   },
+  async redirects() {
+    return [
+      // Canonicalize the old landing path to the root (the landing now renders
+      // at "/"). Permanent so search engines consolidate on leadlensintel.com/.
+      { source: "/demo-pipeline", destination: "/", permanent: true },
+    ];
+  },
   async headers() {
     return [
       {
