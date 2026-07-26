@@ -17,7 +17,14 @@
 
 ## Providers (recordar antes de correr): brave OK, tavily OK, serper agotado, firecrawl OK, anthropic OK.
 
-## Bloques PENDIENTES (2-10) — no iniciados
+## Bloque 2 — DONE (Market-to-Account integrado al harness)
+- `lib/discovery/market-to-account-pipeline.ts`: `runStagedPipeline(input, executors)` — secuencia explícita segments→queries_by_segment→discover+verify→classify+rank→shortlist(diversa)→deep research SOLO shortlist→métricas+reason codes. Ejecutores inyectables (live en harness, stub en tests) → determinista/replayable. StagedRunArtifact expone: segments, queries_by_segment, discovered/verified/classified, structural_ranking, shortlist, deep_research_status, signal_coverage, evidence_coverage, cost_by_stage, duration_by_stage, reason_codes (included/excluded/shortlisted/not_shortlisted/deep_research_complete/incomplete/no_current_timing/insufficient_evidence).
+- market-to-account.ts: +deriveBuyerSegments (etapa 1), +buildSegmentQueries (etapa 2, UNIVERSE queries por segmento, no eventos).
+- run-amor-de-gea-pilot.ts: cablea el pipeline sobre el universo YA descubierto (sin nueva corrida live) → escribe staged-pipeline.json + market_to_account_stages en el manifest. Deep research NO se corre aquí (Bloque 5) → deep_research_incomplete honesto.
+- Verificado por replay determinista sobre el artefacto real: 7 segmentos, 15 verificadas, shortlist diversa (Tu Tienda Saludable/BioPlaza/Fitt Global/GHL/Movich), deep 5 incomplete.
+- Tests: test:market-to-account-pipeline (22) + en release:check. channel-only nunca act_now; scores separados; replay determinista.
+
+## Bloques PENDIENTES (3-10) — no iniciados
 2. **Integrar Market-to-Account en el harness** (hoy es post-hoc): segmentos→queries por segmento→universo→verificación→ranking→shortlist→deep research; métricas y reason-codes por etapa en el artefacto. NO exigir señal reciente para entrar al universo.
 3. **Expandir universo Amor de Gea** 15→40-60 verificadas, ≥5 segmentos, query families por segmento (retail/premium/hospitality/spa/food-service/distribución/corporate/gifting/amenities); honestidad sobre gaps.
 4. **Ranking mejorado**: 6 dimensiones con inputs transparentes + reglas explícitas de recomendación + tests (high-fit/low-timing, low-fit/recent, etc.).

@@ -32,6 +32,36 @@ export const SEGMENTS: SegmentDef[] = [
   { id: "amenities", label: "Amenities / kits", match: /(amenit|welcome kit|kit de bienvenida|room experience|welcome pack|hu[eé]sped)/i, ease_of_entry: 60, commercial_potential: 60, note: "Kits/experiencia de huésped; volumen ligado a ocupación." },
 ];
 
+/** Stage 1 — buyer segments relevant to the client offering/objective. Physical
+ *  wellness/food offerings activate the retail/hospitality/food/distribution set;
+ *  software/SaaS offerings return none (scope guard). Deterministic. */
+export function deriveBuyerSegments(offering: string, objective = ""): SegmentDef[] {
+  const hay = `${offering} ${objective}`.toLowerCase();
+  const physical = /(infusi|bot[aá]nic|bebida|beverage|t[eé]|herbal|wellness|bienestar|alimento|food|cosm|natural|consumo|producto f[ií]sico|snack|suplement)/i.test(hay);
+  const software = /(software|saas|plataforma|platform|erp|api|telemetr|consultor)/i.test(hay);
+  if (software && !physical) return [];
+  if (!physical) return SEGMENTS; // generic physical/commercial → all segments
+  return SEGMENTS; // wellness/botanical → full retail/hospitality/food/distribution set
+}
+
+/** Stage 2 — UNIVERSE queries per segment (find companies, NOT events). Region
+ *  aware. These never prove timing; event queries are a later, shortlist-only
+ *  stage (Block 5). Deterministic. */
+export function buildSegmentQueries(segment: BuyerSegment, region = "Colombia"): string[] {
+  const r = region;
+  const map: Record<BuyerSegment, string[]> = {
+    retail: [`tiendas saludables ${r}`, `supermercados premium ${r}`, `concept store productos naturales ${r}`, `retail bienestar ${r} directorio`],
+    distribution: [`distribuidores productos naturales ${r}`, `mayoristas alimentos saludables ${r}`, `comercializadoras bienestar ${r}`],
+    hospitality: [`hoteles boutique ${r}`, `grupos hoteleros ${r}`, `hoteles con spa ${r}`, `resorts wellness ${r}`],
+    wellness: [`spas ${r}`, `centros de bienestar ${r}`, `wellness centers ${r}`, `retiros ${r}`],
+    food_service: [`cafés especializados ${r}`, `restaurantes saludables ${r}`, `cadenas gastronómicas ${r}`],
+    corporate: [`empresas programas de bienestar ${r}`, `regalos corporativos bienestar ${r}`, `beneficios empleados ${r}`],
+    amenities: [`proveedores amenities hoteles ${r}`, `kits de bienvenida ${r}`, `amenities spa ${r}`],
+    unclassified: [`empresas bienestar ${r}`],
+  };
+  return map[segment] ?? map.unclassified;
+}
+
 export interface SegmentAssessment {
   primarySegment: BuyerSegment;
   secondarySegments: BuyerSegment[];

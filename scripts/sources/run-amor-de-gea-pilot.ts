@@ -115,6 +115,17 @@ async function main() {
   discovery.candidates = discovery.candidates.map(candidate => ({ ...candidate, raw_context: sanitizePublicContent(candidate.raw_context ?? "") }));
   writeFileSync(join(runDir, "discovery.json"), `${JSON.stringify(discovery, null, 2)}\n`);
 
+  // Market-to-Account staged pipeline (Block 2): formalize the run sequence over
+  // the ALREADY-discovered universe (no new provider cost). Deep research is not
+  // run here (Block 5) → deep_research_incomplete, reported honestly.
+  const { runStagedPipeline } = await import("@/lib/discovery/market-to-account-pipeline");
+  const universeAccounts = (discovery.metrics.universe_accounts ?? []) as Array<{ company: string; domain: string | null; sector: string | null; visibility?: string; score?: number | null }>;
+  const staged = await runStagedPipeline(
+    { offering: "infusiones y botánicos de bienestar", objective: "", region: targetCountries[0], shortlist_size: 8, per_segment_cap: 3 },
+    { discoverAndVerify: async () => universeAccounts.map((u) => ({ company: u.company, domain: u.domain ?? null, sector: u.sector ?? null, visibility: u.visibility ?? "unknown", baseScore: typeof u.score === "number" ? u.score : null, verified: true })) },
+  );
+  writeFileSync(join(runDir, "staged-pipeline.json"), `${JSON.stringify(staged, null, 2)}\n`);
+
   const manifest: Record<string, unknown> = {
     version: "amor-de-gea-pilot-v1", phase, ran_at: new Date().toISOString(), budget_cap_usd: budget,
     llm_budget_cap_usd: llmBudget,
@@ -139,6 +150,20 @@ async function main() {
     candidates_rejected_wrong_geography: candidatesBeforeGeographyGate - candidatesAfterGeographyGate,
     known_accounts_excluded: knownAccounts,
     candidates_rejected_known_account: candidatesBeforeNoveltyGate - discovery.candidates.length,
+    // Staged Market-to-Account artifact (Block 2) — summary in manifest, full in staged-pipeline.json.
+    market_to_account_stages: {
+      segments: staged.segments,
+      queries_by_segment: staged.queries_by_segment,
+      discovered_companies: staged.discovered_companies,
+      verified_companies: staged.verified_companies,
+      classified_companies: staged.classified_companies,
+      shortlist: staged.shortlist.map((a) => a.company),
+      deep_research_status: staged.deep_research_status,
+      signal_coverage: staged.signal_coverage,
+      evidence_coverage: staged.evidence_coverage,
+      cost_by_stage: staged.cost_by_stage,
+      duration_by_stage: staged.duration_by_stage,
+    },
     status: phase === "full" ? "discovery_ready" : "completed",
   };
   if (novelCandidates.length < 2) {
