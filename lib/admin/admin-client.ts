@@ -46,6 +46,19 @@ export async function adminFetch(path: string, init?: RequestInit): Promise<Resp
 }
 
 /**
+ * Admin logout — clears the server admin-session cookie and any local dev token,
+ * then signs out the Supabase session. Returns to /admin/login.
+ */
+export async function adminLogout(): Promise<void> {
+  try { await fetch("/api/admin/session", { method: "DELETE" }); } catch { /* ignore */ }
+  clearAdminToken();
+  try {
+    const { getSupabaseClient } = await import("@/lib/supabase/client");
+    await getSupabaseClient()?.auth.signOut();
+  } catch { /* ignore */ }
+}
+
+/**
  * Parse a Response as JSON safely.
  * Returns null instead of throwing if the body is empty or not valid JSON.
  */

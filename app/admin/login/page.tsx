@@ -1,180 +1,82 @@
 "use client";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { getAdminToken, setAdminToken, clearAdminToken, adminFetch } from "@/lib/admin/admin-client";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { getSupabaseClient } from "@/lib/supabase/client";
 
-async function validateToken(token: string): Promise<"ok" | "invalid" | "unreachable"> {
-  const res = await adminFetch("/api/admin/auth-check");
-  if (res.ok) return "ok";
-  if (res.status === 401 || res.status === 403) { clearAdminToken(); return "invalid"; }
-  if (res.status === 503) return "unreachable";
-  return "invalid";
-}
-
-export default function AdminLoginPage() {
+// Admin login — Supabase email/password authentication, then server-side
+// authorization via /api/admin/session (which checks the admin_users allowlist
+// and sets a signed httpOnly cookie). Never reveals whether an email is an
+// admin before valid authentication.
+function AdminLoginInner() {
   const router = useRouter();
-  const [token, setToken]       = useState("");
-  const [error, setError]       = useState("");
-  const [loading, setLoading]   = useState(false);
+  const params = useSearchParams();
+  const next = params.get("next");
+  const reason = params.get("reason");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(reason === "unauthorized" ? "This account is not authorized for Admin access." : "");
+  const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
 
-  // If already have a stored token, validate it silently and redirect
-  useEffect(() => {
-    const existing = getAdminToken();
-    if (!existing) { setChecking(false); return; }
+  const dest = () => (next && /^\/admin(\/|$)/.test(next) && !/^\/admin\/login/.test(next) ? next : "/admin/intelligence");
 
-    adminFetch("/api/admin/auth-check")
-      .then((r) => {
-        if (r.ok) {
-          router.replace("/admin");
-        } else {
-          clearAdminToken();
-          setChecking(false);
-        }
-      })
-      .catch(() => setChecking(false));
-  }, [router]);
+  // Already have a valid admin cookie? go straight in.
+  useEffect(() => {
+    fetch("/api/admin/session").then((r) => { if (r.ok) router.replace(dest()); else setChecking(false); }).catch(() => setChecking(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
-    const t = token.trim();
-    if (!t) { setError("Token is required."); return; }
-
+    const supabase = getSupabaseClient();
+    if (!supabase) { setError("Authentication is not configured. Contact the system owner."); return; }
+    if (!email.trim() || !password) { setError("Email and password are required."); return; }
     setLoading(true);
-    setAdminToken(t);
-
-    const result = await validateToken(t);
+    try {
+      const { data, error: authErr } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+      if (authErr || !data.session) { setError("Invalid email or password."); setLoading(false); return; }
+      // Exchange the session for a server-verified admin cookie.
+      const res = await fetch("/api/admin/session", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ access_token: data.session.access_token }),
+      });
+      if (res.ok) { router.replace(dest()); return; }
+      // Not an admin (or config error): sign the Supabase session back out so a
+      // non-admin isn't left holding a customer session on the admin origin.
+      await supabase.auth.signOut();
+      if (res.status === 403) setError("This account is not authorized for Admin access.");
+      else if (res.status === 503) setError("Admin authorization is temporarily unavailable. Try again shortly.");
+      else setError("Sign-in failed. Please try again.");
+    } catch { setError("Network error. Please try again."); }
     setLoading(false);
-
-    if (result === "ok") {
-      router.replace("/admin");
-    } else if (result === "unreachable") {
-      clearAdminToken();
-      setError("Could not reach the server. Make sure the dev server is running.");
-    } else {
-      clearAdminToken();
-      setError("Invalid token. Check your ADMIN_SECRET_TOKEN in .env.local.");
-    }
   }
 
-  if (checking) {
-    return (
-      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#f8fafc", fontFamily: "-apple-system,sans-serif", color: "#64748b" }}>
-        Verifying session...
-      </div>
-    );
-  }
+  if (checking) return <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#f8fafc", color: "#64748b", fontFamily: "-apple-system,sans-serif" }}>Verifying session…</div>;
 
+  const input: React.CSSProperties = { display: "block", width: "100%", padding: "0.75rem 0.875rem", border: "1px solid #e2e8f0", borderRadius: "0.625rem", fontSize: "0.9rem", color: "#0f172a", background: "#fff", outline: "none", boxSizing: "border-box", fontFamily: "inherit", marginBottom: "1rem" };
   return (
-    <div style={{
-      minHeight: "100vh",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      background: "#f8fafc",
-      fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",
-      padding: "2rem",
-    }}>
-      <div style={{
-        width: "100%",
-        maxWidth: 400,
-        background: "#fff",
-        border: "1px solid #e2e8f0",
-        borderRadius: "1rem",
-        padding: "2.5rem",
-        boxShadow: "0 4px 24px rgba(0,0,0,0.06)",
-      }}>
-        {/* Brand */}
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#f8fafc", fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif", padding: "2rem" }}>
+      <div style={{ width: "100%", maxWidth: 400, background: "#fff", border: "1px solid #e2e8f0", borderRadius: "1rem", padding: "2.5rem", boxShadow: "0 4px 24px rgba(0,0,0,0.06)" }}>
         <div style={{ marginBottom: "2rem", textAlign: "center" }}>
-          <div style={{
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: 44,
-            height: 44,
-            background: "linear-gradient(135deg,#0ea5e9,#0284c7)",
-            borderRadius: 10,
-            color: "#fff",
-            fontWeight: 800,
-            fontSize: "1.25rem",
-            marginBottom: "0.875rem",
-          }}>L</div>
-          <h1 style={{ color: "#0f172a", fontSize: "1.25rem", fontWeight: 800, margin: "0 0 0.25rem", letterSpacing: "-0.02em" }}>
-            LeadLens Admin
-          </h1>
-          <p style={{ color: "#64748b", fontSize: "0.8rem", margin: 0 }}>Internal operations dashboard</p>
+          <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 44, height: 44, background: "linear-gradient(135deg,#0ea5e9,#0284c7)", borderRadius: 10, color: "#fff", fontWeight: 800, fontSize: "1.25rem", marginBottom: "0.875rem" }}>L</div>
+          <h1 style={{ color: "#0f172a", fontSize: "1.25rem", fontWeight: 800, margin: "0 0 0.25rem", letterSpacing: "-0.02em" }}>LeadLens Admin</h1>
+          <p style={{ color: "#64748b", fontSize: "0.8rem", margin: 0 }}>Authorized administrators only</p>
         </div>
-
         <form onSubmit={handleSubmit}>
-          <label style={{ display: "block", marginBottom: "1.25rem" }}>
-            <span style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#374151", marginBottom: "0.4rem", letterSpacing: "0.03em", textTransform: "uppercase" }}>
-              Admin Token
-            </span>
-            <input
-              type="password"
-              value={token}
-              onChange={(e) => setToken(e.target.value)}
-              placeholder="Enter your ADMIN_SECRET_TOKEN"
-              autoComplete="current-password"
-              style={{
-                display: "block",
-                width: "100%",
-                padding: "0.75rem 0.875rem",
-                border: "1px solid #e2e8f0",
-                borderRadius: "0.625rem",
-                fontSize: "0.9rem",
-                color: "#0f172a",
-                background: "#fff",
-                outline: "none",
-                boxSizing: "border-box",
-                fontFamily: "inherit",
-              }}
-              onFocus={(e) => { e.target.style.borderColor = "#0ea5e9"; e.target.style.boxShadow = "0 0 0 3px rgba(14,165,233,0.12)"; }}
-              onBlur={(e)  => { e.target.style.borderColor = "#e2e8f0"; e.target.style.boxShadow = "none"; }}
-            />
-          </label>
-
-          {error && (
-            <div style={{
-              background: "#fee2e2",
-              border: "1px solid #fca5a5",
-              borderRadius: "0.5rem",
-              padding: "0.625rem 0.875rem",
-              color: "#dc2626",
-              fontSize: "0.8rem",
-              marginBottom: "1rem",
-            }}>
-              {error}
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            style={{
-              display: "block",
-              width: "100%",
-              padding: "0.8rem",
-              background: loading ? "#7dd3fc" : "#0ea5e9",
-              color: "#fff",
-              border: "none",
-              borderRadius: "0.625rem",
-              fontWeight: 700,
-              fontSize: "0.9rem",
-              cursor: loading ? "not-allowed" : "pointer",
-              fontFamily: "inherit",
-              transition: "background 0.15s",
-            }}
-          >
-            {loading ? "Verifying..." : "Enter admin dashboard"}
-          </button>
+          <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#374151", marginBottom: "0.4rem", letterSpacing: "0.03em", textTransform: "uppercase" }}>Email</label>
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@company.com" autoComplete="username" style={input} />
+          <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#374151", marginBottom: "0.4rem", letterSpacing: "0.03em", textTransform: "uppercase" }}>Password</label>
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" autoComplete="current-password" style={input} />
+          {error && <div style={{ background: "#fee2e2", border: "1px solid #fca5a5", borderRadius: "0.5rem", padding: "0.625rem 0.875rem", color: "#dc2626", fontSize: "0.8rem", marginBottom: "1rem" }}>{error}</div>}
+          <button type="submit" disabled={loading} style={{ display: "block", width: "100%", padding: "0.8rem", background: loading ? "#7dd3fc" : "#0ea5e9", color: "#fff", border: "none", borderRadius: "0.625rem", fontWeight: 700, fontSize: "0.9rem", cursor: loading ? "not-allowed" : "pointer", fontFamily: "inherit" }}>{loading ? "Signing in…" : "Sign in"}</button>
         </form>
-
-        <p style={{ textAlign: "center", color: "#94a3b8", fontSize: "0.72rem", marginTop: "1.5rem", marginBottom: 0 }}>
-          Token is validated server-side. Never stored in plain text.
-        </p>
+        <p style={{ textAlign: "center", color: "#94a3b8", fontSize: "0.72rem", marginTop: "1.5rem", marginBottom: 0 }}>Authenticated by Supabase. Authorized server-side.</p>
       </div>
     </div>
   );
+}
+
+export default function AdminLoginPage() {
+  return <Suspense fallback={null}><AdminLoginInner /></Suspense>;
 }
