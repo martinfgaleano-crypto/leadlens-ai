@@ -31,6 +31,23 @@ After those: verify at `https://leadlensintel.com/admin/login` (Tests A–F in P
 
 ---
 
+## FIX: "Verifying session" infinite spinner — DONE
+
+**Root cause (code, not config).** The `/login` mount effect cleared its loading state only on the explicit no-session branch: `getSession().then(...)` had **no `.catch()`/`.finally()`**, and the session-exists path relied on a redirect that could stall. A rejected/slow `getSession()` (stale/invalid refresh token in localStorage — common in prod) or a hung Admin bridge left the page permanently on "Verifying session". Config was verified fine: `origin/main` HEAD = `9d697ef`, `admin_users` exists, owner row `is_active=true, revoked_at=null`.
+
+**Also found + fixed during the fix:** a `ranRef` run-once guard interacted badly with React Strict Mode (first attempt cancelled on unmount, second skipped by the guard → nothing settled → hang in dev). Removed it; each mount now settles once via `cancelled`/`settled` guards.
+
+**State machine (terminating).** `phase ∈ { verifying, form, redirecting }` + a `sawSession` ref. On mount: failsafe `setTimeout` (9s) + `cancelled`/`settled` guards; `getSession()` in try/catch (throw → form); no session → form; session → time-bounded bridge → `resolveLoginTarget` → redirect (admin → `/admin/intelligence`, else `/dashboard`). The verifying state is ALWAYS terminated. Failsafe: if nothing settles in 9s, a known session → `/dashboard`, else the form.
+
+**Bridge hardening.** `establishAdminSession` now has an 8s `AbortController` timeout, tolerates malformed/non-JSON bodies, and returns a deterministic result for 401/403/500/503/network/timeout (never throws). An unavailable Admin service never traps a valid normal user — they fall through to `/dashboard`.
+
+- Files: `app/login/page.tsx` (state machine), `lib/admin/admin-bootstrap.ts` (`establishAdminSession` timeout + `resolveLoginTarget`).
+- Tests: `test:admin-login-routing` **28 passed** (adds resolver matrix: no-session→form, admin→Portal, normal→dashboard, bridge-unavailable→dashboard; malformed 2xx → deterministic; 500 → not-admin). `test:admin-auth` **48/48** regression. tsc clean.
+- Browser: local `/login` (fresh tab) reaches the **form**, no infinite "Verifying session", no console errors.
+- Commit: (see Latest commit). Owner must `git push` to deploy the fix (base `9d697ef` already on origin).
+
+---
+
 ## UNIFIED LOGIN FLOW (auto-route admins) — DONE
 
 One login experience: the normal `/login`. After a verified Supabase sign-in the client hands **only the access token** to `POST /api/admin/session`; the server verifies the token + queries `admin_users` live and, for an active admin, issues the httpOnly cookie and returns `{ isAdmin:true, redirectTo:"/admin/intelligence" }`. The client follows it. Normal users → existing `/dashboard`. **No Admin button, no role picker, no second credential entry, no client-trusted role/user_id/isAdmin.**

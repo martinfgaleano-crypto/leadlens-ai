@@ -1,7 +1,7 @@
 // Unit tests: unified post-login Admin routing bridge (client helper).
 // Server-authoritative; the client only forwards the access token and follows.
 import {
-  safeInternal, decidePostLoginRoute, establishAdminSession,
+  safeInternal, decidePostLoginRoute, establishAdminSession, resolveLoginTarget,
   bootstrapAdminRedirectOnce, resetAdminBootstrap, clearAdminSession,
 } from "@/lib/admin/admin-bootstrap";
 import { readFileSync } from "fs";
@@ -32,6 +32,15 @@ t("admin destination takes precedence", decidePostLoginRoute({ isAdmin: true, re
 t("normal user → dashboard", decidePostLoginRoute({ isAdmin: false, redirectTo: null }, "/dashboard") === "/dashboard");
 t("admin without redirectTo falls back to normal", decidePostLoginRoute({ isAdmin: true, redirectTo: null }, "/dashboard") === "/dashboard");
 
+// ── resolveLoginTarget (terminal decision — never leaves caller hanging) ─────
+t("no session → show form", resolveLoginTarget(false, null).action === "form");
+const rAdmin = resolveLoginTarget(true, { isAdmin: true, redirectTo: "/admin/intelligence" });
+t("session + admin → redirect Portal", rAdmin.action === "redirect" && rAdmin.action === "redirect" && rAdmin.to === "/admin/intelligence");
+const rNorm = resolveLoginTarget(true, { isAdmin: false, redirectTo: null });
+t("session + normal user → /dashboard", rNorm.action === "redirect" && rNorm.to === "/dashboard");
+const rFail = resolveLoginTarget(true, null);
+t("session + bridge unavailable → /dashboard (not trapped)", rFail.action === "redirect" && rFail.to === "/dashboard");
+
 // ── establishAdminSession ────────────────────────────────────────────────────
 (async () => {
   setFetch(() => ({ status: 200, body: { ok: true, isAdmin: true, redirectTo: "/admin/intelligence" } }));
@@ -47,6 +56,13 @@ t("admin without redirectTo falls back to normal", decidePostLoginRoute({ isAdmi
   const sanitized = await establishAdminSession("tok");
   t("server redirect sanitized to internal", sanitized.isAdmin && sanitized.redirectTo === "/admin/intelligence");
 
+  // malformed 2xx body (json throws) → deterministic admin default, no crash.
+  (globalThis as { fetch: unknown }).fetch = async () => ({ ok: true, status: 200, json: async () => { throw new Error("bad json"); } } as unknown as Response);
+  const malformed = await establishAdminSession("tok");
+  t("malformed 2xx → deterministic (admin default target)", malformed.isAdmin && malformed.redirectTo === "/admin/intelligence");
+
+  setFetch(() => ({ status: 500, body: {} }));
+  t("500 → not admin (deterministic)", (await establishAdminSession("tok")).isAdmin === false);
   setFetch(() => ({ status: 403, body: { error: "not authorized" } }));
   t("normal user (403) → not admin", (await establishAdminSession("tok")).isAdmin === false);
   setFetch(() => ({ status: 401, body: {} }));

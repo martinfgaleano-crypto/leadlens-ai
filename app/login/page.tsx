@@ -1,9 +1,14 @@
 "use client";
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { getSupabaseClient } from "@/lib/supabase/client";
-import { establishAdminSession, decidePostLoginRoute } from "@/lib/admin/admin-bootstrap";
+import { establishAdminSession, resolveLoginTarget } from "@/lib/admin/admin-bootstrap";
+
+// Login page states — the page must never remain in "verifying" after the mount
+// check settles or errors.
+type LoginPhase = "verifying" | "form" | "redirecting";
+const VERIFY_FAILSAFE_MS = 9000;
 
 function friendlyAuthError(msg: string): string {
   const m = msg.toLowerCase();
@@ -36,23 +41,57 @@ function LoginContent() {
   const [password, setPassword] = useState("");
   const [error, setError]       = useState("");
   const [loading, setLoading]   = useState(false);
-  const [checking, setChecking] = useState(true);
+  const [phase, setPhase]       = useState<LoginPhase>("verifying");
+  const sawSession = useRef(false);
 
   // Route a verified session: active admins → Admin Portal, everyone else →
   // normal dashboard. Server decides admin status; the client only forwards the
-  // access token. No role picker, no Admin button.
+  // access token. Bridge never throws and is time-bounded.
   async function routeAfterAuth(accessToken: string | undefined) {
     const bridge = accessToken ? await establishAdminSession(accessToken) : { isAdmin: false, redirectTo: null };
-    router.replace(decidePostLoginRoute(bridge, "/dashboard"));
+    const target = resolveLoginTarget(!!accessToken, bridge);
+    if (target.action === "redirect") { setPhase("redirecting"); router.replace(target.to); }
+    else setPhase("form");
   }
 
+  // Mount check with a guaranteed terminal state: a rejected/slow getSession, a
+  // stalled bridge, or an unavailable Admin service can never trap the page in
+  // "verifying". Failsafe timer + cancelled guard + explicit settle.
   useEffect(() => {
-    const supabase = getSupabaseClient();
-    if (!supabase) { setChecking(false); return; }
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) routeAfterAuth(session.access_token);
-      else setChecking(false);
-    });
+    // Each mount runs its own attempt with independent cancelled/settled guards.
+    // Under Strict Mode the first (unmounted) attempt is cancelled and the
+    // second settles exactly once — no duplicate redirect, no hang.
+    let cancelled = false, settled = false;
+    let timer: ReturnType<typeof setTimeout>;
+    const settle = (fn: () => void) => { if (cancelled || settled) return; settled = true; clearTimeout(timer); fn(); };
+    timer = setTimeout(() => settle(() => {
+      if (sawSession.current) { setPhase("redirecting"); router.replace("/dashboard"); }
+      else setPhase("form");
+    }), VERIFY_FAILSAFE_MS);
+
+    (async () => {
+      const supabase = getSupabaseClient();
+      if (!supabase) return settle(() => setPhase("form"));
+      let session: { access_token: string } | null = null;
+      try {
+        const { data } = await supabase.auth.getSession();
+        session = data.session;
+      } catch {
+        return settle(() => setPhase("form")); // stale/invalid stored token → show form
+      }
+      if (cancelled) return;
+      if (!session) return settle(() => setPhase("form"));
+      sawSession.current = true;
+      const bridge = await establishAdminSession(session.access_token);
+      if (cancelled) return;
+      const target = resolveLoginTarget(true, bridge);
+      settle(() => {
+        if (target.action === "redirect") { setPhase("redirecting"); router.replace(target.to); }
+        else setPhase("form");
+      });
+    })();
+
+    return () => { cancelled = true; clearTimeout(timer); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -78,9 +117,8 @@ function LoginContent() {
     }
   }
 
-  if (checking) {
-    return <div style={S.fullCenter}>Verifying session…</div>;
-  }
+  if (phase === "verifying") return <div style={S.fullCenter}>Verifying session…</div>;
+  if (phase === "redirecting") return <div style={S.fullCenter}>Signing you in…</div>;
 
   return (
     <div style={S.page}>

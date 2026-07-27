@@ -14,22 +14,39 @@ export function safeInternal(path: string | null | undefined, fallback: string):
   return path;
 }
 
-/** Ask the server to establish an Admin session for this token. Returns
- *  isAdmin=true (+ server-provided internal redirect) only when the server
- *  issued the cookie; any non-2xx (401/403 normal user, 503 config) → not admin. */
-export async function establishAdminSession(accessToken: string): Promise<{ isAdmin: boolean; redirectTo: string | null }> {
+/** Ask the server to establish an Admin session for this token. ALWAYS resolves
+ *  deterministically (never throws): isAdmin=true (+ server-provided internal
+ *  redirect) only on a 2xx that issued the cookie; any non-2xx (401/403 normal
+ *  user, 500/503 config), malformed body, network error or timeout → not admin.
+ *  A bounded timeout guarantees the caller can never hang on this request. */
+export async function establishAdminSession(accessToken: string, timeoutMs = 8000): Promise<{ isAdmin: boolean; redirectTo: string | null }> {
   if (!accessToken) return { isAdmin: false, redirectTo: null };
+  const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+  const timer = controller ? setTimeout(() => controller.abort(), timeoutMs) : null;
   try {
     const res = await fetch("/api/admin/session", {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ access_token: accessToken }),
+      signal: controller?.signal,
     });
     if (res.ok) {
-      const d = await res.json().catch(() => ({}));
-      return { isAdmin: true, redirectTo: safeInternal(d?.redirectTo, "/admin/intelligence") };
+      const d = await res.json().catch(() => ({} as { redirectTo?: string }));
+      return { isAdmin: true, redirectTo: safeInternal((d as { redirectTo?: string })?.redirectTo, "/admin/intelligence") };
     }
     return { isAdmin: false, redirectTo: null };
   } catch { return { isAdmin: false, redirectTo: null }; }
+  finally { if (timer) clearTimeout(timer); }
+}
+
+/** Deterministic post-session routing decision. No session → show the form. A
+ *  valid session always redirects: active admin → its target, everyone else
+ *  (normal user, or Admin service unavailable) → the normal dashboard. Never
+ *  leaves the caller without a decision. */
+export type LoginResolution = { action: "form" } | { action: "redirect"; to: string };
+export function resolveLoginTarget(hasSession: boolean, bridge: { isAdmin: boolean; redirectTo: string | null } | null): LoginResolution {
+  if (!hasSession) return { action: "form" };
+  if (bridge && bridge.isAdmin && bridge.redirectTo) return { action: "redirect", to: bridge.redirectTo };
+  return { action: "redirect", to: "/dashboard" };
 }
 
 /** Where to send the user after a verified login: Admin destination takes
