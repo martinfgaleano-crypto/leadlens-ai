@@ -31,6 +31,19 @@ After those: verify at `https://leadlensintel.com/admin/login` (Tests A–F in P
 
 ---
 
+## UNIFIED LOGIN FLOW (auto-route admins) — DONE
+
+One login experience: the normal `/login`. After a verified Supabase sign-in the client hands **only the access token** to `POST /api/admin/session`; the server verifies the token + queries `admin_users` live and, for an active admin, issues the httpOnly cookie and returns `{ isAdmin:true, redirectTo:"/admin/intelligence" }`. The client follows it. Normal users → existing `/dashboard`. **No Admin button, no role picker, no second credential entry, no client-trusted role/user_id/isAdmin.**
+- New: `lib/admin/admin-bootstrap.ts` — `establishAdminSession` (forwards token only, sanitizes the returned redirect to an internal path), `decidePostLoginRoute` (Admin destination precedence), `bootstrapAdminRedirectOnce` (one-time guard for already-authenticated landings), `clearAdminSession` (logout: DELETE cookie + re-arm guard).
+- `app/login/page.tsx` — post-sign-in and already-authenticated mount now route via the bridge (was hardcoded `/dashboard`).
+- `app/dashboard/_components/DashboardShell.tsx` — one-time admin bootstrap on mount (active admin landing on any dashboard page → Admin Portal; runs once; no loop); both Sign-out buttons now clear the Admin cookie too.
+- `app/api/admin/session/route.ts` — success response adds `isAdmin:true, redirectTo:"/admin/intelligence"`.
+- `app/admin/login/page.tsx` — now a thin compatibility route: existing admin cookie → in; existing Supabase session → bridge; otherwise defer to `/login` (no separate credential prompt); form kept only as a misconfig fallback.
+- Tests: `test:admin-login-routing` **22 passed** (open-redirect guard, Admin-destination precedence, token-only request, 401/403/503/network → not-admin, one-time bootstrap, logout DELETE + re-arm, no rendered Admin CTA in shell/login). `test:admin-auth` regression **48/48**. tsc clean. Local render of `/login` verified: form intact, no Admin button, no console errors.
+- **Live A–D flow not yet verifiable here:** `admin_users` isn't created in Supabase yet (bootstrap SQL not run) and code isn't deployed — so the live owner→Admin redirect can only be confirmed after the migration + deploy. Logic + UI verified locally.
+
+---
+
 ## HARDENING PASS (post-review) — DONE
 
 ### 1. Immediate Admin revocation (authoritative active-allowlist boundary)

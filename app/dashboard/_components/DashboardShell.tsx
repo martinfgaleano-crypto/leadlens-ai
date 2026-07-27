@@ -1,7 +1,9 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { getSupabaseClient } from "@/lib/supabase/client";
+import { bootstrapAdminRedirectOnce, clearAdminSession } from "@/lib/admin/admin-bootstrap";
 
 // ─── Customer Workspace Shell ─────────────────────────────────────────────────
 // Premium top-nav workspace — a private continuation of the public site, NOT
@@ -24,8 +26,29 @@ const NAV = [
 
 export default function DashboardShell({ email, onLogout, children }: Props) {
   const pathname = usePathname() ?? "";
+  const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+
+  // One-time Admin bootstrap: an active admin who lands on any normal
+  // authenticated page is routed to the Admin Portal. Server-authoritative
+  // (verifies token + admin_users live); runs once per load; no loop (a normal
+  // user gets 403 and stays).
+  useEffect(() => {
+    const supabase = getSupabaseClient();
+    if (!supabase) return;
+    let cancelled = false;
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (cancelled || !session) return;
+      const dest = await bootstrapAdminRedirectOnce(session.access_token);
+      if (!cancelled && dest) router.replace(dest);
+    });
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Normal logout must also clear the Admin cookie + bootstrap guard.
+  const handleLogout = async () => { await clearAdminSession(); onLogout(); };
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -74,7 +97,7 @@ export default function DashboardShell({ email, onLogout, children }: Props) {
         {email}
       </span>
       <button
-        onClick={onLogout}
+        onClick={handleLogout}
         style={{ background: "#fff", border: "1px solid #e2e8f0", color: "#64748b", borderRadius: "0.45rem", padding: "0.35rem 0.85rem", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
       >
         Sign out
@@ -121,7 +144,7 @@ export default function DashboardShell({ email, onLogout, children }: Props) {
               ))}
               <div style={{ borderTop: "1px solid #f1f5f9", marginTop: "0.5rem", paddingTop: "0.75rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <span style={{ color: "#94a3b8", fontSize: "0.72rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 200 }}>{email}</span>
-                <button onClick={onLogout} style={{ background: "#fff", border: "1px solid #e2e8f0", color: "#64748b", borderRadius: "0.45rem", padding: "0.35rem 0.85rem", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
+                <button onClick={handleLogout} style={{ background: "#fff", border: "1px solid #e2e8f0", color: "#64748b", borderRadius: "0.45rem", padding: "0.35rem 0.85rem", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
                   Sign out
                 </button>
               </div>

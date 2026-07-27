@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
   }
 
   const value = signAdminSession({ sub: result.userId, role: result.role }, secret);
-  const res = NextResponse.json({ ok: true, role: result.role });
+  const res = NextResponse.json({ ok: true, role: result.role, isAdmin: true, redirectTo: "/admin/intelligence" });
   res.cookies.set(ADMIN_COOKIE_NAME, value, {
     httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax",
     path: "/", maxAge: ADMIN_SESSION_TTL_SECONDS,

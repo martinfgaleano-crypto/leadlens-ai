@@ -3,6 +3,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { getSupabaseClient } from "@/lib/supabase/client";
+import { establishAdminSession, decidePostLoginRoute } from "@/lib/admin/admin-bootstrap";
 
 function friendlyAuthError(msg: string): string {
   const m = msg.toLowerCase();
@@ -37,11 +38,19 @@ function LoginContent() {
   const [loading, setLoading]   = useState(false);
   const [checking, setChecking] = useState(true);
 
+  // Route a verified session: active admins → Admin Portal, everyone else →
+  // normal dashboard. Server decides admin status; the client only forwards the
+  // access token. No role picker, no Admin button.
+  async function routeAfterAuth(accessToken: string | undefined) {
+    const bridge = accessToken ? await establishAdminSession(accessToken) : { isAdmin: false, redirectTo: null };
+    router.replace(decidePostLoginRoute(bridge, "/dashboard"));
+  }
+
   useEffect(() => {
     const supabase = getSupabaseClient();
     if (!supabase) { setChecking(false); return; }
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) router.replace("/dashboard");
+      if (session) routeAfterAuth(session.access_token);
       else setChecking(false);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -56,15 +65,16 @@ function LoginContent() {
     }
     setError("");
     setLoading(true);
-    const { error: authError } = await supabase.auth.signInWithPassword({
+    const { data, error: authError } = await supabase.auth.signInWithPassword({
       email: email.trim(),
       password,
     });
-    setLoading(false);
     if (authError) {
+      setLoading(false);
       setError(friendlyAuthError(authError.message));
     } else {
-      router.replace("/dashboard");
+      // Keep the spinner while the server-side admin bridge decides the route.
+      await routeAfterAuth(data.session?.access_token);
     }
   }
 

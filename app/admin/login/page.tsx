@@ -2,11 +2,12 @@
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getSupabaseClient } from "@/lib/supabase/client";
+import { establishAdminSession } from "@/lib/admin/admin-bootstrap";
 
-// Admin login — Supabase email/password authentication, then server-side
-// authorization via /api/admin/session (which checks the admin_users allowlist
-// and sets a signed httpOnly cookie). Never reveals whether an email is an
-// admin before valid authentication.
+// Compatibility route. There is ONE login experience: the normal /login. This
+// page auto-authorizes an existing Supabase session (active admin → Admin
+// Portal) and otherwise defers to /login — no second credential prompt. The
+// email/password form remains only as a fallback when auth is misconfigured.
 function AdminLoginInner() {
   const router = useRouter();
   const params = useSearchParams();
@@ -20,9 +21,25 @@ function AdminLoginInner() {
 
   const dest = () => (next && /^\/admin(\/|$)/.test(next) && !/^\/admin\/login/.test(next) ? next : "/admin/intelligence");
 
-  // Already have a valid admin cookie? go straight in.
+  // 1) valid admin cookie → straight in. 2) existing Supabase session → bridge
+  // (active admin → Admin Portal; normal user → dashboard). 3) no session →
+  // defer to the single normal /login. Form shows only if auth isn't configured.
   useEffect(() => {
-    fetch("/api/admin/session").then((r) => { if (r.ok) router.replace(dest()); else setChecking(false); }).catch(() => setChecking(false));
+    (async () => {
+      try {
+        const r = await fetch("/api/admin/session");
+        if (r.ok) { router.replace(dest()); return; }
+      } catch { /* fall through */ }
+      const supabase = getSupabaseClient();
+      if (!supabase) { setChecking(false); return; }
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const bridge = await establishAdminSession(session.access_token);
+        router.replace(bridge.isAdmin && bridge.redirectTo ? bridge.redirectTo : "/dashboard");
+      } else {
+        router.replace(`/login?next=${encodeURIComponent(dest())}`);
+      }
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
