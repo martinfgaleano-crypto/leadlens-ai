@@ -8,6 +8,7 @@ import {
 } from "@/lib/auth/admin-session";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { authorizeAdmin } from "@/lib/auth/admin-authorization";
+import { activeAdminDecision, localBypassAllowed, isLocalHostname, checkActiveAdminViaRest, hostnameFromUrl } from "@/lib/auth/admin-access";
 
 let p = 0, f = 0;
 const t = (n: string, ok: boolean, d = "") => { console.log(`${ok ? "✅" : "❌"} ${n}${ok || !d ? "" : `  (${d})`}`); ok ? p++ : f++; };
@@ -15,13 +16,14 @@ const t = (n: string, ok: boolean, d = "") => { console.log(`${ok ? "✅" : "❌
 const SECRET = "test-session-secret-value";
 
 // Build a minimal NextRequest-like object requireAdmin understands.
-const fakeReq = (opts: { cookie?: string; token?: string } = {}) => ({
+const fakeReq = (opts: { cookie?: string; token?: string; url?: string } = {}) => ({
+  url: opts.url ?? "http://localhost:3000/api/admin/test",
   cookies: { get: (n: string) => (n === ADMIN_COOKIE_NAME && opts.cookie ? { value: opts.cookie } : undefined) },
   headers: new Headers(opts.token ? { "x-admin-token": opts.token } : {}),
 }) as unknown as NextRequest;
 
 const withEnv = (env: Record<string, string | undefined>, fn: () => void) => {
-  const keys = ["NODE_ENV", "ADMIN_SESSION_SECRET", "ADMIN_SECRET_TOKEN"];
+  const keys = ["NODE_ENV", "ADMIN_SESSION_SECRET", "ADMIN_SECRET_TOKEN", "ADMIN_LOCAL_BYPASS"];
   const saved: Record<string, string | undefined> = {};
   for (const k of keys) saved[k] = process.env[k];
   for (const k of keys) { if (k in env) (process.env as Record<string, string | undefined>)[k] = env[k]; else delete (process.env as Record<string, string | undefined>)[k]; }
@@ -67,8 +69,51 @@ withEnv({ NODE_ENV: "development", ADMIN_SECRET_TOKEN: "leadlens_test_admin_123"
   t("dev: wrong shared token ⇒ 401", requireAdmin(fakeReq({ token: "nope" }))?.status === 401);
 });
 withEnv({ NODE_ENV: "development" }, () => {
-  t("dev: no secrets ⇒ open (local usable)", requireAdmin(fakeReq()) === null);
+  t("dev: no secrets, no bypass flag ⇒ 401", requireAdmin(fakeReq())?.status === 401);
 });
+withEnv({ NODE_ENV: "development", ADMIN_LOCAL_BYPASS: "true" }, () => {
+  t("dev: bypass flag + localhost ⇒ authorized", requireAdmin(fakeReq({ url: "http://localhost:3000/api/admin/x" })) === null);
+  t("dev: bypass flag + remote host ⇒ 401", requireAdmin(fakeReq({ url: "https://leadlensintel.com/api/admin/x" }))?.status === 401);
+});
+
+// ── Active-allowlist decision (immediate revocation) ─────────────────────────
+t("active row ⇒ allow", activeAdminDecision({ signatureValid: true, row: { is_active: true, revoked_at: null } }) === "allow");
+t("is_active=false ⇒ deny", activeAdminDecision({ signatureValid: true, row: { is_active: false, revoked_at: null } }) === "deny");
+t("revoked_at set ⇒ deny", activeAdminDecision({ signatureValid: true, row: { is_active: true, revoked_at: "2026-01-01T00:00:00Z" } }) === "deny");
+t("row deleted/missing ⇒ deny", activeAdminDecision({ signatureValid: true, row: null }) === "deny");
+t("invalid signature ⇒ deny", activeAdminDecision({ signatureValid: false, row: { is_active: true, revoked_at: null } }) === "deny");
+t("lookup error ⇒ fail_closed", activeAdminDecision({ signatureValid: true, lookupError: true, row: null }) === "fail_closed");
+
+// ── checkActiveAdminViaRest with mocked fetch ────────────────────────────────
+async function restTests() {
+  const ok = (rows: unknown) => (async () => ({ ok: true, json: async () => rows })) as unknown as typeof fetch;
+  const httpErr = (async () => ({ ok: false, json: async () => [] })) as unknown as typeof fetch;
+  const thrower = (async () => { throw new Error("net"); }) as unknown as typeof fetch;
+  const cfg = { url: "https://x.supabase.co", serviceKey: "svc" };
+  const active = await checkActiveAdminViaRest(ok([{ is_active: true, revoked_at: null }]), cfg, "u1");
+  t("REST active row", !active.lookupError && activeAdminDecision({ signatureValid: true, ...active }) === "allow");
+  const revoked = await checkActiveAdminViaRest(ok([{ is_active: true, revoked_at: "2026-01-01" }]), cfg, "u1");
+  t("REST revoked row ⇒ deny", activeAdminDecision({ signatureValid: true, ...revoked }) === "deny");
+  const empty = await checkActiveAdminViaRest(ok([]), cfg, "u1");
+  t("REST empty ⇒ deny", activeAdminDecision({ signatureValid: true, ...empty }) === "deny");
+  const errResp = await checkActiveAdminViaRest(httpErr, cfg, "u1");
+  t("REST http error ⇒ fail_closed", errResp.lookupError && activeAdminDecision({ signatureValid: true, ...errResp }) === "fail_closed");
+  const threw = await checkActiveAdminViaRest(thrower, cfg, "u1");
+  t("REST throw ⇒ fail_closed", threw.lookupError);
+}
+
+// ── Local-bypass hostname policy ─────────────────────────────────────────────
+const bypass = (nodeEnv: string, hostname: string, flag: boolean) => localBypassAllowed({ nodeEnv, hostname, bypassEnabled: flag });
+t("localhost + flag ⇒ bypass", bypass("development", "localhost", true) === true);
+t("127.0.0.1 + flag ⇒ bypass", bypass("development", "127.0.0.1", true) === true);
+t("::1 + flag ⇒ bypass", isLocalHostname("::1") && bypass("development", "::1", true) === true);
+t("localhost, NO flag ⇒ no bypass", bypass("development", "localhost", false) === false);
+t("Vercel preview host ⇒ never bypass", bypass("development", "leadlens-git-main.vercel.app", true) === false);
+t("*.vercel.app ⇒ never bypass", bypass("development", "my-app.vercel.app", true) === false);
+t("leadlensintel.com ⇒ never bypass", bypass("development", "leadlensintel.com", true) === false);
+t("www.leadlensintel.com ⇒ never bypass", bypass("development", "www.leadlensintel.com", true) === false);
+t("production + localhost ⇒ never bypass", bypass("production", "localhost", true) === false);
+t("spoofed forwarded host not usable (only trusted host parsed)", hostnameFromUrl("https://leadlensintel.com/admin") === "leadlensintel.com" && bypass("development", "leadlensintel.com", true) === false);
 
 // ── authorizeAdmin fail-closed on missing config ─────────────────────────────
 (async () => {
@@ -77,6 +122,7 @@ withEnv({ NODE_ENV: "development" }, () => {
     t("authorizeAdmin: missing config ⇒ 503", !r.ok && r.status === 503);
   });
   t("authorizeAdmin: no token ⇒ 401", !(await authorizeAdmin(null)).ok);
+  await restTests();
   console.log(`\n${p} passed, ${f} failed`); if (f) process.exit(1);
 })();
 

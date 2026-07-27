@@ -1,6 +1,20 @@
 # Production Admin Authentication & Authorization — Checkpoint
 
-## Status: stable unit DONE (server-side core + login + middleware + hardening). Owner deployment steps below.
+## Status: stable unit DONE + hardening pass DONE. Owner deployment steps below.
+
+---
+
+## HARDENING PASS (post-review) — DONE
+
+### 1. Immediate Admin revocation (authoritative active-allowlist boundary)
+`middleware.ts` is now the centralized server-side boundary for **both** pages (`/admin/*`) and APIs (`/api/admin/*`, except the login/bootstrap routes `session`/`auth-check`). On every protected request it: (1) HMAC-verifies the signed cookie (edge Web Crypto) → `user_id`; (2) queries `admin_users` **live** via Supabase REST with the service-role key (`checkActiveAdminViaRest`, edge `fetch`) for `is_active=true && revoked_at IS NULL`; (3) decides via `activeAdminDecision`. **Revocation is immediate — never waits for the 8h TTL.** On deny/fail-closed the cookie is cleared; **APIs → 403** (503 on lookup failure), **pages → `/admin/login?reason=unauthorized`**. DB/config failure fails closed. Signature-only `requireAdmin` remains in the API routes as defense-in-depth behind this boundary.
+
+### 2. Restricted local-dev bypass
+The bypass now requires **all** of: `NODE_ENV !== "production"` **AND** the request's trusted hostname (`req.nextUrl.hostname` / `hostnameFromUrl(req.url)` — never `x-forwarded-host`) is literally `localhost`/`127.0.0.1`/`::1` **AND** `ADMIN_LOCAL_BYPASS=true`. It can never activate on Vercel Preview, `*.vercel.app`, or `leadlensintel.com`/`www` (also: Vercel sets `NODE_ENV=production` on Preview, a second guard). Missing `ADMIN_SESSION_SECRET` fails closed on production, Preview, and any non-local host. `requireAdmin`'s former "no secret ⇒ open" dev path is now gated by the same `localBypassAllowed`.
+- New files: `lib/auth/admin-access.ts` (edge-safe pure helpers + REST check). Modified: `middleware.ts`, `lib/auth/require-admin.ts`.
+- **Local-dev note:** to use Admin on localhost without a real login, set `ADMIN_LOCAL_BYPASS=true` in `.env.local`.
+- Verified: middleware stays Edge-compatible (no node:crypto; only `admin-cookie` constants + `admin-access` fetch/pure); service-role key stays server-only (passed in, never client); customer auth unchanged; prod shared-token rejection intact; no redirect loops (login excluded from matcher).
+- Tests: `test:admin-auth` now **48 passed** (adds active-allowlist matrix: active→allow, is_active=false→deny, revoked_at→deny, deleted row→deny, bad signature→deny, lookup error→fail_closed; REST mock: active/revoked/empty/http-error/throw; local-bypass matrix: localhost+flag→allow, no-flag→deny, `*.vercel.app`/preview/apex/www→never, production→never, spoofed forwarded-host inert). tsc clean.
 
 ---
 
@@ -36,6 +50,7 @@ All `/api/admin/*` continue through `requireAdmin` (now cookie-based). `requireA
 - Reused: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` (server-only), `NEXT_PUBLIC_APP_URL=https://leadlensintel.com`.
 - **NEW required in production: `ADMIN_SESSION_SECRET`** (server-only; long random string; signs/verifies the admin cookie). Without it, all admin access fails closed.
 - `ADMIN_SECRET_TOKEN` now dev/test-only.
+- **NEW `ADMIN_LOCAL_BYPASS`** (dev-only, optional): `true` enables the local-dev bypass, and only on a literal localhost host. Never set it in Vercel/production.
 
 ## 10. Supabase configuration (owner to verify)
 - **Authentication → URL Configuration → Site URL:** `https://leadlensintel.com`
@@ -76,7 +91,7 @@ Committed locally; **not pushed/deployed** (environment has no GitHub credential
 `50089be`
 
 ## 20. Remaining limitations
-- **Immediate revocation:** the signed cookie is valid up to its 8h TTL; a revoked admin loses access at next cookie refresh (login/expiry), and immediately at the data layer only if a route re-checks the allowlist. `authorizeAdmin` is available for sensitive writes to re-check on demand. Tighten TTL or add per-request DB re-check for critical writes if stricter immediacy is required.
+- **Immediate revocation:** RESOLVED in the hardening pass — the middleware boundary queries `admin_users` live on every `/admin/*` and `/api/admin/*` request, so a revoked/inactive/deleted admin is denied on the next request regardless of the 8h cookie TTL. (Excluded bootstrap routes `/api/admin/session` and `/api/admin/auth-check` do their own `authorizeAdmin`/signature checks.) Trade-off: one Supabase REST lookup per protected admin request (fine for admin-console traffic).
 - **Internal routes** that gate on `x-admin-token && requireAdmin` (e.g. monitor drain) rely on the dev token in dev and `INTERNAL_RUN_SECRET` for automation; the admin-UI button path uses the cookie. No production shared-token path remains.
 - Migration 040 must be applied before the flow works in production.
 - Customer auth (localStorage) is unchanged — not migrated to cookies (out of scope).

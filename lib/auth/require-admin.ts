@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ADMIN_COOKIE_NAME, verifyAdminSession, sharedSecretAllowed } from "./admin-session";
+import { localBypassAllowed, hostnameFromUrl } from "./admin-access";
 
 /**
  * requireAdmin — server-side Admin gate for every /admin API route.
@@ -25,15 +26,19 @@ export function requireAdmin(req: NextRequest): NextResponse | null {
     if (verifyAdminSession(cookie, sessionSecret).ok) return null;
   }
 
-  // Dev/test-only shared-secret fallback (never in production).
+  // Dev/test-only shared-secret fallback (never in production; on Vercel Preview
+  // NODE_ENV is "production", so this whole block is skipped there too).
   if (sharedSecretAllowed()) {
     const shared = process.env.ADMIN_SECRET_TOKEN;
-    if (!shared) {
-      console.warn("[admin] no ADMIN_SESSION_SECRET/ADMIN_SECRET_TOKEN set — allowing in development mode");
-      return null; // preserves existing local-dev convenience
-    }
     const token = req.headers.get("x-admin-token");
-    if (token && token === shared) return null;
+    if (shared && token === shared) return null;
+    if (shared) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // No shared secret: allow ONLY under the restricted local bypass — literal
+    // localhost + explicit ADMIN_LOCAL_BYPASS. Never on any remote hostname.
+    if (localBypassAllowed({ nodeEnv: process.env.NODE_ENV, hostname: hostnameFromUrl(req.url), bypassEnabled: process.env.ADMIN_LOCAL_BYPASS === "true" })) {
+      console.warn("[admin] ADMIN_LOCAL_BYPASS active on local host — dev-only access");
+      return null;
+    }
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ADMIN_COOKIE_NAME } from "@/lib/auth/admin-cookie";
+import { activeAdminDecision, checkActiveAdminViaRest, localBypassAllowed } from "@/lib/auth/admin-access";
 
-// Server-side protection for Admin PAGES (data APIs self-protect via
-// requireAdmin). Unauthenticated /admin/* → /admin/login?next=<path>. The
-// admin-session cookie is HMAC-verified at the edge with Web Crypto (identical
-// scheme to lib/auth/admin-session). All /admin/* responses get X-Robots-Tag:
-// noindex. /admin/login and /api are excluded (login must be reachable; APIs
-// return JSON 401/403 themselves).
+// Centralized, authoritative Admin boundary for BOTH pages (/admin/*) and APIs
+// (/api/admin/*, except the login/bootstrap routes). On every protected request:
+//   1. verify the signed cookie (HMAC, edge Web Crypto) → user_id;
+//   2. query admin_users live (service-role REST) for is_active && !revoked_at;
+//   3. allow / deny / fail-closed accordingly.
+// Revocation is therefore immediate — never waits for the 8h cookie TTL. Denied
+// requests get the cookie cleared; pages redirect to /admin/login?reason=
+// unauthorized, APIs get 403. All /admin/* responses are noindex.
 
 const b64urlToBytes = (s: string): Uint8Array => {
   const b64 = s.replace(/-/g, "+").replace(/_/g, "/") + "===".slice((s.length + 3) % 4);
@@ -22,46 +25,74 @@ const bytesToB64url = (buf: ArrayBuffer): string => {
   return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 };
 
-async function verifyEdge(cookie: string | undefined, secret: string | undefined, now = Date.now()): Promise<boolean> {
-  if (!cookie || !secret) return false;
+/** Edge cookie verify → { ok, sub }. Mirrors lib/auth/admin-session (Node). */
+async function verifyEdge(cookie: string | undefined, secret: string | undefined, now = Date.now()): Promise<{ ok: boolean; sub?: string }> {
+  if (!cookie || !secret) return { ok: false };
   const dot = cookie.indexOf(".");
-  if (dot <= 0) return false;
+  if (dot <= 0) return { ok: false };
   const payloadB64 = cookie.slice(0, dot), sig = cookie.slice(dot + 1);
   try {
     const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
     const mac = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(payloadB64));
-    if (bytesToB64url(mac) !== sig) return false;
+    if (bytesToB64url(mac) !== sig) return { ok: false };
     const payload = JSON.parse(new TextDecoder().decode(b64urlToBytes(payloadB64)));
-    return typeof payload.exp === "number" && payload.exp * 1000 > now && !!payload.sub;
-  } catch { return false; }
+    if (typeof payload.exp !== "number" || payload.exp * 1000 <= now || !payload.sub) return { ok: false };
+    return { ok: true, sub: String(payload.sub) };
+  } catch { return { ok: false }; }
 }
 
-const isSafeNext = (p: string): string => (/^\/admin(\/|$)/.test(p) && !/^\/admin\/login/.test(p) ? p : "/admin/intelligence");
+const noindex = (res: NextResponse): NextResponse => { res.headers.set("X-Robots-Tag", "noindex, nofollow"); return res; };
+const clearCookie = (res: NextResponse): NextResponse => {
+  res.cookies.set(ADMIN_COOKIE_NAME, "", { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax", path: "/", maxAge: 0 });
+  return res;
+};
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const noindex = (res: NextResponse) => { res.headers.set("X-Robots-Tag", "noindex, nofollow"); return res; };
+  const isApi = pathname.startsWith("/api/");
+  // Trusted hostname only — req.nextUrl.hostname derives from the real Host,
+  // NOT the spoofable x-forwarded-host header.
+  const host = req.nextUrl.hostname;
 
-  // Login page is always reachable; still noindex it.
-  if (pathname === "/admin/login" || pathname.startsWith("/admin/login/")) return noindex(NextResponse.next());
+  // Login page always reachable (still noindex). API bootstrap routes are
+  // excluded via the matcher.
+  if (!isApi && (pathname === "/admin/login" || pathname.startsWith("/admin/login/"))) return noindex(NextResponse.next());
 
-  // Local-dev convenience: outside production, do not redirect (the API layer
-  // still enforces requireAdmin on all data). Production is always enforced.
-  if (process.env.NODE_ENV !== "production" && !process.env.ADMIN_SESSION_SECRET) return noindex(NextResponse.next());
-
-  const ok = await verifyEdge(req.cookies.get(ADMIN_COOKIE_NAME)?.value, process.env.ADMIN_SESSION_SECRET);
-  if (ok) {
-    // Authorized admin landing on /admin → send to the Command Center.
-    if (pathname === "/admin") { const u = req.nextUrl.clone(); u.pathname = "/admin/intelligence"; u.search = ""; return noindex(NextResponse.redirect(u)); }
-    return noindex(NextResponse.next());
+  // Restricted local-dev bypass: not production + explicit flag + literal local host.
+  if (localBypassAllowed({ nodeEnv: process.env.NODE_ENV, hostname: host, bypassEnabled: process.env.ADMIN_LOCAL_BYPASS === "true" })) {
+    return isApi ? NextResponse.next() : noindex(NextResponse.next());
   }
 
-  const url = req.nextUrl.clone();
-  url.pathname = "/admin/login";
-  url.search = `?next=${encodeURIComponent(isSafeNext(pathname))}`;
-  return noindex(NextResponse.redirect(url));
+  // 1. Signature.
+  const secret = process.env.ADMIN_SESSION_SECRET;
+  const { ok: sigOk, sub } = await verifyEdge(req.cookies.get(ADMIN_COOKIE_NAME)?.value, secret);
+
+  // 2. Live allowlist (authoritative — immediate revocation).
+  let decision: "allow" | "deny" | "fail_closed";
+  if (!sigOk || !sub) decision = "deny";
+  else {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL, key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!url || !key) decision = "fail_closed";
+    else {
+      const { lookupError, row } = await checkActiveAdminViaRest(fetch, { url, serviceKey: key }, sub);
+      decision = activeAdminDecision({ signatureValid: true, lookupError, row });
+    }
+  }
+
+  if (decision === "allow") {
+    if (!isApi && pathname === "/admin") { const u = req.nextUrl.clone(); u.pathname = "/admin/intelligence"; u.search = ""; return noindex(NextResponse.redirect(u)); }
+    return isApi ? NextResponse.next() : noindex(NextResponse.next());
+  }
+
+  // Deny / fail-closed: clear cookie; 403 for APIs, redirect for pages.
+  if (isApi) return clearCookie(NextResponse.json({ error: decision === "fail_closed" ? "Admin authorization unavailable." : "Unauthorized" }, { status: decision === "fail_closed" ? 503 : 403 }));
+  const u = req.nextUrl.clone();
+  u.pathname = "/admin/login";
+  u.search = "?reason=unauthorized";
+  return clearCookie(noindex(NextResponse.redirect(u)));
 }
 
-// Match Admin PAGES only. API routes (/api/admin/*) enforce requireAdmin
-// themselves and must stay reachable to return JSON 401/403.
-export const config = { matcher: ["/admin", "/admin/((?!login).*)"] };
+// Admin pages + admin APIs, EXCLUDING /admin/login (must be reachable) and the
+// login/bootstrap APIs /api/admin/session and /api/admin/auth-check (used to
+// obtain/validate a session before a cookie exists).
+export const config = { matcher: ["/admin", "/admin/((?!login).*)", "/api/admin/((?!session|auth-check).*)"] };
