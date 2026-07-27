@@ -73,7 +73,7 @@ Committed locally; **not pushed/deployed** (environment has no GitHub credential
 - Admin Command Center: `https://leadlensintel.com/admin/intelligence`
 
 ## 19. Commit hash
-`8318d73`
+`50089be`
 
 ## 20. Remaining limitations
 - **Immediate revocation:** the signed cookie is valid up to its 8h TTL; a revoked admin loses access at next cookie refresh (login/expiry), and immediately at the data layer only if a route re-checks the allowlist. `authorizeAdmin` is available for sensitive writes to re-check on demand. Tighten TTL or add per-request DB re-check for critical writes if stricter immediacy is required.
@@ -91,4 +91,4 @@ This file.
 - **D. Incognito verification:** unauthenticated `/admin/intelligence` → redirected to login; normal customer account → "not authorized"; admin account → Command Center.
 
 ## Latest commit
-`8318d73` — Production Admin auth (on `f7c97bd`).
+`50089be` — Production Admin auth (on `f7c97bd`).
