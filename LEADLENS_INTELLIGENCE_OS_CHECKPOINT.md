@@ -1,7 +1,20 @@
 # LeadLens Intelligence OS — Checkpoint
 
 ## Current block
-**Block 0 — Directed Audit & Intelligence Map — DONE.**
+**Block 1 — Intelligence Domain Contracts — DONE.** (Block 0 below.)
+
+## Block 1 — DONE (canonical domain contracts)
+- `lib/intelligence/os-contracts.ts` (NEW, `OS_CONTRACTS_VERSION = "os-contracts-v1"`): all 16 required contracts + honesty guards. NO UI, NO persistence, NO migration, NO ranking impact.
+- **Contracts:** IntelligenceMeasurementState (9 states), IntelligenceMaturityLevel (5, ordered + `maturityRank`), OperationalMode (9 + `NON_PRODUCTION_MODES`), IntelligenceScope (global/tenant/client — always explicit), MeasurementResult (`MeasuredValue | UnmeasuredValue`; **score structurally impossible unless `state:"measured"`**), IntelligenceEvidenceReference (+`EVIDENCE_KINDS`, `NON_OPERATIONAL_EVIDENCE`), IntelligenceClaim (discriminated union fact/signal/inference/hypothesis/recommendation/validated_conclusion), IntelligenceCapability, IntelligenceCapabilityAssessment, IntelligenceMaturityDimension (8 dims), IntelligenceMaturityIndex, IntelligenceLiftAssessment, IntelligenceOutput, IntelligencePattern (+`MIN_PATTERN_SAMPLE=5`), IntelligenceValidation, IntelligenceOutcome (aligned to 039 `FeedbackDimension`), IntelligenceGap, NextBestIntelligenceAction, ReportReadinessAssessment (5 levels), IntelligenceSystemDiagnosis, IntelligenceSnapshot.
+- **Runtime honesty guards (testable):** `validateMeasurement`, `assessProductionEligibility`, `validateCapabilityAssessment`, `isValidated`/`validateOutputHonesty`, `normalizePatternState`, `deriveOutcomePerformance`, `deriveIntelligenceLift`, `validateReadiness`, `serializeIntelligence` (recursive key-sort for deterministic replay).
+- **Reused:** `FeedbackDimension` from `feedback-taxonomy.ts`; measurement-state vocabulary mirrors `growth-index.ts` discipline; outcome kinds align with migration 039 (`progressed/terminal_positive/terminal_negative`). No Amor de Gea hardcoding — vertical/tenant agnostic.
+- **Tests:** `test:intelligence-os-contracts` **24 passed** (all 15 required invariants: required fields, unmeasured states, no-score-when-unmeasured, volume≠maturity, schema≠production, tests≠production, shadow≠production, generation≠validation, recommendation≠fact, pattern-sample floor, no-outcomes⇒not_measured, no-baseline⇒not_measured, critical-gap-blocks-premium, explicit scopes, deterministic serialization). Related existing green: market-to-account 17, premium-report-contract 23, segment-universe 21. `tsc --noEmit` clean.
+- **package.json:** added `test:intelligence-os-contracts`; also added the previously-missing `test:segment-universe` to `release:check`.
+- **Production impact: zero.** Types + pure guards only.
+
+---
+
+## Block 0 — DONE (Directed Audit & Intelligence Map)
 
 ## Completed work (Block 0)
 - Directed audit of the real intelligence surfaces (no broad repo scan). Verified: `/admin/intelligence` page + 4 subpages + 7 Admin API routes; `lib/intelligence/*` (growth-index, feature-snapshot, feedback-taxonomy, preference-learner, shadow-preference); `lib/memory/*` (account-memory, change-classifier); discovery/report/quality modules; relevant migrations.
@@ -41,13 +54,20 @@ None added in Block 0 (no code). Existing `release:check` suite unchanged.
 Preserved: `preference-learner` + `shadow-preference` never touch ranking; UI shows "ranking: Off". All future blocks must keep observation/shadow non-production-impacting.
 
 ## Next block
-**Block 1 — Intelligence Domain Contracts** (TypeScript types only; tests for required fields + honesty states + no-false-production-maturity; no UI, no broad persistence).
+**Block 2 — Intelligence Snapshot Engine** (deterministic assembly of the index + capability assessments + evidence integrity + gaps + next actions + report readiness + system diagnosis from REAL existing data, `not_measured` elsewhere). Define the snapshot methodology version. Add replay-determinism, idempotency, missing-data and sparse-data tests. Persist historical snapshots **only if** the audit-confirmed need holds (single candidate table `intelligence_index_snapshots`); otherwise keep it a typed projection. No UI.
+
+### Block 2 preparation notes
+- Consume `os-contracts.ts` types + guards. The engine must call `validateMeasurement`/`validateCapabilityAssessment`/`validateReadiness` on its own output and refuse to emit an invalid snapshot.
+- Real data sources ready to read: `growth-index.computeGrowthIndex()` (map its 5 components into the 8 dimensions where they correspond; the rest → `not_measured`/`not_instrumented`), `opportunity_feedback`(+039 outcomes), `learned_preferences`, vault counts, and the latest harness artifacts under `ml/data/pilot-amor-de-gea/<ts>/`.
+- Use `serializeIntelligence` for the replay/idempotency assertions.
+- Snapshot must run with **no provider/LLM calls**; explicit `source_data_cutoff` + `methodology_version`.
 
 ## Exact next prompt
-> Continue the LeadLens Intelligence OS from `LEADLENS_INTELLIGENCE_OS_CHECKPOINT.md`. Execute **Block 1 only — Intelligence Domain Contracts**: create reusable, tenant-aware TypeScript contracts for capability, capability assessment, maturity dimension, maturity index, intelligence output, pattern, validation, outcome, gap, next action, report readiness, intelligence snapshot, and explicit unknown/unmeasured states — reading from existing data shapes (`growth-index`, `learned_preferences`, `opportunity_feedback`/039, market-to-account artifacts), with no UI and no broad persistence. Add targeted tests: required fields, honesty states, and that knowledge volume / passing tests / schema existence cannot produce production maturity, and that shadow ≠ production and generation ≠ validation. Typecheck, commit, update the checkpoint, and stop after Block 1.
+> Continue the LeadLens Intelligence OS from `LEADLENS_INTELLIGENCE_OS_CHECKPOINT.md` (commit at Block 1). Execute **Block 2 only — Intelligence Snapshot Engine**: build a deterministic, provider-free assembler that reads real existing data (`growth-index`, `opportunity_feedback`/039, `learned_preferences`, vault counts, latest `ml/data/pilot-amor-de-gea` artifacts) and produces an `IntelligenceSnapshot` per `os-contracts.ts` — mapping available signals into the 8 maturity dimensions and marking everything else `not_measured`/`not_instrumented`, computing capability assessments, evidence integrity, gaps, next-best actions, report readiness and a rules-based diagnosis. Define a snapshot methodology version; validate output with the contract guards; add tests for deterministic replay, idempotency, missing-data and sparse-data. Persist `intelligence_index_snapshots` only if trend history genuinely requires it, else keep a typed projection. No Admin UI. Typecheck, commit, update the checkpoint, and stop after Block 2.
 
 ## Latest commit
-`ce9afcb` — Intelligence OS Block 0: directed audit + intelligence/data map (on `17a0dbf`).
+`45c3bef` — Intelligence OS Block 1: canonical domain contracts + honesty guards.
+`23f684d` — Intelligence OS Block 0: directed audit + intelligence/data map (on `17a0dbf`).
 
 ## Runtime links
 - Admin (dev): `http://localhost:3000/admin/intelligence`
