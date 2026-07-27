@@ -1,7 +1,21 @@
 # LeadLens Intelligence OS — Checkpoint
 
 ## Current block
-**Block 1 — Intelligence Domain Contracts — DONE.** (Block 0 below.)
+**Block 2 — Intelligence Snapshot Engine — DONE.** (Blocks 0–1 below.)
+
+## Block 2 — DONE (deterministic snapshot engine)
+- `lib/intelligence/snapshot-engine.ts` (NEW, `INTELLIGENCE_SNAPSHOT_METHODOLOGY_VERSION = "snapshot-methodology-v1"`): pure, provider-free `buildIntelligenceSnapshot(input)` → `IntelligenceSnapshot`. Documented methodology in one header block (sources, sample thresholds, capability/maturity/dimension rules, missing-data behavior, action prioritization, limitations). **Self-validates** with the Block-1 guards and THROWS rather than shipping a dishonest snapshot.
+- `lib/intelligence/snapshot-loader.ts` (NEW): the only environment-touching part (outside the determinism contract). Reads the latest `ml/data/pilot-amor-de-gea/<ts>/{segment-universe,staged-pipeline}.json`; DB-only signals stay honest nulls ⇒ `not_measured`/`not_instrumented`. `assembleLiveSnapshot()` runs on real files with no provider/LLM calls.
+- **Real Amor de Gea snapshot (verified honest output):** LEVEL `structured_knowledge` (conf 0.5); overall `insufficient_evidence` (2/8 dims measurable); dims — analytical_depth measured 49, evidence_integrity measured 0 (0 corroborated in pilot shortlist), differentiation `not_measured`, commercial_relevance/client_specificity/temporal `insufficient_evidence`, learning_maturity `no_observations`, outcome_performance `not_measured`; readiness `brief_ready` (3 customer-safe outputs, 4 high blockers); top gap `no_commercial_outcome` (critical); strongest cap `structural_account_ranking`, weakest `outcome_learning`.
+- **Anti-inflation proven by the engine's own guards:** during development the guard rejected two over-claims (`counterevidence_analysis` and `structural_account_ranking` asserting analytical maturity without evidence) — fixed so a maturity level is asserted only with a real sample or production status.
+- **Persistence decision: DEFERRED (no migration).** Only one snapshot exists; a trend needs ≥2. The snapshot is cheap + provider-free, so Block 5 (Admin) will consume `assembleLiveSnapshot()` on demand. `intelligence_index_snapshots` persistence lands in **Block 7** once a recurring snapshot cadence exists. Documented as gap `no_historical_snapshots`.
+- **Tests:** `test:intelligence-snapshot` **26 passed** (all 20 required invariants: provider-free assembly, deterministic replay, stable serialization, missing-data≠zero, volume≠analytical, one-pilot≠client-specificity, tests/schema≠production, no-outcomes⇒not_measured, no-baseline⇒not_measured, shadow≠production, insufficient-sample⇒insufficient, evidence-integrity honesty, critical-gap-blocks-premium, deterministic+deduped gaps, actions-from-gaps, conservative maturity, diagnosis-matches-data, cutoff+methodology present, ranking-untouched). Companions green: os-contracts 24, market-to-account 17, segment-universe 21, learner 33/33. `tsc` clean.
+- **package.json:** added `test:intelligence-snapshot` to scripts + `release:check`.
+- **Production impact: zero.** No ranking/selector import (asserted by test 20); no persistence; no observation/shadow promotion.
+
+---
+
+## Block 1 — Intelligence Domain Contracts — DONE. (Block 0 below.)
 
 ## Block 1 — DONE (canonical domain contracts)
 - `lib/intelligence/os-contracts.ts` (NEW, `OS_CONTRACTS_VERSION = "os-contracts-v1"`): all 16 required contracts + honesty guards. NO UI, NO persistence, NO migration, NO ranking impact.
@@ -54,18 +68,20 @@ None added in Block 0 (no code). Existing `release:check` suite unchanged.
 Preserved: `preference-learner` + `shadow-preference` never touch ranking; UI shows "ranking: Off". All future blocks must keep observation/shadow non-production-impacting.
 
 ## Next block
-**Block 2 — Intelligence Snapshot Engine** (deterministic assembly of the index + capability assessments + evidence integrity + gaps + next actions + report readiness + system diagnosis from REAL existing data, `not_measured` elsewhere). Define the snapshot methodology version. Add replay-determinism, idempotency, missing-data and sparse-data tests. Persist historical snapshots **only if** the audit-confirmed need holds (single candidate table `intelligence_index_snapshots`); otherwise keep it a typed projection. No UI.
+**Block 3 — Output & Pattern Registry** (typed adapters over `learned_preferences` + Market-to-Account/evidence artifacts; strict fact/signal/inference/hypothesis/recommendation separation; sample-size + confidence gates via the Block-1 contracts; observation/shadow status with **no production ranking impact**). Do NOT invent outputs from empty data.
 
-### Block 2 preparation notes
-- Consume `os-contracts.ts` types + guards. The engine must call `validateMeasurement`/`validateCapabilityAssessment`/`validateReadiness` on its own output and refuse to emit an invalid snapshot.
-- Real data sources ready to read: `growth-index.computeGrowthIndex()` (map its 5 components into the 8 dimensions where they correspond; the rest → `not_measured`/`not_instrumented`), `opportunity_feedback`(+039 outcomes), `learned_preferences`, vault counts, and the latest harness artifacts under `ml/data/pilot-amor-de-gea/<ts>/`.
-- Use `serializeIntelligence` for the replay/idempotency assertions.
-- Snapshot must run with **no provider/LLM calls**; explicit `source_data_cutoff` + `methodology_version`.
+### Block 3 preparation notes
+- Consume `os-contracts.ts` `IntelligenceOutput` / `IntelligencePattern` + `normalizePatternState` (MIN_PATTERN_SAMPLE=5) + claim discriminants.
+- Adapt `learned_preferences` → `IntelligencePattern` (observation/shadow; `ranking_impact:"off"`); do NOT treat them as validated intelligence.
+- Adapt Market-to-Account artifacts (segment landscape, verified/probable/excluded, reason codes, channel-fit-not-buying-intent) → `IntelligenceOutput` as facts/inferences (never as validated recommendations).
+- Feed the resulting `outputs`/`patterns` into the snapshot (currently `[]`). Keep the snapshot self-validation green.
+- Add tests: empty data ⇒ empty registry (no fabrication); pattern below floor stays `insufficient_sample`; recommendations carry `requires_validation`; fact/inference never collapse.
 
 ## Exact next prompt
-> Continue the LeadLens Intelligence OS from `LEADLENS_INTELLIGENCE_OS_CHECKPOINT.md` (commit at Block 1). Execute **Block 2 only — Intelligence Snapshot Engine**: build a deterministic, provider-free assembler that reads real existing data (`growth-index`, `opportunity_feedback`/039, `learned_preferences`, vault counts, latest `ml/data/pilot-amor-de-gea` artifacts) and produces an `IntelligenceSnapshot` per `os-contracts.ts` — mapping available signals into the 8 maturity dimensions and marking everything else `not_measured`/`not_instrumented`, computing capability assessments, evidence integrity, gaps, next-best actions, report readiness and a rules-based diagnosis. Define a snapshot methodology version; validate output with the contract guards; add tests for deterministic replay, idempotency, missing-data and sparse-data. Persist `intelligence_index_snapshots` only if trend history genuinely requires it, else keep a typed projection. No Admin UI. Typecheck, commit, update the checkpoint, and stop after Block 2.
+> Continue the LeadLens Intelligence OS from `LEADLENS_INTELLIGENCE_OS_CHECKPOINT.md` (commit at Block 2). Execute **Block 3 only — Output & Pattern Registry**: build typed adapters that turn `learned_preferences` into observation/shadow `IntelligencePattern`s (ranking impact off, sample-gated by MIN_PATTERN_SAMPLE) and Market-to-Account/evidence artifacts into `IntelligenceOutput`s with strict fact/signal/inference/hypothesis/recommendation separation — never fabricating outputs from empty data, never marking a generated recommendation validated, never letting a pattern affect production ranking. Wire the registries into the snapshot's `outputs`/`patterns`. Add targeted tests (empty⇒empty, sample floor, claim separation, no ranking impact). Typecheck, commit, update the checkpoint, and stop after Block 3. Do not begin the validation loop or Admin UI.
 
 ## Latest commit
+`92a8840` — Intelligence OS Block 2: deterministic snapshot engine.
 `45c3bef` — Intelligence OS Block 1: canonical domain contracts + honesty guards.
 `23f684d` — Intelligence OS Block 0: directed audit + intelligence/data map (on `17a0dbf`).
 
