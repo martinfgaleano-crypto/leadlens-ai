@@ -1,6 +1,33 @@
 # Production Admin Authentication & Authorization — Checkpoint
 
-## Status: stable unit DONE + hardening pass DONE. Owner deployment steps below.
+## Status: code DONE + hardening DONE. Deployment attempted; blocked by absent credentials for GitHub/Vercel/Supabase-dashboard. Owner actions below.
+
+---
+
+## DEPLOYMENT RUN (attempted directly)
+
+**Environment capability probe (all negative for the credentialed systems):**
+- GitHub: no `gh` CLI, no `GITHUB_TOKEN`/`GH_TOKEN`, no `~/.ssh` keys, empty ssh-agent, no `github.com` keychain entry, SSH host-key unverified → **push not possible**.
+- Vercel: no `vercel` CLI, no `VERCEL_TOKEN`, no connected Chrome session → **cannot set env vars or redeploy**.
+- Supabase dashboard: no `supabase` CLI, no `psql`, no Postgres connection string, no management token, no connected Chrome session → **cannot run DDL (migration)**.
+- Real Chrome (claude-in-chrome): **no connected browsers** → no authenticated dashboard sessions to drive.
+
+**What I completed directly (verified):**
+- ✅ Phase 1 — repo verified: branch `main`, HEAD `b325b57`, all three admin-auth commits present (`50089be`, `30c4170`, `b325b57`), 10 commits ahead of `origin/main`, clean fast-forward, no secrets/.env in the diff.
+- ✅ `ADMIN_SESSION_SECRET` generated (48 random bytes, base64) and stored in gitignored `.env.local` — **value never printed**. Owner copies it into Vercel from that file.
+- ✅ Supabase reached via the service-role key (REST/Auth-admin): confirmed **`admin_users` does NOT exist yet** (PGRST205) and identified the owner Auth account **`martinfgaleano@gmail.com` → UUID `e9c5fc31-6d9b-45eb-a110-1d6647c04f50`** (already exists + confirmed; no duplicate created).
+- ✅ Staged a single copy-paste bootstrap: `scripts/bootstrap-admin-production.sql` = migration 040 (idempotent) + owner authorization upsert + verify SELECT.
+- ✅ Code build-confidence: `tsc --noEmit` clean; `test:admin-auth` 48/48. (Full `next build` not run: a dev server is live on :3000 and building alongside it corrupts the webpack chunk registry — tsc + tests are the signal.)
+- ✅ Security checks verifiable from code (Phase 8): prod rejects `leadlens_test_admin_123` (unit-tested); service-role key never imported into client; admin cookie `httpOnly`; external `next` rejected; `/admin` excluded from `sitemap.ts` and disallowed in `robots.ts` + middleware `noindex`; no secrets committed (`.env.local` gitignored).
+
+**Blocked (owner-credentialed — cannot complete from here):** GitHub push (Phase 2), Vercel env + redeploy (Phase 3), Supabase migration DDL (Phase 4), and everything downstream that needs a live deploy/table (Phases 5 REST-insert, 6, 7, 8 live checks).
+
+### Minimal owner actions (three systems, each one paste/click)
+1. **GitHub push** — from a machine with GitHub access: `git push origin main` (fast-forward of 10 commits; no force, no history rewrite). Vercel auto-deploys the production branch.
+2. **Vercel** — Project → Settings → Environment Variables → add `ADMIN_SESSION_SECRET` (Production; value is in local `.env.local`) → confirm `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_APP_URL=https://leadlensintel.com` exist → Redeploy latest. Do **not** add `ADMIN_LOCAL_BYPASS`.
+3. **Supabase** — SQL Editor → paste and run `scripts/bootstrap-admin-production.sql` (applies migration 040 + authorizes the owner UUID; the final SELECT should return one active row). Then Authentication → URL Configuration → Site URL = `https://leadlensintel.com` (no redirect URLs needed).
+
+After those: verify at `https://leadlensintel.com/admin/login` (Tests A–F in Phase 7). I can run the production A–F verification in a later turn once the deploy + migration are live.
 
 ---
 
