@@ -74,6 +74,7 @@
     "test:market-to-account": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/market-to-account.test.ts",
     "test:premium-report-contract": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/premium-report-contract.test.ts",
     "test:market-to-account-pipeline": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/market-to-account-pipeline.test.ts",
+    "test:segment-universe": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/segment-universe.test.ts",
     "pilot:amor-de-gea": "npx -y tsx --tsconfig tsconfig.json scripts/sources/run-amor-de-gea-pilot.ts",
     "pilot:e2e:preflight": "npx -y tsx --tsconfig tsconfig.json scripts/sources/pilot-e2e-preflight.ts",
     "pilot:e2e:run": "npx -y tsx --tsconfig tsconfig.json scripts/sources/run-pilot-e2e.ts",

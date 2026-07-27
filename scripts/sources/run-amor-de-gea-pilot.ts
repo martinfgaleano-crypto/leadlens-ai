@@ -120,9 +120,39 @@ async function main() {
   // run here (Block 5) → deep_research_incomplete, reported honestly.
   const { runStagedPipeline } = await import("@/lib/discovery/market-to-account-pipeline");
   const universeAccounts = (discovery.metrics.universe_accounts ?? []) as Array<{ company: string; domain: string | null; sector: string | null; visibility?: string; score?: number | null }>;
+
+  // Block 3 — live segment-universe expansion (breadth), gated by flag + provider
+  // health + hard cost ceiling. Merges into the staged pipeline universe.
+  const mergedUniverse: Array<{ company: string; domain: string | null; sector: string | null; visibility: string; baseScore: number | null; verified: boolean }> = universeAccounts.map((u) => ({ company: u.company, domain: u.domain ?? null, sector: u.sector ?? null, visibility: u.visibility ?? "unknown", baseScore: typeof u.score === "number" ? u.score : null, verified: true }));
+  let segmentUniverse: unknown = null;
+  if (process.env.AMOR_EXPAND_UNIVERSE === "true") {
+    const { discoverSegmentUniverse, segmentsForRun } = await import("@/lib/discovery/segment-universe");
+    const { braveProvider, tavilyProvider } = await import("@/lib/sources/access/providers");
+    const liveSearch = async (q: string) => {
+      const [b, t] = await Promise.all([
+        braveProvider.search({ query: q, language: "es", region: "co", max_results: 6, query_type: "industry_discovery" }).catch(() => ({ results: [] })),
+        tavilyProvider.search({ query: q, language: "es", region: "co", max_results: 6, query_type: "industry_discovery" }).catch(() => ({ results: [] })),
+      ]);
+      return [...b.results, ...t.results].map((r) => ({ title: r.title, url: r.canonical_url }));
+    };
+    const expandCeiling = Math.min(Number(process.env.AMOR_EXPAND_MAX_USD ?? "0.5"), valueContract.provider_budget_usd);
+    const su = await discoverSegmentUniverse(segmentsForRun(), liveSearch, { region: targetCountries[0], maxQueriesPerSegment: 3, costCeilingUsd: expandCeiling });
+    writeFileSync(join(runDir, "segment-universe.json"), `${JSON.stringify(su, null, 2)}\n`);
+    segmentUniverse = { verified: su.verified_company_count, probable: su.probable_company_count, excluded: su.excluded_company_count, unresolved: su.unresolved_company_count, raw: su.raw_candidate_count, deduped: su.deduped_company_count, segment_distribution: su.segment_distribution, cost_total: su.cost_total, aborted_on_budget: su.aborted_on_budget, provider_used: su.provider_used };
+    const seenD = new Set(mergedUniverse.map((u) => u.domain).filter(Boolean));
+    const seenN = new Set(mergedUniverse.map((u) => u.company.toLowerCase()));
+    for (const c of su.companies) {
+      if (c.domain && seenD.has(c.domain)) continue;
+      if (seenN.has(c.company.toLowerCase())) continue;
+      mergedUniverse.push({ company: c.company, domain: c.domain, sector: c.sector, visibility: c.visibility, baseScore: null, verified: c.status === "verified" });
+      if (c.domain) seenD.add(c.domain); seenN.add(c.company.toLowerCase());
+    }
+    console.log(`[expand] segment-universe: +${su.companies.length} (verified ${su.verified_company_count}, probable ${su.probable_company_count}, excluded ${su.excluded_company_count}) → universe ${mergedUniverse.length}. cost=$${su.cost_total} aborted=${su.aborted_on_budget}`);
+  }
+
   const staged = await runStagedPipeline(
     { offering: "infusiones y botánicos de bienestar", objective: "", region: targetCountries[0], shortlist_size: 8, per_segment_cap: 3 },
-    { discoverAndVerify: async () => universeAccounts.map((u) => ({ company: u.company, domain: u.domain ?? null, sector: u.sector ?? null, visibility: u.visibility ?? "unknown", baseScore: typeof u.score === "number" ? u.score : null, verified: true })) },
+    { discoverAndVerify: async () => mergedUniverse },
   );
   writeFileSync(join(runDir, "staged-pipeline.json"), `${JSON.stringify(staged, null, 2)}\n`);
 
@@ -164,6 +194,8 @@ async function main() {
       cost_by_stage: staged.cost_by_stage,
       duration_by_stage: staged.duration_by_stage,
     },
+    segment_universe: segmentUniverse,
+    universe_size: mergedUniverse.length,
     status: phase === "full" ? "discovery_ready" : "completed",
   };
   if (novelCandidates.length < 2) {
