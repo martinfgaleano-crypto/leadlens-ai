@@ -106,4 +106,5 @@ This file.
 - **D. Incognito verification:** unauthenticated `/admin/intelligence` → redirected to login; normal customer account → "not authorized"; admin account → Command Center.
 
 ## Latest commit
-`50089be` — Production Admin auth (on `f7c97bd`).
+`30c4170` — Admin-auth hardening (immediate revocation + localhost-only bypass).
+`50089be` — Production Admin auth (base).
