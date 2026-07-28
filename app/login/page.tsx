@@ -1,14 +1,16 @@
 "use client";
-import { useState, useEffect, useRef, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { getSupabaseClient } from "@/lib/supabase/client";
 import { establishAdminSession, resolveLoginTarget } from "@/lib/admin/admin-bootstrap";
 
-// Login page states — the page must never remain in "verifying" after the mount
-// check settles or errors.
-type LoginPhase = "verifying" | "form" | "redirecting";
-const VERIFY_FAILSAFE_MS = 9000;
+// Structural fail-safe: the login FORM renders unconditionally on the first
+// render. Session detection is background-only and can never hide the form —
+// no full-screen spinner, no verifying-only state. A bumpable build marker is
+// rendered so we can prove which code production is serving.
+const LOGIN_BUILD = "form-first-v2";
+const GETSESSION_TIMEOUT_MS = 4000; // never let a hung token refresh keep the hint spinning
 
 function friendlyAuthError(msg: string): string {
   const m = msg.toLowerCase();
@@ -41,87 +43,63 @@ function LoginContent() {
   const [password, setPassword] = useState("");
   const [error, setError]       = useState("");
   const [loading, setLoading]   = useState(false);
-  const [phase, setPhase]       = useState<LoginPhase>("verifying");
-  const sawSession = useRef(false);
+  // Non-blocking hint only — the form is ALWAYS rendered regardless of this.
+  const [sessionNote, setSessionNote] = useState<"checking" | "redirecting" | null>("checking");
+  const [authUnavailable, setAuthUnavailable] = useState(false);
 
-  // Route a verified session: active admins → Admin Portal, everyone else →
-  // normal dashboard. Server decides admin status; the client only forwards the
-  // access token. Bridge never throws and is time-bounded.
-  async function routeAfterAuth(accessToken: string | undefined) {
-    const bridge = accessToken ? await establishAdminSession(accessToken) : { isAdmin: false, redirectTo: null };
-    const target = resolveLoginTarget(!!accessToken, bridge);
-    if (target.action === "redirect") { setPhase("redirecting"); router.replace(target.to); }
-    else setPhase("form");
-  }
-
-  // Mount check with a guaranteed terminal state: a rejected/slow getSession, a
-  // stalled bridge, or an unavailable Admin service can never trap the page in
-  // "verifying". Failsafe timer + cancelled guard + explicit settle.
+  // Background existing-session detection. It can only trigger a redirect; it can
+  // NEVER hide or block the form. Every failure mode (hung getSession, corrupted
+  // token, hung/500 Admin bridge, malformed JSON) simply leaves the form usable.
   useEffect(() => {
-    // Each mount runs its own attempt with independent cancelled/settled guards.
-    // Under Strict Mode the first (unmounted) attempt is cancelled and the
-    // second settles exactly once — no duplicate redirect, no hang.
-    let cancelled = false, settled = false;
-    let timer: ReturnType<typeof setTimeout>;
-    const settle = (fn: () => void) => { if (cancelled || settled) return; settled = true; clearTimeout(timer); fn(); };
-    timer = setTimeout(() => settle(() => {
-      if (sawSession.current) { setPhase("redirecting"); router.replace("/dashboard"); }
-      else setPhase("form");
-    }), VERIFY_FAILSAFE_MS);
-
+    let cancelled = false;
     (async () => {
       const supabase = getSupabaseClient();
-      if (!supabase) return settle(() => setPhase("form"));
+      if (!supabase) { if (!cancelled) { setAuthUnavailable(true); setSessionNote(null); } return; }
       let session: { access_token: string } | null = null;
+      let rejected = false;
       try {
-        const { data } = await supabase.auth.getSession();
-        session = data.session;
-      } catch {
-        return settle(() => setPhase("form")); // stale/invalid stored token → show form
-      }
+        // Bound getSession so a stalled token refresh never keeps the hint up.
+        const gs = supabase.auth.getSession().catch(() => { rejected = true; return { data: { session: null } }; });
+        const timeout = new Promise<{ data: { session: null } }>((r) => setTimeout(() => r({ data: { session: null } }), GETSESSION_TIMEOUT_MS));
+        const res = await Promise.race([gs, timeout]);
+        session = res.data.session;
+      } catch { rejected = true; }
+      // Clear ONLY a corrupted/rejected local token (never a valid session).
+      if (rejected) { try { await supabase.auth.signOut({ scope: "local" }); } catch { /* ignore */ } }
       if (cancelled) return;
-      if (!session) return settle(() => setPhase("form"));
-      sawSession.current = true;
+      if (!session) { setSessionNote(null); return; }
+      // Already authenticated → route in the background (form still visible).
       const bridge = await establishAdminSession(session.access_token);
       if (cancelled) return;
       const target = resolveLoginTarget(true, bridge);
-      settle(() => {
-        if (target.action === "redirect") { setPhase("redirecting"); router.replace(target.to); }
-        else setPhase("form");
-      });
+      if (target.action === "redirect") { setSessionNote("redirecting"); router.replace(target.to); }
+      else setSessionNote(null);
     })();
-
-    return () => { cancelled = true; clearTimeout(timer); };
+    return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const supabase = getSupabaseClient();
-    if (!supabase) {
-      setError("Auth service is not configured.");
-      return;
-    }
+    if (!supabase) { setError("Authentication is temporarily unavailable. Please retry."); return; }
     setError("");
     setLoading(true);
-    const { data, error: authError } = await supabase.auth.signInWithPassword({
-      email: email.trim(),
-      password,
-    });
-    if (authError) {
+    try {
+      const { data, error: authError } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+      if (authError || !data.session) { setLoading(false); setError(friendlyAuthError(authError?.message ?? "Sign-in failed.")); return; }
+      const bridge = await establishAdminSession(data.session.access_token);
+      const target = resolveLoginTarget(true, bridge);
+      setSessionNote("redirecting");
+      router.replace(target.action === "redirect" ? target.to : "/dashboard");
+    } catch {
       setLoading(false);
-      setError(friendlyAuthError(authError.message));
-    } else {
-      // Keep the spinner while the server-side admin bridge decides the route.
-      await routeAfterAuth(data.session?.access_token);
+      setError("Network error. Please try again.");
     }
   }
 
-  if (phase === "verifying") return <div style={S.fullCenter}>Verifying session…</div>;
-  if (phase === "redirecting") return <div style={S.fullCenter}>Signing you in…</div>;
-
   return (
-    <div style={S.page}>
+    <div style={S.page} data-login-build={LOGIN_BUILD}>
       <div style={S.card}>
         {/* Brand */}
         <div style={{ textAlign: "center", marginBottom: "2rem" }}>
@@ -129,6 +107,17 @@ function LoginContent() {
           <h1 style={S.h1}>Sign in to your LeadLens workspace</h1>
           <p style={S.sub}>Your B2B opportunity monitor</p>
         </div>
+
+        {/* Non-blocking hints — the form below is always usable regardless. */}
+        {sessionNote === "checking" && (
+          <p style={{ textAlign: "center", color: "#94a3b8", fontSize: "0.72rem", margin: "0 0 1rem" }}>Checking existing session…</p>
+        )}
+        {sessionNote === "redirecting" && (
+          <p style={{ textAlign: "center", color: "#0ea5e9", fontSize: "0.72rem", margin: "0 0 1rem" }}>Signing you in…</p>
+        )}
+        {authUnavailable && (
+          <div style={S.errorBox}>Authentication is temporarily unavailable. Please retry.</div>
+        )}
 
         {/* Verification success banner */}
         {verified && (

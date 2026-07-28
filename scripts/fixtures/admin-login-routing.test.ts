@@ -98,7 +98,16 @@ t("session + bridge unavailable → /dashboard (not trapped)", rFail.action === 
     return !/admin control panel/i.test(c) && !/control panel/i.test(c) && !/href=["'`]\/admin/i.test(c) && !/>\s*Admin\b[^<]*</i.test(c) && !/role.?picker/i.test(c);
   };
   t("dashboard shell renders no Admin CTA", noAdminCta(readFileSync("app/dashboard/_components/DashboardShell.tsx", "utf8")));
-  t("normal login renders no Admin CTA / role-picker", noAdminCta(readFileSync("app/login/page.tsx", "utf8")));
+  const loginSrc = readFileSync("app/login/page.tsx", "utf8");
+  t("normal login renders no Admin CTA / role-picker", noAdminCta(loginSrc));
+
+  // ── Form-first structural guarantees (no RTL in this repo) ─────────────────
+  t("login has NO full-screen verifying/spinner-only return", !/return\s*<div[^>]*>\s*(Verifying session|Signing you in)/.test(loginSrc) && !/if\s*\(\s*phase\s*===\s*["']verifying/.test(loginSrc));
+  t("login form fields are rendered unconditionally", /onSubmit=\{handleSubmit\}/.test(loginSrc) && /type="email"/.test(loginSrc) && /type="password"/.test(loginSrc));
+  t("login exposes a build marker (data-login-build)", /data-login-build=\{LOGIN_BUILD\}/.test(loginSrc) && /LOGIN_BUILD\s*=\s*"/.test(loginSrc));
+  t("getSession is time-bounded (no unbounded await blocks form)", /Promise\.race/.test(loginSrc) && /GETSESSION_TIMEOUT_MS/.test(loginSrc));
+  t("stale/rejected token → local signOut, form kept", /signOut\(\{\s*scope:\s*["']local["']/.test(loginSrc) && /rejected/.test(loginSrc));
+  t("supabase init failure keeps form (authUnavailable, no blank)", /authUnavailable/.test(loginSrc) && /Authentication is temporarily unavailable/.test(loginSrc));
 
   console.log(`\n${p} passed, ${f} failed`); if (f) process.exit(1);
 })();
