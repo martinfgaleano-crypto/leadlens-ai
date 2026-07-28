@@ -31,7 +31,20 @@ After those: verify at `https://leadlensintel.com/admin/login` (Tests A–F in P
 
 ---
 
-## FIX: "Verifying session" infinite spinner — DONE
+## FIX v2 (DEFINITIVE): form-first login — DONE
+
+The timeout state-machine (1677fd4) was **confirmed deployed** (origin/main = 1677fd4; the live production `/login` chunk contains the state machine — "Signing you in" string present) yet production still hung. Conclusion: gating the UI on session verification is the wrong shape. **Fixed structurally — the form now renders unconditionally on the first render; session detection is background-only and can never hide or block it.**
+
+- **Deployment verification (before this fix):** production commit = `1677fd4` (fully deployed, not stale, no rollback); the served login JS chunk contained the new implementation. So the bug was **client logic**, not a stale deployment or hydration failure (hydration ran — the client had reached the "verifying" state).
+- **Root cause:** every prior version started in a full-screen `verifying` state and only left it when a background promise settled; a hung/rejected `getSession()` (stale refresh token) or a stalled Admin bridge never let the form render. A timeout can't reliably save this if the settle path itself is unreachable.
+- **New architecture (`app/login/page.tsx`):** the `<form>` is returned unconditionally (no `verifying`/`redirecting` full-screen returns). A background effect: bounds `getSession()` with `Promise.race` (4s) and catches its rejection; a rejected/corrupted local token triggers a best-effort `signOut({ scope:"local" })` (never clears a valid session); on a confirmed session it routes in the background (admin→`/admin/intelligence`, else→`/dashboard`); every failure (hung getSession, malformed JSON, Admin bridge 401/403/500/503 or hang, Supabase init failure) leaves the form fully usable. Supabase init failure shows an inline "temporarily unavailable" note but keeps the fields. Non-blocking hints only ("Checking existing session…" / "Signing you in…"). A non-secret marker `data-login-build="form-first-v2"` is rendered to prove the served code.
+- **Production build test (isolated worktree, real `next build` + `next start` on :3100, NOT dev):** build passed (`/login` prerendered static, middleware built); the served page renders the form; **with a corrupted Supabase token injected into localStorage, the form still renders and is interactive** (typed into the email field) — never stuck on "Verifying session". No console errors. (Built in a detached worktree with symlinked node_modules so the owner's running dev server's `.next` was untouched.)
+- **Tests:** `test:admin-login-routing` **34 passed** (adds form-first structural guarantees: no spinner-only return, unconditional form fields, build marker, bounded getSession, stale-token local signOut, init-failure keeps form). `test:admin-auth` **48/48**. tsc clean.
+- **Commit:** `f238adf`. **Owner must push** (CLI still has no GitHub credentials): GitHub Desktop → Push origin (1 commit on top of `1677fd4`), then verify `https://leadlensintel.com/login` shows the form immediately (build marker `form-first-v2` in DOM).
+
+---
+
+## FIX: "Verifying session" infinite spinner — superseded by FIX v2 above
 
 **Root cause (code, not config).** The `/login` mount effect cleared its loading state only on the explicit no-session branch: `getSession().then(...)` had **no `.catch()`/`.finally()`**, and the session-exists path relied on a redirect that could stall. A rejected/slow `getSession()` (stale/invalid refresh token in localStorage — common in prod) or a hung Admin bridge left the page permanently on "Verifying session". Config was verified fine: `origin/main` HEAD = `9d697ef`, `admin_users` exists, owner row `is_active=true, revoked_at=null`.
 
