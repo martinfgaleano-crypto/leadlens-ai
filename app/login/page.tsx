@@ -9,7 +9,7 @@ import { establishAdminSession, resolveLoginTarget } from "@/lib/admin/admin-boo
 // render. Session detection is background-only and can never hide the form —
 // no full-screen spinner, no verifying-only state. A bumpable build marker is
 // rendered so we can prove which code production is serving.
-const LOGIN_BUILD = "form-first-v2";
+const LOGIN_BUILD = "form-always-visible-v3";
 const GETSESSION_TIMEOUT_MS = 4000; // never let a hung token refresh keep the hint spinning
 
 function friendlyAuthError(msg: string): string {

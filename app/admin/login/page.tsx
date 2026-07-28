@@ -4,10 +4,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { getSupabaseClient } from "@/lib/supabase/client";
 import { establishAdminSession } from "@/lib/admin/admin-bootstrap";
 
-// Compatibility route. There is ONE login experience: the normal /login. This
-// page auto-authorizes an existing Supabase session (active admin → Admin
-// Portal) and otherwise defers to /login — no second credential prompt. The
-// email/password form remains only as a fallback when auth is misconfigured.
+// Compatibility route. There is ONE login experience: the normal /login. The
+// admin form here is ALWAYS rendered (never blocked by a "Verifying session"
+// screen). A background check auto-authorizes an existing session and otherwise
+// defers to /login — but it can never hide or disable the form.
+const LOGIN_BUILD = "form-always-visible-v3";
+const GETSESSION_TIMEOUT_MS = 4000;
+
 function AdminLoginInner() {
   const router = useRouter();
   const params = useSearchParams();
@@ -17,29 +20,42 @@ function AdminLoginInner() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(reason === "unauthorized" ? "This account is not authorized for Admin access." : "");
   const [loading, setLoading] = useState(false);
-  const [checking, setChecking] = useState(true);
+  const [sessionNote, setSessionNote] = useState<"checking" | "redirecting" | null>("checking");
 
   const dest = () => (next && /^\/admin(\/|$)/.test(next) && !/^\/admin\/login/.test(next) ? next : "/admin/intelligence");
 
-  // 1) valid admin cookie → straight in. 2) existing Supabase session → bridge
-  // (active admin → Admin Portal; normal user → dashboard). 3) no session →
-  // defer to the single normal /login. Form shows only if auth isn't configured.
+  // Background only — never gates the form. 1) valid admin cookie → in.
+  // 2) existing Supabase session → bridge → redirect. 3) no session → defer to
+  // /login. Every await is bounded/caught; any failure leaves the form usable.
   useEffect(() => {
+    let cancelled = false;
     (async () => {
       try {
-        const r = await fetch("/api/admin/session");
-        if (r.ok) { router.replace(dest()); return; }
+        const ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
+        const tm = ctrl ? setTimeout(() => ctrl.abort(), GETSESSION_TIMEOUT_MS) : null;
+        const r = await fetch("/api/admin/session", { signal: ctrl?.signal }).finally(() => { if (tm) clearTimeout(tm); });
+        if (!cancelled && r.ok) { setSessionNote("redirecting"); router.replace(dest()); return; }
       } catch { /* fall through */ }
       const supabase = getSupabaseClient();
-      if (!supabase) { setChecking(false); return; }
-      const { data: { session } } = await supabase.auth.getSession();
+      if (!supabase) { if (!cancelled) setSessionNote(null); return; }
+      let session: { access_token: string } | null = null;
+      try {
+        const gs = supabase.auth.getSession().catch(() => ({ data: { session: null } }));
+        const timeout = new Promise<{ data: { session: null } }>((res) => setTimeout(() => res({ data: { session: null } }), GETSESSION_TIMEOUT_MS));
+        session = (await Promise.race([gs, timeout])).data.session;
+      } catch { session = null; }
+      if (cancelled) return;
       if (session) {
         const bridge = await establishAdminSession(session.access_token);
+        if (cancelled) return;
+        setSessionNote("redirecting");
         router.replace(bridge.isAdmin && bridge.redirectTo ? bridge.redirectTo : "/dashboard");
       } else {
+        setSessionNote("redirecting");
         router.replace(`/login?next=${encodeURIComponent(dest())}`);
       }
     })();
+    return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -69,17 +85,17 @@ function AdminLoginInner() {
     setLoading(false);
   }
 
-  if (checking) return <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#f8fafc", color: "#64748b", fontFamily: "-apple-system,sans-serif" }}>Verifying session…</div>;
-
   const input: React.CSSProperties = { display: "block", width: "100%", padding: "0.75rem 0.875rem", border: "1px solid #e2e8f0", borderRadius: "0.625rem", fontSize: "0.9rem", color: "#0f172a", background: "#fff", outline: "none", boxSizing: "border-box", fontFamily: "inherit", marginBottom: "1rem" };
   return (
-    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#f8fafc", fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif", padding: "2rem" }}>
+    <div data-login-build={LOGIN_BUILD} style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#f8fafc", fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif", padding: "2rem" }}>
       <div style={{ width: "100%", maxWidth: 400, background: "#fff", border: "1px solid #e2e8f0", borderRadius: "1rem", padding: "2.5rem", boxShadow: "0 4px 24px rgba(0,0,0,0.06)" }}>
         <div style={{ marginBottom: "2rem", textAlign: "center" }}>
           <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 44, height: 44, background: "linear-gradient(135deg,#0ea5e9,#0284c7)", borderRadius: 10, color: "#fff", fontWeight: 800, fontSize: "1.25rem", marginBottom: "0.875rem" }}>L</div>
           <h1 style={{ color: "#0f172a", fontSize: "1.25rem", fontWeight: 800, margin: "0 0 0.25rem", letterSpacing: "-0.02em" }}>LeadLens Admin</h1>
           <p style={{ color: "#64748b", fontSize: "0.8rem", margin: 0 }}>Authorized administrators only</p>
         </div>
+        {sessionNote === "checking" && <p style={{ textAlign: "center", color: "#94a3b8", fontSize: "0.72rem", margin: "0 0 1rem" }}>Checking existing session…</p>}
+        {sessionNote === "redirecting" && <p style={{ textAlign: "center", color: "#0ea5e9", fontSize: "0.72rem", margin: "0 0 1rem" }}>Signing you in…</p>}
         <form onSubmit={handleSubmit}>
           <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#374151", marginBottom: "0.4rem", letterSpacing: "0.03em", textTransform: "uppercase" }}>Email</label>
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@company.com" autoComplete="username" style={input} />

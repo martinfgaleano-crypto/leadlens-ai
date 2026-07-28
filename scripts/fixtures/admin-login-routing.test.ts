@@ -101,13 +101,30 @@ t("session + bridge unavailable → /dashboard (not trapped)", rFail.action === 
   const loginSrc = readFileSync("app/login/page.tsx", "utf8");
   t("normal login renders no Admin CTA / role-picker", noAdminCta(loginSrc));
 
-  // ── Form-first structural guarantees (no RTL in this repo) ─────────────────
-  t("login has NO full-screen verifying/spinner-only return", !/return\s*<div[^>]*>\s*(Verifying session|Signing you in)/.test(loginSrc) && !/if\s*\(\s*phase\s*===\s*["']verifying/.test(loginSrc));
+  // ── Form-first structural guarantees across the WHOLE auth stack (no RTL) ──
+  // These fail if any future edit reintroduces a blocking "Verifying session"
+  // state on /login, /admin/login or /signup.
+  const adminLoginSrc = readFileSync("app/admin/login/page.tsx", "utf8");
+  const signupSrc = readFileSync("app/signup/page.tsx", "utf8");
+  const rendersVerifying = (s: string) => /return\s*<div[^>]*>\s*Verifying session/.test(stripComments(s)) || /\bVerifying session…?<\/div>/.test(stripComments(s));
+  const blocksOnChecking = (s: string) => /if\s*\(\s*(checking|phase\s*===\s*["']verifying)/.test(stripComments(s));
+
+  t("NO 'Verifying session' rendered on /login", !rendersVerifying(loginSrc) && !blocksOnChecking(loginSrc));
+  t("NO 'Verifying session' rendered on /admin/login", !rendersVerifying(adminLoginSrc) && !blocksOnChecking(adminLoginSrc));
+  t("NO 'Verifying session' rendered on /signup", !rendersVerifying(signupSrc) && !blocksOnChecking(signupSrc));
+
   t("login form fields are rendered unconditionally", /onSubmit=\{handleSubmit\}/.test(loginSrc) && /type="email"/.test(loginSrc) && /type="password"/.test(loginSrc));
-  t("login exposes a build marker (data-login-build)", /data-login-build=\{LOGIN_BUILD\}/.test(loginSrc) && /LOGIN_BUILD\s*=\s*"/.test(loginSrc));
-  t("getSession is time-bounded (no unbounded await blocks form)", /Promise\.race/.test(loginSrc) && /GETSESSION_TIMEOUT_MS/.test(loginSrc));
-  t("stale/rejected token → local signOut, form kept", /signOut\(\{\s*scope:\s*["']local["']/.test(loginSrc) && /rejected/.test(loginSrc));
+  t("admin/login form fields are rendered unconditionally", /onSubmit=\{handleSubmit\}/.test(adminLoginSrc) && /type="email"/.test(adminLoginSrc) && /type="password"/.test(adminLoginSrc));
+
+  t("login build marker is form-always-visible-v3", /LOGIN_BUILD\s*=\s*"form-always-visible-v3"/.test(loginSrc) && /data-login-build=\{LOGIN_BUILD\}/.test(loginSrc));
+  t("admin/login build marker is form-always-visible-v3", /LOGIN_BUILD\s*=\s*"form-always-visible-v3"/.test(adminLoginSrc) && /data-login-build=\{LOGIN_BUILD\}/.test(adminLoginSrc));
+  t("marker is NOT the superseded form-first-v2", !/form-first-v2/.test(loginSrc) && !/form-first-v2/.test(adminLoginSrc));
+
+  t("getSession is time-bounded on /login and /admin/login", /Promise\.race/.test(loginSrc) && /Promise\.race/.test(adminLoginSrc));
+  t("getSession bounded/caught on /signup (no unbounded await)", /Promise\.race/.test(signupSrc) && /catch/.test(signupSrc) && !/if\s*\(\s*checking/.test(signupSrc));
+  t("stale/rejected token → local signOut, form kept (/login)", /signOut\(\{\s*scope:\s*["']local["']/.test(loginSrc) && /rejected/.test(loginSrc));
   t("supabase init failure keeps form (authUnavailable, no blank)", /authUnavailable/.test(loginSrc) && /Authentication is temporarily unavailable/.test(loginSrc));
+  t("background effects are cancellable (no state update after unmount)", /cancelled/.test(loginSrc) && /cancelled/.test(adminLoginSrc) && /cancelled/.test(signupSrc));
 
   console.log(`\n${p} passed, ${f} failed`); if (f) process.exit(1);
 })();

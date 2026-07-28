@@ -13,17 +13,24 @@ export default function SignupPage() {
   const [error, setError]         = useState("");
   const [isDuplicate, setIsDuplicate] = useState(false);
   const [loading, setLoading]     = useState(false);
-  const [checking, setChecking]   = useState(true);
   const [view, setView]           = useState<SignupState>("form");
 
-  // If already logged in, skip to dashboard
+  // Background only — the signup form is ALWAYS rendered (never blocked by a
+  // "Verifying session" screen). If already logged in, redirect in the
+  // background; a hung/rejected getSession simply leaves the form usable.
   useEffect(() => {
-    const supabase = getSupabaseClient();
-    if (!supabase) { setChecking(false); return; }
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) router.replace("/dashboard");
-      else setChecking(false);
-    });
+    let cancelled = false;
+    (async () => {
+      const supabase = getSupabaseClient();
+      if (!supabase) return;
+      try {
+        const gs = supabase.auth.getSession().catch(() => ({ data: { session: null } }));
+        const timeout = new Promise<{ data: { session: null } }>((res) => setTimeout(() => res({ data: { session: null } }), 4000));
+        const { data: { session } } = await Promise.race([gs, timeout]);
+        if (!cancelled && session) router.replace("/dashboard");
+      } catch { /* keep the form visible */ }
+    })();
+    return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -81,10 +88,6 @@ export default function SignupPage() {
     // first dashboard visit after the user clicks the confirmation link.
     setLoading(false);
     setView("check-email");
-  }
-
-  if (checking) {
-    return <div style={S.fullCenter}>Verifying session…</div>;
   }
 
   if (view === "check-email") {
