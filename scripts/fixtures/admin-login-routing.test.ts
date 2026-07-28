@@ -120,12 +120,15 @@ t("session + bridge unavailable → /dashboard (not trapped)", rFail.action === 
     t(`${name}: NO getSession/onAuthStateChange (pure static form)`, !/\.auth\.getSession\s*\(/.test(code) && !/onAuthStateChange/.test(code));
     t(`${name}: form fields rendered unconditionally`, /onSubmit=\{handleSubmit\}/.test(code) && /type="email"/.test(code) && /type="password"/.test(code));
     t(`${name}: NO Suspense loading-only fallback`, !/<Suspense/.test(code) && !/fallback=/.test(code));
-    t(`${name}: build marker auth-nonblocking-v4`, /LOGIN_BUILD\s*=\s*"auth-nonblocking-v4"/.test(code) && /data-login-build=\{LOGIN_BUILD\}/.test(code));
+    const expectedMarker = name === "/signup" ? "auth-nonblocking-v4" : "auth-nonblocking-v5";
+    t(`${name}: current build marker`, new RegExp(`LOGIN_BUILD\\s*=\\s*["']${expectedMarker}["']`).test(code) && /data-login-build=\{LOGIN_BUILD\}/.test(code));
     t(`${name}: NOT the superseded v2/v3 markers`, !/form-first-v2|form-always-visible-v3/.test(code));
   }
   t("login: supabase init failure keeps form (authUnavailable inline note)", /authUnavailable/.test(loginSrc) && /Authentication is temporarily unavailable/.test(loginSrc));
   t("login: explicit sign-in still routes via bridge", /signInWithPassword/.test(loginSrc) && /establishAdminSession/.test(loginSrc) && /resolveLoginTarget/.test(loginSrc));
   t("admin login: explicit sign-in uses the same bounded bridge", /establishAdminSession/.test(adminLoginSrc) && /resolveLoginTarget/.test(adminLoginSrc));
+  t("login: successful routing is a hard navigation", /window\.location\.replace/.test(loginSrc));
+  t("admin login: successful routing is a hard navigation", /window\.location\.replace/.test(adminLoginSrc));
 
   console.log(`\n${p} passed, ${f} failed`); if (f) process.exit(1);
 })();

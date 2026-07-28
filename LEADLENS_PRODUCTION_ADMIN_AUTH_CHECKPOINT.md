@@ -33,6 +33,13 @@ After those: verify at `https://leadlensintel.com/admin/login` (Tests A–F in P
 
 ## EMERGENCY FIX v5: remove final Suspense blocking surfaces — verified locally
 
+### Production cache follow-up (auth-nonblocking-v5)
+
+After `72d97bc` reached `origin/main`, production HTML was verified to contain the v4 form and no retired checking text, while an already-open browser still displayed “Checking existing session”. Root cause: stale App Router/client cache surviving the deployment. The follow-up makes `/login` and `/admin/login` explicitly `no-store` in middleware and uses a hard same-origin navigation after successful login so old RSC state cannot survive. Build markers for both login routes are now `auth-nonblocking-v5`.
+
+- Production before follow-up: HTML already had one email field, one password field and `auth-nonblocking-v4`; the stuck text was not present server-side.
+- Follow-up tests: routing **54/54**, Admin security **48/48**, typecheck/build passed.
+
 **Exact residual root cause:** although v4 removed mount-time `getSession()`, `/login` still wrapped the form in a full-page `<Suspense fallback="Loading…">` and `/admin/login` used `<Suspense fallback={null}>`. A production hydration/search-params suspension could therefore replace the form with loading-only or blank UI. The secondary Admin form also bypassed the bounded shared bridge, so its failure behavior diverged from `/login`.
 
 **Focused correction:**

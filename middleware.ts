@@ -42,6 +42,12 @@ async function verifyEdge(cookie: string | undefined, secret: string | undefined
 }
 
 const noindex = (res: NextResponse): NextResponse => { res.headers.set("X-Robots-Tag", "noindex, nofollow"); return res; };
+const noStore = (res: NextResponse): NextResponse => {
+  res.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+  res.headers.set("Pragma", "no-cache");
+  res.headers.set("Expires", "0");
+  return res;
+};
 const clearCookie = (res: NextResponse): NextResponse => {
   res.cookies.set(ADMIN_COOKIE_NAME, "", { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax", path: "/", maxAge: 0 });
   return res;
@@ -54,9 +60,10 @@ export async function middleware(req: NextRequest) {
   // NOT the spoofable x-forwarded-host header.
   const host = req.nextUrl.hostname;
 
-  // Login page always reachable (still noindex). API bootstrap routes are
-  // excluded via the matcher.
-  if (!isApi && (pathname === "/admin/login" || pathname.startsWith("/admin/login/"))) return noindex(NextResponse.next());
+  // Auth entry pages are always reachable and explicitly uncacheable. This
+  // prevents a browser/CDN from retaining a retired verification-only bundle.
+  if (!isApi && (pathname === "/login" || pathname.startsWith("/login/"))) return noStore(NextResponse.next());
+  if (!isApi && (pathname === "/admin/login" || pathname.startsWith("/admin/login/"))) return noStore(noindex(NextResponse.next()));
 
   // Restricted local-dev bypass: not production + explicit flag + literal local host.
   if (localBypassAllowed({ nodeEnv: process.env.NODE_ENV, hostname: host, bypassEnabled: process.env.ADMIN_LOCAL_BYPASS === "true" })) {
@@ -95,4 +102,4 @@ export async function middleware(req: NextRequest) {
 // Admin pages + admin APIs, EXCLUDING /admin/login (must be reachable) and the
 // login/bootstrap APIs /api/admin/session and /api/admin/auth-check (used to
 // obtain/validate a session before a cookie exists).
-export const config = { matcher: ["/admin", "/admin/((?!login).*)", "/api/admin/((?!session|auth-check).*)"] };
+export const config = { matcher: ["/login", "/admin", "/admin/((?!login).*)", "/admin/login", "/api/admin/((?!session|auth-check).*)"] };

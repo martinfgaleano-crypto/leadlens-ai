@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getSupabaseClient } from "@/lib/supabase/client";
 import { establishAdminSession, resolveLoginTarget } from "@/lib/admin/admin-bootstrap";
@@ -10,7 +9,7 @@ import { establishAdminSession, resolveLoginTarget } from "@/lib/admin/admin-boo
 // so no getSession/refresh-token/bridge state can ever block, cover, disable or
 // gate the form. Redirects happen ONLY after an explicit successful sign-in.
 // A bumpable build marker proves which code production is serving.
-const LOGIN_BUILD = "auth-nonblocking-v4";
+const LOGIN_BUILD = "auth-nonblocking-v5";
 
 function friendlyAuthError(msg: string): string {
   const m = msg.toLowerCase();
@@ -26,8 +25,6 @@ function friendlyAuthError(msg: string): string {
 }
 
 export default function LoginPage() {
-  const router        = useRouter();
-
   const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
   const [error, setError]       = useState("");
@@ -62,7 +59,9 @@ export default function LoginPage() {
         return;
       }
       const target = resolveLoginTarget(true, bridge);
-      router.replace(target.action === "redirect" ? target.to : "/dashboard");
+      // Hard navigation deliberately bypasses stale App Router/RSC state from
+      // older deployments. The destination is same-origin and server-checked.
+      window.location.replace(target.action === "redirect" ? target.to : "/dashboard");
     } catch {
       setLoading(false);
       setError("Network error. Please try again.");

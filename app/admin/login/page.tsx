@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { getSupabaseClient } from "@/lib/supabase/client";
 import { establishAdminSession, resolveLoginTarget } from "@/lib/admin/admin-bootstrap";
 
@@ -8,10 +7,9 @@ import { establishAdminSession, resolveLoginTarget } from "@/lib/admin/admin-boo
 // nothing async can block, cover or disable the form. An admin signs in here
 // exactly like /login; on success the server bridge issues the cookie and
 // redirects. There is no "Checking existing session"/"Verifying session" state.
-const LOGIN_BUILD = "auth-nonblocking-v4";
+const LOGIN_BUILD = "auth-nonblocking-v5";
 
 export default function AdminLoginPage() {
-  const router = useRouter();
   const [next, setNext] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -43,7 +41,9 @@ export default function AdminLoginPage() {
         return;
       }
       const target = resolveLoginTarget(true, bridge);
-      router.replace(bridge.isAdmin ? dest() : target.action === "redirect" ? target.to : "/dashboard");
+      // Force a new document so cached pre-fix App Router state cannot survive
+      // a successful login and paint the retired verification screen.
+      window.location.replace(bridge.isAdmin ? dest() : target.action === "redirect" ? target.to : "/dashboard");
     } catch {
       // signInWithPassword itself failed before a session existed. Keep the
       // already-rendered form interactive and report the authentication error.
