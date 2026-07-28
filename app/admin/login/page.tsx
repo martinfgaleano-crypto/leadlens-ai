@@ -7,7 +7,7 @@ import { establishAdminSession, resolveLoginTarget } from "@/lib/admin/admin-boo
 // nothing async can block, cover or disable the form. An admin signs in here
 // exactly like /login; on success the server bridge issues the cookie and
 // redirects. There is no "Checking existing session"/"Verifying session" state.
-const LOGIN_BUILD = "auth-nonblocking-v5";
+const LOGIN_BUILD = "auth-nonblocking-v6";
 
 export default function AdminLoginPage() {
   const [next, setNext] = useState<string | null>(null);
@@ -40,10 +40,21 @@ export default function AdminLoginPage() {
         setLoading(false);
         return;
       }
+      if (!bridge.isAdmin) {
+        setError(
+          bridge.status === 403
+            ? "This account is not authorized for Admin access."
+            : bridge.status === 503
+              ? "Admin authorization is temporarily unavailable. Please retry."
+              : "Could not establish the Admin session. Please retry.",
+        );
+        setLoading(false);
+        return;
+      }
       const target = resolveLoginTarget(true, bridge);
       // Force a new document so cached pre-fix App Router state cannot survive
       // a successful login and paint the retired verification screen.
-      window.location.replace(bridge.isAdmin ? dest() : target.action === "redirect" ? target.to : "/dashboard");
+      window.location.replace(target.action === "redirect" ? dest() : "/admin/intelligence");
     } catch {
       // signInWithPassword itself failed before a session existed. Keep the
       // already-rendered form interactive and report the authentication error.

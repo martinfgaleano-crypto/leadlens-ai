@@ -1,15 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ADMIN_COOKIE_NAME } from "@/lib/auth/admin-cookie";
-import { activeAdminDecision, checkActiveAdminViaRest, localBypassAllowed } from "@/lib/auth/admin-access";
+import { localBypassAllowed } from "@/lib/auth/admin-access";
 
-// Centralized, authoritative Admin boundary for BOTH pages (/admin/*) and APIs
-// (/api/admin/*, except the login/bootstrap routes). On every protected request:
-//   1. verify the signed cookie (HMAC, edge Web Crypto) → user_id;
-//   2. query admin_users live (service-role REST) for is_active && !revoked_at;
-//   3. allow / deny / fail-closed accordingly.
-// Revocation is therefore immediate — never waits for the 8h cookie TTL. Denied
-// requests get the cookie cleared; pages redirect to /admin/login?reason=
-// unauthorized, APIs get 403. All /admin/* responses are noindex.
+// Centralized Admin boundary for BOTH pages (/admin/*) and APIs (/api/admin/*,
+// except the login/bootstrap routes). The session endpoint has already verified
+// the Supabase token AND the live admin_users allowlist before issuing this
+// HMAC-signed, httpOnly cookie. Middleware verifies that signed grant locally.
+//
+// Do not repeat a remote Supabase lookup from Edge here. That created a second,
+// failure-prone authorization hop after a successful login and could bounce a
+// freshly authorized owner back to /admin/login when Edge networking/config
+// differed from the Node session function.
 
 const b64urlToBytes = (s: string): Uint8Array => {
   const b64 = s.replace(/-/g, "+").replace(/_/g, "/") + "===".slice((s.length + 3) % 4);
@@ -70,29 +71,17 @@ export async function middleware(req: NextRequest) {
     return isApi ? NextResponse.next() : noindex(NextResponse.next());
   }
 
-  // 1. Signature.
+  // The signed cookie is the grant. It can only be minted by
+  // POST /api/admin/session after live Supabase + allowlist authorization.
   const secret = process.env.ADMIN_SESSION_SECRET;
   const { ok: sigOk, sub } = await verifyEdge(req.cookies.get(ADMIN_COOKIE_NAME)?.value, secret);
-
-  // 2. Live allowlist (authoritative — immediate revocation).
-  let decision: "allow" | "deny" | "fail_closed";
-  if (!sigOk || !sub) decision = "deny";
-  else {
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL, key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    if (!url || !key) decision = "fail_closed";
-    else {
-      const { lookupError, row } = await checkActiveAdminViaRest(fetch, { url, serviceKey: key }, sub);
-      decision = activeAdminDecision({ signatureValid: true, lookupError, row });
-    }
-  }
-
-  if (decision === "allow") {
+  if (sigOk && sub) {
     if (!isApi && pathname === "/admin") { const u = req.nextUrl.clone(); u.pathname = "/admin/intelligence"; u.search = ""; return noindex(NextResponse.redirect(u)); }
     return isApi ? NextResponse.next() : noindex(NextResponse.next());
   }
 
-  // Deny / fail-closed: clear cookie; 403 for APIs, redirect for pages.
-  if (isApi) return clearCookie(NextResponse.json({ error: decision === "fail_closed" ? "Admin authorization unavailable." : "Unauthorized" }, { status: decision === "fail_closed" ? 503 : 403 }));
+  // Invalid, missing or expired grant: clear it and require a fresh login.
+  if (isApi) return clearCookie(NextResponse.json({ error: "Unauthorized" }, { status: 403 }));
   const u = req.nextUrl.clone();
   u.pathname = "/admin/login";
   u.search = "?reason=unauthorized";

@@ -9,7 +9,7 @@ import { establishAdminSession, resolveLoginTarget } from "@/lib/admin/admin-boo
 // so no getSession/refresh-token/bridge state can ever block, cover, disable or
 // gate the form. Redirects happen ONLY after an explicit successful sign-in.
 // A bumpable build marker proves which code production is serving.
-const LOGIN_BUILD = "auth-nonblocking-v5";
+const LOGIN_BUILD = "auth-nonblocking-v6";
 
 function friendlyAuthError(msg: string): string {
   const m = msg.toLowerCase();

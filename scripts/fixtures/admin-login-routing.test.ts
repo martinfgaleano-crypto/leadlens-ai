@@ -102,7 +102,7 @@ t("session + bridge unavailable → /dashboard (not trapped)", rFail.action === 
   const loginSrc = readFileSync("app/login/page.tsx", "utf8");
   t("normal login renders no Admin CTA / role-picker", noAdminCta(loginSrc));
 
-  // ── PURE STATIC FORM guarantees across the WHOLE auth stack (auth-nonblocking-v4).
+  // ── PURE STATIC FORM guarantees across the WHOLE auth stack.
   // These fail if any future edit reintroduces mount-time session discovery or a
   // loading/verifying state on /login, /admin/login or /signup.
   const adminLoginSrc = readFileSync("app/admin/login/page.tsx", "utf8");
@@ -120,7 +120,7 @@ t("session + bridge unavailable → /dashboard (not trapped)", rFail.action === 
     t(`${name}: NO getSession/onAuthStateChange (pure static form)`, !/\.auth\.getSession\s*\(/.test(code) && !/onAuthStateChange/.test(code));
     t(`${name}: form fields rendered unconditionally`, /onSubmit=\{handleSubmit\}/.test(code) && /type="email"/.test(code) && /type="password"/.test(code));
     t(`${name}: NO Suspense loading-only fallback`, !/<Suspense/.test(code) && !/fallback=/.test(code));
-    const expectedMarker = name === "/signup" ? "auth-nonblocking-v4" : "auth-nonblocking-v5";
+    const expectedMarker = name === "/signup" ? "auth-nonblocking-v4" : "auth-nonblocking-v6";
     t(`${name}: current build marker`, new RegExp(`LOGIN_BUILD\\s*=\\s*["']${expectedMarker}["']`).test(code) && /data-login-build=\{LOGIN_BUILD\}/.test(code));
     t(`${name}: NOT the superseded v2/v3 markers`, !/form-first-v2|form-always-visible-v3/.test(code));
   }
