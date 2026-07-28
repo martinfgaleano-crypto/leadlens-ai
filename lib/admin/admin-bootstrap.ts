@@ -19,8 +19,14 @@ export function safeInternal(path: string | null | undefined, fallback: string):
  *  redirect) only on a 2xx that issued the cookie; any non-2xx (401/403 normal
  *  user, 500/503 config), malformed body, network error or timeout → not admin.
  *  A bounded timeout guarantees the caller can never hang on this request. */
-export async function establishAdminSession(accessToken: string, timeoutMs = 8000): Promise<{ isAdmin: boolean; redirectTo: string | null }> {
-  if (!accessToken) return { isAdmin: false, redirectTo: null };
+export interface AdminBridgeResult {
+  isAdmin: boolean;
+  redirectTo: string | null;
+  status: number | null;
+}
+
+export async function establishAdminSession(accessToken: string, timeoutMs = 8000): Promise<AdminBridgeResult> {
+  if (!accessToken) return { isAdmin: false, redirectTo: null, status: 401 };
   const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
   const timer = controller ? setTimeout(() => controller.abort(), timeoutMs) : null;
   try {
@@ -30,11 +36,12 @@ export async function establishAdminSession(accessToken: string, timeoutMs = 800
       signal: controller?.signal,
     });
     if (res.ok) {
-      const d = await res.json().catch(() => ({} as { redirectTo?: string }));
-      return { isAdmin: true, redirectTo: safeInternal((d as { redirectTo?: string })?.redirectTo, "/admin/intelligence") };
+      const d = await res.json().catch(() => null) as { ok?: boolean; isAdmin?: boolean; redirectTo?: string } | null;
+      if (!d || d.ok !== true || d.isAdmin !== true) return { isAdmin: false, redirectTo: null, status: res.status };
+      return { isAdmin: true, redirectTo: safeInternal(d.redirectTo, "/admin/intelligence"), status: res.status };
     }
-    return { isAdmin: false, redirectTo: null };
-  } catch { return { isAdmin: false, redirectTo: null }; }
+    return { isAdmin: false, redirectTo: null, status: res.status };
+  } catch { return { isAdmin: false, redirectTo: null, status: null }; }
   finally { if (timer) clearTimeout(timer); }
 }
 

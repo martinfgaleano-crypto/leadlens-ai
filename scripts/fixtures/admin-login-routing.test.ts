@@ -52,14 +52,14 @@ t("session + bridge unavailable → /dashboard (not trapped)", rFail.action === 
     return Object.keys(body).length === 1 && body.access_token === "tok-abc";
   })());
 
-  setFetch(() => ({ status: 200, body: { ok: true, redirectTo: "https://evil.com/x" } }));
+  setFetch(() => ({ status: 200, body: { ok: true, isAdmin: true, redirectTo: "https://evil.com/x" } }));
   const sanitized = await establishAdminSession("tok");
   t("server redirect sanitized to internal", sanitized.isAdmin && sanitized.redirectTo === "/admin/intelligence");
 
-  // malformed 2xx body (json throws) → deterministic admin default, no crash.
+  // Malformed 2xx cannot be trusted as proof that the bridge established Admin.
   (globalThis as { fetch: unknown }).fetch = async () => ({ ok: true, status: 200, json: async () => { throw new Error("bad json"); } } as unknown as Response);
   const malformed = await establishAdminSession("tok");
-  t("malformed 2xx → deterministic (admin default target)", malformed.isAdmin && malformed.redirectTo === "/admin/intelligence");
+  t("malformed 2xx → dashboard-safe non-admin result", !malformed.isAdmin && malformed.redirectTo === null);
 
   setFetch(() => ({ status: 500, body: {} }));
   t("500 → not admin (deterministic)", (await establishAdminSession("tok")).isAdmin === false);
@@ -76,7 +76,7 @@ t("session + bridge unavailable → /dashboard (not trapped)", rFail.action === 
 
   // ── one-time bootstrap guard ───────────────────────────────────────────────
   resetAdminBootstrap();
-  setFetch(() => ({ status: 200, body: { isAdmin: true, redirectTo: "/admin/intelligence" } }));
+  setFetch(() => ({ status: 200, body: { ok: true, isAdmin: true, redirectTo: "/admin/intelligence" } }));
   const first = await bootstrapAdminRedirectOnce("tok");
   const second = await bootstrapAdminRedirectOnce("tok");
   t("bootstrap runs once (2nd returns null)", first === "/admin/intelligence" && second === null);
@@ -88,6 +88,7 @@ t("session + bridge unavailable → /dashboard (not trapped)", rFail.action === 
   setFetch(() => ({ status: 200, body: { ok: true } }));
   await clearAdminSession();
   t("logout calls DELETE /api/admin/session", calls[0]?.url === "/api/admin/session" && calls[0]?.init?.method === "DELETE");
+  setFetch(() => ({ status: 200, body: { ok: true, isAdmin: true, redirectTo: "/admin/intelligence" } }));
   t("logout re-arms bootstrap guard", (await bootstrapAdminRedirectOnce("tok")) === "/admin/intelligence");
 
   // ── No Admin button / nav entry RENDERED (assert on code with comments
@@ -118,11 +119,13 @@ t("session + bridge unavailable → /dashboard (not trapped)", rFail.action === 
     // getSession/onAuthStateChange on mount — nothing async precedes the form.
     t(`${name}: NO getSession/onAuthStateChange (pure static form)`, !/\.auth\.getSession\s*\(/.test(code) && !/onAuthStateChange/.test(code));
     t(`${name}: form fields rendered unconditionally`, /onSubmit=\{handleSubmit\}/.test(code) && /type="email"/.test(code) && /type="password"/.test(code));
+    t(`${name}: NO Suspense loading-only fallback`, !/<Suspense/.test(code) && !/fallback=/.test(code));
     t(`${name}: build marker auth-nonblocking-v4`, /LOGIN_BUILD\s*=\s*"auth-nonblocking-v4"/.test(code) && /data-login-build=\{LOGIN_BUILD\}/.test(code));
     t(`${name}: NOT the superseded v2/v3 markers`, !/form-first-v2|form-always-visible-v3/.test(code));
   }
   t("login: supabase init failure keeps form (authUnavailable inline note)", /authUnavailable/.test(loginSrc) && /Authentication is temporarily unavailable/.test(loginSrc));
   t("login: explicit sign-in still routes via bridge", /signInWithPassword/.test(loginSrc) && /establishAdminSession/.test(loginSrc) && /resolveLoginTarget/.test(loginSrc));
+  t("admin login: explicit sign-in uses the same bounded bridge", /establishAdminSession/.test(adminLoginSrc) && /resolveLoginTarget/.test(adminLoginSrc));
 
   console.log(`\n${p} passed, ${f} failed`); if (f) process.exit(1);
 })();

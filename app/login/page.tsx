@@ -1,6 +1,6 @@
 "use client";
-import { useState, useEffect, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getSupabaseClient } from "@/lib/supabase/client";
 import { establishAdminSession, resolveLoginTarget } from "@/lib/admin/admin-bootstrap";
@@ -26,29 +26,24 @@ function friendlyAuthError(msg: string): string {
 }
 
 export default function LoginPage() {
-  return (
-    <Suspense fallback={<div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", color: "#64748b", fontFamily: "-apple-system,sans-serif", fontSize: "0.9rem" }}>Loading…</div>}>
-      <LoginContent />
-    </Suspense>
-  );
-}
-
-function LoginContent() {
   const router        = useRouter();
-  const searchParams  = useSearchParams();
-  const verified      = searchParams.get("verified") === "1";
-  const verifyFailed  = searchParams.get("error") === "verification-failed";
 
   const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
   const [error, setError]       = useState("");
   const [loading, setLoading]   = useState(false);
   const [authUnavailable, setAuthUnavailable] = useState(false);
+  const [verified, setVerified] = useState(false);
+  const [verifyFailed, setVerifyFailed] = useState(false);
 
-  // NO session discovery on mount. The only async here is a synchronous check
-  // that the Supabase client can be created (env present) — it never touches
-  // getSession/localStorage/network and cannot block the form.
-  useEffect(() => { if (!getSupabaseClient()) setAuthUnavailable(true); }, []);
+  // Query banners and configuration checks run after the unconditional form
+  // render. They never perform session discovery or gate the UI.
+  useEffect(() => {
+    if (!getSupabaseClient()) setAuthUnavailable(true);
+    const params = new URLSearchParams(window.location.search);
+    setVerified(params.get("verified") === "1");
+    setVerifyFailed(params.get("error") === "verification-failed");
+  }, []);
 
   // Redirect happens ONLY on an explicit successful sign-in.
   async function handleSubmit(e: React.FormEvent) {
@@ -61,6 +56,11 @@ function LoginContent() {
       const { data, error: authError } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
       if (authError || !data.session) { setLoading(false); setError(friendlyAuthError(authError?.message ?? "Sign-in failed.")); return; }
       const bridge = await establishAdminSession(data.session.access_token);
+      if (bridge.status === 401) {
+        setLoading(false);
+        setError("Your session could not be verified. Please sign in again.");
+        return;
+      }
       const target = resolveLoginTarget(true, bridge);
       router.replace(target.action === "redirect" ? target.to : "/dashboard");
     } catch {

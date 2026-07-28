@@ -1,7 +1,8 @@
 "use client";
-import { useState, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { getSupabaseClient } from "@/lib/supabase/client";
+import { establishAdminSession, resolveLoginTarget } from "@/lib/admin/admin-bootstrap";
 
 // Compatibility route. PURE STATIC FORM — no session discovery on mount, so
 // nothing async can block, cover or disable the form. An admin signs in here
@@ -9,15 +10,19 @@ import { getSupabaseClient } from "@/lib/supabase/client";
 // redirects. There is no "Checking existing session"/"Verifying session" state.
 const LOGIN_BUILD = "auth-nonblocking-v4";
 
-function AdminLoginInner() {
+export default function AdminLoginPage() {
   const router = useRouter();
-  const params = useSearchParams();
-  const next = params.get("next");
-  const reason = params.get("reason");
+  const [next, setNext] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(reason === "unauthorized" ? "This account is not authorized for Admin access." : "");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setNext(params.get("next"));
+    if (params.get("reason") === "unauthorized") setError("This account is not authorized for Admin access.");
+  }, []);
 
   const dest = () => (next && /^\/admin(\/|$)/.test(next) && !/^\/admin\/login/.test(next) ? next : "/admin/intelligence");
 
@@ -31,20 +36,20 @@ function AdminLoginInner() {
     try {
       const { data, error: authErr } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
       if (authErr || !data.session) { setError("Invalid email or password."); setLoading(false); return; }
-      // Exchange the session for a server-verified admin cookie.
-      const res = await fetch("/api/admin/session", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ access_token: data.session.access_token }),
-      });
-      if (res.ok) { router.replace(dest()); return; }
-      // Not an admin (or config error): sign the Supabase session back out so a
-      // non-admin isn't left holding a customer session on the admin origin.
-      await supabase.auth.signOut();
-      if (res.status === 403) setError("This account is not authorized for Admin access.");
-      else if (res.status === 503) setError("Admin authorization is temporarily unavailable. Try again shortly.");
-      else setError("Sign-in failed. Please try again.");
-    } catch { setError("Network error. Please try again."); }
-    setLoading(false);
+      const bridge = await establishAdminSession(data.session.access_token);
+      if (bridge.status === 401) {
+        setError("Your session could not be verified. Please sign in again.");
+        setLoading(false);
+        return;
+      }
+      const target = resolveLoginTarget(true, bridge);
+      router.replace(bridge.isAdmin ? dest() : target.action === "redirect" ? target.to : "/dashboard");
+    } catch {
+      // signInWithPassword itself failed before a session existed. Keep the
+      // already-rendered form interactive and report the authentication error.
+      setError("Network error. Please try again.");
+      setLoading(false);
+    }
   }
 
   const input: React.CSSProperties = { display: "block", width: "100%", padding: "0.75rem 0.875rem", border: "1px solid #e2e8f0", borderRadius: "0.625rem", fontSize: "0.9rem", color: "#0f172a", background: "#fff", outline: "none", boxSizing: "border-box", fontFamily: "inherit", marginBottom: "1rem" };
@@ -68,8 +73,4 @@ function AdminLoginInner() {
       </div>
     </div>
   );
-}
-
-export default function AdminLoginPage() {
-  return <Suspense fallback={null}><AdminLoginInner /></Suspense>;
 }

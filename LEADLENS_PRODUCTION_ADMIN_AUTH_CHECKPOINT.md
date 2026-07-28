@@ -31,7 +31,43 @@ After those: verify at `https://leadlensintel.com/admin/login` (Tests A–F in P
 
 ---
 
-## FIX v3 (RESOLVED IN PUBLIC PRODUCTION): whole-auth-stack form-first — DONE
+## EMERGENCY FIX v5: remove final Suspense blocking surfaces — verified locally
+
+**Exact residual root cause:** although v4 removed mount-time `getSession()`, `/login` still wrapped the form in a full-page `<Suspense fallback="Loading…">` and `/admin/login` used `<Suspense fallback={null}>`. A production hydration/search-params suspension could therefore replace the form with loading-only or blank UI. The secondary Admin form also bypassed the bounded shared bridge, so its failure behavior diverged from `/login`.
+
+**Focused correction:**
+- `/login` and `/admin/login` render their email/password forms directly on the first server/client render; no `Suspense`, loading-only return, session discovery, bridge request, or redirect can gate the form.
+- Query-string banners are parsed only after render and remain informational.
+- Both explicit submit paths use `establishAdminSession`, bounded to 8 seconds.
+- Active Admin → `/admin/intelligence` (or a validated Admin `next` path).
+- Authenticated non-Admin, bridge 403/500/503/network/timeout/malformed response → `/dashboard`.
+- Bridge 401 → visible session-verification error on the still-usable form.
+- The client sends only `access_token`; role/user ID/Admin status remain server-authoritative.
+
+**Verification (2026-07-28):**
+- `test:admin-login-routing`: **52/52 passed**.
+- `test:admin-auth`: **48/48 passed**.
+- `tsc --noEmit`: passed.
+- `next build`: passed; `/login` and `/admin/login` prerendered successfully.
+- Production `next start` on port 3105: both routes exposed exactly one email input, one password input and one submit button; neither contained “Verifying session” nor “Checking existing session”.
+- Unauthenticated `/admin/intelligence` redirected once to `/admin/login?reason=unauthorized`; the form remained visible and no console errors were observed.
+
+Commit and deployment status are recorded in the handoff for this fix.
+
+---
+
+## FIX v4 (auth-nonblocking-v4): auth pages are PURE STATIC FORMS — superseded by v5
+
+**Source of "Checking existing session":** it was the non-blocking hint I added in v3 (`sessionNote === "checking"` in `app/login/page.tsx` + `app/admin/login/page.tsx`). Even rendered below the form, the mount-time background session discovery (getSession + admin bridge) read as blocking and the owner's login "didn't work".
+
+**Definitive fix:** `/login`, `/admin/login`, `/signup` are now **pure static forms** — **no `getSession`/`onAuthStateChange`/bridge/redirect on mount**. Nothing async runs before or around the form, so no session/token/refresh/bridge state can block, cover, disable or gate it. All "Checking existing session"/"Signing you in"/"Verifying session" text and the `sessionNote` state are removed. Redirects happen ONLY after an explicit successful sign-in (submit → signInWithPassword → admin bridge → `/admin/intelligence` or `/dashboard`). `/login` keeps a synchronous supabase-availability check → inline "temporarily unavailable" note. Marker `data-login-build="auth-nonblocking-v4"` on all three forms. Tradeoff (accepted): an already-logged-in user visiting a login page is not auto-redirected; they see the usable form.
+- Tests: `test:admin-login-routing` **48 passed** (asserts no loading text, no session gate, **no getSession/onAuthStateChange on the auth pages**, unconditional fields, v4 marker). `test:admin-auth` 48/48. tsc clean.
+- Production build (isolated worktree, `next build`+`next start` :3102): `/admin/login` with a corrupted token → `auth-nonblocking-v4`, form editable, submit enabled, **not covered by any overlay**, no loading text.
+- Commit `2113a42`. Deploy + public verification below.
+
+---
+
+## FIX v3 (superseded by v4): whole-auth-stack form-first
 
 **The real stuck page was `/admin/login` (and `/signup`), not `/login`.** `/login` was already form-first (v2), but `/admin/login` and `/signup` still had `if (checking) return <full-screen "Verifying session…">` gated on an **unbounded, un-caught `await getSession()`**. The owner hitting `/admin/intelligence` without a cookie is redirected by middleware to `/admin/login`, which then hung on "Verifying session…" when a stale token made `getSession()` stall.
 
