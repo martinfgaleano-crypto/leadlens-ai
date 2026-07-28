@@ -31,7 +31,25 @@ After those: verify at `https://leadlensintel.com/admin/login` (Tests A–F in P
 
 ---
 
-## FIX v2 (DEFINITIVE): form-first login — DONE
+## FIX v3 (RESOLVED IN PUBLIC PRODUCTION): whole-auth-stack form-first — DONE
+
+**The real stuck page was `/admin/login` (and `/signup`), not `/login`.** `/login` was already form-first (v2), but `/admin/login` and `/signup` still had `if (checking) return <full-screen "Verifying session…">` gated on an **unbounded, un-caught `await getSession()`**. The owner hitting `/admin/intelligence` without a cookie is redirected by middleware to `/admin/login`, which then hung on "Verifying session…" when a stale token made `getSession()` stall.
+
+- **Fix:** all three auth pages (`app/login/page.tsx`, `app/admin/login/page.tsx`, `app/signup/page.tsx`) now render the form UNCONDITIONALLY; session discovery is background-only, bounded (`Promise.race` 4s), caught, and cancellable — it can never hide/replace the form. Marker bumped to `data-login-build="form-always-visible-v3"`. "Verifying session" no longer exists in any render path (comments only).
+- **Tests:** `test:admin-login-routing` **41 passed** (whole-auth-stack guarantees: no Verifying-session render on /login, /admin/login, /signup; unconditional form fields; v3 marker; bounded getSession; cancellable effects). `test:admin-auth` **48/48**. tsc clean.
+- **Production build:** isolated worktree `next build` + `next start` (:3101); `/admin/login` with a corrupted token rendered `form-always-visible-v3`, editable form, no "Verifying session"; no console errors.
+- **Commit `c0a6a31`** — pushed to `origin/main` via GitHub Desktop. **Vercel deployed it** (production `/login` chunk `page-f9b8a3403db9baf4.js` contains `form-always-visible-v3`, no "Verifying session").
+- **PUBLIC PRODUCTION VERIFIED (`https://leadlensintel.com`):**
+  - Clean storage → `/login`: `form-always-visible-v3`, form visible, not stuck. ✓
+  - Malformed/stale token → `/admin/login`: renders the editable form (background-redirects to `/login`), **never "Verifying session"**. ✓ (the owner's exact failure path)
+  - Invalid credentials → inline "Incorrect email or password" with the form preserved. ✓
+  - Single `/api/admin/session → 401`, no request loop; no console errors. ✓
+  - Valid-admin → `/admin/intelligence`: requires the owner's password (I'm prohibited from entering credentials) — owner does this final confirmation.
+- **Verdict: the "Verifying session" blocker is RESOLVED IN PUBLIC PRODUCTION.**
+
+---
+
+## FIX v2 (superseded by v3): form-first login
 
 The timeout state-machine (1677fd4) was **confirmed deployed** (origin/main = 1677fd4; the live production `/login` chunk contains the state machine — "Signing you in" string present) yet production still hung. Conclusion: gating the UI on session verification is the wrong shape. **Fixed structurally — the form now renders unconditionally on the first render; session detection is background-only and can never hide or block it.**
 
