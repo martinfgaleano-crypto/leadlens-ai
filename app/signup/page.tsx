@@ -1,10 +1,11 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getSupabaseClient } from "@/lib/supabase/client";
 
 type SignupState = "form" | "check-email";
+const LOGIN_BUILD = "auth-nonblocking-v4";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -15,24 +16,8 @@ export default function SignupPage() {
   const [loading, setLoading]     = useState(false);
   const [view, setView]           = useState<SignupState>("form");
 
-  // Background only — the signup form is ALWAYS rendered (never blocked by a
-  // "Verifying session" screen). If already logged in, redirect in the
-  // background; a hung/rejected getSession simply leaves the form usable.
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      const supabase = getSupabaseClient();
-      if (!supabase) return;
-      try {
-        const gs = supabase.auth.getSession().catch(() => ({ data: { session: null } }));
-        const timeout = new Promise<{ data: { session: null } }>((res) => setTimeout(() => res({ data: { session: null } }), 4000));
-        const { data: { session } } = await Promise.race([gs, timeout]);
-        if (!cancelled && session) router.replace("/dashboard");
-      } catch { /* keep the form visible */ }
-    })();
-    return () => { cancelled = true; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // PURE STATIC FORM — no session discovery on mount. Nothing async runs before
+  // the form renders, so it can never be blocked by a session/loading state.
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -118,7 +103,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div style={S.page}>
+    <div style={S.page} data-login-build={LOGIN_BUILD}>
       <div style={S.card}>
         {/* Brand */}
         <div style={{ textAlign: "center", marginBottom: "2rem" }}>

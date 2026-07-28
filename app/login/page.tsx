@@ -5,12 +5,12 @@ import Link from "next/link";
 import { getSupabaseClient } from "@/lib/supabase/client";
 import { establishAdminSession, resolveLoginTarget } from "@/lib/admin/admin-bootstrap";
 
-// Structural fail-safe: the login FORM renders unconditionally on the first
-// render. Session detection is background-only and can never hide the form —
-// no full-screen spinner, no verifying-only state. A bumpable build marker is
-// rendered so we can prove which code production is serving.
-const LOGIN_BUILD = "form-always-visible-v3";
-const GETSESSION_TIMEOUT_MS = 4000; // never let a hung token refresh keep the hint spinning
+// Structural fail-safe: the login page is a PURE STATIC FORM. It performs NO
+// session discovery on mount — nothing async runs before or around the render,
+// so no getSession/refresh-token/bridge state can ever block, cover, disable or
+// gate the form. Redirects happen ONLY after an explicit successful sign-in.
+// A bumpable build marker proves which code production is serving.
+const LOGIN_BUILD = "auth-nonblocking-v4";
 
 function friendlyAuthError(msg: string): string {
   const m = msg.toLowerCase();
@@ -43,42 +43,14 @@ function LoginContent() {
   const [password, setPassword] = useState("");
   const [error, setError]       = useState("");
   const [loading, setLoading]   = useState(false);
-  // Non-blocking hint only — the form is ALWAYS rendered regardless of this.
-  const [sessionNote, setSessionNote] = useState<"checking" | "redirecting" | null>("checking");
   const [authUnavailable, setAuthUnavailable] = useState(false);
 
-  // Background existing-session detection. It can only trigger a redirect; it can
-  // NEVER hide or block the form. Every failure mode (hung getSession, corrupted
-  // token, hung/500 Admin bridge, malformed JSON) simply leaves the form usable.
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      const supabase = getSupabaseClient();
-      if (!supabase) { if (!cancelled) { setAuthUnavailable(true); setSessionNote(null); } return; }
-      let session: { access_token: string } | null = null;
-      let rejected = false;
-      try {
-        // Bound getSession so a stalled token refresh never keeps the hint up.
-        const gs = supabase.auth.getSession().catch(() => { rejected = true; return { data: { session: null } }; });
-        const timeout = new Promise<{ data: { session: null } }>((r) => setTimeout(() => r({ data: { session: null } }), GETSESSION_TIMEOUT_MS));
-        const res = await Promise.race([gs, timeout]);
-        session = res.data.session;
-      } catch { rejected = true; }
-      // Clear ONLY a corrupted/rejected local token (never a valid session).
-      if (rejected) { try { await supabase.auth.signOut({ scope: "local" }); } catch { /* ignore */ } }
-      if (cancelled) return;
-      if (!session) { setSessionNote(null); return; }
-      // Already authenticated → route in the background (form still visible).
-      const bridge = await establishAdminSession(session.access_token);
-      if (cancelled) return;
-      const target = resolveLoginTarget(true, bridge);
-      if (target.action === "redirect") { setSessionNote("redirecting"); router.replace(target.to); }
-      else setSessionNote(null);
-    })();
-    return () => { cancelled = true; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // NO session discovery on mount. The only async here is a synchronous check
+  // that the Supabase client can be created (env present) — it never touches
+  // getSession/localStorage/network and cannot block the form.
+  useEffect(() => { if (!getSupabaseClient()) setAuthUnavailable(true); }, []);
 
+  // Redirect happens ONLY on an explicit successful sign-in.
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const supabase = getSupabaseClient();
@@ -90,7 +62,6 @@ function LoginContent() {
       if (authError || !data.session) { setLoading(false); setError(friendlyAuthError(authError?.message ?? "Sign-in failed.")); return; }
       const bridge = await establishAdminSession(data.session.access_token);
       const target = resolveLoginTarget(true, bridge);
-      setSessionNote("redirecting");
       router.replace(target.action === "redirect" ? target.to : "/dashboard");
     } catch {
       setLoading(false);
@@ -108,13 +79,6 @@ function LoginContent() {
           <p style={S.sub}>Your B2B opportunity monitor</p>
         </div>
 
-        {/* Non-blocking hints — the form below is always usable regardless. */}
-        {sessionNote === "checking" && (
-          <p style={{ textAlign: "center", color: "#94a3b8", fontSize: "0.72rem", margin: "0 0 1rem" }}>Checking existing session…</p>
-        )}
-        {sessionNote === "redirecting" && (
-          <p style={{ textAlign: "center", color: "#0ea5e9", fontSize: "0.72rem", margin: "0 0 1rem" }}>Signing you in…</p>
-        )}
         {authUnavailable && (
           <div style={S.errorBox}>Authentication is temporarily unavailable. Please retry.</div>
         )}

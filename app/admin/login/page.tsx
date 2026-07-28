@@ -1,15 +1,13 @@
 "use client";
-import { useState, useEffect, Suspense } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getSupabaseClient } from "@/lib/supabase/client";
-import { establishAdminSession } from "@/lib/admin/admin-bootstrap";
 
-// Compatibility route. There is ONE login experience: the normal /login. The
-// admin form here is ALWAYS rendered (never blocked by a "Verifying session"
-// screen). A background check auto-authorizes an existing session and otherwise
-// defers to /login — but it can never hide or disable the form.
-const LOGIN_BUILD = "form-always-visible-v3";
-const GETSESSION_TIMEOUT_MS = 4000;
+// Compatibility route. PURE STATIC FORM — no session discovery on mount, so
+// nothing async can block, cover or disable the form. An admin signs in here
+// exactly like /login; on success the server bridge issues the cookie and
+// redirects. There is no "Checking existing session"/"Verifying session" state.
+const LOGIN_BUILD = "auth-nonblocking-v4";
 
 function AdminLoginInner() {
   const router = useRouter();
@@ -20,44 +18,8 @@ function AdminLoginInner() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(reason === "unauthorized" ? "This account is not authorized for Admin access." : "");
   const [loading, setLoading] = useState(false);
-  const [sessionNote, setSessionNote] = useState<"checking" | "redirecting" | null>("checking");
 
   const dest = () => (next && /^\/admin(\/|$)/.test(next) && !/^\/admin\/login/.test(next) ? next : "/admin/intelligence");
-
-  // Background only — never gates the form. 1) valid admin cookie → in.
-  // 2) existing Supabase session → bridge → redirect. 3) no session → defer to
-  // /login. Every await is bounded/caught; any failure leaves the form usable.
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
-        const tm = ctrl ? setTimeout(() => ctrl.abort(), GETSESSION_TIMEOUT_MS) : null;
-        const r = await fetch("/api/admin/session", { signal: ctrl?.signal }).finally(() => { if (tm) clearTimeout(tm); });
-        if (!cancelled && r.ok) { setSessionNote("redirecting"); router.replace(dest()); return; }
-      } catch { /* fall through */ }
-      const supabase = getSupabaseClient();
-      if (!supabase) { if (!cancelled) setSessionNote(null); return; }
-      let session: { access_token: string } | null = null;
-      try {
-        const gs = supabase.auth.getSession().catch(() => ({ data: { session: null } }));
-        const timeout = new Promise<{ data: { session: null } }>((res) => setTimeout(() => res({ data: { session: null } }), GETSESSION_TIMEOUT_MS));
-        session = (await Promise.race([gs, timeout])).data.session;
-      } catch { session = null; }
-      if (cancelled) return;
-      if (session) {
-        const bridge = await establishAdminSession(session.access_token);
-        if (cancelled) return;
-        setSessionNote("redirecting");
-        router.replace(bridge.isAdmin && bridge.redirectTo ? bridge.redirectTo : "/dashboard");
-      } else {
-        setSessionNote("redirecting");
-        router.replace(`/login?next=${encodeURIComponent(dest())}`);
-      }
-    })();
-    return () => { cancelled = true; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -94,8 +56,6 @@ function AdminLoginInner() {
           <h1 style={{ color: "#0f172a", fontSize: "1.25rem", fontWeight: 800, margin: "0 0 0.25rem", letterSpacing: "-0.02em" }}>LeadLens Admin</h1>
           <p style={{ color: "#64748b", fontSize: "0.8rem", margin: 0 }}>Authorized administrators only</p>
         </div>
-        {sessionNote === "checking" && <p style={{ textAlign: "center", color: "#94a3b8", fontSize: "0.72rem", margin: "0 0 1rem" }}>Checking existing session…</p>}
-        {sessionNote === "redirecting" && <p style={{ textAlign: "center", color: "#0ea5e9", fontSize: "0.72rem", margin: "0 0 1rem" }}>Signing you in…</p>}
         <form onSubmit={handleSubmit}>
           <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#374151", marginBottom: "0.4rem", letterSpacing: "0.03em", textTransform: "uppercase" }}>Email</label>
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@company.com" autoComplete="username" style={input} />
