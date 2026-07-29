@@ -54,7 +54,8 @@ t("7 schema-only capability not production", capOf(snap, "what_changed_detection
 // 8. Outcome Performance not_measured without outcomes.
 t("8 no outcomes ⇒ outcome_performance not_measured", dimOf(snap, "outcome_performance").measurement.state === "not_measured");
 const withOutcomes: IntelligenceOutcome[] = [{ id: "o1", kind: "terminal_positive", dimension: "commercial_outcome", observed_at: NOW, evidence: [] }, { id: "o2", kind: "terminal_negative", dimension: "commercial_outcome", observed_at: NOW, evidence: [] }];
-t("8b outcomes ⇒ measured", isMeasured(dimOf(buildIntelligenceSnapshot(baseInput({ feedback: { ...baseInput().feedback, outcomes: withOutcomes } })), "outcome_performance").measurement));
+t("8b thin outcomes ⇒ insufficient", dimOf(buildIntelligenceSnapshot(baseInput({ feedback: { ...baseInput().feedback, outcomes: withOutcomes } })), "outcome_performance").measurement.state === "insufficient_evidence");
+t("8c sufficient outcomes ⇒ measured", isMeasured(dimOf(buildIntelligenceSnapshot(baseInput({ feedback: { ...baseInput().feedback, outcomes: [...withOutcomes, ...withOutcomes, withOutcomes[0]] } })), "outcome_performance").measurement));
 
 // 9. Differentiation not_measured without baseline.
 t("9 no baseline ⇒ differentiation not_measured", dimOf(snap, "differentiation").measurement.state === "not_measured");

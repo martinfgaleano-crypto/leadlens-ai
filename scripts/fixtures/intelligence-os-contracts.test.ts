@@ -94,7 +94,8 @@ const outs: IntelligenceOutcome[] = [
   { id: "x1", kind: "terminal_positive", dimension: "commercial_outcome", observed_at: NOW, evidence: [] },
   { id: "x2", kind: "terminal_negative", dimension: "commercial_outcome", observed_at: NOW, evidence: [] },
 ];
-t("11b real outcomes ⇒ measured", isMeasured(deriveOutcomePerformance(outs, MV, NOW, CUT).measurement));
+t("11b thin outcomes ⇒ insufficient", deriveOutcomePerformance(outs, MV, NOW, CUT).measurement.state === "insufficient_evidence");
+t("11c sufficient outcomes ⇒ measured", isMeasured(deriveOutcomePerformance([...outs, ...outs, outs[0]], MV, NOW, CUT).measurement));
 
 // 12. No baseline ⇒ Intelligence Lift not_measured.
 t("12 no baseline ⇒ lift not_measured", deriveIntelligenceLift(null, MV, NOW).measurement.state === "not_measured");

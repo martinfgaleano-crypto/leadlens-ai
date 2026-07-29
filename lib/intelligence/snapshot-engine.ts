@@ -25,7 +25,9 @@ import {
   type IntelligenceSystemDiagnosis, type IntelligenceOutcome, type BaselineType, type OperationalMode,
   type ImpactLevel, type IntelligenceEvidenceReference, type ReadinessBlocker, type Violation,
   type IntelligenceOutput, type IntelligencePattern, type IntelligenceRegistrySummary,
+  type IntelligenceValidationSummary,
 } from "./os-contracts";
+import { summarizeValidationLearning, type OutputValidationLifecycle } from "./validation-lifecycle";
 
 export const INTELLIGENCE_SNAPSHOT_METHODOLOGY_VERSION = "snapshot-methodology-v1";
 
@@ -120,6 +122,7 @@ export interface SnapshotInput {
   learner: SnapshotLearnerSignals;
   outputs?: IntelligenceOutput[];
   patterns?: IntelligencePattern[];
+  validation_lifecycles?: OutputValidationLifecycle[];
   baseline: BaselineType | null;
   snapshots_persisted: boolean;
   ml_tables_available: boolean;
@@ -436,6 +439,8 @@ export function buildIntelligenceSnapshot(input: SnapshotInput): IntelligenceSna
   const diagnosis = buildDiagnosis(maturity.level, caps, gaps, actions, readiness);
   const outputs = [...(input.outputs ?? [])].sort((a, b) => a.id.localeCompare(b.id));
   const patterns = [...(input.patterns ?? [])].sort((a, b) => a.id.localeCompare(b.id));
+  const lifecycles = [...(input.validation_lifecycles ?? [])].sort((a, b) => a.output_id.localeCompare(b.output_id));
+  const validationSummary: IntelligenceValidationSummary = summarizeValidationLearning(outputs, lifecycles);
 
   const index: IntelligenceMaturityIndex = {
     version: OS_CONTRACTS_VERSION, methodology_version: INTELLIGENCE_SNAPSHOT_METHODOLOGY_VERSION,
@@ -455,6 +460,8 @@ export function buildIntelligenceSnapshot(input: SnapshotInput): IntelligenceSna
     calculated_at: input.now, source_data_cutoff: input.source_data_cutoff,
     index, capability_assessments: caps, outputs, patterns,
     registry_summary: buildRegistrySummary(outputs, patterns), validations: [],
+    validation_summary: validationSummary,
+    learning_implications: lifecycles.flatMap((v) => v.learning_implications).sort((a, b) => a.id.localeCompare(b.id)),
     gaps, actions, readiness,
     lift: deriveIntelligenceLift(input.baseline, INTELLIGENCE_SNAPSHOT_METHODOLOGY_VERSION, input.now),
     diagnosis, previous_snapshot_id: input.previous?.id ?? null,

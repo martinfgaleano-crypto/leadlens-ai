@@ -448,12 +448,47 @@ export interface IntelligenceSnapshot {
   patterns: IntelligencePattern[];
   registry_summary: IntelligenceRegistrySummary;
   validations: IntelligenceValidation[];
+  validation_summary: IntelligenceValidationSummary;
+  learning_implications: IntelligenceLearningImplicationProjection[];
   gaps: IntelligenceGap[];
   actions: NextBestIntelligenceAction[];
   readiness: ReportReadinessAssessment;
   lift: IntelligenceLiftAssessment;
   diagnosis: IntelligenceSystemDiagnosis;
   previous_snapshot_id: string | null;
+}
+
+export interface IntelligenceValidationSummary {
+  output_count: number;
+  reviewed_count: number;
+  corrected_count: number;
+  client_relevant_count: number;
+  client_rejected_count: number;
+  acted_upon_count: number;
+  confirmed_count: number;
+  partially_confirmed_count: number;
+  refuted_count: number;
+  no_outcome_count: number;
+  expired_count: number;
+  validation_coverage: MeasurementResult;
+  outcome_coverage: MeasurementResult;
+  implications_by_type: Partial<Record<"reinforce" | "correct" | "investigate" | "exception" | "no_learning", number>>;
+  most_common_state: ValidationState | null;
+  lifecycle_bottleneck: string | null;
+}
+
+export interface IntelligenceLearningImplicationProjection {
+  id: string;
+  output_id: string;
+  outcome_id: string;
+  type: "reinforce" | "correct" | "investigate" | "exception" | "no_learning";
+  statement: string;
+  mode: "observation" | "shadow" | "human_reviewed";
+  human_approved: boolean;
+  ranking_impact: "off";
+  affected_capability: string | null;
+  affected_pattern: string | null;
+  created_at: string;
 }
 
 export interface IntelligenceRegistrySummary {
@@ -545,11 +580,17 @@ export function normalizePatternState(p: Pick<IntelligencePattern, "state" | "sa
   return p.state;
 }
 
-/** Outcome Performance dimension from outcomes: not_measured when none. */
+export const MIN_OUTCOME_PERFORMANCE_SAMPLE = 5;
+/** Outcome Performance stays unmeasured below the minimum real-outcome sample. */
 export function deriveOutcomePerformance(outcomes: IntelligenceOutcome[], methodology_version: string, now: string, cutoff: string): IntelligenceMaturityDimension {
   const real = outcomes.filter((o) => o.kind !== "no_outcome");
   const base = { id: "outcome_performance" as const, methodology_version, evidence: [] as IntelligenceEvidenceReference[], limitations: [] as string[], trend: "not_instrumented" as const, next_improvement: "Observe commercial outcomes on delivered recommendations.", assessed_at: now, source_data_cutoff: cutoff };
   if (real.length === 0) return { ...base, measurement: unmeasured("not_measured", "no commercial outcomes recorded") };
+  if (real.length < MIN_OUTCOME_PERFORMANCE_SAMPLE) return {
+    ...base,
+    measurement: unmeasured("insufficient_evidence", `need at least ${MIN_OUTCOME_PERFORMANCE_SAMPLE} attributable outcomes`, real.length),
+    limitations: [`only ${real.length} attributable outcome(s); minimum is ${MIN_OUTCOME_PERFORMANCE_SAMPLE}`],
+  };
   const wins = real.filter((o) => o.kind === "terminal_positive").length;
   return { ...base, measurement: measured(Math.round((wins / real.length) * 100), Math.min(1, real.length / 20), real.length), trend: "flat" };
 }

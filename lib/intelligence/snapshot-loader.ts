@@ -116,6 +116,7 @@ export async function loadSnapshotInputs(opts: {
       max_sample_size: patterns.reduce((m, p) => Math.max(m, p.sample_size), 0),
     },
     outputs, patterns,
+    validation_lifecycles: [],
     baseline: null,
     snapshots_persisted: false,
     ml_tables_available: false,

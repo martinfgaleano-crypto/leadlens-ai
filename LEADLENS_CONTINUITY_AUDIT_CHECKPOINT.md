@@ -104,7 +104,7 @@ Functional gaps that prevent the intelligence objective:
 
 ## 12. Current Intelligence OS block
 
-Blocks 0, 1, 2, and 3 are verified complete. Block 4 has not started.
+Blocks 0, 1, 2, 3, and 4 are verified complete. Block 5 has not started.
 
 Current honest snapshot:
 
@@ -204,7 +204,7 @@ Risk:
 - Outcomes: schema exists; meaningful sample not measured.
 - Vault/Account Memory: persistence implementations exist; not connected to the OS snapshot.
 
-## 20. Recommended next block
+## 20. Historical recommendation before Block 4
 
 **Intelligence OS Block 4 — Validation and Learning Loop.**
 
@@ -220,13 +220,13 @@ Production/ranking impact: none.
 
 Scope: one controlled block.
 
-Stop condition: registries are wired and tested; checkpoint updated; Block 4 and Admin UI not started.
+Historical stop condition: registries were wired and tested; Block 4 and Admin UI had not started.
 
-## 21. Exact next prompt
+## 21. Historical exact prompt for Block 4
 
 > Continue LeadLens from `LEADLENS_CONTINUITY_AUDIT_CHECKPOINT.md` after Block 3. Execute exactly **Intelligence OS Block 4 — Validation and Learning Loop**. Reuse existing `IntelligenceValidation`, `IntelligenceOutcome`, `opportunity_feedback`, learned-preference and migration-039 outcome contracts to build a deterministic, tenant-safe output→review→correction→client relevance→action→commercial outcome→learning projection. Do not auto-promote patterns, do not change ranking, reports, Admin authentication or Admin UI, do not call providers, and do not claim outcome performance without real outcomes. Add targeted honesty/idempotency tests, integrate only the validation/outcome summaries needed by the snapshot, document the persistence decision narrowly, update both checkpoints, commit, and stop before Block 5 Admin Command Center.
 
-## 22. Stop condition
+## 22. Historical Block 3 stop condition
 
 Block 3 is complete when registry tests and related regressions pass, checkpoints are committed, and Block 4 has not begun.
 
@@ -241,3 +241,19 @@ Block 3 is complete when registry tests and related regressions pass, checkpoint
 - Persistence: deferred; no migration.
 - Ranking/report/Admin/auth/customer behavior: unchanged.
 - Targeted tests: registries 28, OS contracts 24, snapshot 26, learner 33, Market-to-Account 17, pipeline 22, segment universe 21; typecheck passed.
+
+## 24. Post-audit Block 4 completion
+
+- Added a deterministic, tenant/client-aware validation lifecycle with centralized legal transitions.
+- Human review preserves immutable originals and append-only correction history; factual correctness remains separate from client relevance.
+- Commercial actions, attributed outcomes and safe learning implications are separate domain objects.
+- Outcomes require linked actions, explicit attribution confidence and limitations; `no_outcome`, rejection and refutation remain distinct.
+- Learning remains observation/shadow/human-reviewed and always has ranking impact off.
+- Report eligibility defaults internal; human approval alone is insufficient.
+- Added migration 041 for minimally durable lifecycle persistence. It is pending application and intentionally service-role only under RLS.
+- Added a server-context repository that derives tenant, actor and role outside browser input and supports idempotent writes.
+- Snapshot now carries a deterministic validation/learning summary without changing maturity from mere lifecycle volume.
+- Outcome Performance now requires five attributable outcomes; 1–4 remain insufficient evidence.
+- Verification: validation loop 50, OS contracts 25, snapshot 27, registries 28; typecheck and diff checks clean.
+- Runtime `.leadlens` files remain excluded. No provider, ranking, report, Admin, authentication, baseline or trend work was performed.
+- Next authorized block: Block 5 Admin Intelligence Command Center. Not started.

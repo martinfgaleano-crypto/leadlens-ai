@@ -1,7 +1,29 @@
 # LeadLens Intelligence OS — Checkpoint
 
 ## Current block
-**Block 3 — Intelligence Output and Pattern Registry — DONE.** (Blocks 0–2 below.)
+**Block 4 — Validation and Learning Loop — DONE.** (Blocks 0–3 below.)
+
+## Block 4 — DONE (durable validation + conservative learning)
+
+- **Targeted reuse audit:** migrations 023/031/038/039 and `opportunity_feedback` remain useful for aggregate feedback/outcome vocabulary, but cannot safely represent immutable IntelligenceOutput snapshots, correction history, ordered transitions, action linkage, attribution limitations or learning implications. Legacy feedback is adapted only with an explicit known `output_id`; all other rows remain honestly unlinked.
+- **Pure lifecycle (`validation-lifecycle.ts`):** centralized ordered state graph for `unreviewed → review/correction → client relevance → action → outcome`; invalid shortcuts throw. Original outputs are cloned and never overwritten. Reviews retain reviewer/role, original and reviewed statements, correction history, confidence/evidence/relevance/safety judgments, notes, timestamps and methodology version.
+- **Semantic separation:** factual review and client relevance are independent. Commercial actions (`research/save/contact/response/meeting/proposal`) are separate from attributed outcomes. `client_rejected` never becomes a negative commercial outcome and `no_outcome` never becomes refuted.
+- **Attribution and learning safety:** every outcome requires a linked action, bounded attribution confidence and at least one attribution limitation. Learning implications require a linked outcome, remain `observation|shadow|human_reviewed`, require approval for human-reviewed mode and are structurally fixed to `ranking_impact:"off"`. One outcome never creates/promotes a pattern.
+- **Report eligibility:** defaults to `internal_only`; human approval alone produces at most `review_required`. Client relevance plus evidence-quality and customer-safety judgments are required for a customer-safe projection. Nothing is automatically published.
+- **Persistence (`041_intelligence_validation_loop.sql`):** narrowly justified append-only tables for validations, review history, actions, outcomes and learning implications. UUID primary keys, tenant/client scope, immutable JSON snapshots, idempotency uniqueness, linkage FKs and checks. RLS is enabled with no authenticated policies: only trusted server services can read/write. Migration is created but **not applied** in this block.
+- **Server repository (`validation-store.ts`):** browser input cannot supply tenant/actor identity; server context injects it. Writes preserve idempotency keys and complete attribution snapshots. No API/UI was added.
+- **Snapshot integration:** deterministic `validation_summary` exposes review/correction/relevance/action/outcome/expiration counts, honest coverage measurements, implication counts and lifecycle bottleneck. Learning implications are projected with ranking off. Empty data yields `no_observations`/`not_measured`, never a fabricated zero.
+- **Outcome anti-inflation:** `Outcome Performance` now needs at least **5 attributable non-`no_outcome` outcomes**. Samples 1–4 are `insufficient_evidence`; zero remains `not_measured`.
+- **Verification:** validation loop **50/50**, OS contracts **25/25**, snapshot **27/27**, registries **28/28**; `npx tsc --noEmit` and `git diff --check` pass.
+- **Production impact:** no provider calls, ranking/scoring changes, Admin/UI/auth/report changes, historical trends or baseline work. Current real six outputs remain unreviewed and internal.
+
+## Next block
+
+**Block 5 — Admin Intelligence Command Center**, consuming these read-only projections and server-mediated review services. It has not been started.
+
+### Exact next prompt
+
+> Continue LeadLens from `LEADLENS_INTELLIGENCE_OS_CHECKPOINT.md` after committed Block 4. Execute exactly **Intelligence OS Block 5 — Admin Intelligence Command Center**. Build an authenticated, read-first Admin surface over the existing snapshot, output registry, pattern registry and validation summaries; expose honest measured/unmeasured states, lifecycle bottlenecks, evidence/counterevidence and server-mediated human review actions. Do not call providers, modify ranking, auto-promote patterns, auto-publish customer outputs, fabricate historical trends or Intelligence Lift, change Admin authentication, or apply migration 041 without explicit authorization. Add authorization, tenant-isolation, rendering and honesty tests; update both checkpoints, commit, and stop before any later block.
 
 ## Block 3 — DONE (provider-free output + pattern registries)
 
@@ -16,11 +38,11 @@
 - **Tests:** `test:intelligence-registries` **28 passed**. Regressions green: OS contracts 24, snapshot 26, learner 33/33, Market-to-Account 17, staged pipeline 22, segment universe 21. `tsc --noEmit` clean.
 - **Production/ranking/report impact: zero.** No provider calls, no UI changes, no customer report changes, no selector/scorer imports, no Admin/auth changes.
 
-## Next block
+## Historical next block after Block 3
 
 **Block 4 — Validation and Learning Loop.** Link an `IntelligenceOutput` to human review, correction, client relevance, action and commercial outcome using existing feedback/outcome schemas. Keep ranking off and do not redesign Admin in that block.
 
-### Exact next prompt
+### Historical exact next prompt for Block 4
 
 > Continue LeadLens from `LEADLENS_INTELLIGENCE_OS_CHECKPOINT.md` after Block 3. Execute exactly **Intelligence OS Block 4 — Validation and Learning Loop**. Reuse existing `IntelligenceValidation`, `IntelligenceOutcome`, `opportunity_feedback`, learned-preference and migration-039 outcome contracts to build a deterministic, tenant-safe output→review→correction→client relevance→action→commercial outcome→learning projection. Do not auto-promote patterns, do not change ranking, reports, Admin authentication or Admin UI, do not call providers, and do not claim outcome performance without real outcomes. Add targeted honesty/idempotency tests, integrate only the validation/outcome summaries needed by the snapshot, document the persistence decision narrowly, update both checkpoints, commit, and stop before Block 5 Admin Command Center.
 
@@ -102,6 +124,7 @@ Preserved: `preference-learner` + `shadow-preference` never touch ranking; UI sh
 > Continue the LeadLens Intelligence OS from `LEADLENS_INTELLIGENCE_OS_CHECKPOINT.md` (commit at Block 2). Execute **Block 3 only — Output & Pattern Registry**: build typed adapters that turn `learned_preferences` into observation/shadow `IntelligencePattern`s (ranking impact off, sample-gated by MIN_PATTERN_SAMPLE) and Market-to-Account/evidence artifacts into `IntelligenceOutput`s with strict fact/signal/inference/hypothesis/recommendation separation — never fabricating outputs from empty data, never marking a generated recommendation validated, never letting a pattern affect production ranking. Wire the registries into the snapshot's `outputs`/`patterns`. Add targeted tests (empty⇒empty, sample floor, claim separation, no ranking impact). Typecheck, commit, update the checkpoint, and stop after Block 3. Do not begin the validation loop or Admin UI.
 
 ## Latest commit
+`dc35ca1` — Intelligence OS Block 3: output + pattern registries (Block 4 base).
 `92a8840` — Intelligence OS Block 2: deterministic snapshot engine.
 `45c3bef` — Intelligence OS Block 1: canonical domain contracts + honesty guards.
 `23f684d` — Intelligence OS Block 0: directed audit + intelligence/data map (on `17a0dbf`).
