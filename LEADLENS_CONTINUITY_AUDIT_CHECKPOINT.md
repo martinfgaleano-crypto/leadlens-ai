@@ -104,13 +104,13 @@ Functional gaps that prevent the intelligence objective:
 
 ## 12. Current Intelligence OS block
 
-Blocks 0, 1, and 2 are verified complete. Block 3 has not started.
+Blocks 0, 1, 2, and 3 are verified complete. Block 4 has not started.
 
 Current honest snapshot:
 
 - maturity: `structured_knowledge`;
 - readiness: `brief_ready`;
-- outputs: 0;
+- outputs: 6 from the latest real artifact;
 - patterns: 0;
 - outcomes: 0;
 - baseline: none;
@@ -206,15 +206,15 @@ Risk:
 
 ## 20. Recommended next block
 
-**Intelligence OS Block 3 — Intelligence Output and Pattern Registry.**
+**Intelligence OS Block 4 — Validation and Learning Loop.**
 
-Objective: adapt real Market-to-Account evidence and learned preferences into honest typed registries and wire them into the snapshot.
+Objective: connect generated Intelligence Outputs to human review, corrections, client relevance, actions and real commercial outcomes without affecting ranking.
 
-Prerequisites: this checkpoint, no provider calls, empty→empty, sample/confidence gates, claim separation, ranking off.
+Prerequisites: Block 3 registries, existing validation/outcome contracts, migration 039 vocabulary, tenant-safe linkage, ranking off.
 
-Likely files: new `lib/intelligence/*registry*.ts` adapters, `snapshot-loader.ts`, narrow snapshot input wiring, fixture tests.
+Likely files: a narrow validation/learning projection under `lib/intelligence/`, snapshot input/summary wiring, fixture tests; persistence only if human review history cannot be represented safely otherwise.
 
-Success: deterministic registries, no fabrication, no validated generated recommendations, sample-gated patterns, no ranking impact, related tests/typecheck green.
+Success: deterministic output→validation→outcome linkage; no validation without evidence; no outcome-performance score without real outcomes; no automatic pattern promotion; related tests/typecheck green.
 
 Production/ranking impact: none.
 
@@ -224,9 +224,20 @@ Stop condition: registries are wired and tested; checkpoint updated; Block 4 and
 
 ## 21. Exact next prompt
 
-> Continue LeadLens from `LEADLENS_CONTINUITY_AUDIT_CHECKPOINT.md` at the audit commit. Execute exactly **Intelligence OS Block 3 — Intelligence Output and Pattern Registry**. Build deterministic typed adapters that transform real Market-to-Account/segment-universe evidence into `IntelligenceOutput` records and real `learned_preferences` into observation/shadow `IntelligencePattern` records. Preserve strict fact/signal/inference/hypothesis/recommendation separation; never convert a generated recommendation into a validated conclusion; require `MIN_PATTERN_SAMPLE` and confidence gates; keep `ranking_impact: "off"`; empty source data must produce empty registries; do not hardcode Amor de Gea except as a fixture/artifact input; do not call providers; do not modify ranking, reports, Admin auth, Admin UI, Vault behavior, billing, or customer flows. Wire supported outputs/patterns into the Intelligence Snapshot, add targeted determinism and honesty tests, run the related OS/snapshot/learner/Market-to-Account suites plus typecheck, update `LEADLENS_INTELLIGENCE_OS_CHECKPOINT.md`, commit, and stop. Do not begin Block 4 validation/outcome learning or Block 5 Admin Command Center.
+> Continue LeadLens from `LEADLENS_CONTINUITY_AUDIT_CHECKPOINT.md` after Block 3. Execute exactly **Intelligence OS Block 4 — Validation and Learning Loop**. Reuse existing `IntelligenceValidation`, `IntelligenceOutcome`, `opportunity_feedback`, learned-preference and migration-039 outcome contracts to build a deterministic, tenant-safe output→review→correction→client relevance→action→commercial outcome→learning projection. Do not auto-promote patterns, do not change ranking, reports, Admin authentication or Admin UI, do not call providers, and do not claim outcome performance without real outcomes. Add targeted honesty/idempotency tests, integrate only the validation/outcome summaries needed by the snapshot, document the persistence decision narrowly, update both checkpoints, commit, and stop before Block 5 Admin Command Center.
 
 ## 22. Stop condition
 
-Audit complete when both audit documents are committed. Do not begin Block 3 in this task.
+Block 3 is complete when registry tests and related regressions pass, checkpoints are committed, and Block 4 has not begun.
 
+## 23. Post-audit Block 3 completion
+
+- Output Registry: implemented in `lib/intelligence/output-registry.ts`.
+- Pattern Registry: implemented in `lib/intelligence/pattern-registry.ts`.
+- Current real artifact: 6 supported, unreviewed, non-report-eligible outputs.
+- Current real `learned_preferences`: 0 rows; therefore 0 real patterns, honestly.
+- Insufficient-sample behavior: implemented and fixture-exercised; no absent-data fabrication.
+- Snapshot: includes registries and deterministic summary without maturity inflation.
+- Persistence: deferred; no migration.
+- Ranking/report/Admin/auth/customer behavior: unchanged.
+- Targeted tests: registries 28, OS contracts 24, snapshot 26, learner 33, Market-to-Account 17, pipeline 22, segment universe 21; typecheck passed.

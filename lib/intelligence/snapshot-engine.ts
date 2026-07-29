@@ -17,13 +17,14 @@
 import {
   OS_CONTRACTS_VERSION, measured, unmeasured, isMeasured,
   deriveOutcomePerformance, deriveIntelligenceLift, normalizePatternState,
-  validateMeasurement, validateCapabilityAssessment, validateReadiness, serializeIntelligence,
+  validateMeasurement, validateCapabilityAssessment, validateOutputHonesty, validateReadiness, serializeIntelligence,
   type IntelligenceScope, type IntelligenceSnapshot, type IntelligenceMaturityDimension,
   type IntelligenceMaturityIndex, type IntelligenceCapabilityAssessment, type MaturityDimensionId,
   type IntelligenceMaturityLevel, type MeasurementResult, type IntelligenceGap, type GapSeverity,
   type NextBestIntelligenceAction, type IntelligenceActionType, type ReportReadinessAssessment,
   type IntelligenceSystemDiagnosis, type IntelligenceOutcome, type BaselineType, type OperationalMode,
   type ImpactLevel, type IntelligenceEvidenceReference, type ReadinessBlocker, type Violation,
+  type IntelligenceOutput, type IntelligencePattern, type IntelligenceRegistrySummary,
 } from "./os-contracts";
 
 export const INTELLIGENCE_SNAPSHOT_METHODOLOGY_VERSION = "snapshot-methodology-v1";
@@ -117,6 +118,8 @@ export interface SnapshotInput {
   knowledge: SnapshotKnowledgeSignals;
   evidence: SnapshotEvidenceSignals | null;
   learner: SnapshotLearnerSignals;
+  outputs?: IntelligenceOutput[];
+  patterns?: IntelligencePattern[];
   baseline: BaselineType | null;
   snapshots_persisted: boolean;
   ml_tables_available: boolean;
@@ -398,6 +401,30 @@ function buildDiagnosis(level: IntelligenceMaturityLevel | null, caps: Intellige
   };
 }
 
+function buildRegistrySummary(outputs: IntelligenceOutput[], patterns: IntelligencePattern[]): IntelligenceRegistrySummary {
+  const count = <T extends string>(values: T[]): Partial<Record<T, number>> => {
+    const result: Partial<Record<T, number>> = {};
+    for (const value of values) result[value] = (result[value] ?? 0) + 1;
+    return result;
+  };
+  const strongest = [...outputs].sort((a, b) => b.confidence - a.confidence || a.id.localeCompare(b.id))[0] ?? null;
+  const insufficient = patterns.filter((p) => p.state === "insufficient_sample").length;
+  return {
+    output_count: outputs.length,
+    outputs_by_type: count(outputs.map((o) => o.type)),
+    outputs_by_validation_state: count(outputs.map((o) => o.validation_state)),
+    outputs_by_report_eligibility: count(outputs.map((o) => o.report_eligibility)),
+    pattern_count: patterns.length,
+    patterns_by_state: count(patterns.map((p) => p.state)),
+    strongest_supported_output_id: strongest?.id ?? null,
+    primary_pattern_limitation: patterns.length === 0
+      ? "No learned-preference records were supplied; no pattern was fabricated."
+      : insufficient > 0
+        ? `${insufficient} pattern(s) remain below MIN_PATTERN_SAMPLE.`
+        : "Patterns remain observation-only pending human review and outcomes.",
+  };
+}
+
 // ── Assembler ────────────────────────────────────────────────────────────────
 export function buildIntelligenceSnapshot(input: SnapshotInput): IntelligenceSnapshot {
   const dims = buildDimensions(input);
@@ -407,6 +434,8 @@ export function buildIntelligenceSnapshot(input: SnapshotInput): IntelligenceSna
   const actions = buildActions(gaps, input);
   const readiness = buildReadiness(input, dims, gaps);
   const diagnosis = buildDiagnosis(maturity.level, caps, gaps, actions, readiness);
+  const outputs = [...(input.outputs ?? [])].sort((a, b) => a.id.localeCompare(b.id));
+  const patterns = [...(input.patterns ?? [])].sort((a, b) => a.id.localeCompare(b.id));
 
   const index: IntelligenceMaturityIndex = {
     version: OS_CONTRACTS_VERSION, methodology_version: INTELLIGENCE_SNAPSHOT_METHODOLOGY_VERSION,
@@ -424,7 +453,8 @@ export function buildIntelligenceSnapshot(input: SnapshotInput): IntelligenceSna
     id: `snapshot:${describeScope(input.scope)}:${input.source_data_cutoff}`,
     scope: input.scope, methodology_version: INTELLIGENCE_SNAPSHOT_METHODOLOGY_VERSION,
     calculated_at: input.now, source_data_cutoff: input.source_data_cutoff,
-    index, capability_assessments: caps, outputs: [], patterns: [], validations: [],
+    index, capability_assessments: caps, outputs, patterns,
+    registry_summary: buildRegistrySummary(outputs, patterns), validations: [],
     gaps, actions, readiness,
     lift: deriveIntelligenceLift(input.baseline, INTELLIGENCE_SNAPSHOT_METHODOLOGY_VERSION, input.now),
     diagnosis, previous_snapshot_id: input.previous?.id ?? null,
@@ -446,9 +476,18 @@ export function validateSnapshot(s: IntelligenceSnapshot): Violation[] {
   for (const d of s.index.dimensions) v.push(...validateMeasurement(d.measurement));
   v.push(...validateMeasurement(s.index.overall));
   for (const c of s.capability_assessments) v.push(...validateCapabilityAssessment(c));
+  for (const o of s.outputs) {
+    v.push(...validateMeasurement(o.novelty), ...validateMeasurement(o.actionability), ...validateMeasurement(o.commercial_relevance));
+    v.push(...validateOutputHonesty(o));
+    if (o.ranking_impact !== "none") v.push({ code: "output_ranking_impact", message: o.id });
+  }
   v.push(...validateReadiness(s.readiness));
-  // Patterns (none yet) would be sample-gated here.
-  for (const p of s.patterns) if (normalizePatternState(p) !== p.state) v.push({ code: "pattern_over_promoted", message: p.id });
+  for (const p of s.patterns) {
+    v.push(...validateMeasurement(p.confidence));
+    if (normalizePatternState(p) !== p.state) v.push({ code: "pattern_over_promoted", message: p.id });
+    if (p.ranking_impact !== "off" || p.report_impact !== "off" || p.mode === "production")
+      v.push({ code: "pattern_unsafe_impact", message: p.id });
+  }
   return v;
 }
 

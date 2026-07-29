@@ -10,6 +10,8 @@ import {
   buildIntelligenceSnapshot, type SnapshotInput, type SnapshotArtifactSignals,
 } from "./snapshot-engine";
 import type { IntelligenceScope, IntelligenceSnapshot, IntelligenceOutcome } from "./os-contracts";
+import { assembleArtifactOutputs, type ArtifactOutputSource } from "./output-registry";
+import { adaptLearnedPreferences, type LearnedPreferenceSource } from "./pattern-registry";
 
 const PILOT_DIR = "ml/data/pilot-amor-de-gea";
 
@@ -45,11 +47,59 @@ export async function loadLatestArtifactSignals(root = process.cwd()): Promise<{
   } catch { return { signals: null, cutoff: null }; }
 }
 
+/** Load the richer, still provider-free projection required by the output
+ * registry. Missing fields stay empty; no conclusion is fabricated. */
+export async function loadLatestArtifactOutputSource(
+  root = process.cwd(),
+  scope: IntelligenceScope = { kind: "global" },
+): Promise<{ source: ArtifactOutputSource | null; cutoff: string | null }> {
+  try {
+    const dir = path.join(root, PILOT_DIR);
+    const runs = (await fs.readdir(dir)).filter((d) => /\d{4}-\d{2}-\d{2}T/.test(d)).sort();
+    const latest = runs[runs.length - 1];
+    if (!latest) return { source: null, cutoff: null };
+    const su = JSON.parse(await fs.readFile(path.join(dir, latest, "segment-universe.json"), "utf8"));
+    const staged = JSON.parse(await fs.readFile(path.join(dir, latest, "staged-pipeline.json"), "utf8"));
+    const shortlist = Array.isArray(staged.shortlist) ? staged.shortlist as Array<{ company?: unknown }> : [];
+    const versions = [String(staged.version ?? "market-to-account-pipeline-v1"), "segment-universe-v1"];
+    return {
+      cutoff: latest,
+      source: {
+        source_id: `artifact:${latest}`,
+        scope,
+        created_at: latest,
+        market: null,
+        client_id: "amor-de-gea",
+        segment_distribution: su.segment_distribution ?? {},
+        raw_candidates: su.raw_candidate_count ?? 0,
+        deduplicated_candidates: su.deduped_company_count ?? 0,
+        verified: su.verified_company_count ?? 0,
+        probable: su.probable_company_count ?? 0,
+        excluded: su.excluded_company_count ?? 0,
+        shortlist_accounts: shortlist.map((a) => String(a.company ?? "")).filter(Boolean),
+        timing_count: staged.signal_coverage?.with_timing ?? 0,
+        evidence_corroborated: staged.evidence_coverage?.corroborated ?? 0,
+        evidence_total: staged.evidence_coverage?.total_shortlist ?? 0,
+        deep_research_complete: staged.deep_research_status?.complete ?? 0,
+        capability_versions: versions,
+      },
+    };
+  } catch { return { source: null, cutoff: null }; }
+}
+
 /** Assemble a live snapshot from real files. DB-only signals stay honest nulls
  *  when unavailable (⇒ not_measured/not_instrumented, never fabricated). */
-export async function loadSnapshotInputs(opts: { scope?: IntelligenceScope; now?: string; root?: string } = {}): Promise<SnapshotInput> {
+export async function loadSnapshotInputs(opts: {
+  scope?: IntelligenceScope;
+  now?: string;
+  root?: string;
+  learned_preferences?: LearnedPreferenceSource[];
+} = {}): Promise<SnapshotInput> {
   const now = opts.now ?? new Date().toISOString();
   const { signals, cutoff } = await loadLatestArtifactSignals(opts.root);
+  const { source } = await loadLatestArtifactOutputSource(opts.root, opts.scope ?? { kind: "global" });
+  const outputs = assembleArtifactOutputs(source);
+  const patterns = adaptLearnedPreferences(opts.learned_preferences ?? []);
   const outcomes: IntelligenceOutcome[] = []; // 039 outcomes empty in current data
   return {
     scope: opts.scope ?? { kind: "global" },
@@ -60,7 +110,12 @@ export async function loadSnapshotInputs(opts: { scope?: IntelligenceScope; now?
     feedback: { total_events: 0, rated_events: 0, useful_events: 0, corrections: 0, outcomes },
     knowledge: { vault_companies: null, verified_signals: null, sources: null, distinct_regions: 0, distinct_industries: 0, account_memory_records: null },
     evidence: null,
-    learner: { preference_count: 0, validated_count: 0, max_sample_size: 0 },
+    learner: {
+      preference_count: patterns.length,
+      validated_count: 0,
+      max_sample_size: patterns.reduce((m, p) => Math.max(m, p.sample_size), 0),
+    },
+    outputs, patterns,
     baseline: null,
     snapshots_persisted: false,
     ml_tables_available: false,

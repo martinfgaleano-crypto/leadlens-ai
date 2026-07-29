@@ -221,7 +221,13 @@ export interface IntelligenceOutput {
   type: IntelligenceOutputType;
   claim: IntelligenceClaim;
   summary: string;
+  affected_market: string | null;
+  affected_segments: string[];
+  affected_accounts: string[];
+  client_id: string | null;
   reasoning_summary: string;
+  supporting_facts: IntelligenceClaim[];
+  supporting_signals: IntelligenceClaim[];
   supporting_evidence: IntelligenceEvidenceReference[];
   counterevidence: IntelligenceEvidenceReference[];
   alternative_explanations: string[];
@@ -280,9 +286,13 @@ export interface IntelligencePattern {
   commercial_meaning: string;
   recommended_response: string;
   ranking_impact: "off";           // observation/shadow patterns never affect ranking
+  report_impact: "off";            // Block 3 patterns are never customer-facing automatically
   mode: OperationalMode;
   markets: string[];
   segments: string[];
+  accounts: string[];
+  time_range: { from: string | null; to: string | null };
+  basis: string;
   created_at: string;
   last_observed: string | null;
   review_by: string | null;
@@ -436,6 +446,7 @@ export interface IntelligenceSnapshot {
   capability_assessments: IntelligenceCapabilityAssessment[];
   outputs: IntelligenceOutput[];
   patterns: IntelligencePattern[];
+  registry_summary: IntelligenceRegistrySummary;
   validations: IntelligenceValidation[];
   gaps: IntelligenceGap[];
   actions: NextBestIntelligenceAction[];
@@ -443,6 +454,17 @@ export interface IntelligenceSnapshot {
   lift: IntelligenceLiftAssessment;
   diagnosis: IntelligenceSystemDiagnosis;
   previous_snapshot_id: string | null;
+}
+
+export interface IntelligenceRegistrySummary {
+  output_count: number;
+  outputs_by_type: Partial<Record<IntelligenceOutputType, number>>;
+  outputs_by_validation_state: Partial<Record<ValidationState, number>>;
+  outputs_by_report_eligibility: Partial<Record<IntelligenceOutput["report_eligibility"], number>>;
+  pattern_count: number;
+  patterns_by_state: Partial<Record<PatternState, number>>;
+  strongest_supported_output_id: string | null;
+  primary_pattern_limitation: string | null;
 }
 
 // ═══ Honesty guards (runtime-detectable invariants) ══════════════════════════
@@ -493,6 +515,21 @@ export function isValidated(o: Pick<IntelligenceOutput, "validation_state">): bo
 /** A freshly generated output must not present itself as validated. */
 export function validateOutputHonesty(o: IntelligenceOutput): Violation[] {
   const v: Violation[] = [];
+  if (o.claim.kind === "fact" && o.claim.evidence.length === 0) {
+    v.push({ code: "fact_without_evidence", message: "fact requires direct evidence" });
+  }
+  if (o.claim.kind === "validated_conclusion" && (!o.claim.validation_ref || !isValidated(o))) {
+    v.push({ code: "validated_conclusion_without_validation", message: "validated conclusion requires an actual validation state and reference" });
+  }
+  if (o.supporting_facts.some((c) => c.kind !== "fact") || o.supporting_signals.some((c) => c.kind !== "signal")) {
+    v.push({ code: "claim_kind_collapsed", message: "supporting facts/signals must preserve their semantic kinds" });
+  }
+  if (o.type === "timing_interpretation" && !o.supporting_evidence.some((e) => e.dated && (e.kind === "signal" || e.kind === "fact"))) {
+    v.push({ code: "timing_without_dated_evidence", message: "timing interpretation requires dated fact/signal evidence" });
+  }
+  if (o.report_eligibility === "eligible" && o.human_review_state === "unreviewed") {
+    v.push({ code: "unreviewed_output_eligible", message: "unreviewed output cannot be customer-facing" });
+  }
   if (o.claim.kind === "recommendation" && o.report_eligibility === "eligible" && !isValidated(o)) {
     v.push({ code: "unvalidated_recommendation_eligible", message: "recommendation marked report-eligible without validation" });
   }

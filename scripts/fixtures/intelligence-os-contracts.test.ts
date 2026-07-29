@@ -67,7 +67,9 @@ t("7b clean production passes", validateCapabilityAssessment(baseAssessment()).l
 const rec: IntelligenceClaim = { id: "c1", kind: "recommendation", statement: "Prioritize segment X", action: "outreach", rationale: "fit", requires_validation: true, evidence: [] };
 const genOutput = (over: Partial<IntelligenceOutput> = {}): IntelligenceOutput => ({
   id: "o1", scope: { kind: "tenant", tenant_id: "t1" }, type: "client_specific_recommendation", claim: rec,
-  summary: "s", reasoning_summary: "r", supporting_evidence: [], counterevidence: [], alternative_explanations: [],
+  summary: "s", affected_market: null, affected_segments: [], affected_accounts: [], client_id: null,
+  reasoning_summary: "r", supporting_facts: [], supporting_signals: [],
+  supporting_evidence: [], counterevidence: [], alternative_explanations: [],
   unresolved_questions: [], confidence: 0.5, confidence_method: "heuristic", novelty: unmeasured("not_measured", "x"),
   actionability: unmeasured("not_measured", "x"), commercial_relevance: unmeasured("not_measured", "x"),
   validation_state: "unreviewed", human_review_state: "unreviewed", outcome_state: "none", ranking_impact: "none",
