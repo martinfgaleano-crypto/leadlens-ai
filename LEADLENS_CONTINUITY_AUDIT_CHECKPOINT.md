@@ -104,7 +104,7 @@ Functional gaps that prevent the intelligence objective:
 
 ## 12. Current Intelligence OS block
 
-Blocks 0, 1, 2, 3, and 4 are verified complete. Block 5 has not started.
+Blocks 0, 1, 2, 3, 4, and 5 are verified complete. Block 6 has not started.
 
 Current honest snapshot:
 
@@ -257,3 +257,18 @@ Block 3 is complete when registry tests and related regressions pass, checkpoint
 - Verification: validation loop 50, OS contracts 25, snapshot 27, registries 28; typecheck and diff checks clean.
 - Runtime `.leadlens` files remain excluded. No provider, ranking, report, Admin, authentication, baseline or trend work was performed.
 - Next authorized block: Block 5 Admin Intelligence Command Center. Not started.
+
+## 25. Post-audit Block 5 completion
+
+- Replaced the feedback-first `/admin/intelligence` page with the authenticated LeadLens Intelligence Command Center.
+- Added one secure server-side Admin view model and one protected, no-store API; full, partial and DB-unavailable modes never fabricate zero values.
+- Connected the deterministic snapshot, 27 capability assessments, six real outputs, zero real patterns, migration-041 validation lifecycles, feedback observability, gaps, actions, readiness, evidence and knowledge inventory.
+- Added eight hash-preserving views: Overview, Capabilities, Outputs, Patterns, Validation, Gaps & Actions, Readiness and Evidence.
+- Current live local QA state: structured knowledge, 50% maturity confidence, 2/8 measured dimensions, brief-ready, six unreviewed/internal outputs, zero patterns, zero reviews/actions/outcomes, Evidence Integrity 0 because corroboration is 0/8.
+- Migration 041 query succeeded in the current environment. No lifecycle rows existed; the empty validation funnel is therefore real and expected.
+- Existing Growth Observatory, Review Queue, Source Access, Source Review and feedback learner remain available.
+- Command Center tests 36, Admin Auth 48, login routing 57, OS contracts 25, snapshot 27, registries 28, validation 50, Market-to-Account 17, pipeline 22 and segment universe 21 all passed. Production-equivalent Next build passed.
+- Authenticated browser QA completed locally with an ephemeral signed test session, not production credentials: all tabs rendered, no infinite loading, console clean, and no horizontal page overflow at 1280 px or 900 px.
+- Captures: `artifacts/block5-command-center/01-overview.png` through `08-evidence.png`.
+- No production deployment, provider call, LLM render call, ranking change, customer-report change, auth modification, baseline or historical persistence.
+- Next recommended block: Block 6 Self-knowledge and Improvement Queue Governance. Not started.

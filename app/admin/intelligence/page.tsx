@@ -1,188 +1,335 @@
 "use client";
-// Customer Intelligence — observation-mode admin center. Shows structured
-// feedback observability and learner output. Prominent, honest framing:
-// nothing here affects rankings in this version.
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import AdminLayout from "../_components/AdminLayout";
 import { adminFetch } from "@/lib/admin/admin-client";
+import type { AdminIntelligenceViewModel } from "@/lib/intelligence/admin-view-model";
+import type {
+  IntelligenceCapabilityAssessment, IntelligenceGap, IntelligenceOutput,
+  IntelligencePattern, MeasurementResult, NextBestIntelligenceAction,
+} from "@/lib/intelligence/os-contracts";
+import styles from "./page.module.css";
 
-const S = {
-  h1: { fontSize: "1.4rem", fontWeight: 800, color: "#0f172a", marginBottom: "0.25rem" } as React.CSSProperties,
-  sub: { color: "#64748b", fontSize: "0.85rem", marginBottom: "1rem" } as React.CSSProperties,
-  banner: { background: "#fffbeb", border: "1px solid #fde68a", color: "#92400e", borderRadius: "0.6rem", padding: "0.7rem 1rem", fontSize: "0.82rem", fontWeight: 600, marginBottom: "1.25rem" } as React.CSSProperties,
-  card: { background: "#fff", border: "1px solid #e2e8f0", borderRadius: "0.75rem", padding: "1.25rem", marginBottom: "1.25rem" } as React.CSSProperties,
-  grid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "0.75rem" } as React.CSSProperties,
-  metric: { background: "#f8fafc", border: "1px solid #f1f5f9", borderRadius: "0.6rem", padding: "0.75rem", textAlign: "center" as const },
-  btn: { background: "#0f172a", color: "#fff", border: "none", borderRadius: "0.5rem", padding: "0.5rem 1rem", fontSize: "0.82rem", fontWeight: 600, cursor: "pointer" } as React.CSSProperties,
-  btnSm: { background: "#fff", border: "1px solid #cbd5e1", borderRadius: "0.4rem", padding: "0.2rem 0.6rem", fontSize: "0.7rem", fontWeight: 600, cursor: "pointer", color: "#334155" } as React.CSSProperties,
-  pill: (bg: string, fg: string) => ({ display: "inline-block", background: bg, color: fg, borderRadius: "999px", padding: "0.1rem 0.55rem", fontSize: "0.66rem", fontWeight: 700 }) as React.CSSProperties,
+const TABS = [
+  ["overview", "Overview"], ["capabilities", "Capabilities"], ["outputs", "Outputs"],
+  ["patterns", "Patterns"], ["validation", "Validation"], ["gaps", "Gaps & Actions"],
+  ["readiness", "Readiness"], ["evidence", "Evidence"],
+] as const;
+type Tab = (typeof TABS)[number][0];
+const LABELS: Record<string, string> = {
+  analytical_depth: "Analytical Depth", differentiation: "Differentiation",
+  evidence_integrity: "Evidence Integrity", commercial_relevance: "Commercial Relevance",
+  client_specificity: "Client Specificity", temporal_intelligence: "Temporal Intelligence",
+  learning_maturity: "Learning Maturity", outcome_performance: "Outcome Performance",
 };
+const words = (value: string | null | undefined) => value ? value.replace(/_/g, " ") : "Unavailable";
+const pct = (value: number | null) => value === null ? "Not measured" : `${Math.round(value * 100)}%`;
+const stateTone = (state: string) => state === "measured" || state === "production" || state === "confirmed"
+  ? styles.good : state.includes("not_") || state === "blocked" || state === "refuted"
+    ? styles.bad : styles.warn;
 
-type Pref = {
-  id: string; scope: string; monitor_id: string | null; feature_key: string;
-  direction: string; status: string; strength: number | null; confidence: number | null;
-  effective_confidence: number | null; observations: number; positive_obs: number;
-  neutral_obs: number; negative_obs: number; distinct_report_count: number;
-  last_observed_at: string | null; explanation: string | null; version: number;
-};
+function StatePill({ value }: { value: string }) {
+  return <span className={`${styles.pill} ${stateTone(value)}`}>{words(value)}</span>;
+}
 
-type Overview = {
-  migration_missing?: boolean;
-  message?: string;
-  metrics?: {
-    total_events: number; with_reason_codes: number; with_snapshot: number; with_versions: number;
-    sentiment: { positive: number; neutral: number; negative: number; none: number };
-    top_reason_codes: [string, number][];
-    already_known_pct: number; bad_explanation_pct: number; incorrect_information_pct: number;
-  };
-  preferences?: Pref[];
-};
+function Measurement({ value, compact = false }: { value: MeasurementResult; compact?: boolean }) {
+  return (
+    <div className={styles.measurement}>
+      <StatePill value={value.state} />
+      {value.state === "measured" ? (
+        <>
+          <strong className={compact ? styles.scoreSmall : styles.score}>{value.score}</strong>
+          <span className={styles.muted}>confidence {pct(value.confidence)} · n={value.sample_size}</span>
+        </>
+      ) : <span className={styles.muted}>{value.reason}{value.sample_size !== undefined ? ` · n=${value.sample_size}` : ""}</span>}
+    </div>
+  );
+}
 
-const STATUS_LABEL: Record<string, { label: string; bg: string; fg: string }> = {
-  inferred_weak: { label: "Emerging pattern", bg: "#eff6ff", fg: "#1e40af" },
-  inferred_validated: { label: "Validated pattern — observation only", bg: "#f0fdf4", fg: "#166534" },
-  explicit: { label: "Explicit", bg: "#f8fafc", fg: "#334155" },
-  frozen: { label: "Frozen", bg: "#f1f5f9", fg: "#475569" },
-  revoked: { label: "Revoked", bg: "#fef2f2", fg: "#991b1b" },
-};
+function EmptyState({ title, children }: { title: string; children: React.ReactNode }) {
+  return <div className={styles.empty}><strong>{title}</strong><p>{children}</p></div>;
+}
 
-export default function IntelligencePage() {
-  const [data, setData] = useState<Overview | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [running, setRunning] = useState(false);
-  const [runResult, setRunResult] = useState<string | null>(null);
-  const [busy, setBusy] = useState<string | null>(null);
+function Metric({ label, value, note }: { label: string; value: React.ReactNode; note?: string }) {
+  return <div className={styles.metric}><span>{label}</span><strong>{value}</strong>{note && <small>{note}</small>}</div>;
+}
 
-  const load = useCallback(async () => {
-    try {
-      const res = await adminFetch("/api/admin/intelligence/overview");
-      const d = await res.json();
-      if (!res.ok) { setError(d.error ?? `Load failed (${res.status})`); return; }
-      setData(d); setError(null);
-    } catch { setError("Network error."); }
-  }, []);
-  useEffect(() => { load(); }, [load]);
+function SectionHeader({ title, eyebrow, text }: { title: string; eyebrow?: string; text?: string }) {
+  return <header className={styles.sectionHeader}>{eyebrow && <span>{eyebrow}</span>}<h2>{title}</h2>{text && <p>{text}</p>}</header>;
+}
 
+function Overview({ model }: { model: AdminIntelligenceViewModel }) {
+  const { snapshot } = model;
+  return <>
+    <section className={styles.hero}>
+      <div>
+        <span className={styles.eyebrow}>LeadLens Intelligence Maturity</span>
+        <h1>{words(snapshot.index.level)}</h1>
+        <Measurement value={snapshot.index.overall} />
+        <p className={styles.diagnosis}>{snapshot.diagnosis.headline}</p>
+      </div>
+      <dl className={styles.heroFacts}>
+        <div><dt>Maturity confidence</dt><dd>{pct(snapshot.index.level_confidence)}</dd></div>
+        <div><dt>Strongest capability</dt><dd>{words(snapshot.diagnosis.strongest_capability)}</dd></div>
+        <div><dt>Weakest capability</dt><dd>{words(snapshot.diagnosis.weakest_capability)}</dd></div>
+        <div><dt>Primary bottleneck</dt><dd>{words(snapshot.diagnosis.top_bottleneck) ?? "None identified"}</dd></div>
+        <div><dt>Highest-leverage action</dt><dd>{words(snapshot.diagnosis.highest_leverage_action)}</dd></div>
+        <div><dt>Report readiness</dt><dd>{words(snapshot.readiness.readiness_level)}</dd></div>
+      </dl>
+      <footer>
+        <span>Calculated {new Date(snapshot.calculated_at).toLocaleString()}</span>
+        <span>Cutoff {snapshot.source_data_cutoff}</span>
+        <span>{snapshot.methodology_version}</span>
+      </footer>
+    </section>
+
+    <div className={styles.availability} role="status">
+      <strong>Data availability</strong><span>{model.availability.message}</span>
+      <StatePill value={`database ${model.availability.database}`} />
+      <StatePill value={`artifact ${model.availability.artifact}`} />
+      <StatePill value={`validation ${model.availability.validation_persistence}`} />
+    </div>
+
+    <SectionHeader eyebrow="Eight dimensions" title="Maturity scorecard" text="Scores appear only when the underlying dimension is genuinely measured." />
+    <div className={styles.dimensionGrid}>
+      {snapshot.index.dimensions.map((dimension) => (
+        <article className={styles.dimension} key={dimension.id}>
+          <div className={styles.rowBetween}><h3>{LABELS[dimension.id] ?? words(dimension.id)}</h3><span>{words(dimension.trend)}</span></div>
+          <Measurement value={dimension.measurement} />
+          {dimension.id === "differentiation" && dimension.measurement.state !== "measured" && <p>Baseline comparison has not been run.</p>}
+          {dimension.id === "outcome_performance" && dimension.measurement.state !== "measured" && <p>Fewer than five attributable outcomes are available.</p>}
+          {dimension.id === "evidence_integrity" && <p>{model.evidence.explanation}</p>}
+          <dl>
+            <div><dt>Evidence</dt><dd>{dimension.evidence[0]?.ref ?? "No supporting reference available"}</dd></div>
+            <div><dt>Principal limitation</dt><dd>{dimension.limitations[0] ?? "No recorded limitation"}</dd></div>
+            <div><dt>Next improvement</dt><dd>{dimension.next_improvement ?? "No next step recorded"}</dd></div>
+          </dl>
+        </article>
+      ))}
+    </div>
+
+    <div className={styles.twoCol}>
+      <section className={styles.panel}>
+        <SectionHeader eyebrow="Responsible claims" title="What LeadLens can claim today" />
+        {model.responsible_claims.length ? <ul className={styles.cleanList}>{model.responsible_claims.map((x) => <li key={x}>{x}</li>)}</ul>
+          : <EmptyState title="No validated claims available">Operational claims need exercised capabilities or supported outputs.</EmptyState>}
+      </section>
+      <section className={styles.panel}>
+        <SectionHeader eyebrow="System limitations" title="What LeadLens cannot responsibly claim yet" />
+        <ul className={styles.cleanList}>{model.unsupported_claims.map((x) => <li key={x}>{x}</li>)}</ul>
+      </section>
+    </div>
+
+    <section className={styles.panel}>
+      <SectionHeader eyebrow="Secondary inventory" title={model.knowledge.label} text={model.knowledge.disclaimer} />
+      <div className={styles.metricGrid}>
+        <Metric label="Verified companies" value={model.knowledge.verified_companies ?? "Unavailable"} />
+        <Metric label="Probable companies" value={model.knowledge.probable_companies ?? "Unavailable"} />
+        <Metric label="Excluded candidates" value={model.knowledge.excluded_candidates ?? "Unavailable"} />
+        <Metric label="Buyer segments" value={model.knowledge.buyer_segments ?? "Unavailable"} />
+        <Metric label="Markets represented" value={model.knowledge.markets_represented ?? "Unavailable"} />
+        <Metric label="Vault records" value={model.knowledge.vault_records ?? "Unavailable"} />
+        <Metric label="Account Memory" value={model.knowledge.account_memory_records ?? "Unavailable"} />
+        <Metric label="Latest artifact" value={model.knowledge.latest_run ?? "Unavailable"} />
+      </div>
+    </section>
+  </>;
+}
+
+function Capabilities({ capabilities }: { capabilities: IntelligenceCapabilityAssessment[] }) {
+  const [mode, setMode] = useState("all");
+  const [measurement, setMeasurement] = useState("all");
+  const [exercised, setExercised] = useState("all");
+  const filtered = capabilities.filter((cap) =>
+    (mode === "all" || cap.mode === mode) &&
+    (measurement === "all" || (measurement === "measured" ? cap.measurement_state === "measured" : cap.measurement_state !== "measured")) &&
+    (exercised === "all" || (exercised === "yes" ? Boolean(cap.last_exercised) : !cap.last_exercised)));
+  return <section>
+    <SectionHeader eyebrow={`${filtered.length} of ${capabilities.length}`} title="Capability map" text="Operational maturity, evidence and impact—without treating database volume as intelligence." />
+    <div className={styles.filters} aria-label="Capability filters">
+      <label>Mode<select value={mode} onChange={(e) => setMode(e.target.value)}><option value="all">All</option>{Array.from(new Set(capabilities.map((c) => c.mode))).map((x) => <option key={x}>{x}</option>)}</select></label>
+      <label>Measurement<select value={measurement} onChange={(e) => setMeasurement(e.target.value)}><option value="all">All</option><option value="measured">Measured</option><option value="unmeasured">Unmeasured</option></select></label>
+      <label>Exercised<select value={exercised} onChange={(e) => setExercised(e.target.value)}><option value="all">All</option><option value="yes">Exercised</option><option value="no">Not exercised</option></select></label>
+    </div>
+    <div className={styles.tableWrap}><table>
+      <thead><tr><th>Capability</th><th>Maturity</th><th>Mode</th><th>Measurement</th><th>Sample</th><th>Evidence</th><th>Impact</th><th>Last exercised</th></tr></thead>
+      <tbody>{filtered.map((cap) => <tr key={cap.capability_id}>
+        <td><details><summary>{words(cap.capability_id)}</summary><div className={styles.detail}>
+          <strong>Known limitations</strong><ul>{cap.limitations.map((x) => <li key={x}>{x}</li>)}</ul>
+          <strong>Failure modes</strong><ul>{cap.known_failure_modes.map((x) => <li key={x}>{x}</li>)}</ul>
+          <strong>Evidence</strong><ul>{cap.evidence.map((x) => <li key={x.id}>{x.kind}: {x.ref}</li>)}</ul>
+          <strong>Promotion criteria</strong><ul>{cap.promotion_criteria.map((x) => <li key={x}>{x}</li>)}</ul>
+          <p><strong>Next milestone:</strong> {cap.next_milestone ?? "Not defined"}</p>
+        </div></details></td>
+        <td>{words(cap.maturity_level)}</td><td><StatePill value={cap.mode} /></td><td><StatePill value={cap.measurement_state} /></td>
+        <td>{cap.sample_size}</td><td>{cap.evidence.length}</td><td>ranking {cap.ranking_impact}<br/>report {cap.report_impact}</td>
+        <td>{cap.last_exercised ? new Date(cap.last_exercised).toLocaleDateString() : "Never"}</td>
+      </tr>)}</tbody>
+    </table></div>
+  </section>;
+}
+
+function OutputCard({ output }: { output: IntelligenceOutput }) {
+  const claims = [output.claim.kind, ...output.supporting_facts.map((x) => x.kind), ...output.supporting_signals.map((x) => x.kind)];
+  return <article className={styles.output}>
+    <header><div><span className={styles.eyebrow}>{words(output.type)}</span><h3>{output.claim.statement}</h3></div><strong>{Math.round(output.confidence * 100)}%</strong></header>
+    <p>{output.summary}</p>
+    <div className={styles.pills}>{Array.from(new Set(claims)).map((x) => <StatePill key={x} value={x} />)}<StatePill value={output.validation_state}/><StatePill value={output.report_eligibility}/></div>
+    <dl className={styles.outputFacts}>
+      <div><dt>Market</dt><dd>{output.affected_market ?? "Unspecified"}</dd></div>
+      <div><dt>Segments</dt><dd>{output.affected_segments.join(", ") || "None"}</dd></div>
+      <div><dt>Accounts</dt><dd>{output.affected_accounts.length || "Market-level"}</dd></div>
+      <div><dt>Scope</dt><dd>{output.scope.kind}</dd></div>
+      <div><dt>Review</dt><dd>{words(output.human_review_state)}</dd></div>
+      <div><dt>Ranking impact</dt><dd>{output.ranking_impact}</dd></div>
+    </dl>
+    <div className={styles.measureRow}><Measurement compact value={output.novelty}/><Measurement compact value={output.actionability}/><Measurement compact value={output.commercial_relevance}/></div>
+    <details><summary>Reasoning, evidence and limitations</summary><div className={styles.detail}>
+      <p><strong>Reasoning:</strong> {output.reasoning_summary}</p>
+      <strong>Evidence</strong><ul>{output.supporting_evidence.map((x) => <li key={x.id}>{x.kind}: {x.ref}</li>)}</ul>
+      <strong>Counterevidence</strong><ul>{output.counterevidence.length ? output.counterevidence.map((x) => <li key={x.id}>{x.ref}</li>) : <li>None recorded</li>}</ul>
+      <strong>Alternative explanations</strong><ul>{output.alternative_explanations.map((x) => <li key={x}>{x}</li>)}</ul>
+      <strong>Unresolved questions</strong><ul>{output.unresolved_questions.map((x) => <li key={x}>{x}</li>)}</ul>
+    </div></details>
+  </article>;
+}
+
+function Outputs({ model }: { model: AdminIntelligenceViewModel }) {
+  const outputs = model.snapshot.outputs;
+  const [type, setType] = useState("all"), [validation, setValidation] = useState("all");
+  const filtered = outputs.filter((o) => (type === "all" || o.type === type) && (validation === "all" || o.validation_state === validation));
+  const v = model.snapshot.validation_summary;
+  return <section>
+    <SectionHeader eyebrow="Intelligence registry" title="Intelligence outputs" text="Generated conclusions remain distinct from validated conclusions and customer-safe content." />
+    <div className={styles.metricGrid}>
+      <Metric label="Total outputs" value={outputs.length}/><Metric label="Reviewed" value={v.reviewed_count}/><Metric label="Unreviewed" value={outputs.length-v.reviewed_count}/>
+      <Metric label="Customer-safe" value={outputs.filter((o) => o.report_eligibility === "eligible").length}/><Metric label="Internal-only" value={outputs.filter((o) => o.report_eligibility !== "eligible").length}/>
+      <Metric label="Confirmed" value={v.confirmed_count}/><Metric label="Refuted" value={v.refuted_count}/><Metric label="Acted upon" value={v.acted_upon_count}/>
+    </div>
+    <div className={styles.filters}><label>Output type<select value={type} onChange={(e) => setType(e.target.value)}><option value="all">All</option>{Array.from(new Set(outputs.map((o) => o.type))).map((x) => <option key={x}>{x}</option>)}</select></label>
+      <label>Validation<select value={validation} onChange={(e) => setValidation(e.target.value)}><option value="all">All</option>{Array.from(new Set(outputs.map((o) => o.validation_state))).map((x) => <option key={x}>{x}</option>)}</select></label></div>
+    <div className={styles.outputList}>{filtered.map((output) => <OutputCard key={output.id} output={output}/>)}</div>
+  </section>;
+}
+
+function Patterns({ model }: { model: AdminIntelligenceViewModel }) {
+  const patterns = model.snapshot.patterns;
+  return <section><SectionHeader eyebrow="Observation only" title="Pattern Observatory" text="Outputs never become patterns automatically; every pattern remains sample- and review-gated." />
+    {!patterns.length ? <EmptyState title="No valid patterns yet">{model.empty_states.patterns} Next: collect compatible, distinct observations and request human review.</EmptyState>
+      : <div className={styles.outputList}>{patterns.map((p: IntelligencePattern) => <article className={styles.output} key={p.id}><header><div><span className={styles.eyebrow}>{words(p.type)}</span><h3>{p.statement}</h3></div><StatePill value={p.state}/></header><p>{p.explanation}</p><div className={styles.metricGrid}><Metric label="Sample" value={`${p.sample_size}/${model.pattern_threshold}`}/><Metric label="Remaining" value={Math.max(0, model.pattern_threshold-p.sample_size)}/><Metric label="Mode" value={words(p.mode)}/><Metric label="Ranking" value={p.ranking_impact}/><Metric label="Report" value={p.report_impact}/></div><details><summary>Evidence and exceptions</summary><div className={styles.detail}><p>{p.commercial_meaning}</p><ul>{p.evidence.map((x) => <li key={x.id}>{x.ref}</li>)}</ul><p>Counterexamples: {p.counterexamples.join(", ") || "None recorded"}</p><p>Exceptions: {p.exceptions.join(", ") || "None recorded"}</p></div></details></article>)}</div>}
+    <section className={styles.panel}><h3>Pattern readiness</h3><p>Minimum compatible rated sample: <strong>{model.pattern_threshold}</strong>. Human review remains required after reaching the floor. Candidate categories include source quality, timing, false positives, client-specific preferences and cross-account tendencies.</p></section>
+  </section>;
+}
+
+function Validation({ model, reload }: { model: AdminIntelligenceViewModel; reload: () => void }) {
+  const [running, setRunning] = useState(false), [result, setResult] = useState("");
+  const s = model.snapshot.validation_summary;
+  const funnel = [
+    ["Generated", s.output_count], ["Reviewed", s.reviewed_count], ["Corrected", s.corrected_count],
+    ["Client relevant", s.client_relevant_count], ["Acted upon", s.acted_upon_count],
+    ["Confirmed", s.confirmed_count], ["Partially confirmed", s.partially_confirmed_count], ["Refuted", s.refuted_count],
+  ] as const;
   async function runLearner() {
-    setRunning(true); setRunResult(null);
+    setRunning(true);
     try {
       const res = await adminFetch("/api/admin/intelligence/learn", { method: "POST", body: JSON.stringify({}) });
-      const d = await res.json();
-      if (!res.ok) setRunResult(`Failed: ${d.error ?? d.result?.reason ?? res.status}`);
-      else setRunResult(`Done — ${d.result.events_read} events read, ${d.result.events_learnable} learnable, ${d.result.created} created, ${d.result.updated} updated, ${d.result.unchanged} unchanged.`);
-      await load();
+      const body = await res.json();
+      setResult(res.ok ? `Learner complete: ${body.result?.events_read ?? 0} events read. Ranking remains off.` : `Learner unavailable: ${body.error ?? res.status}`);
+      reload();
     } finally { setRunning(false); }
   }
+  return <section><SectionHeader eyebrow="Output → outcome → learning" title="Validation and learning funnel" text={`Primary lifecycle bottleneck: ${words(s.lifecycle_bottleneck)}`} />
+    <div className={styles.funnel} aria-label="Validation funnel">{funnel.map(([name, count], index) => <div key={name}><span>{index+1}</span><strong>{count}</strong><small>{name}</small></div>)}</div>
+    {!s.reviewed_count && <EmptyState title="No persisted human reviews">{model.empty_states.validation} This is expected until an Admin reviews an output through the server-mediated lifecycle.</EmptyState>}
+    {!s.acted_upon_count && <EmptyState title="No acted-upon outputs">No commercial action has yet been linked to an intelligence output. Link a real action before recording an outcome.</EmptyState>}
+    {!s.confirmed_count && !s.partially_confirmed_count && !s.refuted_count && <EmptyState title="No attributable outcomes">{model.empty_states.outcomes}</EmptyState>}
+    <div className={styles.twoCol}>
+      <section className={styles.panel}><h3>Learning implications</h3><div className={styles.metricGrid}>{Object.entries(s.implications_by_type).map(([name, count]) => <Metric key={name} label={words(name)} value={count}/>)}</div>{!Object.keys(s.implications_by_type).length && <p className={styles.muted}>No implications yet. The system will not update ranking automatically.</p>}</section>
+      <section className={styles.panel}><div className={styles.rowBetween}><h3>Feedback observability</h3><button className={styles.button} onClick={runLearner} disabled={running}>{running ? "Running…" : "Run observation learner"}</button></div>
+        {model.feedback.available ? <div className={styles.metricGrid}><Metric label="Events" value={model.feedback.total_events}/><Metric label="With reasons" value={model.feedback.with_reason_codes}/><Metric label="With snapshot" value={model.feedback.with_snapshot}/><Metric label="With versions" value={model.feedback.with_versions}/></div>
+          : <p className={styles.muted}>{model.feedback.reason}</p>}{result && <p role="status">{result}</p>}</section>
+    </div>
+  </section>;
+}
 
-  async function act(id: string, action: "freeze" | "revoke") {
-    if (!window.confirm(action === "freeze"
-      ? "Freeze this pattern? It will stop updating automatically (ranking stays off)."
-      : "Revoke this pattern? It keeps its history but is excluded from any future interpretation.")) return;
-    setBusy(id);
+function GapCard({ gap }: { gap: IntelligenceGap }) {
+  return <article className={styles.gap}><header><StatePill value={gap.severity}/><strong>Priority {gap.priority}</strong><span>{words(gap.category)}</span></header><h3>{gap.impact}</h3><p>{gap.recommended_action}</p><dl><div><dt>Capability</dt><dd>{words(gap.affected_capability)}</dd></div><div><dt>Readiness impact</dt><dd>{gap.report_readiness_impact}</dd></div><div><dt>Effort</dt><dd>{gap.effort}</dd></div><div><dt>Confidence</dt><dd>{pct(gap.confidence)}</dd></div><div><dt>Dependency</dt><dd>{gap.dependency ?? "None"}</dd></div><div><dt>Status</dt><dd>{gap.status}</dd></div></dl></article>;
+}
+function ActionRow({ action }: { action: NextBestIntelligenceAction }) {
+  return <article className={styles.action}><strong>{action.priority}</strong><div><h3>{words(action.action_type)}</h3><p>{action.rationale}</p><small>Success: {action.success_metric}</small></div><div><StatePill value={action.status}/><span>effort {action.effort} · confidence {pct(action.confidence)}</span></div></article>;
+}
+function Gaps({ model }: { model: AdminIntelligenceViewModel }) {
+  const [severity, setSeverity] = useState("all");
+  const gaps = model.snapshot.gaps.filter((g) => severity === "all" || g.severity === severity);
+  const actions = model.snapshot.actions;
+  const fastest = [...actions].sort((a,b) => ["xs","s","m","l","xl"].indexOf(a.effort)-["xs","s","m","l","xl"].indexOf(b.effort) || b.priority-a.priority)[0];
+  return <section><SectionHeader eyebrow={`${gaps.length} active gaps`} title="Intelligence gaps and action queue" text="Priorities are ordinal decision aids, not precise forecasts." />
+    <div className={styles.filters}><label>Severity<select value={severity} onChange={(e) => setSeverity(e.target.value)}><option value="all">All</option>{["critical","high","medium","low"].map((x) => <option key={x}>{x}</option>)}</select></label></div>
+    <div className={styles.gapGrid}>{gaps.map((gap) => <GapCard gap={gap} key={gap.id}/>)}</div>
+    <SectionHeader eyebrow="Impact × effort" title="Next best intelligence actions" text={`Highest leverage: ${words(actions[0]?.action_type)}. Fastest meaningful: ${words(fastest?.action_type)}.`}/>
+    <div className={styles.actionList}>{actions.map((action) => <ActionRow action={action} key={action.id}/>)}</div>
+  </section>;
+}
+
+function Readiness({ model }: { model: AdminIntelligenceViewModel }) {
+  const r = model.snapshot.readiness;
+  const levels = ["not_ready","snapshot_ready","brief_ready","intelligence_report_ready","premium_report_ready"];
+  const current = levels.indexOf(r.readiness_level);
+  return <section><SectionHeader eyebrow="System-level assessment" title="Report readiness" text="Brief-ready is not equivalent to premium intelligence." />
+    <div className={styles.readiness}>{levels.map((level, i) => <div className={i <= current ? styles.reached : ""} key={level}><span>{i+1}</span><strong>{words(level)}</strong></div>)}</div>
+    <div className={styles.metricGrid}><Metric label="Current level" value={words(r.readiness_level)}/><Metric label="Confidence" value={pct(r.confidence)}/><Metric label="Customer-safe outputs" value={r.customer_safe_outputs.length}/><Metric label="Internal-only outputs" value={r.unsafe_outputs.length}/></div>
+    <div className={styles.twoCol}><section className={styles.panel}><h3>Current blockers</h3><ul className={styles.cleanList}>{r.blockers.map((b, i) => <li key={`${b.gap_id}-${i}`}><StatePill value={b.severity}/> {b.description}</li>)}</ul></section>
+      <section className={styles.panel}><h3>Supportable sections</h3><ul className={styles.cleanList}>{r.supportable_sections.map((x) => <li key={x}>{x}</li>)}</ul><h3>Still superficial</h3><ul className={styles.cleanList}>{r.superficial_sections.map((x) => <li key={x}>{x}</li>)}</ul></section></div>
+    <EmptyState title="Intelligence Lift">{model.empty_states.lift}</EmptyState><EmptyState title="Historical trends">{model.empty_states.trends}</EmptyState>
+  </section>;
+}
+
+function Evidence({ model }: { model: AdminIntelligenceViewModel }) {
+  const e = model.evidence;
+  return <section><SectionHeader eyebrow="Availability ≠ quality" title="Evidence integrity" text={e.explanation}/>
+    <div className={styles.evidenceHero}><Measurement value={e.availability}/><p>Evidence availability, quality, corroboration, freshness and counterevidence are tracked separately.</p></div>
+    <div className={styles.metricGrid}><Metric label="Evidence items" value={e.total ?? "Unavailable"}/><Metric label="Dated" value={e.dated ?? "Unavailable"}/><Metric label="Corroborated" value={e.corroborated ?? "Unavailable"}/><Metric label="Stale" value={e.stale ?? "Unavailable"}/><Metric label="Source classes" value={e.source_classes ?? "Unavailable"}/><Metric label="Counterevidence" value={e.counterevidence_instrumented === null ? "Unavailable" : e.counterevidence_instrumented ? "Instrumented" : "Not instrumented"}/></div>
+    <section className={styles.panel}><h3>Evidence operations</h3><p>Review rights, source quality and contradictions before any customer use.</p><div className={styles.links}><a href="/admin/intelligence/sources">Source Access</a><a href="/admin/intelligence/source-review">Source Review</a><a href="/admin/intelligence/review">Review Queue</a><a href="/admin/intelligence/growth">Growth Observatory</a></div></section>
+  </section>;
+}
+
+export default function IntelligencePage() {
+  const [model, setModel] = useState<AdminIntelligenceViewModel | null>(null);
+  const [error, setError] = useState("");
+  const [tab, setTab] = useState<Tab>("overview");
+  const load = useCallback(async () => {
+    setError("");
     try {
-      const res = await adminFetch(`/api/admin/intelligence/preferences/${id}/${action}`, { method: "POST", body: JSON.stringify({}) });
-      if (!res.ok) setError((await res.json()).error ?? `${action} failed`);
-      await load();
-    } finally { setBusy(null); }
-  }
+      const res = await adminFetch("/api/admin/intelligence/command-center");
+      const body = await res.json();
+      if (!res.ok) throw new Error(body.detail ?? body.error ?? `Request failed (${res.status})`);
+      setModel(body);
+    } catch (e) { setError(e instanceof Error ? e.message : "Command Center unavailable."); }
+  }, []);
+  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    const fromHash = window.location.hash.replace("#", "") as Tab;
+    if (TABS.some(([id]) => id === fromHash)) setTab(fromHash);
+    const onHash = () => { const next = window.location.hash.replace("#", "") as Tab; if (TABS.some(([id]) => id === next)) setTab(next); };
+    window.addEventListener("hashchange", onHash); return () => window.removeEventListener("hashchange", onHash);
+  }, []);
+  const active = useMemo(() => {
+    if (!model) return null;
+    if (tab === "overview") return <Overview model={model}/>;
+    if (tab === "capabilities") return <Capabilities capabilities={model.snapshot.capability_assessments}/>;
+    if (tab === "outputs") return <Outputs model={model}/>;
+    if (tab === "patterns") return <Patterns model={model}/>;
+    if (tab === "validation") return <Validation model={model} reload={load}/>;
+    if (tab === "gaps") return <Gaps model={model}/>;
+    if (tab === "readiness") return <Readiness model={model}/>;
+    return <Evidence model={model}/>;
+  }, [model, tab, load]);
 
-  const prefLabel = (p: Pref) => {
-    if (p.status !== "inferred_weak") return STATUS_LABEL[p.status] ?? STATUS_LABEL.inferred_weak;
-    return (p.positive_obs + p.negative_obs) < 3 ? { label: "Early signal", bg: "#f8fafc", fg: "#64748b" } : STATUS_LABEL.inferred_weak;
-  };
-
-  return (
-    <AdminLayout>
-      <h1 style={S.h1}>Customer Intelligence</h1>
-      <p style={S.sub}>Structured feedback observability and observation-only learned patterns.</p>
-      <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "1rem" }}>
-        {[
-          { href: "/admin/intelligence/growth", label: "📈 Growth Observatory" },
-          { href: "/admin/intelligence/review", label: "🧑‍⚖️ Review Queue" },
-          { href: "/admin/intelligence/sources", label: "🔎 Source Access" },
-          { href: "/admin/intelligence/source-review", label: "✅ Source Review" },
-        ].map((l) => (
-          <a key={l.href} href={l.href} style={{ background: "#fff", border: "1px solid #cbd5e1", borderRadius: "0.5rem", padding: "0.4rem 0.9rem", fontSize: "0.78rem", fontWeight: 600, color: "#0f172a", textDecoration: "none" }}>{l.label}</a>
-        ))}
-      </div>
-      <div style={S.banner}>⚠ Observation mode — learned preferences are not affecting rankings.</div>
-
-      {error && <div style={{ ...S.banner, background: "#fef2f2", borderColor: "#fecaca", color: "#991b1b" }}>{error}</div>}
-      {data?.migration_missing && (
-        <div style={S.card}>Migration 031 not applied — intelligence columns unavailable. Apply <code>supabase/migrations/031_intelligence_foundation.sql</code> and refresh.</div>
-      )}
-
-      {data?.metrics && (
-        <div style={S.card}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.9rem" }}>
-            <h2 style={{ fontSize: "0.95rem", fontWeight: 700, color: "#0f172a", margin: 0 }}>Feedback observability</h2>
-            <button style={S.btn} onClick={runLearner} disabled={running}>{running ? "Running learner…" : "Run learner"}</button>
-          </div>
-          {runResult && <p style={{ fontSize: "0.78rem", color: "#334155", marginBottom: "0.75rem" }}>{runResult}</p>}
-          <div style={S.grid}>
-            {[
-              { label: "Feedback events", value: data.metrics.total_events },
-              { label: "With reasons", value: data.metrics.with_reason_codes },
-              { label: "With snapshot", value: data.metrics.with_snapshot },
-              { label: "With versions", value: data.metrics.with_versions },
-              { label: "Useful", value: data.metrics.sentiment.positive },
-              { label: "Partial", value: data.metrics.sentiment.neutral },
-              { label: "Not useful", value: data.metrics.sentiment.negative },
-              { label: "Already known %", value: `${data.metrics.already_known_pct}%` },
-              { label: "Weak explanation %", value: `${data.metrics.bad_explanation_pct}%` },
-            ].map((m) => (
-              <div key={m.label} style={S.metric}>
-                <div style={{ fontSize: "1.15rem", fontWeight: 800, color: "#0f172a" }}>{m.value}</div>
-                <div style={{ fontSize: "0.6rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "#94a3b8", marginTop: "0.2rem" }}>{m.label}</div>
-              </div>
-            ))}
-          </div>
-          {data.metrics.top_reason_codes.length > 0 && (
-            <div style={{ marginTop: "0.9rem", display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
-              {data.metrics.top_reason_codes.map(([code, n]) => (
-                <span key={code} style={S.pill("#f1f5f9", "#475569")}>{n} × {code.replace(/_/g, " ")}</span>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
-      <div style={S.card}>
-        <h2 style={{ fontSize: "0.95rem", fontWeight: 700, color: "#0f172a", marginBottom: "0.25rem" }}>Observed patterns</h2>
-        <p style={{ fontSize: "0.72rem", color: "#94a3b8", marginBottom: "0.9rem" }}>
-          Rebuilt deterministically from structured feedback. Ranking impact: <strong>Off</strong> for every pattern in this version.
-        </p>
-        {(data?.preferences ?? []).length === 0 ? (
-          <p style={{ fontSize: "0.82rem", color: "#94a3b8" }}>No patterns yet — they appear after customers leave structured feedback and the learner runs.</p>
-        ) : (
-          (data!.preferences!).map((p) => {
-            const lab = prefLabel(p);
-            return (
-              <div key={p.id} style={{ borderTop: "1px solid #f1f5f9", padding: "0.7rem 0", fontSize: "0.8rem" }}>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", alignItems: "center" }}>
-                  <code style={{ color: "#0f172a", fontWeight: 700 }}>{p.feature_key}</code>
-                  <span style={S.pill(p.direction === "positive" ? "#f0fdf4" : p.direction === "negative" ? "#fef2f2" : "#f8fafc", p.direction === "positive" ? "#166534" : p.direction === "negative" ? "#991b1b" : "#64748b")}>{p.direction}</span>
-                  <span style={S.pill(lab.bg, lab.fg)}>{lab.label}</span>
-                  <span style={S.pill("#f8fafc", "#64748b")}>{p.scope}{p.monitor_id ? ` · ${p.monitor_id.slice(0, 8)}…` : ""}</span>
-                  <span style={S.pill("#f8fafc", "#64748b")}>ranking: Off</span>
-                </div>
-                <div style={{ color: "#64748b", margin: "0.3rem 0" }}>
-                  {p.positive_obs}+ / {p.neutral_obs}○ / {p.negative_obs}− · {p.distinct_report_count} report{p.distinct_report_count === 1 ? "" : "s"} · conf {p.confidence ?? "—"} (effective {p.effective_confidence ?? "—"}) · v{p.version}
-                  {p.last_observed_at ? ` · last ${new Date(p.last_observed_at).toISOString().slice(0, 10)}` : ""}
-                </div>
-                {p.explanation && <div style={{ color: "#475569", fontSize: "0.76rem", marginBottom: "0.35rem" }}>{p.explanation}</div>}
-                {(p.status === "inferred_weak" || p.status === "inferred_validated") && (
-                  <div style={{ display: "flex", gap: "0.4rem" }}>
-                    <button style={S.btnSm} disabled={busy === p.id} onClick={() => act(p.id, "freeze")}>Freeze</button>
-                    <button style={{ ...S.btnSm, color: "#991b1b" }} disabled={busy === p.id} onClick={() => act(p.id, "revoke")}>Revoke</button>
-                  </div>
-                )}
-              </div>
-            );
-          })
-        )}
-      </div>
-    </AdminLayout>
-  );
+  return <AdminLayout><main className={styles.shell}>
+    <header className={styles.commandHeader}><div><span>Intelligence OS · Internal</span><h1>LeadLens Intelligence Command Center</h1><p>Operational truth about capabilities, outputs, evidence, validation and next improvements.</p></div><div className={styles.links}><a href="/admin/intelligence/growth">Growth Observatory</a><a href="/admin/intelligence/review">Review Queue</a><a href="/admin/intelligence/sources">Source Access</a><a href="/admin/intelligence/source-review">Source Review</a></div></header>
+    <nav className={styles.tabs} aria-label="Intelligence Command Center sections">{TABS.map(([id, name]) => <a key={id} href={`#${id}`} aria-current={tab === id ? "page" : undefined} onClick={() => setTab(id)}>{name}</a>)}</nav>
+    {error ? <EmptyState title="Command Center unavailable">{error} No values have been replaced with fabricated zeros. <button className={styles.button} onClick={load}>Retry</button></EmptyState>
+      : !model ? <div className={styles.loading} aria-live="polite"><span/>Assembling the latest protected intelligence snapshot…</div>
+        : active}
+  </main></AdminLayout>;
 }

@@ -1,7 +1,34 @@
 # LeadLens Intelligence OS — Checkpoint
 
 ## Current block
-**Block 4 — Validation and Learning Loop — DONE.** (Blocks 0–3 below.)
+**Block 5 — Admin Intelligence Command Center — DONE.** (Blocks 0–4 below.)
+
+## Block 5 — DONE (authenticated operational Command Center)
+
+- **Previous page:** `/admin/intelligence` was a client-side feedback/preferences observatory. It did not load the Intelligence Snapshot, capability registry, output registry, Block 4 validation lifecycle, gaps, next actions, readiness or evidence integrity.
+- **Admin architecture:** `admin-view-model.ts` assembles one provider-free, presentation-safe model per request. It combines the latest deterministic artifact, canonical snapshot, output/pattern registries and optional Supabase learned preferences, feedback and migration-041 lifecycle snapshots. Full, partial and DB-unavailable states are explicit; unavailable values remain `null`, never zero.
+- **Protected API:** `GET /api/admin/intelligence/command-center` uses the recovered `requireAdmin` boundary, returns `private, no-store`, adds `noindex`, exposes no service key and fails closed with a useful 503 state. Tenant/actor IDs cannot be supplied by the browser. Migration 041 was **available** during authenticated local QA.
+- **New page:** institutional, desktop-first Command Center with hash-preserving tabs: Overview, Capabilities, Outputs, Patterns, Validation, Gaps & Actions, Readiness and Evidence. One initial API request avoids waterfalls; detailed evidence is collapsed until requested.
+- **Overview:** real diagnosis, structured-knowledge maturity, 50% level confidence, insufficient-evidence overall state, strongest/weakest capability, primary bottleneck, highest-leverage action, brief-ready status, cutoff/methodology, all eight maturity dimensions and explicit explanations for unmeasured states and Evidence Integrity score 0.
+- **Capabilities:** dense expandable table over real capability assessments with mode/measurement/exercised filters, samples, evidence, impacts, limitations, failure modes, promotion criteria and milestones.
+- **Outputs:** six real Block-3 outputs from the current artifact; types, claims, confidence, measurement states, validation/review/eligibility, ranking impact, evidence, reasoning, counterevidence and unresolved questions. All remain unreviewed/internal and ranking-off.
+- **Patterns:** real registry only. Current state is zero patterns; the page explains learned-preference count 0, `MIN_PATTERN_SAMPLE=5`, remaining evidence/review requirements and why outputs never become patterns automatically.
+- **Validation:** real Block-4 funnel and lifecycle bottleneck; current counts are generated 6, reviewed/corrected/relevant/acted/outcome 0. Feedback observability and observation learner are preserved here. No model/ranking update is implied.
+- **Gaps/actions/readiness/evidence:** real priority-ordered gaps and action queue, effort/impact semantics, system-level readiness funnel/blockers, explicit non-persisted trends and unmeasured lift, corroboration explanation (`0/8` in evaluated shortlist), source-operation links and knowledge-infrastructure disclaimer.
+- **Preserved operations:** Growth Observatory, Review Queue, Source Access and Source Review remain linked; old feedback observability was demoted into Validation instead of deleted.
+- **Security/performance:** existing Admin auth behavior unchanged; normal-user API access denied; no provider/LLM calls on render; no protected raw JSON dump; Command Center page bundle 10.2 kB / 104 kB first load.
+- **Tests/build:** Command Center **36/36**, Admin Auth **48/48**, login routing **57/57**, OS contracts **25/25**, snapshot **27/27**, registries **28/28**, validation **50/50**, Market-to-Account **17/17**, pipeline **22/22**, segment universe **21/21**. `next build` passed.
+- **Browser QA:** authenticated local Admin session with an ephemeral test signature; Overview and all seven detail tabs rendered, no infinite loading, no console warnings/errors, and no page-level horizontal overflow at 1280×default or 900×900. This is local verification, **not production deployment verification**.
+- **Screenshots:** `artifacts/block5-command-center/01-overview.png` through `08-evidence.png`.
+- **Production/ranking/report impact:** no deployment performed; no ranking/scoring/customer-report/auth changes, provider searches, baseline evaluation, historical persistence or automatic learning.
+
+## Next block
+
+**Block 6 — Self-knowledge and Improvement Queue Governance.** Turn the already-derived diagnosis/gaps/actions into an auditable operational improvement workflow with owners, review decisions, blocked reasons, promotion/freeze recommendations and evidence-based completion—without ranking mutation or automatic capability promotion.
+
+### Exact next prompt
+
+> Continue LeadLens from committed Intelligence OS Block 5 in `LEADLENS_INTELLIGENCE_OS_CHECKPOINT.md`. Execute exactly **Block 6 — Self-knowledge and Improvement Queue Governance**. Reuse the existing snapshot diagnosis, gaps and next-best actions to build a deterministic, auditable improvement workflow: explicit owners, dependencies, review decisions, evidence-required completion, blocked/frozen states, and conservative promotion/freeze recommendations. Connect it to the Admin Command Center without changing Admin authentication, production ranking, customer reports, providers, historical snapshot persistence or Intelligence Lift baselines. Never let task completion alone promote a capability; require operational evidence and human approval. Add tenant-safe persistence only if the targeted reuse audit proves it necessary, add honesty/idempotency/security tests, run build and authenticated browser QA, update both checkpoints, commit, and stop before Block 7.
 
 ## Block 4 — DONE (durable validation + conservative learning)
 
@@ -17,11 +44,11 @@
 - **Verification:** validation loop **50/50**, OS contracts **25/25**, snapshot **27/27**, registries **28/28**; `npx tsc --noEmit` and `git diff --check` pass.
 - **Production impact:** no provider calls, ranking/scoring changes, Admin/UI/auth/report changes, historical trends or baseline work. Current real six outputs remain unreviewed and internal.
 
-## Next block
+## Historical next block after Block 4
 
 **Block 5 — Admin Intelligence Command Center**, consuming these read-only projections and server-mediated review services. It has not been started.
 
-### Exact next prompt
+### Historical exact next prompt for Block 5
 
 > Continue LeadLens from `LEADLENS_INTELLIGENCE_OS_CHECKPOINT.md` after committed Block 4. Execute exactly **Intelligence OS Block 5 — Admin Intelligence Command Center**. Build an authenticated, read-first Admin surface over the existing snapshot, output registry, pattern registry and validation summaries; expose honest measured/unmeasured states, lifecycle bottlenecks, evidence/counterevidence and server-mediated human review actions. Do not call providers, modify ranking, auto-promote patterns, auto-publish customer outputs, fabricate historical trends or Intelligence Lift, change Admin authentication, or apply migration 041 without explicit authorization. Add authorization, tenant-isolation, rendering and honesty tests; update both checkpoints, commit, and stop before any later block.
 
