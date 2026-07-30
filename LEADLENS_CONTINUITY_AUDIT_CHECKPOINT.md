@@ -1,5 +1,36 @@
 # LeadLens Continuity Audit — Authoritative Checkpoint
 
+## Block 9 continuity update — 2026-07-30
+
+- Starting HEAD: `4ba5dbd` (Block 8).
+- Replayed and classified the eight non-persisted raw Block 8 results using the
+  same three Brave queries and matching 2/5/1 distribution. All eight were
+  correct rejections; the raw-ledger omission is now documented.
+- Added a reviewed 19-case public benchmark and deterministic fixture runner
+  with explicit live-mode authorization, ten-gate traces, denominated
+  precision/recall/identity/date/event metrics and error attribution.
+- Fixture logic classified 19/19 correctly (preliminary). A separate 24-query
+  live comparison found Brave strongest for dated recovery, Tavily useful for
+  event/extraction but missing search dates, and Serper unavailable with HTTP
+  400. Provider costs remained not measured.
+- Tavily Extract succeeded 8/8. Visible English/Spanish dateline recovery raised
+  exact date recovery from 0/8 to 7/8; retrieval dates remain prohibited.
+- Same-six rerun used 18/24 searches and produced 56 raw results but no valid
+  signal. Identity failed 54 times and freshness 41 times; gates prevented all
+  false positives. Decisions stayed four prioritize/two monitor.
+- Migration 043 was confirmed applied and reused. One run, 12 triggers and six
+  account-specific no-change rows were persisted. A post-run ID collision was
+  corrected offline with zero provider calls; one immutable pre-fix row remains.
+- Benchmark artifacts stay outside production intelligence tables. No new
+  migration, scheduler, broad market expansion, ranking/report/auth change,
+  pattern promotion or final report was created.
+- Snapshot/Command Center load only local artifacts and label metrics
+  preliminary benchmark/not production outcomes.
+- All required tests, typecheck and production build passed. Full record:
+  `LEADLENS_BLOCK_9_SIGNAL_RECOVERY_BENCHMARK_REPORT.md`.
+- Runtime `.leadlens/source-intelligence.json` and `.leadlens/usage.json` remain
+  excluded from the commit.
+
 ## Block 8 continuity update — 2026-07-30
 
 - Starting HEAD: `0c04d59` (Block 7).

@@ -1,7 +1,55 @@
 # LeadLens Intelligence OS — Checkpoint
 
 ## Current block
-**Block 8 — Signal Intelligence, Temporal Monitoring and What Changed v2 — DONE.**
+**Block 9 — Signal Recovery Benchmark, Source Calibration and Monitoring Operations — DONE.**
+
+## Block 9 — DONE
+
+- Audited the eight Block 8 results individually: four correct-entity static
+  pages, three wrong entities/geographies and one old official static document.
+  All eight rejections were correct; no acceptance gate was weakened.
+- Added a 19-case real public benchmark: 8 known positives, 5 source/window
+  negatives and 6 adversarial cases. Fixture replay is provider-free,
+  deterministic and explicitly separated from production intelligence.
+- Preliminary curated-fixture results: 10/10 TP, 9/9 TN, 0 FP, 0 FN; precision,
+  recall and identity precision 100%. These are benchmark logic results, not
+  production outcomes.
+- Live 24-query comparison: Brave succeeded 8/8 and recovered acceptable dated
+  results for 5/6 positive cases while rejecting 2/2 adversarial cases; Tavily
+  Search found event content but supplied no dates; Serper failed 8/8 with HTTP
+  400. Cost remained not measured.
+- Tavily extraction succeeded 8/8. Targeted English/Spanish visible-dateline
+  recovery improved exact dates from 0/8 to 7/8 without treating retrieval time
+  as publication time. IKEA remains honestly unresolved in extraction.
+- Added ten-gate diagnostics, false-negative/false-positive attribution,
+  provider/query-family metrics, resumable/idempotent monitoring operations,
+  failed-account-only retry and decision/signal-specific cadence policy. No
+  scheduler was created.
+- Same-six calibrated rerun: 18 searches, 56 raw results, 54 dated, 40
+  event-pattern results, 2 correct-entity results, 0 candidates, 0 valid
+  signals, 0 material changes and 0 decision transitions. Identity was the
+  primary bottleneck; all false-positive protections remained active.
+- Migration 043 was verified applied and reused: 1 run, 12 triggers, 0 signals
+  and 6 corrected account-specific changes persisted. A no-signal change-ID
+  collision was found, fixed and reprocessed offline; the original row remains
+  immutable for audit.
+- Command Center additions are provider-free, preliminary/benchmark-labeled and
+  additive in Overview, Evidence and Gaps & Actions. Outcome Performance,
+  Intelligence Lift, ranking, patterns, auth and customer reports remain
+  unchanged.
+- Verification: Block 9 38/38, Block 8 51/51, Block 7 62/62, evidence 55/55,
+  date resolver 14/14, Command Center 36/36, Snapshot 27/27, Registries 28/28,
+  Validation 50/50, Admin Auth 48/48, login routing 57/57, ranking v2 31/31 and
+  v3 52/52. TypeScript and production build passed.
+- Full details:
+  `LEADLENS_BLOCK_9_SIGNAL_RECOVERY_BENCHMARK_REPORT.md`.
+
+## Next block
+
+Block 10 should narrowly improve provider-specific query decomposition and
+external-source entity recovery for Colombian accounts, fix or retire Serper,
+and expand reviewed category coverage. Do not start scheduling, customer
+alerts, ranking learning, pattern promotion or the final Amor de Gea report.
 
 ## Block 8 — DONE
 

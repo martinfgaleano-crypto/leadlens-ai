@@ -1,0 +1,180 @@
+{
+  "benchmark_id": "signal-recovery-benchmark-v1-2026-07-30",
+  "methodology_version": "signal-recovery-benchmark-v1",
+  "reviewed_at": "2026-07-30T13:15:00.000Z",
+  "source_cutoff": "2026-07-30T13:15:00.000Z",
+  "label_scope": "Each label evaluates the cited public source inside its stated window; a negative label is not a claim that the account had no event anywhere on the web.",
+  "cases": [
+    {
+      "id": "pos-ikea-cali-opening-2024", "class": "positive", "account": "IKEA Colombia", "verified_domain": "ikea.com",
+      "country": "Colombia", "category": "store_opening", "window_start": "2024-01-01", "window_end": "2024-12-31",
+      "expected_signal": true, "expected_entity": "confirmed", "expected_status": "completed", "expected_date_state": "exact", "expected_corroboration": "single_source",
+      "event_date": "2024-05-09", "source_url": "https://www.ikea.com/co/es/newsroom/corporate-news/ikea-abre-segunda-tienda-colombia-pubccab25e0/",
+      "source_owner": "ikea.com", "source_type": "official", "query_family": "exact_name_signal_local", "provider": "fixture",
+      "title": "IKEA abrió las puertas de su segunda tienda en Colombia", "text": "El 9 de mayo de 2024 IKEA inauguró oficialmente su segunda tienda en Colombia, ubicada en Cali.",
+      "commercially_meaningful": true, "benchmark_provenance": "Official IKEA Colombia newsroom; human-reviewed public source."
+    },
+    {
+      "id": "pos-fedex-vianen-facility-2025", "class": "positive", "account": "FedEx", "verified_domain": "fedex.com",
+      "country": "Netherlands", "category": "facility_opening", "window_start": "2025-01-01", "window_end": "2025-12-31",
+      "expected_signal": true, "expected_entity": "confirmed", "expected_status": "completed", "expected_date_state": "exact", "expected_corroboration": "single_source",
+      "event_date": "2025-07-01", "source_url": "https://newsroom.fedex.com/newsroom/europe-english/fedex-optimizes-logistics-operations-with-new-facility-in-vianen",
+      "source_owner": "fedex.com", "source_type": "official", "query_family": "exact_name_signal", "provider": "fixture",
+      "title": "FedEx Optimizes Logistics Operations with New Facility in Vianen", "text": "FedEx announced the completed opening of its newest logistics facility in Vianen on July 1, 2025.",
+      "commercially_meaningful": true, "benchmark_provenance": "Official FedEx newsroom; human-reviewed public source."
+    },
+    {
+      "id": "pos-apple-iphone17-launch-2025", "class": "positive", "account": "Apple", "verified_domain": "apple.com",
+      "country": "United States", "category": "product_launch", "window_start": "2025-01-01", "window_end": "2025-12-31",
+      "expected_signal": true, "expected_entity": "confirmed", "expected_status": "announced", "expected_date_state": "exact", "expected_corroboration": "single_source",
+      "event_date": "2025-09-09", "source_url": "https://www.apple.com/newsroom/2025/09/apple-debuts-iphone-17/",
+      "source_owner": "apple.com", "source_type": "official", "query_family": "site_official_signal", "provider": "fixture",
+      "title": "Apple debuts iPhone 17", "text": "Apple announced iPhone 17 on September 9, 2025 and specified its new product features and availability.",
+      "commercially_meaningful": true, "benchmark_provenance": "Official Apple newsroom; human-reviewed public source."
+    },
+    {
+      "id": "pos-spotify-umg-agreement-2025", "class": "positive", "account": "Spotify", "verified_domain": "spotify.com",
+      "country": "Global", "category": "partnership", "window_start": "2025-01-01", "window_end": "2025-12-31",
+      "expected_signal": true, "expected_entity": "confirmed", "expected_status": "announced", "expected_date_state": "exact", "expected_corroboration": "single_source",
+      "event_date": "2025-01-26", "source_url": "https://newsroom.spotify.com/2025-01-26/universal-music-group-spotify-expansion/",
+      "source_owner": "spotify.com", "source_type": "official", "query_family": "exact_name_partner", "provider": "fixture",
+      "title": "Universal Music Group and Spotify Strike a New Multiyear Agreement", "text": "Spotify and Universal Music Group announced new multiyear recorded-music and publishing agreements on January 26, 2025.",
+      "commercially_meaningful": true, "benchmark_provenance": "Official Spotify newsroom; human-reviewed public source."
+    },
+    {
+      "id": "pos-spotify-leadership-2025", "class": "positive", "account": "Spotify", "verified_domain": "spotify.com",
+      "country": "Global", "category": "leadership_change", "window_start": "2025-01-01", "window_end": "2025-12-31",
+      "expected_signal": true, "expected_entity": "confirmed", "expected_status": "announced", "expected_date_state": "exact", "expected_corroboration": "single_source",
+      "event_date": "2025-09-30", "source_url": "https://newsroom.spotify.com/2025-09-30/spotify-announcement-daniel-ek-executive-chairman/",
+      "source_owner": "spotify.com", "source_type": "official", "query_family": "exact_name_signal", "provider": "fixture",
+      "title": "Spotify Announces Leadership Evolution", "text": "Spotify announced on September 30, 2025 that Daniel Ek would become Executive Chairman and two co-CEOs would take office in January 2026.",
+      "commercially_meaningful": true, "benchmark_provenance": "Official Spotify newsroom; human-reviewed public source."
+    },
+    {
+      "id": "pos-amazon-shreveport-facility-2024", "class": "positive", "account": "Amazon", "verified_domain": "aboutamazon.com",
+      "country": "United States", "category": "facility_opening", "window_start": "2024-01-01", "window_end": "2024-12-31",
+      "expected_signal": true, "expected_entity": "confirmed", "expected_status": "completed", "expected_date_state": "exact", "expected_corroboration": "single_source",
+      "event_date": "2024-10-09", "source_url": "https://www.aboutamazon.com/news/operations/amazon-fulfillment-center-robotics-ai",
+      "source_owner": "aboutamazon.com", "source_type": "official", "query_family": "exact_name_signal", "provider": "fixture",
+      "title": "Amazon unveils the next generation of fulfillment centers", "text": "Amazon described its operating next-generation fulfillment center in Shreveport on October 9, 2024.",
+      "commercially_meaningful": true, "benchmark_provenance": "Official Amazon newsroom; human-reviewed public source."
+    },
+    {
+      "id": "pos-microsoft-activision-completed-2023", "class": "positive", "account": "Microsoft", "verified_domain": "microsoft.com",
+      "country": "United States", "category": "acquisition", "window_start": "2023-01-01", "window_end": "2023-12-31",
+      "expected_signal": true, "expected_entity": "confirmed", "expected_status": "completed", "expected_date_state": "exact", "expected_corroboration": "single_source",
+      "event_date": "2023-10-13", "source_url": "https://news.microsoft.com/wp-content/uploads/prod/sites/653/2023/10/Phil-Spencer-email-to-Microsoft-employees.pdf",
+      "source_owner": "microsoft.com", "source_type": "official", "query_family": "exact_name_signal_year", "provider": "fixture",
+      "title": "Welcoming Activision Blizzard King to Team Xbox", "text": "Microsoft stated on October 13, 2023 that it had completed the acquisition of Activision Blizzard.",
+      "commercially_meaningful": true, "benchmark_provenance": "Official Microsoft employee communication PDF; human-reviewed public source."
+    },
+    {
+      "id": "pos-airbnb-fifa-partnership-2025", "class": "positive", "account": "Airbnb", "verified_domain": "airbnb.com",
+      "country": "Global", "category": "partnership", "window_start": "2025-01-01", "window_end": "2025-12-31",
+      "expected_signal": true, "expected_entity": "confirmed", "expected_status": "announced", "expected_date_state": "exact", "expected_corroboration": "single_source",
+      "event_date": "2025-06-12", "source_url": "https://news.airbnb.com/wp-content/uploads/sites/4/2025/06/Airbnb-and-FIFA-Announce-Major-Multi-Tournament-Partnership.pdf",
+      "source_owner": "airbnb.com", "source_type": "official", "query_family": "exact_name_partner", "provider": "fixture",
+      "title": "Airbnb and FIFA Announce Major Multi-Tournament Partnership", "text": "Airbnb and FIFA announced a three-year multi-tournament partnership on June 12, 2025.",
+      "commercially_meaningful": true, "benchmark_provenance": "Official Airbnb/FIFA press release; human-reviewed public source."
+    },
+    {
+      "id": "neg-hotel-static-listing", "class": "negative", "account": "Hotel Spa La Colina", "verified_domain": "hotelspalacolina.com",
+      "country": "Colombia", "category": null, "window_start": "2026-07-23", "window_end": "2026-07-30",
+      "expected_signal": false, "expected_entity": "probable", "expected_status": "unknown", "expected_date_state": "retrieved_only", "expected_corroboration": "unsupported",
+      "event_date": null, "source_url": "https://enlazandoalmas.com/listing/hotel-spa-la-colina-pereira",
+      "source_owner": "enlazandoalmas.com", "source_type": "directory", "query_family": "exact_name_signal", "provider": "fixture",
+      "title": "Hotel Spa La Colina | Planes de Spa y Hospedaje", "text": "Static hotel and spa listing near Pereira; it states services and location but no opening or expansion event.",
+      "commercially_meaningful": false, "benchmark_provenance": "Block 8 same-day replay; negative within cited source/window only."
+    },
+    {
+      "id": "neg-hotel-flickr-profile", "class": "negative", "account": "Hotel Spa La Colina", "verified_domain": "hotelspalacolina.com",
+      "country": "Colombia", "category": null, "window_start": "2026-07-23", "window_end": "2026-07-30",
+      "expected_signal": false, "expected_entity": "probable", "expected_status": "unknown", "expected_date_state": "retrieved_only", "expected_corroboration": "unsupported",
+      "event_date": null, "source_url": "https://www.flickr.com/photos/hotel-spa-la-colina",
+      "source_owner": "hotelspalacolina.com", "source_type": "official_social", "query_family": "exact_name_signal", "provider": "fixture",
+      "title": "Hotel Spa La Colina | Flickr", "text": "A photo profile containing a gallery count and no atomic commercial event.",
+      "commercially_meaningful": false, "benchmark_provenance": "Block 8 same-day replay; negative within cited source/window only."
+    },
+    {
+      "id": "neg-bioplaza-directory", "class": "negative", "account": "BioPlaza", "verified_domain": "bioplaza.com.co",
+      "country": "Colombia", "category": null, "window_start": "2026-07-23", "window_end": "2026-07-30",
+      "expected_signal": false, "expected_entity": "probable", "expected_status": "unknown", "expected_date_state": "retrieved_only", "expected_corroboration": "unsupported",
+      "event_date": null, "source_url": "https://es.restaurantguru.com/Bioplaza-Bogota",
+      "source_owner": "restaurantguru.com", "source_type": "directory", "query_family": "exact_name_signal", "provider": "fixture",
+      "title": "BioPlaza Chicó, Bogotá", "text": "Static restaurant directory page with menu and review language; no dated opening event.",
+      "commercially_meaningful": false, "benchmark_provenance": "Block 8 same-day replay; negative within cited source/window only."
+    },
+    {
+      "id": "neg-bioplaza-product-static", "class": "negative", "account": "BioPlaza", "verified_domain": "bioplaza.com.co",
+      "country": "Colombia", "category": null, "window_start": "2026-07-23", "window_end": "2026-07-30",
+      "expected_signal": false, "expected_entity": "confirmed", "expected_status": "unknown", "expected_date_state": "retrieved_only", "expected_corroboration": "unsupported",
+      "event_date": null, "source_url": "https://www.bioplaza.com.co/producto/harina-de-platano-500g",
+      "source_owner": "bioplaza.com.co", "source_type": "official", "query_family": "site_official_signal", "provider": "fixture",
+      "title": "Harina de plátano 500g", "text": "Static product catalog page that offers a product but does not announce a launch.",
+      "commercially_meaningful": false, "benchmark_provenance": "Block 8 same-day replay; negative within cited source/window only."
+    },
+    {
+      "id": "neg-dam-old-price-list", "class": "negative", "account": "Distribuidora DAM", "verified_domain": "distribuidoradam.com",
+      "country": "Colombia", "category": null, "window_start": "2026-07-23", "window_end": "2026-07-30",
+      "expected_signal": false, "expected_entity": "confirmed", "expected_status": "unknown", "expected_date_state": "exact", "expected_corroboration": "unsupported",
+      "event_date": "2025-12-05", "source_url": "https://distribuidoradam.com/wp-content/uploads/2025/12/Lista-de-Precios-Distribuidora-DAM-5-de-Diciembre-2025.pdf",
+      "source_owner": "distribuidoradam.com", "source_type": "official", "query_family": "exact_name_signal", "provider": "fixture",
+      "title": "Lista de Precios Distribuidora DAM", "text": "Dated price list and static national-distribution description; no new expansion event and outside the benchmark window.",
+      "commercially_meaningful": false, "benchmark_provenance": "Block 8 same-day replay; negative within cited source/window only."
+    },
+    {
+      "id": "adv-bioplaza-dominican-place", "class": "adversarial", "account": "BioPlaza Colombia", "verified_domain": "bioplaza.com.co",
+      "country": "Colombia", "category": null, "window_start": "2026-01-01", "window_end": "2026-07-30",
+      "expected_signal": false, "expected_entity": "wrong_entity", "expected_status": "unknown", "expected_date_state": "exact", "expected_corroboration": "unsupported",
+      "event_date": "2026-06-22", "source_url": "https://www.tiktok.com/discover/cafe-kirby-santiago",
+      "source_owner": "tiktok.com", "source_type": "social", "query_family": "exact_name_signal", "provider": "fixture",
+      "title": "Cafe Kirby Santiago", "text": "Mentions BioPlaza as an address in Santiago, Dominican Republic, unrelated to BioPlaza Colombia.",
+      "commercially_meaningful": false, "benchmark_provenance": "Block 8 wrong-entity replay case."
+    },
+    {
+      "id": "adv-bioplaza-nigeria", "class": "adversarial", "account": "BioPlaza Colombia", "verified_domain": "bioplaza.com.co",
+      "country": "Colombia", "category": null, "window_start": "2026-01-01", "window_end": "2026-07-30",
+      "expected_signal": false, "expected_entity": "wrong_entity", "expected_status": "unknown", "expected_date_state": "exact", "expected_corroboration": "unsupported",
+      "event_date": "2026-04-06", "source_url": "https://bioplaza.com.ng/tiehome",
+      "source_owner": "bioplaza.com.ng", "source_type": "website", "query_family": "exact_name_signal", "provider": "fixture",
+      "title": "Home - Bio Plaza", "text": "A Nigerian biography and finance website with a different domain and business.",
+      "commercially_meaningful": false, "benchmark_provenance": "Block 8 wrong-entity replay case."
+    },
+    {
+      "id": "adv-bioplaza-puerto-rico-address", "class": "adversarial", "account": "BioPlaza Colombia", "verified_domain": "bioplaza.com.co",
+      "country": "Colombia", "category": null, "window_start": "2026-01-01", "window_end": "2026-07-30",
+      "expected_signal": false, "expected_entity": "wrong_entity", "expected_status": "unknown", "expected_date_state": "exact", "expected_corroboration": "unsupported",
+      "event_date": "2026-03-22", "source_url": "https://npiprofile.com/npi/1720168560",
+      "source_owner": "npiprofile.com", "source_type": "registry", "query_family": "exact_name_signal", "provider": "fixture",
+      "title": "BIOIMAGENES MEDICAS CSP", "text": "Uses BIOPLAZA as a building address in Puerto Rico; it is unrelated to the Colombian retailer.",
+      "commercially_meaningful": false, "benchmark_provenance": "Block 8 wrong-entity replay case."
+    },
+    {
+      "id": "adv-microsoft-planned-not-completed", "class": "adversarial", "account": "Microsoft", "verified_domain": "microsoft.com",
+      "country": "United States", "category": "acquisition", "window_start": "2023-01-01", "window_end": "2023-09-30",
+      "expected_signal": true, "expected_entity": "confirmed", "expected_status": "planned", "expected_date_state": "exact", "expected_corroboration": "single_source",
+      "event_date": "2023-07-19", "source_url": "https://news.microsoft.com/wp-content/uploads/prod/sites/642/2023/07/Extending-the-closing-date-of-the-ABK-deal.pdf",
+      "source_owner": "microsoft.com", "source_type": "official", "query_family": "exact_name_signal_year", "provider": "fixture",
+      "title": "Extending the closing date of the ABK deal", "text": "Microsoft and Activision Blizzard extended the merger agreement closing deadline; the acquisition was not yet completed.",
+      "commercially_meaningful": true, "benchmark_provenance": "Official Microsoft PDF; planned-versus-completed adversarial pair."
+    },
+    {
+      "id": "adv-spotify-controlled-source-duplicate", "class": "adversarial", "account": "Spotify", "verified_domain": "spotify.com",
+      "country": "Global", "category": "partnership", "window_start": "2025-01-01", "window_end": "2025-12-31",
+      "expected_signal": true, "expected_entity": "confirmed", "expected_status": "announced", "expected_date_state": "exact", "expected_corroboration": "single_source",
+      "event_date": "2025-01-26", "source_url": "https://newsroom.spotify.com/2025-01-26/universal-music-group-spotify-expansion/",
+      "source_owner": "spotify.com", "source_type": "official_social", "query_family": "exact_name_partner", "provider": "fixture",
+      "title": "Spotify social repost of UMG agreement", "text": "A controlled-channel repost repeats Spotify's official UMG agreement announcement and must not become an independent source.",
+      "commercially_meaningful": true, "duplicate_of": "pos-spotify-umg-agreement-2025", "benchmark_provenance": "Controlled-source independence adversarial case."
+    },
+    {
+      "id": "adv-generic-hiring-page", "class": "adversarial", "account": "Amazon", "verified_domain": "amazon.jobs",
+      "country": "Global", "category": null, "window_start": "2026-01-01", "window_end": "2026-07-30",
+      "expected_signal": false, "expected_entity": "confirmed", "expected_status": "unknown", "expected_date_state": "retrieved_only", "expected_corroboration": "unsupported",
+      "event_date": null, "source_url": "https://www.amazon.jobs/en/",
+      "source_owner": "amazon.com", "source_type": "official", "query_family": "site_official_signal", "provider": "fixture",
+      "title": "Amazon Jobs", "text": "Generic evergreen careers landing page without a dated role, hiring acceleration or location-specific expansion event.",
+      "commercially_meaningful": false, "benchmark_provenance": "Official evergreen hiring page adversarial case."
+    }
+  ]
+}

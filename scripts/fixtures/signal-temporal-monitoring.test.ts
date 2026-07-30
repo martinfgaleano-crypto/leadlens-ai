@@ -91,6 +91,9 @@ t("47 output ranking remains off", temporalOutput({ type: "what_changed", accoun
 t("48 output report remains off", temporalOutput({ type: "what_changed", account_id: "a" }).report_impact === "off");
 t("49 no signal is valid timing", assessTimingV2({ signal: null, structural_relevance: "strong", commercial_accessibility: "clear" }) === "no_current_timing_evidence");
 t("50 current signal alone does not guarantee strong timing", assessTimingV2({ signal: signal(), structural_relevance: "strong", commercial_accessibility: "clear" }) !== "strong_timing");
+const accountAChange = compareSignalObservations({ account_id: "a", monitoring_run_id: run1.run_id, prior: null, current: null, baseline_available: true, detected_at: NOW });
+const accountBChange = compareSignalObservations({ account_id: "b", monitoring_run_id: run1.run_id, prior: null, current: null, baseline_available: true, detected_at: NOW });
+t("51 no-signal change IDs remain account-specific", accountAChange.change_id !== accountBChange.change_id);
 
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed) process.exit(1);

@@ -19,6 +19,11 @@ const ES_MONTHS: Record<string, number> = {
   agosto: 8, septiembre: 9, setiembre: 9, octubre: 10, noviembre: 11, diciembre: 12,
   ene: 1, feb: 2, mar: 3, abr: 4, jun: 6, jul: 7, ago: 8, sep: 9, sept: 9, oct: 10, nov: 11, dic: 12,
 };
+const EN_MONTHS: Record<string, number> = {
+  january: 1, february: 2, march: 3, april: 4, may: 5, june: 6, july: 7,
+  august: 8, september: 9, october: 10, november: 11, december: 12,
+  jan: 1, feb: 2, mar: 3, apr: 4, jun: 6, jul: 7, aug: 8, sep: 9, sept: 9, oct: 10, nov: 11, dec: 12,
+};
 const pad = (n: number) => String(n).padStart(2, "0");
 function inRange(y: number, mo: number, d: number): string | null {
   if (mo < 1 || mo > 12 || d < 1 || d > 31) return null;
@@ -51,6 +56,16 @@ export function parseSpanishDate(raw: string | null | undefined): string | null 
   return null;
 }
 
+export function parseEnglishDate(raw: string | null | undefined): string | null {
+  if (!raw) return null;
+  const s = raw.toLowerCase();
+  const mdy = s.match(/([a-z]+)\.?\s+(\d{1,2})(?:st|nd|rd|th)?,?\s+(\d{4})/);
+  if (mdy && EN_MONTHS[mdy[1]]) return inRange(parseInt(mdy[3], 10), EN_MONTHS[mdy[1]], parseInt(mdy[2], 10));
+  const dmy = s.match(/(\d{1,2})(?:st|nd|rd|th)?\s+([a-z]+)\.?,?\s+(\d{4})/);
+  if (dmy && EN_MONTHS[dmy[2]]) return inRange(parseInt(dmy[3], 10), EN_MONTHS[dmy[2]], parseInt(dmy[1], 10));
+  return null;
+}
+
 function toIso(raw: string | null | undefined): string | null {
   if (!raw) return null;
   const m = raw.match(ISO_RE);
@@ -60,6 +75,8 @@ function toIso(raw: string | null | undefined): string | null {
   }
   const es = parseSpanishDate(raw);
   if (es) return es;
+  const en = parseEnglishDate(raw);
+  if (en) return en;
   const parsed = new Date(raw);
   if (Number.isFinite(parsed.getTime()) && parsed.getFullYear() >= 2000 && parsed.getTime() < Date.now() + 86_400_000) {
     return parsed.toISOString().slice(0, 10);
@@ -104,15 +121,15 @@ export function resolvePublicationDate(input: {
   const visIso = toIso(visible?.[1]);
   if (visIso) candidates.push({ date: visIso, source: "visible_text", confidence: "low", method: "visible publication marker" });
 
-  // 5b. Spanish visible date in the extracted article text (markdown strips the
+  // 5b. Spanish/English visible date in extracted article text (markdown strips the
   //     HTML meta/JSON-LD, so Colombian news dates only survive as body text like
   //     "27 de marzo de 2026" or "23 sept 2025"). Scan the first 1500 chars where
   //     the byline/dateline lives, to avoid picking up dates cited in the story.
   if (!candidates.some((c) => c.source !== "url_pattern")) {
-    const head = html.slice(0, 1500);
-    const esMatch = head.match(/(\d{1,2}\s+(?:de\s+)?[a-zA-Záéíóú]+\.?\s+(?:de\s+)?\d{4})|(?:hace\s+\d+\s+(?:d[ií]as?|semanas?|meses?|a[ñn]os?))/i);
-    const esIso = parseSpanishDate(esMatch?.[0]);
-    if (esIso) candidates.push({ date: esIso, source: "visible_text", confidence: "low", method: "fecha visible en español (dateline)" });
+    const head = html.slice(0, 5000);
+    const visibleMatch = head.match(/(\d{1,2}\s+(?:de\s+)?[a-zA-Záéíóú]+\.?\s+(?:de\s+)?\d{4})|([a-zA-Z]+\s+\d{1,2}(?:st|nd|rd|th)?,?\s+\d{4})|(?:hace\s+\d+\s+(?:d[ií]as?|semanas?|meses?|a[ñn]os?))/i);
+    const visibleIso = parseSpanishDate(visibleMatch?.[0]) ?? parseEnglishDate(visibleMatch?.[0]);
+    if (visibleIso) candidates.push({ date: visibleIso, source: "visible_text", confidence: "low", method: "visible Spanish/English dateline" });
   }
 
   // 6. URL date pattern — weak evidence only

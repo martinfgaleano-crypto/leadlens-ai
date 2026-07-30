@@ -382,7 +382,7 @@ export function compareSignalObservations(input: {
   const added = current?.supporting_evidence_ids.filter((id) => !prior?.supporting_evidence_ids.includes(id)) ?? [];
   const removed = prior?.supporting_evidence_ids.filter((id) => !current?.supporting_evidence_ids.includes(id)) ?? [];
   return {
-    change_id: `chg_${hash(`${input.monitoring_run_id}:${prior?.signal_id ?? "none"}:${current?.signal_id ?? "none"}:${state}`)}`,
+    change_id: `chg_${hash(`${input.monitoring_run_id}:${input.account_id}:${prior?.signal_id ?? "none"}:${current?.signal_id ?? "none"}:${state}`)}`,
     signal_key: current?.signal_key ?? prior?.signal_key ?? null, account_id: input.account_id,
     monitoring_run_id: input.monitoring_run_id, state, prior_state: prior?.current_status ?? null,
     current_state: current?.current_status ?? null, evidence_delta: { added, removed },

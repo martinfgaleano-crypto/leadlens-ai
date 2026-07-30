@@ -113,6 +113,20 @@ function Overview({ model }: { model: AdminIntelligenceViewModel }) {
         <Metric label="Provider cost" value={model.signal_temporal.summary.measured_cost_usd === null ? "Not measured" : `$${model.signal_temporal.summary.measured_cost_usd}`}/>
       </div>
     </section>}
+    {model.signal_benchmark && <section className={styles.panel}>
+      <SectionHeader eyebrow="Block 9 · benchmark · preliminary" title="Signal recovery health" text="Curated benchmark measurements are not production outcomes and do not affect ranking, Outcome Performance or report readiness."/>
+      <div className={styles.metricGrid}>
+        <Metric label="Signal system status" value={model.signal_benchmark.metrics.false_positives ? "Precision gap" : "Precision protected"}/>
+        <Metric label="Sample" value={model.signal_benchmark.metrics.sample_size}/>
+        <Metric label="Precision" value={model.signal_benchmark.metrics.precision.value === null ? "Insufficient sample" : pct(model.signal_benchmark.metrics.precision.value)}/>
+        <Metric label="Recall" value={model.signal_benchmark.metrics.recall.value === null ? "Insufficient sample" : pct(model.signal_benchmark.metrics.recall.value)}/>
+        <Metric label="Identity precision" value={model.signal_benchmark.metrics.identity_precision.value === null ? "Insufficient sample" : pct(model.signal_benchmark.metrics.identity_precision.value)}/>
+        <Metric label="Date-valid coverage" value={model.signal_benchmark.metrics.date_valid_coverage.value === null ? "Insufficient sample" : pct(model.signal_benchmark.metrics.date_valid_coverage.value)}/>
+        <Metric label="False positives / negatives" value={`${model.signal_benchmark.metrics.false_positives} / ${model.signal_benchmark.metrics.false_negatives}`}/>
+        <Metric label="Primary recovery bottleneck" value={Object.entries(model.signal_benchmark.gate_failures).sort((a,b) => b[1]-a[1])[0]?.[0] ?? "None measured"}/>
+      </div>
+      {model.signal_monitoring_operation && <p>Latest operation: {model.signal_monitoring_operation.summary.raw_results} raw results, {model.signal_monitoring_operation.summary.correct_entity_results} correct-entity results, {model.signal_monitoring_operation.summary.valid_signals} valid signals. Persistence is operational; monitoring remains manually triggered.</p>}
+    </section>}
 
     <SectionHeader eyebrow="Eight dimensions" title="Maturity scorecard" text="Scores appear only when the underlying dimension is genuinely measured." />
     <div className={styles.dimensionGrid}>
@@ -293,6 +307,13 @@ function Gaps({ model }: { model: AdminIntelligenceViewModel }) {
   const actions = model.snapshot.actions;
   const fastest = [...actions].sort((a,b) => ["xs","s","m","l","xl"].indexOf(a.effort)-["xs","s","m","l","xl"].indexOf(b.effort) || b.priority-a.priority)[0];
   return <section><SectionHeader eyebrow={`${gaps.length} active gaps`} title="Intelligence gaps and action queue" text="Priorities are ordinal decision aids, not precise forecasts." />
+    {model.signal_benchmark && <section className={styles.panel}><h3>Signal calibration gaps · benchmark preliminary</h3>
+      <ul>
+        {Object.entries(model.signal_benchmark.gate_failures).sort((a,b) => b[1]-a[1]).slice(0,5).map(([name,count]) => <li key={name}><strong>{words(name)}:</strong> {count} fixture gate failures. Next action: calibrate the category-specific recovery path without weakening the gate.</li>)}
+        <li><strong>Coverage:</strong> add reviewed cases for signal categories not represented in the 19-case benchmark.</li>
+        <li><strong>Provider/date:</strong> retain Brave for dated search discovery and Tavily for extraction; keep Serper disabled while HTTP 400 persists.</li>
+      </ul>
+    </section>}
     <div className={styles.filters}><label>Severity<select value={severity} onChange={(e) => setSeverity(e.target.value)}><option value="all">All</option>{["critical","high","medium","low"].map((x) => <option key={x}>{x}</option>)}</select></label></div>
     <div className={styles.gapGrid}>{gaps.map((gap) => <GapCard gap={gap} key={gap.id}/>)}</div>
     <SectionHeader eyebrow="Impact × effort" title="Next best intelligence actions" text={`Highest leverage: ${words(actions[0]?.action_type)}. Fastest meaningful: ${words(fastest?.action_type)}.`}/>
@@ -319,6 +340,10 @@ function Evidence({ model }: { model: AdminIntelligenceViewModel }) {
   return <section><SectionHeader eyebrow="Availability ≠ quality" title="Evidence integrity" text={e.explanation}/>
     <div className={styles.evidenceHero}><Measurement value={e.availability}/><p>Evidence availability, quality, corroboration, freshness and counterevidence are tracked separately.</p></div>
     <div className={styles.metricGrid}><Metric label="Evidence items" value={e.total ?? "Unavailable"}/><Metric label="Dated" value={e.dated ?? "Unavailable"}/><Metric label="Corroborated" value={e.corroborated ?? "Unavailable"}/><Metric label="Stale" value={e.stale ?? "Unavailable"}/><Metric label="Source classes" value={e.source_classes ?? "Unavailable"}/><Metric label="Counterevidence" value={e.counterevidence_instrumented === null ? "Unavailable" : e.counterevidence_instrumented ? "Instrumented" : "Not instrumented"}/></div>
+    {model.signal_benchmark && <section className={styles.panel}><h3>Signal benchmark diagnostics · preliminary</h3>
+      <div className={styles.metricGrid}><Metric label="Benchmark sample" value={model.signal_benchmark.metrics.sample_size}/><Metric label="True positives" value={model.signal_benchmark.metrics.true_positives}/><Metric label="True negatives" value={model.signal_benchmark.metrics.true_negatives}/><Metric label="False positives" value={model.signal_benchmark.metrics.false_positives}/><Metric label="False negatives" value={model.signal_benchmark.metrics.false_negatives}/><Metric label="Event accuracy" value={model.signal_benchmark.metrics.event_normalization_accuracy.value === null ? "Insufficient sample" : pct(model.signal_benchmark.metrics.event_normalization_accuracy.value)}/></div>
+      <p>These are curated benchmark results, not client outcomes. Denominators are preserved in the benchmark artifact and no metric affects structural ranking.</p>
+    </section>}
     {model.research_quality && <section className={styles.panel}><h3>Research acceptance ledger</h3>
       <div className={styles.metricGrid}><Metric label="Accepted" value={model.research_quality.summary.accepted_evidence}/><Metric label="Rejected" value={model.research_quality.summary.rejected_evidence}/><Metric label="Wrong entity rejected" value={model.research_quality.summary.wrong_entity_rejections}/><Metric label="Dated coverage" value={pct(model.research_quality.summary.dated_evidence_coverage)}/><Metric label="Corroboration attempts" value={model.research_quality.summary.corroboration_attempts}/><Metric label="Counterevidence checks" value={`${model.research_quality.summary.counterevidence_checks}/${model.research_quality.summary.accounts_researched}`}/></div>
       <p>Source tiers: {Object.entries(model.research_quality.summary.source_quality_distribution).map(([tier, count]) => `${tier}: ${count}`).join(" · ")}. Provider cost: {model.research_quality.summary.provider_cost.state === "measured" ? `$${model.research_quality.summary.provider_cost.usd}` : "not measured"}.</p>

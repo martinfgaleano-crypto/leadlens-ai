@@ -4,7 +4,7 @@
 import { MIN_PATTERN_SAMPLE, type IntelligenceSnapshot, type MeasurementResult } from "./os-contracts";
 import { buildIntelligenceSnapshot, type SnapshotInput } from "./snapshot-engine";
 import { loadSnapshotInputs } from "./snapshot-loader";
-import { loadLatestDeepEvidence, loadLatestResearchQuality, loadLatestSignalTemporal, type DeepEvidenceArtifact, type ResearchQualityArtifact, type SignalTemporalArtifact } from "./snapshot-loader";
+import { loadLatestDeepEvidence, loadLatestResearchQuality, loadLatestSignalTemporal, loadLatestSignalBenchmark, loadLatestSignalMonitoringOperation, type DeepEvidenceArtifact, type ResearchQualityArtifact, type SignalTemporalArtifact, type SignalBenchmarkArtifact, type SignalMonitoringOperationArtifact } from "./snapshot-loader";
 import type { LearnedPreferenceSource } from "./pattern-registry";
 import type { OutputValidationLifecycle } from "./validation-lifecycle";
 
@@ -62,6 +62,8 @@ export interface AdminIntelligenceViewModel {
   deep_accounts: DeepEvidenceArtifact | null;
   research_quality: ResearchQualityArtifact | null;
   signal_temporal: SignalTemporalArtifact | null;
+  signal_benchmark: SignalBenchmarkArtifact | null;
+  signal_monitoring_operation: SignalMonitoringOperationArtifact | null;
   responsible_claims: string[];
   unsupported_claims: string[];
   empty_states: {
@@ -81,7 +83,7 @@ export interface AdminIntelligenceLoadedData {
 
 const label = (value: string): string => value.replace(/_/g, " ");
 
-export function buildAdminIntelligenceViewModel(data: AdminIntelligenceLoadedData & { deep_accounts?: DeepEvidenceArtifact | null; research_quality?: ResearchQualityArtifact | null; signal_temporal?: SignalTemporalArtifact | null }): AdminIntelligenceViewModel {
+export function buildAdminIntelligenceViewModel(data: AdminIntelligenceLoadedData & { deep_accounts?: DeepEvidenceArtifact | null; research_quality?: ResearchQualityArtifact | null; signal_temporal?: SignalTemporalArtifact | null; signal_benchmark?: SignalBenchmarkArtifact | null; signal_monitoring_operation?: SignalMonitoringOperationArtifact | null }): AdminIntelligenceViewModel {
   const snapshot = buildIntelligenceSnapshot(data.input);
   const artifact = data.input.artifact;
   const evidenceDimension = snapshot.index.dimensions.find((d) => d.id === "evidence_integrity")!;
@@ -134,6 +136,8 @@ export function buildAdminIntelligenceViewModel(data: AdminIntelligenceLoadedDat
     deep_accounts: data.deep_accounts ?? null,
     research_quality: data.research_quality ?? null,
     signal_temporal: data.signal_temporal ?? null,
+    signal_benchmark: data.signal_benchmark ?? null,
+    signal_monitoring_operation: data.signal_monitoring_operation ?? null,
     responsible_claims: Array.from(new Set([...productionCapabilities, ...supportedOutputs])).slice(0, 10),
     unsupported_claims: Array.from(new Set(unsupported)).slice(0, 10),
     empty_states: {
@@ -237,6 +241,8 @@ export async function loadAdminIntelligenceViewModel(options: {
   const deepAccounts = await loadLatestDeepEvidence(options.root);
   const researchQuality = await loadLatestResearchQuality(options.root);
   const signalTemporal = await loadLatestSignalTemporal(options.root);
+  const signalBenchmark = await loadLatestSignalBenchmark(options.root);
+  const signalMonitoringOperation = await loadLatestSignalMonitoringOperation(options.root);
   input.validation_lifecycles = lifecycles;
   const realOutcomes = lifecycles.flatMap((v) => v.outcomes).map((o) => ({
     id: o.id, kind: o.kind, dimension: "commercial_outcome" as const,
@@ -247,6 +253,7 @@ export async function loadAdminIntelligenceViewModel(options: {
 
   return buildAdminIntelligenceViewModel({
     input, feedback, deep_accounts: deepAccounts, research_quality: researchQuality, signal_temporal: signalTemporal,
+    signal_benchmark: signalBenchmark, signal_monitoring_operation: signalMonitoringOperation,
     availability: {
       artifact: input.artifact ? "available" : "unavailable",
       database: databaseState,

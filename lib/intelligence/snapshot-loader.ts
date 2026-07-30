@@ -17,6 +17,52 @@ const PILOT_DIR = "ml/data/pilot-amor-de-gea";
 const DEEP_EVIDENCE_DIR = "ml/data/evidence-temporal";
 const RESEARCH_QUALITY_DIR = "ml/data/research-quality";
 const SIGNAL_TEMPORAL_DIR = "ml/data/signal-temporal";
+const SIGNAL_BENCHMARK_DIR = "ml/data/signal-benchmark";
+const SIGNAL_MONITORING_OPERATIONS_DIR = "ml/data/signal-monitoring-operations";
+
+export interface SignalBenchmarkArtifact {
+  cutoff: string; run_id: string; methodology_version: string; preliminary: boolean;
+  metrics: {
+    sample_size: number; positive_labels: number; negative_labels: number; adversarial_cases: number;
+    true_positives: number; false_positives: number; true_negatives: number; false_negatives: number;
+    precision: { numerator: number; denominator: number; value: number | null; state: string };
+    recall: { numerator: number; denominator: number; value: number | null; state: string };
+    identity_precision: { numerator: number; denominator: number; value: number | null; state: string };
+    date_valid_coverage: { numerator: number; denominator: number; value: number | null; state: string };
+    event_normalization_accuracy: { numerator: number; denominator: number; value: number | null; state: string };
+  };
+  gate_failures: Record<string, number>;
+  query_families: Array<{ family: string; accepted_signal: { value: number | null }; false_positive: { value: number | null } }>;
+}
+export interface SignalMonitoringOperationArtifact {
+  cutoff: string; generated_at: string; methodology_version: string;
+  summary: {
+    accounts: number; searches: number; extracts: number; retries: number; raw_results: number;
+    accepted_evidence: number; rejected_evidence: number; correct_entity_results: number;
+    date_valid_results: number; event_valid_results: number; signal_candidates: number;
+    valid_signals: number; material_changes: number; qualification_transitions: number;
+    cost: { state: string; usd?: number; reason?: string };
+  };
+}
+
+export async function loadLatestSignalBenchmark(root = process.cwd()): Promise<SignalBenchmarkArtifact | null> {
+  try {
+    const dir = path.join(root, SIGNAL_BENCHMARK_DIR);
+    const files = (await fs.readdir(dir)).filter((f) => /^bench_.*\.json$/.test(f)).sort();
+    const latest = files.at(-1); if (!latest) return null;
+    const artifact = JSON.parse(await fs.readFile(path.join(dir, latest), "utf8")) as Omit<SignalBenchmarkArtifact, "cutoff">;
+    return { ...artifact, cutoff: latest };
+  } catch { return null; }
+}
+export async function loadLatestSignalMonitoringOperation(root = process.cwd()): Promise<SignalMonitoringOperationArtifact | null> {
+  try {
+    const dir = path.join(root, SIGNAL_MONITORING_OPERATIONS_DIR);
+    const files = (await fs.readdir(dir)).filter((f) => /^amor-de-gea-block9-.*\.json$/.test(f)).sort();
+    const latest = files.at(-1); if (!latest) return null;
+    const artifact = JSON.parse(await fs.readFile(path.join(dir, latest), "utf8")) as Omit<SignalMonitoringOperationArtifact, "cutoff">;
+    return { ...artifact, cutoff: latest };
+  } catch { return null; }
+}
 
 export interface SignalTemporalArtifact {
   cutoff: string;
@@ -199,6 +245,7 @@ export async function loadSnapshotInputs(opts: {
   const deep = await loadLatestDeepEvidence(opts.root);
   const research = await loadLatestResearchQuality(opts.root);
   const temporal = await loadLatestSignalTemporal(opts.root);
+  const benchmark = await loadLatestSignalBenchmark(opts.root);
   const { source } = await loadLatestArtifactOutputSource(opts.root, opts.scope ?? { kind: "global" });
   const outputs = assembleArtifactOutputs(source);
   const patterns = adaptLearnedPreferences(opts.learned_preferences ?? []);
@@ -206,7 +253,7 @@ export async function loadSnapshotInputs(opts: {
   return {
     scope: opts.scope ?? { kind: "global" },
     now, source_data_cutoff: cutoff ?? now,
-    capability_versions: { entity_resolution: "entity-resolution-v3", company_verification: "segment-universe-v1", structural_account_ranking: "market-to-account-pipeline-v1", company_discovery: "segment-universe-v1", signal_monitoring: temporal?.methodology_version ?? "not_available" },
+    capability_versions: { entity_resolution: "entity-resolution-v3", company_verification: "segment-universe-v1", structural_account_ranking: "market-to-account-pipeline-v1", company_discovery: "segment-universe-v1", signal_monitoring: temporal?.methodology_version ?? "not_available", signal_recovery_benchmark: benchmark?.methodology_version ?? "not_available" },
     artifact: signals ? {
       ...signals,
       deep_research_complete: research?.summary.accounts_researched ?? signals.deep_research_complete,

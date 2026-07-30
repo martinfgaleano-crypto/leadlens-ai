@@ -1,0 +1,2340 @@
+{
+  "run_id": "bench_d91e0bb65511be1d",
+  "benchmark_id": "signal-recovery-benchmark-v1-2026-07-30",
+  "mode": "fixture",
+  "provider": null,
+  "source_cutoff": "2026-07-30T13:15:00.000Z",
+  "status": "completed",
+  "cost": {
+    "state": "not_measured",
+    "reason": "Fixture replay makes no provider calls."
+  },
+  "timeout_state": "none",
+  "observations": [
+    {
+      "case_id": "pos-ikea-cali-opening-2024",
+      "predicted_signal": true,
+      "predicted_entity": "confirmed",
+      "predicted_category": "store_opening",
+      "predicted_status": "completed",
+      "predicted_date_state": "exact",
+      "predicted_date": "2024-05-09T00:00:00.000Z",
+      "correct_identity": true,
+      "correct_category": true,
+      "correct_status": true,
+      "correct_date": true,
+      "gate_trace": [
+        {
+          "gate": "identity",
+          "state": "pass",
+          "reason": "Verified or controlled domain.",
+          "evidence": [
+            "https://www.ikea.com/co/es/newsroom/corporate-news/ikea-abre-segunda-tienda-colombia-pubccab25e0/"
+          ],
+          "confidence": 0.99
+        },
+        {
+          "gate": "event",
+          "state": "pass",
+          "reason": "Completed opening language.",
+          "evidence": [
+            "IKEA abrió las puertas de su segunda tienda en Colombia"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "date",
+          "state": "pass",
+          "reason": "Resolved from visible_text.",
+          "evidence": [
+            "visible_text:2024-05-09"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "freshness",
+          "state": "pass",
+          "reason": "Event is inside benchmark window.",
+          "evidence": [
+            "2024-01-01",
+            "2024-12-31"
+          ],
+          "confidence": 0.95
+        },
+        {
+          "gate": "materiality",
+          "state": "pass",
+          "reason": "Curated meaningful event.",
+          "evidence": [
+            "El 9 de mayo de 2024 IKEA inauguró oficialmente su segunda tienda en Colombia, ubicada en Cali."
+          ],
+          "confidence": 0.85
+        },
+        {
+          "gate": "source_quality",
+          "state": "pass",
+          "reason": "Source type: official.",
+          "evidence": [
+            "https://www.ikea.com/co/es/newsroom/corporate-news/ikea-abre-segunda-tienda-colombia-pubccab25e0/"
+          ],
+          "confidence": 0.95
+        },
+        {
+          "gate": "corroboration",
+          "state": "insufficient_evidence",
+          "reason": "Single-source observation is allowed but not corroborated.",
+          "evidence": [
+            "ikea.com"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "counterevidence",
+          "state": "not_applicable",
+          "reason": "Fixture replay contains no asserted counterevidence unless labeled.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "client_relevance",
+          "state": "not_applicable",
+          "reason": "Cross-company benchmark measures signal recovery, not client fit.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "timing",
+          "state": "pass",
+          "reason": "Identity, event, date and window gates pass.",
+          "evidence": [],
+          "confidence": 0.9
+        }
+      ],
+      "false_negative_code": null,
+      "false_positive_code": null,
+      "accepted_source_ids": [
+        "src_10c6af5acfa475a6"
+      ],
+      "source_owner_keys": [
+        "ikea.com"
+      ]
+    },
+    {
+      "case_id": "pos-fedex-vianen-facility-2025",
+      "predicted_signal": true,
+      "predicted_entity": "confirmed",
+      "predicted_category": "facility_opening",
+      "predicted_status": "completed",
+      "predicted_date_state": "exact",
+      "predicted_date": "2025-07-01T00:00:00.000Z",
+      "correct_identity": true,
+      "correct_category": true,
+      "correct_status": true,
+      "correct_date": true,
+      "gate_trace": [
+        {
+          "gate": "identity",
+          "state": "pass",
+          "reason": "Verified or controlled domain.",
+          "evidence": [
+            "https://newsroom.fedex.com/newsroom/europe-english/fedex-optimizes-logistics-operations-with-new-facility-in-vianen"
+          ],
+          "confidence": 0.99
+        },
+        {
+          "gate": "event",
+          "state": "pass",
+          "reason": "Completed opening language.",
+          "evidence": [
+            "FedEx Optimizes Logistics Operations with New Facility in Vianen"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "date",
+          "state": "pass",
+          "reason": "Resolved from visible_text.",
+          "evidence": [
+            "visible_text:2025-07-01"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "freshness",
+          "state": "pass",
+          "reason": "Event is inside benchmark window.",
+          "evidence": [
+            "2025-01-01",
+            "2025-12-31"
+          ],
+          "confidence": 0.95
+        },
+        {
+          "gate": "materiality",
+          "state": "pass",
+          "reason": "Curated meaningful event.",
+          "evidence": [
+            "FedEx announced the completed opening of its newest logistics facility in Vianen on July 1, 2025."
+          ],
+          "confidence": 0.85
+        },
+        {
+          "gate": "source_quality",
+          "state": "pass",
+          "reason": "Source type: official.",
+          "evidence": [
+            "https://newsroom.fedex.com/newsroom/europe-english/fedex-optimizes-logistics-operations-with-new-facility-in-vianen"
+          ],
+          "confidence": 0.95
+        },
+        {
+          "gate": "corroboration",
+          "state": "insufficient_evidence",
+          "reason": "Single-source observation is allowed but not corroborated.",
+          "evidence": [
+            "fedex.com"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "counterevidence",
+          "state": "not_applicable",
+          "reason": "Fixture replay contains no asserted counterevidence unless labeled.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "client_relevance",
+          "state": "not_applicable",
+          "reason": "Cross-company benchmark measures signal recovery, not client fit.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "timing",
+          "state": "pass",
+          "reason": "Identity, event, date and window gates pass.",
+          "evidence": [],
+          "confidence": 0.9
+        }
+      ],
+      "false_negative_code": null,
+      "false_positive_code": null,
+      "accepted_source_ids": [
+        "src_d94bec6bb97bd99c"
+      ],
+      "source_owner_keys": [
+        "fedex.com"
+      ]
+    },
+    {
+      "case_id": "pos-apple-iphone17-launch-2025",
+      "predicted_signal": true,
+      "predicted_entity": "confirmed",
+      "predicted_category": "product_launch",
+      "predicted_status": "announced",
+      "predicted_date_state": "exact",
+      "predicted_date": "2025-09-09T00:00:00.000Z",
+      "correct_identity": true,
+      "correct_category": true,
+      "correct_status": true,
+      "correct_date": true,
+      "gate_trace": [
+        {
+          "gate": "identity",
+          "state": "pass",
+          "reason": "Verified or controlled domain.",
+          "evidence": [
+            "https://www.apple.com/newsroom/2025/09/apple-debuts-iphone-17/"
+          ],
+          "confidence": 0.99
+        },
+        {
+          "gate": "event",
+          "state": "pass",
+          "reason": "New product announcement.",
+          "evidence": [
+            "Apple debuts iPhone 17"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "date",
+          "state": "pass",
+          "reason": "Resolved from visible_text.",
+          "evidence": [
+            "visible_text:2025-09-09"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "freshness",
+          "state": "pass",
+          "reason": "Event is inside benchmark window.",
+          "evidence": [
+            "2025-01-01",
+            "2025-12-31"
+          ],
+          "confidence": 0.95
+        },
+        {
+          "gate": "materiality",
+          "state": "pass",
+          "reason": "Curated meaningful event.",
+          "evidence": [
+            "Apple announced iPhone 17 on September 9, 2025 and specified its new product features and availability."
+          ],
+          "confidence": 0.85
+        },
+        {
+          "gate": "source_quality",
+          "state": "pass",
+          "reason": "Source type: official.",
+          "evidence": [
+            "https://www.apple.com/newsroom/2025/09/apple-debuts-iphone-17/"
+          ],
+          "confidence": 0.95
+        },
+        {
+          "gate": "corroboration",
+          "state": "insufficient_evidence",
+          "reason": "Single-source observation is allowed but not corroborated.",
+          "evidence": [
+            "apple.com"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "counterevidence",
+          "state": "not_applicable",
+          "reason": "Fixture replay contains no asserted counterevidence unless labeled.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "client_relevance",
+          "state": "not_applicable",
+          "reason": "Cross-company benchmark measures signal recovery, not client fit.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "timing",
+          "state": "pass",
+          "reason": "Identity, event, date and window gates pass.",
+          "evidence": [],
+          "confidence": 0.9
+        }
+      ],
+      "false_negative_code": null,
+      "false_positive_code": null,
+      "accepted_source_ids": [
+        "src_4b3696ac18955048"
+      ],
+      "source_owner_keys": [
+        "apple.com"
+      ]
+    },
+    {
+      "case_id": "pos-spotify-umg-agreement-2025",
+      "predicted_signal": true,
+      "predicted_entity": "confirmed",
+      "predicted_category": "partnership",
+      "predicted_status": "announced",
+      "predicted_date_state": "exact",
+      "predicted_date": "2025-01-26T00:00:00.000Z",
+      "correct_identity": true,
+      "correct_category": true,
+      "correct_status": true,
+      "correct_date": true,
+      "gate_trace": [
+        {
+          "gate": "identity",
+          "state": "pass",
+          "reason": "Verified or controlled domain.",
+          "evidence": [
+            "https://newsroom.spotify.com/2025-01-26/universal-music-group-spotify-expansion/"
+          ],
+          "confidence": 0.99
+        },
+        {
+          "gate": "event",
+          "state": "pass",
+          "reason": "Partnership/agreement announcement.",
+          "evidence": [
+            "Universal Music Group and Spotify Strike a New Multiyear Agreement"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "date",
+          "state": "pass",
+          "reason": "Resolved from visible_text.",
+          "evidence": [
+            "visible_text:2025-01-26"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "freshness",
+          "state": "pass",
+          "reason": "Event is inside benchmark window.",
+          "evidence": [
+            "2025-01-01",
+            "2025-12-31"
+          ],
+          "confidence": 0.95
+        },
+        {
+          "gate": "materiality",
+          "state": "pass",
+          "reason": "Curated meaningful event.",
+          "evidence": [
+            "Spotify and Universal Music Group announced new multiyear recorded-music and publishing agreements on January 26, 2025."
+          ],
+          "confidence": 0.85
+        },
+        {
+          "gate": "source_quality",
+          "state": "pass",
+          "reason": "Source type: official.",
+          "evidence": [
+            "https://newsroom.spotify.com/2025-01-26/universal-music-group-spotify-expansion/"
+          ],
+          "confidence": 0.95
+        },
+        {
+          "gate": "corroboration",
+          "state": "insufficient_evidence",
+          "reason": "Single-source observation is allowed but not corroborated.",
+          "evidence": [
+            "spotify.com"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "counterevidence",
+          "state": "not_applicable",
+          "reason": "Fixture replay contains no asserted counterevidence unless labeled.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "client_relevance",
+          "state": "not_applicable",
+          "reason": "Cross-company benchmark measures signal recovery, not client fit.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "timing",
+          "state": "pass",
+          "reason": "Identity, event, date and window gates pass.",
+          "evidence": [],
+          "confidence": 0.9
+        }
+      ],
+      "false_negative_code": null,
+      "false_positive_code": null,
+      "accepted_source_ids": [
+        "src_f6a2e4eea3e7ce57"
+      ],
+      "source_owner_keys": [
+        "spotify.com"
+      ]
+    },
+    {
+      "case_id": "pos-spotify-leadership-2025",
+      "predicted_signal": true,
+      "predicted_entity": "confirmed",
+      "predicted_category": "leadership_change",
+      "predicted_status": "announced",
+      "predicted_date_state": "exact",
+      "predicted_date": "2025-09-30T00:00:00.000Z",
+      "correct_identity": true,
+      "correct_category": true,
+      "correct_status": true,
+      "correct_date": true,
+      "gate_trace": [
+        {
+          "gate": "identity",
+          "state": "pass",
+          "reason": "Verified or controlled domain.",
+          "evidence": [
+            "https://newsroom.spotify.com/2025-09-30/spotify-announcement-daniel-ek-executive-chairman/"
+          ],
+          "confidence": 0.99
+        },
+        {
+          "gate": "event",
+          "state": "pass",
+          "reason": "Leadership appointment language.",
+          "evidence": [
+            "Spotify Announces Leadership Evolution"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "date",
+          "state": "pass",
+          "reason": "Resolved from visible_text.",
+          "evidence": [
+            "visible_text:2025-09-30"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "freshness",
+          "state": "pass",
+          "reason": "Event is inside benchmark window.",
+          "evidence": [
+            "2025-01-01",
+            "2025-12-31"
+          ],
+          "confidence": 0.95
+        },
+        {
+          "gate": "materiality",
+          "state": "pass",
+          "reason": "Curated meaningful event.",
+          "evidence": [
+            "Spotify announced on September 30, 2025 that Daniel Ek would become Executive Chairman and two co-CEOs would take office in January 2026."
+          ],
+          "confidence": 0.85
+        },
+        {
+          "gate": "source_quality",
+          "state": "pass",
+          "reason": "Source type: official.",
+          "evidence": [
+            "https://newsroom.spotify.com/2025-09-30/spotify-announcement-daniel-ek-executive-chairman/"
+          ],
+          "confidence": 0.95
+        },
+        {
+          "gate": "corroboration",
+          "state": "insufficient_evidence",
+          "reason": "Single-source observation is allowed but not corroborated.",
+          "evidence": [
+            "spotify.com"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "counterevidence",
+          "state": "not_applicable",
+          "reason": "Fixture replay contains no asserted counterevidence unless labeled.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "client_relevance",
+          "state": "not_applicable",
+          "reason": "Cross-company benchmark measures signal recovery, not client fit.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "timing",
+          "state": "pass",
+          "reason": "Identity, event, date and window gates pass.",
+          "evidence": [],
+          "confidence": 0.9
+        }
+      ],
+      "false_negative_code": null,
+      "false_positive_code": null,
+      "accepted_source_ids": [
+        "src_0b5b09e25c081abf"
+      ],
+      "source_owner_keys": [
+        "spotify.com"
+      ]
+    },
+    {
+      "case_id": "pos-amazon-shreveport-facility-2024",
+      "predicted_signal": true,
+      "predicted_entity": "confirmed",
+      "predicted_category": "facility_opening",
+      "predicted_status": "completed",
+      "predicted_date_state": "exact",
+      "predicted_date": "2024-10-09T00:00:00.000Z",
+      "correct_identity": true,
+      "correct_category": true,
+      "correct_status": true,
+      "correct_date": true,
+      "gate_trace": [
+        {
+          "gate": "identity",
+          "state": "pass",
+          "reason": "Verified or controlled domain.",
+          "evidence": [
+            "https://www.aboutamazon.com/news/operations/amazon-fulfillment-center-robotics-ai"
+          ],
+          "confidence": 0.99
+        },
+        {
+          "gate": "event",
+          "state": "pass",
+          "reason": "Completed opening language.",
+          "evidence": [
+            "Amazon unveils the next generation of fulfillment centers"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "date",
+          "state": "pass",
+          "reason": "Resolved from visible_text.",
+          "evidence": [
+            "visible_text:2024-10-09"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "freshness",
+          "state": "pass",
+          "reason": "Event is inside benchmark window.",
+          "evidence": [
+            "2024-01-01",
+            "2024-12-31"
+          ],
+          "confidence": 0.95
+        },
+        {
+          "gate": "materiality",
+          "state": "pass",
+          "reason": "Curated meaningful event.",
+          "evidence": [
+            "Amazon described its operating next-generation fulfillment center in Shreveport on October 9, 2024."
+          ],
+          "confidence": 0.85
+        },
+        {
+          "gate": "source_quality",
+          "state": "pass",
+          "reason": "Source type: official.",
+          "evidence": [
+            "https://www.aboutamazon.com/news/operations/amazon-fulfillment-center-robotics-ai"
+          ],
+          "confidence": 0.95
+        },
+        {
+          "gate": "corroboration",
+          "state": "insufficient_evidence",
+          "reason": "Single-source observation is allowed but not corroborated.",
+          "evidence": [
+            "aboutamazon.com"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "counterevidence",
+          "state": "not_applicable",
+          "reason": "Fixture replay contains no asserted counterevidence unless labeled.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "client_relevance",
+          "state": "not_applicable",
+          "reason": "Cross-company benchmark measures signal recovery, not client fit.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "timing",
+          "state": "pass",
+          "reason": "Identity, event, date and window gates pass.",
+          "evidence": [],
+          "confidence": 0.9
+        }
+      ],
+      "false_negative_code": null,
+      "false_positive_code": null,
+      "accepted_source_ids": [
+        "src_4b766b2a073ab1b3"
+      ],
+      "source_owner_keys": [
+        "aboutamazon.com"
+      ]
+    },
+    {
+      "case_id": "pos-microsoft-activision-completed-2023",
+      "predicted_signal": true,
+      "predicted_entity": "confirmed",
+      "predicted_category": "acquisition",
+      "predicted_status": "completed",
+      "predicted_date_state": "exact",
+      "predicted_date": "2023-10-13T00:00:00.000Z",
+      "correct_identity": true,
+      "correct_category": true,
+      "correct_status": true,
+      "correct_date": true,
+      "gate_trace": [
+        {
+          "gate": "identity",
+          "state": "pass",
+          "reason": "Verified or controlled domain.",
+          "evidence": [
+            "https://news.microsoft.com/wp-content/uploads/prod/sites/653/2023/10/Phil-Spencer-email-to-Microsoft-employees.pdf"
+          ],
+          "confidence": 0.99
+        },
+        {
+          "gate": "event",
+          "state": "pass",
+          "reason": "Completion language is explicit.",
+          "evidence": [
+            "Welcoming Activision Blizzard King to Team Xbox"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "date",
+          "state": "pass",
+          "reason": "Resolved from visible_text.",
+          "evidence": [
+            "visible_text:2023-10-13"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "freshness",
+          "state": "pass",
+          "reason": "Event is inside benchmark window.",
+          "evidence": [
+            "2023-01-01",
+            "2023-12-31"
+          ],
+          "confidence": 0.95
+        },
+        {
+          "gate": "materiality",
+          "state": "pass",
+          "reason": "Curated meaningful event.",
+          "evidence": [
+            "Microsoft stated on October 13, 2023 that it had completed the acquisition of Activision Blizzard."
+          ],
+          "confidence": 0.85
+        },
+        {
+          "gate": "source_quality",
+          "state": "pass",
+          "reason": "Source type: official.",
+          "evidence": [
+            "https://news.microsoft.com/wp-content/uploads/prod/sites/653/2023/10/Phil-Spencer-email-to-Microsoft-employees.pdf"
+          ],
+          "confidence": 0.95
+        },
+        {
+          "gate": "corroboration",
+          "state": "insufficient_evidence",
+          "reason": "Single-source observation is allowed but not corroborated.",
+          "evidence": [
+            "microsoft.com"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "counterevidence",
+          "state": "not_applicable",
+          "reason": "Fixture replay contains no asserted counterevidence unless labeled.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "client_relevance",
+          "state": "not_applicable",
+          "reason": "Cross-company benchmark measures signal recovery, not client fit.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "timing",
+          "state": "pass",
+          "reason": "Identity, event, date and window gates pass.",
+          "evidence": [],
+          "confidence": 0.9
+        }
+      ],
+      "false_negative_code": null,
+      "false_positive_code": null,
+      "accepted_source_ids": [
+        "src_d1ddb7910299fdd8"
+      ],
+      "source_owner_keys": [
+        "microsoft.com"
+      ]
+    },
+    {
+      "case_id": "pos-airbnb-fifa-partnership-2025",
+      "predicted_signal": true,
+      "predicted_entity": "confirmed",
+      "predicted_category": "partnership",
+      "predicted_status": "announced",
+      "predicted_date_state": "exact",
+      "predicted_date": "2025-06-12T00:00:00.000Z",
+      "correct_identity": true,
+      "correct_category": true,
+      "correct_status": true,
+      "correct_date": true,
+      "gate_trace": [
+        {
+          "gate": "identity",
+          "state": "pass",
+          "reason": "Verified or controlled domain.",
+          "evidence": [
+            "https://news.airbnb.com/wp-content/uploads/sites/4/2025/06/Airbnb-and-FIFA-Announce-Major-Multi-Tournament-Partnership.pdf"
+          ],
+          "confidence": 0.99
+        },
+        {
+          "gate": "event",
+          "state": "pass",
+          "reason": "Partnership/agreement announcement.",
+          "evidence": [
+            "Airbnb and FIFA Announce Major Multi-Tournament Partnership"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "date",
+          "state": "pass",
+          "reason": "Resolved from visible_text.",
+          "evidence": [
+            "visible_text:2025-06-12"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "freshness",
+          "state": "pass",
+          "reason": "Event is inside benchmark window.",
+          "evidence": [
+            "2025-01-01",
+            "2025-12-31"
+          ],
+          "confidence": 0.95
+        },
+        {
+          "gate": "materiality",
+          "state": "pass",
+          "reason": "Curated meaningful event.",
+          "evidence": [
+            "Airbnb and FIFA announced a three-year multi-tournament partnership on June 12, 2025."
+          ],
+          "confidence": 0.85
+        },
+        {
+          "gate": "source_quality",
+          "state": "pass",
+          "reason": "Source type: official.",
+          "evidence": [
+            "https://news.airbnb.com/wp-content/uploads/sites/4/2025/06/Airbnb-and-FIFA-Announce-Major-Multi-Tournament-Partnership.pdf"
+          ],
+          "confidence": 0.95
+        },
+        {
+          "gate": "corroboration",
+          "state": "insufficient_evidence",
+          "reason": "Single-source observation is allowed but not corroborated.",
+          "evidence": [
+            "airbnb.com"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "counterevidence",
+          "state": "not_applicable",
+          "reason": "Fixture replay contains no asserted counterevidence unless labeled.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "client_relevance",
+          "state": "not_applicable",
+          "reason": "Cross-company benchmark measures signal recovery, not client fit.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "timing",
+          "state": "pass",
+          "reason": "Identity, event, date and window gates pass.",
+          "evidence": [],
+          "confidence": 0.9
+        }
+      ],
+      "false_negative_code": null,
+      "false_positive_code": null,
+      "accepted_source_ids": [
+        "src_8c0678d481d4d5d2"
+      ],
+      "source_owner_keys": [
+        "airbnb.com"
+      ]
+    },
+    {
+      "case_id": "neg-hotel-static-listing",
+      "predicted_signal": false,
+      "predicted_entity": "probable",
+      "predicted_category": null,
+      "predicted_status": "unknown",
+      "predicted_date_state": "retrieved_only",
+      "predicted_date": null,
+      "correct_identity": true,
+      "correct_category": true,
+      "correct_status": true,
+      "correct_date": true,
+      "gate_trace": [
+        {
+          "gate": "identity",
+          "state": "pass",
+          "reason": "Full distinctive account name appears in external source.",
+          "evidence": [
+            "https://enlazandoalmas.com/listing/hotel-spa-la-colina-pereira"
+          ],
+          "confidence": 0.82
+        },
+        {
+          "gate": "event",
+          "state": "fail",
+          "reason": "Static/reference content has no atomic event.",
+          "evidence": [
+            "Hotel Spa La Colina | Planes de Spa y Hospedaje"
+          ],
+          "confidence": 0.85
+        },
+        {
+          "gate": "date",
+          "state": "fail",
+          "reason": "No publication/effective event date.",
+          "evidence": [
+            "retrieval:2026-07-30T13:15:00Z"
+          ],
+          "confidence": 0.95
+        },
+        {
+          "gate": "freshness",
+          "state": "insufficient_evidence",
+          "reason": "Freshness cannot be established without event date.",
+          "evidence": [
+            "2026-07-23",
+            "2026-07-30"
+          ],
+          "confidence": 0.5
+        },
+        {
+          "gate": "materiality",
+          "state": "fail",
+          "reason": "Static or commercially irrelevant content.",
+          "evidence": [
+            "Static hotel and spa listing near Pereira; it states services and location but no opening or expansion event."
+          ],
+          "confidence": 0.85
+        },
+        {
+          "gate": "source_quality",
+          "state": "insufficient_evidence",
+          "reason": "Source type: directory.",
+          "evidence": [
+            "https://enlazandoalmas.com/listing/hotel-spa-la-colina-pereira"
+          ],
+          "confidence": 0.6
+        },
+        {
+          "gate": "corroboration",
+          "state": "insufficient_evidence",
+          "reason": "Single-source observation is allowed but not corroborated.",
+          "evidence": [
+            "enlazandoalmas.com"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "counterevidence",
+          "state": "not_applicable",
+          "reason": "Fixture replay contains no asserted counterevidence unless labeled.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "client_relevance",
+          "state": "not_applicable",
+          "reason": "Cross-company benchmark measures signal recovery, not client fit.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "timing",
+          "state": "fail",
+          "reason": "At least one current-timing prerequisite failed.",
+          "evidence": [],
+          "confidence": 0.9
+        }
+      ],
+      "false_negative_code": null,
+      "false_positive_code": null,
+      "accepted_source_ids": [],
+      "source_owner_keys": [
+        "enlazandoalmas.com"
+      ]
+    },
+    {
+      "case_id": "neg-hotel-flickr-profile",
+      "predicted_signal": false,
+      "predicted_entity": "confirmed",
+      "predicted_category": null,
+      "predicted_status": "unknown",
+      "predicted_date_state": "retrieved_only",
+      "predicted_date": null,
+      "correct_identity": false,
+      "correct_category": true,
+      "correct_status": true,
+      "correct_date": true,
+      "gate_trace": [
+        {
+          "gate": "identity",
+          "state": "pass",
+          "reason": "Verified or controlled domain.",
+          "evidence": [
+            "https://www.flickr.com/photos/hotel-spa-la-colina"
+          ],
+          "confidence": 0.99
+        },
+        {
+          "gate": "event",
+          "state": "fail",
+          "reason": "Static/reference content has no atomic event.",
+          "evidence": [
+            "Hotel Spa La Colina | Flickr"
+          ],
+          "confidence": 0.85
+        },
+        {
+          "gate": "date",
+          "state": "fail",
+          "reason": "No publication/effective event date.",
+          "evidence": [
+            "retrieval:2026-07-30T13:15:00Z"
+          ],
+          "confidence": 0.95
+        },
+        {
+          "gate": "freshness",
+          "state": "insufficient_evidence",
+          "reason": "Freshness cannot be established without event date.",
+          "evidence": [
+            "2026-07-23",
+            "2026-07-30"
+          ],
+          "confidence": 0.5
+        },
+        {
+          "gate": "materiality",
+          "state": "fail",
+          "reason": "Static or commercially irrelevant content.",
+          "evidence": [
+            "A photo profile containing a gallery count and no atomic commercial event."
+          ],
+          "confidence": 0.85
+        },
+        {
+          "gate": "source_quality",
+          "state": "pass",
+          "reason": "Source type: official_social.",
+          "evidence": [
+            "https://www.flickr.com/photos/hotel-spa-la-colina"
+          ],
+          "confidence": 0.6
+        },
+        {
+          "gate": "corroboration",
+          "state": "insufficient_evidence",
+          "reason": "Single-source observation is allowed but not corroborated.",
+          "evidence": [
+            "hotelspalacolina.com"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "counterevidence",
+          "state": "not_applicable",
+          "reason": "Fixture replay contains no asserted counterevidence unless labeled.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "client_relevance",
+          "state": "not_applicable",
+          "reason": "Cross-company benchmark measures signal recovery, not client fit.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "timing",
+          "state": "fail",
+          "reason": "At least one current-timing prerequisite failed.",
+          "evidence": [],
+          "confidence": 0.9
+        }
+      ],
+      "false_negative_code": null,
+      "false_positive_code": null,
+      "accepted_source_ids": [],
+      "source_owner_keys": [
+        "hotelspalacolina.com"
+      ]
+    },
+    {
+      "case_id": "neg-bioplaza-directory",
+      "predicted_signal": false,
+      "predicted_entity": "probable",
+      "predicted_category": null,
+      "predicted_status": "unknown",
+      "predicted_date_state": "retrieved_only",
+      "predicted_date": null,
+      "correct_identity": true,
+      "correct_category": true,
+      "correct_status": true,
+      "correct_date": true,
+      "gate_trace": [
+        {
+          "gate": "identity",
+          "state": "pass",
+          "reason": "Full distinctive account name appears in external source.",
+          "evidence": [
+            "https://es.restaurantguru.com/Bioplaza-Bogota"
+          ],
+          "confidence": 0.82
+        },
+        {
+          "gate": "event",
+          "state": "fail",
+          "reason": "Static/reference content has no atomic event.",
+          "evidence": [
+            "BioPlaza Chicó, Bogotá"
+          ],
+          "confidence": 0.85
+        },
+        {
+          "gate": "date",
+          "state": "fail",
+          "reason": "No publication/effective event date.",
+          "evidence": [
+            "retrieval:2026-07-30T13:15:00Z"
+          ],
+          "confidence": 0.95
+        },
+        {
+          "gate": "freshness",
+          "state": "insufficient_evidence",
+          "reason": "Freshness cannot be established without event date.",
+          "evidence": [
+            "2026-07-23",
+            "2026-07-30"
+          ],
+          "confidence": 0.5
+        },
+        {
+          "gate": "materiality",
+          "state": "fail",
+          "reason": "Static or commercially irrelevant content.",
+          "evidence": [
+            "Static restaurant directory page with menu and review language; no dated opening event."
+          ],
+          "confidence": 0.85
+        },
+        {
+          "gate": "source_quality",
+          "state": "insufficient_evidence",
+          "reason": "Source type: directory.",
+          "evidence": [
+            "https://es.restaurantguru.com/Bioplaza-Bogota"
+          ],
+          "confidence": 0.6
+        },
+        {
+          "gate": "corroboration",
+          "state": "insufficient_evidence",
+          "reason": "Single-source observation is allowed but not corroborated.",
+          "evidence": [
+            "restaurantguru.com"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "counterevidence",
+          "state": "not_applicable",
+          "reason": "Fixture replay contains no asserted counterevidence unless labeled.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "client_relevance",
+          "state": "not_applicable",
+          "reason": "Cross-company benchmark measures signal recovery, not client fit.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "timing",
+          "state": "fail",
+          "reason": "At least one current-timing prerequisite failed.",
+          "evidence": [],
+          "confidence": 0.9
+        }
+      ],
+      "false_negative_code": null,
+      "false_positive_code": null,
+      "accepted_source_ids": [],
+      "source_owner_keys": [
+        "restaurantguru.com"
+      ]
+    },
+    {
+      "case_id": "neg-bioplaza-product-static",
+      "predicted_signal": false,
+      "predicted_entity": "confirmed",
+      "predicted_category": null,
+      "predicted_status": "unknown",
+      "predicted_date_state": "retrieved_only",
+      "predicted_date": null,
+      "correct_identity": true,
+      "correct_category": true,
+      "correct_status": true,
+      "correct_date": true,
+      "gate_trace": [
+        {
+          "gate": "identity",
+          "state": "pass",
+          "reason": "Verified or controlled domain.",
+          "evidence": [
+            "https://www.bioplaza.com.co/producto/harina-de-platano-500g"
+          ],
+          "confidence": 0.99
+        },
+        {
+          "gate": "event",
+          "state": "fail",
+          "reason": "Static/reference content has no atomic event.",
+          "evidence": [
+            "Harina de plátano 500g"
+          ],
+          "confidence": 0.85
+        },
+        {
+          "gate": "date",
+          "state": "fail",
+          "reason": "No publication/effective event date.",
+          "evidence": [
+            "retrieval:2026-07-30T13:15:00Z"
+          ],
+          "confidence": 0.95
+        },
+        {
+          "gate": "freshness",
+          "state": "insufficient_evidence",
+          "reason": "Freshness cannot be established without event date.",
+          "evidence": [
+            "2026-07-23",
+            "2026-07-30"
+          ],
+          "confidence": 0.5
+        },
+        {
+          "gate": "materiality",
+          "state": "fail",
+          "reason": "Static or commercially irrelevant content.",
+          "evidence": [
+            "Static product catalog page that offers a product but does not announce a launch."
+          ],
+          "confidence": 0.85
+        },
+        {
+          "gate": "source_quality",
+          "state": "pass",
+          "reason": "Source type: official.",
+          "evidence": [
+            "https://www.bioplaza.com.co/producto/harina-de-platano-500g"
+          ],
+          "confidence": 0.95
+        },
+        {
+          "gate": "corroboration",
+          "state": "insufficient_evidence",
+          "reason": "Single-source observation is allowed but not corroborated.",
+          "evidence": [
+            "bioplaza.com.co"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "counterevidence",
+          "state": "not_applicable",
+          "reason": "Fixture replay contains no asserted counterevidence unless labeled.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "client_relevance",
+          "state": "not_applicable",
+          "reason": "Cross-company benchmark measures signal recovery, not client fit.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "timing",
+          "state": "fail",
+          "reason": "At least one current-timing prerequisite failed.",
+          "evidence": [],
+          "confidence": 0.9
+        }
+      ],
+      "false_negative_code": null,
+      "false_positive_code": null,
+      "accepted_source_ids": [],
+      "source_owner_keys": [
+        "bioplaza.com.co"
+      ]
+    },
+    {
+      "case_id": "neg-dam-old-price-list",
+      "predicted_signal": false,
+      "predicted_entity": "confirmed",
+      "predicted_category": null,
+      "predicted_status": "unknown",
+      "predicted_date_state": "exact",
+      "predicted_date": "2025-12-05T00:00:00.000Z",
+      "correct_identity": true,
+      "correct_category": true,
+      "correct_status": true,
+      "correct_date": true,
+      "gate_trace": [
+        {
+          "gate": "identity",
+          "state": "pass",
+          "reason": "Verified or controlled domain.",
+          "evidence": [
+            "https://distribuidoradam.com/wp-content/uploads/2025/12/Lista-de-Precios-Distribuidora-DAM-5-de-Diciembre-2025.pdf"
+          ],
+          "confidence": 0.99
+        },
+        {
+          "gate": "event",
+          "state": "fail",
+          "reason": "Static/reference content has no atomic event.",
+          "evidence": [
+            "Lista de Precios Distribuidora DAM"
+          ],
+          "confidence": 0.85
+        },
+        {
+          "gate": "date",
+          "state": "pass",
+          "reason": "Resolved from visible_text.",
+          "evidence": [
+            "visible_text:2025-12-05"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "freshness",
+          "state": "fail",
+          "reason": "Event is outside benchmark window.",
+          "evidence": [
+            "2026-07-23",
+            "2026-07-30"
+          ],
+          "confidence": 0.95
+        },
+        {
+          "gate": "materiality",
+          "state": "fail",
+          "reason": "Static or commercially irrelevant content.",
+          "evidence": [
+            "Dated price list and static national-distribution description; no new expansion event and outside the benchmark window."
+          ],
+          "confidence": 0.85
+        },
+        {
+          "gate": "source_quality",
+          "state": "pass",
+          "reason": "Source type: official.",
+          "evidence": [
+            "https://distribuidoradam.com/wp-content/uploads/2025/12/Lista-de-Precios-Distribuidora-DAM-5-de-Diciembre-2025.pdf"
+          ],
+          "confidence": 0.95
+        },
+        {
+          "gate": "corroboration",
+          "state": "insufficient_evidence",
+          "reason": "Single-source observation is allowed but not corroborated.",
+          "evidence": [
+            "distribuidoradam.com"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "counterevidence",
+          "state": "not_applicable",
+          "reason": "Fixture replay contains no asserted counterevidence unless labeled.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "client_relevance",
+          "state": "not_applicable",
+          "reason": "Cross-company benchmark measures signal recovery, not client fit.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "timing",
+          "state": "fail",
+          "reason": "At least one current-timing prerequisite failed.",
+          "evidence": [],
+          "confidence": 0.9
+        }
+      ],
+      "false_negative_code": null,
+      "false_positive_code": null,
+      "accepted_source_ids": [],
+      "source_owner_keys": [
+        "distribuidoradam.com"
+      ]
+    },
+    {
+      "case_id": "adv-bioplaza-dominican-place",
+      "predicted_signal": false,
+      "predicted_entity": "probable",
+      "predicted_category": null,
+      "predicted_status": "unknown",
+      "predicted_date_state": "exact",
+      "predicted_date": "2026-06-22T00:00:00.000Z",
+      "correct_identity": false,
+      "correct_category": true,
+      "correct_status": true,
+      "correct_date": true,
+      "gate_trace": [
+        {
+          "gate": "identity",
+          "state": "pass",
+          "reason": "Full distinctive account name appears in external source.",
+          "evidence": [
+            "https://www.tiktok.com/discover/cafe-kirby-santiago"
+          ],
+          "confidence": 0.82
+        },
+        {
+          "gate": "event",
+          "state": "fail",
+          "reason": "No supported atomic event pattern.",
+          "evidence": [
+            "Cafe Kirby Santiago"
+          ],
+          "confidence": 0.85
+        },
+        {
+          "gate": "date",
+          "state": "pass",
+          "reason": "Resolved from visible_text.",
+          "evidence": [
+            "visible_text:2026-06-22"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "freshness",
+          "state": "pass",
+          "reason": "Event is inside benchmark window.",
+          "evidence": [
+            "2026-01-01",
+            "2026-07-30"
+          ],
+          "confidence": 0.95
+        },
+        {
+          "gate": "materiality",
+          "state": "fail",
+          "reason": "Static or commercially irrelevant content.",
+          "evidence": [
+            "Mentions BioPlaza as an address in Santiago, Dominican Republic, unrelated to BioPlaza Colombia."
+          ],
+          "confidence": 0.85
+        },
+        {
+          "gate": "source_quality",
+          "state": "insufficient_evidence",
+          "reason": "Source type: social.",
+          "evidence": [
+            "https://www.tiktok.com/discover/cafe-kirby-santiago"
+          ],
+          "confidence": 0.6
+        },
+        {
+          "gate": "corroboration",
+          "state": "insufficient_evidence",
+          "reason": "Single-source observation is allowed but not corroborated.",
+          "evidence": [
+            "tiktok.com"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "counterevidence",
+          "state": "not_applicable",
+          "reason": "Fixture replay contains no asserted counterevidence unless labeled.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "client_relevance",
+          "state": "not_applicable",
+          "reason": "Cross-company benchmark measures signal recovery, not client fit.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "timing",
+          "state": "fail",
+          "reason": "At least one current-timing prerequisite failed.",
+          "evidence": [],
+          "confidence": 0.9
+        }
+      ],
+      "false_negative_code": null,
+      "false_positive_code": null,
+      "accepted_source_ids": [],
+      "source_owner_keys": [
+        "tiktok.com"
+      ]
+    },
+    {
+      "case_id": "adv-bioplaza-nigeria",
+      "predicted_signal": false,
+      "predicted_entity": "wrong_entity",
+      "predicted_category": null,
+      "predicted_status": "unknown",
+      "predicted_date_state": "exact",
+      "predicted_date": "2026-04-06T00:00:00.000Z",
+      "correct_identity": true,
+      "correct_category": true,
+      "correct_status": true,
+      "correct_date": true,
+      "gate_trace": [
+        {
+          "gate": "identity",
+          "state": "fail",
+          "reason": "Explicit geography conflicts with benchmark account.",
+          "evidence": [
+            "https://bioplaza.com.ng/tiehome"
+          ],
+          "confidence": 0.97
+        },
+        {
+          "gate": "event",
+          "state": "fail",
+          "reason": "No supported atomic event pattern.",
+          "evidence": [
+            "Home - Bio Plaza"
+          ],
+          "confidence": 0.85
+        },
+        {
+          "gate": "date",
+          "state": "pass",
+          "reason": "Resolved from visible_text.",
+          "evidence": [
+            "visible_text:2026-04-06"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "freshness",
+          "state": "pass",
+          "reason": "Event is inside benchmark window.",
+          "evidence": [
+            "2026-01-01",
+            "2026-07-30"
+          ],
+          "confidence": 0.95
+        },
+        {
+          "gate": "materiality",
+          "state": "fail",
+          "reason": "Static or commercially irrelevant content.",
+          "evidence": [
+            "A Nigerian biography and finance website with a different domain and business."
+          ],
+          "confidence": 0.85
+        },
+        {
+          "gate": "source_quality",
+          "state": "pass",
+          "reason": "Source type: website.",
+          "evidence": [
+            "https://bioplaza.com.ng/tiehome"
+          ],
+          "confidence": 0.6
+        },
+        {
+          "gate": "corroboration",
+          "state": "insufficient_evidence",
+          "reason": "Single-source observation is allowed but not corroborated.",
+          "evidence": [
+            "bioplaza.com.ng"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "counterevidence",
+          "state": "not_applicable",
+          "reason": "Fixture replay contains no asserted counterevidence unless labeled.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "client_relevance",
+          "state": "not_applicable",
+          "reason": "Cross-company benchmark measures signal recovery, not client fit.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "timing",
+          "state": "fail",
+          "reason": "At least one current-timing prerequisite failed.",
+          "evidence": [],
+          "confidence": 0.9
+        }
+      ],
+      "false_negative_code": null,
+      "false_positive_code": null,
+      "accepted_source_ids": [],
+      "source_owner_keys": [
+        "bioplaza.com.ng"
+      ]
+    },
+    {
+      "case_id": "adv-bioplaza-puerto-rico-address",
+      "predicted_signal": false,
+      "predicted_entity": "wrong_entity",
+      "predicted_category": null,
+      "predicted_status": "unknown",
+      "predicted_date_state": "exact",
+      "predicted_date": "2026-03-22T00:00:00.000Z",
+      "correct_identity": true,
+      "correct_category": true,
+      "correct_status": true,
+      "correct_date": true,
+      "gate_trace": [
+        {
+          "gate": "identity",
+          "state": "fail",
+          "reason": "Explicit geography conflicts with benchmark account.",
+          "evidence": [
+            "https://npiprofile.com/npi/1720168560"
+          ],
+          "confidence": 0.97
+        },
+        {
+          "gate": "event",
+          "state": "fail",
+          "reason": "No supported atomic event pattern.",
+          "evidence": [
+            "BIOIMAGENES MEDICAS CSP"
+          ],
+          "confidence": 0.85
+        },
+        {
+          "gate": "date",
+          "state": "pass",
+          "reason": "Resolved from visible_text.",
+          "evidence": [
+            "visible_text:2026-03-22"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "freshness",
+          "state": "pass",
+          "reason": "Event is inside benchmark window.",
+          "evidence": [
+            "2026-01-01",
+            "2026-07-30"
+          ],
+          "confidence": 0.95
+        },
+        {
+          "gate": "materiality",
+          "state": "fail",
+          "reason": "Static or commercially irrelevant content.",
+          "evidence": [
+            "Uses BIOPLAZA as a building address in Puerto Rico; it is unrelated to the Colombian retailer."
+          ],
+          "confidence": 0.85
+        },
+        {
+          "gate": "source_quality",
+          "state": "pass",
+          "reason": "Source type: registry.",
+          "evidence": [
+            "https://npiprofile.com/npi/1720168560"
+          ],
+          "confidence": 0.6
+        },
+        {
+          "gate": "corroboration",
+          "state": "insufficient_evidence",
+          "reason": "Single-source observation is allowed but not corroborated.",
+          "evidence": [
+            "npiprofile.com"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "counterevidence",
+          "state": "not_applicable",
+          "reason": "Fixture replay contains no asserted counterevidence unless labeled.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "client_relevance",
+          "state": "not_applicable",
+          "reason": "Cross-company benchmark measures signal recovery, not client fit.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "timing",
+          "state": "fail",
+          "reason": "At least one current-timing prerequisite failed.",
+          "evidence": [],
+          "confidence": 0.9
+        }
+      ],
+      "false_negative_code": null,
+      "false_positive_code": null,
+      "accepted_source_ids": [],
+      "source_owner_keys": [
+        "npiprofile.com"
+      ]
+    },
+    {
+      "case_id": "adv-microsoft-planned-not-completed",
+      "predicted_signal": true,
+      "predicted_entity": "confirmed",
+      "predicted_category": "acquisition",
+      "predicted_status": "planned",
+      "predicted_date_state": "exact",
+      "predicted_date": "2023-07-19T00:00:00.000Z",
+      "correct_identity": true,
+      "correct_category": true,
+      "correct_status": true,
+      "correct_date": true,
+      "gate_trace": [
+        {
+          "gate": "identity",
+          "state": "pass",
+          "reason": "Verified or controlled domain.",
+          "evidence": [
+            "https://news.microsoft.com/wp-content/uploads/prod/sites/642/2023/07/Extending-the-closing-date-of-the-ABK-deal.pdf"
+          ],
+          "confidence": 0.99
+        },
+        {
+          "gate": "event",
+          "state": "pass",
+          "reason": "Future/extended closing language is explicit.",
+          "evidence": [
+            "Extending the closing date of the ABK deal"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "date",
+          "state": "pass",
+          "reason": "Resolved from visible_text.",
+          "evidence": [
+            "visible_text:2023-07-19"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "freshness",
+          "state": "pass",
+          "reason": "Event is inside benchmark window.",
+          "evidence": [
+            "2023-01-01",
+            "2023-09-30"
+          ],
+          "confidence": 0.95
+        },
+        {
+          "gate": "materiality",
+          "state": "pass",
+          "reason": "Curated meaningful event.",
+          "evidence": [
+            "Microsoft and Activision Blizzard extended the merger agreement closing deadline; the acquisition was not yet completed."
+          ],
+          "confidence": 0.85
+        },
+        {
+          "gate": "source_quality",
+          "state": "pass",
+          "reason": "Source type: official.",
+          "evidence": [
+            "https://news.microsoft.com/wp-content/uploads/prod/sites/642/2023/07/Extending-the-closing-date-of-the-ABK-deal.pdf"
+          ],
+          "confidence": 0.95
+        },
+        {
+          "gate": "corroboration",
+          "state": "insufficient_evidence",
+          "reason": "Single-source observation is allowed but not corroborated.",
+          "evidence": [
+            "microsoft.com"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "counterevidence",
+          "state": "not_applicable",
+          "reason": "Fixture replay contains no asserted counterevidence unless labeled.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "client_relevance",
+          "state": "not_applicable",
+          "reason": "Cross-company benchmark measures signal recovery, not client fit.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "timing",
+          "state": "pass",
+          "reason": "Identity, event, date and window gates pass.",
+          "evidence": [],
+          "confidence": 0.9
+        }
+      ],
+      "false_negative_code": null,
+      "false_positive_code": null,
+      "accepted_source_ids": [
+        "src_fe2d66434ad84eb5"
+      ],
+      "source_owner_keys": [
+        "microsoft.com"
+      ]
+    },
+    {
+      "case_id": "adv-spotify-controlled-source-duplicate",
+      "predicted_signal": true,
+      "predicted_entity": "confirmed",
+      "predicted_category": "partnership",
+      "predicted_status": "announced",
+      "predicted_date_state": "exact",
+      "predicted_date": "2025-01-26T00:00:00.000Z",
+      "correct_identity": true,
+      "correct_category": true,
+      "correct_status": true,
+      "correct_date": true,
+      "gate_trace": [
+        {
+          "gate": "identity",
+          "state": "pass",
+          "reason": "Verified or controlled domain.",
+          "evidence": [
+            "https://newsroom.spotify.com/2025-01-26/universal-music-group-spotify-expansion/"
+          ],
+          "confidence": 0.99
+        },
+        {
+          "gate": "event",
+          "state": "pass",
+          "reason": "Partnership/agreement announcement.",
+          "evidence": [
+            "Spotify social repost of UMG agreement"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "date",
+          "state": "pass",
+          "reason": "Resolved from visible_text.",
+          "evidence": [
+            "visible_text:2025-01-26"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "freshness",
+          "state": "pass",
+          "reason": "Event is inside benchmark window.",
+          "evidence": [
+            "2025-01-01",
+            "2025-12-31"
+          ],
+          "confidence": 0.95
+        },
+        {
+          "gate": "materiality",
+          "state": "pass",
+          "reason": "Curated meaningful event.",
+          "evidence": [
+            "A controlled-channel repost repeats Spotify's official UMG agreement announcement and must not become an independent source."
+          ],
+          "confidence": 0.85
+        },
+        {
+          "gate": "source_quality",
+          "state": "pass",
+          "reason": "Source type: official_social.",
+          "evidence": [
+            "https://newsroom.spotify.com/2025-01-26/universal-music-group-spotify-expansion/"
+          ],
+          "confidence": 0.6
+        },
+        {
+          "gate": "corroboration",
+          "state": "insufficient_evidence",
+          "reason": "Controlled/duplicate source does not add independence.",
+          "evidence": [
+            "spotify.com"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "counterevidence",
+          "state": "not_applicable",
+          "reason": "Fixture replay contains no asserted counterevidence unless labeled.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "client_relevance",
+          "state": "not_applicable",
+          "reason": "Cross-company benchmark measures signal recovery, not client fit.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "timing",
+          "state": "pass",
+          "reason": "Identity, event, date and window gates pass.",
+          "evidence": [],
+          "confidence": 0.9
+        }
+      ],
+      "false_negative_code": null,
+      "false_positive_code": null,
+      "accepted_source_ids": [
+        "src_f6a2e4eea3e7ce57"
+      ],
+      "source_owner_keys": [
+        "spotify.com"
+      ]
+    },
+    {
+      "case_id": "adv-generic-hiring-page",
+      "predicted_signal": false,
+      "predicted_entity": "confirmed",
+      "predicted_category": null,
+      "predicted_status": "unknown",
+      "predicted_date_state": "retrieved_only",
+      "predicted_date": null,
+      "correct_identity": true,
+      "correct_category": true,
+      "correct_status": true,
+      "correct_date": true,
+      "gate_trace": [
+        {
+          "gate": "identity",
+          "state": "pass",
+          "reason": "Verified or controlled domain.",
+          "evidence": [
+            "https://www.amazon.jobs/en/"
+          ],
+          "confidence": 0.99
+        },
+        {
+          "gate": "event",
+          "state": "fail",
+          "reason": "Static/reference content has no atomic event.",
+          "evidence": [
+            "Amazon Jobs"
+          ],
+          "confidence": 0.85
+        },
+        {
+          "gate": "date",
+          "state": "fail",
+          "reason": "No publication/effective event date.",
+          "evidence": [
+            "retrieval:2026-07-30T13:15:00Z"
+          ],
+          "confidence": 0.95
+        },
+        {
+          "gate": "freshness",
+          "state": "insufficient_evidence",
+          "reason": "Freshness cannot be established without event date.",
+          "evidence": [
+            "2026-01-01",
+            "2026-07-30"
+          ],
+          "confidence": 0.5
+        },
+        {
+          "gate": "materiality",
+          "state": "fail",
+          "reason": "Static or commercially irrelevant content.",
+          "evidence": [
+            "Generic evergreen careers landing page without a dated role, hiring acceleration or location-specific expansion event."
+          ],
+          "confidence": 0.85
+        },
+        {
+          "gate": "source_quality",
+          "state": "pass",
+          "reason": "Source type: official.",
+          "evidence": [
+            "https://www.amazon.jobs/en/"
+          ],
+          "confidence": 0.95
+        },
+        {
+          "gate": "corroboration",
+          "state": "insufficient_evidence",
+          "reason": "Single-source observation is allowed but not corroborated.",
+          "evidence": [
+            "amazon.com"
+          ],
+          "confidence": 0.9
+        },
+        {
+          "gate": "counterevidence",
+          "state": "not_applicable",
+          "reason": "Fixture replay contains no asserted counterevidence unless labeled.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "client_relevance",
+          "state": "not_applicable",
+          "reason": "Cross-company benchmark measures signal recovery, not client fit.",
+          "evidence": [],
+          "confidence": 1
+        },
+        {
+          "gate": "timing",
+          "state": "fail",
+          "reason": "At least one current-timing prerequisite failed.",
+          "evidence": [],
+          "confidence": 0.9
+        }
+      ],
+      "false_negative_code": null,
+      "false_positive_code": null,
+      "accepted_source_ids": [],
+      "source_owner_keys": [
+        "amazon.com"
+      ]
+    }
+  ],
+  "metrics": {
+    "sample_size": 19,
+    "positive_labels": 8,
+    "negative_labels": 5,
+    "adversarial_cases": 6,
+    "true_positives": 10,
+    "false_positives": 0,
+    "true_negatives": 9,
+    "false_negatives": 0,
+    "precision": {
+      "numerator": 10,
+      "denominator": 10,
+      "value": 1,
+      "state": "measured"
+    },
+    "recall": {
+      "numerator": 10,
+      "denominator": 10,
+      "value": 1,
+      "state": "measured"
+    },
+    "specificity": {
+      "numerator": 9,
+      "denominator": 9,
+      "value": 1,
+      "state": "measured"
+    },
+    "positive_predictive_value": {
+      "numerator": 10,
+      "denominator": 10,
+      "value": 1,
+      "state": "measured"
+    },
+    "signal_yield": {
+      "numerator": 10,
+      "denominator": 19,
+      "value": 0.5263157894736842,
+      "state": "measured"
+    },
+    "identity_precision": {
+      "numerator": 10,
+      "denominator": 10,
+      "value": 1,
+      "state": "measured"
+    },
+    "date_valid_coverage": {
+      "numerator": 10,
+      "denominator": 10,
+      "value": 1,
+      "state": "measured"
+    },
+    "event_normalization_accuracy": {
+      "numerator": 19,
+      "denominator": 19,
+      "value": 1,
+      "state": "measured"
+    },
+    "event_status_accuracy": {
+      "numerator": 10,
+      "denominator": 10,
+      "value": 1,
+      "state": "measured"
+    }
+  },
+  "methodology_version": "signal-recovery-benchmark-v1",
+  "safety": {
+    "internal_only": true,
+    "production_intelligence_table": false,
+    "ranking_impact": "off",
+    "report_impact": "off",
+    "outcome_performance_impact": "none",
+    "methodology_version": "signal-recovery-benchmark-v1",
+    "depends_on": "signal-temporal-v2"
+  },
+  "dataset_path": "benchmarks/signal-recovery-v1.json",
+  "preliminary": true,
+  "query_families": [
+    {
+      "family": "exact_name_partner",
+      "retrieved": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1,
+        "state": "measured"
+      },
+      "valid_identity": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1,
+        "state": "measured"
+      },
+      "date_valid": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1,
+        "state": "measured"
+      },
+      "event_valid": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1,
+        "state": "measured"
+      },
+      "accepted_signal": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1,
+        "state": "measured"
+      },
+      "false_positive": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null,
+        "state": "insufficient_sample"
+      }
+    },
+    {
+      "family": "exact_name_signal",
+      "retrieved": {
+        "numerator": 10,
+        "denominator": 10,
+        "value": 1,
+        "state": "measured"
+      },
+      "valid_identity": {
+        "numerator": 8,
+        "denominator": 10,
+        "value": 0.8,
+        "state": "measured"
+      },
+      "date_valid": {
+        "numerator": 7,
+        "denominator": 10,
+        "value": 0.7,
+        "state": "measured"
+      },
+      "event_valid": {
+        "numerator": 3,
+        "denominator": 10,
+        "value": 0.3,
+        "state": "measured"
+      },
+      "accepted_signal": {
+        "numerator": 3,
+        "denominator": 10,
+        "value": 0.3,
+        "state": "measured"
+      },
+      "false_positive": {
+        "numerator": 0,
+        "denominator": 7,
+        "value": 0,
+        "state": "measured"
+      }
+    },
+    {
+      "family": "exact_name_signal_local",
+      "retrieved": {
+        "numerator": 1,
+        "denominator": 1,
+        "value": 1,
+        "state": "measured"
+      },
+      "valid_identity": {
+        "numerator": 1,
+        "denominator": 1,
+        "value": 1,
+        "state": "measured"
+      },
+      "date_valid": {
+        "numerator": 1,
+        "denominator": 1,
+        "value": 1,
+        "state": "measured"
+      },
+      "event_valid": {
+        "numerator": 1,
+        "denominator": 1,
+        "value": 1,
+        "state": "measured"
+      },
+      "accepted_signal": {
+        "numerator": 1,
+        "denominator": 1,
+        "value": 1,
+        "state": "measured"
+      },
+      "false_positive": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null,
+        "state": "insufficient_sample"
+      }
+    },
+    {
+      "family": "exact_name_signal_year",
+      "retrieved": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1,
+        "state": "measured"
+      },
+      "valid_identity": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1,
+        "state": "measured"
+      },
+      "date_valid": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1,
+        "state": "measured"
+      },
+      "event_valid": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1,
+        "state": "measured"
+      },
+      "accepted_signal": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1,
+        "state": "measured"
+      },
+      "false_positive": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null,
+        "state": "insufficient_sample"
+      }
+    },
+    {
+      "family": "site_official_signal",
+      "retrieved": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1,
+        "state": "measured"
+      },
+      "valid_identity": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1,
+        "state": "measured"
+      },
+      "date_valid": {
+        "numerator": 1,
+        "denominator": 3,
+        "value": 0.3333333333333333,
+        "state": "measured"
+      },
+      "event_valid": {
+        "numerator": 1,
+        "denominator": 3,
+        "value": 0.3333333333333333,
+        "state": "measured"
+      },
+      "accepted_signal": {
+        "numerator": 1,
+        "denominator": 3,
+        "value": 0.3333333333333333,
+        "state": "measured"
+      },
+      "false_positive": {
+        "numerator": 0,
+        "denominator": 2,
+        "value": 0,
+        "state": "measured"
+      }
+    }
+  ],
+  "gate_failures": {
+    "event": 9,
+    "date": 5,
+    "materiality": 9,
+    "timing": 9,
+    "freshness": 1,
+    "identity": 2
+  },
+  "false_negatives": [],
+  "false_positives": [],
+  "provider_results": [
+    {
+      "provider": "fixture",
+      "calls": 0,
+      "cost_state": "not_measured",
+      "note": "No provider conclusion is inferred from fixture replay."
+    }
+  ]
+}

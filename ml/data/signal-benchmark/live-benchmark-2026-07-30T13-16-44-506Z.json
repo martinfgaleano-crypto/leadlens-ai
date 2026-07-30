@@ -1,0 +1,935 @@
+{
+  "run_id": "live-benchmark-2026-07-30T13-16-44-506Z",
+  "methodology_version": "signal-recovery-benchmark-v1",
+  "mode": "live",
+  "source_cutoff": "2026-07-30T13:16:44.506Z",
+  "selected_cases": [
+    "pos-ikea-cali-opening-2024",
+    "pos-fedex-vianen-facility-2025",
+    "pos-apple-iphone17-launch-2025",
+    "pos-spotify-umg-agreement-2025",
+    "pos-spotify-leadership-2025",
+    "pos-amazon-shreveport-facility-2024",
+    "adv-bioplaza-nigeria",
+    "adv-generic-hiring-page"
+  ],
+  "limits": {
+    "max_queries": 24,
+    "max_results": 5,
+    "explicit_flag": true
+  },
+  "calls": 24,
+  "cost": {
+    "state": "not_measured",
+    "reason": "Providers returned no cost estimate."
+  },
+  "provider_health": [
+    {
+      "provider": "brave",
+      "status": "available",
+      "reason": null
+    },
+    {
+      "provider": "serper",
+      "status": "available",
+      "reason": null
+    },
+    {
+      "provider": "tavily",
+      "status": "available",
+      "reason": null
+    }
+  ],
+  "provider_results": [
+    {
+      "provider": "brave",
+      "queries": 8,
+      "successful_queries": 8,
+      "raw_results": 35,
+      "expected_url_recovery": 2,
+      "valid_identity_results": 35,
+      "date_valid_results": 31,
+      "event_valid_results": 15,
+      "accepted_results": 12,
+      "median_latency_ms": 609,
+      "cost_state": "not_measured"
+    },
+    {
+      "provider": "serper",
+      "queries": 8,
+      "successful_queries": 0,
+      "raw_results": 0,
+      "expected_url_recovery": 0,
+      "valid_identity_results": 0,
+      "date_valid_results": 0,
+      "event_valid_results": 0,
+      "accepted_results": 0,
+      "median_latency_ms": 119,
+      "cost_state": "not_measured"
+    },
+    {
+      "provider": "tavily",
+      "queries": 8,
+      "successful_queries": 8,
+      "raw_results": 40,
+      "expected_url_recovery": 1,
+      "valid_identity_results": 39,
+      "date_valid_results": 0,
+      "event_valid_results": 13,
+      "accepted_results": 0,
+      "median_latency_ms": 1339,
+      "cost_state": "not_measured"
+    }
+  ],
+  "ledger": [
+    {
+      "case_id": "pos-ikea-cali-opening-2024",
+      "class": "positive",
+      "provider": "brave",
+      "query": "\"IKEA Colombia\" abrió nueva tienda 2024",
+      "ok": true,
+      "error": null,
+      "latency_ms": 1108,
+      "raw_results": 5,
+      "expected_url_found": true,
+      "valid_identity_results": 5,
+      "date_valid_results": 4,
+      "event_valid_results": 2,
+      "accepted_results": 1,
+      "sanitized_results": [
+        {
+          "url": "https://www.ikea.com/co/es/newsroom/corporate-news/ikea-abre-segunda-tienda-colombia-pubccab25e0",
+          "title": "IKEA abrió su segunda tienda en Cali - IKEA Colombia",
+          "published_date": "2024-05-09T00:00:00",
+          "predicted_signal": true
+        },
+        {
+          "url": "https://www.ikea.com/co/es/newsroom/corporate-news/la-espera-termino-ikea-anuncia-que-los-colombianos-podran-visitar-su-primera-tienda-en-el-pais-el-proximo-28-de-septiembre-pub1d54a0b0",
+          "title": "La espera terminó: IKEA anuncia su llegada a Colombia - IKEA Colombia",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://www.portafolio.co/negocios/empresas/ikea-abrira-el-8-de-mayo-de-2024-su-segunda-tienda-en-colombia-estara-en-cali-603750",
+          "title": "Ikea abrirá el 8 de mayo de 2024 su segunda tienda en Colombia: estará en Cali | Empresas | Negocios | Portafolio",
+          "published_date": "2024-04-29T16:19:00",
+          "predicted_signal": false
+        },
+        {
+          "url": "https://marketinginsiderreview.com/ikea-colombia-tienda-antioquia-2024",
+          "title": "IKEA Colombia abrirá en 2024 su segunda tienda en Antioquía",
+          "published_date": "2021-12-04T13:14:13",
+          "predicted_signal": false
+        },
+        {
+          "url": "https://www.portafolio.co/amp/negocios/empresas/ikea-tendra-dos-tiendas-mas-en-colombia-vea-cuando-y-donde-seran-590361",
+          "title": "Ikea abrirá dos tiendas nuevas en Colombia, ¿dónde estarán? - PORTAFOLIO.CO",
+          "published_date": "2023-10-09T23:12:15",
+          "predicted_signal": false
+        }
+      ]
+    },
+    {
+      "case_id": "pos-ikea-cali-opening-2024",
+      "class": "positive",
+      "provider": "serper",
+      "query": "\"IKEA Colombia\" abrió nueva tienda 2024",
+      "ok": false,
+      "error": "HTTP 400",
+      "latency_ms": 599,
+      "raw_results": 0,
+      "expected_url_found": false,
+      "valid_identity_results": 0,
+      "date_valid_results": 0,
+      "event_valid_results": 0,
+      "accepted_results": 0,
+      "sanitized_results": []
+    },
+    {
+      "case_id": "pos-ikea-cali-opening-2024",
+      "class": "positive",
+      "provider": "tavily",
+      "query": "\"IKEA Colombia\" abrió nueva tienda 2024",
+      "ok": true,
+      "error": null,
+      "latency_ms": 1970,
+      "raw_results": 5,
+      "expected_url_found": false,
+      "valid_identity_results": 5,
+      "date_valid_results": 0,
+      "event_valid_results": 2,
+      "accepted_results": 0,
+      "sanitized_results": [
+        {
+          "url": "https://www.instagram.com/p/CWvsRsEhHX7?hl=en",
+          "title": "Ikea confirma la apertura de una nueva tienda en Medellín . ...",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://www.ikea.com/cl/es/newsroom/corporate-news/ikea-abre-segunda-tienda-colombia-pub36420a00",
+          "title": "IKEA abre su segunda tienda en Colombia",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://es-us.finanzas.yahoo.com/noticias/ikea-medell%C3%ADn-mes-abrir%C3%ADa-megatienda-172400747.html",
+          "title": "IKEA en Medellín: en este mes de 2024 abriría la segunda megatienda del ...",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://www.youtube.com/watch?v=axyuaAVsb9c",
+          "title": "IKEA inaugura tercera tienda en Colombia",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://www.valoraanalitik.com/abrio-sus-puertas-la-tercera-tienda-ikea-de-colombia?amp=",
+          "title": "Abrió sus puertas en Envigado la tercera tienda IKEA de Colombia",
+          "published_date": null,
+          "predicted_signal": false
+        }
+      ]
+    },
+    {
+      "case_id": "pos-fedex-vianen-facility-2025",
+      "class": "positive",
+      "provider": "brave",
+      "query": "\"FedEx\" opened new facility 2025",
+      "ok": true,
+      "error": null,
+      "latency_ms": 951,
+      "raw_results": 5,
+      "expected_url_found": false,
+      "valid_identity_results": 5,
+      "date_valid_results": 5,
+      "event_valid_results": 3,
+      "accepted_results": 3,
+      "sanitized_results": [
+        {
+          "url": "https://www.gary.gov/news-updates/gary-celebrates-groundbreaking-for-60-million-fedex-distribution-center",
+          "title": "Gary Celebrates Groundbreaking for $60 Million FedEx Distribution Center",
+          "published_date": "2025-10-02T00:00:00",
+          "predicted_signal": false
+        },
+        {
+          "url": "https://newsroom.fedex.com/newsroom/meisa-english/fedex-opens-state-of-the-art-regional-logistics-facility-in-qatars-free-zones",
+          "title": "FedEx Opens State-of-the-Art Regional Logistics Facility in Qatar’s Free Zones",
+          "published_date": "2025-09-15T10:01:33",
+          "predicted_signal": true
+        },
+        {
+          "url": "https://newsroom.fedex.com/newsroom/europe-english/fedex-inaugurates-new-global-air-transit-facility-at-istanbul-airport-elevating-turkiyes-position-in-global-logistics",
+          "title": "FedEx inaugurates new global air transit facility at Istanbul Airport, elevating Türkiye’s position in global logistics",
+          "published_date": "2025-09-04T13:47:53",
+          "predicted_signal": true
+        },
+        {
+          "url": "https://newsroom.fedex.com/newsroom/europe-english/fedex-express-swiss-post-opens-new-facility-in-gossau-switzerland",
+          "title": "FedEx Express Swiss Post Opens New Facility in Gossau (Switzerland)",
+          "published_date": "2025-10-20T08:18:18",
+          "predicted_signal": true
+        },
+        {
+          "url": "https://newsroom.fedex.com/FedEx-expands-eastern-japan-gateway-at-narita-international-airport",
+          "title": "FedEx Expands Eastern Japan Gateway at Narita International Airport",
+          "published_date": "2025-08-25T07:03:49",
+          "predicted_signal": false
+        }
+      ]
+    },
+    {
+      "case_id": "pos-fedex-vianen-facility-2025",
+      "class": "positive",
+      "provider": "serper",
+      "query": "\"FedEx\" opened new facility 2025",
+      "ok": false,
+      "error": "HTTP 400",
+      "latency_ms": 129,
+      "raw_results": 0,
+      "expected_url_found": false,
+      "valid_identity_results": 0,
+      "date_valid_results": 0,
+      "event_valid_results": 0,
+      "accepted_results": 0,
+      "sanitized_results": []
+    },
+    {
+      "case_id": "pos-fedex-vianen-facility-2025",
+      "class": "positive",
+      "provider": "tavily",
+      "query": "\"FedEx\" opened new facility 2025",
+      "ok": true,
+      "error": null,
+      "latency_ms": 1322,
+      "raw_results": 5,
+      "expected_url_found": false,
+      "valid_identity_results": 5,
+      "date_valid_results": 0,
+      "event_valid_results": 0,
+      "accepted_results": 0,
+      "sanitized_results": [
+        {
+          "url": "https://www.gary.gov/news-updates/city-of-gary-to-host-groundbreaking-for-new-fedex-distribution-center",
+          "title": "City of Gary to Host Groundbreaking for New FedEx Distribution Center",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://www.youtube.com/watch?v=MABrpSMBxW0",
+          "title": "New FedEx Facility Opens in San Bernardino County",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://newsroom.fedex.com/newsroom/global-english/fedex-unveils-new-automated-sorting-facility-at-memphis-world-hub",
+          "title": "FedEx Unveils New Automated Sorting Facility at Memphis World Hub",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://www.fedex.com/",
+          "title": "FedEx Global Home - Select Your Location",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://www.fedex.com/en-us/about/company-structure.html",
+          "title": "Company Structure and Facts",
+          "published_date": null,
+          "predicted_signal": false
+        }
+      ]
+    },
+    {
+      "case_id": "pos-apple-iphone17-launch-2025",
+      "class": "positive",
+      "provider": "brave",
+      "query": "\"Apple\" announced new product 2025",
+      "ok": true,
+      "error": null,
+      "latency_ms": 586,
+      "raw_results": 5,
+      "expected_url_found": false,
+      "valid_identity_results": 5,
+      "date_valid_results": 5,
+      "event_valid_results": 0,
+      "accepted_results": 0,
+      "sanitized_results": [
+        {
+          "url": "https://www.macworld.com/article/671090/new-apple-products-iphone-ipad-mac-watch.html",
+          "title": "Upcoming Apple products 2026: Every new iPhone, Mac, iPad & Watch coming | Macworld",
+          "published_date": "2026-06-09T11:12:13",
+          "predicted_signal": false
+        },
+        {
+          "url": "https://thegadgetflow.com/blog/new-apple-products-coming",
+          "title": "17 New Apple products coming in 2025: Everything we know so far",
+          "published_date": "2025-12-11T08:56:54",
+          "predicted_signal": false
+        },
+        {
+          "url": "https://9to5mac.com/2025/12/31/all-the-new-products-apple-released-in-2025",
+          "title": "All the new products Apple released in 2025 - 9to5Mac",
+          "published_date": "2025-12-31T20:26:54",
+          "predicted_signal": false
+        },
+        {
+          "url": "https://www.macrumors.com/guide/upcoming-apple-products",
+          "title": "Upcoming Apple Products Guide: What's Coming in 2026 - MacRumors",
+          "published_date": "2026-07-24T20:47:10",
+          "predicted_signal": false
+        },
+        {
+          "url": "https://www.usatoday.com/story/tech/2025/09/09/2025-apple-event-recap/86061219007",
+          "title": "2025 Apple event recap: What to know about iPhone 17, iPhone Air and new Apple Watches",
+          "published_date": "2025-09-09T23:58:34",
+          "predicted_signal": false
+        }
+      ]
+    },
+    {
+      "case_id": "pos-apple-iphone17-launch-2025",
+      "class": "positive",
+      "provider": "serper",
+      "query": "\"Apple\" announced new product 2025",
+      "ok": false,
+      "error": "HTTP 400",
+      "latency_ms": 156,
+      "raw_results": 0,
+      "expected_url_found": false,
+      "valid_identity_results": 0,
+      "date_valid_results": 0,
+      "event_valid_results": 0,
+      "accepted_results": 0,
+      "sanitized_results": []
+    },
+    {
+      "case_id": "pos-apple-iphone17-launch-2025",
+      "class": "positive",
+      "provider": "tavily",
+      "query": "\"Apple\" announced new product 2025",
+      "ok": true,
+      "error": null,
+      "latency_ms": 2136,
+      "raw_results": 5,
+      "expected_url_found": false,
+      "valid_identity_results": 5,
+      "date_valid_results": 0,
+      "event_valid_results": 0,
+      "accepted_results": 0,
+      "sanitized_results": [
+        {
+          "url": "https://www.macworld.com/article/671090/new-apple-products-iphone-ipad-mac-watch.html",
+          "title": "Every new Apple product coming in 2026 (and beyond)",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://www.cnbc.com/amp/2025/09/09/live-updates-apple-event-iphone17-airpods-ios26.html",
+          "title": "Live updates: Apple Event 2025",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://thegadgetflow.com/blog/new-apple-products-coming/amp",
+          "title": "17 New Apple products coming in 2025: Everything we know so far",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://www.macrumors.com/guide/upcoming-apple-products",
+          "title": "Upcoming Apple Products Guide: What's Coming in 2026",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://www.youtube.com/watch?v=IcglM5qlG6k",
+          "title": "Apple October Event - 7 NEW Products Coming!",
+          "published_date": null,
+          "predicted_signal": false
+        }
+      ]
+    },
+    {
+      "case_id": "pos-spotify-umg-agreement-2025",
+      "class": "positive",
+      "provider": "brave",
+      "query": "\"Spotify\" announced partnership agreement 2025",
+      "ok": true,
+      "error": null,
+      "latency_ms": 609,
+      "raw_results": 5,
+      "expected_url_found": false,
+      "valid_identity_results": 5,
+      "date_valid_results": 5,
+      "event_valid_results": 3,
+      "accepted_results": 3,
+      "sanitized_results": [
+        {
+          "url": "https://newsroom.spotify.com/2025-09-18/sony-music-group-spotify-partnership-expansion",
+          "title": "Sony Music Group and Spotify Announce Expanded Multiyear Global Partnership — Spotify",
+          "published_date": "2025-09-30T13:28:40",
+          "predicted_signal": true
+        },
+        {
+          "url": "https://newsroom.spotify.com/2025-10-01/advertising-partnerships-product-updates",
+          "title": "Spotify Unveils New Advertising Partnerships and Product Updates — Spotify",
+          "published_date": "2025-10-01T12:45:41",
+          "predicted_signal": false
+        },
+        {
+          "url": "https://newsroom.spotify.com/2025-02-06/warner-music-group-spotify-agreement",
+          "title": "Warner Music Group and Spotify Announce a New Multiyear Agreement — Spotify",
+          "published_date": "2025-09-17T19:59:58",
+          "predicted_signal": true
+        },
+        {
+          "url": "https://newsroom.spotify.com/2025-09-30/merlin-spotify-partnership-renewal",
+          "title": "Merlin and Spotify Extend Multiyear Global Licensing Partnership — Spotify",
+          "published_date": "2025-09-30T13:26:58",
+          "predicted_signal": false
+        },
+        {
+          "url": "https://variety.com/2025/music/news/spotify-partners-sony-universal-warner-develop-ai-products-1236554321",
+          "title": "Spotify Partners With Sony, Universal, Warner and More to Develop AI Music Products",
+          "published_date": "2025-10-16T12:00:00",
+          "predicted_signal": true
+        }
+      ]
+    },
+    {
+      "case_id": "pos-spotify-umg-agreement-2025",
+      "class": "positive",
+      "provider": "serper",
+      "query": "\"Spotify\" announced partnership agreement 2025",
+      "ok": false,
+      "error": "HTTP 400",
+      "latency_ms": 119,
+      "raw_results": 0,
+      "expected_url_found": false,
+      "valid_identity_results": 0,
+      "date_valid_results": 0,
+      "event_valid_results": 0,
+      "accepted_results": 0,
+      "sanitized_results": []
+    },
+    {
+      "case_id": "pos-spotify-umg-agreement-2025",
+      "class": "positive",
+      "provider": "tavily",
+      "query": "\"Spotify\" announced partnership agreement 2025",
+      "ok": true,
+      "error": null,
+      "latency_ms": 934,
+      "raw_results": 5,
+      "expected_url_found": false,
+      "valid_identity_results": 5,
+      "date_valid_results": 0,
+      "event_valid_results": 5,
+      "accepted_results": 0,
+      "sanitized_results": [
+        {
+          "url": "https://newsroom.spotify.com/2025-09-18/sony-music-group-spotify-partnership-expansion",
+          "title": "Sony Music Group and Spotify Announce Expanded Multiyear Global Partnership — Spotify",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://www.prnewswire.com/news-releases/warner-music-group-and-spotify-announce-new-multi-year-agreement-to-fuel-growth-and-innovation-302370056.html",
+          "title": "WARNER MUSIC GROUP AND SPOTIFY ANNOUNCE NEW MULTI-YEAR AGREEMENT TO FUEL GROWTH AND INNOVATION",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://newsroom.spotify.com/2025-02-06/warner-music-group-spotify-agreement",
+          "title": "Warner Music Group and Spotify Announce a New Multiyear Agreement — Spotify",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://www.wmg.com/news/warner-music-group-and-spotify-announce-new-multi-year-agreement-to-fuel-growth-and-innovation",
+          "title": "Warner Music Group and Spotify Announce New Multi-Year Agreement to Fuel Growth and Innovation - Warner Music Group",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://www.universalmusic.com/universal-music-group-and-spotify-strike-new-multi-year-agreement",
+          "title": "UNIVERSAL MUSIC GROUP AND SPOTIFY STRIKE NEW MULTI-YEAR AGREEMENT - UMG",
+          "published_date": null,
+          "predicted_signal": false
+        }
+      ]
+    },
+    {
+      "case_id": "pos-spotify-leadership-2025",
+      "class": "positive",
+      "provider": "brave",
+      "query": "\"Spotify\" leadership appointment CEO 2025",
+      "ok": true,
+      "error": null,
+      "latency_ms": 598,
+      "raw_results": 5,
+      "expected_url_found": true,
+      "valid_identity_results": 5,
+      "date_valid_results": 5,
+      "event_valid_results": 5,
+      "accepted_results": 3,
+      "sanitized_results": [
+        {
+          "url": "https://newsroom.spotify.com/2025-09-30/spotify-announcement-daniel-ek-executive-chairman",
+          "title": "Spotify Announces Leadership Evolution: Daniel Ek to Become Executive Chairman, Alex Norström and Gustav Söderström to Become Co-CEOs in January 2026 — Spotify",
+          "published_date": "2025-09-30T11:35:49",
+          "predicted_signal": true
+        },
+        {
+          "url": "https://newsroom.spotify.com/2025-09-30/daniel-ek-letter-evolving-how-we-lead",
+          "title": "Evolving How We Lead — Spotify",
+          "published_date": "2026-04-03T15:11:50",
+          "predicted_signal": false
+        },
+        {
+          "url": "https://www.reuters.com/sustainability/boards-policy-regulation/five-things-know-about-spotifys-new-co-ceos-2025-09-30",
+          "title": "Five things to know about Spotify's new co-CEOs | Reuters",
+          "published_date": "2025-09-30T14:05:12",
+          "predicted_signal": true
+        },
+        {
+          "url": "https://finance.yahoo.com/news/spotify-names-co-ceos-daniel-150350331.html",
+          "title": "Spotify Names Co-CEOs as Daniel Ek Shifts Role Might Change the Case for Investing in SPOT",
+          "published_date": "2025-10-02T15:03:50",
+          "predicted_signal": true
+        },
+        {
+          "url": "https://intellizence.com/insights/executive-appointments/spotify-announces-new-co-ceos-ek-becomes-chairman",
+          "title": "Spotify Announces New Co-CEOs, Ek Becomes Chairman | Intellizence",
+          "published_date": "2026-01-13T07:12:11",
+          "predicted_signal": false
+        }
+      ]
+    },
+    {
+      "case_id": "pos-spotify-leadership-2025",
+      "class": "positive",
+      "provider": "serper",
+      "query": "\"Spotify\" leadership appointment CEO 2025",
+      "ok": false,
+      "error": "HTTP 400",
+      "latency_ms": 112,
+      "raw_results": 0,
+      "expected_url_found": false,
+      "valid_identity_results": 0,
+      "date_valid_results": 0,
+      "event_valid_results": 0,
+      "accepted_results": 0,
+      "sanitized_results": []
+    },
+    {
+      "case_id": "pos-spotify-leadership-2025",
+      "class": "positive",
+      "provider": "tavily",
+      "query": "\"Spotify\" leadership appointment CEO 2025",
+      "ok": true,
+      "error": null,
+      "latency_ms": 1322,
+      "raw_results": 5,
+      "expected_url_found": true,
+      "valid_identity_results": 5,
+      "date_valid_results": 0,
+      "event_valid_results": 4,
+      "accepted_results": 0,
+      "sanitized_results": [
+        {
+          "url": "https://intellizence.com/insights/executive-appointments/spotify-announces-new-co-ceos-ek-becomes-chairman",
+          "title": "Spotify Announces New Co-CEOs, Ek Becomes Chairman | Intellizence",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://finance.yahoo.com/news/spotify-names-co-ceos-daniel-150350331.html",
+          "title": "Spotify Names Co-CEOs as Daniel Ek Shifts Role Might Change the Case for Investing in SPOT",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://newsroom.spotify.com/2025-09-30/spotify-announcement-daniel-ek-executive-chairman",
+          "title": "Daniel Ek to Become Executive Chairman, Alex Norström and ...",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://www.musicweek.com/digital/read/spotify-s-leadership-look-ahead-to-a-new-era-without-daniel-ek-as-ceo/092750",
+          "title": "Spotify's leadership look ahead to a new era without Daniel Ek as CEO | Digital | Music Week",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://simplywall.st/stocks/us/media/nyse-spot/spotify-technology/management",
+          "title": "Spotify Technology S.A. (SPOT) Leadership & Management Team Analysis - Simply Wall St",
+          "published_date": null,
+          "predicted_signal": false
+        }
+      ]
+    },
+    {
+      "case_id": "pos-amazon-shreveport-facility-2024",
+      "class": "positive",
+      "provider": "brave",
+      "query": "\"Amazon\" opened new facility 2024",
+      "ok": true,
+      "error": null,
+      "latency_ms": 704,
+      "raw_results": 5,
+      "expected_url_found": false,
+      "valid_identity_results": 5,
+      "date_valid_results": 3,
+      "event_valid_results": 2,
+      "accepted_results": 2,
+      "sanitized_results": [
+        {
+          "url": "https://www.ksla.com/2024/09/27/amazon-officially-opens-long-awaited-fulfillment-center-shreveport",
+          "title": "Amazon officially opens long-awaited fulfillment center in Shreveport",
+          "published_date": "2024-09-27T23:41:39",
+          "predicted_signal": true
+        },
+        {
+          "url": "https://www.cleburne.net/CivicAlerts.aspx?AID=1009",
+          "title": "News Flash • New Amazon Facility Announced in Cleburne",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://www.niagaracounty.gov/news_detail_T8_R721.php",
+          "title": "Amazon Robotics Fulfillment Center to bring 1,000 jobs to Niagara County",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://www.cbsnews.com/miami/news/amazon-opens-operations-in-homestead",
+          "title": "Amazon opens state-of-the-art facility in Homestead - CBS Miami",
+          "published_date": "2024-09-06T17:27:05",
+          "predicted_signal": true
+        },
+        {
+          "url": "https://www.supplychainbrain.com/articles/39771-amazon-planning-for-16m-square-feet-of-new-warehouse-spaces-in-2024",
+          "title": "Amazon Planning for 16M Square Feet of New Warehouse Spaces in 2024 | SupplyChainBrain",
+          "published_date": "2024-05-28T00:00:00",
+          "predicted_signal": false
+        }
+      ]
+    },
+    {
+      "case_id": "pos-amazon-shreveport-facility-2024",
+      "class": "positive",
+      "provider": "serper",
+      "query": "\"Amazon\" opened new facility 2024",
+      "ok": false,
+      "error": "HTTP 400",
+      "latency_ms": 111,
+      "raw_results": 0,
+      "expected_url_found": false,
+      "valid_identity_results": 0,
+      "date_valid_results": 0,
+      "event_valid_results": 0,
+      "accepted_results": 0,
+      "sanitized_results": []
+    },
+    {
+      "case_id": "pos-amazon-shreveport-facility-2024",
+      "class": "positive",
+      "provider": "tavily",
+      "query": "\"Amazon\" opened new facility 2024",
+      "ok": true,
+      "error": null,
+      "latency_ms": 2298,
+      "raw_results": 5,
+      "expected_url_found": false,
+      "valid_identity_results": 5,
+      "date_valid_results": 0,
+      "event_valid_results": 2,
+      "accepted_results": 0,
+      "sanitized_results": [
+        {
+          "url": "https://www.bizjournals.com/pacific/news/2023/12/01/amazon-plans-to-open-facility-in-2024.html",
+          "title": "Amazon plans to open $200M facility in 2024",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://www.facebook.com/theNFPA/posts/in-october-2024-amazon-opened-its-largest-warehouse-yet-a-six-story-facility-spa/1063965032434033",
+          "title": "In October 2024, Amazon opened its largest warehouse yet, a six-story ...",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://www.nola.com/news/northshore/slidell-amazon-facilitys-opening-pushed-back-again-to-2024/article_861925b0-009a-11ee-9dd2-e769efdf3fd2.amp.html",
+          "title": "Slidell Amazon facility's opening pushed back again to 2024",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://www.supplychainbrain.com/articles/39771-amazon-planning-for-16m-square-feet-of-new-warehouse-spaces-in-2024",
+          "title": "Amazon Planning for 16M Square Feet of New Warehouse Spaces in 2024 | SupplyChainBrain",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://amp.fresnobee.com/news/local/article315816662.html",
+          "title": "New Amazon facility coming to Fresno. Mega warehouse project underway ...",
+          "published_date": null,
+          "predicted_signal": false
+        }
+      ]
+    },
+    {
+      "case_id": "adv-bioplaza-nigeria",
+      "class": "adversarial",
+      "provider": "brave",
+      "query": "\"BioPlaza Colombia\" expansion 2026",
+      "ok": true,
+      "error": null,
+      "latency_ms": 601,
+      "raw_results": 0,
+      "expected_url_found": false,
+      "valid_identity_results": 0,
+      "date_valid_results": 0,
+      "event_valid_results": 0,
+      "accepted_results": 0,
+      "sanitized_results": []
+    },
+    {
+      "case_id": "adv-bioplaza-nigeria",
+      "class": "adversarial",
+      "provider": "serper",
+      "query": "\"BioPlaza Colombia\" expansion 2026",
+      "ok": false,
+      "error": "HTTP 400",
+      "latency_ms": 114,
+      "raw_results": 0,
+      "expected_url_found": false,
+      "valid_identity_results": 0,
+      "date_valid_results": 0,
+      "event_valid_results": 0,
+      "accepted_results": 0,
+      "sanitized_results": []
+    },
+    {
+      "case_id": "adv-bioplaza-nigeria",
+      "class": "adversarial",
+      "provider": "tavily",
+      "query": "\"BioPlaza Colombia\" expansion 2026",
+      "ok": true,
+      "error": null,
+      "latency_ms": 1339,
+      "raw_results": 5,
+      "expected_url_found": false,
+      "valid_identity_results": 4,
+      "date_valid_results": 0,
+      "event_valid_results": 0,
+      "accepted_results": 0,
+      "sanitized_results": [
+        {
+          "url": "https://amp.dw.com/en/sowing-the-seeds-of-an-organic-revolution/a-18886533",
+          "title": "An organic revolution",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://jackleckerman.com/events/biosimilars-latam-colombia-2026",
+          "title": "Biosimilars LatAm - Colombia 2026 - Jackleckerman - Global Human Interaction",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://www.linkedin.com/company/bioplaza",
+          "title": "BioPlaza® - Food With Spirit",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://www.bioplaza.com.co/",
+          "title": "Tienda de Productos Saludables - Bioplaza.com.co",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://thecitypaperbogota.com/features/20-questions-green-destiny",
+          "title": "20 Questions: green destiny",
+          "published_date": null,
+          "predicted_signal": false
+        }
+      ]
+    },
+    {
+      "case_id": "adv-generic-hiring-page",
+      "class": "adversarial",
+      "provider": "brave",
+      "query": "\"Amazon\" expansion 2026",
+      "ok": true,
+      "error": null,
+      "latency_ms": 566,
+      "raw_results": 5,
+      "expected_url_found": false,
+      "valid_identity_results": 5,
+      "date_valid_results": 4,
+      "event_valid_results": 0,
+      "accepted_results": 0,
+      "sanitized_results": [
+        {
+          "url": "https://www.aboutamazon.com/news/operations/amazon-europe-robotics-delivery-investment",
+          "title": "Amazon announces new robotics, faster delivery expansion in Europe, and $1 billion in employee upskilling",
+          "published_date": "2026-06-04T09:28:05",
+          "predicted_signal": false
+        },
+        {
+          "url": "https://sellersumbrella.com/post/amazon-international-expansion",
+          "title": "Going Global 2026: Amazon International Expansion Guide",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://www.freightwaves.com/news/amazon-opens-full-scale-less-than-truckload-network-to-all-businesses",
+          "title": "Amazon opens full-scale, less-than-truckload shipping to all businesses - FreightWaves",
+          "published_date": "2026-06-12T13:19:40",
+          "predicted_signal": false
+        },
+        {
+          "url": "https://www.supplychaindive.com/news/amazon-rural-delivery-expansion-ups-postal-impact/746922",
+          "title": "Amazon to invest $4B toward rural delivery expansion by 2026 | Supply Chain Dive",
+          "published_date": "2025-05-01T14:30:38",
+          "predicted_signal": false
+        },
+        {
+          "url": "https://www.nytimes.com/2026/05/04/business/amazon-shipping-services.html",
+          "title": "Amazon Expands Logistics Arm to Outside Companies - The New York Times",
+          "published_date": "2026-05-04T22:08:29",
+          "predicted_signal": false
+        }
+      ]
+    },
+    {
+      "case_id": "adv-generic-hiring-page",
+      "class": "adversarial",
+      "provider": "serper",
+      "query": "\"Amazon\" expansion 2026",
+      "ok": false,
+      "error": "HTTP 400",
+      "latency_ms": 116,
+      "raw_results": 0,
+      "expected_url_found": false,
+      "valid_identity_results": 0,
+      "date_valid_results": 0,
+      "event_valid_results": 0,
+      "accepted_results": 0,
+      "sanitized_results": []
+    },
+    {
+      "case_id": "adv-generic-hiring-page",
+      "class": "adversarial",
+      "provider": "tavily",
+      "query": "\"Amazon\" expansion 2026",
+      "ok": true,
+      "error": null,
+      "latency_ms": 728,
+      "raw_results": 5,
+      "expected_url_found": false,
+      "valid_identity_results": 5,
+      "date_valid_results": 0,
+      "event_valid_results": 0,
+      "accepted_results": 0,
+      "sanitized_results": [
+        {
+          "url": "https://markets.financialcontent.com/wral/article/finterra-2026-4-1-the-titan-of-two-worlds-a-deep-dive-into-amazons-2026-strategic-pivot",
+          "title": "The Titan of Two Worlds: A Deep-Dive into Amazon’s 2026 Strategic Pivot",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://www.aboutamazon.com/news/company-news/amazon-ai-investment-us-federal-agencies",
+          "title": "Amazon to invest up to $50 billion to strengthen American leadership in AI and supercomputing",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://www.wsj.com/tech/amazon-plans-to-invest-4-billion-by-2026-to-speed-up-deliveries-in-rural-america-3afa80fc",
+          "title": "Amazon Plans to Invest $4 Billion by 2026 to Speed Up Deliveries in Rural America - WSJ",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://www.supplychainbrain.com/articles/41666-amazon-plans-to-build-dozens-of-us-warehouses-in-rural-expansion",
+          "title": "Amazon Plans to Build Dozens of U.S. Warehouses in Rural Expansion | SupplyChainBrain",
+          "published_date": null,
+          "predicted_signal": false
+        },
+        {
+          "url": "https://www.youtube.com/watch?v=C_EL_RZpR9U",
+          "title": "Amazon to invest $4B in small towns by 2026 to expand delivery network",
+          "published_date": null,
+          "predicted_signal": false
+        }
+      ]
+    }
+  ]
+}
