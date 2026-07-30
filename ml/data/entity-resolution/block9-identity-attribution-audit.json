@@ -1,0 +1,1700 @@
+{
+  "audit_id": "block10-phase10a-identity-attribution",
+  "methodology_version": "colombian-entity-resolution-v1",
+  "generated_at": "2026-07-30T14:14:17.774Z",
+  "source_artifact": "amor-de-gea-block9-2026-07-30T13-21-30-694Z.json",
+  "threshold_changes_before_audit": 0,
+  "summary": {
+    "results": 56,
+    "relationship_distribution": {
+      "same_commercial_name_different_company": 7,
+      "unrelated_namesake": 41,
+      "directory_profile": 3,
+      "social_profile": 2,
+      "exact_company": 2,
+      "unresolved": 1
+    },
+    "identity_decisions": {
+      "wrong_entity": 53,
+      "confirmed": 2,
+      "unresolved": 1
+    },
+    "correct_prior_rejections": 56
+  },
+  "matrix": [
+    {
+      "result_id": "b9id:naturalmente.com.co:1",
+      "account": "Natural + Mente",
+      "account_domain": "naturalmente.com.co",
+      "source_url": "https://pe.fashionnetwork.com/news/Natura-acelera-su-expansion-en-colombia-y-se-instala-en-el-centro-comercial-andino,1839444.html",
+      "source_domain": "pe.fashionnetwork.com",
+      "provider": "brave",
+      "query": "\"Natural + Mente\" (apertura OR \"nueva sede\" OR expansión) Colombia 2026",
+      "query_family": "exact_name_signal_local",
+      "name_match": "partial_conflicting",
+      "domain_match": "mismatch",
+      "location_match": "country_or_city_mention_only",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "same_commercial_name_different_company",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.97,
+      "decisive_evidence": [
+        "Title identifies a different, similarly named company."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": null,
+      "event_date": "2026-06-12T06:01:31"
+    },
+    {
+      "result_id": "b9id:naturalmente.com.co:2",
+      "account": "Natural + Mente",
+      "account_domain": "naturalmente.com.co",
+      "source_url": "https://lagrannoticia.com/con-nueva-tienda-en-andino-natura-fortalece-su-ecosistema-omnicanal",
+      "source_domain": "lagrannoticia.com",
+      "provider": "brave",
+      "query": "\"Natural + Mente\" (apertura OR \"nueva sede\" OR expansión) Colombia 2026",
+      "query_family": "exact_name_signal_local",
+      "name_match": "partial_conflicting",
+      "domain_match": "mismatch",
+      "location_match": "not_established",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "same_commercial_name_different_company",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.97,
+      "decisive_evidence": [
+        "Title identifies a different, similarly named company."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "store_opening",
+      "event_date": "2026-06-08T03:02:15"
+    },
+    {
+      "result_id": "b9id:naturalmente.com.co:3",
+      "account": "Natural + Mente",
+      "account_domain": "naturalmente.com.co",
+      "source_url": "https://www.hsbnoticias.com/natura-fortalece-su-estrategia-de-expansion-y-le-apuesta-por-las-tiendas-fisicas",
+      "source_domain": "hsbnoticias.com",
+      "provider": "brave",
+      "query": "\"Natural + Mente\" (apertura OR \"nueva sede\" OR expansión) Colombia 2026",
+      "query_family": "exact_name_signal_local",
+      "name_match": "partial_conflicting",
+      "domain_match": "mismatch",
+      "location_match": "not_established",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "same_commercial_name_different_company",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.97,
+      "decisive_evidence": [
+        "Title identifies a different, similarly named company."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "store_opening",
+      "event_date": "2026-06-06T16:28:59"
+    },
+    {
+      "result_id": "b9id:naturalmente.com.co:4",
+      "account": "Natural + Mente",
+      "account_domain": "naturalmente.com.co",
+      "source_url": "https://www.eltiempo.com/amp/vida/tendencias/apertura-de-establecimiento-comercial-en-bogota-amplia-la-red-de-distribucion-de-natura-3543692",
+      "source_domain": "eltiempo.com",
+      "provider": "brave",
+      "query": "\"Natural + Mente\" (apertura OR \"nueva sede\" OR expansión) Colombia 2026",
+      "query_family": "exact_name_signal_local",
+      "name_match": "partial_conflicting",
+      "domain_match": "mismatch",
+      "location_match": "country_or_city_mention_only",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "same_commercial_name_different_company",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.97,
+      "decisive_evidence": [
+        "Title identifies a different, similarly named company."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "store_opening",
+      "event_date": "2026-06-02T15:14:26"
+    },
+    {
+      "result_id": "b9id:naturalmente.com.co:5",
+      "account": "Natural + Mente",
+      "account_domain": "naturalmente.com.co",
+      "source_url": "https://lanotaeconomica.com.co/movidas-empresarial/natura-fortalece-su-ecosistema-omnicanal-en-colombia-con-nueva-tienda-en-andino",
+      "source_domain": "lanotaeconomica.com.co",
+      "provider": "brave",
+      "query": "\"Natural + Mente\" (apertura OR \"nueva sede\" OR expansión) Colombia 2026",
+      "query_family": "exact_name_signal_local",
+      "name_match": "partial_conflicting",
+      "domain_match": "mismatch",
+      "location_match": "country_or_city_mention_only",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "same_commercial_name_different_company",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.97,
+      "decisive_evidence": [
+        "Title identifies a different, similarly named company."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "store_opening",
+      "event_date": "2026-06-02T23:00:47"
+    },
+    {
+      "result_id": "b9id:naturalmente.com.co:6",
+      "account": "Natural + Mente",
+      "account_domain": "naturalmente.com.co",
+      "source_url": "https://www.infobae.com/colombia/2026/07/24/ferrari-revelo-que-avanza-en-la-busqueda-de-un-nuevo-distribuidor-en-colombia-tras-escandalo-de-estafa-en-compra-de-lujosos-autos",
+      "source_domain": "infobae.com",
+      "provider": "brave",
+      "query": "\"Natural + Mente\" (alianza OR \"acuerdo de distribución\" OR \"nuevo distribuidor\") Colombia 2026",
+      "query_family": "exact_name_partner_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "country_or_city_mention_only",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "distribution_agreement",
+      "event_date": "2026-07-24T22:53:41"
+    },
+    {
+      "result_id": "b9id:naturalmente.com.co:7",
+      "account": "Natural + Mente",
+      "account_domain": "naturalmente.com.co",
+      "source_url": "https://renault.cl/noticia/astara-nuevo-distribuidor-de-renault-en-chile",
+      "source_domain": "renault.cl",
+      "provider": "brave",
+      "query": "\"Natural + Mente\" (alianza OR \"acuerdo de distribución\" OR \"nuevo distribuidor\") Colombia 2026",
+      "query_family": "exact_name_partner_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "not_established",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "distribution_agreement",
+      "event_date": "2026-07-01T02:28:35"
+    },
+    {
+      "result_id": "b9id:naturalmente.com.co:8",
+      "account": "Natural + Mente",
+      "account_domain": "naturalmente.com.co",
+      "source_url": "https://www.channelbiz.es/2026/07/17/submer-group-alcanza-un-acuerdo-de-distribucion-con-netceed/amp",
+      "source_domain": "channelbiz.es",
+      "provider": "brave",
+      "query": "\"Natural + Mente\" (alianza OR \"acuerdo de distribución\" OR \"nuevo distribuidor\") Colombia 2026",
+      "query_family": "exact_name_partner_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "not_established",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "distribution_agreement",
+      "event_date": "2026-07-17T07:08:40"
+    },
+    {
+      "result_id": "b9id:naturalmente.com.co:9",
+      "account": "Natural + Mente",
+      "account_domain": "naturalmente.com.co",
+      "source_url": "https://www.muycanal.com/2026/07/17/submer-group-firma-acuerdo-distribucion-netceed-emea",
+      "source_domain": "muycanal.com",
+      "provider": "brave",
+      "query": "\"Natural + Mente\" (alianza OR \"acuerdo de distribución\" OR \"nuevo distribuidor\") Colombia 2026",
+      "query_family": "exact_name_partner_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "not_established",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "distribution_agreement",
+      "event_date": "2026-07-17T09:47:57"
+    },
+    {
+      "result_id": "b9id:naturalmente.com.co:10",
+      "account": "Natural + Mente",
+      "account_domain": "naturalmente.com.co",
+      "source_url": "https://www.enfasys.net/2026/05/01/vertiv-maxid-acuerdo-distribucion-sudamerica",
+      "source_domain": "enfasys.net",
+      "provider": "brave",
+      "query": "\"Natural + Mente\" (alianza OR \"acuerdo de distribución\" OR \"nuevo distribuidor\") Colombia 2026",
+      "query_family": "exact_name_partner_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "not_established",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "distribution_agreement",
+      "event_date": "2026-05-01T05:43:03"
+    },
+    {
+      "result_id": "b9id:tutiendasaludable.com.co:1",
+      "account": "Tu Tienda Saludable",
+      "account_domain": "tutiendasaludable.com.co",
+      "source_url": "https://www.vanguardia.com/colombia/2026/07/27/reconocida-cadena-de-supermercados-anuncia-millonaria-expansion-con-12-nuevos-almacenes",
+      "source_domain": "vanguardia.com",
+      "provider": "brave",
+      "query": "\"Tu Tienda Saludable\" (apertura OR \"nueva sede\" OR expansión) Colombia 2026",
+      "query_family": "exact_name_signal_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "not_established",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": null,
+      "event_date": "2026-07-28T02:46:47"
+    },
+    {
+      "result_id": "b9id:tutiendasaludable.com.co:2",
+      "account": "Tu Tienda Saludable",
+      "account_domain": "tutiendasaludable.com.co",
+      "source_url": "https://www.semana.com/economia/capsulas/articulo/arturo-calle-anuncia-nuevo-plan-de-expansion-e-inversion-abrira-13-nuevas-tiendas-y-renovara-tres-puntos-estrategicos-en-2026/202620",
+      "source_domain": "semana.com",
+      "provider": "brave",
+      "query": "\"Tu Tienda Saludable\" (apertura OR \"nueva sede\" OR expansión) Colombia 2026",
+      "query_family": "exact_name_signal_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "not_established",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": null,
+      "event_date": "2026-07-02T22:32:20"
+    },
+    {
+      "result_id": "b9id:tutiendasaludable.com.co:3",
+      "account": "Tu Tienda Saludable",
+      "account_domain": "tutiendasaludable.com.co",
+      "source_url": "https://www.tecnogus.com.co/nueva-tienda-columbia-bogota-zona-t",
+      "source_domain": "tecnogus.com.co",
+      "provider": "brave",
+      "query": "\"Tu Tienda Saludable\" (apertura OR \"nueva sede\" OR expansión) Colombia 2026",
+      "query_family": "exact_name_signal_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "country_or_city_mention_only",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "store_opening",
+      "event_date": "2026-05-09T11:15:09"
+    },
+    {
+      "result_id": "b9id:tutiendasaludable.com.co:4",
+      "account": "Tu Tienda Saludable",
+      "account_domain": "tutiendasaludable.com.co",
+      "source_url": "https://www.100franquicias.com/Noticias/2026-03-24-la-franquicia-plan-de-expansion-aqui-tu-reforma-despliega-su-estrategia-de-expansion-con-67-nuevas-tiendas-en-8-paises.htm",
+      "source_domain": "100franquicias.com",
+      "provider": "brave",
+      "query": "\"Tu Tienda Saludable\" (apertura OR \"nueva sede\" OR expansión) Colombia 2026",
+      "query_family": "exact_name_signal_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "not_established",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "directory_profile",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": null,
+      "event_date": "2026-03-24T15:53:52"
+    },
+    {
+      "result_id": "b9id:tutiendasaludable.com.co:5",
+      "account": "Tu Tienda Saludable",
+      "account_domain": "tutiendasaludable.com.co",
+      "source_url": "https://www.hsbnoticias.com/la-alimentacion-saludable-y-el-valor-del-origen-estan-transformando-el-negocio",
+      "source_domain": "hsbnoticias.com",
+      "provider": "brave",
+      "query": "\"Tu Tienda Saludable\" (apertura OR \"nueva sede\" OR expansión) Colombia 2026",
+      "query_family": "exact_name_signal_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "country_or_city_mention_only",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": null,
+      "event_date": "2026-05-19T15:17:24"
+    },
+    {
+      "result_id": "b9id:tutiendasaludable.com.co:6",
+      "account": "Tu Tienda Saludable",
+      "account_domain": "tutiendasaludable.com.co",
+      "source_url": "https://itwarelatam.com/2016/08/31/furukawa-selecciono-nuevo-distribuidor-en-colombia",
+      "source_domain": "itwarelatam.com",
+      "provider": "brave",
+      "query": "\"Tu Tienda Saludable\" (alianza OR \"acuerdo de distribución\" OR \"nuevo distribuidor\") Colombia 2026",
+      "query_family": "exact_name_partner_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "country_or_city_mention_only",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "distribution_agreement",
+      "event_date": "2025-11-22T21:02:02"
+    },
+    {
+      "result_id": "b9id:tutiendasaludable.com.co:7",
+      "account": "Tu Tienda Saludable",
+      "account_domain": "tutiendasaludable.com.co",
+      "source_url": "https://www.linkedin.com/in/angelmonteroandrino",
+      "source_domain": "linkedin.com",
+      "provider": "brave",
+      "query": "\"Tu Tienda Saludable\" (alianza OR \"acuerdo de distribución\" OR \"nuevo distribuidor\") Colombia 2026",
+      "query_family": "exact_name_partner_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "not_established",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "unverified_social_property",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "social_profile",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "distribution_agreement",
+      "event_date": "2026-06-17T08:57:22"
+    },
+    {
+      "result_id": "b9id:tutiendasaludable.com.co:8",
+      "account": "Tu Tienda Saludable",
+      "account_domain": "tutiendasaludable.com.co",
+      "source_url": "https://vandal.elespanol.com/noticia/1350791839/bandai-namco-seguira-distribuyendo-juegos-fisicos-y-anuncia-una-ampliacion-de-su-acuerdo-con-koei-tecmo",
+      "source_domain": "vandal.elespanol.com",
+      "provider": "brave",
+      "query": "\"Tu Tienda Saludable\" (alianza OR \"acuerdo de distribución\" OR \"nuevo distribuidor\") Colombia 2026",
+      "query_family": "exact_name_partner_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "not_established",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": null,
+      "event_date": "2026-07-24T11:44:22"
+    },
+    {
+      "result_id": "b9id:hotelspalacolina.com:1",
+      "account": "Hotel Spa La Colina",
+      "account_domain": "hotelspalacolina.com",
+      "source_url": "https://www.valoraanalitik.com/accor-acelera-colombia-2026-hoteles",
+      "source_domain": "valoraanalitik.com",
+      "provider": "brave",
+      "query": "\"Hotel Spa La Colina\" (apertura OR \"nueva sede\" OR expansión) Colombia 2026",
+      "query_family": "exact_name_signal_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "country_or_city_mention_only",
+      "category_match": "generic_category_only",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": null,
+      "event_date": "2026-04-29T15:06:06"
+    },
+    {
+      "result_id": "b9id:hotelspalacolina.com:2",
+      "account": "Hotel Spa La Colina",
+      "account_domain": "hotelspalacolina.com",
+      "source_url": "https://www.eluniversal.com.co/economica/2025/10/06/cartagena-amplia-su-oferta-hotelera-con-nuevos-proyectos-de-lujo-y-expansion-de-cadenas-internacionales",
+      "source_domain": "eluniversal.com.co",
+      "provider": "brave",
+      "query": "\"Hotel Spa La Colina\" (apertura OR \"nueva sede\" OR expansión) Colombia 2026",
+      "query_family": "exact_name_signal_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "not_established",
+      "category_match": "generic_category_only",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": null,
+      "event_date": "2025-10-06T15:30:31"
+    },
+    {
+      "result_id": "b9id:hotelspalacolina.com:3",
+      "account": "Hotel Spa La Colina",
+      "account_domain": "hotelspalacolina.com",
+      "source_url": "https://www.traveltradecaribbean.es/especial-ttc-las-inversiones-hoteleras-en-america-latina-y-el-caribe-en-2026",
+      "source_domain": "traveltradecaribbean.es",
+      "provider": "brave",
+      "query": "\"Hotel Spa La Colina\" (apertura OR \"nueva sede\" OR expansión) Colombia 2026",
+      "query_family": "exact_name_signal_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "not_established",
+      "category_match": "generic_category_only",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "new_location",
+      "event_date": "2026-04-27T16:19:42"
+    },
+    {
+      "result_id": "b9id:hotelspalacolina.com:4",
+      "account": "Hotel Spa La Colina",
+      "account_domain": "hotelspalacolina.com",
+      "source_url": "https://forbes.co/negocios/wyndham-proyecta-aumentar-su-presencia-en-colombia-con-12-nuevos-hoteles",
+      "source_domain": "forbes.co",
+      "provider": "brave",
+      "query": "\"Hotel Spa La Colina\" (apertura OR \"nueva sede\" OR expansión) Colombia 2026",
+      "query_family": "exact_name_signal_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "country_or_city_mention_only",
+      "category_match": "generic_category_only",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": null,
+      "event_date": "2026-06-23T21:27:42"
+    },
+    {
+      "result_id": "b9id:hotelspalacolina.com:5",
+      "account": "Hotel Spa La Colina",
+      "account_domain": "hotelspalacolina.com",
+      "source_url": "https://www.valoraanalitik.com/wyndham-revela-planes-expansion-colombia",
+      "source_domain": "valoraanalitik.com",
+      "provider": "brave",
+      "query": "\"Hotel Spa La Colina\" (apertura OR \"nueva sede\" OR expansión) Colombia 2026",
+      "query_family": "exact_name_signal_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "country_or_city_mention_only",
+      "category_match": "generic_category_only",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": null,
+      "event_date": "2026-03-09T17:00:16"
+    },
+    {
+      "result_id": "b9id:hotelspalacolina.com:6",
+      "account": "Hotel Spa La Colina",
+      "account_domain": "hotelspalacolina.com",
+      "source_url": "https://www.linkedin.com/in/angelmonteroandrino",
+      "source_domain": "linkedin.com",
+      "provider": "brave",
+      "query": "\"Hotel Spa La Colina\" (alianza OR \"acuerdo de distribución\" OR \"nuevo distribuidor\") Colombia 2026",
+      "query_family": "exact_name_partner_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "not_established",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "unverified_social_property",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "social_profile",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "distribution_agreement",
+      "event_date": "2026-06-17T08:57:22"
+    },
+    {
+      "result_id": "b9id:bioplaza.com.co:1",
+      "account": "BioPlaza",
+      "account_domain": "bioplaza.com.co",
+      "source_url": "https://es-us.noticias.yahoo.com/centro-comercial-bogot%C3%A1-expansi%C3%B3n-llegar%C3%A1n-224000285.html",
+      "source_domain": "es-us.noticias.yahoo.com",
+      "provider": "brave",
+      "query": "\"BioPlaza\" (apertura OR \"nueva sede\" OR expansión) Colombia 2026",
+      "query_family": "exact_name_signal_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "country_or_city_mention_only",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "directory_profile",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "new_location",
+      "event_date": "2026-03-18T22:40:00"
+    },
+    {
+      "result_id": "b9id:bioplaza.com.co:2",
+      "account": "BioPlaza",
+      "account_domain": "bioplaza.com.co",
+      "source_url": "https://www.pulzo.com/economia/abriran-nuevo-centro-comercial-colombia-sera-inmenso-zona-clave-PP5171274",
+      "source_domain": "pulzo.com",
+      "provider": "brave",
+      "query": "\"BioPlaza\" (apertura OR \"nueva sede\" OR expansión) Colombia 2026",
+      "query_family": "exact_name_signal_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "country_or_city_mention_only",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": null,
+      "event_date": "2026-05-07T14:08:49"
+    },
+    {
+      "result_id": "b9id:bioplaza.com.co:3",
+      "account": "BioPlaza",
+      "account_domain": "bioplaza.com.co",
+      "source_url": "https://www.pharmabiz.net/biosidus-colombia-con-nueva-sede",
+      "source_domain": "pharmabiz.net",
+      "provider": "brave",
+      "query": "\"BioPlaza\" (apertura OR \"nueva sede\" OR expansión) Colombia 2026",
+      "query_family": "exact_name_signal_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "country_or_city_mention_only",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "new_location",
+      "event_date": "2026-02-16T15:59:24"
+    },
+    {
+      "result_id": "b9id:bioplaza.com.co:4",
+      "account": "BioPlaza",
+      "account_domain": "bioplaza.com.co",
+      "source_url": "https://www.larepublica.co/empresas/apertura-de-tienda-de-columbia-en-zona-t-de-bogota-4388385",
+      "source_domain": "larepublica.co",
+      "provider": "brave",
+      "query": "\"BioPlaza\" (apertura OR \"nueva sede\" OR expansión) Colombia 2026",
+      "query_family": "exact_name_signal_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "country_or_city_mention_only",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "store_opening",
+      "event_date": "2026-05-08T18:17:56"
+    },
+    {
+      "result_id": "b9id:bioplaza.com.co:5",
+      "account": "BioPlaza",
+      "account_domain": "bioplaza.com.co",
+      "source_url": "https://www.larepublica.co/ocio/apertura-de-nuevas-sedes-bodytech-4308195",
+      "source_domain": "larepublica.co",
+      "provider": "brave",
+      "query": "\"BioPlaza\" (apertura OR \"nueva sede\" OR expansión) Colombia 2026",
+      "query_family": "exact_name_signal_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "not_established",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "new_location",
+      "event_date": "2026-01-20T05:01:10"
+    },
+    {
+      "result_id": "b9id:bioplaza.com.co:6",
+      "account": "BioPlaza",
+      "account_domain": "bioplaza.com.co",
+      "source_url": "https://www.bioplaza.com.co/quinoa-pop-endulzada-con-yacon",
+      "source_domain": "bioplaza.com.co",
+      "provider": "tavily",
+      "query": "site:bioplaza.com.co (apertura OR \"nueva sede\" OR expansión OR inauguración)",
+      "query_family": "site_official_signal",
+      "name_match": "domain_confirmed",
+      "domain_match": "verified",
+      "location_match": "not_established",
+      "category_match": "consistent",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "exact_company",
+      "identity_decision": "confirmed",
+      "confidence": 0.99,
+      "decisive_evidence": [
+        "Verified domain bioplaza.com.co matches result host."
+      ],
+      "missing_evidence": [],
+      "prior_rejection_reason": "downstream_gate_failed",
+      "rejection_correct": true,
+      "event_category": null,
+      "event_date": null
+    },
+    {
+      "result_id": "b9id:bioplaza.com.co:7",
+      "account": "BioPlaza",
+      "account_domain": "bioplaza.com.co",
+      "source_url": "https://www.infobae.com/colombia/2026/07/24/ferrari-revelo-que-avanza-en-la-busqueda-de-un-nuevo-distribuidor-en-colombia-tras-escandalo-de-estafa-en-compra-de-lujosos-autos",
+      "source_domain": "infobae.com",
+      "provider": "brave",
+      "query": "\"BioPlaza\" (alianza OR \"acuerdo de distribución\" OR \"nuevo distribuidor\") Colombia 2026",
+      "query_family": "exact_name_partner_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "country_or_city_mention_only",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "distribution_agreement",
+      "event_date": "2026-07-24T22:53:41"
+    },
+    {
+      "result_id": "b9id:bioplaza.com.co:8",
+      "account": "BioPlaza",
+      "account_domain": "bioplaza.com.co",
+      "source_url": "https://itwarelatam.com/2016/08/31/furukawa-selecciono-nuevo-distribuidor-en-colombia",
+      "source_domain": "itwarelatam.com",
+      "provider": "brave",
+      "query": "\"BioPlaza\" (alianza OR \"acuerdo de distribución\" OR \"nuevo distribuidor\") Colombia 2026",
+      "query_family": "exact_name_partner_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "country_or_city_mention_only",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "distribution_agreement",
+      "event_date": "2025-11-22T21:02:02"
+    },
+    {
+      "result_id": "b9id:bioplaza.com.co:9",
+      "account": "BioPlaza",
+      "account_domain": "bioplaza.com.co",
+      "source_url": "https://www.itseller.cl/2026/05/01/vertiv-maxid-infraestructura-centros-datos-chile",
+      "source_domain": "itseller.cl",
+      "provider": "brave",
+      "query": "\"BioPlaza\" (alianza OR \"acuerdo de distribución\" OR \"nuevo distribuidor\") Colombia 2026",
+      "query_family": "exact_name_partner_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "not_established",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "distribution_agreement",
+      "event_date": "2026-05-01T15:50:26"
+    },
+    {
+      "result_id": "b9id:bioplaza.com.co:10",
+      "account": "BioPlaza",
+      "account_domain": "bioplaza.com.co",
+      "source_url": "https://caracol.com.co/2026/07/24/ferrari-confirma-que-busca-nuevo-distribuidor-en-colombia-y-marca-distancia-del-caso-autos-italianos",
+      "source_domain": "caracol.com.co",
+      "provider": "brave",
+      "query": "\"BioPlaza\" (alianza OR \"acuerdo de distribución\" OR \"nuevo distribuidor\") Colombia 2026",
+      "query_family": "exact_name_partner_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "country_or_city_mention_only",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "distribution_agreement",
+      "event_date": "2026-07-24T11:50:01"
+    },
+    {
+      "result_id": "b9id:bioplaza.com.co:11",
+      "account": "BioPlaza",
+      "account_domain": "bioplaza.com.co",
+      "source_url": "https://valijadiplomaticamexico.wordpress.com/2026/05/01/ruta-financiera-lino-calderon-vertiv-y-maxid-establecen-acuerdo-de-distribucion",
+      "source_domain": "valijadiplomaticamexico.wordpress.com",
+      "provider": "brave",
+      "query": "\"BioPlaza\" (alianza OR \"acuerdo de distribución\" OR \"nuevo distribuidor\") Colombia 2026",
+      "query_family": "exact_name_partner_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "not_established",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "distribution_agreement",
+      "event_date": "2026-05-01T20:03:26"
+    },
+    {
+      "result_id": "b9id:distribuidoradam.com:1",
+      "account": "Distribuidora DAM",
+      "account_domain": "distribuidoradam.com",
+      "source_url": "https://www.vanguardia.com/colombia/2026/07/27/reconocida-cadena-de-supermercados-anuncia-millonaria-expansion-con-12-nuevos-almacenes",
+      "source_domain": "vanguardia.com",
+      "provider": "brave",
+      "query": "\"Distribuidora DAM\" (apertura OR \"nueva sede\" OR expansión) Colombia 2026",
+      "query_family": "exact_name_signal_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "not_established",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": null,
+      "event_date": "2026-07-28T02:46:47"
+    },
+    {
+      "result_id": "b9id:distribuidoradam.com:2",
+      "account": "Distribuidora DAM",
+      "account_domain": "distribuidoradam.com",
+      "source_url": "https://www.elcolombiano.com/negocios/madecentro-inversion-tiendas-miami-expansion-2026-AL38553650",
+      "source_domain": "elcolombiano.com",
+      "provider": "brave",
+      "query": "\"Distribuidora DAM\" (apertura OR \"nueva sede\" OR expansión) Colombia 2026",
+      "query_family": "exact_name_signal_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "not_established",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "store_opening",
+      "event_date": "2026-07-06T18:05:04"
+    },
+    {
+      "result_id": "b9id:distribuidoradam.com:3",
+      "account": "Distribuidora DAM",
+      "account_domain": "distribuidoradam.com",
+      "source_url": "https://es-us.noticias.yahoo.com/pintuco-lanza-megaplan-expansi%C3%B3n-colombia-212000555.html",
+      "source_domain": "es-us.noticias.yahoo.com",
+      "provider": "brave",
+      "query": "\"Distribuidora DAM\" (apertura OR \"nueva sede\" OR expansión) Colombia 2026",
+      "query_family": "exact_name_signal_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "country_or_city_mention_only",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "directory_profile",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "store_opening",
+      "event_date": "2026-07-23T21:20:00"
+    },
+    {
+      "result_id": "b9id:distribuidoradam.com:4",
+      "account": "Distribuidora DAM",
+      "account_domain": "distribuidoradam.com",
+      "source_url": "https://www.logisticaprofesional.com/texto-diario/mostrar/5906935/moinsa-supply-chain-abre-colombia-e-impulsa-presencia-latinoamerica",
+      "source_domain": "logisticaprofesional.com",
+      "provider": "brave",
+      "query": "\"Distribuidora DAM\" (apertura OR \"nueva sede\" OR expansión) Colombia 2026",
+      "query_family": "exact_name_signal_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "country_or_city_mention_only",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "new_location",
+      "event_date": "2026-06-04T10:53:43"
+    },
+    {
+      "result_id": "b9id:distribuidoradam.com:5",
+      "account": "Distribuidora DAM",
+      "account_domain": "distribuidoradam.com",
+      "source_url": "https://noticiasaldiayalahora.co/economia/damasco-impulsa-su-expansion-nacional-con-la-apertura-de-su-tienda-numero-49-en-el-tigre-y-anuncia-ambicioso-plan-de-crecimiento-generando-100-empleos-directos",
+      "source_domain": "noticiasaldiayalahora.co",
+      "provider": "brave",
+      "query": "\"Distribuidora DAM\" (apertura OR \"nueva sede\" OR expansión) Colombia 2026",
+      "query_family": "exact_name_signal_local",
+      "name_match": "partial_conflicting",
+      "domain_match": "mismatch",
+      "location_match": "not_established",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "same_commercial_name_different_company",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.97,
+      "decisive_evidence": [
+        "Title identifies a different, similarly named company."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "store_opening",
+      "event_date": "2026-04-15T17:05:39"
+    },
+    {
+      "result_id": "b9id:distribuidoradam.com:6",
+      "account": "Distribuidora DAM",
+      "account_domain": "distribuidoradam.com",
+      "source_url": "https://www.infobae.com/colombia/2026/07/24/ferrari-revelo-que-avanza-en-la-busqueda-de-un-nuevo-distribuidor-en-colombia-tras-escandalo-de-estafa-en-compra-de-lujosos-autos",
+      "source_domain": "infobae.com",
+      "provider": "brave",
+      "query": "\"Distribuidora DAM\" (alianza OR \"acuerdo de distribución\" OR \"nuevo distribuidor\") Colombia 2026",
+      "query_family": "exact_name_partner_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "country_or_city_mention_only",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "distribution_agreement",
+      "event_date": "2026-07-24T22:53:41"
+    },
+    {
+      "result_id": "b9id:distribuidoradam.com:7",
+      "account": "Distribuidora DAM",
+      "account_domain": "distribuidoradam.com",
+      "source_url": "https://itwarelatam.com/2016/08/31/furukawa-selecciono-nuevo-distribuidor-en-colombia",
+      "source_domain": "itwarelatam.com",
+      "provider": "brave",
+      "query": "\"Distribuidora DAM\" (alianza OR \"acuerdo de distribución\" OR \"nuevo distribuidor\") Colombia 2026",
+      "query_family": "exact_name_partner_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "country_or_city_mention_only",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "distribution_agreement",
+      "event_date": "2025-11-22T21:02:02"
+    },
+    {
+      "result_id": "b9id:distribuidoradam.com:8",
+      "account": "Distribuidora DAM",
+      "account_domain": "distribuidoradam.com",
+      "source_url": "https://www.channelbiz.es/2026/07/17/submer-group-alcanza-un-acuerdo-de-distribucion-con-netceed/amp",
+      "source_domain": "channelbiz.es",
+      "provider": "brave",
+      "query": "\"Distribuidora DAM\" (alianza OR \"acuerdo de distribución\" OR \"nuevo distribuidor\") Colombia 2026",
+      "query_family": "exact_name_partner_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "not_established",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "distribution_agreement",
+      "event_date": "2026-07-17T07:08:40"
+    },
+    {
+      "result_id": "b9id:distribuidoradam.com:9",
+      "account": "Distribuidora DAM",
+      "account_domain": "distribuidoradam.com",
+      "source_url": "https://tclgfirm.com/es/blog/danos-en-la-distribucion-5-errores-comunes-en-los-acuerdos-de-distribucion-que-podrian-perjudicar-a-su-negocio",
+      "source_domain": "tclgfirm.com",
+      "provider": "brave",
+      "query": "\"Distribuidora DAM\" (alianza OR \"acuerdo de distribución\" OR \"nuevo distribuidor\") Colombia 2026",
+      "query_family": "exact_name_partner_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "not_established",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "distribution_agreement",
+      "event_date": "2025-10-15T17:12:08"
+    },
+    {
+      "result_id": "b9id:distribuidoradam.com:10",
+      "account": "Distribuidora DAM",
+      "account_domain": "distribuidoradam.com",
+      "source_url": "https://www.enfasys.net/2026/05/01/vertiv-maxid-acuerdo-distribucion-sudamerica",
+      "source_domain": "enfasys.net",
+      "provider": "brave",
+      "query": "\"Distribuidora DAM\" (alianza OR \"acuerdo de distribución\" OR \"nuevo distribuidor\") Colombia 2026",
+      "query_family": "exact_name_partner_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "not_established",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "distribution_agreement",
+      "event_date": "2026-05-01T05:43:03"
+    },
+    {
+      "result_id": "b9id:somosconsiente.com:1",
+      "account": "Somos Consiente",
+      "account_domain": "somosconsiente.com",
+      "source_url": "https://forbes.co/negocios/arturo-calle-pondra-en-marcha-su-plan-de-expansion-con-la-apertura-de-13-nuevas-tiendas-este-ano",
+      "source_domain": "forbes.co",
+      "provider": "brave",
+      "query": "\"Somos Consiente\" (apertura OR \"nueva sede\" OR expansión) Colombia 2026",
+      "query_family": "exact_name_signal_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "not_established",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unresolved",
+      "identity_decision": "unresolved",
+      "confidence": 0.25,
+      "decisive_evidence": [
+        "Title is insufficient to identify the subject."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "store_opening",
+      "event_date": "2026-07-03T16:00:56"
+    },
+    {
+      "result_id": "b9id:somosconsiente.com:2",
+      "account": "Somos Consiente",
+      "account_domain": "somosconsiente.com",
+      "source_url": "https://www.semana.com/economia/capsulas/articulo/arturo-calle-anuncia-nuevo-plan-de-expansion-e-inversion-abrira-13-nuevas-tiendas-y-renovara-tres-puntos-estrategicos-en-2026/202620",
+      "source_domain": "semana.com",
+      "provider": "brave",
+      "query": "\"Somos Consiente\" (apertura OR \"nueva sede\" OR expansión) Colombia 2026",
+      "query_family": "exact_name_signal_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "not_established",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "store_opening",
+      "event_date": "2026-07-02T22:32:20"
+    },
+    {
+      "result_id": "b9id:somosconsiente.com:3",
+      "account": "Somos Consiente",
+      "account_domain": "somosconsiente.com",
+      "source_url": "https://www.vanguardia.com/colombia/2026/07/27/reconocida-cadena-de-supermercados-anuncia-millonaria-expansion-con-12-nuevos-almacenes",
+      "source_domain": "vanguardia.com",
+      "provider": "brave",
+      "query": "\"Somos Consiente\" (apertura OR \"nueva sede\" OR expansión) Colombia 2026",
+      "query_family": "exact_name_signal_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "not_established",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": null,
+      "event_date": "2026-07-28T02:46:47"
+    },
+    {
+      "result_id": "b9id:somosconsiente.com:4",
+      "account": "Somos Consiente",
+      "account_domain": "somosconsiente.com",
+      "source_url": "https://www.portafolio.co/negocios/empresas/somos-internet-impulsa-expansion-tras-levantar-mas-de-us-14-millones-en-su-serie-a-638057",
+      "source_domain": "portafolio.co",
+      "provider": "brave",
+      "query": "\"Somos Consiente\" (apertura OR \"nueva sede\" OR expansión) Colombia 2026",
+      "query_family": "exact_name_signal_local",
+      "name_match": "partial_conflicting",
+      "domain_match": "mismatch",
+      "location_match": "not_established",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "same_commercial_name_different_company",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.97,
+      "decisive_evidence": [
+        "Title identifies a different, similarly named company."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": null,
+      "event_date": "2025-08-20T17:37:59"
+    },
+    {
+      "result_id": "b9id:somosconsiente.com:5",
+      "account": "Somos Consiente",
+      "account_domain": "somosconsiente.com",
+      "source_url": "https://www.actualidadglobalinternacional.com/post/colombia-inaugura-la-nueva-sede-de-su-consulado-general-central-en-madrid",
+      "source_domain": "actualidadglobalinternacional.com",
+      "provider": "brave",
+      "query": "\"Somos Consiente\" (apertura OR \"nueva sede\" OR expansión) Colombia 2026",
+      "query_family": "exact_name_signal_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "country_or_city_mention_only",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "new_location",
+      "event_date": "2026-07-30T02:51:25"
+    },
+    {
+      "result_id": "b9id:somosconsiente.com:6",
+      "account": "Somos Consiente",
+      "account_domain": "somosconsiente.com",
+      "source_url": "https://somosconsiente.com/producto/libro-att-el-universo",
+      "source_domain": "somosconsiente.com",
+      "provider": "tavily",
+      "query": "site:somosconsiente.com (apertura OR \"nueva sede\" OR expansión OR inauguración)",
+      "query_family": "site_official_signal",
+      "name_match": "domain_confirmed",
+      "domain_match": "verified",
+      "location_match": "not_established",
+      "category_match": "consistent",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "exact_company",
+      "identity_decision": "confirmed",
+      "confidence": 0.99,
+      "decisive_evidence": [
+        "Verified domain somosconsiente.com matches result host."
+      ],
+      "missing_evidence": [],
+      "prior_rejection_reason": "downstream_gate_failed",
+      "rejection_correct": true,
+      "event_category": null,
+      "event_date": null
+    },
+    {
+      "result_id": "b9id:somosconsiente.com:7",
+      "account": "Somos Consiente",
+      "account_domain": "somosconsiente.com",
+      "source_url": "https://itwarelatam.com/2016/08/31/furukawa-selecciono-nuevo-distribuidor-en-colombia",
+      "source_domain": "itwarelatam.com",
+      "provider": "brave",
+      "query": "\"Somos Consiente\" (alianza OR \"acuerdo de distribución\" OR \"nuevo distribuidor\") Colombia 2026",
+      "query_family": "exact_name_partner_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "country_or_city_mention_only",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "distribution_agreement",
+      "event_date": "2025-11-22T21:02:02"
+    },
+    {
+      "result_id": "b9id:somosconsiente.com:8",
+      "account": "Somos Consiente",
+      "account_domain": "somosconsiente.com",
+      "source_url": "https://www.infobae.com/colombia/2026/07/24/ferrari-revelo-que-avanza-en-la-busqueda-de-un-nuevo-distribuidor-en-colombia-tras-escandalo-de-estafa-en-compra-de-lujosos-autos",
+      "source_domain": "infobae.com",
+      "provider": "brave",
+      "query": "\"Somos Consiente\" (alianza OR \"acuerdo de distribución\" OR \"nuevo distribuidor\") Colombia 2026",
+      "query_family": "exact_name_partner_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "country_or_city_mention_only",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "distribution_agreement",
+      "event_date": "2026-07-24T22:53:41"
+    },
+    {
+      "result_id": "b9id:somosconsiente.com:9",
+      "account": "Somos Consiente",
+      "account_domain": "somosconsiente.com",
+      "source_url": "https://caracol.com.co/2026/07/24/ferrari-confirma-que-busca-nuevo-distribuidor-en-colombia-y-marca-distancia-del-caso-autos-italianos",
+      "source_domain": "caracol.com.co",
+      "provider": "brave",
+      "query": "\"Somos Consiente\" (alianza OR \"acuerdo de distribución\" OR \"nuevo distribuidor\") Colombia 2026",
+      "query_family": "exact_name_partner_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "country_or_city_mention_only",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "distribution_agreement",
+      "event_date": "2026-07-24T11:50:01"
+    },
+    {
+      "result_id": "b9id:somosconsiente.com:10",
+      "account": "Somos Consiente",
+      "account_domain": "somosconsiente.com",
+      "source_url": "https://www.ipauta.com/w-sound-y-warner-music-latina-renuevan-su-alianza-estrategica",
+      "source_domain": "ipauta.com",
+      "provider": "brave",
+      "query": "\"Somos Consiente\" (alianza OR \"acuerdo de distribución\" OR \"nuevo distribuidor\") Colombia 2026",
+      "query_family": "exact_name_partner_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "not_established",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "distribution_agreement",
+      "event_date": "2026-07-23T17:23:19"
+    },
+    {
+      "result_id": "b9id:somosconsiente.com:11",
+      "account": "Somos Consiente",
+      "account_domain": "somosconsiente.com",
+      "source_url": "https://www.channelbiz.es/2026/07/17/submer-group-alcanza-un-acuerdo-de-distribucion-con-netceed/amp",
+      "source_domain": "channelbiz.es",
+      "provider": "brave",
+      "query": "\"Somos Consiente\" (alianza OR \"acuerdo de distribución\" OR \"nuevo distribuidor\") Colombia 2026",
+      "query_family": "exact_name_partner_local",
+      "name_match": "none",
+      "domain_match": "mismatch",
+      "location_match": "not_established",
+      "category_match": "incompatible_or_unknown",
+      "social_property_match": "not_applicable",
+      "legal_name_evidence": "not_available",
+      "relationship_state": "unrelated_namesake",
+      "identity_decision": "wrong_entity",
+      "confidence": 0.94,
+      "decisive_evidence": [
+        "Result title/domain do not identify the target account."
+      ],
+      "missing_evidence": [
+        "verified domain linkage",
+        "matching contact/address or official property"
+      ],
+      "prior_rejection_reason": "identity_gate_failed",
+      "rejection_correct": true,
+      "event_category": "distribution_agreement",
+      "event_date": "2026-07-17T07:08:40"
+    }
+  ]
+}

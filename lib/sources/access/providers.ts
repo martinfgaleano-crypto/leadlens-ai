@@ -19,6 +19,11 @@ function emptyResponse(provider: string, query: SearchQuery, error: string, late
   return { ok: false, provider, query, results: [], latency_ms: latency, cost_estimate_usd: null, error };
 }
 
+function safeProviderError(status: number, body: string): string {
+  const compact = body.replace(/[\r\n\t]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 240);
+  return `HTTP ${status}${compact ? `: ${compact}` : ""}`;
+}
+
 // ── Tavily (existing LeadLens provider credential: TAVILY_API_KEY) ────────────
 export const tavilyProvider: SearchProvider = {
   id: "tavily",
@@ -134,7 +139,12 @@ export const serperProvider: SearchProvider = {
         signal: AbortSignal.timeout(15_000),
       });
       const latency = Date.now() - started;
-      if (!res.ok) return emptyResponse("serper", query, `HTTP ${res.status}`, latency);
+      if (!res.ok) {
+        // Preserve a bounded, key-free diagnostic. Serper's HTTP status alone
+        // cannot distinguish malformed payload, quota and authentication.
+        const body = await res.text().catch(() => "");
+        return emptyResponse("serper", query, safeProviderError(res.status, body), latency);
+      }
       const data = await res.json() as { organic?: Array<{ link: string; title?: string; snippet?: string; date?: string }> };
       const now = new Date().toISOString();
       const results: SearchResultItem[] = (data.organic ?? []).map((r, i) => ({

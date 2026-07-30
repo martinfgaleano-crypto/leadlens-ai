@@ -1,5 +1,9 @@
 # LeadLens Continuity Audit — Authoritative Checkpoint
 
+## Block 10 continuity update — 2026-07-30
+
+Block 10 adds Colombian entity resolution without changing structural ranking, Admin auth or customer output. The complete Block 9 audit preserved all 56 correct rejections. The same-six pass confirmed 6/6 identities and verified six domains/official sites, but recovered no dated directly attributable event; zero signals remains honest. Serper is disabled from fallback because its minimal probe returned insufficient credits. Migration 044 is generated only and awaits explicit authorization. See `LEADLENS_BLOCK_10_COLOMBIAN_ENTITY_RESOLUTION_REPORT.md`.
+
 ## Block 9 continuity update — 2026-07-30
 
 - Starting HEAD: `4ba5dbd` (Block 8).

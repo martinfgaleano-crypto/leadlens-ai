@@ -285,3 +285,12 @@ Preserved: `preference-learner` + `shadow-preference` never touch ranking; UI sh
 ## Runtime links
 - Admin (dev): `http://localhost:3000/admin/intelligence`
 - Latest real artifact: `ml/data/pilot-amor-de-gea/2026-07-27T01-35-36-464Z/` (21 verified / 29 probable / 114 excluded; 7 segments).
+
+## Block 10 checkpoint — Colombian entity resolution
+
+- Audited all 56 Block 9 results first: 53 wrong entity, 2 exact company, 1 unresolved; all 56 prior rejections were correct.
+- Added Colombia-aware profiles, anchors, typed identity graph, official-property ownership, relationship separation, provider-specific queries, provider health, identity-first caps and event attribution.
+- Serper minimal probe diagnosed insufficient credits and removed it from automatic fallback.
+- Same six accounts: 6 confirmed, 6 verified domains, 6 verified official sites, 0 unresolved, 0 dated direct events, 0 valid signals.
+- Command Center reads the artifact without provider calls. Ranking and report impact remain off.
+- Migration 044 generated but not applied. Block 11 not started.

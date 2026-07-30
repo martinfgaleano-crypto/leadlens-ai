@@ -1,0 +1,3227 @@
+{
+  "methodology_version": "colombian-entity-resolution-v1",
+  "generated_at": "2026-07-30T14:24:06.487Z",
+  "source_research_artifact": "amor-de-gea-block7-2026-07-30T00-33-22-535Z.json",
+  "limits": {
+    "accounts": 6,
+    "max_identity_queries_per_account": 5,
+    "max_identity_extractions_total": 12,
+    "max_event_queries_per_eligible_account": 3,
+    "max_event_extractions_total": 8
+  },
+  "summary": {
+    "accounts": 6,
+    "identity_queries": 18,
+    "searches": 30,
+    "extractions": 0,
+    "results": 106,
+    "confirmed": 6,
+    "high_confidence": 0,
+    "probable": 0,
+    "unresolved": 0,
+    "verified_domains": 6,
+    "official_properties": 6,
+    "event_eligible": 6,
+    "dated_event_results": 0,
+    "directly_attributable_events": 0,
+    "valid_signals": 0,
+    "provider_health": {
+      "serper": {
+        "state": "disabled",
+        "reason": "HTTP 400 Not enough credits",
+        "automatic_fallback": false
+      },
+      "brave": {
+        "state": "configured"
+      },
+      "tavily": {
+        "state": "configured"
+      }
+    },
+    "cost": {
+      "state": "not_measured",
+      "reason": "Provider adapters returned no per-request cost."
+    }
+  },
+  "accounts": [
+    {
+      "account": "Natural + Mente",
+      "domain": "naturalmente.com.co",
+      "identity_profile": {
+        "profile_id": "entity_wijp9c",
+        "account_id": "rp_r5i5ih",
+        "client_id": "amor-de-gea",
+        "canonical_commercial_name": "Natural + Mente",
+        "normalized_name": {
+          "raw_name": "Natural + Mente",
+          "normalized_full": "natural mente",
+          "comparison_name": "natural mente",
+          "legal_suffixes_removed": [],
+          "generic_prefixes_observed": []
+        },
+        "legal_name": null,
+        "nit": null,
+        "verified_domain": "naturalmente.com.co",
+        "alternate_verified_domains": [],
+        "official_properties": [
+          {
+            "property_id": "prop_smhen0",
+            "type": "website",
+            "url": "https://naturalmente.com.co",
+            "state": "verified",
+            "ownership_evidence": [
+              {
+                "kind": "verified_domain",
+                "value": "naturalmente.com.co",
+                "strength": "strong",
+                "supports_identity": true,
+                "confidence": 0.99,
+                "evidence": [],
+                "reason": "Persisted verified account domain.",
+                "anchor_id": "anchor_49gnol"
+              }
+            ],
+            "source_owner_key": "naturalmente.com.co",
+            "confidence": 0.95,
+            "profile_only": false,
+            "last_verified_at": "2026-07-30T14:24:06.487Z",
+            "limitations": []
+          }
+        ],
+        "city": null,
+        "department": null,
+        "country": "Colombia",
+        "verified_addresses": [],
+        "business_category": "retail",
+        "products_services": [],
+        "parent_entity": null,
+        "subsidiaries": [],
+        "branches": [],
+        "known_aliases": [],
+        "former_names": [],
+        "marketplace_identities": [],
+        "distributor_relationships": [],
+        "registry_references": [],
+        "identity_confidence": 0.94,
+        "identity_state": "confirmed",
+        "confirmed_anchors": [
+          {
+            "kind": "verified_domain",
+            "value": "naturalmente.com.co",
+            "strength": "strong",
+            "supports_identity": true,
+            "confidence": 0.99,
+            "evidence": [],
+            "reason": "Persisted verified account domain.",
+            "anchor_id": "anchor_49gnol"
+          },
+          {
+            "kind": "contact_page",
+            "value": "https://naturalmente.com.co/",
+            "strength": "moderate",
+            "supports_identity": true,
+            "confidence": 0.82,
+            "evidence": [],
+            "reason": "Provider recovered content on the persisted verified domain.",
+            "anchor_id": "anchor_161ot8s"
+          }
+        ],
+        "conflicting_anchors": [],
+        "unresolved_identity_questions": [],
+        "source_provenance": [],
+        "last_verified_date": "2026-07-30T14:23:46.735Z",
+        "methodology_version": "colombian-entity-resolution-v1",
+        "internal_only": true
+      },
+      "identity_queries": [
+        {
+          "query_id": "entityq_1781w0x",
+          "provider": "brave",
+          "stage": "identity",
+          "query": "\"Natural + Mente\" Colombia retail",
+          "task": "identity_discovery",
+          "requires_identity_state": [
+            "confirmed",
+            "high_confidence",
+            "probable",
+            "ambiguous",
+            "unresolved"
+          ]
+        },
+        {
+          "query_id": "entityq_1y7etsd",
+          "provider": "brave",
+          "stage": "identity",
+          "query": "\"Natural + Mente\" sitio oficial",
+          "task": "identity_discovery",
+          "requires_identity_state": [
+            "confirmed",
+            "high_confidence",
+            "probable",
+            "ambiguous",
+            "unresolved"
+          ]
+        },
+        {
+          "query_id": "entityq_wkgllm",
+          "provider": "tavily",
+          "stage": "identity",
+          "query": "Natural + Mente empresa colombiana  retail",
+          "task": "identity_discovery",
+          "requires_identity_state": [
+            "confirmed",
+            "high_confidence",
+            "probable",
+            "ambiguous",
+            "unresolved"
+          ]
+        }
+      ],
+      "identity_results": [
+        {
+          "url": "https://naturalmente.com.co/",
+          "canonical_url": "https://naturalmente.com.co/",
+          "title": "Natural + Mente – Distribuidor mayorista de productos naturales",
+          "snippet": "Colombia · Menu · Suscríbete a nuestro Newsletter y recibe 10% de descuento en tu próxima compra · Descuento acumulable con otras promociones o descuentos.",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:47.430Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 1,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.facebook.com/naturalmentecolombiano",
+          "canonical_url": "https://www.facebook.com/naturalmentecolombiano",
+          "title": "Naturalmente (@naturalmentecolombiano)",
+          "snippet": "Naturalmente es una empresa colombiana que promueve el consumo de cosméticos sin colorantes, estabilizantes o conservantes artificiales, la materia prima es 100",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:47.406Z",
+          "source_type": null,
+          "provider": "tavily",
+          "rank": 1,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.instagram.com/comercializadoranaturalmente",
+          "canonical_url": "https://www.instagram.com/comercializadoranaturalmente",
+          "title": "NATURAL+MENTE (@comercializadoranaturalmente)",
+          "snippet": "313 361 4052. tu distribuidora de productos naturales de confianza. Natural+Mente la consigues al mejor precio. 📲 313 3614052 #Barranquilla #Colombia #Creatina",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:47.406Z",
+          "source_type": null,
+          "provider": "tavily",
+          "rank": 2,
+          "locale": "es"
+        },
+        {
+          "url": "https://natural--mente.com/contact",
+          "canonical_url": "https://natural--mente.com/contact",
+          "title": "Contacto - natural–mente",
+          "snippet": "Contactanos 57+3213921828 contacto@natural–mente.com Calle 19 #4-71 local 402 Bogotá – Colombia",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:47.406Z",
+          "source_type": null,
+          "provider": "tavily",
+          "rank": 3,
+          "locale": "es"
+        },
+        {
+          "url": "https://natural--mente.com",
+          "canonical_url": "https://natural--mente.com/",
+          "title": "natural–mente – \"Conjugamos creatividad y pasión deportiva ...",
+          "snippet": "Transformamos ideas en experiencias únicas, fusionando innovación y diseño para crear eventos memorables y productos que superan expectativas.",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:47.406Z",
+          "source_type": null,
+          "provider": "tavily",
+          "rank": 4,
+          "locale": "es"
+        },
+        {
+          "url": "https://co.linkedin.com/company/naturalmente-nf",
+          "canonical_url": "https://co.linkedin.com/company/naturalmente-nf",
+          "title": "Naturalmente NF SAS",
+          "snippet": "Somos una compañía comercializadora y distribuidora de Medicamentos, Suplementos dietarios, Alimentos y Productos Naturales con experiencia de 13 años en el",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:47.406Z",
+          "source_type": null,
+          "provider": "tavily",
+          "rank": 5,
+          "locale": "es"
+        }
+      ],
+      "execution_plan": {
+        "account_id": "rp_r5i5ih",
+        "identity_state": "confirmed",
+        "identity_queries": [
+          {
+            "query_id": "entityq_1781w0x",
+            "provider": "brave",
+            "stage": "identity",
+            "query": "\"Natural + Mente\" Colombia retail",
+            "task": "identity_discovery",
+            "requires_identity_state": [
+              "confirmed",
+              "high_confidence",
+              "probable",
+              "ambiguous",
+              "unresolved"
+            ]
+          },
+          {
+            "query_id": "entityq_1y7etsd",
+            "provider": "brave",
+            "stage": "identity",
+            "query": "\"Natural + Mente\" sitio oficial",
+            "task": "identity_discovery",
+            "requires_identity_state": [
+              "confirmed",
+              "high_confidence",
+              "probable",
+              "ambiguous",
+              "unresolved"
+            ]
+          },
+          {
+            "query_id": "entityq_wkgllm",
+            "provider": "tavily",
+            "stage": "identity",
+            "query": "Natural + Mente empresa colombiana  retail",
+            "task": "identity_discovery",
+            "requires_identity_state": [
+              "confirmed",
+              "high_confidence",
+              "probable",
+              "ambiguous",
+              "unresolved"
+            ]
+          }
+        ],
+        "event_queries": [
+          {
+            "query_id": "entityq_1mtgp3n",
+            "provider": "brave",
+            "stage": "event",
+            "query": "\"Natural + Mente\" \"apertura expansión alianza lanzamiento\" Colombia",
+            "task": "event_discovery",
+            "requires_identity_state": [
+              "confirmed",
+              "high_confidence"
+            ]
+          },
+          {
+            "query_id": "entityq_1iqtt71",
+            "provider": "tavily",
+            "stage": "counterevidence",
+            "query": "\"Natural + Mente\" cierre inactiva cancelada",
+            "task": "negative_event",
+            "requires_identity_state": [
+              "confirmed",
+              "high_confidence"
+            ]
+          }
+        ],
+        "extraction_urls": [],
+        "event_extraction_urls": [],
+        "stop_reason": "event_eligible"
+      },
+      "event_attributions": [
+        {
+          "attribution_id": "attr_76ruvz",
+          "account_id": "rp_r5i5ih",
+          "event_id": "tavily:0:https://amp.fresnobee.com/vida-en-el-valle/noticias/article312502736.html",
+          "identity_state": "confirmed",
+          "relationship": "same_company",
+          "state": "directly_attributed",
+          "scope": "unknown",
+          "event_subject": "Ceremonia de naturalización cancelada afecta a inmigrantes del ...",
+          "location": null,
+          "event_date": null,
+          "event_status": "observed",
+          "source_owner": "https://amp.fresnobee.com/vida-en-el-valle/noticias/article312502736.html",
+          "decisive_anchors": [],
+          "limitations": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ],
+          "signal_eligible": false,
+          "confidence": 0.5,
+          "methodology_version": "colombian-entity-resolution-v1",
+          "internal_only": true,
+          "ranking_impact": "off",
+          "report_impact": "off",
+          "url": "https://amp.fresnobee.com/vida-en-el-valle/noticias/article312502736.html",
+          "provider": "tavily",
+          "rejection": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ]
+        },
+        {
+          "attribution_id": "attr_1qfb6es",
+          "account_id": "rp_r5i5ih",
+          "event_id": "tavily:1:https://www.reddit.com/r/Intune/comments/1ge2gwq/logout_inactive_user_from_device_after_particular?tl=es-419",
+          "identity_state": "confirmed",
+          "relationship": "same_company",
+          "state": "directly_attributed",
+          "scope": "unknown",
+          "event_subject": "cerrar sesión Usuario inactivo del dispositivo después de un tiempo ...",
+          "location": null,
+          "event_date": null,
+          "event_status": "observed",
+          "source_owner": "https://www.reddit.com/r/Intune/comments/1ge2gwq/logout_inactive_user_from_device_after_particular?tl=es-419",
+          "decisive_anchors": [],
+          "limitations": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ],
+          "signal_eligible": false,
+          "confidence": 0.5,
+          "methodology_version": "colombian-entity-resolution-v1",
+          "internal_only": true,
+          "ranking_impact": "off",
+          "report_impact": "off",
+          "url": "https://www.reddit.com/r/Intune/comments/1ge2gwq/logout_inactive_user_from_device_after_particular?tl=es-419",
+          "provider": "tavily",
+          "rejection": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ]
+        },
+        {
+          "attribution_id": "attr_13bnnx9",
+          "account_id": "rp_r5i5ih",
+          "event_id": "tavily:2:https://www.novo-legal.com/es/blog/administrative-closure-termination",
+          "identity_state": "confirmed",
+          "relationship": "same_company",
+          "state": "directly_attributed",
+          "scope": "unknown",
+          "event_subject": "Cierre Administrativo vs. Terminación: Guía 2026",
+          "location": null,
+          "event_date": null,
+          "event_status": "observed",
+          "source_owner": "https://www.novo-legal.com/es/blog/administrative-closure-termination",
+          "decisive_anchors": [],
+          "limitations": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ],
+          "signal_eligible": false,
+          "confidence": 0.5,
+          "methodology_version": "colombian-entity-resolution-v1",
+          "internal_only": true,
+          "ranking_impact": "off",
+          "report_impact": "off",
+          "url": "https://www.novo-legal.com/es/blog/administrative-closure-termination",
+          "provider": "tavily",
+          "rejection": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ]
+        },
+        {
+          "attribution_id": "attr_1cr7c6m",
+          "account_id": "rp_r5i5ih",
+          "event_id": "tavily:3:https://help.naturalcycles.com/hc/es/articles/360003288654-C%C3%B3mo-cancelar-una-suscripci%C3%B3n",
+          "identity_state": "confirmed",
+          "relationship": "same_company",
+          "state": "directly_attributed",
+          "scope": "unknown",
+          "event_subject": "Cómo cancelar una suscripción – Atención al cliente | Contáctanos",
+          "location": null,
+          "event_date": null,
+          "event_status": "observed",
+          "source_owner": "https://help.naturalcycles.com/hc/es/articles/360003288654-C%C3%B3mo-cancelar-una-suscripci%C3%B3n",
+          "decisive_anchors": [],
+          "limitations": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ],
+          "signal_eligible": false,
+          "confidence": 0.5,
+          "methodology_version": "colombian-entity-resolution-v1",
+          "internal_only": true,
+          "ranking_impact": "off",
+          "report_impact": "off",
+          "url": "https://help.naturalcycles.com/hc/es/articles/360003288654-C%C3%B3mo-cancelar-una-suscripci%C3%B3n",
+          "provider": "tavily",
+          "rejection": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ]
+        },
+        {
+          "attribution_id": "attr_1fzglv0",
+          "account_id": "rp_r5i5ih",
+          "event_id": "tavily:4:https://www.youtube.com/watch?v=uI31Tt9eaHk",
+          "identity_state": "confirmed",
+          "relationship": "same_company",
+          "state": "directly_attributed",
+          "scope": "unknown",
+          "event_subject": "¿Qué significa CERRAR un caso ADMINISTRATIVAMENTE?",
+          "location": null,
+          "event_date": null,
+          "event_status": "observed",
+          "source_owner": "https://www.youtube.com/watch?v=uI31Tt9eaHk",
+          "decisive_anchors": [],
+          "limitations": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ],
+          "signal_eligible": false,
+          "confidence": 0.5,
+          "methodology_version": "colombian-entity-resolution-v1",
+          "internal_only": true,
+          "ranking_impact": "off",
+          "report_impact": "off",
+          "url": "https://www.youtube.com/watch?v=uI31Tt9eaHk",
+          "provider": "tavily",
+          "rejection": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ]
+        }
+      ],
+      "explanation": {
+        "verdict": "confirmed",
+        "confirmed_anchors": [
+          "verified_domain",
+          "contact_page"
+        ],
+        "conflicting_anchors": [],
+        "missing_anchors": [],
+        "next_action": "Review directly attributable dated events."
+      }
+    },
+    {
+      "account": "Tu Tienda Saludable",
+      "domain": "tutiendasaludable.com.co",
+      "identity_profile": {
+        "profile_id": "entity_a0cdol",
+        "account_id": "rp_62dwgs",
+        "client_id": "amor-de-gea",
+        "canonical_commercial_name": "Tu Tienda Saludable",
+        "normalized_name": {
+          "raw_name": "Tu Tienda Saludable",
+          "normalized_full": "tu tienda saludable",
+          "comparison_name": "tu tienda saludable",
+          "legal_suffixes_removed": [],
+          "generic_prefixes_observed": []
+        },
+        "legal_name": null,
+        "nit": null,
+        "verified_domain": "tutiendasaludable.com.co",
+        "alternate_verified_domains": [],
+        "official_properties": [
+          {
+            "property_id": "prop_1863xfx",
+            "type": "website",
+            "url": "https://tutiendasaludable.com.co",
+            "state": "verified",
+            "ownership_evidence": [
+              {
+                "kind": "verified_domain",
+                "value": "tutiendasaludable.com.co",
+                "strength": "strong",
+                "supports_identity": true,
+                "confidence": 0.99,
+                "evidence": [],
+                "reason": "Persisted verified account domain.",
+                "anchor_id": "anchor_1feb40c"
+              }
+            ],
+            "source_owner_key": "tutiendasaludable.com.co",
+            "confidence": 0.95,
+            "profile_only": false,
+            "last_verified_at": "2026-07-30T14:24:06.487Z",
+            "limitations": []
+          }
+        ],
+        "city": null,
+        "department": null,
+        "country": "Colombia",
+        "verified_addresses": [],
+        "business_category": "retail",
+        "products_services": [],
+        "parent_entity": null,
+        "subsidiaries": [],
+        "branches": [],
+        "known_aliases": [],
+        "former_names": [],
+        "marketplace_identities": [],
+        "distributor_relationships": [],
+        "registry_references": [],
+        "identity_confidence": 0.94,
+        "identity_state": "confirmed",
+        "confirmed_anchors": [
+          {
+            "kind": "verified_domain",
+            "value": "tutiendasaludable.com.co",
+            "strength": "strong",
+            "supports_identity": true,
+            "confidence": 0.99,
+            "evidence": [],
+            "reason": "Persisted verified account domain.",
+            "anchor_id": "anchor_1feb40c"
+          },
+          {
+            "kind": "contact_page",
+            "value": "https://tutiendasaludable.com.co/",
+            "strength": "moderate",
+            "supports_identity": true,
+            "confidence": 0.82,
+            "evidence": [],
+            "reason": "Provider recovered content on the persisted verified domain.",
+            "anchor_id": "anchor_sz14u7"
+          }
+        ],
+        "conflicting_anchors": [],
+        "unresolved_identity_questions": [],
+        "source_provenance": [],
+        "last_verified_date": "2026-07-30T14:23:46.735Z",
+        "methodology_version": "colombian-entity-resolution-v1",
+        "internal_only": true
+      },
+      "identity_queries": [
+        {
+          "query_id": "entityq_12qn7h9",
+          "provider": "brave",
+          "stage": "identity",
+          "query": "\"Tu Tienda Saludable\" Colombia retail",
+          "task": "identity_discovery",
+          "requires_identity_state": [
+            "confirmed",
+            "high_confidence",
+            "probable",
+            "ambiguous",
+            "unresolved"
+          ]
+        },
+        {
+          "query_id": "entityq_1f40zvd",
+          "provider": "brave",
+          "stage": "identity",
+          "query": "\"Tu Tienda Saludable\" sitio oficial",
+          "task": "identity_discovery",
+          "requires_identity_state": [
+            "confirmed",
+            "high_confidence",
+            "probable",
+            "ambiguous",
+            "unresolved"
+          ]
+        },
+        {
+          "query_id": "entityq_1fy0atu",
+          "provider": "tavily",
+          "stage": "identity",
+          "query": "Tu Tienda Saludable empresa colombiana  retail",
+          "task": "identity_discovery",
+          "requires_identity_state": [
+            "confirmed",
+            "high_confidence",
+            "probable",
+            "ambiguous",
+            "unresolved"
+          ]
+        }
+      ],
+      "identity_results": [
+        {
+          "url": "https://tutiendasaludable.com.co/",
+          "canonical_url": "https://tutiendasaludable.com.co/",
+          "title": "Tu Tienda Saludable – Productos Saludables",
+          "snippet": "<strong>Nos pusimos en la tarea de buscar las mejores marcas de productos saludables para que comiences con la disciplina de aprender a cuidarte desde adentro</strong>. Tenemos los mejores productos para que cuides de tu alimentación a un clic de distancia.",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:49.366Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 1,
+          "locale": "es"
+        },
+        {
+          "url": "https://launiondeautonomosdeandalucia.org/directory/tu-tienda-saludable/",
+          "canonical_url": "https://launiondeautonomosdeandalucia.org/directory/tu-tienda-saludable",
+          "title": "Tu Tienda Saludable | Unión UATAE Andalucía",
+          "snippet": "Cumaral-Meta, Colombia, Cumaral, Colombia · +57 3008671517 · info@ikafresh.com · https://www.ikafresh.com/ 49 · Populares · Floresta, Tundama, Boyacá, RAP (Especial) Central, 150601, Colombia · +57 3132729984 · gerencia@tacay.co · luzmaya4@hotmail.com ·",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:49.366Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 2,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.instagram.com/tutiendasaludable.com.co/",
+          "canonical_url": "https://www.instagram.com/tutiendasaludable.com.co",
+          "title": "Tu Tienda Saludable (@tutiendasaludable.com.co)",
+          "snippet": "See Instagram photos and videos from <strong>Tu</strong> <strong>Tienda</strong> <strong>Saludable</strong> (@tutiendasaludable.com.co)",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:49.366Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 3,
+          "locale": "es"
+        },
+        {
+          "url": "https://tutiendasaludable.com.co/",
+          "canonical_url": "https://tutiendasaludable.com.co/",
+          "title": "Tu Tienda Saludable – Productos Saludables",
+          "snippet": "1. En Tu Tienda Saludable encuentra alimentos naturales, orgánicos y de comercio justo con nuestros tenderos y productores.",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:49.389Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 1,
+          "locale": "es"
+        },
+        {
+          "url": "https://tutiendasaludable.com/",
+          "canonical_url": "https://tutiendasaludable.com/",
+          "title": "Suplementos Omnilife y Seytú | Tu Tienda Saludable",
+          "snippet": "Descubre los mejores suplementos Omnilife y productos de belleza Seytú en Tu Tienda Saludable . Envíos a Latinoamérica, EE.UU. y España. ¡Cuida tu salud hoy!",
+          "published_date": "2025-03-22T23:00:01",
+          "retrieved_at": "2026-07-30T14:23:49.389Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 2,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.instagram.com/tutiendasaludable.com.co/",
+          "canonical_url": "https://www.instagram.com/tutiendasaludable.com.co",
+          "title": "Tu Tienda Saludable (@tutiendasaludable.com.co)",
+          "snippet": "See Instagram photos and videos from <strong>Tu</strong> <strong>Tienda</strong> <strong>Saludable</strong> (@tutiendasaludable.com.co)",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:49.389Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 3,
+          "locale": "es"
+        },
+        {
+          "url": "https://tiendasisu.com/shop/",
+          "canonical_url": "https://tiendasisu.com/shop",
+          "title": "Tienda - Sisu - Tu tienda saludable",
+          "snippet": "©Copyright 2022 – Sisu Tu tienda Saludable® | Todos los Derechos Reservados | Diseño Web Profesional:. www.diseñotuweb.com.ar",
+          "published_date": "2022-01-05T23:38:12",
+          "retrieved_at": "2026-07-30T14:23:49.389Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 4,
+          "locale": "es"
+        },
+        {
+          "url": "https://tutiendasaludable.com.co",
+          "canonical_url": "https://tutiendasaludable.com.co/",
+          "title": "Tu Tienda Saludable – Productos Saludables",
+          "snippet": "1. En Tu Tienda Saludable encuentra alimentos naturales, orgánicos y de comercio justo con nuestros tenderos y productores. También podrás adquirir los productos en nuestra tienda en línea.\n\n2. Tejemos redes de apoyo entre tenderos, productores y consumidores. Solidarios, justos y solidarios. Compar",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:50.778Z",
+          "source_type": null,
+          "provider": "tavily",
+          "rank": 1,
+          "locale": "es"
+        },
+        {
+          "url": "https://frutosysemillas.com/pages/quienes-somos",
+          "canonical_url": "https://frutosysemillas.com/pages/quienes-somos",
+          "title": "¿Quiénes Somos? | Mercado Saludable | Frutos y Semillas",
+          "snippet": "Somos una marca líder en el mercado de alimentación saludable en Colombia, con una trayectoria de 15 años de experiencia en diferentes canales de venta.",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:50.778Z",
+          "source_type": null,
+          "provider": "tavily",
+          "rank": 2,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.instagram.com/nutri_light_supermarket?hl=en",
+          "canonical_url": "https://www.instagram.com/nutri_light_supermarket?hl=en",
+          "title": "Nutrilight 🍃 Supermarket Saludable 🌿 (@nutri_light_supermarket)",
+          "snippet": "✨NUEVA CUENTA ✨ Somos el supermarket saludable donde encuentras tus marcas favoritas para cuidarte Medellín Bogotá.",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:50.778Z",
+          "source_type": null,
+          "provider": "tavily",
+          "rank": 3,
+          "locale": "es"
+        }
+      ],
+      "execution_plan": {
+        "account_id": "rp_62dwgs",
+        "identity_state": "confirmed",
+        "identity_queries": [
+          {
+            "query_id": "entityq_12qn7h9",
+            "provider": "brave",
+            "stage": "identity",
+            "query": "\"Tu Tienda Saludable\" Colombia retail",
+            "task": "identity_discovery",
+            "requires_identity_state": [
+              "confirmed",
+              "high_confidence",
+              "probable",
+              "ambiguous",
+              "unresolved"
+            ]
+          },
+          {
+            "query_id": "entityq_1f40zvd",
+            "provider": "brave",
+            "stage": "identity",
+            "query": "\"Tu Tienda Saludable\" sitio oficial",
+            "task": "identity_discovery",
+            "requires_identity_state": [
+              "confirmed",
+              "high_confidence",
+              "probable",
+              "ambiguous",
+              "unresolved"
+            ]
+          },
+          {
+            "query_id": "entityq_1fy0atu",
+            "provider": "tavily",
+            "stage": "identity",
+            "query": "Tu Tienda Saludable empresa colombiana  retail",
+            "task": "identity_discovery",
+            "requires_identity_state": [
+              "confirmed",
+              "high_confidence",
+              "probable",
+              "ambiguous",
+              "unresolved"
+            ]
+          }
+        ],
+        "event_queries": [
+          {
+            "query_id": "entityq_15rb6vz",
+            "provider": "brave",
+            "stage": "event",
+            "query": "\"Tu Tienda Saludable\" \"apertura expansión alianza lanzamiento\" Colombia",
+            "task": "event_discovery",
+            "requires_identity_state": [
+              "confirmed",
+              "high_confidence"
+            ]
+          },
+          {
+            "query_id": "entityq_l530h5",
+            "provider": "tavily",
+            "stage": "counterevidence",
+            "query": "\"Tu Tienda Saludable\" cierre inactiva cancelada",
+            "task": "negative_event",
+            "requires_identity_state": [
+              "confirmed",
+              "high_confidence"
+            ]
+          }
+        ],
+        "extraction_urls": [],
+        "event_extraction_urls": [],
+        "stop_reason": "event_eligible"
+      },
+      "event_attributions": [
+        {
+          "attribution_id": "attr_tf0pbz",
+          "account_id": "rp_62dwgs",
+          "event_id": "tavily:0:https://ayuda.tiendanube.com/es_AR/cancelar-y-reactivar-tienda/como-reactivar-mi-tienda",
+          "identity_state": "confirmed",
+          "relationship": "same_company",
+          "state": "directly_attributed",
+          "scope": "unknown",
+          "event_subject": "¿Cómo reactivar mi Tiendanube?",
+          "location": null,
+          "event_date": null,
+          "event_status": "observed",
+          "source_owner": "https://ayuda.tiendanube.com/es_AR/cancelar-y-reactivar-tienda/como-reactivar-mi-tienda",
+          "decisive_anchors": [],
+          "limitations": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ],
+          "signal_eligible": false,
+          "confidence": 0.5,
+          "methodology_version": "colombian-entity-resolution-v1",
+          "internal_only": true,
+          "ranking_impact": "off",
+          "report_impact": "off",
+          "url": "https://ayuda.tiendanube.com/es_AR/cancelar-y-reactivar-tienda/como-reactivar-mi-tienda",
+          "provider": "tavily",
+          "rejection": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ]
+        },
+        {
+          "attribution_id": "attr_16v9f3u",
+          "account_id": "rp_62dwgs",
+          "event_id": "tavily:1:https://www.instagram.com/p/DYQPbDQjw4S",
+          "identity_state": "confirmed",
+          "relationship": "same_company",
+          "state": "directly_attributed",
+          "scope": "unknown",
+          "event_subject": "📣 Canela Boutique Saludable anunció su cierre definitivo y ...",
+          "location": null,
+          "event_date": null,
+          "event_status": "observed",
+          "source_owner": "https://www.instagram.com/p/DYQPbDQjw4S",
+          "decisive_anchors": [],
+          "limitations": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ],
+          "signal_eligible": false,
+          "confidence": 0.5,
+          "methodology_version": "colombian-entity-resolution-v1",
+          "internal_only": true,
+          "ranking_impact": "off",
+          "report_impact": "off",
+          "url": "https://www.instagram.com/p/DYQPbDQjw4S",
+          "provider": "tavily",
+          "rejection": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ]
+        },
+        {
+          "attribution_id": "attr_pmfyue",
+          "account_id": "rp_62dwgs",
+          "event_id": "tavily:2:https://help.etsy.com/hc/es/articles/21661771654423--Por-qu%C3%A9-me-ha-enviado-Etsy-un-correo-electr%C3%B3nico-informando-de-que-se-va-a-desactivar-mi-tienda",
+          "identity_state": "confirmed",
+          "relationship": "same_company",
+          "state": "directly_attributed",
+          "scope": "unknown",
+          "event_subject": "¿Por qué me ha enviado Etsy un correo electrónico ...",
+          "location": null,
+          "event_date": null,
+          "event_status": "observed",
+          "source_owner": "https://help.etsy.com/hc/es/articles/21661771654423--Por-qu%C3%A9-me-ha-enviado-Etsy-un-correo-electr%C3%B3nico-informando-de-que-se-va-a-desactivar-mi-tienda",
+          "decisive_anchors": [],
+          "limitations": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ],
+          "signal_eligible": false,
+          "confidence": 0.5,
+          "methodology_version": "colombian-entity-resolution-v1",
+          "internal_only": true,
+          "ranking_impact": "off",
+          "report_impact": "off",
+          "url": "https://help.etsy.com/hc/es/articles/21661771654423--Por-qu%C3%A9-me-ha-enviado-Etsy-un-correo-electr%C3%B3nico-informando-de-que-se-va-a-desactivar-mi-tienda",
+          "provider": "tavily",
+          "rejection": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ]
+        },
+        {
+          "attribution_id": "attr_v3bx33",
+          "account_id": "rp_62dwgs",
+          "event_id": "tavily:3:https://www.reddit.com/r/Etsy/comments/1mtsufa/will_etsy_ever_allow_inactive_shops_to_be_reopened?tl=es-419",
+          "identity_state": "confirmed",
+          "relationship": "same_company",
+          "state": "directly_attributed",
+          "scope": "unknown",
+          "event_subject": "¿Etsy alguna vez permitirá que se reabran las tiendas ...",
+          "location": null,
+          "event_date": null,
+          "event_status": "observed",
+          "source_owner": "https://www.reddit.com/r/Etsy/comments/1mtsufa/will_etsy_ever_allow_inactive_shops_to_be_reopened?tl=es-419",
+          "decisive_anchors": [],
+          "limitations": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ],
+          "signal_eligible": false,
+          "confidence": 0.5,
+          "methodology_version": "colombian-entity-resolution-v1",
+          "internal_only": true,
+          "ranking_impact": "off",
+          "report_impact": "off",
+          "url": "https://www.reddit.com/r/Etsy/comments/1mtsufa/will_etsy_ever_allow_inactive_shops_to_be_reopened?tl=es-419",
+          "provider": "tavily",
+          "rejection": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ]
+        },
+        {
+          "attribution_id": "attr_q5zv79",
+          "account_id": "rp_62dwgs",
+          "event_id": "tavily:4:https://help.shopify.com/es/manual/your-account/manage-orgs-and-stores/manage-pricing-plan/deactivate-store",
+          "identity_state": "confirmed",
+          "relationship": "same_company",
+          "state": "directly_attributed",
+          "scope": "unknown",
+          "event_subject": "Desactivar y volver a activar la tienda Shopify",
+          "location": null,
+          "event_date": null,
+          "event_status": "observed",
+          "source_owner": "https://help.shopify.com/es/manual/your-account/manage-orgs-and-stores/manage-pricing-plan/deactivate-store",
+          "decisive_anchors": [],
+          "limitations": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ],
+          "signal_eligible": false,
+          "confidence": 0.5,
+          "methodology_version": "colombian-entity-resolution-v1",
+          "internal_only": true,
+          "ranking_impact": "off",
+          "report_impact": "off",
+          "url": "https://help.shopify.com/es/manual/your-account/manage-orgs-and-stores/manage-pricing-plan/deactivate-store",
+          "provider": "tavily",
+          "rejection": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ]
+        }
+      ],
+      "explanation": {
+        "verdict": "confirmed",
+        "confirmed_anchors": [
+          "verified_domain",
+          "contact_page"
+        ],
+        "conflicting_anchors": [],
+        "missing_anchors": [],
+        "next_action": "Review directly attributable dated events."
+      }
+    },
+    {
+      "account": "Hotel Spa La Colina",
+      "domain": "hotelspalacolina.com",
+      "identity_profile": {
+        "profile_id": "entity_tay6rd",
+        "account_id": "rp_1v459p4",
+        "client_id": "amor-de-gea",
+        "canonical_commercial_name": "Hotel Spa La Colina",
+        "normalized_name": {
+          "raw_name": "Hotel Spa La Colina",
+          "normalized_full": "hotel spa la colina",
+          "comparison_name": "hotel spa la colina",
+          "legal_suffixes_removed": [],
+          "generic_prefixes_observed": []
+        },
+        "legal_name": null,
+        "nit": null,
+        "verified_domain": "hotelspalacolina.com",
+        "alternate_verified_domains": [],
+        "official_properties": [
+          {
+            "property_id": "prop_1adsjuv",
+            "type": "website",
+            "url": "https://hotelspalacolina.com",
+            "state": "verified",
+            "ownership_evidence": [
+              {
+                "kind": "verified_domain",
+                "value": "hotelspalacolina.com",
+                "strength": "strong",
+                "supports_identity": true,
+                "confidence": 0.99,
+                "evidence": [],
+                "reason": "Persisted verified account domain.",
+                "anchor_id": "anchor_co14v6"
+              }
+            ],
+            "source_owner_key": "hotelspalacolina.com",
+            "confidence": 0.95,
+            "profile_only": false,
+            "last_verified_at": "2026-07-30T14:24:06.487Z",
+            "limitations": []
+          }
+        ],
+        "city": null,
+        "department": null,
+        "country": "Colombia",
+        "verified_addresses": [],
+        "business_category": "hospitality",
+        "products_services": [],
+        "parent_entity": null,
+        "subsidiaries": [],
+        "branches": [],
+        "known_aliases": [],
+        "former_names": [],
+        "marketplace_identities": [],
+        "distributor_relationships": [],
+        "registry_references": [],
+        "identity_confidence": 0.94,
+        "identity_state": "confirmed",
+        "confirmed_anchors": [
+          {
+            "kind": "verified_domain",
+            "value": "hotelspalacolina.com",
+            "strength": "strong",
+            "supports_identity": true,
+            "confidence": 0.99,
+            "evidence": [],
+            "reason": "Persisted verified account domain.",
+            "anchor_id": "anchor_co14v6"
+          },
+          {
+            "kind": "contact_page",
+            "value": "https://hotelspalacolina.com/es",
+            "strength": "moderate",
+            "supports_identity": true,
+            "confidence": 0.82,
+            "evidence": [],
+            "reason": "Provider recovered content on the persisted verified domain.",
+            "anchor_id": "anchor_4bwdsx"
+          }
+        ],
+        "conflicting_anchors": [],
+        "unresolved_identity_questions": [],
+        "source_provenance": [],
+        "last_verified_date": "2026-07-30T14:23:46.735Z",
+        "methodology_version": "colombian-entity-resolution-v1",
+        "internal_only": true
+      },
+      "identity_queries": [
+        {
+          "query_id": "entityq_ique9q",
+          "provider": "brave",
+          "stage": "identity",
+          "query": "\"Hotel Spa La Colina\" Colombia hospitality",
+          "task": "identity_discovery",
+          "requires_identity_state": [
+            "confirmed",
+            "high_confidence",
+            "probable",
+            "ambiguous",
+            "unresolved"
+          ]
+        },
+        {
+          "query_id": "entityq_10gg0h7",
+          "provider": "brave",
+          "stage": "identity",
+          "query": "\"Hotel Spa La Colina\" sitio oficial",
+          "task": "identity_discovery",
+          "requires_identity_state": [
+            "confirmed",
+            "high_confidence",
+            "probable",
+            "ambiguous",
+            "unresolved"
+          ]
+        },
+        {
+          "query_id": "entityq_1i4eqiv",
+          "provider": "tavily",
+          "stage": "identity",
+          "query": "Hotel Spa La Colina empresa colombiana  hospitality",
+          "task": "identity_discovery",
+          "requires_identity_state": [
+            "confirmed",
+            "high_confidence",
+            "probable",
+            "ambiguous",
+            "unresolved"
+          ]
+        }
+      ],
+      "identity_results": [
+        {
+          "url": "https://hotelspalacolina.com/es/",
+          "canonical_url": "https://hotelspalacolina.com/es",
+          "title": "Hotel Spa La Colina – Escápate al Hotel Spa La Colina, un refugio romántico en la naturaleza del Eje Cafetero con spa al aire libre, gastronomía gourmet y vistas inigualables.",
+          "snippet": "<strong>Un exclusivo hotel spa en medio del bosque, donde el descanso, la naturaleza y el cuidado personal se combinan para ofrecer una experiencia íntima y memorable</strong>.",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:52.996Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 1,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.booking.com/hotel/co/spa-la-colina.html",
+          "canonical_url": "https://www.booking.com/hotel/co/spa-la-colina.html",
+          "title": "Hotel Spa La Colina, Pereira, Colombia",
+          "snippet": "Featuring free WiFi and a year-round outdoor pool, Hotel Spa La Colina <strong>offers accommodations in Pereira</strong>. The hotel has a terrace and spa center, and guests can enjoy a drink at the bar.",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:52.996Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 2,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.expedia.com/Pereira-Hotels-Hotel-Spa-La-Colina.h16263758.Hotel-Information",
+          "canonical_url": "https://www.expedia.com/Pereira-Hotels-Hotel-Spa-La-Colina.h16263758.Hotel-Information",
+          "title": "Hotel Spa La Colina Reviews, Deals & Photos 2026 - Expedia.com",
+          "snippet": "Hotel Spa La Colina <strong>offers a peaceful getaway near Plaza de Bolivar and Parque Consotá</strong>. Enjoy a free full breakfast, outdoor pool, garden strolls, and international cuisine at the on-site restaurant.",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:52.996Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 3,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.hotels.com/es/ho629732/hotel-spa-la-colina-pereira-colombia/",
+          "canonical_url": "https://www.hotels.com/es/ho629732/hotel-spa-la-colina-pereira-colombia",
+          "title": "Hotel Spa La Colina en Pereira: ver hotel, precios y opiniones - Hotels.com",
+          "snippet": "Descubre las ofertas de Hotel Spa La Colina. Cerca de Estadio Hernán Ramírez Villegas. Este hotel ofrece desayuno, wifi y estacionamiento sin cargo. Todas las unidades cuentan con chimenea y colchones Sleep Number.",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:52.996Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 4,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.tripadvisor.com/Hotel_Review-g297479-d2045757-Reviews-Hotel_Spa_La_Colina-Pereira_Risaralda_Department.html",
+          "canonical_url": "https://www.tripadvisor.com/Hotel_Review-g297479-d2045757-Reviews-Hotel_Spa_La_Colina-Pereira_Risaralda_Department.html",
+          "title": "HOTEL SPA LA COLINA - Updated 2026 Prices & Reviews (Pereira, Colombia)",
+          "snippet": "Hotel La Colina has <strong>amazing views, superb service, and fabulous amenities</strong>. I personally enjoyed the spa, their breakfast and the mountain views.",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:52.996Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 5,
+          "locale": "es"
+        },
+        {
+          "url": "https://hotelspalacolina.com/es/",
+          "canonical_url": "https://hotelspalacolina.com/es",
+          "title": "Hotel Spa La Colina – Escápate al Hotel Spa La Colina, un refugio romántico en la naturaleza del Eje Cafetero con spa al aire libre, gastronomía gourmet y vistas inigualables.",
+          "snippet": "<strong>En lo alto de una colina, rodeado por la magia del bosque andino y a solo 20 minutos de Pereira</strong>, nace un lugar donde el tiempo se detiene: Hotel Spa La Colina.",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:52.984Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 1,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.expedia.com/Pereira-Hotels-Hotel-Spa-La-Colina.h16263758.Hotel-Information",
+          "canonical_url": "https://www.expedia.com/Pereira-Hotels-Hotel-Spa-La-Colina.h16263758.Hotel-Information",
+          "title": "Hotel Spa La Colina Reviews, Deals & Photos 2026 - Expedia.com",
+          "snippet": "<strong>Located close to Plaza de Bolivar and Parque Consotá</strong>, Hotel Spa La Colina provides free full breakfast, a free roundtrip airport shuttle, and a terrace. Indulge in a massage, a body wrap, and a facial at La Colina, the onsite spa.",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:52.984Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 2,
+          "locale": "es"
+        },
+        {
+          "url": "https://fincahotellacolina.com/",
+          "canonical_url": "https://fincahotellacolina.com/",
+          "title": "HOTEL | Hotel Spa La Colina",
+          "snippet": "HOTEL SPA LA COLINA Make a dream escape to the best country hotel, exclusive and romantic in the heart of the coffee axis, where natural and human harmonize to offer quality, comfort and well-being. QUIET AND NATURAL HOTEL We offer comfortable accommodation and spa in the middle of the forest, with ",
+          "published_date": "2022-09-09T16:05:30",
+          "retrieved_at": "2026-07-30T14:23:52.984Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 3,
+          "locale": "es"
+        },
+        {
+          "url": "https://spa-la-colina.allpereirahotels.com/es/",
+          "canonical_url": "https://spa-la-colina.allpereirahotels.com/es",
+          "title": "HOTEL SPA LA COLINA, PEREIRA",
+          "snippet": "Hotel Spa La Colina San Vicente (Risoralda) - hotel de 5 estrellas. Este hotel de 5 estrellas, Hotel Spa La Colina Pereira, ofrece 10 habitaciones a 4 km del Zoológico Matecaña. Dispone de WiFi en toda la propiedad para tu …",
+          "published_date": "2022-03-09T00:00:00",
+          "retrieved_at": "2026-07-30T14:23:52.984Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 4,
+          "locale": "es"
+        },
+        {
+          "url": "https://spa-la-colina.hotelesejecafetero.net/en/",
+          "canonical_url": "https://spa-la-colina.hotelesejecafetero.net/en",
+          "title": "ᐉ HOTEL SPA LA COLINA ⋆⋆⋆⋆⋆ ( COLOMBIA ) REAL PHOTOS & GREAT DEALS",
+          "snippet": "Hotel Spa La Colina San Vicente (Risoralda) - 5 star hotel. <strong>Situated around 6 km from the multi - purpose Hernan Ramirez Villegas Stadium</strong>, the smoke-free Hotel Spa La Colina San Vicente features 2 hot tubs. This 5-star …",
+          "published_date": "2022-03-10T00:00:00",
+          "retrieved_at": "2026-07-30T14:23:52.984Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 5,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.trivago.com/en-US/oar/hotel-spa-la-colina-pereira?search=100-6253948",
+          "canonical_url": "https://www.trivago.com/en-US/oar/hotel-spa-la-colina-pereira?search=100-6253948",
+          "title": "Hotel Spa La Colina, Pereira, Colombia - trivago",
+          "snippet": "Spa La Colina is a rural, exclusive and romantic Hotel in the heart of the coffee cultural landscape, where nature and humanity are harmonized to offer quality, comfort and wellness.\nWe offer comfortable accommodation and spa in the woods with an extraordinary view over the mountains of the Cordille",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:54.595Z",
+          "source_type": null,
+          "provider": "tavily",
+          "rank": 1,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.tripadvisor.com/Hotel_Review-g297479-d2045757-Reviews-Hotel_Spa_La_Colina-Pereira_Risaralda_Department.html",
+          "canonical_url": "https://www.tripadvisor.com/Hotel_Review-g297479-d2045757-Reviews-Hotel_Spa_La_Colina-Pereira_Risaralda_Department.html",
+          "title": "HOTEL SPA LA COLINA: Updated 2026 Prices &  Reviews (Pereira, Colombia)",
+          "snippet": "## About\n\n4.7\n\nVery Good\n\n(395 reviews)\n\n#1 of 56 hotels in Pereira\n\nLocation\n\n4.7\n\nRooms\n\n4.7\n\nValue\n\n4.7\n\nCleanliness\n\n4.8\n\nService\n\n4.8\n\nSleep Quality\n\n4.7\n\nTravelers' Choice\n\n2026\n\nHotel Spa La Colina is a boutique retreat surrounded by nature, ideal for disconnecting from the noise and reconnec",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:54.595Z",
+          "source_type": null,
+          "provider": "tavily",
+          "rank": 2,
+          "locale": "es"
+        },
+        {
+          "url": "https://spa-la-colina.hotelesejecafetero.net/en",
+          "canonical_url": "https://spa-la-colina.hotelesejecafetero.net/en",
+          "title": "ᐉ HOTEL SPA LA COLINA ⋆⋆⋆⋆⋆ ( COLOMBIA ) REAL PHOTOS & GREAT DEALS",
+          "snippet": "Situated around 6 km from the multi - purpose Hernan Ramirez Villegas Stadium, the smoke-free Hotel Spa La Colina San Vicente features 2 hot tubs. This 5-star hotel is approximately 10 minutes by car from the Alto del Nudo and provides guests with a traditional Hammam, a treatment room, and a solari",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:54.595Z",
+          "source_type": null,
+          "provider": "tavily",
+          "rank": 3,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.hotels.com/ho629732/hotel-spa-la-colina-pereira-colombia",
+          "canonical_url": "https://www.hotels.com/ho629732/hotel-spa-la-colina-pereira-colombia",
+          "title": "Hotel Spa La Colina, Pereira: Hotel Reviews, Rooms & Prices",
+          "snippet": "Hotel Spa La Colina. Services include hot stone massages, facials, body wraps, and body scrubs. The spa is equipped with a sauna, a hot tub, a steam room, and",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:54.595Z",
+          "source_type": null,
+          "provider": "tavily",
+          "rank": 4,
+          "locale": "es"
+        },
+        {
+          "url": "https://hotelspalacolina.com/en",
+          "canonical_url": "https://hotelspalacolina.com/en",
+          "title": "Disconnect from the world Reconéctate with you",
+          "snippet": "Hotel Spa La Colina. Hotel in the middle of nature. With only 10 rooms, designed to provide privacy, tranquility and comfort, we offer",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:54.595Z",
+          "source_type": null,
+          "provider": "tavily",
+          "rank": 5,
+          "locale": "es"
+        }
+      ],
+      "execution_plan": {
+        "account_id": "rp_1v459p4",
+        "identity_state": "confirmed",
+        "identity_queries": [
+          {
+            "query_id": "entityq_ique9q",
+            "provider": "brave",
+            "stage": "identity",
+            "query": "\"Hotel Spa La Colina\" Colombia hospitality",
+            "task": "identity_discovery",
+            "requires_identity_state": [
+              "confirmed",
+              "high_confidence",
+              "probable",
+              "ambiguous",
+              "unresolved"
+            ]
+          },
+          {
+            "query_id": "entityq_10gg0h7",
+            "provider": "brave",
+            "stage": "identity",
+            "query": "\"Hotel Spa La Colina\" sitio oficial",
+            "task": "identity_discovery",
+            "requires_identity_state": [
+              "confirmed",
+              "high_confidence",
+              "probable",
+              "ambiguous",
+              "unresolved"
+            ]
+          },
+          {
+            "query_id": "entityq_1i4eqiv",
+            "provider": "tavily",
+            "stage": "identity",
+            "query": "Hotel Spa La Colina empresa colombiana  hospitality",
+            "task": "identity_discovery",
+            "requires_identity_state": [
+              "confirmed",
+              "high_confidence",
+              "probable",
+              "ambiguous",
+              "unresolved"
+            ]
+          }
+        ],
+        "event_queries": [
+          {
+            "query_id": "entityq_1crska5",
+            "provider": "brave",
+            "stage": "event",
+            "query": "\"Hotel Spa La Colina\" \"apertura expansión alianza lanzamiento\" Colombia",
+            "task": "event_discovery",
+            "requires_identity_state": [
+              "confirmed",
+              "high_confidence"
+            ]
+          },
+          {
+            "query_id": "entityq_1un8k2r",
+            "provider": "tavily",
+            "stage": "counterevidence",
+            "query": "\"Hotel Spa La Colina\" cierre inactiva cancelada",
+            "task": "negative_event",
+            "requires_identity_state": [
+              "confirmed",
+              "high_confidence"
+            ]
+          }
+        ],
+        "extraction_urls": [],
+        "event_extraction_urls": [],
+        "stop_reason": "event_eligible"
+      },
+      "event_attributions": [
+        {
+          "attribution_id": "attr_17g8bf9",
+          "account_id": "rp_1v459p4",
+          "event_id": "tavily:0:https://www.tripadvisor.es/Hotel_Review-g297479-d2045757-Reviews-Hotel_Spa_La_Colina-Pereira_Risaralda_Department.html",
+          "identity_state": "confirmed",
+          "relationship": "same_company",
+          "state": "directly_attributed",
+          "scope": "unknown",
+          "event_subject": "HOTEL SPA LA COLINA (Pereira, Colombia): 2026 ...",
+          "location": null,
+          "event_date": null,
+          "event_status": "observed",
+          "source_owner": "https://www.tripadvisor.es/Hotel_Review-g297479-d2045757-Reviews-Hotel_Spa_La_Colina-Pereira_Risaralda_Department.html",
+          "decisive_anchors": [],
+          "limitations": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ],
+          "signal_eligible": false,
+          "confidence": 0.5,
+          "methodology_version": "colombian-entity-resolution-v1",
+          "internal_only": true,
+          "ranking_impact": "off",
+          "report_impact": "off",
+          "url": "https://www.tripadvisor.es/Hotel_Review-g297479-d2045757-Reviews-Hotel_Spa_La_Colina-Pereira_Risaralda_Department.html",
+          "provider": "tavily",
+          "rejection": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ]
+        },
+        {
+          "attribution_id": "attr_4wsfl",
+          "account_id": "rp_1v459p4",
+          "event_id": "tavily:1:https://hotelspalacolina.com/es",
+          "identity_state": "confirmed",
+          "relationship": "same_company",
+          "state": "directly_attributed",
+          "scope": "account_wide",
+          "event_subject": "Hotel Spa La Colina – Escápate al Hotel Spa La Colina, un refugio romántico en la naturaleza del Eje Cafetero con spa al aire libre, gastronomía gourmet y vistas inigualables.",
+          "location": null,
+          "event_date": null,
+          "event_status": "observed",
+          "source_owner": "https://hotelspalacolina.com/es",
+          "decisive_anchors": [],
+          "limitations": [
+            "Event date is missing or invalid."
+          ],
+          "signal_eligible": false,
+          "confidence": 0.5,
+          "methodology_version": "colombian-entity-resolution-v1",
+          "internal_only": true,
+          "ranking_impact": "off",
+          "report_impact": "off",
+          "url": "https://hotelspalacolina.com/es",
+          "provider": "tavily",
+          "rejection": [
+            "Event date is missing or invalid."
+          ]
+        },
+        {
+          "attribution_id": "attr_4ei13m",
+          "account_id": "rp_1v459p4",
+          "event_id": "tavily:2:https://www.booking.com/hotel/co/spa-la-colina.es.html",
+          "identity_state": "confirmed",
+          "relationship": "same_company",
+          "state": "directly_attributed",
+          "scope": "unknown",
+          "event_subject": "Hotel Spa La Colina, Pereira (precios actualizados en 2026)",
+          "location": null,
+          "event_date": null,
+          "event_status": "observed",
+          "source_owner": "https://www.booking.com/hotel/co/spa-la-colina.es.html",
+          "decisive_anchors": [],
+          "limitations": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ],
+          "signal_eligible": false,
+          "confidence": 0.5,
+          "methodology_version": "colombian-entity-resolution-v1",
+          "internal_only": true,
+          "ranking_impact": "off",
+          "report_impact": "off",
+          "url": "https://www.booking.com/hotel/co/spa-la-colina.es.html",
+          "provider": "tavily",
+          "rejection": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ]
+        },
+        {
+          "attribution_id": "attr_s9fkhh",
+          "account_id": "rp_1v459p4",
+          "event_id": "tavily:3:https://www.expedia.com/es/Pereira-Hoteles-Hotel-Spa-La-Colina.h16263758.Informacion-Hotel",
+          "identity_state": "confirmed",
+          "relationship": "same_company",
+          "state": "directly_attributed",
+          "scope": "unknown",
+          "event_subject": "Hotel Spa La Colina: Comentarios, Precios y Fotos 2026",
+          "location": null,
+          "event_date": null,
+          "event_status": "observed",
+          "source_owner": "https://www.expedia.com/es/Pereira-Hoteles-Hotel-Spa-La-Colina.h16263758.Informacion-Hotel",
+          "decisive_anchors": [],
+          "limitations": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ],
+          "signal_eligible": false,
+          "confidence": 0.5,
+          "methodology_version": "colombian-entity-resolution-v1",
+          "internal_only": true,
+          "ranking_impact": "off",
+          "report_impact": "off",
+          "url": "https://www.expedia.com/es/Pereira-Hoteles-Hotel-Spa-La-Colina.h16263758.Informacion-Hotel",
+          "provider": "tavily",
+          "rejection": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ]
+        },
+        {
+          "attribution_id": "attr_1hdrgsc",
+          "account_id": "rp_1v459p4",
+          "event_id": "tavily:4:https://spa-la-colina.hotelesejecafetero.net/es",
+          "identity_state": "confirmed",
+          "relationship": "same_company",
+          "state": "directly_attributed",
+          "scope": "unknown",
+          "event_subject": "ᐉ HOTEL SPA LA COLINA ⋆⋆⋆⋆⋆ ( SAN VICENTE ...",
+          "location": null,
+          "event_date": null,
+          "event_status": "observed",
+          "source_owner": "https://spa-la-colina.hotelesejecafetero.net/es",
+          "decisive_anchors": [],
+          "limitations": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ],
+          "signal_eligible": false,
+          "confidence": 0.5,
+          "methodology_version": "colombian-entity-resolution-v1",
+          "internal_only": true,
+          "ranking_impact": "off",
+          "report_impact": "off",
+          "url": "https://spa-la-colina.hotelesejecafetero.net/es",
+          "provider": "tavily",
+          "rejection": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ]
+        }
+      ],
+      "explanation": {
+        "verdict": "confirmed",
+        "confirmed_anchors": [
+          "verified_domain",
+          "contact_page"
+        ],
+        "conflicting_anchors": [],
+        "missing_anchors": [],
+        "next_action": "Review directly attributable dated events."
+      }
+    },
+    {
+      "account": "BioPlaza",
+      "domain": "bioplaza.com.co",
+      "identity_profile": {
+        "profile_id": "entity_oa5wu",
+        "account_id": "rp_hcdx5a",
+        "client_id": "amor-de-gea",
+        "canonical_commercial_name": "BioPlaza",
+        "normalized_name": {
+          "raw_name": "BioPlaza",
+          "normalized_full": "bioplaza",
+          "comparison_name": "bioplaza",
+          "legal_suffixes_removed": [],
+          "generic_prefixes_observed": []
+        },
+        "legal_name": null,
+        "nit": null,
+        "verified_domain": "bioplaza.com.co",
+        "alternate_verified_domains": [],
+        "official_properties": [
+          {
+            "property_id": "prop_1ieaapw",
+            "type": "website",
+            "url": "https://bioplaza.com.co",
+            "state": "verified",
+            "ownership_evidence": [
+              {
+                "kind": "verified_domain",
+                "value": "bioplaza.com.co",
+                "strength": "strong",
+                "supports_identity": true,
+                "confidence": 0.99,
+                "evidence": [],
+                "reason": "Persisted verified account domain.",
+                "anchor_id": "anchor_1ylpll"
+              }
+            ],
+            "source_owner_key": "bioplaza.com.co",
+            "confidence": 0.95,
+            "profile_only": false,
+            "last_verified_at": "2026-07-30T14:24:06.487Z",
+            "limitations": []
+          }
+        ],
+        "city": null,
+        "department": null,
+        "country": "Colombia",
+        "verified_addresses": [],
+        "business_category": "retail",
+        "products_services": [],
+        "parent_entity": null,
+        "subsidiaries": [],
+        "branches": [],
+        "known_aliases": [],
+        "former_names": [],
+        "marketplace_identities": [],
+        "distributor_relationships": [],
+        "registry_references": [],
+        "identity_confidence": 0.94,
+        "identity_state": "confirmed",
+        "confirmed_anchors": [
+          {
+            "kind": "verified_domain",
+            "value": "bioplaza.com.co",
+            "strength": "strong",
+            "supports_identity": true,
+            "confidence": 0.99,
+            "evidence": [],
+            "reason": "Persisted verified account domain.",
+            "anchor_id": "anchor_1ylpll"
+          },
+          {
+            "kind": "contact_page",
+            "value": "https://www.bioplaza.com.co/",
+            "strength": "moderate",
+            "supports_identity": true,
+            "confidence": 0.82,
+            "evidence": [],
+            "reason": "Provider recovered content on the persisted verified domain.",
+            "anchor_id": "anchor_y1hdzt"
+          }
+        ],
+        "conflicting_anchors": [],
+        "unresolved_identity_questions": [],
+        "source_provenance": [],
+        "last_verified_date": "2026-07-30T14:23:46.735Z",
+        "methodology_version": "colombian-entity-resolution-v1",
+        "internal_only": true
+      },
+      "identity_queries": [
+        {
+          "query_id": "entityq_1crx2yq",
+          "provider": "brave",
+          "stage": "identity",
+          "query": "\"BioPlaza\" Colombia retail",
+          "task": "identity_discovery",
+          "requires_identity_state": [
+            "confirmed",
+            "high_confidence",
+            "probable",
+            "ambiguous",
+            "unresolved"
+          ]
+        },
+        {
+          "query_id": "entityq_5eaa0u",
+          "provider": "brave",
+          "stage": "identity",
+          "query": "\"BioPlaza\" sitio oficial",
+          "task": "identity_discovery",
+          "requires_identity_state": [
+            "confirmed",
+            "high_confidence",
+            "probable",
+            "ambiguous",
+            "unresolved"
+          ]
+        },
+        {
+          "query_id": "entityq_xkug1b",
+          "provider": "tavily",
+          "stage": "identity",
+          "query": "BioPlaza empresa colombiana  retail",
+          "task": "identity_discovery",
+          "requires_identity_state": [
+            "confirmed",
+            "high_confidence",
+            "probable",
+            "ambiguous",
+            "unresolved"
+          ]
+        }
+      ],
+      "identity_results": [
+        {
+          "url": "https://www.bioplaza.com.co/",
+          "canonical_url": "https://www.bioplaza.com.co/",
+          "title": "- BioPlaza Retail - Encuentra aquí todos los productos BioPlaza.",
+          "snippet": "Productos saludables: Frutos secos, endulzantes saludables, harinas sin gluten, almidones, sales, semillas. Envíos a todo Colombia.",
+          "published_date": "2024-11-29T16:10:45",
+          "retrieved_at": "2026-07-30T14:23:56.600Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 1,
+          "locale": "es"
+        },
+        {
+          "url": "https://co.linkedin.com/company/bioplaza",
+          "canonical_url": "https://co.linkedin.com/company/bioplaza",
+          "title": "BioPlaza",
+          "snippet": "<strong>Primer mercado de alimentos orgánicos, naturales y funcionales en Colombia</strong>. Sitio web · http://www.bioplaza.com.co · Enlace externo para BioPlaza® · Sector · Agricultura · Tamaño de la empresa · De 11 a 50 empleados · Sede · Bogotá, ...",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:56.600Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 2,
+          "locale": "es"
+        },
+        {
+          "url": "https://b2bmarketplace.procolombia.co/es/bioplaza-retail-sas-26195",
+          "canonical_url": "https://b2bmarketplace.procolombia.co/es/bioplaza-retail-sas-26195",
+          "title": "BioPlaza Retail SAS | | Colombian B2B Marketplace",
+          "snippet": "Somos <strong>desarrolladores, productores y comercializadores de alimentos orgánicos, naturales y funcionales en Colombia- Sur América</strong>. Ver más Ver menos 〉 · Conocer más · BioPlaza Retail SAS · Conocer más · BioPlaza Retail SAS · Conocer más · BioPlaza Retail SAS ·",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:56.600Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 3,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.informacolombia.com/directorio-empresas/informacion-empresa/bioplaza-retail-sas",
+          "canonical_url": "https://www.informacolombia.com/directorio-empresas/informacion-empresa/bioplaza-retail-sas",
+          "title": "Bioplaza Retail S A S: NIT, teléfono y contacto",
+          "snippet": "El teléfono de Bioplaza Retail S A S es el 3114808258. Esta empresa fué constituida como SOCIEDAD POR ACCIONES SIMPLIFICADA y se dedica a <strong>Comercio al por mayor de productos alimenticios</strong>.",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:56.600Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 4,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.datacreditoempresas.com.co/directorio/bioplaza-retail-sas.html",
+          "canonical_url": "https://www.datacreditoempresas.com.co/directorio/bioplaza-retail-sas.html",
+          "title": "BIOPLAZA RETAIL S.A.S - Datos de empresas",
+          "snippet": "Su dirección reportada en Registro mercantil es <strong>AUT MEDELL N K M 1.5 V A SIBERIA BODEGA 35 en la ciudad de Bogotá, D.c., Bogota</strong>. Bioplaza Retail S.a.s tiene el teléfono de contacto 60...........",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:56.600Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 5,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.bioplaza.com.co/",
+          "canonical_url": "https://www.bioplaza.com.co/",
+          "title": "- BioPlaza Retail - Encuentra aquí todos los productos BioPlaza.",
+          "snippet": "En BioPlaza, nos enorgullece ofrecer una experiencia única de compra para aquellos que buscan productos naturales y sostenibles.",
+          "published_date": "2024-11-29T16:10:45",
+          "retrieved_at": "2026-07-30T14:23:56.598Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 1,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.tiktok.com/@bioplaza.oficial",
+          "canonical_url": "https://www.tiktok.com/@bioplaza.oficial",
+          "title": "bioplaza.oficial",
+          "snippet": "TikTok: las tendencias empiezan aquí. Los espectadores pueden descubrir millones de videos cortos personalizados tanto desde dispositivos móviles como en la versión web. Descarga la aplicación para empezar.",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:56.598Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 2,
+          "locale": "es"
+        },
+        {
+          "url": "https://co.linkedin.com/company/bioplaza",
+          "canonical_url": "https://co.linkedin.com/company/bioplaza",
+          "title": "BioPlaza",
+          "snippet": "Sitio web · <strong>http://www.bioplaza.com.co</strong> · Enlace externo para BioPlaza® · Sector · Agricultura · Tamaño de la empresa · De 11 a 50 empleados · Sede · Bogotá, Bogotá · Tipo · Empresa propia · Fundación · 2002 · Especialidades ...",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:56.598Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 3,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.facebook.com/bioplazaorganic/",
+          "canonical_url": "https://www.facebook.com/bioplazaorganic",
+          "title": "BioPlaza | Facebook",
+          "snippet": "BioPlaza. 7,658 likes. Chicó: Tr. 17 No. 98-13 / Tel: 257 40 47",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:56.598Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 4,
+          "locale": "es"
+        },
+        {
+          "url": "https://bioplaza.org/shop/",
+          "canonical_url": "https://bioplaza.org/shop",
+          "title": "Tienda Online - BioPlaza",
+          "snippet": "Especial para la elaboración de croquetas, hamburguesas, salsas y cremas. Igualmente funcional para preparar panadería sin gluten.",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:56.598Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 5,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.linkedin.com/company/bioplaza",
+          "canonical_url": "https://www.linkedin.com/company/bioplaza",
+          "title": "BioPlaza® - Food With Spirit",
+          "snippet": "# BioPlaza®\nFood With Spirit\nFarming • Bogotá, Bogotá • 80 followers • 11-50 employees\n\n## Overview\nPrimer mercado de alimentos orgánicos, naturales y funcionales en Colombia.\n\n### Website\n\n### Crunchbase\nN/A\n### LinkedIn\nN/A\n\n### Industry\nFarming\n\n### Company Size\n11-50 employees  \n10 associated me",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:57.812Z",
+          "source_type": null,
+          "provider": "tavily",
+          "rank": 1,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.innpulsacolombia.com/bioplaza",
+          "canonical_url": "https://www.innpulsacolombia.com/bioplaza",
+          "title": "BIOPLAZA",
+          "snippet": "Mar 3, 2025 — Bioplaza es una cadena de tiendas que ofrece productos naturales y orgánicos, incluyendo alimentos, suplementos y productos de cuidado personal, ...Read more",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:57.812Z",
+          "source_type": null,
+          "provider": "tavily",
+          "rank": 2,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.bioplaza.com.co",
+          "canonical_url": "https://www.bioplaza.com.co/",
+          "title": "Tienda de Productos Saludables - Bioplaza.com.co",
+          "snippet": "Puedes encontrar nuestros productos en\n\nBioPlaza en Jumbo\n\nBioPlaza en almacenes Exito\n\nBioPlaza en almacenes Carulla\n\nBioPlaza en Merqueo\n\nBioPlaza en Gastronomy Market [...] El sagú es un tubérculo colombiano lleno de nutrientes, que sirve como base para diversos productos, incluyendo las achiras.",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:57.812Z",
+          "source_type": null,
+          "provider": "tavily",
+          "rank": 3,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.instagram.com/bioplaza?hl=en",
+          "canonical_url": "https://www.instagram.com/bioplaza?hl=en",
+          "title": "BioPlaza alimentación saludable ( ...",
+          "snippet": "Descubre nuestros alimentos a granel y encuentra el mejor precio del mercado en www.bioplaza.com.co Envíos a todo el país. #Alimento #Agranel #Dátiles # ...Read more",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:57.812Z",
+          "source_type": null,
+          "provider": "tavily",
+          "rank": 4,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.facebook.com/bybioplaza",
+          "canonical_url": "https://www.facebook.com/bybioplaza",
+          "title": "By BioPlaza (@bybioplaza)",
+          "snippet": "Te ayudamos en tu camino hacia el bienestar y la alimentación saludable. Con nuestros productos podrás realizar todo tipo de preparaciones que aportan sabor y ...Read more",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:23:57.812Z",
+          "source_type": null,
+          "provider": "tavily",
+          "rank": 5,
+          "locale": "es"
+        }
+      ],
+      "execution_plan": {
+        "account_id": "rp_hcdx5a",
+        "identity_state": "confirmed",
+        "identity_queries": [
+          {
+            "query_id": "entityq_1crx2yq",
+            "provider": "brave",
+            "stage": "identity",
+            "query": "\"BioPlaza\" Colombia retail",
+            "task": "identity_discovery",
+            "requires_identity_state": [
+              "confirmed",
+              "high_confidence",
+              "probable",
+              "ambiguous",
+              "unresolved"
+            ]
+          },
+          {
+            "query_id": "entityq_5eaa0u",
+            "provider": "brave",
+            "stage": "identity",
+            "query": "\"BioPlaza\" sitio oficial",
+            "task": "identity_discovery",
+            "requires_identity_state": [
+              "confirmed",
+              "high_confidence",
+              "probable",
+              "ambiguous",
+              "unresolved"
+            ]
+          },
+          {
+            "query_id": "entityq_xkug1b",
+            "provider": "tavily",
+            "stage": "identity",
+            "query": "BioPlaza empresa colombiana  retail",
+            "task": "identity_discovery",
+            "requires_identity_state": [
+              "confirmed",
+              "high_confidence",
+              "probable",
+              "ambiguous",
+              "unresolved"
+            ]
+          }
+        ],
+        "event_queries": [
+          {
+            "query_id": "entityq_133oihc",
+            "provider": "brave",
+            "stage": "event",
+            "query": "\"BioPlaza\" \"apertura expansión alianza lanzamiento\" Colombia",
+            "task": "event_discovery",
+            "requires_identity_state": [
+              "confirmed",
+              "high_confidence"
+            ]
+          },
+          {
+            "query_id": "entityq_1a65in6",
+            "provider": "tavily",
+            "stage": "counterevidence",
+            "query": "\"BioPlaza\" cierre inactiva cancelada",
+            "task": "negative_event",
+            "requires_identity_state": [
+              "confirmed",
+              "high_confidence"
+            ]
+          }
+        ],
+        "extraction_urls": [],
+        "event_extraction_urls": [],
+        "stop_reason": "event_eligible"
+      },
+      "event_attributions": [
+        {
+          "attribution_id": "attr_ku9jue",
+          "account_id": "rp_hcdx5a",
+          "event_id": "tavily:0:https://www.bioplaza.com.co/",
+          "identity_state": "confirmed",
+          "relationship": "same_company",
+          "state": "directly_attributed",
+          "scope": "account_wide",
+          "event_subject": "Tienda de Productos Saludables - Bioplaza.com.co",
+          "location": null,
+          "event_date": null,
+          "event_status": "observed",
+          "source_owner": "https://www.bioplaza.com.co/",
+          "decisive_anchors": [],
+          "limitations": [
+            "Event date is missing or invalid."
+          ],
+          "signal_eligible": false,
+          "confidence": 0.5,
+          "methodology_version": "colombian-entity-resolution-v1",
+          "internal_only": true,
+          "ranking_impact": "off",
+          "report_impact": "off",
+          "url": "https://www.bioplaza.com.co/",
+          "provider": "tavily",
+          "rejection": [
+            "Event date is missing or invalid."
+          ]
+        },
+        {
+          "attribution_id": "attr_jj23id",
+          "account_id": "rp_hcdx5a",
+          "event_id": "tavily:1:https://www.instagram.com/bioplaza?hl=en",
+          "identity_state": "confirmed",
+          "relationship": "same_company",
+          "state": "directly_attributed",
+          "scope": "unknown",
+          "event_subject": "BioPlaza alimentación saludable ( ...",
+          "location": null,
+          "event_date": null,
+          "event_status": "observed",
+          "source_owner": "https://www.instagram.com/bioplaza?hl=en",
+          "decisive_anchors": [],
+          "limitations": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ],
+          "signal_eligible": false,
+          "confidence": 0.5,
+          "methodology_version": "colombian-entity-resolution-v1",
+          "internal_only": true,
+          "ranking_impact": "off",
+          "report_impact": "off",
+          "url": "https://www.instagram.com/bioplaza?hl=en",
+          "provider": "tavily",
+          "rejection": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ]
+        },
+        {
+          "attribution_id": "attr_1aoyd5j",
+          "account_id": "rp_hcdx5a",
+          "event_id": "tavily:2:https://gcvoters.org/es/blog/2025/06/03/statement-on-shutdown-of-biolabs-manufacturing-facility-in-conyers",
+          "identity_state": "confirmed",
+          "relationship": "same_company",
+          "state": "directly_attributed",
+          "scope": "unknown",
+          "event_subject": "Declaración sobre el cierre de la planta de fabricación ...",
+          "location": null,
+          "event_date": null,
+          "event_status": "observed",
+          "source_owner": "https://gcvoters.org/es/blog/2025/06/03/statement-on-shutdown-of-biolabs-manufacturing-facility-in-conyers",
+          "decisive_anchors": [],
+          "limitations": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ],
+          "signal_eligible": false,
+          "confidence": 0.5,
+          "methodology_version": "colombian-entity-resolution-v1",
+          "internal_only": true,
+          "ranking_impact": "off",
+          "report_impact": "off",
+          "url": "https://gcvoters.org/es/blog/2025/06/03/statement-on-shutdown-of-biolabs-manufacturing-facility-in-conyers",
+          "provider": "tavily",
+          "rejection": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ]
+        },
+        {
+          "attribution_id": "attr_hnawe0",
+          "account_id": "rp_hcdx5a",
+          "event_id": "tavily:3:https://www.facebook.com/bybioplaza/videos/bioplaza-tienda-virtual-httpsbprcomco-env%C3%ADos-a-todo-colombia-pide-tus-ingredient/106994134494640",
+          "identity_state": "confirmed",
+          "relationship": "same_company",
+          "state": "directly_attributed",
+          "scope": "unknown",
+          "event_subject": "BioPlaza Tienda Virtual 💚🌿🌱🌿🌿 https://bpr.com.co/ Envíos a ...",
+          "location": null,
+          "event_date": null,
+          "event_status": "observed",
+          "source_owner": "https://www.facebook.com/bybioplaza/videos/bioplaza-tienda-virtual-httpsbprcomco-env%C3%ADos-a-todo-colombia-pide-tus-ingredient/106994134494640",
+          "decisive_anchors": [],
+          "limitations": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ],
+          "signal_eligible": false,
+          "confidence": 0.5,
+          "methodology_version": "colombian-entity-resolution-v1",
+          "internal_only": true,
+          "ranking_impact": "off",
+          "report_impact": "off",
+          "url": "https://www.facebook.com/bybioplaza/videos/bioplaza-tienda-virtual-httpsbprcomco-env%C3%ADos-a-todo-colombia-pide-tus-ingredient/106994134494640",
+          "provider": "tavily",
+          "rejection": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ]
+        },
+        {
+          "attribution_id": "attr_p0in7a",
+          "account_id": "rp_hcdx5a",
+          "event_id": "tavily:4:https://www.facebook.com/bybioplaza",
+          "identity_state": "confirmed",
+          "relationship": "same_company",
+          "state": "directly_attributed",
+          "scope": "unknown",
+          "event_subject": "By BioPlaza (@bybioplaza)",
+          "location": null,
+          "event_date": null,
+          "event_status": "observed",
+          "source_owner": "https://www.facebook.com/bybioplaza",
+          "decisive_anchors": [],
+          "limitations": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ],
+          "signal_eligible": false,
+          "confidence": 0.5,
+          "methodology_version": "colombian-entity-resolution-v1",
+          "internal_only": true,
+          "ranking_impact": "off",
+          "report_impact": "off",
+          "url": "https://www.facebook.com/bybioplaza",
+          "provider": "tavily",
+          "rejection": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ]
+        }
+      ],
+      "explanation": {
+        "verdict": "confirmed",
+        "confirmed_anchors": [
+          "verified_domain",
+          "contact_page"
+        ],
+        "conflicting_anchors": [],
+        "missing_anchors": [],
+        "next_action": "Review directly attributable dated events."
+      }
+    },
+    {
+      "account": "Distribuidora DAM",
+      "domain": "distribuidoradam.com",
+      "identity_profile": {
+        "profile_id": "entity_1wun5y3",
+        "account_id": "rp_1v1bsfg",
+        "client_id": "amor-de-gea",
+        "canonical_commercial_name": "Distribuidora DAM",
+        "normalized_name": {
+          "raw_name": "Distribuidora DAM",
+          "normalized_full": "distribuidora dam",
+          "comparison_name": "distribuidora dam",
+          "legal_suffixes_removed": [],
+          "generic_prefixes_observed": [
+            "distribuidora"
+          ]
+        },
+        "legal_name": null,
+        "nit": null,
+        "verified_domain": "distribuidoradam.com",
+        "alternate_verified_domains": [],
+        "official_properties": [
+          {
+            "property_id": "prop_avc4lb",
+            "type": "website",
+            "url": "https://distribuidoradam.com",
+            "state": "verified",
+            "ownership_evidence": [
+              {
+                "kind": "verified_domain",
+                "value": "distribuidoradam.com",
+                "strength": "strong",
+                "supports_identity": true,
+                "confidence": 0.99,
+                "evidence": [],
+                "reason": "Persisted verified account domain.",
+                "anchor_id": "anchor_pb4jtu"
+              }
+            ],
+            "source_owner_key": "distribuidoradam.com",
+            "confidence": 0.95,
+            "profile_only": false,
+            "last_verified_at": "2026-07-30T14:24:06.487Z",
+            "limitations": []
+          }
+        ],
+        "city": null,
+        "department": null,
+        "country": "Colombia",
+        "verified_addresses": [],
+        "business_category": "distribution",
+        "products_services": [],
+        "parent_entity": null,
+        "subsidiaries": [],
+        "branches": [],
+        "known_aliases": [],
+        "former_names": [],
+        "marketplace_identities": [],
+        "distributor_relationships": [],
+        "registry_references": [],
+        "identity_confidence": 0.94,
+        "identity_state": "confirmed",
+        "confirmed_anchors": [
+          {
+            "kind": "verified_domain",
+            "value": "distribuidoradam.com",
+            "strength": "strong",
+            "supports_identity": true,
+            "confidence": 0.99,
+            "evidence": [],
+            "reason": "Persisted verified account domain.",
+            "anchor_id": "anchor_pb4jtu"
+          },
+          {
+            "kind": "contact_page",
+            "value": "https://distribuidoradam.com/",
+            "strength": "moderate",
+            "supports_identity": true,
+            "confidence": 0.82,
+            "evidence": [],
+            "reason": "Provider recovered content on the persisted verified domain.",
+            "anchor_id": "anchor_13i31vx"
+          }
+        ],
+        "conflicting_anchors": [],
+        "unresolved_identity_questions": [],
+        "source_provenance": [],
+        "last_verified_date": "2026-07-30T14:23:46.735Z",
+        "methodology_version": "colombian-entity-resolution-v1",
+        "internal_only": true
+      },
+      "identity_queries": [
+        {
+          "query_id": "entityq_1nd5a1i",
+          "provider": "brave",
+          "stage": "identity",
+          "query": "\"Distribuidora DAM\" Colombia distribution",
+          "task": "identity_discovery",
+          "requires_identity_state": [
+            "confirmed",
+            "high_confidence",
+            "probable",
+            "ambiguous",
+            "unresolved"
+          ]
+        },
+        {
+          "query_id": "entityq_14vg6nz",
+          "provider": "brave",
+          "stage": "identity",
+          "query": "\"Distribuidora DAM\" sitio oficial",
+          "task": "identity_discovery",
+          "requires_identity_state": [
+            "confirmed",
+            "high_confidence",
+            "probable",
+            "ambiguous",
+            "unresolved"
+          ]
+        },
+        {
+          "query_id": "entityq_172fm55",
+          "provider": "tavily",
+          "stage": "identity",
+          "query": "Distribuidora DAM empresa colombiana  distribution",
+          "task": "identity_discovery",
+          "requires_identity_state": [
+            "confirmed",
+            "high_confidence",
+            "probable",
+            "ambiguous",
+            "unresolved"
+          ]
+        }
+      ],
+      "identity_results": [
+        {
+          "url": "https://distribuidoradam.com/",
+          "canonical_url": "https://distribuidoradam.com/",
+          "title": "Distribuidora DAM | Distribuidor mayorista de productos saludables",
+          "snippet": "Somos DAM, <strong>distribuidor mayorista de productos naturales donde abastecemos a dietéticas, panaderías, heladerías y emprendedores en todas partes del país</strong>.",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:24:00.791Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 1,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.instagram.com/distribuidoradam/?hl=es",
+          "canonical_url": "https://www.instagram.com/distribuidoradam?hl=es",
+          "title": "Distribuidora DAM (@distribuidoradam)",
+          "snippet": "8,463 Followers, 1,239 Following, 204 Posts - See Instagram photos and videos from <strong>Distribuidora</strong> <strong>DAM</strong> (@distribuidoradam)",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:24:00.791Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 2,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.facebook.com/p/Distribuidora-DAM-100063723002546/",
+          "canonical_url": "https://www.facebook.com/p/Distribuidora-DAM-100063723002546",
+          "title": "Distribuidora DAM | Facebook",
+          "snippet": "Distribuidora DAM. 6,026 likes · 42 talking about this. Hola! Somos una <strong>distribuidora de productos saludables</strong>. Estamos en Capital Federal y hacemos envíos",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:24:00.791Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 3,
+          "locale": "es"
+        },
+        {
+          "url": "https://vlex.cl/vid/comercializadora-distribuidora-dam-limitada-913587681",
+          "canonical_url": "https://vlex.cl/vid/comercializadora-distribuidora-dam-limitada-913587681",
+          "title": "COMERCIALIZADORA Y DISTRIBUIDORA DAM LIMITADA - vLex Chile - vLex",
+          "snippet": "“COMERCIALIZADORA Y DISTRIBUIDORA DAM LIMITADA”, pudiendo usar nombre de ·",
+          "published_date": "2022-11-02T00:00:00",
+          "retrieved_at": "2026-07-30T14:24:00.791Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 4,
+          "locale": "es"
+        },
+        {
+          "url": "https://ubicania.com/empresas/distribuidora-dam_id_BDA08B6D50F0E394",
+          "canonical_url": "https://ubicania.com/empresas/distribuidora-dam_id_BDA08B6D50F0E394",
+          "title": "DISTRIBUIDORA DAM en YARINACOCHA - CORONEL PORTILLO - UCAYALI",
+          "snippet": "DISTRIBUIDORA DAM en <strong>YARINACOCHA,CORONEL PORTILLO,UCAYALI</strong>. Con actividad económica OTRAS ACTIVID.DE TIPO SERVICIO NCP. Dirección CAL.TRES MZA. V LOTE. 18 URB. FONAVI MZ V LOTE 18 (POR LA AV. ALAMEDAS Y UNIV. UAP).",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:24:00.791Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 5,
+          "locale": "es"
+        },
+        {
+          "url": "https://distribuidoradam.com/",
+          "canonical_url": "https://distribuidoradam.com/",
+          "title": "Distribuidora DAM | Distribuidor mayorista de productos saludables",
+          "snippet": "Somos DAM, distribuidor mayorista de productos naturales donde abastecemos a dietéticas, panaderías, heladerías y emprendedores en todas partes del país.",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:24:00.820Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 1,
+          "locale": "es"
+        },
+        {
+          "url": "https://ubicania.com/empresas/distribuidora-dam_id_BDA08B6D50F0E394",
+          "canonical_url": "https://ubicania.com/empresas/distribuidora-dam_id_BDA08B6D50F0E394",
+          "title": "DISTRIBUIDORA DAM en YARINACOCHA - CORONEL PORTILLO - UCAYALI",
+          "snippet": "DISTRIBUIDORA DAM en <strong>YARINACOCHA,CORONEL PORTILLO,UCAYALI</strong>. Con actividad económica OTRAS ACTIVID.DE TIPO SERVICIO NCP. Dirección CAL.TRES MZA. V LOTE. 18 URB. FONAVI MZ V LOTE 18 (POR LA AV. ALAMEDAS Y UNIV. UAP).",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:24:00.820Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 2,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.cuitonline.com/detalle/30716915421/distribuidora-dam-sa.html",
+          "canonical_url": "https://www.cuitonline.com/detalle/30716915421/distribuidora-dam-sa.html",
+          "title": "DISTRIBUIDORA DAM S.A. (30-71691542-1), C.A.B.A. - Cuit Online",
+          "snippet": "DISTRIBUIDORA DAM SA � CUIT: 30716915421 � Persona Jurídica � <strong>parana 850</strong> � Localidad: Ciudad Autonoma Buenos Aires � Fecha de contrato social: 2019-12-17 � Ganancias: Ganancias Sociedades",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:24:00.820Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 3,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.instagram.com/distribuidoradam/?hl=es",
+          "canonical_url": "https://www.instagram.com/distribuidoradam?hl=es",
+          "title": "Distribuidora DAM (@distribuidoradam)",
+          "snippet": "8,463 Followers, 1,239 Following, 204 Posts - See Instagram photos and videos from <strong>Distribuidora</strong> <strong>DAM</strong> (@distribuidoradam)",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:24:00.820Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 4,
+          "locale": "es"
+        },
+        {
+          "url": "https://vlex.cl/vid/comercializadora-distribuidora-dam-limitada-913587681",
+          "canonical_url": "https://vlex.cl/vid/comercializadora-distribuidora-dam-limitada-913587681",
+          "title": "COMERCIALIZADORA Y DISTRIBUIDORA DAM LIMITADA - vLex Chile - vLex",
+          "snippet": "COMERCIALIZADORA Y DISTRIBUIDORA DAM LIMITADA",
+          "published_date": "2022-11-02T00:00:00",
+          "retrieved_at": "2026-07-30T14:24:00.820Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 5,
+          "locale": "es"
+        },
+        {
+          "url": "https://distribuidoradam.com",
+          "canonical_url": "https://distribuidoradam.com/",
+          "title": "Distribuidora DAM | Distribuidor mayorista de productos saludables",
+          "snippet": "## Quiénes Somos\n\nSomos DAM, distribuidor mayorista de productos naturales donde abastecemos a dietéticas, panaderías, heladerías y emprendedores en todas partes del país. Tenemos como principal objetivo la atención a nuestros clientes y consumidores que nos eligen porque ofrecemos una amplia varied",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:24:02.141Z",
+          "source_type": null,
+          "provider": "tavily",
+          "rank": 1,
+          "locale": "es"
+        },
+        {
+          "url": "https://es.linkedin.com/company/distribuciones-dam-s-a",
+          "canonical_url": "https://es.linkedin.com/company/distribuciones-dam-s-a",
+          "title": "Distribuciones Dam, S.A.",
+          "snippet": "# Distribuciones Dam, S.A.\nN/A\nTransportation, Logistics, Supply Chain and Storage • Pinto, Madrid • 212 followers • 51-200 employees\n\n## Overview\nEmpresa dedicada a la logística integral especializada en mercancía de gran volumen con entrega e instalación o montaje de electrodomésticos, electrónica",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:24:02.141Z",
+          "source_type": null,
+          "provider": "tavily",
+          "rank": 2,
+          "locale": "es"
+        },
+        {
+          "url": "https://clutch.co/co/logistics/distribution-companies",
+          "canonical_url": "https://clutch.co/co/logistics/distribution-companies",
+          "title": "Top Distribution Companies in Colombia - Jul 2026 Rankings | Clutch.co",
+          "snippet": "Read more  View Profile  \n   Image 3: Zeus Ultrasonic Logotype\n### Zeus Ultrasonic\n\nNot yet reviewed  Undisclosed   Undisclosed   Freelancer   San Rafael, Colombia   Services provided\n\n 75% Warehousing & Distribution 25% Contract Manufacturing    Zeus Ultrasonic is a Warehousing & Distribution compa",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:24:02.141Z",
+          "source_type": null,
+          "provider": "tavily",
+          "rank": 3,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.cheekyfoods.com.au",
+          "canonical_url": "https://www.cheekyfoods.com.au/",
+          "title": "Cheeky Foods - Australia's Leading Latin Food Products Distributor",
+          "snippet": "Explore Latin American, Colombian, and African flavours in Australia with us. As your trusted importers and distributors since 2009, our mission is to promote cultural exchange through Hispanic cuisine. Serving restaurants, supermarkets, food trucks, and more, we have strategically distributed our 3",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:24:02.141Z",
+          "source_type": null,
+          "provider": "tavily",
+          "rank": 4,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.cisco.com/c/dam/global/pt_br/partners/rewards/Participating_Countries_and_Cisco_Authorised_Distributors_July28__PORT.pdf",
+          "canonical_url": "https://www.cisco.com/c/dam/global/pt_br/partners/rewards/Participating_Countries_and_Cisco_Authorised_Distributors_July28__PORT.pdf",
+          "title": "DISTRIBUIDORES AUTORIZADOS DA CISCO",
+          "snippet": "Colômbia Ingram Micro, Makrocomputo SA, MPS Mayorista De Colombia SA, Tech Data, Intcomex Comores Westcon Africa, Interdist, Comztek Costa do Marfim Westcon Africa, Interdist, Tech Data/ Azlan Costa Rica Tech Data, Ingram Micro Croácia M SAN Grupa, Megatrend, ComTel Corp Djibuti Westcon Africa, Mart",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:24:02.141Z",
+          "source_type": null,
+          "provider": "tavily",
+          "rank": 5,
+          "locale": "es"
+        }
+      ],
+      "execution_plan": {
+        "account_id": "rp_1v1bsfg",
+        "identity_state": "confirmed",
+        "identity_queries": [
+          {
+            "query_id": "entityq_1nd5a1i",
+            "provider": "brave",
+            "stage": "identity",
+            "query": "\"Distribuidora DAM\" Colombia distribution",
+            "task": "identity_discovery",
+            "requires_identity_state": [
+              "confirmed",
+              "high_confidence",
+              "probable",
+              "ambiguous",
+              "unresolved"
+            ]
+          },
+          {
+            "query_id": "entityq_14vg6nz",
+            "provider": "brave",
+            "stage": "identity",
+            "query": "\"Distribuidora DAM\" sitio oficial",
+            "task": "identity_discovery",
+            "requires_identity_state": [
+              "confirmed",
+              "high_confidence",
+              "probable",
+              "ambiguous",
+              "unresolved"
+            ]
+          },
+          {
+            "query_id": "entityq_172fm55",
+            "provider": "tavily",
+            "stage": "identity",
+            "query": "Distribuidora DAM empresa colombiana  distribution",
+            "task": "identity_discovery",
+            "requires_identity_state": [
+              "confirmed",
+              "high_confidence",
+              "probable",
+              "ambiguous",
+              "unresolved"
+            ]
+          }
+        ],
+        "event_queries": [
+          {
+            "query_id": "entityq_29srfd",
+            "provider": "brave",
+            "stage": "event",
+            "query": "\"Distribuidora DAM\" \"apertura expansión alianza lanzamiento\" Colombia",
+            "task": "event_discovery",
+            "requires_identity_state": [
+              "confirmed",
+              "high_confidence"
+            ]
+          },
+          {
+            "query_id": "entityq_12ix5mn",
+            "provider": "tavily",
+            "stage": "counterevidence",
+            "query": "\"Distribuidora DAM\" cierre inactiva cancelada",
+            "task": "negative_event",
+            "requires_identity_state": [
+              "confirmed",
+              "high_confidence"
+            ]
+          }
+        ],
+        "extraction_urls": [],
+        "event_extraction_urls": [],
+        "stop_reason": "event_eligible"
+      },
+      "event_attributions": [
+        {
+          "attribution_id": "attr_1nf7q5d",
+          "account_id": "rp_1v1bsfg",
+          "event_id": "tavily:0:https://distribuidoradam.com/",
+          "identity_state": "confirmed",
+          "relationship": "same_company",
+          "state": "directly_attributed",
+          "scope": "account_wide",
+          "event_subject": "Distribuidora DAM | Distribuidor mayorista de productos ...",
+          "location": null,
+          "event_date": null,
+          "event_status": "observed",
+          "source_owner": "https://distribuidoradam.com/",
+          "decisive_anchors": [],
+          "limitations": [
+            "Event date is missing or invalid."
+          ],
+          "signal_eligible": false,
+          "confidence": 0.5,
+          "methodology_version": "colombian-entity-resolution-v1",
+          "internal_only": true,
+          "ranking_impact": "off",
+          "report_impact": "off",
+          "url": "https://distribuidoradam.com/",
+          "provider": "tavily",
+          "rejection": [
+            "Event date is missing or invalid."
+          ]
+        },
+        {
+          "attribution_id": "attr_1dp0bua",
+          "account_id": "rp_1v1bsfg",
+          "event_id": "tavily:1:https://www.facebook.com/ANIMEXICO.ONLINE/posts/qu%C3%A9-es-dammuchos-quiz%C3%A1s-a%C3%BAn-no-lo-sepan-pero-nosotros-no-somos-una-tiendadam-es-/1228533819314802",
+          "identity_state": "confirmed",
+          "relationship": "same_company",
+          "state": "directly_attributed",
+          "scope": "unknown",
+          "event_subject": "¿Qué es DAM?🤔 Muchos quizás aún no lo sepan, pero ...",
+          "location": null,
+          "event_date": null,
+          "event_status": "observed",
+          "source_owner": "https://www.facebook.com/ANIMEXICO.ONLINE/posts/qu%C3%A9-es-dammuchos-quiz%C3%A1s-a%C3%BAn-no-lo-sepan-pero-nosotros-no-somos-una-tiendadam-es-/1228533819314802",
+          "decisive_anchors": [],
+          "limitations": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ],
+          "signal_eligible": false,
+          "confidence": 0.5,
+          "methodology_version": "colombian-entity-resolution-v1",
+          "internal_only": true,
+          "ranking_impact": "off",
+          "report_impact": "off",
+          "url": "https://www.facebook.com/ANIMEXICO.ONLINE/posts/qu%C3%A9-es-dammuchos-quiz%C3%A1s-a%C3%BAn-no-lo-sepan-pero-nosotros-no-somos-una-tiendadam-es-/1228533819314802",
+          "provider": "tavily",
+          "rejection": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ]
+        },
+        {
+          "attribution_id": "attr_125n8zt",
+          "account_id": "rp_1v1bsfg",
+          "event_id": "tavily:2:https://www.facebook.com/ANIMEXICO.ONLINE/videos/dam-tv-ep-1/1026802379518182",
+          "identity_state": "confirmed",
+          "relationship": "same_company",
+          "state": "directly_attributed",
+          "scope": "unknown",
+          "event_subject": "Y como la de chambear si nos la sabemos, aquí les dejamos ...",
+          "location": null,
+          "event_date": null,
+          "event_status": "observed",
+          "source_owner": "https://www.facebook.com/ANIMEXICO.ONLINE/videos/dam-tv-ep-1/1026802379518182",
+          "decisive_anchors": [],
+          "limitations": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ],
+          "signal_eligible": false,
+          "confidence": 0.5,
+          "methodology_version": "colombian-entity-resolution-v1",
+          "internal_only": true,
+          "ranking_impact": "off",
+          "report_impact": "off",
+          "url": "https://www.facebook.com/ANIMEXICO.ONLINE/videos/dam-tv-ep-1/1026802379518182",
+          "provider": "tavily",
+          "rejection": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ]
+        },
+        {
+          "attribution_id": "attr_9d39zg",
+          "account_id": "rp_1v1bsfg",
+          "event_id": "tavily:3:https://www.tiktok.com/@delivery.tv/video/7194633508638248238",
+          "identity_state": "confirmed",
+          "relationship": "same_company",
+          "state": "directly_attributed",
+          "scope": "unknown",
+          "event_subject": "¿Fuiste desconectado por inactividad? #deliverytv ...",
+          "location": null,
+          "event_date": null,
+          "event_status": "observed",
+          "source_owner": "https://www.tiktok.com/@delivery.tv/video/7194633508638248238",
+          "decisive_anchors": [],
+          "limitations": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ],
+          "signal_eligible": false,
+          "confidence": 0.5,
+          "methodology_version": "colombian-entity-resolution-v1",
+          "internal_only": true,
+          "ranking_impact": "off",
+          "report_impact": "off",
+          "url": "https://www.tiktok.com/@delivery.tv/video/7194633508638248238",
+          "provider": "tavily",
+          "rejection": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ]
+        },
+        {
+          "attribution_id": "attr_1xeqc42",
+          "account_id": "rp_1v1bsfg",
+          "event_id": "tavily:4:https://www.visa.com.pe/content/dam/VCOM/download/about-visa/visa-rules-public-spanish.pdf",
+          "identity_state": "confirmed",
+          "relationship": "same_company",
+          "state": "directly_attributed",
+          "scope": "unknown",
+          "event_subject": "Reglas Básicas de Visa y Reglas de Productos y Servicios de ...",
+          "location": null,
+          "event_date": null,
+          "event_status": "observed",
+          "source_owner": "https://www.visa.com.pe/content/dam/VCOM/download/about-visa/visa-rules-public-spanish.pdf",
+          "decisive_anchors": [],
+          "limitations": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ],
+          "signal_eligible": false,
+          "confidence": 0.5,
+          "methodology_version": "colombian-entity-resolution-v1",
+          "internal_only": true,
+          "ranking_impact": "off",
+          "report_impact": "off",
+          "url": "https://www.visa.com.pe/content/dam/VCOM/download/about-visa/visa-rules-public-spanish.pdf",
+          "provider": "tavily",
+          "rejection": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ]
+        }
+      ],
+      "explanation": {
+        "verdict": "confirmed",
+        "confirmed_anchors": [
+          "verified_domain",
+          "contact_page"
+        ],
+        "conflicting_anchors": [],
+        "missing_anchors": [],
+        "next_action": "Review directly attributable dated events."
+      }
+    },
+    {
+      "account": "Somos Consiente",
+      "domain": "somosconsiente.com",
+      "identity_profile": {
+        "profile_id": "entity_105msfb",
+        "account_id": "rp_a2xwiw",
+        "client_id": "amor-de-gea",
+        "canonical_commercial_name": "Somos Consiente",
+        "normalized_name": {
+          "raw_name": "Somos Consiente",
+          "normalized_full": "somos consiente",
+          "comparison_name": "somos consiente",
+          "legal_suffixes_removed": [],
+          "generic_prefixes_observed": []
+        },
+        "legal_name": null,
+        "nit": null,
+        "verified_domain": "somosconsiente.com",
+        "alternate_verified_domains": [],
+        "official_properties": [
+          {
+            "property_id": "prop_1wexz3l",
+            "type": "website",
+            "url": "https://somosconsiente.com",
+            "state": "verified",
+            "ownership_evidence": [
+              {
+                "kind": "verified_domain",
+                "value": "somosconsiente.com",
+                "strength": "strong",
+                "supports_identity": true,
+                "confidence": 0.99,
+                "evidence": [],
+                "reason": "Persisted verified account domain.",
+                "anchor_id": "anchor_7qv1zg"
+              }
+            ],
+            "source_owner_key": "somosconsiente.com",
+            "confidence": 0.95,
+            "profile_only": false,
+            "last_verified_at": "2026-07-30T14:24:06.487Z",
+            "limitations": []
+          }
+        ],
+        "city": null,
+        "department": null,
+        "country": "Colombia",
+        "verified_addresses": [],
+        "business_category": "wellness",
+        "products_services": [],
+        "parent_entity": null,
+        "subsidiaries": [],
+        "branches": [],
+        "known_aliases": [],
+        "former_names": [],
+        "marketplace_identities": [],
+        "distributor_relationships": [],
+        "registry_references": [],
+        "identity_confidence": 0.94,
+        "identity_state": "confirmed",
+        "confirmed_anchors": [
+          {
+            "kind": "verified_domain",
+            "value": "somosconsiente.com",
+            "strength": "strong",
+            "supports_identity": true,
+            "confidence": 0.99,
+            "evidence": [],
+            "reason": "Persisted verified account domain.",
+            "anchor_id": "anchor_7qv1zg"
+          },
+          {
+            "kind": "contact_page",
+            "value": "https://somosconsiente.com/",
+            "strength": "moderate",
+            "supports_identity": true,
+            "confidence": 0.82,
+            "evidence": [],
+            "reason": "Provider recovered content on the persisted verified domain.",
+            "anchor_id": "anchor_1pux3ov"
+          }
+        ],
+        "conflicting_anchors": [],
+        "unresolved_identity_questions": [],
+        "source_provenance": [],
+        "last_verified_date": "2026-07-30T14:23:46.735Z",
+        "methodology_version": "colombian-entity-resolution-v1",
+        "internal_only": true
+      },
+      "identity_queries": [
+        {
+          "query_id": "entityq_1n94olh",
+          "provider": "brave",
+          "stage": "identity",
+          "query": "\"Somos Consiente\" Colombia wellness",
+          "task": "identity_discovery",
+          "requires_identity_state": [
+            "confirmed",
+            "high_confidence",
+            "probable",
+            "ambiguous",
+            "unresolved"
+          ]
+        },
+        {
+          "query_id": "entityq_7nez9t",
+          "provider": "brave",
+          "stage": "identity",
+          "query": "\"Somos Consiente\" sitio oficial",
+          "task": "identity_discovery",
+          "requires_identity_state": [
+            "confirmed",
+            "high_confidence",
+            "probable",
+            "ambiguous",
+            "unresolved"
+          ]
+        },
+        {
+          "query_id": "entityq_1berkse",
+          "provider": "tavily",
+          "stage": "identity",
+          "query": "Somos Consiente empresa colombiana  wellness",
+          "task": "identity_discovery",
+          "requires_identity_state": [
+            "confirmed",
+            "high_confidence",
+            "probable",
+            "ambiguous",
+            "unresolved"
+          ]
+        }
+      ],
+      "identity_results": [
+        {
+          "url": "https://somosconsiente.com/",
+          "canonical_url": "https://somosconsiente.com/",
+          "title": "Somos Consiente – En Consiente diseñamos productos con mucho amor que te inspiran a alcanzar tu máximo potencial",
+          "snippet": "Ideas para la Semana de la Salud en tu empresa en Colombia, podemos ayudarte a diseñar una propuesta personalizada que combine regalos corporativos, kits de bienestar y talleres adaptados a las necesidades de tu organización.",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:24:04.517Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 1,
+          "locale": "es"
+        },
+        {
+          "url": "https://somosconsiente.com/vende-consiente/",
+          "canonical_url": "https://somosconsiente.com/vende-consiente",
+          "title": "VENDE CONSIENTE – Somos Consiente",
+          "snippet": "Quiénes somos · Dónde encontrarnos · Escríbenos · ¿Quieres vender Consiente? Blog · Ayuda al cliente: Política de privacidad · Términos y condiciones · Cambios y garantías · Contacto: +57 310 820 54 87 · Medellín – Colombia · hola@somosconsiente.com ·",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:24:04.517Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 2,
+          "locale": "es"
+        },
+        {
+          "url": "https://somosconsiente.com/quienes-somos/",
+          "canonical_url": "https://somosconsiente.com/quienes-somos",
+          "title": "¿Quienes Somos? – Somos Consiente",
+          "snippet": "<strong>Somos tres hermanas colombianas que desde el año 2018 decidieron crear su propia empresa: CONSIENTE</strong>.",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:24:04.517Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 3,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.youtube.com/channel/UCYKFriS5TsQ8vFrrcTW33bg",
+          "canonical_url": "https://www.youtube.com/channel/UCYKFriS5TsQ8vFrrcTW33bg",
+          "title": "Youtube",
+          "snippet": "AboutPressCopyrightContact usCreatorsAdvertiseDevelopersTermsPrivacyPolicy &amp; SafetyHow YouTube worksTest new featuresNFL Sunday Ticket · © 2026 Google LLC · Somos Consiente - YouTube",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:24:04.517Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 4,
+          "locale": "es"
+        },
+        {
+          "url": "https://somosconsiente.com/tienda/page/2/",
+          "canonical_url": "https://somosconsiente.com/tienda/page/2",
+          "title": "Tienda – Página 2 – Somos Consiente",
+          "snippet": "Hola, quiero más información sobre Consiente.",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:24:04.517Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 5,
+          "locale": "es"
+        },
+        {
+          "url": "https://somosconsiente.com/",
+          "canonical_url": "https://somosconsiente.com/",
+          "title": "Somos Consiente – En Consiente diseñamos productos con mucho amor que te inspiran a alcanzar tu máximo potencial",
+          "snippet": "Hola, quiero más información sobre Consiente.",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:24:04.520Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 1,
+          "locale": "es"
+        },
+        {
+          "url": "https://somosconsiente.com/tienda/",
+          "canonical_url": "https://somosconsiente.com/tienda",
+          "title": "Tienda – Somos Consiente",
+          "snippet": "Hola, quiero más información sobre Consiente.",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:24:04.520Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 2,
+          "locale": "es"
+        },
+        {
+          "url": "https://somosconsiente.com/vende-consiente/",
+          "canonical_url": "https://somosconsiente.com/vende-consiente",
+          "title": "VENDE CONSIENTE – Somos Consiente",
+          "snippet": "“En <strong>MÜNN</strong> amamos distribuir los productos de CONSIENTE. Son hermosos, de temas súper relevantes para el bienestar y a precios muy buenos. La atención del equipo de CONSIENTE es excelente, siempre están listas para solucionarnos las dudas y son muy rápidas para hacernos las reposicion",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:24:04.520Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 3,
+          "locale": "es"
+        },
+        {
+          "url": "https://somosconsiente.com/tienda/page/2/",
+          "canonical_url": "https://somosconsiente.com/tienda/page/2",
+          "title": "Tienda – Página 2 – Somos Consiente",
+          "snippet": "Hola, quiero más información sobre Consiente.",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:24:04.520Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 4,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.youtube.com/@somosconsiente",
+          "canonical_url": "https://www.youtube.com/@somosconsiente",
+          "title": "Somos Consiente - YouTube",
+          "snippet": "Empresa especializada en el desarrollo de productos para el bienestar emocional de las personas.",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:24:04.520Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 5,
+          "locale": "es"
+        },
+        {
+          "url": "https://somosconsiente.com",
+          "canonical_url": "https://somosconsiente.com/",
+          "title": "Somos Consiente – En Consiente diseñamos productos con mucho amor que te inspiran a alcanzar tu máximo potencial",
+          "snippet": "Ideas para la Semana de la Salud en tu empresa en Colombia, podemos ayudarte a diseñar una propuesta personalizada que combine regalos corporativos, kits de bienestar y talleres adaptados a las necesidades de tu organización.\n\n LEER MÁS\n\n## @SOMOSCONSIENTE\n\nGracias a @efcolombia @ambassadorsefcolomb",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:24:05.402Z",
+          "source_type": null,
+          "provider": "tavily",
+          "rank": 1,
+          "locale": "es"
+        },
+        {
+          "url": "https://somosconsiente.com/quienes-somos",
+          "canonical_url": "https://somosconsiente.com/quienes-somos",
+          "title": "¿Quienes Somos? – Somos Consiente",
+          "snippet": "Ir al contenido\n\n[](\n\n$0  0 Cart\n\n[](\n\n$0  0 Cart\n\n# ¿Quienes Somos?\n\n##### María Camila Olaya Líder de investigación y desarrollo\n\n##### María Daniela Olaya Líder de estrategia y comercial\n\n##### María Paula Olaya Líder de diseño y comunicación\n\n## Nuestra historia\n\nSomos tres hermanas colombianas ",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:24:05.402Z",
+          "source_type": null,
+          "provider": "tavily",
+          "rank": 2,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.youtube.com/watch?v=0w3oM1ecfCg",
+          "canonical_url": "https://www.youtube.com/watch?v=0w3oM1ecfCg",
+          "title": "Somos Consiente",
+          "snippet": "Desarrollamos productos que guían a las personas a tener una vida donde la felicidad, el amor propio y la paz interior son una prioridad.",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:24:05.402Z",
+          "source_type": null,
+          "provider": "tavily",
+          "rank": 3,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.instagram.com/somosconsiente?hl=en",
+          "canonical_url": "https://www.instagram.com/somosconsiente?hl=en",
+          "title": "Consiente | Regalos bienestar (@somosconsiente) · Medellín",
+          "snippet": "44K followers · 1K+ posts · Crecimiento personal | Salud mental Rituales de bienestar Regalos empresariales. tralo en somosconsiente.com",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:24:05.402Z",
+          "source_type": null,
+          "provider": "tavily",
+          "rank": 4,
+          "locale": "es"
+        },
+        {
+          "url": "https://www.instagram.com/reel/DRn5buwjCQt",
+          "canonical_url": "https://www.instagram.com/reel/DRn5buwjCQt",
+          "title": "“Somos Alma de Origen Natural… una empresa ...",
+          "snippet": "✨ una empresa Santandereana que nace para brindarte bienestar. Creemos en el poder de lo natural… para sanar, equilibrar y devolver calma a tu",
+          "published_date": null,
+          "retrieved_at": "2026-07-30T14:24:05.402Z",
+          "source_type": null,
+          "provider": "tavily",
+          "rank": 5,
+          "locale": "es"
+        }
+      ],
+      "execution_plan": {
+        "account_id": "rp_a2xwiw",
+        "identity_state": "confirmed",
+        "identity_queries": [
+          {
+            "query_id": "entityq_1n94olh",
+            "provider": "brave",
+            "stage": "identity",
+            "query": "\"Somos Consiente\" Colombia wellness",
+            "task": "identity_discovery",
+            "requires_identity_state": [
+              "confirmed",
+              "high_confidence",
+              "probable",
+              "ambiguous",
+              "unresolved"
+            ]
+          },
+          {
+            "query_id": "entityq_7nez9t",
+            "provider": "brave",
+            "stage": "identity",
+            "query": "\"Somos Consiente\" sitio oficial",
+            "task": "identity_discovery",
+            "requires_identity_state": [
+              "confirmed",
+              "high_confidence",
+              "probable",
+              "ambiguous",
+              "unresolved"
+            ]
+          },
+          {
+            "query_id": "entityq_1berkse",
+            "provider": "tavily",
+            "stage": "identity",
+            "query": "Somos Consiente empresa colombiana  wellness",
+            "task": "identity_discovery",
+            "requires_identity_state": [
+              "confirmed",
+              "high_confidence",
+              "probable",
+              "ambiguous",
+              "unresolved"
+            ]
+          }
+        ],
+        "event_queries": [
+          {
+            "query_id": "entityq_1irqfxj",
+            "provider": "brave",
+            "stage": "event",
+            "query": "\"Somos Consiente\" \"apertura expansión alianza lanzamiento\" Colombia",
+            "task": "event_discovery",
+            "requires_identity_state": [
+              "confirmed",
+              "high_confidence"
+            ]
+          },
+          {
+            "query_id": "entityq_1d0ykk1",
+            "provider": "tavily",
+            "stage": "counterevidence",
+            "query": "\"Somos Consiente\" cierre inactiva cancelada",
+            "task": "negative_event",
+            "requires_identity_state": [
+              "confirmed",
+              "high_confidence"
+            ]
+          }
+        ],
+        "extraction_urls": [],
+        "event_extraction_urls": [],
+        "stop_reason": "event_eligible"
+      },
+      "event_attributions": [
+        {
+          "attribution_id": "attr_10dqkr9",
+          "account_id": "rp_a2xwiw",
+          "event_id": "tavily:0:https://simplygest.cloud/academy/cerrar-tu-sesion-automaticamente-tras-un-periodo-de-inactividad",
+          "identity_state": "confirmed",
+          "relationship": "same_company",
+          "state": "directly_attributed",
+          "scope": "unknown",
+          "event_subject": "Cerrar tu sesión automáticamente tras un periodo de inactividad",
+          "location": null,
+          "event_date": null,
+          "event_status": "observed",
+          "source_owner": "https://simplygest.cloud/academy/cerrar-tu-sesion-automaticamente-tras-un-periodo-de-inactividad",
+          "decisive_anchors": [],
+          "limitations": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ],
+          "signal_eligible": false,
+          "confidence": 0.5,
+          "methodology_version": "colombian-entity-resolution-v1",
+          "internal_only": true,
+          "ranking_impact": "off",
+          "report_impact": "off",
+          "url": "https://simplygest.cloud/academy/cerrar-tu-sesion-automaticamente-tras-un-periodo-de-inactividad",
+          "provider": "tavily",
+          "rejection": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ]
+        },
+        {
+          "attribution_id": "attr_39rsc8",
+          "account_id": "rp_a2xwiw",
+          "event_id": "tavily:1:https://www.facebook.com/groups/platacardusuarios/posts/4286094918327159",
+          "identity_state": "confirmed",
+          "relationship": "same_company",
+          "state": "directly_attributed",
+          "scope": "unknown",
+          "event_subject": "Buenas noches, tengo una duda espero puedan solucionarmelo.",
+          "location": null,
+          "event_date": null,
+          "event_status": "observed",
+          "source_owner": "https://www.facebook.com/groups/platacardusuarios/posts/4286094918327159",
+          "decisive_anchors": [],
+          "limitations": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ],
+          "signal_eligible": false,
+          "confidence": 0.5,
+          "methodology_version": "colombian-entity-resolution-v1",
+          "internal_only": true,
+          "ranking_impact": "off",
+          "report_impact": "off",
+          "url": "https://www.facebook.com/groups/platacardusuarios/posts/4286094918327159",
+          "provider": "tavily",
+          "rejection": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ]
+        },
+        {
+          "attribution_id": "attr_z3rko6",
+          "account_id": "rp_a2xwiw",
+          "event_id": "tavily:2:https://somosconsiente.com/vende-consiente",
+          "identity_state": "confirmed",
+          "relationship": "same_company",
+          "state": "directly_attributed",
+          "scope": "account_wide",
+          "event_subject": "VENDE CONSIENTE",
+          "location": null,
+          "event_date": null,
+          "event_status": "observed",
+          "source_owner": "https://somosconsiente.com/vende-consiente",
+          "decisive_anchors": [],
+          "limitations": [
+            "Event date is missing or invalid."
+          ],
+          "signal_eligible": false,
+          "confidence": 0.5,
+          "methodology_version": "colombian-entity-resolution-v1",
+          "internal_only": true,
+          "ranking_impact": "off",
+          "report_impact": "off",
+          "url": "https://somosconsiente.com/vende-consiente",
+          "provider": "tavily",
+          "rejection": [
+            "Event date is missing or invalid."
+          ]
+        },
+        {
+          "attribution_id": "attr_1011nko",
+          "account_id": "rp_a2xwiw",
+          "event_id": "tavily:3:https://www.youtube.com/watch?v=kYkUtN-yEao",
+          "identity_state": "confirmed",
+          "relationship": "same_company",
+          "state": "directly_attributed",
+          "scope": "unknown",
+          "event_subject": "96. Cerrando Ciclos: Estrategias para el cierre de una empresa.",
+          "location": null,
+          "event_date": null,
+          "event_status": "observed",
+          "source_owner": "https://www.youtube.com/watch?v=kYkUtN-yEao",
+          "decisive_anchors": [],
+          "limitations": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ],
+          "signal_eligible": false,
+          "confidence": 0.5,
+          "methodology_version": "colombian-entity-resolution-v1",
+          "internal_only": true,
+          "ranking_impact": "off",
+          "report_impact": "off",
+          "url": "https://www.youtube.com/watch?v=kYkUtN-yEao",
+          "provider": "tavily",
+          "rejection": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ]
+        },
+        {
+          "attribution_id": "attr_ppptyv",
+          "account_id": "rp_a2xwiw",
+          "event_id": "tavily:4:https://www.instagram.com/reel/C7fXB0xxcXW",
+          "identity_state": "confirmed",
+          "relationship": "same_company",
+          "state": "directly_attributed",
+          "scope": "unknown",
+          "event_subject": "🚨Comparte esto para que a nadie más le pase🚨 Es triste que aún existan ...",
+          "location": null,
+          "event_date": null,
+          "event_status": "observed",
+          "source_owner": "https://www.instagram.com/reel/C7fXB0xxcXW",
+          "decisive_anchors": [],
+          "limitations": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ],
+          "signal_eligible": false,
+          "confidence": 0.5,
+          "methodology_version": "colombian-entity-resolution-v1",
+          "internal_only": true,
+          "ranking_impact": "off",
+          "report_impact": "off",
+          "url": "https://www.instagram.com/reel/C7fXB0xxcXW",
+          "provider": "tavily",
+          "rejection": [
+            "Event date is missing or invalid.",
+            "Attribution scope is unknown, not account-wide."
+          ]
+        }
+      ],
+      "explanation": {
+        "verdict": "confirmed",
+        "confirmed_anchors": [
+          "verified_domain",
+          "contact_page"
+        ],
+        "conflicting_anchors": [],
+        "missing_anchors": [],
+        "next_action": "Review directly attributable dated events."
+      }
+    }
+  ],
+  "internal_only": true,
+  "ranking_impact": "off",
+  "report_impact": "off",
+  "reprocessed_at": "2026-07-30T14:25:47.658Z",
+  "reprocess_reason": "Attach deterministic official website properties from persisted verified domains; zero provider calls."
+}

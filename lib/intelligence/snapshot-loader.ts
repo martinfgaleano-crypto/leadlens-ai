@@ -19,6 +19,27 @@ const RESEARCH_QUALITY_DIR = "ml/data/research-quality";
 const SIGNAL_TEMPORAL_DIR = "ml/data/signal-temporal";
 const SIGNAL_BENCHMARK_DIR = "ml/data/signal-benchmark";
 const SIGNAL_MONITORING_OPERATIONS_DIR = "ml/data/signal-monitoring-operations";
+const ENTITY_RESOLUTION_DIR = "ml/data/entity-resolution";
+
+export interface EntityResolutionArtifact {
+  generated_at: string; methodology_version: string; internal_only: true;
+  summary: {
+    accounts: number; identity_queries: number; searches: number; extractions: number; results: number;
+    confirmed: number; high_confidence: number; probable: number; unresolved: number;
+    verified_domains: number; official_properties: number; event_eligible: number;
+    dated_event_results: number; directly_attributable_events: number; valid_signals: number;
+    provider_health: Record<string,{ state: string; reason?: string; automatic_fallback?: boolean }>;
+    cost: { state: string; reason?: string };
+  };
+}
+export async function loadLatestEntityResolution(root = process.cwd()): Promise<EntityResolutionArtifact | null> {
+  try {
+    const dir=path.join(root,ENTITY_RESOLUTION_DIR);
+    const files=(await fs.readdir(dir)).filter(f=>/^amor-de-gea-block10-.*\.json$/.test(f)).sort();
+    const latest=files.at(-1); if(!latest) return null;
+    return JSON.parse(await fs.readFile(path.join(dir,latest),"utf8")) as EntityResolutionArtifact;
+  } catch { return null; }
+}
 
 export interface SignalBenchmarkArtifact {
   cutoff: string; run_id: string; methodology_version: string; preliminary: boolean;

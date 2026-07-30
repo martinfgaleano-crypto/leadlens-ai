@@ -127,6 +127,20 @@ function Overview({ model }: { model: AdminIntelligenceViewModel }) {
       </div>
       {model.signal_monitoring_operation && <p>Latest operation: {model.signal_monitoring_operation.summary.raw_results} raw results, {model.signal_monitoring_operation.summary.correct_entity_results} correct-entity results, {model.signal_monitoring_operation.summary.valid_signals} valid signals. Persistence is operational; monitoring remains manually triggered.</p>}
     </section>}
+    {model.entity_resolution && <section className={styles.panel}>
+      <SectionHeader eyebrow="Block 10 · internal only" title="Colombian entity resolution" text="Identity is resolved before event search. Results remain outside ranking and customer reports."/>
+      <div className={styles.metricGrid}>
+        <Metric label="Entity coverage" value={`${model.entity_resolution.summary.accounts}/6`}/>
+        <Metric label="Confirmed accounts" value={model.entity_resolution.summary.confirmed}/>
+        <Metric label="Unresolved accounts" value={model.entity_resolution.summary.unresolved}/>
+        <Metric label="Verified domains" value={model.entity_resolution.summary.verified_domains}/>
+        <Metric label="Official properties" value={model.entity_resolution.summary.official_properties}/>
+        <Metric label="Event eligible" value={model.entity_resolution.summary.event_eligible}/>
+        <Metric label="Direct events" value={model.entity_resolution.summary.directly_attributable_events}/>
+        <Metric label="Primary bottleneck" value={model.entity_resolution.summary.dated_event_results ? "Event attribution" : "No dated attributable event"}/>
+      </div>
+      <p><strong>Provider health:</strong> {Object.entries(model.entity_resolution.summary.provider_health).map(([provider,health]) => `${provider}: ${health.state}${health.automatic_fallback === false ? " (fallback off)" : ""}`).join(" · ")}</p>
+    </section>}
 
     <SectionHeader eyebrow="Eight dimensions" title="Maturity scorecard" text="Scores appear only when the underlying dimension is genuinely measured." />
     <div className={styles.dimensionGrid}>
