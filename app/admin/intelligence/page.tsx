@@ -83,6 +83,25 @@ function Overview({ model }: { model: AdminIntelligenceViewModel }) {
       </footer>
     </section>
 
+    <section className={styles.panel}>
+      <SectionHeader
+        eyebrow="Live internal pilot"
+        title="Amor de Gea"
+        text="Canonical Colombian pilot workspace. Client context and human review remain the current blockers."
+      />
+      <div className={styles.metricGrid}>
+        <Metric label="Pilot status" value="Context required" />
+        <Metric label="Accounts" value="6" />
+        <Metric label="Internal theses" value="6" />
+        <Metric label="Unanswered questions" value="17" />
+        <Metric label="Critical blockers" value="10" />
+        <Metric label="Reviewed theses" value="0" />
+        <Metric label="Customer-safe outputs" value="0" />
+      </div>
+      <p><strong>Next action:</strong> complete and review the highest-priority client-context questions.</p>
+      <a href="/admin/intelligence/pilots/amor-de-gea">Open Amor de Gea pilot workspace →</a>
+    </section>
+
     <div className={styles.availability} role="status">
       <strong>Data availability</strong><span>{model.availability.message}</span>
       <StatePill value={`database ${model.availability.database}`} />

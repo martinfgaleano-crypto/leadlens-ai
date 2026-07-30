@@ -1,5 +1,27 @@
 # LeadLens Block 13 — Amor de Gea Pilot Workspace
 
+## Post-migration activation
+
+Migration 047 was manually applied and verified through service-role access on both tables and every expected column. Anonymous access exposed no rows. PostgREST does not expose sufficient `pg_catalog` metadata to independently enumerate every index, grant and RLS policy, so those details are classified as partially verified empirically rather than overstated.
+
+The corrected backfill dry-run planned one canonical pilot, six existing theses and one activity event while embedding one client identity, six account references, 17 unanswered questions, six feasibility assessments, 20 readiness sections and six monitoring triggers. It found zero duplicates, orphans, invalid references, conflicting IDs, synthetic answers or writes.
+
+The authorized first write inserted eight rows: one pilot, six theses and one activity event. The immediate second write inserted zero rows with no duplicate error or destructive update. Direct final Supabase verification confirmed:
+
+- 1 canonical pilot;
+- 6 account references and 6 theses with exact expected IDs;
+- 17 unanswered context questions;
+- 6 feasibility assessments;
+- 20 readiness records;
+- 6 monitoring triggers;
+- 0 real answers or accepted context versions;
+- 0 reviewed theses;
+- 0 customer-safe outputs;
+- 0 orphan or cross-scope records;
+- internal-only, ranking off, report impact off and final report disabled.
+
+The Command Center now contains a bounded Amor de Gea summary and canonical workspace link. The production canonical URL exists and correctly redirected an unauthenticated browser to `/admin/login?reason=unauthorized` with no console errors. Full authenticated content/refresh/back-navigation verification remains pending because no active Admin browser session was available and the focused activation commit has not yet been pushed. No force push or automatic deployment was performed.
+
 ## Result
 
 Block 13 replaces the empty Amor de Gea Admin state with a canonical, populated internal workspace at `/admin/intelligence/pilots/amor-de-gea`. It exposes the six verified accounts, six internal theses, 17 unanswered context questions, feasibility, safety, readiness, activity and an operating checklist. The final report remains disabled, ranking remains off and no production answer was fabricated.
@@ -23,7 +45,7 @@ The Admin pilot page now links to the canonical Intelligence route. Legacy slugs
 - Customer-safe outputs: 0
 - Current signals/current timing: 0/0
 
-Migration 047 adds only a canonical pilot record and append-only activity table with RLS and service-role access. It was generated but **not applied**.
+Migration 047 adds only a canonical pilot record and append-only activity table with RLS and service-role access. It is now applied.
 
 ## Data reconciliation
 
@@ -36,9 +58,9 @@ Read-only reconciliation against Supabase performed zero writes:
 | Context intakes | 0 | 0 | 0 | Supabase 046 | Write only real drafts/submissions |
 | Accepted context versions | 0 | 0 | 0 | Supabase 046 | Create only after human acceptance |
 | Safety reviews | 0 | 0 | 0 | Supabase 046 | Create only after human review |
-| Canonical pilot | 1 | unavailable until 047 | 1 | bundled view model | Apply 047 manually before write backfill |
+| Canonical pilot | 1 | 1 | 1 | Supabase + bundled view model | Verified |
 
-The production bundle statically includes the tracked Block 10, 11 and 12 JSON artifacts. It has no `.leadlens` runtime dependency and performs no provider or LLM call during render. The dry-run backfill reports one pilot, six accounts, six theses, 17 questions, six safety assessments and 20 sections with `writes: 0` and `synthetic_answers: 0`. Write mode was deferred because migration 047 was not authorized/applied.
+The production bundle statically includes the tracked Block 10, 11 and 12 JSON artifacts. It has no `.leadlens` runtime dependency and performs no provider or LLM call during render. The dry-run backfill reported one pilot, six accounts, six theses, 17 questions, six safety assessments and 20 sections with `writes: 0` and `synthetic_answers: 0`. Write mode then completed with eight inserts and the second run performed zero writes.
 
 ## Workspace architecture and state
 
@@ -87,12 +109,12 @@ All operations require active Admin authorization, reject forged question/thesis
 - TypeScript: passed.
 - Production build: passed; both workspace page and two protected APIs are present.
 
-Browser validation confirmed that the production-equivalent build routes unauthenticated local access to Admin login instead of exposing the workspace. A complete local authenticated visual run could not be safely simulated because the Admin layout requires a signed httpOnly session cookie and the production build correctly disables local bypass. No Auth weakening or fake production intake was introduced. Final authenticated screenshots must therefore be captured after deployment with a real authorized Admin session.
+Browser validation confirmed that both the production-equivalent build and current production route redirect unauthenticated access to Admin login instead of exposing the workspace. Production emitted no browser-console error during this check. A complete authenticated visual run could not be safely simulated because no active Admin session was available and the Admin layout requires a signed httpOnly session cookie. No Auth weakening or fake production intake was introduced. Final authenticated screenshots must therefore be captured after the activation deployment with a real authorized Admin session.
 
 ## Migration and security status
 
 - Migrations 041–046: reported applied; 045/046 tables were readable.
-- Migration 047: generated, not applied.
+- Migration 047: applied and operationally verified.
 - No service-role secret is sent to the browser.
 - No customer route was added.
 - No provider payload, personal contact data or hidden reasoning is stored/exposed.
@@ -102,6 +124,6 @@ Browser validation confirmed that the production-equivalent build routes unauthe
 
 Real state remains: 17 unanswered questions, 10 critical blockers, six unreviewed theses, six context/feasibility-blocked accounts, zero current timing, zero current signals and zero customer-safe outputs.
 
-Exact next action: apply migration 047 manually, run the bounded backfill in dry-run again, explicitly authorize its write mode, deploy Block 13, then open the canonical route with a real Admin session and enter the first critical Amor de Gea answers as drafts. Do not generate the final report until accepted context, thesis review, feasibility and safety gates pass.
+Exact next action: push the focused Block 13/activation commits, wait for Vercel Ready, then open the canonical route with a real Admin session and verify the persisted zero-answer state. After validation, collect the first real critical Amor de Gea answers as drafts. Do not generate the final report until accepted context, thesis review, feasibility and safety gates pass.
 
 Next recommended block: a controlled Amor de Gea pilot operation block using real client answers, not a new generic Intelligence abstraction. Block 14 was not started.

@@ -381,3 +381,12 @@ Block 3 is complete when registry tests and related regressions pass, checkpoint
 - Authenticated visual QA/screenshots remain post-deploy with a real Admin session; Auth was not weakened to manufacture a local pass.
 - Full record: `LEADLENS_BLOCK_13_AMOR_DE_GEA_PILOT_WORKSPACE_REPORT.md`.
 - Block 14 and final Amor de Gea report were not started.
+
+### Post-migration activation
+
+- Migration 047 is applied and compatible with the bounded activation workflow.
+- Backfill dry run passed with 0 writes and 0 synthetic answers.
+- First write inserted 1 canonical pilot, 6 existing theses and 1 activity event; the second run was an idempotent 0-write no-op.
+- Database truth is now 1 pilot, 6 accounts, 6 unreviewed internal theses, 17 unanswered questions, 0 accepted context versions, 0 reviewed theses and 0 customer-safe outputs.
+- IDs and client scope match, with zero orphan/cross-scope records. Ranking/report impact remain off and final report remains disabled.
+- Current production recognizes the canonical URL and redirects unauthorized access to Admin login without console errors. The activation deployment and full authenticated browser validation remain pending the user-owned push from `main`; no force push was performed.

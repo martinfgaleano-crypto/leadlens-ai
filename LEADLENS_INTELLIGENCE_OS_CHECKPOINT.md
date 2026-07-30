@@ -322,3 +322,12 @@ Preserved: `preference-learner` + `shadow-preference` never touch ranking; UI sh
 - Targeted 48/48 plus Auth, validation, evidence, signal, research, registry, snapshot, Market-to-Account and entity regressions passed; typecheck and production build passed.
 - Browser confirmed fail-closed unauthenticated behavior. Authenticated production screenshot verification remains a post-deploy action because the signed httpOnly Admin session was intentionally not bypassed.
 - Final customer report, deployment, outreach, new accounts, adaptive ranking and Block 14 were not started.
+
+### Block 13 post-migration activation
+
+- Migration 047 was manually applied; both tables, all expected columns and service-role reads were verified. Anonymous reads exposed no rows; catalog-level policy/index enumeration remains unavailable through PostgREST and is reported honestly as partial empirical verification.
+- Dry run: 1 pilot, 6 theses and 1 activity insert planned; 6 account references, 17 unanswered questions, 6 feasibility records, 20 readiness sections and 6 triggers embedded; 0 writes, synthetic answers, conflicts, orphans or invalid references.
+- Authorized write: 8 new rows (1 pilot + 6 existing internal theses + 1 activity event). Immediate second run: 0 writes and no duplicate/destructive operation.
+- Direct Supabase verification: 1 pilot, 6 exact accounts/theses, 17 questions, 0 answers, 0 accepted versions, 0 reviewed theses, 0 customer-safe outputs and 0 cross-scope/orphan records.
+- Command Center now links to the canonical pilot with the required concise zero-state summary.
+- Current production recognizes the canonical route and fails closed to Admin login without console errors. Activation deployment and authenticated content/refresh/navigation QA remain pending because `main` is not pushed and no active Admin browser session was available. Runtime files remain excluded. Block 14 was not started.

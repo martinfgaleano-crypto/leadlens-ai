@@ -46,7 +46,10 @@ async function run() {
   test("23 route is private no-store", /private, no-store/.test(routeSource));
   test("24 every major tab has content code", ["Overview","Capabilities","Outputs","Patterns","Validation","Gaps & Actions","Readiness","Evidence"].every((x) => pageSource.includes(x)));
   test("25 useful error fallback exists", /No values have been replaced with fabricated zeros/.test(pageSource) && /Retry/.test(pageSource));
-  test("26 no Amor-specific presentation", !/Amor de Gea|amor-de-gea/i.test(pageSource));
+  test("26 bounded Amor pilot summary links canonical workspace",
+    pageSource.includes("/admin/intelligence/pilots/amor-de-gea") &&
+    pageSource.includes('value="17"') &&
+    pageSource.includes('value="10"'));
   test("27 all eight dimensions present", local.snapshot.index.dimensions.length === 8);
   test("28 observation pattern production is forbidden", local.snapshot.patterns.every((p) => p.mode !== "production"));
   test("29 outputs retain ranking off", local.snapshot.outputs.every((o) => o.ranking_impact === "none"));
