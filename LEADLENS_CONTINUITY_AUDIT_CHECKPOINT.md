@@ -1,5 +1,32 @@
 # LeadLens Continuity Audit — Authoritative Checkpoint
 
+## Block 8 continuity update — 2026-07-30
+
+- Starting HEAD: `0c04d59` (Block 7).
+- Audited 18 persisted account states, 12 dossiers, 34 evidence records and 12
+  claims before implementation. Repeated observations were incorrectly marked
+  as first observations because the runner never loaded a prior baseline.
+- Implemented canonical signal intelligence, per-type temporal policies,
+  baseline-required durable triggers, bounded verified-identity query planning,
+  event normalization, source independence, signal counterevidence, What
+  Changed v2, Timing v2 and explicit qualification transitions.
+- Generated migration 043 with only four justified internal ledgers. It remains
+  unapplied pending explicit owner approval; no schema claim is fabricated.
+- Controlled pass used the same six Colombia-first accounts and the persisted
+  Block 7 cutoff. Twelve Brave queries returned eight raw results without
+  errors, but zero result passed identity + event + publication-date gates.
+  The correct result is six `no_current_signal`, zero material changes and zero
+  decision transitions. Provider cost is not measured.
+- The local immutable artifact is
+  `ml/data/signal-temporal/amor-de-gea-block8-2026-07-30T12-50-20-362Z.json`.
+  Snapshot/Admin load it provider-free and show migration/cost limitations.
+- Ranking, Outcome Performance, customer reports, auth, patterns and market
+  scope remain unchanged. No scheduler was created.
+- Block 8 suite and all required regressions/typecheck/build passed. Details:
+  `LEADLENS_BLOCK_8_SIGNAL_TEMPORAL_MONITORING_REPORT.md`.
+- Runtime `.leadlens/source-intelligence.json` and `.leadlens/usage.json` remain
+  excluded from the commit.
+
 ## Block 7 continuity update — 2026-07-29
 
 - Starting HEAD: `926b456` (Block 6).

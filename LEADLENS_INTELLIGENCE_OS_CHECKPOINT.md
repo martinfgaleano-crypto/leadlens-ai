@@ -1,7 +1,44 @@
 # LeadLens Intelligence OS — Checkpoint
 
 ## Current block
-**Block 7 — Research Quality, Claim Recovery and Opportunity Qualification — DONE.**
+**Block 8 — Signal Intelligence, Temporal Monitoring and What Changed v2 — DONE.**
+
+## Block 8 — DONE
+
+- Added `signal-temporal-v2`: 54 signal categories, explicit signal/event states,
+  ten-dimensional materiality, category-specific decay/expiry policy, atomic
+  event normalization, source independence and strict observation-only defaults.
+- Added baseline-required trigger registry, verified-identity monitoring-query
+  planner, overlap windows, provider-date uncertainty, stable/idempotent run IDs
+  and hard query/extraction/trigger caps. No scheduler or render-time provider call.
+- Added signal-specific corroboration and bounded counterevidence contracts,
+  What Changed v2, gated Timing v2, explicit qualification transitions and
+  14 internal temporal output types. Raw signal count affects no decision.
+- First real same-six-account temporal pass: baseline
+  `2026-07-30T00:33:22.535Z`, 12 active triggers, 12/30 queries, eight raw
+  results, zero provider failures, zero dated entity-safe event candidates,
+  zero accepted/corroborated signals, six honest `no_current_signal` outputs,
+  zero material changes and zero qualification transitions. Cost is
+  `cost_not_measured`, never fabricated as zero.
+- Generated minimal migration 043 for four immutable/RLS-protected ledgers:
+  runs, triggers, signals and changes. It is pending explicit application;
+  migration 042 remains the authoritative baseline.
+- Snapshot and Command Center consume the local Block 8 artifact provider-free
+  and expose monitoring metrics without inflating maturity, ranking or report
+  eligibility.
+- Verification: Block 8 50/50, Block 7 62/62, Block 6 55/55, Command Center
+  36/36, OS contracts 25/25, snapshot 27/27, registries 28/28, validation 50/50,
+  Admin Auth 48/48, login routing 57/57, ranking/intelligence v2 31/31 and v3
+  52/52. TypeScript and production build passed.
+- Full audit and run ledger:
+  `LEADLENS_BLOCK_8_SIGNAL_TEMPORAL_MONITORING_REPORT.md`.
+
+## Next block
+
+Apply migration 043 only with explicit approval, replay the existing artifact
+to verify immutable database persistence and tenant isolation, then scope Block
+9. Do not begin scheduling, ranking learning, pattern promotion or customer
+temporal reports.
 
 ## Block 7 — DONE
 

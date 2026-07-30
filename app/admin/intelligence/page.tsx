@@ -100,6 +100,19 @@ function Overview({ model }: { model: AdminIntelligenceViewModel }) {
         <Metric label="Primary bottleneck" value={model.research_quality.summary.commercially_relevant_claims ? "Corroboration / timing" : "No current commercial claims"}/>
       </div>
     </section>}
+    {model.signal_temporal && <section className={styles.panel}>
+      <SectionHeader eyebrow="Block 8 · observation only" title="Temporal monitoring" text={`${model.signal_temporal.summary.unchanged_or_no_current_signal} of ${model.signal_temporal.summary.accounts} accounts produced an honest no-change or no-current-signal result. Ranking and reports remain off.`}/>
+      <div className={styles.metricGrid}>
+        <Metric label="Accounts monitored" value={model.signal_temporal.summary.accounts}/>
+        <Metric label="Triggers checked" value={model.signal_temporal.summary.triggers_checked}/>
+        <Metric label="Queries executed" value={model.signal_temporal.summary.queries_executed}/>
+        <Metric label="Signal candidates" value={model.signal_temporal.summary.signal_candidates}/>
+        <Metric label="Accepted signals" value={model.signal_temporal.summary.accepted_signals}/>
+        <Metric label="Material changes" value={model.signal_temporal.summary.accounts_with_material_change}/>
+        <Metric label="Database ledger" value={model.signal_temporal.migration_043_applied ? "Available" : "Migration 043 pending"}/>
+        <Metric label="Provider cost" value={model.signal_temporal.summary.measured_cost_usd === null ? "Not measured" : `$${model.signal_temporal.summary.measured_cost_usd}`}/>
+      </div>
+    </section>}
 
     <SectionHeader eyebrow="Eight dimensions" title="Maturity scorecard" text="Scores appear only when the underlying dimension is genuinely measured." />
     <div className={styles.dimensionGrid}>

@@ -1,0 +1,1473 @@
+{
+  "block": 8,
+  "generated_at": "2026-07-30T12:50:20.362Z",
+  "methodology_version": "signal-temporal-v2",
+  "baseline_artifact": "amor-de-gea-block7-2026-07-30T00-33-22-535Z.json",
+  "migration_043_applied": false,
+  "persistence": {
+    "local_immutable_artifact": true,
+    "database_signal_tables": "blocked_pending_explicit_migration_043_approval",
+    "migration_042_reuse": "source evidence, claims, states and dossiers remain authoritative baseline"
+  },
+  "limits": {
+    "max_accounts": 6,
+    "max_triggers_per_account": 3,
+    "max_queries_per_trigger": 3,
+    "max_queries": 30,
+    "max_extracts": 12,
+    "max_retries": 2,
+    "max_cost_usd": 1.5,
+    "no_llm": true,
+    "no_scheduler": true
+  },
+  "run": {
+    "run_id": "mon_o4cfx0",
+    "client_id": "amor-de-gea",
+    "source_cutoff": "2026-07-30T12:50:20.362Z",
+    "baseline_cutoff": "2026-07-30T00:33:22.535Z",
+    "requested_from": "2026-07-30T00:33:22.535Z",
+    "requested_to": "2026-07-30T12:50:20.362Z",
+    "query_cap": 30,
+    "extraction_cap": 12,
+    "trigger_cap_per_account": 3,
+    "operational_mode": "observation",
+    "status": "completed",
+    "provider_date_behavior": "requested_not_guaranteed",
+    "ranking_impact": "off",
+    "report_impact": "off"
+  },
+  "summary": {
+    "accounts": 6,
+    "triggers_checked": 12,
+    "queries_executed": 12,
+    "extracts": 0,
+    "retries": 0,
+    "signal_candidates": 0,
+    "accepted_signals": 0,
+    "corroborated_signals": 0,
+    "accounts_with_material_change": 0,
+    "unchanged_or_no_current_signal": 6,
+    "qualification_transitions": 0,
+    "measured_cost_usd": null,
+    "cost_state": "cost_not_measured"
+  },
+  "provider_contribution": {
+    "brave": {
+      "calls": 12,
+      "results": 8,
+      "errors": 0
+    }
+  },
+  "accounts": [
+    {
+      "account": "Natural + Mente",
+      "domain": "naturalmente.com.co",
+      "baseline_cutoff": "2026-07-30T00:33:22.535Z",
+      "triggers": [
+        {
+          "trigger_id": "trg_14xosi9",
+          "tenant_user_id": null,
+          "client_id": "amor-de-gea",
+          "account_id": "naturalmente.com.co",
+          "category": "new_location",
+          "trigger_statement": "Detectar apertura o expansión física verificable.",
+          "current_baseline": "2026-07-30T00:33:22.535Z",
+          "evidence_required": [
+            "entity-matched evidence",
+            "publication or effective date",
+            "commercially relevant event"
+          ],
+          "disconfirming_evidence": [
+            "cancelled or delayed event",
+            "wrong entity",
+            "stale or evergreen content"
+          ],
+          "why_it_matters": "Puede crear una ventana comercial concreta.",
+          "client_relevance": "Requires explicit client-context gate.",
+          "expected_review_horizon_days": 60,
+          "search_cadence_recommendation_days": 60,
+          "query_templates": [
+            "\"{name}\" expansión",
+            "\"{name}\" \"nueva sede\"",
+            "\"{name}\" apertura {country}"
+          ],
+          "priority": "high",
+          "confidence": 0.7,
+          "active_status": "active",
+          "created_at": "2026-07-30T12:50:20.362Z",
+          "last_checked_at": null,
+          "next_check_at": "2026-09-28T12:50:20.362Z",
+          "expiry": null,
+          "methodology_version": "signal-temporal-v2"
+        },
+        {
+          "trigger_id": "trg_vyry9m",
+          "tenant_user_id": null,
+          "client_id": "amor-de-gea",
+          "account_id": "naturalmente.com.co",
+          "category": "distribution_agreement",
+          "trigger_statement": "Detectar nueva distribución, alianza o canal comprador.",
+          "current_baseline": "2026-07-30T00:33:22.535Z",
+          "evidence_required": [
+            "entity-matched evidence",
+            "publication or effective date",
+            "commercially relevant event"
+          ],
+          "disconfirming_evidence": [
+            "cancelled or delayed event",
+            "wrong entity",
+            "stale or evergreen content"
+          ],
+          "why_it_matters": "Puede ampliar acceso comercial para Amor de Gea.",
+          "client_relevance": "Requires explicit client-context gate.",
+          "expected_review_horizon_days": 60,
+          "search_cadence_recommendation_days": 60,
+          "query_templates": [
+            "\"{name}\" alianza",
+            "\"{name}\" \"acuerdo de distribución\"",
+            "\"{name}\" proveedor"
+          ],
+          "priority": "high",
+          "confidence": 0.7,
+          "active_status": "active",
+          "created_at": "2026-07-30T12:50:20.362Z",
+          "last_checked_at": null,
+          "next_check_at": "2026-09-28T12:50:20.362Z",
+          "expiry": null,
+          "methodology_version": "signal-temporal-v2"
+        }
+      ],
+      "planned_queries": [
+        {
+          "query_id": "mq_zc19na",
+          "trigger_id": "trg_14xosi9",
+          "query": "\"Natural + Mente\" expansión",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        },
+        {
+          "query_id": "mq_kgukuh",
+          "trigger_id": "trg_14xosi9",
+          "query": "\"Natural + Mente\" \"nueva sede\"",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        },
+        {
+          "query_id": "mq_1u4t4i9",
+          "trigger_id": "trg_14xosi9",
+          "query": "\"Natural + Mente\" apertura Colombia",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        },
+        {
+          "query_id": "mq_1pajeq0",
+          "trigger_id": "trg_vyry9m",
+          "query": "\"Natural + Mente\" alianza",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        },
+        {
+          "query_id": "mq_1cpsxo5",
+          "trigger_id": "trg_vyry9m",
+          "query": "\"Natural + Mente\" \"acuerdo de distribución\"",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        },
+        {
+          "query_id": "mq_1rqddvo",
+          "trigger_id": "trg_vyry9m",
+          "query": "\"Natural + Mente\" proveedor",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        }
+      ],
+      "executed_queries": [
+        {
+          "query_id": "mq_zc19na",
+          "trigger_id": "trg_14xosi9",
+          "query": "\"Natural + Mente\" expansión",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null,
+          "provider": "brave",
+          "error": null,
+          "result_count": 0,
+          "accepted_entity_dated_candidates": 0
+        },
+        {
+          "query_id": "mq_kgukuh",
+          "trigger_id": "trg_14xosi9",
+          "query": "\"Natural + Mente\" \"nueva sede\"",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null,
+          "provider": "brave",
+          "error": null,
+          "result_count": 0,
+          "accepted_entity_dated_candidates": 0
+        }
+      ],
+      "signal_candidates": 0,
+      "accepted_signals": [],
+      "rejected_signals": [],
+      "what_changed": {
+        "change_id": "chg_1mqrcbv",
+        "signal_key": null,
+        "account_id": "naturalmente.com.co",
+        "monitoring_run_id": "mon_o4cfx0",
+        "state": "unchanged",
+        "prior_state": null,
+        "current_state": null,
+        "evidence_delta": {
+          "added": [],
+          "removed": []
+        },
+        "effective_date": null,
+        "detection_date": "2026-07-30T12:50:20.362Z",
+        "materiality": "insufficient_evidence",
+        "commercial_interpretation": "No decision-changing temporal change detected.",
+        "confidence": 0,
+        "limitation": "No current signal found within bounded monitoring.",
+        "immutable": true,
+        "methodology_version": "signal-temporal-v2"
+      },
+      "timing": "no_current_timing_evidence",
+      "qualification_transition": {
+        "transition_id": "qtr_1u120bm",
+        "previous_decision": "prioritize",
+        "new_decision": "prioritize",
+        "reason": "No explicit transition rule passed.",
+        "decisive_evidence": [],
+        "timing_state": "no_current_timing_evidence",
+        "failed_gates": [
+          "credible_current_timing",
+          "clear_action"
+        ],
+        "confidence": 0.5,
+        "reviewer_state": "unreviewed",
+        "ranking_impact": "off"
+      },
+      "output": {
+        "type": "no_current_signal",
+        "account_id": "naturalmente.com.co",
+        "signal_id": null,
+        "evidence_ids": [],
+        "trigger_id": "trg_14xosi9",
+        "qualification_transition_id": "qtr_1u120bm",
+        "claim_ids": [],
+        "prior_state_id": null,
+        "current_state_id": null,
+        "internal_only": true,
+        "review_state": "unreviewed",
+        "ranking_impact": "off",
+        "report_impact": "off",
+        "methodology_version": "signal-temporal-v2"
+      }
+    },
+    {
+      "account": "Tu Tienda Saludable",
+      "domain": "tutiendasaludable.com.co",
+      "baseline_cutoff": "2026-07-30T00:33:22.535Z",
+      "triggers": [
+        {
+          "trigger_id": "trg_tx8rwm",
+          "tenant_user_id": null,
+          "client_id": "amor-de-gea",
+          "account_id": "tutiendasaludable.com.co",
+          "category": "new_location",
+          "trigger_statement": "Detectar apertura o expansión física verificable.",
+          "current_baseline": "2026-07-30T00:33:22.535Z",
+          "evidence_required": [
+            "entity-matched evidence",
+            "publication or effective date",
+            "commercially relevant event"
+          ],
+          "disconfirming_evidence": [
+            "cancelled or delayed event",
+            "wrong entity",
+            "stale or evergreen content"
+          ],
+          "why_it_matters": "Puede crear una ventana comercial concreta.",
+          "client_relevance": "Requires explicit client-context gate.",
+          "expected_review_horizon_days": 60,
+          "search_cadence_recommendation_days": 60,
+          "query_templates": [
+            "\"{name}\" expansión",
+            "\"{name}\" \"nueva sede\"",
+            "\"{name}\" apertura {country}"
+          ],
+          "priority": "high",
+          "confidence": 0.7,
+          "active_status": "active",
+          "created_at": "2026-07-30T12:50:20.362Z",
+          "last_checked_at": null,
+          "next_check_at": "2026-09-28T12:50:20.362Z",
+          "expiry": null,
+          "methodology_version": "signal-temporal-v2"
+        },
+        {
+          "trigger_id": "trg_wqlw6h",
+          "tenant_user_id": null,
+          "client_id": "amor-de-gea",
+          "account_id": "tutiendasaludable.com.co",
+          "category": "distribution_agreement",
+          "trigger_statement": "Detectar nueva distribución, alianza o canal comprador.",
+          "current_baseline": "2026-07-30T00:33:22.535Z",
+          "evidence_required": [
+            "entity-matched evidence",
+            "publication or effective date",
+            "commercially relevant event"
+          ],
+          "disconfirming_evidence": [
+            "cancelled or delayed event",
+            "wrong entity",
+            "stale or evergreen content"
+          ],
+          "why_it_matters": "Puede ampliar acceso comercial para Amor de Gea.",
+          "client_relevance": "Requires explicit client-context gate.",
+          "expected_review_horizon_days": 60,
+          "search_cadence_recommendation_days": 60,
+          "query_templates": [
+            "\"{name}\" alianza",
+            "\"{name}\" \"acuerdo de distribución\"",
+            "\"{name}\" proveedor"
+          ],
+          "priority": "high",
+          "confidence": 0.7,
+          "active_status": "active",
+          "created_at": "2026-07-30T12:50:20.362Z",
+          "last_checked_at": null,
+          "next_check_at": "2026-09-28T12:50:20.362Z",
+          "expiry": null,
+          "methodology_version": "signal-temporal-v2"
+        }
+      ],
+      "planned_queries": [
+        {
+          "query_id": "mq_3ww36r",
+          "trigger_id": "trg_tx8rwm",
+          "query": "\"Tu Tienda Saludable\" expansión",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        },
+        {
+          "query_id": "mq_1k6wobi",
+          "trigger_id": "trg_tx8rwm",
+          "query": "\"Tu Tienda Saludable\" \"nueva sede\"",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        },
+        {
+          "query_id": "mq_3qurig",
+          "trigger_id": "trg_tx8rwm",
+          "query": "\"Tu Tienda Saludable\" apertura Colombia",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        },
+        {
+          "query_id": "mq_1olgp0r",
+          "trigger_id": "trg_wqlw6h",
+          "query": "\"Tu Tienda Saludable\" alianza",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        },
+        {
+          "query_id": "mq_sxnoeq",
+          "trigger_id": "trg_wqlw6h",
+          "query": "\"Tu Tienda Saludable\" \"acuerdo de distribución\"",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        },
+        {
+          "query_id": "mq_1dsddsr",
+          "trigger_id": "trg_wqlw6h",
+          "query": "\"Tu Tienda Saludable\" proveedor",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        }
+      ],
+      "executed_queries": [
+        {
+          "query_id": "mq_3ww36r",
+          "trigger_id": "trg_tx8rwm",
+          "query": "\"Tu Tienda Saludable\" expansión",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null,
+          "provider": "brave",
+          "error": null,
+          "result_count": 0,
+          "accepted_entity_dated_candidates": 0
+        },
+        {
+          "query_id": "mq_1k6wobi",
+          "trigger_id": "trg_tx8rwm",
+          "query": "\"Tu Tienda Saludable\" \"nueva sede\"",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null,
+          "provider": "brave",
+          "error": null,
+          "result_count": 0,
+          "accepted_entity_dated_candidates": 0
+        }
+      ],
+      "signal_candidates": 0,
+      "accepted_signals": [],
+      "rejected_signals": [],
+      "what_changed": {
+        "change_id": "chg_1mqrcbv",
+        "signal_key": null,
+        "account_id": "tutiendasaludable.com.co",
+        "monitoring_run_id": "mon_o4cfx0",
+        "state": "unchanged",
+        "prior_state": null,
+        "current_state": null,
+        "evidence_delta": {
+          "added": [],
+          "removed": []
+        },
+        "effective_date": null,
+        "detection_date": "2026-07-30T12:50:20.362Z",
+        "materiality": "insufficient_evidence",
+        "commercial_interpretation": "No decision-changing temporal change detected.",
+        "confidence": 0,
+        "limitation": "No current signal found within bounded monitoring.",
+        "immutable": true,
+        "methodology_version": "signal-temporal-v2"
+      },
+      "timing": "no_current_timing_evidence",
+      "qualification_transition": {
+        "transition_id": "qtr_1lyuqol",
+        "previous_decision": "prioritize",
+        "new_decision": "prioritize",
+        "reason": "No explicit transition rule passed.",
+        "decisive_evidence": [],
+        "timing_state": "no_current_timing_evidence",
+        "failed_gates": [
+          "credible_current_timing",
+          "clear_action"
+        ],
+        "confidence": 0.5,
+        "reviewer_state": "unreviewed",
+        "ranking_impact": "off"
+      },
+      "output": {
+        "type": "no_current_signal",
+        "account_id": "tutiendasaludable.com.co",
+        "signal_id": null,
+        "evidence_ids": [],
+        "trigger_id": "trg_tx8rwm",
+        "qualification_transition_id": "qtr_1lyuqol",
+        "claim_ids": [],
+        "prior_state_id": null,
+        "current_state_id": null,
+        "internal_only": true,
+        "review_state": "unreviewed",
+        "ranking_impact": "off",
+        "report_impact": "off",
+        "methodology_version": "signal-temporal-v2"
+      }
+    },
+    {
+      "account": "Hotel Spa La Colina",
+      "domain": "hotelspalacolina.com",
+      "baseline_cutoff": "2026-07-30T00:33:22.535Z",
+      "triggers": [
+        {
+          "trigger_id": "trg_1ngrwyk",
+          "tenant_user_id": null,
+          "client_id": "amor-de-gea",
+          "account_id": "hotelspalacolina.com",
+          "category": "new_location",
+          "trigger_statement": "Detectar apertura o expansión física verificable.",
+          "current_baseline": "2026-07-30T00:33:22.535Z",
+          "evidence_required": [
+            "entity-matched evidence",
+            "publication or effective date",
+            "commercially relevant event"
+          ],
+          "disconfirming_evidence": [
+            "cancelled or delayed event",
+            "wrong entity",
+            "stale or evergreen content"
+          ],
+          "why_it_matters": "Puede crear una ventana comercial concreta.",
+          "client_relevance": "Requires explicit client-context gate.",
+          "expected_review_horizon_days": 60,
+          "search_cadence_recommendation_days": 60,
+          "query_templates": [
+            "\"{name}\" expansión",
+            "\"{name}\" \"nueva sede\"",
+            "\"{name}\" apertura {country}"
+          ],
+          "priority": "high",
+          "confidence": 0.7,
+          "active_status": "active",
+          "created_at": "2026-07-30T12:50:20.362Z",
+          "last_checked_at": null,
+          "next_check_at": "2026-09-28T12:50:20.362Z",
+          "expiry": null,
+          "methodology_version": "signal-temporal-v2"
+        },
+        {
+          "trigger_id": "trg_1opmb7v",
+          "tenant_user_id": null,
+          "client_id": "amor-de-gea",
+          "account_id": "hotelspalacolina.com",
+          "category": "distribution_agreement",
+          "trigger_statement": "Detectar nueva distribución, alianza o canal comprador.",
+          "current_baseline": "2026-07-30T00:33:22.535Z",
+          "evidence_required": [
+            "entity-matched evidence",
+            "publication or effective date",
+            "commercially relevant event"
+          ],
+          "disconfirming_evidence": [
+            "cancelled or delayed event",
+            "wrong entity",
+            "stale or evergreen content"
+          ],
+          "why_it_matters": "Puede ampliar acceso comercial para Amor de Gea.",
+          "client_relevance": "Requires explicit client-context gate.",
+          "expected_review_horizon_days": 60,
+          "search_cadence_recommendation_days": 60,
+          "query_templates": [
+            "\"{name}\" alianza",
+            "\"{name}\" \"acuerdo de distribución\"",
+            "\"{name}\" proveedor"
+          ],
+          "priority": "high",
+          "confidence": 0.7,
+          "active_status": "active",
+          "created_at": "2026-07-30T12:50:20.362Z",
+          "last_checked_at": null,
+          "next_check_at": "2026-09-28T12:50:20.362Z",
+          "expiry": null,
+          "methodology_version": "signal-temporal-v2"
+        }
+      ],
+      "planned_queries": [
+        {
+          "query_id": "mq_12eblqs",
+          "trigger_id": "trg_1ngrwyk",
+          "query": "\"Hotel Spa La Colina\" expansión",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        },
+        {
+          "query_id": "mq_whu2kf",
+          "trigger_id": "trg_1ngrwyk",
+          "query": "\"Hotel Spa La Colina\" \"nueva sede\"",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        },
+        {
+          "query_id": "mq_xduvc7",
+          "trigger_id": "trg_1ngrwyk",
+          "query": "\"Hotel Spa La Colina\" apertura Colombia",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        },
+        {
+          "query_id": "mq_xvfbg",
+          "trigger_id": "trg_1opmb7v",
+          "query": "\"Hotel Spa La Colina\" alianza",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        },
+        {
+          "query_id": "mq_4vu9s9",
+          "trigger_id": "trg_1opmb7v",
+          "query": "\"Hotel Spa La Colina\" \"acuerdo de distribución\"",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        },
+        {
+          "query_id": "mq_19xhls8",
+          "trigger_id": "trg_1opmb7v",
+          "query": "\"Hotel Spa La Colina\" proveedor",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        }
+      ],
+      "executed_queries": [
+        {
+          "query_id": "mq_12eblqs",
+          "trigger_id": "trg_1ngrwyk",
+          "query": "\"Hotel Spa La Colina\" expansión",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null,
+          "provider": "brave",
+          "error": null,
+          "result_count": 2,
+          "accepted_entity_dated_candidates": 0
+        },
+        {
+          "query_id": "mq_whu2kf",
+          "trigger_id": "trg_1ngrwyk",
+          "query": "\"Hotel Spa La Colina\" \"nueva sede\"",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null,
+          "provider": "brave",
+          "error": null,
+          "result_count": 0,
+          "accepted_entity_dated_candidates": 0
+        }
+      ],
+      "signal_candidates": 0,
+      "accepted_signals": [],
+      "rejected_signals": [],
+      "what_changed": {
+        "change_id": "chg_1mqrcbv",
+        "signal_key": null,
+        "account_id": "hotelspalacolina.com",
+        "monitoring_run_id": "mon_o4cfx0",
+        "state": "unchanged",
+        "prior_state": null,
+        "current_state": null,
+        "evidence_delta": {
+          "added": [],
+          "removed": []
+        },
+        "effective_date": null,
+        "detection_date": "2026-07-30T12:50:20.362Z",
+        "materiality": "insufficient_evidence",
+        "commercial_interpretation": "No decision-changing temporal change detected.",
+        "confidence": 0,
+        "limitation": "No current signal found within bounded monitoring.",
+        "immutable": true,
+        "methodology_version": "signal-temporal-v2"
+      },
+      "timing": "no_current_timing_evidence",
+      "qualification_transition": {
+        "transition_id": "qtr_1mn5u51",
+        "previous_decision": "monitor",
+        "new_decision": "monitor",
+        "reason": "No explicit transition rule passed.",
+        "decisive_evidence": [],
+        "timing_state": "no_current_timing_evidence",
+        "failed_gates": [
+          "credible_current_timing",
+          "clear_action"
+        ],
+        "confidence": 0.5,
+        "reviewer_state": "unreviewed",
+        "ranking_impact": "off"
+      },
+      "output": {
+        "type": "no_current_signal",
+        "account_id": "hotelspalacolina.com",
+        "signal_id": null,
+        "evidence_ids": [],
+        "trigger_id": "trg_1ngrwyk",
+        "qualification_transition_id": "qtr_1mn5u51",
+        "claim_ids": [],
+        "prior_state_id": null,
+        "current_state_id": null,
+        "internal_only": true,
+        "review_state": "unreviewed",
+        "ranking_impact": "off",
+        "report_impact": "off",
+        "methodology_version": "signal-temporal-v2"
+      }
+    },
+    {
+      "account": "BioPlaza",
+      "domain": "bioplaza.com.co",
+      "baseline_cutoff": "2026-07-30T00:33:22.535Z",
+      "triggers": [
+        {
+          "trigger_id": "trg_10jbfjt",
+          "tenant_user_id": null,
+          "client_id": "amor-de-gea",
+          "account_id": "bioplaza.com.co",
+          "category": "new_location",
+          "trigger_statement": "Detectar apertura o expansión física verificable.",
+          "current_baseline": "2026-07-30T00:33:22.535Z",
+          "evidence_required": [
+            "entity-matched evidence",
+            "publication or effective date",
+            "commercially relevant event"
+          ],
+          "disconfirming_evidence": [
+            "cancelled or delayed event",
+            "wrong entity",
+            "stale or evergreen content"
+          ],
+          "why_it_matters": "Puede crear una ventana comercial concreta.",
+          "client_relevance": "Requires explicit client-context gate.",
+          "expected_review_horizon_days": 60,
+          "search_cadence_recommendation_days": 60,
+          "query_templates": [
+            "\"{name}\" expansión",
+            "\"{name}\" \"nueva sede\"",
+            "\"{name}\" apertura {country}"
+          ],
+          "priority": "high",
+          "confidence": 0.7,
+          "active_status": "active",
+          "created_at": "2026-07-30T12:50:20.362Z",
+          "last_checked_at": null,
+          "next_check_at": "2026-09-28T12:50:20.362Z",
+          "expiry": null,
+          "methodology_version": "signal-temporal-v2"
+        },
+        {
+          "trigger_id": "trg_llj2gi",
+          "tenant_user_id": null,
+          "client_id": "amor-de-gea",
+          "account_id": "bioplaza.com.co",
+          "category": "distribution_agreement",
+          "trigger_statement": "Detectar nueva distribución, alianza o canal comprador.",
+          "current_baseline": "2026-07-30T00:33:22.535Z",
+          "evidence_required": [
+            "entity-matched evidence",
+            "publication or effective date",
+            "commercially relevant event"
+          ],
+          "disconfirming_evidence": [
+            "cancelled or delayed event",
+            "wrong entity",
+            "stale or evergreen content"
+          ],
+          "why_it_matters": "Puede ampliar acceso comercial para Amor de Gea.",
+          "client_relevance": "Requires explicit client-context gate.",
+          "expected_review_horizon_days": 60,
+          "search_cadence_recommendation_days": 60,
+          "query_templates": [
+            "\"{name}\" alianza",
+            "\"{name}\" \"acuerdo de distribución\"",
+            "\"{name}\" proveedor"
+          ],
+          "priority": "high",
+          "confidence": 0.7,
+          "active_status": "active",
+          "created_at": "2026-07-30T12:50:20.362Z",
+          "last_checked_at": null,
+          "next_check_at": "2026-09-28T12:50:20.362Z",
+          "expiry": null,
+          "methodology_version": "signal-temporal-v2"
+        }
+      ],
+      "planned_queries": [
+        {
+          "query_id": "mq_16eae7z",
+          "trigger_id": "trg_10jbfjt",
+          "query": "\"BioPlaza\" expansión",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        },
+        {
+          "query_id": "mq_1bcq6ci",
+          "trigger_id": "trg_10jbfjt",
+          "query": "\"BioPlaza\" \"nueva sede\"",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        },
+        {
+          "query_id": "mq_1cjywzo",
+          "trigger_id": "trg_10jbfjt",
+          "query": "\"BioPlaza\" apertura Colombia",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        },
+        {
+          "query_id": "mq_1qqdjph",
+          "trigger_id": "trg_llj2gi",
+          "query": "\"BioPlaza\" alianza",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        },
+        {
+          "query_id": "mq_nmdd48",
+          "trigger_id": "trg_llj2gi",
+          "query": "\"BioPlaza\" \"acuerdo de distribución\"",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        },
+        {
+          "query_id": "mq_13jt55d",
+          "trigger_id": "trg_llj2gi",
+          "query": "\"BioPlaza\" proveedor",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        }
+      ],
+      "executed_queries": [
+        {
+          "query_id": "mq_16eae7z",
+          "trigger_id": "trg_10jbfjt",
+          "query": "\"BioPlaza\" expansión",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null,
+          "provider": "brave",
+          "error": null,
+          "result_count": 5,
+          "accepted_entity_dated_candidates": 1
+        },
+        {
+          "query_id": "mq_1bcq6ci",
+          "trigger_id": "trg_10jbfjt",
+          "query": "\"BioPlaza\" \"nueva sede\"",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null,
+          "provider": "brave",
+          "error": null,
+          "result_count": 0,
+          "accepted_entity_dated_candidates": 0
+        }
+      ],
+      "signal_candidates": 0,
+      "accepted_signals": [],
+      "rejected_signals": [],
+      "what_changed": {
+        "change_id": "chg_1mqrcbv",
+        "signal_key": null,
+        "account_id": "bioplaza.com.co",
+        "monitoring_run_id": "mon_o4cfx0",
+        "state": "unchanged",
+        "prior_state": null,
+        "current_state": null,
+        "evidence_delta": {
+          "added": [],
+          "removed": []
+        },
+        "effective_date": null,
+        "detection_date": "2026-07-30T12:50:20.362Z",
+        "materiality": "insufficient_evidence",
+        "commercial_interpretation": "No decision-changing temporal change detected.",
+        "confidence": 0,
+        "limitation": "No current signal found within bounded monitoring.",
+        "immutable": true,
+        "methodology_version": "signal-temporal-v2"
+      },
+      "timing": "no_current_timing_evidence",
+      "qualification_transition": {
+        "transition_id": "qtr_ueo4be",
+        "previous_decision": "prioritize",
+        "new_decision": "prioritize",
+        "reason": "No explicit transition rule passed.",
+        "decisive_evidence": [],
+        "timing_state": "no_current_timing_evidence",
+        "failed_gates": [
+          "credible_current_timing",
+          "clear_action"
+        ],
+        "confidence": 0.5,
+        "reviewer_state": "unreviewed",
+        "ranking_impact": "off"
+      },
+      "output": {
+        "type": "no_current_signal",
+        "account_id": "bioplaza.com.co",
+        "signal_id": null,
+        "evidence_ids": [],
+        "trigger_id": "trg_10jbfjt",
+        "qualification_transition_id": "qtr_ueo4be",
+        "claim_ids": [],
+        "prior_state_id": null,
+        "current_state_id": null,
+        "internal_only": true,
+        "review_state": "unreviewed",
+        "ranking_impact": "off",
+        "report_impact": "off",
+        "methodology_version": "signal-temporal-v2"
+      }
+    },
+    {
+      "account": "Distribuidora DAM",
+      "domain": "distribuidoradam.com",
+      "baseline_cutoff": "2026-07-30T00:33:22.535Z",
+      "triggers": [
+        {
+          "trigger_id": "trg_1mi3kf8",
+          "tenant_user_id": null,
+          "client_id": "amor-de-gea",
+          "account_id": "distribuidoradam.com",
+          "category": "new_location",
+          "trigger_statement": "Detectar apertura o expansión física verificable.",
+          "current_baseline": "2026-07-30T00:33:22.535Z",
+          "evidence_required": [
+            "entity-matched evidence",
+            "publication or effective date",
+            "commercially relevant event"
+          ],
+          "disconfirming_evidence": [
+            "cancelled or delayed event",
+            "wrong entity",
+            "stale or evergreen content"
+          ],
+          "why_it_matters": "Puede crear una ventana comercial concreta.",
+          "client_relevance": "Requires explicit client-context gate.",
+          "expected_review_horizon_days": 60,
+          "search_cadence_recommendation_days": 60,
+          "query_templates": [
+            "\"{name}\" expansión",
+            "\"{name}\" \"nueva sede\"",
+            "\"{name}\" apertura {country}"
+          ],
+          "priority": "high",
+          "confidence": 0.7,
+          "active_status": "active",
+          "created_at": "2026-07-30T12:50:20.362Z",
+          "last_checked_at": null,
+          "next_check_at": "2026-09-28T12:50:20.362Z",
+          "expiry": null,
+          "methodology_version": "signal-temporal-v2"
+        },
+        {
+          "trigger_id": "trg_1hhk88z",
+          "tenant_user_id": null,
+          "client_id": "amor-de-gea",
+          "account_id": "distribuidoradam.com",
+          "category": "distribution_agreement",
+          "trigger_statement": "Detectar nueva distribución, alianza o canal comprador.",
+          "current_baseline": "2026-07-30T00:33:22.535Z",
+          "evidence_required": [
+            "entity-matched evidence",
+            "publication or effective date",
+            "commercially relevant event"
+          ],
+          "disconfirming_evidence": [
+            "cancelled or delayed event",
+            "wrong entity",
+            "stale or evergreen content"
+          ],
+          "why_it_matters": "Puede ampliar acceso comercial para Amor de Gea.",
+          "client_relevance": "Requires explicit client-context gate.",
+          "expected_review_horizon_days": 60,
+          "search_cadence_recommendation_days": 60,
+          "query_templates": [
+            "\"{name}\" alianza",
+            "\"{name}\" \"acuerdo de distribución\"",
+            "\"{name}\" proveedor"
+          ],
+          "priority": "high",
+          "confidence": 0.7,
+          "active_status": "active",
+          "created_at": "2026-07-30T12:50:20.362Z",
+          "last_checked_at": null,
+          "next_check_at": "2026-09-28T12:50:20.362Z",
+          "expiry": null,
+          "methodology_version": "signal-temporal-v2"
+        }
+      ],
+      "planned_queries": [
+        {
+          "query_id": "mq_1nfvg5i",
+          "trigger_id": "trg_1mi3kf8",
+          "query": "\"Distribuidora DAM\" expansión",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        },
+        {
+          "query_id": "mq_11nyz21",
+          "trigger_id": "trg_1mi3kf8",
+          "query": "\"Distribuidora DAM\" \"nueva sede\"",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        },
+        {
+          "query_id": "mq_glyew1",
+          "trigger_id": "trg_1mi3kf8",
+          "query": "\"Distribuidora DAM\" apertura Colombia",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        },
+        {
+          "query_id": "mq_1sfx07o",
+          "trigger_id": "trg_1hhk88z",
+          "query": "\"Distribuidora DAM\" alianza",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        },
+        {
+          "query_id": "mq_ho01oh",
+          "trigger_id": "trg_1hhk88z",
+          "query": "\"Distribuidora DAM\" \"acuerdo de distribución\"",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        },
+        {
+          "query_id": "mq_1xfaxbk",
+          "trigger_id": "trg_1hhk88z",
+          "query": "\"Distribuidora DAM\" proveedor",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        }
+      ],
+      "executed_queries": [
+        {
+          "query_id": "mq_1nfvg5i",
+          "trigger_id": "trg_1mi3kf8",
+          "query": "\"Distribuidora DAM\" expansión",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null,
+          "provider": "brave",
+          "error": null,
+          "result_count": 1,
+          "accepted_entity_dated_candidates": 1
+        },
+        {
+          "query_id": "mq_11nyz21",
+          "trigger_id": "trg_1mi3kf8",
+          "query": "\"Distribuidora DAM\" \"nueva sede\"",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null,
+          "provider": "brave",
+          "error": null,
+          "result_count": 0,
+          "accepted_entity_dated_candidates": 0
+        }
+      ],
+      "signal_candidates": 0,
+      "accepted_signals": [],
+      "rejected_signals": [],
+      "what_changed": {
+        "change_id": "chg_1mqrcbv",
+        "signal_key": null,
+        "account_id": "distribuidoradam.com",
+        "monitoring_run_id": "mon_o4cfx0",
+        "state": "unchanged",
+        "prior_state": null,
+        "current_state": null,
+        "evidence_delta": {
+          "added": [],
+          "removed": []
+        },
+        "effective_date": null,
+        "detection_date": "2026-07-30T12:50:20.362Z",
+        "materiality": "insufficient_evidence",
+        "commercial_interpretation": "No decision-changing temporal change detected.",
+        "confidence": 0,
+        "limitation": "No current signal found within bounded monitoring.",
+        "immutable": true,
+        "methodology_version": "signal-temporal-v2"
+      },
+      "timing": "no_current_timing_evidence",
+      "qualification_transition": {
+        "transition_id": "qtr_1tua6fv",
+        "previous_decision": "prioritize",
+        "new_decision": "prioritize",
+        "reason": "No explicit transition rule passed.",
+        "decisive_evidence": [],
+        "timing_state": "no_current_timing_evidence",
+        "failed_gates": [
+          "credible_current_timing",
+          "clear_action"
+        ],
+        "confidence": 0.5,
+        "reviewer_state": "unreviewed",
+        "ranking_impact": "off"
+      },
+      "output": {
+        "type": "no_current_signal",
+        "account_id": "distribuidoradam.com",
+        "signal_id": null,
+        "evidence_ids": [],
+        "trigger_id": "trg_1mi3kf8",
+        "qualification_transition_id": "qtr_1tua6fv",
+        "claim_ids": [],
+        "prior_state_id": null,
+        "current_state_id": null,
+        "internal_only": true,
+        "review_state": "unreviewed",
+        "ranking_impact": "off",
+        "report_impact": "off",
+        "methodology_version": "signal-temporal-v2"
+      }
+    },
+    {
+      "account": "Somos Consiente",
+      "domain": "somosconsiente.com",
+      "baseline_cutoff": "2026-07-30T00:33:22.535Z",
+      "triggers": [
+        {
+          "trigger_id": "trg_cdsde6",
+          "tenant_user_id": null,
+          "client_id": "amor-de-gea",
+          "account_id": "somosconsiente.com",
+          "category": "new_location",
+          "trigger_statement": "Detectar apertura o expansión física verificable.",
+          "current_baseline": "2026-07-30T00:33:22.535Z",
+          "evidence_required": [
+            "entity-matched evidence",
+            "publication or effective date",
+            "commercially relevant event"
+          ],
+          "disconfirming_evidence": [
+            "cancelled or delayed event",
+            "wrong entity",
+            "stale or evergreen content"
+          ],
+          "why_it_matters": "Puede crear una ventana comercial concreta.",
+          "client_relevance": "Requires explicit client-context gate.",
+          "expected_review_horizon_days": 60,
+          "search_cadence_recommendation_days": 60,
+          "query_templates": [
+            "\"{name}\" expansión",
+            "\"{name}\" \"nueva sede\"",
+            "\"{name}\" apertura {country}"
+          ],
+          "priority": "high",
+          "confidence": 0.7,
+          "active_status": "active",
+          "created_at": "2026-07-30T12:50:20.362Z",
+          "last_checked_at": null,
+          "next_check_at": "2026-09-28T12:50:20.362Z",
+          "expiry": null,
+          "methodology_version": "signal-temporal-v2"
+        },
+        {
+          "trigger_id": "trg_1bdngg1",
+          "tenant_user_id": null,
+          "client_id": "amor-de-gea",
+          "account_id": "somosconsiente.com",
+          "category": "distribution_agreement",
+          "trigger_statement": "Detectar nueva distribución, alianza o canal comprador.",
+          "current_baseline": "2026-07-30T00:33:22.535Z",
+          "evidence_required": [
+            "entity-matched evidence",
+            "publication or effective date",
+            "commercially relevant event"
+          ],
+          "disconfirming_evidence": [
+            "cancelled or delayed event",
+            "wrong entity",
+            "stale or evergreen content"
+          ],
+          "why_it_matters": "Puede ampliar acceso comercial para Amor de Gea.",
+          "client_relevance": "Requires explicit client-context gate.",
+          "expected_review_horizon_days": 60,
+          "search_cadence_recommendation_days": 60,
+          "query_templates": [
+            "\"{name}\" alianza",
+            "\"{name}\" \"acuerdo de distribución\"",
+            "\"{name}\" proveedor"
+          ],
+          "priority": "high",
+          "confidence": 0.7,
+          "active_status": "active",
+          "created_at": "2026-07-30T12:50:20.362Z",
+          "last_checked_at": null,
+          "next_check_at": "2026-09-28T12:50:20.362Z",
+          "expiry": null,
+          "methodology_version": "signal-temporal-v2"
+        }
+      ],
+      "planned_queries": [
+        {
+          "query_id": "mq_1lycv98",
+          "trigger_id": "trg_cdsde6",
+          "query": "\"Somos Consiente\" expansión",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        },
+        {
+          "query_id": "mq_yn48br",
+          "trigger_id": "trg_cdsde6",
+          "query": "\"Somos Consiente\" \"nueva sede\"",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        },
+        {
+          "query_id": "mq_r24a73",
+          "trigger_id": "trg_cdsde6",
+          "query": "\"Somos Consiente\" apertura Colombia",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        },
+        {
+          "query_id": "mq_ne252u",
+          "trigger_id": "trg_1bdngg1",
+          "query": "\"Somos Consiente\" alianza",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        },
+        {
+          "query_id": "mq_1nf3gbr",
+          "trigger_id": "trg_1bdngg1",
+          "query": "\"Somos Consiente\" \"acuerdo de distribución\"",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        },
+        {
+          "query_id": "mq_1d16zz2",
+          "trigger_id": "trg_1bdngg1",
+          "query": "\"Somos Consiente\" proveedor",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null
+        }
+      ],
+      "executed_queries": [
+        {
+          "query_id": "mq_1lycv98",
+          "trigger_id": "trg_cdsde6",
+          "query": "\"Somos Consiente\" expansión",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null,
+          "provider": "brave",
+          "error": null,
+          "result_count": 0,
+          "accepted_entity_dated_candidates": 0
+        },
+        {
+          "query_id": "mq_yn48br",
+          "trigger_id": "trg_cdsde6",
+          "query": "\"Somos Consiente\" \"nueva sede\"",
+          "requested_from": "2026-07-24T00:33:22.535Z",
+          "requested_to": "2026-07-30T12:50:20.362Z",
+          "overlap_days": 6,
+          "provider_date_behavior": "requested_not_guaranteed",
+          "accepted": true,
+          "rejection_reason": null,
+          "provider": "brave",
+          "error": null,
+          "result_count": 0,
+          "accepted_entity_dated_candidates": 0
+        }
+      ],
+      "signal_candidates": 0,
+      "accepted_signals": [],
+      "rejected_signals": [],
+      "what_changed": {
+        "change_id": "chg_1mqrcbv",
+        "signal_key": null,
+        "account_id": "somosconsiente.com",
+        "monitoring_run_id": "mon_o4cfx0",
+        "state": "unchanged",
+        "prior_state": null,
+        "current_state": null,
+        "evidence_delta": {
+          "added": [],
+          "removed": []
+        },
+        "effective_date": null,
+        "detection_date": "2026-07-30T12:50:20.362Z",
+        "materiality": "insufficient_evidence",
+        "commercial_interpretation": "No decision-changing temporal change detected.",
+        "confidence": 0,
+        "limitation": "No current signal found within bounded monitoring.",
+        "immutable": true,
+        "methodology_version": "signal-temporal-v2"
+      },
+      "timing": "no_current_timing_evidence",
+      "qualification_transition": {
+        "transition_id": "qtr_15xqmg7",
+        "previous_decision": "monitor",
+        "new_decision": "monitor",
+        "reason": "No explicit transition rule passed.",
+        "decisive_evidence": [],
+        "timing_state": "no_current_timing_evidence",
+        "failed_gates": [
+          "credible_current_timing",
+          "clear_action"
+        ],
+        "confidence": 0.5,
+        "reviewer_state": "unreviewed",
+        "ranking_impact": "off"
+      },
+      "output": {
+        "type": "no_current_signal",
+        "account_id": "somosconsiente.com",
+        "signal_id": null,
+        "evidence_ids": [],
+        "trigger_id": "trg_cdsde6",
+        "qualification_transition_id": "qtr_15xqmg7",
+        "claim_ids": [],
+        "prior_state_id": null,
+        "current_state_id": null,
+        "internal_only": true,
+        "review_state": "unreviewed",
+        "ranking_impact": "off",
+        "report_impact": "off",
+        "methodology_version": "signal-temporal-v2"
+      }
+    }
+  ]
+}

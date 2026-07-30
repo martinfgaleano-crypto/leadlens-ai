@@ -16,6 +16,37 @@ import { adaptLearnedPreferences, type LearnedPreferenceSource } from "./pattern
 const PILOT_DIR = "ml/data/pilot-amor-de-gea";
 const DEEP_EVIDENCE_DIR = "ml/data/evidence-temporal";
 const RESEARCH_QUALITY_DIR = "ml/data/research-quality";
+const SIGNAL_TEMPORAL_DIR = "ml/data/signal-temporal";
+
+export interface SignalTemporalArtifact {
+  cutoff: string;
+  generated_at: string;
+  methodology_version: "signal-temporal-v2";
+  migration_043_applied: boolean;
+  summary: {
+    accounts: number; triggers_checked: number; queries_executed: number; extracts: number;
+    retries: number; signal_candidates: number; accepted_signals: number; corroborated_signals: number;
+    accounts_with_material_change: number; unchanged_or_no_current_signal: number;
+    qualification_transitions: number; measured_cost_usd: number | null; cost_state: string;
+  };
+  accounts: Array<{
+    account: string; domain: string; baseline_cutoff: string;
+    accepted_signals: Array<{ category: string; current_status: string; publication_date: string | null }>;
+    what_changed: { state: string }; timing: string;
+    output: { type: string; internal_only: true; ranking_impact: "off"; report_impact: "off" };
+  }>;
+}
+
+export async function loadLatestSignalTemporal(root = process.cwd()): Promise<SignalTemporalArtifact | null> {
+  try {
+    const dir = path.join(root, SIGNAL_TEMPORAL_DIR);
+    const files = (await fs.readdir(dir)).filter((f) => /^amor-de-gea-block8-.*\.json$/.test(f)).sort();
+    const latest = files.at(-1);
+    if (!latest) return null;
+    const artifact = JSON.parse(await fs.readFile(path.join(dir, latest), "utf8")) as Omit<SignalTemporalArtifact, "cutoff">;
+    return { ...artifact, cutoff: latest };
+  } catch { return null; }
+}
 
 export interface ResearchQualityArtifact {
   cutoff: string;
@@ -167,6 +198,7 @@ export async function loadSnapshotInputs(opts: {
   const { signals, cutoff } = await loadLatestArtifactSignals(opts.root);
   const deep = await loadLatestDeepEvidence(opts.root);
   const research = await loadLatestResearchQuality(opts.root);
+  const temporal = await loadLatestSignalTemporal(opts.root);
   const { source } = await loadLatestArtifactOutputSource(opts.root, opts.scope ?? { kind: "global" });
   const outputs = assembleArtifactOutputs(source);
   const patterns = adaptLearnedPreferences(opts.learned_preferences ?? []);
@@ -174,7 +206,7 @@ export async function loadSnapshotInputs(opts: {
   return {
     scope: opts.scope ?? { kind: "global" },
     now, source_data_cutoff: cutoff ?? now,
-    capability_versions: { entity_resolution: "entity-resolution-v3", company_verification: "segment-universe-v1", structural_account_ranking: "market-to-account-pipeline-v1", company_discovery: "segment-universe-v1" },
+    capability_versions: { entity_resolution: "entity-resolution-v3", company_verification: "segment-universe-v1", structural_account_ranking: "market-to-account-pipeline-v1", company_discovery: "segment-universe-v1", signal_monitoring: temporal?.methodology_version ?? "not_available" },
     artifact: signals ? {
       ...signals,
       deep_research_complete: research?.summary.accounts_researched ?? signals.deep_research_complete,
