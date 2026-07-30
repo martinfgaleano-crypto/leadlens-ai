@@ -1,5 +1,9 @@
 # LeadLens Continuity Audit — Authoritative Checkpoint
 
+## Block 12 continuity update — 2026-07-30
+
+Block 12 turns the 17 real client-context gaps into an auditable intake/review system. Ten gaps are critical; all questions remain unanswered in production, six accounts remain blocked by context/feasibility and zero outputs are customer-safe. Fixtures prove deterministic recalculation without production leakage. Migration 046 is generated and not applied; ranking, Auth and reports are unchanged. Block 13 was not started.
+
 ## Block 11 continuity update — 2026-07-30
 
 Block 11 creates deterministic client-specific commercial theses while preserving fit/access/timing/buying-intent separation. Amor de Gea context is usable but has 17 explicit gaps. Six confirmed accounts yielded 4 prioritize and 2 monitor theses; all six lack current timing and remain unreviewed/internal-only with ranking and reports off. Migration 045 is generated and not applied. Block 12 was not started. See `LEADLENS_BLOCK_11_ACCOUNT_OPPORTUNITY_SYNTHESIS_REPORT.md`.

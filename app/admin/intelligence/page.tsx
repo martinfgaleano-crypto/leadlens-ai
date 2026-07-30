@@ -156,6 +156,25 @@ function Overview({ model }: { model: AdminIntelligenceViewModel }) {
       <p><strong>Primary bottleneck:</strong> {model.opportunity_synthesis.summary.blocked_by_timing} accounts lack current timing and {model.opportunity_synthesis.summary.blocked_by_evidence} retain evidence gaps. Missing client fields: {model.opportunity_synthesis.summary.context_unknown_fields}.</p>
       <ul>{model.opportunity_synthesis.theses.map(t=><li key={t.account_id}><strong>{t.account_name} · {words(t.decision)}:</strong> {t.why_now.statement} Why not now: {t.why_not_now[0]} Limiter: {words(t.confidence.limiting_factor)}.</li>)}</ul>
     </section>}
+    {model.client_context_review && <section className={styles.panel}>
+      <SectionHeader eyebrow="Block 12 · production context · internal" title="Client context completion & thesis review" text="Unanswered fields remain unknown. Submission is not acceptance; no fixture answer enters this view."/>
+      <div className={styles.metricGrid}>
+        <Metric label="Context completeness" value={`${model.client_context_review.summary.context_completeness}%`}/>
+        <Metric label="Critical blockers" value={model.client_context_review.summary.critical_blockers}/>
+        <Metric label="Unanswered questions" value={model.client_context_review.summary.unanswered}/>
+        <Metric label="Theses reviewed" value={model.client_context_review.summary.theses_reviewed}/>
+        <Metric label="Feasibility assessed" value={model.client_context_review.summary.feasibility_assessed}/>
+        <Metric label="Safety reviewed" value={model.client_context_review.summary.customer_safety_reviewed}/>
+        <Metric label="Customer-safe" value={model.client_context_review.summary.customer_safe}/>
+        <Metric label="Sections blocked" value={model.client_context_review.summary.report_sections_blocked}/>
+      </div>
+      <p><strong>Primary blocker:</strong> verified operational, compliance and economic client answers are missing. Intake: {words(model.client_context_review.summary.intake_status)} · accepted context version: {model.client_context_review.summary.accepted_context_version ?? "none"}.</p>
+      <h3>Highest-priority intake questions</h3>
+      <ol>{model.client_context_review.questions.slice(0,10).map(q=><li key={q.question_id}><strong>{words(q.category)} · {words(q.field)}:</strong> {q.text} <small>{q.who_should_answer} · {words(q.answer_format)} · {q.affected_accounts.length} accounts</small></li>)}</ol>
+      <h3>Validation-ready shortlist</h3>
+      <ul>{model.client_context_review.shortlist.map(x=><li key={x.account}><strong>{x.account}:</strong> {words(x.state)} — {x.next_reviewer_action}</li>)}</ul>
+      <p><strong>Report sections:</strong> {model.client_context_review.summary.report_sections_ready} ready · {model.client_context_review.summary.report_sections_ready_with_limitations} ready with limitations · {model.client_context_review.summary.report_sections_blocked} blocked.</p>
+    </section>}
 
     <SectionHeader eyebrow="Eight dimensions" title="Maturity scorecard" text="Scores appear only when the underlying dimension is genuinely measured." />
     <div className={styles.dimensionGrid}>

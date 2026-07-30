@@ -302,3 +302,11 @@ Preserved: `preference-learner` + `shadow-preference` never touch ranking; UI sh
 - Same six accounts: 6 internal unreviewed theses, 6 use cases, 6 access paths, 4 prioritize, 2 monitor, 6 without current timing, 0 customer-safe.
 - Added fourteen internal Output Registry types and provider-free Command Center integration. Ranking/report impact remains off; six theses create no pattern.
 - Migration 045 generated but not applied. Block 12 not started.
+
+## Block 12 checkpoint — Client context and thesis review
+
+- Audited all 17 real Block 11 gaps; 10 are critical feasibility/customer-safety blockers.
+- Added prioritized field questions, intake/answer contracts, immutable versions, conflict handling, deterministic thesis recalculation/deltas, 12-dimension feasibility, safety gates, validation shortlist and section readiness.
+- Production mode: 17 unanswered, 0 accepted answers, 0 reviewed theses, 6 context/feasibility-blocked accounts, 0 customer-safe, 0 fixture leakage.
+- Command Center integration is additive and provider-free. Ranking/report impact remains off.
+- Migration 046 generated but not applied; migration 045 also remains outside this block's application authority. Block 13 not started.

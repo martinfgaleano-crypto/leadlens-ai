@@ -21,6 +21,16 @@ const SIGNAL_BENCHMARK_DIR = "ml/data/signal-benchmark";
 const SIGNAL_MONITORING_OPERATIONS_DIR = "ml/data/signal-monitoring-operations";
 const ENTITY_RESOLUTION_DIR = "ml/data/entity-resolution";
 const OPPORTUNITY_SYNTHESIS_DIR = "ml/data/opportunity-synthesis";
+const CLIENT_CONTEXT_REVIEW_DIR="ml/data/client-context-review";
+export interface ClientContextReviewArtifact{
+ generated_at:string;methodology_version:string;mode:"production";internal_only:true;
+ summary:{real_gaps:number;critical_blockers:number;questions:number;unanswered:number;accepted_answers:number;conflicts:number;context_completeness:number;context_state:string;intake_status:string;accepted_context_version:string|null;theses_reviewed:number;thesis_corrections:number;feasibility_assessed:number;customer_safety_reviewed:number;customer_safe:number;safe_with_limitations:number;validation_ready:number;blocked_by_context:number;blocked_by_feasibility:number;report_sections_ready:number;report_sections_ready_with_limitations:number;report_sections_blocked:number;production_fixture_answers:number};
+ gaps:Array<{gap_id:string;field:string;category:string;priority:string;affected_accounts:string[];affected_report_sections:string[];blocking:boolean}>;
+ questions:Array<{question_id:string;text:string;field:string;category:string;priority:string;who_should_answer:string;answer_format:string;affected_accounts:string[]}>;
+ shortlist:Array<{account:string;current_decision:string;state:string;blockers:string[];next_reviewer_action:string}>;
+ sections:Array<{section:string;state:string;missing_context:string[];review_status:string;customer_safety_state:string}>;
+}
+export async function loadLatestClientContextReview(root=process.cwd()):Promise<ClientContextReviewArtifact|null>{try{const dir=path.join(root,CLIENT_CONTEXT_REVIEW_DIR);const files=(await fs.readdir(dir)).filter(f=>/^amor-de-gea-block12-.*\.json$/.test(f)).sort();const latest=files.at(-1);if(!latest)return null;return JSON.parse(await fs.readFile(path.join(dir,latest),"utf8")) as ClientContextReviewArtifact}catch{return null}}
 
 export interface OpportunitySynthesisArtifact {
   generated_at:string;methodology_version:string;internal_only:true;

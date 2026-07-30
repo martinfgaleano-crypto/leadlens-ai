@@ -17,6 +17,12 @@ export const COMMERCIAL_STRATEGY_OUTPUT_TYPES = [
   "why_now_assessment","why_not_now_assessment","client_context_gap","account_strategy_risk",
   "monitor_trigger_strategy","no_current_commercial_window","commercial_research_question",
 ] as const;
+export const CLIENT_CONTEXT_REVIEW_OUTPUT_TYPES=[
+  "client_context_gap","client_context_question","client_context_conflict","client_context_update",
+  "thesis_revision","thesis_strengthening","thesis_weakening","commercial_feasibility_assessment",
+  "account_disqualification","customer_safety_assessment","report_section_readiness",
+  "validation_ready_account","context_blocked_account",
+] as const;
 const TARGET_VERIFIED = 40;
 
 export interface ArtifactOutputSource {

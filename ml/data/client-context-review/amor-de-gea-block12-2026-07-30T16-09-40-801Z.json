@@ -1,0 +1,4234 @@
+{
+  "methodology_version": "client-context-review-v1",
+  "generated_at": "2026-07-30T16:09:40.801Z",
+  "source_block11": "amor-de-gea-block11-2026-07-30T15-51-48-651Z.json",
+  "mode": "production",
+  "summary": {
+    "real_gaps": 17,
+    "critical_blockers": 10,
+    "questions": 17,
+    "unanswered": 17,
+    "accepted_answers": 0,
+    "conflicts": 0,
+    "context_completeness": 0,
+    "context_state": "unanswered",
+    "intake_status": "draft",
+    "accepted_context_version": null,
+    "theses_reviewed": 0,
+    "thesis_corrections": 0,
+    "feasibility_assessed": 6,
+    "customer_safety_reviewed": 6,
+    "customer_safe": 0,
+    "safe_with_limitations": 0,
+    "validation_ready": 0,
+    "blocked_by_context": 6,
+    "blocked_by_feasibility": 6,
+    "report_sections_ready": 0,
+    "report_sections_ready_with_limitations": 5,
+    "report_sections_blocked": 9,
+    "production_fixture_answers": 0
+  },
+  "gaps": [
+    {
+      "gap_id": "gap_1xp98t2",
+      "field": "account_size_constraints",
+      "category": "commercial",
+      "current_state": "unanswered",
+      "current_source": "Block 11 canonical client context",
+      "context_state": "missing",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "affected_fit_dimensions": [
+        "account_scale_fit"
+      ],
+      "affected_access_paths": [
+        "category-buyer outreach",
+        "category-buyer outreach",
+        "hospitality or operations outreach",
+        "category-buyer outreach",
+        "distributor introduction",
+        "partnership proposal"
+      ],
+      "affected_use_cases": [
+        "uc_81zthn",
+        "uc_1fk29j0",
+        "uc_fveb9",
+        "uc_1rh4zx8",
+        "uc_6kaok8",
+        "uc_1dim7jh"
+      ],
+      "affected_buying_path_assumptions": [
+        "pilot",
+        "approval_sequence",
+        "procurement_role"
+      ],
+      "affected_decisions": [
+        "prioritize",
+        "monitor"
+      ],
+      "affected_report_sections": [
+        "Account shortlist",
+        "Portfolio strategy"
+      ],
+      "priority": "critical_blocker",
+      "priority_dimensions": {
+        "decision_impact": 5,
+        "accounts_affected": 6,
+        "report_impact": 2,
+        "feasibility_impact": 3,
+        "client_specificity_impact": 4,
+        "confidence_impact": 5,
+        "effort": 1,
+        "urgency": 5,
+        "reversibility": 4,
+        "dependency_depth": 1
+      },
+      "effort": "low",
+      "who_should_answer": "client commercial lead",
+      "document_can_answer": false,
+      "client_interview_required": true,
+      "blocking": true
+    },
+    {
+      "gap_id": "gap_1ay1p7z",
+      "field": "certifications",
+      "category": "compliance",
+      "current_state": "unanswered",
+      "current_source": "Block 11 canonical client context",
+      "context_state": "missing",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "affected_fit_dimensions": [
+        "operational_feasibility",
+        "offer_category_fit"
+      ],
+      "affected_access_paths": [
+        "category-buyer outreach",
+        "category-buyer outreach",
+        "hospitality or operations outreach",
+        "category-buyer outreach",
+        "distributor introduction",
+        "partnership proposal"
+      ],
+      "affected_use_cases": [
+        "uc_81zthn",
+        "uc_1fk29j0",
+        "uc_fveb9",
+        "uc_1rh4zx8",
+        "uc_6kaok8",
+        "uc_1dim7jh"
+      ],
+      "affected_buying_path_assumptions": [
+        "pilot",
+        "approval_sequence",
+        "procurement_role"
+      ],
+      "affected_decisions": [
+        "prioritize",
+        "monitor"
+      ],
+      "affected_report_sections": [
+        "Commercial use case",
+        "Risks",
+        "Limitations"
+      ],
+      "priority": "critical_blocker",
+      "priority_dimensions": {
+        "decision_impact": 5,
+        "accounts_affected": 6,
+        "report_impact": 3,
+        "feasibility_impact": 5,
+        "client_specificity_impact": 4,
+        "confidence_impact": 5,
+        "effort": 3,
+        "urgency": 5,
+        "reversibility": 4,
+        "dependency_depth": 2
+      },
+      "effort": "medium",
+      "who_should_answer": "client compliance lead",
+      "document_can_answer": true,
+      "client_interview_required": false,
+      "blocking": true
+    },
+    {
+      "gap_id": "gap_2od657",
+      "field": "delivery_radius",
+      "category": "operational",
+      "current_state": "unanswered",
+      "current_source": "Block 11 canonical client context",
+      "context_state": "missing",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "affected_fit_dimensions": [
+        "geography_fit",
+        "commercial_accessibility_fit"
+      ],
+      "affected_access_paths": [
+        "category-buyer outreach",
+        "category-buyer outreach",
+        "hospitality or operations outreach",
+        "category-buyer outreach",
+        "distributor introduction",
+        "partnership proposal"
+      ],
+      "affected_use_cases": [
+        "uc_81zthn",
+        "uc_1fk29j0",
+        "uc_fveb9",
+        "uc_1rh4zx8",
+        "uc_6kaok8",
+        "uc_1dim7jh"
+      ],
+      "affected_buying_path_assumptions": [
+        "pilot",
+        "approval_sequence",
+        "procurement_role"
+      ],
+      "affected_decisions": [
+        "prioritize",
+        "monitor"
+      ],
+      "affected_report_sections": [
+        "Access path",
+        "Account shortlist"
+      ],
+      "priority": "critical_blocker",
+      "priority_dimensions": {
+        "decision_impact": 5,
+        "accounts_affected": 6,
+        "report_impact": 2,
+        "feasibility_impact": 3,
+        "client_specificity_impact": 4,
+        "confidence_impact": 5,
+        "effort": 1,
+        "urgency": 5,
+        "reversibility": 4,
+        "dependency_depth": 2
+      },
+      "effort": "low",
+      "who_should_answer": "client operations",
+      "document_can_answer": true,
+      "client_interview_required": false,
+      "blocking": true
+    },
+    {
+      "gap_id": "gap_w6puop",
+      "field": "distribution_capability",
+      "category": "operational",
+      "current_state": "unanswered",
+      "current_source": "Block 11 canonical client context",
+      "context_state": "missing",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "affected_fit_dimensions": [
+        "commercial_accessibility_fit",
+        "geography_fit",
+        "client_capacity_fit"
+      ],
+      "affected_access_paths": [
+        "category-buyer outreach",
+        "category-buyer outreach",
+        "hospitality or operations outreach",
+        "category-buyer outreach",
+        "distributor introduction",
+        "partnership proposal"
+      ],
+      "affected_use_cases": [
+        "uc_81zthn",
+        "uc_1fk29j0",
+        "uc_fveb9",
+        "uc_1rh4zx8",
+        "uc_6kaok8",
+        "uc_1dim7jh"
+      ],
+      "affected_buying_path_assumptions": [
+        "pilot",
+        "approval_sequence",
+        "procurement_role"
+      ],
+      "affected_decisions": [
+        "prioritize",
+        "monitor"
+      ],
+      "affected_report_sections": [
+        "Access path",
+        "Commercial sequence",
+        "Risks"
+      ],
+      "priority": "critical_blocker",
+      "priority_dimensions": {
+        "decision_impact": 5,
+        "accounts_affected": 6,
+        "report_impact": 3,
+        "feasibility_impact": 3,
+        "client_specificity_impact": 4,
+        "confidence_impact": 5,
+        "effort": 3,
+        "urgency": 5,
+        "reversibility": 4,
+        "dependency_depth": 3
+      },
+      "effort": "medium",
+      "who_should_answer": "client operations",
+      "document_can_answer": true,
+      "client_interview_required": true,
+      "blocking": true
+    },
+    {
+      "gap_id": "gap_6wlet9",
+      "field": "fulfillment_constraints",
+      "category": "operational",
+      "current_state": "unanswered",
+      "current_source": "Block 11 canonical client context",
+      "context_state": "missing",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "affected_fit_dimensions": [
+        "operational_feasibility",
+        "commercial_accessibility_fit"
+      ],
+      "affected_access_paths": [
+        "category-buyer outreach",
+        "category-buyer outreach",
+        "hospitality or operations outreach",
+        "category-buyer outreach",
+        "distributor introduction",
+        "partnership proposal"
+      ],
+      "affected_use_cases": [
+        "uc_81zthn",
+        "uc_1fk29j0",
+        "uc_fveb9",
+        "uc_1rh4zx8",
+        "uc_6kaok8",
+        "uc_1dim7jh"
+      ],
+      "affected_buying_path_assumptions": [
+        "pilot",
+        "approval_sequence",
+        "procurement_role"
+      ],
+      "affected_decisions": [
+        "prioritize",
+        "monitor"
+      ],
+      "affected_report_sections": [
+        "Access path",
+        "Risks"
+      ],
+      "priority": "critical_blocker",
+      "priority_dimensions": {
+        "decision_impact": 5,
+        "accounts_affected": 6,
+        "report_impact": 2,
+        "feasibility_impact": 5,
+        "client_specificity_impact": 4,
+        "confidence_impact": 5,
+        "effort": 3,
+        "urgency": 5,
+        "reversibility": 4,
+        "dependency_depth": 2
+      },
+      "effort": "medium",
+      "who_should_answer": "client operations",
+      "document_can_answer": true,
+      "client_interview_required": true,
+      "blocking": true
+    },
+    {
+      "gap_id": "gap_w2lj27",
+      "field": "margins",
+      "category": "economic",
+      "current_state": "unanswered",
+      "current_source": "Block 11 canonical client context",
+      "context_state": "missing",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "affected_fit_dimensions": [
+        "economic_potential_fit",
+        "operational_feasibility"
+      ],
+      "affected_access_paths": [
+        "category-buyer outreach",
+        "category-buyer outreach",
+        "hospitality or operations outreach",
+        "category-buyer outreach",
+        "distributor introduction",
+        "partnership proposal"
+      ],
+      "affected_use_cases": [
+        "uc_81zthn",
+        "uc_1fk29j0",
+        "uc_fveb9",
+        "uc_1rh4zx8",
+        "uc_6kaok8",
+        "uc_1dim7jh"
+      ],
+      "affected_buying_path_assumptions": [
+        "pilot",
+        "approval_sequence",
+        "procurement_role"
+      ],
+      "affected_decisions": [
+        "prioritize",
+        "monitor"
+      ],
+      "affected_report_sections": [
+        "Commercial use case",
+        "Risks"
+      ],
+      "priority": "critical_blocker",
+      "priority_dimensions": {
+        "decision_impact": 5,
+        "accounts_affected": 6,
+        "report_impact": 2,
+        "feasibility_impact": 5,
+        "client_specificity_impact": 4,
+        "confidence_impact": 5,
+        "effort": 3,
+        "urgency": 5,
+        "reversibility": 4,
+        "dependency_depth": 2
+      },
+      "effort": "medium",
+      "who_should_answer": "client finance/commercial lead",
+      "document_can_answer": true,
+      "client_interview_required": true,
+      "blocking": true
+    },
+    {
+      "gap_id": "gap_bvzzvn",
+      "field": "minimum_order",
+      "category": "economic",
+      "current_state": "unanswered",
+      "current_source": "Block 11 canonical client context",
+      "context_state": "missing",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "affected_fit_dimensions": [
+        "account_scale_fit",
+        "operational_feasibility"
+      ],
+      "affected_access_paths": [
+        "category-buyer outreach",
+        "category-buyer outreach",
+        "hospitality or operations outreach",
+        "category-buyer outreach",
+        "distributor introduction",
+        "partnership proposal"
+      ],
+      "affected_use_cases": [
+        "uc_81zthn",
+        "uc_1fk29j0",
+        "uc_fveb9",
+        "uc_1rh4zx8",
+        "uc_6kaok8",
+        "uc_1dim7jh"
+      ],
+      "affected_buying_path_assumptions": [
+        "pilot",
+        "approval_sequence",
+        "procurement_role"
+      ],
+      "affected_decisions": [
+        "prioritize",
+        "monitor"
+      ],
+      "affected_report_sections": [
+        "Commercial use case",
+        "Commercial sequence"
+      ],
+      "priority": "critical_blocker",
+      "priority_dimensions": {
+        "decision_impact": 5,
+        "accounts_affected": 6,
+        "report_impact": 2,
+        "feasibility_impact": 5,
+        "client_specificity_impact": 4,
+        "confidence_impact": 5,
+        "effort": 1,
+        "urgency": 5,
+        "reversibility": 4,
+        "dependency_depth": 2
+      },
+      "effort": "low",
+      "who_should_answer": "client operations",
+      "document_can_answer": true,
+      "client_interview_required": false,
+      "blocking": true
+    },
+    {
+      "gap_id": "gap_5d4fvb",
+      "field": "price_positioning",
+      "category": "economic",
+      "current_state": "unanswered",
+      "current_source": "Block 11 canonical client context",
+      "context_state": "missing",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "affected_fit_dimensions": [
+        "economic_potential_fit",
+        "brand_positioning_fit"
+      ],
+      "affected_access_paths": [
+        "category-buyer outreach",
+        "category-buyer outreach",
+        "hospitality or operations outreach",
+        "category-buyer outreach",
+        "distributor introduction",
+        "partnership proposal"
+      ],
+      "affected_use_cases": [
+        "uc_81zthn",
+        "uc_1fk29j0",
+        "uc_fveb9",
+        "uc_1rh4zx8",
+        "uc_6kaok8",
+        "uc_1dim7jh"
+      ],
+      "affected_buying_path_assumptions": [
+        "pilot",
+        "approval_sequence",
+        "procurement_role"
+      ],
+      "affected_decisions": [
+        "prioritize",
+        "monitor"
+      ],
+      "affected_report_sections": [
+        "Commercial use case",
+        "Risks"
+      ],
+      "priority": "critical_blocker",
+      "priority_dimensions": {
+        "decision_impact": 5,
+        "accounts_affected": 6,
+        "report_impact": 2,
+        "feasibility_impact": 3,
+        "client_specificity_impact": 4,
+        "confidence_impact": 5,
+        "effort": 1,
+        "urgency": 5,
+        "reversibility": 4,
+        "dependency_depth": 2
+      },
+      "effort": "low",
+      "who_should_answer": "client commercial lead",
+      "document_can_answer": true,
+      "client_interview_required": false,
+      "blocking": true
+    },
+    {
+      "gap_id": "gap_atddqg",
+      "field": "product_formats",
+      "category": "offer",
+      "current_state": "unanswered",
+      "current_source": "Block 11 canonical client context",
+      "context_state": "missing",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "affected_fit_dimensions": [
+        "offer_category_fit",
+        "channel_fit"
+      ],
+      "affected_access_paths": [
+        "category-buyer outreach",
+        "category-buyer outreach",
+        "hospitality or operations outreach",
+        "category-buyer outreach",
+        "distributor introduction",
+        "partnership proposal"
+      ],
+      "affected_use_cases": [
+        "uc_81zthn",
+        "uc_1fk29j0",
+        "uc_fveb9",
+        "uc_1rh4zx8",
+        "uc_6kaok8",
+        "uc_1dim7jh"
+      ],
+      "affected_buying_path_assumptions": [
+        "pilot",
+        "approval_sequence",
+        "procurement_role"
+      ],
+      "affected_decisions": [
+        "prioritize",
+        "monitor"
+      ],
+      "affected_report_sections": [
+        "Commercial use case",
+        "Account-client fit"
+      ],
+      "priority": "critical_blocker",
+      "priority_dimensions": {
+        "decision_impact": 5,
+        "accounts_affected": 6,
+        "report_impact": 2,
+        "feasibility_impact": 3,
+        "client_specificity_impact": 4,
+        "confidence_impact": 5,
+        "effort": 1,
+        "urgency": 5,
+        "reversibility": 4,
+        "dependency_depth": 2
+      },
+      "effort": "low",
+      "who_should_answer": "client product lead",
+      "document_can_answer": true,
+      "client_interview_required": false,
+      "blocking": true
+    },
+    {
+      "gap_id": "gap_19azxv4",
+      "field": "production_capacity",
+      "category": "operational",
+      "current_state": "unanswered",
+      "current_source": "Block 11 canonical client context",
+      "context_state": "missing",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "affected_fit_dimensions": [
+        "client_capacity_fit",
+        "account_scale_fit"
+      ],
+      "affected_access_paths": [
+        "category-buyer outreach",
+        "category-buyer outreach",
+        "hospitality or operations outreach",
+        "category-buyer outreach",
+        "distributor introduction",
+        "partnership proposal"
+      ],
+      "affected_use_cases": [
+        "uc_81zthn",
+        "uc_1fk29j0",
+        "uc_fveb9",
+        "uc_1rh4zx8",
+        "uc_6kaok8",
+        "uc_1dim7jh"
+      ],
+      "affected_buying_path_assumptions": [
+        "pilot",
+        "approval_sequence",
+        "procurement_role"
+      ],
+      "affected_decisions": [
+        "prioritize",
+        "monitor"
+      ],
+      "affected_report_sections": [
+        "Commercial use case",
+        "Risks"
+      ],
+      "priority": "critical_blocker",
+      "priority_dimensions": {
+        "decision_impact": 5,
+        "accounts_affected": 6,
+        "report_impact": 2,
+        "feasibility_impact": 3,
+        "client_specificity_impact": 4,
+        "confidence_impact": 5,
+        "effort": 3,
+        "urgency": 5,
+        "reversibility": 4,
+        "dependency_depth": 2
+      },
+      "effort": "medium",
+      "who_should_answer": "client operations",
+      "document_can_answer": true,
+      "client_interview_required": true,
+      "blocking": true
+    },
+    {
+      "gap_id": "gap_qjua2s",
+      "field": "business_model",
+      "category": "strategic",
+      "current_state": "unanswered",
+      "current_source": "Block 11 canonical client context",
+      "context_state": "missing",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "affected_fit_dimensions": [
+        "strategic_fit",
+        "commercial_accessibility_fit"
+      ],
+      "affected_access_paths": [
+        "category-buyer outreach",
+        "category-buyer outreach",
+        "hospitality or operations outreach",
+        "category-buyer outreach",
+        "distributor introduction",
+        "partnership proposal"
+      ],
+      "affected_use_cases": [
+        "uc_81zthn",
+        "uc_1fk29j0",
+        "uc_fveb9",
+        "uc_1rh4zx8",
+        "uc_6kaok8",
+        "uc_1dim7jh"
+      ],
+      "affected_buying_path_assumptions": [
+        "pilot",
+        "approval_sequence",
+        "procurement_role"
+      ],
+      "affected_decisions": [
+        "prioritize",
+        "monitor"
+      ],
+      "affected_report_sections": [
+        "Client context summary",
+        "Account-client fit"
+      ],
+      "priority": "high_leverage",
+      "priority_dimensions": {
+        "decision_impact": 3,
+        "accounts_affected": 6,
+        "report_impact": 2,
+        "feasibility_impact": 3,
+        "client_specificity_impact": 4,
+        "confidence_impact": 3,
+        "effort": 1,
+        "urgency": 2,
+        "reversibility": 4,
+        "dependency_depth": 2
+      },
+      "effort": "low",
+      "who_should_answer": "client commercial lead",
+      "document_can_answer": true,
+      "client_interview_required": true,
+      "blocking": false
+    },
+    {
+      "gap_id": "gap_1rkiv7v",
+      "field": "current_partnerships",
+      "category": "commercial",
+      "current_state": "unanswered",
+      "current_source": "Block 11 canonical client context",
+      "context_state": "missing",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "affected_fit_dimensions": [
+        "relationship_path_plausibility",
+        "commercial_accessibility_fit"
+      ],
+      "affected_access_paths": [
+        "category-buyer outreach",
+        "category-buyer outreach",
+        "hospitality or operations outreach",
+        "category-buyer outreach",
+        "distributor introduction",
+        "partnership proposal"
+      ],
+      "affected_use_cases": [
+        "uc_81zthn",
+        "uc_1fk29j0",
+        "uc_fveb9",
+        "uc_1rh4zx8",
+        "uc_6kaok8",
+        "uc_1dim7jh"
+      ],
+      "affected_buying_path_assumptions": [
+        "pilot",
+        "approval_sequence",
+        "procurement_role"
+      ],
+      "affected_decisions": [
+        "prioritize",
+        "monitor"
+      ],
+      "affected_report_sections": [
+        "Access path",
+        "Portfolio strategy"
+      ],
+      "priority": "high_leverage",
+      "priority_dimensions": {
+        "decision_impact": 3,
+        "accounts_affected": 6,
+        "report_impact": 2,
+        "feasibility_impact": 3,
+        "client_specificity_impact": 4,
+        "confidence_impact": 3,
+        "effort": 3,
+        "urgency": 2,
+        "reversibility": 4,
+        "dependency_depth": 2
+      },
+      "effort": "medium",
+      "who_should_answer": "client commercial lead",
+      "document_can_answer": true,
+      "client_interview_required": true,
+      "blocking": false
+    },
+    {
+      "gap_id": "gap_r9wy0u",
+      "field": "customization_capacity",
+      "category": "offer",
+      "current_state": "unanswered",
+      "current_source": "Block 11 canonical client context",
+      "context_state": "missing",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "affected_fit_dimensions": [
+        "operational_feasibility",
+        "brand_positioning_fit"
+      ],
+      "affected_access_paths": [
+        "category-buyer outreach",
+        "category-buyer outreach",
+        "hospitality or operations outreach",
+        "category-buyer outreach",
+        "distributor introduction",
+        "partnership proposal"
+      ],
+      "affected_use_cases": [
+        "uc_81zthn",
+        "uc_1fk29j0",
+        "uc_fveb9",
+        "uc_1rh4zx8",
+        "uc_6kaok8",
+        "uc_1dim7jh"
+      ],
+      "affected_buying_path_assumptions": [
+        "pilot",
+        "approval_sequence",
+        "procurement_role"
+      ],
+      "affected_decisions": [
+        "prioritize",
+        "monitor"
+      ],
+      "affected_report_sections": [
+        "Commercial use case",
+        "Risks"
+      ],
+      "priority": "high_leverage",
+      "priority_dimensions": {
+        "decision_impact": 3,
+        "accounts_affected": 6,
+        "report_impact": 2,
+        "feasibility_impact": 5,
+        "client_specificity_impact": 4,
+        "confidence_impact": 3,
+        "effort": 3,
+        "urgency": 2,
+        "reversibility": 4,
+        "dependency_depth": 2
+      },
+      "effort": "medium",
+      "who_should_answer": "client operations",
+      "document_can_answer": true,
+      "client_interview_required": true,
+      "blocking": false
+    },
+    {
+      "gap_id": "gap_1mmvn8h",
+      "field": "preferred_deal_type",
+      "category": "commercial",
+      "current_state": "unanswered",
+      "current_source": "Block 11 canonical client context",
+      "context_state": "missing",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "affected_fit_dimensions": [
+        "relationship_path_plausibility",
+        "strategic_fit"
+      ],
+      "affected_access_paths": [
+        "category-buyer outreach",
+        "category-buyer outreach",
+        "hospitality or operations outreach",
+        "category-buyer outreach",
+        "distributor introduction",
+        "partnership proposal"
+      ],
+      "affected_use_cases": [
+        "uc_81zthn",
+        "uc_1fk29j0",
+        "uc_fveb9",
+        "uc_1rh4zx8",
+        "uc_6kaok8",
+        "uc_1dim7jh"
+      ],
+      "affected_buying_path_assumptions": [
+        "pilot",
+        "approval_sequence",
+        "procurement_role"
+      ],
+      "affected_decisions": [
+        "prioritize",
+        "monitor"
+      ],
+      "affected_report_sections": [
+        "Access path",
+        "Commercial sequence"
+      ],
+      "priority": "high_leverage",
+      "priority_dimensions": {
+        "decision_impact": 3,
+        "accounts_affected": 6,
+        "report_impact": 2,
+        "feasibility_impact": 3,
+        "client_specificity_impact": 4,
+        "confidence_impact": 3,
+        "effort": 1,
+        "urgency": 2,
+        "reversibility": 4,
+        "dependency_depth": 2
+      },
+      "effort": "low",
+      "who_should_answer": "client commercial lead",
+      "document_can_answer": false,
+      "client_interview_required": true,
+      "blocking": false
+    },
+    {
+      "gap_id": "gap_1b1sdh9",
+      "field": "sales_cycle_tolerance",
+      "category": "commercial",
+      "current_state": "unanswered",
+      "current_source": "Block 11 canonical client context",
+      "context_state": "missing",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "affected_fit_dimensions": [
+        "commercial_accessibility_fit",
+        "strategic_fit"
+      ],
+      "affected_access_paths": [
+        "category-buyer outreach",
+        "category-buyer outreach",
+        "hospitality or operations outreach",
+        "category-buyer outreach",
+        "distributor introduction",
+        "partnership proposal"
+      ],
+      "affected_use_cases": [
+        "uc_81zthn",
+        "uc_1fk29j0",
+        "uc_fveb9",
+        "uc_1rh4zx8",
+        "uc_6kaok8",
+        "uc_1dim7jh"
+      ],
+      "affected_buying_path_assumptions": [
+        "pilot",
+        "approval_sequence",
+        "procurement_role"
+      ],
+      "affected_decisions": [
+        "prioritize",
+        "monitor"
+      ],
+      "affected_report_sections": [
+        "Commercial sequence",
+        "Risks"
+      ],
+      "priority": "high_leverage",
+      "priority_dimensions": {
+        "decision_impact": 3,
+        "accounts_affected": 6,
+        "report_impact": 2,
+        "feasibility_impact": 3,
+        "client_specificity_impact": 4,
+        "confidence_impact": 3,
+        "effort": 1,
+        "urgency": 2,
+        "reversibility": 4,
+        "dependency_depth": 2
+      },
+      "effort": "low",
+      "who_should_answer": "client leadership",
+      "document_can_answer": false,
+      "client_interview_required": true,
+      "blocking": false
+    },
+    {
+      "gap_id": "gap_1j828fh",
+      "field": "white_label_capacity",
+      "category": "offer",
+      "current_state": "unanswered",
+      "current_source": "Block 11 canonical client context",
+      "context_state": "missing",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "affected_fit_dimensions": [
+        "offer_category_fit",
+        "operational_feasibility"
+      ],
+      "affected_access_paths": [
+        "category-buyer outreach",
+        "category-buyer outreach",
+        "hospitality or operations outreach",
+        "category-buyer outreach",
+        "distributor introduction",
+        "partnership proposal"
+      ],
+      "affected_use_cases": [
+        "uc_81zthn",
+        "uc_1fk29j0",
+        "uc_fveb9",
+        "uc_1rh4zx8",
+        "uc_6kaok8",
+        "uc_1dim7jh"
+      ],
+      "affected_buying_path_assumptions": [
+        "pilot",
+        "approval_sequence",
+        "procurement_role"
+      ],
+      "affected_decisions": [
+        "prioritize",
+        "monitor"
+      ],
+      "affected_report_sections": [
+        "Commercial use case",
+        "Risks"
+      ],
+      "priority": "high_leverage",
+      "priority_dimensions": {
+        "decision_impact": 3,
+        "accounts_affected": 6,
+        "report_impact": 2,
+        "feasibility_impact": 5,
+        "client_specificity_impact": 4,
+        "confidence_impact": 3,
+        "effort": 3,
+        "urgency": 2,
+        "reversibility": 4,
+        "dependency_depth": 2
+      },
+      "effort": "medium",
+      "who_should_answer": "client product/operations",
+      "document_can_answer": true,
+      "client_interview_required": true,
+      "blocking": false
+    },
+    {
+      "gap_id": "gap_k3qob2",
+      "field": "company_stage",
+      "category": "strategic",
+      "current_state": "unanswered",
+      "current_source": "Block 11 canonical client context",
+      "context_state": "missing",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "affected_fit_dimensions": [
+        "client_capacity_fit"
+      ],
+      "affected_access_paths": [
+        "category-buyer outreach",
+        "category-buyer outreach",
+        "hospitality or operations outreach",
+        "category-buyer outreach",
+        "distributor introduction",
+        "partnership proposal"
+      ],
+      "affected_use_cases": [
+        "uc_81zthn",
+        "uc_1fk29j0",
+        "uc_fveb9",
+        "uc_1rh4zx8",
+        "uc_6kaok8",
+        "uc_1dim7jh"
+      ],
+      "affected_buying_path_assumptions": [
+        "pilot",
+        "approval_sequence",
+        "procurement_role"
+      ],
+      "affected_decisions": [
+        "prioritize",
+        "monitor"
+      ],
+      "affected_report_sections": [
+        "Client context summary",
+        "Risks"
+      ],
+      "priority": "important",
+      "priority_dimensions": {
+        "decision_impact": 3,
+        "accounts_affected": 6,
+        "report_impact": 2,
+        "feasibility_impact": 3,
+        "client_specificity_impact": 4,
+        "confidence_impact": 3,
+        "effort": 1,
+        "urgency": 2,
+        "reversibility": 4,
+        "dependency_depth": 1
+      },
+      "effort": "low",
+      "who_should_answer": "client leadership",
+      "document_can_answer": false,
+      "client_interview_required": true,
+      "blocking": false
+    }
+  ],
+  "questions": [
+    {
+      "question_id": "q_1m45vhc",
+      "gap_id": "gap_1xp98t2",
+      "text": "What account size or expected order range is commercially suitable today?",
+      "category": "commercial",
+      "field": "account_size_constraints",
+      "why": "Affects account_scale_fit and Account shortlist, Portfolio strategy.",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "possible_answers": [
+        "verified value",
+        "unknown",
+        "not applicable"
+      ],
+      "validation_type": "client_confirmation",
+      "evidence_required": [
+        "explicit client answer"
+      ],
+      "who_should_answer": "client commercial lead",
+      "answer_format": "range",
+      "document_can_answer": false,
+      "interview_required": true,
+      "expected_decision_impact": "May enable or disqualify all dependent account theses.",
+      "next_system_action": "Create reviewed answer, then recalculate affected theses deterministically.",
+      "priority": "critical_blocker"
+    },
+    {
+      "question_id": "q_7k3ya9",
+      "gap_id": "gap_1ay1p7z",
+      "text": "Which current registrations, certifications and compliance documents can be evidenced?",
+      "category": "compliance",
+      "field": "certifications",
+      "why": "Affects operational_feasibility, offer_category_fit and Commercial use case, Risks, Limitations.",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "possible_answers": [
+        "verified value",
+        "unknown",
+        "not applicable"
+      ],
+      "validation_type": "client_confirmation",
+      "evidence_required": [
+        "supporting document or evidence reference"
+      ],
+      "who_should_answer": "client compliance lead",
+      "answer_format": "document upload",
+      "document_can_answer": true,
+      "interview_required": false,
+      "expected_decision_impact": "May enable or disqualify all dependent account theses.",
+      "next_system_action": "Create reviewed answer, then recalculate affected theses deterministically.",
+      "priority": "critical_blocker"
+    },
+    {
+      "question_id": "q_1ng5kf5",
+      "gap_id": "gap_2od657",
+      "text": "What exact cities, departments or national zones can be served reliably today?",
+      "category": "operational",
+      "field": "delivery_radius",
+      "why": "Affects geography_fit, commercial_accessibility_fit and Access path, Account shortlist.",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "possible_answers": [
+        "verified value",
+        "unknown",
+        "not applicable"
+      ],
+      "validation_type": "client_confirmation",
+      "evidence_required": [
+        "supporting document or evidence reference"
+      ],
+      "who_should_answer": "client operations",
+      "answer_format": "multi-select",
+      "document_can_answer": true,
+      "interview_required": false,
+      "expected_decision_impact": "May enable or disqualify all dependent account theses.",
+      "next_system_action": "Create reviewed answer, then recalculate affected theses deterministically.",
+      "priority": "critical_blocker"
+    },
+    {
+      "question_id": "q_8p2w4d",
+      "gap_id": "gap_w6puop",
+      "text": "Through which geographies and delivery methods can Amor de Gea reliably fulfill B2B orders?",
+      "category": "operational",
+      "field": "distribution_capability",
+      "why": "Affects commercial_accessibility_fit, geography_fit, client_capacity_fit and Access path, Commercial sequence, Risks.",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "possible_answers": [
+        "verified value",
+        "unknown",
+        "not applicable"
+      ],
+      "validation_type": "client_confirmation",
+      "evidence_required": [
+        "supporting document or evidence reference"
+      ],
+      "who_should_answer": "client operations",
+      "answer_format": "multi-select",
+      "document_can_answer": true,
+      "interview_required": true,
+      "expected_decision_impact": "May enable or disqualify all dependent account theses.",
+      "next_system_action": "Create reviewed answer, then recalculate affected theses deterministically.",
+      "priority": "critical_blocker"
+    },
+    {
+      "question_id": "q_98jr4b",
+      "gap_id": "gap_6wlet9",
+      "text": "Which fulfillment, shipping or inventory constraints apply to B2B orders?",
+      "category": "operational",
+      "field": "fulfillment_constraints",
+      "why": "Affects operational_feasibility, commercial_accessibility_fit and Access path, Risks.",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "possible_answers": [
+        "verified value",
+        "unknown",
+        "not applicable"
+      ],
+      "validation_type": "client_confirmation",
+      "evidence_required": [
+        "supporting document or evidence reference"
+      ],
+      "who_should_answer": "client operations",
+      "answer_format": "free text",
+      "document_can_answer": true,
+      "interview_required": true,
+      "expected_decision_impact": "May enable or disqualify all dependent account theses.",
+      "next_system_action": "Create reviewed answer, then recalculate affected theses deterministically.",
+      "priority": "critical_blocker"
+    },
+    {
+      "question_id": "q_iz15ks",
+      "gap_id": "gap_w2lj27",
+      "text": "What minimum gross-margin or distributor-margin constraints must a B2B opportunity satisfy?",
+      "category": "economic",
+      "field": "margins",
+      "why": "Affects economic_potential_fit, operational_feasibility and Commercial use case, Risks.",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "possible_answers": [
+        "verified value",
+        "unknown",
+        "not applicable"
+      ],
+      "validation_type": "client_confirmation",
+      "evidence_required": [
+        "supporting document or evidence reference"
+      ],
+      "who_should_answer": "client finance/commercial lead",
+      "answer_format": "range",
+      "document_can_answer": true,
+      "interview_required": true,
+      "expected_decision_impact": "May enable or disqualify all dependent account theses.",
+      "next_system_action": "Create reviewed answer, then recalculate affected theses deterministically.",
+      "priority": "critical_blocker"
+    },
+    {
+      "question_id": "q_xrwhtc",
+      "gap_id": "gap_bvzzvn",
+      "text": "What is the minimum order quantity or value for one B2B account?",
+      "category": "economic",
+      "field": "minimum_order",
+      "why": "Affects account_scale_fit, operational_feasibility and Commercial use case, Commercial sequence.",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "possible_answers": [
+        "verified value",
+        "unknown",
+        "not applicable"
+      ],
+      "validation_type": "client_confirmation",
+      "evidence_required": [
+        "supporting document or evidence reference"
+      ],
+      "who_should_answer": "client operations",
+      "answer_format": "numeric",
+      "document_can_answer": true,
+      "interview_required": false,
+      "expected_decision_impact": "May enable or disqualify all dependent account theses.",
+      "next_system_action": "Create reviewed answer, then recalculate affected theses deterministically.",
+      "priority": "critical_blocker"
+    },
+    {
+      "question_id": "q_1ihirlr",
+      "gap_id": "gap_5d4fvb",
+      "text": "What verified wholesale price range and market positioning apply to the current B2B offer?",
+      "category": "economic",
+      "field": "price_positioning",
+      "why": "Affects economic_potential_fit, brand_positioning_fit and Commercial use case, Risks.",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "possible_answers": [
+        "verified value",
+        "unknown",
+        "not applicable"
+      ],
+      "validation_type": "client_confirmation",
+      "evidence_required": [
+        "supporting document or evidence reference"
+      ],
+      "who_should_answer": "client commercial lead",
+      "answer_format": "range",
+      "document_can_answer": true,
+      "interview_required": false,
+      "expected_decision_impact": "May enable or disqualify all dependent account theses.",
+      "next_system_action": "Create reviewed answer, then recalculate affected theses deterministically.",
+      "priority": "critical_blocker"
+    },
+    {
+      "question_id": "q_1ocfopt",
+      "gap_id": "gap_atddqg",
+      "text": "Which product formats and packaging configurations are currently available for B2B sale?",
+      "category": "offer",
+      "field": "product_formats",
+      "why": "Affects offer_category_fit, channel_fit and Commercial use case, Account-client fit.",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "possible_answers": [
+        "verified value",
+        "unknown",
+        "not applicable"
+      ],
+      "validation_type": "client_confirmation",
+      "evidence_required": [
+        "supporting document or evidence reference"
+      ],
+      "who_should_answer": "client product lead",
+      "answer_format": "multi-select",
+      "document_can_answer": true,
+      "interview_required": false,
+      "expected_decision_impact": "May enable or disqualify all dependent account theses.",
+      "next_system_action": "Create reviewed answer, then recalculate affected theses deterministically.",
+      "priority": "critical_blocker"
+    },
+    {
+      "question_id": "q_iy6pid",
+      "gap_id": "gap_19azxv4",
+      "text": "What maximum monthly B2B volume can Amor de Gea supply reliably to one account?",
+      "category": "operational",
+      "field": "production_capacity",
+      "why": "Affects client_capacity_fit, account_scale_fit and Commercial use case, Risks.",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "possible_answers": [
+        "verified value",
+        "unknown",
+        "not applicable"
+      ],
+      "validation_type": "client_confirmation",
+      "evidence_required": [
+        "supporting document or evidence reference"
+      ],
+      "who_should_answer": "client operations",
+      "answer_format": "numeric",
+      "document_can_answer": true,
+      "interview_required": true,
+      "expected_decision_impact": "May enable or disqualify all dependent account theses.",
+      "next_system_action": "Create reviewed answer, then recalculate affected theses deterministically.",
+      "priority": "critical_blocker"
+    },
+    {
+      "question_id": "q_12c720u",
+      "gap_id": "gap_qjua2s",
+      "text": "Which B2B business model does Amor de Gea currently support?",
+      "category": "strategic",
+      "field": "business_model",
+      "why": "Affects strategic_fit, commercial_accessibility_fit and Client context summary, Account-client fit.",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "possible_answers": [
+        "verified value",
+        "unknown",
+        "not applicable"
+      ],
+      "validation_type": "client_confirmation",
+      "evidence_required": [
+        "supporting document or evidence reference"
+      ],
+      "who_should_answer": "client commercial lead",
+      "answer_format": "multi-select",
+      "document_can_answer": true,
+      "interview_required": true,
+      "expected_decision_impact": "May strengthen, weaken or redirect access/use-case hypotheses.",
+      "next_system_action": "Create reviewed answer, then recalculate affected theses deterministically.",
+      "priority": "high_leverage"
+    },
+    {
+      "question_id": "q_17e3fyi",
+      "gap_id": "gap_1rkiv7v",
+      "text": "Which current distributors, channel partners or B2B references may affect account access?",
+      "category": "commercial",
+      "field": "current_partnerships",
+      "why": "Affects relationship_path_plausibility, commercial_accessibility_fit and Access path, Portfolio strategy.",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "possible_answers": [
+        "verified value",
+        "unknown",
+        "not applicable"
+      ],
+      "validation_type": "client_confirmation",
+      "evidence_required": [
+        "supporting document or evidence reference"
+      ],
+      "who_should_answer": "client commercial lead",
+      "answer_format": "free text",
+      "document_can_answer": true,
+      "interview_required": true,
+      "expected_decision_impact": "May strengthen, weaken or redirect access/use-case hypotheses.",
+      "next_system_action": "Create reviewed answer, then recalculate affected theses deterministically.",
+      "priority": "high_leverage"
+    },
+    {
+      "question_id": "q_3s8bem",
+      "gap_id": "gap_r9wy0u",
+      "text": "What product or packaging customization is operationally available today?",
+      "category": "offer",
+      "field": "customization_capacity",
+      "why": "Affects operational_feasibility, brand_positioning_fit and Commercial use case, Risks.",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "possible_answers": [
+        "verified value",
+        "unknown",
+        "not applicable"
+      ],
+      "validation_type": "client_confirmation",
+      "evidence_required": [
+        "supporting document or evidence reference"
+      ],
+      "who_should_answer": "client operations",
+      "answer_format": "multi-select",
+      "document_can_answer": true,
+      "interview_required": true,
+      "expected_decision_impact": "May strengthen, weaken or redirect access/use-case hypotheses.",
+      "next_system_action": "Create reviewed answer, then recalculate affected theses deterministically.",
+      "priority": "high_leverage"
+    },
+    {
+      "question_id": "q_1a6qpm5",
+      "gap_id": "gap_1mmvn8h",
+      "text": "Which commercial motions are preferred: direct wholesale, distributor, pilot, gifting or partnership?",
+      "category": "commercial",
+      "field": "preferred_deal_type",
+      "why": "Affects relationship_path_plausibility, strategic_fit and Access path, Commercial sequence.",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "possible_answers": [
+        "verified value",
+        "unknown",
+        "not applicable"
+      ],
+      "validation_type": "client_confirmation",
+      "evidence_required": [
+        "explicit client answer"
+      ],
+      "who_should_answer": "client commercial lead",
+      "answer_format": "multi-select",
+      "document_can_answer": false,
+      "interview_required": true,
+      "expected_decision_impact": "May strengthen, weaken or redirect access/use-case hypotheses.",
+      "next_system_action": "Create reviewed answer, then recalculate affected theses deterministically.",
+      "priority": "high_leverage"
+    },
+    {
+      "question_id": "q_1r82ye",
+      "gap_id": "gap_1b1sdh9",
+      "text": "What B2B sales-cycle length is acceptable before an account becomes impractical?",
+      "category": "commercial",
+      "field": "sales_cycle_tolerance",
+      "why": "Affects commercial_accessibility_fit, strategic_fit and Commercial sequence, Risks.",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "possible_answers": [
+        "verified value",
+        "unknown",
+        "not applicable"
+      ],
+      "validation_type": "client_confirmation",
+      "evidence_required": [
+        "explicit client answer"
+      ],
+      "who_should_answer": "client leadership",
+      "answer_format": "range",
+      "document_can_answer": false,
+      "interview_required": true,
+      "expected_decision_impact": "May strengthen, weaken or redirect access/use-case hypotheses.",
+      "next_system_action": "Create reviewed answer, then recalculate affected theses deterministically.",
+      "priority": "high_leverage"
+    },
+    {
+      "question_id": "q_1mzrje5",
+      "gap_id": "gap_1j828fh",
+      "text": "Is white-label production currently available, unavailable or conditional?",
+      "category": "offer",
+      "field": "white_label_capacity",
+      "why": "Affects offer_category_fit, operational_feasibility and Commercial use case, Risks.",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "possible_answers": [
+        "verified value",
+        "unknown",
+        "not applicable"
+      ],
+      "validation_type": "client_confirmation",
+      "evidence_required": [
+        "supporting document or evidence reference"
+      ],
+      "who_should_answer": "client product/operations",
+      "answer_format": "enum",
+      "document_can_answer": true,
+      "interview_required": true,
+      "expected_decision_impact": "May strengthen, weaken or redirect access/use-case hypotheses.",
+      "next_system_action": "Create reviewed answer, then recalculate affected theses deterministically.",
+      "priority": "high_leverage"
+    },
+    {
+      "question_id": "q_8qsoj6",
+      "gap_id": "gap_k3qob2",
+      "text": "Which company stage best describes Amor de Gea today?",
+      "category": "strategic",
+      "field": "company_stage",
+      "why": "Affects client_capacity_fit and Client context summary, Risks.",
+      "affected_accounts": [
+        "rp_r5i5ih",
+        "rp_62dwgs",
+        "rp_1v459p4",
+        "rp_hcdx5a",
+        "rp_1v1bsfg",
+        "rp_a2xwiw"
+      ],
+      "affected_theses": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "possible_answers": [
+        "verified value",
+        "unknown",
+        "not applicable"
+      ],
+      "validation_type": "client_confirmation",
+      "evidence_required": [
+        "explicit client answer"
+      ],
+      "who_should_answer": "client leadership",
+      "answer_format": "enum",
+      "document_can_answer": false,
+      "interview_required": true,
+      "expected_decision_impact": "May strengthen, weaken or redirect access/use-case hypotheses.",
+      "next_system_action": "Create reviewed answer, then recalculate affected theses deterministically.",
+      "priority": "important"
+    }
+  ],
+  "intake": {
+    "intake_id": "intake_3tex2p",
+    "tenant_id": null,
+    "client_id": "amor-de-gea",
+    "context_version": "ctx_1kqa1cw",
+    "status": "draft",
+    "created_by": "system:block12",
+    "started_at": "2026-07-30T16:09:40.798Z",
+    "completed_at": null,
+    "question_set_version": "client-context-review-v1",
+    "methodology_version": "client-context-review-v1",
+    "answers": [],
+    "evidence_refs": [],
+    "unresolved_questions": [
+      "q_1m45vhc",
+      "q_7k3ya9",
+      "q_1ng5kf5",
+      "q_8p2w4d",
+      "q_98jr4b",
+      "q_iz15ks",
+      "q_xrwhtc",
+      "q_1ihirlr",
+      "q_1ocfopt",
+      "q_iy6pid",
+      "q_12c720u",
+      "q_17e3fyi",
+      "q_3s8bem",
+      "q_1a6qpm5",
+      "q_1r82ye",
+      "q_1mzrje5",
+      "q_8qsoj6"
+    ],
+    "conflicting_answers": [],
+    "reviewer_state": "unreviewed",
+    "supersedes_id": null,
+    "created_at": "2026-07-30T16:09:40.798Z",
+    "fixture_mode": false
+  },
+  "context_versions": [],
+  "feasibility": [
+    {
+      "account_id": "rp_r5i5ih",
+      "dimensions": [
+        {
+          "dimension": "product",
+          "state": "insufficient_context",
+          "client_fields": [
+            "product_formats"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing product_formats.",
+          "next_verification": "Provide and review product_formats.",
+          "confidence": 0
+        },
+        {
+          "dimension": "pricing",
+          "state": "insufficient_context",
+          "client_fields": [
+            "price_positioning",
+            "minimum_order"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing price_positioning, minimum_order.",
+          "next_verification": "Provide and review price_positioning, minimum_order.",
+          "confidence": 0
+        },
+        {
+          "dimension": "margin",
+          "state": "insufficient_context",
+          "client_fields": [
+            "margins"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing margins.",
+          "next_verification": "Provide and review margins.",
+          "confidence": 0
+        },
+        {
+          "dimension": "fulfillment",
+          "state": "insufficient_context",
+          "client_fields": [
+            "fulfillment_constraints"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing fulfillment_constraints.",
+          "next_verification": "Provide and review fulfillment_constraints.",
+          "confidence": 0
+        },
+        {
+          "dimension": "geographic",
+          "state": "insufficient_context",
+          "client_fields": [
+            "distribution_capability",
+            "delivery_radius"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing distribution_capability, delivery_radius.",
+          "next_verification": "Provide and review distribution_capability, delivery_radius.",
+          "confidence": 0
+        },
+        {
+          "dimension": "capacity",
+          "state": "insufficient_context",
+          "client_fields": [
+            "production_capacity"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing production_capacity.",
+          "next_verification": "Provide and review production_capacity.",
+          "confidence": 0
+        },
+        {
+          "dimension": "certification",
+          "state": "insufficient_context",
+          "client_fields": [
+            "certifications"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing certifications.",
+          "next_verification": "Provide and review certifications.",
+          "confidence": 0
+        },
+        {
+          "dimension": "procurement",
+          "state": "insufficient_context",
+          "client_fields": [
+            "preferred_deal_type"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing preferred_deal_type.",
+          "next_verification": "Provide and review preferred_deal_type.",
+          "confidence": 0
+        },
+        {
+          "dimension": "pilot",
+          "state": "insufficient_context",
+          "client_fields": [
+            "customization_capacity"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing customization_capacity.",
+          "next_verification": "Provide and review customization_capacity.",
+          "confidence": 0
+        },
+        {
+          "dimension": "sales_cycle",
+          "state": "insufficient_context",
+          "client_fields": [
+            "sales_cycle_tolerance"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing sales_cycle_tolerance.",
+          "next_verification": "Provide and review sales_cycle_tolerance.",
+          "confidence": 0
+        },
+        {
+          "dimension": "operational_complexity",
+          "state": "insufficient_context",
+          "client_fields": [
+            "fulfillment_constraints",
+            "production_capacity"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing fulfillment_constraints, production_capacity.",
+          "next_verification": "Provide and review fulfillment_constraints, production_capacity.",
+          "confidence": 0
+        },
+        {
+          "dimension": "implementation_burden",
+          "state": "insufficient_context",
+          "client_fields": [
+            "certifications",
+            "product_formats"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing certifications, product_formats.",
+          "next_verification": "Provide and review certifications, product_formats.",
+          "confidence": 0
+        }
+      ]
+    },
+    {
+      "account_id": "rp_62dwgs",
+      "dimensions": [
+        {
+          "dimension": "product",
+          "state": "insufficient_context",
+          "client_fields": [
+            "product_formats"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing product_formats.",
+          "next_verification": "Provide and review product_formats.",
+          "confidence": 0
+        },
+        {
+          "dimension": "pricing",
+          "state": "insufficient_context",
+          "client_fields": [
+            "price_positioning",
+            "minimum_order"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing price_positioning, minimum_order.",
+          "next_verification": "Provide and review price_positioning, minimum_order.",
+          "confidence": 0
+        },
+        {
+          "dimension": "margin",
+          "state": "insufficient_context",
+          "client_fields": [
+            "margins"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing margins.",
+          "next_verification": "Provide and review margins.",
+          "confidence": 0
+        },
+        {
+          "dimension": "fulfillment",
+          "state": "insufficient_context",
+          "client_fields": [
+            "fulfillment_constraints"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing fulfillment_constraints.",
+          "next_verification": "Provide and review fulfillment_constraints.",
+          "confidence": 0
+        },
+        {
+          "dimension": "geographic",
+          "state": "insufficient_context",
+          "client_fields": [
+            "distribution_capability",
+            "delivery_radius"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing distribution_capability, delivery_radius.",
+          "next_verification": "Provide and review distribution_capability, delivery_radius.",
+          "confidence": 0
+        },
+        {
+          "dimension": "capacity",
+          "state": "insufficient_context",
+          "client_fields": [
+            "production_capacity"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing production_capacity.",
+          "next_verification": "Provide and review production_capacity.",
+          "confidence": 0
+        },
+        {
+          "dimension": "certification",
+          "state": "insufficient_context",
+          "client_fields": [
+            "certifications"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing certifications.",
+          "next_verification": "Provide and review certifications.",
+          "confidence": 0
+        },
+        {
+          "dimension": "procurement",
+          "state": "insufficient_context",
+          "client_fields": [
+            "preferred_deal_type"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing preferred_deal_type.",
+          "next_verification": "Provide and review preferred_deal_type.",
+          "confidence": 0
+        },
+        {
+          "dimension": "pilot",
+          "state": "insufficient_context",
+          "client_fields": [
+            "customization_capacity"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing customization_capacity.",
+          "next_verification": "Provide and review customization_capacity.",
+          "confidence": 0
+        },
+        {
+          "dimension": "sales_cycle",
+          "state": "insufficient_context",
+          "client_fields": [
+            "sales_cycle_tolerance"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing sales_cycle_tolerance.",
+          "next_verification": "Provide and review sales_cycle_tolerance.",
+          "confidence": 0
+        },
+        {
+          "dimension": "operational_complexity",
+          "state": "insufficient_context",
+          "client_fields": [
+            "fulfillment_constraints",
+            "production_capacity"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing fulfillment_constraints, production_capacity.",
+          "next_verification": "Provide and review fulfillment_constraints, production_capacity.",
+          "confidence": 0
+        },
+        {
+          "dimension": "implementation_burden",
+          "state": "insufficient_context",
+          "client_fields": [
+            "certifications",
+            "product_formats"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing certifications, product_formats.",
+          "next_verification": "Provide and review certifications, product_formats.",
+          "confidence": 0
+        }
+      ]
+    },
+    {
+      "account_id": "rp_1v459p4",
+      "dimensions": [
+        {
+          "dimension": "product",
+          "state": "insufficient_context",
+          "client_fields": [
+            "product_formats"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing product_formats.",
+          "next_verification": "Provide and review product_formats.",
+          "confidence": 0
+        },
+        {
+          "dimension": "pricing",
+          "state": "insufficient_context",
+          "client_fields": [
+            "price_positioning",
+            "minimum_order"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing price_positioning, minimum_order.",
+          "next_verification": "Provide and review price_positioning, minimum_order.",
+          "confidence": 0
+        },
+        {
+          "dimension": "margin",
+          "state": "insufficient_context",
+          "client_fields": [
+            "margins"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing margins.",
+          "next_verification": "Provide and review margins.",
+          "confidence": 0
+        },
+        {
+          "dimension": "fulfillment",
+          "state": "insufficient_context",
+          "client_fields": [
+            "fulfillment_constraints"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing fulfillment_constraints.",
+          "next_verification": "Provide and review fulfillment_constraints.",
+          "confidence": 0
+        },
+        {
+          "dimension": "geographic",
+          "state": "insufficient_context",
+          "client_fields": [
+            "distribution_capability",
+            "delivery_radius"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing distribution_capability, delivery_radius.",
+          "next_verification": "Provide and review distribution_capability, delivery_radius.",
+          "confidence": 0
+        },
+        {
+          "dimension": "capacity",
+          "state": "insufficient_context",
+          "client_fields": [
+            "production_capacity"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing production_capacity.",
+          "next_verification": "Provide and review production_capacity.",
+          "confidence": 0
+        },
+        {
+          "dimension": "certification",
+          "state": "insufficient_context",
+          "client_fields": [
+            "certifications"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing certifications.",
+          "next_verification": "Provide and review certifications.",
+          "confidence": 0
+        },
+        {
+          "dimension": "procurement",
+          "state": "insufficient_context",
+          "client_fields": [
+            "preferred_deal_type"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing preferred_deal_type.",
+          "next_verification": "Provide and review preferred_deal_type.",
+          "confidence": 0
+        },
+        {
+          "dimension": "pilot",
+          "state": "insufficient_context",
+          "client_fields": [
+            "customization_capacity"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing customization_capacity.",
+          "next_verification": "Provide and review customization_capacity.",
+          "confidence": 0
+        },
+        {
+          "dimension": "sales_cycle",
+          "state": "insufficient_context",
+          "client_fields": [
+            "sales_cycle_tolerance"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing sales_cycle_tolerance.",
+          "next_verification": "Provide and review sales_cycle_tolerance.",
+          "confidence": 0
+        },
+        {
+          "dimension": "operational_complexity",
+          "state": "insufficient_context",
+          "client_fields": [
+            "fulfillment_constraints",
+            "production_capacity"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing fulfillment_constraints, production_capacity.",
+          "next_verification": "Provide and review fulfillment_constraints, production_capacity.",
+          "confidence": 0
+        },
+        {
+          "dimension": "implementation_burden",
+          "state": "insufficient_context",
+          "client_fields": [
+            "certifications",
+            "product_formats"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing certifications, product_formats.",
+          "next_verification": "Provide and review certifications, product_formats.",
+          "confidence": 0
+        }
+      ]
+    },
+    {
+      "account_id": "rp_hcdx5a",
+      "dimensions": [
+        {
+          "dimension": "product",
+          "state": "insufficient_context",
+          "client_fields": [
+            "product_formats"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing product_formats.",
+          "next_verification": "Provide and review product_formats.",
+          "confidence": 0
+        },
+        {
+          "dimension": "pricing",
+          "state": "insufficient_context",
+          "client_fields": [
+            "price_positioning",
+            "minimum_order"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing price_positioning, minimum_order.",
+          "next_verification": "Provide and review price_positioning, minimum_order.",
+          "confidence": 0
+        },
+        {
+          "dimension": "margin",
+          "state": "insufficient_context",
+          "client_fields": [
+            "margins"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing margins.",
+          "next_verification": "Provide and review margins.",
+          "confidence": 0
+        },
+        {
+          "dimension": "fulfillment",
+          "state": "insufficient_context",
+          "client_fields": [
+            "fulfillment_constraints"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing fulfillment_constraints.",
+          "next_verification": "Provide and review fulfillment_constraints.",
+          "confidence": 0
+        },
+        {
+          "dimension": "geographic",
+          "state": "insufficient_context",
+          "client_fields": [
+            "distribution_capability",
+            "delivery_radius"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing distribution_capability, delivery_radius.",
+          "next_verification": "Provide and review distribution_capability, delivery_radius.",
+          "confidence": 0
+        },
+        {
+          "dimension": "capacity",
+          "state": "insufficient_context",
+          "client_fields": [
+            "production_capacity"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing production_capacity.",
+          "next_verification": "Provide and review production_capacity.",
+          "confidence": 0
+        },
+        {
+          "dimension": "certification",
+          "state": "insufficient_context",
+          "client_fields": [
+            "certifications"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing certifications.",
+          "next_verification": "Provide and review certifications.",
+          "confidence": 0
+        },
+        {
+          "dimension": "procurement",
+          "state": "insufficient_context",
+          "client_fields": [
+            "preferred_deal_type"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing preferred_deal_type.",
+          "next_verification": "Provide and review preferred_deal_type.",
+          "confidence": 0
+        },
+        {
+          "dimension": "pilot",
+          "state": "insufficient_context",
+          "client_fields": [
+            "customization_capacity"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing customization_capacity.",
+          "next_verification": "Provide and review customization_capacity.",
+          "confidence": 0
+        },
+        {
+          "dimension": "sales_cycle",
+          "state": "insufficient_context",
+          "client_fields": [
+            "sales_cycle_tolerance"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing sales_cycle_tolerance.",
+          "next_verification": "Provide and review sales_cycle_tolerance.",
+          "confidence": 0
+        },
+        {
+          "dimension": "operational_complexity",
+          "state": "insufficient_context",
+          "client_fields": [
+            "fulfillment_constraints",
+            "production_capacity"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing fulfillment_constraints, production_capacity.",
+          "next_verification": "Provide and review fulfillment_constraints, production_capacity.",
+          "confidence": 0
+        },
+        {
+          "dimension": "implementation_burden",
+          "state": "insufficient_context",
+          "client_fields": [
+            "certifications",
+            "product_formats"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing certifications, product_formats.",
+          "next_verification": "Provide and review certifications, product_formats.",
+          "confidence": 0
+        }
+      ]
+    },
+    {
+      "account_id": "rp_1v1bsfg",
+      "dimensions": [
+        {
+          "dimension": "product",
+          "state": "insufficient_context",
+          "client_fields": [
+            "product_formats"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing product_formats.",
+          "next_verification": "Provide and review product_formats.",
+          "confidence": 0
+        },
+        {
+          "dimension": "pricing",
+          "state": "insufficient_context",
+          "client_fields": [
+            "price_positioning",
+            "minimum_order"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing price_positioning, minimum_order.",
+          "next_verification": "Provide and review price_positioning, minimum_order.",
+          "confidence": 0
+        },
+        {
+          "dimension": "margin",
+          "state": "insufficient_context",
+          "client_fields": [
+            "margins"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing margins.",
+          "next_verification": "Provide and review margins.",
+          "confidence": 0
+        },
+        {
+          "dimension": "fulfillment",
+          "state": "insufficient_context",
+          "client_fields": [
+            "fulfillment_constraints"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing fulfillment_constraints.",
+          "next_verification": "Provide and review fulfillment_constraints.",
+          "confidence": 0
+        },
+        {
+          "dimension": "geographic",
+          "state": "insufficient_context",
+          "client_fields": [
+            "distribution_capability",
+            "delivery_radius"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing distribution_capability, delivery_radius.",
+          "next_verification": "Provide and review distribution_capability, delivery_radius.",
+          "confidence": 0
+        },
+        {
+          "dimension": "capacity",
+          "state": "insufficient_context",
+          "client_fields": [
+            "production_capacity"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing production_capacity.",
+          "next_verification": "Provide and review production_capacity.",
+          "confidence": 0
+        },
+        {
+          "dimension": "certification",
+          "state": "insufficient_context",
+          "client_fields": [
+            "certifications"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing certifications.",
+          "next_verification": "Provide and review certifications.",
+          "confidence": 0
+        },
+        {
+          "dimension": "procurement",
+          "state": "insufficient_context",
+          "client_fields": [
+            "preferred_deal_type"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing preferred_deal_type.",
+          "next_verification": "Provide and review preferred_deal_type.",
+          "confidence": 0
+        },
+        {
+          "dimension": "pilot",
+          "state": "insufficient_context",
+          "client_fields": [
+            "customization_capacity"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing customization_capacity.",
+          "next_verification": "Provide and review customization_capacity.",
+          "confidence": 0
+        },
+        {
+          "dimension": "sales_cycle",
+          "state": "insufficient_context",
+          "client_fields": [
+            "sales_cycle_tolerance"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing sales_cycle_tolerance.",
+          "next_verification": "Provide and review sales_cycle_tolerance.",
+          "confidence": 0
+        },
+        {
+          "dimension": "operational_complexity",
+          "state": "insufficient_context",
+          "client_fields": [
+            "fulfillment_constraints",
+            "production_capacity"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing fulfillment_constraints, production_capacity.",
+          "next_verification": "Provide and review fulfillment_constraints, production_capacity.",
+          "confidence": 0
+        },
+        {
+          "dimension": "implementation_burden",
+          "state": "insufficient_context",
+          "client_fields": [
+            "certifications",
+            "product_formats"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing certifications, product_formats.",
+          "next_verification": "Provide and review certifications, product_formats.",
+          "confidence": 0
+        }
+      ]
+    },
+    {
+      "account_id": "rp_a2xwiw",
+      "dimensions": [
+        {
+          "dimension": "product",
+          "state": "insufficient_context",
+          "client_fields": [
+            "product_formats"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing product_formats.",
+          "next_verification": "Provide and review product_formats.",
+          "confidence": 0
+        },
+        {
+          "dimension": "pricing",
+          "state": "insufficient_context",
+          "client_fields": [
+            "price_positioning",
+            "minimum_order"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing price_positioning, minimum_order.",
+          "next_verification": "Provide and review price_positioning, minimum_order.",
+          "confidence": 0
+        },
+        {
+          "dimension": "margin",
+          "state": "insufficient_context",
+          "client_fields": [
+            "margins"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing margins.",
+          "next_verification": "Provide and review margins.",
+          "confidence": 0
+        },
+        {
+          "dimension": "fulfillment",
+          "state": "insufficient_context",
+          "client_fields": [
+            "fulfillment_constraints"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing fulfillment_constraints.",
+          "next_verification": "Provide and review fulfillment_constraints.",
+          "confidence": 0
+        },
+        {
+          "dimension": "geographic",
+          "state": "insufficient_context",
+          "client_fields": [
+            "distribution_capability",
+            "delivery_radius"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing distribution_capability, delivery_radius.",
+          "next_verification": "Provide and review distribution_capability, delivery_radius.",
+          "confidence": 0
+        },
+        {
+          "dimension": "capacity",
+          "state": "insufficient_context",
+          "client_fields": [
+            "production_capacity"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing production_capacity.",
+          "next_verification": "Provide and review production_capacity.",
+          "confidence": 0
+        },
+        {
+          "dimension": "certification",
+          "state": "insufficient_context",
+          "client_fields": [
+            "certifications"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing certifications.",
+          "next_verification": "Provide and review certifications.",
+          "confidence": 0
+        },
+        {
+          "dimension": "procurement",
+          "state": "insufficient_context",
+          "client_fields": [
+            "preferred_deal_type"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing preferred_deal_type.",
+          "next_verification": "Provide and review preferred_deal_type.",
+          "confidence": 0
+        },
+        {
+          "dimension": "pilot",
+          "state": "insufficient_context",
+          "client_fields": [
+            "customization_capacity"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing customization_capacity.",
+          "next_verification": "Provide and review customization_capacity.",
+          "confidence": 0
+        },
+        {
+          "dimension": "sales_cycle",
+          "state": "insufficient_context",
+          "client_fields": [
+            "sales_cycle_tolerance"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing sales_cycle_tolerance.",
+          "next_verification": "Provide and review sales_cycle_tolerance.",
+          "confidence": 0
+        },
+        {
+          "dimension": "operational_complexity",
+          "state": "insufficient_context",
+          "client_fields": [
+            "fulfillment_constraints",
+            "production_capacity"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing fulfillment_constraints, production_capacity.",
+          "next_verification": "Provide and review fulfillment_constraints, production_capacity.",
+          "confidence": 0
+        },
+        {
+          "dimension": "implementation_burden",
+          "state": "insufficient_context",
+          "client_fields": [
+            "certifications",
+            "product_formats"
+          ],
+          "account_requirements": [],
+          "evidence": [],
+          "assumptions": [],
+          "blocker": "Missing certifications, product_formats.",
+          "next_verification": "Provide and review certifications, product_formats.",
+          "confidence": 0
+        }
+      ]
+    }
+  ],
+  "safety": [
+    {
+      "assessment_id": "safety_15boqgf",
+      "thesis_id": "thesis_1wapr5b",
+      "state": "context_incomplete",
+      "gates": [
+        {
+          "gate": "client_context",
+          "passed": false,
+          "reason": "Verified context incomplete."
+        },
+        {
+          "gate": "identity",
+          "passed": true,
+          "reason": "Identity not confirmed."
+        },
+        {
+          "gate": "evidence",
+          "passed": true,
+          "reason": "Central claims not traceable."
+        },
+        {
+          "gate": "claim_separation",
+          "passed": true,
+          "reason": "Unsupported buying intent."
+        },
+        {
+          "gate": "client_fit",
+          "passed": true,
+          "reason": "Client fit unsupported."
+        },
+        {
+          "gate": "feasibility",
+          "passed": false,
+          "reason": "Critical feasibility unresolved."
+        },
+        {
+          "gate": "timing_honesty",
+          "passed": true,
+          "reason": "Timing not honest."
+        },
+        {
+          "gate": "counterevidence",
+          "passed": true,
+          "reason": "Counterevidence absent."
+        },
+        {
+          "gate": "limitations",
+          "passed": true,
+          "reason": "Limitations absent."
+        },
+        {
+          "gate": "review",
+          "passed": false,
+          "reason": "Human review incomplete."
+        },
+        {
+          "gate": "freshness",
+          "passed": true,
+          "reason": "Context/evidence stale."
+        },
+        {
+          "gate": "conflict",
+          "passed": true,
+          "reason": "Context conflict unresolved."
+        }
+      ],
+      "customer_safe_content": null,
+      "internal_only": true,
+      "ranking_impact": "off"
+    },
+    {
+      "assessment_id": "safety_maa449",
+      "thesis_id": "thesis_1q07kes",
+      "state": "context_incomplete",
+      "gates": [
+        {
+          "gate": "client_context",
+          "passed": false,
+          "reason": "Verified context incomplete."
+        },
+        {
+          "gate": "identity",
+          "passed": true,
+          "reason": "Identity not confirmed."
+        },
+        {
+          "gate": "evidence",
+          "passed": true,
+          "reason": "Central claims not traceable."
+        },
+        {
+          "gate": "claim_separation",
+          "passed": true,
+          "reason": "Unsupported buying intent."
+        },
+        {
+          "gate": "client_fit",
+          "passed": true,
+          "reason": "Client fit unsupported."
+        },
+        {
+          "gate": "feasibility",
+          "passed": false,
+          "reason": "Critical feasibility unresolved."
+        },
+        {
+          "gate": "timing_honesty",
+          "passed": true,
+          "reason": "Timing not honest."
+        },
+        {
+          "gate": "counterevidence",
+          "passed": true,
+          "reason": "Counterevidence absent."
+        },
+        {
+          "gate": "limitations",
+          "passed": true,
+          "reason": "Limitations absent."
+        },
+        {
+          "gate": "review",
+          "passed": false,
+          "reason": "Human review incomplete."
+        },
+        {
+          "gate": "freshness",
+          "passed": true,
+          "reason": "Context/evidence stale."
+        },
+        {
+          "gate": "conflict",
+          "passed": true,
+          "reason": "Context conflict unresolved."
+        }
+      ],
+      "customer_safe_content": null,
+      "internal_only": true,
+      "ranking_impact": "off"
+    },
+    {
+      "assessment_id": "safety_rmextq",
+      "thesis_id": "thesis_1tt06l2",
+      "state": "context_incomplete",
+      "gates": [
+        {
+          "gate": "client_context",
+          "passed": false,
+          "reason": "Verified context incomplete."
+        },
+        {
+          "gate": "identity",
+          "passed": true,
+          "reason": "Identity not confirmed."
+        },
+        {
+          "gate": "evidence",
+          "passed": true,
+          "reason": "Central claims not traceable."
+        },
+        {
+          "gate": "claim_separation",
+          "passed": true,
+          "reason": "Unsupported buying intent."
+        },
+        {
+          "gate": "client_fit",
+          "passed": true,
+          "reason": "Client fit unsupported."
+        },
+        {
+          "gate": "feasibility",
+          "passed": false,
+          "reason": "Critical feasibility unresolved."
+        },
+        {
+          "gate": "timing_honesty",
+          "passed": true,
+          "reason": "Timing not honest."
+        },
+        {
+          "gate": "counterevidence",
+          "passed": true,
+          "reason": "Counterevidence absent."
+        },
+        {
+          "gate": "limitations",
+          "passed": true,
+          "reason": "Limitations absent."
+        },
+        {
+          "gate": "review",
+          "passed": false,
+          "reason": "Human review incomplete."
+        },
+        {
+          "gate": "freshness",
+          "passed": true,
+          "reason": "Context/evidence stale."
+        },
+        {
+          "gate": "conflict",
+          "passed": true,
+          "reason": "Context conflict unresolved."
+        }
+      ],
+      "customer_safe_content": null,
+      "internal_only": true,
+      "ranking_impact": "off"
+    },
+    {
+      "assessment_id": "safety_11m66my",
+      "thesis_id": "thesis_1i2l5mk",
+      "state": "context_incomplete",
+      "gates": [
+        {
+          "gate": "client_context",
+          "passed": false,
+          "reason": "Verified context incomplete."
+        },
+        {
+          "gate": "identity",
+          "passed": true,
+          "reason": "Identity not confirmed."
+        },
+        {
+          "gate": "evidence",
+          "passed": true,
+          "reason": "Central claims not traceable."
+        },
+        {
+          "gate": "claim_separation",
+          "passed": true,
+          "reason": "Unsupported buying intent."
+        },
+        {
+          "gate": "client_fit",
+          "passed": true,
+          "reason": "Client fit unsupported."
+        },
+        {
+          "gate": "feasibility",
+          "passed": false,
+          "reason": "Critical feasibility unresolved."
+        },
+        {
+          "gate": "timing_honesty",
+          "passed": true,
+          "reason": "Timing not honest."
+        },
+        {
+          "gate": "counterevidence",
+          "passed": true,
+          "reason": "Counterevidence absent."
+        },
+        {
+          "gate": "limitations",
+          "passed": true,
+          "reason": "Limitations absent."
+        },
+        {
+          "gate": "review",
+          "passed": false,
+          "reason": "Human review incomplete."
+        },
+        {
+          "gate": "freshness",
+          "passed": true,
+          "reason": "Context/evidence stale."
+        },
+        {
+          "gate": "conflict",
+          "passed": true,
+          "reason": "Context conflict unresolved."
+        }
+      ],
+      "customer_safe_content": null,
+      "internal_only": true,
+      "ranking_impact": "off"
+    },
+    {
+      "assessment_id": "safety_1ernqqz",
+      "thesis_id": "thesis_1y75p8d",
+      "state": "context_incomplete",
+      "gates": [
+        {
+          "gate": "client_context",
+          "passed": false,
+          "reason": "Verified context incomplete."
+        },
+        {
+          "gate": "identity",
+          "passed": true,
+          "reason": "Identity not confirmed."
+        },
+        {
+          "gate": "evidence",
+          "passed": true,
+          "reason": "Central claims not traceable."
+        },
+        {
+          "gate": "claim_separation",
+          "passed": true,
+          "reason": "Unsupported buying intent."
+        },
+        {
+          "gate": "client_fit",
+          "passed": true,
+          "reason": "Client fit unsupported."
+        },
+        {
+          "gate": "feasibility",
+          "passed": false,
+          "reason": "Critical feasibility unresolved."
+        },
+        {
+          "gate": "timing_honesty",
+          "passed": true,
+          "reason": "Timing not honest."
+        },
+        {
+          "gate": "counterevidence",
+          "passed": true,
+          "reason": "Counterevidence absent."
+        },
+        {
+          "gate": "limitations",
+          "passed": true,
+          "reason": "Limitations absent."
+        },
+        {
+          "gate": "review",
+          "passed": false,
+          "reason": "Human review incomplete."
+        },
+        {
+          "gate": "freshness",
+          "passed": true,
+          "reason": "Context/evidence stale."
+        },
+        {
+          "gate": "conflict",
+          "passed": true,
+          "reason": "Context conflict unresolved."
+        }
+      ],
+      "customer_safe_content": null,
+      "internal_only": true,
+      "ranking_impact": "off"
+    },
+    {
+      "assessment_id": "safety_1ybpcdj",
+      "thesis_id": "thesis_1mijkzb",
+      "state": "context_incomplete",
+      "gates": [
+        {
+          "gate": "client_context",
+          "passed": false,
+          "reason": "Verified context incomplete."
+        },
+        {
+          "gate": "identity",
+          "passed": true,
+          "reason": "Identity not confirmed."
+        },
+        {
+          "gate": "evidence",
+          "passed": true,
+          "reason": "Central claims not traceable."
+        },
+        {
+          "gate": "claim_separation",
+          "passed": true,
+          "reason": "Unsupported buying intent."
+        },
+        {
+          "gate": "client_fit",
+          "passed": true,
+          "reason": "Client fit unsupported."
+        },
+        {
+          "gate": "feasibility",
+          "passed": false,
+          "reason": "Critical feasibility unresolved."
+        },
+        {
+          "gate": "timing_honesty",
+          "passed": true,
+          "reason": "Timing not honest."
+        },
+        {
+          "gate": "counterevidence",
+          "passed": true,
+          "reason": "Counterevidence absent."
+        },
+        {
+          "gate": "limitations",
+          "passed": true,
+          "reason": "Limitations absent."
+        },
+        {
+          "gate": "review",
+          "passed": false,
+          "reason": "Human review incomplete."
+        },
+        {
+          "gate": "freshness",
+          "passed": true,
+          "reason": "Context/evidence stale."
+        },
+        {
+          "gate": "conflict",
+          "passed": true,
+          "reason": "Context conflict unresolved."
+        }
+      ],
+      "customer_safe_content": null,
+      "internal_only": true,
+      "ranking_impact": "off"
+    }
+  ],
+  "shortlist": [
+    {
+      "account": "Natural + Mente",
+      "current_decision": "prioritize",
+      "context_quality": "usable",
+      "thesis_confidence": 0.45,
+      "feasibility_state": "insufficient_context",
+      "customer_safety_state": "context_incomplete",
+      "state": "blocked_by_client_context",
+      "blockers": [
+        "client_context",
+        "feasibility",
+        "review"
+      ],
+      "next_reviewer_action": "Complete critical client context, then review thesis and feasibility.",
+      "review_priority": "high"
+    },
+    {
+      "account": "Tu Tienda Saludable",
+      "current_decision": "prioritize",
+      "context_quality": "usable",
+      "thesis_confidence": 0.45,
+      "feasibility_state": "insufficient_context",
+      "customer_safety_state": "context_incomplete",
+      "state": "blocked_by_client_context",
+      "blockers": [
+        "client_context",
+        "feasibility",
+        "review"
+      ],
+      "next_reviewer_action": "Complete critical client context, then review thesis and feasibility.",
+      "review_priority": "high"
+    },
+    {
+      "account": "Hotel Spa La Colina",
+      "current_decision": "monitor",
+      "context_quality": "usable",
+      "thesis_confidence": 0.45,
+      "feasibility_state": "insufficient_context",
+      "customer_safety_state": "context_incomplete",
+      "state": "blocked_by_client_context",
+      "blockers": [
+        "client_context",
+        "feasibility",
+        "review"
+      ],
+      "next_reviewer_action": "Complete critical client context, then review thesis and feasibility.",
+      "review_priority": "high"
+    },
+    {
+      "account": "BioPlaza",
+      "current_decision": "prioritize",
+      "context_quality": "usable",
+      "thesis_confidence": 0.45,
+      "feasibility_state": "insufficient_context",
+      "customer_safety_state": "context_incomplete",
+      "state": "blocked_by_client_context",
+      "blockers": [
+        "client_context",
+        "feasibility",
+        "review"
+      ],
+      "next_reviewer_action": "Complete critical client context, then review thesis and feasibility.",
+      "review_priority": "high"
+    },
+    {
+      "account": "Distribuidora DAM",
+      "current_decision": "prioritize",
+      "context_quality": "usable",
+      "thesis_confidence": 0.45,
+      "feasibility_state": "insufficient_context",
+      "customer_safety_state": "context_incomplete",
+      "state": "blocked_by_client_context",
+      "blockers": [
+        "client_context",
+        "feasibility",
+        "review"
+      ],
+      "next_reviewer_action": "Complete critical client context, then review thesis and feasibility.",
+      "review_priority": "high"
+    },
+    {
+      "account": "Somos Consiente",
+      "current_decision": "monitor",
+      "context_quality": "usable",
+      "thesis_confidence": 0.45,
+      "feasibility_state": "insufficient_context",
+      "customer_safety_state": "context_incomplete",
+      "state": "blocked_by_client_context",
+      "blockers": [
+        "client_context",
+        "feasibility",
+        "review"
+      ],
+      "next_reviewer_action": "Complete critical client context, then review thesis and feasibility.",
+      "review_priority": "high"
+    }
+  ],
+  "sections": [
+    {
+      "section": "Client context summary",
+      "state": "blocked",
+      "supporting_outputs": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "missing_context": [
+        "business_model",
+        "company_stage"
+      ],
+      "missing_evidence": [],
+      "review_status": "unreviewed",
+      "customer_safety_state": "review_required"
+    },
+    {
+      "section": "Market landscape",
+      "state": "ready_with_limitations",
+      "supporting_outputs": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "missing_context": [],
+      "missing_evidence": [],
+      "review_status": "unreviewed",
+      "customer_safety_state": "review_required"
+    },
+    {
+      "section": "Buyer segments",
+      "state": "ready_with_limitations",
+      "supporting_outputs": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "missing_context": [],
+      "missing_evidence": [],
+      "review_status": "unreviewed",
+      "customer_safety_state": "review_required"
+    },
+    {
+      "section": "Verified company universe",
+      "state": "ready_with_limitations",
+      "supporting_outputs": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "missing_context": [],
+      "missing_evidence": [],
+      "review_status": "unreviewed",
+      "customer_safety_state": "review_required"
+    },
+    {
+      "section": "Account shortlist",
+      "state": "blocked",
+      "supporting_outputs": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "missing_context": [
+        "account_size_constraints",
+        "delivery_radius"
+      ],
+      "missing_evidence": [],
+      "review_status": "unreviewed",
+      "customer_safety_state": "review_required"
+    },
+    {
+      "section": "Account identity",
+      "state": "ready_with_limitations",
+      "supporting_outputs": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "missing_context": [],
+      "missing_evidence": [],
+      "review_status": "unreviewed",
+      "customer_safety_state": "review_required"
+    },
+    {
+      "section": "Account-client fit",
+      "state": "blocked",
+      "supporting_outputs": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "missing_context": [
+        "product_formats",
+        "business_model"
+      ],
+      "missing_evidence": [],
+      "review_status": "unreviewed",
+      "customer_safety_state": "review_required"
+    },
+    {
+      "section": "Commercial use case",
+      "state": "blocked",
+      "supporting_outputs": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "missing_context": [
+        "certifications",
+        "margins",
+        "minimum_order",
+        "price_positioning",
+        "product_formats",
+        "production_capacity",
+        "customization_capacity",
+        "white_label_capacity"
+      ],
+      "missing_evidence": [],
+      "review_status": "unreviewed",
+      "customer_safety_state": "review_required"
+    },
+    {
+      "section": "Access path",
+      "state": "blocked",
+      "supporting_outputs": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "missing_context": [
+        "delivery_radius",
+        "distribution_capability",
+        "fulfillment_constraints",
+        "current_partnerships",
+        "preferred_deal_type"
+      ],
+      "missing_evidence": [],
+      "review_status": "unreviewed",
+      "customer_safety_state": "review_required"
+    },
+    {
+      "section": "Buying path",
+      "state": "internal_only",
+      "supporting_outputs": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "missing_context": [],
+      "missing_evidence": [],
+      "review_status": "unreviewed",
+      "customer_safety_state": "review_required"
+    },
+    {
+      "section": "Why This Account",
+      "state": "internal_only",
+      "supporting_outputs": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "missing_context": [],
+      "missing_evidence": [],
+      "review_status": "unreviewed",
+      "customer_safety_state": "review_required"
+    },
+    {
+      "section": "Why Now",
+      "state": "internal_only",
+      "supporting_outputs": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "missing_context": [],
+      "missing_evidence": [],
+      "review_status": "unreviewed",
+      "customer_safety_state": "review_required"
+    },
+    {
+      "section": "Why Not Now",
+      "state": "internal_only",
+      "supporting_outputs": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "missing_context": [],
+      "missing_evidence": [],
+      "review_status": "unreviewed",
+      "customer_safety_state": "review_required"
+    },
+    {
+      "section": "Counterevidence",
+      "state": "internal_only",
+      "supporting_outputs": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "missing_context": [],
+      "missing_evidence": [],
+      "review_status": "unreviewed",
+      "customer_safety_state": "review_required"
+    },
+    {
+      "section": "Risks",
+      "state": "blocked",
+      "supporting_outputs": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "missing_context": [
+        "certifications",
+        "distribution_capability",
+        "fulfillment_constraints",
+        "margins",
+        "price_positioning",
+        "production_capacity",
+        "customization_capacity",
+        "sales_cycle_tolerance",
+        "white_label_capacity",
+        "company_stage"
+      ],
+      "missing_evidence": [],
+      "review_status": "unreviewed",
+      "customer_safety_state": "review_required"
+    },
+    {
+      "section": "Monitoring trigger",
+      "state": "internal_only",
+      "supporting_outputs": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "missing_context": [],
+      "missing_evidence": [],
+      "review_status": "unreviewed",
+      "customer_safety_state": "review_required"
+    },
+    {
+      "section": "Portfolio strategy",
+      "state": "blocked",
+      "supporting_outputs": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "missing_context": [
+        "account_size_constraints",
+        "current_partnerships"
+      ],
+      "missing_evidence": [],
+      "review_status": "unreviewed",
+      "customer_safety_state": "review_required"
+    },
+    {
+      "section": "Commercial sequence",
+      "state": "blocked",
+      "supporting_outputs": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "missing_context": [
+        "distribution_capability",
+        "minimum_order",
+        "preferred_deal_type",
+        "sales_cycle_tolerance"
+      ],
+      "missing_evidence": [],
+      "review_status": "unreviewed",
+      "customer_safety_state": "review_required"
+    },
+    {
+      "section": "Methodology",
+      "state": "ready_with_limitations",
+      "supporting_outputs": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "missing_context": [],
+      "missing_evidence": [],
+      "review_status": "unreviewed",
+      "customer_safety_state": "review_required"
+    },
+    {
+      "section": "Limitations",
+      "state": "blocked",
+      "supporting_outputs": [
+        "thesis_1wapr5b",
+        "thesis_1q07kes",
+        "thesis_1tt06l2",
+        "thesis_1i2l5mk",
+        "thesis_1y75p8d",
+        "thesis_1mijkzb"
+      ],
+      "missing_context": [
+        "certifications"
+      ],
+      "missing_evidence": [],
+      "review_status": "unreviewed",
+      "customer_safety_state": "review_required"
+    }
+  ],
+  "outputs": [
+    {
+      "type": "client_context_gap",
+      "ref": "gap_1xp98t2",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_gap",
+      "ref": "gap_1ay1p7z",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_gap",
+      "ref": "gap_2od657",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_gap",
+      "ref": "gap_w6puop",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_gap",
+      "ref": "gap_6wlet9",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_gap",
+      "ref": "gap_w2lj27",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_gap",
+      "ref": "gap_bvzzvn",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_gap",
+      "ref": "gap_5d4fvb",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_gap",
+      "ref": "gap_atddqg",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_gap",
+      "ref": "gap_19azxv4",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_gap",
+      "ref": "gap_qjua2s",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_gap",
+      "ref": "gap_1rkiv7v",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_gap",
+      "ref": "gap_r9wy0u",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_gap",
+      "ref": "gap_1mmvn8h",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_gap",
+      "ref": "gap_1b1sdh9",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_gap",
+      "ref": "gap_1j828fh",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_gap",
+      "ref": "gap_k3qob2",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_question",
+      "ref": "q_1m45vhc",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_question",
+      "ref": "q_7k3ya9",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_question",
+      "ref": "q_1ng5kf5",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_question",
+      "ref": "q_8p2w4d",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_question",
+      "ref": "q_98jr4b",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_question",
+      "ref": "q_iz15ks",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_question",
+      "ref": "q_xrwhtc",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_question",
+      "ref": "q_1ihirlr",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_question",
+      "ref": "q_1ocfopt",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_question",
+      "ref": "q_iy6pid",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_question",
+      "ref": "q_12c720u",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_question",
+      "ref": "q_17e3fyi",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_question",
+      "ref": "q_3s8bem",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_question",
+      "ref": "q_1a6qpm5",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_question",
+      "ref": "q_1r82ye",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_question",
+      "ref": "q_1mzrje5",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "client_context_question",
+      "ref": "q_8qsoj6",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "customer_safety_assessment",
+      "ref": "safety_15boqgf",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "customer_safety_assessment",
+      "ref": "safety_maa449",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "customer_safety_assessment",
+      "ref": "safety_rmextq",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "customer_safety_assessment",
+      "ref": "safety_11m66my",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "customer_safety_assessment",
+      "ref": "safety_1ernqqz",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    },
+    {
+      "type": "customer_safety_assessment",
+      "ref": "safety_1ybpcdj",
+      "internal_only": true,
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "review_state": "unreviewed"
+    }
+  ],
+  "internal_only": true,
+  "ranking_impact": "off",
+  "report_impact": "off"
+}
