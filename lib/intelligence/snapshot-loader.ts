@@ -14,6 +14,37 @@ import { assembleArtifactOutputs, type ArtifactOutputSource } from "./output-reg
 import { adaptLearnedPreferences, type LearnedPreferenceSource } from "./pattern-registry";
 
 const PILOT_DIR = "ml/data/pilot-amor-de-gea";
+const DEEP_EVIDENCE_DIR = "ml/data/evidence-temporal";
+
+export interface DeepEvidenceArtifact {
+  cutoff: string;
+  summary: {
+    accounts_researched: number; evidence_items: number; corroborated_claims: number;
+    dated_evidence_items: number; source_classes: number;
+    contradicted_claims: number; current_opportunities: number; monitor_accounts: number;
+    review_candidates: number; provider_calls: number; provider_reported_cost_usd: number | null;
+  };
+  accounts: Array<{
+    account: string; domain: string;
+    dossier: {
+      evidence: { total: number; independent_sources: number; corroborated_claims: number; contradicted_claims: number };
+      temporal: { timing_state: string };
+      decision: { state: string; reason: string };
+      confidence: number; limitations: string[];
+    };
+  }>;
+}
+
+export async function loadLatestDeepEvidence(root = process.cwd()): Promise<DeepEvidenceArtifact | null> {
+  try {
+    const dir = path.join(root, DEEP_EVIDENCE_DIR);
+    const files = (await fs.readdir(dir)).filter((f) => /^amor-de-gea-.*\.json$/.test(f)).sort();
+    const latest = files.at(-1);
+    if (!latest) return null;
+    const artifact = JSON.parse(await fs.readFile(path.join(dir, latest), "utf8")) as Omit<DeepEvidenceArtifact, "cutoff">;
+    return { ...artifact, cutoff: latest };
+  } catch { return null; }
+}
 
 /** Read the newest segment-universe + staged-pipeline artifact, if any. */
 export async function loadLatestArtifactSignals(root = process.cwd()): Promise<{ signals: SnapshotArtifactSignals | null; cutoff: string | null }> {
@@ -97,6 +128,7 @@ export async function loadSnapshotInputs(opts: {
 } = {}): Promise<SnapshotInput> {
   const now = opts.now ?? new Date().toISOString();
   const { signals, cutoff } = await loadLatestArtifactSignals(opts.root);
+  const deep = await loadLatestDeepEvidence(opts.root);
   const { source } = await loadLatestArtifactOutputSource(opts.root, opts.scope ?? { kind: "global" });
   const outputs = assembleArtifactOutputs(source);
   const patterns = adaptLearnedPreferences(opts.learned_preferences ?? []);
@@ -109,7 +141,14 @@ export async function loadSnapshotInputs(opts: {
     distinct_clients: signals ? 1 : 0,
     feedback: { total_events: 0, rated_events: 0, useful_events: 0, corrections: 0, outcomes },
     knowledge: { vault_companies: null, verified_signals: null, sources: null, distinct_regions: 0, distinct_industries: 0, account_memory_records: null },
-    evidence: null,
+    evidence: deep ? {
+      total: deep.summary.evidence_items,
+      dated: deep.summary.dated_evidence_items,
+      corroborated: deep.summary.corroborated_claims,
+      stale: null,
+      source_classes: deep.summary.source_classes,
+      counterevidence_instrumented: true,
+    } : null,
     learner: {
       preference_count: patterns.length,
       validated_count: 0,

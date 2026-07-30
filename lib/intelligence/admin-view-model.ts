@@ -4,6 +4,7 @@
 import { MIN_PATTERN_SAMPLE, type IntelligenceSnapshot, type MeasurementResult } from "./os-contracts";
 import { buildIntelligenceSnapshot, type SnapshotInput } from "./snapshot-engine";
 import { loadSnapshotInputs } from "./snapshot-loader";
+import { loadLatestDeepEvidence, type DeepEvidenceArtifact } from "./snapshot-loader";
 import type { LearnedPreferenceSource } from "./pattern-registry";
 import type { OutputValidationLifecycle } from "./validation-lifecycle";
 
@@ -58,6 +59,7 @@ export interface AdminIntelligenceViewModel {
     counterevidence_instrumented: boolean | null;
     explanation: string;
   };
+  deep_accounts: DeepEvidenceArtifact | null;
   responsible_claims: string[];
   unsupported_claims: string[];
   empty_states: {
@@ -77,7 +79,7 @@ export interface AdminIntelligenceLoadedData {
 
 const label = (value: string): string => value.replace(/_/g, " ");
 
-export function buildAdminIntelligenceViewModel(data: AdminIntelligenceLoadedData): AdminIntelligenceViewModel {
+export function buildAdminIntelligenceViewModel(data: AdminIntelligenceLoadedData & { deep_accounts?: DeepEvidenceArtifact | null }): AdminIntelligenceViewModel {
   const snapshot = buildIntelligenceSnapshot(data.input);
   const artifact = data.input.artifact;
   const evidenceDimension = snapshot.index.dimensions.find((d) => d.id === "evidence_integrity")!;
@@ -127,6 +129,7 @@ export function buildAdminIntelligenceViewModel(data: AdminIntelligenceLoadedDat
           ? "Corroboration coverage is unavailable in the current environment."
           : `${corroborated} of ${total ?? "unknown"} evaluated evidence items are corroborated.`,
     },
+    deep_accounts: data.deep_accounts ?? null,
     responsible_claims: Array.from(new Set([...productionCapabilities, ...supportedOutputs])).slice(0, 10),
     unsupported_claims: Array.from(new Set(unsupported)).slice(0, 10),
     empty_states: {
@@ -227,6 +230,7 @@ export async function loadAdminIntelligenceViewModel(options: {
   }
 
   const input = await loadSnapshotInputs({ root: options.root, now, learned_preferences: preferences });
+  const deepAccounts = await loadLatestDeepEvidence(options.root);
   input.validation_lifecycles = lifecycles;
   const realOutcomes = lifecycles.flatMap((v) => v.outcomes).map((o) => ({
     id: o.id, kind: o.kind, dimension: "commercial_outcome" as const,
@@ -236,7 +240,7 @@ export async function loadAdminIntelligenceViewModel(options: {
   input.feedback.outcomes = realOutcomes;
 
   return buildAdminIntelligenceViewModel({
-    input, feedback,
+    input, feedback, deep_accounts: deepAccounts,
     availability: {
       artifact: input.artifact ? "available" : "unavailable",
       database: databaseState,

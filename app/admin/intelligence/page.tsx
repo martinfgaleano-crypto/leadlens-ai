@@ -286,9 +286,18 @@ function Readiness({ model }: { model: AdminIntelligenceViewModel }) {
 
 function Evidence({ model }: { model: AdminIntelligenceViewModel }) {
   const e = model.evidence;
+  const deep = model.deep_accounts;
   return <section><SectionHeader eyebrow="Availability ≠ quality" title="Evidence integrity" text={e.explanation}/>
     <div className={styles.evidenceHero}><Measurement value={e.availability}/><p>Evidence availability, quality, corroboration, freshness and counterevidence are tracked separately.</p></div>
     <div className={styles.metricGrid}><Metric label="Evidence items" value={e.total ?? "Unavailable"}/><Metric label="Dated" value={e.dated ?? "Unavailable"}/><Metric label="Corroborated" value={e.corroborated ?? "Unavailable"}/><Metric label="Stale" value={e.stale ?? "Unavailable"}/><Metric label="Source classes" value={e.source_classes ?? "Unavailable"}/><Metric label="Counterevidence" value={e.counterevidence_instrumented === null ? "Unavailable" : e.counterevidence_instrumented ? "Instrumented" : "Not instrumented"}/></div>
+    {deep ? <section className={styles.panel}>
+      <h3>Deep account intelligence · controlled pass</h3>
+      <p>{deep.summary.accounts_researched} shortlisted accounts researched with {deep.summary.provider_calls} bounded provider calls. Search presence is not treated as purchase intent.</p>
+      <div className={styles.metricGrid}><Metric label="Review candidates" value={deep.summary.review_candidates}/><Metric label="Current opportunities" value={deep.summary.current_opportunities}/><Metric label="Monitor" value={deep.summary.monitor_accounts}/><Metric label="Contradicted claims" value={deep.summary.contradicted_claims}/></div>
+      <div className={styles.tableWrap}><table><thead><tr><th>Account</th><th>Independent sources</th><th>Corroborated claims</th><th>Timing</th><th>Decision</th><th>Confidence</th></tr></thead>
+        <tbody>{deep.accounts.map((account) => <tr key={account.domain}><td>{account.account}<br/><small>{account.domain}</small></td><td>{account.dossier.evidence.independent_sources}</td><td>{account.dossier.evidence.corroborated_claims}</td><td><StatePill value={account.dossier.temporal.timing_state}/></td><td><StatePill value={account.dossier.decision.state}/><br/><small>{account.dossier.decision.reason}</small></td><td>{pct(account.dossier.confidence)}</td></tr>)}</tbody>
+      </table></div>
+    </section> : <EmptyState title="No deep-account artifact yet">Run the controlled 5–6 account enrichment pass. Missing evidence is not replaced with synthetic intelligence.</EmptyState>}
     <section className={styles.panel}><h3>Evidence operations</h3><p>Review rights, source quality and contradictions before any customer use.</p><div className={styles.links}><a href="/admin/intelligence/sources">Source Access</a><a href="/admin/intelligence/source-review">Source Review</a><a href="/admin/intelligence/review">Review Queue</a><a href="/admin/intelligence/growth">Growth Observatory</a></div></section>
   </section>;
 }
