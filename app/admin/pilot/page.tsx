@@ -97,6 +97,11 @@ export default function PilotConsolePage() {
 
   return (
     <AdminLayout>
+      <div style={{ ...S.card, border: "1px solid #a5b4fc", background: "#eef2ff" }}>
+        <strong>Amor de Gea · canonical Intelligence pilot</strong>
+        <p style={{ fontSize: "0.78rem" }}>Six verified accounts, six internal theses and 17 client-context questions are available in the live internal workspace.</p>
+        <a href="/admin/intelligence/pilots/amor-de-gea" style={{ color: "#3730a3", fontWeight: 700 }}>Open Amor de Gea workspace →</a>
+      </div>
       <h1 style={S.h1}>Pilot Console — complimentary tier runs</h1>
       <p style={{ fontSize: "0.78rem", color: "#64748b", marginBottom: "1rem" }}>
         Pilotos gratuitos administrados con trazabilidad comercial completa (tier, precio de referencia, entitlements, costos estimados). Quality gates activos; sin pagos; límite por cliente. Comparación controlada: crea varios tiers para el mismo cliente con el mismo ICP.

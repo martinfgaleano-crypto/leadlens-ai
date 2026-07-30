@@ -368,3 +368,16 @@ Block 3 is complete when registry tests and related regressions pass, checkpoint
 - Captures: `artifacts/block5-command-center/01-overview.png` through `08-evidence.png`.
 - No production deployment, provider call, LLM render call, ranking change, customer-report change, auth modification, baseline or historical persistence.
 - Next recommended block: Block 6 Self-knowledge and Improvement Queue Governance. Not started.
+
+## 26. Block 13 continuity — Amor de Gea operational workspace
+
+- Canonical pilot ID: `amor-de-gea`; dedicated internal route: `/admin/intelligence/pilots/amor-de-gea`.
+- Exact empty-state cause was the mismatch between the legacy `batch_jobs/onboarding.pilot` loader and the artifact-backed Intelligence work from Blocks 10–12.
+- The workspace now exposes Overview, 17-question Context intake, six-account comparison, six theses, feasibility, safety, report readiness, activity and checklist without creating a final report.
+- Migrations 045/046 are readable but currently contain zero Amor de Gea workflow rows. Versioned repository artifacts are the canonical source until a controlled backfill.
+- Migration 047 is generated only, unapplied; dry run shows zero writes and zero synthetic answers.
+- Safe writes are Admin-gated, server-scoped, ID-validated, idempotent and history-preserving. Customer safety and ranking remain off.
+- 48 targeted tests and all directly relevant regressions, typecheck and production build passed.
+- Authenticated visual QA/screenshots remain post-deploy with a real Admin session; Auth was not weakened to manufacture a local pass.
+- Full record: `LEADLENS_BLOCK_13_AMOR_DE_GEA_PILOT_WORKSPACE_REPORT.md`.
+- Block 14 and final Amor de Gea report were not started.

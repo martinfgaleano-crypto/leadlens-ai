@@ -310,3 +310,15 @@ Preserved: `preference-learner` + `shadow-preference` never touch ranking; UI sh
 - Production mode: 17 unanswered, 0 accepted answers, 0 reviewed theses, 6 context/feasibility-blocked accounts, 0 customer-safe, 0 fixture leakage.
 - Command Center integration is additive and provider-free. Ranking/report impact remains off.
 - Migration 046 generated but not applied; migration 045 also remains outside this block's application authority. Block 13 not started.
+
+## Block 13 checkpoint — Live Amor de Gea pilot workspace
+
+- Root cause: the legacy Admin pilot API reads only `batch_jobs` with `onboarding.pilot`; Blocks 10–12 live under Intelligence client `amor-de-gea`, so the old page truthfully returned an empty list.
+- Added canonical `/admin/intelligence/pilots/amor-de-gea` route with alias mapping and populated versioned Block 10–12 artifacts; no `.leadlens` runtime dependency or provider call.
+- Live state remains honest: six accounts, six internal theses, 17 unanswered questions, 10 critical blockers, zero timing/signals/customer-safe outputs.
+- Added Admin-only idempotent draft/submission, partial context acceptance, deterministic affected-thesis calculation, append-only thesis review and safety review operations. Submission never activates context and internal approval never becomes customer-safe.
+- Read-only Supabase reconciliation found 0 persisted Block 11 theses, 0 intakes, 0 accepted versions and 0 safety reviews for `amor-de-gea`. Dry-run backfill performed 0 writes and created 0 synthetic answers.
+- Migration 047 was generated for only canonical pilot/activity persistence and remains unapplied. Write backfill was deferred.
+- Targeted 48/48 plus Auth, validation, evidence, signal, research, registry, snapshot, Market-to-Account and entity regressions passed; typecheck and production build passed.
+- Browser confirmed fail-closed unauthenticated behavior. Authenticated production screenshot verification remains a post-deploy action because the signed httpOnly Admin session was intentionally not bypassed.
+- Final customer report, deployment, outreach, new accounts, adaptive ranking and Block 14 were not started.
