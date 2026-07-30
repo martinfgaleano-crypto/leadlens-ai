@@ -294,3 +294,11 @@ Preserved: `preference-learner` + `shadow-preference` never touch ranking; UI sh
 - Same six accounts: 6 confirmed, 6 verified domains, 6 verified official sites, 0 unresolved, 0 dated direct events, 0 valid signals.
 - Command Center reads the artifact without provider calls. Ranking and report impact remain off.
 - Migration 044 generated but not applied. Block 11 not started.
+
+## Block 11 checkpoint — Account opportunity synthesis
+
+- Audited the real client context before synthesis; quality is usable with 17 explicit operational/economic gaps.
+- Added twelve-dimensional account-to-client fit, commercial access, buying-path hypotheses, bounded use cases, opportunity theses, Why Now/Why Not Now, gates, confidence limiters, research questions, portfolio roles and sequencing.
+- Same six accounts: 6 internal unreviewed theses, 6 use cases, 6 access paths, 4 prioritize, 2 monitor, 6 without current timing, 0 customer-safe.
+- Added fourteen internal Output Registry types and provider-free Command Center integration. Ranking/report impact remains off; six theses create no pattern.
+- Migration 045 generated but not applied. Block 12 not started.

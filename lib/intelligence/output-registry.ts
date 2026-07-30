@@ -11,6 +11,12 @@ import {
 } from "./os-contracts";
 
 export const OUTPUT_REGISTRY_VERSION = "output-registry-v1";
+export const COMMERCIAL_STRATEGY_OUTPUT_TYPES = [
+  "client_account_fit_assessment","account_opportunity_thesis","commercial_use_case",
+  "buying_path_hypothesis","commercial_access_path","entry_strategy","portfolio_role",
+  "why_now_assessment","why_not_now_assessment","client_context_gap","account_strategy_risk",
+  "monitor_trigger_strategy","no_current_commercial_window","commercial_research_question",
+] as const;
 const TARGET_VERIFIED = 40;
 
 export interface ArtifactOutputSource {

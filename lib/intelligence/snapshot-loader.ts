@@ -20,6 +20,17 @@ const SIGNAL_TEMPORAL_DIR = "ml/data/signal-temporal";
 const SIGNAL_BENCHMARK_DIR = "ml/data/signal-benchmark";
 const SIGNAL_MONITORING_OPERATIONS_DIR = "ml/data/signal-monitoring-operations";
 const ENTITY_RESOLUTION_DIR = "ml/data/entity-resolution";
+const OPPORTUNITY_SYNTHESIS_DIR = "ml/data/opportunity-synthesis";
+
+export interface OpportunitySynthesisArtifact {
+  generated_at:string;methodology_version:string;internal_only:true;
+  summary:{accounts:number;context_quality:string;context_unknown_fields:number;theses:number;use_cases:number;access_paths:number;buying_paths:number;usable_client_fit:number;strong_use_case_clarity:number;plausible_access_paths:number;blocked_by_context:number;blocked_by_timing:number;blocked_by_evidence:number;decisions:Record<string,number>;review_state:string;customer_safe_outputs:number};
+  portfolio:{roles:Array<{account_id:string;role:string;explanation:string}>;sequence:Array<{step:number;account_id:string;rationale:string;dependency:string|null;next_action:string}>;concentration:Record<string,number>;generalized_patterns:[]};
+  theses:Array<{account_id:string;account_name:string;decision:string;why_now:{state:string;statement:string};why_not_now:string[];confidence:{overall:number;limiting_factor:string};review_state:string;internal_only:true}>;
+}
+export async function loadLatestOpportunitySynthesis(root=process.cwd()):Promise<OpportunitySynthesisArtifact|null>{
+  try{const dir=path.join(root,OPPORTUNITY_SYNTHESIS_DIR);const files=(await fs.readdir(dir)).filter(f=>/^amor-de-gea-block11-.*\.json$/.test(f)).sort();const latest=files.at(-1);if(!latest)return null;return JSON.parse(await fs.readFile(path.join(dir,latest),"utf8")) as OpportunitySynthesisArtifact}catch{return null}
+}
 
 export interface EntityResolutionArtifact {
   generated_at: string; methodology_version: string; internal_only: true;

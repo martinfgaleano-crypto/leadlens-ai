@@ -141,6 +141,21 @@ function Overview({ model }: { model: AdminIntelligenceViewModel }) {
       </div>
       <p><strong>Provider health:</strong> {Object.entries(model.entity_resolution.summary.provider_health).map(([provider,health]) => `${provider}: ${health.state}${health.automatic_fallback === false ? " (fallback off)" : ""}`).join(" · ")}</p>
     </section>}
+    {model.opportunity_synthesis && <section className={styles.panel}>
+      <SectionHeader eyebrow="Block 11 · internal · unreviewed" title="Account opportunity synthesis" text="Client-specific fit, accessibility and strategy are separated from timing and buying intent. Premium readiness remains blocked."/>
+      <div className={styles.metricGrid}>
+        <Metric label="Opportunity theses" value={model.opportunity_synthesis.summary.theses}/>
+        <Metric label="Client context" value={model.opportunity_synthesis.summary.context_quality}/>
+        <Metric label="Usable client fit" value={model.opportunity_synthesis.summary.usable_client_fit}/>
+        <Metric label="Use cases" value={model.opportunity_synthesis.summary.use_cases}/>
+        <Metric label="Access paths" value={model.opportunity_synthesis.summary.access_paths}/>
+        <Metric label="Without current timing" value={model.opportunity_synthesis.summary.blocked_by_timing}/>
+        <Metric label="Unreviewed" value={model.opportunity_synthesis.summary.review_state}/>
+        <Metric label="Customer-safe" value={model.opportunity_synthesis.summary.customer_safe_outputs}/>
+      </div>
+      <p><strong>Primary bottleneck:</strong> {model.opportunity_synthesis.summary.blocked_by_timing} accounts lack current timing and {model.opportunity_synthesis.summary.blocked_by_evidence} retain evidence gaps. Missing client fields: {model.opportunity_synthesis.summary.context_unknown_fields}.</p>
+      <ul>{model.opportunity_synthesis.theses.map(t=><li key={t.account_id}><strong>{t.account_name} · {words(t.decision)}:</strong> {t.why_now.statement} Why not now: {t.why_not_now[0]} Limiter: {words(t.confidence.limiting_factor)}.</li>)}</ul>
+    </section>}
 
     <SectionHeader eyebrow="Eight dimensions" title="Maturity scorecard" text="Scores appear only when the underlying dimension is genuinely measured." />
     <div className={styles.dimensionGrid}>

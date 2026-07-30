@@ -4,7 +4,7 @@
 import { MIN_PATTERN_SAMPLE, type IntelligenceSnapshot, type MeasurementResult } from "./os-contracts";
 import { buildIntelligenceSnapshot, type SnapshotInput } from "./snapshot-engine";
 import { loadSnapshotInputs } from "./snapshot-loader";
-import { loadLatestDeepEvidence, loadLatestResearchQuality, loadLatestSignalTemporal, loadLatestSignalBenchmark, loadLatestSignalMonitoringOperation, loadLatestEntityResolution, type DeepEvidenceArtifact, type ResearchQualityArtifact, type SignalTemporalArtifact, type SignalBenchmarkArtifact, type SignalMonitoringOperationArtifact, type EntityResolutionArtifact } from "./snapshot-loader";
+import { loadLatestDeepEvidence, loadLatestResearchQuality, loadLatestSignalTemporal, loadLatestSignalBenchmark, loadLatestSignalMonitoringOperation, loadLatestEntityResolution, loadLatestOpportunitySynthesis, type DeepEvidenceArtifact, type ResearchQualityArtifact, type SignalTemporalArtifact, type SignalBenchmarkArtifact, type SignalMonitoringOperationArtifact, type EntityResolutionArtifact, type OpportunitySynthesisArtifact } from "./snapshot-loader";
 import type { LearnedPreferenceSource } from "./pattern-registry";
 import type { OutputValidationLifecycle } from "./validation-lifecycle";
 
@@ -65,6 +65,7 @@ export interface AdminIntelligenceViewModel {
   signal_benchmark: SignalBenchmarkArtifact | null;
   signal_monitoring_operation: SignalMonitoringOperationArtifact | null;
   entity_resolution: EntityResolutionArtifact | null;
+  opportunity_synthesis: OpportunitySynthesisArtifact | null;
   responsible_claims: string[];
   unsupported_claims: string[];
   empty_states: {
@@ -84,7 +85,7 @@ export interface AdminIntelligenceLoadedData {
 
 const label = (value: string): string => value.replace(/_/g, " ");
 
-export function buildAdminIntelligenceViewModel(data: AdminIntelligenceLoadedData & { deep_accounts?: DeepEvidenceArtifact | null; research_quality?: ResearchQualityArtifact | null; signal_temporal?: SignalTemporalArtifact | null; signal_benchmark?: SignalBenchmarkArtifact | null; signal_monitoring_operation?: SignalMonitoringOperationArtifact | null; entity_resolution?: EntityResolutionArtifact | null }): AdminIntelligenceViewModel {
+export function buildAdminIntelligenceViewModel(data: AdminIntelligenceLoadedData & { deep_accounts?: DeepEvidenceArtifact | null; research_quality?: ResearchQualityArtifact | null; signal_temporal?: SignalTemporalArtifact | null; signal_benchmark?: SignalBenchmarkArtifact | null; signal_monitoring_operation?: SignalMonitoringOperationArtifact | null; entity_resolution?: EntityResolutionArtifact | null; opportunity_synthesis?:OpportunitySynthesisArtifact|null }): AdminIntelligenceViewModel {
   const snapshot = buildIntelligenceSnapshot(data.input);
   const artifact = data.input.artifact;
   const evidenceDimension = snapshot.index.dimensions.find((d) => d.id === "evidence_integrity")!;
@@ -140,6 +141,7 @@ export function buildAdminIntelligenceViewModel(data: AdminIntelligenceLoadedDat
     signal_benchmark: data.signal_benchmark ?? null,
     signal_monitoring_operation: data.signal_monitoring_operation ?? null,
     entity_resolution: data.entity_resolution ?? null,
+    opportunity_synthesis:data.opportunity_synthesis??null,
     responsible_claims: Array.from(new Set([...productionCapabilities, ...supportedOutputs])).slice(0, 10),
     unsupported_claims: Array.from(new Set(unsupported)).slice(0, 10),
     empty_states: {
@@ -246,6 +248,7 @@ export async function loadAdminIntelligenceViewModel(options: {
   const signalBenchmark = await loadLatestSignalBenchmark(options.root);
   const signalMonitoringOperation = await loadLatestSignalMonitoringOperation(options.root);
   const entityResolution = await loadLatestEntityResolution(options.root);
+  const opportunitySynthesis=await loadLatestOpportunitySynthesis(options.root);
   input.validation_lifecycles = lifecycles;
   const realOutcomes = lifecycles.flatMap((v) => v.outcomes).map((o) => ({
     id: o.id, kind: o.kind, dimension: "commercial_outcome" as const,
@@ -256,7 +259,7 @@ export async function loadAdminIntelligenceViewModel(options: {
 
   return buildAdminIntelligenceViewModel({
     input, feedback, deep_accounts: deepAccounts, research_quality: researchQuality, signal_temporal: signalTemporal,
-    signal_benchmark: signalBenchmark, signal_monitoring_operation: signalMonitoringOperation, entity_resolution: entityResolution,
+    signal_benchmark: signalBenchmark, signal_monitoring_operation: signalMonitoringOperation, entity_resolution: entityResolution, opportunity_synthesis:opportunitySynthesis,
     availability: {
       artifact: input.artifact ? "available" : "unavailable",
       database: databaseState,

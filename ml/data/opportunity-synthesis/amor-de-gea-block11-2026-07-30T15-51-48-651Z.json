@@ -1,0 +1,4146 @@
+{
+  "methodology_version": "account-opportunity-synthesis-v1",
+  "generated_at": "2026-07-30T15:51:48.651Z",
+  "sources": {
+    "research_quality": "amor-de-gea-block7-2026-07-30T00-33-22-535Z.json",
+    "entity_resolution": "amor-de-gea-block10-2026-07-30T14-24-06-487Z.json"
+  },
+  "reuse_readiness": {
+    "client_context": "migration 042 intelligence_client_contexts",
+    "dossiers": "migration 042 intelligence_dossiers",
+    "validation": "migration 041 lifecycle",
+    "entity_profiles": "migration 044 records",
+    "new_semantics": "migration 045 generated, not applied"
+  },
+  "summary": {
+    "accounts": 6,
+    "context_quality": "usable",
+    "context_unknown_fields": 17,
+    "theses": 6,
+    "use_cases": 6,
+    "access_paths": 6,
+    "buying_paths": 6,
+    "usable_client_fit": 6,
+    "strong_use_case_clarity": 0,
+    "plausible_access_paths": 6,
+    "blocked_by_context": 0,
+    "blocked_by_timing": 6,
+    "blocked_by_evidence": 6,
+    "decisions": {
+      "prioritize": 4,
+      "monitor": 2
+    },
+    "review_state": "unreviewed",
+    "customer_safe_outputs": 0
+  },
+  "client_context": {
+    "context_id": "ctx_1kqa1cw",
+    "client_id": "amor-de-gea",
+    "tenant_id": null,
+    "client_name": {
+      "value": "Amor de Gea",
+      "provenance": [
+        "ml/data/research-quality/amor-de-gea-block7-2026-07-30T00-33-22-535Z.json#client_context"
+      ],
+      "confidence": 1,
+      "state": "explicit",
+      "updated_at": "2026-07-30T00:33:22.535Z"
+    },
+    "verified_domain": {
+      "value": null,
+      "provenance": [
+        "ml/data/research-quality/amor-de-gea-block7-2026-07-30T00-33-22-535Z.json#client_context"
+      ],
+      "confidence": 0,
+      "state": "explicit",
+      "updated_at": "2026-07-30T00:33:22.535Z"
+    },
+    "geography": {
+      "value": [
+        "Colombia"
+      ],
+      "provenance": [
+        "ml/data/research-quality/amor-de-gea-block7-2026-07-30T00-33-22-535Z.json#client_context"
+      ],
+      "confidence": 1,
+      "state": "explicit",
+      "updated_at": "2026-07-30T00:33:22.535Z"
+    },
+    "business_model": {
+      "value": null,
+      "provenance": [
+        "ml/data/research-quality/amor-de-gea-block7-2026-07-30T00-33-22-535Z.json#client_context"
+      ],
+      "confidence": 0,
+      "state": "explicit",
+      "updated_at": "2026-07-30T00:33:22.535Z"
+    },
+    "company_stage": {
+      "value": null,
+      "provenance": [
+        "ml/data/research-quality/amor-de-gea-block7-2026-07-30T00-33-22-535Z.json#client_context"
+      ],
+      "confidence": 0,
+      "state": "explicit",
+      "updated_at": "2026-07-30T00:33:22.535Z"
+    },
+    "offer_categories": {
+      "value": [
+        "Infusiones y bebidas botánicas funcionales de bienestar"
+      ],
+      "provenance": [
+        "ml/data/research-quality/amor-de-gea-block7-2026-07-30T00-33-22-535Z.json#client_context"
+      ],
+      "confidence": 1,
+      "state": "explicit",
+      "updated_at": "2026-07-30T00:33:22.535Z"
+    },
+    "value_proposition": {
+      "value": "Infusiones y bebidas botánicas funcionales de bienestar",
+      "provenance": [
+        "ml/data/research-quality/amor-de-gea-block7-2026-07-30T00-33-22-535Z.json#client_context"
+      ],
+      "confidence": 0.9,
+      "state": "explicit",
+      "updated_at": "2026-07-30T00:33:22.535Z"
+    },
+    "positioning": {
+      "value": null,
+      "provenance": [
+        "ml/data/research-quality/amor-de-gea-block7-2026-07-30T00-33-22-535Z.json#client_context"
+      ],
+      "confidence": 0,
+      "state": "explicit",
+      "updated_at": "2026-07-30T00:33:22.535Z"
+    },
+    "target_segments": {
+      "value": [
+        "retail",
+        "distribution",
+        "hospitality",
+        "wellness"
+      ],
+      "provenance": [
+        "ml/data/research-quality/amor-de-gea-block7-2026-07-30T00-33-22-535Z.json#client_context"
+      ],
+      "confidence": 1,
+      "state": "explicit",
+      "updated_at": "2026-07-30T00:33:22.535Z"
+    },
+    "excluded_segments": {
+      "value": [
+        "government",
+        "medical_provider"
+      ],
+      "provenance": [
+        "ml/data/research-quality/amor-de-gea-block7-2026-07-30T00-33-22-535Z.json#client_context"
+      ],
+      "confidence": 1,
+      "state": "explicit",
+      "updated_at": "2026-07-30T00:33:22.535Z"
+    },
+    "priority_channels": {
+      "value": [
+        "retail",
+        "distribution",
+        "hospitality",
+        "wellness"
+      ],
+      "provenance": [
+        "ml/data/research-quality/amor-de-gea-block7-2026-07-30T00-33-22-535Z.json#client_context"
+      ],
+      "confidence": 0.85,
+      "state": "explicit",
+      "updated_at": "2026-07-30T00:33:22.535Z"
+    },
+    "objective": {
+      "value": "Identificar compradores o canales colombianos con encaje estructural y evidencia comercial verificable",
+      "provenance": [
+        "ml/data/research-quality/amor-de-gea-block7-2026-07-30T00-33-22-535Z.json#client_context"
+      ],
+      "confidence": 1,
+      "state": "explicit",
+      "updated_at": "2026-07-30T00:33:22.535Z"
+    },
+    "constraints": {
+      "value": [
+        "Colombia primero",
+        "no inferir intención de compra",
+        "cuentas obvias no bastan como valor pagado"
+      ],
+      "provenance": [
+        "ml/data/research-quality/amor-de-gea-block7-2026-07-30T00-33-22-535Z.json#client_context"
+      ],
+      "confidence": 1,
+      "state": "explicit",
+      "updated_at": "2026-07-30T00:33:22.535Z"
+    },
+    "unknown_fields": [
+      "business_model",
+      "company_stage",
+      "price_positioning",
+      "minimum_order",
+      "fulfillment_constraints",
+      "certifications",
+      "product_formats",
+      "customization_capacity",
+      "distribution_capability",
+      "production_capacity",
+      "account_size_constraints",
+      "current_partnerships",
+      "preferred_deal_type",
+      "sales_cycle_tolerance",
+      "margins",
+      "white_label_capacity",
+      "delivery_radius"
+    ],
+    "quality": "usable",
+    "quality_reasons": [
+      "4/4 minimum reasoning groups are explicit.",
+      "17 operational or commercial fields remain unknown."
+    ],
+    "methodology_version": "account-opportunity-synthesis-v1"
+  },
+  "theses": [
+    {
+      "thesis_id": "thesis_1wapr5b",
+      "account_id": "rp_r5i5ih",
+      "account_name": "Natural + Mente",
+      "domain": "naturalmente.com.co",
+      "segment": "retail",
+      "geography": "Colombia",
+      "identity_confidence": 0.94,
+      "context_id": "ctx_1kqa1cw",
+      "context_quality": "usable",
+      "fit": [
+        {
+          "dimension": "offer_category_fit",
+          "state": "strong",
+          "evidence": [
+            "Explicit botanical infusion offer and verified account segment."
+          ],
+          "client_fields": [
+            "offer_categories"
+          ],
+          "account_fields": [
+            "segment"
+          ],
+          "confidence": 0.82,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "segment_fit",
+          "state": "strong",
+          "evidence": [
+            "Segment is explicitly prioritized."
+          ],
+          "client_fields": [
+            "target_segments"
+          ],
+          "account_fields": [
+            "segment"
+          ],
+          "confidence": 0.95,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "geography_fit",
+          "state": "strong",
+          "evidence": [
+            "Colombia is explicit target geography."
+          ],
+          "client_fields": [
+            "geography"
+          ],
+          "account_fields": [
+            "country"
+          ],
+          "confidence": 0.98,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "channel_fit",
+          "state": "moderate",
+          "evidence": [
+            "Account segment is a plausible channel; channel operating model is unverified."
+          ],
+          "client_fields": [
+            "priority_channels"
+          ],
+          "account_fields": [
+            "segment"
+          ],
+          "confidence": 0.62,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "account_scale_fit",
+          "state": "insufficient_evidence",
+          "evidence": [],
+          "client_fields": [
+            "account_size_constraints"
+          ],
+          "account_fields": [],
+          "confidence": 0.1,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "commercial_accessibility_fit",
+          "state": "moderate",
+          "evidence": [
+            "A role-category route is plausible; direct access is not proven."
+          ],
+          "client_fields": [
+            "objective"
+          ],
+          "account_fields": [
+            "domain",
+            "segment"
+          ],
+          "confidence": 0.55,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "operational_feasibility",
+          "state": "insufficient_evidence",
+          "evidence": [],
+          "client_fields": [
+            "fulfillment_constraints",
+            "distribution_capability",
+            "certifications"
+          ],
+          "account_fields": [],
+          "confidence": 0.1,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "brand_positioning_fit",
+          "state": "moderate",
+          "evidence": [
+            "Wellness category alignment is plausible; account price architecture is unverified."
+          ],
+          "client_fields": [
+            "offer_categories"
+          ],
+          "account_fields": [
+            "segment"
+          ],
+          "confidence": 0.55,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "strategic_fit",
+          "state": "strong",
+          "evidence": [
+            "Target geography and segment are explicit."
+          ],
+          "client_fields": [
+            "objective",
+            "target_segments"
+          ],
+          "account_fields": [
+            "country",
+            "segment"
+          ],
+          "confidence": 0.8,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "economic_potential_fit",
+          "state": "insufficient_evidence",
+          "evidence": [],
+          "client_fields": [
+            "price_positioning",
+            "margins"
+          ],
+          "account_fields": [],
+          "confidence": 0.1,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "client_capacity_fit",
+          "state": "insufficient_evidence",
+          "evidence": [],
+          "client_fields": [
+            "production_capacity",
+            "distribution_capability"
+          ],
+          "account_fields": [],
+          "confidence": 0.1,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "relationship_path_plausibility",
+          "state": "moderate",
+          "evidence": [
+            "Sector role category can be tested without assuming a contact."
+          ],
+          "client_fields": [
+            "objective"
+          ],
+          "account_fields": [
+            "segment",
+            "domain"
+          ],
+          "confidence": 0.5,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        }
+      ],
+      "use_cases": [
+        {
+          "use_case_id": "uc_81zthn",
+          "statement": "Evaluate assortment of botanical wellness beverages for Natural + Mente.",
+          "client_offer": "Infusiones y bebidas botánicas funcionales de bienestar",
+          "account_need": "Plausible category/channel use; demand is not evidenced.",
+          "evidence": [
+            "rc_7tvnpf"
+          ],
+          "inferences": [
+            "Sector-informed fit for retail."
+          ],
+          "assumptions": [
+            "Account assortment/procurement openness is unverified."
+          ],
+          "commercial_value": "Test account-specific category relevance without claiming demand.",
+          "operational_requirements": [
+            "Verify formats, certifications, minimum order, fulfillment and margin viability."
+          ],
+          "likely_owner": "retail buying / category management",
+          "timing_state": "no_current_timing",
+          "confidence": 0.61,
+          "disqualifying_evidence": [],
+          "next_validation_action": "Inspect current assortment and verify procurement route."
+        }
+      ],
+      "access_paths": [
+        {
+          "type": "category-buyer outreach",
+          "account_relevance": "Plausible for retail.",
+          "client_feasibility": "insufficient_evidence",
+          "likely_internal_owner": {
+            "role": "category management",
+            "state": "sector_informed_inference"
+          },
+          "required_evidence": [
+            "Procurement ownership",
+            "Supplier onboarding path",
+            "Client fulfillment feasibility"
+          ],
+          "entry_barrier": "unknown",
+          "complexity": "unknown",
+          "sales_cycle": "unknown",
+          "key_risk": "Website presence does not establish direct commercial access.",
+          "next_step": "Verify role category and whether purchasing is direct, centralized or distributor-led.",
+          "confidence": 0.48,
+          "direct_access_proven": false
+        }
+      ],
+      "buying_path": {
+        "need_owner": {
+          "role": "category management",
+          "state": "sector_informed_inference"
+        },
+        "category_owner": {
+          "role": "retail buying / category management",
+          "state": "sector_informed_inference"
+        },
+        "operational_user": {
+          "role": "category management",
+          "state": "sector_informed_inference"
+        },
+        "economic_buyer": {
+          "role": "general management or budget owner",
+          "state": "hypothesis"
+        },
+        "procurement_role": {
+          "role": "procurement",
+          "state": "hypothesis"
+        },
+        "blocker": "Unknown supplier onboarding, economics and operational feasibility.",
+        "approval_sequence": [
+          "Category relevance validation",
+          "Sample/pilot evaluation",
+          "Commercial negotiation",
+          "Procurement approval",
+          "Operational implementation"
+        ],
+        "evidence_required": [
+          "Current assortment",
+          "Required certifications",
+          "Volume and margin constraints",
+          "Fulfillment requirements"
+        ],
+        "pilot": "A bounded sample or assortment validation only if client capacity and account interest are verified.",
+        "complexity": "unknown",
+        "confidence": 0.42
+      },
+      "opportunity_statement": "Natural + Mente is a structurally relevant retail account for testing assortment of botanical wellness beverages; this is a fit thesis, not evidence of demand or buying intent.",
+      "why_this_account": [
+        "Verified Colombian retail account.",
+        "Segment is explicit in the client's target context.",
+        "A bounded category-buyer outreach route can be investigated."
+      ],
+      "why_now": {
+        "state": "no_current_timing",
+        "statement": "No current dated commercial signal has been identified.",
+        "evidence": []
+      },
+      "why_not_now": [
+        "No current dated commercial signal has been identified.",
+        "No evidence of active sourcing, expansion or category-change window.",
+        "Client capacity, pricing, certifications, minimum order and distribution feasibility are unknown.",
+        "Procurement path and direct accessibility are unverified."
+      ],
+      "entry_strategy": {
+        "approach": "Research before outreach",
+        "message_angle": "Validate whether assortment of botanical wellness beverages is relevant to the account.",
+        "value_proposition": "A botanical wellness beverage category hypothesis tailored to the account segment.",
+        "proof_required": [
+          "Product formats and certifications",
+          "Fulfillment capacity",
+          "Commercial terms",
+          "Account category openness"
+        ],
+        "motion": "bounded validation then sample/pilot only if both sides qualify",
+        "next_action": "Answer the highest-priority research question before proposing contact."
+      },
+      "counterevidence": {
+        "negative_evidence": [],
+        "alternative_explanation": "The account may fit the segment while using exclusive suppliers, centralized procurement or an assortment incompatible with the client.",
+        "classification": "plausible_alternative_explanation",
+        "confidence_impact": 0.15
+      },
+      "gates": [
+        {
+          "gate": "client_context",
+          "state": "pass",
+          "confidence": 0.75,
+          "evidence": [
+            "Explicit offer, geography, objective and segments."
+          ],
+          "failure_reason": null,
+          "next_action": "Collect operational and economic client constraints."
+        },
+        {
+          "gate": "account_identity",
+          "state": "pass",
+          "confidence": 0.94,
+          "evidence": [
+            "naturalmente.com.co"
+          ],
+          "failure_reason": null,
+          "next_action": "Maintain identity verification."
+        },
+        {
+          "gate": "structural_fit",
+          "state": "pass",
+          "confidence": 0.74,
+          "evidence": [
+            "rc_7tvnpf"
+          ],
+          "failure_reason": null,
+          "next_action": "Verify account structure."
+        },
+        {
+          "gate": "client_fit",
+          "state": "pass",
+          "confidence": 0.72,
+          "evidence": [
+            "Explicit geography and segment."
+          ],
+          "failure_reason": null,
+          "next_action": "Resolve mismatch."
+        },
+        {
+          "gate": "accessibility",
+          "state": "partial",
+          "confidence": 0.48,
+          "evidence": [],
+          "failure_reason": "Route category is plausible but access is not verified.",
+          "next_action": "Verify procurement route."
+        },
+        {
+          "gate": "use_case",
+          "state": "pass",
+          "confidence": 0.61,
+          "evidence": [
+            "rc_7tvnpf"
+          ],
+          "failure_reason": null,
+          "next_action": "Inspect current assortment and verify procurement route."
+        },
+        {
+          "gate": "evidence",
+          "state": "partial",
+          "confidence": 0.45,
+          "evidence": [
+            "rc_7tvnpf"
+          ],
+          "failure_reason": "Central commercial assumptions remain unverified.",
+          "next_action": "Answer decision-changing questions."
+        },
+        {
+          "gate": "timing",
+          "state": "fail",
+          "confidence": 0,
+          "evidence": [],
+          "failure_reason": "No current signal.",
+          "next_action": "Monitor explicit trigger."
+        },
+        {
+          "gate": "counterevidence",
+          "state": "pass",
+          "confidence": 0.7,
+          "evidence": [],
+          "failure_reason": null,
+          "next_action": "Test alternative explanation."
+        },
+        {
+          "gate": "action",
+          "state": "pass",
+          "confidence": 0.65,
+          "evidence": [],
+          "failure_reason": null,
+          "next_action": "Keep action bounded to research/monitoring."
+        }
+      ],
+      "decision": "prioritize",
+      "monitoring_trigger": {
+        "statement": "A verified footprint expansion can create a new category-entry window.",
+        "evidence_needed": "Dated official announcement plus independent or partner confirmation.",
+        "review_horizon_days": 90
+      },
+      "questions": [
+        {
+          "question": "Does Natural + Mente currently carry or use a comparable botanical infusion category?",
+          "why": "Determines whether the use case is real rather than category similarity.",
+          "decision_affected": [
+            "prioritize",
+            "monitor",
+            "low_priority"
+          ],
+          "verification": "Review verified assortment/operations or obtain account confirmation.",
+          "effort": "low",
+          "priority": "high"
+        },
+        {
+          "question": "Is purchasing direct, centralized, location-specific or distributor-led?",
+          "why": "Determines the viable access path and decision owner.",
+          "decision_affected": [
+            "investigate_now",
+            "prioritize",
+            "monitor"
+          ],
+          "verification": "Official supplier information or bounded account inquiry.",
+          "effort": "medium",
+          "priority": "high"
+        },
+        {
+          "question": "Can the client meet required certifications, volumes, delivery and commercial terms?",
+          "why": "Tests operational feasibility before outreach.",
+          "decision_affected": [
+            "prioritize",
+            "low_priority",
+            "exclude"
+          ],
+          "verification": "Obtain explicit client operational context.",
+          "effort": "medium",
+          "priority": "high"
+        }
+      ],
+      "confidence": {
+        "identity": 0.94,
+        "structural": 0.74,
+        "client_fit": 0.72,
+        "use_case": 0.61,
+        "accessibility": 0.48,
+        "buying_path": 0.42,
+        "evidence": 0.45,
+        "timing": 0,
+        "strategy": 0.48,
+        "overall": 0.45,
+        "limiting_factor": "timing"
+      },
+      "limitations": [
+        "Missing client context: business_model.",
+        "Missing client context: company_stage.",
+        "Missing client context: price_positioning.",
+        "Missing client context: minimum_order.",
+        "Missing client context: fulfillment_constraints.",
+        "Missing client context: certifications.",
+        "Missing client context: product_formats.",
+        "Missing client context: customization_capacity.",
+        "Missing client context: distribution_capability.",
+        "Missing client context: production_capacity.",
+        "Missing client context: account_size_constraints.",
+        "Missing client context: current_partnerships.",
+        "Missing client context: preferred_deal_type.",
+        "Missing client context: sales_cycle_tolerance.",
+        "Missing client context: margins.",
+        "Missing client context: white_label_capacity.",
+        "Missing client context: delivery_radius.",
+        "No outcome validation.",
+        "No buying intent evidence."
+      ],
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "thesis_id": "thesis_1q07kes",
+      "account_id": "rp_62dwgs",
+      "account_name": "Tu Tienda Saludable",
+      "domain": "tutiendasaludable.com.co",
+      "segment": "retail",
+      "geography": "Colombia",
+      "identity_confidence": 0.94,
+      "context_id": "ctx_1kqa1cw",
+      "context_quality": "usable",
+      "fit": [
+        {
+          "dimension": "offer_category_fit",
+          "state": "strong",
+          "evidence": [
+            "Explicit botanical infusion offer and verified account segment."
+          ],
+          "client_fields": [
+            "offer_categories"
+          ],
+          "account_fields": [
+            "segment"
+          ],
+          "confidence": 0.82,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "segment_fit",
+          "state": "strong",
+          "evidence": [
+            "Segment is explicitly prioritized."
+          ],
+          "client_fields": [
+            "target_segments"
+          ],
+          "account_fields": [
+            "segment"
+          ],
+          "confidence": 0.95,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "geography_fit",
+          "state": "strong",
+          "evidence": [
+            "Colombia is explicit target geography."
+          ],
+          "client_fields": [
+            "geography"
+          ],
+          "account_fields": [
+            "country"
+          ],
+          "confidence": 0.98,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "channel_fit",
+          "state": "moderate",
+          "evidence": [
+            "Account segment is a plausible channel; channel operating model is unverified."
+          ],
+          "client_fields": [
+            "priority_channels"
+          ],
+          "account_fields": [
+            "segment"
+          ],
+          "confidence": 0.62,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "account_scale_fit",
+          "state": "insufficient_evidence",
+          "evidence": [],
+          "client_fields": [
+            "account_size_constraints"
+          ],
+          "account_fields": [],
+          "confidence": 0.1,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "commercial_accessibility_fit",
+          "state": "moderate",
+          "evidence": [
+            "A role-category route is plausible; direct access is not proven."
+          ],
+          "client_fields": [
+            "objective"
+          ],
+          "account_fields": [
+            "domain",
+            "segment"
+          ],
+          "confidence": 0.55,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "operational_feasibility",
+          "state": "insufficient_evidence",
+          "evidence": [],
+          "client_fields": [
+            "fulfillment_constraints",
+            "distribution_capability",
+            "certifications"
+          ],
+          "account_fields": [],
+          "confidence": 0.1,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "brand_positioning_fit",
+          "state": "moderate",
+          "evidence": [
+            "Wellness category alignment is plausible; account price architecture is unverified."
+          ],
+          "client_fields": [
+            "offer_categories"
+          ],
+          "account_fields": [
+            "segment"
+          ],
+          "confidence": 0.55,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "strategic_fit",
+          "state": "strong",
+          "evidence": [
+            "Target geography and segment are explicit."
+          ],
+          "client_fields": [
+            "objective",
+            "target_segments"
+          ],
+          "account_fields": [
+            "country",
+            "segment"
+          ],
+          "confidence": 0.8,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "economic_potential_fit",
+          "state": "insufficient_evidence",
+          "evidence": [],
+          "client_fields": [
+            "price_positioning",
+            "margins"
+          ],
+          "account_fields": [],
+          "confidence": 0.1,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "client_capacity_fit",
+          "state": "insufficient_evidence",
+          "evidence": [],
+          "client_fields": [
+            "production_capacity",
+            "distribution_capability"
+          ],
+          "account_fields": [],
+          "confidence": 0.1,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "relationship_path_plausibility",
+          "state": "moderate",
+          "evidence": [
+            "Sector role category can be tested without assuming a contact."
+          ],
+          "client_fields": [
+            "objective"
+          ],
+          "account_fields": [
+            "segment",
+            "domain"
+          ],
+          "confidence": 0.5,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        }
+      ],
+      "use_cases": [
+        {
+          "use_case_id": "uc_1fk29j0",
+          "statement": "Evaluate assortment of botanical wellness beverages for Tu Tienda Saludable.",
+          "client_offer": "Infusiones y bebidas botánicas funcionales de bienestar",
+          "account_need": "Plausible category/channel use; demand is not evidenced.",
+          "evidence": [
+            "rc_d36cm4"
+          ],
+          "inferences": [
+            "Sector-informed fit for retail."
+          ],
+          "assumptions": [
+            "Account assortment/procurement openness is unverified."
+          ],
+          "commercial_value": "Test account-specific category relevance without claiming demand.",
+          "operational_requirements": [
+            "Verify formats, certifications, minimum order, fulfillment and margin viability."
+          ],
+          "likely_owner": "retail buying / category management",
+          "timing_state": "no_current_timing",
+          "confidence": 0.61,
+          "disqualifying_evidence": [],
+          "next_validation_action": "Inspect current assortment and verify procurement route."
+        }
+      ],
+      "access_paths": [
+        {
+          "type": "category-buyer outreach",
+          "account_relevance": "Plausible for retail.",
+          "client_feasibility": "insufficient_evidence",
+          "likely_internal_owner": {
+            "role": "category management",
+            "state": "sector_informed_inference"
+          },
+          "required_evidence": [
+            "Procurement ownership",
+            "Supplier onboarding path",
+            "Client fulfillment feasibility"
+          ],
+          "entry_barrier": "unknown",
+          "complexity": "unknown",
+          "sales_cycle": "unknown",
+          "key_risk": "Website presence does not establish direct commercial access.",
+          "next_step": "Verify role category and whether purchasing is direct, centralized or distributor-led.",
+          "confidence": 0.48,
+          "direct_access_proven": false
+        }
+      ],
+      "buying_path": {
+        "need_owner": {
+          "role": "category management",
+          "state": "sector_informed_inference"
+        },
+        "category_owner": {
+          "role": "retail buying / category management",
+          "state": "sector_informed_inference"
+        },
+        "operational_user": {
+          "role": "category management",
+          "state": "sector_informed_inference"
+        },
+        "economic_buyer": {
+          "role": "general management or budget owner",
+          "state": "hypothesis"
+        },
+        "procurement_role": {
+          "role": "procurement",
+          "state": "hypothesis"
+        },
+        "blocker": "Unknown supplier onboarding, economics and operational feasibility.",
+        "approval_sequence": [
+          "Category relevance validation",
+          "Sample/pilot evaluation",
+          "Commercial negotiation",
+          "Procurement approval",
+          "Operational implementation"
+        ],
+        "evidence_required": [
+          "Current assortment",
+          "Required certifications",
+          "Volume and margin constraints",
+          "Fulfillment requirements"
+        ],
+        "pilot": "A bounded sample or assortment validation only if client capacity and account interest are verified.",
+        "complexity": "unknown",
+        "confidence": 0.42
+      },
+      "opportunity_statement": "Tu Tienda Saludable is a structurally relevant retail account for testing assortment of botanical wellness beverages; this is a fit thesis, not evidence of demand or buying intent.",
+      "why_this_account": [
+        "Verified Colombian retail account.",
+        "Segment is explicit in the client's target context.",
+        "A bounded category-buyer outreach route can be investigated."
+      ],
+      "why_now": {
+        "state": "no_current_timing",
+        "statement": "No current dated commercial signal has been identified.",
+        "evidence": []
+      },
+      "why_not_now": [
+        "No current dated commercial signal has been identified.",
+        "No evidence of active sourcing, expansion or category-change window.",
+        "Client capacity, pricing, certifications, minimum order and distribution feasibility are unknown.",
+        "Procurement path and direct accessibility are unverified."
+      ],
+      "entry_strategy": {
+        "approach": "Research before outreach",
+        "message_angle": "Validate whether assortment of botanical wellness beverages is relevant to the account.",
+        "value_proposition": "A botanical wellness beverage category hypothesis tailored to the account segment.",
+        "proof_required": [
+          "Product formats and certifications",
+          "Fulfillment capacity",
+          "Commercial terms",
+          "Account category openness"
+        ],
+        "motion": "bounded validation then sample/pilot only if both sides qualify",
+        "next_action": "Answer the highest-priority research question before proposing contact."
+      },
+      "counterevidence": {
+        "negative_evidence": [],
+        "alternative_explanation": "The account may fit the segment while using exclusive suppliers, centralized procurement or an assortment incompatible with the client.",
+        "classification": "plausible_alternative_explanation",
+        "confidence_impact": 0.15
+      },
+      "gates": [
+        {
+          "gate": "client_context",
+          "state": "pass",
+          "confidence": 0.75,
+          "evidence": [
+            "Explicit offer, geography, objective and segments."
+          ],
+          "failure_reason": null,
+          "next_action": "Collect operational and economic client constraints."
+        },
+        {
+          "gate": "account_identity",
+          "state": "pass",
+          "confidence": 0.94,
+          "evidence": [
+            "tutiendasaludable.com.co"
+          ],
+          "failure_reason": null,
+          "next_action": "Maintain identity verification."
+        },
+        {
+          "gate": "structural_fit",
+          "state": "pass",
+          "confidence": 0.74,
+          "evidence": [
+            "rc_d36cm4"
+          ],
+          "failure_reason": null,
+          "next_action": "Verify account structure."
+        },
+        {
+          "gate": "client_fit",
+          "state": "pass",
+          "confidence": 0.72,
+          "evidence": [
+            "Explicit geography and segment."
+          ],
+          "failure_reason": null,
+          "next_action": "Resolve mismatch."
+        },
+        {
+          "gate": "accessibility",
+          "state": "partial",
+          "confidence": 0.48,
+          "evidence": [],
+          "failure_reason": "Route category is plausible but access is not verified.",
+          "next_action": "Verify procurement route."
+        },
+        {
+          "gate": "use_case",
+          "state": "pass",
+          "confidence": 0.61,
+          "evidence": [
+            "rc_d36cm4"
+          ],
+          "failure_reason": null,
+          "next_action": "Inspect current assortment and verify procurement route."
+        },
+        {
+          "gate": "evidence",
+          "state": "partial",
+          "confidence": 0.45,
+          "evidence": [
+            "rc_d36cm4"
+          ],
+          "failure_reason": "Central commercial assumptions remain unverified.",
+          "next_action": "Answer decision-changing questions."
+        },
+        {
+          "gate": "timing",
+          "state": "fail",
+          "confidence": 0,
+          "evidence": [],
+          "failure_reason": "No current signal.",
+          "next_action": "Monitor explicit trigger."
+        },
+        {
+          "gate": "counterevidence",
+          "state": "pass",
+          "confidence": 0.7,
+          "evidence": [],
+          "failure_reason": null,
+          "next_action": "Test alternative explanation."
+        },
+        {
+          "gate": "action",
+          "state": "pass",
+          "confidence": 0.65,
+          "evidence": [],
+          "failure_reason": null,
+          "next_action": "Keep action bounded to research/monitoring."
+        }
+      ],
+      "decision": "prioritize",
+      "monitoring_trigger": {
+        "statement": "A verified footprint expansion can create a new category-entry window.",
+        "evidence_needed": "Dated official announcement plus independent or partner confirmation.",
+        "review_horizon_days": 90
+      },
+      "questions": [
+        {
+          "question": "Does Tu Tienda Saludable currently carry or use a comparable botanical infusion category?",
+          "why": "Determines whether the use case is real rather than category similarity.",
+          "decision_affected": [
+            "prioritize",
+            "monitor",
+            "low_priority"
+          ],
+          "verification": "Review verified assortment/operations or obtain account confirmation.",
+          "effort": "low",
+          "priority": "high"
+        },
+        {
+          "question": "Is purchasing direct, centralized, location-specific or distributor-led?",
+          "why": "Determines the viable access path and decision owner.",
+          "decision_affected": [
+            "investigate_now",
+            "prioritize",
+            "monitor"
+          ],
+          "verification": "Official supplier information or bounded account inquiry.",
+          "effort": "medium",
+          "priority": "high"
+        },
+        {
+          "question": "Can the client meet required certifications, volumes, delivery and commercial terms?",
+          "why": "Tests operational feasibility before outreach.",
+          "decision_affected": [
+            "prioritize",
+            "low_priority",
+            "exclude"
+          ],
+          "verification": "Obtain explicit client operational context.",
+          "effort": "medium",
+          "priority": "high"
+        }
+      ],
+      "confidence": {
+        "identity": 0.94,
+        "structural": 0.74,
+        "client_fit": 0.72,
+        "use_case": 0.61,
+        "accessibility": 0.48,
+        "buying_path": 0.42,
+        "evidence": 0.45,
+        "timing": 0,
+        "strategy": 0.48,
+        "overall": 0.45,
+        "limiting_factor": "timing"
+      },
+      "limitations": [
+        "Missing client context: business_model.",
+        "Missing client context: company_stage.",
+        "Missing client context: price_positioning.",
+        "Missing client context: minimum_order.",
+        "Missing client context: fulfillment_constraints.",
+        "Missing client context: certifications.",
+        "Missing client context: product_formats.",
+        "Missing client context: customization_capacity.",
+        "Missing client context: distribution_capability.",
+        "Missing client context: production_capacity.",
+        "Missing client context: account_size_constraints.",
+        "Missing client context: current_partnerships.",
+        "Missing client context: preferred_deal_type.",
+        "Missing client context: sales_cycle_tolerance.",
+        "Missing client context: margins.",
+        "Missing client context: white_label_capacity.",
+        "Missing client context: delivery_radius.",
+        "No outcome validation.",
+        "No buying intent evidence."
+      ],
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "thesis_id": "thesis_1tt06l2",
+      "account_id": "rp_1v459p4",
+      "account_name": "Hotel Spa La Colina",
+      "domain": "hotelspalacolina.com",
+      "segment": "hospitality",
+      "geography": "Colombia",
+      "identity_confidence": 0.94,
+      "context_id": "ctx_1kqa1cw",
+      "context_quality": "usable",
+      "fit": [
+        {
+          "dimension": "offer_category_fit",
+          "state": "strong",
+          "evidence": [
+            "Explicit botanical infusion offer and verified account segment."
+          ],
+          "client_fields": [
+            "offer_categories"
+          ],
+          "account_fields": [
+            "segment"
+          ],
+          "confidence": 0.82,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "segment_fit",
+          "state": "strong",
+          "evidence": [
+            "Segment is explicitly prioritized."
+          ],
+          "client_fields": [
+            "target_segments"
+          ],
+          "account_fields": [
+            "segment"
+          ],
+          "confidence": 0.95,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "geography_fit",
+          "state": "strong",
+          "evidence": [
+            "Colombia is explicit target geography."
+          ],
+          "client_fields": [
+            "geography"
+          ],
+          "account_fields": [
+            "country"
+          ],
+          "confidence": 0.98,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "channel_fit",
+          "state": "moderate",
+          "evidence": [
+            "Account segment is a plausible channel; channel operating model is unverified."
+          ],
+          "client_fields": [
+            "priority_channels"
+          ],
+          "account_fields": [
+            "segment"
+          ],
+          "confidence": 0.62,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "account_scale_fit",
+          "state": "insufficient_evidence",
+          "evidence": [],
+          "client_fields": [
+            "account_size_constraints"
+          ],
+          "account_fields": [],
+          "confidence": 0.1,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "commercial_accessibility_fit",
+          "state": "moderate",
+          "evidence": [
+            "A role-category route is plausible; direct access is not proven."
+          ],
+          "client_fields": [
+            "objective"
+          ],
+          "account_fields": [
+            "domain",
+            "segment"
+          ],
+          "confidence": 0.55,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "operational_feasibility",
+          "state": "insufficient_evidence",
+          "evidence": [],
+          "client_fields": [
+            "fulfillment_constraints",
+            "distribution_capability",
+            "certifications"
+          ],
+          "account_fields": [],
+          "confidence": 0.1,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "brand_positioning_fit",
+          "state": "moderate",
+          "evidence": [
+            "Wellness category alignment is plausible; account price architecture is unverified."
+          ],
+          "client_fields": [
+            "offer_categories"
+          ],
+          "account_fields": [
+            "segment"
+          ],
+          "confidence": 0.55,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "strategic_fit",
+          "state": "strong",
+          "evidence": [
+            "Target geography and segment are explicit."
+          ],
+          "client_fields": [
+            "objective",
+            "target_segments"
+          ],
+          "account_fields": [
+            "country",
+            "segment"
+          ],
+          "confidence": 0.8,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "economic_potential_fit",
+          "state": "insufficient_evidence",
+          "evidence": [],
+          "client_fields": [
+            "price_positioning",
+            "margins"
+          ],
+          "account_fields": [],
+          "confidence": 0.1,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "client_capacity_fit",
+          "state": "insufficient_evidence",
+          "evidence": [],
+          "client_fields": [
+            "production_capacity",
+            "distribution_capability"
+          ],
+          "account_fields": [],
+          "confidence": 0.1,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "relationship_path_plausibility",
+          "state": "moderate",
+          "evidence": [
+            "Sector role category can be tested without assuming a contact."
+          ],
+          "client_fields": [
+            "objective"
+          ],
+          "account_fields": [
+            "segment",
+            "domain"
+          ],
+          "confidence": 0.5,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        }
+      ],
+      "use_cases": [
+        {
+          "use_case_id": "uc_fveb9",
+          "statement": "Evaluate guest wellness beverage or spa amenity pilot for Hotel Spa La Colina.",
+          "client_offer": "Infusiones y bebidas botánicas funcionales de bienestar",
+          "account_need": "Plausible category/channel use; demand is not evidenced.",
+          "evidence": [
+            "rc_1rd9b6s"
+          ],
+          "inferences": [
+            "Sector-informed fit for hospitality."
+          ],
+          "assumptions": [
+            "Account assortment/procurement openness is unverified."
+          ],
+          "commercial_value": "Test account-specific category relevance without claiming demand.",
+          "operational_requirements": [
+            "Verify formats, certifications, minimum order, fulfillment and margin viability."
+          ],
+          "likely_owner": "food and beverage / guest experience",
+          "timing_state": "no_current_timing",
+          "confidence": 0.61,
+          "disqualifying_evidence": [],
+          "next_validation_action": "Inspect current assortment and verify procurement route."
+        }
+      ],
+      "access_paths": [
+        {
+          "type": "hospitality or operations outreach",
+          "account_relevance": "Plausible for hospitality.",
+          "client_feasibility": "insufficient_evidence",
+          "likely_internal_owner": {
+            "role": "food and beverage",
+            "state": "sector_informed_inference"
+          },
+          "required_evidence": [
+            "Procurement ownership",
+            "Supplier onboarding path",
+            "Client fulfillment feasibility"
+          ],
+          "entry_barrier": "unknown",
+          "complexity": "unknown",
+          "sales_cycle": "unknown",
+          "key_risk": "Website presence does not establish direct commercial access.",
+          "next_step": "Verify role category and whether purchasing is direct, centralized or distributor-led.",
+          "confidence": 0.48,
+          "direct_access_proven": false
+        }
+      ],
+      "buying_path": {
+        "need_owner": {
+          "role": "food and beverage",
+          "state": "sector_informed_inference"
+        },
+        "category_owner": {
+          "role": "food and beverage / guest experience",
+          "state": "sector_informed_inference"
+        },
+        "operational_user": {
+          "role": "food and beverage",
+          "state": "sector_informed_inference"
+        },
+        "economic_buyer": {
+          "role": "general management or budget owner",
+          "state": "hypothesis"
+        },
+        "procurement_role": {
+          "role": "procurement",
+          "state": "hypothesis"
+        },
+        "blocker": "Unknown supplier onboarding, economics and operational feasibility.",
+        "approval_sequence": [
+          "Category relevance validation",
+          "Sample/pilot evaluation",
+          "Commercial negotiation",
+          "Procurement approval",
+          "Operational implementation"
+        ],
+        "evidence_required": [
+          "Current assortment",
+          "Required certifications",
+          "Volume and margin constraints",
+          "Fulfillment requirements"
+        ],
+        "pilot": "A bounded sample or assortment validation only if client capacity and account interest are verified.",
+        "complexity": "unknown",
+        "confidence": 0.42
+      },
+      "opportunity_statement": "Hotel Spa La Colina is a structurally relevant hospitality account for testing guest wellness beverage or spa amenity pilot; this is a fit thesis, not evidence of demand or buying intent.",
+      "why_this_account": [
+        "Verified Colombian hospitality account.",
+        "Segment is explicit in the client's target context.",
+        "A bounded hospitality or operations outreach route can be investigated."
+      ],
+      "why_now": {
+        "state": "no_current_timing",
+        "statement": "No current dated commercial signal has been identified.",
+        "evidence": []
+      },
+      "why_not_now": [
+        "No current dated commercial signal has been identified.",
+        "No evidence of active sourcing, expansion or category-change window.",
+        "Client capacity, pricing, certifications, minimum order and distribution feasibility are unknown.",
+        "Procurement path and direct accessibility are unverified."
+      ],
+      "entry_strategy": {
+        "approach": "Research before outreach",
+        "message_angle": "Validate whether guest wellness beverage or spa amenity pilot is relevant to the account.",
+        "value_proposition": "A botanical wellness beverage category hypothesis tailored to the account segment.",
+        "proof_required": [
+          "Product formats and certifications",
+          "Fulfillment capacity",
+          "Commercial terms",
+          "Account category openness"
+        ],
+        "motion": "bounded validation then sample/pilot only if both sides qualify",
+        "next_action": "Answer the highest-priority research question before proposing contact."
+      },
+      "counterevidence": {
+        "negative_evidence": [],
+        "alternative_explanation": "The account may fit the segment while using exclusive suppliers, centralized procurement or an assortment incompatible with the client.",
+        "classification": "plausible_alternative_explanation",
+        "confidence_impact": 0.15
+      },
+      "gates": [
+        {
+          "gate": "client_context",
+          "state": "pass",
+          "confidence": 0.75,
+          "evidence": [
+            "Explicit offer, geography, objective and segments."
+          ],
+          "failure_reason": null,
+          "next_action": "Collect operational and economic client constraints."
+        },
+        {
+          "gate": "account_identity",
+          "state": "pass",
+          "confidence": 0.94,
+          "evidence": [
+            "hotelspalacolina.com"
+          ],
+          "failure_reason": null,
+          "next_action": "Maintain identity verification."
+        },
+        {
+          "gate": "structural_fit",
+          "state": "pass",
+          "confidence": 0.68,
+          "evidence": [
+            "rc_1rd9b6s"
+          ],
+          "failure_reason": null,
+          "next_action": "Verify account structure."
+        },
+        {
+          "gate": "client_fit",
+          "state": "pass",
+          "confidence": 0.72,
+          "evidence": [
+            "Explicit geography and segment."
+          ],
+          "failure_reason": null,
+          "next_action": "Resolve mismatch."
+        },
+        {
+          "gate": "accessibility",
+          "state": "partial",
+          "confidence": 0.48,
+          "evidence": [],
+          "failure_reason": "Route category is plausible but access is not verified.",
+          "next_action": "Verify procurement route."
+        },
+        {
+          "gate": "use_case",
+          "state": "pass",
+          "confidence": 0.61,
+          "evidence": [
+            "rc_1rd9b6s"
+          ],
+          "failure_reason": null,
+          "next_action": "Inspect current assortment and verify procurement route."
+        },
+        {
+          "gate": "evidence",
+          "state": "partial",
+          "confidence": 0.45,
+          "evidence": [
+            "rc_1rd9b6s"
+          ],
+          "failure_reason": "Central commercial assumptions remain unverified.",
+          "next_action": "Answer decision-changing questions."
+        },
+        {
+          "gate": "timing",
+          "state": "fail",
+          "confidence": 0,
+          "evidence": [],
+          "failure_reason": "No current signal.",
+          "next_action": "Monitor explicit trigger."
+        },
+        {
+          "gate": "counterevidence",
+          "state": "pass",
+          "confidence": 0.7,
+          "evidence": [],
+          "failure_reason": null,
+          "next_action": "Test alternative explanation."
+        },
+        {
+          "gate": "action",
+          "state": "pass",
+          "confidence": 0.65,
+          "evidence": [],
+          "failure_reason": null,
+          "next_action": "Keep action bounded to research/monitoring."
+        }
+      ],
+      "decision": "monitor",
+      "monitoring_trigger": {
+        "statement": "A verified footprint expansion can create a new category-entry window.",
+        "evidence_needed": "Dated official announcement plus independent or partner confirmation.",
+        "review_horizon_days": 90
+      },
+      "questions": [
+        {
+          "question": "Does Hotel Spa La Colina currently carry or use a comparable botanical infusion category?",
+          "why": "Determines whether the use case is real rather than category similarity.",
+          "decision_affected": [
+            "prioritize",
+            "monitor",
+            "low_priority"
+          ],
+          "verification": "Review verified assortment/operations or obtain account confirmation.",
+          "effort": "low",
+          "priority": "high"
+        },
+        {
+          "question": "Is purchasing direct, centralized, location-specific or distributor-led?",
+          "why": "Determines the viable access path and decision owner.",
+          "decision_affected": [
+            "investigate_now",
+            "prioritize",
+            "monitor"
+          ],
+          "verification": "Official supplier information or bounded account inquiry.",
+          "effort": "medium",
+          "priority": "high"
+        },
+        {
+          "question": "Can the client meet required certifications, volumes, delivery and commercial terms?",
+          "why": "Tests operational feasibility before outreach.",
+          "decision_affected": [
+            "prioritize",
+            "low_priority",
+            "exclude"
+          ],
+          "verification": "Obtain explicit client operational context.",
+          "effort": "medium",
+          "priority": "high"
+        }
+      ],
+      "confidence": {
+        "identity": 0.94,
+        "structural": 0.68,
+        "client_fit": 0.72,
+        "use_case": 0.61,
+        "accessibility": 0.48,
+        "buying_path": 0.42,
+        "evidence": 0.45,
+        "timing": 0,
+        "strategy": 0.48,
+        "overall": 0.45,
+        "limiting_factor": "timing"
+      },
+      "limitations": [
+        "Missing client context: business_model.",
+        "Missing client context: company_stage.",
+        "Missing client context: price_positioning.",
+        "Missing client context: minimum_order.",
+        "Missing client context: fulfillment_constraints.",
+        "Missing client context: certifications.",
+        "Missing client context: product_formats.",
+        "Missing client context: customization_capacity.",
+        "Missing client context: distribution_capability.",
+        "Missing client context: production_capacity.",
+        "Missing client context: account_size_constraints.",
+        "Missing client context: current_partnerships.",
+        "Missing client context: preferred_deal_type.",
+        "Missing client context: sales_cycle_tolerance.",
+        "Missing client context: margins.",
+        "Missing client context: white_label_capacity.",
+        "Missing client context: delivery_radius.",
+        "No outcome validation.",
+        "No buying intent evidence."
+      ],
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "thesis_id": "thesis_1i2l5mk",
+      "account_id": "rp_hcdx5a",
+      "account_name": "BioPlaza",
+      "domain": "bioplaza.com.co",
+      "segment": "retail",
+      "geography": "Colombia",
+      "identity_confidence": 0.94,
+      "context_id": "ctx_1kqa1cw",
+      "context_quality": "usable",
+      "fit": [
+        {
+          "dimension": "offer_category_fit",
+          "state": "strong",
+          "evidence": [
+            "Explicit botanical infusion offer and verified account segment."
+          ],
+          "client_fields": [
+            "offer_categories"
+          ],
+          "account_fields": [
+            "segment"
+          ],
+          "confidence": 0.82,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "segment_fit",
+          "state": "strong",
+          "evidence": [
+            "Segment is explicitly prioritized."
+          ],
+          "client_fields": [
+            "target_segments"
+          ],
+          "account_fields": [
+            "segment"
+          ],
+          "confidence": 0.95,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "geography_fit",
+          "state": "strong",
+          "evidence": [
+            "Colombia is explicit target geography."
+          ],
+          "client_fields": [
+            "geography"
+          ],
+          "account_fields": [
+            "country"
+          ],
+          "confidence": 0.98,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "channel_fit",
+          "state": "moderate",
+          "evidence": [
+            "Account segment is a plausible channel; channel operating model is unverified."
+          ],
+          "client_fields": [
+            "priority_channels"
+          ],
+          "account_fields": [
+            "segment"
+          ],
+          "confidence": 0.62,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "account_scale_fit",
+          "state": "insufficient_evidence",
+          "evidence": [],
+          "client_fields": [
+            "account_size_constraints"
+          ],
+          "account_fields": [],
+          "confidence": 0.1,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "commercial_accessibility_fit",
+          "state": "moderate",
+          "evidence": [
+            "A role-category route is plausible; direct access is not proven."
+          ],
+          "client_fields": [
+            "objective"
+          ],
+          "account_fields": [
+            "domain",
+            "segment"
+          ],
+          "confidence": 0.55,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "operational_feasibility",
+          "state": "insufficient_evidence",
+          "evidence": [],
+          "client_fields": [
+            "fulfillment_constraints",
+            "distribution_capability",
+            "certifications"
+          ],
+          "account_fields": [],
+          "confidence": 0.1,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "brand_positioning_fit",
+          "state": "moderate",
+          "evidence": [
+            "Wellness category alignment is plausible; account price architecture is unverified."
+          ],
+          "client_fields": [
+            "offer_categories"
+          ],
+          "account_fields": [
+            "segment"
+          ],
+          "confidence": 0.55,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "strategic_fit",
+          "state": "strong",
+          "evidence": [
+            "Target geography and segment are explicit."
+          ],
+          "client_fields": [
+            "objective",
+            "target_segments"
+          ],
+          "account_fields": [
+            "country",
+            "segment"
+          ],
+          "confidence": 0.8,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "economic_potential_fit",
+          "state": "insufficient_evidence",
+          "evidence": [],
+          "client_fields": [
+            "price_positioning",
+            "margins"
+          ],
+          "account_fields": [],
+          "confidence": 0.1,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "client_capacity_fit",
+          "state": "insufficient_evidence",
+          "evidence": [],
+          "client_fields": [
+            "production_capacity",
+            "distribution_capability"
+          ],
+          "account_fields": [],
+          "confidence": 0.1,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "relationship_path_plausibility",
+          "state": "moderate",
+          "evidence": [
+            "Sector role category can be tested without assuming a contact."
+          ],
+          "client_fields": [
+            "objective"
+          ],
+          "account_fields": [
+            "segment",
+            "domain"
+          ],
+          "confidence": 0.5,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        }
+      ],
+      "use_cases": [
+        {
+          "use_case_id": "uc_1rh4zx8",
+          "statement": "Evaluate assortment of botanical wellness beverages for BioPlaza.",
+          "client_offer": "Infusiones y bebidas botánicas funcionales de bienestar",
+          "account_need": "Plausible category/channel use; demand is not evidenced.",
+          "evidence": [
+            "rc_1wxhy64"
+          ],
+          "inferences": [
+            "Sector-informed fit for retail."
+          ],
+          "assumptions": [
+            "Account assortment/procurement openness is unverified."
+          ],
+          "commercial_value": "Test account-specific category relevance without claiming demand.",
+          "operational_requirements": [
+            "Verify formats, certifications, minimum order, fulfillment and margin viability."
+          ],
+          "likely_owner": "retail buying / category management",
+          "timing_state": "no_current_timing",
+          "confidence": 0.61,
+          "disqualifying_evidence": [],
+          "next_validation_action": "Inspect current assortment and verify procurement route."
+        }
+      ],
+      "access_paths": [
+        {
+          "type": "category-buyer outreach",
+          "account_relevance": "Plausible for retail.",
+          "client_feasibility": "insufficient_evidence",
+          "likely_internal_owner": {
+            "role": "category management",
+            "state": "sector_informed_inference"
+          },
+          "required_evidence": [
+            "Procurement ownership",
+            "Supplier onboarding path",
+            "Client fulfillment feasibility"
+          ],
+          "entry_barrier": "unknown",
+          "complexity": "unknown",
+          "sales_cycle": "unknown",
+          "key_risk": "Website presence does not establish direct commercial access.",
+          "next_step": "Verify role category and whether purchasing is direct, centralized or distributor-led.",
+          "confidence": 0.48,
+          "direct_access_proven": false
+        }
+      ],
+      "buying_path": {
+        "need_owner": {
+          "role": "category management",
+          "state": "sector_informed_inference"
+        },
+        "category_owner": {
+          "role": "retail buying / category management",
+          "state": "sector_informed_inference"
+        },
+        "operational_user": {
+          "role": "category management",
+          "state": "sector_informed_inference"
+        },
+        "economic_buyer": {
+          "role": "general management or budget owner",
+          "state": "hypothesis"
+        },
+        "procurement_role": {
+          "role": "procurement",
+          "state": "hypothesis"
+        },
+        "blocker": "Unknown supplier onboarding, economics and operational feasibility.",
+        "approval_sequence": [
+          "Category relevance validation",
+          "Sample/pilot evaluation",
+          "Commercial negotiation",
+          "Procurement approval",
+          "Operational implementation"
+        ],
+        "evidence_required": [
+          "Current assortment",
+          "Required certifications",
+          "Volume and margin constraints",
+          "Fulfillment requirements"
+        ],
+        "pilot": "A bounded sample or assortment validation only if client capacity and account interest are verified.",
+        "complexity": "unknown",
+        "confidence": 0.42
+      },
+      "opportunity_statement": "BioPlaza is a structurally relevant retail account for testing assortment of botanical wellness beverages; this is a fit thesis, not evidence of demand or buying intent.",
+      "why_this_account": [
+        "Verified Colombian retail account.",
+        "Segment is explicit in the client's target context.",
+        "A bounded category-buyer outreach route can be investigated."
+      ],
+      "why_now": {
+        "state": "no_current_timing",
+        "statement": "No current dated commercial signal has been identified.",
+        "evidence": []
+      },
+      "why_not_now": [
+        "No current dated commercial signal has been identified.",
+        "No evidence of active sourcing, expansion or category-change window.",
+        "Client capacity, pricing, certifications, minimum order and distribution feasibility are unknown.",
+        "Procurement path and direct accessibility are unverified."
+      ],
+      "entry_strategy": {
+        "approach": "Research before outreach",
+        "message_angle": "Validate whether assortment of botanical wellness beverages is relevant to the account.",
+        "value_proposition": "A botanical wellness beverage category hypothesis tailored to the account segment.",
+        "proof_required": [
+          "Product formats and certifications",
+          "Fulfillment capacity",
+          "Commercial terms",
+          "Account category openness"
+        ],
+        "motion": "bounded validation then sample/pilot only if both sides qualify",
+        "next_action": "Answer the highest-priority research question before proposing contact."
+      },
+      "counterevidence": {
+        "negative_evidence": [],
+        "alternative_explanation": "The account may fit the segment while using exclusive suppliers, centralized procurement or an assortment incompatible with the client.",
+        "classification": "plausible_alternative_explanation",
+        "confidence_impact": 0.15
+      },
+      "gates": [
+        {
+          "gate": "client_context",
+          "state": "pass",
+          "confidence": 0.75,
+          "evidence": [
+            "Explicit offer, geography, objective and segments."
+          ],
+          "failure_reason": null,
+          "next_action": "Collect operational and economic client constraints."
+        },
+        {
+          "gate": "account_identity",
+          "state": "pass",
+          "confidence": 0.94,
+          "evidence": [
+            "bioplaza.com.co"
+          ],
+          "failure_reason": null,
+          "next_action": "Maintain identity verification."
+        },
+        {
+          "gate": "structural_fit",
+          "state": "pass",
+          "confidence": 0.74,
+          "evidence": [
+            "rc_1wxhy64"
+          ],
+          "failure_reason": null,
+          "next_action": "Verify account structure."
+        },
+        {
+          "gate": "client_fit",
+          "state": "pass",
+          "confidence": 0.72,
+          "evidence": [
+            "Explicit geography and segment."
+          ],
+          "failure_reason": null,
+          "next_action": "Resolve mismatch."
+        },
+        {
+          "gate": "accessibility",
+          "state": "partial",
+          "confidence": 0.48,
+          "evidence": [],
+          "failure_reason": "Route category is plausible but access is not verified.",
+          "next_action": "Verify procurement route."
+        },
+        {
+          "gate": "use_case",
+          "state": "pass",
+          "confidence": 0.61,
+          "evidence": [
+            "rc_1wxhy64"
+          ],
+          "failure_reason": null,
+          "next_action": "Inspect current assortment and verify procurement route."
+        },
+        {
+          "gate": "evidence",
+          "state": "partial",
+          "confidence": 0.45,
+          "evidence": [
+            "rc_1wxhy64"
+          ],
+          "failure_reason": "Central commercial assumptions remain unverified.",
+          "next_action": "Answer decision-changing questions."
+        },
+        {
+          "gate": "timing",
+          "state": "fail",
+          "confidence": 0,
+          "evidence": [],
+          "failure_reason": "No current signal.",
+          "next_action": "Monitor explicit trigger."
+        },
+        {
+          "gate": "counterevidence",
+          "state": "pass",
+          "confidence": 0.7,
+          "evidence": [],
+          "failure_reason": null,
+          "next_action": "Test alternative explanation."
+        },
+        {
+          "gate": "action",
+          "state": "pass",
+          "confidence": 0.65,
+          "evidence": [],
+          "failure_reason": null,
+          "next_action": "Keep action bounded to research/monitoring."
+        }
+      ],
+      "decision": "prioritize",
+      "monitoring_trigger": {
+        "statement": "A verified footprint expansion can create a new category-entry window.",
+        "evidence_needed": "Dated official announcement plus independent or partner confirmation.",
+        "review_horizon_days": 90
+      },
+      "questions": [
+        {
+          "question": "Does BioPlaza currently carry or use a comparable botanical infusion category?",
+          "why": "Determines whether the use case is real rather than category similarity.",
+          "decision_affected": [
+            "prioritize",
+            "monitor",
+            "low_priority"
+          ],
+          "verification": "Review verified assortment/operations or obtain account confirmation.",
+          "effort": "low",
+          "priority": "high"
+        },
+        {
+          "question": "Is purchasing direct, centralized, location-specific or distributor-led?",
+          "why": "Determines the viable access path and decision owner.",
+          "decision_affected": [
+            "investigate_now",
+            "prioritize",
+            "monitor"
+          ],
+          "verification": "Official supplier information or bounded account inquiry.",
+          "effort": "medium",
+          "priority": "high"
+        },
+        {
+          "question": "Can the client meet required certifications, volumes, delivery and commercial terms?",
+          "why": "Tests operational feasibility before outreach.",
+          "decision_affected": [
+            "prioritize",
+            "low_priority",
+            "exclude"
+          ],
+          "verification": "Obtain explicit client operational context.",
+          "effort": "medium",
+          "priority": "high"
+        }
+      ],
+      "confidence": {
+        "identity": 0.94,
+        "structural": 0.74,
+        "client_fit": 0.72,
+        "use_case": 0.61,
+        "accessibility": 0.48,
+        "buying_path": 0.42,
+        "evidence": 0.45,
+        "timing": 0,
+        "strategy": 0.48,
+        "overall": 0.45,
+        "limiting_factor": "timing"
+      },
+      "limitations": [
+        "Missing client context: business_model.",
+        "Missing client context: company_stage.",
+        "Missing client context: price_positioning.",
+        "Missing client context: minimum_order.",
+        "Missing client context: fulfillment_constraints.",
+        "Missing client context: certifications.",
+        "Missing client context: product_formats.",
+        "Missing client context: customization_capacity.",
+        "Missing client context: distribution_capability.",
+        "Missing client context: production_capacity.",
+        "Missing client context: account_size_constraints.",
+        "Missing client context: current_partnerships.",
+        "Missing client context: preferred_deal_type.",
+        "Missing client context: sales_cycle_tolerance.",
+        "Missing client context: margins.",
+        "Missing client context: white_label_capacity.",
+        "Missing client context: delivery_radius.",
+        "No outcome validation.",
+        "No buying intent evidence."
+      ],
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "thesis_id": "thesis_1y75p8d",
+      "account_id": "rp_1v1bsfg",
+      "account_name": "Distribuidora DAM",
+      "domain": "distribuidoradam.com",
+      "segment": "distribution",
+      "geography": "Colombia",
+      "identity_confidence": 0.94,
+      "context_id": "ctx_1kqa1cw",
+      "context_quality": "usable",
+      "fit": [
+        {
+          "dimension": "offer_category_fit",
+          "state": "strong",
+          "evidence": [
+            "Explicit botanical infusion offer and verified account segment."
+          ],
+          "client_fields": [
+            "offer_categories"
+          ],
+          "account_fields": [
+            "segment"
+          ],
+          "confidence": 0.82,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "segment_fit",
+          "state": "strong",
+          "evidence": [
+            "Segment is explicitly prioritized."
+          ],
+          "client_fields": [
+            "target_segments"
+          ],
+          "account_fields": [
+            "segment"
+          ],
+          "confidence": 0.95,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "geography_fit",
+          "state": "strong",
+          "evidence": [
+            "Colombia is explicit target geography."
+          ],
+          "client_fields": [
+            "geography"
+          ],
+          "account_fields": [
+            "country"
+          ],
+          "confidence": 0.98,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "channel_fit",
+          "state": "moderate",
+          "evidence": [
+            "Account segment is a plausible channel; channel operating model is unverified."
+          ],
+          "client_fields": [
+            "priority_channels"
+          ],
+          "account_fields": [
+            "segment"
+          ],
+          "confidence": 0.62,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "account_scale_fit",
+          "state": "insufficient_evidence",
+          "evidence": [],
+          "client_fields": [
+            "account_size_constraints"
+          ],
+          "account_fields": [],
+          "confidence": 0.1,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "commercial_accessibility_fit",
+          "state": "moderate",
+          "evidence": [
+            "A role-category route is plausible; direct access is not proven."
+          ],
+          "client_fields": [
+            "objective"
+          ],
+          "account_fields": [
+            "domain",
+            "segment"
+          ],
+          "confidence": 0.55,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "operational_feasibility",
+          "state": "insufficient_evidence",
+          "evidence": [],
+          "client_fields": [
+            "fulfillment_constraints",
+            "distribution_capability",
+            "certifications"
+          ],
+          "account_fields": [],
+          "confidence": 0.1,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "brand_positioning_fit",
+          "state": "moderate",
+          "evidence": [
+            "Wellness category alignment is plausible; account price architecture is unverified."
+          ],
+          "client_fields": [
+            "offer_categories"
+          ],
+          "account_fields": [
+            "segment"
+          ],
+          "confidence": 0.55,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "strategic_fit",
+          "state": "strong",
+          "evidence": [
+            "Target geography and segment are explicit."
+          ],
+          "client_fields": [
+            "objective",
+            "target_segments"
+          ],
+          "account_fields": [
+            "country",
+            "segment"
+          ],
+          "confidence": 0.8,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "economic_potential_fit",
+          "state": "insufficient_evidence",
+          "evidence": [],
+          "client_fields": [
+            "price_positioning",
+            "margins"
+          ],
+          "account_fields": [],
+          "confidence": 0.1,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "client_capacity_fit",
+          "state": "insufficient_evidence",
+          "evidence": [],
+          "client_fields": [
+            "production_capacity",
+            "distribution_capability"
+          ],
+          "account_fields": [],
+          "confidence": 0.1,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "relationship_path_plausibility",
+          "state": "moderate",
+          "evidence": [
+            "Sector role category can be tested without assuming a contact."
+          ],
+          "client_fields": [
+            "objective"
+          ],
+          "account_fields": [
+            "segment",
+            "domain"
+          ],
+          "confidence": 0.5,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        }
+      ],
+      "use_cases": [
+        {
+          "use_case_id": "uc_6kaok8",
+          "statement": "Evaluate portfolio expansion with a Colombian botanical beverage category for Distribuidora DAM.",
+          "client_offer": "Infusiones y bebidas botánicas funcionales de bienestar",
+          "account_need": "Plausible category/channel use; demand is not evidenced.",
+          "evidence": [
+            "rc_139whjf"
+          ],
+          "inferences": [
+            "Sector-informed fit for distribution."
+          ],
+          "assumptions": [
+            "Account assortment/procurement openness is unverified."
+          ],
+          "commercial_value": "Test account-specific category relevance without claiming demand.",
+          "operational_requirements": [
+            "Verify formats, certifications, minimum order, fulfillment and margin viability."
+          ],
+          "likely_owner": "distribution management",
+          "timing_state": "no_current_timing",
+          "confidence": 0.61,
+          "disqualifying_evidence": [],
+          "next_validation_action": "Inspect current assortment and verify procurement route."
+        }
+      ],
+      "access_paths": [
+        {
+          "type": "distributor introduction",
+          "account_relevance": "Plausible for distribution.",
+          "client_feasibility": "insufficient_evidence",
+          "likely_internal_owner": {
+            "role": "distribution management",
+            "state": "sector_informed_inference"
+          },
+          "required_evidence": [
+            "Procurement ownership",
+            "Supplier onboarding path",
+            "Client fulfillment feasibility"
+          ],
+          "entry_barrier": "unknown",
+          "complexity": "unknown",
+          "sales_cycle": "unknown",
+          "key_risk": "Website presence does not establish direct commercial access.",
+          "next_step": "Verify role category and whether purchasing is direct, centralized or distributor-led.",
+          "confidence": 0.48,
+          "direct_access_proven": false
+        }
+      ],
+      "buying_path": {
+        "need_owner": {
+          "role": "distribution management",
+          "state": "sector_informed_inference"
+        },
+        "category_owner": {
+          "role": "distribution management",
+          "state": "sector_informed_inference"
+        },
+        "operational_user": {
+          "role": "distribution management",
+          "state": "sector_informed_inference"
+        },
+        "economic_buyer": {
+          "role": "general management or budget owner",
+          "state": "hypothesis"
+        },
+        "procurement_role": {
+          "role": "procurement",
+          "state": "hypothesis"
+        },
+        "blocker": "Unknown supplier onboarding, economics and operational feasibility.",
+        "approval_sequence": [
+          "Category relevance validation",
+          "Sample/pilot evaluation",
+          "Commercial negotiation",
+          "Procurement approval",
+          "Operational implementation"
+        ],
+        "evidence_required": [
+          "Current assortment",
+          "Required certifications",
+          "Volume and margin constraints",
+          "Fulfillment requirements"
+        ],
+        "pilot": "A bounded sample or assortment validation only if client capacity and account interest are verified.",
+        "complexity": "unknown",
+        "confidence": 0.42
+      },
+      "opportunity_statement": "Distribuidora DAM is a structurally relevant distribution account for testing portfolio expansion with a Colombian botanical beverage category; this is a fit thesis, not evidence of demand or buying intent.",
+      "why_this_account": [
+        "Verified Colombian distribution account.",
+        "Segment is explicit in the client's target context.",
+        "A bounded distributor introduction route can be investigated."
+      ],
+      "why_now": {
+        "state": "no_current_timing",
+        "statement": "No current dated commercial signal has been identified.",
+        "evidence": []
+      },
+      "why_not_now": [
+        "No current dated commercial signal has been identified.",
+        "No evidence of active sourcing, expansion or category-change window.",
+        "Client capacity, pricing, certifications, minimum order and distribution feasibility are unknown.",
+        "Procurement path and direct accessibility are unverified."
+      ],
+      "entry_strategy": {
+        "approach": "Research before outreach",
+        "message_angle": "Validate whether portfolio expansion with a Colombian botanical beverage category is relevant to the account.",
+        "value_proposition": "A botanical wellness beverage category hypothesis tailored to the account segment.",
+        "proof_required": [
+          "Product formats and certifications",
+          "Fulfillment capacity",
+          "Commercial terms",
+          "Account category openness"
+        ],
+        "motion": "bounded validation then sample/pilot only if both sides qualify",
+        "next_action": "Answer the highest-priority research question before proposing contact."
+      },
+      "counterevidence": {
+        "negative_evidence": [],
+        "alternative_explanation": "The account may fit the segment while using exclusive suppliers, centralized procurement or an assortment incompatible with the client.",
+        "classification": "plausible_alternative_explanation",
+        "confidence_impact": 0.15
+      },
+      "gates": [
+        {
+          "gate": "client_context",
+          "state": "pass",
+          "confidence": 0.75,
+          "evidence": [
+            "Explicit offer, geography, objective and segments."
+          ],
+          "failure_reason": null,
+          "next_action": "Collect operational and economic client constraints."
+        },
+        {
+          "gate": "account_identity",
+          "state": "pass",
+          "confidence": 0.94,
+          "evidence": [
+            "distribuidoradam.com"
+          ],
+          "failure_reason": null,
+          "next_action": "Maintain identity verification."
+        },
+        {
+          "gate": "structural_fit",
+          "state": "pass",
+          "confidence": 0.72,
+          "evidence": [
+            "rc_139whjf"
+          ],
+          "failure_reason": null,
+          "next_action": "Verify account structure."
+        },
+        {
+          "gate": "client_fit",
+          "state": "pass",
+          "confidence": 0.72,
+          "evidence": [
+            "Explicit geography and segment."
+          ],
+          "failure_reason": null,
+          "next_action": "Resolve mismatch."
+        },
+        {
+          "gate": "accessibility",
+          "state": "partial",
+          "confidence": 0.48,
+          "evidence": [],
+          "failure_reason": "Route category is plausible but access is not verified.",
+          "next_action": "Verify procurement route."
+        },
+        {
+          "gate": "use_case",
+          "state": "pass",
+          "confidence": 0.61,
+          "evidence": [
+            "rc_139whjf"
+          ],
+          "failure_reason": null,
+          "next_action": "Inspect current assortment and verify procurement route."
+        },
+        {
+          "gate": "evidence",
+          "state": "partial",
+          "confidence": 0.45,
+          "evidence": [
+            "rc_139whjf"
+          ],
+          "failure_reason": "Central commercial assumptions remain unverified.",
+          "next_action": "Answer decision-changing questions."
+        },
+        {
+          "gate": "timing",
+          "state": "fail",
+          "confidence": 0,
+          "evidence": [],
+          "failure_reason": "No current signal.",
+          "next_action": "Monitor explicit trigger."
+        },
+        {
+          "gate": "counterevidence",
+          "state": "pass",
+          "confidence": 0.7,
+          "evidence": [],
+          "failure_reason": null,
+          "next_action": "Test alternative explanation."
+        },
+        {
+          "gate": "action",
+          "state": "pass",
+          "confidence": 0.65,
+          "evidence": [],
+          "failure_reason": null,
+          "next_action": "Keep action bounded to research/monitoring."
+        }
+      ],
+      "decision": "prioritize",
+      "monitoring_trigger": {
+        "statement": "A verified footprint expansion can create a new category-entry window.",
+        "evidence_needed": "Dated official announcement plus independent or partner confirmation.",
+        "review_horizon_days": 90
+      },
+      "questions": [
+        {
+          "question": "Does Distribuidora DAM currently carry or use a comparable botanical infusion category?",
+          "why": "Determines whether the use case is real rather than category similarity.",
+          "decision_affected": [
+            "prioritize",
+            "monitor",
+            "low_priority"
+          ],
+          "verification": "Review verified assortment/operations or obtain account confirmation.",
+          "effort": "low",
+          "priority": "high"
+        },
+        {
+          "question": "Is purchasing direct, centralized, location-specific or distributor-led?",
+          "why": "Determines the viable access path and decision owner.",
+          "decision_affected": [
+            "investigate_now",
+            "prioritize",
+            "monitor"
+          ],
+          "verification": "Official supplier information or bounded account inquiry.",
+          "effort": "medium",
+          "priority": "high"
+        },
+        {
+          "question": "Can the client meet required certifications, volumes, delivery and commercial terms?",
+          "why": "Tests operational feasibility before outreach.",
+          "decision_affected": [
+            "prioritize",
+            "low_priority",
+            "exclude"
+          ],
+          "verification": "Obtain explicit client operational context.",
+          "effort": "medium",
+          "priority": "high"
+        }
+      ],
+      "confidence": {
+        "identity": 0.94,
+        "structural": 0.72,
+        "client_fit": 0.72,
+        "use_case": 0.61,
+        "accessibility": 0.48,
+        "buying_path": 0.42,
+        "evidence": 0.45,
+        "timing": 0,
+        "strategy": 0.48,
+        "overall": 0.45,
+        "limiting_factor": "timing"
+      },
+      "limitations": [
+        "Missing client context: business_model.",
+        "Missing client context: company_stage.",
+        "Missing client context: price_positioning.",
+        "Missing client context: minimum_order.",
+        "Missing client context: fulfillment_constraints.",
+        "Missing client context: certifications.",
+        "Missing client context: product_formats.",
+        "Missing client context: customization_capacity.",
+        "Missing client context: distribution_capability.",
+        "Missing client context: production_capacity.",
+        "Missing client context: account_size_constraints.",
+        "Missing client context: current_partnerships.",
+        "Missing client context: preferred_deal_type.",
+        "Missing client context: sales_cycle_tolerance.",
+        "Missing client context: margins.",
+        "Missing client context: white_label_capacity.",
+        "Missing client context: delivery_radius.",
+        "No outcome validation.",
+        "No buying intent evidence."
+      ],
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "thesis_id": "thesis_1mijkzb",
+      "account_id": "rp_a2xwiw",
+      "account_name": "Somos Consiente",
+      "domain": "somosconsiente.com",
+      "segment": "wellness",
+      "geography": "Colombia",
+      "identity_confidence": 0.94,
+      "context_id": "ctx_1kqa1cw",
+      "context_quality": "usable",
+      "fit": [
+        {
+          "dimension": "offer_category_fit",
+          "state": "strong",
+          "evidence": [
+            "Explicit botanical infusion offer and verified account segment."
+          ],
+          "client_fields": [
+            "offer_categories"
+          ],
+          "account_fields": [
+            "segment"
+          ],
+          "confidence": 0.82,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "segment_fit",
+          "state": "strong",
+          "evidence": [
+            "Segment is explicitly prioritized."
+          ],
+          "client_fields": [
+            "target_segments"
+          ],
+          "account_fields": [
+            "segment"
+          ],
+          "confidence": 0.95,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "geography_fit",
+          "state": "strong",
+          "evidence": [
+            "Colombia is explicit target geography."
+          ],
+          "client_fields": [
+            "geography"
+          ],
+          "account_fields": [
+            "country"
+          ],
+          "confidence": 0.98,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "channel_fit",
+          "state": "moderate",
+          "evidence": [
+            "Account segment is a plausible channel; channel operating model is unverified."
+          ],
+          "client_fields": [
+            "priority_channels"
+          ],
+          "account_fields": [
+            "segment"
+          ],
+          "confidence": 0.62,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "account_scale_fit",
+          "state": "insufficient_evidence",
+          "evidence": [],
+          "client_fields": [
+            "account_size_constraints"
+          ],
+          "account_fields": [],
+          "confidence": 0.1,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "commercial_accessibility_fit",
+          "state": "moderate",
+          "evidence": [
+            "A role-category route is plausible; direct access is not proven."
+          ],
+          "client_fields": [
+            "objective"
+          ],
+          "account_fields": [
+            "domain",
+            "segment"
+          ],
+          "confidence": 0.55,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "operational_feasibility",
+          "state": "insufficient_evidence",
+          "evidence": [],
+          "client_fields": [
+            "fulfillment_constraints",
+            "distribution_capability",
+            "certifications"
+          ],
+          "account_fields": [],
+          "confidence": 0.1,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "brand_positioning_fit",
+          "state": "moderate",
+          "evidence": [
+            "Wellness category alignment is plausible; account price architecture is unverified."
+          ],
+          "client_fields": [
+            "offer_categories"
+          ],
+          "account_fields": [
+            "segment"
+          ],
+          "confidence": 0.55,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "strategic_fit",
+          "state": "strong",
+          "evidence": [
+            "Target geography and segment are explicit."
+          ],
+          "client_fields": [
+            "objective",
+            "target_segments"
+          ],
+          "account_fields": [
+            "country",
+            "segment"
+          ],
+          "confidence": 0.8,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "economic_potential_fit",
+          "state": "insufficient_evidence",
+          "evidence": [],
+          "client_fields": [
+            "price_positioning",
+            "margins"
+          ],
+          "account_fields": [],
+          "confidence": 0.1,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "client_capacity_fit",
+          "state": "insufficient_evidence",
+          "evidence": [],
+          "client_fields": [
+            "production_capacity",
+            "distribution_capability"
+          ],
+          "account_fields": [],
+          "confidence": 0.1,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        },
+        {
+          "dimension": "relationship_path_plausibility",
+          "state": "moderate",
+          "evidence": [
+            "Sector role category can be tested without assuming a contact."
+          ],
+          "client_fields": [
+            "objective"
+          ],
+          "account_fields": [
+            "segment",
+            "domain"
+          ],
+          "confidence": 0.5,
+          "limitations": [
+            "No verified buying intent or procurement path."
+          ],
+          "disqualifiers": [],
+          "next_verification": "Verify account procurement model and client operational feasibility."
+        }
+      ],
+      "use_cases": [
+        {
+          "use_case_id": "uc_1dim7jh",
+          "statement": "Evaluate complementary botanical beverage for wellness routines for Somos Consiente.",
+          "client_offer": "Infusiones y bebidas botánicas funcionales de bienestar",
+          "account_need": "Plausible category/channel use; demand is not evidenced.",
+          "evidence": [
+            "rc_iolzhz"
+          ],
+          "inferences": [
+            "Sector-informed fit for wellness."
+          ],
+          "assumptions": [
+            "Account assortment/procurement openness is unverified."
+          ],
+          "commercial_value": "Test account-specific category relevance without claiming demand.",
+          "operational_requirements": [
+            "Verify formats, certifications, minimum order, fulfillment and margin viability."
+          ],
+          "likely_owner": "wellness operations",
+          "timing_state": "no_current_timing",
+          "confidence": 0.61,
+          "disqualifying_evidence": [],
+          "next_validation_action": "Inspect current assortment and verify procurement route."
+        }
+      ],
+      "access_paths": [
+        {
+          "type": "partnership proposal",
+          "account_relevance": "Plausible for wellness.",
+          "client_feasibility": "insufficient_evidence",
+          "likely_internal_owner": {
+            "role": "wellness operations",
+            "state": "sector_informed_inference"
+          },
+          "required_evidence": [
+            "Procurement ownership",
+            "Supplier onboarding path",
+            "Client fulfillment feasibility"
+          ],
+          "entry_barrier": "unknown",
+          "complexity": "unknown",
+          "sales_cycle": "unknown",
+          "key_risk": "Website presence does not establish direct commercial access.",
+          "next_step": "Verify role category and whether purchasing is direct, centralized or distributor-led.",
+          "confidence": 0.48,
+          "direct_access_proven": false
+        }
+      ],
+      "buying_path": {
+        "need_owner": {
+          "role": "wellness operations",
+          "state": "sector_informed_inference"
+        },
+        "category_owner": {
+          "role": "wellness operations",
+          "state": "sector_informed_inference"
+        },
+        "operational_user": {
+          "role": "wellness operations",
+          "state": "sector_informed_inference"
+        },
+        "economic_buyer": {
+          "role": "general management or budget owner",
+          "state": "hypothesis"
+        },
+        "procurement_role": {
+          "role": "procurement",
+          "state": "hypothesis"
+        },
+        "blocker": "Unknown supplier onboarding, economics and operational feasibility.",
+        "approval_sequence": [
+          "Category relevance validation",
+          "Sample/pilot evaluation",
+          "Commercial negotiation",
+          "Procurement approval",
+          "Operational implementation"
+        ],
+        "evidence_required": [
+          "Current assortment",
+          "Required certifications",
+          "Volume and margin constraints",
+          "Fulfillment requirements"
+        ],
+        "pilot": "A bounded sample or assortment validation only if client capacity and account interest are verified.",
+        "complexity": "unknown",
+        "confidence": 0.42
+      },
+      "opportunity_statement": "Somos Consiente is a structurally relevant wellness account for testing complementary botanical beverage for wellness routines; this is a fit thesis, not evidence of demand or buying intent.",
+      "why_this_account": [
+        "Verified Colombian wellness account.",
+        "Segment is explicit in the client's target context.",
+        "A bounded partnership proposal route can be investigated."
+      ],
+      "why_now": {
+        "state": "no_current_timing",
+        "statement": "No current dated commercial signal has been identified.",
+        "evidence": []
+      },
+      "why_not_now": [
+        "No current dated commercial signal has been identified.",
+        "No evidence of active sourcing, expansion or category-change window.",
+        "Client capacity, pricing, certifications, minimum order and distribution feasibility are unknown.",
+        "Procurement path and direct accessibility are unverified."
+      ],
+      "entry_strategy": {
+        "approach": "Research before outreach",
+        "message_angle": "Validate whether complementary botanical beverage for wellness routines is relevant to the account.",
+        "value_proposition": "A botanical wellness beverage category hypothesis tailored to the account segment.",
+        "proof_required": [
+          "Product formats and certifications",
+          "Fulfillment capacity",
+          "Commercial terms",
+          "Account category openness"
+        ],
+        "motion": "bounded validation then sample/pilot only if both sides qualify",
+        "next_action": "Answer the highest-priority research question before proposing contact."
+      },
+      "counterevidence": {
+        "negative_evidence": [],
+        "alternative_explanation": "The account may fit the segment while using exclusive suppliers, centralized procurement or an assortment incompatible with the client.",
+        "classification": "plausible_alternative_explanation",
+        "confidence_impact": 0.15
+      },
+      "gates": [
+        {
+          "gate": "client_context",
+          "state": "pass",
+          "confidence": 0.75,
+          "evidence": [
+            "Explicit offer, geography, objective and segments."
+          ],
+          "failure_reason": null,
+          "next_action": "Collect operational and economic client constraints."
+        },
+        {
+          "gate": "account_identity",
+          "state": "pass",
+          "confidence": 0.94,
+          "evidence": [
+            "somosconsiente.com"
+          ],
+          "failure_reason": null,
+          "next_action": "Maintain identity verification."
+        },
+        {
+          "gate": "structural_fit",
+          "state": "pass",
+          "confidence": 0.64,
+          "evidence": [
+            "rc_iolzhz"
+          ],
+          "failure_reason": null,
+          "next_action": "Verify account structure."
+        },
+        {
+          "gate": "client_fit",
+          "state": "pass",
+          "confidence": 0.72,
+          "evidence": [
+            "Explicit geography and segment."
+          ],
+          "failure_reason": null,
+          "next_action": "Resolve mismatch."
+        },
+        {
+          "gate": "accessibility",
+          "state": "partial",
+          "confidence": 0.48,
+          "evidence": [],
+          "failure_reason": "Route category is plausible but access is not verified.",
+          "next_action": "Verify procurement route."
+        },
+        {
+          "gate": "use_case",
+          "state": "pass",
+          "confidence": 0.61,
+          "evidence": [
+            "rc_iolzhz"
+          ],
+          "failure_reason": null,
+          "next_action": "Inspect current assortment and verify procurement route."
+        },
+        {
+          "gate": "evidence",
+          "state": "partial",
+          "confidence": 0.45,
+          "evidence": [
+            "rc_iolzhz"
+          ],
+          "failure_reason": "Central commercial assumptions remain unverified.",
+          "next_action": "Answer decision-changing questions."
+        },
+        {
+          "gate": "timing",
+          "state": "fail",
+          "confidence": 0,
+          "evidence": [],
+          "failure_reason": "No current signal.",
+          "next_action": "Monitor explicit trigger."
+        },
+        {
+          "gate": "counterevidence",
+          "state": "pass",
+          "confidence": 0.7,
+          "evidence": [],
+          "failure_reason": null,
+          "next_action": "Test alternative explanation."
+        },
+        {
+          "gate": "action",
+          "state": "pass",
+          "confidence": 0.65,
+          "evidence": [],
+          "failure_reason": null,
+          "next_action": "Keep action bounded to research/monitoring."
+        }
+      ],
+      "decision": "monitor",
+      "monitoring_trigger": {
+        "statement": "A verified footprint expansion can create a new category-entry window.",
+        "evidence_needed": "Dated official announcement plus independent or partner confirmation.",
+        "review_horizon_days": 90
+      },
+      "questions": [
+        {
+          "question": "Does Somos Consiente currently carry or use a comparable botanical infusion category?",
+          "why": "Determines whether the use case is real rather than category similarity.",
+          "decision_affected": [
+            "prioritize",
+            "monitor",
+            "low_priority"
+          ],
+          "verification": "Review verified assortment/operations or obtain account confirmation.",
+          "effort": "low",
+          "priority": "high"
+        },
+        {
+          "question": "Is purchasing direct, centralized, location-specific or distributor-led?",
+          "why": "Determines the viable access path and decision owner.",
+          "decision_affected": [
+            "investigate_now",
+            "prioritize",
+            "monitor"
+          ],
+          "verification": "Official supplier information or bounded account inquiry.",
+          "effort": "medium",
+          "priority": "high"
+        },
+        {
+          "question": "Can the client meet required certifications, volumes, delivery and commercial terms?",
+          "why": "Tests operational feasibility before outreach.",
+          "decision_affected": [
+            "prioritize",
+            "low_priority",
+            "exclude"
+          ],
+          "verification": "Obtain explicit client operational context.",
+          "effort": "medium",
+          "priority": "high"
+        }
+      ],
+      "confidence": {
+        "identity": 0.94,
+        "structural": 0.64,
+        "client_fit": 0.72,
+        "use_case": 0.61,
+        "accessibility": 0.48,
+        "buying_path": 0.42,
+        "evidence": 0.45,
+        "timing": 0,
+        "strategy": 0.48,
+        "overall": 0.45,
+        "limiting_factor": "timing"
+      },
+      "limitations": [
+        "Missing client context: business_model.",
+        "Missing client context: company_stage.",
+        "Missing client context: price_positioning.",
+        "Missing client context: minimum_order.",
+        "Missing client context: fulfillment_constraints.",
+        "Missing client context: certifications.",
+        "Missing client context: product_formats.",
+        "Missing client context: customization_capacity.",
+        "Missing client context: distribution_capability.",
+        "Missing client context: production_capacity.",
+        "Missing client context: account_size_constraints.",
+        "Missing client context: current_partnerships.",
+        "Missing client context: preferred_deal_type.",
+        "Missing client context: sales_cycle_tolerance.",
+        "Missing client context: margins.",
+        "Missing client context: white_label_capacity.",
+        "Missing client context: delivery_radius.",
+        "No outcome validation.",
+        "No buying intent evidence."
+      ],
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    }
+  ],
+  "portfolio": {
+    "portfolio_id": "portfolio_us2bdv",
+    "roles": [
+      {
+        "account_id": "rp_hcdx5a",
+        "role": "accessible_entry_account",
+        "explanation": "Highest bounded thesis confidence; suitable for first validation, not automatic outreach."
+      },
+      {
+        "account_id": "rp_1v1bsfg",
+        "role": "channel_account",
+        "explanation": "Tests channel reach and distributor economics."
+      },
+      {
+        "account_id": "rp_1v459p4",
+        "role": "monitor_account",
+        "explanation": "Relevant but retained behind an explicit trigger."
+      },
+      {
+        "account_id": "rp_r5i5ih",
+        "role": "strategic_account",
+        "explanation": "Relevant account whose thesis depends on learning from earlier validation."
+      },
+      {
+        "account_id": "rp_a2xwiw",
+        "role": "monitor_account",
+        "explanation": "Relevant but retained behind an explicit trigger."
+      },
+      {
+        "account_id": "rp_62dwgs",
+        "role": "strategic_account",
+        "explanation": "Relevant account whose thesis depends on learning from earlier validation."
+      }
+    ],
+    "sequence": [
+      {
+        "step": 1,
+        "account_id": "rp_hcdx5a",
+        "rationale": "Validate the clearest bounded account thesis first.",
+        "expected_learning": "Category relevance, procurement route and client feasibility.",
+        "required_preparation": [
+          "Client operational constraints",
+          "Account procurement-path evidence"
+        ],
+        "dependency": null,
+        "risk": "No current timing or verified buying intent.",
+        "next_action": "Answer decision-changing questions.",
+        "success_criterion": "Use case and access path are verified or rejected without inferring demand."
+      },
+      {
+        "step": 2,
+        "account_id": "rp_1v1bsfg",
+        "rationale": "Use earlier learning to reduce uncertainty.",
+        "expected_learning": "Category relevance, procurement route and client feasibility.",
+        "required_preparation": [
+          "Client operational constraints",
+          "Account procurement-path evidence"
+        ],
+        "dependency": "rp_hcdx5a",
+        "risk": "No current timing or verified buying intent.",
+        "next_action": "Answer decision-changing questions.",
+        "success_criterion": "Use case and access path are verified or rejected without inferring demand."
+      },
+      {
+        "step": 3,
+        "account_id": "rp_1v459p4",
+        "rationale": "Use earlier learning to reduce uncertainty.",
+        "expected_learning": "Category relevance, procurement route and client feasibility.",
+        "required_preparation": [
+          "Client operational constraints",
+          "Account procurement-path evidence"
+        ],
+        "dependency": "rp_1v1bsfg",
+        "risk": "No current timing or verified buying intent.",
+        "next_action": "Answer decision-changing questions.",
+        "success_criterion": "Use case and access path are verified or rejected without inferring demand."
+      },
+      {
+        "step": 4,
+        "account_id": "rp_r5i5ih",
+        "rationale": "Use earlier learning to reduce uncertainty.",
+        "expected_learning": "Category relevance, procurement route and client feasibility.",
+        "required_preparation": [
+          "Client operational constraints",
+          "Account procurement-path evidence"
+        ],
+        "dependency": "rp_1v459p4",
+        "risk": "No current timing or verified buying intent.",
+        "next_action": "Answer decision-changing questions.",
+        "success_criterion": "Use case and access path are verified or rejected without inferring demand."
+      },
+      {
+        "step": 5,
+        "account_id": "rp_a2xwiw",
+        "rationale": "Use earlier learning to reduce uncertainty.",
+        "expected_learning": "Category relevance, procurement route and client feasibility.",
+        "required_preparation": [
+          "Client operational constraints",
+          "Account procurement-path evidence"
+        ],
+        "dependency": "rp_r5i5ih",
+        "risk": "No current timing or verified buying intent.",
+        "next_action": "Answer decision-changing questions.",
+        "success_criterion": "Use case and access path are verified or rejected without inferring demand."
+      },
+      {
+        "step": 6,
+        "account_id": "rp_62dwgs",
+        "rationale": "Use earlier learning to reduce uncertainty.",
+        "expected_learning": "Category relevance, procurement route and client feasibility.",
+        "required_preparation": [
+          "Client operational constraints",
+          "Account procurement-path evidence"
+        ],
+        "dependency": "rp_a2xwiw",
+        "risk": "No current timing or verified buying intent.",
+        "next_action": "Answer decision-changing questions.",
+        "success_criterion": "Use case and access path are verified or rejected without inferring demand."
+      }
+    ],
+    "concentration": {
+      "retail": 3,
+      "hospitality": 1,
+      "distribution": 1,
+      "wellness": 1
+    },
+    "generalized_patterns": [],
+    "internal_only": true,
+    "ranking_impact": "off",
+    "methodology_version": "account-opportunity-synthesis-v1"
+  },
+  "outputs": [
+    {
+      "type": "account_opportunity_thesis",
+      "account_id": "rp_r5i5ih",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1wapr5b"
+      ],
+      "output_id": "commercial_199ijib",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "commercial_use_case",
+      "account_id": "rp_r5i5ih",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "uc_81zthn"
+      ],
+      "output_id": "commercial_1bfiqzz",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "commercial_access_path",
+      "account_id": "rp_r5i5ih",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1wapr5b"
+      ],
+      "output_id": "commercial_1i3dnui",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "buying_path_hypothesis",
+      "account_id": "rp_r5i5ih",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1wapr5b"
+      ],
+      "output_id": "commercial_r8vvle",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "why_now_assessment",
+      "account_id": "rp_r5i5ih",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1wapr5b"
+      ],
+      "output_id": "commercial_sh8lwd",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "why_not_now_assessment",
+      "account_id": "rp_r5i5ih",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1wapr5b"
+      ],
+      "output_id": "commercial_a1fmdb",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "commercial_research_question",
+      "account_id": "rp_r5i5ih",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1wapr5b:q0",
+        "thesis_1wapr5b:q1",
+        "thesis_1wapr5b:q2"
+      ],
+      "output_id": "commercial_11kzn9q",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "account_opportunity_thesis",
+      "account_id": "rp_62dwgs",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1q07kes"
+      ],
+      "output_id": "commercial_oneol6",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "commercial_use_case",
+      "account_id": "rp_62dwgs",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "uc_1fk29j0"
+      ],
+      "output_id": "commercial_emcjes",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "commercial_access_path",
+      "account_id": "rp_62dwgs",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1q07kes"
+      ],
+      "output_id": "commercial_v4jabr",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "buying_path_hypothesis",
+      "account_id": "rp_62dwgs",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1q07kes"
+      ],
+      "output_id": "commercial_19gys7z",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "why_now_assessment",
+      "account_id": "rp_62dwgs",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1q07kes"
+      ],
+      "output_id": "commercial_1eyrdfg",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "why_not_now_assessment",
+      "account_id": "rp_62dwgs",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1q07kes"
+      ],
+      "output_id": "commercial_wv8sue",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "commercial_research_question",
+      "account_id": "rp_62dwgs",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1q07kes:q0",
+        "thesis_1q07kes:q1",
+        "thesis_1q07kes:q2"
+      ],
+      "output_id": "commercial_tc67t9",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "account_opportunity_thesis",
+      "account_id": "rp_1v459p4",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1tt06l2"
+      ],
+      "output_id": "commercial_1h3hc1x",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "commercial_use_case",
+      "account_id": "rp_1v459p4",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "uc_fveb9"
+      ],
+      "output_id": "commercial_1swyd47",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "commercial_access_path",
+      "account_id": "rp_1v459p4",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1tt06l2"
+      ],
+      "output_id": "commercial_11l3y7m",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "buying_path_hypothesis",
+      "account_id": "rp_1v459p4",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1tt06l2"
+      ],
+      "output_id": "commercial_1umkfl6",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "why_now_assessment",
+      "account_id": "rp_1v459p4",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1tt06l2"
+      ],
+      "output_id": "commercial_wbzf6n",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "why_not_now_assessment",
+      "account_id": "rp_1v459p4",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1tt06l2"
+      ],
+      "output_id": "commercial_v28hrt",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "commercial_research_question",
+      "account_id": "rp_1v459p4",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1tt06l2:q0",
+        "thesis_1tt06l2:q1",
+        "thesis_1tt06l2:q2"
+      ],
+      "output_id": "commercial_vubpp6",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "account_opportunity_thesis",
+      "account_id": "rp_hcdx5a",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1i2l5mk"
+      ],
+      "output_id": "commercial_avblit",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "commercial_use_case",
+      "account_id": "rp_hcdx5a",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "uc_1rh4zx8"
+      ],
+      "output_id": "commercial_1cyso94",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "commercial_access_path",
+      "account_id": "rp_hcdx5a",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1i2l5mk"
+      ],
+      "output_id": "commercial_1cfaxqo",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "buying_path_hypothesis",
+      "account_id": "rp_hcdx5a",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1i2l5mk"
+      ],
+      "output_id": "commercial_k6k00o",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "why_now_assessment",
+      "account_id": "rp_hcdx5a",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1i2l5mk"
+      ],
+      "output_id": "commercial_1bd3j4r",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "why_not_now_assessment",
+      "account_id": "rp_hcdx5a",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1i2l5mk"
+      ],
+      "output_id": "commercial_1phj3d",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "commercial_research_question",
+      "account_id": "rp_hcdx5a",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1i2l5mk:q0",
+        "thesis_1i2l5mk:q1",
+        "thesis_1i2l5mk:q2"
+      ],
+      "output_id": "commercial_1ibx4a0",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "account_opportunity_thesis",
+      "account_id": "rp_1v1bsfg",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1y75p8d"
+      ],
+      "output_id": "commercial_1qnugv3",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "commercial_use_case",
+      "account_id": "rp_1v1bsfg",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "uc_6kaok8"
+      ],
+      "output_id": "commercial_eh3bjy",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "commercial_access_path",
+      "account_id": "rp_1v1bsfg",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1y75p8d"
+      ],
+      "output_id": "commercial_kb8cgs",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "buying_path_hypothesis",
+      "account_id": "rp_1v1bsfg",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1y75p8d"
+      ],
+      "output_id": "commercial_19zceb8",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "why_now_assessment",
+      "account_id": "rp_1v1bsfg",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1y75p8d"
+      ],
+      "output_id": "commercial_cigged",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "why_not_now_assessment",
+      "account_id": "rp_1v1bsfg",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1y75p8d"
+      ],
+      "output_id": "commercial_3p8pqr",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "commercial_research_question",
+      "account_id": "rp_1v1bsfg",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1y75p8d:q0",
+        "thesis_1y75p8d:q1",
+        "thesis_1y75p8d:q2"
+      ],
+      "output_id": "commercial_cdhytw",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "account_opportunity_thesis",
+      "account_id": "rp_a2xwiw",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1mijkzb"
+      ],
+      "output_id": "commercial_1ucwfav",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "commercial_use_case",
+      "account_id": "rp_a2xwiw",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "uc_1dim7jh"
+      ],
+      "output_id": "commercial_v46rpu",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "commercial_access_path",
+      "account_id": "rp_a2xwiw",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1mijkzb"
+      ],
+      "output_id": "commercial_17u41ty",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "buying_path_hypothesis",
+      "account_id": "rp_a2xwiw",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1mijkzb"
+      ],
+      "output_id": "commercial_mjr1lq",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "why_now_assessment",
+      "account_id": "rp_a2xwiw",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1mijkzb"
+      ],
+      "output_id": "commercial_f7xk0d",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "why_not_now_assessment",
+      "account_id": "rp_a2xwiw",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1mijkzb"
+      ],
+      "output_id": "commercial_men717",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    },
+    {
+      "type": "commercial_research_question",
+      "account_id": "rp_a2xwiw",
+      "context_id": "ctx_1kqa1cw",
+      "refs": [
+        "thesis_1mijkzb:q0",
+        "thesis_1mijkzb:q1",
+        "thesis_1mijkzb:q2"
+      ],
+      "output_id": "commercial_11v2hre",
+      "internal_only": true,
+      "review_state": "unreviewed",
+      "ranking_impact": "off",
+      "report_impact": "off",
+      "methodology_version": "account-opportunity-synthesis-v1"
+    }
+  ],
+  "internal_only": true,
+  "ranking_impact": "off",
+  "report_impact": "off"
+}
