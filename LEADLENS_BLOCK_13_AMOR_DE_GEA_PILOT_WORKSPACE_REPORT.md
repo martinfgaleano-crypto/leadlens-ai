@@ -1,5 +1,7 @@
 # LeadLens Block 13 — Amor de Gea Pilot Workspace
 
+> Block 14 subsequently rebuilt the visible workspace around commercial decisions while preserving every Block 13 persistence, authorization, history and safety contract. See `LEADLENS_BLOCK_14_RADICAL_PILOT_EXPERIENCE_REBUILD_REPORT.md`.
+
 ## Post-migration activation
 
 Migration 047 was manually applied and verified through service-role access on both tables and every expected column. Anonymous access exposed no rows. PostgREST does not expose sufficient `pg_catalog` metadata to independently enumerate every index, grant and RLS policy, so those details are classified as partially verified empirically rather than overstated.

@@ -390,3 +390,16 @@ Block 3 is complete when registry tests and related regressions pass, checkpoint
 - Database truth is now 1 pilot, 6 accounts, 6 unreviewed internal theses, 17 unanswered questions, 0 accepted context versions, 0 reviewed theses and 0 customer-safe outputs.
 - IDs and client scope match, with zero orphan/cross-scope records. Ranking/report impact remain off and final report remains disabled.
 - Current production recognizes the canonical URL and redirects unauthorized access to Admin login without console errors. The activation deployment and full authenticated browser validation remain pending the user-owned push from `main`; no force push was performed.
+
+## 27. Block 14 — Radical pilot experience rebuild
+
+- Amor de Gea now opens into a premium, decision-oriented Spanish workspace rather than a state inspector.
+- First-screen value: diagnosis, portfolio composition, best validation candidate, strategic account, honest differentiation limitation and next decision.
+- Six account experiences preserve real identities/theses but present distinct roles, cases, commercial paths, evidence, feasibility, risks and triggers.
+- The 17-question wall became a six-category readiness workflow with five high-impact questions first and twelve under disclosure.
+- Manual database IDs were removed from the UI; safe write semantics remain unchanged.
+- Fit/access duplicate defaults are disclosed instead of cosmetically varied.
+- Report readiness is progress-oriented and final report stays locked.
+- Responsive browser QA at 1440/1280/1024/390 showed no overflow or console error.
+- No migration, ranking change, provider call, synthetic answer, new account or final report.
+- Full report: `LEADLENS_BLOCK_14_RADICAL_PILOT_EXPERIENCE_REBUILD_REPORT.md`.

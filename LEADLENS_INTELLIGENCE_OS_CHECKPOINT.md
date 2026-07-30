@@ -331,3 +331,14 @@ Preserved: `preference-learner` + `shadow-preference` never touch ranking; UI sh
 - Direct Supabase verification: 1 pilot, 6 exact accounts/theses, 17 questions, 0 answers, 0 accepted versions, 0 reviewed theses, 0 customer-safe outputs and 0 cross-scope/orphan records.
 - Command Center now links to the canonical pilot with the required concise zero-state summary.
 - Current production recognizes the canonical route and fails closed to Admin login without console errors. Activation deployment and authenticated content/refresh/navigation QA remain pending because `main` is not pushed and no active Admin browser session was available. Runtime files remain excluded. Block 14 was not started.
+
+## Block 14 checkpoint — Premium pilot experience
+
+- Replaced the technical flat workspace with a decision-first Spanish experience: Executive Brief, Account Portfolio, Account Intelligence, Client Readiness, Evidence & Monitoring, and Review & Finalization.
+- Removed manual intake/context/thesis IDs from visible workflows. Draft, submission, partial acceptance and append-only review remain API-backed and Admin-only.
+- Six accounts now use their real portfolio roles, segments, use cases and triggers. A categorical portfolio map replaces the misleading flat table.
+- Audited identical fit/access values (`0.72`/`0.48`) as shared Block 11 baselines. No arbitrary score variation was created; qualitative labels and a visible limitation replace false precision.
+- The five highest-impact client questions lead; twelve remain progressively disclosed. All 17 are still unanswered.
+- Evidence, zero timing, report progress and next actions are interpreted in commercial language. Final report remains disabled; ranking/customer safety remain off.
+- Visual QA passed at 1440, 1280, 1024 and 390 px with no document overflow or console errors. Ten screenshots are under `artifacts/block14-premium-pilot/`.
+- No migration 048, provider research, synthetic answers, new accounts, report generation or Block 15.
