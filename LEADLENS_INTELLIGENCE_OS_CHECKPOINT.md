@@ -1,7 +1,48 @@
 # LeadLens Intelligence OS — Checkpoint
 
 ## Current block
-**Block 5 — Admin Intelligence Command Center — DONE.** (Blocks 0–4 below.)
+**Block 7 — Research Quality, Claim Recovery and Opportunity Qualification — DONE.**
+
+## Block 7 — DONE
+
+- Deterministic verified-data-only account research profiles with ambiguity
+  risks and evidence gaps; unknown aliases/parents/locations are never invented.
+- Bounded entity-safe query planner with eight quality dimensions, explicit
+  rejection reasons and identity-first adaptive execution.
+- Task-specific provider routing, global retry/query/extraction caps and
+  provider quarantine/fallback after failure.
+- Formal source tiers A–D, accepted/rejected evidence ledger and strengthened
+  entity gates. Tier D is discovery-only.
+- Atomic claim recovery separates fact, interpretation and recommendation.
+  Account-controlled website/social sources count once; provider duplication is
+  never independent corroboration.
+- Explicit bounded counterevidence for every dossier; absence is recorded only
+  as `not_found_within_bounded_search`.
+- Eight-gate qualification with internal-only `act_now/investigate_now/
+  prioritize/monitor/low_priority/exclude` decisions and monitoring triggers.
+  Identity, timing and evidence cannot be compensated by structural ranking.
+- Same-six-account pass: 19 queries, 1 retry, 8 extracts, 17 accepted and 27
+  rejected evidence records, 8 wrong-entity rejections, 4 dated items, 6 atomic
+  footprint claims, 0 current commercial claims, 0 independent corroborations,
+  counterevidence 6/6, qualification 6/6, decisions 4 prioritize + 2 monitor,
+  0 actionable. Cost remains not measured.
+- Migration 042 was sufficient. Six corrected versioned dossiers, evidence,
+  claims and account states were persisted; no migration 043.
+- Snapshot/Admin integration is provider-free and additive inside existing
+  tabs. Ranking, auth, customer reports, patterns and maturity thresholds remain
+  unchanged.
+- Tests: Research Quality 62/62, Evidence/Temporal 55/55, Command Center 36/36,
+  Validation 50/50, Registries 28/28, Admin Auth 48/48 and structural ranking
+  17/17; TypeScript and production build clean. See
+  `LEADLENS_BLOCK_7_RESEARCH_QUALITY_REPORT.md`.
+
+## Next block
+
+**Block 8 — Targeted Current-Signal Recovery and Human Qualification Review.**
+Improve date-bearing business-media/partner discovery, repair the Serper HTTP
+400 request path and add server-mediated human review for internal account
+qualifications. Do not change ranking, auto-publish dossiers, promote patterns,
+run broad expansion or resume the final Amor de Gea report.
 
 ## Block 5 — DONE (authenticated operational Command Center)
 

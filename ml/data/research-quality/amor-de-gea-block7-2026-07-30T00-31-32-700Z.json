@@ -1,0 +1,4737 @@
+{
+  "summary": {
+    "version": "block7-controlled-research-v1",
+    "run_at": "2026-07-30T00:31:32.700Z",
+    "source_block6_artifact": "amor-de-gea-2026-07-30T00-03-11-708Z.json",
+    "limits": {
+      "max_accounts": 6,
+      "max_planned_per_account": 5,
+      "max_executed_queries": 24,
+      "max_retries": 2,
+      "max_extracts": 8,
+      "max_results_per_query": 5,
+      "max_cost_usd": 1
+    },
+    "accounts_researched": 6,
+    "planned_queries": 30,
+    "rejected_queries": 0,
+    "executed_queries": 6,
+    "retries": 0,
+    "extracts": 0,
+    "accepted_evidence": 0,
+    "rejected_evidence": 0,
+    "wrong_entity_rejections": 0,
+    "identity_mismatch_rate": 0,
+    "dated_evidence": 0,
+    "dated_evidence_coverage": 0,
+    "claims": 0,
+    "commercially_relevant_claims": 0,
+    "corroboration_attempts": 0,
+    "corroborated_claims": 0,
+    "counterevidence_checks": 0,
+    "qualification_coverage": 6,
+    "decision_distribution": {
+      "act_now": 0,
+      "investigate_now": 0,
+      "prioritize": 4,
+      "monitor": 2,
+      "low_priority": 0,
+      "exclude": 0
+    },
+    "actionable_accounts": 0,
+    "monitor_accounts": 2,
+    "excluded_accounts": 0,
+    "unresolved_accounts": 2,
+    "query_efficiency": 0,
+    "source_quality_distribution": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "provider_contribution": {
+      "serper": {
+        "calls": 6,
+        "accepted": 0,
+        "rejected": 0,
+        "errors": 6
+      }
+    },
+    "provider_cost": {
+      "state": "not_measured",
+      "reason": "6 provider calls executed; adapters returned no cost estimate."
+    },
+    "database_persisted_accounts": 6
+  },
+  "comparison": {
+    "version": "research-quality-v1",
+    "block6": {
+      "accounts_researched": 6,
+      "queries_executed": 12,
+      "accepted_evidence": 28,
+      "rejected_evidence": 0,
+      "wrong_entity_evidence": 10,
+      "dated_evidence": 4,
+      "claims": 8,
+      "corroborated_claims": 0,
+      "counterevidence_checks": 0,
+      "qualification_coverage": 0,
+      "actionable_accounts": 0,
+      "monitor_accounts": 0,
+      "provider_cost_state": "not_measured"
+    },
+    "block7": {
+      "accounts_researched": 6,
+      "queries_executed": 6,
+      "accepted_evidence": 0,
+      "rejected_evidence": 0,
+      "wrong_entity_evidence": 0,
+      "dated_evidence": 0,
+      "claims": 0,
+      "corroborated_claims": 0,
+      "counterevidence_checks": 0,
+      "qualification_coverage": 6,
+      "actionable_accounts": 0,
+      "monitor_accounts": 2,
+      "provider_cost_state": "not_measured"
+    },
+    "quality_changes": [
+      "Fewer wrong-entity sources were accepted.",
+      "Dated evidence did not increase.",
+      "Counterevidence coverage did not improve.",
+      "All researched accounts now receive transparent qualification."
+    ],
+    "deterministic_key": "q8o5t0"
+  },
+  "client_context": {
+    "client_id": "amor-de-gea",
+    "region": "Colombia",
+    "offering": "Infusiones y bebidas botánicas funcionales de bienestar",
+    "objective": "Identificar compradores o canales colombianos con encaje estructural y evidencia comercial verificable",
+    "priority_segments": [
+      "retail",
+      "distribution",
+      "hospitality",
+      "wellness"
+    ],
+    "excluded_segments": [
+      "government",
+      "medical_provider"
+    ],
+    "explicit_constraints": [
+      "Colombia primero",
+      "no inferir intención de compra",
+      "cuentas obvias no bastan como valor pagado"
+    ],
+    "unknown_fields": [],
+    "captured_at": "2026-07-30T00:31:32.700Z"
+  },
+  "accounts": [
+    {
+      "account": "Natural + Mente",
+      "domain": "naturalmente.com.co",
+      "profile": {
+        "profile_id": "rp_r5i5ih",
+        "canonical_company_name": "Natural + Mente",
+        "known_aliases": [],
+        "domain": "naturalmente.com.co",
+        "alternate_domains": [],
+        "country": "Colombia",
+        "city_or_region": null,
+        "business_type": "retail",
+        "segment": "retail",
+        "known_products_or_services": [],
+        "known_locations": [],
+        "parent_company": null,
+        "subsidiaries": [],
+        "exclusion_terms": [
+          "-directorio",
+          "-empleos genéricos",
+          "-homónimos"
+        ],
+        "ambiguity_risks": [
+          "generic_name_tokens:natural"
+        ],
+        "likely_language": "es",
+        "identity_confidence": 0.85,
+        "structural_score": 74,
+        "current_evidence_gaps": [
+          "commercial_footprint",
+          "recent_signals",
+          "timing",
+          "independent_corroboration",
+          "counterevidence",
+          "client_relevance",
+          "decision_maker_category",
+          "geographic_fit"
+        ],
+        "verified_fields": [
+          "canonical_company_name",
+          "domain",
+          "country",
+          "segment"
+        ],
+        "methodology_version": "research-quality-v1"
+      },
+      "query_plan": {
+        "accepted": [
+          {
+            "stage": "identity",
+            "query": "\"Natural + Mente\" naturalmente.com.co Colombia sitio oficial ubicación",
+            "target_gap": "identity",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.55,
+              "temporal_relevance": 0.5,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_1e0wsjs",
+            "account_key": "naturalmente.com.co",
+            "target_claim_id": null
+          },
+          {
+            "stage": "commercial_footprint",
+            "query": "\"Natural + Mente\" naturalmente.com.co Colombia retail tiendas sedes distribución productos",
+            "target_gap": "commercial_footprint",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.9,
+              "temporal_relevance": 0.5,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_1fw1ykf",
+            "account_key": "naturalmente.com.co",
+            "target_claim_id": null
+          },
+          {
+            "stage": "current_activity",
+            "query": "\"Natural + Mente\" naturalmente.com.co Colombia apertura expansión alianza lanzamiento 2025 2026",
+            "target_gap": "recent_signals",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.9,
+              "temporal_relevance": 0.9,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_8ygno5",
+            "account_key": "naturalmente.com.co",
+            "target_claim_id": null
+          },
+          {
+            "stage": "counterevidence",
+            "query": "\"Natural + Mente\" naturalmente.com.co Colombia cierre inactivo contracción retiró descontinuado",
+            "target_gap": "counterevidence",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.2,
+              "temporal_relevance": 0.9,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_1wh9l2",
+            "account_key": "naturalmente.com.co",
+            "target_claim_id": null
+          },
+          {
+            "stage": "client_relevance",
+            "query": "\"Natural + Mente\" naturalmente.com.co Colombia Infusiones y bebidas botánicas funcionales de bienestar retail",
+            "target_gap": "client_relevance",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.2,
+              "temporal_relevance": 0.5,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_19w1k85",
+            "account_key": "naturalmente.com.co",
+            "target_claim_id": null
+          }
+        ],
+        "rejected": []
+      },
+      "queries_executed": [
+        {
+          "query": {
+            "stage": "identity",
+            "query": "\"Natural + Mente\" naturalmente.com.co Colombia sitio oficial ubicación",
+            "target_gap": "identity",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.55,
+              "temporal_relevance": 0.5,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_1e0wsjs",
+            "account_key": "naturalmente.com.co",
+            "target_claim_id": null
+          },
+          "provider": "serper",
+          "result_count": 0,
+          "error": "HTTP 400"
+        }
+      ],
+      "extraction_log": [],
+      "evidence_decisions": [],
+      "claims": [],
+      "corroboration_attempts": [],
+      "gap_states": {
+        "commercial_footprint": "unresolved",
+        "recent_signals": "unresolved",
+        "timing": "unresolved",
+        "independent_corroboration": "unresolved",
+        "counterevidence": "unresolved",
+        "client_relevance": "resolved",
+        "decision_maker_category": "unresolved",
+        "geographic_fit": "unresolved",
+        "identity": "unresolved",
+        "official_domain": "unresolved"
+      },
+      "qualification": {
+        "qualification_id": "oq_1qp77vr",
+        "account_key": "naturalmente.com.co",
+        "state": "prioritize",
+        "gates": [
+          {
+            "id": "identity",
+            "state": "not_measured",
+            "confidence": null,
+            "evidence_refs": [],
+            "blockers": [],
+            "next_verification_step": "Confirm official domain and operating identity."
+          },
+          {
+            "id": "structural_relevance",
+            "state": "passed",
+            "confidence": 0.74,
+            "evidence_refs": [],
+            "blockers": [],
+            "next_verification_step": null
+          },
+          {
+            "id": "commercial_accessibility",
+            "state": "not_measured",
+            "confidence": null,
+            "evidence_refs": [],
+            "blockers": [
+              "No verified buying path or decision-maker category."
+            ],
+            "next_verification_step": "Verify channel and supplier onboarding path."
+          },
+          {
+            "id": "evidence",
+            "state": "failed",
+            "confidence": 0,
+            "evidence_refs": [],
+            "blockers": [
+              "No independently corroborated commercial claim."
+            ],
+            "next_verification_step": "Corroborate the highest-value claim with an independent source."
+          },
+          {
+            "id": "timing",
+            "state": "failed",
+            "confidence": 0,
+            "evidence_refs": [],
+            "blockers": [
+              "No current dated commercial window."
+            ],
+            "next_verification_step": "Recover a dated expansion, partnership, hiring or launch signal."
+          },
+          {
+            "id": "counterevidence",
+            "state": "not_measured",
+            "confidence": null,
+            "evidence_refs": [],
+            "blockers": [],
+            "next_verification_step": "Run bounded counterevidence query."
+          },
+          {
+            "id": "client_fit",
+            "state": "passed",
+            "confidence": 0.8,
+            "evidence_refs": [],
+            "blockers": [],
+            "next_verification_step": null
+          },
+          {
+            "id": "actionability",
+            "state": "partial",
+            "confidence": null,
+            "evidence_refs": [],
+            "blockers": [
+              "No evidence-backed immediate outreach action."
+            ],
+            "next_verification_step": "Watch explicit monitoring triggers."
+          }
+        ],
+        "passed_gates": [
+          "structural_relevance",
+          "client_fit"
+        ],
+        "failed_gates": [
+          "evidence",
+          "timing"
+        ],
+        "decisive_evidence": [],
+        "remaining_uncertainty": [
+          "No verified buying path or decision-maker category.",
+          "No independently corroborated commercial claim.",
+          "No current dated commercial window.",
+          "No evidence-backed immediate outreach action."
+        ],
+        "could_change_decision": [
+          "Confirm official domain and operating identity.",
+          "Verify channel and supplier onboarding path.",
+          "Corroborate the highest-value claim with an independent source.",
+          "Recover a dated expansion, partnership, hiring or launch signal.",
+          "Run bounded counterevidence query.",
+          "Watch explicit monitoring triggers."
+        ],
+        "justified_next_action": "Monitor defined triggers; do not claim buying intent.",
+        "unjustified_next_action": "Immediate sales outreach or purchase-intent claim.",
+        "monitoring_triggers": [
+          {
+            "trigger_id": "mt_5qyvm3",
+            "signal_category": "new_location_or_expansion",
+            "why_it_matters": "A verified footprint expansion can create a new category-entry window.",
+            "evidence_needed": "Dated official announcement plus independent or partner confirmation.",
+            "review_horizon_days": 90,
+            "current_baseline": "No current corroborated expansion signal.",
+            "confidence": 0.65
+          },
+          {
+            "trigger_id": "mt_24jw5o",
+            "signal_category": "distribution_or_category_partnership",
+            "why_it_matters": "A new channel or category partnership may change commercial accessibility.",
+            "evidence_needed": "Named partner, account identity, event date and operating scope.",
+            "review_horizon_days": 90,
+            "current_baseline": "No verified current partnership.",
+            "confidence": 0.6
+          }
+        ],
+        "internal_only": true,
+        "methodology_version": "research-quality-v1"
+      },
+      "dossier": {
+        "dossier_id": "dos_kwnfq4",
+        "account_key": "naturalmente.com.co",
+        "client_id": "amor-de-gea",
+        "generated_at": "2026-07-30T00:31:32.700Z",
+        "identity": {
+          "name": "Natural + Mente",
+          "domain": "naturalmente.com.co",
+          "country": "Colombia"
+        },
+        "structural": {
+          "score": 74,
+          "segment": "retail",
+          "rationale": []
+        },
+        "evidence": {
+          "total": 0,
+          "independent_sources": 0,
+          "corroborated_claims": 0,
+          "contradicted_claims": 0
+        },
+        "temporal": {
+          "timing_state": "insufficient_evidence",
+          "what_changed": [
+            {
+              "field": "account_state",
+              "state": "not_measured",
+              "before": null,
+              "after": {
+                "structural_score": 74,
+                "timing_state": "insufficient_evidence",
+                "corroborated_claims": 0,
+                "contradicted_claims": 0,
+                "claim_states": []
+              },
+              "reason": "First comparable account observation."
+            }
+          ]
+        },
+        "commercial": {
+          "client_relevance": "explicit_match",
+          "rationale": [
+            "Segment explicitly prioritized."
+          ]
+        },
+        "decision": {
+          "state": "research_more",
+          "reason": "Evidence is insufficient for account action."
+        },
+        "confidence": 0,
+        "limitations": [
+          "No exact or inferred publication date in available evidence.",
+          "No independently corroborated claim.",
+          "No verified buying path or decision-maker category.",
+          "No independently corroborated commercial claim.",
+          "No current dated commercial window.",
+          "No evidence-backed immediate outreach action."
+        ],
+        "internal_only": true,
+        "methodology_version": "evidence-temporal-v1",
+        "research_profile": {
+          "profile_id": "rp_r5i5ih",
+          "canonical_company_name": "Natural + Mente",
+          "known_aliases": [],
+          "domain": "naturalmente.com.co",
+          "alternate_domains": [],
+          "country": "Colombia",
+          "city_or_region": null,
+          "business_type": "retail",
+          "segment": "retail",
+          "known_products_or_services": [],
+          "known_locations": [],
+          "parent_company": null,
+          "subsidiaries": [],
+          "exclusion_terms": [
+            "-directorio",
+            "-empleos genéricos",
+            "-homónimos"
+          ],
+          "ambiguity_risks": [
+            "generic_name_tokens:natural"
+          ],
+          "likely_language": "es",
+          "identity_confidence": 0.85,
+          "structural_score": 74,
+          "current_evidence_gaps": [
+            "commercial_footprint",
+            "recent_signals",
+            "timing",
+            "independent_corroboration",
+            "counterevidence",
+            "client_relevance",
+            "decision_maker_category",
+            "geographic_fit"
+          ],
+          "verified_fields": [
+            "canonical_company_name",
+            "domain",
+            "country",
+            "segment"
+          ],
+          "methodology_version": "research-quality-v1"
+        },
+        "research_gaps": {
+          "before": [
+            "commercial_footprint",
+            "recent_signals",
+            "timing",
+            "independent_corroboration",
+            "counterevidence",
+            "client_relevance",
+            "decision_maker_category",
+            "geographic_fit"
+          ],
+          "after": {
+            "commercial_footprint": "unresolved",
+            "recent_signals": "unresolved",
+            "timing": "unresolved",
+            "independent_corroboration": "unresolved",
+            "counterevidence": "unresolved",
+            "client_relevance": "resolved",
+            "decision_maker_category": "unresolved",
+            "geographic_fit": "unresolved",
+            "identity": "unresolved",
+            "official_domain": "unresolved"
+          }
+        },
+        "query_plan": {
+          "accepted": [
+            {
+              "stage": "identity",
+              "query": "\"Natural + Mente\" naturalmente.com.co Colombia sitio oficial ubicación",
+              "target_gap": "identity",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.55,
+                "temporal_relevance": 0.5,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_1e0wsjs",
+              "account_key": "naturalmente.com.co",
+              "target_claim_id": null
+            },
+            {
+              "stage": "commercial_footprint",
+              "query": "\"Natural + Mente\" naturalmente.com.co Colombia retail tiendas sedes distribución productos",
+              "target_gap": "commercial_footprint",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.9,
+                "temporal_relevance": 0.5,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_1fw1ykf",
+              "account_key": "naturalmente.com.co",
+              "target_claim_id": null
+            },
+            {
+              "stage": "current_activity",
+              "query": "\"Natural + Mente\" naturalmente.com.co Colombia apertura expansión alianza lanzamiento 2025 2026",
+              "target_gap": "recent_signals",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.9,
+                "temporal_relevance": 0.9,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_8ygno5",
+              "account_key": "naturalmente.com.co",
+              "target_claim_id": null
+            },
+            {
+              "stage": "counterevidence",
+              "query": "\"Natural + Mente\" naturalmente.com.co Colombia cierre inactivo contracción retiró descontinuado",
+              "target_gap": "counterevidence",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.2,
+                "temporal_relevance": 0.9,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_1wh9l2",
+              "account_key": "naturalmente.com.co",
+              "target_claim_id": null
+            },
+            {
+              "stage": "client_relevance",
+              "query": "\"Natural + Mente\" naturalmente.com.co Colombia Infusiones y bebidas botánicas funcionales de bienestar retail",
+              "target_gap": "client_relevance",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.2,
+                "temporal_relevance": 0.5,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_19w1k85",
+              "account_key": "naturalmente.com.co",
+              "target_claim_id": null
+            }
+          ],
+          "rejected": []
+        },
+        "queries_executed": [
+          {
+            "query": {
+              "stage": "identity",
+              "query": "\"Natural + Mente\" naturalmente.com.co Colombia sitio oficial ubicación",
+              "target_gap": "identity",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.55,
+                "temporal_relevance": 0.5,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_1e0wsjs",
+              "account_key": "naturalmente.com.co",
+              "target_claim_id": null
+            },
+            "provider": "serper",
+            "result_count": 0,
+            "error": "HTTP 400"
+          }
+        ],
+        "evidence_decisions": [],
+        "claims_generated": [],
+        "corroboration_attempts": [],
+        "counterevidence_search": {
+          "executed": false,
+          "result": "not_executed"
+        },
+        "qualification": {
+          "qualification_id": "oq_1qp77vr",
+          "account_key": "naturalmente.com.co",
+          "state": "prioritize",
+          "gates": [
+            {
+              "id": "identity",
+              "state": "not_measured",
+              "confidence": null,
+              "evidence_refs": [],
+              "blockers": [],
+              "next_verification_step": "Confirm official domain and operating identity."
+            },
+            {
+              "id": "structural_relevance",
+              "state": "passed",
+              "confidence": 0.74,
+              "evidence_refs": [],
+              "blockers": [],
+              "next_verification_step": null
+            },
+            {
+              "id": "commercial_accessibility",
+              "state": "not_measured",
+              "confidence": null,
+              "evidence_refs": [],
+              "blockers": [
+                "No verified buying path or decision-maker category."
+              ],
+              "next_verification_step": "Verify channel and supplier onboarding path."
+            },
+            {
+              "id": "evidence",
+              "state": "failed",
+              "confidence": 0,
+              "evidence_refs": [],
+              "blockers": [
+                "No independently corroborated commercial claim."
+              ],
+              "next_verification_step": "Corroborate the highest-value claim with an independent source."
+            },
+            {
+              "id": "timing",
+              "state": "failed",
+              "confidence": 0,
+              "evidence_refs": [],
+              "blockers": [
+                "No current dated commercial window."
+              ],
+              "next_verification_step": "Recover a dated expansion, partnership, hiring or launch signal."
+            },
+            {
+              "id": "counterevidence",
+              "state": "not_measured",
+              "confidence": null,
+              "evidence_refs": [],
+              "blockers": [],
+              "next_verification_step": "Run bounded counterevidence query."
+            },
+            {
+              "id": "client_fit",
+              "state": "passed",
+              "confidence": 0.8,
+              "evidence_refs": [],
+              "blockers": [],
+              "next_verification_step": null
+            },
+            {
+              "id": "actionability",
+              "state": "partial",
+              "confidence": null,
+              "evidence_refs": [],
+              "blockers": [
+                "No evidence-backed immediate outreach action."
+              ],
+              "next_verification_step": "Watch explicit monitoring triggers."
+            }
+          ],
+          "passed_gates": [
+            "structural_relevance",
+            "client_fit"
+          ],
+          "failed_gates": [
+            "evidence",
+            "timing"
+          ],
+          "decisive_evidence": [],
+          "remaining_uncertainty": [
+            "No verified buying path or decision-maker category.",
+            "No independently corroborated commercial claim.",
+            "No current dated commercial window.",
+            "No evidence-backed immediate outreach action."
+          ],
+          "could_change_decision": [
+            "Confirm official domain and operating identity.",
+            "Verify channel and supplier onboarding path.",
+            "Corroborate the highest-value claim with an independent source.",
+            "Recover a dated expansion, partnership, hiring or launch signal.",
+            "Run bounded counterevidence query.",
+            "Watch explicit monitoring triggers."
+          ],
+          "justified_next_action": "Monitor defined triggers; do not claim buying intent.",
+          "unjustified_next_action": "Immediate sales outreach or purchase-intent claim.",
+          "monitoring_triggers": [
+            {
+              "trigger_id": "mt_5qyvm3",
+              "signal_category": "new_location_or_expansion",
+              "why_it_matters": "A verified footprint expansion can create a new category-entry window.",
+              "evidence_needed": "Dated official announcement plus independent or partner confirmation.",
+              "review_horizon_days": 90,
+              "current_baseline": "No current corroborated expansion signal.",
+              "confidence": 0.65
+            },
+            {
+              "trigger_id": "mt_24jw5o",
+              "signal_category": "distribution_or_category_partnership",
+              "why_it_matters": "A new channel or category partnership may change commercial accessibility.",
+              "evidence_needed": "Named partner, account identity, event date and operating scope.",
+              "review_horizon_days": 90,
+              "current_baseline": "No verified current partnership.",
+              "confidence": 0.6
+            }
+          ],
+          "internal_only": true,
+          "methodology_version": "research-quality-v1"
+        },
+        "monitoring_triggers": [
+          {
+            "trigger_id": "mt_5qyvm3",
+            "signal_category": "new_location_or_expansion",
+            "why_it_matters": "A verified footprint expansion can create a new category-entry window.",
+            "evidence_needed": "Dated official announcement plus independent or partner confirmation.",
+            "review_horizon_days": 90,
+            "current_baseline": "No current corroborated expansion signal.",
+            "confidence": 0.65
+          },
+          {
+            "trigger_id": "mt_24jw5o",
+            "signal_category": "distribution_or_category_partnership",
+            "why_it_matters": "A new channel or category partnership may change commercial accessibility.",
+            "evidence_needed": "Named partner, account identity, event date and operating scope.",
+            "review_horizon_days": 90,
+            "current_baseline": "No verified current partnership.",
+            "confidence": 0.6
+          }
+        ],
+        "next_best_research_action": "Confirm official domain and operating identity.",
+        "cost": {
+          "state": "not_measured",
+          "reason": "1 provider calls executed; adapters returned no cost estimate."
+        },
+        "provider_contribution": [
+          "serper"
+        ]
+      },
+      "database_persistence": {
+        "ok": true,
+        "persisted": true,
+        "reason": null
+      }
+    },
+    {
+      "account": "Tu Tienda Saludable",
+      "domain": "tutiendasaludable.com.co",
+      "profile": {
+        "profile_id": "rp_62dwgs",
+        "canonical_company_name": "Tu Tienda Saludable",
+        "known_aliases": [],
+        "domain": "tutiendasaludable.com.co",
+        "alternate_domains": [],
+        "country": "Colombia",
+        "city_or_region": null,
+        "business_type": "retail",
+        "segment": "retail",
+        "known_products_or_services": [],
+        "known_locations": [],
+        "parent_company": null,
+        "subsidiaries": [],
+        "exclusion_terms": [
+          "-directorio",
+          "-empleos genéricos",
+          "-homónimos"
+        ],
+        "ambiguity_risks": [
+          "short_or_acronym_tokens:tu",
+          "generic_name_tokens:tienda,saludable"
+        ],
+        "likely_language": "es",
+        "identity_confidence": 0.85,
+        "structural_score": 74,
+        "current_evidence_gaps": [
+          "commercial_footprint",
+          "recent_signals",
+          "timing",
+          "independent_corroboration",
+          "counterevidence",
+          "client_relevance",
+          "decision_maker_category",
+          "geographic_fit"
+        ],
+        "verified_fields": [
+          "canonical_company_name",
+          "domain",
+          "country",
+          "segment"
+        ],
+        "methodology_version": "research-quality-v1"
+      },
+      "query_plan": {
+        "accepted": [
+          {
+            "stage": "identity",
+            "query": "\"Tu Tienda Saludable\" tutiendasaludable.com.co Colombia sitio oficial ubicación",
+            "target_gap": "identity",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.9,
+              "temporal_relevance": 0.5,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_16mq33k",
+            "account_key": "tutiendasaludable.com.co",
+            "target_claim_id": null
+          },
+          {
+            "stage": "commercial_footprint",
+            "query": "\"Tu Tienda Saludable\" tutiendasaludable.com.co Colombia retail tiendas sedes distribución productos",
+            "target_gap": "commercial_footprint",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.9,
+              "temporal_relevance": 0.5,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_6k64ir",
+            "account_key": "tutiendasaludable.com.co",
+            "target_claim_id": null
+          },
+          {
+            "stage": "current_activity",
+            "query": "\"Tu Tienda Saludable\" tutiendasaludable.com.co Colombia apertura expansión alianza lanzamiento 2025 2026",
+            "target_gap": "recent_signals",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.9,
+              "temporal_relevance": 0.9,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_1gifviv",
+            "account_key": "tutiendasaludable.com.co",
+            "target_claim_id": null
+          },
+          {
+            "stage": "counterevidence",
+            "query": "\"Tu Tienda Saludable\" tutiendasaludable.com.co Colombia cierre inactivo contracción retiró descontinuado",
+            "target_gap": "counterevidence",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.9,
+              "temporal_relevance": 0.9,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_6whwx6",
+            "account_key": "tutiendasaludable.com.co",
+            "target_claim_id": null
+          },
+          {
+            "stage": "client_relevance",
+            "query": "\"Tu Tienda Saludable\" tutiendasaludable.com.co Colombia Infusiones y bebidas botánicas funcionales de bienestar retail",
+            "target_gap": "client_relevance",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.9,
+              "temporal_relevance": 0.5,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_pn8rab",
+            "account_key": "tutiendasaludable.com.co",
+            "target_claim_id": null
+          }
+        ],
+        "rejected": []
+      },
+      "queries_executed": [
+        {
+          "query": {
+            "stage": "identity",
+            "query": "\"Tu Tienda Saludable\" tutiendasaludable.com.co Colombia sitio oficial ubicación",
+            "target_gap": "identity",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.9,
+              "temporal_relevance": 0.5,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_16mq33k",
+            "account_key": "tutiendasaludable.com.co",
+            "target_claim_id": null
+          },
+          "provider": "serper",
+          "result_count": 0,
+          "error": "HTTP 400"
+        }
+      ],
+      "extraction_log": [],
+      "evidence_decisions": [],
+      "claims": [],
+      "corroboration_attempts": [],
+      "gap_states": {
+        "commercial_footprint": "unresolved",
+        "recent_signals": "unresolved",
+        "timing": "unresolved",
+        "independent_corroboration": "unresolved",
+        "counterevidence": "unresolved",
+        "client_relevance": "resolved",
+        "decision_maker_category": "unresolved",
+        "geographic_fit": "unresolved",
+        "identity": "unresolved",
+        "official_domain": "unresolved"
+      },
+      "qualification": {
+        "qualification_id": "oq_rsw2l2",
+        "account_key": "tutiendasaludable.com.co",
+        "state": "prioritize",
+        "gates": [
+          {
+            "id": "identity",
+            "state": "not_measured",
+            "confidence": null,
+            "evidence_refs": [],
+            "blockers": [],
+            "next_verification_step": "Confirm official domain and operating identity."
+          },
+          {
+            "id": "structural_relevance",
+            "state": "passed",
+            "confidence": 0.74,
+            "evidence_refs": [],
+            "blockers": [],
+            "next_verification_step": null
+          },
+          {
+            "id": "commercial_accessibility",
+            "state": "not_measured",
+            "confidence": null,
+            "evidence_refs": [],
+            "blockers": [
+              "No verified buying path or decision-maker category."
+            ],
+            "next_verification_step": "Verify channel and supplier onboarding path."
+          },
+          {
+            "id": "evidence",
+            "state": "failed",
+            "confidence": 0,
+            "evidence_refs": [],
+            "blockers": [
+              "No independently corroborated commercial claim."
+            ],
+            "next_verification_step": "Corroborate the highest-value claim with an independent source."
+          },
+          {
+            "id": "timing",
+            "state": "failed",
+            "confidence": 0,
+            "evidence_refs": [],
+            "blockers": [
+              "No current dated commercial window."
+            ],
+            "next_verification_step": "Recover a dated expansion, partnership, hiring or launch signal."
+          },
+          {
+            "id": "counterevidence",
+            "state": "not_measured",
+            "confidence": null,
+            "evidence_refs": [],
+            "blockers": [],
+            "next_verification_step": "Run bounded counterevidence query."
+          },
+          {
+            "id": "client_fit",
+            "state": "passed",
+            "confidence": 0.8,
+            "evidence_refs": [],
+            "blockers": [],
+            "next_verification_step": null
+          },
+          {
+            "id": "actionability",
+            "state": "partial",
+            "confidence": null,
+            "evidence_refs": [],
+            "blockers": [
+              "No evidence-backed immediate outreach action."
+            ],
+            "next_verification_step": "Watch explicit monitoring triggers."
+          }
+        ],
+        "passed_gates": [
+          "structural_relevance",
+          "client_fit"
+        ],
+        "failed_gates": [
+          "evidence",
+          "timing"
+        ],
+        "decisive_evidence": [],
+        "remaining_uncertainty": [
+          "No verified buying path or decision-maker category.",
+          "No independently corroborated commercial claim.",
+          "No current dated commercial window.",
+          "No evidence-backed immediate outreach action."
+        ],
+        "could_change_decision": [
+          "Confirm official domain and operating identity.",
+          "Verify channel and supplier onboarding path.",
+          "Corroborate the highest-value claim with an independent source.",
+          "Recover a dated expansion, partnership, hiring or launch signal.",
+          "Run bounded counterevidence query.",
+          "Watch explicit monitoring triggers."
+        ],
+        "justified_next_action": "Monitor defined triggers; do not claim buying intent.",
+        "unjustified_next_action": "Immediate sales outreach or purchase-intent claim.",
+        "monitoring_triggers": [
+          {
+            "trigger_id": "mt_1gwtxj0",
+            "signal_category": "new_location_or_expansion",
+            "why_it_matters": "A verified footprint expansion can create a new category-entry window.",
+            "evidence_needed": "Dated official announcement plus independent or partner confirmation.",
+            "review_horizon_days": 90,
+            "current_baseline": "No current corroborated expansion signal.",
+            "confidence": 0.65
+          },
+          {
+            "trigger_id": "mt_1fuqa79",
+            "signal_category": "distribution_or_category_partnership",
+            "why_it_matters": "A new channel or category partnership may change commercial accessibility.",
+            "evidence_needed": "Named partner, account identity, event date and operating scope.",
+            "review_horizon_days": 90,
+            "current_baseline": "No verified current partnership.",
+            "confidence": 0.6
+          }
+        ],
+        "internal_only": true,
+        "methodology_version": "research-quality-v1"
+      },
+      "dossier": {
+        "dossier_id": "dos_pg4wc7",
+        "account_key": "tutiendasaludable.com.co",
+        "client_id": "amor-de-gea",
+        "generated_at": "2026-07-30T00:31:32.700Z",
+        "identity": {
+          "name": "Tu Tienda Saludable",
+          "domain": "tutiendasaludable.com.co",
+          "country": "Colombia"
+        },
+        "structural": {
+          "score": 74,
+          "segment": "retail",
+          "rationale": []
+        },
+        "evidence": {
+          "total": 0,
+          "independent_sources": 0,
+          "corroborated_claims": 0,
+          "contradicted_claims": 0
+        },
+        "temporal": {
+          "timing_state": "insufficient_evidence",
+          "what_changed": [
+            {
+              "field": "account_state",
+              "state": "not_measured",
+              "before": null,
+              "after": {
+                "structural_score": 74,
+                "timing_state": "insufficient_evidence",
+                "corroborated_claims": 0,
+                "contradicted_claims": 0,
+                "claim_states": []
+              },
+              "reason": "First comparable account observation."
+            }
+          ]
+        },
+        "commercial": {
+          "client_relevance": "explicit_match",
+          "rationale": [
+            "Segment explicitly prioritized."
+          ]
+        },
+        "decision": {
+          "state": "research_more",
+          "reason": "Evidence is insufficient for account action."
+        },
+        "confidence": 0,
+        "limitations": [
+          "No exact or inferred publication date in available evidence.",
+          "No independently corroborated claim.",
+          "No verified buying path or decision-maker category.",
+          "No independently corroborated commercial claim.",
+          "No current dated commercial window.",
+          "No evidence-backed immediate outreach action."
+        ],
+        "internal_only": true,
+        "methodology_version": "evidence-temporal-v1",
+        "research_profile": {
+          "profile_id": "rp_62dwgs",
+          "canonical_company_name": "Tu Tienda Saludable",
+          "known_aliases": [],
+          "domain": "tutiendasaludable.com.co",
+          "alternate_domains": [],
+          "country": "Colombia",
+          "city_or_region": null,
+          "business_type": "retail",
+          "segment": "retail",
+          "known_products_or_services": [],
+          "known_locations": [],
+          "parent_company": null,
+          "subsidiaries": [],
+          "exclusion_terms": [
+            "-directorio",
+            "-empleos genéricos",
+            "-homónimos"
+          ],
+          "ambiguity_risks": [
+            "short_or_acronym_tokens:tu",
+            "generic_name_tokens:tienda,saludable"
+          ],
+          "likely_language": "es",
+          "identity_confidence": 0.85,
+          "structural_score": 74,
+          "current_evidence_gaps": [
+            "commercial_footprint",
+            "recent_signals",
+            "timing",
+            "independent_corroboration",
+            "counterevidence",
+            "client_relevance",
+            "decision_maker_category",
+            "geographic_fit"
+          ],
+          "verified_fields": [
+            "canonical_company_name",
+            "domain",
+            "country",
+            "segment"
+          ],
+          "methodology_version": "research-quality-v1"
+        },
+        "research_gaps": {
+          "before": [
+            "commercial_footprint",
+            "recent_signals",
+            "timing",
+            "independent_corroboration",
+            "counterevidence",
+            "client_relevance",
+            "decision_maker_category",
+            "geographic_fit"
+          ],
+          "after": {
+            "commercial_footprint": "unresolved",
+            "recent_signals": "unresolved",
+            "timing": "unresolved",
+            "independent_corroboration": "unresolved",
+            "counterevidence": "unresolved",
+            "client_relevance": "resolved",
+            "decision_maker_category": "unresolved",
+            "geographic_fit": "unresolved",
+            "identity": "unresolved",
+            "official_domain": "unresolved"
+          }
+        },
+        "query_plan": {
+          "accepted": [
+            {
+              "stage": "identity",
+              "query": "\"Tu Tienda Saludable\" tutiendasaludable.com.co Colombia sitio oficial ubicación",
+              "target_gap": "identity",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.9,
+                "temporal_relevance": 0.5,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_16mq33k",
+              "account_key": "tutiendasaludable.com.co",
+              "target_claim_id": null
+            },
+            {
+              "stage": "commercial_footprint",
+              "query": "\"Tu Tienda Saludable\" tutiendasaludable.com.co Colombia retail tiendas sedes distribución productos",
+              "target_gap": "commercial_footprint",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.9,
+                "temporal_relevance": 0.5,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_6k64ir",
+              "account_key": "tutiendasaludable.com.co",
+              "target_claim_id": null
+            },
+            {
+              "stage": "current_activity",
+              "query": "\"Tu Tienda Saludable\" tutiendasaludable.com.co Colombia apertura expansión alianza lanzamiento 2025 2026",
+              "target_gap": "recent_signals",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.9,
+                "temporal_relevance": 0.9,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_1gifviv",
+              "account_key": "tutiendasaludable.com.co",
+              "target_claim_id": null
+            },
+            {
+              "stage": "counterevidence",
+              "query": "\"Tu Tienda Saludable\" tutiendasaludable.com.co Colombia cierre inactivo contracción retiró descontinuado",
+              "target_gap": "counterevidence",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.9,
+                "temporal_relevance": 0.9,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_6whwx6",
+              "account_key": "tutiendasaludable.com.co",
+              "target_claim_id": null
+            },
+            {
+              "stage": "client_relevance",
+              "query": "\"Tu Tienda Saludable\" tutiendasaludable.com.co Colombia Infusiones y bebidas botánicas funcionales de bienestar retail",
+              "target_gap": "client_relevance",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.9,
+                "temporal_relevance": 0.5,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_pn8rab",
+              "account_key": "tutiendasaludable.com.co",
+              "target_claim_id": null
+            }
+          ],
+          "rejected": []
+        },
+        "queries_executed": [
+          {
+            "query": {
+              "stage": "identity",
+              "query": "\"Tu Tienda Saludable\" tutiendasaludable.com.co Colombia sitio oficial ubicación",
+              "target_gap": "identity",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.9,
+                "temporal_relevance": 0.5,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_16mq33k",
+              "account_key": "tutiendasaludable.com.co",
+              "target_claim_id": null
+            },
+            "provider": "serper",
+            "result_count": 0,
+            "error": "HTTP 400"
+          }
+        ],
+        "evidence_decisions": [],
+        "claims_generated": [],
+        "corroboration_attempts": [],
+        "counterevidence_search": {
+          "executed": false,
+          "result": "not_executed"
+        },
+        "qualification": {
+          "qualification_id": "oq_rsw2l2",
+          "account_key": "tutiendasaludable.com.co",
+          "state": "prioritize",
+          "gates": [
+            {
+              "id": "identity",
+              "state": "not_measured",
+              "confidence": null,
+              "evidence_refs": [],
+              "blockers": [],
+              "next_verification_step": "Confirm official domain and operating identity."
+            },
+            {
+              "id": "structural_relevance",
+              "state": "passed",
+              "confidence": 0.74,
+              "evidence_refs": [],
+              "blockers": [],
+              "next_verification_step": null
+            },
+            {
+              "id": "commercial_accessibility",
+              "state": "not_measured",
+              "confidence": null,
+              "evidence_refs": [],
+              "blockers": [
+                "No verified buying path or decision-maker category."
+              ],
+              "next_verification_step": "Verify channel and supplier onboarding path."
+            },
+            {
+              "id": "evidence",
+              "state": "failed",
+              "confidence": 0,
+              "evidence_refs": [],
+              "blockers": [
+                "No independently corroborated commercial claim."
+              ],
+              "next_verification_step": "Corroborate the highest-value claim with an independent source."
+            },
+            {
+              "id": "timing",
+              "state": "failed",
+              "confidence": 0,
+              "evidence_refs": [],
+              "blockers": [
+                "No current dated commercial window."
+              ],
+              "next_verification_step": "Recover a dated expansion, partnership, hiring or launch signal."
+            },
+            {
+              "id": "counterevidence",
+              "state": "not_measured",
+              "confidence": null,
+              "evidence_refs": [],
+              "blockers": [],
+              "next_verification_step": "Run bounded counterevidence query."
+            },
+            {
+              "id": "client_fit",
+              "state": "passed",
+              "confidence": 0.8,
+              "evidence_refs": [],
+              "blockers": [],
+              "next_verification_step": null
+            },
+            {
+              "id": "actionability",
+              "state": "partial",
+              "confidence": null,
+              "evidence_refs": [],
+              "blockers": [
+                "No evidence-backed immediate outreach action."
+              ],
+              "next_verification_step": "Watch explicit monitoring triggers."
+            }
+          ],
+          "passed_gates": [
+            "structural_relevance",
+            "client_fit"
+          ],
+          "failed_gates": [
+            "evidence",
+            "timing"
+          ],
+          "decisive_evidence": [],
+          "remaining_uncertainty": [
+            "No verified buying path or decision-maker category.",
+            "No independently corroborated commercial claim.",
+            "No current dated commercial window.",
+            "No evidence-backed immediate outreach action."
+          ],
+          "could_change_decision": [
+            "Confirm official domain and operating identity.",
+            "Verify channel and supplier onboarding path.",
+            "Corroborate the highest-value claim with an independent source.",
+            "Recover a dated expansion, partnership, hiring or launch signal.",
+            "Run bounded counterevidence query.",
+            "Watch explicit monitoring triggers."
+          ],
+          "justified_next_action": "Monitor defined triggers; do not claim buying intent.",
+          "unjustified_next_action": "Immediate sales outreach or purchase-intent claim.",
+          "monitoring_triggers": [
+            {
+              "trigger_id": "mt_1gwtxj0",
+              "signal_category": "new_location_or_expansion",
+              "why_it_matters": "A verified footprint expansion can create a new category-entry window.",
+              "evidence_needed": "Dated official announcement plus independent or partner confirmation.",
+              "review_horizon_days": 90,
+              "current_baseline": "No current corroborated expansion signal.",
+              "confidence": 0.65
+            },
+            {
+              "trigger_id": "mt_1fuqa79",
+              "signal_category": "distribution_or_category_partnership",
+              "why_it_matters": "A new channel or category partnership may change commercial accessibility.",
+              "evidence_needed": "Named partner, account identity, event date and operating scope.",
+              "review_horizon_days": 90,
+              "current_baseline": "No verified current partnership.",
+              "confidence": 0.6
+            }
+          ],
+          "internal_only": true,
+          "methodology_version": "research-quality-v1"
+        },
+        "monitoring_triggers": [
+          {
+            "trigger_id": "mt_1gwtxj0",
+            "signal_category": "new_location_or_expansion",
+            "why_it_matters": "A verified footprint expansion can create a new category-entry window.",
+            "evidence_needed": "Dated official announcement plus independent or partner confirmation.",
+            "review_horizon_days": 90,
+            "current_baseline": "No current corroborated expansion signal.",
+            "confidence": 0.65
+          },
+          {
+            "trigger_id": "mt_1fuqa79",
+            "signal_category": "distribution_or_category_partnership",
+            "why_it_matters": "A new channel or category partnership may change commercial accessibility.",
+            "evidence_needed": "Named partner, account identity, event date and operating scope.",
+            "review_horizon_days": 90,
+            "current_baseline": "No verified current partnership.",
+            "confidence": 0.6
+          }
+        ],
+        "next_best_research_action": "Confirm official domain and operating identity.",
+        "cost": {
+          "state": "not_measured",
+          "reason": "1 provider calls executed; adapters returned no cost estimate."
+        },
+        "provider_contribution": [
+          "serper"
+        ]
+      },
+      "database_persistence": {
+        "ok": true,
+        "persisted": true,
+        "reason": null
+      }
+    },
+    {
+      "account": "Hotel Spa La Colina",
+      "domain": "hotelspalacolina.com",
+      "profile": {
+        "profile_id": "rp_1v459p4",
+        "canonical_company_name": "Hotel Spa La Colina",
+        "known_aliases": [],
+        "domain": "hotelspalacolina.com",
+        "alternate_domains": [],
+        "country": "Colombia",
+        "city_or_region": null,
+        "business_type": "hospitality",
+        "segment": "hospitality",
+        "known_products_or_services": [],
+        "known_locations": [],
+        "parent_company": null,
+        "subsidiaries": [],
+        "exclusion_terms": [
+          "-directorio",
+          "-empleos genéricos",
+          "-homónimos"
+        ],
+        "ambiguity_risks": [
+          "short_or_acronym_tokens:spa,la",
+          "generic_name_tokens:hotel,spa"
+        ],
+        "likely_language": "es",
+        "identity_confidence": 0.85,
+        "structural_score": 68,
+        "current_evidence_gaps": [
+          "commercial_footprint",
+          "independent_corroboration",
+          "counterevidence",
+          "client_relevance",
+          "decision_maker_category",
+          "geographic_fit"
+        ],
+        "verified_fields": [
+          "canonical_company_name",
+          "domain",
+          "country",
+          "segment"
+        ],
+        "methodology_version": "research-quality-v1"
+      },
+      "query_plan": {
+        "accepted": [
+          {
+            "stage": "identity",
+            "query": "\"Hotel Spa La Colina\" hotelspalacolina.com Colombia sitio oficial ubicación",
+            "target_gap": "identity",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.55,
+              "temporal_relevance": 0.5,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_1i29lwo",
+            "account_key": "hotelspalacolina.com",
+            "target_claim_id": null
+          },
+          {
+            "stage": "commercial_footprint",
+            "query": "\"Hotel Spa La Colina\" hotelspalacolina.com Colombia hospitality tiendas sedes distribución productos",
+            "target_gap": "commercial_footprint",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.9,
+              "temporal_relevance": 0.5,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_15hb38g",
+            "account_key": "hotelspalacolina.com",
+            "target_claim_id": null
+          },
+          {
+            "stage": "current_activity",
+            "query": "\"Hotel Spa La Colina\" hotelspalacolina.com Colombia apertura expansión alianza lanzamiento 2025 2026",
+            "target_gap": "recent_signals",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.9,
+              "temporal_relevance": 0.9,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_1b17xo7",
+            "account_key": "hotelspalacolina.com",
+            "target_claim_id": null
+          },
+          {
+            "stage": "counterevidence",
+            "query": "\"Hotel Spa La Colina\" hotelspalacolina.com Colombia cierre inactivo contracción retiró descontinuado",
+            "target_gap": "counterevidence",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.2,
+              "temporal_relevance": 0.9,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_hw9vui",
+            "account_key": "hotelspalacolina.com",
+            "target_claim_id": null
+          },
+          {
+            "stage": "client_relevance",
+            "query": "\"Hotel Spa La Colina\" hotelspalacolina.com Colombia Infusiones y bebidas botánicas funcionales de bienestar hospitality",
+            "target_gap": "client_relevance",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.2,
+              "temporal_relevance": 0.5,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_1ehneb6",
+            "account_key": "hotelspalacolina.com",
+            "target_claim_id": null
+          }
+        ],
+        "rejected": []
+      },
+      "queries_executed": [
+        {
+          "query": {
+            "stage": "identity",
+            "query": "\"Hotel Spa La Colina\" hotelspalacolina.com Colombia sitio oficial ubicación",
+            "target_gap": "identity",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.55,
+              "temporal_relevance": 0.5,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_1i29lwo",
+            "account_key": "hotelspalacolina.com",
+            "target_claim_id": null
+          },
+          "provider": "serper",
+          "result_count": 0,
+          "error": "HTTP 400"
+        }
+      ],
+      "extraction_log": [],
+      "evidence_decisions": [],
+      "claims": [],
+      "corroboration_attempts": [],
+      "gap_states": {
+        "commercial_footprint": "unresolved",
+        "independent_corroboration": "unresolved",
+        "counterevidence": "unresolved",
+        "client_relevance": "resolved",
+        "decision_maker_category": "unresolved",
+        "geographic_fit": "unresolved",
+        "identity": "unresolved",
+        "official_domain": "unresolved",
+        "timing": "unresolved"
+      },
+      "qualification": {
+        "qualification_id": "oq_1t5jmhu",
+        "account_key": "hotelspalacolina.com",
+        "state": "monitor",
+        "gates": [
+          {
+            "id": "identity",
+            "state": "not_measured",
+            "confidence": null,
+            "evidence_refs": [],
+            "blockers": [],
+            "next_verification_step": "Confirm official domain and operating identity."
+          },
+          {
+            "id": "structural_relevance",
+            "state": "partial",
+            "confidence": 0.68,
+            "evidence_refs": [],
+            "blockers": [],
+            "next_verification_step": null
+          },
+          {
+            "id": "commercial_accessibility",
+            "state": "not_measured",
+            "confidence": null,
+            "evidence_refs": [],
+            "blockers": [
+              "No verified buying path or decision-maker category."
+            ],
+            "next_verification_step": "Verify channel and supplier onboarding path."
+          },
+          {
+            "id": "evidence",
+            "state": "failed",
+            "confidence": 0,
+            "evidence_refs": [],
+            "blockers": [
+              "No independently corroborated commercial claim."
+            ],
+            "next_verification_step": "Corroborate the highest-value claim with an independent source."
+          },
+          {
+            "id": "timing",
+            "state": "failed",
+            "confidence": 0,
+            "evidence_refs": [],
+            "blockers": [
+              "No current dated commercial window."
+            ],
+            "next_verification_step": "Recover a dated expansion, partnership, hiring or launch signal."
+          },
+          {
+            "id": "counterevidence",
+            "state": "not_measured",
+            "confidence": null,
+            "evidence_refs": [],
+            "blockers": [],
+            "next_verification_step": "Run bounded counterevidence query."
+          },
+          {
+            "id": "client_fit",
+            "state": "passed",
+            "confidence": 0.8,
+            "evidence_refs": [],
+            "blockers": [],
+            "next_verification_step": null
+          },
+          {
+            "id": "actionability",
+            "state": "partial",
+            "confidence": null,
+            "evidence_refs": [],
+            "blockers": [
+              "No evidence-backed immediate outreach action."
+            ],
+            "next_verification_step": "Watch explicit monitoring triggers."
+          }
+        ],
+        "passed_gates": [
+          "client_fit"
+        ],
+        "failed_gates": [
+          "evidence",
+          "timing"
+        ],
+        "decisive_evidence": [],
+        "remaining_uncertainty": [
+          "No verified buying path or decision-maker category.",
+          "No independently corroborated commercial claim.",
+          "No current dated commercial window.",
+          "No evidence-backed immediate outreach action."
+        ],
+        "could_change_decision": [
+          "Confirm official domain and operating identity.",
+          "Verify channel and supplier onboarding path.",
+          "Corroborate the highest-value claim with an independent source.",
+          "Recover a dated expansion, partnership, hiring or launch signal.",
+          "Run bounded counterevidence query.",
+          "Watch explicit monitoring triggers."
+        ],
+        "justified_next_action": "Monitor defined triggers; do not claim buying intent.",
+        "unjustified_next_action": "Immediate sales outreach or purchase-intent claim.",
+        "monitoring_triggers": [
+          {
+            "trigger_id": "mt_ka2x90",
+            "signal_category": "new_location_or_expansion",
+            "why_it_matters": "A verified footprint expansion can create a new category-entry window.",
+            "evidence_needed": "Dated official announcement plus independent or partner confirmation.",
+            "review_horizon_days": 90,
+            "current_baseline": "No current corroborated expansion signal.",
+            "confidence": 0.65
+          },
+          {
+            "trigger_id": "mt_bmhiwd",
+            "signal_category": "distribution_or_category_partnership",
+            "why_it_matters": "A new channel or category partnership may change commercial accessibility.",
+            "evidence_needed": "Named partner, account identity, event date and operating scope.",
+            "review_horizon_days": 90,
+            "current_baseline": "No verified current partnership.",
+            "confidence": 0.6
+          }
+        ],
+        "internal_only": true,
+        "methodology_version": "research-quality-v1"
+      },
+      "dossier": {
+        "dossier_id": "dos_a1xx66",
+        "account_key": "hotelspalacolina.com",
+        "client_id": "amor-de-gea",
+        "generated_at": "2026-07-30T00:31:32.700Z",
+        "identity": {
+          "name": "Hotel Spa La Colina",
+          "domain": "hotelspalacolina.com",
+          "country": "Colombia"
+        },
+        "structural": {
+          "score": 68,
+          "segment": "hospitality",
+          "rationale": []
+        },
+        "evidence": {
+          "total": 0,
+          "independent_sources": 0,
+          "corroborated_claims": 0,
+          "contradicted_claims": 0
+        },
+        "temporal": {
+          "timing_state": "insufficient_evidence",
+          "what_changed": [
+            {
+              "field": "account_state",
+              "state": "not_measured",
+              "before": null,
+              "after": {
+                "structural_score": 68,
+                "timing_state": "insufficient_evidence",
+                "corroborated_claims": 0,
+                "contradicted_claims": 0,
+                "claim_states": []
+              },
+              "reason": "First comparable account observation."
+            }
+          ]
+        },
+        "commercial": {
+          "client_relevance": "explicit_match",
+          "rationale": [
+            "Segment explicitly prioritized."
+          ]
+        },
+        "decision": {
+          "state": "research_more",
+          "reason": "Evidence is insufficient for account action."
+        },
+        "confidence": 0,
+        "limitations": [
+          "No exact or inferred publication date in available evidence.",
+          "No independently corroborated claim.",
+          "No verified buying path or decision-maker category.",
+          "No independently corroborated commercial claim.",
+          "No current dated commercial window.",
+          "No evidence-backed immediate outreach action."
+        ],
+        "internal_only": true,
+        "methodology_version": "evidence-temporal-v1",
+        "research_profile": {
+          "profile_id": "rp_1v459p4",
+          "canonical_company_name": "Hotel Spa La Colina",
+          "known_aliases": [],
+          "domain": "hotelspalacolina.com",
+          "alternate_domains": [],
+          "country": "Colombia",
+          "city_or_region": null,
+          "business_type": "hospitality",
+          "segment": "hospitality",
+          "known_products_or_services": [],
+          "known_locations": [],
+          "parent_company": null,
+          "subsidiaries": [],
+          "exclusion_terms": [
+            "-directorio",
+            "-empleos genéricos",
+            "-homónimos"
+          ],
+          "ambiguity_risks": [
+            "short_or_acronym_tokens:spa,la",
+            "generic_name_tokens:hotel,spa"
+          ],
+          "likely_language": "es",
+          "identity_confidence": 0.85,
+          "structural_score": 68,
+          "current_evidence_gaps": [
+            "commercial_footprint",
+            "independent_corroboration",
+            "counterevidence",
+            "client_relevance",
+            "decision_maker_category",
+            "geographic_fit"
+          ],
+          "verified_fields": [
+            "canonical_company_name",
+            "domain",
+            "country",
+            "segment"
+          ],
+          "methodology_version": "research-quality-v1"
+        },
+        "research_gaps": {
+          "before": [
+            "commercial_footprint",
+            "independent_corroboration",
+            "counterevidence",
+            "client_relevance",
+            "decision_maker_category",
+            "geographic_fit"
+          ],
+          "after": {
+            "commercial_footprint": "unresolved",
+            "independent_corroboration": "unresolved",
+            "counterevidence": "unresolved",
+            "client_relevance": "resolved",
+            "decision_maker_category": "unresolved",
+            "geographic_fit": "unresolved",
+            "identity": "unresolved",
+            "official_domain": "unresolved",
+            "timing": "unresolved"
+          }
+        },
+        "query_plan": {
+          "accepted": [
+            {
+              "stage": "identity",
+              "query": "\"Hotel Spa La Colina\" hotelspalacolina.com Colombia sitio oficial ubicación",
+              "target_gap": "identity",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.55,
+                "temporal_relevance": 0.5,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_1i29lwo",
+              "account_key": "hotelspalacolina.com",
+              "target_claim_id": null
+            },
+            {
+              "stage": "commercial_footprint",
+              "query": "\"Hotel Spa La Colina\" hotelspalacolina.com Colombia hospitality tiendas sedes distribución productos",
+              "target_gap": "commercial_footprint",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.9,
+                "temporal_relevance": 0.5,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_15hb38g",
+              "account_key": "hotelspalacolina.com",
+              "target_claim_id": null
+            },
+            {
+              "stage": "current_activity",
+              "query": "\"Hotel Spa La Colina\" hotelspalacolina.com Colombia apertura expansión alianza lanzamiento 2025 2026",
+              "target_gap": "recent_signals",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.9,
+                "temporal_relevance": 0.9,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_1b17xo7",
+              "account_key": "hotelspalacolina.com",
+              "target_claim_id": null
+            },
+            {
+              "stage": "counterevidence",
+              "query": "\"Hotel Spa La Colina\" hotelspalacolina.com Colombia cierre inactivo contracción retiró descontinuado",
+              "target_gap": "counterevidence",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.2,
+                "temporal_relevance": 0.9,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_hw9vui",
+              "account_key": "hotelspalacolina.com",
+              "target_claim_id": null
+            },
+            {
+              "stage": "client_relevance",
+              "query": "\"Hotel Spa La Colina\" hotelspalacolina.com Colombia Infusiones y bebidas botánicas funcionales de bienestar hospitality",
+              "target_gap": "client_relevance",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.2,
+                "temporal_relevance": 0.5,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_1ehneb6",
+              "account_key": "hotelspalacolina.com",
+              "target_claim_id": null
+            }
+          ],
+          "rejected": []
+        },
+        "queries_executed": [
+          {
+            "query": {
+              "stage": "identity",
+              "query": "\"Hotel Spa La Colina\" hotelspalacolina.com Colombia sitio oficial ubicación",
+              "target_gap": "identity",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.55,
+                "temporal_relevance": 0.5,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_1i29lwo",
+              "account_key": "hotelspalacolina.com",
+              "target_claim_id": null
+            },
+            "provider": "serper",
+            "result_count": 0,
+            "error": "HTTP 400"
+          }
+        ],
+        "evidence_decisions": [],
+        "claims_generated": [],
+        "corroboration_attempts": [],
+        "counterevidence_search": {
+          "executed": false,
+          "result": "not_executed"
+        },
+        "qualification": {
+          "qualification_id": "oq_1t5jmhu",
+          "account_key": "hotelspalacolina.com",
+          "state": "monitor",
+          "gates": [
+            {
+              "id": "identity",
+              "state": "not_measured",
+              "confidence": null,
+              "evidence_refs": [],
+              "blockers": [],
+              "next_verification_step": "Confirm official domain and operating identity."
+            },
+            {
+              "id": "structural_relevance",
+              "state": "partial",
+              "confidence": 0.68,
+              "evidence_refs": [],
+              "blockers": [],
+              "next_verification_step": null
+            },
+            {
+              "id": "commercial_accessibility",
+              "state": "not_measured",
+              "confidence": null,
+              "evidence_refs": [],
+              "blockers": [
+                "No verified buying path or decision-maker category."
+              ],
+              "next_verification_step": "Verify channel and supplier onboarding path."
+            },
+            {
+              "id": "evidence",
+              "state": "failed",
+              "confidence": 0,
+              "evidence_refs": [],
+              "blockers": [
+                "No independently corroborated commercial claim."
+              ],
+              "next_verification_step": "Corroborate the highest-value claim with an independent source."
+            },
+            {
+              "id": "timing",
+              "state": "failed",
+              "confidence": 0,
+              "evidence_refs": [],
+              "blockers": [
+                "No current dated commercial window."
+              ],
+              "next_verification_step": "Recover a dated expansion, partnership, hiring or launch signal."
+            },
+            {
+              "id": "counterevidence",
+              "state": "not_measured",
+              "confidence": null,
+              "evidence_refs": [],
+              "blockers": [],
+              "next_verification_step": "Run bounded counterevidence query."
+            },
+            {
+              "id": "client_fit",
+              "state": "passed",
+              "confidence": 0.8,
+              "evidence_refs": [],
+              "blockers": [],
+              "next_verification_step": null
+            },
+            {
+              "id": "actionability",
+              "state": "partial",
+              "confidence": null,
+              "evidence_refs": [],
+              "blockers": [
+                "No evidence-backed immediate outreach action."
+              ],
+              "next_verification_step": "Watch explicit monitoring triggers."
+            }
+          ],
+          "passed_gates": [
+            "client_fit"
+          ],
+          "failed_gates": [
+            "evidence",
+            "timing"
+          ],
+          "decisive_evidence": [],
+          "remaining_uncertainty": [
+            "No verified buying path or decision-maker category.",
+            "No independently corroborated commercial claim.",
+            "No current dated commercial window.",
+            "No evidence-backed immediate outreach action."
+          ],
+          "could_change_decision": [
+            "Confirm official domain and operating identity.",
+            "Verify channel and supplier onboarding path.",
+            "Corroborate the highest-value claim with an independent source.",
+            "Recover a dated expansion, partnership, hiring or launch signal.",
+            "Run bounded counterevidence query.",
+            "Watch explicit monitoring triggers."
+          ],
+          "justified_next_action": "Monitor defined triggers; do not claim buying intent.",
+          "unjustified_next_action": "Immediate sales outreach or purchase-intent claim.",
+          "monitoring_triggers": [
+            {
+              "trigger_id": "mt_ka2x90",
+              "signal_category": "new_location_or_expansion",
+              "why_it_matters": "A verified footprint expansion can create a new category-entry window.",
+              "evidence_needed": "Dated official announcement plus independent or partner confirmation.",
+              "review_horizon_days": 90,
+              "current_baseline": "No current corroborated expansion signal.",
+              "confidence": 0.65
+            },
+            {
+              "trigger_id": "mt_bmhiwd",
+              "signal_category": "distribution_or_category_partnership",
+              "why_it_matters": "A new channel or category partnership may change commercial accessibility.",
+              "evidence_needed": "Named partner, account identity, event date and operating scope.",
+              "review_horizon_days": 90,
+              "current_baseline": "No verified current partnership.",
+              "confidence": 0.6
+            }
+          ],
+          "internal_only": true,
+          "methodology_version": "research-quality-v1"
+        },
+        "monitoring_triggers": [
+          {
+            "trigger_id": "mt_ka2x90",
+            "signal_category": "new_location_or_expansion",
+            "why_it_matters": "A verified footprint expansion can create a new category-entry window.",
+            "evidence_needed": "Dated official announcement plus independent or partner confirmation.",
+            "review_horizon_days": 90,
+            "current_baseline": "No current corroborated expansion signal.",
+            "confidence": 0.65
+          },
+          {
+            "trigger_id": "mt_bmhiwd",
+            "signal_category": "distribution_or_category_partnership",
+            "why_it_matters": "A new channel or category partnership may change commercial accessibility.",
+            "evidence_needed": "Named partner, account identity, event date and operating scope.",
+            "review_horizon_days": 90,
+            "current_baseline": "No verified current partnership.",
+            "confidence": 0.6
+          }
+        ],
+        "next_best_research_action": "Confirm official domain and operating identity.",
+        "cost": {
+          "state": "not_measured",
+          "reason": "1 provider calls executed; adapters returned no cost estimate."
+        },
+        "provider_contribution": [
+          "serper"
+        ]
+      },
+      "database_persistence": {
+        "ok": true,
+        "persisted": true,
+        "reason": null
+      }
+    },
+    {
+      "account": "BioPlaza",
+      "domain": "bioplaza.com.co",
+      "profile": {
+        "profile_id": "rp_hcdx5a",
+        "canonical_company_name": "BioPlaza",
+        "known_aliases": [],
+        "domain": "bioplaza.com.co",
+        "alternate_domains": [],
+        "country": "Colombia",
+        "city_or_region": null,
+        "business_type": "retail",
+        "segment": "retail",
+        "known_products_or_services": [],
+        "known_locations": [],
+        "parent_company": null,
+        "subsidiaries": [],
+        "exclusion_terms": [],
+        "ambiguity_risks": [],
+        "likely_language": "es",
+        "identity_confidence": 0.85,
+        "structural_score": 74,
+        "current_evidence_gaps": [
+          "commercial_footprint",
+          "independent_corroboration",
+          "counterevidence",
+          "client_relevance",
+          "decision_maker_category",
+          "geographic_fit"
+        ],
+        "verified_fields": [
+          "canonical_company_name",
+          "domain",
+          "country",
+          "segment"
+        ],
+        "methodology_version": "research-quality-v1"
+      },
+      "query_plan": {
+        "accepted": [
+          {
+            "stage": "identity",
+            "query": "\"BioPlaza\" bioplaza.com.co Colombia sitio oficial ubicación",
+            "target_gap": "identity",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.55,
+              "temporal_relevance": 0.5,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_1seyr4",
+            "account_key": "bioplaza.com.co",
+            "target_claim_id": null
+          },
+          {
+            "stage": "commercial_footprint",
+            "query": "\"BioPlaza\" bioplaza.com.co Colombia retail tiendas sedes distribución productos",
+            "target_gap": "commercial_footprint",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.9,
+              "temporal_relevance": 0.5,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_ltx943",
+            "account_key": "bioplaza.com.co",
+            "target_claim_id": null
+          },
+          {
+            "stage": "current_activity",
+            "query": "\"BioPlaza\" bioplaza.com.co Colombia apertura expansión alianza lanzamiento 2025 2026",
+            "target_gap": "recent_signals",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.9,
+              "temporal_relevance": 0.9,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_1bvqo2j",
+            "account_key": "bioplaza.com.co",
+            "target_claim_id": null
+          },
+          {
+            "stage": "counterevidence",
+            "query": "\"BioPlaza\" bioplaza.com.co Colombia cierre inactivo contracción retiró descontinuado",
+            "target_gap": "counterevidence",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.2,
+              "temporal_relevance": 0.9,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_1l5n2jy",
+            "account_key": "bioplaza.com.co",
+            "target_claim_id": null
+          },
+          {
+            "stage": "client_relevance",
+            "query": "\"BioPlaza\" bioplaza.com.co Colombia Infusiones y bebidas botánicas funcionales de bienestar retail",
+            "target_gap": "client_relevance",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.2,
+              "temporal_relevance": 0.5,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_bem313",
+            "account_key": "bioplaza.com.co",
+            "target_claim_id": null
+          }
+        ],
+        "rejected": []
+      },
+      "queries_executed": [
+        {
+          "query": {
+            "stage": "identity",
+            "query": "\"BioPlaza\" bioplaza.com.co Colombia sitio oficial ubicación",
+            "target_gap": "identity",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.55,
+              "temporal_relevance": 0.5,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_1seyr4",
+            "account_key": "bioplaza.com.co",
+            "target_claim_id": null
+          },
+          "provider": "serper",
+          "result_count": 0,
+          "error": "HTTP 400"
+        }
+      ],
+      "extraction_log": [],
+      "evidence_decisions": [],
+      "claims": [],
+      "corroboration_attempts": [],
+      "gap_states": {
+        "commercial_footprint": "unresolved",
+        "independent_corroboration": "unresolved",
+        "counterevidence": "unresolved",
+        "client_relevance": "resolved",
+        "decision_maker_category": "unresolved",
+        "geographic_fit": "unresolved",
+        "identity": "unresolved",
+        "official_domain": "unresolved",
+        "timing": "unresolved"
+      },
+      "qualification": {
+        "qualification_id": "oq_16bs2pi",
+        "account_key": "bioplaza.com.co",
+        "state": "prioritize",
+        "gates": [
+          {
+            "id": "identity",
+            "state": "not_measured",
+            "confidence": null,
+            "evidence_refs": [],
+            "blockers": [],
+            "next_verification_step": "Confirm official domain and operating identity."
+          },
+          {
+            "id": "structural_relevance",
+            "state": "passed",
+            "confidence": 0.74,
+            "evidence_refs": [],
+            "blockers": [],
+            "next_verification_step": null
+          },
+          {
+            "id": "commercial_accessibility",
+            "state": "not_measured",
+            "confidence": null,
+            "evidence_refs": [],
+            "blockers": [
+              "No verified buying path or decision-maker category."
+            ],
+            "next_verification_step": "Verify channel and supplier onboarding path."
+          },
+          {
+            "id": "evidence",
+            "state": "failed",
+            "confidence": 0,
+            "evidence_refs": [],
+            "blockers": [
+              "No independently corroborated commercial claim."
+            ],
+            "next_verification_step": "Corroborate the highest-value claim with an independent source."
+          },
+          {
+            "id": "timing",
+            "state": "failed",
+            "confidence": 0,
+            "evidence_refs": [],
+            "blockers": [
+              "No current dated commercial window."
+            ],
+            "next_verification_step": "Recover a dated expansion, partnership, hiring or launch signal."
+          },
+          {
+            "id": "counterevidence",
+            "state": "not_measured",
+            "confidence": null,
+            "evidence_refs": [],
+            "blockers": [],
+            "next_verification_step": "Run bounded counterevidence query."
+          },
+          {
+            "id": "client_fit",
+            "state": "passed",
+            "confidence": 0.8,
+            "evidence_refs": [],
+            "blockers": [],
+            "next_verification_step": null
+          },
+          {
+            "id": "actionability",
+            "state": "partial",
+            "confidence": null,
+            "evidence_refs": [],
+            "blockers": [
+              "No evidence-backed immediate outreach action."
+            ],
+            "next_verification_step": "Watch explicit monitoring triggers."
+          }
+        ],
+        "passed_gates": [
+          "structural_relevance",
+          "client_fit"
+        ],
+        "failed_gates": [
+          "evidence",
+          "timing"
+        ],
+        "decisive_evidence": [],
+        "remaining_uncertainty": [
+          "No verified buying path or decision-maker category.",
+          "No independently corroborated commercial claim.",
+          "No current dated commercial window.",
+          "No evidence-backed immediate outreach action."
+        ],
+        "could_change_decision": [
+          "Confirm official domain and operating identity.",
+          "Verify channel and supplier onboarding path.",
+          "Corroborate the highest-value claim with an independent source.",
+          "Recover a dated expansion, partnership, hiring or launch signal.",
+          "Run bounded counterevidence query.",
+          "Watch explicit monitoring triggers."
+        ],
+        "justified_next_action": "Monitor defined triggers; do not claim buying intent.",
+        "unjustified_next_action": "Immediate sales outreach or purchase-intent claim.",
+        "monitoring_triggers": [
+          {
+            "trigger_id": "mt_1hjjycc",
+            "signal_category": "new_location_or_expansion",
+            "why_it_matters": "A verified footprint expansion can create a new category-entry window.",
+            "evidence_needed": "Dated official announcement plus independent or partner confirmation.",
+            "review_horizon_days": 90,
+            "current_baseline": "No current corroborated expansion signal.",
+            "confidence": 0.65
+          },
+          {
+            "trigger_id": "mt_1mfhhl1",
+            "signal_category": "distribution_or_category_partnership",
+            "why_it_matters": "A new channel or category partnership may change commercial accessibility.",
+            "evidence_needed": "Named partner, account identity, event date and operating scope.",
+            "review_horizon_days": 90,
+            "current_baseline": "No verified current partnership.",
+            "confidence": 0.6
+          }
+        ],
+        "internal_only": true,
+        "methodology_version": "research-quality-v1"
+      },
+      "dossier": {
+        "dossier_id": "dos_arrqcg",
+        "account_key": "bioplaza.com.co",
+        "client_id": "amor-de-gea",
+        "generated_at": "2026-07-30T00:31:32.700Z",
+        "identity": {
+          "name": "BioPlaza",
+          "domain": "bioplaza.com.co",
+          "country": "Colombia"
+        },
+        "structural": {
+          "score": 74,
+          "segment": "retail",
+          "rationale": []
+        },
+        "evidence": {
+          "total": 0,
+          "independent_sources": 0,
+          "corroborated_claims": 0,
+          "contradicted_claims": 0
+        },
+        "temporal": {
+          "timing_state": "insufficient_evidence",
+          "what_changed": [
+            {
+              "field": "account_state",
+              "state": "not_measured",
+              "before": null,
+              "after": {
+                "structural_score": 74,
+                "timing_state": "insufficient_evidence",
+                "corroborated_claims": 0,
+                "contradicted_claims": 0,
+                "claim_states": []
+              },
+              "reason": "First comparable account observation."
+            }
+          ]
+        },
+        "commercial": {
+          "client_relevance": "explicit_match",
+          "rationale": [
+            "Segment explicitly prioritized."
+          ]
+        },
+        "decision": {
+          "state": "research_more",
+          "reason": "Evidence is insufficient for account action."
+        },
+        "confidence": 0,
+        "limitations": [
+          "No exact or inferred publication date in available evidence.",
+          "No independently corroborated claim.",
+          "No verified buying path or decision-maker category.",
+          "No independently corroborated commercial claim.",
+          "No current dated commercial window.",
+          "No evidence-backed immediate outreach action."
+        ],
+        "internal_only": true,
+        "methodology_version": "evidence-temporal-v1",
+        "research_profile": {
+          "profile_id": "rp_hcdx5a",
+          "canonical_company_name": "BioPlaza",
+          "known_aliases": [],
+          "domain": "bioplaza.com.co",
+          "alternate_domains": [],
+          "country": "Colombia",
+          "city_or_region": null,
+          "business_type": "retail",
+          "segment": "retail",
+          "known_products_or_services": [],
+          "known_locations": [],
+          "parent_company": null,
+          "subsidiaries": [],
+          "exclusion_terms": [],
+          "ambiguity_risks": [],
+          "likely_language": "es",
+          "identity_confidence": 0.85,
+          "structural_score": 74,
+          "current_evidence_gaps": [
+            "commercial_footprint",
+            "independent_corroboration",
+            "counterevidence",
+            "client_relevance",
+            "decision_maker_category",
+            "geographic_fit"
+          ],
+          "verified_fields": [
+            "canonical_company_name",
+            "domain",
+            "country",
+            "segment"
+          ],
+          "methodology_version": "research-quality-v1"
+        },
+        "research_gaps": {
+          "before": [
+            "commercial_footprint",
+            "independent_corroboration",
+            "counterevidence",
+            "client_relevance",
+            "decision_maker_category",
+            "geographic_fit"
+          ],
+          "after": {
+            "commercial_footprint": "unresolved",
+            "independent_corroboration": "unresolved",
+            "counterevidence": "unresolved",
+            "client_relevance": "resolved",
+            "decision_maker_category": "unresolved",
+            "geographic_fit": "unresolved",
+            "identity": "unresolved",
+            "official_domain": "unresolved",
+            "timing": "unresolved"
+          }
+        },
+        "query_plan": {
+          "accepted": [
+            {
+              "stage": "identity",
+              "query": "\"BioPlaza\" bioplaza.com.co Colombia sitio oficial ubicación",
+              "target_gap": "identity",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.55,
+                "temporal_relevance": 0.5,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_1seyr4",
+              "account_key": "bioplaza.com.co",
+              "target_claim_id": null
+            },
+            {
+              "stage": "commercial_footprint",
+              "query": "\"BioPlaza\" bioplaza.com.co Colombia retail tiendas sedes distribución productos",
+              "target_gap": "commercial_footprint",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.9,
+                "temporal_relevance": 0.5,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_ltx943",
+              "account_key": "bioplaza.com.co",
+              "target_claim_id": null
+            },
+            {
+              "stage": "current_activity",
+              "query": "\"BioPlaza\" bioplaza.com.co Colombia apertura expansión alianza lanzamiento 2025 2026",
+              "target_gap": "recent_signals",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.9,
+                "temporal_relevance": 0.9,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_1bvqo2j",
+              "account_key": "bioplaza.com.co",
+              "target_claim_id": null
+            },
+            {
+              "stage": "counterevidence",
+              "query": "\"BioPlaza\" bioplaza.com.co Colombia cierre inactivo contracción retiró descontinuado",
+              "target_gap": "counterevidence",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.2,
+                "temporal_relevance": 0.9,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_1l5n2jy",
+              "account_key": "bioplaza.com.co",
+              "target_claim_id": null
+            },
+            {
+              "stage": "client_relevance",
+              "query": "\"BioPlaza\" bioplaza.com.co Colombia Infusiones y bebidas botánicas funcionales de bienestar retail",
+              "target_gap": "client_relevance",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.2,
+                "temporal_relevance": 0.5,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_bem313",
+              "account_key": "bioplaza.com.co",
+              "target_claim_id": null
+            }
+          ],
+          "rejected": []
+        },
+        "queries_executed": [
+          {
+            "query": {
+              "stage": "identity",
+              "query": "\"BioPlaza\" bioplaza.com.co Colombia sitio oficial ubicación",
+              "target_gap": "identity",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.55,
+                "temporal_relevance": 0.5,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_1seyr4",
+              "account_key": "bioplaza.com.co",
+              "target_claim_id": null
+            },
+            "provider": "serper",
+            "result_count": 0,
+            "error": "HTTP 400"
+          }
+        ],
+        "evidence_decisions": [],
+        "claims_generated": [],
+        "corroboration_attempts": [],
+        "counterevidence_search": {
+          "executed": false,
+          "result": "not_executed"
+        },
+        "qualification": {
+          "qualification_id": "oq_16bs2pi",
+          "account_key": "bioplaza.com.co",
+          "state": "prioritize",
+          "gates": [
+            {
+              "id": "identity",
+              "state": "not_measured",
+              "confidence": null,
+              "evidence_refs": [],
+              "blockers": [],
+              "next_verification_step": "Confirm official domain and operating identity."
+            },
+            {
+              "id": "structural_relevance",
+              "state": "passed",
+              "confidence": 0.74,
+              "evidence_refs": [],
+              "blockers": [],
+              "next_verification_step": null
+            },
+            {
+              "id": "commercial_accessibility",
+              "state": "not_measured",
+              "confidence": null,
+              "evidence_refs": [],
+              "blockers": [
+                "No verified buying path or decision-maker category."
+              ],
+              "next_verification_step": "Verify channel and supplier onboarding path."
+            },
+            {
+              "id": "evidence",
+              "state": "failed",
+              "confidence": 0,
+              "evidence_refs": [],
+              "blockers": [
+                "No independently corroborated commercial claim."
+              ],
+              "next_verification_step": "Corroborate the highest-value claim with an independent source."
+            },
+            {
+              "id": "timing",
+              "state": "failed",
+              "confidence": 0,
+              "evidence_refs": [],
+              "blockers": [
+                "No current dated commercial window."
+              ],
+              "next_verification_step": "Recover a dated expansion, partnership, hiring or launch signal."
+            },
+            {
+              "id": "counterevidence",
+              "state": "not_measured",
+              "confidence": null,
+              "evidence_refs": [],
+              "blockers": [],
+              "next_verification_step": "Run bounded counterevidence query."
+            },
+            {
+              "id": "client_fit",
+              "state": "passed",
+              "confidence": 0.8,
+              "evidence_refs": [],
+              "blockers": [],
+              "next_verification_step": null
+            },
+            {
+              "id": "actionability",
+              "state": "partial",
+              "confidence": null,
+              "evidence_refs": [],
+              "blockers": [
+                "No evidence-backed immediate outreach action."
+              ],
+              "next_verification_step": "Watch explicit monitoring triggers."
+            }
+          ],
+          "passed_gates": [
+            "structural_relevance",
+            "client_fit"
+          ],
+          "failed_gates": [
+            "evidence",
+            "timing"
+          ],
+          "decisive_evidence": [],
+          "remaining_uncertainty": [
+            "No verified buying path or decision-maker category.",
+            "No independently corroborated commercial claim.",
+            "No current dated commercial window.",
+            "No evidence-backed immediate outreach action."
+          ],
+          "could_change_decision": [
+            "Confirm official domain and operating identity.",
+            "Verify channel and supplier onboarding path.",
+            "Corroborate the highest-value claim with an independent source.",
+            "Recover a dated expansion, partnership, hiring or launch signal.",
+            "Run bounded counterevidence query.",
+            "Watch explicit monitoring triggers."
+          ],
+          "justified_next_action": "Monitor defined triggers; do not claim buying intent.",
+          "unjustified_next_action": "Immediate sales outreach or purchase-intent claim.",
+          "monitoring_triggers": [
+            {
+              "trigger_id": "mt_1hjjycc",
+              "signal_category": "new_location_or_expansion",
+              "why_it_matters": "A verified footprint expansion can create a new category-entry window.",
+              "evidence_needed": "Dated official announcement plus independent or partner confirmation.",
+              "review_horizon_days": 90,
+              "current_baseline": "No current corroborated expansion signal.",
+              "confidence": 0.65
+            },
+            {
+              "trigger_id": "mt_1mfhhl1",
+              "signal_category": "distribution_or_category_partnership",
+              "why_it_matters": "A new channel or category partnership may change commercial accessibility.",
+              "evidence_needed": "Named partner, account identity, event date and operating scope.",
+              "review_horizon_days": 90,
+              "current_baseline": "No verified current partnership.",
+              "confidence": 0.6
+            }
+          ],
+          "internal_only": true,
+          "methodology_version": "research-quality-v1"
+        },
+        "monitoring_triggers": [
+          {
+            "trigger_id": "mt_1hjjycc",
+            "signal_category": "new_location_or_expansion",
+            "why_it_matters": "A verified footprint expansion can create a new category-entry window.",
+            "evidence_needed": "Dated official announcement plus independent or partner confirmation.",
+            "review_horizon_days": 90,
+            "current_baseline": "No current corroborated expansion signal.",
+            "confidence": 0.65
+          },
+          {
+            "trigger_id": "mt_1mfhhl1",
+            "signal_category": "distribution_or_category_partnership",
+            "why_it_matters": "A new channel or category partnership may change commercial accessibility.",
+            "evidence_needed": "Named partner, account identity, event date and operating scope.",
+            "review_horizon_days": 90,
+            "current_baseline": "No verified current partnership.",
+            "confidence": 0.6
+          }
+        ],
+        "next_best_research_action": "Confirm official domain and operating identity.",
+        "cost": {
+          "state": "not_measured",
+          "reason": "1 provider calls executed; adapters returned no cost estimate."
+        },
+        "provider_contribution": [
+          "serper"
+        ]
+      },
+      "database_persistence": {
+        "ok": true,
+        "persisted": true,
+        "reason": null
+      }
+    },
+    {
+      "account": "Distribuidora DAM",
+      "domain": "distribuidoradam.com",
+      "profile": {
+        "profile_id": "rp_1v1bsfg",
+        "canonical_company_name": "Distribuidora DAM",
+        "known_aliases": [],
+        "domain": "distribuidoradam.com",
+        "alternate_domains": [],
+        "country": "Colombia",
+        "city_or_region": null,
+        "business_type": "distribution",
+        "segment": "distribution",
+        "known_products_or_services": [],
+        "known_locations": [],
+        "parent_company": null,
+        "subsidiaries": [],
+        "exclusion_terms": [
+          "-directorio",
+          "-empleos genéricos",
+          "-homónimos"
+        ],
+        "ambiguity_risks": [
+          "short_or_acronym_tokens:dam",
+          "generic_name_tokens:distribuidora"
+        ],
+        "likely_language": "es",
+        "identity_confidence": 0.85,
+        "structural_score": 72,
+        "current_evidence_gaps": [
+          "identity",
+          "official_domain",
+          "commercial_footprint",
+          "recent_signals",
+          "timing",
+          "independent_corroboration",
+          "counterevidence",
+          "client_relevance",
+          "decision_maker_category",
+          "geographic_fit"
+        ],
+        "verified_fields": [
+          "canonical_company_name",
+          "domain",
+          "country",
+          "segment"
+        ],
+        "methodology_version": "research-quality-v1"
+      },
+      "query_plan": {
+        "accepted": [
+          {
+            "stage": "identity",
+            "query": "\"Distribuidora DAM\" distribuidoradam.com Colombia sitio oficial ubicación",
+            "target_gap": "identity",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.55,
+              "temporal_relevance": 0.5,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_1ovwq73",
+            "account_key": "distribuidoradam.com",
+            "target_claim_id": null
+          },
+          {
+            "stage": "commercial_footprint",
+            "query": "\"Distribuidora DAM\" distribuidoradam.com Colombia distribution tiendas sedes distribución productos",
+            "target_gap": "commercial_footprint",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.9,
+              "temporal_relevance": 0.5,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_1wlkug7",
+            "account_key": "distribuidoradam.com",
+            "target_claim_id": null
+          },
+          {
+            "stage": "current_activity",
+            "query": "\"Distribuidora DAM\" distribuidoradam.com Colombia apertura expansión alianza lanzamiento 2025 2026",
+            "target_gap": "recent_signals",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.9,
+              "temporal_relevance": 0.9,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_47cgqe",
+            "account_key": "distribuidoradam.com",
+            "target_claim_id": null
+          },
+          {
+            "stage": "counterevidence",
+            "query": "\"Distribuidora DAM\" distribuidoradam.com Colombia cierre inactivo contracción retiró descontinuado",
+            "target_gap": "counterevidence",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.2,
+              "temporal_relevance": 0.9,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_q4rnyl",
+            "account_key": "distribuidoradam.com",
+            "target_claim_id": null
+          },
+          {
+            "stage": "client_relevance",
+            "query": "\"Distribuidora DAM\" distribuidoradam.com Colombia Infusiones y bebidas botánicas funcionales de bienestar distribution",
+            "target_gap": "client_relevance",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.2,
+              "temporal_relevance": 0.5,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_14g4rmn",
+            "account_key": "distribuidoradam.com",
+            "target_claim_id": null
+          }
+        ],
+        "rejected": []
+      },
+      "queries_executed": [
+        {
+          "query": {
+            "stage": "identity",
+            "query": "\"Distribuidora DAM\" distribuidoradam.com Colombia sitio oficial ubicación",
+            "target_gap": "identity",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.55,
+              "temporal_relevance": 0.5,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_1ovwq73",
+            "account_key": "distribuidoradam.com",
+            "target_claim_id": null
+          },
+          "provider": "serper",
+          "result_count": 0,
+          "error": "HTTP 400"
+        }
+      ],
+      "extraction_log": [],
+      "evidence_decisions": [],
+      "claims": [],
+      "corroboration_attempts": [],
+      "gap_states": {
+        "identity": "unresolved",
+        "official_domain": "unresolved",
+        "commercial_footprint": "unresolved",
+        "recent_signals": "unresolved",
+        "timing": "unresolved",
+        "independent_corroboration": "unresolved",
+        "counterevidence": "unresolved",
+        "client_relevance": "resolved",
+        "decision_maker_category": "unresolved",
+        "geographic_fit": "unresolved"
+      },
+      "qualification": {
+        "qualification_id": "oq_1i02cv3",
+        "account_key": "distribuidoradam.com",
+        "state": "prioritize",
+        "gates": [
+          {
+            "id": "identity",
+            "state": "not_measured",
+            "confidence": null,
+            "evidence_refs": [],
+            "blockers": [],
+            "next_verification_step": "Confirm official domain and operating identity."
+          },
+          {
+            "id": "structural_relevance",
+            "state": "passed",
+            "confidence": 0.72,
+            "evidence_refs": [],
+            "blockers": [],
+            "next_verification_step": null
+          },
+          {
+            "id": "commercial_accessibility",
+            "state": "not_measured",
+            "confidence": null,
+            "evidence_refs": [],
+            "blockers": [
+              "No verified buying path or decision-maker category."
+            ],
+            "next_verification_step": "Verify channel and supplier onboarding path."
+          },
+          {
+            "id": "evidence",
+            "state": "failed",
+            "confidence": 0,
+            "evidence_refs": [],
+            "blockers": [
+              "No independently corroborated commercial claim."
+            ],
+            "next_verification_step": "Corroborate the highest-value claim with an independent source."
+          },
+          {
+            "id": "timing",
+            "state": "failed",
+            "confidence": 0,
+            "evidence_refs": [],
+            "blockers": [
+              "No current dated commercial window."
+            ],
+            "next_verification_step": "Recover a dated expansion, partnership, hiring or launch signal."
+          },
+          {
+            "id": "counterevidence",
+            "state": "not_measured",
+            "confidence": null,
+            "evidence_refs": [],
+            "blockers": [],
+            "next_verification_step": "Run bounded counterevidence query."
+          },
+          {
+            "id": "client_fit",
+            "state": "passed",
+            "confidence": 0.8,
+            "evidence_refs": [],
+            "blockers": [],
+            "next_verification_step": null
+          },
+          {
+            "id": "actionability",
+            "state": "partial",
+            "confidence": null,
+            "evidence_refs": [],
+            "blockers": [
+              "No evidence-backed immediate outreach action."
+            ],
+            "next_verification_step": "Watch explicit monitoring triggers."
+          }
+        ],
+        "passed_gates": [
+          "structural_relevance",
+          "client_fit"
+        ],
+        "failed_gates": [
+          "evidence",
+          "timing"
+        ],
+        "decisive_evidence": [],
+        "remaining_uncertainty": [
+          "No verified buying path or decision-maker category.",
+          "No independently corroborated commercial claim.",
+          "No current dated commercial window.",
+          "No evidence-backed immediate outreach action."
+        ],
+        "could_change_decision": [
+          "Confirm official domain and operating identity.",
+          "Verify channel and supplier onboarding path.",
+          "Corroborate the highest-value claim with an independent source.",
+          "Recover a dated expansion, partnership, hiring or launch signal.",
+          "Run bounded counterevidence query.",
+          "Watch explicit monitoring triggers."
+        ],
+        "justified_next_action": "Monitor defined triggers; do not claim buying intent.",
+        "unjustified_next_action": "Immediate sales outreach or purchase-intent claim.",
+        "monitoring_triggers": [
+          {
+            "trigger_id": "mt_14hz343",
+            "signal_category": "new_location_or_expansion",
+            "why_it_matters": "A verified footprint expansion can create a new category-entry window.",
+            "evidence_needed": "Dated official announcement plus independent or partner confirmation.",
+            "review_horizon_days": 90,
+            "current_baseline": "No current corroborated expansion signal.",
+            "confidence": 0.65
+          },
+          {
+            "trigger_id": "mt_1umvp2s",
+            "signal_category": "distribution_or_category_partnership",
+            "why_it_matters": "A new channel or category partnership may change commercial accessibility.",
+            "evidence_needed": "Named partner, account identity, event date and operating scope.",
+            "review_horizon_days": 90,
+            "current_baseline": "No verified current partnership.",
+            "confidence": 0.6
+          }
+        ],
+        "internal_only": true,
+        "methodology_version": "research-quality-v1"
+      },
+      "dossier": {
+        "dossier_id": "dos_gqyg0p",
+        "account_key": "distribuidoradam.com",
+        "client_id": "amor-de-gea",
+        "generated_at": "2026-07-30T00:31:32.700Z",
+        "identity": {
+          "name": "Distribuidora DAM",
+          "domain": "distribuidoradam.com",
+          "country": "Colombia"
+        },
+        "structural": {
+          "score": 72,
+          "segment": "distribution",
+          "rationale": []
+        },
+        "evidence": {
+          "total": 0,
+          "independent_sources": 0,
+          "corroborated_claims": 0,
+          "contradicted_claims": 0
+        },
+        "temporal": {
+          "timing_state": "insufficient_evidence",
+          "what_changed": [
+            {
+              "field": "account_state",
+              "state": "not_measured",
+              "before": null,
+              "after": {
+                "structural_score": 72,
+                "timing_state": "insufficient_evidence",
+                "corroborated_claims": 0,
+                "contradicted_claims": 0,
+                "claim_states": []
+              },
+              "reason": "First comparable account observation."
+            }
+          ]
+        },
+        "commercial": {
+          "client_relevance": "explicit_match",
+          "rationale": [
+            "Segment explicitly prioritized."
+          ]
+        },
+        "decision": {
+          "state": "research_more",
+          "reason": "Evidence is insufficient for account action."
+        },
+        "confidence": 0,
+        "limitations": [
+          "No exact or inferred publication date in available evidence.",
+          "No independently corroborated claim.",
+          "No verified buying path or decision-maker category.",
+          "No independently corroborated commercial claim.",
+          "No current dated commercial window.",
+          "No evidence-backed immediate outreach action."
+        ],
+        "internal_only": true,
+        "methodology_version": "evidence-temporal-v1",
+        "research_profile": {
+          "profile_id": "rp_1v1bsfg",
+          "canonical_company_name": "Distribuidora DAM",
+          "known_aliases": [],
+          "domain": "distribuidoradam.com",
+          "alternate_domains": [],
+          "country": "Colombia",
+          "city_or_region": null,
+          "business_type": "distribution",
+          "segment": "distribution",
+          "known_products_or_services": [],
+          "known_locations": [],
+          "parent_company": null,
+          "subsidiaries": [],
+          "exclusion_terms": [
+            "-directorio",
+            "-empleos genéricos",
+            "-homónimos"
+          ],
+          "ambiguity_risks": [
+            "short_or_acronym_tokens:dam",
+            "generic_name_tokens:distribuidora"
+          ],
+          "likely_language": "es",
+          "identity_confidence": 0.85,
+          "structural_score": 72,
+          "current_evidence_gaps": [
+            "identity",
+            "official_domain",
+            "commercial_footprint",
+            "recent_signals",
+            "timing",
+            "independent_corroboration",
+            "counterevidence",
+            "client_relevance",
+            "decision_maker_category",
+            "geographic_fit"
+          ],
+          "verified_fields": [
+            "canonical_company_name",
+            "domain",
+            "country",
+            "segment"
+          ],
+          "methodology_version": "research-quality-v1"
+        },
+        "research_gaps": {
+          "before": [
+            "identity",
+            "official_domain",
+            "commercial_footprint",
+            "recent_signals",
+            "timing",
+            "independent_corroboration",
+            "counterevidence",
+            "client_relevance",
+            "decision_maker_category",
+            "geographic_fit"
+          ],
+          "after": {
+            "identity": "unresolved",
+            "official_domain": "unresolved",
+            "commercial_footprint": "unresolved",
+            "recent_signals": "unresolved",
+            "timing": "unresolved",
+            "independent_corroboration": "unresolved",
+            "counterevidence": "unresolved",
+            "client_relevance": "resolved",
+            "decision_maker_category": "unresolved",
+            "geographic_fit": "unresolved"
+          }
+        },
+        "query_plan": {
+          "accepted": [
+            {
+              "stage": "identity",
+              "query": "\"Distribuidora DAM\" distribuidoradam.com Colombia sitio oficial ubicación",
+              "target_gap": "identity",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.55,
+                "temporal_relevance": 0.5,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_1ovwq73",
+              "account_key": "distribuidoradam.com",
+              "target_claim_id": null
+            },
+            {
+              "stage": "commercial_footprint",
+              "query": "\"Distribuidora DAM\" distribuidoradam.com Colombia distribution tiendas sedes distribución productos",
+              "target_gap": "commercial_footprint",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.9,
+                "temporal_relevance": 0.5,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_1wlkug7",
+              "account_key": "distribuidoradam.com",
+              "target_claim_id": null
+            },
+            {
+              "stage": "current_activity",
+              "query": "\"Distribuidora DAM\" distribuidoradam.com Colombia apertura expansión alianza lanzamiento 2025 2026",
+              "target_gap": "recent_signals",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.9,
+                "temporal_relevance": 0.9,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_47cgqe",
+              "account_key": "distribuidoradam.com",
+              "target_claim_id": null
+            },
+            {
+              "stage": "counterevidence",
+              "query": "\"Distribuidora DAM\" distribuidoradam.com Colombia cierre inactivo contracción retiró descontinuado",
+              "target_gap": "counterevidence",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.2,
+                "temporal_relevance": 0.9,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_q4rnyl",
+              "account_key": "distribuidoradam.com",
+              "target_claim_id": null
+            },
+            {
+              "stage": "client_relevance",
+              "query": "\"Distribuidora DAM\" distribuidoradam.com Colombia Infusiones y bebidas botánicas funcionales de bienestar distribution",
+              "target_gap": "client_relevance",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.2,
+                "temporal_relevance": 0.5,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_14g4rmn",
+              "account_key": "distribuidoradam.com",
+              "target_claim_id": null
+            }
+          ],
+          "rejected": []
+        },
+        "queries_executed": [
+          {
+            "query": {
+              "stage": "identity",
+              "query": "\"Distribuidora DAM\" distribuidoradam.com Colombia sitio oficial ubicación",
+              "target_gap": "identity",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.55,
+                "temporal_relevance": 0.5,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_1ovwq73",
+              "account_key": "distribuidoradam.com",
+              "target_claim_id": null
+            },
+            "provider": "serper",
+            "result_count": 0,
+            "error": "HTTP 400"
+          }
+        ],
+        "evidence_decisions": [],
+        "claims_generated": [],
+        "corroboration_attempts": [],
+        "counterevidence_search": {
+          "executed": false,
+          "result": "not_executed"
+        },
+        "qualification": {
+          "qualification_id": "oq_1i02cv3",
+          "account_key": "distribuidoradam.com",
+          "state": "prioritize",
+          "gates": [
+            {
+              "id": "identity",
+              "state": "not_measured",
+              "confidence": null,
+              "evidence_refs": [],
+              "blockers": [],
+              "next_verification_step": "Confirm official domain and operating identity."
+            },
+            {
+              "id": "structural_relevance",
+              "state": "passed",
+              "confidence": 0.72,
+              "evidence_refs": [],
+              "blockers": [],
+              "next_verification_step": null
+            },
+            {
+              "id": "commercial_accessibility",
+              "state": "not_measured",
+              "confidence": null,
+              "evidence_refs": [],
+              "blockers": [
+                "No verified buying path or decision-maker category."
+              ],
+              "next_verification_step": "Verify channel and supplier onboarding path."
+            },
+            {
+              "id": "evidence",
+              "state": "failed",
+              "confidence": 0,
+              "evidence_refs": [],
+              "blockers": [
+                "No independently corroborated commercial claim."
+              ],
+              "next_verification_step": "Corroborate the highest-value claim with an independent source."
+            },
+            {
+              "id": "timing",
+              "state": "failed",
+              "confidence": 0,
+              "evidence_refs": [],
+              "blockers": [
+                "No current dated commercial window."
+              ],
+              "next_verification_step": "Recover a dated expansion, partnership, hiring or launch signal."
+            },
+            {
+              "id": "counterevidence",
+              "state": "not_measured",
+              "confidence": null,
+              "evidence_refs": [],
+              "blockers": [],
+              "next_verification_step": "Run bounded counterevidence query."
+            },
+            {
+              "id": "client_fit",
+              "state": "passed",
+              "confidence": 0.8,
+              "evidence_refs": [],
+              "blockers": [],
+              "next_verification_step": null
+            },
+            {
+              "id": "actionability",
+              "state": "partial",
+              "confidence": null,
+              "evidence_refs": [],
+              "blockers": [
+                "No evidence-backed immediate outreach action."
+              ],
+              "next_verification_step": "Watch explicit monitoring triggers."
+            }
+          ],
+          "passed_gates": [
+            "structural_relevance",
+            "client_fit"
+          ],
+          "failed_gates": [
+            "evidence",
+            "timing"
+          ],
+          "decisive_evidence": [],
+          "remaining_uncertainty": [
+            "No verified buying path or decision-maker category.",
+            "No independently corroborated commercial claim.",
+            "No current dated commercial window.",
+            "No evidence-backed immediate outreach action."
+          ],
+          "could_change_decision": [
+            "Confirm official domain and operating identity.",
+            "Verify channel and supplier onboarding path.",
+            "Corroborate the highest-value claim with an independent source.",
+            "Recover a dated expansion, partnership, hiring or launch signal.",
+            "Run bounded counterevidence query.",
+            "Watch explicit monitoring triggers."
+          ],
+          "justified_next_action": "Monitor defined triggers; do not claim buying intent.",
+          "unjustified_next_action": "Immediate sales outreach or purchase-intent claim.",
+          "monitoring_triggers": [
+            {
+              "trigger_id": "mt_14hz343",
+              "signal_category": "new_location_or_expansion",
+              "why_it_matters": "A verified footprint expansion can create a new category-entry window.",
+              "evidence_needed": "Dated official announcement plus independent or partner confirmation.",
+              "review_horizon_days": 90,
+              "current_baseline": "No current corroborated expansion signal.",
+              "confidence": 0.65
+            },
+            {
+              "trigger_id": "mt_1umvp2s",
+              "signal_category": "distribution_or_category_partnership",
+              "why_it_matters": "A new channel or category partnership may change commercial accessibility.",
+              "evidence_needed": "Named partner, account identity, event date and operating scope.",
+              "review_horizon_days": 90,
+              "current_baseline": "No verified current partnership.",
+              "confidence": 0.6
+            }
+          ],
+          "internal_only": true,
+          "methodology_version": "research-quality-v1"
+        },
+        "monitoring_triggers": [
+          {
+            "trigger_id": "mt_14hz343",
+            "signal_category": "new_location_or_expansion",
+            "why_it_matters": "A verified footprint expansion can create a new category-entry window.",
+            "evidence_needed": "Dated official announcement plus independent or partner confirmation.",
+            "review_horizon_days": 90,
+            "current_baseline": "No current corroborated expansion signal.",
+            "confidence": 0.65
+          },
+          {
+            "trigger_id": "mt_1umvp2s",
+            "signal_category": "distribution_or_category_partnership",
+            "why_it_matters": "A new channel or category partnership may change commercial accessibility.",
+            "evidence_needed": "Named partner, account identity, event date and operating scope.",
+            "review_horizon_days": 90,
+            "current_baseline": "No verified current partnership.",
+            "confidence": 0.6
+          }
+        ],
+        "next_best_research_action": "Confirm official domain and operating identity.",
+        "cost": {
+          "state": "not_measured",
+          "reason": "1 provider calls executed; adapters returned no cost estimate."
+        },
+        "provider_contribution": [
+          "serper"
+        ]
+      },
+      "database_persistence": {
+        "ok": true,
+        "persisted": true,
+        "reason": null
+      }
+    },
+    {
+      "account": "Somos Consiente",
+      "domain": "somosconsiente.com",
+      "profile": {
+        "profile_id": "rp_a2xwiw",
+        "canonical_company_name": "Somos Consiente",
+        "known_aliases": [],
+        "domain": "somosconsiente.com",
+        "alternate_domains": [],
+        "country": "Colombia",
+        "city_or_region": null,
+        "business_type": "wellness",
+        "segment": "wellness",
+        "known_products_or_services": [],
+        "known_locations": [],
+        "parent_company": null,
+        "subsidiaries": [],
+        "exclusion_terms": [
+          "-directorio",
+          "-empleos genéricos",
+          "-homónimos"
+        ],
+        "ambiguity_risks": [
+          "generic_name_tokens:consiente"
+        ],
+        "likely_language": "es",
+        "identity_confidence": 0.85,
+        "structural_score": 64,
+        "current_evidence_gaps": [
+          "commercial_footprint",
+          "recent_signals",
+          "timing",
+          "independent_corroboration",
+          "counterevidence",
+          "client_relevance",
+          "decision_maker_category",
+          "geographic_fit"
+        ],
+        "verified_fields": [
+          "canonical_company_name",
+          "domain",
+          "country",
+          "segment"
+        ],
+        "methodology_version": "research-quality-v1"
+      },
+      "query_plan": {
+        "accepted": [
+          {
+            "stage": "identity",
+            "query": "\"Somos Consiente\" somosconsiente.com Colombia sitio oficial ubicación",
+            "target_gap": "identity",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.55,
+              "temporal_relevance": 0.5,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_1petv5b",
+            "account_key": "somosconsiente.com",
+            "target_claim_id": null
+          },
+          {
+            "stage": "commercial_footprint",
+            "query": "\"Somos Consiente\" somosconsiente.com Colombia wellness tiendas sedes distribución productos",
+            "target_gap": "commercial_footprint",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.9,
+              "temporal_relevance": 0.5,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_1u41odg",
+            "account_key": "somosconsiente.com",
+            "target_claim_id": null
+          },
+          {
+            "stage": "current_activity",
+            "query": "\"Somos Consiente\" somosconsiente.com Colombia apertura expansión alianza lanzamiento 2025 2026",
+            "target_gap": "recent_signals",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.9,
+              "temporal_relevance": 0.9,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_1s4u4uq",
+            "account_key": "somosconsiente.com",
+            "target_claim_id": null
+          },
+          {
+            "stage": "counterevidence",
+            "query": "\"Somos Consiente\" somosconsiente.com Colombia cierre inactivo contracción retiró descontinuado",
+            "target_gap": "counterevidence",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.2,
+              "temporal_relevance": 0.9,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_1fpmgd5",
+            "account_key": "somosconsiente.com",
+            "target_claim_id": null
+          },
+          {
+            "stage": "client_relevance",
+            "query": "\"Somos Consiente\" somosconsiente.com Colombia Infusiones y bebidas botánicas funcionales de bienestar wellness",
+            "target_gap": "client_relevance",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.2,
+              "temporal_relevance": 0.5,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_1kac84e",
+            "account_key": "somosconsiente.com",
+            "target_claim_id": null
+          }
+        ],
+        "rejected": []
+      },
+      "queries_executed": [
+        {
+          "query": {
+            "stage": "identity",
+            "query": "\"Somos Consiente\" somosconsiente.com Colombia sitio oficial ubicación",
+            "target_gap": "identity",
+            "expected_source_tier": "B",
+            "quality": "strong",
+            "quality_dimensions": {
+              "account_specificity": 1,
+              "identity_discrimination": 1,
+              "geographic_precision": 1,
+              "commercial_relevance": 0.55,
+              "temporal_relevance": 0.5,
+              "expected_source_quality": 0.8,
+              "ambiguity_risk": 0.2,
+              "redundancy": 0
+            },
+            "accepted": true,
+            "rejection_reasons": [],
+            "query_id": "rq_1petv5b",
+            "account_key": "somosconsiente.com",
+            "target_claim_id": null
+          },
+          "provider": "serper",
+          "result_count": 0,
+          "error": "HTTP 400"
+        }
+      ],
+      "extraction_log": [],
+      "evidence_decisions": [],
+      "claims": [],
+      "corroboration_attempts": [],
+      "gap_states": {
+        "commercial_footprint": "unresolved",
+        "recent_signals": "unresolved",
+        "timing": "unresolved",
+        "independent_corroboration": "unresolved",
+        "counterevidence": "unresolved",
+        "client_relevance": "resolved",
+        "decision_maker_category": "unresolved",
+        "geographic_fit": "unresolved",
+        "identity": "unresolved",
+        "official_domain": "unresolved"
+      },
+      "qualification": {
+        "qualification_id": "oq_vwpf3",
+        "account_key": "somosconsiente.com",
+        "state": "monitor",
+        "gates": [
+          {
+            "id": "identity",
+            "state": "not_measured",
+            "confidence": null,
+            "evidence_refs": [],
+            "blockers": [],
+            "next_verification_step": "Confirm official domain and operating identity."
+          },
+          {
+            "id": "structural_relevance",
+            "state": "partial",
+            "confidence": 0.64,
+            "evidence_refs": [],
+            "blockers": [],
+            "next_verification_step": null
+          },
+          {
+            "id": "commercial_accessibility",
+            "state": "not_measured",
+            "confidence": null,
+            "evidence_refs": [],
+            "blockers": [
+              "No verified buying path or decision-maker category."
+            ],
+            "next_verification_step": "Verify channel and supplier onboarding path."
+          },
+          {
+            "id": "evidence",
+            "state": "failed",
+            "confidence": 0,
+            "evidence_refs": [],
+            "blockers": [
+              "No independently corroborated commercial claim."
+            ],
+            "next_verification_step": "Corroborate the highest-value claim with an independent source."
+          },
+          {
+            "id": "timing",
+            "state": "failed",
+            "confidence": 0,
+            "evidence_refs": [],
+            "blockers": [
+              "No current dated commercial window."
+            ],
+            "next_verification_step": "Recover a dated expansion, partnership, hiring or launch signal."
+          },
+          {
+            "id": "counterevidence",
+            "state": "not_measured",
+            "confidence": null,
+            "evidence_refs": [],
+            "blockers": [],
+            "next_verification_step": "Run bounded counterevidence query."
+          },
+          {
+            "id": "client_fit",
+            "state": "passed",
+            "confidence": 0.8,
+            "evidence_refs": [],
+            "blockers": [],
+            "next_verification_step": null
+          },
+          {
+            "id": "actionability",
+            "state": "partial",
+            "confidence": null,
+            "evidence_refs": [],
+            "blockers": [
+              "No evidence-backed immediate outreach action."
+            ],
+            "next_verification_step": "Watch explicit monitoring triggers."
+          }
+        ],
+        "passed_gates": [
+          "client_fit"
+        ],
+        "failed_gates": [
+          "evidence",
+          "timing"
+        ],
+        "decisive_evidence": [],
+        "remaining_uncertainty": [
+          "No verified buying path or decision-maker category.",
+          "No independently corroborated commercial claim.",
+          "No current dated commercial window.",
+          "No evidence-backed immediate outreach action."
+        ],
+        "could_change_decision": [
+          "Confirm official domain and operating identity.",
+          "Verify channel and supplier onboarding path.",
+          "Corroborate the highest-value claim with an independent source.",
+          "Recover a dated expansion, partnership, hiring or launch signal.",
+          "Run bounded counterevidence query.",
+          "Watch explicit monitoring triggers."
+        ],
+        "justified_next_action": "Monitor defined triggers; do not claim buying intent.",
+        "unjustified_next_action": "Immediate sales outreach or purchase-intent claim.",
+        "monitoring_triggers": [
+          {
+            "trigger_id": "mt_1enkddr",
+            "signal_category": "new_location_or_expansion",
+            "why_it_matters": "A verified footprint expansion can create a new category-entry window.",
+            "evidence_needed": "Dated official announcement plus independent or partner confirmation.",
+            "review_horizon_days": 90,
+            "current_baseline": "No current corroborated expansion signal.",
+            "confidence": 0.65
+          },
+          {
+            "trigger_id": "mt_13u3u3s",
+            "signal_category": "distribution_or_category_partnership",
+            "why_it_matters": "A new channel or category partnership may change commercial accessibility.",
+            "evidence_needed": "Named partner, account identity, event date and operating scope.",
+            "review_horizon_days": 90,
+            "current_baseline": "No verified current partnership.",
+            "confidence": 0.6
+          }
+        ],
+        "internal_only": true,
+        "methodology_version": "research-quality-v1"
+      },
+      "dossier": {
+        "dossier_id": "dos_lalh4w",
+        "account_key": "somosconsiente.com",
+        "client_id": "amor-de-gea",
+        "generated_at": "2026-07-30T00:31:32.700Z",
+        "identity": {
+          "name": "Somos Consiente",
+          "domain": "somosconsiente.com",
+          "country": "Colombia"
+        },
+        "structural": {
+          "score": 64,
+          "segment": "wellness",
+          "rationale": []
+        },
+        "evidence": {
+          "total": 0,
+          "independent_sources": 0,
+          "corroborated_claims": 0,
+          "contradicted_claims": 0
+        },
+        "temporal": {
+          "timing_state": "insufficient_evidence",
+          "what_changed": [
+            {
+              "field": "account_state",
+              "state": "not_measured",
+              "before": null,
+              "after": {
+                "structural_score": 64,
+                "timing_state": "insufficient_evidence",
+                "corroborated_claims": 0,
+                "contradicted_claims": 0,
+                "claim_states": []
+              },
+              "reason": "First comparable account observation."
+            }
+          ]
+        },
+        "commercial": {
+          "client_relevance": "explicit_match",
+          "rationale": [
+            "Segment explicitly prioritized."
+          ]
+        },
+        "decision": {
+          "state": "research_more",
+          "reason": "Evidence is insufficient for account action."
+        },
+        "confidence": 0,
+        "limitations": [
+          "No exact or inferred publication date in available evidence.",
+          "No independently corroborated claim.",
+          "No verified buying path or decision-maker category.",
+          "No independently corroborated commercial claim.",
+          "No current dated commercial window.",
+          "No evidence-backed immediate outreach action."
+        ],
+        "internal_only": true,
+        "methodology_version": "evidence-temporal-v1",
+        "research_profile": {
+          "profile_id": "rp_a2xwiw",
+          "canonical_company_name": "Somos Consiente",
+          "known_aliases": [],
+          "domain": "somosconsiente.com",
+          "alternate_domains": [],
+          "country": "Colombia",
+          "city_or_region": null,
+          "business_type": "wellness",
+          "segment": "wellness",
+          "known_products_or_services": [],
+          "known_locations": [],
+          "parent_company": null,
+          "subsidiaries": [],
+          "exclusion_terms": [
+            "-directorio",
+            "-empleos genéricos",
+            "-homónimos"
+          ],
+          "ambiguity_risks": [
+            "generic_name_tokens:consiente"
+          ],
+          "likely_language": "es",
+          "identity_confidence": 0.85,
+          "structural_score": 64,
+          "current_evidence_gaps": [
+            "commercial_footprint",
+            "recent_signals",
+            "timing",
+            "independent_corroboration",
+            "counterevidence",
+            "client_relevance",
+            "decision_maker_category",
+            "geographic_fit"
+          ],
+          "verified_fields": [
+            "canonical_company_name",
+            "domain",
+            "country",
+            "segment"
+          ],
+          "methodology_version": "research-quality-v1"
+        },
+        "research_gaps": {
+          "before": [
+            "commercial_footprint",
+            "recent_signals",
+            "timing",
+            "independent_corroboration",
+            "counterevidence",
+            "client_relevance",
+            "decision_maker_category",
+            "geographic_fit"
+          ],
+          "after": {
+            "commercial_footprint": "unresolved",
+            "recent_signals": "unresolved",
+            "timing": "unresolved",
+            "independent_corroboration": "unresolved",
+            "counterevidence": "unresolved",
+            "client_relevance": "resolved",
+            "decision_maker_category": "unresolved",
+            "geographic_fit": "unresolved",
+            "identity": "unresolved",
+            "official_domain": "unresolved"
+          }
+        },
+        "query_plan": {
+          "accepted": [
+            {
+              "stage": "identity",
+              "query": "\"Somos Consiente\" somosconsiente.com Colombia sitio oficial ubicación",
+              "target_gap": "identity",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.55,
+                "temporal_relevance": 0.5,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_1petv5b",
+              "account_key": "somosconsiente.com",
+              "target_claim_id": null
+            },
+            {
+              "stage": "commercial_footprint",
+              "query": "\"Somos Consiente\" somosconsiente.com Colombia wellness tiendas sedes distribución productos",
+              "target_gap": "commercial_footprint",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.9,
+                "temporal_relevance": 0.5,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_1u41odg",
+              "account_key": "somosconsiente.com",
+              "target_claim_id": null
+            },
+            {
+              "stage": "current_activity",
+              "query": "\"Somos Consiente\" somosconsiente.com Colombia apertura expansión alianza lanzamiento 2025 2026",
+              "target_gap": "recent_signals",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.9,
+                "temporal_relevance": 0.9,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_1s4u4uq",
+              "account_key": "somosconsiente.com",
+              "target_claim_id": null
+            },
+            {
+              "stage": "counterevidence",
+              "query": "\"Somos Consiente\" somosconsiente.com Colombia cierre inactivo contracción retiró descontinuado",
+              "target_gap": "counterevidence",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.2,
+                "temporal_relevance": 0.9,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_1fpmgd5",
+              "account_key": "somosconsiente.com",
+              "target_claim_id": null
+            },
+            {
+              "stage": "client_relevance",
+              "query": "\"Somos Consiente\" somosconsiente.com Colombia Infusiones y bebidas botánicas funcionales de bienestar wellness",
+              "target_gap": "client_relevance",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.2,
+                "temporal_relevance": 0.5,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_1kac84e",
+              "account_key": "somosconsiente.com",
+              "target_claim_id": null
+            }
+          ],
+          "rejected": []
+        },
+        "queries_executed": [
+          {
+            "query": {
+              "stage": "identity",
+              "query": "\"Somos Consiente\" somosconsiente.com Colombia sitio oficial ubicación",
+              "target_gap": "identity",
+              "expected_source_tier": "B",
+              "quality": "strong",
+              "quality_dimensions": {
+                "account_specificity": 1,
+                "identity_discrimination": 1,
+                "geographic_precision": 1,
+                "commercial_relevance": 0.55,
+                "temporal_relevance": 0.5,
+                "expected_source_quality": 0.8,
+                "ambiguity_risk": 0.2,
+                "redundancy": 0
+              },
+              "accepted": true,
+              "rejection_reasons": [],
+              "query_id": "rq_1petv5b",
+              "account_key": "somosconsiente.com",
+              "target_claim_id": null
+            },
+            "provider": "serper",
+            "result_count": 0,
+            "error": "HTTP 400"
+          }
+        ],
+        "evidence_decisions": [],
+        "claims_generated": [],
+        "corroboration_attempts": [],
+        "counterevidence_search": {
+          "executed": false,
+          "result": "not_executed"
+        },
+        "qualification": {
+          "qualification_id": "oq_vwpf3",
+          "account_key": "somosconsiente.com",
+          "state": "monitor",
+          "gates": [
+            {
+              "id": "identity",
+              "state": "not_measured",
+              "confidence": null,
+              "evidence_refs": [],
+              "blockers": [],
+              "next_verification_step": "Confirm official domain and operating identity."
+            },
+            {
+              "id": "structural_relevance",
+              "state": "partial",
+              "confidence": 0.64,
+              "evidence_refs": [],
+              "blockers": [],
+              "next_verification_step": null
+            },
+            {
+              "id": "commercial_accessibility",
+              "state": "not_measured",
+              "confidence": null,
+              "evidence_refs": [],
+              "blockers": [
+                "No verified buying path or decision-maker category."
+              ],
+              "next_verification_step": "Verify channel and supplier onboarding path."
+            },
+            {
+              "id": "evidence",
+              "state": "failed",
+              "confidence": 0,
+              "evidence_refs": [],
+              "blockers": [
+                "No independently corroborated commercial claim."
+              ],
+              "next_verification_step": "Corroborate the highest-value claim with an independent source."
+            },
+            {
+              "id": "timing",
+              "state": "failed",
+              "confidence": 0,
+              "evidence_refs": [],
+              "blockers": [
+                "No current dated commercial window."
+              ],
+              "next_verification_step": "Recover a dated expansion, partnership, hiring or launch signal."
+            },
+            {
+              "id": "counterevidence",
+              "state": "not_measured",
+              "confidence": null,
+              "evidence_refs": [],
+              "blockers": [],
+              "next_verification_step": "Run bounded counterevidence query."
+            },
+            {
+              "id": "client_fit",
+              "state": "passed",
+              "confidence": 0.8,
+              "evidence_refs": [],
+              "blockers": [],
+              "next_verification_step": null
+            },
+            {
+              "id": "actionability",
+              "state": "partial",
+              "confidence": null,
+              "evidence_refs": [],
+              "blockers": [
+                "No evidence-backed immediate outreach action."
+              ],
+              "next_verification_step": "Watch explicit monitoring triggers."
+            }
+          ],
+          "passed_gates": [
+            "client_fit"
+          ],
+          "failed_gates": [
+            "evidence",
+            "timing"
+          ],
+          "decisive_evidence": [],
+          "remaining_uncertainty": [
+            "No verified buying path or decision-maker category.",
+            "No independently corroborated commercial claim.",
+            "No current dated commercial window.",
+            "No evidence-backed immediate outreach action."
+          ],
+          "could_change_decision": [
+            "Confirm official domain and operating identity.",
+            "Verify channel and supplier onboarding path.",
+            "Corroborate the highest-value claim with an independent source.",
+            "Recover a dated expansion, partnership, hiring or launch signal.",
+            "Run bounded counterevidence query.",
+            "Watch explicit monitoring triggers."
+          ],
+          "justified_next_action": "Monitor defined triggers; do not claim buying intent.",
+          "unjustified_next_action": "Immediate sales outreach or purchase-intent claim.",
+          "monitoring_triggers": [
+            {
+              "trigger_id": "mt_1enkddr",
+              "signal_category": "new_location_or_expansion",
+              "why_it_matters": "A verified footprint expansion can create a new category-entry window.",
+              "evidence_needed": "Dated official announcement plus independent or partner confirmation.",
+              "review_horizon_days": 90,
+              "current_baseline": "No current corroborated expansion signal.",
+              "confidence": 0.65
+            },
+            {
+              "trigger_id": "mt_13u3u3s",
+              "signal_category": "distribution_or_category_partnership",
+              "why_it_matters": "A new channel or category partnership may change commercial accessibility.",
+              "evidence_needed": "Named partner, account identity, event date and operating scope.",
+              "review_horizon_days": 90,
+              "current_baseline": "No verified current partnership.",
+              "confidence": 0.6
+            }
+          ],
+          "internal_only": true,
+          "methodology_version": "research-quality-v1"
+        },
+        "monitoring_triggers": [
+          {
+            "trigger_id": "mt_1enkddr",
+            "signal_category": "new_location_or_expansion",
+            "why_it_matters": "A verified footprint expansion can create a new category-entry window.",
+            "evidence_needed": "Dated official announcement plus independent or partner confirmation.",
+            "review_horizon_days": 90,
+            "current_baseline": "No current corroborated expansion signal.",
+            "confidence": 0.65
+          },
+          {
+            "trigger_id": "mt_13u3u3s",
+            "signal_category": "distribution_or_category_partnership",
+            "why_it_matters": "A new channel or category partnership may change commercial accessibility.",
+            "evidence_needed": "Named partner, account identity, event date and operating scope.",
+            "review_horizon_days": 90,
+            "current_baseline": "No verified current partnership.",
+            "confidence": 0.6
+          }
+        ],
+        "next_best_research_action": "Confirm official domain and operating identity.",
+        "cost": {
+          "state": "not_measured",
+          "reason": "1 provider calls executed; adapters returned no cost estimate."
+        },
+        "provider_contribution": [
+          "serper"
+        ]
+      },
+      "database_persistence": {
+        "ok": true,
+        "persisted": true,
+        "reason": null
+      }
+    }
+  ]
+}

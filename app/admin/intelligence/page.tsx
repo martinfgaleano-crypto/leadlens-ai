@@ -89,6 +89,17 @@ function Overview({ model }: { model: AdminIntelligenceViewModel }) {
       <StatePill value={`artifact ${model.availability.artifact}`} />
       <StatePill value={`validation ${model.availability.validation_persistence}`} />
     </div>
+    {model.research_quality && <section className={styles.panel}>
+      <SectionHeader eyebrow="Block 7 · internal only" title="Research quality" text={model.research_quality.comparison.quality_changes.join(" ")}/>
+      <div className={styles.metricGrid}>
+        <Metric label="Accounts researched" value={model.research_quality.summary.accounts_researched}/>
+        <Metric label="Qualified" value={model.research_quality.summary.qualification_coverage}/>
+        <Metric label="Evidence accepted" value={model.research_quality.summary.accepted_evidence}/>
+        <Metric label="Evidence rejected" value={model.research_quality.summary.rejected_evidence}/>
+        <Metric label="Actionable now" value={model.research_quality.summary.actionable_accounts}/>
+        <Metric label="Primary bottleneck" value={model.research_quality.summary.commercially_relevant_claims ? "Corroboration / timing" : "No current commercial claims"}/>
+      </div>
+    </section>}
 
     <SectionHeader eyebrow="Eight dimensions" title="Maturity scorecard" text="Scores appear only when the underlying dimension is genuinely measured." />
     <div className={styles.dimensionGrid}>
@@ -209,6 +220,11 @@ function Outputs({ model }: { model: AdminIntelligenceViewModel }) {
     <div className={styles.filters}><label>Output type<select value={type} onChange={(e) => setType(e.target.value)}><option value="all">All</option>{Array.from(new Set(outputs.map((o) => o.type))).map((x) => <option key={x}>{x}</option>)}</select></label>
       <label>Validation<select value={validation} onChange={(e) => setValidation(e.target.value)}><option value="all">All</option>{Array.from(new Set(outputs.map((o) => o.validation_state))).map((x) => <option key={x}>{x}</option>)}</select></label></div>
     <div className={styles.outputList}>{filtered.map((output) => <OutputCard key={output.id} output={output}/>)}</div>
+    {model.research_quality && <section className={styles.panel}><h3>Account qualification outputs · internal</h3>
+      <div className={styles.tableWrap}><table><thead><tr><th>Account</th><th>Decision</th><th>Claims</th><th>Passed gates</th><th>Failed gates</th><th>Next action</th></tr></thead>
+        <tbody>{model.research_quality.accounts.map((account) => <tr key={account.domain}><td>{account.account}<br/><small>{account.domain}</small></td><td><StatePill value={account.qualification.state}/></td><td>{account.claims.length}</td><td>{account.qualification.passed_gates.join(", ") || "None"}</td><td>{account.qualification.failed_gates.join(", ") || "None"}</td><td>{account.qualification.justified_next_action}</td></tr>)}</tbody>
+      </table></div>
+    </section>}
   </section>;
 }
 
@@ -290,6 +306,10 @@ function Evidence({ model }: { model: AdminIntelligenceViewModel }) {
   return <section><SectionHeader eyebrow="Availability ≠ quality" title="Evidence integrity" text={e.explanation}/>
     <div className={styles.evidenceHero}><Measurement value={e.availability}/><p>Evidence availability, quality, corroboration, freshness and counterevidence are tracked separately.</p></div>
     <div className={styles.metricGrid}><Metric label="Evidence items" value={e.total ?? "Unavailable"}/><Metric label="Dated" value={e.dated ?? "Unavailable"}/><Metric label="Corroborated" value={e.corroborated ?? "Unavailable"}/><Metric label="Stale" value={e.stale ?? "Unavailable"}/><Metric label="Source classes" value={e.source_classes ?? "Unavailable"}/><Metric label="Counterevidence" value={e.counterevidence_instrumented === null ? "Unavailable" : e.counterevidence_instrumented ? "Instrumented" : "Not instrumented"}/></div>
+    {model.research_quality && <section className={styles.panel}><h3>Research acceptance ledger</h3>
+      <div className={styles.metricGrid}><Metric label="Accepted" value={model.research_quality.summary.accepted_evidence}/><Metric label="Rejected" value={model.research_quality.summary.rejected_evidence}/><Metric label="Wrong entity rejected" value={model.research_quality.summary.wrong_entity_rejections}/><Metric label="Dated coverage" value={pct(model.research_quality.summary.dated_evidence_coverage)}/><Metric label="Corroboration attempts" value={model.research_quality.summary.corroboration_attempts}/><Metric label="Counterevidence checks" value={`${model.research_quality.summary.counterevidence_checks}/${model.research_quality.summary.accounts_researched}`}/></div>
+      <p>Source tiers: {Object.entries(model.research_quality.summary.source_quality_distribution).map(([tier, count]) => `${tier}: ${count}`).join(" · ")}. Provider cost: {model.research_quality.summary.provider_cost.state === "measured" ? `$${model.research_quality.summary.provider_cost.usd}` : "not measured"}.</p>
+    </section>}
     {deep ? <section className={styles.panel}>
       <h3>Deep account intelligence · controlled pass</h3>
       <p>{deep.summary.accounts_researched} shortlisted accounts researched with {deep.summary.provider_calls} bounded provider calls. Search presence is not treated as purchase intent.</p>

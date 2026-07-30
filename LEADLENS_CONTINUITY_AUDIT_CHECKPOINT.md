@@ -1,5 +1,31 @@
 # LeadLens Continuity Audit — Authoritative Checkpoint
 
+## Block 7 continuity update — 2026-07-29
+
+- Starting HEAD: `926b456` (Block 6).
+- Migrations 041 and 042 are owner-confirmed applied.
+- Block 7 added account research profiles, bounded query planning, source tiers,
+  accepted/rejected evidence decisions, atomic claims, ownership-aware source
+  independence, explicit counterevidence, eight-gate opportunity qualification,
+  monitoring triggers and additive Command Center projections.
+- Final same-six-account pass: 19 queries, 17 accepted evidence items, 27
+  rejections, 8 wrong-entity rejections, four dated items, six footprint claims,
+  zero current commercial claims, zero independent corroborations, six bounded
+  counterevidence checks and six qualifications (four prioritize, two monitor,
+  zero actionable).
+- Serper returned HTTP 400; one bounded fallback switched the pass to Brave.
+  Cost stayed `not_measured` because adapters returned no cost estimate.
+- A post-pass audit caught website/social channels being counted as independent.
+  Offline source-owner readjudication removed three false structural
+  corroborations and persisted six corrected versioned dossiers to migration
+  042 tables with zero additional provider calls.
+- No migration 043, Admin-auth change, ranking mutation, customer-report change,
+  production pattern promotion, broad market expansion or final report run.
+- Dirty runtime files `.leadlens/source-intelligence.json` and
+  `.leadlens/usage.json` remain user/runtime state and are excluded.
+- Full implementation and comparison:
+  `LEADLENS_BLOCK_7_RESEARCH_QUALITY_REPORT.md`.
+
 ## 1. Audit timestamp
 
 2026-07-29, America/Bogota.

@@ -15,6 +15,43 @@ import { adaptLearnedPreferences, type LearnedPreferenceSource } from "./pattern
 
 const PILOT_DIR = "ml/data/pilot-amor-de-gea";
 const DEEP_EVIDENCE_DIR = "ml/data/evidence-temporal";
+const RESEARCH_QUALITY_DIR = "ml/data/research-quality";
+
+export interface ResearchQualityArtifact {
+  cutoff: string;
+  summary: {
+    accounts_researched: number; planned_queries: number; rejected_queries: number; executed_queries: number;
+    accepted_evidence: number; rejected_evidence: number; wrong_entity_rejections: number;
+    dated_evidence: number; dated_evidence_coverage: number; claims: number;
+    commercially_relevant_claims: number; corroboration_attempts: number; corroborated_claims: number;
+    counterevidence_checks: number; qualification_coverage: number; actionable_accounts: number;
+    monitor_accounts: number; excluded_accounts: number; query_efficiency: number;
+    decision_distribution: Record<string, number>; source_quality_distribution: Record<string, number>;
+    provider_cost: { state: "measured"; usd: number } | { state: "not_measured"; reason: string };
+    database_persisted_accounts: number;
+  };
+  comparison: { quality_changes: string[] };
+  accounts: Array<{
+    account: string; domain: string;
+    claims: Array<{ claim_id: string; statement: string; category: string; corroboration_state: string; publication_date: string | null; confidence: number }>;
+    qualification: {
+      state: string; passed_gates: string[]; failed_gates: string[]; remaining_uncertainty: string[];
+      justified_next_action: string; unjustified_next_action: string;
+      monitoring_triggers: Array<{ signal_category: string; why_it_matters: string; review_horizon_days: number }>;
+    };
+  }>;
+}
+
+export async function loadLatestResearchQuality(root = process.cwd()): Promise<ResearchQualityArtifact | null> {
+  try {
+    const dir = path.join(root, RESEARCH_QUALITY_DIR);
+    const files = (await fs.readdir(dir)).filter((f) => /^amor-de-gea-block7-.*\.json$/.test(f)).sort();
+    const latest = files.at(-1);
+    if (!latest) return null;
+    const artifact = JSON.parse(await fs.readFile(path.join(dir, latest), "utf8")) as Omit<ResearchQualityArtifact, "cutoff">;
+    return { ...artifact, cutoff: latest };
+  } catch { return null; }
+}
 
 export interface DeepEvidenceArtifact {
   cutoff: string;
@@ -129,6 +166,7 @@ export async function loadSnapshotInputs(opts: {
   const now = opts.now ?? new Date().toISOString();
   const { signals, cutoff } = await loadLatestArtifactSignals(opts.root);
   const deep = await loadLatestDeepEvidence(opts.root);
+  const research = await loadLatestResearchQuality(opts.root);
   const { source } = await loadLatestArtifactOutputSource(opts.root, opts.scope ?? { kind: "global" });
   const outputs = assembleArtifactOutputs(source);
   const patterns = adaptLearnedPreferences(opts.learned_preferences ?? []);
@@ -137,17 +175,28 @@ export async function loadSnapshotInputs(opts: {
     scope: opts.scope ?? { kind: "global" },
     now, source_data_cutoff: cutoff ?? now,
     capability_versions: { entity_resolution: "entity-resolution-v3", company_verification: "segment-universe-v1", structural_account_ranking: "market-to-account-pipeline-v1", company_discovery: "segment-universe-v1" },
-    artifact: signals,
+    artifact: signals ? {
+      ...signals,
+      deep_research_complete: research?.summary.accounts_researched ?? signals.deep_research_complete,
+      evidence_corroborated: research?.summary.corroborated_claims ?? signals.evidence_corroborated,
+      evidence_weak: research ? research.summary.accepted_evidence - research.summary.corroborated_claims : signals.evidence_weak,
+      evidence_total: research?.summary.accepted_evidence ?? signals.evidence_total,
+      dynamic_opportunities: research?.summary.actionable_accounts ?? signals.dynamic_opportunities,
+    } : signals,
     distinct_clients: signals ? 1 : 0,
     feedback: { total_events: 0, rated_events: 0, useful_events: 0, corrections: 0, outcomes },
     knowledge: { vault_companies: null, verified_signals: null, sources: null, distinct_regions: 0, distinct_industries: 0, account_memory_records: null },
-    evidence: deep ? {
-      total: deep.summary.evidence_items,
-      dated: deep.summary.dated_evidence_items,
-      corroborated: deep.summary.corroborated_claims,
+    evidence: research ? {
+      total: research.summary.accepted_evidence,
+      dated: research.summary.dated_evidence,
+      corroborated: research.summary.corroborated_claims,
       stale: null,
-      source_classes: deep.summary.source_classes,
+      source_classes: Object.values(research.summary.source_quality_distribution).filter((n) => n > 0).length,
       counterevidence_instrumented: true,
+    } : deep ? {
+      total: deep.summary.evidence_items, dated: deep.summary.dated_evidence_items,
+      corroborated: deep.summary.corroborated_claims, stale: null,
+      source_classes: deep.summary.source_classes, counterevidence_instrumented: true,
     } : null,
     learner: {
       preference_count: patterns.length,
