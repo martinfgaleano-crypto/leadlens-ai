@@ -56,7 +56,7 @@ const roles = new Set(workspace.portfolio.roles.map((role: any) => role.role));
   ["37 qualitative scores lead", experience.includes("Encaje estructural sólido") && experience.includes("Acceso moderado, sin verificar")],
   ["38 no raw ids in review UI", !review.includes("thesis.thesis_id}") || review.includes("body: JSON.stringify")],
   ["39 account map uses real categories", experience.includes("Posición categórica derivada de decisión, segmento y rol")],
-  ["40 no final export", !experience.includes("Exportar") && !experience.includes("Descargar reporte")],
+  ["40 internal export does not unlock final report", experience.includes("PDF interno") && experience.includes("Generar reporte final") && experience.includes("disabled")],
   ["41 no migration required", !experience.includes("migration") && !intake.includes("migration")],
 ].forEach(([name, condition]) => test(String(name), Boolean(condition)));
 

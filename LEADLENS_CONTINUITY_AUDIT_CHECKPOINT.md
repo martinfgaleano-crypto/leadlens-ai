@@ -403,3 +403,14 @@ Block 3 is complete when registry tests and related regressions pass, checkpoint
 - Responsive browser QA at 1440/1280/1024/390 showed no overflow or console error.
 - No migration, ranking change, provider call, synthetic answer, new account or final report.
 - Full report: `LEADLENS_BLOCK_14_RADICAL_PILOT_EXPERIENCE_REBUILD_REPORT.md`.
+
+## 28. Block 15 — Pilot navigation, ICP, recommendations and internal PDF
+
+- Canonical hierarchy is now Admin -> Intelligence -> Pilots -> Amor de Gea; `/admin/pilot` redirects and no longer competes with the Intelligence workspace.
+- Seven URL-backed Spanish subtabs preserve location and direct navigation; Resumen is the non-empty default.
+- ICP, provenance, unresolved assumptions and the historical discovery funnel are first-class and honest.
+- Six-account validation order is deterministic and role-based, with account rationale, strength, blocker and next action; ranking remains off.
+- Admin-only server PDF provides an eight-page internal review brief. It is private/no-store, pilot-scoped, provider-free and visibly not customer-safe.
+- Final customer report remains locked; 17 questions, zero timing and six unreviewed theses remain unchanged.
+- No migration 048. Targeted and regression suites, typecheck and production build passed.
+- Full record: `LEADLENS_BLOCK_15_PILOT_NAVIGATION_ICP_RECOMMENDATIONS_PDF_REPORT.md`.

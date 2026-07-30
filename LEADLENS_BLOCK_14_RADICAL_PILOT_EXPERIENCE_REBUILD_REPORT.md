@@ -185,3 +185,7 @@ Capturas:
 Desplegar Block 14, verificar la ruta autenticada y capturar las primeras cinco respuestas reales de Amor de Gea como borrador. No aceptar contexto ni generar reporte hasta revisión humana.
 
 Block 15, publicación, outreach, expansión de cuentas y reporte final no fueron iniciados.
+
+## Continuidad posterior — Block 15
+
+Block 15 ya fue ejecutado de forma aditiva: convirtió la navegación por anclas en subtabs con URL, hizo explícitos ICP/universo/recomendaciones y añadió un PDF interno Admin-only. No invalida las decisiones de Block 14: el reporte final sigue bloqueado, ranking permanece sin cambios y no se crearon respuestas sintéticas. Ver `LEADLENS_BLOCK_15_PILOT_NAVIGATION_ICP_RECOMMENDATIONS_PDF_REPORT.md`.

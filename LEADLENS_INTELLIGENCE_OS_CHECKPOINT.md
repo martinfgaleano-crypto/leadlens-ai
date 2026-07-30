@@ -342,3 +342,15 @@ Preserved: `preference-learner` + `shadow-preference` never touch ranking; UI sh
 - Evidence, zero timing, report progress and next actions are interpreted in commercial language. Final report remains disabled; ranking/customer safety remain off.
 - Visual QA passed at 1440, 1280, 1024 and 390 px with no document overflow or console errors. Ten screenshots are under `artifacts/block14-premium-pilot/`.
 - No migration 048, provider research, synthetic answers, new accounts, report generation or Block 15.
+
+## Block 15 checkpoint — navegación, ICP, recomendaciones y PDF interno
+
+- Eliminada la ambigüedad entre `/admin/pilot` y el workspace Intelligence: el legado redirige al piloto canónico.
+- Añadidos breadcrumbs persistentes y siete subtabs con URL, Resumen por defecto y vínculo bidireccional con Command Center.
+- ICP provisional explícito con diez dimensiones, indicadores, descalificadores y procedencia separada en hechos, inferencias y preguntas abiertas.
+- Universo histórico explicado (252/164/21/29/114) y seis cuentas presentadas como muestra controlada, no como mercado completo.
+- Shortlist editorial: BioPlaza, Distribuidora DAM, Natural + Mente, Tu Tienda Saludable, Hotel Spa La Colina y Somos Consiente. No crea score ni cambia ranking.
+- PDF interno A4 Admin-only generado server-side, ocho páginas, visualmente renderizado y corregido. El reporte final para cliente permanece deshabilitado.
+- 47 pruebas Block 15, 41 Block 14, 48 Block 13, 36 Command Center, 48 Auth, 55 evidencia y 51 señales; typecheck y build de 134 páginas aprobados.
+- Sin migración 048, proveedores, respuestas sintéticas, customer-safe output ni Block 16.
+- Informe completo: `LEADLENS_BLOCK_15_PILOT_NAVIGATION_ICP_RECOMMENDATIONS_PDF_REPORT.md`.

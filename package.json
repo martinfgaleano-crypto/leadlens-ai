@@ -86,6 +86,8 @@
     "test:signal-recovery-benchmark": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/signal-recovery-benchmark.test.ts",
     "test:admin-auth": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/admin-auth.test.ts",
     "test:admin-login-routing": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/admin-login-routing.test.ts",
+    "test:pilot-navigation-pdf": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/pilot-navigation-pdf.test.ts",
+    "pilot:internal-pdf": "npx -y tsx --tsconfig tsconfig.json scripts/generate-internal-pilot-pdf.ts",
     "pilot:amor-de-gea": "npx -y tsx --tsconfig tsconfig.json scripts/sources/run-amor-de-gea-pilot.ts",
     "pilot:deep-enrichment": "npx -y tsx --tsconfig tsconfig.json scripts/sources/run-controlled-deep-enrichment.ts",
     "pilot:deep-enrichment:reprocess": "npx -y tsx --tsconfig tsconfig.json scripts/sources/reprocess-controlled-deep-enrichment.ts",

@@ -5,5 +5,5 @@ import PilotExperience from "./pilot-experience";
 
 export default function PilotWorkspacePage({ params }: { params: { pilotId: string } }) {
   if (!canonicalPilotId(params.pilotId)) notFound();
-  return <AdminLayout><PilotExperience workspace={buildPilotWorkspace()} /></AdminLayout>;
+  return <AdminLayout><PilotExperience workspace={buildPilotWorkspace()} activeSection="overview" /></AdminLayout>;
 }

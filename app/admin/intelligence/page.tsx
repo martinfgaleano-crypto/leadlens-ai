@@ -85,21 +85,22 @@ function Overview({ model }: { model: AdminIntelligenceViewModel }) {
 
     <section className={styles.panel}>
       <SectionHeader
-        eyebrow="Live internal pilot"
+        eyebrow="Pilotos activos"
         title="Amor de Gea"
-        text="Canonical Colombian pilot workspace. Client context and human review remain the current blockers."
+        text="Piloto colombiano canónico. El contexto del cliente y la revisión humana siguen siendo los bloqueos actuales."
       />
       <div className={styles.metricGrid}>
-        <Metric label="Pilot status" value="Context required" />
-        <Metric label="Accounts" value="6" />
-        <Metric label="Internal theses" value="6" />
-        <Metric label="Unanswered questions" value="17" />
-        <Metric label="Critical blockers" value="10" />
-        <Metric label="Reviewed theses" value="0" />
-        <Metric label="Customer-safe outputs" value="0" />
+        <Metric label="Etapa" value="Validación con el cliente" />
+        <Metric label="Cuentas analizadas" value="6" />
+        <Metric label="Recomendadas" value="4" />
+        <Metric label="Monitoreadas" value="2" />
+        <Metric label="Preguntas sin respuesta" value="17" />
+        <Metric label="Preguntas críticas" value="10" />
+        <Metric label="Tesis revisadas" value="0" />
+        <Metric label="Salidas aptas para cliente" value="0" />
       </div>
-      <p><strong>Next action:</strong> complete and review the highest-priority client-context questions.</p>
-      <a href="/admin/intelligence/pilots/amor-de-gea">Open Amor de Gea pilot workspace →</a>
+      <p><strong>Próxima acción:</strong> completar y revisar las preguntas prioritarias de contexto del cliente.</p>
+      <a href="/admin/intelligence/pilots/amor-de-gea">Abrir piloto →</a>
     </section>
 
     <div className={styles.availability} role="status">

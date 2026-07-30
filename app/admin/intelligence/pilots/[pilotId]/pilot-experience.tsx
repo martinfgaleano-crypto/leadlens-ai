@@ -1,7 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import type { PilotWorkspace } from "@/lib/intelligence/pilot-workspace";
+import { ACCOUNT_UNIVERSE, ICP, PILOT_SECTIONS, type PilotSection, recommendations } from "@/lib/intelligence/pilot-intelligence";
 import PilotIntake from "./pilot-intake";
 import PilotReviewOperations from "./pilot-review-operations";
 import styles from "./workspace.module.css";
@@ -255,8 +257,9 @@ function AccountDetail({ workspace, account }: { workspace: PilotWorkspace; acco
   </div>;
 }
 
-export default function PilotExperience({ workspace }: { workspace: PilotWorkspace }) {
-  const [selectedId, setSelectedId] = useState(workspace.portfolio?.sequence?.[0]?.account_id ?? workspace.accounts[0]?.account_id);
+export default function PilotExperience({ workspace, activeSection = "overview", initialAccountId }: { workspace: PilotWorkspace; activeSection?: PilotSection; initialAccountId?: string }) {
+  const recs = useMemo(() => recommendations(workspace), [workspace]);
+  const [selectedId, setSelectedId] = useState(initialAccountId ?? recs[0]?.account.account_id ?? workspace.accounts[0]?.account_id);
   const selected = workspace.accounts.find((account: any) => account.account_id === selectedId) ?? workspace.accounts[0];
   const entry = workspace.accounts.find((account: any) => roleFor(workspace, account.account_id)?.role === "accessible_entry_account");
   const strategic = workspace.accounts.find((account: any) => roleFor(workspace, account.account_id)?.role === "strategic_account");
@@ -270,16 +273,23 @@ export default function PilotExperience({ workspace }: { workspace: PilotWorkspa
   }), [workspace]);
 
   return <div className={styles.workspace}>
+    <div className={styles.locationBar}>
+      <nav className={styles.breadcrumbs} aria-label="Ruta de navegación">
+        <Link href="/admin">Admin</Link><span>/</span><Link href="/admin/intelligence">Intelligence</Link><span>/</span><Link href="/admin/intelligence">Pilotos</Link><span>/</span><strong>Amor de Gea</strong>
+      </nav>
+      <Link className={styles.commandLink} href="/admin/intelligence">← Volver al Command Center</Link>
+      <div className={styles.locationTitle}><div><strong>Amor de Gea</strong><span>Piloto de inteligencia comercial</span></div><span className={styles.internalBadge}>Revisión interna</span></div>
+    </div>
     <nav className={styles.workspaceNav} aria-label="Navegación del piloto">
-      <a href="#brief">Resumen ejecutivo</a>
-      <a href="#portfolio">Portafolio</a>
-      <a href="#account">Inteligencia de cuenta</a>
-      <a href="#readiness">Preparación del cliente</a>
-      <a href="#evidence">Evidencia y timing</a>
-      <a href="#report">Progreso del reporte</a>
+      {PILOT_SECTIONS.map(([section, label]) => <Link
+        key={section}
+        href={section === "overview" ? "/admin/intelligence/pilots/amor-de-gea" : `/admin/intelligence/pilots/amor-de-gea/${section}`}
+        className={activeSection === section ? styles.activeTab : ""}
+        aria-current={activeSection === section ? "page" : undefined}
+      >{label}</Link>)}
     </nav>
 
-    <header id="brief" className={styles.executive}>
+    {activeSection === "overview" && <><header id="brief" className={styles.executive}>
       <div className={styles.executiveTop}>
         <div>
           <span className={styles.eyebrow}>Piloto de oportunidad comercial · Colombia</span>
@@ -306,23 +316,47 @@ export default function PilotExperience({ workspace }: { workspace: PilotWorkspa
         <div className={styles.recommendation}><span>Próxima decisión</span><strong>Confirmar oferta, mínimos y capacidad</strong><p>Estas respuestas desbloquean viabilidad para {affected} cuentas y permiten revisar las seis tesis.</p></div>
       </div>
     </header>
+    <section className={styles.overviewBrief}>
+      <div><span className={styles.eyebrow}>Perfil de cliente ideal</span><h2>Qué está buscando LeadLens</h2><p>{ICP.summary}</p><Link href="/admin/intelligence/pilots/amor-de-gea/icp">Ver perfil, procedencia y preguntas abiertas →</Link></div>
+      <div><span className={styles.eyebrow}>Cuentas recomendadas</span><h2>Secuencia de validación</h2>{recs.slice(0, 4).map(rec => <p key={rec.account.account_id}><strong>{rec.order}. {rec.account.account_name}</strong><br />{rec.rationale}</p>)}<Link href="/admin/intelligence/pilots/amor-de-gea/accounts">Ver shortlist completa →</Link></div>
+      <div><span className={styles.eyebrow}>Estado de exportación</span><h2>Dos salidas, dos estados</h2><p><strong>PDF interno:</strong> disponible para revisión.</p><p><strong>Reporte final para cliente:</strong> bloqueado hasta completar contexto y revisión.</p><a className={styles.exportButton} href="/api/admin/intelligence/pilots/amor-de-gea/pdf">Descargar PDF interno</a><small>Versión interna del piloto; todavía no corresponde al reporte final.</small></div>
+    </section></>}
 
+    {activeSection === "icp" && <section id="icp" className={styles.section}>
+      <header className={styles.sectionHeader}><div><span className={styles.eyebrow}>Perfil de cliente ideal</span><h2>Una hipótesis explícita, no una verdad cerrada</h2></div><p>{ICP.summary}</p></header>
+      <div className={styles.icpConfidence}><div><strong>{ICP.provenance.facts.length}</strong><span>criterios verificados</span></div><div><strong>{ICP.provenance.inferences.length}</strong><span>grupos de inferencias</span></div><div><strong>{ICP.provenance.questions.length}</strong><span>grupos por confirmar</span></div></div>
+      <div className={styles.icpGrid}>{ICP.dimensions.map(([name, value, state]) => <article key={name}><span className={styles.contentType}>{state === "hecho" ? "HECHO" : state === "inferencia" ? "INFERENCIA" : "PREGUNTA ABIERTA"}</span><h3>{name}</h3><p>{value}</p></article>)}</div>
+      <div className={styles.provenanceGrid}>
+        <section><h3>Indicadores positivos</h3><ul>{ICP.positive.map(x => <li key={x}>{x}</li>)}</ul></section>
+        <section><h3>Descalificadores</h3><ul>{ICP.disqualifiers.map(x => <li key={x}>{x}</li>)}</ul></section>
+        <section><h3>Cómo se derivó</h3><h4>Hechos</h4><ul>{ICP.provenance.facts.map(x => <li key={x}>{x}</li>)}</ul><h4>Inferencias</h4><ul>{ICP.provenance.inferences.map(x => <li key={x}>{x}</li>)}</ul><h4>Preguntas abiertas</h4><ul>{ICP.provenance.questions.map(x => <li key={x}>{x}</li>)}</ul></section>
+      </div>
+    </section>}
+
+    {activeSection === "accounts" && <><section className={styles.section}>
+      <header className={styles.sectionHeader}><div><span className={styles.eyebrow}>Universo analizado</span><h2>De descubrimiento amplio a una muestra controlada</h2></div><p>{ACCOUNT_UNIVERSE.limitation}</p></header>
+      <div className={styles.funnel}>{[
+        [ACCOUNT_UNIVERSE.raw, "Brutos"], [ACCOUNT_UNIVERSE.deduplicated, "Deduplicados"], [ACCOUNT_UNIVERSE.verified, "Verificados"], [ACCOUNT_UNIVERSE.probable, "Probables"], [ACCOUNT_UNIVERSE.excluded, "Excluidos"], [ACCOUNT_UNIVERSE.controlled, "Muestra controlada"]
+      ].map(([value, label]) => <div key={label}><strong>{value}</strong><span>{label}</span></div>)}</div>
+      <div className={styles.universeNote}><strong>¿Por qué estas seis?</strong><p>Cubren retail especializado, salud, premium, hospitalidad/bienestar, distribución y estilo de vida consciente. Cada una prueba una dimensión del perfil y una ruta comercial distinta; dos se conservan para aprender de triggers, no porque exista timing.</p></div>
+    </section>
     <section id="portfolio" className={styles.section}>
       <header className={styles.sectionHeader}>
-        <div><span className={styles.eyebrow}>Account Portfolio</span><h2>Seis rutas comerciales, no un ranking plano</h2></div>
-        <p>El portafolio combina cuentas de entrada, alcance estratégico, canal y monitoreo. Selecciona una para abrir su tesis completa.</p>
+        <div><span className={styles.eyebrow}>Cuentas recomendadas</span><h2>Una secuencia transparente para validar</h2></div>
+        <p>El orden combina encaje con el perfil, claridad del caso de uso, acceso, viabilidad, evidencia, fricción y valor de aprendizaje. No crea un score nuevo ni supone intención de compra.</p>
       </header>
       <div className={styles.portfolioLayout}>
         <div className={styles.accountList}>
-          {workspace.accounts.map((account: any) => {
+          {recs.map((rec) => { const account = rec.account;
             const role = roleFor(workspace, account.account_id);
-            return <button key={account.account_id} onClick={() => setSelectedId(account.account_id)} className={`${styles.accountCard} ${selectedId === account.account_id ? styles.selected : ""}`}>
+            return <article key={account.account_id} className={`${styles.accountCard} ${selectedId === account.account_id ? styles.selected : ""}`}>
               <div className={`${styles.identityMark} ${styles[account.segment]}`}>{account.account_name.slice(0, 2).toUpperCase()}</div>
               <div className={styles.accountCardMain}>
-                <span>{SEGMENT[account.segment] ?? account.segment}</span>
-                <h3>{account.account_name}</h3>
-                <p>{strategicCopy(account, role)}</p>
-                <div><strong>{DECISION[account.decision]}</strong><span>{ROLE[role?.role]}</span></div>
+                <span>#{rec.order} · {SEGMENT[account.segment] ?? account.segment}</span>
+                <h3>{account.account_name}</h3><strong>{rec.category}</strong>
+                <p>{rec.rationale}</p>
+                <p><strong>Fortaleza:</strong> {rec.strength}</p><p><strong>Bloqueo:</strong> {rec.blocker}</p><p><strong>Próxima acción:</strong> {rec.action}</p>
+                <Link href={`/admin/intelligence/pilots/amor-de-gea/account?account=${encodeURIComponent(account.account_id)}`}>Ver análisis completo →</Link>
               </div>
               <div className={styles.accountQualities}>
                 <span>{qualitative(account.confidence?.client_fit, "fit")}</span>
@@ -330,7 +364,7 @@ export default function PilotExperience({ workspace }: { workspace: PilotWorkspa
                 <span>Viabilidad por confirmar</span>
                 <span>Sin timing actual</span>
               </div>
-            </button>;
+            </article>;
           })}
         </div>
         <aside className={styles.mapPanel}>
@@ -340,13 +374,14 @@ export default function PilotExperience({ workspace }: { workspace: PilotWorkspa
           <div className={styles.mapLegend}><span>Retail</span><span>Distribución</span><span>Hospitalidad</span><span>Bienestar</span></div>
         </aside>
       </div>
-    </section>
+    </section></>}
 
-    <section id="account" className={styles.section}>
+    {activeSection === "account" && <section id="account" className={styles.section}>
+      <div className={styles.accountSelector}>{recs.map(rec => <Link key={rec.account.account_id} className={selectedId === rec.account.account_id ? styles.selectedAccountLink : ""} href={`/admin/intelligence/pilots/amor-de-gea/account?account=${encodeURIComponent(rec.account.account_id)}`}>{rec.order}. {rec.account.account_name}</Link>)}</div>
       <AccountDetail workspace={workspace} account={selected} />
-    </section>
+    </section>}
 
-    <section id="readiness" className={styles.section}>
+    {activeSection === "context" && <section id="readiness" className={styles.section}>
       <header className={styles.sectionHeader}>
         <div><span className={styles.eyebrow}>Client Readiness</span><h2>Convertir incertidumbre en decisiones</h2></div>
         <p>Las preguntas están priorizadas por el efecto que tienen sobre cuentas, viabilidad y secciones del reporte.</p>
@@ -355,9 +390,9 @@ export default function PilotExperience({ workspace }: { workspace: PilotWorkspa
         {["Oferta B2B", "Capacidad y operación", "Precios y mínimos", "Cobertura geográfica", "Cumplimiento", "Estrategia comercial"].map(category => <div key={category}><strong>{category}</strong><span>Necesita confirmación</span></div>)}
       </div>
       <PilotIntake pilotId={workspace.pilot.pilot_id} questions={workspace.questions} />
-    </section>
+    </section>}
 
-    <section id="evidence" className={styles.section}>
+    {activeSection === "evidence" && <section id="evidence" className={styles.section}>
       <header className={styles.sectionHeader}>
         <div><span className={styles.eyebrow}>Evidence & Monitoring</span><h2>Lo que sabemos y lo que todavía no justifica acción</h2></div>
         <p>La ausencia de una señal no es ausencia de trabajo: es una conclusión temporal honesta.</p>
@@ -387,9 +422,9 @@ export default function PilotExperience({ workspace }: { workspace: PilotWorkspa
         <div><span className={styles.contentType}>RECOMENDACIÓN</span><p>Secuencia de validación, no intención de compra.</p></div>
         <div><span className={styles.contentType}>LIMITACIÓN</span><p>Sin timing, economía ni capacidad confirmada.</p></div>
       </div>
-    </section>
+    </section>}
 
-    <section id="report" className={styles.section}>
+    {activeSection === "readiness" && <section id="report" className={styles.section}>
       <header className={styles.sectionHeader}>
         <div><span className={styles.eyebrow}>Review & Finalization</span><h2>Mapa de progreso hacia el reporte</h2></div>
         <p>El análisis ya tiene una base útil. Cada grupo muestra lo completado y la dependencia exacta que falta.</p>
@@ -421,8 +456,9 @@ export default function PilotExperience({ workspace }: { workspace: PilotWorkspa
         </div>
         <aside><strong>Efecto esperado</strong><p>Desbloquear la evaluación de viabilidad de seis cuentas, mejorar las secciones dependientes del contexto y habilitar una revisión fundada de las seis tesis.</p></aside>
       </div>
+      <div className={styles.exportStates}><div><strong>PDF interno del piloto</strong><span>Disponible para revisión interna</span><a className={styles.exportButton} href="/api/admin/intelligence/pilots/amor-de-gea/pdf">Descargar piloto en PDF</a><small>No corresponde todavía al reporte final para el cliente.</small></div><div><strong>Reporte final para cliente</strong><span>Bloqueado</span><button disabled>Generar reporte final</button><small>Requiere completar contexto, evidencia y revisión.</small></div></div>
       <div className={styles.reportLock}>El reporte final permanecerá deshabilitado hasta completar las confirmaciones y revisiones necesarias.</div>
-    </section>
+    </section>}
 
     <footer className={styles.workspaceFooter}>
       <span>Solo para revisión interna</span>

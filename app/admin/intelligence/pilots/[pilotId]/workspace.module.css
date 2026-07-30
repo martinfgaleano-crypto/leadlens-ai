@@ -17,6 +17,17 @@
 .workspace button, .workspace input, .workspace textarea, .workspace select { font: inherit; }
 .workspace a { color: var(--sage); }
 
+.locationBar { margin-bottom: .5rem; }
+.breadcrumbs { display: flex; flex-wrap: wrap; gap: .45rem; color: var(--muted); font-size: .72rem; }
+.breadcrumbs a { text-decoration: none; }
+.breadcrumbs strong { color: var(--ink); }
+.commandLink { display: inline-block; margin: 1rem 0; font-size: .75rem; font-weight: 800; text-decoration: none; }
+.locationTitle { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--line); }
+.locationTitle div { display: grid; gap: .2rem; }
+.locationTitle div strong { font: 500 1.7rem Georgia, serif; }
+.locationTitle div span { color: var(--muted); font-size: .74rem; }
+.internalBadge { padding: .4rem .65rem; color: #765a28; background: var(--gold-soft); font-size: .67rem; font-weight: 800; text-transform: uppercase; }
+
 .workspaceNav {
   position: sticky;
   top: 0;
@@ -39,6 +50,39 @@
   white-space: nowrap;
 }
 .workspaceNav a:hover, .workspaceNav a:focus-visible { color: var(--sage); }
+.workspaceNav a.activeTab { position: relative; color: var(--ink); }
+.workspaceNav a.activeTab::after { position: absolute; right: 0; bottom: -.95rem; left: 0; height: 3px; content: ""; background: var(--sage); }
+
+.overviewBrief { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin-top: 1px; background: var(--line); }
+.overviewBrief > div { padding: 1.5rem; background: #fff; }
+.overviewBrief h2 { margin: .5rem 0; font: 500 1.35rem Georgia, serif; }
+.overviewBrief p { color: var(--muted); font-size: .74rem; line-height: 1.5; }
+.overviewBrief a { font-size: .74rem; font-weight: 800; }
+.overviewBrief small, .exportStates small { display: block; margin-top: .55rem; color: var(--muted); font-size: .64rem; line-height: 1.4; }
+.exportButton { display: inline-block; padding: .72rem 1rem; color: #fff !important; background: var(--sage); text-decoration: none; }
+
+.icpConfidence, .funnel { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px; margin-bottom: 1.5rem; background: var(--line); border: 1px solid var(--line); }
+.icpConfidence { grid-template-columns: repeat(3, 1fr); }
+.icpConfidence div, .funnel div { padding: 1rem; background: #fff; text-align: center; }
+.icpConfidence strong, .funnel strong { display: block; font: 500 1.8rem Georgia, serif; }
+.icpConfidence span, .funnel span { color: var(--muted); font-size: .68rem; }
+.icpGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.icpGrid article { padding: 1.2rem; background: #fff; }
+.icpGrid h3 { margin: .4rem 0; font: 500 1.15rem Georgia, serif; }
+.icpGrid p, .provenanceGrid li, .universeNote p { color: var(--muted); font-size: .74rem; line-height: 1.5; }
+.provenanceGrid { display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 1rem; margin-top: 1rem; }
+.provenanceGrid section, .universeNote { padding: 1.3rem; background: var(--wash); }
+.provenanceGrid h3, .universeNote strong { font: 500 1.15rem Georgia, serif; }
+.provenanceGrid h4 { margin-bottom: .2rem; font-size: .72rem; text-transform: uppercase; }
+.universeNote { margin-top: 1rem; }
+.accountSelector { display: flex; gap: .5rem; overflow-x: auto; margin-bottom: 2rem; padding-bottom: .7rem; }
+.accountSelector a { padding: .6rem .75rem; color: var(--muted); background: var(--wash); white-space: nowrap; text-decoration: none; font-size: .7rem; font-weight: 700; }
+.accountSelector a.selectedAccountLink { color: #fff; background: var(--sage); }
+.exportStates { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; margin-top: 1.5rem; background: var(--line); border: 1px solid var(--line); }
+.exportStates > div { display: grid; gap: .65rem; align-content: start; padding: 1.4rem; background: #fff; }
+.exportStates span { color: var(--muted); font-size: .75rem; }
+.exportStates button { padding: .72rem 1rem; color: #8a8f8c; background: #edf0ee; border: 0; }
+
 
 .executive {
   scroll-margin-top: 70px;
@@ -309,6 +353,7 @@
   .strategicSummary { grid-template-columns: repeat(2, 1fr); }
   .categoryStrip { grid-template-columns: repeat(3, 1fr); }
   .timingModule { grid-template-columns: repeat(2, 1fr); }
+  .overviewBrief { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 900px) {
@@ -320,6 +365,7 @@
   .accountCard { grid-template-columns: 52px minmax(0, 1fr); }
   .accountQualities { grid-column: 2; padding: .8rem 0 0; border-left: 0; border-top: 1px solid var(--line); }
   .reviewForm, .nextActions { grid-template-columns: 1fr; }
+  .provenanceGrid, .exportStates { grid-template-columns: 1fr; }
   .nextActions aside { padding: 1rem 0 0; border-left: 0; border-top: 1px solid #40564c; }
 }
 
@@ -335,4 +381,6 @@
   .readinessIntro { grid-template-columns: 1fr; gap: .5rem; }
   .portfolioMap { height: 330px; }
   .workspaceFooter { flex-direction: column; }
+  .icpGrid, .icpConfidence, .funnel { grid-template-columns: 1fr; }
+  .locationTitle { align-items: flex-start; flex-direction: column; }
 }
