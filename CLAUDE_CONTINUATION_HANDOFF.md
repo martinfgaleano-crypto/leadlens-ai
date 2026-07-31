@@ -292,3 +292,12 @@ Before modifying code, propose the smallest concrete phase that advances:
 
 Preserve every invariant documented in the handoff.
 ```
+
+## 20. Client questionnaire experience (added)
+
+Professional client-context questionnaires now exist (reusable across pilots):
+- Editable **XLSX** (primary): `GET /api/admin/intelligence/pilots/[pilotId]/questionnaire/xlsx`
+- Read/print **PDF**: `GET /api/admin/intelligence/pilots/[pilotId]/questionnaire/pdf`
+- Technical **CSV** (fallback): `GET /api/admin/intelligence/pilots/[pilotId]/questionnaire`
+Model: `lib/intelligence/client-questionnaire.ts` (17 client-facing questions, 9 esenciales, 3 phases, options/units/confidence, hidden import keys). Renderers: `lib/reports/client-questionnaire-xlsx.ts` (exceljs), `lib/reports/client-questionnaire-pdf.ts` (jsPDF). Admin: 3-button module in the Context tab. Admin-only, private/no-store, provider-free, answers blank, no internal names on client outputs. See `LEADLENS_CLIENT_QUESTIONNAIRE_EXPERIENCE_REPORT.md`.
+**Next operational step:** send the XLSX/PDF to Amor de Gea; import the returned answers as `admin_entry` and review/accept before recalculating theses. Do not import/accept before review.

@@ -391,10 +391,12 @@ export default function PilotExperience({ workspace, activeSection = "overview",
       </div>
       <div className={styles.exportStates}>
         <div>
-          <strong>Cuestionario de contexto ({workspace.questions.length} preguntas)</strong>
-          <span>Envíaselo al cliente para que lo complete y devuelva</span>
-          <a className={styles.exportButton} href={`/api/admin/intelligence/pilots/${workspace.pilot.pilot_id}/questionnaire`}>Exportar cuestionario (CSV)</a>
-          <small>CSV editable con columnas de respuesta en blanco. Las respuestas se cargan y revisan aquí antes de recalcular las tesis.</small>
+          <strong>Cuestionario para el cliente</strong>
+          <span>Recoge la información operativa y comercial necesaria para afinar las seis tesis de oportunidad. 17 preguntas · 9 esenciales · 20–30 min. Ninguna respuesta viene precargada; todo queda sujeto a revisión de LeadLens.</span>
+          <a className={styles.exportButton} href={`/api/admin/intelligence/pilots/${workspace.pilot.pilot_id}/questionnaire/xlsx`}>Descargar cuestionario editable (.xlsx)</a>
+          <a className={styles.exportButton} href={`/api/admin/intelligence/pilots/${workspace.pilot.pilot_id}/questionnaire/pdf`}>Descargar cuestionario para revisión (.pdf)</a>
+          <a href={`/api/admin/intelligence/pilots/${workspace.pilot.pilot_id}/questionnaire`}><small>Descargar CSV técnico</small></a>
+          <small>Descargar no crea ni acepta contexto. Las respuestas se cargan y revisan aquí antes de recalcular las tesis.</small>
         </div>
       </div>
       <PilotIntake pilotId={workspace.pilot.pilot_id} questions={workspace.questions} />

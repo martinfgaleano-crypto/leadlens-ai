@@ -443,3 +443,6 @@ Block 3 is complete when registry tests and related regressions pass, checkpoint
 - This closeout is documentation-only. Pre-existing `.leadlens/source-intelligence.json` and `.leadlens/usage.json` runtime changes remain intentionally excluded.
 - Block 17 was not started. Next authorized phase: Client Context Completion and Account Intelligence Quality Improvement.
 - Git push, Vercel readiness and production smoke validation remain pending after the closeout commit.
+
+## Client questionnaire experience (added)
+Professional client questionnaires (XLSX primary / PDF / CSV fallback) added, reusable per pilot; Admin-only, provider-free, answers blank. Endpoints under `/api/admin/intelligence/pilots/[pilotId]/questionnaire[/xlsx|/pdf]`. See `LEADLENS_CLIENT_QUESTIONNAIRE_EXPERIENCE_REPORT.md`. Next: send to Amor de Gea, import answers after review.

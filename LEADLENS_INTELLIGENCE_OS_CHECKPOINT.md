@@ -384,3 +384,6 @@ Preserved: `preference-learner` + `shadow-preference` never touch ranking; UI sh
 - Cierre exclusivamente documental; no modifica producto, Auth, renderer, migraciones, datos ni lógica de Intelligence.
 - Block 17 no fue iniciado. La siguiente fase autorizable sigue siendo Client Context Completion and Account Intelligence Quality Improvement.
 - El commit documental queda listo para push; Vercel/producción permanece pendiente hasta que ese push y deployment ocurran.
+
+## Client questionnaire experience (added)
+Professional client questionnaires (XLSX primary / PDF / CSV fallback) added, reusable per pilot; Admin-only, provider-free, answers blank. Endpoints under `/api/admin/intelligence/pilots/[pilotId]/questionnaire[/xlsx|/pdf]`. See `LEADLENS_CLIENT_QUESTIONNAIRE_EXPERIENCE_REPORT.md`. Next: send to Amor de Gea, import answers after review.
