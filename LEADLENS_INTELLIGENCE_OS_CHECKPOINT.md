@@ -366,3 +366,13 @@ Preserved: `preference-learner` + `shadow-preference` never touch ranking; UI sh
 - Final customer report, ranking y customer safety continúan bloqueados. Sin migración ni Block 17.
 - Regresión: 42/42 premium, 47/47 Block 15, 41/41 Block 14, 48/48 Block 13, 48/48 Auth, 55/55 evidencia, 51/51 señales; typecheck y build aprobados.
 - Informe completo: `LEADLENS_BLOCK_16_PREMIUM_INTERNAL_PDF_REBUILD_REPORT.md`.
+
+### Corrección final y handoff Claude
+
+- PDF verificado: 16 páginas; route y script comparten el renderer activo. El PDF de ocho páginas era un artefacto/build anterior, no una ruta vigente.
+- Arquitectura impresa alineada con los siete tabs Admin y con su verde profundo, fondo cálido, jerarquía, roles y readiness.
+- Funnel técnico y métrica hero de cero timing removidos del cuerpo principal; timing ahora es interpretación útil.
+- Navegación compartida desde `PILOT_SECTIONS`; co-branding reutilizable mediante `PilotReportBrand`.
+- Dos render-review cycles a 180 DPI comparados con Admin 1440/1280/1024; temporales excluidos.
+- Continuidad completa para Claude: `CLAUDE_CONTINUATION_HANDOFF.md`.
+- Próxima fase, no iniciada: Client Context Completion and Account Intelligence Quality Improvement.

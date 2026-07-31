@@ -98,3 +98,5 @@ Stop confirmado: no se inició Block 16, outreach, expansión de cuentas, invest
 ## Continuidad posterior — Block 16
 
 Block 16 sustituyó este PDF interno de ocho páginas por un brief premium de 16 páginas, sin cambiar el ranking, las seis cuentas ni el bloqueo customer-safe. El nuevo filename es `leadlens-amor-de-gea-informe-interno-YYYY-MM-DD.pdf`; incluye metadata, links, funnel, mapa de portafolio y una página editorial por cuenta. La implementación y su QA render-first están documentadas en `LEADLENS_BLOCK_16_PREMIUM_INTERNAL_PDF_REBUILD_REPORT.md`.
+
+Corrección final: el PDF de 16 páginas fue alineado con los siete tabs y el sistema visual del Admin. El funnel técnico dejó de ser una sección principal, cero timing dejó de ser métrica hero y el mapa/portfolio/perfiles permanecen como adaptaciones impresas del workspace.

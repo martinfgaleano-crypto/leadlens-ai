@@ -133,3 +133,29 @@ La calidad visual y editorial ya es comercialmente creíble, pero el documento s
 Siguiente acción exacta: desplegar el commit de Block 16, entrar con una sesión Admin real, descargar `leadlens-amor-de-gea-informe-interno-YYYY-MM-DD.pdf` desde el piloto y validar links/metadatos en el visor de producción. Después, obtener de Amor de Gea las cinco respuestas críticas antes de considerar el reporte final.
 
 Stop confirmado: Block 16 termina aquí. No se inició Block 17, reporte final, publicación, nuevas cuentas, outreach, contactos ni ranking adaptativo.
+
+## Corrección final — adaptación impresa de la experiencia Admin
+
+La revisión final confirmó que HEAD producía el renderer Block 16 de 16 páginas; la versión de ocho páginas solo puede corresponder a un build o descarga anterior. La ruta protegida y el generador local importan el mismo `buildInternalPilotPdf`, no existe un segundo renderer alcanzable y `private, no-store` evita reutilización del PDF por cache.
+
+El Admin premium —validado previamente en artefactos de 1440, 1280 y 1024 px— quedó como fuente visual y estructural de verdad. El PDF ahora representa sus siete tabs mediante una banda impresa persistente:
+
+| Admin | PDF | Adaptación |
+|---|---|---|
+| Resumen | páginas 2–3 | diagnóstico, prioridades y secuencia |
+| ICP | página 4 | contexto de oportunidad y supuestos |
+| Cuentas recomendadas | páginas 5–7 | razones, portfolio y mapa |
+| Análisis por cuenta | páginas 8–13 | tesis, oportunidad, ruta, validación, trigger y acción |
+| Contexto | página 14 | conocido/propuesto/confirmación y cinco preguntas |
+| Evidencia y timing | página 15 | soporte, incertidumbre, monitoreo y lectura temporal |
+| Preparación del reporte | páginas 15–16 | progreso, unlocks, método y límites |
+
+Se eliminó del cuerpo principal el funnel 252/164/21/29/114, la narrativa de deduplicación, la versión metodológica visible, el ranking técnico y la métrica hero de cero timing. La amplitud de investigación queda como una frase discreta en metodología. Timing se interpreta en prosa y por triggers específicos.
+
+El visual usa el mismo verde profundo, off-white, mint, reglas, jerarquía y estados del Admin. Las páginas de cuenta reducen cajas repetidas y conservan el orden conceptual del detalle Admin. `PILOT_SECTIONS` es compartido con el producto y `PilotReportBrand` permite configurar nombre, categoría, geografía, accent, logo/tagline y cover motif para futuros pilotos.
+
+Se realizaron dos ciclos finales a 180 DPI, con contact sheets locales comparados contra los artefactos Admin. Se corrigió la única discrepancia del primer ciclo: colisión entre etiquetas en la navegación impresa. Los artefactos temporales no forman parte del commit.
+
+Handoff completo: `CLAUDE_CONTINUATION_HANDOFF.md`.
+
+Próxima fase exacta, no iniciada: **AMOR DE GEA PILOT — CLIENT CONTEXT COMPLETION AND ACCOUNT INTELLIGENCE QUALITY IMPROVEMENT**.

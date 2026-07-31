@@ -425,3 +425,13 @@ Block 3 is complete when registry tests and related regressions pass, checkpoint
 - Final report, customer-safe promotion, timing inference and production ranking remain off. No migration and no Block 17.
 - Targeted/regression suites, TypeScript and the 134-page production build passed.
 - Full record: `LEADLENS_BLOCK_16_PREMIUM_INTERNAL_PDF_REBUILD_REPORT.md`.
+
+### Final Admin-matched PDF correction
+
+- Verified the active local/route renderer produces 16 A4 pages; no reachable eight-page renderer remains.
+- Printed section band mirrors the seven canonical Admin tabs and uses shared `PILOT_SECTIONS`.
+- Removed the technical processing funnel, visible method version/ranking language and zero-timing hero treatment.
+- Account pages now read as print adaptations of Admin detail rather than a separate consulting template.
+- Client branding is data-driven through `PilotReportBrand`; LeadLens remains the primary verified design system.
+- Two 180-DPI render/contact-sheet reviews were compared with stored Admin QA at 1440, 1280 and 1024.
+- Claude continuation source of truth: `CLAUDE_CONTINUATION_HANDOFF.md`. Block 17 was not started.

@@ -1,11 +1,11 @@
 import { jsPDF } from "jspdf";
 import type { PilotWorkspace } from "@/lib/intelligence/pilot-workspace";
-import { ACCOUNT_UNIVERSE, ICP, recommendations } from "@/lib/intelligence/pilot-intelligence";
+import { ICP, PILOT_SECTIONS, recommendations } from "@/lib/intelligence/pilot-intelligence";
 
-export const PREMIUM_PDF_VERSION = "leadlens-internal-brief-v2";
+export const PREMIUM_PDF_VERSION = "leadlens-pilot-brief-v3";
 export const PREMIUM_EXPECTED_PAGES = 16;
 export const PDF_MIN_BODY_SIZE = 9.5;
-const INTERNAL = "INTERNO - NO APTO TODAVIA PARA ENTREGA AL CLIENTE";
+export const PILOT_REPORT_SECTIONS = PILOT_SECTIONS.map(([, label]) => safe(label));
 const GREEN = [18, 43, 34] as const;
 const SAGE = [47, 101, 80] as const;
 const MINT = [226, 239, 232] as const;
@@ -18,6 +18,24 @@ const WHITE = [255, 255, 255] as const;
 
 type ClaimKind = "HECHO" | "INFERENCIA" | "RECOMENDACION" | "LIMITACION";
 type PdfColor = readonly [number, number, number];
+export type PilotReportBrand = {
+  clientName: string;
+  category: string;
+  geography: string;
+  reportLanguage: "es";
+  accent: PdfColor;
+  coverMotif: "botanical-lines" | "none";
+  logoUrl?: string;
+  tagline?: string;
+};
+export const AMOR_DE_GEA_REPORT_BRAND: PilotReportBrand = {
+  clientName: "Amor de Gea",
+  category: "infusiones botanicas",
+  geography: "Colombia",
+  reportLanguage: "es",
+  accent: GOLD,
+  coverMotif: "botanical-lines",
+};
 type PremiumCopy = {
   thesis: string; useCase: string; buyer: string; route: string; friction: string;
   validation: string; action: string; fallback: string; avoid: string; trigger: string;
@@ -119,15 +137,15 @@ export function premiumAccountEditorial(workspace: PilotWorkspace) {
   return recommendations(workspace).map(rec => ({ ...rec, editorial: COPY[rec.account.account_name] }));
 }
 
-export function buildInternalPilotPdf(workspace: PilotWorkspace, generatedAt = new Date()) {
+export function buildInternalPilotPdf(workspace: PilotWorkspace, generatedAt = new Date(), brand: PilotReportBrand = AMOR_DE_GEA_REPORT_BRAND) {
   const pdf = new jsPDF({ unit: "mm", format: "a4", compress: true, putOnlyUsedFonts: true });
   const accounts = premiumAccountEditorial(workspace);
   const reportDate = generatedAt.toLocaleDateString("es-CO");
   pdf.setProperties({
-    title: "Amor de Gea - Informe interno de inteligencia comercial",
+    title: `${brand.clientName} - Informe interno de inteligencia comercial`,
     author: "LeadLens",
-    subject: "Piloto interno de oportunidades comerciales en Colombia",
-    keywords: "LeadLens, Amor de Gea, inteligencia comercial, cuentas, Colombia, piloto interno",
+    subject: `Piloto interno de oportunidades comerciales en ${brand.geography}`,
+    keywords: `LeadLens, ${brand.clientName}, inteligencia comercial, cuentas, ${brand.geography}, piloto interno`,
     creator: PREMIUM_PDF_VERSION,
   });
 
@@ -143,9 +161,25 @@ export function buildInternalPilotPdf(workspace: PilotWorkspace, generatedAt = n
   const pageHeader = (section: string) => {
     currentSection = section;
     font(7.5, "bold"); color(SAGE); pdf.text("LEADLENS", 16, 12);
-    font(7.5); color(MUTED); pdf.text("AMOR DE GEA", 105, 12, { align: "center" });
+    font(7.5); color(MUTED); pdf.text(safe(brand.clientName).toUpperCase(), 105, 12, { align: "center" });
     pdf.text(safe(section).toUpperCase(), 194, 12, { align: "right" });
     stroke(LINE); pdf.line(16, 16, 194, 16);
+    const active = section === "Executive Brief" || section === "Decisiones" ? "Resumen"
+      : section === "Contexto de oportunidad" ? "ICP"
+      : section === "Por que estas cuentas" || section === "Portafolio recomendado" || section === "Mapa de portafolio" ? "Cuentas recomendadas"
+      : section.startsWith("Cuenta ") ? "Analisis por cuenta"
+      : section === "Contexto del cliente" ? "Contexto"
+      : section === "Timing y preparacion" ? "Evidencia y timing"
+      : "Preparacion del reporte";
+    const printTabs = ["RESUMEN", "ICP", "RECOMENDADAS", "POR CUENTA", "CONTEXTO", "EVIDENCIA + TIMING", "PREPARACION"];
+    const widths = [21, 10, 28, 25, 20, 36, 30];
+    let tabX = 16;
+    PILOT_REPORT_SECTIONS.forEach((tab, index) => {
+      if (tab === active) { fill(SAGE); pdf.rect(tabX, 19, widths[index], 6, "F"); color(WHITE); }
+      else color(MUTED);
+      font(5.5, "bold"); pdf.text(printTabs[index], tabX + 2, 23);
+      tabX += widths[index] + 1;
+    });
   };
   const footer = () => {
     const page = pdf.getNumberOfPages();
@@ -161,13 +195,13 @@ export function buildInternalPilotPdf(workspace: PilotWorkspace, generatedAt = n
     pageHeader(section);
   };
   const title = (number: string, heading: string, deck: string) => {
-    font(8, "bold"); color(GOLD); pdf.text(number, 16, 29);
+    font(8, "bold"); color(GOLD); pdf.text(number, 16, 34);
     const titleText = safe(heading);
     font(24, "bold");
     const measured = pdf.getTextWidth(titleText);
     const fittedSize = Math.max(17, Math.min(24, 24 * 178 / measured));
-    font(fittedSize, "bold"); color(GREEN); pdf.text(titleText, 16, 43);
-    text(deck, 16, 53, 160, 10.5, "normal", MUTED, 1.35);
+    font(fittedSize, "bold"); color(GREEN); pdf.text(titleText, 16, 48);
+    text(deck, 16, 58, 160, 10.5, "normal", MUTED, 1.35);
   };
   const card = (x: number, y: number, w: number, h: number, background: PdfColor = WHITE, border: PdfColor = LINE) => {
     fill(background); stroke(border); pdf.roundedRect(x, y, w, h, 2, 2, "FD");
@@ -176,11 +210,6 @@ export function buildInternalPilotPdf(workspace: PilotWorkspace, generatedAt = n
     const tones: Record<ClaimKind, PdfColor> = { HECHO: SAGE, INFERENCIA: [73, 91, 126], RECOMENDACION: GOLD, LIMITACION: [144, 76, 64] };
     fill(tones[kind]); pdf.roundedRect(x, y - 4, kind === "RECOMENDACION" ? 29 : 23, 6, 1, 1, "F");
     font(6.5, "bold"); color(WHITE); pdf.text(kind, x + 2, y);
-  };
-  const metric = (x: number, y: number, value: string, caption: string, accent: PdfColor = SAGE) => {
-    fill(WHITE); stroke(LINE); pdf.roundedRect(x, y, 32, 25, 2, 2, "FD");
-    font(20, "bold"); color(accent); pdf.text(value, x + 4, y + 10);
-    text(caption, x + 4, y + 16, 24, 7.5, "normal", MUTED, 1.1);
   };
   const sectionCard = (x: number, y: number, w: number, h: number, heading: string, body: string, kind?: ClaimKind) => {
     card(x, y, w, h);
@@ -198,31 +227,30 @@ export function buildInternalPilotPdf(workspace: PilotWorkspace, generatedAt = n
   fill(SAGE); pdf.circle(171, 53, 38, "F"); fill([31, 72, 57]); pdf.circle(181, 68, 27, "F");
   stroke([92, 139, 117]); for (let i = 0; i < 5; i++) pdf.line(18, 188 + i * 6, 156 - i * 8, 126 + i * 3);
   font(10, "bold"); color([168, 203, 185]); pdf.text("LEADLENS  /  COMMERCIAL INTELLIGENCE", 18, 26);
-  font(35, "bold"); color(WHITE); pdf.text("Amor de Gea", 18, 76);
-  font(18); color([220, 232, 226]); pdf.text("Commercial Opportunity", 18, 91); pdf.text("Intelligence Pilot", 18, 100);
-  font(10, "bold"); color([168, 203, 185]); pdf.text("INTERNAL INTELLIGENCE BRIEF", 18, 119);
-  card(18, 208, 174, 43, [24, 52, 42], [72, 107, 91]);
-  font(9, "bold"); color([238, 218, 175]); pdf.text(INTERNAL, 27, 222);
-  text("Documento de decision para revision interna. No representa intencion de compra ni una salida aprobada para cliente.", 27, 232, 150, 9.5, "normal", [205, 220, 213], 1.3);
-  font(8); color([168, 203, 185]); pdf.text(`Fecha  ${reportDate}`, 18, 271); pdf.text(`Metodologia  ${PREMIUM_PDF_VERSION}`, 192, 271, { align: "right" });
+  font(35, "bold"); color(WHITE); pdf.text(safe(brand.clientName), 18, 76);
+  font(18); color([220, 232, 226]); pdf.text("Commercial Opportunity", 18, 91); pdf.text("Intelligence", 18, 100);
+  font(10, "bold"); color([168, 203, 185]); pdf.text("INTERNAL PILOT BRIEF", 18, 119);
+  stroke([92, 139, 117]); pdf.line(18, 211, 192, 211);
+  font(8.5, "bold"); color([238, 218, 175]); pdf.text("REVISION INTERNA", 18, 225);
+  text(`Una lectura comercial de seis cuentas para explorar donde puede encajar ${brand.clientName} en ${brand.geography}.`, 18, 236, 145, 10, "normal", [205, 220, 213], 1.3);
+  font(8); color([168, 203, 185]); pdf.text(`Fecha  ${reportDate}`, 18, 271); pdf.text("LeadLens Intelligence", 192, 271, { align: "right" });
   currentSection = "Cubierta";
 
   // 2 - Executive brief
   addPage("Executive Brief");
-  title("01", "La oportunidad existe en el encaje; la accion depende de viabilidad", "LeadLens encontro una cartera util para validar canales. Todavia no encontro una ventana comercial que justifique contacto inmediato.");
-  metric(16, 72, "6", "cuentas profundamente evaluadas");
-  metric(52, 72, "4", "recomendadas para validacion");
-  metric(88, 72, "2", "cuentas bajo monitoreo");
-  metric(124, 72, "0", "senales actuales de timing", GOLD);
-  metric(160, 72, "10", "bloqueos criticos de cliente", GOLD);
-  sectionCard(16, 108, 112, 62, "Conclusion central", "La mejor ruta no es buscar mas empresas hoy. Es confirmar una oferta B2B viable y aprender primero con BioPlaza; despues probar el apalancamiento de Distribuidora DAM y usar esos aprendizajes en dos cuentas retail estrategicas.", "RECOMENDACION");
-  sectionCard(134, 108, 60, 62, "Cautela principal", "Encaje estructural no equivale a demanda, presupuesto, apertura de proveedor ni intencion de compra.", "LIMITACION");
-  font(11, "bold"); color(GREEN); pdf.text("Tres decisiones que destraban el piloto", 16, 190);
+  title("01", "La mejor ruta es validar categoria antes de escalar canal", `LeadLens encontro tres rutas plausibles para ${brand.clientName}: retail especializado, distribucion y experiencias de bienestar.`);
+  font(15, "bold"); color(GREEN); pdf.text("Conclusion comercial", 16, 82);
+  text("BioPlaza ofrece el aprendizaje mas directo sobre surtido, formato y economia. Distribuidora DAM puede ampliar alcance si la propuesta soporta margen, volumen y continuidad. Natural + Mente y Tu Tienda Saludable sirven para contrastar diferenciacion y simplicidad operativa.", 16, 94, 116, 11, "normal", INK, 1.45);
+  stroke(brand.accent); pdf.setLineWidth(1.2); pdf.line(142, 79, 142, 153);
+  font(8, "bold"); color(brand.accent); pdf.text("LECTURA CLAVE", 151, 84);
+  text("El encaje actual justifica validacion, no supone interes de compra. La prioridad es convertir la oferta de Amor de Gea en una propuesta B2B concreta.", 151, 96, 40, 9.5, "normal", MUTED, 1.35);
+  font(11, "bold"); color(GREEN); pdf.text("Tres decisiones que destraban el piloto", 16, 182);
   [["01", "Empaque y formato", "Definir que puede ofrecerse como producto B2B."], ["02", "Economia y MOQ", "Probar margen, pedido minimo y riesgo de inventario."], ["03", "Cobertura y capacidad", "Delimitar donde y cuanto puede cumplirse."]].forEach((item, i) => {
-    card(16 + i * 60, 199, 56, 55);
-    font(17, "bold"); color(GOLD); pdf.text(item[0], 21 + i * 60, 211);
-    font(9.5, "bold"); color(GREEN); pdf.text(item[1], 21 + i * 60, 221);
-    text(item[2], 21 + i * 60, 230, 45, 8.5, "normal", MUTED, 1.25);
+    const x = 16 + i * 60;
+    stroke(LINE); pdf.line(x, 198, x + 50, 198);
+    font(17, "bold"); color(brand.accent); pdf.text(item[0], x, 213);
+    font(9.5, "bold"); color(GREEN); pdf.text(item[1], x, 225);
+    text(item[2], x, 236, 48, 9, "normal", MUTED, 1.25);
   });
 
   // 3 - Key decisions
@@ -244,53 +272,50 @@ export function buildInternalPilotPdf(workspace: PilotWorkspace, generatedAt = n
   font(9, "bold"); color(GOLD); pdf.text("ANTES DE CONTACTAR", 22, 258);
   text("Confirmar formato, precio, MOQ, capacidad, cobertura y certificaciones de Amor de Gea.", 66, 258, 119, 9, "normal", INK);
 
-  // 4 - ICP
-  addPage("Perfil de cliente ideal");
-  title("03", "El ICP actual es una hipotesis operativa", "Busca cuentas colombianas con afinidad de categoria y una ruta comercial que Amor de Gea pueda realmente atender.");
-  sectionCard(16, 69, 178, 45, "Declaracion ICP", ICP.summary, "INFERENCIA");
-  const dimensions = [
-    ["GEOGRAFIA", "Colombia", "HECHO" as ClaimKind], ["SEGMENTOS", "Retail, distribucion, hospitalidad, bienestar", "HECHO" as ClaimKind],
-    ["CANALES", "Surtido, experiencia, alianza, portafolio", "INFERENCIA" as ClaimKind], ["USOS", "Recompra, amenidad, ritual, distribucion", "INFERENCIA" as ClaimKind],
-    ["ESCALA", "Compatible con capacidad y MOQ", "LIMITACION" as ClaimKind], ["COMPRAS", "Ruta accesible y proporcionada", "INFERENCIA" as ClaimKind],
-  ];
-  dimensions.forEach((d, i) => {
-    const x = 16 + (i % 3) * 60; const y = 122 + Math.floor(i / 3) * 39;
-    card(x, y, 56, 34); font(7, "bold"); color(d[2] === "HECHO" ? SAGE : d[2] === "LIMITACION" ? [144,76,64] : [73,91,126]); pdf.text(d[0], x + 5, y + 9);
-    text(d[1], x + 5, y + 17, 46, 8.5, "normal", INK, 1.2);
-  });
-  sectionCard(16, 204, 56, 63, "Indicadores positivos", "Afinidad de bienestar\nRuta de categoria\nRecompra plausible\nPresencia Colombia\nValor de aprendizaje", "HECHO");
-  sectionCard(77, 204, 56, 63, "Descalificadores", "MOQ incompatible\nMargen inviable\nCobertura imposible\nRegistros faltantes\nComplejidad excesiva", "LIMITACION");
-  sectionCard(138, 204, 56, 63, "Lo que no sabe", "Capacidad real\nEconomia mayorista\nFormatos B2B\nCertificaciones\nModelo comercial", "LIMITACION");
+  // 4 - Client opportunity context
+  addPage("Contexto de oportunidad");
+  title("03", `Donde puede encajar ${brand.clientName}`, `El piloto explora como una oferta de ${brand.category} puede entrar en relaciones B2B concretas en ${brand.geography}.`);
+  font(13, "bold"); color(GREEN); pdf.text("Lo que se conoce", 16, 78);
+  text(`${brand.clientName} es la marca cliente; ${brand.geography} es la geografia prioritaria y la categoria informada es ${brand.category}. El alcance actual es un piloto interno de seis cuentas.`, 16, 91, 76, 10.5, "normal", INK, 1.4);
+  font(13, "bold"); color(GREEN); pdf.text("Lo que se esta probando", 108, 78);
+  text("Tres contextos comerciales: incorporacion a surtido especializado, distribucion para ampliar alcance y experiencias de hospitalidad o bienestar. Son rutas de aprendizaje, no demanda confirmada.", 108, 91, 76, 10.5, "normal", INK, 1.4);
+  stroke(LINE); pdf.line(16, 153, 194, 153);
+  font(13, "bold"); color(GREEN); pdf.text("Implicacion para la seleccion", 16, 171);
+  text("Se priorizan cuentas que permiten aprender algo distinto sobre categoria, canal, operacion o experiencia. La afinidad tematica por si sola no basta: debe existir una ruta compradora comprensible y una propuesta que Amor de Gea pueda cumplir.", 16, 184, 112, 10.5, "normal", INK, 1.4);
+  font(8, "bold"); color(brand.accent); pdf.text("CONFIRMAR CON EL CLIENTE", 144, 174);
+  text("Formato B2B\nRango mayorista\nPedido minimo\nCobertura\nCapacidad\nCertificaciones", 144, 188, 42, 9.5, "normal", MUTED, 1.45);
+  font(8); color(MUTED); pdf.text(`Marco provisional: ${safe(ICP.summary).slice(0, 150)}...`, 16, 266);
 
-  // 5 - Market universe
-  addPage("Universo de mercado");
-  title("04", "El valor esta en la reduccion disciplinada del universo", "La muestra controlada permite probar canales distintos. No representa todo el mercado colombiano.");
-  const funnel = [
-    [ACCOUNT_UNIVERSE.raw, "Brutos"], [ACCOUNT_UNIVERSE.deduplicated, "Deduplicados"], [ACCOUNT_UNIVERSE.verified, "Verificados"],
-    [ACCOUNT_UNIVERSE.probable, "Probables"], [ACCOUNT_UNIVERSE.excluded, "Excluidos"], [ACCOUNT_UNIVERSE.controlled, "Controlados"],
-  ] as const;
-  funnel.forEach(([value, name], i) => {
-    const w = 168 - i * 18; const x = 16 + i * 9; const y = 72 + i * 24;
-    fill(i < 2 ? [214, 229, 220] : i < 4 ? [186, 211, 198] : i === 4 ? [235, 225, 203] : SAGE);
-    pdf.roundedRect(x, y, w, 18, 2, 2, "F");
-    font(14, "bold"); color(i === 5 ? WHITE : GREEN); pdf.text(String(value), x + 7, y + 12);
-    font(8, "bold"); pdf.text(name.toUpperCase(), x + 29, y + 11);
+  // 5 - Why these accounts
+  addPage("Por que estas cuentas");
+  title("04", "La cartera compara rutas comerciales, no popularidad", "Cada cuenta fue incluida porque responde una pregunta distinta que puede mejorar la estrategia B2B del cliente.");
+  const routeReasons = [
+    ["RETAIL ESPECIALIZADO", "BioPlaza", "¿Puede la oferta entrar en una categoria de bienestar con economia y formato comprensibles?"],
+    ["DISTRIBUCION", "Distribuidora DAM", "¿Puede una linea corta sostener margen, volumen, cobertura y continuidad por canal?"],
+    ["RETAIL DE CONTRASTE", "Natural + Mente / Tu Tienda Saludable", "¿La propuesta se diferencia y sigue siendo simple de comprar, rotar y reponer?"],
+    ["EXPERIENCIA", "Hotel Spa La Colina", "¿Una amenidad botanica crea valor para el huesped sin cargar la operacion?"],
+    ["ALIANZA", "Somos Consiente", "¿La afinidad de bienestar puede convertirse en una relacion B2B repetible?"],
+  ];
+  routeReasons.forEach((item, i) => {
+    const y = 74 + i * 38;
+    font(7.5, "bold"); color(brand.accent); pdf.text(item[0], 16, y);
+    font(11, "bold"); color(GREEN); pdf.text(item[1], 16, y + 10);
+    text(item[2], 78, y + 2, 108, 9.5, "normal", MUTED, 1.3);
+    stroke(LINE); pdf.line(16, y + 27, 194, y + 27);
   });
-  metric(16, 229, "4", "candidatos para validacion");
-  metric(52, 229, "2", "cuentas monitoreadas", GOLD);
-  sectionCard(92, 229, 102, 38, "Lectura", "Retail prueba surtido; distribucion prueba alcance; hospitalidad prueba experiencia; bienestar prueba alianza. La cobertura de segmentos es intencional.", "INFERENCIA");
+  text("La muestra es deliberadamente acotada. Sirve para aprender entre rutas; no pretende representar todo el mercado colombiano.", 16, 269, 160, 8.5, "normal", MUTED);
 
   // 6 - Recommended portfolio
   addPage("Portafolio recomendado");
   title("05", "Seis cuentas, seis trabajos distintos dentro del piloto", "La recomendacion combina encaje, claridad de uso, friccion, evidencia y valor de aprendizaje.");
   accounts.forEach((rec, i) => {
     const col = i % 2; const row = Math.floor(i / 2); const x = 16 + col * 91; const y = 70 + row * 63;
-    card(x, y, 87, 57);
+    stroke(LINE); pdf.line(x, y, x + 82, y);
     font(16, "bold"); color(i < 2 ? SAGE : i < 4 ? [73,91,126] : GOLD); pdf.text(String(rec.order).padStart(2, "0"), x + 6, y + 13);
     font(10.5, "bold"); color(GREEN); pdf.text(safe(rec.account.account_name), x + 21, y + 12);
     font(7.2, "bold"); color(MUTED); pdf.text(safe(rec.editorial.role).toUpperCase(), x + 21, y + 20);
     text(rec.editorial.whyAccount, x + 6, y + 29, 75, 8.3, "normal", INK, 1.2);
-    font(7.3, "bold"); color(GOLD); pdf.text(i < 4 ? "SIN TIMING - VALIDAR VIABILIDAD" : "SIN TIMING - MONITOREAR", x + 6, y + 50);
+    font(7.3, "bold"); color(brand.accent); pdf.text(i < 4 ? "SIGUIENTE: VALIDAR VIABILIDAD" : "SIGUIENTE: MONITOREAR SELECTIVAMENTE", x + 6, y + 50);
   });
   fill(GREEN); pdf.roundedRect(16, 261, 178, 13, 2, 2, "F");
   font(8.5, "bold"); color(WHITE); pdf.text("SECUENCIA: entrada retail -> canal -> retail estrategico -> triggers", 105, 269, { align: "center" });
@@ -326,15 +351,23 @@ export function buildInternalPilotPdf(workspace: PilotWorkspace, generatedAt = n
     font(25, "bold"); color(GREEN); pdf.text(safe(account.account_name), 16, 44);
     websiteLink(official?.url ?? `https://${account.domain}`, 16, 55);
     font(8, "bold"); color(MUTED); pdf.text(`${safe(account.segment).toUpperCase()}  /  ${safe(rec.category).toUpperCase()}`, 194, 54, { align: "right" });
-    sectionCard(16, 66, 178, 44, "Tesis ejecutiva", ed.thesis, "INFERENCIA");
-    sectionCard(16, 118, 86, 57, "Por que esta cuenta", `${ed.whyAccount}\n\nCaso de uso: ${ed.useCase}`, "HECHO");
-    sectionCard(108, 118, 86, 57, "Ruta comercial", `${ed.buyer}\n\n${ed.route}`, "INFERENCIA");
-    sectionCard(16, 183, 86, 54, "Friccion y pregunta critica", `${ed.friction}\n\n${ed.validation}`, "LIMITACION");
-    sectionCard(108, 183, 86, 54, "Timing", `Ahora: sin senal comercial actual.\n\nTrigger: ${ed.trigger}`, "LIMITACION");
-    card(16, 241, 178, 30, MINT);
-    label("RECOMENDACION", 22, 250);
-    text(ed.action, 22, 259, 112, 9.2, "bold", GREEN, 1.2);
-    text(`Fallback: ${ed.fallback}\nEvitar: ${ed.avoid}`, 139, 250, 49, 7.1, "normal", MUTED, 1.15);
+    fill(MINT); pdf.rect(16, 66, 178, 34, "F");
+    font(8, "bold"); color([73, 91, 126]); pdf.text("TESIS COMERCIAL", 22, 78);
+    text(ed.thesis, 22, 88, 160, 10, "normal", GREEN, 1.25);
+    font(11, "bold"); color(GREEN); pdf.text("Oportunidad", 16, 119);
+    text(`${ed.whyAccount}\n\nCaso de uso: ${ed.useCase}`, 16, 131, 78, 9.5, "normal", INK, 1.3);
+    font(11, "bold"); color(GREEN); pdf.text("Ruta comercial", 108, 119);
+    text(`${ed.buyer}\n\n${ed.route}`, 108, 131, 78, 9.5, "normal", INK, 1.3);
+    stroke(LINE); pdf.line(16, 181, 194, 181);
+    font(8, "bold"); color([144, 76, 64]); pdf.text("VALIDACION REQUERIDA", 16, 194);
+    text(ed.friction, 16, 205, 78, 9, "normal", MUTED, 1.25);
+    font(10, "bold"); color(GREEN); pdf.text(ed.validation, 16, 229, { maxWidth: 78 });
+    font(8, "bold"); color(brand.accent); pdf.text("CUANDO REACTIVAR", 108, 194);
+    text(ed.trigger, 108, 205, 78, 9, "normal", MUTED, 1.25);
+    fill(GREEN); pdf.rect(108, 227, 78, 1.2, "F");
+    font(8, "bold"); color(GREEN); pdf.text("SIGUIENTE MOVIMIENTO", 108, 239);
+    text(ed.action, 108, 250, 78, 9.2, "bold", GREEN, 1.2);
+    text(`Alternativa: ${ed.fallback} Evitar: ${ed.avoid}`, 16, 250, 78, 7.5, "normal", MUTED, 1.15);
     font(7.5, "bold"); color(SAGE); pdf.text("EVIDENCIA", 16, 273);
     font(7.2); color(MUTED);
     pdf.text(`Sitio oficial  |  propiedad oficial  |  ${identity?.last_verified_date?.slice(0, 10) ?? "sin fecha"}  |  reciente  |  confianza ${Math.round((identity?.identity_confidence ?? 0) * 100)}%`, 42, 273);
@@ -366,23 +399,22 @@ export function buildInternalPilotPdf(workspace: PilotWorkspace, generatedAt = n
 
   // 15 - Timing and readiness
   addPage("Timing y preparacion");
-  title("14", "Cero senales no significa cero oportunidad", "Significa que ninguna evidencia publica reciente supero los gates de fecha, atribucion y relevancia comercial.");
-  const checked = ["Nuevas ubicaciones", "Cambios de surtido", "Alianzas", "Contratacion", "Programas de bienestar", "Proveedores"];
-  card(16, 72, 84, 79); font(10.5, "bold"); color(GREEN); pdf.text("Categorias revisadas", 22, 84);
-  checked.forEach((item, i) => { fill(MINT); pdf.circle(24, 96 + i * 8, 1.5, "F"); font(8.5); color(INK); pdf.text(item, 30, 98 + i * 8); });
-  card(108, 72, 86, 79); font(10.5, "bold"); color(GREEN); pdf.text("Por que no calificaron", 114, 84);
-  ["Sin evento atribuible", "Fecha insuficiente", "Relevancia comercial debil", "Sin corroboracion independiente"].forEach((item, i) => {
-    label("LIMITACION", 114, 98 + i * 13); text(item, 139, 98 + i * 13, 48, 8.2, "normal", MUTED, 1.1);
-  });
-  font(11, "bold"); color(GREEN); pdf.text("Preparacion del reporte", 16, 169);
+  title("14", "Evidencia y timing para decidir el siguiente movimiento", "No hay un evento verificado que cree urgencia. Las recomendaciones se sostienen por relevancia, acceso y valor de validacion.");
+  font(12, "bold"); color(GREEN); pdf.text("Lo que la evidencia permite afirmar", 16, 84);
+  text("Las seis identidades y propiedades oficiales estan verificadas. La evidencia disponible permite ubicar cada cuenta por segmento y plantear una ruta comercial inicial; no permite afirmar demanda, presupuesto o apertura de proveedor.", 16, 97, 112, 10, "normal", INK, 1.4);
+  fill(MINT); pdf.rect(142, 78, 52, 61, "F");
+  font(8, "bold"); color(SAGE); pdf.text("MONITOREAR", 150, 91);
+  text("Cambios de surtido\nNuevas ubicaciones\nAlianzas\nProgramas de bienestar\nBusqueda de proveedores", 150, 103, 37, 8.5, "normal", MUTED, 1.35);
+  stroke(LINE); pdf.line(16, 155, 194, 155);
+  font(11, "bold"); color(GREEN); pdf.text("Preparacion del reporte", 16, 172);
   const readiness: Array<[string, string, PdfColor]> = [
-    ["BASE SOLIDA", "Identidad, funnel, segmentos, shortlist y tesis internas.", SAGE],
-    ["UTIL CON LIMITES", "ICP, estrategia de portafolio, encaje y evidencia base.", [73,91,126] as const],
-    ["CONFIRMACION", "Economia, capacidad, cobertura, formatos y registros.", GOLD],
-    ["NO LISTO", "Timing actual, revision customer-safe y reporte final.", [144,76,64] as const],
+    ["BASE SOLIDA", "Identidad, segmentos, cartera recomendada y tesis internas.", SAGE],
+    ["UTILIZABLE CON LIMITES", "Marco de oportunidad, encaje y evidencia estructural.", [73,91,126] as const],
+    ["REQUIERE CONFIRMACION", "Economia, capacidad, cobertura, formatos y registros.", GOLD],
+    ["NO LISTO", "Conclusiones revisadas para cliente y reporte final.", [144,76,64] as const],
   ];
   readiness.forEach((r, i) => {
-    const x = 16 + (i % 2) * 91, y = 179 + Math.floor(i / 2) * 43;
+    const x = 16 + (i % 2) * 91, y = 183 + Math.floor(i / 2) * 43;
     card(x, y, 87, 36); fill(r[2]); pdf.rect(x, y, 4, 36, "F");
     font(8, "bold"); color(r[2]); pdf.text(r[0], x + 10, y + 11);
     text(r[1], x + 10, y + 20, 70, 8.3, "normal", MUTED, 1.2);
@@ -390,10 +422,10 @@ export function buildInternalPilotPdf(workspace: PilotWorkspace, generatedAt = n
 
   // 16 - Methodology
   addPage("Metodologia y limites");
-  title("15", "Disciplina de evidencia antes que volumen", "El reporte convierte informacion publica y contexto de cliente en decisiones internas trazables.");
+  title("15", "Como leer este piloto", "Una metodologia breve para distinguir evidencia, interpretacion, recomendacion y limites.");
   const methods = [
     ["01", "Identidad", "Dominio y propiedad oficial antes de atribuir evidencia."],
-    ["02", "Funnel", "Deduplicacion y exclusiones antes de investigar en profundidad."],
+    ["02", "Cobertura", "LeadLens evaluo un universo mas amplio y selecciono una muestra comparativa."],
     ["03", "Evidencia", "Fuente, fecha, atribucion y rol del claim permanecen visibles."],
     ["04", "Separacion", "Hecho, inferencia, recomendacion y limitacion no se mezclan."],
     ["05", "Timing", "Encaje estructural nunca crea urgencia ni intencion de compra."],
@@ -406,8 +438,8 @@ export function buildInternalPilotPdf(workspace: PilotWorkspace, generatedAt = n
     font(10, "bold"); color(GREEN); pdf.text(m[1], x + 23, y + 12);
     text(m[2], x + 23, y + 21, 56, 8.3, "normal", MUTED, 1.2);
   });
-  sectionCard(16, 224, 178, 42, "Limitaciones del piloto", "Las seis cuentas no representan todo el mercado. No existe evidencia de demanda ni de timing actual. La viabilidad depende de respuestas de Amor de Gea. Ninguna recomendacion habilita contacto automatico ni reporte final.", "LIMITACION");
-  font(7.5); color(MUTED); pdf.text(`Metodologia: ${PREMIUM_PDF_VERSION}  |  Ranking: sin cambios  |  Customer-safe: bloqueado`, 16, 276);
+  sectionCard(16, 224, 178, 42, "Limitaciones del piloto", `Las seis cuentas son una muestra controlada, no todo el mercado. La evidencia actual no demuestra demanda ni urgencia. La viabilidad depende de respuestas de ${brand.clientName} y revision humana antes de cualquier entrega final.`, "LIMITACION");
+  font(7.5); color(MUTED); pdf.text("Informe interno para revision. El reporte final para cliente permanece bloqueado.", 16, 276);
   footer();
 
   if (pdf.getNumberOfPages() !== PREMIUM_EXPECTED_PAGES) {
