@@ -1,179 +1,294 @@
-# LeadLens — handoff completo para continuación con Claude
+# CLAUDE CONTINUATION HANDOFF — LEADLENS
 
-## A. Identidad del proyecto
+Documento autoritativo de continuidad. Leer completo antes de proponer o modificar código.
 
-LeadLens es un sistema de inteligencia comercial B2B que transforma investigación pública, contexto explícito del cliente y revisión humana en oportunidades comerciales trazables. Su promesa no es entregar una lista genérica de empresas: explica por qué una cuenta importa, qué ruta comercial podría existir, qué evidencia la sostiene, qué falta confirmar y cuál es el siguiente movimiento seguro.
+## 1. Project identity
 
-LeadLens no es un scraper de contactos, un buscador de empresas, un generador de intención de compra ni un sistema de outreach automático. Tampoco debe fabricar timing, respuestas del cliente o conclusiones customer-safe.
+- Producto: **LeadLens**.
+- Categoría: **Account Opportunity Intelligence / B2B Opportunity & Market Intelligence**.
+- Usuario objetivo: fundadores, equipos comerciales, estrategia, partnerships y desarrollo de negocio que necesitan priorizar cuentas B2B con evidencia.
+- Promesa: encontrar cuentas que vale la pena evaluar y explicar por qué importan, qué cambió, qué evidencia existe, qué sigue incierto, si existe timing y qué acción está justificada.
+- Valor principal: convertir investigación pública y contexto explícito del cliente en decisiones comerciales trazables, no en listas genéricas.
+- Producción: `https://leadlensintel.com`.
+- Repositorio: `/Users/martingaleano/leadlens-project`.
+- Branch: `main`.
+- Deployment: Vercel.
+- Base de datos: Supabase/Postgres con RLS.
+- Stack: Next.js 14 App Router, React, TypeScript, Supabase y jsPDF server-side.
 
-- Producción: `https://leadlensintel.com`
-- Repositorio: `/Users/martingaleano/leadlens-project`
-- Branch canónico: `main`
-- Stack: Next.js 14 App Router, TypeScript, Supabase/Postgres/RLS, Vercel, generación PDF server-side con jsPDF.
-- Arquitectura: rutas customer y Admin separadas; Intelligence OS tipado; artefactos deterministas; persistencia Supabase para estados que requieren durabilidad; providers fuera del render.
+LeadLens **no** es una base estática de leads, CRM, producto de datos de contacto ni herramienta de outreach masivo. Fit, accesibilidad o afinidad nunca equivalen a intención de compra.
 
-## B. Estado actual del producto
+## 2. Product principles and invariants
 
-- Admin principal: `/admin`
-- Intelligence Command Center: `/admin/intelligence`
-- Piloto canónico: `/admin/intelligence/pilots/amor-de-gea`
-- Alias legado: `/admin/pilot` redirige al piloto canónico.
-- Customer: `/dashboard`, `/dashboard/icp`, `/dashboard/searches`, `/dashboard/searches/[id]`, `/results/[jobId]`, `/results/[jobId]/brief`.
-- Auth Admin: sesión Supabase + allowlist `admin_users` + cookie firmada httpOnly; revocación inmediata; bypass solo localhost con flag explícito; producción fail-closed.
-- Supabase: migraciones 001–047 presentes y aplicadas según el checkpoint operativo. No existe migración 048.
-- Vercel: `main`/`origin/main` era el despliegue esperado antes del commit final de este handoff. El commit final requiere push y esperar estado Ready.
-- Amor de Gea: 1 piloto, 6 cuentas, 6 tesis internas, 17 preguntas sin responder, 0 versiones de contexto aceptadas, 0 tesis revisadas, 0 outputs customer-safe.
-- PDF interno: disponible por endpoint Admin-only; 16 páginas; renderer activo `lib/reports/internal-pilot-pdf.ts`; metadata `leadlens-pilot-brief-v3`; filename estable.
+- Structural fit, client fit y timing son dimensiones separadas.
+- Accessibility es distinta de buying intent.
+- Sin evento actual verificable no se afirma urgencia.
+- Hechos, señales, inferencias, recomendaciones y limitaciones permanecen separados.
+- Counterevidence debe seguir visible.
+- Nunca fabricar buying intent ni respuestas del cliente.
+- Customer-safe requiere revisión explícita; aprobación interna no basta.
+- Ranking permanece sin cambios salvo autorización expresa.
+- Outputs internos permanecen internos.
+- Admin y PDF no realizan provider calls durante render.
+- Preservar aislamiento tenant y derivar tenant/actor en servidor.
+- Versiones históricas y revisiones son inmutables/append-only.
+- No guardar/exponer payloads crudos, secretos ni hidden reasoning.
+
+## 3. Current architecture
+
+- Next.js App Router: rutas públicas/customer y `/admin` separadas.
+- Auth Admin: Supabase login, allowlist `admin_users`, cookie firmada httpOnly, revocación inmediata y producción fail-closed. Bypass únicamente localhost con flag explícito.
+- RLS: acceso anónimo denegado a datos internos; escrituras sensibles server-only/service-role.
+- Command Center: `app/admin/intelligence/page.tsx`, `lib/intelligence/admin-view-model.ts`, `app/api/admin/intelligence/command-center/route.ts`.
+- Snapshot/capabilities: `lib/intelligence/snapshot-engine.ts`, `snapshot-loader.ts`, `feature-snapshot.ts`, `os-contracts.ts`.
+- Registries: `output-registry.ts`, `pattern-registry.ts`.
+- Validación: `validation-lifecycle.ts`, `validation-store.ts`.
+- Evidencia/temporal: `evidence-temporal.ts`, `evidence-store.ts`, `research-quality.ts`.
+- Señales/monitoring: `signal-temporal.ts`, `signal-benchmark.ts`, `lib/sources/signal-taxonomy.ts`, `signal-freshness.ts`.
+- Entidades: `colombian-entity-resolution.ts`, `lib/discovery/corporate-identity.ts`, `entity-role.ts`.
+- Cliente/cuenta: `account-opportunity-synthesis.ts`, `client-context-review.ts`.
+- Piloto: `pilot-workspace.ts`, `pilot-intelligence.ts`.
+- PDF: `lib/reports/internal-pilot-pdf.ts`; endpoint Node Admin-only; generador local comparte renderer.
+- Persistencia: migraciones Supabase para Auth, lifecycle, evidencia, señales, entidades, tesis, contexto y piloto.
+
+## 4. Blocks 0–16
+
+| Block | Objetivo y resultado | Archivos clave | Migración | Commit | Validación / limitación |
+|---|---|---|---|---|---|
+| 0 | Auditoría dirigida y mapa Intelligence/data. | checkpoints/audit reports | — | `23f684d` | Base documental; sin contratos ejecutables. |
+| 1 | Contratos canónicos y guardas de honestidad. | `os-contracts.ts` | — | `fc450de` | Contratos probados; faltaba snapshot. |
+| 2 | Snapshot determinista, capabilities y maturity. | `snapshot-engine.ts`, `snapshot-loader.ts` | — | `f7c97bd` | Tests snapshot; sin registries. |
+| 3 | Output Registry y Pattern Registry en observation/shadow. | `output-registry.ts`, `pattern-registry.ts` | — | `dc35ca1` | Sample gates; ranking off. |
+| 4 | Lifecycle de validación, acciones, outcomes y aprendizaje. | `validation-lifecycle.ts`, `validation-store.ts` | 041 | `2489bbc` | Validación tests; necesita outcomes reales. |
+| 5 | Intelligence Command Center Admin seguro. | Admin page/view model/API | — | `0ade65a` | Command Center tests/build; capacidades parciales. |
+| 6 | Evidencia, claims, fechas, freshness y corroboración. | `evidence-temporal.ts`, `evidence-store.ts` | 042 | `926b456` | Evidence suite; profundidad desigual. |
+| 7 | Research profiles, identity-first research y qualification. | `research-quality.ts`, research scripts | — | `0c04d59` | Research-quality tests; sin evento comercial directo. |
+| 8 | Signal Intelligence, monitoring y What Changed. | `signal-temporal.ts`, signal taxonomy | 043 | `4ba5dbd` | Signal suite; fit no crea timing. |
+| 9 | Benchmark de señales y diagnóstico provider/source. | `signal-benchmark.ts`, block9 scripts | — | `9feca53` | Benchmark tests; cobertura/costo variables. |
+| 10 | Resolución colombiana de entidades y atribución. | `colombian-entity-resolution.ts` | 044 | `7bea3c442247256ae054d8936b1c431577cee22e` | 6 identidades confirmadas; identidad no prueba oportunidad. |
+| 11 | Account opportunity synthesis, buyer/use-case/route/thesis. | `account-opportunity-synthesis.ts` | 045 | `ffbe76f428afd715ca8686c647cd0167a0e03332` | 6 tesis internas; contexto cliente incompleto. |
+| 12 | Intake, context versions, recalculo y thesis-review readiness. | `client-context-review.ts` | 046 | `0e703c59c6c7441e82dd00c4d926c8eafca604a7` | 17 preguntas/10 blockers; ninguna respuesta. |
+| 13 | Workspace operativo, persistencia/backfill idempotente. | `pilot-workspace.ts`, pilot routes/scripts | 047 | `7c2e3b2f30b9935970f7d03a4eec64bef7ecfaaa`, `a849ae5dd0aaf264816f808f23277e713e1b0494` | 1 piloto/6 tesis; sin reviews. |
+| 14 | Rediseño premium Admin decision-first y responsive. | `pilot-experience.tsx`, `workspace.module.css` | — | `e2ca3101ab1765fdf8e6569d38f8db110165b1e6` | QA 1440/1280/1024/390; datos cliente pendientes. |
+| 15 | Navegación canónica, ICP, recomendaciones y PDF interno inicial. | `pilot-intelligence.ts`, section routes, PDF route | — | `cbab5502118121913a3d8bc7445f452813321336` | 47/47; PDF inicial reemplazado en Block 16. |
+| 16 | PDF premium de 16 páginas y alineación final con Admin. | `internal-pilot-pdf.ts`, PDF tests/reports | — (048 no requerida) | `aaf39ebfd2d932592d762725739493ba7cbcaa67`, `b4fe4e18ad6a05a12e3894702bb884e4b1cf1be6` | 42/42 + visual QA; baseline aceptado, no reconstruir. |
+
+## 5. Amor de Gea pilot state
+
+- Pilot ID: `amor-de-gea`.
+- Ruta: `/admin/intelligence/pilots/amor-de-gea`.
+- Cliente: Amor de Gea.
+- Geografía: Colombia.
+- Categoría informada: infusiones botánicas.
+- Estado: validación con el cliente; interno.
+- Cuentas/tesis: 6/6.
+- Preguntas: 17.
+- Respuestas aceptadas/contextos aceptados/tesis revisadas/customer-safe: 0/0/0/0.
+- Timing: no existe evento comercial actual verificable que cree urgencia.
+- PDF: interno, 16 páginas, habilitado.
 - Reporte final: deshabilitado.
-- Ranking: sin impacto adaptativo.
 
-## C–D. Intelligence OS y Blocks 0–16
+Orden:
 
-| Block | Objetivo e implementación principal | Archivos/migración | Commit | Limitación pendiente |
-|---|---|---|---|---|
-| 0 | Auditoría dirigida, mapa de datos/inteligencia y límites del sistema. | Checkpoints y mapa de arquitectura; sin migración. | `23f684d` | No construía contratos ejecutables. |
-| 1 | Contratos canónicos de inteligencia y guardas de honestidad. | `lib/intelligence/*contracts*`; sin migración. | `fc450de` | Sin snapshot determinista. |
-| 2 | Snapshot determinista, capacidades y readiness sin falsos ceros. | Snapshot/assessment engine; sin migración. | `f7c97bd` | Sin outputs/pattern registry. |
-| 3 | Output Registry y Pattern Registry en observación/shadow. | Registries y tests; sin migración. | `dc35ca1` | Patrones no validados; ranking off. |
-| 4 | Ciclo de validación, acciones, outcomes y aprendizaje seguro. | Repositorio lifecycle; `041_intelligence_validation_loop.sql`. | `2489bbc` | Requiere volumen humano atribuible. |
-| 5 | Admin Intelligence Command Center y view model seguro. | `app/admin/intelligence`, API/view model; sin migración. | `0ade65a` | Varias capacidades siguen parciales. |
-| 6 | Evidencia, claims, fechas, frescura, corroboración y cambios. | `lib/intelligence/evidence*`; `042_evidence_temporal_intelligence.sql`. | `926b456` | Profundidad de evidencia varía por cuenta. |
-| 7 | Calidad de investigación, recuperación de claims y account intelligence. | Research/evidence recovery y fixtures; sin migración nueva. | `0c04d59` | Sin evento comercial directo en la muestra. |
-| 8 | Taxonomía de señales, monitoreo temporal y What Changed v2. | `lib/intelligence/signals*`, monitoring; `043_signal_temporal_monitoring.sql`. | `4ba5dbd` | Baselines limitados; no crea timing desde fit. |
-| 9 | Benchmark de recuperación, cobertura de fuentes y operaciones de monitoreo. | Source coverage/monitor operations; sin migración nueva. | `9feca53` | Proveedores pueden limitar cobertura/costo. |
-| 10 | Resolución de entidades colombianas, propiedad oficial y atribución. | Entity resolver/identity graph; `044_colombian_entity_resolution.sql`. | `7bea3c4` | Identidad confirmada no implica oportunidad. |
-| 11 | Síntesis cliente-cuenta, rutas, casos de uso y tesis internas. | Opportunity synthesis/output adapters; `045_account_opportunity_synthesis.sql`. | `ffbe76f` | Depende de economía/contexto real del cliente. |
-| 12 | Intake, versiones de contexto, recalculo de tesis y revisión/safety. | Client context/review; `046_client_context_review.sql`. | `0e703c5` | Las 17 preguntas siguen sin respuesta. |
-| 13 | Workspace operativo canónico y backfill idempotente de Amor de Gea. | `lib/intelligence/pilot-workspace.ts`, rutas/operations; `047_amor_pilot_workspace.sql`. | `7c2e3b2` + activación `a849ae5` | Sin tesis revisadas ni customer-safe. |
-| 14 | Experiencia Admin premium, decision-first y responsive. | `pilot-experience.tsx`, CSS y tests. | `e2ca310` | Los datos subyacentes aún requieren cliente. |
-| 15 | Navegación canónica, ICP, recomendaciones y primer PDF interno. | `pilot-intelligence.ts`, rutas tabs, endpoint PDF. | `cbab550` | PDF inicial era demasiado técnico/plano. |
-| 16 | PDF premium y corrección final alineada con Admin. | `lib/reports/internal-pilot-pdf.ts`, endpoint, tests y reportes; sin migración 048. | Base `aaf39eb`; commit final = el commit que contiene este archivo (`git rev-parse HEAD`). | Sigue siendo interno; falta contexto real y revisión humana. |
+1. BioPlaza
+2. Distribuidora DAM
+3. Natural + Mente
+4. Tu Tienda Saludable
+5. Hotel Spa La Colina
+6. Somos Consiente
 
-## E. Estado de Amor de Gea
+Validar primero: BioPlaza, DAM. Seguimiento estratégico: Natural + Mente, Tu Tienda Saludable. Monitorear selectivamente: Hotel Spa La Colina, Somos Consiente.
 
-Agrupación vigente:
+Esta secuencia es estrategia de validación, no prueba de intención de compra ni nuevo algoritmo de ranking productivo.
 
-- Validar primero: BioPlaza; Distribuidora DAM.
-- Seguimiento estratégico: Natural + Mente; Tu Tienda Saludable.
-- Monitorear selectivamente: Hotel Spa La Colina; Somos Consiente.
+## 6. Current pilot intelligence
 
-La evidencia confirma identidad, dominio y propiedad oficial para las seis cuentas. No existe evento verificable que cree urgencia ni evidencia de intención de compra. Los triggers son específicos por cuenta y sirven para monitoreo, no para fabricar timing.
+| Cuenta | Segmento / rol | Oportunidad y uso | Buyer/ruta | Pregunta / siguiente acción | Trigger / límite |
+|---|---|---|---|---|---|
+| BioPlaza | Retail; cuenta de entrada | Validación de categoría; inclusión acotada en surtido bienestar. | Category management/compras; muestra B2B y alta de proveedor. | ¿Formato, precio, margen y abastecimiento permiten prueba? Preparar ficha/economía/muestra. | Nueva categoría/surtido/proveedores. Evidencia estructural, no demanda. |
+| Distribuidora DAM | Distribución; palanca de canal | Route-to-market y complemento de portafolio. | Dirección comercial/portafolio/abastecimiento; validar cobertura y economics. | ¿Sostiene margen, volumen y despacho? Modelar canal, MOQ, capacidad y territorio. | Expansión de portafolio/cobertura. Dominio no prueba interés. |
+| Natural + Mente | Retail; seguimiento estratégico | Diferenciación dentro de surtido naturalmente afín. | Compras/curaduría/liderazgo comercial; aplicar aprendizaje BioPlaza. | ¿Qué atributo agrega valor frente al surtido? Definir diferenciador y comparar formato/precio. | Renovación catálogo/nuevas marcas. Afinidad no prueba demanda. |
+| Tu Tienda Saludable | Retail; seguimiento estratégico | Entrada simple, recurrente y de bajo inventario. | Compras/abastecimiento/administración; propuesta corta y reposición clara. | ¿Puede entrar de forma rentable y fácil de reponer? Diseñar piloto bajo inventario. | Catálogo de bebidas/nueva tienda. Operación real no confirmada. |
+| Hotel Spa La Colina | Hospitality; monitoreo | Amenidad/ritual/bebida de bienvenida. | A&B/spa/guest experience/operaciones; identificar dueño del programa. | ¿Mejora experiencia sin cargar operación? Preparar concepto de una página y monitorear. | Expansión spa/programa/amenidades. Sin programa/presupuesto verificado. |
+| Somos Consiente | Wellness; monitoreo | Alianza de contenido/comunidad/ritual. | Fundador/alianzas/comunidad/operaciones; esperar programa concreto. | ¿Puede convertirse en relación B2B repetible? Definir triggers; no investigar profundo aún. | Programa/alianza/tienda/experiencia. Afinidad puede no monetizar. |
 
-Faltan economía mayorista, formatos B2B, MOQ, margen, capacidad, cobertura, certificaciones y modelo comercial. El Admin conserva 17 preguntas; el PDF muestra solo las cinco de mayor impacto. Las seis tesis están internas y sin revisión. Ninguna salida es customer-safe. El PDF interno está habilitado; el reporte final permanece bloqueado.
+## 7. Client-context state
 
-## F. Base de datos y migraciones
+Hay 17 preguntas, 10 blockers críticos, todas sin responder. No existe respuesta real aceptada, respuesta sintética productiva ni context version aceptada.
 
-- 001–030: SaaS, auth/customer, ICP/búsquedas, resultados, calidad/enrichment, Vault, créditos, onboarding, delivery, feedback y snapshots.
-- 031–039: Intelligence foundation, ML, source review, signals, institutional snapshots, origins y feedback outcomes.
-- 040: autorización Admin (`admin_users`).
-- 041: validation/learning lifecycle.
-- 042: evidence/temporal intelligence.
-- 043: signal temporal monitoring.
-- 044: Colombian entity resolution.
-- 045: account opportunity synthesis — aplicada.
-- 046: client context/review — aplicada.
-- 047: canonical Amor pilot workspace — aplicada.
-- 048: no creada ni aplicada; no es necesaria.
+Inputs prioritarios: formatos B2B, rango mayorista, MOQ, restricciones de margen, cobertura de entrega, capacidad de producción, fulfillment, registros/certificaciones, capacidad de distribución, modelo comercial preferido y ciclo de venta aceptable.
 
-Estado esperado: 1 piloto Amor de Gea, 6 tesis/cuentas, 17 preguntas, 0 respuestas aceptadas, 0 versiones activas de contexto, 0 tesis revisadas y 0 customer-safe outputs. El client/pilot ID canónico seguro es `amor-de-gea`; no documentar tenant UUIDs ni secretos. RLS debe negar acceso anónimo; escrituras sensibles son server-only/service-role y derivan tenant/actor en servidor.
+- Retail: formato, precio, MOQ, margen, rotación/reposición.
+- Distribución: margen de canal, volumen, territorio, capacidad/continuidad.
+- Hospitality: formato de servicio, fulfillment, reposición y certificaciones.
+- Feasibility/report readiness/customer safety: capacidad, cobertura, cumplimiento, economics y revisión explícita.
 
-## G. Mapa de archivos importante
+## 8. Database and migrations
 
-- `lib/intelligence/pilot-workspace.ts`: ensamblaje canónico del piloto.
-- `lib/intelligence/pilot-intelligence.ts`: tabs, ICP, universo histórico y orden de recomendaciones.
-- `lib/intelligence/account-opportunity-synthesis.ts` y módulos relacionados: tesis/rutas/casos.
-- `lib/intelligence/client-context*`: intake, versiones, feasibility y recalculo.
-- `lib/intelligence/evidence*`: evidencia, claims, fechas, freshness/corroboración.
-- `lib/intelligence/signal*` / `monitor*`: taxonomía, timing, triggers y What Changed.
-- `lib/intelligence/*entity*`: identidad colombiana, anchors y propiedad oficial.
-- `lib/intelligence/admin-intelligence-view-model.ts`: lectura segura del Command Center.
-- `lib/intelligence/snapshot*`: snapshot/capability/readiness determinista.
-- `app/admin/intelligence/pilots/[pilotId]/pilot-experience.tsx`: experiencia Admin source-of-truth.
-- `app/admin/intelligence/pilots/[pilotId]/pilot-experience.module.css`: sistema visual Admin.
-- `lib/reports/internal-pilot-pdf.ts`: renderer PDF activo, tema compartido vía `PILOT_SECTIONS`, co-branding configurable.
-- `app/api/admin/intelligence/pilots/[pilotId]/pdf/route.ts`: endpoint protegido y filename/cache/log.
-- `scripts/generate-internal-pilot-pdf.ts`: generador local del mismo renderer.
-- `scripts/fixtures/premium-internal-pdf.test.ts`: contrato PDF/Admin.
-- `scripts/fixtures/pilot-navigation-pdf.test.ts`: regresión Block 15.
-- `LEADLENS_INTELLIGENCE_OS_CHECKPOINT.md`, `LEADLENS_CONTINUITY_AUDIT_CHECKPOINT.md`: continuidad.
-- `LEADLENS_BLOCK_16_PREMIUM_INTERNAL_PDF_REBUILD_REPORT.md`: auditoría/render QA.
+- 001–039: SaaS/auth/customer, ICP/searches/results, quality/enrichment, Vault, credits, onboarding, delivery, feedback, snapshots, Intelligence/ML, source/signal review y origins.
+- 040 `admin_authorization`: `admin_users`, allowlist/revocación Admin. Aplicada.
+- 041 `intelligence_validation_loop`: lifecycle/reviews/actions/outcomes/learning, idempotencia. Aplicada.
+- 042 `evidence_temporal_intelligence`: evidencia/claims/fechas/freshness/cambios. Aplicada.
+- 043 `signal_temporal_monitoring`: señales, runs, baselines/transitions. Aplicada.
+- 044 `colombian_entity_resolution`: identidad, propiedades/anchors/atribución. Aplicada.
+- 045 `account_opportunity_synthesis`: tesis cliente-cuenta y outputs relacionados. Aplicada.
+- 046 `client_context_review`: intake, respuestas/versiones, thesis/safety review. Aplicada.
+- 047 `amor_pilot_workspace`: piloto canónico, tesis y actividad. Aplicada.
+- 048: no existe y no es requerida.
 
-## H. Rutas y redirects
+Tablas principales introducidas en 040–047: `admin_users`, `intelligence_validations`, `intelligence_validation_reviews`, `intelligence_commercial_actions`, `intelligence_commercial_outcomes`, `intelligence_learning_implications`, `intelligence_evidence`, `intelligence_claims`, `intelligence_claim_evidence`, `intelligence_client_contexts`, `intelligence_account_states`, `intelligence_dossiers`, `intelligence_monitoring_runs`, `intelligence_monitoring_triggers`, `intelligence_signals`, `intelligence_signal_changes`, `intelligence_entity_resolution_records`, `intelligence_account_opportunity_syntheses`, `intelligence_portfolio_syntheses`, `intelligence_client_context_versions`, `intelligence_client_intakes`, `intelligence_customer_safety_reviews`, `intelligence_pilots` e `intelligence_pilot_activity`.
 
-- `/admin/login`: acceso Admin.
+RLS debe negar acceso anónimo. Escrituras son server-only. Upserts/backfills son idempotentes. Versiones/revisiones preservan historia. Tenant/client scope se deriva en servidor. No incluir secretos.
+
+## 9. Current Supabase pilot counts
+
+- Pilots: 1
+- Accounts: 6
+- Theses: 6
+- Unanswered questions: 17
+- Real answers: 0
+- Accepted contexts: 0
+- Reviewed theses: 0
+- Customer-safe outputs: 0
+- Orphan records: 0
+- Cross-scope records: 0
+
+## 10. Route map
+
+- `/admin/login`, `/api/admin/session`, `/api/admin/auth-check`: Auth Admin.
 - `/admin/intelligence`: Command Center.
-- `/admin/intelligence/pilots/amor-de-gea`: Resumen.
-- `/admin/intelligence/pilots/amor-de-gea/{icp|accounts|account|context|evidence|readiness}`: secciones URL-backed.
-- `/api/admin/intelligence/pilots/amor-de-gea/pdf`: PDF interno.
-- `/api/admin/intelligence/pilots/[pilotId]/intake`: intake.
-- `/api/admin/intelligence/pilots/[pilotId]/operations`: operaciones/review.
+- `/admin/intelligence/pilots/amor-de-gea`: Resumen por defecto.
+- `/admin/intelligence/pilots/amor-de-gea/{icp|accounts|account|context|evidence|readiness}`: tabs URL-backed.
 - `/admin/pilot`: redirect al piloto canónico.
-- IDs forjados del PDF: 404; usuarios no Admin: rechazo/redirect según superficie.
+- `/api/admin/intelligence/pilots/[pilotId]/intake`: draft/submit context.
+- `/api/admin/intelligence/pilots/[pilotId]/operations`: context acceptance, thesis/safety review.
+- `/api/admin/intelligence/pilots/[pilotId]/pdf`: PDF Admin-only; ID forjado 404.
+- Customer: `/dashboard`, `/dashboard/icp`, `/dashboard/searches`, `/dashboard/searches/[id]`, `/results/[jobId]`, `/results/[jobId]/brief`.
 
-## I. Comandos de prueba
+El reporte final permanece bloqueado aunque el PDF interno esté disponible.
+
+## 11. Important file map
+
+- `app/admin/intelligence/page.tsx`: Command Center.
+- `app/admin/intelligence/pilots/[pilotId]/page.tsx`: piloto/resumen.
+- `app/admin/intelligence/pilots/[pilotId]/[section]/page.tsx`: tabs.
+- `app/admin/intelligence/pilots/[pilotId]/pilot-experience.tsx`: UX source-of-truth.
+- `pilot-intake.tsx`, `pilot-review-operations.tsx`: intake/review.
+- `workspace.module.css`: sistema visual.
+- `app/api/admin/intelligence/pilots/[pilotId]/{intake|operations|pdf}/route.ts`: APIs.
+- `lib/intelligence/pilot-workspace.ts`: loader/ensamblaje.
+- `pilot-intelligence.ts`: secciones, ICP y recomendaciones.
+- `account-opportunity-synthesis.ts`: tesis/rutas/use cases.
+- `client-context-review.ts`: questions/versions/recalculation/readiness.
+- `output-registry.ts`, `pattern-registry.ts`: outputs/patterns.
+- `snapshot-engine.ts`, `snapshot-loader.ts`: snapshot/capabilities.
+- `colombian-entity-resolution.ts`: entity resolution.
+- `evidence-temporal.ts`, `evidence-store.ts`, `research-quality.ts`: evidence.
+- `signal-temporal.ts`, `signal-benchmark.ts`: signals.
+- `lib/reports/internal-pilot-pdf.ts`: renderer activo.
+- `scripts/generate-internal-pilot-pdf.ts`: PDF local.
+- `scripts/sources/backfill-amor-pilot-workspace.ts`: backfill.
+- `reconcile-amor-pilot-workspace.ts`: reconciliation.
+- `verify-amor-pilot-migration.ts`: verification.
+- Tests clave: `premium-internal-pdf.test.ts`, `pilot-navigation-pdf.test.ts`, `premium-pilot-experience.test.ts`, `pilot-workspace.test.ts`, `intelligence-validation-loop.test.ts`, `admin-intelligence-command-center.test.ts`, `admin-auth.test.ts`, `evidence-temporal-intelligence.test.ts`, `signal-temporal-monitoring.test.ts`.
+- Reports/checkpoints: `LEADLENS_BLOCK_13_AMOR_DE_GEA_PILOT_WORKSPACE_REPORT.md`, `LEADLENS_BLOCK_14_RADICAL_PILOT_EXPERIENCE_REBUILD_REPORT.md`, `LEADLENS_BLOCK_15_PILOT_NAVIGATION_ICP_RECOMMENDATIONS_PDF_REPORT.md`, `LEADLENS_BLOCK_16_PREMIUM_INTERNAL_PDF_REBUILD_REPORT.md`, `LEADLENS_INTELLIGENCE_OS_CHECKPOINT.md`, `LEADLENS_CONTINUITY_AUDIT_CHECKPOINT.md`.
+
+## 12. Internal PDF state
+
+- Renderer metadata: `leadlens-pilot-brief-v3`.
+- 16 páginas A4, texto seleccionable, metadata/links.
+- Estructura Admin: Resumen, ICP, Cuentas recomendadas, Análisis por cuenta, Contexto, Evidencia y timing, Preparación.
+- Banda impresa representa los siete tabs.
+- LeadLens es sistema visual primario; Amor de Gea usa acento botánico restringido no presentado como identidad oficial.
+- Admin-only, `private, no-store`, sin provider calls.
+- Reporte final deshabilitado.
+
+Baseline interno aceptado. **No reconstruir el PDF.** Cambios futuros deben responder a nuevo contenido o defecto concreto demostrado.
+
+## 13. Test commands
 
 ```bash
 npm run test:premium-internal-pdf
 npm run test:pilot-navigation-pdf
 npx -y tsx scripts/fixtures/premium-pilot-experience.test.ts
 npx -y tsx scripts/fixtures/pilot-workspace.test.ts
+npx -y tsx scripts/fixtures/client-context-review.test.ts
 npm run test:admin-auth
 npm run test:evidence-temporal-intelligence
 npm run test:signal-temporal-monitoring
+npm run test:intelligence-validation-loop
+npm run test:admin-intelligence-command-center
 npx tsc --noEmit
 npm run build
-npm run pilot:internal-pdf -- output/pdf/leadlens-amor-de-gea-informe-interno.pdf
 ```
 
-## J. Despliegue
+## 14. Deployment workflow
 
-1. Abrir GitHub Desktop y verificar que solo esté el commit final del sprint.
-2. Push `main` a `origin`.
-3. Esperar Vercel `Ready`; no asumir despliegue por commit local.
-4. No aplicar migración: este sprint no crea 048.
-5. Entrar en producción con sesión Admin real.
-6. Abrir el piloto, recorrer las siete secciones y descargar el PDF.
-7. Verificar 16 páginas, filename, metadata v3, links y ausencia de cache obsoleta.
-8. Mantener sin commit `.leadlens/source-intelligence.json` y `.leadlens/usage.json`.
+1. Commit en `main`.
+2. Abrir GitHub Desktop.
+3. Push origin.
+4. Esperar Vercel `Ready`.
+5. Verificar producción.
+6. Login Admin real.
+7. Abrir `/admin/intelligence/pilots/amor-de-gea`.
+8. Descargar PDF y confirmar 16 páginas/metadata/links.
+9. Confirmar cero errores console/API.
+10. Aplicar migraciones futuras manualmente solo con autorización.
 
-## K. Invariantes
+Nunca incluir `.leadlens/source-intelligence.json` ni `.leadlens/usage.json`.
 
-- Nunca inventar intención de compra.
-- Nunca derivar timing desde fit estructural.
-- Separar evidencia, interpretación, recomendación y limitación.
-- Customer-safe requiere estado explícito y gates.
-- Ranking no cambia sin autorización.
-- Piloto y PDF son Admin-only.
-- No sintetizar respuestas del cliente.
-- Cero provider calls durante render.
-- Aislamiento tenant y actor derivados en servidor.
-- Versiones y revisiones son inmutables/append-only.
-- No exponer payloads crudos, secretos ni reasoning privado.
+## 15. Current Git and deployment state
 
-## L. Limitaciones conocidas
+- Estado verificado antes del closeout: branch `main`, HEAD `b4fe4e18ad6a05a12e3894702bb884e4b1cf1be6`.
+- `origin/main...HEAD`: `0 behind / 0 ahead`; el push de Block 16 ya ocurrió.
+- Dirty intencional: solo `.leadlens/source-intelligence.json`, `.leadlens/usage.json`.
+- Untracked: ninguno antes de editar este handoff.
+- El commit final de closeout será el commit que contiene esta versión; resolver con `git rev-parse HEAD`.
+- Push del commit de closeout: pendiente.
+- Vercel Ready y validación Admin/PDF de producción: pendientes de verificación; no asumir.
 
-- No hay respuestas reales de Amor de Gea.
-- No hay versión de contexto aceptada.
-- Las seis tesis no han sido revisadas.
-- No existen outputs customer-safe ni reporte final.
-- No hay timing comercial actual verificable.
-- El piloto es una muestra controlada de seis cuentas.
-- La profundidad de account intelligence todavía debe aumentar.
-- La evidencia más allá de identidad/dominio varía por cuenta.
+## 16. Known limitations
 
-## M. Próxima fase exacta — no iniciada
+- Sin respuestas reales, context version aceptada, tesis revisadas, customer-safe outputs ni reporte final.
+- Sin timing comercial actual verificable.
+- Muestra controlada de seis cuentas.
+- Evidencia más fuerte para identidad que demanda.
+- Buyer roles son hipótesis.
+- Feasibility depende de contexto.
+- Sin outcome data, intelligence-lift validado ni adaptive ranking.
+- Un piloto no demuestra rendimiento generalizado.
+
+## 17. Exact next phase for Claude
 
 **AMOR DE GEA PILOT — CLIENT CONTEXT COMPLETION AND ACCOUNT INTELLIGENCE QUALITY IMPROVEMENT**
 
-Debe ingresar respuestas reales, aceptar una versión de contexto, recalcular tesis, profundizar evidencia por cuenta, mejorar diferenciación, revisar las seis tesis y preparar outputs customer-safe. Generar reporte final únicamente cuando los gates de readiness pasen.
+Primero: leer este archivo; verificar HEAD/deployment; abrir piloto; confirmar data/UI; proponer la fase concreta más pequeña; no modificar hasta verificar continuidad.
 
-## N. No repetir
+Después: ingresar respuestas reales, mejorar intake solo si es necesario, aceptar context version, recalcular tesis afectadas, profundizar evidencia, validar buyer paths, revisar seis tesis, reevaluar feasibility/readiness y preparar customer-safe únicamente con revisión. Reporte final solo tras gates.
 
-No reiniciar auditoría de arquitectura; no reconstruir Auth; no recrear migraciones; no rehacer navegación, Admin o PDF; no ejecutar discovery amplio; no cambiar ranking; no inventar respuestas.
+## 18. Do not repeat
 
-## O. Estado Git al cierre
+No reiniciar arquitectura; no reconstruir Auth, navegación, workspace o PDF; no recrear/reaplicar 040–047; no discovery amplio ni cuentas nuevas sin autorización; no cambiar ranking; no inferir intención; no inventar respuestas; no promover customer-safe automáticamente ni generar reporte final prematuramente.
 
-El commit final es el commit que contiene este handoff; resolverlo con `git rev-parse HEAD`. Branch `main`. Antes del commit final, `origin/main` apuntaba a `aaf39ebfd2d932592d762725739493ba7cbcaa67`. Push y despliegue quedan pendientes salvo que el handoff final indique lo contrario. El repositorio debe quedar limpio excepto:
+## 19. Safe continuation instructions
 
-- `.leadlens/source-intelligence.json`
-- `.leadlens/usage.json`
+```text
+Read `CLAUDE_CONTINUATION_HANDOFF.md` completely and treat it as the authoritative continuation state.
+
+Do not restart the architecture audit or rebuild completed systems.
+
+Verify the current Git HEAD, production deployment and Amor de Gea pilot state first.
+
+Then continue exactly with:
+
+AMOR DE GEA PILOT — CLIENT CONTEXT COMPLETION AND ACCOUNT INTELLIGENCE QUALITY IMPROVEMENT
+
+Before modifying code, propose the smallest concrete phase that advances:
+- real client-context completion;
+- account evidence depth;
+- thesis review;
+- feasibility;
+- customer-safe readiness.
+
+Preserve every invariant documented in the handoff.
+```

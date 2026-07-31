@@ -159,3 +159,10 @@ Se realizaron dos ciclos finales a 180 DPI, con contact sheets locales comparado
 Handoff completo: `CLAUDE_CONTINUATION_HANDOFF.md`.
 
 Próxima fase exacta, no iniciada: **AMOR DE GEA PILOT — CLIENT CONTEXT COMPLETION AND ACCOUNT INTELLIGENCE QUALITY IMPROVEMENT**.
+
+## Final documentation closeout
+
+- The accepted baseline remains `leadlens-pilot-brief-v3`, 16 A4 pages, Admin-matched and provider-free. No renderer or product code changed.
+- `CLAUDE_CONTINUATION_HANDOFF.md` is the authoritative Claude handoff for Blocks 0–16, current pilot truth, migrations 040–047, validation commands and constraints.
+- Block 17 was not started. The next phase remains Client Context Completion and Account Intelligence Quality Improvement.
+- Push, Vercel readiness and production validation remain pending after the documentation-only commit.

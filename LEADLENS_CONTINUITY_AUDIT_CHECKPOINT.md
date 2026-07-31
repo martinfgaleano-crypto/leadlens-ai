@@ -435,3 +435,11 @@ Block 3 is complete when registry tests and related regressions pass, checkpoint
 - Client branding is data-driven through `PilotReportBrand`; LeadLens remains the primary verified design system.
 - Two 180-DPI render/contact-sheet reviews were compared with stored Admin QA at 1440, 1280 and 1024.
 - Claude continuation source of truth: `CLAUDE_CONTINUATION_HANDOFF.md`. Block 17 was not started.
+
+## 30. Final GPT code closeout
+
+- Accepted baseline remains the Admin-matched 16-page `leadlens-pilot-brief-v3`; no further PDF or product changes were made.
+- `CLAUDE_CONTINUATION_HANDOFF.md` is authoritative for architecture, Blocks 0–16, applied migrations 040–047, pilot truth, verification commands, constraints and next-phase prompt.
+- This closeout is documentation-only. Pre-existing `.leadlens/source-intelligence.json` and `.leadlens/usage.json` runtime changes remain intentionally excluded.
+- Block 17 was not started. Next authorized phase: Client Context Completion and Account Intelligence Quality Improvement.
+- Git push, Vercel readiness and production smoke validation remain pending after the closeout commit.

@@ -376,3 +376,11 @@ Preserved: `preference-learner` + `shadow-preference` never touch ranking; UI sh
 - Dos render-review cycles a 180 DPI comparados con Admin 1440/1280/1024; temporales excluidos.
 - Continuidad completa para Claude: `CLAUDE_CONTINUATION_HANDOFF.md`.
 - Próxima fase, no iniciada: Client Context Completion and Account Intelligence Quality Improvement.
+
+### Final GPT code closeout
+
+- Baseline aceptado: PDF interno premium `leadlens-pilot-brief-v3`, 16 páginas A4, alineado con Admin y sin reconstrucción pendiente.
+- Fuente autoritativa de continuidad: `CLAUDE_CONTINUATION_HANDOFF.md`, con arquitectura, Blocks 0–16, migraciones 040–047, estado real del piloto, pruebas, límites y prompt de continuación.
+- Cierre exclusivamente documental; no modifica producto, Auth, renderer, migraciones, datos ni lógica de Intelligence.
+- Block 17 no fue iniciado. La siguiente fase autorizable sigue siendo Client Context Completion and Account Intelligence Quality Improvement.
+- El commit documental queda listo para push; Vercel/producción permanece pendiente hasta que ese push y deployment ocurran.
