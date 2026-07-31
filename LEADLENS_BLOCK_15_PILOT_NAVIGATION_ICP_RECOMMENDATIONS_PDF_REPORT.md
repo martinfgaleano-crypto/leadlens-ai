@@ -94,3 +94,7 @@ Commit estable de Block 15: se reporta en el handoff final porque el hash se cre
 No se verificó la descarga con una sesión Admin de producción porque no se usaron ni fabricaron credenciales. Tampoco se resolvieron las 17 preguntas, el timing cero o la revisión de tesis. Próxima acción exacta: desplegar este commit, abrir el piloto con sesión Admin real, recorrer las siete rutas y descargar el PDF; después capturar las cinco respuestas críticas de Amor de Gea. No generar todavía el reporte final.
 
 Stop confirmado: no se inició Block 16, outreach, expansión de cuentas, investigación amplia, publicación ni ranking adaptativo.
+
+## Continuidad posterior — Block 16
+
+Block 16 sustituyó este PDF interno de ocho páginas por un brief premium de 16 páginas, sin cambiar el ranking, las seis cuentas ni el bloqueo customer-safe. El nuevo filename es `leadlens-amor-de-gea-informe-interno-YYYY-MM-DD.pdf`; incluye metadata, links, funnel, mapa de portafolio y una página editorial por cuenta. La implementación y su QA render-first están documentadas en `LEADLENS_BLOCK_16_PREMIUM_INTERNAL_PDF_REBUILD_REPORT.md`.

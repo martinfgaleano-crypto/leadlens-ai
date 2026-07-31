@@ -414,3 +414,14 @@ Block 3 is complete when registry tests and related regressions pass, checkpoint
 - Final customer report remains locked; 17 questions, zero timing and six unreviewed theses remain unchanged.
 - No migration 048. Targeted and regression suites, typecheck and production build passed.
 - Full record: `LEADLENS_BLOCK_15_PILOT_NAVIGATION_ICP_RECOMMENDATIONS_PDF_REPORT.md`.
+
+## 29. Block 16 — Premium internal PDF rebuild
+
+- Replaced the eight-page text-heavy internal PDF with a 16-page consulting-style commercial intelligence brief.
+- Added a reusable jsPDF composition system, premium cover, executive hierarchy, visual ICP/funnel/portfolio/readiness and one differentiated page per account.
+- Evidence rows now expose source type, verification date, freshness, confidence, claim role, limitation and clickable official property.
+- Preserved Admin-only access, forged-ID rejection, private caching, deterministic provider-free generation, stable filename and structured success/failure logs.
+- Three 200-DPI render iterations were visually inspected; no clipping, blank pages, overflow or footer collision remains.
+- Final report, customer-safe promotion, timing inference and production ranking remain off. No migration and no Block 17.
+- Targeted/regression suites, TypeScript and the 134-page production build passed.
+- Full record: `LEADLENS_BLOCK_16_PREMIUM_INTERNAL_PDF_REBUILD_REPORT.md`.

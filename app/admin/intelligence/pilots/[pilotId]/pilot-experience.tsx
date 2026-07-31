@@ -319,7 +319,7 @@ export default function PilotExperience({ workspace, activeSection = "overview",
     <section className={styles.overviewBrief}>
       <div><span className={styles.eyebrow}>Perfil de cliente ideal</span><h2>Qué está buscando LeadLens</h2><p>{ICP.summary}</p><Link href="/admin/intelligence/pilots/amor-de-gea/icp">Ver perfil, procedencia y preguntas abiertas →</Link></div>
       <div><span className={styles.eyebrow}>Cuentas recomendadas</span><h2>Secuencia de validación</h2>{recs.slice(0, 4).map(rec => <p key={rec.account.account_id}><strong>{rec.order}. {rec.account.account_name}</strong><br />{rec.rationale}</p>)}<Link href="/admin/intelligence/pilots/amor-de-gea/accounts">Ver shortlist completa →</Link></div>
-      <div><span className={styles.eyebrow}>Estado de exportación</span><h2>Dos salidas, dos estados</h2><p><strong>PDF interno:</strong> disponible para revisión.</p><p><strong>Reporte final para cliente:</strong> bloqueado hasta completar contexto y revisión.</p><a className={styles.exportButton} href="/api/admin/intelligence/pilots/amor-de-gea/pdf">Descargar PDF interno</a><small>Versión interna del piloto; todavía no corresponde al reporte final.</small></div>
+      <div><span className={styles.eyebrow}>Estado de exportación</span><h2>Dos salidas, dos estados</h2><p><strong>PDF interno:</strong> disponible para revisión.</p><p><strong>Reporte final para cliente:</strong> bloqueado hasta completar contexto y revisión.</p><a className={styles.exportButton} href="/api/admin/intelligence/pilots/amor-de-gea/pdf">Descargar informe interno en PDF</a><small>Documento interno para revisión. El reporte final para cliente continúa bloqueado.</small></div>
     </section></>}
 
     {activeSection === "icp" && <section id="icp" className={styles.section}>
@@ -456,7 +456,7 @@ export default function PilotExperience({ workspace, activeSection = "overview",
         </div>
         <aside><strong>Efecto esperado</strong><p>Desbloquear la evaluación de viabilidad de seis cuentas, mejorar las secciones dependientes del contexto y habilitar una revisión fundada de las seis tesis.</p></aside>
       </div>
-      <div className={styles.exportStates}><div><strong>PDF interno del piloto</strong><span>Disponible para revisión interna</span><a className={styles.exportButton} href="/api/admin/intelligence/pilots/amor-de-gea/pdf">Descargar piloto en PDF</a><small>No corresponde todavía al reporte final para el cliente.</small></div><div><strong>Reporte final para cliente</strong><span>Bloqueado</span><button disabled>Generar reporte final</button><small>Requiere completar contexto, evidencia y revisión.</small></div></div>
+      <div className={styles.exportStates}><div><strong>PDF interno del piloto</strong><span>Disponible para revisión interna</span><a className={styles.exportButton} href="/api/admin/intelligence/pilots/amor-de-gea/pdf">Descargar informe interno en PDF</a><small>Documento interno para revisión. El reporte final para cliente continúa bloqueado.</small></div><div><strong>Reporte final para cliente</strong><span>Bloqueado</span><button disabled>Generar reporte final</button><small>Requiere completar contexto, evidencia y revisión.</small></div></div>
       <div className={styles.reportLock}>El reporte final permanecerá deshabilitado hasta completar las confirmaciones y revisiones necesarias.</div>
     </section>}
 

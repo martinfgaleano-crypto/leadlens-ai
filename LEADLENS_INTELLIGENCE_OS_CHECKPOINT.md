@@ -354,3 +354,15 @@ Preserved: `preference-learner` + `shadow-preference` never touch ranking; UI sh
 - 47 pruebas Block 15, 41 Block 14, 48 Block 13, 36 Command Center, 48 Auth, 55 evidencia y 51 señales; typecheck y build de 134 páginas aprobados.
 - Sin migración 048, proveedores, respuestas sintéticas, customer-safe output ni Block 16.
 - Informe completo: `LEADLENS_BLOCK_15_PILOT_NAVIGATION_ICP_RECOMMENDATIONS_PDF_REPORT.md`.
+
+## Block 16 checkpoint — reconstrucción premium del PDF interno
+
+- El PDF interno fue reautorizado desde cero como brief editorial de 16 páginas; ya no reutiliza el layout plano de Block 15.
+- Incluye cubierta premium, Executive Brief, decisiones, ICP visual, funnel, portafolio, mapa cualitativo, una página por cuenta, contexto, timing/readiness y metodología.
+- Las seis cuentas tienen tesis, uso, comprador, ruta, fricción, pregunta, trigger, acción, fallback y evidencia diferenciados.
+- Evidencia visible: fuente oficial, tipo, fecha, frescura, confianza, claim, rol, limitación y link; no se infiere compra ni timing.
+- Tres ciclos de generación/render a 200 DPI; versión final sin páginas vacías, clipping, overflow ni footer overlap observado.
+- PDF Admin-only, private/no-store, determinista y provider-free; filename estable, metadata y logs de éxito/error.
+- Final customer report, ranking y customer safety continúan bloqueados. Sin migración ni Block 17.
+- Regresión: 42/42 premium, 47/47 Block 15, 41/41 Block 14, 48/48 Block 13, 48/48 Auth, 55/55 evidencia, 51/51 señales; typecheck y build aprobados.
+- Informe completo: `LEADLENS_BLOCK_16_PREMIUM_INTERNAL_PDF_REBUILD_REPORT.md`.
