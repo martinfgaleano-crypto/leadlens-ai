@@ -389,6 +389,14 @@ export default function PilotExperience({ workspace, activeSection = "overview",
       <div className={styles.categoryStrip}>
         {["Oferta B2B", "Capacidad y operación", "Precios y mínimos", "Cobertura geográfica", "Cumplimiento", "Estrategia comercial"].map(category => <div key={category}><strong>{category}</strong><span>Necesita confirmación</span></div>)}
       </div>
+      <div className={styles.exportStates}>
+        <div>
+          <strong>Cuestionario de contexto ({workspace.questions.length} preguntas)</strong>
+          <span>Envíaselo al cliente para que lo complete y devuelva</span>
+          <a className={styles.exportButton} href={`/api/admin/intelligence/pilots/${workspace.pilot.pilot_id}/questionnaire`}>Exportar cuestionario (CSV)</a>
+          <small>CSV editable con columnas de respuesta en blanco. Las respuestas se cargan y revisan aquí antes de recalcular las tesis.</small>
+        </div>
+      </div>
       <PilotIntake pilotId={workspace.pilot.pilot_id} questions={workspace.questions} />
     </section>}
 
