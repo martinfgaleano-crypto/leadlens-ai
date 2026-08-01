@@ -393,10 +393,10 @@ export default function PilotExperience({ workspace, activeSection = "overview",
         <div>
           <strong>Cuestionario para el cliente</strong>
           <span>Recoge la información operativa y comercial necesaria para afinar las seis tesis de oportunidad. 17 preguntas · 9 esenciales · 20–30 min. Ninguna respuesta viene precargada; todo queda sujeto a revisión de LeadLens.</span>
-          <a className={styles.exportButton} href={`/api/admin/intelligence/pilots/${workspace.pilot.pilot_id}/questionnaire/xlsx`}>Descargar cuestionario editable (.xlsx)</a>
+          <a className={styles.exportButton} href={`/api/admin/intelligence/pilots/${workspace.pilot.pilot_id}/questionnaire/xlsx`}>Descargar cuestionario editable (.xlsx) — recomendado</a>
           <a className={styles.exportButton} href={`/api/admin/intelligence/pilots/${workspace.pilot.pilot_id}/questionnaire/pdf`}>Descargar cuestionario para revisión (.pdf)</a>
           <a href={`/api/admin/intelligence/pilots/${workspace.pilot.pilot_id}/questionnaire`}><small>Descargar CSV técnico</small></a>
-          <small>Descargar no crea ni acepta contexto. Las respuestas se cargan y revisan aquí antes de recalcular las tesis.</small>
+          <small>XLSX es el formato recomendado para completar; el PDF es para revisar o imprimir; el CSV es técnico. Descargar no crea ni acepta contexto: las respuestas se revisan antes de usarse.</small>
         </div>
       </div>
       <PilotIntake pilotId={workspace.pilot.pilot_id} questions={workspace.questions} />

@@ -446,3 +446,6 @@ Block 3 is complete when registry tests and related regressions pass, checkpoint
 
 ## Client questionnaire experience (added)
 Professional client questionnaires (XLSX primary / PDF / CSV fallback) added, reusable per pilot; Admin-only, provider-free, answers blank. Endpoints under `/api/admin/intelligence/pilots/[pilotId]/questionnaire[/xlsx|/pdf]`. See `LEADLENS_CLIENT_QUESTIONNAIRE_EXPERIENCE_REPORT.md`. Next: send to Amor de Gea, import answers after review.
+
+## Client questionnaire visual correction (v2)
+PDF/XLSX polished (drawn checkboxes, thematic order, vertical-form XLSX, blank cells, live formulas). 27 tests. No migration.

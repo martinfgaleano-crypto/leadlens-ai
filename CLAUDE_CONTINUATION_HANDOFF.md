@@ -301,3 +301,6 @@ Professional client-context questionnaires now exist (reusable across pilots):
 - Technical **CSV** (fallback): `GET /api/admin/intelligence/pilots/[pilotId]/questionnaire`
 Model: `lib/intelligence/client-questionnaire.ts` (17 client-facing questions, 9 esenciales, 3 phases, options/units/confidence, hidden import keys). Renderers: `lib/reports/client-questionnaire-xlsx.ts` (exceljs), `lib/reports/client-questionnaire-pdf.ts` (jsPDF). Admin: 3-button module in the Context tab. Admin-only, private/no-store, provider-free, answers blank, no internal names on client outputs. See `LEADLENS_CLIENT_QUESTIONNAIRE_EXPERIENCE_REPORT.md`.
 **Next operational step:** send the XLSX/PDF to Amor de Gea; import the returned answers as `admin_entry` and review/accept before recalculating theses. Do not import/accept before review.
+
+## Client questionnaire visual correction (v2)
+PDF + XLSX polished: drawn checkboxes, thematic section order, fixed cover, vertical-form XLSX (blank cells, hidden keys, live Resumen/Esenciales), responder page. test:client-questionnaire 27. See report.

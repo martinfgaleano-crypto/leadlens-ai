@@ -56,12 +56,14 @@ export const AMOR_QUESTIONS: ClientQuestion[] = [
     why: "Define qué se puede ofrecer a cada cuenta y en qué formato entrar.",
     subfields: ["Producto o línea", "Formato/presentación", "Tamaño de unidad", "Unidades por caja", "Tipo de empaque", "Vida útil (si aplica)", "Disponible hoy (sí/no)"] },
   { key: "customization", internal_fields: ["customization_capacity"], section_id: "A", phase: "commercial", kind: "multi_select",
-    question: "¿Puede Amor de Gea personalizar producto o empaque para un cliente B2B?",
-    why: "Amplía o limita las rutas posibles (surtido, gifting, marca propia).",
-    options: ["Sin personalización por ahora", "Ajustes de etiqueta o empaque", "Surtido a medida", "Regalo corporativo", "Marca propia", "Condicional / caso a caso", "Otro"] },
+    question: "¿Puede Amor de Gea personalizar el producto o el empaque para un cliente B2B?",
+    why: "Amplía o limita las rutas posibles (surtido, gifting, co-branding).",
+    units_or_examples: "«Personalización» = ajuste de empaque/etiqueta o co-branding. La fabricación de marca blanca se trata por separado en la siguiente pregunta.",
+    options: ["Sin personalización por ahora", "Ajuste de etiqueta o empaque", "Co-branding (marca compartida)", "Surtido a medida", "Kit de regalo corporativo", "Condicional / caso a caso", "Otro"] },
   { key: "private_label", internal_fields: ["white_label_capacity"], section_id: "A", phase: "optional", kind: "single_select",
-    question: "¿La producción de marca blanca está disponible hoy?",
-    why: "Habilita o descarta oportunidades de marca propia con distribuidores/retail.",
+    question: "¿La fabricación de marca blanca está disponible hoy?",
+    why: "Distinto de personalizar empaque o co-branding: aquí se fabrica el producto con la marca del cliente B2B.",
+    units_or_examples: "Marca blanca = producir con la marca del cliente (no es solo ajustar etiqueta ni co-branding).",
     options: ["Sí", "No", "Condicional", "En desarrollo", "No estoy seguro"] },
   // ── B. Precios y condiciones ──
   { key: "wholesale_price", internal_fields: ["price_positioning"], section_id: "B", phase: "essential", kind: "structured", sensitive: true,
@@ -72,8 +74,8 @@ export const AMOR_QUESTIONS: ClientQuestion[] = [
   { key: "minimum_order", internal_fields: ["minimum_order"], section_id: "B", phase: "essential", kind: "structured", sensitive: true,
     question: "¿Cuál es el pedido mínimo B2B?",
     why: "Determina qué cuentas son operativamente viables y cómo diseñar un piloto.",
-    units_or_examples: "Ej.: 50 unidades, o $500.000 COP por pedido.",
-    subfields: ["Mínimo en unidades", "Mínimo en valor", "Mínimo por referencia", "Excepción para pedido piloto"] },
+    units_or_examples: "Ej.: 50 unidades o $500.000 COP por pedido. Indique si aplica a un piloto o a un pedido recurrente.",
+    subfields: ["Mínimo en unidades", "Mínimo en valor (COP)", "Valor aproximado por pedido mensual", "Frecuencia esperada de pedido", "Mínimo por referencia", "¿Piloto vs. recurrente?"] },
   { key: "margin", internal_fields: ["margins"], section_id: "B", phase: "essential", kind: "range", sensitive: true,
     question: "¿Qué margen o condición comercial debe preservarse para que una oportunidad sea viable?",
     why: "Filtra oportunidades que no sostienen la economía del negocio.",
@@ -97,7 +99,9 @@ export const AMOR_QUESTIONS: ClientQuestion[] = [
   { key: "operational_constraints", internal_fields: ["fulfillment_constraints"], section_id: "C", phase: "essential", kind: "multi_select",
     question: "¿Qué restricciones operativas debería considerar LeadLens?",
     why: "Evita recomendar cuentas que la operación no puede atender hoy.",
-    options: ["Inventario limitado", "Tiempo de producción", "Requiere temperatura/almacenamiento", "Empaque frágil", "Lote mínimo de producción", "Disponibilidad estacional", "Días de despacho", "Limitaciones del transportador"] },
+    units_or_examples: "Marque las que apliquen e indique brevemente el impacto en el abastecimiento.",
+    options: ["Inventario limitado", "Tiempo de producción", "Requiere temperatura/almacenamiento", "Empaque frágil", "Lote mínimo de producción", "Disponibilidad estacional", "Días de despacho", "Limitaciones del transportador"],
+    subfields: ["Impacto (breve)"] },
   // ── D. Cumplimiento ──
   { key: "certifications", internal_fields: ["certifications"], section_id: "D", phase: "essential", kind: "structured",
     question: "¿Qué registros, certificaciones o documentos están disponibles hoy?",
@@ -128,7 +132,7 @@ export const AMOR_QUESTIONS: ClientQuestion[] = [
     question: "¿Qué etapa describe mejor a Amor de Gea hoy?",
     why: "Contextualiza expectativas y ritmo del piloto.",
     options: ["Validando demanda B2B", "Primeros clientes B2B recurrentes", "Creciendo un canal B2B existente", "Expandiendo geográficamente", "Desarrollando distribuidores", "Consolidando operaciones", "Otro"] },
-  { key: "pilot_objectives", internal_fields: [], section_id: "F", phase: "optional", kind: "multi_select",
+  { key: "pilot_objectives", internal_fields: [], section_id: "F", phase: "commercial", kind: "multi_select",
     question: "¿Cuáles son los 3 objetivos más importantes de este piloto?",
     why: "Alinea las recomendaciones con lo que más le importa al negocio.",
     options: ["Generar ingresos a corto plazo", "Validar encaje producto-mercado", "Abrir retail especializado", "Encontrar distribuidores", "Entrar a hotelería", "Probar regalo corporativo", "Mejorar la oferta B2B", "Aprender requisitos de precio y MOQ", "Construir referencias comerciales", "Otro"] },
@@ -177,6 +181,26 @@ export function renderQuestionnaire(questions: ClientQuestion[] = AMOR_QUESTIONS
 
 export function essentialCount(questions: ClientQuestion[] = AMOR_QUESTIONS): number {
   return questions.filter((q) => q.phase === "essential").length;
+}
+
+// One visible XLSX sheet / PDF section per thematic section (A–F).
+export const SECTION_SHEET: Record<string, string> = {
+  A: "Oferta B2B", B: "Precios y condiciones", C: "Capacidad y cobertura",
+  D: "Cumplimiento", E: "Estrategia comercial", F: "Prioridades",
+};
+
+/** Thematic (section A→F) order with 1..N numbering — used by the PDF and the
+ *  XLSX so the document reads by topic, not by priority. Priority stays a label. */
+export function renderBySection(questions: ClientQuestion[] = AMOR_QUESTIONS): RenderedQuestion[] {
+  const sectionTitle = (id: string) => SECTIONS.find((s) => s.id === id)?.title ?? id;
+  const order = SECTIONS.map((s) => s.id);
+  const withIdx = questions.map((q, i) => ({ q, i }));
+  withIdx.sort((a, b) => order.indexOf(a.q.section_id) - order.indexOf(b.q.section_id) || a.i - b.i);
+  return withIdx.map(({ q }, i) => ({
+    number: i + 1, sectionId: q.section_id, sectionTitle: sectionTitle(q.section_id),
+    phase: q.phase, phaseLabel: PHASE_LABEL[q.phase], question: q.question, why: q.why, kind: q.kind,
+    options: q.options ?? [], unitsOrExamples: q.units_or_examples ?? "", subfields: q.subfields ?? [], sensitive: !!q.sensitive,
+  }));
 }
 
 /** Hidden import contract row (metadata sheet / hidden columns only). */
