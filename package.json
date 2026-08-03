@@ -119,7 +119,8 @@
     "test:amor-phase5a": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/amor-phase5a-customer-safe.test.ts",
     "pilot:amor-phase5a1-bioplaza": "npx -y tsx --tsconfig tsconfig.json scripts/sources/run-amor-phase5a1-bioplaza-confirmation.ts",
     "test:amor-phase5a1": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/amor-phase5a1-signoff.test.ts",
-    "test:amor-context-impact": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/amor-context-impact-audit.test.ts"
+    "test:amor-context-impact": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/amor-context-impact-audit.test.ts",
+    "test:amor-blueprint-v2": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/amor-blueprint-v2-replay.test.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.27.0",

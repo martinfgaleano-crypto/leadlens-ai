@@ -497,3 +497,6 @@ One bounded BioPlaza provider call was consumed; DAM used direct official eviden
 ## Context-impact audit boundary
 
 Zero provider calls. Client handoff and Phase 5B remain paused. Historical layers are preserved; Blueprint V2 and V3R3 are unapproved proposals only.
+## Blueprint V2 continuity
+
+Blueprint V1 and V3R2 remain immutable. Blueprint V2 is approved for replay; V3R3 remains internal founder review. No migration, provider call, client delivery or Phase 5B occurred.

@@ -353,3 +353,6 @@ Use `amor-de-gea-phase5a1-signoff.ts`. V4D.1 has 11 safe-after-check accounts an
 ## Context-impact audit continuity
 
 Handoff is paused. `amor-de-gea-context-impact-audit.ts` concludes partial—not strong—impact, creates unapproved Blueprint V2 and proposes V3R3 with BioPlaza/DAM outside the active portfolio. No providers were used.
+## Blueprint V2 replay checkpoint
+
+Replay `amor_blueprint_v2_replay_20260803_v1` compiles 30 context fields into 22 executable rules across 56 persisted domains. V3R3 proposes 10 active accounts; BioPlaza is insufficient evidence and DAM is monitor-only. Do not search or contact the client.

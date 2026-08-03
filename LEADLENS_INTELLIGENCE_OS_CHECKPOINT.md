@@ -438,3 +438,6 @@ V4D.1 is founder-signed and ready for the client conflict check, not final deliv
 ## Context impact
 
 Audit replay covers 56 domains and 15 enriched accounts. Context impact is partially demonstrated; Blueprint V1 is not fully compiled/enforced. Blueprint V2 and V3R3 await founder review.
+## Context compiler V2
+
+`amor-context-rule-compiler@2.0.0` is active for deterministic replay only. Query and candidate decision traces, field coverage and rule impact are exposed inside the existing pilot Admin.

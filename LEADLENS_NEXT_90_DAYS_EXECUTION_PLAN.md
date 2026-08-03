@@ -104,3 +104,6 @@ V4D.1 is ready for manual conflict-check delivery. Import remains preview-only; 
 ## Context-impact audit
 
 Client handoff is paused. Prioritize approval and implementation of the context-rule compiler, Blueprint V2 and candidate decision traces before any new discovery or client delivery.
+### Blueprint V2 context-compiled replay
+
+Blueprint V2 is approved only for persisted-data replay. V3R3 and replacement queries remain founder-review gates; no provider search or Amor de Gea handoff may resume before explicit approval.
