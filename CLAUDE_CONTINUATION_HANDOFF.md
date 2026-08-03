@@ -326,3 +326,7 @@ Audited the intake pipeline (manual entry `/intake` → review/accept `/operatio
 # Phase 2 handoff — 2026-08-03
 
 Canonical accepted context: `context_28bbc2b447323da3e387c964`, sourced only from `intake_fb4bc38a8e0af0343c9f8f1e`. The Commercial Readiness Profile is in the existing pilot Context experience. Preserve all provenance and 15 explicit limitations. Do not start Phase 3 without founder review.
+
+## Phase 3 handoff
+
+Search Blueprint V1 is `founder_review`; six recalibrations are `internal_review`. Baseline V1 objects remain canonical history. Do not execute the 15 query hypotheses or begin Phase 4 without explicit founder approval.

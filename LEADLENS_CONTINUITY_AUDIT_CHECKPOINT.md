@@ -470,3 +470,7 @@ Audited the intake pipeline (manual entry `/intake` → review/accept `/operatio
 # Phase 2 continuity — 2026-08-03
 
 Acceptance used the existing versioned context architecture; no migration was required. Candidate history remains intact. Phase 3 is blocked pending founder review of the accepted profile.
+
+## Phase 3 continuity
+
+Baseline theses are preserved and referenced through `supersedes_id`; V2 comparisons are internal-only. No migration, discovery, provider payload or public report change was introduced.
