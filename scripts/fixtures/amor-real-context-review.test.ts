@@ -27,7 +27,7 @@ test("17 no thesis recalculation",review.invariants.theses_recalculated===false)
 test("18 no ranking change",review.invariants.ranking_changed===false);
 test("19 no provider calls",review.invariants.provider_calls===false);
 test("20 no customer-safe promotion",review.invariants.customer_safe_promoted===false);
-test("21 workspace exposes review but keeps active context null",buildPilotWorkspace().contextReview.answers.length===17&&buildPilotWorkspace().pilot.active_context_version===null);
+test("21 workspace exposes review and accepted Phase 2 context",buildPilotWorkspace().contextReview.answers.length===17&&buildPilotWorkspace().pilot.active_context_version==="context_28bbc2b447323da3e387c964");
 const core=readFileSync("lib/intelligence/amor-de-gea-real-context-review.ts","utf8");
 test("22 review module makes no provider call",!/fetch\(|\.search\(|Serper|Tavily/.test(core));
 const plan=readFileSync("LEADLENS_NEXT_90_DAYS_EXECUTION_PLAN.md","utf8");

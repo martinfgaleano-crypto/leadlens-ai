@@ -1,0 +1,11 @@
+import{readFileSync}from"fs";import{AMOR_ACCEPTED_CONTEXT,AMOR_COMMERCIAL_READINESS as r}from"@/lib/intelligence/amor-de-gea-commercial-readiness";import{buildPilotWorkspace}from"@/lib/intelligence/pilot-workspace";
+let passed=0,failed=0;function check(label:string,value:boolean){if(value){passed++;console.log(`✅ ${label}`)}else{failed++;console.error(`❌ ${label}`)}}
+const w=buildPilotWorkspace(),route=readFileSync("app/api/admin/intelligence/pilots/[pilotId]/operations/route.ts","utf8"),script=readFileSync("scripts/sources/accept-amor-founder-context.ts","utf8");
+check("exact candidate",AMOR_ACCEPTED_CONTEXT.source_candidate_id==="intake_fb4bc38a8e0af0343c9f8f1e"&&script.includes(AMOR_ACCEPTED_CONTEXT.source_candidate_id));
+check("existing accept_context",script.includes('action:"accept_context"')&&route.includes('operation.action === "accept_context"'));
+check("immutable linked version",w.pilot.active_context_version===r.context_version_id&&AMOR_ACCEPTED_CONTEXT.version===1);check("17 accepted fields",AMOR_ACCEPTED_CONTEXT.accepted_fields===17);
+check("provenance separated",["client_questionnaire","founder_pilot_decision","system_interpretation","open_validation"].every(x=>route.includes(x)));check("15 explicit limitations",route.includes("dosage and bottle-duration inconsistency"));
+check("route states",r.routes.enabled.length===7&&r.routes.conditioned.length===4&&r.routes.blocked.length===4);check("proposal differs from negotiation",r.validations.before_formal_proposal.every(x=>!r.validations.later_negotiation.includes(x as never)));
+check("private label blocked",r.routes.blocked.includes("Private label"));check("high volume conditioned",r.initial_order_readiness.some(x=>x.includes("conditioned")));check("customer safe limits",r.customer_safe_limitations.length===4&&!AMOR_ACCEPTED_CONTEXT.customer_safe_promoted);
+check("no recalculation",AMOR_ACCEPTED_CONTEXT.theses_recalculated===0);check("no ranking",AMOR_ACCEPTED_CONTEXT.ranking_impact==="off");check("no providers",AMOR_ACCEPTED_CONTEXT.provider_calls===0);check("phase 3 blocked",r.next_phase.includes("blocked pending founder review"));check("report disabled",r.final_report_generation==="disabled");
+console.log(`\n${passed} passed, ${failed} failed`);if(failed)process.exit(1);

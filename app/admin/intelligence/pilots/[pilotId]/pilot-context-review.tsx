@@ -1,23 +1,25 @@
 "use client";
 
-import {useState} from "react";
 import type {PilotWorkspace} from "@/lib/intelligence/pilot-workspace";
-import {adminFetch} from "@/lib/admin/admin-client";
 import styles from "./workspace.module.css";
 
 const COMPLETION:Record<string,string>={answered:"Respondida",missing:"Faltante",ambiguous:"Ambigua",not_applicable:"No aplica",clarification_recommended:"Aclaración recomendada"};
 const CLASSIFICATION:Record<string,string>={sufficient_to_continue:"Suficiente para continuar",pending_non_blocking:"Pendiente no bloqueante",conditioning:"Condiciona recomendación",route_specific_blocker:"Bloquea solo una ruta",customer_safe_blocker:"Bloquea uso customer-safe"};
 const EVIDENCE:Record<string,string>={no_evidence:"Sin evidencia",client_statement:"Declaración del cliente",client_marketing_material:"Material comercial del cliente",client_document_supplied:"Documento declarado/suministrado",independently_verified:"Verificado independientemente"};
 
-export default function PilotContextReview({review}:{review:PilotWorkspace["contextReview"]}) {
+export default function PilotContextReview({review,accepted,readiness}:{review:PilotWorkspace["contextReview"];accepted:PilotWorkspace["acceptedContext"];readiness:PilotWorkspace["commercialReadiness"]}) {
   const s=review.summary;
-  const [candidateState,setCandidateState]=useState("");
-  async function createCandidate(){setCandidateState("Creando candidato versionado…");const response=await adminFetch("/api/admin/intelligence/pilots/amor-de-gea/context-candidate",{method:"POST"});const result=await response.json().catch(()=>({}));setCandidateState(response.ok?`Candidato listo: ${result.intake_id}. Todavía no ha sido aceptado.`:result.error??"No fue posible crear el candidato.");}
   return <div className={styles.contextReview}>
     <div className={styles.previewBanner}>
-      <div><span>{review.acceptance_readiness.label}</span><h3>Contexto resuelto con limitaciones explícitas</h3></div>
-      <div><p>Las respuestas del cliente, decisiones del fundador e interpretaciones del sistema permanecen separadas. No existe contexto aceptado, recalculo de tesis, cambio de ranking ni promoción customer-safe.</p><button className={styles.acceptanceButton} onClick={createCandidate}>Crear candidato para aceptación</button>{candidateState&&<small role="status">{candidateState}</small>}</div>
+      <div><span>CONTEXTO ACEPTADO · V{accepted.version}</span><h3>Contexto resuelto con limitaciones explícitas</h3></div>
+      <div><p>Versión <code>{accepted.id}</code> · aceptada {new Date(accepted.accepted_at).toLocaleString("es-CO")} · fuente <code>{accepted.source_candidate_id}</code>. Las 17 respuestas, decisiones del fundador, interpretaciones y validaciones permanecen separadas.</p><small>{accepted.authorization}. Sin recalcular tesis, alterar ranking ni promover contenido customer-safe.</small></div>
     </div>
+    <section className={styles.successContract}><span>COMMERCIAL READINESS PROFILE</span><h3>Qué puede explorar Amor de Gea ahora</h3><p>Perfil interno vinculado a <code>{readiness.context_version_id}</code>. No implica intención de compra ni garantiza ventas.</p>
+      <div>{readiness.offer_ready_now.map(x=><strong key={x}>{x}</strong>)}</div>
+      <div className={styles.contextColumns}><section><h3>Pedido inicial</h3><ol>{readiness.initial_order_readiness.map(x=><li key={x}>{x}</li>)}</ol><h3>Geografía</h3><ol>{readiness.geographic_readiness.map(x=><li key={x}>{x}</li>)}</ol></section><section><h3>Perfil a favorecer</h3><ol>{readiness.account_profile.favor.map(x=><li key={x}>{x}</li>)}</ol><h3>Depriorizar</h3><ol>{readiness.account_profile.deprioritize.map(x=><li key={x}>{x}</li>)}</ol></section></div>
+      <div className={styles.contextColumns}><section><h3>Rutas habilitadas</h3><ol>{readiness.routes.enabled.map(x=><li key={x}>{x}</li>)}</ol><h3>Rutas condicionadas</h3><ol>{readiness.routes.conditioned.map(x=><li key={x}>{x}</li>)}</ol></section><section><h3>Bloqueadas o diferidas</h3><ol>{readiness.routes.blocked.map(x=><li key={x}>{x}</li>)}</ol><h3>Límites customer-safe</h3><ol>{readiness.customer_safe_limitations.map(x=><li key={x}>{x}</li>)}</ol></section></div>
+      <div className={styles.contextColumns}><section><h3>Antes de propuesta formal</h3><ol>{readiness.validations.before_formal_proposal.map(x=><li key={x}>{x}</li>)}</ol></section><section><h3>Durante negociación</h3><ol>{readiness.validations.later_negotiation.map(x=><li key={x}>{x}</li>)}</ol></section></div>
+    </section>
     <div className={styles.reviewMetrics}>
       <div><strong>{s.answered}</strong><span>respondidas sin reserva mayor</span></div>
       <div><strong>{s.clarification_recommended}</strong><span>requieren aclaración</span></div>

@@ -105,7 +105,9 @@
     "test:pilot-questionnaire": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/pilot-questionnaire.test.ts",
     "test:client-questionnaire": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/client-questionnaire.test.ts",
     "test:amor-real-context-review": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/amor-real-context-review.test.ts",
-    "pilot:context-candidate": "npx -y tsx --tsconfig tsconfig.json scripts/sources/create-amor-founder-context-candidate.ts"
+    "pilot:context-candidate": "npx -y tsx --tsconfig tsconfig.json scripts/sources/create-amor-founder-context-candidate.ts",
+    "pilot:accept-context": "npx -y tsx --tsconfig tsconfig.json scripts/sources/accept-amor-founder-context.ts",
+    "test:amor-commercial-readiness": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/amor-commercial-readiness.test.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.27.0",

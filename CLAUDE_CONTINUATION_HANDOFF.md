@@ -323,3 +323,6 @@ PDF + XLSX polished: drawn checkboxes, thematic section order, fixed cover, vert
 
 ## Phase 0 — execution control + intake readiness (done)
 Audited the intake pipeline (manual entry `/intake` → review/accept `/operations` → append-only context versions; tenant-safe; honesty-gated). Questionnaire keys stable (17 unique, 0 dupes), `_meta` parseable, 17/17 internal-field coverage. **Decision: A — manual entry sufficient for Amor de Gea** (minimal one-time exceljs ingestion utility = documented fallback B; not built). No code/migrations. See `LEADLENS_PHASE_0_INTAKE_READINESS_AUDIT.md` + `LEADLENS_NEXT_90_DAYS_EXECUTION_PLAN.md`. **Phase 1 blocked until the completed questionnaire is returned.**
+# Phase 2 handoff — 2026-08-03
+
+Canonical accepted context: `context_28bbc2b447323da3e387c964`, sourced only from `intake_fb4bc38a8e0af0343c9f8f1e`. The Commercial Readiness Profile is in the existing pilot Context experience. Preserve all provenance and 15 explicit limitations. Do not start Phase 3 without founder review.

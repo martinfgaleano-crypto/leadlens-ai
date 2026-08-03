@@ -400,7 +400,7 @@ export default function PilotExperience({ workspace, activeSection = "overview",
           <small>XLSX es el formato recomendado para completar; el PDF es para revisar o imprimir; el CSV es técnico. Descargar no crea ni acepta contexto: las respuestas se revisan antes de usarse.</small>
         </div>
       </div>
-      <PilotContextReview review={workspace.contextReview} />
+      <PilotContextReview review={workspace.contextReview} accepted={workspace.acceptedContext} readiness={workspace.commercialReadiness} />
       <PilotIntake pilotId={workspace.pilot.pilot_id} questions={workspace.questions} />
     </section>}
 

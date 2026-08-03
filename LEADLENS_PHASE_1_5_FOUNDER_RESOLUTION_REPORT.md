@@ -121,4 +121,7 @@ Changed files: resolution model, context candidate API/script, Context UI/CSS, t
 Founder action: review candidate `intake_fb4bc38a8e0af0343c9f8f1e` and explicitly approve or reject its included answers, founder decisions, open validations and limitations.
 
 Phase 2 activates only when the separate `accept_context` operation creates the first accepted context version from that candidate. This sprint does not perform that action.
+# Continuation note — Phase 2
+
+Phase 1.5 is complete. Its exact candidate was accepted as immutable context version `context_28bbc2b447323da3e387c964` on 2026-08-03, with provenance and limitations retained. Further account recalibration is intentionally deferred.
 

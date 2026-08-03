@@ -36,6 +36,24 @@ function stableId(prefix: string, value: unknown) {
   return `${prefix}_${createHash("sha256").update(JSON.stringify(value)).digest("hex").slice(0, 24)}`;
 }
 
+const AMOR_DE_GEA_AUTHORIZED_ACCEPTANCE_LIMITATIONS = [
+  "Exact wholesale economics remain pending validation.",
+  "VAT treatment remains pending validation.",
+  "Final margin and channel discount structure remain pending validation.",
+  "Freight and shipping economics remain pending validation.",
+  "Ordinary production capacity remains unconfirmed.",
+  "Per-SKU production capacity remains unconfirmed.",
+  "Orders above 1,000 units with advance planning are not ordinary capacity.",
+  "Private-label feasibility remains unconfirmed and route-blocked.",
+  "Existing commercial relationships and channel conflicts are unknown.",
+  "National logistics capability is client-stated and not independently verified.",
+  "Regulatory documentation is client-stated and not independently verified.",
+  "Product-benefit and health claims remain blocked from customer-safe use.",
+  "The dosage and bottle-duration inconsistency remains unresolved.",
+  "Route priorities are founder-approved decisions, not client-stated facts.",
+  "Objectives combine client strategic direction with three founder-approved measurable outcomes.",
+] as const;
+
 export async function POST(req: NextRequest, { params }: { params: { pilotId: string } }) {
   const denied = requireAdmin(req);
   if (denied) return denied;
@@ -73,15 +91,32 @@ export async function POST(req: NextRequest, { params }: { params: { pilotId: st
     const versionNumber = (previous.data?.version_number ?? 0) + 1;
     const versionPayload = {
       pilot_id: pilotId,
+      source_candidate_id: intake.id,
       accepted_answers: answers.filter((answer: any) => accepted.includes(answer.question_id)),
+      provenance_layers: {
+        client_questionnaire: answers.filter((answer: any) => answer.client_source),
+        client_marketing_material: intake.intake_json?.marketing_materials ?? [],
+        founder_pilot_decision: intake.intake_json?.founder_decisions ?? [],
+        system_interpretation: intake.intake_json?.system_interpretations ?? [],
+        open_validation: intake.intake_json?.open_validations ?? [],
+      },
+      candidate_limitations: intake.intake_json?.limitations ?? [],
+      explicit_limitations: intake.id === "intake_fb4bc38a8e0af0343c9f8f1e"
+        ? AMOR_DE_GEA_AUTHORIZED_ACCEPTANCE_LIMITATIONS
+        : (intake.intake_json?.limitations ?? []),
       rejected_question_ids: rejected,
       unresolved_question_ids: workspace.questions.map((q: any) => q.question_id).filter((id: string) => !accepted.includes(id)),
       acceptance: accepted.length === answers.length ? "accepted" : "partially_accepted",
       actor: "active_admin_session",
+      founder_authorization: {candidate_id:intake.id,authorized:true,scope:"accept_this_candidate_only",recorded_at:now},
+      acceptance_audit: {event_type:"context_accepted",candidate_id:intake.id,actor:"active_admin_session",occurred_at:now,append_only:true},
       deterministic_recalculation: {
         provider_calls: 0,
-        affected_thesis_ids: Array.from(new Set<string>(workspace.questions.filter((q: any) => accepted.includes(q.question_id)).flatMap((q: any) => q.affected_theses))),
+        affected_thesis_ids: [],
+        deferred_to_next_phase: true,
       },
+      ranking_impact:"off",
+      customer_safe_promoted:false,
     };
     const id = stableId("context", { pilotId, intake: intake.id, accepted, rejected });
     const { error } = await db.from("intelligence_client_context_versions").insert({
