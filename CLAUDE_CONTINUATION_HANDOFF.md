@@ -345,3 +345,7 @@ Use `AMOR_PHASE46_PORTFOLIO`, `AMOR_PHASE46_ACTION_BRIEFS` and `AMOR_PHASE46_CON
 ## Phase 5A continuity
 
 Use the separate `amor-de-gea-phase5a-customer-safe.ts` V4D layer. Conflict answers are deliberately null, final report generation is disabled and Phase 5B requires real client responses plus explicit founder approval.
+
+## Phase 5A.1 continuity
+
+Use `amor-de-gea-phase5a1-signoff.ts`. V4D.1 has 11 safe-after-check accounts and one BioPlaza source gap. The CSV importer is preview-only; never fabricate or persist responses automatically.

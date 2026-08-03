@@ -489,3 +489,7 @@ Exactly three authorized narrow searches were consumed and persisted. No broad d
 ## Phase 5A audit boundary
 
 Zero provider calls and zero invented conflict answers. V4D is not a delivered report; no outreach, CRM, client portal, migration or commercial activation occurred.
+
+## Phase 5A.1 audit boundary
+
+One bounded BioPlaza provider call was consumed; DAM used direct official evidence. Client answers remain zero and preview import performs zero writes.

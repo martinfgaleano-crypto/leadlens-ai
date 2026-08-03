@@ -430,3 +430,7 @@ V3R2 preserves V3/V3R and records the founder-approved provisional portfolio plu
 ## Phase 5A
 
 V4D is a separate customer-safe preparation layer. It contains 12 evidence gates, four brief candidates and a safe conflict-check request; delivery is blocked by client responses and founder review.
+
+## Phase 5A.1
+
+V4D.1 is founder-signed and ready for the client conflict check, not final delivery. Four wording revisions are complete, DAM is source-confirmed and BioPlaza remains blocked.

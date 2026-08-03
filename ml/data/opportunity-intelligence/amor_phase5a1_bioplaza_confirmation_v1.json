@@ -1,0 +1,12 @@
+{
+  "run_id": "amor_phase5a1_bioplaza_confirmation_v1",
+  "state": "completed",
+  "provider": "tavily",
+  "provider_calls": 1,
+  "query": "site:bioplaza.org tienda productos marcas naturales orgánicos Colombia",
+  "domain": "bioplaza.org",
+  "latency_ms": 1176,
+  "exact_cost_usd": null,
+  "error": null,
+  "results": []
+}

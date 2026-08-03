@@ -96,3 +96,7 @@ V3R2 contains 12 provisionally approved internal accounts after exactly three ev
 ## Phase 5A checkpoint
 
 V4D prepares customer-safe wording and the future report architecture without generating delivery. The immediate dependency is the 13-account conflict check followed by founder review; first action remains limited to 2–4 accounts.
+
+## Phase 5A.1 checkpoint
+
+V4D.1 is ready for manual conflict-check delivery. Import remains preview-only; Phase 5B starts only after 13 real responses and explicit founder authorization.
