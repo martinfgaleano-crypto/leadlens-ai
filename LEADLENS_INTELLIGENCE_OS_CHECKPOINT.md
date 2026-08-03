@@ -422,3 +422,7 @@ Original and recovery usage remain separately recorded: 15 + 15 Tavily calls. Re
 # Phase 4.5
 
 Founder review readiness is implemented as V3R. V3 and the completed search run remain immutable. Eleven accounts survive, three need evidence, one is rejected, and every account requires a founder conflict check.
+
+## Phase 4.6
+
+V3R2 preserves V3/V3R and records the founder-approved provisional portfolio plus repair outcomes. Portfolio size is 12, customer-safe remains false and conflict checks are pending.

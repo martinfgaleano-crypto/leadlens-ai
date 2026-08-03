@@ -481,3 +481,7 @@ V1/V2 remain immutable. V3 uses a documentation-backed versioned object and sani
 # Phase 4.5 audit boundary
 
 No search, customer-safe promotion, final report, outreach, CRM, migration or Phase 5 activation occurred. The review packet is internal and founder decisions remain pending.
+
+## Phase 4.6 audit boundary
+
+Exactly three authorized narrow searches were consumed and persisted. No broad discovery, new candidates, final report, outreach, CRM, migration or Phase 5 activation occurred.

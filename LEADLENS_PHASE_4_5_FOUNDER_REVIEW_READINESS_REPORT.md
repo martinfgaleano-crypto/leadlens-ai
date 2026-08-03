@@ -38,3 +38,7 @@
 36. Phase 5 activates only through a later explicit founder approval event after V3R decisions and conflicts are recorded.
 
 V3 is preserved. V3R is internal, customer-safe output remains zero, and no outreach, CRM, final report or Opportunity Facilitation was created.
+
+## Phase 4.6 continuation
+
+The founder approved V3R provisionally. Three authorized official-domain repairs produced V3R2: Natural + Mente is reinstated as Priority, Hotel Spa La Colina remains evidence-pending, and Tu Tienda Saludable is rejected. The internal portfolio is now 12 accounts; conflict checks and Phase 5 approval remain pending.

@@ -337,3 +337,7 @@ Blueprint V1 is approved. Recovery run `amor_phase4_recovery_v1` persisted 15 co
 # Phase 4.5 continuity
 
 The separate `V3R` layer audits all 15 V3 accounts without new provider calls or historical mutation. Use `AMOR_PHASE45_ACCOUNT_REVIEWS` and `AMOR_PHASE45_PACKET`; do not promote, contact or begin Phase 5 without a later explicit founder event.
+
+## Phase 4.6 continuity
+
+Use `AMOR_PHASE46_PORTFOLIO`, `AMOR_PHASE46_ACTION_BRIEFS` and `AMOR_PHASE46_CONFLICT_PACKAGE`. V3R2 has 12 internal accounts; exactly three repair calls were consumed. Do not rerun repairs or begin Phase 5.

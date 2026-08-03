@@ -1,0 +1,81 @@
+{
+  "run_id": "amor_phase4_6_evidence_repair_v1",
+  "state": "completed",
+  "provider": "tavily",
+  "call_ceiling": 3,
+  "actual_calls": 3,
+  "exact_cost_usd": null,
+  "created_at": "2026-08-03T19:53:27.838Z",
+  "updated_at": "2026-08-03T19:53:30.916Z",
+  "operations": [
+    {
+      "account": "Hotel Spa La Colina",
+      "domain": "hotelspalacolina.com",
+      "query": "site:hotelspalacolina.com spa hotel tienda productos bienestar regalos experiencias",
+      "status": "completed",
+      "attempts": 1,
+      "latency_ms": 1258,
+      "error": null,
+      "results": [
+        {
+          "title": "Hotel Spa La Colina – Escápate al Hotel Spa La Colina, un refugio romántico en la naturaleza del Eje Cafetero con spa al aire libre, gastronomía gourmet y vistas inigualables.",
+          "url": "https://hotelspalacolina.com/es",
+          "published_date": null,
+          "retrieved_at": "2026-08-03T19:53:29.112Z"
+        },
+        {
+          "title": "Hotel Spa La Colina – Escápate al Hotel Spa La Colina, un refugio romántico en la naturaleza del Eje Cafetero con spa al aire libre, gastronomía gourmet y vistas inigualables.",
+          "url": "https://hotelspalacolina.com/en",
+          "published_date": null,
+          "retrieved_at": "2026-08-03T19:53:29.112Z"
+        },
+        {
+          "title": "Habitaciones – Hotel Spa La Colina",
+          "url": "https://hotelspalacolina.com/es/habitaciones",
+          "published_date": null,
+          "retrieved_at": "2026-08-03T19:53:29.112Z"
+        },
+        {
+          "title": "Habitaciones – Hotel Spa La Colina",
+          "url": "https://hotelspalacolina.com/en/habitaciones",
+          "published_date": null,
+          "retrieved_at": "2026-08-03T19:53:29.112Z"
+        }
+      ]
+    },
+    {
+      "account": "Natural + Mente",
+      "domain": "naturalmente.com.co",
+      "query": "site:naturalmente.com.co tienda productos marcas extractos botánicos bienestar Colombia",
+      "status": "completed",
+      "attempts": 1,
+      "latency_ms": 993,
+      "error": null,
+      "results": [
+        {
+          "title": "VITAFER-L GOLD ENERGIZANTE 500 ml (Natural Medy) – Natural + Mente",
+          "url": "https://naturalmente.com.co/producto/vitafer-l-gold-energizante-500-ml-natural-medy",
+          "published_date": null,
+          "retrieved_at": "2026-08-03T19:53:30.113Z"
+        }
+      ]
+    },
+    {
+      "account": "Tu Tienda Saludable",
+      "domain": "tutiendasaludable.com",
+      "query": "site:tutiendasaludable.com catálogo productos marcas extractos líquidos bienestar Colombia",
+      "status": "completed",
+      "attempts": 1,
+      "latency_ms": 794,
+      "error": null,
+      "results": [
+        {
+          "title": "Dolce Vita Supreme | - tutiendasaludable.com",
+          "url": "https://tutiendasaludable.com/product/dolce-vita-supreme",
+          "published_date": null,
+          "retrieved_at": "2026-08-03T19:53:30.914Z"
+        }
+      ]
+    }
+  ]
+}

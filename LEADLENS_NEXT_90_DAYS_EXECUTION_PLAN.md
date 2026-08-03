@@ -88,3 +88,7 @@ The controlled search and recovery are complete. Fifteen accounts now await huma
 # Phase 4.5 checkpoint
 
 V3R now provides a separate founder decision layer over the preserved V3 portfolio. The proposed internal portfolio is reduced to 11 accounts; four are recommended Work First, three require evidence and one is rejected. Phase 5 remains blocked until explicit founder approval and conflict checks.
+
+## Phase 4.6 checkpoint
+
+V3R2 contains 12 provisionally approved internal accounts after exactly three evidence repairs. Four internal Action Brief drafts and a conflict-check package are ready; Phase 5 remains blocked.
