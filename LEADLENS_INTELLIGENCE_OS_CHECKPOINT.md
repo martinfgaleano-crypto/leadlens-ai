@@ -415,3 +415,7 @@ Phase 1.5 complete. Phase 2 context acceptance and Commercial Readiness are comp
 ## Phase 3 checkpoint
 
 Context-driven Blueprint V1 and six internal recalibrations exist. Hotel Spa La Colina is raised, DAM lowered and no account is ACT NOW. Search/provider calls remain zero; Phase 4 awaits founder approval.
+
+## Phase 4 checkpoint
+
+Original and recovery usage remain separately recorded: 15 + 15 Tavily calls. Recovery completed with 90 sanitized results, 56 domains, 18 qualified accounts and a 15-account internal portfolio. Human review is pending.

@@ -7,6 +7,7 @@ import { ACCOUNT_UNIVERSE, ICP, PILOT_SECTIONS, type PilotSection, recommendatio
 import PilotIntake from "./pilot-intake";
 import PilotContextReview from "./pilot-context-review";
 import PilotSearchBlueprint from "./pilot-search-blueprint";
+import PilotPhase4Intelligence from "./pilot-phase4-intelligence";
 import PilotReviewOperations from "./pilot-review-operations";
 import styles from "./workspace.module.css";
 
@@ -403,6 +404,7 @@ export default function PilotExperience({ workspace, activeSection = "overview",
       </div>
       <PilotContextReview review={workspace.contextReview} accepted={workspace.acceptedContext} readiness={workspace.commercialReadiness} />
       <PilotSearchBlueprint workspace={workspace} />
+      <PilotPhase4Intelligence workspace={workspace} />
       <PilotIntake pilotId={workspace.pilot.pilot_id} questions={workspace.questions} />
     </section>}
 

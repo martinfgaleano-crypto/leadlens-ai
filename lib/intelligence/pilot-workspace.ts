@@ -11,6 +11,7 @@ import {
   buildAmorAccountRecalibration,
   buildWhatChanged,
 } from "./amor-de-gea-search-blueprint";
+import * as phase4 from "./amor-de-gea-phase4-intelligence";
 export const AMOR_PILOT_ID = "amor-de-gea";
 export const PILOT_WORKSPACE_VERSION = "amor-pilot-workspace-v1";
 export const LEGACY_PILOT_ALIASES = [
@@ -64,6 +65,7 @@ export interface PilotWorkspace {
   searchBlueprint: typeof AMOR_SEARCH_BLUEPRINT;
   recalibratedTheses: ReturnType<typeof buildAmorAccountRecalibration>;
   whatChanged: ReturnType<typeof buildWhatChanged>;
+  phase4: typeof phase4;
   questions: any[];
   accounts: any[];
   theses: any[];
@@ -224,10 +226,10 @@ export function buildPilotWorkspace(): PilotWorkspace {
       updated_at: AMOR_SEARCH_BLUEPRINT.created_at,
       last_intelligence_refresh: updated,
       last_human_review: AMOR_ACCEPTED_CONTEXT.accepted_at,
-      readiness: "blueprint_founder_review",
+      readiness: "phase4_internal_human_review",
       blockers: [
-        "Founder approval of Search Blueprint V1 pending",
-        "No Phase 4 search authorized",
+        "Human review of 15-account proposed portfolio pending",
+        "No Phase 5 action authorized",
         "No current timing",
         "0 customer-safe outputs",
       ],
@@ -245,9 +247,9 @@ export function buildPilotWorkspace(): PilotWorkspace {
       critical_blockers: (block12 as any).summary.critical_blockers,
       customer_safe: (block12 as any).summary.customer_safe,
       report_ready: (block12 as any).summary.report_sections_ready,
-      diagnosis: `Search Blueprint V1 and six internal thesis versions are linked to ${AMOR_ACCEPTED_CONTEXT.id}; no search, new account or timing inference occurred.`,
+      diagnosis: `Controlled run ${phase4.AMOR_PHASE4_RUN.run_id} completed with 15 queries and an internal ${phase4.AMOR_PHASE4_FUNNEL.portfolio}-account portfolio; no outreach or outcome inference occurred.`,
       next_action:
-        "Founder review and explicit approval of Blueprint V1 before the controlled Phase 4 search.",
+        "Human review of portfolio, conflict checks and evidence gaps before any Phase 5 activation.",
     },
     contextReview: buildAmorRealContextReview(),
     acceptedContext: AMOR_ACCEPTED_CONTEXT,
@@ -255,6 +257,7 @@ export function buildPilotWorkspace(): PilotWorkspace {
     searchBlueprint: AMOR_SEARCH_BLUEPRINT,
     recalibratedTheses,
     whatChanged,
+    phase4,
     questions,
     accounts,
     theses: (block11 as any).theses,
@@ -270,7 +273,7 @@ export function buildPilotWorkspace(): PilotWorkspace {
       canonical_artifacts: "available",
       database: "available",
       message:
-        "Blueprint V1 is founder_review; Phase 4 remains blocked and baseline theses are preserved.",
+        "Phase 4 portfolio is internal and pending human review; V1/V2 history remains preserved.",
     },
     final_report_generation: "disabled",
     internal_only: true,

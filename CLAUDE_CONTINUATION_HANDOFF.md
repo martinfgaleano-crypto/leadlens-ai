@@ -330,3 +330,7 @@ Canonical accepted context: `context_28bbc2b447323da3e387c964`, sourced only fro
 ## Phase 3 handoff
 
 Search Blueprint V1 is `founder_review`; six recalibrations are `internal_review`. Baseline V1 objects remain canonical history. Do not execute the 15 query hypotheses or begin Phase 4 without explicit founder approval.
+
+## Phase 4 handoff
+
+Blueprint V1 is approved. Recovery run `amor_phase4_recovery_v1` persisted 15 completed Tavily queries atomically. The 15-account V3 portfolio is internal and pending human review. No Phase 5 action is authorized.

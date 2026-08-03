@@ -81,3 +81,7 @@ Phase 1.5 is complete. Phase 2 accepted `context_28bbc2b447323da3e387c964` and d
 ## Phase 3 continuation — 2026-08-03
 
 Blueprint V1 and six internal V2 thesis comparisons are ready for founder review. Phase 4 remains blocked until explicit approval authorizes the bounded controlled search. The Phase 4 numbers are ceilings, not quotas.
+
+## Phase 4 continuation — 2026-08-03
+
+The controlled search and recovery are complete. Fifteen accounts now await human review; Phase 5 remains blocked until the founder approves a reviewed subset and explicitly authorizes preparation or action.

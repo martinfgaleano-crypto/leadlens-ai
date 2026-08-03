@@ -110,7 +110,8 @@
     "test:amor-commercial-readiness": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/amor-commercial-readiness.test.ts",
     "test:amor-search-blueprint": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/amor-search-blueprint.test.ts",
     "test:amor-phase4-recovery": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/amor-phase4-recovery.test.ts",
-    "pilot:amor-phase4-recovery": "npx -y tsx --tsconfig tsconfig.json scripts/sources/run-amor-phase4-controlled-search.ts"
+    "pilot:amor-phase4-recovery": "npx -y tsx --tsconfig tsconfig.json scripts/sources/run-amor-phase4-controlled-search.ts",
+    "test:amor-phase4-intelligence": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/amor-phase4-intelligence.test.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.27.0",

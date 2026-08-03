@@ -474,3 +474,7 @@ Acceptance used the existing versioned context architecture; no migration was re
 ## Phase 3 continuity
 
 Baseline theses are preserved and referenced through `supersedes_id`; V2 comparisons are internal-only. No migration, discovery, provider payload or public report change was introduced.
+
+## Phase 4 continuity
+
+V1/V2 remain immutable. V3 uses a documentation-backed versioned object and sanitized incremental checkpoint; no raw provider response is tracked. Phase 5 is blocked by human review.
