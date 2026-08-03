@@ -1,0 +1,1479 @@
+{
+  "run_id": "amor_blueprint_v2_bounded_search_20260803_v1",
+  "state": "completed",
+  "blueprint_id": "blueprint_57b88651984aaee555dc23be_v2_context_compiled",
+  "compiler_version": "2.0.0",
+  "created_at": "2026-08-03T21:48:27.798Z",
+  "updated_at": "2026-08-03T21:48:40.412Z",
+  "limits": {
+    "provider_calls": 8,
+    "query_families": 4,
+    "queries_per_family": 2,
+    "raw_results": 60,
+    "unique_domains": 40,
+    "identity_verified": 20,
+    "qualified": 12,
+    "deep_researched": 8,
+    "new_portfolio_accounts": 6
+  },
+  "provider_health": {
+    "tavily": "available"
+  },
+  "provider_calls": 8,
+  "provider_errors": 0,
+  "exact_cost_usd": null,
+  "queries": [
+    {
+      "query_id": "v2_retail_owner_multibrand",
+      "family": "retail",
+      "route": "specialty_retail",
+      "query": "Colombia \"tienda multimarca\" \"productos naturales\" catálogo marcas comprar online",
+      "context_fields": [
+        "Pilot MOQ",
+        "Early recurring range",
+        "Procurement tolerance",
+        "Durable relationship objective"
+      ],
+      "rule_ids": [
+        "R01_CATEGORY_BUYER",
+        "R02_FORMAT_TEST",
+        "R07_RECURRENCE",
+        "R18_PROCUREMENT"
+      ],
+      "mechanism": "approximately 50-unit multibrand test followed by shelf/ecommerce replenishment",
+      "status": "completed",
+      "attempts": 1,
+      "provider": "tavily",
+      "executed_at": "2026-08-03T21:48:27.809Z",
+      "latency_ms": 2677,
+      "raw_results": 5,
+      "error": null,
+      "candidates": [
+        {
+          "query_id": "v2_retail_owner_multibrand",
+          "family": "retail",
+          "route": "specialty_retail",
+          "provider": "tavily",
+          "rank": 1,
+          "title": "Vitálica tienda naturista Colombia",
+          "url": "https://www.tiendavitalica.com/",
+          "domain": "tiendavitalica.com",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:30.491Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "candidate",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "investigate",
+            "rules_passed": [
+              "R01_CATEGORY_BUYER",
+              "R02_FORMAT_TEST",
+              "R07_RECURRENCE",
+              "R18_PROCUREMENT"
+            ],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "identity/evidence verification required"
+          }
+        },
+        {
+          "query_id": "v2_retail_owner_multibrand",
+          "family": "retail",
+          "route": "specialty_retail",
+          "provider": "tavily",
+          "rank": 2,
+          "title": "Amorella: La Mejor Tienda Multimarca en Bogotá",
+          "url": "https://www.tiktok.com/@amorellatmm/video/7392283846063967493",
+          "domain": "tiktok.com",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:30.491Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "insufficient",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "insufficient evidence",
+            "rules_passed": [],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "stop before qualification"
+          }
+        },
+        {
+          "query_id": "v2_retail_owner_multibrand",
+          "family": "retail",
+          "route": "specialty_retail",
+          "provider": "tavily",
+          "rank": 3,
+          "title": "Tienda online oficial Somos Moda",
+          "url": "https://www.somosmoda.com.co/",
+          "domain": "somosmoda.com.co",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:30.491Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "candidate",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "investigate",
+            "rules_passed": [
+              "R01_CATEGORY_BUYER",
+              "R02_FORMAT_TEST",
+              "R07_RECURRENCE",
+              "R18_PROCUREMENT"
+            ],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "identity/evidence verification required"
+          }
+        },
+        {
+          "query_id": "v2_retail_owner_multibrand",
+          "family": "retail",
+          "route": "specialty_retail",
+          "provider": "tavily",
+          "rank": 4,
+          "title": "Mayorista on Instagram: \"LA MEJOR TIENDA DE ...",
+          "url": "https://www.instagram.com/reel/DQ65GE4DZfk",
+          "domain": "instagram.com",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:30.491Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "insufficient",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "insufficient evidence",
+            "rules_passed": [],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "stop before qualification"
+          }
+        },
+        {
+          "query_id": "v2_retail_owner_multibrand",
+          "family": "retail",
+          "route": "specialty_retail",
+          "provider": "tavily",
+          "rank": 5,
+          "title": "IMPORTADORA de Skincare y Maquillaje🤩 | Encuentra todos ...",
+          "url": "https://www.instagram.com/reel/DWKnmp1Ce-s",
+          "domain": "instagram.com",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:30.491Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "insufficient",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "insufficient evidence",
+            "rules_passed": [],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "stop before qualification"
+          }
+        }
+      ]
+    },
+    {
+      "query_id": "v2_retail_regional_replenishment",
+      "family": "retail",
+      "route": "specialty_retail",
+      "query": "Colombia tienda regional saludable multimarca \"nuestras marcas\" domicilio productos naturales",
+      "context_fields": [
+        "National coverage",
+        "Pilot MOQ",
+        "Business maturity",
+        "Procurement tolerance"
+      ],
+      "rule_ids": [
+        "R02_FORMAT_TEST",
+        "R10_NATIONAL_FREIGHT",
+        "R15_MATURITY",
+        "R18_PROCUREMENT"
+      ],
+      "mechanism": "regional shelf test with concentrated reorder",
+      "status": "completed",
+      "attempts": 1,
+      "provider": "tavily",
+      "executed_at": "2026-08-03T21:48:30.502Z",
+      "latency_ms": 1165,
+      "raw_results": 4,
+      "error": null,
+      "candidates": [
+        {
+          "query_id": "v2_retail_regional_replenishment",
+          "family": "retail",
+          "route": "specialty_retail",
+          "provider": "tavily",
+          "rank": 1,
+          "title": "Tu Tienda Saludable – Productos Saludables",
+          "url": "https://tutiendasaludable.com.co/",
+          "domain": "tutiendasaludable.com.co",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:31.672Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "candidate",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "investigate",
+            "rules_passed": [
+              "R02_FORMAT_TEST",
+              "R10_NATIONAL_FREIGHT",
+              "R15_MATURITY",
+              "R18_PROCUREMENT"
+            ],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "identity/evidence verification required"
+          }
+        },
+        {
+          "query_id": "v2_retail_regional_replenishment",
+          "family": "retail",
+          "route": "specialty_retail",
+          "provider": "tavily",
+          "rank": 2,
+          "title": "Nos encanta asesorarte y guiarte en tu compra🤩 Recuerda que también ...",
+          "url": "https://www.instagram.com/p/DVQzRHkAPgr",
+          "domain": "instagram.com",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:31.672Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "insufficient",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "insufficient evidence",
+            "rules_passed": [],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "stop before qualification"
+          }
+        },
+        {
+          "query_id": "v2_retail_regional_replenishment",
+          "family": "retail",
+          "route": "specialty_retail",
+          "provider": "tavily",
+          "rank": 3,
+          "title": "Tienda naturista Ser Saludable, tu mercado natural",
+          "url": "https://tiendasersaludable.com/",
+          "domain": "tiendasersaludable.com",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:31.672Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "candidate",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "investigate",
+            "rules_passed": [
+              "R02_FORMAT_TEST",
+              "R10_NATIONAL_FREIGHT",
+              "R15_MATURITY",
+              "R18_PROCUREMENT"
+            ],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "identity/evidence verification required"
+          }
+        },
+        {
+          "query_id": "v2_retail_regional_replenishment",
+          "family": "retail",
+          "route": "specialty_retail",
+          "provider": "tavily",
+          "rank": 4,
+          "title": "Zonazul | Mercado Saludable – Creemos que el mejor estilo de vida es quererte y comer delicioso",
+          "url": "https://zonazul.co/",
+          "domain": "zonazul.co",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:31.672Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "candidate",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "investigate",
+            "rules_passed": [
+              "R02_FORMAT_TEST",
+              "R10_NATIONAL_FREIGHT",
+              "R15_MATURITY",
+              "R18_PROCUREMENT"
+            ],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "identity/evidence verification required"
+          }
+        }
+      ]
+    },
+    {
+      "query_id": "v2_hospitality_retail_repeat",
+      "family": "hospitality",
+      "route": "hospitality_spa",
+      "query": "Colombia \"hotel boutique\" spa \"tienda\" productos bienestar regalos huéspedes",
+      "context_fields": [
+        "Premium packaging",
+        "Glass packaging",
+        "Pilot MOQ",
+        "Route priorities"
+      ],
+      "rule_ids": [
+        "R02_FORMAT_TEST",
+        "R03_PREMIUM_ROUTE",
+        "R11_GLASS",
+        "R17_ROUTE_PRIORITY"
+      ],
+      "mechanism": "spa retail or guest gifting followed by inventory replenishment",
+      "status": "completed",
+      "attempts": 1,
+      "provider": "tavily",
+      "executed_at": "2026-08-03T21:48:31.676Z",
+      "latency_ms": 1348,
+      "raw_results": 5,
+      "error": null,
+      "candidates": [
+        {
+          "query_id": "v2_hospitality_retail_repeat",
+          "family": "hospitality",
+          "route": "hospitality_spa",
+          "provider": "tavily",
+          "rank": 1,
+          "title": "Fundación Chankuap on Instagram: \" ¿Tu hotel, spa o centro ...",
+          "url": "https://www.instagram.com/reel/DOoK5RZEaH7?hl=en",
+          "domain": "instagram.com",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:33.029Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "insufficient",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "insufficient evidence",
+            "rules_passed": [],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "stop before qualification"
+          }
+        },
+        {
+          "query_id": "v2_hospitality_retail_repeat",
+          "family": "hospitality",
+          "route": "hospitality_spa",
+          "provider": "tavily",
+          "rank": 2,
+          "title": "El complemento que ofrecen los hoteles boutique para tu ...",
+          "url": "https://www.vivenda.mx/blog/el-complemento-que-ofrecen-los-hoteles-boutique-para-tu-descanso",
+          "domain": "vivenda.mx",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:33.029Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "candidate",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "investigate",
+            "rules_passed": [
+              "R02_FORMAT_TEST",
+              "R03_PREMIUM_ROUTE",
+              "R11_GLASS",
+              "R17_ROUTE_PRIORITY"
+            ],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "identity/evidence verification required"
+          }
+        },
+        {
+          "query_id": "v2_hospitality_retail_repeat",
+          "family": "hospitality",
+          "route": "hospitality_spa",
+          "provider": "tavily",
+          "rank": 3,
+          "title": "En navidad regala bienestar con nuestros bonos ...",
+          "url": "https://www.instagram.com/p/DDfJtMcP5E1",
+          "domain": "instagram.com",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:33.029Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "insufficient",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "insufficient evidence",
+            "rules_passed": [],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "stop before qualification"
+          }
+        },
+        {
+          "query_id": "v2_hospitality_retail_repeat",
+          "family": "hospitality",
+          "route": "hospitality_spa",
+          "provider": "tavily",
+          "rank": 4,
+          "title": "Este año, regala una experiencia llena de bienestar. Nuestras ...",
+          "url": "https://www.instagram.com/reel/DSDprcLkmOx",
+          "domain": "instagram.com",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:33.029Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "insufficient",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "insufficient evidence",
+            "rules_passed": [],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "stop before qualification"
+          }
+        },
+        {
+          "query_id": "v2_hospitality_retail_repeat",
+          "family": "hospitality",
+          "route": "hospitality_spa",
+          "provider": "tavily",
+          "rank": 5,
+          "title": "Hotel Boutique & Spa - Celestino",
+          "url": "https://hotelcelestino.com/es/hotel-celestino",
+          "domain": "hotelcelestino.com",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:33.029Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "candidate",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "investigate",
+            "rules_passed": [
+              "R02_FORMAT_TEST",
+              "R03_PREMIUM_ROUTE",
+              "R11_GLASS",
+              "R17_ROUTE_PRIORITY"
+            ],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "identity/evidence verification required"
+          }
+        }
+      ]
+    },
+    {
+      "query_id": "v2_hospitality_wellness_package",
+      "family": "hospitality",
+      "route": "hospitality_spa",
+      "query": "Colombia retiro bienestar hotel \"paquete\" huéspedes tienda regalos productos locales",
+      "context_fields": [
+        "Special assortments",
+        "Co-branding",
+        "Short commercial-cycle preference",
+        "Pilot learning objectives"
+      ],
+      "rule_ids": [
+        "R04_CUSTOMIZATION",
+        "R14_SHORT_CYCLE",
+        "R19_BUYER_PATH",
+        "R20_LEARNING"
+      ],
+      "mechanism": "curated recurring guest or retreat package using finished products",
+      "status": "completed",
+      "attempts": 1,
+      "provider": "tavily",
+      "executed_at": "2026-08-03T21:48:33.036Z",
+      "latency_ms": 1401,
+      "raw_results": 5,
+      "error": null,
+      "candidates": [
+        {
+          "query_id": "v2_hospitality_wellness_package",
+          "family": "hospitality",
+          "route": "hospitality_spa",
+          "provider": "tavily",
+          "rank": 1,
+          "title": "15 regalos inspiradores para un retiro de bienestar",
+          "url": "https://www.naboo.app/es-es/blog/regalos-retiro-bienestar-espana",
+          "domain": "naboo.app",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:34.441Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "candidate",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "investigate",
+            "rules_passed": [
+              "R04_CUSTOMIZATION",
+              "R14_SHORT_CYCLE",
+              "R19_BUYER_PATH",
+              "R20_LEARNING"
+            ],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "identity/evidence verification required"
+          }
+        },
+        {
+          "query_id": "v2_hospitality_wellness_package",
+          "family": "hospitality",
+          "route": "hospitality_spa",
+          "provider": "tavily",
+          "rank": 2,
+          "title": "Retiros todo incluido de bienestar y transformación en Colombia",
+          "url": "https://www.tripaneer.com/es/all/c/retiros-todo-incluido-bienestar-y-transformacion/d/colombia",
+          "domain": "tripaneer.com",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:34.441Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "candidate",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "investigate",
+            "rules_passed": [
+              "R04_CUSTOMIZATION",
+              "R14_SHORT_CYCLE",
+              "R19_BUYER_PATH",
+              "R20_LEARNING"
+            ],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "identity/evidence verification required"
+          }
+        },
+        {
+          "query_id": "v2_hospitality_wellness_package",
+          "family": "hospitality",
+          "route": "hospitality_spa",
+          "provider": "tavily",
+          "rank": 3,
+          "title": "1 retiros de bienestar en Colombia: principales ofertas y precios",
+          "url": "https://es.bookimed.com/retreats/country=colombia/direction=wellness-retreats",
+          "domain": "es.bookimed.com",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:34.441Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "candidate",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "investigate",
+            "rules_passed": [
+              "R04_CUSTOMIZATION",
+              "R14_SHORT_CYCLE",
+              "R19_BUYER_PATH",
+              "R20_LEARNING"
+            ],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "identity/evidence verification required"
+          }
+        },
+        {
+          "query_id": "v2_hospitality_wellness_package",
+          "family": "hospitality",
+          "route": "hospitality_spa",
+          "provider": "tavily",
+          "rank": 4,
+          "title": "Retiros de Lujo y Bienestar en Colombia | Viajes Médicos y ...",
+          "url": "https://www.medicaltourismpackages.com/es/colombia-bienestar-retiros-de-lujo",
+          "domain": "medicaltourismpackages.com",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:34.441Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "candidate",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "investigate",
+            "rules_passed": [
+              "R04_CUSTOMIZATION",
+              "R14_SHORT_CYCLE",
+              "R19_BUYER_PATH",
+              "R20_LEARNING"
+            ],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "identity/evidence verification required"
+          }
+        },
+        {
+          "query_id": "v2_hospitality_wellness_package",
+          "family": "hospitality",
+          "route": "hospitality_spa",
+          "provider": "tavily",
+          "rank": 5,
+          "title": "Peregrinaciones de paz y placer: Booking.com",
+          "url": "https://news.booking.com/es-co/peregrinaciones-de-paz-y-placer-bookingcom-comparte-seis-retiros-de-inmersion-para-celebrar-el-dia-internacional-de-la-felicidad",
+          "domain": "news.booking.com",
+          "source_type": "news",
+          "retrieved_at": "2026-08-03T21:48:34.441Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "insufficient",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "insufficient evidence",
+            "rules_passed": [],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "stop before qualification"
+          }
+        }
+      ]
+    },
+    {
+      "query_id": "v2_gifting_recurring_program",
+      "family": "gifting",
+      "route": "gifting",
+      "query": "Colombia \"regalos corporativos\" personalizados \"bienestar\" empresas programas recurrentes marcas",
+      "context_fields": [
+        "Corporate gifting",
+        "Custom labels",
+        "Co-branding",
+        "Early recurring range"
+      ],
+      "rule_ids": [
+        "R04_CUSTOMIZATION",
+        "R07_RECURRENCE",
+        "R17_ROUTE_PRIORITY",
+        "R20_LEARNING"
+      ],
+      "mechanism": "co-branded employee/client wellness kits across recurring programs",
+      "status": "completed",
+      "attempts": 1,
+      "provider": "tavily",
+      "executed_at": "2026-08-03T21:48:34.445Z",
+      "latency_ms": 1187,
+      "raw_results": 5,
+      "error": null,
+      "candidates": [
+        {
+          "query_id": "v2_gifting_recurring_program",
+          "family": "gifting",
+          "route": "gifting",
+          "provider": "tavily",
+          "rank": 1,
+          "title": "Regalos corporativos personalizados para empresas en Colombia",
+          "url": "https://www.promohit.co/noticias/regalos-corporativos",
+          "domain": "promohit.co",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:35.636Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "candidate",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "investigate",
+            "rules_passed": [
+              "R04_CUSTOMIZATION",
+              "R07_RECURRENCE",
+              "R17_ROUTE_PRIORITY",
+              "R20_LEARNING"
+            ],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "identity/evidence verification required"
+          }
+        },
+        {
+          "query_id": "v2_gifting_recurring_program",
+          "family": "gifting",
+          "route": "gifting",
+          "provider": "tavily",
+          "rank": 2,
+          "title": "Regalos corporativos en Colombia – Imán de Recuerdos",
+          "url": "https://www.imanderecuerdos.com/blogs/regalos/regalos-corporativos",
+          "domain": "imanderecuerdos.com",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:35.636Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "candidate",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "investigate",
+            "rules_passed": [
+              "R04_CUSTOMIZATION",
+              "R07_RECURRENCE",
+              "R17_ROUTE_PRIORITY",
+              "R20_LEARNING"
+            ],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "identity/evidence verification required"
+          }
+        },
+        {
+          "query_id": "v2_gifting_recurring_program",
+          "family": "gifting",
+          "route": "gifting",
+          "provider": "tavily",
+          "rank": 3,
+          "title": "10 Ideas Regalos Corporativos para Clientes y Colaboradores | EM2C",
+          "url": "https://em2c.com.co/10-ideas-regalos-corporativos-clientes-colaboradores",
+          "domain": "em2c.com.co",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:35.636Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "candidate",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "investigate",
+            "rules_passed": [
+              "R04_CUSTOMIZATION",
+              "R07_RECURRENCE",
+              "R17_ROUTE_PRIORITY",
+              "R20_LEARNING"
+            ],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "identity/evidence verification required"
+          }
+        },
+        {
+          "query_id": "v2_gifting_recurring_program",
+          "family": "gifting",
+          "route": "gifting",
+          "provider": "tavily",
+          "rank": 4,
+          "title": "Regalos Corporativos para Empresas | Habibi",
+          "url": "https://www.habibiplantitas.com/pages/regalos-corporativos",
+          "domain": "habibiplantitas.com",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:35.636Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "candidate",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "investigate",
+            "rules_passed": [
+              "R04_CUSTOMIZATION",
+              "R07_RECURRENCE",
+              "R17_ROUTE_PRIORITY",
+              "R20_LEARNING"
+            ],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "identity/evidence verification required"
+          }
+        },
+        {
+          "query_id": "v2_gifting_recurring_program",
+          "family": "gifting",
+          "route": "gifting",
+          "provider": "tavily",
+          "rank": 5,
+          "title": "Gifting Corporativo en Colombia 2026: 30 Artículos Promocionales",
+          "url": "https://markmelo.com/gifting-corporativo-articulos-promocionales-colombia",
+          "domain": "markmelo.com",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:35.636Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "candidate",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "investigate",
+            "rules_passed": [
+              "R04_CUSTOMIZATION",
+              "R07_RECURRENCE",
+              "R17_ROUTE_PRIORITY",
+              "R20_LEARNING"
+            ],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "identity/evidence verification required"
+          }
+        }
+      ]
+    },
+    {
+      "query_id": "v2_gifting_curated_brands",
+      "family": "gifting",
+      "route": "gifting",
+      "query": "Colombia cajas corporativas \"marcas aliadas\" personalización regalos clientes empleados",
+      "context_fields": [
+        "Packaging adaptation",
+        "Special assortments",
+        "Private-label uncertainty",
+        "Procurement tolerance"
+      ],
+      "rule_ids": [
+        "R04_CUSTOMIZATION",
+        "R05_PRIVATE_LABEL",
+        "R18_PROCUREMENT",
+        "R19_BUYER_PATH"
+      ],
+      "mechanism": "finished-product inclusion in repeat seasonal/client boxes",
+      "status": "completed",
+      "attempts": 1,
+      "provider": "tavily",
+      "executed_at": "2026-08-03T21:48:35.640Z",
+      "latency_ms": 2320,
+      "raw_results": 5,
+      "error": null,
+      "candidates": [
+        {
+          "query_id": "v2_gifting_curated_brands",
+          "family": "gifting",
+          "route": "gifting",
+          "provider": "tavily",
+          "rank": 1,
+          "title": "Cajas de regalo corporativas seleccionadas para empleados y clientes | europages",
+          "url": "https://www.europages.es/es/company/the-ethical-gift-box-22240971/products/curated-corporate-gift-boxes-for-employees-clients-36072015",
+          "domain": "europages.es",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:37.964Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "candidate",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "investigate",
+            "rules_passed": [
+              "R04_CUSTOMIZATION",
+              "R05_PRIVATE_LABEL",
+              "R18_PROCUREMENT",
+              "R19_BUYER_PATH"
+            ],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "identity/evidence verification required"
+          }
+        },
+        {
+          "query_id": "v2_gifting_curated_brands",
+          "family": "gifting",
+          "route": "gifting",
+          "provider": "tavily",
+          "rank": 2,
+          "title": "Cómo hacer cajas corporativas para regalos empresariales: Proceso paso a paso | TikTok",
+          "url": "https://www.tiktok.com/@surpriseregalosydetalles/video/7321163099162053894",
+          "domain": "tiktok.com",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:37.964Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "insufficient",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "insufficient evidence",
+            "rules_passed": [],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "stop before qualification"
+          }
+        },
+        {
+          "query_id": "v2_gifting_curated_brands",
+          "family": "gifting",
+          "route": "gifting",
+          "provider": "tavily",
+          "rank": 3,
+          "title": "Personalización de regalos | Keyceo",
+          "url": "https://www.keyceo.com/es/gift-customization.html",
+          "domain": "keyceo.com",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:37.964Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "candidate",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "investigate",
+            "rules_passed": [
+              "R04_CUSTOMIZATION",
+              "R05_PRIVATE_LABEL",
+              "R18_PROCUREMENT",
+              "R19_BUYER_PATH"
+            ],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "identity/evidence verification required"
+          }
+        },
+        {
+          "query_id": "v2_gifting_curated_brands",
+          "family": "gifting",
+          "route": "gifting",
+          "provider": "tavily",
+          "rank": 4,
+          "title": "Cestas de Navidad Corporativas Nantes – Cajas Gourmet para Empresas | europages",
+          "url": "https://europages.es/es/company/smarquis-le-gout-de-nos-regions-22319751/products/paniers-de-noel-entreprise-coffrets-gourmands-pour-clients-et-salaries-36298005",
+          "domain": "europages.es",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:37.964Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "candidate",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "investigate",
+            "rules_passed": [
+              "R04_CUSTOMIZATION",
+              "R05_PRIVATE_LABEL",
+              "R18_PROCUREMENT",
+              "R19_BUYER_PATH"
+            ],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "identity/evidence verification required"
+          }
+        },
+        {
+          "query_id": "v2_gifting_curated_brands",
+          "family": "gifting",
+          "route": "gifting",
+          "provider": "tavily",
+          "rank": 5,
+          "title": "Cestas de Navidad Corporativas Nantes – Cajas Gourmet para Empresas | europages",
+          "url": "https://www.europages.es/es/company/smarquis-le-gout-de-nos-regions-22319751/products/paniers-de-noel-entreprise-coffrets-gourmands-pour-clients-et-salaries-36298005",
+          "domain": "europages.es",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:37.964Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "candidate",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "investigate",
+            "rules_passed": [
+              "R04_CUSTOMIZATION",
+              "R05_PRIVATE_LABEL",
+              "R18_PROCUREMENT",
+              "R19_BUYER_PATH"
+            ],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "identity/evidence verification required"
+          }
+        }
+      ]
+    },
+    {
+      "query_id": "v2_distribution_selective_regional",
+      "family": "distribution",
+      "route": "regional_distribution",
+      "query": "Colombia distribuidor regional selectivo \"productos naturales\" marcas independientes catálogo",
+      "context_fields": [
+        "Capacity above 300",
+        "Capacity near 1,000+",
+        "National coverage",
+        "Procurement tolerance"
+      ],
+      "rule_ids": [
+        "R08_CAPACITY_300",
+        "R09_VOLUME_1000",
+        "R10_NATIONAL_FREIGHT",
+        "R18_PROCUREMENT"
+      ],
+      "mechanism": "controlled regional listing followed by independent-retailer replenishment",
+      "status": "completed",
+      "attempts": 1,
+      "provider": "tavily",
+      "executed_at": "2026-08-03T21:48:37.969Z",
+      "latency_ms": 1255,
+      "raw_results": 5,
+      "error": null,
+      "candidates": [
+        {
+          "query_id": "v2_distribution_selective_regional",
+          "family": "distribution",
+          "route": "regional_distribution",
+          "provider": "tavily",
+          "rank": 1,
+          "title": "Venta De Productos Naturales Por Catálogo En Colombia",
+          "url": "https://www.instagram.com/popular/venta-de-productos-naturales-por-cat%C3%A1logo-en-colombia",
+          "domain": "instagram.com",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:39.229Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "insufficient",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "insufficient evidence",
+            "rules_passed": [],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "stop before qualification"
+          }
+        },
+        {
+          "query_id": "v2_distribution_selective_regional",
+          "family": "distribution",
+          "route": "regional_distribution",
+          "provider": "tavily",
+          "rank": 2,
+          "title": "Colombia presenta BIO IN: el Portafolio de Ingredientes Naturales | Colombia más competitiva",
+          "url": "https://colombiamascompetitiva.com/colombia-presenta-bio-in-el-portafolio-de-ingredientes-naturales",
+          "domain": "colombiamascompetitiva.com",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:39.229Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "candidate",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "investigate",
+            "rules_passed": [
+              "R08_CAPACITY_300",
+              "R09_VOLUME_1000",
+              "R10_NATIONAL_FREIGHT",
+              "R18_PROCUREMENT"
+            ],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "identity/evidence verification required"
+          }
+        },
+        {
+          "query_id": "v2_distribution_selective_regional",
+          "family": "distribution",
+          "route": "regional_distribution",
+          "provider": "tavily",
+          "rank": 3,
+          "title": "Productos Colombianos al por Mayor en USA | Inca",
+          "url": "https://incadistributions.com/productos-colombianos-al-mayor",
+          "domain": "incadistributions.com",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:39.229Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "candidate",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "investigate",
+            "rules_passed": [
+              "R08_CAPACITY_300",
+              "R09_VOLUME_1000",
+              "R10_NATIONAL_FREIGHT",
+              "R18_PROCUREMENT"
+            ],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "identity/evidence verification required"
+          }
+        },
+        {
+          "query_id": "v2_distribution_selective_regional",
+          "family": "distribution",
+          "route": "regional_distribution",
+          "provider": "tavily",
+          "rank": 4,
+          "title": "Productos naturales que te van a sorprender | Temporada 6 | Shark ...",
+          "url": "https://www.youtube.com/watch?v=MM63hWvNm18",
+          "domain": "youtube.com",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:39.229Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "insufficient",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "insufficient evidence",
+            "rules_passed": [],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "stop before qualification"
+          }
+        },
+        {
+          "query_id": "v2_distribution_selective_regional",
+          "family": "distribution",
+          "route": "regional_distribution",
+          "provider": "tavily",
+          "rank": 5,
+          "title": "Productos - Empaques de Colombia",
+          "url": "https://empaquesdecolombia.com/productos-ecologicos",
+          "domain": "empaquesdecolombia.com",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:39.229Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "candidate",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "investigate",
+            "rules_passed": [
+              "R08_CAPACITY_300",
+              "R09_VOLUME_1000",
+              "R10_NATIONAL_FREIGHT",
+              "R18_PROCUREMENT"
+            ],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "identity/evidence verification required"
+          }
+        }
+      ]
+    },
+    {
+      "query_id": "v2_distribution_staged_onboarding",
+      "family": "distribution",
+      "route": "regional_distribution",
+      "query": "Colombia mayorista productos saludables \"marcas\" distribuimos tiendas independientes regional",
+      "context_fields": [
+        "Early recurring range",
+        "Business maturity",
+        "Documentation stated available",
+        "Pilot learning objectives"
+      ],
+      "rule_ids": [
+        "R07_RECURRENCE",
+        "R12_DOCUMENTS",
+        "R15_MATURITY",
+        "R20_LEARNING"
+      ],
+      "mechanism": "phased supplier onboarding and replenishment to independent stores",
+      "status": "completed",
+      "attempts": 1,
+      "provider": "tavily",
+      "executed_at": "2026-08-03T21:48:39.234Z",
+      "latency_ms": 1166,
+      "raw_results": 5,
+      "error": null,
+      "candidates": [
+        {
+          "query_id": "v2_distribution_staged_onboarding",
+          "family": "distribution",
+          "route": "regional_distribution",
+          "provider": "tavily",
+          "rank": 1,
+          "title": "Distribuidor Mayorista de Productos Saludables",
+          "url": "https://stevia.com.co/pages/distribuidor-mayorista-o-tienda",
+          "domain": "stevia.com.co",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:40.406Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "candidate",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "investigate",
+            "rules_passed": [
+              "R07_RECURRENCE",
+              "R12_DOCUMENTS",
+              "R15_MATURITY",
+              "R20_LEARNING"
+            ],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "identity/evidence verification required"
+          }
+        },
+        {
+          "query_id": "v2_distribution_staged_onboarding",
+          "family": "distribution",
+          "route": "regional_distribution",
+          "provider": "tavily",
+          "rank": 2,
+          "title": "Productos Colombianos al por Mayor en USA",
+          "url": "https://incadistributions.com/productos-colombianos-al-mayor",
+          "domain": "incadistributions.com",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:40.406Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "candidate",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "investigate",
+            "rules_passed": [
+              "R07_RECURRENCE",
+              "R12_DOCUMENTS",
+              "R15_MATURITY",
+              "R20_LEARNING"
+            ],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "identity/evidence verification required"
+          }
+        },
+        {
+          "query_id": "v2_distribution_staged_onboarding",
+          "family": "distribution",
+          "route": "regional_distribution",
+          "provider": "tavily",
+          "rank": 3,
+          "title": "Colbrands: Distribuidor Mayorista de Productos Latinos Colombianos | Variedad Auténtica para Tiendas y Supermercados en USA",
+          "url": "https://colbrands.us/",
+          "domain": "colbrands.us",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:40.406Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "candidate",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "investigate",
+            "rules_passed": [
+              "R07_RECURRENCE",
+              "R12_DOCUMENTS",
+              "R15_MATURITY",
+              "R20_LEARNING"
+            ],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "identity/evidence verification required"
+          }
+        },
+        {
+          "query_id": "v2_distribution_staged_onboarding",
+          "family": "distribution",
+          "route": "regional_distribution",
+          "provider": "tavily",
+          "rank": 4,
+          "title": "🌿 Haz crecer tu negocio con nosotros En Variedades el 47 te abrimos las ...",
+          "url": "https://www.instagram.com/p/DQMj1QnjdfT",
+          "domain": "instagram.com",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:40.406Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "insufficient",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "insufficient evidence",
+            "rules_passed": [],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "stop before qualification"
+          }
+        },
+        {
+          "query_id": "v2_distribution_staged_onboarding",
+          "family": "distribution",
+          "route": "regional_distribution",
+          "provider": "tavily",
+          "rank": 5,
+          "title": "Fresh – Distribuidora Mayorista",
+          "url": "https://distribuidorafresh.com.ar/",
+          "domain": "distribuidorafresh.com.ar",
+          "source_type": null,
+          "retrieved_at": "2026-08-03T21:48:40.406Z",
+          "published_date": null,
+          "snippet_persisted": false,
+          "gate": {
+            "identity": "candidate",
+            "colombia": "probable",
+            "hard_rule_failure": false,
+            "decision": "investigate",
+            "rules_passed": [
+              "R07_RECURRENCE",
+              "R12_DOCUMENTS",
+              "R15_MATURITY",
+              "R20_LEARNING"
+            ],
+            "rules_conditioned": [
+              "R10_NATIONAL_FREIGHT",
+              "R16_RELATIONSHIP_UNKNOWN",
+              "R22_OFFICIAL_EVIDENCE"
+            ],
+            "counterfactual_a": "generic include",
+            "v2_result": "identity/evidence verification required"
+          }
+        }
+      ]
+    }
+  ],
+  "raw_payloads_persisted": false
+}

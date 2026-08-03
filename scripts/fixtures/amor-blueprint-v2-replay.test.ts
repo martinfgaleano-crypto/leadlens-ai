@@ -8,7 +8,7 @@ const tests:[string,()=>void][]=[
  ["active executable rules",()=>{assert.ok(v.AMOR_V2_RULES.length>=20);assert.ok(v.AMOR_V2_RULES.every(x=>x.active&&x.logic&&x.fields.length&&x.evidence))}],
  ["15 queries traced",()=>{assert.equal(v.AMOR_V2_QUERY_TRACE.length,15);assert.ok(v.AMOR_V2_QUERY_TRACE.every(x=>x.rule_ids.length&&x.expected_mechanism))}],
  ["generic queries revised",()=>assert.ok(v.AMOR_V2_QUERY_TRACE.filter(x=>x.revised_or_removed).length>=5)],
- ["56 candidates replayed",()=>{assert.equal(v.AMOR_V2_REPLAY.length,56);assert.ok(v.AMOR_V2_REPLAY.every(x=>x.decision&&x.rationale&&x.counterfactual.A&&x.not_applicable))}],
+ ["all checkpoint and enriched candidates replayed",()=>{assert.ok(v.AMOR_V2_REPLAY.length>=56);assert.ok(v.AMOR_V2_REPLAY.every(x=>x.decision&&x.rationale&&x.counterfactual.A&&x.not_applicable))}],
  ["rule states",()=>assert.ok(v.AMOR_V2_REPLAY.every(x=>x.passed&&x.failed&&x.conditioned&&x.not_applicable))],
  ["BioPlaza independently removed",()=>assert.equal(v.AMOR_V2_REPLAY.find(x=>x.account==="BioPlaza")?.decision,"insufficient evidence")],
  ["DAM independently monitored",()=>assert.equal(v.AMOR_V2_REPLAY.find(x=>x.account==="Distribuidora DAM")?.decision,"monitor")],

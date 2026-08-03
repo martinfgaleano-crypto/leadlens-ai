@@ -441,3 +441,5 @@ Audit replay covers 56 domains and 15 enriched accounts. Context impact is parti
 ## Context compiler V2
 
 `amor-context-rule-compiler@2.0.0` is active for deterministic replay only. Query and candidate decision traces, field coverage and rule impact are exposed inside the existing pilot Admin.
+
+V2 bounded discovery demonstrated stronger traceability but not better qualified yield. Preserve the moderate-impact verdict and add an account-first official-identity stage before any future run.

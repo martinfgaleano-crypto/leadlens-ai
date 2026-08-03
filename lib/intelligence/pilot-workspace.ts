@@ -18,6 +18,7 @@ import * as phase5a from "./amor-de-gea-phase5a-customer-safe";
 import * as phase5a1 from "./amor-de-gea-phase5a1-signoff";
 import * as contextImpact from "./amor-de-gea-context-impact-audit";
 import * as blueprintV2Replay from "./amor-de-gea-blueprint-v2-replay";
+import * as blueprintV2Search from "./amor-de-gea-blueprint-v2-bounded-search";
 export const AMOR_PILOT_ID = "amor-de-gea";
 export const PILOT_WORKSPACE_VERSION = "amor-pilot-workspace-v1";
 export const LEGACY_PILOT_ALIASES = [
@@ -78,6 +79,7 @@ export interface PilotWorkspace {
   phase5a1: typeof phase5a1;
   contextImpact: typeof contextImpact;
   blueprintV2Replay: typeof blueprintV2Replay;
+  blueprintV2Search: typeof blueprintV2Search;
   questions: any[];
   accounts: any[];
   theses: any[];
@@ -276,6 +278,7 @@ export function buildPilotWorkspace(): PilotWorkspace {
     phase5a1,
     contextImpact,
     blueprintV2Replay,
+    blueprintV2Search,
     questions,
     accounts,
     theses: (block11 as any).theses,
