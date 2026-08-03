@@ -145,7 +145,7 @@ t(
   "workspace preserves phase4 during V3R review",
   w.phase4.AMOR_PHASE4_RUN.state === "completed" &&
     w.phase4.AMOR_PHASE4_PORTFOLIO.length === 15 &&
-      w.pilot.readiness === "phase5a1_v4d1_ready_for_client_conflict_check",
+      w.pilot.readiness === "context_impact_audit_founder_review_handoff_paused",
 );
 t(
   "no forbidden product expansion",

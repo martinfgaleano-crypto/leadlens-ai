@@ -434,3 +434,7 @@ V4D is a separate customer-safe preparation layer. It contains 12 evidence gates
 ## Phase 5A.1
 
 V4D.1 is founder-signed and ready for the client conflict check, not final delivery. Four wording revisions are complete, DAM is source-confirmed and BioPlaza remains blocked.
+
+## Context impact
+
+Audit replay covers 56 domains and 15 enriched accounts. Context impact is partially demonstrated; Blueprint V1 is not fully compiled/enforced. Blueprint V2 and V3R3 await founder review.

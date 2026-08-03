@@ -493,3 +493,7 @@ Zero provider calls and zero invented conflict answers. V4D is not a delivered r
 ## Phase 5A.1 audit boundary
 
 One bounded BioPlaza provider call was consumed; DAM used direct official evidence. Client answers remain zero and preview import performs zero writes.
+
+## Context-impact audit boundary
+
+Zero provider calls. Client handoff and Phase 5B remain paused. Historical layers are preserved; Blueprint V2 and V3R3 are unapproved proposals only.

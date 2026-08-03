@@ -100,3 +100,7 @@ V4D prepares customer-safe wording and the future report architecture without ge
 ## Phase 5A.1 checkpoint
 
 V4D.1 is ready for manual conflict-check delivery. Import remains preview-only; Phase 5B starts only after 13 real responses and explicit founder authorization.
+
+## Context-impact audit
+
+Client handoff is paused. Prioritize approval and implementation of the context-rule compiler, Blueprint V2 and candidate decision traces before any new discovery or client delivery.
