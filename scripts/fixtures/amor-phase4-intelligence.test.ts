@@ -142,9 +142,10 @@ t(
     p.AMOR_PHASE4_ACCOUNTING.exact_provider_cost.includes("unavailable"),
 );
 t(
-  "workspace exposes phase4",
+  "workspace preserves phase4 during V3R review",
   w.phase4.AMOR_PHASE4_RUN.state === "completed" &&
-    w.pilot.readiness === "phase4_internal_human_review",
+    w.phase4.AMOR_PHASE4_PORTFOLIO.length === 15 &&
+      w.pilot.readiness === "phase4_5_founder_decision_pending",
 );
 t(
   "no forbidden product expansion",

@@ -12,6 +12,7 @@ import {
   buildWhatChanged,
 } from "./amor-de-gea-search-blueprint";
 import * as phase4 from "./amor-de-gea-phase4-intelligence";
+import * as phase45 from "./amor-de-gea-phase4-5-review";
 export const AMOR_PILOT_ID = "amor-de-gea";
 export const PILOT_WORKSPACE_VERSION = "amor-pilot-workspace-v1";
 export const LEGACY_PILOT_ALIASES = [
@@ -66,6 +67,7 @@ export interface PilotWorkspace {
   recalibratedTheses: ReturnType<typeof buildAmorAccountRecalibration>;
   whatChanged: ReturnType<typeof buildWhatChanged>;
   phase4: typeof phase4;
+  phase45: typeof phase45;
   questions: any[];
   accounts: any[];
   theses: any[];
@@ -226,7 +228,7 @@ export function buildPilotWorkspace(): PilotWorkspace {
       updated_at: AMOR_SEARCH_BLUEPRINT.created_at,
       last_intelligence_refresh: updated,
       last_human_review: AMOR_ACCEPTED_CONTEXT.accepted_at,
-      readiness: "phase4_internal_human_review",
+      readiness: "phase4_5_founder_decision_pending",
       blockers: [
         "Human review of 15-account proposed portfolio pending",
         "No Phase 5 action authorized",
@@ -258,6 +260,7 @@ export function buildPilotWorkspace(): PilotWorkspace {
     recalibratedTheses,
     whatChanged,
     phase4,
+    phase45,
     questions,
     accounts,
     theses: (block11 as any).theses,

@@ -85,3 +85,6 @@ Blueprint V1 and six internal V2 thesis comparisons are ready for founder review
 ## Phase 4 continuation — 2026-08-03
 
 The controlled search and recovery are complete. Fifteen accounts now await human review; Phase 5 remains blocked until the founder approves a reviewed subset and explicitly authorizes preparation or action.
+# Phase 4.5 checkpoint
+
+V3R now provides a separate founder decision layer over the preserved V3 portfolio. The proposed internal portfolio is reduced to 11 accounts; four are recommended Work First, three require evidence and one is rejected. Phase 5 remains blocked until explicit founder approval and conflict checks.

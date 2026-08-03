@@ -334,3 +334,6 @@ Search Blueprint V1 is `founder_review`; six recalibrations are `internal_review
 ## Phase 4 handoff
 
 Blueprint V1 is approved. Recovery run `amor_phase4_recovery_v1` persisted 15 completed Tavily queries atomically. The 15-account V3 portfolio is internal and pending human review. No Phase 5 action is authorized.
+# Phase 4.5 continuity
+
+The separate `V3R` layer audits all 15 V3 accounts without new provider calls or historical mutation. Use `AMOR_PHASE45_ACCOUNT_REVIEWS` and `AMOR_PHASE45_PACKET`; do not promote, contact or begin Phase 5 without a later explicit founder event.

@@ -478,3 +478,6 @@ Baseline theses are preserved and referenced through `supersedes_id`; V2 compari
 ## Phase 4 continuity
 
 V1/V2 remain immutable. V3 uses a documentation-backed versioned object and sanitized incremental checkpoint; no raw provider response is tracked. Phase 5 is blocked by human review.
+# Phase 4.5 audit boundary
+
+No search, customer-safe promotion, final report, outreach, CRM, migration or Phase 5 activation occurred. The review packet is internal and founder decisions remain pending.

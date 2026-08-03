@@ -1,5 +1,5 @@
 import { readFileSync } from "fs";
-import { buildPilotWorkspace } from "@/lib/intelligence/pilot-workspace";
+import { buildPilotWorkspace, dryRunPilotBackfill } from "@/lib/intelligence/pilot-workspace";
 import { ACCOUNT_UNIVERSE, ICP, PILOT_SECTIONS, recommendations } from "@/lib/intelligence/pilot-intelligence";
 import { buildInternalPilotPdf } from "@/lib/reports/internal-pilot-pdf";
 
@@ -56,7 +56,7 @@ const test = (name: string, ok: boolean) => { console.log(`${ok ? "✅" : "❌"}
   ["36 stable filename", endpoint.includes("leadlens-amor-de-gea-informe-interno-${date}.pdf")],
   ["37 export logged", endpoint.includes("internal_pilot_pdf_exported")],
   ["38 no provider calls", !pdfSource.includes("fetch(") && !endpoint.includes("provider")],
-  ["39 no synthetic answers", workspace.overview.context_completeness === 0],
+  ["39 no synthetic answers", dryRunPilotBackfill(workspace).synthetic_answers === 0],
   ["40 ranking unchanged", workspace.ranking_impact === "off"],
   ["41 valid PDF bytes", pdf.length > 10_000 && pdf.subarray(0, 4).toString() === "%PDF"],
   ["42 six recommendations", recs.length === 6],
