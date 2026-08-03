@@ -1,0 +1,10 @@
+import assert from "node:assert/strict";
+import {readFileSync,existsSync} from "node:fs";
+import {AMOR_PILOT1_EMAIL,AMOR_PILOT1_FINAL,AMOR_PILOT1_FOUNDER_CHECKLIST} from "../../lib/intelligence/amor-de-gea-pilot1-finalization";
+const p=AMOR_PILOT1_FINAL;
+assert.equal(p.portfolio.first_validation.length,4);assert.equal(p.portfolio.strategic_priority.length,3);assert.equal(p.portfolio.investigate_selectively.length,3);assert.equal(p.accounts.length,10);
+for(const x of ["BioPlaza","Distribuidora DAM","Hotel Spa La Colina","Tu Tienda Saludable","Somos Consiente"])assert(!p.accounts.some(a=>a.name===x));
+assert.equal(p.provider_calls,0);assert.equal(p.closure.state,"FOUNDER REVIEW REQUIRED");assert.equal(p.closure.delivered,false);assert.equal(p.feedback.responses.length,0);assert.equal(p.feedback.response_status,"Awaiting client feedback.");assert.equal(p.pilot2.accounts.length,0);assert.equal(p.pilot2.repeat_suppression,true);assert.equal(AMOR_PILOT1_FOUNDER_CHECKLIST.length,17);assert.equal(AMOR_PILOT1_EMAIL.sent,false);
+for(const f of [p.report.filename,"Amor-de-Gea-Account-Action-Briefs-Pilot-1.pdf","Amor-de-Gea-LeadLens-Pilot-1-Feedback.pdf","Amor-de-Gea-LeadLens-Pilot-1-Feedback.docx"])assert(existsSync(`public/pilot-deliverables/${f}`));
+const admin=readFileSync("app/admin/intelligence/pilots/[pilotId]/pilot1-finalization.tsx","utf8");assert(admin.includes("PILOT 1 FEEDBACK"));assert.equal(p.feedback.response_status,"Awaiting client feedback.");
+console.log("amor pilot1 finalization: ok");

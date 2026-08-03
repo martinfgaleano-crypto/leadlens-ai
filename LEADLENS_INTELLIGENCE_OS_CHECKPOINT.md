@@ -447,3 +447,6 @@ V2 bounded discovery demonstrated stronger traceability but not better qualified
 Account-first discovery v1 is implemented as reusable classification, canonical identity, structural gate, route source maps and quality metrics. No account-first performance claim is allowed until its controlled validation.
 
 Controlled validation protected downstream quality but did not prove buyer retrieval. Require harvestable entity data and route-specific parsers before another provider run.
+# Update — customer-delivery loop
+
+The Intelligence OS now carries a customer-safe Pilot 1 delivery layer, structured feedback contract, account-memory baseline and repeat suppression. Empty feedback remains neutral (`Awaiting client feedback.`); no customer answer is inferred.

@@ -506,3 +506,6 @@ Founder-authorized search later consumed exactly 8 Tavily calls without errors. 
 Architecture-only account-first work used zero providers and preserved V3R3 exactly. The four-call validation remains unapproved and unexecuted.
 
 Founder-authorized account-first validation later consumed exactly four Tavily calls with zero errors. V3R3 remains unchanged; no second run, V3R4, client delivery or Phase 5B occurred.
+# Update — 2026-08-03
+
+V3R3 history is preserved and represented as a definitive ten-account customer portfolio. Pilot 1 closure remains founder-gated; Pilot 2 is planned only, has zero accounts and is not authorized.

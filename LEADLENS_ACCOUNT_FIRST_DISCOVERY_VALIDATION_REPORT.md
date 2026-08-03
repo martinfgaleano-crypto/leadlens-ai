@@ -44,3 +44,6 @@
 42. Founder decision: approve return to source-map design and the minimal parser/source corrections; no expansion is justified.
 43. Activation: founder approves a named corrected source/parser plan; any new provider budget requires separate authorization.
 44. Stop: no second batch, portfolio change, V3R4, client contact, report delivery, outreach, CRM or Phase 5B.
+# Operational pause
+
+Account-first discovery experimentation is paused until Amor de Gea Pilot 1 has been delivered and real client feedback has been incorporated. No parser work or additional account search is authorized in this closeout.

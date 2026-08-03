@@ -362,3 +362,6 @@ Bounded run `amor_blueprint_v2_bounded_search_20260803_v1` completed 8 Tavily ca
 Account-first v1 now enforces source ecosystem → entity → identity → buyer role → business model → context gate before enrichment. Validation `amor_account_first_validation_v1` is FOUNDER REVIEW with a four-call ceiling and has not run.
 
 Validation completed 4 Tavily calls: 20 sources, 2 accepted ecosystems, 2 stopped owner placeholders, 0 verified buyers and 0 enrichment waste. Verdict INCONCLUSIVE; next state RETURN TO SOURCE-MAP DESIGN. Historical calls: 46.
+# Update — Pilot 1 finalization
+
+Amor de Gea Pilot 1 is `FOUNDER REVIEW REQUIRED`. Use `lib/intelligence/amor-de-gea-pilot1-finalization.ts` as the operational closeout source. Do not add accounts, run providers, mark delivery, close Pilot 1 or activate Pilot 2 without the corresponding manual event.
