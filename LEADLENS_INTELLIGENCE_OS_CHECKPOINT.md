@@ -385,6 +385,14 @@ Preserved: `preference-learner` + `shadow-preference` never touch ranking; UI sh
 - Block 17 no fue iniciado. La siguiente fase autorizable sigue siendo Client Context Completion and Account Intelligence Quality Improvement.
 - El commit documental queda listo para push; Vercel/producción permanece pendiente hasta que ese push y deployment ocurran.
 
+### Phase 1 — real client context review
+
+- Reconciliación segura: `526f42a` coincidía con `origin/main`; no existían cambios o commits de Claude que rescatar.
+- PDF real de 9 páginas y tres imágenes revisados sin añadir fuentes cliente a Git.
+- Context tab incorpora una capa `PREVIEW — NO APLICADO`: 17 preguntas, 7 respondidas, 6 por aclarar y 4 faltantes.
+- Preserva texto verbatim, página/fingerprint, evidencia y clasificación operacional; muestra preview de seis cuentas y Pilot Success Contract.
+- 0 contextos aceptados, 0 tesis recalculadas, ranking intacto, sin providers, customer-safe o reporte final. Phase 2 no iniciada.
+
 ## Client questionnaire experience (added)
 Professional client questionnaires (XLSX primary / PDF / CSV fallback) added, reusable per pilot; Admin-only, provider-free, answers blank. Endpoints under `/api/admin/intelligence/pilots/[pilotId]/questionnaire[/xlsx|/pdf]`. See `LEADLENS_CLIENT_QUESTIONNAIRE_EXPERIENCE_REPORT.md`. Next: send to Amor de Gea, import answers after review.
 

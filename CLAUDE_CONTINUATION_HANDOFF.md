@@ -293,6 +293,14 @@ Before modifying code, propose the smallest concrete phase that advances:
 Preserve every invariant documented in the handoff.
 ```
 
+## Phase 1 real-context review continuation — 2026-08-02
+
+- Returned client questionnaire reviewed: 9-page iOS PDF with FreeText annotations; three images classified only as client marketing material.
+- Admin Context now contains `PREVIEW — NO APLICADO`: 17 represented, 7 answered, 6 clarification recommended, 4 missing and 0 accepted.
+- Preview includes operational/evidence classifications, six-account impact and Pilot Success Contract. No ranking, thesis, provider, customer-safe or final-report action occurred.
+- Authoritative detail: `LEADLENS_PHASE_1_AMOR_DE_GEA_REAL_CONTEXT_REVIEW_REPORT.md`.
+- Next gate: obtain four priority clarifications, founder review, then explicit context acceptance. Phase 2 has not started.
+
 ## 20. Client questionnaire experience (added)
 
 Professional client-context questionnaires now exist (reusable across pilots):

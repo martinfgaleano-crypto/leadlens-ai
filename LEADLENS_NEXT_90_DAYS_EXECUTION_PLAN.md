@@ -69,4 +69,8 @@ Per phase, record start/end when actually executed (no pre-filled dates). Phase 
 - Phase 0 (this session): intake pipeline verified ready; manual-entry decision = **A**; mapping documented (17/17 coverage); execution plan created. No answers, no context, no recalculation.
 
 ## 17. Current next action
-Founder: download the `.xlsx` (recomendado) / `.pdf` from `…/pilots/amor-de-gea/context`, send to Amor de Gea, and return the completed file. That return activates Phase 1.
+Phase 1 review is active: the returned PDF and three marketing images were inspected and mapped into a non-applied Admin preview. Founder: review the 17 mapped items, collect the four priority clarifications and compliance support, then explicitly authorize context entry/submission and acceptance. Phase 2 remains blocked until an accepted context version exists.
+
+## LEADLENS OPPORTUNITY FACILITATION — PARKED STRATEGIC IDEA
+
+LeadLens podría ayudar más adelante a conectar clientes con compradores calificados, facilitar introducciones o apoyar oportunidades por una tarifa o compensación por éxito. Es estratégicamente interesante, pero no forma parte del producto activo ni de Amor de Gea Phase 1. Solo debe reconsiderarse cuando la calidad de Account Intelligence esté demostrada y el proceso pueda automatizarse en gran medida. No construir todavía UI, adquisición de contactos, outreach, introducciones, comisiones, success fees, contratos ni negociación.

@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { PilotWorkspace } from "@/lib/intelligence/pilot-workspace";
 import { ACCOUNT_UNIVERSE, ICP, PILOT_SECTIONS, type PilotSection, recommendations } from "@/lib/intelligence/pilot-intelligence";
 import PilotIntake from "./pilot-intake";
+import PilotContextReview from "./pilot-context-review";
 import PilotReviewOperations from "./pilot-review-operations";
 import styles from "./workspace.module.css";
 
@@ -399,6 +400,7 @@ export default function PilotExperience({ workspace, activeSection = "overview",
           <small>XLSX es el formato recomendado para completar; el PDF es para revisar o imprimir; el CSV es técnico. Descargar no crea ni acepta contexto: las respuestas se revisan antes de usarse.</small>
         </div>
       </div>
+      <PilotContextReview review={workspace.contextReview} />
       <PilotIntake pilotId={workspace.pilot.pilot_id} questions={workspace.questions} />
     </section>}
 
