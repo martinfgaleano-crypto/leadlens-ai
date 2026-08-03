@@ -111,3 +111,5 @@ Blueprint V2 is approved only for persisted-data replay. V3R3 and replacement qu
 The authorized bounded search is complete: 8 calls, no errors, no justified V3R4. Review the negative yield and account-first compiler correction before authorizing any second batch.
 
 Account-first architecture is implemented without providers. The next activation is the founder-reviewed four-ecosystem validation plan, not another generic query batch.
+
+The four-ecosystem validation is complete and inconclusive. Do not expand discovery; first require harvestable structured sources and route-specific parsers for COTELCO/stockist/catalog/member data.

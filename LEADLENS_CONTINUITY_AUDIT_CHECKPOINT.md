@@ -504,3 +504,5 @@ Blueprint V1 and V3R2 remain immutable. Blueprint V2 is approved for replay; V3R
 Founder-authorized search later consumed exactly 8 Tavily calls without errors. V3R3 remains unchanged; no V3R4, client delivery or Phase 5B activation occurred.
 
 Architecture-only account-first work used zero providers and preserved V3R3 exactly. The four-call validation remains unapproved and unexecuted.
+
+Founder-authorized account-first validation later consumed exactly four Tavily calls with zero errors. V3R3 remains unchanged; no second run, V3R4, client delivery or Phase 5B occurred.

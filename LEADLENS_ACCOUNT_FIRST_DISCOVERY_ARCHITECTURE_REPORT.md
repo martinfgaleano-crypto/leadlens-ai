@@ -31,3 +31,5 @@
 29. Founder decision: approve/revise the four-ecosystem validation plan and its success/stop rules.
 30. Activation event: explicit founder authorization naming `amor_account_first_validation_v1` and approving up to four provider calls.
 31. Stop: 0 provider calls, V3R3 unchanged, no V3R4, client contact, report delivery, outreach, CRM or Phase 5B.
+
+Continuation: validation `amor_account_first_validation_v1` used four Tavily calls. Two authoritative ecosystems were accepted but yielded no resolvable buyer account; 18/20 weak sources were stopped and enrichment waste was zero. Verdict: INCONCLUSIVE; return to source-map design.

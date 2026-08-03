@@ -360,3 +360,5 @@ Replay `amor_blueprint_v2_replay_20260803_v1` compiles 30 context fields into 22
 Bounded run `amor_blueprint_v2_bounded_search_20260803_v1` completed 8 Tavily calls (39 raw, 28 domains, 0 errors). Zonazul is investigation-only; no V3R4 was justified. Historical total is 42 calls. No second batch is authorized.
 
 Account-first v1 now enforces source ecosystem → entity → identity → buyer role → business model → context gate before enrichment. Validation `amor_account_first_validation_v1` is FOUNDER REVIEW with a four-call ceiling and has not run.
+
+Validation completed 4 Tavily calls: 20 sources, 2 accepted ecosystems, 2 stopped owner placeholders, 0 verified buyers and 0 enrichment waste. Verdict INCONCLUSIVE; next state RETURN TO SOURCE-MAP DESIGN. Historical calls: 46.

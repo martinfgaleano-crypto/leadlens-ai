@@ -20,6 +20,7 @@ import * as contextImpact from "./amor-de-gea-context-impact-audit";
 import * as blueprintV2Replay from "./amor-de-gea-blueprint-v2-replay";
 import * as blueprintV2Search from "./amor-de-gea-blueprint-v2-bounded-search";
 import * as accountFirstDiscovery from "../discovery/account-first-discovery";
+import * as accountFirstValidation from "../discovery/account-first-validation-results";
 export const AMOR_PILOT_ID = "amor-de-gea";
 export const PILOT_WORKSPACE_VERSION = "amor-pilot-workspace-v1";
 export const LEGACY_PILOT_ALIASES = [
@@ -82,6 +83,7 @@ export interface PilotWorkspace {
   blueprintV2Replay: typeof blueprintV2Replay;
   blueprintV2Search: typeof blueprintV2Search;
   accountFirstDiscovery: typeof accountFirstDiscovery;
+  accountFirstValidation: typeof accountFirstValidation;
   questions: any[];
   accounts: any[];
   theses: any[];
@@ -282,6 +284,7 @@ export function buildPilotWorkspace(): PilotWorkspace {
     blueprintV2Replay,
     blueprintV2Search,
     accountFirstDiscovery,
+    accountFirstValidation,
     questions,
     accounts,
     theses: (block11 as any).theses,
