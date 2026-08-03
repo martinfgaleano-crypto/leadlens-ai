@@ -449,3 +449,6 @@ Professional client questionnaires (XLSX primary / PDF / CSV fallback) added, re
 
 ## Client questionnaire visual correction (v2)
 PDF/XLSX polished (drawn checkboxes, thematic order, vertical-form XLSX, blank cells, live formulas). 27 tests. No migration.
+
+## Phase 0 — execution control + intake readiness (done)
+Audited the intake pipeline (manual entry `/intake` → review/accept `/operations` → append-only context versions; tenant-safe; honesty-gated). Questionnaire keys stable (17 unique, 0 dupes), `_meta` parseable, 17/17 internal-field coverage. **Decision: A — manual entry sufficient for Amor de Gea** (minimal one-time exceljs ingestion utility = documented fallback B; not built). No code/migrations. See `LEADLENS_PHASE_0_INTAKE_READINESS_AUDIT.md` + `LEADLENS_NEXT_90_DAYS_EXECUTION_PLAN.md`. **Phase 1 blocked until the completed questionnaire is returned.**
