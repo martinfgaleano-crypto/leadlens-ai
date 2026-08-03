@@ -341,3 +341,7 @@ The separate `V3R` layer audits all 15 V3 accounts without new provider calls or
 ## Phase 4.6 continuity
 
 Use `AMOR_PHASE46_PORTFOLIO`, `AMOR_PHASE46_ACTION_BRIEFS` and `AMOR_PHASE46_CONFLICT_PACKAGE`. V3R2 has 12 internal accounts; exactly three repair calls were consumed. Do not rerun repairs or begin Phase 5.
+
+## Phase 5A continuity
+
+Use the separate `amor-de-gea-phase5a-customer-safe.ts` V4D layer. Conflict answers are deliberately null, final report generation is disabled and Phase 5B requires real client responses plus explicit founder approval.

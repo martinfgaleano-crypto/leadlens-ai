@@ -31,3 +31,7 @@
 29. Phase 5 activates only through a new explicit founder event after those decisions are recorded.
 
 No final customer report, customer-safe promotion, outreach, private-contact collection, CRM or Opportunity Facilitation occurred.
+
+## Phase 5A continuation
+
+The founder approved V3R2. V4D now contains customer-safe draft wording, 12 evidence gates, four Action Brief candidates and a protected 13-account conflict-check export. Final delivery remains blocked until real Amor de Gea responses and founder approval.

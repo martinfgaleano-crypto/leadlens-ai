@@ -14,6 +14,7 @@ import {
 import * as phase4 from "./amor-de-gea-phase4-intelligence";
 import * as phase45 from "./amor-de-gea-phase4-5-review";
 import * as phase46 from "./amor-de-gea-phase4-6-portfolio";
+import * as phase5a from "./amor-de-gea-phase5a-customer-safe";
 export const AMOR_PILOT_ID = "amor-de-gea";
 export const PILOT_WORKSPACE_VERSION = "amor-pilot-workspace-v1";
 export const LEGACY_PILOT_ALIASES = [
@@ -70,6 +71,7 @@ export interface PilotWorkspace {
   phase4: typeof phase4;
   phase45: typeof phase45;
   phase46: typeof phase46;
+  phase5a: typeof phase5a;
   questions: any[];
   accounts: any[];
   theses: any[];
@@ -230,7 +232,7 @@ export function buildPilotWorkspace(): PilotWorkspace {
       updated_at: AMOR_SEARCH_BLUEPRINT.created_at,
       last_intelligence_refresh: updated,
       last_human_review: AMOR_ACCEPTED_CONTEXT.accepted_at,
-      readiness: "phase4_6_v3r2_conflict_check_pending",
+      readiness: "phase5a_v4d_blocked_by_client_conflict_check",
       blockers: [
         "Human review of 15-account proposed portfolio pending",
         "No Phase 5 action authorized",
@@ -264,6 +266,7 @@ export function buildPilotWorkspace(): PilotWorkspace {
     phase4,
     phase45,
     phase46,
+    phase5a,
     questions,
     accounts,
     theses: (block11 as any).theses,

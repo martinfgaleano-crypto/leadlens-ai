@@ -1,0 +1,6 @@
+import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/auth/require-admin";
+import { canonicalPilotId } from "@/lib/intelligence/pilot-workspace";
+import { AMOR_PHASE5A_CONFLICT_REQUEST, buildAmorConflictCheckCsv } from "@/lib/intelligence/amor-de-gea-phase5a-customer-safe";
+export const runtime="nodejs";export const dynamic="force-dynamic";
+export async function GET(req:NextRequest,{params}:{params:{pilotId:string}}){const denied=requireAdmin(req);if(denied)return denied;if(canonicalPilotId(params.pilotId)!=="amor-de-gea")return NextResponse.json({error:"Piloto no encontrado."},{status:404});const date=new Date().toISOString().slice(0,10);console.info(JSON.stringify({event:"pilot_conflict_check_exported",status:"success",pilot_id:"amor-de-gea",actor:"active_admin_session",accounts:AMOR_PHASE5A_CONFLICT_REQUEST.answers.length,version:"V4D"}));return new NextResponse(buildAmorConflictCheckCsv(),{status:200,headers:{"Content-Type":"text/csv; charset=utf-8","Content-Disposition":`attachment; filename="leadlens-amor-de-gea-conflict-check-${date}.csv"`,"Cache-Control":"private, no-store","X-LeadLens-Report-Status":"customer-safe-request-not-final-report"}})}

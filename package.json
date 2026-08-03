@@ -115,7 +115,8 @@
     "test:amor-phase4-5-review": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/amor-phase4-5-review.test.ts",
     "test:amor-phase4-6-repair": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/amor-phase4-6-repair-runner.test.ts",
     "pilot:amor-phase4-6-repair": "npx -y tsx --tsconfig tsconfig.json scripts/sources/run-amor-phase4-6-evidence-repair.ts",
-    "test:amor-phase4-6-portfolio": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/amor-phase4-6-portfolio.test.ts"
+    "test:amor-phase4-6-portfolio": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/amor-phase4-6-portfolio.test.ts",
+    "test:amor-phase5a": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/amor-phase5a-customer-safe.test.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.27.0",

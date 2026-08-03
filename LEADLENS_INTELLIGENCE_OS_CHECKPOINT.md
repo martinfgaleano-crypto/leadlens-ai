@@ -426,3 +426,7 @@ Founder review readiness is implemented as V3R. V3 and the completed search run 
 ## Phase 4.6
 
 V3R2 preserves V3/V3R and records the founder-approved provisional portfolio plus repair outcomes. Portfolio size is 12, customer-safe remains false and conflict checks are pending.
+
+## Phase 5A
+
+V4D is a separate customer-safe preparation layer. It contains 12 evidence gates, four brief candidates and a safe conflict-check request; delivery is blocked by client responses and founder review.

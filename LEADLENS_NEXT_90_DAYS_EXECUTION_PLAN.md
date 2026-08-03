@@ -92,3 +92,7 @@ V3R now provides a separate founder decision layer over the preserved V3 portfol
 ## Phase 4.6 checkpoint
 
 V3R2 contains 12 provisionally approved internal accounts after exactly three evidence repairs. Four internal Action Brief drafts and a conflict-check package are ready; Phase 5 remains blocked.
+
+## Phase 5A checkpoint
+
+V4D prepares customer-safe wording and the future report architecture without generating delivery. The immediate dependency is the 13-account conflict check followed by founder review; first action remains limited to 2–4 accounts.
