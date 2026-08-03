@@ -123,3 +123,7 @@ The view stays under existing Admin Auth. No client PDF/image is served or commi
 ## 13. Founder actions and Phase 2 gate
 
 Founder must review the preview, obtain the four priority clarifications and supporting compliance documents, then explicitly authorize entry/submission and acceptance of a real context version. Phase 2 activates only after that reviewed version is accepted. Until then: no thesis recalculation, discovery, ranking change, customer-safe output or final report.
+
+## Phase 1.5 continuation
+
+Founder resolution replaced the four global clarification requests with explicit conservative treatments. Candidate `intake_fb4bc38a8e0af0343c9f8f1e` is persisted for founder review with separate client, founder, system and open-validation provenance. State: ready for founder acceptance with limitations; 0 accepted contexts and Phase 2 not started. See `LEADLENS_PHASE_1_5_FOUNDER_RESOLUTION_REPORT.md`.

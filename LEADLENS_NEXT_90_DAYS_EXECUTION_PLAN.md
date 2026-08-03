@@ -69,7 +69,7 @@ Per phase, record start/end when actually executed (no pre-filled dates). Phase 
 - Phase 0 (this session): intake pipeline verified ready; manual-entry decision = **A**; mapping documented (17/17 coverage); execution plan created. No answers, no context, no recalculation.
 
 ## 17. Current next action
-Phase 1 review is active: the returned PDF and three marketing images were inspected and mapped into a non-applied Admin preview. Founder: review the 17 mapped items, collect the four priority clarifications and compliance support, then explicitly authorize context entry/submission and acceptance. Phase 2 remains blocked until an accepted context version exists.
+Phase 1.5 is ready for founder acceptance: candidate `intake_fb4bc38a8e0af0343c9f8f1e` contains 17 mapped fields with client, founder, system and open-validation provenance separated. Founder: review its explicit limitations and authorize or reject the separate `accept_context` action. Phase 2 remains blocked until the first accepted context version exists.
 
 ## LEADLENS OPPORTUNITY FACILITATION — PARKED STRATEGIC IDEA
 

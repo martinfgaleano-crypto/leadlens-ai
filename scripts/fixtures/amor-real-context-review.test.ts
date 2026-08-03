@@ -1,5 +1,5 @@
 import {readFileSync} from "fs";
-import {buildAmorRealContextReview, AMOR_QUESTIONNAIRE_FINGERPRINT} from "@/lib/intelligence/amor-de-gea-real-context-review";
+import {buildAmorRealContextReview,buildFounderAcceptanceCandidate, AMOR_QUESTIONNAIRE_FINGERPRINT} from "@/lib/intelligence/amor-de-gea-real-context-review";
 import {buildPilotWorkspace} from "@/lib/intelligence/pilot-workspace";
 
 let passed=0,failed=0;
@@ -18,7 +18,7 @@ test("8 wholesale economics are preliminary",by("wholesale_price").customer_safe
 test("9 missing margin does not block discovery globally",by("margin").affected_routes.length===2&&by("margin").operational_classification==="pending_non_blocking");
 test("10 route blocker is scoped",by("private_label").operational_classification==="route_specific_blocker"&&by("private_label").affected_routes.join()==="private_label");
 test("11 customer-safe blocker is distinct",by("certifications").operational_classification==="customer_safe_blocker");
-test("12 clarifications separated",review.clarification.before_acceptance.length===4&&review.clarification.later.length===4);
+test("12 no global clarification blocks acceptance",review.clarification.before_acceptance.length===0&&review.clarification.later.length>=4);
 test("13 preview explicitly not applied",review.state==="preview_not_applied");
 test("14 six-account preview complete",review.account_preview.length===6&&new Set(review.account_preview.map(x=>x.account)).size===6);
 test("15 success contract represented",review.success_contract.value_dimensions.length===5&&review.success_contract.indicators.outcomes.includes("Ventas cuando existan"));
@@ -32,5 +32,28 @@ const core=readFileSync("lib/intelligence/amor-de-gea-real-context-review.ts","u
 test("22 review module makes no provider call",!/fetch\(|\.search\(|Serper|Tavily/.test(core));
 const plan=readFileSync("LEADLENS_NEXT_90_DAYS_EXECUTION_PLAN.md","utf8");
 test("23 Opportunity Facilitation remains documentation-only",plan.includes("LEADLENS OPPORTUNITY FACILITATION — PARKED STRATEGIC IDEA"));
+const workspace=buildPilotWorkspace(),candidate=buildFounderAcceptanceCandidate(workspace.questions);
+const resolution=(id:string)=>review.founder_resolutions.find(x=>x.question_id===id)!;
+test("24 client answer distinct from founder resolution",by("account_size").original_answer!==resolution("account_size").resolution&&resolution("account_size").source==="founder_pilot_decision");
+test("25 founder decision distinct from system interpretation",resolution("preferred_models").source==="founder_pilot_decision"&&resolution("monthly_capacity").source==="system_interpretation");
+test("26 private label remains unconfirmed",by("private_label").completion==="missing"&&resolution("private_label").candidate_action==="exclude_route");
+test("27 route priorities founder-approved",review.commercial_route_hypothesis.label.includes("FOUNDER-APPROVED")&&resolution("preferred_models").source==="founder_pilot_decision");
+test("28 existing relationships remain unknown",by("existing_partners").completion==="missing"&&resolution("existing_partners").candidate_action==="keep_open");
+test("29 margin VAT freight non-blocking",resolution("margin").source==="open_validation"&&review.acceptance_readiness.global_blockers.length===0&&review.clarification.later.some(x=>x.includes("flete")));
+test("30 normal capacity unconfirmed",resolution("monthly_capacity").limitation.includes("no es capacidad normal"));
+test("31 high volume conditioned",review.account_size_ladder.at(-1)?.state==="route_blocked_until_validated");
+test("32 regulatory docs client-stated",by("certifications").evidence_state==="client_statement"&&resolution("certifications").influence.customer_safe===false);
+test("33 health claims customer-safe blocked",by("certifications").customer_safe_impact.includes("no adjuntó")&&by("products_b2b").customer_safe_impact.includes("no son claims verificados"));
+test("34 objectives measurable not client-misattributed",review.success_contract.founder_objectives.length===3&&String(review.success_contract.client_strategic_objective)!==String(review.success_contract.founder_objectives[0].definition));
+test("35 candidate has versioned 17 answers",candidate.answers.length===17&&candidate.answers.every(x=>x.question_id));
+test("36 draft provenance layers preserved",candidate.founder_decisions.length>0&&candidate.system_interpretations.length>0&&candidate.open_validations.length>0);
+test("37 no automatic acceptance",candidate.accepted_context_created===false&&review.acceptance_readiness.automatic_acceptance===false);
+test("38 acceptance ready with limitations",review.acceptance_readiness.state==="ready_for_founder_acceptance"&&review.acceptance_readiness.limitations.length===8);
+const endpoint=readFileSync("app/api/admin/intelligence/pilots/[pilotId]/context-candidate/route.ts","utf8");
+test("39 candidate endpoint Admin-only and tenant not forgeable",endpoint.includes("requireAdmin(req)")&&!endpoint.includes("tenant_id:z")&&endpoint.includes("tenant_user_id:null"));
+test("40 candidate persistence does not accept",endpoint.includes("submission_does_not_activate_context:true")&&!endpoint.includes("intelligence_client_context_versions"));
+test("41 direct client expectations preserve five dimensions",review.success_contract.client_expectation_feedback.source==="client_direct"&&review.success_contract.client_expectation_feedback.dimensions.length===5);
+test("42 client evaluation questions preserved",review.success_contract.client_expectation_feedback.evaluation_questions.length===6&&review.success_contract.client_expectation_feedback.evaluation_questions.some(x=>x.includes("simple base de datos")));
+test("43 strategic allocation remains outcome-gated",review.success_contract.client_expectation_feedback.dimensions.find(x=>x.id==="market_learning")?.boundary.includes("outcomes suficientes")===true);
 
 console.log(`\n${passed} passed, ${failed} failed`);if(failed)process.exit(1);

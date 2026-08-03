@@ -393,6 +393,13 @@ Preserved: `preference-learner` + `shadow-preference` never touch ranking; UI sh
 - Preserva texto verbatim, página/fingerprint, evidencia y clasificación operacional; muestra preview de seis cuentas y Pilot Success Contract.
 - 0 contextos aceptados, 0 tesis recalculadas, ranking intacto, sin providers, customer-safe o reporte final. Phase 2 no iniciada.
 
+### Phase 1.5 — founder resolution
+
+- Economics, capacidad, logística, documentación, objetivos y cuatro preguntas faltantes tienen tratamiento explícito sin inventar respuestas.
+- Feedback directo del cliente registrado en cinco dimensiones y seis preguntas de evaluación; separado de decisiones del fundador.
+- Candidato idempotente `intake_fb4bc38a8e0af0343c9f8f1e` persistido con 17 campos y provenance por capa.
+- `READY FOR FOUNDER ACCEPTANCE`; 0 contextos aceptados, 0 recalculos, ranking off, sin providers ni customer-safe. Phase 2 no iniciada.
+
 ## Client questionnaire experience (added)
 Professional client questionnaires (XLSX primary / PDF / CSV fallback) added, reusable per pilot; Admin-only, provider-free, answers blank. Endpoints under `/api/admin/intelligence/pilots/[pilotId]/questionnaire[/xlsx|/pdf]`. See `LEADLENS_CLIENT_QUESTIONNAIRE_EXPERIENCE_REPORT.md`. Next: send to Amor de Gea, import answers after review.
 

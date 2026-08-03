@@ -452,6 +452,13 @@ Block 3 is complete when registry tests and related regressions pass, checkpoint
 - Final economics remain non-blocking globally; private label is route-specific; unsupported compliance/health claims remain customer-safe blockers.
 - No context acceptance, thesis recalculation, ranking change, discovery, provider call, migration or final report. Phase 2 remains blocked.
 
+## 32. Phase 1.5 founder resolution
+
+- Resolved six clarification classes and four missing questions using distinct client, founder, system and open-validation provenance.
+- Preserved direct client expectations across commercial intelligence, prioritization, pre-meeting intelligence, market learning and strategy review.
+- Persisted idempotent intake candidate `intake_fb4bc38a8e0af0343c9f8f1e`; no migration was required.
+- Ready for explicit founder acceptance with eight limitations. Accepted contexts remain zero and Phase 2 was not started.
+
 ## Client questionnaire experience (added)
 Professional client questionnaires (XLSX primary / PDF / CSV fallback) added, reusable per pilot; Admin-only, provider-free, answers blank. Endpoints under `/api/admin/intelligence/pilots/[pilotId]/questionnaire[/xlsx|/pdf]`. See `LEADLENS_CLIENT_QUESTIONNAIRE_EXPERIENCE_REPORT.md`. Next: send to Amor de Gea, import answers after review.
 

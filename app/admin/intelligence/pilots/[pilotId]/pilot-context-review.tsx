@@ -1,4 +1,8 @@
+"use client";
+
+import {useState} from "react";
 import type {PilotWorkspace} from "@/lib/intelligence/pilot-workspace";
+import {adminFetch} from "@/lib/admin/admin-client";
 import styles from "./workspace.module.css";
 
 const COMPLETION:Record<string,string>={answered:"Respondida",missing:"Faltante",ambiguous:"Ambigua",not_applicable:"No aplica",clarification_recommended:"Aclaración recomendada"};
@@ -7,10 +11,12 @@ const EVIDENCE:Record<string,string>={no_evidence:"Sin evidencia",client_stateme
 
 export default function PilotContextReview({review}:{review:PilotWorkspace["contextReview"]}) {
   const s=review.summary;
+  const [candidateState,setCandidateState]=useState("");
+  async function createCandidate(){setCandidateState("Creando candidato versionado…");const response=await adminFetch("/api/admin/intelligence/pilots/amor-de-gea/context-candidate",{method:"POST"});const result=await response.json().catch(()=>({}));setCandidateState(response.ok?`Candidato listo: ${result.intake_id}. Todavía no ha sido aceptado.`:result.error??"No fue posible crear el candidato.");}
   return <div className={styles.contextReview}>
     <div className={styles.previewBanner}>
-      <div><span>PREVIEW — NO APLICADO</span><h3>Revisión del contexto real devuelto</h3></div>
-      <p>Las respuestas están preservadas para revisión. No existe contexto aceptado, recalculo de tesis, cambio de ranking ni promoción customer-safe.</p>
+      <div><span>{review.acceptance_readiness.label}</span><h3>Contexto resuelto con limitaciones explícitas</h3></div>
+      <div><p>Las respuestas del cliente, decisiones del fundador e interpretaciones del sistema permanecen separadas. No existe contexto aceptado, recalculo de tesis, cambio de ranking ni promoción customer-safe.</p><button className={styles.acceptanceButton} onClick={createCandidate}>Crear candidato para aceptación</button>{candidateState&&<small role="status">{candidateState}</small>}</div>
     </div>
     <div className={styles.reviewMetrics}>
       <div><strong>{s.answered}</strong><span>respondidas sin reserva mayor</span></div>
@@ -32,6 +38,7 @@ export default function PilotContextReview({review}:{review:PilotWorkspace["cont
             <p><strong>Rutas:</strong> {answer.affected_routes.join(", ")}</p>
             <p><strong>Impacto externo:</strong> {answer.customer_safe_impact}</p>
             {answer.clarification&&<p><strong>Aclaración:</strong> {answer.clarification}</p>}
+            {review.founder_resolutions.filter(item=>item.question_id===answer.question_id).map(item=><div className={styles.resolutionBox} key={item.question_id}><small>{item.source.replaceAll("_"," ")}</small><p>{item.resolution}</p><p><strong>Límite:</strong> {item.limitation}</p><em>{item.candidate_action.replaceAll("_"," ")}</em></div>)}
           </div>
         </div>
       </details>)}
@@ -48,7 +55,7 @@ export default function PilotContextReview({review}:{review:PilotWorkspace["cont
     </section>
 
     <div className={styles.contextColumns}>
-      <section><h3>Aclarar antes de aceptar contexto</h3><ol>{review.clarification.before_acceptance.map(x=><li key={x}>{x}</li>)}</ol></section>
+      <section><h3>Bloqueos globales</h3>{review.acceptance_readiness.global_blockers.length?<ol>{review.acceptance_readiness.global_blockers.map(x=><li key={x}>{x}</li>)}</ol>:<p>Ninguno. Las incógnitas restantes son validaciones posteriores, límites de ruta o límites customer-safe.</p>}</section>
       <section><h3>Puede validarse después</h3><ol>{review.clarification.later.map(x=><li key={x}>{x}</li>)}</ol></section>
     </div>
 
@@ -56,6 +63,8 @@ export default function PilotContextReview({review}:{review:PilotWorkspace["cont
       <span>PILOT SUCCESS CONTRACT</span><h3>{review.success_contract.decision}</h3>
       <p>{review.success_contract.database_difference}</p>
       <div>{review.success_contract.value_dimensions.map(x=><strong key={x}>{x}</strong>)}</div>
+      <div>{review.success_contract.founder_objectives.map(x=><strong key={x.id}>{x.label}</strong>)}</div>
+      <details className={styles.clientExpectations}><summary>Ver expectativas expresadas por el cliente</summary>{review.success_contract.client_expectation_feedback.dimensions.map(x=><article key={x.id}><h4>{x.label}</h4><p>{x.expectation}</p><small>{x.boundary}</small></article>)}<h4>Preguntas de evaluación</h4><ul>{review.success_contract.client_expectation_feedback.evaluation_questions.map(x=><li key={x}>{x}</li>)}</ul></details>
       <small>No garantiza ventas. Si las primeras recomendaciones no producen resultados, LeadLens revisará acción, selección, buyer path, oferta, objeciones y recalibración antes de entregar más leads.</small>
     </section>
   </div>;

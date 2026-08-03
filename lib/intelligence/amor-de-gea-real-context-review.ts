@@ -7,6 +7,16 @@ export type ReviewCompletion = "answered" | "missing" | "ambiguous" | "not_appli
 export type EvidenceState = "no_evidence" | "client_statement" | "client_marketing_material" | "client_document_supplied" | "independently_verified";
 export type OperationalClassification = "sufficient_to_continue" | "pending_non_blocking" | "conditioning" | "route_specific_blocker" | "customer_safe_blocker";
 export type PreviewDirection = "strengthen" | "weaken" | "uncertain";
+export type ResolutionSource = "client_questionnaire" | "client_marketing_material" | "founder_pilot_decision" | "system_interpretation" | "open_validation";
+
+export interface FounderResolution {
+  question_id:string;
+  source:ResolutionSource;
+  resolution:string;
+  limitation:string;
+  influence:{discovery:boolean;prioritization:boolean;customer_safe:boolean};
+  candidate_action:"include"|"include_with_limitation"|"exclude_route"|"keep_open";
+}
 
 export interface RealContextAnswer {
   question_id: string;
@@ -78,7 +88,37 @@ export const PILOT_SUCCESS_CONTRACT = {
   cadence: ["Revisión de línea base","Revisión después de las primeras acciones","Actualización mensual cuando aporte valor"],
   no_sales_response: ["Verificar si el cliente actuó","Revisar selección y buyer path","Revisar oferta y encaje","Capturar objeciones","Recalibrar","Ejecutar otra búsqueda limitada solo si se justifica"],
   database_difference: "Una base de datos muestra empresas. LeadLens determina cuáles tienen sentido para tu negocio, en qué orden trabajarlas, cómo prepararte y qué aprender de los resultados.",
+  client_strategic_objective:"Construir relaciones comerciales duraderas y que beneficien a ambas partes.",
+  founder_objectives:[
+    {id:"account_relevance",label:"Relevancia de cuentas",definition:"Identificar y priorizar un portafolio que Amor de Gea considere comercialmente relevante y operativamente plausible."},
+    {id:"commercial_action",label:"Acción comercial",definition:"Permitir que Amor de Gea trabaje un primer conjunto de cuentas con preparación específica y próximos pasos claros."},
+    {id:"market_learning",label:"Aprendizaje de mercado",definition:"Determinar qué tipos de cuenta, casos de uso, objeciones y rutas muestran mayor potencial práctico."},
+  ],
+  client_expectation_feedback:{
+    source:"client_direct" as const,
+    dimensions:[
+      {id:"commercial_intelligence",label:"Inteligencia comercial, no solo una base de datos",expectation:"Una selección refinada de cuentas relevantes —no cientos de empresas— con explicación de por qué cada una importa.",examples:["hoteles boutique enfocados en bienestar","spas premium","clínicas de medicina funcional","tiendas naturales de alto nivel","empresas con programas sólidos de bienestar corporativo"],boundary:"La expectativa de probabilidad se traduce en priorización explicada; no se inventa una probabilidad numérica de conversión."},
+      {id:"prioritization",label:"Priorización",expectation:"Responder a quién visitar primero usando facilidad de entrada, volumen esperado, ciclo, recompra y alineación de marca.",examples:[],boundary:"Las variables son criterios cualitativos hasta que outcomes reales permitan calibrarlas."},
+      {id:"pre_meeting",label:"Información antes de la reunión",expectation:"Preparar decisión/área probable, oferta comparable visible, prioridades, propuesta plausible y adaptación del discurso.",examples:[],boundary:"No afirmar decisores exactos, prioridades privadas o propuestas aceptadas sin evidencia."},
+      {id:"market_learning",label:"Aprendizaje del mercado",expectation:"Entender por qué algunas cuentas avanzan o no: precio, formato, amenities, personalización y política de distribución.",examples:[],boundary:"No recomendar una asignación como 70% a un segmento antes de outcomes suficientes."},
+      {id:"strategy_review",label:"Revisión estratégica",expectation:"Convertir resultados y objeciones en cambios de foco y siguientes experimentos.",examples:[],boundary:"Requiere acciones y outcomes; no es una conclusión disponible en esta fase."},
+    ],
+    evaluation_questions:["¿Cómo miden el éxito de un piloto?","¿Qué indicadores de desempeño entregan?","¿Con qué frecuencia revisan la estrategia?","¿Qué ocurre si las primeras recomendaciones no generan ventas?","¿Cómo incorporan el aprendizaje para mejorar las siguientes recomendaciones?","¿Qué diferencia a LeadLens de una simple base de datos de empresas?"],
+  },
 } as const;
+
+export const FOUNDER_RESOLUTIONS:FounderResolution[]=[
+  {question_id:"margin",source:"open_validation",resolution:"El descuento indicativo de 20%–30% permanece client-stated; margen, IVA y economics finales se validan antes de propuesta o negociación.",limitation:"No existe precio mayorista derivado ni exclusión automática por margen.",influence:{discovery:true,prioritization:true,customer_safe:false},candidate_action:"include_with_limitation"},
+  {question_id:"account_size",source:"founder_pilot_decision",resolution:"Escalera interna: Tier 1 piloto ~50; Tier 2 recurrencia temprana ~100–300/mes; Tier 3 escala estratégica >300 condicionada; Tier 4 ~1.000+ con validación y planeación.",limitation:"Interpretación conservadora aprobada para el piloto; Amor de Gea no seleccionó explícitamente estos tiers y mixed-SKU sigue abierto.",influence:{discovery:true,prioritization:true,customer_safe:false},candidate_action:"include_with_limitation"},
+  {question_id:"monthly_capacity",source:"system_interpretation",resolution:"Capacidad ordinaria y por SKU sin confirmar. Priorizar solo pilotos y recurrencia temprana; >300 condicionado y ~1.000+ bloqueado por ruta hasta validar.",limitation:"La declaración de más de 1.000 con un mes de aviso no es capacidad normal.",influence:{discovery:true,prioritization:true,customer_safe:false},candidate_action:"include_with_limitation"},
+  {question_id:"delivery_coverage",source:"system_interpretation",resolution:"Búsqueda nacional en Colombia; favorecer pedidos concentrados fuera de la región base. Flete, SLA, carrier y rotura se validan antes de propuesta.",limitation:"Cobertura y 2–5 días son declaraciones del cliente, no promesa logística verificada.",influence:{discovery:true,prioritization:true,customer_safe:false},candidate_action:"include_with_limitation"},
+  {question_id:"certifications",source:"client_questionnaire",resolution:"Documentación tratada como CLIENT-STATED AVAILABLE para inteligencia interna.",limitation:"Sin archivos, números o vigencias revisados; compliance y health claims siguen bloqueados customer-safe.",influence:{discovery:true,prioritization:true,customer_safe:false},candidate_action:"include_with_limitation"},
+  {question_id:"pilot_objectives",source:"founder_pilot_decision",resolution:"Tres objetivos direccionales: relevancia de cuentas, acción comercial y aprendizaje de mercado.",limitation:"El cliente solo declaró el objetivo estratégico de relaciones duraderas; no se garantiza venta.",influence:{discovery:true,prioritization:true,customer_safe:false},candidate_action:"include_with_limitation"},
+  {question_id:"private_label",source:"open_validation",resolution:"Marca blanca no confirmada; todas las demás rutas continúan.",limitation:"La mención en material comercial no prueba capacidad operativa.",influence:{discovery:true,prioritization:true,customer_safe:false},candidate_action:"exclude_route"},
+  {question_id:"current_models",source:"system_interpretation",resolution:"Rutas potenciales, no históricamente probadas: wholesale directo, retail especializado, pilotos, gifting, co-branding, hospitalidad boutique y alianzas.",limitation:"Historia operacional por canal desconocida.",influence:{discovery:true,prioritization:true,customer_safe:false},candidate_action:"include_with_limitation"},
+  {question_id:"preferred_models",source:"founder_pilot_decision",resolution:"Hipótesis Phase 2: P1 retail wellness independiente; P2 hospitalidad/spa; P3 gifting/co-branding; distribuidores selectivos exploratorios; distribución nacional compleja y private label diferidos.",limitation:"Hipótesis reversible del fundador; no es preferencia declarada por el cliente.",influence:{discovery:true,prioritization:true,customer_safe:false},candidate_action:"include_with_limitation"},
+  {question_id:"existing_partners",source:"open_validation",resolution:"No hay lista de exclusión. Cada cuenta prioritaria requiere chequeo de relación/conflicto antes de outreach.",limitation:"Relaciones y conflictos existentes son desconocidos.",influence:{discovery:true,prioritization:true,customer_safe:false},candidate_action:"keep_open"},
+];
 
 export function buildAmorRealContextReview() {
   const keyToRaw:Record<string,string>={products_b2b:"product_formats",customization:"customization_capacity",private_label:"white_label_capacity",wholesale_price:"price_positioning",minimum_order:"minimum_order",margin:"margins",account_size:"account_size_constraints",monthly_capacity:"production_capacity",delivery_coverage:"delivery_radius",operational_constraints:"fulfillment_constraints",certifications:"certifications",current_models:"business_model",preferred_models:"preferred_deal_type",existing_partners:"current_partnerships",sales_cycle:"sales_cycle_tolerance",company_stage:"company_stage",pilot_objectives:"distribution_capability"};
@@ -98,7 +138,23 @@ export function buildAmorRealContextReview() {
     route_preview:{enabled:["pilotos retail pequeños","retail especializado"],strengthened:["gifting y co-branding","hospitalidad experiencial","wellness retail"],conditioned:["distribución","multi-sede","compras con compliance alto"],deprioritized:["private label hasta confirmación","cuentas que exijan ciclos largos inmediatos"],favored_account_types:["retail natural premium","boutique wellness","hospitalidad de experiencia"],penalized_account_types:["distribuidores de gran escala sin piloto","procurement pesado sin documentos"]},
     account_preview: AMOR_ACCOUNT_IMPACT_PREVIEW,
     success_contract:PILOT_SUCCESS_CONTRACT,
-    clarification:{before_acceptance:["¿Qué tres modelos comerciales debe priorizar LeadLens?","¿Qué clientes, distribuidores, retailers, hoteles o aliados deben considerarse o evitarse?","¿Qué tres objetivos medibles debe perseguir el piloto en 90–180 días?","¿Cuál es la capacidad mensual normal, máxima y aproximada por SKU?"],later:["¿El descuento mayorista preliminar de 20%–30% incluye IVA?","¿Cómo funcionan flete, costo y manejo de rotura de vidrio?","¿Private label está disponible hoy?","¿Qué márgenes o estructuras finales aplican?"]},
+    founder_resolutions:FOUNDER_RESOLUTIONS,
+    account_size_ladder:[{tier:1,label:"Piloto",volume:"~50 unidades",state:"usable"},{tier:2,label:"Cuenta recurrente temprana",volume:"~100–300/mes",state:"preferred_initial"},{tier:3,label:"Escala estratégica",volume:">300/mes",state:"conditioned"},{tier:4,label:"Alto volumen",volume:"~1.000+",state:"route_blocked_until_validated"}],
+    commercial_route_hypothesis:{label:"FOUNDER-APPROVED SEARCH HYPOTHESIS — NOT CLIENT-STATED PREFERENCE",priority_1:["retail especializado","wellness retail independiente"],priority_2:["hospitalidad boutique","spas","experiencias wellness"],priority_3:["gifting corporativo","kits curados","co-branding"],exploratory:["distribuidores regionales selectivos"],deferred:["distribución nacional de gran escala","private label complejo","cadenas con procurement pesado"]},
+    acceptance_readiness:{state:"ready_for_founder_acceptance" as const,label:"READY FOR FOUNDER ACCEPTANCE",global_blockers:[],limitations:["Exact economics remain pending.","Ordinary and per-SKU capacity remain unconfirmed.","Logistics details remain pending.","Private label is excluded from prioritization until confirmed.","Documents are client-stated, not independently verified.","Health and regulatory claims remain customer-safe blocked.","Existing client relationships remain unknown.","Route priorities are founder-approved hypotheses, not client-stated facts."],automatic_acceptance:false},
+    clarification:{before_acceptance:[],later:["¿El descuento mayorista preliminar de 20%–30% incluye IVA?","¿Cómo funcionan flete, costo y manejo de rotura de vidrio?","¿Private label está disponible hoy?","¿Qué márgenes o estructuras finales aplican?","¿Cuál es la capacidad ordinaria y aproximada por SKU?","¿Qué relaciones o conflictos existentes deben respetarse?"]},
     invariants:{context_accepted:false,theses_recalculated:false,ranking_changed:false,provider_calls:false,customer_safe_promoted:false,final_report_generated:false},
   };
+}
+
+export function buildFounderAcceptanceCandidate(questions:Array<{question_id:string;field:string}>) {
+  const review=buildAmorRealContextReview();
+  const questionnaireByField=new Map<string,typeof review.answers[number]>();
+  for(const answer of review.answers)for(const field of answer.mapped_fields)questionnaireByField.set(field,answer);
+  const candidateAnswers=questions.map(question=>{
+    const client=questionnaireByField.get(question.field);
+    const resolution=client?review.founder_resolutions.find(item=>item.question_id===client.question_id):undefined;
+    return {question_id:question.question_id,field:question.field,status:client?.original_answer?"answered":"unknown",original_answer:client?.original_answer??"",client_source:client?.original_answer?{type:"client_questionnaire" as const,fingerprint:review.source.fingerprint,page:client.annotation_page,evidence_state:client.evidence_state}:null,founder_resolution:resolution?.source==="founder_pilot_decision"?resolution:null,system_interpretation:resolution?.source==="system_interpretation"?resolution:null,open_validation:resolution?.source==="open_validation"?resolution:null,operational_classification:client?.operational_classification??"conditioning",review_status:"unreviewed" as const,included_in_candidate:resolution?.candidate_action!=="exclude_route"};
+  });
+  return {candidate_version:"amor-founder-acceptance-candidate-v1",pilot_id:"amor-de-gea",state:"submitted_for_founder_review" as const,source_review_version:review.version,answers:candidateAnswers,founder_decisions:review.founder_resolutions.filter(x=>x.source==="founder_pilot_decision"),system_interpretations:review.founder_resolutions.filter(x=>x.source==="system_interpretation"),open_validations:review.founder_resolutions.filter(x=>x.source==="open_validation"),limitations:review.acceptance_readiness.limitations,accepted_context_created:false,theses_recalculated:false,ranking_impact:"off" as const,provider_calls:0,customer_safe_promoted:false};
 }

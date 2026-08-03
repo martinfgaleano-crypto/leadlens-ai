@@ -301,6 +301,14 @@ Preserve every invariant documented in the handoff.
 - Authoritative detail: `LEADLENS_PHASE_1_AMOR_DE_GEA_REAL_CONTEXT_REVIEW_REPORT.md`.
 - Next gate: obtain four priority clarifications, founder review, then explicit context acceptance. Phase 2 has not started.
 
+## Phase 1.5 founder-resolution continuation — 2026-08-02
+
+- All six clarification categories and four missing questions now have explicit conservative treatment; final economics no longer globally block the pilot.
+- Direct client product expectations are recorded separately: commercial intelligence, prioritization, pre-meeting preparation, market learning and strategy review, plus six evaluation questions.
+- Founder-approved ladder, route hypothesis and three pilot objectives are labeled and never attributed to the client.
+- Persisted candidate: `intake_fb4bc38a8e0af0343c9f8f1e`; 17 questions, 0 accepted context versions, no thesis/ranking/provider/customer-safe action.
+- State: `READY FOR FOUNDER ACCEPTANCE WITH EXPLICIT LIMITATIONS`. Phase 2 starts only after explicit `accept_context`.
+
 ## 20. Client questionnaire experience (added)
 
 Professional client-context questionnaires now exist (reusable across pilots):

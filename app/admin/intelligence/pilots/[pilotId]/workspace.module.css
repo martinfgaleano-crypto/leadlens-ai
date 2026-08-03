@@ -326,6 +326,8 @@
 .previewBanner span, .impactPreview header span, .successContract > span { color: #d7ba75; font-size: .64rem; font-weight: 900; letter-spacing: .12em; }
 .previewBanner h3, .impactPreview h3, .successContract h3 { margin: .4rem 0; font: 500 1.55rem Georgia, serif; }
 .previewBanner p { margin: 0; color: #c7d2cd; font-size: .76rem; line-height: 1.6; }
+.previewBanner small { display:block; margin-top:.55rem; color:#c7d2cd; font-size:.65rem; }
+.acceptanceButton { margin-top:.8rem; padding:.7rem .9rem; color:#183027; background:#d7ba75; border:0; cursor:pointer; font-size:.7rem; font-weight:900; }
 .reviewMetrics { display: grid; grid-template-columns: repeat(5,1fr); border: 1px solid var(--line); background: var(--line); gap: 1px; }
 .reviewMetrics div { padding: 1rem; background: #fff; }
 .reviewMetrics strong, .reviewMetrics span { display: block; }
@@ -343,6 +345,9 @@
 .reviewAnswerBody small { color:var(--muted); font-size:.62rem; font-weight:800; text-transform:uppercase; }
 .reviewAnswer blockquote { margin:.5rem 0 0; padding:.8rem; white-space:pre-wrap; background:var(--wash); font: .78rem/1.55 Georgia,serif; }
 .reviewEvidence p { margin:0 0 .45rem; color:var(--muted); font-size:.68rem; line-height:1.45; }
+.resolutionBox { margin-top:.8rem; padding:.8rem; border-left:3px solid var(--gold); background:var(--gold-soft); }
+.resolutionBox > small { color:#765a28; font-weight:900; text-transform:uppercase; }
+.resolutionBox > em { color:#765a28; font-size:.6rem; font-style:normal; font-weight:900; text-transform:uppercase; }
 .impactPreview { padding:1.5rem; background:var(--wash); }
 .impactPreview header p { color:var(--muted); font-size:.72rem; }
 .impactPreview > div { display:grid; grid-template-columns:repeat(2,1fr); gap:.7rem; }
@@ -360,6 +365,11 @@
 .successContract p, .successContract small { color:#d6e0db; font-size:.72rem; line-height:1.55; }
 .successContract > div { display:flex; flex-wrap:wrap; gap:.5rem; margin:1rem 0; }
 .successContract > div strong { padding:.45rem .6rem; border:1px solid #60766b; font-size:.64rem; }
+.clientExpectations { margin:1rem 0; padding:1rem; border:1px solid #60766b; }
+.clientExpectations summary { cursor:pointer; font-size:.72rem; font-weight:900; }
+.clientExpectations article { margin-top:.8rem; padding-top:.8rem; border-top:1px solid #60766b; }
+.clientExpectations h4 { margin:.25rem 0; font:500 1rem Georgia,serif; }
+.clientExpectations li { margin:.4rem 0; color:#d6e0db; font-size:.68rem; }
 
 .timingModule { display: grid; grid-template-columns: 1.35fr repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
 .timingModule > div { padding: 1.4rem; background: #fff; }
