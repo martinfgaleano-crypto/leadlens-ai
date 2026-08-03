@@ -123,7 +123,8 @@
     "test:amor-blueprint-v2": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/amor-blueprint-v2-replay.test.ts",
     "test:amor-blueprint-v2-search": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/amor-blueprint-v2-bounded-search.test.ts",
     "test:amor-blueprint-v2-search-results": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/amor-blueprint-v2-search-results.test.ts",
-    "pilot:amor-blueprint-v2-search": "npx -y tsx --tsconfig tsconfig.json scripts/sources/run-amor-blueprint-v2-bounded-search.ts"
+    "pilot:amor-blueprint-v2-search": "npx -y tsx --tsconfig tsconfig.json scripts/sources/run-amor-blueprint-v2-bounded-search.ts",
+    "test:account-first-discovery": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/account-first-discovery.test.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.27.0",
