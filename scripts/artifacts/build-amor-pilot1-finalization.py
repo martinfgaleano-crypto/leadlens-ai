@@ -94,10 +94,10 @@ def feedback_story():
         title(s,letter,name)
         for q in qs:
             p(s,'<b>'+q+'</b>')
-            if letter in ('B','E'):p(s,'Calificación 1–5:  ☐ 1   ☐ 2   ☐ 3   ☐ 4   ☐ 5')
+            if letter in ('B','E'):p(s,'Calificación 1–5:  [ ] 1   [ ] 2   [ ] 3   [ ] 4   [ ] 5')
             if letter=='C':
-                p(s,'Relación: ☐ nueva ☐ conocida ☐ contactada ☐ conversación activa ☐ cliente/socio ☐ excluir')
-                p(s,'Relevancia: ☐ alta ☐ media ☐ baja · Acción: ☐ validar primero ☐ mantener ☐ investigar ☐ descartar')
+                p(s,'Relación: [ ] nueva  [ ] conocida  [ ] contactada  [ ] conversación activa  [ ] cliente/socio  [ ] excluir')
+                p(s,'Relevancia: [ ] alta  [ ] media  [ ] baja · Acción: [ ] validar primero  [ ] mantener  [ ] investigar  [ ] descartar')
             p(s,'Respuesta / nota: _______________________________________________________________')
             p(s,'________________________________________________________________________________','Smallx')
         if idx<len(SECTIONS)-1:s.append(PageBreak())

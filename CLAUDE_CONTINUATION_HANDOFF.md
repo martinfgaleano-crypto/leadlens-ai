@@ -1,5 +1,9 @@
 # CLAUDE CONTINUATION HANDOFF — LEADLENS
 
+## Latest checkpoint - Amor de Gea Pilot 1 delivery mapping
+
+The approved package is mapped by canonical IDs in `lib/intelligence/amor-de-gea-pilot1-delivery.ts`; the Admin route verifies exact SHA-256 content. The old dynamic six-account PDF is historical only and marked `OBSOLETO - NO ENVIAR`. Do not change V3R3, run Pilot 2, or reintroduce `/api/admin/intelligence/pilots/amor-de-gea/pdf` into primary delivery UI. Full evidence is in `LEADLENS_AMOR_DE_GEA_FINAL_REPORT_MAPPING_AND_DELIVERY_FIX.md`.
+
 Documento autoritativo de continuidad. Leer completo antes de proponer o modificar código.
 
 ## 1. Project identity

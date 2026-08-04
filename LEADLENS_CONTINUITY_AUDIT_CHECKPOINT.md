@@ -1,5 +1,9 @@
 # LeadLens Continuity Audit — Authoritative Checkpoint
 
+## Pilot 1 delivery integrity update - 2026-08-03
+
+Amor de Gea Pilot 1 has a canonical four-artifact manifest, checksum-protected Admin downloads, a first-position Delivery Center, a 17/17 founder gate and explicit separation of the obsolete six-account internal brief. V3R3 is unchanged; no search, provider or client action occurred. See `LEADLENS_AMOR_DE_GEA_FINAL_REPORT_MAPPING_AND_DELIVERY_FIX.md`.
+
 ## Block 12 continuity update — 2026-07-30
 
 Block 12 turns the 17 real client-context gaps into an auditable intake/review system. Ten gaps are critical; all questions remain unanswered in production, six accounts remain blocked by context/feasibility and zero outputs are customer-safe. Fixtures prove deterministic recalculation without production leakage. Migration 046 is generated and not applied; ranking, Auth and reports are unchanged. Block 13 was not started.

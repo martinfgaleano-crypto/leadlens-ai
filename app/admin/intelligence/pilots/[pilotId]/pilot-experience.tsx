@@ -10,6 +10,7 @@ import PilotSearchBlueprint from "./pilot-search-blueprint";
 import PilotPhase4Intelligence from "./pilot-phase4-intelligence";
 import PilotReviewOperations from "./pilot-review-operations";
 import Pilot1Finalization from "./pilot1-finalization";
+import {AMOR_PILOT1_FINAL} from "@/lib/intelligence/amor-de-gea-pilot1-finalization";
 import styles from "./workspace.module.css";
 
 const SEGMENT: Record<string, string> = {
@@ -265,10 +266,6 @@ export default function PilotExperience({ workspace, activeSection = "overview",
   const recs = useMemo(() => recommendations(workspace), [workspace]);
   const [selectedId, setSelectedId] = useState(initialAccountId ?? recs[0]?.account.account_id ?? workspace.accounts[0]?.account_id);
   const selected = workspace.accounts.find((account: any) => account.account_id === selectedId) ?? workspace.accounts[0];
-  const entry = workspace.accounts.find((account: any) => roleFor(workspace, account.account_id)?.role === "accessible_entry_account");
-  const strategic = workspace.accounts.find((account: any) => roleFor(workspace, account.account_id)?.role === "strategic_account");
-  const nextQuestions = ["product_formats", "minimum_order", "delivery_radius", "production_capacity"];
-  const affected = useMemo(() => new Set(workspace.questions.filter((question: any) => nextQuestions.includes(question.field)).flatMap((question: any) => question.affected_accounts)).size, [workspace]);
   const groupedSections = useMemo(() => ({
     foundation: workspace.sections.filter((section: any) => section.state === "ready_with_limitations"),
     confirmation: workspace.sections.filter((section: any) => section.state === "blocked" && section.missing_context?.length),
@@ -298,7 +295,7 @@ export default function PilotExperience({ workspace, activeSection = "overview",
         <div>
           <span className={styles.eyebrow}>Piloto de oportunidad comercial · Colombia</span>
           <h1>Amor de Gea</h1>
-          <p className={styles.lead}>LeadLens identificó seis cuentas colombianas relevantes. Cuatro merecen validación activa y dos deben mantenerse bajo monitoreo. La principal limitación ya no es descubrir empresas: es confirmar la capacidad comercial de Amor de Gea y encontrar una ventana temporal verificable.</p>
+          <p className={styles.lead}>LeadLens organizó diez cuentas colombianas en una secuencia comercial: cuatro para primera validación, tres de prioridad estratégica y tres para investigación selectiva. La siguiente decisión es validar relaciones previas y preparar conversaciones acotadas.</p>
         </div>
         <aside>
           <span>Etapa actual</span>
@@ -307,23 +304,23 @@ export default function PilotExperience({ workspace, activeSection = "overview",
         </aside>
       </div>
       <div className={styles.heroMetrics}>
-        <div><strong>6</strong><span>Cuentas evaluadas</span></div>
+        <div><strong>10</strong><span>Cuentas activas</span></div>
         <div><strong>4</strong><span>Priorizar para validación</span></div>
-        <div><strong>2</strong><span>Monitorear</span></div>
-        <div><strong>6</strong><span>Tesis listas para revisar</span></div>
+        <div><strong>3</strong><span>Prioridad estratégica</span></div>
+        <div><strong>3</strong><span>Investigar selectivamente</span></div>
         <div><strong>0</strong><span>Señales de timing actuales</span></div>
       </div>
       <div className={styles.strategicSummary}>
-        <div><span>Mejor validación inicial</span><strong>{entry?.account_name ?? "Por determinar"}</strong><p>{entry ? strategicCopy(entry, roleFor(workspace, entry.account_id)) : "Requiere revisión."}</p></div>
-        <div><span>Cuenta de valor estratégico</span><strong>{strategic?.account_name ?? "Por determinar"}</strong><p>Su tesis ganará precisión después de aprender del primer caso de validación.</p></div>
+        <div><span>Mejor validación inicial</span><strong>Éteka</strong><p>Primera cuenta del portafolio final V3R3 para validar un caso de uso acotado en spa u hospitalidad.</p></div>
+        <div><span>Cuenta de valor estratégico</span><strong>Ser Saludable</strong><p>Permanece como prioridad estratégica después de aprender de la primera secuencia.</p></div>
         <div><span>Mayor fricción</span><strong>Sin diferenciación confiable</strong><p>Los puntajes de acceso son una base compartida; se requiere evidencia por cuenta antes de señalar una ganadora.</p></div>
-        <div className={styles.recommendation}><span>Próxima decisión</span><strong>Confirmar oferta, mínimos y capacidad</strong><p>Estas respuestas desbloquean viabilidad para {affected} cuentas y permiten revisar las seis tesis.</p></div>
+        <div className={styles.recommendation}><span>Próxima decisión</span><strong>Revisar relaciones y preparar cuatro validaciones</strong><p>Confirmar conflictos, economía, capacidad y responsable antes de cualquier contacto.</p></div>
       </div>
     </header>
     <section className={styles.overviewBrief}>
       <div><span className={styles.eyebrow}>Perfil de cliente ideal</span><h2>Qué está buscando LeadLens</h2><p>{ICP.summary}</p><Link href="/admin/intelligence/pilots/amor-de-gea/icp">Ver perfil, procedencia y preguntas abiertas →</Link></div>
-      <div><span className={styles.eyebrow}>Cuentas recomendadas</span><h2>Secuencia de validación</h2>{recs.slice(0, 4).map(rec => <p key={rec.account.account_id}><strong>{rec.order}. {rec.account.account_name}</strong><br />{rec.rationale}</p>)}<Link href="/admin/intelligence/pilots/amor-de-gea/accounts">Ver shortlist completa →</Link></div>
-      <div><span className={styles.eyebrow}>Estado de exportación</span><h2>Dos salidas, dos estados</h2><p><strong>PDF interno:</strong> disponible para revisión.</p><p><strong>Reporte final para cliente:</strong> bloqueado hasta completar contexto y revisión.</p><a className={styles.exportButton} href="/api/admin/intelligence/pilots/amor-de-gea/pdf">Descargar informe interno en PDF</a><small>Documento interno para revisión. El reporte final para cliente continúa bloqueado.</small></div>
+      <div><span className={styles.eyebrow}>Cuentas recomendadas</span><h2>Secuencia final de validación</h2>{AMOR_PILOT1_FINAL.accounts.slice(0,4).map((account,index)=><p key={account.name}><strong>{index+1}. {account.name}</strong><br />{account.why}</p>)}<details><summary>Las seis cuentas restantes</summary><p><strong>Prioridad estratégica:</strong> {AMOR_PILOT1_FINAL.portfolio.strategic_priority.join(" · ")}</p><p><strong>Investigar selectivamente:</strong> {AMOR_PILOT1_FINAL.portfolio.investigate_selectively.join(" · ")}</p></details></div>
+      <div><span className={styles.eyebrow}>Estado de entrega</span><h2>Paquete final disponible</h2><p><strong>Reporte final:</strong> diez cuentas, versión V3R3.</p><p><strong>Estado:</strong> revisión del fundador requerida.</p><a className={styles.exportButton} href="/api/admin/intelligence/pilots/amor-de-gea/artifacts/pilot1-final-report?preview=1" target="_blank" rel="noreferrer">Abrir reporte final para cliente</a><small>El informe histórico de seis cuentas está separado en el Historial interno.</small></div>
     </section></>}
 
     {activeSection === "icp" && <section id="icp" className={styles.section}>
@@ -473,8 +470,7 @@ export default function PilotExperience({ workspace, activeSection = "overview",
         </div>
         <aside><strong>Efecto esperado</strong><p>Desbloquear la evaluación de viabilidad de seis cuentas, mejorar las secciones dependientes del contexto y habilitar una revisión fundada de las seis tesis.</p></aside>
       </div>
-      <div className={styles.exportStates}><div><strong>PDF interno del piloto</strong><span>Disponible para revisión interna</span><a className={styles.exportButton} href="/api/admin/intelligence/pilots/amor-de-gea/pdf">Descargar informe interno en PDF</a><small>Documento interno para revisión. El reporte final para cliente continúa bloqueado.</small></div><div><strong>Reporte final para cliente</strong><span>Bloqueado</span><button disabled>Generar reporte final</button><small>Requiere completar contexto, evidencia y revisión.</small></div></div>
-      <div className={styles.reportLock}>El reporte final permanecerá deshabilitado hasta completar las confirmaciones y revisiones necesarias.</div>
+      <div className={styles.exportStates}><div><strong>Reporte final para cliente</strong><span>Disponible · revisión del fundador requerida</span><a className={styles.exportButton} href="/api/admin/intelligence/pilots/amor-de-gea/artifacts/pilot1-final-report?preview=1" target="_blank" rel="noreferrer">Vista previa del reporte final</a><small>Portafolio V3R3 de diez cuentas.</small></div><div><strong>Informe histórico de seis cuentas</strong><span>OBSOLETO — NO ENVIAR</span><p>Se conserva solo en el Historial interno del centro de entrega.</p></div></div>
     </section>}
 
     <footer className={styles.workspaceFooter}>
