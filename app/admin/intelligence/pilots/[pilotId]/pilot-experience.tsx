@@ -9,6 +9,7 @@ import PilotContextReview from "./pilot-context-review";
 import PilotSearchBlueprint from "./pilot-search-blueprint";
 import PilotPhase4Intelligence from "./pilot-phase4-intelligence";
 import PilotReviewOperations from "./pilot-review-operations";
+import Pilot1Finalization from "./pilot1-finalization";
 import styles from "./workspace.module.css";
 
 const SEGMENT: Record<string, string> = {
@@ -292,7 +293,7 @@ export default function PilotExperience({ workspace, activeSection = "overview",
       >{label}</Link>)}
     </nav>
 
-    {activeSection === "overview" && <><header id="brief" className={styles.executive}>
+    {activeSection === "overview" && <><Pilot1Finalization/><header id="brief" className={styles.executive}>
       <div className={styles.executiveTop}>
         <div>
           <span className={styles.eyebrow}>Piloto de oportunidad comercial · Colombia</span>

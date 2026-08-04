@@ -102,7 +102,9 @@ t("session + bridge unavailable → /dashboard (not trapped)", rFail.action === 
   const loginSrc = readFileSync("app/login/page.tsx", "utf8");
   const adminLayoutSrc = readFileSync("app/admin/_components/AdminLayout.tsx", "utf8");
   t("normal login renders no Admin CTA / role-picker", noAdminCta(loginSrc));
-  t("Admin layout validates the signed server session", /fetch\(["']\/api\/admin\/session["']/.test(adminLayoutSrc) && /credentials:\s*["']same-origin["']/.test(adminLayoutSrc));
+  const middlewareSrc = readFileSync("middleware.ts", "utf8");
+  t("Admin middleware validates the signed server session", /verifyEdge/.test(middlewareSrc) && /ll_admin_session|ADMIN_COOKIE_NAME/.test(middlewareSrc));
+  t("Admin layout has no duplicate blocking session gate", !/fetch\(["']\/api\/admin\/session["']/.test(adminLayoutSrc) && !/Loading\.\.\./.test(adminLayoutSrc));
   t("Admin layout does NOT require the retired localStorage token", !/getAdminToken/.test(adminLayoutSrc) && !/leadlens_admin_token/.test(adminLayoutSrc));
   t("Admin layout logout clears the server session", /adminLogout/.test(adminLayoutSrc));
 

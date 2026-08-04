@@ -162,40 +162,8 @@ function NavLink({ href, label, active, onClick }: { href: string; label: string
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const [ready, setReady]       = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    // The authoritative credential is the signed httpOnly ll_admin_session
-    // cookie issued by POST /api/admin/session. Never require the retired
-    // localStorage token: production login deliberately does not create one.
-    // A bounded server check prevents an unavailable endpoint from trapping
-    // the layout forever on "Loading...".
-    const controller = new AbortController();
-    let active = true;
-    const timer = window.setTimeout(() => controller.abort(), 8000);
-    fetch("/api/admin/session", {
-      method: "GET",
-      cache: "no-store",
-      credentials: "same-origin",
-      signal: controller.signal,
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("unauthorized");
-        if (active) setReady(true);
-      })
-      .catch(() => {
-        if (active) window.location.replace(`/admin/login?reason=unauthorized&next=${encodeURIComponent(pathname)}`);
-      })
-      .finally(() => window.clearTimeout(timer));
-    return () => {
-      active = false;
-      window.clearTimeout(timer);
-      controller.abort();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -209,10 +177,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   async function handleLogout() {
     await adminLogout();
     window.location.replace("/admin/login");
-  }
-
-  if (!ready) {
-    return <div style={S.loading}>Loading...</div>;
   }
 
   const nav = [

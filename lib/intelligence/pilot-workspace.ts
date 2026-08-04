@@ -307,6 +307,32 @@ export function buildPilotWorkspace(): PilotWorkspace {
     ranking_impact: "off",
   };
 }
+
+/**
+ * React Server Components may pass only serializable values to the client.
+ * Several historical intelligence modules also export helper functions; the
+ * workspace keeps their data exports but must never leak executable module
+ * members across the server/client boundary.
+ */
+export function buildSerializablePilotWorkspace(): PilotWorkspace {
+  const workspace = buildPilotWorkspace();
+  const json = JSON.stringify(workspace, (_key, value) => {
+    if (typeof value === "function" || typeof value === "undefined") return undefined;
+    if (typeof value === "bigint") return value.toString();
+    return value;
+  });
+  if (!json) throw new Error("Pilot workspace serialization produced no data.");
+  return JSON.parse(json) as PilotWorkspace;
+}
+
+/** Minimal payload for the operational overview. Historical intelligence is
+ * available on its dedicated sections and must not delay the main pilot URL. */
+export function buildPilotOverviewWorkspace(): PilotWorkspace {
+  const workspace = buildSerializablePilotWorkspace();
+  const heavy = ["phase4","phase45","phase46","phase5a","phase5a1","contextImpact","blueprintV2Replay","blueprintV2Search","accountFirstDiscovery","accountFirstValidation","contextReview","acceptedContext","commercialReadiness","searchBlueprint","recalibratedTheses","whatChanged","activity","checklist","reconciliation"] as const;
+  for (const key of heavy) delete (workspace as unknown as Record<string,unknown>)[key];
+  return workspace;
+}
 export function dryRunPilotBackfill(workspace: PilotWorkspace) {
   return {
     mode: "dry_run",

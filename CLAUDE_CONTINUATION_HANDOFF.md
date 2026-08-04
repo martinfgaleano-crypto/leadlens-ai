@@ -365,3 +365,7 @@ Validation completed 4 Tavily calls: 20 sources, 2 accepted ecosystems, 2 stoppe
 # Update — Pilot 1 finalization
 
 Amor de Gea Pilot 1 is `FOUNDER REVIEW REQUIRED`. Use `lib/intelligence/amor-de-gea-pilot1-finalization.ts` as the operational closeout source. Do not add accounts, run providers, mark delivery, close Pilot 1 or activate Pilot 2 without the corresponding manual event.
+
+## Urgent loading repair
+
+The duplicate client session gate in `AdminLayout` was removed because middleware already enforces Admin authorization. The Amor de Gea overview now renders its operational closeout immediately, has a route error boundary and serves all four deliverables through an allowlisted Admin-only download handler.

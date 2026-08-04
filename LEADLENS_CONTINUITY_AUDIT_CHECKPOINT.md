@@ -509,3 +509,5 @@ Founder-authorized account-first validation later consumed exactly four Tavily c
 # Update — 2026-08-03
 
 V3R3 history is preserved and represented as a definitive ten-account customer portfolio. Pilot 1 closure remains founder-gated; Pilot 2 is planned only, has zero accounts and is not authorized.
+
+Production-reliability correction: the Pilot route no longer waits on a duplicate client auth fetch. Middleware remains authoritative; visible route errors settle through a recoverable boundary and optional artifacts use protected allowlisted downloads.
