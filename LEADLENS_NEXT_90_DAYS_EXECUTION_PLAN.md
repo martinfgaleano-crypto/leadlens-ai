@@ -116,3 +116,7 @@ The four-ecosystem validation is complete and inconclusive. Do not expand discov
 # Update — Amor de Gea Pilot 1 finalization (2026-08-03)
 
 Pilot 1 now has a founder-review delivery package: ten-account V3R3 portfolio, final report, four Action Briefs, feedback packet, manual review gate and Pilot 2 plan. The immediate next action is founder review and client delivery; no Pilot 2 search is authorized.
+
+
+## 18. Pilot 1 deliverable finalization (2026-08-03)
+Premium regeneration of the four customer files from the approved V3R3 intelligence (single-source JSON exported from the modules → deterministic reportlab/python-docx renderer). Report 25 pp, briefs 9 pp, feedback 13 pp + DOCX. Internal labels removed, Spanish unified, evidence cards visible (real official sources + retrieval date + no-timing). Portfolio, exclusions and Pilot 2 (PLANNED — NOT AUTHORIZED) unchanged. Delivery checksums/sizes/pages updated; downloads verified. Founder action: review in the Delivery Center, complete the 17-item checklist, confirm relationships, send the package.

@@ -1,0 +1,522 @@
+{
+  "meta": {
+    "client": "Amor de Gea",
+    "pilot": "Piloto 1 · LeadLens",
+    "geography": "Colombia",
+    "generated_date": "2026-08-03",
+    "generated_label": "Agosto 2026 · Colombia",
+    "retrieved_label": "3 de agosto de 2026"
+  },
+  "portfolio": {
+    "first_validation": [
+      "Éteka",
+      "Celestino Hotel Boutique & Spa",
+      "Sinergy On",
+      "Vitálica"
+    ],
+    "strategic_priority": [
+      "Ser Saludable",
+      "Masaya Collection",
+      "Natural + Mente"
+    ],
+    "investigate_selectively": [
+      "Hotel Charleston Santa Teresa Spa",
+      "Habibi Plantitas",
+      "Funat"
+    ]
+  },
+  "group_es": {
+    "Primera validación": "Primera secuencia de validación",
+    "Prioridad estratégica": "Prioridad estratégica",
+    "Investigar selectivamente": "Investigación selectiva"
+  },
+  "relationship_disclosure": "LeadLens no recibió confirmación de la relación comercial previa de Amor de Gea con estas cuentas. Antes de contactar, confirme si ya existe relación, conversación, exclusión o conflicto.",
+  "accounts": [
+    {
+      "name": "Éteka",
+      "group": "Primera validación",
+      "route": "Hotelería y spa",
+      "route_key": "hospitality_spa",
+      "why": "Su propuesta pública de spa permite explorar un ritual de bienestar o regalo para huéspedes.",
+      "test": "Validar un único caso de uso con 50 unidades.",
+      "unknown": "No está confirmado que compre productos de terceros ni quién decide.",
+      "next": "Confirmar modelo de retail/regalo, responsable de compra y manejo de vidrio.",
+      "evidence": {
+        "source": "etekacartagena.com",
+        "fact": "Su página oficial describe un hotel spa en Cartagena con rituales de bienestar; la página fue actualizada el 5 de julio de 2026.",
+        "retrieved": "3 de agosto de 2026",
+        "freshness": "fresh",
+        "proves": "Identidad y operación de hotelería/spa vigente: relevancia estructural de la ruta.",
+        "not_proves": "No está confirmado que compre productos de terceros ni quién decide. No hay evidencia de intención de compra ni de temporalidad (timing)."
+      }
+    },
+    {
+      "name": "Celestino Hotel Boutique & Spa",
+      "group": "Primera validación",
+      "route": "Hotelería y spa",
+      "route_key": "hospitality_spa",
+      "why": "La combinación hotel boutique y spa crea una hipótesis concreta de regalo o venta complementaria.",
+      "test": "Probar una referencia en una propiedad y medir aceptación.",
+      "unknown": "No se verificó retail de terceros ni frecuencia de reposición.",
+      "next": "Confirmar área compradora, caso de uso y cadencia potencial.",
+      "evidence": {
+        "source": "hotelcelestino.com",
+        "fact": "Su sitio oficial describe un hotel boutique con spa en Medellín, con sauna, jacuzzi y baño frío.",
+        "retrieved": "3 de agosto de 2026",
+        "freshness": "current",
+        "proves": "Identidad y operación de hotelería/spa vigente: relevancia estructural de la ruta.",
+        "not_proves": "No se verificó retail de terceros ni frecuencia de reposición. No hay evidencia de intención de compra ni de temporalidad (timing)."
+      }
+    },
+    {
+      "name": "Sinergy On",
+      "group": "Primera validación",
+      "route": "Regalos corporativos",
+      "route_key": "gifting",
+      "why": "Su oferta pública de soluciones corporativas permite evaluar un producto terminado dentro de un kit.",
+      "test": "Presentar un kit muestra para un brief compatible.",
+      "unknown": "No hay evidencia de un proyecto activo ni de aceptación del formato.",
+      "next": "Validar brief, volumen, plazo, personalización y economía.",
+      "evidence": {
+        "source": "sinergyon.com",
+        "fact": "Su sitio oficial ofrece explícitamente kits corporativos y de eventos personalizados en Bogotá.",
+        "retrieved": "3 de agosto de 2026",
+        "freshness": "current",
+        "proves": "Canal de kits o regalos corporativos: encaje para un producto terminado dentro de un kit.",
+        "not_proves": "No hay evidencia de un proyecto activo ni de aceptación del formato. No hay evidencia de intención de compra ni de temporalidad (timing)."
+      }
+    },
+    {
+      "name": "Vitálica",
+      "group": "Primera validación",
+      "route": "Retail especializado",
+      "route_key": "specialty_retail",
+      "why": "El surtido natural visible permite contrastar un formato botánico líquido diferenciado.",
+      "test": "Proponer un surtido mixto pequeño y medir rotación.",
+      "unknown": "Margen, onboarding y desempeño de líquidos no están confirmados.",
+      "next": "Preguntar por categoría, documentación, margen y reposición.",
+      "evidence": {
+        "source": "tiendavitalica.com",
+        "fact": "Su e-commerce oficial activo describe productos naturales, vitaminas y suplementos en Colombia.",
+        "retrieved": "3 de agosto de 2026",
+        "freshness": "current",
+        "proves": "Operación de retail de productos naturales activa: adyacencia de categoría.",
+        "not_proves": "Margen, onboarding y desempeño de líquidos no están confirmados. No hay evidencia de intención de compra ni de temporalidad (timing)."
+      }
+    },
+    {
+      "name": "Ser Saludable",
+      "group": "Prioridad estratégica",
+      "route": "Retail especializado",
+      "route_key": "specialty_retail",
+      "why": "La operación pública en bienestar sugiere afinidad estructural para una prueba acotada.",
+      "test": "Validar encaje de posicionamiento y una prueba de baja exposición.",
+      "unknown": "Apertura de categoría, comprador y requisitos documentales.",
+      "next": "Confirmar lenguaje no médico, documentación y proceso de alta.",
+      "evidence": {
+        "source": "tiendasersaludable.com",
+        "fact": "Su tienda oficial describe medicina natural, vitaminas, nutrición deportiva y productos de bienestar.",
+        "retrieved": "3 de agosto de 2026",
+        "freshness": "current",
+        "proves": "Operación de retail de productos naturales activa: adyacencia de categoría.",
+        "not_proves": "Apertura de categoría, comprador y requisitos documentales. No hay evidencia de intención de compra ni de temporalidad (timing)."
+      }
+    },
+    {
+      "name": "Masaya Collection",
+      "group": "Prioridad estratégica",
+      "route": "Hotelería y spa",
+      "route_key": "hospitality_spa",
+      "why": "Su presencia en hospitalidad ofrece una plataforma para explorar gifting o experiencia de huésped.",
+      "test": "Diseñar una prueba en una sola propiedad antes de escalar.",
+      "unknown": "No se verificó compra de terceros, autonomía local ni encaje de 50 unidades.",
+      "next": "Identificar propiedad, caso de uso y nivel de decisión.",
+      "evidence": {
+        "source": "masaya-experience.com",
+        "fact": "Su página oficial describe estadías boutique en Colombia centradas en sofisticación, bienestar y conexión; actualizada el 21 de julio de 2026.",
+        "retrieved": "3 de agosto de 2026",
+        "freshness": "fresh",
+        "proves": "Identidad y operación de hotelería/spa vigente: relevancia estructural de la ruta.",
+        "not_proves": "No se verificó compra de terceros, autonomía local ni encaje de 50 unidades. No hay evidencia de intención de compra ni de temporalidad (timing)."
+      }
+    },
+    {
+      "name": "Natural + Mente",
+      "group": "Prioridad estratégica",
+      "route": "Retail especializado",
+      "route_key": "specialty_retail",
+      "why": "El ecommerce activo y categorías de fitoterapia muestran adyacencia de surtido multimarcas.",
+      "test": "Evaluar una prueba pequeña con posicionamiento seguro.",
+      "unknown": "Acceso comprador, margen, premiumización y recompra.",
+      "next": "Confirmar onboarding, comparación de precio y criterios de rotación.",
+      "evidence": {
+        "source": "naturalmente.com.co",
+        "fact": "Su ecommerce activo lista productos y expone categorías de fitoterapia, nutrición y múltiples laboratorios (confirmado en la revisión de evidencia).",
+        "retrieved": "3 de agosto de 2026",
+        "freshness": "unknown",
+        "proves": "Operación de retail de productos naturales activa: adyacencia de categoría.",
+        "not_proves": "Acceso comprador, margen, premiumización y recompra. No hay evidencia de intención de compra ni de temporalidad (timing)."
+      }
+    },
+    {
+      "name": "Hotel Charleston Santa Teresa Spa",
+      "group": "Investigar selectivamente",
+      "route": "Hotelería y spa",
+      "route_key": "hospitality_spa",
+      "why": "Los rituales de spa visibles justifican una validación de alto nivel como referencia de mercado.",
+      "test": "Explorar solo si existe patrocinador operativo para una prueba pequeña.",
+      "unknown": "Procurement puede ser complejo y no hay retail de terceros confirmado.",
+      "next": "Validar autonomía del spa, canal de compra y tamaño mínimo.",
+      "evidence": {
+        "source": "hotelcharlestonsantateresa.com",
+        "fact": "Su página oficial describe masajes, faciales y rituales de bienestar en su spa de Cartagena.",
+        "retrieved": "3 de agosto de 2026",
+        "freshness": "current",
+        "proves": "Identidad y operación de hotelería/spa vigente: relevancia estructural de la ruta.",
+        "not_proves": "Procurement puede ser complejo y no hay retail de terceros confirmado. No hay evidencia de intención de compra ni de temporalidad (timing)."
+      }
+    },
+    {
+      "name": "Habibi Plantitas",
+      "group": "Investigar selectivamente",
+      "route": "Regalos corporativos",
+      "route_key": "gifting",
+      "why": "La oferta pública de regalos personalizados abre una hipótesis para integrar un producto terminado.",
+      "test": "Probar compatibilidad en un kit estacional o corporativo.",
+      "unknown": "Aceptación de ingeribles, volumen y recurrencia.",
+      "next": "Confirmar manejo de producto, temporadas, personalización y margen.",
+      "evidence": {
+        "source": "habibiplantitas.com",
+        "fact": "Su página oficial ofrece regalos corporativos personalizados en toda Colombia, incluidas plantas, velas y bonsái.",
+        "retrieved": "3 de agosto de 2026",
+        "freshness": "current",
+        "proves": "Canal de kits o regalos corporativos: encaje para un producto terminado dentro de un kit.",
+        "not_proves": "Aceptación de ingeribles, volumen y recurrencia. No hay evidencia de intención de compra ni de temporalidad (timing)."
+      }
+    },
+    {
+      "name": "Funat",
+      "group": "Investigar selectivamente",
+      "route": "Retail especializado",
+      "route_key": "specialty_retail",
+      "why": "Su catálogo botánico aporta aprendizaje de categoría y una posible afinidad comercial.",
+      "test": "Determinar primero si existe espacio no competitivo para terceros.",
+      "unknown": "Apertura a marcas externas y solapamiento competitivo.",
+      "next": "Validar rol comercial, política de terceros y diferenciación.",
+      "evidence": {
+        "source": "funat.co",
+        "fact": "Su tienda oficial ofrece productos naturales e incluye explícitamente tés e infusiones; página actualizada el 11 de junio de 2026.",
+        "retrieved": "3 de agosto de 2026",
+        "freshness": "fresh",
+        "proves": "Operación de retail de productos naturales activa: adyacencia de categoría.",
+        "not_proves": "Apertura a marcas externas y solapamiento competitivo. No hay evidencia de intención de compra ni de temporalidad (timing)."
+      }
+    }
+  ],
+  "excluded": [
+    {
+      "name": "BioPlaza",
+      "reason": "Retail natural consolidado y relevante, pero su compra centralizada y escala superan la accesibilidad de una primera prueba; se mantiene como aprendizaje de mayor volumen."
+    },
+    {
+      "name": "Distribuidora DAM",
+      "reason": "La ruta de distribución es coherente, pero economía, capacidad y volumen de apertura siguen sin resolverse; se conserva solo como referencia de ruta."
+    },
+    {
+      "name": "Hotel Spa La Colina",
+      "reason": "Salió de la primera secuencia porque la evidencia pública no confirmó una oferta de spa vigente ni comportamiento de retail de terceros; Éteka y Celestino cubren mejor el mismo aprendizaje."
+    },
+    {
+      "name": "Tu Tienda Saludable",
+      "reason": "La evidencia disponible apunta a un revendedor concentrado en una sola marca, no a un comprador multimarca diferenciado; inferior a Vitálica y Ser Saludable para el mismo objetivo."
+    },
+    {
+      "name": "Somos Consiente",
+      "reason": "No se estableció un mecanismo de compra recurrente más allá de una alineación de marca genérica; se reconsideraría solo si aparece un caso de compra repetible."
+    }
+  ],
+  "readiness": {
+    "strengths": [
+      "Portafolio de tres elixires botánicos terminados con presentación premium.",
+      "Prueba inicial pequeña y compatible con la capacidad actual (cercana a 50 unidades).",
+      "Tres rutas comerciales plausibles: retail especializado, hotelería/spa y regalos corporativos.",
+      "Opciones de personalización, co-branding y kits de regalo."
+    ],
+    "validate": [
+      "Rango de precio mayorista, margen y condiciones por canal.",
+      "Documentación de soporte y lenguaje no médico para cada cuenta.",
+      "Logística y manejo del envase de vidrio.",
+      "Capacidad por pedido y alcance real de personalización."
+    ]
+  },
+  "what_changed": {
+    "before": [
+      "Negocios de bienestar genéricos en Colombia.",
+      "Cuentas grandes o reconocibles por su nombre.",
+      "Ideas amplias de distribución.",
+      "Afinidad de categoría sin filtro operativo.",
+      "Alianzas genéricas."
+    ],
+    "after": [
+      "Pruebas iniciales manejables, con MOQ cercano a 50 unidades.",
+      "Rango recurrente esperado de ~100–300 unidades como referencia.",
+      "Rutas de gifting y co-branding con mecanismo de compra concreto.",
+      "Estructuras de compra boutique y penalización de procurement complejo.",
+      "Mecanismos de recompra explícitos y caminos de comprador más específicos.",
+      "Restricciones de afirmaciones y encaje con la madurez del negocio."
+    ],
+    "narrative": [
+      "Las respuestas de Amor de Gea orientaron la búsqueda hacia pilotos manejables y mecanismos de recompra que todavía deben validarse.",
+      "Retail, hotelería, gifting y distribución se evaluaron con mecanismos y exigencias operativas diferentes.",
+      "Se priorizaron productos terminados y pruebas acotadas; gran volumen y private label quedaron condicionados por capacidad y economía.",
+      "Hotel Spa La Colina salió de la primera secuencia porque la evidencia pública no confirmó retail de terceros ni reposición.",
+      "Natural + Mente regresó tras confirmar ecommerce activo, múltiples laboratorios y categorías adyacentes.",
+      "Tu Tienda Saludable y Somos Consiente se excluyeron porque la evidencia disponible no mostró un mecanismo suficientemente diferenciado o recurrente.",
+      "Vitálica entró en la primera secuencia por su ecommerce activo y un mecanismo de sell-through verificable mediante prueba.",
+      "Se conservaron 12 cuentas de calidad en lugar de maximizar volumen."
+    ]
+  },
+  "market_map": [
+    {
+      "route": "Retail especializado",
+      "summary": "Prueba inicial más sencilla, mecanismo de reventa claro y reposición por validar."
+    },
+    {
+      "route": "Hotelería / spa",
+      "summary": "Encaje diferenciado y múltiples usos posibles; retail de terceros y recurrencia siguen sin confirmar."
+    },
+    {
+      "route": "Regalos y co-branding",
+      "summary": "Presentación y personalización atractivas; demanda por proyecto o temporada y recurrencia por probar."
+    },
+    {
+      "route": "Distribución regional",
+      "summary": "Mayor alcance potencial y mayor dependencia de capacidad, economía y requisitos de canal."
+    }
+  ],
+  "route_review": [
+    {
+      "route": "Hotelería y spa",
+      "evidence": "moderada–alta",
+      "mechanism": "fuerte, con caso de uso por verificar",
+      "conclusion": "parcialmente respaldada"
+    },
+    {
+      "route": "Retail especializado",
+      "evidence": "irregular",
+      "mechanism": "fuerte y observable",
+      "conclusion": "respaldada (ruta más fácil de probar)"
+    },
+    {
+      "route": "Regalos corporativos",
+      "evidence": "moderada",
+      "mechanism": "prometedor, depende del proyecto",
+      "conclusion": "parcialmente respaldada"
+    },
+    {
+      "route": "Distribución regional",
+      "evidence": "baja",
+      "mechanism": "condicionado",
+      "conclusion": "la más condicionada"
+    }
+  ],
+  "success": {
+    "objective": "Mejorar qué cuentas validar primero y cómo preparar cada conversación.",
+    "value": [
+      "Inteligencia comercial",
+      "Priorización",
+      "Preparación antes de reuniones",
+      "Aprendizaje de mercado",
+      "Revisión estratégica"
+    ],
+    "no_guarantee": "LeadLens mejora la calidad de decisión comercial y la preparación. Las ventas dependen también de la ejecución del cliente, respuesta de las cuentas, negociación, precio, timing y otros factores de mercado."
+  },
+  "prep_checklist": [
+    "Confirmar relación previa o conflicto de cada cuenta antes de contactar.",
+    "Preparar muestras, ficha de producto y lenguaje seguro (no médico).",
+    "Definir condiciones mayoristas, margen mínimo y política de personalización.",
+    "Confirmar documentación de soporte y capacidad por pedido.",
+    "Fijar el máximo de unidades y personalización que se puede cumplir."
+  ],
+  "briefs": [
+    {
+      "name": "Éteka",
+      "group": "Primera validación",
+      "route": "Hotelería y spa",
+      "route_key": "hospitality_spa",
+      "why": "Su propuesta pública de spa permite explorar un ritual de bienestar o regalo para huéspedes.",
+      "test": "Validar un único caso de uso con 50 unidades.",
+      "unknown": "No está confirmado que compre productos de terceros ni quién decide.",
+      "next": "Confirmar modelo de retail/regalo, responsable de compra y manejo de vidrio.",
+      "evidence": {
+        "source": "etekacartagena.com",
+        "fact": "Su página oficial describe un hotel spa en Cartagena con rituales de bienestar; la página fue actualizada el 5 de julio de 2026.",
+        "retrieved": "3 de agosto de 2026",
+        "freshness": "fresh",
+        "proves": "Identidad y operación de hotelería/spa vigente: relevancia estructural de la ruta.",
+        "not_proves": "No está confirmado que compre productos de terceros ni quién decide. No hay evidencia de intención de compra ni de temporalidad (timing)."
+      },
+      "thesis": "Un hotel spa con rituales de bienestar vigentes puede probar un complemento botánico sellado como retail de spa o regalo para huéspedes, sin afirmaciones médicas.",
+      "buyer_hyp": "Gerencia general o responsable de spa / experiencia de huésped (función a confirmar, sin nombre).",
+      "procurement": "Propiedad única: decisión probablemente local, por confirmar.",
+      "cycle": "Corto si existe un caso de uso claro; sin evidencia de proceso de compra de terceros.",
+      "objections": [
+        "No opera retail de terceros",
+        "Manejo del envase de vidrio",
+        "Riesgo de afirmaciones de salud",
+        "Alta de proveedor"
+      ],
+      "questions": [
+        "¿Venden productos de bienestar de terceros en el spa o la recepción?",
+        "¿Qué ritual o momento del huésped podría usar un producto sellado de 50 ml?",
+        "¿Quién decide las compras del spa?",
+        "¿Qué cadencia de reposición sería realista?"
+      ],
+      "prep": [
+        "Muestras de producto terminado",
+        "Hoja de uso seguro (sin lenguaje médico)",
+        "Condiciones mayoristas",
+        "Dimensiones y logística del vidrio"
+      ]
+    },
+    {
+      "name": "Celestino Hotel Boutique & Spa",
+      "group": "Primera validación",
+      "route": "Hotelería y spa",
+      "route_key": "hospitality_spa",
+      "why": "La combinación hotel boutique y spa crea una hipótesis concreta de regalo o venta complementaria.",
+      "test": "Probar una referencia en una propiedad y medir aceptación.",
+      "unknown": "No se verificó retail de terceros ni frecuencia de reposición.",
+      "next": "Confirmar área compradora, caso de uso y cadencia potencial.",
+      "evidence": {
+        "source": "hotelcelestino.com",
+        "fact": "Su sitio oficial describe un hotel boutique con spa en Medellín, con sauna, jacuzzi y baño frío.",
+        "retrieved": "3 de agosto de 2026",
+        "freshness": "current",
+        "proves": "Identidad y operación de hotelería/spa vigente: relevancia estructural de la ruta.",
+        "not_proves": "No se verificó retail de terceros ni frecuencia de reposición. No hay evidencia de intención de compra ni de temporalidad (timing)."
+      },
+      "thesis": "Un hotel boutique con spa en Medellín permite conectar un producto con el regalo al huésped o la reventa boutique alrededor de las amenidades de bienestar existentes.",
+      "buyer_hyp": "Gerencia general, spa o experiencia de huésped (función a confirmar, sin nombre).",
+      "procurement": "Propiedad boutique: decisión probablemente concentrada, por confirmar.",
+      "cycle": "Potencialmente corto en una sola propiedad; frecuencia de consumo por validar.",
+      "objections": [
+        "Sin retail de terceros verificado",
+        "Baja frecuencia de consumo",
+        "Incertidumbre de compras"
+      ],
+      "questions": [
+        "¿Existe inventario de regalo al huésped o venta boutique?",
+        "¿Quién es dueño de la decisión?",
+        "¿Qué amenidad genera un uso recurrente?",
+        "¿Puede una sola propiedad probar de forma independiente?"
+      ],
+      "prep": [
+        "Colección de producto",
+        "Concepto de regalo al huésped",
+        "Copia de uso seguro",
+        "Economía del piloto"
+      ]
+    },
+    {
+      "name": "Sinergy On",
+      "group": "Primera validación",
+      "route": "Regalos corporativos",
+      "route_key": "gifting",
+      "why": "Su oferta pública de soluciones corporativas permite evaluar un producto terminado dentro de un kit.",
+      "test": "Presentar un kit muestra para un brief compatible.",
+      "unknown": "No hay evidencia de un proyecto activo ni de aceptación del formato.",
+      "next": "Validar brief, volumen, plazo, personalización y economía.",
+      "evidence": {
+        "source": "sinergyon.com",
+        "fact": "Su sitio oficial ofrece explícitamente kits corporativos y de eventos personalizados en Bogotá.",
+        "retrieved": "3 de agosto de 2026",
+        "freshness": "current",
+        "proves": "Canal de kits o regalos corporativos: encaje para un producto terminado dentro de un kit.",
+        "not_proves": "No hay evidencia de un proyecto activo ni de aceptación del formato. No hay evidencia de intención de compra ni de temporalidad (timing)."
+      },
+      "thesis": "Un proveedor de kits corporativos personalizados puede incorporar Amor de Gea como componente premium de bienestar dentro de un brief de cliente en curso.",
+      "buyer_hyp": "Dirección comercial, compras de gifting o alianzas (función a confirmar, sin nombre).",
+      "procurement": "Por proyecto: depende de un brief activo del cliente final.",
+      "cycle": "Dependiente de campaña; estacional o por proyecto.",
+      "objections": [
+        "Puede requerir marca blanca",
+        "Estacionalidad",
+        "Costo de personalización",
+        "Tiempos de entrega"
+      ],
+      "questions": [
+        "¿Hay un brief activo compatible?",
+        "¿Qué volúmenes y tiempos aplican?",
+        "¿Se acepta co-branding con producto terminado?",
+        "¿Con qué frecuencia se repiten los briefs de bienestar?"
+      ],
+      "prep": [
+        "Kit de muestra",
+        "Opciones de co-branding",
+        "Escalas de volumen",
+        "Hoja de tiempos de entrega"
+      ]
+    },
+    {
+      "name": "Vitálica",
+      "group": "Primera validación",
+      "route": "Retail especializado",
+      "route_key": "specialty_retail",
+      "why": "El surtido natural visible permite contrastar un formato botánico líquido diferenciado.",
+      "test": "Proponer un surtido mixto pequeño y medir rotación.",
+      "unknown": "Margen, onboarding y desempeño de líquidos no están confirmados.",
+      "next": "Preguntar por categoría, documentación, margen y reposición.",
+      "evidence": {
+        "source": "tiendavitalica.com",
+        "fact": "Su e-commerce oficial activo describe productos naturales, vitaminas y suplementos en Colombia.",
+        "retrieved": "3 de agosto de 2026",
+        "freshness": "current",
+        "proves": "Operación de retail de productos naturales activa: adyacencia de categoría.",
+        "not_proves": "Margen, onboarding y desempeño de líquidos no están confirmados. No hay evidencia de intención de compra ni de temporalidad (timing)."
+      },
+      "thesis": "Un e-commerce de productos naturales activo permite probar líquidos botánicos premium diferenciados junto al surtido actual y observar la reposición por sell-through.",
+      "buyer_hyp": "Comprador de categoría, propietario o compras (función a confirmar, sin nombre).",
+      "procurement": "Retail independiente: alta de categoría por confirmar.",
+      "cycle": "Observable vía sell-through; plazo por validar.",
+      "objections": [
+        "Posible desajuste de formato",
+        "Competencia de surtido",
+        "Requisitos de documentación",
+        "Margen"
+      ],
+      "questions": [
+        "¿Qué líquidos comparables ya venden?",
+        "¿Quién aprueba el alta de categoría?",
+        "¿Qué margen y documentación se requieren?",
+        "¿Cómo se mide el sell-through?"
+      ],
+      "prep": [
+        "Muestras",
+        "Ficha técnica de producto",
+        "Posicionamiento seguro",
+        "Condiciones mayoristas y de reposición"
+      ]
+    }
+  ],
+  "limitations": [
+    "Las descripciones se apoyan en superficies públicas revisadas durante el piloto y en el contexto entregado por Amor de Gea.",
+    "Una afinidad pública no demuestra interés, presupuesto, timing, margen ni autorización de compra.",
+    "No se identifican compradores nominales sin verificación.",
+    "Los casos de uso son hipótesis de validación, no hechos comerciales.",
+    "No se atribuyen efectos de salud ni se recomienda lenguaje médico.",
+    "La relación comercial previa con cada cuenta no está confirmada y debe capturarse antes del contacto."
+  ],
+  "agenda": [
+    "Contexto de Amor de Gea y qué cambió — 5 min",
+    "Mapa de oportunidades — 5 min",
+    "Portafolio y primera secuencia — 10 min",
+    "Cuatro Action Briefs — 10–15 min",
+    "Plan de validación recomendado — 5 min",
+    "Feedback y prioridades del Piloto 2 — 5 min"
+  ],
+  "email": {
+    "subject": "Resultados del Piloto 1 de LeadLens — Amor de Gea",
+    "body": "Hola Juliana,\n\nYa finalizamos el primer piloto de LeadLens para Amor de Gea.\n\nA partir de la información que nos compartieron, revisamos y ajustamos la búsqueda para priorizar cuentas más compatibles con el momento comercial, la capacidad, los formatos y las rutas que Amor de Gea puede explorar actualmente.\n\nAdjuntamos:\n\n1. El reporte final del piloto.\n2. Los Account Action Briefs de las cuentas recomendadas para la primera validación.\n3. Un documento breve de retroalimentación.\n\nEl reporte presenta las cuentas que recomendamos validar primero, las razones detrás de cada selección, las principales oportunidades por ruta y la información que todavía conviene confirmar antes de iniciar conversaciones.\n\nLa retroalimentación será especialmente importante para revisar qué cuentas ya conocen, cuáles consideran más relevantes y qué debería mejorar LeadLens en un segundo ciclo.\n\nMuchas gracias por la confianza y por la información compartida durante este primer piloto.\n\nQuedo atento a sus comentarios.\n\nMartín Galeano\nLeadLens"
+  }
+}

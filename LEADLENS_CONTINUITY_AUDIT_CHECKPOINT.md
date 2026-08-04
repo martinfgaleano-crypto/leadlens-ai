@@ -515,3 +515,7 @@ Founder-authorized account-first validation later consumed exactly four Tavily c
 V3R3 history is preserved and represented as a definitive ten-account customer portfolio. Pilot 1 closure remains founder-gated; Pilot 2 is planned only, has zero accounts and is not authorized.
 
 Production-reliability correction: the Pilot route no longer waits on a duplicate client auth fetch. Middleware remains authoritative; visible route errors settle through a recoverable boundary and optional artifacts use protected allowlisted downloads.
+
+
+## Continuity note — Pilot 1 finalization (2026-08-03)
+HEAD advanced with `feat: finalize premium Amor de Gea customer deliverables`. Only presentation/evidence-visibility/language/internal-label-removal changed; approved portfolio, exclusions, evidence conclusions, customer-safe gates, account memory and Pilot 2 state preserved. Deliverable generation is deterministic (stable download checksums). Push pending via GitHub Desktop (no CLI push credentials). See `LEADLENS_AMOR_DE_GEA_FINAL_DELIVERABLE_REVIEW_AND_REDESIGN.md`.

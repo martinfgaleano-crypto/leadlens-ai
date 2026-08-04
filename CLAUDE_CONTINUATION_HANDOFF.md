@@ -373,3 +373,12 @@ Amor de Gea Pilot 1 is `FOUNDER REVIEW REQUIRED`. Use `lib/intelligence/amor-de-
 ## Urgent loading repair
 
 The duplicate client session gate in `AdminLayout` was removed because middleware already enforces Admin authorization. The Amor de Gea overview now renders its operational closeout immediately, has a route error boundary and serves all four deliverables through an allowlisted Admin-only download handler.
+
+
+## Pilot 1 customer deliverables — finalized (2026-08-03)
+- Premium redesign of the 4 customer-safe files. Source of truth = intelligence modules → `scripts/artifacts/export-amor-pilot1-deliverable.ts` → `output/amor-pilot1-deliverable.data.json` → `scripts/artifacts/build-amor-pilot1-finalization.py` (deterministic; invariant PDF + normalized DOCX zip).
+- Report 25 pp / 53,956 B, briefs 9 pp / 20,402 B, feedback 13 pp / 15,730 B, DOCX 39,698 B. Checksums in `lib/intelligence/amor-de-gea-pilot1-delivery.ts` updated (version `V3R3 / 2.0`).
+- Reproduce: `pip install reportlab python-docx pypdf`; `npm run pilot:amor-deliverable-export`; `python scripts/artifacts/build-amor-pilot1-finalization.py`.
+- Tests: `test:amor-pilot1-content`, `test:amor-pilot1-delivery`, `test:amor-pilot1-finalization` green; tsc + `next build` clean.
+- Preserved: V3R3 portfolio, exclusions, evidence conclusions, customer-safe boundaries, account memory, Pilot 2 planned/not-authorized, provider_calls 0.
+- Report: `LEADLENS_AMOR_DE_GEA_FINAL_DELIVERABLE_REVIEW_AND_REDESIGN.md`.

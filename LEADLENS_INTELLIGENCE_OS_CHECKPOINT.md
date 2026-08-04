@@ -450,3 +450,7 @@ Controlled validation protected downstream quality but did not prove buyer retri
 # Update — customer-delivery loop
 
 The Intelligence OS now carries a customer-safe Pilot 1 delivery layer, structured feedback contract, account-memory baseline and repeat suppression. Empty feedback remains neutral (`Awaiting client feedback.`); no customer answer is inferred.
+
+
+## Checkpoint addendum — Pilot 1 deliverable redesign (2026-08-03)
+Customer-facing Pilot 1 package regenerated to premium quality without changing intelligence. Evidence now visible (official source + public fact + retrieval date + explicit no-timing) for the ten accounts; four account-specific Action Briefs; internal version tokens removed from customer files (enforced by a generation-time denylist self-check and `test:amor-pilot1-content`). Delivery manifest checksums/sizes/pages refreshed; download route integrity verified. No provider calls, no new search, Pilot 2 unchanged.

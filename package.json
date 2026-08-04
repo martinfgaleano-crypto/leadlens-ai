@@ -127,7 +127,11 @@
     "test:account-first-discovery": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/account-first-discovery.test.ts",
     "test:account-first-validation-runner": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/account-first-validation-runner.test.ts",
     "pilot:account-first-validation": "npx -y tsx --tsconfig tsconfig.json scripts/sources/run-account-first-validation.ts",
-    "test:account-first-validation-results": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/account-first-validation-results.test.ts"
+    "test:account-first-validation-results": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/account-first-validation-results.test.ts",
+    "pilot:amor-deliverable-export": "npx -y tsx --tsconfig tsconfig.json scripts/artifacts/export-amor-pilot1-deliverable.ts",
+    "test:amor-pilot1-content": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/amor-pilot1-deliverable-content.test.ts",
+    "test:amor-pilot1-delivery": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/amor-pilot1-delivery-integrity.test.ts",
+    "test:amor-pilot1-finalization": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/amor-pilot1-finalization.test.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.27.0",
