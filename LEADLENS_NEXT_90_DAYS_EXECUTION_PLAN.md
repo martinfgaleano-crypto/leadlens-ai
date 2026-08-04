@@ -120,3 +120,7 @@ Pilot 1 now has a founder-review delivery package: ten-account V3R3 portfolio, f
 
 ## 18. Pilot 1 deliverable finalization (2026-08-03)
 Premium regeneration of the four customer files from the approved V3R3 intelligence (single-source JSON exported from the modules → deterministic reportlab/python-docx renderer). Report 25 pp, briefs 9 pp, feedback 13 pp + DOCX. Internal labels removed, Spanish unified, evidence cards visible (real official sources + retrieval date + no-timing). Portfolio, exclusions and Pilot 2 (PLANNED — NOT AUTHORIZED) unchanged. Delivery checksums/sizes/pages updated; downloads verified. Founder action: review in the Delivery Center, complete the 17-item checklist, confirm relationships, send the package.
+
+
+## 19. Pilot 1 final delivery release (2026-08-03)
+Delivery-ready package: compressed and renumbered report (18 pp), 5-pp briefs, 9-pp feedback with evaluation guides (cómo evaluar, escala 1–5, cuentas, briefs, Piloto 2) + novelty/decision-change questions + empty vector checkboxes. Spanish unified. Delivery metadata v1.2 (pages/size/sha256). Intelligence, exclusions and Pilot 2 (planned/not authorized) unchanged. Founder: push, review in Delivery Center, send the four files.

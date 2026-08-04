@@ -519,3 +519,7 @@ Production-reliability correction: the Pilot route no longer waits on a duplicat
 
 ## Continuity note — Pilot 1 finalization (2026-08-03)
 HEAD advanced with `feat: finalize premium Amor de Gea customer deliverables`. Only presentation/evidence-visibility/language/internal-label-removal changed; approved portfolio, exclusions, evidence conclusions, customer-safe gates, account memory and Pilot 2 state preserved. Deliverable generation is deterministic (stable download checksums). Push pending via GitHub Desktop (no CLI push credentials). See `LEADLENS_AMOR_DE_GEA_FINAL_DELIVERABLE_REVIEW_AND_REDESIGN.md`.
+
+
+## Continuity note — Pilot 1 final release (2026-08-03)
+Commit `feat: release final Amor de Gea Pilot 1 package`. Presentation/economy/feedback-usability only; approved portfolio, exclusions, evidence, customer-safe gates, account memory and Pilot 2 state preserved. Deterministic deliverables (stable checksums), delivery metadata v1.2. Push pending via GitHub Desktop. See LEADLENS_AMOR_DE_GEA_PILOT1_FINAL_DELIVERY_RELEASE_REPORT.md.

@@ -212,7 +212,105 @@ const data = {
   email: { subject: AMOR_PILOT1_EMAIL.subject, body: AMOR_PILOT1_EMAIL.body },
 };
 
+// Spanish-first terminology normalization (§8). "temporalidad (timing)" is left
+// intact (already Spanish-first with the English term in parentheses).
+const REPL: [RegExp, string][] = [
+  [/sell-through/gi, "rotación de venta"],
+  [/co-?branding/gi, "marca compartida"],
+  [/\bgifting\b/gi, "regalos corporativos"],
+  [/\bonboarding\b/gi, "alta como proveedor"],
+  [/\bprocurement\b/gi, "proceso de compras"],
+  [/\bMOQ\b/g, "pedido mínimo"],
+  [/premiumización/gi, "posicionamiento premium"],
+  [/buyer paths?/gi, "ruta de compra"],
+];
+const norm = (v: unknown): unknown =>
+  typeof v === "string" ? REPL.reduce((s, [re, to]) => s.replace(re, to), v)
+  : Array.isArray(v) ? v.map(norm)
+  : v && typeof v === "object" ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, norm(x)]))
+  : v;
+
+// Feedback evaluation guides (§12–§16, §20–§21) — helps Amor de Gea judge the pilot.
+const feedback_guide = {
+  how_to_evaluate: {
+    intro: "Esta guía es para Amor de Gea. El piloto no debe evaluarse solo por si ocurre una venta inmediata, sino por la calidad de la decisión comercial que permite tomar.",
+    dimensions: [
+      { n: 1, title: "Relevancia", q: "¿Las cuentas tienen sentido para la capacidad, el producto y las rutas reales de Amor de Gea?" },
+      { n: 2, title: "Priorización", q: "¿El reporte ayuda a decidir qué cuentas merecen atención primero y cuáles no aún?" },
+      { n: 3, title: "Inteligencia", q: "¿Aporta contexto, evidencia, mecanismos, riesgos o preguntas que Amor de Gea no tenía?" },
+      { n: 4, title: "Preparación comercial", q: "¿Los briefs preparan mejor a Amor de Gea para validar la cuenta y hacer mejores preguntas?" },
+      { n: 5, title: "Aprendizaje y siguiente ciclo", q: "¿La retroalimentación y los resultados ayudarán a mejorar el próximo portafolio?" },
+    ],
+    note: "Un buen resultado no exige que cada cuenta se vuelva cliente. El piloto aporta valor cuando mejora qué cuentas se evalúan, cómo se abordan, qué se aprende y qué oportunidades se descartan a tiempo.",
+  },
+  scale_guide: {
+    levels: [
+      { n: 1, text: "No fue útil o no representó la realidad de Amor de Gea." },
+      { n: 2, text: "Fue poco útil o demasiado genérico." },
+      { n: 3, text: "Fue aceptable, pero requiere mejoras importantes." },
+      { n: 4, text: "Fue útil, específico y aplicable." },
+      { n: 5, text: "Fue muy útil, reveló información nueva o cambió una decisión." },
+    ],
+    guidance: [
+      "Use 4 o 5 solo cuando la sección produjo valor real para decidir.",
+      "Use 1 o 2 cuando la información fue genérica, inexacta o no aplicable.",
+      "Use los comentarios para explicar qué debería cambiar.",
+    ],
+  },
+  account_guide: {
+    questions: [
+      "¿Ya conocíamos o trabajamos esta cuenta?",
+      "¿El caso de uso propuesto es realista?",
+      "¿Es compatible con nuestra capacidad actual?",
+      "¿La ruta coincide con nuestras prioridades comerciales?",
+      "¿Dedicaríamos tiempo a validarla?",
+      "¿Qué evidencia o información falta?",
+      "¿Debe mantenerse, subir, bajar o excluirse?",
+    ],
+    relationship: [
+      { label: "Nueva", desc: "no la conocíamos antes." },
+      { label: "Conocida", desc: "conocida pero nunca trabajada activamente." },
+      { label: "Contactada", desc: "existe contacto previo." },
+      { label: "Conversación activa", desc: "proceso comercial en curso." },
+      { label: "Cliente/socio", desc: "relación comercial actual o previa." },
+      { label: "Excluir", desc: "conflicto, mal encaje o sin interés." },
+    ],
+  },
+  brief_guide: [
+    "¿La hipótesis comercial fue clara?",
+    "¿El contexto de la cuenta fue realmente útil?",
+    "¿La función compradora y la ruta de entrada fueron razonables?",
+    "¿Las preguntas propuestas fueron específicas?",
+    "¿El brief mejoró la preparación de la reunión?",
+    "¿Faltó algo importante o hubo contenido demasiado genérico?",
+  ],
+  pilot2_guide: [
+    "Rutas que deberían recibir más atención.",
+    "Rutas que deberían recibir menos atención.",
+    "Cuentas que no deberían repetirse.",
+    "Cuentas conocidas que LeadLens debería suprimir.",
+    "Regiones de interés.",
+    "Nivel mínimo de evidencia esperado.",
+    "Si es más valioso buscar cuentas nuevas o monitorear las actuales.",
+    "Qué justificaría continuar de forma mensual.",
+  ],
+  key_questions: [
+    "¿Qué información o recomendación de cuenta fue genuinamente nueva para Amor de Gea?",
+    "¿Este piloto cambió qué cuentas o rutas priorizaría Amor de Gea? Explique.",
+  ],
+  commercial: {
+    questions: [
+      "¿Consideraría Amor de Gea un segundo ciclo de oportunidades?",
+      "¿Qué tendría que mejorar?",
+      "¿Qué resultado haría que el servicio valiera la inversión?",
+    ],
+    formats: ["Cuentas nuevas", "Monitoreo de cuentas", "Cuentas nuevas + monitoreo", "Briefs de acción", "Inteligencia de rutas", "Otro"],
+  },
+};
+
+const finalData = norm({ ...data, closing_pilot2: "Un segundo ciclo podrá incorporar nuevas cuentas, resultados reales y cambios observados después de este primer proceso.", feedback_guide }) as Record<string, unknown>;
+
 mkdirSync("output", { recursive: true });
 const out = "output/amor-pilot1-deliverable.data.json";
-writeFileSync(out, JSON.stringify(data, null, 2));
+writeFileSync(out, JSON.stringify(finalData, null, 2));
 console.log(`wrote ${out} · ${accounts.length} accounts · ${briefs.length} briefs`);

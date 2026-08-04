@@ -72,7 +72,7 @@
       "name": "Sinergy On",
       "group": "Primera validación",
       "route": "Regalos corporativos",
-      "route_key": "gifting",
+      "route_key": "regalos corporativos",
       "why": "Su oferta pública de soluciones corporativas permite evaluar un producto terminado dentro de un kit.",
       "test": "Presentar un kit muestra para un brief compatible.",
       "unknown": "No hay evidencia de un proyecto activo ni de aceptación del formato.",
@@ -93,7 +93,7 @@
       "route_key": "specialty_retail",
       "why": "El surtido natural visible permite contrastar un formato botánico líquido diferenciado.",
       "test": "Proponer un surtido mixto pequeño y medir rotación.",
-      "unknown": "Margen, onboarding y desempeño de líquidos no están confirmados.",
+      "unknown": "Margen, alta como proveedor y desempeño de líquidos no están confirmados.",
       "next": "Preguntar por categoría, documentación, margen y reposición.",
       "evidence": {
         "source": "tiendavitalica.com",
@@ -101,7 +101,7 @@
         "retrieved": "3 de agosto de 2026",
         "freshness": "current",
         "proves": "Operación de retail de productos naturales activa: adyacencia de categoría.",
-        "not_proves": "Margen, onboarding y desempeño de líquidos no están confirmados. No hay evidencia de intención de compra ni de temporalidad (timing)."
+        "not_proves": "Margen, alta como proveedor y desempeño de líquidos no están confirmados. No hay evidencia de intención de compra ni de temporalidad (timing)."
       }
     },
     {
@@ -127,7 +127,7 @@
       "group": "Prioridad estratégica",
       "route": "Hotelería y spa",
       "route_key": "hospitality_spa",
-      "why": "Su presencia en hospitalidad ofrece una plataforma para explorar gifting o experiencia de huésped.",
+      "why": "Su presencia en hospitalidad ofrece una plataforma para explorar regalos corporativos o experiencia de huésped.",
       "test": "Diseñar una prueba en una sola propiedad antes de escalar.",
       "unknown": "No se verificó compra de terceros, autonomía local ni encaje de 50 unidades.",
       "next": "Identificar propiedad, caso de uso y nivel de decisión.",
@@ -147,15 +147,15 @@
       "route_key": "specialty_retail",
       "why": "El ecommerce activo y categorías de fitoterapia muestran adyacencia de surtido multimarcas.",
       "test": "Evaluar una prueba pequeña con posicionamiento seguro.",
-      "unknown": "Acceso comprador, margen, premiumización y recompra.",
-      "next": "Confirmar onboarding, comparación de precio y criterios de rotación.",
+      "unknown": "Acceso comprador, margen, posicionamiento premium y recompra.",
+      "next": "Confirmar alta como proveedor, comparación de precio y criterios de rotación.",
       "evidence": {
         "source": "naturalmente.com.co",
         "fact": "Su ecommerce activo lista productos y expone categorías de fitoterapia, nutrición y múltiples laboratorios (confirmado en la revisión de evidencia).",
         "retrieved": "3 de agosto de 2026",
         "freshness": "unknown",
         "proves": "Operación de retail de productos naturales activa: adyacencia de categoría.",
-        "not_proves": "Acceso comprador, margen, premiumización y recompra. No hay evidencia de intención de compra ni de temporalidad (timing)."
+        "not_proves": "Acceso comprador, margen, posicionamiento premium y recompra. No hay evidencia de intención de compra ni de temporalidad (timing)."
       }
     },
     {
@@ -165,7 +165,7 @@
       "route_key": "hospitality_spa",
       "why": "Los rituales de spa visibles justifican una validación de alto nivel como referencia de mercado.",
       "test": "Explorar solo si existe patrocinador operativo para una prueba pequeña.",
-      "unknown": "Procurement puede ser complejo y no hay retail de terceros confirmado.",
+      "unknown": "proceso de compras puede ser complejo y no hay retail de terceros confirmado.",
       "next": "Validar autonomía del spa, canal de compra y tamaño mínimo.",
       "evidence": {
         "source": "hotelcharlestonsantateresa.com",
@@ -173,14 +173,14 @@
         "retrieved": "3 de agosto de 2026",
         "freshness": "current",
         "proves": "Identidad y operación de hotelería/spa vigente: relevancia estructural de la ruta.",
-        "not_proves": "Procurement puede ser complejo y no hay retail de terceros confirmado. No hay evidencia de intención de compra ni de temporalidad (timing)."
+        "not_proves": "proceso de compras puede ser complejo y no hay retail de terceros confirmado. No hay evidencia de intención de compra ni de temporalidad (timing)."
       }
     },
     {
       "name": "Habibi Plantitas",
       "group": "Investigar selectivamente",
       "route": "Regalos corporativos",
-      "route_key": "gifting",
+      "route_key": "regalos corporativos",
       "why": "La oferta pública de regalos personalizados abre una hipótesis para integrar un producto terminado.",
       "test": "Probar compatibilidad en un kit estacional o corporativo.",
       "unknown": "Aceptación de ingeribles, volumen y recurrencia.",
@@ -240,7 +240,7 @@
       "Portafolio de tres elixires botánicos terminados con presentación premium.",
       "Prueba inicial pequeña y compatible con la capacidad actual (cercana a 50 unidades).",
       "Tres rutas comerciales plausibles: retail especializado, hotelería/spa y regalos corporativos.",
-      "Opciones de personalización, co-branding y kits de regalo."
+      "Opciones de personalización, marca compartida y kits de regalo."
     ],
     "validate": [
       "Rango de precio mayorista, margen y condiciones por canal.",
@@ -258,21 +258,21 @@
       "Alianzas genéricas."
     ],
     "after": [
-      "Pruebas iniciales manejables, con MOQ cercano a 50 unidades.",
+      "Pruebas iniciales manejables, con pedido mínimo cercano a 50 unidades.",
       "Rango recurrente esperado de ~100–300 unidades como referencia.",
-      "Rutas de gifting y co-branding con mecanismo de compra concreto.",
-      "Estructuras de compra boutique y penalización de procurement complejo.",
+      "Rutas de regalos corporativos y marca compartida con mecanismo de compra concreto.",
+      "Estructuras de compra boutique y penalización de proceso de compras complejo.",
       "Mecanismos de recompra explícitos y caminos de comprador más específicos.",
       "Restricciones de afirmaciones y encaje con la madurez del negocio."
     ],
     "narrative": [
       "Las respuestas de Amor de Gea orientaron la búsqueda hacia pilotos manejables y mecanismos de recompra que todavía deben validarse.",
-      "Retail, hotelería, gifting y distribución se evaluaron con mecanismos y exigencias operativas diferentes.",
+      "Retail, hotelería, regalos corporativos y distribución se evaluaron con mecanismos y exigencias operativas diferentes.",
       "Se priorizaron productos terminados y pruebas acotadas; gran volumen y private label quedaron condicionados por capacidad y economía.",
       "Hotel Spa La Colina salió de la primera secuencia porque la evidencia pública no confirmó retail de terceros ni reposición.",
       "Natural + Mente regresó tras confirmar ecommerce activo, múltiples laboratorios y categorías adyacentes.",
       "Tu Tienda Saludable y Somos Consiente se excluyeron porque la evidencia disponible no mostró un mecanismo suficientemente diferenciado o recurrente.",
-      "Vitálica entró en la primera secuencia por su ecommerce activo y un mecanismo de sell-through verificable mediante prueba.",
+      "Vitálica entró en la primera secuencia por su ecommerce activo y un mecanismo de rotación de venta verificable mediante prueba.",
       "Se conservaron 12 cuentas de calidad en lugar de maximizar volumen."
     ]
   },
@@ -286,7 +286,7 @@
       "summary": "Encaje diferenciado y múltiples usos posibles; retail de terceros y recurrencia siguen sin confirmar."
     },
     {
-      "route": "Regalos y co-branding",
+      "route": "Regalos y marca compartida",
       "summary": "Presentación y personalización atractivas; demanda por proyecto o temporada y recurrencia por probar."
     },
     {
@@ -422,7 +422,7 @@
       "name": "Sinergy On",
       "group": "Primera validación",
       "route": "Regalos corporativos",
-      "route_key": "gifting",
+      "route_key": "regalos corporativos",
       "why": "Su oferta pública de soluciones corporativas permite evaluar un producto terminado dentro de un kit.",
       "test": "Presentar un kit muestra para un brief compatible.",
       "unknown": "No hay evidencia de un proyecto activo ni de aceptación del formato.",
@@ -436,7 +436,7 @@
         "not_proves": "No hay evidencia de un proyecto activo ni de aceptación del formato. No hay evidencia de intención de compra ni de temporalidad (timing)."
       },
       "thesis": "Un proveedor de kits corporativos personalizados puede incorporar Amor de Gea como componente premium de bienestar dentro de un brief de cliente en curso.",
-      "buyer_hyp": "Dirección comercial, compras de gifting o alianzas (función a confirmar, sin nombre).",
+      "buyer_hyp": "Dirección comercial, compras de regalos corporativos o alianzas (función a confirmar, sin nombre).",
       "procurement": "Por proyecto: depende de un brief activo del cliente final.",
       "cycle": "Dependiente de campaña; estacional o por proyecto.",
       "objections": [
@@ -448,12 +448,12 @@
       "questions": [
         "¿Hay un brief activo compatible?",
         "¿Qué volúmenes y tiempos aplican?",
-        "¿Se acepta co-branding con producto terminado?",
+        "¿Se acepta marca compartida con producto terminado?",
         "¿Con qué frecuencia se repiten los briefs de bienestar?"
       ],
       "prep": [
         "Kit de muestra",
-        "Opciones de co-branding",
+        "Opciones de marca compartida",
         "Escalas de volumen",
         "Hoja de tiempos de entrega"
       ]
@@ -465,7 +465,7 @@
       "route_key": "specialty_retail",
       "why": "El surtido natural visible permite contrastar un formato botánico líquido diferenciado.",
       "test": "Proponer un surtido mixto pequeño y medir rotación.",
-      "unknown": "Margen, onboarding y desempeño de líquidos no están confirmados.",
+      "unknown": "Margen, alta como proveedor y desempeño de líquidos no están confirmados.",
       "next": "Preguntar por categoría, documentación, margen y reposición.",
       "evidence": {
         "source": "tiendavitalica.com",
@@ -473,12 +473,12 @@
         "retrieved": "3 de agosto de 2026",
         "freshness": "current",
         "proves": "Operación de retail de productos naturales activa: adyacencia de categoría.",
-        "not_proves": "Margen, onboarding y desempeño de líquidos no están confirmados. No hay evidencia de intención de compra ni de temporalidad (timing)."
+        "not_proves": "Margen, alta como proveedor y desempeño de líquidos no están confirmados. No hay evidencia de intención de compra ni de temporalidad (timing)."
       },
-      "thesis": "Un e-commerce de productos naturales activo permite probar líquidos botánicos premium diferenciados junto al surtido actual y observar la reposición por sell-through.",
+      "thesis": "Un e-commerce de productos naturales activo permite probar líquidos botánicos premium diferenciados junto al surtido actual y observar la reposición por rotación de venta.",
       "buyer_hyp": "Comprador de categoría, propietario o compras (función a confirmar, sin nombre).",
       "procurement": "Retail independiente: alta de categoría por confirmar.",
-      "cycle": "Observable vía sell-through; plazo por validar.",
+      "cycle": "Observable vía rotación de venta; plazo por validar.",
       "objections": [
         "Posible desajuste de formato",
         "Competencia de surtido",
@@ -489,7 +489,7 @@
         "¿Qué líquidos comparables ya venden?",
         "¿Quién aprueba el alta de categoría?",
         "¿Qué margen y documentación se requieren?",
-        "¿Cómo se mide el sell-through?"
+        "¿Cómo se mide el rotación de venta?"
       ],
       "prep": [
         "Muestras",
@@ -518,5 +518,142 @@
   "email": {
     "subject": "Resultados del Piloto 1 de LeadLens — Amor de Gea",
     "body": "Hola Juliana,\n\nYa finalizamos el primer piloto de LeadLens para Amor de Gea.\n\nA partir de la información que nos compartieron, revisamos y ajustamos la búsqueda para priorizar cuentas más compatibles con el momento comercial, la capacidad, los formatos y las rutas que Amor de Gea puede explorar actualmente.\n\nAdjuntamos:\n\n1. El reporte final del piloto.\n2. Los Account Action Briefs de las cuentas recomendadas para la primera validación.\n3. Un documento breve de retroalimentación.\n\nEl reporte presenta las cuentas que recomendamos validar primero, las razones detrás de cada selección, las principales oportunidades por ruta y la información que todavía conviene confirmar antes de iniciar conversaciones.\n\nLa retroalimentación será especialmente importante para revisar qué cuentas ya conocen, cuáles consideran más relevantes y qué debería mejorar LeadLens en un segundo ciclo.\n\nMuchas gracias por la confianza y por la información compartida durante este primer piloto.\n\nQuedo atento a sus comentarios.\n\nMartín Galeano\nLeadLens"
+  },
+  "closing_pilot2": "Un segundo ciclo podrá incorporar nuevas cuentas, resultados reales y cambios observados después de este primer proceso.",
+  "feedback_guide": {
+    "how_to_evaluate": {
+      "intro": "Esta guía es para Amor de Gea. El piloto no debe evaluarse solo por si ocurre una venta inmediata, sino por la calidad de la decisión comercial que permite tomar.",
+      "dimensions": [
+        {
+          "n": 1,
+          "title": "Relevancia",
+          "q": "¿Las cuentas tienen sentido para la capacidad, el producto y las rutas reales de Amor de Gea?"
+        },
+        {
+          "n": 2,
+          "title": "Priorización",
+          "q": "¿El reporte ayuda a decidir qué cuentas merecen atención primero y cuáles no aún?"
+        },
+        {
+          "n": 3,
+          "title": "Inteligencia",
+          "q": "¿Aporta contexto, evidencia, mecanismos, riesgos o preguntas que Amor de Gea no tenía?"
+        },
+        {
+          "n": 4,
+          "title": "Preparación comercial",
+          "q": "¿Los briefs preparan mejor a Amor de Gea para validar la cuenta y hacer mejores preguntas?"
+        },
+        {
+          "n": 5,
+          "title": "Aprendizaje y siguiente ciclo",
+          "q": "¿La retroalimentación y los resultados ayudarán a mejorar el próximo portafolio?"
+        }
+      ],
+      "note": "Un buen resultado no exige que cada cuenta se vuelva cliente. El piloto aporta valor cuando mejora qué cuentas se evalúan, cómo se abordan, qué se aprende y qué oportunidades se descartan a tiempo."
+    },
+    "scale_guide": {
+      "levels": [
+        {
+          "n": 1,
+          "text": "No fue útil o no representó la realidad de Amor de Gea."
+        },
+        {
+          "n": 2,
+          "text": "Fue poco útil o demasiado genérico."
+        },
+        {
+          "n": 3,
+          "text": "Fue aceptable, pero requiere mejoras importantes."
+        },
+        {
+          "n": 4,
+          "text": "Fue útil, específico y aplicable."
+        },
+        {
+          "n": 5,
+          "text": "Fue muy útil, reveló información nueva o cambió una decisión."
+        }
+      ],
+      "guidance": [
+        "Use 4 o 5 solo cuando la sección produjo valor real para decidir.",
+        "Use 1 o 2 cuando la información fue genérica, inexacta o no aplicable.",
+        "Use los comentarios para explicar qué debería cambiar."
+      ]
+    },
+    "account_guide": {
+      "questions": [
+        "¿Ya conocíamos o trabajamos esta cuenta?",
+        "¿El caso de uso propuesto es realista?",
+        "¿Es compatible con nuestra capacidad actual?",
+        "¿La ruta coincide con nuestras prioridades comerciales?",
+        "¿Dedicaríamos tiempo a validarla?",
+        "¿Qué evidencia o información falta?",
+        "¿Debe mantenerse, subir, bajar o excluirse?"
+      ],
+      "relationship": [
+        {
+          "label": "Nueva",
+          "desc": "no la conocíamos antes."
+        },
+        {
+          "label": "Conocida",
+          "desc": "conocida pero nunca trabajada activamente."
+        },
+        {
+          "label": "Contactada",
+          "desc": "existe contacto previo."
+        },
+        {
+          "label": "Conversación activa",
+          "desc": "proceso comercial en curso."
+        },
+        {
+          "label": "Cliente/socio",
+          "desc": "relación comercial actual o previa."
+        },
+        {
+          "label": "Excluir",
+          "desc": "conflicto, mal encaje o sin interés."
+        }
+      ]
+    },
+    "brief_guide": [
+      "¿La hipótesis comercial fue clara?",
+      "¿El contexto de la cuenta fue realmente útil?",
+      "¿La función compradora y la ruta de entrada fueron razonables?",
+      "¿Las preguntas propuestas fueron específicas?",
+      "¿El brief mejoró la preparación de la reunión?",
+      "¿Faltó algo importante o hubo contenido demasiado genérico?"
+    ],
+    "pilot2_guide": [
+      "Rutas que deberían recibir más atención.",
+      "Rutas que deberían recibir menos atención.",
+      "Cuentas que no deberían repetirse.",
+      "Cuentas conocidas que LeadLens debería suprimir.",
+      "Regiones de interés.",
+      "Nivel mínimo de evidencia esperado.",
+      "Si es más valioso buscar cuentas nuevas o monitorear las actuales.",
+      "Qué justificaría continuar de forma mensual."
+    ],
+    "key_questions": [
+      "¿Qué información o recomendación de cuenta fue genuinamente nueva para Amor de Gea?",
+      "¿Este piloto cambió qué cuentas o rutas priorizaría Amor de Gea? Explique."
+    ],
+    "commercial": {
+      "questions": [
+        "¿Consideraría Amor de Gea un segundo ciclo de oportunidades?",
+        "¿Qué tendría que mejorar?",
+        "¿Qué resultado haría que el servicio valiera la inversión?"
+      ],
+      "formats": [
+        "Cuentas nuevas",
+        "Monitoreo de cuentas",
+        "Cuentas nuevas + monitoreo",
+        "Briefs de acción",
+        "Inteligencia de rutas",
+        "Otro"
+      ]
+    }
   }
 }

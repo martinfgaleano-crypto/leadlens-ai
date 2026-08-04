@@ -454,3 +454,7 @@ The Intelligence OS now carries a customer-safe Pilot 1 delivery layer, structur
 
 ## Checkpoint addendum — Pilot 1 deliverable redesign (2026-08-03)
 Customer-facing Pilot 1 package regenerated to premium quality without changing intelligence. Evidence now visible (official source + public fact + retrieval date + explicit no-timing) for the ten accounts; four account-specific Action Briefs; internal version tokens removed from customer files (enforced by a generation-time denylist self-check and `test:amor-pilot1-content`). Delivery manifest checksums/sizes/pages refreshed; download route integrity verified. No provider calls, no new search, Pilot 2 unchanged.
+
+
+## Checkpoint addendum — Pilot 1 final release (2026-08-03)
+Customer package finalized for delivery: page economy (report 18 / briefs 5 / feedback 9), coherent numbering, drawn empty checkboxes, feedback evaluation guides and two intelligence-vs-database questions (novelty, decision change), Spanish terminology normalized. No intelligence change; Pilot 2 unchanged. Delivery manifest v1.2 with refreshed checksums; downloads integrity-verified.

@@ -382,3 +382,11 @@ The duplicate client session gate in `AdminLayout` was removed because middlewar
 - Tests: `test:amor-pilot1-content`, `test:amor-pilot1-delivery`, `test:amor-pilot1-finalization` green; tsc + `next build` clean.
 - Preserved: V3R3 portfolio, exclusions, evidence conclusions, customer-safe boundaries, account memory, Pilot 2 planned/not-authorized, provider_calls 0.
 - Report: `LEADLENS_AMOR_DE_GEA_FINAL_DELIVERABLE_REVIEW_AND_REDESIGN.md`.
+
+
+## Pilot 1 final release (2026-08-03)
+- Definitive delivery build over a678f1f. Report 25→18 pp, Briefs 9→5 pp, Feedback 13→9 pp; Option A numbering (cover excluded, "Página X de N"); 12 contiguous sections + generated Contenido index.
+- Feedback: added "Cómo evaluar este piloto" (5 dims), 1–5 scale guide, account/brief/Pilot-2 guides, novelty + decision-change questions, non-aggressive commercial willingness; PDF checkboxes are drawn empty vector boxes (no glyphs).
+- Spanish terminology normalized (MOQ, co-branding, procurement, sell-through, onboarding, gifting → Spanish) at the exporter data layer.
+- Delivery manifest: pages 18/5/9/null, new sizes/sha256, version 1.2. Deterministic build. Tests + tsc + build green.
+- Commit: `feat: release final Amor de Gea Pilot 1 package`. Report: LEADLENS_AMOR_DE_GEA_PILOT1_FINAL_DELIVERY_RELEASE_REPORT.md. Push via GitHub Desktop.

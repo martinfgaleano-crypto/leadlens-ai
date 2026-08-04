@@ -57,7 +57,23 @@ for (const [id, art] of Object.entries(AMOR_PILOT1_DELIVERABLES)) {
   assert.equal(statSync(path).size, art.size, `${id} size matches delivery manifest`);
   assert.equal(createHash("sha256").update(bytes).digest("hex"), art.sha256, `${id} sha256 matches delivery manifest`);
 }
-assert.equal(AMOR_PILOT1_DELIVERABLES["pilot1-final-report"].pages, 25);
-assert.equal(AMOR_PILOT1_DELIVERABLES["pilot1-final-report"].version, "V3R3 / 2.0");
+assert.equal(AMOR_PILOT1_DELIVERABLES["pilot1-final-report"].pages, 18, "final report compressed to 18 pages");
+assert.equal(AMOR_PILOT1_DELIVERABLES["pilot1-action-briefs"].pages, 5, "briefs compressed to 5 pages");
+assert.equal(AMOR_PILOT1_DELIVERABLES["pilot1-feedback-pdf"].pages, 9, "feedback compressed to 9 pages");
+for (const art of Object.values(AMOR_PILOT1_DELIVERABLES)) assert.equal(art.version, "1.2", "customer-deliverable version is 1.2");
+
+// 5. Feedback evaluation guides (§12–§21) present in the deliverable data.
+const g = data.feedback_guide;
+assert.equal(g.how_to_evaluate.dimensions.length, 5, "how-to-evaluate has five dimensions");
+assert.equal(g.scale_guide.levels.length, 5, "1–5 scale guide present");
+assert(g.account_guide.questions.length >= 5 && g.account_guide.relationship.length === 6, "account evaluation guide present");
+assert(g.brief_guide.length >= 5, "brief evaluation guide present");
+assert(g.pilot2_guide.length >= 6, "Pilot 2 guide present");
+assert.equal(g.key_questions.length, 2, "novelty + decision-change questions present");
+assert(/genuinamente nueva/i.test(g.key_questions[0]) && /cambió/i.test(g.key_questions[1]), "novelty and decision-change wording");
+assert(g.commercial.formats.length >= 5, "commercial willingness formats present");
+assert(/segundo ciclo/i.test(data.closing_pilot2), "customer-safe Pilot 2 closing line present");
+// Spanish terminology normalized (no raw English jargon in customer data).
+for (const eng of ["sell-through", "co-branding", "onboarding", "gifting", "MOQ"]) assert(!new RegExp(eng, "i").test(raw), `English term '${eng}' normalized to Spanish`);
 
 console.log("amor pilot1 deliverable content: ok");
