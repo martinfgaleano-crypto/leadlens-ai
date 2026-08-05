@@ -458,3 +458,7 @@ Customer-facing Pilot 1 package regenerated to premium quality without changing 
 
 ## Checkpoint addendum — Pilot 1 final release (2026-08-03)
 Customer package finalized for delivery: page economy (report 18 / briefs 5 / feedback 9), coherent numbering, drawn empty checkboxes, feedback evaluation guides and two intelligence-vs-database questions (novelty, decision change), Spanish terminology normalized. No intelligence change; Pilot 2 unchanged. Delivery manifest v1.2 with refreshed checksums; downloads integrity-verified.
+
+
+## Checkpoint addendum — Recurring Opportunity Cycle V1 (2026-08-03)
+Reusable AccountMemory/Outcome/Novelty/WhatChanged/Cycle models (`lib/intelligence/recurring/`) + Amor de Gea seed (15 accounts). Anti-repetition enforces delivered/prior accounts cannot re-enter as new; rediscovery is not a meaningful change; every novelty decision is traced with the exact rule. Outcome capture is manual + fail-closed (migration 048 unapplied). Route learning shows "awaiting real outcomes". Pilot 1 unchanged; Pilot 2 planned, 0 accounts. No providers/search.

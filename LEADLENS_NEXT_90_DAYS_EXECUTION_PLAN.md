@@ -124,3 +124,7 @@ Premium regeneration of the four customer files from the approved V3R3 intellige
 
 ## 19. Pilot 1 final delivery release (2026-08-03)
 Delivery-ready package: compressed and renumbered report (18 pp), 5-pp briefs, 9-pp feedback with evaluation guides (cómo evaluar, escala 1–5, cuentas, briefs, Piloto 2) + novelty/decision-change questions + empty vector checkboxes. Spanish unified. Delivery metadata v1.2 (pages/size/sha256). Intelligence, exclusions and Pilot 2 (planned/not authorized) unchanged. Founder: push, review in Delivery Center, send the four files.
+
+
+## 20. Recurring Opportunity Cycle V1 (2026-08-03)
+Built the memory/learning foundation for monthly cycles: Account Memory + events, outcome capture (manual, fail-closed), anti-repetition + traceable novelty, What Changed (customer-safe), OpportunityCycle, route learning. Amor de Gea seeded (15 accounts). Pilot 2 references memory but stays PLANNED — NOT AUTHORIZED (0 accounts; gate 9/10, founder approval pending). Migration 048 created, not applied. Founder decisions: (a) apply 048 for durable persistence; (b) authorize Pilot 2 when real outcomes exist.

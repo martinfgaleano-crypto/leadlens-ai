@@ -10,6 +10,7 @@ import PilotSearchBlueprint from "./pilot-search-blueprint";
 import PilotPhase4Intelligence from "./pilot-phase4-intelligence";
 import PilotReviewOperations from "./pilot-review-operations";
 import Pilot1Finalization from "./pilot1-finalization";
+import PilotRecurringCycle from "./pilot-recurring-cycle";
 import {AMOR_PILOT1_FINAL} from "@/lib/intelligence/amor-de-gea-pilot1-finalization";
 import styles from "./workspace.module.css";
 
@@ -290,7 +291,7 @@ export default function PilotExperience({ workspace, activeSection = "overview",
       >{label}</Link>)}
     </nav>
 
-    {activeSection === "overview" && <><Pilot1Finalization/><header id="brief" className={styles.executive}>
+    {activeSection === "overview" && <><Pilot1Finalization/><PilotRecurringCycle/><header id="brief" className={styles.executive}>
       <div className={styles.executiveTop}>
         <div>
           <span className={styles.eyebrow}>Piloto de oportunidad comercial · Colombia</span>

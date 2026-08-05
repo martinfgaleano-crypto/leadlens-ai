@@ -488,3 +488,13 @@
   .icpGrid, .icpConfidence, .funnel { grid-template-columns: 1fr; }
   .locationTitle { align-items: flex-start; flex-direction: column; }
 }
+
+/* Recurring Opportunity Cycle panel */
+.simpleTable { width: 100%; border-collapse: collapse; font-size: 12px; }
+.simpleTable th, .simpleTable td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #e3e9e3; vertical-align: top; }
+.simpleTable th { color: #4E6A54; font-weight: 700; }
+.outcomeForm { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; align-items: end; padding: 8px 0; }
+.outcomeForm label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: #4E6A54; }
+.outcomeForm select, .outcomeForm input { padding: 6px 8px; border: 1px solid #cad8cd; border-radius: 6px; font-size: 13px; }
+.outcomeForm button { padding: 8px 14px; background: #17352C; color: #fff; border: 0; border-radius: 6px; cursor: pointer; }
+.outcomeForm button:disabled { opacity: .5; cursor: default; }

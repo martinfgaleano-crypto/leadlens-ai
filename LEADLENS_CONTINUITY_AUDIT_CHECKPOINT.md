@@ -523,3 +523,7 @@ HEAD advanced with `feat: finalize premium Amor de Gea customer deliverables`. O
 
 ## Continuity note — Pilot 1 final release (2026-08-03)
 Commit `feat: release final Amor de Gea Pilot 1 package`. Presentation/economy/feedback-usability only; approved portfolio, exclusions, evidence, customer-safe gates, account memory and Pilot 2 state preserved. Deterministic deliverables (stable checksums), delivery metadata v1.2. Push pending via GitHub Desktop. See LEADLENS_AMOR_DE_GEA_PILOT1_FINAL_DELIVERY_RELEASE_REPORT.md.
+
+
+## Continuity note — Recurring Opportunity Cycle V1 (2026-08-03)
+Commit `feat: build recurring opportunity cycle foundation`. Additive foundation only; Pilot 1 content/deliverables and Pilot 2 (planned/not authorized) preserved. Deterministic models + seed; append-only event store via migration 048 (created, not applied). 50-check test suite; tsc + build green. Push via GitHub Desktop. See LEADLENS_RECURRING_OPPORTUNITY_CYCLE_V1_REPORT.md.

@@ -390,3 +390,10 @@ The duplicate client session gate in `AdminLayout` was removed because middlewar
 - Spanish terminology normalized (MOQ, co-branding, procurement, sell-through, onboarding, gifting → Spanish) at the exporter data layer.
 - Delivery manifest: pages 18/5/9/null, new sizes/sha256, version 1.2. Deterministic build. Tests + tsc + build green.
 - Commit: `feat: release final Amor de Gea Pilot 1 package`. Report: LEADLENS_AMOR_DE_GEA_PILOT1_FINAL_DELIVERY_RELEASE_REPORT.md. Push via GitHub Desktop.
+
+
+## Recurring Opportunity Cycle V1 (2026-08-03)
+- Reusable foundation in `lib/intelligence/recurring/{model,engine}.ts`: AccountMemory, 24 memory-event types, 28 outcome statuses + 17 reasons, novelty/anti-repetition (traceable, rediscovery≠change), What Changed (internal + customer-safe), OpportunityCycle, deterministic learning + route learning ("awaiting real outcomes").
+- Seed `lib/intelligence/amor-de-gea-account-memory.ts`: 15 accounts (10 delivered→previously_delivered, 5 inactive with reappearance states). Pilot 2 readiness = PLANNED — NOT AUTHORIZED, 0 accounts, gate 9/10 (only founder approval pending).
+- Outcome capture: `/api/admin/intelligence/pilots/[pilotId]/outcomes` (validated, append-only, fail-closed 503) + Admin panel `pilot-recurring-cycle.tsx` in the pilot overview. Migration 048 (append-only `intelligence_account_events`) created, NOT applied.
+- Pilot 1 untouched; no providers/search. `test:recurring-cycle` 50 checks; tsc + build green. Commit `feat: build recurring opportunity cycle foundation`. Report: LEADLENS_RECURRING_OPPORTUNITY_CYCLE_V1_REPORT.md.
