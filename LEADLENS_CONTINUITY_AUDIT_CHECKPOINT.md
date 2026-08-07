@@ -531,3 +531,7 @@ Commit `feat: build recurring opportunity cycle foundation`. Additive foundation
 
 ## Continuity note — Source Intelligence V1 (2026-08-04)
 Commit `feat: build country industry source intelligence layer`. Additive only (new files + one test script); Pilot 1/2, Account Memory, providers preserved. Deterministic, 0 provider calls, no migration. Founder: review `/admin/intelligence/discovery` and approve which hypothesized Colombia sources to benchmark first. See LEADLENS_COUNTRY_INDUSTRY_SOURCE_INTELLIGENCE_V1_REPORT.md.
+
+
+## Continuity note — Discovery Engine V2 benchmark (2026-08-04)
+Commit `feat: benchmark discovery engine with measured source yield`. Additive only; deterministic fixture (0 provider calls), reproducible artifact, no migration, no outreach, no people enrichment. Pilot 1/2, Account Memory, providers preserved. Founder: review /admin/intelligence/discovery Benchmark medido and approve source-role/order decisions. Next: live budgeted execution. See LEADLENS_DISCOVERY_ENGINE_V2_HOSPITALITY_BENCHMARK_REPORT.md.

@@ -8,6 +8,7 @@ import {
 import {
   buildSourcePlan, detectCoverageGaps, seedResearchQueue, type DiscoveryContext, ROUTER_VERSION,
 } from "@/lib/discovery/source-intelligence";
+import { runBenchmark } from "@/lib/discovery/source-intelligence/benchmark";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Discovery Intelligence · LeadLens", robots: { index: false, follow: false } };
@@ -84,7 +85,50 @@ export default function DiscoveryObservatory() {
         {queue.map((q) => (<div key={q.id} style={{ padding: "3px 0" }}><code>{q.id}</code> · {q.gap} → {q.proposed_source} <i>[{q.status}]</i></div>))}
       </div>
 
+      <BenchmarkSection />
+
       <p style={{ fontSize: 11.5, color: C.muted }}>Rendimiento comercial por fuente: <b>awaiting_real_outcomes</b> — se activa cuando existan resultados reales de ciclos. Ninguna reprioridad se aplica automáticamente; requiere aprobación del fundador.</p>
     </main>
+  );
+}
+
+function BenchmarkSection() {
+  const b = runBenchmark();
+  const rows: { k: string; get: (f: (typeof b.strategies)[number]) => string | number }[] = [
+    { k: "Resultados de fuente", get: (f) => f.source_results }, { k: "Candidatos crudos", get: (f) => f.raw_candidates },
+    { k: "Entidades resueltas", get: (f) => f.entity_resolved }, { k: "Dominios oficiales", get: (f) => f.official_domains },
+    { k: "Contexto compatible", get: (f) => f.context_compatible }, { k: "Evidencia suficiente", get: (f) => f.evidence_sufficient },
+    { k: "Oportunidad plausible", get: (f) => f.opportunity_plausible }, { k: "Nuevos calificados", get: (f) => f.genuinely_new_qualified },
+    { k: "Tasa duplicados", get: (f) => (f.raw_candidates ? (f.duplicates / f.raw_candidates).toFixed(2) : "N/A") },
+    { k: "Costo (est.)", get: (f) => f.cost }, { k: "Costo marginal / calificado", get: (f) => f.marginal_cost_per_incremental_qualified ?? "N/A" },
+    { k: "Latencia (ms)", get: (f) => f.latency_ms },
+  ];
+  return (
+    <>
+      <h2 style={{ color: C.navy, fontSize: 16 }}>Benchmark medido · {b.id}</h2>
+      <div style={{ ...box, background: "#FFF7E6" }}>
+        <div style={{ fontSize: 11.5, color: "#8a6d3b" }}><b>Base:</b> {b.data_basis} · {b.provider_calls} llamadas a proveedores · ejecución en vivo: {String(b.live_execution)}. {b.warnings[0]} {b.warnings[1]}</div>
+      </div>
+      <div style={box}>
+        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12.5 }}>
+          <thead><tr style={{ background: C.navy, color: "#fff", textAlign: "left" }}><th style={{ padding: 6 }}>Métrica</th>{b.strategies.map((f) => <th key={f.strategy} style={{ padding: 6 }}>{f.strategy}</th>)}</tr></thead>
+          <tbody>{rows.map((r, i) => (
+            <tr key={r.k} style={{ background: i % 2 ? C.cream : "#fff" }}>
+              <td style={{ padding: 6, fontWeight: 600 }}>{r.k}</td>
+              {b.strategies.map((f) => <td key={f.strategy} style={{ padding: 6 }}>{r.get(f)}</td>)}
+            </tr>
+          ))}</tbody>
+        </table>
+        <div style={{ fontSize: 12, color: C.ink, marginTop: 8 }}>Estrategia preferida (esta muestra): <b>{b.founder_decisions.preferred_strategy}</b> · mayor pérdida de candidatos: <b>{b.rejection_analysis[0]?.reason}</b> ({b.rejection_analysis[0]?.pct}% · fuente {b.rejection_analysis[0]?.top_source}) · bloqueador principal: <b>{b.founder_decisions.biggest_blocker}</b>.</div>
+      </div>
+      <div style={box}>
+        <div style={{ fontWeight: 700, color: C.navy }}>Análisis de rechazos</div>
+        {b.rejection_analysis.map((r) => (<div key={r.reason} style={{ fontSize: 12.5, padding: "3px 0", color: C.muted }}><b style={{ color: C.ink }}>{r.reason}</b> — {r.count} ({r.pct}%) · concentrado en {r.top_source}</div>))}
+      </div>
+      <div style={box}>
+        <div style={{ fontWeight: 700, color: C.navy }}>Recomendaciones (requieren aprobación del fundador)</div>
+        {b.recommendations.map((r) => (<div key={r.id} style={{ fontSize: 12.5, padding: "4px 0", borderBottom: `1px solid ${C.line}` }}><span style={{ background: C.gold, color: "#fff", padding: "1px 6px", borderRadius: 4, fontSize: 10.5 }}>{r.kind}</span> <b>{r.source_id}</b> — {r.rationale} <i style={{ color: C.muted }}>[conf {r.confidence} · fixture-based · sin auto-aplicar]</i></div>))}
+      </div>
+    </>
   );
 }

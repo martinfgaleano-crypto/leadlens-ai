@@ -1,0 +1,377 @@
+{
+  "id": "discovery-v2-colombia-hospitality-001",
+  "fixture": "discovery-v2-colombia-hospitality-001",
+  "fixture_version": "fixture-v1",
+  "taxonomy_version": "source-intelligence-taxonomy-v1",
+  "registry_version": "source-intelligence-registry-v1",
+  "router_version": "source-router-v1",
+  "context": {
+    "country": "CO",
+    "industry_labels": [
+      "hospitality",
+      "boutique_hospitality",
+      "spa",
+      "wellness"
+    ],
+    "business_models": [
+      "hotel_operator"
+    ],
+    "routes": [
+      "hospitality_guest_experience"
+    ],
+    "mechanisms": [
+      "guest_amenity"
+    ]
+  },
+  "generated_at": "2026-08-04",
+  "provider_calls": 0,
+  "live_execution": false,
+  "data_basis": "deterministic_fixture",
+  "budgets": {
+    "max_source_pages": 60,
+    "max_extractions": 120,
+    "max_domain_resolutions": 60,
+    "max_evidence_calls": 40
+  },
+  "strategies": [
+    {
+      "strategy": "structured_first",
+      "source_results": 24,
+      "raw_candidates": 24,
+      "entity_resolved": 14,
+      "real_business": 13,
+      "business_model_compatible": 13,
+      "context_compatible": 11,
+      "evidence_sufficient": 10,
+      "opportunity_plausible": 9,
+      "portfolio_candidate": 6,
+      "portfolio_selected": 0,
+      "duplicates": 5,
+      "genuinely_new_qualified": 6,
+      "official_domains": 6,
+      "qualified": 9,
+      "cost": 17.5,
+      "latency_ms": 1920,
+      "incremental_qualified": 9,
+      "marginal_cost_per_incremental_qualified": 1.94
+    },
+    {
+      "strategy": "search_first",
+      "source_results": 9,
+      "raw_candidates": 9,
+      "entity_resolved": 5,
+      "real_business": 5,
+      "business_model_compatible": 5,
+      "context_compatible": 5,
+      "evidence_sufficient": 5,
+      "opportunity_plausible": 5,
+      "portfolio_candidate": 3,
+      "portfolio_selected": 0,
+      "duplicates": 0,
+      "genuinely_new_qualified": 3,
+      "official_domains": 5,
+      "qualified": 5,
+      "cost": 6.5,
+      "latency_ms": 670,
+      "incremental_qualified": 5,
+      "marginal_cost_per_incremental_qualified": 1.3
+    },
+    {
+      "strategy": "hybrid",
+      "source_results": 15,
+      "raw_candidates": 15,
+      "entity_resolved": 11,
+      "real_business": 10,
+      "business_model_compatible": 10,
+      "context_compatible": 8,
+      "evidence_sufficient": 7,
+      "opportunity_plausible": 6,
+      "portfolio_candidate": 4,
+      "portfolio_selected": 0,
+      "duplicates": 3,
+      "genuinely_new_qualified": 4,
+      "official_domains": 5,
+      "qualified": 6,
+      "cost": 12.7,
+      "latency_ms": 1250,
+      "incremental_qualified": 6,
+      "marginal_cost_per_incremental_qualified": 2.12
+    }
+  ],
+  "source_contributions": [
+    {
+      "source_id": "co_rnt",
+      "strategy": "structured_first",
+      "raw": 8,
+      "resolved": 8,
+      "qualified": 4,
+      "unique_qualified": 4,
+      "incremental_qualified": 4,
+      "official_domains": 0,
+      "cost": 7.7,
+      "marginal_cost_per_incremental_qualified": 1.92,
+      "role_observed": "DISCOVERY_SOURCE + IDENTITY_SOURCE (low domain)",
+      "snapshot_confidence": "benchmarked"
+    },
+    {
+      "source_id": "co_cotelco",
+      "strategy": "structured_first",
+      "raw": 7,
+      "resolved": 3,
+      "qualified": 2,
+      "unique_qualified": 2,
+      "incremental_qualified": 2,
+      "official_domains": 3,
+      "cost": 4.15,
+      "marginal_cost_per_incremental_qualified": 2.07,
+      "role_observed": "DISCOVERY_SOURCE + BUSINESS_MODEL_SOURCE",
+      "snapshot_confidence": "benchmarked"
+    },
+    {
+      "source_id": "search_engine",
+      "strategy": "structured_first",
+      "raw": 9,
+      "resolved": 3,
+      "qualified": 3,
+      "unique_qualified": 3,
+      "incremental_qualified": 3,
+      "official_domains": 3,
+      "cost": 4.65,
+      "marginal_cost_per_incremental_qualified": 1.55,
+      "role_observed": "DISCOVERY_SOURCE (noisy) / EVIDENCE",
+      "snapshot_confidence": "benchmarked"
+    },
+    {
+      "source_id": "co_rnt",
+      "strategy": "hybrid",
+      "raw": 8,
+      "resolved": 8,
+      "qualified": 4,
+      "unique_qualified": 4,
+      "incremental_qualified": 4,
+      "official_domains": 0,
+      "cost": 7.7,
+      "marginal_cost_per_incremental_qualified": 1.92,
+      "role_observed": "DISCOVERY_SOURCE + IDENTITY_SOURCE (low domain)",
+      "snapshot_confidence": "benchmarked"
+    },
+    {
+      "source_id": "co_cotelco",
+      "strategy": "hybrid",
+      "raw": 7,
+      "resolved": 3,
+      "qualified": 2,
+      "unique_qualified": 2,
+      "incremental_qualified": 2,
+      "official_domains": 3,
+      "cost": 4.15,
+      "marginal_cost_per_incremental_qualified": 2.07,
+      "role_observed": "DISCOVERY_SOURCE + BUSINESS_MODEL_SOURCE",
+      "snapshot_confidence": "benchmarked"
+    }
+  ],
+  "provider_metrics": [
+    {
+      "provider": "firecrawl_structured",
+      "requests": 30,
+      "failures": 0,
+      "official_domains_resolved": 5,
+      "useful_results": 30,
+      "cost": 23.7,
+      "latency_ms": 2500
+    },
+    {
+      "provider": "serper",
+      "requests": 20,
+      "failures": 0,
+      "official_domains_resolved": 4,
+      "useful_results": 18,
+      "cost": 11.5,
+      "latency_ms": 1580
+    }
+  ],
+  "overlap": {
+    "total_unique_qualified": 9,
+    "overlap_rate_structured_first": 0.21
+  },
+  "rejection_analysis": [
+    {
+      "reason": "non_business_result",
+      "count": 8,
+      "pct": 67,
+      "top_source": "search_engine"
+    },
+    {
+      "reason": "wrong_geography_or_route",
+      "count": 2,
+      "pct": 17,
+      "top_source": "co_rnt"
+    },
+    {
+      "reason": "aggregator",
+      "count": 2,
+      "pct": 17,
+      "top_source": "search_engine"
+    }
+  ],
+  "review_sample": [
+    {
+      "bucket": "strongest",
+      "canonical": "Éteka",
+      "source": "co_rnt+co_cotelco+search_engine",
+      "why": "verified identity+domain, strong spa/guest mechanism",
+      "evidence": "Registry name + location anchor"
+    },
+    {
+      "bucket": "strongest",
+      "canonical": "Celestino Hotel Boutique & Spa",
+      "source": "co_rnt+co_cotelco",
+      "why": "verified identity+domain, strong spa/guest mechanism",
+      "evidence": "Registry name + location anchor"
+    },
+    {
+      "bucket": "strongest",
+      "canonical": "Hacienda Bambusa",
+      "source": "co_cotelco",
+      "why": "verified identity+domain, strong spa/guest mechanism",
+      "evidence": "Domain-anchored identity via haciendabambusa.com"
+    },
+    {
+      "bucket": "strongest",
+      "canonical": "Sofitel Legend Santa Clara",
+      "source": "co_cotelco",
+      "why": "verified identity+domain, strong spa/guest mechanism",
+      "evidence": "Domain-anchored identity via sofitel-legend-santaclara.com"
+    },
+    {
+      "bucket": "strongest",
+      "canonical": "Hotel Charleston Santa Teresa Spa",
+      "source": "search_engine",
+      "why": "verified identity+domain, strong spa/guest mechanism",
+      "evidence": "Domain-anchored identity via hotelcharlestonsantateresa.com"
+    },
+    {
+      "bucket": "borderline",
+      "canonical": "Masaya Collection",
+      "source": "co_rnt",
+      "why": "reached evidence_sufficient; insufficient_evidence",
+      "evidence": "Group/parent identity; properties resolve separately"
+    },
+    {
+      "bucket": "borderline",
+      "canonical": "Posada El Descanso",
+      "source": "co_rnt",
+      "why": "reached evidence_sufficient; no_official_domain",
+      "evidence": "Registry name + location anchor"
+    },
+    {
+      "bucket": "borderline",
+      "canonical": "Hotel Campestre Los Almendros",
+      "source": "co_rnt",
+      "why": "reached context_compatible; wrong_geography_or_route",
+      "evidence": "Registry name + location anchor"
+    },
+    {
+      "bucket": "borderline",
+      "canonical": "Hoteles Estelar",
+      "source": "co_cotelco",
+      "why": "reached evidence_sufficient; insufficient_evidence",
+      "evidence": "Group/parent identity; properties resolve separately"
+    },
+    {
+      "bucket": "rejected",
+      "canonical": "Hotel Campestre Los Almendros",
+      "source": "co_rnt",
+      "why": "wrong_geography_or_route",
+      "evidence": "inactive_business"
+    },
+    {
+      "bucket": "rejected",
+      "canonical": null,
+      "source": "co_cotelco",
+      "why": "non_business_result",
+      "evidence": "association"
+    },
+    {
+      "bucket": "rejected",
+      "canonical": null,
+      "source": "search_engine",
+      "why": "non_business_result",
+      "evidence": "article"
+    },
+    {
+      "bucket": "rejected",
+      "canonical": null,
+      "source": "search_engine",
+      "why": "aggregator",
+      "evidence": "aggregator"
+    },
+    {
+      "bucket": "rejected",
+      "canonical": null,
+      "source": "search_engine",
+      "why": "non_business_result",
+      "evidence": "article"
+    },
+    {
+      "bucket": "rejected",
+      "canonical": null,
+      "source": "search_engine",
+      "why": "non_business_result",
+      "evidence": "non_business"
+    }
+  ],
+  "recommendations": [
+    {
+      "id": "rec_structured_first",
+      "kind": "keep_strategy",
+      "source_id": "co_rnt+co_cotelco",
+      "rationale": "Structured-first yielded 6 genuinely-new qualified vs search-first 3 in this fixture; more precise, fewer non-business rejections.",
+      "confidence": "low",
+      "human_approval_required": true,
+      "auto_applied": false,
+      "fixture_based": true
+    },
+    {
+      "id": "rec_rnt_identity_role",
+      "kind": "use_source_for_identity_not_domain",
+      "source_id": "co_rnt",
+      "rationale": "RNT resolved identities but exposed no official domains; pair with a domain provider. Treat as IDENTITY/COVERAGE, not a domain source.",
+      "confidence": "low",
+      "human_approval_required": true,
+      "auto_applied": false,
+      "fixture_based": true
+    },
+    {
+      "id": "rec_research_hotel_collection",
+      "kind": "research_source",
+      "source_id": "hotel_collections",
+      "rationale": "Registry-origin entities lose at the official-domain stage; research a structured hotel-collection source that carries domains.",
+      "confidence": "low",
+      "human_approval_required": true,
+      "auto_applied": false,
+      "fixture_based": true
+    }
+  ],
+  "warnings": [
+    "Benchmark is FIXTURE-BASED (deterministic), not a live crawl — provider_calls = 0.",
+    "Small sample (24 fixture rows); treat differences as preliminary, not significant.",
+    "Commercial-outcome performance: awaiting_real_outcomes.",
+    "Source real-world confidence remains 'hypothesized'; a fixture run cannot promote a real source beyond 'benchmarked'."
+  ],
+  "stop_conditions_triggered": [
+    "source_ecosystem_exhausted"
+  ],
+  "founder_decisions": {
+    "preferred_strategy": "structured_first",
+    "search_first_source": "co_rnt",
+    "search_second_source": "co_cotelco",
+    "validation_mainly_source": "co_rnt (identity/coverage — low domain yield)",
+    "best_domain_provider": "serper (search) for registry-origin entities",
+    "biggest_candidate_loss": "non_business_result",
+    "biggest_blocker": "official-domain resolution for registry-origin entities",
+    "research_next": "structured hotel-collection source with domains",
+    "parser_next": "co_rnt registry parser (adds identity, lacks domains)",
+    "ready_for_manufacturing": "architecture ready; run a live hospitality validation first"
+  }
+}

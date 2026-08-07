@@ -404,3 +404,10 @@ The duplicate client session gate in `AdminLayout` was removed because middlewar
 - Success criteria met: hospitality/guest_amenity vs manufacturing/procurement produce materially different, explained, tiered plans (structured sources before generic search). Read-only observatory at `/admin/intelligence/discovery`.
 - Deterministic; 0 provider calls, no search, no migration. Pilot 1/2, Account Memory, providers untouched. `test:source-intelligence-layer` 38/0; recurring-cycle 50/0; tsc + build green.
 - Commit `feat: build country industry source intelligence layer`. Report: LEADLENS_COUNTRY_INDUSTRY_SOURCE_INTELLIGENCE_V1_REPORT.md. Next: Discovery Engine V2 controlled source execution (Colombia hospitality, budgeted).
+
+
+## Discovery Engine V2 — hospitality benchmark (2026-08-04)
+- Controlled Source Executor + entity resolution V2 + staged validation funnel + incremental/marginal yield + overlap + source-vs-provider metrics, run over a DETERMINISTIC FIXTURE (0 provider calls, no live crawl). New: lib/discovery/source-intelligence/{benchmark-fixture,executor,benchmark}.ts; artifact output/discovery-v2-colombia-hospitality-001.json.
+- Measured (fixture): structured-first 6 genuinely-new qualified (dup 0.21, mc/qual 1.94) > hybrid 4 > search-first 3 (cheaper but 67% non-business rejections from search). RNT = identity/coverage (0 verified domains); blocker = official-domain resolution for registry-origin. Known Amor accounts suppressed.
+- Sources stay 'hypothesized' (fixture can't promote); learning recs approval-gated + fixture_based; commercial perf awaiting_real_outcomes. Observatory /admin/intelligence/discovery extended with Benchmark medido section.
+- test:discovery-engine-v2 40/0; source-intelligence 38/0; recurring-cycle 50/0; tsc + build green. Commit `feat: benchmark discovery engine with measured source yield`. Next: LIVE budgeted execution of one Tier-1 Colombia source. Report: LEADLENS_DISCOVERY_ENGINE_V2_HOSPITALITY_BENCHMARK_REPORT.md.

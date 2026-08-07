@@ -466,3 +466,7 @@ Reusable AccountMemory/Outcome/Novelty/WhatChanged/Cycle models (`lib/intelligen
 
 ## Checkpoint addendum — Source Intelligence V1 (2026-08-04)
 Discovery routing layer: knows WHERE to search. Multi-label taxonomies (graph, no single parent), Colombia source registry/ecosystems/roles, contextual tiered mappings, Source Memory (awaiting_real_outcomes), funnel/yield metrics, explainable Source Router (account-memory-aware, source≠provider). No provider calls, no migration. Observatory `/admin/intelligence/discovery`.
+
+
+## Checkpoint addendum — Discovery Engine V2 benchmark (2026-08-04)
+Fixture-based measured discovery: executor, entity-resolution V2, 10-stage funnel, incremental/marginal yield, source overlap, source≠provider. Structured-first strongest for genuinely-new qualified in this fixture; search noisy (non-business). 0 provider calls; sources remain hypothesized; learning approval-gated. Observatory shows Benchmark medido. Pilot 1/2 + Account Memory unchanged.
