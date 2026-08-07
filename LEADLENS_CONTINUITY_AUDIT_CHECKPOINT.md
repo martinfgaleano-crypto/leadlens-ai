@@ -535,3 +535,7 @@ Commit `feat: build country industry source intelligence layer`. Additive only (
 
 ## Continuity note — Discovery Engine V2 benchmark (2026-08-04)
 Commit `feat: benchmark discovery engine with measured source yield`. Additive only; deterministic fixture (0 provider calls), reproducible artifact, no migration, no outreach, no people enrichment. Pilot 1/2, Account Memory, providers preserved. Founder: review /admin/intelligence/discovery Benchmark medido and approve source-role/order decisions. Next: live budgeted execution. See LEADLENS_DISCOVERY_ENGINE_V2_HOSPITALITY_BENCHMARK_REPORT.md.
+
+
+## Continuity note — Discovery Engine V2.1 (2026-08-04)
+Commit `feat: run live controlled discovery validation for colombia hospitality`. Additive; fixture regression preserved. Live artifact kept separate (data_basis discriminator). 0 provider calls, no outreach, no people enrichment. Founder: authorize a search-provider key/quota to run cohort B, and approve the Cotelco parser. See LEADLENS_DISCOVERY_ENGINE_V2_1_LIVE_VALIDATION_REPORT.md.

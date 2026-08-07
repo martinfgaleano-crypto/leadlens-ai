@@ -136,3 +136,7 @@ Built the discovery-precision layer before Discovery Engine V2: multi-label indu
 
 ## 21. Discovery Engine V2 — hospitality benchmark (2026-08-04)
 Measured the discovery pipeline over a deterministic Colombia-hospitality fixture (0 provider calls): 3 strategies, full funnel, incremental/marginal yield, overlap, source-vs-provider. Structured-first leads for genuinely-new qualified; search-first noisy; blocker = domain resolution for registry-origin. Learning approval-gated; sources stay hypothesized. Next: live budgeted execution of one Tier-1 source, then the manufacturing benchmark.
+
+
+## 22. Discovery Engine V2.1 — live validation (2026-08-04)
+Ran the first real controlled source access (Cotelco afiliados): public + structured + domains provided directly (n=4). Search cohort blocked (no creds). Live snapshot separate from fixture; co_cotelco→benchmarked (small). Manufacturing NOT YET. Next: Cotelco JS-pagination parser + search cohort under a real provider key, then reconsider manufacturing.

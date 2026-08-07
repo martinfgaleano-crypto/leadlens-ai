@@ -9,6 +9,7 @@ import {
   buildSourcePlan, detectCoverageGaps, seedResearchQueue, type DiscoveryContext, ROUTER_VERSION,
 } from "@/lib/discovery/source-intelligence";
 import { runBenchmark } from "@/lib/discovery/source-intelligence/benchmark";
+import { buildLiveBenchmark } from "@/lib/discovery/source-intelligence/live";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Discovery Intelligence · LeadLens", robots: { index: false, follow: false } };
@@ -85,10 +86,75 @@ export default function DiscoveryObservatory() {
         {queue.map((q) => (<div key={q.id} style={{ padding: "3px 0" }}><code>{q.id}</code> · {q.gap} → {q.proposed_source} <i>[{q.status}]</i></div>))}
       </div>
 
+      <div style={{ borderTop: `2px solid ${C.gold}`, margin: "18px 0 6px" }} />
+      <LiveBenchmarkSection />
+      <div style={{ borderTop: `2px solid ${C.line}`, margin: "18px 0 6px" }} />
+      <div style={{ fontSize: 11, color: C.muted, marginBottom: 6 }}>La sección siguiente es el benchmark DETERMINÍSTICO por FIXTURE (valida el pipeline; no es rendimiento real). Nunca se mezcla con el benchmark en vivo.</div>
       <BenchmarkSection />
 
       <p style={{ fontSize: 11.5, color: C.muted }}>Rendimiento comercial por fuente: <b>awaiting_real_outcomes</b> — se activa cuando existan resultados reales de ciclos. Ninguna reprioridad se aplica automáticamente; requiere aprobación del fundador.</p>
     </main>
+  );
+}
+
+function LiveBenchmarkSection() {
+  const b = buildLiveBenchmark();
+  const acc = { direct_access: "#4E6A54", parser_required: C.gold, javascript_heavy: "#b45", pagination_complex: "#b45", provider_accessible: "#3E6B8A", operationally_unsuitable: "#b45", manually_accessible_only: C.gold } as Record<string, string>;
+  return (
+    <>
+      <h2 style={{ color: C.navy, fontSize: 17 }}>
+        <span style={{ background: "#b45", color: "#fff", padding: "2px 8px", borderRadius: 4, fontSize: 11, marginRight: 8 }}>EN VIVO</span>
+        Benchmark en vivo · {b.id}
+      </h2>
+      <div style={{ ...box, background: "#EAF4EC" }}>
+        <div style={{ fontSize: 12 }}><b>data_basis:</b> {b.data_basis} · <b>live_execution:</b> {String(b.live_execution)} · <b>llamadas a proveedores:</b> {b.total_provider_calls} · <b>muestra:</b> {b.entities_company_level.length} · <b>cohortes ejecutadas:</b> {b.cohorts.filter((c) => c.status === "executed").length}/3</div>
+        <div style={{ fontSize: 11.5, color: "#8a6d3b", marginTop: 6 }}>⚠ {b.warnings[0]}</div>
+      </div>
+
+      <div style={box}>
+        <div style={{ fontWeight: 700, color: C.navy }}>Accesibilidad operativa de fuentes</div>
+        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12, marginTop: 6 }}>
+          <thead><tr style={{ background: C.navy, color: "#fff", textAlign: "left" }}><th style={{ padding: 5 }}>Fuente</th><th style={{ padding: 5 }}>Estado</th><th style={{ padding: 5 }}>Método</th><th style={{ padding: 5 }}>Rol recomendado</th><th style={{ padding: 5 }}>Nota</th></tr></thead>
+          <tbody>{b.accessibility.map((a, i) => (
+            <tr key={a.source_id} style={{ background: i % 2 ? C.cream : "#fff", verticalAlign: "top" }}>
+              <td style={{ padding: 5, fontWeight: 600 }}>{a.source_name}</td>
+              <td style={{ padding: 5 }}>{a.states.map((s) => <span key={s} style={{ background: acc[s] ?? C.muted, color: "#fff", padding: "1px 5px", borderRadius: 3, fontSize: 10, marginRight: 3, display: "inline-block", marginBottom: 2 }}>{s}</span>)}</td>
+              <td style={{ padding: 5, color: C.muted }}>{a.access_method}</td>
+              <td style={{ padding: 5 }}>{a.recommended_role}</td>
+              <td style={{ padding: 5, color: C.muted }}>{a.failure_reason ?? a.notes}</td>
+            </tr>
+          ))}</tbody>
+        </table>
+      </div>
+
+      <div style={box}>
+        <div style={{ fontWeight: 700, color: C.navy }}>Cohortes + economía de verificación</div>
+        {b.cohorts.map((c) => (
+          <div key={c.cohort} style={{ fontSize: 12.5, padding: "4px 0", borderBottom: `1px solid ${C.line}` }}>
+            <b>{c.cohort}</b>: <span style={{ color: c.status === "executed" ? "#4E6A54" : "#b45" }}>{c.status}</span>
+            {c.status === "executed" && c.verification ? ` · raw ${c.verification.raw_candidates} → verificados ${c.verification.verified_accounts} · dominios verificados ${c.funnel?.official_domains_verified}/${c.verification.raw_candidates} (directos) · costo/verificado ≈${c.verification.cost_per_verified_account} (est.) · 0 proveedores` : ` — ${c.reason}`}
+          </div>
+        ))}
+      </div>
+
+      <div style={box}>
+        <div style={{ fontWeight: 700, color: C.navy }}>Profundidad de investigación (L0–L5)</div>
+        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12, marginTop: 6 }}>
+          <thead><tr style={{ background: C.navy, color: "#fff", textAlign: "left" }}><th style={{ padding: 5 }}>Nivel</th><th style={{ padding: 5 }}>Entran</th><th style={{ padding: 5 }}>Sobreviven</th><th style={{ padding: 5 }}>Rechazados</th><th style={{ padding: 5 }}>Llamadas</th><th style={{ padding: 5 }}>Costo</th></tr></thead>
+          <tbody>{b.depth.map((d, i) => (<tr key={d.level} style={{ background: i % 2 ? C.cream : "#fff" }}><td style={{ padding: 5 }}>{d.level}</td><td style={{ padding: 5 }}>{d.entrants}</td><td style={{ padding: 5 }}>{d.survivors}</td><td style={{ padding: 5 }}>{d.rejected}</td><td style={{ padding: 5 }}>{d.calls}</td><td style={{ padding: 5 }}>{d.cost}</td></tr>))}</tbody>
+        </table>
+      </div>
+
+      <div style={box}>
+        <div style={{ fontWeight: 700, color: C.navy }}>Fixture vs. vivo (dónde falló la suposición)</div>
+        {b.fixture_vs_live.map((x, i) => (<div key={i} style={{ fontSize: 12, padding: "4px 0", borderBottom: `1px solid ${C.line}` }}><b>{x.assumption}</b><br /><span style={{ color: C.muted }}>fixture:</span> {x.fixture}<br /><span style={{ color: "#4E6A54" }}>vivo:</span> {x.live}</div>))}
+      </div>
+
+      <div style={box}>
+        <div style={{ fontWeight: 700, color: C.navy }}>Recomendaciones (requieren aprobación del fundador)</div>
+        {b.recommendations.map((r) => (<div key={r.id} style={{ fontSize: 12.5, padding: "4px 0" }}><span style={{ background: C.gold, color: "#fff", padding: "1px 6px", borderRadius: 4, fontSize: 10.5 }}>{r.kind}</span> <b>{r.source_id}</b> — {r.rationale} <i style={{ color: C.muted }}>[{r.data_basis} · n={r.sample_size} · conf {r.confidence} · sin auto-aplicar]</i></div>))}
+      </div>
+    </>
   );
 }
 

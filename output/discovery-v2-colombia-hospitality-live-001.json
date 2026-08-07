@@ -1,0 +1,526 @@
+{
+  "id": "discovery-v2-colombia-hospitality-live-001",
+  "taxonomy_version": "source-intelligence-taxonomy-v1",
+  "registry_version": "source-intelligence-registry-v1",
+  "module_version": "discovery-v2-1-live-v1",
+  "context": {
+    "country": "CO",
+    "industry_labels": [
+      "hospitality",
+      "boutique_hospitality",
+      "spa",
+      "wellness"
+    ],
+    "business_models": [
+      "hotel_operator"
+    ],
+    "routes": [
+      "hospitality_guest_experience"
+    ],
+    "mechanisms": [
+      "guest_amenity"
+    ]
+  },
+  "generated_at": "2026-08-04",
+  "data_basis": "live_source",
+  "live_execution": true,
+  "total_provider_calls": 0,
+  "cohorts": [
+    {
+      "cohort": "structured",
+      "status": "executed",
+      "reason": null,
+      "data_basis": "live_source",
+      "live_execution": true,
+      "source_id": "co_cotelco",
+      "provider_calls": 0,
+      "funnel": {
+        "source_results": 2,
+        "raw_candidates": 4,
+        "entity_resolved": 4,
+        "real_business": 4,
+        "business_model_compatible": 4,
+        "context_compatible": 4,
+        "evidence_sufficient": 4,
+        "opportunity_plausible": 4,
+        "portfolio_candidate": 4,
+        "genuinely_new": 4,
+        "duplicates": 0,
+        "official_domains_verified": 4,
+        "direct_domains": 4,
+        "search_resolved_domains": 0
+      },
+      "verification": {
+        "raw_candidates": 4,
+        "verified_accounts": 4,
+        "provider_calls": 0,
+        "total_cost": 0.4,
+        "actual_provider_cost": null,
+        "estimated_provider_cost": 0.4,
+        "unknown_cost": true,
+        "cost_per_verified_account": 0.1,
+        "cost_per_context_compatible": 0.1,
+        "cost_per_evidence_sufficient": 0.1,
+        "cost_per_opportunity_plausible": 0.1,
+        "verification_calls_per_account": 0
+      }
+    },
+    {
+      "cohort": "search",
+      "status": "not_executed",
+      "reason": "No search-provider credentials loaded in the execution environment (declared in .env.local, not available to this process) + known provider exhaustion.",
+      "data_basis": "unavailable",
+      "live_execution": false,
+      "source_id": "search_engine",
+      "provider_calls": 0,
+      "funnel": null,
+      "verification": null
+    },
+    {
+      "cohort": "hybrid",
+      "status": "not_executed",
+      "reason": "Depends on the search cohort (domain enrichment); Cotelco already provides domains directly, so hybrid adds little here.",
+      "data_basis": "unavailable",
+      "live_execution": false,
+      "source_id": null,
+      "provider_calls": 0,
+      "funnel": null,
+      "verification": null
+    }
+  ],
+  "accessibility": [
+    {
+      "source_id": "co_cotelco",
+      "source_name": "Cotelco — Oferta de Alojamiento (afiliados)",
+      "attempted_url": "https://cotelco.org/afiliados/",
+      "states": [
+        "direct_access",
+        "parser_required",
+        "javascript_heavy",
+        "pagination_complex"
+      ],
+      "access_method": "in_app_browser (public page)",
+      "provider_required": "browser/extraction provider (e.g. Firecrawl) for scale",
+      "parsing_difficulty": "medium",
+      "structural_stability": "stable",
+      "last_success": "2026-08-04",
+      "last_failure": null,
+      "failure_reason": null,
+      "notes": "Public affiliate directory lists hotels with name, city AND official website directly. Pagination is JS-driven and NOT URL-addressable (/page/2/ returned the same entries), so deterministic full-directory sampling needs JS interaction — controlled small sample only.",
+      "scorecard": {
+        "authority": 0.9,
+        "coverage": 0.7,
+        "accessibility": 0.5,
+        "extraction_reliability": 0.6,
+        "entity_density": 0.8,
+        "identity_quality": 0.85,
+        "domain_availability": 0.95,
+        "freshness": 0.6,
+        "latency": "medium",
+        "cost": "low",
+        "maintenance_burden": "medium"
+      },
+      "recommended_role": "primary_discovery"
+    },
+    {
+      "source_id": "co_rnt",
+      "source_name": "Registro Nacional de Turismo (RNT)",
+      "attempted_url": "https://rnt.confecamaras.co/",
+      "states": [
+        "manually_accessible_only",
+        "javascript_heavy"
+      ],
+      "access_method": "form search (not attempted at scale)",
+      "provider_required": "headless browser",
+      "parsing_difficulty": "high",
+      "structural_stability": "unknown",
+      "last_success": null,
+      "last_failure": null,
+      "failure_reason": "Not executed this sprint — form/JS registry search; deferred to avoid uncontrolled access.",
+      "notes": "High-authority identity source but form-driven; deferred. Theoretical value high; operational cost high.",
+      "scorecard": {
+        "authority": 0.95,
+        "coverage": 0.95,
+        "accessibility": 0.3,
+        "extraction_reliability": 0.3,
+        "entity_density": 0.9,
+        "identity_quality": 0.95,
+        "domain_availability": 0.1,
+        "freshness": 0.7,
+        "latency": "high",
+        "cost": "high",
+        "maintenance_burden": "high"
+      },
+      "recommended_role": "identity_validation"
+    },
+    {
+      "source_id": "search_engine",
+      "source_name": "Authorized search provider (Serper/Tavily/Brave)",
+      "attempted_url": "n/a",
+      "states": [
+        "provider_accessible",
+        "operationally_unsuitable"
+      ],
+      "access_method": "provider API",
+      "provider_required": "serper/tavily/brave",
+      "parsing_difficulty": "low",
+      "structural_stability": "unknown",
+      "last_success": null,
+      "last_failure": "2026-08-04",
+      "failure_reason": "No provider credentials loaded in the execution environment (declared in .env.local but not available to this process) + known provider exhaustion. Cohort not_executed.",
+      "notes": "Search cohort could not run legitimately this sprint. Not a failure — a recorded operational-access limitation (§45).",
+      "scorecard": {
+        "authority": 0.4,
+        "coverage": 0.9,
+        "accessibility": 0.9,
+        "extraction_reliability": 0.7,
+        "entity_density": 0.5,
+        "identity_quality": 0.5,
+        "domain_availability": 0.8,
+        "freshness": 0.9,
+        "latency": "low",
+        "cost": "medium",
+        "maintenance_burden": "low"
+      },
+      "recommended_role": "gap_filler"
+    }
+  ],
+  "entities_company_level": [
+    {
+      "raw_name": "Hotel Estelar El Cable",
+      "city": "Manizales",
+      "official_domain": "hotelesestelar.com"
+    },
+    {
+      "raw_name": "One sixteen Hotel",
+      "city": "Bogotá",
+      "official_domain": "onesixteenhotel.com"
+    },
+    {
+      "raw_name": "1549 Hostal",
+      "city": "Barichara",
+      "official_domain": "1549hostal.com"
+    },
+    {
+      "raw_name": "AcquaSanta Lofts Hotel",
+      "city": "Cali",
+      "official_domain": "acquasantahotel.com"
+    }
+  ],
+  "depth": [
+    {
+      "level": "L0_discovery",
+      "entrants": 4,
+      "survivors": 4,
+      "rejected": 0,
+      "calls": 2,
+      "cost": 0.1
+    },
+    {
+      "level": "L1_identity",
+      "entrants": 4,
+      "survivors": 4,
+      "rejected": 0,
+      "calls": 0,
+      "cost": 0.1
+    },
+    {
+      "level": "L2_business_model",
+      "entrants": 4,
+      "survivors": 4,
+      "rejected": 0,
+      "calls": 0,
+      "cost": 0.1
+    },
+    {
+      "level": "L3_context",
+      "entrants": 4,
+      "survivors": 4,
+      "rejected": 0,
+      "calls": 0,
+      "cost": 0.1
+    },
+    {
+      "level": "L4_evidence",
+      "entrants": 4,
+      "survivors": 4,
+      "rejected": 0,
+      "calls": 0,
+      "cost": 0
+    },
+    {
+      "level": "L5_deep_opportunity",
+      "entrants": 0,
+      "survivors": 0,
+      "rejected": 0,
+      "calls": 0,
+      "cost": 0
+    }
+  ],
+  "snapshots": [
+    {
+      "benchmark_id": "discovery-v2-colombia-hospitality-live-001",
+      "data_basis": "live_source",
+      "live_execution": true,
+      "source_id": "co_cotelco",
+      "context": {
+        "country": "CO",
+        "industry_labels": [
+          "hospitality",
+          "boutique_hospitality",
+          "spa",
+          "wellness"
+        ],
+        "business_models": [
+          "hotel_operator"
+        ],
+        "routes": [
+          "hospitality_guest_experience"
+        ],
+        "mechanisms": [
+          "guest_amenity"
+        ]
+      },
+      "sample_size": 4,
+      "captured_at": "2026-08-04",
+      "provider_interactions": [
+        {
+          "source_id": "co_cotelco",
+          "provider": "in_app_browser",
+          "step": "discovery+identity+domain"
+        }
+      ],
+      "funnel": {
+        "source_results": 2,
+        "raw_candidates": 4,
+        "entity_resolved": 4,
+        "real_business": 4,
+        "business_model_compatible": 4,
+        "context_compatible": 4,
+        "evidence_sufficient": 4,
+        "opportunity_plausible": 4,
+        "portfolio_candidate": 4,
+        "genuinely_new": 4,
+        "duplicates": 0,
+        "official_domains_verified": 4,
+        "direct_domains": 4,
+        "search_resolved_domains": 0
+      },
+      "verification": {
+        "raw_candidates": 4,
+        "verified_accounts": 4,
+        "provider_calls": 0,
+        "total_cost": 0.4,
+        "actual_provider_cost": null,
+        "estimated_provider_cost": 0.4,
+        "unknown_cost": true,
+        "cost_per_verified_account": 0.1,
+        "cost_per_context_compatible": 0.1,
+        "cost_per_evidence_sufficient": 0.1,
+        "cost_per_opportunity_plausible": 0.1,
+        "verification_calls_per_account": 0
+      },
+      "depth": [
+        {
+          "level": "L0_discovery",
+          "entrants": 4,
+          "survivors": 4,
+          "rejected": 0,
+          "calls": 2,
+          "cost": 0.1
+        },
+        {
+          "level": "L1_identity",
+          "entrants": 4,
+          "survivors": 4,
+          "rejected": 0,
+          "calls": 0,
+          "cost": 0.1
+        },
+        {
+          "level": "L2_business_model",
+          "entrants": 4,
+          "survivors": 4,
+          "rejected": 0,
+          "calls": 0,
+          "cost": 0.1
+        },
+        {
+          "level": "L3_context",
+          "entrants": 4,
+          "survivors": 4,
+          "rejected": 0,
+          "calls": 0,
+          "cost": 0.1
+        },
+        {
+          "level": "L4_evidence",
+          "entrants": 4,
+          "survivors": 4,
+          "rejected": 0,
+          "calls": 0,
+          "cost": 0
+        },
+        {
+          "level": "L5_deep_opportunity",
+          "entrants": 0,
+          "survivors": 0,
+          "rejected": 0,
+          "calls": 0,
+          "cost": 0
+        }
+      ],
+      "accessibility": [
+        "direct_access",
+        "parser_required",
+        "javascript_heavy",
+        "pagination_complex"
+      ],
+      "failures": [],
+      "confidence": "benchmarked"
+    }
+  ],
+  "fixture_vs_live": [
+    {
+      "assumption": "Structured sources lack official domains (need a provider to resolve)",
+      "fixture": "RNT: 0 verified domains; domain resolution is the blocker",
+      "live": "Cotelco afiliados provides official domains DIRECTLY (4/4) — domain resolution cost ≈ 0"
+    },
+    {
+      "assumption": "Structured-first is limited by domain resolution cost",
+      "fixture": "marginal cost driven by domain/evidence calls",
+      "live": "real blocker is JS-driven, non-URL-addressable PAGINATION (scale), not domain resolution"
+    },
+    {
+      "assumption": "Search has ~67% non-business rejection",
+      "fixture": "search noisy",
+      "live": "INSUFFICIENT LIVE EVIDENCE — search cohort not executed (no credentials)"
+    }
+  ],
+  "rejection_analysis": [
+    {
+      "reason": "none_in_sample",
+      "count": 0
+    }
+  ],
+  "review_sample": [
+    {
+      "bucket": "accepted",
+      "name": "Hotel Estelar El Cable",
+      "domain": "hotelesestelar.com",
+      "decision": "context_compatible (plausible) · evidence_sufficient · genuinely_new",
+      "why": "Cotelco affiliate (authoritative), identity + verified official domain; spa not individually verified ⇒ plausible not strong"
+    },
+    {
+      "bucket": "accepted",
+      "name": "One sixteen Hotel",
+      "domain": "onesixteenhotel.com",
+      "decision": "context_compatible (plausible) · evidence_sufficient · genuinely_new",
+      "why": "Cotelco affiliate (authoritative), identity + verified official domain; spa not individually verified ⇒ plausible not strong"
+    },
+    {
+      "bucket": "accepted",
+      "name": "1549 Hostal",
+      "domain": "1549hostal.com",
+      "decision": "context_compatible (plausible) · evidence_sufficient · genuinely_new",
+      "why": "Cotelco affiliate (authoritative), identity + verified official domain; spa not individually verified ⇒ plausible not strong"
+    },
+    {
+      "bucket": "accepted",
+      "name": "AcquaSanta Lofts Hotel",
+      "domain": "acquasantahotel.com",
+      "decision": "context_compatible (plausible) · evidence_sufficient · genuinely_new",
+      "why": "Cotelco affiliate (authoritative), identity + verified official domain; spa not individually verified ⇒ plausible not strong"
+    }
+  ],
+  "source_confidence_changes": [
+    {
+      "source_id": "co_cotelco",
+      "from": "hypothesized",
+      "to": "benchmarked",
+      "sample_size": 4,
+      "note": "One valid live run, n=4 — benchmarked at most; NOT historically_effective (needs multiple runs)."
+    }
+  ],
+  "recommendations": [
+    {
+      "id": "rec_cotelco_primary_domains",
+      "kind": "use_source_primary_discovery_provides_domains",
+      "source_id": "co_cotelco",
+      "rationale": "Cotelco afiliados yields active hotels WITH official domains directly (4/4), collapsing domain-resolution cost. Strong primary discovery candidate for CO hospitality.",
+      "confidence": "low",
+      "data_basis": "live_source",
+      "sample_size": 4,
+      "human_approval_required": true,
+      "auto_applied": false
+    },
+    {
+      "id": "rec_cotelco_js_parser",
+      "kind": "parser_investment",
+      "source_id": "co_cotelco",
+      "rationale": "Directory pagination is JS-driven and not URL-addressable; a small headless parser with click-through pagination is needed to sample beyond the first page.",
+      "confidence": "low",
+      "data_basis": "live_source",
+      "sample_size": 4,
+      "human_approval_required": true,
+      "auto_applied": false
+    },
+    {
+      "id": "rec_search_needs_creds",
+      "kind": "unblock_cohort",
+      "source_id": "search_engine",
+      "rationale": "Search cohort could not run — load authorized provider credentials (and confirm quota) to obtain the search baseline before comparing strategies.",
+      "confidence": "low",
+      "data_basis": "unavailable",
+      "sample_size": 0,
+      "human_approval_required": true,
+      "auto_applied": false
+    }
+  ],
+  "research_queue": [
+    {
+      "id": "srq_live_1",
+      "task": "Build a Cotelco afiliados parser handling JS pagination + city filter",
+      "priority": "high",
+      "reason": "Only the first page is URL-addressable; scale needs interaction."
+    },
+    {
+      "id": "srq_live_2",
+      "task": "Authorize + quota-check a search provider to run cohort B/C",
+      "priority": "high",
+      "reason": "No search baseline yet."
+    },
+    {
+      "id": "srq_live_3",
+      "task": "Evaluate RNT form-search access (headless) for identity coverage",
+      "priority": "medium",
+      "reason": "High authority, high operational cost."
+    }
+  ],
+  "warnings": [
+    "LIVE but SMALL sample (n=4) — establishes accessibility + that the pipeline runs live; NOT sufficient to rank strategies or promote to historically_effective.",
+    "Only the structured cohort executed; search + hybrid are not_executed (recorded operational limitation, §45).",
+    "Provider cost is ESTIMATED (browser access, no billable provider); actual_provider_cost = null.",
+    "Commercial-outcome performance: awaiting_real_outcomes."
+  ],
+  "founder_decisions": {
+    "preferred_strategy": "INSUFFICIENT LIVE EVIDENCE (search cohort not run)",
+    "access_structured_source": "YES — Cotelco afiliados is publicly accessible and structured",
+    "domain_resolution_difficulty": "LOW for Cotelco (domains provided directly) — contradicts fixture",
+    "biggest_real_blocker": "JS-driven, non-URL-addressable pagination (scale), plus missing search-provider credentials",
+    "confidence_change": "co_cotelco: hypothesized → benchmarked (n=4, small)",
+    "ready_for_manufacturing": "NOT YET — run a full structured cohort (parser) + a search cohort first; one blocker (search creds) remains"
+  },
+  "performance_questions": {
+    "q1_can_access_structured": "YES — Cotelco afiliados (public, structured)",
+    "q2_usable_entities": "4 observed in a controlled sample (directory is larger; JS pagination)",
+    "q3_resolve_to_real_business": "4/4 (100%) in-sample — Cotelco affiliates are active hotels",
+    "q4_domain_difficulty": "LOW — directory provides official domains directly",
+    "q5_hotel_operator_pct": "4/4 in-sample (incl. one hospitality_group: Estelar)",
+    "q8_genuinely_new": "4/4 — none in Amor de Gea Account Memory",
+    "q9_cost_per_verified": "≈0.1 estimated units (no billable provider; domains provided)",
+    "q11_where_rejected": "no rejections in this small sample",
+    "q18_biggest_blocker": "pagination/scale + missing search credentials",
+    "note": "Strategy ranking, search cleanliness, and hybrid economics = INSUFFICIENT LIVE EVIDENCE this sprint."
+  }
+}

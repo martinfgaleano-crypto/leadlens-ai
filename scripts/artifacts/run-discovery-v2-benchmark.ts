@@ -11,3 +11,9 @@ const s = Object.fromEntries(artifact.strategies.map((f) => [f.strategy, `raw ${
 console.log(`wrote ${out} · provider_calls=${artifact.provider_calls}`);
 for (const [k, v] of Object.entries(s)) console.log(`  ${k}: ${v}`);
 console.log("  top rejection:", artifact.rejection_analysis[0]);
+
+// Live validation artifact (V2.1)
+import { buildLiveBenchmark } from "../../lib/discovery/source-intelligence/live";
+const live = buildLiveBenchmark();
+writeFileSync("output/discovery-v2-colombia-hospitality-live-001.json", JSON.stringify(live, null, 2));
+console.log(`wrote live artifact · data_basis=${live.data_basis} · live=${live.live_execution} · provider_calls=${live.total_provider_calls} · sample=${live.entities_company_level.length} · cohorts executed=${live.cohorts.filter(c=>c.status==="executed").length}/3`);

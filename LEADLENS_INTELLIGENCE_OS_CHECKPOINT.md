@@ -470,3 +470,7 @@ Discovery routing layer: knows WHERE to search. Multi-label taxonomies (graph, n
 
 ## Checkpoint addendum — Discovery Engine V2 benchmark (2026-08-04)
 Fixture-based measured discovery: executor, entity-resolution V2, 10-stage funnel, incremental/marginal yield, source overlap, source≠provider. Structured-first strongest for genuinely-new qualified in this fixture; search noisy (non-business). 0 provider calls; sources remain hypothesized; learning approval-gated. Observatory shows Benchmark medido. Pilot 1/2 + Account Memory unchanged.
+
+
+## Checkpoint addendum — Discovery Engine V2.1 live validation (2026-08-04)
+First live controlled source access (Cotelco afiliados). Real finding: structured directory provides official domains directly (verification cost collapses), contradicting the fixture; real blocker = JS pagination + missing search credentials. Live snapshot separate from fixture; co_cotelco → benchmarked (n=4). Search/hybrid not_executed (honest). 0 provider calls, no people data. Pilot 1/2 + Account Memory unchanged.
