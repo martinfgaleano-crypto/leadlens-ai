@@ -7,6 +7,7 @@ import {
   type SourceContextMapping, type SourcePriorityTier, type SourceRole,
 } from "./registry";
 import type { DiscoveryContext, IndustryLabel } from "./taxonomy";
+import { coverageForContext, type CoverageBreadth, type CoverageDepth } from "./coverage";
 
 // ─── Source Memory (analogous to Account Memory; history-preserving) ──────────
 export interface SourcePerformanceSnapshot {
@@ -82,6 +83,9 @@ export interface SourcePlanStep {
 }
 export interface SourcePlan {
   context: DiscoveryContext; matched_mapping_id: string | null; country_coverage: "strong" | "medium" | "weak";
+  coverage_breadth: CoverageBreadth; coverage_depth: CoverageDepth;
+  routing_state: "specialized_coverage" | "fallback_coverage" | "INSUFFICIENT_SOURCE_COVERAGE";
+  primary_cluster: string | null; adjacent_transfer_clusters: string[]; coverage_gaps: string[];
   steps: SourcePlanStep[]; fallback_source_ids: string[]; stop_conditions: string[];
   suppressed_accounts: string[]; account_memory_consulted: boolean; source_memory_consulted: boolean;
   expected_cost: "low" | "medium" | "high"; explanation: string; version: string;
@@ -122,6 +126,7 @@ export function buildSourcePlan(
   const mapping = matchMapping(ctx);
   const knownAccounts = opts.knownAccounts ?? [];
   const suppressed = knownAccounts.filter((a) => a.suppressed).map((a) => a.canonical_id);
+  const contextualCoverage = coverageForContext(ctx.industry_labels, ctx.business_models, ctx.routes);
 
   const steps: SourcePlanStep[] = [];
   if (mapping) {
@@ -143,13 +148,19 @@ export function buildSourcePlan(
 
   return {
     context: ctx, matched_mapping_id: mapping?.id ?? null, country_coverage: countryCoverage(ctx.country),
+    coverage_breadth: contextualCoverage.coverage?.breadth ?? "none",
+    coverage_depth: contextualCoverage.coverage?.depth ?? "untested",
+    routing_state: mapping ? contextualCoverage.routing_state : "INSUFFICIENT_SOURCE_COVERAGE",
+    primary_cluster: contextualCoverage.primary_cluster,
+    adjacent_transfer_clusters: contextualCoverage.adjacent_clusters,
+    coverage_gaps: contextualCoverage.coverage ? [contextualCoverage.coverage.biggest_gap] : ["cluster_no_specialized_source"],
     steps, fallback_source_ids: Array.from(new Set(fallback)),
     stop_conditions: STOP_CONDITIONS, suppressed_accounts: suppressed,
     account_memory_consulted: knownAccounts.length > 0, source_memory_consulted: Boolean(opts.sourceMemory),
     expected_cost: steps.some((s) => s.priority === "tier_1_primary") ? "low" : "medium",
     explanation: mapping
       ? `País ${ctx.country}, ruta ${mapping.route}, mecanismo ${mapping.mechanism}: se priorizan fuentes estructuradas (${steps.filter((s) => s.priority === "tier_1_primary").map((s) => s.source_name).join(", ") || "n/d"}) antes de buscadores genéricos. ${mapping.rationale} Se suprimen ${suppressed.length} cuentas ya conocidas antes de investigar.`
-      : `Sin mapping específico para ${ctx.country}/${ctx.routes.join(",")}; se usan fuentes de descubrimiento genéricas con el buscador como relleno.`,
+      : `INSUFFICIENT_SOURCE_COVERAGE para ${ctx.country}/${ctx.routes.join(",")}: transferencia adyacente explícita (${contextualCoverage.adjacent_clusters.join(", ") || "ninguna"}), luego registro/cámaras, buscador genérico y sitios de empresa. Se crea una brecha; no se presenta como cobertura especializada.`,
     version: ROUTER_VERSION,
   };
 }

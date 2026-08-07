@@ -4,3 +4,4 @@ export * from "./router";
 export * from "./executor";
 export * from "./benchmark";
 export * from "./live";
+export * from "./coverage";

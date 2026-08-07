@@ -87,3 +87,6 @@ Ranking/scorer/selector INTACTOS; ML en shadow. Hard blockers nunca se relajan; 
 - Rúbrica humana v1 y runbook de piloto v2: critical → HOLD/FAIL; SLA inicial 2
   días hábiles, máximo 1 piloto, soporte/incident/refund/seguimiento definidos.
 - `npm run release:check` vigente: 263/263 assertions; build 130/130.
+# Discovery Engine V2.2 checkpoint — 2026-08-07
+
+Colombia market coverage is now modeled across 20 overlapping B2B clusters in `lib/discovery/source-intelligence/coverage.ts`, with an 18-source atlas, breadth/depth matrix, route and business-model coverage, benchmark/research queues, entity relationships, decision scope, saturation/diversity/concentration diagnostics and safe provider status. The router reports contextual coverage and `INSUFFICIENT_SOURCE_COVERAGE`; Admin discovery exposes the market map. V1/V2/V2.1 benchmarks remain unchanged and passing. No migration, provider call, Pilot 1 mutation or Pilot 2 run occurred. Next approved work should be the bounded manufacturing benchmark, followed by retail and technology; Mexico research starts only after those three materially different structures are measured.

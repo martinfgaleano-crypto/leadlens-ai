@@ -10,6 +10,11 @@ import {
 } from "@/lib/discovery/source-intelligence";
 import { runBenchmark } from "@/lib/discovery/source-intelligence/benchmark";
 import { buildLiveBenchmark } from "@/lib/discovery/source-intelligence/live";
+import {
+  COLOMBIA_PRIORITY_CLUSTERS, COLOMBIA_SOURCE_ATLAS, COLOMBIA_BENCHMARK_QUEUE,
+  SOURCE_RESEARCH_QUEUE_V2, buildCountryCoverage, routeCoverage, businessModelCoverage,
+  coverageGapsV2, internationalReadiness, providerDiagnostic, v22Audit,
+} from "@/lib/discovery/source-intelligence/coverage";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Discovery Intelligence · LeadLens", robots: { index: false, follow: false } };
@@ -49,11 +54,16 @@ function Plan({ title, ctx }: { title: string; ctx: DiscoveryContext }) {
   );
 }
 
-export default function DiscoveryObservatory() {
+export default function DiscoveryObservatory({ searchParams }: { searchParams?: Record<string, string | string[] | undefined> }) {
   const co = COUNTRY_REGISTRY.CO;
   const gaps = detectCoverageGaps("CO");
   const queue = seedResearchQueue("CO");
   const byRole = COLOMBIA_SOURCES.length;
+  const pick = (key: string) => typeof searchParams?.[key] === "string" ? searchParams[key] as string : "";
+  const clusterFilter = pick("cluster"), modelFilter = pick("business_model"), routeFilter = pick("route"), ecosystemFilter = pick("ecosystem"), confidenceFilter = pick("confidence"), accessibilityFilter = pick("accessibility");
+  const coverage = buildCountryCoverage();
+  const atlas = COLOMBIA_SOURCE_ATLAS.filter(s => (!clusterFilter || s.clusters.includes(clusterFilter)) && (!modelFilter || s.business_models.includes(modelFilter)) && (!routeFilter || s.routes.includes(routeFilter)) && (!ecosystemFilter || s.ecosystem === ecosystemFilter) && (!confidenceFilter || s.confidence === confidenceFilter) && (!accessibilityFilter || s.accessibility.includes(accessibilityFilter as never)));
+  const routeRows = routeCoverage(), modelRows = businessModelCoverage(), v2gaps = coverageGapsV2().slice(0, 10), readiness = internationalReadiness(), audit = v22Audit();
   return (
     <main style={{ maxWidth: 1000, margin: "0 auto", padding: 24, color: C.ink, fontFamily: "system-ui, sans-serif" }}>
       <div style={{ color: C.gold, fontWeight: 700, fontSize: 11, letterSpacing: 1 }}>LEADLENS · INTELLIGENCE</div>
@@ -66,6 +76,37 @@ export default function DiscoveryObservatory() {
         <div style={{ fontSize: 12, color: C.muted, marginTop: 4 }}>Asociaciones: {co.sector_associations.join(" · ")}</div>
         <div style={{ fontSize: 11.5, color: C.muted, marginTop: 6 }}>Próximos mercados (marco reutilizable, no poblados): MX · US · ES · CL · AR · PE · BR</div>
       </div>
+
+      <h2 style={{ color: C.navy, fontSize: 18 }}>Colombia Discovery Market Map V2.2</h2>
+      <div style={{ ...box, background: C.sage, fontSize: 12.5 }}>
+        <b>{COLOMBIA_PRIORITY_CLUSTERS.length}/20</b> clusters prioritarios modelados · <b>{coverage.filter(x => x.specialized_sources > 0).length}/20</b> con fuente especializada registrada · <b>{coverage.filter(x => x.depth === "manually_validated" || x.depth === "benchmarked").length}/20</b> con fuente validada manualmente o benchmarkeada · <b>{coverage.filter(x => x.benchmarked_sources > 0).length}/20</b> benchmarkeados. El denominador es la lista explícita de 20 clusters, no “todas las empresas de Colombia”.
+      </div>
+
+      <form style={{ ...box, display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(145px,1fr))", gap: 8 }}>
+        <Filter name="cluster" label="Cluster" values={COLOMBIA_PRIORITY_CLUSTERS.map(x => x.id)} selected={clusterFilter}/>
+        <Filter name="business_model" label="Modelo" values={Array.from(new Set(COLOMBIA_PRIORITY_CLUSTERS.flatMap(x => x.business_models)))} selected={modelFilter}/>
+        <Filter name="route" label="Ruta" values={Array.from(new Set(COLOMBIA_PRIORITY_CLUSTERS.flatMap(x => x.routes)))} selected={routeFilter}/>
+        <Filter name="ecosystem" label="Ecosistema" values={Array.from(new Set(COLOMBIA_SOURCE_ATLAS.map(x => x.ecosystem)))} selected={ecosystemFilter}/>
+        <Filter name="confidence" label="Confianza" values={Array.from(new Set(COLOMBIA_SOURCE_ATLAS.map(x => x.confidence)))} selected={confidenceFilter}/>
+        <Filter name="accessibility" label="Accesibilidad" values={Array.from(new Set(COLOMBIA_SOURCE_ATLAS.flatMap(x => x.accessibility)))} selected={accessibilityFilter}/>
+        <button style={{ border: 0, borderRadius: 5, background: C.navy, color: "white", padding: 7, alignSelf: "end" }}>Filtrar atlas</button>
+      </form>
+
+      <h2 style={{ color: C.navy, fontSize: 16 }}>Matriz de clusters: amplitud ≠ profundidad</h2>
+      <div style={{ ...box, overflowX: "auto" }}><table style={{ width:"100%", borderCollapse:"collapse", fontSize:11.5 }}><thead><tr style={{background:C.navy,color:"white",textAlign:"left"}}><th style={{padding:5}}>Cluster</th><th>Amplitud</th><th>Profundidad</th><th>Fuentes</th><th>Especializadas</th><th>Benchmarked</th><th>Brecha principal</th></tr></thead><tbody>{coverage.map((x,i)=><tr key={x.cluster_id} style={{background:i%2?C.cream:"white"}}><td style={{padding:5,fontWeight:600}}>{x.cluster_id}</td><td>{x.breadth}</td><td>{x.depth}</td><td>{x.registered_sources}</td><td>{x.specialized_sources}</td><td>{x.benchmarked_sources}</td><td>{x.biggest_gap}</td></tr>)}</tbody></table></div>
+
+      <h2 style={{ color: C.navy, fontSize: 16 }}>Source Atlas ({atlas.length}/{COLOMBIA_SOURCE_ATLAS.length})</h2>
+      <div style={{ ...box, overflowX:"auto" }}><table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}><thead><tr style={{background:C.navy,color:"white",textAlign:"left"}}><th style={{padding:5}}>Fuente</th><th>Clusters</th><th>Roles</th><th>Acceso</th><th>Confianza</th><th>Uso / límite</th></tr></thead><tbody>{atlas.map((s,i)=><tr key={s.id} style={{background:i%2?C.cream:"white",verticalAlign:"top"}}><td style={{padding:5}}><b>{s.name}</b><br/><code>{s.domain}</code><br/>{s.geography.join(" · ")}</td><td>{s.clusters.join(", ")}</td><td>{s.roles.join(", ")}</td><td>{s.accessibility.join(", ")}</td><td>{s.confidence}</td><td>{s.notes}<br/><span style={{color:C.muted}}>{s.limitation}</span></td></tr>)}</tbody></table></div>
+
+      <h2 style={{ color:C.navy,fontSize:16 }}>Cobertura por ruta y modelo de negocio</h2>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(300px,1fr))",gap:12}}><CoverageList title="Rutas" rows={routeRows.map(x=>({name:x.route,detail:`${x.specialized_sources} fuentes especializadas · ${x.clusters} clusters`}))}/><CoverageList title="Modelos" rows={modelRows.map(x=>({name:x.business_model,detail:`${x.specialized_sources} fuentes especializadas · ${x.clusters} clusters`}))}/></div>
+
+      <h2 style={{color:C.navy,fontSize:16}}>Cola de benchmarks</h2><QueueTable rows={COLOMBIA_BENCHMARK_QUEUE.map(x=>({priority:x.priority,name:x.id,state:x.benchmark_state,why:x.rationale}))}/>
+      <h2 style={{color:C.navy,fontSize:16}}>Top 10 investigación de fuentes</h2><QueueTable rows={SOURCE_RESEARCH_QUEUE_V2.map((x,i)=>({priority:i+1,name:`${x.candidate_source} · ${x.cluster}`,state:x.status,why:`${x.gap}: ${x.objective}`}))}/>
+      <h2 style={{color:C.navy,fontSize:16}}>Top brechas accionables</h2><CoverageList title="Brechas" rows={v2gaps.map(x=>({name:`${x.severity} · ${x.type}${x.cluster?` · ${x.cluster}`:""}`,detail:`${x.evidence} → ${x.next_action}`}))}/>
+
+      <div style={box}><b>Expansión internacional</b><div style={{fontSize:12,marginTop:5}}>Schema {readiness.schema} · router {readiness.router} · taxonomía {readiness.taxonomy} · benchmark {readiness.benchmark_framework}. Próximo país recomendado: <b>{readiness.next_country}</b>, {readiness.start_when}</div></div>
+      <div style={box}><b>Diagnóstico seguro de providers</b>{providerDiagnostic().map(p=><div key={p.provider} style={{fontSize:12,paddingTop:4}}>{p.provider}: configurado <b>{p.configured?"sí":"no"}</b> · runtime {p.runtime_available?"sí":"no"} · rol {p.intended_role} · estado {p.last_known_working_state}</div>)}<div style={{fontSize:11,color:C.muted,marginTop:6}}>Sprint: {audit.provider_calls}/{audit.limits.provider_calls} llamadas provider · {audit.source_access_validations}/{audit.limits.source_access_validations} validaciones · {audit.deep_source_inspections}/{audit.limits.deep_source_inspections} inspecciones. Nunca se muestran valores de secretos.</div></div>
 
       <h2 style={{ color: C.navy, fontSize: 16 }}>Planes de fuentes (ejemplos)</h2>
       <Plan title="Colombia · hotelería + spa · hotel_operator · guest_amenity" ctx={HOSPITALITY} />
@@ -96,6 +137,10 @@ export default function DiscoveryObservatory() {
     </main>
   );
 }
+
+function Filter({name,label,values,selected}:{name:string;label:string;values:string[];selected:string}){return <label style={{fontSize:11,color:C.muted}}>{label}<select name={name} defaultValue={selected} style={{display:"block",width:"100%",padding:6,border:`1px solid ${C.line}`,borderRadius:4,background:"white"}}><option value="">Todos</option>{values.sort().map(v=><option key={v}>{v}</option>)}</select></label>}
+function CoverageList({title,rows}:{title:string;rows:{name:string;detail:string}[]}){return <div style={box}><b>{title}</b>{rows.map(x=><div key={x.name} style={{fontSize:11.5,padding:"4px 0",borderBottom:`1px solid ${C.line}`}}><code>{x.name}</code> — {x.detail}</div>)}</div>}
+function QueueTable({rows}:{rows:{priority:number;name:string;state:string;why:string}[]}){return <div style={box}>{rows.map(x=><div key={x.name} style={{fontSize:12,padding:"5px 0",borderBottom:`1px solid ${C.line}`}}><b>#{x.priority} {x.name}</b> <i>[{x.state}]</i><br/><span style={{color:C.muted}}>{x.why}</span></div>)}</div>}
 
 function LiveBenchmarkSection() {
   const b = buildLiveBenchmark();

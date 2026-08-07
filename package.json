@@ -136,7 +136,8 @@
     "test:source-intelligence-layer": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/source-intelligence-layer.test.ts",
     "test:discovery-engine-v2": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/discovery-engine-v2.test.ts",
     "pilot:discovery-v2-benchmark": "npx -y tsx --tsconfig tsconfig.json scripts/artifacts/run-discovery-v2-benchmark.ts",
-    "test:discovery-engine-v2-1-live": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/discovery-engine-v2-1-live.test.ts"
+    "test:discovery-engine-v2-1-live": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/discovery-engine-v2-1-live.test.ts",
+    "test:discovery-engine-v2-2-coverage": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/discovery-engine-v2-2-coverage.test.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.27.0",
