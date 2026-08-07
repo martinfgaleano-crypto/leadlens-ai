@@ -462,3 +462,7 @@ Customer package finalized for delivery: page economy (report 18 / briefs 5 / fe
 
 ## Checkpoint addendum — Recurring Opportunity Cycle V1 (2026-08-03)
 Reusable AccountMemory/Outcome/Novelty/WhatChanged/Cycle models (`lib/intelligence/recurring/`) + Amor de Gea seed (15 accounts). Anti-repetition enforces delivered/prior accounts cannot re-enter as new; rediscovery is not a meaningful change; every novelty decision is traced with the exact rule. Outcome capture is manual + fail-closed (migration 048 unapplied). Route learning shows "awaiting real outcomes". Pilot 1 unchanged; Pilot 2 planned, 0 accounts. No providers/search.
+
+
+## Checkpoint addendum — Source Intelligence V1 (2026-08-04)
+Discovery routing layer: knows WHERE to search. Multi-label taxonomies (graph, no single parent), Colombia source registry/ecosystems/roles, contextual tiered mappings, Source Memory (awaiting_real_outcomes), funnel/yield metrics, explainable Source Router (account-memory-aware, source≠provider). No provider calls, no migration. Observatory `/admin/intelligence/discovery`.

@@ -527,3 +527,7 @@ Commit `feat: release final Amor de Gea Pilot 1 package`. Presentation/economy/f
 
 ## Continuity note — Recurring Opportunity Cycle V1 (2026-08-03)
 Commit `feat: build recurring opportunity cycle foundation`. Additive foundation only; Pilot 1 content/deliverables and Pilot 2 (planned/not authorized) preserved. Deterministic models + seed; append-only event store via migration 048 (created, not applied). 50-check test suite; tsc + build green. Push via GitHub Desktop. See LEADLENS_RECURRING_OPPORTUNITY_CYCLE_V1_REPORT.md.
+
+
+## Continuity note — Source Intelligence V1 (2026-08-04)
+Commit `feat: build country industry source intelligence layer`. Additive only (new files + one test script); Pilot 1/2, Account Memory, providers preserved. Deterministic, 0 provider calls, no migration. Founder: review `/admin/intelligence/discovery` and approve which hypothesized Colombia sources to benchmark first. See LEADLENS_COUNTRY_INDUSTRY_SOURCE_INTELLIGENCE_V1_REPORT.md.

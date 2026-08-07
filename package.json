@@ -132,7 +132,8 @@
     "test:amor-pilot1-content": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/amor-pilot1-deliverable-content.test.ts",
     "test:amor-pilot1-delivery": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/amor-pilot1-delivery-integrity.test.ts",
     "test:amor-pilot1-finalization": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/amor-pilot1-finalization.test.ts",
-    "test:recurring-cycle": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/recurring-opportunity-cycle.test.ts"
+    "test:recurring-cycle": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/recurring-opportunity-cycle.test.ts",
+    "test:source-intelligence-layer": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/source-intelligence-layer.test.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.27.0",

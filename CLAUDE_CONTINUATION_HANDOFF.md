@@ -397,3 +397,10 @@ The duplicate client session gate in `AdminLayout` was removed because middlewar
 - Seed `lib/intelligence/amor-de-gea-account-memory.ts`: 15 accounts (10 delivered→previously_delivered, 5 inactive with reappearance states). Pilot 2 readiness = PLANNED — NOT AUTHORIZED, 0 accounts, gate 9/10 (only founder approval pending).
 - Outcome capture: `/api/admin/intelligence/pilots/[pilotId]/outcomes` (validated, append-only, fail-closed 503) + Admin panel `pilot-recurring-cycle.tsx` in the pilot overview. Migration 048 (append-only `intelligence_account_events`) created, NOT applied.
 - Pilot 1 untouched; no providers/search. `test:recurring-cycle` 50 checks; tsc + build green. Commit `feat: build recurring opportunity cycle foundation`. Report: LEADLENS_RECURRING_OPPORTUNITY_CYCLE_V1_REPORT.md.
+
+
+## Country × Industry Source Intelligence V1 (2026-08-04)
+- New `lib/discovery/source-intelligence/{taxonomy,registry,router}.ts`: multi-label industry graph, Colombia country+source registry (12 sources), contextual source mappings (5), Source Memory (append-only snapshots, awaiting_real_outcomes), discovery funnel + yield metrics, and an explainable Source Router (`buildSourcePlan`) that consumes Account Memory (suppress known) and separates SOURCE from PROVIDER.
+- Success criteria met: hospitality/guest_amenity vs manufacturing/procurement produce materially different, explained, tiered plans (structured sources before generic search). Read-only observatory at `/admin/intelligence/discovery`.
+- Deterministic; 0 provider calls, no search, no migration. Pilot 1/2, Account Memory, providers untouched. `test:source-intelligence-layer` 38/0; recurring-cycle 50/0; tsc + build green.
+- Commit `feat: build country industry source intelligence layer`. Report: LEADLENS_COUNTRY_INDUSTRY_SOURCE_INTELLIGENCE_V1_REPORT.md. Next: Discovery Engine V2 controlled source execution (Colombia hospitality, budgeted).

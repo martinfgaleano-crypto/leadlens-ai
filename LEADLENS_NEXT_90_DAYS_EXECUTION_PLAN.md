@@ -128,3 +128,7 @@ Delivery-ready package: compressed and renumbered report (18 pp), 5-pp briefs, 9
 
 ## 20. Recurring Opportunity Cycle V1 (2026-08-03)
 Built the memory/learning foundation for monthly cycles: Account Memory + events, outcome capture (manual, fail-closed), anti-repetition + traceable novelty, What Changed (customer-safe), OpportunityCycle, route learning. Amor de Gea seeded (15 accounts). Pilot 2 references memory but stays PLANNED — NOT AUTHORIZED (0 accounts; gate 9/10, founder approval pending). Migration 048 created, not applied. Founder decisions: (a) apply 048 for durable persistence; (b) authorize Pilot 2 when real outcomes exist.
+
+
+## 20. Country × Industry Source Intelligence V1 (2026-08-04)
+Built the discovery-precision layer before Discovery Engine V2: multi-label industry graph, Colombia country/source registry + contextual source mappings, Source Memory, funnel/yield metrics, explainable Source Router (account-memory-aware, source vs provider separated), read-only observatory. Deterministic, 0 provider calls, no migration. Next: budgeted controlled source execution for one Colombia mapping to capture real yields.
