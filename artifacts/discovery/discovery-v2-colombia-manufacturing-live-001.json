@@ -1,0 +1,2149 @@
+{
+  "id": "discovery-v2-colombia-manufacturing-live-001",
+  "benchmark_version": "discovery-v2-3-manufacturing-live-v1",
+  "taxonomy_version": "source-intelligence-taxonomy-v1",
+  "registry_version": "source-intelligence-registry-v1",
+  "source_atlas_version": "colombia-source-atlas-v2.3",
+  "router_version": "source-router-v1+coverage-v2.2",
+  "parser_version": "pdfplumber-manual-structured-sample-v1",
+  "generated_at": "2026-08-07",
+  "data_basis": "mixed_live",
+  "live_execution": true,
+  "context": {
+    "country": "CO",
+    "cluster": "manufacturing",
+    "business_model": "manufacturer",
+    "route": "procurement",
+    "secondary_route": "supplier_addition",
+    "mechanism": "supplier_addition"
+  },
+  "budgets": {
+    "source_access_validations": {
+      "used": 4,
+      "max": 30
+    },
+    "source_entries_observed": {
+      "used": 30,
+      "max": 150
+    },
+    "provider_search_calls": {
+      "used": 5,
+      "max": 25
+    },
+    "domain_resolution_calls": {
+      "used": 10,
+      "max": 40
+    },
+    "evidence_calls": {
+      "used": 0,
+      "max": 25
+    },
+    "deep_research": {
+      "used": 10,
+      "max": 15
+    },
+    "total_billable_calls": {
+      "used": 19,
+      "max": 75
+    }
+  },
+  "sources": [
+    {
+      "source": "co_andi",
+      "status": "executed",
+      "basis": "live_source",
+      "accessibility": [
+        "direct_access",
+        "parser_required"
+      ],
+      "sample": 5
+    },
+    {
+      "source": "co_procolombia",
+      "status": "executed",
+      "basis": "live_source",
+      "accessibility": [
+        "direct_access",
+        "structured_pdf",
+        "parser_required"
+      ],
+      "sample": 25
+    }
+  ],
+  "cohorts": {
+    "specialized": {
+      "status": "executed",
+      "funnel": {
+        "source_results": 30,
+        "raw_candidates": 30,
+        "entity_resolved": 30,
+        "real_business": 30,
+        "business_model_compatible": 22,
+        "context_compatible": 22,
+        "evidence_sufficient": 22,
+        "opportunity_plausible": 22,
+        "portfolio_candidate": 0,
+        "genuinely_new": 22,
+        "official_domains_verified": 8
+      }
+    },
+    "search": {
+      "status": "executed",
+      "raw": 25,
+      "company_results": 24,
+      "company_result_rate": 0.96
+    },
+    "hybrid": {
+      "status": "executed",
+      "domain_attempts": 10,
+      "digital_resolved": 7
+    }
+  },
+  "candidates": [
+    {
+      "raw_entity": "AAK Colombia SAS",
+      "canonical_account": "aak-colombia",
+      "legal_entity": "AAK Colombia SAS",
+      "commercial_brand": "AAK",
+      "parent_group": "AAK Group",
+      "facility": null,
+      "subindustry": "food_beverage",
+      "business_models": [
+        "manufacturer",
+        "exporter"
+      ],
+      "domain": "aak.com",
+      "geography": "national_unknown",
+      "source": "co_andi",
+      "manufacturer_status": "manufacturer_and_exporter",
+      "evidence": "ANDI Cámara de Alimentos affiliate; food ingredients manufacturer.",
+      "decision": "accepted",
+      "confidence": "high",
+      "decision_scope": "corporate",
+      "export_oriented": true,
+      "novelty": "genuinely_new"
+    },
+    {
+      "raw_entity": "Comestibles Aldor S.A.",
+      "canonical_account": "comestibles-aldor",
+      "legal_entity": "Comestibles Aldor S.A.",
+      "commercial_brand": "Aldor",
+      "parent_group": null,
+      "facility": null,
+      "subindustry": "food_beverage",
+      "business_models": [
+        "manufacturer",
+        "exporter"
+      ],
+      "domain": "aldoronline.com",
+      "geography": "Valle del Cauca",
+      "source": "co_andi",
+      "manufacturer_status": "manufacturer_and_exporter",
+      "evidence": "ANDI food-industry affiliate; confectionery production.",
+      "decision": "accepted",
+      "confidence": "high",
+      "decision_scope": "corporate",
+      "export_oriented": true,
+      "novelty": "genuinely_new"
+    },
+    {
+      "raw_entity": "Team Foods Colombia S.A.",
+      "canonical_account": "team-foods-colombia",
+      "legal_entity": "Team Foods Colombia S.A.",
+      "commercial_brand": "TEAM",
+      "parent_group": "Team Foods",
+      "facility": null,
+      "subindustry": "food_beverage",
+      "business_models": [
+        "manufacturer",
+        "exporter"
+      ],
+      "domain": null,
+      "geography": "national_unknown",
+      "source": "co_andi",
+      "manufacturer_status": "manufacturer_and_exporter",
+      "evidence": "ANDI food-industry affiliate; edible oils and foods.",
+      "decision": "accepted",
+      "confidence": "high",
+      "decision_scope": "group",
+      "export_oriented": true,
+      "novelty": "genuinely_new"
+    },
+    {
+      "raw_entity": "Alimentos Cárnicos S.A.S.",
+      "canonical_account": "alimentos-carnicos",
+      "legal_entity": "Alimentos Cárnicos S.A.S.",
+      "commercial_brand": null,
+      "parent_group": "Grupo Nutresa",
+      "facility": null,
+      "subindustry": "food_beverage",
+      "business_models": [
+        "manufacturer"
+      ],
+      "domain": "alimentoscarnicos.com.co",
+      "geography": "Antioquia",
+      "source": "co_andi",
+      "manufacturer_status": "verified_manufacturer",
+      "evidence": "ANDI food-industry affiliate; processed-food operating subsidiary.",
+      "decision": "accepted",
+      "confidence": "high",
+      "decision_scope": "group",
+      "export_oriented": false,
+      "novelty": "genuinely_new"
+    },
+    {
+      "raw_entity": "Alpina Productos Alimenticios S.A.",
+      "canonical_account": "alpina-productos-alimenticios",
+      "legal_entity": "Alpina Productos Alimenticios S.A.",
+      "commercial_brand": "Alpina",
+      "parent_group": null,
+      "facility": null,
+      "subindustry": "food_beverage",
+      "business_models": [
+        "manufacturer",
+        "distributor",
+        "exporter"
+      ],
+      "domain": "alpina.com",
+      "geography": "Cundinamarca",
+      "source": "co_andi",
+      "manufacturer_status": "manufacturer_and_exporter",
+      "evidence": "ANDI food-industry affiliate; direct production and export activity.",
+      "decision": "accepted",
+      "confidence": "high",
+      "decision_scope": "corporate",
+      "export_oriented": true,
+      "novelty": "genuinely_new"
+    },
+    {
+      "raw_entity": "ABRACOL SA",
+      "canonical_account": "abracol",
+      "legal_entity": "ABRACOL SA",
+      "commercial_brand": "Abracol",
+      "parent_group": null,
+      "facility": null,
+      "subindustry": "metalworking_machinery",
+      "business_models": [
+        "manufacturer",
+        "distributor",
+        "exporter"
+      ],
+      "domain": "abracol.com",
+      "geography": "Antioquia",
+      "source": "co_procolombia",
+      "manufacturer_status": "manufacturer_and_exporter",
+      "evidence": "ProColombia: productora, comercializadora y exportadora de abrasivos.",
+      "decision": "accepted",
+      "confidence": "high",
+      "decision_scope": "corporate",
+      "export_oriented": true,
+      "novelty": "genuinely_new"
+    },
+    {
+      "raw_entity": "ACERARQ S.A.S. BIC",
+      "canonical_account": "acerarq",
+      "legal_entity": "ACERARQ S.A.S. BIC",
+      "commercial_brand": "Acerarq",
+      "parent_group": null,
+      "facility": null,
+      "subindustry": "metalworking_machinery",
+      "business_models": [
+        "manufacturer",
+        "service_provider"
+      ],
+      "domain": "acerarq.com",
+      "geography": "Cundinamarca",
+      "source": "co_procolombia",
+      "manufacturer_status": "verified_manufacturer",
+      "evidence": "ProColombia: diseño, fabricación, armado y montaje de estructuras metálicas.",
+      "decision": "accepted",
+      "confidence": "high",
+      "decision_scope": "corporate",
+      "export_oriented": true,
+      "novelty": "genuinely_new"
+    },
+    {
+      "raw_entity": "ACESCO COLOMBIA SAS",
+      "canonical_account": "acesco-colombia",
+      "legal_entity": "ACESCO COLOMBIA SAS",
+      "commercial_brand": "Acesco",
+      "parent_group": "Grupo Acesco",
+      "facility": null,
+      "subindustry": "metalworking_machinery",
+      "business_models": [
+        "manufacturer",
+        "distributor",
+        "exporter"
+      ],
+      "domain": null,
+      "geography": "Atlántico",
+      "source": "co_procolombia",
+      "manufacturer_status": "manufacturer_and_exporter",
+      "evidence": "ProColombia: producción y comercialización de productos de acero.",
+      "decision": "accepted",
+      "confidence": "high",
+      "decision_scope": "group",
+      "export_oriented": true,
+      "novelty": "genuinely_new"
+    },
+    {
+      "raw_entity": "ALUICA S.A.S",
+      "canonical_account": "aluica",
+      "legal_entity": "ALUICA S.A.S",
+      "commercial_brand": "Aluica",
+      "parent_group": null,
+      "facility": null,
+      "subindustry": "metalworking_machinery",
+      "business_models": [
+        "manufacturer"
+      ],
+      "domain": null,
+      "geography": "Cundinamarca",
+      "source": "co_procolombia",
+      "manufacturer_status": "verified_manufacturer",
+      "evidence": "ProColombia: fabricación de perfiles de aluminio.",
+      "decision": "accepted",
+      "confidence": "high",
+      "decision_scope": "corporate",
+      "export_oriented": true,
+      "novelty": "genuinely_new"
+    },
+    {
+      "raw_entity": "BALKRAN INC SAS BIC",
+      "canonical_account": "balkran",
+      "legal_entity": "BALKRAN INC SAS BIC",
+      "commercial_brand": "Balkran",
+      "parent_group": null,
+      "facility": null,
+      "subindustry": "metalworking_machinery",
+      "business_models": [
+        "manufacturer",
+        "exporter"
+      ],
+      "domain": "cercasbalkran.com",
+      "geography": "Boyacá",
+      "source": "co_procolombia",
+      "manufacturer_status": "manufacturer_and_exporter",
+      "evidence": "ProColombia: fabricación de maquinaria agropecuaria y forestal.",
+      "decision": "accepted",
+      "confidence": "high",
+      "decision_scope": "corporate",
+      "export_oriented": true,
+      "novelty": "genuinely_new"
+    },
+    {
+      "raw_entity": "AQUAFUSION COLOMBIA S.A.S.",
+      "canonical_account": "aquafusion-colombia",
+      "legal_entity": "AQUAFUSION COLOMBIA S.A.S.",
+      "commercial_brand": "Aquafusión",
+      "parent_group": null,
+      "facility": null,
+      "subindustry": "packaging_plastics",
+      "business_models": [
+        "manufacturer"
+      ],
+      "domain": null,
+      "geography": "Cundinamarca",
+      "source": "co_procolombia",
+      "manufacturer_status": "verified_manufacturer",
+      "evidence": "ProColombia: fabricante de tuberías y accesorios plásticos.",
+      "decision": "accepted",
+      "confidence": "high",
+      "decision_scope": "corporate",
+      "export_oriented": true,
+      "novelty": "genuinely_new"
+    },
+    {
+      "raw_entity": "AS ELASTOMEROS SAS",
+      "canonical_account": "as-elastomeros",
+      "legal_entity": "AS ELASTOMEROS SAS",
+      "commercial_brand": null,
+      "parent_group": null,
+      "facility": null,
+      "subindustry": "packaging_plastics",
+      "business_models": [
+        "manufacturer",
+        "distributor"
+      ],
+      "domain": null,
+      "geography": "Cundinamarca",
+      "source": "co_procolombia",
+      "manufacturer_status": "manufacturer_and_distributor",
+      "evidence": "ProColombia: pisos modulares plásticos; seeks wholesale distribution.",
+      "decision": "accepted",
+      "confidence": "medium",
+      "decision_scope": "corporate",
+      "export_oriented": true,
+      "novelty": "genuinely_new"
+    },
+    {
+      "raw_entity": "DISVINILOS SAS",
+      "canonical_account": "disvinilos",
+      "legal_entity": "DISVINILOS SAS",
+      "commercial_brand": null,
+      "parent_group": null,
+      "facility": null,
+      "subindustry": "packaging_plastics",
+      "business_models": [
+        "manufacturer",
+        "distributor"
+      ],
+      "domain": null,
+      "geography": "Cundinamarca",
+      "source": "co_procolombia",
+      "manufacturer_status": "manufacturer_and_distributor",
+      "evidence": "ProColombia: fabricación de artículos en plástico y envases rígidos.",
+      "decision": "accepted",
+      "confidence": "high",
+      "decision_scope": "corporate",
+      "export_oriented": true,
+      "novelty": "genuinely_new"
+    },
+    {
+      "raw_entity": "ELIND SAS",
+      "canonical_account": "elind",
+      "legal_entity": "ELIND SAS",
+      "commercial_brand": null,
+      "parent_group": null,
+      "facility": null,
+      "subindustry": "packaging_plastics",
+      "business_models": [
+        "manufacturer",
+        "service_provider"
+      ],
+      "domain": null,
+      "geography": "Cundinamarca",
+      "source": "co_procolombia",
+      "manufacturer_status": "verified_manufacturer",
+      "evidence": "ProColombia: diseña y fabrica maquinaria para empaques flexibles.",
+      "decision": "accepted",
+      "confidence": "high",
+      "decision_scope": "corporate",
+      "export_oriented": true,
+      "novelty": "genuinely_new"
+    },
+    {
+      "raw_entity": "FLEXCO SAS",
+      "canonical_account": "flexco",
+      "legal_entity": "FLEXCO SAS",
+      "commercial_brand": null,
+      "parent_group": null,
+      "facility": null,
+      "subindustry": "packaging_plastics",
+      "business_models": [
+        "manufacturer",
+        "distributor"
+      ],
+      "domain": null,
+      "geography": "Risaralda",
+      "source": "co_procolombia",
+      "manufacturer_status": "manufacturer_and_distributor",
+      "evidence": "ProColombia: fabricación de mangueras y filamento plástico.",
+      "decision": "accepted",
+      "confidence": "high",
+      "decision_scope": "corporate",
+      "export_oriented": true,
+      "novelty": "genuinely_new"
+    },
+    {
+      "raw_entity": "ABSORBENTES DE COLOMBIA S.A.",
+      "canonical_account": "absorbentes-de-colombia",
+      "legal_entity": "ABSORBENTES DE COLOMBIA S.A.",
+      "commercial_brand": null,
+      "parent_group": null,
+      "facility": null,
+      "subindustry": "chemicals_cosmetics",
+      "business_models": [
+        "manufacturer",
+        "distributor"
+      ],
+      "domain": null,
+      "geography": "Antioquia",
+      "source": "co_procolombia",
+      "manufacturer_status": "manufacturer_and_distributor",
+      "evidence": "ProColombia: producción y comercialización de absorbentes de higiene personal.",
+      "decision": "accepted",
+      "confidence": "high",
+      "decision_scope": "corporate",
+      "export_oriented": true,
+      "novelty": "genuinely_new"
+    },
+    {
+      "raw_entity": "AMENIGROUP",
+      "canonical_account": "amenigroup",
+      "legal_entity": "AMENIGROUP",
+      "commercial_brand": null,
+      "parent_group": null,
+      "facility": null,
+      "subindustry": "chemicals_cosmetics",
+      "business_models": [
+        "manufacturer",
+        "brand_owner"
+      ],
+      "domain": null,
+      "geography": "Antioquia",
+      "source": "co_procolombia",
+      "manufacturer_status": "probable_manufacturer",
+      "evidence": "ProColombia: innovación en cuidado personal; manufacturing language not explicit.",
+      "decision": "borderline",
+      "confidence": "medium",
+      "decision_scope": "unknown",
+      "export_oriented": true,
+      "novelty": "genuinely_new"
+    },
+    {
+      "raw_entity": "BEST INDUSTRIAL SAS",
+      "canonical_account": "best-industrial",
+      "legal_entity": "BEST INDUSTRIAL SAS",
+      "commercial_brand": null,
+      "parent_group": null,
+      "facility": null,
+      "subindustry": "chemicals_cosmetics",
+      "business_models": [
+        "manufacturer"
+      ],
+      "domain": null,
+      "geography": "Valle del Cauca",
+      "source": "co_procolombia",
+      "manufacturer_status": "verified_manufacturer",
+      "evidence": "ProColombia: más de 30 años de manufactura industrial en caucho.",
+      "decision": "accepted",
+      "confidence": "high",
+      "decision_scope": "corporate",
+      "export_oriented": true,
+      "novelty": "genuinely_new"
+    },
+    {
+      "raw_entity": "ETERNA S.A",
+      "canonical_account": "eterna",
+      "legal_entity": "ETERNA S.A",
+      "commercial_brand": "Eterna",
+      "parent_group": null,
+      "facility": null,
+      "subindustry": "chemicals_cosmetics",
+      "business_models": [
+        "manufacturer",
+        "distributor"
+      ],
+      "domain": null,
+      "geography": "Cundinamarca",
+      "source": "co_procolombia",
+      "manufacturer_status": "manufacturer_and_distributor",
+      "evidence": "ProColombia: desarrolla y fabrica productos de aseo, limpieza y protección.",
+      "decision": "accepted",
+      "confidence": "high",
+      "decision_scope": "corporate",
+      "export_oriented": true,
+      "novelty": "genuinely_new"
+    },
+    {
+      "raw_entity": "FIBREXASEO SAS",
+      "canonical_account": "fibrexaseo",
+      "legal_entity": "FIBREXASEO SAS",
+      "commercial_brand": null,
+      "parent_group": null,
+      "facility": null,
+      "subindustry": "chemicals_cosmetics",
+      "business_models": [
+        "manufacturer",
+        "distributor"
+      ],
+      "domain": null,
+      "geography": "Santander",
+      "source": "co_procolombia",
+      "manufacturer_status": "manufacturer_and_distributor",
+      "evidence": "ProColombia: fábrica de esponjas y artículos de limpieza.",
+      "decision": "accepted",
+      "confidence": "high",
+      "decision_scope": "corporate",
+      "export_oriented": true,
+      "novelty": "genuinely_new"
+    },
+    {
+      "raw_entity": "FUNDACIÓN CAMINOS DE IDENTIDAD - FUCAI",
+      "canonical_account": "fucai",
+      "legal_entity": "Fundación Caminos de Identidad",
+      "commercial_brand": "FUCAI",
+      "parent_group": null,
+      "facility": null,
+      "subindustry": "textiles_apparel",
+      "business_models": [
+        "service_provider"
+      ],
+      "domain": null,
+      "geography": "Cundinamarca",
+      "source": "co_procolombia",
+      "manufacturer_status": "service_provider",
+      "evidence": "ProColombia: NGO working with communities; apparel offering is not proof of manufacturing entity.",
+      "decision": "rejected",
+      "confidence": "high",
+      "decision_scope": "corporate",
+      "export_oriented": true,
+      "novelty": "genuinely_new"
+    },
+    {
+      "raw_entity": "GEOMATRIX SAS",
+      "canonical_account": "geomatrix",
+      "legal_entity": "GEOMATRIX SAS",
+      "commercial_brand": null,
+      "parent_group": null,
+      "facility": null,
+      "subindustry": "textiles_apparel",
+      "business_models": [
+        "manufacturer",
+        "distributor"
+      ],
+      "domain": null,
+      "geography": "Cundinamarca",
+      "source": "co_procolombia",
+      "manufacturer_status": "manufacturer_and_distributor",
+      "evidence": "ProColombia: fabricación y comercialización de geosintéticos/fibras técnicas.",
+      "decision": "accepted",
+      "confidence": "high",
+      "decision_scope": "corporate",
+      "export_oriented": true,
+      "novelty": "genuinely_new"
+    },
+    {
+      "raw_entity": "CEB METALMECANICA SAS",
+      "canonical_account": "ceb-metalmecanica",
+      "legal_entity": "CEB METALMECANICA SAS",
+      "commercial_brand": null,
+      "parent_group": null,
+      "facility": null,
+      "subindustry": "textiles_apparel",
+      "business_models": [
+        "manufacturer"
+      ],
+      "domain": null,
+      "geography": "Cundinamarca",
+      "source": "co_procolombia",
+      "manufacturer_status": "verified_manufacturer",
+      "evidence": "ProColombia: fabricación de maquinaria para cortar y plegar telas.",
+      "decision": "borderline",
+      "confidence": "medium",
+      "decision_scope": "corporate",
+      "export_oriented": true,
+      "novelty": "genuinely_new"
+    },
+    {
+      "raw_entity": "ADOCOL SAS",
+      "canonical_account": "adocol",
+      "legal_entity": "ADOCOL SAS",
+      "commercial_brand": null,
+      "parent_group": null,
+      "facility": null,
+      "subindustry": "other",
+      "business_models": [
+        "distributor",
+        "reseller"
+      ],
+      "domain": null,
+      "geography": "Antioquia",
+      "source": "co_procolombia",
+      "manufacturer_status": "distributor_only",
+      "evidence": "ProColombia: representación y comercialización; no manufacturing evidence.",
+      "decision": "rejected",
+      "confidence": "high",
+      "decision_scope": "corporate",
+      "export_oriented": true,
+      "novelty": "genuinely_new"
+    },
+    {
+      "raw_entity": "BERTOLINI COLOMBIA SAS",
+      "canonical_account": "bertolini-colombia",
+      "legal_entity": "BERTOLINI COLOMBIA SAS",
+      "commercial_brand": "Bertolini",
+      "parent_group": null,
+      "facility": null,
+      "subindustry": "other",
+      "business_models": [
+        "importer",
+        "exporter",
+        "retailer"
+      ],
+      "domain": null,
+      "geography": "Atlántico",
+      "source": "co_procolombia",
+      "manufacturer_status": "importer_only",
+      "evidence": "ProColombia: importer/exporter of furniture; no local manufacture stated.",
+      "decision": "rejected",
+      "confidence": "high",
+      "decision_scope": "corporate",
+      "export_oriented": true,
+      "novelty": "genuinely_new"
+    },
+    {
+      "raw_entity": "ARTESANIAS DE COLOMBIA S.A BIC",
+      "canonical_account": "artesanias-de-colombia",
+      "legal_entity": "ARTESANIAS DE COLOMBIA S.A BIC",
+      "commercial_brand": "Artesanías de Colombia",
+      "parent_group": null,
+      "facility": null,
+      "subindustry": "other",
+      "business_models": [
+        "service_provider"
+      ],
+      "domain": null,
+      "geography": "Cundinamarca",
+      "source": "co_procolombia",
+      "manufacturer_status": "service_provider",
+      "evidence": "ProColombia: social/design assistance organization, not direct manufacturer.",
+      "decision": "rejected",
+      "confidence": "high",
+      "decision_scope": "corporate",
+      "export_oriented": true,
+      "novelty": "genuinely_new"
+    },
+    {
+      "raw_entity": "C.I ALDI PRODUCTS S.A.S",
+      "canonical_account": "ci-aldi-products",
+      "legal_entity": "C.I ALDI PRODUCTS S.A.S",
+      "commercial_brand": null,
+      "parent_group": null,
+      "facility": null,
+      "subindustry": "packaging_plastics",
+      "business_models": [
+        "exporter",
+        "distributor"
+      ],
+      "domain": null,
+      "geography": "Norte de Santander",
+      "source": "co_procolombia",
+      "manufacturer_status": "ambiguous",
+      "evidence": "ProColombia: comercializadora internacional; packaging category but manufacturing not established.",
+      "decision": "borderline",
+      "confidence": "low",
+      "decision_scope": "unknown",
+      "export_oriented": true,
+      "novelty": "genuinely_new"
+    },
+    {
+      "raw_entity": "COTECMAR",
+      "canonical_account": "cotecmar",
+      "legal_entity": "Corporación de Ciencia y Tecnología para el Desarrollo de la Industria Naval",
+      "commercial_brand": "COTECMAR",
+      "parent_group": null,
+      "facility": "Mamonal shipyard",
+      "subindustry": "metalworking_machinery",
+      "business_models": [
+        "manufacturer",
+        "service_provider"
+      ],
+      "domain": null,
+      "geography": "Bolívar",
+      "source": "co_procolombia",
+      "manufacturer_status": "verified_manufacturer",
+      "evidence": "ProColombia: naval construction and technology organization; facility is discovery object, not separate account.",
+      "decision": "accepted",
+      "confidence": "high",
+      "decision_scope": "corporate",
+      "export_oriented": true,
+      "novelty": "genuinely_new"
+    },
+    {
+      "raw_entity": "ENERGIA SOLAR ESWINDOWS (TECNOGLASS)",
+      "canonical_account": "energia-solar-eswindows",
+      "legal_entity": "Energía Solar ESWindows S.A.S.",
+      "commercial_brand": "ESWindows",
+      "parent_group": "Tecnoglass",
+      "facility": null,
+      "subindustry": "metalworking_machinery",
+      "business_models": [
+        "manufacturer",
+        "exporter"
+      ],
+      "domain": null,
+      "geography": "Atlántico",
+      "source": "co_procolombia",
+      "manufacturer_status": "manufacturer_and_exporter",
+      "evidence": "ProColombia: glass/window manufacturing; explicit Tecnoglass group relationship.",
+      "decision": "accepted",
+      "confidence": "high",
+      "decision_scope": "group",
+      "export_oriented": true,
+      "novelty": "genuinely_new"
+    },
+    {
+      "raw_entity": "CI INDUSTRIAS HUMCAR",
+      "canonical_account": "industrias-humcar",
+      "legal_entity": "CI INDUSTRIAS HUMCAR",
+      "commercial_brand": null,
+      "parent_group": null,
+      "facility": null,
+      "subindustry": "packaging_plastics",
+      "business_models": [
+        "exporter",
+        "distributor"
+      ],
+      "domain": null,
+      "geography": "Norte de Santander",
+      "source": "co_procolombia",
+      "manufacturer_status": "ambiguous",
+      "evidence": "ProColombia: comercializadora internacional of corrugated boxes; producer identity unresolved.",
+      "decision": "borderline",
+      "confidence": "low",
+      "decision_scope": "unknown",
+      "export_oriented": true,
+      "novelty": "genuinely_new"
+    }
+  ],
+  "source_bias_profiles": [
+    {
+      "source": "co_andi",
+      "sample_size": 5,
+      "company_size_tendency": "large/formal members",
+      "geographic_tendency": "national_unknown (40%)",
+      "exporter_share": 0.8,
+      "industry_tendency": "food_beverage (100%)",
+      "formal_membership_tendency": "high",
+      "digital_presence_tendency": "partially provider-resolved",
+      "confidence": "low",
+      "evidence_basis": "live_source"
+    },
+    {
+      "source": "co_procolombia",
+      "sample_size": 25,
+      "company_size_tendency": "export-ready formal firms",
+      "geographic_tendency": "Cundinamarca (44%)",
+      "exporter_share": 1,
+      "industry_tendency": "multi-subindustry",
+      "formal_membership_tendency": "not_applicable_export_event",
+      "digital_presence_tendency": "partially provider-resolved",
+      "confidence": "low",
+      "evidence_basis": "live_source"
+    }
+  ],
+  "source_comparison": [
+    {
+      "source": "co_andi",
+      "sample": 5,
+      "manufacturer_precision": 1,
+      "digital_resolution": 0.8,
+      "novel_qualified": 5,
+      "incremental_canonical": 5,
+      "subindustries_added": [
+        "food_beverage"
+      ],
+      "recommended_role": "subindustry_discovery",
+      "confidence": "benchmarked"
+    },
+    {
+      "source": "co_procolombia",
+      "sample": 25,
+      "manufacturer_precision": 0.68,
+      "digital_resolution": 0.12,
+      "novel_qualified": 17,
+      "incremental_canonical": 17,
+      "subindustries_added": [
+        "metalworking_machinery",
+        "packaging_plastics",
+        "chemicals_cosmetics",
+        "textiles_apparel"
+      ],
+      "recommended_role": "exporter_discovery",
+      "confidence": "benchmarked"
+    }
+  ],
+  "source_performance_snapshots": [
+    {
+      "source_id": "co_andi",
+      "cycle_id": "discovery-v2-colombia-manufacturing-live-001",
+      "benchmark_cell": "manufacturing/procurement/supplier_addition",
+      "captured_at": "2026-08-07",
+      "country": "CO",
+      "candidates_discovered": 5,
+      "valid_entities": 5,
+      "correct_business_models": 5,
+      "context_compatible": 5,
+      "evidence_sufficient": 5,
+      "opportunity_plausible": 5,
+      "portfolio_accounts": 0,
+      "outcome_state": "awaiting_real_outcomes"
+    },
+    {
+      "source_id": "co_procolombia",
+      "cycle_id": "discovery-v2-colombia-manufacturing-live-001",
+      "benchmark_cell": "manufacturing/procurement/supplier_addition",
+      "captured_at": "2026-08-07",
+      "country": "CO",
+      "candidates_discovered": 25,
+      "valid_entities": 25,
+      "correct_business_models": 17,
+      "context_compatible": 17,
+      "evidence_sufficient": 17,
+      "opportunity_plausible": 17,
+      "portfolio_accounts": 0,
+      "outcome_state": "awaiting_real_outcomes"
+    }
+  ],
+  "subindustry_divergence": {
+    "state": "high",
+    "reason": "6/6 subindustries depend on one observed source; precision spread 1.00.",
+    "profiles": [
+      {
+        "subindustry": "food_beverage",
+        "sources": [
+          "co_andi"
+        ],
+        "entities": 5,
+        "verified_manufacturers": 5,
+        "manufacturer_precision": 1,
+        "biggest_gap": "digital_resolution"
+      },
+      {
+        "subindustry": "metalworking_machinery",
+        "sources": [
+          "co_procolombia"
+        ],
+        "entities": 7,
+        "verified_manufacturers": 7,
+        "manufacturer_precision": 1,
+        "biggest_gap": "digital_resolution"
+      },
+      {
+        "subindustry": "packaging_plastics",
+        "sources": [
+          "co_procolombia"
+        ],
+        "entities": 7,
+        "verified_manufacturers": 5,
+        "manufacturer_precision": 0.714,
+        "biggest_gap": "manufacturer_identity"
+      },
+      {
+        "subindustry": "chemicals_cosmetics",
+        "sources": [
+          "co_procolombia"
+        ],
+        "entities": 5,
+        "verified_manufacturers": 4,
+        "manufacturer_precision": 0.8,
+        "biggest_gap": "digital_resolution"
+      },
+      {
+        "subindustry": "textiles_apparel",
+        "sources": [
+          "co_procolombia"
+        ],
+        "entities": 3,
+        "verified_manufacturers": 1,
+        "manufacturer_precision": 0.333,
+        "biggest_gap": "digital_resolution"
+      },
+      {
+        "subindustry": "other",
+        "sources": [
+          "co_procolombia"
+        ],
+        "entities": 3,
+        "verified_manufacturers": 0,
+        "manufacturer_precision": 0,
+        "biggest_gap": "digital_resolution"
+      }
+    ]
+  },
+  "saturation": [
+    {
+      "processed": 10,
+      "resolved": 10,
+      "qualified": 10,
+      "novel": 10,
+      "incremental_qualified": 10,
+      "duplicate_rate": 0,
+      "group_concentration": 0.03333333333333333,
+      "subindustry_concentration": 0.5
+    },
+    {
+      "processed": 20,
+      "resolved": 20,
+      "qualified": 19,
+      "novel": 20,
+      "incremental_qualified": 9,
+      "duplicate_rate": 0,
+      "group_concentration": 0.03333333333333333,
+      "subindustry_concentration": 0.25
+    },
+    {
+      "processed": 30,
+      "resolved": 30,
+      "qualified": 22,
+      "novel": 30,
+      "incremental_qualified": 3,
+      "duplicate_rate": 0,
+      "group_concentration": 0.03333333333333333,
+      "subindustry_concentration": 0.23333333333333334
+    }
+  ],
+  "diversity": {
+    "geographic": 0.3333333333333333,
+    "parent_group": 1,
+    "business_model": 0.16666666666666666,
+    "subindustry": 0.2,
+    "mechanism": 0.03333333333333333
+  },
+  "digital_resolution_rate": 0.233,
+  "manufacturer_precision": 0.733,
+  "exporter_bias": 0.967,
+  "evidence_sufficient_yield": 0.733,
+  "opportunity_plausible_yield": 0.733,
+  "novelty_yield": 1,
+  "rejections": [
+    {
+      "reason": "service_provider",
+      "count": 2
+    },
+    {
+      "reason": "distributor_only",
+      "count": 1
+    },
+    {
+      "reason": "importer_only",
+      "count": 1
+    }
+  ],
+  "provider_calls": [
+    {
+      "provider": "tavily",
+      "purpose": "minimal_validation",
+      "source": null,
+      "candidate": null,
+      "benchmark": "discovery-v2-colombia-manufacturing-live-001",
+      "timestamp": "2026-08-07T22:30:00.000Z",
+      "success": true,
+      "latency_ms": 1438,
+      "estimated_cost_usd": null,
+      "actual_cost_usd": null,
+      "safe_error": null,
+      "result_count": 1
+    },
+    {
+      "provider": "brave",
+      "purpose": "minimal_validation",
+      "source": null,
+      "candidate": null,
+      "benchmark": "discovery-v2-colombia-manufacturing-live-001",
+      "timestamp": "2026-08-07T22:30:00.000Z",
+      "success": true,
+      "latency_ms": 877,
+      "estimated_cost_usd": null,
+      "actual_cost_usd": null,
+      "safe_error": null,
+      "result_count": 1
+    },
+    {
+      "provider": "serper",
+      "purpose": "minimal_validation",
+      "source": null,
+      "candidate": null,
+      "benchmark": "discovery-v2-colombia-manufacturing-live-001",
+      "timestamp": "2026-08-07T22:30:00.000Z",
+      "success": false,
+      "latency_ms": 537,
+      "estimated_cost_usd": null,
+      "actual_cost_usd": null,
+      "safe_error": "HTTP 400: not enough credits",
+      "result_count": 0
+    },
+    {
+      "provider": "firecrawl",
+      "purpose": "minimal_validation",
+      "source": null,
+      "candidate": null,
+      "benchmark": "discovery-v2-colombia-manufacturing-live-001",
+      "timestamp": "2026-08-07T22:30:00.000Z",
+      "success": true,
+      "latency_ms": 1704,
+      "estimated_cost_usd": null,
+      "actual_cost_usd": null,
+      "safe_error": null,
+      "result_count": 1
+    },
+    {
+      "provider": "tavily",
+      "purpose": "search_cohort",
+      "source": "search_engine",
+      "candidate": null,
+      "benchmark": "discovery-v2-colombia-manufacturing-live-001",
+      "timestamp": "2026-08-07T22:30:00.000Z",
+      "success": true,
+      "latency_ms": 1251,
+      "estimated_cost_usd": null,
+      "actual_cost_usd": null,
+      "safe_error": null,
+      "result_count": 5
+    },
+    {
+      "provider": "brave",
+      "purpose": "search_cohort",
+      "source": "search_engine",
+      "candidate": null,
+      "benchmark": "discovery-v2-colombia-manufacturing-live-001",
+      "timestamp": "2026-08-07T22:30:00.000Z",
+      "success": true,
+      "latency_ms": 1066,
+      "estimated_cost_usd": null,
+      "actual_cost_usd": null,
+      "safe_error": null,
+      "result_count": 5
+    },
+    {
+      "provider": "tavily",
+      "purpose": "search_cohort",
+      "source": "search_engine",
+      "candidate": null,
+      "benchmark": "discovery-v2-colombia-manufacturing-live-001",
+      "timestamp": "2026-08-07T22:30:00.000Z",
+      "success": true,
+      "latency_ms": 1525,
+      "estimated_cost_usd": null,
+      "actual_cost_usd": null,
+      "safe_error": null,
+      "result_count": 5
+    },
+    {
+      "provider": "brave",
+      "purpose": "search_cohort",
+      "source": "search_engine",
+      "candidate": null,
+      "benchmark": "discovery-v2-colombia-manufacturing-live-001",
+      "timestamp": "2026-08-07T22:30:00.000Z",
+      "success": true,
+      "latency_ms": 625,
+      "estimated_cost_usd": null,
+      "actual_cost_usd": null,
+      "safe_error": null,
+      "result_count": 5
+    },
+    {
+      "provider": "tavily",
+      "purpose": "search_cohort",
+      "source": "search_engine",
+      "candidate": null,
+      "benchmark": "discovery-v2-colombia-manufacturing-live-001",
+      "timestamp": "2026-08-07T22:30:00.000Z",
+      "success": true,
+      "latency_ms": 1595,
+      "estimated_cost_usd": null,
+      "actual_cost_usd": null,
+      "safe_error": null,
+      "result_count": 5
+    },
+    {
+      "provider": "firecrawl",
+      "purpose": "domain_resolution",
+      "source": "co_andi",
+      "candidate": "aak-colombia",
+      "benchmark": "discovery-v2-colombia-manufacturing-live-001",
+      "timestamp": "2026-08-07T22:30:00.000Z",
+      "success": true,
+      "latency_ms": 1521,
+      "estimated_cost_usd": null,
+      "actual_cost_usd": null,
+      "safe_error": null,
+      "result_count": 1
+    },
+    {
+      "provider": "firecrawl",
+      "purpose": "domain_resolution",
+      "source": "co_andi",
+      "candidate": "comestibles-aldor",
+      "benchmark": "discovery-v2-colombia-manufacturing-live-001",
+      "timestamp": "2026-08-07T22:30:00.000Z",
+      "success": true,
+      "latency_ms": 1599,
+      "estimated_cost_usd": null,
+      "actual_cost_usd": null,
+      "safe_error": null,
+      "result_count": 1
+    },
+    {
+      "provider": "firecrawl",
+      "purpose": "domain_resolution",
+      "source": "co_andi",
+      "candidate": "team-foods-colombia",
+      "benchmark": "discovery-v2-colombia-manufacturing-live-001",
+      "timestamp": "2026-08-07T22:30:00.000Z",
+      "success": true,
+      "latency_ms": 1183,
+      "estimated_cost_usd": null,
+      "actual_cost_usd": null,
+      "safe_error": null,
+      "result_count": 1
+    },
+    {
+      "provider": "firecrawl",
+      "purpose": "domain_resolution",
+      "source": "co_andi",
+      "candidate": "alimentos-carnicos",
+      "benchmark": "discovery-v2-colombia-manufacturing-live-001",
+      "timestamp": "2026-08-07T22:30:00.000Z",
+      "success": true,
+      "latency_ms": 1565,
+      "estimated_cost_usd": null,
+      "actual_cost_usd": null,
+      "safe_error": null,
+      "result_count": 1
+    },
+    {
+      "provider": "firecrawl",
+      "purpose": "domain_resolution",
+      "source": "co_andi",
+      "candidate": "alpina-productos-alimenticios",
+      "benchmark": "discovery-v2-colombia-manufacturing-live-001",
+      "timestamp": "2026-08-07T22:30:00.000Z",
+      "success": true,
+      "latency_ms": 1640,
+      "estimated_cost_usd": null,
+      "actual_cost_usd": null,
+      "safe_error": null,
+      "result_count": 1
+    },
+    {
+      "provider": "firecrawl",
+      "purpose": "domain_resolution",
+      "source": "co_procolombia",
+      "candidate": "abracol",
+      "benchmark": "discovery-v2-colombia-manufacturing-live-001",
+      "timestamp": "2026-08-07T22:30:00.000Z",
+      "success": true,
+      "latency_ms": 2947,
+      "estimated_cost_usd": null,
+      "actual_cost_usd": null,
+      "safe_error": null,
+      "result_count": 1
+    },
+    {
+      "provider": "firecrawl",
+      "purpose": "domain_resolution",
+      "source": "co_procolombia",
+      "candidate": "acerarq",
+      "benchmark": "discovery-v2-colombia-manufacturing-live-001",
+      "timestamp": "2026-08-07T22:30:00.000Z",
+      "success": true,
+      "latency_ms": 2298,
+      "estimated_cost_usd": null,
+      "actual_cost_usd": null,
+      "safe_error": null,
+      "result_count": 1
+    },
+    {
+      "provider": "firecrawl",
+      "purpose": "domain_resolution",
+      "source": "co_procolombia",
+      "candidate": "acesco-colombia",
+      "benchmark": "discovery-v2-colombia-manufacturing-live-001",
+      "timestamp": "2026-08-07T22:30:00.000Z",
+      "success": true,
+      "latency_ms": 1510,
+      "estimated_cost_usd": null,
+      "actual_cost_usd": null,
+      "safe_error": null,
+      "result_count": 1
+    },
+    {
+      "provider": "firecrawl",
+      "purpose": "domain_resolution",
+      "source": "co_procolombia",
+      "candidate": "aluica",
+      "benchmark": "discovery-v2-colombia-manufacturing-live-001",
+      "timestamp": "2026-08-07T22:30:00.000Z",
+      "success": true,
+      "latency_ms": 1407,
+      "estimated_cost_usd": null,
+      "actual_cost_usd": null,
+      "safe_error": null,
+      "result_count": 1
+    },
+    {
+      "provider": "firecrawl",
+      "purpose": "domain_resolution",
+      "source": "co_procolombia",
+      "candidate": "balkran",
+      "benchmark": "discovery-v2-colombia-manufacturing-live-001",
+      "timestamp": "2026-08-07T22:30:00.000Z",
+      "success": true,
+      "latency_ms": 1637,
+      "estimated_cost_usd": null,
+      "actual_cost_usd": null,
+      "safe_error": null,
+      "result_count": 1
+    }
+  ],
+  "verification_economics": {
+    "actual_cost_usd": null,
+    "estimated_cost_usd": null,
+    "cost_state": "unknown_not_invented",
+    "cost_per_verified_manufacturer": null,
+    "cost_per_context_compatible": null,
+    "cost_per_evidence_sufficient": null,
+    "cost_per_novel_qualified": null
+  },
+  "review": {
+    "strong": [
+      {
+        "raw_entity": "AAK Colombia SAS",
+        "canonical_account": "aak-colombia",
+        "legal_entity": "AAK Colombia SAS",
+        "commercial_brand": "AAK",
+        "parent_group": "AAK Group",
+        "facility": null,
+        "subindustry": "food_beverage",
+        "business_models": [
+          "manufacturer",
+          "exporter"
+        ],
+        "domain": "aak.com",
+        "geography": "national_unknown",
+        "source": "co_andi",
+        "manufacturer_status": "manufacturer_and_exporter",
+        "evidence": "ANDI Cámara de Alimentos affiliate; food ingredients manufacturer.",
+        "decision": "accepted",
+        "confidence": "high",
+        "decision_scope": "corporate",
+        "export_oriented": true,
+        "novelty": "genuinely_new"
+      },
+      {
+        "raw_entity": "Comestibles Aldor S.A.",
+        "canonical_account": "comestibles-aldor",
+        "legal_entity": "Comestibles Aldor S.A.",
+        "commercial_brand": "Aldor",
+        "parent_group": null,
+        "facility": null,
+        "subindustry": "food_beverage",
+        "business_models": [
+          "manufacturer",
+          "exporter"
+        ],
+        "domain": "aldoronline.com",
+        "geography": "Valle del Cauca",
+        "source": "co_andi",
+        "manufacturer_status": "manufacturer_and_exporter",
+        "evidence": "ANDI food-industry affiliate; confectionery production.",
+        "decision": "accepted",
+        "confidence": "high",
+        "decision_scope": "corporate",
+        "export_oriented": true,
+        "novelty": "genuinely_new"
+      },
+      {
+        "raw_entity": "Team Foods Colombia S.A.",
+        "canonical_account": "team-foods-colombia",
+        "legal_entity": "Team Foods Colombia S.A.",
+        "commercial_brand": "TEAM",
+        "parent_group": "Team Foods",
+        "facility": null,
+        "subindustry": "food_beverage",
+        "business_models": [
+          "manufacturer",
+          "exporter"
+        ],
+        "domain": null,
+        "geography": "national_unknown",
+        "source": "co_andi",
+        "manufacturer_status": "manufacturer_and_exporter",
+        "evidence": "ANDI food-industry affiliate; edible oils and foods.",
+        "decision": "accepted",
+        "confidence": "high",
+        "decision_scope": "group",
+        "export_oriented": true,
+        "novelty": "genuinely_new"
+      },
+      {
+        "raw_entity": "Alimentos Cárnicos S.A.S.",
+        "canonical_account": "alimentos-carnicos",
+        "legal_entity": "Alimentos Cárnicos S.A.S.",
+        "commercial_brand": null,
+        "parent_group": "Grupo Nutresa",
+        "facility": null,
+        "subindustry": "food_beverage",
+        "business_models": [
+          "manufacturer"
+        ],
+        "domain": "alimentoscarnicos.com.co",
+        "geography": "Antioquia",
+        "source": "co_andi",
+        "manufacturer_status": "verified_manufacturer",
+        "evidence": "ANDI food-industry affiliate; processed-food operating subsidiary.",
+        "decision": "accepted",
+        "confidence": "high",
+        "decision_scope": "group",
+        "export_oriented": false,
+        "novelty": "genuinely_new"
+      },
+      {
+        "raw_entity": "Alpina Productos Alimenticios S.A.",
+        "canonical_account": "alpina-productos-alimenticios",
+        "legal_entity": "Alpina Productos Alimenticios S.A.",
+        "commercial_brand": "Alpina",
+        "parent_group": null,
+        "facility": null,
+        "subindustry": "food_beverage",
+        "business_models": [
+          "manufacturer",
+          "distributor",
+          "exporter"
+        ],
+        "domain": "alpina.com",
+        "geography": "Cundinamarca",
+        "source": "co_andi",
+        "manufacturer_status": "manufacturer_and_exporter",
+        "evidence": "ANDI food-industry affiliate; direct production and export activity.",
+        "decision": "accepted",
+        "confidence": "high",
+        "decision_scope": "corporate",
+        "export_oriented": true,
+        "novelty": "genuinely_new"
+      },
+      {
+        "raw_entity": "ABRACOL SA",
+        "canonical_account": "abracol",
+        "legal_entity": "ABRACOL SA",
+        "commercial_brand": "Abracol",
+        "parent_group": null,
+        "facility": null,
+        "subindustry": "metalworking_machinery",
+        "business_models": [
+          "manufacturer",
+          "distributor",
+          "exporter"
+        ],
+        "domain": "abracol.com",
+        "geography": "Antioquia",
+        "source": "co_procolombia",
+        "manufacturer_status": "manufacturer_and_exporter",
+        "evidence": "ProColombia: productora, comercializadora y exportadora de abrasivos.",
+        "decision": "accepted",
+        "confidence": "high",
+        "decision_scope": "corporate",
+        "export_oriented": true,
+        "novelty": "genuinely_new"
+      },
+      {
+        "raw_entity": "ACERARQ S.A.S. BIC",
+        "canonical_account": "acerarq",
+        "legal_entity": "ACERARQ S.A.S. BIC",
+        "commercial_brand": "Acerarq",
+        "parent_group": null,
+        "facility": null,
+        "subindustry": "metalworking_machinery",
+        "business_models": [
+          "manufacturer",
+          "service_provider"
+        ],
+        "domain": "acerarq.com",
+        "geography": "Cundinamarca",
+        "source": "co_procolombia",
+        "manufacturer_status": "verified_manufacturer",
+        "evidence": "ProColombia: diseño, fabricación, armado y montaje de estructuras metálicas.",
+        "decision": "accepted",
+        "confidence": "high",
+        "decision_scope": "corporate",
+        "export_oriented": true,
+        "novelty": "genuinely_new"
+      },
+      {
+        "raw_entity": "ACESCO COLOMBIA SAS",
+        "canonical_account": "acesco-colombia",
+        "legal_entity": "ACESCO COLOMBIA SAS",
+        "commercial_brand": "Acesco",
+        "parent_group": "Grupo Acesco",
+        "facility": null,
+        "subindustry": "metalworking_machinery",
+        "business_models": [
+          "manufacturer",
+          "distributor",
+          "exporter"
+        ],
+        "domain": null,
+        "geography": "Atlántico",
+        "source": "co_procolombia",
+        "manufacturer_status": "manufacturer_and_exporter",
+        "evidence": "ProColombia: producción y comercialización de productos de acero.",
+        "decision": "accepted",
+        "confidence": "high",
+        "decision_scope": "group",
+        "export_oriented": true,
+        "novelty": "genuinely_new"
+      },
+      {
+        "raw_entity": "ALUICA S.A.S",
+        "canonical_account": "aluica",
+        "legal_entity": "ALUICA S.A.S",
+        "commercial_brand": "Aluica",
+        "parent_group": null,
+        "facility": null,
+        "subindustry": "metalworking_machinery",
+        "business_models": [
+          "manufacturer"
+        ],
+        "domain": null,
+        "geography": "Cundinamarca",
+        "source": "co_procolombia",
+        "manufacturer_status": "verified_manufacturer",
+        "evidence": "ProColombia: fabricación de perfiles de aluminio.",
+        "decision": "accepted",
+        "confidence": "high",
+        "decision_scope": "corporate",
+        "export_oriented": true,
+        "novelty": "genuinely_new"
+      },
+      {
+        "raw_entity": "BALKRAN INC SAS BIC",
+        "canonical_account": "balkran",
+        "legal_entity": "BALKRAN INC SAS BIC",
+        "commercial_brand": "Balkran",
+        "parent_group": null,
+        "facility": null,
+        "subindustry": "metalworking_machinery",
+        "business_models": [
+          "manufacturer",
+          "exporter"
+        ],
+        "domain": "cercasbalkran.com",
+        "geography": "Boyacá",
+        "source": "co_procolombia",
+        "manufacturer_status": "manufacturer_and_exporter",
+        "evidence": "ProColombia: fabricación de maquinaria agropecuaria y forestal.",
+        "decision": "accepted",
+        "confidence": "high",
+        "decision_scope": "corporate",
+        "export_oriented": true,
+        "novelty": "genuinely_new"
+      }
+    ],
+    "borderline": [
+      {
+        "raw_entity": "AMENIGROUP",
+        "canonical_account": "amenigroup",
+        "legal_entity": "AMENIGROUP",
+        "commercial_brand": null,
+        "parent_group": null,
+        "facility": null,
+        "subindustry": "chemicals_cosmetics",
+        "business_models": [
+          "manufacturer",
+          "brand_owner"
+        ],
+        "domain": null,
+        "geography": "Antioquia",
+        "source": "co_procolombia",
+        "manufacturer_status": "probable_manufacturer",
+        "evidence": "ProColombia: innovación en cuidado personal; manufacturing language not explicit.",
+        "decision": "borderline",
+        "confidence": "medium",
+        "decision_scope": "unknown",
+        "export_oriented": true,
+        "novelty": "genuinely_new"
+      },
+      {
+        "raw_entity": "CEB METALMECANICA SAS",
+        "canonical_account": "ceb-metalmecanica",
+        "legal_entity": "CEB METALMECANICA SAS",
+        "commercial_brand": null,
+        "parent_group": null,
+        "facility": null,
+        "subindustry": "textiles_apparel",
+        "business_models": [
+          "manufacturer"
+        ],
+        "domain": null,
+        "geography": "Cundinamarca",
+        "source": "co_procolombia",
+        "manufacturer_status": "verified_manufacturer",
+        "evidence": "ProColombia: fabricación de maquinaria para cortar y plegar telas.",
+        "decision": "borderline",
+        "confidence": "medium",
+        "decision_scope": "corporate",
+        "export_oriented": true,
+        "novelty": "genuinely_new"
+      },
+      {
+        "raw_entity": "C.I ALDI PRODUCTS S.A.S",
+        "canonical_account": "ci-aldi-products",
+        "legal_entity": "C.I ALDI PRODUCTS S.A.S",
+        "commercial_brand": null,
+        "parent_group": null,
+        "facility": null,
+        "subindustry": "packaging_plastics",
+        "business_models": [
+          "exporter",
+          "distributor"
+        ],
+        "domain": null,
+        "geography": "Norte de Santander",
+        "source": "co_procolombia",
+        "manufacturer_status": "ambiguous",
+        "evidence": "ProColombia: comercializadora internacional; packaging category but manufacturing not established.",
+        "decision": "borderline",
+        "confidence": "low",
+        "decision_scope": "unknown",
+        "export_oriented": true,
+        "novelty": "genuinely_new"
+      },
+      {
+        "raw_entity": "CI INDUSTRIAS HUMCAR",
+        "canonical_account": "industrias-humcar",
+        "legal_entity": "CI INDUSTRIAS HUMCAR",
+        "commercial_brand": null,
+        "parent_group": null,
+        "facility": null,
+        "subindustry": "packaging_plastics",
+        "business_models": [
+          "exporter",
+          "distributor"
+        ],
+        "domain": null,
+        "geography": "Norte de Santander",
+        "source": "co_procolombia",
+        "manufacturer_status": "ambiguous",
+        "evidence": "ProColombia: comercializadora internacional of corrugated boxes; producer identity unresolved.",
+        "decision": "borderline",
+        "confidence": "low",
+        "decision_scope": "unknown",
+        "export_oriented": true,
+        "novelty": "genuinely_new"
+      }
+    ],
+    "rejected": [
+      {
+        "raw_entity": "FUNDACIÓN CAMINOS DE IDENTIDAD - FUCAI",
+        "canonical_account": "fucai",
+        "legal_entity": "Fundación Caminos de Identidad",
+        "commercial_brand": "FUCAI",
+        "parent_group": null,
+        "facility": null,
+        "subindustry": "textiles_apparel",
+        "business_models": [
+          "service_provider"
+        ],
+        "domain": null,
+        "geography": "Cundinamarca",
+        "source": "co_procolombia",
+        "manufacturer_status": "service_provider",
+        "evidence": "ProColombia: NGO working with communities; apparel offering is not proof of manufacturing entity.",
+        "decision": "rejected",
+        "confidence": "high",
+        "decision_scope": "corporate",
+        "export_oriented": true,
+        "novelty": "genuinely_new"
+      },
+      {
+        "raw_entity": "ADOCOL SAS",
+        "canonical_account": "adocol",
+        "legal_entity": "ADOCOL SAS",
+        "commercial_brand": null,
+        "parent_group": null,
+        "facility": null,
+        "subindustry": "other",
+        "business_models": [
+          "distributor",
+          "reseller"
+        ],
+        "domain": null,
+        "geography": "Antioquia",
+        "source": "co_procolombia",
+        "manufacturer_status": "distributor_only",
+        "evidence": "ProColombia: representación y comercialización; no manufacturing evidence.",
+        "decision": "rejected",
+        "confidence": "high",
+        "decision_scope": "corporate",
+        "export_oriented": true,
+        "novelty": "genuinely_new"
+      },
+      {
+        "raw_entity": "BERTOLINI COLOMBIA SAS",
+        "canonical_account": "bertolini-colombia",
+        "legal_entity": "BERTOLINI COLOMBIA SAS",
+        "commercial_brand": "Bertolini",
+        "parent_group": null,
+        "facility": null,
+        "subindustry": "other",
+        "business_models": [
+          "importer",
+          "exporter",
+          "retailer"
+        ],
+        "domain": null,
+        "geography": "Atlántico",
+        "source": "co_procolombia",
+        "manufacturer_status": "importer_only",
+        "evidence": "ProColombia: importer/exporter of furniture; no local manufacture stated.",
+        "decision": "rejected",
+        "confidence": "high",
+        "decision_scope": "corporate",
+        "export_oriented": true,
+        "novelty": "genuinely_new"
+      },
+      {
+        "raw_entity": "ARTESANIAS DE COLOMBIA S.A BIC",
+        "canonical_account": "artesanias-de-colombia",
+        "legal_entity": "ARTESANIAS DE COLOMBIA S.A BIC",
+        "commercial_brand": "Artesanías de Colombia",
+        "parent_group": null,
+        "facility": null,
+        "subindustry": "other",
+        "business_models": [
+          "service_provider"
+        ],
+        "domain": null,
+        "geography": "Cundinamarca",
+        "source": "co_procolombia",
+        "manufacturer_status": "service_provider",
+        "evidence": "ProColombia: social/design assistance organization, not direct manufacturer.",
+        "decision": "rejected",
+        "confidence": "high",
+        "decision_scope": "corporate",
+        "export_oriented": true,
+        "novelty": "genuinely_new"
+      }
+    ],
+    "automated_decision_preserved": true
+  },
+  "relationships": [
+    {
+      "account": "aak-colombia",
+      "brand": "AAK",
+      "parent_group": "AAK Group",
+      "facility": null,
+      "facility_is_account": false,
+      "decision_scope": "corporate"
+    },
+    {
+      "account": "comestibles-aldor",
+      "brand": "Aldor",
+      "parent_group": null,
+      "facility": null,
+      "facility_is_account": false,
+      "decision_scope": "corporate"
+    },
+    {
+      "account": "team-foods-colombia",
+      "brand": "TEAM",
+      "parent_group": "Team Foods",
+      "facility": null,
+      "facility_is_account": false,
+      "decision_scope": "group"
+    },
+    {
+      "account": "alimentos-carnicos",
+      "brand": null,
+      "parent_group": "Grupo Nutresa",
+      "facility": null,
+      "facility_is_account": false,
+      "decision_scope": "group"
+    },
+    {
+      "account": "alpina-productos-alimenticios",
+      "brand": "Alpina",
+      "parent_group": null,
+      "facility": null,
+      "facility_is_account": false,
+      "decision_scope": "corporate"
+    },
+    {
+      "account": "abracol",
+      "brand": "Abracol",
+      "parent_group": null,
+      "facility": null,
+      "facility_is_account": false,
+      "decision_scope": "corporate"
+    },
+    {
+      "account": "acerarq",
+      "brand": "Acerarq",
+      "parent_group": null,
+      "facility": null,
+      "facility_is_account": false,
+      "decision_scope": "corporate"
+    },
+    {
+      "account": "acesco-colombia",
+      "brand": "Acesco",
+      "parent_group": "Grupo Acesco",
+      "facility": null,
+      "facility_is_account": false,
+      "decision_scope": "group"
+    },
+    {
+      "account": "aluica",
+      "brand": "Aluica",
+      "parent_group": null,
+      "facility": null,
+      "facility_is_account": false,
+      "decision_scope": "corporate"
+    },
+    {
+      "account": "balkran",
+      "brand": "Balkran",
+      "parent_group": null,
+      "facility": null,
+      "facility_is_account": false,
+      "decision_scope": "corporate"
+    },
+    {
+      "account": "aquafusion-colombia",
+      "brand": "Aquafusión",
+      "parent_group": null,
+      "facility": null,
+      "facility_is_account": false,
+      "decision_scope": "corporate"
+    },
+    {
+      "account": "eterna",
+      "brand": "Eterna",
+      "parent_group": null,
+      "facility": null,
+      "facility_is_account": false,
+      "decision_scope": "corporate"
+    },
+    {
+      "account": "fucai",
+      "brand": "FUCAI",
+      "parent_group": null,
+      "facility": null,
+      "facility_is_account": false,
+      "decision_scope": "corporate"
+    },
+    {
+      "account": "bertolini-colombia",
+      "brand": "Bertolini",
+      "parent_group": null,
+      "facility": null,
+      "facility_is_account": false,
+      "decision_scope": "corporate"
+    },
+    {
+      "account": "artesanias-de-colombia",
+      "brand": "Artesanías de Colombia",
+      "parent_group": null,
+      "facility": null,
+      "facility_is_account": false,
+      "decision_scope": "corporate"
+    },
+    {
+      "account": "cotecmar",
+      "brand": "COTECMAR",
+      "parent_group": null,
+      "facility": "Mamonal shipyard",
+      "facility_is_account": false,
+      "decision_scope": "corporate"
+    },
+    {
+      "account": "energia-solar-eswindows",
+      "brand": "ESWindows",
+      "parent_group": "Tecnoglass",
+      "facility": null,
+      "facility_is_account": false,
+      "decision_scope": "group"
+    }
+  ],
+  "complementarity": {
+    "discovery": "ProColombia adds 25 export-ready candidates; ANDI adds 5 high-authority food manufacturers.",
+    "identity": "Both supply legal/commercial names; group resolution requires follow-up.",
+    "business_model": "ProColombia descriptions distinguish production from commerce better than member logos alone.",
+    "domain": "Neither observed source reliably supplies domains; provider resolution is complementary.",
+    "geography": "ProColombia adds seven named regions; ANDI sample is more national/large-company biased.",
+    "subindustry": "ANDI is strongest for food; ProColombia adds packaging, chemicals, textiles and metalworking.",
+    "novelty": "No candidate matched current benchmark Account Memory fixture."
+  },
+  "learning": [
+    {
+      "recommendation": "Retain a base manufacturing plan and add subindustry overlays.",
+      "evidence": "High routing divergence across five groups; ANDI depth varies by chamber and ProColombia is exporter-biased.",
+      "sample": 30,
+      "context": "CO manufacturing procurement",
+      "data_basis": "mixed_live",
+      "uncertainty": "small controlled sample; no population inference",
+      "human_approval_required": true,
+      "auto_applied": false
+    },
+    {
+      "recommendation": "Use ProColombia as exporter discovery, not representative market coverage.",
+      "evidence": "Observed exporter-oriented share 97%.",
+      "sample": 30,
+      "context": "2026 exporter-event list",
+      "data_basis": "live_source",
+      "uncertainty": "selection frame is explicitly exporters",
+      "human_approval_required": true,
+      "auto_applied": false
+    },
+    {
+      "recommendation": "Keep generic search/domain providers as a digital-resolution layer.",
+      "evidence": "Direct source-domain yield was 0/30; hybrid resolved 7/10 attempts after rejecting one conflicting domain.",
+      "sample": 10,
+      "context": "official digital presence",
+      "data_basis": "live_provider",
+      "uncertainty": "bounded attempts",
+      "human_approval_required": true,
+      "auto_applied": false
+    }
+  ],
+  "generalization_status": "moderate_adjustments_required",
+  "stop_reason": "controlled_sample_complete_budget_respected",
+  "search_observations": [
+    {
+      "provider": "tavily",
+      "query": "fabricantes alimentos bebidas Colombia empresa planta producción",
+      "results": [
+        {
+          "title": "Alimentos Procesados Colombia | sectores | Invertir en Colombia",
+          "url": "https://investincolombia.com.co/es/sectores/agroindustria-y-produccion-de-alimentos/alimentos-procesados",
+          "snippet": "Imagen\n\nInfografía de alimentos procesados / Processed food infographic\n\nExisten más de 5.800 empresas dedicadas a la producción de bebidas, productos alimenticios, agricultura, ganadería y actividades de servicios relacionados, así como a la silvicultura y extracción de madera en el país.\n\n## Notic"
+        },
+        {
+          "title": "ANDI - Camaras Sectoriales",
+          "url": "https://www.andi.com.co/home/camara/16-industria-de-alimentos",
+          "snippet": "|  |  |  |  |\n|  |\n| Nutreo S.A.S | Omnilife de Colombia S.A.S | Pepsico Alimentos Colombia LTDA | QBCo S.A.S. |\n|  |  |  |  |\n|\n| Quala S.A. | Productos Ramo | Real SAS (Kerry) | Sanulac Nutrición Colombia |\n|  |  |  |\n|  |  |  |  |\n|\n| C.I. Sociedad Industrial de Grasas Vegetales SIGRA S.A. | Supe"
+        },
+        {
+          "title": "Los 10 principales fabricantes y proveedores de alimentos y bebidas en México - PreHeated",
+          "url": "https://thepreheated.com/top-10-fabrikanten-en-leveranciers-van-voedingsmiddelen-en-dranken-in-mexico",
+          "snippet": "PepsiCo Alimentos es una importante empresa de alimentos y bebidas en México, con 15 plantas de producción y 276 centros de distribución en todo el país. Se asocia con Grupo Gepp y otras embotelladoras para producir y distribuir marcas reconocidas como Sabritas, Gamesa (el mayor fabricante de gallet"
+        },
+        {
+          "title": "Empacadores y fabricantes de productos alimenticios",
+          "url": "https://www.dirind.com/dag/empacadores-fabricantes-productos-alimenticios1.html",
+          "snippet": "Tlapaleros No. 10  \n Col. Paseos de Churubusco  \n 09030 Iztapalapa, CDMX\n\nALTA: 2004-01-30\n\nUltima actualización: 2025-11-11\n\nCONNECT THE WORLD, S.A. DE C.V.\n\nElaboramos pulpa de aguacate y guacamole congelados al alto vacío en diferentes presentaciones y de acuerdo a las necesidades de nuestros cli"
+        },
+        {
+          "title": "FÁBRICAS DE ALIMENTOS CERTIFICADAS EN BUENAS ...",
+          "url": "https://www.datos.gov.co/widgets/jdjx-jx6d",
+          "snippet": "1. COMERCIALIZADORA FRESMAR SAS. DOSQUEBRADAS ; 2. GREEN LIKE NATURAL FOOD SAS. ARMENIA ; 3. LABORATORÍO ENERXIS SAS. BOGOTÁ ; 4. DNA DISTRINAL SAS. CARTAGENA ; 5.Read more"
+        }
+      ],
+      "latency_ms": 1251,
+      "cost_estimate_usd": null,
+      "error": null
+    },
+    {
+      "provider": "brave",
+      "query": "fabricantes empaques plásticos Colombia empresa planta",
+      "results": [
+        {
+          "title": "Fábrica de envases plásticos y botellas plásticas en Bogotá",
+          "url": "https://isoplasticos.com/",
+          "snippet": "<strong>Isoplasticos</strong> es una fábrica de envases plásticos ubicada en Bogotá Colombia. Fabricamos botellas, envases, tapas, potes y vasos plásticos."
+        },
+        {
+          "title": "Fábricas de Empaques en Colombia",
+          "url": "https://www.directoriodefabricas.com/colombia/fabricantes-de-empaques-en-colombia.html",
+          "snippet": "Es un proveedor de empaques que ofrece variedad de opciones para diversos sectores: Industria, Flores, Frutas, Laboratorios Farmacéuticos, Alimentos, Electrodomésticos, entre otros. Atiende requerimientos en todo el territorio Colombiano. ... <strong>Fábrica de empaques plásticos</strong>. Es una em"
+        },
+        {
+          "title": "Envases Plásticos | Fabricación y Comercialización | Endipack Ltda.",
+          "url": "https://endipack.com/",
+          "snippet": "Nuestra planta de producción esta ... y asepsia en todos nuestros procesos y productos. ... Somos una <strong>empresa dedicada a la fabricación de empaques plásticos</strong>, que trabaja para anticiparse a las necesidades de nuestros clientes, ..."
+        },
+        {
+          "title": "Paraplásticos – Fábrica de Envases Plásticos",
+          "url": "https://paraplasticos.com/",
+          "snippet": "<strong>Somos una empresa netamente fundada en Colombia en el año 1997 y dedicada a la fabricación de envases plásticos industriales mediante el proceso de inyección para diversos usos industriales como: pinturas, grasas, aceites, estucos, químicos, alimentos lácteos, entre otros. ... Empaque de</st"
+        },
+        {
+          "title": "Empaqplas - Bolsas y productos plásticos para industrias",
+          "url": "https://www.empaqplas.com.co/",
+          "snippet": "<strong>Empaqplas</strong> es una fábrica de plásticos Colombiana con más de 25 años de experiencia en la producción de bolsas plásticas y empaques eco-sostenibles, transparentes y con impresión flexográfica hasta 6 tintas."
+        }
+      ],
+      "latency_ms": 1066,
+      "cost_estimate_usd": null,
+      "error": null
+    },
+    {
+      "provider": "tavily",
+      "query": "fabricantes cosméticos aseo Colombia empresa planta",
+      "results": [
+        {
+          "title": "8 Laboratorios Cosméticos de Fabricación a Terceros en Colombia ...",
+          "url": "https://cosmeticlatam.com/2022/03/04/8-laboratorios-cosmeticos-de-fabricacion-a-terceros-en-colombia-a-tener-en-cuenta",
+          "snippet": "Prebel S.A. Es una empresa colombiana con una planta industrial, en la cual fabrica cosméticos, fragancias y productos de aseo personal, con una"
+        },
+        {
+          "title": "ESTABLECIMIENTOS FABRICANTES DE PRODUCTOS ...",
+          "url": "https://www.invima.gov.co/invima_website/static/attachments/cosmeticos_cosmeticos/establecimientos_certificacos_cosmeticos.pdf",
+          "snippet": "CUMPLE CON LAS CONDICIONES HIGIENICAS TECNICAS LOCATIVAS Y DE CONTROL DE CALIDAD PARA LA FABRICACION DE COSMETICOS EN FORMA DE LIQUIDOS SOLUCIONES SEMISOLIDOS: GELES 7/10/2014 121 CONSTELACION INDUSTRIAL DEL ASEO S.A.S 830061446 3 CR 59 No 5A 77 85 BOGOTA BOGOTA DC 4065016 CUMPLE CON LAS CONDICIONES"
+        },
+        {
+          "title": "Maquila de Cosméticos y Aseo en Colombia | MaquilaYa",
+          "url": "https://maquilaya.co/",
+          "snippet": "Saltar al contenido\n\nLaboratorio de Cosméticos y Aseo en Colombia | MaquilaYa\n\nLaboratorio de cosméticos y aseo en Colombia - MaquilaYa fabricación a terceros\n\nLaboratorio de maquila · Bogotá, Colombia\n\n# Laboratorio de Cosméticos y Aseo en Colombia\n\nEscala tu producción sin complicaciones.\n\nSomos e"
+        },
+        {
+          "title": "Planta de fabricación de cosméticos",
+          "url": "https://industriasbiggest.com/bignoticias/post/21_planta-cosmeticos?page_type=post",
+          "snippet": "INVIMA nos dio la capacidad para producir cosméticos para: niños, área de ojos, para la piel, los labios, aseo e higiene corporal, desodorantes y"
+        },
+        {
+          "title": "Trabajo de fabricante de cosmeticos | Portal de Empleo Computrabajo",
+          "url": "https://co.computrabajo.com/trabajo-de-fabricante-de-cosmeticos",
+          "snippet": "Las últimas vacantes de fabricante de cosmeticos de las mejores empresas de Colombia están aquí! 181 Ofertas de trabajo de fabricante de cosmeticos … $ 1.750."
+        }
+      ],
+      "latency_ms": 1525,
+      "cost_estimate_usd": null,
+      "error": null
+    },
+    {
+      "provider": "brave",
+      "query": "fabricantes textiles confecciones Colombia empresa",
+      "results": [
+        {
+          "title": "Empresas de confección de ropa: Industrias líderes en Colombia y la importancia del sector para el país",
+          "url": "https://cvn.com.co/empresas-de-confeccion-de-ropa-industrias",
+          "snippet": "Empresas como <strong>Coltejer, Fabricato, Tejicóndor, Protela, Gef, Enka,Textiles Lafayette y el Grupo Crystal que enmarca a Hilados, Toptex,Textilia,Textiles Miratex y Supertex</strong> hacen parte de las industrias del sector textil que gozan de más reconocimiento y posicionamiento en el mercado "
+        },
+        {
+          "title": "Las empresas líderes del sector textil y confecciones en Colombia - AmericaMalls & Retail",
+          "url": "https://america-retail.com/paises/colombia/las-empresas-lideres-del-sector-textil-y-confecciones-en-colombia",
+          "snippet": "Empresas como <strong>Manufacturas Eliot y Pash S.A.S</strong> han demostrado que, con innovación y adaptación, es posible alcanzar un crecimiento significativo incluso en un entorno económico desafiante."
+        },
+        {
+          "title": "pasión y compromiso en la industria textil - Fabricato",
+          "url": "https://www.fabricato.com/nuestra-empresa",
+          "snippet": "Somos líderes del mercado en Colombia en la comercialización y fabricación de productos textiles"
+        },
+        {
+          "title": "Empresa de Confección Textil en Bogotá | LP Confecciones",
+          "url": "https://lpconfecciones.com/",
+          "snippet": "Somos una <strong>empresa líder de confección textil en Bogotá, con más de 5 años de experiencia en el diseño, corte y confección de uniformes empresariales , escolares y clinicos</strong>."
+        },
+        {
+          "title": "Grupo Acrilan - Textiles de Colombia",
+          "url": "https://www.grupoacrilan.com/es",
+          "snippet": "Somos líderes en el sector textil desde 1983. Actualmente nuestra empresa cuenta con plantas de tejeduría, tintorería, confección y bordado.Ver más"
+        }
+      ],
+      "latency_ms": 625,
+      "cost_estimate_usd": null,
+      "error": null
+    },
+    {
+      "provider": "tavily",
+      "query": "fabricantes metalmecánica maquinaria Colombia empresa planta",
+      "results": [
+        {
+          "title": "Inicio - RIORION S.A.",
+          "url": "https://riorion.com.co/",
+          "snippet": "Somos una empresa metalmecánica colombiana que brinda soluciones relacionadas con el diseño, fabricación, montaje y mantenimiento de plantas industriales ...Read more"
+        },
+        {
+          "title": "Colombia Proveedores De La Industria Metalmecánica",
+          "url": "https://www.metalmecanica.com/colombia",
+          "snippet": "Arcmex Robotics, SA de CV · manizales, Caldas, 63173, · Llamar: 3111977225 ; Cluster Metalmecanico · Manizales, Caldas, 170006, · Llamar: +57 314 8187294 ; GI Group.Read more"
+        },
+        {
+          "title": "Presentación de Nuestras Dos Plantas de Mecanizados",
+          "url": "https://www.tiktok.com/@metalmecanica.y.m/video/7384109539072756998",
+          "snippet": "Descubre nuestra nueva planta de mecanizado, separando la producción en serie y fabricaciones especiales. @metalmecanica y mecanizados.Read more"
+        },
+        {
+          "title": "Servicio de Metalmecánica: Innovación y Calidad en Cada ...",
+          "url": "https://eygingenieria.com.co/servicio-de-metalmecanica",
+          "snippet": "En EYG Ingeniería ofrecemos el servicio profesional de metalmecánica, contamos con más de 13 años de experiencia en la industria, calidad al mejor precio."
+        },
+        {
+          "title": "Instagram",
+          "url": "https://www.instagram.com/reel/DPB7jBcjapa",
+          "snippet": "metaltec.cl's profile picture\nVideo by METALTEC SA on September 25, 2025.\nmetaltec.cl's profile picture\nmetaltec.cl's profile picture\nbastiand.c's profile picture\nasilvaf's profile picture\nVideo by METALTEC SA on July 22, 2025.\nVideo by METALTEC SA on March 17, 2026.\nVideo by METALTEC SA on May 27, "
+        }
+      ],
+      "latency_ms": 1595,
+      "cost_estimate_usd": null,
+      "error": null
+    }
+  ],
+  "domain_observations": [
+    {
+      "candidate": "aak-colombia",
+      "provider": "firecrawl",
+      "domain": "aak.com",
+      "confidence": "probable",
+      "latency_ms": 1521,
+      "cost_estimate_usd": null,
+      "error": null
+    },
+    {
+      "candidate": "comestibles-aldor",
+      "provider": "firecrawl",
+      "domain": "aldoronline.com",
+      "confidence": "probable",
+      "latency_ms": 1599,
+      "cost_estimate_usd": null,
+      "error": null
+    },
+    {
+      "candidate": "team-foods-colombia",
+      "provider": "firecrawl",
+      "domain": null,
+      "confidence": "conflicting",
+      "latency_ms": 1183,
+      "cost_estimate_usd": null,
+      "error": null
+    },
+    {
+      "candidate": "alimentos-carnicos",
+      "provider": "firecrawl",
+      "domain": "alimentoscarnicos.com.co",
+      "confidence": "probable",
+      "latency_ms": 1565,
+      "cost_estimate_usd": null,
+      "error": null
+    },
+    {
+      "candidate": "alpina-productos-alimenticios",
+      "provider": "firecrawl",
+      "domain": "alpina.com",
+      "confidence": "probable",
+      "latency_ms": 1640,
+      "cost_estimate_usd": null,
+      "error": null
+    },
+    {
+      "candidate": "abracol",
+      "provider": "firecrawl",
+      "domain": "abracol.com",
+      "confidence": "probable",
+      "latency_ms": 2947,
+      "cost_estimate_usd": null,
+      "error": null
+    },
+    {
+      "candidate": "acerarq",
+      "provider": "firecrawl",
+      "domain": "acerarq.com",
+      "confidence": "probable",
+      "latency_ms": 2298,
+      "cost_estimate_usd": null,
+      "error": null
+    },
+    {
+      "candidate": "acesco-colombia",
+      "provider": "firecrawl",
+      "domain": null,
+      "confidence": "none",
+      "latency_ms": 1510,
+      "cost_estimate_usd": null,
+      "error": null
+    },
+    {
+      "candidate": "aluica",
+      "provider": "firecrawl",
+      "domain": null,
+      "confidence": "none",
+      "latency_ms": 1407,
+      "cost_estimate_usd": null,
+      "error": null
+    },
+    {
+      "candidate": "balkran",
+      "provider": "firecrawl",
+      "domain": "cercasbalkran.com",
+      "confidence": "probable",
+      "latency_ms": 1637,
+      "cost_estimate_usd": null,
+      "error": null
+    }
+  ]
+}

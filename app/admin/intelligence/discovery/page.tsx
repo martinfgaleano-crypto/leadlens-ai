@@ -15,6 +15,8 @@ import {
   SOURCE_RESEARCH_QUEUE_V2, buildCountryCoverage, routeCoverage, businessModelCoverage,
   coverageGapsV2, internationalReadiness, providerDiagnostic, v22Audit,
 } from "@/lib/discovery/source-intelligence/coverage";
+import { MANUFACTURING_RESEARCH_QUEUE } from "@/lib/discovery/source-intelligence/manufacturing-live";
+import manufacturingArtifact from "@/artifacts/discovery/discovery-v2-colombia-manufacturing-live-001.json";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Discovery Intelligence · LeadLens", robots: { index: false, follow: false } };
@@ -102,6 +104,7 @@ export default function DiscoveryObservatory({ searchParams }: { searchParams?: 
       <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(300px,1fr))",gap:12}}><CoverageList title="Rutas" rows={routeRows.map(x=>({name:x.route,detail:`${x.specialized_sources} fuentes especializadas · ${x.clusters} clusters`}))}/><CoverageList title="Modelos" rows={modelRows.map(x=>({name:x.business_model,detail:`${x.specialized_sources} fuentes especializadas · ${x.clusters} clusters`}))}/></div>
 
       <h2 style={{color:C.navy,fontSize:16}}>Cola de benchmarks</h2><QueueTable rows={COLOMBIA_BENCHMARK_QUEUE.map(x=>({priority:x.priority,name:x.id,state:x.benchmark_state,why:x.rationale}))}/>
+      <ManufacturingBenchmarkSection />
       <h2 style={{color:C.navy,fontSize:16}}>Top 10 investigación de fuentes</h2><QueueTable rows={SOURCE_RESEARCH_QUEUE_V2.map((x,i)=>({priority:i+1,name:`${x.candidate_source} · ${x.cluster}`,state:x.status,why:`${x.gap}: ${x.objective}`}))}/>
       <h2 style={{color:C.navy,fontSize:16}}>Top brechas accionables</h2><CoverageList title="Brechas" rows={v2gaps.map(x=>({name:`${x.severity} · ${x.type}${x.cluster?` · ${x.cluster}`:""}`,detail:`${x.evidence} → ${x.next_action}`}))}/>
 
@@ -141,6 +144,24 @@ export default function DiscoveryObservatory({ searchParams }: { searchParams?: 
 function Filter({name,label,values,selected}:{name:string;label:string;values:string[];selected:string}){return <label style={{fontSize:11,color:C.muted}}>{label}<select name={name} defaultValue={selected} style={{display:"block",width:"100%",padding:6,border:`1px solid ${C.line}`,borderRadius:4,background:"white"}}><option value="">Todos</option>{values.sort().map(v=><option key={v}>{v}</option>)}</select></label>}
 function CoverageList({title,rows}:{title:string;rows:{name:string;detail:string}[]}){return <div style={box}><b>{title}</b>{rows.map(x=><div key={x.name} style={{fontSize:11.5,padding:"4px 0",borderBottom:`1px solid ${C.line}`}}><code>{x.name}</code> — {x.detail}</div>)}</div>}
 function QueueTable({rows}:{rows:{priority:number;name:string;state:string;why:string}[]}){return <div style={box}>{rows.map(x=><div key={x.name} style={{fontSize:12,padding:"5px 0",borderBottom:`1px solid ${C.line}`}}><b>#{x.priority} {x.name}</b> <i>[{x.state}]</i><br/><span style={{color:C.muted}}>{x.why}</span></div>)}</div>}
+
+function ManufacturingBenchmarkSection(){
+ const a=manufacturingArtifact;
+ const pct=(x:number|null)=>x===null?"n/d":`${Math.round(x*100)}%`;
+ return <section>
+  <h2 style={{color:C.navy,fontSize:17}}><span style={{background:"#3E6B8A",color:"white",padding:"2px 7px",borderRadius:4,fontSize:10,marginRight:7}}>CELDA #2 · EN VIVO</span>Manufacturing · procurement · supplier addition</h2>
+  <div style={{...box,background:"#EDF3F7",fontSize:12}}><b>{a.id}</b> · muestra {a.candidates.length} · 2 fuentes especializadas · {a.provider_calls.length} llamadas auditadas · manufacturer precision <b>{pct(a.manufacturer_precision)}</b> · digital resolution <b>{pct(a.digital_resolution_rate)}</b> · divergencia <b>{a.subindustry_divergence.state}</b>. Todos los porcentajes describen esta muestra, no la población colombiana.</div>
+  <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(300px,1fr))",gap:12}}>
+   <div style={box}><b>Comparación de fuentes</b>{a.source_comparison.map(s=><div key={s.source} style={{fontSize:11.5,padding:"5px 0",borderBottom:`1px solid ${C.line}`}}><b>{s.source}</b> · n={s.sample} · fabricantes {pct(s.manufacturer_precision)} · digital {pct(s.digital_resolution)} · nuevos calificados {s.novel_qualified}<br/><span style={{color:C.muted}}>{s.recommended_role} · {s.subindustries_added.join(", ")}</span></div>)}</div>
+   <div style={box}><b>Composición observada / sesgo</b>{a.source_bias_profiles.map(s=><div key={s.source} style={{fontSize:11.5,padding:"5px 0",borderBottom:`1px solid ${C.line}`}}><b>{s.source}</b> · exportador {pct(s.exporter_share)} · {s.geographic_tendency}<br/><span style={{color:C.muted}}>{s.company_size_tendency} · {s.industry_tendency} · conf {s.confidence}</span></div>)}</div>
+  </div>
+  <div style={box}><b>Divergencia por subindustria — {a.subindustry_divergence.state}</b><table style={{width:"100%",borderCollapse:"collapse",fontSize:11.5,marginTop:6}}><thead><tr style={{background:C.navy,color:"white",textAlign:"left"}}><th style={{padding:5}}>Subindustria</th><th>Fuente</th><th>Raw</th><th>Fabricantes</th><th>Precisión</th><th>Brecha</th></tr></thead><tbody>{a.subindustry_divergence.profiles.map((x,i)=><tr key={x.subindustry} style={{background:i%2?C.cream:"white"}}><td style={{padding:5}}>{x.subindustry}</td><td>{x.sources.join(", ")}</td><td>{x.entities}</td><td>{x.verified_manufacturers}</td><td>{pct(x.manufacturer_precision)}</td><td>{x.biggest_gap}</td></tr>)}</tbody></table><p style={{fontSize:11,color:C.muted}}>{a.subindustry_divergence.reason}</p></div>
+  <div style={box}><b>Saturación observada</b>{a.saturation.map(x=><div key={x.processed} style={{fontSize:11.5,padding:"5px 0"}}>{x.processed} procesadas → {x.qualified} calificadas · incremento último tramo {x.incremental_qualified} · duplicados {pct(x.duplicate_rate)}<div style={{height:5,background:C.sage}}><div style={{height:5,width:`${Math.round(x.qualified/x.processed*100)}%`,background:C.gold}}/></div></div>)}</div>
+  <div style={box}><b>Complementariedad</b>{Object.entries(a.complementarity).map(([k,v])=><div key={k} style={{fontSize:11.5,padding:"3px 0"}}><code>{k}</code> — {v}</div>)}</div>
+  <div style={box}><b>Revisión del fundador</b><div style={{fontSize:11.5,marginTop:5}}>Aceptadas fuertes: {a.review.strong.length} · borderline: {a.review.borderline.length} · rechazadas: {a.review.rejected.length}. La decisión automatizada original se conserva.</div>{a.review.strong.slice(0,5).map(x=><div key={x.canonical_account} style={{fontSize:11,padding:"3px 0"}}><b>{x.raw_entity}</b> → {x.legal_entity} · {x.subindustry} · {x.manufacturer_status} · {x.geography} · {x.domain??"dominio no resuelto"}</div>)}</div>
+  <h3 style={{color:C.navy,fontSize:14}}>Investigación Manufacturing priorizada</h3><QueueTable rows={MANUFACTURING_RESEARCH_QUEUE.map(x=>({priority:x.priority,name:x.task,state:"open",why:`${x.gap} → ${x.candidate_source}`}))}/>
+ </section>;
+}
 
 function LiveBenchmarkSection() {
   const b = buildLiveBenchmark();

@@ -5,3 +5,4 @@ export * from "./executor";
 export * from "./benchmark";
 export * from "./live";
 export * from "./coverage";
+export * from "./manufacturing-live";
