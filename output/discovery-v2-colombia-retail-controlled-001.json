@@ -1,0 +1,269 @@
+{
+  "id": "discovery-v2-colombia-retail-controlled-001",
+  "version": "discovery-v2-4-retail-v1",
+  "data_basis": "controlled_sample",
+  "live_execution": false,
+  "provider_calls": 0,
+  "generated_at": "2026-08-07",
+  "depth_state": "controlled_sample_complete · live_benchmark_pending",
+  "live_id_reserved": "discovery-v2-colombia-retail-live-001",
+  "retail_live_status": "not_executed",
+  "retail_live_reason": "Provider env now fixed (loadCliEnv) but no billable provider calls authorized this sprint; a live retail-source cohort (Fenalco/ecommerce/store-locator + search) is the reserved next step.",
+  "context": {
+    "country": "CO",
+    "cluster": "retail",
+    "target_models": [
+      "retailer",
+      "specialty_retailer",
+      "multi_brand_retailer"
+    ],
+    "route": "retail_listing",
+    "mechanism": "product_listing"
+  },
+  "raw_listings": 17,
+  "unique_locations": 8,
+  "unique_brands": 11,
+  "unique_chains": 2,
+  "unique_parents": 8,
+  "canonical_accounts": 8,
+  "location_inflation_ratio": 2.13,
+  "marketplace_breakdown": {
+    "not_marketplace": 14,
+    "marketplace_platform": 1,
+    "marketplace_seller": 1,
+    "listing_only": 1
+  },
+  "model_breakdown": {
+    "chain_operator": 8,
+    "specialty_retailer": 2,
+    "multi_brand_retailer": 1,
+    "ecommerce_store": 1,
+    "marketplace": 1,
+    "reseller": 1,
+    "incompatible": 2,
+    "distributor": 1
+  },
+  "verified_retail_accounts": 7,
+  "assortment_evidence_accounts": 7,
+  "assortment_evidence_yield": 1,
+  "product_listing_plausibility": {
+    "strong": 13,
+    "no": 3,
+    "weak": 1
+  },
+  "listing_saturation": [
+    {
+      "processed": 5,
+      "resolved": 5,
+      "qualified": 5,
+      "novel": 0,
+      "incremental_qualified": 5,
+      "duplicate_rate": 0
+    },
+    {
+      "processed": 10,
+      "resolved": 10,
+      "qualified": 10,
+      "novel": 0,
+      "incremental_qualified": 5,
+      "duplicate_rate": 0
+    },
+    {
+      "processed": 15,
+      "resolved": 14,
+      "qualified": 13,
+      "novel": 0,
+      "incremental_qualified": 3,
+      "duplicate_rate": 0
+    }
+  ],
+  "commercial_account_saturation": [
+    {
+      "processed": 5,
+      "resolved": 5,
+      "qualified": 1,
+      "novel": 1,
+      "incremental_qualified": 1,
+      "duplicate_rate": 0.8
+    },
+    {
+      "processed": 10,
+      "resolved": 10,
+      "qualified": 4,
+      "novel": 4,
+      "incremental_qualified": 3,
+      "duplicate_rate": 0.6
+    },
+    {
+      "processed": 15,
+      "resolved": 13,
+      "qualified": 7,
+      "novel": 7,
+      "incremental_qualified": 3,
+      "duplicate_rate": 0.4
+    }
+  ],
+  "chain_concentration": [
+    {
+      "dimension": "parent_group",
+      "value": "Grupo Éxito",
+      "count": 5,
+      "share": 0.29411764705882354,
+      "flag": "source_high_concentration"
+    }
+  ],
+  "diversity": {
+    "geographic": 0.2857142857142857,
+    "parent_group": 0.5714285714285714,
+    "business_model": 0.42857142857142855,
+    "subindustry": 0.07142857142857142,
+    "mechanism": 0.07142857142857142
+  },
+  "source_bias": [
+    "geography: Bogotá-heavy (53%)",
+    "chain-heavy (store-locator inflates large chains)",
+    "marketplace contamination present"
+  ],
+  "novelty_note": "Duplicate store locations collapse to one canonical account BEFORE novelty — 8 store rows for 2 chains do not create 8 opportunities.",
+  "review_sample": [
+    {
+      "name": "Éxito Bogotá 1",
+      "canonical": "Grupo Éxito",
+      "kind": "physical_store_location",
+      "model": "chain_operator",
+      "marketplace": "not_marketplace",
+      "decision_scope": "corporate",
+      "listing": "strong"
+    },
+    {
+      "name": "Éxito Medellín 2",
+      "canonical": "Grupo Éxito",
+      "kind": "physical_store_location",
+      "model": "chain_operator",
+      "marketplace": "not_marketplace",
+      "decision_scope": "corporate",
+      "listing": "strong"
+    },
+    {
+      "name": "Éxito Cali 3",
+      "canonical": "Grupo Éxito",
+      "kind": "physical_store_location",
+      "model": "chain_operator",
+      "marketplace": "not_marketplace",
+      "decision_scope": "corporate",
+      "listing": "strong"
+    },
+    {
+      "name": "Éxito Barranquilla 4",
+      "canonical": "Grupo Éxito",
+      "kind": "physical_store_location",
+      "model": "chain_operator",
+      "marketplace": "not_marketplace",
+      "decision_scope": "corporate",
+      "listing": "strong"
+    },
+    {
+      "name": "Éxito Bogotá 5",
+      "canonical": "Grupo Éxito",
+      "kind": "physical_store_location",
+      "model": "chain_operator",
+      "marketplace": "not_marketplace",
+      "decision_scope": "corporate",
+      "listing": "strong"
+    },
+    {
+      "name": "Falabella Bogotá 1",
+      "canonical": "Falabella Colombia",
+      "kind": "physical_store_location",
+      "model": "chain_operator",
+      "marketplace": "not_marketplace",
+      "decision_scope": "corporate",
+      "listing": "strong"
+    },
+    {
+      "name": "Falabella Medellín 2",
+      "canonical": "Falabella Colombia",
+      "kind": "physical_store_location",
+      "model": "chain_operator",
+      "marketplace": "not_marketplace",
+      "decision_scope": "corporate",
+      "listing": "strong"
+    },
+    {
+      "name": "Falabella Cali 3",
+      "canonical": "Falabella Colombia",
+      "kind": "physical_store_location",
+      "model": "chain_operator",
+      "marketplace": "not_marketplace",
+      "decision_scope": "corporate",
+      "listing": "strong"
+    },
+    {
+      "name": "Tienda Naturista Vida Sana",
+      "canonical": "Vida Sana",
+      "kind": "ecommerce_store",
+      "model": "specialty_retailer",
+      "marketplace": "not_marketplace",
+      "decision_scope": "local",
+      "listing": "strong"
+    },
+    {
+      "name": "Boutique Aroma & Bienestar",
+      "canonical": "Aroma & Bienestar",
+      "kind": "ecommerce_store",
+      "model": "multi_brand_retailer",
+      "marketplace": "not_marketplace",
+      "decision_scope": "local",
+      "listing": "strong"
+    },
+    {
+      "name": "Mundo Verde Orgánicos",
+      "canonical": "Mundo Verde",
+      "kind": "ecommerce_store",
+      "model": "specialty_retailer",
+      "marketplace": "not_marketplace",
+      "decision_scope": "local",
+      "listing": "strong"
+    },
+    {
+      "name": "TiendaNatural.com.co",
+      "canonical": "Tienda Natural",
+      "kind": "ecommerce_store",
+      "model": "ecommerce_store",
+      "marketplace": "not_marketplace",
+      "decision_scope": "corporate",
+      "listing": "strong"
+    }
+  ],
+  "reusable_capabilities": [
+    "location_inflation_ratio",
+    "chain_vs_brand_vs_location_resolution",
+    "marketplace_classification",
+    "assortment_evidence + yield",
+    "listing_vs_commercial_account_saturation",
+    "chain_concentration",
+    "CommercialDecisionScope (corporate vs local buying)"
+  ],
+  "warnings": [
+    "CONTROLLED SAMPLE (not live) — validates the retail pipeline + reusable capabilities; live retail-source access is the next step.",
+    "No buying intent inferred from assortment evidence.",
+    "Provider calls = 0; no people data.",
+    "Commercial-outcome performance: awaiting_real_outcomes."
+  ],
+  "recommendations": [
+    {
+      "id": "rec_location_collapse",
+      "kind": "capability_generalizes",
+      "rationale": "Location Inflation Ratio + canonical collapse reuse for franchises, healthcare/restaurant/education chains and service networks.",
+      "confidence": "low",
+      "human_approval_required": true
+    },
+    {
+      "id": "rec_retail_live",
+      "kind": "next_step",
+      "rationale": "Run a live controlled retail-source access (Fenalco/ecommerce/store-locator) under a hard budget to obtain real yields and source bias.",
+      "confidence": "low",
+      "human_approval_required": true
+    }
+  ]
+}

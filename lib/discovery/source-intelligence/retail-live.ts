@@ -11,7 +11,11 @@
 // is the documented next step. Provider calls = 0. No people data.
 import { calculateSaturation, concentrationFlags, diversityYield, type CommercialDecisionScope } from "./coverage";
 
-export const RETAIL_BENCHMARK_ID = "discovery-v2-colombia-retail-live-001";
+// INTEGRITY FIX (V2.4.1, §2): this is a CONTROLLED SAMPLE, so it must NOT carry the
+// "-live-" id. The live id is reserved for a true live execution.
+export const RETAIL_BENCHMARK_ID = "discovery-v2-colombia-retail-controlled-001";
+export const RETAIL_LIVE_ID_RESERVED = "discovery-v2-colombia-retail-live-001"; // reserved for a real live run
+export const RETAIL_DEPTH_STATE = "controlled_sample_complete · live_benchmark_pending"; // NOT "benchmarked"
 export const RETAIL_VERSION = "discovery-v2-4-retail-v1";
 
 export type RetailEntityKind = "physical_store_location" | "chain_brand" | "parent_group" | "ecommerce_store" | "marketplace_platform" | "marketplace_seller" | "distributor" | "article" | "non_business";
@@ -64,6 +68,7 @@ export function productListingPlausibility(r: RetailRow): ProductListingPlausibi
 
 export interface RetailBenchmarkArtifact {
   id: string; version: string; data_basis: "controlled_sample"; live_execution: false; provider_calls: 0; generated_at: string;
+  depth_state: string; live_id_reserved: string; retail_live_status: "not_executed"; retail_live_reason: string;
   context: { country: string; cluster: string; target_models: string[]; route: string; mechanism: string };
   raw_listings: number; unique_locations: number; unique_brands: number; unique_chains: number; unique_parents: number;
   canonical_accounts: number; location_inflation_ratio: number;
@@ -99,6 +104,8 @@ export function buildRetailBenchmark(): RetailBenchmarkArtifact {
   if (marketplace["marketplace_seller"] || marketplace["listing_only"]) source_bias.push("marketplace contamination present");
   return {
     id: RETAIL_BENCHMARK_ID, version: RETAIL_VERSION, data_basis: "controlled_sample", live_execution: false, provider_calls: 0, generated_at: "2026-08-07",
+    depth_state: RETAIL_DEPTH_STATE, live_id_reserved: RETAIL_LIVE_ID_RESERVED, retail_live_status: "not_executed",
+    retail_live_reason: "Provider env now fixed (loadCliEnv) but no billable provider calls authorized this sprint; a live retail-source cohort (Fenalco/ecommerce/store-locator + search) is the reserved next step.",
     context: { country: "CO", cluster: "retail", target_models: ["retailer", "specialty_retailer", "multi_brand_retailer"], route: "retail_listing", mechanism: "product_listing" },
     raw_listings: rows.length, unique_locations: locations.length, unique_brands: new Set(rows.map((r) => r.truth.brand)).size,
     unique_chains: new Set(rows.filter((r) => r.truth.business_model === "chain_operator").map((r) => r.truth.parent_group)).size,

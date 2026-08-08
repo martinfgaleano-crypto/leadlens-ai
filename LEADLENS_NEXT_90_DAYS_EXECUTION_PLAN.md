@@ -144,3 +144,7 @@ Ran the first real controlled source access (Cotelco afiliados): public + struct
 
 ## 23. Discovery V2.4 — multi-country foundation + Colombia retail (2026-08-07)
 Extended discovery to five markets (CO/US/GB/AU/CA): profiles, Foundation Source, curated atlases (research hypotheses), generic geography/identifiers, five-country readiness (breadth built, depth untested outside CO), per-country queues, Market Memory + Source Type Learning. Colombia Retail #3 (controlled): Location Inflation Ratio, marketplace/chain/assortment capabilities. Providers still unavailable in exec env. Next: Colombia Technology #4 + USA foundation validation once a provider key is authorized.
+
+
+## 24. Discovery V2.4.1 — live recovery + foundation validation (2026-08-07)
+Corrected retail controlled/live integrity; fixed provider-env CLI loading (loadCliEnv); really validated UK/AU/CA-federal/US-SEC foundation sources (operationally_validated; identity not domains; USA fragmented). Empirical readiness (depth=live only). 0 provider calls; no migration. Next: V2.5 — Colombia Retail LIVE + USA foundation state validation once a provider key is authorized, then USA Manufacturing Benchmark #1.

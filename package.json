@@ -140,7 +140,9 @@
     "test:discovery-engine-v2-2-coverage": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/discovery-engine-v2-2-coverage.test.ts",
     "pilot:discovery-v2-3-manufacturing": "npx -y tsx --tsconfig tsconfig.json scripts/sources/run-manufacturing-v2-3-live.ts",
     "test:discovery-engine-v2-3-manufacturing": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/discovery-engine-v2-3-manufacturing.test.ts",
-    "test:discovery-engine-v2-4-multi-country": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/discovery-engine-v2-4-multi-country.test.ts"
+    "test:discovery-engine-v2-4-multi-country": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/discovery-engine-v2-4-multi-country.test.ts",
+    "test:discovery-engine-v2-4-1-live-recovery": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/discovery-engine-v2-4-1-live-recovery.test.ts",
+    "pilot:diagnose-provider-env": "npx -y tsx --tsconfig tsconfig.json scripts/artifacts/diagnose-provider-env.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.27.0",

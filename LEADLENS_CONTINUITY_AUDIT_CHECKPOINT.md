@@ -543,3 +543,7 @@ Commit `feat: run live controlled discovery validation for colombia hospitality`
 
 ## Continuity note — Discovery V2.4 (2026-08-07)
 Commit `feat: expand discovery to five priority markets`. Additive; extends coverage.ts/manufacturing-live.ts. New-country atlases are research hypotheses (not live-validated); retail is a controlled sample. 0 provider calls, no international benchmark, no people data, pilots preserved. Founder: authorize a provider key to enable live cohorts; approve next benchmark (Colombia Technology #4 + USA foundation). See LEADLENS_DISCOVERY_V2_4_MULTI_COUNTRY_FOUNDATION_AND_RETAIL_REPORT.md.
+
+
+## Continuity note — Discovery V2.4.1 (2026-08-07)
+Commit `feat: validate retail and international discovery foundations`. Integrity fix (retail id/depth), env root-cause fix (safe loadCliEnv, no secrets), real foundation validations via public access (0 providers, no people data). Fixture/live/manufacturing artifacts + pilots preserved. Founder: authorize a provider key/quota to run live retail + USA state validation. See LEADLENS_DISCOVERY_V2_4_1_LIVE_RECOVERY_AND_FOUNDATION_VALIDATION_REPORT.md.

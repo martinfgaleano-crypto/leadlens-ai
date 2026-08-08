@@ -12,6 +12,7 @@ import { runBenchmark } from "@/lib/discovery/source-intelligence/benchmark";
 import { buildLiveBenchmark } from "@/lib/discovery/source-intelligence/live";
 import { fiveCountryReadiness, countryCoverageGaps, INTL_BENCHMARK_QUEUE, INTL_RESEARCH_QUEUE, SOURCE_TYPE_LEARNING, MULTI_COUNTRY_VERSION } from "@/lib/discovery/source-intelligence/multi-country";
 import { buildRetailBenchmark } from "@/lib/discovery/source-intelligence/retail-live";
+import { FOUNDATION_VALIDATIONS, empiricalReadiness, CROSS_COUNTRY_FOUNDATION } from "@/lib/discovery/source-intelligence/foundation-validation";
 import {
   COLOMBIA_PRIORITY_CLUSTERS, COLOMBIA_SOURCE_ATLAS, COLOMBIA_BENCHMARK_QUEUE,
   SOURCE_RESEARCH_QUEUE_V2, buildCountryCoverage, routeCoverage, businessModelCoverage,
@@ -199,8 +200,33 @@ function FiveCountrySection() {
         <div style={{ fontSize: 11.5, color: C.muted, marginTop: 4 }}>Cola de investigación: {INTL_RESEARCH_QUEUE.slice(0, 5).map((q) => q.task).join(" · ")}…</div>
         <div style={{ fontSize: 11.5, color: C.muted, marginTop: 4 }}>Brechas por país: {gaps.length} · aprendizaje por tipo de fuente (hipótesis): {SOURCE_TYPE_LEARNING.length}</div>
       </div>
+      <FoundationValidationSection />
       <RetailSection />
     </>
+  );
+}
+
+function FoundationValidationSection() {
+  const v = FOUNDATION_VALIDATIONS; const er = empiricalReadiness();
+  return (
+    <div style={box}>
+      <div style={{ fontWeight: 700, color: C.navy }}>Validación real de Foundation Sources (acceso público, 0 proveedores)</div>
+      <div style={{ fontSize: 11.5, color: C.muted, margin: "4px 0 8px" }}>Inspección de acceso real (navegador, sin bypass, sin datos personales) → <b>operationally_validated</b> (NO es benchmark). Foundation = identidad, no dominios/oportunidad.</div>
+      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+        <thead><tr style={{ background: C.navy, color: "#fff", textAlign: "left" }}><th style={{ padding: 5 }}>País</th><th style={{ padding: 5 }}>Fuente</th><th style={{ padding: 5 }}>Identificador</th><th style={{ padding: 5 }}>Identidad</th><th style={{ padding: 5 }}>Dominio</th><th style={{ padding: 5 }}>Account-first</th><th style={{ padding: 5 }}>Estado</th><th style={{ padding: 5 }}>Límite</th></tr></thead>
+        <tbody>{v.map((x, i) => (
+          <tr key={x.source_id} style={{ background: i % 2 ? C.cream : "#fff", verticalAlign: "top" }}>
+            <td style={{ padding: 5, fontWeight: 700 }}>{x.country}</td><td style={{ padding: 5 }}>{x.source_name}</td>
+            <td style={{ padding: 5 }}>{x.identifier_observed}</td><td style={{ padding: 5 }}>{x.identity_usefulness}</td>
+            <td style={{ padding: 5 }}>{x.provides.official_domain ? "sí" : "no"}</td><td style={{ padding: 5 }}>{x.account_first_feasible ? "sí" : "no"}</td>
+            <td style={{ padding: 5 }}><span style={{ background: "#4E6A54", color: "#fff", padding: "1px 5px", borderRadius: 3, fontSize: 10 }}>{x.validation_state}</span></td>
+            <td style={{ padding: 5, color: C.muted, fontSize: 11 }}>{x.primary_limitation}</td>
+          </tr>
+        ))}</tbody>
+      </table>
+      <div style={{ fontSize: 11.5, color: C.muted, marginTop: 8 }}>Arquitectura de foundation: {CROSS_COUNTRY_FOUNDATION.map((c) => `${c.country}=${c.foundation_kind}`).join(" · ")}</div>
+      <div style={{ fontSize: 11.5, color: C.muted, marginTop: 4 }}>Readiness empírica (depth = benchmarks en vivo): {er.map((e) => `${e.country} foundation=${e.foundation_readiness} depth=${e.live_benchmark_depth}`).join(" · ")}</div>
+    </div>
   );
 }
 
@@ -208,8 +234,9 @@ function RetailSection() {
   const r = buildRetailBenchmark();
   return (
     <div style={{ ...box, background: "#FBF7F0" }}>
-      <div style={{ fontWeight: 700, color: C.navy }}>Colombia · Retail benchmark #3 · {r.id}</div>
-      <div style={{ fontSize: 11.5, color: "#8a6d3b", margin: "4px 0 8px" }}>⚠ {r.warnings[0]}</div>
+      <div style={{ fontWeight: 700, color: C.navy }}>Colombia · Retail #3 · MUESTRA CONTROLADA · {r.id}</div>
+      <div style={{ fontSize: 11.5, color: "#8a6d3b", margin: "4px 0 4px" }}>data_basis <b>{r.data_basis}</b> · depth <b>{r.depth_state}</b> · benchmark en vivo <b>{r.retail_live_status}</b> (id reservado: {r.live_id_reserved})</div>
+      <div style={{ fontSize: 11.5, color: "#8a6d3b", marginBottom: 8 }}>⚠ {r.warnings[0]}</div>
       <div style={{ fontSize: 12.5 }}>
         Listados crudos <b>{r.raw_listings}</b> → cuentas canónicas <b>{r.canonical_accounts}</b> · <b>Location Inflation Ratio {r.location_inflation_ratio}</b> · assortment yield <b>{r.assortment_evidence_yield}</b> · plausibilidad product-listing: {Object.entries(r.product_listing_plausibility).map(([k, v]) => `${k} ${v}`).join(", ")}
       </div>

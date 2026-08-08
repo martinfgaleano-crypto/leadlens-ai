@@ -21,5 +21,5 @@ console.log(`wrote live artifact · data_basis=${live.data_basis} · live=${live
 // Retail benchmark (V2.4)
 import { buildRetailBenchmark } from "../../lib/discovery/source-intelligence/retail-live";
 const retail = buildRetailBenchmark();
-writeFileSync("output/discovery-v2-colombia-retail-live-001.json", JSON.stringify(retail, null, 2));
+writeFileSync("output/discovery-v2-colombia-retail-controlled-001.json", JSON.stringify(retail, null, 2));
 console.log(`wrote retail · basis=${retail.data_basis} · raw ${retail.raw_listings} → canonical ${retail.canonical_accounts} · LIR ${retail.location_inflation_ratio} · assortment_yield ${retail.assortment_evidence_yield} · bias ${retail.source_bias.join("; ")}`);

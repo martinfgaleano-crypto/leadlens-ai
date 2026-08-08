@@ -66,7 +66,7 @@ t("31 Canada province gap", gaps.some((g) => g.country === "CA" && g.type === "p
 
 // 32–42. Colombia Retail benchmark + reusable capabilities.
 const R = buildRetailBenchmark();
-t("32 retail benchmark id + controlled (honest, not live)", R.id === "discovery-v2-colombia-retail-live-001" && R.data_basis === "controlled_sample" && R.live_execution === false && R.provider_calls === 0);
+t("32 retail benchmark id + controlled (honest, not live)", R.id === "discovery-v2-colombia-retail-controlled-001" && !R.id.includes("-live-") && R.data_basis === "controlled_sample" && R.live_execution === false && R.provider_calls === 0);
 t("33 Location Inflation Ratio > 1 (locations collapse)", R.location_inflation_ratio > 1 && R.canonical_accounts < R.raw_listings);
 t("34 store locations collapse to canonical accounts", R.unique_locations >= 5 && R.canonical_accounts <= R.raw_listings - 4);
 t("35 marketplace classification separates platform/seller/listing", R.marketplace_breakdown["marketplace_platform"] >= 1 && R.marketplace_breakdown["marketplace_seller"] >= 1 && R.marketplace_breakdown["listing_only"] >= 1);

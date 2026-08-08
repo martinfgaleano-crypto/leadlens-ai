@@ -478,3 +478,7 @@ First live controlled source access (Cotelco afiliados). Real finding: structure
 
 ## Checkpoint addendum — Discovery V2.4 multi-country + retail (2026-08-07)
 Five-market foundation (CO/US/GB/AU/CA): profiles, Foundation Source, curated atlases (researched not live), generic geography/identifiers, source layers, legal/personal-data flags, readiness (depth untested outside CO), queues, Market Memory + Source Type Learning hypotheses. Colombia Retail #3 (controlled): Location Inflation 2.13, marketplace classification, assortment yield, saturation, bias. All V1–V2.3 preserved; 0 providers; no migration; pilots unchanged.
+
+
+## Checkpoint addendum — Discovery V2.4.1 (2026-08-07)
+Integrity + empirical trust: retail controlled≠live corrected (depth honest), provider-env root cause fixed (loadCliEnv; keys now visible to CLI; 0 billable calls), and four international Foundation Sources really validated (UK/AU/CA-federal/US-SEC = operationally_validated; identity yes, domain no, account-first feasible; USA fragmented). Empirical depth = live benchmarks only. Observatory separates hypothesis/validation/benchmark + controlled/live. Pilots + prior artifacts preserved.
