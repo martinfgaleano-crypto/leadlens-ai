@@ -17,7 +17,7 @@ const t = (n: string, ok: boolean, d = "") => { console.log(`${ok ? "✅" : "❌
 // 1–5. Provider env diagnostic + safe loader.
 const diag = providerEnvDiagnostic();
 t("1 .env.local detected", diag.env_local_exists);
-t("2 diagnostic reports all four providers", diag.providers.length === 4 && ["tavily", "brave", "firecrawl", "serper"].every((id) => diag.providers.some((p2) => p2.provider === id)));
+t("2 diagnostic preserves four providers + adds Exa/SAM", diag.providers.length === 6 && ["tavily", "brave", "firecrawl", "serper", "exa", "sam_gov"].every((id) => diag.providers.some((p2) => p2.provider === id)));
 t("3 keys become visible to runner after load (root cause fixed)", diag.providers.every((p2) => p2.key_defined_in_env_file ? p2.visible_to_runner_after_load : true));
 t("4 diagnostic exposes NO secret values (booleans/status only)", diag.providers.every((p2) => typeof p2.visible_to_runner_after_load === "boolean" && !("key_value" in p2) && !("value" in p2)));
 t("5 no billable calls made (call_tested false; state distinguishes missing vs unavailable)", diag.providers.every((p2) => p2.call_tested === false && ["diagnostic_not_run", "configured_runtime_unavailable", "not_configured"].includes(p2.exec_state)));

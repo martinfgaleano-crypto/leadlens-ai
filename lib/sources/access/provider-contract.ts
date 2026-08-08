@@ -13,6 +13,10 @@ export interface SearchQuery {
   freshness_days?: number | null;
   /** Query intent for routing/benchmark attribution. */
   query_type?: "company_specific" | "signal_specific" | "industry_discovery" | "regional_discovery" | "official_domain" | "news" | "careers" | "regulatory" | "generic";
+  /** Semantic-search escalation controls. Ignored by providers that do not support them. */
+  search_mode?: "standard" | "fast" | "deep";
+  include_domains?: string[];
+  exclude_domains?: string[];
 }
 
 export interface SearchResultItem {

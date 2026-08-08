@@ -20,8 +20,15 @@ function emptyResponse(provider: string, query: SearchQuery, error: string, late
 }
 
 function safeProviderError(status: number, body: string): string {
-  const compact = body.replace(/[\r\n\t]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 240);
+  const compact = redactSecrets(body).replace(/[\r\n\t]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 240);
   return `HTTP ${status}${compact ? `: ${compact}` : ""}`;
+}
+
+/** Redact credential-shaped fields before any provider payload reaches logs/ledgers. */
+export function redactSecrets(value: string): string {
+  return value
+    .replace(/([?&](?:api_key|apiKey|key|token)=)[^&\s]+/gi, "$1[REDACTED]")
+    .replace(/("?(?:api_key|apiKey|key|token|authorization|x-api-key)"?\s*[:=]\s*"?)[^",\s}]+/gi, "$1[REDACTED]");
 }
 
 // ── Tavily (existing LeadLens provider credential: TAVILY_API_KEY) ────────────
@@ -209,6 +216,64 @@ export const firecrawlProvider: SearchProvider = {
   },
 };
 
+// ── Exa (semantic/company discovery escalation; EXA_API_KEY) ────────────────
+// Uses the stable HTTP API directly to avoid coupling the provider layer to an
+// SDK version. Company search intentionally excludes people enrichment.
+export const exaProvider: SearchProvider = {
+  id: "exa",
+  capabilities: (): ProviderCapabilities => ({ search: true, extract: false, regions: "global", supports_dates: false }),
+  async health(): Promise<ProviderHealth> {
+    const present = !!process.env.EXA_API_KEY;
+    return { provider: "exa", status: present ? "available" : "unavailable", reason: present ? null : "EXA_API_KEY missing", credentials_present: present };
+  },
+  async search(query: SearchQuery): Promise<SearchProviderResponse> {
+    if (!process.env.EXA_API_KEY) return emptyResponse("exa", query, "EXA_API_KEY missing");
+    // Exa company category does not support excludeDomains or published-date
+    // filters. Guard rather than issuing a known-invalid/billable request.
+    if (query.exclude_domains?.length || query.freshness_days) {
+      return emptyResponse("exa", query, "unsupported_company_filter_combination");
+    }
+    const started = Date.now();
+    try {
+      const type = query.search_mode === "fast" ? "fast" : query.search_mode === "deep" ? "deep" : "auto";
+      const res = await fetch("https://api.exa.ai/search", {
+        method: "POST",
+        headers: { "x-api-key": process.env.EXA_API_KEY, "content-type": "application/json" },
+        body: JSON.stringify({
+          query: query.query,
+          type,
+          category: "company",
+          numResults: Math.min(Math.max(query.max_results ?? 8, 1), 100),
+          contents: { highlights: true },
+          ...(query.include_domains?.length ? { includeDomains: query.include_domains } : {}),
+        }),
+        signal: AbortSignal.timeout(type === "deep" ? 30_000 : 15_000),
+      });
+      const latency = Date.now() - started;
+      if (!res.ok) return emptyResponse("exa", query, safeProviderError(res.status, await res.text().catch(() => "")), latency);
+      const data = await res.json() as { results?: Array<{ id?: string; url: string; title?: string; publishedDate?: string; highlights?: string[] }>; costDollars?: { total?: number } };
+      const now = new Date().toISOString();
+      const seen = new Set<string>();
+      const results = (data.results ?? []).flatMap((r, i): SearchResultItem[] => {
+        const canonical_url = canonicalizeUrl(r.url);
+        if (seen.has(canonical_url)) return [];
+        seen.add(canonical_url);
+        return [{ url: r.url, canonical_url, title: r.title ?? null,
+          snippet: r.highlights?.join(" … ").slice(0, 300) ?? null,
+          published_date: r.publishedDate ?? null, retrieved_at: now,
+          source_type: classifySourceType(r.url), provider: "exa", rank: i + 1,
+          locale: query.language ?? null }];
+      });
+      try { recordProviderCall("exa", true, latency); } catch { /* ledger */ }
+      const measured = data.costDollars?.total;
+      return { ok: true, provider: "exa", query, results, latency_ms: latency,
+        cost_estimate_usd: typeof measured === "number" ? measured : null, error: null };
+    } catch (err) {
+      return emptyResponse("exa", query, redactSecrets(err instanceof Error ? err.message.slice(0, 120) : "request failed"), Date.now() - started);
+    }
+  },
+};
+
 // ── Fixture provider (offline, deterministic — tests/benchmarks only) ─────────
 export const fixtureProvider: SearchProvider = {
   id: "fixture_offline",
@@ -236,8 +301,8 @@ export const fixtureProvider: SearchProvider = {
 
 // Apollo is deliberately absent by strategic decision — never a provider,
 // fallback, benchmark or dataset source. No LinkedIn automation either.
-export const ALL_PROVIDERS: SearchProvider[] = [tavilyProvider, braveProvider, serperProvider, firecrawlProvider, fixtureProvider];
-export const REAL_PROVIDERS: SearchProvider[] = [tavilyProvider, braveProvider, serperProvider, firecrawlProvider];
+export const ALL_PROVIDERS: SearchProvider[] = [tavilyProvider, braveProvider, serperProvider, firecrawlProvider, exaProvider, fixtureProvider];
+export const REAL_PROVIDERS: SearchProvider[] = [tavilyProvider, braveProvider, serperProvider, firecrawlProvider, exaProvider];
 
 export function getProvider(id: string): SearchProvider | null {
   return ALL_PROVIDERS.find((p) => p.id === id) ?? null;

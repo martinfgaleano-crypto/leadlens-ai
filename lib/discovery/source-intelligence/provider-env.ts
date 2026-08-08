@@ -21,6 +21,8 @@ export const PROVIDER_KEYS = [
   { id: "brave", key: "BRAVE_SEARCH_API_KEY", role: "general search / freshness" },
   { id: "firecrawl", key: "FIRECRAWL_API_KEY", role: "page / structured extraction" },
   { id: "serper", key: "SERPER_API_KEY", role: "general search / domain resolution" },
+  { id: "exa", key: "EXA_API_KEY", role: "semantic company discovery escalation" },
+  { id: "sam_gov", key: "DATA_GOV_API_KEY", role: "USA government entity / procurement source" },
 ] as const;
 
 export type ProviderExecState =

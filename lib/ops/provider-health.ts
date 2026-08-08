@@ -46,6 +46,7 @@ interface ProviderDef {
 
 const t0 = () => Date.now();
 const ms = (s: number) => Date.now() - s;
+const redactDiagnostic = (value: string) => value.replace(/([?&](?:api_key|apiKey|key|token)=)[^&\s]+/gi, "$1[REDACTED]").replace(/((?:authorization|x-api-key)\s*[:=]\s*)[^,\s}]+/gi, "$1[REDACTED]");
 
 function key(...names: string[]): string | undefined {
   for (const n of names) if (process.env[n]) return process.env[n];
@@ -62,6 +63,49 @@ async function http(url: string, init: RequestInit, timeoutMs = 10_000): Promise
 }
 
 export const PROVIDER_DEFS: ProviderDef[] = [
+  {
+    id: "exa", name: "Exa", role: "Semantic company discovery / escalation search",
+    fallback: "Brave/Tavily and specialized sources continue; semantic long-tail coverage degrades.",
+    impact: "No hard failure: fewer incremental company candidates after normal coverage stalls.",
+    envKeys: ["EXA_API_KEY"],
+    probe: async () => {
+      const k=key("EXA_API_KEY"); if(!k)return {state:"missing",detail:null,latency_ms:null};
+      const s=t0(); const r=await http("https://api.exa.ai/search",{method:"POST",headers:{"x-api-key":k,"content-type":"application/json"},body:JSON.stringify({query:"LeadLens provider diagnostic",type:"fast",category:"company",numResults:1,contents:{highlights:true}})}); const lat=ms(s);
+      if(r.status===200)return {state:"ok",detail:null,latency_ms:lat};
+      if(r.status===401||r.status===403)return {state:"invalid",detail:`HTTP ${r.status}`,latency_ms:lat};
+      if(r.status===402)return {state:"exhausted",detail:"402 — quota/payment required",latency_ms:lat};
+      if(r.status===429)return {state:"rate_limited",detail:"429",latency_ms:lat};
+      return {state:"unknown",detail:`HTTP ${r.status}`,latency_ms:lat};
+    },
+  },
+  {
+    id: "sam_gov", name: "SAM.gov / Data.gov", role: "USA structured entity and procurement evidence",
+    fallback: "USA foundation/state/SEC/industry sources plus web search continue.",
+    impact: "Government registration and contractor context unavailable; never blocks general Discovery.",
+    envKeys: ["DATA_GOV_API_KEY"],
+    probe: async () => {
+      const k=key("DATA_GOV_API_KEY"); if(!k)return {state:"missing",detail:null,latency_ms:null};
+      const s=t0(), params=new URLSearchParams({api_key:k,ueiSAM:"F5V8F1J4D2K3",includeSections:"entityRegistration"});
+      const r=await http(`https://api.sam.gov/entity-information/v3/entities?${params}`,{headers:{Accept:"application/json"}}); const lat=ms(s);
+      if(r.status===200)return {state:"ok",detail:null,latency_ms:lat};
+      if(r.status===401||r.status===403)return {state:"invalid",detail:`HTTP ${r.status}`,latency_ms:lat};
+      if(r.status===429)return {state:"rate_limited",detail:"429",latency_ms:lat};
+      return {state:"unknown",detail:`HTTP ${r.status}`,latency_ms:lat};
+    },
+  },
+  {
+    id: "sec_edgar", name: "SEC EDGAR", role: "Public-company identity, filings and signal evidence",
+    fallback: "Company websites and search providers supply evidence; private-company discovery unaffected.",
+    impact: "SEC filing evidence unavailable; not treated as universal USA coverage.",
+    envKeys: ["SEC_EDGAR_CONTACT"],
+    probe: async () => {
+      const contact=key("SEC_EDGAR_CONTACT"); if(!contact)return {state:"missing",detail:"SEC_EDGAR_CONTACT required for fair-access User-Agent",latency_ms:null};
+      const s=t0(), r=await http("https://data.sec.gov/submissions/CIK0000320193.json",{headers:{"User-Agent":`LeadLens research application ${contact}`,"Accept-Encoding":"gzip, deflate",Accept:"application/json"}}); const lat=ms(s);
+      if(r.status===200)return {state:"ok",detail:"No API key required",latency_ms:lat};
+      if(r.status===403||r.status===429)return {state:"rate_limited",detail:`HTTP ${r.status}`,latency_ms:lat};
+      return {state:"unknown",detail:`HTTP ${r.status}`,latency_ms:lat};
+    },
+  },
   {
     id: "anthropic", name: "Anthropic (Claude)", role: "Needs-map, extracción de universo, agentes de reporte",
     fallback: "Vertical packs → needs-map y seed universe determinísticos; reportes E2E NO disponibles (fail-closed).",
@@ -202,7 +246,7 @@ export async function probeAll(force = false): Promise<ProviderStatus[]> {
         probed_at: new Date().toISOString(),
       };
     } catch (e) {
-      st = { id: def.id, name: def.name, role: def.role, configured, state: "unknown", state_kind: "observed_by_leadlens", detail: e instanceof Error ? e.message.slice(0, 120) : "probe failed", latency_ms: null, credits: { value: null, kind: "unavailable" }, usage: usage[def.id] ?? null, fallback: def.fallback, impact: def.impact, probed_at: new Date().toISOString() };
+      st = { id: def.id, name: def.name, role: def.role, configured, state: "unknown", state_kind: "observed_by_leadlens", detail: e instanceof Error ? redactDiagnostic(e.message).slice(0, 120) : "probe failed", latency_ms: null, credits: { value: null, kind: "unavailable" }, usage: usage[def.id] ?? null, fallback: def.fallback, impact: def.impact, probed_at: new Date().toISOString() };
     }
     cache.set(def.id, { at: Date.now(), st });
     out.push(st);
@@ -216,6 +260,11 @@ export const RUN_REQUIREMENTS: Record<string, { requires: string[]; degraded_wit
   discovery_benchmark: { requires: ["supabase"], degraded_without: ["anthropic", "brave", "serper", "tavily", "firecrawl"], note: "Corre degradado con packs, pero sin search providers el recall es ~0: presupuestar Serper/Tavily antes." },
   provider_limited_validation: { requires: ["firecrawl"], degraded_without: [], note: "Valida el pipeline profundo con URLs conocidas/newsrooms — sin search ni LLM." },
 };
+
+export const DISCOVERY_PROVIDER_ROUTES = {
+  CO: { base: ["specialized_local_sources", "brave", "tavily"], escalation: ["exa"], extraction: ["firecrawl"] },
+  US: { base: ["foundation_state_sources", "sam_gov", "sec_edgar", "industry_sources", "brave", "tavily"], escalation: ["exa"], extraction: ["firecrawl"] },
+} as const;
 
 /** Recommended action per state — shown in the console. */
 export function recommendedAction(s: ProviderStatus): string | null {
