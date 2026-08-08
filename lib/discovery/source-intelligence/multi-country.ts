@@ -1,0 +1,183 @@
+// Discovery Engine V2.4 — multi-country foundation (breadth across five markets).
+// EXTENDS the existing Colombia atlas/coverage (coverage.ts) — does not duplicate it.
+// Adds: 5 CountryProfiles, the Foundation Source concept, curated initial Source
+// Atlases for USA/UK/Australia/Canada, generic geography/identifiers/terminology,
+// country maturity + five-country readiness, per-country benchmark/research queues,
+// Market Memory and cross-country Source Type Learning (hypotheses only).
+//
+// HONESTY: the four new-country atlases are RESEARCHED FROM KNOWLEDGE of well-known
+// official registries/ecosystems, NOT live-validated this sprint. Every entry is
+// confidence "discovered"/"hypothesized" with accessibility "researched_not_tested".
+// No international account benchmark was executed (§100). Depth outside Colombia = untested.
+import type { CoverageBreadth, CoverageDepth, AtlasConfidence, OperationalAccessibility } from "./coverage";
+
+// ─── Country profile ──────────────────────────────────────────────────────────
+export const COUNTRY_CODES = ["CO", "US", "GB", "AU", "CA"] as const;
+export type CountryCode = (typeof COUNTRY_CODES)[number];
+export const COUNTRY_MATURITY = ["not_started", "foundation_researched", "atlas_seeded", "breadth_partial", "breadth_good", "benchmark_started", "benchmarked", "multi_benchmark", "outcome_learning", "mature"] as const;
+export type CountryMaturity = (typeof COUNTRY_MATURITY)[number];
+
+export interface GeographyLevel { level: string; example: string } // generic; country-specific type names
+export interface BusinessIdentifierType { country: CountryCode; identifier_type: string; issuer: string; example_role: string }
+export interface MarketProfile {
+  code: CountryCode; name: string; languages: string[]; discovery_role: string; commercial_role: string;
+  discovery_priority: 1 | 2 | 3 | 4 | 5; commercial_priority: 1 | 2 | 3 | 4 | 5; regional_complexity: "low" | "medium" | "high";
+  geography_levels: GeographyLevel[]; entity_terminology: string[]; identifier_types: BusinessIdentifierType[];
+  foundation_source_state: "single_national" | "fragmented" | "federal_plus_provincial" | "partial"; maturity: CountryMaturity;
+}
+export const COUNTRY_PROFILES: Record<CountryCode, MarketProfile> = {
+  CO: { code: "CO", name: "Colombia", languages: ["es"], discovery_role: "foundation_market · product-learning · real-customer validation · first mature Source Atlas", commercial_role: "active", discovery_priority: 1, commercial_priority: 2, regional_complexity: "medium",
+    geography_levels: [{ level: "department", example: "Antioquia" }, { level: "city", example: "Medellín" }], entity_terminology: ["NIT", "Cámara de Comercio", "S.A.S.", "RUES", "Régimen"], identifier_types: [{ country: "CO", identifier_type: "NIT", issuer: "DIAN", example_role: "tax/business id" }, { country: "CO", identifier_type: "matrícula mercantil", issuer: "Cámara de Comercio", example_role: "registration" }], foundation_source_state: "single_national", maturity: "multi_benchmark" },
+  US: { code: "US", name: "United States", languages: ["en"], discovery_role: "second high-depth market · first major scale test", commercial_role: "primary_commercial_expansion", discovery_priority: 2, commercial_priority: 1, regional_complexity: "high",
+    geography_levels: [{ level: "state", example: "California" }, { level: "metro", example: "Bay Area" }, { level: "city", example: "San Francisco" }], entity_terminology: ["Corporation", "Inc.", "LLC", "supplier", "vendor", "EIN", "Secretary of State"], identifier_types: [{ country: "US", identifier_type: "EIN", issuer: "IRS", example_role: "federal tax id (sensitive — not collected)" }, { country: "US", identifier_type: "state filing number", issuer: "Secretary of State", example_role: "registration" }, { country: "US", identifier_type: "CIK", issuer: "SEC", example_role: "public-company id" }, { country: "US", identifier_type: "UEI", issuer: "SAM.gov", example_role: "federal contractor id" }], foundation_source_state: "fragmented", maturity: "atlas_seeded" },
+  GB: { code: "GB", name: "United Kingdom", languages: ["en"], discovery_role: "high-quality structured company-data environment · strong identity foundation", commercial_role: "next", discovery_priority: 3, commercial_priority: 3, regional_complexity: "medium",
+    geography_levels: [{ level: "nation", example: "Scotland" }, { level: "region", example: "Greater London" }, { level: "local_area", example: "Manchester" }], entity_terminology: ["Ltd", "PLC", "LLP", "Companies House", "company number"], identifier_types: [{ country: "GB", identifier_type: "company number", issuer: "Companies House", example_role: "canonical company id" }, { country: "GB", identifier_type: "VAT number", issuer: "HMRC", example_role: "tax id" }], foundation_source_state: "single_national", maturity: "atlas_seeded" },
+  AU: { code: "AU", name: "Australia", languages: ["en"], discovery_role: "high-quality national business-data environment · structured identity", commercial_role: "prepared", discovery_priority: 4, commercial_priority: 4, regional_complexity: "medium",
+    geography_levels: [{ level: "state_territory", example: "New South Wales" }, { level: "city", example: "Sydney" }], entity_terminology: ["Pty Ltd", "ABN", "ACN", "business name", "ASIC"], identifier_types: [{ country: "AU", identifier_type: "ABN", issuer: "Australian Business Register", example_role: "canonical business id" }, { country: "AU", identifier_type: "ACN", issuer: "ASIC", example_role: "company number" }], foundation_source_state: "single_national", maturity: "atlas_seeded" },
+  CA: { code: "CA", name: "Canada", languages: ["en", "fr"], discovery_role: "multi-jurisdiction source-routing test · federal + provincial", commercial_role: "prepared", discovery_priority: 5, commercial_priority: 5, regional_complexity: "high",
+    geography_levels: [{ level: "province_territory", example: "Ontario" }, { level: "city", example: "Toronto" }], entity_terminology: ["Corporation", "Inc.", "Ltée", "federal corporation", "provincial corporation", "Corporations Canada"], identifier_types: [{ country: "CA", identifier_type: "corporation number", issuer: "Corporations Canada", example_role: "federal corporate id" }, { country: "CA", identifier_type: "business number (BN)", issuer: "CRA", example_role: "tax id" }, { country: "CA", identifier_type: "provincial registration", issuer: "provincial registry", example_role: "provincial id" }], foundation_source_state: "federal_plus_provincial", maturity: "atlas_seeded" },
+};
+
+// ─── Source layers + Foundation Source concept ────────────────────────────────
+export const SOURCE_LAYERS = ["foundation", "national_business", "state_province_regional", "industry", "business_model", "commercial_route", "evidence", "signal", "fallback_search"] as const;
+export type SourceLayer = (typeof SOURCE_LAYERS)[number];
+
+export type LegalReuseState = "explicit_open_reuse" | "api_terms" | "public_access_terms_unclear" | "restricted" | "manual_review_required";
+export type PersonalDataPresence = "none_observed" | "incidental" | "material" | "unknown";
+export type LegalSensitivity = "low" | "moderate" | "unknown" | "manual_review";
+
+export interface IntlSourceAtlasEntry {
+  id: string; name: string; domain: string; country: CountryCode; jurisdiction: string; geography_scope: string[];
+  layers: SourceLayer[]; is_foundation_source: boolean; clusters: string[]; business_models: string[];
+  ecosystem: string; roles: string[]; has_company_entities: boolean; structuredness: "structured" | "semi_structured" | "unstructured";
+  api_available: boolean; bulk_available: boolean; public_access: boolean; auth_required: boolean;
+  provides_identifier: boolean; provides_status: boolean; provides_location: boolean; provides_industry: boolean; provides_domain: "high" | "medium" | "low" | "none";
+  accessibility: (OperationalAccessibility | "researched_not_tested")[]; legal_reuse: LegalReuseState; personal_data: PersonalDataPresence; legal_sensitivity: LegalSensitivity;
+  confidence: AtlasConfidence; freshness: "high" | "medium" | "low" | "unknown"; limitation: string; evidence_basis: string;
+}
+const F = (x: IntlSourceAtlasEntry) => x;
+
+// Foundation-source validation (§48): official ≠ foundation. Must provide identity value.
+export function isFoundationSource(s: IntlSourceAtlasEntry): boolean {
+  return s.is_foundation_source && s.has_company_entities && s.provides_identifier && s.provides_status;
+}
+
+// ─── Curated initial Source Atlases (researched from knowledge; NOT live) ──────
+export const US_SOURCE_ATLAS: IntlSourceAtlasEntry[] = [
+  F({ id: "us_sos_generic", name: "Secretary of State business-entity search (per state)", domain: "sos.<state>.gov", country: "US", jurisdiction: "state", geography_scope: ["state"], layers: ["foundation", "state_province_regional"], is_foundation_source: true, clusters: ["manufacturing", "retail", "professional_services", "technology"], business_models: ["corporation", "llc"], ecosystem: "official_registries", roles: ["FOUNDATION_SOURCE", "IDENTITY_SOURCE", "VALIDATION_SOURCE"], has_company_entities: true, structuredness: "semi_structured", api_available: false, bulk_available: false, public_access: true, auth_required: false, provides_identifier: true, provides_status: true, provides_location: true, provides_industry: false, provides_domain: "none", accessibility: ["researched_not_tested", "javascript_heavy", "pagination_complex"], legal_reuse: "public_access_terms_unclear", personal_data: "incidental", legal_sensitivity: "moderate", confidence: "hypothesized", freshness: "medium", limitation: "50 fragmented systems, no single national registry; formats differ per state; no domains.", evidence_basis: "Well-known state SoS systems; not live-tested." }),
+  F({ id: "us_sam_gov", name: "SAM.gov (federal contractors / entities)", domain: "sam.gov", country: "US", jurisdiction: "federal", geography_scope: ["national"], layers: ["foundation", "national_business", "commercial_route"], is_foundation_source: true, clusters: ["manufacturing", "professional_services", "construction", "technology"], business_models: ["supplier", "contractor"], ecosystem: "federal_procurement", roles: ["FOUNDATION_SOURCE", "IDENTITY_SOURCE", "BUSINESS_MODEL_SOURCE"], has_company_entities: true, structuredness: "structured", api_available: true, bulk_available: true, public_access: true, auth_required: true, provides_identifier: true, provides_status: true, provides_location: true, provides_industry: true, provides_domain: "low", accessibility: ["researched_not_tested", "provider_accessible", "authentication_required"], legal_reuse: "api_terms", personal_data: "incidental", legal_sensitivity: "low", confidence: "hypothesized", freshness: "high", limitation: "Only federally-registered entities (procurement-oriented), not the whole economy.", evidence_basis: "SAM.gov public API is well documented; not live-tested." }),
+  F({ id: "us_sec_edgar", name: "SEC EDGAR (public companies)", domain: "sec.gov", country: "US", jurisdiction: "federal", geography_scope: ["national"], layers: ["national_business", "evidence"], is_foundation_source: false, clusters: ["technology", "manufacturing", "professional_services"], business_models: ["public_company"], ecosystem: "official_registries", roles: ["IDENTITY_SOURCE", "EVIDENCE_SOURCE"], has_company_entities: true, structuredness: "structured", api_available: true, bulk_available: true, public_access: true, auth_required: false, provides_identifier: true, provides_status: true, provides_location: true, provides_industry: true, provides_domain: "medium", accessibility: ["researched_not_tested", "provider_accessible", "structured_endpoint"], legal_reuse: "explicit_open_reuse", personal_data: "material", legal_sensitivity: "low", confidence: "hypothesized", freshness: "high", limitation: "Public companies ONLY — not universal coverage; not a foundation source for SMEs.", evidence_basis: "EDGAR full-text/API well documented; not live-tested." }),
+  F({ id: "us_industry_assocs", name: "US national industry associations (e.g. NAM, sector bodies)", domain: "various", country: "US", jurisdiction: "national", geography_scope: ["national"], layers: ["industry", "business_model"], is_foundation_source: false, clusters: ["manufacturing", "technology", "healthcare", "logistics"], business_models: ["manufacturer", "service_provider"], ecosystem: "industry_associations", roles: ["DISCOVERY_SOURCE", "BUSINESS_MODEL_SOURCE"], has_company_entities: true, structuredness: "semi_structured", api_available: false, bulk_available: false, public_access: true, auth_required: false, provides_identifier: false, provides_status: false, provides_location: true, provides_industry: true, provides_domain: "medium", accessibility: ["researched_not_tested", "parser_required"], legal_reuse: "public_access_terms_unclear", personal_data: "incidental", legal_sensitivity: "moderate", confidence: "discovered", freshness: "medium", limitation: "Member-biased (established firms); coverage varies by sector.", evidence_basis: "Sector associations exist widely; specific directories not validated." }),
+  F({ id: "us_search", name: "Authorized search provider (fallback)", domain: "n/a", country: "US", jurisdiction: "n/a", geography_scope: ["national", "state"], layers: ["fallback_search"], is_foundation_source: false, clusters: ["*"], business_models: ["*"], ecosystem: "search_engines", roles: ["DISCOVERY_SOURCE", "IDENTITY_SOURCE"], has_company_entities: false, structuredness: "unstructured", api_available: true, bulk_available: false, public_access: true, auth_required: true, provides_identifier: false, provides_status: false, provides_location: false, provides_industry: false, provides_domain: "high", accessibility: ["provider_accessible"], legal_reuse: "api_terms", personal_data: "incidental", legal_sensitivity: "low", confidence: "hypothesized", freshness: "high", limitation: "Gap-filler / domain resolver; noisy for discovery.", evidence_basis: "Provider APIs." }),
+];
+export const UK_SOURCE_ATLAS: IntlSourceAtlasEntry[] = [
+  F({ id: "gb_companies_house", name: "Companies House", domain: "gov.uk/government/organisations/companies-house", country: "GB", jurisdiction: "national", geography_scope: ["national"], layers: ["foundation", "national_business"], is_foundation_source: true, clusters: ["*"], business_models: ["ltd", "plc", "llp"], ecosystem: "official_registries", roles: ["FOUNDATION_SOURCE", "IDENTITY_SOURCE", "VALIDATION_SOURCE"], has_company_entities: true, structuredness: "structured", api_available: true, bulk_available: true, public_access: true, auth_required: true, provides_identifier: true, provides_status: true, provides_location: true, provides_industry: true, provides_domain: "none", accessibility: ["researched_not_tested", "provider_accessible", "structured_endpoint"], legal_reuse: "explicit_open_reuse", personal_data: "material", legal_sensitivity: "moderate", confidence: "hypothesized", freshness: "high", limitation: "Strong IDENTITY foundation (company number/status/SIC), but NO commercial domains or opportunity evidence; officer personal data present (do not collect).", evidence_basis: "Companies House free API + bulk product are well documented; not live-tested." }),
+  F({ id: "gb_sector_bodies", name: "UK trade bodies / sector associations", domain: "various", country: "GB", jurisdiction: "national", geography_scope: ["national", "region"], layers: ["industry", "business_model"], is_foundation_source: false, clusters: ["manufacturing", "technology", "professional_services"], business_models: ["manufacturer", "service_provider"], ecosystem: "industry_associations", roles: ["DISCOVERY_SOURCE", "BUSINESS_MODEL_SOURCE"], has_company_entities: true, structuredness: "semi_structured", api_available: false, bulk_available: false, public_access: true, auth_required: false, provides_identifier: false, provides_status: false, provides_location: true, provides_industry: true, provides_domain: "medium", accessibility: ["researched_not_tested", "parser_required"], legal_reuse: "public_access_terms_unclear", personal_data: "incidental", legal_sensitivity: "moderate", confidence: "discovered", freshness: "medium", limitation: "Member-biased; DISCOVERY not identity.", evidence_basis: "Sector bodies exist widely; specific directories not validated." }),
+  F({ id: "gb_gov_procurement", name: "UK government procurement (Contracts Finder / FTS)", domain: "gov.uk/contracts-finder", country: "GB", jurisdiction: "national", geography_scope: ["national"], layers: ["commercial_route", "signal"], is_foundation_source: false, clusters: ["professional_services", "technology", "construction"], business_models: ["supplier"], ecosystem: "government_procurement", roles: ["SIGNAL_SOURCE", "DISCOVERY_SOURCE"], has_company_entities: true, structuredness: "structured", api_available: true, bulk_available: true, public_access: true, auth_required: false, provides_identifier: false, provides_status: false, provides_location: true, provides_industry: true, provides_domain: "low", accessibility: ["researched_not_tested", "provider_accessible"], legal_reuse: "explicit_open_reuse", personal_data: "incidental", legal_sensitivity: "low", confidence: "discovered", freshness: "high", limitation: "Suppliers to public sector only.", evidence_basis: "Open procurement data; not live-tested." }),
+  F({ id: "gb_search", name: "Authorized search provider (fallback)", domain: "n/a", country: "GB", jurisdiction: "n/a", geography_scope: ["national"], layers: ["fallback_search"], is_foundation_source: false, clusters: ["*"], business_models: ["*"], ecosystem: "search_engines", roles: ["DISCOVERY_SOURCE", "IDENTITY_SOURCE"], has_company_entities: false, structuredness: "unstructured", api_available: true, bulk_available: false, public_access: true, auth_required: true, provides_identifier: false, provides_status: false, provides_location: false, provides_industry: false, provides_domain: "high", accessibility: ["provider_accessible"], legal_reuse: "api_terms", personal_data: "incidental", legal_sensitivity: "low", confidence: "hypothesized", freshness: "high", limitation: "Gap-filler / domain resolver.", evidence_basis: "Provider APIs." }),
+];
+export const AU_SOURCE_ATLAS: IntlSourceAtlasEntry[] = [
+  F({ id: "au_abr_abn", name: "Australian Business Register / ABN Lookup", domain: "abr.business.gov.au", country: "AU", jurisdiction: "national", geography_scope: ["national", "state_territory"], layers: ["foundation", "national_business"], is_foundation_source: true, clusters: ["*"], business_models: ["pty_ltd", "sole_trader"], ecosystem: "official_registries", roles: ["FOUNDATION_SOURCE", "IDENTITY_SOURCE", "VALIDATION_SOURCE"], has_company_entities: true, structuredness: "structured", api_available: true, bulk_available: true, public_access: true, auth_required: true, provides_identifier: true, provides_status: true, provides_location: true, provides_industry: false, provides_domain: "none", accessibility: ["researched_not_tested", "provider_accessible", "structured_endpoint"], legal_reuse: "explicit_open_reuse", personal_data: "incidental", legal_sensitivity: "low", confidence: "hypothesized", freshness: "high", limitation: "National identity foundation (ABN/ACN/status/postcode); NO domains, weak industry; not complete commercial discovery.", evidence_basis: "ABN Lookup web service + Bulk Extract are documented; not live-tested." }),
+  F({ id: "au_industry_assocs", name: "Australian industry associations / manufacturer directories", domain: "various", country: "AU", jurisdiction: "national", geography_scope: ["national", "state_territory"], layers: ["industry", "business_model"], is_foundation_source: false, clusters: ["manufacturing", "professional_services"], business_models: ["manufacturer", "service_provider"], ecosystem: "industry_associations", roles: ["DISCOVERY_SOURCE", "BUSINESS_MODEL_SOURCE"], has_company_entities: true, structuredness: "semi_structured", api_available: false, bulk_available: false, public_access: true, auth_required: false, provides_identifier: false, provides_status: false, provides_location: true, provides_industry: true, provides_domain: "medium", accessibility: ["researched_not_tested", "parser_required"], legal_reuse: "public_access_terms_unclear", personal_data: "incidental", legal_sensitivity: "moderate", confidence: "discovered", freshness: "medium", limitation: "Member-biased.", evidence_basis: "Associations exist; specific directories not validated." }),
+  F({ id: "au_search", name: "Authorized search provider (fallback)", domain: "n/a", country: "AU", jurisdiction: "n/a", geography_scope: ["national"], layers: ["fallback_search"], is_foundation_source: false, clusters: ["*"], business_models: ["*"], ecosystem: "search_engines", roles: ["DISCOVERY_SOURCE", "IDENTITY_SOURCE"], has_company_entities: false, structuredness: "unstructured", api_available: true, bulk_available: false, public_access: true, auth_required: true, provides_identifier: false, provides_status: false, provides_location: false, provides_industry: false, provides_domain: "high", accessibility: ["provider_accessible"], legal_reuse: "api_terms", personal_data: "incidental", legal_sensitivity: "low", confidence: "hypothesized", freshness: "high", limitation: "Gap-filler.", evidence_basis: "Provider APIs." }),
+];
+export const CA_SOURCE_ATLAS: IntlSourceAtlasEntry[] = [
+  F({ id: "ca_corporations_canada", name: "Corporations Canada (federal)", domain: "ised-isde.canada.ca", country: "CA", jurisdiction: "federal", geography_scope: ["national"], layers: ["foundation", "national_business"], is_foundation_source: true, clusters: ["*"], business_models: ["federal_corporation"], ecosystem: "official_registries", roles: ["FOUNDATION_SOURCE", "IDENTITY_SOURCE", "VALIDATION_SOURCE"], has_company_entities: true, structuredness: "structured", api_available: false, bulk_available: true, public_access: true, auth_required: false, provides_identifier: true, provides_status: true, provides_location: true, provides_industry: false, provides_domain: "none", accessibility: ["researched_not_tested", "structured_endpoint"], legal_reuse: "explicit_open_reuse", personal_data: "incidental", legal_sensitivity: "low", confidence: "hypothesized", freshness: "high", limitation: "FEDERAL corporations only — provincially-incorporated companies are NOT here (fragmented foundation).", evidence_basis: "Federal corporation search + open datasets; not live-tested." }),
+  F({ id: "ca_provincial_registries", name: "Provincial registries (ON/BC/QC/AB…)", domain: "various", country: "CA", jurisdiction: "provincial", geography_scope: ["province_territory"], layers: ["foundation", "state_province_regional"], is_foundation_source: true, clusters: ["*"], business_models: ["provincial_corporation"], ecosystem: "official_registries", roles: ["FOUNDATION_SOURCE", "IDENTITY_SOURCE"], has_company_entities: true, structuredness: "semi_structured", api_available: false, bulk_available: false, public_access: true, auth_required: false, provides_identifier: true, provides_status: true, provides_location: true, provides_industry: false, provides_domain: "none", accessibility: ["researched_not_tested", "javascript_heavy", "authentication_required"], legal_reuse: "public_access_terms_unclear", personal_data: "incidental", legal_sensitivity: "moderate", confidence: "discovered", freshness: "medium", limitation: "Per-province formats/access differ; some paywalled — foundation is federal_plus_provincial.", evidence_basis: "Provincial registries exist; access varies; not validated." }),
+  F({ id: "ca_search", name: "Authorized search provider (fallback)", domain: "n/a", country: "CA", jurisdiction: "n/a", geography_scope: ["national", "province_territory"], layers: ["fallback_search"], is_foundation_source: false, clusters: ["*"], business_models: ["*"], ecosystem: "search_engines", roles: ["DISCOVERY_SOURCE", "IDENTITY_SOURCE"], has_company_entities: false, structuredness: "unstructured", api_available: true, bulk_available: false, public_access: true, auth_required: true, provides_identifier: false, provides_status: false, provides_location: false, provides_industry: false, provides_domain: "high", accessibility: ["provider_accessible"], legal_reuse: "api_terms", personal_data: "incidental", legal_sensitivity: "low", confidence: "hypothesized", freshness: "high", limitation: "Gap-filler.", evidence_basis: "Provider APIs." }),
+];
+export const INTL_SOURCE_ATLAS: Record<CountryCode, IntlSourceAtlasEntry[]> = { CO: [], US: US_SOURCE_ATLAS, GB: UK_SOURCE_ATLAS, AU: AU_SOURCE_ATLAS, CA: CA_SOURCE_ATLAS };
+
+// ─── Five-country readiness (breadth vs depth; no fake percentages) ───────────
+export interface CountryReadiness {
+  country: CountryCode; name: string; discovery_role: string; commercial_role: string; maturity: CountryMaturity;
+  foundation_source_state: string; foundation_source_count: number; specialized_source_count: number;
+  breadth: CoverageBreadth; depth: CoverageDepth; regional_complexity: string; live_benchmark_count: number;
+  biggest_gap: string; next_benchmark: string;
+}
+export function fiveCountryReadiness(colombiaLiveBenchmarks = 2): CountryReadiness[] {
+  return COUNTRY_CODES.map((code) => {
+    const p = COUNTRY_PROFILES[code]; const atlas = INTL_SOURCE_ATLAS[code];
+    const foundations = atlas.filter(isFoundationSource);
+    const specialized = atlas.filter((s) => !s.layers.includes("fallback_search"));
+    const isCO = code === "CO";
+    const breadth: CoverageBreadth = isCO ? "strong" : specialized.length >= 3 ? "good" : specialized.length >= 1 ? "partial" : "none";
+    const depth: CoverageDepth = isCO ? "multi_benchmark" : "untested"; // no live benchmark outside CO
+    return {
+      country: code, name: p.name, discovery_role: p.discovery_role, commercial_role: p.commercial_role, maturity: p.maturity,
+      foundation_source_state: p.foundation_source_state, foundation_source_count: isCO ? 1 : foundations.length, specialized_source_count: isCO ? 20 : specialized.length,
+      breadth, depth, regional_complexity: p.regional_complexity, live_benchmark_count: isCO ? colombiaLiveBenchmarks : 0,
+      biggest_gap: isCO ? "retail/technology benchmarks pending" : code === "US" ? "no_single_foundation_source (fragmented state registries)" : code === "CA" ? "provincial coverage fragmented" : foundations.length ? "no_live_benchmark" : "foundation_source_unvalidated",
+      next_benchmark: isCO ? "Retail (current) → Technology" : NEXT_BENCHMARK[code],
+    };
+  });
+}
+
+// ─── Per-country benchmark queue (planned; NOT executed, §100) ────────────────
+const NEXT_BENCHMARK: Record<CountryCode, string> = { CO: "Technology", US: "Manufacturing", GB: "Technology / SaaS", AU: "Manufacturing", CA: "Technology" };
+export interface IntlBenchmarkCell { id: string; country: CountryCode; industry: string; business_model: string; route: string; foundation_source: string | null; candidate_sources: string[]; state: "planned"; priority: number; rationale: string }
+export const INTL_BENCHMARK_QUEUE: IntlBenchmarkCell[] = [
+  { id: "us-manufacturing-planned", country: "US", industry: "manufacturing", business_model: "manufacturer", route: "procurement", foundation_source: "us_sam_gov", candidate_sources: ["us_sam_gov", "us_industry_assocs", "us_sos_generic", "us_search"], state: "planned", priority: 1, rationale: "Highest non-Colombia priority; tests national+state+industry routing + fragmented foundation." },
+  { id: "us-technology-planned", country: "US", industry: "technology", business_model: "saas_vendor", route: "saas_purchase", foundation_source: "us_sec_edgar", candidate_sources: ["us_industry_assocs", "us_search"], state: "planned", priority: 2, rationale: "Digital-native; high commercial relevance." },
+  { id: "us-retail-planned", country: "US", industry: "specialty_retail", business_model: "retailer", route: "retail_listing", foundation_source: null, candidate_sources: ["us_industry_assocs", "us_search"], state: "planned", priority: 3, rationale: "Reuses Colombia retail capabilities (location inflation, chains, marketplace)." },
+  { id: "gb-technology-planned", country: "GB", industry: "technology", business_model: "saas_vendor", route: "saas_purchase", foundation_source: "gb_companies_house", candidate_sources: ["gb_companies_house", "gb_sector_bodies", "gb_search"], state: "planned", priority: 1, rationale: "Companies House identity foundation + software ecosystem discovery." },
+  { id: "gb-professional-services-planned", country: "GB", industry: "professional_services", business_model: "service_provider", route: "service_contract", foundation_source: "gb_companies_house", candidate_sources: ["gb_companies_house", "gb_gov_procurement", "gb_search"], state: "planned", priority: 2, rationale: "Identity-rich; procurement signal." },
+  { id: "au-manufacturing-planned", country: "AU", industry: "manufacturing", business_model: "manufacturer", route: "procurement", foundation_source: "au_abr_abn", candidate_sources: ["au_abr_abn", "au_industry_assocs", "au_search"], state: "planned", priority: 1, rationale: "ABN identity foundation + manufacturer directories." },
+  { id: "au-professional-services-planned", country: "AU", industry: "professional_services", business_model: "service_provider", route: "service_contract", foundation_source: "au_abr_abn", candidate_sources: ["au_abr_abn", "au_search"], state: "planned", priority: 2, rationale: "Identity-rich English market." },
+  { id: "ca-technology-planned", country: "CA", industry: "technology", business_model: "saas_vendor", route: "saas_purchase", foundation_source: "ca_corporations_canada", candidate_sources: ["ca_corporations_canada", "ca_provincial_registries", "ca_search"], state: "planned", priority: 1, rationale: "Tests federal+provincial routing on a digital-native vertical." },
+  { id: "ca-manufacturing-planned", country: "CA", industry: "manufacturing", business_model: "manufacturer", route: "procurement", foundation_source: "ca_corporations_canada", candidate_sources: ["ca_corporations_canada", "ca_provincial_registries", "ca_search"], state: "planned", priority: 2, rationale: "Federal+provincial + industry." },
+];
+
+// ─── International Source Research Queue ───────────────────────────────────────
+export interface IntlResearchTask { id: string; country: CountryCode; task: string; priority: "high" | "medium" | "low"; reason: string }
+export const INTL_RESEARCH_QUEUE: IntlResearchTask[] = [
+  { id: "irq-us-1", country: "US", task: "Standardize state SoS registry access (representative states: CA/TX/NY/FL/IL)", priority: "high", reason: "Fragmented foundation; no national registry." },
+  { id: "irq-us-2", country: "US", task: "Validate SAM.gov API for federal-supplier identity + industry (NAICS)", priority: "high", reason: "Best structured national identity for procurement-facing firms." },
+  { id: "irq-us-3", country: "US", task: "Curate SaaS/technology ecosystem sources (associations, review platforms — ToS-aware)", priority: "medium", reason: "Digital-native discovery." },
+  { id: "irq-gb-1", country: "GB", task: "Integrate Companies House API as identity foundation (company number/status/SIC)", priority: "high", reason: "Strong national identity foundation." },
+  { id: "irq-gb-2", country: "GB", task: "Curate UK software/SaaS ecosystem sources", priority: "medium", reason: "First planned UK benchmark." },
+  { id: "irq-au-1", country: "AU", task: "Evaluate ABN Lookup web service + Bulk Extract operationally", priority: "high", reason: "National identity foundation." },
+  { id: "irq-au-2", country: "AU", task: "Curate manufacturer association sources", priority: "medium", reason: "First planned AU benchmark." },
+  { id: "irq-ca-1", country: "CA", task: "Map provincial registries (ON/BC/QC/AB) access + formats", priority: "high", reason: "Federal foundation is partial; provinces fragmented." },
+  { id: "irq-ca-2", country: "CA", task: "Curate technology ecosystem sources", priority: "medium", reason: "First planned CA benchmark." },
+];
+
+// ─── Country coverage gaps ────────────────────────────────────────────────────
+export interface CountryGap { country: CountryCode; type: string; severity: "high" | "medium" | "low"; evidence: string }
+export function countryCoverageGaps(): CountryGap[] {
+  const gaps: CountryGap[] = [];
+  for (const code of COUNTRY_CODES) {
+    if (code === "CO") continue;
+    const atlas = INTL_SOURCE_ATLAS[code]; const p = COUNTRY_PROFILES[code];
+    if (!atlas.some(isFoundationSource)) gaps.push({ country: code, type: "no_foundation_source", severity: "high", evidence: "No validated foundation source" });
+    if (p.foundation_source_state === "fragmented") gaps.push({ country: code, type: "fragmented_foundation_sources", severity: "medium", evidence: "No single national registry (state/provincial fragmentation)" });
+    if (p.foundation_source_state === "federal_plus_provincial") gaps.push({ country: code, type: "province_coverage_missing", severity: "medium", evidence: "Provincial registries not yet mapped" });
+    gaps.push({ country: code, type: "no_live_benchmark", severity: "medium", evidence: "depth=untested until a live benchmark runs" });
+    if (atlas.some((s) => s.legal_reuse === "public_access_terms_unclear")) gaps.push({ country: code, type: "legal_reuse_terms_unclear", severity: "low", evidence: "Some sources have unclear reuse terms — founder review" });
+  }
+  return gaps;
+}
+
+// ─── Market Memory + cross-country Source Type Learning (hypotheses only) ─────
+export interface MarketMemory {
+  country: CountryCode; structure: string; foundation_source_state: string; source_ecosystems: number;
+  benchmarks: number; source_type_notes: string[]; last_updated: string;
+}
+export function marketMemory(): MarketMemory[] {
+  return COUNTRY_CODES.map((code) => {
+    const atlas = INTL_SOURCE_ATLAS[code]; const p = COUNTRY_PROFILES[code];
+    return { country: code, structure: p.regional_complexity + " regional complexity", foundation_source_state: p.foundation_source_state,
+      source_ecosystems: code === "CO" ? 12 : new Set(atlas.map((s) => s.ecosystem)).size, benchmarks: code === "CO" ? 2 : 0,
+      source_type_notes: code === "CO" ? ["associations: high business-model precision, formal-member bias", "registries: identity coverage, weak domains"] : ["awaiting_live_benchmark"], last_updated: "2026-08-07" };
+  });
+}
+// Cross-country hypotheses — supporting markets + confidence; NEVER auto-applied.
+export interface SourceTypeLearning { source_type: string; observed_pattern: string; supporting_markets: CountryCode[]; sample_count: number; confidence: "hypothesis" | "weak" | "moderate"; note: string }
+export const SOURCE_TYPE_LEARNING: SourceTypeLearning[] = [
+  { source_type: "government_registry", observed_pattern: "High identity/status coverage but weak or no commercial domains; foundation not discovery.", supporting_markets: ["CO"], sample_count: 1, confidence: "hypothesis", note: "Cross-country evidence pending (UK/AU/CA registries expected similar)." },
+  { source_type: "industry_association_directory", observed_pattern: "High business-model precision but bias toward established/formal-member firms.", supporting_markets: ["CO"], sample_count: 2, confidence: "weak", note: "From CO hospitality + manufacturing; not transferable as proof." },
+  { source_type: "export_directory", observed_pattern: "Overrepresents export-ready firms (exporter bias).", supporting_markets: ["CO"], sample_count: 1, confidence: "hypothesis", note: "ProColombia; a UK/US export list would need its own benchmark." },
+  { source_type: "store_locator", observed_pattern: "Severe location inflation (many locations → few canonical accounts).", supporting_markets: [], sample_count: 0, confidence: "hypothesis", note: "To be measured in the Retail benchmark." },
+];
+
+export const MULTI_COUNTRY_VERSION = "discovery-v2-4-multi-country-v1";

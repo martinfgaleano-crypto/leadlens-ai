@@ -539,3 +539,7 @@ Commit `feat: benchmark discovery engine with measured source yield`. Additive o
 
 ## Continuity note — Discovery Engine V2.1 (2026-08-04)
 Commit `feat: run live controlled discovery validation for colombia hospitality`. Additive; fixture regression preserved. Live artifact kept separate (data_basis discriminator). 0 provider calls, no outreach, no people enrichment. Founder: authorize a search-provider key/quota to run cohort B, and approve the Cotelco parser. See LEADLENS_DISCOVERY_ENGINE_V2_1_LIVE_VALIDATION_REPORT.md.
+
+
+## Continuity note — Discovery V2.4 (2026-08-07)
+Commit `feat: expand discovery to five priority markets`. Additive; extends coverage.ts/manufacturing-live.ts. New-country atlases are research hypotheses (not live-validated); retail is a controlled sample. 0 provider calls, no international benchmark, no people data, pilots preserved. Founder: authorize a provider key to enable live cohorts; approve next benchmark (Colombia Technology #4 + USA foundation). See LEADLENS_DISCOVERY_V2_4_MULTI_COUNTRY_FOUNDATION_AND_RETAIL_REPORT.md.

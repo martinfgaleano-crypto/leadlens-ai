@@ -10,6 +10,8 @@ import {
 } from "@/lib/discovery/source-intelligence";
 import { runBenchmark } from "@/lib/discovery/source-intelligence/benchmark";
 import { buildLiveBenchmark } from "@/lib/discovery/source-intelligence/live";
+import { fiveCountryReadiness, countryCoverageGaps, INTL_BENCHMARK_QUEUE, INTL_RESEARCH_QUEUE, SOURCE_TYPE_LEARNING, MULTI_COUNTRY_VERSION } from "@/lib/discovery/source-intelligence/multi-country";
+import { buildRetailBenchmark } from "@/lib/discovery/source-intelligence/retail-live";
 import {
   COLOMBIA_PRIORITY_CLUSTERS, COLOMBIA_SOURCE_ATLAS, COLOMBIA_BENCHMARK_QUEUE,
   SOURCE_RESEARCH_QUEUE_V2, buildCountryCoverage, routeCoverage, businessModelCoverage,
@@ -72,8 +74,10 @@ export default function DiscoveryObservatory({ searchParams }: { searchParams?: 
       <h1 style={{ color: C.navy, margin: "2px 0 2px" }}>¿Dónde sabe buscar LeadLens?</h1>
       <div style={{ color: C.muted, fontSize: 12, marginBottom: 16 }}>Country × Industry Source Intelligence · {REGISTRY_VERSION} · {ROUTER_VERSION} · sin llamadas a proveedores</div>
 
+      <FiveCountrySection />
+
       <div style={box}>
-        <div style={{ fontWeight: 700, color: C.navy }}>Países</div>
+        <div style={{ fontWeight: 700, color: C.navy }}>Colombia · detalle</div>
         <div style={{ marginTop: 6 }}><b>{co.name}</b> ({co.code}) — cobertura <b>{buildSourcePlan(HOSPITALITY).country_coverage}</b> · {byRole} fuentes · {(SOURCE_MAPPINGS.CO ?? []).length} mappings contextuales · datos estructurados: {co.structured_data_availability}</div>
         <div style={{ fontSize: 12, color: C.muted, marginTop: 4 }}>Asociaciones: {co.sector_associations.join(" · ")}</div>
         <div style={{ fontSize: 11.5, color: C.muted, marginTop: 6 }}>Próximos mercados (marco reutilizable, no poblados): MX · US · ES · CL · AR · PE · BR</div>
@@ -161,6 +165,60 @@ function ManufacturingBenchmarkSection(){
   <div style={box}><b>Revisión del fundador</b><div style={{fontSize:11.5,marginTop:5}}>Aceptadas fuertes: {a.review.strong.length} · borderline: {a.review.borderline.length} · rechazadas: {a.review.rejected.length}. La decisión automatizada original se conserva.</div>{a.review.strong.slice(0,5).map(x=><div key={x.canonical_account} style={{fontSize:11,padding:"3px 0"}}><b>{x.raw_entity}</b> → {x.legal_entity} · {x.subindustry} · {x.manufacturer_status} · {x.geography} · {x.domain??"dominio no resuelto"}</div>)}</div>
   <h3 style={{color:C.navy,fontSize:14}}>Investigación Manufacturing priorizada</h3><QueueTable rows={MANUFACTURING_RESEARCH_QUEUE.map(x=>({priority:x.priority,name:x.task,state:"open",why:`${x.gap} → ${x.candidate_source}`}))}/>
  </section>;
+}
+
+function FiveCountrySection() {
+  const readiness = fiveCountryReadiness();
+  const gaps = countryCoverageGaps();
+  const bcol: Record<string, string> = { none: "#b45", weak: "#c88", partial: C.gold, good: "#4E6A54", strong: C.navy };
+  return (
+    <>
+      <div style={{ ...box, background: "#EAF4EC" }}>
+        <div style={{ fontWeight: 700, color: C.navy, fontSize: 15 }}>Cinco mercados de descubrimiento · {MULTI_COUNTRY_VERSION}</div>
+        <div style={{ fontSize: 11.5, color: "#8a6d3b", marginTop: 4 }}>Breadth (cuánto Atlas existe) vs Depth (cuánto se validó en vivo). Fuera de Colombia, depth = untested hasta correr un benchmark en vivo. Atlas nuevos = investigados desde conocimiento, NO validados en vivo (confianza discovered/hypothesized).</div>
+      </div>
+      <div style={box}>
+        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+          <thead><tr style={{ background: C.navy, color: "#fff", textAlign: "left" }}><th style={{ padding: 5 }}>País</th><th style={{ padding: 5 }}>Rol descubrimiento</th><th style={{ padding: 5 }}>Rol comercial</th><th style={{ padding: 5 }}>Breadth</th><th style={{ padding: 5 }}>Depth</th><th style={{ padding: 5 }}>Foundation</th><th style={{ padding: 5 }}>Esp.</th><th style={{ padding: 5 }}>Benchmarks</th><th style={{ padding: 5 }}>Gap principal</th><th style={{ padding: 5 }}>Próximo</th></tr></thead>
+          <tbody>{readiness.map((r, i) => (
+            <tr key={r.country} style={{ background: i % 2 ? C.cream : "#fff", verticalAlign: "top" }}>
+              <td style={{ padding: 5, fontWeight: 700 }}>{r.name} <span style={{ color: C.muted }}>({r.country})</span></td>
+              <td style={{ padding: 5, color: C.muted, fontSize: 11 }}>{r.discovery_role}</td>
+              <td style={{ padding: 5 }}>{r.commercial_role}</td>
+              <td style={{ padding: 5 }}><span style={{ background: bcol[r.breadth], color: "#fff", padding: "1px 6px", borderRadius: 3, fontSize: 10.5 }}>{r.breadth}</span></td>
+              <td style={{ padding: 5 }}>{r.depth}</td>
+              <td style={{ padding: 5, fontSize: 11 }}>{r.foundation_source_state} ({r.foundation_source_count})</td>
+              <td style={{ padding: 5 }}>{r.specialized_source_count}</td>
+              <td style={{ padding: 5 }}>{r.live_benchmark_count}</td>
+              <td style={{ padding: 5, color: C.muted, fontSize: 11 }}>{r.biggest_gap}</td>
+              <td style={{ padding: 5, fontSize: 11 }}>{r.next_benchmark}</td>
+            </tr>
+          ))}</tbody>
+        </table>
+        <div style={{ fontSize: 11.5, color: C.muted, marginTop: 8 }}>Cola de benchmarks internacional (planeados, NO ejecutados): {INTL_BENCHMARK_QUEUE.map((b) => b.id).join(" · ")}</div>
+        <div style={{ fontSize: 11.5, color: C.muted, marginTop: 4 }}>Cola de investigación: {INTL_RESEARCH_QUEUE.slice(0, 5).map((q) => q.task).join(" · ")}…</div>
+        <div style={{ fontSize: 11.5, color: C.muted, marginTop: 4 }}>Brechas por país: {gaps.length} · aprendizaje por tipo de fuente (hipótesis): {SOURCE_TYPE_LEARNING.length}</div>
+      </div>
+      <RetailSection />
+    </>
+  );
+}
+
+function RetailSection() {
+  const r = buildRetailBenchmark();
+  return (
+    <div style={{ ...box, background: "#FBF7F0" }}>
+      <div style={{ fontWeight: 700, color: C.navy }}>Colombia · Retail benchmark #3 · {r.id}</div>
+      <div style={{ fontSize: 11.5, color: "#8a6d3b", margin: "4px 0 8px" }}>⚠ {r.warnings[0]}</div>
+      <div style={{ fontSize: 12.5 }}>
+        Listados crudos <b>{r.raw_listings}</b> → cuentas canónicas <b>{r.canonical_accounts}</b> · <b>Location Inflation Ratio {r.location_inflation_ratio}</b> · assortment yield <b>{r.assortment_evidence_yield}</b> · plausibilidad product-listing: {Object.entries(r.product_listing_plausibility).map(([k, v]) => `${k} ${v}`).join(", ")}
+      </div>
+      <div style={{ fontSize: 12, color: C.muted, marginTop: 6 }}>Marketplace: {Object.entries(r.marketplace_breakdown).map(([k, v]) => `${k} ${v}`).join(", ")}</div>
+      <div style={{ fontSize: 12, color: C.muted, marginTop: 4 }}>Sesgo de fuente: {r.source_bias.join(" · ")}</div>
+      <div style={{ fontSize: 11.5, color: C.ink, marginTop: 6 }}><b>Capacidades reutilizables:</b> {r.reusable_capabilities.join(" · ")}</div>
+      <div style={{ fontSize: 11.5, color: C.muted, marginTop: 4 }}>{r.novelty_note}</div>
+    </div>
+  );
 }
 
 function LiveBenchmarkSection() {

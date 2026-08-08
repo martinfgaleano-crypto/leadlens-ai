@@ -474,3 +474,7 @@ Fixture-based measured discovery: executor, entity-resolution V2, 10-stage funne
 
 ## Checkpoint addendum — Discovery Engine V2.1 live validation (2026-08-04)
 First live controlled source access (Cotelco afiliados). Real finding: structured directory provides official domains directly (verification cost collapses), contradicting the fixture; real blocker = JS pagination + missing search credentials. Live snapshot separate from fixture; co_cotelco → benchmarked (n=4). Search/hybrid not_executed (honest). 0 provider calls, no people data. Pilot 1/2 + Account Memory unchanged.
+
+
+## Checkpoint addendum — Discovery V2.4 multi-country + retail (2026-08-07)
+Five-market foundation (CO/US/GB/AU/CA): profiles, Foundation Source, curated atlases (researched not live), generic geography/identifiers, source layers, legal/personal-data flags, readiness (depth untested outside CO), queues, Market Memory + Source Type Learning hypotheses. Colombia Retail #3 (controlled): Location Inflation 2.13, marketplace classification, assortment yield, saturation, bias. All V1–V2.3 preserved; 0 providers; no migration; pilots unchanged.

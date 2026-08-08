@@ -140,3 +140,7 @@ Measured the discovery pipeline over a deterministic Colombia-hospitality fixtur
 
 ## 22. Discovery Engine V2.1 — live validation (2026-08-04)
 Ran the first real controlled source access (Cotelco afiliados): public + structured + domains provided directly (n=4). Search cohort blocked (no creds). Live snapshot separate from fixture; co_cotelco→benchmarked (small). Manufacturing NOT YET. Next: Cotelco JS-pagination parser + search cohort under a real provider key, then reconsider manufacturing.
+
+
+## 23. Discovery V2.4 — multi-country foundation + Colombia retail (2026-08-07)
+Extended discovery to five markets (CO/US/GB/AU/CA): profiles, Foundation Source, curated atlases (research hypotheses), generic geography/identifiers, five-country readiness (breadth built, depth untested outside CO), per-country queues, Market Memory + Source Type Learning. Colombia Retail #3 (controlled): Location Inflation Ratio, marketplace/chain/assortment capabilities. Providers still unavailable in exec env. Next: Colombia Technology #4 + USA foundation validation once a provider key is authorized.
