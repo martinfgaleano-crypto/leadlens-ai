@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/require-admin";
-import { probeAll, deriveAlerts, PROVIDER_DEFS, RUN_REQUIREMENTS, recommendedAction } from "@/lib/ops/provider-health";
+import { probeAll, probeOne, deriveAlerts, PROVIDER_DEFS, RUN_REQUIREMENTS, recommendedAction } from "@/lib/ops/provider-health";
 
 export const dynamic = "force-dynamic";
 
 // Internal rate-limit for forced probes (per process): max 1 forced sweep/min.
 let lastForced = 0;
+const lastForcedProvider = new Map<string, number>();
 
 /** GET /api/admin/operations/providers — provider health, credits, usage, alerts.
  *  ?probe=1 forces a live probe sweep (rate-limited). Never exposes secrets. */
@@ -29,8 +30,10 @@ export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}));
   const id = String(body.provider ?? "");
   if (!PROVIDER_DEFS.some((d) => d.id === id)) return NextResponse.json({ error: "unknown_provider" }, { status: 400 });
+  const last=lastForcedProvider.get(id)??0;
+  if(Date.now()-last<60_000)return NextResponse.json({error:"rate_limited",detail:"Probe individual: máximo 1/min por proveedor."},{status:429});
+  lastForcedProvider.set(id,Date.now());
   console.log(`[audit] admin provider test: ${id} at ${new Date().toISOString()}`);
-  const statuses = await probeAll(true);
-  const st = statuses.find((s) => s.id === id);
+  const st = await probeOne(id,true);
   return NextResponse.json({ status: st });
 }

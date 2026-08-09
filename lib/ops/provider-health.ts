@@ -5,7 +5,7 @@
 // unavailable). Probes are minimal (no token burn beyond ~1 token for
 // Anthropic) and cached; the admin console rate-limits manual tests.
 
-import { getUsage, type ProviderUsage } from "./usage-ledger";
+import { getUsage, recordProviderCall, type ProviderUsage } from "./usage-ledger";
 
 export const PROVIDER_HEALTH_VERSION = "provider-health-v1";
 
@@ -227,29 +227,40 @@ export const PROVIDER_DEFS: ProviderDef[] = [
 const cache = new Map<string, { at: number; st: ProviderStatus }>();
 const CACHE_MS = 5 * 60 * 1000;
 
-export async function probeAll(force = false): Promise<ProviderStatus[]> {
-  const usage = getUsage();
-  const out: ProviderStatus[] = [];
-  for (const def of PROVIDER_DEFS) {
-    const cached = cache.get(def.id);
-    if (!force && cached && Date.now() - cached.at < CACHE_MS) { out.push({ ...cached.st, usage: usage[def.id] ?? null }); continue; }
-    const configured = def.envKeys.some((k) => !!process.env[k]);
-    let st: ProviderStatus;
-    try {
-      const p = await def.probe();
-      st = {
-        id: def.id, name: def.name, role: def.role, configured,
-        state: p.state, state_kind: "confirmed_by_provider",
-        detail: p.detail, latency_ms: p.latency_ms,
-        credits: p.credits ?? { value: null, kind: "unavailable" },
-        usage: usage[def.id] ?? null, fallback: def.fallback, impact: def.impact,
-        probed_at: new Date().toISOString(),
-      };
-    } catch (e) {
-      st = { id: def.id, name: def.name, role: def.role, configured, state: "unknown", state_kind: "observed_by_leadlens", detail: e instanceof Error ? redactDiagnostic(e.message).slice(0, 120) : "probe failed", latency_ms: null, credits: { value: null, kind: "unavailable" }, usage: usage[def.id] ?? null, fallback: def.fallback, impact: def.impact, probed_at: new Date().toISOString() };
-    }
-    cache.set(def.id, { at: Date.now(), st });
-    out.push(st);
+function configuredStatus(def: ProviderDef): ProviderStatus {
+  const configured=def.envKeys.some((envKey)=>Boolean(process.env[envKey]));
+  return {id:def.id,name:def.name,role:def.role,configured,state:configured?"not_tested":"missing",state_kind:"observed_by_leadlens",detail:null,latency_ms:null,credits:{value:null,kind:"unavailable"},usage:getUsage()[def.id]??null,fallback:def.fallback,impact:def.impact,probed_at:null};
+}
+
+/** Probe exactly one provider. Unknown ids fail closed without network activity. */
+export async function probeOne(id:string,force=true):Promise<ProviderStatus|null>{
+  const def=PROVIDER_DEFS.find(candidate=>candidate.id===id);
+  if(!def)return null;
+  const cached=cache.get(def.id);
+  if(!force&&cached&&Date.now()-cached.at<CACHE_MS)return {...cached.st,usage:getUsage()[def.id]??null};
+  if(!force)return configuredStatus(def);
+  const configured=def.envKeys.some((envKey)=>Boolean(process.env[envKey]));
+  let st:ProviderStatus;
+  try{
+    const p=await def.probe();
+    const success=p.state==="ok"||p.state==="degraded"||p.state==="not_tested";
+    if(configured&&p.latency_ms!==null)recordProviderCall(def.id,success,p.latency_ms,p.detail);
+    st={id:def.id,name:def.name,role:def.role,configured,state:p.state,state_kind:"confirmed_by_provider",detail:p.detail,latency_ms:p.latency_ms,credits:p.credits??{value:null,kind:"unavailable"},usage:getUsage()[def.id]??null,fallback:def.fallback,impact:def.impact,probed_at:new Date().toISOString()};
+  }catch(error){
+    const detail=redactDiagnostic(error instanceof Error?error.message:"probe failed").slice(0,120);
+    if(configured)recordProviderCall(def.id,false,0,detail);
+    st={id:def.id,name:def.name,role:def.role,configured,state:"unknown",state_kind:"observed_by_leadlens",detail,latency_ms:null,credits:{value:null,kind:"unavailable"},usage:getUsage()[def.id]??null,fallback:def.fallback,impact:def.impact,probed_at:new Date().toISOString()};
+  }
+  cache.set(def.id,{at:Date.now(),st});
+  return st;
+}
+
+/** Cold/default reads are network-free; only an explicit force probes providers. */
+export async function probeAll(force=false):Promise<ProviderStatus[]>{
+  const out:ProviderStatus[]=[];
+  for(const def of PROVIDER_DEFS){
+    const status=await probeOne(def.id,force);
+    if(status)out.push(status);
   }
   return out;
 }
