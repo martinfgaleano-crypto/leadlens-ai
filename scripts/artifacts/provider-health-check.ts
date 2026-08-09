@@ -48,9 +48,10 @@ async function callStructured<T>(provider: "sam_gov" | "sec_edgar", configured: 
   out.push(await call("firecrawl", process.env.FIRECRAWL_API_KEY, () => fetch("https://api.firecrawl.dev/v1/scrape", { method: "POST", headers: { "content-type": "application/json", "Authorization": `Bearer ${process.env.FIRECRAWL_API_KEY}` }, body: JSON.stringify({ url: "https://example.com", formats: ["markdown"] }) })));
   out.push(await call("serper", process.env.SERPER_API_KEY, () => fetch("https://google.serper.dev/search", { method: "POST", headers: { "content-type": "application/json", "X-API-KEY": process.env.SERPER_API_KEY ?? "" }, body: JSON.stringify({ q: "colombia retail", num: 1 }) })));
   out.push(await callExa());
-  // Known public registered UEI from the official SAM Entity API examples;
-  // deterministic identity lookup avoids treating a no-match name as auth failure.
-  out.push(await callStructured("sam_gov", Boolean(process.env.DATA_GOV_API_KEY), () => searchSamEntities({ uei: "DE95TS6Y5XR6", registrationStatus: "A", limit: 3 })));
+  // Known public UEI from the official SAM Entity API examples. Do not add a
+  // registration-status filter: entity status can change and turn a valid auth
+  // probe into a false 404 while the canonical UEI remains resolvable.
+  out.push(await callStructured("sam_gov", Boolean(process.env.DATA_GOV_API_KEY), () => searchSamEntities({ uei: "DE95TS6Y5XR6", limit: 3 })));
   out.push(await callStructured("sec_edgar", Boolean(process.env.SEC_EDGAR_CONTACT), () => getSecCompanySubmissions("320193")));
   for (const h of out) console.log(`${h.provider}: configured=${h.configured} visible=${h.runtime_visible} status=${h.http_status} -> ${h.state}${h.normalized_results === undefined ? "" : ` normalized_results=${h.normalized_results} ledger_recorded=${h.ledger_recorded}`}`);
 })();
