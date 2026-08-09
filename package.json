@@ -145,7 +145,11 @@
     "test:discovery-engine-v2-4-1-live-recovery": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/discovery-engine-v2-4-1-live-recovery.test.ts",
     "pilot:diagnose-provider-env": "npx -y tsx --tsconfig tsconfig.json scripts/artifacts/diagnose-provider-env.ts",
     "providers:diagnose": "npx -y tsx --tsconfig tsconfig.json scripts/artifacts/provider-health-check.ts",
-    "test:provider-integrations": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/provider-integrations.test.ts"
+    "test:provider-integrations": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/provider-integrations.test.ts",
+    "pilot:discovery-v2-5-retail": "npx -y tsx --tsconfig tsconfig.json scripts/sources/run-retail-v2-5-live.ts",
+    "pilot:discovery-v2-5-retail:reprocess": "npx -y tsx --tsconfig tsconfig.json scripts/sources/reprocess-retail-v2-5-live.ts",
+    "pilot:discovery-v2-5-retail:exa": "npx -y tsx --tsconfig tsconfig.json scripts/sources/run-retail-v2-5-exa-escalation.ts",
+    "test:discovery-engine-v2-5-retail-live": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/discovery-engine-v2-5-retail-live.test.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.27.0",

@@ -33,7 +33,7 @@ t("8 retail id is controlled (not -live-)", RETAIL_BENCHMARK_ID === "discovery-v
 t("9 retail data_basis controlled_sample + live_execution false", R.data_basis === "controlled_sample" && R.live_execution === false);
 t("10 live retail id reserved + status not_executed", RETAIL_LIVE_ID_RESERVED === "discovery-v2-colombia-retail-live-001" && R.retail_live_status === "not_executed" && R.live_id_reserved === RETAIL_LIVE_ID_RESERVED);
 t("11 retail depth NOT benchmarked", /controlled_sample_complete/.test(RETAIL_DEPTH_STATE) && /live_benchmark_pending/.test(RETAIL_DEPTH_STATE) && !/benchmarked/.test(RETAIL_DEPTH_STATE.replace("live_benchmark_pending", "")));
-t("12 old -live- artifact reclassified (not controlled data)", (() => { const j = JSON.parse(readFileSync("output/discovery-v2-colombia-retail-live-001.json", "utf8")); return j.status === "misclassified_reclassified" && j.superseded_by === "discovery-v2-colombia-retail-controlled-001"; })());
+t("12 reserved -live- artifact now contains genuine live data", (() => { const j = JSON.parse(readFileSync("output/discovery-v2-colombia-retail-live-001.json", "utf8")); return j.id === "discovery-v2-colombia-retail-live-001" && j.live_execution === true && j.data_basis === "live_provider"; })());
 t("13 controlled artifact file carries controlled id", JSON.parse(readFileSync("output/discovery-v2-colombia-retail-controlled-001.json", "utf8")).id === "discovery-v2-colombia-retail-controlled-001");
 
 // 14–16. Retail capabilities preserved (controlled).
@@ -53,20 +53,20 @@ t("24 business identifiers observed per country", FOUNDATION_VALIDATIONS.map((v)
 
 // 25–27. Empirical readiness (depth = live benchmarks only, no fabrication).
 const er = empiricalReadiness();
-t("25 empirical depth uses live benchmarks (CO=2, others=0)", er.find((e) => e.country === "CO")!.live_benchmark_depth === 2 && er.filter((e) => e.country !== "CO").every((e) => e.live_benchmark_depth === 0));
+t("25 empirical depth uses live benchmarks (CO=3, others=0)", er.find((e) => e.country === "CO")!.live_benchmark_depth === 3 && er.filter((e) => e.country !== "CO").every((e) => e.live_benchmark_depth === 0));
 t("26 UK/AU foundation validated but depth still 0 (validation ≠ benchmark)", er.find((e) => e.country === "GB")!.foundation_readiness === "validated" && er.find((e) => e.country === "GB")!.live_benchmark_depth === 0);
 t("27 US/CA foundation partial (fragmented)", er.find((e) => e.country === "US")!.foundation_readiness === "partial" && er.find((e) => e.country === "CA")!.foundation_readiness === "partial");
 
 // 28–30. Guard: controlled/fixture cannot inflate live depth.
 t("28 fixture benchmark still deterministic_fixture (0 providers)", runBenchmark().data_basis === "deterministic_fixture" && runBenchmark().provider_calls === 0);
-t("29 controlled retail does not add to CO live-benchmark depth", er.find((e) => e.country === "CO")!.live_benchmark_depth === 2);
+t("29 live retail adds exactly one to CO live-benchmark depth", er.find((e) => e.country === "CO")!.live_benchmark_depth === 3);
 t("30 new-country atlases still not benchmarked (confidence discovered/hypothesized)", Object.values(INTL_SOURCE_ATLAS).flat().every((s) => ["discovered", "hypothesized"].includes(s.confidence)));
 
 // 31–34. Regression preservation.
 t("31 hospitality live artifact preserved", buildLiveBenchmark().id === "discovery-v2-colombia-hospitality-live-001" && buildLiveBenchmark().data_basis === "live_source");
 t("32 manufacturing benchmark preserved", buildManufacturingBenchmark().id === "discovery-v2-colombia-manufacturing-live-001");
 t("33 five-country readiness preserved", fiveCountryReadiness().length === 5);
-t("34 CO depth multi_benchmark (hospitality+manufacturing only)", fiveCountryReadiness().find((r) => r.country === "CO")!.depth === "multi_benchmark");
+t("34 CO depth remains multi_benchmark after hospitality+manufacturing+retail", fiveCountryReadiness().find((r) => r.country === "CO")!.depth === "multi_benchmark");
 
 console.log(`\n${p} passed, ${f} failed`);
 if (f > 0) process.exit(1);

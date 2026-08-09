@@ -20,6 +20,7 @@ import {
 } from "@/lib/discovery/source-intelligence/coverage";
 import { MANUFACTURING_RESEARCH_QUEUE } from "@/lib/discovery/source-intelligence/manufacturing-live";
 import manufacturingArtifact from "@/artifacts/discovery/discovery-v2-colombia-manufacturing-live-001.json";
+import retailLiveArtifact from "@/artifacts/discovery/discovery-v2-colombia-retail-live-001.json";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Discovery Intelligence · LeadLens", robots: { index: false, follow: false } };
@@ -232,8 +233,9 @@ function FoundationValidationSection() {
 
 function RetailSection() {
   const r = buildRetailBenchmark();
+  const live = retailLiveArtifact;
   return (
-    <div style={{ ...box, background: "#FBF7F0" }}>
+    <><div style={{ ...box, background: "#FBF7F0" }}>
       <div style={{ fontWeight: 700, color: C.navy }}>Colombia · Retail #3 · MUESTRA CONTROLADA · {r.id}</div>
       <div style={{ fontSize: 11.5, color: "#8a6d3b", margin: "4px 0 4px" }}>data_basis <b>{r.data_basis}</b> · depth <b>{r.depth_state}</b> · benchmark en vivo <b>{r.retail_live_status}</b> (id reservado: {r.live_id_reserved})</div>
       <div style={{ fontSize: 11.5, color: "#8a6d3b", marginBottom: 8 }}>⚠ {r.warnings[0]}</div>
@@ -245,6 +247,14 @@ function RetailSection() {
       <div style={{ fontSize: 11.5, color: C.ink, marginTop: 6 }}><b>Capacidades reutilizables:</b> {r.reusable_capabilities.join(" · ")}</div>
       <div style={{ fontSize: 11.5, color: C.muted, marginTop: 4 }}>{r.novelty_note}</div>
     </div>
+    <div style={{ ...box, background: "#EAF4EC" }}>
+      <div style={{ fontWeight: 700, color: C.navy }}>Colombia · Retail #3 · EN VIVO · {live.id}</div>
+      <div style={{ fontSize: 11.5, color: C.muted, margin: "4px 0 8px" }}>data_basis <b>{live.data_basis}</b> · llamadas <b>{live.budget.actual_calls}/{live.budget.hard_max_provider_calls}</b> · muestra observada, no representatividad del mercado</div>
+      <div style={{ fontSize: 12.5 }}>Resultados <b>{live.metrics.raw_results}</b> → únicos <b>{live.metrics.unique_results}</b> → cuentas canónicas <b>{live.metrics.canonical_accounts}</b> → compatibles retail <b>{live.metrics.retail_compatible}</b></div>
+      <div style={{ fontSize: 12, color: C.muted, marginTop: 5 }}>Precisión observada <b>{Math.round(live.metrics.retailer_precision*100)}%</b> · resolución digital <b>{Math.round(live.metrics.digital_resolution_rate*100)}%</b> · evidencia de surtido <b>{Math.round(live.metrics.assortment_evidence_yield*100)}%</b> · inflation ratio <b>{live.metrics.location_inflation_ratio.toFixed(2)}</b></div>
+      <div style={{ fontSize: 11.5, color: "#8a6d3b", marginTop: 5 }}>Exa: {live.metrics.exa_executed ? `${live.metrics.exa_incremental_accounts} cuentas incrementales` : "no ejecutado: cobertura base superó el umbral de escalamiento"} · intención de compra inferida: {live.metrics.buying_intent_inferred}</div>
+      <div style={{ fontSize: 11.5, color: C.muted, marginTop: 5 }}>Saturación observada: {live.saturation.map(x=>`${x.processed}→${x.useful_accounts} útiles`).join(" · ")}</div>
+    </div></>
   );
 }
 

@@ -72,7 +72,7 @@ export interface EmpiricalReadiness {
 }
 export function empiricalReadiness(): EmpiricalReadiness[] {
   return [
-    { country: "CO", foundation_readiness: "validated", source_accessibility: "public", live_benchmark_depth: 2, identity_resolution_readiness: "high", primary_gap: "retail live pending; technology unbenchmarked", next_action: "Colombia Technology live benchmark (#4)" },
+    { country: "CO", foundation_readiness: "validated", source_accessibility: "public", live_benchmark_depth: 3, identity_resolution_readiness: "high", primary_gap: "technology unbenchmarked; retail SME/regional coverage partial", next_action: "Colombia Technology live benchmark (#4)" },
     { country: "US", foundation_readiness: "partial", source_accessibility: "mixed", live_benchmark_depth: 0, identity_resolution_readiness: "medium", primary_gap: "no single SME foundation (fragmented); per-state validation pending", next_action: "Validate 2 representative state SoS + SAM.gov, then USA Benchmark #1 (Manufacturing)" },
     { country: "GB", foundation_readiness: "validated", source_accessibility: "public", live_benchmark_depth: 0, identity_resolution_readiness: "high", primary_gap: "no discovery/opportunity source benchmarked (identity only)", next_action: "Curate + validate a UK technology/SaaS discovery source, then Benchmark #1" },
     { country: "AU", foundation_readiness: "validated", source_accessibility: "public", live_benchmark_depth: 0, identity_resolution_readiness: "high", primary_gap: "no discovery source benchmarked (identity only)", next_action: "Validate a manufacturer association source, then Benchmark #1" },
