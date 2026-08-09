@@ -13,21 +13,30 @@ function response<T>(provider:string, source:string, started:number, records:T[]
   const latency=Date.now()-started; try{recordProviderCall(provider,!error,latency,error);}catch{}
   return {ok:!error,source,provider,retrieved_at:new Date().toISOString(),records,latency_ms:latency,cost_usd:null,error};
 }
-function statusError(status:number){if(status===401||status===403)return "auth_failed";if(status===429)return "rate_limited";return `HTTP ${status}`;}
+async function statusError(res:Response){
+  if(res.status===401||res.status===403)return "auth_failed";
+  if(res.status===429)return "rate_limited";
+  let detail="";
+  try{
+    const body=await res.json() as {message?:unknown;detail?:unknown};
+    detail=[body.message,body.detail].filter((value):value is string=>typeof value==="string").join(": ");
+  }catch{}
+  return redactSecrets(`HTTP ${res.status}${detail?`: ${detail}`:""}`).slice(0,300);
+}
 
 /** Public organizational entity lookup. Personal contacts are never mapped. */
 export async function searchSamEntities(input:{legalBusinessName?:string;uei?:string;registrationStatus?:"A"|"E";limit?:number}):Promise<StructuredSourceResponse<SamOrganization>>{
   const started=Date.now(), key=process.env.DATA_GOV_API_KEY;
   if(!key)return response("sam_gov_direct","sam.gov",started,[],"DATA_GOV_API_KEY missing");
   if(!input.legalBusinessName&&!input.uei)return response("sam_gov_direct","sam.gov",started,[],"legalBusinessName or uei required");
-  const params=new URLSearchParams({samRegistered:"Yes",includeSections:"entityRegistration,coreData,assertions"});
+  const params=new URLSearchParams({includeSections:"entityRegistration,coreData,assertions"});
   params.set("api_key",key); // required by the public v3 API; URL is never logged/persisted
   if(input.legalBusinessName)params.set("legalBusinessName",input.legalBusinessName);
   if(input.uei)params.set("ueiSAM",input.uei);
   if(input.registrationStatus)params.set("registrationStatus",input.registrationStatus);
   try{
     const res=await fetch(`https://api.sam.gov/entity-information/v3/entities?${params}`,{headers:{accept:"application/json"},signal:AbortSignal.timeout(15_000)});
-    if(!res.ok)return response("sam_gov_direct","sam.gov",started,[],statusError(res.status));
+    if(!res.ok)return response("sam_gov_direct","sam.gov",started,[],await statusError(res));
     const data=await res.json() as {entityData?:Array<Record<string,unknown>>};
     const records=(data.entityData??[]).slice(0,Math.min(input.limit??10,10)).map(raw=>{
       const reg=(raw.entityRegistration??{}) as Record<string,unknown>, core=(raw.coreData??{}) as Record<string,unknown>;
@@ -49,7 +58,7 @@ export async function getSecCompanySubmissions(cik:string|number):Promise<Struct
   try{
     const url=`https://data.sec.gov/submissions/CIK${normalized}.json`;
     const res=await fetch(url,{headers:{"User-Agent":`LeadLens research application ${contact}`,"Accept-Encoding":"gzip, deflate",accept:"application/json"},signal:AbortSignal.timeout(15_000)});
-    if(!res.ok)return response("sec_edgar_direct","sec.gov",started,[],statusError(res.status));
+    if(!res.ok)return response("sec_edgar_direct","sec.gov",started,[],await statusError(res));
     const d=await res.json() as {name?:string;sic?:string;stateOfIncorporation?:string;filings?:{recent?:{accessionNumber?:string[];form?:string[];filingDate?:string[];primaryDocument?:string[]}}};
     const f=d.filings?.recent, forms=f?.form??[];
     return response("sec_edgar_direct","sec.gov",started,[{cik:normalized,legal_name:d.name??null,sic:d.sic??null,state_of_incorporation:d.stateOfIncorporation??null,recent_filings:forms.slice(0,40).map((form,i)=>({accession_number:f?.accessionNumber?.[i]??"",form,filed_at:f?.filingDate?.[i]??"",primary_document:f?.primaryDocument?.[i]??null})),source_url:canonicalizeUrl(url),evidence_basis:"sec_edgar_submissions"}],null);

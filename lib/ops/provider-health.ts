@@ -263,8 +263,34 @@ export const RUN_REQUIREMENTS: Record<string, { requires: string[]; degraded_wit
 
 export const DISCOVERY_PROVIDER_ROUTES = {
   CO: { base: ["specialized_local_sources", "brave", "tavily"], escalation: ["exa"], extraction: ["firecrawl"] },
-  US: { base: ["foundation_state_sources", "sam_gov", "sec_edgar", "industry_sources", "brave", "tavily"], escalation: ["exa"], extraction: ["firecrawl"] },
+  US: {
+    base: ["foundation_state_sources", "industry_sources", "brave", "tavily"],
+    contextual: {
+      government_procurement: ["sam_gov"],
+      public_company_evidence: ["sec_edgar"],
+    },
+    escalation: ["exa"],
+    extraction: ["firecrawl"],
+  },
 } as const;
+
+export interface UsaProviderContext {
+  commercial_route?: string | null;
+  opportunity_mechanism?: string | null;
+  business_model?: string | null;
+  evidence_needs?: string[];
+  account_is_public_company?: boolean;
+}
+
+/** Contextual US providers are opt-in capabilities, never universal discovery defaults. */
+export function contextualUsProviders(context: UsaProviderContext = {}): Array<"sam_gov" | "sec_edgar"> {
+  const values=[context.commercial_route,context.opportunity_mechanism,context.business_model]
+    .filter((value):value is string=>Boolean(value)).map(value=>value.toLowerCase());
+  const evidence=(context.evidence_needs??[]).map(value=>value.toLowerCase());
+  const government=values.some(value=>["government_procurement","federal_contracting","government_supplier","government_vendor","public_sector"].includes(value));
+  const sec=Boolean(context.account_is_public_company)||values.includes("public_company")||evidence.some(value=>["sec_filings","company_facts","public_company_identity","what_changed_sec"].includes(value));
+  return [...(government?["sam_gov" as const]:[]),...(sec?["sec_edgar" as const]:[])];
+}
 
 /** Recommended action per state — shown in the console. */
 export function recommendedAction(s: ProviderStatus): string | null {
