@@ -21,6 +21,7 @@ import {
 import { MANUFACTURING_RESEARCH_QUEUE } from "@/lib/discovery/source-intelligence/manufacturing-live";
 import manufacturingArtifact from "@/artifacts/discovery/discovery-v2-colombia-manufacturing-live-001.json";
 import retailLiveArtifact from "@/artifacts/discovery/discovery-v2-colombia-retail-live-001.json";
+import usaManufacturingArtifact from "@/artifacts/discovery/discovery-v2-usa-manufacturing-live-001.json";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Discovery Intelligence · LeadLens", robots: { index: false, follow: false } };
@@ -111,6 +112,7 @@ export default function DiscoveryObservatory({ searchParams }: { searchParams?: 
 
       <h2 style={{color:C.navy,fontSize:16}}>Cola de benchmarks</h2><QueueTable rows={COLOMBIA_BENCHMARK_QUEUE.map(x=>({priority:x.priority,name:x.id,state:x.benchmark_state,why:x.rationale}))}/>
       <ManufacturingBenchmarkSection />
+      <UsaManufacturingSection />
       <h2 style={{color:C.navy,fontSize:16}}>Top 10 investigación de fuentes</h2><QueueTable rows={SOURCE_RESEARCH_QUEUE_V2.map((x,i)=>({priority:i+1,name:`${x.candidate_source} · ${x.cluster}`,state:x.status,why:`${x.gap}: ${x.objective}`}))}/>
       <h2 style={{color:C.navy,fontSize:16}}>Top brechas accionables</h2><CoverageList title="Brechas" rows={v2gaps.map(x=>({name:`${x.severity} · ${x.type}${x.cluster?` · ${x.cluster}`:""}`,detail:`${x.evidence} → ${x.next_action}`}))}/>
 
@@ -166,6 +168,23 @@ function ManufacturingBenchmarkSection(){
   <div style={box}><b>Complementariedad</b>{Object.entries(a.complementarity).map(([k,v])=><div key={k} style={{fontSize:11.5,padding:"3px 0"}}><code>{k}</code> — {v}</div>)}</div>
   <div style={box}><b>Revisión del fundador</b><div style={{fontSize:11.5,marginTop:5}}>Aceptadas fuertes: {a.review.strong.length} · borderline: {a.review.borderline.length} · rechazadas: {a.review.rejected.length}. La decisión automatizada original se conserva.</div>{a.review.strong.slice(0,5).map(x=><div key={x.canonical_account} style={{fontSize:11,padding:"3px 0"}}><b>{x.raw_entity}</b> → {x.legal_entity} · {x.subindustry} · {x.manufacturer_status} · {x.geography} · {x.domain??"dominio no resuelto"}</div>)}</div>
   <h3 style={{color:C.navy,fontSize:14}}>Investigación Manufacturing priorizada</h3><QueueTable rows={MANUFACTURING_RESEARCH_QUEUE.map(x=>({priority:x.priority,name:x.task,state:"open",why:`${x.gap} → ${x.candidate_source}`}))}/>
+ </section>;
+}
+
+function UsaManufacturingSection(){
+ const u=usaManufacturingArtifact,c=manufacturingArtifact,pct=(x:number)=>`${Math.round(x*100)}%`;
+ const states=Object.entries(u.observed_sample_bias.states).sort((a,b)=>b[1]-a[1]);
+ return <section>
+  <h2 style={{color:C.navy,fontSize:17}}><span style={{background:"#3E6B8A",color:"white",padding:"2px 7px",borderRadius:4,fontSize:10,marginRight:7}}>USA · CELDA #1 · EN VIVO</span>Manufacturing · procurement · supplier addition</h2>
+  <div style={{...box,background:"#EDF3F7",fontSize:12}}><b>{u.id}</b> · llamadas contabilizadas <b>{u.recovery.total_calls_counted}/28</b> ({u.recovery.original_lost_calls.count} ejecutadas sin resultados persistidos + {u.recovery.recovery_calls_persisted} recuperadas) · raw persistido <b>{u.metrics.raw_candidates}</b> → cuentas <b>{u.metrics.canonical_accounts}</b> → fabricantes compatibles <b>{u.metrics.manufacturer_compatible}</b> · precisión <b>{pct(u.metrics.manufacturer_precision)}</b>.</div>
+  <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(285px,1fr))",gap:12}}>
+   <div style={box}><b>Funnel y evidencia</b><div style={{fontSize:11.5,marginTop:5}}>Dominio oficial {pct(u.metrics.official_domain_yield)} · evidencia {pct(u.metrics.evidence_yield)} · procurement estructural {u.metrics.procurement_plausible} · buying intent inferido {u.metrics.buying_intent_inferred}.</div>{Object.entries(u.cohort_funnel).map(([k,v])=><div key={k} style={{fontSize:11,padding:"3px 0"}}><code>{k}</code>: {v.raw} raw → {v.manufacturer_compatible} fabricantes</div>)}</div>
+   <div style={box}><b>Exa incremental</b><div style={{fontSize:11.5,marginTop:5}}>{u.metrics.exa_calls} llamada recuperada · {u.metrics.exa_raw} raw · <b>{u.metrics.exa_incremental_qualified} fabricantes incrementales</b> · overlap {u.metrics.exa_overlap} · {u.exa_decision} · coste observado ${u.metrics.exa_cost_usd??"n/d"}.</div></div>
+   <div style={box}><b>Geografía observada</b><div style={{fontSize:11.5,marginTop:5}}>{u.metrics.states_observed} estados: {states.map(([s,n])=>`${s} ${n}`).join(" · ")}. Muestra digital, no representatividad nacional.</div></div>
+   <div style={box}><b>Reliability recovery</b><div style={{fontSize:11.5,marginTop:5}}>Primera corrida: <b>executed_but_results_not_persisted</b>. Persistencia incremental activa · resume verificado · protección de duplicados activa · parcial recuperable: {u.recovery.partial_state_path}.</div></div>
+  </div>
+  <div style={box}><b>Colombia vs USA Manufacturing</b><div style={{fontSize:11.5,marginTop:5}}>CO: precisión {pct(c.manufacturer_precision)} · resolución digital {pct(c.digital_resolution_rate)} · asociaciones/exportadores estructurados pero sesgados. USA: precisión {pct(u.metrics.manufacturer_precision)} · resolución digital {pct(u.metrics.digital_resolution_yield)} · identidad estatal fragmentada, superficie especializada pública de bajo rendimiento y mayor valor incremental de búsqueda semántica.</div></div>
+  <div style={box}><b>Contextual providers</b><div style={{fontSize:11.5,marginTop:5}}>SEC: 0 llamadas, sin trigger CIK confiable. SAM: 0 llamadas, omitido por 404 operativo y ausencia de ruta federal necesaria. Ninguno se ejecuta por defecto.</div></div>
  </section>;
 }
 

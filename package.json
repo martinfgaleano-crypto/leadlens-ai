@@ -149,7 +149,12 @@
     "pilot:discovery-v2-5-retail": "npx -y tsx --tsconfig tsconfig.json scripts/sources/run-retail-v2-5-live.ts",
     "pilot:discovery-v2-5-retail:reprocess": "npx -y tsx --tsconfig tsconfig.json scripts/sources/reprocess-retail-v2-5-live.ts",
     "pilot:discovery-v2-5-retail:exa": "npx -y tsx --tsconfig tsconfig.json scripts/sources/run-retail-v2-5-exa-escalation.ts",
-    "test:discovery-engine-v2-5-retail-live": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/discovery-engine-v2-5-retail-live.test.ts"
+    "test:discovery-engine-v2-5-retail-live": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/discovery-engine-v2-5-retail-live.test.ts",
+    "pilot:discovery-v2-6-usa-manufacturing": "npx -y tsx --tsconfig tsconfig.json scripts/sources/run-usa-manufacturing-v2-6-live.ts",
+    "test:discovery-engine-v2-6-usa-manufacturing": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/discovery-engine-v2-6-usa-manufacturing.test.ts",
+    "pilot:discovery-v2-6-usa-manufacturing:recover": "npx -y tsx --tsconfig tsconfig.json scripts/sources/recover-usa-manufacturing-v2-6-live.ts",
+    "test:discovery-v2-6-recovery": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/discovery-v2-6-recovery-persistence.test.ts",
+    "pilot:discovery-v2-6-usa-manufacturing:reprocess": "npx -y tsx --tsconfig tsconfig.json scripts/sources/reprocess-usa-manufacturing-v2-6.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.27.0",

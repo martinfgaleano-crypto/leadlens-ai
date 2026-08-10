@@ -1,0 +1,3731 @@
+{
+  "id": "discovery-v2-usa-manufacturing-live-001",
+  "version": "discovery-v2-6-usa-manufacturing-v1",
+  "live_execution": true,
+  "data_basis": "live_provider",
+  "captured_at": "2026-08-10T04:08:08.214Z",
+  "context": {
+    "country": "US",
+    "cluster": "manufacturing",
+    "business_model": "manufacturer",
+    "route": "procurement",
+    "mechanism": "supplier_addition",
+    "client_specific": false
+  },
+  "budget": {
+    "hard_max": 28,
+    "actual": 9,
+    "within_budget": true
+  },
+  "calls": [
+    {
+      "provider": "brave",
+      "purpose": "specialized_packaging_accounts",
+      "source_id": "us_specialized_manufacturing",
+      "query": "US packaging manufacturers association member companies official websites",
+      "timestamp": "2026-08-10T04:08:09.313Z",
+      "success": true,
+      "latency_ms": 1073,
+      "result_count": 8,
+      "estimated_cost_usd": null,
+      "safe_error": null
+    },
+    {
+      "provider": "tavily",
+      "purpose": "specialized_medical_accounts",
+      "source_id": "us_specialized_manufacturing",
+      "query": "United States medical device manufacturers association member companies official websites",
+      "timestamp": "2026-08-10T04:08:10.389Z",
+      "success": true,
+      "latency_ms": 1068,
+      "result_count": 8,
+      "estimated_cost_usd": null,
+      "safe_error": null
+    },
+    {
+      "provider": "brave",
+      "purpose": "regional_manufacturer_accounts",
+      "source_id": "us_regional_manufacturing",
+      "query": "Ohio Michigan metalworking machinery manufacturers company official site",
+      "timestamp": "2026-08-10T04:08:11.137Z",
+      "success": true,
+      "latency_ms": 740,
+      "result_count": 8,
+      "estimated_cost_usd": null,
+      "safe_error": null
+    },
+    {
+      "provider": "tavily",
+      "purpose": "regional_manufacturer_accounts",
+      "source_id": "us_regional_manufacturing",
+      "query": "Texas North Carolina California contract manufacturers plastics electronics official websites",
+      "timestamp": "2026-08-10T04:08:12.487Z",
+      "success": true,
+      "latency_ms": 1343,
+      "result_count": 8,
+      "estimated_cost_usd": null,
+      "safe_error": null
+    },
+    {
+      "provider": "exa",
+      "purpose": "incremental_company_discovery",
+      "source_id": "exa_semantic",
+      "query": "US small and mid-sized packaging plastics medical device and metalworking manufacturers official company websites",
+      "timestamp": "2026-08-10T04:08:13.006Z",
+      "success": true,
+      "latency_ms": 506,
+      "result_count": 8,
+      "estimated_cost_usd": 0.007,
+      "safe_error": null
+    },
+    {
+      "provider": "firecrawl",
+      "purpose": "manufacturer_evidence_validation",
+      "source_id": "official_company_evidence",
+      "query": "site:contractpackaging.org manufacturing capabilities products facilities",
+      "timestamp": "2026-08-10T04:08:14.404Z",
+      "success": true,
+      "latency_ms": 1372,
+      "result_count": 3,
+      "estimated_cost_usd": null,
+      "safe_error": null
+    },
+    {
+      "provider": "firecrawl",
+      "purpose": "manufacturer_evidence_validation",
+      "source_id": "official_company_evidence",
+      "query": "site:printpack.com manufacturing capabilities products facilities",
+      "timestamp": "2026-08-10T04:08:15.740Z",
+      "success": true,
+      "latency_ms": 1331,
+      "result_count": 3,
+      "estimated_cost_usd": null,
+      "safe_error": null
+    },
+    {
+      "provider": "firecrawl",
+      "purpose": "manufacturer_evidence_validation",
+      "source_id": "official_company_evidence",
+      "query": "site:packworld.com manufacturing capabilities products facilities",
+      "timestamp": "2026-08-10T04:08:16.632Z",
+      "success": true,
+      "latency_ms": 886,
+      "result_count": 3,
+      "estimated_cost_usd": null,
+      "safe_error": null
+    },
+    {
+      "provider": "firecrawl",
+      "purpose": "manufacturer_evidence_validation",
+      "source_id": "official_company_evidence",
+      "query": "site:flexpack.org manufacturing capabilities products facilities",
+      "timestamp": "2026-08-10T04:08:17.552Z",
+      "success": true,
+      "latency_ms": 913,
+      "result_count": 3,
+      "estimated_cost_usd": null,
+      "safe_error": null
+    }
+  ],
+  "observations": [
+    {
+      "provider": "brave",
+      "source_id": "us_specialized_manufacturing",
+      "source_role": [
+        "DISCOVERY_SOURCE",
+        "BUSINESS_MODEL_SOURCE"
+      ],
+      "cohort": "specialized_first",
+      "query": "US packaging manufacturers association member companies official websites",
+      "purpose": "specialized_packaging_accounts",
+      "response": {
+        "ok": true,
+        "provider": "brave",
+        "query": {
+          "query": "US packaging manufacturers association member companies official websites",
+          "region": "us",
+          "language": "en",
+          "max_results": 8,
+          "query_type": "industry_discovery",
+          "search_mode": "standard"
+        },
+        "results": [
+          {
+            "url": "https://www.contractpackaging.org/",
+            "canonical_url": "https://www.contractpackaging.org/",
+            "title": "CPA, The Association for Contract Packagers and Manufacturers",
+            "snippet": "CPA, The Association for Contract Packagers and Manufacturers, is the premier resource for the co-man/co-pack industry and CPG brands and retailers they serve.",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:09.310Z",
+            "source_type": null,
+            "provider": "brave",
+            "rank": 1,
+            "locale": "en"
+          },
+          {
+            "url": "https://www.printpack.com/associations/",
+            "canonical_url": "https://www.printpack.com/associations",
+            "title": "Associations - Printpack",
+            "snippet": "SNAC International is the international trade association of the snack food industry representing snack manufacturers and suppliers. ... The Flexographic Technical Association, Inc. founded in 1958, is the leading technical society devoted exclusively to the flexographic printing industry. ... The m",
+            "published_date": "2025-11-17T20:59:39",
+            "retrieved_at": "2026-08-10T04:08:09.310Z",
+            "source_type": null,
+            "provider": "brave",
+            "rank": 2,
+            "locale": "en"
+          },
+          {
+            "url": "https://www.packworld.com/page/packaging-associations",
+            "canonical_url": "https://www.packworld.com/page/packaging-associations",
+            "title": "Packaging Associations | Packaging World",
+            "snippet": "Packaging intelligence and updates from Packaging World delivered to your inbox. ... Chocolate Manufacturers Association of the U.S.A.",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:09.310Z",
+            "source_type": null,
+            "provider": "brave",
+            "rank": 3,
+            "locale": "en"
+          },
+          {
+            "url": "https://www.flexpack.org/",
+            "canonical_url": "https://www.flexpack.org/",
+            "title": "Flexible Packaging Association | FPA",
+            "snippet": "W️elcome to FPA&#x27;s new website and Member Compass. Please be sure to enter your e-mail address to set up your new account. ACKNOWLEDGE ... The Flexible Packaging Association is the voice of the U.S. manufacturers of flexible packaging and their suppliers. The association’s mission is connecting,",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:09.310Z",
+            "source_type": null,
+            "provider": "brave",
+            "rank": 4,
+            "locale": "en"
+          },
+          {
+            "url": "https://industrialpackaging.org/",
+            "canonical_url": "https://industrialpackaging.org/",
+            "title": "Home - Industrial Packaging Alliance of North America",
+            "snippet": "IPANA’s purpose is to be the leading membership organization for manufacturers of new industrial packaging in North America. To this end, IPANA: Effectively represents the industrial packaging industry before U.S. and international regulatory bodies; Develops and maintains alliances with other trade",
+            "published_date": "2021-12-08T12:27:12",
+            "retrieved_at": "2026-08-10T04:08:09.310Z",
+            "source_type": null,
+            "provider": "brave",
+            "rank": 5,
+            "locale": "en"
+          },
+          {
+            "url": "https://www.aiccbox.org/",
+            "canonical_url": "https://www.aiccbox.org/",
+            "title": "Home | AICC",
+            "snippet": "Breaking Down Boxes, brought to you by AICC, The Independent Packaging Association, gives you the story behind the boxes. Entrepreneurs share their trials and triumphs in authentic conversations filled with knowledge and laughter. AICC Update is the podcast for members of AICC, The Independent Packa",
+            "published_date": "2025-11-18T21:48:09",
+            "retrieved_at": "2026-08-10T04:08:09.310Z",
+            "source_type": null,
+            "provider": "brave",
+            "rank": 6,
+            "locale": "en"
+          },
+          {
+            "url": "https://www.pmmi.org/",
+            "canonical_url": "https://www.pmmi.org/",
+            "title": "PMMI, The Association for Packaging and Processing Technologies",
+            "snippet": "PMMI provides critical business solutions and resources for companies in the packaging and processing industry -keeping you connected to customers all year long. ... Make a bigger impact at trade shows! This workshop developed for PMMI Members gives your sales team the skills and knowledge to increa",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:09.310Z",
+            "source_type": null,
+            "provider": "brave",
+            "rank": 7,
+            "locale": "en"
+          },
+          {
+            "url": "https://www.flexpack.org/about-us",
+            "canonical_url": "https://www.flexpack.org/about-us",
+            "title": "About the Flexible Packaging Association",
+            "snippet": "The Flexible Packaging Association is the U.S. association of the manufacturers of flexible packaging; and, material or equipment suppliers to the industry. Flexible packaging is produced from paper, plastic, film, aluminum foil, or any combination of those materials, and includes bags, pouches, lab",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:09.310Z",
+            "source_type": "official",
+            "provider": "brave",
+            "rank": 8,
+            "locale": "en"
+          }
+        ],
+        "latency_ms": 1073,
+        "cost_estimate_usd": null,
+        "error": null
+      }
+    },
+    {
+      "provider": "tavily",
+      "source_id": "us_specialized_manufacturing",
+      "source_role": [
+        "DISCOVERY_SOURCE",
+        "BUSINESS_MODEL_SOURCE"
+      ],
+      "cohort": "specialized_first",
+      "query": "United States medical device manufacturers association member companies official websites",
+      "purpose": "specialized_medical_accounts",
+      "response": {
+        "ok": true,
+        "provider": "tavily",
+        "query": {
+          "query": "United States medical device manufacturers association member companies official websites",
+          "region": "us",
+          "language": "en",
+          "max_results": 8,
+          "query_type": "industry_discovery",
+          "search_mode": "standard"
+        },
+        "results": [
+          {
+            "url": "https://www.zoominfo.com/c/medical-device-manufacturers-association/42797220",
+            "canonical_url": "https://www.zoominfo.com/c/medical-device-manufacturers-association/42797220",
+            "title": "Medical Device Manufacturers Association",
+            "snippet": "Medical Device Manufacturers Association's official website is www.medicaldevices.org Sign Up For FreeTo access detailed company insights. Phone number: (202)",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:10.387Z",
+            "source_type": null,
+            "provider": "tavily",
+            "rank": 1,
+            "locale": "en"
+          },
+          {
+            "url": "https://www.linkedin.com/company/mdma-medicaldevices",
+            "canonical_url": "https://www.linkedin.com/company/mdma-medicaldevices",
+            "title": "Medical Device Manufacturers Association (MDMA) - Promoting Patient Access & Innovation. Connecting the Med Tech ecosystem for better health care tomorrow.",
+            "snippet": "### Website\n\n### Crunchbase\nN/A\n### LinkedIn\nN/A\n\n### Industry\nMedical Equipment Manufacturing\n\n### Company Size\n11-50 employees  \n25 associated members (LinkedIn members who've listed Medical Device Manufacturers Association (MDMA) as their current workplace on their profile)\n\n### Founded\n1992\n\n###",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:10.387Z",
+            "source_type": null,
+            "provider": "tavily",
+            "rank": 2,
+            "locale": "en"
+          },
+          {
+            "url": "https://www.medicaldevices.org/about",
+            "canonical_url": "https://www.medicaldevices.org/about",
+            "title": "About - Medical Device Manufacturers Association",
+            "snippet": "Mr. Packer is a Board Member of MDMA (Medical Device Manufacturers Association), a national trade association based in Washington, D.C. that advocates for entrepreneurial medical technology companies and is a Board Member of Bruker BioSciences Corporation,a leading provider of high-performance scien",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:10.387Z",
+            "source_type": "official",
+            "provider": "tavily",
+            "rank": 3,
+            "locale": "en"
+          },
+          {
+            "url": "https://www.trade.gov/selectusa-medical-technology-industry-associations",
+            "canonical_url": "https://www.trade.gov/selectusa-medical-technology-industry-associations",
+            "title": "SelectUSA Medical Technology Industry Associations",
+            "snippet": "An official website of the United States government   Here’s how you know\n\nOfficial websites use .gov  \nA .gov website belongs to an official government organization in the United States.\n\nSecure .gov websites use HTTPS  \nA lock ( ) or  means you’ve safely connected to the .gov website.\n\nSelectUSA L",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:10.387Z",
+            "source_type": "regulatory",
+            "provider": "tavily",
+            "rank": 4,
+            "locale": "en"
+          },
+          {
+            "url": "https://healthcare-digital.com/top10/top-10-medical-device-associations",
+            "canonical_url": "https://healthcare-digital.com/top10/top-10-medical-device-associations",
+            "title": "Top 10: Medical Device Associations | Healthcare Digital",
+            "snippet": "Youtube Placeholder\n\n## 01 Advanced Medical Technology Association\n\nCountry: US  \n Leader: Scott Whitaker  \n AdvaMed is a US medical device trade association, based in Washington, DC, and is the largest medical device association in the world, with US and international members who are medical techno",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:10.387Z",
+            "source_type": null,
+            "provider": "tavily",
+            "rank": 5,
+            "locale": "en"
+          },
+          {
+            "url": "https://members.medicaldevices.org/page/AssociateDirectory",
+            "canonical_url": "https://members.medicaldevices.org/page/AssociateDirectory",
+            "title": "Associate Member Directory",
+            "snippet": "Wilson & Associates provides consulting expertise in regulatory affairs and quality assurance for both US and international medical device firms.Read more",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:10.387Z",
+            "source_type": null,
+            "provider": "tavily",
+            "rank": 6,
+            "locale": "en"
+          },
+          {
+            "url": "https://www.medicaldevices.org",
+            "canonical_url": "https://www.medicaldevices.org/",
+            "title": "Medical Device Manufacturers Association: Home",
+            "snippet": "Skip to footer\n\nmdma\n\nJoin\n\n#### Search MDMA\n\nMember login\n\n#### Advocacy & Engagement\n\n### How MDMA partners with our members to promote innovation and patient access\n\nLearn more\n\n## Our work on key issues\n\nReimbursement\n\nAccelerating Medicare coverage for breakthrough technologies.\n\nregulatory\n\nOn",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:10.387Z",
+            "source_type": null,
+            "provider": "tavily",
+            "rank": 7,
+            "locale": "en"
+          },
+          {
+            "url": "https://members.medicaldevices.org",
+            "canonical_url": "https://members.medicaldevices.org/",
+            "title": "Medical Device Manufacturers Association (MDMA)",
+            "snippet": "MDMA is the leading advocate on the major issues affecting our industry … facing innovative medical device companies. 202-354-7171 mdmainfo@medicaldevices.org",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:10.387Z",
+            "source_type": null,
+            "provider": "tavily",
+            "rank": 8,
+            "locale": "en"
+          }
+        ],
+        "latency_ms": 1068,
+        "cost_estimate_usd": null,
+        "error": null
+      }
+    },
+    {
+      "provider": "brave",
+      "source_id": "us_regional_manufacturing",
+      "source_role": [
+        "DISCOVERY_SOURCE",
+        "COVERAGE_SOURCE"
+      ],
+      "cohort": "search_first",
+      "query": "Ohio Michigan metalworking machinery manufacturers company official site",
+      "purpose": "regional_manufacturer_accounts",
+      "response": {
+        "ok": true,
+        "provider": "brave",
+        "query": {
+          "query": "Ohio Michigan metalworking machinery manufacturers company official site",
+          "region": "us",
+          "language": "en",
+          "max_results": 8,
+          "query_type": "regional_discovery",
+          "search_mode": "standard"
+        },
+        "results": [
+          {
+            "url": "https://www.dnb.com/business-directory/company-information.metalworking_machinery_manufacturing.us.html",
+            "canonical_url": "https://www.dnb.com/business-directory/company-information.metalworking_machinery_manufacturing.us.html",
+            "title": "Find Metalworking Machinery Manufacturing companies in United States of America - Dun & Bradstreet",
+            "snippet": "Country:Solon, Ohio United States · SALES REVENUE ($M): $416.26M · <strong>Comau LLC</strong> · Country:Southfield, Michigan United States · SALES REVENUE ($M): $414.43M · 12345678910 · ... &gt; Next · Metalworking Machinery Manufacturing Companies in this Town ·",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:11.135Z",
+            "source_type": null,
+            "provider": "brave",
+            "rank": 1,
+            "locale": "en"
+          },
+          {
+            "url": "https://www.ohiovalleymfg.com/",
+            "canonical_url": "https://www.ohiovalleymfg.com/",
+            "title": "Heavy Gauge Stamping & Precision Blanking | Ohio Valley",
+            "snippet": "<strong>Ohio Valley</strong> delivers heavy‑gauge stamping, precision blanking, tool‑and‑die design &amp; robotic welding with ISO 9001:2015 quality. Request a quote.",
+            "published_date": "2026-04-07T12:48:22",
+            "retrieved_at": "2026-08-10T04:08:11.135Z",
+            "source_type": null,
+            "provider": "brave",
+            "rank": 2,
+            "locale": "en"
+          },
+          {
+            "url": "https://www.dnb.com/business-directory/company-information.metalworking_machinery_manufacturing.us.ohio.html",
+            "canonical_url": "https://www.dnb.com/business-directory/company-information.metalworking_machinery_manufacturing.us.ohio.html",
+            "title": "Discover Metalworking Machinery Manufacturing companies in Ohio, United States of America - Dun & Bradstreet",
+            "snippet": "Detailed info on Metalworking Machinery Manufacturing companies in Ohio, United States of America, including financial statements, sales and marketing contacts, top competitors, and firmographic insights.",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:11.135Z",
+            "source_type": null,
+            "provider": "brave",
+            "rank": 3,
+            "locale": "en"
+          },
+          {
+            "url": "https://www.buckeyemachine.com/",
+            "canonical_url": "https://www.buckeyemachine.com/",
+            "title": "Buckeye Machine - Custom Automation, Tailored Precision.",
+            "snippet": "At <strong>Buckeye Machine, Inc.</strong>, we pride ourselves in being a premier Ohio-based supplier of specialized automated equipment and precision-machined parts. Our dedicated and highly experienced team supports manufacturers throughout Mansfield and the ...",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:11.135Z",
+            "source_type": null,
+            "provider": "brave",
+            "rank": 4,
+            "locale": "en"
+          },
+          {
+            "url": "https://modernmachinerycompany.com/",
+            "canonical_url": "https://modernmachinerycompany.com/",
+            "title": "Modern Machinery Company",
+            "snippet": "Press Brakes Laser Cutting Plasma Cutting Robotic Welding Metal Finishing Rolling Plate Let us help grow your business. We are <strong>Modern Machinery</strong>. A distributor of metal fabrication equipment in Indiana, Ohio, Kentucky, and Michigan.",
+            "published_date": "2025-05-16T22:54:14",
+            "retrieved_at": "2026-08-10T04:08:11.135Z",
+            "source_type": null,
+            "provider": "brave",
+            "rank": 5,
+            "locale": "en"
+          },
+          {
+            "url": "https://www.danddindustries.com/",
+            "canonical_url": "https://www.danddindustries.com/",
+            "title": "Used Equipment Dealer | Metalworking Equipment | D&D Industries, Inc.",
+            "snippet": "<strong>D &amp; D Industries, Inc.</strong> is certified by the Association of Machinery and Equipment Appraisers and can provide equipment appraisals for one piece of equipment to an entire facility. We are also a member of the Machinery Dealers National Association. Our office and main warehouse a",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:11.135Z",
+            "source_type": null,
+            "provider": "brave",
+            "rank": 6,
+            "locale": "en"
+          },
+          {
+            "url": "https://mcgregormetal.com/",
+            "canonical_url": "https://mcgregormetal.com/",
+            "title": "McGregor Metal",
+            "snippet": "Firmly rooted in <strong>Springfield, Ohio</strong> and with a manufacturing family numbering 350+ employees, we take pride in our long history as a community anchor.",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:11.135Z",
+            "source_type": null,
+            "provider": "brave",
+            "rank": 7,
+            "locale": "en"
+          },
+          {
+            "url": "https://www.dnb.com/business-directory/company-information.metalworking_machinery_manufacturing.us.ohio.dayton.html",
+            "canonical_url": "https://www.dnb.com/business-directory/company-information.metalworking_machinery_manufacturing.us.ohio.dayton.html",
+            "title": "Find Metalworking Machinery Manufacturing companies in Dayton, Ohio, United States of America - Dun & Bradstreet",
+            "snippet": "Detailed info on Metalworking Machinery Manufacturing companies in Dayton, Ohio, United States of America, including financial statements, sales and marketing contacts, top competitors, and firmographic insights.",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:11.135Z",
+            "source_type": null,
+            "provider": "brave",
+            "rank": 8,
+            "locale": "en"
+          }
+        ],
+        "latency_ms": 740,
+        "cost_estimate_usd": null,
+        "error": null
+      }
+    },
+    {
+      "provider": "tavily",
+      "source_id": "us_regional_manufacturing",
+      "source_role": [
+        "DISCOVERY_SOURCE",
+        "COVERAGE_SOURCE"
+      ],
+      "cohort": "search_first",
+      "query": "Texas North Carolina California contract manufacturers plastics electronics official websites",
+      "purpose": "regional_manufacturer_accounts",
+      "response": {
+        "ok": true,
+        "provider": "tavily",
+        "query": {
+          "query": "Texas North Carolina California contract manufacturers plastics electronics official websites",
+          "region": "us",
+          "language": "en",
+          "max_results": 8,
+          "query_type": "regional_discovery",
+          "search_mode": "standard"
+        },
+        "results": [
+          {
+            "url": "https://bencor-llc.com/services/contract-manufacturing",
+            "canonical_url": "https://bencor-llc.com/services/contract-manufacturing",
+            "title": "US Electronics Contract Manufacturing | Bencor",
+            "snippet": "BENCOR is a leading electronics contract manufacturing services provider based in Texas. With over 28 years of experience in the industry, we specialize in providing full-scale PCB layout and assembly services to customers ranging from high-tech startups to established companies. Our highly knowledg",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:12.486Z",
+            "source_type": null,
+            "provider": "tavily",
+            "rank": 1,
+            "locale": "en"
+          },
+          {
+            "url": "https://www.ksplastic.com/service/contract-manufacturing",
+            "canonical_url": "https://www.ksplastic.com/service/contract-manufacturing",
+            "title": "Contract Manufacturing Services in California | KS Group",
+            "snippet": "## Why Choose KS Plastics Inc. for Contract Manufacturing Services\n\nWith over 50 years of experience focused exclusively on injection molding, MOS Plastics offers unparalleled specialized plastic component manufacturing expertise. Our experience spans industries from medical devices to automotive, c",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:12.486Z",
+            "source_type": null,
+            "provider": "tavily",
+            "rank": 2,
+            "locale": "en"
+          },
+          {
+            "url": "https://contractmanufacturingcompanies.com/houston-texas-contract-manufacturers",
+            "canonical_url": "https://contractmanufacturingcompanies.com/houston-texas-contract-manufacturers",
+            "title": "Houston, Texas Contract Manufacturers",
+            "snippet": "Since 1920, Hankscraft Inc. has been a leader in the contract manufacturing industry, producing dependable and high-quality products for all of our customers.",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:12.486Z",
+            "source_type": null,
+            "provider": "tavily",
+            "rank": 3,
+            "locale": "en"
+          },
+          {
+            "url": "https://www.thomasnet.com/articles/top-suppliers/top-contract-manufacturing-companies-in-the-usa",
+            "canonical_url": "https://www.thomasnet.com/articles/top-suppliers/top-contract-manufacturing-companies-in-the-usa",
+            "title": "Contract Manufacturing Companies in the USA",
+            "snippet": "Find a list of the top featured contract manufacturing companies on Thomas, as well as the top contract manufacturers in the USA by revenue.",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:12.486Z",
+            "source_type": null,
+            "provider": "tavily",
+            "rank": 4,
+            "locale": "en"
+          },
+          {
+            "url": "https://www.professionalplastics.com",
+            "canonical_url": "https://www.professionalplastics.com/",
+            "title": "Plastic Sheets, Plastic Rods, Plastic Tubing Local Supplier",
+            "snippet": "### Hotel & Motel\n\nAircraft Systems\n\n### Aircraft Systems\n\nOffice & Restaurant Furniture\n\n### Office & Restaurant Furniture\n\nMass Transit\n\n### Mass Transit\n\nLaser Equipment & Precision Optics\n\n### Laser Equipment & Precision Optics\n\nMeat, Poultry & Fish\n\n### Meat, Poultry & Fish\n\nContract Manufactur",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:12.486Z",
+            "source_type": null,
+            "provider": "tavily",
+            "rank": 5,
+            "locale": "en"
+          },
+          {
+            "url": "https://www.komaspec.com/about-us/blog/how-to-find-an-electronics-contract-manufacturer",
+            "canonical_url": "https://www.komaspec.com/about-us/blog/how-to-find-an-electronics-contract-manufacturer",
+            "title": "How to Find an Electronics Contract Manufacturer in 2026",
+            "snippet": "Some factories only run automated pick-and-place machines for bare circuit boards. Other facilities handle comprehensive box builds by molding the plastics, stamping the sheet metal, integrating the internal cable routing, and sealing the final retail packaging.\n\nClarify their exact in-house EMS cap",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:12.486Z",
+            "source_type": "official",
+            "provider": "tavily",
+            "rank": 6,
+            "locale": "en"
+          },
+          {
+            "url": "https://www.smcltd.com",
+            "canonical_url": "https://www.smcltd.com/",
+            "title": "SMC: Medical Contract Manufacturer & Pharma Services Company",
+            "snippet": "Efficiency. Scalability. Risk reduction. Our history of excellence and speed to market in contract medical manufacturing is based on obsessive attention to these factors at every stage of your project. Combining in-house engineering, injection molding and assembly expertise with our global supply ch",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:12.486Z",
+            "source_type": null,
+            "provider": "tavily",
+            "rank": 7,
+            "locale": "en"
+          },
+          {
+            "url": "https://www.dow.com/en-us.html",
+            "canonical_url": "https://www.dow.com/en-us.html",
+            "title": "Materials Science & Chemical Manufacturing | Dow Inc.",
+            "snippet": "Agriculture, Feed and Animal Care \nBeauty and Personal Care\nBuilding, Construction and Infrastructure\nChemical Manufacturing and Industrial\nConsumer Goods and Appliances\nElectronics\nEnergy Solutions\nFilms, Tapes and Release Liners \nFood and Beverage\nHealthcare, Pharmaceutical and Medical \nHome Care,",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:12.486Z",
+            "source_type": null,
+            "provider": "tavily",
+            "rank": 8,
+            "locale": "en"
+          }
+        ],
+        "latency_ms": 1343,
+        "cost_estimate_usd": null,
+        "error": null
+      }
+    },
+    {
+      "provider": "exa",
+      "source_id": "exa_semantic",
+      "source_role": [
+        "DISCOVERY_SOURCE",
+        "IDENTITY_SOURCE"
+      ],
+      "cohort": "exa_escalation",
+      "query": "US small and mid-sized packaging plastics medical device and metalworking manufacturers official company websites",
+      "purpose": "incremental_company_discovery",
+      "response": {
+        "ok": true,
+        "provider": "exa",
+        "query": {
+          "query": "US small and mid-sized packaging plastics medical device and metalworking manufacturers official company websites",
+          "region": "us",
+          "language": "en",
+          "max_results": 8,
+          "query_type": "regional_discovery",
+          "search_mode": "fast"
+        },
+        "results": [
+          {
+            "url": "https://vonco.com/",
+            "canonical_url": "https://vonco.com/",
+            "title": "Vonco Products, LLC",
+            "snippet": "# Vonco Products, LLC\n...\nVonco Products, LLC is a Packaging and Containers Manufacturing company. Vonco Products is a risk-free contract manufacturer of medical fluid bags, devices, plastic components and spouted stand up pouches. Vonco Products, LLC employs 39 people and has an annual revenue of $",
+            "published_date": "2026-06-22T00:00:00.000Z",
+            "retrieved_at": "2026-08-10T04:08:13.005Z",
+            "source_type": null,
+            "provider": "exa",
+            "rank": 1,
+            "locale": "en"
+          },
+          {
+            "url": "https://avna.com/",
+            "canonical_url": "https://avna.com/",
+            "title": "AVNA",
+            "snippet": "# AVNA (AVNA, Inc.)\n...\nAVNA is a Medical Equipment Manufacturing company. AVNA employs 149 people (+16.1% YoY, +53 people). Headquartered in New Britain, Connecticut, United States, with presence in Costa Rica. Its workforce is distributed across United States, Costa Rica, and China.\n...\nAVNA (form",
+            "published_date": "2026-06-24T00:00:00.000Z",
+            "retrieved_at": "2026-08-10T04:08:13.005Z",
+            "source_type": null,
+            "provider": "exa",
+            "rank": 2,
+            "locale": "en"
+          },
+          {
+            "url": "https://currierplastics.com/",
+            "canonical_url": "https://currierplastics.com/",
+            "title": "Currier",
+            "snippet": "# Currier (Currier Plastics, Inc.)\n...\nCurrier is a Plastics Manufacturing company. Currier provides custom injection molding, custom blow molding, tooling, and design engineering for industries including healthcare, packaging, and more!. Currier employs 61 people (+23.4% YoY, +33 people) and has an",
+            "published_date": "2026-06-25T00:00:00.000Z",
+            "retrieved_at": "2026-08-10T04:08:13.005Z",
+            "source_type": null,
+            "provider": "exa",
+            "rank": 3,
+            "locale": "en"
+          },
+          {
+            "url": "https://advantechplastics.com/",
+            "canonical_url": "https://advantechplastics.com/",
+            "title": "AdvanTech Plastics LLC",
+            "snippet": "# AdvanTech Plastics LLC\n...\nAdvanTech Plastics LLC is a Packaging & Containers company. AdvanTech Plastics is a plastic injection molding company located in Woodstock, Illinois. They specialize in medical device and pharmaceutical packaging injection molding, industrial/electronic plastic packaging",
+            "published_date": "2026-06-28T00:00:00.000Z",
+            "retrieved_at": "2026-08-10T04:08:13.005Z",
+            "source_type": null,
+            "provider": "exa",
+            "rank": 4,
+            "locale": "en"
+          },
+          {
+            "url": "https://matrixplastic.com/",
+            "canonical_url": "https://matrixplastic.com/",
+            "title": "Matrix Plastic Products, LLC",
+            "snippet": "# Matrix Plastic Products, LLC\n...\nMatrix Plastic Products, LLC is a Plastics Manufacturing company. Matrix Plastic Products is a quality-driven custom manufacturer specializing in injection molding, moldmaking & assembly with surgical precision. They partner with medical device manufacturers to eng",
+            "published_date": "2026-06-24T00:00:00.000Z",
+            "retrieved_at": "2026-08-10T04:08:13.005Z",
+            "source_type": null,
+            "provider": "exa",
+            "rank": 5,
+            "locale": "en"
+          },
+          {
+            "url": "https://seawayplastics.com/",
+            "canonical_url": "https://seawayplastics.com/",
+            "title": "Seaway Plastics Engineering",
+            "snippet": "# Seaway Plastics Engineering (Seaway Plastics Engineering, LLC)\n...\nSeaway Plastics Engineering is a Plastics Manufacturing company. Seaway Plastics Engineering employs 66 people (+16.7% YoY, +16 people) and has an annual revenue of $22M, founded in 1974. Headquartered in Port Richey, Florida, Unit",
+            "published_date": "2026-06-28T00:00:00.000Z",
+            "retrieved_at": "2026-08-10T04:08:13.005Z",
+            "source_type": null,
+            "provider": "exa",
+            "rank": 6,
+            "locale": "en"
+          },
+          {
+            "url": "https://medbiollc.com/",
+            "canonical_url": "https://medbiollc.com/",
+            "title": "Medbio, LLC",
+            "snippet": "Medbio, LLC is a Medical Equipment Manufacturing company. Medbio is a full-service medical contract manufacturer that specializes in manufacturing medical devices from design to completion. They offer a range of services including engineering, tooling, tool transfer, prototype tooling, injection mol",
+            "published_date": "2026-06-22T00:00:00.000Z",
+            "retrieved_at": "2026-08-10T04:08:13.005Z",
+            "source_type": null,
+            "provider": "exa",
+            "rank": 7,
+            "locale": "en"
+          },
+          {
+            "url": "https://keypackaging.com/",
+            "canonical_url": "https://keypackaging.com/",
+            "title": "Key Packaging Co.",
+            "snippet": "# Key Packaging Co. (Key Packaging Company, Inc.)\n...\nKey Packaging Co. is a Plastics Manufacturing company. Key Packaging provides custom thin gauge thermoforming plastic packaging solutions for industries such as medical device packaging, automotive trays, pharmaceutical packaging, cosmetic packag",
+            "published_date": "2026-06-25T00:00:00.000Z",
+            "retrieved_at": "2026-08-10T04:08:13.005Z",
+            "source_type": null,
+            "provider": "exa",
+            "rank": 8,
+            "locale": "en"
+          }
+        ],
+        "latency_ms": 506,
+        "cost_estimate_usd": 0.007,
+        "error": null
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "source_id": "official_company_evidence",
+      "source_role": [
+        "EVIDENCE_SOURCE",
+        "VALIDATION_SOURCE"
+      ],
+      "cohort": "hybrid",
+      "query": "site:contractpackaging.org manufacturing capabilities products facilities",
+      "purpose": "manufacturer_evidence_validation",
+      "response": {
+        "ok": true,
+        "provider": "firecrawl",
+        "query": {
+          "query": "site:contractpackaging.org manufacturing capabilities products facilities",
+          "region": "us",
+          "language": "en",
+          "max_results": 3,
+          "query_type": "regional_discovery",
+          "search_mode": "standard"
+        },
+        "results": [
+          {
+            "url": "https://www.contractpackaging.org/external-manufacturing-library/15-point-action-plan-for-finding-and-selecting-your-contract-manufacturing-partner-example",
+            "canonical_url": "https://www.contractpackaging.org/external-manufacturing-library/15-point-action-plan-for-finding-and-selecting-your-contract-manufacturing-partner-example",
+            "title": "CPA - Contract Packaging Association",
+            "snippet": "Assess each potential partner's technical capabilities, machinery, and technology to ensure they can meet your product's manufacturing and packaging ...",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:14.403Z",
+            "source_type": null,
+            "provider": "firecrawl",
+            "rank": 1,
+            "locale": "en"
+          },
+          {
+            "url": "https://www.contractpackaging.org/external-manufacturing-library/navigating-the-perils-of-misaligned-contract-manufacturing-partnerships",
+            "canonical_url": "https://www.contractpackaging.org/external-manufacturing-library/navigating-the-perils-of-misaligned-contract-manufacturing-partnerships",
+            "title": "Navigating the Perils of Misaligned Contract Manufacturing ... - CPA",
+            "snippet": "Navigating the Perils of Misaligned Contract Manufacturing Partnerships · 1. Compromised Product Quality · 2. Supply Chain Disruptions · 3. Increased Costs · 4.",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:14.403Z",
+            "source_type": null,
+            "provider": "firecrawl",
+            "rank": 2,
+            "locale": "en"
+          },
+          {
+            "url": "https://www.contractpackaging.org/external-manufacturing-library/six-fatal-mistakes-emerging-brands-make-when-selecting-a-contract-packaging-partner",
+            "canonical_url": "https://www.contractpackaging.org/external-manufacturing-library/six-fatal-mistakes-emerging-brands-make-when-selecting-a-contract-packaging-partner",
+            "title": "CPA - Contract Packaging Association",
+            "snippet": "A common mistake is choosing a firm based solely on their capabilities without considering their location and proximity to your manufacturing facilities or ...",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:14.403Z",
+            "source_type": null,
+            "provider": "firecrawl",
+            "rank": 3,
+            "locale": "en"
+          }
+        ],
+        "latency_ms": 1372,
+        "cost_estimate_usd": null,
+        "error": null
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "source_id": "official_company_evidence",
+      "source_role": [
+        "EVIDENCE_SOURCE",
+        "VALIDATION_SOURCE"
+      ],
+      "cohort": "hybrid",
+      "query": "site:printpack.com manufacturing capabilities products facilities",
+      "purpose": "manufacturer_evidence_validation",
+      "response": {
+        "ok": true,
+        "provider": "firecrawl",
+        "query": {
+          "query": "site:printpack.com manufacturing capabilities products facilities",
+          "region": "us",
+          "language": "en",
+          "max_results": 3,
+          "query_type": "regional_discovery",
+          "search_mode": "standard"
+        },
+        "results": [
+          {
+            "url": "https://www.printpack.com/locations/",
+            "canonical_url": "https://www.printpack.com/locations",
+            "title": "Printpack Locations across the USA",
+            "snippet": "# Locations\nType of Facility\n\n- Flexible Converting\n\nSubscribe",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:15.740Z",
+            "source_type": null,
+            "provider": "firecrawl",
+            "rank": 1,
+            "locale": "en"
+          },
+          {
+            "url": "https://www.printpack.com/",
+            "canonical_url": "https://www.printpack.com/",
+            "title": "Preserving and Enhancing People's Lives with Printpack's ...",
+            "snippet": "# The Leader in Flexible & Specialty Rigid Packaging\nWith our advanced printing methods, focus on sustainability, and extensive manufacturing and converting capabilities, we take your packaging to the next level.\n\n## Our Key Capabilities\nPrintpack leads the packaging industry in manufacturing capabi",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:15.740Z",
+            "source_type": null,
+            "provider": "firecrawl",
+            "rank": 2,
+            "locale": "en"
+          },
+          {
+            "url": "https://www.printpack.com/printpack-increases-capabilities-at-bloomington-facility/",
+            "canonical_url": "https://www.printpack.com/printpack-increases-capabilities-at-bloomington-facility",
+            "title": "Printpack Increases Capabilities at Bloomington Facility",
+            "snippet": "Find out how Printpack is setting the standard in flexible packaging through strategic investments and quality enhancements.",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:15.740Z",
+            "source_type": null,
+            "provider": "firecrawl",
+            "rank": 3,
+            "locale": "en"
+          }
+        ],
+        "latency_ms": 1331,
+        "cost_estimate_usd": null,
+        "error": null
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "source_id": "official_company_evidence",
+      "source_role": [
+        "EVIDENCE_SOURCE",
+        "VALIDATION_SOURCE"
+      ],
+      "cohort": "hybrid",
+      "query": "site:packworld.com manufacturing capabilities products facilities",
+      "purpose": "manufacturer_evidence_validation",
+      "response": {
+        "ok": true,
+        "provider": "firecrawl",
+        "query": {
+          "query": "site:packworld.com manufacturing capabilities products facilities",
+          "region": "us",
+          "language": "en",
+          "max_results": 3,
+          "query_type": "regional_discovery",
+          "search_mode": "standard"
+        },
+        "results": [
+          {
+            "url": "https://www.packworld.com/flexibles/wrapping/news/22948486/trioworld-trioworld-group-announces-new-manufacturing-facility-in-brownsburg-indiana",
+            "canonical_url": "https://www.packworld.com/flexibles/wrapping/news/22948486/trioworld-trioworld-group-announces-new-manufacturing-facility-in-brownsburg-indiana",
+            "title": "Trioworld Announces New Manufacturing Facility in Brownsburg ...",
+            "snippet": "The facility will expand the company's production and service capabilities in North America and meet increasing demand for flexible films.",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:16.630Z",
+            "source_type": "news",
+            "provider": "firecrawl",
+            "rank": 1,
+            "locale": "en"
+          },
+          {
+            "url": "https://www.packworld.com/leaders-new/machinery/strapping/news/22525989/signode-industrial-group-signode-opens-global-flagship-facility-in-illinois",
+            "canonical_url": "https://www.packworld.com/leaders-new/machinery/strapping/news/22525989/signode-industrial-group-signode-opens-global-flagship-facility-in-illinois",
+            "title": "Signode Opens Global Flagship Facility in Illinois | Packaging World",
+            "snippet": "The new facility encompasses manufacturing for a broad portfolio of equipment and houses division leadership, sales, customer support, marketing ...",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:16.630Z",
+            "source_type": "news",
+            "provider": "firecrawl",
+            "rank": 2,
+            "locale": "en"
+          },
+          {
+            "url": "https://www.packworld.com/coding-printing-labeling/labeling/news/22954770/id-technology-a-promach-product-brand-id-technology-announces-facility-expansions-to-support-growing-demand-and-continued-north-american-growth",
+            "canonical_url": "https://www.packworld.com/coding-printing-labeling/labeling/news/22954770/id-technology-a-promach-product-brand-id-technology-announces-facility-expansions-to-support-growing-demand-and-continued-north-american-growth",
+            "title": "ID Technology Announces Facility Expansions to Support Growing ...",
+            "snippet": "Strategic expansions in Fort Worth, Texas; York, Pennsylvania; and Edmonton, Alberta aim to increase production capacity, enhance manufacturing capabilities ...",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:16.630Z",
+            "source_type": "news",
+            "provider": "firecrawl",
+            "rank": 3,
+            "locale": "en"
+          }
+        ],
+        "latency_ms": 886,
+        "cost_estimate_usd": null,
+        "error": null
+      }
+    },
+    {
+      "provider": "firecrawl",
+      "source_id": "official_company_evidence",
+      "source_role": [
+        "EVIDENCE_SOURCE",
+        "VALIDATION_SOURCE"
+      ],
+      "cohort": "hybrid",
+      "query": "site:flexpack.org manufacturing capabilities products facilities",
+      "purpose": "manufacturer_evidence_validation",
+      "response": {
+        "ok": true,
+        "provider": "firecrawl",
+        "query": {
+          "query": "site:flexpack.org manufacturing capabilities products facilities",
+          "region": "us",
+          "language": "en",
+          "max_results": 3,
+          "query_type": "regional_discovery",
+          "search_mode": "standard"
+        },
+        "results": [
+          {
+            "url": "https://www.flexpack.org/press-room?page=211&category=General%20News",
+            "canonical_url": "https://www.flexpack.org/press-room?page=211&category=General+News",
+            "title": "News and Information Collected and Disseminated by the Flexible ...",
+            "snippet": "FPA tracks information about new product launches and developments in the industry, sales of flexible packaging, materials and equipment, trade show ...",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:17.551Z",
+            "source_type": "news",
+            "provider": "firecrawl",
+            "rank": 1,
+            "locale": "en"
+          },
+          {
+            "url": "https://www.flexpack.org/?_sp=0806dadb-15a3-4074-b191-40f6ae3fcfc0",
+            "canonical_url": "https://www.flexpack.org/?_sp=0806dadb-15a3-4074-b191-40f6ae3fcfc0",
+            "title": "Flexible Packaging Association",
+            "snippet": "Welcome to the Flexible Packaging Association, the leading voice of the flexible packaging industry.",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:17.551Z",
+            "source_type": null,
+            "provider": "firecrawl",
+            "rank": 2,
+            "locale": "en"
+          },
+          {
+            "url": "https://www.flexpack.org/publication/RG93bmxvYWQ6ODQ2/download",
+            "canonical_url": "https://www.flexpack.org/publication/RG93bmxvYWQ6ODQ2/download",
+            "title": "[PDF] Bryce Corporation to Expand Operations in Searcy, Create More ...",
+            "snippet": "As part of this expansion, Bryce Corporation will construct a new manufacturing facility and a distribution center in Searcy. The company ...",
+            "published_date": null,
+            "retrieved_at": "2026-08-10T04:08:17.551Z",
+            "source_type": null,
+            "provider": "firecrawl",
+            "rank": 3,
+            "locale": "en"
+          }
+        ],
+        "latency_ms": 913,
+        "cost_estimate_usd": null,
+        "error": null
+      }
+    }
+  ],
+  "candidates": [
+    {
+      "raw_entity": "CPA, The Association for Contract Packagers and Manufacturers",
+      "canonical_account": null,
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": null,
+      "url": "https://www.contractpackaging.org/",
+      "provider": "brave",
+      "source_id": "us_specialized_manufacturing",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "BUSINESS_MODEL_SOURCE"
+      ],
+      "cohort": "specialized_first",
+      "entity_types": [
+        "article"
+      ],
+      "subindustries": [
+        "packaging_plastics"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": false,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "unknown",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "uncertain",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Associations - Printpack",
+      "canonical_account": "Associations - Printpack",
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": "printpack.com",
+      "url": "https://www.printpack.com/associations",
+      "provider": "brave",
+      "source_id": "us_specialized_manufacturing",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "BUSINESS_MODEL_SOURCE"
+      ],
+      "cohort": "specialized_first",
+      "entity_types": [
+        "article"
+      ],
+      "subindustries": [
+        "food_beverage"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": true,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "corporate",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "genuinely_new",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Packaging Associations",
+      "canonical_account": null,
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": null,
+      "url": "https://www.packworld.com/page/packaging-associations",
+      "provider": "brave",
+      "source_id": "us_specialized_manufacturing",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "BUSINESS_MODEL_SOURCE"
+      ],
+      "cohort": "specialized_first",
+      "entity_types": [
+        "article"
+      ],
+      "subindustries": [
+        "packaging_plastics"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": false,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "unknown",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "uncertain",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Flexible Packaging Association",
+      "canonical_account": null,
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": null,
+      "url": "https://www.flexpack.org/",
+      "provider": "brave",
+      "source_id": "us_specialized_manufacturing",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "BUSINESS_MODEL_SOURCE"
+      ],
+      "cohort": "specialized_first",
+      "entity_types": [
+        "article"
+      ],
+      "subindustries": [
+        "packaging_plastics"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": false,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "unknown",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "uncertain",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Home - Industrial Packaging Alliance of North America",
+      "canonical_account": "Home - Industrial Packaging Alliance of North America",
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": "industrialpackaging.org",
+      "url": "https://industrialpackaging.org/",
+      "provider": "brave",
+      "source_id": "us_specialized_manufacturing",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "BUSINESS_MODEL_SOURCE"
+      ],
+      "cohort": "specialized_first",
+      "entity_types": [
+        "article"
+      ],
+      "subindustries": [
+        "packaging_plastics"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": true,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "corporate",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "genuinely_new",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Home",
+      "canonical_account": "Home",
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": "aiccbox.org",
+      "url": "https://www.aiccbox.org/",
+      "provider": "brave",
+      "source_id": "us_specialized_manufacturing",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "BUSINESS_MODEL_SOURCE"
+      ],
+      "cohort": "specialized_first",
+      "entity_types": [
+        "article"
+      ],
+      "subindustries": [
+        "packaging_plastics"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": true,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "corporate",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "genuinely_new",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "PMMI, The Association for Packaging and Processing Technologies",
+      "canonical_account": "PMMI, The Association for Packaging and Processing Technologies",
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": "pmmi.org",
+      "url": "https://www.pmmi.org/",
+      "provider": "brave",
+      "source_id": "us_specialized_manufacturing",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "BUSINESS_MODEL_SOURCE"
+      ],
+      "cohort": "specialized_first",
+      "entity_types": [
+        "article"
+      ],
+      "subindustries": [
+        "packaging_plastics"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": true,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "corporate",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "genuinely_new",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "About the Flexible Packaging Association",
+      "canonical_account": null,
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": null,
+      "url": "https://www.flexpack.org/about-us",
+      "provider": "brave",
+      "source_id": "us_specialized_manufacturing",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "BUSINESS_MODEL_SOURCE"
+      ],
+      "cohort": "specialized_first",
+      "entity_types": [
+        "article"
+      ],
+      "subindustries": [
+        "packaging_plastics",
+        "machinery_equipment"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": false,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "unknown",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "duplicate",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Medical Device Manufacturers Association",
+      "canonical_account": null,
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": null,
+      "url": "https://www.zoominfo.com/c/medical-device-manufacturers-association/42797220",
+      "provider": "tavily",
+      "source_id": "us_specialized_manufacturing",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "BUSINESS_MODEL_SOURCE"
+      ],
+      "cohort": "specialized_first",
+      "entity_types": [
+        "article"
+      ],
+      "subindustries": [
+        "medical_health"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": false,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "unknown",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "uncertain",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Medical Device Manufacturers Association (MDMA) - Promoting Patient Access & Innovation. Connecting the Med Tech ecosystem for better health care tomorrow.",
+      "canonical_account": null,
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": null,
+      "url": "https://www.linkedin.com/company/mdma-medicaldevices",
+      "provider": "tavily",
+      "source_id": "us_specialized_manufacturing",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "BUSINESS_MODEL_SOURCE"
+      ],
+      "cohort": "specialized_first",
+      "entity_types": [
+        "article"
+      ],
+      "subindustries": [
+        "machinery_equipment",
+        "medical_health"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": false,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "unknown",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "uncertain",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "About - Medical Device Manufacturers Association",
+      "canonical_account": null,
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": null,
+      "url": "https://www.medicaldevices.org/about",
+      "provider": "tavily",
+      "source_id": "us_specialized_manufacturing",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "BUSINESS_MODEL_SOURCE"
+      ],
+      "cohort": "specialized_first",
+      "entity_types": [
+        "article"
+      ],
+      "subindustries": [
+        "medical_health"
+      ],
+      "state": "WA",
+      "state_resolution": "observed_text",
+      "official_domain": false,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "unknown",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "uncertain",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "SelectUSA Medical Technology Industry Associations",
+      "canonical_account": "SelectUSA Medical Technology Industry Associations",
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": "trade.gov",
+      "url": "https://www.trade.gov/selectusa-medical-technology-industry-associations",
+      "provider": "tavily",
+      "source_id": "us_specialized_manufacturing",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "BUSINESS_MODEL_SOURCE"
+      ],
+      "cohort": "specialized_first",
+      "entity_types": [
+        "article"
+      ],
+      "subindustries": [
+        "other"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": true,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "corporate",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "genuinely_new",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Top 10: Medical Device Associations",
+      "canonical_account": "Top 10: Medical Device Associations",
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": "healthcare-digital.com",
+      "url": "https://healthcare-digital.com/top10/top-10-medical-device-associations",
+      "provider": "tavily",
+      "source_id": "us_specialized_manufacturing",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "BUSINESS_MODEL_SOURCE"
+      ],
+      "cohort": "specialized_first",
+      "entity_types": [
+        "article"
+      ],
+      "subindustries": [
+        "medical_health"
+      ],
+      "state": "WA",
+      "state_resolution": "observed_text",
+      "official_domain": true,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "corporate",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "genuinely_new",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Associate Member Directory",
+      "canonical_account": null,
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": null,
+      "url": "https://members.medicaldevices.org/page/AssociateDirectory",
+      "provider": "tavily",
+      "source_id": "us_specialized_manufacturing",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "BUSINESS_MODEL_SOURCE"
+      ],
+      "cohort": "specialized_first",
+      "entity_types": [
+        "article"
+      ],
+      "subindustries": [
+        "medical_health"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": false,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "unknown",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "duplicate",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Medical Device Manufacturers Association: Home",
+      "canonical_account": null,
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": null,
+      "url": "https://www.medicaldevices.org/",
+      "provider": "tavily",
+      "source_id": "us_specialized_manufacturing",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "BUSINESS_MODEL_SOURCE"
+      ],
+      "cohort": "specialized_first",
+      "entity_types": [
+        "article"
+      ],
+      "subindustries": [
+        "medical_health"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": false,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "unknown",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "duplicate",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Medical Device Manufacturers Association (MDMA)",
+      "canonical_account": null,
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": null,
+      "url": "https://members.medicaldevices.org/",
+      "provider": "tavily",
+      "source_id": "us_specialized_manufacturing",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "BUSINESS_MODEL_SOURCE"
+      ],
+      "cohort": "specialized_first",
+      "entity_types": [
+        "article"
+      ],
+      "subindustries": [
+        "medical_health"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": false,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "unknown",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "duplicate",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Find Metalworking Machinery Manufacturing companies in United States of America - Dun & Bradstreet",
+      "canonical_account": "Find Metalworking Machinery Manufacturing companies in United States of America - Dun & Bradstreet",
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": "dnb.com",
+      "url": "https://www.dnb.com/business-directory/company-information.metalworking_machinery_manufacturing.us.html",
+      "provider": "brave",
+      "source_id": "us_regional_manufacturing",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "COVERAGE_SOURCE"
+      ],
+      "cohort": "search_first",
+      "entity_types": [
+        "article"
+      ],
+      "subindustries": [
+        "metalworking",
+        "machinery_equipment"
+      ],
+      "state": "MI",
+      "state_resolution": "observed_text",
+      "official_domain": true,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "corporate",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "genuinely_new",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Heavy Gauge Stamping & Precision Blanking",
+      "canonical_account": "Heavy Gauge Stamping & Precision Blanking",
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": "ohiovalleymfg.com",
+      "url": "https://www.ohiovalleymfg.com/",
+      "provider": "brave",
+      "source_id": "us_regional_manufacturing",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "COVERAGE_SOURCE"
+      ],
+      "cohort": "search_first",
+      "entity_types": [
+        "other"
+      ],
+      "subindustries": [
+        "other"
+      ],
+      "state": "OH",
+      "state_resolution": "observed_text",
+      "official_domain": true,
+      "manufacturer_decision": "borderline",
+      "procurement_plausibility": "weak",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "corporate",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "genuinely_new",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Discover Metalworking Machinery Manufacturing companies in Ohio, United States of America - Dun & Bradstreet",
+      "canonical_account": "Discover Metalworking Machinery Manufacturing companies in Ohio, United States of America - Dun & Bradstreet",
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": "dnb.com",
+      "url": "https://www.dnb.com/business-directory/company-information.metalworking_machinery_manufacturing.us.ohio.html",
+      "provider": "brave",
+      "source_id": "us_regional_manufacturing",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "COVERAGE_SOURCE"
+      ],
+      "cohort": "search_first",
+      "entity_types": [
+        "article"
+      ],
+      "subindustries": [
+        "metalworking",
+        "machinery_equipment"
+      ],
+      "state": "OH",
+      "state_resolution": "observed_text",
+      "official_domain": true,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "corporate",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "duplicate",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Buckeye Machine - Custom Automation, Tailored Precision.",
+      "canonical_account": "Buckeye Machine - Custom Automation, Tailored Precision.",
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": "buckeyemachine.com",
+      "url": "https://www.buckeyemachine.com/",
+      "provider": "brave",
+      "source_id": "us_regional_manufacturing",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "COVERAGE_SOURCE"
+      ],
+      "cohort": "search_first",
+      "entity_types": [
+        "manufacturer"
+      ],
+      "subindustries": [
+        "machinery_equipment"
+      ],
+      "state": "OH",
+      "state_resolution": "observed_text",
+      "official_domain": true,
+      "manufacturer_decision": "manufacturer_compatible",
+      "procurement_plausibility": "structurally_plausible",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "corporate",
+      "evidence": "Buckeye Machine - Custom Automation, Tailored Precision. At <strong>Buckeye Machine, Inc.</strong>, we pride ourselves in being a premier Ohio-based supplier of specialized automated equipment and precision-machined parts. Our dedicated and highly experienced team supports manufacturers throughout M",
+      "evidence_yield": true,
+      "novelty": "genuinely_new",
+      "confidence": "moderate",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Modern Machinery Company",
+      "canonical_account": "Modern Machinery Company",
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": "modernmachinerycompany.com",
+      "url": "https://modernmachinerycompany.com/",
+      "provider": "brave",
+      "source_id": "us_regional_manufacturing",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "COVERAGE_SOURCE"
+      ],
+      "cohort": "search_first",
+      "entity_types": [
+        "distributor"
+      ],
+      "subindustries": [
+        "textiles_apparel",
+        "metalworking",
+        "machinery_equipment"
+      ],
+      "state": "IN",
+      "state_resolution": "observed_text",
+      "official_domain": true,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "corporate",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "genuinely_new",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Used Equipment Dealer",
+      "canonical_account": "Used Equipment Dealer",
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": "danddindustries.com",
+      "url": "https://www.danddindustries.com/",
+      "provider": "brave",
+      "source_id": "us_regional_manufacturing",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "COVERAGE_SOURCE"
+      ],
+      "cohort": "search_first",
+      "entity_types": [
+        "article"
+      ],
+      "subindustries": [
+        "metalworking",
+        "machinery_equipment"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": true,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "corporate",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "genuinely_new",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "McGregor Metal",
+      "canonical_account": "McGregor Metal",
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": "mcgregormetal.com",
+      "url": "https://mcgregormetal.com/",
+      "provider": "brave",
+      "source_id": "us_regional_manufacturing",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "COVERAGE_SOURCE"
+      ],
+      "cohort": "search_first",
+      "entity_types": [
+        "manufacturer"
+      ],
+      "subindustries": [
+        "metalworking"
+      ],
+      "state": "OH",
+      "state_resolution": "observed_text",
+      "official_domain": true,
+      "manufacturer_decision": "manufacturer_compatible",
+      "procurement_plausibility": "structurally_plausible",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "corporate",
+      "evidence": "McGregor Metal Firmly rooted in <strong>Springfield, Ohio</strong> and with a manufacturing family numbering 350+ employees, we take pride in our long history as a community anchor.",
+      "evidence_yield": true,
+      "novelty": "genuinely_new",
+      "confidence": "moderate",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Find Metalworking Machinery Manufacturing companies in Dayton, Ohio, United States of America - Dun & Bradstreet",
+      "canonical_account": "Find Metalworking Machinery Manufacturing companies in Dayton, Ohio, United States of America - Dun & Bradstreet",
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": "dnb.com",
+      "url": "https://www.dnb.com/business-directory/company-information.metalworking_machinery_manufacturing.us.ohio.dayton.html",
+      "provider": "brave",
+      "source_id": "us_regional_manufacturing",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "COVERAGE_SOURCE"
+      ],
+      "cohort": "search_first",
+      "entity_types": [
+        "article"
+      ],
+      "subindustries": [
+        "metalworking",
+        "machinery_equipment"
+      ],
+      "state": "OH",
+      "state_resolution": "observed_text",
+      "official_domain": true,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "corporate",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "duplicate",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "US Electronics Contract Manufacturing",
+      "canonical_account": "US Electronics Contract Manufacturing",
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": "bencor-llc.com",
+      "url": "https://bencor-llc.com/services/contract-manufacturing",
+      "provider": "tavily",
+      "source_id": "us_regional_manufacturing",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "COVERAGE_SOURCE"
+      ],
+      "cohort": "search_first",
+      "entity_types": [
+        "contract_manufacturer",
+        "assembler"
+      ],
+      "subindustries": [
+        "electronics_electrical"
+      ],
+      "state": "TX",
+      "state_resolution": "observed_text",
+      "official_domain": true,
+      "manufacturer_decision": "manufacturer_compatible",
+      "procurement_plausibility": "structurally_plausible",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "corporate",
+      "evidence": "US Electronics Contract Manufacturing | Bencor BENCOR is a leading electronics contract manufacturing services provider based in Texas. With over 28 years of experience in the industry, we specialize in providing full-scale PCB layout and assembly services to customers ranging from high-tech startup",
+      "evidence_yield": true,
+      "novelty": "genuinely_new",
+      "confidence": "moderate",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Contract Manufacturing Services in California",
+      "canonical_account": "Contract Manufacturing Services in California",
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": "ksplastic.com",
+      "url": "https://www.ksplastic.com/service/contract-manufacturing",
+      "provider": "tavily",
+      "source_id": "us_regional_manufacturing",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "COVERAGE_SOURCE"
+      ],
+      "cohort": "search_first",
+      "entity_types": [
+        "contract_manufacturer"
+      ],
+      "subindustries": [
+        "packaging_plastics",
+        "medical_health"
+      ],
+      "state": "CA",
+      "state_resolution": "observed_text",
+      "official_domain": true,
+      "manufacturer_decision": "manufacturer_compatible",
+      "procurement_plausibility": "structurally_plausible",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "corporate",
+      "evidence": "Contract Manufacturing Services in California | KS Group ## Why Choose KS Plastics Inc. for Contract Manufacturing Services\n\nWith over 50 years of experience focused exclusively on injection molding, MOS Plastics offers unparalleled specialized plastic component manufacturing expertise. Our experien",
+      "evidence_yield": true,
+      "novelty": "genuinely_new",
+      "confidence": "moderate",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Houston, Texas Contract Manufacturers",
+      "canonical_account": null,
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": null,
+      "url": "https://contractmanufacturingcompanies.com/houston-texas-contract-manufacturers",
+      "provider": "tavily",
+      "source_id": "us_regional_manufacturing",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "COVERAGE_SOURCE"
+      ],
+      "cohort": "search_first",
+      "entity_types": [
+        "marketplace_directory"
+      ],
+      "subindustries": [
+        "other"
+      ],
+      "state": "TX",
+      "state_resolution": "observed_text",
+      "official_domain": false,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "unknown",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "uncertain",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Contract Manufacturing Companies in the USA",
+      "canonical_account": null,
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": null,
+      "url": "https://www.thomasnet.com/articles/top-suppliers/top-contract-manufacturing-companies-in-the-usa",
+      "provider": "tavily",
+      "source_id": "us_regional_manufacturing",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "COVERAGE_SOURCE"
+      ],
+      "cohort": "search_first",
+      "entity_types": [
+        "article"
+      ],
+      "subindustries": [
+        "other"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": false,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "unknown",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "uncertain",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Plastic Sheets, Plastic Rods, Plastic Tubing Local Supplier",
+      "canonical_account": "Plastic Sheets, Plastic Rods, Plastic Tubing Local Supplier",
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": "professionalplastics.com",
+      "url": "https://www.professionalplastics.com/",
+      "provider": "tavily",
+      "source_id": "us_regional_manufacturing",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "COVERAGE_SOURCE"
+      ],
+      "cohort": "search_first",
+      "entity_types": [
+        "distributor"
+      ],
+      "subindustries": [
+        "packaging_plastics",
+        "machinery_equipment"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": true,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "corporate",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "genuinely_new",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "How to Find an Electronics Contract Manufacturer in 2026",
+      "canonical_account": "How to Find an Electronics Contract Manufacturer in 2026",
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": "komaspec.com",
+      "url": "https://www.komaspec.com/about-us/blog/how-to-find-an-electronics-contract-manufacturer",
+      "provider": "tavily",
+      "source_id": "us_regional_manufacturing",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "COVERAGE_SOURCE"
+      ],
+      "cohort": "search_first",
+      "entity_types": [
+        "article"
+      ],
+      "subindustries": [
+        "packaging_plastics",
+        "metalworking",
+        "electronics_electrical"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": true,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "corporate",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "genuinely_new",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "SMC: Medical Contract Manufacturer & Pharma Services Company",
+      "canonical_account": "SMC: Medical Contract Manufacturer & Pharma Services Company",
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": "smcltd.com",
+      "url": "https://www.smcltd.com/",
+      "provider": "tavily",
+      "source_id": "us_regional_manufacturing",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "COVERAGE_SOURCE"
+      ],
+      "cohort": "search_first",
+      "entity_types": [
+        "contract_manufacturer",
+        "assembler"
+      ],
+      "subindustries": [
+        "medical_health"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": true,
+      "manufacturer_decision": "manufacturer_compatible",
+      "procurement_plausibility": "structurally_plausible",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "corporate",
+      "evidence": "SMC: Medical Contract Manufacturer & Pharma Services Company Efficiency. Scalability. Risk reduction. Our history of excellence and speed to market in contract medical manufacturing is based on obsessive attention to these factors at every stage of your project. Combining in-house engineering, injec",
+      "evidence_yield": true,
+      "novelty": "genuinely_new",
+      "confidence": "moderate",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Materials Science & Chemical Manufacturing",
+      "canonical_account": "Materials Science & Chemical Manufacturing",
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": "dow.com",
+      "url": "https://www.dow.com/en-us.html",
+      "provider": "tavily",
+      "source_id": "us_regional_manufacturing",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "COVERAGE_SOURCE"
+      ],
+      "cohort": "search_first",
+      "entity_types": [
+        "manufacturer"
+      ],
+      "subindustries": [
+        "food_beverage",
+        "chemicals_cosmetics",
+        "electronics_electrical",
+        "medical_health"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": true,
+      "manufacturer_decision": "manufacturer_compatible",
+      "procurement_plausibility": "structurally_plausible",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "corporate",
+      "evidence": "Materials Science & Chemical Manufacturing | Dow Inc. Agriculture, Feed and Animal Care \nBeauty and Personal Care\nBuilding, Construction and Infrastructure\nChemical Manufacturing and Industrial\nConsumer Goods and Appliances\nElectronics\nEnergy Solutions\nFilms, Tapes and Release Liners \nFood and Bever",
+      "evidence_yield": true,
+      "novelty": "genuinely_new",
+      "confidence": "moderate",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Vonco Products, LLC",
+      "canonical_account": "Vonco Products, LLC",
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": "vonco.com",
+      "url": "https://vonco.com/",
+      "provider": "exa",
+      "source_id": "exa_semantic",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "IDENTITY_SOURCE"
+      ],
+      "cohort": "exa_escalation",
+      "entity_types": [
+        "contract_manufacturer"
+      ],
+      "subindustries": [
+        "packaging_plastics"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": true,
+      "manufacturer_decision": "manufacturer_compatible",
+      "procurement_plausibility": "structurally_plausible",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "corporate",
+      "evidence": "Vonco Products, LLC # Vonco Products, LLC\n...\nVonco Products, LLC is a Packaging and Containers Manufacturing company. Vonco Products is a risk-free contract manufacturer of medical fluid bags, devices, plastic components and spouted stand up pouches. Vonco Products, LLC employs 39 people and has an",
+      "evidence_yield": true,
+      "novelty": "genuinely_new",
+      "confidence": "moderate",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "AVNA",
+      "canonical_account": "AVNA",
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": "avna.com",
+      "url": "https://avna.com/",
+      "provider": "exa",
+      "source_id": "exa_semantic",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "IDENTITY_SOURCE"
+      ],
+      "cohort": "exa_escalation",
+      "entity_types": [
+        "manufacturer"
+      ],
+      "subindustries": [
+        "machinery_equipment"
+      ],
+      "state": "CT",
+      "state_resolution": "observed_text",
+      "official_domain": true,
+      "manufacturer_decision": "manufacturer_compatible",
+      "procurement_plausibility": "structurally_plausible",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "corporate",
+      "evidence": "AVNA # AVNA (AVNA, Inc.)\n...\nAVNA is a Medical Equipment Manufacturing company. AVNA employs 149 people (+16.1% YoY, +53 people). Headquartered in New Britain, Connecticut, United States, with presence in Costa Rica. Its workforce is distributed across United States, Costa Rica, and China.\n...\nAVNA ",
+      "evidence_yield": true,
+      "novelty": "genuinely_new",
+      "confidence": "moderate",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Currier",
+      "canonical_account": "Currier",
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": "currierplastics.com",
+      "url": "https://currierplastics.com/",
+      "provider": "exa",
+      "source_id": "exa_semantic",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "IDENTITY_SOURCE"
+      ],
+      "cohort": "exa_escalation",
+      "entity_types": [
+        "manufacturer"
+      ],
+      "subindustries": [
+        "packaging_plastics",
+        "machinery_equipment"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": true,
+      "manufacturer_decision": "manufacturer_compatible",
+      "procurement_plausibility": "structurally_plausible",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "corporate",
+      "evidence": "Currier # Currier (Currier Plastics, Inc.)\n...\nCurrier is a Plastics Manufacturing company. Currier provides custom injection molding, custom blow molding, tooling, and design engineering for industries including healthcare, packaging, and more!. Currier employs 61 people (+23.4% YoY, +33 people) an",
+      "evidence_yield": true,
+      "novelty": "genuinely_new",
+      "confidence": "moderate",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "AdvanTech Plastics LLC",
+      "canonical_account": "AdvanTech Plastics LLC",
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": "advantechplastics.com",
+      "url": "https://advantechplastics.com/",
+      "provider": "exa",
+      "source_id": "exa_semantic",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "IDENTITY_SOURCE"
+      ],
+      "cohort": "exa_escalation",
+      "entity_types": [
+        "manufacturer"
+      ],
+      "subindustries": [
+        "packaging_plastics",
+        "electronics_electrical",
+        "medical_health"
+      ],
+      "state": "IL",
+      "state_resolution": "observed_text",
+      "official_domain": true,
+      "manufacturer_decision": "manufacturer_compatible",
+      "procurement_plausibility": "structurally_plausible",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "corporate",
+      "evidence": "AdvanTech Plastics LLC # AdvanTech Plastics LLC\n...\nAdvanTech Plastics LLC is a Packaging & Containers company. AdvanTech Plastics is a plastic injection molding company located in Woodstock, Illinois. They specialize in medical device and pharmaceutical packaging injection molding, industrial/elect",
+      "evidence_yield": true,
+      "novelty": "genuinely_new",
+      "confidence": "moderate",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Matrix Plastic Products, LLC",
+      "canonical_account": "Matrix Plastic Products, LLC",
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": "matrixplastic.com",
+      "url": "https://matrixplastic.com/",
+      "provider": "exa",
+      "source_id": "exa_semantic",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "IDENTITY_SOURCE"
+      ],
+      "cohort": "exa_escalation",
+      "entity_types": [
+        "manufacturer",
+        "assembler"
+      ],
+      "subindustries": [
+        "packaging_plastics",
+        "medical_health"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": true,
+      "manufacturer_decision": "manufacturer_compatible",
+      "procurement_plausibility": "structurally_plausible",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "corporate",
+      "evidence": "Matrix Plastic Products, LLC # Matrix Plastic Products, LLC\n...\nMatrix Plastic Products, LLC is a Plastics Manufacturing company. Matrix Plastic Products is a quality-driven custom manufacturer specializing in injection molding, moldmaking & assembly with surgical precision. They partner with medica",
+      "evidence_yield": true,
+      "novelty": "genuinely_new",
+      "confidence": "moderate",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Seaway Plastics Engineering",
+      "canonical_account": "Seaway Plastics Engineering",
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": "seawayplastics.com",
+      "url": "https://seawayplastics.com/",
+      "provider": "exa",
+      "source_id": "exa_semantic",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "IDENTITY_SOURCE"
+      ],
+      "cohort": "exa_escalation",
+      "entity_types": [
+        "manufacturer"
+      ],
+      "subindustries": [
+        "packaging_plastics"
+      ],
+      "state": "FL",
+      "state_resolution": "observed_text",
+      "official_domain": true,
+      "manufacturer_decision": "manufacturer_compatible",
+      "procurement_plausibility": "structurally_plausible",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "corporate",
+      "evidence": "Seaway Plastics Engineering # Seaway Plastics Engineering (Seaway Plastics Engineering, LLC)\n...\nSeaway Plastics Engineering is a Plastics Manufacturing company. Seaway Plastics Engineering employs 66 people (+16.7% YoY, +16 people) and has an annual revenue of $22M, founded in 1974. Headquartered i",
+      "evidence_yield": true,
+      "novelty": "genuinely_new",
+      "confidence": "moderate",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Medbio, LLC",
+      "canonical_account": "Medbio, LLC",
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": "medbiollc.com",
+      "url": "https://medbiollc.com/",
+      "provider": "exa",
+      "source_id": "exa_semantic",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "IDENTITY_SOURCE"
+      ],
+      "cohort": "exa_escalation",
+      "entity_types": [
+        "contract_manufacturer"
+      ],
+      "subindustries": [
+        "machinery_equipment",
+        "medical_health"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": true,
+      "manufacturer_decision": "manufacturer_compatible",
+      "procurement_plausibility": "structurally_plausible",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "corporate",
+      "evidence": "Medbio, LLC Medbio, LLC is a Medical Equipment Manufacturing company. Medbio is a full-service medical contract manufacturer that specializes in manufacturing medical devices from design to completion. They offer a range of services including engineering, tooling, tool transfer, prototype tooling, i",
+      "evidence_yield": true,
+      "novelty": "genuinely_new",
+      "confidence": "moderate",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Key Packaging Co.",
+      "canonical_account": "Key Packaging Co.",
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": "keypackaging.com",
+      "url": "https://keypackaging.com/",
+      "provider": "exa",
+      "source_id": "exa_semantic",
+      "source_roles": [
+        "DISCOVERY_SOURCE",
+        "IDENTITY_SOURCE"
+      ],
+      "cohort": "exa_escalation",
+      "entity_types": [
+        "manufacturer"
+      ],
+      "subindustries": [
+        "packaging_plastics",
+        "chemicals_cosmetics",
+        "medical_health"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": true,
+      "manufacturer_decision": "manufacturer_compatible",
+      "procurement_plausibility": "structurally_plausible",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "corporate",
+      "evidence": "Key Packaging Co. # Key Packaging Co. (Key Packaging Company, Inc.)\n...\nKey Packaging Co. is a Plastics Manufacturing company. Key Packaging provides custom thin gauge thermoforming plastic packaging solutions for industries such as medical device packaging, automotive trays, pharmaceutical packagin",
+      "evidence_yield": true,
+      "novelty": "genuinely_new",
+      "confidence": "moderate",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "CPA - Contract Packaging Association",
+      "canonical_account": null,
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": null,
+      "url": "https://www.contractpackaging.org/external-manufacturing-library/15-point-action-plan-for-finding-and-selecting-your-contract-manufacturing-partner-example",
+      "provider": "firecrawl",
+      "source_id": "official_company_evidence",
+      "source_roles": [
+        "EVIDENCE_SOURCE",
+        "VALIDATION_SOURCE"
+      ],
+      "cohort": "hybrid",
+      "entity_types": [
+        "article"
+      ],
+      "subindustries": [
+        "packaging_plastics",
+        "machinery_equipment"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": false,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "unknown",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "duplicate",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Navigating the Perils of Misaligned Contract Manufacturing ... - CPA",
+      "canonical_account": null,
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": null,
+      "url": "https://www.contractpackaging.org/external-manufacturing-library/navigating-the-perils-of-misaligned-contract-manufacturing-partnerships",
+      "provider": "firecrawl",
+      "source_id": "official_company_evidence",
+      "source_roles": [
+        "EVIDENCE_SOURCE",
+        "VALIDATION_SOURCE"
+      ],
+      "cohort": "hybrid",
+      "entity_types": [
+        "marketplace_directory"
+      ],
+      "subindustries": [
+        "other"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": false,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "unknown",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "duplicate",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "CPA - Contract Packaging Association",
+      "canonical_account": null,
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": null,
+      "url": "https://www.contractpackaging.org/external-manufacturing-library/six-fatal-mistakes-emerging-brands-make-when-selecting-a-contract-packaging-partner",
+      "provider": "firecrawl",
+      "source_id": "official_company_evidence",
+      "source_roles": [
+        "EVIDENCE_SOURCE",
+        "VALIDATION_SOURCE"
+      ],
+      "cohort": "hybrid",
+      "entity_types": [
+        "article"
+      ],
+      "subindustries": [
+        "packaging_plastics"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": false,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "unknown",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "duplicate",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Printpack Locations across the USA",
+      "canonical_account": "Printpack Locations across the USA",
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": "printpack.com",
+      "url": "https://www.printpack.com/locations",
+      "provider": "firecrawl",
+      "source_id": "official_company_evidence",
+      "source_roles": [
+        "EVIDENCE_SOURCE",
+        "VALIDATION_SOURCE"
+      ],
+      "cohort": "hybrid",
+      "entity_types": [
+        "other"
+      ],
+      "subindustries": [
+        "other"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": true,
+      "manufacturer_decision": "borderline",
+      "procurement_plausibility": "weak",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "corporate",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "duplicate",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Preserving and Enhancing People's Lives with Printpack's ...",
+      "canonical_account": "Preserving and Enhancing People's Lives with Printpack's ...",
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": "printpack.com",
+      "url": "https://www.printpack.com/",
+      "provider": "firecrawl",
+      "source_id": "official_company_evidence",
+      "source_roles": [
+        "EVIDENCE_SOURCE",
+        "VALIDATION_SOURCE"
+      ],
+      "cohort": "hybrid",
+      "entity_types": [
+        "manufacturer"
+      ],
+      "subindustries": [
+        "packaging_plastics"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": true,
+      "manufacturer_decision": "manufacturer_compatible",
+      "procurement_plausibility": "structurally_plausible",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "corporate",
+      "evidence": "Preserving and Enhancing People's Lives with Printpack's ... # The Leader in Flexible & Specialty Rigid Packaging\nWith our advanced printing methods, focus on sustainability, and extensive manufacturing and converting capabilities, we take your packaging to the next level.\n\n## Our Key Capabilities\nP",
+      "evidence_yield": true,
+      "novelty": "duplicate",
+      "confidence": "moderate",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Printpack Increases Capabilities at Bloomington Facility",
+      "canonical_account": "Printpack Increases Capabilities at Bloomington Facility",
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": "printpack.com",
+      "url": "https://www.printpack.com/printpack-increases-capabilities-at-bloomington-facility",
+      "provider": "firecrawl",
+      "source_id": "official_company_evidence",
+      "source_roles": [
+        "EVIDENCE_SOURCE",
+        "VALIDATION_SOURCE"
+      ],
+      "cohort": "hybrid",
+      "entity_types": [
+        "other"
+      ],
+      "subindustries": [
+        "packaging_plastics",
+        "building_materials"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": true,
+      "manufacturer_decision": "borderline",
+      "procurement_plausibility": "weak",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "corporate",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "duplicate",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Trioworld Announces New Manufacturing Facility in Brownsburg ...",
+      "canonical_account": null,
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": null,
+      "url": "https://www.packworld.com/flexibles/wrapping/news/22948486/trioworld-trioworld-group-announces-new-manufacturing-facility-in-brownsburg-indiana",
+      "provider": "firecrawl",
+      "source_id": "official_company_evidence",
+      "source_roles": [
+        "EVIDENCE_SOURCE",
+        "VALIDATION_SOURCE"
+      ],
+      "cohort": "hybrid",
+      "entity_types": [
+        "article"
+      ],
+      "subindustries": [
+        "other"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": false,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "unknown",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "duplicate",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Signode Opens Global Flagship Facility in Illinois",
+      "canonical_account": null,
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": null,
+      "url": "https://www.packworld.com/leaders-new/machinery/strapping/news/22525989/signode-industrial-group-signode-opens-global-flagship-facility-in-illinois",
+      "provider": "firecrawl",
+      "source_id": "official_company_evidence",
+      "source_roles": [
+        "EVIDENCE_SOURCE",
+        "VALIDATION_SOURCE"
+      ],
+      "cohort": "hybrid",
+      "entity_types": [
+        "article"
+      ],
+      "subindustries": [
+        "packaging_plastics",
+        "machinery_equipment"
+      ],
+      "state": "IL",
+      "state_resolution": "observed_text",
+      "official_domain": false,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "unknown",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "duplicate",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "ID Technology Announces Facility Expansions to Support Growing ...",
+      "canonical_account": null,
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": null,
+      "url": "https://www.packworld.com/coding-printing-labeling/labeling/news/22954770/id-technology-a-promach-product-brand-id-technology-announces-facility-expansions-to-support-growing-demand-and-continued-north-american-growth",
+      "provider": "firecrawl",
+      "source_id": "official_company_evidence",
+      "source_roles": [
+        "EVIDENCE_SOURCE",
+        "VALIDATION_SOURCE"
+      ],
+      "cohort": "hybrid",
+      "entity_types": [
+        "article"
+      ],
+      "subindustries": [
+        "other"
+      ],
+      "state": "ID",
+      "state_resolution": "observed_text",
+      "official_domain": false,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "unknown",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "duplicate",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "News and Information Collected and Disseminated by the Flexible ...",
+      "canonical_account": null,
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": null,
+      "url": "https://www.flexpack.org/press-room?page=211&category=General+News",
+      "provider": "firecrawl",
+      "source_id": "official_company_evidence",
+      "source_roles": [
+        "EVIDENCE_SOURCE",
+        "VALIDATION_SOURCE"
+      ],
+      "cohort": "hybrid",
+      "entity_types": [
+        "article"
+      ],
+      "subindustries": [
+        "packaging_plastics",
+        "machinery_equipment"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": false,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "unknown",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "duplicate",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "Flexible Packaging Association",
+      "canonical_account": null,
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": null,
+      "url": "https://www.flexpack.org/?_sp=0806dadb-15a3-4074-b191-40f6ae3fcfc0",
+      "provider": "firecrawl",
+      "source_id": "official_company_evidence",
+      "source_roles": [
+        "EVIDENCE_SOURCE",
+        "VALIDATION_SOURCE"
+      ],
+      "cohort": "hybrid",
+      "entity_types": [
+        "article"
+      ],
+      "subindustries": [
+        "packaging_plastics"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": false,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "unknown",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "duplicate",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    },
+    {
+      "raw_entity": "[PDF] Bryce Corporation to Expand Operations in Searcy, Create More ...",
+      "canonical_account": null,
+      "legal_entity": null,
+      "parent_group": null,
+      "domain": null,
+      "url": "https://www.flexpack.org/publication/RG93bmxvYWQ6ODQ2/download",
+      "provider": "firecrawl",
+      "source_id": "official_company_evidence",
+      "source_roles": [
+        "EVIDENCE_SOURCE",
+        "VALIDATION_SOURCE"
+      ],
+      "cohort": "hybrid",
+      "entity_types": [
+        "article"
+      ],
+      "subindustries": [
+        "other"
+      ],
+      "state": "unknown",
+      "state_resolution": "unknown",
+      "official_domain": false,
+      "manufacturer_decision": "non_manufacturer",
+      "procurement_plausibility": "unsupported",
+      "buying_intent": "not_inferred",
+      "commercial_decision_scope": "unknown",
+      "evidence": null,
+      "evidence_yield": false,
+      "novelty": "duplicate",
+      "confidence": "low",
+      "data_basis": "live_provider"
+    }
+  ],
+  "cohort_funnel": {
+    "specialized_first": {
+      "executed": true,
+      "raw": 16,
+      "unique": 12,
+      "canonical": 6,
+      "manufacturer_compatible": 0,
+      "evidence_sufficient": 0
+    },
+    "search_first": {
+      "executed": true,
+      "raw": 16,
+      "unique": 14,
+      "canonical": 12,
+      "manufacturer_compatible": 6,
+      "evidence_sufficient": 6
+    },
+    "hybrid": {
+      "executed": false,
+      "raw": 12,
+      "unique": 0,
+      "canonical": 0,
+      "manufacturer_compatible": 0,
+      "evidence_sufficient": 0
+    },
+    "exa_escalation": {
+      "executed": true,
+      "raw": 8,
+      "unique": 8,
+      "canonical": 8,
+      "manufacturer_compatible": 8,
+      "evidence_sufficient": 8
+    }
+  },
+  "metrics": {
+    "raw_candidates": 52,
+    "unique_candidates": 34,
+    "canonical_accounts": 26,
+    "manufacturer_compatible": 14,
+    "manufacturer_precision": 0.5384615384615384,
+    "official_domain_yield": 0.7647058823529411,
+    "digital_resolution_yield": 0.7647058823529411,
+    "evidence_yield": 1,
+    "procurement_plausible": 14,
+    "buying_intent_inferred": 0,
+    "states_observed": 9,
+    "exa_calls": 1,
+    "exa_raw": 8,
+    "exa_qualified": 8,
+    "exa_incremental_qualified": 8,
+    "exa_overlap": 0,
+    "exa_official_domain_yield": 1,
+    "exa_evidence_yield": 1,
+    "total_cost_usd": 0.007,
+    "exa_cost_usd": 0.007,
+    "cost_per_incremental_exa_qualified": 0.000875
+  },
+  "observed_sample_bias": {
+    "states": {
+      "WA": 2,
+      "MI": 1,
+      "OH": 3,
+      "IN": 1,
+      "TX": 2,
+      "CA": 1,
+      "CT": 1,
+      "IL": 1,
+      "FL": 1
+    },
+    "subindustries": {
+      "packaging_plastics": 15,
+      "food_beverage": 2,
+      "medical_health": 11,
+      "machinery_equipment": 9,
+      "other": 4,
+      "metalworking": 5,
+      "textiles_apparel": 1,
+      "electronics_electrical": 4,
+      "chemicals_cosmetics": 2
+    },
+    "digitally_visible_share": 0.7647058823529411,
+    "public_company_share": "not_measured",
+    "government_contractor_share": "not_measured",
+    "warning": "Observed sample composition, not market representation."
+  },
+  "saturation": [
+    {
+      "processed": 10,
+      "canonical": 4,
+      "manufacturer_compatible": 0,
+      "incremental_qualified": 0
+    },
+    {
+      "processed": 20,
+      "canonical": 9,
+      "manufacturer_compatible": 1,
+      "incremental_qualified": 1
+    },
+    {
+      "processed": 30,
+      "canonical": 16,
+      "manufacturer_compatible": 4,
+      "incremental_qualified": 4
+    },
+    {
+      "processed": 40,
+      "canonical": 26,
+      "manufacturer_compatible": 14,
+      "incremental_qualified": 14
+    },
+    {
+      "processed": 50,
+      "canonical": 26,
+      "manufacturer_compatible": 14,
+      "incremental_qualified": 14
+    }
+  ],
+  "source_performance_snapshots": [
+    {
+      "source_id": "us_specialized_manufacturing",
+      "cycle_id": "discovery-v2-usa-manufacturing-live-001",
+      "captured_at": "2026-08-10T04:08:08.214Z",
+      "country": "US",
+      "candidates_discovered": 16,
+      "valid_entities": 6,
+      "correct_business_models": 0,
+      "context_compatible": 0,
+      "evidence_sufficient": 0,
+      "opportunity_plausible": 0,
+      "portfolio_accounts": 0,
+      "novelty_yield": null,
+      "false_positives": 12,
+      "duplicates": 4,
+      "extraction_failures": 0,
+      "access_failures": 0,
+      "avg_cost": null,
+      "avg_latency_ms": 1071,
+      "client_selected_rate": null,
+      "contact_rate": null,
+      "order_rate": null,
+      "outcome_state": "awaiting_real_outcomes"
+    },
+    {
+      "source_id": "us_regional_manufacturing",
+      "cycle_id": "discovery-v2-usa-manufacturing-live-001",
+      "captured_at": "2026-08-10T04:08:08.214Z",
+      "country": "US",
+      "candidates_discovered": 16,
+      "valid_entities": 12,
+      "correct_business_models": 6,
+      "context_compatible": 6,
+      "evidence_sufficient": 6,
+      "opportunity_plausible": 6,
+      "portfolio_accounts": 0,
+      "novelty_yield": 1,
+      "false_positives": 7,
+      "duplicates": 2,
+      "extraction_failures": 0,
+      "access_failures": 0,
+      "avg_cost": null,
+      "avg_latency_ms": 1042,
+      "client_selected_rate": null,
+      "contact_rate": null,
+      "order_rate": null,
+      "outcome_state": "awaiting_real_outcomes"
+    },
+    {
+      "source_id": "exa_semantic",
+      "cycle_id": "discovery-v2-usa-manufacturing-live-001",
+      "captured_at": "2026-08-10T04:08:08.214Z",
+      "country": "US",
+      "candidates_discovered": 8,
+      "valid_entities": 8,
+      "correct_business_models": 8,
+      "context_compatible": 8,
+      "evidence_sufficient": 8,
+      "opportunity_plausible": 8,
+      "portfolio_accounts": 0,
+      "novelty_yield": 1,
+      "false_positives": 0,
+      "duplicates": 0,
+      "extraction_failures": 0,
+      "access_failures": 0,
+      "avg_cost": null,
+      "avg_latency_ms": 506,
+      "client_selected_rate": null,
+      "contact_rate": null,
+      "order_rate": null,
+      "outcome_state": "awaiting_real_outcomes"
+    },
+    {
+      "source_id": "official_company_evidence",
+      "cycle_id": "discovery-v2-usa-manufacturing-live-001",
+      "captured_at": "2026-08-10T04:08:08.214Z",
+      "country": "US",
+      "candidates_discovered": 12,
+      "valid_entities": 0,
+      "correct_business_models": 0,
+      "context_compatible": 0,
+      "evidence_sufficient": 0,
+      "opportunity_plausible": 0,
+      "portfolio_accounts": 0,
+      "novelty_yield": null,
+      "false_positives": 0,
+      "duplicates": 12,
+      "extraction_failures": 0,
+      "access_failures": 0,
+      "avg_cost": null,
+      "avg_latency_ms": 1126,
+      "client_selected_rate": null,
+      "contact_rate": null,
+      "order_rate": null,
+      "outcome_state": "awaiting_real_outcomes"
+    }
+  ],
+  "manual_review": {
+    "accepted": [
+      {
+        "raw_entity": "Buckeye Machine - Custom Automation, Tailored Precision.",
+        "canonical_account": "Buckeye Machine - Custom Automation, Tailored Precision.",
+        "legal_entity": null,
+        "parent_group": null,
+        "domain": "buckeyemachine.com",
+        "url": "https://www.buckeyemachine.com/",
+        "provider": "brave",
+        "source_id": "us_regional_manufacturing",
+        "source_roles": [
+          "DISCOVERY_SOURCE",
+          "COVERAGE_SOURCE"
+        ],
+        "cohort": "search_first",
+        "entity_types": [
+          "manufacturer"
+        ],
+        "subindustries": [
+          "machinery_equipment"
+        ],
+        "state": "OH",
+        "state_resolution": "observed_text",
+        "official_domain": true,
+        "manufacturer_decision": "manufacturer_compatible",
+        "procurement_plausibility": "structurally_plausible",
+        "buying_intent": "not_inferred",
+        "commercial_decision_scope": "corporate",
+        "evidence": "Buckeye Machine - Custom Automation, Tailored Precision. At <strong>Buckeye Machine, Inc.</strong>, we pride ourselves in being a premier Ohio-based supplier of specialized automated equipment and precision-machined parts. Our dedicated and highly experienced team supports manufacturers throughout M",
+        "evidence_yield": true,
+        "novelty": "genuinely_new",
+        "confidence": "moderate",
+        "data_basis": "live_provider"
+      },
+      {
+        "raw_entity": "McGregor Metal",
+        "canonical_account": "McGregor Metal",
+        "legal_entity": null,
+        "parent_group": null,
+        "domain": "mcgregormetal.com",
+        "url": "https://mcgregormetal.com/",
+        "provider": "brave",
+        "source_id": "us_regional_manufacturing",
+        "source_roles": [
+          "DISCOVERY_SOURCE",
+          "COVERAGE_SOURCE"
+        ],
+        "cohort": "search_first",
+        "entity_types": [
+          "manufacturer"
+        ],
+        "subindustries": [
+          "metalworking"
+        ],
+        "state": "OH",
+        "state_resolution": "observed_text",
+        "official_domain": true,
+        "manufacturer_decision": "manufacturer_compatible",
+        "procurement_plausibility": "structurally_plausible",
+        "buying_intent": "not_inferred",
+        "commercial_decision_scope": "corporate",
+        "evidence": "McGregor Metal Firmly rooted in <strong>Springfield, Ohio</strong> and with a manufacturing family numbering 350+ employees, we take pride in our long history as a community anchor.",
+        "evidence_yield": true,
+        "novelty": "genuinely_new",
+        "confidence": "moderate",
+        "data_basis": "live_provider"
+      },
+      {
+        "raw_entity": "US Electronics Contract Manufacturing",
+        "canonical_account": "US Electronics Contract Manufacturing",
+        "legal_entity": null,
+        "parent_group": null,
+        "domain": "bencor-llc.com",
+        "url": "https://bencor-llc.com/services/contract-manufacturing",
+        "provider": "tavily",
+        "source_id": "us_regional_manufacturing",
+        "source_roles": [
+          "DISCOVERY_SOURCE",
+          "COVERAGE_SOURCE"
+        ],
+        "cohort": "search_first",
+        "entity_types": [
+          "contract_manufacturer",
+          "assembler"
+        ],
+        "subindustries": [
+          "electronics_electrical"
+        ],
+        "state": "TX",
+        "state_resolution": "observed_text",
+        "official_domain": true,
+        "manufacturer_decision": "manufacturer_compatible",
+        "procurement_plausibility": "structurally_plausible",
+        "buying_intent": "not_inferred",
+        "commercial_decision_scope": "corporate",
+        "evidence": "US Electronics Contract Manufacturing | Bencor BENCOR is a leading electronics contract manufacturing services provider based in Texas. With over 28 years of experience in the industry, we specialize in providing full-scale PCB layout and assembly services to customers ranging from high-tech startup",
+        "evidence_yield": true,
+        "novelty": "genuinely_new",
+        "confidence": "moderate",
+        "data_basis": "live_provider"
+      },
+      {
+        "raw_entity": "Contract Manufacturing Services in California",
+        "canonical_account": "Contract Manufacturing Services in California",
+        "legal_entity": null,
+        "parent_group": null,
+        "domain": "ksplastic.com",
+        "url": "https://www.ksplastic.com/service/contract-manufacturing",
+        "provider": "tavily",
+        "source_id": "us_regional_manufacturing",
+        "source_roles": [
+          "DISCOVERY_SOURCE",
+          "COVERAGE_SOURCE"
+        ],
+        "cohort": "search_first",
+        "entity_types": [
+          "contract_manufacturer"
+        ],
+        "subindustries": [
+          "packaging_plastics",
+          "medical_health"
+        ],
+        "state": "CA",
+        "state_resolution": "observed_text",
+        "official_domain": true,
+        "manufacturer_decision": "manufacturer_compatible",
+        "procurement_plausibility": "structurally_plausible",
+        "buying_intent": "not_inferred",
+        "commercial_decision_scope": "corporate",
+        "evidence": "Contract Manufacturing Services in California | KS Group ## Why Choose KS Plastics Inc. for Contract Manufacturing Services\n\nWith over 50 years of experience focused exclusively on injection molding, MOS Plastics offers unparalleled specialized plastic component manufacturing expertise. Our experien",
+        "evidence_yield": true,
+        "novelty": "genuinely_new",
+        "confidence": "moderate",
+        "data_basis": "live_provider"
+      },
+      {
+        "raw_entity": "SMC: Medical Contract Manufacturer & Pharma Services Company",
+        "canonical_account": "SMC: Medical Contract Manufacturer & Pharma Services Company",
+        "legal_entity": null,
+        "parent_group": null,
+        "domain": "smcltd.com",
+        "url": "https://www.smcltd.com/",
+        "provider": "tavily",
+        "source_id": "us_regional_manufacturing",
+        "source_roles": [
+          "DISCOVERY_SOURCE",
+          "COVERAGE_SOURCE"
+        ],
+        "cohort": "search_first",
+        "entity_types": [
+          "contract_manufacturer",
+          "assembler"
+        ],
+        "subindustries": [
+          "medical_health"
+        ],
+        "state": "unknown",
+        "state_resolution": "unknown",
+        "official_domain": true,
+        "manufacturer_decision": "manufacturer_compatible",
+        "procurement_plausibility": "structurally_plausible",
+        "buying_intent": "not_inferred",
+        "commercial_decision_scope": "corporate",
+        "evidence": "SMC: Medical Contract Manufacturer & Pharma Services Company Efficiency. Scalability. Risk reduction. Our history of excellence and speed to market in contract medical manufacturing is based on obsessive attention to these factors at every stage of your project. Combining in-house engineering, injec",
+        "evidence_yield": true,
+        "novelty": "genuinely_new",
+        "confidence": "moderate",
+        "data_basis": "live_provider"
+      },
+      {
+        "raw_entity": "Materials Science & Chemical Manufacturing",
+        "canonical_account": "Materials Science & Chemical Manufacturing",
+        "legal_entity": null,
+        "parent_group": null,
+        "domain": "dow.com",
+        "url": "https://www.dow.com/en-us.html",
+        "provider": "tavily",
+        "source_id": "us_regional_manufacturing",
+        "source_roles": [
+          "DISCOVERY_SOURCE",
+          "COVERAGE_SOURCE"
+        ],
+        "cohort": "search_first",
+        "entity_types": [
+          "manufacturer"
+        ],
+        "subindustries": [
+          "food_beverage",
+          "chemicals_cosmetics",
+          "electronics_electrical",
+          "medical_health"
+        ],
+        "state": "unknown",
+        "state_resolution": "unknown",
+        "official_domain": true,
+        "manufacturer_decision": "manufacturer_compatible",
+        "procurement_plausibility": "structurally_plausible",
+        "buying_intent": "not_inferred",
+        "commercial_decision_scope": "corporate",
+        "evidence": "Materials Science & Chemical Manufacturing | Dow Inc. Agriculture, Feed and Animal Care \nBeauty and Personal Care\nBuilding, Construction and Infrastructure\nChemical Manufacturing and Industrial\nConsumer Goods and Appliances\nElectronics\nEnergy Solutions\nFilms, Tapes and Release Liners \nFood and Bever",
+        "evidence_yield": true,
+        "novelty": "genuinely_new",
+        "confidence": "moderate",
+        "data_basis": "live_provider"
+      },
+      {
+        "raw_entity": "Vonco Products, LLC",
+        "canonical_account": "Vonco Products, LLC",
+        "legal_entity": null,
+        "parent_group": null,
+        "domain": "vonco.com",
+        "url": "https://vonco.com/",
+        "provider": "exa",
+        "source_id": "exa_semantic",
+        "source_roles": [
+          "DISCOVERY_SOURCE",
+          "IDENTITY_SOURCE"
+        ],
+        "cohort": "exa_escalation",
+        "entity_types": [
+          "contract_manufacturer"
+        ],
+        "subindustries": [
+          "packaging_plastics"
+        ],
+        "state": "unknown",
+        "state_resolution": "unknown",
+        "official_domain": true,
+        "manufacturer_decision": "manufacturer_compatible",
+        "procurement_plausibility": "structurally_plausible",
+        "buying_intent": "not_inferred",
+        "commercial_decision_scope": "corporate",
+        "evidence": "Vonco Products, LLC # Vonco Products, LLC\n...\nVonco Products, LLC is a Packaging and Containers Manufacturing company. Vonco Products is a risk-free contract manufacturer of medical fluid bags, devices, plastic components and spouted stand up pouches. Vonco Products, LLC employs 39 people and has an",
+        "evidence_yield": true,
+        "novelty": "genuinely_new",
+        "confidence": "moderate",
+        "data_basis": "live_provider"
+      },
+      {
+        "raw_entity": "AVNA",
+        "canonical_account": "AVNA",
+        "legal_entity": null,
+        "parent_group": null,
+        "domain": "avna.com",
+        "url": "https://avna.com/",
+        "provider": "exa",
+        "source_id": "exa_semantic",
+        "source_roles": [
+          "DISCOVERY_SOURCE",
+          "IDENTITY_SOURCE"
+        ],
+        "cohort": "exa_escalation",
+        "entity_types": [
+          "manufacturer"
+        ],
+        "subindustries": [
+          "machinery_equipment"
+        ],
+        "state": "CT",
+        "state_resolution": "observed_text",
+        "official_domain": true,
+        "manufacturer_decision": "manufacturer_compatible",
+        "procurement_plausibility": "structurally_plausible",
+        "buying_intent": "not_inferred",
+        "commercial_decision_scope": "corporate",
+        "evidence": "AVNA # AVNA (AVNA, Inc.)\n...\nAVNA is a Medical Equipment Manufacturing company. AVNA employs 149 people (+16.1% YoY, +53 people). Headquartered in New Britain, Connecticut, United States, with presence in Costa Rica. Its workforce is distributed across United States, Costa Rica, and China.\n...\nAVNA ",
+        "evidence_yield": true,
+        "novelty": "genuinely_new",
+        "confidence": "moderate",
+        "data_basis": "live_provider"
+      },
+      {
+        "raw_entity": "Currier",
+        "canonical_account": "Currier",
+        "legal_entity": null,
+        "parent_group": null,
+        "domain": "currierplastics.com",
+        "url": "https://currierplastics.com/",
+        "provider": "exa",
+        "source_id": "exa_semantic",
+        "source_roles": [
+          "DISCOVERY_SOURCE",
+          "IDENTITY_SOURCE"
+        ],
+        "cohort": "exa_escalation",
+        "entity_types": [
+          "manufacturer"
+        ],
+        "subindustries": [
+          "packaging_plastics",
+          "machinery_equipment"
+        ],
+        "state": "unknown",
+        "state_resolution": "unknown",
+        "official_domain": true,
+        "manufacturer_decision": "manufacturer_compatible",
+        "procurement_plausibility": "structurally_plausible",
+        "buying_intent": "not_inferred",
+        "commercial_decision_scope": "corporate",
+        "evidence": "Currier # Currier (Currier Plastics, Inc.)\n...\nCurrier is a Plastics Manufacturing company. Currier provides custom injection molding, custom blow molding, tooling, and design engineering for industries including healthcare, packaging, and more!. Currier employs 61 people (+23.4% YoY, +33 people) an",
+        "evidence_yield": true,
+        "novelty": "genuinely_new",
+        "confidence": "moderate",
+        "data_basis": "live_provider"
+      },
+      {
+        "raw_entity": "AdvanTech Plastics LLC",
+        "canonical_account": "AdvanTech Plastics LLC",
+        "legal_entity": null,
+        "parent_group": null,
+        "domain": "advantechplastics.com",
+        "url": "https://advantechplastics.com/",
+        "provider": "exa",
+        "source_id": "exa_semantic",
+        "source_roles": [
+          "DISCOVERY_SOURCE",
+          "IDENTITY_SOURCE"
+        ],
+        "cohort": "exa_escalation",
+        "entity_types": [
+          "manufacturer"
+        ],
+        "subindustries": [
+          "packaging_plastics",
+          "electronics_electrical",
+          "medical_health"
+        ],
+        "state": "IL",
+        "state_resolution": "observed_text",
+        "official_domain": true,
+        "manufacturer_decision": "manufacturer_compatible",
+        "procurement_plausibility": "structurally_plausible",
+        "buying_intent": "not_inferred",
+        "commercial_decision_scope": "corporate",
+        "evidence": "AdvanTech Plastics LLC # AdvanTech Plastics LLC\n...\nAdvanTech Plastics LLC is a Packaging & Containers company. AdvanTech Plastics is a plastic injection molding company located in Woodstock, Illinois. They specialize in medical device and pharmaceutical packaging injection molding, industrial/elect",
+        "evidence_yield": true,
+        "novelty": "genuinely_new",
+        "confidence": "moderate",
+        "data_basis": "live_provider"
+      }
+    ],
+    "borderline": [
+      {
+        "raw_entity": "Heavy Gauge Stamping & Precision Blanking",
+        "canonical_account": "Heavy Gauge Stamping & Precision Blanking",
+        "legal_entity": null,
+        "parent_group": null,
+        "domain": "ohiovalleymfg.com",
+        "url": "https://www.ohiovalleymfg.com/",
+        "provider": "brave",
+        "source_id": "us_regional_manufacturing",
+        "source_roles": [
+          "DISCOVERY_SOURCE",
+          "COVERAGE_SOURCE"
+        ],
+        "cohort": "search_first",
+        "entity_types": [
+          "other"
+        ],
+        "subindustries": [
+          "other"
+        ],
+        "state": "OH",
+        "state_resolution": "observed_text",
+        "official_domain": true,
+        "manufacturer_decision": "borderline",
+        "procurement_plausibility": "weak",
+        "buying_intent": "not_inferred",
+        "commercial_decision_scope": "corporate",
+        "evidence": null,
+        "evidence_yield": false,
+        "novelty": "genuinely_new",
+        "confidence": "low",
+        "data_basis": "live_provider"
+      }
+    ],
+    "rejected": [
+      {
+        "raw_entity": "CPA, The Association for Contract Packagers and Manufacturers",
+        "canonical_account": null,
+        "legal_entity": null,
+        "parent_group": null,
+        "domain": null,
+        "url": "https://www.contractpackaging.org/",
+        "provider": "brave",
+        "source_id": "us_specialized_manufacturing",
+        "source_roles": [
+          "DISCOVERY_SOURCE",
+          "BUSINESS_MODEL_SOURCE"
+        ],
+        "cohort": "specialized_first",
+        "entity_types": [
+          "article"
+        ],
+        "subindustries": [
+          "packaging_plastics"
+        ],
+        "state": "unknown",
+        "state_resolution": "unknown",
+        "official_domain": false,
+        "manufacturer_decision": "non_manufacturer",
+        "procurement_plausibility": "unsupported",
+        "buying_intent": "not_inferred",
+        "commercial_decision_scope": "unknown",
+        "evidence": null,
+        "evidence_yield": false,
+        "novelty": "uncertain",
+        "confidence": "low",
+        "data_basis": "live_provider"
+      },
+      {
+        "raw_entity": "Associations - Printpack",
+        "canonical_account": "Associations - Printpack",
+        "legal_entity": null,
+        "parent_group": null,
+        "domain": "printpack.com",
+        "url": "https://www.printpack.com/associations",
+        "provider": "brave",
+        "source_id": "us_specialized_manufacturing",
+        "source_roles": [
+          "DISCOVERY_SOURCE",
+          "BUSINESS_MODEL_SOURCE"
+        ],
+        "cohort": "specialized_first",
+        "entity_types": [
+          "article"
+        ],
+        "subindustries": [
+          "food_beverage"
+        ],
+        "state": "unknown",
+        "state_resolution": "unknown",
+        "official_domain": true,
+        "manufacturer_decision": "non_manufacturer",
+        "procurement_plausibility": "unsupported",
+        "buying_intent": "not_inferred",
+        "commercial_decision_scope": "corporate",
+        "evidence": null,
+        "evidence_yield": false,
+        "novelty": "genuinely_new",
+        "confidence": "low",
+        "data_basis": "live_provider"
+      },
+      {
+        "raw_entity": "Packaging Associations",
+        "canonical_account": null,
+        "legal_entity": null,
+        "parent_group": null,
+        "domain": null,
+        "url": "https://www.packworld.com/page/packaging-associations",
+        "provider": "brave",
+        "source_id": "us_specialized_manufacturing",
+        "source_roles": [
+          "DISCOVERY_SOURCE",
+          "BUSINESS_MODEL_SOURCE"
+        ],
+        "cohort": "specialized_first",
+        "entity_types": [
+          "article"
+        ],
+        "subindustries": [
+          "packaging_plastics"
+        ],
+        "state": "unknown",
+        "state_resolution": "unknown",
+        "official_domain": false,
+        "manufacturer_decision": "non_manufacturer",
+        "procurement_plausibility": "unsupported",
+        "buying_intent": "not_inferred",
+        "commercial_decision_scope": "unknown",
+        "evidence": null,
+        "evidence_yield": false,
+        "novelty": "uncertain",
+        "confidence": "low",
+        "data_basis": "live_provider"
+      },
+      {
+        "raw_entity": "Flexible Packaging Association",
+        "canonical_account": null,
+        "legal_entity": null,
+        "parent_group": null,
+        "domain": null,
+        "url": "https://www.flexpack.org/",
+        "provider": "brave",
+        "source_id": "us_specialized_manufacturing",
+        "source_roles": [
+          "DISCOVERY_SOURCE",
+          "BUSINESS_MODEL_SOURCE"
+        ],
+        "cohort": "specialized_first",
+        "entity_types": [
+          "article"
+        ],
+        "subindustries": [
+          "packaging_plastics"
+        ],
+        "state": "unknown",
+        "state_resolution": "unknown",
+        "official_domain": false,
+        "manufacturer_decision": "non_manufacturer",
+        "procurement_plausibility": "unsupported",
+        "buying_intent": "not_inferred",
+        "commercial_decision_scope": "unknown",
+        "evidence": null,
+        "evidence_yield": false,
+        "novelty": "uncertain",
+        "confidence": "low",
+        "data_basis": "live_provider"
+      },
+      {
+        "raw_entity": "Home - Industrial Packaging Alliance of North America",
+        "canonical_account": "Home - Industrial Packaging Alliance of North America",
+        "legal_entity": null,
+        "parent_group": null,
+        "domain": "industrialpackaging.org",
+        "url": "https://industrialpackaging.org/",
+        "provider": "brave",
+        "source_id": "us_specialized_manufacturing",
+        "source_roles": [
+          "DISCOVERY_SOURCE",
+          "BUSINESS_MODEL_SOURCE"
+        ],
+        "cohort": "specialized_first",
+        "entity_types": [
+          "article"
+        ],
+        "subindustries": [
+          "packaging_plastics"
+        ],
+        "state": "unknown",
+        "state_resolution": "unknown",
+        "official_domain": true,
+        "manufacturer_decision": "non_manufacturer",
+        "procurement_plausibility": "unsupported",
+        "buying_intent": "not_inferred",
+        "commercial_decision_scope": "corporate",
+        "evidence": null,
+        "evidence_yield": false,
+        "novelty": "genuinely_new",
+        "confidence": "low",
+        "data_basis": "live_provider"
+      },
+      {
+        "raw_entity": "Home",
+        "canonical_account": "Home",
+        "legal_entity": null,
+        "parent_group": null,
+        "domain": "aiccbox.org",
+        "url": "https://www.aiccbox.org/",
+        "provider": "brave",
+        "source_id": "us_specialized_manufacturing",
+        "source_roles": [
+          "DISCOVERY_SOURCE",
+          "BUSINESS_MODEL_SOURCE"
+        ],
+        "cohort": "specialized_first",
+        "entity_types": [
+          "article"
+        ],
+        "subindustries": [
+          "packaging_plastics"
+        ],
+        "state": "unknown",
+        "state_resolution": "unknown",
+        "official_domain": true,
+        "manufacturer_decision": "non_manufacturer",
+        "procurement_plausibility": "unsupported",
+        "buying_intent": "not_inferred",
+        "commercial_decision_scope": "corporate",
+        "evidence": null,
+        "evidence_yield": false,
+        "novelty": "genuinely_new",
+        "confidence": "low",
+        "data_basis": "live_provider"
+      },
+      {
+        "raw_entity": "PMMI, The Association for Packaging and Processing Technologies",
+        "canonical_account": "PMMI, The Association for Packaging and Processing Technologies",
+        "legal_entity": null,
+        "parent_group": null,
+        "domain": "pmmi.org",
+        "url": "https://www.pmmi.org/",
+        "provider": "brave",
+        "source_id": "us_specialized_manufacturing",
+        "source_roles": [
+          "DISCOVERY_SOURCE",
+          "BUSINESS_MODEL_SOURCE"
+        ],
+        "cohort": "specialized_first",
+        "entity_types": [
+          "article"
+        ],
+        "subindustries": [
+          "packaging_plastics"
+        ],
+        "state": "unknown",
+        "state_resolution": "unknown",
+        "official_domain": true,
+        "manufacturer_decision": "non_manufacturer",
+        "procurement_plausibility": "unsupported",
+        "buying_intent": "not_inferred",
+        "commercial_decision_scope": "corporate",
+        "evidence": null,
+        "evidence_yield": false,
+        "novelty": "genuinely_new",
+        "confidence": "low",
+        "data_basis": "live_provider"
+      },
+      {
+        "raw_entity": "Medical Device Manufacturers Association",
+        "canonical_account": null,
+        "legal_entity": null,
+        "parent_group": null,
+        "domain": null,
+        "url": "https://www.zoominfo.com/c/medical-device-manufacturers-association/42797220",
+        "provider": "tavily",
+        "source_id": "us_specialized_manufacturing",
+        "source_roles": [
+          "DISCOVERY_SOURCE",
+          "BUSINESS_MODEL_SOURCE"
+        ],
+        "cohort": "specialized_first",
+        "entity_types": [
+          "article"
+        ],
+        "subindustries": [
+          "medical_health"
+        ],
+        "state": "unknown",
+        "state_resolution": "unknown",
+        "official_domain": false,
+        "manufacturer_decision": "non_manufacturer",
+        "procurement_plausibility": "unsupported",
+        "buying_intent": "not_inferred",
+        "commercial_decision_scope": "unknown",
+        "evidence": null,
+        "evidence_yield": false,
+        "novelty": "uncertain",
+        "confidence": "low",
+        "data_basis": "live_provider"
+      },
+      {
+        "raw_entity": "Medical Device Manufacturers Association (MDMA) - Promoting Patient Access & Innovation. Connecting the Med Tech ecosystem for better health care tomorrow.",
+        "canonical_account": null,
+        "legal_entity": null,
+        "parent_group": null,
+        "domain": null,
+        "url": "https://www.linkedin.com/company/mdma-medicaldevices",
+        "provider": "tavily",
+        "source_id": "us_specialized_manufacturing",
+        "source_roles": [
+          "DISCOVERY_SOURCE",
+          "BUSINESS_MODEL_SOURCE"
+        ],
+        "cohort": "specialized_first",
+        "entity_types": [
+          "article"
+        ],
+        "subindustries": [
+          "machinery_equipment",
+          "medical_health"
+        ],
+        "state": "unknown",
+        "state_resolution": "unknown",
+        "official_domain": false,
+        "manufacturer_decision": "non_manufacturer",
+        "procurement_plausibility": "unsupported",
+        "buying_intent": "not_inferred",
+        "commercial_decision_scope": "unknown",
+        "evidence": null,
+        "evidence_yield": false,
+        "novelty": "uncertain",
+        "confidence": "low",
+        "data_basis": "live_provider"
+      },
+      {
+        "raw_entity": "About - Medical Device Manufacturers Association",
+        "canonical_account": null,
+        "legal_entity": null,
+        "parent_group": null,
+        "domain": null,
+        "url": "https://www.medicaldevices.org/about",
+        "provider": "tavily",
+        "source_id": "us_specialized_manufacturing",
+        "source_roles": [
+          "DISCOVERY_SOURCE",
+          "BUSINESS_MODEL_SOURCE"
+        ],
+        "cohort": "specialized_first",
+        "entity_types": [
+          "article"
+        ],
+        "subindustries": [
+          "medical_health"
+        ],
+        "state": "WA",
+        "state_resolution": "observed_text",
+        "official_domain": false,
+        "manufacturer_decision": "non_manufacturer",
+        "procurement_plausibility": "unsupported",
+        "buying_intent": "not_inferred",
+        "commercial_decision_scope": "unknown",
+        "evidence": null,
+        "evidence_yield": false,
+        "novelty": "uncertain",
+        "confidence": "low",
+        "data_basis": "live_provider"
+      }
+    ],
+    "automated_decision_preserved": true
+  },
+  "exa_decision": "high_incremental_value",
+  "sec": {
+    "calls": 0,
+    "contribution": "not_used_no_reliable_public_company_cik_trigger"
+  },
+  "sam": {
+    "calls": 0,
+    "status": "skipped_operational_404_and_no_required_federal_route",
+    "contribution": "none"
+  },
+  "warnings": [
+    "Structural procurement plausibility is not buying intent.",
+    "No people/contact data.",
+    "Observed bias is not national representativeness.",
+    "Confidence ceiling is benchmarked."
+  ],
+  "stop_reason": "planned_cohorts_completed",
+  "recovery": {
+    "original_lost_calls": {
+      "count": 14,
+      "providers": {
+        "brave": 5,
+        "tavily": 5,
+        "exa": 4
+      },
+      "state": "executed_but_results_not_persisted",
+      "recorded_at": "2026-08-10T04:08:08.214Z",
+      "cost_usd": null
+    },
+    "recovery_calls_persisted": 9,
+    "total_calls_counted": 23,
+    "partial_state_path": "artifacts/discovery/discovery-v2-usa-manufacturing-live-001.partial.json",
+    "resumability_verified": true,
+    "duplicate_call_protection": true,
+    "reliability": {
+      "partial_persistence_failure": true,
+      "incremental_persistence_enabled": true,
+      "resume_count": 0,
+      "duplicate_call_blocks": 0
+    },
+    "reprocessed_without_provider_calls": true,
+    "reprocessed_at": "2026-08-10T04:12:31.060Z"
+  },
+  "execution": {
+    "access_method": "authorized provider APIs",
+    "no_people_data": true,
+    "sec_calls": 0,
+    "sam_calls": 0
+  }
+}

@@ -36,8 +36,8 @@ t("12 new-country atlases sized (US≥5, UK/AU/CA≥3)", US_SOURCE_ATLAS.length 
 // 13–16. Fragmented/federal foundation states + accessibility honesty.
 t("13 USA foundation fragmented (no single national registry)", COUNTRY_PROFILES.US.foundation_source_state === "fragmented");
 t("14 Canada federal+provincial", COUNTRY_PROFILES.CA.foundation_source_state === "federal_plus_provincial" && CA_SOURCE_ATLAS.some((s) => s.jurisdiction === "provincial"));
-t("15 new sources not live-tested (researched_not_tested)", US_SOURCE_ATLAS.concat(UK_SOURCE_ATLAS, AU_SOURCE_ATLAS, CA_SOURCE_ATLAS).filter((s) => s.ecosystem !== "search_engines").every((s) => s.accessibility.includes("researched_not_tested")));
-t("16 new sources confidence discovered/hypothesized (not benchmarked)", Object.values(INTL_SOURCE_ATLAS).flat().every((s) => ["discovered", "hypothesized"].includes(s.confidence)));
+t("15 unexecuted international sources remain researched_not_tested", US_SOURCE_ATLAS.concat(UK_SOURCE_ATLAS, AU_SOURCE_ATLAS, CA_SOURCE_ATLAS).filter((s) => !["us_industry_assocs","us_search"].includes(s.id) && s.ecosystem !== "search_engines").every((s) => s.accessibility.includes("researched_not_tested")));
+t("16 only executed USA source classes moved to benchmarked", US_SOURCE_ATLAS.filter(s=>["us_industry_assocs","us_search"].includes(s.id)).every(s=>s.confidence==="benchmarked") && Object.values(INTL_SOURCE_ATLAS).flat().filter(s=>!["us_industry_assocs","us_search"].includes(s.id)).every((s) => ["discovered", "hypothesized"].includes(s.confidence)));
 
 // 17–20. Legal/reuse + personal-data metadata (account-first).
 t("17 legal reuse + personal-data + sensitivity flags present", UK_SOURCE_ATLAS.every((s) => s.legal_reuse && s.personal_data && s.legal_sensitivity));
@@ -48,19 +48,19 @@ t("20 legal metadata is flags not conclusions", ["explicit_open_reuse", "api_ter
 // 21–24. Five-country readiness (breadth vs depth honesty).
 const readiness = fiveCountryReadiness();
 t("21 readiness for all five", readiness.length === 5);
-t("22 depth outside CO = untested (no fabricated depth)", readiness.filter((r) => r.country !== "CO").every((r) => r.depth === "untested" && r.live_benchmark_count === 0));
+t("22 USA depth benchmarked; GB/AU/CA remain untested", readiness.find(r=>r.country==="US")?.depth==="benchmarked" && readiness.find(r=>r.country==="US")?.live_benchmark_count===1 && readiness.filter((r) => ["GB","AU","CA"].includes(r.country)).every((r) => r.depth === "untested" && r.live_benchmark_count === 0));
 t("23 CO strong breadth + multi_benchmark depth", readiness.find((r) => r.country === "CO")!.breadth === "strong" && readiness.find((r) => r.country === "CO")!.depth === "multi_benchmark");
 t("24 USA/UK/AU/CA meaningful breadth (≥ partial)", readiness.filter((r) => r.country !== "CO").every((r) => ["partial", "good", "strong"].includes(r.breadth)));
 
 // 25–28. Queues + market memory + source-type learning (no auto changes).
-t("25 international benchmark queue planned (not executed)", INTL_BENCHMARK_QUEUE.length >= 6 && INTL_BENCHMARK_QUEUE.every((b) => b.state === "planned"));
+t("25 USA Manufacturing complete; remaining international cells planned", INTL_BENCHMARK_QUEUE.length >= 6 && INTL_BENCHMARK_QUEUE.filter(b=>b.country==="US"&&b.industry==="manufacturing").every(b=>b.state==="live_complete") && INTL_BENCHMARK_QUEUE.filter(b=>!(b.country==="US"&&b.industry==="manufacturing")).every(b=>b.state==="planned"));
 t("26 USA highest non-CO benchmark priority present", INTL_BENCHMARK_QUEUE.some((b) => b.country === "US" && b.priority === 1));
 t("27 research queue + market memory per country", INTL_RESEARCH_QUEUE.length >= 6 && marketMemory().length === 5);
 t("28 source-type learning are hypotheses, no cross-country score transfer", SOURCE_TYPE_LEARNING.every((l) => ["hypothesis", "weak", "moderate"].includes(l.confidence)) && SOURCE_TYPE_LEARNING.find((l) => l.source_type === "store_locator")!.sample_count === 0);
 
 // 29–31. Country coverage gaps.
 const gaps = countryCoverageGaps();
-t("29 country gaps include no_live_benchmark for new markets", gaps.some((g) => g.country === "US" && g.type === "no_live_benchmark"));
+t("29 no_live_benchmark remains for GB/AU/CA but not USA", !gaps.some((g) => g.country === "US" && g.type === "no_live_benchmark") && ["GB","AU","CA"].every(country=>gaps.some(g=>g.country===country&&g.type==="no_live_benchmark")));
 t("30 USA fragmented-foundation gap", gaps.some((g) => g.country === "US" && g.type === "fragmented_foundation_sources"));
 t("31 Canada province gap", gaps.some((g) => g.country === "CA" && g.type === "province_coverage_missing"));
 

@@ -53,14 +53,14 @@ t("24 business identifiers observed per country", FOUNDATION_VALIDATIONS.map((v)
 
 // 25–27. Empirical readiness (depth = live benchmarks only, no fabrication).
 const er = empiricalReadiness();
-t("25 empirical depth uses live benchmarks (CO=3, others=0)", er.find((e) => e.country === "CO")!.live_benchmark_depth === 3 && er.filter((e) => e.country !== "CO").every((e) => e.live_benchmark_depth === 0));
+t("25 empirical depth uses live benchmarks (CO=3, US=1)", er.find((e) => e.country === "CO")!.live_benchmark_depth === 3 && er.find((e) => e.country === "US")!.live_benchmark_depth === 1 && er.filter((e) => ["GB","AU","CA"].includes(e.country)).every((e) => e.live_benchmark_depth === 0));
 t("26 UK/AU foundation validated but depth still 0 (validation ≠ benchmark)", er.find((e) => e.country === "GB")!.foundation_readiness === "validated" && er.find((e) => e.country === "GB")!.live_benchmark_depth === 0);
 t("27 US/CA foundation partial (fragmented)", er.find((e) => e.country === "US")!.foundation_readiness === "partial" && er.find((e) => e.country === "CA")!.foundation_readiness === "partial");
 
 // 28–30. Guard: controlled/fixture cannot inflate live depth.
 t("28 fixture benchmark still deterministic_fixture (0 providers)", runBenchmark().data_basis === "deterministic_fixture" && runBenchmark().provider_calls === 0);
 t("29 live retail adds exactly one to CO live-benchmark depth", er.find((e) => e.country === "CO")!.live_benchmark_depth === 3);
-t("30 new-country atlases still not benchmarked (confidence discovered/hypothesized)", Object.values(INTL_SOURCE_ATLAS).flat().every((s) => ["discovered", "hypothesized"].includes(s.confidence)));
+t("30 only executed USA source classes are benchmarked", Object.values(INTL_SOURCE_ATLAS).flat().filter(s=>!["us_industry_assocs","us_search"].includes(s.id)).every((s) => ["discovered", "hypothesized"].includes(s.confidence)) && Object.values(INTL_SOURCE_ATLAS).flat().filter(s=>["us_industry_assocs","us_search"].includes(s.id)).every(s=>s.confidence==="benchmarked"));
 
 // 31–34. Regression preservation.
 t("31 hospitality live artifact preserved", buildLiveBenchmark().id === "discovery-v2-colombia-hospitality-live-001" && buildLiveBenchmark().data_basis === "live_source");
