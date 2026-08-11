@@ -11,15 +11,15 @@ const COPY = {
     announcementCTA: "Get your Snapshot →",
     navPricing: "Pricing",
     navSignIn: "Sign in",
-    navCTA: "See pricing →",
-    heroBadge: "Beta open — B2B commercial intelligence",
+    navCTA: "Get started →",
+    heroBadge: "Account Opportunity Intelligence · B2B",
     heroH1pre: "Find the B2B accounts",
-    heroH1hi: "worth contacting this week",
+    heroH1hi: "worth working now",
     heroH1post: ".",
-    heroH2: "And know exactly why.",
-    heroSub: "LeadLens maps your market, detects public buying signals, and delivers a ranked list of high-intent accounts — with the context and strategy your team needs to make the first call count.",
-    heroCTA: "Get your first Opportunity Preview — from $7 →",
-    heroSeeAll: "See what's included",
+    heroH2: "And the evidence behind every opportunity.",
+    heroSub: "LeadLens tells you which accounts fit, why they matter now, and the public evidence behind each opportunity — account-level intelligence, not a contact list.",
+    heroCTA: "Get your Opportunity Preview — from $7 →",
+    heroSeeAll: "See how it works",
     heroNote: "No contact databases. No email lists. Just commercial intelligence.",
     proofLabels: [["5","opportunity briefs"],["6–8","market segments"],["24–48h","delivery"],["100%","source-verified"]] as [string,string][],
     howTag: "How it works",
@@ -294,15 +294,15 @@ const COPY = {
     announcementCTA: "Obtener mi Snapshot →",
     navPricing: "Precios",
     navSignIn: "Iniciar sesión",
-    navCTA: "Ver precios →",
-    heroBadge: "Beta abierta — inteligencia comercial B2B",
+    navCTA: "Comenzar →",
+    heroBadge: "Inteligencia de Oportunidades de Cuenta · B2B",
     heroH1pre: "Encuentra las cuentas B2B",
-    heroH1hi: "que vale la pena contactar esta semana",
+    heroH1hi: "que vale la pena trabajar ahora",
     heroH1post: ".",
-    heroH2: "Y sabe exactamente por qué.",
-    heroSub: "LeadLens mapea tu mercado, detecta señales públicas de compra y entrega un ranking de cuentas de alta intención — con el contexto y la estrategia que tu equipo necesita para que la primera conversación cuente.",
-    heroCTA: "Obtener tu primer Opportunity Preview — desde $7 →",
-    heroSeeAll: "Ver qué incluye",
+    heroH2: "Y la evidencia detrás de cada oportunidad.",
+    heroSub: "LeadLens te dice qué cuentas encajan, por qué importan ahora y la evidencia pública detrás de cada oportunidad — inteligencia a nivel de cuenta, no una lista de contactos.",
+    heroCTA: "Obtén tu Opportunity Preview — desde $7 →",
+    heroSeeAll: "Ver cómo funciona",
     heroNote: "Sin bases de datos de contactos. Sin listas de emails. Solo inteligencia comercial.",
     proofLabels: [["5","briefs de oportunidad"],["6–8","segmentos de mercado"],["24–48h","entrega"],["100%","fuentes verificadas"]] as [string,string][],
     howTag: "Cómo funciona",
@@ -577,15 +577,15 @@ const COPY = {
     announcementCTA: "Obter meu Snapshot →",
     navPricing: "Preços",
     navSignIn: "Entrar",
-    navCTA: "Ver preços →",
-    heroBadge: "Beta aberta — inteligência comercial B2B",
+    navCTA: "Começar →",
+    heroBadge: "Inteligência de Oportunidades de Conta · B2B",
     heroH1pre: "Encontre as contas B2B",
-    heroH1hi: "que valem a pena contatar esta semana",
+    heroH1hi: "que valem a pena trabalhar agora",
     heroH1post: ".",
-    heroH2: "E saiba exatamente por quê.",
-    heroSub: "LeadLens mapeia seu mercado, detecta sinais públicos de compra e entrega uma lista ranqueada de contas de alta intenção — com o contexto e a estratégia que sua equipe precisa para a primeira conversa contar.",
-    heroCTA: "Obter seu primeiro Opportunity Preview — a partir de $7 →",
-    heroSeeAll: "Ver o que está incluído",
+    heroH2: "E a evidência por trás de cada oportunidade.",
+    heroSub: "A LeadLens diz quais contas se encaixam, por que importam agora e a evidência pública por trás de cada oportunidade — inteligência em nível de conta, não uma lista de contatos.",
+    heroCTA: "Obtenha seu Opportunity Preview — a partir de $7 →",
+    heroSeeAll: "Ver como funciona",
     heroNote: "Sem bancos de dados de contatos. Sem listas de e-mails. Apenas inteligência comercial.",
     proofLabels: [["5","briefs de oportunidade"],["6–8","segmentos de mercado"],["24–48h","entrega"],["100%","fontes verificadas"]] as [string,string][],
     howTag: "Como funciona",
@@ -860,15 +860,15 @@ const COPY = {
     announcementCTA: "Snapshotを取得 →",
     navPricing: "料金",
     navSignIn: "ログイン",
-    navCTA: "料金を見る →",
-    heroBadge: "ベータ版公開中 — B2Bコマーシャルインテリジェンス",
+    navCTA: "始める →",
+    heroBadge: "アカウント機会インテリジェンス · B2B",
     heroH1pre: "今週コンタクトする価値のある",
     heroH1hi: "B2Bアカウントを見つけましょう",
     heroH1post: "。",
-    heroH2: "そして、その理由を正確に把握しましょう。",
-    heroSub: "LeadLensは市場をマッピングし、公開されている購買シグナルを検出し、高い意図を持つアカウントのランク付きリストをお届けします — チームが最初の会話を成功させるために必要なコンテキストと戦略とともに。",
-    heroCTA: "最初のOpportunity Preview — $7から →",
-    heroSeeAll: "含まれる内容を見る",
+    heroH2: "そして、各機会の裏付けとなる根拠を。",
+    heroSub: "LeadLensは、どのアカウントが適合し、なぜ今重要で、各機会の裏付けとなる公開情報をお伝えします — 連絡先リストではなく、アカウント単位のインテリジェンス。",
+    heroCTA: "Opportunity Previewを取得 — $7から →",
+    heroSeeAll: "仕組みを見る",
     heroNote: "コンタクトデータベースなし。メールリストなし。コマーシャルインテリジェンスのみ。",
     proofLabels: [["5件","オポチュニティブリーフ"],["6〜8","市場セグメント"],["24〜48h","納品"],["100%","ソース検証済み"]] as [string,string][],
     howTag: "使い方",
@@ -1333,7 +1333,7 @@ export default function DemoPipelinePage() {
 
   // ─── LANDING ──────────────────────────────────────────────────────────────
   if (view === "landing") return (
-    <div style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", color: "#0f172a", background: "#fff", lineHeight: 1.5 }}>
+    <div className="ll-root" style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", color: "#0f172a", background: "#fff", lineHeight: 1.5 }}>
       <style>{`
         .ll-pricing-grid { display: grid; gap: 1.5rem; max-width: 56rem; margin: 0 auto; align-items: stretch; grid-template-columns: repeat(3, 1fr); }
         @media (max-width: 900px) { .ll-pricing-grid { grid-template-columns: repeat(2, 1fr); } }
@@ -1341,7 +1341,25 @@ export default function DemoPipelinePage() {
         .ll-hero-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 3rem; align-items: center; }
         @media (max-width: 840px) { .ll-hero-grid { grid-template-columns: 1fr; gap: 1.25rem; } .ll-hero-left { text-align: center; display: flex; flex-direction: column; align-items: center; } .ll-hero-mock { margin-top: 0; width: 100%; } }
         @media (max-width: 480px) { .ll-hero-mock { overflow: hidden; max-width: 100%; } }
-        @media (max-width: 520px) { .ll-nav-pricing { display: none; } .ll-nav-r { gap: .75rem !important; } }
+        /* Navbar: single row at every width — never wraps, never overflows (audit §9/§10). */
+        .ll-root { overflow-x: hidden; }
+        .ll-nav-r { flex-wrap: nowrap !important; min-width: 0; }
+        .ll-nav-lang { display: inline-flex; }
+        .ll-nav-cta { white-space: nowrap; }
+        .ll-nav-signin { white-space: nowrap; }
+        @media (max-width: 680px) {
+          .ll-nav-wrap nav { padding: .625rem 1rem !important; }
+          .ll-nav-r { gap: .75rem !important; }
+          .ll-nav-pricing { display: none !important; }
+          .ll-nav-lang { display: none !important; }
+          .ll-nav-cta { font-size: .82rem !important; padding: .5rem .8rem !important; }
+        }
+        @media (max-width: 380px) {
+          .ll-nav-wrap nav { padding: .5rem .75rem !important; }
+          .ll-nav-r { gap: .625rem !important; }
+          .ll-nav-cta { font-size: .78rem !important; padding: .45rem .65rem !important; }
+        }
+        @media (max-width: 330px) { .ll-nav-signin { display: none !important; } }
         @media (max-width: 600px) {
           .ll-proof-outer { flex-wrap: wrap; }
           .ll-proof-item { width: 50%; justify-content: center; }
@@ -1395,20 +1413,20 @@ export default function DemoPipelinePage() {
       </div>
 
       {/* Nav */}
-      <div style={{ borderBottom: "1px solid #e8f4fd", position: "sticky", top: 0, background: "rgba(255,255,255,.96)", backdropFilter: "blur(12px)", zIndex: 40, boxShadow: "0 1px 0 #e8f4fd" }}>
-        <nav style={{ padding: ".875rem 1.5rem", display: "flex", justifyContent: "space-between", alignItems: "center", maxWidth: "72rem", margin: "0 auto" }}>
-          <span style={{ fontWeight: 800, fontSize: "1.2rem", letterSpacing: "-.03em", color: "#0f172a" }}>
-            Lead<span style={{ color: "#0ea5e9" }}>Lens</span><span style={{ color: "#94a3b8", fontWeight: 500, fontSize: ".9rem", marginLeft: ".25rem" }}>AI</span>
+      <div className="ll-nav-wrap" style={{ borderBottom: "1px solid #e8f4fd", position: "sticky", top: 0, background: "rgba(255,255,255,.96)", backdropFilter: "blur(12px)", zIndex: 40, boxShadow: "0 1px 0 #e8f4fd" }}>
+        <nav style={{ padding: ".875rem 1.5rem", display: "flex", justifyContent: "space-between", alignItems: "center", maxWidth: "72rem", margin: "0 auto", gap: ".75rem" }}>
+          <span style={{ fontWeight: 800, fontSize: "1.2rem", letterSpacing: "-.03em", color: "#0f172a", flexShrink: 0 }}>
+            Lead<span style={{ color: "#0ea5e9" }}>Lens</span>
           </span>
-          <div className="ll-nav-r" style={{ display: "flex", alignItems: "center", gap: "1.25rem", flexWrap: "wrap" as const }}>
+          <div className="ll-nav-r" style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
             <button className="ll-nav-pricing" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" })} style={navLinkStyle}>
               {copy.navPricing}
             </button>
-            <a href="/login" style={{ ...navLinkStyle, textDecoration: "none" }}>
+            <a className="ll-nav-signin" href="/login" style={{ ...navLinkStyle, textDecoration: "none" }}>
               {copy.navSignIn}
             </a>
-            <LangSelect />
-            <Btn onClick={() => goToForm("standard")}>{copy.navCTA}</Btn>
+            <span className="ll-nav-lang"><LangSelect /></span>
+            <span className="ll-nav-cta"><Btn onClick={() => goToForm("standard")}>{copy.navCTA}</Btn></span>
           </div>
         </nav>
       </div>
