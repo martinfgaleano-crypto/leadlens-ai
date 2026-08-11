@@ -1373,9 +1373,9 @@ export default function DemoPipelinePage() {
         .ll-hero-mock-mobile  { display: none; }
         @media (max-width: 640px) {
           /* Sections */
-          .ll-section { padding: 3rem 1rem !important; }
+          .ll-section { padding: 2.25rem 1rem !important; }
           .ll-problem-sec { padding: 3rem 1rem !important; }
-          .ll-cta-sec { padding: 3.5rem 1rem !important; }
+          .ll-cta-sec { padding: 2.5rem 1rem !important; }
           .ll-hero-outer { padding: 1.75rem 1rem 1.5rem !important; }
           .ll-faq-inner { padding: 0 1rem !important; }
           .ll-monthly-card { padding: 1.5rem 1.125rem !important; }
@@ -1433,7 +1433,7 @@ export default function DemoPipelinePage() {
 
       {/* Hero */}
       <div style={{ background: "linear-gradient(170deg,#e0f2fe 0%,#f0f9ff 35%,#fff 75%)" }}>
-        <div className="ll-hero-outer" style={{ maxWidth: "74rem", margin: "0 auto", padding: "4.5rem 1.5rem 4rem" }}>
+        <div className="ll-hero-outer" style={{ maxWidth: "74rem", margin: "0 auto", padding: "3.25rem 1.5rem 2.75rem" }}>
           <div className="ll-hero-grid">
             {/* Left column — text + CTAs */}
             <div className="ll-hero-left">
@@ -1671,26 +1671,6 @@ export default function DemoPipelinePage() {
       </section>
 
       {/* Visualizations */}
-      <section className="ll-section" style={{ ...sectionStyle, background: "#fff" }}>
-        <div style={{ ...innerStyle }}>
-          <div style={{ textAlign: "center" as const, marginBottom: "2.5rem" }}>
-            <Tag>{copy.vizTag}</Tag>
-            <h2 style={sectionTitleStyle}>{copy.vizTitle}</h2>
-            <p style={{ color: "#64748b", fontSize: "1.05rem", maxWidth: "38rem", margin: "0 auto", lineHeight: 1.6 }}>
-              {copy.vizSub}
-            </p>
-          </div>
-
-          {/* Market Map — full width */}
-          <MarketMapMatrix />
-
-          {/* Score Breakdown + Priority Quadrant — side by side */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))", gap: "1.375rem", marginTop: "1.375rem" }}>
-            <ScoreBreakdown />
-            <PriorityQuadrant />
-          </div>
-        </div>
-      </section>
 
       {/* Pricing */}
       <section id="pricing" className="ll-section" style={{ ...sectionStyle, background: "#f8fafc" }}>
@@ -1766,24 +1746,6 @@ export default function DemoPipelinePage() {
       </section>
 
       {/* Problem — LeadLens blue/white premium */}
-      <section className="ll-problem-sec" style={{ background: "#eff6ff", padding: "5rem 1.5rem" }}>
-        <div style={{ ...innerStyle, textAlign: "center" }}>
-          <div style={{ display: "inline-block", background: "#dbeafe", color: "#1d4ed8", fontSize: ".75rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".06em", padding: ".25rem .875rem", borderRadius: 999, marginBottom: "1.25rem" }}>
-            {copy.problemTag}
-          </div>
-          <h2 style={{ fontSize: "clamp(1.75rem,3.5vw,2.25rem)", fontWeight: 800, color: "#0f172a", letterSpacing: "-.02em", maxWidth: "38rem", margin: "0 auto 3rem" }}>
-            {copy.problemTitle}
-          </h2>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: "1rem", textAlign: "left" }}>
-            {copy.problemItems.map((item, i) => (
-              <div key={i} style={{ display: "flex", gap: ".875rem", alignItems: "flex-start", background: "#fff", border: "1px solid #bfdbfe", borderRadius: ".875rem", padding: "1.25rem 1.375rem", boxShadow: "0 1px 4px rgba(14,165,233,.07)" }}>
-                <span style={{ color: "#f87171", fontWeight: 700, flexShrink: 0, fontSize: ".95rem", marginTop: ".1rem" }}>✗</span>
-                <span style={{ fontSize: ".9rem", color: "#334155", lineHeight: 1.6 }}>{item}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Comparison */}
       <section className="ll-section" style={{ ...sectionStyle, background: "#fff" }}>
@@ -1853,22 +1815,6 @@ export default function DemoPipelinePage() {
       </section>
 
       {/* Beta delivery expectations */}
-      <section className="ll-section" style={{ ...sectionStyle, background: "#f8fafc" }}>
-        <div style={{ ...innerStyle, maxWidth: "48rem" }}>
-          <div style={{ textAlign: "center", marginBottom: "2rem" }}>
-            <Tag>{copy.expectationsTag}</Tag>
-            <h2 style={{ ...sectionTitleStyle, fontSize: "clamp(1.5rem,3vw,1.875rem)" }}>{copy.expectationsTitle}</h2>
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: ".75rem" }}>
-            {copy.expectationsItems.map((item, i) => (
-              <div key={i} style={{ display: "flex", gap: ".75rem", alignItems: "flex-start", background: "#fff", border: "1px solid #e2e8f0", borderRadius: ".75rem", padding: "1rem 1.125rem" }}>
-                <span style={{ color: "#0ea5e9", fontWeight: 700, flexShrink: 0, fontSize: ".875rem" }}>✓</span>
-                <span style={{ fontSize: ".875rem", color: "#64748b", lineHeight: 1.55 }}>{item}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* FAQ */}
       <section className="ll-section" style={{ ...sectionStyle, background: "#fff" }}>
@@ -1899,30 +1845,6 @@ export default function DemoPipelinePage() {
       </section>
 
       {/* B2C Teaser */}
-      <section className="ll-section" style={{ ...sectionStyle, background: "#f8fafc" }}>
-        <div style={{ ...innerStyle, maxWidth: "48rem", textAlign: "center" }}>
-          <div style={{ display: "inline-block", background: "#fef3c7", color: "#92400e", fontSize: ".72rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", padding: ".25rem .875rem", borderRadius: 999, marginBottom: "1.25rem" }}>
-            {copy.b2cTeaserTag}
-          </div>
-          <h2 style={{ fontSize: "clamp(1.375rem,3vw,1.875rem)", fontWeight: 800, color: "#0f172a", letterSpacing: "-.02em", marginBottom: ".875rem", lineHeight: 1.25 }}>
-            {copy.b2cTeaserTitle}
-          </h2>
-          <p style={{ fontSize: ".975rem", color: "#475569", lineHeight: 1.65, maxWidth: "38rem", margin: "0 auto .875rem" }}>
-            {copy.b2cTeaserSub}
-          </p>
-          <p style={{ fontSize: ".82rem", color: "#94a3b8", marginBottom: "1.5rem" }}>
-            {copy.b2cTeaserNote}
-          </p>
-          <button
-            style={{ background: "#f59e0b", color: "#fff", border: "none", borderRadius: ".75rem", padding: ".75rem 1.75rem", fontWeight: 700, fontSize: ".9rem", cursor: "pointer", transition: "background .15s" }}
-            onMouseOver={e => { e.currentTarget.style.background = "#d97706"; }}
-            onMouseOut={e => { e.currentTarget.style.background = "#f59e0b"; }}
-            onClick={() => { /* waitlist — no flow yet */ }}
-          >
-            {copy.b2cTeaserCTA}
-          </button>
-        </div>
-      </section>
 
       {/* Final CTA */}
       <section className="ll-cta-sec" style={{ background: "linear-gradient(135deg,#0c4a6e 0%,#0284c7 100%)", padding: "5rem 1.5rem" }}>
@@ -1990,7 +1912,7 @@ export default function DemoPipelinePage() {
       </div>
       <header style={{ background: "#fff", borderBottom: "1px solid #e2e8f0", padding: ".875rem 1.5rem", display: "flex", justifyContent: "space-between", alignItems: "center", position: "sticky", top: 0, zIndex: 30 }}>
         <button onClick={() => setView("landing")} style={{ fontWeight: 800, fontSize: "1.1rem", background: "none", border: "none", cursor: "pointer", letterSpacing: "-.02em" }}>
-          Lead<span style={{ color: "#0ea5e9" }}>Lens</span> AI
+          Lead<span style={{ color: "#0ea5e9" }}>Lens</span>
         </button>
         <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
           <select
@@ -2094,25 +2016,32 @@ export default function DemoPipelinePage() {
               </div>
             )}
 
-            <div style={{ marginBottom: "1rem" }}>
-              <label style={labelStyle}>{copy.fTone}</label>
-              <select value={form.tone} onChange={e => setForm(f => ({ ...f, tone: e.target.value as typeof f.tone }))} style={inputStyle}>
-                <option value="direct">{copy.toneDirect}</option>
-                <option value="consultative">{copy.toneConsultative}</option>
-                <option value="casual">{copy.toneCasual}</option>
-              </select>
-            </div>
-
-            <div style={{ marginBottom: "1rem" }}>
-              <label style={labelStyle}>{copy.fRegion}</label>
-              <select value={form.target_market_region ?? "global"} onChange={e => setForm(f => ({ ...f, target_market_region: e.target.value as MarketRegion }))} style={inputStyle}>
-                <option value="north_america">{copy.regionNA}</option>
-                <option value="latin_america">{copy.regionLA}</option>
-                <option value="europe">{copy.regionEU}</option>
-                <option value="asia">{copy.regionAS}</option>
-                <option value="global">{copy.regionGL}</option>
-              </select>
-            </div>
+            {/* Refinements collapsed by default (safe defaults: tone=direct, region=global) — fewer visible fields, no data removed. */}
+            <details style={{ borderTop: "1px solid #f1f5f9", paddingTop: "1rem", marginTop: ".25rem", marginBottom: "1rem" }}>
+              <summary style={{ fontSize: ".82rem", fontWeight: 600, color: "#0284c7", cursor: "pointer", listStyle: "none", userSelect: "none" }}>
+                {lang === "es" ? "Ajustar tono e idioma de mercado (opcional)" : lang === "pt" ? "Ajustar tom e mercado-alvo (opcional)" : lang === "ja" ? "トーンと対象市場を調整（任意）" : "Adjust tone & target market (optional)"}
+              </summary>
+              <div style={{ marginTop: "1rem" }}>
+                <div style={{ marginBottom: "1rem" }}>
+                  <label style={labelStyle}>{copy.fTone}</label>
+                  <select value={form.tone} onChange={e => setForm(f => ({ ...f, tone: e.target.value as typeof f.tone }))} style={inputStyle}>
+                    <option value="direct">{copy.toneDirect}</option>
+                    <option value="consultative">{copy.toneConsultative}</option>
+                    <option value="casual">{copy.toneCasual}</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={labelStyle}>{copy.fRegion}</label>
+                  <select value={form.target_market_region ?? "global"} onChange={e => setForm(f => ({ ...f, target_market_region: e.target.value as MarketRegion }))} style={inputStyle}>
+                    <option value="north_america">{copy.regionNA}</option>
+                    <option value="latin_america">{copy.regionLA}</option>
+                    <option value="europe">{copy.regionEU}</option>
+                    <option value="asia">{copy.regionAS}</option>
+                    <option value="global">{copy.regionGL}</option>
+                  </select>
+                </div>
+              </div>
+            </details>
 
             <FormField label={copy.fEmail} value={form.contact_email} onChange={v => setForm(f => ({ ...f, contact_email: v }))} type="email" placeholder="you@company.com" />
 
@@ -2198,7 +2127,7 @@ export default function DemoPipelinePage() {
         <header style={{ background: "#fff", borderBottom: "1px solid #e2e8f0", padding: "1rem 1.5rem", position: "sticky", top: 0, zIndex: 30 }}>
           <div style={{ maxWidth: "58rem", margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
             <div>
-              <span style={{ fontWeight: 800, fontSize: "1.1rem", letterSpacing: "-.02em" }}>Lead<span style={{ color: "#0ea5e9" }}>Lens</span> AI</span>
+              <span style={{ fontWeight: 800, fontSize: "1.1rem", letterSpacing: "-.02em" }}>Lead<span style={{ color: "#0ea5e9" }}>Lens</span></span>
               <span style={{ marginLeft: ".75rem", fontSize: ".78rem", background: "#f0fdf4", color: "#16a34a", fontWeight: 700, padding: "2px 8px", borderRadius: 999 }}>{copy.reportReady}</span>
             </div>
             <div style={{ display: "flex", gap: ".75rem", flexWrap: "wrap", alignItems: "center" }}>
@@ -3453,7 +3382,7 @@ function MetaCell({ label, val }: { label: string; val: React.ReactNode }) {
 
 // ─── Shared styles ────────────────────────────────────────────────────────────
 
-const sectionStyle:      React.CSSProperties = { padding: "5rem 1.5rem" };
+const sectionStyle:      React.CSSProperties = { padding: "3.25rem 1.5rem" };
 const innerStyle:        React.CSSProperties = { maxWidth: "64rem", margin: "0 auto" };
 const sectionTitleStyle: React.CSSProperties = { fontSize: "clamp(1.75rem,3.5vw,2.25rem)", fontWeight: 800, marginBottom: ".75rem", letterSpacing: "-.02em" };
 const navLinkStyle:      React.CSSProperties = { fontSize: ".875rem", color: "#64748b", textDecoration: "none", cursor: "pointer", background: "none", border: "none" };
