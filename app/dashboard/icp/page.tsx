@@ -232,7 +232,7 @@ export default function IcpPage() {
       {/* Page header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "2rem" }}>
         <div>
-          <h1 style={S.pageTitle}>ICP Builder</h1>
+          <h1 style={S.pageTitle}>ICP (Ideal Customer Profile) Builder</h1>
           <p style={S.pageSub}>Define your Ideal Customer Profiles. These drive your lead searches.</p>
         </div>
         {!formOpen && (

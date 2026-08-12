@@ -117,3 +117,7 @@ Preserve `conversion-plumbing.test.ts`, product catalog tests, payment-gate test
 ## 17. Founder decisions
 
 Choose the single canonical pre-billing CTA; decide whether the monitor collects email or remains hidden; decide whether onboarding is before or after payment; approve consolidation of company/offer/value-proposition inputs; decide whether exact country is mandatory at first step; and approve canonical retirement of “Snapshot.”
+
+## 18. Non-negotiable localization rule
+
+Follow `docs/LOCALIZATION_RULES.md`. The first visible `ICP` in every page or onboarding context must include the correct active-language expansion. Backend identifiers remain unchanged.

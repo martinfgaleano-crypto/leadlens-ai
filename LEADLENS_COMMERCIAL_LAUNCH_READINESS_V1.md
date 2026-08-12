@@ -198,3 +198,7 @@ Choose payment provider; auth-before-checkout approval; which tiers launch first
 ## 44. Exact recommended next technical sprint
 
 **Commercial Intent + Verified Entitlement Foundation**: provider-neutral intent schema, server catalog contract, authenticated ownership, idempotent payment-event ledger, entitlement activation, paid execution gate, sandbox-only adapter, and E2E fixtures. Do not connect live credentials or enable production payments in that sprint.
+
+## 45. Non-negotiable localization rule
+
+All future commercial implementation must follow `docs/LOCALIZATION_RULES.md`: expand `ICP` locally on first use in each user context, never leak an English definition into translated UI, and preserve internal identifiers.

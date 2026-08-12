@@ -24,7 +24,7 @@ export default function RefundPage() {
         <div style={{ background: "#f0f9ff", border: "1px solid #bae6fd", borderRadius: ".875rem", padding: "1.25rem 1.5rem", marginBottom: "2.5rem" }}>
           <p style={{ margin: 0, color: "#0284c7", fontSize: ".9375rem" }}>
             <strong>Summary:</strong> We want you to be satisfied with your LeadLens report. If
-            your report was not delivered or did not match your ICP description, contact us within
+            your report was not delivered or did not match your ICP (Ideal Customer Profile) description, contact us within
             7 days and we will make it right — reprocess your batch or issue a refund.
           </p>
         </div>

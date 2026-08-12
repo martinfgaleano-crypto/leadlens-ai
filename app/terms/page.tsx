@@ -39,7 +39,7 @@ export default function TermsPage() {
 
         <Section title="3. What you receive">
           <ul>
-            <li>A batch of qualified B2B leads matching the ICP you described.</li>
+            <li>A batch of qualified B2B leads matching the ICP (Ideal Customer Profile) you described.</li>
             <li>Personalized email drafts, LinkedIn DMs, and follow-up sequences per lead.</li>
             <li>CSV + Markdown export of all lead data and outreach copy.</li>
             <li>Delivery within 24–48 hours of order confirmation during our beta period.</li>

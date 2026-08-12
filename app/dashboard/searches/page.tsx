@@ -209,7 +209,7 @@ export default function SearchesPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!form.name.trim()) { setFormError("Monitor name is required."); return; }
-    if (!form.icp_id)      { setFormError("Please select an ICP."); return; }
+    if (!form.icp_id)      { setFormError("Please select an ICP (Ideal Customer Profile)."); return; }
 
     const leadCount = parseInt(form.requested_lead_count, 10);
     if (isNaN(leadCount) || leadCount < 1 || leadCount > 500) {
@@ -307,7 +307,7 @@ export default function SearchesPage() {
         <div style={{ ...S.section, marginBottom: "1.5rem" }}>
           <div style={S.emptyState}>
             <div style={S.emptyIcon}>🎯</div>
-            <div style={S.emptyTitle}>Create an ICP first</div>
+            <div style={S.emptyTitle}>Create an ICP (Ideal Customer Profile) first</div>
             <div style={S.emptySub}>
               You need a target profile (ICP) before creating a monitor — it tells LeadLens who your ideal customers are.
             </div>
@@ -344,7 +344,7 @@ export default function SearchesPage() {
 
               <div>
                 <label style={S.labelBlock}>
-                  <span style={S.labelText}>ICP *</span>
+                  <span style={S.labelText}>ICP (Ideal Customer Profile) *</span>
                   <select style={S.input} value={form.icp_id} onChange={e => setField("icp_id", e.target.value)} required>
                     <option value="">Select an ICP…</option>
                     {icps.map(icp => (

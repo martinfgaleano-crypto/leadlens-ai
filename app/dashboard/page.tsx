@@ -311,7 +311,7 @@ export default function DashboardPage() {
         <QuickLink
           href="/dashboard/icp"
           icon="🎯"
-          title="ICP Builder"
+          title="ICP (Ideal Customer Profile) Builder"
           desc={icpCount > 0 ? `${icpCount} profile${icpCount !== 1 ? "s" : ""} saved` : "Define your ideal customer"}
           cta="Open ICP Builder →"
         />

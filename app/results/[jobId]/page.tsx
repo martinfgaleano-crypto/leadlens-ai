@@ -331,7 +331,7 @@ export default function ResultsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <BreakdownChart
               title="Fit distribution"
-              explainer="How your analyzed accounts split by ICP fit."
+              explainer="How your analyzed accounts split by ICP (Ideal Customer Profile) fit."
               data={insights.fit}
               fallback="Fit distribution will appear once accounts are scored."
             />

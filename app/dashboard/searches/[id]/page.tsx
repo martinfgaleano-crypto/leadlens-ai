@@ -555,7 +555,7 @@ export default function SearchDetailPage() {
         <div style={S.detailGrid}>
           <DetailRow label="Status"          value={<StatusBadge status={search.status} />} />
           <DetailRow label="Requested Accounts" value={search.requested_lead_count} />
-          <DetailRow label="ICP"             value={icpName ?? (search.icp_id ? "ICP no longer exists" : "None")} />
+          <DetailRow label="ICP (Ideal Customer Profile)" value={icpName ?? (search.icp_id ? "ICP no longer exists" : "None")} />
           <DetailRow label="Countries"       value={search.countries.length > 0 ? search.countries.join(", ") : "—"} />
           <DetailRow label="Industries"      value={search.industries.length > 0 ? search.industries.join(", ") : "—"} />
           <DetailRow label="Notes"           value={search.notes ?? "—"} />

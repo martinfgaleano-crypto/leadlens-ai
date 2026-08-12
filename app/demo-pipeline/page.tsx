@@ -24,7 +24,7 @@ const COPY = {
     heroNote: "No contact databases. No email lists. Just commercial intelligence.",
     proofLabels: [["5","opportunity briefs"],["6–8","market segments"],["24–48h","delivery"],["100%","source-verified"]] as [string,string][],
     howTag: "How it works",
-    howTitle: "ICP in. Commercial intelligence out.",
+    howTitle: "ICP (Ideal Customer Profile) in. Commercial intelligence out.",
     steps: [
       ["1","Describe your ICP","Tell us what you sell, who you sell to, and what makes a great customer. Takes 5 minutes."],
       ["2","We map your market","LeadLens identifies 6–8 buyer segments — including ones you haven't considered. Then finds real companies in each."],
@@ -307,7 +307,7 @@ const COPY = {
     heroNote: "Sin bases de datos de contactos. Sin listas de emails. Solo inteligencia comercial.",
     proofLabels: [["5","briefs de oportunidad"],["6–8","segmentos de mercado"],["24–48h","entrega"],["100%","fuentes verificadas"]] as [string,string][],
     howTag: "Cómo funciona",
-    howTitle: "ICP adentro. Inteligencia comercial afuera.",
+    howTitle: "ICP (Perfil de Cliente Ideal) adentro. Inteligencia comercial afuera.",
     steps: [
       ["1","Describe tu ICP","Cuéntanos qué vendes, a quién y qué hace un gran cliente. Toma 5 minutos."],
       ["2","Mapeamos tu mercado","LeadLens identifica 6–8 segmentos de compradores, incluidos algunos que quizás no habías considerado. Luego encuentra empresas reales en cada segmento."],
@@ -590,7 +590,7 @@ const COPY = {
     heroNote: "Sem bancos de dados de contatos. Sem listas de e-mails. Apenas inteligência comercial.",
     proofLabels: [["5","briefs de oportunidade"],["6–8","segmentos de mercado"],["24–48h","entrega"],["100%","fontes verificadas"]] as [string,string][],
     howTag: "Como funciona",
-    howTitle: "ICP dentro. Inteligência comercial fora.",
+    howTitle: "ICP (Perfil de Cliente Ideal) dentro. Inteligência comercial fora.",
     steps: [
       ["1","Descreva seu ICP","Nos diga o que você vende, para quem e o que faz um ótimo cliente. Leva 5 minutos."],
       ["2","Mapeamos seu mercado","LeadLens identifica 6–8 segmentos de compradores — incluindo alguns que você talvez não tenha considerado. Depois encontra empresas reais em cada segmento."],
@@ -873,7 +873,7 @@ const COPY = {
     heroNote: "コンタクトデータベースなし。メールリストなし。コマーシャルインテリジェンスのみ。",
     proofLabels: [["5件","オポチュニティブリーフ"],["6〜8","市場セグメント"],["24〜48h","納品"],["100%","ソース検証済み"]] as [string,string][],
     howTag: "使い方",
-    howTitle: "ICPを入力。コマーシャルインテリジェンスを出力。",
+    howTitle: "ICP（理想顧客プロファイル）を入力。コマーシャルインテリジェンスを出力。",
     steps: [
       ["1","ICPを入力","何を販売し、誰に販売し、優れた顧客とは何かをお伝えください。5分で完了します。"],
       ["2","市場をマッピング","LeadLensは6〜8の購買者セグメントを特定します — まだ検討していないものも含めて。各セグメントの実在する企業を見つけます。"],

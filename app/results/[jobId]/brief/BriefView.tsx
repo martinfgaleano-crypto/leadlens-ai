@@ -28,7 +28,7 @@ const GRADE = { strong: { label: "Strong evidence", c: "#a7f3d0" }, moderate: { 
 // source titles keep their language.
 const L = (es: boolean) => ({
   briefTitle: es ? "Informe de Inteligencia de Oportunidades" : "Opportunity Intelligence Brief",
-  icpVerdict: es ? "Veredicto del ICP" : "ICP Verdict",
+  icpVerdict: es ? "Veredicto del ICP (Perfil de Cliente Ideal)" : "ICP (Ideal Customer Profile) Verdict",
   verdictWord: { proceed: es ? "AVANZAR" : "PROCEED", refine: es ? "REFINAR" : "REFINE", stop: es ? "DETENER" : "STOP" } as Record<string, string>,
   verdictEvidence: es ? "derivado de los resultados reales de este preview" : "derived from this preview's real results",
   execBrief: es ? "Resumen Ejecutivo" : "Executive Brief",
