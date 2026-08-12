@@ -38,7 +38,7 @@ export async function GET() {
             L
           </div>
           <span style={{ color: "white", fontSize: 34, fontWeight: 800, letterSpacing: -1 }}>
-            LeadLens<span style={{ color: "#7dd3fc", marginLeft: 8 }}>AI</span>
+            LeadLens<span style={{ color: "#7dd3fc", marginLeft: 8, fontSize: 22, fontWeight: 600 }}>· Account Opportunity Intelligence</span>
           </span>
         </div>
 
@@ -54,12 +54,12 @@ export async function GET() {
             maxWidth: 920,
           }}
         >
-          Qualified B2B leads + personalized outreach drafts.
+          Find the B2B accounts worth working now.
         </div>
 
         {/* Sub */}
         <div style={{ color: "#bae6fd", fontSize: 26, maxWidth: 820, lineHeight: 1.5 }}>
-          Tell us your ideal customer. We research, qualify, and write the outreach. You review and send.
+          Which accounts fit, why they matter now, and the public evidence behind each opportunity. Account-level intelligence, not a contact list.
         </div>
       </div>
     ),

@@ -41,6 +41,7 @@
     "sources:recalc-eligibility": "npx -y tsx --tsconfig tsconfig.json scripts/sources/recalc-eligibility.ts",
     "sources:adjudicate-v2": "npx -y tsx --tsconfig tsconfig.json scripts/sources/ai-adjudication-v2.ts",
     "test:product-catalog": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/product-catalog.test.ts",
+    "test:commercial-continuity": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/commercial-continuity.test.ts",
     "test:pilot-depth": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/pilot-depth.test.ts",
     "test:company-first": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/company-first-discovery.test.ts",
     "replay:discovery-trace": "npx -y tsx --tsconfig tsconfig.json scripts/sources/replay-discovery-trace.ts",
