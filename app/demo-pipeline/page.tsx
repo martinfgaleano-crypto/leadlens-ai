@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useId } from "react";
 import type { LeadLensReport, ProcessedLead, PlanType, QCStatus, OutputLanguage, MarketRegion } from "@/types";
+import { safeConversionPayload, type ConversionEvent, type ConversionMetadata } from "@/lib/analytics/conversion-events";
 
 // ─── Localization dictionary ──────────────────────────────────────────────────
 
@@ -1173,6 +1174,10 @@ function track(event: string, data: Record<string, unknown> = {}) {
   try { void fetch("/api/events", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ event, ...data }), keepalive: true }); } catch { /* never block UX */ }
 }
 
+function trackConversion(event: ConversionEvent, metadata: ConversionMetadata = {}) {
+  track(event, safeConversionPayload(event, metadata));
+}
+
 const LANG_OPTIONS: { value: OutputLanguage; label: string }[] = [
   { value: "en", label: "English" },
   { value: "es", label: "Español" },
@@ -1238,17 +1243,35 @@ export default function DemoPipelinePage() {
   const [formMode, setFormMode]   = useState<"paid_batch" | "sample_demo">("paid_batch");
   const [isSampleDemo, setIsSampleDemo] = useState(false);
   const formRef = useRef<HTMLDivElement>(null);
+  const pricingRef = useRef<HTMLElement>(null);
+  const pricingSeen = useRef(false);
 
   const copy = COPY[lang];
 
-  useEffect(() => { track("pricing_page_viewed", { product_version: "launch_v0", launch_price: true }); }, []);
+  useEffect(() => { trackConversion("landing_view"); }, []);
+  useEffect(() => {
+    const node = pricingRef.current;
+    if (!node || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !pricingSeen.current) {
+        pricingSeen.current = true;
+        trackConversion("pricing_view");
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
 
   function changeLang(l: OutputLanguage) {
     setLang(l);
     setForm(f => ({ ...f, output_language: l }));
   }
 
-  function goToForm(p: PlanType) {
+  function goToForm(p: PlanType, source: ConversionMetadata["source_cta"] = "pricing") {
+    if (source === "hero") trackConversion("hero_cta_click", { plan: p, source_cta: source });
+    if (source === "nav") trackConversion("nav_cta_click", { plan: p, source_cta: source });
+    trackConversion("pricing_plan_select", { plan: p, source_cta: source });
     track("tier_selected", { product_code: PLANS[p].productCode, product_version: "launch_v0", launch_price: true, tier: p });
     const lsUrl = LS_URLS[p];
     if (lsUrl) {
@@ -1257,6 +1280,7 @@ export default function DemoPipelinePage() {
       return;
     }
     track("onboarding_started", { product_code: PLANS[p].productCode, product_version: "launch_v0" });
+    trackConversion("onboarding_start", { plan: p, source_cta: source });
     setPlan(p);
     setFormMode("paid_batch");
     setView("form");
@@ -1264,6 +1288,7 @@ export default function DemoPipelinePage() {
   }
 
   function goToDemo() {
+    trackConversion("onboarding_start", { plan, source_cta: "demo" });
     setFormMode("sample_demo");
     setIsSampleDemo(false);
     setView("form");
@@ -1273,7 +1298,12 @@ export default function DemoPipelinePage() {
   async function runPipeline(e: React.FormEvent) {
     e.preventDefault();
     // Payment gate: never run pipeline for paid_batch mode without a checkout link
-    if (formMode === "paid_batch") return;
+    if (formMode === "paid_batch") {
+      trackConversion("onboarding_error", { plan, error_category: "unavailable" });
+      return;
+    }
+    trackConversion("onboarding_step_complete", { plan, step: 1 });
+    trackConversion("onboarding_submit", { plan, step: 1 });
     setError(null);
     setIsSampleDemo(true);
     setView("processing");
@@ -1287,10 +1317,22 @@ export default function DemoPipelinePage() {
     }
 
     try {
+      const demoOnboarding = {
+        company_name: form.company_name,
+        company_description: form.company_description,
+        offer_description: form.offer_description,
+        value_proposition: form.value_proposition,
+        target_customer_description: form.target_customer_description,
+        average_ticket: form.average_ticket,
+        tone: form.tone,
+        contact_email: form.contact_email,
+        output_language: form.output_language,
+        target_market_region: form.target_market_region,
+      };
       const res = await fetch("/api/demo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan, onboarding: { ...form, ...tierExtras, product_code: PLANS[plan].productCode } }),
+        body: JSON.stringify({ plan, onboarding: demoOnboarding }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? `Server error ${res.status}`);
@@ -1298,10 +1340,12 @@ export default function DemoPipelinePage() {
       setReport(data.report as LeadLensReport);
       await delay(300);
       setView("results");
+      trackConversion("onboarding_success", { plan });
       setExp(null);
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       setError(msg);
+      trackConversion("onboarding_error", { plan, error_category: "server" });
       setView("form");
     }
   }
@@ -1323,6 +1367,7 @@ export default function DemoPipelinePage() {
   // Shared lang selector rendered in each view's nav
   const LangSelect = () => (
     <select
+      aria-label="Language"
       value={lang}
       onChange={e => changeLang(e.target.value as OutputLanguage)}
       style={{ background: "transparent", border: "1px solid #e2e8f0", color: "#64748b", padding: "4px 8px", borderRadius: 6, cursor: "pointer", fontSize: ".82rem", fontFamily: "inherit" }}
@@ -1404,7 +1449,7 @@ export default function DemoPipelinePage() {
       {/* Announcement bar */}
       <div style={{ background: "linear-gradient(135deg,#075985,#0284c7)", color: "#fff", textAlign: "center", padding: ".55rem 1rem", fontSize: ".8rem", fontWeight: 500, letterSpacing: ".01em" }}>
         {copy.announcement}{" "}
-        <button onClick={() => goToForm("standard")} style={{ background: "rgba(255,255,255,.18)", border: "1px solid rgba(255,255,255,.3)", color: "#fff", fontSize: ".78rem", fontWeight: 700, borderRadius: 5, padding: "2px 12px", cursor: "pointer", marginLeft: 8, transition: "background .15s" }}
+        <button onClick={() => goToForm("standard", "announcement")} style={{ background: "rgba(255,255,255,.18)", border: "1px solid rgba(255,255,255,.3)", color: "#fff", fontSize: ".78rem", fontWeight: 700, borderRadius: 5, padding: "2px 12px", cursor: "pointer", marginLeft: 8, transition: "background .15s" }}
           onMouseOver={e => (e.currentTarget.style.background = "rgba(255,255,255,.28)")}
           onMouseOut={e => (e.currentTarget.style.background = "rgba(255,255,255,.18)")}
         >
@@ -1426,7 +1471,7 @@ export default function DemoPipelinePage() {
               {copy.navSignIn}
             </a>
             <span className="ll-nav-lang"><LangSelect /></span>
-            <span className="ll-nav-cta"><Btn onClick={() => goToForm("standard")}>{copy.navCTA}</Btn></span>
+            <span className="ll-nav-cta"><Btn onClick={() => goToForm("standard", "nav")}>{copy.navCTA}</Btn></span>
           </div>
         </nav>
       </div>
@@ -1452,8 +1497,8 @@ export default function DemoPipelinePage() {
                 {copy.heroSub}
               </p>
               <div className="ll-hero-cta-row" style={{ display: "flex", gap: ".875rem", flexWrap: "wrap" as const, marginBottom: "1rem" }}>
-                <Btn lg onClick={() => goToForm("standard")}>{copy.heroCTA}</Btn>
-                <BtnOutline lg onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" })}>{copy.heroSeeAll}</BtnOutline>
+                <Btn lg onClick={() => goToForm("standard", "hero")}>{copy.heroCTA}</Btn>
+                <BtnOutline lg onClick={() => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" })}>{copy.heroSeeAll}</BtnOutline>
               </div>
               <p className="ll-hero-note" style={{ display: "inline-block", fontSize: ".82rem", color: "#64748b", background: "#f0f9ff", border: "1px solid #e0f2fe", borderRadius: 999, padding: ".375rem 1rem", marginBottom: ".75rem" }}>
                 {copy.heroNote}
@@ -1489,7 +1534,7 @@ export default function DemoPipelinePage() {
       </div>
 
       {/* How it works */}
-      <section className="ll-section" style={{ ...sectionStyle, background: "#f8fafc" }}>
+      <section id="how-it-works" className="ll-section" style={{ ...sectionStyle, background: "#f8fafc" }}>
         <div style={innerStyle}>
           <div style={{ textAlign: "center", marginBottom: "3rem" }}>
             <Tag>{copy.howTag}</Tag>
@@ -1525,7 +1570,7 @@ export default function DemoPipelinePage() {
             <button onClick={goToDemo} style={{ display: "inline-flex", alignItems: "center", gap: ".4rem", background: "#f0f9ff", border: "1.5px solid #bae6fd", color: "#0284c7", borderRadius: 999, padding: ".4rem 1.125rem", fontSize: ".8rem", fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
               📄 {copy.sampleBridgeFreeDemo} →
             </button>
-            <button onClick={() => goToForm("sample")} style={{ display: "inline-flex", alignItems: "center", gap: ".4rem", background: "#fffbeb", border: "1.5px solid #fde68a", color: "#92400e", borderRadius: 999, padding: ".4rem 1.125rem", fontSize: ".8rem", fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
+            <button onClick={() => goToForm("sample", "sample_bridge")} style={{ display: "inline-flex", alignItems: "center", gap: ".4rem", background: "#fffbeb", border: "1.5px solid #fde68a", color: "#92400e", borderRadius: 999, padding: ".4rem 1.125rem", fontSize: ".8rem", fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
               ⭐ {copy.sampleBridgeSamplePack} →
             </button>
           </div>
@@ -1673,7 +1718,7 @@ export default function DemoPipelinePage() {
       {/* Visualizations */}
 
       {/* Pricing */}
-      <section id="pricing" className="ll-section" style={{ ...sectionStyle, background: "#f8fafc" }}>
+      <section id="pricing" ref={pricingRef} className="ll-section" style={{ ...sectionStyle, background: "#f8fafc" }}>
         <div style={{ ...innerStyle, textAlign: "center" }}>
           <Tag>{copy.pricingTag}</Tag>
           <h2 style={sectionTitleStyle}>{copy.pricingTitle}</h2>
@@ -1705,7 +1750,7 @@ export default function DemoPipelinePage() {
               <h3 style={{ fontSize: "1.1rem", fontWeight: 800, color: "#0f172a", letterSpacing: "-.02em", marginBottom: ".375rem" }}>{copy.monthlyTitle}</h3>
               <p style={{ fontSize: ".875rem", color: "#475569", lineHeight: 1.6, margin: 0, maxWidth: "40rem" }}>{copy.monthlySub}</p>
             </div>
-            <button onClick={() => goToForm("sample")}
+            <button onClick={() => goToForm("sample", "monitor")}
               style={{ background: "none", border: "1.5px solid #0ea5e9", color: "#0284c7", borderRadius: ".75rem", padding: ".7rem 1.375rem", fontWeight: 600, fontSize: ".875rem", cursor: "pointer", whiteSpace: "nowrap" as const, flexShrink: 0, transition: "all .15s", fontFamily: "inherit" }}
               onMouseOver={e => { e.currentTarget.style.background = "#e0f2fe"; }}
               onMouseOut={e => { e.currentTarget.style.background = "none"; }}
@@ -1859,7 +1904,7 @@ export default function DemoPipelinePage() {
             {copy.ctaSub}
           </p>
           <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" as const }}>
-            <button onClick={() => goToForm("starter")}
+            <button onClick={() => goToForm("starter", "final")}
               style={{ background: "#fff", color: "#0284c7", border: "none", borderRadius: ".75rem", padding: "1rem 2rem", fontWeight: 700, fontSize: "1rem", cursor: "pointer", boxShadow: "0 4px 14px rgba(0,0,0,.15)", transition: "all .15s" }}
               onMouseOver={e => { e.currentTarget.style.background = "#f0f9ff"; e.currentTarget.style.transform = "translateY(-1px)"; }}
               onMouseOut={e => { e.currentTarget.style.background = "#fff"; e.currentTarget.style.transform = ""; }}
@@ -1916,6 +1961,7 @@ export default function DemoPipelinePage() {
         </button>
         <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
           <select
+            aria-label="Language"
             value={lang}
             onChange={e => changeLang(e.target.value as OutputLanguage)}
             style={{ background: "transparent", border: "1px solid #e2e8f0", color: "#64748b", padding: "4px 8px", borderRadius: 6, cursor: "pointer", fontSize: ".82rem", fontFamily: "inherit" }}
@@ -1963,7 +2009,7 @@ export default function DemoPipelinePage() {
           <p style={{ fontSize: ".84rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" as const, letterSpacing: ".06em", marginBottom: "1rem" }}>{copy.step1}</p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: ".625rem" }}>
             {(Object.entries(PLANS) as [PlanType, typeof PLANS.starter][]).map(([key, p]) => (
-              <button key={key} type="button" onClick={() => setPlan(key)}
+              <button key={key} type="button" onClick={() => { setPlan(key); trackConversion("pricing_plan_select", { plan: key, source_cta: "pricing" }); }} aria-pressed={plan === key}
                 style={{ border: `1.5px solid ${plan === key ? "#0ea5e9" : "#e2e8f0"}`, borderRadius: ".75rem", padding: ".75rem .5rem", textAlign: "center" as const, cursor: "pointer", transition: "all .15s", background: plan === key ? "#e0f2fe" : "#fff" }}>
                 <div style={{ fontSize: "1.1rem", fontWeight: 800, color: "#0f172a" }}>{p.price}</div>
                 <div style={{ fontSize: ".72rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".04em", color: "#94a3b8", marginTop: ".2rem" }}>{copy.planNames[key]}</div>
@@ -1985,16 +2031,16 @@ export default function DemoPipelinePage() {
             </div>
 
             {error && (
-              <div style={{ background: "#fef2f2", border: "1px solid #fecaca", borderRadius: ".75rem", padding: "1rem", marginBottom: "1.25rem", fontSize: ".875rem", color: "#dc2626" }}>
+              <div role="alert" style={{ background: "#fef2f2", border: "1px solid #fecaca", borderRadius: ".75rem", padding: "1rem", marginBottom: "1.25rem", fontSize: ".875rem", color: "#dc2626" }}>
                 <strong>Error:</strong> {error}
               </div>
             )}
 
-            <FormField label={copy.fCompanyName} value={form.company_name} onChange={v => setForm(f => ({ ...f, company_name: v }))} placeholder="e.g. GrowthForge Studio" />
-            <FormField label={copy.fCompanyDesc} value={form.company_description} onChange={v => setForm(f => ({ ...f, company_description: v }))} multiline placeholder="2–3 sentences about your business" />
-            <FormField label={copy.fOffer} value={form.offer_description} onChange={v => setForm(f => ({ ...f, offer_description: v }))} multiline placeholder="What exactly are you selling and at what price?" />
-            <FormField label={copy.fValue} value={form.value_proposition} onChange={v => setForm(f => ({ ...f, value_proposition: v }))} multiline placeholder="What specific outcome do you deliver?" />
-            <FormField label={copy.fCustomer} value={form.target_customer_description} onChange={v => setForm(f => ({ ...f, target_customer_description: v }))} multiline placeholder="Company size, titles, industries, signals..." />
+            <FormField required label={copy.fCompanyName} value={form.company_name} onChange={v => setForm(f => ({ ...f, company_name: v }))} placeholder="e.g. GrowthForge Studio" />
+            <FormField required label={copy.fCompanyDesc} value={form.company_description} onChange={v => setForm(f => ({ ...f, company_description: v }))} multiline placeholder="2–3 sentences about your business" />
+            <FormField required label={copy.fOffer} value={form.offer_description} onChange={v => setForm(f => ({ ...f, offer_description: v }))} multiline placeholder="What exactly are you selling and at what price?" />
+            <FormField required label={copy.fValue} value={form.value_proposition} onChange={v => setForm(f => ({ ...f, value_proposition: v }))} multiline placeholder="What specific outcome do you deliver?" />
+            <FormField required label={copy.fCustomer} value={form.target_customer_description} onChange={v => setForm(f => ({ ...f, target_customer_description: v }))} multiline placeholder="Company size, titles, industries, signals..." />
             <FormField label={copy.fTicket} value={form.average_ticket ?? ""} onChange={v => setForm(f => ({ ...f, average_ticket: v }))} placeholder="e.g. $3,000/month" />
 
             {/* Tier-adaptive onboarding — progressive disclosure, all optional */}
@@ -2043,7 +2089,7 @@ export default function DemoPipelinePage() {
               </div>
             </details>
 
-            <FormField label={copy.fEmail} value={form.contact_email} onChange={v => setForm(f => ({ ...f, contact_email: v }))} type="email" placeholder="you@company.com" />
+            <FormField required label={copy.fEmail} value={form.contact_email} onChange={v => setForm(f => ({ ...f, contact_email: v }))} type="email" placeholder="you@company.com" />
 
             {formMode === "paid_batch" ? (
               /* Checkout-pending gate — no LS URL set yet */
@@ -3347,16 +3393,17 @@ function Tag({ children }: { children: React.ReactNode }) {
   );
 }
 
-function FormField({ label, value, onChange, multiline, type = "text", placeholder = "" }: {
+function FormField({ label, value, onChange, multiline, type = "text", placeholder = "", required = false }: {
   label: string; value: string; onChange: (v: string) => void;
-  multiline?: boolean; type?: string; placeholder?: string;
+  multiline?: boolean; type?: string; placeholder?: string; required?: boolean;
 }) {
+  const id = useId();
   return (
     <div style={{ marginBottom: "1rem" }}>
-      <label style={labelStyle}>{label}</label>
+      <label htmlFor={id} style={labelStyle}>{label}{required ? " *" : ""}</label>
       {multiline
-        ? <textarea value={value} onChange={e => onChange(e.target.value)} rows={2} placeholder={placeholder} style={inputStyle} />
-        : <input type={type} value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} style={inputStyle} />
+        ? <textarea id={id} required={required} value={value} onChange={e => onChange(e.target.value)} rows={2} placeholder={placeholder} style={inputStyle} />
+        : <input id={id} required={required} type={type} value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} style={inputStyle} />
       }
     </div>
   );

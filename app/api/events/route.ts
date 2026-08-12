@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { checkRateLimit, requestClientKey } from "@/lib/security/rate-limit";
+import { CONVERSION_EVENTS, conversionMetadataSchema } from "@/lib/analytics/conversion-events";
 
 // ─── Product analytics intake (launch_tier_architecture_v0) ──────────────────
 // Foundation: validates and structured-logs tier/product events server-side so
@@ -18,6 +19,7 @@ const EVENT_NAMES = [
   "upgrade_viewed", "upgrade_started", "upgrade_completed",
   "monitor_interest", "strategic_interest", "agency_interest",
   "refund_requested", "redelivery_requested",
+  ...CONVERSION_EVENTS,
 ] as const;
 
 // Browser telemetry is untrusted. Payment completion, refunds and redelivery
@@ -39,6 +41,10 @@ const eventSchema = z.object({
   icp_count: z.number().int().min(0).max(10).optional(),
   opportunity_count: z.number().int().min(0).max(100).optional(),
   meta: z.record(z.string().max(200)).optional(),
+  plan: conversionMetadataSchema.shape.plan,
+  source_cta: conversionMetadataSchema.shape.source_cta,
+  step: conversionMetadataSchema.shape.step,
+  error_category: conversionMetadataSchema.shape.error_category,
 });
 
 export async function POST(req: NextRequest) {
