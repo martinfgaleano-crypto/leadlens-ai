@@ -6,7 +6,7 @@ import { loadEnv } from "../lib/load-env.mjs";
 import { createClient } from "@supabase/supabase-js";
 
 const env = loadEnv();
-const base = "https://leadlensintel.com";
+const base = process.env.LEADLENS_QA_BASE_URL || "https://leadlensintel.com";
 if (!env.NEXT_PUBLIC_SUPABASE_URL || !env.NEXT_PUBLIC_SUPABASE_ANON_KEY || !env.SUPABASE_SERVICE_ROLE_KEY) {
   throw new Error("required Supabase environment is unavailable");
 }
@@ -19,7 +19,7 @@ const emails = [`qa-journey-a-${marker}@leadlensintel.com`, `qa-journey-b-${mark
 const users = [];
 const result = {
   migration_049_shape: false, migration_050_shape: false, migration_051_shape: false,
-  user_a_created: false, user_b_created: false, profile_exists: false, intent_created: false, intent_owner_correct: false,
+  user_a_created: false, user_b_created: false, profile_bootstrap_verified: false, intent_created: false, intent_owner_correct: false,
   onboarding_created: false, onboarding_owner_correct: false, intent_linked: false,
   multi_country_persisted: false, intent_completed: false, retry_idempotent: false,
   lifecycle_intent_recorded: false, lifecycle_onboarding_recorded: false, lifecycle_payload_private: false,
@@ -59,8 +59,6 @@ try {
   }
   result.user_a_created = users.length >= 1;
   result.user_b_created = users.length >= 2;
-  const { data: profileRows } = await admin.from("profiles").select("id").eq("id", users[0]);
-  result.profile_exists = profileRows?.length === 1;
 
   const clients = [anon(), anon()];
   const sessions = [];
@@ -127,6 +125,8 @@ try {
       : insertError ? `insert_${insertError.code ?? "error"}` : "api_post_insert_failure";
     throw new Error(`onboarding API failed with HTTP ${onboardingResponse.status}: ${category}`);
   }
+  const { data: profileRows } = await admin.from("profiles").select("id,onboarding_completed").eq("id", users[0]);
+  result.profile_bootstrap_verified = profileRows?.length === 1 && profileRows[0].onboarding_completed === true;
 
   const retryResponse = await fetch(`${base}/api/customer/onboarding`, {
     method: "POST", headers, body: JSON.stringify(onboardingPayload),

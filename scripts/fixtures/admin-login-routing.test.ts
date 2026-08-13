@@ -131,7 +131,7 @@ t("session + bridge unavailable → /dashboard (not trapped)", rFail.action === 
     t(`${name}: NOT the superseded v2/v3 markers`, !/form-first-v2|form-always-visible-v3/.test(code));
   }
   t("login: supabase init failure keeps form (authUnavailable inline note)", /authUnavailable/.test(loginSrc) && /Authentication is temporarily unavailable/.test(loginSrc));
-  t("login: explicit sign-in still routes via bridge", /signInWithPassword/.test(loginSrc) && /establishAdminSession/.test(loginSrc) && /resolveLoginTarget/.test(loginSrc));
+  t("login: explicit sign-in still routes via bridge", /signInWithPassword/.test(loginSrc) && /establishAdminSession/.test(loginSrc) && /decidePostLoginRoute/.test(loginSrc));
   t("admin login: explicit sign-in uses the same bounded bridge", /establishAdminSession/.test(adminLoginSrc) && /resolveLoginTarget/.test(adminLoginSrc));
   t("login: successful routing is a hard navigation", /window\.location\.replace/.test(loginSrc));
   t("admin login: successful routing is a hard navigation", /window\.location\.replace/.test(adminLoginSrc));

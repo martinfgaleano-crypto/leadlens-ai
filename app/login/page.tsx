@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { getSupabaseClient } from "@/lib/supabase/client";
-import { establishAdminSession, resolveLoginTarget } from "@/lib/admin/admin-bootstrap";
+import { decidePostLoginRoute, establishAdminSession } from "@/lib/admin/admin-bootstrap";
 import { commercialFlowQuery, parseCommercialFlowState, persistCommercialIntent, type CommercialFlowState } from "@/lib/commercial/customer-flow";
 
 // Structural fail-safe: the login page is a PURE STATIC FORM. It performs NO
@@ -61,7 +61,6 @@ export default function LoginPage() {
         setError("Your session could not be verified. Please sign in again.");
         return;
       }
-      const target = resolveLoginTarget(true, bridge);
       const intentSaved = await persistCommercialIntent(data.session.access_token, flow);
       if (!intentSaved) {
         setLoading(false);
@@ -71,7 +70,7 @@ export default function LoginPage() {
       void fetch("/api/events", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ event: "auth_completed", product_code: flow?.product_code, meta: { locale: flow?.locale ?? "en" } }) });
       // Hard navigation deliberately bypasses stale App Router/RSC state from
       // older deployments. The destination is same-origin and server-checked.
-      window.location.replace(target.action === "redirect" ? target.to : (flow?.return_to ?? "/dashboard"));
+      window.location.replace(decidePostLoginRoute(bridge, flow?.return_to ?? "/dashboard"));
     } catch {
       setLoading(false);
       setError("Network error. Please try again.");

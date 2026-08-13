@@ -33,6 +33,7 @@ const onboardingMigration = readFileSync("supabase/migrations/050_authenticated_
 const lifecycleMigration = readFileSync("supabase/migrations/051_customer_lifecycle_events.sql", "utf8");
 const onboardingRoute = readFileSync("app/api/customer/onboarding/route.ts", "utf8");
 const intentRoute = readFileSync("app/api/commercial-intents/route.ts", "utf8");
+const loginPage = readFileSync("app/login/page.tsx", "utf8");
 test("recovery callback reaches password form with browser exchange", callback.includes("/reset-password") && reset.includes("exchangeCodeForSession"));
 test("recovery request uses Supabase secure flow", forgot.includes("resetPasswordForEmail"));
 test("new password updates authenticated user", reset.includes("updateUser({ password })"));
@@ -48,6 +49,7 @@ test("onboarding RLS owner policies exist", onboardingMigration.includes("auth.u
 test("onboarding administrative writes are server-only", onboardingMigration.includes("Writes remain server-only") && !onboardingMigration.includes("for update to authenticated"));
 test("onboarding API derives owner from verified JWT", onboardingRoute.includes("db.auth.getUser(token)") && onboardingRoute.includes("user_id: auth.user.id"));
 test("onboarding requires explicit target countries", onboardingRoute.includes("target_countries") && onboardingRoute.includes(".min(1).max(12)"));
+test("normal login preserves customer return path after admin check", loginPage.includes('decidePostLoginRoute(bridge, flow?.return_to ?? "/dashboard")'));
 test("onboarding bootstraps missing customer profile server-side", onboardingRoute.includes('from("profiles").upsert') && onboardingRoute.includes('ignoreDuplicates: true'));
 test("onboarding claims intent before persistence", onboardingRoute.includes('status: "onboarding_started"') && onboardingRoute.includes('.eq("status", "captured").select("id")'));
 test("completed onboarding retry returns existing row", onboardingRoute.includes("intent.onboarding_id") && onboardingRoute.includes("idempotent: true"));
@@ -60,4 +62,4 @@ const empty = { delivery_readiness: { status: "blocked" }, actionability_summary
 test("first value requires usable opportunity", hasUsableOpportunity(usable));
 test("blocked delivery never emits first value", !hasUsableOpportunity(empty));
 
-console.log(`\n${passed}/35 authenticated product assertions passed.`);
+console.log(`\n${passed}/36 authenticated product assertions passed.`);
