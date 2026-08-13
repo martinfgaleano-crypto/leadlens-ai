@@ -769,30 +769,10 @@ export default function SearchDetailPage() {
         </div>
       )}
 
-      {/* Lead Source Summary — only when vault data exists */}
-      {search.status === "completed" && (
-        (search.vault_leads_used != null || search.apollo_leads_used != null) &&
-        ((search.vault_leads_used ?? 0) + (search.apollo_leads_used ?? 0)) > 0
-      ) && (
-        <div style={{ ...S.section, marginBottom: "1.25rem" }}>
-          <div style={S.sectionHeader}>
-            <span style={S.sectionTitle}>Account Source Summary</span>
-          </div>
-          <div style={{ padding: "1rem 1.25rem", display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
-            {[
-              { label: "Requested", value: search.requested_lead_count, color: "#0f172a" },
-              { label: "From Vault", value: search.vault_leads_used ?? 0, color: "#15803d" },
-              { label: "From Apollo", value: search.apollo_leads_used ?? 0, color: "#1d4ed8" },
-              { label: "Vault Hit Rate", value: `${Math.round((search.vault_hit_rate ?? 0) * 100)}%`, color: "#0f172a" },
-            ].map(item => (
-              <div key={item.label} style={{ textAlign: "center", padding: "0.875rem", background: "#f8fafc", borderRadius: "0.5rem" }}>
-                <div style={{ fontSize: "0.68rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "0.4rem" }}>{item.label}</div>
-                <div style={{ fontSize: "1.35rem", fontWeight: 800, color: item.color, letterSpacing: "-0.02em" }}>{item.value}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      {/* Internal provider-sourcing summary (Vault/Apollo/hit-rate) intentionally
+          NOT shown to customers — it exposes lead-database plumbing that
+          contradicts the Account Opportunity Intelligence product. Data/types
+          are unchanged; this is a display-only suppression. */}
 
       {/* Account results */}
       <div style={S.section}>
@@ -857,12 +837,12 @@ export default function SearchDetailPage() {
                 {isNoLeads ? "🔍" : "⚠️"}
               </div>
               <div style={{ color: "#0f172a", fontWeight: 700, fontSize: "1rem", marginBottom: "0.5rem" }}>
-                {isNoLeads ? "No accounts found" : "Search could not be completed"}
+                {isNoLeads ? "No accounts found" : "This run could not be completed"}
               </div>
               <div style={{ color: "#64748b", fontSize: "0.85rem", maxWidth: 400, margin: "0 auto" }}>
                 {isNoLeads
-                  ? "Our search returned no matching accounts for your criteria. No credits were charged."
-                  : "Something went wrong during lead generation. Our team has been notified."}
+                  ? "LeadLens found no matching accounts for your criteria this run. Refine your target profile and try again."
+                  : "Something went wrong while building your account intelligence. Our team has been notified."}
               </div>
 
               {isNoLeads && (
@@ -890,7 +870,7 @@ export default function SearchDetailPage() {
 
         {/* ── Loading leads ── */}
         {isCompleted && leadsLoading && (
-          <div style={{ padding: "2rem 1.25rem", color: "#64748b", fontSize: "0.875rem" }}>Loading leads…</div>
+          <div style={{ padding: "2rem 1.25rem", color: "#64748b", fontSize: "0.875rem" }}>Loading accounts…</div>
         )}
 
         {/* ── No leads ── */}

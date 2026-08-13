@@ -74,8 +74,9 @@ export default function LoginPage() {
         {/* Brand */}
         <div style={{ textAlign: "center", marginBottom: "2rem" }}>
           <div style={S.logoBox}>L</div>
+          <div style={S.eyebrow}>Account Opportunity Intelligence</div>
           <h1 style={S.h1}>Sign in to your LeadLens workspace</h1>
-          <p style={S.sub}>Your B2B opportunity monitor</p>
+          <p style={S.sub}>Know which B2B accounts to work now — and why.</p>
         </div>
 
         {authUnavailable && (
@@ -192,6 +193,15 @@ const S = {
     color: "#64748b",
     fontSize: "0.8rem",
     margin: 0,
+  } as React.CSSProperties,
+  eyebrow: {
+    display: "inline-block",
+    fontSize: "0.62rem",
+    fontWeight: 700,
+    letterSpacing: "0.12em",
+    textTransform: "uppercase",
+    color: "#0284c7",
+    marginBottom: "0.6rem",
   } as React.CSSProperties,
   label: {
     display: "block",

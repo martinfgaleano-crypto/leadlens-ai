@@ -276,6 +276,8 @@ export default function DashboardPage() {
 
   const planLabel    = PLAN_LABELS[profile?.plan ?? "free"] ?? profile?.plan ?? "Free";
   const displayEmail = profile?.email ?? userEmail ?? "—";
+  // Credits are an internal accounting mechanic — keep them out of the customer timeline.
+  const visibleTimeline = timeline.filter(ev => ev.type !== "credits_consumed" && ev.type !== "credits_added");
 
   return (
     <DashboardShell email={displayEmail} onLogout={handleLogout}>
@@ -296,8 +298,7 @@ export default function DashboardPage() {
       <div style={S.statsGrid}>
         <StatCard label="Account"    value={displayEmail} small />
         <StatCard label="Plan"       value={planLabel}  color={profile?.plan === "free" ? "#64748b" : "#0ea5e9"} />
-        <StatCard label="Credits"    value={profile?.credits_remaining ?? 0} />
-        <StatCard label="ICPs"       value={icpCount}   color="#7c3aed" />
+        <StatCard label="Target profiles" value={icpCount} color="#7c3aed" />
         <StatCard label="Monitors"   value={searchCount} />
         <StatCard
           label="Onboarding"
@@ -317,7 +318,7 @@ export default function DashboardPage() {
         />
         <QuickLink
           href="/dashboard/searches"
-          icon="🔍"
+          icon="📡"
           title="Monitors"
           desc={searchCount > 0 ? `${searchCount} monitor${searchCount !== 1 ? "s" : ""} created` : "Track a target market for opportunities"}
           cta="Open Monitors →"
@@ -340,10 +341,10 @@ export default function DashboardPage() {
               {latestReport?.latest_report_job_id && (
                 <span style={{ display: "inline-flex", gap: "0.5rem", flexWrap: "wrap" }}>
                   <Link href={`/results/${latestReport.latest_report_job_id}`} style={{ background: "#0ea5e9", color: "#fff", borderRadius: "0.45rem", padding: "0.4rem 1rem", fontWeight: 700, fontSize: "0.78rem", textDecoration: "none" }}>
-                    Open latest report →
+                    Open latest intelligence →
                   </Link>
                   <Link href={`/results/${latestReport.latest_report_job_id}/brief`} style={{ background: "#0f172a", color: "#fff", borderRadius: "0.45rem", padding: "0.4rem 1rem", fontWeight: 700, fontSize: "0.78rem", textDecoration: "none" }}>
-                    Institutional brief →
+                    Account Brief →
                   </Link>
                 </span>
               )}
@@ -351,7 +352,7 @@ export default function DashboardPage() {
             <div style={{ padding: "1rem 1.25rem", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: "0.75rem" }}>
               {[
                 { label: "Monitors", value: monitors.length, color: "#0f172a" },
-                { label: "Reports ready", value: reportsReady.length, color: "#15803d" },
+                { label: "Briefs ready", value: reportsReady.length, color: "#15803d" },
                 { label: "Processing", value: processing.length, color: "#075985" },
                 { label: "Needs attention", value: needsAttention.length, color: needsAttention.length > 0 ? "#dc2626" : "#64748b" },
                 { label: "Setup incomplete", value: setupIncomplete.length, color: setupIncomplete.length > 0 ? "#d97706" : "#64748b" },
@@ -364,12 +365,12 @@ export default function DashboardPage() {
             </div>
             {(() => {
               const suggestion = setupIncomplete.length > 0
-                ? { icon: "⚙️", text: `Complete setup on ${setupIncomplete.length} monitor${setupIncomplete.length === 1 ? "" : "s"} to unlock reports.`, href: "/dashboard/searches" }
+                ? { icon: "⚙️", text: `Complete setup on ${setupIncomplete.length} monitor${setupIncomplete.length === 1 ? "" : "s"} to unlock account intelligence.`, href: "/dashboard/searches" }
                 : processing.length > 0
-                  ? { icon: "⏳", text: "A report is being generated — it will appear here when ready.", href: "/dashboard/searches" }
+                  ? { icon: "⏳", text: "Your account intelligence is being built — it will appear here when ready.", href: "/dashboard/searches" }
                   : latestReport?.latest_report_job_id
-                    ? { icon: "📊", text: "Your latest report is ready to review.", href: `/results/${latestReport.latest_report_job_id}` }
-                    : { icon: "🚀", text: "Run your first monitor to get your first opportunity report.", href: "/dashboard/searches" };
+                    ? { icon: "📊", text: "Your latest Account Brief is ready to review.", href: `/results/${latestReport.latest_report_job_id}` }
+                    : { icon: "🚀", text: "Run your first monitor to build your first Opportunity Portfolio.", href: "/dashboard/searches" };
               return (
                 <Link href={suggestion.href} style={{ textDecoration: "none" }}>
                   <div style={{ margin: "0 1.25rem 0.85rem", padding: "0.65rem 0.9rem", background: "#f0f9ff", border: "1px solid #bae6fd", borderRadius: "0.55rem", display: "flex", alignItems: "center", gap: "0.6rem" }}>
@@ -389,63 +390,21 @@ export default function DashboardPage() {
         );
       })()}
 
-      {/* Credits card */}
-      <div style={{ ...S.section, marginBottom: "1.25rem" }}>
-        <div style={S.sectionHeader}>
-          <span style={S.sectionTitle}>Credits</span>
-          <span style={{ fontSize: "0.75rem", color: "#94a3b8" }}>Lifetime: {creditLifetime ?? 0}</span>
-        </div>
-        <div style={{ padding: "1rem 1.25rem" }}>
-          {/* Balance */}
-          <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: creditTxns.length > 0 ? "1rem" : 0 }}>
-            <div>
-              <div style={{ fontSize: "2.5rem", fontWeight: 900, color: (creditBalance ?? 0) >= 50 ? "#16a34a" : (creditBalance ?? 0) >= 10 ? "#d97706" : "#dc2626", lineHeight: 1 }}>
-                {creditBalance ?? 0}
-              </div>
-              <div style={{ fontSize: "0.72rem", color: "#94a3b8", marginTop: "0.2rem" }}>available credits</div>
-            </div>
-          </div>
-          {/* Recent transactions */}
-          {creditTxns.length > 0 && (
-            <div>
-              <div style={{ fontSize: "0.7rem", fontWeight: 700, color: "#94a3b8", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: "0.5rem" }}>
-                Recent Activity
-              </div>
-              {creditTxns.map(t => (
-                <div key={t.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.4rem 0", borderBottom: "1px solid #f8fafc", fontSize: "0.8rem" }}>
-                  <span style={{ color: "#64748b" }}>{t.description ?? t.type}</span>
-                  <span style={{ fontWeight: 700, color: t.amount >= 0 ? "#16a34a" : "#dc2626" }}>
-                    {t.amount >= 0 ? "+" : ""}{t.amount}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Search statistics */}
+      {/* Intelligence activity */}
       {searchCount > 0 && (() => {
-        const avgLeads = completedSearches.length > 0
-          ? Math.round(
-              completedSearches.reduce((s, r) => s + (r.process_generated_count ?? 0), 0)
-              / completedSearches.length
-            )
-          : null;
         const lastCompleted = completedSearches[0]?.process_finished_at ?? null;
         return (
           <div style={{ ...S.section, marginBottom: "1.25rem" }}>
             <div style={S.sectionHeader}>
-              <span style={S.sectionTitle}>Search Statistics</span>
+              <span style={S.sectionTitle}>Intelligence activity</span>
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: "0", borderBottom: "none" }}>
               {[
-                { label: "Total Searches",     value: searchCount },
-                { label: "Completed",          value: completedSearches.length },
-                { label: "Credits Spent",      value: totalCreditsSpent },
-                { label: "Avg Leads",          value: avgLeads ?? "—" },
-              ].map((item, i) => (
-                <div key={item.label} style={{ padding: "1rem 1.25rem", borderRight: i < 3 ? "1px solid #f1f5f9" : "none" }}>
+                { label: "Monitors",     value: searchCount },
+                { label: "Briefs ready", value: completedSearches.length },
+                { label: "Target profiles", value: icpCount },
+              ].map((item, i, arr) => (
+                <div key={item.label} style={{ padding: "1rem 1.25rem", borderRight: i < arr.length - 1 ? "1px solid #f1f5f9" : "none" }}>
                   <div style={{ fontSize: "0.68rem", fontWeight: 700, color: "#94a3b8", letterSpacing: "0.07em", textTransform: "uppercase" as const, marginBottom: "0.3rem" }}>
                     {item.label}
                   </div>
@@ -455,7 +414,7 @@ export default function DashboardPage() {
             </div>
             {lastCompleted && (
               <div style={{ padding: "0.6rem 1.25rem", borderTop: "1px solid #f1f5f9", fontSize: "0.75rem", color: "#94a3b8" }}>
-                Last completed: {new Date(lastCompleted).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                Latest brief ready: {new Date(lastCompleted).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
               </div>
             )}
           </div>
@@ -504,13 +463,13 @@ export default function DashboardPage() {
       </div>
 
       {/* Recent Activity timeline */}
-      {timeline.length > 0 && (
+      {visibleTimeline.length > 0 && (
         <div style={{ ...S.section, marginBottom: "1.25rem" }}>
           <div style={S.sectionHeader}>
-            <span style={S.sectionTitle}>Recent Activity</span>
+            <span style={S.sectionTitle}>Recent activity</span>
           </div>
           <div style={{ padding: "0.25rem 0" }}>
-            {timeline.map(ev => {
+            {visibleTimeline.map(ev => {
               const actColors: Record<string, string> = {
                 search_completed: "#16a34a",
                 search_failed:    "#dc2626",
@@ -522,7 +481,7 @@ export default function DashboardPage() {
               const meta = ev.meta ?? {};
               const sub =
                 ev.type === "search_completed"  ? `${meta.leads ?? 0} account${meta.leads !== 1 ? "s" : ""} delivered` :
-                ev.type === "search_failed"      ? "Search failed" :
+                ev.type === "search_failed"      ? "Run failed" :
                 ev.type === "credits_consumed"   ? `-${meta.amount ?? 0} credits` :
                 ev.type === "credits_added"      ? `+${meta.amount ?? 0} credits` :
                 "";
@@ -545,10 +504,10 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Recent searches */}
+      {/* Recent monitors */}
       <div style={S.section}>
         <div style={S.sectionHeader}>
-          <span style={S.sectionTitle}>Recent Searches</span>
+          <span style={S.sectionTitle}>Recent monitors</span>
           {searchCount > 0 && (
             <Link href="/dashboard/searches" style={{ color: "#0ea5e9", fontSize: "0.8rem", fontWeight: 600, textDecoration: "none" }}>
               View all →
@@ -558,7 +517,7 @@ export default function DashboardPage() {
 
         {recentSearches.length === 0 ? (
           <div style={S.emptyState}>
-            <div style={S.emptyIcon}>🔍</div>
+            <div style={S.emptyIcon}>📡</div>
             <div style={S.emptyTitle}>No monitors yet</div>
             <div style={S.emptySub}>
               {icpCount === 0
@@ -575,8 +534,8 @@ export default function DashboardPage() {
         ) : (
           <>
             <div style={S.tableHeader}>
-              <span style={{ ...S.col, flex: 3 }}>Search</span>
-              <span style={{ ...S.col, flex: 1 }}>Leads</span>
+              <span style={{ ...S.col, flex: 3 }}>Monitor</span>
+              <span style={{ ...S.col, flex: 1 }}>Accounts</span>
               <span style={{ ...S.col, flex: 1 }}>Status</span>
               <span style={{ ...S.col, flex: 1.5 }}>Date</span>
               <span style={{ ...S.col, flex: 1 }}></span>
@@ -602,13 +561,13 @@ export default function DashboardPage() {
         )}
       </div>
 
-      {/* Plan upgrade hint (only for free plan) */}
+      {/* Plan hint (only for free plan) */}
       {profile?.plan === "free" && (
         <div style={{ ...S.upgradeHint, marginTop: "1.25rem" }}>
-          <div style={{ fontWeight: 700, color: "#0f172a", fontSize: "0.875rem" }}>Ready to get leads?</div>
+          <div style={{ fontWeight: 700, color: "#0f172a", fontSize: "0.875rem" }}>Ready to build your first Opportunity Portfolio?</div>
           <div style={{ color: "#64748b", fontSize: "0.8rem", marginTop: "0.2rem" }}>
-            Purchase a batch from the{" "}
-            <Link href="/demo-pipeline" style={{ color: "#0ea5e9", fontWeight: 600, textDecoration: "none" }}>
+            Choose a plan on the{" "}
+            <Link href="/" style={{ color: "#0ea5e9", fontWeight: 600, textDecoration: "none" }}>
               pricing page
             </Link>{" "}
             to get started.
@@ -645,12 +604,14 @@ function QuickLink({ href, icon, title, desc, cta }: { href: string; icon: strin
 
 // ─── Plan display labels ──────────────────────────────────────────────────────
 
+// Canonical tier display names (Commercial Continuity Contract). No prices here —
+// prices live only in the server catalog; the legacy $29/$79/$149 labels were stale.
 const PLAN_LABELS: Record<string, string> = {
   free:     "Free",
-  sample:   "Sample ($7)",
-  starter:  "Starter ($29)",
-  standard: "Standard ($79)",
-  pro:      "Pro ($149)",
+  sample:   "Preview",
+  starter:  "Brief",
+  standard: "Intelligence",
+  pro:      "Premium",
 };
 
 // ─── Styles ──────────────────────────────────────────────────────────────────

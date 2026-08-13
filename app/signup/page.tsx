@@ -108,8 +108,9 @@ export default function SignupPage() {
         {/* Brand */}
         <div style={{ textAlign: "center", marginBottom: "2rem" }}>
           <div style={S.logoBox}>L</div>
-          <h1 style={S.h1}>Create your account</h1>
-          <p style={S.sub}>Find the B2B accounts worth contacting — and know exactly why</p>
+          <div style={S.eyebrow}>Account Opportunity Intelligence</div>
+          <h1 style={S.h1}>Create your LeadLens account</h1>
+          <p style={S.sub}>Find the B2B accounts worth working now — and the evidence behind each one.</p>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -240,6 +241,16 @@ const S = {
     color: "#64748b",
     fontSize: "0.8rem",
     margin: 0,
+    lineHeight: 1.5,
+  } as React.CSSProperties,
+  eyebrow: {
+    display: "inline-block",
+    fontSize: "0.62rem",
+    fontWeight: 700,
+    letterSpacing: "0.12em",
+    textTransform: "uppercase",
+    color: "#0284c7",
+    marginBottom: "0.6rem",
   } as React.CSSProperties,
   label: {
     display: "block",
