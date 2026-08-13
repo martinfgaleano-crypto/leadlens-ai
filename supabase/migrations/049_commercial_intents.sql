@@ -24,16 +24,19 @@ create table if not exists public.commercial_intents (
 create index if not exists commercial_intents_user_created_idx
   on public.commercial_intents (user_id, created_at desc);
 
+drop trigger if exists commercial_intents_set_updated_at on public.commercial_intents;
+create trigger commercial_intents_set_updated_at
+  before update on public.commercial_intents
+  for each row execute function set_updated_at();
+
 alter table public.commercial_intents enable row level security;
 
 drop policy if exists "commercial_intents_owner_select" on public.commercial_intents;
 create policy "commercial_intents_owner_select" on public.commercial_intents
   for select to authenticated using (auth.uid() = user_id);
 
+-- Writes are server-only through /api/commercial-intents. The service role
+-- bypasses RLS after it verifies the customer's JWT. This prevents a browser
+-- from forcing status transitions or assigning linkage fields directly.
 drop policy if exists "commercial_intents_owner_insert" on public.commercial_intents;
-create policy "commercial_intents_owner_insert" on public.commercial_intents
-  for insert to authenticated with check (auth.uid() = user_id);
-
 drop policy if exists "commercial_intents_owner_update" on public.commercial_intents;
-create policy "commercial_intents_owner_update" on public.commercial_intents
-  for update to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id);

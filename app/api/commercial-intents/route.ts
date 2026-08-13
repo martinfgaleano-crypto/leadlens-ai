@@ -43,6 +43,7 @@ export async function POST(req: NextRequest) {
     status: "captured",
   }).select("id, product_code, status, created_at").single();
   if (error) return NextResponse.json({ error: "Commercial intent could not be saved." }, { status: 503 });
+  console.log(`[analytics] ${JSON.stringify({ event: "commercial_intent_created", user_id: auth.user.id, intent_id: data.id, product_code: data.product_code, ts: new Date().toISOString() })}`);
   return NextResponse.json({ intent: data }, { status: 201 });
 }
 

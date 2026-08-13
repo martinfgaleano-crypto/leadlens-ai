@@ -22,6 +22,8 @@ const EVENT_NAMES = [
   "commercial_intent_captured", "account_created", "email_verified", "login_completed",
   "password_recovery_requested", "password_reset_completed", "dashboard_first_view",
   "first_usable_opportunity_delivered",
+  "plan_selected", "commercial_intent_created", "auth_started", "auth_completed",
+  "job_started", "portfolio_ready", "brief_ready",
   ...CONVERSION_EVENTS,
 ] as const;
 

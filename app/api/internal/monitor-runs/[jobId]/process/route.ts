@@ -3,6 +3,7 @@ import { runLeadLensPipeline } from "@/lib/pipeline";
 import { completeSnapshot, failSnapshot, getSnapshot } from "@/lib/storage/snapshot-store";
 import { fetchOnboardingDataForSearch, normalizeRunPlan } from "@/lib/monitor/run-jobs";
 import { recordMonitorRunUsage } from "@/lib/usage/usage-events";
+import { recordFirstUsableOpportunity } from "@/lib/analytics/customer-lifecycle";
 
 // ── POST /api/internal/monitor-runs/[jobId]/process ───────────────────────────
 // Internal processor: executes the pipeline for an EXISTING processing
@@ -92,7 +93,7 @@ export async function POST(
 
   const { data: search } = await db
     .from("lead_searches")
-    .select("id")
+    .select("id, user_id")
     .eq("id", searchId)
     .single();
 
@@ -112,6 +113,10 @@ export async function POST(
   try {
     const report = await runLeadLensPipeline({ onboardingData, plan, jobId, searchId });
     await completeSnapshot(jobId, plan, report, searchId);
+    if (search.user_id) {
+      const milestone = await recordFirstUsableOpportunity({ db, userId: search.user_id as string, report });
+      console.log(`[analytics] first-usable job=${jobId} result=${milestone}`);
+    }
     console.log(`[internal/process] completed job=${jobId} hot=${report.hot_count} total=${report.total_leads}`);
     // Soft usage tracking — no deduction (see lib/usage/usage-events.ts).
     // initiated_by is unknown at processor level in v0; recorded as "customer"

@@ -68,6 +68,7 @@ export default function LoginPage() {
         setError("Your account is ready, but we could not save your selected plan. Please try again.");
         return;
       }
+      void fetch("/api/events", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ event: "auth_completed", product_code: flow?.product_code, meta: { locale: flow?.locale ?? "en" } }) });
       // Hard navigation deliberately bypasses stale App Router/RSC state from
       // older deployments. The destination is same-origin and server-checked.
       window.location.replace(target.action === "redirect" ? target.to : (flow?.return_to ?? "/dashboard"));

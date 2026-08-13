@@ -76,6 +76,7 @@ export default function SignupPage() {
         setError("Your account was created, but we could not save your selected plan. Please sign in and try again.");
         return;
       }
+      void fetch("/api/events", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ event: "auth_completed", product_code: flow?.product_code, meta: { locale: flow?.locale ?? "en", method: "signup" } }) });
       setLoading(false);
       router.replace(flow?.return_to ?? "/dashboard");
       return;
