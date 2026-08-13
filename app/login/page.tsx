@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { getSupabaseClient } from "@/lib/supabase/client";
 import { establishAdminSession, resolveLoginTarget } from "@/lib/admin/admin-bootstrap";
+import { commercialFlowQuery, parseCommercialFlowState, persistCommercialIntent, type CommercialFlowState } from "@/lib/commercial/customer-flow";
 
 // Structural fail-safe: the login page is a PURE STATIC FORM. It performs NO
 // session discovery on mount — nothing async runs before or around the render,
@@ -32,12 +33,14 @@ export default function LoginPage() {
   const [authUnavailable, setAuthUnavailable] = useState(false);
   const [verified, setVerified] = useState(false);
   const [verifyFailed, setVerifyFailed] = useState(false);
+  const [flow, setFlow] = useState<CommercialFlowState | null>(null);
 
   // Query banners and configuration checks run after the unconditional form
   // render. They never perform session discovery or gate the UI.
   useEffect(() => {
     if (!getSupabaseClient()) setAuthUnavailable(true);
     const params = new URLSearchParams(window.location.search);
+    setFlow(parseCommercialFlowState(params));
     setVerified(params.get("verified") === "1");
     setVerifyFailed(params.get("error") === "verification-failed");
   }, []);
@@ -59,9 +62,15 @@ export default function LoginPage() {
         return;
       }
       const target = resolveLoginTarget(true, bridge);
+      const intentSaved = await persistCommercialIntent(data.session.access_token, flow);
+      if (!intentSaved) {
+        setLoading(false);
+        setError("Your account is ready, but we could not save your selected plan. Please try again.");
+        return;
+      }
       // Hard navigation deliberately bypasses stale App Router/RSC state from
       // older deployments. The destination is same-origin and server-checked.
-      window.location.replace(target.action === "redirect" ? target.to : "/dashboard");
+      window.location.replace(target.action === "redirect" ? target.to : (flow?.return_to ?? "/dashboard"));
     } catch {
       setLoading(false);
       setError("Network error. Please try again.");
@@ -137,11 +146,14 @@ export default function LoginPage() {
           <button type="submit" disabled={loading} style={loading ? S.btnDisabled : S.btn}>
             {loading ? "Signing in…" : "Sign in"}
           </button>
+          <div style={{ textAlign: "right", marginTop: "0.75rem" }}>
+            <Link href={`/forgot-password${commercialFlowQuery(flow)}`} style={S.link}>Forgot your password?</Link>
+          </div>
         </form>
 
         <p style={S.footer}>
           Don&apos;t have an account?{" "}
-          <Link href="/signup" style={S.link}>Create one →</Link>
+          <Link href={`/signup${commercialFlowQuery(flow)}`} style={S.link}>Create one →</Link>
         </p>
       </div>
     </div>

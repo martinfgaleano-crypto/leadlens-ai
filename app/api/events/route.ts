@@ -19,6 +19,9 @@ const EVENT_NAMES = [
   "upgrade_viewed", "upgrade_started", "upgrade_completed",
   "monitor_interest", "strategic_interest", "agency_interest",
   "refund_requested", "redelivery_requested",
+  "commercial_intent_captured", "account_created", "email_verified", "login_completed",
+  "password_recovery_requested", "password_reset_completed", "dashboard_first_view",
+  "first_usable_opportunity_delivered",
   ...CONVERSION_EVENTS,
 ] as const;
 
@@ -26,6 +29,7 @@ const EVENT_NAMES = [
 // are server/domain events and must never be accepted from a public caller.
 const SERVER_ONLY_EVENTS = new Set<string>([
   "purchase_completed", "upgrade_completed", "refund_requested", "redelivery_requested",
+  "first_usable_opportunity_delivered",
 ]);
 
 const eventSchema = z.object({

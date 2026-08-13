@@ -1,8 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getSupabaseClient } from "@/lib/supabase/client";
+import { commercialFlowQuery, parseCommercialFlowState, persistCommercialIntent, type CommercialFlowState } from "@/lib/commercial/customer-flow";
 
 type SignupState = "form" | "check-email";
 const LOGIN_BUILD = "auth-nonblocking-v4";
@@ -15,6 +16,9 @@ export default function SignupPage() {
   const [isDuplicate, setIsDuplicate] = useState(false);
   const [loading, setLoading]     = useState(false);
   const [view, setView]           = useState<SignupState>("form");
+  const [flow, setFlow]           = useState<CommercialFlowState | null>(null);
+
+  useEffect(() => setFlow(parseCommercialFlowState(new URLSearchParams(window.location.search))), []);
 
   // PURE STATIC FORM — no session discovery on mount. Nothing async runs before
   // the form renders, so it can never be blocked by a session/loading state.
@@ -34,6 +38,9 @@ export default function SignupPage() {
     const { data, error: authError } = await supabase.auth.signUp({
       email: email.trim(),
       password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback?type=signup${commercialFlowQuery(flow).replace("?", "&")}`,
+      },
     });
 
     if (authError) {
@@ -63,8 +70,14 @@ export default function SignupPage() {
     // Create profile now and go to dashboard.
     if (session && user) {
       await ensureProfile(supabase, user.id, user.email ?? email.trim());
+      const intentSaved = await persistCommercialIntent(session.access_token, flow);
+      if (!intentSaved) {
+        setLoading(false);
+        setError("Your account was created, but we could not save your selected plan. Please sign in and try again.");
+        return;
+      }
       setLoading(false);
-      router.replace("/dashboard");
+      router.replace(flow?.return_to ?? "/dashboard");
       return;
     }
 
@@ -85,7 +98,7 @@ export default function SignupPage() {
             <p style={{ ...S.sub, lineHeight: 1.6 }}>
               We sent a confirmation link to <strong style={{ color: "#0f172a" }}>{email}</strong>.
               Click it to activate your account, then{" "}
-              <Link href="/login" style={S.link}>sign in</Link>.
+              <Link href={`/login${commercialFlowQuery(flow)}`} style={S.link}>sign in</Link>.
             </p>
           </div>
           <p style={{ textAlign: "center", color: "#94a3b8", fontSize: "0.75rem" }}>
@@ -149,7 +162,7 @@ export default function SignupPage() {
             <div style={S.errorBox}>
               <strong>This email is already registered.</strong>
               {" "}
-              <Link href="/login" style={{ color: "#dc2626", fontWeight: 700 }}>
+              <Link href={`/login${commercialFlowQuery(flow)}`} style={{ color: "#dc2626", fontWeight: 700 }}>
                 Log in instead →
               </Link>
             </div>
@@ -170,7 +183,7 @@ export default function SignupPage() {
 
         <p style={S.footer}>
           Already have an account?{" "}
-          <Link href="/login" style={S.link}>Sign in →</Link>
+          <Link href={`/login${commercialFlowQuery(flow)}`} style={S.link}>Sign in →</Link>
         </p>
       </div>
     </div>

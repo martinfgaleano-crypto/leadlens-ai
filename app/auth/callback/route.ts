@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { commercialFlowQuery, parseCommercialFlowState } from "@/lib/commercial/customer-flow";
 
 /**
  * GET /auth/callback
@@ -14,6 +15,16 @@ export async function GET(req: NextRequest) {
   const { searchParams, origin } = new URL(req.url);
   const code = searchParams.get("code");
   const type = searchParams.get("type"); // "signup" | "recovery" | "magiclink"
+  const flowQuery = commercialFlowQuery(parseCommercialFlowState(searchParams));
+
+  // Recovery needs the browser client to retain the exchanged session so it
+  // can call updateUser. A server-only exchange would discard that session on
+  // redirect because this app does not use the Supabase SSR cookie adapter.
+  if (code && type === "recovery") {
+    const recovery = new URLSearchParams({ code });
+    if (flowQuery) new URLSearchParams(flowQuery.slice(1)).forEach((value, key) => recovery.set(key, value));
+    return NextResponse.redirect(`${origin}/reset-password?${recovery.toString()}`);
+  }
 
   if (code && process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     const supabase = createClient(
@@ -24,12 +35,9 @@ export async function GET(req: NextRequest) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
-      // Password reset — send to dashboard or a reset-password page if we have one
-      if (type === "recovery") {
-        return NextResponse.redirect(`${origin}/dashboard`);
-      }
       // Email verification success — tell login page to show success banner
-      return NextResponse.redirect(`${origin}/login?verified=1`);
+      const suffix = flowQuery ? `&${flowQuery.slice(1)}` : "";
+      return NextResponse.redirect(`${origin}/login?verified=1${suffix}`);
     }
   }
 

@@ -6,6 +6,7 @@ import DashboardShell from "@/app/dashboard/_components/DashboardShell";
 import { getSupabaseClient } from "@/lib/supabase/client";
 import { buildTimeline } from "@/lib/activity/build-timeline";
 import type { ActivityEvent } from "@/lib/activity/build-timeline";
+import { buildCustomerDashboardView } from "@/lib/dashboard/customer-dashboard-view";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -278,6 +279,7 @@ export default function DashboardPage() {
   const displayEmail = profile?.email ?? userEmail ?? "—";
   // Credits are an internal accounting mechanic — keep them out of the customer timeline.
   const visibleTimeline = timeline.filter(ev => ev.type !== "credits_consumed" && ev.type !== "credits_added");
+  const customerView = buildCustomerDashboardView({ onboarding_completed: Boolean(profile?.onboarding_completed), monitors });
 
   return (
     <DashboardShell email={displayEmail} onLogout={handleLogout}>
@@ -292,6 +294,14 @@ export default function DashboardPage() {
         <p style={{ color: "rgba(224,242,254,0.75)", margin: "0.45rem 0 0", fontSize: "0.875rem", maxWidth: 560 }}>
           Monitor your target market, review account intelligence, and improve every run with feedback.
         </p>
+      </div>
+
+      <div style={{ marginBottom: "1.25rem", padding: "1rem 1.25rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap", background: "#fff", border: "1px solid #e2e8f0", borderRadius: ".75rem" }}>
+        <div>
+          <div style={{ color: "#0284c7", fontSize: ".64rem", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase" }}>Next best action</div>
+          <div style={{ marginTop: ".2rem", color: "#334155", fontSize: ".85rem" }}>{customerView.message}</div>
+        </div>
+        <Link href={customerView.primary_action.href} style={{ padding: ".65rem .9rem", borderRadius: ".5rem", background: "#0f172a", color: "#fff", fontSize: ".78rem", fontWeight: 700, textDecoration: "none" }}>{customerView.primary_action.label} →</Link>
       </div>
 
       {/* Account + plan stat cards */}
