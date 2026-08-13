@@ -43,6 +43,16 @@ export async function POST(req: NextRequest) {
     status: "captured",
   }).select("id, product_code, status, created_at").single();
   if (error) return NextResponse.json({ error: "Commercial intent could not be saved." }, { status: 503 });
+  const { error: lifecycleError } = await auth.db.from("customer_lifecycle_events").upsert({
+    user_id: auth.user.id,
+    event_name: "commercial_intent_created",
+    object_type: "commercial_intent",
+    object_id: data.id,
+    product_code: data.product_code,
+    locale: parsed.data.locale,
+    metadata: {},
+  }, { onConflict: "user_id,event_name,object_type,object_id", ignoreDuplicates: true });
+  if (lifecycleError) console.error("[analytics] commercial_intent_created ledger write failed");
   console.log(`[analytics] ${JSON.stringify({ event: "commercial_intent_created", user_id: auth.user.id, intent_id: data.id, product_code: data.product_code, ts: new Date().toISOString() })}`);
   return NextResponse.json({ intent: data }, { status: 201 });
 }

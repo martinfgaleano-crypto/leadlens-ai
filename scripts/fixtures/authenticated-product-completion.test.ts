@@ -32,6 +32,7 @@ const migration = readFileSync("supabase/migrations/049_commercial_intents.sql",
 const onboardingMigration = readFileSync("supabase/migrations/050_authenticated_onboarding_context.sql", "utf8");
 const lifecycleMigration = readFileSync("supabase/migrations/051_customer_lifecycle_events.sql", "utf8");
 const onboardingRoute = readFileSync("app/api/customer/onboarding/route.ts", "utf8");
+const intentRoute = readFileSync("app/api/commercial-intents/route.ts", "utf8");
 test("recovery callback reaches password form with browser exchange", callback.includes("/reset-password") && reset.includes("exchangeCodeForSession"));
 test("recovery request uses Supabase secure flow", forgot.includes("resetPasswordForEmail"));
 test("new password updates authenticated user", reset.includes("updateUser({ password })"));
@@ -47,11 +48,16 @@ test("onboarding RLS owner policies exist", onboardingMigration.includes("auth.u
 test("onboarding administrative writes are server-only", onboardingMigration.includes("Writes remain server-only") && !onboardingMigration.includes("for update to authenticated"));
 test("onboarding API derives owner from verified JWT", onboardingRoute.includes("db.auth.getUser(token)") && onboardingRoute.includes("user_id: auth.user.id"));
 test("onboarding requires explicit target countries", onboardingRoute.includes("target_countries") && onboardingRoute.includes(".min(1).max(12)"));
+test("onboarding bootstraps missing customer profile server-side", onboardingRoute.includes('from("profiles").upsert') && onboardingRoute.includes('ignoreDuplicates: true'));
+test("onboarding claims intent before persistence", onboardingRoute.includes('status: "onboarding_started"') && onboardingRoute.includes('.eq("status", "captured").select("id")'));
+test("completed onboarding retry returns existing row", onboardingRoute.includes("intent.onboarding_id") && onboardingRoute.includes("idempotent: true"));
 test("lifecycle event idempotency is persisted", lifecycleMigration.includes("unique (user_id, event_name, object_type, object_id)"));
 test("browser cannot forge lifecycle milestone insert", !lifecycleMigration.includes("for insert to authenticated"));
+test("commercial intent emits privacy-safe ledger event", intentRoute.includes('event_name: "commercial_intent_created"') && intentRoute.includes("metadata: {}"));
+test("onboarding emits privacy-safe ledger event", onboardingRoute.includes('event_name: "onboarding_completed"') && onboardingRoute.includes("metadata: {}"));
 const usable = { delivery_readiness: { status: "ready" }, actionability_summary: { act_now: 0, validate_first: 1, monitor: 0, exclude: 0 }, processed_leads: [] } as unknown as LeadLensReport;
 const empty = { delivery_readiness: { status: "blocked" }, actionability_summary: { act_now: 1, validate_first: 0, monitor: 0, exclude: 0 }, processed_leads: [] } as unknown as LeadLensReport;
 test("first value requires usable opportunity", hasUsableOpportunity(usable));
 test("blocked delivery never emits first value", !hasUsableOpportunity(empty));
 
-console.log(`\n${passed}/30 authenticated product assertions passed.`);
+console.log(`\n${passed}/35 authenticated product assertions passed.`);
