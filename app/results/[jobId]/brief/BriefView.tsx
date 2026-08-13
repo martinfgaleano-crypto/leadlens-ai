@@ -43,7 +43,7 @@ const L = (es: boolean) => ({
   filteredOut: es ? "filtradas" : "filtered out",
   selected: es ? "seleccionadas para ti" : "selected for you",
   allocation: es ? "Asignación de esfuerzo" : "Effort allocation",
-  dossiers: es ? "Fichas por Cuenta" : "Account Dossiers",
+  dossiers: es ? "Inteligencia por cuenta" : "Account intelligence",
   whyNow: es ? "Por qué ahora" : "Why now",
   whyCompany: es ? "Por qué esta empresa" : "Why this company",
   whyQuarter: es ? "Por qué este trimestre" : "Why this quarter",
@@ -59,7 +59,8 @@ const L = (es: boolean) => ({
   whatIsnt: es ? "Qué es este informe — y qué no" : "What this brief is — and isn't",
   download: es ? "Descargar PDF" : "Download PDF",
   grade: { strong: es ? "Evidencia sólida" : "Strong evidence", moderate: es ? "Evidencia moderada" : "Moderate evidence", developing: es ? "En desarrollo" : "Developing" } as Record<string, string>,
-  tierChip: { HOT: es ? "PRIORITARIA" : "HOT", WARM: es ? "POSIBLE" : "WARM", COLD: es ? "FRÍA" : "COLD", DISCARD: es ? "DESCARTADA" : "DISCARD", UNSCORED: es ? "SIN PUNTAJE" : "UNSCORED" } as Record<string, string>,
+  // Decision states (aligned with the landing product proof) — not lead temperature.
+  tierChip: { HOT: es ? "Priorizar" : "Prioritize", WARM: es ? "Validar" : "Validate", COLD: es ? "Monitorear" : "Monitor", DISCARD: es ? "En espera" : "Hold", UNSCORED: es ? "Sin evaluar" : "Unscored" } as Record<string, string>,
   grounded: es ? "CON EVIDENCIA" : "EVIDENCE-GROUNDED",
   validateFirst: es ? "VALIDAR PRIMERO" : "VALIDATE FIRST",
   fitTiming: es ? "Fit × Timing" : "Fit × Timing",
@@ -73,7 +74,7 @@ const L = (es: boolean) => ({
   noDatedData: es ? "Sin datos con fecha suficientes para graficar — se muestran solo los análisis." : "Not enough dated data to chart — analysis only.",
   chartsTitle: es ? "Visualización del análisis" : "Analysis at a glance",
   fresh: es ? "reciente (≤30d)" : "fresh (≤30d)", recent: es ? "activa (≤90d)" : "recent (≤90d)", stale: es ? "antigua (>90d)" : "stale (>90d)", undated: es ? "sin fecha" : "undated",
-  bucketWord: { hot: es ? "prioritarias" : "hot", warm: es ? "posibles" : "warm", cold: es ? "frías" : "cold", discard: es ? "descartadas" : "discard" } as Record<string, string>,
+  bucketWord: { hot: es ? "priorizar" : "prioritize", warm: es ? "validar" : "validate", cold: es ? "monitorear" : "monitor", discard: es ? "en espera" : "hold" } as Record<string, string>,
   basis: {
     fact: es ? "Verificado" : "Verified", inference: es ? "Análisis" : "Analysis",
     hypothesis: es ? "Hipótesis" : "Hypothesis", recommendation: es ? "Recomendación" : "Recommendation",
@@ -207,7 +208,9 @@ export default function BriefView({ report, experience }: { report: Institutiona
   const wrap: React.CSSProperties = { maxWidth: 880, margin: "0 auto", padding: "28px 20px 60px", fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif", color: "#0f172a" };
   const sec: React.CSSProperties = { background: "#fff", border: "1px solid #e8edf3", borderRadius: 12, padding: "22px 26px", marginBottom: 18, boxShadow: "0 1px 2px rgba(15,23,42,0.03)" };
   const h2: React.CSSProperties = { fontSize: 11, fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "#64748b", margin: "0 0 12px" };
-  const tierColor = (t: string) => t === "HOT" ? "#dc2626" : t === "WARM" ? "#d97706" : t === "COLD" ? "#0284c7" : "#94a3b8";
+  // Restrained decision palette (Prioritize=blue, Validate=amber, Monitor=slate,
+  // Hold=light) — replaces the red "hot lead" scale to match the landing.
+  const tierColor = (t: string) => t === "HOT" ? "#0284c7" : t === "WARM" ? "#b45309" : t === "COLD" ? "#64748b" : "#94a3b8";
 
   return (
     <div style={{ background: "#f6f8fb", minHeight: "100vh" }}>
@@ -315,8 +318,8 @@ export default function BriefView({ report, experience }: { report: Institutiona
             {d.risks.length > 0 && <div style={{ marginTop: 10 }}><div style={{ fontSize: 10, fontWeight: 800, color: "#94a3b8", textTransform: "uppercase" }}>{t.risks}</div>{d.risks.map((rk, j) => <ClaimP key={j} c={rk} />)}</div>}
             {d.hypotheses.length > 0 && <div style={{ marginTop: 10 }}><div style={{ fontSize: 10, fontWeight: 800, color: "#94a3b8", textTransform: "uppercase" }}>{t.validate}</div>{d.hypotheses.map((h, j) => <ClaimP key={j} c={h} />)}</div>}
             {d.playbook && (
-              <div style={{ marginTop: 10, background: "#fef2f2", borderRadius: 8, padding: "10px 14px" }}>
-                <div style={{ fontSize: 10, fontWeight: 800, color: "#dc2626", textTransform: "uppercase", marginBottom: 4 }}>{t.approach}</div>
+              <div style={{ marginTop: 10, background: "#f8fafc", border: "1px solid #eef2f7", borderRadius: 8, padding: "10px 14px" }}>
+                <div style={{ fontSize: 10, fontWeight: 800, color: "#64748b", textTransform: "uppercase", marginBottom: 4 }}>{t.approach}</div>
                 {Object.entries(d.playbook).map(([k, v]) => <p key={k} style={{ fontSize: 12.5, margin: "3px 0", color: "#334155" }}><strong style={{ textTransform: "capitalize" }}>{k.replace(/_/g, " ")}:</strong> {v}</p>)}
               </div>
             )}
