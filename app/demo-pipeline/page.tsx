@@ -25,12 +25,12 @@ const COPY = {
     heroH2: "And the evidence behind every opportunity.",
     heroSub: "Your team can't work every account. LeadLens shows which ones deserve attention now — and the evidence behind the decision.",
     heroCTA: "Get started",
-    heroPriceNote: "From $7 · one-time · no card to explore the sample",
+    heroPriceNote: "Paid plans start at $7, one-time · viewing the sample is free — no card needed.",
     heroSeeAll: "View sample",
     heroNote: "No contact databases. No email lists. Just commercial intelligence.",
     proofLabels: [["5","account briefs"],["6–8","buyer segments"],["24–48h","delivery"],["Evidence","+ counterevidence"]] as [string,string][],
     howTag: "How it works",
-    howTitle: "ICP (Ideal Customer Profile) in. Commercial intelligence out.",
+    howTitle: "From your ideal customer profile to a decision — in three steps.",
     steps: [
       ["1","Describe your ICP","Tell us what you sell, who you sell to, and what makes a great customer. Takes 5 minutes."],
       ["2","We map your market","LeadLens identifies 6–8 buyer segments — including ones you haven't considered. Then finds real companies in each."],
@@ -224,6 +224,9 @@ const COPY = {
     sampleBridgeFreeDemo: "Preview the report format",
     sampleBridgeSamplePack: "Get an Opportunity Report — from $7",
     samplePreviewDisclaimer: "This preview uses sample data to show the report format. Real Opportunity Portfolios include researched companies, verified signals, and scored briefs.",
+    sampleTeaserText: "Want the full reasoning behind a decision? See a complete Account Brief — the change, the evidence and counterevidence, what to validate, and the decision.",
+    sampleTeaserCTA: "View full sample →",
+    sampleTeaserNote: "Illustrative synthetic sample — no real company data.",
     trustItems: ["Source-verified signals", "Human-reviewed output", "No contact databases", "7-day refund policy"] as string[],
     afterPurchaseTitle: "After you buy:",
     afterPurchaseSteps: [
@@ -240,6 +243,15 @@ const COPY = {
     checkoutEarlyBanner: "Checkout is in final review. Preview the sample report format while you wait.",
     comparisonTag: "How we compare",
     comparisonTitle: "LeadLens is not a database. It's a decision.",
+    diffLede: { pre: "Databases tell you who exists. Signal tools tell you what happened. LeadLens builds the ", emph: "case", post: " for whether an account is worth your team's attention — and what supports it." },
+    diffOldLabel: "Most tools give you",
+    diffOldItems: ["Company", "Industry", "Size", "Contacts"],
+    diffOldFoot: "Static account data.",
+    diffNewLabel: "LeadLens adds",
+    diffNewItems: ["What Changed", "Evidence & counterevidence", "Fit & Timing", "A decision + what to validate"],
+    diffNewFoot: "The case for the account — and against.",
+    diffProofBold: "Don't trust a score — inspect the reasoning.",
+    diffProofRest: " Every priority comes with the evidence, its limits, and what to validate before you act.",
     comparisonHeaders: ["", "Google", "Apollo / ZoomInfo", "Clay", "LeadLens"] as string[],
     comparisonRows: [
       ["What you get", "Pages and links", "Contact records to filter", "Data infrastructure", "Ranked opportunity briefs"],
@@ -310,12 +322,12 @@ const COPY = {
     heroH2: "Y la evidencia detrás de cada oportunidad.",
     heroSub: "Tu equipo no puede trabajar todas las cuentas. LeadLens muestra cuáles merecen atención ahora — y la evidencia detrás de la decisión.",
     heroCTA: "Comenzar",
-    heroPriceNote: "Desde $7 · pago único · sin tarjeta para ver la muestra",
+    heroPriceNote: "Los planes de pago desde $7, pago único · ver la muestra es gratis — sin tarjeta.",
     heroSeeAll: "Ver muestra",
     heroNote: "Sin bases de datos de contactos. Sin listas de emails. Solo inteligencia comercial.",
     proofLabels: [["5","account briefs"],["6–8","segmentos de compradores"],["24–48h","entrega"],["Evidencia","+ contraevidencia"]] as [string,string][],
     howTag: "Cómo funciona",
-    howTitle: "ICP (Perfil de Cliente Ideal) adentro. Inteligencia comercial afuera.",
+    howTitle: "De tu perfil de cliente ideal a una decisión — en tres pasos.",
     steps: [
       ["1","Describe tu ICP","Cuéntanos qué vendes, a quién y qué hace un gran cliente. Toma 5 minutos."],
       ["2","Mapeamos tu mercado","LeadLens identifica 6–8 segmentos de compradores, incluidos algunos que quizás no habías considerado. Luego encuentra empresas reales en cada segmento."],
@@ -509,6 +521,9 @@ const COPY = {
     sampleBridgeFreeDemo: "Ver el formato del Opportunity Portfolio",
     sampleBridgeSamplePack: "Obtener Opportunity Report — desde $7",
     samplePreviewDisclaimer: "Esta vista previa usa datos de ejemplo para mostrar la estructura del Opportunity Portfolio. Para un Opportunity Portfolio real con señales verificadas, compra un Opportunity Portfolio.",
+    sampleTeaserText: "¿Quieres el razonamiento completo detrás de una decisión? Mira un Account Brief completo — el cambio, la evidencia y la contraevidencia, qué validar y la decisión.",
+    sampleTeaserCTA: "Ver muestra completa →",
+    sampleTeaserNote: "Muestra sintética ilustrativa — sin datos de empresas reales.",
     trustItems: ["Señales verificadas en fuentes", "Output revisado por humanos", "Sin bases de datos de contactos", "Política de reembolso de 7 días"] as string[],
     afterPurchaseTitle: "Después de comprar:",
     afterPurchaseSteps: [
@@ -525,6 +540,15 @@ const COPY = {
     checkoutEarlyBanner: "El checkout está en revisión final. Puedes ver el formato del Opportunity Portfolio de muestra mientras esperas.",
     comparisonTag: "Cómo nos comparamos",
     comparisonTitle: "LeadLens no es una base de datos. Es una decisión.",
+    diffLede: { pre: "Las bases de datos te dicen quién existe. Las herramientas de señales te dicen qué pasó. LeadLens construye el ", emph: "caso", post: " sobre si una cuenta merece la atención de tu equipo — y qué lo respalda." },
+    diffOldLabel: "La mayoría de herramientas te dan",
+    diffOldItems: ["Empresa", "Industria", "Tamaño", "Contactos"],
+    diffOldFoot: "Datos estáticos de la cuenta.",
+    diffNewLabel: "LeadLens añade",
+    diffNewItems: ["Qué cambió", "Evidencia y contraevidencia", "Fit y Timing", "Una decisión + qué validar"],
+    diffNewFoot: "El caso a favor de la cuenta — y en contra.",
+    diffProofBold: "No confíes en un puntaje — inspecciona el razonamiento.",
+    diffProofRest: " Cada prioridad viene con la evidencia, sus límites y qué validar antes de actuar.",
     comparisonHeaders: ["", "Google", "Apollo / ZoomInfo", "Clay", "LeadLens"] as string[],
     comparisonRows: [
       ["Qué obtienes", "Páginas y enlaces", "Registros de contactos para filtrar", "Infraestructura de datos", "Briefs de oportunidad rankeados"],
@@ -595,12 +619,12 @@ const COPY = {
     heroH2: "E a evidência por trás de cada oportunidade.",
     heroSub: "Sua equipe não pode trabalhar todas as contas. A LeadLens mostra quais merecem atenção agora — e a evidência por trás da decisão.",
     heroCTA: "Começar",
-    heroPriceNote: "A partir de $7 · pagamento único · sem cartão para ver a amostra",
+    heroPriceNote: "Planos pagos a partir de $7, pagamento único · ver a amostra é grátis — sem cartão.",
     heroSeeAll: "Ver amostra",
     heroNote: "Sem bancos de dados de contatos. Sem listas de e-mails. Apenas inteligência comercial.",
     proofLabels: [["5","account briefs"],["6–8","segmentos de compradores"],["24–48h","entrega"],["Evidência","+ contraevidência"]] as [string,string][],
     howTag: "Como funciona",
-    howTitle: "ICP (Perfil de Cliente Ideal) dentro. Inteligência comercial fora.",
+    howTitle: "Do seu perfil de cliente ideal a uma decisão — em três passos.",
     steps: [
       ["1","Descreva seu ICP","Nos diga o que você vende, para quem e o que faz um ótimo cliente. Leva 5 minutos."],
       ["2","Mapeamos seu mercado","LeadLens identifica 6–8 segmentos de compradores — incluindo alguns que você talvez não tenha considerado. Depois encontra empresas reais em cada segmento."],
@@ -794,6 +818,9 @@ const COPY = {
     sampleBridgeFreeDemo: "Visualizar o formato do Opportunity Portfolio",
     sampleBridgeSamplePack: "Obter Opportunity Report — a partir de $7",
     samplePreviewDisclaimer: "Esta prévia usa dados de exemplo para mostrar a estrutura do Opportunity Portfolio. Para um Opportunity Portfolio real com sinais verificados, compre um Opportunity Portfolio.",
+    sampleTeaserText: "Quer o raciocínio completo por trás de uma decisão? Veja um Account Brief completo — a mudança, a evidência e a contraevidência, o que validar e a decisão.",
+    sampleTeaserCTA: "Ver amostra completa →",
+    sampleTeaserNote: "Amostra sintética ilustrativa — sem dados de empresas reais.",
     trustItems: ["Sinais verificados em fontes", "Output revisado por humanos", "Sem bancos de dados de contatos", "Política de reembolso de 7 dias"] as string[],
     afterPurchaseTitle: "Após a compra:",
     afterPurchaseSteps: [
@@ -810,6 +837,15 @@ const COPY = {
     checkoutEarlyBanner: "O checkout está em revisão final. Visualize o formato do Opportunity Portfolio de exemplo enquanto espera.",
     comparisonTag: "Como nos comparamos",
     comparisonTitle: "LeadLens não é um banco de dados. É uma decisão.",
+    diffLede: { pre: "Bancos de dados dizem quem existe. Ferramentas de sinais dizem o que aconteceu. A LeadLens constrói o ", emph: "caso", post: " sobre se uma conta merece a atenção da sua equipe — e o que o sustenta." },
+    diffOldLabel: "A maioria das ferramentas te dá",
+    diffOldItems: ["Empresa", "Indústria", "Tamanho", "Contatos"],
+    diffOldFoot: "Dados estáticos da conta.",
+    diffNewLabel: "A LeadLens adiciona",
+    diffNewItems: ["O que mudou", "Evidência e contraevidência", "Fit e Timing", "Uma decisão + o que validar"],
+    diffNewFoot: "O caso a favor da conta — e contra.",
+    diffProofBold: "Não confie em uma pontuação — inspecione o raciocínio.",
+    diffProofRest: " Cada prioridade vem com a evidência, seus limites e o que validar antes de agir.",
     comparisonHeaders: ["", "Google", "Apollo / ZoomInfo", "Clay", "LeadLens"] as string[],
     comparisonRows: [
       ["O que você recebe", "Páginas e links", "Registros de contatos para filtrar", "Infraestrutura de dados", "Briefs de oportunidade ranqueados"],
@@ -880,12 +916,12 @@ const COPY = {
     heroH2: "そして、各機会の裏付けとなる根拠を。",
     heroSub: "すべてのアカウントに取り組むことはできません。LeadLensは、今どのアカウントに注力すべきか、その判断の根拠とともに示します。",
     heroCTA: "始める",
-    heroPriceNote: "$7から · 一回払い · サンプルはカード不要",
+    heroPriceNote: "有料プランは$7から・一回払い。サンプルの閲覧は無料 — カード不要。",
     heroSeeAll: "サンプルを見る",
     heroNote: "コンタクトデータベースなし。メールリストなし。コマーシャルインテリジェンスのみ。",
     proofLabels: [["5件","アカウントブリーフ"],["6〜8","購買者セグメント"],["24〜48h","納品"],["エビデンス","+ 反証"]] as [string,string][],
     howTag: "使い方",
-    howTitle: "ICP（理想顧客プロファイル）を入力。コマーシャルインテリジェンスを出力。",
+    howTitle: "理想顧客プロファイルから意思決定まで — 3つのステップで。",
     steps: [
       ["1","ICPを入力","何を販売し、誰に販売し、優れた顧客とは何かをお伝えください。5分で完了します。"],
       ["2","市場をマッピング","LeadLensは6〜8の購買者セグメントを特定します — まだ検討していないものも含めて。各セグメントの実在する企業を見つけます。"],
@@ -1079,6 +1115,9 @@ const COPY = {
     sampleBridgeFreeDemo: "Opportunity Portfolio形式を確認する",
     sampleBridgeSamplePack: "Opportunity Report — $7から",
     samplePreviewDisclaimer: "このプレビューはサンプルデータを使用してOpportunity Portfolioの構造を示しています。検証済みシグナル付きの実際のOpportunity Portfolioには、Opportunity Portfolioをご購入ください。",
+    sampleTeaserText: "意思決定の背後にある完全な根拠をご覧になりたいですか？完全なAccount Briefをご覧ください — 変化、エビデンスと反証、検証すべきこと、そして意思決定。",
+    sampleTeaserCTA: "完全なサンプルを見る →",
+    sampleTeaserNote: "説明用の合成サンプル — 実企業データは含みません。",
     trustItems: ["ソース検証済みシグナル", "人によるレビュー済み出力", "コンタクトデータベースなし", "7日間返金ポリシー"] as string[],
     afterPurchaseTitle: "購入後の流れ：",
     afterPurchaseSteps: [
@@ -1095,6 +1134,15 @@ const COPY = {
     checkoutEarlyBanner: "チェックアウトはローンチ前の最終審査中です。お待ちの間、サンプルOpportunity Portfolioのフォーマットをご確認いただけます。",
     comparisonTag: "比較",
     comparisonTitle: "LeadLensはデータベースではありません。意思決定のツールです。",
+    diffLede: { pre: "データベースは誰が存在するかを、シグナルツールは何が起きたかを教えます。LeadLensは、アカウントがチームの注目に値するか、そして何がそれを裏付けるかについて、", emph: "根拠", post: "を構築します。" },
+    diffOldLabel: "ほとんどのツールが提供するもの",
+    diffOldItems: ["企業", "業界", "規模", "連絡先"],
+    diffOldFoot: "静的なアカウントデータ。",
+    diffNewLabel: "LeadLensが加えるもの",
+    diffNewItems: ["何が変わったか", "エビデンスと反証", "フィットとタイミング", "意思決定 + 検証すべきこと"],
+    diffNewFoot: "アカウントに賛成 — そして反対の根拠。",
+    diffProofBold: "スコアを鵜呑みにせず、根拠を検証してください。",
+    diffProofRest: " すべての優先順位には、エビデンス、その限界、そして行動前に検証すべきことが付きます。",
     comparisonHeaders: ["", "Google", "Apollo / ZoomInfo", "Clay", "LeadLens"] as string[],
     comparisonRows: [
       ["取得できるもの", "ページとリンク", "フィルター用コンタクトレコード", "データインフラ", "ランク付きオポチュニティブリーフ"],
@@ -1402,7 +1450,10 @@ export default function DemoPipelinePage() {
         @media (max-width: 840px) { .ll-hero-grid { grid-template-columns: 1fr; gap: 1.25rem; } .ll-hero-left { text-align: center; display: flex; flex-direction: column; align-items: center; min-width: 0; } .ll-hero-mock { margin-top: 0; width: 100%; min-width: 0; } }
         @media (max-width: 480px) { .ll-hero-mock { overflow: hidden; max-width: 100%; } }
         /* Navbar: single row; section links collapse into a mobile menu (§18–23). */
-        .ll-root { overflow-x: hidden; }
+        /* overflow-x:clip contains horizontal overflow WITHOUT creating a scroll
+           container, so the sticky nav below actually pins (overflow-x:hidden
+           silently breaks position:sticky by making .ll-root scrollable). */
+        .ll-root { overflow-x: clip; }
         .ll-nav-r { flex-wrap: nowrap !important; min-width: 0; }
         .ll-nav-links { display: flex; }
         .ll-nav-lang { display: inline-flex; }
@@ -1411,6 +1462,12 @@ export default function DemoPipelinePage() {
         .ll-nav-burger { display: none; }
         /* Anchor offset so the sticky nav never covers a section heading. */
         section[id], .ll-section { scroll-margin-top: 76px; }
+        /* Pricing anchor lands the heading peek + the 2×2 cards together (§136–142).
+           Larger top margin reveals the title/subhead above the grid while pulling
+           the cards up into the viewport. Tuned smaller on short/mobile viewports. */
+        .ll-price-anchor { scroll-margin-top: 220px; }
+        @media (max-width: 820px) { .ll-price-anchor { scroll-margin-top: 210px; } }
+        @media (max-width: 580px) { .ll-price-anchor { scroll-margin-top: 250px; } }
         @media (max-width: 820px) {
           .ll-nav-links { display: none !important; }
           .ll-nav-signin { display: none !important; }
@@ -1475,7 +1532,6 @@ export default function DemoPipelinePage() {
           .ll-hero-cta-row { flex-direction: column !important; gap: .5rem !important; margin-bottom: .75rem !important; }
           .ll-hero-cta-row button { width: 100% !important; justify-content: center !important; box-sizing: border-box !important; padding-left: 1rem !important; padding-right: 1rem !important; white-space: normal !important; }
           .ll-hero-note    { font-size: .75rem !important; padding: .275rem .875rem !important; margin-bottom: .4rem !important; }
-          .ll-hero-demo-link { font-size: .78rem !important; }
           /* Swap mockups */
           .ll-hero-mock-desktop { display: none !important; }
           .ll-hero-mock-mobile  { display: block !important; }
@@ -1579,13 +1635,14 @@ export default function DemoPipelinePage() {
                 <Btn lg onClick={() => goToForm("standard", "hero")}>{copy.heroCTA}</Btn>
                 <BtnOutline lg onClick={() => { window.location.href = "/sample"; }}>{copy.heroSeeAll}</BtnOutline>
               </div>
-              <p style={{ fontSize: ".8rem", color: "#94a3b8", margin: "0 0 1.1rem" }}>{copy.heroPriceNote}</p>
+              {/* Two concepts kept explicitly separate (§128–132): the paid entry
+                  price, and that the public sample is free to view without a card.
+                  A single redundant "Preview sample report" link was removed so the
+                  hero has exactly one sample action — the "View sample" button. */}
+              <p style={{ fontSize: ".8rem", color: "#94a3b8", margin: "0 0 1.1rem", lineHeight: 1.5 }}>{copy.heroPriceNote}</p>
               <p className="ll-hero-note" style={{ display: "inline-block", fontSize: ".82rem", color: "#64748b", background: "#f0f9ff", border: "1px solid #e0f2fe", borderRadius: 999, padding: ".375rem 1rem", marginBottom: ".75rem" }}>
                 {copy.heroNote}
               </p>
-              <button className="ll-hero-demo-link" onClick={goToDemo} style={{ display: "block", background: "none", border: "none", color: "#94a3b8", fontSize: ".82rem", cursor: "pointer", textDecoration: "underline", padding: ".25rem 0" }}>
-                {copy.tryDemoCTA} →
-              </button>
             </div>
             {/* Right column — signature interactive account workspace */}
             <div className="ll-hero-mock">
@@ -1612,12 +1669,13 @@ export default function DemoPipelinePage() {
         </div>
       </div>
 
-      {/* Curiosity band */}
-      <div style={{ background: "#0f172a", color: "#fff", padding: "2.5rem 1.5rem", textAlign: "center" }}>
-        <p style={{ maxWidth: "42rem", margin: "0 auto", fontSize: "clamp(1.35rem,3vw,1.85rem)", fontWeight: 800, letterSpacing: "-.02em", lineHeight: 1.25 }}>
+      {/* Curiosity band — one punchy transition line into How it works. The
+          category label was removed (already shown in the hero badge + announcement)
+          and the band tightened (§152C/§154): its single job is the question. */}
+      <div style={{ background: "#0f172a", color: "#fff", padding: "1.75rem 1.5rem", textAlign: "center" }}>
+        <p style={{ maxWidth: "42rem", margin: "0 auto", fontSize: "clamp(1.3rem,3vw,1.75rem)", fontWeight: 800, letterSpacing: "-.02em", lineHeight: 1.25 }}>
           {copy.heroCuriosity}
         </p>
-        <p style={{ margin: ".7rem auto 0", color: "#7dd3fc", fontSize: ".9rem", fontWeight: 600 }}>{copy.heroBadge}</p>
       </div>
 
       {/* How it works */}
@@ -1650,31 +1708,30 @@ export default function DemoPipelinePage() {
         <div style={{ ...innerStyle, textAlign: "center" }}>
           <Tag>{copy.samplePreviewTag}</Tag>
           <h2 style={sectionTitleStyle}>{copy.samplePreviewTitle}</h2>
-          <p style={{ color: "#64748b", fontSize: "1.05rem", maxWidth: "36rem", margin: "0 auto 3rem", lineHeight: 1.6 }}>
+          <p style={{ color: "#64748b", fontSize: "1.05rem", maxWidth: "36rem", margin: "0 auto 1.75rem", lineHeight: 1.6 }}>
             {copy.samplePreviewSub}
           </p>
-          {/* Sample data disclaimer */}
-          <p style={{ fontSize: ".8rem", color: "#94a3b8", maxWidth: "36rem", margin: "0 auto 1.5rem", lineHeight: 1.55, background: "#f8fafc", border: "1px solid #f1f5f9", borderRadius: ".5rem", padding: ".5rem .875rem", display: "inline-block" }}>
-            ℹ️ {copy.samplePreviewDisclaimer}
-          </p>
 
-          {/* Report Preview / Sample Pack bridge */}
-          <div style={{ display: "flex", gap: ".75rem", justifyContent: "center", flexWrap: "wrap" as const, marginBottom: "2rem" }}>
-            <button onClick={goToDemo} style={{ display: "inline-flex", alignItems: "center", gap: ".4rem", background: "#f0f9ff", border: "1.5px solid #bae6fd", color: "#0284c7", borderRadius: 999, padding: ".4rem 1.125rem", fontSize: ".8rem", fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
-              📄 {copy.sampleBridgeFreeDemo} →
-            </button>
-            <button onClick={() => goToForm("sample", "sample_bridge")} style={{ display: "inline-flex", alignItems: "center", gap: ".4rem", background: "#fffbeb", border: "1.5px solid #fde68a", color: "#92400e", borderRadius: 999, padding: ".4rem 1.125rem", fontSize: ".8rem", fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
-              ⭐ {copy.sampleBridgeSamplePack} →
-            </button>
-          </div>
-
-          {/* Sample teaser — the full Account Brief lives on /sample */}
+          {/* Primary sample action: the complete synthetic Account Brief on /sample.
+              One clear primary CTA (§135/§159D); the format preview and the $7
+              Opportunity Report follow as explicitly secondary options. The redundant
+              gray disclaimer panel was removed — the synthetic note lives in the card. */}
           <div style={{ maxWidth: "40rem", margin: "0 auto", background: "linear-gradient(180deg,#f8fbff,#fff)", border: "1px solid #e2e8f0", borderRadius: "1rem", padding: "1.75rem 2rem", textAlign: "center" as const }}>
             <p style={{ fontSize: "1.05rem", color: "#334155", lineHeight: 1.6, margin: "0 auto 1.25rem", maxWidth: "34rem" }}>
-              Want the full reasoning behind a decision? See a complete Account Brief — the change, the evidence and counterevidence, what to validate, and the decision.
+              {copy.sampleTeaserText}
             </p>
-            <a href="/sample" style={{ display: "inline-block", background: "#0ea5e9", color: "#fff", borderRadius: ".75rem", padding: ".8rem 1.6rem", fontWeight: 700, fontSize: ".9rem", textDecoration: "none" }}>View full sample →</a>
-            <div style={{ fontSize: ".72rem", color: "#94a3b8", marginTop: ".9rem" }}>Illustrative synthetic sample — no real company data.</div>
+            <a href="/sample" style={{ display: "inline-block", background: "#0ea5e9", color: "#fff", borderRadius: ".75rem", padding: ".8rem 1.6rem", fontWeight: 700, fontSize: ".9rem", textDecoration: "none" }}>{copy.sampleTeaserCTA}</a>
+            <div style={{ fontSize: ".72rem", color: "#94a3b8", marginTop: ".9rem" }}>{copy.sampleTeaserNote}</div>
+          </div>
+
+          {/* Secondary options — clearly subordinate to "View full sample" above */}
+          <div style={{ display: "flex", gap: ".75rem", justifyContent: "center", flexWrap: "wrap" as const, marginTop: "1.5rem" }}>
+            <button onClick={goToDemo} style={{ display: "inline-flex", alignItems: "center", gap: ".4rem", background: "none", border: "none", color: "#64748b", fontSize: ".8rem", fontWeight: 600, cursor: "pointer", fontFamily: "inherit", textDecoration: "underline", textUnderlineOffset: "3px" }}>
+              {copy.sampleBridgeFreeDemo} →
+            </button>
+            <button onClick={() => goToForm("sample", "sample_bridge")} style={{ display: "inline-flex", alignItems: "center", gap: ".4rem", background: "none", border: "none", color: "#64748b", fontSize: ".8rem", fontWeight: 600, cursor: "pointer", fontFamily: "inherit", textDecoration: "underline", textUnderlineOffset: "3px" }}>
+              {copy.sampleBridgeSamplePack} →
+            </button>
           </div>
         </div>
       </section>
@@ -1682,13 +1739,18 @@ export default function DemoPipelinePage() {
       {/* Visualizations */}
 
       {/* Pricing */}
-      <section id="pricing" ref={pricingRef} className="ll-section" style={{ ...sectionStyle, background: "#f8fafc" }}>
+      <section ref={pricingRef} className="ll-section" style={{ ...sectionStyle, background: "#f8fafc" }}>
         <div style={{ ...innerStyle, textAlign: "center" }}>
           <Tag>{copy.pricingTag}</Tag>
           <h2 style={sectionTitleStyle}>{copy.pricingTitle}</h2>
-          <p style={{ color: "#64748b", fontSize: "1.05rem", maxWidth: "36rem", margin: "0 auto 3rem", lineHeight: 1.6 }}>
+          <p style={{ color: "#64748b", fontSize: "1.05rem", maxWidth: "36rem", margin: "0 auto 1.75rem", lineHeight: 1.6 }}>
             {copy.pricingSub}
           </p>
+
+          {/* Scroll anchor: nav "Pricing" and direct /#pricing land here so the
+              heading context AND the pricing cards enter the viewport together —
+              scroll-margin-top clears the sticky nav plus a heading peek (§136–142). */}
+          <span id="pricing" className="ll-price-anchor" aria-hidden style={{ display: "block" }} />
 
           {/* Pricing ladder — clean 2×2 (no 3+1 orphan) */}
           <div className="ll-price-grid">
@@ -1767,27 +1829,27 @@ export default function DemoPipelinePage() {
           <Tag>{copy.comparisonTag}</Tag>
           <h2 style={{ ...sectionTitleStyle, maxWidth: "36rem" }}>{copy.comparisonTitle}</h2>
           <p style={{ color: "#64748b", fontSize: "1.05rem", maxWidth: "38rem", margin: ".75rem 0 0", lineHeight: 1.6 }}>
-            Databases tell you who exists. Signal tools tell you what happened. LeadLens builds the <strong style={{ color: "#0284c7" }}>case</strong> for whether an account is worth your team&rsquo;s attention — and what supports it.
+            {copy.diffLede.pre}<strong style={{ color: "#0284c7" }}>{copy.diffLede.emph}</strong>{copy.diffLede.post}
           </p>
           <div className="ll-diff-grid" style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: "1.25rem", alignItems: "stretch", maxWidth: "52rem", margin: "2.5rem auto 0", textAlign: "left" as const }}>
             <div style={{ background: "#f8fafc", border: "1px solid #eef2f7", borderRadius: "1rem", padding: "1.5rem" }}>
-              <div style={{ fontSize: ".62rem", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase" as const, color: "#94a3b8", marginBottom: ".9rem" }}>Most tools give you</div>
-              {["Company", "Industry", "Size", "Contacts"].map(x => (
+              <div style={{ fontSize: ".62rem", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase" as const, color: "#94a3b8", marginBottom: ".9rem" }}>{copy.diffOldLabel}</div>
+              {copy.diffOldItems.map(x => (
                 <div key={x} style={{ fontSize: ".92rem", color: "#64748b", padding: ".3rem 0" }}>{x}</div>
               ))}
-              <div style={{ marginTop: ".8rem", fontSize: ".8rem", color: "#94a3b8", fontStyle: "italic" as const }}>Static account data.</div>
+              <div style={{ marginTop: ".8rem", fontSize: ".8rem", color: "#94a3b8", fontStyle: "italic" as const }}>{copy.diffOldFoot}</div>
             </div>
             <div className="ll-diff-arrow" style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#0ea5e9", fontSize: "1.6rem", fontWeight: 800 }}>→</div>
             <div style={{ background: "linear-gradient(180deg,#f0f9ff,#fff)", border: "1.5px solid #bae6fd", borderRadius: "1rem", padding: "1.5rem", boxShadow: "0 8px 28px rgba(14,165,233,.10)" }}>
-              <div style={{ fontSize: ".62rem", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase" as const, color: "#0284c7", marginBottom: ".9rem" }}>LeadLens adds</div>
-              {["What Changed", "Evidence & counterevidence", "Fit & Timing", "A decision + what to validate"].map(x => (
+              <div style={{ fontSize: ".62rem", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase" as const, color: "#0284c7", marginBottom: ".9rem" }}>{copy.diffNewLabel}</div>
+              {copy.diffNewItems.map(x => (
                 <div key={x} style={{ fontSize: ".92rem", color: "#0f172a", fontWeight: 600, padding: ".3rem 0", display: "flex", gap: ".5rem" }}><span style={{ color: "#0ea5e9", flexShrink: 0 }}>✓</span>{x}</div>
               ))}
-              <div style={{ marginTop: ".8rem", fontSize: ".8rem", color: "#0369a1", fontWeight: 600 }}>The case for the account — and against.</div>
+              <div style={{ marginTop: ".8rem", fontSize: ".8rem", color: "#0369a1", fontWeight: 600 }}>{copy.diffNewFoot}</div>
             </div>
           </div>
           <p style={{ maxWidth: "40rem", margin: "2.25rem auto 0", fontSize: ".98rem", color: "#475569", lineHeight: 1.6 }}>
-            <strong style={{ color: "#0f172a" }}>Don&rsquo;t trust a score — inspect the reasoning.</strong> Every priority comes with the evidence, its limits, and what to validate before you act.
+            <strong style={{ color: "#0f172a" }}>{copy.diffProofBold}</strong>{copy.diffProofRest}
           </p>
         </div>
       </section>
@@ -2792,12 +2854,16 @@ function DecisionPill({ state, small }: { state: string; small?: boolean }) {
 }
 
 function FTE({ fit, timing, evidence }: { fit: string; timing: string; evidence: string }) {
-  const cell = (label: string, val: string) => (
-    <span style={{ display: "inline-flex", alignItems: "baseline", gap: ".28rem" }}>
-      <span style={{ fontSize: ".6rem", color: "#94a3b8", fontWeight: 500, textTransform: "uppercase" as const, letterSpacing: ".03em" }}>{label}</span>
-      <span style={{ fontSize: ".68rem", color: STRENGTH[val].color, fontWeight: STRENGTH[val].weight }}>{val}</span>
-    </span>
-  );
+  const cell = (label: string, val: string) => {
+    // Fallback keeps an unrecognized strength value from crashing the hero.
+    const s = STRENGTH[val] ?? { color: "#475569", weight: 600 };
+    return (
+      <span style={{ display: "inline-flex", alignItems: "baseline", gap: ".28rem" }}>
+        <span style={{ fontSize: ".6rem", color: "#94a3b8", fontWeight: 500, textTransform: "uppercase" as const, letterSpacing: ".03em" }}>{label}</span>
+        <span style={{ fontSize: ".68rem", color: s.color, fontWeight: s.weight }}>{val}</span>
+      </span>
+    );
+  };
   return (
     <div style={{ display: "flex", flexWrap: "wrap" as const, gap: ".1rem .7rem", alignItems: "center" }}>
       {cell("Fit", fit)}{cell("Timing", timing)}{cell("Evidence", evidence)}
@@ -2836,7 +2902,7 @@ const WS_ACCOUNTS: WsAccount[] = [
     next: "Corroborate and confirm scope before prioritizing." },
   { rank: 3, name: "Atlas Clinics Group", seg: "Multi-location healthcare · US West", state: "monitor", fresh: "21d",
     changed: "Announced two new clinic locations", changedAge: "21d ago",
-    fit: "Moderate", timing: "Limited", evidence: "Developing", ladder: 1,
+    fit: "Moderate", timing: "Limited", evidence: "Limited", ladder: 1,
     sources: [{ type: "Local news", note: "two clinic locations", age: "21d", rel: "Direct" }, { type: "Company site", note: "locations page", age: "24d", rel: "Context" }],
     limiters: [{ limit: "No recent operations or sourcing event", validate: "Watch for an operations or vendor signal" }],
     decisionWhy: "Relevant account, but timing evidence is thin.",
