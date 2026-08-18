@@ -1438,6 +1438,23 @@ export default function DemoPipelinePage() {
         /* Desktop: show full mockup, hide mobile card */
         .ll-hero-mock-desktop { display: block; }
         .ll-hero-mock-mobile  { display: none; }
+        /* Signature account workspace: rail + panel on desktop/tablet, chips on phone */
+        .ll-ws-body { display: grid; grid-template-columns: 164px 1fr; }
+        .ll-ws-chips { display: none; }
+        .ll-ws-rail button:focus-visible, .ll-ws-chips button:focus-visible { outline: 2px solid #38bdf8; outline-offset: 2px; }
+        @media (max-width: 560px) {
+          .ll-ws-body { grid-template-columns: 1fr; }
+          .ll-ws-rail { display: none !important; }
+          .ll-ws-chips { display: flex !important; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .ll-ws-rail button, .ll-ws-chips button { transition: none !important; }
+        }
+        /* Pricing: balanced 2×2, single column on phones (fixes 3+1 orphan) */
+        .ll-price-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 1.25rem; max-width: 46rem; margin: 0 auto; align-items: stretch; }
+        @media (max-width: 560px) { .ll-price-grid { grid-template-columns: 1fr; max-width: 24rem; } }
+        /* Differentiation contrast: side-by-side on desktop, stacked with a downward arrow on phones */
+        @media (max-width: 620px) { .ll-diff-grid { grid-template-columns: 1fr !important; } .ll-diff-arrow { transform: rotate(90deg); } }
         @media (max-width: 640px) {
           /* Sections */
           .ll-section { padding: 2.25rem 1rem !important; }
@@ -1565,10 +1582,9 @@ export default function DemoPipelinePage() {
                 {copy.tryDemoCTA} →
               </button>
             </div>
-            {/* Right column — product mockup (desktop) / preview card (mobile) */}
+            {/* Right column — signature interactive account workspace */}
             <div className="ll-hero-mock">
-              <div className="ll-hero-mock-desktop"><LeadMockupHero /></div>
-              <div className="ll-hero-mock-mobile"><LeadMockupMobile /></div>
+              <AccountWorkspace />
             </div>
           </div>
         </div>
@@ -1821,8 +1837,8 @@ export default function DemoPipelinePage() {
             {copy.pricingSub}
           </p>
 
-          {/* Pricing ladder — 4 tiers: validate → select → prioritize → strategize */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(255px,1fr))", gap: "1.25rem", maxWidth: "80rem", margin: "0 auto", alignItems: "stretch" }}>
+          {/* Pricing ladder — clean 2×2 (no 3+1 orphan) */}
+          <div className="ll-price-grid">
             <PricingCard plan="sample"   featured={false} copy={copy} onSelect={goToForm} />
             <PricingCard plan="starter"  featured={false} copy={copy} onSelect={goToForm} />
             <PricingCard plan="standard" featured={true}  copy={copy} onSelect={goToForm} />
@@ -1897,43 +1913,25 @@ export default function DemoPipelinePage() {
         <div style={{ ...innerStyle }}>
           <Tag>{copy.comparisonTag}</Tag>
           <h2 style={{ ...sectionTitleStyle, maxWidth: "36rem" }}>{copy.comparisonTitle}</h2>
-          <div style={{ overflowX: "auto" as const, marginTop: "2.5rem", borderRadius: "1rem", border: "1px solid #e2e8f0", boxShadow: "0 1px 4px rgba(0,0,0,.05)" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse" as const, minWidth: "520px", fontSize: ".875rem" }}>
-              <thead>
-                <tr style={{ background: "#f8fafc", borderBottom: "2px solid #e2e8f0" }}>
-                  {copy.comparisonHeaders.map((h, i) => (
-                    <th key={i} style={{
-                      padding: ".875rem 1.125rem",
-                      textAlign: i === 0 ? "left" as const : "center" as const,
-                      fontWeight: 700,
-                      color: i === copy.comparisonHeaders.length - 1 ? "#0284c7" : "#475569",
-                      fontSize: i === copy.comparisonHeaders.length - 1 ? ".875rem" : ".8rem",
-                      letterSpacing: ".03em",
-                      background: i === copy.comparisonHeaders.length - 1 ? "#f0f9ff" : "transparent",
-                      borderLeft: i === copy.comparisonHeaders.length - 1 ? "2px solid #bae6fd" : "none",
-                    }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {copy.comparisonRows.map((row, ri) => (
-                  <tr key={ri} style={{ borderBottom: ri < copy.comparisonRows.length - 1 ? "1px solid #f1f5f9" : "none", background: ri % 2 === 0 ? "#fff" : "#fafbfc" }}>
-                    {row.map((cell, ci) => (
-                      <td key={ci} style={{
-                        padding: ".875rem 1.125rem",
-                        textAlign: ci === 0 ? "left" as const : "center" as const,
-                        color: ci === 0 ? "#0f172a" : ci === row.length - 1 ? "#0f172a" : "#94a3b8",
-                        fontWeight: ci === 0 ? 600 : ci === row.length - 1 ? 600 : 400,
-                        background: ci === row.length - 1 ? "#f0f9ff" : "transparent",
-                        borderLeft: ci === row.length - 1 ? "2px solid #bae6fd" : "none",
-                        fontSize: ".875rem",
-                        lineHeight: 1.5,
-                      }}>{cell}</td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <p style={{ color: "#64748b", fontSize: "1.05rem", maxWidth: "34rem", margin: ".75rem 0 0", lineHeight: 1.6 }}>
+            Databases help you <strong style={{ color: "#0f172a" }}>find</strong> companies. LeadLens helps you <strong style={{ color: "#0284c7" }}>decide</strong> which ones deserve attention — with the evidence behind it.
+          </p>
+          <div className="ll-diff-grid" style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: "1.25rem", alignItems: "stretch", maxWidth: "52rem", margin: "2.5rem auto 0", textAlign: "left" as const }}>
+            <div style={{ background: "#f8fafc", border: "1px solid #eef2f7", borderRadius: "1rem", padding: "1.5rem" }}>
+              <div style={{ fontSize: ".62rem", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase" as const, color: "#94a3b8", marginBottom: ".9rem" }}>Most tools give you</div>
+              {["Company", "Industry", "Size", "Contacts"].map(x => (
+                <div key={x} style={{ fontSize: ".92rem", color: "#64748b", padding: ".3rem 0" }}>{x}</div>
+              ))}
+              <div style={{ marginTop: ".8rem", fontSize: ".8rem", color: "#94a3b8", fontStyle: "italic" as const }}>Static account data.</div>
+            </div>
+            <div className="ll-diff-arrow" style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#0ea5e9", fontSize: "1.6rem", fontWeight: 800 }}>→</div>
+            <div style={{ background: "linear-gradient(180deg,#f0f9ff,#fff)", border: "1.5px solid #bae6fd", borderRadius: "1rem", padding: "1.5rem", boxShadow: "0 8px 28px rgba(14,165,233,.10)" }}>
+              <div style={{ fontSize: ".62rem", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase" as const, color: "#0284c7", marginBottom: ".9rem" }}>LeadLens adds</div>
+              {["What Changed", "Evidence & counterevidence", "Fit & Timing", "A decision + what to validate"].map(x => (
+                <div key={x} style={{ fontSize: ".92rem", color: "#0f172a", fontWeight: 600, padding: ".3rem 0", display: "flex", gap: ".5rem" }}><span style={{ color: "#0ea5e9", flexShrink: 0 }}>✓</span>{x}</div>
+              ))}
+              <div style={{ marginTop: ".8rem", fontSize: ".8rem", color: "#0369a1", fontWeight: 600 }}>An evidence-grounded decision.</div>
+            </div>
           </div>
         </div>
       </section>
@@ -2947,6 +2945,165 @@ function FTE({ fit, timing, evidence }: { fit: string; timing: string; evidence:
   return (
     <div style={{ display: "flex", flexWrap: "wrap" as const, gap: ".1rem .7rem", alignItems: "center" }}>
       {cell("Fit", fit)}{cell("Timing", timing)}{cell("Evidence", evidence)}
+    </div>
+  );
+}
+
+// ─── Signature interactive product experience (V4) ───────────────────────────
+// A selected-account workspace: pick an account → see What Changed → Evidence →
+// Counterevidence → Decision → What to Validate. Deterministic, local, keyboard-
+// accessible; no API/provider. This is the homepage's signature product moment.
+const WS_ACCOUNTS = [
+  { name: "Northstar Logistics", seg: "Mid-market logistics · US Midwest", state: "prioritize", fresh: "9d ago",
+    changed: "Signed a regional distribution agreement", changedAge: "9d ago",
+    fit: "Strong", timing: "Strong", evidence: "Strong", evSources: 3, evCorr: 2,
+    sources: [["Company announcement", "distribution agreement", "9d"], ["Careers page", "4 operations roles", "12d"], ["Industry press", "new distribution sites", "21d"]],
+    uncertainty: ["No procurement event confirmed", "Decision scope (corporate vs regional) unresolved"],
+    validate: ["Confirm procurement is centralized at group level", "Check whether new sites share the supplier network"],
+    next: "Validate regional procurement ownership before outreach." },
+  { name: "FreshRoute Foods", seg: "Regional food distribution · US Southeast", state: "validate", fresh: "14d ago",
+    changed: "Opened 2 new distribution sites", changedAge: "14d ago",
+    fit: "Strong", timing: "Moderate", evidence: "Moderate", evSources: 2, evCorr: 1,
+    sources: [["Regional press", "2 new sites", "14d"], ["Company blog", "expansion note", "19d"]],
+    uncertainty: ["Only one source corroborates the expansion", "Scope may be regional, not corporate"],
+    validate: ["Confirm the sites affect your target category", "Corroborate the expansion with a second source"],
+    next: "Corroborate and confirm scope before prioritizing." },
+  { name: "Atlas Clinics Group", seg: "Multi-location healthcare · US West", state: "monitor", fresh: "21d ago",
+    changed: "Announced 2 new clinic locations", changedAge: "21d ago",
+    fit: "Moderate", timing: "Limited", evidence: "Moderate", evSources: 2, evCorr: 1,
+    sources: [["Local news", "2 clinic locations", "21d"], ["Company site", "locations page", "24d"]],
+    uncertainty: ["No operations or vendor change observed yet", "Timing evidence is thin"],
+    validate: ["Watch for an operations or vendor signal", "Confirm the category fit"],
+    next: "Monitor for a timing signal before acting." },
+];
+
+function AccountWorkspace() {
+  const [sel, setSel] = useState(0);
+  const a = WS_ACCOUNTS[sel];
+  const s = DECISION_STATES[a.state];
+  const lbl: React.CSSProperties = { fontSize: ".58rem", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase", color: "#7dd3fc", marginBottom: ".35rem" };
+  const panel: React.CSSProperties = { background: "#fff", borderRadius: ".6rem", padding: ".7rem .8rem" };
+
+  return (
+    <div style={{ background: "linear-gradient(160deg,#0b1220 0%,#0f2743 60%,#0c3a5e 100%)", borderRadius: "1.1rem", padding: ".9rem", boxShadow: "0 24px 64px rgba(11,18,32,.28), 0 4px 20px rgba(0,0,0,.12)", border: "1px solid #17324f" }}>
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: ".5rem", padding: ".15rem .35rem .7rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: ".45rem", minWidth: 0 }}>
+          <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#22c55e", boxShadow: "0 0 0 3px rgba(34,197,94,.18)", flexShrink: 0 }} />
+          <span style={{ color: "#fff", fontWeight: 700, fontSize: ".82rem", letterSpacing: "-.01em" }}>Opportunity Portfolio</span>
+          <span style={{ color: "#64809e", fontSize: ".7rem" }}>· pick an account</span>
+        </div>
+        <span style={{ color: "#7dd3fc", background: "rgba(125,211,252,.12)", border: "1px solid rgba(125,211,252,.25)", fontSize: ".58rem", fontWeight: 700, letterSpacing: ".05em", textTransform: "uppercase", padding: ".15rem .5rem", borderRadius: 999, flexShrink: 0 }}>Sample</span>
+      </div>
+
+      <div className="ll-ws-body" style={{ gap: ".7rem" }}>
+        {/* Portfolio rail (desktop/tablet) */}
+        <div className="ll-ws-rail" role="tablist" aria-label="Accounts" aria-orientation="vertical" style={{ display: "flex", flexDirection: "column", gap: ".4rem" }}>
+          {WS_ACCOUNTS.map((acc, i) => {
+            const st = DECISION_STATES[acc.state]; const on = i === sel;
+            return (
+              <button key={acc.name} role="tab" aria-selected={on} tabIndex={on ? 0 : -1}
+                onClick={() => setSel(i)}
+                onKeyDown={e => { if (e.key === "ArrowDown" || e.key === "ArrowRight") { e.preventDefault(); setSel((i + 1) % WS_ACCOUNTS.length); } if (e.key === "ArrowUp" || e.key === "ArrowLeft") { e.preventDefault(); setSel((i - 1 + WS_ACCOUNTS.length) % WS_ACCOUNTS.length); } }}
+                style={{ textAlign: "left", cursor: "pointer", fontFamily: "inherit", borderRadius: ".55rem", padding: ".5rem .6rem", border: on ? "1px solid #38bdf8" : "1px solid #1c3a5a", background: on ? "rgba(56,189,248,.14)" : "rgba(255,255,255,.02)", transition: "background .15s, border-color .15s" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: ".4rem", marginBottom: ".15rem" }}>
+                  <span style={{ width: 6, height: 6, borderRadius: "50%", background: st.dot, flexShrink: 0 }} />
+                  <span style={{ color: on ? "#fff" : "#cbd8e8", fontWeight: 700, fontSize: ".74rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{acc.name}</span>
+                </div>
+                <div style={{ color: "#7c98b8", fontSize: ".6rem", textTransform: "uppercase", letterSpacing: ".04em", fontWeight: 700, paddingLeft: ".95rem" }}>{st.label} · {acc.fresh}</div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Portfolio chips (mobile) */}
+        <div className="ll-ws-chips" role="tablist" aria-label="Accounts" style={{ gap: ".4rem", overflowX: "auto", paddingBottom: ".15rem" }}>
+          {WS_ACCOUNTS.map((acc, i) => {
+            const st = DECISION_STATES[acc.state]; const on = i === sel;
+            return (
+              <button key={acc.name} role="tab" aria-selected={on}
+                onClick={() => setSel(i)}
+                style={{ flexShrink: 0, cursor: "pointer", fontFamily: "inherit", display: "inline-flex", alignItems: "center", gap: ".35rem", borderRadius: 999, padding: ".35rem .7rem", border: on ? "1px solid #38bdf8" : "1px solid #1c3a5a", background: on ? "rgba(56,189,248,.16)" : "rgba(255,255,255,.03)", color: on ? "#fff" : "#cbd8e8", fontWeight: 700, fontSize: ".72rem", whiteSpace: "nowrap" }}>
+                <span style={{ width: 6, height: 6, borderRadius: "50%", background: st.dot }} />{acc.name.split(" ")[0]}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Selected account intelligence */}
+        <div role="tabpanel" style={{ background: "#f4f8fc", borderRadius: ".75rem", padding: ".75rem .8rem", minWidth: 0 }}>
+          {/* Account + decision */}
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: ".5rem", marginBottom: ".55rem" }}>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontWeight: 800, fontSize: ".92rem", color: "#0f172a", letterSpacing: "-.01em", lineHeight: 1.2 }}>{a.name}</div>
+              <div style={{ fontSize: ".66rem", color: "#64748b", marginTop: ".1rem" }}>{a.seg}</div>
+            </div>
+            <DecisionPill state={a.state} />
+          </div>
+
+          {/* What Changed — signature event strip */}
+          <div style={{ background: "#0f172a", borderRadius: ".55rem", padding: ".55rem .7rem", marginBottom: ".55rem" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: ".5rem" }}>
+              <span style={{ fontSize: ".56rem", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase", color: "#7dd3fc" }}>What changed</span>
+              <span style={{ fontSize: ".64rem", color: "#94a3b8", fontWeight: 600, whiteSpace: "nowrap" }}>{a.changedAge}</span>
+            </div>
+            <div style={{ color: "#fff", fontSize: ".82rem", fontWeight: 600, marginTop: ".2rem", lineHeight: 1.35 }}>{a.changed}</div>
+          </div>
+
+          {/* Fit / Timing / Evidence strip */}
+          <div style={{ ...panel, marginBottom: ".5rem", background: "#fff", border: "1px solid #e8eef5", padding: ".5rem .7rem" }}>
+            <FTE fit={a.fit} timing={a.timing} evidence={a.evidence} />
+          </div>
+
+          {/* Evidence */}
+          <div style={{ ...panel, marginBottom: ".5rem", border: "1px solid #e8eef5" }}>
+            <div style={lbl}>Evidence</div>
+            <div style={{ display: "flex", alignItems: "center", gap: ".4rem", flexWrap: "wrap", marginBottom: ".35rem" }}>
+              <span style={{ fontSize: ".7rem", color: "#0f172a", fontWeight: 700 }}>{a.evidence}</span>
+              <span style={{ color: "#cbd5e1" }}>·</span>
+              <span style={{ fontSize: ".68rem", color: "#475569" }}>{a.evSources} dated sources</span>
+              <span style={{ color: "#cbd5e1" }}>·</span>
+              <span style={{ fontSize: ".68rem", color: "#15803d", fontWeight: 600 }}>{a.evCorr} corroborate</span>
+            </div>
+            {a.sources.map(([type, what, age], i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: ".5rem", fontSize: ".68rem", color: "#334155", padding: ".15rem 0", borderTop: i === 0 ? "none" : "1px solid #f1f5f9" }}>
+                <span style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  <span style={{ color: "#94a3b8", fontStyle: "italic", fontSize: ".6rem", marginRight: ".3rem" }}>illustrative</span>
+                  <span style={{ fontWeight: 600, color: "#0f172a" }}>{type}</span> <span style={{ color: "#64748b" }}>— {what}</span>
+                </span>
+                <span style={{ color: "#94a3b8", fontSize: ".64rem", whiteSpace: "nowrap", flexShrink: 0 }}>{age}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Counterevidence / uncertainty */}
+          <div style={{ background: "#fffbeb", border: "1px solid #fde68a", borderLeft: "3px solid #d97706", borderRadius: ".5rem", padding: ".5rem .7rem", marginBottom: ".5rem" }}>
+            <div style={{ ...lbl, color: "#b45309" }}>Counterevidence &amp; uncertainty</div>
+            {a.uncertainty.map((u, i) => (
+              <div key={i} style={{ display: "flex", gap: ".4rem", fontSize: ".7rem", color: "#92400e", lineHeight: 1.4, padding: ".05rem 0" }}><span style={{ fontWeight: 700 }}>–</span>{u}</div>
+            ))}
+          </div>
+
+          {/* What to Validate */}
+          <div style={{ ...panel, marginBottom: ".5rem", border: "1px solid #e8eef5" }}>
+            <div style={lbl}>What to validate</div>
+            {a.validate.map((v, i) => (
+              <div key={i} style={{ display: "flex", gap: ".4rem", fontSize: ".72rem", color: "#334155", lineHeight: 1.4, padding: ".05rem 0" }}><span style={{ color: "#0284c7", fontWeight: 700 }}>→</span>{v}</div>
+            ))}
+          </div>
+
+          {/* Next decision */}
+          <div style={{ background: "#0f172a", borderRadius: ".55rem", padding: ".55rem .7rem", display: "flex", alignItems: "center", gap: ".5rem", flexWrap: "wrap" }}>
+            <DecisionPill state={a.state} small />
+            <span style={{ color: "#cbd8e8", fontSize: ".72rem", lineHeight: 1.35, minWidth: 0 }}>{a.next}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer legend */}
+      <div style={{ color: "#5f7c9c", fontSize: ".6rem", padding: ".6rem .4rem 0", lineHeight: 1.4 }}>
+        Synthetic example. Every account is grounded in dated evidence — and states what remains unconfirmed.
+      </div>
     </div>
   );
 }
