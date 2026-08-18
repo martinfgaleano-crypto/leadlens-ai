@@ -24,7 +24,7 @@ const COPY = {
     heroH1hi: "worth working now",
     heroH1post: ".",
     heroH2: "And the evidence behind every opportunity.",
-    heroSub: "Your team can't work every account. LeadLens shows which ones deserve attention now — and the evidence behind the decision.",
+    heroSub: "Turn market evidence into clearer account decisions.",
     heroCTA: "Get started",
     heroPriceNote: "Start with a $7 one-time validation run.",
     heroSeeAll: "View sample",
@@ -339,7 +339,7 @@ const COPY = {
     heroH1hi: "que vale la pena trabajar ahora",
     heroH1post: ".",
     heroH2: "Y la evidencia detrás de cada oportunidad.",
-    heroSub: "Tu equipo no puede trabajar todas las cuentas. LeadLens muestra cuáles merecen atención ahora — y la evidencia detrás de la decisión.",
+    heroSub: "Convierte la evidencia del mercado en decisiones de cuenta más claras.",
     heroCTA: "Comenzar",
     heroPriceNote: "Empieza con una validación única de $7.",
     heroSeeAll: "Ver muestra",
@@ -379,10 +379,10 @@ const COPY = {
     monitorPrice: "Desde $99/mes",
     planNames: { sample: "Preview", starter: "Brief", standard: "Intelligence", pro: "Premium" },
     planDescs: {
-      sample:   "Ve el formato — sin pago requerido.",
-      starter:  "Un diagnóstico pagado que mapea tu mercado y te muestra dónde enfocarte antes de comprometerte con un reporte más profundo.",
-      standard: "Un reporte enfocado que convierte un ICP en una lista de empresas rankeadas que vale la pena contactar — con señales, scores y estrategia.",
-      pro:      "Un reporte más profundo para negocios que quieren mayor visibilidad de mercado, más oportunidades y una dirección estratégica más sólida.",
+      sample:   "Comprueba si LeadLens encuentra oportunidades defendibles para tu negocio — valida la calidad antes de comprometerte.",
+      starter:  "Obtén un conjunto enfocado de cuentas que vale la pena investigar ahora, comparadas y priorizadas.",
+      standard: "Descubre qué cuentas merecen prioridad y cómo asignar tu esfuerzo comercial.",
+      pro:      "Convierte la inteligencia de oportunidades en una estrategia comercial enfocada.",
     },
     planFeatures: {
       sample:   ["Market Map de muestra","Briefs de empresa de muestra","Sin investigación real — solo formato","Ve el output antes de comprometerte"],
@@ -654,7 +654,7 @@ const COPY = {
     heroH1hi: "que valem a pena trabalhar agora",
     heroH1post: ".",
     heroH2: "E a evidência por trás de cada oportunidade.",
-    heroSub: "Sua equipe não pode trabalhar todas as contas. A LeadLens mostra quais merecem atenção agora — e a evidência por trás da decisão.",
+    heroSub: "Transforme a evidência do mercado em decisões de conta mais claras.",
     heroCTA: "Começar",
     heroPriceNote: "Comece com uma validação única de $7.",
     heroSeeAll: "Ver amostra",
@@ -694,10 +694,10 @@ const COPY = {
     monitorPrice: "A partir de $99/mês",
     planNames: { sample: "Preview", starter: "Brief", standard: "Intelligence", pro: "Premium" },
     planDescs: {
-      sample:   "Veja o formato — sem pagamento necessário.",
-      starter:  "Um diagnóstico pago que mapeia seu mercado e mostra onde focar antes de se comprometer com um relatório mais profundo.",
-      standard: "Um relatório focado que transforma um ICP em uma lista ranqueada de empresas que valem a pena contatar — com sinais, scores e estratégia.",
-      pro:      "Um relatório mais profundo para empresas que querem maior visibilidade de mercado, mais oportunidades e uma direção estratégica mais sólida.",
+      sample:   "Veja se a LeadLens encontra oportunidades defensáveis para o seu negócio — valide a qualidade antes de se comprometer.",
+      starter:  "Receba um conjunto focado de contas que vale a pena investigar agora, comparadas e priorizadas.",
+      standard: "Descubra quais contas merecem prioridade e como alocar seu esforço comercial.",
+      pro:      "Transforme a inteligência de oportunidades em uma estratégia comercial focada.",
     },
     planFeatures: {
       sample:   ["Market Map de exemplo","Briefs de empresa de exemplo","Sem pesquisa real — apenas formato","Veja o output antes de se comprometer"],
@@ -969,7 +969,7 @@ const COPY = {
     heroH1hi: "B2Bアカウントを見つけましょう",
     heroH1post: "。",
     heroH2: "そして、各機会の裏付けとなる根拠を。",
-    heroSub: "すべてのアカウントに取り組むことはできません。LeadLensは、今どのアカウントに注力すべきか、その判断の根拠とともに示します。",
+    heroSub: "市場のエビデンスを、より明確なアカウントの意思決定へ。",
     heroCTA: "始める",
     heroPriceNote: "$7・一回払いの検証ランから始められます。",
     heroSeeAll: "サンプルを見る",
@@ -1009,10 +1009,10 @@ const COPY = {
     monitorPrice: "$99/月から",
     planNames: { sample: "Preview", starter: "Brief", standard: "Intelligence", pro: "Premium" },
     planDescs: {
-      sample:   "フォーマットを確認 — 支払い不要。",
-      starter:  "より深いレポートにコミットする前に、市場をマッピングしてどこに集中すべきかを示す有料の診断ツール。",
-      standard: "1つのICPを、コンタクトする価値のある企業のランク付きリストに変える集中型レポート — シグナル・スコア・戦略付き。",
-      pro:      "より広い市場の可視性、より多くのオポチュニティ、より強い戦略的方向性を必要とするビジネス向けの深いレポート。",
+      sample:   "LeadLensがあなたのビジネスに根拠のあるオポチュニティを見つけられるか確認 — コミット前に品質を検証。",
+      starter:  "今調査する価値のあるアカウントの集中セットを、比較・優先順位付けして取得。",
+      standard: "どのアカウントを優先すべきか、商業リソースをどう配分するかを把握。",
+      pro:      "オポチュニティ・インテリジェンスを、集中した商業戦略に変える。",
     },
     planFeatures: {
       sample:   ["サンプルマーケットマップ","サンプル企業ブリーフ","実際の調査なし — フォーマットのみ","コミットする前に出力を確認"],
@@ -1607,7 +1607,17 @@ export default function DemoPipelinePage() {
         }
         /* Pricing: balanced 2×2, single column on phones (fixes 3+1 orphan) */
         .ll-price-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 1.25rem; max-width: 46rem; margin: 0 auto; align-items: stretch; }
-        @media (max-width: 560px) { .ll-price-grid { grid-template-columns: 1fr; max-width: 24rem; } }
+        @media (max-width: 560px) {
+          /* Mobile pricing compaction (§20–40): tighter cards, smaller price, tighter
+             gap — key info (name/price/purpose/differentiator/CTA) stays visible;
+             desktop is untouched. */
+          .ll-price-grid { grid-template-columns: 1fr; max-width: 24rem; gap: .85rem; }
+          .ll-price-card { padding: 1.25rem 1.3rem !important; border-radius: .9rem !important; text-align: left !important; }
+          .ll-price-value { font-size: 2rem !important; }
+          .ll-price-head { margin-bottom: .6rem !important; }
+          .ll-price-cta { padding: .7rem !important; }
+          .ll-price-card > details { margin-top: .6rem !important; }
+        }
         /* Differentiation contrast: side-by-side on desktop, stacked with a downward arrow on phones */
         @media (max-width: 620px) { .ll-diff-grid { grid-template-columns: 1fr !important; } .ll-diff-arrow { transform: rotate(90deg); } }
         /* How-it-works: desktop = three connected stages on one continuous line;
@@ -3506,6 +3516,7 @@ function PricingCard({ plan, featured, copy, onSelect }: {
   const featuredShadow = "0 4px 24px rgba(14,165,233,.18)";
   return (
     <div
+      className="ll-price-card"
       style={{
         border: `1.5px solid ${featured ? "#0ea5e9" : "#e2e8f0"}`,
         borderRadius: "1.125rem",
@@ -3540,12 +3551,12 @@ function PricingCard({ plan, featured, copy, onSelect }: {
       )}
 
       {/* Plan name + price */}
-      <div style={{ marginBottom: ".85rem" }}>
+      <div className="ll-price-head" style={{ marginBottom: ".85rem" }}>
         <div style={{ fontSize: ".72rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".08em", color: featured ? "#0284c7" : "#94a3b8", marginBottom: ".5rem" }}>
           {copy.planNames[plan]}
         </div>
-        <div style={{ display: "flex", alignItems: "baseline", gap: ".4rem", marginBottom: ".55rem" }}>
-          <span style={{ fontSize: "2.4rem", fontWeight: 800, letterSpacing: "-.03em", lineHeight: 1, color: "#0f172a" }}>{p.price}</span>
+        <div className="ll-price-amount" style={{ display: "flex", alignItems: "baseline", gap: ".4rem", marginBottom: ".55rem" }}>
+          <span className="ll-price-value" style={{ fontSize: "2.4rem", fontWeight: 800, letterSpacing: "-.03em", lineHeight: 1, color: "#0f172a" }}>{p.price}</span>
           <span style={{ fontSize: ".72rem", color: "#94a3b8" }}>{copy.oneBatch}</span>
         </div>
         <div style={{ fontSize: ".9rem", color: "#334155", lineHeight: 1.45, marginBottom: ".4rem" }}>{copy.planDescs[plan]}</div>
@@ -3555,6 +3566,7 @@ function PricingCard({ plan, featured, copy, onSelect }: {
       {/* CTA — visible without scrolling features */}
       <button
         onClick={() => onSelect(plan)}
+        className="ll-price-cta"
         style={{
           width: "100%", background: "#0ea5e9", color: "#fff", border: "none", borderRadius: ".75rem",
           padding: ".8rem", fontWeight: 700, fontSize: ".9rem", cursor: "pointer",

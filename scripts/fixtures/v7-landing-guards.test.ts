@@ -54,6 +54,18 @@ t("I4 FAQ rows are collapsible accordions with chevron state",
   /className="ll-faq-item"/.test(src) && /<details[^>]*open=\{i === 0\}/.test(src) && /ll-faq-item\[open\] \.ll-faq-chev/.test(src));
 t("I5 FAQ accordion summary has a comfortable touch target", /\.ll-faq-item summary \{[^}]*min-height:\s*44px/.test(src));
 
+// ─── J. V8.1 hero precision + mobile pricing compaction ───────────────────────
+t("J1 hero support copy is the analytical 'Turn market evidence…' line",
+  /heroSub:\s*"Turn market evidence into clearer account decisions\."/.test(src));
+t("J2 old 'work every account' hero support copy removed", !/can't work every account/.test(src));
+t("J3 hero support copy localized in 4 locales", (src.match(/heroSub:/g) || []).length === 4);
+t("J4 pricing amounts intact ($7/$25/$59/$129)",
+  /price:\s*"\$7"/.test(src) && /price:\s*"\$25"/.test(src) && /price:\s*"\$59"/.test(src) && /price:\s*"\$129"/.test(src));
+t("J5 pricing tier names intact (Preview/Brief/Intelligence/Premium)",
+  /planNames:\s*\{\s*sample:\s*"Preview",\s*starter:\s*"Brief",\s*standard:\s*"Intelligence",\s*pro:\s*"Premium"\s*\}/.test(src));
+t("J6 mobile pricing compaction is mobile-only (desktop card untouched)",
+  /\.ll-price-card \{ padding: 1\.25rem[^}]*text-align: left/.test(src) && /padding: "2rem"/.test(src));
+
 // ─── G. Responsive anchors (desktop composed vs mobile start) + FAQ ───────────
 t("G1 pricing anchor desktop vs mobile scroll-margin differ (composed/centered vs start)",
   /\.ll-price-anchor\s*\{\s*scroll-margin-top:\s*270px/.test(src) && /max-width:\s*580px\)\s*\{\s*\.ll-price-anchor\s*\{\s*scroll-margin-top:\s*300px/.test(src));
