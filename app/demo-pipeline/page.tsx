@@ -12,15 +12,20 @@ const COPY = {
     announcementCTA: "Get your Opportunity Preview →",
     navPricing: "Pricing",
     navSignIn: "Sign in",
-    navCTA: "Get started →",
+    navCTA: "Get started",
+    navHow: "How it works",
+    navSample: "Sample",
+    navFaq: "FAQ",
+    heroCuriosity: "What changed in the accounts you're already watching?",
     heroBadge: "Account Opportunity Intelligence · B2B",
     heroH1pre: "Find the B2B accounts",
     heroH1hi: "worth working now",
     heroH1post: ".",
     heroH2: "And the evidence behind every opportunity.",
     heroSub: "LeadLens tells you which accounts fit, why they matter now, and the public evidence behind each opportunity — account-level intelligence, not a contact list.",
-    heroCTA: "Get your Opportunity Preview — from $7 →",
-    heroSeeAll: "See how it works",
+    heroCTA: "Get started",
+    heroPriceNote: "From $7 · one-time · no card to explore the sample",
+    heroSeeAll: "View sample",
     heroNote: "No contact databases. No email lists. Just commercial intelligence.",
     proofLabels: [["5","account briefs"],["6–8","buyer segments"],["24–48h","delivery"],["Evidence","+ counterevidence"]] as [string,string][],
     howTag: "How it works",
@@ -66,7 +71,7 @@ const COPY = {
       standard: ["Everything in Brief","1 ICP · up to 2 regions","12 complete opportunities","Complete portfolio ranking + allocation","Portfolio risk + coverage gaps","Evidence center with explained ranking","Next best investigation & action","Executive Intelligence Brief"],
       pro:      ["Everything in Intelligence","Up to 2 ICPs · up to 3 regions","18 complete opportunities","Reinforced corroboration on priority accounts","Systematic counterevidence","Deeper clusters + market patterns","Strategic sequence + revalidation dates","Strategic Executive Brief"],
     },
-    planCTAs: { sample: "Preview my opportunities →", starter: "Build my opportunity brief →", standard: "Build my intelligence portfolio →", pro: "Build my opportunity strategy →" },
+    planCTAs: { sample: "Get started", starter: "Get started", standard: "Get started", pro: "Get started" },
     launchNote: "Founding launch pricing — these are early-access prices while LeadLens is in its first customer cohort.",
     compareTitle: "Compare plans",
     leadsFoundBy: (n: number) => `${n} opportunities found by LeadLens`,
@@ -291,15 +296,20 @@ const COPY = {
     announcementCTA: "Obtener mi Opportunity Preview →",
     navPricing: "Precios",
     navSignIn: "Iniciar sesión",
-    navCTA: "Comenzar →",
+    navCTA: "Comenzar",
+    navHow: "Cómo funciona",
+    navSample: "Muestra",
+    navFaq: "FAQ",
+    heroCuriosity: "¿Qué cambió en las cuentas que ya observas?",
     heroBadge: "Inteligencia de Oportunidades de Cuenta · B2B",
     heroH1pre: "Encuentra las cuentas B2B",
     heroH1hi: "que vale la pena trabajar ahora",
     heroH1post: ".",
     heroH2: "Y la evidencia detrás de cada oportunidad.",
     heroSub: "LeadLens te dice qué cuentas encajan, por qué importan ahora y la evidencia pública detrás de cada oportunidad — inteligencia a nivel de cuenta, no una lista de contactos.",
-    heroCTA: "Obtén tu Opportunity Preview — desde $7 →",
-    heroSeeAll: "Ver cómo funciona",
+    heroCTA: "Comenzar",
+    heroPriceNote: "Desde $7 · pago único · sin tarjeta para ver la muestra",
+    heroSeeAll: "Ver muestra",
     heroNote: "Sin bases de datos de contactos. Sin listas de emails. Solo inteligencia comercial.",
     proofLabels: [["5","account briefs"],["6–8","segmentos de compradores"],["24–48h","entrega"],["Evidencia","+ contraevidencia"]] as [string,string][],
     howTag: "Cómo funciona",
@@ -332,7 +342,7 @@ const COPY = {
       standard: ["1 ICP","Market Map — 6–8 segmentos","10–15 oportunidades rankeadas","Top 5 Opportunity Briefs","Señales públicas con fuentes","Fit × Timing × Evidence por cuenta","Por qué ahora — análisis de timing","Qué validar por cuenta","Contexto de acercamiento opcional","Descarga PDF + CSV","Entrega en 24–48h"],
       pro:      ["1 ICP","Market Map ampliado","20–30 oportunidades rankeadas","Top 10 Opportunity Briefs","Recomendaciones por segmento","Lista de evidencias y fuentes","Secuencia recomendada por cuenta","Análisis de riesgos y debilidades","Descarga PDF + CSV","Entrega en 24–48h"],
     },
-    planCTAs: { sample: "Previsualizar mis oportunidades →", starter: "Construir mi opportunity brief →", standard: "Construir mi portafolio de inteligencia →", pro: "Construir mi estrategia de oportunidades →" },
+    planCTAs: { sample: "Comenzar", starter: "Comenzar", standard: "Comenzar", pro: "Comenzar" },
     planFor: {
       sample:   "Para equipos que quieren prueba antes de invertir presupuesto real.",
       starter:  "Para equipos que necesitan una lista corta y defendible esta semana.",
@@ -570,15 +580,20 @@ const COPY = {
     announcementCTA: "Obter meu Opportunity Preview →",
     navPricing: "Preços",
     navSignIn: "Entrar",
-    navCTA: "Começar →",
+    navCTA: "Começar",
+    navHow: "Como funciona",
+    navSample: "Amostra",
+    navFaq: "FAQ",
+    heroCuriosity: "O que mudou nas contas que você já acompanha?",
     heroBadge: "Inteligência de Oportunidades de Conta · B2B",
     heroH1pre: "Encontre as contas B2B",
     heroH1hi: "que valem a pena trabalhar agora",
     heroH1post: ".",
     heroH2: "E a evidência por trás de cada oportunidade.",
     heroSub: "A LeadLens diz quais contas se encaixam, por que importam agora e a evidência pública por trás de cada oportunidade — inteligência em nível de conta, não uma lista de contatos.",
-    heroCTA: "Obtenha seu Opportunity Preview — a partir de $7 →",
-    heroSeeAll: "Ver como funciona",
+    heroCTA: "Começar",
+    heroPriceNote: "A partir de $7 · pagamento único · sem cartão para ver a amostra",
+    heroSeeAll: "Ver amostra",
     heroNote: "Sem bancos de dados de contatos. Sem listas de e-mails. Apenas inteligência comercial.",
     proofLabels: [["5","account briefs"],["6–8","segmentos de compradores"],["24–48h","entrega"],["Evidência","+ contraevidência"]] as [string,string][],
     howTag: "Como funciona",
@@ -611,7 +626,7 @@ const COPY = {
       standard: ["1 ICP","Market Map — 6–8 segmentos","10–15 oportunidades ranqueadas","Top 5 Opportunity Briefs","Sinais públicos com fontes","Fit × Timing × Evidence por conta","Por que agora — análise de timing","O que validar por conta","Contexto de abordagem opcional","Download PDF + CSV","Entrega em 24–48h"],
       pro:      ["1 ICP","Market Map ampliado","20–30 oportunidades ranqueadas","Top 10 Opportunity Briefs","Recomendações por segmento","Lista de evidências e fontes","Sequência recomendada por conta","Análise de riscos e fraquezas","Download PDF + CSV","Entrega em 24–48h"],
     },
-    planCTAs: { sample: "Pré-visualizar minhas oportunidades →", starter: "Construir meu opportunity brief →", standard: "Construir meu portfólio de inteligência →", pro: "Construir minha estratégia →" },
+    planCTAs: { sample: "Começar", starter: "Começar", standard: "Começar", pro: "Começar" },
     planFor: {
       sample: "Para equipes que querem prova antes de investir.",
       starter: "Para equipes que precisam de uma lista curta e defensável.",
@@ -849,15 +864,20 @@ const COPY = {
     announcementCTA: "Opportunity Previewを取得 →",
     navPricing: "料金",
     navSignIn: "ログイン",
-    navCTA: "始める →",
+    navCTA: "始める",
+    navHow: "使い方",
+    navSample: "サンプル",
+    navFaq: "FAQ",
+    heroCuriosity: "すでに注視しているアカウントで、何が変わったか？",
     heroBadge: "アカウント機会インテリジェンス · B2B",
     heroH1pre: "今週コンタクトする価値のある",
     heroH1hi: "B2Bアカウントを見つけましょう",
     heroH1post: "。",
     heroH2: "そして、各機会の裏付けとなる根拠を。",
     heroSub: "LeadLensは、どのアカウントが適合し、なぜ今重要で、各機会の裏付けとなる公開情報をお伝えします — 連絡先リストではなく、アカウント単位のインテリジェンス。",
-    heroCTA: "Opportunity Previewを取得 — $7から →",
-    heroSeeAll: "仕組みを見る",
+    heroCTA: "始める",
+    heroPriceNote: "$7から · 一回払い · サンプルはカード不要",
+    heroSeeAll: "サンプルを見る",
     heroNote: "コンタクトデータベースなし。メールリストなし。コマーシャルインテリジェンスのみ。",
     proofLabels: [["5件","アカウントブリーフ"],["6〜8","購買者セグメント"],["24〜48h","納品"],["エビデンス","+ 反証"]] as [string,string][],
     howTag: "使い方",
@@ -890,7 +910,7 @@ const COPY = {
       standard: ["1 ICP","マーケットマップ — 6〜8セグメント","ランク付きオポチュニティ10〜15件","トップ5オポチュニティブリーフ","ソース付き公開シグナル","Fit × Timing × Evidence（各アカウント）","今なぜか — タイミング分析","各アカウントで検証すべきこと","任意のアウトリーチ文脈","PDF + CSVダウンロード","24〜48時間で納品"],
       pro:      ["1 ICP","拡張マーケットマップ","ランク付きオポチュニティ20〜30件","トップ10オポチュニティブリーフ","セグメントレベルの推奨","証拠とソースリスト","推奨シーケンス","リスクと弱点分析","PDF + CSVダウンロード","24〜48時間で納品"],
     },
-    planCTAs: { sample: "機会をプレビュー →", starter: "オポチュニティ・ブリーフを作成 →", standard: "インテリジェンス・ポートフォリオを作成 →", pro: "オポチュニティ戦略を作成 →" },
+    planCTAs: { sample: "始める", starter: "始める", standard: "始める", pro: "始める" },
     planFor: {
       sample: "本格投資の前に品質を確認したいチーム向け。",
       starter: "今週行動できる短く堅実なリストが必要なチーム向け。",
@@ -1226,9 +1246,16 @@ export default function DemoPipelinePage() {
   const [expanded, setExp]        = useState<number | null>(null);
   const [formMode, setFormMode]   = useState<"paid_batch" | "sample_demo">("paid_batch");
   const [isSampleDemo, setIsSampleDemo] = useState(false);
+  const [navOpen, setNavOpen] = useState(false);
   const formRef = useRef<HTMLDivElement>(null);
   const pricingRef = useRef<HTMLElement>(null);
   const pricingSeen = useRef(false);
+
+  // Smooth-scroll to a landing section anchor and close the mobile menu.
+  function goToSection(id: string) {
+    setNavOpen(false);
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 
   const copy = COPY[lang];
 
@@ -1370,25 +1397,32 @@ export default function DemoPipelinePage() {
         .ll-hero-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 3rem; align-items: center; }
         @media (max-width: 840px) { .ll-hero-grid { grid-template-columns: 1fr; gap: 1.25rem; } .ll-hero-left { text-align: center; display: flex; flex-direction: column; align-items: center; min-width: 0; } .ll-hero-mock { margin-top: 0; width: 100%; min-width: 0; } }
         @media (max-width: 480px) { .ll-hero-mock { overflow: hidden; max-width: 100%; } }
-        /* Navbar: single row at every width — never wraps, never overflows (audit §9/§10). */
+        /* Navbar: single row; section links collapse into a mobile menu (§18–23). */
         .ll-root { overflow-x: hidden; }
         .ll-nav-r { flex-wrap: nowrap !important; min-width: 0; }
+        .ll-nav-links { display: flex; }
         .ll-nav-lang { display: inline-flex; }
         .ll-nav-cta { white-space: nowrap; }
         .ll-nav-signin { white-space: nowrap; }
+        .ll-nav-burger { display: none; }
+        /* Anchor offset so the sticky nav never covers a section heading. */
+        section[id], .ll-section { scroll-margin-top: 76px; }
+        @media (max-width: 820px) {
+          .ll-nav-links { display: none !important; }
+          .ll-nav-signin { display: none !important; }
+          .ll-nav-lang { display: none !important; }
+          .ll-nav-burger { display: inline-flex !important; align-items: center; }
+        }
         @media (max-width: 680px) {
           .ll-nav-wrap nav { padding: .625rem 1rem !important; }
           .ll-nav-r { gap: .75rem !important; }
-          .ll-nav-pricing { display: none !important; }
-          .ll-nav-lang { display: none !important; }
           .ll-nav-cta { font-size: .82rem !important; padding: .5rem .8rem !important; }
         }
         @media (max-width: 380px) {
           .ll-nav-wrap nav { padding: .5rem .75rem !important; }
-          .ll-nav-r { gap: .625rem !important; }
+          .ll-nav-r { gap: .5rem !important; }
           .ll-nav-cta { font-size: .78rem !important; padding: .45rem .65rem !important; }
         }
-        @media (max-width: 330px) { .ll-nav-signin { display: none !important; } }
         @media (max-width: 600px) {
           .ll-proof-outer { flex-wrap: wrap; }
           .ll-proof-item { width: 50%; justify-content: center; }
@@ -1442,23 +1476,58 @@ export default function DemoPipelinePage() {
       </div>
 
       {/* Nav */}
+      {(() => {
+      const NAV_SECTIONS = [
+        { id: "how-it-works", label: copy.navHow },
+        { id: "sample", label: copy.navSample },
+        { id: "pricing", label: copy.navPricing },
+        { id: "faq", label: copy.navFaq },
+      ];
+      return (
       <div className="ll-nav-wrap" style={{ borderBottom: "1px solid #e8f4fd", position: "sticky", top: 0, background: "rgba(255,255,255,.96)", backdropFilter: "blur(12px)", zIndex: 40, boxShadow: "0 1px 0 #e8f4fd" }}>
-        <nav style={{ padding: ".875rem 1.5rem", display: "flex", justifyContent: "space-between", alignItems: "center", maxWidth: "72rem", margin: "0 auto", gap: ".75rem" }}>
+        <nav style={{ padding: ".875rem 1.5rem", display: "flex", justifyContent: "space-between", alignItems: "center", maxWidth: "72rem", margin: "0 auto", gap: "1rem" }}>
           <span style={{ fontWeight: 800, fontSize: "1.2rem", letterSpacing: "-.03em", color: "#0f172a", flexShrink: 0 }}>
             Lead<span style={{ color: "#0ea5e9" }}>Lens</span>
           </span>
-          <div className="ll-nav-r" style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
-            <button className="ll-nav-pricing" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" })} style={navLinkStyle}>
-              {copy.navPricing}
-            </button>
+          {/* Desktop section links */}
+          <div className="ll-nav-links" style={{ display: "flex", alignItems: "center", gap: "1.75rem" }}>
+            {NAV_SECTIONS.map(sx => (
+              <button key={sx.id} onClick={() => goToSection(sx.id)} style={navLinkStyle}>{sx.label}</button>
+            ))}
+          </div>
+          <div className="ll-nav-r" style={{ display: "flex", alignItems: "center", gap: "1.1rem" }}>
             <a className="ll-nav-signin" href="/login" style={{ ...navLinkStyle, textDecoration: "none" }}>
               {copy.navSignIn}
             </a>
             <span className="ll-nav-lang"><LangSelect /></span>
             <span className="ll-nav-cta"><Btn onClick={() => goToForm("standard", "nav")}>{copy.navCTA}</Btn></span>
+            <button
+              className="ll-nav-burger"
+              aria-label="Menu"
+              aria-expanded={navOpen}
+              aria-controls="ll-nav-panel"
+              onClick={() => setNavOpen(o => !o)}
+              style={{ display: "none", background: "none", border: "none", cursor: "pointer", fontSize: "1.35rem", lineHeight: 1, color: "#0f172a", padding: ".25rem .35rem" }}
+            >
+              {navOpen ? "✕" : "☰"}
+            </button>
           </div>
         </nav>
+        {/* Mobile dropdown panel */}
+        {navOpen && (
+          <div id="ll-nav-panel" className="ll-nav-panel" style={{ borderTop: "1px solid #e8f4fd", background: "#fff", padding: ".5rem 1.25rem 1rem" }}>
+            {NAV_SECTIONS.map(sx => (
+              <button key={sx.id} onClick={() => goToSection(sx.id)} style={{ display: "block", width: "100%", textAlign: "left", background: "none", border: "none", borderBottom: "1px solid #f1f5f9", padding: ".7rem .25rem", fontSize: ".95rem", fontWeight: 600, color: "#334155", cursor: "pointer", fontFamily: "inherit" }}>{sx.label}</button>
+            ))}
+            <a href="/login" style={{ display: "block", width: "100%", padding: ".7rem .25rem", fontSize: ".95rem", fontWeight: 600, color: "#334155", textDecoration: "none", borderBottom: "1px solid #f1f5f9" }}>{copy.navSignIn}</a>
+            <div style={{ marginTop: ".85rem" }}>
+              <Btn onClick={() => { setNavOpen(false); goToForm("standard", "nav"); }}>{copy.navCTA}</Btn>
+            </div>
+          </div>
+        )}
       </div>
+      );
+      })()}
 
       {/* Hero */}
       <div style={{ background: "linear-gradient(170deg,#e0f2fe 0%,#f0f9ff 35%,#fff 75%)" }}>
@@ -1480,10 +1549,11 @@ export default function DemoPipelinePage() {
               <p className="ll-hero-sub" style={{ fontSize: "1.1rem", color: "#475569", marginBottom: "2.25rem", lineHeight: 1.7, maxWidth: "34rem" }}>
                 {copy.heroSub}
               </p>
-              <div className="ll-hero-cta-row" style={{ display: "flex", gap: ".875rem", flexWrap: "wrap" as const, marginBottom: "1rem" }}>
+              <div className="ll-hero-cta-row" style={{ display: "flex", gap: ".875rem", flexWrap: "wrap" as const, marginBottom: ".55rem" }}>
                 <Btn lg onClick={() => goToForm("standard", "hero")}>{copy.heroCTA}</Btn>
-                <BtnOutline lg onClick={() => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" })}>{copy.heroSeeAll}</BtnOutline>
+                <BtnOutline lg onClick={() => goToSection("sample")}>{copy.heroSeeAll}</BtnOutline>
               </div>
+              <p style={{ fontSize: ".8rem", color: "#94a3b8", margin: "0 0 1.1rem" }}>{copy.heroPriceNote}</p>
               <p className="ll-hero-note" style={{ display: "inline-block", fontSize: ".82rem", color: "#64748b", background: "#f0f9ff", border: "1px solid #e0f2fe", borderRadius: 999, padding: ".375rem 1rem", marginBottom: ".75rem" }}>
                 {copy.heroNote}
               </p>
@@ -1517,6 +1587,14 @@ export default function DemoPipelinePage() {
         </div>
       </div>
 
+      {/* Curiosity band */}
+      <div style={{ background: "#0f172a", color: "#fff", padding: "2.5rem 1.5rem", textAlign: "center" }}>
+        <p style={{ maxWidth: "42rem", margin: "0 auto", fontSize: "clamp(1.35rem,3vw,1.85rem)", fontWeight: 800, letterSpacing: "-.02em", lineHeight: 1.25 }}>
+          {copy.heroCuriosity}
+        </p>
+        <p style={{ margin: ".7rem auto 0", color: "#7dd3fc", fontSize: ".9rem", fontWeight: 600 }}>{copy.heroBadge}</p>
+      </div>
+
       {/* How it works */}
       <section id="how-it-works" className="ll-section" style={{ ...sectionStyle, background: "#f8fafc" }}>
         <div style={innerStyle}>
@@ -1537,7 +1615,7 @@ export default function DemoPipelinePage() {
       </section>
 
       {/* Sample report preview */}
-      <section className="ll-section" style={{ ...sectionStyle, background: "#fff" }}>
+      <section id="sample" className="ll-section" style={{ ...sectionStyle, background: "#fff" }}>
         <div style={{ ...innerStyle, textAlign: "center" }}>
           <Tag>{copy.samplePreviewTag}</Tag>
           <h2 style={sectionTitleStyle}>{copy.samplePreviewTitle}</h2>
@@ -1868,7 +1946,7 @@ export default function DemoPipelinePage() {
       {/* Beta delivery expectations */}
 
       {/* FAQ */}
-      <section className="ll-section" style={{ ...sectionStyle, background: "#fff" }}>
+      <section id="faq" className="ll-section" style={{ ...sectionStyle, background: "#fff" }}>
         <div className="ll-faq-inner" style={{ maxWidth: "46rem", margin: "0 auto", padding: "0 1.5rem" }}>
           <div style={{ textAlign: "center", marginBottom: "3rem" }}>
             <Tag>{copy.faqTag}</Tag>
