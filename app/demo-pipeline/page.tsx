@@ -17,7 +17,8 @@ const COPY = {
     planDetails: "What's included",
     navSample: "Sample",
     navFaq: "FAQ",
-    heroCuriosity: "What changed in the accounts you're already watching?",
+    heroCuriosity: "Markets change.",
+    heroCuriosityEmph: "Your priorities should too.",
     heroBadge: "Account Opportunity Intelligence · B2B",
     heroH1pre: "Find the B2B accounts",
     heroH1hi: "worth working now",
@@ -331,7 +332,8 @@ const COPY = {
     planDetails: "Qué incluye",
     navSample: "Muestra",
     navFaq: "FAQ",
-    heroCuriosity: "¿Qué cambió en las cuentas que ya observas?",
+    heroCuriosity: "Los mercados cambian.",
+    heroCuriosityEmph: "Tus prioridades también.",
     heroBadge: "Inteligencia de Oportunidades de Cuenta · B2B",
     heroH1pre: "Encuentra las cuentas B2B",
     heroH1hi: "que vale la pena trabajar ahora",
@@ -645,7 +647,8 @@ const COPY = {
     planDetails: "O que inclui",
     navSample: "Amostra",
     navFaq: "FAQ",
-    heroCuriosity: "O que mudou nas contas que você já acompanha?",
+    heroCuriosity: "Os mercados mudam.",
+    heroCuriosityEmph: "Suas prioridades também.",
     heroBadge: "Inteligência de Oportunidades de Conta · B2B",
     heroH1pre: "Encontre as contas B2B",
     heroH1hi: "que valem a pena trabalhar agora",
@@ -959,7 +962,8 @@ const COPY = {
     planDetails: "含まれるもの",
     navSample: "サンプル",
     navFaq: "FAQ",
-    heroCuriosity: "すでに注視しているアカウントで、何が変わったか？",
+    heroCuriosity: "市場は変化します。",
+    heroCuriosityEmph: "優先順位も変えるべきです。",
     heroBadge: "アカウント機会インテリジェンス · B2B",
     heroH1pre: "今週コンタクトする価値のある",
     heroH1hi: "B2Bアカウントを見つけましょう",
@@ -1541,16 +1545,23 @@ export default function DemoPipelinePage() {
         @media (max-width: 580px) { .ll-price-anchor { scroll-margin-top: 300px; } }
         /* Sample Output product-proof layout: copy left, real Brief right on desktop;
            eyebrow → mini-brief → CTA stacked on mobile (§180/§188). */
-        .ll-sample-grid { display: grid; grid-template-columns: 1fr 1.05fr; grid-template-areas: "head proof" "cta proof"; column-gap: 2.75rem; row-gap: 1.5rem; align-items: start; }
-        .ll-sample-head { grid-area: head; }
-        .ll-sample-cta  { grid-area: cta; align-self: end; }
-        .ll-sample-proof { grid-area: proof; align-self: center; width: 100%; max-width: 27rem; justify-self: end; }
-        @media (max-width: 840px) {
-          .ll-sample-grid { grid-template-columns: 1fr; grid-template-areas: "head" "proof" "cta"; row-gap: 1.25rem; }
-          .ll-sample-head h2 { max-width: none !important; }
-          .ll-sample-head p  { max-width: 34rem !important; }
-          .ll-sample-proof { justify-self: stretch; max-width: 30rem; margin: 0 auto; }
-          .ll-sample-cta { align-self: start; }
+        /* Mobile-first flex stack (DOM order head → proof → cta). Desktop uses
+           LINE-based grid placement (not grid-template-areas, which this build
+           pipeline strips) so copy sits left over two rows and the Brief spans
+           the right column. */
+        .ll-sample-grid { display: flex; flex-direction: column; gap: 1.25rem; }
+        .ll-sample-proof { width: 100%; max-width: 30rem; margin: 0 auto; }
+        /* FAQ accordion: hide native marker, rotate chevron on open, comfy tap target */
+        .ll-faq-item summary::-webkit-details-marker { display: none; }
+        .ll-faq-item summary { min-height: 44px; box-sizing: border-box; }
+        .ll-faq-chev { transition: transform .18s ease; }
+        .ll-faq-item[open] .ll-faq-chev { transform: rotate(180deg); }
+        .ll-faq-item summary:focus-visible { outline: 2px solid #38bdf8; outline-offset: -2px; }
+        @media (min-width: 841px) {
+          .ll-sample-grid { display: grid; grid-template-columns: 1fr 1.05fr; column-gap: 2.75rem; row-gap: 1.5rem; align-items: start; }
+          .ll-sample-head  { grid-column: 1; grid-row: 1; }
+          .ll-sample-cta   { grid-column: 1; grid-row: 2; align-self: end; }
+          .ll-sample-proof { grid-column: 2; grid-row: 1 / span 2; align-self: center; justify-self: end; width: 100%; max-width: 27rem; margin: 0; }
         }
         @media (max-width: 820px) {
           .ll-nav-links { display: none !important; }
@@ -1761,12 +1772,11 @@ export default function DemoPipelinePage() {
         </div>
       </div>
 
-      {/* Curiosity band — one punchy transition line into How it works. The
-          category label was removed (already shown in the hero badge + announcement)
-          and the band tightened (§152C/§154): its single job is the question. */}
+      {/* Market-transition band — an editorial pause between the product proof and
+          How it works: "Markets change. Your priorities should too." (§29/§108). */}
       <div style={{ background: "#0f172a", color: "#fff", padding: "1.75rem 1.5rem", textAlign: "center" }}>
-        <p style={{ maxWidth: "42rem", margin: "0 auto", fontSize: "clamp(1.3rem,3vw,1.75rem)", fontWeight: 800, letterSpacing: "-.02em", lineHeight: 1.25 }}>
-          {copy.heroCuriosity}
+        <p style={{ maxWidth: "42rem", margin: "0 auto", fontSize: "clamp(1.3rem,3vw,1.75rem)", fontWeight: 800, letterSpacing: "-.02em", lineHeight: 1.3 }}>
+          {copy.heroCuriosity} <span style={{ color: "#7dd3fc" }}>{copy.heroCuriosityEmph}</span>
         </p>
       </div>
 
@@ -1986,17 +1996,19 @@ export default function DemoPipelinePage() {
             <Tag>{copy.faqTag}</Tag>
             <h2 style={sectionTitleStyle}>{copy.faqTitle}</h2>
           </div>
-          {/* 5 primary questions stay open; the rest collapse into a native
-              disclosure so the FAQ never dominates the mobile ending (§207/§208). */}
+          {/* Each question is a collapsible accordion (first open) so the FAQ scans
+              as a tight list on mobile instead of a wall of open answers; the rest
+              collapse under a "More questions" disclosure (§56/§57/§114). */}
           {(() => {
             const faqRow = ([q, a]: [string, string], i: number, arr: [string, string][]) => (
-              <div key={i} style={{ padding: "1.25rem 1.5rem", borderBottom: i < arr.length - 1 ? "1px solid #f1f5f9" : "none", background: i % 2 === 0 ? "#fff" : "#fafbfc" }}>
-                <div style={{ fontWeight: 700, fontSize: ".925rem", color: "#0f172a", marginBottom: ".5rem", display: "flex", gap: ".75rem", alignItems: "flex-start" }}>
+              <details key={i} open={i === 0} className="ll-faq-item" style={{ borderBottom: i < arr.length - 1 ? "1px solid #f1f5f9" : "none", background: i % 2 === 0 ? "#fff" : "#fafbfc" }}>
+                <summary style={{ cursor: "pointer", listStyle: "none", display: "flex", gap: ".75rem", alignItems: "flex-start", padding: "1.05rem 1.5rem", fontWeight: 700, fontSize: ".925rem", color: "#0f172a", userSelect: "none" as const }}>
                   <span style={{ color: "#0ea5e9", fontWeight: 800, flexShrink: 0, fontSize: ".85rem", marginTop: ".1rem" }}>Q</span>
-                  {q}
-                </div>
-                <div style={{ fontSize: ".875rem", color: "#64748b", lineHeight: 1.65, paddingLeft: "1.375rem" }}>{a}</div>
-              </div>
+                  <span style={{ flex: 1 }}>{q}</span>
+                  <span aria-hidden className="ll-faq-chev" style={{ color: "#94a3b8", flexShrink: 0, fontSize: "1.1rem", lineHeight: 1, marginTop: ".05rem" }}>⌄</span>
+                </summary>
+                <div style={{ fontSize: ".875rem", color: "#64748b", lineHeight: 1.65, padding: "0 1.5rem 1.15rem 3.25rem" }}>{a}</div>
+              </details>
             );
             const primary = copy.faqs.slice(0, 5);
             const rest = copy.faqs.slice(5);

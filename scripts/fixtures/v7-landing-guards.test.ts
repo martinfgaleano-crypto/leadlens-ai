@@ -42,7 +42,17 @@ t("F1 SampleBriefCard reuses the real intelligence primitives",
 t("F2 Sample section renders the SampleBriefCard (SHOW, not tell)", /<SampleBriefCard \/>/.test(src));
 t("F3 Sample headline shows reasoning (not 'this is what it looks like')",
   /samplePreviewTitle:\s*"See the reasoning/.test(src) && !/This is what an Account Brief looks like/.test(src));
-t("F4 Sample Output two-column/stack layout present", /ll-sample-grid/.test(src) && /grid-template-areas/.test(src));
+t("F4 Sample layout uses robust line-based grid (no grid-template-areas, which the build strips)",
+  /ll-sample-grid/.test(src) && /\.ll-sample-proof\s*\{[^}]*grid-column:\s*2/.test(src) && !/grid-template-areas:\s*"/.test(src));
+
+// ─── I. V8 mobile experience ──────────────────────────────────────────────────
+t("I1 market-transition copy is 'Markets change. Your priorities should too.'",
+  /heroCuriosity:\s*"Markets change\."/.test(src) && /heroCuriosityEmph:\s*"Your priorities should too\."/.test(src));
+t("I2 old 'already watching' transition copy removed", !/already watching/.test(src));
+t("I3 transition copy localized in 4 locales", (src.match(/heroCuriosityEmph:/g) || []).length === 4);
+t("I4 FAQ rows are collapsible accordions with chevron state",
+  /className="ll-faq-item"/.test(src) && /<details[^>]*open=\{i === 0\}/.test(src) && /ll-faq-item\[open\] \.ll-faq-chev/.test(src));
+t("I5 FAQ accordion summary has a comfortable touch target", /\.ll-faq-item summary \{[^}]*min-height:\s*44px/.test(src));
 
 // ─── G. Responsive anchors (desktop composed vs mobile start) + FAQ ───────────
 t("G1 pricing anchor desktop vs mobile scroll-margin differ (composed/centered vs start)",
