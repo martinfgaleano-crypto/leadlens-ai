@@ -25,13 +25,32 @@ t("A2 workspace strengths use only Strong/Moderate/Limited",
     .every((m) => /"(Strong|Moderate|Limited)"$/.test(m)));
 t("A3 FTE strength lookup has a crash-proof fallback", /STRENGTH\[val\]\s*\?\?/.test(src));
 
-// ─── B. Hero: paid entry vs free sample, single sample action ─────────────────
-t("B1 hero price note separates paid $7 from free sample viewing",
-  /heroPriceNote:\s*"Paid plans start at \$7[^"]*viewing the sample is free/.test(src));
+// ─── B. Hero: concise $7 validation-entry microcopy, single sample action ─────
+// The free-sample/no-card clause was removed (View sample implies free browsing);
+// the note is now a concise $7 validation-entry line (§197–200).
+t("B1 hero price note is the concise $7 validation entry (no free-sample/no-card clause)",
+  /heroPriceNote:\s*"[^"]*\$7[^"]*"/.test(src) && !/viewing the sample is free/.test(src) && !/no card needed/.test(src));
 // The hero-only underline demo link (class ll-hero-demo-link) is removed; the
 // tryDemoCTA key legitimately still drives banners in the non-hero demo views.
 t("B2 redundant hero 'Preview sample report' demo link removed", !/ll-hero-demo-link/.test(src));
 t("B3 hero keeps exactly one sample action — the View sample button", /copy\.heroSeeAll/.test(src));
+
+// ─── F. Sample Output shows the deliverable (real primitives, not marketing art) ─
+const briefBlock = src.slice(src.indexOf("function SampleBriefCard"), src.indexOf("function OpportunityMockupHero"));
+t("F1 SampleBriefCard reuses the real intelligence primitives",
+  /function SampleBriefCard\(\)/.test(src) && /WS_ACCOUNTS\[0\]/.test(briefBlock) && /<CanvasStep[\s\S]*?label="Decision"/.test(briefBlock));
+t("F2 Sample section renders the SampleBriefCard (SHOW, not tell)", /<SampleBriefCard \/>/.test(src));
+t("F3 Sample headline shows reasoning (not 'this is what it looks like')",
+  /samplePreviewTitle:\s*"See the reasoning/.test(src) && !/This is what an Account Brief looks like/.test(src));
+t("F4 Sample Output two-column/stack layout present", /ll-sample-grid/.test(src) && /grid-template-areas/.test(src));
+
+// ─── G. Responsive anchors (desktop composed vs mobile start) + FAQ ───────────
+t("G1 pricing anchor desktop vs mobile scroll-margin differ (composed vs start)",
+  /\.ll-price-anchor\s*\{\s*scroll-margin-top:\s*220px/.test(src) && /max-width:\s*580px\)\s*\{\s*\.ll-price-anchor\s*\{\s*scroll-margin-top:\s*300px/.test(src));
+t("G2 FAQ compressed to 5 primary + 'More questions' disclosure",
+  /faqMore:/.test(src) && /copy\.faqs\.slice\(0,\s*5\)/.test(src) && /copy\.faqs\.slice\(5\)/.test(src));
+t("G3 faqMore + sampleSeePricing localized in 4 locales",
+  (src.match(/faqMore:/g) || []).length === 4 && (src.match(/sampleSeePricing:/g) || []).length === 4);
 
 // ─── C. Sticky nav + pricing anchor ───────────────────────────────────────────
 t("C1 .ll-root uses overflow-x:clip so the sticky nav actually pins", /\.ll-root\s*\{\s*overflow-x:\s*clip/.test(src));

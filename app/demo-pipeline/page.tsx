@@ -25,7 +25,7 @@ const COPY = {
     heroH2: "And the evidence behind every opportunity.",
     heroSub: "Your team can't work every account. LeadLens shows which ones deserve attention now — and the evidence behind the decision.",
     heroCTA: "Get started",
-    heroPriceNote: "Paid plans start at $7, one-time · viewing the sample is free — no card needed.",
+    heroPriceNote: "Start with a $7 one-time validation run.",
     heroSeeAll: "View sample",
     heroNote: "No contact databases. No email lists. Just commercial intelligence.",
     proofLabels: [["5","account briefs"],["6–8","buyer segments"],["24–48h","delivery"],["Evidence","+ counterevidence"]] as [string,string][],
@@ -195,9 +195,11 @@ const COPY = {
       ["Next Commercial Decision", "A clear next step per account, with optional outreach context — you decide what to send."],
     ] as [string, string][],
     samplePreviewTag: "Sample output",
-    samplePreviewTitle: "This is what an Account Brief looks like",
-    samplePreviewSub: "Every account comes with a full Account Brief — what changed, why it fits, why the timing may matter, the evidence and counterevidence, and what to validate before you act.",
+    samplePreviewTitle: "See the reasoning behind the decision.",
+    samplePreviewSub: "Every account arrives as an Account Brief — the change, the evidence and its limits, and the decision.",
+    sampleSeePricing: "See pricing →",
     faqTag: "FAQ",
+    faqMore: "More questions",
     faqTitle: "Common questions",
     faqs: [
       ["What exactly do I get?", "A prioritized Opportunity Portfolio of accounts for your ICP — each with an Account Brief: what changed, why it fits, why the timing may matter, the evidence and counterevidence, and what to validate before you act. Delivered as PDF + CSV in 24–48h."],
@@ -322,7 +324,7 @@ const COPY = {
     heroH2: "Y la evidencia detrás de cada oportunidad.",
     heroSub: "Tu equipo no puede trabajar todas las cuentas. LeadLens muestra cuáles merecen atención ahora — y la evidencia detrás de la decisión.",
     heroCTA: "Comenzar",
-    heroPriceNote: "Los planes de pago desde $7, pago único · ver la muestra es gratis — sin tarjeta.",
+    heroPriceNote: "Empieza con una validación única de $7.",
     heroSeeAll: "Ver muestra",
     heroNote: "Sin bases de datos de contactos. Sin listas de emails. Solo inteligencia comercial.",
     proofLabels: [["5","account briefs"],["6–8","segmentos de compradores"],["24–48h","entrega"],["Evidencia","+ contraevidencia"]] as [string,string][],
@@ -492,9 +494,11 @@ const COPY = {
       ["Next Commercial Decision", "Un siguiente paso claro por cuenta, con contexto de acercamiento opcional — tú decides qué enviar."],
     ] as [string, string][],
     samplePreviewTag: "Ejemplo de salida",
-    samplePreviewTitle: "Así se ve un Account Brief",
-    samplePreviewSub: "Cada cuenta incluye un Account Brief completo — qué cambió, por qué encaja, por qué el timing puede importar, la evidencia y la contraevidencia, y qué validar antes de actuar.",
+    samplePreviewTitle: "Mira el razonamiento detrás de la decisión.",
+    samplePreviewSub: "Cada cuenta llega como un Account Brief — el cambio, la evidencia y sus límites, y la decisión.",
+    sampleSeePricing: "Ver precios →",
     faqTag: "Preguntas frecuentes",
+    faqMore: "Más preguntas",
     faqTitle: "Preguntas comunes",
     faqs: [
       ["¿Qué recibo exactamente?", "Un Opportunity Portfolio priorizado de cuentas para tu ICP — cada una con un Account Brief: qué cambió, por qué encaja, por qué el timing puede importar, la evidencia y la contraevidencia, y qué validar antes de actuar. Entregado como PDF + CSV en 24–48h."],
@@ -619,7 +623,7 @@ const COPY = {
     heroH2: "E a evidência por trás de cada oportunidade.",
     heroSub: "Sua equipe não pode trabalhar todas as contas. A LeadLens mostra quais merecem atenção agora — e a evidência por trás da decisão.",
     heroCTA: "Começar",
-    heroPriceNote: "Planos pagos a partir de $7, pagamento único · ver a amostra é grátis — sem cartão.",
+    heroPriceNote: "Comece com uma validação única de $7.",
     heroSeeAll: "Ver amostra",
     heroNote: "Sem bancos de dados de contatos. Sem listas de e-mails. Apenas inteligência comercial.",
     proofLabels: [["5","account briefs"],["6–8","segmentos de compradores"],["24–48h","entrega"],["Evidência","+ contraevidência"]] as [string,string][],
@@ -789,9 +793,11 @@ const COPY = {
       ["Next Commercial Decision", "Um próximo passo claro por conta, com contexto de abordagem opcional — você decide o que enviar."],
     ] as [string, string][],
     samplePreviewTag: "Exemplo de saída",
-    samplePreviewTitle: "É assim que um Account Brief se parece",
-    samplePreviewSub: "Cada conta inclui um Account Brief completo — o que mudou, por que encaixa, por que o timing pode importar, a evidência e a contraevidência, e o que validar antes de agir.",
+    samplePreviewTitle: "Veja o raciocínio por trás da decisão.",
+    samplePreviewSub: "Cada conta chega como um Account Brief — a mudança, a evidência e seus limites, e a decisão.",
+    sampleSeePricing: "Ver preços →",
     faqTag: "Perguntas frequentes",
+    faqMore: "Mais perguntas",
     faqTitle: "Dúvidas comuns",
     faqs: [
       ["O que exatamente eu recebo?", "Um Opportunity Portfolio priorizado de contas para o seu ICP — cada uma com um Account Brief: o que mudou, por que encaixa, por que o timing pode importar, a evidência e a contraevidência, e o que validar antes de agir. Entregue como PDF + CSV em 24–48h."],
@@ -916,7 +922,7 @@ const COPY = {
     heroH2: "そして、各機会の裏付けとなる根拠を。",
     heroSub: "すべてのアカウントに取り組むことはできません。LeadLensは、今どのアカウントに注力すべきか、その判断の根拠とともに示します。",
     heroCTA: "始める",
-    heroPriceNote: "有料プランは$7から・一回払い。サンプルの閲覧は無料 — カード不要。",
+    heroPriceNote: "$7・一回払いの検証ランから始められます。",
     heroSeeAll: "サンプルを見る",
     heroNote: "コンタクトデータベースなし。メールリストなし。コマーシャルインテリジェンスのみ。",
     proofLabels: [["5件","アカウントブリーフ"],["6〜8","購買者セグメント"],["24〜48h","納品"],["エビデンス","+ 反証"]] as [string,string][],
@@ -1086,9 +1092,11 @@ const COPY = {
       ["Next Commercial Decision", "アカウントごとの明確な次のステップと任意のアウトリーチ文脈 — 何を送るかはあなたが決めます。"],
     ] as [string, string][],
     samplePreviewTag: "サンプル出力",
-    samplePreviewTitle: "Account Briefはこのような内容です",
-    samplePreviewSub: "各アカウントに完全なAccount Briefが付きます — 何が変わったか、なぜ適合するか、なぜタイミングが重要か、エビデンスと反証、そして行動前に検証すべきこと。",
+    samplePreviewTitle: "意思決定の背後にある根拠をご覧ください。",
+    samplePreviewSub: "各アカウントはAccount Briefとして届きます — 変化、エビデンスとその限界、そして意思決定。",
+    sampleSeePricing: "料金を見る →",
     faqTag: "よくある質問",
+    faqMore: "その他の質問",
     faqTitle: "よくいただく質問",
     faqs: [
       ["具体的に何が得られますか？", "ICPに合わせた、優先順位付けされたアカウントのOpportunity Portfolio — 各アカウントにAccount Brief：何が変わったか、なぜ適合するか、なぜタイミングが重要か、エビデンスと反証、行動前に検証すべきこと。PDF + CSVで24〜48時間以内に納品します。"],
@@ -1465,9 +1473,25 @@ export default function DemoPipelinePage() {
         /* Pricing anchor lands the heading peek + the 2×2 cards together (§136–142).
            Larger top margin reveals the title/subhead above the grid while pulling
            the cards up into the viewport. Tuned smaller on short/mobile viewports. */
+        /* Desktop composes the section (heading tail + cards prominent). Mobile uses a
+           large offset so the anchor sits low in the viewport, revealing the section
+           from its eyebrow down = section START (§163–166). Tuned by real render. */
         .ll-price-anchor { scroll-margin-top: 220px; }
-        @media (max-width: 820px) { .ll-price-anchor { scroll-margin-top: 210px; } }
-        @media (max-width: 580px) { .ll-price-anchor { scroll-margin-top: 250px; } }
+        @media (max-width: 820px) { .ll-price-anchor { scroll-margin-top: 300px; } }
+        @media (max-width: 580px) { .ll-price-anchor { scroll-margin-top: 300px; } }
+        /* Sample Output product-proof layout: copy left, real Brief right on desktop;
+           eyebrow → mini-brief → CTA stacked on mobile (§180/§188). */
+        .ll-sample-grid { display: grid; grid-template-columns: 1fr 1.05fr; grid-template-areas: "head proof" "cta proof"; column-gap: 2.75rem; row-gap: 1.5rem; align-items: start; }
+        .ll-sample-head { grid-area: head; }
+        .ll-sample-cta  { grid-area: cta; align-self: end; }
+        .ll-sample-proof { grid-area: proof; align-self: center; width: 100%; max-width: 27rem; justify-self: end; }
+        @media (max-width: 840px) {
+          .ll-sample-grid { grid-template-columns: 1fr; grid-template-areas: "head" "proof" "cta"; row-gap: 1.25rem; }
+          .ll-sample-head h2 { max-width: none !important; }
+          .ll-sample-head p  { max-width: 34rem !important; }
+          .ll-sample-proof { justify-self: stretch; max-width: 30rem; margin: 0 auto; }
+          .ll-sample-cta { align-self: start; }
+        }
         @media (max-width: 820px) {
           .ll-nav-links { display: none !important; }
           .ll-nav-signin { display: none !important; }
@@ -1703,35 +1727,30 @@ export default function DemoPipelinePage() {
         </div>
       </section>
 
-      {/* Sample report preview */}
-      <section id="sample" className="ll-section" style={{ ...sectionStyle, background: "#fff" }}>
-        <div style={{ ...innerStyle, textAlign: "center" }}>
-          <Tag>{copy.samplePreviewTag}</Tag>
-          <h2 style={sectionTitleStyle}>{copy.samplePreviewTitle}</h2>
-          <p style={{ color: "#64748b", fontSize: "1.05rem", maxWidth: "36rem", margin: "0 auto 1.75rem", lineHeight: 1.6 }}>
-            {copy.samplePreviewSub}
-          </p>
+      {/* Sample output — product proof. SHOWS a real Account Brief (built from the
+          same intelligence primitives as the hero canvas) beside a tight commercial
+          block, rather than describing it. Desktop: copy left / brief right. Mobile:
+          eyebrow → mini-brief → CTA (grid-template-areas reorder). §175–190, §216. */}
+      <section id="sample" className="ll-section" style={{ ...sectionStyle, background: "#f8fafc" }}>
+        <div style={innerStyle}>
+          <div className="ll-sample-grid">
+            <div className="ll-sample-head">
+              <Tag>{copy.samplePreviewTag}</Tag>
+              <h2 style={{ ...sectionTitleStyle, maxWidth: "20rem", marginBottom: ".6rem" }}>{copy.samplePreviewTitle}</h2>
+              <p style={{ color: "#64748b", fontSize: "1.02rem", maxWidth: "24rem", margin: 0, lineHeight: 1.6 }}>
+                {copy.samplePreviewSub}
+              </p>
+            </div>
 
-          {/* Primary sample action: the complete synthetic Account Brief on /sample.
-              One clear primary CTA (§135/§159D); the format preview and the $7
-              Opportunity Report follow as explicitly secondary options. The redundant
-              gray disclaimer panel was removed — the synthetic note lives in the card. */}
-          <div style={{ maxWidth: "40rem", margin: "0 auto", background: "linear-gradient(180deg,#f8fbff,#fff)", border: "1px solid #e2e8f0", borderRadius: "1rem", padding: "1.75rem 2rem", textAlign: "center" as const }}>
-            <p style={{ fontSize: "1.05rem", color: "#334155", lineHeight: 1.6, margin: "0 auto 1.25rem", maxWidth: "34rem" }}>
-              {copy.sampleTeaserText}
-            </p>
-            <a href="/sample" style={{ display: "inline-block", background: "#0ea5e9", color: "#fff", borderRadius: ".75rem", padding: ".8rem 1.6rem", fontWeight: 700, fontSize: ".9rem", textDecoration: "none" }}>{copy.sampleTeaserCTA}</a>
-            <div style={{ fontSize: ".72rem", color: "#94a3b8", marginTop: ".9rem" }}>{copy.sampleTeaserNote}</div>
-          </div>
+            <div className="ll-sample-proof"><SampleBriefCard /></div>
 
-          {/* Secondary options — clearly subordinate to "View full sample" above */}
-          <div style={{ display: "flex", gap: ".75rem", justifyContent: "center", flexWrap: "wrap" as const, marginTop: "1.5rem" }}>
-            <button onClick={goToDemo} style={{ display: "inline-flex", alignItems: "center", gap: ".4rem", background: "none", border: "none", color: "#64748b", fontSize: ".8rem", fontWeight: 600, cursor: "pointer", fontFamily: "inherit", textDecoration: "underline", textUnderlineOffset: "3px" }}>
-              {copy.sampleBridgeFreeDemo} →
-            </button>
-            <button onClick={() => goToForm("sample", "sample_bridge")} style={{ display: "inline-flex", alignItems: "center", gap: ".4rem", background: "none", border: "none", color: "#64748b", fontSize: ".8rem", fontWeight: 600, cursor: "pointer", fontFamily: "inherit", textDecoration: "underline", textUnderlineOffset: "3px" }}>
-              {copy.sampleBridgeSamplePack} →
-            </button>
+            <div className="ll-sample-cta">
+              <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" as const }}>
+                <a href="/sample" style={{ display: "inline-block", background: "#0ea5e9", color: "#fff", borderRadius: ".75rem", padding: ".8rem 1.6rem", fontWeight: 700, fontSize: ".9rem", textDecoration: "none", boxShadow: "0 8px 20px rgba(14,165,233,.22)" }}>{copy.sampleTeaserCTA}</a>
+                <button onClick={() => goToSection("pricing")} style={{ background: "none", border: "none", color: "#0284c7", fontSize: ".85rem", fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>{copy.sampleSeePricing}</button>
+              </div>
+              <div style={{ fontSize: ".72rem", color: "#94a3b8", marginTop: ".85rem" }}>{copy.sampleTeaserNote}</div>
+            </div>
           </div>
         </div>
       </section>
@@ -1865,17 +1884,38 @@ export default function DemoPipelinePage() {
             <Tag>{copy.faqTag}</Tag>
             <h2 style={sectionTitleStyle}>{copy.faqTitle}</h2>
           </div>
-          <div style={{ border: "1px solid #e2e8f0", borderRadius: "1rem", overflow: "hidden" }}>
-            {copy.faqs.map(([q, a], i) => (
-              <div key={i} style={{ padding: "1.25rem 1.5rem", borderBottom: i < copy.faqs.length - 1 ? "1px solid #f1f5f9" : "none", background: i % 2 === 0 ? "#fff" : "#fafbfc" }}>
+          {/* 5 primary questions stay open; the rest collapse into a native
+              disclosure so the FAQ never dominates the mobile ending (§207/§208). */}
+          {(() => {
+            const faqRow = ([q, a]: [string, string], i: number, arr: [string, string][]) => (
+              <div key={i} style={{ padding: "1.25rem 1.5rem", borderBottom: i < arr.length - 1 ? "1px solid #f1f5f9" : "none", background: i % 2 === 0 ? "#fff" : "#fafbfc" }}>
                 <div style={{ fontWeight: 700, fontSize: ".925rem", color: "#0f172a", marginBottom: ".5rem", display: "flex", gap: ".75rem", alignItems: "flex-start" }}>
                   <span style={{ color: "#0ea5e9", fontWeight: 800, flexShrink: 0, fontSize: ".85rem", marginTop: ".1rem" }}>Q</span>
                   {q}
                 </div>
                 <div style={{ fontSize: ".875rem", color: "#64748b", lineHeight: 1.65, paddingLeft: "1.375rem" }}>{a}</div>
               </div>
-            ))}
-          </div>
+            );
+            const primary = copy.faqs.slice(0, 5);
+            const rest = copy.faqs.slice(5);
+            return (
+              <>
+                <div style={{ border: "1px solid #e2e8f0", borderRadius: "1rem", overflow: "hidden" }}>
+                  {primary.map((f, i) => faqRow(f, i, primary))}
+                </div>
+                {rest.length > 0 && (
+                  <details style={{ marginTop: "1rem" }}>
+                    <summary style={{ cursor: "pointer", listStyle: "none", textAlign: "center", fontSize: ".85rem", fontWeight: 700, color: "#0284c7", padding: ".6rem 0", userSelect: "none" as const }}>
+                      {copy.faqMore} ↓
+                    </summary>
+                    <div style={{ border: "1px solid #e2e8f0", borderRadius: "1rem", overflow: "hidden", marginTop: ".5rem" }}>
+                      {rest.map((f, i) => faqRow(f, i, rest))}
+                    </div>
+                  </details>
+                )}
+              </>
+            );
+          })()}
           {/* FAQ → CTA bridge */}
           <div style={{ marginTop: "1.75rem", textAlign: "center" }}>
             <span style={{ fontSize: ".875rem", color: "#64748b" }}>{copy.faqCtaBridge}{" "}</span>
@@ -3051,6 +3091,60 @@ function AccountWorkspace() {
 
       <div style={{ color: "#5f7c9c", fontSize: ".6rem", padding: ".55rem .5rem 0", lineHeight: 1.4 }}>
         Illustrative sample — synthetic account, events and sources.
+      </div>
+    </div>
+  );
+}
+
+// Compact, real Account Brief built from the SAME primitives as the hero canvas
+// (CanvasStep spine + DecisionPill + FTE + relation tags) and the same synthetic
+// account — so the Sample Output section SHOWS the deliverable instead of
+// describing it, and reads as one product with the hero and /sample (§178–182,216).
+function SampleBriefCard() {
+  const a = WS_ACCOUNTS[0]; // Northstar — the lead account across hero + /sample
+  const src = a.sources[0];
+  const lim = a.limiters[0];
+  const dstate = DECISION_STATES[a.state];
+  return (
+    <div style={{ background: "#fff", border: "1px solid #e6eef6", borderRadius: "1rem", boxShadow: "0 20px 48px rgba(15,23,42,.10), 0 3px 12px rgba(15,23,42,.05)", overflow: "hidden", textAlign: "left" as const }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: ".5rem", padding: ".6rem .9rem", borderBottom: "1px solid #eef2f7", background: "linear-gradient(180deg,#f8fbff,#fff)" }}>
+        <span style={{ fontSize: ".58rem", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase", color: "#94a3b8" }}>Account Brief</span>
+        <span style={{ color: "#0284c7", background: "#eff6ff", border: "1px solid #bfdbfe", fontSize: ".55rem", fontWeight: 700, letterSpacing: ".05em", textTransform: "uppercase", padding: ".12rem .5rem", borderRadius: 999 }}>Sample</span>
+      </div>
+      <div style={{ padding: ".85rem .95rem" }}>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: ".5rem" }}>
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontWeight: 800, fontSize: ".98rem", color: "#0f172a", letterSpacing: "-.02em", lineHeight: 1.15 }}>{a.name}</div>
+            <div style={{ fontSize: ".66rem", color: "#64748b", marginTop: ".12rem" }}>{a.seg}</div>
+          </div>
+          <DecisionPill state={a.state} />
+        </div>
+        <div style={{ margin: ".55rem 0 .8rem" }}><FTE fit={a.fit} timing={a.timing} evidence={a.evidence} /></div>
+        <CanvasStep dotColor="#0f172a" label="What changed" meta={a.changedAge}>
+          <div style={{ fontSize: ".82rem", fontWeight: 700, color: "#0f172a", lineHeight: 1.3 }}>{a.changed}</div>
+        </CanvasStep>
+        <CanvasStep dotColor="#0284c7" label="Supported by">
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: ".5rem" }}>
+            <span style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: ".72rem" }}>
+              <span style={{ fontWeight: 600, color: "#0f172a" }}>{src.type}</span> <span style={{ color: "#64748b" }}>— {src.note}</span>
+            </span>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: ".25rem", fontSize: ".6rem", fontWeight: 700, color: REL_COLOR[src.rel], flexShrink: 0 }}>
+              <span style={{ width: 5, height: 5, borderRadius: "50%", background: REL_COLOR[src.rel] }} />{src.rel}
+            </span>
+          </div>
+        </CanvasStep>
+        <CanvasStep dotColor="#64748b" label="Limited by">
+          <div style={{ fontSize: ".74rem", color: "#334155", fontWeight: 600, lineHeight: 1.35 }}>{lim.limit}</div>
+          <div style={{ display: "flex", gap: ".35rem", marginTop: ".15rem", fontSize: ".7rem", color: "#0369a1", lineHeight: 1.35 }}>
+            <span style={{ fontWeight: 700, flexShrink: 0 }}>Validate →</span><span style={{ minWidth: 0 }}>{lim.validate}</span>
+          </div>
+        </CanvasStep>
+        <CanvasStep dotColor={dstate.dot} last label="Decision">
+          <div style={{ display: "flex", alignItems: "center", gap: ".5rem", flexWrap: "wrap" as const }}>
+            <DecisionPill state={a.state} />
+            <span style={{ fontSize: ".76rem", color: "#0f172a", fontWeight: 600, lineHeight: 1.35 }}>{a.next}</span>
+          </div>
+        </CanvasStep>
       </div>
     </div>
   );
