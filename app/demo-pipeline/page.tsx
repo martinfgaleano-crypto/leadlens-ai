@@ -26,7 +26,7 @@ const COPY = {
     heroH2: "And the evidence behind every opportunity.",
     heroSub: "Turn market evidence into clearer account decisions.",
     heroCTA: "Get started",
-    heroPriceNote: "Start with a $7 one-time validation run.",
+    heroPriceNote: "From $7 · one-time.",
     heroSeeAll: "View sample",
     heroNote: "No contact databases. No email lists. Just commercial intelligence.",
     proofLabels: [["5","account briefs"],["6–8","buyer segments"],["24–48h","delivery"],["Evidence","+ counterevidence"]] as [string,string][],
@@ -272,7 +272,7 @@ const COPY = {
     diffProofRest: " Every priority comes with the evidence, its limits, and what to validate before you act.",
     comparisonHeaders: ["", "Google", "Apollo / ZoomInfo", "Clay", "LeadLens"] as string[],
     comparisonRows: [
-      ["What you get", "Pages and links", "Contact records to filter", "Data infrastructure", "Ranked opportunity briefs"],
+      ["What you get", "Pages and links", "Contact records to filter", "Data infrastructure", "Prioritized opportunity briefs"],
       ["Signals", "You find them manually", "Basic intent data", "You build the workflow", "Auto-detected with sources"],
       ["Market mapping", "Manual research", "Industry filters only", "You configure it", "Automatic — 6–8 segments"],
       ["Outreach strategy", "None", "Email templates", "You build it", "Signal-led, per account"],
@@ -341,7 +341,7 @@ const COPY = {
     heroH2: "Y la evidencia detrás de cada oportunidad.",
     heroSub: "Convierte la evidencia del mercado en decisiones de cuenta más claras.",
     heroCTA: "Comenzar",
-    heroPriceNote: "Empieza con una validación única de $7.",
+    heroPriceNote: "Desde $7 · pago único.",
     heroSeeAll: "Ver muestra",
     heroNote: "Sin bases de datos de contactos. Sin listas de emails. Solo inteligencia comercial.",
     proofLabels: [["5","account briefs"],["6–8","segmentos de compradores"],["24–48h","entrega"],["Evidencia","+ contraevidencia"]] as [string,string][],
@@ -385,10 +385,10 @@ const COPY = {
       pro:      "Convierte la inteligencia de oportunidades en una estrategia comercial enfocada.",
     },
     planFeatures: {
-      sample:   ["Market Map de muestra","Briefs de empresa de muestra","Sin investigación real — solo formato","Ve el output antes de comprometerte"],
-      starter:  ["1 ICP","5–8 segmentos de compradores","Ranking de segmentos","Señales a seguir por segmento","Tipos de oportunidades ejemplo","Primer segmento recomendado","Entrega en PDF"],
-      standard: ["1 ICP","Market Map — 6–8 segmentos","10–15 oportunidades rankeadas","Top 5 Opportunity Briefs","Señales públicas con fuentes","Fit × Timing × Evidence por cuenta","Por qué ahora — análisis de timing","Qué validar por cuenta","Contexto de acercamiento opcional","Descarga PDF + CSV","Entrega en 24–48h"],
-      pro:      ["1 ICP","Market Map ampliado","20–30 oportunidades rankeadas","Top 10 Opportunity Briefs","Recomendaciones por segmento","Lista de evidencias y fuentes","Secuencia recomendada por cuenta","Análisis de riesgos y debilidades","Descarga PDF + CSV","Entrega en 24–48h"],
+      sample:   ["1 ICP · 1 región","2 oportunidades completas","Qué cambió + fechas del evento + fuentes","Calidad de evidencia, Por qué ahora, fit y timing","Riesgos, qué validar, próxima acción","Veredicto del ICP: continuar / refinar / detener"],
+      starter:  ["Todo lo de Preview","1 ICP · 1 región","6 oportunidades completas","Priorización inicial + estados (Actuar ya / Investigar / Monitorear)","Comparación Fit × Timing","Riesgos clave + secuencia recomendada","Executive Opportunity Brief"],
+      standard: ["Todo lo de Brief","1 ICP · hasta 2 regiones","12 oportunidades completas","Priorización completa del portafolio + asignación","Riesgo del portafolio + brechas de cobertura","Centro de evidencia con priorización explicada","Próxima mejor investigación y acción","Executive Intelligence Brief"],
+      pro:      ["Todo lo de Intelligence","Hasta 2 ICPs · hasta 3 regiones","18 oportunidades completas","Corroboración reforzada en cuentas prioritarias","Contraevidencia sistemática","Clusters más profundos + patrones de mercado","Secuencia estratégica + fechas de revalidación","Strategic Executive Brief"],
     },
     planCTAs: { sample: "Comenzar", starter: "Comenzar", standard: "Comenzar", pro: "Comenzar" },
     planFor: {
@@ -587,7 +587,7 @@ const COPY = {
     diffProofRest: " Cada prioridad viene con la evidencia, sus límites y qué validar antes de actuar.",
     comparisonHeaders: ["", "Google", "Apollo / ZoomInfo", "Clay", "LeadLens"] as string[],
     comparisonRows: [
-      ["Qué obtienes", "Páginas y enlaces", "Registros de contactos para filtrar", "Infraestructura de datos", "Briefs de oportunidad rankeados"],
+      ["Qué obtienes", "Páginas y enlaces", "Registros de contactos para filtrar", "Infraestructura de datos", "Briefs de oportunidad priorizados"],
       ["Señales", "Las buscas manualmente", "Datos de intención básicos", "Construyes el flujo", "Auto-detectadas con fuentes"],
       ["Mapeo de mercado", "Investigación manual", "Solo filtros de industria", "Tú lo configuras", "Automático — 6–8 segmentos"],
       ["Estrategia de outreach", "Ninguna", "Plantillas de email", "Tú la construyes", "Liderada por señales, por cuenta"],
@@ -656,7 +656,7 @@ const COPY = {
     heroH2: "E a evidência por trás de cada oportunidade.",
     heroSub: "Transforme a evidência do mercado em decisões de conta mais claras.",
     heroCTA: "Começar",
-    heroPriceNote: "Comece com uma validação única de $7.",
+    heroPriceNote: "A partir de $7 · pagamento único.",
     heroSeeAll: "Ver amostra",
     heroNote: "Sem bancos de dados de contatos. Sem listas de e-mails. Apenas inteligência comercial.",
     proofLabels: [["5","account briefs"],["6–8","segmentos de compradores"],["24–48h","entrega"],["Evidência","+ contraevidência"]] as [string,string][],
@@ -700,10 +700,10 @@ const COPY = {
       pro:      "Transforme a inteligência de oportunidades em uma estratégia comercial focada.",
     },
     planFeatures: {
-      sample:   ["Market Map de exemplo","Briefs de empresa de exemplo","Sem pesquisa real — apenas formato","Veja o output antes de se comprometer"],
-      starter:  ["1 ICP","5–8 segmentos de compradores","Ranking de segmentos","Sinais a acompanhar por segmento","Tipos de oportunidades exemplo","Primeiro segmento recomendado","Entrega em PDF"],
-      standard: ["1 ICP","Market Map — 6–8 segmentos","10–15 oportunidades ranqueadas","Top 5 Opportunity Briefs","Sinais públicos com fontes","Fit × Timing × Evidence por conta","Por que agora — análise de timing","O que validar por conta","Contexto de abordagem opcional","Download PDF + CSV","Entrega em 24–48h"],
-      pro:      ["1 ICP","Market Map ampliado","20–30 oportunidades ranqueadas","Top 10 Opportunity Briefs","Recomendações por segmento","Lista de evidências e fontes","Sequência recomendada por conta","Análise de riscos e fraquezas","Download PDF + CSV","Entrega em 24–48h"],
+      sample:   ["1 ICP · 1 região","2 oportunidades completas","O que mudou + datas do evento + fontes","Qualidade da evidência, Por que agora, fit e timing","Riscos, o que validar, próxima ação","Veredito do ICP: continuar / refinar / parar"],
+      starter:  ["Tudo do Preview","1 ICP · 1 região","6 oportunidades completas","Priorização inicial + status (Agir agora / Investigar / Monitorar)","Comparação Fit × Timing","Riscos-chave + sequência recomendada","Executive Opportunity Brief"],
+      standard: ["Tudo do Brief","1 ICP · até 2 regiões","12 oportunidades completas","Priorização completa do portfólio + alocação","Risco do portfólio + lacunas de cobertura","Centro de evidência com priorização explicada","Próxima melhor investigação e ação","Executive Intelligence Brief"],
+      pro:      ["Tudo do Intelligence","Até 2 ICPs · até 3 regiões","18 oportunidades completas","Corroboração reforçada em contas prioritárias","Contraevidência sistemática","Clusters mais profundos + padrões de mercado","Sequência estratégica + datas de revalidação","Strategic Executive Brief"],
     },
     planCTAs: { sample: "Começar", starter: "Começar", standard: "Começar", pro: "Começar" },
     planFor: {
@@ -902,7 +902,7 @@ const COPY = {
     diffProofRest: " Cada prioridade vem com a evidência, seus limites e o que validar antes de agir.",
     comparisonHeaders: ["", "Google", "Apollo / ZoomInfo", "Clay", "LeadLens"] as string[],
     comparisonRows: [
-      ["O que você recebe", "Páginas e links", "Registros de contatos para filtrar", "Infraestrutura de dados", "Briefs de oportunidade ranqueados"],
+      ["O que você recebe", "Páginas e links", "Registros de contatos para filtrar", "Infraestrutura de dados", "Briefs de oportunidade priorizados"],
       ["Sinais", "Você busca manualmente", "Dados de intenção básicos", "Você constrói o fluxo", "Auto-detectados com fontes"],
       ["Mapeamento de mercado", "Pesquisa manual", "Apenas filtros de indústria", "Você configura", "Automático — 6–8 segmentos"],
       ["Estratégia de outreach", "Nenhuma", "Templates de e-mail", "Você constrói", "Liderada por sinais, por conta"],
@@ -971,7 +971,7 @@ const COPY = {
     heroH2: "そして、各機会の裏付けとなる根拠を。",
     heroSub: "市場のエビデンスを、より明確なアカウントの意思決定へ。",
     heroCTA: "始める",
-    heroPriceNote: "$7・一回払いの検証ランから始められます。",
+    heroPriceNote: "$7から · 一回払い。",
     heroSeeAll: "サンプルを見る",
     heroNote: "コンタクトデータベースなし。メールリストなし。コマーシャルインテリジェンスのみ。",
     proofLabels: [["5件","アカウントブリーフ"],["6〜8","購買者セグメント"],["24〜48h","納品"],["エビデンス","+ 反証"]] as [string,string][],
@@ -1015,10 +1015,10 @@ const COPY = {
       pro:      "オポチュニティ・インテリジェンスを、集中した商業戦略に変える。",
     },
     planFeatures: {
-      sample:   ["サンプルマーケットマップ","サンプル企業ブリーフ","実際の調査なし — フォーマットのみ","コミットする前に出力を確認"],
-      starter:  ["1 ICP","5〜8購買者セグメント","セグメントランキングプレビュー","セグメントごとの注目シグナル","オポチュニティタイプ例","テスト推奨の最初のセグメント","PDF納品"],
-      standard: ["1 ICP","マーケットマップ — 6〜8セグメント","ランク付きオポチュニティ10〜15件","トップ5オポチュニティブリーフ","ソース付き公開シグナル","Fit × Timing × Evidence（各アカウント）","今なぜか — タイミング分析","各アカウントで検証すべきこと","任意のアウトリーチ文脈","PDF + CSVダウンロード","24〜48時間で納品"],
-      pro:      ["1 ICP","拡張マーケットマップ","ランク付きオポチュニティ20〜30件","トップ10オポチュニティブリーフ","セグメントレベルの推奨","証拠とソースリスト","推奨シーケンス","リスクと弱点分析","PDF + CSVダウンロード","24〜48時間で納品"],
+      sample:   ["1 ICP · 1地域","2件の完全なオポチュニティ","変化 + イベント日付 + ソース","エビデンスの質、なぜ今、フィットとタイミング","リスク、検証すべきこと、次のアクション","ICP判定：続行 / 調整 / 停止"],
+      starter:  ["Previewの全内容","1 ICP · 1地域","6件の完全なオポチュニティ","初期の優先順位付け + ステータス（今すぐ対応 / 調査 / 監視）","フィット × タイミング比較","主要リスク + 推奨シーケンス","エグゼクティブ・オポチュニティ・ブリーフ"],
+      standard: ["Briefの全内容","1 ICP · 最大2地域","12件の完全なオポチュニティ","ポートフォリオ全体の優先順位付け + 配分","ポートフォリオのリスク + カバレッジのギャップ","優先順位の根拠を示すエビデンスセンター","次善の調査とアクション","エグゼクティブ・インテリジェンス・ブリーフ"],
+      pro:      ["Intelligenceの全内容","最大2 ICP · 最大3地域","18件の完全なオポチュニティ","優先アカウントでの強化されたコロボレーション","体系的な反証","より深いクラスタ + 市場パターン","戦略的シーケンス + 再検証日","ストラテジック・エグゼクティブ・ブリーフ"],
     },
     planCTAs: { sample: "始める", starter: "始める", standard: "始める", pro: "始める" },
     planFor: {
@@ -1217,7 +1217,7 @@ const COPY = {
     diffProofRest: " すべての優先順位には、エビデンス、その限界、そして行動前に検証すべきことが付きます。",
     comparisonHeaders: ["", "Google", "Apollo / ZoomInfo", "Clay", "LeadLens"] as string[],
     comparisonRows: [
-      ["取得できるもの", "ページとリンク", "フィルター用コンタクトレコード", "データインフラ", "ランク付きオポチュニティブリーフ"],
+      ["取得できるもの", "ページとリンク", "フィルター用コンタクトレコード", "データインフラ", "優先順位付けされたオポチュニティブリーフ"],
       ["シグナル", "手動で探す", "基本的なインテントデータ", "ワークフローを自体で構築", "ソース付きで自動検出"],
       ["市場マッピング", "手動調査", "業界フィルターのみ", "自分で設定", "自動 — 6〜8セグメント"],
       ["アウトリーチ戦略", "なし", "メールテンプレート", "自分で構築", "シグナルベース、アカウントごと"],
@@ -1636,23 +1636,28 @@ export default function DemoPipelinePage() {
           .ll-section { padding: 2.25rem 1rem !important; }
           .ll-problem-sec { padding: 3rem 1rem !important; }
           .ll-cta-sec { padding: 2.5rem 1rem !important; }
-          .ll-hero-outer { padding: 1.25rem 1rem 1.25rem !important; }
+          .ll-hero-outer { padding: 1rem 1.1rem 0 !important; }
           .ll-faq-inner { padding: 0 1rem !important; }
           .ll-monthly-card { padding: 1.5rem 1.125rem !important; }
-          /* Mobile hero recomposition (§1–39): remove the promo layers before the
-             product — banner, the duplicate bold H2, and the reassurance pill — and
-             reduce the CTA block so the Opportunity Portfolio reaches the fold sooner. */
+          /* Mobile hero recomposition (§7–31): remove the promo layers (banner,
+             duplicate H2, reassurance pill), left-align into an editorial hierarchy,
+             turn the eyebrow into a restrained inline category marker, put a compact
+             primary + inline "View sample →" on one action row, and pull the product
+             canvas near the screen edge right after the actions so the marketing turns
+             into the product instead of a separate screenshot. */
           .ll-announce { display: none !important; }
           .ll-hero-h2  { display: none !important; }
           .ll-hero-note { display: none !important; }
-          .ll-hero-badge   { margin-bottom: .875rem !important; font-size: .74rem !important; padding: .3rem .875rem .3rem .55rem !important; }
-          .ll-hero-h1      { font-size: 1.875rem !important; line-height: 1.15 !important; letter-spacing: -.02em !important; margin-bottom: .6rem !important; }
-          .ll-hero-sub     { font-size: .95rem !important; line-height: 1.5 !important; margin-bottom: 1.15rem !important; }
-          /* One filled primary + a light text secondary (not two equal buttons). */
-          .ll-hero-cta-row { flex-direction: column !important; align-items: stretch !important; gap: .55rem !important; margin-bottom: .5rem !important; }
-          .ll-hero-cta-row > button:first-child { width: 100% !important; justify-content: center !important; box-sizing: border-box !important; white-space: normal !important; }
-          .ll-hero-cta-row > button:nth-child(2) { width: auto !important; align-self: flex-start !important; background: none !important; border: none !important; box-shadow: none !important; color: #0284c7 !important; padding: .35rem .1rem !important; font-size: .95rem !important; }
+          .ll-hero-left { text-align: left !important; align-items: flex-start !important; }
+          .ll-hero-badge { background: none !important; border: none !important; box-shadow: none !important; padding: 0 !important; margin-bottom: .95rem !important; font-size: .7rem !important; font-weight: 700 !important; letter-spacing: .04em !important; text-transform: uppercase !important; color: #0284c7 !important; }
+          .ll-hero-h1    { font-size: 2rem !important; line-height: 1.12 !important; letter-spacing: -.025em !important; margin-bottom: .55rem !important; }
+          .ll-hero-sub   { font-size: .95rem !important; font-weight: 500 !important; line-height: 1.45 !important; color: #64748b !important; margin-bottom: 1.1rem !important; }
+          .ll-hero-cta-row { flex-direction: row !important; align-items: center !important; flex-wrap: wrap !important; gap: 1rem !important; margin-bottom: .55rem !important; }
+          .ll-hero-cta-row > button:first-child { width: auto !important; padding: .7rem 1.4rem !important; font-size: .95rem !important; white-space: nowrap !important; }
+          .ll-hero-cta-row > button:nth-child(2) { width: auto !important; align-self: center !important; background: none !important; border: none !important; box-shadow: none !important; color: #0284c7 !important; padding: .35rem 0 !important; font-size: .92rem !important; font-weight: 600 !important; white-space: nowrap !important; }
           .ll-hero-cta-row > button:nth-child(2)::after { content: " →"; }
+          .ll-hero-price { font-size: .78rem !important; margin: 0 !important; }
+          .ll-hero-mock  { margin: .95rem -.6rem 0 !important; }
           /* Swap mockups */
           .ll-hero-mock-desktop { display: none !important; }
           .ll-hero-mock-mobile  { display: block !important; }
@@ -1761,7 +1766,7 @@ export default function DemoPipelinePage() {
                   price, and that the public sample is free to view without a card.
                   A single redundant "Preview sample report" link was removed so the
                   hero has exactly one sample action — the "View sample" button. */}
-              <p style={{ fontSize: ".8rem", color: "#94a3b8", margin: "0 0 1.1rem", lineHeight: 1.5 }}>{copy.heroPriceNote}</p>
+              <p className="ll-hero-price" style={{ fontSize: ".8rem", color: "#94a3b8", margin: "0 0 1.1rem", lineHeight: 1.5 }}>{copy.heroPriceNote}</p>
               <p className="ll-hero-note" style={{ display: "inline-block", fontSize: ".82rem", color: "#64748b", background: "#f0f9ff", border: "1px solid #e0f2fe", borderRadius: 999, padding: ".375rem 1rem", marginBottom: ".75rem" }}>
                 {copy.heroNote}
               </p>

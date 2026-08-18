@@ -76,6 +76,22 @@ t("K4 mobile secondary CTA is a light text link (not a second heavy button)",
   /\.ll-hero-cta-row > button:nth-child\(2\) \{[^}]*background: none[^}]*border: none/.test(src));
 t("K5 single hero support line retained (analytical)", /heroSub:\s*"Turn market evidence into clearer account decisions\."/.test(src));
 
+// ─── L. V8.3 mobile hero editorial recomposition + localization closeout ──────
+t("L1 mobile hero is left-aligned editorial", /\.ll-hero-left \{ text-align: left/.test(src));
+t("L2 mobile eyebrow is a restrained inline marker (no pill, uppercase)",
+  /\.ll-hero-badge \{ background: none[^}]*text-transform: uppercase/.test(src));
+t("L3 mobile CTA actions sit on one row", /\.ll-hero-cta-row \{ flex-direction: row/.test(src));
+t("L4 hero price line is concise 'From $7 · one-time' (localized 4 locales)",
+  /heroPriceNote:\s*"From \$7 · one-time\."/.test(src) && (src.match(/heroPriceNote:/g) || []).length === 4);
+t("L5 product canvas pulled near the screen edge on mobile", /\.ll-hero-mock\s+\{ margin:[^}]*-\.6rem/.test(src));
+t("L6 rendered pricing copy has no stale lead-list framing (planFeatures + comparison)",
+  // planFeatures no longer diverge with old "Market Map / oportunidades rankeadas".
+  !/oportunidades rankeadas/.test(src) && !/oportunidades ranqueadas/.test(src) &&
+  !/Market Map — 6/.test(src) && !/Market Map ampliado/.test(src) &&
+  // rendered comparison row uses "prioritized", not "ranked", across locales.
+  !/Briefs de oportunidad rankeados/.test(src) && !/Briefs de oportunidade ranqueados/.test(src) &&
+  /Prioritized opportunity briefs/.test(src));
+
 // ─── G. Responsive anchors (desktop composed vs mobile start) + FAQ ───────────
 t("G1 pricing anchor desktop vs mobile scroll-margin differ (composed/centered vs start)",
   /\.ll-price-anchor\s*\{\s*scroll-margin-top:\s*270px/.test(src) && /max-width:\s*580px\)\s*\{\s*\.ll-price-anchor\s*\{\s*scroll-margin-top:\s*300px/.test(src));
