@@ -14,6 +14,7 @@ const COPY = {
     navSignIn: "Sign in",
     navCTA: "Get started",
     navHow: "How it works",
+    planDetails: "What's included",
     navSample: "Sample",
     navFaq: "FAQ",
     heroCuriosity: "What changed in the accounts you're already watching?",
@@ -298,6 +299,7 @@ const COPY = {
     navSignIn: "Iniciar sesión",
     navCTA: "Comenzar",
     navHow: "Cómo funciona",
+    planDetails: "Qué incluye",
     navSample: "Muestra",
     navFaq: "FAQ",
     heroCuriosity: "¿Qué cambió en las cuentas que ya observas?",
@@ -582,6 +584,7 @@ const COPY = {
     navSignIn: "Entrar",
     navCTA: "Começar",
     navHow: "Como funciona",
+    planDetails: "O que inclui",
     navSample: "Amostra",
     navFaq: "FAQ",
     heroCuriosity: "O que mudou nas contas que você já acompanha?",
@@ -866,6 +869,7 @@ const COPY = {
     navSignIn: "ログイン",
     navCTA: "始める",
     navHow: "使い方",
+    planDetails: "含まれるもの",
     navSample: "サンプル",
     navFaq: "FAQ",
     heroCuriosity: "すでに注視しているアカウントで、何が変わったか？",
@@ -1691,6 +1695,12 @@ export default function DemoPipelinePage() {
               </BriefSection>
             </div>
 
+            {/* Fit / Timing / Evidence / Counterevidence / dimensions — full depth on demand (preview homepage) */}
+            <details className="ll-brief-more">
+              <summary style={{ cursor: "pointer", listStyle: "none", fontSize: ".8rem", fontWeight: 700, color: "#0284c7", padding: "1rem 1.5rem .25rem", userSelect: "none" as const }}>
+                See fit, timing, evidence &amp; counterevidence ↓
+              </summary>
+
             {/* Fit + Timing */}
             <div style={{ padding: "1.25rem 1.5rem 0", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: "1.5rem" }}>
               <BriefSection label="Fit">
@@ -1764,6 +1774,7 @@ export default function DemoPipelinePage() {
                 </div>
               ))}
             </div>
+            </details>
 
             {/* What to Validate + Next Commercial Decision */}
             <div style={{ padding: "1.25rem 1.5rem 1.375rem", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: "1.5rem" }}>
@@ -1819,8 +1830,13 @@ export default function DemoPipelinePage() {
           </div>
           <p style={{ fontSize: ".8rem", color: "#94a3b8", maxWidth: "40rem", margin: "1.25rem auto 0" }}>{copy.launchNote}</p>
 
-          {/* Plan comparison */}
-          <ComparisonTable copy={copy} />
+          {/* Plan comparison — collapsed by default to reduce density */}
+          <details className="ll-compare-details" style={{ maxWidth: "80rem", margin: "1.75rem auto 0" }}>
+            <summary style={{ cursor: "pointer", listStyle: "none", textAlign: "center", fontSize: ".85rem", fontWeight: 700, color: "#0284c7", padding: ".6rem 0", userSelect: "none" as const }}>
+              {copy.compareTitle} ↓
+            </summary>
+            <ComparisonTable copy={copy} />
+          </details>
 
           {/* Opportunity Monitor strip — coming soon */}
           <div style={{ marginTop: "2rem", maxWidth: "62rem", margin: "2rem auto 0", background: "linear-gradient(135deg,#f0f9ff,#e0f2fe)", border: "1px solid #bae6fd", borderRadius: "1.125rem", padding: "1.5rem 2rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1.5rem", flexWrap: "wrap" as const }}>
@@ -1922,28 +1938,9 @@ export default function DemoPipelinePage() {
         </div>
       </section>
 
-      {/* What you receive */}
-      <section className="ll-section" style={{ ...sectionStyle, background: "#fff" }}>
-        <div style={{ ...innerStyle, textAlign: "center" }}>
-          <Tag>{copy.receiveTag}</Tag>
-          <h2 style={sectionTitleStyle}>{copy.receiveTitle}</h2>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: ".875rem", marginTop: "2.5rem", textAlign: "left" }}>
-            {copy.receiveItems.map(([title, desc], i) => (
-              <div key={i} style={{ display: "flex", gap: ".75rem", alignItems: "flex-start", background: "#f8fafc", border: "1px solid #f1f5f9", borderRadius: ".75rem", padding: "1rem 1.125rem" }}>
-                <div style={{ width: "1.5rem", height: "1.5rem", background: "#0ea5e9", color: "#fff", borderRadius: ".4rem", display: "flex", alignItems: "center", justifyContent: "center", fontSize: ".68rem", fontWeight: 800, flexShrink: 0, marginTop: ".05rem" }}>
-                  {i + 1}
-                </div>
-                <div>
-                  <div style={{ fontWeight: 700, fontSize: ".855rem", color: "#0f172a", marginBottom: ".15rem" }}>{title}</div>
-                  <div style={{ fontSize: ".8rem", color: "#64748b", lineHeight: 1.5 }}>{desc}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Beta delivery expectations */}
+      {/* "What you receive" section removed (V3): the Opportunity Portfolio + Account
+          Brief product proof already demonstrates the deliverables — no separate
+          explanatory grid needed (redundant copy). Copy keys retained for reuse. */}
 
       {/* FAQ */}
       <section id="faq" className="ll-section" style={{ ...sectionStyle, background: "#fff" }}>
@@ -3178,59 +3175,47 @@ function PricingCard({ plan, featured, copy, onSelect }: {
         </div>
       )}
 
-      {/* Plan name + price block */}
-      <div style={{ marginBottom: "1.25rem" }}>
-        <div style={{ fontSize: ".72rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".08em", color: featured ? "#0284c7" : "#94a3b8", marginBottom: ".625rem" }}>
+      {/* Plan name + price */}
+      <div style={{ marginBottom: ".85rem" }}>
+        <div style={{ fontSize: ".72rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".08em", color: featured ? "#0284c7" : "#94a3b8", marginBottom: ".5rem" }}>
           {copy.planNames[plan]}
         </div>
-        <div style={{ display: "flex", alignItems: "baseline", gap: ".25rem", marginBottom: ".2rem" }}>
-          <span style={{ fontSize: "2.75rem", fontWeight: 800, letterSpacing: "-.03em", lineHeight: 1, color: "#0f172a" }}>{p.price}</span>
+        <div style={{ display: "flex", alignItems: "baseline", gap: ".4rem", marginBottom: ".55rem" }}>
+          <span style={{ fontSize: "2.4rem", fontWeight: 800, letterSpacing: "-.03em", lineHeight: 1, color: "#0f172a" }}>{p.price}</span>
+          <span style={{ fontSize: ".72rem", color: "#94a3b8" }}>{copy.oneBatch}</span>
         </div>
-        <div style={{ fontSize: ".72rem", color: "#94a3b8", marginBottom: ".5rem", letterSpacing: "-.01em" }}>
-          {copy.pricePerLead[plan]}
-        </div>
-        <div style={{ fontSize: ".875rem", color: "#64748b", lineHeight: 1.45, marginBottom: ".5rem" }}>{copy.planDescs[plan]}</div>
-        <div style={{ fontSize: ".78rem", color: "#94a3b8", lineHeight: 1.45, marginBottom: ".5rem" }}>{copy.planFor[plan]}</div>
-        <div style={{ fontSize: ".78rem", color: featured ? "#0369a1" : "#64748b", fontWeight: 600, lineHeight: 1.45, marginBottom: ".875rem" }}>{copy.planDiff[plan]}</div>
-        <div style={{ display: "inline-block", fontSize: ".7rem", fontWeight: 600, color: featured ? "#0284c7" : "#64748b", background: featured ? "#e0f2fe" : "#f1f5f9", borderRadius: ".375rem", padding: "3px 10px" }}>
-          {copy.oneBatch}
-        </div>
+        <div style={{ fontSize: ".9rem", color: "#334155", lineHeight: 1.45, marginBottom: ".4rem" }}>{copy.planDescs[plan]}</div>
+        <div style={{ fontSize: ".8rem", color: featured ? "#0369a1" : "#64748b", fontWeight: 600, lineHeight: 1.45 }}>{copy.planDiff[plan]}</div>
       </div>
 
-      {/* Divider */}
-      <div style={{ borderTop: `1px solid ${featured ? "#bae6fd" : "#f1f5f9"}`, marginBottom: "1rem" }} />
-
-      {/* Features — flex:1 pushes button to bottom */}
-      <div style={{ flex: 1, marginBottom: "1.5rem" }}>
-        {copy.planFeatures[plan].map(f => (
-          <div key={f} style={{ fontSize: ".855rem", color: "#64748b", padding: ".3rem 0", display: "flex", gap: ".6rem", alignItems: "flex-start", lineHeight: 1.45 }}>
-            <span style={{ color: "#0ea5e9", fontWeight: 700, flexShrink: 0, marginTop: ".1rem" }}>✓</span>{f}
-          </div>
-        ))}
-      </div>
-
-      {/* CTA — always at bottom */}
+      {/* CTA — visible without scrolling features */}
       <button
         onClick={() => onSelect(plan)}
         style={{
-          width: "100%",
-          background: "#0ea5e9",
-          color: "#fff",
-          border: "none",
-          borderRadius: ".75rem",
-          padding: ".9rem",
-          fontWeight: 700,
-          fontSize: ".9rem",
-          cursor: "pointer",
+          width: "100%", background: "#0ea5e9", color: "#fff", border: "none", borderRadius: ".75rem",
+          padding: ".8rem", fontWeight: 700, fontSize: ".9rem", cursor: "pointer",
           transition: "background .15s, transform .15s",
           boxShadow: featured ? "0 4px 14px rgba(14,165,233,.35)" : "none",
-          marginTop: "auto",
         }}
         onMouseOver={e => { e.currentTarget.style.background = "#0284c7"; e.currentTarget.style.transform = "translateY(-1px)"; }}
         onMouseOut={e => { e.currentTarget.style.background = "#0ea5e9"; e.currentTarget.style.transform = ""; }}
       >
         {copy.planCTAs[plan]}
       </button>
+
+      {/* Features — collapsed by default (progressive disclosure) */}
+      <details className="ll-price-details" style={{ marginTop: ".9rem" }}>
+        <summary style={{ cursor: "pointer", listStyle: "none", fontSize: ".78rem", fontWeight: 600, color: "#0284c7", padding: ".2rem 0", userSelect: "none" as const }}>
+          {copy.planDetails} ↓
+        </summary>
+        <div style={{ marginTop: ".5rem", borderTop: `1px solid ${featured ? "#bae6fd" : "#f1f5f9"}`, paddingTop: ".6rem" }}>
+          {copy.planFeatures[plan].map(f => (
+            <div key={f} style={{ fontSize: ".82rem", color: "#64748b", padding: ".28rem 0", display: "flex", gap: ".55rem", alignItems: "flex-start", lineHeight: 1.45 }}>
+              <span style={{ color: "#0ea5e9", fontWeight: 700, flexShrink: 0, marginTop: ".1rem" }}>✓</span>{f}
+            </div>
+          ))}
+        </div>
+      </details>
     </div>
   );
 }
