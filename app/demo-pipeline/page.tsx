@@ -1570,9 +1570,10 @@ export default function DemoPipelinePage() {
           .ll-nav-burger { display: inline-flex !important; align-items: center; }
         }
         @media (max-width: 680px) {
-          .ll-nav-wrap nav { padding: .625rem 1rem !important; }
+          /* Tighter nav so the logo leads and the CTA supports the hero (§14–17). */
+          .ll-nav-wrap nav { padding: .5rem 1rem !important; }
           .ll-nav-r { gap: .75rem !important; }
-          .ll-nav-cta { font-size: .82rem !important; padding: .5rem .8rem !important; }
+          .ll-nav-cta button { font-size: .8rem !important; padding: .45rem .9rem !important; }
         }
         @media (max-width: 380px) {
           .ll-nav-wrap nav { padding: .5rem .75rem !important; }
@@ -1635,16 +1636,23 @@ export default function DemoPipelinePage() {
           .ll-section { padding: 2.25rem 1rem !important; }
           .ll-problem-sec { padding: 3rem 1rem !important; }
           .ll-cta-sec { padding: 2.5rem 1rem !important; }
-          .ll-hero-outer { padding: 1.75rem 1rem 1.5rem !important; }
+          .ll-hero-outer { padding: 1.25rem 1rem 1.25rem !important; }
           .ll-faq-inner { padding: 0 1rem !important; }
           .ll-monthly-card { padding: 1.5rem 1.125rem !important; }
-          /* Hero text */
+          /* Mobile hero recomposition (§1–39): remove the promo layers before the
+             product — banner, the duplicate bold H2, and the reassurance pill — and
+             reduce the CTA block so the Opportunity Portfolio reaches the fold sooner. */
+          .ll-announce { display: none !important; }
+          .ll-hero-h2  { display: none !important; }
+          .ll-hero-note { display: none !important; }
           .ll-hero-badge   { margin-bottom: .875rem !important; font-size: .74rem !important; padding: .3rem .875rem .3rem .55rem !important; }
-          .ll-hero-h1      { font-size: 1.875rem !important; line-height: 1.15 !important; letter-spacing: -.02em !important; margin-bottom: .75rem !important; }
-          .ll-hero-sub     { font-size: .9rem !important; line-height: 1.55 !important; margin-bottom: 1rem !important; }
-          .ll-hero-cta-row { flex-direction: column !important; gap: .5rem !important; margin-bottom: .75rem !important; }
-          .ll-hero-cta-row button { width: 100% !important; justify-content: center !important; box-sizing: border-box !important; padding-left: 1rem !important; padding-right: 1rem !important; white-space: normal !important; }
-          .ll-hero-note    { font-size: .75rem !important; padding: .275rem .875rem !important; margin-bottom: .4rem !important; }
+          .ll-hero-h1      { font-size: 1.875rem !important; line-height: 1.15 !important; letter-spacing: -.02em !important; margin-bottom: .6rem !important; }
+          .ll-hero-sub     { font-size: .95rem !important; line-height: 1.5 !important; margin-bottom: 1.15rem !important; }
+          /* One filled primary + a light text secondary (not two equal buttons). */
+          .ll-hero-cta-row { flex-direction: column !important; align-items: stretch !important; gap: .55rem !important; margin-bottom: .5rem !important; }
+          .ll-hero-cta-row > button:first-child { width: 100% !important; justify-content: center !important; box-sizing: border-box !important; white-space: normal !important; }
+          .ll-hero-cta-row > button:nth-child(2) { width: auto !important; align-self: flex-start !important; background: none !important; border: none !important; box-shadow: none !important; color: #0284c7 !important; padding: .35rem .1rem !important; font-size: .95rem !important; }
+          .ll-hero-cta-row > button:nth-child(2)::after { content: " →"; }
           /* Swap mockups */
           .ll-hero-mock-desktop { display: none !important; }
           .ll-hero-mock-mobile  { display: block !important; }
@@ -1659,8 +1667,9 @@ export default function DemoPipelinePage() {
         }
       `}</style>
 
-      {/* Announcement bar */}
-      <div style={{ background: "linear-gradient(135deg,#075985,#0284c7)", color: "#fff", textAlign: "center", padding: ".55rem 1rem", fontSize: ".8rem", fontWeight: 500, letterSpacing: ".01em" }}>
+      {/* Announcement bar — hidden on mobile (the hero already carries the proposition;
+          it added a promotional layer before the product on phones). §11–13. */}
+      <div className="ll-announce" style={{ background: "linear-gradient(135deg,#075985,#0284c7)", color: "#fff", textAlign: "center", padding: ".55rem 1rem", fontSize: ".8rem", fontWeight: 500, letterSpacing: ".01em" }}>
         {copy.announcement}{" "}
         <button onClick={() => goToForm("standard", "announcement")} style={{ background: "rgba(255,255,255,.18)", border: "1px solid rgba(255,255,255,.3)", color: "#fff", fontSize: ".78rem", fontWeight: 700, borderRadius: 5, padding: "2px 12px", cursor: "pointer", marginLeft: 8, transition: "background .15s" }}
           onMouseOver={e => (e.currentTarget.style.background = "rgba(255,255,255,.28)")}
@@ -1738,7 +1747,7 @@ export default function DemoPipelinePage() {
                 {copy.heroH1pre}<br />
                 <span style={{ color: "#0ea5e9" }}>{copy.heroH1hi}</span>{copy.heroH1post}
               </h1>
-              <p style={{ fontSize: "clamp(1.25rem,2.5vw,1.75rem)", fontWeight: 700, color: "#334155", marginBottom: "1.25rem", letterSpacing: "-.02em", lineHeight: 1.2 }}>
+              <p className="ll-hero-h2" style={{ fontSize: "clamp(1.25rem,2.5vw,1.75rem)", fontWeight: 700, color: "#334155", marginBottom: "1.25rem", letterSpacing: "-.02em", lineHeight: 1.2 }}>
                 {copy.heroH2}
               </p>
               <p className="ll-hero-sub" style={{ fontSize: "1.1rem", color: "#475569", marginBottom: "2.25rem", lineHeight: 1.7, maxWidth: "34rem" }}>

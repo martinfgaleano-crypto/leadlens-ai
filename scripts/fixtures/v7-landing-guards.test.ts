@@ -66,6 +66,16 @@ t("J5 pricing tier names intact (Preview/Brief/Intelligence/Premium)",
 t("J6 mobile pricing compaction is mobile-only (desktop card untouched)",
   /\.ll-price-card \{ padding: 1\.25rem[^}]*text-align: left/.test(src) && /padding: "2rem"/.test(src));
 
+// ─── K. V8.2 mobile hero recomposition (mobile-only; desktop preserved) ───────
+t("K1 H1 intact", /heroH1hi:\s*"worth working now"/.test(src));
+t("K2 promo banner + duplicate H2 + reassurance pill are HIDDEN on mobile",
+  /\.ll-announce \{ display: none/.test(src) && /\.ll-hero-h2\s*\{ display: none/.test(src) && /\.ll-hero-note \{ display: none/.test(src));
+t("K3 banner/H2/pill still render on desktop (hidden only via mobile media query)",
+  /className="ll-announce"/.test(src) && /className="ll-hero-h2"/.test(src) && /className="ll-hero-note"/.test(src));
+t("K4 mobile secondary CTA is a light text link (not a second heavy button)",
+  /\.ll-hero-cta-row > button:nth-child\(2\) \{[^}]*background: none[^}]*border: none/.test(src));
+t("K5 single hero support line retained (analytical)", /heroSub:\s*"Turn market evidence into clearer account decisions\."/.test(src));
+
 // ─── G. Responsive anchors (desktop composed vs mobile start) + FAQ ───────────
 t("G1 pricing anchor desktop vs mobile scroll-margin differ (composed/centered vs start)",
   /\.ll-price-anchor\s*\{\s*scroll-margin-top:\s*270px/.test(src) && /max-width:\s*580px\)\s*\{\s*\.ll-price-anchor\s*\{\s*scroll-margin-top:\s*300px/.test(src));
