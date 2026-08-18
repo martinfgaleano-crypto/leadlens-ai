@@ -1447,14 +1447,19 @@ export default function DemoPipelinePage() {
           .ll-ws-rail { display: none !important; }
           .ll-ws-chips { display: flex !important; }
         }
+        @keyframes llwsfade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+        .ll-ws-fade { animation: llwsfade .22s ease; }
         @media (prefers-reduced-motion: reduce) {
           .ll-ws-rail button, .ll-ws-chips button { transition: none !important; }
+          .ll-ws-fade { animation: none !important; }
         }
         /* Pricing: balanced 2×2, single column on phones (fixes 3+1 orphan) */
         .ll-price-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 1.25rem; max-width: 46rem; margin: 0 auto; align-items: stretch; }
         @media (max-width: 560px) { .ll-price-grid { grid-template-columns: 1fr; max-width: 24rem; } }
         /* Differentiation contrast: side-by-side on desktop, stacked with a downward arrow on phones */
         @media (max-width: 620px) { .ll-diff-grid { grid-template-columns: 1fr !important; } .ll-diff-arrow { transform: rotate(90deg); } }
+        /* How-it-works flow: three connected stages, stacked with downward arrows on phones */
+        @media (max-width: 720px) { .ll-how-flow { grid-template-columns: 1fr !important; gap: .75rem !important; } .ll-how-arrow { transform: rotate(90deg); } }
         @media (max-width: 640px) {
           /* Sections */
           .ll-section { padding: 2.25rem 1rem !important; }
@@ -1572,7 +1577,7 @@ export default function DemoPipelinePage() {
               </p>
               <div className="ll-hero-cta-row" style={{ display: "flex", gap: ".875rem", flexWrap: "wrap" as const, marginBottom: ".55rem" }}>
                 <Btn lg onClick={() => goToForm("standard", "hero")}>{copy.heroCTA}</Btn>
-                <BtnOutline lg onClick={() => goToSection("sample")}>{copy.heroSeeAll}</BtnOutline>
+                <BtnOutline lg onClick={() => { window.location.href = "/sample"; }}>{copy.heroSeeAll}</BtnOutline>
               </div>
               <p style={{ fontSize: ".8rem", color: "#94a3b8", margin: "0 0 1.1rem" }}>{copy.heroPriceNote}</p>
               <p className="ll-hero-note" style={{ display: "inline-block", fontSize: ".82rem", color: "#64748b", background: "#f0f9ff", border: "1px solid #e0f2fe", borderRadius: 999, padding: ".375rem 1rem", marginBottom: ".75rem" }}>
@@ -1622,14 +1627,20 @@ export default function DemoPipelinePage() {
             <Tag>{copy.howTag}</Tag>
             <h2 style={sectionTitleStyle}>{copy.howTitle}</h2>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: "1.5rem" }}>
-            {copy.steps.map(([n, t, d]) => (
-              <div key={n} style={{ textAlign: "center" }}>
-                <div style={{ width: "3rem", height: "3rem", background: "#0ea5e9", color: "#fff", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.15rem", fontWeight: 800, margin: "0 auto 1rem", boxShadow: "0 4px 12px rgba(14,165,233,.35)" }}>{n}</div>
-                <h3 style={{ fontWeight: 700, marginBottom: ".4rem", fontSize: ".975rem" }}>{t}</h3>
-                <p style={{ color: "#64748b", fontSize: ".865rem", lineHeight: 1.55 }}>{d}</p>
-              </div>
-            ))}
+          {/* Connected 3-stage flow: Define -> Investigate -> Decide */}
+          <div className="ll-how-flow" style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr auto 1fr", gap: ".5rem", alignItems: "center", maxWidth: "58rem", margin: "0 auto" }}>
+            {([
+              ["01", "Define", "Tell LeadLens what matters — your business, ICP and target market."],
+              ["02", "Investigate", "LeadLens finds accounts, detects what changed, and grounds it in dated evidence."],
+              ["03", "Decide", "You get a prioritized portfolio and Account Briefs — each with a decision."],
+            ] as const).flatMap(([n, t, d], i) => [
+              <div key={n} style={{ background: "#fff", border: "1px solid #e8edf3", borderRadius: "1rem", padding: "1.5rem 1.4rem", height: "100%", boxSizing: "border-box" as const }}>
+                <div style={{ fontSize: ".7rem", fontWeight: 800, letterSpacing: ".1em", color: "#0284c7", marginBottom: ".6rem" }}>{n}</div>
+                <h3 style={{ fontWeight: 800, fontSize: "1.05rem", letterSpacing: "-.01em", margin: "0 0 .4rem" }}>{t}</h3>
+                <p style={{ color: "#64748b", fontSize: ".875rem", lineHeight: 1.55, margin: 0 }}>{d}</p>
+              </div>,
+              i < 2 ? <div key={n + "-arrow"} className="ll-how-arrow" style={{ color: "#0ea5e9", fontSize: "1.5rem", fontWeight: 800, textAlign: "center" as const }}>→</div> : null,
+            ])}
           </div>
         </div>
       </section>
@@ -1657,171 +1668,13 @@ export default function DemoPipelinePage() {
             </button>
           </div>
 
-          {/* Sample Account Brief */}
-          <div style={{ maxWidth: "56rem", margin: "0 auto", background: "#fff", border: "2px solid #e2e8f0", borderRadius: "1.25rem", overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,.07)", textAlign: "left" as const }}>
-
-            {/* Brief header */}
-            <div style={{ padding: "1.125rem 1.5rem", borderBottom: "1px solid #f1f5f9", background: "linear-gradient(180deg,#f8fafc 0%,#fff 100%)", display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap" as const, gap: "1rem" }}>
-              <div style={{ minWidth: 0 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: ".5rem", marginBottom: ".35rem", flexWrap: "wrap" as const }}>
-                  <span style={{ fontSize: ".65rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", background: "#e0f2fe", color: "#0284c7", padding: ".15rem .5rem", borderRadius: 999 }}>Sample · Illustrative data</span>
-                  <span style={{ fontSize: ".65rem", color: "#94a3b8" }}>Account Brief</span>
-                </div>
-                <div style={{ fontWeight: 800, fontSize: "1.2rem", color: "#0f172a", letterSpacing: "-.02em", lineHeight: 1.2 }}>Northstar Logistics</div>
-                <div style={{ fontSize: ".8rem", color: "#64748b", marginTop: ".2rem" }}>Mid-market logistics · regional freight · United States (Midwest)</div>
-                <div style={{ fontSize: ".72rem", color: "#94a3b8", marginTop: ".25rem" }}>
-                  Account resolved · parent: Northstar Group · commercial unit: Logistics division
-                </div>
-              </div>
-              <div style={{ display: "flex", flexDirection: "column" as const, alignItems: "flex-end", gap: ".4rem", flexShrink: 0 }}>
-                <DecisionPill state="prioritize" />
-                <div style={{ fontSize: ".68rem", color: "#94a3b8", fontWeight: 500, whiteSpace: "nowrap" as const }}>Evidence refreshed 9d ago</div>
-                <div style={{ fontSize: ".68rem", color: "#94a3b8", whiteSpace: "nowrap" as const }}>Decision scope: <span style={{ color: "#475569", fontWeight: 600 }}>Regional</span> <span style={{ color: "#cbd5e1" }}>(corporate unconfirmed)</span></div>
-              </div>
-            </div>
-
-            {/* Opportunity Thesis */}
-            <div style={{ padding: "1.25rem 1.5rem 0" }}>
-              <BriefSection label="Opportunity Thesis">
-                <div style={{ background: "#f0f9ff", border: "1px solid #e0f2fe", borderLeft: "3px solid #0ea5e9", borderRadius: "0 .5rem .5rem 0", padding: ".8rem .95rem", fontSize: ".875rem", color: "#0f172a", lineHeight: 1.6 }}>
-                  Northstar is expanding regional distribution while adding operations capacity — a combination that plausibly increases supplier and tooling needs. The evidence is recent and partly corroborated, but <strong>no procurement event is confirmed</strong>, so this is a fit-and-timing thesis worth validating, not a confirmed signal.
-                </div>
-              </BriefSection>
-            </div>
-
-            {/* What Changed — fact vs interpretation */}
-            <div style={{ padding: "1.25rem 1.5rem 0" }}>
-              <BriefSection label="What Changed">
-                <div style={{ display: "flex", flexDirection: "column" as const, gap: ".3rem", marginBottom: ".65rem" }}>
-                  {[
-                    ["Signed a regional distribution agreement", "company announcement · 9d ago"],
-                    ["Opened 2 new distribution sites", "regional press · 14d ago"],
-                    ["Posted 4 operations roles", "company careers page · 12d ago"],
-                  ].map(([fact, meta], i) => (
-                    <div key={i} style={{ display: "flex", gap: ".55rem", alignItems: "baseline", fontSize: ".845rem", color: "#334155", lineHeight: 1.5 }}>
-                      <span style={{ fontSize: ".56rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".04em", color: "#0369a1", background: "#f0f9ff", border: "1px solid #e0f2fe", borderRadius: ".25rem", padding: ".05rem .3rem", flexShrink: 0 }}>Observed</span>
-                      <span style={{ minWidth: 0 }}>{fact} <span style={{ color: "#94a3b8", fontSize: ".72rem" }}>— {meta}</span></span>
-                    </div>
-                  ))}
-                </div>
-                <div style={{ background: "#fafafa", border: "1px dashed #e2e8f0", borderRadius: ".5rem", padding: ".6rem .8rem", fontSize: ".8rem", color: "#64748b", lineHeight: 1.55 }}>
-                  <span style={{ fontSize: ".56rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".04em", color: "#b45309", marginRight: ".4rem" }}>Interpretation</span>
-                  Regional expansion may increase supplier complexity and creates a plausible timing window — worth validating, not evidence of active buying.
-                </div>
-              </BriefSection>
-            </div>
-
-            {/* Fit / Timing / Evidence / Counterevidence / dimensions — full depth on demand (preview homepage) */}
-            <details className="ll-brief-more">
-              <summary style={{ cursor: "pointer", listStyle: "none", fontSize: ".8rem", fontWeight: 700, color: "#0284c7", padding: "1rem 1.5rem .25rem", userSelect: "none" as const }}>
-                See fit, timing, evidence &amp; counterevidence ↓
-              </summary>
-
-            {/* Fit + Timing */}
-            <div style={{ padding: "1.25rem 1.5rem 0", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: "1.5rem" }}>
-              <BriefSection label="Fit">
-                <div style={{ fontSize: ".845rem", color: "#334155", lineHeight: 1.6 }}>
-                  Growing logistics operator in active regional expansion. Operations-led growth aligns with the commercial context — the kind of account where new vendor and tooling needs typically emerge.
-                  <div style={{ marginTop: ".4rem", fontSize: ".72rem", color: "#94a3b8" }}>Fit strength: <span style={{ color: "#0f172a", fontWeight: 700 }}>Strong</span></div>
-                </div>
-              </BriefSection>
-              <BriefSection label="Timing">
-                <div style={{ fontSize: ".845rem", color: "#334155", lineHeight: 1.6 }}>
-                  Expansion and hiring occurred within the last two weeks. Recent change creates a plausible timing window — not a confirmed procurement cycle.
-                  <div style={{ marginTop: ".4rem", fontSize: ".72rem", color: "#94a3b8" }}>Timing strength: <span style={{ color: "#0f172a", fontWeight: 700 }}>Strong</span></div>
-                </div>
-              </BriefSection>
-            </div>
-
-            {/* Evidence */}
-            <div style={{ padding: "1.25rem 1.5rem 0" }}>
-              <BriefSection label="Evidence">
-                <div style={{ display: "flex", alignItems: "center", gap: ".5rem", flexWrap: "wrap" as const, marginBottom: ".55rem" }}>
-                  <span style={{ fontSize: ".72rem", color: "#475569" }}>Strength: <span style={{ color: "#0f172a", fontWeight: 700 }}>Strong</span></span>
-                  <span style={{ color: "#cbd5e1" }}>·</span>
-                  <span style={{ fontSize: ".72rem", color: "#475569" }}>3 sources</span>
-                  <span style={{ color: "#cbd5e1" }}>·</span>
-                  <span style={{ fontSize: ".72rem", color: "#16a34a", fontWeight: 600 }}>2 corroborate the expansion</span>
-                </div>
-                {[
-                  ["Company announcement", "distribution agreement", "9d ago"],
-                  ["Company careers page", "operations roles", "12d ago"],
-                  ["Industry publication", "new distribution sites", "21d ago"],
-                ].map(([type, what, date], i) => (
-                  <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: ".5rem", fontSize: ".8rem", color: "#334155", padding: ".28rem 0", borderTop: i === 0 ? "none" : "1px solid #f8fafc", lineHeight: 1.4 }}>
-                    <span style={{ minWidth: 0 }}>
-                      <span style={{ fontSize: ".62rem", fontWeight: 600, color: "#94a3b8", fontStyle: "italic" as const, marginRight: ".4rem" }}>Illustrative source</span>
-                      <span style={{ fontWeight: 600, color: "#0f172a" }}>{type}</span> <span style={{ color: "#64748b" }}>— {what}</span>
-                    </span>
-                    <span style={{ fontSize: ".7rem", color: "#94a3b8", whiteSpace: "nowrap" as const, flexShrink: 0 }}>{date}</span>
-                  </div>
-                ))}
-              </BriefSection>
-            </div>
-
-            {/* Counterevidence / Uncertainty */}
-            <div style={{ padding: "1.25rem 1.5rem 0" }}>
-              <BriefSection label="Counterevidence & Uncertainty">
-                <div style={{ background: "#fffbeb", border: "1px solid #fef3c7", borderLeft: "3px solid #d97706", borderRadius: "0 .5rem .5rem 0", padding: ".75rem .9rem" }}>
-                  {[
-                    "No procurement event or vendor evaluation confirmed",
-                    "Distribution expansion may relate to a different division",
-                    "Timing evidence is more recent than the fit evidence",
-                    "Decision scope (corporate vs regional) is unresolved",
-                  ].map((c, i) => (
-                    <div key={i} style={{ display: "flex", gap: ".5rem", fontSize: ".82rem", color: "#92400e", padding: ".15rem 0", lineHeight: 1.5 }}>
-                      <span style={{ fontWeight: 700, flexShrink: 0 }}>–</span>{c}
-                    </div>
-                  ))}
-                </div>
-              </BriefSection>
-            </div>
-
-            {/* Decision dimensions (secondary) */}
-            <div style={{ padding: "1.25rem 1.5rem 0", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))", gap: "1rem" }}>
-              {[
-                ["Account Attractiveness", "Strong", "#0f172a"],
-                ["Commercial Accessibility", "Partial", "#475569"],
-                ["Strategic Value", "Moderate", "#475569"],
-              ].map(([label, val, color]) => (
-                <div key={label} style={{ background: "#f8fafc", border: "1px solid #f1f5f9", borderRadius: ".6rem", padding: ".6rem .75rem" }}>
-                  <div style={{ fontSize: ".6rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".05em", color: "#94a3b8", marginBottom: ".2rem" }}>{label}</div>
-                  <div style={{ fontSize: ".875rem", fontWeight: 700, color }}>{val}</div>
-                </div>
-              ))}
-            </div>
-            </details>
-
-            {/* What to Validate + Next Commercial Decision */}
-            <div style={{ padding: "1.25rem 1.5rem 1.375rem", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: "1.5rem" }}>
-              <BriefSection label="What to Validate">
-                {[
-                  "Confirm whether procurement is centralized at group level",
-                  "Check whether new sites use the same supplier network",
-                  "Verify the expansion affects your target category",
-                ].map((v, i) => (
-                  <div key={i} style={{ display: "flex", gap: ".5rem", fontSize: ".845rem", color: "#334155", padding: ".2rem 0", lineHeight: 1.5 }}>
-                    <span style={{ color: "#0284c7", fontWeight: 700, flexShrink: 0 }}>→</span>{v}
-                  </div>
-                ))}
-              </BriefSection>
-              <div style={{ display: "flex", flexDirection: "column" as const, gap: ".75rem" }}>
-                <BriefSection label="Next Commercial Decision">
-                  <div style={{ background: "#f0f9ff", border: "1px solid #e0f2fe", borderRadius: ".6rem", padding: ".7rem .85rem", fontSize: ".845rem", color: "#0f172a", lineHeight: 1.55 }}>
-                    <DecisionPill state="prioritize" small /> <span style={{ margin: "0 .2rem", color: "#94a3b8" }}>→</span>
-                    validate procurement scope before any outreach.
-                  </div>
-                </BriefSection>
-                <div style={{ fontSize: ".72rem", color: "#94a3b8", lineHeight: 1.5 }}>
-                  <span style={{ fontWeight: 600, color: "#64748b" }}>Optional commercial angle:</span> if validated, reference the regional-expansion context rather than a generic pitch.
-                </div>
-              </div>
-            </div>
-
-            {/* Footer — sample honesty */}
-            <div style={{ padding: ".8rem 1.5rem", background: "#f8fafc", borderTop: "1px solid #f1f5f9", fontSize: ".7rem", color: "#94a3b8", lineHeight: 1.5 }}>
-              Illustrative example — synthetic company, events, dates and sources shown to demonstrate the format of a real Account Brief. LeadLens grounds every conclusion in dated public evidence and states what remains unconfirmed.
-            </div>
+          {/* Sample teaser — the full Account Brief lives on /sample */}
+          <div style={{ maxWidth: "40rem", margin: "0 auto", background: "linear-gradient(180deg,#f8fbff,#fff)", border: "1px solid #e2e8f0", borderRadius: "1rem", padding: "1.75rem 2rem", textAlign: "center" as const }}>
+            <p style={{ fontSize: "1.05rem", color: "#334155", lineHeight: 1.6, margin: "0 auto 1.25rem", maxWidth: "34rem" }}>
+              Want the full reasoning behind a decision? See a complete Account Brief — the change, the evidence and counterevidence, what to validate, and the decision.
+            </p>
+            <a href="/sample" style={{ display: "inline-block", background: "#0ea5e9", color: "#fff", borderRadius: ".75rem", padding: ".8rem 1.6rem", fontWeight: 700, fontSize: ".9rem", textDecoration: "none" }}>View full sample →</a>
+            <div style={{ fontSize: ".72rem", color: "#94a3b8", marginTop: ".9rem" }}>Illustrative synthetic sample — no real company data.</div>
           </div>
         </div>
       </section>
@@ -2953,156 +2806,182 @@ function FTE({ fit, timing, evidence }: { fit: string; timing: string; evidence:
 // A selected-account workspace: pick an account → see What Changed → Evidence →
 // Counterevidence → Decision → What to Validate. Deterministic, local, keyboard-
 // accessible; no API/provider. This is the homepage's signature product moment.
-const WS_ACCOUNTS = [
-  { name: "Northstar Logistics", seg: "Mid-market logistics · US Midwest", state: "prioritize", fresh: "9d ago",
+// Each account is a distinct analytical story: change → evidence (with source
+// relations + a corroboration ladder) → confidence limiters (each paired to a
+// validation) → decision. Synthetic/illustrative only.
+type WsSource = { type: string; note: string; age: string; rel: "Direct" | "Corroborating" | "Context" };
+type WsAccount = {
+  rank: number; name: string; seg: string; state: string; fresh: string;
+  changed: string; changedAge: string; fit: string; timing: string; evidence: string;
+  ladder: 1 | 2 | 3; sources: WsSource[];
+  limiters: { limit: string; validate: string }[]; decisionWhy: string; next: string;
+};
+const WS_ACCOUNTS: WsAccount[] = [
+  { rank: 1, name: "Northstar Logistics", seg: "Mid-market logistics · US Midwest", state: "prioritize", fresh: "9d",
     changed: "Signed a regional distribution agreement", changedAge: "9d ago",
-    fit: "Strong", timing: "Strong", evidence: "Strong", evSources: 3, evCorr: 2,
-    sources: [["Company announcement", "distribution agreement", "9d"], ["Careers page", "4 operations roles", "12d"], ["Industry press", "new distribution sites", "21d"]],
-    uncertainty: ["No procurement event confirmed", "Decision scope (corporate vs regional) unresolved"],
-    validate: ["Confirm procurement is centralized at group level", "Check whether new sites share the supplier network"],
+    fit: "Strong", timing: "Strong", evidence: "Strong", ladder: 3,
+    sources: [{ type: "Company announcement", note: "distribution agreement", age: "9d", rel: "Direct" }, { type: "Industry publication", note: "new distribution sites", age: "12d", rel: "Corroborating" }, { type: "Careers page", note: "4 operations roles", age: "15d", rel: "Context" }],
+    limiters: [{ limit: "Procurement ownership not confirmed", validate: "Confirm whether regional purchasing is centralized" }],
+    decisionWhy: "Recent, corroborated expansion with strong fit and timing.",
     next: "Validate regional procurement ownership before outreach." },
-  { name: "FreshRoute Foods", seg: "Regional food distribution · US Southeast", state: "validate", fresh: "14d ago",
-    changed: "Opened 2 new distribution sites", changedAge: "14d ago",
-    fit: "Strong", timing: "Moderate", evidence: "Moderate", evSources: 2, evCorr: 1,
-    sources: [["Regional press", "2 new sites", "14d"], ["Company blog", "expansion note", "19d"]],
-    uncertainty: ["Only one source corroborates the expansion", "Scope may be regional, not corporate"],
-    validate: ["Confirm the sites affect your target category", "Corroborate the expansion with a second source"],
+  { rank: 2, name: "FreshRoute Foods", seg: "Regional food distribution · US Southeast", state: "validate", fresh: "14d",
+    changed: "Opened two new distribution sites", changedAge: "14d ago",
+    fit: "Strong", timing: "Moderate", evidence: "Moderate", ladder: 2,
+    sources: [{ type: "Regional press", note: "two new sites", age: "14d", rel: "Direct" }, { type: "Company blog", note: "expansion note", age: "19d", rel: "Context" }],
+    limiters: [{ limit: "Only one direct corroboration", validate: "Corroborate the expansion with a second source" }, { limit: "Category scope unclear", validate: "Confirm the sites affect your target category" }],
+    decisionWhy: "Good fit, but the change is only partly corroborated.",
     next: "Corroborate and confirm scope before prioritizing." },
-  { name: "Atlas Clinics Group", seg: "Multi-location healthcare · US West", state: "monitor", fresh: "21d ago",
-    changed: "Announced 2 new clinic locations", changedAge: "21d ago",
-    fit: "Moderate", timing: "Limited", evidence: "Moderate", evSources: 2, evCorr: 1,
-    sources: [["Local news", "2 clinic locations", "21d"], ["Company site", "locations page", "24d"]],
-    uncertainty: ["No operations or vendor change observed yet", "Timing evidence is thin"],
-    validate: ["Watch for an operations or vendor signal", "Confirm the category fit"],
-    next: "Monitor for a timing signal before acting." },
+  { rank: 3, name: "Atlas Clinics Group", seg: "Multi-location healthcare · US West", state: "monitor", fresh: "21d",
+    changed: "Announced two new clinic locations", changedAge: "21d ago",
+    fit: "Moderate", timing: "Limited", evidence: "Developing", ladder: 1,
+    sources: [{ type: "Local news", note: "two clinic locations", age: "21d", rel: "Direct" }, { type: "Company site", note: "locations page", age: "24d", rel: "Context" }],
+    limiters: [{ limit: "No recent operations or sourcing event", validate: "Watch for an operations or vendor signal" }],
+    decisionWhy: "Relevant account, but timing evidence is thin.",
+    next: "Monitor for a fresher timing signal before acting." },
 ];
+
+const REL_COLOR: Record<string, string> = { Direct: "#0284c7", Corroborating: "#15803d", Context: "#94a3b8" };
+const LADDER = ["Observed", "Confirmed", "Corroborated"];
+
+// One connected analytical step on the canvas spine.
+function CanvasStep({ dotColor, last, label, meta, children }: { dotColor: string; last?: boolean; label: string; meta?: string; children: React.ReactNode }) {
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "16px 1fr", columnGap: ".7rem" }}>
+      <div style={{ position: "relative", display: "flex", justifyContent: "center" }}>
+        <span style={{ width: 11, height: 11, borderRadius: "50%", background: dotColor, marginTop: "1px", zIndex: 1, boxShadow: "0 0 0 3px #fff" }} />
+        {!last && <span aria-hidden style={{ position: "absolute", top: 13, bottom: "-.7rem", width: 2, background: "#e4ebf3" }} />}
+      </div>
+      <div style={{ paddingBottom: last ? 0 : ".85rem", minWidth: 0 }}>
+        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: ".5rem", marginBottom: ".3rem" }}>
+          <span style={{ fontSize: ".6rem", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase", color: "#64748b" }}>{label}</span>
+          {meta && <span style={{ fontSize: ".64rem", color: "#94a3b8", fontWeight: 600, whiteSpace: "nowrap" }}>{meta}</span>}
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
 
 function AccountWorkspace() {
   const [sel, setSel] = useState(0);
   const a = WS_ACCOUNTS[sel];
-  const s = DECISION_STATES[a.state];
-  const lbl: React.CSSProperties = { fontSize: ".58rem", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase", color: "#7dd3fc", marginBottom: ".35rem" };
-  const panel: React.CSSProperties = { background: "#fff", borderRadius: ".6rem", padding: ".7rem .8rem" };
+  const dstate = DECISION_STATES[a.state];
 
   return (
-    <div style={{ background: "linear-gradient(160deg,#0b1220 0%,#0f2743 60%,#0c3a5e 100%)", borderRadius: "1.1rem", padding: ".9rem", boxShadow: "0 24px 64px rgba(11,18,32,.28), 0 4px 20px rgba(0,0,0,.12)", border: "1px solid #17324f" }}>
-      {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: ".5rem", padding: ".15rem .35rem .7rem" }}>
+    <div style={{ background: "linear-gradient(160deg,#0b1220 0%,#0f2743 62%,#0c3a5e 100%)", borderRadius: "1.15rem", padding: ".7rem", boxShadow: "0 24px 64px rgba(11,18,32,.28), 0 4px 20px rgba(0,0,0,.12)", border: "1px solid #17324f" }}>
+      {/* Stage header */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: ".5rem", padding: ".25rem .5rem .7rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: ".45rem", minWidth: 0 }}>
           <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#22c55e", boxShadow: "0 0 0 3px rgba(34,197,94,.18)", flexShrink: 0 }} />
-          <span style={{ color: "#fff", fontWeight: 700, fontSize: ".82rem", letterSpacing: "-.01em" }}>Opportunity Portfolio</span>
-          <span style={{ color: "#64809e", fontSize: ".7rem" }}>· pick an account</span>
+          <span style={{ color: "#fff", fontWeight: 700, fontSize: ".8rem", letterSpacing: "-.01em" }}>Opportunity Portfolio</span>
         </div>
-        <span style={{ color: "#7dd3fc", background: "rgba(125,211,252,.12)", border: "1px solid rgba(125,211,252,.25)", fontSize: ".58rem", fontWeight: 700, letterSpacing: ".05em", textTransform: "uppercase", padding: ".15rem .5rem", borderRadius: 999, flexShrink: 0 }}>Sample</span>
+        <span style={{ color: "#7dd3fc", background: "rgba(125,211,252,.12)", border: "1px solid rgba(125,211,252,.25)", fontSize: ".56rem", fontWeight: 700, letterSpacing: ".05em", textTransform: "uppercase", padding: ".15rem .5rem", borderRadius: 999, flexShrink: 0 }}>Sample</span>
       </div>
 
       <div className="ll-ws-body" style={{ gap: ".7rem" }}>
-        {/* Portfolio rail (desktop/tablet) */}
-        <div className="ll-ws-rail" role="tablist" aria-label="Accounts" aria-orientation="vertical" style={{ display: "flex", flexDirection: "column", gap: ".4rem" }}>
+        {/* Ranked account rail (desktop/tablet) */}
+        <div className="ll-ws-rail" role="tablist" aria-label="Accounts" aria-orientation="vertical" style={{ display: "flex", flexDirection: "column", gap: ".35rem" }}>
           {WS_ACCOUNTS.map((acc, i) => {
             const st = DECISION_STATES[acc.state]; const on = i === sel;
             return (
               <button key={acc.name} role="tab" aria-selected={on} tabIndex={on ? 0 : -1}
                 onClick={() => setSel(i)}
                 onKeyDown={e => { if (e.key === "ArrowDown" || e.key === "ArrowRight") { e.preventDefault(); setSel((i + 1) % WS_ACCOUNTS.length); } if (e.key === "ArrowUp" || e.key === "ArrowLeft") { e.preventDefault(); setSel((i - 1 + WS_ACCOUNTS.length) % WS_ACCOUNTS.length); } }}
-                style={{ textAlign: "left", cursor: "pointer", fontFamily: "inherit", borderRadius: ".55rem", padding: ".5rem .6rem", border: on ? "1px solid #38bdf8" : "1px solid #1c3a5a", background: on ? "rgba(56,189,248,.14)" : "rgba(255,255,255,.02)", transition: "background .15s, border-color .15s" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: ".4rem", marginBottom: ".15rem" }}>
+                style={{ position: "relative", textAlign: "left", cursor: "pointer", fontFamily: "inherit", borderRadius: ".5rem", padding: ".45rem .55rem .45rem .7rem", border: "none", background: on ? "rgba(56,189,248,.16)" : "transparent", transition: "background .18s" }}>
+                {on && <span aria-hidden style={{ position: "absolute", left: 0, top: 8, bottom: 8, width: 3, borderRadius: 3, background: "#38bdf8" }} />}
+                <div style={{ display: "flex", alignItems: "center", gap: ".4rem" }}>
+                  <span style={{ color: "#5f7c9c", fontSize: ".62rem", fontWeight: 800, width: "1ch", flexShrink: 0 }}>{acc.rank}</span>
                   <span style={{ width: 6, height: 6, borderRadius: "50%", background: st.dot, flexShrink: 0 }} />
-                  <span style={{ color: on ? "#fff" : "#cbd8e8", fontWeight: 700, fontSize: ".74rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{acc.name}</span>
+                  <span style={{ color: on ? "#fff" : "#b9cbe0", fontWeight: 700, fontSize: ".73rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{acc.name}</span>
                 </div>
-                <div style={{ color: "#7c98b8", fontSize: ".6rem", textTransform: "uppercase", letterSpacing: ".04em", fontWeight: 700, paddingLeft: ".95rem" }}>{st.label} · {acc.fresh}</div>
+                <div style={{ color: "#6f8bab", fontSize: ".58rem", textTransform: "uppercase", letterSpacing: ".04em", fontWeight: 700, paddingLeft: "1.75rem", marginTop: ".1rem" }}>{st.label} · {acc.fresh}</div>
               </button>
             );
           })}
         </div>
 
-        {/* Portfolio chips (mobile) */}
-        <div className="ll-ws-chips" role="tablist" aria-label="Accounts" style={{ gap: ".4rem", overflowX: "auto", paddingBottom: ".15rem" }}>
+        {/* Account switcher (mobile) */}
+        <div className="ll-ws-chips" role="tablist" aria-label="Accounts" style={{ background: "rgba(255,255,255,.04)", borderRadius: ".6rem", padding: ".2rem" }}>
           {WS_ACCOUNTS.map((acc, i) => {
             const st = DECISION_STATES[acc.state]; const on = i === sel;
             return (
               <button key={acc.name} role="tab" aria-selected={on}
                 onClick={() => setSel(i)}
-                style={{ flexShrink: 0, cursor: "pointer", fontFamily: "inherit", display: "inline-flex", alignItems: "center", gap: ".35rem", borderRadius: 999, padding: ".35rem .7rem", border: on ? "1px solid #38bdf8" : "1px solid #1c3a5a", background: on ? "rgba(56,189,248,.16)" : "rgba(255,255,255,.03)", color: on ? "#fff" : "#cbd8e8", fontWeight: 700, fontSize: ".72rem", whiteSpace: "nowrap" }}>
-                <span style={{ width: 6, height: 6, borderRadius: "50%", background: st.dot }} />{acc.name.split(" ")[0]}
+                style={{ flex: 1, minWidth: 0, cursor: "pointer", fontFamily: "inherit", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: ".3rem", borderRadius: ".45rem", padding: ".4rem .3rem", border: "none", background: on ? "#fff" : "transparent", color: on ? "#0f172a" : "#b9cbe0", fontWeight: 700, fontSize: ".72rem", whiteSpace: "nowrap", transition: "background .18s" }}>
+                <span style={{ width: 6, height: 6, borderRadius: "50%", background: st.dot, flexShrink: 0 }} />{acc.name.split(" ")[0]}
               </button>
             );
           })}
         </div>
 
-        {/* Selected account intelligence */}
-        <div role="tabpanel" style={{ background: "#f4f8fc", borderRadius: ".75rem", padding: ".75rem .8rem", minWidth: 0 }}>
-          {/* Account + decision */}
-          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: ".5rem", marginBottom: ".55rem" }}>
+        {/* Selected-account intelligence canvas */}
+        <div role="tabpanel" key={sel} className="ll-ws-fade" style={{ background: "#fff", borderRadius: ".85rem", padding: ".85rem .95rem", minWidth: 0 }}>
+          {/* Account + decision + F/T/E */}
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: ".5rem" }}>
             <div style={{ minWidth: 0 }}>
-              <div style={{ fontWeight: 800, fontSize: ".92rem", color: "#0f172a", letterSpacing: "-.01em", lineHeight: 1.2 }}>{a.name}</div>
-              <div style={{ fontSize: ".66rem", color: "#64748b", marginTop: ".1rem" }}>{a.seg}</div>
+              <div style={{ fontWeight: 800, fontSize: ".98rem", color: "#0f172a", letterSpacing: "-.02em", lineHeight: 1.15 }}>{a.name}</div>
+              <div style={{ fontSize: ".66rem", color: "#64748b", marginTop: ".12rem" }}>{a.seg}</div>
             </div>
             <DecisionPill state={a.state} />
           </div>
+          <div style={{ margin: ".6rem 0 .85rem" }}><FTE fit={a.fit} timing={a.timing} evidence={a.evidence} /></div>
 
-          {/* What Changed — signature event strip */}
-          <div style={{ background: "#0f172a", borderRadius: ".55rem", padding: ".55rem .7rem", marginBottom: ".55rem" }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: ".5rem" }}>
-              <span style={{ fontSize: ".56rem", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase", color: "#7dd3fc" }}>What changed</span>
-              <span style={{ fontSize: ".64rem", color: "#94a3b8", fontWeight: 600, whiteSpace: "nowrap" }}>{a.changedAge}</span>
+          {/* Analytical spine: change → evidence + limiters → validate → decision */}
+          <CanvasStep dotColor="#0f172a" label="What changed" meta={a.changedAge}>
+            <div style={{ fontSize: ".86rem", fontWeight: 700, color: "#0f172a", lineHeight: 1.3 }}>{a.changed}</div>
+          </CanvasStep>
+
+          <CanvasStep dotColor="#0284c7" label="Supported by">
+            {/* Corroboration ladder */}
+            <div style={{ display: "flex", alignItems: "center", gap: ".3rem", marginBottom: ".45rem" }}>
+              {LADDER.map((step, i) => {
+                const reached = i < a.ladder;
+                return (
+                  <span key={step} style={{ display: "inline-flex", alignItems: "center", gap: ".3rem" }}>
+                    <span style={{ fontSize: ".62rem", fontWeight: reached ? 700 : 500, color: reached ? "#0f172a" : "#cbd5e1" }}>{step}</span>
+                    {i < 2 && <span style={{ color: reached && i + 1 < a.ladder ? "#0284c7" : "#dbe3ec", fontSize: ".62rem" }}>→</span>}
+                  </span>
+                );
+              })}
             </div>
-            <div style={{ color: "#fff", fontSize: ".82rem", fontWeight: 600, marginTop: ".2rem", lineHeight: 1.35 }}>{a.changed}</div>
-          </div>
-
-          {/* Fit / Timing / Evidence strip */}
-          <div style={{ ...panel, marginBottom: ".5rem", background: "#fff", border: "1px solid #e8eef5", padding: ".5rem .7rem" }}>
-            <FTE fit={a.fit} timing={a.timing} evidence={a.evidence} />
-          </div>
-
-          {/* Evidence */}
-          <div style={{ ...panel, marginBottom: ".5rem", border: "1px solid #e8eef5" }}>
-            <div style={lbl}>Evidence</div>
-            <div style={{ display: "flex", alignItems: "center", gap: ".4rem", flexWrap: "wrap", marginBottom: ".35rem" }}>
-              <span style={{ fontSize: ".7rem", color: "#0f172a", fontWeight: 700 }}>{a.evidence}</span>
-              <span style={{ color: "#cbd5e1" }}>·</span>
-              <span style={{ fontSize: ".68rem", color: "#475569" }}>{a.evSources} dated sources</span>
-              <span style={{ color: "#cbd5e1" }}>·</span>
-              <span style={{ fontSize: ".68rem", color: "#15803d", fontWeight: 600 }}>{a.evCorr} corroborate</span>
-            </div>
-            {a.sources.map(([type, what, age], i) => (
-              <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: ".5rem", fontSize: ".68rem", color: "#334155", padding: ".15rem 0", borderTop: i === 0 ? "none" : "1px solid #f1f5f9" }}>
-                <span style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  <span style={{ color: "#94a3b8", fontStyle: "italic", fontSize: ".6rem", marginRight: ".3rem" }}>illustrative</span>
-                  <span style={{ fontWeight: 600, color: "#0f172a" }}>{type}</span> <span style={{ color: "#64748b" }}>— {what}</span>
+            {a.sources.map((src, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: ".5rem", padding: ".22rem 0", borderTop: i === 0 ? "none" : "1px solid #f4f7fa" }}>
+                <span style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: ".72rem" }}>
+                  <span style={{ fontWeight: 600, color: "#0f172a" }}>{src.type}</span> <span style={{ color: "#64748b" }}>— {src.note}</span>
                 </span>
-                <span style={{ color: "#94a3b8", fontSize: ".64rem", whiteSpace: "nowrap", flexShrink: 0 }}>{age}</span>
+                <span style={{ display: "inline-flex", alignItems: "center", gap: ".55rem", flexShrink: 0 }}>
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: ".25rem", fontSize: ".6rem", fontWeight: 700, color: REL_COLOR[src.rel] }}>
+                    <span style={{ width: 5, height: 5, borderRadius: "50%", background: REL_COLOR[src.rel] }} />{src.rel}
+                  </span>
+                  <span style={{ color: "#94a3b8", fontSize: ".64rem", width: "2.4ch", textAlign: "right" }}>{src.age}</span>
+                </span>
               </div>
             ))}
-          </div>
+          </CanvasStep>
 
-          {/* Counterevidence / uncertainty */}
-          <div style={{ background: "#fffbeb", border: "1px solid #fde68a", borderLeft: "3px solid #d97706", borderRadius: ".5rem", padding: ".5rem .7rem", marginBottom: ".5rem" }}>
-            <div style={{ ...lbl, color: "#b45309" }}>Counterevidence &amp; uncertainty</div>
-            {a.uncertainty.map((u, i) => (
-              <div key={i} style={{ display: "flex", gap: ".4rem", fontSize: ".7rem", color: "#92400e", lineHeight: 1.4, padding: ".05rem 0" }}><span style={{ fontWeight: 700 }}>–</span>{u}</div>
+          <CanvasStep dotColor="#64748b" label="Limited by">
+            {a.limiters.map((l, i) => (
+              <div key={i} style={{ padding: i === 0 ? "0 0 .35rem" : ".35rem 0", borderTop: i === 0 ? "none" : "1px solid #f4f7fa" }}>
+                <div style={{ fontSize: ".76rem", color: "#334155", fontWeight: 600, lineHeight: 1.35 }}>{l.limit}</div>
+                <div style={{ display: "flex", gap: ".35rem", marginTop: ".15rem", fontSize: ".7rem", color: "#0369a1", lineHeight: 1.35 }}>
+                  <span style={{ fontWeight: 700, flexShrink: 0 }}>Validate →</span><span style={{ minWidth: 0 }}>{l.validate}</span>
+                </div>
+              </div>
             ))}
-          </div>
+          </CanvasStep>
 
-          {/* What to Validate */}
-          <div style={{ ...panel, marginBottom: ".5rem", border: "1px solid #e8eef5" }}>
-            <div style={lbl}>What to validate</div>
-            {a.validate.map((v, i) => (
-              <div key={i} style={{ display: "flex", gap: ".4rem", fontSize: ".72rem", color: "#334155", lineHeight: 1.4, padding: ".05rem 0" }}><span style={{ color: "#0284c7", fontWeight: 700 }}>→</span>{v}</div>
-            ))}
-          </div>
-
-          {/* Next decision */}
-          <div style={{ background: "#0f172a", borderRadius: ".55rem", padding: ".55rem .7rem", display: "flex", alignItems: "center", gap: ".5rem", flexWrap: "wrap" }}>
-            <DecisionPill state={a.state} small />
-            <span style={{ color: "#cbd8e8", fontSize: ".72rem", lineHeight: 1.35, minWidth: 0 }}>{a.next}</span>
-          </div>
+          <CanvasStep dotColor={dstate.dot} last label="Decision">
+            <div style={{ display: "flex", alignItems: "center", gap: ".5rem", flexWrap: "wrap", marginBottom: ".2rem" }}>
+              <DecisionPill state={a.state} />
+              <span style={{ fontSize: ".72rem", color: "#475569" }}>{a.decisionWhy}</span>
+            </div>
+            <div style={{ fontSize: ".78rem", color: "#0f172a", fontWeight: 600, lineHeight: 1.35, marginTop: ".2rem" }}>{a.next}</div>
+          </CanvasStep>
         </div>
       </div>
 
-      {/* Footer legend */}
-      <div style={{ color: "#5f7c9c", fontSize: ".6rem", padding: ".6rem .4rem 0", lineHeight: 1.4 }}>
-        Synthetic example. Every account is grounded in dated evidence — and states what remains unconfirmed.
+      <div style={{ color: "#5f7c9c", fontSize: ".6rem", padding: ".55rem .5rem 0", lineHeight: 1.4 }}>
+        Illustrative sample — synthetic account, events and sources.
       </div>
     </div>
   );
