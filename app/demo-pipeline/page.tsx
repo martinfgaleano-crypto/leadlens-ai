@@ -30,7 +30,22 @@ const COPY = {
     heroNote: "No contact databases. No email lists. Just commercial intelligence.",
     proofLabels: [["5","account briefs"],["6–8","buyer segments"],["24–48h","delivery"],["Evidence","+ counterevidence"]] as [string,string][],
     howTag: "How it works",
-    howTitle: "From your ideal customer profile to a decision — in three steps.",
+    howTitle: { pre: "From commercial context to ", emph: "accounts worth working", post: " — in three steps." },
+    how: {
+      step1Title: "Set the context",
+      step1Copy: "Tell LeadLens what you sell, who you serve and where you're trying to grow. Have an ICP? We'll use it. If not, we'll help structure the criteria.",
+      step2Title: "Investigate",
+      step2Copy: "LeadLens finds relevant accounts, identifies meaningful changes and evaluates the dated evidence behind them.",
+      step3Title: "Decide",
+      step3Copy: "Get a prioritized portfolio and Account Briefs showing where to focus, why and what to validate next.",
+      vSell: "What you sell", vServe: "Who you serve", vGrow: "Where you want to grow",
+      vCriteria: "Opportunity criteria",
+      vChanged: "What changed", vChangedVal: "Regional expansion",
+      vSupported: "Supported by", vSupportedVal: "3 dated sources",
+      vLadder: ["Observed", "Confirmed", "Corroborated"],
+      vDecideReason: "Expansion + strong fit, corroborated",
+      vValidate: "Validate", vValidateVal: "Procurement ownership",
+    },
     steps: [
       ["1","Describe your ICP","Tell us what you sell, who you sell to, and what makes a great customer. Takes 5 minutes."],
       ["2","We map your market","LeadLens identifies 6–8 buyer segments — including ones you haven't considered. Then finds real companies in each."],
@@ -329,7 +344,22 @@ const COPY = {
     heroNote: "Sin bases de datos de contactos. Sin listas de emails. Solo inteligencia comercial.",
     proofLabels: [["5","account briefs"],["6–8","segmentos de compradores"],["24–48h","entrega"],["Evidencia","+ contraevidencia"]] as [string,string][],
     howTag: "Cómo funciona",
-    howTitle: "De tu perfil de cliente ideal a una decisión — en tres pasos.",
+    howTitle: { pre: "Del contexto comercial a las ", emph: "cuentas que vale la pena trabajar", post: " — en tres pasos." },
+    how: {
+      step1Title: "Define el contexto",
+      step1Copy: "Cuéntale a LeadLens qué vendes, a quién atiendes y dónde quieres crecer. ¿Ya tienes un ICP? Lo usamos. Si no, ayudamos a estructurar los criterios.",
+      step2Title: "Investiga",
+      step2Copy: "LeadLens encuentra cuentas relevantes, identifica cambios significativos y evalúa la evidencia fechada detrás de ellos.",
+      step3Title: "Decide",
+      step3Copy: "Recibe un portafolio priorizado y Account Briefs que muestran dónde enfocarte, por qué y qué validar a continuación.",
+      vSell: "Qué vendes", vServe: "A quién atiendes", vGrow: "Dónde quieres crecer",
+      vCriteria: "Criterios de oportunidad",
+      vChanged: "Qué cambió", vChangedVal: "Expansión regional",
+      vSupported: "Respaldado por", vSupportedVal: "3 fuentes fechadas",
+      vLadder: ["Observado", "Confirmado", "Corroborado"],
+      vDecideReason: "Expansión + buen fit, corroborado",
+      vValidate: "Validar", vValidateVal: "Titularidad de compras",
+    },
     steps: [
       ["1","Describe tu ICP","Cuéntanos qué vendes, a quién y qué hace un gran cliente. Toma 5 minutos."],
       ["2","Mapeamos tu mercado","LeadLens identifica 6–8 segmentos de compradores, incluidos algunos que quizás no habías considerado. Luego encuentra empresas reales en cada segmento."],
@@ -628,7 +658,22 @@ const COPY = {
     heroNote: "Sem bancos de dados de contatos. Sem listas de e-mails. Apenas inteligência comercial.",
     proofLabels: [["5","account briefs"],["6–8","segmentos de compradores"],["24–48h","entrega"],["Evidência","+ contraevidência"]] as [string,string][],
     howTag: "Como funciona",
-    howTitle: "Do seu perfil de cliente ideal a uma decisão — em três passos.",
+    howTitle: { pre: "Do contexto comercial às ", emph: "contas que valem o esforço", post: " — em três passos." },
+    how: {
+      step1Title: "Defina o contexto",
+      step1Copy: "Diga à LeadLens o que você vende, quem você atende e onde quer crescer. Já tem um ICP? Nós o usamos. Se não, ajudamos a estruturar os critérios.",
+      step2Title: "Investigue",
+      step2Copy: "A LeadLens encontra contas relevantes, identifica mudanças significativas e avalia a evidência datada por trás delas.",
+      step3Title: "Decida",
+      step3Copy: "Receba um portfólio priorizado e Account Briefs mostrando onde focar, por quê e o que validar em seguida.",
+      vSell: "O que você vende", vServe: "Quem você atende", vGrow: "Onde quer crescer",
+      vCriteria: "Critérios de oportunidade",
+      vChanged: "O que mudou", vChangedVal: "Expansão regional",
+      vSupported: "Sustentado por", vSupportedVal: "3 fontes datadas",
+      vLadder: ["Observado", "Confirmado", "Corroborado"],
+      vDecideReason: "Expansão + bom fit, corroborado",
+      vValidate: "Validar", vValidateVal: "Responsável por compras",
+    },
     steps: [
       ["1","Descreva seu ICP","Nos diga o que você vende, para quem e o que faz um ótimo cliente. Leva 5 minutos."],
       ["2","Mapeamos seu mercado","LeadLens identifica 6–8 segmentos de compradores — incluindo alguns que você talvez não tenha considerado. Depois encontra empresas reais em cada segmento."],
@@ -927,7 +972,22 @@ const COPY = {
     heroNote: "コンタクトデータベースなし。メールリストなし。コマーシャルインテリジェンスのみ。",
     proofLabels: [["5件","アカウントブリーフ"],["6〜8","購買者セグメント"],["24〜48h","納品"],["エビデンス","+ 反証"]] as [string,string][],
     howTag: "使い方",
-    howTitle: "理想顧客プロファイルから意思決定まで — 3つのステップで。",
+    howTitle: { pre: "商業的コンテキストから、", emph: "取り組む価値のあるアカウント", post: "へ — 3ステップで。" },
+    how: {
+      step1Title: "コンテキストを設定",
+      step1Copy: "何を売り、誰に提供し、どこで成長したいかをLeadLensに伝えてください。ICPがあれば活用します。なければ、条件の整理をお手伝いします。",
+      step2Title: "調査する",
+      step2Copy: "LeadLensは関連アカウントを見つけ、重要な変化を特定し、その背後にある日付付きのエビデンスを評価します。",
+      step3Title: "意思決定",
+      step3Copy: "優先順位付けされたポートフォリオとAccount Briefを受け取り、どこに注力すべきか、その理由、次に検証すべきことがわかります。",
+      vSell: "何を売るか", vServe: "誰に提供するか", vGrow: "どこで成長したいか",
+      vCriteria: "オポチュニティ条件",
+      vChanged: "変化", vChangedVal: "地域拡大",
+      vSupported: "裏付け", vSupportedVal: "日付付き3ソース",
+      vLadder: ["観測", "確認", "裏付け完了"],
+      vDecideReason: "拡大＋高い適合、裏付けあり",
+      vValidate: "検証", vValidateVal: "調達の責任所在",
+    },
     steps: [
       ["1","ICPを入力","何を販売し、誰に販売し、優れた顧客とは何かをお伝えください。5分で完了します。"],
       ["2","市場をマッピング","LeadLensは6〜8の購買者セグメントを特定します — まだ検討していないものも含めて。各セグメントの実在する企業を見つけます。"],
@@ -1476,7 +1536,7 @@ export default function DemoPipelinePage() {
         /* Desktop composes the section (heading tail + cards prominent). Mobile uses a
            large offset so the anchor sits low in the viewport, revealing the section
            from its eyebrow down = section START (§163–166). Tuned by real render. */
-        .ll-price-anchor { scroll-margin-top: 220px; }
+        .ll-price-anchor { scroll-margin-top: 270px; }
         @media (max-width: 820px) { .ll-price-anchor { scroll-margin-top: 300px; } }
         @media (max-width: 580px) { .ll-price-anchor { scroll-margin-top: 300px; } }
         /* Sample Output product-proof layout: copy left, real Brief right on desktop;
@@ -1539,8 +1599,16 @@ export default function DemoPipelinePage() {
         @media (max-width: 560px) { .ll-price-grid { grid-template-columns: 1fr; max-width: 24rem; } }
         /* Differentiation contrast: side-by-side on desktop, stacked with a downward arrow on phones */
         @media (max-width: 620px) { .ll-diff-grid { grid-template-columns: 1fr !important; } .ll-diff-arrow { transform: rotate(90deg); } }
-        /* How-it-works flow: three connected stages, stacked with downward arrows on phones */
-        @media (max-width: 720px) { .ll-how-flow { grid-template-columns: 1fr !important; gap: .75rem !important; } .ll-how-arrow { transform: rotate(90deg); } }
+        /* How-it-works: desktop = three connected stages on one continuous line;
+           mobile = a single vertical spine the stages attach to (§15–24). */
+        .ll-how-desktop { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: stretch; max-width: 64rem; margin: 0 auto; }
+        .ll-how-mobile  { display: none; }
+        .ll-how-card { background: #fff; border: 1px solid #eef2f7; border-radius: 1rem; padding: 1.4rem 1.35rem; display: flex; flex-direction: column; height: 100%; box-sizing: border-box; }
+        .ll-how-conn { display: flex; align-items: center; padding: 0 .55rem; }
+        @media (max-width: 820px) {
+          .ll-how-desktop { display: none; }
+          .ll-how-mobile  { display: block; max-width: 30rem; margin: 0 auto; }
+        }
         @media (max-width: 640px) {
           /* Sections */
           .ll-section { padding: 2.25rem 1rem !important; }
@@ -1704,27 +1772,61 @@ export default function DemoPipelinePage() {
 
       {/* How it works */}
       <section id="how-it-works" className="ll-section" style={{ ...sectionStyle, background: "#f8fafc" }}>
-        <div style={innerStyle}>
-          <div style={{ textAlign: "center", marginBottom: "3rem" }}>
-            <Tag>{copy.howTag}</Tag>
-            <h2 style={sectionTitleStyle}>{copy.howTitle}</h2>
-          </div>
-          {/* Connected 3-stage flow: Define -> Investigate -> Decide */}
-          <div className="ll-how-flow" style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr auto 1fr", gap: ".5rem", alignItems: "center", maxWidth: "58rem", margin: "0 auto" }}>
-            {([
-              ["01", "Define", "Tell LeadLens what matters — your business, ICP and target market."],
-              ["02", "Investigate", "LeadLens finds accounts, detects what changed, and grounds it in dated evidence."],
-              ["03", "Decide", "You get a prioritized portfolio and Account Briefs — each with a decision."],
-            ] as const).flatMap(([n, t, d], i) => [
-              <div key={n} style={{ background: "#fff", border: "1px solid #e8edf3", borderRadius: "1rem", padding: "1.5rem 1.4rem", height: "100%", boxSizing: "border-box" as const }}>
-                <div style={{ fontSize: ".7rem", fontWeight: 800, letterSpacing: ".1em", color: "#0284c7", marginBottom: ".6rem" }}>{n}</div>
-                <h3 style={{ fontWeight: 800, fontSize: "1.05rem", letterSpacing: "-.01em", margin: "0 0 .4rem" }}>{t}</h3>
-                <p style={{ color: "#64748b", fontSize: ".875rem", lineHeight: 1.55, margin: 0 }}>{d}</p>
-              </div>,
-              i < 2 ? <div key={n + "-arrow"} className="ll-how-arrow" style={{ color: "#0ea5e9", fontSize: "1.5rem", fontWeight: 800, textAlign: "center" as const }}>→</div> : null,
-            ])}
-          </div>
-        </div>
+        {(() => {
+          const steps = [
+            { n: "01", title: copy.how.step1Title, body: copy.how.step1Copy, viz: <HowStep1Viz how={copy.how} /> },
+            { n: "02", title: copy.how.step2Title, body: copy.how.step2Copy, viz: <HowStep2Viz how={copy.how} /> },
+            { n: "03", title: copy.how.step3Title, body: copy.how.step3Copy, viz: <HowStep3Viz how={copy.how} /> },
+          ];
+          const num = (n: string) => (
+            <div style={{ display: "flex", alignItems: "center", gap: ".55rem", marginBottom: ".55rem" }}>
+              <span style={{ fontSize: ".8rem", fontWeight: 800, color: "#0ea5e9", letterSpacing: ".04em" }}>{n}</span>
+              <span aria-hidden style={{ width: 24, height: 1, background: "#dbe4ee" }} />
+            </div>
+          );
+          const stepInner = (s: typeof steps[number]) => (
+            <>
+              {num(s.n)}
+              <h3 style={{ fontWeight: 800, fontSize: "1.05rem", letterSpacing: "-.01em", margin: "0 0 .35rem" }}>{s.title}</h3>
+              <p style={{ color: "#64748b", fontSize: ".85rem", lineHeight: 1.55, margin: 0 }}>{s.body}</p>
+              {s.viz}
+            </>
+          );
+          return (
+            <div style={innerStyle}>
+              <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
+                <Tag>{copy.howTag}</Tag>
+                <h2 style={sectionTitleStyle}>{copy.howTitle.pre}<span style={{ color: "#0ea5e9" }}>{copy.howTitle.emph}</span>{copy.howTitle.post}</h2>
+              </div>
+
+              {/* Desktop: three connected stages on one continuous line */}
+              <div className="ll-how-desktop">
+                {steps.flatMap((s, i) => [
+                  <div key={s.n} className="ll-how-card">{stepInner(s)}</div>,
+                  i < 2 ? (
+                    <div key={s.n + "-c"} className="ll-how-conn" aria-hidden>
+                      <span style={{ flex: 1, height: 2, background: "linear-gradient(90deg,#e2e8f0,#bae6fd)" }} />
+                      <span style={{ color: "#7dd3fc", fontSize: "1.05rem", fontWeight: 800, marginLeft: 2 }}>›</span>
+                    </div>
+                  ) : null,
+                ])}
+              </div>
+
+              {/* Mobile: one vertical spine the stages attach to */}
+              <div className="ll-how-mobile">
+                {steps.map((s, i) => (
+                  <div key={s.n} style={{ display: "grid", gridTemplateColumns: "16px 1fr", columnGap: ".85rem" }}>
+                    <div style={{ position: "relative", display: "flex", justifyContent: "center" }}>
+                      <span aria-hidden style={{ width: 11, height: 11, borderRadius: "50%", background: "#0ea5e9", marginTop: 3, zIndex: 1, boxShadow: "0 0 0 3px #f8fafc" }} />
+                      {i < 2 && <span aria-hidden style={{ position: "absolute", top: 14, bottom: "-1.4rem", width: 2, background: "#dbe4ee" }} />}
+                    </div>
+                    <div style={{ paddingBottom: i < 2 ? "1.4rem" : 0, minWidth: 0 }}>{stepInner(s)}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
       </section>
 
       {/* Sample output — product proof. SHOWS a real Account Brief (built from the
@@ -3146,6 +3248,57 @@ function SampleBriefCard() {
           </div>
         </CanvasStep>
       </div>
+    </div>
+  );
+}
+
+// ─── How it works — mini product visuals (reuse the real intelligence grammar) ──
+// Each step carries a small, product-derived visual so the section SHOWS the
+// context → investigation → decision transformation, not three generic cards.
+type HowCopy = typeof COPY["en"]["how"];
+
+function HowStep1Viz({ how }: { how: HowCopy }) {
+  const row = (t: string) => (
+    <div key={t} style={{ fontSize: ".72rem", color: "#475569", background: "#fff", border: "1px solid #e8edf3", borderRadius: ".45rem", padding: ".3rem .6rem", fontWeight: 600 }}>{t}</div>
+  );
+  return (
+    <div style={{ marginTop: "1.1rem" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: ".3rem" }}>
+        {[how.vSell, how.vServe, how.vGrow].map(row)}
+      </div>
+      <div aria-hidden style={{ textAlign: "center", color: "#cbd5e1", fontSize: ".95rem", lineHeight: 1, margin: ".35rem 0" }}>↓</div>
+      <div style={{ fontSize: ".76rem", fontWeight: 700, color: "#0369a1", background: "linear-gradient(180deg,#f0f9ff,#e0f2fe)", border: "1px solid #bae6fd", borderRadius: ".45rem", padding: ".45rem .6rem", textAlign: "center" }}>{how.vCriteria}</div>
+    </div>
+  );
+}
+
+function HowStep2Viz({ how }: { how: HowCopy }) {
+  const field = (label: string, val: string, strong = false) => (
+    <div key={label}>
+      <div style={{ fontSize: ".56rem", fontWeight: 800, letterSpacing: ".07em", textTransform: "uppercase" as const, color: "#94a3b8" }}>{label}</div>
+      <div style={{ fontSize: ".8rem", fontWeight: strong ? 700 : 600, color: strong ? "#0f172a" : "#334155", lineHeight: 1.3 }}>{val}</div>
+    </div>
+  );
+  return (
+    <div style={{ marginTop: "1.1rem", display: "flex", flexDirection: "column", gap: ".5rem" }}>
+      {field(how.vChanged, how.vChangedVal, true)}
+      {field(how.vSupported, how.vSupportedVal)}
+      <div style={{ display: "flex", alignItems: "center", gap: ".28rem", flexWrap: "wrap" as const }}>
+        {how.vLadder.flatMap((s, i) => [
+          <span key={s} style={{ fontSize: ".6rem", fontWeight: i === how.vLadder.length - 1 ? 700 : 500, color: i === how.vLadder.length - 1 ? "#0369a1" : "#94a3b8" }}>{s}</span>,
+          i < how.vLadder.length - 1 ? <span key={s + "-a"} aria-hidden style={{ color: "#cbd5e1", fontSize: ".6rem" }}>→</span> : null,
+        ])}
+      </div>
+    </div>
+  );
+}
+
+function HowStep3Viz({ how }: { how: HowCopy }) {
+  return (
+    <div style={{ marginTop: "1.1rem", display: "flex", flexDirection: "column", gap: ".4rem", alignItems: "flex-start" }}>
+      <DecisionPill state="prioritize" />
+      <div style={{ fontSize: ".72rem", color: "#475569", lineHeight: 1.35 }}>{how.vDecideReason}</div>
+      <div style={{ fontSize: ".72rem", color: "#0369a1", fontWeight: 600, lineHeight: 1.35 }}>{how.vValidate} → {how.vValidateVal}</div>
     </div>
   );
 }

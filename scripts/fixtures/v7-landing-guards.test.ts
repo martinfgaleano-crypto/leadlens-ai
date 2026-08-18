@@ -45,8 +45,8 @@ t("F3 Sample headline shows reasoning (not 'this is what it looks like')",
 t("F4 Sample Output two-column/stack layout present", /ll-sample-grid/.test(src) && /grid-template-areas/.test(src));
 
 // ─── G. Responsive anchors (desktop composed vs mobile start) + FAQ ───────────
-t("G1 pricing anchor desktop vs mobile scroll-margin differ (composed vs start)",
-  /\.ll-price-anchor\s*\{\s*scroll-margin-top:\s*220px/.test(src) && /max-width:\s*580px\)\s*\{\s*\.ll-price-anchor\s*\{\s*scroll-margin-top:\s*300px/.test(src));
+t("G1 pricing anchor desktop vs mobile scroll-margin differ (composed/centered vs start)",
+  /\.ll-price-anchor\s*\{\s*scroll-margin-top:\s*270px/.test(src) && /max-width:\s*580px\)\s*\{\s*\.ll-price-anchor\s*\{\s*scroll-margin-top:\s*300px/.test(src));
 t("G2 FAQ compressed to 5 primary + 'More questions' disclosure",
   /faqMore:/.test(src) && /copy\.faqs\.slice\(0,\s*5\)/.test(src) && /copy\.faqs\.slice\(5\)/.test(src));
 t("G3 faqMore + sampleSeePricing localized in 4 locales",
@@ -70,7 +70,24 @@ t("D6 differentiation JSX is driven by copy keys (not hardcoded English)",
 
 // ─── E. Professional How-it-works heading ─────────────────────────────────────
 t("E1 awkward '(Ideal Customer Profile) in' heading removed", !/ICP \(Ideal Customer Profile\) in/.test(src));
-t("E2 how-it-works heading localized in 4 locales", count(/howTitle:/g) === 4);
+t("E2 how-it-works heading localized in 4 locales", count(/howTitle:\s*\{/g) === 4);
+
+// ─── H. How-it-works V7.3 transformation ──────────────────────────────────────
+// Headline reframed to commercial-context (not "you must arrive with an ICP").
+t("H1 headline is commercial-context → accounts, not ICP-first",
+  /howTitle:\s*\{\s*pre:\s*"From commercial context/.test(src) && !/From your ideal customer profile/.test(src));
+t("H2 headline emphasis on 'accounts worth working' (blue), rendered via copy",
+  /emph:\s*"accounts worth working"/.test(src) && /copy\.howTitle\.emph/.test(src));
+t("H3 Step 1 makes ICP optional (existing ICP used; criteria structured otherwise)",
+  /Have an ICP\? We'll use it\. If not, we'll help structure the criteria\./.test(src));
+t("H4 localized step copy in 4 locales", count(/step1Copy:/g) === 4 && count(/step2Copy:/g) === 4 && count(/step3Copy:/g) === 4);
+t("H5 mini product visuals reuse real primitives (DecisionPill + ladder + evidence)",
+  /function HowStep1Viz/.test(src) && /function HowStep2Viz/.test(src) && /function HowStep3Viz/.test(src) &&
+  /<DecisionPill state="prioritize" \/>/.test(src));
+t("H6 connected layout: desktop connectors + mobile vertical spine",
+  /ll-how-desktop/.test(src) && /ll-how-mobile/.test(src) && /ll-how-conn/.test(src));
+t("H7 old generic card+arrow flow replaced", !/className="ll-how-flow"/.test(src) && !/className="ll-how-arrow"/.test(src));
+t("H8 how mini-visual labels localized in 4 locales", count(/vCriteria:/g) === 4 && count(/vLadder:/g) === 4);
 
 console.log(`\n${passed}/${passed + failed} passed`);
 process.exit(failed ? 1 : 0);
