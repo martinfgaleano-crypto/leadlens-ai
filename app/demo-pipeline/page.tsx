@@ -23,7 +23,7 @@ const COPY = {
     heroH1hi: "worth working now",
     heroH1post: ".",
     heroH2: "And the evidence behind every opportunity.",
-    heroSub: "LeadLens tells you which accounts fit, why they matter now, and the public evidence behind each opportunity — account-level intelligence, not a contact list.",
+    heroSub: "Your team can't work every account. LeadLens shows which ones deserve attention now — and the evidence behind the decision.",
     heroCTA: "Get started",
     heroPriceNote: "From $7 · one-time · no card to explore the sample",
     heroSeeAll: "View sample",
@@ -157,7 +157,7 @@ const COPY = {
     sLearningMeta: "Learning signals",
     footerCopy: "© 2026 LeadLens AI — B2B Commercial Intelligence. We analyze public signals, not personal data.",
     footerLinks: ["Privacy", "Terms", "Refund Policy", "Contact"],
-    footerContact: "Questions? Email us: martinfgaleano@gmail.com",
+    footerContact: "Questions? Email us: operations@leadlensintel.com",
     expectationsTag: "What to expect",
     expectationsTitle: "Honest about what we deliver",
     expectationsItems: [
@@ -211,8 +211,8 @@ const COPY = {
       ["Does the preview use real data?", "No. The free preview shows the format and structure of a real Opportunity Portfolio using sample data. For a real Opportunity Portfolio with researched companies and verified signals, purchase an Opportunity Portfolio."],
     ] as [string, string][],
     ctaTag: "Get started",
-    ctaTitle: "Know which accounts to call this week.",
-    ctaSub: "One prioritized Opportunity Portfolio. 24–48h delivery. Real accounts, dated evidence, a decision you can defend.",
+    ctaTitle: "Now find yours.",
+    ctaSub: "See which accounts the evidence says deserve your team's attention — and why.",
     ctaCTA: "Get your first Opportunity Preview — from $7 →",
     sampleTabs: ["Email", "LinkedIn DM", "Follow-up 1", "Follow-up 2"],
     pricePerLead: { sample: "One-time payment", starter: "One-time payment", standard: "One-time payment", pro: "One-time payment" },
@@ -308,7 +308,7 @@ const COPY = {
     heroH1hi: "que vale la pena trabajar ahora",
     heroH1post: ".",
     heroH2: "Y la evidencia detrás de cada oportunidad.",
-    heroSub: "LeadLens te dice qué cuentas encajan, por qué importan ahora y la evidencia pública detrás de cada oportunidad — inteligencia a nivel de cuenta, no una lista de contactos.",
+    heroSub: "Tu equipo no puede trabajar todas las cuentas. LeadLens muestra cuáles merecen atención ahora — y la evidencia detrás de la decisión.",
     heroCTA: "Comenzar",
     heroPriceNote: "Desde $7 · pago único · sin tarjeta para ver la muestra",
     heroSeeAll: "Ver muestra",
@@ -442,7 +442,7 @@ const COPY = {
     sLearningMeta: "Señales de aprendizaje",
     footerCopy: "© 2026 LeadLens AI — Inteligencia Comercial B2B. Analizamos señales públicas, no datos personales.",
     footerLinks: ["Privacidad", "Términos", "Política de devolución", "Contacto"],
-    footerContact: "¿Preguntas? Escríbenos: martinfgaleano@gmail.com",
+    footerContact: "¿Preguntas? Escríbenos: operations@leadlensintel.com",
     expectationsTag: "Qué esperar",
     expectationsTitle: "Honestos sobre lo que entregamos",
     expectationsItems: [
@@ -496,8 +496,8 @@ const COPY = {
       ["¿La vista previa usa datos reales?", "No. La vista previa gratuita muestra el formato y la estructura de un Opportunity Portfolio real usando datos de ejemplo. Para un Opportunity Portfolio real con empresas investigadas y señales verificadas, compra un Opportunity Portfolio."],
     ] as [string, string][],
     ctaTag: "Comenzar",
-    ctaTitle: "Sabe qué cuentas llamar esta semana.",
-    ctaSub: "Un Opportunity Portfolio priorizado. Entrega en 24–48h. Cuentas reales, evidencia fechada, una decisión que puedes defender.",
+    ctaTitle: "Ahora encuentra las tuyas.",
+    ctaSub: "Descubre qué cuentas merecen la atención de tu equipo — y por qué.",
     ctaCTA: "Obtener tu primer Opportunity Preview — desde $7 →",
     sampleTabs: ["Email", "LinkedIn DM", "Seguimiento 1", "Seguimiento 2"],
     pricePerLead: { sample: "Pago único", starter: "Pago único", standard: "Pago único", pro: "Pago único" },
@@ -593,7 +593,7 @@ const COPY = {
     heroH1hi: "que valem a pena trabalhar agora",
     heroH1post: ".",
     heroH2: "E a evidência por trás de cada oportunidade.",
-    heroSub: "A LeadLens diz quais contas se encaixam, por que importam agora e a evidência pública por trás de cada oportunidade — inteligência em nível de conta, não uma lista de contatos.",
+    heroSub: "Sua equipe não pode trabalhar todas as contas. A LeadLens mostra quais merecem atenção agora — e a evidência por trás da decisão.",
     heroCTA: "Começar",
     heroPriceNote: "A partir de $7 · pagamento único · sem cartão para ver a amostra",
     heroSeeAll: "Ver amostra",
@@ -727,7 +727,7 @@ const COPY = {
     sLearningMeta: "Sinais de aprendizado",
     footerCopy: "© 2026 LeadLens AI — Inteligência Comercial B2B. Analisamos sinais públicos, não dados pessoais.",
     footerLinks: ["Privacidade", "Termos", "Política de Reembolso", "Contato"],
-    footerContact: "Dúvidas? Fale conosco: martinfgaleano@gmail.com",
+    footerContact: "Dúvidas? Fale conosco: operations@leadlensintel.com",
     expectationsTag: "O que esperar",
     expectationsTitle: "Honestos sobre o que entregamos",
     expectationsItems: [
@@ -781,8 +781,8 @@ const COPY = {
       ["A prévia usa dados reais?", "Não. A prévia gratuita mostra o formato e a estrutura de um Opportunity Portfolio real usando dados de exemplo. Para um Opportunity Portfolio real com empresas pesquisadas e sinais verificados, compre um Opportunity Portfolio."],
     ] as [string, string][],
     ctaTag: "Começar",
-    ctaTitle: "Saiba quais contas ligar esta semana.",
-    ctaSub: "Um Opportunity Portfolio priorizado. Entrega em 24–48h. Contas reais, evidência datada, uma decisão que você pode defender.",
+    ctaTitle: "Agora encontre as suas.",
+    ctaSub: "Descubra quais contas merecem a atenção da sua equipe — e por quê.",
     ctaCTA: "Obter seu primeiro Opportunity Preview — a partir de $7 →",
     sampleTabs: ["Email", "LinkedIn DM", "Follow-up 1", "Follow-up 2"],
     pricePerLead: { sample: "Pagamento único", starter: "Pagamento único", standard: "Pagamento único", pro: "Pagamento único" },
@@ -878,7 +878,7 @@ const COPY = {
     heroH1hi: "B2Bアカウントを見つけましょう",
     heroH1post: "。",
     heroH2: "そして、各機会の裏付けとなる根拠を。",
-    heroSub: "LeadLensは、どのアカウントが適合し、なぜ今重要で、各機会の裏付けとなる公開情報をお伝えします — 連絡先リストではなく、アカウント単位のインテリジェンス。",
+    heroSub: "すべてのアカウントに取り組むことはできません。LeadLensは、今どのアカウントに注力すべきか、その判断の根拠とともに示します。",
     heroCTA: "始める",
     heroPriceNote: "$7から · 一回払い · サンプルはカード不要",
     heroSeeAll: "サンプルを見る",
@@ -1012,7 +1012,7 @@ const COPY = {
     sLearningMeta: "学習シグナル",
     footerCopy: "© 2026 LeadLens AI — B2Bコマーシャルインテリジェンス。公開シグナルを分析します。個人データは使用しません。",
     footerLinks: ["プライバシー", "利用規約", "返金ポリシー", "お問い合わせ"],
-    footerContact: "ご質問は: martinfgaleano@gmail.com",
+    footerContact: "ご質問は: operations@leadlensintel.com",
     expectationsTag: "期待できること",
     expectationsTitle: "提供内容について正直にお伝えします",
     expectationsItems: [
@@ -1066,8 +1066,8 @@ const COPY = {
       ["プレビューは実際のデータを使っていますか？", "いいえ。無料プレビューはサンプルデータを使用して、実際のOpportunity Portfolioの形式と構造を示しています。調査された企業と検証済みシグナルを含む実際のOpportunity Portfolioには、Opportunity Portfolioをご購入ください。"],
     ] as [string, string][],
     ctaTag: "始める",
-    ctaTitle: "今週コンタクトすべきアカウントを把握しましょう。",
-    ctaSub: "優先順位付けされたOpportunity Portfolio 1件。24〜48時間で納品。実際のアカウント、日付付きの根拠、確かな意思決定。",
+    ctaTitle: "次は、あなたのアカウントを。",
+    ctaSub: "どのアカウントがチームの注力に値するか、その理由とともに。",
     ctaCTA: "最初のOpportunity Preview — $7から →",
     sampleTabs: ["メール", "LinkedIn DM", "フォローアップ 1", "フォローアップ 2"],
     pricePerLead: { sample: "一回払い", starter: "1回払い", standard: "1回払い", pro: "1回払い" },
@@ -1766,8 +1766,8 @@ export default function DemoPipelinePage() {
         <div style={{ ...innerStyle }}>
           <Tag>{copy.comparisonTag}</Tag>
           <h2 style={{ ...sectionTitleStyle, maxWidth: "36rem" }}>{copy.comparisonTitle}</h2>
-          <p style={{ color: "#64748b", fontSize: "1.05rem", maxWidth: "34rem", margin: ".75rem 0 0", lineHeight: 1.6 }}>
-            Databases help you <strong style={{ color: "#0f172a" }}>find</strong> companies. LeadLens helps you <strong style={{ color: "#0284c7" }}>decide</strong> which ones deserve attention — with the evidence behind it.
+          <p style={{ color: "#64748b", fontSize: "1.05rem", maxWidth: "38rem", margin: ".75rem 0 0", lineHeight: 1.6 }}>
+            Databases tell you who exists. Signal tools tell you what happened. LeadLens builds the <strong style={{ color: "#0284c7" }}>case</strong> for whether an account is worth your team&rsquo;s attention — and what supports it.
           </p>
           <div className="ll-diff-grid" style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: "1.25rem", alignItems: "stretch", maxWidth: "52rem", margin: "2.5rem auto 0", textAlign: "left" as const }}>
             <div style={{ background: "#f8fafc", border: "1px solid #eef2f7", borderRadius: "1rem", padding: "1.5rem" }}>
@@ -1783,9 +1783,12 @@ export default function DemoPipelinePage() {
               {["What Changed", "Evidence & counterevidence", "Fit & Timing", "A decision + what to validate"].map(x => (
                 <div key={x} style={{ fontSize: ".92rem", color: "#0f172a", fontWeight: 600, padding: ".3rem 0", display: "flex", gap: ".5rem" }}><span style={{ color: "#0ea5e9", flexShrink: 0 }}>✓</span>{x}</div>
               ))}
-              <div style={{ marginTop: ".8rem", fontSize: ".8rem", color: "#0369a1", fontWeight: 600 }}>An evidence-grounded decision.</div>
+              <div style={{ marginTop: ".8rem", fontSize: ".8rem", color: "#0369a1", fontWeight: 600 }}>The case for the account — and against.</div>
             </div>
           </div>
+          <p style={{ maxWidth: "40rem", margin: "2.25rem auto 0", fontSize: ".98rem", color: "#475569", lineHeight: 1.6 }}>
+            <strong style={{ color: "#0f172a" }}>Don&rsquo;t trust a score — inspect the reasoning.</strong> Every priority comes with the evidence, its limits, and what to validate before you act.
+          </p>
         </div>
       </section>
 
@@ -1864,7 +1867,7 @@ export default function DemoPipelinePage() {
         </p>
         <div style={{ display: "flex", justifyContent: "center", gap: "1.5rem", flexWrap: "wrap" }}>
           {copy.footerLinks.map((l, i) => {
-            const hrefs = ["/privacy", "/terms", "/refund", "mailto:martinfgaleano@gmail.com"];
+            const hrefs = ["/privacy", "/terms", "/refund", "mailto:operations@leadlensintel.com"];
             return (
               <a key={l} href={hrefs[i] ?? "#"} style={{ color: "#94a3b8", fontSize: ".82rem", textDecoration: "none" }}
                 onMouseOver={e => (e.currentTarget.style.color = "#64748b")}
@@ -2884,7 +2887,7 @@ function AccountWorkspace() {
           {WS_ACCOUNTS.map((acc, i) => {
             const st = DECISION_STATES[acc.state]; const on = i === sel;
             return (
-              <button key={acc.name} role="tab" aria-selected={on} tabIndex={on ? 0 : -1}
+              <button key={acc.name} role="tab" aria-selected={on} aria-controls="ll-ws-panel" tabIndex={on ? 0 : -1}
                 onClick={() => setSel(i)}
                 onKeyDown={e => { if (e.key === "ArrowDown" || e.key === "ArrowRight") { e.preventDefault(); setSel((i + 1) % WS_ACCOUNTS.length); } if (e.key === "ArrowUp" || e.key === "ArrowLeft") { e.preventDefault(); setSel((i - 1 + WS_ACCOUNTS.length) % WS_ACCOUNTS.length); } }}
                 style={{ position: "relative", textAlign: "left", cursor: "pointer", fontFamily: "inherit", borderRadius: ".5rem", padding: ".45rem .55rem .45rem .7rem", border: "none", background: on ? "rgba(56,189,248,.16)" : "transparent", transition: "background .18s" }}>
@@ -2905,7 +2908,7 @@ function AccountWorkspace() {
           {WS_ACCOUNTS.map((acc, i) => {
             const st = DECISION_STATES[acc.state]; const on = i === sel;
             return (
-              <button key={acc.name} role="tab" aria-selected={on}
+              <button key={acc.name} role="tab" aria-selected={on} aria-controls="ll-ws-panel"
                 onClick={() => setSel(i)}
                 style={{ flex: 1, minWidth: 0, cursor: "pointer", fontFamily: "inherit", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: ".3rem", borderRadius: ".45rem", padding: ".4rem .3rem", border: "none", background: on ? "#fff" : "transparent", color: on ? "#0f172a" : "#b9cbe0", fontWeight: 700, fontSize: ".72rem", whiteSpace: "nowrap", transition: "background .18s" }}>
                 <span style={{ width: 6, height: 6, borderRadius: "50%", background: st.dot, flexShrink: 0 }} />{acc.name.split(" ")[0]}
@@ -2915,7 +2918,7 @@ function AccountWorkspace() {
         </div>
 
         {/* Selected-account intelligence canvas */}
-        <div role="tabpanel" key={sel} className="ll-ws-fade" style={{ background: "#fff", borderRadius: ".85rem", padding: ".85rem .95rem", minWidth: 0 }}>
+        <div role="tabpanel" id="ll-ws-panel" key={sel} className="ll-ws-fade" style={{ background: "#fff", borderRadius: ".85rem", padding: ".85rem .95rem", minWidth: 0 }}>
           {/* Account + decision + F/T/E */}
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: ".5rem" }}>
             <div style={{ minWidth: 0 }}>

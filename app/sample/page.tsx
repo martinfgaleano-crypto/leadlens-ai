@@ -185,7 +185,10 @@ export default function SamplePage() {
         <div style={{ textAlign: "center", marginTop: "2.5rem" }}>
           <div style={{ fontSize: "1.25rem", fontWeight: 800, letterSpacing: "-.02em", marginBottom: ".5rem" }}>See what deserves your attention.</div>
           <p style={{ color: "#64748b", fontSize: ".92rem", margin: "0 auto 1.25rem", maxWidth: "32rem" }}>This is one synthetic account. LeadLens builds the same reasoning across your market.</p>
-          <Link href="/" style={{ display: "inline-block", background: "#0ea5e9", color: "#fff", borderRadius: ".75rem", padding: ".85rem 1.7rem", fontWeight: 700, fontSize: ".95rem", textDecoration: "none" }}>Get started →</Link>
+          <div style={{ display: "flex", gap: ".75rem", justifyContent: "center", flexWrap: "wrap" }}>
+            <Link href="/" style={{ display: "inline-block", background: "#0ea5e9", color: "#fff", borderRadius: ".75rem", padding: ".85rem 1.7rem", fontWeight: 700, fontSize: ".95rem", textDecoration: "none" }}>Get started →</Link>
+            <Link href="/#pricing" style={{ display: "inline-block", background: "#fff", color: "#0284c7", border: "1.5px solid #bae6fd", borderRadius: ".75rem", padding: ".85rem 1.6rem", fontWeight: 700, fontSize: ".95rem", textDecoration: "none" }}>See pricing</Link>
+          </div>
         </div>
       </div>
     </div>
