@@ -1,0 +1,13 @@
+{
+  "generatedAt": "2026-08-19T15:55:50.731Z",
+  "fixture": "alt",
+  "client": null,
+  "tier": "Premium",
+  "accounts": 6,
+  "files": [
+    "LeadLens_Opportunity_Portfolio_Portfolio_2026-08-19.html",
+    "LeadLens_Portfolio_Portfolio_2026-08-19.csv",
+    "LeadLens_Evidence_Portfolio_2026-08-19.csv"
+  ],
+  "secretScan": "clean"
+}

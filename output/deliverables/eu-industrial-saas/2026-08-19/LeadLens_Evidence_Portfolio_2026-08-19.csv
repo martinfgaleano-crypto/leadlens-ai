@@ -1,0 +1,6 @@
+Account,Decision,Claim,Source,Relation,Date,Age,URL
+Pennine Components Ltd,Prioritize,,Primary source · 11d,direct,2026-08-08,12d,https://example.co.uk/pennine
+Nordwind Logistik GmbH,Prioritize,,Primary source · 16d,direct,2026-08-03,17d,https://example.de/nordwind
+Helsinki Data Oy,Validate,,Primary source · 23d,direct,2026-07-27,24d,https://example.fi/hdata
+Lyon Manufacture SA,Validate,,Primary source,direct,,,https://example.fr/lyon
+Aarhus Retail Group,Monitor,,Primary source · 31d,direct,2026-07-19,32d,https://example.dk/aarhus

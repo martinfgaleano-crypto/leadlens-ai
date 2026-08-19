@@ -44,6 +44,8 @@
     "test:commercial-continuity": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/commercial-continuity.test.ts",
     "test:v7-landing-guards": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/v7-landing-guards.test.ts",
     "test:deliverable": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/deliverable-renderer.test.ts",
+    "test:portable": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/portable-deliverable.test.ts",
+    "deliverable:generate": "npx -y tsx --tsconfig tsconfig.json scripts/deliverable/generate-portable.ts",
     "test:authenticated-product": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/authenticated-product-completion.test.ts",
     "test:pilot-depth": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/pilot-depth.test.ts",
     "test:company-first": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/company-first-discovery.test.ts",
