@@ -67,7 +67,7 @@ const COPY = {
     oneBatch: "One-time payment",
     monthlyTag: "Coming soon — Pilot access",
     monthlyTitle: "Opportunity Monitor",
-    monthlySub: "Monthly refreshed opportunities, signal updates, weekly opportunity digest, and recurring briefs — for teams that need continuous market intelligence.",
+    monthlySub: "Monthly refreshed opportunities, signal updates, weekly opportunity digest, and recurring briefs — for teams that need periodic account re-evaluation.",
     monitorCTA: "Join pilot waitlist",
     monitorPrice: "From $99/mo",
     planNames: { sample: "Preview", starter: "Brief", standard: "Intelligence", pro: "Premium" },
@@ -84,7 +84,7 @@ const COPY = {
       pro:      "For teams turning a prioritized portfolio into an account strategy.",
     },
     planDiff: {
-      sample:   "Validates: is this worth it for my ICP?",
+      sample:   "Validates: is LeadLens useful for my commercial context?",
       starter:  "Adds selection: a compared set with initial ranking and statuses.",
       standard: "Adds prioritization: full portfolio ranking, allocation and risk.",
       pro:      "Adds strategy: deeper corroboration and strategic sequencing on priority accounts.",
@@ -179,7 +179,7 @@ const COPY = {
     sEvidenceDiscipline: "Evidence quality",
     sIntelligenceNotes: "Quality checks",
     sLearningMeta: "Learning signals",
-    footerCopy: "© 2026 LeadLens AI — B2B Commercial Intelligence. We analyze public signals, not personal data.",
+    footerCopy: "© 2026 LeadLens — Account Opportunity Intelligence for B2B. We analyze public signals, not personal data.",
     footerLinks: ["Privacy", "Terms", "Refund Policy", "Contact"],
     footerContact: "Questions? Email us: operations@leadlensintel.com",
     expectationsTag: "What to expect",
@@ -226,20 +226,20 @@ const COPY = {
     faqMore: "More questions",
     faqTitle: "Common questions",
     faqs: [
-      ["What exactly do I get?", "A prioritized Opportunity Portfolio of accounts for your ICP — each with an Account Brief: what changed, why it fits, why the timing may matter, the evidence and counterevidence, and what to validate before you act. Delivered as PDF + CSV in 24–48h."],
+      ["What exactly do I get?", "A prioritized Opportunity Portfolio of accounts for your commercial context — each with an Account Brief: what changed, why it fits, why the timing may matter, the evidence and counterevidence, and what to validate before you act. Delivered as PDF + CSV in 24–48h."],
       ["How is this different from Apollo or ZoomInfo?", "Apollo and ZoomInfo are contact databases — you filter and export records. LeadLens gives you commercial intelligence: which companies are showing signals for your specific offer right now, why they're a good opportunity, and how to approach them. You don't get a list — you get criterion and context."],
-      ["How is this different from Clay?", "Clay is infrastructure — a powerful platform for building enrichment workflows. LeadLens is opinionated: you describe your ICP, we do the research and deliver a prioritized brief. No setup, no workflows, no technical knowledge required."],
+      ["How is this different from Clay?", "Clay is infrastructure — a powerful platform for building enrichment workflows. LeadLens is opinionated: you describe your commercial context, we do the research and deliver a prioritized brief. No setup, no workflows, no technical knowledge required."],
       ["Do you sell email lists or contact databases?", "No. LeadLens analyzes publicly available commercial information about companies. We do not sell email lists, phone databases, or personal contact records."],
-      ["How long does delivery take?", "Typically 24–48 hours after you submit your ICP form. Every Opportunity Portfolio is reviewed before delivery."],
-      ["What if the opportunities don't match my ICP?", "If we consistently miss your ICP and can't resolve it, you're eligible for a refund within 7 days. See our refund policy."],
+      ["How long does delivery take?", "Typically 24–48 hours after you share your commercial context. Every Opportunity Portfolio is reviewed before delivery."],
+      ["What if the opportunities don't match what I need?", "If the opportunities consistently miss what you're looking for and we can't resolve it, you're eligible for a refund within 7 days. See our refund policy."],
       ["Is there a subscription or contract?", "No. One-time payment per Opportunity Portfolio. No recurring charges, no commitments, no hidden fees."],
-      ["What happens after I purchase?", "You submit your ICP form (5 minutes). We research your market, detect signals, score accounts, and deliver your Opportunity Portfolio via email in 24–48h."],
+      ["What happens after I purchase?", "You share your commercial context. LeadLens researches your market, evaluates what changed and the evidence behind each opportunity, and delivers your Opportunity Portfolio via email in 24–48h."],
       ["Does the preview use real data?", "No. The free preview shows the format and structure of a real Opportunity Portfolio using sample data. For a real Opportunity Portfolio with researched companies and verified signals, purchase an Opportunity Portfolio."],
     ] as [string, string][],
     ctaTag: "Get started",
     ctaTitle: "Now find yours.",
     ctaSub: "See which accounts the evidence says deserve your team's attention — and why.",
-    ctaCTA: "Get your first Opportunity Preview — from $7 →",
+    ctaCTA: "Get started — from $7 →",
     sampleTabs: ["Email", "LinkedIn DM", "Follow-up 1", "Follow-up 2"],
     pricePerLead: { sample: "One-time payment", starter: "One-time payment", standard: "One-time payment", pro: "One-time payment" },
     samplePackTitle: "Not ready to commit?",
@@ -256,19 +256,19 @@ const COPY = {
     trustItems: ["Source-verified signals", "Human-reviewed output", "No contact databases", "7-day refund policy"] as string[],
     afterPurchaseTitle: "After you buy:",
     afterPurchaseSteps: [
-      "Submit your ICP — takes 5 minutes.",
-      "LeadLens maps your market and identifies target segments.",
-      "We detect signals and score each opportunity.",
+      "Share your commercial context — ICP optional.",
+      "LeadLens structures the opportunity criteria and investigates the market.",
+      "It evaluates what changed, the evidence, and what limits confidence.",
       "You receive your Opportunity Portfolio in 24–48h.",
     ] as string[],
     afterPurchaseNote: "Typical delivery: 24–48h. Nothing is sent automatically. You review every brief before acting.",
-    faqCtaBridge: "Still not sure? Preview the sample report format first — free, no payment required.",
+    faqCtaBridge: "Want to see the format first?",
     resultsUpgradeTitle: "Ready for real commercial intelligence?",
     resultsUpgradeSub: "An Opportunity Portfolio delivers 5 company briefs with signals, opportunity scores, and outreach strategy — researched and reviewed by our team in 24–48h.",
     resultsUpgradeCTA: "Get your Opportunity Report — from $7 →",
     checkoutEarlyBanner: "Checkout is in final review. Preview the sample report format while you wait.",
     comparisonTag: "How we compare",
-    comparisonTitle: "LeadLens is not a database. It's a decision.",
+    comparisonTitle: "LeadLens is not a database. It's decision intelligence.",
     diffLede: { pre: "Databases tell you who exists. Signal tools tell you what happened. LeadLens builds the ", emph: "case", post: " for whether an account is worth your team's attention — and what supports it." },
     diffOldLabel: "Most tools give you",
     diffOldItems: ["Company", "Industry", "Size", "Contacts"],
@@ -390,7 +390,7 @@ const COPY = {
     oneBatch: "Pago único",
     monthlyTag: "Próximamente — Acceso piloto",
     monthlyTitle: "Opportunity Monitor",
-    monthlySub: "Oportunidades actualizadas mensualmente, señales nuevas, resumen semanal de oportunidades y briefs recurrentes — para equipos que necesitan inteligencia de mercado continua.",
+    monthlySub: "Oportunidades actualizadas mensualmente, señales nuevas, resumen semanal de oportunidades y briefs recurrentes — para equipos que necesitan reevaluación periódica de cuentas.",
     monitorCTA: "Unirse a la lista piloto",
     monitorPrice: "Desde $99/mes",
     planNames: { sample: "Preview", starter: "Brief", standard: "Intelligence", pro: "Premium" },
@@ -414,7 +414,7 @@ const COPY = {
       pro:      "Para equipos que convierten un portafolio priorizado en estrategia de cuentas.",
     },
     planDiff: {
-      sample:   "Valida: ¿vale la pena para mi ICP?",
+      sample:   "Valida: ¿es útil LeadLens para mi contexto comercial?",
       starter:  "Agrega selección: un set comparado con ranking inicial y estados.",
       standard: "Agrega priorización: ranking completo, asignación y riesgo de portafolio.",
       pro:      "Agrega estrategia: corroboración profunda y secuencia estratégica en cuentas prioritarias.",
@@ -502,7 +502,7 @@ const COPY = {
     sEvidenceDiscipline: "Calidad de evidencia",
     sIntelligenceNotes: "Control de calidad",
     sLearningMeta: "Señales de aprendizaje",
-    footerCopy: "© 2026 LeadLens AI — Inteligencia Comercial B2B. Analizamos señales públicas, no datos personales.",
+    footerCopy: "© 2026 LeadLens — Inteligencia de Oportunidades de Cuenta para B2B. Analizamos señales públicas, no datos personales.",
     footerLinks: ["Privacidad", "Términos", "Política de devolución", "Contacto"],
     footerContact: "¿Preguntas? Escríbenos: operations@leadlensintel.com",
     expectationsTag: "Qué esperar",
@@ -553,16 +553,16 @@ const COPY = {
       ["¿En qué se diferencia de Apollo o ZoomInfo?", "Apollo y ZoomInfo son bases de datos de contactos — filtras y exportas registros. LeadLens te da inteligencia comercial: qué empresas están mostrando señales para tu oferta específica ahora mismo, por qué son una buena oportunidad y cómo acercarte. No recibes una lista — recibes criterio y contexto."],
       ["¿En qué se diferencia de Clay?", "Clay es infraestructura — una plataforma poderosa para construir flujos de enriquecimiento. LeadLens es opinionado: describes tu ICP, nosotros hacemos la investigación y entregamos un brief priorizado. Sin configuración, sin flujos de trabajo, sin conocimiento técnico requerido."],
       ["¿Venden listas de emails o bases de datos de contactos?", "No. LeadLens analiza información comercial públicamente disponible sobre empresas. No vendemos listas de emails, bases de datos telefónicas ni registros de contactos personales."],
-      ["¿Cuánto tarda la entrega?", "Típicamente 24–48 horas después de enviar tu formulario de ICP. Cada Opportunity Portfolio es revisado antes de la entrega."],
+      ["¿Cuánto tarda la entrega?", "Típicamente 24–48 horas después de compartir tu contexto comercial. Cada Opportunity Portfolio es revisado antes de la entrega."],
       ["¿Qué pasa si las oportunidades no coinciden con mi ICP?", "Si fallamos consistentemente y no podemos resolverlo, tienes derecho a un reembolso dentro de 7 días. Ver política de devoluciones."],
       ["¿Hay suscripción o contrato?", "No. Pago único por Opportunity Portfolio. Sin cargos recurrentes, sin compromisos, sin tarifas ocultas."],
-      ["¿Qué pasa después de comprar?", "Envías tu formulario de ICP (5 minutos). Investigamos tu mercado, detectamos señales, puntuamos cuentas y entregamos tu Opportunity Portfolio por email en 24–48h."],
+      ["¿Qué pasa después de comprar?", "Compartes tu contexto comercial. LeadLens investiga tu mercado, evalúa qué cambió y la evidencia detrás de cada oportunidad, y entrega tu Opportunity Portfolio por email en 24–48h."],
       ["¿La vista previa usa datos reales?", "No. La vista previa gratuita muestra el formato y la estructura de un Opportunity Portfolio real usando datos de ejemplo. Para un Opportunity Portfolio real con empresas investigadas y señales verificadas, compra un Opportunity Portfolio."],
     ] as [string, string][],
     ctaTag: "Comenzar",
     ctaTitle: "Ahora encuentra las tuyas.",
     ctaSub: "Descubre qué cuentas merecen la atención de tu equipo — y por qué.",
-    ctaCTA: "Obtener tu primer Opportunity Preview — desde $7 →",
+    ctaCTA: "Comenzar — desde $7 →",
     sampleTabs: ["Email", "LinkedIn DM", "Seguimiento 1", "Seguimiento 2"],
     pricePerLead: { sample: "Pago único", starter: "Pago único", standard: "Pago único", pro: "Pago único" },
     samplePackTitle: "¿No estás listo para comprometerte?",
@@ -579,19 +579,19 @@ const COPY = {
     trustItems: ["Señales verificadas en fuentes", "Output revisado por humanos", "Sin bases de datos de contactos", "Política de reembolso de 7 días"] as string[],
     afterPurchaseTitle: "Después de comprar:",
     afterPurchaseSteps: [
-      "Envía tu ICP — toma 5 minutos.",
-      "LeadLens mapea tu mercado e identifica segmentos objetivo.",
-      "Detectamos señales y puntuamos cada oportunidad.",
+      "Comparte tu contexto comercial — ICP opcional.",
+      "LeadLens estructura los criterios de oportunidad e investiga el mercado.",
+      "Evalúa qué cambió, la evidencia y qué limita la confianza.",
       "Recibes tu Opportunity Portfolio en 24–48h.",
     ] as string[],
     afterPurchaseNote: "Entrega típica: 24–48h. Nada se envía automáticamente. Tú revisas cada brief antes de actuar.",
-    faqCtaBridge: "¿Aún no estás seguro? Ve primero el formato del Opportunity Portfolio — gratis, sin pago requerido.",
+    faqCtaBridge: "¿Quieres ver el formato primero?",
     resultsUpgradeTitle: "¿Listo para inteligencia comercial real?",
     resultsUpgradeSub: "Un Opportunity Portfolio entrega 5 briefs de empresa con señales, scores de oportunidad y estrategia de outreach — investigado y revisado por nuestro equipo en 24–48h.",
     resultsUpgradeCTA: "Obtener tu Opportunity Report — desde $7 →",
     checkoutEarlyBanner: "El checkout está en revisión final. Puedes ver el formato del Opportunity Portfolio de muestra mientras esperas.",
     comparisonTag: "Cómo nos comparamos",
-    comparisonTitle: "LeadLens no es una base de datos. Es una decisión.",
+    comparisonTitle: "LeadLens no es una base de datos. Es inteligencia para decidir.",
     diffLede: { pre: "Las bases de datos te dicen quién existe. Las herramientas de señales te dicen qué pasó. LeadLens construye el ", emph: "caso", post: " sobre si una cuenta merece la atención de tu equipo — y qué lo respalda." },
     diffOldLabel: "La mayoría de herramientas te dan",
     diffOldItems: ["Empresa", "Industria", "Tamaño", "Contactos"],
@@ -713,7 +713,7 @@ const COPY = {
     oneBatch: "Pagamento único",
     monthlyTag: "Em breve — Acesso piloto",
     monthlyTitle: "Opportunity Monitor",
-    monthlySub: "Oportunidades atualizadas mensalmente, novos sinais, resumo semanal e briefs recorrentes — para equipes que precisam de inteligência de mercado contínua.",
+    monthlySub: "Oportunidades atualizadas mensalmente, novos sinais, resumo semanal e briefs recorrentes — para equipes que precisam de reavaliação periódica de contas.",
     monitorCTA: "Entrar na lista piloto",
     monitorPrice: "A partir de $99/mês",
     planNames: { sample: "Preview", starter: "Brief", standard: "Intelligence", pro: "Premium" },
@@ -737,7 +737,7 @@ const COPY = {
       pro: "Para equipes convertendo portfólio em estratégia.",
     },
     planDiff: {
-      sample: "Valida: vale a pena para meu ICP?",
+      sample: "Valida: a LeadLens é útil para o meu contexto comercial?",
       starter: "Adiciona seleção: um conjunto comparado com ranking inicial.",
       standard: "Adiciona priorização: ranking completo e alocação.",
       pro: "Adiciona estratégia: corroboração profunda em contas prioritárias.",
@@ -825,7 +825,7 @@ const COPY = {
     sEvidenceDiscipline: "Qualidade da evidência",
     sIntelligenceNotes: "Controle de qualidade",
     sLearningMeta: "Sinais de aprendizado",
-    footerCopy: "© 2026 LeadLens AI — Inteligência Comercial B2B. Analisamos sinais públicos, não dados pessoais.",
+    footerCopy: "© 2026 LeadLens — Inteligência de Oportunidades de Conta para B2B. Analisamos sinais públicos, não dados pessoais.",
     footerLinks: ["Privacidade", "Termos", "Política de Reembolso", "Contato"],
     footerContact: "Dúvidas? Fale conosco: operations@leadlensintel.com",
     expectationsTag: "O que esperar",
@@ -879,13 +879,13 @@ const COPY = {
       ["Quanto tempo demora a entrega?", "Tipicamente 24–48 horas após você enviar seu formulário de ICP. Cada Opportunity Portfolio é revisado antes da entrega."],
       ["E se as oportunidades não combinarem com meu ICP?", "Se falharmos consistentemente e não conseguirmos resolver, você tem direito a reembolso em 7 dias. Consulte nossa política de reembolso."],
       ["Há assinatura ou contrato?", "Não. Pagamento único por Opportunity Portfolio. Sem cobranças recorrentes, sem compromissos, sem taxas ocultas."],
-      ["O que acontece após a compra?", "Você envia seu formulário de ICP (5 minutos). Pesquisamos seu mercado, detectamos sinais, pontuamos contas e entregamos seu Opportunity Portfolio por e-mail em 24–48h."],
+      ["O que acontece após a compra?", "Você compartilha seu contexto comercial. A LeadLens pesquisa seu mercado, avalia o que mudou e a evidência por trás de cada oportunidade, e entrega seu Opportunity Portfolio por e-mail em 24–48h."],
       ["A prévia usa dados reais?", "Não. A prévia gratuita mostra o formato e a estrutura de um Opportunity Portfolio real usando dados de exemplo. Para um Opportunity Portfolio real com empresas pesquisadas e sinais verificados, compre um Opportunity Portfolio."],
     ] as [string, string][],
     ctaTag: "Começar",
     ctaTitle: "Agora encontre as suas.",
     ctaSub: "Descubra quais contas merecem a atenção da sua equipe — e por quê.",
-    ctaCTA: "Obter seu primeiro Opportunity Preview — a partir de $7 →",
+    ctaCTA: "Começar — a partir de $7 →",
     sampleTabs: ["Email", "LinkedIn DM", "Follow-up 1", "Follow-up 2"],
     pricePerLead: { sample: "Pagamento único", starter: "Pagamento único", standard: "Pagamento único", pro: "Pagamento único" },
     samplePackTitle: "Ainda não está pronto para se comprometer?",
@@ -902,19 +902,19 @@ const COPY = {
     trustItems: ["Sinais verificados em fontes", "Output revisado por humanos", "Sem bancos de dados de contatos", "Política de reembolso de 7 dias"] as string[],
     afterPurchaseTitle: "Após a compra:",
     afterPurchaseSteps: [
-      "Envie seu ICP — leva 5 minutos.",
-      "LeadLens mapeia seu mercado e identifica segmentos-alvo.",
-      "Detectamos sinais e pontuamos cada oportunidade.",
+      "Compartilhe seu contexto comercial — ICP opcional.",
+      "A LeadLens estrutura os critérios de oportunidade e investiga o mercado.",
+      "Avalia o que mudou, a evidência e o que limita a confiança.",
       "Você recebe seu Opportunity Portfolio em 24–48h.",
     ] as string[],
     afterPurchaseNote: "Entrega típica: 24–48h. Nada é enviado automaticamente. Você revisa cada brief antes de agir.",
-    faqCtaBridge: "Ainda não tem certeza? Veja o formato do Opportunity Portfolio primeiro — gratuito, sem pagamento necessário.",
+    faqCtaBridge: "Quer ver o formato primeiro?",
     resultsUpgradeTitle: "Pronto para inteligência comercial real?",
     resultsUpgradeSub: "Um Opportunity Portfolio entrega 5 briefs de empresa com sinais, scores de oportunidade e estratégia de outreach — pesquisado e revisado pela nossa equipe em 24–48h.",
     resultsUpgradeCTA: "Obter seu Opportunity Report — a partir de $7 →",
     checkoutEarlyBanner: "O checkout está em revisão final. Visualize o formato do Opportunity Portfolio de exemplo enquanto espera.",
     comparisonTag: "Como nos comparamos",
-    comparisonTitle: "LeadLens não é um banco de dados. É uma decisão.",
+    comparisonTitle: "LeadLens não é um banco de dados. É inteligência para decidir.",
     diffLede: { pre: "Bancos de dados dizem quem existe. Ferramentas de sinais dizem o que aconteceu. A LeadLens constrói o ", emph: "caso", post: " sobre se uma conta merece a atenção da sua equipe — e o que o sustenta." },
     diffOldLabel: "A maioria das ferramentas te dá",
     diffOldItems: ["Empresa", "Indústria", "Tamanho", "Contatos"],
@@ -1036,7 +1036,7 @@ const COPY = {
     oneBatch: "1回払い",
     monthlyTag: "近日公開 — パイロットアクセス",
     monthlyTitle: "Opportunity Monitor",
-    monthlySub: "毎月更新されるオポチュニティ、シグナル更新、週次オポチュニティダイジェスト、定期ブリーフ — 継続的な市場インテリジェンスを必要とするチーム向け。",
+    monthlySub: "毎月更新されるオポチュニティ、シグナル更新、週次オポチュニティダイジェスト、定期ブリーフ — 定期的なアカウント再評価を必要とするチーム向け。",
     monitorCTA: "パイロットウェイトリストに登録",
     monitorPrice: "$99/月から",
     planNames: { sample: "Preview", starter: "Brief", standard: "Intelligence", pro: "Premium" },
@@ -1060,7 +1060,7 @@ const COPY = {
       pro: "ポートフォリオを戦略に変えるチーム向け。",
     },
     planDiff: {
-      sample: "検証：自社ICPに価値があるか？",
+      sample: "検証：自社の商業的コンテキストにLeadLensは役立つか？",
       starter: "選定を追加：初期ランキング付きの比較セット。",
       standard: "優先順位付けを追加：完全なランキングと配分。",
       pro: "戦略を追加：優先アカウントの深い裏付けと戦略的シーケンス。",
@@ -1148,7 +1148,7 @@ const COPY = {
     sEvidenceDiscipline: "エビデンス品質",
     sIntelligenceNotes: "品質チェック",
     sLearningMeta: "学習シグナル",
-    footerCopy: "© 2026 LeadLens AI — B2Bコマーシャルインテリジェンス。公開シグナルを分析します。個人データは使用しません。",
+    footerCopy: "© 2026 LeadLens — B2B向けアカウント機会インテリジェンス。公開シグナルを分析します。個人データは使用しません。",
     footerLinks: ["プライバシー", "利用規約", "返金ポリシー", "お問い合わせ"],
     footerContact: "ご質問は: operations@leadlensintel.com",
     expectationsTag: "期待できること",
@@ -1202,13 +1202,13 @@ const COPY = {
       ["納品までどのくらいかかりますか？", "ICPフォーム送信後、通常24〜48時間以内に納品します。各Opportunity Portfolioは納品前にレビューします。"],
       ["オポチュニティがICPに合わなかった場合は？", "継続的に失敗し解決できない場合、7日以内に返金を申請できます。返金ポリシーをご確認ください。"],
       ["サブスクリプションや契約はありますか？", "いいえ。Opportunity Portfolioごとの1回払いです。継続課金なし、コミットメントなし、隠れた費用もありません。"],
-      ["購入後はどうなりますか？", "ICPフォームを送信します（5分）。市場を調査し、シグナルを検出し、アカウントをスコアリングして、24〜48時間以内にメールでOpportunity Portfolioをお届けします。"],
+      ["購入後はどうなりますか？", "商業的コンテキストを共有します。LeadLensが市場を調査し、各オポチュニティの背後にある変化とエビデンスを評価して、24〜48時間以内にメールでOpportunity Portfolioをお届けします。"],
       ["プレビューは実際のデータを使っていますか？", "いいえ。無料プレビューはサンプルデータを使用して、実際のOpportunity Portfolioの形式と構造を示しています。調査された企業と検証済みシグナルを含む実際のOpportunity Portfolioには、Opportunity Portfolioをご購入ください。"],
     ] as [string, string][],
     ctaTag: "始める",
     ctaTitle: "次は、あなたのアカウントを。",
     ctaSub: "どのアカウントがチームの注力に値するか、その理由とともに。",
-    ctaCTA: "最初のOpportunity Preview — $7から →",
+    ctaCTA: "始める — $7から →",
     sampleTabs: ["メール", "LinkedIn DM", "フォローアップ 1", "フォローアップ 2"],
     pricePerLead: { sample: "一回払い", starter: "1回払い", standard: "1回払い", pro: "1回払い" },
     samplePackTitle: "コミットする準備ができていませんか？",
@@ -1225,13 +1225,13 @@ const COPY = {
     trustItems: ["ソース検証済みシグナル", "人によるレビュー済み出力", "コンタクトデータベースなし", "7日間返金ポリシー"] as string[],
     afterPurchaseTitle: "購入後の流れ：",
     afterPurchaseSteps: [
-      "ICPを送信します — 5分で完了。",
-      "LeadLensが市場をマッピングし、ターゲットセグメントを特定します。",
-      "シグナルを検出し、各オポチュニティをスコアリングします。",
+      "商業的コンテキストを共有 — ICPは任意。",
+      "LeadLensがオポチュニティ条件を整理し、市場を調査します。",
+      "何が変わったか、エビデンス、そして確信を限定する要因を評価します。",
       "24〜48時間以内にOpportunity Portfolioが届きます。",
     ] as string[],
     afterPurchaseNote: "通常の納品時間：24〜48時間。自動送信は一切ありません。行動する前に各ブリーフをご確認いただけます。",
-    faqCtaBridge: "まだ迷っていますか？まずOpportunity Portfolioの形式をご確認ください — 無料、支払い不要です。",
+    faqCtaBridge: "まず形式をご覧になりますか？",
     resultsUpgradeTitle: "実際のコマーシャルインテリジェンスを試す準備ができましたか？",
     resultsUpgradeSub: "Opportunity Portfolioはシグナル、オポチュニティスコア、アウトリーチ戦略付きの5件の企業ブリーフをお届けします — チームによる調査とレビュー済み、24〜48時間で。",
     resultsUpgradeCTA: "Opportunity Report — $7から →",
@@ -1700,6 +1700,9 @@ export default function DemoPipelinePage() {
           .ll-hero-value-h { font-size: .95rem; font-weight: 700; color: #0f172a; line-height: 1.25; }
           .ll-hero-value-p { font-size: .82rem; color: #64748b; line-height: 1.45; margin-top: .12rem; }
           .ll-hero-mock  { margin: 1.6rem -.6rem 0 !important; }
+          /* How-it-works H2 smaller on mobile so it no longer dominates a viewport (§28);
+             the full headline is kept (hiding the suffix would break JA grammar). */
+          .ll-how-h2 { font-size: 1.5rem !important; line-height: 1.22 !important; }
           /* Swap mockups */
           .ll-hero-mock-desktop { display: none !important; }
           .ll-hero-mock-mobile  { display: block !important; }
@@ -1891,7 +1894,7 @@ export default function DemoPipelinePage() {
             <div style={innerStyle}>
               <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
                 <Tag>{copy.howTag}</Tag>
-                <h2 style={sectionTitleStyle}>{copy.howTitle.pre}<span style={{ color: "#0ea5e9" }}>{copy.howTitle.emph}</span>{copy.howTitle.post}</h2>
+                <h2 style={sectionTitleStyle} className="ll-how-h2">{copy.howTitle.pre}<span style={{ color: "#0ea5e9" }}>{copy.howTitle.emph}</span><span className="ll-how-suffix">{copy.howTitle.post}</span></h2>
               </div>
 
               {/* Desktop: three connected stages on one continuous line */}
@@ -2118,8 +2121,8 @@ export default function DemoPipelinePage() {
           {/* FAQ → CTA bridge */}
           <div style={{ marginTop: "1.75rem", textAlign: "center" }}>
             <span style={{ fontSize: ".875rem", color: "#64748b" }}>{copy.faqCtaBridge}{" "}</span>
-            <button onClick={goToDemo} style={{ background: "none", border: "none", color: "#0ea5e9", fontSize: ".875rem", fontWeight: 600, cursor: "pointer", textDecoration: "underline", padding: 0, fontFamily: "inherit" }}>
-              {copy.tryDemoCTA} →
+            <button onClick={() => { window.location.href = "/sample"; }} style={{ background: "none", border: "none", color: "#0ea5e9", fontSize: ".875rem", fontWeight: 600, cursor: "pointer", textDecoration: "underline", padding: 0, fontFamily: "inherit" }}>
+              {copy.heroSeeAll} →
             </button>
           </div>
         </div>
@@ -2139,20 +2142,19 @@ export default function DemoPipelinePage() {
           <p style={{ fontSize: "1.1rem", color: "#bae6fd", marginBottom: "2.5rem", lineHeight: 1.6 }}>
             {copy.ctaSub}
           </p>
-          <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" as const }}>
+          {/* One dominant action + a light secondary text link (§71–73). */}
+          <div style={{ display: "flex", gap: "1.4rem", justifyContent: "center", alignItems: "center", flexWrap: "wrap" as const }}>
             <button onClick={() => goToForm("starter", "final")}
-              style={{ background: "#fff", color: "#0284c7", border: "none", borderRadius: ".75rem", padding: "1rem 2rem", fontWeight: 700, fontSize: "1rem", cursor: "pointer", boxShadow: "0 4px 14px rgba(0,0,0,.15)", transition: "all .15s" }}
+              style={{ background: "#fff", color: "#0284c7", border: "none", borderRadius: ".75rem", padding: ".85rem 1.6rem", fontWeight: 700, fontSize: ".95rem", cursor: "pointer", boxShadow: "0 4px 14px rgba(0,0,0,.15)", transition: "all .15s" }}
               onMouseOver={e => { e.currentTarget.style.background = "#f0f9ff"; e.currentTarget.style.transform = "translateY(-1px)"; }}
               onMouseOut={e => { e.currentTarget.style.background = "#fff"; e.currentTarget.style.transform = ""; }}
             >
               {copy.ctaCTA}
             </button>
-            <button onClick={goToDemo}
-              style={{ background: "rgba(255,255,255,.15)", color: "#fff", border: "1.5px solid rgba(255,255,255,.3)", borderRadius: ".75rem", padding: "1rem 2rem", fontWeight: 600, fontSize: "1rem", cursor: "pointer", transition: "all .15s" }}
-              onMouseOver={e => { e.currentTarget.style.background = "rgba(255,255,255,.22)"; }}
-              onMouseOut={e => { e.currentTarget.style.background = "rgba(255,255,255,.15)"; }}
+            <button onClick={() => { window.location.href = "/sample"; }}
+              style={{ background: "none", color: "#e0f2fe", border: "none", padding: ".35rem", fontWeight: 600, fontSize: ".95rem", cursor: "pointer", fontFamily: "inherit" }}
             >
-              {copy.tryDemoCTA} →
+              {copy.heroSeeAll} →
             </button>
           </div>
         </div>

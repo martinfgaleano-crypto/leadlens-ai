@@ -57,7 +57,7 @@ export default function RefundPage() {
         <Section title="4. How to request a refund">
           <p>
             Email{" "}
-            <a href="mailto:martinfgaleano@gmail.com" style={{ color: "#0ea5e9" }}>martinfgaleano@gmail.com</a>{" "}
+            <a href="mailto:operations@leadlensintel.com" style={{ color: "#0ea5e9" }}>operations@leadlensintel.com</a>{" "}
             with:
           </p>
           <ul>
@@ -81,13 +81,13 @@ export default function RefundPage() {
         <Section title="6. Contact">
           <p>
             For any questions about this policy, email{" "}
-            <a href="mailto:martinfgaleano@gmail.com" style={{ color: "#0ea5e9" }}>martinfgaleano@gmail.com</a>.
+            <a href="mailto:operations@leadlensintel.com" style={{ color: "#0ea5e9" }}>operations@leadlensintel.com</a>.
           </p>
         </Section>
 
         <div style={{ borderTop: "1px solid #f1f5f9", paddingTop: "2rem", marginTop: "2rem", fontSize: ".82rem", color: "#94a3b8" }}>
           Questions? Email{" "}
-          <a href="mailto:martinfgaleano@gmail.com" style={{ color: "#0ea5e9" }}>martinfgaleano@gmail.com</a>
+          <a href="mailto:operations@leadlensintel.com" style={{ color: "#0ea5e9" }}>operations@leadlensintel.com</a>
           {" · "}
           <Link href="/privacy" style={{ color: "#94a3b8" }}>Privacy</Link>
           {" · "}

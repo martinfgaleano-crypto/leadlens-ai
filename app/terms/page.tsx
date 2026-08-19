@@ -99,13 +99,13 @@ export default function TermsPage() {
         <Section title="10. Contact">
           <p>
             Questions about these terms? Email{" "}
-            <a href="mailto:martinfgaleano@gmail.com" style={{ color: "#0ea5e9" }}>martinfgaleano@gmail.com</a>.
+            <a href="mailto:operations@leadlensintel.com" style={{ color: "#0ea5e9" }}>operations@leadlensintel.com</a>.
           </p>
         </Section>
 
         <div style={{ borderTop: "1px solid #f1f5f9", paddingTop: "2rem", marginTop: "2rem", fontSize: ".82rem", color: "#94a3b8" }}>
           Questions? Email{" "}
-          <a href="mailto:martinfgaleano@gmail.com" style={{ color: "#0ea5e9" }}>martinfgaleano@gmail.com</a>
+          <a href="mailto:operations@leadlensintel.com" style={{ color: "#0ea5e9" }}>operations@leadlensintel.com</a>
         </div>
       </div>
     </div>

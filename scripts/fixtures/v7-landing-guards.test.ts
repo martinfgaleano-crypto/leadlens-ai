@@ -105,6 +105,26 @@ t("M5 value outcomes map to product grammar (focus / changed / evidence), no lea
   !/heroValue:[\s\S]{0,600}(lead list|hot lead|buying intent|contact list)/i.test(src));
 t("M6 H1 + support still intact", /heroH1hi:\s*"worth working now"/.test(src) && /heroSub:\s*"Turn market evidence into clearer account decisions\."/.test(src));
 
+// ─── N. V8.5 product-truth + brand + legal-email closeout ─────────────────────
+t("N1 footer brand is 'LeadLens' (not 'LeadLens AI') with AOI category, 4 locales",
+  !/LeadLens AI/.test(src) && (src.match(/© 2026 LeadLens —/g) || []).length === 4);
+t("N2 After-you-buy has no mandatory-ICP or 'score each opportunity' framing",
+  !/Submit your ICP/.test(src) && !/score each opportunity/i.test(src) && !/detect signals and score/i.test(src) &&
+  /Share your commercial context — ICP optional\./.test(src));
+t("N3 no 'score accounts' / 'puntuamos cuentas' / 'pontuamos contas' / スコアリング in FAQ",
+  !/score accounts/i.test(src) && !/puntuamos cuentas/.test(src) && !/pontuamos contas/.test(src) && !/アカウントをスコアリング/.test(src));
+t("N4 Preview validation line no longer hinges on a mandatory ICP",
+  /is LeadLens useful for my commercial context\?/.test(src) && !/is this worth it for my ICP/.test(src));
+t("N5 Monitor does not claim continuous/real-time market intelligence",
+  !/continuous market intelligence/.test(src) && !/inteligencia de mercado continua/.test(src) && /periodic account re-evaluation/.test(src));
+t("N6 final CTA is concise 'Get started — from $7'", /ctaCTA:\s*"Get started — from \$7 →"/.test(src));
+t("N7 'Don't trust a score — inspect the reasoning' preserved", /Don't trust a score — inspect the reasoning/.test(src));
+{
+  const legal = ["app/terms/page.tsx", "app/privacy/page.tsx", "app/refund/page.tsx"].map((f) => readFileSync(f, "utf8")).join("\n");
+  t("N8 legal pages use corporate email (no personal Gmail)",
+    !/martinfgaleano@gmail\.com/.test(legal) && /operations@leadlensintel\.com/.test(legal));
+}
+
 // ─── G. Responsive anchors (desktop composed vs mobile start) + FAQ ───────────
 t("G1 pricing anchor desktop vs mobile scroll-margin differ (composed/centered vs start)",
   /\.ll-price-anchor\s*\{\s*scroll-margin-top:\s*270px/.test(src) && /max-width:\s*580px\)\s*\{\s*\.ll-price-anchor\s*\{\s*scroll-margin-top:\s*300px/.test(src));

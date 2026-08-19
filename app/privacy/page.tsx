@@ -23,7 +23,7 @@ export default function PrivacyPage() {
 
         <Section title="1. Who we are">
           <p>LeadLens AI (&ldquo;we&rdquo;, &ldquo;us&rdquo;, or &ldquo;our&rdquo;) is a B2B lead research service. We help businesses identify qualified prospects and generate personalized outreach copy. For questions, contact us at{" "}
-            <a href="mailto:martinfgaleano@gmail.com" style={{ color: "#0ea5e9" }}>martinfgaleano@gmail.com</a>.
+            <a href="mailto:operations@leadlensintel.com" style={{ color: "#0ea5e9" }}>operations@leadlensintel.com</a>.
           </p>
         </Section>
 
@@ -76,7 +76,7 @@ export default function PrivacyPage() {
           <p>
             You may request access to, correction of, or deletion of your personal data at any time
             by emailing{" "}
-            <a href="mailto:martinfgaleano@gmail.com" style={{ color: "#0ea5e9" }}>martinfgaleano@gmail.com</a>.
+            <a href="mailto:operations@leadlensintel.com" style={{ color: "#0ea5e9" }}>operations@leadlensintel.com</a>.
             We will respond within 30 days.
           </p>
         </Section>
@@ -91,7 +91,7 @@ export default function PrivacyPage() {
 
         <div style={{ borderTop: "1px solid #f1f5f9", paddingTop: "2rem", marginTop: "2rem", fontSize: ".82rem", color: "#94a3b8" }}>
           Questions? Email{" "}
-          <a href="mailto:martinfgaleano@gmail.com" style={{ color: "#0ea5e9" }}>martinfgaleano@gmail.com</a>
+          <a href="mailto:operations@leadlensintel.com" style={{ color: "#0ea5e9" }}>operations@leadlensintel.com</a>
         </div>
       </div>
     </div>
