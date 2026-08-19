@@ -184,6 +184,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { href: "/admin/beta-readiness", label: "Beta Readiness" },
     { href: "/admin/onboarding",    label: "Onboarding" },
     { href: "/admin/orders",        label: "Orders" },
+    { href: "/admin/deliverables",  label: "Deliverables" },
     { href: "/admin/jobs",          label: "Jobs" },
     { href: "/admin/snapshots",     label: "Snapshots" },
     { href: "/admin/searches",      label: "Searches" },

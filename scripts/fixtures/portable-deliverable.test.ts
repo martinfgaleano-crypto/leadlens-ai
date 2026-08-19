@@ -5,7 +5,7 @@
 //   3. Sanitized: no secrets / raw report fields / internal metadata embedded.
 //   4. Complete: all panels, embedded CSVs match the exports, real Amor renders.
 // Run: npm run test:portable
-import { readFileSync } from "node:fs";
+import { readFileSync, existsSync } from "node:fs";
 import path from "node:path";
 import { fromAmorPilot } from "@/lib/deliverable/adapters";
 import { renderPortableHtml } from "@/lib/deliverable/portable/render-portable";
@@ -80,6 +80,35 @@ t("24 Spanish/Unicode preserved (Éteka)", html.includes("Éteka"));
 const jp = fromAmorPilot({ meta: { client: "日本テスト", geography: "東京" }, accounts: [{ name: "オポチュニティ株式会社", why: "テスト理由", test: "検証", unknown: "不明", next: "次の一歩", evidence: { source: "example.jp", fact: "事実", retrieved: "2026-01-01", freshness: "fresh" } }] });
 const jpHtml = renderPortableHtml(jp);
 t("25 Japanese company name renders intact", jpHtml.includes("オポチュニティ株式会社") && jpHtml.includes("日本テスト"));
+
+// ─── V1.1 visual friendliness (structure, not pixels) ─────────────────────────
+t("26 editorial cover with AOI kicker (not a marketing hero)", html.includes('class="pt-cover"') && html.includes('class="pt-cover-kick"') && !/get started/i.test(html));
+t("27 deterministic executive read is present and count-grounded", html.includes('class="pt-exec"') && /3 de 10 cuentas merecen atención prioritaria ahora\. 4 requieren validación/.test(html));
+t("28 executive read has no fabricated prose beyond real counts", !/probablemente|likely to close|estimamos|we estimate/i.test(html));
+t("29 What Changed carries the signature accent treatment", html.includes('class="pt-card pt-signal"') && html.includes("pt-label-accent"));
+t("30 commercial context stays a disclosure (secondary to opening)", html.includes('class="pt-card pt-context"') && /<details/.test(html));
+
+// ─── Path-traversal / resolver safety (deliverable store) ─────────────────────
+import { resolveDeliverableFile, listDeliverables } from "@/lib/deliverable/portable/deliverable-store";
+t("31 resolver rejects ../ traversal in slug", resolveDeliverableFile("../../etc", "2026-08-03", "x.html") === null);
+t("32 resolver rejects traversal in filename", resolveDeliverableFile("amor-de-gea", "2026-08-03", "../../../etc/passwd") === null);
+t("33 resolver rejects non-artifact extensions", resolveDeliverableFile("amor-de-gea", "2026-08-03", "manifest.json") === null && resolveDeliverableFile("amor-de-gea", "2026-08-03", "x.exe") === null);
+t("34 resolver rejects encoded traversal", resolveDeliverableFile("%2e%2e", "2026-08-03", "x.html") === null && resolveDeliverableFile("amor-de-gea", "2026-08-03", "..%2fx.html") === null);
+const listed = listDeliverables();
+t("35 store lists the generated Amor deliverable as a customer artifact", listed.some((d) => d.slug === "amor-de-gea" && d.kind === "customer" && d.html !== null && d.accounts === 10));
+t("36 a real listed HTML resolves and stays inside the base dir", (() => { const d = listed.find((x) => x.html); return d ? resolveDeliverableFile(d.slug, d.date, d.html!) !== null : false; })());
+
+// ─── Admin surface guards (static) ────────────────────────────────────────────
+const listRoute = readFileSync("app/api/admin/deliverables/route.ts", "utf8");
+const fileRoute = readFileSync("app/api/admin/deliverables/file/route.ts", "utf8");
+const adminPage = readFileSync("app/admin/deliverables/page.tsx", "utf8");
+const adminNav = readFileSync("app/admin/_components/AdminLayout.tsx", "utf8");
+t("37 list route requires admin auth", /requireAdmin\(req\)/.test(listRoute) && /if \(deny\) return deny/.test(listRoute));
+t("38 file route requires admin auth + validates via resolver", /requireAdmin\(req\)/.test(fileRoute) && /resolveDeliverableFile/.test(fileRoute) && /nosniff/.test(fileRoute));
+t("39 admin page exposes Preview + Download HTML + CSV actions", /Preview/.test(adminPage) && /Download HTML/.test(adminPage) && /Portfolio CSV/.test(adminPage) && /Evidence CSV/.test(adminPage));
+t("40 admin nav links Deliverables", /href: "\/admin\/deliverables"/.test(adminNav));
+t("41 no public (non-admin) deliverables index route exists",
+  !existsSync("app/deliverables") && !existsSync("app/api/deliverables") && !existsSync("app/api/deliverable"));
 
 console.log(`\n${passed}/${passed + failed} passed`);
 process.exit(failed ? 1 : 0);

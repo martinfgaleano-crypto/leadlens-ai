@@ -87,17 +87,44 @@ const dimVal = (a: AccountBriefVM, label: string) => a.dimensions.find((d) => d.
 
 // ─── Sections ─────────────────────────────────────────────────────────────────
 
+/** Deterministic executive read — only from real counts (§9). No LLM prose. */
+function executiveRead(vm: DeliverableViewModel, es: boolean): string | null {
+  const c = vm.portfolio.counts; const total = vm.portfolio.total;
+  if (!total) return null;
+  const pri = c.prioritize, val = c.validate;
+  const corr = vm.coverage?.corroborated ?? 0;
+  if (es) {
+    const a = pri > 0
+      ? `${pri} de ${total} cuenta${total === 1 ? "" : "s"} merece${pri === 1 ? "" : "n"} atención prioritaria ahora`
+      : `Ninguna cuenta merece atención prioritaria inmediata todavía`;
+    const b = corr > 0 ? `; los casos más sólidos combinan cambio comercial reciente con evidencia corroborada` : ``;
+    const d = val > 0 ? `. ${val} requiere${val === 1 ? "" : "n"} validación antes de aumentar la atención.` : `.`;
+    return `${a}${b}${d}`;
+  }
+  const a = pri > 0
+    ? `${pri} of ${total} account${total === 1 ? "" : "s"} currently merit${pri === 1 ? "s" : ""} priority attention`
+    : `No account currently merits immediate priority attention`;
+  const b = corr > 0 ? `, and the strongest cases combine recent commercial change with corroborated evidence` : ``;
+  const d = val > 0 ? `. ${val} still require${val === 1 ? "s" : ""} validation before attention increases.` : `.`;
+  return `${a}${b}${d}`;
+}
+
 function portfolioPanel(vm: DeliverableViewModel, t: T, es: boolean): string {
   const total = vm.portfolio.total || 1;
   const priority = vm.accounts.filter((a) => a.decision === "prioritize" || a.decision === "validate");
   const cc = vm.commercialContext;
+  const exec = executiveRead(vm, es);
   const bar = ORDER.filter((k) => vm.portfolio.counts[k] > 0)
     .map((k) => `<div style="width:${(vm.portfolio.counts[k] / total) * 100}%;background:${DECISION_TOKENS[k].dot}"></div>`).join("");
   const legend = ORDER.map((k) => `<span class="pt-leg"><span class="pt-dot" style="background:${DECISION_TOKENS[k].dot}"></span><strong>${vm.portfolio.counts[k]}</strong> ${esc(decisionLabel(k, es).toLowerCase())}</span>`).join("");
 
   return `<section class="pt-panel" id="panel-portfolio">
-    ${vm.headline ? `<h1 class="pt-h1">${esc(vm.headline)}</h1>` : ""}
-    ${vm.summary ? `<p class="pt-sub">${esc(vm.summary)}</p>` : ""}
+    <div class="pt-cover">
+      <div class="pt-cover-kick">${esc(t.aoi)}</div>
+      ${vm.headline ? `<h1 class="pt-h1">${esc(vm.headline)}</h1>` : ""}
+      ${vm.summary ? `<p class="pt-sub">${esc(vm.summary)}</p>` : ""}
+    </div>
+    ${exec ? `<div class="pt-exec"><span class="pt-exec-k">${esc(t.compareInsight)}</span><p class="pt-exec-t">${esc(exec)}</p></div>` : ""}
     ${cc && (cc.summary || cc.industries.length || cc.regions.length || cc.criteria.length) ? `<details class="pt-card pt-context"><summary class="pt-csum">${esc(t.commercialContext)}</summary><div class="pt-cbody">
       ${cc.summary ? `<p class="pt-p">${esc(cc.summary)}</p>` : ""}
       ${cc.industries.length ? `<div class="pt-row"><span class="pt-k">${esc(t.ctxIndustries)}</span><span class="pt-v">${esc(cc.industries.join(" · "))}</span></div>` : ""}
@@ -140,7 +167,7 @@ function briefHtml(a: AccountBriefVM, t: T, es: boolean): string {
   return `<div class="pt-brief" data-brief="${esc(a.id)}">
     <div class="pt-card"><div class="pt-bh"><div><h2 class="pt-bh-name">${a.rank ? `<span class="pt-rank">${esc(a.rank)}.</span> ` : ""}${esc(a.company)}</h2><div class="pt-bh-sub">${esc([a.segment, a.geography].filter(Boolean).join(" · ")) || (es ? "Detalles de cuenta limitados" : "Account details limited")}</div></div><div class="pt-bh-r">${badge(a.decision, es)}${a.freshness?.age ? `<span class="pt-fresh">${esc(a.freshness.age)} ${esc(t.ago)}</span>` : ""}</div></div>${dims ? `<div class="pt-dims">${dims}</div>` : ""}</div>
     ${(a.thesis || a.whyItMatters) ? `<div class="pt-card">${a.thesis ? `<p class="pt-label">${esc(t.thesis)}</p><p class="pt-p">${esc(a.thesis)}</p>` : ""}${a.whyItMatters && a.whyItMatters !== a.thesis ? `<div class="pt-sep"><p class="pt-label">${esc(t.whyMatters)}</p><p class="pt-p">${esc(a.whyItMatters)}</p></div>` : ""}</div>` : ""}
-    ${a.whatChanged.length ? `<div class="pt-card"><p class="pt-label">${esc(t.whatChanged)}</p><div class="pt-chgs">${changed}</div></div>` : ""}
+    ${a.whatChanged.length ? `<div class="pt-card pt-signal"><p class="pt-label pt-label-accent">${esc(t.whatChanged)}</p><div class="pt-chgs">${changed}</div></div>` : ""}
     <div class="pt-card"><div class="pt-ev-h"><p class="pt-label" style="margin:0">${esc(t.supportedBy)}</p>${evBits.length ? `<span class="pt-ev-b">${esc(evBits.join(" · "))}</span>` : ""}</div>${a.sources.length ? `<div class="pt-srcs">${sources}</div>` : `<p class="pt-muted-p">${esc(t.noEvidence)}</p>`}</div>
     ${bullets(t.counter, a.counterSignals, "#dc2626", t.noCounter)}
     ${bullets(t.limits, a.limitations, "#b45309")}
@@ -302,11 +329,21 @@ body{margin:0;background:#f4f7fb;color:#0f172a;font-family:-apple-system,BlinkMa
 .pt-dl:hover{background:#0369a1}
 .pt-dl-ghost{background:#fff;color:#0369a1;border:1px solid #bae6fd}
 .pt-dl-ghost:hover{background:#f0f9ff}
-.pt-main{max-width:1100px;margin:0 auto;padding:16px 16px 40px}
-.pt-panel{display:flex;flex-direction:column;gap:14px}
+.pt-main{max-width:1040px;margin:0 auto;padding:22px 16px 48px}
+.pt-panel{display:flex;flex-direction:column;gap:16px}
 .pt-hidden{display:none}
-.pt-card{background:#fff;border:1px solid #e8edf3;border-radius:12px;padding:18px 20px;box-shadow:0 1px 2px rgba(15,23,42,.03)}
-.pt-label{font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#94a3b8;margin:0 0 10px}
+.pt-card{background:#fff;border:1px solid #edf1f6;border-radius:14px;padding:20px 24px;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+.pt-label{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#94a3b8;margin:0 0 11px}
+.pt-label-accent{color:#0284c7}
+/* Cover — editorial opening, not a marketing hero */
+.pt-cover{padding:6px 2px 2px}
+.pt-cover-kick{font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#0284c7;margin-bottom:8px}
+/* Executive read — the one-line LeadLens portfolio verdict */
+.pt-exec{background:linear-gradient(180deg,#f0f9ff,#f8fbff);border:1px solid #cfe9fb;border-left:4px solid #0ea5e9;border-radius:12px;padding:16px 20px}
+.pt-exec-k{display:block;font-size:10.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:#0369a1;margin-bottom:6px}
+.pt-exec-t{font-size:15.5px;line-height:1.55;color:#0c344e;margin:0;font-weight:500}
+/* What Changed — LeadLens signature block */
+.pt-signal{border-left:4px solid #0ea5e9;background:linear-gradient(180deg,#f7fcff,#fff)}
 .pt-note{font-size:12px;color:#94a3b8;margin:8px 0 0;line-height:1.55}
 .pt-muted{color:#94a3b8}
 .pt-muted-p{font-size:12.5px;color:#94a3b8;margin:0}
