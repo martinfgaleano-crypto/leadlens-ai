@@ -25,6 +25,14 @@ const COPY = {
     heroH1post: ".",
     heroH2: "And the evidence behind every opportunity.",
     heroSub: "Turn market evidence into clearer account decisions.",
+    heroValue: {
+      label: "What LeadLens helps you decide",
+      items: [
+        { h: "Know where to focus", p: "The accounts that most deserve your team's commercial attention." },
+        { h: "Understand what changed", p: "The recent market and account developments behind each opportunity." },
+        { h: "Act with evidence", p: "What supports the case, what's uncertain, and what to validate next." },
+      ],
+    },
     heroCTA: "Get started",
     heroPriceNote: "From $7 · one-time.",
     heroSeeAll: "View sample",
@@ -340,6 +348,14 @@ const COPY = {
     heroH1post: ".",
     heroH2: "Y la evidencia detrás de cada oportunidad.",
     heroSub: "Convierte la evidencia del mercado en decisiones de cuenta más claras.",
+    heroValue: {
+      label: "Qué te ayuda a decidir LeadLens",
+      items: [
+        { h: "Dónde enfocarte", p: "Las cuentas que más merecen la atención comercial de tu equipo." },
+        { h: "Qué cambió", p: "Los desarrollos recientes de mercado y cuenta detrás de cada oportunidad." },
+        { h: "Actúa con evidencia", p: "Qué respalda el caso, qué es incierto y qué validar a continuación." },
+      ],
+    },
     heroCTA: "Comenzar",
     heroPriceNote: "Desde $7 · pago único.",
     heroSeeAll: "Ver muestra",
@@ -655,6 +671,14 @@ const COPY = {
     heroH1post: ".",
     heroH2: "E a evidência por trás de cada oportunidade.",
     heroSub: "Transforme a evidência do mercado em decisões de conta mais claras.",
+    heroValue: {
+      label: "O que a LeadLens ajuda você a decidir",
+      items: [
+        { h: "Onde focar", p: "As contas que mais merecem a atenção comercial da sua equipe." },
+        { h: "O que mudou", p: "Os desenvolvimentos recentes de mercado e conta por trás de cada oportunidade." },
+        { h: "Aja com evidência", p: "O que sustenta o caso, o que é incerto e o que validar em seguida." },
+      ],
+    },
     heroCTA: "Começar",
     heroPriceNote: "A partir de $7 · pagamento único.",
     heroSeeAll: "Ver amostra",
@@ -970,6 +994,14 @@ const COPY = {
     heroH1post: "。",
     heroH2: "そして、各機会の裏付けとなる根拠を。",
     heroSub: "市場のエビデンスを、より明確なアカウントの意思決定へ。",
+    heroValue: {
+      label: "LeadLensが意思決定を支援すること",
+      items: [
+        { h: "どこに注力すべきか", p: "チームの商業的注目に最も値するアカウント。" },
+        { h: "何が変わったか", p: "各オポチュニティの背後にある最近の市場・アカウントの動き。" },
+        { h: "エビデンスで行動", p: "何が根拠を支え、何が不確かで、次に何を検証すべきか。" },
+      ],
+    },
     heroCTA: "始める",
     heroPriceNote: "$7から · 一回払い。",
     heroSeeAll: "サンプルを見る",
@@ -1519,6 +1551,8 @@ export default function DemoPipelinePage() {
         @media (max-width: 900px) { .ll-pricing-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 580px) { .ll-pricing-grid { grid-template-columns: 1fr; gap: 1.25rem; padding-top: .875rem; } }
         .ll-hero-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 3rem; align-items: center; }
+        /* Mobile-only acquisition value layer — hidden on desktop (2-col hero carries value). */
+        .ll-hero-value { display: none; }
         @media (max-width: 840px) { .ll-hero-grid { grid-template-columns: 1fr; gap: 1.25rem; } .ll-hero-left { text-align: center; display: flex; flex-direction: column; align-items: center; min-width: 0; } .ll-hero-mock { margin-top: 0; width: 100%; min-width: 0; } }
         @media (max-width: 480px) { .ll-hero-mock { overflow: hidden; max-width: 100%; } }
         /* Navbar: single row; section links collapse into a mobile menu (§18–23). */
@@ -1654,10 +1688,18 @@ export default function DemoPipelinePage() {
           .ll-hero-sub   { font-size: .95rem !important; font-weight: 500 !important; line-height: 1.45 !important; color: #64748b !important; margin-bottom: 1.1rem !important; }
           .ll-hero-cta-row { flex-direction: row !important; align-items: center !important; flex-wrap: wrap !important; gap: 1rem !important; margin-bottom: .55rem !important; }
           .ll-hero-cta-row > button:first-child { width: auto !important; padding: .7rem 1.4rem !important; font-size: .95rem !important; white-space: nowrap !important; }
-          .ll-hero-cta-row > button:nth-child(2) { width: auto !important; align-self: center !important; background: none !important; border: none !important; box-shadow: none !important; color: #0284c7 !important; padding: .35rem 0 !important; font-size: .92rem !important; font-weight: 600 !important; white-space: nowrap !important; }
-          .ll-hero-cta-row > button:nth-child(2)::after { content: " →"; }
+          .ll-hero-cta2 { width: auto !important; align-self: center !important; background: none !important; border: none !important; box-shadow: none !important; color: #0284c7 !important; padding: .35rem 0 !important; font-size: .92rem !important; font-weight: 600 !important; white-space: nowrap !important; }
+          .ll-hero-cta2::after { content: " →"; }
           .ll-hero-price { font-size: .78rem !important; margin: 0 !important; }
-          .ll-hero-mock  { margin: .95rem -.6rem 0 !important; }
+          /* Acquisition value layer: shown between hero actions and the product. */
+          .ll-hero-value { display: block !important; margin-top: 1.6rem !important; }
+          .ll-hero-value-label { font-size: .68rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #94a3b8; margin-bottom: .7rem; }
+          .ll-hero-value-row { display: grid; grid-template-columns: auto 1fr; gap: .7rem; padding: .7rem 0; border-top: 1px solid #cfe6fb; }
+          .ll-hero-value-row:first-of-type { border-top: none; padding-top: .05rem; }
+          .ll-hero-value-dot { width: 7px; height: 7px; border-radius: 50%; background: #0ea5e9; margin-top: .5rem; }
+          .ll-hero-value-h { font-size: .95rem; font-weight: 700; color: #0f172a; line-height: 1.25; }
+          .ll-hero-value-p { font-size: .82rem; color: #64748b; line-height: 1.45; margin-top: .12rem; }
+          .ll-hero-mock  { margin: 1.6rem -.6rem 0 !important; }
           /* Swap mockups */
           .ll-hero-mock-desktop { display: none !important; }
           .ll-hero-mock-mobile  { display: block !important; }
@@ -1760,7 +1802,7 @@ export default function DemoPipelinePage() {
               </p>
               <div className="ll-hero-cta-row" style={{ display: "flex", gap: ".875rem", flexWrap: "wrap" as const, marginBottom: ".55rem" }}>
                 <Btn lg onClick={() => goToForm("standard", "hero")}>{copy.heroCTA}</Btn>
-                <BtnOutline lg onClick={() => { window.location.href = "/sample"; }}>{copy.heroSeeAll}</BtnOutline>
+                <BtnOutline lg className="ll-hero-cta2" onClick={() => { window.location.href = "/sample"; }}>{copy.heroSeeAll}</BtnOutline>
               </div>
               {/* Two concepts kept explicitly separate (§128–132): the paid entry
                   price, and that the public sample is free to view without a card.
@@ -1770,6 +1812,25 @@ export default function DemoPipelinePage() {
               <p className="ll-hero-note" style={{ display: "inline-block", fontSize: ".82rem", color: "#64748b", background: "#f0f9ff", border: "1px solid #e0f2fe", borderRadius: 999, padding: ".375rem 1rem", marginBottom: ".75rem" }}>
                 {copy.heroNote}
               </p>
+              {/* Mobile acquisition value layer (§10–35): three compact outcome
+                  statements between the hero and the product proof, so a first-time
+                  visitor understands what LeadLens helps them decide before the
+                  Opportunity Portfolio appears. Mobile-only (hidden on desktop, where the
+                  2-column hero already carries value); maps to Portfolio / What Changed /
+                  Evidence. Editorial rows with hairlines — not feature cards, not numbers
+                  (kept distinct from How it works). */}
+              <div className="ll-hero-value">
+                <div className="ll-hero-value-label">{copy.heroValue.label}</div>
+                {copy.heroValue.items.map((it, i) => (
+                  <div key={i} className="ll-hero-value-row">
+                    <span className="ll-hero-value-dot" aria-hidden />
+                    <div>
+                      <div className="ll-hero-value-h">{it.h}</div>
+                      <div className="ll-hero-value-p">{it.p}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
             {/* Right column — signature interactive account workspace */}
             <div className="ll-hero-mock">
@@ -3827,9 +3888,9 @@ function Btn({ children, onClick, lg }: { children: React.ReactNode; onClick?: (
   );
 }
 
-function BtnOutline({ children, onClick, lg }: { children: React.ReactNode; onClick?: () => void; lg?: boolean }) {
+function BtnOutline({ children, onClick, lg, className }: { children: React.ReactNode; onClick?: () => void; lg?: boolean; className?: string }) {
   return (
-    <button onClick={onClick}
+    <button onClick={onClick} className={className}
       style={{ display: "inline-flex", alignItems: "center", gap: ".4rem", padding: lg ? "1rem 2rem" : ".6rem 1.2rem", borderRadius: lg ? ".75rem" : ".6rem", fontWeight: 600, fontSize: lg ? "1.05rem" : ".9rem", cursor: "pointer", border: "1.5px solid #e2e8f0", background: "#fff", color: "#334155", transition: "all .15s", whiteSpace: "nowrap" as const }}
       onMouseOver={e => { e.currentTarget.style.background = "#f8fafc"; e.currentTarget.style.borderColor = "#cbd5e1"; }}
       onMouseOut={e => { e.currentTarget.style.background = "#fff"; e.currentTarget.style.borderColor = "#e2e8f0"; }}

@@ -73,7 +73,7 @@ t("K2 promo banner + duplicate H2 + reassurance pill are HIDDEN on mobile",
 t("K3 banner/H2/pill still render on desktop (hidden only via mobile media query)",
   /className="ll-announce"/.test(src) && /className="ll-hero-h2"/.test(src) && /className="ll-hero-note"/.test(src));
 t("K4 mobile secondary CTA is a light text link (not a second heavy button)",
-  /\.ll-hero-cta-row > button:nth-child\(2\) \{[^}]*background: none[^}]*border: none/.test(src));
+  /\.ll-hero-cta2 \{[^}]*background: none[^}]*border: none/.test(src) && /className="ll-hero-cta2"/.test(src));
 t("K5 single hero support line retained (analytical)", /heroSub:\s*"Turn market evidence into clearer account decisions\."/.test(src));
 
 // ─── L. V8.3 mobile hero editorial recomposition + localization closeout ──────
@@ -91,6 +91,19 @@ t("L6 rendered pricing copy has no stale lead-list framing (planFeatures + compa
   // rendered comparison row uses "prioritized", not "ranked", across locales.
   !/Briefs de oportunidad rankeados/.test(src) && !/Briefs de oportunidade ranqueados/.test(src) &&
   /Prioritized opportunity briefs/.test(src));
+
+// ─── M. V8.4 mobile acquisition-first value layer ─────────────────────────────
+t("M1 heroValue acquisition block localized in 4 locales", count(/heroValue:\s*\{/g) === 4);
+t("M2 value layer rendered as editorial rows (not feature cards, not numbered)",
+  /className="ll-hero-value"/.test(src) && /ll-hero-value-row/.test(src) && /ll-hero-value-dot/.test(src));
+t("M3 value layer is mobile-only (hidden on desktop, shown ≤640)",
+  /\.ll-hero-value \{ display: none; \}/.test(src) && /\.ll-hero-value \{ display: block !important/.test(src));
+t("M4 hero secondary CTA uses a direct class (robust vs stripped combinator)",
+  /className="ll-hero-cta2"/.test(src) && /\.ll-hero-cta2 \{[^}]*background: none/.test(src));
+t("M5 value outcomes map to product grammar (focus / changed / evidence), no lead-gen framing",
+  /"Know where to focus"/.test(src) && /"Understand what changed"/.test(src) && /"Act with evidence"/.test(src) &&
+  !/heroValue:[\s\S]{0,600}(lead list|hot lead|buying intent|contact list)/i.test(src));
+t("M6 H1 + support still intact", /heroH1hi:\s*"worth working now"/.test(src) && /heroSub:\s*"Turn market evidence into clearer account decisions\."/.test(src));
 
 // ─── G. Responsive anchors (desktop composed vs mobile start) + FAQ ───────────
 t("G1 pricing anchor desktop vs mobile scroll-margin differ (composed/centered vs start)",
