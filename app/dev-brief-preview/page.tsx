@@ -9,9 +9,11 @@
 //   • is not linked from any customer surface.
 // It exists solely to close the authenticated-QA gap for design review.
 import { notFound } from "next/navigation";
-import BriefView from "@/app/results/[jobId]/brief/BriefView";
+import OpportunityWorkspace from "@/components/deliverable/OpportunityWorkspace";
 import { assembleInstitutionalReport } from "@/lib/reports/institutional-assembler";
 import { resolveReportExperience } from "@/lib/products/report-experience";
+import { fromInstitutionalReport, fromAmorPilot } from "@/lib/deliverable/adapters";
+import type { DeliverableViewModel } from "@/lib/deliverable/deliverable-view-model";
 
 export const dynamic = "force-dynamic";
 
@@ -68,10 +70,32 @@ const RAW = {
 
 const META = { job_id: "dev-preview", plan: "standard", search_id: null, customer_ref: null, created_at: NOW };
 
-export default function DevBriefPreview() {
+// Legacy Amor de Gea pilot artifact — read-only, proves the renderer is generic
+// (a bespoke report shape, not the institutional one). Never mutated.
+function loadAmorViewModel(): DeliverableViewModel | null {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const fs = require("node:fs") as typeof import("node:fs");
+    const path = require("node:path") as typeof import("node:path");
+    const raw = fs.readFileSync(path.join(process.cwd(), "output", "amor-pilot1-deliverable.data.json"), "utf8");
+    return fromAmorPilot(JSON.parse(raw));
+  } catch {
+    return null;
+  }
+}
+
+export default function DevBriefPreview({ searchParams }: { searchParams?: { source?: string } }) {
   if (process.env.NODE_ENV === "production") notFound();
+
+  // ?source=amor renders the real legacy pilot through the SAME workspace,
+  // proving generic compatibility. Default: synthetic institutional report.
+  if (searchParams?.source === "amor") {
+    const vm = loadAmorViewModel();
+    if (vm) return <OpportunityWorkspace vm={vm} />;
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const report = assembleInstitutionalReport(RAW as any, META);
   const experience = resolveReportExperience("intelligence_launch_v0");
-  return <BriefView report={report} experience={experience} />;
+  return <OpportunityWorkspace vm={fromInstitutionalReport(report, experience)} />;
 }

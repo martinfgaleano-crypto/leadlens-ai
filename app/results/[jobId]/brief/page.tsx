@@ -8,7 +8,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { getSupabaseClient } from "@/lib/supabase/client";
 import { getBriefForViewer, type BriefResult } from "./actions";
-import BriefView from "./BriefView";
+import OpportunityWorkspace from "@/components/deliverable/OpportunityWorkspace";
+import { fromInstitutionalReport } from "@/lib/deliverable/adapters";
 
 function Neutral({ text }: { text: string }) {
   return (
@@ -39,7 +40,7 @@ export default function BriefPage() {
 
   if (!result) return <Neutral text="Preparing your brief…" />;
   switch (result.state) {
-    case "ok": return <BriefView report={result.report} experience={result.experience} />;
+    case "ok": return <OpportunityWorkspace vm={fromInstitutionalReport(result.report, result.experience)} />;
     case "processing": return <Neutral text="Your brief is being generated. This can take a few minutes — refresh shortly." />;
     case "signin_required": return <Neutral text="Please sign in to view this brief." />;
     case "forbidden": return <Neutral text="This brief is not available." />;
