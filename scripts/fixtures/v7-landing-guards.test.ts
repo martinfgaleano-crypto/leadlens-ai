@@ -170,5 +170,30 @@ t("H6 connected layout: desktop connectors + mobile vertical spine",
 t("H7 old generic card+arrow flow replaced", !/className="ll-how-flow"/.test(src) && !/className="ll-how-arrow"/.test(src));
 t("H8 how mini-visual labels localized in 4 locales", count(/vCriteria:/g) === 4 && count(/vLadder:/g) === 4);
 
+// ─── O. V9 final freeze (mobile lang selector, disclosures, compaction) ───────
+t("O1 mobile hamburger has a localized language selector (aria-pressed, 44px)",
+  /navLanguage/.test(src) && /aria-pressed=\{lang === o\.value\}/.test(src) && /LANG_OPTIONS\.map/.test(src));
+t("O2 navLanguage localized in 4 locales", count(/navLanguage:/g) === 4);
+t("O3 changeLang updates <html lang> on switch",
+  /function changeLang\(l: OutputLanguage\)/.test(src) && /document\.documentElement\.lang = l/.test(src));
+t("O4 After You Buy is a disclosure: open on desktop/SSR, collapsible on mobile",
+  /const \[afterOpen, setAfterOpen\] = useState\(true\)/.test(src) &&
+  /<details className="ll-afterbuy" open=\{afterOpen\}/.test(src) &&
+  /matchMedia\("\(max-width: 640px\)"\)\.matches\) setAfterOpen\(false\)/.test(src));
+t("O5 Opportunity Monitor: coming-soon/pilot, periodic (no real-time/continuous), $99/mo",
+  /monthlyTag:\s*"Coming soon — Pilot access"/.test(src) &&
+  /monitorSubMobile:\s*"Periodic account re-evaluation/.test(src) &&
+  /monitorPrice:\s*"From \$99\/mo"/.test(src) &&
+  !/real-time/i.test(src) && !/always-on/i.test(src) && !/continuous market intelligence/i.test(src));
+t("O6 monitorSubMobile (compact teaser) localized in 4 locales", count(/monitorSubMobile:/g) === 4);
+t("O7 per-card 'One-time payment' hidden on mobile (intro already states one-time)",
+  /className="ll-price-onetime"/.test(src) && /\.ll-price-onetime\s*\{\s*display:\s*none/.test(src));
+t("O8 How-it-works has a per-locale shortened mobile headline (JA keeps へ particle)",
+  count(/howTitlePostMobile:/g) === 4 && /howTitlePostMobile:\s*"へ。"/.test(src) &&
+  /ll-how-suffix-mobile/.test(src));
+t("O9 prices unchanged ($7/$25/$59/$129) and product truth intact",
+  /\$7/.test(src) && /\$25/.test(src) && /\$59/.test(src) && /\$129/.test(src) &&
+  !/LeadLens AI/.test(src) && !/score each opportunity/i.test(src) && !/Submit your ICP/.test(src));
+
 console.log(`\n${passed}/${passed + failed} passed`);
 process.exit(failed ? 1 : 0);

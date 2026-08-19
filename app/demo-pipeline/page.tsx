@@ -12,6 +12,7 @@ const COPY = {
     announcementCTA: "Get your Opportunity Preview →",
     navPricing: "Pricing",
     navSignIn: "Sign in",
+    navLanguage: "Language",
     navCTA: "Get started",
     navHow: "How it works",
     planDetails: "What's included",
@@ -40,6 +41,7 @@ const COPY = {
     proofLabels: [["5","account briefs"],["6–8","buyer segments"],["24–48h","delivery"],["Evidence","+ counterevidence"]] as [string,string][],
     howTag: "How it works",
     howTitle: { pre: "From commercial context to ", emph: "accounts worth working", post: " — in three steps." },
+    howTitlePostMobile: ".",
     how: {
       step1Title: "Set the context",
       step1Copy: "Tell LeadLens what you sell, who you serve and where you're trying to grow. Have an ICP? We'll use it. If not, we'll help structure the criteria.",
@@ -68,6 +70,7 @@ const COPY = {
     monthlyTag: "Coming soon — Pilot access",
     monthlyTitle: "Opportunity Monitor",
     monthlySub: "Monthly refreshed opportunities, signal updates, weekly opportunity digest, and recurring briefs — for teams that need periodic account re-evaluation.",
+    monitorSubMobile: "Periodic account re-evaluation — monthly refreshes and recurring briefs.",
     monitorCTA: "Join pilot waitlist",
     monitorPrice: "From $99/mo",
     planNames: { sample: "Preview", starter: "Brief", standard: "Intelligence", pro: "Premium" },
@@ -335,6 +338,7 @@ const COPY = {
     announcementCTA: "Obtener mi Opportunity Preview →",
     navPricing: "Precios",
     navSignIn: "Iniciar sesión",
+    navLanguage: "Idioma",
     navCTA: "Comenzar",
     navHow: "Cómo funciona",
     planDetails: "Qué incluye",
@@ -363,6 +367,7 @@ const COPY = {
     proofLabels: [["5","account briefs"],["6–8","segmentos de compradores"],["24–48h","entrega"],["Evidencia","+ contraevidencia"]] as [string,string][],
     howTag: "Cómo funciona",
     howTitle: { pre: "Del contexto comercial a las ", emph: "cuentas que vale la pena trabajar", post: " — en tres pasos." },
+    howTitlePostMobile: ".",
     how: {
       step1Title: "Define el contexto",
       step1Copy: "Cuéntale a LeadLens qué vendes, a quién atiendes y dónde quieres crecer. ¿Ya tienes un ICP? Lo usamos. Si no, ayudamos a estructurar los criterios.",
@@ -391,6 +396,7 @@ const COPY = {
     monthlyTag: "Próximamente — Acceso piloto",
     monthlyTitle: "Opportunity Monitor",
     monthlySub: "Oportunidades actualizadas mensualmente, señales nuevas, resumen semanal de oportunidades y briefs recurrentes — para equipos que necesitan reevaluación periódica de cuentas.",
+    monitorSubMobile: "Reevaluación periódica de cuentas: actualizaciones mensuales y briefs recurrentes.",
     monitorCTA: "Unirse a la lista piloto",
     monitorPrice: "Desde $99/mes",
     planNames: { sample: "Preview", starter: "Brief", standard: "Intelligence", pro: "Premium" },
@@ -658,6 +664,7 @@ const COPY = {
     announcementCTA: "Obter meu Opportunity Preview →",
     navPricing: "Preços",
     navSignIn: "Entrar",
+    navLanguage: "Idioma",
     navCTA: "Começar",
     navHow: "Como funciona",
     planDetails: "O que inclui",
@@ -686,6 +693,7 @@ const COPY = {
     proofLabels: [["5","account briefs"],["6–8","segmentos de compradores"],["24–48h","entrega"],["Evidência","+ contraevidência"]] as [string,string][],
     howTag: "Como funciona",
     howTitle: { pre: "Do contexto comercial às ", emph: "contas que valem o esforço", post: " — em três passos." },
+    howTitlePostMobile: ".",
     how: {
       step1Title: "Defina o contexto",
       step1Copy: "Diga à LeadLens o que você vende, quem você atende e onde quer crescer. Já tem um ICP? Nós o usamos. Se não, ajudamos a estruturar os critérios.",
@@ -714,6 +722,7 @@ const COPY = {
     monthlyTag: "Em breve — Acesso piloto",
     monthlyTitle: "Opportunity Monitor",
     monthlySub: "Oportunidades atualizadas mensalmente, novos sinais, resumo semanal e briefs recorrentes — para equipes que precisam de reavaliação periódica de contas.",
+    monitorSubMobile: "Reavaliação periódica de contas: atualizações mensais e briefs recorrentes.",
     monitorCTA: "Entrar na lista piloto",
     monitorPrice: "A partir de $99/mês",
     planNames: { sample: "Preview", starter: "Brief", standard: "Intelligence", pro: "Premium" },
@@ -981,6 +990,7 @@ const COPY = {
     announcementCTA: "Opportunity Previewを取得 →",
     navPricing: "料金",
     navSignIn: "ログイン",
+    navLanguage: "言語",
     navCTA: "始める",
     navHow: "使い方",
     planDetails: "含まれるもの",
@@ -1009,6 +1019,7 @@ const COPY = {
     proofLabels: [["5件","アカウントブリーフ"],["6〜8","購買者セグメント"],["24〜48h","納品"],["エビデンス","+ 反証"]] as [string,string][],
     howTag: "使い方",
     howTitle: { pre: "商業的コンテキストから、", emph: "取り組む価値のあるアカウント", post: "へ — 3ステップで。" },
+    howTitlePostMobile: "へ。",
     how: {
       step1Title: "コンテキストを設定",
       step1Copy: "何を売り、誰に提供し、どこで成長したいかをLeadLensに伝えてください。ICPがあれば活用します。なければ、条件の整理をお手伝いします。",
@@ -1037,6 +1048,7 @@ const COPY = {
     monthlyTag: "近日公開 — パイロットアクセス",
     monthlyTitle: "Opportunity Monitor",
     monthlySub: "毎月更新されるオポチュニティ、シグナル更新、週次オポチュニティダイジェスト、定期ブリーフ — 定期的なアカウント再評価を必要とするチーム向け。",
+    monitorSubMobile: "定期的なアカウント再評価 — 毎月の更新と定期ブリーフ。",
     monitorCTA: "パイロットウェイトリストに登録",
     monitorPrice: "$99/月から",
     planNames: { sample: "Preview", starter: "Brief", standard: "Intelligence", pro: "Premium" },
@@ -1403,6 +1415,10 @@ export default function DemoPipelinePage() {
   const [formMode, setFormMode]   = useState<"paid_batch" | "sample_demo">("paid_batch");
   const [isSampleDemo, setIsSampleDemo] = useState(false);
   const [navOpen, setNavOpen] = useState(false);
+  // After-you-buy: rendered open (SSR + desktop, so crawlers/desktop see it); collapses
+  // on mount for phones so it no longer consumes a full mobile viewport (§50–54).
+  const [afterOpen, setAfterOpen] = useState(true);
+  useEffect(() => { if (typeof window !== "undefined" && window.matchMedia("(max-width: 640px)").matches) setAfterOpen(false); }, []);
   const formRef = useRef<HTMLDivElement>(null);
   const pricingRef = useRef<HTMLElement>(null);
   const pricingSeen = useRef(false);
@@ -1433,6 +1449,8 @@ export default function DemoPipelinePage() {
   function changeLang(l: OutputLanguage) {
     setLang(l);
     setForm(f => ({ ...f, output_language: l }));
+    // Keep the document language in sync for accessibility / semantics (§25).
+    if (typeof document !== "undefined") document.documentElement.lang = l;
   }
 
   function goToForm(p: PlanType, source: ConversionMetadata["source_cta"] = "pricing") {
@@ -1652,6 +1670,26 @@ export default function DemoPipelinePage() {
           .ll-price-head { margin-bottom: .6rem !important; }
           .ll-price-cta { padding: .7rem !important; }
           .ll-price-card > details { margin-top: .6rem !important; }
+          /* §38: per-card "One-time payment" is redundant on mobile — the pricing intro
+             already states "Four one-time products". Hide the repeat; keep it on desktop. */
+          .ll-price-onetime { display: none !important; }
+        }
+        /* After You Buy: hide the native marker; on mobile it becomes a real disclosure
+           with a chevron affordance (open on desktop/SSR, collapsed ≤640). §50–54 */
+        .ll-afterbuy > summary { list-style: none; }
+        .ll-afterbuy > summary::-webkit-details-marker { display: none; }
+        @media (max-width: 640px) {
+          .ll-afterbuy { padding: 1rem 1.15rem !important; }
+          .ll-afterbuy > summary { display: flex; align-items: center; justify-content: space-between; min-height: 44px !important; margin-bottom: 0 !important; }
+          .ll-afterbuy > summary::after { content: "⌄"; font-size: 1.1rem; color: #94a3b8; }
+          .ll-afterbuy[open] > summary { margin-bottom: 1rem !important; }
+          .ll-afterbuy[open] > summary::after { content: "⌃"; }
+          /* Opportunity Monitor: compact, clearly secondary to the 4 one-time tiers (§41–48) */
+          .ll-monitor { padding: 1rem 1.15rem !important; gap: .75rem !important; margin-top: 1.25rem !important; }
+          .ll-monitor .ll-monitor-title { font-size: .95rem !important; }
+          .ll-monitor .ll-monitor-copy-full { display: none !important; }
+          .ll-monitor .ll-monitor-copy-mobile { display: block !important; }
+          .ll-monitor .ll-monitor-cta { width: 100% !important; text-align: center !important; }
         }
         /* Differentiation contrast: side-by-side on desktop, stacked with a downward arrow on phones */
         @media (max-width: 620px) { .ll-diff-grid { grid-template-columns: 1fr !important; } .ll-diff-arrow { transform: rotate(90deg); } }
@@ -1659,6 +1697,7 @@ export default function DemoPipelinePage() {
            mobile = a single vertical spine the stages attach to (§15–24). */
         .ll-how-desktop { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: stretch; max-width: 64rem; margin: 0 auto; }
         .ll-how-mobile  { display: none; }
+        .ll-how-suffix-mobile { display: none; }
         .ll-how-card { background: #fff; border: 1px solid #eef2f7; border-radius: 1rem; padding: 1.4rem 1.35rem; display: flex; flex-direction: column; height: 100%; box-sizing: border-box; }
         .ll-how-conn { display: flex; align-items: center; padding: 0 .55rem; }
         @media (max-width: 820px) {
@@ -1703,6 +1742,10 @@ export default function DemoPipelinePage() {
           /* How-it-works H2 smaller on mobile so it no longer dominates a viewport (§28);
              the full headline is kept (hiding the suffix would break JA grammar). */
           .ll-how-h2 { font-size: 1.5rem !important; line-height: 1.22 !important; }
+          /* §55: shorten the How-it-works headline on mobile (drop "— in three steps."
+             per-locale; JA keeps its へ particle so grammar stays intact). */
+          .ll-how-suffix { display: none !important; }
+          .ll-how-suffix-mobile { display: inline !important; }
           /* Swap mockups */
           .ll-hero-mock-desktop { display: none !important; }
           .ll-hero-mock-mobile  { display: block !important; }
@@ -1769,13 +1812,27 @@ export default function DemoPipelinePage() {
         </nav>
         {/* Mobile dropdown panel */}
         {navOpen && (
-          <div id="ll-nav-panel" className="ll-nav-panel" style={{ borderTop: "1px solid #e8f4fd", background: "#fff", padding: ".5rem 1.25rem 1rem" }}>
+          <div id="ll-nav-panel" className="ll-nav-panel" style={{ borderTop: "1px solid #e8f4fd", background: "#fff", padding: ".5rem 1.25rem 1.1rem" }}>
             {NAV_SECTIONS.map(sx => (
-              <button key={sx.id} onClick={() => goToSection(sx.id)} style={{ display: "block", width: "100%", textAlign: "left", background: "none", border: "none", borderBottom: "1px solid #f1f5f9", padding: ".7rem .25rem", fontSize: ".95rem", fontWeight: 600, color: "#334155", cursor: "pointer", fontFamily: "inherit" }}>{sx.label}</button>
+              <button key={sx.id} onClick={() => goToSection(sx.id)} style={{ display: "block", width: "100%", textAlign: "left", background: "none", border: "none", borderBottom: "1px solid #f1f5f9", padding: ".85rem .25rem", minHeight: "44px", fontSize: ".95rem", fontWeight: 600, color: "#334155", cursor: "pointer", fontFamily: "inherit" }}>{sx.label}</button>
             ))}
-            <a href="/login" style={{ display: "block", width: "100%", padding: ".7rem .25rem", fontSize: ".95rem", fontWeight: 600, color: "#334155", textDecoration: "none", borderBottom: "1px solid #f1f5f9" }}>{copy.navSignIn}</a>
+            <a href="/login" style={{ display: "flex", alignItems: "center", width: "100%", padding: ".85rem .25rem", minHeight: "44px", boxSizing: "border-box" as const, fontSize: ".95rem", fontWeight: 600, color: "#334155", textDecoration: "none", borderBottom: "1px solid #f1f5f9" }}>{copy.navSignIn}</a>
             <div style={{ marginTop: ".85rem" }}>
               <Btn onClick={() => { setNavOpen(false); goToForm("standard", "nav"); }}>{copy.navCTA}</Btn>
+            </div>
+            {/* Localized language selector — mobile only lives here (the top nav has no
+                room). Full-width row of language buttons with a visible selected state
+                and ≥44px touch targets (§17–22). */}
+            <div style={{ marginTop: "1.1rem", borderTop: "1px solid #f1f5f9", paddingTop: ".9rem" }}>
+              <div style={{ fontSize: ".68rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".05em", color: "#94a3b8", marginBottom: ".55rem" }}>{copy.navLanguage}</div>
+              <div role="group" aria-label={copy.navLanguage} style={{ display: "flex", gap: ".4rem", flexWrap: "wrap" as const }}>
+                {LANG_OPTIONS.map(o => (
+                  <button key={o.value} onClick={() => changeLang(o.value as OutputLanguage)} aria-pressed={lang === o.value}
+                    style={{ flex: "1 1 44%", minHeight: "44px", borderRadius: ".55rem", border: `1.5px solid ${lang === o.value ? "#0ea5e9" : "#e2e8f0"}`, background: lang === o.value ? "#e0f2fe" : "#fff", color: lang === o.value ? "#0284c7" : "#334155", fontWeight: lang === o.value ? 700 : 600, fontSize: ".85rem", cursor: "pointer", fontFamily: "inherit" }}>
+                    {o.label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         )}
@@ -1894,7 +1951,7 @@ export default function DemoPipelinePage() {
             <div style={innerStyle}>
               <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
                 <Tag>{copy.howTag}</Tag>
-                <h2 style={sectionTitleStyle} className="ll-how-h2">{copy.howTitle.pre}<span style={{ color: "#0ea5e9" }}>{copy.howTitle.emph}</span><span className="ll-how-suffix">{copy.howTitle.post}</span></h2>
+                <h2 style={sectionTitleStyle} className="ll-how-h2">{copy.howTitle.pre}<span style={{ color: "#0ea5e9" }}>{copy.howTitle.emph}</span><span className="ll-how-suffix">{copy.howTitle.post}</span><span className="ll-how-suffix-mobile">{copy.howTitlePostMobile}</span></h2>
               </div>
 
               {/* Desktop: three connected stages on one continuous line */}
@@ -1988,8 +2045,8 @@ export default function DemoPipelinePage() {
             <ComparisonTable copy={copy} />
           </details>
 
-          {/* Opportunity Monitor strip — coming soon */}
-          <div style={{ marginTop: "2rem", maxWidth: "62rem", margin: "2rem auto 0", background: "linear-gradient(135deg,#f0f9ff,#e0f2fe)", border: "1px solid #bae6fd", borderRadius: "1.125rem", padding: "1.5rem 2rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1.5rem", flexWrap: "wrap" as const }}>
+          {/* Opportunity Monitor strip — coming soon (compact + secondary on mobile) */}
+          <div className="ll-monitor" style={{ marginTop: "2rem", maxWidth: "62rem", margin: "2rem auto 0", background: "linear-gradient(135deg,#f0f9ff,#e0f2fe)", border: "1px solid #bae6fd", borderRadius: "1.125rem", padding: "1.5rem 2rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1.5rem", flexWrap: "wrap" as const }}>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ display: "flex", alignItems: "center", gap: ".625rem", marginBottom: ".625rem", flexWrap: "wrap" as const }}>
                 <span style={{ display: "inline-block", background: "#0ea5e9", color: "#fff", fontSize: ".65rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", padding: ".2rem .65rem", borderRadius: 999 }}>
@@ -1997,10 +2054,11 @@ export default function DemoPipelinePage() {
                 </span>
                 <span style={{ fontSize: ".8rem", fontWeight: 600, color: "#0284c7" }}>{copy.monitorPrice}</span>
               </div>
-              <h3 style={{ fontSize: "1.1rem", fontWeight: 800, color: "#0f172a", letterSpacing: "-.02em", marginBottom: ".375rem" }}>{copy.monthlyTitle}</h3>
-              <p style={{ fontSize: ".875rem", color: "#475569", lineHeight: 1.6, margin: 0, maxWidth: "40rem" }}>{copy.monthlySub}</p>
+              <h3 className="ll-monitor-title" style={{ fontSize: "1.1rem", fontWeight: 800, color: "#0f172a", letterSpacing: "-.02em", marginBottom: ".375rem" }}>{copy.monthlyTitle}</h3>
+              <p className="ll-monitor-copy ll-monitor-copy-full" style={{ fontSize: ".875rem", color: "#475569", lineHeight: 1.6, margin: 0, maxWidth: "40rem" }}>{copy.monthlySub}</p>
+              <p className="ll-monitor-copy ll-monitor-copy-mobile" style={{ fontSize: ".8rem", color: "#475569", lineHeight: 1.45, margin: 0, maxWidth: "40rem", display: "none" }}>{copy.monitorSubMobile}</p>
             </div>
-            <button onClick={() => goToForm("sample", "monitor")}
+            <button className="ll-monitor-cta" onClick={() => goToForm("sample", "monitor")}
               style={{ background: "none", border: "1.5px solid #0ea5e9", color: "#0284c7", borderRadius: ".75rem", padding: ".7rem 1.375rem", fontWeight: 600, fontSize: ".875rem", cursor: "pointer", whiteSpace: "nowrap" as const, flexShrink: 0, transition: "all .15s", fontFamily: "inherit" }}
               onMouseOver={e => { e.currentTarget.style.background = "#e0f2fe"; }}
               onMouseOut={e => { e.currentTarget.style.background = "none"; }}
@@ -2018,11 +2076,11 @@ export default function DemoPipelinePage() {
             ))}
           </div>
 
-          {/* After you buy */}
-          <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "1rem", padding: "1.5rem 2rem", maxWidth: "44rem", margin: "1.5rem auto 0", textAlign: "left" as const }}>
-            <p style={{ fontSize: ".72rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", color: "#94a3b8", marginBottom: "1rem" }}>
+          {/* After you buy — open on desktop/SSR, collapsible on mobile (§50–54) */}
+          <details className="ll-afterbuy" open={afterOpen} onToggle={e => setAfterOpen(e.currentTarget.open)} style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "1rem", padding: "1.5rem 2rem", maxWidth: "44rem", margin: "1.5rem auto 0", textAlign: "left" as const }}>
+            <summary style={{ fontSize: ".72rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", color: "#94a3b8", marginBottom: "1rem", cursor: "pointer", listStyle: "none", minHeight: "24px" }}>
               {copy.afterPurchaseTitle}
-            </p>
+            </summary>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: ".875rem" }}>
               {copy.afterPurchaseSteps.map((step, i) => (
                 <div key={i} style={{ display: "flex", gap: ".625rem", alignItems: "flex-start" }}>
@@ -2036,7 +2094,7 @@ export default function DemoPipelinePage() {
             <p style={{ fontSize: ".78rem", color: "#94a3b8", marginTop: "1rem", marginBottom: 0, textAlign: "center" as const, lineHeight: 1.5 }}>
               {copy.afterPurchaseNote}
             </p>
-          </div>
+          </details>
         </div>
       </section>
 
@@ -3634,7 +3692,7 @@ function PricingCard({ plan, featured, copy, onSelect }: {
         </div>
         <div className="ll-price-amount" style={{ display: "flex", alignItems: "baseline", gap: ".4rem", marginBottom: ".55rem" }}>
           <span className="ll-price-value" style={{ fontSize: "2.4rem", fontWeight: 800, letterSpacing: "-.03em", lineHeight: 1, color: "#0f172a" }}>{p.price}</span>
-          <span style={{ fontSize: ".72rem", color: "#94a3b8" }}>{copy.oneBatch}</span>
+          <span className="ll-price-onetime" style={{ fontSize: ".72rem", color: "#94a3b8" }}>{copy.oneBatch}</span>
         </div>
         <div style={{ fontSize: ".9rem", color: "#334155", lineHeight: 1.45, marginBottom: ".4rem" }}>{copy.planDescs[plan]}</div>
         <div style={{ fontSize: ".8rem", color: featured ? "#0369a1" : "#64748b", fontWeight: 600, lineHeight: 1.45 }}>{copy.planDiff[plan]}</div>
