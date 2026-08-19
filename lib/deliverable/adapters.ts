@@ -11,13 +11,20 @@ import type { ReportExperience } from "@/lib/products/report-experience";
 import { derivePortfolioStatus, deriveAllocation, type StatusVerdict } from "@/lib/products/report-experience";
 import {
   type DeliverableViewModel, type AccountBriefVM, type DecisionState, type Strength,
-  type SourceVM, type ChangeVM, type EvidenceRelation,
+  type SourceVM, type ChangeVM, type EvidenceRelation, type ValidationQueueItemVM,
   ageLabel, daysAgo, hostOf,
 } from "./deliverable-view-model";
 
 function slug(s: string, i: number): string {
   const base = s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40);
   return base ? `${base}-${i}` : `account-${i}`;
+}
+
+/** Aggregate per-account validations into a portfolio decision queue. */
+function buildValidationQueue(accounts: AccountBriefVM[]): ValidationQueueItemVM[] {
+  return accounts
+    .filter((a) => a.validations.length > 0)
+    .map((a) => ({ accountId: a.id, company: a.company, decision: a.decision, items: a.validations }));
 }
 
 function fitStrength(score: number | null): Strength | null {
@@ -138,17 +145,26 @@ export function fromInstitutionalReport(r: InstitutionalOpportunityReportV1, exp
       note: r.portfolio_summary.tier_note ?? null,
     },
     accounts,
+    commercialContext: {
+      summary: r.context.icp_summary,
+      regions: r.context.regions ?? [],
+      industries: r.context.industries ?? [],
+      criteria: [],
+    },
+    validationQueue: buildValidationQueue(accounts),
     coverage: {
       withDatedEvidence: r.coverage.accounts_with_dated_evidence,
       withSources: r.coverage.accounts_with_sources,
+      corroborated: accounts.filter((a) => a.evidence.corroborated === true).length,
       grade,
       note: r.quality?.note ?? null,
     },
     methodology: r.methodology ?? [],
     limitations: r.limitations ?? [],
-    downloads: { pdf: true, csv: false },
+    downloads: { pdf: true, portfolioCsv: true, evidenceCsv: accounts.some((a) => a.sources.length > 0) },
     capabilities: {
       showPortfolioTab: !experience || experience.show_portfolio,
+      showCompareTab: accounts.length >= 2,
       showEvidenceTab: accounts.some((a) => a.sources.length > 0),
       showDownloadsTab: true,
       showMethodology: (r.methodology?.length ?? 0) > 0,
@@ -269,19 +285,28 @@ export function fromAmorPilot(d: AmorDeliverable): DeliverableViewModel {
       note: null,
     },
     accounts,
+    commercialContext: {
+      summary: d.readiness?.strengths?.length ? d.readiness.strengths[0] : null,
+      regions: geography ? [geography] : [],
+      industries: Array.from(new Set(rawAccounts.map((a) => a.route).filter((x): x is string => Boolean(x)))),
+      criteria: d.what_changed?.after ?? [],
+    },
+    validationQueue: buildValidationQueue(accounts),
     coverage: {
       withDatedEvidence: accounts.filter((a) => a.evidence.datedCount > 0).length,
       withSources: accounts.filter((a) => a.sources.length > 0).length,
+      corroborated: 0,
       grade: null,
       note: null,
     },
     methodology: [],
     limitations: d.limitations ?? [],
-    downloads: { pdf: false, csv: false },
+    downloads: { pdf: true, portfolioCsv: true, evidenceCsv: accounts.some((a) => a.sources.length > 0) },
     capabilities: {
       showPortfolioTab: true,
+      showCompareTab: accounts.length >= 2,
       showEvidenceTab: accounts.some((a) => a.sources.length > 0),
-      showDownloadsTab: false,
+      showDownloadsTab: true,
       showMethodology: false,
     },
   };

@@ -9,12 +9,25 @@
 // horizontal account switcher + scrollable tabs + progressive disclosure.
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import type { DeliverableViewModel, DecisionState } from "@/lib/deliverable/deliverable-view-model";
-import { DECISION_TOKENS, decisionLabel } from "@/lib/deliverable/deliverable-view-model";
+import type { DeliverableViewModel, DecisionState, AccountBriefVM } from "@/lib/deliverable/deliverable-view-model";
+import { DECISION_TOKENS, STRENGTH_TOKENS, decisionLabel } from "@/lib/deliverable/deliverable-view-model";
+import { portfolioCsv, evidenceCsv, deliverableFilename } from "@/lib/deliverable/exports";
 import { AccountBrief, DecisionBadge, SourceList } from "./primitives";
 
-type Tab = "portfolio" | "accounts" | "evidence" | "downloads";
+type Tab = "portfolio" | "accounts" | "compare" | "evidence" | "downloads";
 const DECISION_ORDER: DecisionState[] = ["prioritize", "validate", "monitor", "hold"];
+
+/** Client-side download of a text blob (customer action; no server round-trip). */
+function downloadText(filename: string, text: string, mime: string) {
+  try {
+    const blob = new Blob([text], { type: mime });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  } catch { /* download unavailable in this context */ }
+}
 
 export default function OpportunityWorkspace({ vm }: { vm: DeliverableViewModel }) {
   const es = vm.meta.language === "es";
@@ -24,6 +37,7 @@ export default function OpportunityWorkspace({ vm }: { vm: DeliverableViewModel 
     const list: Tab[] = [];
     if (vm.capabilities.showPortfolioTab) list.push("portfolio");
     list.push("accounts");
+    if (vm.capabilities.showCompareTab) list.push("compare");
     if (vm.capabilities.showEvidenceTab) list.push("evidence");
     if (vm.capabilities.showDownloadsTab) list.push("downloads");
     return list;
@@ -31,6 +45,7 @@ export default function OpportunityWorkspace({ vm }: { vm: DeliverableViewModel 
 
   const [tab, setTab] = useState<Tab>(tabs[0] ?? "accounts");
   const [accountId, setAccountId] = useState<string>(vm.accounts[0]?.id ?? "");
+  const [decisionFilter, setDecisionFilter] = useState<DecisionState | "all">("all");
 
   // Hydrate selection from the URL (deep-link), then keep the URL in sync via
   // replaceState — reload-free, and it does not spam browser history (§101/§102).
@@ -89,17 +104,23 @@ export default function OpportunityWorkspace({ vm }: { vm: DeliverableViewModel 
 
         {tab === "accounts" && (
           <div className="dlv-accounts">
-            <AccountNav vm={vm} activeId={active?.id ?? ""} onSelect={openAccount} es={es} t={t} />
+            <AccountNav vm={vm} activeId={active?.id ?? ""} onSelect={openAccount} es={es} t={t} filter={decisionFilter} onFilter={setDecisionFilter} />
             <section className="dlv-brief">
               {active ? <AccountBrief a={active} es={es} /> : <Empty text={t.emptyPortfolio} />}
             </section>
           </div>
         )}
 
+        {tab === "compare" && vm.capabilities.showCompareTab && <CompareTab vm={vm} t={t} es={es} onOpen={openAccount} />}
+
         {tab === "evidence" && vm.capabilities.showEvidenceTab && <EvidenceTab vm={vm} t={t} es={es} onOpen={openAccount} />}
 
         {tab === "downloads" && vm.capabilities.showDownloadsTab && <DownloadsTab vm={vm} t={t} />}
       </main>
+
+      {/* Print/PDF-only: the full deliverable stacked in a stable reading order.
+          Hidden on screen; the interactive main is hidden in print (§86–90). */}
+      <PrintDocument vm={vm} t={t} es={es} />
 
       <footer className="dlv-footer">
         LeadLens · {t.aoi}{vm.meta.schemaVersion ? ` · brief v${vm.meta.schemaVersion}` : ""}{vm.meta.generatedLabel ? ` · ${vm.meta.generatedLabel}` : ""}
@@ -108,13 +129,55 @@ export default function OpportunityWorkspace({ vm }: { vm: DeliverableViewModel 
   );
 }
 
+// ─── Print/PDF document — deliberate LeadLens export, not a screenshot ─────────
+function PrintDocument({ vm, t, es }: { vm: DeliverableViewModel; t: L; es: boolean }) {
+  return (
+    <div className="dlv-print" aria-hidden>
+      <div className="dlv-print-cover">
+        <div className="dlv-logo" style={{ fontSize: 22 }}>Lead<span style={{ color: "#0284c7" }}>Lens</span></div>
+        <div className="dlv-print-kicker">{t.portfolioTitle}{vm.meta.tierLabel ? ` · ${vm.meta.tierLabel}` : ""}</div>
+        <div className="dlv-print-meta">{[vm.meta.client, vm.meta.market, vm.meta.generatedLabel].filter(Boolean).join(" · ")}</div>
+        {vm.headline && <h1 className="dlv-print-h1">{vm.headline}</h1>}
+        {vm.summary && <p className="dlv-print-sub">{vm.summary}</p>}
+      </div>
+
+      {/* Portfolio summary */}
+      <div className="dlv-print-sec">
+        <h2 className="dlv-print-h2">{t.distribution}</h2>
+        <p className="dlv-cmp-txt">{DECISION_ORDER.map((k) => `${vm.portfolio.counts[k]} ${decisionLabel(k, es).toLowerCase()}`).join(" · ")}</p>
+        {vm.portfolio.allocation && <p className="dlv-cmp-txt" style={{ marginTop: 6 }}>{vm.portfolio.allocation.detail}</p>}
+      </div>
+
+      {/* Account briefs */}
+      {vm.accounts.map((a) => (
+        <div key={a.id} className="dlv-print-brief">
+          <AccountBrief a={a} es={es} />
+        </div>
+      ))}
+
+      <div className="dlv-print-foot">{t.absenceNote} · LeadLens · {vm.meta.generatedLabel ?? ""}</div>
+    </div>
+  );
+}
+
 // ─── Portfolio navigator (desktop sidebar / mobile horizontal switcher) ───────
-function AccountNav({ vm, activeId, onSelect, es, t }: { vm: DeliverableViewModel; activeId: string; onSelect: (id: string) => void; es: boolean; t: L }) {
+function AccountNav({ vm, activeId, onSelect, es, t, filter, onFilter }: { vm: DeliverableViewModel; activeId: string; onSelect: (id: string) => void; es: boolean; t: L; filter: DecisionState | "all"; onFilter: (f: DecisionState | "all") => void }) {
+  const filters: (DecisionState | "all")[] = ["all", ...DECISION_ORDER.filter((d) => vm.accounts.some((a) => a.decision === d))];
+  const shown = filter === "all" ? vm.accounts : vm.accounts.filter((a) => a.decision === filter);
   return (
     <aside className="dlv-nav" aria-label={t.accounts}>
-      <div className="dlv-nav-head">{t.accounts} · {vm.accounts.length}</div>
+      <div className="dlv-nav-head">{t.accounts} · {shown.length}{filter !== "all" ? `/${vm.accounts.length}` : ""}</div>
+      {vm.accounts.length > 3 && (
+        <div className="dlv-nav-filter" role="group" aria-label={t.filterByDecision}>
+          {filters.map((f) => (
+            <button key={f} className={`dlv-filter-chip ${filter === f ? "is-active" : ""}`} aria-pressed={filter === f} onClick={() => onFilter(f)}>
+              {f === "all" ? t.all : decisionLabel(f, es)}
+            </button>
+          ))}
+        </div>
+      )}
       <div className="dlv-nav-list" role="listbox" aria-label={t.accounts}>
-        {vm.accounts.map((a) => {
+        {shown.map((a) => {
           const s = DECISION_TOKENS[a.decision];
           const on = a.id === activeId;
           return (
@@ -146,6 +209,21 @@ function PortfolioTab({ vm, t, es, onOpen }: { vm: DeliverableViewModel; t: L; e
           {vm.headline && <h1 className="dlv-hero-h1">{vm.headline}</h1>}
           {vm.summary && <p className="dlv-hero-sub">{vm.summary}</p>}
         </div>
+      )}
+
+      {/* Commercial context — what LeadLens evaluated against (§62–65) */}
+      {vm.commercialContext && (vm.commercialContext.summary || vm.commercialContext.regions.length > 0 || vm.commercialContext.industries.length > 0 || vm.commercialContext.criteria.length > 0) && (
+        <details className="dlv-card dlv-context">
+          <summary className="dlv-context-summary">{t.commercialContext}</summary>
+          <div className="dlv-context-body">
+            {vm.commercialContext.summary && <p className="dlv-context-p">{vm.commercialContext.summary}</p>}
+            {vm.commercialContext.industries.length > 0 && <div className="dlv-ctx-row"><span className="dlv-ctx-k">{t.ctxIndustries}</span><span className="dlv-ctx-v">{vm.commercialContext.industries.join(" · ")}</span></div>}
+            {vm.commercialContext.regions.length > 0 && <div className="dlv-ctx-row"><span className="dlv-ctx-k">{t.ctxRegions}</span><span className="dlv-ctx-v">{vm.commercialContext.regions.join(" · ")}</span></div>}
+            {vm.commercialContext.criteria.length > 0 && (
+              <div className="dlv-ctx-row"><span className="dlv-ctx-k">{t.ctxCriteria}</span><ul className="dlv-ctx-crit">{vm.commercialContext.criteria.map((c, i) => <li key={i}>{c}</li>)}</ul></div>
+            )}
+          </div>
+        </details>
       )}
 
       {/* Decision distribution */}
@@ -196,6 +274,25 @@ function PortfolioTab({ vm, t, es, onOpen }: { vm: DeliverableViewModel; t: L; e
         </div>
       )}
 
+      {/* Validation queue — the portfolio as an actionable decision queue (§24–26) */}
+      {vm.validationQueue.length > 0 && (
+        <div className="dlv-card">
+          <p className="dlv-label">{t.validationQueue}</p>
+          <p className="dlv-note" style={{ marginTop: 0, marginBottom: 10 }}>{t.validationQueueLede}</p>
+          <div className="dlv-vq">
+            {vm.validationQueue.map((q) => (
+              <div key={q.accountId} className="dlv-vq-item">
+                <button className="dlv-vq-name" onClick={() => onOpen(q.accountId)}>
+                  <span className="dlv-nav-dot" style={{ background: DECISION_TOKENS[q.decision].dot }} />
+                  {q.company}
+                </button>
+                <span className="dlv-vq-first">{q.items[0]}{q.items.length > 1 ? ` (+${q.items.length - 1})` : ""}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Coverage */}
       {vm.coverage && (
         <div className="dlv-card">
@@ -203,6 +300,7 @@ function PortfolioTab({ vm, t, es, onOpen }: { vm: DeliverableViewModel; t: L; e
           <div className="dlv-cov">
             <div><span className="dlv-cov-num">{vm.coverage.withDatedEvidence}</span><span className="dlv-cov-lbl">{t.withDated}</span></div>
             <div><span className="dlv-cov-num">{vm.coverage.withSources}</span><span className="dlv-cov-lbl">{t.withSources}</span></div>
+            {vm.coverage.corroborated > 0 && <div><span className="dlv-cov-num">{vm.coverage.corroborated}</span><span className="dlv-cov-lbl">{t.corroboratedCov}</span></div>}
             {vm.coverage.grade && <div><span className="dlv-cov-num">{vm.coverage.grade}</span><span className="dlv-cov-lbl">{t.evidenceGrade}</span></div>}
           </div>
           {vm.coverage.note && <p className="dlv-note">{vm.coverage.note}</p>}
@@ -215,8 +313,132 @@ function PortfolioTab({ vm, t, es, onOpen }: { vm: DeliverableViewModel; t: L; e
           <ul className="dlv-limits-list">{vm.limitations.map((l, i) => <li key={i}>{l}</li>)}</ul>
         </div>
       )}
+
+      {/* How to read this — repeatable interpretation of every LeadLens delivery (§66–70) */}
+      <details className="dlv-card dlv-method">
+        <summary className="dlv-context-summary">{t.howToRead}</summary>
+        <div className="dlv-context-body">
+          <p className="dlv-label" style={{ marginTop: 4 }}>{t.decisionStates}</p>
+          <ul className="dlv-legend">
+            <li><DecisionBadge state="prioritize" es={es} small /> {t.defPrioritize}</li>
+            <li><DecisionBadge state="validate" es={es} small /> {t.defValidate}</li>
+            <li><DecisionBadge state="monitor" es={es} small /> {t.defMonitor}</li>
+            <li><DecisionBadge state="hold" es={es} small /> {t.defHold}</li>
+          </ul>
+          <p className="dlv-label" style={{ marginTop: 12 }}>{t.evidenceRelations}</p>
+          <ul className="dlv-legend dlv-legend-text">
+            <li><strong style={{ color: "#0284c7" }}>{t.relDirect}</strong> — {t.defDirect}</li>
+            <li><strong style={{ color: "#15803d" }}>{t.relCorrob}</strong> — {t.defCorrob}</li>
+            <li><strong style={{ color: "#94a3b8" }}>{t.relContext}</strong> — {t.defContext}</li>
+          </ul>
+          {vm.capabilities.showMethodology && vm.methodology.length > 0 && (
+            <><p className="dlv-label" style={{ marginTop: 12 }}>{t.howBuilt}</p>
+            <ul className="dlv-limits-list" style={{ color: "#475569", paddingLeft: 18 }}>{vm.methodology.map((m, i) => <li key={i}>{m}</li>)}</ul></>
+          )}
+          <p className="dlv-note">{t.absenceNote}</p>
+        </div>
+      </details>
     </div>
   );
+}
+
+// ─── Compare tab — why Account A before Account B (no aggregate score) ────────
+const DECISION_RANK: Record<DecisionState, number> = { prioritize: 0, validate: 1, monitor: 2, hold: 3 };
+
+function CompareTab({ vm, t, es, onOpen }: { vm: DeliverableViewModel; t: L; es: boolean; onOpen: (id: string) => void }) {
+  // Default: the top (up to 4) accounts by portfolio order. Customer can retune.
+  const [selected, setSelected] = useState<string[]>(() => vm.accounts.slice(0, Math.min(4, vm.accounts.length)).map((a) => a.id));
+  const toggle = (id: string) => setSelected((s) => s.includes(id) ? s.filter((x) => x !== id) : s.length >= 4 ? s : [...s, id]);
+  const cols = vm.accounts.filter((a) => selected.includes(a.id));
+
+  const dimVal = (a: AccountBriefVM, label: string) => a.dimensions.find((d) => d.label === label)?.value ?? null;
+  const rows: { label: string; render: (a: AccountBriefVM) => React.ReactNode }[] = [
+    { label: t.cDecision, render: (a) => <DecisionBadge state={a.decision} es={es} small /> },
+    { label: t.cFit, render: (a) => <Strengthy v={dimVal(a, "Fit")} /> },
+    { label: t.cTiming, render: (a) => <Strengthy v={dimVal(a, "Timing")} /> },
+    { label: t.cEvidence, render: (a) => <Strengthy v={a.evidence.strength} /> },
+    { label: t.cFreshness, render: (a) => <span className="dlv-cmp-txt">{a.freshness?.age ? `${a.freshness.age} ${t.ago}` : t.notDated}</span> },
+    { label: t.cChanged, render: (a) => <span className="dlv-cmp-txt">{a.whatChanged[0]?.event ?? "—"}</span> },
+    { label: t.cThesis, render: (a) => <span className="dlv-cmp-txt">{a.thesis ?? "—"}</span> },
+    { label: t.cLimiter, render: (a) => <span className="dlv-cmp-txt">{a.limitations[0] ?? t.noneListed}</span> },
+    { label: t.cValidate, render: (a) => <span className="dlv-cmp-txt">{a.validations[0] ?? "—"}</span> },
+    { label: t.cNext, render: (a) => <span className="dlv-cmp-txt">{a.nextStep ?? "—"}</span> },
+  ];
+
+  const insight = compareInsight(cols, es);
+
+  return (
+    <div className="dlv-panel">
+      <div className="dlv-card">
+        <p className="dlv-label">{t.compareSelect} ({cols.length}/4)</p>
+        <div className="dlv-cmp-chips">
+          {vm.accounts.map((a) => (
+            <button key={a.id} className={`dlv-filter-chip ${selected.includes(a.id) ? "is-active" : ""}`} aria-pressed={selected.includes(a.id)} onClick={() => toggle(a.id)} disabled={!selected.includes(a.id) && selected.length >= 4}>
+              <span className="dlv-nav-dot" style={{ background: DECISION_TOKENS[a.decision].dot, width: 6, height: 6, borderRadius: "50%", marginRight: 5 }} />{a.company}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {insight && (
+        <div className="dlv-card dlv-cmp-insight">
+          <p className="dlv-label" style={{ color: "#0369a1" }}>{t.compareInsight}</p>
+          <p className="dlv-cmp-insight-txt">{insight}</p>
+        </div>
+      )}
+
+      {cols.length >= 2 ? (
+        <div className="dlv-card" style={{ overflowX: "auto" }}>
+          <table className="dlv-cmp-table">
+            <thead>
+              <tr>
+                <th className="dlv-cmp-rowhead" />
+                {cols.map((a) => (
+                  <th key={a.id} className="dlv-cmp-colhead">
+                    <button className="dlv-cmp-name" onClick={() => onOpen(a.id)}>{a.rank ? `${a.rank}. ` : ""}{a.company}</button>
+                    <span className="dlv-cmp-sub">{a.segment ?? ""}</span>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((r) => (
+                <tr key={r.label}>
+                  <td className="dlv-cmp-rowhead">{r.label}</td>
+                  {cols.map((a) => <td key={a.id} className="dlv-cmp-cell">{r.render(a)}</td>)}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <Empty text={t.compareNeedTwo} />
+      )}
+    </div>
+  );
+}
+
+function Strengthy({ v }: { v: string | null }) {
+  if (!v) return <span className="dlv-cmp-txt">—</span>;
+  const tok = STRENGTH_TOKENS[v as keyof typeof STRENGTH_TOKENS] ?? STRENGTH_TOKENS.Moderate;
+  return <span style={{ fontWeight: tok.weight, color: tok.color, fontSize: 13 }}>{v}</span>;
+}
+
+/** Deterministic, non-fabricated comparison insight: order by decision priority
+ *  then evidence freshness, and phrase the lead using the account's OWN fields. */
+function compareInsight(cols: AccountBriefVM[], es: boolean): string | null {
+  if (cols.length < 2) return null;
+  const days = (a: AccountBriefVM) => { const d = a.freshness?.age; return d && /\d/.test(d) ? parseInt(d, 10) : 9999; };
+  const sorted = [...cols].sort((a, b) => DECISION_RANK[a.decision] - DECISION_RANK[b.decision] || days(a) - days(b));
+  const lead = sorted[0], next = sorted[1];
+  if (lead.decision === next.decision && lead.decisionNote === next.decisionNote && !lead.freshness) return null;
+  const leadReason = lead.decisionNote || lead.thesis;
+  const nextGap = next.limitations[0] || next.validations[0];
+  if (!leadReason) return null;
+  if (es) {
+    return `${lead.company} merece atención antes que ${next.company}: ${leadReason}${nextGap ? ` En cambio, ${next.company} aún requiere resolver: ${nextGap}` : ""}`;
+  }
+  return `${lead.company} merits attention before ${next.company}: ${leadReason}${nextGap ? ` ${next.company}, by contrast, still needs to resolve: ${nextGap}` : ""}`;
 }
 
 // ─── Evidence tab — cross-account provenance (§61/§77) ────────────────────────
@@ -241,17 +463,25 @@ function EvidenceTab({ vm, t, es, onOpen }: { vm: DeliverableViewModel; t: L; es
   );
 }
 
-// ─── Downloads tab — portable exports (§62/§63). Only real capabilities. ──────
+// ─── Downloads tab — portable exports (§84–101). Only real capabilities. ──────
 function DownloadsTab({ vm, t }: { vm: DeliverableViewModel; t: L }) {
+  const items: { title: string; desc: string; action: () => void }[] = [];
+  if (vm.downloads.pdf) items.push({ title: t.dlPdf, desc: t.dlPdfDesc, action: () => window.print() });
+  if (vm.downloads.portfolioCsv) items.push({ title: t.dlPortfolioCsv, desc: t.dlPortfolioCsvDesc, action: () => downloadText(deliverableFilename(vm, "portfolio", "csv"), portfolioCsv(vm), "text/csv;charset=utf-8") });
+  if (vm.downloads.evidenceCsv) items.push({ title: t.dlEvidenceCsv, desc: t.dlEvidenceCsvDesc, action: () => downloadText(deliverableFilename(vm, "evidence", "csv"), evidenceCsv(vm), "text/csv;charset=utf-8") });
   return (
     <div className="dlv-panel">
       <div className="dlv-card">
         <p className="dlv-label">{t.downloads}</p>
-        <p className="dlv-note" style={{ marginTop: 0 }}>{t.downloadsLede}</p>
-        <div className="dlv-dl-actions">
-          {vm.downloads.pdf && <button className="dlv-dl-btn" onClick={() => window.print()}>{t.printPdf}</button>}
-          {vm.downloads.csv && <span className="dlv-dl-note">CSV</span>}
-          {!vm.downloads.pdf && !vm.downloads.csv && <span className="dlv-note">{t.noDownloads}</span>}
+        <p className="dlv-note" style={{ marginTop: 0, marginBottom: 14 }}>{t.downloadsLede}</p>
+        <div className="dlv-dl-grid">
+          {items.length === 0 && <span className="dlv-note">{t.noDownloads}</span>}
+          {items.map((it) => (
+            <button key={it.title} className="dlv-dl-card" onClick={it.action}>
+              <span className="dlv-dl-title">{it.title}</span>
+              <span className="dlv-dl-desc">{it.desc}</span>
+            </button>
+          ))}
         </div>
       </div>
     </div>
@@ -274,9 +504,12 @@ function LABELS(es: boolean) {
     tab: {
       portfolio: es ? "Portafolio" : "Portfolio",
       accounts: es ? "Cuentas" : "Account Briefs",
+      compare: es ? "Comparar" : "Compare",
       evidence: es ? "Evidencia" : "Evidence",
       downloads: es ? "Descargas" : "Downloads",
     } as Record<Tab, string>,
+    filterByDecision: es ? "Filtrar por decisión" : "Filter by decision",
+    all: es ? "Todas" : "All",
     distribution: es ? "Distribución de decisiones" : "Decision distribution",
     whereFocus: es ? "Dónde enfocarte" : "Where to focus",
     coverage: es ? "Cobertura de evidencia" : "Evidence coverage",
@@ -290,11 +523,57 @@ function LABELS(es: boolean) {
     evidenceAcross: es ? "Evidencia por cuenta" : "Evidence across accounts",
     evidenceLede: es ? "Cada conclusión es inspeccionable: fuente, fecha y qué establece." : "Every conclusion is inspectable: source, date, and what it establishes.",
     downloads: es ? "Exportar" : "Export",
-    downloadsLede: es ? "El producto interactivo es la experiencia principal; la exportación es para compartir." : "The interactive product is the primary experience; export is for sharing.",
-    printPdf: es ? "Imprimir / Guardar PDF" : "Print / Save as PDF",
+    downloadsLede: es ? "El producto interactivo es la experiencia principal; la exportación es para compartir y para uso interno." : "The interactive product is the primary experience; exports are for sharing and internal use.",
     noDownloads: es ? "Sin exportaciones disponibles para este informe." : "No exports available for this report.",
+    dlPdf: es ? "PDF del portafolio" : "Portfolio PDF",
+    dlPdfDesc: es ? "Documento LeadLens con resumen, briefs y evidencia — para reuniones." : "LeadLens document with summary, briefs and evidence — for meetings.",
+    dlPortfolioCsv: es ? "CSV del portafolio" : "Portfolio CSV",
+    dlPortfolioCsvDesc: es ? "Una fila por cuenta: decisión, dimensiones, límite y validación — para Excel/CRM." : "One row per account: decision, dimensions, limiter and validation — for Excel/CRM.",
+    dlEvidenceCsv: es ? "CSV de evidencia" : "Evidence CSV",
+    dlEvidenceCsvDesc: es ? "Una fila por fuente: afirmación, relación, fecha y enlace." : "One row per source: claim, relation, date and link.",
     emptyPortfolio: es ? "Este portafolio no contiene cuentas todavía." : "This portfolio contains no accounts yet.",
     ago: es ? "atrás" : "ago",
+    // Commercial context
+    commercialContext: es ? "Contexto comercial evaluado" : "Commercial context evaluated",
+    ctxIndustries: es ? "Sectores" : "Industries",
+    ctxRegions: es ? "Mercados" : "Markets",
+    ctxCriteria: es ? "Criterios de oportunidad" : "Opportunity criteria",
+    // Validation queue
+    validationQueue: es ? "Cola de validación" : "Validation queue",
+    validationQueueLede: es ? "Lo que conviene resolver antes de actuar, por cuenta." : "What to resolve before acting, by account.",
+    corroboratedCov: es ? "corroboradas" : "corroborated",
+    // Compare
+    compareSelect: es ? "Selecciona cuentas para comparar" : "Select accounts to compare",
+    compareInsight: es ? "Lectura de LeadLens" : "LeadLens read",
+    compareNeedTwo: es ? "Selecciona al menos dos cuentas para comparar." : "Select at least two accounts to compare.",
+    notDated: es ? "sin fecha" : "not dated",
+    noneListed: es ? "ninguno indicado" : "none listed",
+    cDecision: es ? "Decisión" : "Decision",
+    cFit: "Fit",
+    cTiming: es ? "Timing" : "Timing",
+    cEvidence: es ? "Evidencia" : "Evidence",
+    cFreshness: es ? "Frescura" : "Freshness",
+    cChanged: es ? "Qué cambió" : "What changed",
+    cThesis: es ? "Tesis" : "Thesis",
+    cLimiter: es ? "Límite principal" : "Primary limiter",
+    cValidate: es ? "Validar" : "Validate next",
+    cNext: es ? "Siguiente paso" : "Next step",
+    // How to read this
+    howToRead: es ? "Cómo leer este portafolio" : "How to read this portfolio",
+    decisionStates: es ? "Estados de decisión" : "Decision states",
+    defPrioritize: es ? "la evidencia respalda dedicar atención ahora." : "evidence supports attention now.",
+    defValidate: es ? "prometedor, pero queda una incertidumbre importante." : "promising, but an important uncertainty remains.",
+    defMonitor: es ? "relevante, pero la evidencia o el timing aún no bastan." : "relevant, but evidence or timing is not yet sufficient.",
+    defHold: es ? "no se justifica dedicar esfuerzo ahora." : "effort is not justified right now.",
+    evidenceRelations: es ? "Relación de la evidencia" : "Evidence relations",
+    relDirect: es ? "Directa" : "Direct",
+    relCorrob: es ? "Corroborante" : "Corroborating",
+    relContext: es ? "Contexto" : "Context",
+    defDirect: es ? "establece el cambio directamente." : "establishes the change directly.",
+    defCorrob: es ? "respalda el cambio de forma independiente." : "independently supports the change.",
+    defContext: es ? "aporta contexto de apoyo." : "provides supporting context.",
+    howBuilt: es ? "Cómo se construyó" : "How this was built",
+    absenceNote: es ? "La ausencia de evidencia no es evidencia de ausencia: LeadLens muestra lo que sabe y lo que aún no." : "Absence of evidence is not evidence of absence: LeadLens shows what it knows and what it does not yet.",
   };
 }
 
@@ -342,10 +621,60 @@ const CSS = `
 .dlv-limits { background: #fffbeb; border-color: #fde68a; }
 .dlv-limits-list { margin: 0; padding-left: 18px; font-size: 12.5px; color: #92400e; line-height: 1.6; }
 .dlv-ev-head { appearance: none; background: none; border: none; width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer; font-family: inherit; font-size: 15px; font-weight: 800; color: #0f172a; padding: 0; }
-.dlv-dl-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 4px; }
-.dlv-dl-btn { appearance: none; background: #0284c7; color: #fff; border: none; border-radius: 9px; padding: 11px 18px; min-height: 44px; font-size: 13.5px; font-weight: 700; cursor: pointer; font-family: inherit; }
-.dlv-dl-btn:hover { background: #0369a1; }
 .dlv-footer { text-align: center; font-size: 10.5px; color: #cbd5e1; padding: 8px 16px 26px; }
+
+/* Decision filter + compare selection chips */
+.dlv-nav-filter { display: flex; flex-wrap: wrap; gap: 5px; padding: 0 8px 8px; }
+.dlv-cmp-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.dlv-filter-chip { appearance: none; background: #fff; border: 1px solid #e2e8f0; border-radius: 999px; padding: 5px 11px; min-height: 30px; font-size: 12px; font-weight: 600; color: #475569; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; }
+.dlv-filter-chip:hover { border-color: #cbd5e1; }
+.dlv-filter-chip.is-active { background: #e0f2fe; border-color: #7dd3fc; color: #0369a1; }
+.dlv-filter-chip:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Validation queue */
+.dlv-vq { display: flex; flex-direction: column; }
+.dlv-vq-item { display: flex; align-items: baseline; gap: 12px; padding: 9px 0; border-top: 1px solid #f1f5f9; flex-wrap: wrap; }
+.dlv-vq-item:first-child { border-top: none; }
+.dlv-vq-name { appearance: none; background: none; border: none; cursor: pointer; font-family: inherit; font-size: 13.5px; font-weight: 700; color: #0f172a; display: inline-flex; align-items: center; gap: 7px; padding: 0; min-width: 150px; text-align: left; }
+.dlv-vq-name:hover { color: #0369a1; }
+.dlv-vq-name .dlv-nav-dot { width: 7px; height: 7px; border-radius: 50%; }
+.dlv-vq-first { font-size: 13px; color: #475569; flex: 1; min-width: 180px; }
+
+/* Commercial context + methodology disclosures */
+.dlv-context > summary, .dlv-method > summary { list-style: none; cursor: pointer; }
+.dlv-context > summary::-webkit-details-marker, .dlv-method > summary::-webkit-details-marker { display: none; }
+.dlv-context-summary { font-size: 13px; font-weight: 800; color: #0369a1; padding: 2px 0; display: flex; align-items: center; gap: 6px; }
+.dlv-context-summary::after { content: "▾"; color: #94a3b8; font-size: 11px; }
+details[open] > .dlv-context-summary::after { content: "▴"; }
+.dlv-context-body { margin-top: 12px; padding-top: 12px; border-top: 1px solid #f1f5f9; }
+.dlv-context-p { font-size: 13.5px; color: #334155; line-height: 1.6; margin: 0 0 10px; }
+.dlv-ctx-row { display: flex; gap: 10px; padding: 5px 0; flex-wrap: wrap; }
+.dlv-ctx-k { font-size: 10px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #94a3b8; width: 120px; flex-shrink: 0; padding-top: 2px; }
+.dlv-ctx-v { font-size: 13px; color: #334155; flex: 1; min-width: 180px; }
+.dlv-ctx-crit { margin: 0; padding-left: 16px; font-size: 13px; color: #334155; line-height: 1.6; flex: 1; min-width: 180px; }
+.dlv-legend { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: #475569; }
+.dlv-legend li { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.dlv-legend-text li { display: block; line-height: 1.55; }
+
+/* Compare table */
+.dlv-cmp-insight { background: #f0f9ff; border-color: #bae6fd; }
+.dlv-cmp-insight-txt { font-size: 14px; color: #0c4a6e; line-height: 1.6; margin: 0; }
+.dlv-cmp-table { border-collapse: collapse; width: 100%; min-width: 520px; }
+.dlv-cmp-table th, .dlv-cmp-table td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid #f1f5f9; }
+.dlv-cmp-rowhead { font-size: 10px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; color: #94a3b8; white-space: nowrap; background: #fafbfc; position: sticky; left: 0; }
+.dlv-cmp-colhead { border-bottom: 2px solid #e2e8f0; min-width: 150px; }
+.dlv-cmp-name { appearance: none; background: none; border: none; cursor: pointer; font-family: inherit; font-size: 14px; font-weight: 800; color: #0f172a; padding: 0; display: block; text-align: left; }
+.dlv-cmp-name:hover { color: #0369a1; }
+.dlv-cmp-sub { font-size: 11px; color: #94a3b8; display: block; margin-top: 2px; }
+.dlv-cmp-cell { font-size: 13px; color: #334155; }
+.dlv-cmp-txt { font-size: 12.5px; color: #475569; line-height: 1.5; }
+
+/* Downloads */
+.dlv-dl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.dlv-dl-card { appearance: none; text-align: left; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; min-height: 44px; cursor: pointer; font-family: inherit; display: flex; flex-direction: column; gap: 4px; }
+.dlv-dl-card:hover { border-color: #7dd3fc; background: #f8fafc; }
+.dlv-dl-title { font-size: 14px; font-weight: 700; color: #0369a1; }
+.dlv-dl-desc { font-size: 12px; color: #64748b; line-height: 1.45; }
 
 /* Accounts layout: desktop = persistent left navigator + brief; mobile = top switcher */
 .dlv-accounts { display: grid; grid-template-columns: 288px 1fr; gap: 18px; align-items: start; }
@@ -379,10 +708,29 @@ const CSS = `
   .dlv-topbar { padding: 13px 16px; }
   .dlv-cov { gap: 20px; }
 }
+/* Deliberate print / PDF: a LeadLens document, not broken tab UI (§86–92).
+   The print stylesheet reveals ALL panels stacked in a stable reading order and
+   suppresses interactive chrome; page breaks avoid orphaned headings/decisions. */
+/* Print document — hidden on screen, shown (and the only thing shown) in print */
+.dlv-print { display: none; }
+.dlv-print-cover { padding: 0 0 16px; border-bottom: 2px solid #0f172a; margin-bottom: 18px; }
+.dlv-print-kicker { font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #0284c7; margin-top: 6px; }
+.dlv-print-meta { font-size: 12px; color: #475569; margin-top: 4px; }
+.dlv-print-h1 { font-size: 22px; font-weight: 800; color: #0f172a; margin: 12px 0 6px; }
+.dlv-print-sub { font-size: 13px; color: #475569; line-height: 1.55; margin: 0; }
+.dlv-print-sec { margin-bottom: 16px; }
+.dlv-print-h2 { font-size: 11px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #64748b; margin: 0 0 6px; }
+.dlv-print-brief { margin-bottom: 18px; }
+.dlv-print-foot { font-size: 10px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 8px; margin-top: 10px; }
+
 @media print {
-  .dlv-tabs, .dlv-nav, .dlv-dl-actions, .dlv-footer { display: none !important; }
+  @page { margin: 14mm; }
+  .dlv-topbar, .dlv-tabs, .dlv-main, .dlv-footer { display: none !important; }
   .dlv-root { background: #fff; }
-  .dlv-accounts { grid-template-columns: 1fr; }
-  .dlv-card { box-shadow: none; break-inside: avoid; }
+  .dlv-print { display: block !important; }
+  .dlv-print .dlv-card { box-shadow: none; break-inside: avoid; border-color: #d7dee7; }
+  .dlv-print-brief { break-inside: avoid; }
+  h2, .dlv-label, .dlv-print-h2 { break-after: avoid; }
+  a[href]::after { content: ""; } /* keep source labels clean; links stay clickable */
 }
 `;

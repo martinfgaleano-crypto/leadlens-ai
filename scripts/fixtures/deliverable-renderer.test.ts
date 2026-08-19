@@ -14,6 +14,7 @@ import path from "node:path";
 import { assembleInstitutionalReport } from "@/lib/reports/institutional-assembler";
 import { resolveReportExperience } from "@/lib/products/report-experience";
 import { fromInstitutionalReport, fromAmorPilot } from "@/lib/deliverable/adapters";
+import { portfolioCsv, evidenceCsv, csvEscape, deliverableFilename } from "@/lib/deliverable/exports";
 
 let passed = 0, failed = 0;
 const t = (name: string, ok: boolean, detail = "") => { console.log(`${ok ? "✅" : "❌"} ${name}${ok || !detail ? "" : `  (${detail})`}`); ok ? passed++ : failed++; };
@@ -63,7 +64,23 @@ t("11 what-to-validate surfaces", vm.accounts.some((a) => a.validations.length >
 t("12 recommended next step present", vm.accounts[0].nextStep !== null);
 t("13 portfolio counts sum to total", (["prioritize", "validate", "monitor", "hold"] as const).reduce((s, k) => s + vm.portfolio.counts[k], 0) === vm.portfolio.total);
 t("14 tier label resolved from experience", vm.meta.tierLabel !== null);
-t("15 capabilities gate tabs (portfolio/evidence/downloads)", typeof vm.capabilities.showPortfolioTab === "boolean" && typeof vm.capabilities.showEvidenceTab === "boolean");
+t("15 capabilities gate tabs (portfolio/compare/evidence/downloads)", typeof vm.capabilities.showPortfolioTab === "boolean" && typeof vm.capabilities.showCompareTab === "boolean" && typeof vm.capabilities.showEvidenceTab === "boolean");
+
+// ─── 1b. V1.1 value surfacing (context, queue, exports, compare) ──────────────
+t("15a commercial context surfaced (industries/regions from real data)", vm.commercialContext !== null && vm.commercialContext.industries.length > 0);
+t("15b validation queue aggregates per-account validations", vm.validationQueue.length > 0 && vm.validationQueue.every((q) => q.items.length > 0));
+t("15c compare capability on with ≥2 accounts", vm.capabilities.showCompareTab === true);
+t("15d coverage counts corroborated accounts", typeof vm.coverage?.corroborated === "number");
+// Exports
+const pcsv = portfolioCsv(vm);
+const ecsv = evidenceCsv(vm);
+t("15e portfolio CSV: header + one row per account", pcsv.split("\r\n").length === vm.accounts.length + 1);
+t("15f portfolio CSV first data row names the top account", pcsv.split("\r\n")[1].includes(vm.accounts[0].company));
+t("15g evidence CSV: header + one row per source", ecsv.split("\r\n").length === vm.accounts.reduce((n, a) => n + a.sources.length, 0) + 1);
+t("15h CSV escaping quotes commas/quotes/newlines", csvEscape('a,b') === '"a,b"' && csvEscape('a"b') === '"a""b"' && csvEscape("a\nb") === '"a\nb"' && csvEscape("plain") === "plain");
+t("15i CSV never leaks [object Object]", !pcsv.includes("[object Object]") && !ecsv.includes("[object Object]"));
+t("15j filename is safe + dated", /^LeadLens_Portfolio_.*_\d{4}-\d{2}-\d{2}\.csv$/.test(deliverableFilename(vm, "portfolio", "csv")));
+t("15k downloads expose pdf + portfolio CSV + evidence CSV", vm.downloads.pdf && vm.downloads.portfolioCsv && vm.downloads.evidenceCsv);
 
 // ─── 2. Amor de Gea legacy pilot compatibility ────────────────────────────────
 let amorVm: ReturnType<typeof fromAmorPilot> | null = null;
@@ -90,16 +107,54 @@ const emptyVm = fromAmorPilot({ meta: { client: "X" }, accounts: [] });
 t("27 empty portfolio renders with zero accounts (no crash, no invented data)", emptyVm.accounts.length === 0 && emptyVm.portfolio.total === 0);
 t("28 missing evidence → empty sources, not a placeholder claim", fromAmorPilot({ accounts: [{ name: "Y", why: "w" }] }).accounts[0].sources.length === 0);
 
+// ─── 3b. Second fixture — different shape/size (6 EU accounts, mixed density) ──
+const RAW2 = {
+  onboarding: { output_language: "en" }, created_at: NOW,
+  executive_summary: "Six EU accounts.", segment_insights: ["EU industrial + SaaS."],
+  total_leads: 6, hot_count: 2, warm_count: 2, cold_count: 1, discard_count: 1,
+  ranked_opportunities: [
+    { lead_id: "b1", rank: 1, category: "HOT", recommended_action: "send_outreach_now" },
+    { lead_id: "b2", rank: 2, category: "HOT", recommended_action: "send_outreach_now" },
+    { lead_id: "b3", rank: 3, category: "WARM", recommended_action: "validate_source_first" },
+    { lead_id: "b4", rank: 4, category: "WARM", recommended_action: "validate_source_first" },
+    { lead_id: "b5", rank: 5, category: "COLD", recommended_action: "monitor" },
+    { lead_id: "b6", rank: 6, category: "DISCARD", recommended_action: "exclude" },
+  ],
+  processed_leads: [
+    { id: "b1", candidate: { company: "Pennine Components Ltd", source_url: "https://example.co.uk/p", industry: "Industrial", location: "UK", domain: "example.co.uk" }, qualification: { category: "HOT", fit_score: 9, fit_reasons: ["Fit."] }, enrichment: { account_thesis: "Second line.", why_now: "6 days ago.", signal_date: "2026-08-08", opportunity_risks: ["No RFP."], next_best_question: "Confirm sourcing.", evidence_urls: ["https://example.co.uk/p2"] } },
+    { id: "b2", candidate: { company: "Nordwind Logistik GmbH", source_url: "https://example.de/n", industry: "Logistics", location: "DE", domain: "example.de" }, qualification: { category: "HOT", fit_score: 8, fit_reasons: ["Fit."] }, enrichment: { account_thesis: "Hub.", why_now: "11 days ago.", signal_date: "2026-08-03", opportunity_risks: ["Parent."], next_best_question: "Procurement?", evidence_urls: ["https://example.de/n2"] } },
+    { id: "b3", candidate: { company: "Helsinki Data Oy", source_url: "https://example.fi/h", industry: "SaaS", location: "FI", domain: "example.fi" }, qualification: { category: "WARM", fit_score: 6, fit_reasons: ["Fit."] }, enrichment: { account_thesis: "Hiring.", why_now: "18 days ago.", signal_date: "2026-07-27", opportunity_risks: ["One source."], next_best_question: "Budget?" } },
+    { id: "b4", candidate: { company: "Lyon Manufacture SA", source_url: "https://example.fr/l", industry: "Manufacturing", location: "FR", domain: "example.fr" }, qualification: { category: "WARM", fit_score: 6, fit_reasons: ["Fit."] }, enrichment: { account_thesis: "Cert.", why_now: "Undated.", opportunity_risks: ["No date."], next_best_question: "Contract?" } },
+    { id: "b5", candidate: { company: "Aarhus Retail Group", source_url: "https://example.dk/a", industry: "Retail", location: "DK", domain: "example.dk" }, qualification: { category: "COLD", fit_score: 4, fit_reasons: ["Fit."] }, enrichment: { account_thesis: "Stores.", why_now: "26 days ago.", signal_date: "2026-07-19", opportunity_risks: ["Weak fit."], next_best_question: "Reassess?" } },
+    { id: "b6", candidate: { company: "Old Mill Bakery", source_url: "", industry: "Food", location: "IE", domain: "example.ie" }, qualification: { category: "DISCARD", fit_score: 2, fit_reasons: ["None."] }, enrichment: { account_thesis: "No thesis.", opportunity_risks: ["Below scale."] } },
+  ],
+};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const vm2 = fromInstitutionalReport(assembleInstitutionalReport(RAW2 as any, { job_id: "t2", plan: "premium_launch_v0", search_id: null, customer_ref: null, created_at: NOW }), resolveReportExperience("premium_launch_v0"));
+t("34 second fixture renders all 6 accounts", vm2.accounts.length === 6);
+t("35 second fixture covers all four decision states", new Set(vm2.accounts.map((a) => a.decision)).size === 4);
+t("36 DISCARD dossier maps to Hold", vm2.accounts.some((a) => a.decision === "hold"));
+t("37 undated account produces null date (graceful), not a fabricated one", vm2.accounts.every((a) => a.whatChanged.every((c) => c.date === null || /^\d{4}-\d{2}-\d{2}$/.test(c.date))));
+t("38 second fixture portfolio CSV integrity (7 rows, no object leak)", portfolioCsv(vm2).split("\r\n").length === 7 && !portfolioCsv(vm2).includes("[object Object]"));
+t("39 Unicode company names survive CSV intact", portfolioCsv(vm2).includes("Nordwind Logistik GmbH"));
+
+// Amor CSV (Spanish/Unicode) integrity
+if (amorVm) {
+  t("40 Amor portfolio CSV: 11 rows, Unicode preserved (Éteka)", portfolioCsv(amorVm).split("\r\n").length === 11 && portfolioCsv(amorVm).includes("Éteka"));
+}
+
 // ─── 4. Security posture preserved (static source guards) ─────────────────────
 const brief = readFileSync("app/results/[jobId]/brief/actions.ts", "utf8");
-t("29 canonical route still does server-side ownership check", /lead_searches/.test(brief) && /user\.id !== ownerId/.test(brief) && /forbidden/.test(brief));
-t("30 assembly stays server-side ('use server')", /^"use server";/.test(brief));
+t("41 canonical route still does server-side ownership check", /lead_searches/.test(brief) && /user\.id !== ownerId/.test(brief) && /forbidden/.test(brief));
+t("42 assembly stays server-side ('use server')", /^"use server";/.test(brief));
 const workspace = readFileSync("components/deliverable/OpportunityWorkspace.tsx", "utf8");
-t("31 workspace consumes a view model, never raw report_json", !/report_json/.test(workspace) && /DeliverableViewModel/.test(workspace));
+t("43 workspace consumes a view model, never raw report_json", !/report_json/.test(workspace) && /DeliverableViewModel/.test(workspace));
 const pageSrc = readFileSync("app/results/[jobId]/brief/page.tsx", "utf8");
-t("32 canonical page renders the interactive workspace via the adapter", /OpportunityWorkspace/.test(pageSrc) && /fromInstitutionalReport/.test(pageSrc));
+t("44 canonical page renders the interactive workspace via the adapter", /OpportunityWorkspace/.test(pageSrc) && /fromInstitutionalReport/.test(pageSrc));
 const dev = readFileSync("app/dev-brief-preview/page.tsx", "utf8");
-t("33 Amor preview is dev-only (404 in production)", /NODE_ENV === "production"/.test(dev) && /notFound\(\)/.test(dev));
+t("45 Amor preview is dev-only (404 in production)", /NODE_ENV === "production"/.test(dev) && /notFound\(\)/.test(dev));
+const exportsSrc = readFileSync("lib/deliverable/exports.ts", "utf8");
+t("46 exports derive from the view model only (no raw report fields)", !/report_json|processed_leads|_vault/.test(exportsSrc));
 
 console.log(`\n${passed}/${passed + failed} passed`);
 process.exit(failed ? 1 : 0);

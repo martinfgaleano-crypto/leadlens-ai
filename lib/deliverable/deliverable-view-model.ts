@@ -73,9 +73,28 @@ export interface AccountBriefVM {
 
 export interface DeliverableCapabilities {
   showPortfolioTab: boolean;
+  showCompareTab: boolean;
   showEvidenceTab: boolean;
   showDownloadsTab: boolean;
   showMethodology: boolean;
+}
+
+/** The commercial context LeadLens evaluated accounts against — surfaced so the
+ *  customer can recall WHAT was assessed, not just the results (§62–65). */
+export interface CommercialContextVM {
+  summary: string | null;        // ICP / commercial-context summary
+  regions: string[];
+  industries: string[];
+  criteria: string[];            // opportunity criteria when available
+}
+
+/** One account's outstanding validations — aggregated into a portfolio queue so
+ *  the deliverable reads as an actionable decision queue (§24–25). */
+export interface ValidationQueueItemVM {
+  accountId: string;
+  company: string;
+  decision: DecisionState;
+  items: string[];
 }
 
 export interface DeliverableViewModel {
@@ -99,15 +118,18 @@ export interface DeliverableViewModel {
     note: string | null;
   };
   accounts: AccountBriefVM[];
+  commercialContext: CommercialContextVM | null;
+  validationQueue: ValidationQueueItemVM[];
   coverage: {
     withDatedEvidence: number;
     withSources: number;
+    corroborated: number;        // accounts with corroborated evidence (null-safe count)
     grade: Strength | null;
     note: string | null;
   } | null;
   methodology: string[];
   limitations: string[];
-  downloads: { pdf: boolean; csv: boolean };
+  downloads: { pdf: boolean; portfolioCsv: boolean; evidenceCsv: boolean };
   capabilities: DeliverableCapabilities;
 }
 
