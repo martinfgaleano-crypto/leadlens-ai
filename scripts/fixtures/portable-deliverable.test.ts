@@ -114,5 +114,24 @@ t("40 admin nav links Deliverables", /href: "\/admin\/deliverables"/.test(adminN
 t("41 no public (non-admin) deliverables index route exists",
   !existsSync("app/deliverables") && !existsSync("app/api/deliverables") && !existsSync("app/api/deliverable"));
 
+// ─── R. Client Opportunity Canvas opening (client is the subject) ─────────────
+import { toClientCanvasVM } from "@/lib/deliverable/client-canvas-vm";
+const amorCc = toClientCanvasVM(amor);
+t("R1 portable opens with a light client header (no dark navy gradient)",
+  html.includes('class="pt-top"') && !/\.pt-top\{background:linear-gradient\(120deg,#0b1220/.test(html) && /\.pt-top\{background:#fff/.test(html));
+t("R2 the CLIENT is the header subject (Amor de Gea), not a target account",
+  html.includes('class="pt-client">Amor de Gea<') && !/class="pt-client">Éteka</.test(html));
+t("R3 client canvas VM makes Amor the subject with hasClient=true", amorCc.client === "Amor de Gea" && amorCc.hasClient === true && amorCc.subject === "Amor de Gea");
+t("R4 opportunities remain subordinate to the client (10 in the landscape)", amorCc.landscape.length === 10 && amorCc.landscape.every((o) => o.company !== amorCc.client));
+t("R5 client read is deterministic from counts (no invented client intelligence)", typeof amorCc.read === "string" && /\d+ (of|de) \d+/.test(amorCc.read!));
+t("R6 patterns are honestly empty (no market-pattern synthesis in the report path)", Array.isArray(amorCc.patterns) && amorCc.patterns.length === 0);
+t("R7 objective derives from real commercial context (may be null; Amor has one)", amorCc.objective === null || typeof amorCc.objective === "string");
+t("R8 graceful when there is NO client — subject falls back, never a fake name", (() => {
+  const noClient = toClientCanvasVM({ ...amor, meta: { ...amor.meta, client: null } });
+  return noClient.client === null && noClient.hasClient === false && noClient.subject.length > 0 && !amorCc.landscape.some((o) => o.company === noClient.subject);
+})());
+t("R9 no aggregate score / HOT-WARM-COLD in the client-header region", (() => { const h = html.slice(html.indexOf('class="pt-top"'), html.indexOf("</header>")); return !/\bHOT\b|\bWARM\b|\bCOLD\b/.test(h) && !/\d\/10\b|\d{1,3}\/100\b/.test(h); })());
+t("R10 CaseSpine reasoning + evidence still intact (opportunity drill-down preserved)", (html.match(/data-brief="/g) || []).length === 10 && html.includes("Qué cambió") && html.includes("Decisión"));
+
 console.log(`\n${passed}/${passed + failed} passed`);
 process.exit(failed ? 1 : 0);

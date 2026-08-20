@@ -76,10 +76,28 @@ horizontal rail on mobile). Landing outside the sample unchanged. Guards **102/1
 Section P Opportunity-Case + **Section Q client-canvas/tabs**). tsc + build clean; deliverable
 52/52, portable 45/45, continuity 17/17.
 
-**PENDING — Portable + Amor (immediate next P0):** the portable deliverable still opens on the
-V1 portfolio workspace; wiring the Client Canvas as its opening surface + regenerating Amor (AMOR
-DE GEA as the client header) via a shared `ClientCanvasVM` is the next commit, per the plan below.
-Portable/Amor were **not changed** this turn (portable 45/45 unchanged) — not claimed as shipped.
+**SHIPPED — Portable + Amor (this rollout):** the portable deliverable now opens with a **light
+Client Opportunity Canvas header** — the client is the subject (a 30px client name under a thin
+navy top rule; the dark navy header gradient is gone), with a real Objective line (from the
+report's commercial context when present), market, and "N opportunities evaluated". Driven by a
+shared **`ClientCanvasVM`** (`lib/deliverable/client-canvas-vm.ts`) derived purely from the
+`DeliverableViewModel` — client, objective, opportunity landscape, deterministic client read (from
+real counts), coverage, validation agenda, recommended sequence (from the real allocation, else a
+count-based line). **Amor regenerated** (`output/deliverables/amor-de-gea/2026-08-03/…html`,
+97.6 KB, secret-scan clean): header subject = **Amor de Gea** (verified `.pt-client` = "Amor de
+Gea", NOT a target account; the 10 accounts remain opportunities inside; light header confirmed,
+0 overflow). Graceful when there is no client (institutional reports → subject falls back to
+"Opportunity Portfolio", never a fabricated name). No client-level fields invented: `patterns` is
+honestly empty (no market-pattern synthesis in the current report path). Portable tests **55/55**
+(added Section R: client-is-subject, subordinate opportunities, deterministic read, honest-empty
+patterns, no-client graceful fallback, CaseSpine drill-down intact).
+
+**Workspace parity (audited):** the authenticated `OpportunityWorkspace` shares the same product
+ontology — the `DeliverableViewModel`, decision states (Prioritize/Validate/Monitor/Hold),
+`meta.client`, Where-to-Focus, Validation queue, Compare/Evidence — with **no** lead-list /
+HOT-WARM-COLD / aggregate-score. **Remaining discrepancy (P1, low-risk):** the workspace header
+still shows the client as "Prepared for X" rather than as the dominant client-subject header; a
+future pass can adopt the same light client header there without touching auth/ownership.
 
 ## Status — direction locked; integration is the next step (honest)
 Per the sprint's own "STOP before finalizing / render + compare + select, then integrate only

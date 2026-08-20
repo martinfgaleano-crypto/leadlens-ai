@@ -8,6 +8,7 @@
 import type { DeliverableViewModel, AccountBriefVM, DecisionState } from "../deliverable-view-model";
 import { DECISION_TOKENS, STRENGTH_TOKENS, RELATION_TOKENS, decisionLabel } from "../deliverable-view-model";
 import { portfolioCsv, evidenceCsv, deliverableFilename } from "../exports";
+import { toClientCanvasVM } from "../client-canvas-vm";
 import { esc, safeUrl, jsonForScript, type PortableRuntimePayload, PORTABLE_FORMAT_VERSION } from "./portable-payload";
 
 const ORDER: DecisionState[] = ["prioritize", "validate", "monitor", "hold"];
@@ -278,6 +279,7 @@ function methodPanel(vm: DeliverableViewModel, t: T, es: boolean): string {
 export function renderPortableHtml(vm: DeliverableViewModel): string {
   const es = vm.meta.language === "es";
   const t = L(es);
+  const cc = toClientCanvasVM(vm);   // client-level opening: the client is the subject
   const tabs: [string, string][] = [["portfolio", t.tabs.portfolio], ["accounts", t.tabs.accounts]];
   if (vm.capabilities.showCompareTab && vm.accounts.length >= 2) tabs.push(["compare", t.tabs.compare]);
   if (vm.capabilities.showEvidenceTab && vm.accounts.some((a) => a.sources.length)) tabs.push(["evidence", t.tabs.evidence]);
@@ -311,8 +313,10 @@ export function renderPortableHtml(vm: DeliverableViewModel): string {
 <body>
 <div class="pt-root">
   <header class="pt-top">
-    <div class="pt-brand"><span class="pt-logo">Lead<span style="color:#38bdf8">Lens</span></span><span class="pt-kick">${esc(t.portfolioTitle)}</span></div>
-    <div class="pt-meta">${vm.meta.client ? `<span>${esc(t.preparedFor)} <strong>${esc(vm.meta.client)}</strong></span>` : ""}${vm.meta.market ? `<span>· ${esc(vm.meta.market)}</span>` : ""}${vm.meta.tierLabel ? `<span class="pt-tier">${esc(vm.meta.tierLabel)}</span>` : ""}${vm.meta.generatedLabel ? `<span>· ${esc(t.generated)} ${esc(vm.meta.generatedLabel)}</span>` : ""}</div>
+    <div class="pt-brandline"><span class="pt-logo">Lead<span style="color:#0284c7">Lens</span></span><span class="pt-kick">${esc(t.aoi)}</span>${cc.tierLabel ? `<span class="pt-tier">${esc(cc.tierLabel)}</span>` : ""}</div>
+    <h1 class="pt-client">${esc(cc.subject)}</h1>
+    ${cc.objective ? `<div class="pt-obj"><span class="pt-obj-k">${es ? "Objetivo" : "Objective"}</span> ${esc(cc.objective)}</div>` : ""}
+    <div class="pt-clientmeta">${[cc.market, `${cc.opportunityCount} ${es ? "oportunidades evaluadas" : "opportunities evaluated"}`, cc.generatedLabel ? `${esc(t.generated)} ${cc.generatedLabel}` : null].filter(Boolean).map(esc).join(" · ")}</div>
   </header>
   <nav class="pt-tabs" role="tablist">${tabRow}</nav>
   ${dl}
@@ -336,13 +340,19 @@ const CSS = `
 *{box-sizing:border-box}
 body{margin:0;background:#f4f7fb;color:#0f172a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
 .pt-root{min-height:100vh}
-.pt-top{background:linear-gradient(120deg,#0b1220,#12314f 62%,#0c4a6e);color:#fff;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+/* Light client header — the client is the subject (Client Opportunity Canvas) */
+.pt-top{background:#fff;border-top:3px solid #0b1220;border-bottom:1px solid #eef2f6;padding:18px 24px 16px}
+.pt-brandline{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.pt-client{font-size:30px;font-weight:800;letter-spacing:-.025em;color:#0b1220;margin:10px 0 0;line-height:1.1}
+.pt-obj{font-size:13.5px;color:#475569;line-height:1.5;margin-top:8px;max-width:52rem}
+.pt-obj-k{font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#0284c7;margin-right:8px}
+.pt-clientmeta{font-size:12px;color:#94a3b8;margin-top:7px}
 .pt-brand{display:flex;align-items:baseline;gap:12px}
 .pt-logo{font-size:18px;font-weight:800;letter-spacing:-.02em}
 .pt-kick{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#7dd3fc}
 .pt-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12.5px;color:#cbd5e1}
 .pt-meta strong{color:#fff}
-.pt-tier{background:rgba(56,189,248,.16);color:#7dd3fc;border-radius:999px;padding:2px 10px;font-size:11px;font-weight:700}
+.pt-tier{background:#f0f9ff;border:1px solid #e0f2fe;color:#0369a1;border-radius:999px;padding:2px 10px;font-size:11px;font-weight:700}
 .pt-tabs{position:sticky;top:0;z-index:20;display:flex;gap:2px;background:#fff;border-bottom:1px solid #e2e8f0;padding:0 16px;overflow-x:auto}
 .pt-tab{appearance:none;background:none;border:none;border-bottom:2px solid transparent;padding:14px 16px;min-height:44px;font-size:13.5px;font-weight:700;color:#64748b;cursor:pointer;white-space:nowrap;font-family:inherit}
 .pt-tab:hover{color:#0f172a}
