@@ -195,5 +195,28 @@ t("O9 prices unchanged ($7/$25/$59/$129) and product truth intact",
   /\$7/.test(src) && /\$25/.test(src) && /\$59/.test(src) && /\$129/.test(src) &&
   !/LeadLens AI/.test(src) && !/score each opportunity/i.test(src) && !/Submit your ICP/.test(src));
 
+// ─── P. Landing sample adopts the Opportunity Case grammar (V1 adoption) ──────
+t("P1 sample account data carries Opportunity Case fields (role/type/thesis/whyNow)",
+  /role:\s*"Potential Customer"/.test(src) && /oppType:\s*"Supplier Expansion"/.test(src) && /thesis:\s*"/.test(src) && /whyNow:\s*"/.test(src));
+t("P2 sample renders the reasoning-spine grammar labels",
+  /label="What changed"/.test(src) && /label="Why it matters now"/.test(src) && /label="Evidence"/.test(src) && /label="What to validate"/.test(src) && /label="Decision"/.test(src));
+t("P3 Account Role · Opportunity Type kicker rendered", /\{a\.role\} · \{a\.oppType\}/.test(src));
+t("P4 Opportunity Thesis rendered on the sample", /\{a\.thesis\}/.test(src));
+t("P5 Why It Matters Now rendered", /\{a\.whyNow\}/.test(src));
+t("P6 What to Validate is Decision-critical (not just 'Limited by')", /Decision-critical/.test(src) && /Still unknown/.test(src));
+t("P7 evidence compressed on landing (summary + '+N more in the full Opportunity Case')", /in the full Opportunity Case/.test(src));
+t("P8 Fit/Timing/Evidence remain the visible dimensions", /function FTE/.test(src) && /cell\("Fit", fit\)\}\{cell\("Timing", timing\)\}\{cell\("Evidence", evidence\)/.test(src));
+// Scope the state / score / temperature checks to the SAMPLE region only (the
+// WS_ACCOUNTS data + AccountWorkspace render), not dead/unrendered Viz code.
+const sampleSrc = (() => { const a = src.indexOf("const WS_ACCOUNTS"); const b = src.indexOf("function SampleBriefCard"); return a > -1 && b > a ? src.slice(a, b) : ""; })();
+t("P9 three sample accounts, one each Prioritize/Validate/Monitor (no HOLD needed)",
+  (sampleSrc.match(/state:\s*"prioritize"/g) || []).length === 1 && (sampleSrc.match(/state:\s*"validate"/g) || []).length === 1 && (sampleSrc.match(/state:\s*"monitor"/g) || []).length === 1);
+t("P10 landing product wedge unchanged — only Potential Customer role (no Supplier/Partner as account)",
+  !/role:\s*"(Supplier|Distributor|Strategic Partner)"/.test(sampleSrc) && (sampleSrc.match(/role:\s*"Potential Customer"/g) || []).length === 3);
+t("P11 no aggregate score in the sample (no NN/100, N.N/10, 'score')",
+  sampleSrc.length > 0 && !/\b\d{1,3}\s*\/\s*100\b/.test(sampleSrc) && !/\b\d(?:\.\d)?\s*\/\s*10\b/.test(sampleSrc) && !/\bscore\b/i.test(sampleSrc));
+t("P12 no HOT/WARM/COLD or buying-intent certainty in the sample",
+  sampleSrc.length > 0 && !/\bHOT\b|\bWARM\b|\bCOLD\b/.test(sampleSrc) && !/ready to buy|buying intent|will buy|guaranteed/i.test(sampleSrc));
+
 console.log(`\n${passed}/${passed + failed} passed`);
 process.exit(failed ? 1 : 0);

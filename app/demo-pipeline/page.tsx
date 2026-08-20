@@ -3180,30 +3180,41 @@ function FTE({ fit, timing, evidence }: { fit: string; timing: string; evidence:
 type WsSource = { type: string; note: string; age: string; rel: "Direct" | "Corroborating" | "Context" };
 type WsAccount = {
   rank: number; name: string; seg: string; state: string; fresh: string;
+  role: string; oppType: string; thesis: string; whyNow: string;
   changed: string; changedAge: string; fit: string; timing: string; evidence: string;
+  support: string;   // Independent Support summary (compressed evidence)
   ladder: 1 | 2 | 3; sources: WsSource[];
   limiters: { limit: string; validate: string }[]; decisionWhy: string; next: string;
 };
 const WS_ACCOUNTS: WsAccount[] = [
   { rank: 1, name: "Northstar Logistics", seg: "Mid-market logistics · US Midwest", state: "prioritize", fresh: "9d",
+    role: "Potential Customer", oppType: "Supplier Expansion",
+    thesis: "Northstar is building out regional distribution — plausibly widening its supplier and tooling needs before it formalizes procurement, a window to engage ahead of an RFP.",
+    whyNow: "Scaling distribution typically strains an existing supplier network before teams plan for it — the moment to enter is now, not after procurement closes.",
     changed: "Signed a regional distribution agreement", changedAge: "9d ago",
-    fit: "Strong", timing: "Strong", evidence: "Strong", ladder: 3,
+    fit: "Strong", timing: "Strong", evidence: "Strong", support: "Corroborated · 3 sources", ladder: 3,
     sources: [{ type: "Company announcement", note: "distribution agreement", age: "9d", rel: "Direct" }, { type: "Industry publication", note: "new distribution sites", age: "12d", rel: "Corroborating" }, { type: "Careers page", note: "4 operations roles", age: "15d", rel: "Context" }],
-    limiters: [{ limit: "Procurement ownership not confirmed", validate: "Confirm whether regional purchasing is centralized" }],
+    limiters: [{ limit: "Procurement ownership not confirmed", validate: "Confirm whether regional purchasing is centralized at group level" }],
     decisionWhy: "Recent, corroborated expansion with strong fit and timing.",
     next: "Validate regional procurement ownership before outreach." },
   { rank: 2, name: "FreshRoute Foods", seg: "Regional food distribution · US Southeast", state: "validate", fresh: "14d",
+    role: "Potential Customer", oppType: "Supplier Expansion",
+    thesis: "FreshRoute is expanding its distribution footprint — a plausible fit for new supply, but the change is only partly corroborated and the scope is not yet clear.",
+    whyNow: "New sites usually reopen supplier decisions, but only if they touch your category — worth confirming before committing attention.",
     changed: "Opened two new distribution sites", changedAge: "14d ago",
-    fit: "Strong", timing: "Moderate", evidence: "Moderate", ladder: 2,
+    fit: "Strong", timing: "Moderate", evidence: "Moderate", support: "Partly corroborated · 2 sources", ladder: 2,
     sources: [{ type: "Regional press", note: "two new sites", age: "14d", rel: "Direct" }, { type: "Company blog", note: "expansion note", age: "19d", rel: "Context" }],
-    limiters: [{ limit: "Only one direct corroboration", validate: "Corroborate the expansion with a second source" }, { limit: "Category scope unclear", validate: "Confirm the sites affect your target category" }],
+    limiters: [{ limit: "Only one direct corroboration; category scope unclear", validate: "Confirm the new sites affect your target category" }],
     decisionWhy: "Good fit, but the change is only partly corroborated.",
     next: "Corroborate and confirm scope before prioritizing." },
   { rank: 3, name: "Atlas Clinics Group", seg: "Multi-location healthcare · US West", state: "monitor", fresh: "21d",
+    role: "Potential Customer", oppType: "Facility Expansion",
+    thesis: "Atlas is opening clinic locations — a relevant operator, but with no recent operations or sourcing event the timing case is still thin.",
+    whyNow: "Location growth can precede new sourcing, but without an operations signal the window is not open yet.",
     changed: "Announced two new clinic locations", changedAge: "21d ago",
-    fit: "Moderate", timing: "Limited", evidence: "Limited", ladder: 1,
+    fit: "Moderate", timing: "Limited", evidence: "Limited", support: "Single-sourced · 2 sources", ladder: 1,
     sources: [{ type: "Local news", note: "two clinic locations", age: "21d", rel: "Direct" }, { type: "Company site", note: "locations page", age: "24d", rel: "Context" }],
-    limiters: [{ limit: "No recent operations or sourcing event", validate: "Watch for an operations or vendor signal" }],
+    limiters: [{ limit: "No recent operations or sourcing event", validate: "Watch for an operations or vendor signal before acting" }],
     decisionWhy: "Relevant account, but timing evidence is thin.",
     next: "Monitor for a fresher timing signal before acting." },
 ];
@@ -3284,7 +3295,8 @@ function AccountWorkspace() {
 
         {/* Selected-account intelligence canvas */}
         <div role="tabpanel" id="ll-ws-panel" key={sel} className="ll-ws-fade" style={{ background: "#fff", borderRadius: ".85rem", padding: ".85rem .95rem", minWidth: 0 }}>
-          {/* Account + decision + F/T/E */}
+          {/* Opportunity Case header: role · type → account + decision → thesis → F/T/E */}
+          <div style={{ fontSize: ".58rem", fontWeight: 800, letterSpacing: ".09em", textTransform: "uppercase" as const, color: "#0284c7", marginBottom: ".3rem" }}>{a.role} · {a.oppType}</div>
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: ".5rem" }}>
             <div style={{ minWidth: 0 }}>
               <div style={{ fontWeight: 800, fontSize: ".98rem", color: "#0f172a", letterSpacing: "-.02em", lineHeight: 1.15 }}>{a.name}</div>
@@ -3292,50 +3304,53 @@ function AccountWorkspace() {
             </div>
             <DecisionPill state={a.state} />
           </div>
-          <div style={{ margin: ".6rem 0 .85rem" }}><FTE fit={a.fit} timing={a.timing} evidence={a.evidence} /></div>
+          <p style={{ fontSize: ".76rem", color: "#475569", lineHeight: 1.5, margin: ".5rem 0 0", fontWeight: 500 }}>{a.thesis}</p>
+          <div style={{ margin: ".55rem 0 .8rem", paddingTop: ".55rem", borderTop: "1px solid #eef2f7" }}><FTE fit={a.fit} timing={a.timing} evidence={a.evidence} /></div>
 
-          {/* Analytical spine: change → evidence + limiters → validate → decision */}
-          <CanvasStep dotColor="#0f172a" label="What changed" meta={a.changedAge}>
+          {/* Reasoning spine: change → why now → evidence → validate → decision */}
+          <CanvasStep dotColor="#0ea5e9" label="What changed" meta={a.changedAge}>
             <div style={{ fontSize: ".86rem", fontWeight: 700, color: "#0f172a", lineHeight: 1.3 }}>{a.changed}</div>
           </CanvasStep>
 
-          <CanvasStep dotColor="#0284c7" label="Supported by">
-            {/* Corroboration ladder */}
-            <div style={{ display: "flex", alignItems: "center", gap: ".3rem", marginBottom: ".45rem" }}>
+          <CanvasStep dotColor="#94a3b8" label="Why it matters now">
+            <div style={{ fontSize: ".76rem", color: "#334155", lineHeight: 1.45 }}>{a.whyNow}</div>
+          </CanvasStep>
+
+          <CanvasStep dotColor="#0284c7" label="Evidence">
+            <div style={{ display: "flex", alignItems: "baseline", gap: ".5rem", flexWrap: "wrap" as const, fontSize: ".72rem", color: "#475569", marginBottom: ".4rem" }}>
+              <span style={{ fontWeight: 700, color: STRENGTH[a.evidence]?.color ?? "#0e7490" }}>{a.evidence}</span>
+              <span>· {a.support}</span>
+              <span>· latest {a.sources[0].age}</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: ".3rem", marginBottom: ".4rem" }}>
               {LADDER.map((step, i) => {
                 const reached = i < a.ladder;
                 return (
                   <span key={step} style={{ display: "inline-flex", alignItems: "center", gap: ".3rem" }}>
-                    <span style={{ fontSize: ".62rem", fontWeight: reached ? 700 : 500, color: reached ? "#0f172a" : "#cbd5e1" }}>{step}</span>
-                    {i < 2 && <span style={{ color: reached && i + 1 < a.ladder ? "#0284c7" : "#dbe3ec", fontSize: ".62rem" }}>→</span>}
+                    <span style={{ fontSize: ".6rem", fontWeight: reached ? 700 : 500, color: reached ? "#0f172a" : "#cbd5e1" }}>{step}</span>
+                    {i < 2 && <span style={{ color: reached && i + 1 < a.ladder ? "#0284c7" : "#dbe3ec", fontSize: ".6rem" }}>→</span>}
                   </span>
                 );
               })}
             </div>
-            {a.sources.map((src, i) => (
-              <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: ".5rem", padding: ".22rem 0", borderTop: i === 0 ? "none" : "1px solid #f4f7fa" }}>
-                <span style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: ".72rem" }}>
-                  <span style={{ fontWeight: 600, color: "#0f172a" }}>{src.type}</span> <span style={{ color: "#64748b" }}>— {src.note}</span>
-                </span>
-                <span style={{ display: "inline-flex", alignItems: "center", gap: ".55rem", flexShrink: 0 }}>
-                  <span style={{ display: "inline-flex", alignItems: "center", gap: ".25rem", fontSize: ".6rem", fontWeight: 700, color: REL_COLOR[src.rel] }}>
-                    <span style={{ width: 5, height: 5, borderRadius: "50%", background: REL_COLOR[src.rel] }} />{src.rel}
-                  </span>
-                  <span style={{ color: "#94a3b8", fontSize: ".64rem", width: "2.4ch", textAlign: "right" }}>{src.age}</span>
-                </span>
-              </div>
-            ))}
+            {/* Compressed: the primary supporting claim (full source list lives in the deliverable) */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: ".5rem", fontSize: ".72rem" }}>
+              <span style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const }}>
+                <span style={{ fontWeight: 600, color: "#0f172a" }}>{a.sources[0].type}</span> <span style={{ color: "#64748b" }}>— {a.sources[0].note}</span>
+              </span>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: ".25rem", fontSize: ".6rem", fontWeight: 700, color: REL_COLOR[a.sources[0].rel], flexShrink: 0 }}>
+                <span style={{ width: 5, height: 5, borderRadius: "50%", background: REL_COLOR[a.sources[0].rel] }} />{a.sources[0].rel}
+              </span>
+            </div>
+            {a.sources.length > 1 && <div style={{ fontSize: ".62rem", color: "#94a3b8", marginTop: ".25rem" }}>+{a.sources.length - 1} more source{a.sources.length > 2 ? "s" : ""} in the full Opportunity Case</div>}
           </CanvasStep>
 
-          <CanvasStep dotColor="#64748b" label="Limited by">
-            {a.limiters.map((l, i) => (
-              <div key={i} style={{ padding: i === 0 ? "0 0 .35rem" : ".35rem 0", borderTop: i === 0 ? "none" : "1px solid #f4f7fa" }}>
-                <div style={{ fontSize: ".76rem", color: "#334155", fontWeight: 600, lineHeight: 1.35 }}>{l.limit}</div>
-                <div style={{ display: "flex", gap: ".35rem", marginTop: ".15rem", fontSize: ".7rem", color: "#0369a1", lineHeight: 1.35 }}>
-                  <span style={{ fontWeight: 700, flexShrink: 0 }}>Validate →</span><span style={{ minWidth: 0 }}>{l.validate}</span>
-                </div>
-              </div>
-            ))}
+          <CanvasStep dotColor="#d97706" label="What to validate">
+            <div style={{ display: "flex", alignItems: "baseline", gap: ".4rem", flexWrap: "wrap" as const }}>
+              <span style={{ fontSize: ".54rem", fontWeight: 800, textTransform: "uppercase" as const, letterSpacing: ".04em", color: "#b45309", background: "#fffbeb", border: "1px solid #fde9c8", borderRadius: 4, padding: ".05rem .3rem" }}>Decision-critical</span>
+              <span style={{ fontSize: ".76rem", color: "#0f172a", fontWeight: 600, lineHeight: 1.4 }}>{a.limiters[0].validate}</span>
+            </div>
+            <div style={{ fontSize: ".68rem", color: "#94a3b8", marginTop: ".25rem", lineHeight: 1.4 }}><span style={{ fontWeight: 700 }}>Still unknown</span> · {a.limiters[0].limit}</div>
           </CanvasStep>
 
           <CanvasStep dotColor={dstate.dot} last label="Decision">

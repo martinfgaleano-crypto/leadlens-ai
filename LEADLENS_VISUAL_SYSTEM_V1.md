@@ -67,5 +67,26 @@ What-Changed node is filled Interactive Accent; the Decision node is filled Prio
 closes the case. This makes the Case one coherent object, recognizable without the logo.
 
 ## Where applied
-Portable deliverable (live), the two pilots. The workspace and landing sample reuse the same
-tokens/grammar in a later pass (see the sprint report's landing decision).
+Portable deliverable (live), the two pilots, and the **landing product sample** (live — see
+Landing Compression). The authenticated workspace reuses the same tokens/grammar in a later pass.
+
+## Landing Compression (adoption V1)
+The public landing product sample now renders a **compressed sibling** of the Opportunity Case —
+not a marketing recreation — sharing the palette, decision states, Fit/Timing/Evidence treatment,
+What-Changed signature, evidence semantics and the reasoning-spine identity. It shows ~25% of the
+full framework:
+- **Mini Opportunity Portfolio** (3 synthetic B2B accounts — one Prioritize / Validate / Monitor;
+  account · decision · freshness).
+- **Selected Opportunity Case**: Account Role · Opportunity Type → account + decision → Opportunity
+  Thesis (~35 words) → Fit/Timing/Evidence → spine bands **What Changed → Why It Matters Now →
+  Evidence (compressed: strength · independent support · latest + ladder + primary source + "+N
+  more in the full Opportunity Case") → What to Validate (Decision-critical + one "Still unknown")
+  → Decision**.
+- **Omitted on landing** (lives in the deliverable): full source list, full uncertainty, all
+  validations, Compare, Portfolio Intelligence, Decision Basis, methodology, Account Memory, the
+  secondary dimensions (Potential Value / Feasibility).
+- Node colors: What Changed = Interactive Accent (`#0ea5e9`, filled), Why It Matters = slate,
+  Evidence = Intelligence Blue, Validate = amber, Decision = the decision-state dot.
+- Synthetic sample only; wedge preserved (**Potential Customer** role only — no
+  Supplier/Distributor/Partner on the public landing yet). No aggregate score, no HOT/WARM/COLD,
+  no buying-intent certainty. Everything outside the sample stays frozen.
