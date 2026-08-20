@@ -58,6 +58,29 @@ current flow-forward landing sample. Screenshots (1280 + 390) captured for C and
   supporting cards. Selecting an opportunity (integration step) opens the existing Opportunity
   Case reasoning spine.
 
+## LIVE integration status (updated)
+
+**SHIPPED — Landing (real, integrated, not pilot-only):** the landing product sample is now the
+approved **Client Opportunity Canvas as a mini interactive LeadLens workspace** — `AccountWorkspace`
+replaced by `ClientCanvasSample` in `app/demo-pipeline/page.tsx`. Client **Asteron Systems** is the
+subject; the discovered accounts are opportunities inside. Five tabs (one synthetic fixture powers
+all): **Overview** (Client Canvas — LeadLens Read + Where-to-Focus opportunity landscape +
+supporting column: what's changing / evidence coverage / what to validate) · **Opportunity Cases**
+(the frozen reasoning spine via a reused `CaseSpine`, account selector) · **Evidence** (claim-first
+rows with Direct/Corroborating/Context) · **Compare** (Fit/Timing/Evidence + Key unknown + Validate,
+no aggregate score) · **Strategy** (portfolio read + recommended sequence tied to the portfolio).
+Light composition (navy = text + a 3px top rule; the giant dark header is gone). Opportunity Type
+corrected Supplier→**Operations Expansion** (§66). Verified live: all 5 tabs render, tile→Case
+drill-down works, 0 horizontal overflow, responsive (grids collapse ≤720; account list becomes a
+horizontal rail on mobile). Landing outside the sample unchanged. Guards **102/102** (78 frozen +
+Section P Opportunity-Case + **Section Q client-canvas/tabs**). tsc + build clean; deliverable
+52/52, portable 45/45, continuity 17/17.
+
+**PENDING — Portable + Amor (immediate next P0):** the portable deliverable still opens on the
+V1 portfolio workspace; wiring the Client Canvas as its opening surface + regenerating Amor (AMOR
+DE GEA as the client header) via a shared `ClientCanvasVM` is the next commit, per the plan below.
+Portable/Amor were **not changed** this turn (portable 45/45 unchanged) — not claimed as shipped.
+
 ## Status — direction locked; integration is the next step (honest)
 Per the sprint's own "STOP before finalizing / render + compare + select, then integrate only
 after it passes" workflow, this turn **locks the corrected client-level direction** with rendered

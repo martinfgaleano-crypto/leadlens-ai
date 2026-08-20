@@ -1652,6 +1652,16 @@ export default function DemoPipelinePage() {
           .ll-ws-rail { display: none !important; }
           .ll-ws-chips { display: flex !important; }
         }
+        /* Client Opportunity Canvas sample: collapse spatial grids on phones */
+        .ll-cc-tabs::-webkit-scrollbar { display: none; }
+        .ll-cc-tabs { scrollbar-width: none; }
+        .ll-cc-tabs button:focus-visible { outline: 2px solid #0284c7; outline-offset: -2px; }
+        @media (max-width: 720px) {
+          .ll-cc-overview { grid-template-columns: 1fr !important; }
+          .ll-cc-cases { grid-template-columns: 1fr !important; }
+          .ll-cc-caselist { flex-direction: row !important; overflow-x: auto; gap: .4rem !important; }
+          .ll-cc-caselist button { flex: 0 0 auto; min-width: 9rem; border: 1px solid #e6ebf1 !important; }
+        }
         @keyframes llwsfade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
         .ll-ws-fade { animation: llwsfade .22s ease; }
         @media (prefers-reduced-motion: reduce) {
@@ -1894,7 +1904,7 @@ export default function DemoPipelinePage() {
             </div>
             {/* Right column — signature interactive account workspace */}
             <div className="ll-hero-mock">
-              <AccountWorkspace />
+              <ClientCanvasSample />
             </div>
           </div>
         </div>
@@ -3188,7 +3198,7 @@ type WsAccount = {
 };
 const WS_ACCOUNTS: WsAccount[] = [
   { rank: 1, name: "Northstar Logistics", seg: "Mid-market logistics · US Midwest", state: "prioritize", fresh: "9d",
-    role: "Potential Customer", oppType: "Supplier Expansion",
+    role: "Potential Customer", oppType: "Operations Expansion",
     thesis: "Northstar is building out regional distribution — plausibly widening its supplier and tooling needs before it formalizes procurement, a window to engage ahead of an RFP.",
     whyNow: "Scaling distribution typically strains an existing supplier network before teams plan for it — the moment to enter is now, not after procurement closes.",
     changed: "Signed a regional distribution agreement", changedAge: "9d ago",
@@ -3198,7 +3208,7 @@ const WS_ACCOUNTS: WsAccount[] = [
     decisionWhy: "Recent, corroborated expansion with strong fit and timing.",
     next: "Validate regional procurement ownership before outreach." },
   { rank: 2, name: "FreshRoute Foods", seg: "Regional food distribution · US Southeast", state: "validate", fresh: "14d",
-    role: "Potential Customer", oppType: "Supplier Expansion",
+    role: "Potential Customer", oppType: "Operations Expansion",
     thesis: "FreshRoute is expanding its distribution footprint — a plausible fit for new supply, but the change is only partly corroborated and the scope is not yet clear.",
     whyNow: "New sites usually reopen supplier decisions, but only if they touch your category — worth confirming before committing attention.",
     changed: "Opened two new distribution sites", changedAge: "14d ago",
@@ -3241,131 +3251,220 @@ function CanvasStep({ dotColor, last, label, meta, children }: { dotColor: strin
   );
 }
 
-function AccountWorkspace() {
+// Synthetic CLIENT that is the subject of the sample canvas. The discovered
+// accounts (WS_ACCOUNTS) are the opportunities that live INSIDE it. Illustrative.
+const WS_CLIENT = {
+  name: "Asteron Systems",
+  objective: "Find enterprise accounts where operational expansion creates a credible near-term software opportunity.",
+  market: "United States · Enterprise logistics & operations software",
+  read: "Two accounts merit attention now on recent, corroborated operational expansion; one more needs validation of category scope. The strongest pattern is regional distribution build-outs creating near-term tooling needs.",
+  patterns: ["All three accounts show operational expansion in the last 30 days.", "Distribution build-outs are the dominant trigger.", "Healthcare facility growth is early — no sourcing signal yet."],
+  coverage: [["3/3", "with dated evidence"], ["2", "independently corroborated"], ["9d", "latest evidence"]] as [string, string][],
+  strategy: [
+    "Prioritize Northstar Logistics first — timing and evidence are strongest and the change is corroborated.",
+    "Validate FreshRoute's category scope before allocating active attention.",
+    "Monitor Atlas Clinics for an operations or sourcing signal before acting.",
+  ],
+};
+
+// The Opportunity Case reasoning spine (frozen grammar) for one account — reused
+// by the Opportunity Cases tab. Extracted from the previous hero canvas.
+function CaseSpine({ a }: { a: WsAccount }) {
+  const dstate = DECISION_STATES[a.state];
+  return (
+    <div>
+      <div style={{ fontSize: ".58rem", fontWeight: 800, letterSpacing: ".09em", textTransform: "uppercase" as const, color: "#0284c7", marginBottom: ".3rem" }}>{a.role} · {a.oppType}</div>
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: ".5rem" }}>
+        <div style={{ minWidth: 0 }}>
+          <div style={{ fontWeight: 800, fontSize: ".98rem", color: "#0f172a", letterSpacing: "-.02em", lineHeight: 1.15 }}>{a.name}</div>
+          <div style={{ fontSize: ".66rem", color: "#64748b", marginTop: ".12rem" }}>{a.seg}</div>
+        </div>
+        <DecisionPill state={a.state} />
+      </div>
+      <p style={{ fontSize: ".76rem", color: "#475569", lineHeight: 1.5, margin: ".5rem 0 0", fontWeight: 500 }}>{a.thesis}</p>
+      <div style={{ margin: ".55rem 0 .8rem", paddingTop: ".55rem", borderTop: "1px solid #eef2f7" }}><FTE fit={a.fit} timing={a.timing} evidence={a.evidence} /></div>
+      <CanvasStep dotColor="#0ea5e9" label="What changed" meta={a.changedAge}>
+        <div style={{ fontSize: ".86rem", fontWeight: 700, color: "#0f172a", lineHeight: 1.3 }}>{a.changed}</div>
+      </CanvasStep>
+      <CanvasStep dotColor="#94a3b8" label="Why it matters now">
+        <div style={{ fontSize: ".76rem", color: "#334155", lineHeight: 1.45 }}>{a.whyNow}</div>
+      </CanvasStep>
+      <CanvasStep dotColor="#0284c7" label="Evidence">
+        <div style={{ display: "flex", alignItems: "baseline", gap: ".5rem", flexWrap: "wrap" as const, fontSize: ".72rem", color: "#475569", marginBottom: ".4rem" }}>
+          <span style={{ fontWeight: 700, color: STRENGTH[a.evidence]?.color ?? "#0e7490" }}>{a.evidence}</span><span>· {a.support}</span><span>· latest {a.sources[0].age}</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: ".3rem", marginBottom: ".4rem" }}>
+          {LADDER.map((step, i) => { const reached = i < a.ladder; return (
+            <span key={step} style={{ display: "inline-flex", alignItems: "center", gap: ".3rem" }}>
+              <span style={{ fontSize: ".6rem", fontWeight: reached ? 700 : 500, color: reached ? "#0f172a" : "#cbd5e1" }}>{step}</span>
+              {i < 2 && <span style={{ color: reached && i + 1 < a.ladder ? "#0284c7" : "#dbe3ec", fontSize: ".6rem" }}>→</span>}
+            </span>); })}
+        </div>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: ".5rem", fontSize: ".72rem" }}>
+          <span style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const }}><span style={{ fontWeight: 600, color: "#0f172a" }}>{a.sources[0].type}</span> <span style={{ color: "#64748b" }}>— {a.sources[0].note}</span></span>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: ".25rem", fontSize: ".6rem", fontWeight: 700, color: REL_COLOR[a.sources[0].rel], flexShrink: 0 }}><span style={{ width: 5, height: 5, borderRadius: "50%", background: REL_COLOR[a.sources[0].rel] }} />{a.sources[0].rel}</span>
+        </div>
+        {a.sources.length > 1 && <div style={{ fontSize: ".62rem", color: "#94a3b8", marginTop: ".25rem" }}>+{a.sources.length - 1} more source{a.sources.length > 2 ? "s" : ""} in the full Opportunity Case</div>}
+      </CanvasStep>
+      <CanvasStep dotColor="#d97706" label="What to validate">
+        <div style={{ display: "flex", alignItems: "baseline", gap: ".4rem", flexWrap: "wrap" as const }}>
+          <span style={{ fontSize: ".54rem", fontWeight: 800, textTransform: "uppercase" as const, letterSpacing: ".04em", color: "#b45309", background: "#fffbeb", border: "1px solid #fde9c8", borderRadius: 4, padding: ".05rem .3rem" }}>Decision-critical</span>
+          <span style={{ fontSize: ".76rem", color: "#0f172a", fontWeight: 600, lineHeight: 1.4 }}>{a.limiters[0].validate}</span>
+        </div>
+        <div style={{ fontSize: ".68rem", color: "#94a3b8", marginTop: ".25rem", lineHeight: 1.4 }}><span style={{ fontWeight: 700 }}>Still unknown</span> · {a.limiters[0].limit}</div>
+      </CanvasStep>
+      <CanvasStep dotColor={dstate.dot} last label="Decision">
+        <div style={{ display: "flex", alignItems: "center", gap: ".5rem", flexWrap: "wrap", marginBottom: ".2rem" }}><DecisionPill state={a.state} /><span style={{ fontSize: ".72rem", color: "#475569" }}>{a.decisionWhy}</span></div>
+        <div style={{ fontSize: ".78rem", color: "#0f172a", fontWeight: 600, lineHeight: 1.35, marginTop: ".2rem" }}>{a.next}</div>
+      </CanvasStep>
+    </div>
+  );
+}
+
+const CC_TABS = ["overview", "cases", "evidence", "compare", "strategy"] as const;
+type CcTab = typeof CC_TABS[number];
+const CC_TAB_LABEL: Record<CcTab, string> = { overview: "Overview", cases: "Opportunity Cases", evidence: "Evidence", compare: "Compare", strategy: "Strategy" };
+const zk: React.CSSProperties = { fontSize: ".58rem", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase" as const, color: "#94a3b8", margin: "0 0 .5rem" };
+const scard: React.CSSProperties = { border: "1px solid #e6ebf1", borderRadius: ".7rem", padding: ".7rem .8rem", background: "#fafbfc" };
+
+// The signature LeadLens surface: CLIENT → Opportunity Canvas → Cases → Evidence
+// → Compare → Strategy. Light, client-as-subject; opportunities live inside.
+function ClientCanvasSample() {
+  const [tab, setTab] = useState<CcTab>("overview");
   const [sel, setSel] = useState(0);
   const a = WS_ACCOUNTS[sel];
-  const dstate = DECISION_STATES[a.state];
+  const open = (i: number) => { setSel(i); setTab("cases"); };
+  const dist = (["prioritize", "validate", "monitor", "hold"] as const).map(s => ({ s, n: WS_ACCOUNTS.filter(x => x.state === s).length })).filter(x => x.n > 0);
 
   return (
-    <div style={{ background: "linear-gradient(160deg,#0b1220 0%,#0f2743 62%,#0c3a5e 100%)", borderRadius: "1.15rem", padding: ".7rem", boxShadow: "0 24px 64px rgba(11,18,32,.28), 0 4px 20px rgba(0,0,0,.12)", border: "1px solid #17324f" }}>
-      {/* Stage header */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: ".5rem", padding: ".25rem .5rem .7rem" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: ".45rem", minWidth: 0 }}>
-          <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#22c55e", boxShadow: "0 0 0 3px rgba(34,197,94,.18)", flexShrink: 0 }} />
-          <span style={{ color: "#fff", fontWeight: 700, fontSize: ".8rem", letterSpacing: "-.01em" }}>Opportunity Portfolio</span>
+    <div style={{ background: "#fff", border: "1px solid #e6ebf1", borderTop: "3px solid #0b1220", borderRadius: ".9rem", boxShadow: "0 16px 44px rgba(15,23,42,.10)", overflow: "hidden" }}>
+      {/* Persistent client header */}
+      <div style={{ padding: "1rem 1.1rem .55rem" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: ".5rem" }}>
+          <span style={{ display: "inline-flex", alignItems: "baseline", gap: ".5rem" }}>
+            <span style={{ fontSize: ".82rem", fontWeight: 800, color: "#0b1220" }}>Lead<span style={{ color: "#0284c7" }}>Lens</span></span>
+            <span style={{ fontSize: ".54rem", fontWeight: 700, letterSpacing: ".13em", textTransform: "uppercase" as const, color: "#94a3b8" }}>Account Opportunity Intelligence</span>
+          </span>
+          <span style={{ color: "#0369a1", background: "#f0f9ff", border: "1px solid #e0f2fe", fontSize: ".54rem", fontWeight: 700, letterSpacing: ".05em", textTransform: "uppercase" as const, padding: ".15rem .5rem", borderRadius: 999, flexShrink: 0 }}>Sample</span>
         </div>
-        <span style={{ color: "#7dd3fc", background: "rgba(125,211,252,.12)", border: "1px solid rgba(125,211,252,.25)", fontSize: ".56rem", fontWeight: 700, letterSpacing: ".05em", textTransform: "uppercase", padding: ".15rem .5rem", borderRadius: 999, flexShrink: 0 }}>Sample</span>
+        <div style={{ fontSize: "1.5rem", fontWeight: 800, letterSpacing: "-.025em", color: "#0b1220", marginTop: ".45rem", lineHeight: 1.1 }}>{WS_CLIENT.name}</div>
+        <div style={{ fontSize: ".72rem", color: "#475569", lineHeight: 1.45, marginTop: ".35rem" }}>
+          <span style={{ fontSize: ".55rem", fontWeight: 800, letterSpacing: ".06em", textTransform: "uppercase" as const, color: "#0284c7", marginRight: ".4rem" }}>Objective</span>{WS_CLIENT.objective}
+        </div>
+        <div style={{ fontSize: ".62rem", color: "#94a3b8", marginTop: ".3rem" }}>{WS_CLIENT.market} · <strong style={{ color: "#475569" }}>{WS_ACCOUNTS.length}</strong> opportunities evaluated</div>
       </div>
 
-      <div className="ll-ws-body" style={{ gap: ".7rem" }}>
-        {/* Ranked account rail (desktop/tablet) */}
-        <div className="ll-ws-rail" role="tablist" aria-label="Accounts" aria-orientation="vertical" style={{ display: "flex", flexDirection: "column", gap: ".35rem" }}>
-          {WS_ACCOUNTS.map((acc, i) => {
-            const st = DECISION_STATES[acc.state]; const on = i === sel;
-            return (
-              <button key={acc.name} role="tab" aria-selected={on} aria-controls="ll-ws-panel" tabIndex={on ? 0 : -1}
-                onClick={() => setSel(i)}
-                onKeyDown={e => { if (e.key === "ArrowDown" || e.key === "ArrowRight") { e.preventDefault(); setSel((i + 1) % WS_ACCOUNTS.length); } if (e.key === "ArrowUp" || e.key === "ArrowLeft") { e.preventDefault(); setSel((i - 1 + WS_ACCOUNTS.length) % WS_ACCOUNTS.length); } }}
-                style={{ position: "relative", textAlign: "left", cursor: "pointer", fontFamily: "inherit", borderRadius: ".5rem", padding: ".45rem .55rem .45rem .7rem", border: "none", background: on ? "rgba(56,189,248,.16)" : "transparent", transition: "background .18s" }}>
-                {on && <span aria-hidden style={{ position: "absolute", left: 0, top: 8, bottom: 8, width: 3, borderRadius: 3, background: "#38bdf8" }} />}
-                <div style={{ display: "flex", alignItems: "center", gap: ".4rem" }}>
-                  <span style={{ color: "#5f7c9c", fontSize: ".62rem", fontWeight: 800, width: "1ch", flexShrink: 0 }}>{acc.rank}</span>
-                  <span style={{ width: 6, height: 6, borderRadius: "50%", background: st.dot, flexShrink: 0 }} />
-                  <span style={{ color: on ? "#fff" : "#b9cbe0", fontWeight: 700, fontSize: ".73rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{acc.name}</span>
+      {/* Tab rail */}
+      <div role="tablist" aria-label="LeadLens sample" className="ll-cc-tabs" style={{ display: "flex", gap: ".1rem", padding: "0 .8rem", borderBottom: "1px solid #eef2f6", overflowX: "auto" }}>
+        {CC_TABS.map(tb => { const on = tb === tab; return (
+          <button key={tb} role="tab" aria-selected={on} onClick={() => setTab(tb)}
+            style={{ appearance: "none", background: "none", border: "none", borderBottom: `2px solid ${on ? "#0284c7" : "transparent"}`, padding: ".55rem .55rem", fontFamily: "inherit", fontSize: ".68rem", fontWeight: 700, color: on ? "#0369a1" : "#64748b", cursor: "pointer", whiteSpace: "nowrap" as const }}>
+            {CC_TAB_LABEL[tb]}
+          </button>); })}
+      </div>
+
+      <div key={tab} className="ll-ws-fade" style={{ padding: "1rem 1.1rem 1.1rem", minHeight: "18rem" }}>
+        {/* OVERVIEW — the Client Opportunity Canvas */}
+        {tab === "overview" && (
+          <div>
+            <div style={{ padding: ".1rem 0 .1rem .7rem", borderLeft: "3px solid #0284c7", marginBottom: ".9rem" }}>
+              <div style={{ fontSize: ".55rem", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase" as const, color: "#0284c7", marginBottom: ".25rem" }}>LeadLens Read</div>
+              <div style={{ fontSize: ".82rem", color: "#0f172a", lineHeight: 1.5 }}>{WS_CLIENT.read}</div>
+            </div>
+            <div className="ll-cc-overview" style={{ display: "grid", gridTemplateColumns: "1.7fr 1fr", gap: ".9rem", alignItems: "start" }}>
+              <div>
+                <div style={zk}>Where to focus · Opportunity landscape</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: ".5rem" }}>
+                  {WS_ACCOUNTS.map((acc, i) => { const st = DECISION_STATES[acc.state]; return (
+                    <button key={acc.name} onClick={() => open(i)} style={{ appearance: "none", textAlign: "left", cursor: "pointer", fontFamily: "inherit", border: `1px solid ${i === 0 ? "#bae6fd" : "#e6ebf1"}`, borderRadius: ".6rem", padding: ".6rem .7rem", background: i === 0 ? "linear-gradient(180deg,#f5fbff,#fff 65%)" : "#fff", width: "100%" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: ".45rem" }}>
+                        <span style={{ fontSize: ".64rem", fontWeight: 800, color: i === 0 ? "#0284c7" : "#94a3b8", width: "1ch" }}>{acc.rank}</span>
+                        <span style={{ fontSize: ".82rem", fontWeight: 800, color: "#0f172a", flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const }}>{acc.name}</span>
+                        <DecisionPill state={acc.state} small />
+                      </div>
+                      <div style={{ fontSize: ".6rem", color: "#94a3b8", fontWeight: 600, paddingLeft: "1.3rem", marginTop: ".15rem" }}>{acc.role} · {acc.oppType}</div>
+                      <div style={{ paddingLeft: "1.3rem", marginTop: ".4rem" }}><FTE fit={acc.fit} timing={acc.timing} evidence={acc.evidence} /></div>
+                      <div style={{ display: "flex", alignItems: "center", gap: ".4rem", fontSize: ".68rem", color: "#475569", paddingLeft: "1.3rem", marginTop: ".4rem" }}>
+                        <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#0ea5e9", flexShrink: 0 }} />{acc.changed}<span style={{ color: "#94a3b8", marginLeft: "auto" }}>{acc.fresh}</span>
+                      </div>
+                    </button>); })}
                 </div>
-                <div style={{ color: "#6f8bab", fontSize: ".58rem", textTransform: "uppercase", letterSpacing: ".04em", fontWeight: 700, paddingLeft: "1.75rem", marginTop: ".1rem" }}>{st.label} · {acc.fresh}</div>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Account switcher (mobile) */}
-        <div className="ll-ws-chips" role="tablist" aria-label="Accounts" style={{ background: "rgba(255,255,255,.04)", borderRadius: ".6rem", padding: ".2rem" }}>
-          {WS_ACCOUNTS.map((acc, i) => {
-            const st = DECISION_STATES[acc.state]; const on = i === sel;
-            return (
-              <button key={acc.name} role="tab" aria-selected={on} aria-controls="ll-ws-panel"
-                onClick={() => setSel(i)}
-                style={{ flex: 1, minWidth: 0, cursor: "pointer", fontFamily: "inherit", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: ".3rem", borderRadius: ".45rem", padding: ".4rem .3rem", border: "none", background: on ? "#fff" : "transparent", color: on ? "#0f172a" : "#b9cbe0", fontWeight: 700, fontSize: ".72rem", whiteSpace: "nowrap", transition: "background .18s" }}>
-                <span style={{ width: 6, height: 6, borderRadius: "50%", background: st.dot, flexShrink: 0 }} />{acc.name.split(" ")[0]}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Selected-account intelligence canvas */}
-        <div role="tabpanel" id="ll-ws-panel" key={sel} className="ll-ws-fade" style={{ background: "#fff", borderRadius: ".85rem", padding: ".85rem .95rem", minWidth: 0 }}>
-          {/* Opportunity Case header: role · type → account + decision → thesis → F/T/E */}
-          <div style={{ fontSize: ".58rem", fontWeight: 800, letterSpacing: ".09em", textTransform: "uppercase" as const, color: "#0284c7", marginBottom: ".3rem" }}>{a.role} · {a.oppType}</div>
-          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: ".5rem" }}>
-            <div style={{ minWidth: 0 }}>
-              <div style={{ fontWeight: 800, fontSize: ".98rem", color: "#0f172a", letterSpacing: "-.02em", lineHeight: 1.15 }}>{a.name}</div>
-              <div style={{ fontSize: ".66rem", color: "#64748b", marginTop: ".12rem" }}>{a.seg}</div>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: ".7rem" }}>
+                <div style={scard}><div style={zk}>What&apos;s changing</div><ul style={{ margin: 0, paddingLeft: ".9rem", fontSize: ".68rem", color: "#475569", lineHeight: 1.55 }}>{WS_CLIENT.patterns.map((p, i) => <li key={i}>{p}</li>)}</ul></div>
+                <div style={scard}><div style={zk}>Evidence coverage</div><div style={{ display: "flex", gap: ".9rem", flexWrap: "wrap" as const }}>{WS_CLIENT.coverage.map(([n, l], i) => <div key={i}><div style={{ fontSize: "1.05rem", fontWeight: 800, color: "#0e7490", lineHeight: 1 }}>{n}</div><div style={{ fontSize: ".54rem", textTransform: "uppercase" as const, letterSpacing: ".04em", color: "#94a3b8", fontWeight: 700 }}>{l}</div></div>)}</div></div>
+                <div style={{ ...scard, background: "#fffbeb", borderColor: "#fde9c8" }}><div style={zk}>What to validate</div><ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: ".4rem" }}>{WS_ACCOUNTS.map((acc, i) => <li key={i}><span style={{ display: "block", fontSize: ".58rem", fontWeight: 800, color: "#b45309" }}>{acc.name}</span><span style={{ fontSize: ".66rem", color: "#0f172a", lineHeight: 1.35 }}>{acc.limiters[0].validate}</span></li>)}</ul></div>
+              </div>
             </div>
-            <DecisionPill state={a.state} />
           </div>
-          <p style={{ fontSize: ".76rem", color: "#475569", lineHeight: 1.5, margin: ".5rem 0 0", fontWeight: 500 }}>{a.thesis}</p>
-          <div style={{ margin: ".55rem 0 .8rem", paddingTop: ".55rem", borderTop: "1px solid #eef2f7" }}><FTE fit={a.fit} timing={a.timing} evidence={a.evidence} /></div>
+        )}
 
-          {/* Reasoning spine: change → why now → evidence → validate → decision */}
-          <CanvasStep dotColor="#0ea5e9" label="What changed" meta={a.changedAge}>
-            <div style={{ fontSize: ".86rem", fontWeight: 700, color: "#0f172a", lineHeight: 1.3 }}>{a.changed}</div>
-          </CanvasStep>
+        {/* OPPORTUNITY CASES — full reasoning spine per account */}
+        {tab === "cases" && (
+          <div className="ll-cc-cases" style={{ display: "grid", gridTemplateColumns: "10rem 1fr", gap: ".9rem", alignItems: "start" }}>
+            <div className="ll-cc-caselist" role="tablist" aria-label="Opportunities" style={{ display: "flex", flexDirection: "column", gap: ".3rem" }}>
+              {WS_ACCOUNTS.map((acc, i) => { const st = DECISION_STATES[acc.state]; const on = i === sel; return (
+                <button key={acc.name} role="tab" aria-selected={on} onClick={() => setSel(i)} style={{ appearance: "none", textAlign: "left", cursor: "pointer", fontFamily: "inherit", border: `1px solid ${on ? "#bae6fd" : "transparent"}`, borderRadius: ".5rem", padding: ".4rem .5rem", background: on ? "#f0f9ff" : "transparent" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: ".35rem" }}><span style={{ width: 6, height: 6, borderRadius: "50%", background: st.dot, flexShrink: 0 }} /><span style={{ fontSize: ".72rem", fontWeight: 700, color: "#0f172a", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const }}>{acc.name}</span></div>
+                  <div style={{ fontSize: ".56rem", color: "#94a3b8", fontWeight: 700, textTransform: "uppercase" as const, paddingLeft: ".95rem" }}>{st.label} · {acc.fresh}</div>
+                </button>); })}
+            </div>
+            <div style={{ minWidth: 0 }}><CaseSpine a={a} /></div>
+          </div>
+        )}
 
-          <CanvasStep dotColor="#94a3b8" label="Why it matters now">
-            <div style={{ fontSize: ".76rem", color: "#334155", lineHeight: 1.45 }}>{a.whyNow}</div>
-          </CanvasStep>
+        {/* EVIDENCE — claim-first, traceable basis */}
+        {tab === "evidence" && (
+          <div>
+            <div style={zk}>Evidence across the portfolio · claim → source → freshness</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: ".55rem" }}>
+              {WS_ACCOUNTS.map((acc) => acc.sources.map((src, j) => (
+                <div key={acc.name + j} style={{ ...scard }}>
+                  <div style={{ fontSize: ".74rem", color: "#0f172a", fontWeight: 600, lineHeight: 1.4 }}>{acc.name}: {src.note}</div>
+                  <div style={{ display: "flex", alignItems: "center", gap: ".5rem", flexWrap: "wrap" as const, marginTop: ".3rem", fontSize: ".62rem" }}>
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: ".25rem", fontWeight: 800, color: REL_COLOR[src.rel], textTransform: "uppercase" as const, letterSpacing: ".03em" }}><span style={{ width: 5, height: 5, borderRadius: "50%", background: REL_COLOR[src.rel] }} />{src.rel}</span>
+                    <span style={{ color: "#475569", fontWeight: 600 }}>{src.type}</span>
+                    <span style={{ color: "#94a3b8" }}>· {src.age} ago</span>
+                    <span style={{ color: "#94a3b8", marginLeft: "auto" }}>{j === 0 ? "Observed" : "Supporting"}</span>
+                  </div>
+                </div>
+              )))}
+            </div>
+          </div>
+        )}
 
-          <CanvasStep dotColor="#0284c7" label="Evidence">
-            <div style={{ display: "flex", alignItems: "baseline", gap: ".5rem", flexWrap: "wrap" as const, fontSize: ".72rem", color: "#475569", marginBottom: ".4rem" }}>
-              <span style={{ fontWeight: 700, color: STRENGTH[a.evidence]?.color ?? "#0e7490" }}>{a.evidence}</span>
-              <span>· {a.support}</span>
-              <span>· latest {a.sources[0].age}</span>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: ".3rem", marginBottom: ".4rem" }}>
-              {LADDER.map((step, i) => {
-                const reached = i < a.ladder;
-                return (
-                  <span key={step} style={{ display: "inline-flex", alignItems: "center", gap: ".3rem" }}>
-                    <span style={{ fontSize: ".6rem", fontWeight: reached ? 700 : 500, color: reached ? "#0f172a" : "#cbd5e1" }}>{step}</span>
-                    {i < 2 && <span style={{ color: reached && i + 1 < a.ladder ? "#0284c7" : "#dbe3ec", fontSize: ".6rem" }}>→</span>}
-                  </span>
-                );
-              })}
-            </div>
-            {/* Compressed: the primary supporting claim (full source list lives in the deliverable) */}
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: ".5rem", fontSize: ".72rem" }}>
-              <span style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const }}>
-                <span style={{ fontWeight: 600, color: "#0f172a" }}>{a.sources[0].type}</span> <span style={{ color: "#64748b" }}>— {a.sources[0].note}</span>
-              </span>
-              <span style={{ display: "inline-flex", alignItems: "center", gap: ".25rem", fontSize: ".6rem", fontWeight: 700, color: REL_COLOR[a.sources[0].rel], flexShrink: 0 }}>
-                <span style={{ width: 5, height: 5, borderRadius: "50%", background: REL_COLOR[a.sources[0].rel] }} />{a.sources[0].rel}
-              </span>
-            </div>
-            {a.sources.length > 1 && <div style={{ fontSize: ".62rem", color: "#94a3b8", marginTop: ".25rem" }}>+{a.sources.length - 1} more source{a.sources.length > 2 ? "s" : ""} in the full Opportunity Case</div>}
-          </CanvasStep>
+        {/* COMPARE — why A before B, decision-first, no blended ranking number */}
+        {tab === "compare" && (
+          <div style={{ overflowX: "auto" }}>
+            <div style={zk}>Why work one account before another</div>
+            <table style={{ borderCollapse: "collapse", width: "100%", minWidth: "32rem" }}>
+              <thead><tr><th style={{ background: "#fafbfc" }} />{WS_ACCOUNTS.map(acc => <th key={acc.name} style={{ textAlign: "left", padding: ".5rem .6rem", borderBottom: "2px solid #e6ebf1", fontSize: ".72rem", fontWeight: 800, color: "#0f172a" }}>{acc.name.split(" ")[0]}<div style={{ marginTop: ".2rem" }}><DecisionPill state={acc.state} small /></div></th>)}</tr></thead>
+              <tbody>
+                {([["Fit", (x: WsAccount) => x.fit], ["Timing", (x: WsAccount) => x.timing], ["Evidence", (x: WsAccount) => x.evidence], ["Freshness", (x: WsAccount) => x.fresh], ["What changed", (x: WsAccount) => x.changed], ["Key unknown", (x: WsAccount) => x.limiters[0].limit], ["Validate", (x: WsAccount) => x.limiters[0].validate]] as [string, (x: WsAccount) => string][]).map(([label, fn]) => (
+                  <tr key={label}>
+                    <td style={{ padding: ".45rem .6rem", borderBottom: "1px solid #f1f5f9", fontSize: ".56rem", fontWeight: 800, textTransform: "uppercase" as const, letterSpacing: ".04em", color: "#94a3b8", whiteSpace: "nowrap" as const, background: "#fafbfc" }}>{label}</td>
+                    {WS_ACCOUNTS.map(acc => <td key={acc.name} style={{ padding: ".45rem .6rem", borderBottom: "1px solid #f1f5f9", fontSize: ".68rem", color: "#334155", verticalAlign: "top" }}>{["Fit", "Timing", "Evidence"].includes(label) ? <span style={{ fontWeight: STRENGTH[fn(acc)]?.weight ?? 600, color: STRENGTH[fn(acc)]?.color ?? "#334155" }}>{fn(acc)}</span> : fn(acc)}</td>)}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
 
-          <CanvasStep dotColor="#d97706" label="What to validate">
-            <div style={{ display: "flex", alignItems: "baseline", gap: ".4rem", flexWrap: "wrap" as const }}>
-              <span style={{ fontSize: ".54rem", fontWeight: 800, textTransform: "uppercase" as const, letterSpacing: ".04em", color: "#b45309", background: "#fffbeb", border: "1px solid #fde9c8", borderRadius: 4, padding: ".05rem .3rem" }}>Decision-critical</span>
-              <span style={{ fontSize: ".76rem", color: "#0f172a", fontWeight: 600, lineHeight: 1.4 }}>{a.limiters[0].validate}</span>
+        {/* STRATEGY — portfolio-level commercial interpretation */}
+        {tab === "strategy" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: ".8rem" }}>
+            <div style={{ padding: ".1rem 0 .1rem .7rem", borderLeft: "3px solid #0284c7" }}>
+              <div style={{ fontSize: ".55rem", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase" as const, color: "#0284c7", marginBottom: ".25rem" }}>Portfolio read</div>
+              <div style={{ fontSize: ".8rem", color: "#0f172a", lineHeight: 1.5 }}>{WS_CLIENT.read}</div>
             </div>
-            <div style={{ fontSize: ".68rem", color: "#94a3b8", marginTop: ".25rem", lineHeight: 1.4 }}><span style={{ fontWeight: 700 }}>Still unknown</span> · {a.limiters[0].limit}</div>
-          </CanvasStep>
-
-          <CanvasStep dotColor={dstate.dot} last label="Decision">
-            <div style={{ display: "flex", alignItems: "center", gap: ".5rem", flexWrap: "wrap", marginBottom: ".2rem" }}>
-              <DecisionPill state={a.state} />
-              <span style={{ fontSize: ".72rem", color: "#475569" }}>{a.decisionWhy}</span>
-            </div>
-            <div style={{ fontSize: ".78rem", color: "#0f172a", fontWeight: 600, lineHeight: 1.35, marginTop: ".2rem" }}>{a.next}</div>
-          </CanvasStep>
-        </div>
+            <div><div style={zk}>Recommended sequence</div><ol style={{ margin: 0, paddingLeft: "1.1rem", display: "flex", flexDirection: "column", gap: ".4rem" }}>{WS_CLIENT.strategy.map((s, i) => <li key={i} style={{ fontSize: ".74rem", color: "#334155", lineHeight: 1.5 }}>{s}</li>)}</ol></div>
+            <div style={scard}><div style={zk}>Market patterns</div><ul style={{ margin: 0, paddingLeft: ".9rem", fontSize: ".7rem", color: "#475569", lineHeight: 1.55 }}>{WS_CLIENT.patterns.map((p, i) => <li key={i}>{p}</li>)}</ul></div>
+          </div>
+        )}
       </div>
 
-      <div style={{ color: "#5f7c9c", fontSize: ".6rem", padding: ".55rem .5rem 0", lineHeight: 1.4 }}>
-        Illustrative sample — synthetic account, events and sources.
-      </div>
+      <div style={{ color: "#94a3b8", fontSize: ".58rem", padding: ".5rem 1.1rem .8rem", lineHeight: 1.4, borderTop: "1px solid #f1f5f9" }}>Illustrative sample — synthetic client, accounts, events and sources.</div>
     </div>
   );
 }

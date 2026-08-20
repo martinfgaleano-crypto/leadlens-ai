@@ -197,7 +197,7 @@ t("O9 prices unchanged ($7/$25/$59/$129) and product truth intact",
 
 // ─── P. Landing sample adopts the Opportunity Case grammar (V1 adoption) ──────
 t("P1 sample account data carries Opportunity Case fields (role/type/thesis/whyNow)",
-  /role:\s*"Potential Customer"/.test(src) && /oppType:\s*"Supplier Expansion"/.test(src) && /thesis:\s*"/.test(src) && /whyNow:\s*"/.test(src));
+  /role:\s*"Potential Customer"/.test(src) && /oppType:\s*"Operations Expansion"/.test(src) && /thesis:\s*"/.test(src) && /whyNow:\s*"/.test(src));
 t("P2 sample renders the reasoning-spine grammar labels",
   /label="What changed"/.test(src) && /label="Why it matters now"/.test(src) && /label="Evidence"/.test(src) && /label="What to validate"/.test(src) && /label="Decision"/.test(src));
 t("P3 Account Role · Opportunity Type kicker rendered", /\{a\.role\} · \{a\.oppType\}/.test(src));
@@ -217,6 +217,28 @@ t("P11 no aggregate score in the sample (no NN/100, N.N/10, 'score')",
   sampleSrc.length > 0 && !/\b\d{1,3}\s*\/\s*100\b/.test(sampleSrc) && !/\b\d(?:\.\d)?\s*\/\s*10\b/.test(sampleSrc) && !/\bscore\b/i.test(sampleSrc));
 t("P12 no HOT/WARM/COLD or buying-intent certainty in the sample",
   sampleSrc.length > 0 && !/\bHOT\b|\bWARM\b|\bCOLD\b/.test(sampleSrc) && !/ready to buy|buying intent|will buy|guaranteed/i.test(sampleSrc));
+
+// ─── Q. Client Opportunity Canvas — client-level tabbed sample (adoption) ─────
+t("Q1 sample is CLIENT-level (synthetic client is the subject, not a target account)",
+  /const WS_CLIENT = \{/.test(src) && /name:\s*"Asteron Systems"/.test(src) && /<ClientCanvasSample \/>/.test(src) && !/<AccountWorkspace \/>/.test(src));
+t("Q2 client header shows client name + commercial objective + opportunity count",
+  /\{WS_CLIENT\.name\}/.test(src) && /objective:\s*"/.test(src) && /opportunities evaluated/.test(src));
+t("Q3 mini interactive workspace has five tabs", /CC_TABS = \["overview", "cases", "evidence", "compare", "strategy"\]/.test(src));
+t("Q4 tab labels present (Overview / Opportunity Cases / Evidence / Compare / Strategy)",
+  /Overview/.test(src) && /Opportunity Cases/.test(src) && /Evidence/.test(src) && /Compare/.test(src) && /Strategy/.test(src));
+t("Q5 Overview default tab renders the LeadLens Read + Where to Focus landscape",
+  /useState<CcTab>\("overview"\)/.test(src) && /LeadLens Read/.test(src) && /Where to focus · Opportunity landscape/.test(src));
+t("Q6 opportunities live INSIDE the canvas (tiles open the Opportunity Case)",
+  /const open = \(i: number\) => \{ setSel\(i\); setTab\("cases"\); \}/.test(src));
+t("Q7 Opportunity Cases tab reuses the frozen reasoning spine (CaseSpine)",
+  /function CaseSpine/.test(src) && /<CaseSpine a=\{a\} \/>/.test(src) && /label="What changed"/.test(src) && /label="Decision"/.test(src));
+t("Q8 Evidence tab is claim-first with Direct/Corroborating/Context relations", /claim → source → freshness/.test(src) && /REL_COLOR\[src\.rel\]/.test(src));
+t("Q9 Compare tab compares Fit/Timing/Evidence + Key unknown + Validate", /Key unknown/.test(src) && /Why work one account before another/.test(src));
+t("Q10 Strategy tab gives portfolio-level sequence tied to the portfolio", /Recommended sequence/.test(src) && /Prioritize Northstar Logistics first/.test(src));
+t("Q11 client subject is not one target account (Asteron ≠ Northstar as report title)",
+  /\{WS_CLIENT\.name\}/.test(src) && !/name:\s*"Northstar[^"]*",\s*$/m.test(src.slice(src.indexOf("const WS_CLIENT"), src.indexOf("const WS_CLIENT") + 400)));
+t("Q12 light composition — no giant dark navy header gradient on the sample surface",
+  !/linear-gradient\(160deg,#0b1220/.test(sampleSrc));
 
 console.log(`\n${passed}/${passed + failed} passed`);
 process.exit(failed ? 1 : 0);
