@@ -15,6 +15,7 @@ import { assembleInstitutionalReport } from "@/lib/reports/institutional-assembl
 import { resolveReportExperience } from "@/lib/products/report-experience";
 import { fromInstitutionalReport, fromAmorPilot } from "@/lib/deliverable/adapters";
 import { portfolioCsv, evidenceCsv, csvEscape, deliverableFilename } from "@/lib/deliverable/exports";
+import { toClientCanvasVM } from "@/lib/deliverable/client-canvas-vm";
 
 let passed = 0, failed = 0;
 const t = (name: string, ok: boolean, detail = "") => { console.log(`${ok ? "✅" : "❌"} ${name}${ok || !detail ? "" : `  (${detail})`}`); ok ? passed++ : failed++; };
@@ -155,6 +156,20 @@ const dev = readFileSync("app/dev-brief-preview/page.tsx", "utf8");
 t("45 Amor preview is dev-only (404 in production)", /NODE_ENV === "production"/.test(dev) && /notFound\(\)/.test(dev));
 const exportsSrc = readFileSync("lib/deliverable/exports.ts", "utf8");
 t("46 exports derive from the view model only (no raw report fields)", !/report_json|processed_leads|_vault/.test(exportsSrc));
+
+// ─── 5. Authenticated workspace — client-subject parity (P1) ──────────────────
+t("47 workspace no longer uses 'Prepared for X' report framing", !/Prepared for|preparedFor|Preparado para/.test(workspace));
+t("48 client is the header subject via the shared ClientCanvasVM", /toClientCanvasVM\(vm\)/.test(workspace) && /className="dlv-client">\{cc\.subject\}/.test(workspace));
+t("49 client header is LIGHT (no large dark navy gradient top bar)", !/\.dlv-topbar \{ background: linear-gradient\(120deg,#0b1220/.test(workspace) && /\.dlv-topbar \{ background: #fff/.test(workspace));
+t("50 commercial objective shown only from real data (rendered conditionally)", /\{cc\.objective && /.test(workspace) && /Objective/.test(workspace));
+t("51 opportunities remain subordinate to the client (accounts + AccountBrief render)", /accountsPanel|AccountBrief/.test(workspace) && /opportunities evaluated/.test(workspace));
+t("52 no HOT/WARM/COLD in the workspace", !/\bHOT\b|\bWARM\b|\bCOLD\b/.test(workspace));
+t("53 no aggregate score in the workspace (no NN/100, N.N/10, 'ai score')", !/\b\d{1,3}\s*\/\s*100\b/.test(workspace) && !/\b\d(?:\.\d)?\s*\/\s*10\b/.test(workspace) && !/opportunity score|lead score|ai score/i.test(workspace));
+t("54 workspace client-header VM is graceful (subject falls back, never a fake client)", (() => {
+  const cc = fromInstitutionalReport(assembleInstitutionalReport(RAW2 as unknown as Record<string, unknown>, { job_id: "wtest", plan: "brief_launch_v0", search_id: null, customer_ref: null, created_at: NOW }), resolveReportExperience("brief_launch_v0"));
+  const c = toClientCanvasVM(cc);
+  return c.client === null && c.hasClient === false && c.subject.length > 0 && !c.landscape.some((o) => o.company === c.subject);
+})());
 
 console.log(`\n${passed}/${passed + failed} passed`);
 process.exit(failed ? 1 : 0);

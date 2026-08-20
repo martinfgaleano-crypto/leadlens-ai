@@ -12,6 +12,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { DeliverableViewModel, DecisionState, AccountBriefVM } from "@/lib/deliverable/deliverable-view-model";
 import { DECISION_TOKENS, STRENGTH_TOKENS, decisionLabel } from "@/lib/deliverable/deliverable-view-model";
 import { portfolioCsv, evidenceCsv, deliverableFilename } from "@/lib/deliverable/exports";
+import { toClientCanvasVM } from "@/lib/deliverable/client-canvas-vm";
 import { AccountBrief, DecisionBadge, SourceList } from "./primitives";
 
 type Tab = "portfolio" | "accounts" | "compare" | "evidence" | "downloads";
@@ -32,6 +33,7 @@ function downloadText(filename: string, text: string, mime: string) {
 export default function OpportunityWorkspace({ vm }: { vm: DeliverableViewModel }) {
   const es = vm.meta.language === "es";
   const t = useMemo(() => LABELS(es), [es]);
+  const cc = useMemo(() => toClientCanvasVM(vm), [vm]);   // client is the subject
 
   const tabs = useMemo<Tab[]>(() => {
     const list: Tab[] = [];
@@ -76,17 +78,19 @@ export default function OpportunityWorkspace({ vm }: { vm: DeliverableViewModel 
     <div className="dlv-root">
       <style>{CSS}</style>
 
-      {/* Top bar — institutional identity, subtle branding (§74/§75) */}
+      {/* Client header — the client is the subject; accounts are opportunities
+          evaluated for that client. Light composition (no large dark header),
+          in parity with the landing + portable Client Opportunity Canvas. */}
       <header className="dlv-topbar">
-        <div className="dlv-brand">
-          <span className="dlv-logo">Lead<span style={{ color: "#38bdf8" }}>Lens</span></span>
-          <span className="dlv-kicker">{t.portfolioTitle}</span>
+        <div className="dlv-brandline">
+          <span className="dlv-logo">Lead<span style={{ color: "#0284c7" }}>Lens</span></span>
+          <span className="dlv-kicker">{t.aoi}</span>
+          {cc.tierLabel && <span className="dlv-tier">{cc.tierLabel}</span>}
         </div>
-        <div className="dlv-meta">
-          {vm.meta.client && <span><strong>{vm.meta.client}</strong></span>}
-          {vm.meta.market && <span>· {vm.meta.market}</span>}
-          {vm.meta.tierLabel && <span className="dlv-tier">{vm.meta.tierLabel}</span>}
-          {vm.meta.generatedLabel && <span>· {t.generated} {vm.meta.generatedLabel}</span>}
+        <h1 className="dlv-client">{cc.subject}</h1>
+        {cc.objective && <div className="dlv-obj"><span className="dlv-obj-k">{es ? "Objetivo" : "Objective"}</span> {cc.objective}</div>}
+        <div className="dlv-clientmeta">
+          {[cc.market, `${cc.opportunityCount} ${es ? "oportunidades evaluadas" : "opportunities evaluated"}`, cc.generatedLabel ? `${t.generated} ${cc.generatedLabel}` : null].filter(Boolean).join(" · ")}
         </div>
       </header>
 
@@ -579,13 +583,16 @@ function LABELS(es: boolean) {
 
 const CSS = `
 .dlv-root { background: #f4f7fb; min-height: 100vh; font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; color: #0f172a; }
-.dlv-topbar { background: linear-gradient(120deg,#0b1220,#12314f 62%,#0c4a6e); color: #fff; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
-.dlv-brand { display: flex; align-items: baseline; gap: 12px; }
-.dlv-logo { font-size: 18px; font-weight: 800; letter-spacing: -0.02em; }
-.dlv-kicker { font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #7dd3fc; }
-.dlv-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12.5px; color: #cbd5e1; }
-.dlv-meta strong { color: #fff; }
-.dlv-tier { background: rgba(56,189,248,0.16); color: #7dd3fc; border-radius: 999px; padding: 2px 10px; font-size: 11px; font-weight: 700; }
+/* Client header — light; the client is the subject (no large dark header) */
+.dlv-topbar { background: #fff; border-top: 3px solid #0b1220; border-bottom: 1px solid #eef2f6; padding: 18px 24px 16px; }
+.dlv-brandline { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.dlv-logo { font-size: 18px; font-weight: 800; letter-spacing: -0.02em; color: #0b1220; }
+.dlv-kicker { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #94a3b8; }
+.dlv-client { font-size: 30px; font-weight: 800; letter-spacing: -0.025em; color: #0b1220; margin: 10px 0 0; line-height: 1.1; }
+.dlv-obj { font-size: 13.5px; color: #475569; line-height: 1.5; margin-top: 8px; max-width: 52rem; }
+.dlv-obj-k { font-size: 10px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #0284c7; margin-right: 8px; }
+.dlv-clientmeta { font-size: 12px; color: #94a3b8; margin-top: 7px; }
+.dlv-tier { background: #f0f9ff; border: 1px solid #e0f2fe; color: #0369a1; border-radius: 999px; padding: 2px 10px; font-size: 11px; font-weight: 700; }
 .dlv-tabs { position: sticky; top: 0; z-index: 20; display: flex; gap: 2px; background: #fff; border-bottom: 1px solid #e2e8f0; padding: 0 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
 .dlv-tabs::-webkit-scrollbar { display: none; }
 .dlv-tab { appearance: none; background: none; border: none; border-bottom: 2px solid transparent; padding: 14px 16px; min-height: 44px; font-size: 13.5px; font-weight: 700; color: #64748b; cursor: pointer; white-space: nowrap; font-family: inherit; }
