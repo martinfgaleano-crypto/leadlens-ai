@@ -1,0 +1,124 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LeadLens Client Opportunity Canvas — Pilot D</title><style>
+*{box-sizing:border-box}body{margin:0;background:#f6f7f9;color:#0f172a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:26px 20px 60px}
+.tag{font-size:12px;color:#94a3b8;margin:0 2px 14px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.cc-canvas{background:#ffffff;border:1px solid #e6ebf1;border-top:3px solid #0b1220;border-radius:10px;padding:26px 30px 30px;box-shadow:0 10px 40px rgba(15,23,42,.06)}
+/* client header */
+.cc-brandline{display:flex;align-items:baseline;gap:12px;margin-bottom:14px}
+.cc-logo{font-size:15px;font-weight:800;color:#0b1220}
+.cc-kick{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#94a3b8}
+.cc-client{font-size:34px;font-weight:800;letter-spacing:-.025em;color:#0b1220;margin:0}
+.cc-objwrap{margin-top:10px}
+.cc-obj{font-size:14.5px;color:#475569;line-height:1.5;max-width:48rem}
+.cc-objk{font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#0284c7;margin-right:8px}
+.cc-metarow{display:flex;gap:8px;flex-wrap:wrap;font-size:12px;color:#94a3b8;margin-top:8px}
+.cc-metarow b{color:#475569}
+.cc-dot2{color:#e6ebf1}
+/* LeadLens Read */
+.cc-read{margin:22px 0 20px;padding:2px 0 2px 18px;border-left:3px solid #0284c7}
+.cc-read-k{font-size:10.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:#0284c7;margin-bottom:6px}
+.cc-read-t{font-size:16px;line-height:1.55;color:#0f172a;margin:0;max-width:52rem;font-weight:450}
+/* body layouts */
+.cc-bodyC{display:grid;grid-template-columns:1.9fr 1fr;gap:26px;align-items:start}
+.cc-zk{font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#94a3b8;margin:0 0 12px}
+.cc-zk-lg{font-size:12px;color:#0f172a}
+.cc-zk-sub{color:#94a3b8;font-weight:700}
+.cc-opps{display:flex;flex-direction:column;gap:10px}
+/* opportunity tiles */
+.cc-opp{border:1px solid #e6ebf1;border-radius:10px;padding:13px 15px;background:#ffffff;transition:border-color .15s}
+.cc-opp-focus{border-color:#0284c755;background:linear-gradient(180deg,#e8f4fc55,#fff 60%)}
+.cc-opp-top{display:flex;align-items:center;gap:10px}
+.cc-rank{font-size:12px;font-weight:800;color:#94a3b8;width:16px;flex-shrink:0}
+.cc-opp-focus .cc-rank{color:#0284c7}
+.cc-opp-name{font-size:15.5px;font-weight:800;color:#0f172a;letter-spacing:-.01em;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cc-pill{display:inline-flex;align-items:center;gap:5px;border:1px solid;border-radius:999px;padding:2px 10px;font-size:10.5px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
+.cc-pdot{width:6px;height:6px;border-radius:50%}
+.cc-opp-type{font-size:11.5px;color:#94a3b8;margin:3px 0 0;padding-left:26px;font-weight:600}
+.cc-opp-ftE{display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:#475569;margin:9px 0 0;padding-left:26px}
+.cc-opp-chg{display:flex;align-items:center;gap:8px;font-size:12.5px;color:#475569;margin:9px 0 0;padding-left:26px}
+.cc-chgdot{width:6px;height:6px;border-radius:50%;background:#0ea5e9;flex-shrink:0}
+.cc-fresh{font-size:11px;color:#94a3b8;margin-left:auto;font-weight:600}
+/* supporting column / zones */
+.cc-side{display:flex;flex-direction:column;gap:14px}
+.cc-scard{border:1px solid #e6ebf1;border-radius:10px;padding:15px 16px;background:#fafbfc}
+.cc-scard-amber{background:#fffbeb;border-color:#fde9c8}
+.cc-list{margin:0;padding-left:16px;font-size:12.5px;color:#475569;line-height:1.6}
+.cc-cov{display:flex;gap:20px;flex-wrap:wrap}
+.cc-covn{display:block;font-size:20px;font-weight:800;color:#0e7490}
+.cc-covl{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#94a3b8;font-weight:700}
+.cc-vlist{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
+.cc-vlist li{display:flex;flex-direction:column;gap:1px}
+.cc-va{font-size:11px;font-weight:800;color:#b45309}
+.cc-vq{font-size:12.5px;color:#0f172a;line-height:1.4}
+/* Pilot D grid */
+.cc-gridD{display:grid;grid-template-columns:1.7fr 1fr;grid-auto-rows:min-content;gap:16px;margin:18px 0}
+.cc-zone{border:1px solid #e6ebf1;border-radius:10px;padding:16px 18px;background:#fafbfc}
+.cc-zone-focus{grid-row:span 2;background:#ffffff}
+.cc-zone-amber{background:#fffbeb;border-color:#fde9c8}
+@media(max-width:1023px){.cc-bodyC,.cc-gridD{grid-template-columns:1fr}.cc-zone-focus{grid-row:auto}}
+@media(max-width:560px){.cc-canvas{padding:20px 16px}.cc-client{font-size:26px}}
+</style></head><body><div class="wrap"><div class="tag">Pilot D — Opportunity Landscape Canvas (spatial zones)</div><div class="cc-canvas">
+    <div class="cc-head">
+    <div class="cc-brandline"><span class="cc-logo">Lead<span style="color:#0284c7">Lens</span></span><span class="cc-kick">Account Opportunity Intelligence</span></div>
+    <h1 class="cc-client">Asteron Systems</h1>
+    <div class="cc-objwrap">
+      <div class="cc-obj"><span class="cc-objk">Objective</span> Find enterprise accounts where operational expansion creates a credible near-term software opportunity.</div>
+      
+    </div>
+  </div>
+    <div class="cc-gridD">
+      <div class="cc-zone cc-zone-focus">
+        <div class="cc-zk cc-zk-lg">Where to focus</div>
+        <div class="cc-opps"><div class="cc-opp cc-opp-focus">
+    <div class="cc-opp-top">
+      <span class="cc-rank">1</span>
+      <span class="cc-opp-name">Northstar Logistics</span>
+      <span class="cc-pill" style="color:#0284c7;border-color:#0284c733;background:#0284c70f"><span class="cc-pdot" style="background:#0284c7"></span>Prioritize</span>
+    </div>
+    <div class="cc-opp-type">Operations Expansion</div>
+    <div class="cc-opp-ftE"><span>Fit <b style="color:#0f172a">Strong</b></span><span>Timing <b style="color:#0f172a">Strong</b></span><span>Evidence <b style="color:#475569">Moderate</b></span></div>
+    <div class="cc-opp-chg"><span class="cc-chgdot"></span>Signed a regional distribution agreement<span class="cc-fresh">9d</span></div>
+  </div><div class="cc-opp">
+    <div class="cc-opp-top">
+      <span class="cc-rank">2</span>
+      <span class="cc-opp-name">FreshRoute Foods</span>
+      <span class="cc-pill" style="color:#d97706;border-color:#d9770633;background:#d977060f"><span class="cc-pdot" style="background:#d97706"></span>Validate</span>
+    </div>
+    <div class="cc-opp-type">Operations Expansion</div>
+    <div class="cc-opp-ftE"><span>Fit <b style="color:#0f172a">Strong</b></span><span>Timing <b style="color:#475569">Moderate</b></span><span>Evidence <b style="color:#475569">Moderate</b></span></div>
+    <div class="cc-opp-chg"><span class="cc-chgdot"></span>Opened two new distribution sites<span class="cc-fresh">14d</span></div>
+  </div><div class="cc-opp">
+    <div class="cc-opp-top">
+      <span class="cc-rank">3</span>
+      <span class="cc-opp-name">Vantage Freight Co.</span>
+      <span class="cc-pill" style="color:#d97706;border-color:#d9770633;background:#d977060f"><span class="cc-pdot" style="background:#d97706"></span>Validate</span>
+    </div>
+    <div class="cc-opp-type">Technology Modernization</div>
+    <div class="cc-opp-ftE"><span>Fit <b style="color:#475569">Moderate</b></span><span>Timing <b style="color:#475569">Moderate</b></span><span>Evidence <b style="color:#94a3b8">Limited</b></span></div>
+    <div class="cc-opp-chg"><span class="cc-chgdot"></span>Posted a systems-modernization RFI<span class="cc-fresh">18d</span></div>
+  </div><div class="cc-opp">
+    <div class="cc-opp-top">
+      <span class="cc-rank">4</span>
+      <span class="cc-opp-name">Atlas Clinics Group</span>
+      <span class="cc-pill" style="color:#64748b;border-color:#64748b33;background:#64748b0f"><span class="cc-pdot" style="background:#64748b"></span>Monitor</span>
+    </div>
+    <div class="cc-opp-type">Facility Expansion</div>
+    <div class="cc-opp-ftE"><span>Fit <b style="color:#475569">Moderate</b></span><span>Timing <b style="color:#94a3b8">Limited</b></span><span>Evidence <b style="color:#94a3b8">Limited</b></span></div>
+    <div class="cc-opp-chg"><span class="cc-chgdot"></span>Announced two new clinic locations<span class="cc-fresh">21d</span></div>
+  </div><div class="cc-opp">
+    <div class="cc-opp-top">
+      <span class="cc-rank">5</span>
+      <span class="cc-opp-name">Bergen Retail Group</span>
+      <span class="cc-pill" style="color:#94a3b8;border-color:#94a3b833;background:#94a3b80f"><span class="cc-pdot" style="background:#94a3b8"></span>Hold</span>
+    </div>
+    <div class="cc-opp-type">New Business</div>
+    <div class="cc-opp-ftE"><span>Fit <b style="color:#94a3b8">Limited</b></span><span>Timing <b style="color:#94a3b8">Limited</b></span><span>Evidence <b style="color:#94a3b8">Limited</b></span></div>
+    <div class="cc-opp-chg"><span class="cc-chgdot"></span>No dated operational signal</div>
+  </div></div>
+      </div>
+      <div class="cc-zone"><div class="cc-zk">What's changing</div><ul class="cc-list"><li>3 of 5 accounts show operational expansion in the last 30 days.</li><li>Distribution build-outs are the dominant trigger.</li><li>Healthcare facility growth is early — no sourcing signal yet.</li></ul></div>
+      <div class="cc-zone"><div class="cc-zk">Evidence coverage</div><div class="cc-cov"><div><span class="cc-covn">4 / 5</span><span class="cc-covl">with dated evidence</span></div><div><span class="cc-covn">2</span><span class="cc-covl">independently corroborated</span></div><div><span class="cc-covn">9d</span><span class="cc-covl">latest evidence</span></div></div></div>
+      <div class="cc-zone cc-zone-amber"><div class="cc-zk">What to validate</div><ul class="cc-vlist"><li><span class="cc-va">Northstar Logistics</span><span class="cc-vq">Is regional purchasing centralized at group level?</span></li><li><span class="cc-va">FreshRoute Foods</span><span class="cc-vq">Do the new sites touch the target category?</span></li><li><span class="cc-va">Vantage Freight Co.</span><span class="cc-vq">Is the RFI tied to a funded initiative?</span></li></ul></div>
+    </div>
+    <div class="cc-read"><div class="cc-read-k">LeadLens Read</div><p class="cc-read-t">Two accounts merit attention now on recent, corroborated operational expansion; two more need validation of category or procurement scope. The strongest pattern is regional distribution build-outs creating near-term tooling needs.</p></div>
+  </div></div></body></html>
