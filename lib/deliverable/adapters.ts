@@ -81,6 +81,8 @@ function dossierToBrief(d: AccountDossier, i: number, status: StatusVerdict | nu
     segment: d.industry,
     geography: d.location,
     domain: d.domain,
+    accountRole: null,        // current institutional reports do not emit role/type
+    opportunityType: null,
     decision: decisionOf(d),
     decisionNote: status?.because ?? null,
     thesis: d.thesis?.text ?? null,
@@ -235,6 +237,8 @@ export function fromAmorPilot(d: AmorDeliverable): DeliverableViewModel {
       segment: a.route ?? null,
       geography,
       domain: ev?.source ?? null,
+      accountRole: null,        // Amor pilot has no role/type fields
+      opportunityType: null,
       decision: amorDecision(a.group, i),
       decisionNote: a.group ?? null,
       thesis: a.thesis ?? a.why ?? null,

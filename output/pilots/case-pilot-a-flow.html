@@ -1,0 +1,104 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LeadLens Opportunity Case — Pilot A</title><style>
+*{box-sizing:border-box}body{margin:0;background:#f5f7fa;color:#0f172a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:960px;margin:0 auto;padding:28px 20px 60px}
+.frame{background:linear-gradient(120deg,#0b1220,#12314f 62%,#0c4a6e);color:#fff;border-radius:16px 16px 0 0;padding:16px 24px;display:flex;align-items:baseline;gap:12px}
+.frame .logo{font-size:17px;font-weight:800}.frame .kick{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#7dd3fc}
+.pilot-tag{font-size:12px;color:#94a3b8;margin:22px 2px 8px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+/* shared case atoms */
+.pt-role{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#0284c7;margin-bottom:6px}
+.pt-hrow{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.pt-acct{font-size:26px;font-weight:800;letter-spacing:-.02em;margin:0;color:#0f172a}
+.pt-sub{font-size:12.5px;color:#94a3b8;margin-top:3px}
+.pt-thesis{font-size:15.5px;line-height:1.55;color:#475569;margin:14px 0 0;max-width:52rem;font-weight:500}
+.pt-dims{display:flex;gap:28px;flex-wrap:wrap;margin-top:16px;padding-top:16px;border-top:1px solid #edf1f6}
+.pt-dk{font-size:9.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#94a3b8}
+.pt-dv{font-size:16px;font-weight:700;color:#0f172a;line-height:1.2}
+.pt-dn{font-size:10.5px;color:#94a3b8}
+.pt-badge{display:inline-flex;align-items:center;gap:5px;background:#f0f9ff;border:1px solid #e0f2fe;color:#0369a1;border-radius:999px;padding:4px 12px;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+.pt-badge-lg{font-size:12.5px;padding:5px 14px}
+.pt-lab{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#94a3b8;margin:0 0 9px}
+.pt-lab-accent{color:#0284c7}
+.pt-body{font-size:14px;line-height:1.6;color:#0f172a;margin:0}
+.pt-claim{color:#475569;margin-top:8px}
+.pt-inl{font-size:9.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#94a3b8;margin-right:6px}
+.pt-chg{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.pt-chgdot{width:8px;height:8px;border-radius:50%;background:#0ea5e9;flex-shrink:0;transform:translateY(2px)}
+.pt-chgdot2{width:6px;height:6px;border-radius:50%;background:#94a3b8;flex-shrink:0;transform:translateY(2px)}
+.pt-chge{font-size:15px;font-weight:700;color:#0f172a}
+.pt-chg2{margin-top:8px}.pt-chge2{font-size:13.5px;color:#475569}
+.pt-chga{font-size:11.5px;color:#94a3b8;font-weight:600}
+.pt-chgcat{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#0284c7;background:#f0f9ff;border-radius:4px;padding:1px 7px}
+.pt-evbar{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:#475569}
+.pt-evbar b{color:#0e7490}
+.pt-srcs{display:flex;flex-direction:column;gap:7px;margin-top:10px}
+.pt-src{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+.pt-rel{font-size:9.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;min-width:74px}
+.pt-srcl{font-size:13px;color:#0f172a;font-weight:600}
+.pt-srca{font-size:11px;color:#94a3b8}
+.pt-valrow{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.pt-crit{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#b45309;background:#fffbeb;border:1px solid #fde9c8;border-radius:4px;padding:2px 7px}
+.pt-valq{font-size:14.5px;font-weight:600;color:#0f172a}
+.pt-how{margin-top:8px;color:#475569}
+.pt-decrow{display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+.pt-next{margin-top:12px;padding-top:12px;border-top:1px solid rgba(15,23,42,.06)}
+.pt-revisit{font-size:11.5px;color:#94a3b8;margin-top:6px}
+
+/* Pilot A — flow-forward */
+.ptA-case{background:#ffffff;border:1px solid #e8edf3;border-top:none;border-radius:0 0 16px 16px;padding:26px 30px 30px}
+.ptA-flow{margin-top:20px;position:relative}
+.ptA-band{position:relative;padding:18px 0 18px 30px;border-top:1px solid #edf1f6}
+.ptA-band:before{content:"";position:absolute;left:5px;top:0;bottom:0;width:2px;background:#edf1f6}
+.ptA-band:first-child{border-top:none}
+.ptA-node{position:absolute;left:0;top:22px;width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid #0ea5e9}
+.ptA-signal{background:linear-gradient(90deg,#f7fcff,#fff 60%)}
+.ptA-signal .ptA-node{border-color:#0ea5e9;background:#0ea5e9}
+.ptA-unc{background:linear-gradient(90deg,#f8fafc,#fff 60%)}
+.ptA-unc .ptA-node{border-color:#94a3b8}
+.ptA-dec{background:#f0f9ff;border-radius:12px;margin-top:6px;padding:18px 20px 18px 30px}
+.ptA-dec:before{background:#0284c7}
+.ptA-dec .ptA-node{border-color:#0284c7;background:#0284c7}
+
+/* Pilot B — canvas-forward */
+.ptB-case{background:#ffffff;border:1px solid #e8edf3;border-top:none;border-radius:0 0 16px 16px;padding:26px 30px 30px}
+.ptB-head{padding-bottom:20px;border-bottom:2px solid #edf1f6}
+.ptB-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:0;margin-top:0}
+.ptB-col{display:flex;flex-direction:column}
+.ptB-main{border-right:1px solid #edf1f6}
+.ptB-cell{padding:18px 22px 18px 0}
+.ptB-side .ptB-cell{padding-left:22px;padding-right:0}
+.ptB-cell+.ptB-cell{border-top:1px solid #edf1f6}
+.ptB-signal{border-left:3px solid #0ea5e9;padding-left:14px;background:linear-gradient(90deg,#f7fcff,#fff 70%)}
+.ptB-unc{background:linear-gradient(90deg,#f8fafc,#fff 70%)}
+.ptB-val{background:linear-gradient(90deg,#fffbeb,#fff 80%)}
+.ptB-decision{margin-top:2px;background:#f0f9ff;border:1px solid #e0f2fe;border-radius:12px;padding:18px 22px}
+@media(max-width:720px){.ptB-grid{grid-template-columns:1fr}.ptB-main{border-right:none;border-bottom:1px solid #edf1f6}.ptB-side .ptB-cell{padding-left:0}.ptB-cell{padding-right:0}}
+</style></head><body>
+  <div class="wrap"><div class="pilot-tag">Pilot A — Flow-forward (reasoning spine)</div>
+    <div class="frame"><span class="logo">Lead<span style="color:#38bdf8">Lens</span></span><span class="kick">Opportunity Case</span></div>
+    <div class="ptA-case">
+    <div class="ptA-head"><div class="pt-role">Potential Customer · Supplier Expansion</div>
+    <div class="pt-hrow"><h1 class="pt-acct">Northstar Logistics</h1><span class="pt-badge">● Prioritize</span></div>
+    <div class="pt-sub">Mid-market logistics · United States · Midwest</div>
+    <p class="pt-thesis">Northstar's regional distribution build-out plausibly widens its supplier and tooling needs before it formalizes procurement — a window to engage ahead of an RFP.</p>
+    <div class="pt-dims"><div><div class="pt-dk">Strategic Fit</div><div class="pt-dv">Strong</div><div class="pt-dn">8/10</div></div><div><div class="pt-dk">Timing</div><div class="pt-dv">Strong</div><div class="pt-dn">9d since signal</div></div><div><div class="pt-dk">Evidence</div><div class="pt-dv">Moderate</div><div class="pt-dn">2 sources</div></div></div></div>
+    <div class="ptA-flow">
+      <div class="ptA-band ptA-signal"><span class="ptA-node"></span><div class="ptA-content"><p class="pt-lab pt-lab-accent">What Changed</p>
+    <div class="pt-chg"><span class="pt-chgdot"></span><span class="pt-chge">Signed a regional distribution agreement</span><span class="pt-chga">9d ago</span><span class="pt-chgcat">Expansion</span></div>
+    <div class="pt-chg pt-chg2"><span class="pt-chgdot2"></span><span class="pt-chge2">Posted 4 operations roles</span><span class="pt-chga">12d ago</span><span class="pt-chgcat">Hiring</span></div></div></div>
+      <div class="ptA-band "><span class="ptA-node"></span><div class="ptA-content"><p class="pt-lab">Why It Matters Now</p><p class="pt-body">Scaling distribution typically strains an existing supplier network before teams plan for it — the moment a new supplier can enter is now, not after procurement closes.</p></div></div>
+      <div class="ptA-band "><span class="ptA-node"></span><div class="ptA-content"><p class="pt-lab">Evidence</p>
+    <div class="pt-evbar"><span><b>Moderate</b> strength</span><span>Corroborated · 2 independent sources</span><span>latest 9d ago</span></div>
+    <p class="pt-body pt-claim">A regional distribution agreement was announced and confirmed against a second source.</p>
+    <div class="pt-srcs"><div class="pt-src"><span class="pt-rel" style="color:#0284c7">Direct</span><span class="pt-srcl">Regional distribution agreement</span><span class="pt-srca">9d ago</span></div><div class="pt-src"><span class="pt-rel" style="color:#15803d">Supporting</span><span class="pt-srcl">Operations hiring (careers page)</span><span class="pt-srca">12d ago</span></div></div></div></div>
+      <div class="ptA-band ptA-unc"><span class="ptA-node"></span><div class="ptA-content"><p class="pt-lab">What Could Change the Case</p>
+    <p class="pt-body"><span class="pt-inl">Weakens</span> No procurement event or vendor evaluation is confirmed — the case rests on fit and timing, not a buying signal.</p>
+    <p class="pt-body"><span class="pt-inl">Still unknown</span> Whether procurement is centralized at group level or decided regionally.</p></div></div>
+      <div class="ptA-band "><span class="ptA-node"></span><div class="ptA-content"><p class="pt-lab">What to Validate</p>
+    <div class="pt-valrow"><span class="pt-crit">Decision-critical</span><span class="pt-valq">Confirm whether procurement is centralized at group level.</span></div>
+    <p class="pt-body pt-how"><span class="pt-inl">How</span> One discovery call with operations, or a group-procurement lookup.</p></div></div>
+      <div class="ptA-band ptA-dec"><span class="ptA-node"></span><div class="ptA-content"><div class="pt-decrow"><p class="pt-lab" style="margin:0">Decision</p><span class="pt-badge pt-badge-lg">● Prioritize</span></div>
+    <p class="pt-body">Recent, partly corroborated expansion with strong fit and an open timing window — engaging now precedes a likely RFP.</p>
+    <div class="pt-next"><div class="pt-dk">Recommended Next Step</div><p class="pt-body">Reach the operations lead before a formal procurement process forms.</p><div class="pt-revisit">Revisit when: If no procurement signal appears within 30 days.</div></div></div></div>
+    </div>
+  </div>
+  </div></body></html>

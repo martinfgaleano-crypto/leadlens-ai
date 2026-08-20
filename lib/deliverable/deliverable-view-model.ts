@@ -55,6 +55,10 @@ export interface AccountBriefVM {
   segment: string | null;     // industry / commercial route
   geography: string | null;
   domain: string | null;
+  /** Architecture-ready for multi-role opportunities (§8). Null unless the
+   *  source explicitly provides them — never fabricated. */
+  accountRole: string | null;     // Potential Customer / Supplier / Distributor / Partner …
+  opportunityType: string | null; // Supplier Expansion / Market Entry / Supply Resilience …
   decision: DecisionState;
   decisionNote: string | null;   // one-line why this decision
   thesis: string | null;         // why this account

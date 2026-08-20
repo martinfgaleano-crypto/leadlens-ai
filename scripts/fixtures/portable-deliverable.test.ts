@@ -85,8 +85,12 @@ t("25 Japanese company name renders intact", jpHtml.includes("オポチュニテ
 t("26 editorial cover with AOI kicker (not a marketing hero)", html.includes('class="pt-cover"') && html.includes('class="pt-cover-kick"') && !/get started/i.test(html));
 t("27 deterministic executive read is present and count-grounded", html.includes('class="pt-exec"') && /3 de 10 cuentas merecen atención prioritaria ahora\. 4 requieren validación/.test(html));
 t("28 executive read has no fabricated prose beyond real counts", !/probablemente|likely to close|estimamos|we estimate/i.test(html));
-t("29 What Changed carries the signature accent treatment", html.includes('class="pt-card pt-signal"') && html.includes("pt-label-accent"));
-t("30 commercial context stays a disclosure (secondary to opening)", html.includes('class="pt-card pt-context"') && /<details/.test(html));
+t("29 Opportunity Case is ONE object with a reasoning spine (not box-box-box)", html.includes('class="pt-brief pt-case"') && html.includes('class="pt-flow"') && html.includes('class="pt-node"') && !/pt-brief"[^>]*>\s*<div class="pt-card"/.test(html));
+t("30 Case uses the locked grammar labels (Amor = Spanish)", (() => { const b = html.indexOf('pt-brief pt-case'); const seg = html.slice(b, b + 6000); return ["Qué cambió", "Evidencia", "Qué podría cambiar el caso", "Decisión"].every((l) => seg.includes(l)); })());
+t("30b What Changed carries the signature accent band", /pt-band\s+pt-signal/.test(html) && html.includes("pt-label-accent"));
+t("30c commercial context stays a disclosure (secondary to opening)", html.includes('class="pt-card pt-context"') && /<details/.test(html));
+t("30d Opportunity Thesis renders as a lead paragraph (label-less)", html.includes('class="pt-thesis"'));
+t("30e role/type architecture ready but NOT fabricated for Amor", !/Potential Customer|Supplier Expansion/.test(html) && /accountRole/.test(readFileSync("lib/deliverable/deliverable-view-model.ts", "utf8")));
 
 // ─── Path-traversal / resolver safety (deliverable store) ─────────────────────
 import { resolveDeliverableFile, listDeliverables } from "@/lib/deliverable/portable/deliverable-store";

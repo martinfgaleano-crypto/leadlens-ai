@@ -35,9 +35,13 @@ function L(es: boolean) {
     ctxRegions: es ? "Mercados" : "Markets",
     ctxCriteria: es ? "Criterios de oportunidad" : "Opportunity criteria",
     whatIsnt: es ? "Qué NO es este portafolio" : "What this portfolio isn't",
-    thesis: es ? "Tesis de la cuenta" : "Account thesis",
-    whyMatters: es ? "Por qué importa" : "Why it matters",
-    whatChanged: es ? "Qué cambió" : "What changed",
+    thesis: es ? "Tesis de oportunidad" : "Opportunity Thesis",
+    whyMatters: es ? "Por qué importa ahora" : "Why It Matters Now",
+    whatChanged: es ? "Qué cambió" : "What Changed",
+    evidenceLabel: es ? "Evidencia" : "Evidence",
+    whatCouldChange: es ? "Qué podría cambiar el caso" : "What Could Change the Case",
+    weakensInl: es ? "Debilita" : "Weakens",
+    stillUnknownInl: es ? "Aún desconocido" : "Still unknown",
     supportedBy: es ? "Respaldado por" : "Supported by",
     sources: es ? "fuentes" : "sources", dated: es ? "con fecha" : "dated", latest: es ? "más reciente" : "latest",
     counter: es ? "Contraseñales y riesgos" : "Counter-signals & risks",
@@ -160,19 +164,38 @@ function briefHtml(a: AccountBriefVM, t: T, es: boolean): string {
     const label = url ? `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer nofollow">${esc(s.label)} ↗</a>` : `<span class="pt-src-l">${esc(s.label)}</span>`;
     return `<div class="pt-src"${i < a.sources.length - 1 ? ` style="border-bottom:1px solid #f1f5f9"` : ""}><div class="pt-src-h">${rel ? `<span class="pt-rel" style="color:${rel.color}">${esc(es ? rel.labelEs : rel.label)}</span>` : ""}${label}${s.age ? `<span class="pt-src-a">· ${esc(s.age)} ${esc(t.ago)}</span>` : ""}</div>${s.claim ? `<p class="pt-src-c">${esc(s.claim)}</p>` : ""}</div>`;
   }).join("");
-  const bullets = (title: string, items: string[], color: string, empty?: string) =>
-    (items.length || empty) ? `<div class="pt-card"><p class="pt-label">${esc(title)}</p>${items.length ? `<ul class="pt-bl">${items.map((x) => `<li><span class="pt-bl-d" style="background:${color}"></span><span>${esc(x)}</span></li>`).join("")}</ul>` : `<p class="pt-muted-p">${esc(empty!)}</p>`}</div>` : "";
-  const s = DECISION_TOKENS[a.decision];
+  // ── Opportunity Case — flow-forward "reasoning spine" (visual system V1) ──
+  // One coherent object: a header, then a spine of bands the eye follows in
+  // order. Bands render only when the underlying data exists (graceful absence).
+  const band = (inner: string, cls = "") => `<div class="pt-band ${cls}"><span class="pt-node"></span><div class="pt-bandc">${inner}</div></div>`;
+  const roleType = [a.accountRole, a.opportunityType].filter(Boolean).map((x) => esc(x!)).join(" · ");
 
-  return `<div class="pt-brief" data-brief="${esc(a.id)}">
-    <div class="pt-card"><div class="pt-bh"><div><h2 class="pt-bh-name">${a.rank ? `<span class="pt-rank">${esc(a.rank)}.</span> ` : ""}${esc(a.company)}</h2><div class="pt-bh-sub">${esc([a.segment, a.geography].filter(Boolean).join(" · ")) || (es ? "Detalles de cuenta limitados" : "Account details limited")}</div></div><div class="pt-bh-r">${badge(a.decision, es)}${a.freshness?.age ? `<span class="pt-fresh">${esc(a.freshness.age)} ${esc(t.ago)}</span>` : ""}</div></div>${dims ? `<div class="pt-dims">${dims}</div>` : ""}</div>
-    ${(a.thesis || a.whyItMatters) ? `<div class="pt-card">${a.thesis ? `<p class="pt-label">${esc(t.thesis)}</p><p class="pt-p">${esc(a.thesis)}</p>` : ""}${a.whyItMatters && a.whyItMatters !== a.thesis ? `<div class="pt-sep"><p class="pt-label">${esc(t.whyMatters)}</p><p class="pt-p">${esc(a.whyItMatters)}</p></div>` : ""}</div>` : ""}
-    ${a.whatChanged.length ? `<div class="pt-card pt-signal"><p class="pt-label pt-label-accent">${esc(t.whatChanged)}</p><div class="pt-chgs">${changed}</div></div>` : ""}
-    <div class="pt-card"><div class="pt-ev-h"><p class="pt-label" style="margin:0">${esc(t.supportedBy)}</p>${evBits.length ? `<span class="pt-ev-b">${esc(evBits.join(" · "))}</span>` : ""}</div>${a.sources.length ? `<div class="pt-srcs">${sources}</div>` : `<p class="pt-muted-p">${esc(t.noEvidence)}</p>`}</div>
-    ${bullets(t.counter, a.counterSignals, "#dc2626", t.noCounter)}
-    ${bullets(t.limits, a.limitations, "#b45309")}
-    ${bullets(t.validate, a.validations, "#0284c7")}
-    <div class="pt-card" style="border-left:4px solid ${s.dot};background:${s.bg}"><div class="pt-dec-h"><p class="pt-label" style="margin:0">${esc(t.decision)}</p>${badge(a.decision, es)}</div>${a.decisionNote ? `<p class="pt-p">${esc(a.decisionNote)}</p>` : ""}${a.nextStep ? `<div class="pt-sep"><div class="pt-dim-k">${esc(t.nextStep)}</div><p class="pt-p">${esc(a.nextStep)}</p></div>` : ""}</div>
+  const whyBand = a.whyItMatters && a.whyItMatters !== a.thesis
+    ? band(`<p class="pt-label">${esc(t.whyMatters)}</p><p class="pt-p">${esc(a.whyItMatters)}</p>`) : "";
+  const evidenceBand = band(
+    `<div class="pt-ev-h"><p class="pt-label" style="margin:0">${esc(t.evidenceLabel)}</p>${evBits.length ? `<span class="pt-ev-b">${esc(evBits.join(" · "))}</span>` : ""}</div>${a.sources.length ? `<div class="pt-srcs">${sources}</div>` : `<p class="pt-muted-p">${esc(t.noEvidence)}</p>`}`);
+  const couldChange = (a.counterSignals.length || a.limitations.length)
+    ? band(`<p class="pt-label">${esc(t.whatCouldChange)}</p>${a.counterSignals.map((x) => `<p class="pt-p pt-inl-row"><span class="pt-inl">${esc(t.weakensInl)}</span>${esc(x)}</p>`).join("")}${a.limitations.map((x) => `<p class="pt-p pt-inl-row"><span class="pt-inl">${esc(t.stillUnknownInl)}</span>${esc(x)}</p>`).join("")}`, "pt-unc") : "";
+  const validateBand = a.validations.length
+    ? band(`<p class="pt-label">${esc(t.validate)}</p>${a.validations.map((x, i) => `<div class="pt-valrow">${i === 0 ? `<span class="pt-crit">${es ? "Decisión-crítica" : "Decision-critical"}</span>` : ""}<span class="pt-valq">${esc(x)}</span></div>`).join("")}`) : "";
+  const decisionBand = band(
+    `<div class="pt-dec-h"><p class="pt-label" style="margin:0">${esc(t.decision)}</p>${badge(a.decision, es)}</div>${a.decisionNote ? `<p class="pt-p">${esc(a.decisionNote)}</p>` : ""}${a.nextStep ? `<div class="pt-next"><div class="pt-dim-k">${esc(t.nextStep)}</div><p class="pt-p">${esc(a.nextStep)}</p></div>` : ""}`, "pt-dec");
+
+  return `<div class="pt-brief pt-case" data-brief="${esc(a.id)}">
+    <div class="pt-case-head">
+      ${roleType ? `<div class="pt-role">${roleType}</div>` : ""}
+      <div class="pt-bh"><div><h2 class="pt-bh-name">${a.rank ? `<span class="pt-rank">${esc(a.rank)}.</span> ` : ""}${esc(a.company)}</h2><div class="pt-bh-sub">${esc([a.segment, a.geography].filter(Boolean).join(" · ")) || (es ? "Detalles de cuenta limitados" : "Account details limited")}</div></div><div class="pt-bh-r">${badge(a.decision, es)}${a.freshness?.age ? `<span class="pt-fresh">${esc(a.freshness.age)} ${esc(t.ago)}</span>` : ""}</div></div>
+      ${a.thesis ? `<p class="pt-thesis">${esc(a.thesis)}</p>` : ""}
+      ${dims ? `<div class="pt-dims">${dims}</div>` : ""}
+    </div>
+    <div class="pt-flow">
+      ${a.whatChanged.length ? band(`<p class="pt-label pt-label-accent">${esc(t.whatChanged)}</p><div class="pt-chgs">${changed}</div>`, "pt-signal") : ""}
+      ${whyBand}
+      ${evidenceBand}
+      ${couldChange}
+      ${validateBand}
+      ${decisionBand}
+    </div>
   </div>`;
 }
 
@@ -342,8 +365,34 @@ body{margin:0;background:#f4f7fb;color:#0f172a;font-family:-apple-system,BlinkMa
 .pt-exec{background:linear-gradient(180deg,#f0f9ff,#f8fbff);border:1px solid #cfe9fb;border-left:4px solid #0ea5e9;border-radius:12px;padding:16px 20px}
 .pt-exec-k{display:block;font-size:10.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:#0369a1;margin-bottom:6px}
 .pt-exec-t{font-size:15.5px;line-height:1.55;color:#0c344e;margin:0;font-weight:500}
-/* What Changed — LeadLens signature block */
-.pt-signal{border-left:4px solid #0ea5e9;background:linear-gradient(180deg,#f7fcff,#fff)}
+/* ── Opportunity Case — flow-forward reasoning spine (Visual System V1) ── */
+.pt-case{display:block;background:#fff;border:1px solid #edf1f6;border-radius:14px;padding:0;box-shadow:0 1px 2px rgba(15,23,42,.04);overflow:hidden}
+.pt-case-head{padding:22px 26px 20px}
+.pt-role{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#0284c7;margin-bottom:6px}
+.pt-thesis{font-size:15px;line-height:1.55;color:#475569;margin:14px 0 0;max-width:52rem;font-weight:500}
+.pt-case-head .pt-dims{margin-top:16px;padding-top:16px}
+.pt-flow{position:relative;padding:2px 26px 8px}
+.pt-band{position:relative;padding:16px 0 16px 28px;border-top:1px solid #f1f5f9}
+.pt-band:before{content:"";position:absolute;left:5px;top:0;bottom:0;width:2px;background:#eef2f7}
+.pt-band:first-child{border-top:none}
+.pt-node{position:absolute;left:0;top:20px;width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid #0ea5e9;z-index:1}
+.pt-band.pt-signal{border-left:none;background:linear-gradient(90deg,#f7fcff,#fff 55%)}
+.pt-band.pt-signal .pt-node{background:#0ea5e9}
+.pt-band.pt-unc{background:linear-gradient(90deg,#f8fafc,#fff 55%)}
+.pt-band.pt-unc .pt-node{border-color:#94a3b8}
+.pt-band.pt-dec{background:#f0f9ff;border-radius:12px;margin:6px 0 6px}
+.pt-band.pt-dec:before{background:#bae6fd}
+.pt-band.pt-dec .pt-node{border-color:#0284c7;background:#0284c7}
+.pt-inl-row{margin-top:7px}
+.pt-inl-row:first-of-type{margin-top:0}
+.pt-inl{font-size:9.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#94a3b8;margin-right:7px}
+.pt-valrow{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-top:6px}
+.pt-valrow:first-of-type{margin-top:0}
+.pt-crit{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#b45309;background:#fffbeb;border:1px solid #fde9c8;border-radius:4px;padding:2px 7px;white-space:nowrap}
+.pt-valq{font-size:14px;font-weight:600;color:#0f172a;line-height:1.5}
+.pt-next{margin-top:12px;padding-top:12px;border-top:1px solid rgba(15,23,42,.07)}
+.pt-chg-cat{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#0369a1;background:#f0f9ff;border-radius:4px;padding:1px 7px}
+@media(max-width:640px){.pt-case-head{padding:18px 16px 16px}.pt-flow{padding:2px 16px 6px}.pt-band{padding-left:24px}}
 .pt-note{font-size:12px;color:#94a3b8;margin:8px 0 0;line-height:1.55}
 .pt-muted{color:#94a3b8}
 .pt-muted-p{font-size:12.5px;color:#94a3b8;margin:0}
