@@ -1,0 +1,1457 @@
+{
+  "meta": {
+    "client": "Asteron Systems",
+    "market": "United States & Colombia · Enterprise operations",
+    "generatedAt": "2026-08-21T20:36:04.577Z",
+    "generatedLabel": "2026-08-21",
+    "tierLabel": "Benchmark",
+    "language": "en",
+    "schemaVersion": 1
+  },
+  "headline": "Operational-expansion opportunities across 12 real mid-market & enterprise accounts",
+  "summary": "A real-evidence validation of LeadLens temporal intelligence: 12 accounts evaluated against Asteron's operational-expansion thesis, each Case built only from dated, sourced public evidence. Four accounts show recent, independently corroborated expansion; four need validation; four have no current dated trigger.",
+  "portfolio": {
+    "total": 12,
+    "counts": {
+      "prioritize": 4,
+      "validate": 4,
+      "monitor": 4,
+      "hold": 0
+    },
+    "allocation": {
+      "line": "Focus first on the four corroborated, recent expansions",
+      "detail": "Saia, Watsco, Encompass Health and Alianza Team each show a dated, independently corroborated operational expansion aligned to Asteron's thesis."
+    },
+    "funnel": {
+      "considered": 12,
+      "rejected": 0,
+      "selected": 12
+    },
+    "note": "All 12 evaluated accounts remain visible regardless of evidence outcome."
+  },
+  "accounts": [
+    {
+      "id": "alianza-team",
+      "rank": null,
+      "company": "Alianza Team",
+      "segment": "Food ingredients manufacturing",
+      "geography": "Colombia",
+      "domain": null,
+      "accountRole": "Potential Customer",
+      "opportunityType": "Capacity Expansion",
+      "opportunityDescriptor": null,
+      "decision": "prioritize",
+      "decisionNote": "Dated facility opening corroborated by independent trade (foodnavigator) + Colombian press (elnorte) — the strongest Colombian case.",
+      "thesis": "A Colombian B2B fats/oils manufacturer expanding internationally — a plant build-out that adds cross-border operations and distribution complexity.",
+      "whyItMatters": "A new US plant plus export growth introduces multi-country operations and distribution coordination — precisely where Asteron's orchestration reduces onboarding time; the plant is newly live.",
+      "dimensions": [
+        {
+          "label": "Fit",
+          "value": "Strong"
+        },
+        {
+          "label": "Timing",
+          "value": "Strong"
+        },
+        {
+          "label": "Evidence",
+          "value": "Moderate"
+        }
+      ],
+      "whatChanged": [
+        {
+          "event": "Opened a $36M U.S. functional-fats facility (Apr 9) and publicly reported consolidating its expansion with ~20% exports (May 19).",
+          "date": "2026-05-19",
+          "age": "3mo",
+          "source": "elnorte.com.co",
+          "kind": "true_change"
+        }
+      ],
+      "evidence": {
+        "sourceCount": 2,
+        "datedCount": 2,
+        "corroborated": true,
+        "latestAge": "3mo",
+        "strength": "Moderate"
+      },
+      "sources": [
+        {
+          "label": "elnorte.com.co",
+          "url": null,
+          "date": "2026-05-19",
+          "age": "3mo",
+          "relation": "direct",
+          "claim": "Alianza Team se consolida y avanza en su expansión, exporta 20% de su producción",
+          "observation": null,
+          "basis": "observed",
+          "impacts": [
+            "what_changed",
+            "timing"
+          ]
+        },
+        {
+          "label": "foodnavigator.com",
+          "url": null,
+          "date": "2026-04-09",
+          "age": "5mo",
+          "relation": "corroborating",
+          "claim": "Alianza Team opens $36M U.S. facility to drive functional fats innovation",
+          "observation": null,
+          "basis": "observed",
+          "impacts": [
+            "what_changed",
+            "timing"
+          ]
+        }
+      ],
+      "counterSignals": [
+        "No public signal of a systems gap yet — plant may launch on an incumbent stack."
+      ],
+      "limitations": [
+        "Cross-border org may centralize systems decisions outside the new plant."
+      ],
+      "validations": [
+        "Confirm US plant's operations/distribution systems scope (decision-critical).",
+        "Identify the supply-chain owner across CO↔US."
+      ],
+      "validationDetails": [
+        {
+          "question": "Confirm US plant's operations/distribution systems scope (decision-critical).",
+          "decisionCritical": true,
+          "howToValidate": null,
+          "changesDecisionBecause": null
+        },
+        {
+          "question": "Identify the supply-chain owner across CO↔US.",
+          "decisionCritical": false,
+          "howToValidate": null,
+          "changesDecisionBecause": null
+        }
+      ],
+      "nextStep": "Approach supply-chain leadership on the CO↔US operations bridge.",
+      "revisitWhen": "Further plant/geography expansion, or a disclosed systems initiative.",
+      "freshness": {
+        "label": "Latest evidence",
+        "age": "3mo"
+      },
+      "confidence": "Moderate"
+    },
+    {
+      "id": "saia-inc",
+      "rank": null,
+      "company": "Saia Inc.",
+      "segment": "LTL freight / logistics",
+      "geography": "United States",
+      "domain": null,
+      "accountRole": "Potential Customer",
+      "opportunityType": "Capacity Expansion",
+      "opportunityDescriptor": null,
+      "decision": "prioritize",
+      "decisionNote": "Recent, material, independently corroborated network expansion aligned to Asteron's core profile.",
+      "thesis": "A multi-terminal LTL carrier standing up new terminals month after month — a physical-network build-out that strains routing, dock and yard tooling.",
+      "whyItMatters": "Each new terminal is a new operating node Asteron's TMS/orchestration must model; a rapid multi-site build-out is exactly when a carrier re-evaluates network tooling — the window is open now, not after the network settles.",
+      "dimensions": [
+        {
+          "label": "Fit",
+          "value": "Strong"
+        },
+        {
+          "label": "Timing",
+          "value": "Strong"
+        },
+        {
+          "label": "Evidence",
+          "value": "Strong"
+        }
+      ],
+      "whatChanged": [
+        {
+          "event": "Opened new LTL terminals across the Midwest (Duluth, Columbia, Marysville WA, Indiana) — a third consecutive month of terminal openings.",
+          "date": "2026-06-28",
+          "age": "2mo",
+          "source": "ttnews.com",
+          "kind": "true_change"
+        }
+      ],
+      "evidence": {
+        "sourceCount": 6,
+        "datedCount": 6,
+        "corroborated": true,
+        "latestAge": "2mo",
+        "strength": "Strong"
+      },
+      "sources": [
+        {
+          "label": "ttnews.com",
+          "url": null,
+          "date": "2026-06-28",
+          "age": "2mo",
+          "relation": "direct",
+          "claim": "Saia Continues to Boost Midwest LTL Operations - TT",
+          "observation": null,
+          "basis": "observed",
+          "impacts": [
+            "what_changed",
+            "timing"
+          ]
+        },
+        {
+          "label": "quiverquant.com",
+          "url": null,
+          "date": "2026-06-23",
+          "age": "2mo",
+          "relation": "corroborating",
+          "claim": "Saia Inc. Opens New Terminals in Duluth and Columbia to Expand Midwest Network | Quiver Quantitative",
+          "observation": null,
+          "basis": "observed",
+          "impacts": [
+            "what_changed",
+            "timing"
+          ]
+        },
+        {
+          "label": "freightwaves.com",
+          "url": null,
+          "date": "2026-06-22",
+          "age": "2mo",
+          "relation": "corroborating",
+          "claim": "For a 3rd month in a row, Saia opens new terminals - FreightWaves",
+          "observation": null,
+          "basis": "observed",
+          "impacts": [
+            "what_changed",
+            "timing"
+          ]
+        },
+        {
+          "label": "quiverquant.com",
+          "url": null,
+          "date": "2026-05-22",
+          "age": "3mo",
+          "relation": "corroborating",
+          "claim": "Saia Inc. Expands Network with New Terminals in Marysville, Washington, and Edinburgh, Indiana | Quiver Quantitative",
+          "observation": null,
+          "basis": "observed",
+          "impacts": [
+            "what_changed",
+            "timing"
+          ]
+        },
+        {
+          "label": "globenewswire.com",
+          "url": null,
+          "date": "2026-05-22",
+          "age": "3mo",
+          "relation": "corroborating",
+          "claim": "Saia Continues Network Growth with New Facilities in Washington and Indiana",
+          "observation": null,
+          "basis": "observed",
+          "impacts": [
+            "what_changed",
+            "timing"
+          ]
+        },
+        {
+          "label": "morningstar.com",
+          "url": null,
+          "date": "2026-05-02",
+          "age": "4mo",
+          "relation": "corroborating",
+          "claim": "Saia's LTL Volume Still Muted, but We Look for Solid Recovery as 2026 Progresses | Morningstar",
+          "observation": null,
+          "basis": "observed",
+          "impacts": [
+            "what_changed",
+            "timing"
+          ]
+        }
+      ],
+      "counterSignals": [
+        "LTL tonnage/volume reported soft in late-2025 trade coverage — expansion is capacity-led, not demand-led, so budget urgency may lag."
+      ],
+      "limitations": [
+        "No public signal on their current planning-systems vendor."
+      ],
+      "validations": [
+        "Confirm whether terminal ramp is straining existing TMS/linehaul planning (decision-critical).",
+        "Identify the operations/network-planning owner."
+      ],
+      "validationDetails": [
+        {
+          "question": "Confirm whether terminal ramp is straining existing TMS/linehaul planning (decision-critical).",
+          "decisionCritical": true,
+          "howToValidate": null,
+          "changesDecisionBecause": null
+        },
+        {
+          "question": "Identify the operations/network-planning owner.",
+          "decisionCritical": false,
+          "howToValidate": null,
+          "changesDecisionBecause": null
+        }
+      ],
+      "nextStep": "Reach the VP Operations/Network Planning with a terminal-ramp orchestration angle.",
+      "revisitWhen": "New terminal announcements stop for 2+ months, or a systems-vendor selection is disclosed.",
+      "freshness": {
+        "label": "Latest evidence",
+        "age": "2mo"
+      },
+      "confidence": "Strong"
+    },
+    {
+      "id": "encompass-health",
+      "rank": null,
+      "company": "Encompass Health",
+      "segment": "Healthcare facilities",
+      "geography": "United States",
+      "domain": null,
+      "accountRole": "Potential Customer",
+      "opportunityType": "Operations Expansion",
+      "opportunityDescriptor": null,
+      "decision": "prioritize",
+      "decisionNote": "Repeated, dated, corroborated facility expansion across independent local + trade outlets.",
+      "thesis": "An operator of rehabilitation hospitals adding and expanding facilities — each new hospital is a new operations site with staffing, supply and scheduling load.",
+      "whyItMatters": "A sustained facility-growth cadence means recurring site-onboarding — the operational pattern Asteron shortens; the cadence is active this quarter.",
+      "dimensions": [
+        {
+          "label": "Fit",
+          "value": "Moderate"
+        },
+        {
+          "label": "Timing",
+          "value": "Strong"
+        },
+        {
+          "label": "Evidence",
+          "value": "Strong"
+        }
+      ],
+      "whatChanged": [
+        {
+          "event": "Multiple dated facility developments: Kansas hospital expansion completed (Jul 29), Deaconess expansion announced (Apr 13), Greenville build at midpoint (Mar 24), Franklin expansion begun (Sep 2025).",
+          "date": "2026-08-07",
+          "age": "15d",
+          "source": "investing.com",
+          "kind": "true_change"
+        }
+      ],
+      "evidence": {
+        "sourceCount": 6,
+        "datedCount": 6,
+        "corroborated": true,
+        "latestAge": "15d",
+        "strength": "Strong"
+      },
+      "sources": [
+        {
+          "label": "investing.com",
+          "url": null,
+          "date": "2026-08-07",
+          "age": "15d",
+          "relation": "direct",
+          "claim": "Encompass Health Q2 2026 slides: strong results drive guidance raise By Investing.com",
+          "observation": null,
+          "basis": "observed",
+          "impacts": [
+            "what_changed",
+            "timing"
+          ]
+        },
+        {
+          "label": "healthcaredesignmagazine.com",
+          "url": null,
+          "date": "2026-07-29",
+          "age": "24d",
+          "relation": "corroborating",
+          "claim": "Encompass Health Rehabilitation Hospital Completes Expansion In Katy, Texas - HCD Magazine",
+          "observation": null,
+          "basis": "observed",
+          "impacts": [
+            "what_changed",
+            "timing"
+          ]
+        },
+        {
+          "label": "wevv.com",
+          "url": null,
+          "date": "2026-04-13",
+          "age": "4mo",
+          "relation": "corroborating",
+          "claim": "Encompass Health Deaconess Rehabilitation Hospital Announces Expansion in Newburgh | Health | wevv.com",
+          "observation": null,
+          "basis": "observed",
+          "impacts": [
+            "what_changed",
+            "timing"
+          ]
+        },
+        {
+          "label": "encompasshealth.com",
+          "url": null,
+          "date": "2026-03-24",
+          "age": "5mo",
+          "relation": "corroborating",
+          "claim": "Encompass Health Rehabilitation Hospital of Greenville reaches midpoint of major hospital expansion",
+          "observation": null,
+          "basis": "observed",
+          "impacts": [
+            "what_changed",
+            "timing"
+          ]
+        },
+        {
+          "label": "finance.yahoo.com",
+          "url": null,
+          "date": "2026-01-16",
+          "age": "7mo",
+          "relation": "corroborating",
+          "claim": "How Investors May Respond To Encompass Health (EHC) $100 Million Philadelphia Suburban Rehab Expansion",
+          "observation": null,
+          "basis": "observed",
+          "impacts": [
+            "what_changed",
+            "timing"
+          ]
+        },
+        {
+          "label": "encompasshealth.com",
+          "url": null,
+          "date": "2025-09-19",
+          "age": "11mo",
+          "relation": "corroborating",
+          "claim": "Encompass Health Franklin begins hospital expansion project",
+          "observation": null,
+          "basis": "observed",
+          "impacts": [
+            "what_changed",
+            "timing"
+          ]
+        }
+      ],
+      "counterSignals": [
+        "Healthcare facility ops differ from logistics/distribution — category fit is the open question, not evidence."
+      ],
+      "limitations": [
+        "Asteron's logistics framing may not map cleanly to hospital operations."
+      ],
+      "validations": [
+        "Confirm whether healthcare-ops fit is close enough to Asteron's logistics core (decision-critical).",
+        "Identify facility-operations systems owner."
+      ],
+      "validationDetails": [
+        {
+          "question": "Confirm whether healthcare-ops fit is close enough to Asteron's logistics core (decision-critical).",
+          "decisionCritical": true,
+          "howToValidate": null,
+          "changesDecisionBecause": null
+        },
+        {
+          "question": "Identify facility-operations systems owner.",
+          "decisionCritical": false,
+          "howToValidate": null,
+          "changesDecisionBecause": null
+        }
+      ],
+      "nextStep": "Validate healthcare-operations fit before active pursuit.",
+      "revisitWhen": "A new facility wave, or a disclosed operations-platform initiative.",
+      "freshness": {
+        "label": "Latest evidence",
+        "age": "15d"
+      },
+      "confidence": "Strong"
+    },
+    {
+      "id": "watsco",
+      "rank": null,
+      "company": "Watsco",
+      "segment": "HVAC distribution",
+      "geography": "United States",
+      "domain": null,
+      "accountRole": "Potential Customer",
+      "opportunityType": "Enterprise Transformation",
+      "opportunityDescriptor": null,
+      "decision": "prioritize",
+      "decisionNote": "Confirmed, dated acquisition (announce→complete) with primary + independent corroboration.",
+      "thesis": "The largest US HVAC/R distributor consolidating the Sunbelt through acquisition — each deal adds branches that must be integrated onto common operations systems.",
+      "whyItMatters": "Acquisition integration is the moment distribution/branch operations get re-platformed; Asteron's multi-site orchestration is most relevant during the post-close integration window that just opened.",
+      "dimensions": [
+        {
+          "label": "Fit",
+          "value": "Strong"
+        },
+        {
+          "label": "Timing",
+          "value": "Strong"
+        },
+        {
+          "label": "Evidence",
+          "value": "Strong"
+        }
+      ],
+      "whatChanged": [
+        {
+          "event": "Announced (Apr 28) and completed (Jun 2) the acquisition of Jackson Supply, expanding Sunbelt distribution presence.",
+          "date": "2026-06-03",
+          "age": "3mo",
+          "source": "grafa.com",
+          "kind": "true_change"
+        }
+      ],
+      "evidence": {
+        "sourceCount": 5,
+        "datedCount": 5,
+        "corroborated": true,
+        "latestAge": "3mo",
+        "strength": "Strong"
+      },
+      "sources": [
+        {
+          "label": "grafa.com",
+          "url": null,
+          "date": "2026-06-03",
+          "age": "3mo",
+          "relation": "direct",
+          "claim": "Watsco acquires Jackson Supply to boost Sunbelt HVAC share | Grafa",
+          "observation": null,
+          "basis": "observed",
+          "impacts": [
+            "what_changed",
+            "timing"
+          ]
+        },
+        {
+          "label": "distributionstrategy.com",
+          "url": null,
+          "date": "2026-06-02",
+          "age": "3mo",
+          "relation": "corroborating",
+          "claim": "Watsco Completes Jackson Supply Acquisition, Expanding Presence Across Sunbelt Markets - Distribution Strategy Group",
+          "observation": null,
+          "basis": "observed",
+          "impacts": [
+            "what_changed",
+            "timing"
+          ]
+        },
+        {
+          "label": "watsco.com",
+          "url": null,
+          "date": "2026-06-02",
+          "age": "3mo",
+          "relation": "corroborating",
+          "claim": "Watsco Completes Acquisition of Jackson Supply Company - watsco.com",
+          "observation": null,
+          "basis": "observed",
+          "impacts": [
+            "what_changed",
+            "timing"
+          ]
+        },
+        {
+          "label": "watsco.com",
+          "url": null,
+          "date": "2026-04-28",
+          "age": "4mo",
+          "relation": "corroborating",
+          "claim": "Watsco First Quarter Performance Reflects Stabilizing Markets, Improved Operating Efficiency and Expanded Technology Adoption - watsco.com",
+          "observation": null,
+          "basis": "observed",
+          "impacts": [
+            "what_changed",
+            "timing"
+          ]
+        },
+        {
+          "label": "watsco.com",
+          "url": null,
+          "date": "2026-04-28",
+          "age": "4mo",
+          "relation": "corroborating",
+          "claim": "Watsco To Acquire Jackson Supply Company - watsco.com",
+          "observation": null,
+          "basis": "observed",
+          "impacts": [
+            "what_changed",
+            "timing"
+          ]
+        }
+      ],
+      "counterSignals": [
+        "Q4 earnings framed markets as only 'stabilizing' — capex appetite may be measured."
+      ],
+      "limitations": [
+        "Watsco runs a strong in-house digital program; build-vs-buy resistance is plausible."
+      ],
+      "validations": [
+        "Confirm integration scope for Jackson Supply branches (decision-critical).",
+        "Map their existing distribution-tech stack vs. Asteron fit."
+      ],
+      "validationDetails": [
+        {
+          "question": "Confirm integration scope for Jackson Supply branches (decision-critical).",
+          "decisionCritical": true,
+          "howToValidate": null,
+          "changesDecisionBecause": null
+        },
+        {
+          "question": "Map their existing distribution-tech stack vs. Asteron fit.",
+          "decisionCritical": false,
+          "howToValidate": null,
+          "changesDecisionBecause": null
+        }
+      ],
+      "nextStep": "Engage supply-chain/IT integration lead on branch-integration orchestration.",
+      "revisitWhen": "Integration completes without external tooling, or a further acquisition lands.",
+      "freshness": {
+        "label": "Latest evidence",
+        "age": "3mo"
+      },
+      "confidence": "Strong"
+    },
+    {
+      "id": "tecnoglass",
+      "rank": null,
+      "company": "Tecnoglass",
+      "segment": "Glass & aluminum manufacturing",
+      "geography": "Colombia",
+      "domain": null,
+      "accountRole": "Potential Customer",
+      "opportunityType": "Capacity Expansion",
+      "opportunityDescriptor": null,
+      "decision": "validate",
+      "decisionNote": "Real forward-looking signals, but no confirmed dated facility opening yet — validate before prioritizing.",
+      "thesis": "An architectural-glass manufacturer signaling new-plant plans and a US redomicile — expansion that is announced but not yet operational.",
+      "whyItMatters": "If the new plant proceeds it creates a fresh operations site — but the development is at the plan/financing stage, so the systems window is prospective, not open today.",
+      "dimensions": [
+        {
+          "label": "Fit",
+          "value": "Moderate"
+        },
+        {
+          "label": "Timing",
+          "value": "Moderate"
+        },
+        {
+          "label": "Evidence",
+          "value": "Moderate"
+        }
+      ],
+      "whatChanged": [
+        {
+          "event": "Public signals of new-plant plans + US redomiciling (Feb 28) and double-digit growth guidance (Feb 10); credit facility amended to raise capacity (Sep 2025).",
+          "date": "2026-05-15",
+          "age": "3mo",
+          "source": "umbrex.com",
+          "kind": "true_change"
+        }
+      ],
+      "evidence": {
+        "sourceCount": 4,
+        "datedCount": 4,
+        "corroborated": true,
+        "latestAge": "3mo",
+        "strength": "Moderate"
+      },
+      "sources": [
+        {
+          "label": "umbrex.com",
+          "url": null,
+          "date": "2026-05-15",
+          "age": "3mo",
+          "relation": "direct",
+          "claim": "Tecnoglass Strategy and Business Model",
+          "observation": null,
+          "basis": "observed",
+          "impacts": [
+            "what_changed",
+            "timing"
+          ]
+        },
+        {
+          "label": "simplywall.st",
+          "url": null,
+          "date": "2026-02-28",
+          "age": "6mo",
+          "relation": "corroborating",
+          "claim": "Tecnoglass Redomiciling To U.S. As Buybacks And New Plant Plans Emerge - Simply Wall St News",
+          "observation": null,
+          "basis": "observed",
+          "impacts": [
+            "what_changed",
+            "timing"
+          ]
+        },
+        {
+          "label": "es-us.noticias.yahoo.com",
+          "url": null,
+          "date": "2026-02-10",
+          "age": "6mo",
+          "relation": "corroborating",
+          "claim": "Los planes de Tecnoglass para 2026: crecimiento a doble dígito y búsqueda de nueva planta en EE. UU. - Yahoo Noticias",
+          "observation": null,
+          "basis": "observed",
+          "impacts": [
+            "what_changed",
+            "timing"
+          ]
+        },
+        {
+          "label": "financecolombia.com",
+          "url": null,
+          "date": "2025-09-09",
+          "age": "12mo",
+          "relation": "corroborating",
+          "claim": "Finance Colombia » Tecnoglass Amends Credit Facility, Increasing Capacity to $500 Million USD",
+          "observation": null,
+          "basis": "observed",
+          "impacts": [
+            "what_changed",
+            "timing"
+          ]
+        }
+      ],
+      "counterSignals": [
+        "Evidence is plans/financial rather than an executed operational event."
+      ],
+      "limitations": [
+        "Timeline to a live plant is unconfirmed."
+      ],
+      "validations": [
+        "Confirm whether the new plant has moved from plan to build (decision-critical).",
+        "Track redomicile-driven operations changes."
+      ],
+      "validationDetails": [
+        {
+          "question": "Confirm whether the new plant has moved from plan to build (decision-critical).",
+          "decisionCritical": true,
+          "howToValidate": null,
+          "changesDecisionBecause": null
+        },
+        {
+          "question": "Track redomicile-driven operations changes.",
+          "decisionCritical": false,
+          "howToValidate": null,
+          "changesDecisionBecause": null
+        }
+      ],
+      "nextStep": "Monitor for a groundbreaking/opening that converts plans into an operations trigger.",
+      "revisitWhen": "New-plant construction or opening is confirmed.",
+      "freshness": {
+        "label": "Latest evidence",
+        "age": "3mo"
+      },
+      "confidence": "Moderate"
+    },
+    {
+      "id": "us-foods",
+      "rank": null,
+      "company": "US Foods",
+      "segment": "Foodservice distribution",
+      "geography": "United States",
+      "domain": null,
+      "accountRole": "Potential Customer",
+      "opportunityType": "Capacity Expansion",
+      "opportunityDescriptor": null,
+      "decision": "validate",
+      "decisionNote": "Real material DC expansion, but single-origin and older; corroboration and recency need confirming.",
+      "thesis": "A national foodservice distributor whose DC network is core to Asteron's profile — one confirmed expansion, but dated and single-sourced.",
+      "whyItMatters": "A finished DC expansion changes throughput and slotting needs — relevant to Asteron, but the event is ~9 months old, so timing is weaker than the terminal/hub cases.",
+      "dimensions": [
+        {
+          "label": "Fit",
+          "value": "Strong"
+        },
+        {
+          "label": "Timing",
+          "value": "Limited"
+        },
+        {
+          "label": "Evidence",
+          "value": "Moderate"
+        }
+      ],
+      "whatChanged": [
+        {
+          "event": "Completed expansion of a large Louisiana distribution center (Nov 20, 2025).",
+          "date": "2025-11-20",
+          "age": "9mo",
+          "source": "restaurantbusinessonline.com",
+          "kind": "true_change"
+        }
+      ],
+      "evidence": {
+        "sourceCount": 1,
+        "datedCount": 1,
+        "corroborated": false,
+        "latestAge": "9mo",
+        "strength": "Moderate"
+      },
+      "sources": [
+        {
+          "label": "restaurantbusinessonline.com",
+          "url": null,
+          "date": "2025-11-20",
+          "age": "9mo",
+          "relation": "direct",
+          "claim": "US Foods completes expansion of a massive Louisiana distribution center",
+          "observation": null,
+          "basis": "observed",
+          "impacts": [
+            "what_changed",
+            "timing"
+          ]
+        }
+      ],
+      "counterSignals": [
+        "A 2026 layoffs page appears for US Foods — mixed operational signal."
+      ],
+      "limitations": [
+        "Only one distribution-expansion source surfaced in-window."
+      ],
+      "validations": [
+        "Find independent corroboration + any newer DC activity (decision-critical).",
+        "Confirm current DC-systems posture."
+      ],
+      "validationDetails": [
+        {
+          "question": "Find independent corroboration + any newer DC activity (decision-critical).",
+          "decisionCritical": true,
+          "howToValidate": null,
+          "changesDecisionBecause": null
+        },
+        {
+          "question": "Confirm current DC-systems posture.",
+          "decisionCritical": false,
+          "howToValidate": null,
+          "changesDecisionBecause": null
+        }
+      ],
+      "nextStep": "Seek a second origin and a fresher signal before prioritizing.",
+      "revisitWhen": "A newer DC opening or automation initiative appears.",
+      "freshness": {
+        "label": "Latest evidence",
+        "age": "9mo"
+      },
+      "confidence": "Moderate"
+    },
+    {
+      "id": "mueller-industries",
+      "rank": null,
+      "company": "Mueller Industries",
+      "segment": "Metals manufacturing",
+      "geography": "United States",
+      "domain": null,
+      "accountRole": "Potential Customer",
+      "opportunityType": "Enterprise Transformation",
+      "opportunityDescriptor": null,
+      "decision": "validate",
+      "decisionNote": "Genuine dated M&A/capacity events, but primary corroboration is thin.",
+      "thesis": "A copper/brass manufacturer growing by acquisition and adding automated capacity — expansion real but reported mostly via secondary sources.",
+      "whyItMatters": "Acquisition + new automated capacity add operations sites/lines to integrate — Asteron-relevant, but the signals lean on secondary aggregators, so confidence is moderate.",
+      "dimensions": [
+        {
+          "label": "Fit",
+          "value": "Moderate"
+        },
+        {
+          "label": "Timing",
+          "value": "Moderate"
+        },
+        {
+          "label": "Evidence",
+          "value": "Moderate"
+        }
+      ],
+      "whatChanged": [
+        {
+          "event": "Acquired Bison Metals Technologies (Apr 2) and expanded Mueller Coatings production with a new automated line (Jan 7).",
+          "date": "2026-07-26",
+          "age": "27d",
+          "source": "quartr.com",
+          "kind": "true_change"
+        }
+      ],
+      "evidence": {
+        "sourceCount": 4,
+        "datedCount": 4,
+        "corroborated": true,
+        "latestAge": "27d",
+        "strength": "Moderate"
+      },
+      "sources": [
+        {
+          "label": "quartr.com",
+          "url": null,
+          "date": "2026-07-26",
+          "age": "27d",
+          "relation": "direct",
+          "claim": "Mueller Industries (MLI) Investor presentation Summary | Quartr",
+          "observation": null,
+          "basis": "observed",
+          "impacts": [
+            "what_changed",
+            "timing"
+          ]
+        },
+        {
+          "label": "vectorshift.ai",
+          "url": null,
+          "date": "2026-06-05",
+          "age": "3mo",
+          "relation": "corroborating",
+          "claim": "Mueller Industries Acquisition History — Every Deal, Price & Rationale | VectorShift",
+          "observation": null,
+          "basis": "observed",
+          "impacts": [
+            "what_changed",
+            "timing"
+          ]
+        },
+        {
+          "label": "pulse2.com",
+          "url": null,
+          "date": "2026-04-02",
+          "age": "5mo",
+          "relation": "corroborating",
+          "claim": "Mueller Industries: Acquisition Of Bison Metals Technologies Expands U.S. Copper Tube Capacity",
+          "observation": null,
+          "basis": "observed",
+          "impacts": [
+            "what_changed",
+            "timing"
+          ]
+        },
+        {
+          "label": "muellercoatings.com",
+          "url": null,
+          "date": "2026-01-07",
+          "age": "8mo",
+          "relation": "corroborating",
+          "claim": "Mueller Coatings Expands Production Capacity with New Fully Automated Vacuum Metallizing Line - Mueller Coatings",
+          "observation": null,
+          "basis": "observed",
+          "impacts": [
+            "what_changed",
+            "timing"
+          ]
+        }
+      ],
+      "counterSignals": [
+        "Sourcing skews to secondary finance aggregators rather than primary/trade."
+      ],
+      "limitations": [
+        "Primary-source confirmation limited in-window."
+      ],
+      "validations": [
+        "Corroborate the Bison acquisition scope via primary sources (decision-critical).",
+        "Assess integration/systems implications."
+      ],
+      "validationDetails": [
+        {
+          "question": "Corroborate the Bison acquisition scope via primary sources (decision-critical).",
+          "decisionCritical": true,
+          "howToValidate": null,
+          "changesDecisionBecause": null
+        },
+        {
+          "question": "Assess integration/systems implications.",
+          "decisionCritical": false,
+          "howToValidate": null,
+          "changesDecisionBecause": null
+        }
+      ],
+      "nextStep": "Confirm via primary filings before elevating.",
+      "revisitWhen": "Primary confirmation or a further acquisition.",
+      "freshness": {
+        "label": "Latest evidence",
+        "age": "27d"
+      },
+      "confidence": "Moderate"
+    },
+    {
+      "id": "gxo-logistics",
+      "rank": null,
+      "company": "GXO Logistics",
+      "segment": "Contract logistics / warehousing",
+      "geography": "United States",
+      "domain": null,
+      "accountRole": "Potential Customer",
+      "opportunityType": "Operations Expansion",
+      "opportunityDescriptor": null,
+      "decision": "validate",
+      "decisionNote": "Real expansion AND real contraction, both dated and sourced — a genuine conflict to resolve, not a clean opportunity.",
+      "thesis": "A pure-play contract-logistics operator opening automated hubs while simultaneously restructuring — genuine expansion clouded by material contraction.",
+      "whyItMatters": "Expansion signals exist, but concurrent restructuring means the net operations trajectory is ambiguous — the case must be reconciled before allocating attention.",
+      "dimensions": [
+        {
+          "label": "Fit",
+          "value": "Moderate"
+        },
+        {
+          "label": "Timing",
+          "value": "Moderate"
+        },
+        {
+          "label": "Evidence",
+          "value": "Moderate"
+        }
+      ],
+      "whatChanged": [
+        {
+          "event": "Opened a future-ready logistics hub (Sant'Antonino, Mar 31) and expanded an Electro Dépôt automation contract (Apr 19) — but multiple 2026 layoffs/closures (Southaven, Memphis, West Jefferson) are dated in the same window.",
+          "date": "2026-06-02",
+          "age": "3mo",
+          "source": "simplywall.st",
+          "kind": "true_change"
+        }
+      ],
+      "evidence": {
+        "sourceCount": 4,
+        "datedCount": 4,
+        "corroborated": true,
+        "latestAge": "3mo",
+        "strength": "Moderate"
+      },
+      "sources": [
+        {
+          "label": "simplywall.st",
+          "url": null,
+          "date": "2026-06-02",
+          "age": "3mo",
+          "relation": "direct",
+          "claim": "GXO: North American Contract Logistics Focus Will Support Upside Into 2026",
+          "observation": null,
+          "basis": "observed",
+          "impacts": [
+            "what_changed",
+            "timing"
+          ]
+        },
+        {
+          "label": "sahmcapital.com",
+          "url": null,
+          "date": "2026-04-19",
+          "age": "4mo",
+          "relation": "corroborating",
+          "claim": "Expanded Electro Dépôt Automation Contract Might Change The Case For Investing In GXO Logistics (GXO)",
+          "observation": null,
+          "basis": "observed",
+          "impacts": [
+            "what_changed",
+            "timing"
+          ]
+        },
+        {
+          "label": "layoffhedge.com",
+          "url": null,
+          "date": "2026-04-11",
+          "age": "4mo",
+          "relation": "corroborating",
+          "claim": "GXO Logistics Layoffs 2026 - 220 Jobs Cut | layoffhedge",
+          "observation": null,
+          "basis": "observed",
+          "impacts": [
+            "what_changed",
+            "timing"
+          ]
+        },
+        {
+          "label": "gxo.com",
+          "url": null,
+          "date": "2026-03-31",
+          "age": "5mo",
+          "relation": "corroborating",
+          "claim": "GXO opens future-ready logistics hub in Sant'Antonino",
+          "observation": null,
+          "basis": "observed",
+          "impacts": [
+            "what_changed",
+            "timing"
+          ]
+        }
+      ],
+      "counterSignals": [
+        "220-job Southaven closure, Memphis ~200 cuts, West Jefferson layoffs — material contraction concurrent with expansion."
+      ],
+      "limitations": [
+        "Public signals conflict; net direction is unresolved from open sources."
+      ],
+      "validations": [
+        "Determine whether new-hub/automation growth outweighs the layoff/closure footprint (decision-critical).",
+        "Locate which region carries the net-new operations."
+      ],
+      "validationDetails": [
+        {
+          "question": "Determine whether new-hub/automation growth outweighs the layoff/closure footprint (decision-critical).",
+          "decisionCritical": true,
+          "howToValidate": null,
+          "changesDecisionBecause": null
+        },
+        {
+          "question": "Locate which region carries the net-new operations.",
+          "decisionCritical": false,
+          "howToValidate": null,
+          "changesDecisionBecause": null
+        }
+      ],
+      "nextStep": "Hold active pursuit until the expansion-vs-restructuring balance is confirmed.",
+      "revisitWhen": "A clear net-growth or net-contraction signal resolves the conflict.",
+      "freshness": {
+        "label": "Latest evidence",
+        "age": "3mo"
+      },
+      "confidence": "Moderate"
+    },
+    {
+      "id": "quala-s-a",
+      "rank": null,
+      "company": "Quala S.A.",
+      "segment": "Consumer goods manufacturing",
+      "geography": "Colombia",
+      "domain": null,
+      "accountRole": "Potential Customer",
+      "opportunityType": "New Business",
+      "opportunityDescriptor": null,
+      "decision": "monitor",
+      "decisionNote": "No material dated event; identity confirmed but no temporal trigger.",
+      "thesis": "A large Colombian CPG manufacturer with a strong operational footprint but no material dated expansion event surfaced in-window.",
+      "whyItMatters": null,
+      "dimensions": [
+        {
+          "label": "Fit",
+          "value": "Moderate"
+        },
+        {
+          "label": "Timing",
+          "value": "Limited"
+        },
+        {
+          "label": "Evidence",
+          "value": "Limited"
+        }
+      ],
+      "whatChanged": [
+        {
+          "event": "No verified dated material operational event found in the current window.",
+          "date": null,
+          "age": null,
+          "source": null,
+          "kind": "unknown"
+        }
+      ],
+      "evidence": {
+        "sourceCount": 0,
+        "datedCount": 0,
+        "corroborated": false,
+        "latestAge": null,
+        "strength": "Limited"
+      },
+      "sources": [],
+      "counterSignals": [],
+      "limitations": [
+        "Spanish-language public coverage may under-report operational events (recall limit)."
+      ],
+      "validations": [
+        "Watch for plant/DC investment announcements."
+      ],
+      "validationDetails": [
+        {
+          "question": "Watch for plant/DC investment announcements.",
+          "decisionCritical": true,
+          "howToValidate": null,
+          "changesDecisionBecause": null
+        }
+      ],
+      "nextStep": "Monitor for a dated facility/capacity announcement.",
+      "revisitWhen": "A plant, DC, or capacity investment is announced.",
+      "freshness": null,
+      "confidence": "Limited"
+    },
+    {
+      "id": "coordinadora-mercantil",
+      "rank": null,
+      "company": "Coordinadora Mercantil",
+      "segment": "Logistics / parcel",
+      "geography": "Colombia",
+      "domain": null,
+      "accountRole": "Potential Customer",
+      "opportunityType": "New Business",
+      "opportunityDescriptor": null,
+      "decision": "monitor",
+      "decisionNote": "No material dated event; wrong-entity noise correctly rejected.",
+      "thesis": "A national Colombian logistics operator — ideal structural fit, but no valid dated operational event surfaced for the Colombian entity.",
+      "whyItMatters": null,
+      "dimensions": [
+        {
+          "label": "Fit",
+          "value": "Moderate"
+        },
+        {
+          "label": "Timing",
+          "value": "Limited"
+        },
+        {
+          "label": "Evidence",
+          "value": "Limited"
+        }
+      ],
+      "whatChanged": [
+        {
+          "event": "No verified dated material operational event found; the only negative hit resolved to a same-named Spanish firm and was excluded (wrong entity).",
+          "date": null,
+          "age": null,
+          "source": null,
+          "kind": "unknown"
+        }
+      ],
+      "evidence": {
+        "sourceCount": 0,
+        "datedCount": 0,
+        "corroborated": false,
+        "latestAge": null,
+        "strength": "Limited"
+      },
+      "sources": [],
+      "counterSignals": [],
+      "limitations": [
+        "Name collision with a Spanish 'Coordinadora' required strict entity control; Spanish recall limits apply."
+      ],
+      "validations": [
+        "Watch for hub/technology investment by the Colombian entity."
+      ],
+      "validationDetails": [
+        {
+          "question": "Watch for hub/technology investment by the Colombian entity.",
+          "decisionCritical": true,
+          "howToValidate": null,
+          "changesDecisionBecause": null
+        }
+      ],
+      "nextStep": "Monitor for a dated logistics-network or technology signal.",
+      "revisitWhen": "A hub opening or systems initiative by the Colombian entity is announced.",
+      "freshness": null,
+      "confidence": "Limited"
+    },
+    {
+      "id": "crystal-s-a-s",
+      "rank": null,
+      "company": "Crystal S.A.S.",
+      "segment": "Textile & apparel manufacturing",
+      "geography": "Colombia",
+      "domain": null,
+      "accountRole": "Potential Customer",
+      "opportunityType": "New Business",
+      "opportunityDescriptor": null,
+      "decision": "monitor",
+      "decisionNote": "No material dated event surfaced.",
+      "thesis": "A vertically-integrated textile manufacturer/retailer — plausible fit, but no dated operational expansion event surfaced.",
+      "whyItMatters": null,
+      "dimensions": [
+        {
+          "label": "Fit",
+          "value": "Moderate"
+        },
+        {
+          "label": "Timing",
+          "value": "Limited"
+        },
+        {
+          "label": "Evidence",
+          "value": "Limited"
+        }
+      ],
+      "whatChanged": [
+        {
+          "event": "No verified dated material operational event found in the current window.",
+          "date": null,
+          "age": null,
+          "source": null,
+          "kind": "unknown"
+        }
+      ],
+      "evidence": {
+        "sourceCount": 0,
+        "datedCount": 0,
+        "corroborated": false,
+        "latestAge": null,
+        "strength": "Limited"
+      },
+      "sources": [],
+      "counterSignals": [],
+      "limitations": [
+        "'Crystal' is a common token — identity noise plus Spanish recall limits."
+      ],
+      "validations": [
+        "Watch for plant or retail-network expansion."
+      ],
+      "validationDetails": [
+        {
+          "question": "Watch for plant or retail-network expansion.",
+          "decisionCritical": true,
+          "howToValidate": null,
+          "changesDecisionBecause": null
+        }
+      ],
+      "nextStep": "Monitor for a dated expansion signal.",
+      "revisitWhen": "A new plant or store-network expansion is announced.",
+      "freshness": null,
+      "confidence": "Limited"
+    },
+    {
+      "id": "grupo-bios",
+      "rank": null,
+      "company": "Grupo BIOS",
+      "segment": "Agro-industrial / animal nutrition",
+      "geography": "Colombia",
+      "domain": null,
+      "accountRole": "Potential Customer",
+      "opportunityType": "New Business",
+      "opportunityDescriptor": null,
+      "decision": "monitor",
+      "decisionNote": "Identity confirmed on several sources; no material dated event.",
+      "thesis": "A Colombian agro-industrial holding with many plants — strong structural fit, but no dated operational event surfaced in-window.",
+      "whyItMatters": null,
+      "dimensions": [
+        {
+          "label": "Fit",
+          "value": "Moderate"
+        },
+        {
+          "label": "Timing",
+          "value": "Limited"
+        },
+        {
+          "label": "Evidence",
+          "value": "Limited"
+        }
+      ],
+      "whatChanged": [
+        {
+          "event": "No verified dated material operational event found in the current window.",
+          "date": null,
+          "age": null,
+          "source": null,
+          "kind": "unknown"
+        }
+      ],
+      "evidence": {
+        "sourceCount": 0,
+        "datedCount": 0,
+        "corroborated": false,
+        "latestAge": null,
+        "strength": "Limited"
+      },
+      "sources": [],
+      "counterSignals": [],
+      "limitations": [
+        "Likely Spanish-language recall limitation on operational news."
+      ],
+      "validations": [
+        "Watch for plant/logistics investment announcements."
+      ],
+      "validationDetails": [
+        {
+          "question": "Watch for plant/logistics investment announcements.",
+          "decisionCritical": true,
+          "howToValidate": null,
+          "changesDecisionBecause": null
+        }
+      ],
+      "nextStep": "Monitor for a dated plant/capacity announcement.",
+      "revisitWhen": "A facility or capacity investment is announced.",
+      "freshness": null,
+      "confidence": "Limited"
+    }
+  ],
+  "commercialContext": {
+    "objective": "Find enterprise accounts where operational expansion creates a credible near-term software opportunity.",
+    "clientDescription": "Enterprise logistics & operations software (WMS/TMS/orchestration) for multi-site operators.",
+    "summary": "The account is scaling physical operations — new distribution centers, terminals, plants, facilities, capacity, or acquisitions — which strains existing tooling and creates a near-term systems need.",
+    "regions": [
+      "United States",
+      "Colombia"
+    ],
+    "industries": [
+      "Logistics",
+      "Distribution",
+      "Manufacturing",
+      "Healthcare",
+      "Food & Agriculture"
+    ],
+    "criteria": [
+      "new DC / warehouse / terminal",
+      "new plant / facility opening",
+      "capacity expansion",
+      "acquisition / merger integration",
+      "ERP/WMS/TMS modernization",
+      "large hiring in operations"
+    ]
+  },
+  "validationQueue": [
+    {
+      "accountId": "tecnoglass",
+      "company": "Tecnoglass",
+      "decision": "validate",
+      "items": [
+        "Confirm whether the new plant has moved from plan to build (decision-critical).",
+        "Track redomicile-driven operations changes."
+      ]
+    },
+    {
+      "accountId": "us-foods",
+      "company": "US Foods",
+      "decision": "validate",
+      "items": [
+        "Find independent corroboration + any newer DC activity (decision-critical).",
+        "Confirm current DC-systems posture."
+      ]
+    },
+    {
+      "accountId": "mueller-industries",
+      "company": "Mueller Industries",
+      "decision": "validate",
+      "items": [
+        "Corroborate the Bison acquisition scope via primary sources (decision-critical).",
+        "Assess integration/systems implications."
+      ]
+    },
+    {
+      "accountId": "gxo-logistics",
+      "company": "GXO Logistics",
+      "decision": "validate",
+      "items": [
+        "Determine whether new-hub/automation growth outweighs the layoff/closure footprint (decision-critical).",
+        "Locate which region carries the net-new operations."
+      ]
+    }
+  ],
+  "coverage": {
+    "withDatedEvidence": 8,
+    "withSources": 8,
+    "corroborated": 7,
+    "grade": "Strong",
+    "note": "8/12 accounts carry dated evidence; 7/12 independently corroborated."
+  },
+  "methodology": [
+    "Accounts selected first by structural criteria (sector, operational intensity, public visibility) — never because an event was known.",
+    "Evidence gated: identity → real event date → materiality → client-relevance → independent origin.",
+    "Retrieval/crawl dates, static pages and wrong-entity matches rejected.",
+    "Counterevidence gathered by a separate adversarial pass."
+  ],
+  "limitations": [
+    "Spanish-language operational news has weaker public recall — several Colombian accounts may have events not surfaced in-window.",
+    "Some acquisitions are corroborated by secondary finance aggregators rather than primary filings."
+  ],
+  "downloads": {
+    "pdf": false,
+    "portfolioCsv": true,
+    "evidenceCsv": true
+  },
+  "capabilities": {
+    "showPortfolioTab": true,
+    "showCompareTab": true,
+    "showEvidenceTab": true,
+    "showDownloadsTab": true,
+    "showMethodology": true
+  }
+}
