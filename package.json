@@ -43,6 +43,7 @@
     "test:product-catalog": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/product-catalog.test.ts",
     "test:commercial-continuity": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/commercial-continuity.test.ts",
     "test:product-truth-parity": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/product-truth-parity-repair.test.ts",
+    "test:evidence-complete-case": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/evidence-complete-opportunity-case.test.ts",
     "test:v7-landing-guards": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/v7-landing-guards.test.ts",
     "test:deliverable": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/deliverable-renderer.test.ts",
     "test:portable": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/portable-deliverable.test.ts",

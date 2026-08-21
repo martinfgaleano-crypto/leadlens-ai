@@ -5,6 +5,8 @@
 // material statement carries a `basis` so the reader can tell fact from
 // inference from hypothesis from recommendation from unknown.
 
+import type { OpportunityCaseIntelligenceV1 } from "@/lib/intelligence/opportunity-case-intelligence";
+
 export const INSTITUTIONAL_REPORT_VERSION = 1;
 
 export type ClaimBasis = "fact" | "inference" | "hypothesis" | "recommendation" | "unknown";
@@ -45,6 +47,8 @@ export interface AccountDossier {
   hypotheses: Claim[];        // pain hypotheses, open questions — clearly hypothesis
   recommended_next_step: Claim; // recommendation
   playbook: Record<string, string> | null; // HOT accounts (from Decision Engine when present)
+  /** Curated evaluation/synthesis output; optional for every legacy snapshot. */
+  opportunity_case?: OpportunityCaseIntelligenceV1 | null;
 }
 
 export interface InstitutionalOpportunityReportV1 {

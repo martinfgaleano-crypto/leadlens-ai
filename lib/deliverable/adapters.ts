@@ -8,6 +8,7 @@
 
 import type { InstitutionalOpportunityReportV1, AccountDossier } from "@/lib/reports/institutional-report-types";
 import type { ReportExperience } from "@/lib/products/report-experience";
+import type { OpportunityCaseIntelligenceV1 } from "@/lib/intelligence/opportunity-case-intelligence";
 import { derivePortfolioStatus, deriveAllocation, type StatusVerdict } from "@/lib/products/report-experience";
 import {
   type DeliverableViewModel, type AccountBriefVM, type DecisionState, type Strength,
@@ -27,15 +28,6 @@ function buildValidationQueue(accounts: AccountBriefVM[]): ValidationQueueItemVM
     .map((a) => ({ accountId: a.id, company: a.company, decision: a.decision, items: a.validations }));
 }
 
-function fitStrength(score: number | null): Strength | null {
-  if (score === null) return null;
-  return score >= 7 ? "Strong" : score >= 4 ? "Moderate" : "Limited";
-}
-function timingStrength(days: number | null): Strength | null {
-  if (days === null) return null;
-  return days <= 30 ? "Strong" : days <= 90 ? "Moderate" : "Limited";
-}
-
 // ─── Institutional report → view model ────────────────────────────────────────
 
 const TIER_DECISION: Record<string, DecisionState> = { HOT: "prioritize", WARM: "validate", COLD: "monitor", DISCARD: "hold" };
@@ -47,21 +39,26 @@ function decisionOf(d: AccountDossier): DecisionState {
 }
 
 function dossierToBrief(d: AccountDossier, i: number, status: StatusVerdict | null): AccountBriefVM {
+  const oc = d.opportunity_case ?? null;
   const datedIsos = d.evidence_chain.map((e) => e.date).filter((x): x is string => Boolean(x)).sort().reverse();
   const latestIso = datedIsos[0] ?? null;
   const latestDays = daysAgo(latestIso);
 
   const dimensions: AccountBriefVM["dimensions"] = [];
-  const fit = fitStrength(d.fit_score);
+  const fit = oc?.fit?.value ?? null;
   if (fit) dimensions.push({ label: "Fit", value: fit, note: d.fit_score !== null ? `${d.fit_score}/10` : null });
-  const timing = timingStrength(latestDays);
+  const timing = oc?.timing?.value ?? null;
   if (timing) dimensions.push({ label: "Timing", value: timing, note: latestDays !== null ? `${latestDays}d since signal` : null });
   const evidenceStrength: Strength | null = d.evidence_grounded === true ? "Strong"
     : d.evidence_chain.some((e) => e.url) ? "Moderate"
     : d.evidence_chain.length > 0 ? "Limited" : null;
   if (evidenceStrength) dimensions.push({ label: "Evidence", value: evidenceStrength });
 
-  const sources: SourceVM[] = d.evidence_chain.map((e) => ({
+  const sources: SourceVM[] = oc?.evidence.map((e) => ({
+    label: e.sourceLabel, url: e.url, date: e.date, age: ageLabel(e.date),
+    relation: e.relation === "supporting" ? "corroborating" : e.relation,
+    claim: e.claim, observation: e.observation, basis: e.basis, impacts: e.impacts,
+  })) ?? d.evidence_chain.map((e) => ({
     label: e.label,
     url: e.url,
     date: e.date,
@@ -70,10 +67,8 @@ function dossierToBrief(d: AccountDossier, i: number, status: StatusVerdict | nu
     claim: null,
   }));
 
-  const whatChanged: ChangeVM[] = d.evidence_chain
-    .filter((e) => e.date)
-    .filter((e) => e.date_basis === "fact")
-    .map((e) => ({ event: e.label, date: e.date, age: ageLabel(e.date), source: hostOf(e.url), kind: "recent_event" as const }));
+  const whatChanged: ChangeVM[] = oc?.changes.map((e) => ({ event: e.event, date: e.date, age: ageLabel(e.date), source: e.sourceLabel, kind: "true_change" as const })) ?? [];
+  const validationDetails = oc?.validations ?? [];
 
   return {
     id: slug(d.company, i),
@@ -82,26 +77,29 @@ function dossierToBrief(d: AccountDossier, i: number, status: StatusVerdict | nu
     segment: d.industry,
     geography: d.location,
     domain: d.domain,
-    accountRole: null,        // current institutional reports do not emit role/type
-    opportunityType: null,
+    accountRole: oc?.classification.accountRole?.value ?? null,
+    opportunityType: oc?.classification.opportunityType?.value ?? null,
+    opportunityDescriptor: oc?.classification.opportunityDescriptor ?? null,
     decision: decisionOf(d),
-    decisionNote: status?.because ?? null,
+    decisionNote: oc?.decisionRationale?.value ?? status?.because ?? null,
     thesis: d.thesis?.text ?? null,
-    whyItMatters: d.why_now?.text ?? null,
+    whyItMatters: oc?.whyNow?.value ?? null,
     dimensions,
     whatChanged,
     evidence: {
       sourceCount: d.evidence_chain.length,
       datedCount: datedIsos.length,
-      corroborated: d.evidence_grounded,
+      corroborated: oc ? oc.independentSupport : d.evidence_grounded,
       latestAge: ageLabel(latestIso),
       strength: evidenceStrength,
     },
     sources,
-    counterSignals: d.risks.map((r) => r.text).filter(Boolean),
-    limitations: d.actionability_blockers.filter(Boolean),
-    validations: d.hypotheses.map((h) => h.text).filter(Boolean),
-    nextStep: d.recommended_next_step?.text ?? null,
+    counterSignals: oc?.weaknesses.map((x) => x.value) ?? d.risks.filter((r) => r.basis !== "unknown").map((r) => r.text).filter(Boolean),
+    limitations: oc?.unknowns.map((x) => x.value) ?? d.actionability_blockers.filter(Boolean),
+    validations: validationDetails.length ? validationDetails.map((v) => v.question) : d.hypotheses.map((h) => h.text).filter(Boolean),
+    validationDetails,
+    nextStep: oc?.recommendedNextStep?.value ?? d.recommended_next_step?.text ?? null,
+    revisitWhen: oc?.revisitWhen?.value ?? null,
     freshness: latestIso ? { label: ageLabel(latestIso) ? `${ageLabel(latestIso)} ago` : "dated", age: ageLabel(latestIso) } : null,
     confidence: evidenceStrength,
   };
@@ -187,6 +185,7 @@ interface AmorAccount {
   why?: string; test?: string; unknown?: string; next?: string;
   evidence?: AmorEvidence; thesis?: string; buyer_hyp?: string; procurement?: string;
   cycle?: string; objections?: string[]; questions?: string[]; prep?: string[];
+  opportunity_case?: OpportunityCaseIntelligenceV1;
 }
 interface AmorDeliverable {
   meta?: { client?: string; pilot?: string; geography?: string; generated_date?: string; generated_label?: string };
@@ -224,17 +223,36 @@ export function fromAmorPilot(d: AmorDeliverable): DeliverableViewModel {
     const brief = briefsByName.get(a.name ?? "");
     const ev = a.evidence;
     const date = ev?.retrieved && /\d{4}-\d{2}-\d{2}/.test(ev.retrieved) ? ev.retrieved : null;
-    const relation: EvidenceRelation | null = ev?.proves ? "direct" : ev?.source ? "context" : null;
-    const strength = amorFreshnessStrength(ev?.freshness);
-    const sources: SourceVM[] = ev?.source
-      ? [{ label: ev.source, url: ev.source.includes(".") ? `https://${ev.source.replace(/^https?:\/\//, "")}` : null, date, age: ageLabel(date, true), relation, claim: ev.fact ?? null }]
-      : [];
-    // `retrieved` is an access date, not proof that the underlying fact changed.
-    // Preserve the useful fact but label it as observed context, never change.
-    const whatChanged: ChangeVM[] = ev?.fact ? [{ event: ev.fact, date: null, age: null, source: ev.source ?? null, kind: "static_context" }] : [];
-    const validations = [a.test, ...(brief?.questions ?? [])].filter((x): x is string => Boolean(x));
-    const limitations = [a.unknown].filter((x): x is string => Boolean(x));
-    const counterSignals = [...(brief?.objections ?? [])].filter(Boolean);
+    const oc = a.opportunity_case ?? brief?.opportunity_case;
+    const strength: Strength | null = oc?.evidence.length ? "Moderate" : amorFreshnessStrength(ev?.freshness);
+    const sources: SourceVM[] = oc?.evidence.map((item) => ({
+      label: item.sourceLabel,
+      url: item.url,
+      date: item.date,
+      age: ageLabel(item.date, true),
+      relation: item.relation === "supporting" ? "corroborating" : item.relation,
+      claim: item.claim,
+      observation: item.observation,
+      basis: item.basis,
+      impacts: item.impacts,
+    })) ?? (ev?.source
+      ? [{ label: ev.source, url: ev.source.includes(".") ? `https://${ev.source.replace(/^https?:\/\//, "")}` : null, date: null, age: null, relation: ev?.proves ? "direct" : "context", claim: ev.proves ?? ev.fact ?? null, observation: ev.fact ?? null, basis: "observed" }]
+      : []);
+    const whatChanged: ChangeVM[] = oc?.changes.map((change) => ({
+      event: change.event, date: change.date, age: ageLabel(change.date, true), source: change.sourceLabel, kind: "true_change",
+    })) ?? [];
+    const validationDetails = oc?.validations ?? [];
+    const validations = validationDetails.length
+      ? validationDetails.map((v) => v.question)
+      : [a.test, ...(brief?.questions ?? [])].filter((x): x is string => Boolean(x));
+    const limitations = oc?.unknowns.map((x) => x.value) ?? [a.unknown].filter((x): x is string => Boolean(x));
+    const counterSignals = oc?.weaknesses.map((x) => x.value) ?? [];
+    const fit = oc?.fit?.value ?? null;
+    const timing = oc?.timing?.value ?? null;
+    const dimensions: AccountBriefVM["dimensions"] = [];
+    if (fit) dimensions.push({ label: "Fit", value: fit, note: oc?.fit?.rationale ?? null });
+    if (timing) dimensions.push({ label: "Timing", value: timing, note: oc?.timing?.rationale ?? null });
+    if (strength) dimensions.push({ label: "Evidence", value: strength, note: oc?.independentSupport === false ? "Una fuente oficial; sin soporte independiente" : null });
 
     return {
       id: slug(a.name ?? "account", i),
@@ -243,27 +261,30 @@ export function fromAmorPilot(d: AmorDeliverable): DeliverableViewModel {
       segment: a.route ?? null,
       geography,
       domain: ev?.source ?? null,
-      accountRole: null,        // Amor pilot has no role/type fields
-      opportunityType: null,
+      accountRole: oc?.classification.accountRole?.value ?? null,
+      opportunityType: oc?.classification.opportunityType?.value ?? null,
+      opportunityDescriptor: oc?.classification.opportunityDescriptor ?? null,
       decision: amorDecision(a.group, i),
-      decisionNote: a.group ?? null,
-      thesis: a.thesis ?? a.why ?? null,
-      whyItMatters: a.why ?? null,
-      dimensions: strength ? [{ label: "Evidence", value: strength, note: null }] : [],
+      decisionNote: oc?.decisionRationale?.value ?? a.group ?? null,
+      thesis: brief?.thesis ?? a.thesis ?? a.why ?? null,
+      whyItMatters: oc?.whyNow?.value ?? null,
+      dimensions,
       whatChanged,
       evidence: {
         sourceCount: sources.length,
-        datedCount: date ? 1 : 0,
-        corroborated: null,
-        latestAge: ageLabel(date, true),
+        datedCount: sources.filter((s) => Boolean(s.date)).length,
+        corroborated: oc ? oc.independentSupport : null,
+        latestAge: null,
         strength,
       },
       sources,
       counterSignals,
       limitations,
       validations,
-      nextStep: a.next ?? null,
-      freshness: date ? { label: ageLabel(date, true) ? `${ageLabel(date, true)}` : "con fecha", age: ageLabel(date, true) } : null,
+      validationDetails,
+      nextStep: oc?.recommendedNextStep?.value ?? a.next ?? null,
+      revisitWhen: oc?.revisitWhen?.value ?? null,
+      freshness: null,
       confidence: strength,
     };
   });

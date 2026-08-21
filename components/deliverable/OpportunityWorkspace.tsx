@@ -10,7 +10,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { DeliverableViewModel, DecisionState, AccountBriefVM } from "@/lib/deliverable/deliverable-view-model";
-import { DECISION_TOKENS, STRENGTH_TOKENS, decisionLabel, orderByAttention } from "@/lib/deliverable/deliverable-view-model";
+import { DECISION_TOKENS, STRENGTH_TOKENS, decisionLabel, orderByAttention, accountRoleLabel, opportunityTypeLabel } from "@/lib/deliverable/deliverable-view-model";
 import { portfolioCsv, evidenceCsv, deliverableFilename } from "@/lib/deliverable/exports";
 import { toClientCanvasVM } from "@/lib/deliverable/client-canvas-vm";
 import { AccountBrief, DecisionBadge, SourceList } from "./primitives";
@@ -368,13 +368,16 @@ const DECISION_RANK: Record<DecisionState, number> = { prioritize: 0, validate: 
 
 function CompareTab({ vm, t, es, onOpen }: { vm: DeliverableViewModel; t: L; es: boolean; onOpen: (id: string) => void }) {
   // Default: the top (up to 4) accounts by portfolio order. Customer can retune.
-  const [selected, setSelected] = useState<string[]>(() => vm.accounts.slice(0, Math.min(4, vm.accounts.length)).map((a) => a.id));
+  const orderedAccounts = useMemo(() => orderByAttention(vm.accounts), [vm.accounts]);
+  const [selected, setSelected] = useState<string[]>(() => orderedAccounts.slice(0, Math.min(4, orderedAccounts.length)).map((a) => a.id));
   const toggle = (id: string) => setSelected((s) => s.includes(id) ? s.filter((x) => x !== id) : s.length >= 4 ? s : [...s, id]);
-  const cols = vm.accounts.filter((a) => selected.includes(a.id));
+  const cols = orderedAccounts.filter((a) => selected.includes(a.id));
 
   const dimVal = (a: AccountBriefVM, label: string) => a.dimensions.find((d) => d.label === label)?.value ?? null;
   const rows: { label: string; render: (a: AccountBriefVM) => React.ReactNode }[] = [
     { label: t.cDecision, render: (a) => <DecisionBadge state={a.decision} es={es} small /> },
+    { label: es ? "Rol comercial" : "Account role", render: (a) => <span className="dlv-cmp-txt">{accountRoleLabel(a.accountRole, es) ?? "—"}</span> },
+    { label: es ? "Tipo de oportunidad" : "Opportunity type", render: (a) => <span className="dlv-cmp-txt">{opportunityTypeLabel(a.opportunityType, es) ?? "—"}</span> },
     { label: t.cFit, render: (a) => <Strengthy v={dimVal(a, "Fit")} es={es} /> },
     { label: t.cTiming, render: (a) => <Strengthy v={dimVal(a, "Timing")} es={es} /> },
     { label: t.cEvidence, render: (a) => <Strengthy v={a.evidence.strength} es={es} /> },
@@ -393,7 +396,7 @@ function CompareTab({ vm, t, es, onOpen }: { vm: DeliverableViewModel; t: L; es:
       <div className="dlv-card">
         <p className="dlv-label">{t.compareSelect} ({cols.length}/4)</p>
         <div className="dlv-cmp-chips">
-          {vm.accounts.map((a) => (
+          {orderedAccounts.map((a) => (
             <button key={a.id} className={`dlv-filter-chip ${selected.includes(a.id) ? "is-active" : ""}`} aria-pressed={selected.includes(a.id)} onClick={() => toggle(a.id)} disabled={!selected.includes(a.id) && selected.length >= 4}>
               <span className="dlv-nav-dot" style={{ background: DECISION_TOKENS[a.decision].dot, width: 6, height: 6, borderRadius: "50%", marginRight: 5 }} />{a.company}
             </button>
@@ -464,7 +467,7 @@ function compareInsight(cols: AccountBriefVM[], es: boolean): string | null {
 
 // ─── Evidence tab — cross-account provenance (§61/§77) ────────────────────────
 function EvidenceTab({ vm, t, es, onOpen }: { vm: DeliverableViewModel; t: L; es: boolean; onOpen: (id: string) => void }) {
-  const withSources = vm.accounts.filter((a) => a.sources.length > 0);
+  const withSources = orderByAttention(vm.accounts).filter((a) => a.sources.length > 0);
   return (
     <div className="dlv-panel">
       <div className="dlv-card">

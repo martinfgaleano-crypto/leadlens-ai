@@ -8,7 +8,7 @@
 import type {
   AccountBriefVM, DecisionState, DimensionVM, SourceVM, Strength,
 } from "@/lib/deliverable/deliverable-view-model";
-import { DECISION_TOKENS, STRENGTH_TOKENS, RELATION_TOKENS, decisionLabel } from "@/lib/deliverable/deliverable-view-model";
+import { DECISION_TOKENS, STRENGTH_TOKENS, RELATION_TOKENS, decisionLabel, accountRoleLabel, opportunityTypeLabel } from "@/lib/deliverable/deliverable-view-model";
 
 export type Lang = "en" | "es";
 const T = (es: boolean) => ({
@@ -16,7 +16,7 @@ const T = (es: boolean) => ({
   recentSignal: es ? "Señal reciente" : "Recent signal",
   relevantSignal: es ? "Evidencia actual" : "Current evidence",
   inferredSignal: es ? "Interpretación" : "Interpretation",
-  whyItMatters: es ? "Por qué importa" : "Why it matters",
+  whyItMatters: es ? "Por qué importa ahora" : "Why it matters now",
   thesis: es ? "Tesis de la cuenta" : "Account thesis",
   evidence: es ? "Evidencia" : "Evidence",
   supportedBy: es ? "Respaldado por" : "Supported by",
@@ -29,6 +29,12 @@ const T = (es: boolean) => ({
   validate: es ? "Validar antes de actuar" : "Validate before acting",
   decision: es ? "Decisión" : "Decision",
   nextStep: es ? "Siguiente paso recomendado" : "Recommended next step",
+  revisitWhen: es ? "Revisar cuando" : "Revisit when",
+  observed: es ? "Observado" : "Observed",
+  establishes: es ? "Establece" : "Establishes",
+  affects: es ? "Afecta" : "Affects",
+  decisionCritical: es ? "Decisión crítica" : "Decision-critical",
+  howToValidate: es ? "Cómo validarlo" : "How to validate",
   freshness: es ? "Frescura" : "Freshness",
   ago: es ? "atrás" : "ago",
   noCounter: es ? "No se identificaron contraseñales para esta cuenta." : "No counter-signals identified for this account.",
@@ -132,7 +138,9 @@ export function SourceList({ sources, es }: { sources: SourceVM[]; es: boolean }
                 : <span style={{ fontSize: 13, fontWeight: 600, color: "#334155", wordBreak: "break-word" }}>{s.label}</span>}
               {s.age && <span style={{ fontSize: 11, color: "#94a3b8", whiteSpace: "nowrap" }}>· {s.age} {t.ago}</span>}
             </div>
-            {s.claim && <p style={{ fontSize: 12.5, color: "#475569", margin: 0, lineHeight: 1.5 }}>{s.claim}</p>}
+            {s.claim && <p style={{ fontSize: 12.5, color: "#334155", margin: 0, lineHeight: 1.5 }}><strong>{t.establishes}:</strong> {s.claim}</p>}
+            {s.observation && s.observation !== s.claim && <p style={{ fontSize: 12, color: "#64748b", margin: 0, lineHeight: 1.5 }}><strong>{t.observed}:</strong> {s.observation}</p>}
+            {s.impacts?.length ? <p style={{ fontSize: 10.5, color: "#94a3b8", margin: 0 }}>{t.affects}: {s.impacts.join(" · ")}</p> : null}
           </div>
         );
       })}
@@ -162,7 +170,7 @@ function BulletSection({ title, items, dotColor, empty }: { title: string; items
 
 export function CounterSignals({ a, es }: { a: AccountBriefVM; es: boolean }) {
   const t = T(es);
-  return <BulletSection title={t.counter} items={a.counterSignals} dotColor="#dc2626" empty={t.noCounter} />;
+  return <BulletSection title={t.counter} items={a.counterSignals} dotColor="#dc2626" />;
 }
 export function Limitations({ a, es }: { a: AccountBriefVM; es: boolean }) {
   const t = T(es);
@@ -170,6 +178,18 @@ export function Limitations({ a, es }: { a: AccountBriefVM; es: boolean }) {
 }
 export function Validations({ a, es }: { a: AccountBriefVM; es: boolean }) {
   const t = T(es);
+  if (a.validationDetails?.length) return (
+    <div style={card}>
+      <p style={label}>{t.validate}</p>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        {a.validationDetails.map((v, i) => <div key={i} style={{ borderTop: i ? "1px solid #f1f5f9" : "none", paddingTop: i ? 10 : 0 }}>
+          {v.decisionCritical && <span style={{ fontSize: 9.5, fontWeight: 800, color: "#b45309", textTransform: "uppercase" }}>{t.decisionCritical}</span>}
+          <p style={{ ...bodyText, marginTop: 3 }}>{v.question}</p>
+          {v.howToValidate && <p style={{ fontSize: 12, color: "#64748b", margin: "5px 0 0" }}><strong>{t.howToValidate}:</strong> {v.howToValidate}</p>}
+        </div>)}
+      </div>
+    </div>
+  );
   return <BulletSection title={t.validate} items={a.validations} dotColor="#0284c7" empty={a.validations.length ? undefined : t.noValidate} />;
 }
 
@@ -190,6 +210,7 @@ export function DecisionSection({ a, es }: { a: AccountBriefVM; es: boolean }) {
           <p style={bodyText}>{a.nextStep}</p>
         </div>
       )}
+      {a.revisitWhen && <div style={{ paddingTop: 10, marginTop: 10, borderTop: "1px solid rgba(15,23,42,0.06)" }}><div style={{ fontSize: 9.5, fontWeight: 800, letterSpacing: "0.07em", textTransform: "uppercase", color: "#94a3b8", marginBottom: 3 }}>{t.revisitWhen}</div><p style={bodyText}>{a.revisitWhen}</p></div>}
     </div>
   );
 }
@@ -203,10 +224,12 @@ export function AccountBrief({ a, es }: { a: AccountBriefVM; es: boolean }) {
       <div style={{ ...card, padding: "20px 22px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12, flexWrap: "wrap" }}>
           <div style={{ minWidth: 0 }}>
+            {(a.accountRole || a.opportunityType) && <div style={{ fontSize: 10, color: "#0369a1", fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 5 }}>{[accountRoleLabel(a.accountRole, es), opportunityTypeLabel(a.opportunityType, es)].filter(Boolean).join(" · ")}</div>}
             <h2 style={{ fontSize: 21, fontWeight: 800, color: "#0f172a", margin: "0 0 4px", letterSpacing: "-0.01em", lineHeight: 1.15 }}>
               {a.rank ? <span style={{ color: "#cbd5e1", fontWeight: 700 }}>{a.rank}. </span> : null}{a.company}
             </h2>
             <div style={{ fontSize: 12.5, color: "#94a3b8" }}>{[a.segment, a.geography].filter(Boolean).join(" · ") || (es ? "Detalles de cuenta limitados" : "Account details limited")}</div>
+            {a.opportunityDescriptor && <div style={{ fontSize: 12, color: "#64748b", marginTop: 4 }}>{a.opportunityDescriptor}</div>}
           </div>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6 }}>
             <DecisionBadge state={a.decision} es={es} />

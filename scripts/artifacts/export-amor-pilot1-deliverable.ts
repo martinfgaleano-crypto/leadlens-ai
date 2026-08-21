@@ -9,6 +9,7 @@ import { AMOR_PILOT1_FINAL, AMOR_PILOT1_EMAIL, AMOR_PILOT1_AGENDA } from "../../
 import { AMOR_PHASE4_PORTFOLIO } from "../../lib/intelligence/amor-de-gea-phase4-intelligence";
 import { AMOR_PHASE45_ROUTE_REVIEW } from "../../lib/intelligence/amor-de-gea-phase4-5-review";
 import { AMOR_PHASE5A_WHAT_CHANGED, AMOR_PHASE5A_MARKET_MAP, AMOR_PHASE5A_SUCCESS_CONTRACT } from "../../lib/intelligence/amor-de-gea-phase5a-customer-safe";
+import { evaluateAmorOpportunityCase } from "../../lib/intelligence/opportunity-case-intelligence";
 
 const ROUTE_ES: Record<string, string> = {
   hospitality_spa: "Hotelería y spa",
@@ -131,6 +132,32 @@ const BRIEF_ANGLE: Record<string, { thesis: string; buyer_hyp: string; procureme
 };
 const briefs = accounts.filter((a) => a.group === "Primera validación").map((a) => ({ ...a, ...BRIEF_ANGLE[a.name] }));
 
+// New derived evaluation over immutable Pilot 1 evidence. This adds structured
+// Case reasoning without rewriting a source fact or treating retrieval/page
+// update dates as temporal commercial events.
+const evidenceCompleteAccounts = accounts.map((a) => ({
+  ...a,
+  opportunity_case: evaluateAmorOpportunityCase({
+    account: a.name,
+    routeKey: a.route_key,
+    routeLabel: a.route,
+    group: a.group,
+    clientObjective: AMOR_PHASE5A_SUCCESS_CONTRACT.objective,
+    structuralReason: a.why,
+    proposedTest: a.test,
+    unknown: a.unknown,
+    nextStep: a.next,
+    sourceLabel: a.evidence.source,
+    sourceUrl: a.evidence.source ? `https://${a.evidence.source}` : null,
+    observedFact: a.evidence.fact,
+    proves: a.evidence.proves,
+  }),
+}));
+const evidenceCompleteBriefs = briefs.map((brief) => ({
+  ...brief,
+  opportunity_case: evidenceCompleteAccounts.find((a) => a.name === brief.name)?.opportunity_case,
+}));
+
 const data = {
   meta: {
     client: "Amor de Gea",
@@ -151,7 +178,7 @@ const data = {
     "Investigar selectivamente": "Investigación selectiva",
   },
   relationship_disclosure: AMOR_PILOT1_FINAL.relationship_disclosure,
-  accounts,
+  accounts: evidenceCompleteAccounts,
   excluded: AMOR_PILOT1_FINAL.portfolio.excluded.map((name) => ({ name, reason: WHY_NOT_NOW[name] })),
   readiness: {
     strengths: [
@@ -199,7 +226,7 @@ const data = {
     "Confirmar documentación de soporte y capacidad por pedido.",
     "Fijar el máximo de unidades y personalización que se puede cumplir.",
   ],
-  briefs,
+  briefs: evidenceCompleteBriefs,
   limitations: [
     "Las descripciones se apoyan en superficies públicas revisadas durante el piloto y en el contexto entregado por Amor de Gea.",
     "Una afinidad pública no demuestra interés, presupuesto, timing, margen ni autorización de compra.",

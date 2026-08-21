@@ -11,6 +11,7 @@ import {
   type EvidenceLink,
   type InstitutionalOpportunityReportV1,
 } from "./institutional-report-types";
+import { evaluateInstitutionalOpportunityCase } from "@/lib/intelligence/opportunity-case-intelligence";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type Json = Record<string, any>;
@@ -31,7 +32,7 @@ function daysSince(iso: string | null | undefined): number | null {
   return d >= 0 ? d : null;
 }
 
-function buildDossier(opp: Json, lead: Json | undefined, es = false): AccountDossier {
+function buildDossier(opp: Json, lead: Json | undefined, es = false, clientObjective: string | null = null): AccountDossier {
   const c = lead?.candidate ?? {};
   const e = lead?.enrichment ?? {};
   const q = lead?.qualification ?? {};
@@ -98,6 +99,30 @@ function buildDossier(opp: Json, lead: Json | undefined, es = false): AccountDos
     legacyAction === "exclude" ? "exclude" :
     legacyAction ? "monitor" : null
   );
+  const decisionState = actionabilityStatus === "act_now" ? "prioritize"
+    : actionabilityStatus === "validate_first" ? "validate"
+    : actionabilityStatus === "exclude" ? "hold" : "monitor";
+  const materialSignal = signalDate && c.source_url && clean(e.timing_signals?.[0] ?? e.what_changed ?? e.material_change)
+    ? { label: clean(e.timing_signals?.[0] ?? e.what_changed ?? e.material_change)!, date: signalDate, sourceLabel: (() => { try { return new URL(c.source_url).hostname.replace(/^www\./, ""); } catch { return "primary source"; } })(), url: c.source_url }
+    : null;
+  const opportunity_case = evaluateInstitutionalOpportunityCase({
+    account: c.company ?? opp?.company ?? "Unknown account",
+    clientObjective,
+    explicitRole: clean(decision?.account_role ?? opp?.account_role),
+    explicitType: clean(decision?.opportunity_type ?? opp?.opportunity_type),
+    opportunityDescriptor: clean(decision?.opportunity_descriptor ?? opp?.opportunity_descriptor),
+    fitScore: typeof (opp?.fit_score ?? q?.fit_score) === "number" ? (opp?.fit_score ?? q?.fit_score) : null,
+    fitReasons: Array.isArray(q.fit_reasons) ? q.fit_reasons.filter((x: unknown): x is string => typeof x === "string") : [],
+    signal: materialSignal,
+    whyNow: whyNowText,
+    sourceEvidence: evidence_chain.map((item) => ({ label: item.label, url: item.url, date: item.date })),
+    explicitIndependentSupport: decision?.independent_support === true,
+    risks: riskItems,
+    blockers: Array.isArray(opp?.actionability_blockers) ? opp.actionability_blockers.filter((x: unknown): x is string => typeof x === "string") : [],
+    openQuestions: hypotheses.map((item) => item.text),
+    decision: decisionState,
+    recommendedNextStep: actionText,
+  });
 
   return {
     rank: opp?.rank ?? q?.rank ?? null,
@@ -117,6 +142,7 @@ function buildDossier(opp: Json, lead: Json | undefined, es = false): AccountDos
     hypotheses,
     recommended_next_step,
     playbook: opp?.playbook ?? null,
+    opportunity_case,
   };
 }
 
@@ -128,7 +154,8 @@ export function assembleInstitutionalReport(
   const es = reportJson?.onboarding?.output_language === "es";
   const opps: Json[] = Array.isArray(reportJson.ranked_opportunities) ? reportJson.ranked_opportunities : [];
   const leadsById = new Map<string, Json>((reportJson.processed_leads ?? []).map((l: Json) => [l.id, l]));
-  const dossiers = opps.map((o) => buildDossier(o, leadsById.get(o.lead_id), es)).sort((a, b) => (a.rank ?? 999) - (b.rank ?? 999));
+  const commercialObjective = clean(reportJson?.onboarding?.commercial_objective ?? reportJson?.commercial_context?.objective ?? reportJson?.commercial_intent?.objective);
+  const dossiers = opps.map((o) => buildDossier(o, leadsById.get(o.lead_id), es, commercialObjective)).sort((a, b) => (a.rank ?? 999) - (b.rank ?? 999));
 
   const regions = Array.from(new Set(dossiers.map((d) => d.location).filter(Boolean))) as string[];
   const industries = Array.from(new Set(dossiers.map((d) => d.industry).filter(Boolean))) as string[];

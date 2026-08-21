@@ -6,7 +6,7 @@
 // no login/server/API. Every string is escaped; every URL is http/https-checked.
 
 import type { DeliverableViewModel, AccountBriefVM, DecisionState } from "../deliverable-view-model";
-import { DECISION_TOKENS, STRENGTH_TOKENS, RELATION_TOKENS, decisionLabel, orderByAttention } from "../deliverable-view-model";
+import { DECISION_TOKENS, STRENGTH_TOKENS, RELATION_TOKENS, decisionLabel, orderByAttention, accountRoleLabel, opportunityTypeLabel } from "../deliverable-view-model";
 import { portfolioCsv, evidenceCsv, deliverableFilename } from "../exports";
 import { toClientCanvasVM } from "../client-canvas-vm";
 import { esc, safeUrl, jsonForScript, type PortableRuntimePayload, PORTABLE_FORMAT_VERSION } from "./portable-payload";
@@ -108,16 +108,17 @@ function executiveRead(vm: DeliverableViewModel, es: boolean): string | null {
   if (!total) return null;
   const pri = c.prioritize, val = c.validate;
   const corr = vm.coverage?.corroborated ?? 0;
+  const dated = vm.coverage?.withDatedEvidence ?? 0;
   if (es) {
     const a = pri > 0
-      ? `${pri} de ${total} cuenta${total === 1 ? "" : "s"} merece${pri === 1 ? "" : "n"} atención prioritaria ahora`
+      ? dated > 0 ? `${pri} de ${total} cuenta${total === 1 ? "" : "s"} merece${pri === 1 ? "" : "n"} atención prioritaria ahora` : `${pri} de ${total} cuenta${total === 1 ? "" : "s"} queda${pri === 1 ? "" : "n"} priorizada${pri === 1 ? "" : "s"} para validación por encaje estructural, no por timing actual`
       : `Ninguna cuenta merece atención prioritaria inmediata todavía`;
     const b = corr > 0 ? `; los casos más sólidos combinan cambio comercial reciente con evidencia corroborada` : ``;
     const d = val > 0 ? `. ${val} requiere${val === 1 ? "" : "n"} validación antes de aumentar la atención.` : `.`;
     return `${a}${b}${d}`;
   }
   const a = pri > 0
-    ? `${pri} of ${total} account${total === 1 ? "" : "s"} currently merit${pri === 1 ? "s" : ""} priority attention`
+    ? dated > 0 ? `${pri} of ${total} account${total === 1 ? "" : "s"} currently merit${pri === 1 ? "s" : ""} priority attention` : `${pri} of ${total} account${total === 1 ? " is" : "s are"} prioritized for validation on structural fit, not current timing`
     : `No account currently merits immediate priority attention`;
   const b = corr > 0 ? `, and the strongest cases combine recent commercial change with corroborated evidence` : ``;
   const d = val > 0 ? `. ${val} still require${val === 1 ? "s" : ""} validation before attention increases.` : `.`;
@@ -163,7 +164,7 @@ function portfolioPanel(vm: DeliverableViewModel, t: T, es: boolean): string {
 }
 
 function briefHtml(a: AccountBriefVM, t: T, es: boolean): string {
-  const dims = a.dimensions.map((d) => `<div><div class="pt-dim-k">${esc(es && d.label === "Evidence" ? "Evidencia" : d.label)}</div><div class="pt-dim-v">${strengthSpan(d.value, es)}</div>${d.note ? `<div class="pt-dim-n">${esc(d.note)}</div>` : ""}</div>`).join("");
+  const dims = a.dimensions.map((d) => `<div><div class="pt-dim-k">${esc(es ? ({ Fit: "Encaje", Timing: "Momento", Evidence: "Evidencia" }[d.label] ?? d.label) : d.label)}</div><div class="pt-dim-v">${strengthSpan(d.value, es)}</div>${d.note ? `<div class="pt-dim-n">${esc(d.note)}</div>` : ""}</div>`).join("");
   const changed = a.whatChanged.map((c) => `<div class="pt-chg"><span class="pt-chg-dot"></span><span class="pt-chg-e">${esc(c.event)}</span>${c.age ? `<span class="pt-chg-a">${esc(c.age)} ${esc(t.ago)}</span>` : ""}${c.source ? `<span class="pt-chg-s">· ${esc(c.source)}</span>` : ""}</div>`).join("");
   const evBits: string[] = [];
   if (a.evidence.sourceCount) evBits.push(`${a.evidence.sourceCount} ${t.sources}`);
@@ -173,30 +174,31 @@ function briefHtml(a: AccountBriefVM, t: T, es: boolean): string {
     const rel = s.relation ? RELATION_TOKENS[s.relation] : null;
     const url = safeUrl(s.url);
     const label = url ? `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer nofollow">${esc(s.label)} ↗</a>` : `<span class="pt-src-l">${esc(s.label)}</span>`;
-    return `<div class="pt-src"${i < a.sources.length - 1 ? ` style="border-bottom:1px solid #f1f5f9"` : ""}><div class="pt-src-h">${rel ? `<span class="pt-rel" style="color:${rel.color}">${esc(es ? rel.labelEs : rel.label)}</span>` : ""}${label}${s.age ? `<span class="pt-src-a">· ${esc(s.age)} ${esc(t.ago)}</span>` : ""}</div>${s.claim ? `<p class="pt-src-c">${esc(s.claim)}</p>` : ""}</div>`;
+    return `<div class="pt-src"${i < a.sources.length - 1 ? ` style="border-bottom:1px solid #f1f5f9"` : ""}><div class="pt-src-h">${rel ? `<span class="pt-rel" style="color:${rel.color}">${esc(es ? rel.labelEs : rel.label)}</span>` : ""}${label}${s.age ? `<span class="pt-src-a">· ${esc(s.age)} ${esc(t.ago)}</span>` : ""}</div>${s.claim ? `<p class="pt-src-c"><strong>${es ? "Establece" : "Establishes"}:</strong> ${esc(s.claim)}</p>` : ""}${s.observation && s.observation !== s.claim ? `<p class="pt-src-c"><strong>${es ? "Observado" : "Observed"}:</strong> ${esc(s.observation)}</p>` : ""}${s.impacts?.length ? `<p class="pt-src-a">${es ? "Afecta" : "Affects"}: ${esc(s.impacts.join(" · "))}</p>` : ""}</div>`;
   }).join("");
   // ── Opportunity Case — flow-forward "reasoning spine" (visual system V1) ──
   // One coherent object: a header, then a spine of bands the eye follows in
   // order. Bands render only when the underlying data exists (graceful absence).
   const band = (inner: string, cls = "") => `<div class="pt-band ${cls}"><span class="pt-node"></span><div class="pt-bandc">${inner}</div></div>`;
-  const roleType = [a.accountRole, a.opportunityType].filter(Boolean).map((x) => esc(x!)).join(" · ");
+  const roleType = [accountRoleLabel(a.accountRole, es), opportunityTypeLabel(a.opportunityType, es)].filter(Boolean).map((x) => esc(x!)).join(" · ");
 
   const whyBand = a.whyItMatters && a.whyItMatters !== a.thesis
     ? band(`<p class="pt-label">${esc(t.whyMatters)}</p><p class="pt-p">${esc(a.whyItMatters)}</p>`) : "";
   const evidenceBand = band(
     `<div class="pt-ev-h"><p class="pt-label" style="margin:0">${esc(t.evidenceLabel)}</p>${evBits.length ? `<span class="pt-ev-b">${esc(evBits.join(" · "))}</span>` : ""}</div>${a.sources.length ? `<div class="pt-srcs">${sources}</div>` : `<p class="pt-muted-p">${esc(t.noEvidence)}</p>`}`);
   const couldChange = (a.counterSignals.length || a.limitations.length)
-    ? band(`<p class="pt-label">${esc(t.whatCouldChange)}</p>${a.counterSignals.map((x) => `<p class="pt-p pt-inl-row"><span class="pt-inl">${esc(t.weakensInl)}</span>${esc(x)}</p>`).join("")}${a.limitations.map((x) => `<p class="pt-p pt-inl-row"><span class="pt-inl">${esc(t.stillUnknownInl)}</span>${esc(x)}</p>`).join("")}`, "pt-unc") : "";
+    ? band(`<p class="pt-label">${esc(t.whatCouldChange)}</p>${a.counterSignals.map((x) => `<p class="pt-p pt-inl-row"><span class="pt-inl">${esc(t.weakensInl)}:</span> ${esc(x)}</p>`).join("")}${a.limitations.map((x) => `<p class="pt-p pt-inl-row"><span class="pt-inl">${esc(t.stillUnknownInl)}:</span> ${esc(x)}</p>`).join("")}`, "pt-unc") : "";
   const validateBand = a.validations.length
-    ? band(`<p class="pt-label">${esc(t.validate)}</p>${a.validations.map((x, i) => `<div class="pt-valrow">${i === 0 ? `<span class="pt-crit">${es ? "Decisión-crítica" : "Decision-critical"}</span>` : ""}<span class="pt-valq">${esc(x)}</span></div>`).join("")}`) : "";
+    ? band(`<p class="pt-label">${esc(t.validate)}</p>${(a.validationDetails?.length ? a.validationDetails : a.validations.map((question, i) => ({ question, decisionCritical: i === 0, howToValidate: null }))).map((v) => `<div class="pt-valrow">${v.decisionCritical ? `<span class="pt-crit">${es ? "Decisión crítica" : "Decision-critical"}</span>` : ""}<span class="pt-valq">${esc(v.question)}</span>${v.howToValidate ? `<span class="pt-valhow"><strong>${es ? "Cómo validarlo" : "How to validate"}:</strong> ${esc(v.howToValidate)}</span>` : ""}</div>`).join("")}`) : "";
   const decisionBand = band(
-    `<div class="pt-dec-h"><p class="pt-label" style="margin:0">${esc(t.decision)}</p>${badge(a.decision, es)}</div>${a.decisionNote ? `<p class="pt-p">${esc(a.decisionNote)}</p>` : ""}${a.nextStep ? `<div class="pt-next"><div class="pt-dim-k">${esc(t.nextStep)}</div><p class="pt-p">${esc(a.nextStep)}</p></div>` : ""}`, "pt-dec");
+    `<div class="pt-dec-h"><p class="pt-label" style="margin:0">${esc(t.decision)}</p>${badge(a.decision, es)}</div>${a.decisionNote ? `<p class="pt-p">${esc(a.decisionNote)}</p>` : ""}${a.nextStep ? `<div class="pt-next"><div class="pt-dim-k">${esc(t.nextStep)}</div><p class="pt-p">${esc(a.nextStep)}</p></div>` : ""}${a.revisitWhen ? `<div class="pt-next"><div class="pt-dim-k">${es ? "Revisar cuando" : "Revisit when"}</div><p class="pt-p">${esc(a.revisitWhen)}</p></div>` : ""}`, "pt-dec");
 
   return `<div class="pt-brief pt-case" data-brief="${esc(a.id)}">
     <div class="pt-case-head">
       ${roleType ? `<div class="pt-role">${roleType}</div>` : ""}
       <div class="pt-bh"><div><h2 class="pt-bh-name">${a.rank ? `<span class="pt-rank">${esc(a.rank)}.</span> ` : ""}${esc(a.company)}</h2><div class="pt-bh-sub">${esc([a.segment, a.geography].filter(Boolean).join(" · ")) || (es ? "Detalles de cuenta limitados" : "Account details limited")}</div></div><div class="pt-bh-r">${badge(a.decision, es)}${a.freshness?.age ? `<span class="pt-fresh">${esc(a.freshness.age)} ${esc(t.ago)}</span>` : ""}</div></div>
       ${a.thesis ? `<p class="pt-thesis">${esc(a.thesis)}</p>` : ""}
+      ${a.opportunityDescriptor ? `<p class="pt-descriptor">${esc(a.opportunityDescriptor)}</p>` : ""}
       ${dims ? `<div class="pt-dims">${dims}</div>` : ""}
     </div>
     <div class="pt-flow">
@@ -211,17 +213,20 @@ function briefHtml(a: AccountBriefVM, t: T, es: boolean): string {
 }
 
 function accountsPanel(vm: DeliverableViewModel, t: T, es: boolean): string {
-  const nav = vm.accounts.map((a, i) => `<button class="pt-nav-i${i === 0 ? " is-active" : ""}" data-acct="${esc(a.id)}"><span class="pt-nav-r">${a.rank ?? "·"}</span><span class="pt-nav-b"><span class="pt-nav-n">${esc(a.company)}</span><span class="pt-nav-s"><span class="pt-dot" style="background:${DECISION_TOKENS[a.decision].dot}"></span>${esc(decisionLabel(a.decision, es))}${a.freshness?.age ? ` · ${esc(a.freshness.age)}` : ""}</span></span></button>`).join("");
-  const briefs = vm.accounts.map((a) => briefHtml(a, t, es)).join("");
+  const ordered = orderByAttention(vm.accounts);
+  const nav = ordered.map((a, i) => `<button class="pt-nav-i${i === 0 ? " is-active" : ""}" data-acct="${esc(a.id)}"><span class="pt-nav-r">${a.rank ?? "·"}</span><span class="pt-nav-b"><span class="pt-nav-n">${esc(a.company)}</span><span class="pt-nav-s"><span class="pt-dot" style="background:${DECISION_TOKENS[a.decision].dot}"></span>${esc(decisionLabel(a.decision, es))}${a.freshness?.age ? ` · ${esc(a.freshness.age)}` : ""}</span></span></button>`).join("");
+  const briefs = ordered.map((a) => briefHtml(a, t, es)).join("");
   return `<section class="pt-panel pt-hidden" id="panel-accounts"><div class="pt-accts"><aside class="pt-nav"><div class="pt-nav-h">${esc(t.accounts)} · ${vm.accounts.length}</div><div class="pt-nav-l">${nav}</div></aside><div class="pt-briefs">${briefs}</div></div></section>`;
 }
 
 function comparePanel(vm: DeliverableViewModel, t: T, es: boolean): string {
   if (vm.accounts.length < 2) return "";
-  const cols = vm.accounts;
-  const defaultSel = new Set(vm.accounts.slice(0, Math.min(4, vm.accounts.length)).map((a) => a.id));
+  const cols = orderByAttention(vm.accounts);
+  const defaultSel = new Set(cols.slice(0, Math.min(4, cols.length)).map((a) => a.id));
   const rows: [string, (a: AccountBriefVM) => string][] = [
     [t.cDecision, (a) => badge(a.decision, es)],
+    [es ? "Rol comercial" : "Account role", (a) => `<span class="pt-cmp-t">${esc(accountRoleLabel(a.accountRole, es) ?? "—")}</span>`],
+    [es ? "Tipo de oportunidad" : "Opportunity type", (a) => `<span class="pt-cmp-t">${esc(opportunityTypeLabel(a.opportunityType, es) ?? "—")}</span>`],
     [t.cFit, (a) => strengthSpan(dimVal(a, "Fit"), es)],
     [t.cTiming, (a) => strengthSpan(dimVal(a, "Timing"), es)],
     [t.cEvidence, (a) => strengthSpan(a.evidence.strength, es)],
@@ -258,14 +263,14 @@ function compareInsight(accts: AccountBriefVM[], es: boolean): string | null {
 }
 
 function evidencePanel(vm: DeliverableViewModel, t: T, es: boolean): string {
-  const withSources = vm.accounts.filter((a) => a.sources.length > 0);
+  const withSources = orderByAttention(vm.accounts).filter((a) => a.sources.length > 0);
   if (!withSources.length) return "";
   const blocks = withSources.map((a) => {
     const sources = a.sources.map((sv, i) => {
       const rel = sv.relation ? RELATION_TOKENS[sv.relation] : null;
       const url = safeUrl(sv.url);
       const label = url ? `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer nofollow">${esc(sv.label)} ↗</a>` : `<span class="pt-src-l">${esc(sv.label)}</span>`;
-      return `<div class="pt-src"${i < a.sources.length - 1 ? ` style="border-bottom:1px solid #f1f5f9"` : ""}><div class="pt-src-h">${rel ? `<span class="pt-rel" style="color:${rel.color}">${esc(es ? rel.labelEs : rel.label)}</span>` : ""}${label}${sv.age ? `<span class="pt-src-a">· ${esc(sv.age)} ${esc(t.ago)}</span>` : ""}</div>${sv.claim ? `<p class="pt-src-c">${esc(sv.claim)}</p>` : ""}</div>`;
+      return `<div class="pt-src"${i < a.sources.length - 1 ? ` style="border-bottom:1px solid #f1f5f9"` : ""}><div class="pt-src-h">${rel ? `<span class="pt-rel" style="color:${rel.color}">${esc(es ? rel.labelEs : rel.label)}</span>` : ""}${label}${sv.age ? `<span class="pt-src-a">· ${esc(sv.age)} ${esc(t.ago)}</span>` : ""}</div>${sv.claim ? `<p class="pt-src-c"><strong>${es ? "Establece" : "Establishes"}:</strong> ${esc(sv.claim)}</p>` : ""}${sv.observation && sv.observation !== sv.claim ? `<p class="pt-src-c"><strong>${es ? "Observado" : "Observed"}:</strong> ${esc(sv.observation)}</p>` : ""}${sv.impacts?.length ? `<p class="pt-src-a">${es ? "Afecta" : "Affects"}: ${esc(sv.impacts.join(" · "))}</p>` : ""}</div>`;
     }).join("");
     return `<div class="pt-card"><button class="pt-ev-head" data-goacct="${esc(a.id)}">${a.rank ? esc(a.rank) + ". " : ""}${esc(a.company)} ${badge(a.decision, es)}</button><div class="pt-srcs" style="margin-top:10px">${sources}</div></div>`;
   }).join("");
@@ -401,6 +406,7 @@ body{margin:0;background:#f4f7fb;color:#0f172a;font-family:-apple-system,BlinkMa
 .pt-case-head{padding:22px 26px 20px}
 .pt-role{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#0284c7;margin-bottom:6px}
 .pt-thesis{font-size:15px;line-height:1.55;color:#475569;margin:14px 0 0;max-width:52rem;font-weight:500}
+.pt-descriptor{font-size:12px;line-height:1.5;color:#64748b;margin:7px 0 0}
 .pt-case-head .pt-dims{margin-top:16px;padding-top:16px}
 .pt-flow{position:relative;padding:2px 26px 8px}
 .pt-band{position:relative;padding:16px 0 16px 28px;border-top:1px solid #f1f5f9}
@@ -419,6 +425,7 @@ body{margin:0;background:#f4f7fb;color:#0f172a;font-family:-apple-system,BlinkMa
 .pt-inl{font-size:9.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#94a3b8;margin-right:7px}
 .pt-valrow{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-top:6px}
 .pt-valrow:first-of-type{margin-top:0}
+.pt-valhow{display:block;flex-basis:100%;padding-left:0;font-size:11.5px;line-height:1.45;color:#64748b}
 .pt-crit{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#b45309;background:#fffbeb;border:1px solid #fde9c8;border-radius:4px;padding:2px 7px;white-space:nowrap}
 .pt-valq{font-size:14px;font-weight:600;color:#0f172a;line-height:1.5}
 .pt-next{margin-top:12px;padding-top:12px;border-top:1px solid rgba(15,23,42,.07)}

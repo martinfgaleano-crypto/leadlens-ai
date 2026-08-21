@@ -48,6 +48,81 @@
         "freshness": "fresh",
         "proves": "Identidad y operación de hotelería/spa vigente: relevancia estructural de la ruta.",
         "not_proves": "No está confirmado que compre productos de terceros ni quién decide. No hay evidencia de intención de compra ni de temporalidad (timing)."
+      },
+      "opportunity_case": {
+        "version": "opportunity-case-v1",
+        "classification": {
+          "accountRole": {
+            "value": "Potential Customer",
+            "basis": "explicit",
+            "source": "client commercial objective + approved target-account portfolio",
+            "rationale": "La cuenta fue seleccionada para evaluar una posible relación comercial con Éteka, no como fuente, proveedor o actor del paisaje."
+          },
+          "opportunityType": {
+            "value": "New Business",
+            "basis": "inferred",
+            "source": "commercial route + proposed test",
+            "rationale": "Hotelería y spa: Validar un único caso de uso con 50 unidades."
+          },
+          "opportunityDescriptor": "Prueba de experiencia de huésped o retail de spa"
+        },
+        "fit": {
+          "value": "Moderate",
+          "basis": "inferred",
+          "source": "commercial objective + route evidence + proposed test",
+          "rationale": "Su propuesta pública de spa permite explorar un ritual de bienestar o regalo para huéspedes. La evidencia confirma relevancia estructural, pero no confirma compra de terceros, economía ni aceptación del formato."
+        },
+        "timing": null,
+        "changes": [],
+        "whyNow": null,
+        "evidence": [
+          {
+            "claim": "Identidad y operación de hotelería/spa vigente: relevancia estructural de la ruta.",
+            "observation": "Su página oficial describe un hotel spa en Cartagena con rituales de bienestar; la página fue actualizada el 5 de julio de 2026.",
+            "sourceLabel": "etekacartagena.com",
+            "url": "https://etekacartagena.com",
+            "date": null,
+            "relation": "direct",
+            "basis": "observed",
+            "impacts": [
+              "fit"
+            ],
+            "independenceKey": "etekacartagena.com"
+          }
+        ],
+        "independentSupport": false,
+        "weaknesses": [],
+        "unknowns": [
+          {
+            "value": "No está confirmado que compre productos de terceros ni quién decide.",
+            "basis": "explicit",
+            "source": "approved account review",
+            "rationale": "Unresolved fact that may change the decision."
+          }
+        ],
+        "validations": [
+          {
+            "question": "No está confirmado que compre productos de terceros ni quién decide.",
+            "decisionCritical": true,
+            "howToValidate": "Validar un único caso de uso con 50 unidades.",
+            "changesDecisionBecause": "Resolver esta incógnita puede mover la cuenta entre Priorizar, Validar, Monitorear o En espera."
+          }
+        ],
+        "decisionRationale": {
+          "value": "Validar: el encaje estructural es moderado y está respaldado por una fuente oficial, pero permanece sin confirmar: no está confirmado que compre productos de terceros ni quién decide. No existe evidencia de intención de compra ni de timing actual.",
+          "basis": "inferred",
+          "source": "fit + evidence + material unknown + existing portfolio decision",
+          "rationale": "Síntesis explícita sin puntaje agregado ni certeza de compra."
+        },
+        "recommendedNextStep": {
+          "value": "Confirmar modelo de retail/regalo, responsable de compra y manejo de vidrio.",
+          "basis": "explicit",
+          "source": "approved account review",
+          "rationale": "Next step follows the current decision and named unknown."
+        },
+        "revisitWhen": null,
+        "potentialValue": null,
+        "feasibility": null
       }
     },
     {
@@ -66,6 +141,81 @@
         "freshness": "current",
         "proves": "Identidad y operación de hotelería/spa vigente: relevancia estructural de la ruta.",
         "not_proves": "No se verificó retail de terceros ni frecuencia de reposición. No hay evidencia de intención de compra ni de temporalidad (timing)."
+      },
+      "opportunity_case": {
+        "version": "opportunity-case-v1",
+        "classification": {
+          "accountRole": {
+            "value": "Potential Customer",
+            "basis": "explicit",
+            "source": "client commercial objective + approved target-account portfolio",
+            "rationale": "La cuenta fue seleccionada para evaluar una posible relación comercial con Celestino Hotel Boutique & Spa, no como fuente, proveedor o actor del paisaje."
+          },
+          "opportunityType": {
+            "value": "New Business",
+            "basis": "inferred",
+            "source": "commercial route + proposed test",
+            "rationale": "Hotelería y spa: Probar una referencia en una propiedad y medir aceptación."
+          },
+          "opportunityDescriptor": "Prueba de experiencia de huésped o retail de spa"
+        },
+        "fit": {
+          "value": "Moderate",
+          "basis": "inferred",
+          "source": "commercial objective + route evidence + proposed test",
+          "rationale": "La combinación hotel boutique y spa crea una hipótesis concreta de regalo o venta complementaria. La evidencia confirma relevancia estructural, pero no confirma compra de terceros, economía ni aceptación del formato."
+        },
+        "timing": null,
+        "changes": [],
+        "whyNow": null,
+        "evidence": [
+          {
+            "claim": "Identidad y operación de hotelería/spa vigente: relevancia estructural de la ruta.",
+            "observation": "Su sitio oficial describe un hotel boutique con spa en Medellín, con sauna, jacuzzi y baño frío.",
+            "sourceLabel": "hotelcelestino.com",
+            "url": "https://hotelcelestino.com",
+            "date": null,
+            "relation": "direct",
+            "basis": "observed",
+            "impacts": [
+              "fit"
+            ],
+            "independenceKey": "hotelcelestino.com"
+          }
+        ],
+        "independentSupport": false,
+        "weaknesses": [],
+        "unknowns": [
+          {
+            "value": "No se verificó retail de terceros ni frecuencia de reposición.",
+            "basis": "explicit",
+            "source": "approved account review",
+            "rationale": "Unresolved fact that may change the decision."
+          }
+        ],
+        "validations": [
+          {
+            "question": "No se verificó retail de terceros ni frecuencia de reposición.",
+            "decisionCritical": true,
+            "howToValidate": "Probar una referencia en una propiedad y medir aceptación.",
+            "changesDecisionBecause": "Resolver esta incógnita puede mover la cuenta entre Priorizar, Validar, Monitorear o En espera."
+          }
+        ],
+        "decisionRationale": {
+          "value": "Validar: el encaje estructural es moderado y está respaldado por una fuente oficial, pero permanece sin confirmar: no se verificó retail de terceros ni frecuencia de reposición. No existe evidencia de intención de compra ni de timing actual.",
+          "basis": "inferred",
+          "source": "fit + evidence + material unknown + existing portfolio decision",
+          "rationale": "Síntesis explícita sin puntaje agregado ni certeza de compra."
+        },
+        "recommendedNextStep": {
+          "value": "Confirmar área compradora, caso de uso y cadencia potencial.",
+          "basis": "explicit",
+          "source": "approved account review",
+          "rationale": "Next step follows the current decision and named unknown."
+        },
+        "revisitWhen": null,
+        "potentialValue": null,
+        "feasibility": null
       }
     },
     {
@@ -84,6 +234,81 @@
         "freshness": "current",
         "proves": "Canal de kits o regalos corporativos: encaje para un producto terminado dentro de un kit.",
         "not_proves": "No hay evidencia de un proyecto activo ni de aceptación del formato. No hay evidencia de intención de compra ni de temporalidad (timing)."
+      },
+      "opportunity_case": {
+        "version": "opportunity-case-v1",
+        "classification": {
+          "accountRole": {
+            "value": "Potential Customer",
+            "basis": "explicit",
+            "source": "client commercial objective + approved target-account portfolio",
+            "rationale": "La cuenta fue seleccionada para evaluar una posible relación comercial con Sinergy On, no como fuente, proveedor o actor del paisaje."
+          },
+          "opportunityType": {
+            "value": "New Business",
+            "basis": "inferred",
+            "source": "commercial route + proposed test",
+            "rationale": "Regalos corporativos: Presentar un kit muestra para un brief compatible."
+          },
+          "opportunityDescriptor": "Inclusión de producto terminado en un brief de regalos corporativos"
+        },
+        "fit": {
+          "value": "Moderate",
+          "basis": "inferred",
+          "source": "commercial objective + route evidence + proposed test",
+          "rationale": "Su oferta pública de soluciones corporativas permite evaluar un producto terminado dentro de un kit. La evidencia confirma relevancia estructural, pero no confirma compra de terceros, economía ni aceptación del formato."
+        },
+        "timing": null,
+        "changes": [],
+        "whyNow": null,
+        "evidence": [
+          {
+            "claim": "Canal de kits o regalos corporativos: encaje para un producto terminado dentro de un kit.",
+            "observation": "Su sitio oficial ofrece explícitamente kits corporativos y de eventos personalizados en Bogotá.",
+            "sourceLabel": "sinergyon.com",
+            "url": "https://sinergyon.com",
+            "date": null,
+            "relation": "direct",
+            "basis": "observed",
+            "impacts": [
+              "fit"
+            ],
+            "independenceKey": "sinergyon.com"
+          }
+        ],
+        "independentSupport": false,
+        "weaknesses": [],
+        "unknowns": [
+          {
+            "value": "No hay evidencia de un proyecto activo ni de aceptación del formato.",
+            "basis": "explicit",
+            "source": "approved account review",
+            "rationale": "Unresolved fact that may change the decision."
+          }
+        ],
+        "validations": [
+          {
+            "question": "No hay evidencia de un proyecto activo ni de aceptación del formato.",
+            "decisionCritical": true,
+            "howToValidate": "Presentar un kit muestra para un brief compatible.",
+            "changesDecisionBecause": "Resolver esta incógnita puede mover la cuenta entre Priorizar, Validar, Monitorear o En espera."
+          }
+        ],
+        "decisionRationale": {
+          "value": "Validar: el encaje estructural es moderado y está respaldado por una fuente oficial, pero permanece sin confirmar: no hay evidencia de un proyecto activo ni de aceptación del formato. No existe evidencia de intención de compra ni de timing actual.",
+          "basis": "inferred",
+          "source": "fit + evidence + material unknown + existing portfolio decision",
+          "rationale": "Síntesis explícita sin puntaje agregado ni certeza de compra."
+        },
+        "recommendedNextStep": {
+          "value": "Validar brief, volumen, plazo, personalización y economía.",
+          "basis": "explicit",
+          "source": "approved account review",
+          "rationale": "Next step follows the current decision and named unknown."
+        },
+        "revisitWhen": null,
+        "potentialValue": null,
+        "feasibility": null
       }
     },
     {
@@ -102,6 +327,81 @@
         "freshness": "current",
         "proves": "Operación de retail de productos naturales activa: adyacencia de categoría.",
         "not_proves": "Margen, alta como proveedor y desempeño de líquidos no están confirmados. No hay evidencia de intención de compra ni de temporalidad (timing)."
+      },
+      "opportunity_case": {
+        "version": "opportunity-case-v1",
+        "classification": {
+          "accountRole": {
+            "value": "Potential Customer",
+            "basis": "explicit",
+            "source": "client commercial objective + approved target-account portfolio",
+            "rationale": "La cuenta fue seleccionada para evaluar una posible relación comercial con Vitálica, no como fuente, proveedor o actor del paisaje."
+          },
+          "opportunityType": {
+            "value": "New Business",
+            "basis": "inferred",
+            "source": "commercial route + proposed test",
+            "rationale": "Retail especializado: Proponer un surtido mixto pequeño y medir rotación."
+          },
+          "opportunityDescriptor": "Prueba de categoría y reposición en retail especializado"
+        },
+        "fit": {
+          "value": "Moderate",
+          "basis": "inferred",
+          "source": "commercial objective + route evidence + proposed test",
+          "rationale": "El surtido natural visible permite contrastar un formato botánico líquido diferenciado. La evidencia confirma relevancia estructural, pero no confirma compra de terceros, economía ni aceptación del formato."
+        },
+        "timing": null,
+        "changes": [],
+        "whyNow": null,
+        "evidence": [
+          {
+            "claim": "Operación de retail de productos naturales activa: adyacencia de categoría.",
+            "observation": "Su e-commerce oficial activo describe productos naturales, vitaminas y suplementos en Colombia.",
+            "sourceLabel": "tiendavitalica.com",
+            "url": "https://tiendavitalica.com",
+            "date": null,
+            "relation": "direct",
+            "basis": "observed",
+            "impacts": [
+              "fit"
+            ],
+            "independenceKey": "tiendavitalica.com"
+          }
+        ],
+        "independentSupport": false,
+        "weaknesses": [],
+        "unknowns": [
+          {
+            "value": "Margen, alta como proveedor y desempeño de líquidos no están confirmados.",
+            "basis": "explicit",
+            "source": "approved account review",
+            "rationale": "Unresolved fact that may change the decision."
+          }
+        ],
+        "validations": [
+          {
+            "question": "Margen, alta como proveedor y desempeño de líquidos no están confirmados.",
+            "decisionCritical": true,
+            "howToValidate": "Proponer un surtido mixto pequeño y medir rotación.",
+            "changesDecisionBecause": "Resolver esta incógnita puede mover la cuenta entre Priorizar, Validar, Monitorear o En espera."
+          }
+        ],
+        "decisionRationale": {
+          "value": "Validar: el encaje estructural es moderado y está respaldado por una fuente oficial, pero permanece sin confirmar: margen, alta como proveedor y desempeño de líquidos no están confirmados. No existe evidencia de intención de compra ni de timing actual.",
+          "basis": "inferred",
+          "source": "fit + evidence + material unknown + existing portfolio decision",
+          "rationale": "Síntesis explícita sin puntaje agregado ni certeza de compra."
+        },
+        "recommendedNextStep": {
+          "value": "Preguntar por categoría, documentación, margen y reposición.",
+          "basis": "explicit",
+          "source": "approved account review",
+          "rationale": "Next step follows the current decision and named unknown."
+        },
+        "revisitWhen": null,
+        "potentialValue": null,
+        "feasibility": null
       }
     },
     {
@@ -120,6 +420,81 @@
         "freshness": "current",
         "proves": "Operación de retail de productos naturales activa: adyacencia de categoría.",
         "not_proves": "Apertura de categoría, comprador y requisitos documentales. No hay evidencia de intención de compra ni de temporalidad (timing)."
+      },
+      "opportunity_case": {
+        "version": "opportunity-case-v1",
+        "classification": {
+          "accountRole": {
+            "value": "Potential Customer",
+            "basis": "explicit",
+            "source": "client commercial objective + approved target-account portfolio",
+            "rationale": "La cuenta fue seleccionada para evaluar una posible relación comercial con Ser Saludable, no como fuente, proveedor o actor del paisaje."
+          },
+          "opportunityType": {
+            "value": "New Business",
+            "basis": "inferred",
+            "source": "commercial route + proposed test",
+            "rationale": "Retail especializado: Validar encaje de posicionamiento y una prueba de baja exposición."
+          },
+          "opportunityDescriptor": "Prueba de categoría y reposición en retail especializado"
+        },
+        "fit": {
+          "value": "Moderate",
+          "basis": "inferred",
+          "source": "commercial objective + route evidence + proposed test",
+          "rationale": "La operación pública en bienestar sugiere afinidad estructural para una prueba acotada. La evidencia confirma relevancia estructural, pero no confirma compra de terceros, economía ni aceptación del formato."
+        },
+        "timing": null,
+        "changes": [],
+        "whyNow": null,
+        "evidence": [
+          {
+            "claim": "Operación de retail de productos naturales activa: adyacencia de categoría.",
+            "observation": "Su tienda oficial describe medicina natural, vitaminas, nutrición deportiva y productos de bienestar.",
+            "sourceLabel": "tiendasersaludable.com",
+            "url": "https://tiendasersaludable.com",
+            "date": null,
+            "relation": "direct",
+            "basis": "observed",
+            "impacts": [
+              "fit"
+            ],
+            "independenceKey": "tiendasersaludable.com"
+          }
+        ],
+        "independentSupport": false,
+        "weaknesses": [],
+        "unknowns": [
+          {
+            "value": "Apertura de categoría, comprador y requisitos documentales.",
+            "basis": "explicit",
+            "source": "approved account review",
+            "rationale": "Unresolved fact that may change the decision."
+          }
+        ],
+        "validations": [
+          {
+            "question": "Apertura de categoría, comprador y requisitos documentales.",
+            "decisionCritical": true,
+            "howToValidate": "Validar encaje de posicionamiento y una prueba de baja exposición.",
+            "changesDecisionBecause": "Resolver esta incógnita puede mover la cuenta entre Priorizar, Validar, Monitorear o En espera."
+          }
+        ],
+        "decisionRationale": {
+          "value": "Priorizar: el encaje estructural es moderado y está respaldado por una fuente oficial, pero permanece sin confirmar: apertura de categoría, comprador y requisitos documentales. No existe evidencia de intención de compra ni de timing actual.",
+          "basis": "inferred",
+          "source": "fit + evidence + material unknown + existing portfolio decision",
+          "rationale": "Síntesis explícita sin puntaje agregado ni certeza de compra."
+        },
+        "recommendedNextStep": {
+          "value": "Confirmar lenguaje no médico, documentación y proceso de alta.",
+          "basis": "explicit",
+          "source": "approved account review",
+          "rationale": "Next step follows the current decision and named unknown."
+        },
+        "revisitWhen": null,
+        "potentialValue": null,
+        "feasibility": null
       }
     },
     {
@@ -138,6 +513,81 @@
         "freshness": "fresh",
         "proves": "Identidad y operación de hotelería/spa vigente: relevancia estructural de la ruta.",
         "not_proves": "No se verificó compra de terceros, autonomía local ni encaje de 50 unidades. No hay evidencia de intención de compra ni de temporalidad (timing)."
+      },
+      "opportunity_case": {
+        "version": "opportunity-case-v1",
+        "classification": {
+          "accountRole": {
+            "value": "Potential Customer",
+            "basis": "explicit",
+            "source": "client commercial objective + approved target-account portfolio",
+            "rationale": "La cuenta fue seleccionada para evaluar una posible relación comercial con Masaya Collection, no como fuente, proveedor o actor del paisaje."
+          },
+          "opportunityType": {
+            "value": "New Business",
+            "basis": "inferred",
+            "source": "commercial route + proposed test",
+            "rationale": "Hotelería y spa: Diseñar una prueba en una sola propiedad antes de escalar."
+          },
+          "opportunityDescriptor": "Prueba de experiencia de huésped o retail de spa"
+        },
+        "fit": {
+          "value": "Moderate",
+          "basis": "inferred",
+          "source": "commercial objective + route evidence + proposed test",
+          "rationale": "Su presencia en hospitalidad ofrece una plataforma para explorar regalos corporativos o experiencia de huésped. La evidencia confirma relevancia estructural, pero no confirma compra de terceros, economía ni aceptación del formato."
+        },
+        "timing": null,
+        "changes": [],
+        "whyNow": null,
+        "evidence": [
+          {
+            "claim": "Identidad y operación de hotelería/spa vigente: relevancia estructural de la ruta.",
+            "observation": "Su página oficial describe estadías boutique en Colombia centradas en sofisticación, bienestar y conexión; actualizada el 21 de julio de 2026.",
+            "sourceLabel": "masaya-experience.com",
+            "url": "https://masaya-experience.com",
+            "date": null,
+            "relation": "direct",
+            "basis": "observed",
+            "impacts": [
+              "fit"
+            ],
+            "independenceKey": "masaya-experience.com"
+          }
+        ],
+        "independentSupport": false,
+        "weaknesses": [],
+        "unknowns": [
+          {
+            "value": "No se verificó compra de terceros, autonomía local ni encaje de 50 unidades.",
+            "basis": "explicit",
+            "source": "approved account review",
+            "rationale": "Unresolved fact that may change the decision."
+          }
+        ],
+        "validations": [
+          {
+            "question": "No se verificó compra de terceros, autonomía local ni encaje de 50 unidades.",
+            "decisionCritical": true,
+            "howToValidate": "Diseñar una prueba en una sola propiedad antes de escalar.",
+            "changesDecisionBecause": "Resolver esta incógnita puede mover la cuenta entre Priorizar, Validar, Monitorear o En espera."
+          }
+        ],
+        "decisionRationale": {
+          "value": "Priorizar: el encaje estructural es moderado y está respaldado por una fuente oficial, pero permanece sin confirmar: no se verificó compra de terceros, autonomía local ni encaje de 50 unidades. No existe evidencia de intención de compra ni de timing actual.",
+          "basis": "inferred",
+          "source": "fit + evidence + material unknown + existing portfolio decision",
+          "rationale": "Síntesis explícita sin puntaje agregado ni certeza de compra."
+        },
+        "recommendedNextStep": {
+          "value": "Identificar propiedad, caso de uso y nivel de decisión.",
+          "basis": "explicit",
+          "source": "approved account review",
+          "rationale": "Next step follows the current decision and named unknown."
+        },
+        "revisitWhen": null,
+        "potentialValue": null,
+        "feasibility": null
       }
     },
     {
@@ -156,6 +606,81 @@
         "freshness": "unknown",
         "proves": "Operación de retail de productos naturales activa: adyacencia de categoría.",
         "not_proves": "Acceso comprador, margen, posicionamiento premium y recompra. No hay evidencia de intención de compra ni de temporalidad (timing)."
+      },
+      "opportunity_case": {
+        "version": "opportunity-case-v1",
+        "classification": {
+          "accountRole": {
+            "value": "Potential Customer",
+            "basis": "explicit",
+            "source": "client commercial objective + approved target-account portfolio",
+            "rationale": "La cuenta fue seleccionada para evaluar una posible relación comercial con Natural + Mente, no como fuente, proveedor o actor del paisaje."
+          },
+          "opportunityType": {
+            "value": "New Business",
+            "basis": "inferred",
+            "source": "commercial route + proposed test",
+            "rationale": "Retail especializado: Evaluar una prueba pequeña con posicionamiento seguro."
+          },
+          "opportunityDescriptor": "Prueba de categoría y reposición en retail especializado"
+        },
+        "fit": {
+          "value": "Moderate",
+          "basis": "inferred",
+          "source": "commercial objective + route evidence + proposed test",
+          "rationale": "El ecommerce activo y categorías de fitoterapia muestran adyacencia de surtido multimarcas. La evidencia confirma relevancia estructural, pero no confirma compra de terceros, economía ni aceptación del formato."
+        },
+        "timing": null,
+        "changes": [],
+        "whyNow": null,
+        "evidence": [
+          {
+            "claim": "Operación de retail de productos naturales activa: adyacencia de categoría.",
+            "observation": "Su ecommerce activo lista productos y expone categorías de fitoterapia, nutrición y múltiples laboratorios (confirmado en la revisión de evidencia).",
+            "sourceLabel": "naturalmente.com.co",
+            "url": "https://naturalmente.com.co",
+            "date": null,
+            "relation": "direct",
+            "basis": "observed",
+            "impacts": [
+              "fit"
+            ],
+            "independenceKey": "naturalmente.com.co"
+          }
+        ],
+        "independentSupport": false,
+        "weaknesses": [],
+        "unknowns": [
+          {
+            "value": "Acceso comprador, margen, posicionamiento premium y recompra.",
+            "basis": "explicit",
+            "source": "approved account review",
+            "rationale": "Unresolved fact that may change the decision."
+          }
+        ],
+        "validations": [
+          {
+            "question": "Acceso comprador, margen, posicionamiento premium y recompra.",
+            "decisionCritical": true,
+            "howToValidate": "Evaluar una prueba pequeña con posicionamiento seguro.",
+            "changesDecisionBecause": "Resolver esta incógnita puede mover la cuenta entre Priorizar, Validar, Monitorear o En espera."
+          }
+        ],
+        "decisionRationale": {
+          "value": "Priorizar: el encaje estructural es moderado y está respaldado por una fuente oficial, pero permanece sin confirmar: acceso comprador, margen, posicionamiento premium y recompra. No existe evidencia de intención de compra ni de timing actual.",
+          "basis": "inferred",
+          "source": "fit + evidence + material unknown + existing portfolio decision",
+          "rationale": "Síntesis explícita sin puntaje agregado ni certeza de compra."
+        },
+        "recommendedNextStep": {
+          "value": "Confirmar alta como proveedor, comparación de precio y criterios de rotación.",
+          "basis": "explicit",
+          "source": "approved account review",
+          "rationale": "Next step follows the current decision and named unknown."
+        },
+        "revisitWhen": null,
+        "potentialValue": null,
+        "feasibility": null
       }
     },
     {
@@ -174,6 +699,81 @@
         "freshness": "current",
         "proves": "Identidad y operación de hotelería/spa vigente: relevancia estructural de la ruta.",
         "not_proves": "proceso de compras puede ser complejo y no hay retail de terceros confirmado. No hay evidencia de intención de compra ni de temporalidad (timing)."
+      },
+      "opportunity_case": {
+        "version": "opportunity-case-v1",
+        "classification": {
+          "accountRole": {
+            "value": "Potential Customer",
+            "basis": "explicit",
+            "source": "client commercial objective + approved target-account portfolio",
+            "rationale": "La cuenta fue seleccionada para evaluar una posible relación comercial con Hotel Charleston Santa Teresa Spa, no como fuente, proveedor o actor del paisaje."
+          },
+          "opportunityType": {
+            "value": "New Business",
+            "basis": "inferred",
+            "source": "commercial route + proposed test",
+            "rationale": "Hotelería y spa: Explorar solo si existe patrocinador operativo para una prueba pequeña."
+          },
+          "opportunityDescriptor": "Prueba de experiencia de huésped o retail de spa"
+        },
+        "fit": {
+          "value": "Moderate",
+          "basis": "inferred",
+          "source": "commercial objective + route evidence + proposed test",
+          "rationale": "Los rituales de spa visibles justifican una validación de alto nivel como referencia de mercado. La evidencia confirma relevancia estructural, pero no confirma compra de terceros, economía ni aceptación del formato."
+        },
+        "timing": null,
+        "changes": [],
+        "whyNow": null,
+        "evidence": [
+          {
+            "claim": "Identidad y operación de hotelería/spa vigente: relevancia estructural de la ruta.",
+            "observation": "Su página oficial describe masajes, faciales y rituales de bienestar en su spa de Cartagena.",
+            "sourceLabel": "hotelcharlestonsantateresa.com",
+            "url": "https://hotelcharlestonsantateresa.com",
+            "date": null,
+            "relation": "direct",
+            "basis": "observed",
+            "impacts": [
+              "fit"
+            ],
+            "independenceKey": "hotelcharlestonsantateresa.com"
+          }
+        ],
+        "independentSupport": false,
+        "weaknesses": [],
+        "unknowns": [
+          {
+            "value": "proceso de compras puede ser complejo y no hay retail de terceros confirmado.",
+            "basis": "explicit",
+            "source": "approved account review",
+            "rationale": "Unresolved fact that may change the decision."
+          }
+        ],
+        "validations": [
+          {
+            "question": "proceso de compras puede ser complejo y no hay retail de terceros confirmado.",
+            "decisionCritical": true,
+            "howToValidate": "Explorar solo si existe patrocinador operativo para una prueba pequeña.",
+            "changesDecisionBecause": "Resolver esta incógnita puede mover la cuenta entre Priorizar, Validar, Monitorear o En espera."
+          }
+        ],
+        "decisionRationale": {
+          "value": "Monitorear: el encaje estructural es moderado y está respaldado por una fuente oficial, pero permanece sin confirmar: proceso de compras puede ser complejo y no hay retail de terceros confirmado. No existe evidencia de intención de compra ni de timing actual.",
+          "basis": "inferred",
+          "source": "fit + evidence + material unknown + existing portfolio decision",
+          "rationale": "Síntesis explícita sin puntaje agregado ni certeza de compra."
+        },
+        "recommendedNextStep": {
+          "value": "Validar autonomía del spa, canal de compra y tamaño mínimo.",
+          "basis": "explicit",
+          "source": "approved account review",
+          "rationale": "Next step follows the current decision and named unknown."
+        },
+        "revisitWhen": null,
+        "potentialValue": null,
+        "feasibility": null
       }
     },
     {
@@ -192,6 +792,81 @@
         "freshness": "current",
         "proves": "Canal de kits o regalos corporativos: encaje para un producto terminado dentro de un kit.",
         "not_proves": "Aceptación de ingeribles, volumen y recurrencia. No hay evidencia de intención de compra ni de temporalidad (timing)."
+      },
+      "opportunity_case": {
+        "version": "opportunity-case-v1",
+        "classification": {
+          "accountRole": {
+            "value": "Potential Customer",
+            "basis": "explicit",
+            "source": "client commercial objective + approved target-account portfolio",
+            "rationale": "La cuenta fue seleccionada para evaluar una posible relación comercial con Habibi Plantitas, no como fuente, proveedor o actor del paisaje."
+          },
+          "opportunityType": {
+            "value": "New Business",
+            "basis": "inferred",
+            "source": "commercial route + proposed test",
+            "rationale": "Regalos corporativos: Probar compatibilidad en un kit estacional o corporativo."
+          },
+          "opportunityDescriptor": "Inclusión de producto terminado en un brief de regalos corporativos"
+        },
+        "fit": {
+          "value": "Moderate",
+          "basis": "inferred",
+          "source": "commercial objective + route evidence + proposed test",
+          "rationale": "La oferta pública de regalos personalizados abre una hipótesis para integrar un producto terminado. La evidencia confirma relevancia estructural, pero no confirma compra de terceros, economía ni aceptación del formato."
+        },
+        "timing": null,
+        "changes": [],
+        "whyNow": null,
+        "evidence": [
+          {
+            "claim": "Canal de kits o regalos corporativos: encaje para un producto terminado dentro de un kit.",
+            "observation": "Su página oficial ofrece regalos corporativos personalizados en toda Colombia, incluidas plantas, velas y bonsái.",
+            "sourceLabel": "habibiplantitas.com",
+            "url": "https://habibiplantitas.com",
+            "date": null,
+            "relation": "direct",
+            "basis": "observed",
+            "impacts": [
+              "fit"
+            ],
+            "independenceKey": "habibiplantitas.com"
+          }
+        ],
+        "independentSupport": false,
+        "weaknesses": [],
+        "unknowns": [
+          {
+            "value": "Aceptación de ingeribles, volumen y recurrencia.",
+            "basis": "explicit",
+            "source": "approved account review",
+            "rationale": "Unresolved fact that may change the decision."
+          }
+        ],
+        "validations": [
+          {
+            "question": "Aceptación de ingeribles, volumen y recurrencia.",
+            "decisionCritical": true,
+            "howToValidate": "Probar compatibilidad en un kit estacional o corporativo.",
+            "changesDecisionBecause": "Resolver esta incógnita puede mover la cuenta entre Priorizar, Validar, Monitorear o En espera."
+          }
+        ],
+        "decisionRationale": {
+          "value": "Monitorear: el encaje estructural es moderado y está respaldado por una fuente oficial, pero permanece sin confirmar: aceptación de ingeribles, volumen y recurrencia. No existe evidencia de intención de compra ni de timing actual.",
+          "basis": "inferred",
+          "source": "fit + evidence + material unknown + existing portfolio decision",
+          "rationale": "Síntesis explícita sin puntaje agregado ni certeza de compra."
+        },
+        "recommendedNextStep": {
+          "value": "Confirmar manejo de producto, temporadas, personalización y margen.",
+          "basis": "explicit",
+          "source": "approved account review",
+          "rationale": "Next step follows the current decision and named unknown."
+        },
+        "revisitWhen": null,
+        "potentialValue": null,
+        "feasibility": null
       }
     },
     {
@@ -210,6 +885,81 @@
         "freshness": "fresh",
         "proves": "Operación de retail de productos naturales activa: adyacencia de categoría.",
         "not_proves": "Apertura a marcas externas y solapamiento competitivo. No hay evidencia de intención de compra ni de temporalidad (timing)."
+      },
+      "opportunity_case": {
+        "version": "opportunity-case-v1",
+        "classification": {
+          "accountRole": {
+            "value": "Potential Customer",
+            "basis": "explicit",
+            "source": "client commercial objective + approved target-account portfolio",
+            "rationale": "La cuenta fue seleccionada para evaluar una posible relación comercial con Funat, no como fuente, proveedor o actor del paisaje."
+          },
+          "opportunityType": {
+            "value": "New Business",
+            "basis": "inferred",
+            "source": "commercial route + proposed test",
+            "rationale": "Retail especializado: Determinar primero si existe espacio no competitivo para terceros."
+          },
+          "opportunityDescriptor": "Prueba de categoría y reposición en retail especializado"
+        },
+        "fit": {
+          "value": "Moderate",
+          "basis": "inferred",
+          "source": "commercial objective + route evidence + proposed test",
+          "rationale": "Su catálogo botánico aporta aprendizaje de categoría y una posible afinidad comercial. La evidencia confirma relevancia estructural, pero no confirma compra de terceros, economía ni aceptación del formato."
+        },
+        "timing": null,
+        "changes": [],
+        "whyNow": null,
+        "evidence": [
+          {
+            "claim": "Operación de retail de productos naturales activa: adyacencia de categoría.",
+            "observation": "Su tienda oficial ofrece productos naturales e incluye explícitamente tés e infusiones; página actualizada el 11 de junio de 2026.",
+            "sourceLabel": "funat.co",
+            "url": "https://funat.co",
+            "date": null,
+            "relation": "direct",
+            "basis": "observed",
+            "impacts": [
+              "fit"
+            ],
+            "independenceKey": "funat.co"
+          }
+        ],
+        "independentSupport": false,
+        "weaknesses": [],
+        "unknowns": [
+          {
+            "value": "Apertura a marcas externas y solapamiento competitivo.",
+            "basis": "explicit",
+            "source": "approved account review",
+            "rationale": "Unresolved fact that may change the decision."
+          }
+        ],
+        "validations": [
+          {
+            "question": "Apertura a marcas externas y solapamiento competitivo.",
+            "decisionCritical": true,
+            "howToValidate": "Determinar primero si existe espacio no competitivo para terceros.",
+            "changesDecisionBecause": "Resolver esta incógnita puede mover la cuenta entre Priorizar, Validar, Monitorear o En espera."
+          }
+        ],
+        "decisionRationale": {
+          "value": "Monitorear: el encaje estructural es moderado y está respaldado por una fuente oficial, pero permanece sin confirmar: apertura a marcas externas y solapamiento competitivo. No existe evidencia de intención de compra ni de timing actual.",
+          "basis": "inferred",
+          "source": "fit + evidence + material unknown + existing portfolio decision",
+          "rationale": "Síntesis explícita sin puntaje agregado ni certeza de compra."
+        },
+        "recommendedNextStep": {
+          "value": "Validar rol comercial, política de terceros y diferenciación.",
+          "basis": "explicit",
+          "source": "approved account review",
+          "rationale": "Next step follows the current decision and named unknown."
+        },
+        "revisitWhen": null,
+        "potentialValue": null,
+        "feasibility": null
       }
     }
   ],
@@ -377,7 +1127,82 @@
         "Hoja de uso seguro (sin lenguaje médico)",
         "Condiciones mayoristas",
         "Dimensiones y logística del vidrio"
-      ]
+      ],
+      "opportunity_case": {
+        "version": "opportunity-case-v1",
+        "classification": {
+          "accountRole": {
+            "value": "Potential Customer",
+            "basis": "explicit",
+            "source": "client commercial objective + approved target-account portfolio",
+            "rationale": "La cuenta fue seleccionada para evaluar una posible relación comercial con Éteka, no como fuente, proveedor o actor del paisaje."
+          },
+          "opportunityType": {
+            "value": "New Business",
+            "basis": "inferred",
+            "source": "commercial route + proposed test",
+            "rationale": "Hotelería y spa: Validar un único caso de uso con 50 unidades."
+          },
+          "opportunityDescriptor": "Prueba de experiencia de huésped o retail de spa"
+        },
+        "fit": {
+          "value": "Moderate",
+          "basis": "inferred",
+          "source": "commercial objective + route evidence + proposed test",
+          "rationale": "Su propuesta pública de spa permite explorar un ritual de bienestar o regalo para huéspedes. La evidencia confirma relevancia estructural, pero no confirma compra de terceros, economía ni aceptación del formato."
+        },
+        "timing": null,
+        "changes": [],
+        "whyNow": null,
+        "evidence": [
+          {
+            "claim": "Identidad y operación de hotelería/spa vigente: relevancia estructural de la ruta.",
+            "observation": "Su página oficial describe un hotel spa en Cartagena con rituales de bienestar; la página fue actualizada el 5 de julio de 2026.",
+            "sourceLabel": "etekacartagena.com",
+            "url": "https://etekacartagena.com",
+            "date": null,
+            "relation": "direct",
+            "basis": "observed",
+            "impacts": [
+              "fit"
+            ],
+            "independenceKey": "etekacartagena.com"
+          }
+        ],
+        "independentSupport": false,
+        "weaknesses": [],
+        "unknowns": [
+          {
+            "value": "No está confirmado que compre productos de terceros ni quién decide.",
+            "basis": "explicit",
+            "source": "approved account review",
+            "rationale": "Unresolved fact that may change the decision."
+          }
+        ],
+        "validations": [
+          {
+            "question": "No está confirmado que compre productos de terceros ni quién decide.",
+            "decisionCritical": true,
+            "howToValidate": "Validar un único caso de uso con 50 unidades.",
+            "changesDecisionBecause": "Resolver esta incógnita puede mover la cuenta entre Priorizar, Validar, Monitorear o En espera."
+          }
+        ],
+        "decisionRationale": {
+          "value": "Validar: el encaje estructural es moderado y está respaldado por una fuente oficial, pero permanece sin confirmar: no está confirmado que compre productos de terceros ni quién decide. No existe evidencia de intención de compra ni de timing actual.",
+          "basis": "inferred",
+          "source": "fit + evidence + material unknown + existing portfolio decision",
+          "rationale": "Síntesis explícita sin puntaje agregado ni certeza de compra."
+        },
+        "recommendedNextStep": {
+          "value": "Confirmar modelo de retail/regalo, responsable de compra y manejo de vidrio.",
+          "basis": "explicit",
+          "source": "approved account review",
+          "rationale": "Next step follows the current decision and named unknown."
+        },
+        "revisitWhen": null,
+        "potentialValue": null,
+        "feasibility": null
+      }
     },
     {
       "name": "Celestino Hotel Boutique & Spa",
@@ -416,7 +1241,82 @@
         "Concepto de regalo al huésped",
         "Copia de uso seguro",
         "Economía del piloto"
-      ]
+      ],
+      "opportunity_case": {
+        "version": "opportunity-case-v1",
+        "classification": {
+          "accountRole": {
+            "value": "Potential Customer",
+            "basis": "explicit",
+            "source": "client commercial objective + approved target-account portfolio",
+            "rationale": "La cuenta fue seleccionada para evaluar una posible relación comercial con Celestino Hotel Boutique & Spa, no como fuente, proveedor o actor del paisaje."
+          },
+          "opportunityType": {
+            "value": "New Business",
+            "basis": "inferred",
+            "source": "commercial route + proposed test",
+            "rationale": "Hotelería y spa: Probar una referencia en una propiedad y medir aceptación."
+          },
+          "opportunityDescriptor": "Prueba de experiencia de huésped o retail de spa"
+        },
+        "fit": {
+          "value": "Moderate",
+          "basis": "inferred",
+          "source": "commercial objective + route evidence + proposed test",
+          "rationale": "La combinación hotel boutique y spa crea una hipótesis concreta de regalo o venta complementaria. La evidencia confirma relevancia estructural, pero no confirma compra de terceros, economía ni aceptación del formato."
+        },
+        "timing": null,
+        "changes": [],
+        "whyNow": null,
+        "evidence": [
+          {
+            "claim": "Identidad y operación de hotelería/spa vigente: relevancia estructural de la ruta.",
+            "observation": "Su sitio oficial describe un hotel boutique con spa en Medellín, con sauna, jacuzzi y baño frío.",
+            "sourceLabel": "hotelcelestino.com",
+            "url": "https://hotelcelestino.com",
+            "date": null,
+            "relation": "direct",
+            "basis": "observed",
+            "impacts": [
+              "fit"
+            ],
+            "independenceKey": "hotelcelestino.com"
+          }
+        ],
+        "independentSupport": false,
+        "weaknesses": [],
+        "unknowns": [
+          {
+            "value": "No se verificó retail de terceros ni frecuencia de reposición.",
+            "basis": "explicit",
+            "source": "approved account review",
+            "rationale": "Unresolved fact that may change the decision."
+          }
+        ],
+        "validations": [
+          {
+            "question": "No se verificó retail de terceros ni frecuencia de reposición.",
+            "decisionCritical": true,
+            "howToValidate": "Probar una referencia en una propiedad y medir aceptación.",
+            "changesDecisionBecause": "Resolver esta incógnita puede mover la cuenta entre Priorizar, Validar, Monitorear o En espera."
+          }
+        ],
+        "decisionRationale": {
+          "value": "Validar: el encaje estructural es moderado y está respaldado por una fuente oficial, pero permanece sin confirmar: no se verificó retail de terceros ni frecuencia de reposición. No existe evidencia de intención de compra ni de timing actual.",
+          "basis": "inferred",
+          "source": "fit + evidence + material unknown + existing portfolio decision",
+          "rationale": "Síntesis explícita sin puntaje agregado ni certeza de compra."
+        },
+        "recommendedNextStep": {
+          "value": "Confirmar área compradora, caso de uso y cadencia potencial.",
+          "basis": "explicit",
+          "source": "approved account review",
+          "rationale": "Next step follows the current decision and named unknown."
+        },
+        "revisitWhen": null,
+        "potentialValue": null,
+        "feasibility": null
+      }
     },
     {
       "name": "Sinergy On",
@@ -456,7 +1356,82 @@
         "Opciones de marca compartida",
         "Escalas de volumen",
         "Hoja de tiempos de entrega"
-      ]
+      ],
+      "opportunity_case": {
+        "version": "opportunity-case-v1",
+        "classification": {
+          "accountRole": {
+            "value": "Potential Customer",
+            "basis": "explicit",
+            "source": "client commercial objective + approved target-account portfolio",
+            "rationale": "La cuenta fue seleccionada para evaluar una posible relación comercial con Sinergy On, no como fuente, proveedor o actor del paisaje."
+          },
+          "opportunityType": {
+            "value": "New Business",
+            "basis": "inferred",
+            "source": "commercial route + proposed test",
+            "rationale": "Regalos corporativos: Presentar un kit muestra para un brief compatible."
+          },
+          "opportunityDescriptor": "Inclusión de producto terminado en un brief de regalos corporativos"
+        },
+        "fit": {
+          "value": "Moderate",
+          "basis": "inferred",
+          "source": "commercial objective + route evidence + proposed test",
+          "rationale": "Su oferta pública de soluciones corporativas permite evaluar un producto terminado dentro de un kit. La evidencia confirma relevancia estructural, pero no confirma compra de terceros, economía ni aceptación del formato."
+        },
+        "timing": null,
+        "changes": [],
+        "whyNow": null,
+        "evidence": [
+          {
+            "claim": "Canal de kits o regalos corporativos: encaje para un producto terminado dentro de un kit.",
+            "observation": "Su sitio oficial ofrece explícitamente kits corporativos y de eventos personalizados en Bogotá.",
+            "sourceLabel": "sinergyon.com",
+            "url": "https://sinergyon.com",
+            "date": null,
+            "relation": "direct",
+            "basis": "observed",
+            "impacts": [
+              "fit"
+            ],
+            "independenceKey": "sinergyon.com"
+          }
+        ],
+        "independentSupport": false,
+        "weaknesses": [],
+        "unknowns": [
+          {
+            "value": "No hay evidencia de un proyecto activo ni de aceptación del formato.",
+            "basis": "explicit",
+            "source": "approved account review",
+            "rationale": "Unresolved fact that may change the decision."
+          }
+        ],
+        "validations": [
+          {
+            "question": "No hay evidencia de un proyecto activo ni de aceptación del formato.",
+            "decisionCritical": true,
+            "howToValidate": "Presentar un kit muestra para un brief compatible.",
+            "changesDecisionBecause": "Resolver esta incógnita puede mover la cuenta entre Priorizar, Validar, Monitorear o En espera."
+          }
+        ],
+        "decisionRationale": {
+          "value": "Validar: el encaje estructural es moderado y está respaldado por una fuente oficial, pero permanece sin confirmar: no hay evidencia de un proyecto activo ni de aceptación del formato. No existe evidencia de intención de compra ni de timing actual.",
+          "basis": "inferred",
+          "source": "fit + evidence + material unknown + existing portfolio decision",
+          "rationale": "Síntesis explícita sin puntaje agregado ni certeza de compra."
+        },
+        "recommendedNextStep": {
+          "value": "Validar brief, volumen, plazo, personalización y economía.",
+          "basis": "explicit",
+          "source": "approved account review",
+          "rationale": "Next step follows the current decision and named unknown."
+        },
+        "revisitWhen": null,
+        "potentialValue": null,
+        "feasibility": null
+      }
     },
     {
       "name": "Vitálica",
@@ -496,7 +1471,82 @@
         "Ficha técnica de producto",
         "Posicionamiento seguro",
         "Condiciones mayoristas y de reposición"
-      ]
+      ],
+      "opportunity_case": {
+        "version": "opportunity-case-v1",
+        "classification": {
+          "accountRole": {
+            "value": "Potential Customer",
+            "basis": "explicit",
+            "source": "client commercial objective + approved target-account portfolio",
+            "rationale": "La cuenta fue seleccionada para evaluar una posible relación comercial con Vitálica, no como fuente, proveedor o actor del paisaje."
+          },
+          "opportunityType": {
+            "value": "New Business",
+            "basis": "inferred",
+            "source": "commercial route + proposed test",
+            "rationale": "Retail especializado: Proponer un surtido mixto pequeño y medir rotación."
+          },
+          "opportunityDescriptor": "Prueba de categoría y reposición en retail especializado"
+        },
+        "fit": {
+          "value": "Moderate",
+          "basis": "inferred",
+          "source": "commercial objective + route evidence + proposed test",
+          "rationale": "El surtido natural visible permite contrastar un formato botánico líquido diferenciado. La evidencia confirma relevancia estructural, pero no confirma compra de terceros, economía ni aceptación del formato."
+        },
+        "timing": null,
+        "changes": [],
+        "whyNow": null,
+        "evidence": [
+          {
+            "claim": "Operación de retail de productos naturales activa: adyacencia de categoría.",
+            "observation": "Su e-commerce oficial activo describe productos naturales, vitaminas y suplementos en Colombia.",
+            "sourceLabel": "tiendavitalica.com",
+            "url": "https://tiendavitalica.com",
+            "date": null,
+            "relation": "direct",
+            "basis": "observed",
+            "impacts": [
+              "fit"
+            ],
+            "independenceKey": "tiendavitalica.com"
+          }
+        ],
+        "independentSupport": false,
+        "weaknesses": [],
+        "unknowns": [
+          {
+            "value": "Margen, alta como proveedor y desempeño de líquidos no están confirmados.",
+            "basis": "explicit",
+            "source": "approved account review",
+            "rationale": "Unresolved fact that may change the decision."
+          }
+        ],
+        "validations": [
+          {
+            "question": "Margen, alta como proveedor y desempeño de líquidos no están confirmados.",
+            "decisionCritical": true,
+            "howToValidate": "Proponer un surtido mixto pequeño y medir rotación.",
+            "changesDecisionBecause": "Resolver esta incógnita puede mover la cuenta entre Priorizar, Validar, Monitorear o En espera."
+          }
+        ],
+        "decisionRationale": {
+          "value": "Validar: el encaje estructural es moderado y está respaldado por una fuente oficial, pero permanece sin confirmar: margen, alta como proveedor y desempeño de líquidos no están confirmados. No existe evidencia de intención de compra ni de timing actual.",
+          "basis": "inferred",
+          "source": "fit + evidence + material unknown + existing portfolio decision",
+          "rationale": "Síntesis explícita sin puntaje agregado ni certeza de compra."
+        },
+        "recommendedNextStep": {
+          "value": "Preguntar por categoría, documentación, margen y reposición.",
+          "basis": "explicit",
+          "source": "approved account review",
+          "rationale": "Next step follows the current decision and named unknown."
+        },
+        "revisitWhen": null,
+        "potentialValue": null,
+        "feasibility": null
+      }
     }
   ],
   "limitations": [

@@ -51,13 +51,18 @@ function clientRead(vm: DeliverableViewModel, es: boolean): string | null {
   if (!total) return null;
   const pri = c.prioritize, val = c.validate;
   const corr = vm.coverage?.corroborated ?? 0;
+  const dated = vm.coverage?.withDatedEvidence ?? 0;
   if (es) {
-    const a = pri > 0 ? `${pri} de ${total} oportunidad${total === 1 ? "" : "es"} merece${pri === 1 ? "" : "n"} atención prioritaria ahora` : `Ninguna oportunidad merece atención prioritaria inmediata todavía`;
+    const a = pri > 0
+      ? dated > 0 ? `${pri} de ${total} oportunidad${total === 1 ? "" : "es"} merece${pri === 1 ? "" : "n"} atención prioritaria ahora` : `${pri} de ${total} oportunidad${total === 1 ? "" : "es"} queda${pri === 1 ? "" : "n"} priorizada${pri === 1 ? "" : "s"} para validación por encaje estructural, no por timing actual`
+      : `Ninguna oportunidad merece atención prioritaria inmediata todavía`;
     const b = corr > 0 ? `; los casos más sólidos combinan cambio comercial reciente con evidencia corroborada` : ``;
     const d = val > 0 ? `. ${val} requiere${val === 1 ? "" : "n"} validación antes de aumentar la atención.` : `.`;
     return `${a}${b}${d}`;
   }
-  const a = pri > 0 ? `${pri} of ${total} opportunit${total === 1 ? "y" : "ies"} merit${pri === 1 ? "s" : ""} priority attention now` : `No opportunity merits immediate priority attention yet`;
+  const a = pri > 0
+    ? dated > 0 ? `${pri} of ${total} opportunit${total === 1 ? "y" : "ies"} merit${pri === 1 ? "s" : ""} priority attention now` : `${pri} of ${total} opportunit${total === 1 ? "y is" : "ies are"} prioritized for validation on structural fit, not current timing`
+    : `No opportunity merits immediate priority attention yet`;
   const b = corr > 0 ? `, and the strongest cases combine recent commercial change with corroborated evidence` : ``;
   const d = val > 0 ? `. ${val} still require${val === 1 ? "s" : ""} validation before attention increases.` : `.`;
   return `${a}${b}${d}`;

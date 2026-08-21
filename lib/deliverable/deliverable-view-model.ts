@@ -41,6 +41,9 @@ export interface SourceVM {
   age: string | null;
   relation: EvidenceRelation | null;
   claim: string | null;       // what this source establishes
+  observation?: string | null; // what the source directly says/shows
+  basis?: "observed" | "inferred" | null;
+  impacts?: Array<"fit" | "timing" | "what_changed" | "why_now" | "decision" | "counter_case">;
 }
 
 export interface EvidenceSummaryVM {
@@ -62,6 +65,7 @@ export interface AccountBriefVM {
    *  source explicitly provides them — never fabricated. */
   accountRole: string | null;     // Potential Customer / Supplier / Distributor / Partner …
   opportunityType: string | null; // Supplier Expansion / Market Entry / Supply Resilience …
+  opportunityDescriptor?: string | null;
   decision: DecisionState;
   decisionNote: string | null;   // one-line why this decision
   thesis: string | null;         // why this account
@@ -73,7 +77,14 @@ export interface AccountBriefVM {
   counterSignals: string[];      // risks / counter-evidence that weaken the thesis
   limitations: string[];         // what limits confidence today
   validations: string[];         // what to validate before acting
+  validationDetails?: Array<{
+    question: string;
+    decisionCritical: boolean;
+    howToValidate: string | null;
+    changesDecisionBecause: string | null;
+  }>;
   nextStep: string | null;       // recommended commercial next step
+  revisitWhen?: string | null;
   freshness: { label: string; age: string | null } | null;
   confidence: Strength | null;   // evidence strength, not a generic AI score
 }
@@ -172,6 +183,15 @@ export function decisionLabel(state: DecisionState, es: boolean): string {
   const t = DECISION_TOKENS[state];
   return es ? t.labelEs : t.label;
 }
+
+const ROLE_ES: Record<string, string> = { "Potential Customer": "Cliente potencial", Supplier: "Proveedor", Distributor: "Distribuidor", "Strategic Partner": "Socio estratégico" };
+const TYPE_ES: Record<string, string> = {
+  "New Business": "Nuevo negocio", "Operations Expansion": "Expansión operativa", "Technology Modernization": "Modernización tecnológica",
+  "Enterprise Transformation": "Transformación empresarial", "New Market Entry": "Entrada a nuevo mercado", "Capacity Expansion": "Expansión de capacidad",
+  "Vendor or Platform Change": "Cambio de proveedor o plataforma", "Channel Partnership": "Alianza de canal",
+};
+export const accountRoleLabel = (value: string | null, es: boolean): string | null => value ? (es ? ROLE_ES[value] ?? value : value) : null;
+export const opportunityTypeLabel = (value: string | null, es: boolean): string | null => value ? (es ? TYPE_ES[value] ?? value : value) : null;
 
 /** Canonical attention order. Decision always wins; explicit legacy rank only
  * breaks ties inside one decision state. Array position is the final stable

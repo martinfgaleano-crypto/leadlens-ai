@@ -83,14 +83,14 @@ t("25 Japanese company name renders intact", jpHtml.includes("オポチュニテ
 
 // ─── V1.1 visual friendliness (structure, not pixels) ─────────────────────────
 t("26 editorial cover with AOI kicker (not a marketing hero)", html.includes('class="pt-cover"') && html.includes('class="pt-cover-kick"') && !/get started/i.test(html));
-t("27 deterministic executive read is present and count-grounded", html.includes('class="pt-exec"') && /3 de 10 cuentas merecen atención prioritaria ahora\. 4 requieren validación/.test(html));
+t("27 deterministic executive read is present, count-grounded and timing-honest", html.includes('class="pt-exec"') && /3 de 10 cuentas quedan priorizadas para validación por encaje estructural, no por timing actual\. 4 requieren validación/.test(html));
 t("28 executive read has no fabricated prose beyond real counts", !/probablemente|likely to close|estimamos|we estimate/i.test(html));
 t("29 Opportunity Case is ONE object with a reasoning spine (not box-box-box)", html.includes('class="pt-brief pt-case"') && html.includes('class="pt-flow"') && html.includes('class="pt-node"') && !/pt-brief"[^>]*>\s*<div class="pt-card"/.test(html));
-t("30 Case uses truthful locked grammar labels (Amor = Spanish)", (() => { const b = html.indexOf('pt-brief pt-case'); const seg = html.slice(b, b + 6000); return ["Evidencia actual", "Evidencia", "Qué podría cambiar el caso", "Decisión"].every((l) => seg.includes(l)); })());
-t("30b relevant signal carries the signature accent band", /pt-band\s+pt-signal/.test(html) && html.includes("pt-label-accent"));
+t("30 Case uses truthful locked grammar labels (Amor = Spanish)", (() => { const b = html.indexOf('pt-brief pt-case'); const seg = html.slice(b, b + 6000); return ["Evidencia", "Qué podría cambiar el caso", "Decisión"].every((l) => seg.includes(l)) && !seg.includes("Qué cambió"); })());
+t("30b no signature signal band appears without a true temporal change", !/pt-band\s+pt-signal/.test(html));
 t("30c commercial context stays a disclosure (secondary to opening)", html.includes('class="pt-card pt-context"') && /<details/.test(html));
 t("30d Opportunity Thesis renders as a lead paragraph (label-less)", html.includes('class="pt-thesis"'));
-t("30e role/type architecture ready but NOT fabricated for Amor", !/Potential Customer|Supplier Expansion/.test(html) && /accountRole/.test(readFileSync("lib/deliverable/deliverable-view-model.ts", "utf8")));
+t("30e real Role/Type are structured and localized for Amor", html.includes("Cliente potencial · Nuevo negocio") && !html.includes("Potential Customer · New Business"));
 
 // ─── Path-traversal / resolver safety (deliverable store) ─────────────────────
 import { resolveDeliverableFile, listDeliverables } from "@/lib/deliverable/portable/deliverable-store";
@@ -131,7 +131,7 @@ t("R8 graceful when there is NO client — subject falls back, never a fake name
   return noClient.client === null && noClient.hasClient === false && noClient.subject.length > 0 && !amorCc.landscape.some((o) => o.company === noClient.subject);
 })());
 t("R9 no aggregate score / HOT-WARM-COLD in the client-header region", (() => { const h = html.slice(html.indexOf('class="pt-top"'), html.indexOf("</header>")); return !/\bHOT\b|\bWARM\b|\bCOLD\b/.test(h) && !/\d\/10\b|\d{1,3}\/100\b/.test(h); })());
-t("R10 CaseSpine reasoning + evidence still intact (opportunity drill-down preserved)", (html.match(/data-brief="/g) || []).length === 10 && html.includes("Evidencia actual") && html.includes("Decisión"));
+t("R10 CaseSpine reasoning + evidence still intact (opportunity drill-down preserved)", (html.match(/data-brief="/g) || []).length === 10 && html.includes("Establece:") && html.includes("Decisión"));
 
 console.log(`\n${passed}/${passed + failed} passed`);
 process.exit(failed ? 1 : 0);

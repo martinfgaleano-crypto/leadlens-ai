@@ -32,8 +32,8 @@ test("2 explicit rank only breaks ties inside one decision", () => ordered[0].na
 test("3 Amor Canvas uses canonical attention ordering", () => toClientCanvasVM(vm).landscape.slice(0, 3).every((x) => x.decision === "prioritize"));
 test("4 Amor objective comes from success.objective", () => toClientCanvasVM(vm).objective === raw.success.objective);
 test("5 product description is separated from objective", () => vm.commercialContext?.clientDescription === raw.readiness.strengths[0] && vm.commercialContext?.objective !== vm.commercialContext?.clientDescription);
-test("6 legacy Amor facts are classified static context", () => vm.accounts.every((a) => a.whatChanged.every((c) => c.kind === "static_context")));
-test("7 static facts are not rendered as Qué cambió", () => html.includes("Evidencia actual") && !html.includes('<p class="pt-label pt-label-accent">Qué cambió</p>'));
+test("6 legacy Amor facts remain evidence, not temporal change", () => vm.accounts.every((a) => a.whatChanged.length === 0 && a.sources.every((s) => s.basis === "observed")));
+test("7 static facts are not rendered as Qué cambió", () => html.includes("Observado:") && !html.includes('<p class="pt-label pt-label-accent">Qué cambió</p>'));
 test("8 single-source Amor cases never claim corroboration", () => vm.accounts.every((a) => a.sources.length <= 1 && a.evidence.corroborated !== true) && vm.coverage?.corroborated === 0);
 test("9 canonical portable tabs are in canonical order", () => /Resumen[\s\S]*Casos de oportunidad[\s\S]*Evidencia[\s\S]*Comparar[\s\S]*Inteligencia del portafolio/.test(html));
 test("10 Methodology is a secondary utility", () => !/data-tab="method"/.test(html) && html.includes("Cómo leer este portafolio"));
