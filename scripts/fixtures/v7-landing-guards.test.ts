@@ -224,8 +224,8 @@ t("Q1 sample is CLIENT-level (synthetic client is the subject, not a target acco
 t("Q2 client header shows client name + commercial objective + opportunity count",
   /\{WS_CLIENT\.name\}/.test(src) && /objective:\s*"/.test(src) && /opportunities evaluated/.test(src));
 t("Q3 mini interactive workspace has five tabs", /CC_TABS = \["overview", "cases", "evidence", "compare", "strategy"\]/.test(src));
-t("Q4 tab labels present (Overview / Opportunity Cases / Evidence / Compare / Strategy)",
-  /Overview/.test(src) && /Opportunity Cases/.test(src) && /Evidence/.test(src) && /Compare/.test(src) && /Strategy/.test(src));
+t("Q4 canonical tab labels present (Overview / Opportunity Cases / Evidence / Compare / Portfolio Intelligence)",
+  /Overview/.test(src) && /Opportunity Cases/.test(src) && /Evidence/.test(src) && /Compare/.test(src) && /Portfolio Intelligence/.test(src));
 t("Q5 Overview default tab renders the LeadLens Read + Where to Focus landscape",
   /useState<CcTab>\("overview"\)/.test(src) && /LeadLens Read/.test(src) && /Where to focus · Opportunity landscape/.test(src));
 t("Q6 opportunities live INSIDE the canvas (tiles open the Opportunity Case)",
@@ -234,7 +234,7 @@ t("Q7 Opportunity Cases tab reuses the frozen reasoning spine (CaseSpine)",
   /function CaseSpine/.test(src) && /<CaseSpine a=\{a\} \/>/.test(src) && /label="What changed"/.test(src) && /label="Decision"/.test(src));
 t("Q8 Evidence tab is claim-first with Direct/Corroborating/Context relations", /claim → source → freshness/.test(src) && /REL_COLOR\[src\.rel\]/.test(src));
 t("Q9 Compare tab compares Fit/Timing/Evidence + Key unknown + Validate", /Key unknown/.test(src) && /Why work one account before another/.test(src));
-t("Q10 Strategy tab gives portfolio-level sequence tied to the portfolio", /Recommended sequence/.test(src) && /Prioritize Northstar Logistics first/.test(src));
+t("Q10 Portfolio Intelligence tab gives a sequence tied to the portfolio", /Recommended sequence/.test(src) && /Prioritize Northstar Logistics first/.test(src));
 t("Q11 client subject is not one target account (Asteron ≠ Northstar as report title)",
   /\{WS_CLIENT\.name\}/.test(src) && !/name:\s*"Northstar[^"]*",\s*$/m.test(src.slice(src.indexOf("const WS_CLIENT"), src.indexOf("const WS_CLIENT") + 400)));
 t("Q12 light composition — no giant dark navy header gradient on the sample surface",

@@ -7,7 +7,7 @@
 // client name / objective; Amor has a client but no market-pattern synthesis).
 
 import type { DeliverableViewModel, DecisionState, Strength } from "./deliverable-view-model";
-import { decisionLabel } from "./deliverable-view-model";
+import { decisionLabel, orderByAttention } from "./deliverable-view-model";
 
 export interface CanvasOpportunity {
   accountId: string;
@@ -80,7 +80,7 @@ export function toClientCanvasVM(vm: DeliverableViewModel): ClientCanvasVM {
   const client = vm.meta.client;
   const subject = client ?? (es ? "Portafolio de Oportunidades" : "Opportunity Portfolio");
 
-  const landscape: CanvasOpportunity[] = vm.accounts.map((a) => ({
+  const landscape: CanvasOpportunity[] = orderByAttention(vm.accounts).map((a) => ({
     accountId: a.id,
     company: a.company,
     decision: a.decision,
@@ -100,7 +100,7 @@ export function toClientCanvasVM(vm: DeliverableViewModel): ClientCanvasVM {
     client,
     subject,
     hasClient: Boolean(client),
-    objective: vm.commercialContext?.summary ?? null,
+    objective: vm.commercialContext?.objective ?? null,
     market: vm.meta.market,
     tierLabel: vm.meta.tierLabel,
     generatedLabel: vm.meta.generatedLabel,

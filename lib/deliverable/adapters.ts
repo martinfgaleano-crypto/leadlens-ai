@@ -72,7 +72,8 @@ function dossierToBrief(d: AccountDossier, i: number, status: StatusVerdict | nu
 
   const whatChanged: ChangeVM[] = d.evidence_chain
     .filter((e) => e.date)
-    .map((e) => ({ event: e.label, date: e.date, age: ageLabel(e.date), source: hostOf(e.url) }));
+    .filter((e) => e.date_basis === "fact")
+    .map((e) => ({ event: e.label, date: e.date, age: ageLabel(e.date), source: hostOf(e.url), kind: "recent_event" as const }));
 
   return {
     id: slug(d.company, i),
@@ -148,6 +149,8 @@ export function fromInstitutionalReport(r: InstitutionalOpportunityReportV1, exp
     },
     accounts,
     commercialContext: {
+      objective: null,
+      clientDescription: null,
       summary: r.context.icp_summary,
       regions: r.context.regions ?? [],
       industries: r.context.industries ?? [],
@@ -192,6 +195,7 @@ interface AmorDeliverable {
   briefs?: AmorAccount[];
   what_changed?: { before?: string[]; after?: string[] };
   readiness?: { strengths?: string[]; gaps?: string[] };
+  success?: { objective?: string };
   limitations?: string[];
 }
 
@@ -223,9 +227,11 @@ export function fromAmorPilot(d: AmorDeliverable): DeliverableViewModel {
     const relation: EvidenceRelation | null = ev?.proves ? "direct" : ev?.source ? "context" : null;
     const strength = amorFreshnessStrength(ev?.freshness);
     const sources: SourceVM[] = ev?.source
-      ? [{ label: ev.source, url: ev.source.includes(".") ? `https://${ev.source.replace(/^https?:\/\//, "")}` : null, date, age: ageLabel(date), relation, claim: ev.fact ?? null }]
+      ? [{ label: ev.source, url: ev.source.includes(".") ? `https://${ev.source.replace(/^https?:\/\//, "")}` : null, date, age: ageLabel(date, true), relation, claim: ev.fact ?? null }]
       : [];
-    const whatChanged: ChangeVM[] = ev?.fact ? [{ event: ev.fact, date, age: ageLabel(date), source: ev.source ?? null }] : [];
+    // `retrieved` is an access date, not proof that the underlying fact changed.
+    // Preserve the useful fact but label it as observed context, never change.
+    const whatChanged: ChangeVM[] = ev?.fact ? [{ event: ev.fact, date: null, age: null, source: ev.source ?? null, kind: "static_context" }] : [];
     const validations = [a.test, ...(brief?.questions ?? [])].filter((x): x is string => Boolean(x));
     const limitations = [a.unknown].filter((x): x is string => Boolean(x));
     const counterSignals = [...(brief?.objections ?? [])].filter(Boolean);
@@ -243,13 +249,13 @@ export function fromAmorPilot(d: AmorDeliverable): DeliverableViewModel {
       decisionNote: a.group ?? null,
       thesis: a.thesis ?? a.why ?? null,
       whyItMatters: a.why ?? null,
-      dimensions: strength ? [{ label: "Evidence", value: strength, note: ev?.freshness ?? null }] : [],
+      dimensions: strength ? [{ label: "Evidence", value: strength, note: null }] : [],
       whatChanged,
       evidence: {
         sourceCount: sources.length,
         datedCount: date ? 1 : 0,
         corroborated: null,
-        latestAge: ageLabel(date),
+        latestAge: ageLabel(date, true),
         strength,
       },
       sources,
@@ -257,7 +263,7 @@ export function fromAmorPilot(d: AmorDeliverable): DeliverableViewModel {
       limitations,
       validations,
       nextStep: a.next ?? null,
-      freshness: date ? { label: ageLabel(date) ? `${ageLabel(date)} ago` : "dated", age: ageLabel(date) } : null,
+      freshness: date ? { label: ageLabel(date, true) ? `${ageLabel(date, true)}` : "con fecha", age: ageLabel(date, true) } : null,
       confidence: strength,
     };
   });
@@ -266,7 +272,7 @@ export function fromAmorPilot(d: AmorDeliverable): DeliverableViewModel {
   for (const a of accounts) counts[a.decision] += 1;
 
   const changeSummary = d.what_changed?.after?.length
-    ? `Focus sharpened to: ${d.what_changed.after.slice(0, 3).join("; ")}.`
+    ? `El enfoque se precisó en: ${d.what_changed.after.slice(0, 3).map((item) => item.replace(/[.;:\s]+$/g, "")).join("; ")}.`
     : null;
 
   return {
@@ -290,7 +296,9 @@ export function fromAmorPilot(d: AmorDeliverable): DeliverableViewModel {
     },
     accounts,
     commercialContext: {
-      summary: d.readiness?.strengths?.length ? d.readiness.strengths[0] : null,
+      objective: d.success?.objective ?? null,
+      clientDescription: d.readiness?.strengths?.[0] ?? null,
+      summary: null,
       regions: geography ? [geography] : [],
       industries: Array.from(new Set(rawAccounts.map((a) => a.route).filter((x): x is string => Boolean(x)))),
       criteria: d.what_changed?.after ?? [],

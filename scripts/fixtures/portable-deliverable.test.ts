@@ -28,7 +28,7 @@ t("5 NO external asset URLs in CSS (url(http…))", !/url\(\s*['"]?https?:/i.tes
 t("6 CSS + JS are inline", /<style>/.test(html) && /<script>\(function/.test(html));
 t("7 embeds a JSON runtime payload (application/json)", /<script type="application\/json" id="pt-data">/.test(html));
 t("8 uses no eval / new Function", !/\beval\(/.test(html) && !/new Function/.test(html));
-t("9 all five panels present", ["panel-portfolio","panel-accounts","panel-compare","panel-evidence","panel-method"].every((p)=>html.includes(`id="${p}"`)));
+t("9 all five primary intelligence panels present", ["panel-portfolio","panel-accounts","panel-evidence","panel-compare","panel-intelligence"].every((p)=>html.includes(`id="${p}"`)));
 t("10 portfolio panel is NOT hidden by default (JS-disabled fallback)", /id="panel-portfolio"/.test(html) && /class="pt-panel"\s+id="panel-portfolio"/.test(html));
 t("11 renders all 10 Amor accounts as briefs", (html.match(/data-brief="/g) || []).length === 10);
 t("12 static point-in-time note present (not 'live')", /reflects the evidence available at the time of generation|refleja la evidencia disponible/.test(html) && !/live dashboard/i.test(html));
@@ -86,8 +86,8 @@ t("26 editorial cover with AOI kicker (not a marketing hero)", html.includes('cl
 t("27 deterministic executive read is present and count-grounded", html.includes('class="pt-exec"') && /3 de 10 cuentas merecen atención prioritaria ahora\. 4 requieren validación/.test(html));
 t("28 executive read has no fabricated prose beyond real counts", !/probablemente|likely to close|estimamos|we estimate/i.test(html));
 t("29 Opportunity Case is ONE object with a reasoning spine (not box-box-box)", html.includes('class="pt-brief pt-case"') && html.includes('class="pt-flow"') && html.includes('class="pt-node"') && !/pt-brief"[^>]*>\s*<div class="pt-card"/.test(html));
-t("30 Case uses the locked grammar labels (Amor = Spanish)", (() => { const b = html.indexOf('pt-brief pt-case'); const seg = html.slice(b, b + 6000); return ["Qué cambió", "Evidencia", "Qué podría cambiar el caso", "Decisión"].every((l) => seg.includes(l)); })());
-t("30b What Changed carries the signature accent band", /pt-band\s+pt-signal/.test(html) && html.includes("pt-label-accent"));
+t("30 Case uses truthful locked grammar labels (Amor = Spanish)", (() => { const b = html.indexOf('pt-brief pt-case'); const seg = html.slice(b, b + 6000); return ["Evidencia actual", "Evidencia", "Qué podría cambiar el caso", "Decisión"].every((l) => seg.includes(l)); })());
+t("30b relevant signal carries the signature accent band", /pt-band\s+pt-signal/.test(html) && html.includes("pt-label-accent"));
 t("30c commercial context stays a disclosure (secondary to opening)", html.includes('class="pt-card pt-context"') && /<details/.test(html));
 t("30d Opportunity Thesis renders as a lead paragraph (label-less)", html.includes('class="pt-thesis"'));
 t("30e role/type architecture ready but NOT fabricated for Amor", !/Potential Customer|Supplier Expansion/.test(html) && /accountRole/.test(readFileSync("lib/deliverable/deliverable-view-model.ts", "utf8")));
@@ -131,7 +131,7 @@ t("R8 graceful when there is NO client — subject falls back, never a fake name
   return noClient.client === null && noClient.hasClient === false && noClient.subject.length > 0 && !amorCc.landscape.some((o) => o.company === noClient.subject);
 })());
 t("R9 no aggregate score / HOT-WARM-COLD in the client-header region", (() => { const h = html.slice(html.indexOf('class="pt-top"'), html.indexOf("</header>")); return !/\bHOT\b|\bWARM\b|\bCOLD\b/.test(h) && !/\d\/10\b|\d{1,3}\/100\b/.test(h); })());
-t("R10 CaseSpine reasoning + evidence still intact (opportunity drill-down preserved)", (html.match(/data-brief="/g) || []).length === 10 && html.includes("Qué cambió") && html.includes("Decisión"));
+t("R10 CaseSpine reasoning + evidence still intact (opportunity drill-down preserved)", (html.match(/data-brief="/g) || []).length === 10 && html.includes("Evidencia actual") && html.includes("Decisión"));
 
 console.log(`\n${passed}/${passed + failed} passed`);
 process.exit(failed ? 1 : 0);

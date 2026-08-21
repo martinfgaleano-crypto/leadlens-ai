@@ -13,6 +13,9 @@ import { DECISION_TOKENS, STRENGTH_TOKENS, RELATION_TOKENS, decisionLabel } from
 export type Lang = "en" | "es";
 const T = (es: boolean) => ({
   whatChanged: es ? "Qué cambió" : "What changed",
+  recentSignal: es ? "Señal reciente" : "Recent signal",
+  relevantSignal: es ? "Evidencia actual" : "Current evidence",
+  inferredSignal: es ? "Interpretación" : "Interpretation",
   whyItMatters: es ? "Por qué importa" : "Why it matters",
   thesis: es ? "Tesis de la cuenta" : "Account thesis",
   evidence: es ? "Evidencia" : "Evidence",
@@ -50,7 +53,7 @@ export function DecisionBadge({ state, es, small }: { state: DecisionState; es: 
 }
 
 // ─── Dimension strip (Fit / Timing / Evidence — never one opaque score) ───────
-export function DimensionStrip({ dimensions }: { dimensions: DimensionVM[] }) {
+export function DimensionStrip({ dimensions, es = false }: { dimensions: DimensionVM[]; es?: boolean }) {
   if (dimensions.length === 0) return null;
   return (
     <div style={{ display: "flex", gap: 22, flexWrap: "wrap", margin: "2px 0" }}>
@@ -58,8 +61,8 @@ export function DimensionStrip({ dimensions }: { dimensions: DimensionVM[] }) {
         const tok = STRENGTH_TOKENS[d.value as Strength] ?? STRENGTH_TOKENS.Moderate;
         return (
           <div key={d.label}>
-            <div style={{ fontSize: 9.5, fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", color: "#94a3b8" }}>{d.label}</div>
-            <div style={{ fontSize: 15, fontWeight: tok.weight, color: tok.color, lineHeight: 1.2 }}>{d.value}</div>
+            <div style={{ fontSize: 9.5, fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", color: "#94a3b8" }}>{es ? ({ Fit: "Encaje", Timing: "Momento", Evidence: "Evidencia" }[d.label] ?? d.label) : d.label}</div>
+            <div style={{ fontSize: 15, fontWeight: tok.weight, color: tok.color, lineHeight: 1.2 }}>{es ? ({ Strong: "Sólida", Moderate: "Moderada", Limited: "Limitada" }[d.value] ?? d.value) : d.value}</div>
             {d.note && <div style={{ fontSize: 10.5, color: "#94a3b8" }}>{d.note}</div>}
           </div>
         );
@@ -72,9 +75,14 @@ export function DimensionStrip({ dimensions }: { dimensions: DimensionVM[] }) {
 export function WhatChangedSection({ a, es }: { a: AccountBriefVM; es: boolean }) {
   const t = T(es);
   if (a.whatChanged.length === 0) return null;
+  const kinds = new Set(a.whatChanged.map((c) => c.kind ?? "unknown"));
+  const sectionLabel = kinds.size === 1 && kinds.has("true_change") ? t.whatChanged
+    : kinds.size === 1 && kinds.has("recent_event") ? t.recentSignal
+    : kinds.size === 1 && kinds.has("inference") ? t.inferredSignal
+    : t.relevantSignal;
   return (
     <div style={card}>
-      <p style={label}>{t.whatChanged}</p>
+      <p style={label}>{sectionLabel}</p>
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         {a.whatChanged.map((c, i) => (
           <div key={i} style={{ display: "flex", gap: 10, alignItems: "baseline", flexWrap: "wrap" }}>
@@ -205,7 +213,7 @@ export function AccountBrief({ a, es }: { a: AccountBriefVM; es: boolean }) {
             {a.freshness?.age && <span style={{ fontSize: 11, color: "#94a3b8", fontWeight: 600 }}>{a.freshness.age} {t.ago}</span>}
           </div>
         </div>
-        {a.dimensions.length > 0 && <div style={{ marginTop: 14, paddingTop: 14, borderTop: "1px solid #f1f5f9" }}><DimensionStrip dimensions={a.dimensions} /></div>}
+        {a.dimensions.length > 0 && <div style={{ marginTop: 14, paddingTop: 14, borderTop: "1px solid #f1f5f9" }}><DimensionStrip dimensions={a.dimensions} es={es} /></div>}
       </div>
 
       {/* Thesis / why it matters */}

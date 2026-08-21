@@ -1564,7 +1564,7 @@ export default function DemoPipelinePage() {
   // ─── LANDING ──────────────────────────────────────────────────────────────
   if (view === "landing") return (
     <div className="ll-root" style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", color: "#0f172a", background: "#fff", lineHeight: 1.5 }}>
-      <style>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         .ll-pricing-grid { display: grid; gap: 1.5rem; max-width: 56rem; margin: 0 auto; align-items: stretch; grid-template-columns: repeat(3, 1fr); }
         @media (max-width: 900px) { .ll-pricing-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 580px) { .ll-pricing-grid { grid-template-columns: 1fr; gap: 1.25rem; padding-top: .875rem; } }
@@ -1655,6 +1655,7 @@ export default function DemoPipelinePage() {
         /* Client Opportunity Canvas sample: collapse spatial grids on phones */
         .ll-cc-tabs::-webkit-scrollbar { display: none; }
         .ll-cc-tabs { scrollbar-width: none; }
+        @media (max-width: 640px) { .ll-cc-tabs { padding-right: 2.75rem !important; -webkit-mask-image: linear-gradient(to right,#000 0,#000 calc(100% - 1.75rem),transparent 100%); mask-image: linear-gradient(to right,#000 0,#000 calc(100% - 1.75rem),transparent 100%); } }
         .ll-cc-tabs button:focus-visible { outline: 2px solid #0284c7; outline-offset: -2px; }
         @media (max-width: 720px) {
           .ll-cc-overview { grid-template-columns: 1fr !important; }
@@ -1768,7 +1769,7 @@ export default function DemoPipelinePage() {
           .ll-hero-h1  { font-size: 1.625rem !important; }
           .ll-hero-sub { font-size: .85rem !important; }
         }
-      `}</style>
+      ` }} />
 
       {/* Announcement bar — hidden on mobile (the hero already carries the proposition;
           it added a promotional layer before the product on phones). §11–13. */}
@@ -3323,17 +3324,29 @@ function CaseSpine({ a }: { a: WsAccount }) {
 
 const CC_TABS = ["overview", "cases", "evidence", "compare", "strategy"] as const;
 type CcTab = typeof CC_TABS[number];
-const CC_TAB_LABEL: Record<CcTab, string> = { overview: "Overview", cases: "Opportunity Cases", evidence: "Evidence", compare: "Compare", strategy: "Strategy" };
+const CC_TAB_LABEL: Record<CcTab, string> = { overview: "Overview", cases: "Opportunity Cases", evidence: "Evidence", compare: "Compare", strategy: "Portfolio Intelligence" };
 const zk: React.CSSProperties = { fontSize: ".58rem", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase" as const, color: "#94a3b8", margin: "0 0 .5rem" };
 const scard: React.CSSProperties = { border: "1px solid #e6ebf1", borderRadius: ".7rem", padding: ".7rem .8rem", background: "#fafbfc" };
 
 // The signature LeadLens surface: CLIENT → Opportunity Canvas → Cases → Evidence
-// → Compare → Strategy. Light, client-as-subject; opportunities live inside.
+// → Compare → Portfolio Intelligence. Light, client-as-subject; opportunities live inside.
 function ClientCanvasSample() {
   const [tab, setTab] = useState<CcTab>("overview");
   const [sel, setSel] = useState(0);
   const a = WS_ACCOUNTS[sel];
   const open = (i: number) => { setSel(i); setTab("cases"); };
+  const onCanvasTabKey = (event: React.KeyboardEvent<HTMLButtonElement>, current: CcTab) => {
+    const index = CC_TABS.indexOf(current);
+    let next = index;
+    if (event.key === "ArrowRight") next = (index + 1) % CC_TABS.length;
+    else if (event.key === "ArrowLeft") next = (index - 1 + CC_TABS.length) % CC_TABS.length;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = CC_TABS.length - 1;
+    else return;
+    event.preventDefault();
+    setTab(CC_TABS[next]);
+    event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="tab"]')[next]?.focus();
+  };
   const dist = (["prioritize", "validate", "monitor", "hold"] as const).map(s => ({ s, n: WS_ACCOUNTS.filter(x => x.state === s).length })).filter(x => x.n > 0);
 
   return (
@@ -3357,7 +3370,7 @@ function ClientCanvasSample() {
       {/* Tab rail */}
       <div role="tablist" aria-label="LeadLens sample" className="ll-cc-tabs" style={{ display: "flex", gap: ".1rem", padding: "0 .8rem", borderBottom: "1px solid #eef2f6", overflowX: "auto" }}>
         {CC_TABS.map(tb => { const on = tb === tab; return (
-          <button key={tb} role="tab" aria-selected={on} onClick={() => setTab(tb)}
+          <button key={tb} role="tab" aria-selected={on} tabIndex={on ? 0 : -1} onClick={() => setTab(tb)} onKeyDown={(event) => onCanvasTabKey(event, tb)}
             style={{ appearance: "none", background: "none", border: "none", borderBottom: `2px solid ${on ? "#0284c7" : "transparent"}`, padding: ".55rem .55rem", fontFamily: "inherit", fontSize: ".68rem", fontWeight: 700, color: on ? "#0369a1" : "#64748b", cursor: "pointer", whiteSpace: "nowrap" as const }}>
             {CC_TAB_LABEL[tb]}
           </button>); })}

@@ -161,7 +161,7 @@ t("46 exports derive from the view model only (no raw report fields)", !/report_
 t("47 workspace no longer uses 'Prepared for X' report framing", !/Prepared for|preparedFor|Preparado para/.test(workspace));
 t("48 client is the header subject via the shared ClientCanvasVM", /toClientCanvasVM\(vm\)/.test(workspace) && /className="dlv-client">\{cc\.subject\}/.test(workspace));
 t("49 client header is LIGHT (no large dark navy gradient top bar)", !/\.dlv-topbar \{ background: linear-gradient\(120deg,#0b1220/.test(workspace) && /\.dlv-topbar \{ background: #fff/.test(workspace));
-t("50 commercial objective shown only from real data (rendered conditionally)", /\{cc\.objective && /.test(workspace) && /Objective/.test(workspace));
+t("50 commercial objective shown only from real data (rendered conditionally)", /\{cc\.objective && /.test(workspace) && /Commercial objective/.test(workspace));
 t("51 opportunities remain subordinate to the client (accounts + AccountBrief render)", /accountsPanel|AccountBrief/.test(workspace) && /opportunities evaluated/.test(workspace));
 t("52 no HOT/WARM/COLD in the workspace", !/\bHOT\b|\bWARM\b|\bCOLD\b/.test(workspace));
 t("53 no aggregate score in the workspace (no NN/100, N.N/10, 'ai score')", !/\b\d{1,3}\s*\/\s*100\b/.test(workspace) && !/\b\d(?:\.\d)?\s*\/\s*10\b/.test(workspace) && !/opportunity score|lead score|ai score/i.test(workspace));

@@ -6,7 +6,7 @@
 // no login/server/API. Every string is escaped; every URL is http/https-checked.
 
 import type { DeliverableViewModel, AccountBriefVM, DecisionState } from "../deliverable-view-model";
-import { DECISION_TOKENS, STRENGTH_TOKENS, RELATION_TOKENS, decisionLabel } from "../deliverable-view-model";
+import { DECISION_TOKENS, STRENGTH_TOKENS, RELATION_TOKENS, decisionLabel, orderByAttention } from "../deliverable-view-model";
 import { portfolioCsv, evidenceCsv, deliverableFilename } from "../exports";
 import { toClientCanvasVM } from "../client-canvas-vm";
 import { esc, safeUrl, jsonForScript, type PortableRuntimePayload, PORTABLE_FORMAT_VERSION } from "./portable-payload";
@@ -20,7 +20,7 @@ function L(es: boolean) {
     preparedFor: es ? "Preparado para" : "Prepared for",
     generated: es ? "Generado" : "Generated",
     staticNote: es ? "Este portafolio refleja la evidencia disponible al momento de su generación." : "This portfolio reflects the evidence available at the time of generation.",
-    tabs: { portfolio: es ? "Portafolio" : "Portfolio", accounts: es ? "Cuentas" : "Account Briefs", compare: es ? "Comparar" : "Compare", evidence: es ? "Evidencia" : "Evidence", method: es ? "Metodología" : "How to read" },
+    tabs: { portfolio: es ? "Resumen" : "Overview", accounts: es ? "Casos de oportunidad" : "Opportunity Cases", evidence: es ? "Evidencia" : "Evidence", compare: es ? "Comparar" : "Compare", intelligence: es ? "Inteligencia del portafolio" : "Portfolio Intelligence" },
     accounts: es ? "Cuentas" : "Accounts",
     distribution: es ? "Distribución de decisiones" : "Decision distribution",
     whereFocus: es ? "Dónde enfocarte" : "Where to focus",
@@ -55,8 +55,8 @@ function L(es: boolean) {
     noEvidence: es ? "Sin evidencia con fecha disponible todavía." : "No dated evidence available yet.",
     compareSelect: es ? "Cuentas comparadas" : "Accounts compared",
     compareInsight: es ? "Lectura de LeadLens" : "LeadLens read",
-    cDecision: es ? "Decisión" : "Decision", cFit: "Fit", cTiming: "Timing", cEvidence: es ? "Evidencia" : "Evidence",
-    cFreshness: es ? "Frescura" : "Freshness", cChanged: es ? "Qué cambió" : "What changed", cThesis: es ? "Tesis" : "Thesis",
+    cDecision: es ? "Decisión" : "Decision", cFit: es ? "Encaje" : "Fit", cTiming: es ? "Momento" : "Timing", cEvidence: es ? "Evidencia" : "Evidence",
+    cFreshness: es ? "Vigencia" : "Freshness", cChanged: es ? "Señal relevante" : "Relevant signal", cThesis: es ? "Tesis" : "Thesis",
     cLimiter: es ? "Límite principal" : "Primary limiter", cValidate: es ? "Validar" : "Validate next", cNext: es ? "Siguiente paso" : "Next step",
     evidenceAcross: es ? "Evidencia por cuenta" : "Evidence across accounts",
     evidenceLede: es ? "Cada conclusión es inspeccionable: fuente, fecha y qué establece." : "Every conclusion is inspectable: source, date, and what it establishes.",
@@ -75,6 +75,15 @@ function L(es: boolean) {
     savePortfolioCsv: es ? "Guardar CSV del portafolio" : "Save Portfolio CSV",
     saveEvidenceCsv: es ? "Guardar CSV de evidencia" : "Save Evidence CSV",
     printPdf: es ? "Imprimir / Guardar PDF" : "Print / Save as PDF",
+    utilities: es ? "Utilidades" : "Utilities",
+    portfolioIntelligence: es ? "Inteligencia del portafolio" : "Portfolio Intelligence",
+    decisionLandscape: es ? "Panorama de decisiones" : "Decision landscape",
+    recommendedSequence: es ? "Secuencia recomendada" : "Recommended sequence",
+    portfolioPatterns: es ? "Patrones del portafolio" : "Portfolio patterns",
+    noPortfolioPatterns: es ? "Todavía no se establecieron patrones transversales con evidencia suficiente. No se infieren para llenar este espacio." : "No cross-account patterns have been established with sufficient evidence yet. None are inferred to fill this space.",
+    noIndependentSupport: es ? "No se identificó soporte independiente corroborante." : "No independently corroborating support was identified.",
+    currentEvidence: es ? "Evidencia actual" : "Current evidence",
+    recentSignal: es ? "Señal reciente" : "Recent signal",
   };
 }
 type T = ReturnType<typeof L>;
@@ -83,10 +92,11 @@ function badge(state: DecisionState, es: boolean): string {
   const s = DECISION_TOKENS[state];
   return `<span class="pt-badge" style="background:${s.bg};border-color:${s.border};color:${s.color}"><span class="pt-dot" style="background:${s.dot}"></span>${esc(decisionLabel(state, es))}</span>`;
 }
-function strengthSpan(v: string | null): string {
+function strengthSpan(v: string | null, es = false): string {
   if (!v) return `<span class="pt-muted">—</span>`;
   const tok = STRENGTH_TOKENS[v as keyof typeof STRENGTH_TOKENS] ?? STRENGTH_TOKENS.Moderate;
-  return `<span style="font-weight:${tok.weight};color:${tok.color}">${esc(v)}</span>`;
+  const shown = es ? ({ Strong: "Sólida", Moderate: "Moderada", Limited: "Limitada" }[v] ?? v) : v;
+  return `<span style="font-weight:${tok.weight};color:${tok.color}">${esc(shown)}</span>`;
 }
 const dimVal = (a: AccountBriefVM, label: string) => a.dimensions.find((d) => d.label === label)?.value ?? null;
 
@@ -116,7 +126,7 @@ function executiveRead(vm: DeliverableViewModel, es: boolean): string | null {
 
 function portfolioPanel(vm: DeliverableViewModel, t: T, es: boolean): string {
   const total = vm.portfolio.total || 1;
-  const priority = vm.accounts.filter((a) => a.decision === "prioritize" || a.decision === "validate");
+  const priority = orderByAttention(vm.accounts).filter((a) => a.decision === "prioritize" || a.decision === "validate");
   const cc = vm.commercialContext;
   const exec = executiveRead(vm, es);
   const bar = ORDER.filter((k) => vm.portfolio.counts[k] > 0)
@@ -153,7 +163,7 @@ function portfolioPanel(vm: DeliverableViewModel, t: T, es: boolean): string {
 }
 
 function briefHtml(a: AccountBriefVM, t: T, es: boolean): string {
-  const dims = a.dimensions.map((d) => `<div><div class="pt-dim-k">${esc(d.label)}</div><div class="pt-dim-v">${strengthSpan(d.value)}</div>${d.note ? `<div class="pt-dim-n">${esc(d.note)}</div>` : ""}</div>`).join("");
+  const dims = a.dimensions.map((d) => `<div><div class="pt-dim-k">${esc(es && d.label === "Evidence" ? "Evidencia" : d.label)}</div><div class="pt-dim-v">${strengthSpan(d.value, es)}</div>${d.note ? `<div class="pt-dim-n">${esc(d.note)}</div>` : ""}</div>`).join("");
   const changed = a.whatChanged.map((c) => `<div class="pt-chg"><span class="pt-chg-dot"></span><span class="pt-chg-e">${esc(c.event)}</span>${c.age ? `<span class="pt-chg-a">${esc(c.age)} ${esc(t.ago)}</span>` : ""}${c.source ? `<span class="pt-chg-s">· ${esc(c.source)}</span>` : ""}</div>`).join("");
   const evBits: string[] = [];
   if (a.evidence.sourceCount) evBits.push(`${a.evidence.sourceCount} ${t.sources}`);
@@ -190,7 +200,7 @@ function briefHtml(a: AccountBriefVM, t: T, es: boolean): string {
       ${dims ? `<div class="pt-dims">${dims}</div>` : ""}
     </div>
     <div class="pt-flow">
-      ${a.whatChanged.length ? band(`<p class="pt-label pt-label-accent">${esc(t.whatChanged)}</p><div class="pt-chgs">${changed}</div>`, "pt-signal") : ""}
+      ${a.whatChanged.length ? band(`<p class="pt-label pt-label-accent">${esc(a.whatChanged.every((c) => c.kind === "true_change") ? t.whatChanged : a.whatChanged.every((c) => c.kind === "recent_event") ? t.recentSignal : t.currentEvidence)}</p><div class="pt-chgs">${changed}</div>`, "pt-signal") : ""}
       ${whyBand}
       ${evidenceBand}
       ${couldChange}
@@ -212,9 +222,9 @@ function comparePanel(vm: DeliverableViewModel, t: T, es: boolean): string {
   const defaultSel = new Set(vm.accounts.slice(0, Math.min(4, vm.accounts.length)).map((a) => a.id));
   const rows: [string, (a: AccountBriefVM) => string][] = [
     [t.cDecision, (a) => badge(a.decision, es)],
-    [t.cFit, (a) => strengthSpan(dimVal(a, "Fit"))],
-    [t.cTiming, (a) => strengthSpan(dimVal(a, "Timing"))],
-    [t.cEvidence, (a) => strengthSpan(a.evidence.strength)],
+    [t.cFit, (a) => strengthSpan(dimVal(a, "Fit"), es)],
+    [t.cTiming, (a) => strengthSpan(dimVal(a, "Timing"), es)],
+    [t.cEvidence, (a) => strengthSpan(a.evidence.strength, es)],
     [t.cFreshness, (a) => a.freshness?.age ? `<span class="pt-cmp-t">${esc(a.freshness.age)} ${esc(t.ago)}</span>` : `<span class="pt-cmp-t">${esc(t.notDated)}</span>`],
     [t.cChanged, (a) => `<span class="pt-cmp-t">${esc(a.whatChanged[0]?.event ?? "—")}</span>`],
     [t.cThesis, (a) => `<span class="pt-cmp-t">${esc(a.thesis ?? "—")}</span>`],
@@ -262,7 +272,7 @@ function evidencePanel(vm: DeliverableViewModel, t: T, es: boolean): string {
   return `<section class="pt-panel pt-hidden" id="panel-evidence"><div class="pt-card"><p class="pt-label">${esc(t.evidenceAcross)}</p><p class="pt-note" style="margin-top:0">${esc(t.evidenceLede)}</p></div>${blocks}</section>`;
 }
 
-function methodPanel(vm: DeliverableViewModel, t: T, es: boolean): string {
+function methodContent(vm: DeliverableViewModel, t: T, es: boolean): string {
   const legend = `<ul class="pt-leg-l">
     <li>${badge("prioritize", es)} ${esc(t.defP)}</li><li>${badge("validate", es)} ${esc(t.defV)}</li>
     <li>${badge("monitor", es)} ${esc(t.defM)}</li><li>${badge("hold", es)} ${esc(t.defH)}</li></ul>`;
@@ -271,7 +281,16 @@ function methodPanel(vm: DeliverableViewModel, t: T, es: boolean): string {
     <li><strong style="color:#15803d">${esc(t.relCorrob)}</strong> — ${esc(t.defCorrob)}</li>
     <li><strong style="color:#94a3b8">${esc(t.relContext)}</strong> — ${esc(t.defContext)}</li></ul>`;
   const method = vm.capabilities.showMethodology && vm.methodology.length ? `<p class="pt-label" style="margin-top:12px">${es ? "Cómo se construyó" : "How this was built"}</p><ul class="pt-limlist" style="color:#475569;padding-left:18px">${vm.methodology.map((m) => `<li>${esc(m)}</li>`).join("")}</ul>` : "";
-  return `<section class="pt-panel pt-hidden" id="panel-method"><div class="pt-card"><p class="pt-label">${esc(t.decisionStates)}</p>${legend}<p class="pt-label" style="margin-top:14px">${esc(t.evidenceRelations)}</p>${rels}${method}<p class="pt-note">${esc(t.absenceNote)}</p></div></section>`;
+  return `<div class="pt-card"><p class="pt-label">${esc(t.decisionStates)}</p>${legend}<p class="pt-label" style="margin-top:14px">${esc(t.evidenceRelations)}</p>${rels}${method}<p class="pt-note">${esc(t.absenceNote)}</p></div>`;
+}
+
+function portfolioIntelligencePanel(vm: DeliverableViewModel, t: T, es: boolean): string {
+  const cc = toClientCanvasVM(vm);
+  const decisions = ORDER.map((state) => `<span class="pt-leg"><span class="pt-dot" style="background:${DECISION_TOKENS[state].dot}"></span><strong>${vm.portfolio.counts[state]}</strong> ${esc(decisionLabel(state, es).toLowerCase())}</span>`).join("");
+  const sequence = cc.sequence.length ? `<div class="pt-card"><p class="pt-label">${esc(t.recommendedSequence)}</p><ul class="pt-limlist">${cc.sequence.map((item) => `<li>${esc(item)}</li>`).join("")}</ul></div>` : "";
+  const validations = cc.validationAgenda.length ? `<div class="pt-card"><p class="pt-label">${esc(t.validationQueue)}</p><div class="pt-vq">${cc.validationAgenda.map((q) => `<div class="pt-vq-i"><button class="pt-vq-n" data-goacct="${esc(q.accountId)}">${esc(q.company)}</button><span>${esc(q.item)}</span></div>`).join("")}</div></div>` : "";
+  const coverage = vm.coverage ? `<div class="pt-card"><p class="pt-label">${esc(t.coverage)}</p><p class="pt-note">${vm.coverage.withSources}/${vm.portfolio.total} ${esc(t.withSources)} · ${vm.coverage.withDatedEvidence}/${vm.portfolio.total} ${esc(t.withDated)}${vm.coverage.corroborated === 0 ? ` · ${esc(t.noIndependentSupport)}` : ""}</p></div>` : "";
+  return `<section class="pt-panel pt-hidden" id="panel-intelligence">${cc.read ? `<div class="pt-exec"><span class="pt-exec-k">LeadLens Read</span><p class="pt-exec-t">${esc(cc.read)}</p></div>` : ""}<div class="pt-card"><p class="pt-label">${esc(t.decisionLandscape)}</p><div class="pt-legend">${decisions}</div></div>${sequence}${validations}${coverage}<div class="pt-card pt-honest"><p class="pt-label">${esc(t.portfolioPatterns)}</p><p class="pt-note">${esc(t.noPortfolioPatterns)}</p></div></section>`;
 }
 
 // ─── Document ─────────────────────────────────────────────────────────────────
@@ -281,9 +300,9 @@ export function renderPortableHtml(vm: DeliverableViewModel): string {
   const t = L(es);
   const cc = toClientCanvasVM(vm);   // client-level opening: the client is the subject
   const tabs: [string, string][] = [["portfolio", t.tabs.portfolio], ["accounts", t.tabs.accounts]];
-  if (vm.capabilities.showCompareTab && vm.accounts.length >= 2) tabs.push(["compare", t.tabs.compare]);
   if (vm.capabilities.showEvidenceTab && vm.accounts.some((a) => a.sources.length)) tabs.push(["evidence", t.tabs.evidence]);
-  tabs.push(["method", t.tabs.method]);
+  if (vm.capabilities.showCompareTab && vm.accounts.length >= 2) tabs.push(["compare", t.tabs.compare]);
+  tabs.push(["intelligence", t.tabs.intelligence]);
 
   const payload: PortableRuntimePayload = {
     formatVersion: PORTABLE_FORMAT_VERSION,
@@ -294,12 +313,13 @@ export function renderPortableHtml(vm: DeliverableViewModel): string {
     hasEvidenceCsv: vm.downloads.evidenceCsv,
   };
   const title = `LeadLens — ${t.portfolioTitle}${vm.meta.client ? ` — ${vm.meta.client}` : ""}`;
-  const tabRow = tabs.map(([id, label], i) => `<button class="pt-tab${i === 0 ? " is-active" : ""}" data-tab="${id}">${esc(label)}</button>`).join("");
+  const tabRow = tabs.map(([id, label], i) => `<button role="tab" aria-selected="${i === 0 ? "true" : "false"}" tabindex="${i === 0 ? "0" : "-1"}" class="pt-tab${i === 0 ? " is-active" : ""}" data-tab="${id}">${esc(label)}</button>`).join("");
   const dl = `<div class="pt-dlbar">
     <button class="pt-dl" id="pt-dl-portfolio">${esc(t.savePortfolioCsv)}</button>
     ${payload.hasEvidenceCsv ? `<button class="pt-dl" id="pt-dl-evidence">${esc(t.saveEvidenceCsv)}</button>` : ""}
     <button class="pt-dl pt-dl-ghost" id="pt-print">${esc(t.printPdf)}</button>
   </div>`;
+  const utilities = `<div class="pt-utils"><details><summary>${esc(t.howToRead)}</summary>${methodContent(vm, t, es)}</details><details><summary>${esc(t.utilities)}</summary>${dl}</details></div>`;
 
   return `<!doctype html>
 <html lang="${es ? "es" : "en"}">
@@ -315,18 +335,18 @@ export function renderPortableHtml(vm: DeliverableViewModel): string {
   <header class="pt-top">
     <div class="pt-brandline"><span class="pt-logo">Lead<span style="color:#0284c7">Lens</span></span><span class="pt-kick">${esc(t.aoi)}</span>${cc.tierLabel ? `<span class="pt-tier">${esc(cc.tierLabel)}</span>` : ""}</div>
     <h1 class="pt-client">${esc(cc.subject)}</h1>
-    ${cc.objective ? `<div class="pt-obj"><span class="pt-obj-k">${es ? "Objetivo" : "Objective"}</span> ${esc(cc.objective)}</div>` : ""}
+    ${cc.objective ? `<div class="pt-obj"><span class="pt-obj-k">${es ? "Objetivo comercial" : "Commercial objective"}</span> ${esc(cc.objective)}</div>` : ""}
     <div class="pt-clientmeta">${[cc.market, `${cc.opportunityCount} ${es ? "oportunidades evaluadas" : "opportunities evaluated"}`, cc.generatedLabel ? `${esc(t.generated)} ${cc.generatedLabel}` : null].filter(Boolean).map(esc).join(" · ")}</div>
   </header>
   <nav class="pt-tabs" role="tablist">${tabRow}</nav>
-  ${dl}
   <main class="pt-main">
     ${portfolioPanel(vm, t, es)}
     ${accountsPanel(vm, t, es)}
-    ${comparePanel(vm, t, es)}
     ${evidencePanel(vm, t, es)}
-    ${methodPanel(vm, t, es)}
+    ${comparePanel(vm, t, es)}
+    ${portfolioIntelligencePanel(vm, t, es)}
   </main>
+  ${utilities}
   <footer class="pt-foot">${esc(t.staticNote)} · LeadLens · ${esc(t.aoi)}${vm.meta.generatedLabel ? ` · ${esc(vm.meta.generatedLabel)}` : ""}</footer>
 </div>
 <script type="application/json" id="pt-data">${jsonForScript(payload)}</script>
@@ -357,7 +377,7 @@ body{margin:0;background:#f4f7fb;color:#0f172a;font-family:-apple-system,BlinkMa
 .pt-tab{appearance:none;background:none;border:none;border-bottom:2px solid transparent;padding:14px 16px;min-height:44px;font-size:13.5px;font-weight:700;color:#64748b;cursor:pointer;white-space:nowrap;font-family:inherit}
 .pt-tab:hover{color:#0f172a}
 .pt-tab.is-active{color:#0369a1;border-bottom-color:#0284c7}
-.pt-dlbar{max-width:1100px;margin:0 auto;padding:14px 16px 0;display:flex;gap:10px;flex-wrap:wrap}
+.pt-utils{max-width:1040px;margin:-26px auto 30px;padding:0 16px;display:flex;gap:10px;flex-wrap:wrap}.pt-utils details{background:#fff;border:1px solid #e8edf3;border-radius:10px;color:#64748b;font-size:12px}.pt-utils summary{cursor:pointer;min-height:44px;display:flex;align-items:center;padding:0 14px;font-weight:700;color:#475569}.pt-utils .pt-card{border:0;box-shadow:none;max-width:46rem}.pt-dlbar{padding:4px 14px 14px;display:flex;gap:10px;flex-wrap:wrap}
 .pt-dl{appearance:none;background:#0284c7;color:#fff;border:none;border-radius:9px;padding:10px 16px;min-height:40px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
 .pt-dl:hover{background:#0369a1}
 .pt-dl-ghost{background:#fff;color:#0369a1;border:1px solid #bae6fd}
@@ -366,6 +386,7 @@ body{margin:0;background:#f4f7fb;color:#0f172a;font-family:-apple-system,BlinkMa
 .pt-panel{display:flex;flex-direction:column;gap:16px}
 .pt-hidden{display:none}
 .pt-card{background:#fff;border:1px solid #edf1f6;border-radius:14px;padding:20px 24px;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+.pt-honest{border-style:dashed;box-shadow:none}
 .pt-label{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#94a3b8;margin:0 0 11px}
 .pt-label-accent{color:#0284c7}
 /* Cover — editorial opening, not a marketing hero */
@@ -514,8 +535,8 @@ details[open]>.pt-csum::after{content:" ▴"}
 .pt-leg-t li{display:block;line-height:1.55}
 .pt-foot{text-align:center;font-size:10.5px;color:#cbd5e1;padding:8px 16px 26px;line-height:1.5}
 @media (max-width:820px){.pt-accts{grid-template-columns:1fr;gap:12px}.pt-nav{position:static;max-height:none}.pt-nav-l{flex-direction:row;overflow-x:auto;gap:8px;padding-bottom:2px}.pt-nav-i{flex:0 0 auto;min-width:168px;border:1px solid #e8edf3}.pt-nav-i.is-active{border-color:#7dd3fc}}
-@media (max-width:640px){.pt-main,.pt-dlbar{padding-left:12px;padding-right:12px}.pt-card{padding:15px 16px}.pt-h1{font-size:20px}.pt-top{padding:13px 16px}}
-@media print{@page{margin:14mm}.pt-tabs,.pt-dlbar,.pt-nav,.pt-foot{display:none!important}.pt-hidden{display:flex!important}.pt-root{background:#fff}.pt-accts{grid-template-columns:1fr}.pt-card{box-shadow:none;break-inside:avoid;border-color:#d7dee7}.pt-cmp{min-width:0}.pt-brief{break-inside:avoid}h1,h2,.pt-label{break-after:avoid}}
+@media (max-width:640px){.pt-main{padding-left:12px;padding-right:12px}.pt-card{padding:15px 16px}.pt-h1{font-size:20px}.pt-top{padding:13px 16px}.pt-tabs{padding-right:44px;-webkit-mask-image:linear-gradient(to right,#000 0,#000 calc(100% - 30px),transparent 100%);mask-image:linear-gradient(to right,#000 0,#000 calc(100% - 30px),transparent 100%)}.pt-utils{padding:0 12px}}
+@media print{@page{margin:14mm}.pt-tabs,.pt-utils,.pt-dlbar,.pt-nav,.pt-foot{display:none!important}.pt-hidden{display:flex!important}.pt-root{background:#fff}.pt-accts{grid-template-columns:1fr}.pt-card{box-shadow:none;break-inside:avoid;border-color:#d7dee7}.pt-cmp{min-width:0}.pt-brief{break-inside:avoid}h1,h2,.pt-label{break-after:avoid}}
 `;
 
 // ─── Inline runtime JS (vanilla, no eval, no network) ─────────────────────────
@@ -523,9 +544,9 @@ const JS = `(function(){
   "use strict";
   var data={};try{data=JSON.parse(document.getElementById("pt-data").textContent||"{}");}catch(e){}
   function $all(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));}
-  function show(id){$all(".pt-panel").forEach(function(p){p.classList.toggle("pt-hidden",p.id!=="panel-"+id);});$all(".pt-tab").forEach(function(t){t.classList.toggle("is-active",t.getAttribute("data-tab")===id);});}
+  function show(id){$all(".pt-panel").forEach(function(p){p.classList.toggle("pt-hidden",p.id!=="panel-"+id);});$all(".pt-tab").forEach(function(t){var on=t.getAttribute("data-tab")===id;t.classList.toggle("is-active",on);t.setAttribute("aria-selected",on?"true":"false");t.setAttribute("tabindex",on?"0":"-1");});}
   // Tabs
-  $all(".pt-tab").forEach(function(t){t.addEventListener("click",function(){show(t.getAttribute("data-tab"));});});
+  $all(".pt-tab").forEach(function(t){t.addEventListener("click",function(){show(t.getAttribute("data-tab"));});t.addEventListener("keydown",function(e){var tabs=$all(".pt-tab"),i=tabs.indexOf(t),n=i;if(e.key==="ArrowRight")n=(i+1)%tabs.length;else if(e.key==="ArrowLeft")n=(i-1+tabs.length)%tabs.length;else if(e.key==="Home")n=0;else if(e.key==="End")n=tabs.length-1;else return;e.preventDefault();show(tabs[n].getAttribute("data-tab"));tabs[n].focus();});});
   // Account switching — hide all briefs but the selected one
   function selectAccount(id){
     $all(".pt-brief").forEach(function(b){b.style.display=b.getAttribute("data-brief")===id?"":"none";});

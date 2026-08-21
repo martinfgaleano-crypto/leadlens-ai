@@ -29,6 +29,9 @@ export interface ChangeVM {
   date: string | null;        // ISO yyyy-mm-dd when known — never invented
   age: string | null;         // "9d ago" — derived only from a real date
   source: string | null;      // host / source name when available
+  /** Truthful presentation semantics. Legacy callers may omit this, in which
+   *  case the renderer uses the conservative "relevant signal" label. */
+  kind?: "true_change" | "recent_event" | "static_context" | "inference" | "unknown";
 }
 
 export interface SourceVM {
@@ -86,7 +89,11 @@ export interface DeliverableCapabilities {
 /** The commercial context LeadLens evaluated accounts against — surfaced so the
  *  customer can recall WHAT was assessed, not just the results (§62–65). */
 export interface CommercialContextVM {
-  summary: string | null;        // ICP / commercial-context summary
+  /** The commercial question LeadLens was asked to help answer. */
+  objective?: string | null;
+  /** What the client sells/is. Never presented as the objective. */
+  clientDescription?: string | null;
+  summary: string | null;        // ICP / other commercial-context summary
   regions: string[];
   industries: string[];
   criteria: string[];            // opportunity criteria when available
@@ -164,6 +171,27 @@ export const RELATION_TOKENS: Record<EvidenceRelation, { label: string; labelEs:
 export function decisionLabel(state: DecisionState, es: boolean): string {
   const t = DECISION_TOKENS[state];
   return es ? t.labelEs : t.label;
+}
+
+/** Canonical attention order. Decision always wins; explicit legacy rank only
+ * breaks ties inside one decision state. Array position is the final stable
+ * tie-break. No aggregate or synthetic score is introduced. */
+export const DECISION_PRIORITY: Record<DecisionState, number> = {
+  prioritize: 0,
+  validate: 1,
+  monitor: 2,
+  hold: 3,
+};
+
+export function orderByAttention<T extends Pick<AccountBriefVM, "decision" | "rank">>(items: readonly T[]): T[] {
+  return items
+    .map((item, index) => ({ item, index }))
+    .sort((a, b) =>
+      DECISION_PRIORITY[a.item.decision] - DECISION_PRIORITY[b.item.decision]
+      || (a.item.rank ?? Number.MAX_SAFE_INTEGER) - (b.item.rank ?? Number.MAX_SAFE_INTEGER)
+      || a.index - b.index,
+    )
+    .map(({ item }) => item);
 }
 
 /** Whole days since an ISO date, or null when undated / in the future. */

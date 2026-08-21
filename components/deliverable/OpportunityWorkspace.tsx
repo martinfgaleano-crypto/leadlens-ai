@@ -10,12 +10,12 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { DeliverableViewModel, DecisionState, AccountBriefVM } from "@/lib/deliverable/deliverable-view-model";
-import { DECISION_TOKENS, STRENGTH_TOKENS, decisionLabel } from "@/lib/deliverable/deliverable-view-model";
+import { DECISION_TOKENS, STRENGTH_TOKENS, decisionLabel, orderByAttention } from "@/lib/deliverable/deliverable-view-model";
 import { portfolioCsv, evidenceCsv, deliverableFilename } from "@/lib/deliverable/exports";
 import { toClientCanvasVM } from "@/lib/deliverable/client-canvas-vm";
 import { AccountBrief, DecisionBadge, SourceList } from "./primitives";
 
-type Tab = "portfolio" | "accounts" | "compare" | "evidence" | "downloads";
+type Tab = "portfolio" | "accounts" | "evidence" | "compare" | "intelligence";
 const DECISION_ORDER: DecisionState[] = ["prioritize", "validate", "monitor", "hold"];
 
 /** Client-side download of a text blob (customer action; no server round-trip). */
@@ -39,9 +39,9 @@ export default function OpportunityWorkspace({ vm }: { vm: DeliverableViewModel 
     const list: Tab[] = [];
     if (vm.capabilities.showPortfolioTab) list.push("portfolio");
     list.push("accounts");
-    if (vm.capabilities.showCompareTab) list.push("compare");
     if (vm.capabilities.showEvidenceTab) list.push("evidence");
-    if (vm.capabilities.showDownloadsTab) list.push("downloads");
+    if (vm.capabilities.showCompareTab) list.push("compare");
+    list.push("intelligence");
     return list;
   }, [vm]);
 
@@ -70,13 +70,26 @@ export default function OpportunityWorkspace({ vm }: { vm: DeliverableViewModel 
   }, []);
 
   const goTab = (nx: Tab) => { setTab(nx); sync(nx, accountId); };
+  const onTabKey = (event: React.KeyboardEvent<HTMLButtonElement>, current: Tab) => {
+    const index = tabs.indexOf(current);
+    let next = index;
+    if (event.key === "ArrowRight") next = (index + 1) % tabs.length;
+    else if (event.key === "ArrowLeft") next = (index - 1 + tabs.length) % tabs.length;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = tabs.length - 1;
+    else return;
+    event.preventDefault();
+    goTab(tabs[next]);
+    const buttons = event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="tab"]');
+    buttons?.[next]?.focus();
+  };
   const openAccount = (id: string) => { setAccountId(id); setTab("accounts"); sync("accounts", id); };
 
   const active = vm.accounts.find((a) => a.id === accountId) ?? vm.accounts[0] ?? null;
 
   return (
     <div className="dlv-root">
-      <style>{CSS}</style>
+      <style dangerouslySetInnerHTML={{ __html: CSS }} />
 
       {/* Client header — the client is the subject; accounts are opportunities
           evaluated for that client. Light composition (no large dark header),
@@ -88,7 +101,7 @@ export default function OpportunityWorkspace({ vm }: { vm: DeliverableViewModel 
           {cc.tierLabel && <span className="dlv-tier">{cc.tierLabel}</span>}
         </div>
         <h1 className="dlv-client">{cc.subject}</h1>
-        {cc.objective && <div className="dlv-obj"><span className="dlv-obj-k">{es ? "Objetivo" : "Objective"}</span> {cc.objective}</div>}
+        {cc.objective && <div className="dlv-obj"><span className="dlv-obj-k">{es ? "Objetivo comercial" : "Commercial objective"}</span> {cc.objective}</div>}
         <div className="dlv-clientmeta">
           {[cc.market, `${cc.opportunityCount} ${es ? "oportunidades evaluadas" : "opportunities evaluated"}`, cc.generatedLabel ? `${t.generated} ${cc.generatedLabel}` : null].filter(Boolean).join(" · ")}
         </div>
@@ -97,7 +110,7 @@ export default function OpportunityWorkspace({ vm }: { vm: DeliverableViewModel 
       {/* Tabs — meaningful navigation, not an endless scroll (§57) */}
       <nav className="dlv-tabs" role="tablist" aria-label={t.sections}>
         {tabs.map((tb) => (
-          <button key={tb} role="tab" aria-selected={tab === tb} className={`dlv-tab ${tab === tb ? "is-active" : ""}`} onClick={() => goTab(tb)}>
+          <button key={tb} role="tab" aria-selected={tab === tb} tabIndex={tab === tb ? 0 : -1} className={`dlv-tab ${tab === tb ? "is-active" : ""}`} onClick={() => goTab(tb)} onKeyDown={(event) => onTabKey(event, tb)}>
             {t.tab[tb]}
           </button>
         ))}
@@ -119,8 +132,10 @@ export default function OpportunityWorkspace({ vm }: { vm: DeliverableViewModel 
 
         {tab === "evidence" && vm.capabilities.showEvidenceTab && <EvidenceTab vm={vm} t={t} es={es} onOpen={openAccount} />}
 
-        {tab === "downloads" && vm.capabilities.showDownloadsTab && <DownloadsTab vm={vm} t={t} />}
+        {tab === "intelligence" && <PortfolioIntelligenceTab vm={vm} t={t} es={es} onOpen={openAccount} />}
       </main>
+
+      <UtilityBar vm={vm} t={t} es={es} />
 
       {/* Print/PDF-only: the full deliverable stacked in a stable reading order.
           Hidden on screen; the interactive main is hidden in print (§86–90). */}
@@ -167,7 +182,8 @@ function PrintDocument({ vm, t, es }: { vm: DeliverableViewModel; t: L; es: bool
 // ─── Portfolio navigator (desktop sidebar / mobile horizontal switcher) ───────
 function AccountNav({ vm, activeId, onSelect, es, t, filter, onFilter }: { vm: DeliverableViewModel; activeId: string; onSelect: (id: string) => void; es: boolean; t: L; filter: DecisionState | "all"; onFilter: (f: DecisionState | "all") => void }) {
   const filters: (DecisionState | "all")[] = ["all", ...DECISION_ORDER.filter((d) => vm.accounts.some((a) => a.decision === d))];
-  const shown = filter === "all" ? vm.accounts : vm.accounts.filter((a) => a.decision === filter);
+  const ordered = orderByAttention(vm.accounts);
+  const shown = filter === "all" ? ordered : ordered.filter((a) => a.decision === filter);
   return (
     <aside className="dlv-nav" aria-label={t.accounts}>
       <div className="dlv-nav-head">{t.accounts} · {shown.length}{filter !== "all" ? `/${vm.accounts.length}` : ""}</div>
@@ -205,7 +221,7 @@ function AccountNav({ vm, activeId, onSelect, es, t, filter, onFilter }: { vm: D
 // ─── Portfolio tab — "where should I focus?" ──────────────────────────────────
 function PortfolioTab({ vm, t, es, onOpen }: { vm: DeliverableViewModel; t: L; es: boolean; onOpen: (id: string) => void }) {
   const total = vm.portfolio.total || 1;
-  const priority = vm.accounts.filter((a) => a.decision === "prioritize" || a.decision === "validate");
+  const priority = orderByAttention(vm.accounts).filter((a) => a.decision === "prioritize" || a.decision === "validate");
   return (
     <div className="dlv-panel">
       {(vm.headline || vm.summary) && (
@@ -216,10 +232,11 @@ function PortfolioTab({ vm, t, es, onOpen }: { vm: DeliverableViewModel; t: L; e
       )}
 
       {/* Commercial context — what LeadLens evaluated against (§62–65) */}
-      {vm.commercialContext && (vm.commercialContext.summary || vm.commercialContext.regions.length > 0 || vm.commercialContext.industries.length > 0 || vm.commercialContext.criteria.length > 0) && (
+      {vm.commercialContext && (vm.commercialContext.clientDescription || vm.commercialContext.summary || vm.commercialContext.regions.length > 0 || vm.commercialContext.industries.length > 0 || vm.commercialContext.criteria.length > 0) && (
         <details className="dlv-card dlv-context">
           <summary className="dlv-context-summary">{t.commercialContext}</summary>
           <div className="dlv-context-body">
+            {vm.commercialContext.clientDescription && <p className="dlv-context-p">{vm.commercialContext.clientDescription}</p>}
             {vm.commercialContext.summary && <p className="dlv-context-p">{vm.commercialContext.summary}</p>}
             {vm.commercialContext.industries.length > 0 && <div className="dlv-ctx-row"><span className="dlv-ctx-k">{t.ctxIndustries}</span><span className="dlv-ctx-v">{vm.commercialContext.industries.join(" · ")}</span></div>}
             {vm.commercialContext.regions.length > 0 && <div className="dlv-ctx-row"><span className="dlv-ctx-k">{t.ctxRegions}</span><span className="dlv-ctx-v">{vm.commercialContext.regions.join(" · ")}</span></div>}
@@ -318,31 +335,31 @@ function PortfolioTab({ vm, t, es, onOpen }: { vm: DeliverableViewModel; t: L; e
         </div>
       )}
 
-      {/* How to read this — repeatable interpretation of every LeadLens delivery (§66–70) */}
-      <details className="dlv-card dlv-method">
-        <summary className="dlv-context-summary">{t.howToRead}</summary>
-        <div className="dlv-context-body">
-          <p className="dlv-label" style={{ marginTop: 4 }}>{t.decisionStates}</p>
-          <ul className="dlv-legend">
-            <li><DecisionBadge state="prioritize" es={es} small /> {t.defPrioritize}</li>
-            <li><DecisionBadge state="validate" es={es} small /> {t.defValidate}</li>
-            <li><DecisionBadge state="monitor" es={es} small /> {t.defMonitor}</li>
-            <li><DecisionBadge state="hold" es={es} small /> {t.defHold}</li>
-          </ul>
-          <p className="dlv-label" style={{ marginTop: 12 }}>{t.evidenceRelations}</p>
-          <ul className="dlv-legend dlv-legend-text">
-            <li><strong style={{ color: "#0284c7" }}>{t.relDirect}</strong> — {t.defDirect}</li>
-            <li><strong style={{ color: "#15803d" }}>{t.relCorrob}</strong> — {t.defCorrob}</li>
-            <li><strong style={{ color: "#94a3b8" }}>{t.relContext}</strong> — {t.defContext}</li>
-          </ul>
-          {vm.capabilities.showMethodology && vm.methodology.length > 0 && (
-            <><p className="dlv-label" style={{ marginTop: 12 }}>{t.howBuilt}</p>
-            <ul className="dlv-limits-list" style={{ color: "#475569", paddingLeft: 18 }}>{vm.methodology.map((m, i) => <li key={i}>{m}</li>)}</ul></>
-          )}
-          <p className="dlv-note">{t.absenceNote}</p>
-        </div>
-      </details>
     </div>
+  );
+}
+
+// ─── Portfolio Intelligence V0 — existing structured facts only ─────────────
+function PortfolioIntelligenceTab({ vm, t, es, onOpen }: { vm: DeliverableViewModel; t: L; es: boolean; onOpen: (id: string) => void }) {
+  const cc = toClientCanvasVM(vm);
+  return (
+    <div className="dlv-panel">
+      {cc.read && <div className="dlv-card dlv-intel-read"><p className="dlv-label">LeadLens Read</p><p className="dlv-intel-copy">{cc.read}</p></div>}
+      <div className="dlv-card"><p className="dlv-label">{t.decisionLandscape}</p><div className="dlv-distlegend">{DECISION_ORDER.map((decision) => <span key={decision} className="dlv-distitem"><span className="dlv-nav-dot" style={{ background: DECISION_TOKENS[decision].dot }} /><strong>{vm.portfolio.counts[decision]}</strong> {decisionLabel(decision, es).toLowerCase()}</span>)}</div></div>
+      {cc.sequence.length > 0 && <div className="dlv-card"><p className="dlv-label">{t.sequence}</p><ul className="dlv-limits-list">{cc.sequence.map((item, i) => <li key={i}>{item}</li>)}</ul></div>}
+      {cc.validationAgenda.length > 0 && <div className="dlv-card"><p className="dlv-label">{t.validationAgenda}</p><div className="dlv-vq">{cc.validationAgenda.map((q) => <div className="dlv-vq-item" key={q.accountId}><button className="dlv-vq-name" onClick={() => onOpen(q.accountId)}>{q.company}</button><span className="dlv-vq-first">{q.item}</span></div>)}</div></div>}
+      {vm.coverage && <div className="dlv-card"><p className="dlv-label">{t.coverage}</p><p className="dlv-note">{vm.coverage.withSources}/{vm.portfolio.total} {t.withSources}; {vm.coverage.withDatedEvidence}/{vm.portfolio.total} {t.withDated}. {vm.coverage.corroborated === 0 ? t.noIndependentSupport : ""}</p></div>}
+      {cc.patterns.length === 0 && <div className="dlv-card dlv-honest-empty"><p className="dlv-label">{t.portfolioPatterns}</p><p className="dlv-note">{t.noPortfolioPatterns}</p></div>}
+    </div>
+  );
+}
+
+function UtilityBar({ vm, t, es }: { vm: DeliverableViewModel; t: L; es: boolean }) {
+  return (
+    <aside className="dlv-utilities" aria-label={t.utilities}>
+      <details className="dlv-utility"><summary>{t.howToRead}</summary><div className="dlv-utility-body"><p>{t.absenceNote}</p>{vm.methodology.length > 0 && <ul>{vm.methodology.map((item, i) => <li key={i}>{item}</li>)}</ul>}<p>{decisionLabel("prioritize", es)} → {decisionLabel("validate", es)} → {decisionLabel("monitor", es)} → {decisionLabel("hold", es)}</p></div></details>
+      {vm.capabilities.showDownloadsTab && <details className="dlv-utility"><summary>{t.downloads}</summary><div className="dlv-utility-body"><DownloadsTab vm={vm} t={t} /></div></details>}
+    </aside>
   );
 }
 
@@ -358,9 +375,9 @@ function CompareTab({ vm, t, es, onOpen }: { vm: DeliverableViewModel; t: L; es:
   const dimVal = (a: AccountBriefVM, label: string) => a.dimensions.find((d) => d.label === label)?.value ?? null;
   const rows: { label: string; render: (a: AccountBriefVM) => React.ReactNode }[] = [
     { label: t.cDecision, render: (a) => <DecisionBadge state={a.decision} es={es} small /> },
-    { label: t.cFit, render: (a) => <Strengthy v={dimVal(a, "Fit")} /> },
-    { label: t.cTiming, render: (a) => <Strengthy v={dimVal(a, "Timing")} /> },
-    { label: t.cEvidence, render: (a) => <Strengthy v={a.evidence.strength} /> },
+    { label: t.cFit, render: (a) => <Strengthy v={dimVal(a, "Fit")} es={es} /> },
+    { label: t.cTiming, render: (a) => <Strengthy v={dimVal(a, "Timing")} es={es} /> },
+    { label: t.cEvidence, render: (a) => <Strengthy v={a.evidence.strength} es={es} /> },
     { label: t.cFreshness, render: (a) => <span className="dlv-cmp-txt">{a.freshness?.age ? `${a.freshness.age} ${t.ago}` : t.notDated}</span> },
     { label: t.cChanged, render: (a) => <span className="dlv-cmp-txt">{a.whatChanged[0]?.event ?? "—"}</span> },
     { label: t.cThesis, render: (a) => <span className="dlv-cmp-txt">{a.thesis ?? "—"}</span> },
@@ -422,10 +439,10 @@ function CompareTab({ vm, t, es, onOpen }: { vm: DeliverableViewModel; t: L; es:
   );
 }
 
-function Strengthy({ v }: { v: string | null }) {
+function Strengthy({ v, es }: { v: string | null; es: boolean }) {
   if (!v) return <span className="dlv-cmp-txt">—</span>;
   const tok = STRENGTH_TOKENS[v as keyof typeof STRENGTH_TOKENS] ?? STRENGTH_TOKENS.Moderate;
-  return <span style={{ fontWeight: tok.weight, color: tok.color, fontSize: 13 }}>{v}</span>;
+  return <span style={{ fontWeight: tok.weight, color: tok.color, fontSize: 13 }}>{es ? ({ Strong: "Sólida", Moderate: "Moderada", Limited: "Limitada" }[v] ?? v) : v}</span>;
 }
 
 /** Deterministic, non-fabricated comparison insight: order by decision priority
@@ -506,11 +523,11 @@ function LABELS(es: boolean) {
     sections: es ? "Secciones" : "Sections",
     accounts: es ? "Cuentas" : "Accounts",
     tab: {
-      portfolio: es ? "Portafolio" : "Portfolio",
-      accounts: es ? "Cuentas" : "Account Briefs",
-      compare: es ? "Comparar" : "Compare",
+      portfolio: es ? "Resumen" : "Overview",
+      accounts: es ? "Casos de oportunidad" : "Opportunity Cases",
       evidence: es ? "Evidencia" : "Evidence",
-      downloads: es ? "Descargas" : "Downloads",
+      compare: es ? "Comparar" : "Compare",
+      intelligence: es ? "Inteligencia del portafolio" : "Portfolio Intelligence",
     } as Record<Tab, string>,
     filterByDecision: es ? "Filtrar por decisión" : "Filter by decision",
     all: es ? "Todas" : "All",
@@ -553,11 +570,11 @@ function LABELS(es: boolean) {
     notDated: es ? "sin fecha" : "not dated",
     noneListed: es ? "ninguno indicado" : "none listed",
     cDecision: es ? "Decisión" : "Decision",
-    cFit: "Fit",
-    cTiming: es ? "Timing" : "Timing",
+    cFit: es ? "Encaje" : "Fit",
+    cTiming: es ? "Momento" : "Timing",
     cEvidence: es ? "Evidencia" : "Evidence",
     cFreshness: es ? "Frescura" : "Freshness",
-    cChanged: es ? "Qué cambió" : "What changed",
+    cChanged: es ? "Señal relevante" : "Relevant signal",
     cThesis: es ? "Tesis" : "Thesis",
     cLimiter: es ? "Límite principal" : "Primary limiter",
     cValidate: es ? "Validar" : "Validate next",
@@ -578,6 +595,13 @@ function LABELS(es: boolean) {
     defContext: es ? "aporta contexto de apoyo." : "provides supporting context.",
     howBuilt: es ? "Cómo se construyó" : "How this was built",
     absenceNote: es ? "La ausencia de evidencia no es evidencia de ausencia: LeadLens muestra lo que sabe y lo que aún no." : "Absence of evidence is not evidence of absence: LeadLens shows what it knows and what it does not yet.",
+    utilities: es ? "Utilidades" : "Utilities",
+    decisionLandscape: es ? "Panorama de decisiones" : "Decision landscape",
+    sequence: es ? "Secuencia recomendada" : "Recommended sequence",
+    validationAgenda: es ? "Agenda de validación" : "Validation agenda",
+    portfolioPatterns: es ? "Patrones del portafolio" : "Portfolio patterns",
+    noPortfolioPatterns: es ? "Todavía no se establecieron patrones transversales con evidencia suficiente. No se infieren para llenar este espacio." : "No cross-account patterns have been established with sufficient evidence yet. None are inferred to fill this space.",
+    noIndependentSupport: es ? "No se identificó soporte independiente corroborante." : "No independently corroborating support was identified.",
   };
 }
 
@@ -599,6 +623,15 @@ const CSS = `
 .dlv-tab:hover { color: #0f172a; }
 .dlv-tab.is-active { color: #0369a1; border-bottom-color: #0284c7; }
 .dlv-main { max-width: 1100px; margin: 0 auto; padding: 22px 16px 40px; }
+.dlv-utilities { max-width: 1100px; margin: -22px auto 30px; padding: 0 16px; display: flex; gap: 10px; flex-wrap: wrap; }
+.dlv-utility { background: #fff; border: 1px solid #e8edf3; border-radius: 10px; color: #64748b; font-size: 12px; }
+.dlv-utility summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; padding: 0 14px; font-weight: 700; color: #475569; }
+.dlv-utility-body { padding: 0 14px 14px; max-width: 48rem; line-height: 1.55; }
+.dlv-utility-body .dlv-panel { display: block; }
+.dlv-utility-body .dlv-card { border: 0; box-shadow: none; padding: 4px 0; }
+.dlv-intel-read { border-left: 4px solid #0ea5e9; background: #f8fcff; }
+.dlv-intel-copy { margin: 0; color: #0c4a6e; line-height: 1.6; font-size: 14px; }
+.dlv-honest-empty { border-style: dashed; box-shadow: none; }
 .dlv-panel { display: flex; flex-direction: column; gap: 14px; }
 .dlv-card { background: #fff; border: 1px solid #e8edf3; border-radius: 12px; padding: 18px 20px; box-shadow: 0 1px 2px rgba(15,23,42,0.03); }
 .dlv-label { font-size: 10px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #94a3b8; margin: 0 0 10px; }
@@ -710,6 +743,8 @@ details[open] > .dlv-context-summary::after { content: "▴"; }
 }
 @media (max-width: 640px) {
   .dlv-main { padding: 14px 12px 32px; }
+  .dlv-tabs { padding-right: 44px; -webkit-mask-image: linear-gradient(to right,#000 0,#000 calc(100% - 30px),transparent 100%); mask-image: linear-gradient(to right,#000 0,#000 calc(100% - 30px),transparent 100%); }
+  .dlv-utilities { padding: 0 12px; }
   .dlv-card { padding: 15px 16px; }
   .dlv-hero-h1 { font-size: 20px; }
   .dlv-topbar { padding: 13px 16px; }
@@ -732,7 +767,7 @@ details[open] > .dlv-context-summary::after { content: "▴"; }
 
 @media print {
   @page { margin: 14mm; }
-  .dlv-topbar, .dlv-tabs, .dlv-main, .dlv-footer { display: none !important; }
+  .dlv-topbar, .dlv-tabs, .dlv-main, .dlv-utilities, .dlv-footer { display: none !important; }
   .dlv-root { background: #fff; }
   .dlv-print { display: block !important; }
   .dlv-print .dlv-card { box-shadow: none; break-inside: avoid; border-color: #d7dee7; }
