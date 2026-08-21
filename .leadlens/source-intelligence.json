@@ -973,7 +973,7 @@
   "deep_candidates": 0
  },
  "es.scribd.com": {
-  "urls": 7,
+  "urls": 8,
   "extractions": 1,
   "valid_dates": 0,
   "trigger_events": 0,
@@ -1484,10 +1484,10 @@
   "deep_candidates": 0
  },
  "reportur.com": {
-  "urls": 4,
-  "extractions": 0,
-  "valid_dates": 0,
-  "trigger_events": 0,
+  "urls": 6,
+  "extractions": 2,
+  "valid_dates": 2,
+  "trigger_events": 2,
   "deep_candidates": 0
  },
  "irotama.com": {
@@ -1533,7 +1533,7 @@
   "deep_candidates": 0
  },
  "plazacapital.co": {
-  "urls": 5,
+  "urls": 6,
   "extractions": 2,
   "valid_dates": 2,
   "trigger_events": 2,
@@ -1603,9 +1603,9 @@
   "deep_candidates": 0
  },
  "fittglobal.com": {
-  "urls": 49,
-  "extractions": 20,
-  "valid_dates": 9,
+  "urls": 59,
+  "extractions": 22,
+  "valid_dates": 11,
   "trigger_events": 0,
   "deep_candidates": 6
  },
@@ -1778,8 +1778,8 @@
   "deep_candidates": 0
  },
  "mas-vital.com": {
-  "urls": 4,
-  "extractions": 10,
+  "urls": 5,
+  "extractions": 11,
   "valid_dates": 0,
   "trigger_events": 0,
   "deep_candidates": 0
@@ -1862,7 +1862,7 @@
   "deep_candidates": 0
  },
  "feriaalimentec.com": {
-  "urls": 1,
+  "urls": 2,
   "extractions": 0,
   "valid_dates": 0,
   "trigger_events": 0,
@@ -2072,9 +2072,9 @@
   "deep_candidates": 0
  },
  "bioplaza.com.co": {
-  "urls": 54,
-  "extractions": 18,
-  "valid_dates": 11,
+  "urls": 64,
+  "extractions": 20,
+  "valid_dates": 13,
   "trigger_events": 0,
   "deep_candidates": 2
  },
@@ -2086,15 +2086,15 @@
   "deep_candidates": 6
  },
  "alimentossostenibles.co": {
-  "urls": 46,
-  "extractions": 15,
-  "valid_dates": 9,
+  "urls": 56,
+  "extractions": 19,
+  "valid_dates": 11,
   "trigger_events": 0,
-  "deep_candidates": 5
+  "deep_candidates": 9
  },
  "tutiendasaludable.com.co": {
-  "urls": 44,
-  "extractions": 18,
+  "urls": 54,
+  "extractions": 22,
   "valid_dates": 0,
   "trigger_events": 0,
   "deep_candidates": 0
@@ -2128,11 +2128,11 @@
   "deep_candidates": 0
  },
  "ghlhoteles.com": {
-  "urls": 37,
-  "extractions": 5,
+  "urls": 53,
+  "extractions": 7,
   "valid_dates": 3,
   "trigger_events": 0,
-  "deep_candidates": 3
+  "deep_candidates": 5
  },
  "proveedores.com": {
   "urls": 7,
@@ -2170,7 +2170,7 @@
   "deep_candidates": 0
  },
  "paquetes.ghlhoteles.com": {
-  "urls": 4,
+  "urls": 6,
   "extractions": 0,
   "valid_dates": 0,
   "trigger_events": 0,
@@ -2212,8 +2212,8 @@
   "deep_candidates": 0
  },
  "madretierra.online": {
-  "urls": 38,
-  "extractions": 17,
+  "urls": 46,
+  "extractions": 19,
   "valid_dates": 0,
   "trigger_events": 0,
   "deep_candidates": 1
@@ -2429,9 +2429,9 @@
   "deep_candidates": 4
  },
  "msnaturals.co": {
-  "urls": 25,
-  "extractions": 9,
-  "valid_dates": 7,
+  "urls": 37,
+  "extractions": 12,
+  "valid_dates": 9,
   "trigger_events": 0,
   "deep_candidates": 0
  },
@@ -2443,8 +2443,8 @@
   "deep_candidates": 0
  },
  "py.maptons.com": {
-  "urls": 3,
-  "extractions": 3,
+  "urls": 5,
+  "extractions": 4,
   "valid_dates": 0,
   "trigger_events": 0,
   "deep_candidates": 0
@@ -2702,9 +2702,9 @@
   "deep_candidates": 0
  },
  "essentiall.com.co": {
-  "urls": 16,
-  "extractions": 4,
-  "valid_dates": 3,
+  "urls": 24,
+  "extractions": 5,
+  "valid_dates": 4,
   "trigger_events": 0,
   "deep_candidates": 0
  },
@@ -3087,6 +3087,104 @@
   "deep_candidates": 0
  },
  "britannica.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "earthday.org": {
+  "urls": 2,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "ohchr.org": {
+  "urls": 2,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "ccpasto.org.co": {
+  "urls": 2,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "camaracartago.org": {
+  "urls": 2,
+  "extractions": 2,
+  "valid_dates": 2,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "global-agriculture.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "worldfootwear.com": {
+  "urls": 2,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "politics-prose.com": {
+  "urls": 2,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "house.gov": {
+  "urls": 2,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "ryka.com": {
+  "urls": 2,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "fitchratings.com": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "dssa.gov.co": {
+  "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "tienda.essentiall.com.co": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "academic.cbseit.in": {
+  "urls": 1,
+  "extractions": 1,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "scribd.com": {
   "urls": 1,
   "extractions": 0,
   "valid_dates": 0,
