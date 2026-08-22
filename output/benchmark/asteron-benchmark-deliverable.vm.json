@@ -2,7 +2,7 @@
   "meta": {
     "client": "Asteron Systems",
     "market": "United States & Colombia · Enterprise operations",
-    "generatedAt": "2026-08-22T00:21:16.786Z",
+    "generatedAt": "2026-08-22T23:15:36.655Z",
     "generatedLabel": "2026-08-22",
     "tierLabel": "Benchmark",
     "language": "en",
@@ -330,7 +330,7 @@
         {
           "event": "Multiple dated facility developments: Kansas hospital expansion completed (Jul 29), Deaconess expansion announced (Apr 13), Greenville build at midpoint (Mar 24), Franklin expansion begun (Sep 2025).",
           "date": "2026-08-07",
-          "age": "15d",
+          "age": "16d",
           "source": "investing.com",
           "kind": "true_change"
         }
@@ -339,7 +339,7 @@
         "sourceCount": 6,
         "datedCount": 6,
         "corroborated": true,
-        "latestAge": "15d",
+        "latestAge": "16d",
         "strength": "Strong"
       },
       "sources": [
@@ -347,7 +347,7 @@
           "label": "investing.com",
           "url": null,
           "date": "2026-08-07",
-          "age": "15d",
+          "age": "16d",
           "relation": "direct",
           "claim": "Encompass Health Q2 2026 slides: strong results drive guidance raise By Investing.com",
           "observation": null,
@@ -361,7 +361,7 @@
           "label": "healthcaredesignmagazine.com",
           "url": null,
           "date": "2026-07-29",
-          "age": "24d",
+          "age": "25d",
           "relation": "corroborating",
           "claim": "Encompass Health Rehabilitation Hospital Completes Expansion In Katy, Texas - HCD Magazine",
           "observation": null,
@@ -456,7 +456,7 @@
       "revisitWhen": "A new facility wave, or a disclosed operations-platform initiative.",
       "freshness": {
         "label": "Latest evidence",
-        "age": "15d"
+        "age": "16d"
       },
       "confidence": "Strong"
     },
@@ -866,7 +866,7 @@
         {
           "event": "Acquired Bison Metals Technologies (Apr 2) and expanded Mueller Coatings production with a new automated line (Jan 7).",
           "date": "2026-07-26",
-          "age": "27d",
+          "age": "28d",
           "source": "quartr.com",
           "kind": "true_change"
         }
@@ -875,7 +875,7 @@
         "sourceCount": 4,
         "datedCount": 4,
         "corroborated": true,
-        "latestAge": "27d",
+        "latestAge": "28d",
         "strength": "Moderate"
       },
       "sources": [
@@ -883,7 +883,7 @@
           "label": "quartr.com",
           "url": null,
           "date": "2026-07-26",
-          "age": "27d",
+          "age": "28d",
           "relation": "direct",
           "claim": "Mueller Industries (MLI) Investor presentation Summary | Quartr",
           "observation": null,
@@ -964,7 +964,7 @@
       "revisitWhen": "Primary confirmation or a further acquisition.",
       "freshness": {
         "label": "Latest evidence",
-        "age": "27d"
+        "age": "28d"
       },
       "confidence": "Moderate"
     },

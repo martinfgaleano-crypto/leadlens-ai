@@ -13,6 +13,7 @@ import type { DeliverableViewModel, DecisionState, AccountBriefVM } from "@/lib/
 import { DECISION_TOKENS, STRENGTH_TOKENS, decisionLabel, orderByAttention, accountRoleLabel, opportunityTypeLabel } from "@/lib/deliverable/deliverable-view-model";
 import { portfolioCsv, evidenceCsv, deliverableFilename } from "@/lib/deliverable/exports";
 import { toClientCanvasVM } from "@/lib/deliverable/client-canvas-vm";
+import { buildPortfolioIntelligence } from "@/lib/deliverable/portfolio-intelligence";
 import { AccountBrief, DecisionBadge, SourceList } from "./primitives";
 
 type Tab = "portfolio" | "accounts" | "evidence" | "compare" | "intelligence";
@@ -117,7 +118,7 @@ export default function OpportunityWorkspace({ vm }: { vm: DeliverableViewModel 
       </nav>
 
       <main className="dlv-main" role="tabpanel">
-        {tab === "portfolio" && vm.capabilities.showPortfolioTab && <PortfolioTab vm={vm} t={t} es={es} onOpen={openAccount} />}
+        {tab === "portfolio" && vm.capabilities.showPortfolioTab && <PortfolioTab vm={vm} t={t} es={es} onOpen={openAccount} onExplorePI={() => goTab("intelligence")} />}
 
         {tab === "accounts" && (
           <div className="dlv-accounts">
@@ -219,15 +220,37 @@ function AccountNav({ vm, activeId, onSelect, es, t, filter, onFilter }: { vm: D
 }
 
 // ─── Portfolio tab — "where should I focus?" ──────────────────────────────────
-function PortfolioTab({ vm, t, es, onOpen }: { vm: DeliverableViewModel; t: L; es: boolean; onOpen: (id: string) => void }) {
+function PortfolioTab({ vm, t, es, onOpen, onExplorePI }: { vm: DeliverableViewModel; t: L; es: boolean; onOpen: (id: string) => void; onExplorePI: () => void }) {
   const total = vm.portfolio.total || 1;
   const priority = orderByAttention(vm.accounts).filter((a) => a.decision === "prioritize" || a.decision === "validate");
+  // Compact Portfolio Intelligence preview (§13-16): one cross-account signal +
+  // one coverage statement + top theme/tension → invites the fifth tab. Depth
+  // stays in the tab (§16/§63). Omitted when nothing is supported.
+  const pi = buildPortfolioIntelligence(vm);
+  const previewPattern = pi.changePatterns.find((p) => !p.notable) ?? pi.opportunityPatterns.find((p) => !p.notable) ?? null;
+  const previewTension = pi.tensions[0] ?? null;
+  const previewTheme = pi.validationThemes[0] ?? null;
+  const coverageLine = pi.evidenceCoverage.statements[0] ?? null;
+  const hasPreview = !!(previewPattern || coverageLine || previewTension || previewTheme);
   return (
     <div className="dlv-panel">
       {(vm.headline || vm.summary) && (
         <div className="dlv-hero">
           {vm.headline && <h1 className="dlv-hero-h1">{vm.headline}</h1>}
           {vm.summary && <p className="dlv-hero-sub">{vm.summary}</p>}
+        </div>
+      )}
+
+      {hasPreview && (
+        <div className="dlv-card dlv-intel-read">
+          <p className="dlv-label">{pi.labels.title}</p>
+          <ul className="dlv-limits-list" style={{ marginTop: 4 }}>
+            {previewPattern && <li>{previewPattern.summary}</li>}
+            {coverageLine && <li>{coverageLine}</li>}
+            {previewTension && <li>{es ? `Tensión: ${previewTension.company}` : `Tension: ${previewTension.company}`} — {previewTension.meaning}</li>}
+            {!previewTension && previewTheme && <li>{previewTheme.theme} · {previewTheme.summary}</li>}
+          </ul>
+          <button className="dlv-chip" style={{ marginTop: 8 }} onClick={onExplorePI}>{es ? "Explorar Inteligencia del portafolio →" : "Explore Portfolio Intelligence →"}</button>
         </div>
       )}
 
@@ -339,17 +362,45 @@ function PortfolioTab({ vm, t, es, onOpen }: { vm: DeliverableViewModel; t: L; e
   );
 }
 
-// ─── Portfolio Intelligence V0 — existing structured facts only ─────────────
-function PortfolioIntelligenceTab({ vm, t, es, onOpen }: { vm: DeliverableViewModel; t: L; es: boolean; onOpen: (id: string) => void }) {
-  const cc = toClientCanvasVM(vm);
+// ─── Portfolio Intelligence V1.1 — real cross-account synthesis (localized) ────
+// Presentation only: consumes the deterministic + gated PortfolioIntelligenceVM.
+// No pattern detection here (§66). Supporting accounts are inspectable via the
+// same account navigation (§67-70). Empty sections are omitted (§9/§65).
+function PortfolioIntelligenceTab({ vm, es, onOpen }: { vm: DeliverableViewModel; t: L; es: boolean; onOpen: (id: string) => void }) {
+  const pi = buildPortfolioIntelligence(vm);
+  const L = pi.labels;
+  const nameOf = (id: string) => vm.accounts.find((a) => a.id === id)?.company ?? id;
+  const Chips = ({ ids }: { ids: string[] }) => (
+    <div className="dlv-chips">{ids.slice(0, 6).map((id) => <button key={id} className="dlv-chip" onClick={() => onOpen(id)}>{nameOf(id)}</button>)}{ids.length > 6 && <span className="dlv-note" style={{ margin: 0 }}>+{ids.length - 6}</span>}</div>
+  );
   return (
     <div className="dlv-panel">
-      {cc.read && <div className="dlv-card dlv-intel-read"><p className="dlv-label">LeadLens Read</p><p className="dlv-intel-copy">{cc.read}</p></div>}
-      <div className="dlv-card"><p className="dlv-label">{t.decisionLandscape}</p><div className="dlv-distlegend">{DECISION_ORDER.map((decision) => <span key={decision} className="dlv-distitem"><span className="dlv-nav-dot" style={{ background: DECISION_TOKENS[decision].dot }} /><strong>{vm.portfolio.counts[decision]}</strong> {decisionLabel(decision, es).toLowerCase()}</span>)}</div></div>
-      {cc.sequence.length > 0 && <div className="dlv-card"><p className="dlv-label">{t.sequence}</p><ul className="dlv-limits-list">{cc.sequence.map((item, i) => <li key={i}>{item}</li>)}</ul></div>}
-      {cc.validationAgenda.length > 0 && <div className="dlv-card"><p className="dlv-label">{t.validationAgenda}</p><div className="dlv-vq">{cc.validationAgenda.map((q) => <div className="dlv-vq-item" key={q.accountId}><button className="dlv-vq-name" onClick={() => onOpen(q.accountId)}>{q.company}</button><span className="dlv-vq-first">{q.item}</span></div>)}</div></div>}
-      {vm.coverage && <div className="dlv-card"><p className="dlv-label">{t.coverage}</p><p className="dlv-note">{vm.coverage.withSources}/{vm.portfolio.total} {t.withSources}; {vm.coverage.withDatedEvidence}/{vm.portfolio.total} {t.withDated}. {vm.coverage.corroborated === 0 ? t.noIndependentSupport : ""}</p></div>}
-      {cc.patterns.length === 0 && <div className="dlv-card dlv-honest-empty"><p className="dlv-label">{t.portfolioPatterns}</p><p className="dlv-note">{t.noPortfolioPatterns}</p></div>}
+      {pi.read.length > 0 && (
+        <div className="dlv-card dlv-intel-read"><p className="dlv-label">{L.read}</p>{pi.read.map((r, i) => <p key={i} className="dlv-intel-copy" style={{ marginTop: i ? ".4rem" : 0 }}>{r.text}</p>)}</div>
+      )}
+      <div className="dlv-card"><p className="dlv-label">{L.focus}</p>
+        <div className="dlv-distlegend">{DECISION_ORDER.filter((d) => vm.portfolio.counts[d] > 0).map((decision) => <span key={decision} className="dlv-distitem"><span className="dlv-nav-dot" style={{ background: DECISION_TOKENS[decision].dot }} /><strong>{vm.portfolio.counts[decision]}</strong> {decisionLabel(decision, es).toLowerCase()}</span>)}</div>
+        {pi.attention.filter((a) => a.differentiator).map((a) => <p key={a.decision} className="dlv-note" style={{ marginTop: ".4rem" }}><strong>{decisionLabel(a.decision, es)}:</strong> {a.differentiator}</p>)}
+      </div>
+      {pi.opportunityPatterns.length > 0 && (
+        <div className="dlv-card"><p className="dlv-label">{L.patterns}</p>{pi.opportunityPatterns.map((p) => <div key={p.key} className="dlv-pat"><div className="dlv-pat-h">{p.label}{p.notable ? <span className="dlv-tagm">{L.notable}</span> : <span className="dlv-tag">{p.supportingCaseIds.length}</span>}</div><Chips ids={p.supportingCaseIds} /></div>)}</div>
+      )}
+      {pi.changePatterns.some((p) => !p.notable) && (
+        <div className="dlv-card"><p className="dlv-label">{L.changing}</p>{pi.changePatterns.filter((p) => !p.notable).map((p) => <div key={p.key} className="dlv-pat"><div className="dlv-pat-h">{p.label} <span className="dlv-tag">{p.supportingCaseIds.length}</span></div><p className="dlv-note" style={{ margin: ".2rem 0" }}>{p.summary}{p.caveat ? " " + p.caveat : ""}</p><Chips ids={p.supportingCaseIds} /></div>)}</div>
+      )}
+      <div className="dlv-card"><p className="dlv-label">{L.coverage}</p><ul className="dlv-limits-list">{pi.evidenceCoverage.statements.map((s, i) => <li key={i}>{s}</li>)}</ul></div>
+      {pi.validationThemes.length > 0 && (
+        <div className="dlv-card"><p className="dlv-label">{L.themes}</p>{pi.validationThemes.map((th) => <div key={th.key} className="dlv-pat"><div className="dlv-pat-h">{th.theme}{th.decisionCritical && <span className="dlv-tagc">{L.critical}</span>} <span className="dlv-tag">{th.caseIds.length}</span></div><Chips ids={th.caseIds} /></div>)}</div>
+      )}
+      {pi.tensions.length > 0 && (
+        <div className="dlv-card"><p className="dlv-label">{L.tensions}</p>{pi.tensions.map((tn) => <div key={tn.caseId} className="dlv-pat"><div className="dlv-pat-h"><button className="dlv-chip" onClick={() => onOpen(tn.caseId)}>{tn.company}</button></div><p className="dlv-note" style={{ margin: ".25rem 0" }}><strong>+</strong> {tn.positive}</p><p className="dlv-note" style={{ margin: ".25rem 0" }}><strong>−</strong> {tn.counter}</p><p className="dlv-note" style={{ margin: ".25rem 0", color: "#475569" }}>{tn.meaning}</p></div>)}</div>
+      )}
+      {pi.guidance.length > 0 && (
+        <div className="dlv-card"><p className="dlv-label">{L.guidance}</p>{pi.guidance.map((g, i) => <div key={i} className="dlv-guide"><span className="dlv-gk">{g.kindLabel}</span><span>{g.statement}</span></div>)}</div>
+      )}
+      {pi.coverageGaps.length > 0 && (
+        <div className="dlv-card dlv-honest-empty"><p className="dlv-label">{L.gaps}</p>{pi.coverageGaps.map((g) => <p key={g.key} className="dlv-note" style={{ margin: ".2rem 0" }}><strong>{g.category}.</strong> {g.summary}</p>)}</div>
+      )}
     </div>
   );
 }
@@ -635,6 +686,18 @@ const CSS = `
 .dlv-intel-read { border-left: 4px solid #0ea5e9; background: #f8fcff; }
 .dlv-intel-copy { margin: 0; color: #0c4a6e; line-height: 1.6; font-size: 14px; }
 .dlv-honest-empty { border-style: dashed; box-shadow: none; }
+.dlv-pat { padding: 8px 0; border-top: 1px solid #f1f5f9; }
+.dlv-pat:first-of-type { border-top: none; }
+.dlv-pat-h { font-size: 13.5px; font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.dlv-tag { font-size: 10.5px; font-weight: 800; color: #0369a1; background: #f0f9ff; border: 1px solid #e0f2fe; border-radius: 20px; padding: 1px 8px; }
+.dlv-tagm { font-size: 9.5px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: #64748b; background: #f8fafc; border: 1px solid #eef2f6; border-radius: 4px; padding: 1px 6px; }
+.dlv-tagc { font-size: 9.5px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: #b45309; background: #fffbeb; border: 1px solid #fef3c7; border-radius: 4px; padding: 1px 6px; }
+.dlv-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.dlv-chip { appearance: none; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 600; color: #0f172a; background: #fff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 3px 10px; }
+.dlv-chip:hover { border-color: #0284c7; color: #0369a1; }
+.dlv-guide { display: flex; gap: 9px; align-items: baseline; padding: 6px 0; border-top: 1px solid #f1f5f9; }
+.dlv-guide:first-of-type { border-top: none; }
+.dlv-gk { flex: none; font-size: 10px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: #0369a1; background: #f0f9ff; border: 1px solid #e0f2fe; border-radius: 4px; padding: 2px 7px; min-width: 64px; text-align: center; }
 .dlv-panel { display: flex; flex-direction: column; gap: 14px; }
 .dlv-card { background: #fff; border: 1px solid #e8edf3; border-radius: 12px; padding: 18px 20px; box-shadow: 0 1px 2px rgba(15,23,42,0.03); }
 .dlv-label { font-size: 10px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #94a3b8; margin: 0 0 10px; }

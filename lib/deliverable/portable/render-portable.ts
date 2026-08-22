@@ -311,7 +311,7 @@ function portfolioIntelligencePanel(vm: DeliverableViewModel, t: T, es: boolean)
 
   const tensions = pi.tensions.length ? `<div class="pt-card"><p class="pt-label">${esc(lbl.tensions)}</p>${pi.tensions.map((tn) => `<div class="pt-pat"><div class="pt-pat-h"><button class="pt-chip" data-goacct="${esc(tn.caseId)}">${esc(tn.company)}</button></div><p class="pt-note" style="margin:.25rem 0"><strong>+</strong> ${esc(tn.positive)}</p><p class="pt-note" style="margin:.25rem 0"><strong>−</strong> ${esc(tn.counter)}</p><p class="pt-note" style="margin:.25rem 0;color:#475569">${esc(tn.meaning)}</p></div>`).join("")}</div>` : "";
 
-  const guidance = pi.guidance.length ? `<div class="pt-card"><p class="pt-label">${esc(lbl.guidance)}</p>${pi.guidance.map((g) => `<div class="pt-guide"><span class="pt-gk">${esc(g.kind)}</span><span>${esc(g.statement)}</span></div>`).join("")}</div>` : "";
+  const guidance = pi.guidance.length ? `<div class="pt-card"><p class="pt-label">${esc(lbl.guidance)}</p>${pi.guidance.map((g) => `<div class="pt-guide"><span class="pt-gk">${esc(g.kindLabel)}</span><span>${esc(g.statement)}</span></div>`).join("")}</div>` : "";
 
   const gaps = pi.coverageGaps.length ? `<div class="pt-card pt-honest"><p class="pt-label">${esc(lbl.gaps)}</p>${pi.coverageGaps.map((g) => `<p class="pt-note" style="margin:.2rem 0"><strong>${esc(g.category)}.</strong> ${esc(g.summary)}</p>`).join("")}</div>` : "";
 

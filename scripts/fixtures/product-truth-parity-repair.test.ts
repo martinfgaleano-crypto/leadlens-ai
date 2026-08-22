@@ -38,7 +38,7 @@ test("8 single-source Amor cases never claim corroboration", () => vm.accounts.e
 test("9 canonical portable tabs are in canonical order", () => /Resumen[\s\S]*Casos de oportunidad[\s\S]*Evidencia[\s\S]*Comparar[\s\S]*Inteligencia del portafolio/.test(html));
 test("10 Methodology is a secondary utility", () => !/data-tab="method"/.test(html) && html.includes("Cómo leer este portafolio"));
 test("11 Downloads are secondary utilities", () => !/data-tab="downloads"/.test(html) && html.lastIndexOf('<div class="pt-utils">') > html.indexOf("</main>"));
-test("12 Portfolio Intelligence V0 admits absent patterns", () => html.includes("Todavía no se establecieron patrones transversales"));
+test("12 Portfolio Intelligence renders honest sparse coverage, no fabricated patterns (V1.1)", () => html.includes("no tienen un cambio reciente verificado") && !html.includes("Qué está cambiando") && !html.includes("Tensiones del portafolio"));
 test("13 no synthetic pattern leaks into Amor", () => !toClientCanvasVM(vm).patterns.length);
 test("14 mixed-language generated summary is gone", () => !html.includes("Focus sharpened to") && html.includes("El enfoque se precisó en"));
 test("15 Spanish system strengths are localized", () => !/>Strong<|>Moderate<|>Limited</.test(html));

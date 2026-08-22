@@ -95,7 +95,33 @@ t("§132 Amor produces zero change patterns", M.changePatterns.filter(p => !p.no
 t("§132 Amor produces zero tensions", M.tensions.length === 0);
 t("§132 Amor verified-change count is 0", M.deterministic.verifiedChangeCount === 0);
 t("§47 Amor still yields useful decision landscape + validation + coverage gaps", M.attention.length > 0 && M.coverageGaps.length > 0);
-t("§12 Amor Read frames sparsity as coverage limit, not quality", M.read.some(r => /coverage limit|not a quality/i.test(r.text)));
+t("§12/§26 Amor (es) Read frames sparsity as coverage limit in SPANISH", M.read.some(r => /límite de cobertura|no un juicio de calidad/i.test(r.text)));
+
+// §26/§29 localization: Amor (es) customer prose is Spanish, no English fragments
+{
+  const enFragments = /\b(opportunities merit|coverage limit|not a quality judgment|verified recent|independent support|recurs across|Where to focus)\b/i;
+  const amorProse = [...M.read.map(r => r.text), ...M.guidance.map(g => g.statement), ...M.evidenceCoverage.statements, ...M.coverageGaps.map(g => g.category + " " + g.summary), ...M.opportunityPatterns.map(p => p.summary)].join(" || ");
+  t("§26 Amor synthesized prose has no English fragments", !enFragments.test(amorProse));
+  t("§28 Amor labels localized (Spanish)", M.labels.focus === "Dónde enfocar" && M.labels.read === "LeadLens Read");
+  t("§28 Asteron labels localized (English)", A.labels.focus === "Where to focus");
+  t("§30 ES validation-theme normalization present", M.validationThemes.length >= 1);
+}
+
+// §59-60/§99 canonical keys are locale-independent (diff must not depend on display copy)
+{
+  const enVM = JSON.parse(JSON.stringify(asteron)); enVM.meta.language = "en";
+  const esVM = JSON.parse(JSON.stringify(asteron)); esVM.meta.language = "es";
+  const enPI = buildPortfolioIntelligence(enVM), esPI = buildPortfolioIntelligence(esVM);
+  const enKeys = enPI.changePatterns.map(p => p.key).sort().join(",");
+  const esKeys = esPI.changePatterns.map(p => p.key).sort().join(",");
+  t("§59 change-pattern keys identical across locales", enKeys === esKeys && enKeys.length > 0);
+  t("§60 change-pattern DISPLAY labels differ across locales", enPI.changePatterns.map(p => p.label).join() !== esPI.changePatterns.map(p => p.label).join());
+  const diff = diffPortfolioIntelligence(
+    { pi: enPI, decisions: {}, validations: {} },
+    { pi: esPI, decisions: {}, validations: {} },
+  );
+  t("§60 diff across locales sees zero pattern churn (keys stable)", diff.changePatterns.new.length === 0 && diff.changePatterns.disappeared.length === 0);
+}
 
 // §133 RICH (Asteron) produces supported synthesis
 t("§133 Asteron produces ≥1 real change pattern", A.changePatterns.some(p => !p.notable));
