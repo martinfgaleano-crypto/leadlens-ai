@@ -43,10 +43,22 @@ export const tavilyProvider: SearchProvider = {
     if (!process.env.TAVILY_API_KEY) return emptyResponse("tavily", query, "TAVILY_API_KEY missing");
     const started = Date.now();
     try {
+      // Opt-in temporal mode: Tavily only returns `published_date` under the
+      // `news` topic. A caller signals temporal/news intent via query_type:"news"
+      // (optionally bounding recency with freshness_days → `days`). General
+      // discovery (every other query_type) keeps the default `general` topic and
+      // its existing behavior untouched. Retrieval date is never substituted for
+      // the publication date — `published_date` is mapped only from the provider.
+      const temporal = query.query_type === "news";
+      const days = temporal ? Math.max(1, Math.min(query.freshness_days ?? 365, 730)) : undefined;
       const res = await fetch("https://api.tavily.com/search", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ api_key: process.env.TAVILY_API_KEY, query: query.query, max_results: Math.min(query.max_results ?? 8, 20), include_answer: false }),
+        body: JSON.stringify({
+          api_key: process.env.TAVILY_API_KEY, query: query.query,
+          max_results: Math.min(query.max_results ?? 8, 20), include_answer: false,
+          ...(temporal ? { topic: "news", days } : {}),
+        }),
         signal: AbortSignal.timeout(15_000),
       });
       const latency = Date.now() - started;

@@ -9,6 +9,7 @@ import type { DeliverableViewModel, AccountBriefVM, DecisionState } from "../del
 import { DECISION_TOKENS, STRENGTH_TOKENS, RELATION_TOKENS, decisionLabel, orderByAttention, accountRoleLabel, opportunityTypeLabel } from "../deliverable-view-model";
 import { portfolioCsv, evidenceCsv, deliverableFilename } from "../exports";
 import { toClientCanvasVM } from "../client-canvas-vm";
+import { buildPortfolioIntelligence } from "../portfolio-intelligence";
 import { esc, safeUrl, jsonForScript, type PortableRuntimePayload, PORTABLE_FORMAT_VERSION } from "./portable-payload";
 
 const ORDER: DecisionState[] = ["prioritize", "validate", "monitor", "hold"];
@@ -290,12 +291,31 @@ function methodContent(vm: DeliverableViewModel, t: T, es: boolean): string {
 }
 
 function portfolioIntelligencePanel(vm: DeliverableViewModel, t: T, es: boolean): string {
-  const cc = toClientCanvasVM(vm);
-  const decisions = ORDER.map((state) => `<span class="pt-leg"><span class="pt-dot" style="background:${DECISION_TOKENS[state].dot}"></span><strong>${vm.portfolio.counts[state]}</strong> ${esc(decisionLabel(state, es).toLowerCase())}</span>`).join("");
-  const sequence = cc.sequence.length ? `<div class="pt-card"><p class="pt-label">${esc(t.recommendedSequence)}</p><ul class="pt-limlist">${cc.sequence.map((item) => `<li>${esc(item)}</li>`).join("")}</ul></div>` : "";
-  const validations = cc.validationAgenda.length ? `<div class="pt-card"><p class="pt-label">${esc(t.validationQueue)}</p><div class="pt-vq">${cc.validationAgenda.map((q) => `<div class="pt-vq-i"><button class="pt-vq-n" data-goacct="${esc(q.accountId)}">${esc(q.company)}</button><span>${esc(q.item)}</span></div>`).join("")}</div></div>` : "";
-  const coverage = vm.coverage ? `<div class="pt-card"><p class="pt-label">${esc(t.coverage)}</p><p class="pt-note">${vm.coverage.withSources}/${vm.portfolio.total} ${esc(t.withSources)} · ${vm.coverage.withDatedEvidence}/${vm.portfolio.total} ${esc(t.withDated)}${vm.coverage.corroborated === 0 ? ` · ${esc(t.noIndependentSupport)}` : ""}</p></div>` : "";
-  return `<section class="pt-panel pt-hidden" id="panel-intelligence">${cc.read ? `<div class="pt-exec"><span class="pt-exec-k">LeadLens Read</span><p class="pt-exec-t">${esc(cc.read)}</p></div>` : ""}<div class="pt-card"><p class="pt-label">${esc(t.decisionLandscape)}</p><div class="pt-legend">${decisions}</div></div>${sequence}${validations}${coverage}<div class="pt-card pt-honest"><p class="pt-label">${esc(t.portfolioPatterns)}</p><p class="pt-note">${esc(t.noPortfolioPatterns)}</p></div></section>`;
+  const pi = buildPortfolioIntelligence(vm);
+  const nameOf = (id: string) => vm.accounts.find((a) => a.id === id)?.company ?? id;
+  const chips = (ids: string[]) => ids.slice(0, 6).map((id) => `<button class="pt-chip" data-goacct="${esc(id)}">${esc(nameOf(id))}</button>`).join("") + (ids.length > 6 ? `<span class="pt-note" style="margin:0">+${ids.length - 6}</span>` : "");
+  const lbl = { read: "LeadLens Read", focus: es ? "Dónde enfocar" : "Where to focus", patterns: es ? "Patrones de oportunidad" : "Opportunity patterns", changing: es ? "Qué está cambiando" : "What is changing", coverage: es ? "Cobertura de evidencia" : "Evidence coverage", themes: es ? "Qué validar (temas)" : "Validation themes", tensions: es ? "Tensiones del portafolio" : "Portfolio tensions", guidance: es ? "Dirección recomendada" : "Recommended direction", gaps: es ? "Brechas de cobertura" : "Coverage gaps" };
+  const decisions = ORDER.filter((s) => vm.portfolio.counts[s] > 0).map((state) => `<span class="pt-leg"><span class="pt-dot" style="background:${DECISION_TOKENS[state].dot}"></span><strong>${vm.portfolio.counts[state]}</strong> ${esc(decisionLabel(state, es).toLowerCase())}</span>`).join("");
+
+  const read = pi.read.length ? `<div class="pt-exec"><span class="pt-exec-k">${esc(lbl.read)}</span>${pi.read.map((r) => `<p class="pt-exec-t" style="margin:.3rem 0 0">${esc(r.text)}</p>`).join("")}</div>` : "";
+
+  const attention = `<div class="pt-card"><p class="pt-label">${esc(lbl.focus)}</p><div class="pt-legend">${decisions}</div>${pi.attention.filter((a) => a.differentiator).map((a) => `<p class="pt-note" style="margin-top:.4rem"><strong>${esc(decisionLabel(a.decision, es))}:</strong> ${esc(a.differentiator!)}</p>`).join("")}</div>`;
+
+  const oppPatterns = pi.opportunityPatterns.length ? `<div class="pt-card"><p class="pt-label">${esc(lbl.patterns)}</p>${pi.opportunityPatterns.map((p) => `<div class="pt-pat"><div class="pt-pat-h">${esc(p.label)}${p.notable ? ` <span class="pt-tagm">${es ? "caso notable" : "notable case"}</span>` : ` <span class="pt-tag">${p.supportingCaseIds.length}</span>`}</div><div class="pt-chips">${chips(p.supportingCaseIds)}</div></div>`).join("")}</div>` : "";
+
+  const changePatterns = pi.changePatterns.some((p) => !p.notable) ? `<div class="pt-card"><p class="pt-label">${esc(lbl.changing)}</p>${pi.changePatterns.filter((p) => !p.notable).map((p) => `<div class="pt-pat"><div class="pt-pat-h">${esc(p.label)} <span class="pt-tag">${p.supportingCaseIds.length}</span></div><p class="pt-note" style="margin:.2rem 0">${esc(p.summary)}${p.caveat ? " " + esc(p.caveat) : ""}</p><div class="pt-chips">${chips(p.supportingCaseIds)}</div></div>`).join("")}</div>` : "";
+
+  const coverage = `<div class="pt-card"><p class="pt-label">${esc(lbl.coverage)}</p><ul class="pt-limlist" style="padding-left:18px;color:#334155">${pi.evidenceCoverage.statements.map((s) => `<li>${esc(s)}</li>`).join("")}</ul></div>`;
+
+  const themes = pi.validationThemes.length ? `<div class="pt-card"><p class="pt-label">${esc(lbl.themes)}</p>${pi.validationThemes.map((th) => `<div class="pt-pat"><div class="pt-pat-h">${esc(th.theme)}${th.decisionCritical ? ` <span class="pt-tagc">${es ? "crítico" : "decision-critical"}</span>` : ""} <span class="pt-tag">${th.caseIds.length}</span></div><div class="pt-chips">${chips(th.caseIds)}</div></div>`).join("")}</div>` : "";
+
+  const tensions = pi.tensions.length ? `<div class="pt-card"><p class="pt-label">${esc(lbl.tensions)}</p>${pi.tensions.map((tn) => `<div class="pt-pat"><div class="pt-pat-h"><button class="pt-chip" data-goacct="${esc(tn.caseId)}">${esc(tn.company)}</button></div><p class="pt-note" style="margin:.25rem 0"><strong>+</strong> ${esc(tn.positive)}</p><p class="pt-note" style="margin:.25rem 0"><strong>−</strong> ${esc(tn.counter)}</p><p class="pt-note" style="margin:.25rem 0;color:#475569">${esc(tn.meaning)}</p></div>`).join("")}</div>` : "";
+
+  const guidance = pi.guidance.length ? `<div class="pt-card"><p class="pt-label">${esc(lbl.guidance)}</p>${pi.guidance.map((g) => `<div class="pt-guide"><span class="pt-gk">${esc(g.kind)}</span><span>${esc(g.statement)}</span></div>`).join("")}</div>` : "";
+
+  const gaps = pi.coverageGaps.length ? `<div class="pt-card pt-honest"><p class="pt-label">${esc(lbl.gaps)}</p>${pi.coverageGaps.map((g) => `<p class="pt-note" style="margin:.2rem 0"><strong>${esc(g.category)}.</strong> ${esc(g.summary)}</p>`).join("")}</div>` : "";
+
+  return `<section class="pt-panel pt-hidden" id="panel-intelligence">${read}${attention}${oppPatterns}${changePatterns}${coverage}${themes}${tensions}${guidance}${gaps}</section>`;
 }
 
 // ─── Document ─────────────────────────────────────────────────────────────────
@@ -392,6 +412,15 @@ body{margin:0;background:#f4f7fb;color:#0f172a;font-family:-apple-system,BlinkMa
 .pt-hidden{display:none}
 .pt-card{background:#fff;border:1px solid #edf1f6;border-radius:14px;padding:20px 24px;box-shadow:0 1px 2px rgba(15,23,42,.04)}
 .pt-honest{border-style:dashed;box-shadow:none}
+.pt-pat{padding:8px 0;border-top:1px solid #f1f5f9}.pt-pat:first-of-type{border-top:none}
+.pt-pat-h{font-size:13.5px;font-weight:700;color:#0f172a;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.pt-tag{font-size:10.5px;font-weight:800;color:#0369a1;background:#f0f9ff;border:1px solid #e0f2fe;border-radius:20px;padding:1px 8px}
+.pt-tagm{font-size:9.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#64748b;background:#f8fafc;border:1px solid #eef2f6;border-radius:4px;padding:1px 6px}
+.pt-tagc{font-size:9.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#b45309;background:#fffbeb;border:1px solid #fef3c7;border-radius:4px;padding:1px 6px}
+.pt-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.pt-chip{appearance:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;color:#0f172a;background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:3px 10px}.pt-chip:hover{border-color:#0284c7;color:#0369a1}
+.pt-guide{display:flex;gap:9px;align-items:baseline;padding:6px 0;border-top:1px solid #f1f5f9}.pt-guide:first-of-type{border-top:none}
+.pt-gk{flex:none;font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#0369a1;background:#f0f9ff;border:1px solid #e0f2fe;border-radius:4px;padding:2px 7px;min-width:64px;text-align:center}
 .pt-label{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#94a3b8;margin:0 0 11px}
 .pt-label-accent{color:#0284c7}
 /* Cover — editorial opening, not a marketing hero */
