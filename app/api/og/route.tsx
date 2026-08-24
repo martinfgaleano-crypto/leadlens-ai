@@ -54,7 +54,7 @@ export async function GET() {
             maxWidth: 920,
           }}
         >
-          Find the B2B accounts worth working now.
+          Know which accounts deserve attention now.
         </div>
 
         {/* Sub */}

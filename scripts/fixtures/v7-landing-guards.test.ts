@@ -67,7 +67,7 @@ t("J6 mobile pricing compaction is mobile-only (desktop card untouched)",
   /\.ll-price-card \{ padding: 1\.25rem[^}]*text-align: left/.test(src) && /padding: "2rem"/.test(src));
 
 // ─── K. V8.2 mobile hero recomposition (mobile-only; desktop preserved) ───────
-t("K1 H1 intact", /heroH1hi:\s*"worth working now"/.test(src));
+t("K1 H1 is the account-attention headline (not B2B-defined)", /heroH1hi:\s*"deserve attention now"/.test(src));
 t("K2 promo banner + duplicate H2 + reassurance pill are HIDDEN on mobile",
   /\.ll-announce \{ display: none/.test(src) && /\.ll-hero-h2\s*\{ display: none/.test(src) && /\.ll-hero-note \{ display: none/.test(src));
 t("K3 banner/H2/pill still render on desktop (hidden only via mobile media query)",
@@ -103,7 +103,7 @@ t("M4 hero secondary CTA uses a direct class (robust vs stripped combinator)",
 t("M5 value outcomes map to product grammar (focus / changed / evidence), no lead-gen framing",
   /"Know where to focus"/.test(src) && /"Understand what changed"/.test(src) && /"Act with evidence"/.test(src) &&
   !/heroValue:[\s\S]{0,600}(lead list|hot lead|buying intent|contact list)/i.test(src));
-t("M6 H1 + support still intact", /heroH1hi:\s*"worth working now"/.test(src) && /heroSub:\s*"Turn market evidence into clearer account decisions\."/.test(src));
+t("M6 H1 + support still intact", /heroH1hi:\s*"deserve attention now"/.test(src) && /heroSub:\s*"Turn market evidence into clearer account decisions\."/.test(src));
 
 // ─── N. V8.5 product-truth + brand + legal-email closeout ─────────────────────
 t("N1 footer brand is 'LeadLens' (not 'LeadLens AI') with AOI category, 4 locales",
@@ -239,6 +239,24 @@ t("Q11 client subject is not one target account (Asteron ≠ Northstar as report
   /\{WS_CLIENT\.name\}/.test(src) && !/name:\s*"Northstar[^"]*",\s*$/m.test(src.slice(src.indexOf("const WS_CLIENT"), src.indexOf("const WS_CLIENT") + 400)));
 t("Q12 light composition — no giant dark navy header gradient on the sample surface",
   !/linear-gradient\(160deg,#0b1220/.test(sampleSrc));
+
+// ─── R. Market repositioning (Step 1) — category ≠ "B2B sales" ────────────────
+// LeadLens is Account Opportunity Intelligence. B2B is a launch WEDGE, not the
+// category: the primary headline, category badge, announcement and footer must no
+// longer define the product through B2B — while exactly one restrained wedge line
+// keeps existing B2B sellers recognizing themselves.
+t("R1 category badge is Account Opportunity Intelligence, not B2B-suffixed (4 locales)",
+  /heroBadge:\s*"Account Opportunity Intelligence"/.test(src) && !/heroBadge:\s*"[^"]*·\s*B2B"/.test(src) && (src.match(/heroBadge:/g) || []).length === 4);
+t("R2 primary headline no longer defines LeadLens through B2B (no B2B in any hero H1 field)",
+  !/heroH1(pre|hi|post):\s*"[^"]*B2B/i.test(src) && !/heroH1pre:\s*"Find the B2B/.test(src));
+t("R3 announcement + footer no longer say 'for B2B' / 'B2B向け' (category is not B2B)",
+  !/announcement:\s*"[^"]*(for B2B|para B2B|B2B向け)/.test(src) && !/footerCopy:\s*"[^"]*(for B2B|para B2B|B2B向け)/.test(src));
+t("R4 exactly one explicit launch wedge remains (heroWedge, 4 locales, names B2B once)",
+  (src.match(/heroWedge:/g) || []).length === 4 && /heroWedge:\s*"[^"]*B2B/.test(src) && /className="ll-hero-wedge"/.test(src));
+t("R5 core Account / Timing / Evidence positioning survives",
+  /heroH2:\s*"And the evidence behind every opportunity\."/.test(src) && /heroSub:\s*"Turn market evidence into clearer account decisions\."/.test(src));
+t("R6 no generic AI hype language (AI-powered / supercharge / revolutionize / unlock)",
+  !/AI-powered/i.test(src) && !/supercharge/i.test(src) && !/revolutioni[sz]e/i.test(src) && !/\bunlock\b/i.test(src));
 
 console.log(`\n${passed}/${passed + failed} passed`);
 process.exit(failed ? 1 : 0);

@@ -14,7 +14,7 @@ import type { DecisionState, Strength } from "@/lib/deliverable/deliverable-view
 
 const COPY = {
   en: {
-    announcement: "Account Opportunity Intelligence for B2B — know which accounts to work now, and why.",
+    announcement: "Account Opportunity Intelligence — know which accounts to work now, and why.",
     announcementCTA: "Get your Opportunity Preview →",
     navPricing: "Pricing",
     navSignIn: "Sign in",
@@ -26,12 +26,13 @@ const COPY = {
     navFaq: "FAQ",
     heroCuriosity: "Markets change.",
     heroCuriosityEmph: "Your priorities should too.",
-    heroBadge: "Account Opportunity Intelligence · B2B",
-    heroH1pre: "Find the B2B accounts",
-    heroH1hi: "worth working now",
+    heroBadge: "Account Opportunity Intelligence",
+    heroH1pre: "Know which accounts",
+    heroH1hi: "deserve attention now",
     heroH1post: ".",
     heroH2: "And the evidence behind every opportunity.",
     heroSub: "Turn market evidence into clearer account decisions.",
+    heroWedge: "Built first for research-intensive B2B sales, business-development and advisory teams.",
     heroValue: {
       label: "What LeadLens helps you decide",
       items: [
@@ -188,7 +189,7 @@ const COPY = {
     sEvidenceDiscipline: "Evidence quality",
     sIntelligenceNotes: "Quality checks",
     sLearningMeta: "Learning signals",
-    footerCopy: "© 2026 LeadLens — Account Opportunity Intelligence for B2B. We analyze public signals, not personal data.",
+    footerCopy: "© 2026 LeadLens — Account Opportunity Intelligence. We analyze public signals, not personal data.",
     footerLinks: ["Privacy", "Terms", "Refund Policy", "Contact"],
     footerContact: "Questions? Email us: operations@leadlensintel.com",
     expectationsTag: "What to expect",
@@ -340,7 +341,7 @@ const COPY = {
     sSourceDiscovered: "Discovered",
   },
   es: {
-    announcement: "Account Opportunity Intelligence para B2B — sabe qué cuentas trabajar ahora, y por qué.",
+    announcement: "Inteligencia de Oportunidades de Cuenta — sabe qué cuentas trabajar ahora, y por qué.",
     announcementCTA: "Obtener mi Opportunity Preview →",
     navPricing: "Precios",
     navSignIn: "Iniciar sesión",
@@ -352,12 +353,13 @@ const COPY = {
     navFaq: "FAQ",
     heroCuriosity: "Los mercados cambian.",
     heroCuriosityEmph: "Tus prioridades también.",
-    heroBadge: "Inteligencia de Oportunidades de Cuenta · B2B",
-    heroH1pre: "Encuentra las cuentas B2B",
-    heroH1hi: "que vale la pena trabajar ahora",
+    heroBadge: "Inteligencia de Oportunidades de Cuenta",
+    heroH1pre: "Sabe qué cuentas",
+    heroH1hi: "merecen atención ahora",
     heroH1post: ".",
     heroH2: "Y la evidencia detrás de cada oportunidad.",
     heroSub: "Convierte la evidencia del mercado en decisiones de cuenta más claras.",
+    heroWedge: "Diseñado primero para equipos de ventas B2B, desarrollo de negocio y consultoría con uso intensivo de investigación.",
     heroValue: {
       label: "Qué te ayuda a decidir LeadLens",
       items: [
@@ -514,7 +516,7 @@ const COPY = {
     sEvidenceDiscipline: "Calidad de evidencia",
     sIntelligenceNotes: "Control de calidad",
     sLearningMeta: "Señales de aprendizaje",
-    footerCopy: "© 2026 LeadLens — Inteligencia de Oportunidades de Cuenta para B2B. Analizamos señales públicas, no datos personales.",
+    footerCopy: "© 2026 LeadLens — Inteligencia de Oportunidades de Cuenta. Analizamos señales públicas, no datos personales.",
     footerLinks: ["Privacidad", "Términos", "Política de devolución", "Contacto"],
     footerContact: "¿Preguntas? Escríbenos: operations@leadlensintel.com",
     expectationsTag: "Qué esperar",
@@ -666,7 +668,7 @@ const COPY = {
     sSourceDiscovered: "Descubierto",
   },
   pt: {
-    announcement: "Account Opportunity Intelligence para B2B — saiba quais contas trabalhar agora, e por quê.",
+    announcement: "Inteligência de Oportunidades de Conta — saiba quais contas trabalhar agora, e por quê.",
     announcementCTA: "Obter meu Opportunity Preview →",
     navPricing: "Preços",
     navSignIn: "Entrar",
@@ -678,12 +680,13 @@ const COPY = {
     navFaq: "FAQ",
     heroCuriosity: "Os mercados mudam.",
     heroCuriosityEmph: "Suas prioridades também.",
-    heroBadge: "Inteligência de Oportunidades de Conta · B2B",
-    heroH1pre: "Encontre as contas B2B",
-    heroH1hi: "que valem a pena trabalhar agora",
+    heroBadge: "Inteligência de Oportunidades de Conta",
+    heroH1pre: "Saiba quais contas",
+    heroH1hi: "merecem atenção agora",
     heroH1post: ".",
     heroH2: "E a evidência por trás de cada oportunidade.",
     heroSub: "Transforme a evidência do mercado em decisões de conta mais claras.",
+    heroWedge: "Feito primeiro para equipes de vendas B2B, desenvolvimento de negócios e consultoria com uso intensivo de pesquisa.",
     heroValue: {
       label: "O que a LeadLens ajuda você a decidir",
       items: [
@@ -840,7 +843,7 @@ const COPY = {
     sEvidenceDiscipline: "Qualidade da evidência",
     sIntelligenceNotes: "Controle de qualidade",
     sLearningMeta: "Sinais de aprendizado",
-    footerCopy: "© 2026 LeadLens — Inteligência de Oportunidades de Conta para B2B. Analisamos sinais públicos, não dados pessoais.",
+    footerCopy: "© 2026 LeadLens — Inteligência de Oportunidades de Conta. Analisamos sinais públicos, não dados pessoais.",
     footerLinks: ["Privacidade", "Termos", "Política de Reembolso", "Contato"],
     footerContact: "Dúvidas? Fale conosco: operations@leadlensintel.com",
     expectationsTag: "O que esperar",
@@ -992,7 +995,7 @@ const COPY = {
     sSourceDiscovered: "Descoberto",
   },
   ja: {
-    announcement: "B2B向けAccount Opportunity Intelligence — 今どのアカウントに取り組むべきか、その理由も。",
+    announcement: "Account Opportunity Intelligence — 今どのアカウントに取り組むべきか、その理由も。",
     announcementCTA: "Opportunity Previewを取得 →",
     navPricing: "料金",
     navSignIn: "ログイン",
@@ -1004,12 +1007,13 @@ const COPY = {
     navFaq: "FAQ",
     heroCuriosity: "市場は変化します。",
     heroCuriosityEmph: "優先順位も変えるべきです。",
-    heroBadge: "アカウント機会インテリジェンス · B2B",
-    heroH1pre: "今週コンタクトする価値のある",
-    heroH1hi: "B2Bアカウントを見つけましょう",
+    heroBadge: "アカウント機会インテリジェンス",
+    heroH1pre: "今、注目すべき",
+    heroH1hi: "アカウントを見つけましょう",
     heroH1post: "。",
     heroH2: "そして、各機会の裏付けとなる根拠を。",
     heroSub: "市場のエビデンスを、より明確なアカウントの意思決定へ。",
+    heroWedge: "リサーチ集約型のB2B営業・事業開発・アドバイザリーチームのために、まず設計。",
     heroValue: {
       label: "LeadLensが意思決定を支援すること",
       items: [
@@ -1166,7 +1170,7 @@ const COPY = {
     sEvidenceDiscipline: "エビデンス品質",
     sIntelligenceNotes: "品質チェック",
     sLearningMeta: "学習シグナル",
-    footerCopy: "© 2026 LeadLens — B2B向けアカウント機会インテリジェンス。公開シグナルを分析します。個人データは使用しません。",
+    footerCopy: "© 2026 LeadLens — アカウント機会インテリジェンス。公開シグナルを分析します。個人データは使用しません。",
     footerLinks: ["プライバシー", "利用規約", "返金ポリシー", "お問い合わせ"],
     footerContact: "ご質問は: operations@leadlensintel.com",
     expectationsTag: "期待できること",
@@ -1972,8 +1976,16 @@ export default function DemoPipelinePage() {
               <p className="ll-hero-h2" style={{ fontSize: "clamp(1.25rem,2.5vw,1.75rem)", fontWeight: 700, color: "#334155", marginBottom: "1.25rem", letterSpacing: "-.02em", lineHeight: 1.2 }}>
                 {copy.heroH2}
               </p>
-              <p className="ll-hero-sub" style={{ fontSize: "1.1rem", color: "#475569", marginBottom: "2.25rem", lineHeight: 1.7, maxWidth: "34rem" }}>
+              <p className="ll-hero-sub" style={{ fontSize: "1.1rem", color: "#475569", marginBottom: "1rem", lineHeight: 1.7, maxWidth: "34rem" }}>
                 {copy.heroSub}
+              </p>
+              {/* Launch wedge (§3): B2B is an important launch context, not the
+                  category. Exactly one explicit, restrained reference to the sales /
+                  BD / advisory audience LeadLens is built first for — so a founder or
+                  B2B seller still recognizes themselves without the category being
+                  defined by them. */}
+              <p className="ll-hero-wedge" style={{ fontSize: ".82rem", color: "#64748b", margin: "0 0 2rem", lineHeight: 1.5, maxWidth: "32rem", fontWeight: 500 }}>
+                {copy.heroWedge}
               </p>
               <div className="ll-hero-cta-row" style={{ display: "flex", gap: ".875rem", flexWrap: "wrap" as const, marginBottom: ".55rem" }}>
                 <Btn lg onClick={() => goToForm("standard", "hero")}>{copy.heroCTA}</Btn>
@@ -2464,7 +2476,7 @@ export default function DemoPipelinePage() {
                 <FormField label={lang === "es" ? "Objetivo de la campaña" : "Campaign objective"} value={tierExtras.campaign_objective ?? ""} onChange={v => setTierExtras(t => ({ ...t, campaign_objective: v }))} placeholder={lang === "es" ? "¿Qué quieres lograr con estas cuentas?" : "What do you want these accounts for?"} />
                 <FormField label={lang === "es" ? "Restricciones o exclusiones" : "Restrictions or exclusions"} value={tierExtras.restrictions ?? ""} onChange={v => setTierExtras(t => ({ ...t, restrictions: v }))} placeholder={lang === "es" ? "Industrias, competidores o cuentas a excluir" : "Industries, competitors or accounts to exclude"} />
                 {(plan === "standard" || plan === "pro") && (<>
-                  <FormField label={lang === "es" ? "Capacidad comercial" : "Sales capacity"} value={tierExtras.sales_capacity ?? ""} onChange={v => setTierExtras(t => ({ ...t, sales_capacity: v }))} placeholder={lang === "es" ? "¿Cuántas cuentas puede trabajar tu equipo a la vez?" : "How many accounts can your team work at once?"} />
+                  <FormField label={lang === "es" ? "Capacidad comercial" : "Commercial capacity"} value={tierExtras.sales_capacity ?? ""} onChange={v => setTierExtras(t => ({ ...t, sales_capacity: v }))} placeholder={lang === "es" ? "¿Cuántas cuentas puede trabajar tu equipo a la vez?" : "How many accounts can your team work at once?"} />
                   <FormField label={lang === "es" ? "Preferencias de priorización" : "Prioritization preferences"} value={tierExtras.prioritization_preferences ?? ""} onChange={v => setTierExtras(t => ({ ...t, prioritization_preferences: v }))} placeholder={lang === "es" ? "¿Qué pesa más: fit, timing o tamaño?" : "What matters more: fit, timing or size?"} />
                 </>)}
                 {plan === "pro" && (<>

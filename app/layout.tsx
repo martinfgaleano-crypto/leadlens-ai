@@ -7,9 +7,9 @@ const inter = Inter({ subsets: ["latin"] });
 // Canonical production domain. Env-driven so preview/prod resolve correctly;
 // fallback is the production domain (leadlensintel.com), NOT the Vercel URL.
 const APP_URL = (process.env.NEXT_PUBLIC_APP_URL || "https://leadlensintel.com").replace(/\/$/, "");
-const OG_TITLE = "LeadLens — Account Opportunity Intelligence for B2B";
+const OG_TITLE = "LeadLens — Account Opportunity Intelligence";
 const OG_DESC =
-  "Tell us your ideal customer. LeadLens tells you which B2B accounts to prioritize now, why they matter, and the public evidence behind each opportunity — account-level intelligence, not a contact list.";
+  "Tell us your commercial context. LeadLens tells you which accounts to prioritize now, why they matter, and the public evidence behind each opportunity — account-level intelligence, not a contact list.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
         url: `${APP_URL}/api/og`,
         width: 1200,
         height: 630,
-        alt: "LeadLens — Account Opportunity Intelligence for B2B",
+        alt: "LeadLens — Account Opportunity Intelligence",
       },
     ],
   },
