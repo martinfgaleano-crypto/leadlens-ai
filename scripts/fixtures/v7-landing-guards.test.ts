@@ -257,6 +257,9 @@ t("R5 core Account / Timing / Evidence positioning survives",
   /heroH2:\s*"And the evidence behind every opportunity\."/.test(src) && /heroSub:\s*"Turn market evidence into clearer account decisions\."/.test(src));
 t("R6 no generic AI hype language (AI-powered / supercharge / revolutionize / unlock)",
   !/AI-powered/i.test(src) && !/supercharge/i.test(src) && !/revolutioni[sz]e/i.test(src) && !/\bunlock\b/i.test(src));
+t("R7 wedge leads with the shared account-pursuit pattern + professional services, no B2C claim",
+  /heroWedge:\s*"[^"]*high-value accounts[^"]*professional services/.test(src) &&
+  !/heroWedge:\s*"[^"]*B2C/.test(src) && !/for B2B and B2C|for every business|for any company/i.test(src));
 
 console.log(`\n${passed}/${passed + failed} passed`);
 process.exit(failed ? 1 : 0);

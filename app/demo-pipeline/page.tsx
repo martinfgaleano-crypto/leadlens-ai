@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useId } from "react";
 import type { LeadLensReport, ProcessedLead, PlanType, QCStatus, OutputLanguage, MarketRegion } from "@/types";
 import { safeConversionPayload, type ConversionEvent, type ConversionMetadata } from "@/lib/analytics/conversion-events";
-import { interpretLandingInput, LANDING_INTERPRETATION_EXAMPLES, type LandingInterpretationProjection } from "@/lib/landing/landing-interpretation";
+import { requestInterpretation, type PublicInterpretation } from "@/lib/interpretation/interpret-client";
 import { NORTHSTAR_WHAT_CHANGED } from "@/lib/landing/fixtures/northstar-change";
 import { NORTHSTAR_EVIDENCE } from "@/lib/landing/fixtures/northstar-evidence";
 import { LANDING_COMPARISON, leadersOn, dimValue, type CompareDimension } from "@/lib/landing/fixtures/landing-comparison";
@@ -32,7 +32,7 @@ const COPY = {
     heroH1post: ".",
     heroH2: "And the evidence behind every opportunity.",
     heroSub: "Turn market evidence into clearer account decisions.",
-    heroWedge: "Built first for B2B sales, business-development and specialist consulting teams.",
+    heroWedge: "For teams pursuing high-value accounts, where timing and evidence decide who deserves attention — in B2B sales, business development and professional services.",
     heroValue: {
       label: "What LeadLens helps you decide",
       items: [
@@ -359,7 +359,7 @@ const COPY = {
     heroH1post: ".",
     heroH2: "Y la evidencia detrás de cada oportunidad.",
     heroSub: "Convierte la evidencia del mercado en decisiones de cuenta más claras.",
-    heroWedge: "Diseñado primero para equipos de ventas B2B, desarrollo de negocio y consultoría especializada.",
+    heroWedge: "Para equipos que persiguen cuentas de alto valor, donde el timing y la evidencia deciden a quién atender — en ventas B2B, desarrollo de negocio y servicios profesionales.",
     heroValue: {
       label: "Qué te ayuda a decidir LeadLens",
       items: [
@@ -686,7 +686,7 @@ const COPY = {
     heroH1post: ".",
     heroH2: "E a evidência por trás de cada oportunidade.",
     heroSub: "Transforme a evidência do mercado em decisões de conta mais claras.",
-    heroWedge: "Feito primeiro para equipes de vendas B2B, desenvolvimento de negócios e consultoria especializada.",
+    heroWedge: "Para equipes que buscam contas de alto valor, onde timing e evidência decidem quem merece atenção — em vendas B2B, desenvolvimento de negócios e serviços profissionais.",
     heroValue: {
       label: "O que a LeadLens ajuda você a decidir",
       items: [
@@ -1013,7 +1013,7 @@ const COPY = {
     heroH1post: "。",
     heroH2: "そして、各機会の裏付けとなる根拠を。",
     heroSub: "市場のエビデンスを、より明確なアカウントの意思決定へ。",
-    heroWedge: "B2B営業・事業開発・専門コンサルティングチームのために、まず設計。",
+    heroWedge: "タイミングとエビデンスが注目すべき相手を決める、高価値アカウントを追うチームのために — B2B営業・事業開発・プロフェッショナルサービス向け。",
     heroValue: {
       label: "LeadLensが意思決定を支援すること",
       items: [
@@ -1336,8 +1336,8 @@ const INTERPRETATION_COPY: Record<OutputLanguage, {
   deskEyebrow: string; deskLens: string; modeWhy: string; modeEvidence: string; modeCompare: string;
 }> = {
   en: {
-    eyebrow: "Company interpretation", title: "Tell LeadLens what you sell.", intro: "See how a short commercial description becomes a focused investigation brief — without running a search or inventing accounts.",
-    label: "Describe what you sell, who it is for and the market", placeholder: "We sell logistics software to manufacturers in Colombia.", action: "Interpret what matters", examples: "Try an example",
+    eyebrow: "Company interpretation", title: "Tell LeadLens what your business is trying to achieve.", intro: "Describe your business, your commercial objective and the organizations that matter. LeadLens turns it into a structured read of where attention is justified — no search runs, and no accounts are invented.",
+    label: "Describe your business, commercial objective and the organizations that matter", placeholder: "We provide supply-chain planning software to mid-sized manufacturers and want to identify companies where new facilities, acquisitions or operational expansion create a strong reason to engage.", action: "Interpret my context", examples: "Try an example",
     understood: "LeadLens interpretation", sells: "What you sell", relevant: "Who seems relevant", market: "Where", functions: "Potential commercial functions", potential: "Potential", watch: "What LeadLens would watch", clarify: "One detail would sharpen this", illustrative: "Illustrative interpretation · no market search has run",
     bridge: "See how this becomes an opportunity", canvasEyebrow: "Illustrative opportunity", canvasTitle: "From criteria to an account worth inspecting.", changedEyebrow: "What Changed", changedTitle: "A material change can alter the decision.", before: "Before", change: "Detected change", after: "After", timing: "Timing", why: "Why the decision changes", changeEvent: "Signed a regional distribution agreement", changeSource: "Illustrative company announcement", changeReason: "A recent, corroborated expansion strengthens the timing case; procurement ownership still needs validation.", narrativeDisclaimer: "Illustrative narrative · no live score or ranking was recalculated.", inspectBefore: "Inspect before", inspectAfter: "Inspect after",
     evEyebrow: "The evidence", evTitle: "Don't trust a score. See the reasoning.", evThesis: "Opportunity thesis", evClaim: "What the evidence supports", evDirect: "Direct", evCorroborating: "Corroborating", evContext: "Context", evWeakens: "What weakens the case", evValidate: "What to validate", evRead: "Evidence read", evReadNote: "No blended score — the read is exactly the evidence above.", evCorrob: "corroborated", evSources: "dated sources", evLatest: "latest",
@@ -1345,8 +1345,8 @@ const INTERPRETATION_COPY: Record<OutputLanguage, {
     deskEyebrow: "One decision, three ways", deskLens: "Inspect", modeWhy: "Why now", modeEvidence: "Evidence", modeCompare: "Why this one",
   },
   es: {
-    eyebrow: "Interpretación de empresa", title: "Cuéntale a LeadLens qué vendes.", intro: "Mira cómo una descripción comercial breve se convierte en un criterio de investigación enfocado, sin ejecutar una búsqueda ni inventar cuentas.",
-    label: "Describe qué vendes, para quién y en qué mercado", placeholder: "Vendemos software logístico a fabricantes en Colombia.", action: "Interpretar lo importante", examples: "Prueba un ejemplo",
+    eyebrow: "Interpretación de empresa", title: "Cuéntale a LeadLens qué busca lograr tu negocio.", intro: "Describe tu negocio, tu objetivo comercial y las organizaciones que importan. LeadLens lo convierte en una lectura estructurada de dónde se justifica la atención — sin ejecutar una búsqueda ni inventar cuentas.",
+    label: "Describe tu negocio, objetivo comercial y las organizaciones que importan", placeholder: "Ofrecemos software de planificación de cadena de suministro a fabricantes medianos y queremos identificar empresas donde nuevas plantas, adquisiciones o expansión operativa crean una razón fuerte para actuar.", action: "Interpretar mi contexto", examples: "Prueba un ejemplo",
     understood: "Interpretación de LeadLens", sells: "Qué vendes", relevant: "Quién parece relevante", market: "Dónde", functions: "Funciones comerciales potenciales", potential: "Posible", watch: "Qué investigaría LeadLens", clarify: "Un detalle mejoraría la precisión", illustrative: "Interpretación ilustrativa · no se ejecutó una búsqueda de mercado",
     bridge: "Ver cómo se convierte en una oportunidad", canvasEyebrow: "Oportunidad ilustrativa", canvasTitle: "Del criterio a una cuenta que merece revisión.", changedEyebrow: "Qué cambió", changedTitle: "Un cambio material puede cambiar la decisión.", before: "Antes", change: "Cambio detectado", after: "Después", timing: "Timing", why: "Por qué cambia la decisión", changeEvent: "Firmó un acuerdo de distribución regional", changeSource: "Anuncio corporativo ilustrativo", changeReason: "Una expansión reciente y corroborada fortalece el timing; todavía debe validarse quién controla las compras.", narrativeDisclaimer: "Narrativa ilustrativa · no se recalculó ningún score ni ranking en vivo.", inspectBefore: "Ver antes", inspectAfter: "Ver después",
     evEyebrow: "La evidencia", evTitle: "No confíes en un score. Mira el razonamiento.", evThesis: "Tesis de oportunidad", evClaim: "Lo que respalda la evidencia", evDirect: "Directa", evCorroborating: "Corroborante", evContext: "Contexto", evWeakens: "Qué debilita el caso", evValidate: "Qué validar", evRead: "Lectura de evidencia", evReadNote: "Sin score combinado — la lectura es exactamente la evidencia de arriba.", evCorrob: "corroborado", evSources: "fuentes fechadas", evLatest: "más reciente",
@@ -1354,8 +1354,8 @@ const INTERPRETATION_COPY: Record<OutputLanguage, {
     deskEyebrow: "Una decisión, tres ángulos", deskLens: "Inspeccionar", modeWhy: "Por qué ahora", modeEvidence: "Evidencia", modeCompare: "Por qué esta",
   },
   pt: {
-    eyebrow: "Interpretação da empresa", title: "Conte à LeadLens o que você vende.", intro: "Veja como uma descrição comercial curta se transforma em um critério de investigação focado, sem executar buscas nem inventar contas.",
-    label: "Descreva o que vende, para quem e em qual mercado", placeholder: "Vendemos software de logística para fabricantes na Colômbia.", action: "Interpretar o que importa", examples: "Teste um exemplo",
+    eyebrow: "Interpretação da empresa", title: "Diga à LeadLens o que o seu negócio quer alcançar.", intro: "Descreva seu negócio, seu objetivo comercial e as organizações que importam. A LeadLens transforma isso em uma leitura estruturada de onde a atenção se justifica — sem executar buscas nem inventar contas.",
+    label: "Descreva seu negócio, objetivo comercial e as organizações que importam", placeholder: "Oferecemos software de planejamento de cadeia de suprimentos para fabricantes de médio porte e queremos identificar empresas onde novas fábricas, aquisições ou expansão operacional criam um motivo forte para agir.", action: "Interpretar meu contexto", examples: "Teste um exemplo",
     understood: "Interpretação LeadLens", sells: "O que você vende", relevant: "Quem parece relevante", market: "Onde", functions: "Funções comerciais potenciais", potential: "Possível", watch: "O que a LeadLens observaria", clarify: "Um detalhe aumentaria a precisão", illustrative: "Interpretação ilustrativa · nenhuma busca de mercado foi executada",
     bridge: "Ver como isso vira uma oportunidade", canvasEyebrow: "Oportunidade ilustrativa", canvasTitle: "Do critério a uma conta que merece análise.", changedEyebrow: "O que mudou", changedTitle: "Uma mudança material pode alterar a decisão.", before: "Antes", change: "Mudança detectada", after: "Depois", timing: "Timing", why: "Por que a decisão muda", changeEvent: "Assinou um acordo regional de distribuição", changeSource: "Comunicado corporativo ilustrativo", changeReason: "Uma expansão recente e corroborada fortalece o timing; a responsabilidade de compras ainda precisa ser validada.", narrativeDisclaimer: "Narrativa ilustrativa · nenhum score ou ranking ao vivo foi recalculado.", inspectBefore: "Ver antes", inspectAfter: "Ver depois",
     evEyebrow: "A evidência", evTitle: "Não confie num score. Veja o raciocínio.", evThesis: "Tese de oportunidade", evClaim: "O que a evidência sustenta", evDirect: "Direta", evCorroborating: "Corroborante", evContext: "Contexto", evWeakens: "O que enfraquece o caso", evValidate: "O que validar", evRead: "Leitura da evidência", evReadNote: "Sem score combinado — a leitura é exatamente a evidência acima.", evCorrob: "corroborado", evSources: "fontes datadas", evLatest: "mais recente",
@@ -1363,8 +1363,8 @@ const INTERPRETATION_COPY: Record<OutputLanguage, {
     deskEyebrow: "Uma decisão, três ângulos", deskLens: "Inspecionar", modeWhy: "Por que agora", modeEvidence: "Evidência", modeCompare: "Por que esta",
   },
   ja: {
-    eyebrow: "企業コンテキストの解釈", title: "何を販売しているか教えてください。", intro: "短い事業説明が、検索や企業の捏造なしに、焦点を絞った調査基準へ変わる様子を確認できます。",
-    label: "商品、対象企業、市場を説明してください", placeholder: "コロンビアの製造業向けに物流ソフトウェアを販売しています。", action: "重要点を解釈", examples: "例を試す",
+    eyebrow: "企業コンテキストの解釈", title: "ビジネスで達成したいことをLeadLensに伝えてください。", intro: "ビジネス、商業目標、そして重要な組織を説明してください。LeadLensがどこに注目すべきかを構造化して読み解きます — 検索は実行されず、アカウントを捏造することもありません。",
+    label: "ビジネス、商業目標、重要な組織を説明してください", placeholder: "中堅製造業向けにサプライチェーン計画ソフトウェアを提供しており、新拠点・買収・事業拡大が関与の強い理由となる企業を特定したいと考えています。", action: "コンテキストを解釈", examples: "例を試す",
     understood: "LeadLens の解釈", sells: "販売するもの", relevant: "関連性が高そうな企業", market: "市場", functions: "想定される業務部門", potential: "想定", watch: "LeadLens が注視する変化", clarify: "もう1点あると精度が上がります", illustrative: "説明用の解釈です · 市場検索は実行されていません",
     bridge: "機会への変化を見る", canvasEyebrow: "説明用の機会", canvasTitle: "調査基準から、確認すべき企業へ。", changedEyebrow: "変化したこと", changedTitle: "重要な変化は判断を変えることがあります。", before: "前", change: "検出された変化", after: "後", timing: "タイミング", why: "判断が変わる理由", changeEvent: "地域配送契約を締結", changeSource: "説明用の企業発表", changeReason: "最近の裏付けられた拡大によりタイミングが強まりました。調達責任者の確認はまだ必要です。", narrativeDisclaimer: "説明用のナラティブです · ライブのスコアや順位は再計算されていません。", inspectBefore: "変化前を見る", inspectAfter: "変化後を見る",
     evEyebrow: "根拠", evTitle: "スコアを信じず、推論を確認する。", evThesis: "機会の仮説", evClaim: "根拠が支えること", evDirect: "直接", evCorroborating: "裏付け", evContext: "文脈", evWeakens: "この判断を弱める点", evValidate: "検証すべきこと", evRead: "根拠の読み取り", evReadNote: "合成スコアなし — 読み取りは上記の根拠そのものです。", evCorrob: "裏付けあり", evSources: "日付付きの情報源", evLatest: "最新",
@@ -3306,36 +3306,89 @@ function FTE({ fit, timing, evidence }: { fit: string; timing: string; evidence:
   );
 }
 
-const INTERPRETATION_EXAMPLES_BY_LANG: Record<OutputLanguage, readonly string[]> = {
-  en: LANDING_INTERPRETATION_EXAMPLES,
-  es: ["Vendemos ciberseguridad a bancos en América Latina.", "Vendemos software logístico a fabricantes en Colombia.", "Vendemos empaques industriales a fabricantes de alimentos en Colombia."],
-  pt: ["Vendemos cibersegurança para bancos na América Latina.", "Vendemos software de logística para fabricantes na Colômbia.", "Vendemos embalagem industrial para fabricantes de alimentos na Colômbia."],
-  ja: ["ラテンアメリカの銀行向けにサイバーセキュリティを販売しています。", "コロンビアの製造業向けに物流ソフトウェアを販売しています。", "食品メーカー向けに産業用包装を販売しています。"],
+// Internationally-neutral labeled examples (§14): compact chips (short label)
+// that fill a full, reasoning-rich description. No country hardcoded.
+type InterpretExample = { label: string; text: string };
+const INTERPRET_EXAMPLES: Record<OutputLanguage, InterpretExample[]> = {
+  en: [
+    { label: "Supply-chain software", text: "We provide supply-chain planning software to mid-sized manufacturers and want to identify companies where new facilities, acquisitions or operational expansion create a strong reason to engage." },
+    { label: "Market-entry advisory", text: "We advise companies entering new international markets and want to find organizations whose recent expansion creates a need for market-entry, regulatory and operating support." },
+    { label: "Distribution partners", text: "We provide enterprise software and are looking for strategic distribution partners with strong regional reach and complementary customer relationships." },
+  ],
+  es: [
+    { label: "Software de cadena de suministro", text: "Ofrecemos software de planificación de cadena de suministro a fabricantes medianos y queremos identificar empresas donde nuevas plantas, adquisiciones o expansión operativa crean una razón fuerte para actuar." },
+    { label: "Asesoría de entrada a mercados", text: "Asesoramos a empresas que entran en nuevos mercados internacionales y queremos encontrar organizaciones cuya expansión reciente crea necesidad de apoyo de entrada, regulatorio y operativo." },
+    { label: "Socios de distribución", text: "Ofrecemos software empresarial y buscamos socios de distribución estratégicos con fuerte alcance regional y relaciones de clientes complementarias." },
+  ],
+  pt: [
+    { label: "Software de cadeia de suprimentos", text: "Oferecemos software de planejamento de cadeia de suprimentos para fabricantes de médio porte e queremos identificar empresas onde novas fábricas, aquisições ou expansão operacional criam um motivo forte para agir." },
+    { label: "Consultoria de entrada em mercados", text: "Assessoramos empresas que entram em novos mercados internacionais e queremos encontrar organizações cuja expansão recente cria necessidade de apoio de entrada, regulatório e operacional." },
+    { label: "Parceiros de distribuição", text: "Oferecemos software empresarial e buscamos parceiros de distribuição estratégicos com forte alcance regional e relacionamentos de clientes complementares." },
+  ],
+  ja: [
+    { label: "サプライチェーンソフト", text: "中堅製造業向けにサプライチェーン計画ソフトウェアを提供しており、新拠点・買収・事業拡大が関与の強い理由となる企業を特定したいと考えています。" },
+    { label: "市場参入アドバイザリー", text: "新しい国際市場に参入する企業を支援しており、最近の拡大により参入・規制・オペレーション支援の必要が生じている組織を見つけたいと考えています。" },
+    { label: "販売パートナー", text: "エンタープライズソフトウェアを提供しており、強い地域リーチと補完的な顧客関係を持つ戦略的な販売パートナーを探しています。" },
+  ],
+};
+
+// Stage A result UI copy (real interpretation states, §10/§11/§25).
+const SA_COPY: Record<OutputLanguage, {
+  told: string; inferred: string; objective: string; conditions: string; exclusions: string; none: string;
+  interpreting: string; basedOn: string; noResearch: string; noResearchUnsupported: string;
+  unsupportedTitle: string; retry: string; errorMsg: string; clarifyAction: string;
+}> = {
+  en: { told: "What you told us", inferred: "What LeadLens inferred", objective: "Commercial objective", conditions: "Opportunity conditions", exclusions: "Excluded", none: "—", interpreting: "Interpreting your context…", basedOn: "Your input", noResearch: "Based on what you told us. No external account research has run yet.", noResearchUnsupported: "Based on what you told us. LeadLens does not run this kind of search.", unsupportedTitle: "Outside LeadLens's scope", retry: "Try again", errorMsg: "Interpretation is temporarily unavailable. Please try again.", clarifyAction: "Refine" },
+  es: { told: "Lo que nos dijiste", inferred: "Lo que LeadLens infirió", objective: "Objetivo comercial", conditions: "Condiciones de oportunidad", exclusions: "Excluido", none: "—", interpreting: "Interpretando tu contexto…", basedOn: "Tu texto", noResearch: "Basado en lo que nos dijiste. Aún no se ha hecho investigación externa de cuentas.", noResearchUnsupported: "Basado en lo que nos dijiste. LeadLens no realiza este tipo de búsqueda.", unsupportedTitle: "Fuera del alcance de LeadLens", retry: "Reintentar", errorMsg: "La interpretación no está disponible por ahora. Inténtalo de nuevo.", clarifyAction: "Afinar" },
+  pt: { told: "O que você nos disse", inferred: "O que a LeadLens inferiu", objective: "Objetivo comercial", conditions: "Condições de oportunidade", exclusions: "Excluído", none: "—", interpreting: "Interpretando seu contexto…", basedOn: "Seu texto", noResearch: "Com base no que você nos disse. Nenhuma pesquisa externa de contas foi feita ainda.", noResearchUnsupported: "Com base no que você nos disse. A LeadLens não faz esse tipo de busca.", unsupportedTitle: "Fora do escopo da LeadLens", retry: "Tentar de novo", errorMsg: "A interpretação está indisponível no momento. Tente novamente.", clarifyAction: "Refinar" },
+  ja: { told: "入力された内容", inferred: "LeadLensの解釈", objective: "商業目標", conditions: "機会条件", exclusions: "除外", none: "—", interpreting: "コンテキストを解釈しています…", basedOn: "入力", noResearch: "入力内容に基づいています。外部のアカウント調査はまだ実行されていません。", noResearchUnsupported: "入力内容に基づいています。LeadLensはこの種の検索は行いません。", unsupportedTitle: "LeadLensの対象外", retry: "再試行", errorMsg: "解釈は現在利用できません。もう一度お試しください。", clarifyAction: "調整" },
+};
+
+// Real Stage A: the browser sends free text to /api/interpret and renders the
+// validated public projection. Different inputs → genuinely different reads.
+// No fixture is presented as a personalized answer; no external research is
+// implied. The clarification round re-interprets the original text + the answer.
+const SAMPLE_TRANSITION: Record<OutputLanguage, string> = {
+  en: "A sample account — not generated from your description. This is how LeadLens evaluates an opportunity once research runs.",
+  es: "Una cuenta de ejemplo — no generada a partir de tu descripción. Así evalúa LeadLens una oportunidad cuando se ejecuta la investigación.",
+  pt: "Uma conta de exemplo — não gerada a partir da sua descrição. É assim que a LeadLens avalia uma oportunidade quando a pesquisa é executada.",
+  ja: "サンプルのアカウントです（入力から生成されたものではありません）。調査が実行されると、LeadLensはこのように機会を評価します。",
 };
 
 function CompanyInterpretationExperience({ lang, onBridge }: { lang: OutputLanguage; onBridge: () => void }) {
   const ui = INTERPRETATION_COPY[lang];
-  const examples = INTERPRETATION_EXAMPLES_BY_LANG[lang];
-  const [input, setInput] = useState(examples[1]);
-  const [projection, setProjection] = useState<LandingInterpretationProjection>(() => interpretLandingInput(examples[1], lang));
+  const sa = SA_COPY[lang];
+  const examples = INTERPRET_EXAMPLES[lang];
+  const [input, setInput] = useState(examples[0].text);
   const [clarification, setClarification] = useState("");
+  const [status, setStatus] = useState<"loading" | "done" | "error">("loading");
+  const [result, setResult] = useState<PublicInterpretation | null>(null);
   const inputId = useId();
   const clarificationId = useId();
+  const abortRef = useRef<AbortController | null>(null);
 
-  useEffect(() => {
-    setProjection(interpretLandingInput(input, lang));
-  }, [lang]); // eslint-disable-line react-hooks/exhaustive-deps
+  const run = (text: string, clarify?: string) => {
+    abortRef.current?.abort();
+    const ac = new AbortController();
+    abortRef.current = ac;
+    setStatus("loading");
+    requestInterpretation(text, clarify, lang, ac.signal).then((r) => {
+      if (ac.signal.aborted) return;
+      if (r.ok) { setResult(r.interpretation); setStatus("done"); }
+      else { setStatus("error"); }
+    });
+  };
 
-  const interpret = (nextInput = input) => {
-    const combined = clarification.trim() ? `${nextInput}. ${clarification.trim()}` : nextInput;
-    setProjection(interpretLandingInput(combined, lang));
-  };
-  const useExample = (example: string) => {
-    setInput(example);
-    setClarification("");
-    setProjection(interpretLandingInput(example, lang));
-  };
-  const hasStructuredRead = projection.scenarioKey !== null;
+  // Auto-interpret the default example on mount and when the language changes.
+  useEffect(() => { run(input, undefined); return () => abortRef.current?.abort(); }, [lang]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const onInterpret = () => { setClarification(""); run(input); };
+  const onClarify = () => run(input, clarification);
+  const useExample = (text: string) => { setInput(text); setClarification(""); run(text); };
+
+  const r = result;
+  const rowsWrap: React.CSSProperties = { display: "flex", flexDirection: "column", gap: ".4rem" };
+  const bullet = (text: string, i: number) => <div key={i} style={{ display: "flex", gap: ".45rem", alignItems: "flex-start", color: "#0f172a", fontSize: ".76rem", fontWeight: 650, lineHeight: 1.35 }}><span aria-hidden style={{ width: 6, height: 6, borderRadius: "50%", background: "#0ea5e9", flexShrink: 0, marginTop: ".32rem" }} />{text}</div>;
 
   return (
     <section id="company-interpretation" className="ll-section ll-interpret" style={{ ...sectionStyle, background: "#fff", borderTop: "1px solid #e2e8f0" }}>
@@ -3343,58 +3396,78 @@ function CompanyInterpretationExperience({ lang, onBridge }: { lang: OutputLangu
         <div className="ll-interpret-grid">
           <div>
             <Tag>{ui.eyebrow}</Tag>
-            <h2 style={{ ...sectionTitleStyle, maxWidth: "28rem" }}>{ui.title}</h2>
+            <h2 style={{ ...sectionTitleStyle, maxWidth: "30rem" }}>{ui.title}</h2>
             <p style={{ color: "#64748b", fontSize: ".96rem", lineHeight: 1.65, maxWidth: "31rem", margin: "0 0 1.4rem" }}>{ui.intro}</p>
             <label htmlFor={inputId} style={{ ...labelStyle, color: "#0f172a" }}>{ui.label}</label>
-            <textarea id={inputId} value={input} onChange={(event) => setInput(event.target.value)} rows={4} maxLength={280} placeholder={ui.placeholder}
+            <textarea id={inputId} value={input} onChange={(event) => setInput(event.target.value)} onKeyDown={(e) => { if ((e.metaKey || e.ctrlKey) && e.key === "Enter") onInterpret(); }} rows={4} maxLength={600} placeholder={ui.placeholder}
               style={{ ...inputStyle, minHeight: "7.5rem", padding: ".9rem 1rem", fontSize: "1rem", lineHeight: 1.55, boxShadow: "inset 0 1px 2px rgba(15,23,42,.03)" }} />
             <div style={{ display: "flex", justifyContent: "space-between", gap: ".75rem", alignItems: "center", flexWrap: "wrap", marginTop: ".75rem" }}>
-              <button type="button" onClick={() => interpret()} style={{ minHeight: 44, border: 0, borderRadius: ".65rem", padding: ".65rem 1rem", background: "#0ea5e9", color: "#fff", fontWeight: 700, fontFamily: "inherit", cursor: "pointer" }}>{ui.action} <span aria-hidden>→</span></button>
-              <span style={{ color: "#94a3b8", fontSize: ".72rem" }}>{input.length}/280</span>
+              <button type="button" onClick={onInterpret} disabled={status === "loading"} style={{ minHeight: 44, border: 0, borderRadius: ".65rem", padding: ".65rem 1rem", background: status === "loading" ? "#7dd3fc" : "#0ea5e9", color: "#fff", fontWeight: 700, fontFamily: "inherit", cursor: status === "loading" ? "default" : "pointer" }}>{ui.action} <span aria-hidden>→</span></button>
+              <span style={{ color: "#94a3b8", fontSize: ".72rem" }}>{input.length}/600</span>
             </div>
             <div style={{ marginTop: "1.2rem" }}>
               <div style={{ fontSize: ".68rem", fontWeight: 800, color: "#64748b", letterSpacing: ".06em", textTransform: "uppercase", marginBottom: ".55rem" }}>{ui.examples}</div>
               <div style={{ display: "flex", gap: ".5rem", flexWrap: "wrap" }}>
-                {examples.map((example, index) => <button key={example} type="button" onClick={() => useExample(example)} aria-label={`${ui.examples} ${index + 1}: ${example}`}
-                  style={{ minHeight: 44, border: "1px solid #dbe4ee", borderRadius: 999, background: "#f8fafc", color: "#475569", padding: ".45rem .8rem", fontFamily: "inherit", fontSize: ".76rem", cursor: "pointer", maxWidth: "100%" }}>{index + 1}. {example}</button>)}
+                {examples.map((ex) => <button key={ex.label} type="button" onClick={() => useExample(ex.text)} aria-label={`${ui.examples}: ${ex.text}`}
+                  style={{ minHeight: 44, border: "1px solid #dbe4ee", borderRadius: 999, background: "#f8fafc", color: "#475569", padding: ".45rem .8rem", fontFamily: "inherit", fontSize: ".76rem", cursor: "pointer", maxWidth: "100%" }}>{ex.label}</button>)}
               </div>
             </div>
           </div>
 
           <div aria-live="polite" aria-atomic="true" style={{ borderTop: "3px solid #0f172a", borderRadius: ".9rem", background: "linear-gradient(180deg,#f8fbff,#fff 42%)", boxShadow: "0 18px 46px rgba(15,23,42,.09)", borderRight: "1px solid #e6ebf1", borderBottom: "1px solid #e6ebf1", borderLeft: "1px solid #e6ebf1", overflow: "hidden" }}>
             <div style={{ padding: "1rem 1.15rem", borderBottom: "1px solid #e8edf3", display: "flex", justifyContent: "space-between", gap: ".75rem", alignItems: "center" }}>
-              <div><div style={{ fontSize: ".62rem", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase", color: "#0284c7" }}>{ui.understood}</div><div style={{ fontSize: ".86rem", fontWeight: 700, color: "#0f172a", marginTop: ".2rem" }}>{projection.inputSummary || "—"}</div></div>
-              <span style={{ fontSize: ".58rem", color: "#0369a1", background: "#f0f9ff", border: "1px solid #e0f2fe", borderRadius: 999, padding: ".2rem .55rem", fontWeight: 700, flexShrink: 0 }}>DEMO</span>
+              <div style={{ minWidth: 0 }}><div style={{ fontSize: ".62rem", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase", color: "#0284c7" }}>{ui.understood}</div><div style={{ fontSize: ".86rem", fontWeight: 700, color: "#0f172a", marginTop: ".2rem", overflow: "hidden", textOverflow: "ellipsis", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" as const }}>{r?.told.summary || input || "—"}</div></div>
+              <span style={{ fontSize: ".58rem", color: "#0369a1", background: "#f0f9ff", border: "1px solid #e0f2fe", borderRadius: 999, padding: ".2rem .55rem", fontWeight: 700, flexShrink: 0 }}>{sa.basedOn}</span>
             </div>
-            <div style={{ padding: "1.15rem" }}>
-              {hasStructuredRead ? <>
+            <div style={{ padding: "1.15rem", minHeight: "9rem" }}>
+              {status === "loading" && <div style={{ padding: "1.6rem .2rem", color: "#64748b", fontSize: ".88rem", display: "flex", alignItems: "center", gap: ".6rem" }}><span className="ll-pulse-dot" aria-hidden style={{ width: 9, height: 9, borderRadius: "50%", background: "#0ea5e9", display: "inline-block" }} />{sa.interpreting}</div>}
+              {status === "error" && <div style={{ padding: ".4rem .2rem" }}><div style={{ color: "#0f172a", fontWeight: 650, marginBottom: ".7rem", lineHeight: 1.5 }}>{sa.errorMsg}</div><button type="button" onClick={onInterpret} style={{ minHeight: 44, border: 0, borderRadius: ".55rem", padding: ".55rem .95rem", background: "#0f172a", color: "#fff", fontWeight: 700, fontFamily: "inherit", cursor: "pointer" }}>{sa.retry}</button></div>}
+
+              {status === "done" && r && r.status === "unsupported_objective" && (
+                <div style={{ padding: ".9rem", borderLeft: "3px solid #64748b", background: "#f8fafc", borderRadius: "0 .6rem .6rem 0" }}>
+                  <div style={{ fontSize: ".7rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: ".05em", color: "#475569", marginBottom: ".4rem" }}>{sa.unsupportedTitle}</div>
+                  <div style={{ color: "#0f172a", fontWeight: 600, lineHeight: 1.5 }}>{r.unsupportedReason}</div>
+                </div>
+              )}
+
+              {status === "done" && r && r.status === "needs_clarification" && (
+                <div style={{ padding: ".9rem", borderLeft: "3px solid #d97706", background: "#fffbeb", borderRadius: "0 .6rem .6rem 0" }}>
+                  <label htmlFor={clarificationId} style={{ display: "block", color: "#92400e", fontSize: ".7rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: ".05em", marginBottom: ".4rem" }}>{ui.clarify}</label>
+                  <div style={{ color: "#0f172a", fontWeight: 700, marginBottom: ".65rem", lineHeight: 1.45 }}>{r.clarification.question}</div>
+                  <div style={{ display: "flex", gap: ".5rem", flexWrap: "wrap" }}>
+                    <input id={clarificationId} value={clarification} onChange={(e) => setClarification(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") onClarify(); }} style={{ ...inputStyle, flex: "1 1 12rem", minHeight: 44 }} />
+                    <button type="button" onClick={onClarify} style={{ minHeight: 44, border: 0, borderRadius: ".55rem", padding: ".55rem .85rem", background: "#0f172a", color: "#fff", fontWeight: 700, fontFamily: "inherit", cursor: "pointer" }}>{sa.clarifyAction}</button>
+                  </div>
+                </div>
+              )}
+
+              {status === "done" && r && r.status === "ready_for_confirmation" && (<>
                 <div className="ll-interpret-flow">
                   <div style={{ padding: ".9rem", background: "#fff", border: "1px solid #e6ebf1", borderRadius: ".7rem" }}>
-                    <InterpretationField label={ui.sells} value={projection.productCapability} />
-                    <InterpretationField label={ui.relevant} value={projection.targetAccountDescriptors.join(" · ")} />
-                    <InterpretationField label={ui.market} value={projection.commercialContext.regions.join(" · ") || projection.clarificationGaps[0]} last />
+                    <div style={{ fontSize: ".6rem", fontWeight: 800, letterSpacing: ".07em", textTransform: "uppercase", color: "#64748b", marginBottom: ".55rem" }}>{sa.told}</div>
+                    {r.told.offer && <InterpretationField label={ui.sells} value={r.told.offer} />}
+                    <InterpretationField label={ui.relevant} value={r.told.target.join(" · ") || sa.none} />
+                    <InterpretationField label={ui.market} value={r.told.geographies.join(" · ") || sa.none} />
+                    {r.told.exclusions.length > 0 && <InterpretationField label={sa.exclusions} value={r.told.exclusions.join(" · ")} last />}
                   </div>
                   <div className="ll-interpret-arrow" aria-hidden>→</div>
                   <div style={{ padding: ".9rem", background: "#f0f9ff", border: "1px solid #d8eefc", borderRadius: ".7rem" }}>
-                    <div style={{ fontSize: ".6rem", fontWeight: 800, letterSpacing: ".07em", textTransform: "uppercase", color: "#0284c7", marginBottom: ".65rem" }}>{ui.watch}</div>
-                    <div className="ll-watch-list">{projection.signalFamilies.map((signal, index) => <div key={signal} className="ll-reveal" style={{ display: "flex", gap: ".45rem", alignItems: "flex-start", color: "#0f172a", fontSize: ".76rem", fontWeight: 650, lineHeight: 1.35, transitionDelay: `${index * .06}s` }}><span aria-hidden style={{ width: 6, height: 6, borderRadius: "50%", background: "#0ea5e9", flexShrink: 0, marginTop: ".32rem" }} />{signal}</div>)}</div>
+                    <div style={{ fontSize: ".6rem", fontWeight: 800, letterSpacing: ".07em", textTransform: "uppercase", color: "#0284c7", marginBottom: ".55rem" }}>{sa.inferred}</div>
+                    {r.inferred.objectiveLabel && <div style={{ fontSize: ".82rem", fontWeight: 750, color: "#0f172a", marginBottom: ".6rem", lineHeight: 1.3 }}>{r.inferred.objectiveLabel}{r.inferred.relationship ? <span style={{ color: "#64748b", fontWeight: 600 }}> · {r.inferred.relationship}</span> : null}</div>}
+                    <div style={{ fontSize: ".6rem", fontWeight: 800, letterSpacing: ".06em", textTransform: "uppercase", color: "#0284c7", marginBottom: ".4rem" }}>{ui.watch}</div>
+                    <div style={rowsWrap}>{r.inferred.signalsToWatch.length ? r.inferred.signalsToWatch.map(bullet) : <span style={{ color: "#94a3b8", fontSize: ".76rem" }}>{sa.none}</span>}</div>
                   </div>
                 </div>
-                <div style={{ display: "flex", gap: ".7rem", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", marginTop: ".9rem", paddingTop: ".8rem", borderTop: "1px solid #eef2f7" }}>
-                  <div><div style={{ fontSize: ".58rem", fontWeight: 800, color: "#64748b", textTransform: "uppercase", letterSpacing: ".06em" }}>{ui.functions}</div><div style={{ color: "#475569", fontSize: ".72rem", marginTop: ".15rem" }}>{projection.buyerHypotheses.map((item) => `${ui.potential}: ${item}`).join(" · ")}</div></div>
+                <div style={{ display: "flex", gap: ".7rem", justifyContent: "flex-end", alignItems: "center", flexWrap: "wrap", marginTop: ".9rem", paddingTop: ".8rem", borderTop: "1px solid #eef2f7" }}>
                   <button type="button" onClick={onBridge} style={{ minHeight: 44, border: 0, background: "transparent", color: "#0284c7", fontWeight: 750, fontFamily: "inherit", cursor: "pointer", padding: ".5rem 0" }}>{ui.bridge} <span aria-hidden>↗</span></button>
                 </div>
-              </> : <div style={{ padding: ".9rem", borderLeft: "3px solid #d97706", background: "#fffbeb", borderRadius: "0 .6rem .6rem 0" }}>
-                <label htmlFor={clarificationId} style={{ display: "block", color: "#92400e", fontSize: ".7rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: ".05em", marginBottom: ".4rem" }}>{ui.clarify}</label>
-                <div style={{ color: "#0f172a", fontWeight: 700, marginBottom: ".65rem" }}>{projection.clarificationGaps[0]}</div>
-                <div style={{ display: "flex", gap: ".5rem", flexWrap: "wrap" }}><input id={clarificationId} value={clarification} onChange={(event) => setClarification(event.target.value)} style={{ ...inputStyle, flex: "1 1 12rem", minHeight: 44 }} /><button type="button" onClick={() => interpret()} style={{ minHeight: 44, border: 0, borderRadius: ".55rem", padding: ".55rem .85rem", background: "#0f172a", color: "#fff", fontWeight: 700, fontFamily: "inherit", cursor: "pointer" }}>{ui.action}</button></div>
-              </div>}
+              </>)}
             </div>
-            <div style={{ borderTop: "1px solid #eef2f7", padding: ".55rem 1.15rem", color: "#94a3b8", fontSize: ".62rem" }}>{ui.illustrative}</div>
+            <div style={{ borderTop: "1px solid #eef2f7", padding: ".55rem 1.15rem", color: "#94a3b8", fontSize: ".62rem" }}>{r && r.status === "unsupported_objective" ? sa.noResearchUnsupported : sa.noResearch}</div>
           </div>
         </div>
         <div id="client-canvas-sample" tabIndex={-1} style={{ marginTop: "3.25rem", paddingTop: "2.5rem", borderTop: "1px solid #e2e8f0", outline: "none" }}>
-          <div style={{ marginBottom: "1.2rem" }}><div style={{ fontSize: ".68rem", color: "#0284c7", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase", marginBottom: ".35rem" }}>{ui.canvasEyebrow}</div><h3 style={{ fontSize: "clamp(1.4rem,3vw,1.85rem)", lineHeight: 1.2, letterSpacing: "-.02em", margin: 0 }}>{ui.canvasTitle}</h3></div>
+          <div style={{ marginBottom: "1.2rem" }}><div style={{ fontSize: ".68rem", color: "#0284c7", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase", marginBottom: ".35rem" }}>{ui.canvasEyebrow}</div><h3 style={{ fontSize: "clamp(1.4rem,3vw,1.85rem)", lineHeight: 1.2, letterSpacing: "-.02em", margin: 0 }}>{ui.canvasTitle}</h3><p style={{ color: "#94a3b8", fontSize: ".78rem", lineHeight: 1.5, margin: ".5rem 0 0", maxWidth: "34rem" }}>{SAMPLE_TRANSITION[lang]}</p></div>
           <ClientCanvasSample />
         </div>
         <DecisionDesk lang={lang} />
