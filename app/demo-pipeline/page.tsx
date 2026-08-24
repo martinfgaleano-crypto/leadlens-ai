@@ -3,6 +3,11 @@
 import { useState, useRef, useEffect, useId } from "react";
 import type { LeadLensReport, ProcessedLead, PlanType, QCStatus, OutputLanguage, MarketRegion } from "@/types";
 import { safeConversionPayload, type ConversionEvent, type ConversionMetadata } from "@/lib/analytics/conversion-events";
+import { interpretLandingInput, LANDING_INTERPRETATION_EXAMPLES, type LandingInterpretationProjection } from "@/lib/landing/landing-interpretation";
+import { NORTHSTAR_WHAT_CHANGED } from "@/lib/landing/fixtures/northstar-change";
+import { NORTHSTAR_EVIDENCE } from "@/lib/landing/fixtures/northstar-evidence";
+import type { EvidenceRelation } from "@/lib/deliverable/deliverable-view-model";
+import type { DecisionState, Strength } from "@/lib/deliverable/deliverable-view-model";
 
 // ─── Localization dictionary ──────────────────────────────────────────────────
 
@@ -1315,6 +1320,44 @@ const COPY = {
 
 type Copy = typeof COPY["en"];
 
+const INTERPRETATION_COPY: Record<OutputLanguage, {
+  eyebrow: string; title: string; intro: string; label: string; placeholder: string;
+  action: string; examples: string; understood: string; sells: string; relevant: string;
+  market: string; functions: string; potential: string; watch: string; clarify: string; illustrative: string;
+  bridge: string; canvasEyebrow: string; canvasTitle: string; changedEyebrow: string; changedTitle: string; before: string; change: string;
+  after: string; timing: string; why: string; changeEvent: string; changeSource: string; changeReason: string; narrativeDisclaimer: string; inspectBefore: string; inspectAfter: string;
+  evEyebrow: string; evTitle: string; evThesis: string; evClaim: string; evDirect: string; evCorroborating: string; evContext: string; evWeakens: string; evValidate: string; evRead: string; evReadNote: string; evCorrob: string; evSources: string; evLatest: string;
+}> = {
+  en: {
+    eyebrow: "Company interpretation", title: "Tell LeadLens what you sell.", intro: "See how a short commercial description becomes a focused investigation brief — without running a search or inventing accounts.",
+    label: "Describe what you sell, who it is for and the market", placeholder: "We sell logistics software to manufacturers in Colombia.", action: "Interpret what matters", examples: "Try an example",
+    understood: "LeadLens interpretation", sells: "What you sell", relevant: "Who seems relevant", market: "Where", functions: "Potential commercial functions", potential: "Potential", watch: "What LeadLens would watch", clarify: "One detail would sharpen this", illustrative: "Illustrative interpretation · no market search has run",
+    bridge: "See how this becomes an opportunity", canvasEyebrow: "Illustrative opportunity", canvasTitle: "From criteria to an account worth inspecting.", changedEyebrow: "What Changed", changedTitle: "A material change can alter the decision.", before: "Before", change: "Detected change", after: "After", timing: "Timing", why: "Why the decision changes", changeEvent: "Signed a regional distribution agreement", changeSource: "Illustrative company announcement", changeReason: "A recent, corroborated expansion strengthens the timing case; procurement ownership still needs validation.", narrativeDisclaimer: "Illustrative narrative · no live score or ranking was recalculated.", inspectBefore: "Inspect before", inspectAfter: "Inspect after",
+    evEyebrow: "The evidence", evTitle: "Don't trust a score. See the reasoning.", evThesis: "Opportunity thesis", evClaim: "What the evidence supports", evDirect: "Direct", evCorroborating: "Corroborating", evContext: "Context", evWeakens: "What weakens the case", evValidate: "What to validate", evRead: "Evidence read", evReadNote: "No blended score — the read is exactly the evidence above.", evCorrob: "corroborated", evSources: "dated sources", evLatest: "latest",
+  },
+  es: {
+    eyebrow: "Interpretación de empresa", title: "Cuéntale a LeadLens qué vendes.", intro: "Mira cómo una descripción comercial breve se convierte en un criterio de investigación enfocado, sin ejecutar una búsqueda ni inventar cuentas.",
+    label: "Describe qué vendes, para quién y en qué mercado", placeholder: "Vendemos software logístico a fabricantes en Colombia.", action: "Interpretar lo importante", examples: "Prueba un ejemplo",
+    understood: "Interpretación de LeadLens", sells: "Qué vendes", relevant: "Quién parece relevante", market: "Dónde", functions: "Funciones comerciales potenciales", potential: "Posible", watch: "Qué investigaría LeadLens", clarify: "Un detalle mejoraría la precisión", illustrative: "Interpretación ilustrativa · no se ejecutó una búsqueda de mercado",
+    bridge: "Ver cómo se convierte en una oportunidad", canvasEyebrow: "Oportunidad ilustrativa", canvasTitle: "Del criterio a una cuenta que merece revisión.", changedEyebrow: "Qué cambió", changedTitle: "Un cambio material puede cambiar la decisión.", before: "Antes", change: "Cambio detectado", after: "Después", timing: "Timing", why: "Por qué cambia la decisión", changeEvent: "Firmó un acuerdo de distribución regional", changeSource: "Anuncio corporativo ilustrativo", changeReason: "Una expansión reciente y corroborada fortalece el timing; todavía debe validarse quién controla las compras.", narrativeDisclaimer: "Narrativa ilustrativa · no se recalculó ningún score ni ranking en vivo.", inspectBefore: "Ver antes", inspectAfter: "Ver después",
+    evEyebrow: "La evidencia", evTitle: "No confíes en un score. Mira el razonamiento.", evThesis: "Tesis de oportunidad", evClaim: "Lo que respalda la evidencia", evDirect: "Directa", evCorroborating: "Corroborante", evContext: "Contexto", evWeakens: "Qué debilita el caso", evValidate: "Qué validar", evRead: "Lectura de evidencia", evReadNote: "Sin score combinado — la lectura es exactamente la evidencia de arriba.", evCorrob: "corroborado", evSources: "fuentes fechadas", evLatest: "más reciente",
+  },
+  pt: {
+    eyebrow: "Interpretação da empresa", title: "Conte à LeadLens o que você vende.", intro: "Veja como uma descrição comercial curta se transforma em um critério de investigação focado, sem executar buscas nem inventar contas.",
+    label: "Descreva o que vende, para quem e em qual mercado", placeholder: "Vendemos software de logística para fabricantes na Colômbia.", action: "Interpretar o que importa", examples: "Teste um exemplo",
+    understood: "Interpretação LeadLens", sells: "O que você vende", relevant: "Quem parece relevante", market: "Onde", functions: "Funções comerciais potenciais", potential: "Possível", watch: "O que a LeadLens observaria", clarify: "Um detalhe aumentaria a precisão", illustrative: "Interpretação ilustrativa · nenhuma busca de mercado foi executada",
+    bridge: "Ver como isso vira uma oportunidade", canvasEyebrow: "Oportunidade ilustrativa", canvasTitle: "Do critério a uma conta que merece análise.", changedEyebrow: "O que mudou", changedTitle: "Uma mudança material pode alterar a decisão.", before: "Antes", change: "Mudança detectada", after: "Depois", timing: "Timing", why: "Por que a decisão muda", changeEvent: "Assinou um acordo regional de distribuição", changeSource: "Comunicado corporativo ilustrativo", changeReason: "Uma expansão recente e corroborada fortalece o timing; a responsabilidade de compras ainda precisa ser validada.", narrativeDisclaimer: "Narrativa ilustrativa · nenhum score ou ranking ao vivo foi recalculado.", inspectBefore: "Ver antes", inspectAfter: "Ver depois",
+    evEyebrow: "A evidência", evTitle: "Não confie num score. Veja o raciocínio.", evThesis: "Tese de oportunidade", evClaim: "O que a evidência sustenta", evDirect: "Direta", evCorroborating: "Corroborante", evContext: "Contexto", evWeakens: "O que enfraquece o caso", evValidate: "O que validar", evRead: "Leitura da evidência", evReadNote: "Sem score combinado — a leitura é exatamente a evidência acima.", evCorrob: "corroborado", evSources: "fontes datadas", evLatest: "mais recente",
+  },
+  ja: {
+    eyebrow: "企業コンテキストの解釈", title: "何を販売しているか教えてください。", intro: "短い事業説明が、検索や企業の捏造なしに、焦点を絞った調査基準へ変わる様子を確認できます。",
+    label: "商品、対象企業、市場を説明してください", placeholder: "コロンビアの製造業向けに物流ソフトウェアを販売しています。", action: "重要点を解釈", examples: "例を試す",
+    understood: "LeadLens の解釈", sells: "販売するもの", relevant: "関連性が高そうな企業", market: "市場", functions: "想定される業務部門", potential: "想定", watch: "LeadLens が注視する変化", clarify: "もう1点あると精度が上がります", illustrative: "説明用の解釈です · 市場検索は実行されていません",
+    bridge: "機会への変化を見る", canvasEyebrow: "説明用の機会", canvasTitle: "調査基準から、確認すべき企業へ。", changedEyebrow: "変化したこと", changedTitle: "重要な変化は判断を変えることがあります。", before: "前", change: "検出された変化", after: "後", timing: "タイミング", why: "判断が変わる理由", changeEvent: "地域配送契約を締結", changeSource: "説明用の企業発表", changeReason: "最近の裏付けられた拡大によりタイミングが強まりました。調達責任者の確認はまだ必要です。", narrativeDisclaimer: "説明用のナラティブです · ライブのスコアや順位は再計算されていません。", inspectBefore: "変化前を見る", inspectAfter: "変化後を見る",
+    evEyebrow: "根拠", evTitle: "スコアを信じず、推論を確認する。", evThesis: "機会の仮説", evClaim: "根拠が支えること", evDirect: "直接", evCorroborating: "裏付け", evContext: "文脈", evWeakens: "この判断を弱める点", evValidate: "検証すべきこと", evRead: "根拠の読み取り", evReadNote: "合成スコアなし — 読み取りは上記の根拠そのものです。", evCorrob: "裏付けあり", evSources: "日付付きの情報源", evLatest: "最新",
+  },
+};
+
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 // Internal build marker — not rendered publicly. Check browser console (dev only) or grep this file to identify deployed version.
@@ -1426,7 +1469,8 @@ export default function DemoPipelinePage() {
   // Smooth-scroll to a landing section anchor and close the mobile menu.
   function goToSection(id: string) {
     setNavOpen(false);
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    document.getElementById(id)?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
   }
 
   const copy = COPY[lang];
@@ -1582,7 +1626,7 @@ export default function DemoPipelinePage() {
         .ll-pricing-grid { display: grid; gap: 1.5rem; max-width: 56rem; margin: 0 auto; align-items: stretch; grid-template-columns: repeat(3, 1fr); }
         @media (max-width: 900px) { .ll-pricing-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 580px) { .ll-pricing-grid { grid-template-columns: 1fr; gap: 1.25rem; padding-top: .875rem; } }
-        .ll-hero-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 3rem; align-items: center; }
+        .ll-hero-grid { display: grid; grid-template-columns: minmax(0,42rem); justify-content: center; align-items: center; }
         /* Mobile-only acquisition value layer — hidden on desktop (2-col hero carries value). */
         .ll-hero-value { display: none; }
         @media (max-width: 840px) { .ll-hero-grid { grid-template-columns: 1fr; gap: 1.25rem; } .ll-hero-left { text-align: center; display: flex; flex-direction: column; align-items: center; min-width: 0; } .ll-hero-mock { margin-top: 0; width: 100%; min-width: 0; } }
@@ -1671,6 +1715,24 @@ export default function DemoPipelinePage() {
         .ll-cc-tabs { scrollbar-width: none; }
         @media (max-width: 640px) { .ll-cc-tabs { padding-right: 2.75rem !important; -webkit-mask-image: linear-gradient(to right,#000 0,#000 calc(100% - 1.75rem),transparent 100%); mask-image: linear-gradient(to right,#000 0,#000 calc(100% - 1.75rem),transparent 100%); } }
         .ll-cc-tabs button:focus-visible { outline: 2px solid #0284c7; outline-offset: -2px; }
+        .ll-interpret button:focus-visible, .ll-interpret textarea:focus-visible, .ll-change-toggle:focus-visible, .ll-cc-caselist button:focus-visible { outline: 2px solid #0284c7; outline-offset: 2px; }
+        .ll-interpret-grid { display: grid; grid-template-columns: minmax(0,.92fr) minmax(0,1.18fr); gap: 2.75rem; align-items: start; }
+        .ll-interpret-flow { display: grid; grid-template-columns: minmax(0,.9fr) 2rem minmax(0,1.1fr); align-items: stretch; }
+        .ll-interpret-arrow { display: flex; align-items: center; justify-content: center; color: #7dd3fc; font-size: 1.2rem; font-weight: 800; }
+        .ll-watch-list { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .55rem; }
+        .ll-change-grid { display: grid; grid-template-columns: 1fr auto 1.2fr auto 1fr; gap: .8rem; align-items: center; }
+        .ll-change-connector { color: #7dd3fc; font-size: 1.15rem; font-weight: 800; }
+        @media (max-width: 820px) {
+          .ll-interpret-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+          .ll-change-grid { grid-template-columns: 1fr; }
+          .ll-change-connector { transform: rotate(90deg); justify-self: center; }
+          .ll-ev-grid { grid-template-columns: 1fr !important; gap: 1.1rem !important; }
+        }
+        @media (max-width: 560px) {
+          .ll-interpret-flow { grid-template-columns: 1fr; gap: .7rem; }
+          .ll-interpret-arrow { transform: rotate(90deg); min-height: 1.25rem; }
+          .ll-watch-list { grid-template-columns: 1fr; }
+        }
         @media (max-width: 720px) {
           .ll-cc-overview { grid-template-columns: 1fr !important; }
           .ll-cc-cases { grid-template-columns: 1fr !important; }
@@ -1695,7 +1757,7 @@ export default function DemoPipelinePage() {
           .ll-reveal-pop.ll-in { transform: none; }
         }
         @media (prefers-reduced-motion: reduce) {
-          .ll-ws-rail button, .ll-ws-chips button { transition: none !important; }
+          .ll-ws-rail button, .ll-ws-chips button, .ll-interpret *, .ll-change-v2 * { transition: none !important; scroll-behavior: auto !important; }
           .ll-ws-fade { animation: none !important; }
         }
         /* Pricing: balanced 2×2, single column on phones (fixes 3+1 orphan) */
@@ -1932,13 +1994,14 @@ export default function DemoPipelinePage() {
                 ))}
               </div>
             </div>
-            {/* Right column — signature interactive account workspace */}
-            <div className="ll-hero-mock">
-              <ClientCanvasSample />
-            </div>
           </div>
         </div>
       </div>
+
+      <CompanyInterpretationExperience lang={lang} onBridge={() => {
+        goToSection("client-canvas-sample");
+        document.getElementById("client-canvas-sample")?.focus({ preventScroll: true });
+      }} />
 
       {/* Proof bar */}
       <div style={{ background: "#fff", borderTop: "1px solid #e2e8f0", borderBottom: "1px solid #e2e8f0", padding: "1.75rem 1.5rem" }}>
@@ -3194,7 +3257,6 @@ function DecisionPill({ state, small }: { state: string; small?: boolean }) {
 
 function FTE({ fit, timing, evidence }: { fit: string; timing: string; evidence: string }) {
   const cell = (label: string, val: string) => {
-    // Fallback keeps an unrecognized strength value from crashing the hero.
     const s = STRENGTH[val] ?? { color: "#475569", weight: 600 };
     return (
       <span style={{ display: "inline-flex", alignItems: "baseline", gap: ".28rem" }}>
@@ -3210,6 +3272,206 @@ function FTE({ fit, timing, evidence }: { fit: string; timing: string; evidence:
   );
 }
 
+const INTERPRETATION_EXAMPLES_BY_LANG: Record<OutputLanguage, readonly string[]> = {
+  en: LANDING_INTERPRETATION_EXAMPLES,
+  es: ["Vendemos ciberseguridad a bancos en América Latina.", "Vendemos software logístico a fabricantes en Colombia.", "Vendemos empaques industriales a fabricantes de alimentos en Colombia."],
+  pt: ["Vendemos cibersegurança para bancos na América Latina.", "Vendemos software de logística para fabricantes na Colômbia.", "Vendemos embalagem industrial para fabricantes de alimentos na Colômbia."],
+  ja: ["ラテンアメリカの銀行向けにサイバーセキュリティを販売しています。", "コロンビアの製造業向けに物流ソフトウェアを販売しています。", "食品メーカー向けに産業用包装を販売しています。"],
+};
+
+function CompanyInterpretationExperience({ lang, onBridge }: { lang: OutputLanguage; onBridge: () => void }) {
+  const ui = INTERPRETATION_COPY[lang];
+  const examples = INTERPRETATION_EXAMPLES_BY_LANG[lang];
+  const [input, setInput] = useState(examples[1]);
+  const [projection, setProjection] = useState<LandingInterpretationProjection>(() => interpretLandingInput(examples[1], lang));
+  const [clarification, setClarification] = useState("");
+  const inputId = useId();
+  const clarificationId = useId();
+
+  useEffect(() => {
+    setProjection(interpretLandingInput(input, lang));
+  }, [lang]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const interpret = (nextInput = input) => {
+    const combined = clarification.trim() ? `${nextInput}. ${clarification.trim()}` : nextInput;
+    setProjection(interpretLandingInput(combined, lang));
+  };
+  const useExample = (example: string) => {
+    setInput(example);
+    setClarification("");
+    setProjection(interpretLandingInput(example, lang));
+  };
+  const hasStructuredRead = projection.scenarioKey !== null;
+
+  return (
+    <section id="company-interpretation" className="ll-section ll-interpret" style={{ ...sectionStyle, background: "#fff", borderTop: "1px solid #e2e8f0" }}>
+      <div style={innerStyle}>
+        <div className="ll-interpret-grid">
+          <div>
+            <Tag>{ui.eyebrow}</Tag>
+            <h2 style={{ ...sectionTitleStyle, maxWidth: "28rem" }}>{ui.title}</h2>
+            <p style={{ color: "#64748b", fontSize: ".96rem", lineHeight: 1.65, maxWidth: "31rem", margin: "0 0 1.4rem" }}>{ui.intro}</p>
+            <label htmlFor={inputId} style={{ ...labelStyle, color: "#0f172a" }}>{ui.label}</label>
+            <textarea id={inputId} value={input} onChange={(event) => setInput(event.target.value)} rows={4} maxLength={280} placeholder={ui.placeholder}
+              style={{ ...inputStyle, minHeight: "7.5rem", padding: ".9rem 1rem", fontSize: "1rem", lineHeight: 1.55, boxShadow: "inset 0 1px 2px rgba(15,23,42,.03)" }} />
+            <div style={{ display: "flex", justifyContent: "space-between", gap: ".75rem", alignItems: "center", flexWrap: "wrap", marginTop: ".75rem" }}>
+              <button type="button" onClick={() => interpret()} style={{ minHeight: 44, border: 0, borderRadius: ".65rem", padding: ".65rem 1rem", background: "#0ea5e9", color: "#fff", fontWeight: 700, fontFamily: "inherit", cursor: "pointer" }}>{ui.action} <span aria-hidden>→</span></button>
+              <span style={{ color: "#94a3b8", fontSize: ".72rem" }}>{input.length}/280</span>
+            </div>
+            <div style={{ marginTop: "1.2rem" }}>
+              <div style={{ fontSize: ".68rem", fontWeight: 800, color: "#64748b", letterSpacing: ".06em", textTransform: "uppercase", marginBottom: ".55rem" }}>{ui.examples}</div>
+              <div style={{ display: "flex", gap: ".5rem", flexWrap: "wrap" }}>
+                {examples.map((example, index) => <button key={example} type="button" onClick={() => useExample(example)} aria-label={`${ui.examples} ${index + 1}: ${example}`}
+                  style={{ minHeight: 44, border: "1px solid #dbe4ee", borderRadius: 999, background: "#f8fafc", color: "#475569", padding: ".45rem .8rem", fontFamily: "inherit", fontSize: ".76rem", cursor: "pointer", maxWidth: "100%" }}>{index + 1}. {example}</button>)}
+              </div>
+            </div>
+          </div>
+
+          <div aria-live="polite" aria-atomic="true" style={{ borderTop: "3px solid #0f172a", borderRadius: ".9rem", background: "linear-gradient(180deg,#f8fbff,#fff 42%)", boxShadow: "0 18px 46px rgba(15,23,42,.09)", borderRight: "1px solid #e6ebf1", borderBottom: "1px solid #e6ebf1", borderLeft: "1px solid #e6ebf1", overflow: "hidden" }}>
+            <div style={{ padding: "1rem 1.15rem", borderBottom: "1px solid #e8edf3", display: "flex", justifyContent: "space-between", gap: ".75rem", alignItems: "center" }}>
+              <div><div style={{ fontSize: ".62rem", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase", color: "#0284c7" }}>{ui.understood}</div><div style={{ fontSize: ".86rem", fontWeight: 700, color: "#0f172a", marginTop: ".2rem" }}>{projection.inputSummary || "—"}</div></div>
+              <span style={{ fontSize: ".58rem", color: "#0369a1", background: "#f0f9ff", border: "1px solid #e0f2fe", borderRadius: 999, padding: ".2rem .55rem", fontWeight: 700, flexShrink: 0 }}>DEMO</span>
+            </div>
+            <div style={{ padding: "1.15rem" }}>
+              {hasStructuredRead ? <>
+                <div className="ll-interpret-flow">
+                  <div style={{ padding: ".9rem", background: "#fff", border: "1px solid #e6ebf1", borderRadius: ".7rem" }}>
+                    <InterpretationField label={ui.sells} value={projection.productCapability} />
+                    <InterpretationField label={ui.relevant} value={projection.targetAccountDescriptors.join(" · ")} />
+                    <InterpretationField label={ui.market} value={projection.commercialContext.regions.join(" · ") || projection.clarificationGaps[0]} last />
+                  </div>
+                  <div className="ll-interpret-arrow" aria-hidden>→</div>
+                  <div style={{ padding: ".9rem", background: "#f0f9ff", border: "1px solid #d8eefc", borderRadius: ".7rem" }}>
+                    <div style={{ fontSize: ".6rem", fontWeight: 800, letterSpacing: ".07em", textTransform: "uppercase", color: "#0284c7", marginBottom: ".65rem" }}>{ui.watch}</div>
+                    <div className="ll-watch-list">{projection.signalFamilies.map((signal, index) => <div key={signal} className="ll-reveal" style={{ display: "flex", gap: ".45rem", alignItems: "flex-start", color: "#0f172a", fontSize: ".76rem", fontWeight: 650, lineHeight: 1.35, transitionDelay: `${index * .06}s` }}><span aria-hidden style={{ width: 6, height: 6, borderRadius: "50%", background: "#0ea5e9", flexShrink: 0, marginTop: ".32rem" }} />{signal}</div>)}</div>
+                  </div>
+                </div>
+                <div style={{ display: "flex", gap: ".7rem", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", marginTop: ".9rem", paddingTop: ".8rem", borderTop: "1px solid #eef2f7" }}>
+                  <div><div style={{ fontSize: ".58rem", fontWeight: 800, color: "#64748b", textTransform: "uppercase", letterSpacing: ".06em" }}>{ui.functions}</div><div style={{ color: "#475569", fontSize: ".72rem", marginTop: ".15rem" }}>{projection.buyerHypotheses.map((item) => `${ui.potential}: ${item}`).join(" · ")}</div></div>
+                  <button type="button" onClick={onBridge} style={{ minHeight: 44, border: 0, background: "transparent", color: "#0284c7", fontWeight: 750, fontFamily: "inherit", cursor: "pointer", padding: ".5rem 0" }}>{ui.bridge} <span aria-hidden>↗</span></button>
+                </div>
+              </> : <div style={{ padding: ".9rem", borderLeft: "3px solid #d97706", background: "#fffbeb", borderRadius: "0 .6rem .6rem 0" }}>
+                <label htmlFor={clarificationId} style={{ display: "block", color: "#92400e", fontSize: ".7rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: ".05em", marginBottom: ".4rem" }}>{ui.clarify}</label>
+                <div style={{ color: "#0f172a", fontWeight: 700, marginBottom: ".65rem" }}>{projection.clarificationGaps[0]}</div>
+                <div style={{ display: "flex", gap: ".5rem", flexWrap: "wrap" }}><input id={clarificationId} value={clarification} onChange={(event) => setClarification(event.target.value)} style={{ ...inputStyle, flex: "1 1 12rem", minHeight: 44 }} /><button type="button" onClick={() => interpret()} style={{ minHeight: 44, border: 0, borderRadius: ".55rem", padding: ".55rem .85rem", background: "#0f172a", color: "#fff", fontWeight: 700, fontFamily: "inherit", cursor: "pointer" }}>{ui.action}</button></div>
+              </div>}
+            </div>
+            <div style={{ borderTop: "1px solid #eef2f7", padding: ".55rem 1.15rem", color: "#94a3b8", fontSize: ".62rem" }}>{ui.illustrative}</div>
+          </div>
+        </div>
+        <div id="client-canvas-sample" tabIndex={-1} style={{ marginTop: "3.25rem", paddingTop: "2.5rem", borderTop: "1px solid #e2e8f0", outline: "none" }}>
+          <div style={{ marginBottom: "1.2rem" }}><div style={{ fontSize: ".68rem", color: "#0284c7", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase", marginBottom: ".35rem" }}>{ui.canvasEyebrow}</div><h3 style={{ fontSize: "clamp(1.4rem,3vw,1.85rem)", lineHeight: 1.2, letterSpacing: "-.02em", margin: 0 }}>{ui.canvasTitle}</h3></div>
+          <ClientCanvasSample />
+        </div>
+        <WhatChangedV2 lang={lang} />
+        <EvidenceReasoning lang={lang} />
+      </div>
+    </section>
+  );
+}
+
+function InterpretationField({ label, value, last }: { label: string; value: string; last?: boolean }) {
+  return <div style={{ paddingBottom: last ? 0 : ".7rem", marginBottom: last ? 0 : ".7rem", borderBottom: last ? 0 : "1px solid #eef2f7" }}><div style={{ fontSize: ".58rem", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", letterSpacing: ".06em" }}>{label}</div><div style={{ color: "#0f172a", fontSize: ".78rem", fontWeight: 700, lineHeight: 1.4, marginTop: ".2rem" }}>{value}</div></div>;
+}
+
+function WhatChangedV2({ lang }: { lang: OutputLanguage }) {
+  const ui = INTERPRETATION_COPY[lang];
+  const fixture = NORTHSTAR_WHAT_CHANGED;
+  const [inspect, setInspect] = useState<"before" | "after">("after");
+  const panelId = "landing-what-changed-panel";
+  return <div className="ll-change-v2" style={{ marginTop: "3.25rem", paddingTop: "2.5rem", borderTop: "1px solid #e2e8f0" }}>
+    <div style={{ display: "flex", justifyContent: "space-between", gap: "1rem", alignItems: "flex-end", flexWrap: "wrap", marginBottom: "1.3rem" }}>
+      <div><div style={{ fontSize: ".68rem", color: "#0284c7", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase", marginBottom: ".35rem" }}>{ui.changedEyebrow}</div><h3 style={{ fontSize: "clamp(1.4rem,3vw,1.85rem)", lineHeight: 1.2, letterSpacing: "-.02em", margin: 0 }}>{ui.changedTitle}</h3></div>
+      <div role="group" aria-label={ui.changedTitle} style={{ display: "inline-flex", background: "#f1f5f9", padding: 3, borderRadius: ".55rem" }}>
+        <button className="ll-change-toggle" type="button" aria-pressed={inspect === "before"} aria-controls={panelId} onClick={() => setInspect("before")} style={{ minHeight: 44, border: 0, borderRadius: ".42rem", padding: ".45rem .75rem", background: inspect === "before" ? "#fff" : "transparent", color: inspect === "before" ? "#0f172a" : "#64748b", fontWeight: 700, fontFamily: "inherit", cursor: "pointer", boxShadow: inspect === "before" ? "0 1px 4px rgba(15,23,42,.1)" : "none" }}>{ui.inspectBefore}</button>
+        <button className="ll-change-toggle" type="button" aria-pressed={inspect === "after"} aria-controls={panelId} onClick={() => setInspect("after")} style={{ minHeight: 44, border: 0, borderRadius: ".42rem", padding: ".45rem .75rem", background: inspect === "after" ? "#fff" : "transparent", color: inspect === "after" ? "#0369a1" : "#64748b", fontWeight: 700, fontFamily: "inherit", cursor: "pointer", boxShadow: inspect === "after" ? "0 1px 4px rgba(15,23,42,.1)" : "none" }}>{ui.inspectAfter}</button>
+      </div>
+    </div>
+    <div id={panelId} className="ll-change-grid" aria-live="polite">
+      <ChangeStateCard label={ui.before} account={fixture.account} decision={fixture.before.decision} timing={fixture.before.timing} active={inspect === "before"} />
+      <div className="ll-change-connector" aria-hidden>→</div>
+      <div style={{ border: "1px solid #bae6fd", borderRadius: ".8rem", padding: "1rem", background: "linear-gradient(180deg,#f0f9ff,#fff)", boxShadow: "0 10px 26px rgba(2,132,199,.08)" }}>
+        <div style={{ fontSize: ".6rem", fontWeight: 800, color: "#0284c7", textTransform: "uppercase", letterSpacing: ".07em" }}>{ui.change}</div>
+        <div style={{ fontSize: ".92rem", fontWeight: 800, color: "#0f172a", marginTop: ".3rem" }}>{ui.changeEvent}</div>
+        <div style={{ fontSize: ".68rem", color: "#64748b", marginTop: ".35rem" }}>{fixture.change.age} · {ui.changeSource}</div>
+      </div>
+      <div className="ll-change-connector" aria-hidden>→</div>
+      <ChangeStateCard label={ui.after} account={fixture.account} decision={fixture.after.decision} timing={fixture.after.timing} active={inspect === "after"} />
+    </div>
+    <div style={{ marginTop: "1rem", padding: ".8rem 1rem", background: "#f8fafc", borderLeft: "3px solid #0284c7", color: "#334155", fontSize: ".78rem", lineHeight: 1.5 }}><strong style={{ color: "#0f172a" }}>{ui.why}:</strong> {ui.changeReason}<div style={{ color: "#94a3b8", fontSize: ".62rem", marginTop: ".25rem" }}>{ui.narrativeDisclaimer}</div></div>
+  </div>;
+}
+
+function ChangeStateCard({ label, account, decision, timing, active }: { label: string; account: string; decision: DecisionState; timing: Strength; active: boolean }) {
+  return <div style={{ border: `1px solid ${active ? "#bae6fd" : "#e6ebf1"}`, borderRadius: ".8rem", padding: "1rem", background: active ? "#fff" : "#f8fafc", opacity: active ? 1 : .72, boxShadow: active ? "0 10px 26px rgba(15,23,42,.08)" : "none", transition: "opacity .2s ease, box-shadow .2s ease" }}>
+    <div style={{ fontSize: ".58rem", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", letterSpacing: ".07em" }}>{label}</div>
+    <div style={{ fontSize: ".9rem", fontWeight: 800, color: "#0f172a", margin: ".35rem 0 .5rem" }}>{account}</div>
+    <DecisionPill state={decision} />
+    <div style={{ display: "flex", justifyContent: "space-between", gap: ".5rem", marginTop: ".65rem", fontSize: ".68rem" }}><span style={{ color: "#94a3b8", textTransform: "uppercase", fontWeight: 700 }}>Timing</span><span style={{ color: STRENGTH[timing].color, fontWeight: STRENGTH[timing].weight }}>{timing}</span></div>
+  </div>;
+}
+
+// ─── Evidence reasoning (Sprint 3) ────────────────────────────────────────────
+// Answers "why believe this decision?" right after What Changed. Projects the
+// canonical Northstar evidence: a claim, a support ladder tinted by canonical
+// relation (direct → corroborating → context), what WEAKENS the case (honesty as
+// a feature), and an Evidence read that is the canonical strength + summary —
+// never a blended score. No source-card grid; the spine shows support relating to
+// one commercial claim. Motion = evidence accumulating, read resolving last.
+const EV_REL_COLOR: Record<EvidenceRelation, string> = { direct: "#0284c7", corroborating: "#15803d", context: "#64748b" };
+function EvidenceReasoning({ lang }: { lang: OutputLanguage }) {
+  const ui = INTERPRETATION_COPY[lang];
+  const f = NORTHSTAR_EVIDENCE;
+  const relLabel: Record<EvidenceRelation, string> = { direct: ui.evDirect, corroborating: ui.evCorroborating, context: ui.evContext };
+  return <div className="ll-evidence" style={{ marginTop: "3.25rem", paddingTop: "2.5rem", borderTop: "1px solid #e2e8f0" }}>
+    <div style={{ marginBottom: "1.3rem" }}>
+      <div style={{ fontSize: ".68rem", color: "#0284c7", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase", marginBottom: ".35rem" }}>{ui.evEyebrow}</div>
+      <h3 style={{ fontSize: "clamp(1.4rem,3vw,1.85rem)", lineHeight: 1.2, letterSpacing: "-.02em", margin: 0 }}>{ui.evTitle}</h3>
+    </div>
+    <div className="ll-ev-grid" style={{ display: "grid", gridTemplateColumns: "0.82fr 1.18fr", gap: "1.5rem", alignItems: "start" }}>
+      {/* Thesis + the claim the evidence must support */}
+      <div>
+        <div style={{ fontSize: ".58rem", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase", color: "#64748b", marginBottom: ".4rem" }}>{ui.evThesis}</div>
+        <p style={{ fontSize: ".82rem", color: "#334155", lineHeight: 1.55, margin: "0 0 1rem" }}>{f.thesis}</p>
+        <div style={{ border: "1px solid #bae6fd", borderRadius: ".7rem", padding: ".8rem .9rem", background: "linear-gradient(180deg,#f0f9ff,#fff)" }}>
+          <div style={{ fontSize: ".56rem", fontWeight: 800, letterSpacing: ".07em", textTransform: "uppercase", color: "#0284c7" }}>{ui.evClaim}</div>
+          <div style={{ fontSize: ".9rem", fontWeight: 800, color: "#0f172a", marginTop: ".3rem", lineHeight: 1.3 }}>{f.claim}</div>
+          <div style={{ fontSize: ".64rem", color: "#64748b", marginTop: ".3rem" }}>{f.account} · {f.items[0].age}</div>
+        </div>
+      </div>
+      {/* Support ladder — a spine of relations joining the claim */}
+      <ol style={{ listStyle: "none", margin: 0, padding: 0 }}>
+        {f.items.map((it, i) => { const c = EV_REL_COLOR[it.relation]; const last = i === f.items.length - 1; return (
+          <li key={i} className="ll-reveal ll-reveal-x" style={{ position: "relative", paddingLeft: "1.4rem", paddingBottom: last ? 0 : ".9rem", marginLeft: "3px", borderLeft: last ? "2px solid transparent" : "2px solid #e2e8f0", transitionDelay: `${0.12 + i * 0.14}s` }}>
+            <span aria-hidden style={{ position: "absolute", left: "-6px", top: ".15rem", width: 11, height: 11, borderRadius: "50%", background: "#fff", border: `2.5px solid ${c}` }} />
+            <div style={{ display: "flex", alignItems: "baseline", gap: ".5rem", flexWrap: "wrap" }}>
+              <span style={{ fontSize: ".56rem", fontWeight: 800, letterSpacing: ".05em", textTransform: "uppercase", color: c, background: `${c}14`, border: `1px solid ${c}33`, borderRadius: 999, padding: ".08rem .5rem" }}>{relLabel[it.relation]}</span>
+              <span style={{ fontSize: ".76rem", fontWeight: 700, color: "#0f172a" }}>{it.sourceType}</span>
+              <span style={{ fontSize: ".64rem", color: "#94a3b8", marginLeft: "auto" }}>{it.age}</span>
+            </div>
+            <div style={{ fontSize: ".72rem", color: "#475569", lineHeight: 1.45, marginTop: ".15rem" }}>{it.observation}</div>
+          </li>); })}
+      </ol>
+    </div>
+    {/* What weakens the case — analytical, not alarming */}
+    <div className="ll-reveal" style={{ marginTop: "1.2rem", padding: ".85rem 1rem", background: "#fffbeb", border: "1px solid #fde9c8", borderLeft: "3px solid #d97706", borderRadius: ".5rem", transitionDelay: ".42s" }}>
+      <div style={{ fontSize: ".56rem", fontWeight: 800, letterSpacing: ".06em", textTransform: "uppercase", color: "#b45309" }}>{ui.evWeakens}</div>
+      <div style={{ fontSize: ".78rem", color: "#0f172a", lineHeight: 1.5, marginTop: ".3rem" }}>{f.weakness}</div>
+      <div style={{ fontSize: ".7rem", color: "#92400e", lineHeight: 1.45, marginTop: ".4rem" }}><strong>{ui.evValidate}:</strong> {f.validate}</div>
+    </div>
+    {/* Evidence read — resolves last; the canonical strength + summary, no score */}
+    <div className="ll-reveal ll-reveal-pop" style={{ marginTop: "1rem", padding: "1rem", background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: ".6rem", transitionDelay: ".56s" }}>
+      <div style={{ fontSize: ".56rem", fontWeight: 800, letterSpacing: ".07em", textTransform: "uppercase", color: "#64748b" }}>{ui.evRead}</div>
+      <div style={{ display: "flex", alignItems: "baseline", gap: ".7rem", flexWrap: "wrap", marginTop: ".35rem" }}>
+        <span style={{ fontSize: "1.3rem", fontWeight: 800, color: STRENGTH[f.summary.strength].color, letterSpacing: "-.01em" }}>{f.summary.strength}</span>
+        <span style={{ fontSize: ".72rem", color: "#475569", fontWeight: 600 }}>{f.summary.corroborated ? `${ui.evCorrob} · ` : ""}{f.summary.datedCount} {ui.evSources} · {ui.evLatest} {f.summary.latestAge}</span>
+      </div>
+      <div style={{ fontSize: ".66rem", color: "#94a3b8", lineHeight: 1.45, marginTop: ".4rem" }}>{ui.evReadNote}</div>
+    </div>
+    <div style={{ color: "#94a3b8", fontSize: ".62rem", marginTop: ".8rem" }}>{ui.illustrative}</div>
+  </div>;
+}
+
 // ─── Signature interactive product experience (V4) ───────────────────────────
 // A selected-account workspace: pick an account → see What Changed → Evidence →
 // Counterevidence → Decision → What to Validate. Deterministic, local, keyboard-
@@ -3219,9 +3481,9 @@ function FTE({ fit, timing, evidence }: { fit: string; timing: string; evidence:
 // validation) → decision. Synthetic/illustrative only.
 type WsSource = { type: string; note: string; age: string; rel: "Direct" | "Corroborating" | "Context" };
 type WsAccount = {
-  rank: number; name: string; seg: string; state: string; fresh: string;
+  rank: number; name: string; seg: string; state: DecisionState; fresh: string;
   role: string; oppType: string; thesis: string; whyNow: string;
-  changed: string; changedAge: string; fit: string; timing: string; evidence: string;
+  changed: string; changedAge: string; fit: Strength; timing: Strength; evidence: Strength;
   support: string;   // Independent Support summary (compressed evidence)
   ladder: 1 | 2 | 3; sources: WsSource[];
   limiters: { limit: string; validate: string }[]; decisionWhy: string; next: string;
@@ -3376,6 +3638,17 @@ function ClientCanvasSample() {
     setTab(CC_TABS[next]);
     event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="tab"]')[next]?.focus();
   };
+  const onCaseTabKey = (event: React.KeyboardEvent<HTMLButtonElement>, current: number) => {
+    let next = current;
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") next = (current + 1) % WS_ACCOUNTS.length;
+    else if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = (current - 1 + WS_ACCOUNTS.length) % WS_ACCOUNTS.length;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = WS_ACCOUNTS.length - 1;
+    else return;
+    event.preventDefault();
+    setSel(next);
+    event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="tab"]')[next]?.focus();
+  };
   const dist = (["prioritize", "validate", "monitor", "hold"] as const).map(s => ({ s, n: WS_ACCOUNTS.filter(x => x.state === s).length })).filter(x => x.n > 0);
 
   return (
@@ -3399,13 +3672,13 @@ function ClientCanvasSample() {
       {/* Tab rail */}
       <div role="tablist" aria-label="LeadLens sample" className="ll-cc-tabs" style={{ display: "flex", gap: ".1rem", padding: "0 .8rem", borderBottom: "1px solid #eef2f6", overflowX: "auto" }}>
         {CC_TABS.map(tb => { const on = tb === tab; return (
-          <button key={tb} role="tab" aria-selected={on} tabIndex={on ? 0 : -1} onClick={() => setTab(tb)} onKeyDown={(event) => onCanvasTabKey(event, tb)}
+          <button key={tb} id={`cc-tab-${tb}`} role="tab" aria-selected={on} aria-controls={`cc-panel-${tb}`} tabIndex={on ? 0 : -1} onClick={() => setTab(tb)} onKeyDown={(event) => onCanvasTabKey(event, tb)}
             style={{ appearance: "none", background: "none", border: "none", borderBottom: `2px solid ${on ? "#0284c7" : "transparent"}`, padding: ".55rem .55rem", fontFamily: "inherit", fontSize: ".68rem", fontWeight: 700, color: on ? "#0369a1" : "#64748b", cursor: "pointer", whiteSpace: "nowrap" as const }}>
             {CC_TAB_LABEL[tb]}
           </button>); })}
       </div>
 
-      <div key={tab} className="ll-ws-fade" style={{ padding: "1rem 1.1rem 1.1rem", minHeight: "18rem" }}>
+      <div key={tab} id={`cc-panel-${tab}`} role="tabpanel" aria-labelledby={`cc-tab-${tab}`} tabIndex={0} className="ll-ws-fade" style={{ padding: "1rem 1.1rem 1.1rem", minHeight: "18rem" }}>
         {/* OVERVIEW — the Client Opportunity Canvas */}
         {tab === "overview" && (
           <div>
@@ -3449,12 +3722,12 @@ function ClientCanvasSample() {
           <div className="ll-cc-cases" style={{ display: "grid", gridTemplateColumns: "10rem 1fr", gap: ".9rem", alignItems: "start" }}>
             <div className="ll-cc-caselist" role="tablist" aria-label="Opportunities" style={{ display: "flex", flexDirection: "column", gap: ".3rem" }}>
               {WS_ACCOUNTS.map((acc, i) => { const st = DECISION_STATES[acc.state]; const on = i === sel; return (
-                <button key={acc.name} role="tab" aria-selected={on} onClick={() => setSel(i)} style={{ appearance: "none", textAlign: "left", cursor: "pointer", fontFamily: "inherit", border: `1px solid ${on ? "#bae6fd" : "transparent"}`, borderRadius: ".5rem", padding: ".4rem .5rem", background: on ? "#f0f9ff" : "transparent" }}>
+                <button key={acc.name} id={`cc-case-tab-${i}`} role="tab" aria-selected={on} aria-controls="cc-case-panel" tabIndex={on ? 0 : -1} onClick={() => setSel(i)} onKeyDown={(event) => onCaseTabKey(event, i)} style={{ appearance: "none", textAlign: "left", cursor: "pointer", fontFamily: "inherit", border: `1px solid ${on ? "#bae6fd" : "transparent"}`, borderRadius: ".5rem", padding: ".4rem .5rem", minHeight: 44, background: on ? "#f0f9ff" : "transparent" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: ".35rem" }}><span style={{ width: 6, height: 6, borderRadius: "50%", background: st.dot, flexShrink: 0 }} /><span style={{ fontSize: ".72rem", fontWeight: 700, color: "#0f172a", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const }}>{acc.name}</span></div>
                   <div style={{ fontSize: ".56rem", color: "#94a3b8", fontWeight: 700, textTransform: "uppercase" as const, paddingLeft: ".95rem" }}>{st.label} · {acc.fresh}</div>
                 </button>); })}
             </div>
-            <div style={{ minWidth: 0 }}><CaseSpine a={a} /></div>
+            <div id="cc-case-panel" role="tabpanel" aria-labelledby={`cc-case-tab-${sel}`} tabIndex={0} style={{ minWidth: 0 }}><CaseSpine a={a} /></div>
           </div>
         )}
 
