@@ -10,9 +10,10 @@ import { assembleInstitutionalReport } from "@/lib/reports/institutional-assembl
 import type { InstitutionalOpportunityReportV1 } from "@/lib/reports/institutional-report-types";
 
 import type { ReportExperience } from "@/lib/products/report-experience";
+import type { ReviewMemory } from "@/lib/deliverable/account-memory-store";
 
 export type BriefResult =
-  | { state: "ok"; report: InstitutionalOpportunityReportV1; experience: ReportExperience }
+  | { state: "ok"; report: InstitutionalOpportunityReportV1; experience: ReportExperience; memory: ReviewMemory | null }
   | { state: "unavailable" }        // missing / non-completed — never confirms existence
   | { state: "processing" }
   | { state: "forbidden" }          // linked report, viewer is not the owner
@@ -82,5 +83,27 @@ export async function getBriefForViewer(jobId: string, accessToken: string | nul
   const ob = (snapshot.report_json as { onboarding?: { product_code?: string; output_language?: string } })?.onboarding;
   const experience = resolveReportExperience(ob?.product_code ?? snapshot.plan ?? null, ob?.output_language === "es" ? "es" : "en");
 
-  return { state: "ok", report, experience };
+  // ── Account Memory (V1.1): persist this completed review's canonical snapshots
+  // (idempotent — re-viewing never duplicates) and load the predecessor review to
+  // power the Living Case. Owner/client/context scoped; server-side only; fails
+  // closed to first-review behavior. Never blocks the deliverable (§51/§108).
+  let memory: ReviewMemory | null = null;
+  try {
+    const db = await serverDb();
+    if (db) {
+      const { fromInstitutionalReport } = await import("@/lib/deliverable/adapters");
+      const { SupabaseAccountMemoryRepo, persistAndLoadMemory } = await import("@/lib/deliverable/account-memory-store");
+      const vm = fromInstitutionalReport(report, experience);
+      const clientKey = vm.meta.client ?? searchId ?? snapshot.job_id;
+      const contextVersion = ob?.product_code ?? snapshot.plan ?? "default";
+      const scope = { ownerUserId: searchId ? ((await db.from("lead_searches").select("user_id").eq("id", searchId).maybeSingle()).data?.user_id ?? null) : null, clientKey };
+      memory = await persistAndLoadMemory(
+        new SupabaseAccountMemoryRepo(db), vm.accounts, scope,
+        { reviewId: snapshot.job_id, reviewedAt: snapshot.created_at ?? new Date().toISOString(), contextVersion },
+        (e) => console.error("[account-memory] persistence failed:", e instanceof Error ? e.message : e),
+      );
+    }
+  } catch (e) { console.error("[account-memory] unavailable:", e instanceof Error ? e.message : e); }
+
+  return { state: "ok", report, experience, memory };
 }

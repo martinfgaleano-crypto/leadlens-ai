@@ -40,7 +40,7 @@ export default function BriefPage() {
 
   if (!result) return <Neutral text="Preparing your brief…" />;
   switch (result.state) {
-    case "ok": return <OpportunityWorkspace vm={fromInstitutionalReport(result.report, result.experience)} />;
+    case "ok": return <OpportunityWorkspace vm={fromInstitutionalReport(result.report, result.experience)} memory={result.memory ?? undefined} />;
     case "processing": return <Neutral text="Your brief is being generated. This can take a few minutes — refresh shortly." />;
     case "signin_required": return <Neutral text="Please sign in to view this brief." />;
     case "forbidden": return <Neutral text="This brief is not available." />;

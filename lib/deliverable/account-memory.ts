@@ -119,7 +119,10 @@ export function diffAccountCase(prev: AccountReviewSnapshot | null, next: Accoun
     validationResolved: [], validationStillOpen: [], decisionCriticalResolved: [], revisitTriggerMet: false,
   };
   if (!prev) return { ...base, isFirstReview: true, isSameReview: false, contextChanged: false, decision: { from: next.decision, to: next.decision, changed: false, drivers: [] }, material: false };
-  if (prev.reviewId === next.reviewId || snapshotFingerprint(prev) === snapshotFingerprint(next)) {
+  // Same review = idempotent re-ingest, or identical intelligence UNDER THE SAME
+  // client context. A pure context change (§17) is NOT "same" — it must flag
+  // client_objective_changed even when the account intelligence is unchanged.
+  if (prev.reviewId === next.reviewId || (snapshotFingerprint(prev) === snapshotFingerprint(next) && prev.contextVersion === next.contextVersion)) {
     return { ...base, isFirstReview: false, isSameReview: true, contextChanged: false, decision: { from: prev.decision, to: next.decision, changed: false, drivers: [] }, timing: { from: prev.timing, to: next.timing, direction: "unchanged" }, fit: { from: prev.fit, to: next.fit, direction: "unchanged" }, evidenceStrength: { from: prev.evidence, to: next.evidence, direction: "unchanged" }, material: false };
   }
   const contextChanged = prev.contextVersion !== next.contextVersion;
@@ -171,6 +174,45 @@ export function orderReviews(snapshots: AccountReviewSnapshot[]): { current: Acc
 
 // ── localized customer-facing "Since Last Review" (§14/§74-75) ──
 export interface MemoryItem { kind: "decision" | "new" | "evidence" | "validation" | "unknown" | "revisit"; text: string }
+
+/** Portfolio-level change (§59-68): aggregate the per-account diffs into a compact,
+ *  customer-safe "since last review" for the Portfolio Intelligence tab. Derived
+ *  from the SAME account snapshots as the Living Cases, so transitions always
+ *  agree (§69-70). Returns null on first review or when nothing material moved. */
+export function portfolioChange(
+  accounts: AccountBriefVM[],
+  previousById: Record<string, AccountReviewSnapshot>,
+  current: { reviewId: string; reviewedAt: string; contextVersion: string },
+  es: boolean,
+): { title: string; items: MemoryItem[] } | null {
+  const decWord: Record<DecisionState, string> = es
+    ? { prioritize: "Priorizar", validate: "Validar", monitor: "Monitorear", hold: "En espera" }
+    : { prioritize: "Prioritize", validate: "Validate", monitor: "Monitor", hold: "Hold" };
+  const toPrioritize: string[] = [], droppedFromPrioritize: string[] = [];
+  let strengthened = 0, weakened = 0, validationsResolved = 0, newChanges = 0, revisitsMet = 0, any = false;
+  for (const a of accounts) {
+    const prev = previousById[a.id]; if (!prev) continue;
+    const d = diffAccountCase(prev, snapshotAccountReview(a, current));
+    if (!d.material || d.isSameReview) continue; any = true;
+    if (d.decision.changed && d.decision.to === "prioritize") toPrioritize.push(a.company);
+    if (d.decision.changed && d.decision.from === "prioritize") droppedFromPrioritize.push(a.company);
+    if (d.timing.direction === "strengthened" || d.evidenceStrength.direction === "strengthened") strengthened++;
+    if (d.timing.direction === "weakened" || d.evidenceStrength.direction === "weakened" || d.counterevidenceAdded) weakened++;
+    validationsResolved += d.validationResolved.length;
+    if (d.newChangeKeys.length) newChanges++;
+    if (d.revisitTriggerMet) revisitsMet++;
+  }
+  if (!any) return null;
+  const items: MemoryItem[] = [];
+  if (toPrioritize.length) items.push({ kind: "decision", text: es ? `${toPrioritize.length} pasaron a ${decWord.prioritize}: ${toPrioritize.join(", ")}` : `${toPrioritize.length} moved to ${decWord.prioritize}: ${toPrioritize.join(", ")}` });
+  if (droppedFromPrioritize.length) items.push({ kind: "decision", text: es ? `${droppedFromPrioritize.length} salieron de ${decWord.prioritize}: ${droppedFromPrioritize.join(", ")}` : `${droppedFromPrioritize.length} left ${decWord.prioritize}: ${droppedFromPrioritize.join(", ")}` });
+  if (strengthened) items.push({ kind: "new", text: es ? `${strengthened} oportunidad(es) se fortaleció(eron)` : `${strengthened} opportunit${strengthened > 1 ? "ies" : "y"} strengthened` });
+  if (weakened) items.push({ kind: "evidence", text: es ? `${weakened} oportunidad(es) se debilitó(aron)` : `${weakened} opportunit${weakened > 1 ? "ies" : "y"} weakened` });
+  if (newChanges) items.push({ kind: "new", text: es ? `${newChanges} con nuevo cambio material verificado` : `${newChanges} with a new verified material change` });
+  if (validationsResolved) items.push({ kind: "validation", text: es ? `${validationsResolved} validación(es) resuelta(s)` : `${validationsResolved} validation${validationsResolved > 1 ? "s" : ""} resolved` });
+  if (revisitsMet) items.push({ kind: "revisit", text: es ? `${revisitsMet} condición(es) de revisión cumplida(s)` : `${revisitsMet} revisit condition${revisitsMet > 1 ? "s" : ""} met` });
+  return { title: es ? "Cambios en el portafolio" : "Portfolio change", items };
+}
 
 export function sinceLastReview(diff: AccountCaseDiff, es: boolean): { title: string; items: MemoryItem[] } | null {
   if (diff.isFirstReview || diff.isSameReview || !diff.material) return null;

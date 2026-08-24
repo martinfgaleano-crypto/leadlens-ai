@@ -10,7 +10,7 @@ import { DECISION_TOKENS, STRENGTH_TOKENS, RELATION_TOKENS, decisionLabel, order
 import { portfolioCsv, evidenceCsv, deliverableFilename } from "../exports";
 import { toClientCanvasVM } from "../client-canvas-vm";
 import { buildPortfolioIntelligence } from "../portfolio-intelligence";
-import { snapshotAccountReview, diffAccountCase, sinceLastReview, type AccountReviewSnapshot } from "../account-memory";
+import { snapshotAccountReview, diffAccountCase, sinceLastReview, portfolioChange, type AccountReviewSnapshot } from "../account-memory";
 
 /** Optional memory input for a SECOND-or-later review portable (§70). The
  *  portable stays a point-in-time snapshot; it only states what changed since the
@@ -304,7 +304,7 @@ function methodContent(vm: DeliverableViewModel, t: T, es: boolean): string {
   return `<div class="pt-card"><p class="pt-label">${esc(t.decisionStates)}</p>${legend}<p class="pt-label" style="margin-top:14px">${esc(t.evidenceRelations)}</p>${rels}${method}<p class="pt-note">${esc(t.absenceNote)}</p></div>`;
 }
 
-function portfolioIntelligencePanel(vm: DeliverableViewModel, t: T, es: boolean): string {
+function portfolioIntelligencePanel(vm: DeliverableViewModel, t: T, es: boolean, mem?: PortableMemory): string {
   const pi = buildPortfolioIntelligence(vm);
   const nameOf = (id: string) => vm.accounts.find((a) => a.id === id)?.company ?? id;
   const chips = (ids: string[]) => ids.slice(0, 6).map((id) => `<button class="pt-chip" data-goacct="${esc(id)}">${esc(nameOf(id))}</button>`).join("") + (ids.length > 6 ? `<span class="pt-note" style="margin:0">+${ids.length - 6}</span>` : "");
@@ -329,7 +329,11 @@ function portfolioIntelligencePanel(vm: DeliverableViewModel, t: T, es: boolean)
 
   const gaps = pi.coverageGaps.length ? `<div class="pt-card pt-honest"><p class="pt-label">${esc(lbl.gaps)}</p>${pi.coverageGaps.map((g) => `<p class="pt-note" style="margin:.2rem 0"><strong>${esc(g.category)}.</strong> ${esc(g.summary)}</p>`).join("")}</div>` : "";
 
-  return `<section class="pt-panel pt-hidden" id="panel-intelligence">${read}${attention}${oppPatterns}${changePatterns}${coverage}${themes}${tensions}${guidance}${gaps}</section>`;
+  // Portfolio Change (§59-68) — compact, only when a predecessor review exists.
+  const pc = mem ? portfolioChange(vm.accounts, mem.previousById, mem.current, es) : null;
+  const change = pc ? `<div class="pt-mem"><span class="pt-mem-k">${esc(pc.title)}</span><ul class="pt-mem-l">${pc.items.map((it) => `<li class="pt-mem-${it.kind}">${esc(it.text)}</li>`).join("")}</ul></div>` : "";
+
+  return `<section class="pt-panel pt-hidden" id="panel-intelligence">${change}${read}${attention}${oppPatterns}${changePatterns}${coverage}${themes}${tensions}${guidance}${gaps}</section>`;
 }
 
 // ─── Document ─────────────────────────────────────────────────────────────────
@@ -383,7 +387,7 @@ export function renderPortableHtml(vm: DeliverableViewModel, mem?: PortableMemor
     ${accountsPanel(vm, t, es, mem)}
     ${evidencePanel(vm, t, es)}
     ${comparePanel(vm, t, es)}
-    ${portfolioIntelligencePanel(vm, t, es)}
+    ${portfolioIntelligencePanel(vm, t, es, mem)}
   </main>
   ${utilities}
   <footer class="pt-foot">${esc(t.staticNote)} · LeadLens · ${esc(t.aoi)}${vm.meta.generatedLabel ? ` · ${esc(vm.meta.generatedLabel)}` : ""}</footer>

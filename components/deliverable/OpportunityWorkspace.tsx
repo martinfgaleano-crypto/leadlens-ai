@@ -14,7 +14,7 @@ import { DECISION_TOKENS, STRENGTH_TOKENS, decisionLabel, orderByAttention, acco
 import { portfolioCsv, evidenceCsv, deliverableFilename } from "@/lib/deliverable/exports";
 import { toClientCanvasVM } from "@/lib/deliverable/client-canvas-vm";
 import { buildPortfolioIntelligence } from "@/lib/deliverable/portfolio-intelligence";
-import { snapshotAccountReview, diffAccountCase, sinceLastReview, type AccountReviewSnapshot } from "@/lib/deliverable/account-memory";
+import { snapshotAccountReview, diffAccountCase, sinceLastReview, portfolioChange, type AccountReviewSnapshot } from "@/lib/deliverable/account-memory";
 import { AccountBrief, DecisionBadge, SourceList } from "./primitives";
 
 /** Optional Account Memory input for a second-or-later review (§68). Dormant when
@@ -152,7 +152,7 @@ export default function OpportunityWorkspace({ vm, memory }: { vm: DeliverableVi
 
         {tab === "evidence" && vm.capabilities.showEvidenceTab && <EvidenceTab vm={vm} t={t} es={es} onOpen={openAccount} />}
 
-        {tab === "intelligence" && <PortfolioIntelligenceTab vm={vm} t={t} es={es} onOpen={openAccount} />}
+        {tab === "intelligence" && <PortfolioIntelligenceTab vm={vm} t={t} es={es} onOpen={openAccount} memory={memory} />}
       </main>
 
       <UtilityBar vm={vm} t={t} es={es} />
@@ -385,15 +385,19 @@ function PortfolioTab({ vm, t, es, onOpen, onExplorePI }: { vm: DeliverableViewM
 // Presentation only: consumes the deterministic + gated PortfolioIntelligenceVM.
 // No pattern detection here (§66). Supporting accounts are inspectable via the
 // same account navigation (§67-70). Empty sections are omitted (§9/§65).
-function PortfolioIntelligenceTab({ vm, es, onOpen }: { vm: DeliverableViewModel; t: L; es: boolean; onOpen: (id: string) => void }) {
+function PortfolioIntelligenceTab({ vm, es, onOpen, memory }: { vm: DeliverableViewModel; t: L; es: boolean; onOpen: (id: string) => void; memory?: WorkspaceMemory }) {
   const pi = buildPortfolioIntelligence(vm);
   const L = pi.labels;
+  const change = memory ? portfolioChange(vm.accounts, memory.previousById, memory.current, es) : null;
   const nameOf = (id: string) => vm.accounts.find((a) => a.id === id)?.company ?? id;
   const Chips = ({ ids }: { ids: string[] }) => (
     <div className="dlv-chips">{ids.slice(0, 6).map((id) => <button key={id} className="dlv-chip" onClick={() => onOpen(id)}>{nameOf(id)}</button>)}{ids.length > 6 && <span className="dlv-note" style={{ margin: 0 }}>+{ids.length - 6}</span>}</div>
   );
   return (
     <div className="dlv-panel">
+      {change && (
+        <div className="dlv-card dlv-mem"><p className="dlv-label">{change.title}</p><ul className="dlv-mem-l">{change.items.map((it, i) => <li key={i} className={it.kind === "decision" ? "dlv-mem-decision" : undefined}>{it.text}</li>)}</ul></div>
+      )}
       {pi.read.length > 0 && (
         <div className="dlv-card dlv-intel-read"><p className="dlv-label">{L.read}</p>{pi.read.map((r, i) => <p key={i} className="dlv-intel-copy" style={{ marginTop: i ? ".4rem" : 0 }}>{r.text}</p>)}</div>
       )}
