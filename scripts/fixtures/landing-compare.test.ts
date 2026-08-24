@@ -28,7 +28,7 @@ t("§26 fixture is illustrative", C.provenance === "illustrative_fixture" && C.i
 t("§7 dimensions are exactly Fit/Timing/Evidence", (["Fit", "Timing", "Evidence"] as CompareDimension[]).every((d) => d in C.why));
 
 // §11/§29 landing render: component present, no workspace/provider/memory import for it
-t("§11 CompareLens rendered", /function CompareLens\(/.test(src) && /<CompareLens lang=\{lang\} \/>/.test(src));
+t("§11 CompareLens rendered (in the Decision Desk)", /function CompareLens\(/.test(src) && /<CompareLens lang=\{lang\} embedded \/>/.test(src));
 t("§8 not a spreadsheet — uses a dimension radiogroup focus, not a static table", /role="radiogroup"/.test(src) && /aria-checked/.test(src));
 t("§29 no OpportunityWorkspace / provider / Account Memory import on landing", !/OpportunityWorkspace/.test(src) && !/account-memory/.test(src) && !/from "@\/lib\/sources\/access/.test(src));
 t("§10 no NN/100 aggregate score anywhere", !/\d\s*\/\s*100/.test(src));

@@ -1329,6 +1329,7 @@ const INTERPRETATION_COPY: Record<OutputLanguage, {
   after: string; timing: string; why: string; changeEvent: string; changeSource: string; changeReason: string; narrativeDisclaimer: string; inspectBefore: string; inspectAfter: string;
   evEyebrow: string; evTitle: string; evThesis: string; evClaim: string; evDirect: string; evCorroborating: string; evContext: string; evWeakens: string; evValidate: string; evRead: string; evReadNote: string; evCorrob: string; evSources: string; evLatest: string;
   cmpEyebrow: string; cmpTitle: string; cmpFocus: string; cmpLeads: string; cmpUnknown: string; cmpNote: string;
+  deskEyebrow: string; deskLens: string; modeWhy: string; modeEvidence: string; modeCompare: string;
 }> = {
   en: {
     eyebrow: "Company interpretation", title: "Tell LeadLens what you sell.", intro: "See how a short commercial description becomes a focused investigation brief — without running a search or inventing accounts.",
@@ -1337,6 +1338,7 @@ const INTERPRETATION_COPY: Record<OutputLanguage, {
     bridge: "See how this becomes an opportunity", canvasEyebrow: "Illustrative opportunity", canvasTitle: "From criteria to an account worth inspecting.", changedEyebrow: "What Changed", changedTitle: "A material change can alter the decision.", before: "Before", change: "Detected change", after: "After", timing: "Timing", why: "Why the decision changes", changeEvent: "Signed a regional distribution agreement", changeSource: "Illustrative company announcement", changeReason: "A recent, corroborated expansion strengthens the timing case; procurement ownership still needs validation.", narrativeDisclaimer: "Illustrative narrative · no live score or ranking was recalculated.", inspectBefore: "Inspect before", inspectAfter: "Inspect after",
     evEyebrow: "The evidence", evTitle: "Don't trust a score. See the reasoning.", evThesis: "Opportunity thesis", evClaim: "What the evidence supports", evDirect: "Direct", evCorroborating: "Corroborating", evContext: "Context", evWeakens: "What weakens the case", evValidate: "What to validate", evRead: "Evidence read", evReadNote: "No blended score — the read is exactly the evidence above.", evCorrob: "corroborated", evSources: "dated sources", evLatest: "latest",
     cmpEyebrow: "Compare", cmpTitle: "Why this one, and not another?", cmpFocus: "Focus dimension", cmpLeads: "leads on", cmpUnknown: "Still unresolved", cmpNote: "Same canonical Fit / Timing / Evidence — no ranking recomputed.",
+    deskEyebrow: "One decision, three ways", deskLens: "Inspect", modeWhy: "Why now", modeEvidence: "Evidence", modeCompare: "Why this one",
   },
   es: {
     eyebrow: "Interpretación de empresa", title: "Cuéntale a LeadLens qué vendes.", intro: "Mira cómo una descripción comercial breve se convierte en un criterio de investigación enfocado, sin ejecutar una búsqueda ni inventar cuentas.",
@@ -1345,6 +1347,7 @@ const INTERPRETATION_COPY: Record<OutputLanguage, {
     bridge: "Ver cómo se convierte en una oportunidad", canvasEyebrow: "Oportunidad ilustrativa", canvasTitle: "Del criterio a una cuenta que merece revisión.", changedEyebrow: "Qué cambió", changedTitle: "Un cambio material puede cambiar la decisión.", before: "Antes", change: "Cambio detectado", after: "Después", timing: "Timing", why: "Por qué cambia la decisión", changeEvent: "Firmó un acuerdo de distribución regional", changeSource: "Anuncio corporativo ilustrativo", changeReason: "Una expansión reciente y corroborada fortalece el timing; todavía debe validarse quién controla las compras.", narrativeDisclaimer: "Narrativa ilustrativa · no se recalculó ningún score ni ranking en vivo.", inspectBefore: "Ver antes", inspectAfter: "Ver después",
     evEyebrow: "La evidencia", evTitle: "No confíes en un score. Mira el razonamiento.", evThesis: "Tesis de oportunidad", evClaim: "Lo que respalda la evidencia", evDirect: "Directa", evCorroborating: "Corroborante", evContext: "Contexto", evWeakens: "Qué debilita el caso", evValidate: "Qué validar", evRead: "Lectura de evidencia", evReadNote: "Sin score combinado — la lectura es exactamente la evidencia de arriba.", evCorrob: "corroborado", evSources: "fuentes fechadas", evLatest: "más reciente",
     cmpEyebrow: "Comparar", cmpTitle: "¿Por qué esta, y no otra?", cmpFocus: "Dimensión en foco", cmpLeads: "lidera en", cmpUnknown: "Aún sin resolver", cmpNote: "Mismos Fit / Timing / Evidence canónicos — sin recalcular ranking.",
+    deskEyebrow: "Una decisión, tres ángulos", deskLens: "Inspeccionar", modeWhy: "Por qué ahora", modeEvidence: "Evidencia", modeCompare: "Por qué esta",
   },
   pt: {
     eyebrow: "Interpretação da empresa", title: "Conte à LeadLens o que você vende.", intro: "Veja como uma descrição comercial curta se transforma em um critério de investigação focado, sem executar buscas nem inventar contas.",
@@ -1353,6 +1356,7 @@ const INTERPRETATION_COPY: Record<OutputLanguage, {
     bridge: "Ver como isso vira uma oportunidade", canvasEyebrow: "Oportunidade ilustrativa", canvasTitle: "Do critério a uma conta que merece análise.", changedEyebrow: "O que mudou", changedTitle: "Uma mudança material pode alterar a decisão.", before: "Antes", change: "Mudança detectada", after: "Depois", timing: "Timing", why: "Por que a decisão muda", changeEvent: "Assinou um acordo regional de distribuição", changeSource: "Comunicado corporativo ilustrativo", changeReason: "Uma expansão recente e corroborada fortalece o timing; a responsabilidade de compras ainda precisa ser validada.", narrativeDisclaimer: "Narrativa ilustrativa · nenhum score ou ranking ao vivo foi recalculado.", inspectBefore: "Ver antes", inspectAfter: "Ver depois",
     evEyebrow: "A evidência", evTitle: "Não confie num score. Veja o raciocínio.", evThesis: "Tese de oportunidade", evClaim: "O que a evidência sustenta", evDirect: "Direta", evCorroborating: "Corroborante", evContext: "Contexto", evWeakens: "O que enfraquece o caso", evValidate: "O que validar", evRead: "Leitura da evidência", evReadNote: "Sem score combinado — a leitura é exatamente a evidência acima.", evCorrob: "corroborado", evSources: "fontes datadas", evLatest: "mais recente",
     cmpEyebrow: "Comparar", cmpTitle: "Por que esta, e não outra?", cmpFocus: "Dimensão em foco", cmpLeads: "lidera em", cmpUnknown: "Ainda sem resolução", cmpNote: "Mesmos Fit / Timing / Evidence canônicos — sem recalcular ranking.",
+    deskEyebrow: "Uma decisão, três ângulos", deskLens: "Inspecionar", modeWhy: "Por que agora", modeEvidence: "Evidência", modeCompare: "Por que esta",
   },
   ja: {
     eyebrow: "企業コンテキストの解釈", title: "何を販売しているか教えてください。", intro: "短い事業説明が、検索や企業の捏造なしに、焦点を絞った調査基準へ変わる様子を確認できます。",
@@ -1361,6 +1365,7 @@ const INTERPRETATION_COPY: Record<OutputLanguage, {
     bridge: "機会への変化を見る", canvasEyebrow: "説明用の機会", canvasTitle: "調査基準から、確認すべき企業へ。", changedEyebrow: "変化したこと", changedTitle: "重要な変化は判断を変えることがあります。", before: "前", change: "検出された変化", after: "後", timing: "タイミング", why: "判断が変わる理由", changeEvent: "地域配送契約を締結", changeSource: "説明用の企業発表", changeReason: "最近の裏付けられた拡大によりタイミングが強まりました。調達責任者の確認はまだ必要です。", narrativeDisclaimer: "説明用のナラティブです · ライブのスコアや順位は再計算されていません。", inspectBefore: "変化前を見る", inspectAfter: "変化後を見る",
     evEyebrow: "根拠", evTitle: "スコアを信じず、推論を確認する。", evThesis: "機会の仮説", evClaim: "根拠が支えること", evDirect: "直接", evCorroborating: "裏付け", evContext: "文脈", evWeakens: "この判断を弱める点", evValidate: "検証すべきこと", evRead: "根拠の読み取り", evReadNote: "合成スコアなし — 読み取りは上記の根拠そのものです。", evCorrob: "裏付けあり", evSources: "日付付きの情報源", evLatest: "最新",
     cmpEyebrow: "比較", cmpTitle: "なぜこの企業で、他ではないのか？", cmpFocus: "注目する観点", cmpLeads: "が優る", cmpUnknown: "未解決", cmpNote: "同じ正規の Fit / Timing / Evidence — ランキングは再計算していません。",
+    deskEyebrow: "一つの判断を三つの角度から", deskLens: "確認", modeWhy: "なぜ今か", modeEvidence: "根拠", modeCompare: "なぜこの企業か",
   },
 };
 
@@ -1504,9 +1509,11 @@ export default function DemoPipelinePage() {
     const els = Array.from(document.querySelectorAll<HTMLElement>(".ll-reveal:not(.ll-in)"));
     if (!els.length) return;
     const io = new IntersectionObserver((entries) => {
-      for (const e of entries) if (e.isIntersecting) { e.target.classList.add("ll-in"); io.unobserve(e.target); }
-    }, { threshold: 0.12, rootMargin: "0px 0px -6% 0px" });
-    els.forEach((el) => io.observe(el));
+      // Reveal when entering view OR when already scrolled past (top above the
+      // viewport) — so fast scrolling can never leave a section stuck hidden.
+      for (const e of entries) if (e.isIntersecting || e.boundingClientRect.top < window.innerHeight) { e.target.classList.add("ll-in"); io.unobserve(e.target); }
+    }, { threshold: 0, rootMargin: "0px 0px -8% 0px" });
+    els.forEach((el) => { if (el.getBoundingClientRect().top < window.innerHeight) { el.classList.add("ll-in"); } else io.observe(el); });
     return () => io.disconnect();
   }, [view]);
 
@@ -3369,12 +3376,64 @@ function CompanyInterpretationExperience({ lang, onBridge }: { lang: OutputLangu
           <div style={{ marginBottom: "1.2rem" }}><div style={{ fontSize: ".68rem", color: "#0284c7", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase", marginBottom: ".35rem" }}>{ui.canvasEyebrow}</div><h3 style={{ fontSize: "clamp(1.4rem,3vw,1.85rem)", lineHeight: 1.2, letterSpacing: "-.02em", margin: 0 }}>{ui.canvasTitle}</h3></div>
           <ClientCanvasSample />
         </div>
-        <WhatChangedV2 lang={lang} />
-        <EvidenceReasoning lang={lang} />
-        <CompareLens lang={lang} />
+        <DecisionDesk lang={lang} />
       </div>
     </section>
   );
+}
+
+// ─── Decision Desk (Sprint 4.5) ───────────────────────────────────────────────
+// One persistent product stage: the account, decision and Fit/Timing/Evidence
+// stay anchored while the visitor changes the QUESTION — Why now / Evidence /
+// Why this one — swapping a single mode body. This collapses three stacked demos
+// into one surface, removes the repeated Northstar/PRIORITIZE/FTE framing (now
+// shown once), and lets the visitor interrogate one decision from three angles.
+// Presentation only — each mode reuses its canonical component, embedded.
+function DecisionDesk({ lang }: { lang: OutputLanguage }) {
+  const ui = INTERPRETATION_COPY[lang];
+  const acct = LANDING_COMPARISON.accounts[0]; // Northstar — canonical decision + FTE
+  const modes = [{ k: "why", label: ui.modeWhy }, { k: "evidence", label: ui.modeEvidence }, { k: "compare", label: ui.modeCompare }] as const;
+  const [mode, setMode] = useState<"why" | "evidence" | "compare">("why");
+  const onTabKey = (e: React.KeyboardEvent, k: string) => {
+    const i = modes.findIndex((m) => m.k === k); let n = i;
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") n = (i + 1) % modes.length;
+    else if (e.key === "ArrowLeft" || e.key === "ArrowUp") n = (i - 1 + modes.length) % modes.length;
+    else return;
+    e.preventDefault(); setMode(modes[n].k);
+    (e.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="tab"]')[n])?.focus();
+  };
+  const fte: [string, Strength][] = [["Fit", acct.fit], ["Timing", acct.timing], ["Evidence", acct.evidence]];
+  return <div className="ll-desk ll-reveal" style={{ marginTop: "3.25rem", paddingTop: "2.5rem", borderTop: "1px solid #e2e8f0" }}>
+    <div style={{ fontSize: ".68rem", color: "#0284c7", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase", marginBottom: ".7rem" }}>{ui.deskEyebrow}</div>
+    <div style={{ border: "1px solid #e6ebf1", borderTop: "3px solid #0b1220", borderRadius: ".9rem", boxShadow: "0 16px 44px rgba(15,23,42,.10)", overflow: "hidden", background: "#fff" }}>
+      {/* Persistent account context — established once */}
+      <div style={{ padding: "1rem 1.1rem", background: "linear-gradient(180deg,#f5fbff,#fff 72%)", borderBottom: "1px solid #eef2f6" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: ".6rem", flexWrap: "wrap" }}>
+          <span style={{ fontSize: "1.2rem", fontWeight: 800, letterSpacing: "-.02em", color: "#0f172a" }}>{acct.name}</span>
+          <DecisionPill state={acct.decision} />
+          <span style={{ fontSize: ".62rem", color: "#94a3b8", marginLeft: "auto" }}>{acct.segment}</span>
+        </div>
+        <div className="ll-desk-fte" style={{ display: "flex", gap: "1.4rem", marginTop: ".65rem", flexWrap: "wrap" }}>
+          {fte.map(([label, val]) => <span key={label} style={{ display: "inline-flex", alignItems: "baseline", gap: ".35rem" }}>
+            <span style={{ fontSize: ".54rem", fontWeight: 800, letterSpacing: ".05em", textTransform: "uppercase", color: "#94a3b8" }}>{label}</span>
+            <span style={{ fontSize: ".9rem", fontWeight: STRENGTH[val].weight, color: STRENGTH[val].color }}>{val}</span>
+          </span>)}
+        </div>
+      </div>
+      {/* The question being asked */}
+      <div role="tablist" aria-label={ui.deskLens} style={{ display: "flex", gap: ".1rem", padding: "0 .7rem", borderBottom: "1px solid #eef2f6", overflowX: "auto" }}>
+        {modes.map((m) => { const on = m.k === mode; return (
+          <button key={m.k} role="tab" aria-selected={on} tabIndex={on ? 0 : -1} onClick={() => setMode(m.k)} onKeyDown={(e) => onTabKey(e, m.k)}
+            style={{ appearance: "none", background: "none", border: "none", borderBottom: `2px solid ${on ? "#0284c7" : "transparent"}`, padding: ".7rem .7rem", minHeight: 44, fontFamily: "inherit", fontSize: ".78rem", fontWeight: 700, color: on ? "#0369a1" : "#64748b", cursor: "pointer", whiteSpace: "nowrap" }}>{m.label}</button>); })}
+      </div>
+      {/* One mode at a time */}
+      <div role="tabpanel" key={mode} className="ll-ws-fade" style={{ padding: "1.1rem 1.1rem 1.25rem" }}>
+        {mode === "why" && <WhatChangedV2 lang={lang} embedded />}
+        {mode === "evidence" && <EvidenceReasoning lang={lang} embedded />}
+        {mode === "compare" && <CompareLens lang={lang} embedded />}
+      </div>
+    </div>
+  </div>;
 }
 
 // ─── Compare — relative decision lens (Sprint 4) ──────────────────────────────
@@ -3384,7 +3443,7 @@ function CompanyInterpretationExperience({ lang, onBridge }: { lang: OutputLangu
 // that Fit does not separate the accounts — Timing (the recent change) does, tying
 // straight back to What Changed + Evidence. Projects canonical Fit/Timing/Evidence
 // + decision state; leadership is an ordinal read of Strength, never a score (§7/§10).
-function CompareLens({ lang }: { lang: OutputLanguage }) {
+function CompareLens({ lang, embedded }: { lang: OutputLanguage; embedded?: boolean }) {
   const ui = INTERPRETATION_COPY[lang];
   const c = LANDING_COMPARISON;
   const dims: CompareDimension[] = ["Fit", "Timing", "Evidence"];
@@ -3398,12 +3457,12 @@ function CompareLens({ lang }: { lang: OutputLanguage }) {
     e.preventDefault(); setDim(dims[n]);
     (e.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="radio"]')[n])?.focus();
   };
-  return <div className="ll-compare ll-reveal" style={{ marginTop: "3.25rem", paddingTop: "2.5rem", borderTop: "1px solid #e2e8f0" }}>
-    <div style={{ display: "flex", justifyContent: "space-between", gap: "1rem", alignItems: "flex-end", flexWrap: "wrap", marginBottom: "1.1rem" }}>
-      <div>
+  return <div className="ll-compare ll-reveal" style={embedded ? {} : { marginTop: "3.25rem", paddingTop: "2.5rem", borderTop: "1px solid #e2e8f0" }}>
+    <div style={{ display: "flex", justifyContent: embedded ? "flex-end" : "space-between", gap: "1rem", alignItems: "flex-end", flexWrap: "wrap", marginBottom: "1.1rem" }}>
+      {!embedded && <div>
         <div style={{ fontSize: ".68rem", color: "#0284c7", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase", marginBottom: ".35rem" }}>{ui.cmpEyebrow}</div>
         <h3 style={{ fontSize: "clamp(1.4rem,3vw,1.85rem)", lineHeight: 1.2, letterSpacing: "-.02em", margin: 0 }}>{ui.cmpTitle}</h3>
-      </div>
+      </div>}
       <div role="radiogroup" aria-label={ui.cmpFocus} style={{ display: "inline-flex", background: "#f1f5f9", padding: 3, borderRadius: ".55rem" }}>
         {dims.map((d) => { const on = d === dim; return (
           <button key={d} role="radio" aria-checked={on} tabIndex={on ? 0 : -1} type="button" onClick={() => setDim(d)} onKeyDown={(e) => onKey(e, d)}
@@ -3441,14 +3500,14 @@ function InterpretationField({ label, value, last }: { label: string; value: str
   return <div style={{ paddingBottom: last ? 0 : ".7rem", marginBottom: last ? 0 : ".7rem", borderBottom: last ? 0 : "1px solid #eef2f7" }}><div style={{ fontSize: ".58rem", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", letterSpacing: ".06em" }}>{label}</div><div style={{ color: "#0f172a", fontSize: ".78rem", fontWeight: 700, lineHeight: 1.4, marginTop: ".2rem" }}>{value}</div></div>;
 }
 
-function WhatChangedV2({ lang }: { lang: OutputLanguage }) {
+function WhatChangedV2({ lang, embedded }: { lang: OutputLanguage; embedded?: boolean }) {
   const ui = INTERPRETATION_COPY[lang];
   const fixture = NORTHSTAR_WHAT_CHANGED;
   const [inspect, setInspect] = useState<"before" | "after">("after");
   const panelId = "landing-what-changed-panel";
-  return <div className="ll-change-v2" style={{ marginTop: "3.25rem", paddingTop: "2.5rem", borderTop: "1px solid #e2e8f0" }}>
-    <div style={{ display: "flex", justifyContent: "space-between", gap: "1rem", alignItems: "flex-end", flexWrap: "wrap", marginBottom: "1.3rem" }}>
-      <div><div style={{ fontSize: ".68rem", color: "#0284c7", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase", marginBottom: ".35rem" }}>{ui.changedEyebrow}</div><h3 style={{ fontSize: "clamp(1.4rem,3vw,1.85rem)", lineHeight: 1.2, letterSpacing: "-.02em", margin: 0 }}>{ui.changedTitle}</h3></div>
+  return <div className="ll-change-v2" style={embedded ? {} : { marginTop: "3.25rem", paddingTop: "2.5rem", borderTop: "1px solid #e2e8f0" }}>
+    <div style={{ display: "flex", justifyContent: embedded ? "flex-end" : "space-between", gap: "1rem", alignItems: "flex-end", flexWrap: "wrap", marginBottom: "1.3rem" }}>
+      {!embedded && <div><div style={{ fontSize: ".68rem", color: "#0284c7", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase", marginBottom: ".35rem" }}>{ui.changedEyebrow}</div><h3 style={{ fontSize: "clamp(1.4rem,3vw,1.85rem)", lineHeight: 1.2, letterSpacing: "-.02em", margin: 0 }}>{ui.changedTitle}</h3></div>}
       <div role="group" aria-label={ui.changedTitle} style={{ display: "inline-flex", background: "#f1f5f9", padding: 3, borderRadius: ".55rem" }}>
         <button className="ll-change-toggle" type="button" aria-pressed={inspect === "before"} aria-controls={panelId} onClick={() => setInspect("before")} style={{ minHeight: 44, border: 0, borderRadius: ".42rem", padding: ".45rem .75rem", background: inspect === "before" ? "#fff" : "transparent", color: inspect === "before" ? "#0f172a" : "#64748b", fontWeight: 700, fontFamily: "inherit", cursor: "pointer", boxShadow: inspect === "before" ? "0 1px 4px rgba(15,23,42,.1)" : "none" }}>{ui.inspectBefore}</button>
         <button className="ll-change-toggle" type="button" aria-pressed={inspect === "after"} aria-controls={panelId} onClick={() => setInspect("after")} style={{ minHeight: 44, border: 0, borderRadius: ".42rem", padding: ".45rem .75rem", background: inspect === "after" ? "#fff" : "transparent", color: inspect === "after" ? "#0369a1" : "#64748b", fontWeight: 700, fontFamily: "inherit", cursor: "pointer", boxShadow: inspect === "after" ? "0 1px 4px rgba(15,23,42,.1)" : "none" }}>{ui.inspectAfter}</button>
@@ -3486,15 +3545,15 @@ function ChangeStateCard({ label, account, decision, timing, active }: { label: 
 // never a blended score. No source-card grid; the spine shows support relating to
 // one commercial claim. Motion = evidence accumulating, read resolving last.
 const EV_REL_COLOR: Record<EvidenceRelation, string> = { direct: "#0284c7", corroborating: "#15803d", context: "#64748b" };
-function EvidenceReasoning({ lang }: { lang: OutputLanguage }) {
+function EvidenceReasoning({ lang, embedded }: { lang: OutputLanguage; embedded?: boolean }) {
   const ui = INTERPRETATION_COPY[lang];
   const f = NORTHSTAR_EVIDENCE;
   const relLabel: Record<EvidenceRelation, string> = { direct: ui.evDirect, corroborating: ui.evCorroborating, context: ui.evContext };
-  return <div className="ll-evidence" style={{ marginTop: "3.25rem", paddingTop: "2.5rem", borderTop: "1px solid #e2e8f0" }}>
-    <div style={{ marginBottom: "1.3rem" }}>
+  return <div className="ll-evidence" style={embedded ? {} : { marginTop: "3.25rem", paddingTop: "2.5rem", borderTop: "1px solid #e2e8f0" }}>
+    {!embedded && <div style={{ marginBottom: "1.3rem" }}>
       <div style={{ fontSize: ".68rem", color: "#0284c7", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase", marginBottom: ".35rem" }}>{ui.evEyebrow}</div>
       <h3 style={{ fontSize: "clamp(1.4rem,3vw,1.85rem)", lineHeight: 1.2, letterSpacing: "-.02em", margin: 0 }}>{ui.evTitle}</h3>
-    </div>
+    </div>}
     <div className="ll-ev-grid" style={{ display: "grid", gridTemplateColumns: "0.82fr 1.18fr", gap: "1.5rem", alignItems: "start" }}>
       {/* Thesis + the claim the evidence must support */}
       <div>
