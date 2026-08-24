@@ -10,6 +10,20 @@ import { DECISION_TOKENS, STRENGTH_TOKENS, RELATION_TOKENS, decisionLabel, order
 import { portfolioCsv, evidenceCsv, deliverableFilename } from "../exports";
 import { toClientCanvasVM } from "../client-canvas-vm";
 import { buildPortfolioIntelligence } from "../portfolio-intelligence";
+import { snapshotAccountReview, diffAccountCase, sinceLastReview, type AccountReviewSnapshot } from "../account-memory";
+
+/** Optional memory input for a SECOND-or-later review portable (§70). The
+ *  portable stays a point-in-time snapshot; it only states what changed since the
+ *  named previous review. Omitted ⇒ first-review behavior (no memory, §65). */
+export interface PortableMemory { current: { reviewId: string; reviewedAt: string; contextVersion: string }; previousById: Record<string, AccountReviewSnapshot> }
+
+function memoryBlock(a: AccountBriefVM, mem: PortableMemory | undefined, es: boolean): string {
+  if (!mem) return "";
+  const prev = mem.previousById[a.id]; if (!prev) return "";
+  const summary = sinceLastReview(diffAccountCase(prev, snapshotAccountReview(a, mem.current)), es);
+  if (!summary) return "";
+  return `<div class="pt-mem"><span class="pt-mem-k">${esc(summary.title)}</span><ul class="pt-mem-l">${summary.items.map((it) => `<li class="pt-mem-${it.kind}">${esc(it.text)}</li>`).join("")}</ul></div>`;
+}
 import { esc, safeUrl, jsonForScript, type PortableRuntimePayload, PORTABLE_FORMAT_VERSION } from "./portable-payload";
 
 const ORDER: DecisionState[] = ["prioritize", "validate", "monitor", "hold"];
@@ -213,10 +227,10 @@ function briefHtml(a: AccountBriefVM, t: T, es: boolean): string {
   </div>`;
 }
 
-function accountsPanel(vm: DeliverableViewModel, t: T, es: boolean): string {
+function accountsPanel(vm: DeliverableViewModel, t: T, es: boolean, mem?: PortableMemory): string {
   const ordered = orderByAttention(vm.accounts);
   const nav = ordered.map((a, i) => `<button class="pt-nav-i${i === 0 ? " is-active" : ""}" data-acct="${esc(a.id)}"><span class="pt-nav-r">${a.rank ?? "·"}</span><span class="pt-nav-b"><span class="pt-nav-n">${esc(a.company)}</span><span class="pt-nav-s"><span class="pt-dot" style="background:${DECISION_TOKENS[a.decision].dot}"></span>${esc(decisionLabel(a.decision, es))}${a.freshness?.age ? ` · ${esc(a.freshness.age)}` : ""}</span></span></button>`).join("");
-  const briefs = ordered.map((a) => briefHtml(a, t, es)).join("");
+  const briefs = ordered.map((a) => memoryBlock(a, mem, es) + briefHtml(a, t, es)).join("");
   return `<section class="pt-panel pt-hidden" id="panel-accounts"><div class="pt-accts"><aside class="pt-nav"><div class="pt-nav-h">${esc(t.accounts)} · ${vm.accounts.length}</div><div class="pt-nav-l">${nav}</div></aside><div class="pt-briefs">${briefs}</div></div></section>`;
 }
 
@@ -320,7 +334,7 @@ function portfolioIntelligencePanel(vm: DeliverableViewModel, t: T, es: boolean)
 
 // ─── Document ─────────────────────────────────────────────────────────────────
 
-export function renderPortableHtml(vm: DeliverableViewModel): string {
+export function renderPortableHtml(vm: DeliverableViewModel, mem?: PortableMemory): string {
   const es = vm.meta.language === "es";
   const t = L(es);
   const cc = toClientCanvasVM(vm);   // client-level opening: the client is the subject
@@ -366,7 +380,7 @@ export function renderPortableHtml(vm: DeliverableViewModel): string {
   <nav class="pt-tabs" role="tablist">${tabRow}</nav>
   <main class="pt-main">
     ${portfolioPanel(vm, t, es)}
-    ${accountsPanel(vm, t, es)}
+    ${accountsPanel(vm, t, es, mem)}
     ${evidencePanel(vm, t, es)}
     ${comparePanel(vm, t, es)}
     ${portfolioIntelligencePanel(vm, t, es)}
@@ -420,6 +434,10 @@ body{margin:0;background:#f4f7fb;color:#0f172a;font-family:-apple-system,BlinkMa
 .pt-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
 .pt-chip{appearance:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;color:#0f172a;background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:3px 10px}.pt-chip:hover{border-color:#0284c7;color:#0369a1}
 .pt-guide{display:flex;gap:9px;align-items:baseline;padding:6px 0;border-top:1px solid #f1f5f9}.pt-guide:first-of-type{border-top:none}
+.pt-mem{border:1px solid #e0f2fe;background:#f8fcff;border-left:4px solid #0ea5e9;border-radius:10px;padding:10px 14px;margin:0 0 10px}
+.pt-mem-k{display:block;font-size:10.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:#0369a1;margin-bottom:6px}
+.pt-mem-l{margin:0;padding-left:16px;font-size:13px;color:#334155;line-height:1.5}
+.pt-mem-l li{margin:2px 0}.pt-mem-decision{font-weight:700;color:#0f172a}
 .pt-gk{flex:none;font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#0369a1;background:#f0f9ff;border:1px solid #e0f2fe;border-radius:4px;padding:2px 7px;min-width:64px;text-align:center}
 .pt-label{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#94a3b8;margin:0 0 11px}
 .pt-label-accent{color:#0284c7}

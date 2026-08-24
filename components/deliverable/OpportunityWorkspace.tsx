@@ -14,7 +14,26 @@ import { DECISION_TOKENS, STRENGTH_TOKENS, decisionLabel, orderByAttention, acco
 import { portfolioCsv, evidenceCsv, deliverableFilename } from "@/lib/deliverable/exports";
 import { toClientCanvasVM } from "@/lib/deliverable/client-canvas-vm";
 import { buildPortfolioIntelligence } from "@/lib/deliverable/portfolio-intelligence";
+import { snapshotAccountReview, diffAccountCase, sinceLastReview, type AccountReviewSnapshot } from "@/lib/deliverable/account-memory";
 import { AccountBrief, DecisionBadge, SourceList } from "./primitives";
+
+/** Optional Account Memory input for a second-or-later review (§68). Dormant when
+ *  absent or on first review — no fake history (§65/§77). Diffs canonical
+ *  structured state only (locale-independent). */
+export interface WorkspaceMemory { current: { reviewId: string; reviewedAt: string; contextVersion: string }; previousById: Record<string, AccountReviewSnapshot> }
+
+function SinceLastReview({ a, memory, es }: { a: AccountBriefVM; memory?: WorkspaceMemory; es: boolean }) {
+  if (!memory) return null;
+  const prev = memory.previousById[a.id]; if (!prev) return null;
+  const summary = sinceLastReview(diffAccountCase(prev, snapshotAccountReview(a, memory.current)), es);
+  if (!summary) return null;
+  return (
+    <div className="dlv-card dlv-mem">
+      <p className="dlv-label">{summary.title}</p>
+      <ul className="dlv-mem-l">{summary.items.map((it, i) => <li key={i} className={it.kind === "decision" ? "dlv-mem-decision" : undefined}>{it.text}</li>)}</ul>
+    </div>
+  );
+}
 
 type Tab = "portfolio" | "accounts" | "evidence" | "compare" | "intelligence";
 const DECISION_ORDER: DecisionState[] = ["prioritize", "validate", "monitor", "hold"];
@@ -31,7 +50,7 @@ function downloadText(filename: string, text: string, mime: string) {
   } catch { /* download unavailable in this context */ }
 }
 
-export default function OpportunityWorkspace({ vm }: { vm: DeliverableViewModel }) {
+export default function OpportunityWorkspace({ vm, memory }: { vm: DeliverableViewModel; memory?: WorkspaceMemory }) {
   const es = vm.meta.language === "es";
   const t = useMemo(() => LABELS(es), [es]);
   const cc = useMemo(() => toClientCanvasVM(vm), [vm]);   // client is the subject
@@ -124,7 +143,7 @@ export default function OpportunityWorkspace({ vm }: { vm: DeliverableViewModel 
           <div className="dlv-accounts">
             <AccountNav vm={vm} activeId={active?.id ?? ""} onSelect={openAccount} es={es} t={t} filter={decisionFilter} onFilter={setDecisionFilter} />
             <section className="dlv-brief">
-              {active ? <AccountBrief a={active} es={es} /> : <Empty text={t.emptyPortfolio} />}
+              {active ? <><SinceLastReview a={active} memory={memory} es={es} /><AccountBrief a={active} es={es} /></> : <Empty text={t.emptyPortfolio} />}
             </section>
           </div>
         )}
@@ -686,6 +705,10 @@ const CSS = `
 .dlv-intel-read { border-left: 4px solid #0ea5e9; background: #f8fcff; }
 .dlv-intel-copy { margin: 0; color: #0c4a6e; line-height: 1.6; font-size: 14px; }
 .dlv-honest-empty { border-style: dashed; box-shadow: none; }
+.dlv-mem { border-left: 4px solid #0ea5e9; background: #f8fcff; }
+.dlv-mem-l { margin: 4px 0 0; padding-left: 16px; font-size: 13px; color: #334155; line-height: 1.5; }
+.dlv-mem-l li { margin: 2px 0; }
+.dlv-mem-decision { font-weight: 700; color: #0f172a; }
 .dlv-pat { padding: 8px 0; border-top: 1px solid #f1f5f9; }
 .dlv-pat:first-of-type { border-top: none; }
 .dlv-pat-h { font-size: 13.5px; font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }

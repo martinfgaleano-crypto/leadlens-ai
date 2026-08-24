@@ -13,6 +13,7 @@ import OpportunityWorkspace from "@/components/deliverable/OpportunityWorkspace"
 import { assembleInstitutionalReport } from "@/lib/reports/institutional-assembler";
 import { resolveReportExperience } from "@/lib/products/report-experience";
 import { fromInstitutionalReport, fromAmorPilot } from "@/lib/deliverable/adapters";
+import { snapshotAccountReview } from "@/lib/deliverable/account-memory";
 import type { DeliverableViewModel } from "@/lib/deliverable/deliverable-view-model";
 
 export const dynamic = "force-dynamic";
@@ -132,7 +133,7 @@ function loadAmorViewModel(): DeliverableViewModel | null {
   }
 }
 
-export default function DevBriefPreview({ searchParams }: { searchParams?: { source?: string; report?: string } }) {
+export default function DevBriefPreview({ searchParams }: { searchParams?: { source?: string; report?: string; memory?: string } }) {
   if (process.env.NODE_ENV === "production") notFound();
 
   // ?source=amor renders the real legacy pilot through the SAME workspace,
@@ -147,5 +148,17 @@ export default function DevBriefPreview({ searchParams }: { searchParams?: { sou
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const report = assembleInstitutionalReport((alt ? RAW_ALT : RAW) as any, alt ? META_ALT : META);
   const experience = resolveReportExperience(alt ? "premium_launch_v0" : "intelligence_launch_v0");
-  return <OpportunityWorkspace vm={fromInstitutionalReport(report, experience)} />;
+  const vm = fromInstitutionalReport(report, experience);
+  // ?memory=1 — synthesize a SECOND review by rolling back a prior review (dev
+  // QA only; obviously synthetic timeline, never a claim of real history).
+  if (searchParams?.memory === "1") {
+    const prior = vm.accounts.map((a) => {
+      const changed = a.whatChanged.some((c) => c.kind === "true_change" || c.kind === "recent_event");
+      const prev = changed ? { ...a, decision: "monitor" as const, dimensions: a.dimensions.map((d) => d.label === "Timing" || d.label === "Evidence" ? { ...d, value: "Limited" as const } : d), whatChanged: [{ event: "No verified recent change", date: null, age: null, source: null, kind: "unknown" as const }], evidence: { ...a.evidence, corroborated: null, datedCount: 0, strength: "Limited" as const }, sources: [], validations: ["Confirm current planning systems / vendor"], validationDetails: [{ question: "Confirm current planning systems / vendor", decisionCritical: true, howToValidate: null, changesDecisionBecause: null }], revisitWhen: a.revisitWhen ?? "A new facility is announced" } : a;
+      return [a.id, snapshotAccountReview(prev, { reviewId: "dev-review-1", reviewedAt: "2026-03-15", contextVersion: "dev-v1" })] as const;
+    });
+    const memory = { current: { reviewId: "dev-review-2", reviewedAt: "2026-08-22", contextVersion: "dev-v1" }, previousById: Object.fromEntries(prior) };
+    return <OpportunityWorkspace vm={vm} memory={memory} />;
+  }
+  return <OpportunityWorkspace vm={vm} />;
 }
