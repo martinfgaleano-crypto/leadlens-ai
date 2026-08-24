@@ -6,6 +6,7 @@ import { safeConversionPayload, type ConversionEvent, type ConversionMetadata } 
 import { interpretLandingInput, LANDING_INTERPRETATION_EXAMPLES, type LandingInterpretationProjection } from "@/lib/landing/landing-interpretation";
 import { NORTHSTAR_WHAT_CHANGED } from "@/lib/landing/fixtures/northstar-change";
 import { NORTHSTAR_EVIDENCE } from "@/lib/landing/fixtures/northstar-evidence";
+import { LANDING_COMPARISON, leadersOn, dimValue, type CompareDimension } from "@/lib/landing/fixtures/landing-comparison";
 import type { EvidenceRelation } from "@/lib/deliverable/deliverable-view-model";
 import type { DecisionState, Strength } from "@/lib/deliverable/deliverable-view-model";
 
@@ -1327,6 +1328,7 @@ const INTERPRETATION_COPY: Record<OutputLanguage, {
   bridge: string; canvasEyebrow: string; canvasTitle: string; changedEyebrow: string; changedTitle: string; before: string; change: string;
   after: string; timing: string; why: string; changeEvent: string; changeSource: string; changeReason: string; narrativeDisclaimer: string; inspectBefore: string; inspectAfter: string;
   evEyebrow: string; evTitle: string; evThesis: string; evClaim: string; evDirect: string; evCorroborating: string; evContext: string; evWeakens: string; evValidate: string; evRead: string; evReadNote: string; evCorrob: string; evSources: string; evLatest: string;
+  cmpEyebrow: string; cmpTitle: string; cmpFocus: string; cmpLeads: string; cmpUnknown: string; cmpNote: string;
 }> = {
   en: {
     eyebrow: "Company interpretation", title: "Tell LeadLens what you sell.", intro: "See how a short commercial description becomes a focused investigation brief — without running a search or inventing accounts.",
@@ -1334,6 +1336,7 @@ const INTERPRETATION_COPY: Record<OutputLanguage, {
     understood: "LeadLens interpretation", sells: "What you sell", relevant: "Who seems relevant", market: "Where", functions: "Potential commercial functions", potential: "Potential", watch: "What LeadLens would watch", clarify: "One detail would sharpen this", illustrative: "Illustrative interpretation · no market search has run",
     bridge: "See how this becomes an opportunity", canvasEyebrow: "Illustrative opportunity", canvasTitle: "From criteria to an account worth inspecting.", changedEyebrow: "What Changed", changedTitle: "A material change can alter the decision.", before: "Before", change: "Detected change", after: "After", timing: "Timing", why: "Why the decision changes", changeEvent: "Signed a regional distribution agreement", changeSource: "Illustrative company announcement", changeReason: "A recent, corroborated expansion strengthens the timing case; procurement ownership still needs validation.", narrativeDisclaimer: "Illustrative narrative · no live score or ranking was recalculated.", inspectBefore: "Inspect before", inspectAfter: "Inspect after",
     evEyebrow: "The evidence", evTitle: "Don't trust a score. See the reasoning.", evThesis: "Opportunity thesis", evClaim: "What the evidence supports", evDirect: "Direct", evCorroborating: "Corroborating", evContext: "Context", evWeakens: "What weakens the case", evValidate: "What to validate", evRead: "Evidence read", evReadNote: "No blended score — the read is exactly the evidence above.", evCorrob: "corroborated", evSources: "dated sources", evLatest: "latest",
+    cmpEyebrow: "Compare", cmpTitle: "Why this one, and not another?", cmpFocus: "Focus dimension", cmpLeads: "leads on", cmpUnknown: "Still unresolved", cmpNote: "Same canonical Fit / Timing / Evidence — no ranking recomputed.",
   },
   es: {
     eyebrow: "Interpretación de empresa", title: "Cuéntale a LeadLens qué vendes.", intro: "Mira cómo una descripción comercial breve se convierte en un criterio de investigación enfocado, sin ejecutar una búsqueda ni inventar cuentas.",
@@ -1341,6 +1344,7 @@ const INTERPRETATION_COPY: Record<OutputLanguage, {
     understood: "Interpretación de LeadLens", sells: "Qué vendes", relevant: "Quién parece relevante", market: "Dónde", functions: "Funciones comerciales potenciales", potential: "Posible", watch: "Qué investigaría LeadLens", clarify: "Un detalle mejoraría la precisión", illustrative: "Interpretación ilustrativa · no se ejecutó una búsqueda de mercado",
     bridge: "Ver cómo se convierte en una oportunidad", canvasEyebrow: "Oportunidad ilustrativa", canvasTitle: "Del criterio a una cuenta que merece revisión.", changedEyebrow: "Qué cambió", changedTitle: "Un cambio material puede cambiar la decisión.", before: "Antes", change: "Cambio detectado", after: "Después", timing: "Timing", why: "Por qué cambia la decisión", changeEvent: "Firmó un acuerdo de distribución regional", changeSource: "Anuncio corporativo ilustrativo", changeReason: "Una expansión reciente y corroborada fortalece el timing; todavía debe validarse quién controla las compras.", narrativeDisclaimer: "Narrativa ilustrativa · no se recalculó ningún score ni ranking en vivo.", inspectBefore: "Ver antes", inspectAfter: "Ver después",
     evEyebrow: "La evidencia", evTitle: "No confíes en un score. Mira el razonamiento.", evThesis: "Tesis de oportunidad", evClaim: "Lo que respalda la evidencia", evDirect: "Directa", evCorroborating: "Corroborante", evContext: "Contexto", evWeakens: "Qué debilita el caso", evValidate: "Qué validar", evRead: "Lectura de evidencia", evReadNote: "Sin score combinado — la lectura es exactamente la evidencia de arriba.", evCorrob: "corroborado", evSources: "fuentes fechadas", evLatest: "más reciente",
+    cmpEyebrow: "Comparar", cmpTitle: "¿Por qué esta, y no otra?", cmpFocus: "Dimensión en foco", cmpLeads: "lidera en", cmpUnknown: "Aún sin resolver", cmpNote: "Mismos Fit / Timing / Evidence canónicos — sin recalcular ranking.",
   },
   pt: {
     eyebrow: "Interpretação da empresa", title: "Conte à LeadLens o que você vende.", intro: "Veja como uma descrição comercial curta se transforma em um critério de investigação focado, sem executar buscas nem inventar contas.",
@@ -1348,6 +1352,7 @@ const INTERPRETATION_COPY: Record<OutputLanguage, {
     understood: "Interpretação LeadLens", sells: "O que você vende", relevant: "Quem parece relevante", market: "Onde", functions: "Funções comerciais potenciais", potential: "Possível", watch: "O que a LeadLens observaria", clarify: "Um detalhe aumentaria a precisão", illustrative: "Interpretação ilustrativa · nenhuma busca de mercado foi executada",
     bridge: "Ver como isso vira uma oportunidade", canvasEyebrow: "Oportunidade ilustrativa", canvasTitle: "Do critério a uma conta que merece análise.", changedEyebrow: "O que mudou", changedTitle: "Uma mudança material pode alterar a decisão.", before: "Antes", change: "Mudança detectada", after: "Depois", timing: "Timing", why: "Por que a decisão muda", changeEvent: "Assinou um acordo regional de distribuição", changeSource: "Comunicado corporativo ilustrativo", changeReason: "Uma expansão recente e corroborada fortalece o timing; a responsabilidade de compras ainda precisa ser validada.", narrativeDisclaimer: "Narrativa ilustrativa · nenhum score ou ranking ao vivo foi recalculado.", inspectBefore: "Ver antes", inspectAfter: "Ver depois",
     evEyebrow: "A evidência", evTitle: "Não confie num score. Veja o raciocínio.", evThesis: "Tese de oportunidade", evClaim: "O que a evidência sustenta", evDirect: "Direta", evCorroborating: "Corroborante", evContext: "Contexto", evWeakens: "O que enfraquece o caso", evValidate: "O que validar", evRead: "Leitura da evidência", evReadNote: "Sem score combinado — a leitura é exatamente a evidência acima.", evCorrob: "corroborado", evSources: "fontes datadas", evLatest: "mais recente",
+    cmpEyebrow: "Comparar", cmpTitle: "Por que esta, e não outra?", cmpFocus: "Dimensão em foco", cmpLeads: "lidera em", cmpUnknown: "Ainda sem resolução", cmpNote: "Mesmos Fit / Timing / Evidence canônicos — sem recalcular ranking.",
   },
   ja: {
     eyebrow: "企業コンテキストの解釈", title: "何を販売しているか教えてください。", intro: "短い事業説明が、検索や企業の捏造なしに、焦点を絞った調査基準へ変わる様子を確認できます。",
@@ -1355,6 +1360,7 @@ const INTERPRETATION_COPY: Record<OutputLanguage, {
     understood: "LeadLens の解釈", sells: "販売するもの", relevant: "関連性が高そうな企業", market: "市場", functions: "想定される業務部門", potential: "想定", watch: "LeadLens が注視する変化", clarify: "もう1点あると精度が上がります", illustrative: "説明用の解釈です · 市場検索は実行されていません",
     bridge: "機会への変化を見る", canvasEyebrow: "説明用の機会", canvasTitle: "調査基準から、確認すべき企業へ。", changedEyebrow: "変化したこと", changedTitle: "重要な変化は判断を変えることがあります。", before: "前", change: "検出された変化", after: "後", timing: "タイミング", why: "判断が変わる理由", changeEvent: "地域配送契約を締結", changeSource: "説明用の企業発表", changeReason: "最近の裏付けられた拡大によりタイミングが強まりました。調達責任者の確認はまだ必要です。", narrativeDisclaimer: "説明用のナラティブです · ライブのスコアや順位は再計算されていません。", inspectBefore: "変化前を見る", inspectAfter: "変化後を見る",
     evEyebrow: "根拠", evTitle: "スコアを信じず、推論を確認する。", evThesis: "機会の仮説", evClaim: "根拠が支えること", evDirect: "直接", evCorroborating: "裏付け", evContext: "文脈", evWeakens: "この判断を弱める点", evValidate: "検証すべきこと", evRead: "根拠の読み取り", evReadNote: "合成スコアなし — 読み取りは上記の根拠そのものです。", evCorrob: "裏付けあり", evSources: "日付付きの情報源", evLatest: "最新",
+    cmpEyebrow: "比較", cmpTitle: "なぜこの企業で、他ではないのか？", cmpFocus: "注目する観点", cmpLeads: "が優る", cmpUnknown: "未解決", cmpNote: "同じ正規の Fit / Timing / Evidence — ランキングは再計算していません。",
   },
 };
 
@@ -3365,9 +3371,70 @@ function CompanyInterpretationExperience({ lang, onBridge }: { lang: OutputLangu
         </div>
         <WhatChangedV2 lang={lang} />
         <EvidenceReasoning lang={lang} />
+        <CompareLens lang={lang} />
       </div>
     </section>
   );
+}
+
+// ─── Compare — relative decision lens (Sprint 4) ──────────────────────────────
+// Completes the decision story (What Changed → Evidence → "why this one?"). A
+// dimension focus, NOT a spreadsheet: pick Fit / Timing / Evidence and the
+// comparison re-emphasizes, surfacing the RELATIVE reason. The honest insight is
+// that Fit does not separate the accounts — Timing (the recent change) does, tying
+// straight back to What Changed + Evidence. Projects canonical Fit/Timing/Evidence
+// + decision state; leadership is an ordinal read of Strength, never a score (§7/§10).
+function CompareLens({ lang }: { lang: OutputLanguage }) {
+  const ui = INTERPRETATION_COPY[lang];
+  const c = LANDING_COMPARISON;
+  const dims: CompareDimension[] = ["Fit", "Timing", "Evidence"];
+  const [dim, setDim] = useState<CompareDimension>("Timing");
+  const leaders = leadersOn(c, dim);
+  const onKey = (e: React.KeyboardEvent, d: CompareDimension) => {
+    const i = dims.indexOf(d); let n = i;
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") n = (i + 1) % dims.length;
+    else if (e.key === "ArrowLeft" || e.key === "ArrowUp") n = (i - 1 + dims.length) % dims.length;
+    else return;
+    e.preventDefault(); setDim(dims[n]);
+    (e.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="radio"]')[n])?.focus();
+  };
+  return <div className="ll-compare ll-reveal" style={{ marginTop: "3.25rem", paddingTop: "2.5rem", borderTop: "1px solid #e2e8f0" }}>
+    <div style={{ display: "flex", justifyContent: "space-between", gap: "1rem", alignItems: "flex-end", flexWrap: "wrap", marginBottom: "1.1rem" }}>
+      <div>
+        <div style={{ fontSize: ".68rem", color: "#0284c7", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase", marginBottom: ".35rem" }}>{ui.cmpEyebrow}</div>
+        <h3 style={{ fontSize: "clamp(1.4rem,3vw,1.85rem)", lineHeight: 1.2, letterSpacing: "-.02em", margin: 0 }}>{ui.cmpTitle}</h3>
+      </div>
+      <div role="radiogroup" aria-label={ui.cmpFocus} style={{ display: "inline-flex", background: "#f1f5f9", padding: 3, borderRadius: ".55rem" }}>
+        {dims.map((d) => { const on = d === dim; return (
+          <button key={d} role="radio" aria-checked={on} tabIndex={on ? 0 : -1} type="button" onClick={() => setDim(d)} onKeyDown={(e) => onKey(e, d)}
+            style={{ minHeight: 44, border: 0, borderRadius: ".42rem", padding: ".45rem .85rem", background: on ? "#fff" : "transparent", color: on ? "#0369a1" : "#64748b", fontWeight: 700, fontFamily: "inherit", cursor: "pointer", boxShadow: on ? "0 1px 4px rgba(15,23,42,.1)" : "none" }}>{d}</button>); })}
+      </div>
+    </div>
+    {/* The 5-second relative insight — changes with the focused dimension */}
+    <div aria-live="polite" style={{ padding: ".85rem 1rem", background: "#f0f9ff", border: "1px solid #e0f2fe", borderLeft: "3px solid #0284c7", borderRadius: ".5rem", marginBottom: "1rem", fontSize: ".82rem", color: "#0f172a", lineHeight: 1.5 }}>{c.why[dim]}</div>
+    <div style={{ display: "flex", flexDirection: "column", gap: ".55rem" }}>
+      {c.accounts.map((a) => { const lead = leaders.includes(a.name); return (
+        <div key={a.name} style={{ border: `1px solid ${lead ? "#bae6fd" : "#e6ebf1"}`, borderRadius: ".6rem", padding: ".7rem .8rem", background: lead ? "linear-gradient(180deg,#f5fbff,#fff 60%)" : "#fff", boxShadow: lead ? "0 4px 14px rgba(2,132,199,.07)" : "none", transition: "border-color .25s ease, background .25s ease, box-shadow .25s ease" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: ".5rem", flexWrap: "wrap" }}>
+            <span style={{ fontSize: ".85rem", fontWeight: 800, color: "#0f172a" }}>{a.name}</span>
+            {lead && <span style={{ fontSize: ".54rem", fontWeight: 800, letterSpacing: ".04em", textTransform: "uppercase", color: "#0369a1", background: "#e0f2fe", borderRadius: 999, padding: ".1rem .5rem" }}>{ui.cmpLeads} {dim}</span>}
+            <span style={{ marginLeft: "auto" }}><DecisionPill state={a.decision} small /></span>
+          </div>
+          <div style={{ display: "flex", gap: "1.2rem", marginTop: ".55rem", flexWrap: "wrap" }}>
+            {dims.map((d) => { const sel = d === dim; const val = dimValue(a, d); return (
+              <span key={d} style={{ display: "inline-flex", alignItems: "baseline", gap: ".3rem", opacity: sel ? 1 : .45, transition: "opacity .25s ease" }}>
+                <span style={{ textTransform: "uppercase", letterSpacing: ".04em", fontWeight: 700, color: "#94a3b8", fontSize: ".54rem" }}>{d}</span>
+                <span style={{ fontSize: sel ? ".92rem" : ".72rem", fontWeight: STRENGTH[val].weight, color: STRENGTH[val].color, transition: "font-size .25s ease" }}>{val}</span>
+              </span>); })}
+          </div>
+          <div style={{ display: "flex", gap: ".45rem", alignItems: "center", marginTop: ".5rem", fontSize: ".68rem", color: "#475569" }}>
+            <span aria-hidden style={{ width: 5, height: 5, borderRadius: "50%", background: "#0ea5e9", flexShrink: 0 }} />{a.changed}<span style={{ color: "#94a3b8", marginLeft: "auto" }}>{a.fresh}</span>
+          </div>
+          <div style={{ fontSize: ".64rem", color: "#94a3b8", marginTop: ".3rem" }}><span style={{ fontWeight: 700, color: "#b45309" }}>{ui.cmpUnknown}:</span> {a.unknown}</div>
+        </div>); })}
+    </div>
+    <div style={{ color: "#94a3b8", fontSize: ".62rem", marginTop: ".8rem" }}>{ui.cmpNote} · {ui.illustrative}</div>
+  </div>;
 }
 
 function InterpretationField({ label, value, last }: { label: string; value: string; last?: boolean }) {
