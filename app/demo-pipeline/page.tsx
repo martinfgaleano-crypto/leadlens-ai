@@ -1446,6 +1446,20 @@ export default function DemoPipelinePage() {
     return () => observer.disconnect();
   }, []);
 
+  // Motion foundation: reveal `.ll-reveal` elements as they enter view (once).
+  // One observer for the whole page; reduced-motion users already see content
+  // (CSS base state is visible), so this is purely additive polish.
+  useEffect(() => {
+    if (typeof IntersectionObserver === "undefined") return;
+    const els = Array.from(document.querySelectorAll<HTMLElement>(".ll-reveal:not(.ll-in)"));
+    if (!els.length) return;
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) if (e.isIntersecting) { e.target.classList.add("ll-in"); io.unobserve(e.target); }
+    }, { threshold: 0.12, rootMargin: "0px 0px -6% 0px" });
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, [view]);
+
   function changeLang(l: OutputLanguage) {
     setLang(l);
     setForm(f => ({ ...f, output_language: l }));
@@ -1665,6 +1679,21 @@ export default function DemoPipelinePage() {
         }
         @keyframes llwsfade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
         .ll-ws-fade { animation: llwsfade .22s ease; }
+        /* ── Motion foundation (Sprint 1): semantic reveal on scroll-in. Base
+           state is fully visible so no-JS / reduced-motion always see content.
+           Only when motion is allowed do elements start hidden and reveal. ── */
+        .ll-reveal { opacity: 1; }
+        @media (prefers-reduced-motion: no-preference) {
+          .ll-reveal { opacity: 0; transform: translateY(16px); transition: opacity .55s cubic-bezier(.22,.61,.36,1), transform .55s cubic-bezier(.22,.61,.36,1); }
+          .ll-reveal.ll-in { opacity: 1; transform: none; }
+          /* "Change detected" — distinct but restrained: a small slide from the
+             left, the direction of an incoming signal (not a bounce/pulse). */
+          .ll-reveal-x { transform: translateX(-10px); }
+          .ll-reveal-x.ll-in { transform: none; }
+          /* "Decision resolves" — the pill settles in last, quiet significance. */
+          .ll-reveal-pop { transform: translateY(6px) scale(.96); }
+          .ll-reveal-pop.ll-in { transform: none; }
+        }
         @media (prefers-reduced-motion: reduce) {
           .ll-ws-rail button, .ll-ws-chips button { transition: none !important; }
           .ll-ws-fade { animation: none !important; }
@@ -1962,7 +1991,7 @@ export default function DemoPipelinePage() {
             <div style={innerStyle}>
               <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
                 <Tag>{copy.howTag}</Tag>
-                <h2 style={sectionTitleStyle} className="ll-how-h2">{copy.howTitle.pre}<span style={{ color: "#0ea5e9" }}>{copy.howTitle.emph}</span><span className="ll-how-suffix">{copy.howTitle.post}</span><span className="ll-how-suffix-mobile">{copy.howTitlePostMobile}</span></h2>
+                <h2 style={sectionTitleStyle} className="ll-how-h2 ll-reveal">{copy.howTitle.pre}<span style={{ color: "#0ea5e9" }}>{copy.howTitle.emph}</span><span className="ll-how-suffix">{copy.howTitle.post}</span><span className="ll-how-suffix-mobile">{copy.howTitlePostMobile}</span></h2>
               </div>
 
               {/* Desktop: three connected stages on one continuous line */}
@@ -2004,7 +2033,7 @@ export default function DemoPipelinePage() {
           <div className="ll-sample-grid">
             <div className="ll-sample-head">
               <Tag>{copy.samplePreviewTag}</Tag>
-              <h2 style={{ ...sectionTitleStyle, maxWidth: "20rem", marginBottom: ".6rem" }}>{copy.samplePreviewTitle}</h2>
+              <h2 className="ll-reveal" style={{ ...sectionTitleStyle, maxWidth: "20rem", marginBottom: ".6rem" }}>{copy.samplePreviewTitle}</h2>
               <p style={{ color: "#64748b", fontSize: "1.02rem", maxWidth: "24rem", margin: 0, lineHeight: 1.6 }}>
                 {copy.samplePreviewSub}
               </p>
@@ -2029,7 +2058,7 @@ export default function DemoPipelinePage() {
       <section ref={pricingRef} className="ll-section" style={{ ...sectionStyle, background: "#f8fafc" }}>
         <div style={{ ...innerStyle, textAlign: "center" }}>
           <Tag>{copy.pricingTag}</Tag>
-          <h2 style={sectionTitleStyle}>{copy.pricingTitle}</h2>
+          <h2 className="ll-reveal" style={sectionTitleStyle}>{copy.pricingTitle}</h2>
           <p style={{ color: "#64748b", fontSize: "1.05rem", maxWidth: "36rem", margin: "0 auto 1.75rem", lineHeight: 1.6 }}>
             {copy.pricingSub}
           </p>
@@ -2115,7 +2144,7 @@ export default function DemoPipelinePage() {
       <section className="ll-section" style={{ ...sectionStyle, background: "#fff" }}>
         <div style={{ ...innerStyle }}>
           <Tag>{copy.comparisonTag}</Tag>
-          <h2 style={{ ...sectionTitleStyle, maxWidth: "36rem" }}>{copy.comparisonTitle}</h2>
+          <h2 className="ll-reveal" style={{ ...sectionTitleStyle, maxWidth: "36rem" }}>{copy.comparisonTitle}</h2>
           <p style={{ color: "#64748b", fontSize: "1.05rem", maxWidth: "38rem", margin: ".75rem 0 0", lineHeight: 1.6 }}>
             {copy.diffLede.pre}<strong style={{ color: "#0284c7" }}>{copy.diffLede.emph}</strong>{copy.diffLede.post}
           </p>
@@ -2151,7 +2180,7 @@ export default function DemoPipelinePage() {
         <div className="ll-faq-inner" style={{ maxWidth: "46rem", margin: "0 auto", padding: "0 1.5rem" }}>
           <div style={{ textAlign: "center", marginBottom: "3rem" }}>
             <Tag>{copy.faqTag}</Tag>
-            <h2 style={sectionTitleStyle}>{copy.faqTitle}</h2>
+            <h2 className="ll-reveal" style={sectionTitleStyle}>{copy.faqTitle}</h2>
           </div>
           {/* Each question is a collapsible accordion (first open) so the FAQ scans
               as a tight list on mobile instead of a wall of open answers; the rest
@@ -3325,7 +3354,7 @@ function CaseSpine({ a }: { a: WsAccount }) {
 const CC_TABS = ["overview", "cases", "evidence", "compare", "strategy"] as const;
 type CcTab = typeof CC_TABS[number];
 const CC_TAB_LABEL: Record<CcTab, string> = { overview: "Overview", cases: "Opportunity Cases", evidence: "Evidence", compare: "Compare", strategy: "Portfolio Intelligence" };
-const zk: React.CSSProperties = { fontSize: ".58rem", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase" as const, color: "#94a3b8", margin: "0 0 .5rem" };
+const zk: React.CSSProperties = { fontSize: ".58rem", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase" as const, color: "#64748b", margin: "0 0 .5rem" };
 const scard: React.CSSProperties = { border: "1px solid #e6ebf1", borderRadius: ".7rem", padding: ".7rem .8rem", background: "#fafbfc" };
 
 // The signature LeadLens surface: CLIENT → Opportunity Canvas → Cases → Evidence
@@ -3388,25 +3417,28 @@ function ClientCanvasSample() {
               <div>
                 <div style={zk}>Where to focus · Opportunity landscape</div>
                 <div style={{ display: "flex", flexDirection: "column", gap: ".5rem" }}>
-                  {WS_ACCOUNTS.map((acc, i) => { const st = DECISION_STATES[acc.state]; return (
-                    <button key={acc.name} onClick={() => open(i)} style={{ appearance: "none", textAlign: "left", cursor: "pointer", fontFamily: "inherit", border: `1px solid ${i === 0 ? "#bae6fd" : "#e6ebf1"}`, borderRadius: ".6rem", padding: ".6rem .7rem", background: i === 0 ? "linear-gradient(180deg,#f5fbff,#fff 65%)" : "#fff", width: "100%" }}>
+                  {WS_ACCOUNTS.map((acc, i) => { const primary = i === 0; return (
+                    <button key={acc.name} onClick={() => open(i)} className={primary ? undefined : "ll-reveal"}
+                      style={{ appearance: "none", textAlign: "left", cursor: "pointer", fontFamily: "inherit", border: `1px solid ${primary ? "#bae6fd" : "#e6ebf1"}`, borderRadius: ".6rem", padding: primary ? ".75rem .8rem" : ".6rem .7rem", background: primary ? "linear-gradient(180deg,#f5fbff,#fff 65%)" : "#fff", width: "100%", ...(primary ? { boxShadow: "0 4px 16px rgba(2,132,199,.08)" } : { transitionDelay: `${0.26 + (i - 1) * 0.09}s` }) }}>
                       <div style={{ display: "flex", alignItems: "center", gap: ".45rem" }}>
-                        <span style={{ fontSize: ".64rem", fontWeight: 800, color: i === 0 ? "#0284c7" : "#94a3b8", width: "1ch" }}>{acc.rank}</span>
-                        <span style={{ fontSize: ".82rem", fontWeight: 800, color: "#0f172a", flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const }}>{acc.name}</span>
-                        <DecisionPill state={acc.state} small />
+                        <span style={{ fontSize: ".64rem", fontWeight: 800, color: primary ? "#0284c7" : "#94a3b8", width: "1ch" }}>{acc.rank}</span>
+                        <span style={{ fontSize: primary ? ".9rem" : ".82rem", fontWeight: 800, color: "#0f172a", flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const }}>{acc.name}</span>
+                        {primary
+                          ? <span className="ll-reveal ll-reveal-pop" style={{ display: "inline-flex", transitionDelay: ".5s" }}><DecisionPill state={acc.state} small /></span>
+                          : <DecisionPill state={acc.state} small />}
                       </div>
-                      <div style={{ fontSize: ".6rem", color: "#94a3b8", fontWeight: 600, paddingLeft: "1.3rem", marginTop: ".15rem" }}>{acc.role} · {acc.oppType}</div>
-                      <div style={{ paddingLeft: "1.3rem", marginTop: ".4rem" }}><FTE fit={acc.fit} timing={acc.timing} evidence={acc.evidence} /></div>
-                      <div style={{ display: "flex", alignItems: "center", gap: ".4rem", fontSize: ".68rem", color: "#475569", paddingLeft: "1.3rem", marginTop: ".4rem" }}>
-                        <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#0ea5e9", flexShrink: 0 }} />{acc.changed}<span style={{ color: "#94a3b8", marginLeft: "auto" }}>{acc.fresh}</span>
+                      <div style={{ fontSize: ".6rem", color: primary ? "#64748b" : "#94a3b8", fontWeight: 600, paddingLeft: "1.3rem", marginTop: ".15rem" }}>{acc.role} · {acc.oppType}</div>
+                      <div className={primary ? "ll-reveal" : undefined} style={{ paddingLeft: "1.3rem", marginTop: ".4rem", ...(primary ? { transitionDelay: ".16s" } : {}) }}><FTE fit={acc.fit} timing={acc.timing} evidence={acc.evidence} /></div>
+                      <div className={primary ? "ll-reveal ll-reveal-x" : undefined} style={{ display: "flex", alignItems: "center", gap: ".4rem", fontSize: primary ? ".72rem" : ".68rem", fontWeight: primary ? 600 : 400, color: primary ? "#0f172a" : "#475569", paddingLeft: "1.3rem", marginTop: ".4rem", ...(primary ? { transitionDelay: ".34s" } : {}) }}>
+                        <span style={{ width: primary ? 6 : 5, height: primary ? 6 : 5, borderRadius: "50%", background: "#0ea5e9", flexShrink: 0 }} />{acc.changed}<span style={{ color: "#94a3b8", marginLeft: "auto", fontWeight: 400 }}>{acc.fresh}</span>
                       </div>
                     </button>); })}
                 </div>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: ".7rem" }}>
-                <div style={scard}><div style={zk}>What&apos;s changing</div><ul style={{ margin: 0, paddingLeft: ".9rem", fontSize: ".68rem", color: "#475569", lineHeight: 1.55 }}>{WS_CLIENT.patterns.map((p, i) => <li key={i}>{p}</li>)}</ul></div>
-                <div style={scard}><div style={zk}>Evidence coverage</div><div style={{ display: "flex", gap: ".9rem", flexWrap: "wrap" as const }}>{WS_CLIENT.coverage.map(([n, l], i) => <div key={i}><div style={{ fontSize: "1.05rem", fontWeight: 800, color: "#0e7490", lineHeight: 1 }}>{n}</div><div style={{ fontSize: ".54rem", textTransform: "uppercase" as const, letterSpacing: ".04em", color: "#94a3b8", fontWeight: 700 }}>{l}</div></div>)}</div></div>
-                <div style={{ ...scard, background: "#fffbeb", borderColor: "#fde9c8" }}><div style={zk}>What to validate</div><ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: ".4rem" }}>{WS_ACCOUNTS.map((acc, i) => <li key={i}><span style={{ display: "block", fontSize: ".58rem", fontWeight: 800, color: "#b45309" }}>{acc.name}</span><span style={{ fontSize: ".66rem", color: "#0f172a", lineHeight: 1.35 }}>{acc.limiters[0].validate}</span></li>)}</ul></div>
+                <div className="ll-reveal" style={{ ...scard, transitionDelay: ".5s" }}><div style={zk}>What&apos;s changing</div><ul style={{ margin: 0, paddingLeft: ".9rem", fontSize: ".68rem", color: "#475569", lineHeight: 1.55 }}>{WS_CLIENT.patterns.map((p, i) => <li key={i}>{p}</li>)}</ul></div>
+                <div className="ll-reveal" style={{ ...scard, transitionDelay: ".58s" }}><div style={zk}>Evidence coverage</div><div style={{ display: "flex", gap: ".9rem", flexWrap: "wrap" as const }}>{WS_CLIENT.coverage.map(([n, l], i) => <div key={i}><div style={{ fontSize: "1.05rem", fontWeight: 800, color: "#0e7490", lineHeight: 1 }}>{n}</div><div style={{ fontSize: ".54rem", textTransform: "uppercase" as const, letterSpacing: ".04em", color: "#64748b", fontWeight: 700 }}>{l}</div></div>)}</div></div>
+                <div className="ll-reveal" style={{ ...scard, background: "#fffbeb", borderColor: "#fde9c8", transitionDelay: ".66s" }}><div style={zk}>What to validate</div><ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: ".4rem" }}>{WS_ACCOUNTS.map((acc, i) => <li key={i}><span style={{ display: "block", fontSize: ".58rem", fontWeight: 800, color: "#b45309" }}>{acc.name}</span><span style={{ fontSize: ".66rem", color: "#0f172a", lineHeight: 1.35 }}>{acc.limiters[0].validate}</span></li>)}</ul></div>
               </div>
             </div>
           </div>
