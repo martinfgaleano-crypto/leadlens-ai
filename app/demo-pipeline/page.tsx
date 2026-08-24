@@ -32,7 +32,7 @@ const COPY = {
     heroH1post: ".",
     heroH2: "And the evidence behind every opportunity.",
     heroSub: "Turn market evidence into clearer account decisions.",
-    heroWedge: "Built first for research-intensive B2B sales, business-development and advisory teams.",
+    heroWedge: "Built first for B2B sales, business-development and specialist consulting teams.",
     heroValue: {
       label: "What LeadLens helps you decide",
       items: [
@@ -359,7 +359,7 @@ const COPY = {
     heroH1post: ".",
     heroH2: "Y la evidencia detrás de cada oportunidad.",
     heroSub: "Convierte la evidencia del mercado en decisiones de cuenta más claras.",
-    heroWedge: "Diseñado primero para equipos de ventas B2B, desarrollo de negocio y consultoría con uso intensivo de investigación.",
+    heroWedge: "Diseñado primero para equipos de ventas B2B, desarrollo de negocio y consultoría especializada.",
     heroValue: {
       label: "Qué te ayuda a decidir LeadLens",
       items: [
@@ -686,7 +686,7 @@ const COPY = {
     heroH1post: ".",
     heroH2: "E a evidência por trás de cada oportunidade.",
     heroSub: "Transforme a evidência do mercado em decisões de conta mais claras.",
-    heroWedge: "Feito primeiro para equipes de vendas B2B, desenvolvimento de negócios e consultoria com uso intensivo de pesquisa.",
+    heroWedge: "Feito primeiro para equipes de vendas B2B, desenvolvimento de negócios e consultoria especializada.",
     heroValue: {
       label: "O que a LeadLens ajuda você a decidir",
       items: [
@@ -1013,7 +1013,7 @@ const COPY = {
     heroH1post: "。",
     heroH2: "そして、各機会の裏付けとなる根拠を。",
     heroSub: "市場のエビデンスを、より明確なアカウントの意思決定へ。",
-    heroWedge: "リサーチ集約型のB2B営業・事業開発・アドバイザリーチームのために、まず設計。",
+    heroWedge: "B2B営業・事業開発・専門コンサルティングチームのために、まず設計。",
     heroValue: {
       label: "LeadLensが意思決定を支援すること",
       items: [
@@ -1969,9 +1969,18 @@ export default function DemoPipelinePage() {
                 <span style={{ width: ".5rem", height: ".5rem", background: "#16a34a", borderRadius: "50%", display: "inline-block", flexShrink: 0 }} />
                 {copy.heroBadge}
               </div>
-              <h1 className="ll-hero-h1" style={{ fontSize: "clamp(2.1rem,4.5vw,3.5rem)", fontWeight: 800, lineHeight: 1.1, marginBottom: ".5rem", letterSpacing: "-.03em" }}>
-                {copy.heroH1pre}<br />
-                <span style={{ color: "#0ea5e9" }}>{copy.heroH1hi}</span>{copy.heroH1post}
+              <h1
+                className="ll-hero-h1"
+                /* Accessible name joins the spans with a real separator so the
+                   line break between pre and hi is not read as one run-together
+                   word (e.g. "accountsdeserve"). CJK needs no space. */
+                aria-label={`${copy.heroH1pre}${lang === "ja" ? "" : " "}${copy.heroH1hi}${copy.heroH1post}`}
+                style={{ fontSize: "clamp(2.1rem,4.5vw,3.5rem)", fontWeight: 800, lineHeight: 1.1, marginBottom: ".5rem", letterSpacing: "-.03em" }}
+              >
+                <span aria-hidden="true">
+                  {copy.heroH1pre}<br />
+                  <span style={{ color: "#0ea5e9" }}>{copy.heroH1hi}</span>{copy.heroH1post}
+                </span>
               </h1>
               <p className="ll-hero-h2" style={{ fontSize: "clamp(1.25rem,2.5vw,1.75rem)", fontWeight: 700, color: "#334155", marginBottom: "1.25rem", letterSpacing: "-.02em", lineHeight: 1.2 }}>
                 {copy.heroH2}

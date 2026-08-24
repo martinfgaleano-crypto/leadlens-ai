@@ -46,6 +46,7 @@
     "test:evidence-complete-case": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/evidence-complete-opportunity-case.test.ts",
     "test:v7-landing-guards": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/v7-landing-guards.test.ts",
     "test:landing-sprint2": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/landing-sprint2.test.ts",
+    "test:company-interpretation": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/company-interpretation.test.ts",
     "test:deliverable": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/deliverable-renderer.test.ts",
     "test:portable": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/portable-deliverable.test.ts",
     "deliverable:generate": "npx -y tsx --tsconfig tsconfig.json scripts/deliverable/generate-portable.ts",

@@ -33,7 +33,9 @@ export type SignalFamily =
   | "investment" | "acquisition" | "partnership" | "operational_transformation"
   | "capacity" | "contract_award" | "new_market" | "technology_change" | "regulatory";
 
-const SIGNAL_FAMILIES: SignalFamily[] = [
+// Exported so the single canonical signal-family list is reused at runtime
+// (e.g. Company Interpretation Stage A validation) instead of being duplicated.
+export const SIGNAL_FAMILIES: SignalFamily[] = [
   "expansion", "new_facility", "fleet_growth", "infrastructure", "investment",
   "acquisition", "partnership", "operational_transformation", "capacity",
   "contract_award", "new_market", "technology_change", "regulatory",
