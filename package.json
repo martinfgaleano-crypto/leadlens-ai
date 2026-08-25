@@ -49,6 +49,7 @@
     "test:company-interpretation": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/company-interpretation.test.ts",
     "test:interpret-service": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/interpret-service.test.ts",
     "test:interpret-integration": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/landing-interpretation-integration.test.ts",
+    "test:interpret-discovery": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/interpret-discovery.test.ts",
     "test:deliverable": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/deliverable-renderer.test.ts",
     "test:portable": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/portable-deliverable.test.ts",
     "deliverable:generate": "npx -y tsx --tsconfig tsconfig.json scripts/deliverable/generate-portable.ts",

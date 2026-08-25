@@ -41,6 +41,13 @@ export interface PublicInterpretation {
   };
   /** Decision-relevant unknowns still to define. */
   gaps: string[];
+  /** Whether the target universe is user-known or discovery-required (§5/§25). */
+  targetMode: "defined" | "discovery_required";
+  /** When discovery-required: what LeadLens would DETERMINE and which organization
+   *  types it would INVESTIGATE (hypotheses — never confirmed targets, §19). */
+  discovery: { needs: string[]; candidateOrgTypes: string[] };
+  /** Optional route-preference refinement (offered as chips, never a blocker). */
+  routeQuestion: string | null;
   /** Still unclear */
   clarification: {
     question: string | null;
@@ -91,7 +98,13 @@ export function toPublicInterpretation(result: InterpretResult): PublicInterpret
       opportunityConditions: i.opportunityConditions.filter((c) => c.type === "change_trigger").map((c) => c.description),
       routesToEvaluate: meta.routesToEvaluate ?? [],
     },
-    gaps: (meta.openGaps && meta.openGaps.length ? meta.openGaps : i.clarification.nonBlockingGaps.map((g) => g.reason)).slice(0, 4),
+    gaps: (meta.openGaps && meta.openGaps.length ? meta.openGaps : i.clarification.nonBlockingGaps.filter((g) => g.priority !== "route_preference").map((g) => g.reason)).slice(0, 4),
+    targetMode: i.targetAccountProfile.definitionStatus === "discovery_required" ? "discovery_required" : "defined",
+    discovery: {
+      needs: i.targetAccountProfile.discoveryNeeds ?? [],
+      candidateOrgTypes: i.targetAccountProfile.candidateOrganizationTypes ?? [],
+    },
+    routeQuestion: i.clarification.nonBlockingGaps.find((g) => g.priority === "route_preference")?.reason ?? null,
     clarification: {
       question: i.clarification.nextQuestion?.question ?? null,
       priority: i.clarification.blockers[0]?.priority ?? null,

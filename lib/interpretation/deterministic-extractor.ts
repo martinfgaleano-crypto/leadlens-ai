@@ -56,6 +56,7 @@ const GEO_PATTERNS: Array<[RegExp, string]> = [
   [/\b(united states|usa|u\.s\.|estados unidos)\b|米国/i, "United States"], [/\b(brazil|brasil)\b|ブラジル/i, "Brazil"],
   [/\b(mexico|m[eé]xico)\b|メキシコ/i, "Mexico"], [/\b(europe|europa)\b|ヨーロッパ/i, "Europe"],
   [/\b(asia|asia[- ]pacific|apac)\b|アジア/i, "Asia"], [/\b(germany|alemania)\b/i, "Germany"], [/\b(uk|united kingdom|reino unido)\b/i, "United Kingdom"],
+  [/\b(spain|espa[ñn]a)\b|スペイン/i, "Spain"], [/\b(france|francia)\b/i, "France"], [/\b(italy|italia)\b/i, "Italy"], [/\b(portugal)\b/i, "Portugal"], [/\b(canada|canad[aá])\b/i, "Canada"], [/\b(japan|jap[oó]n|japão)\b/i, "Japan"],
 ];
 
 // change phrase → canonical SignalFamily (reused from needs-map)
@@ -130,6 +131,17 @@ function extractExclusions(t: string): string[] {
 
 const GENERIC = /^(software|technology|services?|consulting|we help companies grow|find companies|help companies|ayudamos a( las)? empresas|encontrar empresas|tecnolog[ií]a|servicios?)\.?$/i;
 
+// Expansion / exploration intent — the target universe is likely discovery-needed.
+export const EXPANSION = /\b(expand(ing)?|internationa|new markets?|move operations|abroad|overseas|scal(e|ing)|explore|new (region|geograph|countr|channel))\b|internacional|expandir|nuevo mercado|internacionaliz|no exterior|novos mercados|海外|新市場/i;
+// Uncertainty / no-preference / compare-for-me — a legitimate answer that must
+// PROCEED (discovery-required), never loop.
+export const UNCERTAIN = /\b(don'?t know|do not know|not sure|unsure|no preference|no idea|any (option|route)|compare (the )?options?|compare for me|help me (decide|choose)|which (way|route|type) (is best|should)|not decided|haven'?t decided)\b|no (lo )?s[eé]|no est(oy|amos) seguro|sin preferencia|comp[aá]ralas?|ayúdame a decidir|não sei|sem preferência|わからない|決めていない/i;
+
+/** Candidate organization types + discovery needs when the target is unknown but
+ *  the objective/context is enough to configure discovery (HYPOTHESES, not targets). */
+export const DISCOVERY_CANDIDATE_ORG_TYPES = ["Retailers or distributors", "Marketplaces / online channels", "Wholesale buyers", "Strategic or channel partners"];
+export const DISCOVERY_NEEDS = ["Which markets are viable", "Which organization types to pursue", "Which route-to-market fits", "Where account-level opportunities exist"];
+
 /** Deterministically extract a CompanyInterpretationV1 from prose. */
 export function extractCompanyInterpretation(rawInput: string, locale: LandingInterpretationLocale = "en"): CompanyInterpretationV1 {
   const input = rawInput.replace(/\s+/g, " ").trim();
@@ -173,25 +185,47 @@ export function extractCompanyInterpretation(rawInput: string, locale: LandingIn
       hypotheses.push({ family, relevanceToObjective: desc, linkedConditionIds: [id], status: "hypothesis" });
     }
   }
+  const isGeneric = input.length < 18 || GENERIC.test(input);
+  const targetKnown = !!target;
+  const hasBusinessContext = !!offer || (!isGeneric && input.length >= 24);
+  const expansionSignal = EXPANSION.test(input);
+  const uncertain = UNCERTAIN.test(input);
+
+  // Objective inference: an expansion/exploration intent is business DEVELOPMENT,
+  // not customer acquisition — do NOT force win_customers.
+  let objective = supported;
+  if (!objective && hasBusinessContext && !isGeneric) objective = expansionSignal ? "business_development" : "win_customers";
+
+  const exploratory = objective === "business_development" || objective === "partnerships" || objective === "advisory_opportunities" || objective === "identify_high_value_accounts";
+  // The target universe is DISCOVERY-REQUIRED (a valid state) when there is a
+  // real objective + business context, the target is unknown, and the intent is
+  // exploratory / expansion / uncertain. LeadLens should discover the target —
+  // it must never demand it back from the user.
+  const discoveryRequired = !!objective && hasBusinessContext && !targetKnown && (expansionSignal || uncertain || exploratory);
   if (target) conditions.unshift({ id: "oc_structural", type: "structural", description: `Is ${/^(a|an|the)\b/i.test(target) ? target : "a " + target}`, effect: "required", observable: false, origin: "llm_interpretation" });
 
-  const isGeneric = input.length < 18 || GENERIC.test(input);
-  const objective = supported ?? (offer && target && !isGeneric ? "win_customers" : null);
+  // Blockers — NEVER a target_organization question (that asks the user for a
+  // research conclusion, §2/§9). Block only for a missing OBJECTIVE / business
+  // context, or truly generic input.
+  const blockers: Array<{ id: string; priority: "commercial_objective" | "target_organization" | "geography" | "opportunity_condition" | "hard_exclusion" | "route_preference" | "other"; reason: string }> = [];
+  if (isGeneric) blockers.push({ id: "b_ctx", priority: "commercial_objective", reason: "Too general — describe your business and what you are trying to achieve commercially." });
+  else if (!objective) blockers.push({ id: "b_obj", priority: "commercial_objective", reason: "What are you trying to achieve — win customers, develop new business, find partners, or advisory work?" });
+  else if (!targetKnown && !discoveryRequired && !hasBusinessContext) blockers.push({ id: "b_ctx", priority: "commercial_objective", reason: "Tell LeadLens a little about your business so it can bound the search." });
 
-  const blockers = [];
-  if (!objective) blockers.push({ id: "b_obj", priority: "commercial_objective" as const, reason: "No clear commercial objective — who are you trying to reach, and why?" });
-  if (!target && !isGeneric && objective) blockers.push({ id: "b_target", priority: "target_organization" as const, reason: "No target organization described — what kind of company should LeadLens investigate?" });
-  if (isGeneric) blockers.push({ id: "b_target", priority: "target_organization" as const, reason: "Too general — describe your business, objective and the organizations that matter." });
+  const candidateOrganizationTypes = discoveryRequired ? DISCOVERY_CANDIDATE_ORG_TYPES : undefined;
+  const discoveryNeeds = discoveryRequired ? DISCOVERY_NEEDS : undefined;
 
-  const nonBlockingGaps = [];
-  if (objective && target && geographies.length === 0) nonBlockingGaps.push({ id: "g_geo", priority: "geography" as const, reason: "No geography stated; discovery can run broadly, but a region would sharpen it." });
-  if (objective && target && conditions.filter((c) => c.type === "change_trigger").length === 0) nonBlockingGaps.push({ id: "g_trigger", priority: "opportunity_condition" as const, reason: "No change trigger yet — which developments should signal it is time to engage?" });
+  const nonBlockingGaps: Array<{ id: string; priority: "commercial_objective" | "target_organization" | "geography" | "opportunity_condition" | "hard_exclusion" | "route_preference" | "other"; reason: string }> = [];
+  // Offer a route preference as an OPTIONAL refinement (chips), never a blocker,
+  // and never when the user already expressed uncertainty / "compare for me".
+  if (discoveryRequired && !uncertain) nonBlockingGaps.push({ id: "g_route", priority: "route_preference", reason: "Do you already have a preferred way to expand — or should LeadLens compare the options?" });
+  if (objective && targetKnown && geographies.length === 0) nonBlockingGaps.push({ id: "g_geo", priority: "geography", reason: "No geography stated; discovery can run broadly, but a region would sharpen it." });
 
   const disqualifiers = exclusions.map((rule) => ({ type: "custom" as const, rule, severity: "exclude" as const, origin: "user_input" as ContextOrigin }));
 
-  const status = blockers.length > 0 ? "needs_clarification" : "ready_for_confirmation";
-  const certainty = blockers.length > 0 ? (offer || target ? "partially_clear" : "ambiguous") : (nonBlockingGaps.length ? "partially_clear" : "clear");
-
+  const blocked = blockers.length > 0;
+  const status = blocked ? "needs_clarification" : "ready_for_confirmation";
+  const certainty: "clear" | "partially_clear" | "ambiguous" = blocked ? (offer || target ? "partially_clear" : "ambiguous") : (discoveryRequired || nonBlockingGaps.length ? "partially_clear" : "clear");
   const capabilities = offer ? [claim(offer, "user_input", "customer_company")] : [];
 
   return {
@@ -210,6 +244,9 @@ export function extractCompanyInterpretation(rawInput: string, locale: LandingIn
       geographies: geographies.length ? geographies : undefined,
       exclusions: exclusions.length ? exclusions : undefined,
       inferredFromInput: true,
+      definitionStatus: targetKnown ? "defined" : (discoveryRequired ? "discovery_required" : undefined),
+      candidateOrganizationTypes,
+      discoveryNeeds,
     },
     opportunityConditions: objective ? conditions : [],
     signalHypotheses: objective ? hypotheses : [],
@@ -220,14 +257,14 @@ export function extractCompanyInterpretation(rawInput: string, locale: LandingIn
       blockers,
       nonBlockingGaps,
       contradictions: [],
-      nextQuestion: blockers.length ? { gapId: blockers[0].id, question: clarQuestion(blockers[0].priority, locale) } : undefined,
+      nextQuestion: blocked ? { gapId: blockers[0].id, question: clarQuestion(blockers[0].priority, locale) } : undefined,
     },
     certainty,
-    interpretationStatus: objective && blockers.length === 0 ? "ready_for_confirmation" : status,
+    interpretationStatus: objective && !blocked ? "ready_for_confirmation" : status,
   };
 }
 
-function clarQuestion(priority: "commercial_objective" | "target_organization" | "geography" | "opportunity_condition" | "hard_exclusion" | "other", locale: LandingInterpretationLocale): string {
+function clarQuestion(priority: "commercial_objective" | "target_organization" | "geography" | "opportunity_condition" | "hard_exclusion" | "route_preference" | "other", locale: LandingInterpretationLocale): string {
   const Q: Record<string, Record<LandingInterpretationLocale, string>> = {
     commercial_objective: {
       en: "What are you trying to achieve — win customers, find partners, or advisory work?",

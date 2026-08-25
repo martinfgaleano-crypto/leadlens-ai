@@ -152,10 +152,25 @@ export interface GeographyScope {
 }
 
 /**
+ * Whether the target organization universe is KNOWN or must be DISCOVERED.
+ *   • "defined"            — the user stated a usable target (e.g. "regional banks").
+ *   • "partial"            — some descriptors, but the universe needs narrowing.
+ *   • "discovery_required" — the user legitimately does NOT know the target yet
+ *                            (e.g. exploring international expansion). This is a
+ *                            VALID configuration state, never a user error: the
+ *                            target universe is itself part of what LeadLens would
+ *                            discover. It must NOT force a target clarification.
+ */
+export const TARGET_DEFINITION_STATUSES = ["defined", "partial", "discovery_required"] as const;
+export type TargetDefinitionStatus = (typeof TARGET_DEFINITION_STATUSES)[number];
+
+/**
  * Describes the KIND of organization Discovery should later investigate. It does
  * NOT contain discovered accounts. `namedAccounts` is the only place real
  * organization names may appear, and ONLY when the USER explicitly supplied them
- * as seeds — never invented by interpretation.
+ * as seeds — never invented by interpretation. `candidateOrganizationTypes` are
+ * HYPOTHESES to investigate when the target is discovery-required — never
+ * confirmed targets.
  */
 export interface TargetAccountProfileDraft {
   organizationTypes: string[];
@@ -169,6 +184,14 @@ export interface TargetAccountProfileDraft {
   namedAccountsOrigin?: ContextOrigin;
   exclusions?: string[];
   inferredFromInput: boolean;
+  /** KNOWN vs DISCOVERY-REQUIRED. Defaults to "defined" when organizationTypes
+   *  are present; "discovery_required" when the target is legitimately unknown. */
+  definitionStatus?: TargetDefinitionStatus;
+  /** Candidate organization types to INVESTIGATE (hypotheses) when the target is
+   *  discovery-required. Distinct from organizationTypes (user-stated/confirmed). */
+  candidateOrganizationTypes?: string[];
+  /** What LeadLens would need to DETERMINE (markets, routes, org types). */
+  discoveryNeeds?: string[];
 }
 
 // ─── Opportunity conditions (ICP vs Timing kept separate) ─────────────────────
@@ -269,8 +292,21 @@ export const CLARIFICATION_PRIORITIES = [
   "geography",
   "opportunity_condition",
   "hard_exclusion",
+  "route_preference",
   "other",
 ] as const;
+
+/**
+ * Deterministic QUALITY GATE (§10): a clarification is legitimate only if it asks
+ * for something UNIQUELY KNOWN TO THE USER — never for a research conclusion
+ * LeadLens is expected to discover (the best market, the target companies, the
+ * ideal partners, the accounts to prioritize). Returns true if the clarification
+ * is asking for a research conclusion and must be REJECTED.
+ */
+export function isResearchConclusionClarification(priority: ClarificationPriority, reason: string): boolean {
+  if (priority === "target_organization") return true; // "which organizations should LeadLens look at" is a conclusion
+  return /\b(best|top|right|ideal) (market|markets|countr|compan|account|partner|organi[sz]ation)|which (companies|accounts|organizations|markets|countries|partners)|who should (we|leadlens) (research|find|target)|find (the )?companies\b/i.test(reason);
+}
 export type ClarificationPriority = (typeof CLARIFICATION_PRIORITIES)[number];
 
 export interface ClarificationGap {

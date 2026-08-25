@@ -3364,6 +3364,9 @@ const DEFAULT_INTERPRETATION: PublicInterpretation = {
   clarification: { question: null, priority: null },
   unsupportedReason: null,
   gaps: ["Priority regions", "Deal size / procurement owner"],
+  targetMode: "defined",
+  discovery: { needs: [], candidateOrgTypes: [] },
+  routeQuestion: null,
   disclosure: "Based on what you told us. No external account research has run yet.",
 };
 
@@ -3410,6 +3413,17 @@ const HOW_FLOW: Record<OutputLanguage, { eyebrow: string; title: string; nodes: 
     { k: "評価", d: "フィット・タイミング・エビデンス" },
     { k: "優先", d: "今注目すべき相手" },
   ] },
+};
+
+// Discovery-needed target: labels + route-preference chips (§16/§18/§19). When
+// the user is exploring (e.g. international expansion) LeadLens configures
+// discovery instead of demanding a target — these chips are an optional
+// refinement, never a required field.
+const DISCOVERY_COPY: Record<OutputLanguage, { toDiscover: string; determine: string; orgHyp: string; orgHypHint: string; routeChips: { label: string; value: string }[] }> = {
+  en: { toDiscover: "LeadLens would discover this", determine: "What LeadLens would determine", orgHyp: "Organization types to investigate", orgHypHint: "hypotheses — not confirmed targets", routeChips: [{ label: "Direct", value: "we prefer to expand through direct sales" }, { label: "Retail / distributor", value: "we prefer to expand through retailers and distributors" }, { label: "Wholesale", value: "we prefer to expand through wholesale" }, { label: "Marketplaces", value: "we prefer to expand through marketplaces" }, { label: "Compare for me", value: "compare the options for me" }] },
+  es: { toDiscover: "LeadLens lo descubriría", determine: "Qué determinaría LeadLens", orgHyp: "Tipos de organización a investigar", orgHypHint: "hipótesis — no objetivos confirmados", routeChips: [{ label: "Directo", value: "preferimos expandirnos por venta directa" }, { label: "Retail / distribuidor", value: "preferimos expandirnos con minoristas y distribuidores" }, { label: "Mayorista", value: "preferimos expandirnos por mayoreo" }, { label: "Marketplaces", value: "preferimos expandirnos por marketplaces" }, { label: "Compáralo por mí", value: "compara las opciones por mí" }] },
+  pt: { toDiscover: "A LeadLens descobriria isto", determine: "O que a LeadLens determinaria", orgHyp: "Tipos de organização a investigar", orgHypHint: "hipóteses — não alvos confirmados", routeChips: [{ label: "Direto", value: "preferimos expandir por venda direta" }, { label: "Varejo / distribuidor", value: "preferimos expandir com varejistas e distribuidores" }, { label: "Atacado", value: "preferimos expandir por atacado" }, { label: "Marketplaces", value: "preferimos expandir por marketplaces" }, { label: "Compare por mim", value: "compare as opções por mim" }] },
+  ja: { toDiscover: "LeadLensが特定します", determine: "LeadLensが特定すること", orgHyp: "調査すべき組織タイプ", orgHypHint: "仮説 — 確定した対象ではありません", routeChips: [{ label: "直販", value: "直販で拡大したい" }, { label: "小売・販売店", value: "小売・販売店経由で拡大したい" }, { label: "卸売", value: "卸売で拡大したい" }, { label: "マーケットプレイス", value: "マーケットプレイスで拡大したい" }, { label: "比較して", value: "選択肢を比較して" }] },
 };
 
 // Differentiation as a progression: data → event → decision. LeadLens is the
@@ -3515,7 +3529,7 @@ function CompanyInterpretationExperience({ lang, onBridge }: { lang: OutputLangu
                   <div style={{ padding: ".9rem", background: "#fff", border: "1px solid #e6ebf1", borderRadius: ".7rem" }}>
                     <div style={{ fontSize: ".6rem", fontWeight: 800, letterSpacing: ".07em", textTransform: "uppercase", color: "#64748b", marginBottom: ".55rem" }}>{sa.told}</div>
                     {r.told.offer && <InterpretationField label={ui.sells} value={r.told.offer} />}
-                    <InterpretationField label={ui.relevant} value={r.told.target.join(" · ") || sa.none} />
+                    <InterpretationField label={ui.relevant} value={r.told.target.join(" · ") || (r.targetMode === "discovery_required" ? DISCOVERY_COPY[lang].toDiscover : sa.none)} />
                     <InterpretationField label={ui.market} value={r.told.geographies.join(" · ") || sa.none} />
                     {r.told.exclusions.length > 0 && <InterpretationField label={sa.exclusions} value={r.told.exclusions.join(" · ")} last />}
                   </div>
@@ -3527,6 +3541,25 @@ function CompanyInterpretationExperience({ lang, onBridge }: { lang: OutputLangu
                     <div style={rowsWrap}>{r.inferred.signalsToWatch.length ? r.inferred.signalsToWatch.slice(0, 5).map(bullet) : <span style={{ color: "#94a3b8", fontSize: ".76rem" }}>{sa.none}</span>}</div>
                   </div>
                 </div>
+                {/* Discovery-needed brief (§18/§19): what LeadLens would determine +
+                    candidate organization types (hypotheses) + an OPTIONAL route
+                    refinement. Never a demand for the target. */}
+                {r.targetMode === "discovery_required" && (
+                  <div style={{ marginTop: ".85rem", display: "grid", gap: ".7rem" }}>
+                    {r.discovery.needs.length > 0 && <div style={{ padding: ".8rem .9rem", background: "#f0f9ff", border: "1px solid #d8eefc", borderRadius: ".7rem" }}>
+                      <div style={{ fontSize: ".6rem", fontWeight: 800, letterSpacing: ".06em", textTransform: "uppercase", color: "#0284c7", marginBottom: ".45rem" }}>{DISCOVERY_COPY[lang].determine}</div>
+                      <div style={rowsWrap}>{r.discovery.needs.slice(0, 4).map(bullet)}</div>
+                    </div>}
+                    {r.discovery.candidateOrgTypes.length > 0 && <div style={{ padding: ".8rem .9rem", background: "#fff", border: "1px solid #e6ebf1", borderRadius: ".7rem" }}>
+                      <div style={{ fontSize: ".6rem", fontWeight: 800, letterSpacing: ".06em", textTransform: "uppercase", color: "#64748b" }}>{DISCOVERY_COPY[lang].orgHyp} <span style={{ fontWeight: 600, textTransform: "none", letterSpacing: 0, color: "#94a3b8" }}>· {DISCOVERY_COPY[lang].orgHypHint}</span></div>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: ".4rem", marginTop: ".5rem" }}>{r.discovery.candidateOrgTypes.map((c, i) => <span key={i} style={{ fontSize: ".74rem", fontWeight: 600, color: "#475569", background: "#f1f5f9", border: "1px solid #e2e8f0", borderRadius: 999, padding: ".25rem .6rem" }}>{c}</span>)}</div>
+                    </div>}
+                    {r.routeQuestion && <div>
+                      <div style={{ fontSize: ".74rem", color: "#0f172a", fontWeight: 600, marginBottom: ".45rem" }}>{r.routeQuestion}</div>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: ".4rem" }}>{DISCOVERY_COPY[lang].routeChips.map((ch) => <button key={ch.label} type="button" onClick={() => { setClarification(""); run(input, ch.value); }} style={{ minHeight: 40, appearance: "none", cursor: "pointer", fontFamily: "inherit", fontSize: ".74rem", fontWeight: 650, color: "#0284c7", background: "#f0f9ff", border: "1px solid #bae6fd", borderRadius: 999, padding: ".35rem .75rem" }}>{ch.label}</button>)}</div>
+                    </div>}
+                  </div>
+                )}
                 {/* Progressive disclosure (§13): routes + gaps expand on demand so
                     the default read stays scannable in ~5–10s. */}
                 {(r.inferred.routesToEvaluate.length > 0 || r.gaps.length > 0) && (

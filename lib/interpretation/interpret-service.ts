@@ -21,6 +21,7 @@ import { SIGNAL_FAMILIES } from "@/lib/discovery/needs-map";
 import type { LandingInterpretationLocale } from "@/lib/landing/landing-interpretation";
 import {
   stageAViolations,
+  isResearchConclusionClarification,
   SUPPORTED_OBJECTIVE_TYPES,
   UNSUPPORTED_OBJECTIVE_TYPES,
   type CompanyInterpretationV1,
@@ -33,7 +34,7 @@ import {
   type TargetRelationship,
   type BusinessModel,
 } from "./company-interpretation";
-import { extractCompanyInterpretation } from "./deterministic-extractor";
+import { extractCompanyInterpretation, EXPANSION, UNCERTAIN, DISCOVERY_CANDIDATE_ORG_TYPES, DISCOVERY_NEEDS } from "./deterministic-extractor";
 
 // ─── Input guard (§17/§19/§40) ────────────────────────────────────────────────
 
@@ -187,17 +188,29 @@ function assembleFromModel(raw: RawModelInterpretation, input: string, locale: L
   const exclusions = (raw.exclusions ?? []).map((s) => String(s).slice(0, 60)).filter(Boolean).slice(0, 3);
   const disqualifiers = exclusions.map((rule) => ({ type: "custom" as const, rule, severity: "exclude" as const, origin: "user_input" as ContextOrigin }));
 
-  const blockers = [];
-  if (!objective) blockers.push({ id: "b_obj", priority: "commercial_objective" as const, reason: "The commercial objective is unclear." });
-  if (objective && orgTypes.length === 0) blockers.push({ id: "b_target", priority: "target_organization" as const, reason: "No target organization type." });
-  // The model may also request clarification for a material reason.
-  if (raw.clarificationNeeded && blockers.length === 0 && raw.clarificationPriority && raw.clarificationPriority !== "geography") {
+  // Discovery-required vs known target (§5). The target universe may legitimately
+  // be unknown for expansion / exploratory objectives — LeadLens discovers it and
+  // must NEVER demand it back from the user.
+  const targetKnown = orgTypes.length > 0;
+  const hasBusinessContext = !!raw.offer || (raw.capabilities ?? []).length > 0 || input.length >= 24;
+  const exploratory = objective === "business_development" || objective === "partnerships" || objective === "advisory_opportunities" || objective === "identify_high_value_accounts";
+  const discoveryRequired = !!objective && hasBusinessContext && !targetKnown && (EXPANSION.test(input) || UNCERTAIN.test(input) || exploratory);
+  const uncertain = UNCERTAIN.test(input);
+
+  type Gap = { id: string; priority: "commercial_objective" | "target_organization" | "geography" | "opportunity_condition" | "hard_exclusion" | "route_preference" | "other"; reason: string };
+  const blockers: Gap[] = [];
+  if (!objective) blockers.push({ id: "b_obj", priority: "commercial_objective", reason: "What are you trying to achieve — win customers, develop new business, find partners, or advisory work?" });
+  else if (!targetKnown && !discoveryRequired && !hasBusinessContext) blockers.push({ id: "b_ctx", priority: "commercial_objective", reason: "Tell LeadLens a little about your business so it can bound the search." });
+  // The model may request ONE clarification — but only if it is NOT a research
+  // conclusion (§10 quality gate) and NOT a target_organization demand.
+  if (objective && blockers.length === 0 && raw.clarificationNeeded && raw.clarificationPriority && raw.clarificationPriority !== "geography" && raw.clarificationPriority !== "target_organization" && !isResearchConclusionClarification(raw.clarificationPriority, raw.clarificationQuestion ?? "") && !discoveryRequired) {
     blockers.push({ id: "b_model", priority: raw.clarificationPriority, reason: raw.clarificationQuestion || "One detail is needed." });
   }
 
-  const nonBlockingGaps = [];
-  if (objective && orgTypes.length && (raw.geographies ?? []).length === 0) nonBlockingGaps.push({ id: "g_geo", priority: "geography" as const, reason: "No geography stated; a region would sharpen discovery." });
-  if (objective && orgTypes.length && conditions.filter((c) => c.type === "change_trigger").length === 0) nonBlockingGaps.push({ id: "g_trigger", priority: "opportunity_condition" as const, reason: "No change trigger yet." });
+  const nonBlockingGaps: Gap[] = [];
+  if (discoveryRequired && !uncertain) nonBlockingGaps.push({ id: "g_route", priority: "route_preference", reason: "Do you already have a preferred way to expand — or should LeadLens compare the options?" });
+  if (objective && targetKnown && (raw.geographies ?? []).length === 0) nonBlockingGaps.push({ id: "g_geo", priority: "geography", reason: "No geography stated; a region would sharpen discovery." });
+  if (objective && targetKnown && conditions.filter((c) => c.type === "change_trigger").length === 0) nonBlockingGaps.push({ id: "g_trigger", priority: "opportunity_condition", reason: "No change trigger yet." });
 
   const contradictions = raw.contradiction ? [{ id: "c1", description: String(raw.contradiction).slice(0, 200), between: [] }] : [];
   const status = blockers.length ? "needs_clarification" : "ready_for_confirmation";
@@ -219,6 +232,9 @@ function assembleFromModel(raw: RawModelInterpretation, input: string, locale: L
       geographies: (raw.geographies ?? []).length ? raw.geographies!.map((g) => ({ label: String(g).slice(0, 40) })) : undefined,
       exclusions: exclusions.length ? exclusions : undefined,
       inferredFromInput: true,
+      definitionStatus: targetKnown ? "defined" : (discoveryRequired ? "discovery_required" : undefined),
+      candidateOrganizationTypes: discoveryRequired ? ((raw.targetOrganizationTypes ?? []).map((s) => String(s).slice(0, 80)).filter(Boolean).slice(0, 5).length ? (raw.targetOrganizationTypes ?? []).map((s) => String(s).slice(0, 80)).filter(Boolean).slice(0, 5) : DISCOVERY_CANDIDATE_ORG_TYPES) : undefined,
+      discoveryNeeds: discoveryRequired ? DISCOVERY_NEEDS : undefined,
     },
     opportunityConditions: objective ? conditions : [],
     signalHypotheses: objective ? hypotheses : [],
@@ -289,8 +305,13 @@ export async function interpretCompany(rawInput: string, opts: { locale?: Landin
   const locale = opts.locale ?? "en";
   const { text, redacted, truncated } = sanitizeInterpretInput(rawInput);
   // Injection markers are neutralized by intent (prompt) — we also strip them from
-  // the text sent to the model so they cannot dominate the extraction.
-  const cleanForModel = text.replace(INJECTION_MARKER, " ");
+  // the text sent to the model so they cannot dominate the extraction. Uncertainty
+  // / "compare for me" markers are ALSO stripped: they are a route PREFERENCE
+  // handled deterministically (route = no_preference), and if left in they make
+  // the model misread the input as a market-research request. If stripping empties
+  // the text, keep the original (the deterministic path handles it).
+  const strippedForModel = text.replace(INJECTION_MARKER, " ").replace(UNCERTAIN, " ").replace(/\s+/g, " ").trim();
+  const cleanForModel = strippedForModel.length >= 12 ? strippedForModel : text;
 
   const objectiveClass = (i: CompanyInterpretationV1) => i.commercialObjective.supported ? i.commercialObjective.type : (i.commercialObjective.supported === false ? i.commercialObjective.requestedType : "unknown");
   const sanitizeList = (xs: unknown, max: number): string[] | undefined => {
@@ -317,10 +338,18 @@ export async function interpretCompany(rawInput: string, opts: { locale?: Landin
     return finish(extractCompanyInterpretation(text, locale), "deterministic_no_model", false);
   }
 
+  // A "compare / not sure / no preference" input is a route PREFERENCE, never an
+  // out-of-scope request. If the model still flips such an input to unsupported
+  // (market-research misread), the deterministic extractor — which handles it as
+  // discovery-required — is authoritative.
+  const uncertainRoute = UNCERTAIN.test(text);
+  const misreadUnsupported = (i: CompanyInterpretationV1) => uncertainRoute && !i.commercialObjective.supported && cleanForModel.length >= 12;
+
   const system = buildSystemPrompt(locale);
   try {
     const raw = coerceRaw(await useModel(system, cleanForModel, 900));
     const assembled = raw ? assembleFromModel(raw, text, locale, nowFn) : null;
+    if (assembled && misreadUnsupported(assembled)) return finish(extractCompanyInterpretation(cleanForModel, locale), "llm_repaired", true, raw!);
     if (assembled && stageAViolations(assembled).length === 0) return finish(assembled, "llm", false, raw!);
     // one constrained repair attempt — for malformed output OR a truth violation.
     const repairSys = system + "\nYour previous output was malformed or violated the rules. Return corrected JSON only. Do NOT add external knowledge.";

@@ -77,10 +77,15 @@ export interface ExecutionReadiness {
   missing: string[];
 }
 
+// A target is "defined enough to execute" when descriptors are present OR the
+// target is legitimately DISCOVERY-REQUIRED (the user need not know it — LeadLens
+// would discover the universe; §5/§7 outcome B). It is NOT ready only when the
+// target is unknown AND no discovery configuration exists.
 const targetAccountDefined = (t: TargetAccountProfileDraft): boolean =>
   (t.organizationTypes?.length ?? 0) > 0 ||
   (t.industries?.length ?? 0) > 0 ||
-  (t.namedAccounts?.length ?? 0) > 0;
+  (t.namedAccounts?.length ?? 0) > 0 ||
+  t.definitionStatus === "discovery_required";
 
 export function executionReadiness(interp: CompanyInterpretationV1): ExecutionReadiness {
   const missing: string[] = [];
