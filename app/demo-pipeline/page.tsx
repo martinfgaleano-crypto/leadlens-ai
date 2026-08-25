@@ -3426,6 +3426,50 @@ const DISCOVERY_COPY: Record<OutputLanguage, { toDiscover: string; determine: st
   ja: { toDiscover: "LeadLensが特定します", determine: "LeadLensが特定すること", orgHyp: "調査すべき組織タイプ", orgHypHint: "仮説 — 確定した対象ではありません", routeChips: [{ label: "直販", value: "直販で拡大したい" }, { label: "小売・販売店", value: "小売・販売店経由で拡大したい" }, { label: "卸売", value: "卸売で拡大したい" }, { label: "マーケットプレイス", value: "マーケットプレイスで拡大したい" }, { label: "比較して", value: "選択肢を比較して" }] },
 };
 
+// Company Interpretation as a mini analyst brief (§5-§16): a LeadLens Read, a
+// truthful commercial-intent label (expansion is NOT "win customers"), and a
+// "what happens next" transition. Built client-side from validated projection
+// fields — no extra model call, no invented facts.
+const BRIEF_COPY: Record<OutputLanguage, {
+  readLabel: string; intentLabel: string; nextLabel: string; next: string; expansionIntent: string;
+  intents: Record<string, string>;
+  readDiscovery: (biz: string, geo: string) => string;
+  readDefined: (biz: string, target: string, intent: string) => string;
+}> = {
+  en: {
+    readLabel: "LeadLens read", intentLabel: "Commercial intent", nextLabel: "What happens next",
+    next: "Once you confirm this context, LeadLens builds the relevant universe, collects current evidence, and determines which organizations deserve attention. No research has run yet.",
+    expansionIntent: "International commercial expansion",
+    intents: { win_customers: "Win new customers", business_development: "Business development", identify_high_value_accounts: "Identify high-value accounts", partnerships: "Find strategic partners", advisory_opportunities: "Find advisory opportunities" },
+    readDiscovery: (biz, geo) => `You run ${biz}${geo ? ` in ${geo}` : ""} and are exploring new commercial ground. Before choosing where to focus, LeadLens would determine which commercial routes and organization types deserve investigation.`,
+    readDefined: (biz, target, intent) => `You're pursuing ${intent.toLowerCase()}${target ? ` among ${target}` : ""}. LeadLens would surface the accounts where a recent change makes engagement worthwhile — and the evidence behind each.`,
+  },
+  es: {
+    readLabel: "Lectura de LeadLens", intentLabel: "Intención comercial", nextLabel: "Qué sigue",
+    next: "Cuando confirmes este contexto, LeadLens construye el universo relevante, reúne evidencia actual y determina qué organizaciones merecen atención. Aún no se ha ejecutado ninguna investigación.",
+    expansionIntent: "Expansión comercial internacional",
+    intents: { win_customers: "Ganar clientes", business_development: "Desarrollo de negocio", identify_high_value_accounts: "Identificar cuentas de alto valor", partnerships: "Encontrar socios estratégicos", advisory_opportunities: "Encontrar oportunidades de asesoría" },
+    readDiscovery: (biz, geo) => `Operas ${biz}${geo ? ` en ${geo}` : ""} y estás explorando nuevo terreno comercial. Antes de decidir dónde enfocarte, LeadLens determinaría qué rutas comerciales y tipos de organización merecen investigación.`,
+    readDefined: (biz, target, intent) => `Buscas ${intent.toLowerCase()}${target ? ` entre ${target}` : ""}. LeadLens encontraría las cuentas donde un cambio reciente hace que valga la pena actuar — y la evidencia detrás de cada una.`,
+  },
+  pt: {
+    readLabel: "Leitura da LeadLens", intentLabel: "Intenção comercial", nextLabel: "O que vem a seguir",
+    next: "Ao confirmar este contexto, a LeadLens constrói o universo relevante, reúne evidência atual e determina quais organizações merecem atenção. Nenhuma pesquisa foi executada ainda.",
+    expansionIntent: "Expansão comercial internacional",
+    intents: { win_customers: "Ganhar clientes", business_development: "Desenvolvimento de negócios", identify_high_value_accounts: "Identificar contas de alto valor", partnerships: "Encontrar parceiros estratégicos", advisory_opportunities: "Encontrar oportunidades de consultoria" },
+    readDiscovery: (biz, geo) => `Você opera ${biz}${geo ? ` em ${geo}` : ""} e está explorando novo terreno comercial. Antes de escolher onde focar, a LeadLens determinaria quais rotas comerciais e tipos de organização merecem investigação.`,
+    readDefined: (biz, target, intent) => `Você busca ${intent.toLowerCase()}${target ? ` entre ${target}` : ""}. A LeadLens encontraria as contas onde uma mudança recente torna o engajamento válido — e a evidência por trás de cada uma.`,
+  },
+  ja: {
+    readLabel: "LeadLensの読み", intentLabel: "商業的意図", nextLabel: "次のステップ",
+    next: "この文脈を確認すると、LeadLensは関連する対象群を構築し、最新のエビデンスを収集し、どの組織に注目すべきかを特定します。調査はまだ実行されていません。",
+    expansionIntent: "国際的な事業拡大",
+    intents: { win_customers: "新規顧客の獲得", business_development: "事業開発", identify_high_value_accounts: "高価値アカウントの特定", partnerships: "戦略的パートナーの発掘", advisory_opportunities: "アドバイザリー機会の発掘" },
+    readDiscovery: (biz, geo) => `${geo ? `${geo}で` : ""}${biz}を営んでおり、新しい商業領域を模索しています。どこに注力するかを決める前に、LeadLensはどの商業ルートと組織タイプを調査すべきかを特定します。`,
+    readDefined: (biz, target, intent) => `${intent}を目指しています${target ? `（対象: ${target}）` : ""}。LeadLensは、最近の変化により関与する価値が生じたアカウントと、その裏付けとなるエビデンスを見つけ出します。`,
+  },
+};
+
 // Differentiation as a progression: data → event → decision. LeadLens is the
 // culmination (widest tier, sky accent), not one of three equal columns.
 const DIFF_LADDER: Record<OutputLanguage, { db: [string, string]; sig: [string, string]; ll: [string, string] }> = {
@@ -3524,7 +3568,22 @@ function CompanyInterpretationExperience({ lang, onBridge }: { lang: OutputLangu
                 </div>
               )}
 
-              {status === "done" && r && r.status === "ready_for_confirmation" && (<>
+              {status === "done" && r && r.status === "ready_for_confirmation" && (() => {
+                const bc = BRIEF_COPY[lang];
+                const intent = r.inferred.objectiveType ? (r.targetMode === "discovery_required" && r.inferred.objectiveType === "business_development" ? bc.expansionIntent : (bc.intents[r.inferred.objectiveType] ?? r.inferred.objectiveLabel ?? "")) : "";
+                const isExpansion = r.targetMode === "discovery_required" && r.inferred.objectiveType === "business_development";
+                const offerClean = (r.told.offer ?? "").replace(/\.$/, "");
+                const biz = offerClean ? `a ${offerClean} business` : "your business";
+                const geo0 = r.told.geographies[0] ?? "";
+                const geo = geo0 && !offerClean.toLowerCase().includes(geo0.toLowerCase()) ? geo0 : "";
+                const read = r.targetMode === "discovery_required" ? bc.readDiscovery(biz, geo) : bc.readDefined(biz, r.told.target.join(", "), intent);
+                return (<>
+                {/* LeadLens Read — a concise synthesis of the commercial problem (§7) */}
+                <div style={{ padding: ".1rem 0 .1rem .7rem", borderLeft: "3px solid #0284c7", marginBottom: ".85rem" }}>
+                  <div style={{ fontSize: ".55rem", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase", color: "#0284c7", marginBottom: ".25rem" }}>{bc.readLabel}</div>
+                  <div style={{ fontSize: ".82rem", color: "#0f172a", lineHeight: 1.5 }}>{read}</div>
+                  {intent && <div style={{ fontSize: ".72rem", color: "#475569", marginTop: ".45rem" }}><span style={{ fontSize: ".55rem", fontWeight: 800, letterSpacing: ".05em", textTransform: "uppercase", color: "#64748b", marginRight: ".4rem" }}>{bc.intentLabel}</span><strong style={{ color: "#0f172a" }}>{intent}</strong>{r.inferred.relationship && !isExpansion ? <span style={{ color: "#94a3b8" }}> · {r.inferred.relationship}</span> : null}</div>}
+                </div>
                 <div className="ll-interpret-flow">
                   <div style={{ padding: ".9rem", background: "#fff", border: "1px solid #e6ebf1", borderRadius: ".7rem" }}>
                     <div style={{ fontSize: ".6rem", fontWeight: 800, letterSpacing: ".07em", textTransform: "uppercase", color: "#64748b", marginBottom: ".55rem" }}>{sa.told}</div>
@@ -3536,7 +3595,6 @@ function CompanyInterpretationExperience({ lang, onBridge }: { lang: OutputLangu
                   <div className="ll-interpret-arrow" aria-hidden>→</div>
                   <div style={{ padding: ".9rem", background: "#f0f9ff", border: "1px solid #d8eefc", borderRadius: ".7rem" }}>
                     <div style={{ fontSize: ".6rem", fontWeight: 800, letterSpacing: ".07em", textTransform: "uppercase", color: "#0284c7", marginBottom: ".55rem" }}>{sa.inferred}</div>
-                    {r.inferred.objectiveLabel && <div style={{ fontSize: ".82rem", fontWeight: 750, color: "#0f172a", marginBottom: ".6rem", lineHeight: 1.3 }}>{r.inferred.objectiveLabel}{r.inferred.relationship ? <span style={{ color: "#64748b", fontWeight: 600 }}> · {r.inferred.relationship}</span> : null}</div>}
                     <div style={{ fontSize: ".6rem", fontWeight: 800, letterSpacing: ".06em", textTransform: "uppercase", color: "#0284c7", marginBottom: ".4rem" }}>{sa.investigate}</div>
                     <div style={rowsWrap}>{r.inferred.signalsToWatch.length ? r.inferred.signalsToWatch.slice(0, 5).map(bullet) : <span style={{ color: "#94a3b8", fontSize: ".76rem" }}>{sa.none}</span>}</div>
                   </div>
@@ -3578,10 +3636,15 @@ function CompanyInterpretationExperience({ lang, onBridge }: { lang: OutputLangu
                     </div>}
                   </div>
                 )}
-                <div style={{ display: "flex", gap: ".7rem", justifyContent: "flex-end", alignItems: "center", flexWrap: "wrap", marginTop: ".9rem", paddingTop: ".8rem", borderTop: "1px solid #eef2f7" }}>
-                  <button type="button" onClick={onBridge} style={{ minHeight: 44, border: 0, background: "transparent", color: "#0284c7", fontWeight: 750, fontFamily: "inherit", cursor: "pointer", padding: ".5rem 0" }}>{ui.bridge} <span aria-hidden>↗</span></button>
+                {/* What happens next (§16) — a truthful transition, not a Stage-B claim */}
+                <div style={{ marginTop: ".9rem", paddingTop: ".8rem", borderTop: "1px solid #eef2f7" }}>
+                  <div style={{ fontSize: ".55rem", fontWeight: 800, letterSpacing: ".06em", textTransform: "uppercase", color: "#64748b", marginBottom: ".3rem" }}>{bc.nextLabel}</div>
+                  <div style={{ fontSize: ".76rem", color: "#475569", lineHeight: 1.5 }}>{bc.next}</div>
+                  <div style={{ display: "flex", justifyContent: "flex-end", marginTop: ".4rem" }}>
+                    <button type="button" onClick={onBridge} style={{ minHeight: 40, border: 0, background: "transparent", color: "#0284c7", fontWeight: 750, fontFamily: "inherit", cursor: "pointer", padding: ".3rem 0" }}>{ui.bridge} <span aria-hidden>↗</span></button>
+                  </div>
                 </div>
-              </>)}
+              </>); })()}
             </div>
             <div style={{ borderTop: "1px solid #eef2f7", padding: ".55rem 1.15rem", color: "#94a3b8", fontSize: ".62rem" }}>{r && r.status === "unsupported_objective" ? sa.noResearchUnsupported : sa.noResearch}</div>
           </div>

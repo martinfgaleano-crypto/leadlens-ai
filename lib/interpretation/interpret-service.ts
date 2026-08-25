@@ -34,7 +34,7 @@ import {
   type TargetRelationship,
   type BusinessModel,
 } from "./company-interpretation";
-import { extractCompanyInterpretation, EXPANSION, UNCERTAIN, DISCOVERY_CANDIDATE_ORG_TYPES, DISCOVERY_NEEDS } from "./deterministic-extractor";
+import { extractCompanyInterpretation, EXPANSION, UNCERTAIN, EXPLICIT_CUSTOMER_ACQ, ADVISORY_BIZ, DISCOVERY_CANDIDATE_ORG_TYPES, DISCOVERY_NEEDS } from "./deterministic-extractor";
 
 // ─── Input guard (§17/§19/§40) ────────────────────────────────────────────────
 
@@ -163,8 +163,13 @@ function assembleFromModel(raw: RawModelInterpretation, input: string, locale: L
     }
   }
 
-  const objective = (SUPPORTED_OBJECTIVE_TYPES as readonly string[]).includes(raw.objective) && raw.objectiveSupported
+  let objective = (SUPPORTED_OBJECTIVE_TYPES as readonly string[]).includes(raw.objective) && raw.objectiveSupported
     ? (raw.objective as SupportedObjectiveType) : null;
+  // Expansion without EXPLICIT customer-acquisition wording is business
+  // development, never "win customers" (§3) — even if the model said win_customers.
+  if (objective === "win_customers" && EXPANSION.test(input) && !EXPLICIT_CUSTOMER_ACQ.test(input)) objective = "business_development";
+  // An advisory/consulting business winning "clients" is advisory_opportunities.
+  if (objective === "win_customers" && ADVISORY_BIZ.test(input)) objective = "advisory_opportunities";
 
   const triggers = (raw.changeTriggers ?? []).filter((c) => c && (SIGNAL_FAMILIES as readonly string[]).includes(c.family)).slice(0, 5);
   const seen = new Set<SignalFamily>();

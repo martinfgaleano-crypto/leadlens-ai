@@ -86,6 +86,24 @@ const compareMisread = await interpretCompany("We sell jewelry in Colombia and w
 t("LLM misread: 'compare for me' with real context does NOT become unsupported (deterministic override)",
   compareMisread.interpretation.interpretationStatus !== "unsupported_objective" && compareMisread.interpretation.commercialObjective.supported === true);
 
+// ─── OBJECTIVE SEMANTICS (§23) — expansion is NOT "win customers" ─────────────
+const objType = (i: CompanyInterpretationV1) => i.commercialObjective.supported ? i.commercialObjective.type : "unsupported";
+const expA = await det("We sell jewelry in Colombia and want to expand internationally.");
+t("OBJ-A expansion (no explicit acquisition) → business_development, NOT win_customers", objType(expA.interpretation) === "business_development");
+const expB = await det("We sell jewelry in Colombia and want to acquire customers in Spain.");
+t("OBJ-B explicit customer acquisition → win_customers", objType(expB.interpretation) === "win_customers");
+const expC = await det("We want distributors in Mexico.");
+t("OBJ-C distributors → partnerships/business-development, not win_customers", ["partnerships", "business_development"].includes(objType(expC.interpretation)));
+const expD = await det("We sell cybersecurity software to regional banks and want more customers.");
+t("OBJ-D known target + more customers → win_customers", objType(expD.interpretation) === "win_customers");
+const expE = await det("We advise companies entering foreign markets and want more advisory clients.");
+t("OBJ-E advisory + more clients → advisory_opportunities", objType(expE.interpretation) === "advisory_opportunities");
+// LLM path: model says win_customers for an expansion input → reclassified to business_development
+const llmExp = await interpretCompany("We sell jewelry in Colombia and want to expand internationally.", {}, {
+  callModel: model({ objectiveSupported: true, objective: "win_customers", offer: "Jewelry", targetOrganizationTypes: [], clarificationNeeded: false } as unknown as RawModelInterpretation),
+});
+t("OBJ-LLM model 'win_customers' on expansion is reclassified to business_development", objType(llmExp.interpretation) === "business_development");
+
 // ─── SEMANTIC INVARIANTS (§28) ────────────────────────────────────────────────
 t("INV-A discovery_required ⇒ never a target_organization blocker",
   [jewelry, unknownRoute, compare, knownRoute, partners, consulting].every((r) => !discovery(r.interpretation) || !r.interpretation.clarification.blockers.some((b) => b.priority === "target_organization")));

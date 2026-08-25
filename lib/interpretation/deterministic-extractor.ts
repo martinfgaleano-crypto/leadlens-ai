@@ -88,7 +88,7 @@ function detectUnsupported(t: string): UnsupportedObjectiveType | null {
 }
 
 function detectSupported(t: string): SupportedObjectiveType | null {
-  if (/\b(distribution partners?|channel partners?|strategic partners?|partnerships?|alianzas?|socios de|パートナー)\b/i.test(t)) return "partnerships";
+  if (/\b(distribut(ion|ors?)|resellers?|channel partners?|channel|strategic partners?|partnerships?|partners? in|alianzas?|socios|distribuidor|revendedor|パートナー|販売店)\b/i.test(t)) return "partnerships";
   if (/\b(advis(e|ory|ing)|consult(ing|ancy)?|asesor|consultor[ií]a|professional services|コンサル)\b/i.test(t)) return "advisory_opportunities";
   if (/\b(high[- ]value|strategic accounts?|prioriti(ze|se)|identify companies|cuentas de alto valor|alto valor|重要(な)?(顧客|アカウント))\b/i.test(t)) return "identify_high_value_accounts";
   if (/\b(business development|new business|desarrollo de negocio|事業開発)\b/i.test(t)) return "business_development";
@@ -136,6 +136,13 @@ export const EXPANSION = /\b(expand(ing)?|internationa|new markets?|move operati
 // Uncertainty / no-preference / compare-for-me — a legitimate answer that must
 // PROCEED (discovery-required), never loop.
 export const UNCERTAIN = /\b(don'?t know|do not know|not sure|unsure|no preference|no idea|any (option|route)|compare (the )?options?|compare for me|help me (decide|choose)|which (way|route|type) (is best|should)|not decided|haven'?t decided)\b|no (lo )?s[eé]|no est(oy|amos) seguro|sin preferencia|comp[aá]ralas?|ayúdame a decidir|não sei|sem preferência|わからない|決めていない/i;
+
+// Explicit customer-acquisition intent — only then may an expansion input be
+// labelled "win customers" (§3/§23). Otherwise expansion is business development.
+export const EXPLICIT_CUSTOMER_ACQ = /\b(acquire|win|get|gain|find|land|more|new) (new )?(customers?|clients?|buyers?)|customer acquisition|sell (more )?to\b|conseguir (m[aá]s )?clientes|ganar clientes|adquirir clientes|novos clientes|mais clientes|新規顧客|顧客獲得/i;
+// An advisory / consulting business winning "clients" is advisory_opportunities,
+// not generic win_customers (§23 CASE E).
+export const ADVISORY_BIZ = /\b(advis(e|es|ing|ory)|consult(ing|ancy|ants?|s)?|asesor(amos|[ií]a)?|consultor(a|[ií]a)?|コンサル)\b/i;
 
 /** Candidate organization types + discovery needs when the target is unknown but
  *  the objective/context is enough to configure discovery (HYPOTHESES, not targets). */
@@ -195,6 +202,11 @@ export function extractCompanyInterpretation(rawInput: string, locale: LandingIn
   // not customer acquisition — do NOT force win_customers.
   let objective = supported;
   if (!objective && hasBusinessContext && !isGeneric) objective = expansionSignal ? "business_development" : "win_customers";
+  // Expansion without EXPLICIT customer-acquisition wording is business
+  // development, never "win customers" (§3).
+  if (objective === "win_customers" && expansionSignal && !EXPLICIT_CUSTOMER_ACQ.test(input)) objective = "business_development";
+  // An advisory/consulting business winning "clients" is advisory_opportunities.
+  if (objective === "win_customers" && ADVISORY_BIZ.test(input)) objective = "advisory_opportunities";
 
   const exploratory = objective === "business_development" || objective === "partnerships" || objective === "advisory_opportunities" || objective === "identify_high_value_accounts";
   // The target universe is DISCOVERY-REQUIRED (a valid state) when there is a
