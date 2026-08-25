@@ -51,7 +51,7 @@ const COPY = {
     howTitlePostMobile: ".",
     how: {
       step1Title: "Set the context",
-      step1Copy: "Tell LeadLens what you sell, who you serve and where you're trying to grow. Have an ICP? We'll use it. If not, we'll help structure the criteria.",
+      step1Copy: "Tell LeadLens what your business is trying to achieve, who you serve and where you want to grow. Have an ICP? We'll use it. If not, we'll help structure the criteria.",
       step2Title: "Investigate",
       step2Copy: "LeadLens finds relevant accounts, identifies meaningful changes and evaluates the dated evidence behind them.",
       step3Title: "Decide",
@@ -238,12 +238,9 @@ const COPY = {
     faqs: [
       ["What exactly do I get?", "A prioritized Opportunity Portfolio of accounts for your commercial context — each with an Account Brief: what changed, why it fits, why the timing may matter, the evidence and counterevidence, and what to validate before you act. Delivered as PDF + CSV in 24–48h."],
       ["How is this different from Apollo or ZoomInfo?", "Apollo and ZoomInfo are contact databases — you filter and export records. LeadLens gives you commercial intelligence: which companies are showing signals for your specific offer right now, why they're a good opportunity, and how to approach them. You don't get a list — you get criterion and context."],
-      ["How is this different from Clay?", "Clay is infrastructure — a powerful platform for building enrichment workflows. LeadLens is opinionated: you describe your commercial context, we do the research and deliver a prioritized brief. No setup, no workflows, no technical knowledge required."],
       ["Do you sell email lists or contact databases?", "No. LeadLens analyzes publicly available commercial information about companies. We do not sell email lists, phone databases, or personal contact records."],
       ["How long does delivery take?", "Typically 24–48 hours after you share your commercial context. Every Opportunity Portfolio is reviewed before delivery."],
       ["What if the opportunities don't match what I need?", "If the opportunities consistently miss what you're looking for and we can't resolve it, you're eligible for a refund within 7 days. See our refund policy."],
-      ["Is there a subscription or contract?", "No. One-time payment per Opportunity Portfolio. No recurring charges, no commitments, no hidden fees."],
-      ["What happens after I purchase?", "You share your commercial context. LeadLens researches your market, evaluates what changed and the evidence behind each opportunity, and delivers your Opportunity Portfolio via email in 24–48h."],
       ["Does the preview use real data?", "No. The free preview shows the format and structure of a real Opportunity Portfolio using sample data. For a real Opportunity Portfolio with researched companies and verified signals, purchase an Opportunity Portfolio."],
     ] as [string, string][],
     ctaTag: "Get started",
@@ -378,7 +375,7 @@ const COPY = {
     howTitlePostMobile: ".",
     how: {
       step1Title: "Define el contexto",
-      step1Copy: "Cuéntale a LeadLens qué vendes, a quién atiendes y dónde quieres crecer. ¿Ya tienes un ICP? Lo usamos. Si no, ayudamos a estructurar los criterios.",
+      step1Copy: "Cuéntale a LeadLens qué busca lograr tu negocio, a quién atiendes y dónde quieres crecer. ¿Ya tienes un ICP? Lo usamos. Si no, ayudamos a estructurar los criterios.",
       step2Title: "Investiga",
       step2Copy: "LeadLens encuentra cuentas relevantes, identifica cambios significativos y evalúa la evidencia fechada detrás de ellos.",
       step3Title: "Decide",
@@ -565,12 +562,9 @@ const COPY = {
     faqs: [
       ["¿Qué recibo exactamente?", "Un Opportunity Portfolio priorizado de cuentas para tu ICP — cada una con un Account Brief: qué cambió, por qué encaja, por qué el timing puede importar, la evidencia y la contraevidencia, y qué validar antes de actuar. Entregado como PDF + CSV en 24–48h."],
       ["¿En qué se diferencia de Apollo o ZoomInfo?", "Apollo y ZoomInfo son bases de datos de contactos — filtras y exportas registros. LeadLens te da inteligencia comercial: qué empresas están mostrando señales para tu oferta específica ahora mismo, por qué son una buena oportunidad y cómo acercarte. No recibes una lista — recibes criterio y contexto."],
-      ["¿En qué se diferencia de Clay?", "Clay es infraestructura — una plataforma poderosa para construir flujos de enriquecimiento. LeadLens es opinionado: describes tu ICP, nosotros hacemos la investigación y entregamos un brief priorizado. Sin configuración, sin flujos de trabajo, sin conocimiento técnico requerido."],
       ["¿Venden listas de emails o bases de datos de contactos?", "No. LeadLens analiza información comercial públicamente disponible sobre empresas. No vendemos listas de emails, bases de datos telefónicas ni registros de contactos personales."],
       ["¿Cuánto tarda la entrega?", "Típicamente 24–48 horas después de compartir tu contexto comercial. Cada Opportunity Portfolio es revisado antes de la entrega."],
       ["¿Qué pasa si las oportunidades no coinciden con mi ICP?", "Si fallamos consistentemente y no podemos resolverlo, tienes derecho a un reembolso dentro de 7 días. Ver política de devoluciones."],
-      ["¿Hay suscripción o contrato?", "No. Pago único por Opportunity Portfolio. Sin cargos recurrentes, sin compromisos, sin tarifas ocultas."],
-      ["¿Qué pasa después de comprar?", "Compartes tu contexto comercial. LeadLens investiga tu mercado, evalúa qué cambió y la evidencia detrás de cada oportunidad, y entrega tu Opportunity Portfolio por email en 24–48h."],
       ["¿La vista previa usa datos reales?", "No. La vista previa gratuita muestra el formato y la estructura de un Opportunity Portfolio real usando datos de ejemplo. Para un Opportunity Portfolio real con empresas investigadas y señales verificadas, compra un Opportunity Portfolio."],
     ] as [string, string][],
     ctaTag: "Comenzar",
@@ -705,7 +699,7 @@ const COPY = {
     howTitlePostMobile: ".",
     how: {
       step1Title: "Defina o contexto",
-      step1Copy: "Diga à LeadLens o que você vende, quem você atende e onde quer crescer. Já tem um ICP? Nós o usamos. Se não, ajudamos a estruturar os critérios.",
+      step1Copy: "Diga à LeadLens o que o seu negócio quer alcançar, quem você atende e onde quer crescer. Já tem um ICP? Nós o usamos. Se não, ajudamos a estruturar os critérios.",
       step2Title: "Investigue",
       step2Copy: "A LeadLens encontra contas relevantes, identifica mudanças significativas e avalia a evidência datada por trás delas.",
       step3Title: "Decida",
@@ -892,12 +886,9 @@ const COPY = {
     faqs: [
       ["O que exatamente eu recebo?", "Um Opportunity Portfolio priorizado de contas para o seu ICP — cada uma com um Account Brief: o que mudou, por que encaixa, por que o timing pode importar, a evidência e a contraevidência, e o que validar antes de agir. Entregue como PDF + CSV em 24–48h."],
       ["Como é diferente do Apollo ou ZoomInfo?", "Apollo e ZoomInfo são bancos de dados de contatos — você filtra e exporta registros. LeadLens te dá inteligência comercial: quais empresas mostram sinais relevantes para sua oferta específica agora, por que são uma boa oportunidade e como abordá-las. Você não recebe uma lista — recebe critério e contexto."],
-      ["Como é diferente do Clay?", "Clay é infraestrutura — uma plataforma poderosa para construir fluxos de enriquecimento. LeadLens é opinativo: você descreve seu ICP, nós fazemos a pesquisa e entregamos um brief priorizado. Sem configuração, sem fluxos de trabalho, sem conhecimento técnico necessário."],
       ["Vocês vendem listas de e-mails ou bancos de dados de contatos?", "Não. LeadLens analisa informações comerciais publicamente disponíveis sobre empresas. Não vendemos listas de e-mails, bancos de dados telefônicos nem registros de contatos pessoais."],
       ["Quanto tempo demora a entrega?", "Tipicamente 24–48 horas após você enviar seu formulário de ICP. Cada Opportunity Portfolio é revisado antes da entrega."],
       ["E se as oportunidades não combinarem com meu ICP?", "Se falharmos consistentemente e não conseguirmos resolver, você tem direito a reembolso em 7 dias. Consulte nossa política de reembolso."],
-      ["Há assinatura ou contrato?", "Não. Pagamento único por Opportunity Portfolio. Sem cobranças recorrentes, sem compromissos, sem taxas ocultas."],
-      ["O que acontece após a compra?", "Você compartilha seu contexto comercial. A LeadLens pesquisa seu mercado, avalia o que mudou e a evidência por trás de cada oportunidade, e entrega seu Opportunity Portfolio por e-mail em 24–48h."],
       ["A prévia usa dados reais?", "Não. A prévia gratuita mostra o formato e a estrutura de um Opportunity Portfolio real usando dados de exemplo. Para um Opportunity Portfolio real com empresas pesquisadas e sinais verificados, compre um Opportunity Portfolio."],
     ] as [string, string][],
     ctaTag: "Começar",
@@ -1032,7 +1023,7 @@ const COPY = {
     howTitlePostMobile: "へ。",
     how: {
       step1Title: "コンテキストを設定",
-      step1Copy: "何を売り、誰に提供し、どこで成長したいかをLeadLensに伝えてください。ICPがあれば活用します。なければ、条件の整理をお手伝いします。",
+      step1Copy: "ビジネスで達成したいこと、誰に提供し、どこで成長したいかをLeadLensに伝えてください。ICPがあれば活用します。なければ、条件の整理をお手伝いします。",
       step2Title: "調査する",
       step2Copy: "LeadLensは関連アカウントを見つけ、重要な変化を特定し、その背後にある日付付きのエビデンスを評価します。",
       step3Title: "意思決定",
@@ -1219,12 +1210,9 @@ const COPY = {
     faqs: [
       ["具体的に何が得られますか？", "ICPに合わせた、優先順位付けされたアカウントのOpportunity Portfolio — 各アカウントにAccount Brief：何が変わったか、なぜ適合するか、なぜタイミングが重要か、エビデンスと反証、行動前に検証すべきこと。PDF + CSVで24〜48時間以内に納品します。"],
       ["ApolloやZoomInfoと何が違いますか？", "ApolloやZoomInfoはコンタクトデータベースです。フィルタリングしてエクスポートするためのレコードを提供します。LeadLensはコマーシャルインテリジェンスを提供します：あなたの特定のオファーに対して今シグナルを示している企業はどこか、なぜ良いオポチュニティか、どうアプローチするか。リストではなく、判断基準とコンテキストをお届けします。"],
-      ["Clayとは何が違いますか？", "Clayはインフラです — エンリッチメントワークフローを構築するための強力なプラットフォームです。LeadLensは意見を持ちます：ICPを説明するとリサーチを行い、優先順位付きブリーフをお届けします。セットアップ不要、ワークフロー不要、技術的な知識不要。"],
       ["メールリストやコンタクトデータベースを販売していますか？", "いいえ。LeadLensは企業に関する公開されているビジネス情報を分析します。メールリスト、電話データベース、個人の連絡先レコードは販売していません。"],
       ["納品までどのくらいかかりますか？", "ICPフォーム送信後、通常24〜48時間以内に納品します。各Opportunity Portfolioは納品前にレビューします。"],
       ["オポチュニティがICPに合わなかった場合は？", "継続的に失敗し解決できない場合、7日以内に返金を申請できます。返金ポリシーをご確認ください。"],
-      ["サブスクリプションや契約はありますか？", "いいえ。Opportunity Portfolioごとの1回払いです。継続課金なし、コミットメントなし、隠れた費用もありません。"],
-      ["購入後はどうなりますか？", "商業的コンテキストを共有します。LeadLensが市場を調査し、各オポチュニティの背後にある変化とエビデンスを評価して、24〜48時間以内にメールでOpportunity Portfolioをお届けします。"],
       ["プレビューは実際のデータを使っていますか？", "いいえ。無料プレビューはサンプルデータを使用して、実際のOpportunity Portfolioの形式と構造を示しています。調査された企業と検証済みシグナルを含む実際のOpportunity Portfolioには、Opportunity Portfolioをご購入ください。"],
     ] as [string, string][],
     ctaTag: "始める",
@@ -2076,12 +2064,17 @@ export default function DemoPipelinePage() {
               <span aria-hidden style={{ width: 24, height: 1, background: "#dbe4ee" }} />
             </div>
           );
+          // Compressed (final landing sprint): the per-step mini-visuals were the
+          // dominant height of How It Works and duplicated what the live product
+          // surfaces (Interpretation / Canvas / Decision Desk) already show. The
+          // stage now reads as one tight line of text — the whole section is a
+          // compact bridge, not a third product demo. (Viz components remain
+          // defined for the contract guards; they are simply not re-rendered here.)
           const stepInner = (s: typeof steps[number]) => (
             <>
               {num(s.n)}
               <h3 style={{ fontWeight: 800, fontSize: "1.05rem", letterSpacing: "-.01em", margin: "0 0 .35rem" }}>{s.title}</h3>
               <p style={{ color: "#64748b", fontSize: ".85rem", lineHeight: 1.55, margin: 0 }}>{s.body}</p>
-              {s.viz}
             </>
           );
           return (
