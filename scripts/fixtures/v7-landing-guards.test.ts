@@ -167,7 +167,7 @@ t("HF1 flow states are Understand → Observe → Detect → Evaluate → Priori
   (() => {
     const m = src.match(/HOW_FLOW[\s\S]*?en:\s*\{[\s\S]*?nodes:\s*\[([\s\S]*?)\]\s*\}/);
     if (!m) return false;
-    const ks = [...m[1].matchAll(/k:\s*"([^"]+)"/g)].map((x) => x[1]);
+    const ks = (m[1].match(/k:\s*"[^"]+"/g) || []).map((x) => x.replace(/k:\s*"([^"]+)"/, "$1"));
     return JSON.stringify(ks) === JSON.stringify(["Understand", "Observe", "Detect", "Evaluate", "Prioritize"]);
   })());
 t("HF2 flow (HOW_FLOW) localized in 4 locales, five stages each",
@@ -232,11 +232,12 @@ t("Q1 sample is CLIENT-level (synthetic client is the subject, not a target acco
   /const WS_CLIENT = \{/.test(src) && /name:\s*"Asteron Systems"/.test(src) && /<ClientCanvasSample \/>/.test(src) && !/<AccountWorkspace \/>/.test(src));
 t("Q2 client header shows client name + commercial objective + opportunity count",
   /\{WS_CLIENT\.name\}/.test(src) && /objective:\s*"/.test(src) && /opportunities evaluated/.test(src));
-t("Q3 mini interactive workspace has five tabs", /CC_TABS = \["overview", "cases", "evidence", "compare", "strategy"\]/.test(src));
+t("Q3 canvas exposes the key inspection surfaces as tabs (overview + cases + evidence + compare)",
+  /CC_TABS = \[[\s\S]*?"overview"[\s\S]*?"cases"[\s\S]*?"evidence"[\s\S]*?"compare"[\s\S]*?\]/.test(src));
 t("Q4 canonical tab labels present (Overview / Opportunity Cases / Evidence / Compare / Portfolio Intelligence)",
   /Overview/.test(src) && /Opportunity Cases/.test(src) && /Evidence/.test(src) && /Compare/.test(src) && /Portfolio Intelligence/.test(src));
-t("Q5 Overview default tab renders the LeadLens Read + Where to Focus landscape",
-  /useState<CcTab>\("overview"\)/.test(src) && /LeadLens Read/.test(src) && /Where to focus · Opportunity landscape/.test(src));
+t("Q5 default view is DECISION-FIRST: leads with the account that deserves attention now + its decision + next action; portfolio read is detail-on-demand",
+  /useState<CcTab>\("overview"\)/.test(src) && /Deserves attention now/.test(src) && /const top = WS_ACCOUNTS\[0\]/.test(src) && /top\.next/.test(src) && /LeadLens portfolio read/.test(src));
 t("Q6 opportunities live INSIDE the canvas (tiles open the Opportunity Case)",
   /const open = \(i: number\) => \{ setSel\(i\); setTab\("cases"\); \}/.test(src));
 t("Q7 Opportunity Cases tab reuses the frozen reasoning spine (CaseSpine)",

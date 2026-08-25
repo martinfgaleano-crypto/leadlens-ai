@@ -3986,43 +3986,64 @@ function ClientCanvasSample() {
       </div>
 
       <div key={tab} id={`cc-panel-${tab}`} role="tabpanel" aria-labelledby={`cc-tab-${tab}`} tabIndex={0} className="ll-ws-fade" style={{ padding: "1rem 1.1rem 1.1rem", minHeight: "18rem" }}>
-        {/* OVERVIEW — the Client Opportunity Canvas */}
-        {tab === "overview" && (
+        {/* OVERVIEW — decision-first: the ONE account that deserves attention now
+            leads (decision → why now → what changed → next action). Other
+            opportunities are compact "inspect another case" rows; the portfolio
+            read + coverage + validations are detail-on-demand. */}
+        {tab === "overview" && (() => {
+          const top = WS_ACCOUNTS[0];
+          const rest = WS_ACCOUNTS.slice(1);
+          return (
           <div>
-            <div style={{ padding: ".1rem 0 .1rem .7rem", borderLeft: "3px solid #0284c7", marginBottom: ".9rem" }}>
-              <div style={{ fontSize: ".55rem", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase" as const, color: "#0284c7", marginBottom: ".25rem" }}>LeadLens Read</div>
-              <div style={{ fontSize: ".82rem", color: "#0f172a", lineHeight: 1.5 }}>{WS_CLIENT.read}</div>
-            </div>
-            <div className="ll-cc-overview" style={{ display: "grid", gridTemplateColumns: "1.7fr 1fr", gap: ".9rem", alignItems: "start" }}>
-              <div>
-                <div style={zk}>Where to focus · Opportunity landscape</div>
-                <div style={{ display: "flex", flexDirection: "column", gap: ".5rem" }}>
-                  {WS_ACCOUNTS.map((acc, i) => { const primary = i === 0; return (
-                    <button key={acc.name} onClick={() => open(i)} className={primary ? undefined : "ll-reveal"}
-                      style={{ appearance: "none", textAlign: "left", cursor: "pointer", fontFamily: "inherit", border: `1px solid ${primary ? "#bae6fd" : "#e6ebf1"}`, borderRadius: ".6rem", padding: primary ? ".75rem .8rem" : ".6rem .7rem", background: primary ? "linear-gradient(180deg,#f5fbff,#fff 65%)" : "#fff", width: "100%", ...(primary ? { boxShadow: "0 4px 16px rgba(2,132,199,.08)" } : { transitionDelay: `${0.26 + (i - 1) * 0.09}s` }) }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: ".45rem" }}>
-                        <span style={{ fontSize: ".64rem", fontWeight: 800, color: primary ? "#0284c7" : "#94a3b8", width: "1ch" }}>{acc.rank}</span>
-                        <span style={{ fontSize: primary ? ".9rem" : ".82rem", fontWeight: 800, color: "#0f172a", flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const }}>{acc.name}</span>
-                        {primary
-                          ? <span className="ll-reveal ll-reveal-pop" style={{ display: "inline-flex", transitionDelay: ".5s" }}><DecisionPill state={acc.state} small /></span>
-                          : <DecisionPill state={acc.state} small />}
-                      </div>
-                      <div style={{ fontSize: ".6rem", color: primary ? "#64748b" : "#94a3b8", fontWeight: 600, paddingLeft: "1.3rem", marginTop: ".15rem" }}>{acc.role} · {acc.oppType}</div>
-                      <div className={primary ? "ll-reveal" : undefined} style={{ paddingLeft: "1.3rem", marginTop: ".4rem", ...(primary ? { transitionDelay: ".16s" } : {}) }}><FTE fit={acc.fit} timing={acc.timing} evidence={acc.evidence} /></div>
-                      <div className={primary ? "ll-reveal ll-reveal-x" : undefined} style={{ display: "flex", alignItems: "center", gap: ".4rem", fontSize: primary ? ".72rem" : ".68rem", fontWeight: primary ? 600 : 400, color: primary ? "#0f172a" : "#475569", paddingLeft: "1.3rem", marginTop: ".4rem", ...(primary ? { transitionDelay: ".34s" } : {}) }}>
-                        <span style={{ width: primary ? 6 : 5, height: primary ? 6 : 5, borderRadius: "50%", background: "#0ea5e9", flexShrink: 0 }} />{acc.changed}<span style={{ color: "#94a3b8", marginLeft: "auto", fontWeight: 400 }}>{acc.fresh}</span>
-                      </div>
-                    </button>); })}
-                </div>
+            {/* Primary decision */}
+            <button onClick={() => open(0)} className="ll-reveal" style={{ appearance: "none", textAlign: "left", width: "100%", cursor: "pointer", fontFamily: "inherit", border: "1px solid #bae6fd", borderRadius: ".8rem", background: "linear-gradient(180deg,#f5fbff,#fff 62%)", padding: "1rem 1.05rem", boxShadow: "0 6px 22px rgba(2,132,199,.09)" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: ".5rem" }}>
+                <span style={{ fontSize: ".55rem", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase" as const, color: "#0284c7" }}>Deserves attention now</span>
+                <DecisionPill state={top.state} small />
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: ".7rem" }}>
-                <div className="ll-reveal" style={{ ...scard, transitionDelay: ".5s" }}><div style={zk}>What&apos;s changing</div><ul style={{ margin: 0, paddingLeft: ".9rem", fontSize: ".68rem", color: "#475569", lineHeight: 1.55 }}>{WS_CLIENT.patterns.map((p, i) => <li key={i}>{p}</li>)}</ul></div>
-                <div className="ll-reveal" style={{ ...scard, transitionDelay: ".58s" }}><div style={zk}>Evidence coverage</div><div style={{ display: "flex", gap: ".9rem", flexWrap: "wrap" as const }}>{WS_CLIENT.coverage.map(([n, l], i) => <div key={i}><div style={{ fontSize: "1.05rem", fontWeight: 800, color: "#0e7490", lineHeight: 1 }}>{n}</div><div style={{ fontSize: ".54rem", textTransform: "uppercase" as const, letterSpacing: ".04em", color: "#64748b", fontWeight: 700 }}>{l}</div></div>)}</div></div>
-                <div className="ll-reveal" style={{ ...scard, background: "#fffbeb", borderColor: "#fde9c8", transitionDelay: ".66s" }}><div style={zk}>What to validate</div><ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: ".4rem" }}>{WS_ACCOUNTS.map((acc, i) => <li key={i}><span style={{ display: "block", fontSize: ".58rem", fontWeight: 800, color: "#b45309" }}>{acc.name}</span><span style={{ fontSize: ".66rem", color: "#0f172a", lineHeight: 1.35 }}>{acc.limiters[0].validate}</span></li>)}</ul></div>
+              <div style={{ display: "flex", alignItems: "baseline", gap: ".55rem", flexWrap: "wrap" as const, marginTop: ".35rem" }}>
+                <span style={{ fontSize: "1.2rem", fontWeight: 800, color: "#0f172a", letterSpacing: "-.025em", lineHeight: 1.1 }}>{top.name}</span>
+                <span style={{ fontSize: ".64rem", color: "#64748b", fontWeight: 600 }}>{top.role} · {top.oppType}</span>
+              </div>
+              <p style={{ fontSize: ".82rem", color: "#334155", lineHeight: 1.5, margin: ".4rem 0 .65rem", fontWeight: 500 }}>{top.whyNow}</p>
+              <div style={{ display: "flex", alignItems: "center", gap: ".45rem", fontSize: ".78rem", color: "#0f172a", fontWeight: 650 }}>
+                <span aria-hidden style={{ width: 7, height: 7, borderRadius: "50%", background: "#0ea5e9", flexShrink: 0 }} />
+                <span style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const }}>{top.changed}</span>
+                <span style={{ color: "#94a3b8", marginLeft: "auto", fontWeight: 400, fontSize: ".7rem", flexShrink: 0 }}>{top.fresh}</span>
+              </div>
+              <div style={{ margin: ".6rem 0", paddingTop: ".6rem", borderTop: "1px solid #eef2f7" }}><FTE fit={top.fit} timing={top.timing} evidence={top.evidence} /></div>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: ".6rem", flexWrap: "wrap" as const }}>
+                <div style={{ fontSize: ".78rem", color: "#0f172a", fontWeight: 600, minWidth: 0 }}><span style={{ fontSize: ".54rem", fontWeight: 800, letterSpacing: ".05em", textTransform: "uppercase" as const, color: "#0284c7", marginRight: ".4rem" }}>Next</span>{top.next}</div>
+                <span style={{ color: "#0284c7", fontWeight: 750, fontSize: ".74rem", flexShrink: 0 }}>Inspect the full case →</span>
+              </div>
+            </button>
+
+            {/* Other opportunities — inspect another case */}
+            <div style={{ marginTop: ".9rem" }}>
+              <div style={zk}>Other opportunities</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: ".4rem" }}>
+                {rest.map((acc, idx) => (
+                  <button key={acc.name} onClick={() => open(idx + 1)} className="ll-reveal" style={{ appearance: "none", textAlign: "left", width: "100%", cursor: "pointer", fontFamily: "inherit", border: "1px solid #e6ebf1", borderRadius: ".6rem", background: "#fff", padding: ".55rem .7rem", display: "flex", alignItems: "center", gap: ".55rem", transitionDelay: `${0.1 + idx * 0.08}s` }}>
+                    <DecisionPill state={acc.state} small />
+                    <span style={{ fontSize: ".82rem", fontWeight: 800, color: "#0f172a", flexShrink: 0 }}>{acc.name}</span>
+                    <span style={{ fontSize: ".68rem", color: "#64748b", minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const, flex: 1 }}>{acc.changed}</span>
+                    <span style={{ fontSize: ".64rem", color: "#94a3b8", flexShrink: 0 }}>{acc.fresh}</span>
+                    <span aria-hidden style={{ color: "#0284c7", fontWeight: 800, flexShrink: 0 }}>›</span>
+                  </button>
+                ))}
               </div>
             </div>
-          </div>
-        )}
+
+            {/* Portfolio read — detail on demand */}
+            <details className="ll-cc-read" style={{ marginTop: ".85rem", border: "1px solid #e6ebf1", borderRadius: ".6rem", background: "#fafbfc" }}>
+              <summary style={{ cursor: "pointer", listStyle: "none", padding: ".6rem .8rem", fontSize: ".62rem", fontWeight: 800, letterSpacing: ".06em", textTransform: "uppercase" as const, color: "#0284c7" }}>LeadLens portfolio read</summary>
+              <div style={{ padding: "0 .8rem .8rem" }}>
+                <div style={{ fontSize: ".78rem", color: "#0f172a", lineHeight: 1.5, marginBottom: ".65rem" }}>{WS_CLIENT.read}</div>
+                <div style={{ display: "flex", gap: "1.1rem", flexWrap: "wrap" as const }}>{WS_CLIENT.coverage.map(([n, l], i) => <div key={i}><div style={{ fontSize: "1.05rem", fontWeight: 800, color: "#0e7490", lineHeight: 1 }}>{n}</div><div style={{ fontSize: ".54rem", textTransform: "uppercase" as const, letterSpacing: ".04em", color: "#64748b", fontWeight: 700 }}>{l}</div></div>)}</div>
+              </div>
+            </details>
+          </div>);
+        })()}
 
         {/* OPPORTUNITY CASES — full reasoning spine per account */}
         {tab === "cases" && (
