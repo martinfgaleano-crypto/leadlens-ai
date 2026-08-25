@@ -1631,7 +1631,25 @@ export default function DemoPipelinePage() {
         .ll-pricing-grid { display: grid; gap: 1.5rem; max-width: 56rem; margin: 0 auto; align-items: stretch; grid-template-columns: repeat(3, 1fr); }
         @media (max-width: 900px) { .ll-pricing-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 580px) { .ll-pricing-grid { grid-template-columns: 1fr; gap: 1.25rem; padding-top: .875rem; } }
-        .ll-hero-grid { display: grid; grid-template-columns: minmax(0,42rem); justify-content: center; align-items: center; }
+        .ll-hero-grid { display: grid; grid-template-columns: minmax(0,40rem) minmax(0,25rem); justify-content: center; align-items: center; gap: 2rem; }
+        /* Hero product-story carousel */
+        .ll-hero-carousel { min-width: 0; width: 100%; }
+        .ll-hc { position: relative; }
+        .ll-hc-window { overflow: hidden; border-radius: 1rem; }
+        .ll-hc-track { display: flex; }
+        .ll-hc-slide { flex: 0 0 100%; min-width: 0; }
+        .ll-hc-card { display: flex; flex-direction: column; height: 22rem; box-sizing: border-box; background: #fff; border: 1px solid #e6ebf1; border-top: 3px solid #0b1220; border-radius: 1rem; box-shadow: 0 18px 46px rgba(15,23,42,.10); padding: 1.15rem 1.2rem; }
+        .ll-hc-nav { display: flex; align-items: center; justify-content: center; gap: .5rem; margin-top: .9rem; }
+        .ll-hc-arrow { appearance: none; width: 2rem; height: 2rem; border-radius: 50%; border: 1px solid #dbe4ee; background: #fff; color: #475569; font-size: 1.1rem; line-height: 1; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .ll-hc-arrow:hover { border-color: #bae6fd; color: #0284c7; }
+        .ll-hc-dots { display: flex; gap: .4rem; align-items: center; }
+        .ll-hc-dot { appearance: none; border: none; background: none; cursor: pointer; font-family: inherit; font-size: .68rem; font-weight: 700; color: #94a3b8; padding: .3rem .55rem; border-radius: 999px; min-height: 32px; }
+        .ll-hc-dot.on { color: #0369a1; background: #f0f9ff; }
+        /* Tablet: carousel drops below the copy, centered. Small phones (<=640)
+           keep the existing compact hero-value composition; the carousel is a
+           desktop/tablet surface (the previously-empty right side). */
+        @media (max-width: 840px) { .ll-hero-carousel { max-width: 30rem; margin: 1.5rem auto 0; } }
+        @media (max-width: 640px) { .ll-hero-carousel { display: none; } }
         /* Mobile-only acquisition value layer — hidden on desktop (2-col hero carries value). */
         .ll-hero-value { display: none; }
         @media (max-width: 840px) { .ll-hero-grid { grid-template-columns: 1fr; gap: 1.25rem; } .ll-hero-left { text-align: center; display: flex; flex-direction: column; align-items: center; min-width: 0; } .ll-hero-mock { margin-top: 0; width: 100%; min-width: 0; } }
@@ -2054,6 +2072,9 @@ export default function DemoPipelinePage() {
                 ))}
               </div>
             </div>
+            {/* Right-side product-story carousel — fills the previously empty hero
+                space; Understand → Prioritize → Explain (§ final sprint). */}
+            <div className="ll-hero-carousel"><HeroCarousel lang={lang} /></div>
           </div>
         </div>
       </div>
@@ -3426,6 +3447,43 @@ const DISCOVERY_COPY: Record<OutputLanguage, { toDiscover: string; determine: st
   ja: { toDiscover: "LeadLensが特定します", determine: "LeadLensが特定すること", orgHyp: "調査すべき組織タイプ", orgHypHint: "仮説 — 確定した対象ではありません", routeChips: [{ label: "直販", value: "直販で拡大したい" }, { label: "小売・販売店", value: "小売・販売店経由で拡大したい" }, { label: "卸売", value: "卸売で拡大したい" }, { label: "マーケットプレイス", value: "マーケットプレイスで拡大したい" }, { label: "比較して", value: "選択肢を比較して" }] },
 };
 
+// Hero product-story carousel copy (§ final sprint). Three moments of the SAME
+// LeadLens system — Understand → Prioritize → Explain — derived from the SAME
+// canonical synthetic truth used by the landing sample (Northstar/FreshRoute/
+// Atlas). Slide 1 is a PRECOMPUTED interpretation projection: passive hero
+// viewing makes ZERO /api/interpret calls.
+const CAROUSEL_COPY: Record<OutputLanguage, {
+  aria: string; prev: string; next: string; steps: [string, string, string];
+  s1head: string; s1input: string; s1readLabel: string; s1read: string; s1invLabel: string; s1chips: string[]; s1foot: string;
+  s2head: string; s2eyebrow: string; s2changeLabel: string;
+  s3head: string; s3modes: [string, string, string]; s3whyLabel: string; s3why: string; s3evLabel: string; s3ev: string;
+}> = {
+  en: {
+    aria: "How LeadLens works, in three steps", prev: "Previous step", next: "Next step", steps: ["Understand", "Prioritize", "Explain"],
+    s1head: "Understand · Company interpretation", s1input: "“We provide supply-chain planning software to mid-sized manufacturers…”", s1readLabel: "LeadLens read", s1read: "Identify manufacturers where a recent operational change makes engagement worthwhile.", s1invLabel: "Would investigate", s1chips: ["New facilities", "Acquisitions", "Expansion"], s1foot: "No external research has run yet.",
+    s2head: "Prioritize · Opportunity canvas", s2eyebrow: "Deserves attention now", s2changeLabel: "What changed",
+    s3head: "Explain · Decision desk", s3modes: ["Why now", "Evidence", "Why this one"], s3whyLabel: "Why now", s3why: "A recent, corroborated distribution change makes the timing case now — procurement ownership still to validate.", s3evLabel: "Evidence", s3ev: "Corroborated across independent sources · latest 9d",
+  },
+  es: {
+    aria: "Cómo funciona LeadLens, en tres pasos", prev: "Paso anterior", next: "Paso siguiente", steps: ["Entender", "Priorizar", "Explicar"],
+    s1head: "Entender · Interpretación de empresa", s1input: "“Ofrecemos software de planificación de cadena de suministro a fabricantes medianos…”", s1readLabel: "Lectura de LeadLens", s1read: "Identificar fabricantes donde un cambio operativo reciente hace que valga la pena actuar.", s1invLabel: "Investigaría", s1chips: ["Nuevas plantas", "Adquisiciones", "Expansión"], s1foot: "Aún no se ha ejecutado investigación externa.",
+    s2head: "Priorizar · Canvas de oportunidades", s2eyebrow: "Merece atención ahora", s2changeLabel: "Qué cambió",
+    s3head: "Explicar · Mesa de decisión", s3modes: ["Por qué ahora", "Evidencia", "Por qué esta"], s3whyLabel: "Por qué ahora", s3why: "Un cambio de distribución reciente y corroborado hace que el timing importe ahora — falta validar quién decide la compra.", s3evLabel: "Evidencia", s3ev: "Corroborado en fuentes independientes · más reciente 9d",
+  },
+  pt: {
+    aria: "Como a LeadLens funciona, em três passos", prev: "Passo anterior", next: "Próximo passo", steps: ["Entender", "Priorizar", "Explicar"],
+    s1head: "Entender · Interpretação da empresa", s1input: "“Oferecemos software de planejamento de cadeia de suprimentos para fabricantes de médio porte…”", s1readLabel: "Leitura da LeadLens", s1read: "Identificar fabricantes onde uma mudança operacional recente torna o engajamento válido.", s1invLabel: "Investigaria", s1chips: ["Novas fábricas", "Aquisições", "Expansão"], s1foot: "Nenhuma pesquisa externa foi executada ainda.",
+    s2head: "Priorizar · Canvas de oportunidades", s2eyebrow: "Merece atenção agora", s2changeLabel: "O que mudou",
+    s3head: "Explicar · Mesa de decisão", s3modes: ["Por que agora", "Evidência", "Por que esta"], s3whyLabel: "Por que agora", s3why: "Uma mudança de distribuição recente e corroborada torna o timing relevante agora — falta validar quem decide a compra.", s3evLabel: "Evidência", s3ev: "Corroborado em fontes independentes · mais recente 9d",
+  },
+  ja: {
+    aria: "LeadLensの仕組み、3ステップ", prev: "前のステップ", next: "次のステップ", steps: ["理解", "優先", "説明"],
+    s1head: "理解 · 企業の解釈", s1input: "「中堅製造業向けにサプライチェーン計画ソフトウェアを提供しています…」", s1readLabel: "LeadLensの読み", s1read: "最近の業務変化により関与する価値が生じた製造業を特定します。", s1invLabel: "調査対象", s1chips: ["新拠点", "買収", "拡大"], s1foot: "外部調査はまだ実行されていません。",
+    s2head: "優先 · 機会キャンバス", s2eyebrow: "今注目すべき", s2changeLabel: "変化",
+    s3head: "説明 · ディシジョンデスク", s3modes: ["なぜ今", "エビデンス", "なぜこれ"], s3whyLabel: "なぜ今", s3why: "最近の裏付けある流通の変化により、今がタイミング — 調達の決定権者は要確認。", s3evLabel: "エビデンス", s3ev: "独立した情報源で裏付け · 最新9日",
+  },
+};
+
 // Company Interpretation as a mini analyst brief (§5-§16): a LeadLens Read, a
 // truthful commercial-intent label (expansion is NOT "win customers"), and a
 // "what happens next" transition. Built client-side from validated projection
@@ -3478,6 +3536,110 @@ const DIFF_LADDER: Record<OutputLanguage, { db: [string, string]; sig: [string, 
   pt: { db: ["Bancos de dados", "quem existe"], sig: ["Ferramentas de sinais", "o que aconteceu"], ll: ["LeadLens", "por que importa agora — e quem merece atenção"] },
   ja: { db: ["データベース", "誰が存在するか"], sig: ["シグナルツール", "何が起きたか"], ll: ["LeadLens", "なぜ今重要か — そして誰に注目すべきか"] },
 };
+
+// Hero product-story carousel — three moments of ONE LeadLens system, derived
+// from the canonical landing fixtures (no new companies/decisions/evidence/
+// scores). Precomputed: passive hero viewing makes ZERO /api/interpret calls.
+function HeroCarousel({ lang }: { lang: OutputLanguage }) {
+  const cc = CAROUSEL_COPY[lang];
+  const [slide, setSlide] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [reduce, setReduce] = useState(false);
+  const N = 3;
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.matchMedia) return;
+    const m = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const apply = () => setReduce(m.matches);
+    apply(); m.addEventListener?.("change", apply);
+    return () => m.removeEventListener?.("change", apply);
+  }, []);
+  useEffect(() => {
+    if (paused || reduce) return;
+    const id = window.setInterval(() => setSlide((s) => (s + 1) % N), 7500);
+    return () => window.clearInterval(id);
+  }, [paused, reduce]);
+  const go = (i: number) => setSlide((i + N) % N);
+  const a = LANDING_COMPARISON.accounts; // Northstar / FreshRoute / Atlas (canonical)
+
+  const head = (t: string) => <div style={{ fontSize: ".58rem", fontWeight: 800, letterSpacing: ".07em", textTransform: "uppercase" as const, color: "#0284c7", marginBottom: ".7rem" }}>{t}</div>;
+  const s1 = (
+    <div className="ll-hc-card">
+      {head(cc.s1head)}
+      <div style={{ fontSize: ".8rem", color: "#64748b", fontStyle: "italic" as const, lineHeight: 1.5, marginBottom: ".85rem", padding: ".55rem .7rem", background: "#f8fafc", border: "1px solid #eef2f7", borderRadius: ".55rem" }}>{cc.s1input}</div>
+      <div style={{ fontSize: ".55rem", fontWeight: 800, letterSpacing: ".06em", textTransform: "uppercase" as const, color: "#64748b", marginBottom: ".25rem" }}>{cc.s1readLabel}</div>
+      <div style={{ fontSize: ".82rem", color: "#0f172a", fontWeight: 600, lineHeight: 1.45, marginBottom: ".85rem" }}>{cc.s1read}</div>
+      <div style={{ fontSize: ".55rem", fontWeight: 800, letterSpacing: ".06em", textTransform: "uppercase" as const, color: "#0284c7", marginBottom: ".4rem" }}>{cc.s1invLabel}</div>
+      <div style={{ display: "flex", flexWrap: "wrap" as const, gap: ".35rem" }}>{cc.s1chips.map((c) => <span key={c} style={{ fontSize: ".72rem", fontWeight: 600, color: "#475569", background: "#f1f5f9", border: "1px solid #e2e8f0", borderRadius: 999, padding: ".22rem .6rem" }}>{c}</span>)}</div>
+      <div style={{ marginTop: "auto", paddingTop: ".8rem", fontSize: ".64rem", color: "#94a3b8" }}>{cc.s1foot}</div>
+    </div>
+  );
+  const s2 = (
+    <div className="ll-hc-card">
+      {head(cc.s2head)}
+      <div style={{ border: "1px solid #bae6fd", borderRadius: ".7rem", background: "linear-gradient(180deg,#f5fbff,#fff 62%)", padding: ".8rem .85rem", boxShadow: "0 4px 16px rgba(2,132,199,.08)" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: ".5rem" }}>
+          <span style={{ fontSize: ".54rem", fontWeight: 800, letterSpacing: ".07em", textTransform: "uppercase" as const, color: "#0284c7" }}>{cc.s2eyebrow}</span>
+          <DecisionPill state={a[0].decision} small />
+        </div>
+        <div style={{ fontSize: "1.02rem", fontWeight: 800, color: "#0f172a", letterSpacing: "-.02em", margin: ".25rem 0 .5rem" }}>{a[0].name}</div>
+        <div style={{ marginBottom: ".5rem" }}><FTE fit={a[0].fit} timing={a[0].timing} evidence={a[0].evidence} /></div>
+        <div style={{ display: "flex", alignItems: "center", gap: ".4rem", fontSize: ".72rem", color: "#0f172a", fontWeight: 600 }}>
+          <span aria-hidden style={{ width: 6, height: 6, borderRadius: "50%", background: "#0ea5e9", flexShrink: 0 }} />
+          <span style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const }}>{a[0].changed}</span>
+          <span style={{ color: "#94a3b8", marginLeft: "auto", fontWeight: 400, fontSize: ".66rem", flexShrink: 0 }}>{a[0].fresh}</span>
+        </div>
+      </div>
+      <div style={{ display: "flex", flexDirection: "column" as const, gap: ".35rem", marginTop: ".55rem" }}>
+        {[a[1], a[2]].map((acc) => (
+          <div key={acc.name} style={{ display: "flex", alignItems: "center", gap: ".5rem", border: "1px solid #e6ebf1", borderRadius: ".55rem", padding: ".45rem .6rem", background: "#fff" }}>
+            <DecisionPill state={acc.decision} small />
+            <span style={{ fontSize: ".78rem", fontWeight: 700, color: "#0f172a" }}>{acc.name}</span>
+            <span style={{ fontSize: ".64rem", color: "#94a3b8", marginLeft: "auto" }}>{acc.fresh}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+  const s3 = (
+    <div className="ll-hc-card">
+      {head(cc.s3head)}
+      <div style={{ display: "flex", alignItems: "center", gap: ".5rem", marginBottom: ".7rem" }}>
+        <span style={{ fontSize: "1.02rem", fontWeight: 800, color: "#0f172a", letterSpacing: "-.02em" }}>{a[0].name}</span>
+        <DecisionPill state={a[0].decision} small />
+      </div>
+      <div role="tablist" aria-label={cc.s3head} style={{ display: "flex", gap: ".35rem", marginBottom: ".8rem", flexWrap: "wrap" as const }}>
+        {cc.s3modes.map((m, i) => <span key={m} role="tab" aria-selected={i === 0} style={{ fontSize: ".68rem", fontWeight: 700, padding: ".28rem .6rem", borderRadius: 999, border: `1px solid ${i === 0 ? "#0284c7" : "#e2e8f0"}`, color: i === 0 ? "#fff" : "#64748b", background: i === 0 ? "#0284c7" : "#fff" }}>{m}</span>)}
+      </div>
+      <div style={{ fontSize: ".55rem", fontWeight: 800, letterSpacing: ".06em", textTransform: "uppercase" as const, color: "#0284c7", marginBottom: ".25rem" }}>{cc.s3whyLabel}</div>
+      <div style={{ fontSize: ".82rem", color: "#0f172a", fontWeight: 600, lineHeight: 1.45, marginBottom: ".8rem" }}>{cc.s3why}</div>
+      <div style={{ fontSize: ".55rem", fontWeight: 800, letterSpacing: ".06em", textTransform: "uppercase" as const, color: "#0e7490", marginBottom: ".25rem" }}>{cc.s3evLabel}</div>
+      <div style={{ display: "flex", alignItems: "center", gap: ".4rem", fontSize: ".74rem", color: "#334155", fontWeight: 500 }}>
+        <span aria-hidden style={{ width: 6, height: 6, borderRadius: "50%", background: "#16a34a", flexShrink: 0 }} />{cc.s3ev}
+      </div>
+    </div>
+  );
+  const slides = [s1, s2, s3];
+
+  return (
+    <div className="ll-hc" role="group" aria-roledescription="carousel" aria-label={cc.aria} tabIndex={0}
+      onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocus={() => setPaused(true)} onBlur={() => setPaused(false)}
+      onKeyDown={(e) => { if (e.key === "ArrowRight") { e.preventDefault(); go(slide + 1); } else if (e.key === "ArrowLeft") { e.preventDefault(); go(slide - 1); } }}>
+      <div className="ll-hc-window">
+        <div className="ll-hc-track" style={{ transform: `translateX(-${slide * 100}%)`, transition: reduce ? "none" : "transform .5s cubic-bezier(.4,0,.2,1)" }}>
+          {slides.map((s, i) => <div className="ll-hc-slide" key={i} aria-hidden={i !== slide}>{s}</div>)}
+        </div>
+      </div>
+      <div className="ll-hc-nav">
+        <button type="button" className="ll-hc-arrow" aria-label={cc.prev} onClick={() => go(slide - 1)}><span aria-hidden>‹</span></button>
+        <div className="ll-hc-dots" role="tablist" aria-label={cc.aria}>
+          {cc.steps.map((st, i) => <button key={st} type="button" role="tab" aria-selected={i === slide} aria-label={st} className={`ll-hc-dot${i === slide ? " on" : ""}`} onClick={() => go(i)}>{st}</button>)}
+        </div>
+        <button type="button" className="ll-hc-arrow" aria-label={cc.next} onClick={() => go(slide + 1)}><span aria-hidden>›</span></button>
+      </div>
+      <div aria-live="polite" style={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0 0 0 0)" }}>{cc.steps[slide]}</div>
+    </div>
+  );
+}
 
 function CompanyInterpretationExperience({ lang, onBridge }: { lang: OutputLanguage; onBridge: () => void }) {
   const ui = INTERPRETATION_COPY[lang];

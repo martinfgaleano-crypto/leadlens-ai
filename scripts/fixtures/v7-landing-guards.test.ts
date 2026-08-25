@@ -271,5 +271,24 @@ t("R7 wedge leads with the shared account-pursuit pattern + professional service
   /heroWedge:\s*"[^"]*high-value accounts[^"]*professional services/.test(src) &&
   !/heroWedge:\s*"[^"]*B2C/.test(src) && !/for B2B and B2C|for every business|for any company/i.test(src));
 
+// ─── T. Hero product-story carousel — Understand → Prioritize → Explain ───────
+// Three moments of ONE LeadLens system, precomputed from canonical fixtures.
+// Guards protect MEANING (3 states in order, zero passive API call, canonical
+// truth, accessibility, Stage A honesty), not exact markup.
+t("T1 carousel has 3 story states in order (Understand → Prioritize → Explain), localized 4 locales",
+  /const CAROUSEL_COPY/.test(src) &&
+  /steps: \["Understand", "Prioritize", "Explain"\]/.test(src) &&
+  /steps: \["Entender", "Priorizar", "Explicar"\]/.test(src) &&
+  /steps: \["理解", "優先", "説明"\]/.test(src));
+t("T2 carousel rendered in hero, derived from canonical LANDING_COMPARISON fixtures — no invented company/score",
+  /<HeroCarousel lang=\{lang\} \/>/.test(src) &&
+  (() => { const m = src.match(/function HeroCarousel[\s\S]*?\n\}/); return !!m && /LANDING_COMPARISON\.accounts/.test(m[0]) && !/\d\s*\/\s*100/.test(m[0]); })());
+t("T3 carousel makes NO interpretation/API call (passive hero viewing = zero LLM calls)",
+  (() => { const m = src.match(/function HeroCarousel[\s\S]*?\n\}/); return !!m && !/requestInterpretation|\/api\/interpret|fetch\(/.test(m[0]); })());
+t("T4 carousel controls accessible (carousel role + arrow labels + dot tablist + reduced-motion)",
+  /aria-roledescription="carousel"/.test(src) && /className="ll-hc-arrow" aria-label/.test(src) && /role="tab" aria-selected=\{i === slide\}/.test(src) && /prefers-reduced-motion: reduce/.test(src));
+t("T5 Understand slide is Stage-A truthful (no research has run)",
+  /s1foot:\s*"No external research has run yet\./.test(src));
+
 console.log(`\n${passed}/${passed + failed} passed`);
 process.exit(failed ? 1 : 0);
