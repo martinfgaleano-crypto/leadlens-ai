@@ -128,6 +128,31 @@ t("I projection separates told vs inferred, no raw internals",
 const pubInv = toPublicInterpretation(inv);
 t("I unsupported projection is honest", pubInv.status === "unsupported_objective" && !!pubInv.unsupportedReason && !/research ran|companies were found/i.test(pubInv.disclosure));
 
+// ─── L. Investigation brief (routes/gaps) + target-org semantic fix ───────────
+const brief = await interpretCompany("We sell jewelry and want to expand internationally.", {}, {
+  callModel: model({
+    objectiveSupported: true, objective: "identify_high_value_accounts", offer: "Jewelry",
+    targetOrganizationTypes: ["Expand internationally", "Regional retailers", "Department stores"], // first is an action phrase → must be dropped
+    changeTriggers: [{ description: "New retail expansion", family: "expansion" }],
+    routesToEvaluate: ["Wholesale to retailers", "Marketplaces", "Local distribution partner"],
+    openGaps: ["Target customer", "Price positioning", "Preferred route to market"],
+    clarificationNeeded: false,
+  } as unknown as RawModelInterpretation),
+});
+const briefPub = toPublicInterpretation(brief);
+t("L target-org semantics: action phrase 'Expand internationally' dropped, real org types kept",
+  !briefPub.told.target.some((x) => /expand internationally/i.test(x)) && briefPub.told.target.includes("Regional retailers"));
+t("L routes-to-evaluate surfaced as hypotheses", briefPub.inferred.routesToEvaluate.includes("Wholesale to retailers") && briefPub.inferred.routesToEvaluate.length <= 5);
+t("L gaps (still to define) surfaced", briefPub.gaps.includes("Target customer") && briefPub.gaps.length <= 4);
+t("L brief output has zero truth violations", stageAViolations(brief.interpretation).length === 0);
+// deterministic path (the fallback/keyless path) must ALSO reject action-phrase targets
+const jewelryDet = await det("We sell jewelry in Colombia but planning to expand internationally soon.");
+t("L deterministic path never puts an objective/action phrase in target org types",
+  !jewelryDet.interpretation.targetAccountProfile.organizationTypes.some((x) => /expand|internationally|expansion/i.test(x)));
+// unsupported must NOT carry routes/gaps
+const invBrief = toPublicInterpretation(inv);
+t("L unsupported objective carries no routes/gaps", invBrief.inferred.routesToEvaluate.length === 0 && invBrief.gaps.length === 0);
+
 // ─── K. Multilingual (ES) ─────────────────────────────────────────────────────
 const es = await det("Vendemos software de ciberseguridad a bancos pero no a fintechs.", "es");
 t("K ES: win_customers + banks + fintech exclusion", es.interpretation.commercialObjective.supported && es.interpretation.targetAccountProfile.organizationTypes.join(" ").toLowerCase().includes("banco") && (es.interpretation.targetAccountProfile.exclusions ?? []).some((e) => /fintech/i.test(e)));

@@ -50,5 +50,19 @@ t("route imports the server service; client never imports the server service",
   /from "@\/lib\/interpretation\/interpret-service"/.test(route) && !/interpret-service/.test(client));
 t("no research provider import in route/client", !/tavily|serper|firecrawl|\bexa\b|\bbrave\b/i.test(route) && !/tavily|serper|firecrawl|\bexa\b|\bbrave\b/i.test(client));
 
+// §37: default example shows a precomputed seed, no model call on passive view.
+t("default example is a precomputed seed (no LLM call on mount)",
+  /DEFAULT_INTERPRETATION/.test(src) && /useState<PublicInterpretation \| null>\(DEFAULT_INTERPRETATION\)/.test(src) && !/useEffect\(\(\) => \{ run\(input/.test(src));
+
+// §11: investigation brief surfaces routes-to-evaluate (hypotheses) + gaps.
+t("investigation brief renders routes-to-evaluate as hypotheses + gaps, progressive disclosure",
+  /routesToEvaluate/.test(src) && /sa\.routesHint/.test(src) && /sa\.gaps/.test(src) && /setExpanded/.test(src) && /What LeadLens would investigate/.test(src));
+
+// §22/§23: one-time is no longer the primary commercial identity.
+t("hero price note is neutral 'Plans from $7' (no 'one-time' identity)",
+  /heroPriceNote:\s*"Plans from \$7\."/.test(src) && !/heroPriceNote:\s*"[^"]*one-time/.test(src));
+t("final CTA is neutral 'Get started →' (no $7/one-time anchor)",
+  /ctaCTA:\s*"Get started →"/.test(src) && !/ctaCTA:\s*"[^"]*(one-time|\$7)/.test(src));
+
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed) process.exit(1);

@@ -81,8 +81,8 @@ t("L1 mobile hero is left-aligned editorial", /\.ll-hero-left \{ text-align: lef
 t("L2 mobile eyebrow is a restrained inline marker (no pill, uppercase)",
   /\.ll-hero-badge \{ background: none[^}]*text-transform: uppercase/.test(src));
 t("L3 mobile CTA actions sit on one row", /\.ll-hero-cta-row \{ flex-direction: row/.test(src));
-t("L4 hero price line is concise 'From $7 · one-time' (localized 4 locales)",
-  /heroPriceNote:\s*"From \$7 · one-time\."/.test(src) && (src.match(/heroPriceNote:/g) || []).length === 4);
+t("L4 hero price line is commercially neutral 'Plans from $7' — no 'one-time' identity (4 locales)",
+  /heroPriceNote:\s*"Plans from \$7\."/.test(src) && (src.match(/heroPriceNote:/g) || []).length === 4 && !/heroPriceNote:\s*"[^"]*one-time/.test(src));
 t("L5 product canvas pulled near the screen edge on mobile", /\.ll-hero-mock\s+\{ margin:[^}]*-\.6rem/.test(src));
 t("L6 rendered pricing copy has no stale lead-list framing (planFeatures + comparison)",
   // planFeatures no longer diverge with old "Market Map / oportunidades rankeadas".
@@ -117,7 +117,7 @@ t("N4 Preview validation line no longer hinges on a mandatory ICP",
   /is LeadLens useful for my commercial context\?/.test(src) && !/is this worth it for my ICP/.test(src));
 t("N5 Monitor does not claim continuous/real-time market intelligence",
   !/continuous market intelligence/.test(src) && !/inteligencia de mercado continua/.test(src) && /periodic account re-evaluation/.test(src));
-t("N6 final CTA is concise 'Get started — from $7'", /ctaCTA:\s*"Get started — from \$7 →"/.test(src));
+t("N6 final CTA is commercially neutral 'Get started →' (no $7/one-time anchor)", /ctaCTA:\s*"Get started →"/.test(src) && !/ctaCTA:\s*"[^"]*(one-time|\$7)/.test(src));
 t("N7 'Don't trust a score — inspect the reasoning' preserved", /Don't trust a score — inspect the reasoning/.test(src));
 {
   const legal = ["app/terms/page.tsx", "app/privacy/page.tsx", "app/refund/page.tsx"].map((f) => readFileSync(f, "utf8")).join("\n");

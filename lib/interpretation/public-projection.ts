@@ -35,7 +35,12 @@ export interface PublicInterpretation {
     businessModel: string | null;
     signalsToWatch: string[];      // hypotheses, not signals
     opportunityConditions: string[];
+    /** Possible go-to-market approaches to EVALUATE — hypotheses, not
+     *  recommendations, never specific markets/companies. */
+    routesToEvaluate: string[];
   };
+  /** Decision-relevant unknowns still to define. */
+  gaps: string[];
   /** Still unclear */
   clarification: {
     question: string | null;
@@ -84,7 +89,9 @@ export function toPublicInterpretation(result: InterpretResult): PublicInterpret
       businessModel: i.companyContext.businessModel?.value ?? null,
       signalsToWatch: i.signalHypotheses.map((h) => h.relevanceToObjective),
       opportunityConditions: i.opportunityConditions.filter((c) => c.type === "change_trigger").map((c) => c.description),
+      routesToEvaluate: meta.routesToEvaluate ?? [],
     },
+    gaps: (meta.openGaps && meta.openGaps.length ? meta.openGaps : i.clarification.nonBlockingGaps.map((g) => g.reason)).slice(0, 4),
     clarification: {
       question: i.clarification.nextQuestion?.question ?? null,
       priority: i.clarification.blockers[0]?.priority ?? null,

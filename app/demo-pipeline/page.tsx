@@ -42,7 +42,7 @@ const COPY = {
       ],
     },
     heroCTA: "Get started",
-    heroPriceNote: "From $7 · one-time.",
+    heroPriceNote: "Plans from $7.",
     heroSeeAll: "View sample",
     heroNote: "No contact databases. No email lists. Just commercial intelligence.",
     proofLabels: [["5","account briefs"],["6–8","buyer segments"],["24–48h","delivery"],["Evidence","+ counterevidence"]] as [string,string][],
@@ -72,7 +72,7 @@ const COPY = {
     ] as [string,string,string][],
     pricingTag: "Pricing",
     pricingTitle: "Buy a decision, not a list.",
-    pricingSub: "Four one-time products: validate the quality, select accounts, prioritize the portfolio, or build the strategy.",
+    pricingSub: "Four ways to start: validate the quality, select accounts, prioritize the portfolio, or build the strategy.",
     oneBatch: "One-time payment",
     monthlyTag: "Coming soon — Pilot access",
     monthlyTitle: "Opportunity Monitor",
@@ -249,7 +249,7 @@ const COPY = {
     ctaTag: "Get started",
     ctaTitle: "Now find yours.",
     ctaSub: "See which accounts the evidence says deserve your team's attention — and why.",
-    ctaCTA: "Get started — from $7 →",
+    ctaCTA: "Get started →",
     sampleTabs: ["Email", "LinkedIn DM", "Follow-up 1", "Follow-up 2"],
     pricePerLead: { sample: "One-time payment", starter: "One-time payment", standard: "One-time payment", pro: "One-time payment" },
     samplePackTitle: "Not ready to commit?",
@@ -369,7 +369,7 @@ const COPY = {
       ],
     },
     heroCTA: "Comenzar",
-    heroPriceNote: "Desde $7 · pago único.",
+    heroPriceNote: "Planes desde $7.",
     heroSeeAll: "Ver muestra",
     heroNote: "Sin bases de datos de contactos. Sin listas de emails. Solo inteligencia comercial.",
     proofLabels: [["5","account briefs"],["6–8","segmentos de compradores"],["24–48h","entrega"],["Evidencia","+ contraevidencia"]] as [string,string][],
@@ -399,7 +399,7 @@ const COPY = {
     ] as [string,string,string][],
     pricingTag: "Precios",
     pricingTitle: "Compra una decisión, no una lista.",
-    pricingSub: "Cuatro productos de pago único: valida la calidad, selecciona cuentas, prioriza el portafolio o construye la estrategia.",
+    pricingSub: "Cuatro formas de empezar: valida la calidad, selecciona cuentas, prioriza el portafolio o construye la estrategia.",
     oneBatch: "Pago único",
     monthlyTag: "Próximamente — Acceso piloto",
     monthlyTitle: "Opportunity Monitor",
@@ -576,7 +576,7 @@ const COPY = {
     ctaTag: "Comenzar",
     ctaTitle: "Ahora encuentra las tuyas.",
     ctaSub: "Descubre qué cuentas merecen la atención de tu equipo — y por qué.",
-    ctaCTA: "Comenzar — desde $7 →",
+    ctaCTA: "Comenzar →",
     sampleTabs: ["Email", "LinkedIn DM", "Seguimiento 1", "Seguimiento 2"],
     pricePerLead: { sample: "Pago único", starter: "Pago único", standard: "Pago único", pro: "Pago único" },
     samplePackTitle: "¿No estás listo para comprometerte?",
@@ -696,7 +696,7 @@ const COPY = {
       ],
     },
     heroCTA: "Começar",
-    heroPriceNote: "A partir de $7 · pagamento único.",
+    heroPriceNote: "Planos a partir de $7.",
     heroSeeAll: "Ver amostra",
     heroNote: "Sem bancos de dados de contatos. Sem listas de e-mails. Apenas inteligência comercial.",
     proofLabels: [["5","account briefs"],["6–8","segmentos de compradores"],["24–48h","entrega"],["Evidência","+ contraevidência"]] as [string,string][],
@@ -903,7 +903,7 @@ const COPY = {
     ctaTag: "Começar",
     ctaTitle: "Agora encontre as suas.",
     ctaSub: "Descubra quais contas merecem a atenção da sua equipe — e por quê.",
-    ctaCTA: "Começar — a partir de $7 →",
+    ctaCTA: "Começar →",
     sampleTabs: ["Email", "LinkedIn DM", "Follow-up 1", "Follow-up 2"],
     pricePerLead: { sample: "Pagamento único", starter: "Pagamento único", standard: "Pagamento único", pro: "Pagamento único" },
     samplePackTitle: "Ainda não está pronto para se comprometer?",
@@ -1023,7 +1023,7 @@ const COPY = {
       ],
     },
     heroCTA: "始める",
-    heroPriceNote: "$7から · 一回払い。",
+    heroPriceNote: "プランは$7から。",
     heroSeeAll: "サンプルを見る",
     heroNote: "コンタクトデータベースなし。メールリストなし。コマーシャルインテリジェンスのみ。",
     proofLabels: [["5件","アカウントブリーフ"],["6〜8","購買者セグメント"],["24〜48h","納品"],["エビデンス","+ 反証"]] as [string,string][],
@@ -1230,7 +1230,7 @@ const COPY = {
     ctaTag: "始める",
     ctaTitle: "次は、あなたのアカウントを。",
     ctaSub: "どのアカウントがチームの注力に値するか、その理由とともに。",
-    ctaCTA: "始める — $7から →",
+    ctaCTA: "始める →",
     sampleTabs: ["メール", "LinkedIn DM", "フォローアップ 1", "フォローアップ 2"],
     pricePerLead: { sample: "一回払い", starter: "1回払い", standard: "1回払い", pro: "1回払い" },
     samplePackTitle: "コミットする準備ができていませんか？",
@@ -3337,11 +3337,31 @@ const SA_COPY: Record<OutputLanguage, {
   told: string; inferred: string; objective: string; conditions: string; exclusions: string; none: string;
   interpreting: string; basedOn: string; noResearch: string; noResearchUnsupported: string;
   unsupportedTitle: string; retry: string; errorMsg: string; clarifyAction: string;
+  investigate: string; routes: string; routesHint: string; gaps: string; more: string; less: string;
 }> = {
-  en: { told: "What you told us", inferred: "What LeadLens inferred", objective: "Commercial objective", conditions: "Opportunity conditions", exclusions: "Excluded", none: "—", interpreting: "Interpreting your context…", basedOn: "Your input", noResearch: "Based on what you told us. No external account research has run yet.", noResearchUnsupported: "Based on what you told us. LeadLens does not run this kind of search.", unsupportedTitle: "Outside LeadLens's scope", retry: "Try again", errorMsg: "Interpretation is temporarily unavailable. Please try again.", clarifyAction: "Refine" },
-  es: { told: "Lo que nos dijiste", inferred: "Lo que LeadLens infirió", objective: "Objetivo comercial", conditions: "Condiciones de oportunidad", exclusions: "Excluido", none: "—", interpreting: "Interpretando tu contexto…", basedOn: "Tu texto", noResearch: "Basado en lo que nos dijiste. Aún no se ha hecho investigación externa de cuentas.", noResearchUnsupported: "Basado en lo que nos dijiste. LeadLens no realiza este tipo de búsqueda.", unsupportedTitle: "Fuera del alcance de LeadLens", retry: "Reintentar", errorMsg: "La interpretación no está disponible por ahora. Inténtalo de nuevo.", clarifyAction: "Afinar" },
-  pt: { told: "O que você nos disse", inferred: "O que a LeadLens inferiu", objective: "Objetivo comercial", conditions: "Condições de oportunidade", exclusions: "Excluído", none: "—", interpreting: "Interpretando seu contexto…", basedOn: "Seu texto", noResearch: "Com base no que você nos disse. Nenhuma pesquisa externa de contas foi feita ainda.", noResearchUnsupported: "Com base no que você nos disse. A LeadLens não faz esse tipo de busca.", unsupportedTitle: "Fora do escopo da LeadLens", retry: "Tentar de novo", errorMsg: "A interpretação está indisponível no momento. Tente novamente.", clarifyAction: "Refinar" },
-  ja: { told: "入力された内容", inferred: "LeadLensの解釈", objective: "商業目標", conditions: "機会条件", exclusions: "除外", none: "—", interpreting: "コンテキストを解釈しています…", basedOn: "入力", noResearch: "入力内容に基づいています。外部のアカウント調査はまだ実行されていません。", noResearchUnsupported: "入力内容に基づいています。LeadLensはこの種の検索は行いません。", unsupportedTitle: "LeadLensの対象外", retry: "再試行", errorMsg: "解釈は現在利用できません。もう一度お試しください。", clarifyAction: "調整" },
+  en: { told: "What you told us", inferred: "What LeadLens inferred", objective: "Commercial objective", conditions: "Opportunity conditions", exclusions: "Excluded", none: "—", interpreting: "Interpreting your context…", basedOn: "Your input", noResearch: "Based on what you told us. No external account research has run yet.", noResearchUnsupported: "Based on what you told us. LeadLens does not run this kind of search.", unsupportedTitle: "Outside LeadLens's scope", retry: "Try again", errorMsg: "Interpretation is temporarily unavailable. Please try again.", clarifyAction: "Refine", investigate: "What LeadLens would investigate", routes: "Routes to evaluate", routesHint: "hypotheses to explore — not recommendations", gaps: "Still to define", more: "See the full brief", less: "Show less" },
+  es: { told: "Lo que nos dijiste", inferred: "Lo que LeadLens infirió", objective: "Objetivo comercial", conditions: "Condiciones de oportunidad", exclusions: "Excluido", none: "—", interpreting: "Interpretando tu contexto…", basedOn: "Tu texto", noResearch: "Basado en lo que nos dijiste. Aún no se ha hecho investigación externa de cuentas.", noResearchUnsupported: "Basado en lo que nos dijiste. LeadLens no realiza este tipo de búsqueda.", unsupportedTitle: "Fuera del alcance de LeadLens", retry: "Reintentar", errorMsg: "La interpretación no está disponible por ahora. Inténtalo de nuevo.", clarifyAction: "Afinar", investigate: "Qué investigaría LeadLens", routes: "Rutas a evaluar", routesHint: "hipótesis a explorar — no recomendaciones", gaps: "Aún por definir", more: "Ver el brief completo", less: "Ver menos" },
+  pt: { told: "O que você nos disse", inferred: "O que a LeadLens inferiu", objective: "Objetivo comercial", conditions: "Condições de oportunidade", exclusions: "Excluído", none: "—", interpreting: "Interpretando seu contexto…", basedOn: "Seu texto", noResearch: "Com base no que você nos disse. Nenhuma pesquisa externa de contas foi feita ainda.", noResearchUnsupported: "Com base no que você nos disse. A LeadLens não faz esse tipo de busca.", unsupportedTitle: "Fora do escopo da LeadLens", retry: "Tentar de novo", errorMsg: "A interpretação está indisponível no momento. Tente novamente.", clarifyAction: "Refinar", investigate: "O que a LeadLens investigaria", routes: "Rotas a avaliar", routesHint: "hipóteses a explorar — não recomendações", gaps: "Ainda a definir", more: "Ver o brief completo", less: "Ver menos" },
+  ja: { told: "入力された内容", inferred: "LeadLensの解釈", objective: "商業目標", conditions: "機会条件", exclusions: "除外", none: "—", interpreting: "コンテキストを解釈しています…", basedOn: "入力", noResearch: "入力内容に基づいています。外部のアカウント調査はまだ実行されていません。", noResearchUnsupported: "入力内容に基づいています。LeadLensはこの種の検索は行いません。", unsupportedTitle: "LeadLensの対象外", retry: "再試行", errorMsg: "解釈は現在利用できません。もう一度お試しください。", clarifyAction: "調整", investigate: "LeadLensが調査する対象", routes: "評価すべき経路", routesHint: "検討すべき仮説 — 推奨ではありません", gaps: "未定義の項目", more: "詳細なブリーフを見る", less: "閉じる" },
+};
+
+// Precomputed default seed (§37): the default example's interpretation is shown
+// instantly with NO model call on passive page view — only real user submissions
+// hit the interpreter. This is a genuine (LLM-produced) interpretation of the
+// default example, not a fabricated demo; the disclosure stays truthful.
+const DEFAULT_INTERPRETATION: PublicInterpretation = {
+  status: "ready_for_confirmation", isReal: true, mode: "llm",
+  told: { summary: INTERPRET_EXAMPLES.en[0].text, offer: "Supply-chain planning software", target: ["Mid-sized manufacturers"], geographies: [], exclusions: [] },
+  inferred: {
+    objectiveLabel: "Identify high-value accounts", objectiveType: "identify_high_value_accounts", relationship: "customers", businessModel: "software",
+    signalsToWatch: ["Opening new manufacturing facilities", "Recent acquisition or merger", "Operational expansion or capacity increase", "Entering a new market", "Capacity investment announced"],
+    opportunityConditions: ["Opening new facilities", "Acquisition or integration activity", "Operational expansion"],
+    routesToEvaluate: ["Direct enterprise sales", "Channel / systems-integrator partners", "Industry-specific reseller network"],
+  },
+  clarification: { question: null, priority: null },
+  unsupportedReason: null,
+  gaps: ["Priority regions", "Deal size / procurement owner"],
+  disclosure: "Based on what you told us. No external account research has run yet.",
 };
 
 // Real Stage A: the browser sends free text to /api/interpret and renders the
@@ -3361,8 +3381,11 @@ function CompanyInterpretationExperience({ lang, onBridge }: { lang: OutputLangu
   const examples = INTERPRET_EXAMPLES[lang];
   const [input, setInput] = useState(examples[0].text);
   const [clarification, setClarification] = useState("");
-  const [status, setStatus] = useState<"loading" | "done" | "error">("loading");
-  const [result, setResult] = useState<PublicInterpretation | null>(null);
+  // §37: the default example shows a precomputed seed instantly — NO model call
+  // on passive view. Only real user actions call /api/interpret.
+  const [status, setStatus] = useState<"loading" | "done" | "error">("done");
+  const [result, setResult] = useState<PublicInterpretation | null>(DEFAULT_INTERPRETATION);
+  const [expanded, setExpanded] = useState(false);
   const inputId = useId();
   const clarificationId = useId();
   const abortRef = useRef<AbortController | null>(null);
@@ -3372,6 +3395,7 @@ function CompanyInterpretationExperience({ lang, onBridge }: { lang: OutputLangu
     const ac = new AbortController();
     abortRef.current = ac;
     setStatus("loading");
+    setExpanded(false);
     requestInterpretation(text, clarify, lang, ac.signal).then((r) => {
       if (ac.signal.aborted) return;
       if (r.ok) { setResult(r.interpretation); setStatus("done"); }
@@ -3379,8 +3403,7 @@ function CompanyInterpretationExperience({ lang, onBridge }: { lang: OutputLangu
     });
   };
 
-  // Auto-interpret the default example on mount and when the language changes.
-  useEffect(() => { run(input, undefined); return () => abortRef.current?.abort(); }, [lang]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => () => abortRef.current?.abort(), []);
 
   const onInterpret = () => { setClarification(""); run(input); };
   const onClarify = () => run(input, clarification);
@@ -3454,10 +3477,28 @@ function CompanyInterpretationExperience({ lang, onBridge }: { lang: OutputLangu
                   <div style={{ padding: ".9rem", background: "#f0f9ff", border: "1px solid #d8eefc", borderRadius: ".7rem" }}>
                     <div style={{ fontSize: ".6rem", fontWeight: 800, letterSpacing: ".07em", textTransform: "uppercase", color: "#0284c7", marginBottom: ".55rem" }}>{sa.inferred}</div>
                     {r.inferred.objectiveLabel && <div style={{ fontSize: ".82rem", fontWeight: 750, color: "#0f172a", marginBottom: ".6rem", lineHeight: 1.3 }}>{r.inferred.objectiveLabel}{r.inferred.relationship ? <span style={{ color: "#64748b", fontWeight: 600 }}> · {r.inferred.relationship}</span> : null}</div>}
-                    <div style={{ fontSize: ".6rem", fontWeight: 800, letterSpacing: ".06em", textTransform: "uppercase", color: "#0284c7", marginBottom: ".4rem" }}>{ui.watch}</div>
-                    <div style={rowsWrap}>{r.inferred.signalsToWatch.length ? r.inferred.signalsToWatch.map(bullet) : <span style={{ color: "#94a3b8", fontSize: ".76rem" }}>{sa.none}</span>}</div>
+                    <div style={{ fontSize: ".6rem", fontWeight: 800, letterSpacing: ".06em", textTransform: "uppercase", color: "#0284c7", marginBottom: ".4rem" }}>{sa.investigate}</div>
+                    <div style={rowsWrap}>{r.inferred.signalsToWatch.length ? r.inferred.signalsToWatch.slice(0, 5).map(bullet) : <span style={{ color: "#94a3b8", fontSize: ".76rem" }}>{sa.none}</span>}</div>
                   </div>
                 </div>
+                {/* Progressive disclosure (§13): routes + gaps expand on demand so
+                    the default read stays scannable in ~5–10s. */}
+                {(r.inferred.routesToEvaluate.length > 0 || r.gaps.length > 0) && (
+                  <div style={{ marginTop: ".8rem" }}>
+                    {!expanded && <button type="button" onClick={() => setExpanded(true)} aria-expanded={false} style={{ border: 0, background: "transparent", color: "#0284c7", fontWeight: 700, fontFamily: "inherit", fontSize: ".78rem", cursor: "pointer", padding: ".2rem 0" }}>{sa.more} <span aria-hidden>↓</span></button>}
+                    {expanded && <div className="ll-ws-fade" style={{ display: "grid", gap: ".8rem" }}>
+                      {r.inferred.routesToEvaluate.length > 0 && <div style={{ padding: ".8rem .9rem", background: "#fff", border: "1px solid #e6ebf1", borderRadius: ".7rem" }}>
+                        <div style={{ fontSize: ".6rem", fontWeight: 800, letterSpacing: ".06em", textTransform: "uppercase", color: "#64748b" }}>{sa.routes} <span style={{ fontWeight: 600, textTransform: "none", letterSpacing: 0, color: "#94a3b8" }}>· {sa.routesHint}</span></div>
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: ".4rem", marginTop: ".5rem" }}>{r.inferred.routesToEvaluate.map((rt, i) => <span key={i} style={{ fontSize: ".74rem", fontWeight: 600, color: "#475569", background: "#f1f5f9", border: "1px solid #e2e8f0", borderRadius: 999, padding: ".25rem .6rem" }}>{rt}</span>)}</div>
+                      </div>}
+                      {r.gaps.length > 0 && <div style={{ padding: ".8rem .9rem", background: "#fffbeb", border: "1px solid #fde68a", borderRadius: ".7rem" }}>
+                        <div style={{ fontSize: ".6rem", fontWeight: 800, letterSpacing: ".06em", textTransform: "uppercase", color: "#92400e" }}>{sa.gaps}</div>
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: ".4rem", marginTop: ".5rem" }}>{r.gaps.map((g, i) => <span key={i} style={{ fontSize: ".74rem", fontWeight: 600, color: "#92400e", background: "#fff", border: "1px solid #fde68a", borderRadius: 999, padding: ".25rem .6rem" }}>{g}</span>)}</div>
+                      </div>}
+                      <button type="button" onClick={() => setExpanded(false)} aria-expanded style={{ border: 0, background: "transparent", color: "#64748b", fontWeight: 650, fontFamily: "inherit", fontSize: ".74rem", cursor: "pointer", padding: ".1rem 0", justifySelf: "start" }}>{sa.less} <span aria-hidden>↑</span></button>
+                    </div>}
+                  </div>
+                )}
                 <div style={{ display: "flex", gap: ".7rem", justifyContent: "flex-end", alignItems: "center", flexWrap: "wrap", marginTop: ".9rem", paddingTop: ".8rem", borderTop: "1px solid #eef2f7" }}>
                   <button type="button" onClick={onBridge} style={{ minHeight: 44, border: 0, background: "transparent", color: "#0284c7", fontWeight: 750, fontFamily: "inherit", cursor: "pointer", padding: ".5rem 0" }}>{ui.bridge} <span aria-hidden>↗</span></button>
                 </div>

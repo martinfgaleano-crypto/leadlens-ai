@@ -113,6 +113,10 @@ function extractTarget(t: string): string | null {
   const m = t.match(/\b(?:to|for|with|para|a|con)\s+((?:mid[- ]sized |small |large |enterprise |regional )?[a-zñáéíóú][^.,;]{2,60}?)(?:\s+(?:in|en|where|whose|that|which|but|and want|con|donde)\b|[.,;]|$)/i);
   const cand = m?.[1]?.trim();
   if (!cand || /^(now|them|us|it|companies|empresas|businesses|organizations?)$/i.test(cand)) return null;
+  // Target must be an ORGANIZATION descriptor, never the user's objective or an
+  // action phrase ("expand internationally", "grow", "sell more") — otherwise
+  // "Who seems relevant" would wrongly echo the objective.
+  if (/^(expand|expanding|grow|growing|sell|selling|increase|enter|entering|launch|scale|scaling|find|identify|prioriti|win|reach|go)\b/i.test(cand) || /internationally|expansion|market[- ]entry|new markets?/i.test(cand)) return null;
   return cand;
 }
 
