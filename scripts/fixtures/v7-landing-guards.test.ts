@@ -148,27 +148,37 @@ t("D4 sample teaser localized in 4 locales", count(/sampleTeaserText:/g) === 4 &
 t("D5 hero price note localized in 4 locales", count(/heroPriceNote:/g) === 4);
 t("D6 differentiation JSX is driven by copy keys (not hardcoded English)",
   /copy\.diffLede\.pre/.test(src) && /copy\.diffProofBold/.test(src) && !/Databases tell you who exists\.[^"]*<strong/.test(src));
+// ── DF. Differentiation as a PROGRESSION (semantic) — database → signals → LeadLens ──
+t("DF1 differentiation is a progression database → signals → LeadLens (DIFF_LADDER, 4 locales)",
+  (() => { const m = src.match(/const DIFF_LADDER[\s\S]*?\n\};/); return !!m &&
+    (m[0].match(/db:\s*\[/g) || []).length >= 4 && (m[0].match(/sig:\s*\[/g) || []).length >= 4 && (m[0].match(/ll:\s*\[/g) || []).length >= 4; })() &&
+  /who exists/.test(src) && /what happened/.test(src) && /why it matters now/.test(src));
+t("DF2 LeadLens is the culmination — an emphasized ladder rung, not one of three equal cards",
+  /className="ll-diffladder"/.test(src) && /ll-diffrung--ll/.test(src) && /ll-diffrung--db/.test(src) && /ll-diffrung--sig/.test(src));
+t("DF3 differentiation is a ladder, not the old comparison grid/matrix",
+  !/comparisonRows\.map/.test(src) && !/className="ll-diff-grid"/.test(src) && !/className="ll-diff-arrow"/.test(src));
 
-// ─── E. Professional How-it-works heading ─────────────────────────────────────
-t("E1 awkward '(Ideal Customer Profile) in' heading removed", !/ICP \(Ideal Customer Profile\) in/.test(src));
-t("E2 how-it-works heading localized in 4 locales", count(/howTitle:\s*\{/g) === 4);
-
-// ─── H. How-it-works V7.3 transformation ──────────────────────────────────────
-// Headline reframed to commercial-context (not "you must arrive with an ICP").
-t("H1 headline is commercial-context → accounts, not ICP-first",
-  /howTitle:\s*\{\s*pre:\s*"From commercial context/.test(src) && !/From your ideal customer profile/.test(src));
-t("H2 headline emphasis on 'accounts worth working' (blue), rendered via copy",
-  /emph:\s*"accounts worth working"/.test(src) && /copy\.howTitle\.emph/.test(src));
-t("H3 Step 1 makes ICP optional (existing ICP used; criteria structured otherwise)",
-  /Have an ICP\? We'll use it\. If not, we'll help structure the criteria\./.test(src));
-t("H4 localized step copy in 4 locales", count(/step1Copy:/g) === 4 && count(/step2Copy:/g) === 4 && count(/step3Copy:/g) === 4);
-t("H5 mini product visuals reuse real primitives (DecisionPill + ladder + evidence)",
-  /function HowStep1Viz/.test(src) && /function HowStep2Viz/.test(src) && /function HowStep3Viz/.test(src) &&
-  /<DecisionPill state="prioritize" \/>/.test(src));
-t("H6 connected layout: desktop connectors + mobile vertical spine",
-  /ll-how-desktop/.test(src) && /ll-how-mobile/.test(src) && /ll-how-conn/.test(src));
-t("H7 old generic card+arrow flow replaced", !/className="ll-how-flow"/.test(src) && !/className="ll-how-arrow"/.test(src));
-t("H8 how mini-visual labels localized in 4 locales", count(/vCriteria:/g) === 4 && count(/vLadder:/g) === 4);
+// ─── HF. How-it-works FLOW (recomposed) — semantic invariants, not markup ─────
+// The section is one continuous 5-stage reasoning flow, not a card row. These
+// guards protect the MEANING (the five real stages, their order, no legacy
+// framing, no false research claim), not exact DOM/classes/card counts. They
+// replace the former E1-E2 + H1-H8 structural guards (§26).
+t("HF1 flow states are Understand → Observe → Detect → Evaluate → Prioritize (EN, in order)",
+  (() => {
+    const m = src.match(/HOW_FLOW[\s\S]*?en:\s*\{[\s\S]*?nodes:\s*\[([\s\S]*?)\]\s*\}/);
+    if (!m) return false;
+    const ks = [...m[1].matchAll(/k:\s*"([^"]+)"/g)].map((x) => x[1]);
+    return JSON.stringify(ks) === JSON.stringify(["Understand", "Observe", "Detect", "Evaluate", "Prioritize"]);
+  })());
+t("HF2 flow (HOW_FLOW) localized in 4 locales, five stages each",
+  (src.match(/nodes:\s*\[/g) || []).length === 4 &&
+  ["en", "es", "pt", "ja"].every((L) => { const m = src.match(new RegExp(`${L}:\\s*\\{[^}]*?nodes:\\s*\\[([\\s\\S]*?)\\]`)); return !!m && (m[1].match(/k:\s*"/g) || []).length === 5; }));
+t("HF3 no legacy 'what you sell' / ICP-first framing survives",
+  !/step1Copy:\s*"[^"]*what you sell/i.test(src) && !/From your ideal customer profile/.test(src) && !/ICP \(Ideal Customer Profile\) in/.test(src));
+t("HF4 flow configures research — it does not claim research ran / was verified",
+  !/HOW_FLOW[\s\S]{0,1400}(we verified|companies were found|accounts were found|externally verified)/i.test(src));
+t("HF5 flow rendered from copy as an ordered list with a culmination stage",
+  /HOW_FLOW\[lang\]/.test(src) && /className="ll-flow"/.test(src) && /<ol className="ll-flow"/.test(src) && /ll-flow-node--end/.test(src));
 
 // ─── O. V9 final freeze (mobile lang selector, disclosures, compaction) ───────
 t("O1 mobile hamburger has a localized language selector (aria-pressed, 44px)",
@@ -188,9 +198,8 @@ t("O5 Opportunity Monitor: coming-soon/pilot, periodic (no real-time/continuous)
 t("O6 monitorSubMobile (compact teaser) localized in 4 locales", count(/monitorSubMobile:/g) === 4);
 t("O7 per-card 'One-time payment' hidden on mobile (intro already states one-time)",
   /className="ll-price-onetime"/.test(src) && /\.ll-price-onetime\s*\{\s*display:\s*none/.test(src));
-t("O8 How-it-works has a per-locale shortened mobile headline (JA keeps へ particle)",
-  count(/howTitlePostMobile:/g) === 4 && /howTitlePostMobile:\s*"へ。"/.test(src) &&
-  /ll-how-suffix-mobile/.test(src));
+t("O8 how-it-works flow title is localized in 4 locales (replaces old mobile-heading split)",
+  (() => { const m = src.match(/const HOW_FLOW[\s\S]*?\n\};/); return !!m && (m[0].match(/title:\s*"/g) || []).length === 4; })());
 t("O9 prices unchanged ($7/$25/$59/$129) and product truth intact",
   /\$7/.test(src) && /\$25/.test(src) && /\$59/.test(src) && /\$129/.test(src) &&
   !/LeadLens AI/.test(src) && !/score each opportunity/i.test(src) && !/Submit your ICP/.test(src));

@@ -1800,6 +1800,44 @@ export default function DemoPipelinePage() {
         }
         /* Differentiation contrast: side-by-side on desktop, stacked with a downward arrow on phones */
         @media (max-width: 620px) { .ll-diff-grid { grid-template-columns: 1fr !important; } .ll-diff-arrow { transform: rotate(90deg); } }
+        /* How-it-works flow: one continuous track of five reasoning stages.
+           Desktop = horizontal spine through the dots; mobile = vertical spine.
+           Not cards — movement from context to prioritized attention. */
+        .ll-flow { list-style: none; margin: 0 auto; padding: 0; display: flex; gap: 0; max-width: 66rem; }
+        .ll-flow-node { flex: 1; display: flex; flex-direction: column; align-items: flex-start; padding: 0 .5rem; min-width: 0; }
+        .ll-flow-marker { position: relative; width: 100%; height: 18px; display: flex; align-items: center; margin-bottom: .75rem; }
+        .ll-flow-dot { width: 13px; height: 13px; border-radius: 50%; background: #fff; border: 2px solid #0ea5e9; box-shadow: 0 0 0 4px #f8fafc; z-index: 1; flex-shrink: 0; }
+        .ll-flow-line { position: absolute; left: 13px; right: -1rem; height: 2px; background: linear-gradient(90deg,#7dd3fc,#e2e8f0); }
+        .ll-flow-node--end .ll-flow-dot { background: #0ea5e9; box-shadow: 0 0 0 5px #e0f2fe; width: 15px; height: 15px; }
+        .ll-flow-k { font-weight: 800; font-size: .98rem; letter-spacing: -.01em; color: #0f172a; }
+        .ll-flow-node--end .ll-flow-k { color: #0284c7; }
+        .ll-flow-d { color: #64748b; font-size: .8rem; line-height: 1.45; margin-top: .22rem; }
+        @media (max-width: 760px) {
+          .ll-flow { flex-direction: column; max-width: 26rem; }
+          .ll-flow-node { flex-direction: row; gap: .85rem; padding: 0; }
+          .ll-flow-marker { width: 15px; height: auto; align-self: stretch; margin-bottom: 0; justify-content: center; flex-shrink: 0; }
+          .ll-flow-dot { margin-top: 4px; }
+          .ll-flow-line { left: 50%; top: 16px; bottom: -.9rem; right: auto; width: 2px; height: auto; transform: translateX(-50%); background: linear-gradient(180deg,#7dd3fc,#e2e8f0); }
+          .ll-flow-body { padding-bottom: 1.05rem; }
+        }
+        /* Differentiation ladder: three tiers of increasing intelligence depth
+           and width. LeadLens is the culmination (widest, sky accent). */
+        .ll-diffladder { display: flex; flex-direction: column; align-items: center; gap: .55rem; max-width: 44rem; margin: 2.25rem auto 0; }
+        .ll-diffrung { width: 100%; display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; border-radius: .85rem; padding: .95rem 1.2rem; box-sizing: border-box; }
+        .ll-diffrung-k { font-weight: 800; font-size: 1rem; letter-spacing: -.01em; white-space: nowrap; }
+        .ll-diffrung-d { color: #64748b; font-size: .88rem; text-align: right; line-height: 1.4; }
+        .ll-diffrung--db  { width: 60%; background: #f8fafc; border: 1px solid #eef2f7; }
+        .ll-diffrung--db .ll-diffrung-k { color: #94a3b8; }
+        .ll-diffrung--sig { width: 80%; background: #f1f5f9; border: 1px solid #e2e8f0; }
+        .ll-diffrung--sig .ll-diffrung-k { color: #64748b; }
+        .ll-diffrung--ll  { width: 100%; background: linear-gradient(180deg,#f0f9ff,#fff); border: 1.5px solid #bae6fd; box-shadow: 0 12px 32px rgba(14,165,233,.13); padding: 1.15rem 1.2rem; }
+        .ll-diffrung--ll .ll-diffrung-k { color: #0284c7; font-size: 1.18rem; }
+        .ll-diffrung--ll .ll-diffrung-d { color: #0f172a; font-weight: 600; }
+        @media (max-width: 560px) {
+          .ll-diffrung { width: 100% !important; flex-direction: column; align-items: flex-start; gap: .2rem; }
+          .ll-diffrung-d { text-align: left; }
+          .ll-diffrung-k { white-space: normal; }
+        }
         /* How-it-works: desktop = three connected stages on one continuous line;
            mobile = a single vertical spine the stages attach to (§15–24). */
         .ll-how-desktop { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: stretch; max-width: 64rem; margin: 0 auto; }
@@ -2050,65 +2088,35 @@ export default function DemoPipelinePage() {
         </p>
       </div>
 
-      {/* How it works */}
+      {/* How it works — the five real reasoning stages as ONE continuous flow
+          (Understand → Observe → Detect → Evaluate → Prioritize), not a card row.
+          Prioritize is the culmination. Reads in seconds; a bridge between the
+          live interpretation above and the opportunity evaluation below. */}
       <section id="how-it-works" className="ll-section" style={{ ...sectionStyle, background: "#f8fafc" }}>
         {(() => {
-          const steps = [
-            { n: "01", title: copy.how.step1Title, body: copy.how.step1Copy, viz: <HowStep1Viz how={copy.how} /> },
-            { n: "02", title: copy.how.step2Title, body: copy.how.step2Copy, viz: <HowStep2Viz how={copy.how} /> },
-            { n: "03", title: copy.how.step3Title, body: copy.how.step3Copy, viz: <HowStep3Viz how={copy.how} /> },
-          ];
-          const num = (n: string) => (
-            <div style={{ display: "flex", alignItems: "center", gap: ".55rem", marginBottom: ".55rem" }}>
-              <span style={{ fontSize: ".8rem", fontWeight: 800, color: "#0ea5e9", letterSpacing: ".04em" }}>{n}</span>
-              <span aria-hidden style={{ width: 24, height: 1, background: "#dbe4ee" }} />
-            </div>
-          );
-          // Compressed (final landing sprint): the per-step mini-visuals were the
-          // dominant height of How It Works and duplicated what the live product
-          // surfaces (Interpretation / Canvas / Decision Desk) already show. The
-          // stage now reads as one tight line of text — the whole section is a
-          // compact bridge, not a third product demo. (Viz components remain
-          // defined for the contract guards; they are simply not re-rendered here.)
-          const stepInner = (s: typeof steps[number]) => (
-            <>
-              {num(s.n)}
-              <h3 style={{ fontWeight: 800, fontSize: "1.05rem", letterSpacing: "-.01em", margin: "0 0 .35rem" }}>{s.title}</h3>
-              <p style={{ color: "#64748b", fontSize: ".85rem", lineHeight: 1.55, margin: 0 }}>{s.body}</p>
-            </>
-          );
+          const f = HOW_FLOW[lang];
+          const accent = (i: number) => i === f.nodes.length - 1;
           return (
             <div style={innerStyle}>
-              <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
-                <Tag>{copy.howTag}</Tag>
-                <h2 style={sectionTitleStyle} className="ll-how-h2 ll-reveal">{copy.howTitle.pre}<span style={{ color: "#0ea5e9" }}>{copy.howTitle.emph}</span><span className="ll-how-suffix">{copy.howTitle.post}</span><span className="ll-how-suffix-mobile">{copy.howTitlePostMobile}</span></h2>
+              <div style={{ textAlign: "center", marginBottom: "2.25rem" }}>
+                <Tag>{f.eyebrow}</Tag>
+                <h2 style={{ ...sectionTitleStyle, maxWidth: "30rem", marginLeft: "auto", marginRight: "auto" }} className="ll-reveal">{f.title}</h2>
               </div>
-
-              {/* Desktop: three connected stages on one continuous line */}
-              <div className="ll-how-desktop">
-                {steps.flatMap((s, i) => [
-                  <div key={s.n} className="ll-how-card">{stepInner(s)}</div>,
-                  i < 2 ? (
-                    <div key={s.n + "-c"} className="ll-how-conn" aria-hidden>
-                      <span style={{ flex: 1, height: 2, background: "linear-gradient(90deg,#e2e8f0,#bae6fd)" }} />
-                      <span style={{ color: "#7dd3fc", fontSize: "1.05rem", fontWeight: 800, marginLeft: 2 }}>›</span>
+              <ol className="ll-flow" aria-label={f.title}>
+                {f.nodes.map((n, i) => (
+                  <li key={n.k} className={`ll-flow-node${accent(i) ? " ll-flow-node--end" : ""}`}>
+                    <div className="ll-flow-marker" aria-hidden>
+                      <span className="ll-flow-dot" />
+                      {i < f.nodes.length - 1 && <span className="ll-flow-line" />}
                     </div>
-                  ) : null,
-                ])}
-              </div>
-
-              {/* Mobile: one vertical spine the stages attach to */}
-              <div className="ll-how-mobile">
-                {steps.map((s, i) => (
-                  <div key={s.n} style={{ display: "grid", gridTemplateColumns: "16px 1fr", columnGap: ".85rem" }}>
-                    <div style={{ position: "relative", display: "flex", justifyContent: "center" }}>
-                      <span aria-hidden style={{ width: 11, height: 11, borderRadius: "50%", background: "#0ea5e9", marginTop: 3, zIndex: 1, boxShadow: "0 0 0 3px #f8fafc" }} />
-                      {i < 2 && <span aria-hidden style={{ position: "absolute", top: 14, bottom: "-1.4rem", width: 2, background: "#dbe4ee" }} />}
+                    <div className="ll-flow-body">
+                      <div className="ll-flow-k">{n.k}</div>
+                      <div className="ll-flow-d">{n.d}</div>
                     </div>
-                    <div style={{ paddingBottom: i < 2 ? "1.4rem" : 0, minWidth: 0 }}>{stepInner(s)}</div>
-                  </div>
+                  </li>
                 ))}
-              </div>
+              </ol>
+              <p style={{ textAlign: "center", color: "#94a3b8", fontSize: ".82rem", margin: "1.4rem 0 0" }}>{f.foot}</p>
             </div>
           );
         })()}
@@ -2238,23 +2246,25 @@ export default function DemoPipelinePage() {
           <p style={{ color: "#64748b", fontSize: "1.05rem", maxWidth: "38rem", margin: ".75rem 0 0", lineHeight: 1.6 }}>
             {copy.diffLede.pre}<strong style={{ color: "#0284c7" }}>{copy.diffLede.emph}</strong>{copy.diffLede.post}
           </p>
-          <div className="ll-diff-grid" style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: "1.25rem", alignItems: "stretch", maxWidth: "52rem", margin: "2.5rem auto 0", textAlign: "left" as const }}>
-            <div style={{ background: "#f8fafc", border: "1px solid #eef2f7", borderRadius: "1rem", padding: "1.5rem" }}>
-              <div style={{ fontSize: ".62rem", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase" as const, color: "#94a3b8", marginBottom: ".9rem" }}>{copy.diffOldLabel}</div>
-              {copy.diffOldItems.map(x => (
-                <div key={x} style={{ fontSize: ".92rem", color: "#64748b", padding: ".3rem 0" }}>{x}</div>
-              ))}
-              <div style={{ marginTop: ".8rem", fontSize: ".8rem", color: "#94a3b8", fontStyle: "italic" as const }}>{copy.diffOldFoot}</div>
-            </div>
-            <div className="ll-diff-arrow" style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#0ea5e9", fontSize: "1.6rem", fontWeight: 800 }}>→</div>
-            <div style={{ background: "linear-gradient(180deg,#f0f9ff,#fff)", border: "1.5px solid #bae6fd", borderRadius: "1rem", padding: "1.5rem", boxShadow: "0 8px 28px rgba(14,165,233,.10)" }}>
-              <div style={{ fontSize: ".62rem", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase" as const, color: "#0284c7", marginBottom: ".9rem" }}>{copy.diffNewLabel}</div>
-              {copy.diffNewItems.map(x => (
-                <div key={x} style={{ fontSize: ".92rem", color: "#0f172a", fontWeight: 600, padding: ".3rem 0", display: "flex", gap: ".5rem" }}><span style={{ color: "#0ea5e9", flexShrink: 0 }}>✓</span>{x}</div>
-              ))}
-              <div style={{ marginTop: ".8rem", fontSize: ".8rem", color: "#0369a1", fontWeight: 600 }}>{copy.diffNewFoot}</div>
-            </div>
-          </div>
+          {/* Progression, not a comparison table: each tier adds a layer of
+              intelligence and grows wider; LeadLens is the culmination (widest,
+              sky accent). Database → what happened → why it matters now. */}
+          {(() => {
+            const dl = DIFF_LADDER[lang];
+            const rung = (label: string, desc: string, kind: string) => (
+              <div className={`ll-diffrung ll-diffrung--${kind}`} role="listitem">
+                <span className="ll-diffrung-k">{label}</span>
+                <span className="ll-diffrung-d">{desc}</span>
+              </div>
+            );
+            return (
+              <div className="ll-diffladder" role="list" aria-label={copy.comparisonTitle}>
+                {rung(dl.db[0], dl.db[1], "db")}
+                {rung(dl.sig[0], dl.sig[1], "sig")}
+                {rung(dl.ll[0], dl.ll[1], "ll")}
+              </div>
+            );
+          })()}
           <p style={{ maxWidth: "40rem", margin: "2.25rem auto 0", fontSize: ".98rem", color: "#475569", lineHeight: 1.6 }}>
             <strong style={{ color: "#0f172a" }}>{copy.diffProofBold}</strong>{copy.diffProofRest}
           </p>
@@ -3366,6 +3376,49 @@ const SAMPLE_TRANSITION: Record<OutputLanguage, string> = {
   es: "Una cuenta de ejemplo — no generada a partir de tu descripción. Así evalúa LeadLens una oportunidad cuando se ejecuta la investigación.",
   pt: "Uma conta de exemplo — não gerada a partir da sua descrição. É assim que a LeadLens avalia uma oportunidade quando a pesquisa é executada.",
   ja: "サンプルのアカウントです（入力から生成されたものではありません）。調査が実行されると、LeadLensはこのように機会を評価します。",
+};
+
+// How LeadLens reasons — the five real stages as a continuous flow (not feature
+// cards): Understand → Observe → Detect → Evaluate → Prioritize. Prioritize is
+// the culmination. Kept extremely concise (one label + one line each).
+const HOW_FLOW: Record<OutputLanguage, { eyebrow: string; title: string; nodes: { k: string; d: string }[]; foot: string }> = {
+  en: { eyebrow: "How it works", title: "From your context to who deserves attention now.", foot: "One continuous read — not a database export.", nodes: [
+    { k: "Understand", d: "your commercial context and objective" },
+    { k: "Observe", d: "the organizations that matter" },
+    { k: "Detect", d: "meaningful change" },
+    { k: "Evaluate", d: "fit, timing and evidence" },
+    { k: "Prioritize", d: "who deserves attention now" },
+  ] },
+  es: { eyebrow: "Cómo funciona", title: "De tu contexto a quién merece atención ahora.", foot: "Una lectura continua — no una exportación de base de datos.", nodes: [
+    { k: "Entiende", d: "tu contexto y objetivo comercial" },
+    { k: "Observa", d: "las organizaciones que importan" },
+    { k: "Detecta", d: "cambios relevantes" },
+    { k: "Evalúa", d: "fit, timing y evidencia" },
+    { k: "Prioriza", d: "quién merece atención ahora" },
+  ] },
+  pt: { eyebrow: "Como funciona", title: "Do seu contexto a quem merece atenção agora.", foot: "Uma leitura contínua — não uma exportação de banco de dados.", nodes: [
+    { k: "Entende", d: "seu contexto e objetivo comercial" },
+    { k: "Observa", d: "as organizações que importam" },
+    { k: "Detecta", d: "mudanças relevantes" },
+    { k: "Avalia", d: "fit, timing e evidência" },
+    { k: "Prioriza", d: "quem merece atenção agora" },
+  ] },
+  ja: { eyebrow: "仕組み", title: "あなたの文脈から、今注目すべき相手へ。", foot: "連続した読み解き — データベースの書き出しではありません。", nodes: [
+    { k: "理解", d: "あなたの商業的文脈と目標" },
+    { k: "観察", d: "重要な組織" },
+    { k: "検知", d: "意味のある変化" },
+    { k: "評価", d: "フィット・タイミング・エビデンス" },
+    { k: "優先", d: "今注目すべき相手" },
+  ] },
+};
+
+// Differentiation as a progression: data → event → decision. LeadLens is the
+// culmination (widest tier, sky accent), not one of three equal columns.
+const DIFF_LADDER: Record<OutputLanguage, { db: [string, string]; sig: [string, string]; ll: [string, string] }> = {
+  en: { db: ["Databases", "who exists"], sig: ["Signal tools", "what happened"], ll: ["LeadLens", "why it matters now — and who deserves attention"] },
+  es: { db: ["Bases de datos", "quién existe"], sig: ["Herramientas de señales", "qué pasó"], ll: ["LeadLens", "por qué importa ahora — y quién merece atención"] },
+  pt: { db: ["Bancos de dados", "quem existe"], sig: ["Ferramentas de sinais", "o que aconteceu"], ll: ["LeadLens", "por que importa agora — e quem merece atenção"] },
+  ja: { db: ["データベース", "誰が存在するか"], sig: ["シグナルツール", "何が起きたか"], ll: ["LeadLens", "なぜ今重要か — そして誰に注目すべきか"] },
 };
 
 function CompanyInterpretationExperience({ lang, onBridge }: { lang: OutputLanguage; onBridge: () => void }) {
