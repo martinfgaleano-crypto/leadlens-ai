@@ -181,15 +181,16 @@ export function confirmInterpretation(
   return { ok: true, context };
 }
 
-// ─── Execution adapter boundary (Phase 3 — NOT built here) ─────────────────────
+// ─── Execution adapter boundary ───────────────────────────────────────────────
 //
-// Later, a single adapter will translate ConfirmedCommercialContextV1 into the
-// canonical LeadLens execution structures used by discovery / research /
-// qualification / evidence. That adapter is where Stage B begins. Rules it must
-// keep (documented now, enforced when built):
+// The adapter that translates ConfirmedCommercialContextV1 into the canonical
+// LeadLens execution commercial context now lives in `execution-context-adapter`
+// (adaptConfirmedContext / adaptInterpretation). It is where Stage B begins, and
+// it keeps these rules (enforced by execution-context-adapter.test.ts):
 //   • no raw prose dependency,
 //   • no USER_CONTEXT entering the Evidence path as fact,
+//   • no query generation (owned downstream),
 //   • no anonymous Account Memory writes,
 //   • real research only AFTER this confirmation gate has passed.
 export const EXECUTION_ADAPTER_BOUNDARY =
-  "ConfirmedCommercialContextV1 → (Phase 3 adapter) → canonical LeadLens execution. Not implemented in Commit 1." as const;
+  "ConfirmedCommercialContextV1 → adaptConfirmedContext (execution-context-adapter) → canonical CommercialContext." as const;
