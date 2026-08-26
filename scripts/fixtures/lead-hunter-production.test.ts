@@ -82,7 +82,7 @@ async function seedCtx(fixture: (typeof GOLDEN_FIXTURES)["software_manufacturing
   // Retry same day reuses the failed snapshot id (idempotent); a real retry uses a new day/runId.
   const retryNextDay = await runAndPersistLeadHunter(cs, rs, "u4", { contextId: "run" }, runnerOf(MANU), { now: () => new Date("2026-08-27T12:00:00.000Z") });
   t("retry: a new discovery cycle (new runId) succeeds and persists separately",
-    retryNextDay.ok && retryNextDay.created && retryNextDay.universe.ok && retryNextDay.runId !== failed.runId);
+    failed.ok && retryNextDay.ok && retryNextDay.created && retryNextDay.universe.ok && retryNextDay.runId !== failed.runId);
 }
 
 // ─── PROVIDER-DEGRADED (completes with gap) ───────────────────────────────────
