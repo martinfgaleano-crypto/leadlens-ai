@@ -106,16 +106,21 @@ export interface ExtractedEvent {
  * can trigger (a real corporate change, not a metric/marketing/reference page),
  * is materially relevant, and has a defensible event date.
  */
-export function extractEvent(candidate: EventCandidate, watchFamilies: string[] = []): ExtractedEvent {
+export function extractEvent(candidate: EventCandidate, watchFamilies: string[] = [], opts: { assumeTriggering?: boolean } = {}): ExtractedEvent {
   const sk = classifySignalKind(candidate.titleAndContent);
   const mat = classifyMateriality(candidate.titleAndContent);
   const date = resolveEventDate(candidate);
   const isNegative = NEGATIVE_KIND.test(candidate.titleAndContent) || (candidate.kindHint ? NEGATIVE_KIND.test(candidate.kindHint) : false);
 
+  // Whether this is an EVENT (vs metric/static) may be asserted by an upstream
+  // structured extractor (LLM classification is allowed for event-vs-metric); the
+  // verb-based deterministic classifier is the fallback. Materiality + date remain
+  // deterministic regardless.
+  const triggering = opts.assumeTriggering === true || sk.can_trigger;
   // Material relative to the Case: a triggering corporate change of non-low
   // materiality (a negative/reversal event is material as counterevidence).
   const material = (mat.level === "high" || mat.level === "medium" || isNegative);
-  const isDatedMaterialEvent = sk.can_trigger && material && date.eventDate !== null;
+  const isDatedMaterialEvent = triggering && material && date.eventDate !== null;
   // Relevance: the event family is watched OR it is high materiality / negative.
   const kind = candidate.kindHint || sk.kind;
   const relevantToCase = watchFamilies.length === 0 || watchFamilies.includes(kind) || mat.level === "high" || isNegative;

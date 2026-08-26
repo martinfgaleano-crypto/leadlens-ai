@@ -65,7 +65,7 @@ t("injection: webpage instructions are neutralized, treated as data not commands
   const fetchPage: PageFetcher = async () => ({ ok: true, content: "x" });
   let n = 0; const counting: PageFetcher = async (u) => { n++; return fetchPage(u); };
   const many = Array.from({ length: 10 }, () => sc({ title: "Acme opened a new plant", snippet: "Acme inaugurated a new facility" }));
-  const { metrics } = await escalateAndExtract(many, counting, [], { maxFetchesPerAccount: 3, maxContentChars: 100, fetchTimeoutMs: 5000 });
+  const { metrics } = await escalateAndExtract(many, counting, [], { budget: { maxFetchesPerAccount: 3, maxContentChars: 100, fetchTimeoutMs: 5000 } });
   t("budget: full-text fetches capped at maxFetchesPerAccount", metrics.fetched === 3 && n === 3);
 }
 

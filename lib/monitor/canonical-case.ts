@@ -54,6 +54,22 @@ const STATUS_DECISION: Record<OppStatus, DecisionState> = { opportunity: "priori
 const weaken = (s: Strength | null): Strength | null => s === "Strong" ? "Moderate" : s === "Moderate" ? "Limited" : s;
 const strengthen = (s: Strength | null): Strength | null => s === "Limited" ? "Moderate" : s === "Moderate" ? "Strong" : s;
 
+/**
+ * THE canonical status → Decision mapping + caps, shared by BOTH the recurring
+ * synthesis and the initial deliverable (via `decisionOf`). This is the single
+ * final Decision authority — there is no independent second mapping.
+ *   • opportunity→Prioritize, investigate→Validate, monitor→Monitor, reject→Hold
+ *   • an open decision-critical question caps at Validate;
+ *   • material counterevidence caps a Prioritize/Monitor at Validate.
+ */
+export function caseDecision(status: OppStatus, openDecisionCritical: string[] = [], hasMaterialCounter = false): { decision: DecisionState; reasons: string[] } {
+  let decision = STATUS_DECISION[status];
+  const reasons: string[] = [`opportunity_test_${status}`];
+  if (openDecisionCritical.length > 0 && decision === "prioritize") { decision = "validate"; reasons.push("open_decision_critical_caps_at_validate"); }
+  if (hasMaterialCounter && (decision === "prioritize" || decision === "monitor")) { decision = "validate"; reasons.push("material_counterevidence_requires_revalidation"); }
+  return { decision, reasons };
+}
+
 /** THE canonical Case decision. Deterministic. */
 export function synthesizeCase(input: CanonicalCaseInput): CanonicalCase {
   const verdict = opportunityTest({
@@ -73,20 +89,18 @@ export function synthesizeCase(input: CanonicalCaseInput): CanonicalCase {
     corporate_identity_verified: input.identityVerified,
   });
 
-  let decision = STATUS_DECISION[verdict.status];
   let decisionSource: CanonicalDecisionSource = "canonical_opportunity_test";
-  const reasons: string[] = [`opportunity_test_${verdict.status}`, ...verdict.soft_flags];
-
   // A material event that hard-rejects for a NON-temporal input reason is an input
   // artifact, not a real Case outcome → conservative fallback, flagged.
-  if (verdict.status === "reject" && input.materialEvent
-    && !verdict.hard_blockers.some((b) => /stale|no_valid_date|no_material_event/.test(b))) {
-    decision = "monitor"; decisionSource = "fallback_conservative"; reasons.push("fallback_input_artifact");
-  }
+  const artifactReject = verdict.status === "reject" && input.materialEvent
+    && !verdict.hard_blockers.some((b) => /stale|no_valid_date|no_material_event/.test(b));
+
+  const dec = caseDecision(artifactReject ? "monitor" : verdict.status, input.openDecisionCritical, input.hasMaterialCounter);
+  let decision = dec.decision;
+  const reasons: string[] = [...dec.reasons, ...verdict.soft_flags];
+  if (artifactReject) { decisionSource = "fallback_conservative"; reasons.push("fallback_input_artifact"); }
 
   const remainingDecisionCritical = input.openDecisionCritical;
-  if (remainingDecisionCritical.length > 0 && decision === "prioritize") { decision = "validate"; reasons.push("open_decision_critical_caps_at_validate"); }
-  if (input.hasMaterialCounter && (decision === "prioritize" || decision === "monitor")) { decision = "validate"; reasons.push("material_counterevidence_requires_revalidation"); }
 
   const evidence = input.hasMaterialCounter ? weaken(input.priorEvidence) : (input.independentSupportNew ? strengthen(input.priorEvidence) : input.priorEvidence);
   const timing = input.hasPostReviewEvent && !input.hasMaterialCounter ? strengthen(input.priorTiming) : input.priorTiming;

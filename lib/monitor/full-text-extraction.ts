@@ -12,6 +12,7 @@ import { classifySignalKind } from "@/lib/discovery/event-vs-metric";
 import { classifyMateriality } from "@/lib/discovery/materiality";
 import { extractEvent, type EventCandidate } from "./event-extraction";
 import type { ObservedItem } from "./delta-research";
+import type { ExtractDeps } from "./claim-event-extractor";
 
 export interface SearchCandidate {
   accountId: string;
@@ -44,6 +45,10 @@ export interface EscalationMetrics {
   eventDateUnknown: number;
   materialityRejected: number;
   injectionNeutralized: number;
+  llmExtractionCalls: number;
+  extractionRepairs: number;
+  extractionFallbacks: number;
+  claimsProposed: number;
 }
 
 // Instruction-like phrases an injected page might contain, aimed at an AI reader.
@@ -83,7 +88,7 @@ export function snippetIsPromising(candidate: SearchCandidate): boolean {
   const negative = NEGATIVE_SNIPPET.test(hay);
   const sk = classifySignalKind(hay);
   const mat = classifyMateriality(hay);
-  if (!sk.can_trigger && !negative) return false;    // metric / marketing / reference → skip
+  if (!sk.can_trigger && !negative && mat.level !== "high") return false; // noise → skip (high materiality escalates even if verb-gate misses)
   if (mat.level === "low" && !negative) return false; // immaterial → skip
   return true;                                        // promising: escalate to full text
 }
@@ -95,43 +100,61 @@ const EVENT_DATE_PHRASE = /\b\d{4}-\d{2}-\d{2}\b|\b(?:january|february|march|apr
  * the canonical event gates over the fuller content. Returns validated ObservedItems
  * + a funnel metric. Non-promising candidates are triaged out (no fetch cost).
  */
+export interface EscalationOptions {
+  budget?: FullTextBudget;
+  /** When provided, promising fetched pages go through STRUCTURED LLM extraction
+   *  (LLM proposes → deterministic gates validate); a null result falls back to
+   *  the deterministic scraper. Omit for deterministic-only behavior. */
+  structured?: ExtractDeps;
+}
+
 export async function escalateAndExtract(
   candidates: SearchCandidate[],
   fetchPage: PageFetcher,
   watchFamilies: string[] = [],
-  budget: FullTextBudget = DEFAULT_FULLTEXT_BUDGET,
+  opts: EscalationOptions = {},
 ): Promise<{ items: ObservedItem[]; metrics: EscalationMetrics }> {
-  const metrics: EscalationMetrics = { triaged: candidates.length, fetched: 0, fetchFailures: 0, eventsProposed: 0, eventsAccepted: 0, eventDateResolved: 0, eventDateUnknown: 0, materialityRejected: 0, injectionNeutralized: 0 };
+  const budget = opts.budget ?? DEFAULT_FULLTEXT_BUDGET;
+  const metrics: EscalationMetrics = { triaged: candidates.length, fetched: 0, fetchFailures: 0, eventsProposed: 0, eventsAccepted: 0, eventDateResolved: 0, eventDateUnknown: 0, materialityRejected: 0, injectionNeutralized: 0, llmExtractionCalls: 0, extractionRepairs: 0, extractionFallbacks: 0, claimsProposed: 0 };
   const items: ObservedItem[] = [];
+  const acceptItem = (i: ObservedItem) => { if (i.eventDate) metrics.eventDateResolved++; else metrics.eventDateUnknown++; if (i.isDatedMaterialEvent) metrics.eventsAccepted++; else metrics.materialityRejected++; items.push(i); };
 
   for (const c of candidates) {
     const snippetText = `${c.title ?? ""}. ${c.snippet ?? ""}`.trim();
-    // Non-promising → extract from the snippet only (cheap, usually contextual).
     if (!snippetIsPromising(c) || metrics.fetched >= budget.maxFetchesPerAccount) {
       const e = extractEvent(snippetCandidate(c, snippetText), watchFamilies);
       if (!e.item.isDatedMaterialEvent) metrics.materialityRejected++;
       items.push(e.item);
       continue;
     }
-    // Promising → full-text fetch.
     metrics.fetched++;
     let content: string | null = null;
     try { const r = await fetchPage(c.sourceUrl); content = r.ok ? r.content : null; } catch { content = null; }
     if (!content) { metrics.fetchFailures++; items.push(extractEvent(snippetCandidate(c, snippetText), watchFamilies).item); continue; }
 
+    // Structured LLM extraction path (proposes; deterministic gates decide).
+    if (opts.structured) {
+      const { extractStructured, proposalsToObservedItems } = await import("./claim-event-extractor");
+      const { result, calls, repaired, neutralized } = await extractStructured(content, c.accountId, opts.structured);
+      metrics.llmExtractionCalls += calls; if (repaired) metrics.extractionRepairs++; if (neutralized) metrics.injectionNeutralized++;
+      if (result) {
+        metrics.claimsProposed += result.claimsProposed; metrics.eventsProposed += result.events.length;
+        const src = { sourceHost: c.sourceHost, sourceUrl: c.sourceUrl, publicationDate: c.publishedDate, retrievedAt: c.retrievedAt, accountId: c.accountId };
+        for (const it of proposalsToObservedItems(result.events, src, watchFamilies)) acceptItem(it);
+        continue;
+      }
+      metrics.extractionFallbacks++; // fall through to deterministic
+    }
+
+    // Deterministic path (also the fallback).
     const { text, neutralized } = neutralizePageContent(content, budget.maxContentChars);
-    if (neutralized) metrics.injectionNeutralized++;
-    const candidate: EventCandidate = {
-      accountId: c.accountId, sourceHost: c.sourceHost, sourceUrl: c.sourceUrl, originId: null,
-      titleAndContent: `${snippetText}. ${text}`,
-      eventDateRaw: scrapeEventDatePhrase(text),
-      publicationDate: c.publishedDate, retrievedAt: c.retrievedAt,
-    };
+    if (neutralized && !opts.structured) metrics.injectionNeutralized++;
     metrics.eventsProposed++;
-    const e = extractEvent(candidate, watchFamilies);
-    if (e.item.eventDate) metrics.eventDateResolved++; else metrics.eventDateUnknown++;
-    if (e.item.isDatedMaterialEvent) metrics.eventsAccepted++; else metrics.materialityRejected++;
-    items.push(e.item);
+    acceptItem(extractEvent({
+      accountId: c.accountId, sourceHost: c.sourceHost, sourceUrl: c.sourceUrl, originId: null,
+      titleAndContent: `${snippetText}. ${text}`, eventDateRaw: scrapeEventDatePhrase(text),
+      publicationDate: c.publishedDate, retrievedAt: c.retrievedAt,
+    }, watchFamilies).item);
   }
   return { items, metrics };
 }

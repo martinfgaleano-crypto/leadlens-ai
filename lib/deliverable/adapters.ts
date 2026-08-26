@@ -9,6 +9,8 @@
 import type { InstitutionalOpportunityReportV1, AccountDossier } from "@/lib/reports/institutional-report-types";
 import type { ReportExperience } from "@/lib/products/report-experience";
 import type { OpportunityCaseIntelligenceV1 } from "@/lib/intelligence/opportunity-case-intelligence";
+import { caseDecision } from "@/lib/monitor/canonical-case";
+import type { OppStatus } from "@/lib/discovery/opportunity-test";
 import { derivePortfolioStatus, deriveAllocation, type StatusVerdict } from "@/lib/products/report-experience";
 import {
   type DeliverableViewModel, type AccountBriefVM, type DecisionState, type Strength,
@@ -30,12 +32,16 @@ function buildValidationQueue(accounts: AccountBriefVM[]): ValidationQueueItemVM
 
 // ─── Institutional report → view model ────────────────────────────────────────
 
-const TIER_DECISION: Record<string, DecisionState> = { HOT: "prioritize", WARM: "validate", COLD: "monitor", DISCARD: "hold" };
-const ACTION_DECISION: Record<string, DecisionState> = { act_now: "prioritize", validate_first: "validate", monitor: "monitor", exclude: "hold" };
+// The initial deliverable's final Decision now routes through the ONE canonical
+// authority (`caseDecision`), the same used by recurring synthesis — no independent
+// decision engine. The dossier's validated verdict (actionability_status / tier)
+// maps to a canonical OppStatus; caseDecision applies the identical mapping + caps.
+const ACTION_STATUS: Record<string, OppStatus> = { act_now: "opportunity", validate_first: "investigate", monitor: "monitor", exclude: "reject" };
+const TIER_STATUS: Record<string, OppStatus> = { HOT: "opportunity", WARM: "investigate", COLD: "monitor", DISCARD: "reject" };
 
 function decisionOf(d: AccountDossier): DecisionState {
-  if (d.actionability_status && ACTION_DECISION[d.actionability_status]) return ACTION_DECISION[d.actionability_status];
-  return TIER_DECISION[d.tier] ?? "monitor";
+  const status: OppStatus = (d.actionability_status && ACTION_STATUS[d.actionability_status]) || TIER_STATUS[d.tier] || "monitor";
+  return caseDecision(status).decision;
 }
 
 function dossierToBrief(d: AccountDossier, i: number, status: StatusVerdict | null): AccountBriefVM {
