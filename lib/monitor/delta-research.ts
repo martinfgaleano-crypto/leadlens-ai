@@ -74,9 +74,10 @@ export interface AccountObservation {
 }
 
 export type DeltaDisposition =
-  | "accepted_new"
-  | "rediscovered"
-  | "rejected_temporal"
+  | "accepted_new"                 // NEW dated material event AFTER the cutoff (true external change)
+  | "newly_discovered_historical"  // dated material event BEFORE the cutoff, not previously known
+  | "rediscovered"                 // same canonical event already in the prior Case
+  | "rejected_temporal"            // no defensible event date
   | "rejected_duplicate"
   | "contextual_only";
 
@@ -93,8 +94,12 @@ export interface AcceptedEvent {
 
 export interface DeltaEvidenceResult {
   classified: ClassifiedItem[];
-  counters: { discovered: number; accepted_new: number; rediscovered: number; rejected_temporal: number; rejected_duplicate: number; contextual_only: number };
+  counters: { discovered: number; accepted_new: number; newly_discovered_historical: number; rediscovered: number; rejected_temporal: number; rejected_duplicate: number; contextual_only: number };
+  /** True EXTERNAL changes after the cutoff → drive What Changed / new changeKeys. */
   acceptedEvents: AcceptedEvent[];
+  /** Newly discovered HISTORICAL events (before cutoff) → new Evidence only, NEVER
+   *  "the account changed since last review". */
+  historicalEvidence: AcceptedEvent[];
   newChangeKeys: string[];
   newOrigins: string[];
   resolvedValidationKeys: string[];
@@ -112,7 +117,16 @@ export function classifyDelta(plan: MonitorReviewPlan, obs: AccountObservation, 
   const known = new Set(plan.knownChangeKeys);
   const knownOrigins = new Set(plan.knownOrigins.map((h) => h.toLowerCase()));
   const classified: ClassifiedItem[] = [];
-  const acceptedByKey = new Map<string, { kind: string; eventDate: string; origins: Set<string>; originIds: Set<string>; isCounter: boolean }>();
+  type Grp = { kind: string; eventDate: string; origins: Set<string>; originIds: Set<string>; isCounter: boolean };
+  const acceptedByKey = new Map<string, Grp>();
+  const historicalByKey = new Map<string, Grp>();
+  const addTo = (m: Map<string, Grp>, changeKey: string, item: ObservedItem, eventDate: string) => {
+    const g = m.get(changeKey) ?? { kind: item.kind, eventDate, origins: new Set<string>(), originIds: new Set<string>(), isCounter: false };
+    g.origins.add(item.sourceHost.toLowerCase());
+    if (item.originId) g.originIds.add(item.originId);
+    if (item.isCounterevidence) g.isCounter = true;
+    m.set(changeKey, g);
+  };
 
   for (const item of obs.items) {
     // 1. Not a dated material event (static page / metric) → contextual only.
@@ -134,21 +148,19 @@ export function classifyDelta(plan: MonitorReviewPlan, obs: AccountObservation, 
       classified.push({ item, disposition: "rediscovered", changeKey, reason: "same canonical event already in the prior accepted Case" });
       continue;
     }
-    // 4. Event predates the previous review cutoff → not new since last review.
+    // 4. Event predates the cutoff and was NOT previously known → newly discovered
+    //    HISTORICAL information: new Evidence, but NOT a change since last review.
     if (et <= cutoff) {
-      classified.push({ item, disposition: "rejected_temporal", changeKey, reason: "event predates the previous accepted review (not new since last review)" });
+      classified.push({ item, disposition: "newly_discovered_historical", changeKey, reason: "material event predates the previous review but was not previously known (new evidence, not new external change)" });
+      addTo(historicalByKey, changeKey, item, eventDate);
       continue;
     }
-    // 5. Accepted new material event after the cutoff.
+    // 5. Accepted new material event after the cutoff (true external change).
     classified.push({ item, disposition: "accepted_new", changeKey, reason: "new dated material event after the previous review" });
-    const g = acceptedByKey.get(changeKey) ?? { kind: item.kind, eventDate, origins: new Set<string>(), originIds: new Set<string>(), isCounter: false };
-    g.origins.add(item.sourceHost.toLowerCase());
-    if (item.originId) g.originIds.add(item.originId);
-    if (item.isCounterevidence) g.isCounter = true;
-    acceptedByKey.set(changeKey, g);
+    addTo(acceptedByKey, changeKey, item, eventDate);
   }
 
-  const acceptedEvents: AcceptedEvent[] = Array.from(acceptedByKey.entries()).map(([changeKey, g]) => ({
+  const toEvents = (m: Map<string, Grp>): AcceptedEvent[] => Array.from(m.entries()).map(([changeKey, g]) => ({
     changeKey, kind: g.kind, eventDate: g.eventDate,
     origins: Array.from(g.origins),
     // Independent support requires ≥2 DISTINCT origin ids (same wire/press release
@@ -156,22 +168,32 @@ export function classifyDelta(plan: MonitorReviewPlan, obs: AccountObservation, 
     independentSupport: g.originIds.size >= 2,
     isCounterevidence: g.isCounter,
   }));
+  const acceptedEvents = toEvents(acceptedByKey);
+  const historicalEvidence = toEvents(historicalByKey);
 
   const counters = {
     discovered: obs.items.length,
     accepted_new: classified.filter((c) => c.disposition === "accepted_new").length,
+    newly_discovered_historical: classified.filter((c) => c.disposition === "newly_discovered_historical").length,
     rediscovered: classified.filter((c) => c.disposition === "rediscovered").length,
     rejected_temporal: classified.filter((c) => c.disposition === "rejected_temporal").length,
     rejected_duplicate: classified.filter((c) => c.disposition === "rejected_duplicate").length,
     contextual_only: classified.filter((c) => c.disposition === "contextual_only").length,
   };
 
+  // What Changed / new changeKeys come ONLY from true post-review external events.
   const newChangeKeys = acceptedEvents.map((e) => e.changeKey);
-  const newOrigins = Array.from(new Set(acceptedEvents.flatMap((e) => e.origins))).filter((h) => !knownOrigins.has(h));
+  // New Evidence origins may come from post-review events AND newly discovered
+  // historical evidence (both add support), minus already-known origins.
+  const newOrigins = Array.from(new Set([...acceptedEvents, ...historicalEvidence].flatMap((e) => e.origins))).filter((h) => !knownOrigins.has(h));
+  // A decision-critical validation can be resolved by a NEW post-review event OR
+  // by newly discovered historical evidence (both are grounded new evidence).
   const resolvedValidationKeys = Array.from(new Set(
-    obs.items.filter((i) => i.resolvesValidationKey && plan.focusValidationKeys.includes(i.resolvesValidationKey)
-      && classified.find((c) => c.item === i)?.disposition === "accepted_new")
-      .map((i) => i.resolvesValidationKey as string),
+    obs.items.filter((i) => {
+      if (!i.resolvesValidationKey || !plan.focusValidationKeys.includes(i.resolvesValidationKey)) return false;
+      const disp = classified.find((c) => c.item === i)?.disposition;
+      return disp === "accepted_new" || disp === "newly_discovered_historical";
+    }).map((i) => i.resolvesValidationKey as string),
   ));
   const hasMaterialCounter = acceptedEvents.some((e) => e.isCounterevidence);
 
@@ -180,5 +202,5 @@ export function classifyDelta(plan: MonitorReviewPlan, obs: AccountObservation, 
   const ageDays = (now.getTime() - cutoff) / DAY_MS;
   const freshnessGap = counters.accepted_new === 0 && ageDays > EVIDENCE_FRESHNESS_DAYS;
 
-  return { classified, counters, acceptedEvents, newChangeKeys, newOrigins, resolvedValidationKeys, hasMaterialCounter, freshnessGap };
+  return { classified, counters, acceptedEvents, historicalEvidence, newChangeKeys, newOrigins, resolvedValidationKeys, hasMaterialCounter, freshnessGap };
 }

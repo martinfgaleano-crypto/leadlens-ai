@@ -76,8 +76,8 @@ const planF = planMonitorReview(stateOf(priorFacility), priorFacility);
 t("temporal: new dated event AFTER cutoff → accepted_new", classifyDelta(planF, obs("acc", [item({ kind: "acquisition", eventDate: daysAgo(10) })]), NOW).counters.accepted_new === 1);
 t("temporal: retrieval date is NEVER the event date (no eventDate → rejected_temporal)",
   classifyDelta(planF, obs("acc", [item({ eventDate: null, publicationDate: daysAgo(1) })]), NOW).counters.rejected_temporal === 1);
-t("temporal: publication new but EVENT old (before cutoff) → not new (rejected_temporal)",
-  classifyDelta(planF, obs("acc", [item({ kind: "acquisition", eventDate: daysAgo(200), publicationDate: daysAgo(1) })]), NOW).counters.rejected_temporal === 1);
+t("temporal: publication new but EVENT old (before cutoff), not previously known → newly_discovered_historical, NOT a new external change",
+  (() => { const d = classifyDelta(planF, obs("acc", [item({ kind: "acquisition", eventDate: daysAgo(200), publicationDate: daysAgo(1) })]), NOW); return d.counters.newly_discovered_historical === 1 && d.newChangeKeys.length === 0; })());
 t("temporal: same canonical event already known → rediscovered, not new",
   classifyDelta(planF, obs("acc", [item({ kind: "new_facility", eventDate: "2026-01-01" })]), NOW).counters.rediscovered === 1);
 t("temporal: static page (not a dated material event) → contextual_only",

@@ -18,6 +18,7 @@ import { toRow } from "@/lib/deliverable/account-memory-store";
 import { REVIEW_CADENCE_DAYS, DEFAULT_MONITOR_BUDGET, type MonitorBudget } from "./monitor-config";
 import { type MonitoredAccountState, buildReviewQueue, type MonitorReviewQueue } from "./monitor-eligibility";
 import { planMonitorReview, classifyDelta, type AccountObservation, type MonitorReviewPlan, type DeltaEvidenceResult } from "./delta-research";
+import { resynthesizeCase, type DecisionSource } from "./case-resynthesis";
 
 const DAY_MS = 86_400_000;
 
@@ -55,46 +56,33 @@ export interface AccountReviewOutcome {
   snapshot?: AccountReviewSnapshot;   // present only when accepted (persisted)
   nextReviewAt: string | null;
   alert?: AlertContract;
+  /** Where the current Decision came from (canonical engine vs retained vs fallback). */
+  decisionSource?: DecisionSource;
 }
 
-// ─── Conservative decision re-evaluation (inspectable; not hardcoded to Prioritize)
-function reevaluateDecision(prior: AccountReviewSnapshot, delta: DeltaEvidenceResult): { decision: DecisionState; reasons: string[] } {
-  const reasons: string[] = [];
-  let decision: DecisionState = prior.decision;
-  const revisitMet = prior.hasRevisitTrigger && (prior.decision === "monitor" || prior.decision === "hold") && delta.newChangeKeys.length > 0;
-
-  if (delta.hasMaterialCounter && prior.decision === "prioritize") { decision = "validate"; reasons.push("material_counterevidence_weakened_case"); }
-  else if (prior.decision === "validate" && prior.decisionCriticalThemeKeys.length > 0
-    && prior.decisionCriticalThemeKeys.every((k) => delta.resolvedValidationKeys.includes(k)) && delta.newChangeKeys.length > 0) {
-    decision = "prioritize"; reasons.push("decision_critical_resolved_with_new_support");
-  } else if (revisitMet) { decision = "validate"; reasons.push("revisit_trigger_met_needs_validation"); }
-  else reasons.push("no_justified_transition");
-  return { decision, reasons };
-}
-
-const weaken = (s: Strength | null): Strength | null => s === "Strong" ? "Moderate" : s === "Moderate" ? "Limited" : s;
-const strengthen = (s: Strength | null): Strength | null => s === "Limited" ? "Moderate" : s === "Moderate" ? "Strong" : s;
-
-function buildNextSnapshot(prior: AccountReviewSnapshot, delta: DeltaEvidenceResult, meta: { reviewId: string; reviewedAt: string; contextVersion: string }): AccountReviewSnapshot {
-  const { decision } = reevaluateDecision(prior, delta);
-  const changeKeys = Array.from(new Set([...prior.changeKeys, ...delta.newChangeKeys]));
+/**
+ * Build the next snapshot by rebuilding the CURRENT Case through the canonical
+ * engine (resynthesizeCase → opportunityTest). changeKeys (What Changed) come ONLY
+ * from true post-review external events — never from newly discovered historical
+ * evidence (which strengthens Evidence without claiming an external change).
+ */
+function buildNextSnapshot(prior: AccountReviewSnapshot, delta: DeltaEvidenceResult, meta: { reviewId: string; reviewedAt: string; contextVersion: string }, now: Date): { snapshot: AccountReviewSnapshot; decisionSource: DecisionSource } {
+  const rc = resynthesizeCase(prior, delta, now);
+  const changeKeys = Array.from(new Set([...prior.changeKeys, ...delta.newChangeKeys])); // post-review only
   const evidenceOrigins = Array.from(new Set([...prior.evidenceOrigins, ...delta.newOrigins]));
-  const independentSupport = prior.independentSupport || delta.acceptedEvents.some((e) => e.independentSupport);
-  const newEvidence = delta.newChangeKeys.length > 0;
-  return {
+  const independentSupport = prior.independentSupport || [...delta.acceptedEvents, ...delta.historicalEvidence].some((e) => e.independentSupport);
+  const snapshot: AccountReviewSnapshot = {
     ...prior,
     reviewId: meta.reviewId, reviewedAt: meta.reviewedAt, contextVersion: meta.contextVersion,
-    decision,
-    // Conservative dimension movement: new independent support strengthens evidence;
-    // material counterevidence weakens it. Fit is not moved by re-observation.
-    evidence: delta.hasMaterialCounter ? weaken(prior.evidence) : (independentSupport && newEvidence ? strengthen(prior.evidence) : prior.evidence),
-    timing: newEvidence && !delta.hasMaterialCounter ? strengthen(prior.timing) : prior.timing,
+    decision: rc.decision,
+    fit: rc.fit, timing: rc.timing, evidence: rc.evidence,
     changeKeys, hasVerifiedChange: changeKeys.length > 0,
     evidenceOrigins, independentSupport,
     counterCount: prior.counterCount + delta.acceptedEvents.filter((e) => e.isCounterevidence).length,
     hasMaterialCounter: prior.hasMaterialCounter || delta.hasMaterialCounter,
-    decisionCriticalThemeKeys: prior.decisionCriticalThemeKeys.filter((k) => !delta.resolvedValidationKeys.includes(k)),
+    decisionCriticalThemeKeys: rc.remainingDecisionCritical,
   };
+  return { snapshot, decisionSource: rc.decisionSource };
 }
 
 function nextReviewFor(decision: DecisionState, reviewedAt: string): string | null {
@@ -132,9 +120,9 @@ export async function reviewAccount(
   }
 
   const delta = classifyDelta(plan, obs, now);
-  const next = buildNextSnapshot(prior, delta, meta);
+  const { snapshot: next, decisionSource } = buildNextSnapshot(prior, delta, meta, now);
   const diff = diffAccountCase(prior, next);
-  const changeCategory: ChangeCategory = diff.material ? "material" : (delta.counters.accepted_new > 0 || delta.freshnessGap ? "minor" : "none");
+  const changeCategory: ChangeCategory = diff.material ? "material" : (delta.counters.accepted_new > 0 || delta.counters.newly_discovered_historical > 0 || delta.freshnessGap ? "minor" : "none");
   const status: AccountOutcomeStatus = diff.material ? "completed_changed" : "completed_no_change";
   const alert: AlertContract = {
     accountId: state.accountId,
@@ -146,7 +134,7 @@ export async function reviewAccount(
     revisitTriggerMet: diff.revisitTriggerMet,
     reviewId: meta.reviewId,
   };
-  return { accountId: state.accountId, status, reasons: [`change_category_${changeCategory}`], delta, diff, snapshot: next, nextReviewAt: nextReviewFor(next.decision, meta.reviewedAt), alert };
+  return { accountId: state.accountId, status, reasons: [`change_category_${changeCategory}`, `decision_source_${decisionSource}`], delta, diff, snapshot: next, nextReviewAt: nextReviewFor(next.decision, meta.reviewedAt), alert, decisionSource };
 }
 
 // ─── Run orchestration ────────────────────────────────────────────────────────
@@ -164,6 +152,9 @@ export interface MonitorRunObservability {
   revisitTriggerMet: number;
   newEvidence: number;
   rediscoveredEvidence: number;
+  newHistoricalEvidence: number;
+  caseResynthesisCanonical: number;
+  caseResynthesisFallback: number;
   providerFailuresSeen: number;
 }
 
@@ -240,6 +231,9 @@ export async function runMonitor(input: MonitorRunInput): Promise<MonitorRun> {
     revisitTriggerMet: outcomes.filter((o) => o.alert?.revisitTriggerMet).length,
     newEvidence: outcomes.reduce((n, o) => n + (o.delta?.counters.accepted_new ?? 0), 0),
     rediscoveredEvidence: outcomes.reduce((n, o) => n + (o.delta?.counters.rediscovered ?? 0), 0),
+    newHistoricalEvidence: outcomes.reduce((n, o) => n + (o.delta?.counters.newly_discovered_historical ?? 0), 0),
+    caseResynthesisCanonical: outcomes.filter((o) => o.decisionSource === "canonical_opportunity_test").length,
+    caseResynthesisFallback: outcomes.filter((o) => o.decisionSource === "fallback_conservative").length,
     providerFailuresSeen: outcomes.reduce((n, o) => n + ((o.delta && o.diff) ? 0 : 0), 0),
   };
 

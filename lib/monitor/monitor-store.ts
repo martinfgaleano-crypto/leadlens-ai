@@ -14,6 +14,7 @@ import type { MonitoredAccountState } from "./monitor-eligibility";
 import { monitoredStateFromSnapshot } from "./monitor-eligibility";
 import type { AccountObservation, MonitorReviewPlan, ObservedItem } from "./delta-research";
 import type { MonitorRun } from "./monitor-cycle";
+import { extractEvent, type EventCandidate } from "./event-extraction";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Db = any;
@@ -52,7 +53,19 @@ export async function persistMonitorRun(db: Db, run: MonitorRun): Promise<{ crea
   return { created: true };
 }
 
-// ─── Default re-observer (bounded, conservative, graceful) ────────────────────
+// ─── Default re-observer (bounded, graceful) ──────────────────────────────────
+
+/** Best-effort event-date PHRASE from text (ISO / "Month YYYY" / "QN YYYY").
+ *  Never the publication or retrieval date — extractEvent validates it. */
+function scrapeDatePhrase(text: string): string | null {
+  const iso = text.match(/\b\d{4}-\d{2}-\d{2}\b/);
+  if (iso) return iso[0];
+  const my = text.match(/\b(?:january|february|march|april|may|june|july|august|september|october|november|december|enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)\s+(?:de\s+)?\d{4}\b/i);
+  if (my) return my[0];
+  const q = text.match(/\bq[1-4]\s*\d{4}\b/i);
+  if (q) return q[0];
+  return null;
+}
 
 export async function defaultReobserver(plan: MonitorReviewPlan): Promise<AccountObservation> {
   const { braveProvider, tavilyProvider } = await import("@/lib/sources/access/providers");
@@ -75,15 +88,17 @@ export async function defaultReobserver(plan: MonitorReviewPlan): Promise<Accoun
             let host = "";
             try { host = new URL(r.url).host.replace(/^www\./, "").toLowerCase(); } catch { host = ""; }
             if (!host) continue;
-            items.push({
-              sourceHost: host, sourceUrl: r.url, originId: null, kind: plan.watchSignalFamilies[0] ?? "signal",
-              // CONSERVATIVE: no dedicated event-date extractor in V1 → we do NOT
-              // assert an event date. publication_date is recorded but never used as
-              // the event date. Such items become contextual/temporal-rejected, never
-              // fabricated What Changed.
-              eventDate: null, publicationDate: r.published_date ?? null, retrievedAt: r.retrieved_at,
-              isDatedMaterialEvent: false, relevantToCase: true,
-            });
+            const titleAndContent = `${r.title ?? ""}. ${r.snippet ?? ""}`.trim();
+            // Best-effort event-date phrase from the title/snippet (a full-text LLM
+            // event extractor is the P2 deepening). Deterministic gates in
+            // extractEvent decide materiality/kind and validate the date — an item
+            // with no defensible event date never becomes a fabricated What Changed.
+            const candidate: EventCandidate = {
+              accountId: plan.accountId, sourceHost: host, sourceUrl: r.url, originId: null,
+              titleAndContent, eventDateRaw: scrapeDatePhrase(titleAndContent), publicationDate: r.published_date ?? null,
+              retrievedAt: r.retrieved_at,
+            };
+            items.push(extractEvent(candidate, plan.watchSignalFamilies).item);
           }
         } else if (!failed.includes(p.id)) failed.push(p.id);
       } catch { if (!failed.includes(p.id)) failed.push(p.id); }
