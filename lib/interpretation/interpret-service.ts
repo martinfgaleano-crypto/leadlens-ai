@@ -35,10 +35,17 @@ import {
   type BusinessModel,
 } from "./company-interpretation";
 import { extractCompanyInterpretation, EXPANSION, UNCERTAIN, EXPLICIT_CUSTOMER_ACQ, ADVISORY_BIZ, DISCOVERY_CANDIDATE_ORG_TYPES, DISCOVERY_NEEDS } from "./deterministic-extractor";
+import {
+  MAX_INPUT_CHARS as CFG_MAX_INPUT_CHARS,
+  MODEL_TIMEOUT_MS,
+  MAX_MODEL_CALLS,
+  MAX_CLARIFICATION_TURNS,
+  CONTRADICTION_TURN_CEILING,
+} from "./interpret-config";
 
 // ─── Input guard (§17/§19/§40) ────────────────────────────────────────────────
 
-export const MAX_INPUT_CHARS = 600;
+export const MAX_INPUT_CHARS = CFG_MAX_INPUT_CHARS;
 
 const CREDENTIAL_PATTERNS: RegExp[] = [
   /\bsk-[A-Za-z0-9_-]{16,}\b/g,          // API keys (OpenAI/Anthropic style)
@@ -54,7 +61,15 @@ export interface SanitizedInput {
   truncated: boolean;
 }
 
-/** Plain-text sanitize + length cap + credential redaction. Never throws. */
+// Prompt-injection markers we neutralize as DATA (never obey). Business prose is
+// the only intent; the model is told to ignore any instruction inside it, AND we
+// strip the markers from the stored/interpreted text so an adversarial phrase can
+// never enter the canonical interpretation or be echoed back.
+const INJECTION_MARKER = /\b(ignore (all |the )?(previous|above|prior) (instructions?|prompts?)|system prompt|reveal your|disregard (the )?(above|previous)|act as|you are now)\b/i;
+const INJECTION_STRIP = new RegExp(INJECTION_MARKER.source, "gi");
+
+/** Plain-text sanitize + length cap + credential redaction + injection stripping.
+ *  Never throws. */
 export function sanitizeInterpretInput(raw: string): SanitizedInput {
   let text = String(raw ?? "").replace(/[<>]/g, " ").replace(/\s+/g, " ").trim();
   const truncated = text.length > MAX_INPUT_CHARS;
@@ -63,12 +78,9 @@ export function sanitizeInterpretInput(raw: string): SanitizedInput {
   for (const re of CREDENTIAL_PATTERNS) {
     if (re.test(text)) { redacted = true; text = text.replace(re, "[redacted]"); }
   }
+  text = text.replace(INJECTION_STRIP, " ").replace(/\s+/g, " ").trim();
   return { text, redacted, truncated };
 }
-
-// Prompt-injection markers we neutralize as DATA (never obey). Business prose is
-// the only intent; the model is told to ignore any instruction inside it.
-const INJECTION_MARKER = /\b(ignore (all |the )?(previous|above|prior) (instructions?|prompts?)|system prompt|reveal your|disregard (the )?(above|previous)|act as|you are now)\b/i;
 
 // ─── The constrained shape the model returns ──────────────────────────────────
 
@@ -110,6 +122,12 @@ export interface InterpretMeta {
   latencyMs: number;
   inputRedacted: boolean;
   inputTruncated: boolean;
+  /** Logical model calls made (0 for deterministic paths, ≤ MAX_MODEL_CALLS). */
+  modelCalls: number;
+  /** A model call exceeded the interactive timeout and we degraded to fallback. */
+  timedOut: boolean;
+  /** Clarification turn ceiling reached — the service stopped asking new questions. */
+  clarificationExhausted: boolean;
   reasoningSummary?: string;
   /** Investigation-brief extras (LLM path): go-to-market routes to evaluate
    *  (hypotheses) and decision-relevant gaps still to define. */
@@ -125,8 +143,9 @@ export interface InterpretResult {
 export type ModelCaller = (system: string, user: string, maxTokens: number) => Promise<unknown>;
 
 export interface InterpretDeps {
-  /** Injectable for tests. When omitted, the real callClaudeJSON is used only if
-   *  a key is configured and DEMO_MODE is off; otherwise the deterministic path runs. */
+  /** Injectable for tests. When omitted, the real bounded model caller (text
+   *  callClaude + local JSON parse) is used only if a key is configured and
+   *  DEMO_MODE is off; otherwise the deterministic path runs. */
   callModel?: ModelCaller;
   modelAvailable?: boolean;
   now?: () => string;
@@ -218,7 +237,10 @@ function assembleFromModel(raw: RawModelInterpretation, input: string, locale: L
   if (objective && targetKnown && conditions.filter((c) => c.type === "change_trigger").length === 0) nonBlockingGaps.push({ id: "g_trigger", priority: "opportunity_condition", reason: "No change trigger yet." });
 
   const contradictions = raw.contradiction ? [{ id: "c1", description: String(raw.contradiction).slice(0, 200), between: [] }] : [];
-  const status = blockers.length ? "needs_clarification" : "ready_for_confirmation";
+  // A material contradiction ALWAYS blocks confirmation (§16) — even when no
+  // clarification blocker was raised.
+  const blocked = blockers.length > 0 || contradictions.length > 0;
+  const status = blocked ? "needs_clarification" : "ready_for_confirmation";
 
   return {
     ...base,
@@ -250,8 +272,8 @@ function assembleFromModel(raw: RawModelInterpretation, input: string, locale: L
       blockers, nonBlockingGaps, contradictions,
       nextQuestion: blockers.length ? { gapId: blockers[0].id, question: raw.clarificationQuestion?.slice(0, 200) || "Could you add one more detail about who you want to reach?" } : undefined,
     },
-    certainty: blockers.length ? "partially_clear" : (nonBlockingGaps.length ? "partially_clear" : "clear"),
-    interpretationStatus: objective && blockers.length === 0 ? "ready_for_confirmation" : status,
+    certainty: contradictions.length ? "conflicting" : (blockers.length || nonBlockingGaps.length ? "partially_clear" : "clear"),
+    interpretationStatus: objective && !blocked ? "ready_for_confirmation" : status,
   };
 }
 
@@ -294,9 +316,34 @@ function coerceRaw(v: unknown): RawModelInterpretation | null {
   };
 }
 
+/** Safe JSON extraction: strip code fences, take the first {...} block, parse.
+ *  Returns null on any failure — the caller treats null as invalid model output
+ *  and repairs/falls back. Never throws. */
+function safeJsonParse(raw: unknown): unknown {
+  if (typeof raw !== "string") return raw ?? null;
+  let s = raw.trim().replace(/^```(?:json)?/i, "").replace(/```$/, "").trim();
+  const start = s.indexOf("{");
+  const end = s.lastIndexOf("}");
+  if (start >= 0 && end > start) s = s.slice(start, end + 1);
+  try { return JSON.parse(s); } catch { return null; }
+}
+
+// Stage A uses the TEXT call (not callClaudeJSON) and parses once here, so the
+// provider's internal JSON-parse retry does not stack on top of our own semantic
+// repair — keeping the call budget at the documented ceiling. Transport retries
+// inside callClaude remain (bounded infra resilience).
 async function defaultCallModel(system: string, user: string, maxTokens: number): Promise<unknown> {
-  const { callClaudeJSON } = await import("@/lib/anthropic");
-  return callClaudeJSON<unknown>(system, user, maxTokens);
+  const { callClaude } = await import("@/lib/anthropic");
+  return safeJsonParse(await callClaude(system, user, maxTokens));
+}
+
+class ModelTimeoutError extends Error {}
+
+function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => reject(new ModelTimeoutError("stage_a_model_timeout")), ms);
+    p.then((v) => { clearTimeout(timer); resolve(v); }, (e) => { clearTimeout(timer); reject(e); });
+  });
 }
 
 function realModelAvailable(): boolean {
@@ -304,10 +351,26 @@ function realModelAvailable(): boolean {
 }
 
 /** Main Stage A entrypoint. Never throws; always returns a valid interpretation. */
-export async function interpretCompany(rawInput: string, opts: { locale?: LandingInterpretationLocale } = {}, deps: InterpretDeps = {}): Promise<InterpretResult> {
+export async function interpretCompany(rawInput: string, opts: { locale?: LandingInterpretationLocale; priorTurns?: number } = {}, deps: InterpretDeps = {}): Promise<InterpretResult> {
   const started = Date.now();
   const nowFn = deps.now ?? (() => new Date().toISOString());
   const locale = opts.locale ?? "en";
+  const priorTurns = Math.max(0, opts.priorTurns ?? 0);
+  let modelCalls = 0;
+  let timedOut = false;
+
+  // Clarification turn ceiling (§14): once the caller has already asked the
+  // allowed number of clarifications, stop emitting NEW questions instead of
+  // looping. Contradictions get one extra turn. We never fabricate readiness —
+  // the interpretation stays needs_clarification, just without a next question.
+  const applyCeiling = (interp: CompanyInterpretationV1): { interp: CompanyInterpretationV1; exhausted: boolean } => {
+    if (interp.interpretationStatus !== "needs_clarification") return { interp, exhausted: false };
+    const ceiling = interp.clarification.contradictions.length > 0 ? CONTRADICTION_TURN_CEILING : MAX_CLARIFICATION_TURNS;
+    if (priorTurns >= ceiling) {
+      return { interp: { ...interp, clarification: { ...interp.clarification, nextQuestion: undefined } }, exhausted: true };
+    }
+    return { interp, exhausted: false };
+  };
   const { text, redacted, truncated } = sanitizeInterpretInput(rawInput);
   // Injection markers are neutralized by intent (prompt) — we also strip them from
   // the text sent to the model so they cannot dominate the extraction. Uncertainty
@@ -324,19 +387,23 @@ export async function interpretCompany(rawInput: string, opts: { locale?: Landin
     const out = xs.map((x) => String(x).slice(0, 80).trim()).filter(Boolean).slice(0, max);
     return out.length ? out : undefined;
   };
-  const finish = (interpretation: CompanyInterpretationV1, mode: InterpretMode, repaired: boolean, brief?: { routesToEvaluate?: unknown; openGaps?: unknown }): InterpretResult => ({
-    interpretation,
-    meta: {
-      mode, fallbackUsed: mode === "deterministic_fallback" || mode === "deterministic_no_model", repaired,
-      clarificationRequired: interpretation.interpretationStatus === "needs_clarification",
-      objectiveClass: objectiveClass(interpretation),
-      latencyMs: Date.now() - started, inputRedacted: redacted, inputTruncated: truncated,
-      // Routes/gaps are honest hypotheses — only surfaced when the objective is
-      // supported (no routes for unsupported/blocked reads).
-      routesToEvaluate: interpretation.commercialObjective.supported ? sanitizeList(brief?.routesToEvaluate, 5) : undefined,
-      openGaps: interpretation.commercialObjective.supported ? sanitizeList(brief?.openGaps, 4) : undefined,
-    },
-  });
+  const finish = (raw0: CompanyInterpretationV1, mode: InterpretMode, repaired: boolean, brief?: { routesToEvaluate?: unknown; openGaps?: unknown }): InterpretResult => {
+    const { interp: interpretation, exhausted } = applyCeiling(raw0);
+    return {
+      interpretation,
+      meta: {
+        mode, fallbackUsed: mode === "deterministic_fallback" || mode === "deterministic_no_model", repaired,
+        clarificationRequired: interpretation.interpretationStatus === "needs_clarification",
+        objectiveClass: objectiveClass(interpretation),
+        latencyMs: Date.now() - started, inputRedacted: redacted, inputTruncated: truncated,
+        modelCalls, timedOut, clarificationExhausted: exhausted,
+        // Routes/gaps are honest hypotheses — only surfaced when the objective is
+        // supported (no routes for unsupported/blocked reads).
+        routesToEvaluate: interpretation.commercialObjective.supported ? sanitizeList(brief?.routesToEvaluate, 5) : undefined,
+        openGaps: interpretation.commercialObjective.supported ? sanitizeList(brief?.openGaps, 4) : undefined,
+      },
+    };
+  };
 
   const useModel = deps.callModel ?? (deps.modelAvailable ?? realModelAvailable() ? defaultCallModel : null);
   if (!useModel) {
@@ -350,19 +417,33 @@ export async function interpretCompany(rawInput: string, opts: { locale?: Landin
   const uncertainRoute = UNCERTAIN.test(text);
   const misreadUnsupported = (i: CompanyInterpretationV1) => uncertainRoute && !i.commercialObjective.supported && cleanForModel.length >= 12;
 
+  // Bounded, timed model call. Enforces the hard call ceiling (§10) and an
+  // interactive timeout (§11): a hang degrades to the deterministic fallback
+  // rather than blocking. Returns null when the ceiling is reached.
+  const callBounded = async (sys: string, usr: string): Promise<unknown> => {
+    if (modelCalls >= MAX_MODEL_CALLS) return null;
+    modelCalls++;
+    try {
+      return await withTimeout(Promise.resolve(useModel(sys, usr, 900)), MODEL_TIMEOUT_MS);
+    } catch (e) {
+      if (e instanceof ModelTimeoutError) timedOut = true;
+      throw e;
+    }
+  };
+
   const system = buildSystemPrompt(locale);
   try {
-    const raw = coerceRaw(await useModel(system, cleanForModel, 900));
+    const raw = coerceRaw(await callBounded(system, cleanForModel));
     const assembled = raw ? assembleFromModel(raw, text, locale, nowFn) : null;
     if (assembled && misreadUnsupported(assembled)) return finish(extractCompanyInterpretation(cleanForModel, locale), "llm_repaired", true, raw!);
     if (assembled && stageAViolations(assembled).length === 0) return finish(assembled, "llm", false, raw!);
     // one constrained repair attempt — for malformed output OR a truth violation.
     const repairSys = system + "\nYour previous output was malformed or violated the rules. Return corrected JSON only. Do NOT add external knowledge.";
-    const rawRepair = coerceRaw(await useModel(repairSys, cleanForModel, 900));
+    const rawRepair = coerceRaw(await callBounded(repairSys, cleanForModel));
     const repaired = rawRepair ? assembleFromModel(rawRepair, text, locale, nowFn) : null;
     if (repaired && stageAViolations(repaired).length === 0) return finish(repaired, "llm_repaired", true, rawRepair!);
   } catch {
-    // fall through to deterministic fallback
+    // fall through to deterministic fallback (timeout, transport failure, etc.)
   }
   return finish(extractCompanyInterpretation(text, locale), "deterministic_fallback", false);
 }
