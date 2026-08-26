@@ -44,3 +44,34 @@ export const REVIEW_CADENCE_DAYS: Record<DecisionState, number | null> = {
 /** Evidence older than this (days) is a freshness gap candidate — NOT
  *  counterevidence, may motivate a validate/next-review. */
 export const EVIDENCE_FRESHNESS_DAYS = 120;
+
+// ─── Recurring scheduler (bounded automatic execution) ────────────────────────
+
+/** Master kill switch for AUTOMATIC recurring execution. Off by default; the
+ *  scheduler route refuses to run when this is false. The authenticated MANUAL
+ *  trigger is unaffected. Set MONITOR_SCHEDULER_ENABLED=true in the environment
+ *  to activate. */
+export function schedulerEnabled(): boolean {
+  return process.env.MONITOR_SCHEDULER_ENABLED === "true";
+}
+
+export interface SchedulerBudget {
+  maxTenantsPerRun: number;
+  maxAccountsPerRun: number;
+  maxProviderCallsPerRun: number;
+  maxRuntimeMs: number;
+}
+
+/** Technical safety limits for one scheduled wake (NOT pricing). One wake reviews
+ *  only DUE accounts, up to these caps; the rest stay due (deferred). */
+export const DEFAULT_SCHEDULER_BUDGET: SchedulerBudget = {
+  maxTenantsPerRun: 25,
+  maxAccountsPerRun: 40,
+  maxProviderCallsPerRun: 240,
+  maxRuntimeMs: 280_000,
+};
+
+/** Conservative default cron cadence (documentation only — the actual cron entry
+ *  lives in vercel.json). Scheduler WAKE frequency ≠ per-account review cadence:
+ *  each wake defers to deterministic Monitor eligibility for what is actually due. */
+export const SCHEDULER_WAKE_CRON = "0 9 * * *"; // daily 09:00 UTC

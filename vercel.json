@@ -7,6 +7,10 @@
     {
       "path": "/api/internal/monitor-runs/drain",
       "schedule": "30 8 * * *"
+    },
+    {
+      "path": "/api/internal/monitor-scheduler",
+      "schedule": "0 9 * * *"
     }
   ]
 }

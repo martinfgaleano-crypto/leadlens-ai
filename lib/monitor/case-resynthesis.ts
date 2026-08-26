@@ -12,7 +12,8 @@
 
 import type { DecisionState, Strength } from "@/lib/deliverable/deliverable-view-model";
 import type { AccountReviewSnapshot } from "@/lib/deliverable/account-memory";
-import { opportunityTest, type OppStatus } from "@/lib/discovery/opportunity-test";
+import type { OppStatus } from "@/lib/discovery/opportunity-test";
+import { synthesizeCase, type CanonicalCaseInput } from "./canonical-case";
 import type { DeltaEvidenceResult, AcceptedEvent } from "./delta-research";
 
 export type DecisionSource = "canonical_opportunity_test" | "retained_no_material_change" | "fallback_conservative";
@@ -30,10 +31,28 @@ export interface ResynthesizedCase {
   freshnessGap: boolean;
 }
 
-const STATUS_DECISION: Record<OppStatus, DecisionState> = { opportunity: "prioritize", investigate: "validate", monitor: "monitor", reject: "hold" };
-const weaken = (s: Strength | null): Strength | null => s === "Strong" ? "Moderate" : s === "Moderate" ? "Limited" : s;
-const strengthen = (s: Strength | null): Strength | null => s === "Limited" ? "Moderate" : s === "Moderate" ? "Strong" : s;
 const latest = (evts: AcceptedEvent[]): AcceptedEvent | null => evts.slice().sort((a, b) => new Date(b.eventDate).getTime() - new Date(a.eventDate).getTime())[0] ?? null;
+
+/** Map a recurring review's validated deltas into the CANONICAL Case input, so
+ *  recurring and initial reviews share one synthesis authority (§22–24). */
+export function recurringToCanonicalInput(prior: AccountReviewSnapshot, delta: DeltaEvidenceResult): CanonicalCaseInput {
+  const signalEvent = latest(delta.acceptedEvents) ?? latest(delta.historicalEvidence);
+  return {
+    accountId: prior.accountId,
+    identityVerified: true, fromUniverse: true,
+    signalKind: signalEvent?.kind ?? null,
+    signalDate: signalEvent?.eventDate ?? (prior.changeKeys[0]?.split(":")[1] ?? null),
+    dateConfidence: signalEvent ? "high" : "medium",
+    sourceHost: signalEvent?.origins[0] ?? prior.evidenceOrigins[0] ?? "unknown.com",
+    materialEvent: true,
+    hasMaterialCounter: delta.hasMaterialCounter,
+    openDecisionCritical: prior.decisionCriticalThemeKeys.filter((k) => !delta.resolvedValidationKeys.includes(k)),
+    priorFit: prior.fit, priorTiming: prior.timing, priorEvidence: prior.evidence,
+    independentSupportNew: [...delta.acceptedEvents, ...delta.historicalEvidence].some((e) => e.independentSupport),
+    hasPostReviewEvent: delta.acceptedEvents.length > 0,
+    geographyConfirmed: true, regionRequired: false,
+  };
+}
 
 /**
  * Re-synthesize the current Case decision from validated deltas. `now` governs the
@@ -55,50 +74,15 @@ export function resynthesizeCase(prior: AccountReviewSnapshot, delta: DeltaEvide
     };
   }
 
-  // Build the canonical input from the strongest current validated event.
-  const signalEvent = latest(delta.acceptedEvents) ?? latest(delta.historicalEvidence);
-  const source = signalEvent?.origins[0] ?? prior.evidenceOrigins[0] ?? "unknown.com";
-  const verdict = opportunityTest({
-    company: prior.accountId,
-    company_from_universe: true,
-    signal_summary: signalEvent ? `${signalEvent.kind} on ${signalEvent.eventDate}` : "monitored account — prior verified change",
-    signal_type: signalEvent?.kind ?? null,
-    signal_date: signalEvent?.eventDate ?? (prior.changeKeys[0]?.split(":")[1] ?? null),
-    date_confidence: signalEvent ? "high" : "medium",
-    source_url: `https://${source}`,
-    source_type: "news",
-    company_in_content: true,
-    grounded: true,
-    matches_needs_family: true,
-    geography_confirmed: true,
-    region_required: false,
-    corporate_identity_verified: true,
-  });
-
-  let decision = STATUS_DECISION[verdict.status];
-  let decisionSource: DecisionSource = "canonical_opportunity_test";
-  const reasons: string[] = [`opportunity_test_${verdict.status}`, ...verdict.soft_flags];
-
-  // Fallback guard: a positive event that hard-rejects for a NON-temporal input
-  // reason is an input artifact, not a real Case outcome — retain prior, flagged.
-  if (verdict.status === "reject" && delta.acceptedEvents.length > 0
-    && !verdict.hard_blockers.some((b) => /stale|no_valid_date|no_material_event/.test(b))) {
-    decision = prior.decision; decisionSource = "fallback_conservative"; reasons.push("fallback_input_artifact");
-  }
-
-  // Decision-critical unknowns cap the decision at Validate (cannot Prioritize with
-  // an open decision-critical question).
-  if (remainingDecisionCritical.length > 0 && decision === "prioritize") { decision = "validate"; reasons.push("open_decision_critical_caps_at_validate"); }
-  // Material counterevidence weakens Prioritize/Monitor to Validate (needs re-check).
-  if (delta.hasMaterialCounter && (decision === "prioritize" || decision === "monitor")) { decision = "validate"; reasons.push("material_counterevidence_requires_revalidation"); }
-
-  const evidence = delta.hasMaterialCounter ? weaken(prior.evidence) : (independentSupportNew ? strengthen(prior.evidence) : prior.evidence);
-  // Timing derives ONLY from an observed post-review dated event.
-  const timing = delta.acceptedEvents.length > 0 && !delta.hasMaterialCounter ? strengthen(prior.timing) : prior.timing;
+  // Delegate to the ONE canonical Case authority (shared with initial reviews).
+  const canonical = synthesizeCase(recurringToCanonicalInput(prior, delta));
+  // A canonical fallback under a real material event → retain prior decision, flagged.
+  const decision = canonical.decisionSource === "fallback_conservative" ? prior.decision : canonical.decision;
+  const decisionSource: DecisionSource = canonical.decisionSource === "fallback_conservative" ? "fallback_conservative" : "canonical_opportunity_test";
 
   return {
-    decision, decisionSource, verdictStatus: verdict.status, reasons,
-    fit: prior.fit, timing, evidence,
+    decision, decisionSource, verdictStatus: canonical.verdictStatus, reasons: canonical.reasons,
+    fit: canonical.fit, timing: canonical.timing, evidence: canonical.evidence,
     hasMaterialCounter: delta.hasMaterialCounter, remainingDecisionCritical, freshnessGap: delta.freshnessGap,
   };
 }

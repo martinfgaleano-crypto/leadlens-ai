@@ -33,6 +33,39 @@ export async function loadCurrentSnapshots(db: Db, scope: SnapshotScope): Promis
   return { states, priorById };
 }
 
+export interface TenantWork {
+  scope: SnapshotScope;
+  states: MonitoredAccountState[];
+  priorById: Record<string, AccountReviewSnapshot>;
+}
+
+/** Cross-tenant due-work loader for the scheduler. Reads recent accepted snapshots,
+ *  reduces to the LATEST per (owner, client, account), and groups by tenant. Bounded
+ *  by `limit`. Owner/client/context isolation is preserved: each tenant carries only
+ *  its own scope. Eligibility (what is actually DUE) is decided downstream. */
+export async function loadDueMonitoredWork(db: Db, limit = 2000): Promise<TenantWork[]> {
+  const { data, error } = await db.from("account_review_snapshots")
+    .select("owner_user_id,client_key,account_id,reviewed_at,snapshot")
+    .order("reviewed_at", { ascending: false })
+    .limit(limit);
+  if (error || !data) return [];
+  const latest = new Map<string, { owner: string | null; client: string; snapshot: AccountReviewSnapshot }>();
+  for (const row of data as Array<{ owner_user_id: string | null; client_key: string; account_id: string; snapshot: AccountReviewSnapshot }>) {
+    const key = `${row.owner_user_id ?? ""}|${row.client_key}|${row.account_id}`;
+    if (!latest.has(key)) latest.set(key, { owner: row.owner_user_id ?? null, client: row.client_key, snapshot: row.snapshot });
+  }
+  const tenants = new Map<string, TenantWork>();
+  latest.forEach(({ owner, client, snapshot }) => {
+    const tkey = `${owner ?? ""}|${client}`;
+    const scope: SnapshotScope = { ownerUserId: owner, clientKey: client };
+    const tw = tenants.get(tkey) ?? { scope, states: [], priorById: {} };
+    tw.states.push(monitoredStateFromSnapshot(snapshot, scope));
+    tw.priorById[snapshot.accountId] = snapshot;
+    tenants.set(tkey, tw);
+  });
+  return Array.from(tenants.values());
+}
+
 /** Persist a run summary (observability) on snapshot_reports. Immutable by
  *  convention: keyed by runId; accepted account snapshots live in account_review_snapshots. */
 export async function persistMonitorRun(db: Db, run: MonitorRun): Promise<{ created: boolean }> {
