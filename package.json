@@ -94,6 +94,7 @@
     "test:intelligence-registries": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/intelligence-registries.test.ts",
     "test:intelligence-validation-loop": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/intelligence-validation-loop.test.ts",
     "test:admin-intelligence-command-center": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/admin-intelligence-command-center.test.ts",
+    "test:admin-intelligence-control-plane": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/admin-intelligence-control-plane-v1.test.ts",
     "test:evidence-temporal-intelligence": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/evidence-temporal-intelligence.test.ts",
     "test:research-quality": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/research-quality.test.ts",
     "test:signal-temporal-monitoring": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/signal-temporal-monitoring.test.ts",

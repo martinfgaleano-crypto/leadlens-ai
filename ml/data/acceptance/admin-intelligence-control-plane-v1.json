@@ -1,0 +1,4142 @@
+{
+  "audit": "admin-intelligence-control-plane-v1",
+  "generated_at": "2026-08-27T19:45:24.392Z",
+  "source_mode": "local_acceptance_artifacts_no_database",
+  "database_metrics_included": false,
+  "control_plane": {
+    "version": "capability-control-plane-v1",
+    "generated_at": "2026-08-27T19:45:24.392Z",
+    "overall": {
+      "state": "measured",
+      "score": 59,
+      "confidence": 0.565835685015765,
+      "sample_size": 24
+    },
+    "overall_confidence": "medium",
+    "state_counts": {
+      "not_started": 0,
+      "implemented": 26,
+      "domain_proven": 0,
+      "production_wired": 10,
+      "live_validated": 0,
+      "soak_validated": 3,
+      "degraded": 8,
+      "blocked": 0
+    },
+    "capabilities": [
+      {
+        "capability": {
+          "id": "stage_a_interpretation",
+          "name": "Stage A Interpretation",
+          "domain": "context",
+          "description": "Stage A Interpretation",
+          "dependencies": [],
+          "snapshot_aliases": [
+            "market_interpretation"
+          ],
+          "implementation_evidence": [
+            "lib/interpretation/interpret-service.ts"
+          ]
+        },
+        "score": {
+          "state": "measured",
+          "score": 74,
+          "confidence": 0.39999999999999997,
+          "sample_size": 1
+        },
+        "confidence": "low",
+        "state": "implemented",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "measured",
+            "score": 58,
+            "confidence": 0.4,
+            "sample_size": 1
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "measured",
+            "score": 75,
+            "confidence": 0.45,
+            "sample_size": 1
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {},
+        "evidence": [
+          {
+            "id": "market_interpretation-ev",
+            "kind": "exercised_run",
+            "ref": "market_interpretation:latest"
+          }
+        ],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "confirmed_commercial_context",
+          "name": "Confirmed Commercial Context",
+          "domain": "context",
+          "description": "Confirmed Commercial Context",
+          "dependencies": [
+            "stage_a_interpretation"
+          ],
+          "snapshot_aliases": [],
+          "implementation_evidence": [
+            "lib/interpretation/confirmed-context-store.ts"
+          ]
+        },
+        "score": {
+          "state": "insufficient_evidence",
+          "reason": "only 1/9 dimensions measured",
+          "sample_size": 1
+        },
+        "confidence": "low",
+        "state": "implemented",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "insufficient_evidence",
+            "reason": "integration not instrumented",
+            "sample_size": 0
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "insufficient_evidence",
+            "reason": "observability not instrumented",
+            "sample_size": 0
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {},
+        "evidence": [
+          {
+            "id": "confirmed_commercial_context:implementation:0",
+            "kind": "schema_exists",
+            "ref": "lib/interpretation/confirmed-context-store.ts"
+          }
+        ],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "context_execution_handoff",
+          "name": "Context → Execution",
+          "domain": "context",
+          "description": "Context → Execution",
+          "dependencies": [
+            "confirmed_commercial_context"
+          ],
+          "snapshot_aliases": [],
+          "implementation_evidence": [
+            "lib/interpretation/discovery-context-adapter.ts"
+          ]
+        },
+        "score": {
+          "state": "insufficient_evidence",
+          "reason": "only 1/9 dimensions measured",
+          "sample_size": 1
+        },
+        "confidence": "low",
+        "state": "implemented",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "insufficient_evidence",
+            "reason": "integration not instrumented",
+            "sample_size": 0
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "insufficient_evidence",
+            "reason": "observability not instrumented",
+            "sample_size": 0
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {},
+        "evidence": [
+          {
+            "id": "context_execution_handoff:implementation:0",
+            "kind": "schema_exists",
+            "ref": "lib/interpretation/discovery-context-adapter.ts"
+          }
+        ],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "lead_hunter",
+          "name": "Lead Hunter",
+          "domain": "discovery",
+          "description": "Lead Hunter",
+          "dependencies": [
+            "context_execution_handoff"
+          ],
+          "snapshot_aliases": [
+            "company_discovery"
+          ],
+          "implementation_evidence": [
+            "lib/lead-hunter/candidate-universe.ts"
+          ]
+        },
+        "score": {
+          "state": "measured",
+          "score": 83,
+          "confidence": 0.6114,
+          "sample_size": 50
+        },
+        "confidence": "medium",
+        "state": "soak_validated",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "measured",
+            "score": 92,
+            "confidence": 0.75,
+            "sample_size": 6
+          },
+          "correctness": {
+            "state": "measured",
+            "score": 42,
+            "confidence": 0.5,
+            "sample_size": 50
+          },
+          "real_world_validation": {
+            "state": "measured",
+            "score": 90,
+            "confidence": 0.62,
+            "sample_size": 10
+          },
+          "reliability": {
+            "state": "measured",
+            "score": 83,
+            "confidence": 0.58,
+            "sample_size": 6
+          },
+          "quality": {
+            "state": "measured",
+            "score": 90,
+            "confidence": 0.62,
+            "sample_size": 10
+          },
+          "observability": {
+            "state": "measured",
+            "score": 90,
+            "confidence": 0.8,
+            "sample_size": 6
+          },
+          "economics": {
+            "state": "measured",
+            "score": 88,
+            "confidence": 0.7,
+            "sample_size": 6
+          },
+          "autonomy": {
+            "state": "measured",
+            "score": 90,
+            "confidence": 0.6,
+            "sample_size": 6
+          }
+        },
+        "supporting_metrics": {
+          "structural_reasonable_rate": 0.9,
+          "wrong_target_rate": 0.1,
+          "capture_proxy": 0,
+          "runs": 6,
+          "researched_accounts": 10
+        },
+        "evidence": [
+          {
+            "id": "company_discovery-ev",
+            "kind": "exercised_run",
+            "ref": "company_discovery:latest"
+          },
+          {
+            "id": "lead_hunter:recall-v1",
+            "kind": "human_review",
+            "ref": "ml/data/acceptance/dynamic-universe-recall-v1.json",
+            "dated": true,
+            "date": "2026-08-27T19:16:18.441Z"
+          }
+        ],
+        "blockers": [],
+        "evidence_freshness_days": 0,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "candidate_universe",
+          "name": "Candidate Universe",
+          "domain": "discovery",
+          "description": "Candidate Universe",
+          "dependencies": [
+            "lead_hunter"
+          ],
+          "snapshot_aliases": [
+            "company_discovery"
+          ],
+          "implementation_evidence": [
+            "lib/lead-hunter/candidate-universe.ts"
+          ]
+        },
+        "score": {
+          "state": "measured",
+          "score": 83,
+          "confidence": 0.6114,
+          "sample_size": 50
+        },
+        "confidence": "medium",
+        "state": "soak_validated",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "measured",
+            "score": 92,
+            "confidence": 0.75,
+            "sample_size": 6
+          },
+          "correctness": {
+            "state": "measured",
+            "score": 42,
+            "confidence": 0.5,
+            "sample_size": 50
+          },
+          "real_world_validation": {
+            "state": "measured",
+            "score": 90,
+            "confidence": 0.62,
+            "sample_size": 10
+          },
+          "reliability": {
+            "state": "measured",
+            "score": 83,
+            "confidence": 0.58,
+            "sample_size": 6
+          },
+          "quality": {
+            "state": "measured",
+            "score": 90,
+            "confidence": 0.62,
+            "sample_size": 10
+          },
+          "observability": {
+            "state": "measured",
+            "score": 90,
+            "confidence": 0.8,
+            "sample_size": 6
+          },
+          "economics": {
+            "state": "measured",
+            "score": 88,
+            "confidence": 0.7,
+            "sample_size": 6
+          },
+          "autonomy": {
+            "state": "measured",
+            "score": 90,
+            "confidence": 0.6,
+            "sample_size": 6
+          }
+        },
+        "supporting_metrics": {
+          "structural_reasonable_rate": 0.9,
+          "wrong_target_rate": 0.1,
+          "capture_proxy": 0,
+          "runs": 6,
+          "researched_accounts": 10
+        },
+        "evidence": [
+          {
+            "id": "company_discovery-ev",
+            "kind": "exercised_run",
+            "ref": "company_discovery:latest"
+          },
+          {
+            "id": "candidate_universe:recall-v1",
+            "kind": "human_review",
+            "ref": "ml/data/acceptance/dynamic-universe-recall-v1.json",
+            "dated": true,
+            "date": "2026-08-27T19:16:18.441Z"
+          }
+        ],
+        "blockers": [],
+        "evidence_freshness_days": 0,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "corporate_identity",
+          "name": "Corporate Identity",
+          "domain": "discovery",
+          "description": "Corporate Identity",
+          "dependencies": [
+            "candidate_universe"
+          ],
+          "snapshot_aliases": [
+            "company_verification",
+            "entity_resolution"
+          ],
+          "implementation_evidence": [
+            "lib/discovery/corporate-identity.ts"
+          ]
+        },
+        "score": {
+          "state": "measured",
+          "score": 74,
+          "confidence": 0.46444444444444444,
+          "sample_size": 21
+        },
+        "confidence": "medium",
+        "state": "production_wired",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "measured",
+            "score": 92,
+            "confidence": 0.5,
+            "sample_size": 21
+          },
+          "correctness": {
+            "state": "measured",
+            "score": 42,
+            "confidence": 0.5,
+            "sample_size": 21
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "measured",
+            "score": 75,
+            "confidence": 0.45,
+            "sample_size": 1
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {},
+        "evidence": [
+          {
+            "id": "company_verification-ev",
+            "kind": "exercised_run",
+            "ref": "company_verification:latest"
+          }
+        ],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "dynamic_universe_discovery",
+          "name": "Dynamic Universe Discovery",
+          "domain": "discovery",
+          "description": "Dynamic Universe Discovery",
+          "dependencies": [
+            "candidate_universe"
+          ],
+          "snapshot_aliases": [
+            "company_discovery"
+          ],
+          "implementation_evidence": [
+            "lib/discovery/company-universe.ts"
+          ]
+        },
+        "score": {
+          "state": "measured",
+          "score": 53,
+          "confidence": 0.5982000000000002,
+          "sample_size": 50
+        },
+        "confidence": "medium",
+        "state": "degraded",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "measured",
+            "score": 92,
+            "confidence": 0.75,
+            "sample_size": 6
+          },
+          "correctness": {
+            "state": "measured",
+            "score": 42,
+            "confidence": 0.5,
+            "sample_size": 50
+          },
+          "real_world_validation": {
+            "state": "measured",
+            "score": 0,
+            "confidence": 0.58,
+            "sample_size": 8
+          },
+          "reliability": {
+            "state": "measured",
+            "score": 83,
+            "confidence": 0.58,
+            "sample_size": 6
+          },
+          "quality": {
+            "state": "measured",
+            "score": 0,
+            "confidence": 0.58,
+            "sample_size": 8
+          },
+          "observability": {
+            "state": "measured",
+            "score": 90,
+            "confidence": 0.8,
+            "sample_size": 6
+          },
+          "economics": {
+            "state": "measured",
+            "score": 88,
+            "confidence": 0.7,
+            "sample_size": 6
+          },
+          "autonomy": {
+            "state": "measured",
+            "score": 90,
+            "confidence": 0.6,
+            "sample_size": 6
+          }
+        },
+        "supporting_metrics": {
+          "structural_reasonable_rate": 0.9,
+          "wrong_target_rate": 0.1,
+          "capture_proxy": 0,
+          "runs": 6,
+          "researched_accounts": 10,
+          "positive_controls": 8,
+          "positive_controls_captured": 0,
+          "human_positive_cases": 0
+        },
+        "evidence": [
+          {
+            "id": "company_discovery-ev",
+            "kind": "exercised_run",
+            "ref": "company_discovery:latest"
+          },
+          {
+            "id": "dynamic_universe_discovery:recall-v1",
+            "kind": "human_review",
+            "ref": "ml/data/acceptance/dynamic-universe-recall-v1.json",
+            "dated": true,
+            "date": "2026-08-27T19:16:18.441Z"
+          }
+        ],
+        "blockers": [
+          "No human-defensible positive Case in the latest positive-control sample (0/8 capture proxy)."
+        ],
+        "evidence_freshness_days": 0,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "pre_research_relevance",
+          "name": "Pre-Research Relevance Gate",
+          "domain": "discovery",
+          "description": "Pre-Research Relevance Gate",
+          "dependencies": [
+            "corporate_identity"
+          ],
+          "snapshot_aliases": [
+            "structural_account_ranking"
+          ],
+          "implementation_evidence": [
+            "lib/lead-hunter/candidate-universe.ts"
+          ]
+        },
+        "score": {
+          "state": "measured",
+          "score": 92,
+          "confidence": 0.6114,
+          "sample_size": 10
+        },
+        "confidence": "medium",
+        "state": "soak_validated",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "measured",
+            "score": 92,
+            "confidence": 0.75,
+            "sample_size": 6
+          },
+          "correctness": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.5,
+            "sample_size": 8
+          },
+          "real_world_validation": {
+            "state": "measured",
+            "score": 90,
+            "confidence": 0.62,
+            "sample_size": 10
+          },
+          "reliability": {
+            "state": "measured",
+            "score": 83,
+            "confidence": 0.58,
+            "sample_size": 6
+          },
+          "quality": {
+            "state": "measured",
+            "score": 90,
+            "confidence": 0.62,
+            "sample_size": 10
+          },
+          "observability": {
+            "state": "measured",
+            "score": 90,
+            "confidence": 0.8,
+            "sample_size": 6
+          },
+          "economics": {
+            "state": "measured",
+            "score": 88,
+            "confidence": 0.7,
+            "sample_size": 6
+          },
+          "autonomy": {
+            "state": "measured",
+            "score": 90,
+            "confidence": 0.6,
+            "sample_size": 6
+          }
+        },
+        "supporting_metrics": {
+          "structural_reasonable_rate": 0.9,
+          "wrong_target_rate": 0.1,
+          "capture_proxy": 0,
+          "runs": 6,
+          "researched_accounts": 10
+        },
+        "evidence": [
+          {
+            "id": "structural_account_ranking-ev",
+            "kind": "replay_consistency",
+            "ref": "structural_account_ranking:latest"
+          },
+          {
+            "id": "pre_research_relevance:recall-v1",
+            "kind": "human_review",
+            "ref": "ml/data/acceptance/dynamic-universe-recall-v1.json",
+            "dated": true,
+            "date": "2026-08-27T19:16:18.441Z"
+          }
+        ],
+        "blockers": [],
+        "evidence_freshness_days": 0,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "initial_research",
+          "name": "Initial Research",
+          "domain": "research",
+          "description": "Initial Research",
+          "dependencies": [
+            "pre_research_relevance"
+          ],
+          "snapshot_aliases": [
+            "deep_account_research"
+          ],
+          "implementation_evidence": [
+            "lib/intelligence/productive-spine.ts"
+          ]
+        },
+        "score": {
+          "state": "measured",
+          "score": 35,
+          "confidence": 0.4942857142857143,
+          "sample_size": 8
+        },
+        "confidence": "medium",
+        "state": "degraded",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "measured",
+            "score": 58,
+            "confidence": 0.4,
+            "sample_size": 6
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "measured",
+            "score": 0,
+            "confidence": 0.58,
+            "sample_size": 8
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "measured",
+            "score": 0,
+            "confidence": 0.58,
+            "sample_size": 8
+          },
+          "observability": {
+            "state": "measured",
+            "score": 75,
+            "confidence": 0.45,
+            "sample_size": 1
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {
+          "positive_controls": 8,
+          "positive_controls_captured": 0,
+          "human_positive_cases": 0
+        },
+        "evidence": [
+          {
+            "id": "deep_account_research-ev",
+            "kind": "exercised_run",
+            "ref": "deep_account_research:latest"
+          }
+        ],
+        "blockers": [
+          "No human-defensible positive Case in the latest positive-control sample (0/8 capture proxy)."
+        ],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "provider_routing",
+          "name": "Provider Routing",
+          "domain": "operations",
+          "description": "Provider Routing",
+          "dependencies": [
+            "initial_research"
+          ],
+          "snapshot_aliases": [],
+          "implementation_evidence": [
+            "lib/monitor/provider-routing.ts"
+          ]
+        },
+        "score": {
+          "state": "measured",
+          "score": 91,
+          "confidence": 0.6666666666666666,
+          "sample_size": 1357
+        },
+        "confidence": "medium",
+        "state": "implemented",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "insufficient_evidence",
+            "reason": "integration not instrumented",
+            "sample_size": 0
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "measured",
+            "score": 84,
+            "confidence": 0.8,
+            "sample_size": 1357
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "measured",
+            "score": 92,
+            "confidence": 0.8,
+            "sample_size": 1357
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {
+          "calls_today": 1357,
+          "errors_today": 214,
+          "observed_cost_today_usd": 4.787814,
+          "providers_with_recent_failure": 3
+        },
+        "evidence": [
+          {
+            "id": "provider_routing:implementation:0",
+            "kind": "schema_exists",
+            "ref": "lib/monitor/provider-routing.ts"
+          }
+        ],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "source_quality",
+          "name": "Source Quality",
+          "domain": "research",
+          "description": "Source Quality",
+          "dependencies": [
+            "provider_routing"
+          ],
+          "snapshot_aliases": [],
+          "implementation_evidence": [
+            "lib/discovery/source-intelligence-store.ts"
+          ]
+        },
+        "score": {
+          "state": "insufficient_evidence",
+          "reason": "only 1/9 dimensions measured",
+          "sample_size": 1
+        },
+        "confidence": "low",
+        "state": "implemented",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "insufficient_evidence",
+            "reason": "integration not instrumented",
+            "sample_size": 0
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "insufficient_evidence",
+            "reason": "observability not instrumented",
+            "sample_size": 0
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {},
+        "evidence": [
+          {
+            "id": "source_quality:implementation:0",
+            "kind": "schema_exists",
+            "ref": "lib/discovery/source-intelligence-store.ts"
+          }
+        ],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "source_association",
+          "name": "Source Association",
+          "domain": "research",
+          "description": "Source Association",
+          "dependencies": [
+            "corporate_identity",
+            "source_quality"
+          ],
+          "snapshot_aliases": [],
+          "implementation_evidence": [
+            "lib/discovery/company-first-discovery.ts"
+          ]
+        },
+        "score": {
+          "state": "insufficient_evidence",
+          "reason": "only 1/9 dimensions measured",
+          "sample_size": 1
+        },
+        "confidence": "low",
+        "state": "implemented",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "insufficient_evidence",
+            "reason": "integration not instrumented",
+            "sample_size": 0
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "insufficient_evidence",
+            "reason": "observability not instrumented",
+            "sample_size": 0
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {},
+        "evidence": [
+          {
+            "id": "source_association:implementation:0",
+            "kind": "schema_exists",
+            "ref": "lib/discovery/company-first-discovery.ts"
+          }
+        ],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "full_text_extraction",
+          "name": "Full-Text Extraction",
+          "domain": "research",
+          "description": "Full-Text Extraction",
+          "dependencies": [
+            "source_association"
+          ],
+          "snapshot_aliases": [],
+          "implementation_evidence": [
+            "lib/monitor/full-text-extraction.ts"
+          ]
+        },
+        "score": {
+          "state": "insufficient_evidence",
+          "reason": "only 1/9 dimensions measured",
+          "sample_size": 1
+        },
+        "confidence": "low",
+        "state": "implemented",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "insufficient_evidence",
+            "reason": "integration not instrumented",
+            "sample_size": 0
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "insufficient_evidence",
+            "reason": "observability not instrumented",
+            "sample_size": 0
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {},
+        "evidence": [
+          {
+            "id": "full_text_extraction:implementation:0",
+            "kind": "schema_exists",
+            "ref": "lib/monitor/full-text-extraction.ts"
+          }
+        ],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "structured_claim_extraction",
+          "name": "Structured Claim Extraction",
+          "domain": "research",
+          "description": "Structured Claim Extraction",
+          "dependencies": [
+            "full_text_extraction"
+          ],
+          "snapshot_aliases": [],
+          "implementation_evidence": [
+            "lib/monitor/claim-event-extractor.ts"
+          ]
+        },
+        "score": {
+          "state": "insufficient_evidence",
+          "reason": "only 1/9 dimensions measured",
+          "sample_size": 1
+        },
+        "confidence": "low",
+        "state": "implemented",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "insufficient_evidence",
+            "reason": "integration not instrumented",
+            "sample_size": 0
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "insufficient_evidence",
+            "reason": "observability not instrumented",
+            "sample_size": 0
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {},
+        "evidence": [
+          {
+            "id": "structured_claim_extraction:implementation:0",
+            "kind": "schema_exists",
+            "ref": "lib/monitor/claim-event-extractor.ts"
+          }
+        ],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "event_extraction",
+          "name": "Event Extraction",
+          "domain": "research",
+          "description": "Event Extraction",
+          "dependencies": [
+            "structured_claim_extraction"
+          ],
+          "snapshot_aliases": [
+            "signal_detection"
+          ],
+          "implementation_evidence": [
+            "lib/monitor/event-extraction.ts"
+          ]
+        },
+        "score": {
+          "state": "insufficient_evidence",
+          "reason": "only 2/9 dimensions measured",
+          "sample_size": 2
+        },
+        "confidence": "low",
+        "state": "implemented",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "measured",
+            "score": 58,
+            "confidence": 0.4,
+            "sample_size": 1
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "insufficient_evidence",
+            "reason": "observability not instrumented",
+            "sample_size": 0
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {},
+        "evidence": [],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "event_dating",
+          "name": "Event Dating",
+          "domain": "reasoning",
+          "description": "Event Dating",
+          "dependencies": [
+            "event_extraction"
+          ],
+          "snapshot_aliases": [
+            "temporal_reasoning"
+          ],
+          "implementation_evidence": [
+            "lib/intelligence/evidence-temporal.ts"
+          ]
+        },
+        "score": {
+          "state": "insufficient_evidence",
+          "reason": "only 2/9 dimensions measured",
+          "sample_size": 2
+        },
+        "confidence": "low",
+        "state": "implemented",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "measured",
+            "score": 58,
+            "confidence": 0.4,
+            "sample_size": 1
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "insufficient_evidence",
+            "reason": "observability not instrumented",
+            "sample_size": 0
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {},
+        "evidence": [],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "temporal_what_changed",
+          "name": "Temporal / What Changed",
+          "domain": "reasoning",
+          "description": "Temporal / What Changed",
+          "dependencies": [
+            "event_dating",
+            "account_memory"
+          ],
+          "snapshot_aliases": [
+            "temporal_reasoning",
+            "what_changed_detection"
+          ],
+          "implementation_evidence": [
+            "lib/monitor/case-resynthesis.ts"
+          ]
+        },
+        "score": {
+          "state": "measured",
+          "score": 90,
+          "confidence": 0.6223404255319148,
+          "sample_size": 6
+        },
+        "confidence": "medium",
+        "state": "production_wired",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "measured",
+            "score": 90,
+            "confidence": 0.7,
+            "sample_size": 6
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "measured",
+            "score": 88,
+            "confidence": 0.65,
+            "sample_size": 6
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "measured",
+            "score": 85,
+            "confidence": 0.7,
+            "sample_size": 6
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {
+          "monitor_sample": 6,
+          "false_novelty": null
+        },
+        "evidence": [],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "materiality",
+          "name": "Materiality",
+          "domain": "reasoning",
+          "description": "Materiality",
+          "dependencies": [
+            "event_extraction"
+          ],
+          "snapshot_aliases": [],
+          "implementation_evidence": [
+            "lib/discovery/materiality.ts"
+          ]
+        },
+        "score": {
+          "state": "insufficient_evidence",
+          "reason": "only 1/9 dimensions measured",
+          "sample_size": 1
+        },
+        "confidence": "low",
+        "state": "implemented",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "insufficient_evidence",
+            "reason": "integration not instrumented",
+            "sample_size": 0
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "insufficient_evidence",
+            "reason": "observability not instrumented",
+            "sample_size": 0
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {},
+        "evidence": [
+          {
+            "id": "materiality:implementation:0",
+            "kind": "schema_exists",
+            "ref": "lib/discovery/materiality.ts"
+          }
+        ],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "corroboration",
+          "name": "Corroboration",
+          "domain": "reasoning",
+          "description": "Corroboration",
+          "dependencies": [
+            "source_association"
+          ],
+          "snapshot_aliases": [],
+          "implementation_evidence": [
+            "lib/discovery/quality-rubric.ts"
+          ]
+        },
+        "score": {
+          "state": "insufficient_evidence",
+          "reason": "only 1/9 dimensions measured",
+          "sample_size": 1
+        },
+        "confidence": "low",
+        "state": "implemented",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "insufficient_evidence",
+            "reason": "integration not instrumented",
+            "sample_size": 0
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "insufficient_evidence",
+            "reason": "observability not instrumented",
+            "sample_size": 0
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {},
+        "evidence": [
+          {
+            "id": "corroboration:implementation:0",
+            "kind": "schema_exists",
+            "ref": "lib/discovery/quality-rubric.ts"
+          }
+        ],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "counterevidence",
+          "name": "Counterevidence",
+          "domain": "reasoning",
+          "description": "Counterevidence",
+          "dependencies": [
+            "initial_research"
+          ],
+          "snapshot_aliases": [
+            "counterevidence_analysis"
+          ],
+          "implementation_evidence": [
+            "lib/discovery/counterevidence.ts"
+          ]
+        },
+        "score": {
+          "state": "insufficient_evidence",
+          "reason": "only 2/9 dimensions measured",
+          "sample_size": 2
+        },
+        "confidence": "low",
+        "state": "implemented",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "measured",
+            "score": 58,
+            "confidence": 0.4,
+            "sample_size": 1
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "insufficient_evidence",
+            "reason": "observability not instrumented",
+            "sample_size": 0
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {},
+        "evidence": [],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "fit",
+          "name": "Fit",
+          "domain": "reasoning",
+          "description": "Fit",
+          "dependencies": [
+            "confirmed_commercial_context",
+            "corporate_identity"
+          ],
+          "snapshot_aliases": [
+            "client_specific_opportunity_assessment"
+          ],
+          "implementation_evidence": [
+            "lib/discovery/commercial-fit.ts"
+          ]
+        },
+        "score": {
+          "state": "measured",
+          "score": 74,
+          "confidence": 0.39999999999999997,
+          "sample_size": 1
+        },
+        "confidence": "low",
+        "state": "implemented",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "measured",
+            "score": 58,
+            "confidence": 0.4,
+            "sample_size": 1
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "measured",
+            "score": 75,
+            "confidence": 0.45,
+            "sample_size": 1
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {},
+        "evidence": [
+          {
+            "id": "client_specific_opportunity_assessment-ev",
+            "kind": "exercised_run",
+            "ref": "client_specific_opportunity_assessment:latest"
+          }
+        ],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "timing",
+          "name": "Timing",
+          "domain": "reasoning",
+          "description": "Timing",
+          "dependencies": [
+            "event_dating",
+            "materiality"
+          ],
+          "snapshot_aliases": [
+            "temporal_reasoning"
+          ],
+          "implementation_evidence": [
+            "lib/discovery/opportunity-test.ts"
+          ]
+        },
+        "score": {
+          "state": "insufficient_evidence",
+          "reason": "only 2/9 dimensions measured",
+          "sample_size": 2
+        },
+        "confidence": "low",
+        "state": "implemented",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "measured",
+            "score": 58,
+            "confidence": 0.4,
+            "sample_size": 1
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "insufficient_evidence",
+            "reason": "observability not instrumented",
+            "sample_size": 0
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {},
+        "evidence": [],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "evidence",
+          "name": "Evidence",
+          "domain": "reasoning",
+          "description": "Evidence",
+          "dependencies": [
+            "source_association"
+          ],
+          "snapshot_aliases": [],
+          "implementation_evidence": [
+            "lib/intelligence/evidence-store.ts"
+          ]
+        },
+        "score": {
+          "state": "insufficient_evidence",
+          "reason": "only 1/9 dimensions measured",
+          "sample_size": 1
+        },
+        "confidence": "low",
+        "state": "implemented",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "insufficient_evidence",
+            "reason": "integration not instrumented",
+            "sample_size": 0
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "insufficient_evidence",
+            "reason": "observability not instrumented",
+            "sample_size": 0
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {},
+        "evidence": [
+          {
+            "id": "evidence:implementation:0",
+            "kind": "schema_exists",
+            "ref": "lib/intelligence/evidence-store.ts"
+          }
+        ],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "opportunity_case",
+          "name": "Opportunity Case Synthesis",
+          "domain": "reasoning",
+          "description": "Opportunity Case Synthesis",
+          "dependencies": [
+            "fit",
+            "timing",
+            "evidence"
+          ],
+          "snapshot_aliases": [
+            "recommendation_generation"
+          ],
+          "implementation_evidence": [
+            "lib/monitor/canonical-case.ts"
+          ]
+        },
+        "score": {
+          "state": "measured",
+          "score": 35,
+          "confidence": 0.4942857142857143,
+          "sample_size": 8
+        },
+        "confidence": "medium",
+        "state": "degraded",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "measured",
+            "score": 58,
+            "confidence": 0.4,
+            "sample_size": 8
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "measured",
+            "score": 0,
+            "confidence": 0.58,
+            "sample_size": 8
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "measured",
+            "score": 0,
+            "confidence": 0.58,
+            "sample_size": 8
+          },
+          "observability": {
+            "state": "measured",
+            "score": 75,
+            "confidence": 0.45,
+            "sample_size": 1
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {
+          "positive_controls": 8,
+          "positive_controls_captured": 0,
+          "human_positive_cases": 0
+        },
+        "evidence": [
+          {
+            "id": "recommendation_generation-ev",
+            "kind": "exercised_run",
+            "ref": "recommendation_generation:latest"
+          }
+        ],
+        "blockers": [
+          "No human-defensible positive Case in the latest positive-control sample (0/8 capture proxy)."
+        ],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "decision",
+          "name": "Decision",
+          "domain": "reasoning",
+          "description": "Decision",
+          "dependencies": [
+            "opportunity_case"
+          ],
+          "snapshot_aliases": [
+            "recommendation_generation"
+          ],
+          "implementation_evidence": [
+            "lib/monitor/canonical-case.ts"
+          ]
+        },
+        "score": {
+          "state": "measured",
+          "score": 35,
+          "confidence": 0.4942857142857143,
+          "sample_size": 8
+        },
+        "confidence": "medium",
+        "state": "degraded",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "measured",
+            "score": 58,
+            "confidence": 0.4,
+            "sample_size": 8
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "measured",
+            "score": 0,
+            "confidence": 0.58,
+            "sample_size": 8
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "measured",
+            "score": 0,
+            "confidence": 0.58,
+            "sample_size": 8
+          },
+          "observability": {
+            "state": "measured",
+            "score": 75,
+            "confidence": 0.45,
+            "sample_size": 1
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {
+          "positive_controls": 8,
+          "positive_controls_captured": 0,
+          "human_positive_cases": 0
+        },
+        "evidence": [
+          {
+            "id": "recommendation_generation-ev",
+            "kind": "exercised_run",
+            "ref": "recommendation_generation:latest"
+          }
+        ],
+        "blockers": [
+          "No human-defensible positive Case in the latest positive-control sample (0/8 capture proxy)."
+        ],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "portfolio_intelligence",
+          "name": "Portfolio Intelligence",
+          "domain": "reasoning",
+          "description": "Portfolio Intelligence",
+          "dependencies": [
+            "decision"
+          ],
+          "snapshot_aliases": [
+            "portfolio_strategy"
+          ],
+          "implementation_evidence": [
+            "lib/deliverable/portfolio-intelligence.ts"
+          ]
+        },
+        "score": {
+          "state": "insufficient_evidence",
+          "reason": "only 2/9 dimensions measured",
+          "sample_size": 2
+        },
+        "confidence": "low",
+        "state": "implemented",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "measured",
+            "score": 58,
+            "confidence": 0.4,
+            "sample_size": 1
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "insufficient_evidence",
+            "reason": "observability not instrumented",
+            "sample_size": 0
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {},
+        "evidence": [],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "account_memory",
+          "name": "Account Memory",
+          "domain": "monitor",
+          "description": "Account Memory",
+          "dependencies": [
+            "opportunity_case"
+          ],
+          "snapshot_aliases": [
+            "account_memory",
+            "anti_repetition"
+          ],
+          "implementation_evidence": [
+            "lib/account-memory/store.ts"
+          ]
+        },
+        "score": {
+          "state": "insufficient_evidence",
+          "reason": "only 2/9 dimensions measured",
+          "sample_size": 2
+        },
+        "confidence": "low",
+        "state": "implemented",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "measured",
+            "score": 58,
+            "confidence": 0.4,
+            "sample_size": 1
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "insufficient_evidence",
+            "reason": "observability not instrumented",
+            "sample_size": 0
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {},
+        "evidence": [],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "monitor",
+          "name": "Monitor",
+          "domain": "monitor",
+          "description": "Monitor",
+          "dependencies": [
+            "account_memory"
+          ],
+          "snapshot_aliases": [],
+          "implementation_evidence": [
+            "lib/monitor/canonical-monitor-service.ts"
+          ]
+        },
+        "score": {
+          "state": "measured",
+          "score": 90,
+          "confidence": 0.6223404255319148,
+          "sample_size": 6
+        },
+        "confidence": "medium",
+        "state": "production_wired",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "measured",
+            "score": 90,
+            "confidence": 0.7,
+            "sample_size": 6
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "measured",
+            "score": 88,
+            "confidence": 0.65,
+            "sample_size": 6
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "measured",
+            "score": 85,
+            "confidence": 0.7,
+            "sample_size": 6
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {
+          "monitor_sample": 6,
+          "false_novelty": null
+        },
+        "evidence": [
+          {
+            "id": "monitor:implementation:0",
+            "kind": "schema_exists",
+            "ref": "lib/monitor/canonical-monitor-service.ts"
+          }
+        ],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "monitor_identity",
+          "name": "Monitor Identity",
+          "domain": "monitor",
+          "description": "Monitor Identity",
+          "dependencies": [
+            "monitor",
+            "corporate_identity"
+          ],
+          "snapshot_aliases": [
+            "entity_resolution"
+          ],
+          "implementation_evidence": [
+            "lib/monitor/canonical-monitor-service.ts"
+          ]
+        },
+        "score": {
+          "state": "measured",
+          "score": 78,
+          "confidence": 0.592741935483871,
+          "sample_size": 21
+        },
+        "confidence": "medium",
+        "state": "production_wired",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "measured",
+            "score": 90,
+            "confidence": 0.7,
+            "sample_size": 6
+          },
+          "correctness": {
+            "state": "measured",
+            "score": 42,
+            "confidence": 0.5,
+            "sample_size": 21
+          },
+          "real_world_validation": {
+            "state": "measured",
+            "score": 88,
+            "confidence": 0.65,
+            "sample_size": 6
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "measured",
+            "score": 85,
+            "confidence": 0.7,
+            "sample_size": 6
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {
+          "monitor_sample": 6,
+          "false_novelty": null
+        },
+        "evidence": [
+          {
+            "id": "entity_resolution-ev",
+            "kind": "exercised_run",
+            "ref": "entity_resolution:latest"
+          }
+        ],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "monitor_full_text",
+          "name": "Monitor Full-Text",
+          "domain": "monitor",
+          "description": "Monitor Full-Text",
+          "dependencies": [
+            "monitor"
+          ],
+          "snapshot_aliases": [],
+          "implementation_evidence": [
+            "lib/monitor/full-text-extraction.ts"
+          ]
+        },
+        "score": {
+          "state": "measured",
+          "score": 90,
+          "confidence": 0.6223404255319148,
+          "sample_size": 6
+        },
+        "confidence": "medium",
+        "state": "production_wired",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "measured",
+            "score": 90,
+            "confidence": 0.7,
+            "sample_size": 6
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "measured",
+            "score": 88,
+            "confidence": 0.65,
+            "sample_size": 6
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "measured",
+            "score": 85,
+            "confidence": 0.7,
+            "sample_size": 6
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {
+          "monitor_sample": 6,
+          "false_novelty": null
+        },
+        "evidence": [
+          {
+            "id": "monitor_full_text:implementation:0",
+            "kind": "schema_exists",
+            "ref": "lib/monitor/full-text-extraction.ts"
+          }
+        ],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "scheduler",
+          "name": "Scheduler",
+          "domain": "monitor",
+          "description": "Scheduler",
+          "dependencies": [
+            "monitor"
+          ],
+          "snapshot_aliases": [],
+          "implementation_evidence": [
+            "lib/monitor/scheduler.ts"
+          ]
+        },
+        "score": {
+          "state": "insufficient_evidence",
+          "reason": "only 2/9 dimensions measured",
+          "sample_size": 2
+        },
+        "confidence": "low",
+        "state": "implemented",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "measured",
+            "score": 45,
+            "confidence": 0.7,
+            "sample_size": 1
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "insufficient_evidence",
+            "reason": "observability not instrumented",
+            "sample_size": 0
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {},
+        "evidence": [
+          {
+            "id": "scheduler:implementation:0",
+            "kind": "schema_exists",
+            "ref": "lib/monitor/scheduler.ts"
+          }
+        ],
+        "blockers": [
+          "Scheduler infrastructure exists but cron remains OFF."
+        ],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "customer_run_lifecycle",
+          "name": "Customer Run Lifecycle",
+          "domain": "operations",
+          "description": "Customer Run Lifecycle",
+          "dependencies": [
+            "context_execution_handoff"
+          ],
+          "snapshot_aliases": [],
+          "implementation_evidence": [
+            "lib/intelligence/productive-spine-store.ts"
+          ]
+        },
+        "score": {
+          "state": "insufficient_evidence",
+          "reason": "only 1/9 dimensions measured",
+          "sample_size": 1
+        },
+        "confidence": "low",
+        "state": "implemented",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "insufficient_evidence",
+            "reason": "integration not instrumented",
+            "sample_size": 0
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "insufficient_evidence",
+            "reason": "observability not instrumented",
+            "sample_size": 0
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {},
+        "evidence": [
+          {
+            "id": "customer_run_lifecycle:implementation:0",
+            "kind": "schema_exists",
+            "ref": "lib/intelligence/productive-spine-store.ts"
+          }
+        ],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "async_execution",
+          "name": "Async Execution",
+          "domain": "operations",
+          "description": "Async Execution",
+          "dependencies": [
+            "customer_run_lifecycle"
+          ],
+          "snapshot_aliases": [],
+          "implementation_evidence": [
+            "lib/intelligence/intelligence-run-dispatch.ts"
+          ]
+        },
+        "score": {
+          "state": "insufficient_evidence",
+          "reason": "only 1/9 dimensions measured",
+          "sample_size": 1
+        },
+        "confidence": "low",
+        "state": "implemented",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "insufficient_evidence",
+            "reason": "integration not instrumented",
+            "sample_size": 0
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "insufficient_evidence",
+            "reason": "observability not instrumented",
+            "sample_size": 0
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {},
+        "evidence": [
+          {
+            "id": "async_execution:implementation:0",
+            "kind": "schema_exists",
+            "ref": "lib/intelligence/intelligence-run-dispatch.ts"
+          }
+        ],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "provider_budget",
+          "name": "Provider Budget Enforcement",
+          "domain": "operations",
+          "description": "Provider Budget Enforcement",
+          "dependencies": [
+            "provider_routing"
+          ],
+          "snapshot_aliases": [],
+          "implementation_evidence": [
+            "lib/monitor/provider-routing.ts"
+          ]
+        },
+        "score": {
+          "state": "measured",
+          "score": 92,
+          "confidence": 0.6699999999999999,
+          "sample_size": 6
+        },
+        "confidence": "medium",
+        "state": "production_wired",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "measured",
+            "score": 90,
+            "confidence": 0.75,
+            "sample_size": 6
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "measured",
+            "score": 92,
+            "confidence": 0.8,
+            "sample_size": 6
+          },
+          "economics": {
+            "state": "measured",
+            "score": 88,
+            "confidence": 0.75,
+            "sample_size": 6
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {
+          "provider_calls": 158,
+          "average_calls_per_run": 26.333333333333332,
+          "observed_cost_usd": 0.662151
+        },
+        "evidence": [
+          {
+            "id": "provider_budget:implementation:0",
+            "kind": "schema_exists",
+            "ref": "lib/monitor/provider-routing.ts"
+          }
+        ],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "provider_cooldown",
+          "name": "Provider Cooldown",
+          "domain": "operations",
+          "description": "Provider Cooldown",
+          "dependencies": [
+            "provider_routing"
+          ],
+          "snapshot_aliases": [],
+          "implementation_evidence": [
+            "lib/discovery/company-first-discovery.ts"
+          ]
+        },
+        "score": {
+          "state": "measured",
+          "score": 91,
+          "confidence": 0.6780487804878049,
+          "sample_size": 1357
+        },
+        "confidence": "medium",
+        "state": "production_wired",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "measured",
+            "score": 90,
+            "confidence": 0.7,
+            "sample_size": 3
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "measured",
+            "score": 84,
+            "confidence": 0.8,
+            "sample_size": 1357
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "measured",
+            "score": 92,
+            "confidence": 0.8,
+            "sample_size": 1357
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {
+          "calls_today": 1357,
+          "errors_today": 214,
+          "observed_cost_today_usd": 4.787814,
+          "providers_with_recent_failure": 3
+        },
+        "evidence": [
+          {
+            "id": "provider_cooldown:implementation:0",
+            "kind": "schema_exists",
+            "ref": "lib/discovery/company-first-discovery.ts"
+          }
+        ],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "cogs_instrumentation",
+          "name": "COGS Instrumentation",
+          "domain": "operations",
+          "description": "COGS Instrumentation",
+          "dependencies": [
+            "provider_routing"
+          ],
+          "snapshot_aliases": [],
+          "implementation_evidence": [
+            "lib/ops/usage-ledger.ts"
+          ]
+        },
+        "score": {
+          "state": "measured",
+          "score": 90,
+          "confidence": 0.7010869565217391,
+          "sample_size": 1357
+        },
+        "confidence": "medium",
+        "state": "production_wired",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "measured",
+            "score": 90,
+            "confidence": 0.75,
+            "sample_size": 6
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "measured",
+            "score": 84,
+            "confidence": 0.8,
+            "sample_size": 1357
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "measured",
+            "score": 92,
+            "confidence": 0.8,
+            "sample_size": 1357
+          },
+          "economics": {
+            "state": "measured",
+            "score": 88,
+            "confidence": 0.75,
+            "sample_size": 6
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {
+          "provider_calls": 158,
+          "average_calls_per_run": 26.333333333333332,
+          "observed_cost_usd": 0.662151,
+          "calls_today": 1357,
+          "errors_today": 214,
+          "observed_cost_today_usd": 4.787814,
+          "providers_with_recent_failure": 3
+        },
+        "evidence": [
+          {
+            "id": "cogs_instrumentation:implementation:0",
+            "kind": "schema_exists",
+            "ref": "lib/ops/usage-ledger.ts"
+          }
+        ],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "runtime_latency",
+          "name": "Runtime / Latency",
+          "domain": "operations",
+          "description": "Runtime / Latency",
+          "dependencies": [
+            "async_execution"
+          ],
+          "snapshot_aliases": [],
+          "implementation_evidence": [
+            "lib/intelligence/productive-spine.ts"
+          ]
+        },
+        "score": {
+          "state": "measured",
+          "score": 80,
+          "confidence": 0.6682926829268293,
+          "sample_size": 6
+        },
+        "confidence": "medium",
+        "state": "degraded",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "measured",
+            "score": 90,
+            "confidence": 0.75,
+            "sample_size": 6
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "measured",
+            "score": 45,
+            "confidence": 0.7,
+            "sample_size": 6
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "measured",
+            "score": 90,
+            "confidence": 0.8,
+            "sample_size": 6
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {
+          "p95_runtime_ms": 304912
+        },
+        "evidence": [
+          {
+            "id": "runtime_latency:implementation:0",
+            "kind": "schema_exists",
+            "ref": "lib/intelligence/productive-spine.ts"
+          }
+        ],
+        "blockers": [
+          "Runtime p95/max 304912ms exceeds the 300000ms operating ceiling."
+        ],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "exception_handling",
+          "name": "Exception Handling",
+          "domain": "operations",
+          "description": "Exception Handling",
+          "dependencies": [
+            "async_execution"
+          ],
+          "snapshot_aliases": [],
+          "implementation_evidence": [
+            "lib/intelligence/productive-spine.ts"
+          ]
+        },
+        "score": {
+          "state": "insufficient_evidence",
+          "reason": "only 1/9 dimensions measured",
+          "sample_size": 1
+        },
+        "confidence": "low",
+        "state": "implemented",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "insufficient_evidence",
+            "reason": "integration not instrumented",
+            "sample_size": 0
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "insufficient_evidence",
+            "reason": "observability not instrumented",
+            "sample_size": 0
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {},
+        "evidence": [
+          {
+            "id": "exception_handling:implementation:0",
+            "kind": "schema_exists",
+            "ref": "lib/intelligence/productive-spine.ts"
+          }
+        ],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "tenant_isolation",
+          "name": "Tenant Isolation",
+          "domain": "operations",
+          "description": "Tenant Isolation",
+          "dependencies": [
+            "customer_run_lifecycle"
+          ],
+          "snapshot_aliases": [],
+          "implementation_evidence": [
+            "lib/intelligence/productive-spine-store.ts"
+          ]
+        },
+        "score": {
+          "state": "insufficient_evidence",
+          "reason": "only 1/9 dimensions measured",
+          "sample_size": 1
+        },
+        "confidence": "low",
+        "state": "implemented",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "insufficient_evidence",
+            "reason": "integration not instrumented",
+            "sample_size": 0
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "insufficient_evidence",
+            "reason": "observability not instrumented",
+            "sample_size": 0
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {},
+        "evidence": [
+          {
+            "id": "tenant_isolation:implementation:0",
+            "kind": "schema_exists",
+            "ref": "lib/intelligence/productive-spine-store.ts"
+          }
+        ],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "autonomy",
+          "name": "Autonomy",
+          "domain": "operations",
+          "description": "Autonomy",
+          "dependencies": [
+            "async_execution",
+            "provider_routing"
+          ],
+          "snapshot_aliases": [],
+          "implementation_evidence": [
+            "lib/intelligence/productive-spine.ts"
+          ]
+        },
+        "score": {
+          "state": "insufficient_evidence",
+          "reason": "only 1/9 dimensions measured",
+          "sample_size": 1
+        },
+        "confidence": "low",
+        "state": "implemented",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "insufficient_evidence",
+            "reason": "integration not instrumented",
+            "sample_size": 0
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "insufficient_evidence",
+            "reason": "observability not instrumented",
+            "sample_size": 0
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {},
+        "evidence": [
+          {
+            "id": "autonomy:implementation:0",
+            "kind": "schema_exists",
+            "ref": "lib/intelligence/productive-spine.ts"
+          }
+        ],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "us_coverage",
+          "name": "US Coverage",
+          "domain": "coverage",
+          "description": "US Coverage",
+          "dependencies": [
+            "dynamic_universe_discovery"
+          ],
+          "snapshot_aliases": [
+            "company_discovery"
+          ],
+          "implementation_evidence": [
+            "lib/discovery/company-universe.ts"
+          ]
+        },
+        "score": {
+          "state": "measured",
+          "score": 53,
+          "confidence": 0.5982000000000002,
+          "sample_size": 50
+        },
+        "confidence": "medium",
+        "state": "degraded",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "measured",
+            "score": 92,
+            "confidence": 0.75,
+            "sample_size": 6
+          },
+          "correctness": {
+            "state": "measured",
+            "score": 42,
+            "confidence": 0.5,
+            "sample_size": 50
+          },
+          "real_world_validation": {
+            "state": "measured",
+            "score": 0,
+            "confidence": 0.58,
+            "sample_size": 8
+          },
+          "reliability": {
+            "state": "measured",
+            "score": 83,
+            "confidence": 0.58,
+            "sample_size": 6
+          },
+          "quality": {
+            "state": "measured",
+            "score": 0,
+            "confidence": 0.58,
+            "sample_size": 8
+          },
+          "observability": {
+            "state": "measured",
+            "score": 90,
+            "confidence": 0.8,
+            "sample_size": 6
+          },
+          "economics": {
+            "state": "measured",
+            "score": 88,
+            "confidence": 0.7,
+            "sample_size": 6
+          },
+          "autonomy": {
+            "state": "measured",
+            "score": 90,
+            "confidence": 0.6,
+            "sample_size": 6
+          }
+        },
+        "supporting_metrics": {
+          "structural_reasonable_rate": 0.9,
+          "wrong_target_rate": 0.1,
+          "capture_proxy": 0,
+          "runs": 6,
+          "researched_accounts": 10,
+          "positive_controls": 8,
+          "positive_controls_captured": 0,
+          "human_positive_cases": 0
+        },
+        "evidence": [
+          {
+            "id": "company_discovery-ev",
+            "kind": "exercised_run",
+            "ref": "company_discovery:latest"
+          },
+          {
+            "id": "us_coverage:recall-v1",
+            "kind": "human_review",
+            "ref": "ml/data/acceptance/dynamic-universe-recall-v1.json",
+            "dated": true,
+            "date": "2026-08-27T19:16:18.441Z"
+          }
+        ],
+        "blockers": [
+          "No human-defensible positive Case in the latest positive-control sample (0/8 capture proxy)."
+        ],
+        "evidence_freshness_days": 0,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "colombia_coverage",
+          "name": "Colombia Coverage",
+          "domain": "coverage",
+          "description": "Colombia Coverage",
+          "dependencies": [
+            "dynamic_universe_discovery"
+          ],
+          "snapshot_aliases": [
+            "company_discovery"
+          ],
+          "implementation_evidence": [
+            "lib/discovery/source-intelligence/multi-country.ts"
+          ]
+        },
+        "score": {
+          "state": "measured",
+          "score": 74,
+          "confidence": 0.46444444444444444,
+          "sample_size": 50
+        },
+        "confidence": "medium",
+        "state": "production_wired",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "measured",
+            "score": 92,
+            "confidence": 0.5,
+            "sample_size": 50
+          },
+          "correctness": {
+            "state": "measured",
+            "score": 42,
+            "confidence": 0.5,
+            "sample_size": 50
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "measured",
+            "score": 75,
+            "confidence": 0.45,
+            "sample_size": 1
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {},
+        "evidence": [
+          {
+            "id": "company_discovery-ev",
+            "kind": "exercised_run",
+            "ref": "company_discovery:latest"
+          }
+        ],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "private_company_coverage",
+          "name": "Private-Company Coverage",
+          "domain": "coverage",
+          "description": "Private-Company Coverage",
+          "dependencies": [
+            "corporate_identity"
+          ],
+          "snapshot_aliases": [
+            "company_verification"
+          ],
+          "implementation_evidence": [
+            "lib/discovery/company-universe.ts"
+          ]
+        },
+        "score": {
+          "state": "measured",
+          "score": 74,
+          "confidence": 0.46444444444444444,
+          "sample_size": 21
+        },
+        "confidence": "medium",
+        "state": "production_wired",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "measured",
+            "score": 92,
+            "confidence": 0.5,
+            "sample_size": 21
+          },
+          "correctness": {
+            "state": "measured",
+            "score": 42,
+            "confidence": 0.5,
+            "sample_size": 21
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "measured",
+            "score": 75,
+            "confidence": 0.45,
+            "sample_size": 1
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {},
+        "evidence": [
+          {
+            "id": "company_verification-ev",
+            "kind": "exercised_run",
+            "ref": "company_verification:latest"
+          }
+        ],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "human_calibration",
+          "name": "Human Calibration",
+          "domain": "learning",
+          "description": "Human Calibration",
+          "dependencies": [
+            "opportunity_case"
+          ],
+          "snapshot_aliases": [],
+          "implementation_evidence": [
+            "lib/intelligence/validation-lifecycle.ts"
+          ]
+        },
+        "score": {
+          "state": "measured",
+          "score": 20,
+          "confidence": 0.5351219512195121,
+          "sample_size": 8
+        },
+        "confidence": "medium",
+        "state": "degraded",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "insufficient_evidence",
+            "reason": "integration not instrumented",
+            "sample_size": 0
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "measured",
+            "score": 0,
+            "confidence": 0.58,
+            "sample_size": 8
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "measured",
+            "score": 0,
+            "confidence": 0.58,
+            "sample_size": 8
+          },
+          "observability": {
+            "state": "insufficient_evidence",
+            "reason": "observability not instrumented",
+            "sample_size": 0
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {
+          "positive_controls": 8,
+          "positive_controls_captured": 0,
+          "human_positive_cases": 0
+        },
+        "evidence": [
+          {
+            "id": "human_calibration:implementation:0",
+            "kind": "schema_exists",
+            "ref": "lib/intelligence/validation-lifecycle.ts"
+          }
+        ],
+        "blockers": [
+          "No human-defensible positive Case in the latest positive-control sample (0/8 capture proxy)."
+        ],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "ml_shadow_learning",
+          "name": "ML / Shadow Learning",
+          "domain": "learning",
+          "description": "ML / Shadow Learning",
+          "dependencies": [
+            "human_calibration"
+          ],
+          "snapshot_aliases": [
+            "feedback_learning",
+            "outcome_learning"
+          ],
+          "implementation_evidence": [
+            "lib/intelligence/shadow-preference.ts"
+          ]
+        },
+        "score": {
+          "state": "insufficient_evidence",
+          "reason": "only 2/9 dimensions measured",
+          "sample_size": 2
+        },
+        "confidence": "low",
+        "state": "implemented",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "measured",
+            "score": 58,
+            "confidence": 0.4,
+            "sample_size": 1
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "insufficient_evidence",
+            "reason": "observability not instrumented",
+            "sample_size": 0
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {},
+        "evidence": [],
+        "blockers": [
+          "Shadow/observation only; ranking impact remains OFF."
+        ],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "production_soak",
+          "name": "Production Soak",
+          "domain": "readiness",
+          "description": "Production Soak",
+          "dependencies": [
+            "async_execution",
+            "opportunity_case"
+          ],
+          "snapshot_aliases": [],
+          "implementation_evidence": [
+            "scripts/run-intelligence-soak-v1.mts"
+          ]
+        },
+        "score": {
+          "state": "insufficient_evidence",
+          "reason": "only 1/9 dimensions measured",
+          "sample_size": 1
+        },
+        "confidence": "low",
+        "state": "implemented",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "insufficient_evidence",
+            "reason": "integration not instrumented",
+            "sample_size": 0
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "insufficient_evidence",
+            "reason": "real_world_validation not instrumented",
+            "sample_size": 0
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "insufficient_evidence",
+            "reason": "quality not instrumented",
+            "sample_size": 0
+          },
+          "observability": {
+            "state": "insufficient_evidence",
+            "reason": "observability not instrumented",
+            "sample_size": 0
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {},
+        "evidence": [
+          {
+            "id": "production_soak:implementation:0",
+            "kind": "schema_exists",
+            "ref": "scripts/run-intelligence-soak-v1.mts"
+          }
+        ],
+        "blockers": [],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      },
+      {
+        "capability": {
+          "id": "launch_readiness",
+          "name": "Launch Readiness",
+          "domain": "readiness",
+          "description": "Launch Readiness",
+          "dependencies": [
+            "production_soak",
+            "human_calibration"
+          ],
+          "snapshot_aliases": [
+            "report_readiness_assessment"
+          ],
+          "implementation_evidence": [
+            "lib/monitor/readiness.ts"
+          ]
+        },
+        "score": {
+          "state": "measured",
+          "score": 35,
+          "confidence": 0.4942857142857143,
+          "sample_size": 8
+        },
+        "confidence": "medium",
+        "state": "degraded",
+        "dimensions": {
+          "implementation": {
+            "state": "measured",
+            "score": 100,
+            "confidence": 0.35,
+            "sample_size": 1
+          },
+          "integration": {
+            "state": "measured",
+            "score": 58,
+            "confidence": 0.4,
+            "sample_size": 1
+          },
+          "correctness": {
+            "state": "insufficient_evidence",
+            "reason": "correctness not instrumented",
+            "sample_size": 0
+          },
+          "real_world_validation": {
+            "state": "measured",
+            "score": 0,
+            "confidence": 0.58,
+            "sample_size": 8
+          },
+          "reliability": {
+            "state": "insufficient_evidence",
+            "reason": "reliability not instrumented",
+            "sample_size": 0
+          },
+          "quality": {
+            "state": "measured",
+            "score": 0,
+            "confidence": 0.58,
+            "sample_size": 8
+          },
+          "observability": {
+            "state": "measured",
+            "score": 75,
+            "confidence": 0.45,
+            "sample_size": 1
+          },
+          "economics": {
+            "state": "insufficient_evidence",
+            "reason": "economics not instrumented",
+            "sample_size": 0
+          },
+          "autonomy": {
+            "state": "insufficient_evidence",
+            "reason": "autonomy not instrumented",
+            "sample_size": 0
+          }
+        },
+        "supporting_metrics": {
+          "positive_controls": 8,
+          "positive_controls_captured": 0,
+          "human_positive_cases": 0
+        },
+        "evidence": [
+          {
+            "id": "report_readiness_assessment-ev",
+            "kind": "exercised_run",
+            "ref": "report_readiness_assessment:latest"
+          }
+        ],
+        "blockers": [
+          "No human-defensible positive Case in the latest positive-control sample (0/8 capture proxy)."
+        ],
+        "evidence_freshness_days": null,
+        "last_evaluated_at": "2026-08-27T19:45:24.392Z"
+      }
+    ],
+    "critical_blockers": [
+      "No human-defensible positive Case in the latest positive-control sample (0/8 capture proxy).",
+      "Runtime p95/max 304912ms exceeds the 300000ms operating ceiling."
+    ],
+    "evidence_policy": [
+      "Real live and production observations override tests and implementation presence.",
+      "Repeated controlled soak overrides one-off acceptance.",
+      "Unit tests and code presence can establish implementation/correctness only, never live validation.",
+      "A rate with denominator zero is not measured.",
+      "Scores may decrease when runtime, failure, quality, or human validation worsens."
+    ]
+  },
+  "availability": {
+    "artifact": "available",
+    "database": "unavailable",
+    "validation_persistence": "unavailable",
+    "learned_preferences": "unavailable",
+    "message": "Database-backed sections are unavailable; deterministic artifact data remains active."
+  }
+}

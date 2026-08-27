@@ -7,6 +7,13 @@ import { loadSnapshotInputs } from "./snapshot-loader";
 import { loadLatestDeepEvidence, loadLatestResearchQuality, loadLatestSignalTemporal, loadLatestSignalBenchmark, loadLatestSignalMonitoringOperation, loadLatestEntityResolution, loadLatestOpportunitySynthesis, loadLatestClientContextReview, type DeepEvidenceArtifact, type ResearchQualityArtifact, type SignalTemporalArtifact, type SignalBenchmarkArtifact, type SignalMonitoringOperationArtifact, type EntityResolutionArtifact, type OpportunitySynthesisArtifact, type ClientContextReviewArtifact } from "./snapshot-loader";
 import type { LearnedPreferenceSource } from "./pattern-registry";
 import type { OutputValidationLifecycle } from "./validation-lifecycle";
+import {
+  buildCapabilityControlPlane,
+  type CapabilityControlPlaneInput,
+  type DynamicRecallSignals,
+  type IntelligenceControlPlane,
+  type SoakSignals,
+} from "./capability-control-plane";
 
 export const ADMIN_INTELLIGENCE_VIEW_VERSION = "admin-intelligence-v1";
 
@@ -34,6 +41,7 @@ export interface AdminIntelligenceViewModel {
   generated_at: string;
   availability: AdminIntelligenceAvailability;
   snapshot: IntelligenceSnapshot;
+  control_plane: IntelligenceControlPlane;
   feedback: FeedbackObservability;
   pattern_threshold: number;
   knowledge: {
@@ -86,8 +94,19 @@ export interface AdminIntelligenceLoadedData {
 
 const label = (value: string): string => value.replace(/_/g, " ");
 
-export function buildAdminIntelligenceViewModel(data: AdminIntelligenceLoadedData & { deep_accounts?: DeepEvidenceArtifact | null; research_quality?: ResearchQualityArtifact | null; signal_temporal?: SignalTemporalArtifact | null; signal_benchmark?: SignalBenchmarkArtifact | null; signal_monitoring_operation?: SignalMonitoringOperationArtifact | null; entity_resolution?: EntityResolutionArtifact | null; opportunity_synthesis?:OpportunitySynthesisArtifact|null;client_context_review?:ClientContextReviewArtifact|null }): AdminIntelligenceViewModel {
+export function buildAdminIntelligenceViewModel(data: AdminIntelligenceLoadedData & { deep_accounts?: DeepEvidenceArtifact | null; research_quality?: ResearchQualityArtifact | null; signal_temporal?: SignalTemporalArtifact | null; signal_benchmark?: SignalBenchmarkArtifact | null; signal_monitoring_operation?: SignalMonitoringOperationArtifact | null; entity_resolution?: EntityResolutionArtifact | null; opportunity_synthesis?:OpportunitySynthesisArtifact|null;client_context_review?:ClientContextReviewArtifact|null; dynamic_recall?: DynamicRecallSignals | null; soak?: SoakSignals | null; provider_usage?: CapabilityControlPlaneInput["provider_usage"] }): AdminIntelligenceViewModel {
   const snapshot = buildIntelligenceSnapshot(data.input);
+  const telemetry = data.dynamic_recall;
+  const controlPlane = buildCapabilityControlPlane({
+    now: data.input.now,
+    snapshot_capabilities: snapshot.capability_assessments,
+    dynamic_recall: telemetry ?? null,
+    soak: data.soak ?? null,
+    monitor_sample: data.signal_temporal?.summary.accounts ?? 0,
+    monitor_false_novelty: null,
+    account_memory_records: data.input.knowledge.account_memory_records,
+    provider_usage: data.provider_usage,
+  });
   const artifact = data.input.artifact;
   const evidenceDimension = snapshot.index.dimensions.find((d) => d.id === "evidence_integrity")!;
   const corroborated = data.input.evidence?.corroborated ?? artifact?.evidence_corroborated ?? null;
@@ -107,6 +126,7 @@ export function buildAdminIntelligenceViewModel(data: AdminIntelligenceLoadedDat
     generated_at: data.input.now,
     availability: data.availability,
     snapshot,
+    control_plane: controlPlane,
     feedback: data.feedback,
     pattern_threshold: MIN_PATTERN_SAMPLE,
     knowledge: {
@@ -252,6 +272,17 @@ export async function loadAdminIntelligenceViewModel(options: {
   const entityResolution = await loadLatestEntityResolution(options.root);
   const opportunitySynthesis=await loadLatestOpportunitySynthesis(options.root);
   const clientContextReview=await loadLatestClientContextReview(options.root);
+  const { getUsage } = await import("@/lib/ops/usage-ledger");
+  const providerUsage = getUsage();
+  const root = options.root ?? process.cwd();
+  let dynamicRecall: DynamicRecallSignals | null = null;
+  let soak: SoakSignals | null = null;
+  try {
+    const { promises: fs } = await import("node:fs");
+    const path = await import("node:path");
+    dynamicRecall = JSON.parse(await fs.readFile(path.join(root, "ml/data/acceptance/dynamic-universe-recall-v1.json"), "utf8")) as DynamicRecallSignals;
+    try { soak = JSON.parse(await fs.readFile(path.join(root, "ml/data/acceptance/intelligence-soak-v1.json"), "utf8")) as SoakSignals; } catch { /* optional historical evidence */ }
+  } catch { /* control plane labels missing acceptance evidence honestly */ }
   input.validation_lifecycles = lifecycles;
   const realOutcomes = lifecycles.flatMap((v) => v.outcomes).map((o) => ({
     id: o.id, kind: o.kind, dimension: "commercial_outcome" as const,
@@ -263,6 +294,7 @@ export async function loadAdminIntelligenceViewModel(options: {
   return buildAdminIntelligenceViewModel({
     input, feedback, deep_accounts: deepAccounts, research_quality: researchQuality, signal_temporal: signalTemporal,
     signal_benchmark: signalBenchmark, signal_monitoring_operation: signalMonitoringOperation, entity_resolution: entityResolution, opportunity_synthesis:opportunitySynthesis,client_context_review:clientContextReview,
+    dynamic_recall: dynamicRecall, soak, provider_usage: providerUsage,
     availability: {
       artifact: input.artifact ? "available" : "unavailable",
       database: databaseState,

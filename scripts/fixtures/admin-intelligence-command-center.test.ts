@@ -46,10 +46,10 @@ async function run() {
   test("23 route is private no-store", /private, no-store/.test(routeSource));
   test("24 every major tab has content code", ["Overview","Capabilities","Outputs","Patterns","Validation","Gaps & Actions","Readiness","Evidence"].every((x) => pageSource.includes(x)));
   test("25 useful error fallback exists", /No values have been replaced with fabricated zeros/.test(pageSource) && /Retry/.test(pageSource));
-  test("26 bounded Amor pilot summary links canonical workspace",
+  test("26 canonical pilot remains linked without stale manually maintained counts",
     pageSource.includes("/admin/intelligence/pilots/amor-de-gea") &&
-    pageSource.includes('value="17"') &&
-    pageSource.includes('value="10"'));
+    !pageSource.includes('value="17"') &&
+    !pageSource.includes('value="10"'));
   test("27 all eight dimensions present", local.snapshot.index.dimensions.length === 8);
   test("28 observation pattern production is forbidden", local.snapshot.patterns.every((p) => p.mode !== "production"));
   test("29 outputs retain ranking off", local.snapshot.outputs.every((o) => o.ranking_impact === "none"));
@@ -74,6 +74,12 @@ async function run() {
   delete env.ADMIN_SECRET_TOKEN; delete env.ADMIN_LOCAL_BYPASS;
   const denied = await GET(new NextRequest("https://leadlensintel.com/api/admin/intelligence/command-center"));
   test("36 normal user is denied by command-center API", denied.status === 401);
+  test("37 command center exposes the canonical automatic capability registry", local.control_plane.capabilities.length === 47);
+  test("38 latest real 0/8 capture overrides implementation and degrades dynamic recall",
+    local.control_plane.capabilities.find((c) => c.capability.id === "dynamic_universe_discovery")?.state === "degraded");
+  test("39 global score is anti-inflation capped while no human-positive Case exists",
+    local.control_plane.overall.state === "measured" && local.control_plane.overall.score <= 59);
+  test("40 command center no longer carries manually maintained pilot counts", !pageSource.includes('value="17"') && !pageSource.includes('value="10"'));
   if (saved.node === undefined) delete env.NODE_ENV; else env.NODE_ENV = saved.node;
   if (saved.secret === undefined) delete env.ADMIN_SESSION_SECRET; else env.ADMIN_SESSION_SECRET = saved.secret;
   if (saved.token === undefined) delete env.ADMIN_SECRET_TOKEN; else env.ADMIN_SECRET_TOKEN = saved.token;

@@ -9,9 +9,10 @@ import type {
   IntelligencePattern, MeasurementResult, NextBestIntelligenceAction,
 } from "@/lib/intelligence/os-contracts";
 import styles from "./page.module.css";
+import type { CapabilityMaturityEvaluation } from "@/lib/intelligence/capability-control-plane";
 
 const TABS = [
-  ["overview", "Overview"], ["capabilities", "Capabilities"], ["outputs", "Outputs"],
+  ["overview", "Overview"], ["control-plane", "Control Plane"], ["capabilities", "Legacy Capabilities"], ["outputs", "Outputs"],
   ["patterns", "Patterns"], ["validation", "Validation"], ["gaps", "Gaps & Actions"],
   ["readiness", "Readiness"], ["evidence", "Evidence"],
 ] as const;
@@ -60,16 +61,19 @@ function SectionHeader({ title, eyebrow, text }: { title: string; eyebrow?: stri
 
 function Overview({ model }: { model: AdminIntelligenceViewModel }) {
   const { snapshot } = model;
+  const control = model.control_plane;
   return <>
     <section className={styles.hero}>
       <div>
-        <span className={styles.eyebrow}>LeadLens Intelligence Maturity</span>
-        <h1>{words(snapshot.index.level)}</h1>
-        <Measurement value={snapshot.index.overall} />
+        <span className={styles.eyebrow}>LeadLens Intelligence Control Plane</span>
+        <h1>Capability maturity</h1>
+        <Measurement value={control.overall} />
         <p className={styles.diagnosis}>{snapshot.diagnosis.headline}</p>
       </div>
       <dl className={styles.heroFacts}>
-        <div><dt>Maturity confidence</dt><dd>{pct(snapshot.index.level_confidence)}</dd></div>
+        <div><dt>Maturity confidence</dt><dd>{words(control.overall_confidence)}</dd></div>
+        <div><dt>Live / soak validated</dt><dd>{control.state_counts.live_validated + control.state_counts.soak_validated}</dd></div>
+        <div><dt>Degraded / blocked</dt><dd>{control.state_counts.degraded + control.state_counts.blocked}</dd></div>
         <div><dt>Strongest capability</dt><dd>{words(snapshot.diagnosis.strongest_capability)}</dd></div>
         <div><dt>Weakest capability</dt><dd>{words(snapshot.diagnosis.weakest_capability)}</dd></div>
         <div><dt>Primary bottleneck</dt><dd>{words(snapshot.diagnosis.top_bottleneck) ?? "None identified"}</dd></div>
@@ -79,28 +83,8 @@ function Overview({ model }: { model: AdminIntelligenceViewModel }) {
       <footer>
         <span>Calculated {new Date(snapshot.calculated_at).toLocaleString()}</span>
         <span>Cutoff {snapshot.source_data_cutoff}</span>
-        <span>{snapshot.methodology_version}</span>
+        <span>{control.version}</span>
       </footer>
-    </section>
-
-    <section className={styles.panel}>
-      <SectionHeader
-        eyebrow="Pilotos activos"
-        title="Amor de Gea"
-        text="Piloto colombiano canónico. El contexto del cliente y la revisión humana siguen siendo los bloqueos actuales."
-      />
-      <div className={styles.metricGrid}>
-        <Metric label="Etapa" value="Validación con el cliente" />
-        <Metric label="Cuentas analizadas" value="6" />
-        <Metric label="Recomendadas" value="4" />
-        <Metric label="Monitoreadas" value="2" />
-        <Metric label="Preguntas sin respuesta" value="17" />
-        <Metric label="Preguntas críticas" value="10" />
-        <Metric label="Tesis revisadas" value="0" />
-        <Metric label="Salidas aptas para cliente" value="0" />
-      </div>
-      <p><strong>Próxima acción:</strong> completar y revisar las preguntas prioritarias de contexto del cliente.</p>
-      <a href="/admin/intelligence/pilots/amor-de-gea">Abrir piloto →</a>
     </section>
 
     <div className={styles.availability} role="status">
@@ -240,6 +224,55 @@ function Overview({ model }: { model: AdminIntelligenceViewModel }) {
       </div>
     </section>
   </>;
+}
+
+function CapabilityDimensionSummary({ evaluation }: { evaluation: CapabilityMaturityEvaluation }) {
+  const measuredDimensions = Object.entries(evaluation.dimensions).filter(([, value]) => value.state === "measured");
+  return <div className={styles.detail}>
+    <strong>Dimension evidence</strong>
+    <ul>{Object.entries(evaluation.dimensions).map(([name, value]) => <li key={name}>
+      {words(name)}: {value.state === "measured" ? `${value.score}/100 · confidence ${pct(value.confidence)} · n=${value.sample_size}` : `${words(value.state)} · ${value.reason}`}
+    </li>)}</ul>
+    <strong>Supporting metrics</strong>
+    {Object.keys(evaluation.supporting_metrics).length ? <ul>{Object.entries(evaluation.supporting_metrics).map(([name, value]) => <li key={name}>{words(name)}: {value ?? "Unavailable"}</li>)}</ul> : <p>No runtime metrics mapped yet.</p>}
+    <strong>Blockers</strong>
+    {evaluation.blockers.length ? <ul>{evaluation.blockers.map((blocker) => <li key={blocker}>{blocker}</li>)}</ul> : <p>No explicit blocker recorded.</p>}
+    <p><strong>Measured dimensions:</strong> {measuredDimensions.length}/9 · <strong>Evidence freshness:</strong> {evaluation.evidence_freshness_days === null ? "Unavailable" : `${evaluation.evidence_freshness_days} days`}</p>
+  </div>;
+}
+
+function ControlPlane({ model }: { model: AdminIntelligenceViewModel }) {
+  const control = model.control_plane;
+  const [domain, setDomain] = useState("all");
+  const [state, setState] = useState("all");
+  const capabilities = control.capabilities.filter((item) => (domain === "all" || item.capability.domain === domain) && (state === "all" || item.state === state));
+  return <section>
+    <SectionHeader eyebrow={`${capabilities.length} of ${control.capabilities.length} canonical capabilities`} title="Automatic capability control plane" text="Implementation, runtime quality, reliability, economics and validation are evaluated separately. Real runs override tests when they conflict." />
+    <div className={styles.metricGrid}>
+      <Metric label="Overall" value={control.overall.state === "measured" ? `${control.overall.score}/100` : "Not measured"} note={`confidence ${control.overall_confidence}`} />
+      <Metric label="Production wired" value={control.state_counts.production_wired}/>
+      <Metric label="Live validated" value={control.state_counts.live_validated}/>
+      <Metric label="Soak validated" value={control.state_counts.soak_validated}/>
+      <Metric label="Degraded" value={control.state_counts.degraded}/>
+      <Metric label="Blocked" value={control.state_counts.blocked}/>
+    </div>
+    {control.critical_blockers.length > 0 && <section className={styles.panel}><h3>Evidence-driven blockers</h3><ul>{control.critical_blockers.map((blocker) => <li key={blocker}>{blocker}</li>)}</ul></section>}
+    <div className={styles.filters}>
+      <label>Domain<select value={domain} onChange={(event) => setDomain(event.target.value)}><option value="all">All</option>{Array.from(new Set(control.capabilities.map((item) => item.capability.domain))).map((value) => <option key={value}>{value}</option>)}</select></label>
+      <label>State<select value={state} onChange={(event) => setState(event.target.value)}><option value="all">All</option>{Array.from(new Set(control.capabilities.map((item) => item.state))).map((value) => <option key={value}>{value}</option>)}</select></label>
+    </div>
+    <div className={styles.tableWrap}><table>
+      <thead><tr><th>Capability</th><th>Domain</th><th>State</th><th>Score</th><th>Confidence</th><th>Validation sample</th><th>Freshness</th></tr></thead>
+      <tbody>{capabilities.map((item) => <tr key={item.capability.id}>
+        <td><details><summary>{item.capability.name}</summary><CapabilityDimensionSummary evaluation={item}/></details></td>
+        <td>{words(item.capability.domain)}</td><td><StatePill value={item.state}/></td>
+        <td>{item.score.state === "measured" ? item.score.score : "Not measured"}</td><td>{item.confidence}</td>
+        <td>{item.score.state === "measured" ? `n=${item.score.sample_size}` : item.score.sample_size !== undefined ? `n=${item.score.sample_size}` : "—"}</td>
+        <td>{item.evidence_freshness_days === null ? "Unavailable" : `${item.evidence_freshness_days}d`}</td>
+      </tr>)}</tbody>
+    </table></div>
+    <section className={styles.panel}><h3>Scoring evidence policy</h3><ol>{control.evidence_policy.map((rule) => <li key={rule}>{rule}</li>)}</ol></section>
+  </section>;
 }
 
 function Capabilities({ capabilities }: { capabilities: IntelligenceCapabilityAssessment[] }) {
@@ -451,6 +484,7 @@ export default function IntelligencePage() {
   const active = useMemo(() => {
     if (!model) return null;
     if (tab === "overview") return <Overview model={model}/>;
+    if (tab === "control-plane") return <ControlPlane model={model}/>;
     if (tab === "capabilities") return <Capabilities capabilities={model.snapshot.capability_assessments}/>;
     if (tab === "outputs") return <Outputs model={model}/>;
     if (tab === "patterns") return <Patterns model={model}/>;
@@ -461,7 +495,7 @@ export default function IntelligencePage() {
   }, [model, tab, load]);
 
   return <AdminLayout><main className={styles.shell}>
-    <header className={styles.commandHeader}><div><span>Intelligence OS · Internal</span><h1>LeadLens Intelligence Command Center</h1><p>Operational truth about capabilities, outputs, evidence, validation and next improvements.</p></div><div className={styles.links}><a href="/admin/intelligence/growth">Growth Observatory</a><a href="/admin/intelligence/review">Review Queue</a><a href="/admin/intelligence/sources">Source Access</a><a href="/admin/intelligence/source-review">Source Review</a></div></header>
+    <header className={styles.commandHeader}><div><span>Intelligence OS · Internal</span><h1>LeadLens Intelligence Command Center</h1><p>Operational truth about capabilities, outputs, evidence, validation and next improvements.</p></div><div className={styles.links}><a href="/admin/intelligence/pilots/amor-de-gea">Pilot Workspace</a><a href="/admin/intelligence/growth">Growth Observatory</a><a href="/admin/intelligence/review">Review Queue</a><a href="/admin/intelligence/sources">Source Access</a><a href="/admin/intelligence/source-review">Source Review</a></div></header>
     <nav className={styles.tabs} aria-label="Intelligence Command Center sections">{TABS.map(([id, name]) => <a key={id} href={`#${id}`} aria-current={tab === id ? "page" : undefined} onClick={() => setTab(id)}>{name}</a>)}</nav>
     {error ? <EmptyState title="Command Center unavailable">{error} No values have been replaced with fabricated zeros. <button className={styles.button} onClick={load}>Retry</button></EmptyState>
       : !model ? <div className={styles.loading} aria-live="polite"><span/>Assembling the latest protected intelligence snapshot…</div>
