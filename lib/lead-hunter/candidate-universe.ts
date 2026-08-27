@@ -135,6 +135,7 @@ export interface CoverageSummary {
   providersAvailable: string[];
   providersFailed: string[];
   routesAttempted: number;
+  routeYield: Array<{ route: string; queries: number; resultPages: number; groundedNames: number; acceptedCompanies: number }>;
   candidatesDiscovered: number;
   candidatesUnique: number;
   eligible: number;
@@ -188,6 +189,7 @@ export interface DiscoveryRunOutput {
   providersAvailable: string[];
   providersFailed: string[];
   operatingMode: string;
+  routeMetrics?: Array<{ route: string; queries: number; resultPages: number; groundedNames: number; acceptedCompanies: number }>;
 }
 
 export type DiscoveryRunner = (plan: DiscoveryPlan) => Promise<DiscoveryRunOutput>;
@@ -441,6 +443,7 @@ export async function hunt(plan: DiscoveryPlan, runner: DiscoveryRunner, opts: H
     providersAvailable: out.providersAvailable,
     providersFailed: out.providersFailed,
     routesAttempted: plan.routes.length,
+    routeYield: out.routeMetrics ?? [],
     candidatesDiscovered: orgs.length,
     candidatesUnique: candidates.length,
     ...counts,
@@ -454,7 +457,7 @@ export async function hunt(plan: DiscoveryPlan, runner: DiscoveryRunner, opts: H
 function emptyCoverage(mode: string, avail: string[], failed: string[], gaps: DiscoveryGap[]): CoverageSummary {
   return {
     operatingMode: mode, providersAvailable: avail, providersFailed: failed,
-    routesAttempted: 0, candidatesDiscovered: 0, candidatesUnique: 0,
+    routesAttempted: 0, routeYield: [], candidatesDiscovered: 0, candidatesUnique: 0,
     eligible: 0, likelyEligible: 0, needsValidation: 0, excluded: 0, identityAmbiguous: 0,
     duplicateRate: 0, gaps,
   };

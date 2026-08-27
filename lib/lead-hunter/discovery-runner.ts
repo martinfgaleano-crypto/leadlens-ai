@@ -12,9 +12,12 @@
 import type { ICP, LeadSearchCriteria } from "@/types";
 import type { DiscoveryPlan, DiscoveryRunner, DiscoveryRunOutput, RawDiscoveredOrg } from "./candidate-universe";
 
-function criteriaFromPlan(plan: DiscoveryPlan): LeadSearchCriteria {
+export function criteriaFromPlan(plan: DiscoveryPlan): LeadSearchCriteria {
   return {
-    target_industries: plan.industries,
+    // Preserve the confirmed target organization family end-to-end. Previously
+    // organizationTypes disappeared here, allowing a manufacturer-only request
+    // to become a broad industry/event search downstream.
+    target_industries: Array.from(new Set([...plan.organizationTypes, ...plan.industries])),
     target_company_size: [],
     target_job_titles: [],
     target_geography: plan.geographies,
@@ -30,9 +33,9 @@ function criteriaFromPlan(plan: DiscoveryPlan): LeadSearchCriteria {
   };
 }
 
-function icpFromPlan(plan: DiscoveryPlan): ICP {
+export function icpFromPlan(plan: DiscoveryPlan): ICP {
   return {
-    target_industries: plan.industries,
+    target_industries: Array.from(new Set([...plan.organizationTypes, ...plan.industries])),
     target_titles: [],
     company_size_range: "",
     pain_points: [],
@@ -61,7 +64,7 @@ export const defaultDiscoveryRunner: DiscoveryRunner = async (plan): Promise<Dis
     organizationType: a.sector ?? undefined,
     origin: a.origin ?? "unknown",
     provider: "engine",
-    route: "engine",
+    route: a.route ?? "engine",
     confidence: a.domain ? "verified" : "plausible",
   }));
 
@@ -70,5 +73,6 @@ export const defaultDiscoveryRunner: DiscoveryRunner = async (plan): Promise<Dis
     providersAvailable: metrics.providers_available ?? [],
     providersFailed: metrics.providers_missing ?? [],
     operatingMode: metrics.operating_mode ?? "provider_limited",
+    routeMetrics: (metrics.universe_route_metrics ?? []).map(x => ({ route: x.route, queries: x.queries, resultPages: x.result_pages, groundedNames: x.grounded_names, acceptedCompanies: x.accepted_companies })),
   };
 };

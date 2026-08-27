@@ -160,7 +160,18 @@ try {
   const artifact = {
     acceptance: "customer-intelligence-e2e-v1", ran_at: new Date().toISOString(), soak_id: soakId, soak_phase: soakPhase,
     synthetic_context: contextText, run_id: runId, lead_hunter_run_id: leadHunterRunId,
-    candidate_universe: { total: companies.length, companies: companies.map((c: any) => ({ name: c.identity?.canonicalName, domain: c.identity?.domain, status: c.status, confidence: c.identity?.confidence, country: c.identity?.country })) },
+    candidate_universe: {
+      total: companies.length,
+      coverage: universe?.coverage ?? null,
+      companies: companies.map((c: any) => ({
+        name: c.identity?.canonicalName,
+        domain: c.identity?.domain,
+        status: c.status,
+        confidence: c.identity?.confidence,
+        country: c.identity?.country,
+        provenance: c.provenance ?? null,
+      })),
+    },
     delivered_accounts: delivered,
     research_audit: runRow?.report_json?._intelligence_run?.researchAudit ?? [],
     monitor_run_id: monitorRunId || null, timings: { ...timings, total_ms: Date.now() - startedAt },

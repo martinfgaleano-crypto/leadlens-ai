@@ -29,6 +29,7 @@ import { buildAccountThesis } from "./account-thesis";
 import { evaluateUniverseQuality, type UniverseQuality } from "./universe-quality";
 import { applyObservedChannelDirection, evaluateChannelEvidence } from "./channel-evidence-contract";
 import type { AccountCommercialRole } from "./account-role";
+import { getUsage } from "@/lib/ops/usage-ledger";
 
 export const DISCOVERY_VERSION = "company-first-v1";
 
@@ -59,8 +60,11 @@ export interface DiscoveryMetrics {
   universe_role_counts: Record<string, number>;
   universe_accounts: Array<{
     company: string; domain: string | null; sector: string | null; country: string | null;
-    origin: string; visibility: string; role: string; score: number | null;
+    origin: string; route: string; visibility: string; role: string; score: number | null;
   }>;
+  universe_route_metrics: Array<{ route: string; queries: number; result_pages: number; grounded_names: number; accepted_companies: number }>;
+  universe_identity_queries: number;
+  universe_enumeration_trace: Array<{ route: string; query: string; provider: string; result_count: number; results: Array<{ title: string | null; url: string }> }>;
   dynamic_companies_with_verified_domain: number;
   universe_quality: UniverseQuality;
   company_signal_queries: number; urls: number; extractions: number; junk_urls_skipped: number;
@@ -97,6 +101,20 @@ export interface DiscoveryMetrics {
 
 export function calculateDiscoveryCost(queries: number, extractions: number, enumerationQueries: number): number {
   return Number((queries * 0.002 + extractions * 0.008 + enumerationQueries * 0.004).toFixed(6));
+}
+
+export function persistedProviderCooldowns(): Record<string, string> {
+  const usage = getUsage();
+  const out: Record<string, string> = {};
+  for (const id of ["serper", "tavily", "brave"] as const) {
+    const u = usage[id];
+    if (!u?.last_failure || !u.last_error) continue;
+    const recent = Date.now() - new Date(u.last_failure).getTime() < 24 * 60 * 60 * 1000;
+    if (!recent) continue;
+    const classified = classifyProviderError(u.last_error);
+    if (/exhausted|invalid|rate_limited/.test(classified)) out[id] = classified;
+  }
+  return out;
 }
 
 const EVENT_VERBS_ES: Record<string, string[]> = {
@@ -309,10 +327,13 @@ export async function runCompanyFirstDiscovery(
     universe_origin_counts: {}, universe_visibility_counts: {}, universe_role_counts: {},
     universe_accounts: universe.companies.map(c => ({
       company: c.name, domain: c.domain, sector: c.sector, country: c.country,
-      origin: c.universe_origin ?? "unknown", visibility: c.visibility_tier ?? "unknown",
+      origin: c.discovery_channels?.length === 2 ? "both" : (c.universe_origin ?? "unknown"), route: c.discovery_route ?? "unknown", visibility: c.visibility_tier ?? "unknown",
       role: c.account_role ?? "unknown", score: c.universe_score ?? null,
     })),
     dynamic_companies_with_verified_domain: universe.companies.filter(c => c.universe_origin === "dynamic_enumeration" && c.confidence === "verified" && !!c.domain).length,
+    universe_route_metrics: universe.stats.route_metrics,
+    universe_identity_queries: universe.stats.domain_resolution_queries,
+    universe_enumeration_trace: universe.stats.enumeration_trace,
     universe_quality: evaluateUniverseQuality(universe.companies),
     company_signal_queries: 0, urls: 0, extractions: 0, junk_urls_skipped: 0,
     provider_calls: 0, provider_calls_by_provider: {}, provider_cooldowns: {},
@@ -324,6 +345,7 @@ export async function runCompanyFirstDiscovery(
     fresh_search_count: 0, fresh_extraction_count: 0, reused_evidence_count: 0, confidence_impact: null,
     duration_ms: 0, est_cost_usd: 0,
   };
+  Object.assign(metrics.provider_cooldowns, persistedProviderCooldowns());
   for (const c of universe.companies) {
     const origin = c.universe_origin ?? "unknown";
     const visibility = c.visibility_tier ?? "unknown";
@@ -335,7 +357,7 @@ export async function runCompanyFirstDiscovery(
   const tax = (k: string) => (metrics.error_taxonomy[k] = (metrics.error_taxonomy[k] ?? 0) + 1);
   let budgetExhausted = false;
   const projectedCost = (extraQueries = 0, extractions = 0) =>
-    calculateDiscoveryCost(metrics.company_signal_queries + extraQueries, metrics.extractions + extractions, universe.stats.enumeration_queries);
+    calculateDiscoveryCost(metrics.company_signal_queries + extraQueries, metrics.extractions + extractions, universe.stats.enumeration_queries + universe.stats.domain_resolution_queries);
   const canSpend = (extraQueries = 0, extractions = 0) => options.costCapUsd === undefined || projectedCost(extraQueries, extractions) <= options.costCapUsd;
 
   const out: LeadCandidate[] = [];
@@ -356,6 +378,8 @@ export async function runCompanyFirstDiscovery(
 
   const provYield: Record<string, number> = {};
   const providerRunStatus: Record<string, string> = {};
+  for (const p of universe.stats.providers_available) providerRunStatus[p] = "available";
+  for (const p of universe.stats.providers_failed) if (!providerRunStatus[p]) providerRunStatus[p] = "failed";
   const providerHardFailures: Record<string, number> = {};
   const daysOld = (iso: string | null) => { if (!iso) return null; const d = Math.round((Date.now() - new Date(iso).getTime()) / 86_400_000); return Number.isFinite(d) && d >= 0 ? d : null; };
 
@@ -728,7 +752,7 @@ export async function runCompanyFirstDiscovery(
   metrics.fresh_search_count = metrics.urls;
   metrics.fresh_extraction_count = metrics.extractions;
   metrics.provider_status = providerRunStatus;
-  metrics.providers_available = Object.keys(provYield);
+  metrics.providers_available = Array.from(new Set([...universe.stats.providers_available, ...Object.keys(provYield)]));
   // "missing" = a search provider that ERRORED (quota/auth/request), NOT one that
   // was healthy but returned nothing. This is what coverage diagnosis needs.
   const searchProviders = ["brave", "serper", "tavily"];
@@ -747,13 +771,17 @@ export async function runCompanyFirstDiscovery(
     metrics.operating_mode = "targeted_discovery";
     metrics.coverage_limitation = `Sin search providers${exhausted.length ? ` (agotados: ${exhausted.join("/")})` : ""}: solo investigación dirigida de sitios corporativos verificados — NO es cobertura de mercado. [${providerBreakdown}]`;
     metrics.confidence_impact = "Alta probabilidad de señales no vistas; los hallazgos son válidos pero la ausencia de hallazgos no implica ausencia de eventos.";
+  } else if (universe.stats.providers_available.length > 0) {
+    metrics.operating_mode = "provider_limited";
+    metrics.coverage_limitation = `Enumeration providers responded (${universe.stats.providers_available.join("/")}) but produced no researchable company universe. This is a coverage gap, not provider failure. [${providerBreakdown}]`;
+    metrics.confidence_impact = "No market-completeness claim is possible; target-family enumeration yielded insufficient grounded organizations.";
   } else {
     metrics.operating_mode = "stopped";
     metrics.coverage_limitation = "Sin search providers ni URLs objetivo: no hay evidencia suficiente para un reporte defendible.";
     metrics.confidence_impact = "Run detenido honestamente.";
   }
   metrics.duration_ms = Date.now() - t0;
-  metrics.est_cost_usd = Number(calculateDiscoveryCost(metrics.company_signal_queries, metrics.extractions, universe.stats.enumeration_queries).toFixed(3));
+  metrics.est_cost_usd = Number(calculateDiscoveryCost(metrics.company_signal_queries, metrics.extractions, universe.stats.enumeration_queries + universe.stats.domain_resolution_queries).toFixed(3));
   // Defensible opportunities own the delivery quota. Preliminary monitors are
   // visible only when capacity remains; they can never starve later accounts.
   const portfolio = prioritizeDiscoveryPortfolio(out, limit);

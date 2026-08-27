@@ -14,6 +14,8 @@ import type { NeedsMap } from "./needs-map";
 import { classifyEntity } from "@/lib/vault/entity-resolution";
 import { classifyOrganization } from "./organization-type";
 import { inferAccountCommercialRole, rolePriority, type AccountCommercialRole } from "./account-role";
+import { getUsage } from "@/lib/ops/usage-ledger";
+import { classifyProviderError } from "@/lib/ops/provider-health";
 
 export const COMPANY_UNIVERSE_VERSION = "company-universe-v2";
 
@@ -24,6 +26,8 @@ export interface UniverseCompany {
   region: string | null;
   sector: string | null;
   discovery_source: string;       // the enumeration URL/title the name came from
+  discovery_route?: "industry_category" | "geo_category" | "source_ecosystem" | "vertical_seed";
+  discovery_channels?: Array<"dynamic" | "pack">;
   confidence: "verified" | "plausible";
   fit_reason: string;
   visibility_tier?: "emerging" | "established" | "obvious";
@@ -36,14 +40,17 @@ export interface UniverseCompany {
   account_role_evidence?: string[];
 }
 
+export interface EnumerationRouteMetric { route: string; queries: number; result_pages: number; grounded_names: number; accepted_companies: number; }
+export interface EnumerationTrace { route: string; query: string; provider: string; result_count: number; results: Array<{ title: string | null; url: string }> }
 export interface UniverseResult {
   companies: UniverseCompany[];
-  stats: { enumeration_queries: number; raw_names: number; classified_company: number; rejected: Record<string, number>; degraded_seed_pack?: string | null };
+  stats: { enumeration_queries: number; domain_resolution_queries: number; raw_names: number; raw_name_sample: string[]; classified_company: number; rejected: Record<string, number>; degraded_seed_pack?: string | null; route_metrics: EnumerationRouteMetric[]; enumeration_trace: EnumerationTrace[]; providers_available: string[]; providers_failed: string[]; llm_extraction_used: boolean };
 }
 
 // Publisher/media and directory hosts never seed a company name from their own
 // brand — we mine the company names FROM their content instead.
 const MEDIA_OR_DIRECTORY = /(revista|diario|peri[oó]dico|portal|noticias?|prensa|larepublica|portafolio|dinero|semana|eltiempo|elespectador|bnamericas|forbes|bloomberg|reuters|paginas?amarillas|directorio|guia|listado)/i;
+export const isMediaOrDirectoryName = (name: string): boolean => MEDIA_OR_DIRECTORY.test(name);
 // Single-token names that are generic Spanish commercial words or ambiguous
 // fragments ("Inter" → ¿Inter Rapidísimo? ¿Banco Inter BR? ¿Inter Milan?).
 // These match anything downstream (substrings/homonyms) and produced the
@@ -53,6 +60,7 @@ const GENERIC_COMPANY_WORD = new Set([
   "producto", "productos", "natural", "naturales", "naturista", "naturistas", "saludable", "saludables",
   "tienda", "mercado", "supermercado", "distribuidor", "distribuidores", "hotel", "hoteles", "spa", "resort",
   "empresa", "grupo", "colombia", "bogota", "medellin", "cali", "barranquilla", "cartagena", "global", "servicios",
+  "packaging", "paper", "foods", "food", "beverage", "industrial", "industries", "manufacturing", "distribution", "enterprises",
 ]);
 
 export function rejectEnumeratedName(name: string): string | null {
@@ -77,7 +85,7 @@ function norm(value: string): string { return value.toLowerCase().normalize("NFD
  * provenance, never an asserted official domain. */
 export function inferEnumeratedDomain(company: string, pages: { title: string | null; snippet: string | null; url: string }[]): { domain: string | null; source: string | null } {
   const companyNorm = norm(company);
-  const tokens = company.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(/[^a-z0-9]+/).filter(t => t.length >= 5 && !GENERIC_COMPANY_WORD.has(t) && !/^(company|compania|internacional)$/.test(t));
+  const tokens = company.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(/[^a-z0-9]+/).filter(t => t.length >= 5 && !GENERIC_COMPANY_WORD.has(t) && !/^(company|compania|corporation|incorporated|limited|internacional)$/.test(t));
   const mentioned = pages.filter(p => norm(`${p.title ?? ""} ${p.snippet ?? ""}`).includes(companyNorm) || tokens.some(t => norm(`${p.title ?? ""} ${p.snippet ?? ""}`).includes(t)));
   for (const p of mentioned) {
     const domain = domainOf(p.url);
@@ -94,7 +102,9 @@ export function inferEnumeratedCountry(company: string, pages: { title: string |
   if (!country) return { country: null, confidence: "unknown", evidence: null };
   const geoPattern = /^colombia$/i.test(country)
     ? /\bcolombia\b|\bbogot[aá]\b|\bmedell[ií]n\b|\bcali\b|\bbarranquilla\b|\bcartagena\b|\bbucaramanga\b|\bpereira\b/i
-    : new RegExp(`\\b${country.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i");
+    : /^(united states|usa|us|u\.s\.)$/i.test(country)
+      ? /\bunited states\b|\bu\.s\.a?\b|\busa\b|\bamerican\b/i
+      : new RegExp(`\\b${country.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i");
   for (const p of pages) {
     const text = `${p.title ?? ""} ${p.snippet ?? ""}`;
     if (!norm(text).includes(companyNorm)) continue;
@@ -108,33 +118,43 @@ export function inferEnumeratedCountry(company: string, pages: { title: string |
 /** Enumeration queries: find PAGES THAT LIST companies matching the ICP —
  *  rankings, association members, sector directories — plus a few
  *  official-domain probes. Region/vertical aware, from the needs map. */
-export function enumerationQueries(icp: ICP, geo0: string, needs: NeedsMap, spanish: boolean): string[] {
-  const industry = (icp.target_industries[0] ?? "").slice(0, 60);
+export interface EnumerationRouteQuery { route: "industry_category" | "geo_category" | "source_ecosystem"; query: string; }
+
+/** Organization-enumeration queries deliberately exclude event/change terms.
+ * Events belong to Research. Every query repeats the confirmed target family so
+ * routing cannot silently broaden "manufacturers" into "any warehouse user". */
+export function enumerationRouteQueries(icp: ICP, geo0: string, needs: NeedsMap, spanish: boolean): EnumerationRouteQuery[] {
+  const target = Array.from(new Set(icp.target_industries.map(x => x.trim()).filter(Boolean))).join(" and ").slice(0, 100);
+  const industry = target || needs.target_company_profile.slice(0, 100);
   const geo = (geo0 || (spanish ? "Colombia" : "United States")).slice(0, 40);
   const wellness = /wellness|bienestar|productos? naturales|bebidas? funcional|spa|hotel|resort|retail/i.test(`${industry} ${needs.target_company_profile} ${needs.expected_need}`);
   if (spanish) {
     if (wellness) return [
-      `empresas compran venden distribuyen ${needs.expected_need.slice(0, 70)} ${geo}`,
-      `cadenas tiendas naturistas independientes ${geo} Bogotá Medellín Cali`,
-      `distribuidores multimarca productos naturales suplementos ${geo}`,
-      `hoteles boutique spa bienestar proveedores alimentos bebidas ${geo}`,
-      `resorts centros de bienestar hospitality ${geo} empresas`,
+      { route: "industry_category", query: `empresas ${industry} ${geo}` },
+      { route: "geo_category", query: `${geo} cadenas tiendas naturistas distribuidores multimarca empresas` },
+      { route: "source_ecosystem", query: `miembros asociación gremio ${industry} ${geo}` },
+      { route: "source_ecosystem", query: `expositores feria ${industry} ${geo} empresas` },
+      { route: "geo_category", query: `${industry} operadores regionales independientes ${geo}` },
     ];
     return [
-      `distribuidores especializados ${industry} ${geo}`,
-      `miembros asociación gremio ${industry} ${geo}`,
-      `expositores feria ${industry} ${geo} empresas`,
-      `cadenas regionales empresas independientes ${industry} ${geo}`,
-      `proveedores y operadores especializados ${industry} ${geo}`,
+      { route: "industry_category", query: `empresas ${industry} ${geo}` },
+      { route: "geo_category", query: `${industry} empresas por región ${geo}` },
+      { route: "source_ecosystem", query: `miembros asociación gremio ${industry} ${geo}` },
+      { route: "source_ecosystem", query: `expositores feria ${industry} ${geo} empresas` },
+      { route: "industry_category", query: `listado empresas ${industry} ${geo}` },
     ];
   }
   return [
-    `specialist ${industry} distributors ${geo}`,
-    `${industry} association members ${geo}`,
-    `${industry} trade show exhibitors ${geo} companies`,
-    `regional independent ${industry} operators ${geo}`,
-    `${industry} suppliers and specialist operators ${geo}`,
+    { route: "industry_category", query: `${geo} ${industry} companies` },
+    { route: "geo_category", query: `${industry} companies by state ${geo}` },
+    { route: "source_ecosystem", query: `${industry} association member companies ${geo}` },
+    { route: "source_ecosystem", query: `${industry} trade show exhibitor companies ${geo}` },
+    { route: "industry_category", query: `list of ${industry} companies ${geo}` },
   ];
+}
+
+export function enumerationQueries(icp: ICP, geo0: string, needs: NeedsMap, spanish: boolean): string[] {
+  return enumerationRouteQueries(icp, geo0, needs, spanish).map(x => x.query);
 }
 
 /** Portfolio construction is deliberately unlike a search-results page:
@@ -180,18 +200,29 @@ export function prioritizeUniverse(companies: UniverseCompany[], limit: number):
 /** Extract candidate company names from enumeration result pages using the LLM
  *  (bounded), then classify each with entity-resolution-v3. Deterministic
  *  fallback mines capitalized multi-word tokens from titles/snippets. */
-async function extractCompanyNames(pages: { title: string | null; snippet: string | null; url: string }[], spanish: boolean): Promise<{ names: string[]; llm_ok: boolean }> {
+export function companyNameGroundedInPages(name: string, pages: { title: string | null; snippet: string | null }[]): boolean {
+  const distinctive = name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(/[^a-z0-9]+/).filter(t => t.length >= 4 && !GENERIC_COMPANY_WORD.has(t) && !/^(company|corporation|incorporated|limited|group|grupo)$/.test(t));
+  if (!distinctive.length) return false;
+  return pages.some(p => {
+    const hay = `${p.title ?? ""} ${p.snippet ?? ""}`.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    return distinctive.every(t => new RegExp(`(?:^|[^a-z0-9])${t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?:$|[^a-z0-9])`, "i").test(hay));
+  });
+}
+
+async function extractCompanyNames(pages: { title: string | null; snippet: string | null; url: string }[], spanish: boolean, targetFamily: string): Promise<{ names: string[]; llm_ok: boolean }> {
   const corpus = pages.map((p) => `- ${p.title ?? ""} | ${p.snippet ?? ""}`).join("\n").slice(0, 6000);
   if (process.env.ANTHROPIC_API_KEY && process.env.DEMO_MODE !== "true" && corpus.length > 40) {
     try {
       const { callClaudeJSON } = await import("@/lib/anthropic");
-      const SYSTEM = `Extraes NOMBRES DE EMPRESAS REALES de fragmentos de listados/rankings/directorios. Reglas estrictas:
+      const SYSTEM = `Extraes NOMBRES DE EMPRESAS REALES de fragmentos de listados/rankings/directorios para la familia objetivo: ${targetFamily}. Reglas estrictas:
 - Solo empresas comerciales reales (con operación), NO medios, NO entidades públicas, NO ciudades/países, NO categorías genéricas.
+- Solo organizaciones que el fragmento vincula explícitamente con la familia objetivo; no amplíes a industrias adyacentes.
 - Devuelve el nombre corporativo, no el titular de la noticia.
+- El nombre debe aparecer literalmente en los fragmentos. No completes ni inventes empresas por conocimiento previo.
 - Si no estás seguro de que sea una empresa real, NO la incluyas.
 - Devuelve SOLO JSON: {"companies": ["Nombre 1","Nombre 2", ...]}`;
       const r = await callClaudeJSON<{ companies: string[] }>(SYSTEM, `Fragmentos:\n${corpus}\n\nExtrae hasta 30 nombres de empresas reales ${spanish ? "colombianas" : ""}.`, 1200);
-      return { names: (r.companies ?? []).filter(Boolean).slice(0, 40), llm_ok: true };
+      return { names: (r.companies ?? []).filter(Boolean).filter(n => companyNameGroundedInPages(n, pages)).slice(0, 40), llm_ok: true };
     } catch { /* fall through — key may exist but be EXHAUSTED at runtime */ }
   }
   // Fallback: capitalized 1-3 word tokens from titles (weak, flagged low).
@@ -209,36 +240,55 @@ export async function buildCompanyUniverse(
   const { braveProvider, serperProvider, tavilyProvider } = await import("@/lib/sources/access/providers");
   const spanish = criteria.output_language === "es" || criteria.target_market_region === "latin_america";
   const gl = criteria.target_market_region === "latin_america" ? "co" : "us";
-  const queries = enumerationQueries(icp, criteria.target_geography[0] ?? "", needs, spanish);
+  const routeQueries = enumerationRouteQueries(icp, criteria.target_geography[0] ?? "", needs, spanish);
+  const queries = routeQueries.map(x => x.query);
   const rejected: Record<string, number> = {};
   const bump = (k: string) => (rejected[k] = (rejected[k] ?? 0) + 1);
 
   // 1. Gather enumeration pages (no freshness limit — directories are evergreen).
   const seen = new Set<string>();
-  const pages: { title: string | null; snippet: string | null; url: string }[] = [];
+  const pages: { title: string | null; snippet: string | null; url: string; route: EnumerationRouteQuery["route"]; query: string }[] = [];
+  const routeMetrics = new Map<string, EnumerationRouteMetric>();
   const providerCooldown = new Set<string>();
+  const previousUsage = getUsage();
+  for (const id of ["serper", "tavily", "brave"] as const) {
+    const u = previousUsage[id];
+    if (!u?.last_failure || !u.last_error || Date.now() - new Date(u.last_failure).getTime() >= 86_400_000) continue;
+    if (/exhausted|invalid|rate_limited/.test(classifyProviderError(u.last_error))) providerCooldown.add(id);
+  }
+  const providersAvailable = new Set<string>();
+  const providersFailed = new Set<string>();
+  const enumerationTrace: EnumerationTrace[] = [];
   let providerCalls = 0;
+  let domainResolutionQueries = 0;
   const maxEnumerationProviderCalls = 8;
-  for (const q of queries) {
+  for (const rq of routeQueries) {
+    const q = rq.query;
+    const rm = routeMetrics.get(rq.route) ?? { route: rq.route, queries: 0, result_pages: 0, grounded_names: 0, accepted_companies: 0 };
+    rm.queries++; routeMetrics.set(rq.route, rm);
     const gathered: Array<{ canonical_url: string; title: string | null; snippet: string | null }> = [];
     for (const [name, provider] of [["brave", braveProvider], ["tavily", tavilyProvider], ["serper", serperProvider]] as const) {
       if (providerCalls >= maxEnumerationProviderCalls || providerCooldown.has(name)) continue;
       providerCalls++;
       const response = await provider.search({ query: q, language: spanish ? "es" : "en", region: gl, max_results: 8, query_type: "industry_discovery" }).catch(() => ({ ok: false, results: [], error: "request_failed" }));
       gathered.push(...response.results);
-      if ((response as { ok?: boolean }).ok === false) providerCooldown.add(name);
+      if ((response as { ok?: boolean }).ok === false) { providerCooldown.add(name); providersFailed.add(name); }
+      else providersAvailable.add(name);
+      if (enumerationTrace.length < 12) enumerationTrace.push({ route: rq.route, query: q, provider: name, result_count: response.results.length, results: response.results.slice(0, 5).map(x => ({ title: x.title, url: x.canonical_url })) });
       // Enumeration needs candidate breadth, not automatic provider consensus.
       if (response.results.length >= 5) break;
     }
     for (const r of gathered) {
       if (seen.has(r.canonical_url)) continue;
       seen.add(r.canonical_url);
-      pages.push({ title: r.title, snippet: r.snippet, url: r.canonical_url });
+      pages.push({ title: r.title, snippet: r.snippet, url: r.canonical_url, route: rq.route, query: q });
+      rm.result_pages++;
     }
   }
 
   // 2. Mine company names from the pages.
-  const { names: rawNames, llm_ok } = await extractCompanyNames(pages, spanish);
+  const targetFamily = Array.from(new Set(icp.target_industries)).join("; ");
+  const { names: rawNames, llm_ok } = await extractCompanyNames(pages, spanish, targetFamily);
   const enumeratedEvidence = new Map(rawNames.map(name => [name.toLowerCase(), inferEnumeratedDomain(name, pages)]));
   const targetCountry = criteria.target_geography[0] ?? "";
   const enumeratedGeography = new Map(rawNames.map(name => [name.toLowerCase(), inferEnumeratedCountry(name, pages, targetCountry)]));
@@ -292,7 +342,11 @@ export async function buildCompanyUniverse(
     const key = cls.primary_account.toLowerCase();
     if (universe.has(key)) {
       // Appearing independently in enumeration strengthens a seed's provenance.
-      if (!seedKeys.has(name.toLowerCase())) universe.get(key)!.universe_score = (universe.get(key)!.universe_score ?? 0) + 5;
+      if (!seedKeys.has(name.toLowerCase())) {
+        const existing = universe.get(key)!;
+        existing.universe_score = (existing.universe_score ?? 0) + 5;
+        existing.discovery_channels = Array.from(new Set<"dynamic" | "pack">([...(existing.discovery_channels ?? ["pack"]), "dynamic"]));
+      }
       continue;
     }
     const isSeed = seedKeys.has(name.toLowerCase());
@@ -306,6 +360,10 @@ export async function buildCompanyUniverse(
       : pages.filter(p => norm(`${p.title ?? ""} ${p.snippet ?? ""}`).includes(norm(name))).map(p => `${p.title ?? ""} ${p.snippet ?? ""}`).join(" ");
     const inferredRole = inferAccountCommercialRole(roleText);
     const accountRole = packRoles.get(cls.primary_account.toLowerCase()) ?? inferredRole.role;
+    const groundingPage = !isSeed ? pages.find(p => companyNameGroundedInPages(name, [p])) : undefined;
+    if (groundingPage) {
+      const rm = routeMetrics.get(groundingPage.route); if (rm) rm.grounded_names++;
+    }
     universe.set(key, {
       name: cls.primary_account, domain: resolvedDomain,
       country: isSeed ? (targetCountry || (gl === "co" ? "Colombia" : null)) : (geography?.country ?? null),
@@ -315,6 +373,8 @@ export async function buildCompanyUniverse(
       // commercial-fit reasoning downstream.
       sector: isSeed ? (packSectors.get(cls.primary_account.toLowerCase()) ?? icp.target_industries[0] ?? null) : (icp.target_industries[0] ?? null),
       discovery_source: isSeed ? `vertical intelligence pack: ${pack?.id ?? "unknown"}` : (enumerated?.source ?? "dynamic sector enumeration (associations/exhibitors/specialists)"),
+      discovery_route: isSeed ? "vertical_seed" : (groundingPage?.route ?? "industry_category"),
+      discovery_channels: [isSeed ? "pack" : "dynamic"],
       confidence: resolvedDomain ? "verified" : "plausible",
       fit_reason: isSeed
         ? `Prior sectorial de LeadLens para ${icp.target_industries[0] ?? ""}; aún requiere señal y evidencia comercial.`
@@ -327,13 +387,44 @@ export async function buildCompanyUniverse(
       account_role_confidence: packRoles.has(cls.primary_account.toLowerCase()) ? "high" : inferredRole.confidence,
       account_role_evidence: packRoles.has(cls.primary_account.toLowerCase()) ? [`curated vertical role: ${accountRole}`] : inferredRole.evidence,
     });
+    if (!isSeed && groundingPage) { const rm = routeMetrics.get(groundingPage.route); if (rm) rm.accepted_companies++; }
     if (resolvedDomain) claimedDomains.set(resolvedDomain, key);
+  }
+
+  // 4. Bounded identity expansion for organizations discovered autonomously.
+  // Category/list pages rarely link each corporate homepage. Resolve only the
+  // first few grounded names through ONE healthy provider; this is permitted
+  // named-account expansion because the names came from upstream discovery.
+  // The existing host/name guard remains authoritative, so search snippets can
+  // never turn a directory or unrelated company into an official domain.
+  const unresolved = Array.from(universe.values()).filter(c => c.universe_origin === "dynamic_enumeration" && !c.domain).slice(0, 6);
+  const identityProvider = providersAvailable.has("brave") && !providerCooldown.has("brave")
+    ? (["brave", braveProvider] as const)
+    : providersAvailable.has("tavily") && !providerCooldown.has("tavily") ? (["tavily", tavilyProvider] as const) : null;
+  if (identityProvider) {
+    for (const company of unresolved) {
+      if (providerCalls >= 12) break;
+      const q = `"${company.name}" official company website ${targetCountry} ${targetFamily}`.slice(0, 240);
+      providerCalls++; domainResolutionQueries++;
+      const response = await identityProvider[1].search({ query: q, language: spanish ? "es" : "en", region: gl, max_results: 5, query_type: "company_specific" }).catch(() => ({ ok: false, results: [], error: "request_failed" }));
+      if ((response as { ok?: boolean }).ok === false) { providersFailed.add(identityProvider[0]); break; }
+      const identityPages = response.results.map(r => ({ title: r.title, snippet: r.snippet, url: r.canonical_url }));
+      if (enumerationTrace.length < 20) enumerationTrace.push({ route: "named_account_expansion", query: q, provider: identityProvider[0], result_count: response.results.length, results: response.results.slice(0, 5).map(x => ({ title: x.title, url: x.canonical_url })) });
+      const inferred = inferEnumeratedDomain(company.name, identityPages);
+      if (!inferred.domain) continue;
+      const claimed = claimedDomains.get(inferred.domain);
+      if (claimed && claimed !== company.name.toLowerCase()) { bump("duplicate_domain_identity"); continue; }
+      company.domain = inferred.domain;
+      company.confidence = "verified";
+      company.discovery_source = `${company.discovery_source}; corporate identity: ${inferred.source}`;
+      claimedDomains.set(inferred.domain, company.name.toLowerCase());
+    }
   }
 
   const companies = prioritizeUniverse(Array.from(universe.values()), opts.maxCompanies ?? 40);
   return {
     companies,
-    stats: { enumeration_queries: queries.length, raw_names: rawNames.length, classified_company: companies.length, rejected, degraded_seed_pack },
+    stats: { enumeration_queries: queries.length, domain_resolution_queries: domainResolutionQueries, raw_names: rawNames.length, raw_name_sample: rawNames.slice(0, 30), classified_company: companies.length, rejected, degraded_seed_pack, route_metrics: Array.from(routeMetrics.values()), enumeration_trace: enumerationTrace, providers_available: Array.from(providersAvailable), providers_failed: Array.from(providersFailed), llm_extraction_used: llm_ok },
   };
 }
 

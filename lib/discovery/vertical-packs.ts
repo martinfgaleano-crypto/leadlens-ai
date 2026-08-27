@@ -176,10 +176,15 @@ export const VERTICAL_PACKS: VerticalPack[] = [FLEET, LOGISTICS, OPERATIONAL_SW,
 /** Match the best pack for an ICP (industries + offer text). Null if none. */
 export function matchVerticalPack(icp: ICP, criteria: LeadSearchCriteria): VerticalPack | null {
   const hay = `${icp.target_industries.join(" ")} ${criteria.offer_summary ?? ""} ${criteria.value_proposition ?? ""}`.toLowerCase();
+  const offer = `${criteria.offer_summary ?? ""} ${criteria.value_proposition ?? ""}`.toLowerCase();
   const targetCountries = new Set((criteria.target_geography ?? []).map(c => c.trim().toLowerCase()));
   let best: { pack: VerticalPack; hits: number } | null = null;
   for (const p of VERTICAL_PACKS) {
     if (p.target_countries?.length && !p.target_countries.some(c => targetCountries.has(c.toLowerCase()))) continue;
+    // The wellness pack models a seller seeking retail/hospitality CHANNELS.
+    // A warehouse/plant software seller targeting beverage companies is not a
+    // wellness-channel objective even if "beverage" appears in its target.
+    if (/^wellness_channels_/.test(p.id) && !/(wellness|wellbeing|bienestar|herbal|botanical|infusion|natural product|functional beverage|bebida funcional)/i.test(offer)) continue;
     const hits = (hay.match(new RegExp(p.match.source, "gi")) ?? []).length;
     if (hits > 0 && (!best || hits > best.hits)) best = { pack: p, hits };
   }
