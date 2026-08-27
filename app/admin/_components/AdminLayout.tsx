@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { adminLogout } from "@/lib/admin/admin-client";
+import { ADMIN_NAVIGATION } from "@/lib/admin/admin-information-architecture";
 
 
 const S = {
@@ -179,36 +180,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     window.location.replace("/admin/login");
   }
 
-  const nav = [
-    { href: "/admin",               label: "Overview" },
-    { href: "/admin/beta-readiness", label: "Beta Readiness" },
-    { href: "/admin/onboarding",    label: "Onboarding" },
-    { href: "/admin/orders",        label: "Orders" },
-    { href: "/admin/deliverables",  label: "Deliverables" },
-    { href: "/admin/jobs",          label: "Jobs" },
-    { href: "/admin/snapshots",     label: "Snapshots" },
-    { href: "/admin/searches",      label: "Searches" },
-    { href: "/admin/monitor-runs",  label: "Monitor Ops" },
-    { href: "/admin/vault-foundation", label: "Vault Foundation" },
-    { href: "/admin/lead-hunter",   label: "Lead Hunter" },
-    { href: "/admin/vault-report-bridge", label: "Vault Bridge" },
-    { href: "/admin/intelligence",  label: "Intelligence · Command Center" },
-    { href: "/admin/intelligence/pilots/amor-de-gea", label: "↳ Piloto · Amor de Gea" },
-    { href: "/admin/operations/providers", label: "Provider Health" },
-    { href: "/admin/vault",         label: "Vault" },
-    { href: "/admin/companies",     label: "Companies" },
-    { href: "/admin/credits",       label: "Credits" },
-    { href: "/admin/feedback",            label: "Feedback Analytics" },
-    { href: "/admin/analytics",          label: "Analytics" },
-    { href: "/admin/notifications",      label: "Notifications" },
-    { href: "/admin/vault-performance",  label: "Vault Performance" },
-    { href: "/admin/vault-candidates",   label: "Vault Candidates" },
-    { href: "/admin/sources",            label: "Sources" },
-    { href: "/admin/source-config", label: "Source Config" },
-    { href: "/admin/source-runs",   label: "Source Runs" },
-    { href: "/admin/settings",      label: "Settings" },
-  ];
-
   const close = () => setMenuOpen(false);
 
   const sidebarContent = (
@@ -218,16 +189,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <span style={S.brandTag}>Admin — Internal</span>
       </div>
       <nav style={S.nav}>
-        <div style={S.navSection}>Operations</div>
-        {nav.map((item) => (
-          <NavLink
-            key={item.href}
-            href={item.href}
-            label={item.label}
-            active={item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href)}
-            onClick={close}
-          />
-        ))}
+        {ADMIN_NAVIGATION.map((section) => <div key={section.id}>
+          <div style={S.navSection}>{section.label}</div>
+          {section.items.map((item) => (
+            <NavLink key={item.href} href={item.href} label={item.label}
+              active={item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href)} onClick={close} />
+          ))}
+        </div>)}
       </nav>
       <div style={S.footer}>
         <Link href="/" style={{ display: "block", color: "#475569", fontSize: "0.75rem", marginBottom: "0.5rem", textDecoration: "none" }}>

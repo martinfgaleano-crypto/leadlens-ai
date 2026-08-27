@@ -1,0 +1,400 @@
+{
+  "version": "admin-information-architecture-v1",
+  "generated_at": "2026-08-27T20:50:24.184Z",
+  "page_entrypoints": 55,
+  "primary_destinations": 22,
+  "deprecated_navigation_destinations": 8,
+  "counts": {
+    "primary": 13,
+    "secondary": 9,
+    "contextual": 25,
+    "deprecated_navigation": 8
+  },
+  "surfaces": [
+    {
+      "route": "/admin",
+      "file": "app/admin/page.tsx",
+      "disposition": "primary",
+      "section": "control",
+      "purpose": "Live operational summary"
+    },
+    {
+      "route": "/admin/analytics",
+      "file": "app/admin/analytics/page.tsx",
+      "disposition": "secondary",
+      "section": "customer",
+      "purpose": "Customer lifecycle metrics"
+    },
+    {
+      "route": "/admin/beta-readiness",
+      "file": "app/admin/beta-readiness/page.tsx",
+      "disposition": "primary",
+      "section": "control",
+      "purpose": "Automatic evidence-based launch gates"
+    },
+    {
+      "route": "/admin/companies",
+      "file": "app/admin/companies/page.tsx",
+      "disposition": "secondary",
+      "section": "intelligence",
+      "purpose": "Company records"
+    },
+    {
+      "route": "/admin/companies/[id]",
+      "file": "app/admin/companies/[id]/page.tsx",
+      "disposition": "contextual",
+      "section": null,
+      "purpose": "Detail route reached from a parent workflow"
+    },
+    {
+      "route": "/admin/credits",
+      "file": "app/admin/credits/page.tsx",
+      "disposition": "secondary",
+      "section": "customer",
+      "purpose": "Customer credit ledger"
+    },
+    {
+      "route": "/admin/credits/[userId]",
+      "file": "app/admin/credits/[userId]/page.tsx",
+      "disposition": "contextual",
+      "section": null,
+      "purpose": "Detail route reached from a parent workflow"
+    },
+    {
+      "route": "/admin/deliverables",
+      "file": "app/admin/deliverables/page.tsx",
+      "disposition": "secondary",
+      "section": "execute",
+      "purpose": "Customer delivery queue"
+    },
+    {
+      "route": "/admin/feedback",
+      "file": "app/admin/feedback/page.tsx",
+      "disposition": "primary",
+      "section": "customer",
+      "purpose": "Human feedback and outcome learning"
+    },
+    {
+      "route": "/admin/intelligence",
+      "file": "app/admin/intelligence/page.tsx",
+      "disposition": "primary",
+      "section": "control",
+      "purpose": "Capability maturity and evidence"
+    },
+    {
+      "route": "/admin/intelligence/discovery",
+      "file": "app/admin/intelligence/discovery/page.tsx",
+      "disposition": "contextual",
+      "section": null,
+      "purpose": "Reachable contextual surface; not a primary navigation destination"
+    },
+    {
+      "route": "/admin/intelligence/growth",
+      "file": "app/admin/intelligence/growth/page.tsx",
+      "disposition": "contextual",
+      "section": null,
+      "purpose": "Reachable contextual surface; not a primary navigation destination"
+    },
+    {
+      "route": "/admin/intelligence/pilots/[pilotId]",
+      "file": "app/admin/intelligence/pilots/[pilotId]/page.tsx",
+      "disposition": "contextual",
+      "section": null,
+      "purpose": "Detail route reached from a parent workflow"
+    },
+    {
+      "route": "/admin/intelligence/pilots/[pilotId]/[section]",
+      "file": "app/admin/intelligence/pilots/[pilotId]/[section]/page.tsx",
+      "disposition": "contextual",
+      "section": null,
+      "purpose": "Detail route reached from a parent workflow"
+    },
+    {
+      "route": "/admin/intelligence/review",
+      "file": "app/admin/intelligence/review/page.tsx",
+      "disposition": "primary",
+      "section": "intelligence",
+      "purpose": "Validation queue"
+    },
+    {
+      "route": "/admin/intelligence/source-review",
+      "file": "app/admin/intelligence/source-review/page.tsx",
+      "disposition": "contextual",
+      "section": null,
+      "purpose": "Reachable contextual surface; not a primary navigation destination"
+    },
+    {
+      "route": "/admin/intelligence/sources",
+      "file": "app/admin/intelligence/sources/page.tsx",
+      "disposition": "primary",
+      "section": "intelligence",
+      "purpose": "Source access and utility"
+    },
+    {
+      "route": "/admin/jobs",
+      "file": "app/admin/jobs/page.tsx",
+      "disposition": "primary",
+      "section": "execute",
+      "purpose": "Execution lifecycle"
+    },
+    {
+      "route": "/admin/jobs/[id]",
+      "file": "app/admin/jobs/[id]/page.tsx",
+      "disposition": "contextual",
+      "section": null,
+      "purpose": "Detail route reached from a parent workflow"
+    },
+    {
+      "route": "/admin/lead-hunter",
+      "file": "app/admin/lead-hunter/page.tsx",
+      "disposition": "primary",
+      "section": "intelligence",
+      "purpose": "Candidate universe and review"
+    },
+    {
+      "route": "/admin/lead-hunter/briefs",
+      "file": "app/admin/lead-hunter/briefs/page.tsx",
+      "disposition": "contextual",
+      "section": null,
+      "purpose": "Reachable contextual surface; not a primary navigation destination"
+    },
+    {
+      "route": "/admin/lead-hunter/candidates",
+      "file": "app/admin/lead-hunter/candidates/page.tsx",
+      "disposition": "contextual",
+      "section": null,
+      "purpose": "Reachable contextual surface; not a primary navigation destination"
+    },
+    {
+      "route": "/admin/lead-hunter/runs",
+      "file": "app/admin/lead-hunter/runs/page.tsx",
+      "disposition": "contextual",
+      "section": null,
+      "purpose": "Reachable contextual surface; not a primary navigation destination"
+    },
+    {
+      "route": "/admin/lead-hunter/runs/[id]",
+      "file": "app/admin/lead-hunter/runs/[id]/page.tsx",
+      "disposition": "contextual",
+      "section": null,
+      "purpose": "Detail route reached from a parent workflow"
+    },
+    {
+      "route": "/admin/login",
+      "file": "app/admin/login/page.tsx",
+      "disposition": "contextual",
+      "section": null,
+      "purpose": "Authentication entrypoint; intentionally absent from authenticated navigation"
+    },
+    {
+      "route": "/admin/monitor-runs",
+      "file": "app/admin/monitor-runs/page.tsx",
+      "disposition": "primary",
+      "section": "execute",
+      "purpose": "Recurring monitor runs"
+    },
+    {
+      "route": "/admin/notifications",
+      "file": "app/admin/notifications/page.tsx",
+      "disposition": "deprecated_navigation",
+      "section": null,
+      "purpose": "Contextual operational surface"
+    },
+    {
+      "route": "/admin/onboarding",
+      "file": "app/admin/onboarding/page.tsx",
+      "disposition": "primary",
+      "section": "customer",
+      "purpose": "Customer context intake"
+    },
+    {
+      "route": "/admin/operations/providers",
+      "file": "app/admin/operations/providers/page.tsx",
+      "disposition": "primary",
+      "section": "control",
+      "purpose": "Provider availability, limits and cost"
+    },
+    {
+      "route": "/admin/orders",
+      "file": "app/admin/orders/page.tsx",
+      "disposition": "secondary",
+      "section": "customer",
+      "purpose": "Order administration"
+    },
+    {
+      "route": "/admin/orders/[id]",
+      "file": "app/admin/orders/[id]/page.tsx",
+      "disposition": "contextual",
+      "section": null,
+      "purpose": "Detail route reached from a parent workflow"
+    },
+    {
+      "route": "/admin/pilot",
+      "file": "app/admin/pilot/page.tsx",
+      "disposition": "primary",
+      "section": "execute",
+      "purpose": "Create and run customer pilots"
+    },
+    {
+      "route": "/admin/pilot/artifact",
+      "file": "app/admin/pilot/artifact/page.tsx",
+      "disposition": "contextual",
+      "section": null,
+      "purpose": "Reachable contextual surface; not a primary navigation destination"
+    },
+    {
+      "route": "/admin/reports/institutional/[jobId]",
+      "file": "app/admin/reports/institutional/[jobId]/page.tsx",
+      "disposition": "contextual",
+      "section": null,
+      "purpose": "Detail route reached from a parent workflow"
+    },
+    {
+      "route": "/admin/searches",
+      "file": "app/admin/searches/page.tsx",
+      "disposition": "secondary",
+      "section": "execute",
+      "purpose": "Search execution detail"
+    },
+    {
+      "route": "/admin/searches/[id]",
+      "file": "app/admin/searches/[id]/page.tsx",
+      "disposition": "contextual",
+      "section": null,
+      "purpose": "Detail route reached from a parent workflow"
+    },
+    {
+      "route": "/admin/settings",
+      "file": "app/admin/settings/page.tsx",
+      "disposition": "secondary",
+      "section": "customer",
+      "purpose": "Operational configuration"
+    },
+    {
+      "route": "/admin/snapshots",
+      "file": "app/admin/snapshots/page.tsx",
+      "disposition": "deprecated_navigation",
+      "section": null,
+      "purpose": "Reachable contextually from Jobs and reports"
+    },
+    {
+      "route": "/admin/source-config",
+      "file": "app/admin/source-config/page.tsx",
+      "disposition": "deprecated_navigation",
+      "section": null,
+      "purpose": "Contextual from Source Intelligence"
+    },
+    {
+      "route": "/admin/source-runs",
+      "file": "app/admin/source-runs/page.tsx",
+      "disposition": "deprecated_navigation",
+      "section": null,
+      "purpose": "Contextual from Source Intelligence"
+    },
+    {
+      "route": "/admin/sources",
+      "file": "app/admin/sources/page.tsx",
+      "disposition": "deprecated_navigation",
+      "section": null,
+      "purpose": "Consolidated into Source Intelligence"
+    },
+    {
+      "route": "/admin/system-health",
+      "file": "app/admin/system-health/page.tsx",
+      "disposition": "secondary",
+      "section": "control",
+      "purpose": "Infrastructure and queue diagnostics"
+    },
+    {
+      "route": "/admin/vault",
+      "file": "app/admin/vault/page.tsx",
+      "disposition": "secondary",
+      "section": "intelligence",
+      "purpose": "Reusable account evidence"
+    },
+    {
+      "route": "/admin/vault-candidates",
+      "file": "app/admin/vault-candidates/page.tsx",
+      "disposition": "deprecated_navigation",
+      "section": null,
+      "purpose": "Consolidated into Lead Hunter"
+    },
+    {
+      "route": "/admin/vault-foundation",
+      "file": "app/admin/vault-foundation/page.tsx",
+      "disposition": "primary",
+      "section": "intelligence",
+      "purpose": "Verified companies, signals and sources"
+    },
+    {
+      "route": "/admin/vault-foundation/candidates/new",
+      "file": "app/admin/vault-foundation/candidates/new/page.tsx",
+      "disposition": "contextual",
+      "section": null,
+      "purpose": "Reachable contextual surface; not a primary navigation destination"
+    },
+    {
+      "route": "/admin/vault-foundation/companies",
+      "file": "app/admin/vault-foundation/companies/page.tsx",
+      "disposition": "contextual",
+      "section": null,
+      "purpose": "Reachable contextual surface; not a primary navigation destination"
+    },
+    {
+      "route": "/admin/vault-foundation/contacts",
+      "file": "app/admin/vault-foundation/contacts/page.tsx",
+      "disposition": "contextual",
+      "section": null,
+      "purpose": "Reachable contextual surface; not a primary navigation destination"
+    },
+    {
+      "route": "/admin/vault-foundation/signal-review",
+      "file": "app/admin/vault-foundation/signal-review/page.tsx",
+      "disposition": "contextual",
+      "section": null,
+      "purpose": "Reachable contextual surface; not a primary navigation destination"
+    },
+    {
+      "route": "/admin/vault-foundation/signals",
+      "file": "app/admin/vault-foundation/signals/page.tsx",
+      "disposition": "contextual",
+      "section": null,
+      "purpose": "Reachable contextual surface; not a primary navigation destination"
+    },
+    {
+      "route": "/admin/vault-foundation/sources",
+      "file": "app/admin/vault-foundation/sources/page.tsx",
+      "disposition": "contextual",
+      "section": null,
+      "purpose": "Reachable contextual surface; not a primary navigation destination"
+    },
+    {
+      "route": "/admin/vault-foundation/suppression",
+      "file": "app/admin/vault-foundation/suppression/page.tsx",
+      "disposition": "contextual",
+      "section": null,
+      "purpose": "Reachable contextual surface; not a primary navigation destination"
+    },
+    {
+      "route": "/admin/vault-performance",
+      "file": "app/admin/vault-performance/page.tsx",
+      "disposition": "deprecated_navigation",
+      "section": null,
+      "purpose": "Consolidated into Intelligence OS"
+    },
+    {
+      "route": "/admin/vault-report-bridge",
+      "file": "app/admin/vault-report-bridge/page.tsx",
+      "disposition": "deprecated_navigation",
+      "section": null,
+      "purpose": "Legacy implementation surface"
+    },
+    {
+      "route": "/admin/vault/[id]",
+      "file": "app/admin/vault/[id]/page.tsx",
+      "disposition": "contextual",
+      "section": null,
+      "purpose": "Detail route reached from a parent workflow"
+    }
+  ]
+}

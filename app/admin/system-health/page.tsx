@@ -158,11 +158,11 @@ export default function SystemHealthPage() {
           </div>
         )}
 
-        {/* Delivery readiness score */}
+        {/* Legacy infrastructure inventory; launch truth lives in Launch Readiness. */}
         <div style={S.sec}>
-          <p style={S.stit}>Production Readiness Score</p>
+          <p style={S.stit}>Legacy delivery infrastructure · not a launch score</p>
           <div style={S.grid}>
-            <ScoreCard label="Overall"         score={data?.scores?.overall          ?? 0} />
+            <ScoreCard label="Legacy coverage" score={data?.scores?.overall          ?? 0} sub="Configuration inventory only" />
             <ScoreCard label="Onboarding"      score={data?.scores?.onboarding       ?? 0} sub="Form → account → ICP → search" />
             <ScoreCard label="Payments"        score={data?.scores?.payments         ?? 0} sub="Lemon Squeezy secret + variants" />
             <ScoreCard label="Processing"      score={data?.scores?.processing       ?? 0} sub="Apollo + DB tables" />
@@ -195,7 +195,7 @@ export default function SystemHealthPage() {
         <div style={S.sec}>
           <p style={S.stit}>Configuration</p>
           <div style={S.grid}>
-            <Check ok={!!data?.apollo_key_set}         label="APOLLO_API_KEY"             sub="Required for all lead generation" />
+            <Check ok={!data?.apollo_key_set}          label="Apollo disabled"            sub="Not part of the canonical Intelligence provider chain" warn={!!data?.apollo_key_set} />
             <Check ok={!!data?.supabase_url_set}       label="SUPABASE_URL"                sub="Database connection" />
             <Check ok={!!data?.supabase_service_set}   label="SUPABASE_SERVICE_ROLE_KEY"   sub="Admin DB operations" />
             <Check ok={!!data?.app_url_set}            label="NEXT_PUBLIC_APP_URL"          sub="Processing triggers + magic links" />

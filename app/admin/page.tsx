@@ -15,6 +15,7 @@ type Settings = {
   anthropic_configured: boolean;
   lemonsqueezy_webhook_secret_configured: boolean;
 };
+type LaunchSummary = { readiness?: { score: number; level: string; confidence: string; blockers: string[]; evaluated_at: string } };
 
 function badge(status: string) {
   const map: Record<string, { bg: string; color: string }> = {
@@ -56,6 +57,7 @@ export default function AdminOverviewPage() {
   const [orders, setOrders]     = useState<Order[]>([]);
   const [jobs, setJobs]         = useState<Job[]>([]);
   const [settings, setSettings] = useState<Settings | null>(null);
+  const [launch, setLaunch] = useState<LaunchSummary | null>(null);
   const [settingsError, setSettingsError] = useState(false);
   const [loading, setLoading]   = useState(true);
   const [authError, setAuthError] = useState(false);
@@ -74,7 +76,8 @@ export default function AdminOverviewPage() {
     const fetchData = Promise.all([
       adminFetch("/api/admin/orders?limit=50"),
       adminFetch("/api/admin/jobs?limit=50"),
-    ]).then(async ([oRes, jRes]) => {
+      adminFetch("/api/admin/intelligence/launch-readiness"),
+    ]).then(async ([oRes, jRes, rRes]) => {
       if (oRes.status === 401 || oRes.status === 403) {
         setAuthError(true);
         return;
@@ -82,6 +85,7 @@ export default function AdminOverviewPage() {
       const [oData, jData] = await Promise.all([oRes.json(), jRes.json()]);
       setOrders(oData.orders ?? []);
       setJobs(jData.jobs ?? []);
+      if (rRes.ok) setLaunch(await rRes.json().catch(() => null));
     }).catch(() => {
       // Network or parse error — leave empty arrays, don't crash
     });
@@ -138,16 +142,14 @@ export default function AdminOverviewPage() {
   // Only surface warnings when we KNOW something is false — never when settings is null/unavailable
   const supabaseMissing   = settings !== null && settings.admin_token_configured !== undefined && !settings.supabase_configured;
   const adminTokenMissing = settings !== null && settings.admin_token_configured === false;
-  const lsWebhookMissing  = settings !== null && !settings.lemonsqueezy_webhook_secret_configured;
   const devBypassActive   = settings?.dev_bypass_active === true;
 
-  // All critical items OK (token, Supabase, LS webhook)
+  // Admin/runtime controls are separate from payments and commercial launch.
   const allCoreOk = settings !== null &&
     settings.admin_token_configured &&
-    settings.supabase_configured &&
-    settings.lemonsqueezy_webhook_secret_configured;
+    settings.supabase_configured;
 
-  const hasWarnings = supabaseMissing || adminTokenMissing || lsWebhookMissing;
+  const hasWarnings = supabaseMissing || adminTokenMissing;
 
   const recentOrders = [...orders].sort((a, b) => b.created_at.localeCompare(a.created_at)).slice(0, 5);
   const recentJobs   = [...jobs].sort((a, b) => b.created_at.localeCompare(a.created_at)).slice(0, 5);
@@ -182,7 +184,6 @@ export default function AdminOverviewPage() {
           <div style={{ fontWeight: 700, color: "#92400e", fontSize: "0.8rem", marginBottom: "0.5rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Configuration warnings</div>
           {supabaseMissing  && <div style={{ color: "#92400e", fontSize: "0.8rem", marginBottom: "0.3rem" }}>Supabase not configured — orders will not be persisted. Add NEXT_PUBLIC_SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY.</div>}
           {adminTokenMissing && <div style={{ color: "#92400e", fontSize: "0.8rem", marginBottom: "0.3rem" }}>ADMIN_SECRET_TOKEN not set — dashboard is unprotected. Add it to .env.local and restart the dev server.</div>}
-          {lsWebhookMissing  && <div style={{ color: "#92400e", fontSize: "0.8rem" }}>Lemon Squeezy webhook secret not configured — orders will not be auto-created on payment. Add LEMONSQUEEZY_WEBHOOK_SECRET.</div>}
           <div style={{ marginTop: "0.625rem" }}>
             <Link href="/admin/settings" style={{ color: "#0ea5e9", fontSize: "0.8rem", fontWeight: 600 }}>View full configuration checklist →</Link>
           </div>
@@ -193,9 +194,13 @@ export default function AdminOverviewPage() {
       {allCoreOk && (
         <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: "0.75rem", padding: "0.875rem 1.25rem", marginBottom: "1.5rem", display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <span style={{ color: "#15803d", fontSize: "1.1rem", fontWeight: 800 }}>✓</span>
-          <span style={{ color: "#15803d", fontSize: "0.875rem", fontWeight: 600 }}>Core admin configuration ready — token, Supabase, and Lemon Squeezy webhook are all configured.</span>
+          <span style={{ color: "#15803d", fontSize: "0.875rem", fontWeight: 600 }}>Core Admin controls are configured. This is not a launch-readiness verdict.</span>
         </div>
       )}
+
+      {launch?.readiness && <Link href="/admin/beta-readiness" style={{ display: "block", textDecoration: "none", background: "#0f172a", color: "#fff", borderRadius: ".75rem", padding: "1rem 1.25rem", marginBottom: "1.5rem" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", gap: 16, alignItems: "center" }}><div><div style={{ color: "#7dd3fc", fontSize: ".68rem", fontWeight: 800, letterSpacing: ".08em" }}>AUTOMATIC LAUNCH READINESS</div><strong style={{ fontSize: "1rem", textTransform: "capitalize" }}>{launch.readiness.level.replace(/_/g, " ")}</strong><div style={{ color: "#94a3b8", fontSize: ".74rem", marginTop: 3 }}>{launch.readiness.blockers.length} failing gates · confidence {launch.readiness.confidence}</div></div><div style={{ fontWeight: 900, fontSize: "2rem" }}>{launch.readiness.score}<span style={{ color: "#94a3b8", fontSize: ".75rem" }}>/100</span></div></div>
+      </Link>}
 
       {/* Dev tools — only visible in development, never in production */}
       {IS_DEV && settings?.supabase_configured && (

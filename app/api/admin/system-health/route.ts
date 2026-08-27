@@ -226,6 +226,8 @@ export async function GET(req: NextRequest) {
 
   results.all_tables_ok  = allTablesOk;
   results.delivery_score = overallScore;
+  results.score_model_status = "legacy_delivery_configuration_only";
+  results.launch_readiness_source = "/api/admin/intelligence/launch-readiness";
 
   return NextResponse.json(results);
 }

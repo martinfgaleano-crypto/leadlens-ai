@@ -1,221 +1,67 @@
 "use client";
-import { useEffect, useState } from "react";
-import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
 import AdminLayout from "../_components/AdminLayout";
 import { adminFetch } from "@/lib/admin/admin-client";
+import type { LaunchReadinessAssessment, LaunchReadinessGate } from "@/lib/intelligence/launch-readiness";
 
-// ─── Beta Readiness (internal) ────────────────────────────────────────────────
-// One page answering: is LeadLens ready to receive a beta customer?
-// Critical config comes live from system-health; product/business/operational
-// items are manual checklists persisted in localStorage (works without
-// Supabase). Booleans only — never secret values.
-
-type EnvHealth = {
-  supabase_url_set: boolean;
-  supabase_anon_key_set: boolean;
-  supabase_service_role_set: boolean;
-  admin_secret_set: boolean;
-  internal_run_secret_set: boolean;
-  cron_secret_set: boolean;
-  app_url_set: boolean;
-  demo_mode: boolean;
-  production_safe: boolean;
-  missing_for_production: string[];
+type Payload = {
+  generated_at: string;
+  readiness: LaunchReadinessAssessment;
+  capability_summary: { overall: { state: string; score?: number }; confidence: string; states: Record<string, number>; blockers: string[] };
+  history: Array<{ observed_at: string; score: number; level: string; confidence: string; blocker_count: number; capability_score: number | null }>;
+  persistence: { available: boolean; persisted: boolean; error: string | null };
 };
 
-type Health = {
-  env_health?: EnvHealth;
-  ls_secret_set?: boolean;
-  ls_variants_configured?: boolean;
-  apollo_key_set?: boolean;
-  supabase_reachable?: boolean;
-};
+const colors: Record<string, string> = { pass: "#15803d", degraded: "#b45309", fail: "#b91c1c", unmeasured: "#64748b" };
+const labels: Record<string, string> = { pass: "PASS", degraded: "DEGRADED", fail: "FAIL", unmeasured: "UNMEASURED" };
+const words = (value: string) => value.replace(/_/g, " ");
 
-const MANUAL_KEY = "leadlens_beta_readiness_manual";
-
-const PRODUCT_CHECKS: { label: string; href: string }[] = [
-  { label: "Landing reachable", href: "/demo-pipeline" },
-  { label: "Signup reachable", href: "/signup" },
-  { label: "Login reachable", href: "/login" },
-  { label: "Dashboard route", href: "/dashboard" },
-  { label: "Report page route", href: "/results/example" },
-  { label: "Admin monitor ops", href: "/admin/monitor-runs" },
-  { label: "Vault Foundation (internal)", href: "/admin/vault-foundation" },
-];
-
-const BUSINESS_ITEMS = [
-  "Legal pages present (privacy/terms)",
-  "Refund page present",
-  "Support/contact email present on landing",
-  "Pricing current on landing",
-  "Apollo disabled / licensed-only (see Critical config)",
-  "No automatic email sending claimed anywhere",
-  "No LinkedIn automation claimed anywhere",
-  "No guaranteed meetings/revenue claimed anywhere",
-];
-
-const OPERATIONAL_ITEMS = [
-  "Supabase migrations 001–029 applied",
-  "Manual QA steps 1–55 completed (BETA_SMOKE_QA.md)",
-  "First customer playbook reviewed (BETA_OPERATIONS_PLAYBOOK.md)",
-  "Test order created end-to-end",
-  "Test monitor run completed (baseline + comparison)",
-  "Test report downloaded (CSV + Markdown)",
-  "Test feedback saved and visible in admin",
-];
-
-function CheckRow({ ok, label, detail }: { ok: boolean | null; label: string; detail?: string }) {
-  return (
-    <div style={{ display: "flex", alignItems: "flex-start", gap: "0.6rem", padding: "0.45rem 0", borderBottom: "1px solid #f8fafc" }}>
-      <span style={{ fontSize: "0.85rem", width: 20, flexShrink: 0 }}>{ok === null ? "…" : ok ? "✅" : "❌"}</span>
-      <div>
-        <div style={{ fontSize: "0.82rem", color: "#0f172a", fontWeight: 600 }}>{label}</div>
-        {detail && <div style={{ fontSize: "0.72rem", color: "#94a3b8" }}>{detail}</div>}
-      </div>
+function Gate({ gate }: { gate: LaunchReadinessGate }) {
+  const color = colors[gate.state];
+  return <article style={{ background: "#fff", border: "1px solid #e2e8f0", borderLeft: `4px solid ${color}`, borderRadius: 10, padding: "1rem 1.1rem" }}>
+    <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "flex-start" }}>
+      <div><strong style={{ color: "#0f172a", fontSize: ".9rem" }}>{gate.label}</strong><div style={{ color: "#64748b", fontSize: ".74rem", marginTop: 3 }}>Weight {gate.weight} · n={gate.sample_size} · {gate.capability_ids.length} capabilities</div></div>
+      <span style={{ color, background: `${color}12`, border: `1px solid ${color}35`, borderRadius: 999, padding: ".18rem .52rem", fontSize: ".66rem", fontWeight: 800 }}>{labels[gate.state]}</span>
     </div>
-  );
+    <p style={{ color: "#334155", fontSize: ".8rem", lineHeight: 1.5, margin: ".65rem 0 .4rem" }}>{gate.reason}</p>
+    {gate.next_action && <p style={{ color: "#0f172a", fontSize: ".76rem", margin: 0 }}><strong>Next:</strong> {gate.next_action}</p>}
+    <details style={{ marginTop: ".55rem", color: "#64748b", fontSize: ".72rem" }}><summary>Machine-readable evidence</summary><ul>{gate.evidence.length ? gate.evidence.map((item) => <li key={item}>{item}</li>) : <li>No evidence reference available.</li>}</ul></details>
+  </article>;
 }
 
-export default function BetaReadinessPage() {
-  const [health, setHealth] = useState<Health | null>(null);
-  const [manual, setManual] = useState<Record<string, boolean>>({});
-
-  useEffect(() => {
-    (async () => {
-      const res = await adminFetch("/api/admin/system-health");
-      if (res.ok) setHealth(await res.json().catch(() => null));
-      else setHealth({});
-    })();
+export default function LaunchReadinessPage() {
+  const [data, setData] = useState<Payload | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const refresh = useCallback(async () => {
+    setLoading(true); setError(null);
     try {
-      const raw = localStorage.getItem(MANUAL_KEY);
-      if (raw) setManual(JSON.parse(raw));
-    } catch { /* fresh state */ }
+      const response = await adminFetch("/api/admin/intelligence/launch-readiness");
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error ?? "Readiness unavailable");
+      setData(body as Payload);
+    } catch (cause) { setError(cause instanceof Error ? cause.message : "Readiness unavailable"); }
+    finally { setLoading(false); }
   }, []);
+  useEffect(() => { void refresh(); }, [refresh]);
 
-  function toggle(item: string) {
-    setManual(prev => {
-      const next = { ...prev, [item]: !prev[item] };
-      try { localStorage.setItem(MANUAL_KEY, JSON.stringify(next)); } catch { /* no persistence */ }
-      return next;
-    });
-  }
-
-  const eh = health?.env_health ?? null;
-  const criticalReady = !!eh?.production_safe;
-  const manualTotal = BUSINESS_ITEMS.length + OPERATIONAL_ITEMS.length;
-  const manualDone = [...BUSINESS_ITEMS, ...OPERATIONAL_ITEMS].filter(i => manual[i]).length;
-
-  // Launch readiness score: live critical checks + Lemon config + manual items.
-  const liveChecks: boolean[] = eh ? [
-    eh.supabase_url_set && eh.supabase_service_role_set,
-    eh.supabase_anon_key_set,
-    eh.admin_secret_set,
-    eh.internal_run_secret_set,
-    eh.cron_secret_set,
-    eh.app_url_set,
-    !eh.demo_mode,
-    !!health?.ls_secret_set,
-    !!health?.ls_variants_configured,
-  ] : [];
-  const liveDone = liveChecks.filter(Boolean).length;
-  const totalChecks = liveChecks.length + manualTotal;
-  const doneChecks = liveDone + manualDone;
-  const readinessPct = totalChecks > 0 ? Math.round((doneChecks / totalChecks) * 100) : 0;
-  const meterColor = readinessPct === 100 ? "#16a34a" : readinessPct >= 70 ? "#d97706" : "#dc2626";
-
-  const sectionStyle: React.CSSProperties = { background: "#fff", border: "1px solid #e2e8f0", borderRadius: "0.75rem", padding: "1.1rem 1.25rem", marginBottom: "1.25rem" };
-  const titleStyle: React.CSSProperties = { fontWeight: 700, fontSize: "0.9rem", color: "#0f172a", marginBottom: "0.6rem" };
-
-  return (
-    <AdminLayout>
-      <div style={{ marginBottom: "1.25rem" }}>
-        <h1 style={{ color: "#0f172a", fontSize: "1.4rem", fontWeight: 800, margin: 0 }}>Beta Readiness</h1>
-        <p style={{ color: "#64748b", fontSize: "0.85rem", margin: "0.35rem 0 0" }}>
-          One answer to: can we put a real beta customer on this deploy?
-        </p>
-      </div>
-
-      {/* Launch readiness meter */}
-      <div style={{ marginBottom: "1rem", background: "#fff", border: "1px solid #e2e8f0", borderRadius: "0.75rem", padding: "1.1rem 1.25rem" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "0.5rem" }}>
-          <span style={{ fontWeight: 700, fontSize: "0.85rem", color: "#0f172a" }}>Launch readiness</span>
-          <span style={{ fontWeight: 800, fontSize: "1.4rem", color: meterColor }}>{eh ? `${readinessPct}%` : "…"}</span>
-        </div>
-        <div style={{ height: 10, background: "#f1f5f9", borderRadius: 999, overflow: "hidden" }}>
-          <div style={{ width: `${readinessPct}%`, height: "100%", background: meterColor, borderRadius: 999, transition: "width 0.4s ease" }} />
-        </div>
-        <div style={{ marginTop: "0.5rem", fontSize: "0.72rem", color: "#94a3b8" }}>
-          {eh ? `${doneChecks}/${totalChecks} checks — ${liveDone}/${liveChecks.length} live config · ${manualDone}/${manualTotal} manual` : "Loading live configuration…"}
-        </div>
-      </div>
-
-      {/* Verdict banner */}
-      <div style={{ marginBottom: "1.25rem", padding: "0.85rem 1.1rem", borderRadius: "0.6rem", fontWeight: 700, fontSize: "0.9rem",
-        background: criticalReady && manualDone === manualTotal ? "#f0fdf4" : "#fef3c7",
-        border: `1px solid ${criticalReady && manualDone === manualTotal ? "#bbf7d0" : "#fde68a"}`,
-        color: criticalReady && manualDone === manualTotal ? "#15803d" : "#92400e" }}>
-        {criticalReady && manualDone === manualTotal
-          ? "READY — critical config complete and all manual checks marked done."
-          : `NOT READY — ${criticalReady ? "" : "critical config incomplete. "}Manual checks: ${manualDone}/${manualTotal} done.`}
-      </div>
-
-      {/* Critical configuration (live) */}
-      <div style={sectionStyle}>
-        <div style={titleStyle}>Critical configuration (live)</div>
-        <CheckRow ok={eh ? eh.supabase_url_set && eh.supabase_service_role_set : null} label="Supabase configured" detail="URL + service role" />
-        <CheckRow ok={eh?.supabase_anon_key_set ?? null} label="Supabase anon key (customer auth)" />
-        <CheckRow ok={eh?.admin_secret_set ?? null} label="ADMIN_SECRET_TOKEN" />
-        <CheckRow ok={eh?.internal_run_secret_set ?? null} label="INTERNAL_RUN_SECRET (processor)" />
-        <CheckRow ok={eh?.cron_secret_set ?? null} label="CRON_SECRET (drainer auto-recovery)" />
-        <CheckRow ok={eh?.app_url_set ?? null} label="NEXT_PUBLIC_APP_URL (async triggers)" />
-        <CheckRow ok={health ? !!health.ls_secret_set : null} label="Lemon Squeezy webhook secret" />
-        <CheckRow ok={health ? !!health.ls_variants_configured : null} label="Lemon checkout variants" />
-        <CheckRow ok={eh ? !eh.demo_mode : null} label="Demo mode OFF" detail={eh?.demo_mode ? "DEMO_MODE=true — must be off for real customers" : undefined} />
-        <CheckRow
-          ok={health ? true : null}
-          label="Apollo licensed-only enforcement"
-          detail={health?.apollo_key_set
-            ? "API key present — customer-facing use stays blocked unless APOLLO_LICENSED_PROVIDER_ENABLED=true (requires data licensing)"
-            : "No Apollo key configured"}
-        />
-        {eh && eh.missing_for_production.length > 0 && (
-          <div style={{ marginTop: "0.6rem", fontSize: "0.75rem", color: "#dc2626" }}>
-            Missing for production: {eh.missing_for_production.join(", ")}
-          </div>
-        )}
-      </div>
-
-      {/* Product readiness (open each to verify) */}
-      <div style={sectionStyle}>
-        <div style={titleStyle}>Product readiness — open each route to verify</div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-          {PRODUCT_CHECKS.map(c => (
-            <Link key={c.href} href={c.href} target="_blank" style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: 999, padding: "0.3rem 0.85rem", fontSize: "0.75rem", fontWeight: 600, color: "#0f172a", textDecoration: "none" }}>
-              {c.label} ↗
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* Manual checklists */}
-      {[
-        { title: "Business readiness (manual)", items: BUSINESS_ITEMS },
-        { title: "Operational readiness (manual)", items: OPERATIONAL_ITEMS },
-      ].map(section => (
-        <div key={section.title} style={sectionStyle}>
-          <div style={titleStyle}>{section.title}</div>
-          {section.items.map(item => (
-            <label key={item} style={{ display: "flex", alignItems: "flex-start", gap: "0.6rem", padding: "0.4rem 0", borderBottom: "1px solid #f8fafc", cursor: "pointer" }}>
-              <input type="checkbox" checked={!!manual[item]} onChange={() => toggle(item)} style={{ marginTop: "0.15rem" }} />
-              <span style={{ fontSize: "0.82rem", color: manual[item] ? "#15803d" : "#0f172a" }}>{item}</span>
-            </label>
-          ))}
-        </div>
-      ))}
-
-      <p style={{ color: "#94a3b8", fontSize: "0.72rem" }}>
-        Manual checks persist in this browser only (localStorage). Live config comes from /api/admin/system-health — values are never shown.
-      </p>
-    </AdminLayout>
-  );
+  const r = data?.readiness;
+  const scoreColor = !r ? "#64748b" : r.score >= 75 ? "#15803d" : r.score >= 50 ? "#b45309" : "#b91c1c";
+  return <AdminLayout><main style={{ maxWidth: 1120, margin: "0 auto", color: "#0f172a" }}>
+    <header style={{ display: "flex", justifyContent: "space-between", gap: 20, alignItems: "flex-start", marginBottom: 22 }}>
+      <div><span style={{ color: "#0284c7", fontSize: ".7rem", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase" }}>Automatic control · internal</span><h1 style={{ fontSize: "1.55rem", margin: ".3rem 0" }}>Launch Readiness</h1><p style={{ color: "#64748b", maxWidth: 720, margin: 0, lineHeight: 1.5 }}>Computed from current capability telemetry, production controls and empirical validation. No manual percentage or browser checklist contributes.</p></div>
+      <button onClick={() => void refresh()} disabled={loading} style={{ border: 0, borderRadius: 8, padding: ".62rem .9rem", background: "#0f172a", color: "#fff", fontWeight: 700 }}>{loading ? "Evaluating…" : "Re-evaluate"}</button>
+    </header>
+    {error && <section style={{ padding: 16, border: "1px solid #fecaca", background: "#fef2f2", borderRadius: 10, color: "#991b1b" }}><strong>No score substituted.</strong> {error}</section>}
+    {r && <>
+      <section style={{ display: "grid", gridTemplateColumns: "minmax(220px, .8fr) minmax(300px, 2fr)", gap: 16, marginBottom: 18 }}>
+        <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 12, padding: 20 }}><div style={{ color: "#64748b", fontSize: ".72rem", fontWeight: 700 }}>CURRENT AUTOMATIC SCORE</div><div style={{ color: scoreColor, fontWeight: 900, fontSize: "3.2rem", lineHeight: 1.1, marginTop: 8 }}>{r.score}<span style={{ fontSize: "1rem" }}>/100</span></div><div style={{ fontWeight: 800, textTransform: "capitalize", marginTop: 8 }}>{words(r.level)}</div><div style={{ color: "#64748b", fontSize: ".75rem", marginTop: 4 }}>Confidence {r.confidence} · n={r.sample_size}</div></div>
+        <div style={{ background: "#0f172a", color: "#e2e8f0", borderRadius: 12, padding: 20 }}><h2 style={{ color: "#fff", margin: "0 0 .6rem", fontSize: "1rem" }}>Current launch truth</h2>{r.blockers.length ? <ul style={{ paddingLeft: 18, margin: 0 }}>{r.blockers.map((item) => <li key={item} style={{ marginBottom: 7, lineHeight: 1.45 }}>{item}</li>)}</ul> : <p>No failing gate in the current evidence.</p>}<p style={{ color: "#94a3b8", fontSize: ".72rem", margin: "1rem 0 0" }}>Evaluated {new Date(r.evaluated_at).toLocaleString()} · source cutoff {r.source_data_cutoff ? new Date(r.source_data_cutoff).toLocaleString() : "unavailable"}</p></div>
+      </section>
+      {!data?.persistence.available && <section style={{ background: "#fffbeb", border: "1px solid #fde68a", color: "#92400e", padding: 12, borderRadius: 8, marginBottom: 16 }}><strong>History not durable yet.</strong> Apply migration 055. Current evaluation remains live and honest; no trend is claimed.</section>}
+      <section><h2 style={{ fontSize: "1rem" }}>Launch gates</h2><div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))", gap: 12 }}>{r.gates.map((gate) => <Gate key={gate.id} gate={gate} />)}</div></section>
+      <section style={{ marginTop: 22, background: "#fff", border: "1px solid #e2e8f0", borderRadius: 12, padding: 18 }}><h2 style={{ fontSize: "1rem", marginTop: 0 }}>Durable history</h2>{data.history.length ? <div style={{ overflowX: "auto" }}><table style={{ borderCollapse: "collapse", width: "100%", fontSize: ".76rem" }}><thead><tr>{["Observed", "Readiness", "Level", "Capability", "Confidence", "Blockers"].map((x) => <th key={x} style={{ textAlign: "left", padding: 8, borderBottom: "1px solid #cbd5e1" }}>{x}</th>)}</tr></thead><tbody>{data.history.map((x) => <tr key={`${x.observed_at}:${x.score}`}><td style={{ padding: 8 }}>{new Date(x.observed_at).toLocaleString()}</td><td>{x.score}</td><td>{words(x.level)}</td><td>{x.capability_score ?? "unmeasured"}</td><td>{x.confidence}</td><td>{x.blocker_count}</td></tr>)}</tbody></table></div> : <p style={{ color: "#64748b", fontSize: ".8rem" }}>No persisted history is available. This is an honest empty state, not a zero trend.</p>}</section>
+      <details style={{ marginTop: 18, color: "#475569", fontSize: ".78rem" }}><summary>Scoring policy</summary><ul>{r.policy.map((item) => <li key={item}>{item}</li>)}</ul></details>
+    </>}
+  </main></AdminLayout>;
 }

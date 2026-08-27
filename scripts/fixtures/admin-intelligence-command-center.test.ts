@@ -55,7 +55,7 @@ async function run() {
   test("29 outputs retain ranking off", local.snapshot.outputs.every((o) => o.ranking_impact === "none"));
   test("30 trends remain explicitly uninstrumented", /not instrumented/.test(local.empty_states.trends));
   test("31 lift remains explicit not measured", /Not measured/.test(local.empty_states.lift));
-  test("32 no historical persistence added", !/intelligence_index_snapshots/.test(loaderSource + routeSource));
+  test("32 command-center loader remains read-only; durable launch history is isolated behind its Admin endpoint", !/intelligence_control_plane_snapshots/.test(loaderSource + routeSource));
   test("33 source links preserved", ["growth","review","sources","source-review"].every((x) => pageSource.includes(`/admin/intelligence/${x}`)));
   test("34 page performs one command-center load", (pageSource.match(/adminFetch\("\/api\/admin\/intelligence\/command-center"/g) ?? []).length === 1);
 
