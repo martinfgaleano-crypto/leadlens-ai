@@ -33,7 +33,10 @@ const emailA = `ll-e2e-a-${stamp}@example.com`;
 const emailB = `ll-e2e-b-${stamp}@example.com`;
 const password = `E2e-${stamp}-Aa!`;
 const contextId = `e2e_context_${stamp}`;
-const contextText = "Vendemos automatización de bodegas, integración WMS y orquestación de inventarios a fabricantes y distribuidores medianos y grandes en Colombia. Buscamos empresas que operen directamente centros de distribución, bodegas o plantas y que hayan abierto, ampliado, automatizado o invertido recientemente en infraestructura logística. Excluir entidades públicas, medios, consultoras, empresas de software puro, retailers sin operación logística propia y operaciones totalmente tercerizadas.";
+const contextText = process.env.LEADLENS_ACCEPTANCE_CONTEXT ?? "Vendemos automatización de bodegas, integración WMS y orquestación de inventarios a fabricantes y distribuidores medianos y grandes en Colombia. Buscamos empresas que operen directamente centros de distribución, bodegas o plantas y que hayan abierto, ampliado, automatizado o invertido recientemente en infraestructura logística. Excluir entidades públicas, medios, consultoras, empresas de software puro, retailers sin operación logística propia y operaciones totalmente tercerizadas.";
+const locale = process.env.LEADLENS_ACCEPTANCE_LOCALE === "en" ? "en" : "es";
+const soakId = process.env.LEADLENS_SOAK_ID ?? null;
+const soakPhase = process.env.LEADLENS_SOAK_PHASE ?? null;
 const startedAt = Date.now();
 const timings: Record<string, number> = {};
 const checks: Array<{ name: string; ok: boolean; detail?: string }> = [];
@@ -61,7 +64,7 @@ try {
   check("real authenticated owners created", Boolean(userA && userB));
 
   let t = Date.now();
-  const interpreted = await interpret(req("/api/interpret", tokenA, { input: contextText, locale: "es" }));
+  const interpreted = await interpret(req("/api/interpret", tokenA, { input: contextText, locale }));
   timings.stage_a_ms = Date.now() - t;
   const interpretationBody = await interpreted.json() as { interpretation?: { status?: string }; confirmation_token?: string };
   check("Stage A reachable and confirmable", interpreted.status === 200 && interpretationBody.interpretation?.status === "ready_for_confirmation" && Boolean(interpretationBody.confirmation_token), `HTTP ${interpreted.status}`);
@@ -155,7 +158,7 @@ try {
     }];
   }).filter(([, value]) => (value as { calls: number }).calls > 0));
   const artifact = {
-    acceptance: "customer-intelligence-e2e-v1", ran_at: new Date().toISOString(),
+    acceptance: "customer-intelligence-e2e-v1", ran_at: new Date().toISOString(), soak_id: soakId, soak_phase: soakPhase,
     synthetic_context: contextText, run_id: runId, lead_hunter_run_id: leadHunterRunId,
     candidate_universe: { total: companies.length, companies: companies.map((c: any) => ({ name: c.identity?.canonicalName, domain: c.identity?.domain, status: c.status, confidence: c.identity?.confidence, country: c.identity?.country })) },
     delivered_accounts: delivered,

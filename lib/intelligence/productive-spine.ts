@@ -140,6 +140,7 @@ async function runIntelligenceExecution(
     if (candidates.length === 0) throw new Error("no_research_ready_candidates");
 
     const researchLimit = Math.min(candidates.length, Math.max(input.deliveryLimit, input.researchLimit));
+    let researchedLeads: ProcessedLead[] = [];
     const report = await deps.pipeline({
       onboardingData: built.input.onboardingData,
       plan: input.plan,
@@ -151,6 +152,7 @@ async function runIntelligenceExecution(
       deliveryLimit: input.deliveryLimit,
       deliveryQualityFloor: "warm",
       decisionOnly: true,
+      onResearchComplete: (leads) => { researchedLeads = leads; },
     });
 
     await saveStage("case_synthesis");
@@ -158,9 +160,24 @@ async function runIntelligenceExecution(
       const item = canonicalCaseForLead(lead);
       return item ? [item] : [];
     });
-    run.researchAudit = report.processed_leads.map(lead => {
+    run.researchAudit = researchedLeads.map(lead => {
       const c = report.canonical_cases?.find(item => item.lead_id === lead.id);
-      return { company: lead.candidate.company, category: lead.qualification.category, fitScore: lead.qualification.fit_score, signalDate: lead.candidate.signal_date ?? null, sourceUrl: lead.candidate.source_url ?? null, canonicalDecision: c?.decision ?? "hold", reasons: c?.reasons ?? ["case_missing"] };
+      return {
+        company: lead.candidate.company, domain: lead.candidate.domain ?? null,
+        country: lead.candidate.country ?? lead.candidate.location ?? null,
+        category: lead.qualification.category, fitScore: lead.qualification.fit_score,
+        signalDate: lead.candidate.signal_date ?? null, sourceUrl: lead.candidate.source_url ?? null,
+        signalType: lead.candidate.signal_type ?? null,
+        researchConfidence: lead.enrichment.research_confidence ?? null,
+        evidenceClaims: (lead.enrichment.evidence_discipline ?? []).map(claim => ({
+          type: claim.type, claim: claim.claim, date: claim.date ?? null,
+          source_url: lead.candidate.source_url ?? null,
+        })),
+        risks: lead.enrichment.opportunity_risks ?? [],
+        nextQuestion: lead.enrichment.next_best_question ?? null,
+        qcStatus: lead.outreach.qc_status ?? null,
+        canonicalDecision: c?.decision ?? "hold", reasons: c?.reasons ?? ["case_missing"],
+      };
     });
     // WARM is not enough for customer delivery. The canonical Case owns the
     // commercial truth: Monitor/Hold research remains counted but is not

@@ -173,6 +173,8 @@
     "test:customer-intelligence-e2e": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/customer-intelligence-e2e-seams.test.ts",
     "test:bounded-async-relevance": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/bounded-async-relevance.test.ts",
     "accept:customer-intelligence-e2e": "npx -y tsx --tsconfig tsconfig.json scripts/accept-customer-intelligence-e2e.mts",
+    "soak:intelligence-v1": "npx -y tsx --tsconfig tsconfig.json scripts/run-intelligence-soak-v1.mts",
+    "analyze:intelligence-soak-v1": "npx -y tsx --tsconfig tsconfig.json scripts/analyze-intelligence-soak-v1.mts",
     "accept:live-monitor-provider": "npx -y tsx --tsconfig tsconfig.json scripts/accept-live-monitor-provider.mts"
   },
   "dependencies": {

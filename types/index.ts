@@ -760,6 +760,9 @@ export interface PipelineInput {
   /** Productive Intelligence may refuse to present COLD/DISCARD research as a
    * useful opportunity result. Research remains visible in run metadata. */
   deliveryQualityFloor?: "warm";
+  /** Acceptance/soak observability hook. Receives every account that consumed
+   * Research before delivery selection; never affects ranking or output. */
+  onResearchComplete?: (leads: ProcessedLead[]) => void;
 }
 
 // ─── Provider result ──────────────────────────────────────────────────────────

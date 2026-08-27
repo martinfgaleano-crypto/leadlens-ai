@@ -17,7 +17,14 @@ export interface IntelligenceRunRecord {
   attempt: number;
   deliveryLimit: number;
   researchLimit: number;
-  researchAudit?: Array<{ company: string; category: string; fitScore: number; signalDate: string | null; sourceUrl: string | null; canonicalDecision: string; reasons: string[] }>;
+  researchAudit?: Array<{
+    company: string; domain: string | null; country: string | null; category: string;
+    fitScore: number; signalDate: string | null; sourceUrl: string | null;
+    signalType: string | null; researchConfidence: number | null;
+    evidenceClaims: Array<{ type: string; claim: string; date: string | null; source_url: string | null }>;
+    risks: string[]; nextQuestion: string | null; qcStatus: string | null;
+    canonicalDecision: string; reasons: string[];
+  }>;
   createdAt: string;
   updatedAt: string;
 }

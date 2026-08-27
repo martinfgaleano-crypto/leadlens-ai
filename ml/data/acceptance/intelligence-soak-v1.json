@@ -1,0 +1,3015 @@
+{
+  "version": "intelligence-soak-v1",
+  "generated_at": "2026-08-27T15:34:04.878Z",
+  "milestone": "00e9607",
+  "phases": {
+    "A": 5,
+    "D": 5
+  },
+  "design": {
+    "contexts": 10,
+    "countries": {
+      "United States": 8,
+      "Colombia": 2
+    },
+    "synthetic_only": true,
+    "hand_seeded_winners": false,
+    "cron": "off",
+    "note": "One unsupported sparse context stopped at Stage A clarification and is excluded from the ten Intelligence runs."
+  },
+  "runs": [
+    {
+      "file": "customer-e2e-1787842339586.json",
+      "soak_id": "us_manufacturing_automation",
+      "phase": "A",
+      "run_id": "intel_4dc55c5f63ff7ff39b04fce527d02cb1",
+      "context": "We sell industrial automation integration and plant operations software to mid-market and enterprise manufacturers in the United States. We target companies operating their own plants that recently opened, expanded, modernized, or invested in production capacity. Exclude government agencies, publishers, consultants, pure software companies, and fully outsourced manufacturing operations.",
+      "universe": 13,
+      "researched": 3,
+      "delivered": 0,
+      "timings": {
+        "stage_a_ms": 11972,
+        "confirmation_ms": 1201,
+        "start_request_ms": 628,
+        "background_completion_ms": 284488,
+        "total_ms": 303115
+      },
+      "usage": {
+        "anthropic": {
+          "calls": 10,
+          "errors": 0,
+          "input_tokens": 14263,
+          "output_tokens": 9801,
+          "calculated_cost_usd": 0.189804,
+          "pricing_source": "Anthropic Sonnet 4.6 public list price, verified 2026-07-22"
+        },
+        "brave": {
+          "calls": 7,
+          "errors": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "calculated_cost_usd": 0,
+          "pricing_source": null
+        },
+        "serper": {
+          "calls": 1,
+          "errors": 1,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "calculated_cost_usd": 0,
+          "pricing_source": null
+        },
+        "tavily": {
+          "calls": 13,
+          "errors": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "calculated_cost_usd": 0,
+          "pricing_source": null
+        }
+      },
+      "outcome": "completed_no_strong_opportunity",
+      "checks": [
+        {
+          "name": "real authenticated owners created",
+          "ok": true
+        },
+        {
+          "name": "Stage A reachable and confirmable",
+          "ok": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "explicit confirmation persisted through customer API",
+          "ok": true
+        },
+        {
+          "name": "same context label persists independently across tenants",
+          "ok": true
+        },
+        {
+          "name": "productive Intelligence run accepted before Research",
+          "ok": true,
+          "detail": "HTTP 202"
+        },
+        {
+          "name": "bounded background processor completed durably",
+          "ok": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "owner reloads durable result",
+          "ok": true
+        },
+        {
+          "name": "other tenant cannot load result",
+          "ok": true
+        },
+        {
+          "name": "Lead Hunter run reference persisted",
+          "ok": true
+        },
+        {
+          "name": "Candidate Universe durable and owner-scoped",
+          "ok": true,
+          "detail": "n=13"
+        },
+        {
+          "name": "canonical Cases generated",
+          "ok": true
+        },
+        {
+          "name": "initial accepted Case set entered Account Memory",
+          "ok": true,
+          "detail": "snapshots=0, delivered=0"
+        },
+        {
+          "name": "Monitor correctly unavailable without delivered accounts",
+          "ok": true
+        },
+        {
+          "name": "completed retry is idempotent and avoids new Research",
+          "ok": true
+        },
+        {
+          "name": "same labels cannot collide cross-tenant",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "file": "customer-e2e-1787842650320.json",
+      "soak_id": "us_logistics_wms",
+      "phase": "A",
+      "run_id": "intel_bf73c4fb9baa988104351481fa24f958",
+      "context": "We sell warehouse automation, WMS integration, and inventory orchestration to mid-market and enterprise manufacturers and distributors in the United States. We target companies operating their own warehouses or distribution centers with recent openings, capacity expansions, automation, or material logistics investments. Exclude government, publishers, consultants, pure software companies, and fully outsourced warehouse operations.",
+      "universe": 14,
+      "researched": 3,
+      "delivered": 0,
+      "timings": {
+        "stage_a_ms": 11870,
+        "confirmation_ms": 587,
+        "start_request_ms": 490,
+        "background_completion_ms": 220939,
+        "total_ms": 236588
+      },
+      "usage": {
+        "anthropic": {
+          "calls": 10,
+          "errors": 0,
+          "input_tokens": 14020,
+          "output_tokens": 9505,
+          "calculated_cost_usd": 0.184635,
+          "pricing_source": "Anthropic Sonnet 4.6 public list price, verified 2026-07-22"
+        },
+        "brave": {
+          "calls": 7,
+          "errors": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "calculated_cost_usd": 0,
+          "pricing_source": null
+        },
+        "serper": {
+          "calls": 1,
+          "errors": 1,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "calculated_cost_usd": 0,
+          "pricing_source": null
+        },
+        "tavily": {
+          "calls": 13,
+          "errors": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "calculated_cost_usd": 0,
+          "pricing_source": null
+        }
+      },
+      "outcome": "completed_no_strong_opportunity",
+      "checks": [
+        {
+          "name": "real authenticated owners created",
+          "ok": true
+        },
+        {
+          "name": "Stage A reachable and confirmable",
+          "ok": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "explicit confirmation persisted through customer API",
+          "ok": true
+        },
+        {
+          "name": "same context label persists independently across tenants",
+          "ok": true
+        },
+        {
+          "name": "productive Intelligence run accepted before Research",
+          "ok": true,
+          "detail": "HTTP 202"
+        },
+        {
+          "name": "bounded background processor completed durably",
+          "ok": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "owner reloads durable result",
+          "ok": true
+        },
+        {
+          "name": "other tenant cannot load result",
+          "ok": true
+        },
+        {
+          "name": "Lead Hunter run reference persisted",
+          "ok": true
+        },
+        {
+          "name": "Candidate Universe durable and owner-scoped",
+          "ok": true,
+          "detail": "n=14"
+        },
+        {
+          "name": "canonical Cases generated",
+          "ok": true
+        },
+        {
+          "name": "initial accepted Case set entered Account Memory",
+          "ok": true,
+          "detail": "snapshots=0, delivered=0"
+        },
+        {
+          "name": "Monitor correctly unavailable without delivered accounts",
+          "ok": true
+        },
+        {
+          "name": "completed retry is idempotent and avoids new Research",
+          "ok": true
+        },
+        {
+          "name": "same labels cannot collide cross-tenant",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "file": "customer-e2e-1787842890721.json",
+      "soak_id": "us_enterprise_operations",
+      "phase": "A",
+      "run_id": "intel_0ea500a47f28b7c8196003aadb4814cd",
+      "context": "We sell enterprise operations planning and systems integration software to large United States manufacturers and distributors. We target companies with recent acquisitions, new plants, regional expansion, capacity growth, or operational technology modernization. Exclude financial institutions, government, publishers, consultancies, software vendors, and changes with no operating impact.",
+      "universe": 2,
+      "researched": 1,
+      "delivered": 0,
+      "timings": {
+        "stage_a_ms": 10888,
+        "confirmation_ms": 465,
+        "start_request_ms": 435,
+        "background_completion_ms": 94876,
+        "total_ms": 109731
+      },
+      "usage": {
+        "anthropic": {
+          "calls": 6,
+          "errors": 0,
+          "input_tokens": 6532,
+          "output_tokens": 3594,
+          "calculated_cost_usd": 0.073506,
+          "pricing_source": "Anthropic Sonnet 4.6 public list price, verified 2026-07-22"
+        },
+        "brave": {
+          "calls": 6,
+          "errors": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "calculated_cost_usd": 0,
+          "pricing_source": null
+        },
+        "serper": {
+          "calls": 1,
+          "errors": 1,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "calculated_cost_usd": 0,
+          "pricing_source": null
+        },
+        "tavily": {
+          "calls": 3,
+          "errors": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "calculated_cost_usd": 0,
+          "pricing_source": null
+        }
+      },
+      "outcome": "completed_no_strong_opportunity",
+      "checks": [
+        {
+          "name": "real authenticated owners created",
+          "ok": true
+        },
+        {
+          "name": "Stage A reachable and confirmable",
+          "ok": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "explicit confirmation persisted through customer API",
+          "ok": true
+        },
+        {
+          "name": "same context label persists independently across tenants",
+          "ok": true
+        },
+        {
+          "name": "productive Intelligence run accepted before Research",
+          "ok": true,
+          "detail": "HTTP 202"
+        },
+        {
+          "name": "bounded background processor completed durably",
+          "ok": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "owner reloads durable result",
+          "ok": true
+        },
+        {
+          "name": "other tenant cannot load result",
+          "ok": true
+        },
+        {
+          "name": "Lead Hunter run reference persisted",
+          "ok": true
+        },
+        {
+          "name": "Candidate Universe durable and owner-scoped",
+          "ok": true,
+          "detail": "n=2"
+        },
+        {
+          "name": "canonical Cases generated",
+          "ok": true
+        },
+        {
+          "name": "initial accepted Case set entered Account Memory",
+          "ok": true,
+          "detail": "snapshots=0, delivered=0"
+        },
+        {
+          "name": "Monitor correctly unavailable without delivered accounts",
+          "ok": true
+        },
+        {
+          "name": "completed retry is idempotent and avoids new Research",
+          "ok": true
+        },
+        {
+          "name": "same labels cannot collide cross-tenant",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "file": "customer-e2e-1787843004691.json",
+      "soak_id": "co_logistics_automation",
+      "phase": "A",
+      "run_id": "intel_210642672083112780c7a9766bd8a109",
+      "context": "Vendemos automatización de bodegas, integración WMS y orquestación de inventarios a fabricantes y distribuidores medianos y grandes en Colombia. Buscamos empresas que operen directamente centros de distribución, bodegas o plantas y que hayan abierto, ampliado, automatizado o invertido recientemente en infraestructura logística. Excluir entidades públicas, medios, consultoras, empresas de software puro y operaciones totalmente tercerizadas.",
+      "universe": 15,
+      "researched": 3,
+      "delivered": 0,
+      "timings": {
+        "stage_a_ms": 14724,
+        "confirmation_ms": 462,
+        "start_request_ms": 452,
+        "background_completion_ms": 311793,
+        "total_ms": 330001
+      },
+      "usage": {
+        "anthropic": {
+          "calls": 10,
+          "errors": 0,
+          "input_tokens": 14475,
+          "output_tokens": 9881,
+          "calculated_cost_usd": 0.19164,
+          "pricing_source": "Anthropic Sonnet 4.6 public list price, verified 2026-07-22"
+        },
+        "brave": {
+          "calls": 11,
+          "errors": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "calculated_cost_usd": 0,
+          "pricing_source": null
+        },
+        "serper": {
+          "calls": 2,
+          "errors": 2,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "calculated_cost_usd": 0,
+          "pricing_source": null
+        },
+        "tavily": {
+          "calls": 15,
+          "errors": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "calculated_cost_usd": 0,
+          "pricing_source": null
+        }
+      },
+      "outcome": "completed_no_strong_opportunity",
+      "checks": [
+        {
+          "name": "real authenticated owners created",
+          "ok": true
+        },
+        {
+          "name": "Stage A reachable and confirmable",
+          "ok": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "explicit confirmation persisted through customer API",
+          "ok": true
+        },
+        {
+          "name": "same context label persists independently across tenants",
+          "ok": true
+        },
+        {
+          "name": "productive Intelligence run accepted before Research",
+          "ok": true,
+          "detail": "HTTP 202"
+        },
+        {
+          "name": "bounded background processor completed durably",
+          "ok": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "owner reloads durable result",
+          "ok": true
+        },
+        {
+          "name": "other tenant cannot load result",
+          "ok": true
+        },
+        {
+          "name": "Lead Hunter run reference persisted",
+          "ok": true
+        },
+        {
+          "name": "Candidate Universe durable and owner-scoped",
+          "ok": true,
+          "detail": "n=15"
+        },
+        {
+          "name": "canonical Cases generated",
+          "ok": true
+        },
+        {
+          "name": "initial accepted Case set entered Account Memory",
+          "ok": true,
+          "detail": "snapshots=0, delivered=0"
+        },
+        {
+          "name": "Monitor correctly unavailable without delivered accounts",
+          "ok": true
+        },
+        {
+          "name": "completed retry is idempotent and avoids new Research",
+          "ok": true
+        },
+        {
+          "name": "same labels cannot collide cross-tenant",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "file": "customer-e2e-1787843338683.json",
+      "soak_id": "us_sparse_professional_services",
+      "phase": "A",
+      "run_id": "intel_e9ad62df671c6f7b136c2df70d509caa",
+      "context": "We sell specialized operations consulting to small United States professional-services firms only when they publicly announce a material new operating location, acquisition, or service-delivery transformation. Exclude generic hiring, awards, thought leadership, directories, publishers, government, and undated company descriptions.",
+      "universe": 6,
+      "researched": 3,
+      "delivered": 0,
+      "timings": {
+        "stage_a_ms": 12250,
+        "confirmation_ms": 593,
+        "start_request_ms": 523,
+        "background_completion_ms": 225574,
+        "total_ms": 241558
+      },
+      "usage": {
+        "anthropic": {
+          "calls": 10,
+          "errors": 0,
+          "input_tokens": 12909,
+          "output_tokens": 8028,
+          "calculated_cost_usd": 0.159147,
+          "pricing_source": "Anthropic Sonnet 4.6 public list price, verified 2026-07-22"
+        },
+        "brave": {
+          "calls": 7,
+          "errors": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "calculated_cost_usd": 0,
+          "pricing_source": null
+        },
+        "serper": {
+          "calls": 1,
+          "errors": 1,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "calculated_cost_usd": 0,
+          "pricing_source": null
+        },
+        "tavily": {
+          "calls": 11,
+          "errors": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "calculated_cost_usd": 0,
+          "pricing_source": null
+        }
+      },
+      "outcome": "completed_no_strong_opportunity",
+      "checks": [
+        {
+          "name": "real authenticated owners created",
+          "ok": true
+        },
+        {
+          "name": "Stage A reachable and confirmable",
+          "ok": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "explicit confirmation persisted through customer API",
+          "ok": true
+        },
+        {
+          "name": "same context label persists independently across tenants",
+          "ok": true
+        },
+        {
+          "name": "productive Intelligence run accepted before Research",
+          "ok": true,
+          "detail": "HTTP 202"
+        },
+        {
+          "name": "bounded background processor completed durably",
+          "ok": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "owner reloads durable result",
+          "ok": true
+        },
+        {
+          "name": "other tenant cannot load result",
+          "ok": true
+        },
+        {
+          "name": "Lead Hunter run reference persisted",
+          "ok": true
+        },
+        {
+          "name": "Candidate Universe durable and owner-scoped",
+          "ok": true,
+          "detail": "n=6"
+        },
+        {
+          "name": "canonical Cases generated",
+          "ok": true
+        },
+        {
+          "name": "initial accepted Case set entered Account Memory",
+          "ok": true,
+          "detail": "snapshots=0, delivered=0"
+        },
+        {
+          "name": "Monitor correctly unavailable without delivered accounts",
+          "ok": true
+        },
+        {
+          "name": "completed retry is idempotent and avoids new Research",
+          "ok": true
+        },
+        {
+          "name": "same labels cannot collide cross-tenant",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "file": "customer-e2e-1787843772894.json",
+      "soak_id": "us_industrial_distribution",
+      "phase": "D",
+      "run_id": "intel_dd83953d66a16055e368e1400eab9a97",
+      "context": "We sell inventory planning and warehouse process integration to mid-market industrial distributors in the United States. We target companies operating their own distribution facilities with a recent new warehouse, acquisition integration, capacity expansion, or automation investment. Exclude brokers without facilities, publishers, government, consultants, and fully outsourced logistics.",
+      "universe": 3,
+      "researched": 2,
+      "delivered": 0,
+      "timings": {
+        "stage_a_ms": 11415,
+        "confirmation_ms": 851,
+        "start_request_ms": 512,
+        "background_completion_ms": 163323,
+        "total_ms": 179317
+      },
+      "usage": {
+        "anthropic": {
+          "calls": 8,
+          "errors": 0,
+          "input_tokens": 10271,
+          "output_tokens": 6724,
+          "calculated_cost_usd": 0.131673,
+          "pricing_source": "Anthropic Sonnet 4.6 public list price, verified 2026-07-22"
+        },
+        "brave": {
+          "calls": 5,
+          "errors": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "calculated_cost_usd": 0,
+          "pricing_source": null
+        },
+        "tavily": {
+          "calls": 6,
+          "errors": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "calculated_cost_usd": 0,
+          "pricing_source": null
+        }
+      },
+      "outcome": "completed_no_strong_opportunity",
+      "checks": [
+        {
+          "name": "real authenticated owners created",
+          "ok": true
+        },
+        {
+          "name": "Stage A reachable and confirmable",
+          "ok": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "explicit confirmation persisted through customer API",
+          "ok": true
+        },
+        {
+          "name": "same context label persists independently across tenants",
+          "ok": true
+        },
+        {
+          "name": "productive Intelligence run accepted before Research",
+          "ok": true,
+          "detail": "HTTP 202"
+        },
+        {
+          "name": "bounded background processor completed durably",
+          "ok": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "owner reloads durable result",
+          "ok": true
+        },
+        {
+          "name": "other tenant cannot load result",
+          "ok": true
+        },
+        {
+          "name": "Lead Hunter run reference persisted",
+          "ok": true
+        },
+        {
+          "name": "Candidate Universe durable and owner-scoped",
+          "ok": true,
+          "detail": "n=3"
+        },
+        {
+          "name": "canonical Cases generated",
+          "ok": true
+        },
+        {
+          "name": "initial accepted Case set entered Account Memory",
+          "ok": true,
+          "detail": "snapshots=0, delivered=0"
+        },
+        {
+          "name": "Monitor correctly unavailable without delivered accounts",
+          "ok": true
+        },
+        {
+          "name": "completed retry is idempotent and avoids new Research",
+          "ok": true
+        },
+        {
+          "name": "same labels cannot collide cross-tenant",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "file": "customer-e2e-1787843955824.json",
+      "soak_id": "us_fleet_operations",
+      "phase": "D",
+      "run_id": "intel_78f76750c15565e9a73491eb85e98031",
+      "context": "We sell fleet maintenance, route planning, and telematics software to large United States distributors and field-service operators with owned or controlled vehicle fleets. We target recent fleet purchases, route expansion, acquisitions, new service territories, or operations modernization. Exclude public authorities, vehicle manufacturers without field fleets, publishers, software companies, and fully outsourced transport.",
+      "universe": 2,
+      "researched": 2,
+      "delivered": 0,
+      "timings": {
+        "stage_a_ms": 13125,
+        "confirmation_ms": 529,
+        "start_request_ms": 505,
+        "background_completion_ms": 149659,
+        "total_ms": 166312
+      },
+      "usage": {
+        "anthropic": {
+          "calls": 8,
+          "errors": 0,
+          "input_tokens": 9203,
+          "output_tokens": 6193,
+          "calculated_cost_usd": 0.120504,
+          "pricing_source": "Anthropic Sonnet 4.6 public list price, verified 2026-07-22"
+        },
+        "brave": {
+          "calls": 6,
+          "errors": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "calculated_cost_usd": 0,
+          "pricing_source": null
+        },
+        "serper": {
+          "calls": 1,
+          "errors": 1,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "calculated_cost_usd": 0,
+          "pricing_source": null
+        },
+        "tavily": {
+          "calls": 3,
+          "errors": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "calculated_cost_usd": 0,
+          "pricing_source": null
+        }
+      },
+      "outcome": "completed_no_strong_opportunity",
+      "checks": [
+        {
+          "name": "real authenticated owners created",
+          "ok": true
+        },
+        {
+          "name": "Stage A reachable and confirmable",
+          "ok": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "explicit confirmation persisted through customer API",
+          "ok": true
+        },
+        {
+          "name": "same context label persists independently across tenants",
+          "ok": true
+        },
+        {
+          "name": "productive Intelligence run accepted before Research",
+          "ok": true,
+          "detail": "HTTP 202"
+        },
+        {
+          "name": "bounded background processor completed durably",
+          "ok": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "owner reloads durable result",
+          "ok": true
+        },
+        {
+          "name": "other tenant cannot load result",
+          "ok": true
+        },
+        {
+          "name": "Lead Hunter run reference persisted",
+          "ok": true
+        },
+        {
+          "name": "Candidate Universe durable and owner-scoped",
+          "ok": true,
+          "detail": "n=2"
+        },
+        {
+          "name": "canonical Cases generated",
+          "ok": true
+        },
+        {
+          "name": "initial accepted Case set entered Account Memory",
+          "ok": true,
+          "detail": "snapshots=0, delivered=0"
+        },
+        {
+          "name": "Monitor correctly unavailable without delivered accounts",
+          "ok": true
+        },
+        {
+          "name": "completed retry is idempotent and avoids new Research",
+          "ok": true
+        },
+        {
+          "name": "same labels cannot collide cross-tenant",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "file": "customer-e2e-1787844124725.json",
+      "soak_id": "us_channel_partnerships",
+      "phase": "D",
+      "run_id": "intel_dc66506c5f89b741f4dbc957b5d7bf49",
+      "context": "We sell partner operations and inventory integration software to United States manufacturers expanding through distributors and channel partners. We target material new distribution agreements, market-entry partnerships, acquisitions, or regional channel expansion that changes fulfillment operations. Exclude marketing-only alliances, event sponsorships, publishers, consultants, government, and undated partner pages.",
+      "universe": 7,
+      "researched": 2,
+      "delivered": 0,
+      "timings": {
+        "stage_a_ms": 13406,
+        "confirmation_ms": 956,
+        "start_request_ms": 535,
+        "background_completion_ms": 155294,
+        "total_ms": 172906
+      },
+      "usage": {
+        "anthropic": {
+          "calls": 8,
+          "errors": 0,
+          "input_tokens": 9194,
+          "output_tokens": 5886,
+          "calculated_cost_usd": 0.115872,
+          "pricing_source": "Anthropic Sonnet 4.6 public list price, verified 2026-07-22"
+        },
+        "brave": {
+          "calls": 8,
+          "errors": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "calculated_cost_usd": 0,
+          "pricing_source": null
+        },
+        "serper": {
+          "calls": 1,
+          "errors": 1,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "calculated_cost_usd": 0,
+          "pricing_source": null
+        },
+        "tavily": {
+          "calls": 7,
+          "errors": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "calculated_cost_usd": 0,
+          "pricing_source": null
+        }
+      },
+      "outcome": "completed_no_strong_opportunity",
+      "checks": [
+        {
+          "name": "real authenticated owners created",
+          "ok": true
+        },
+        {
+          "name": "Stage A reachable and confirmable",
+          "ok": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "explicit confirmation persisted through customer API",
+          "ok": true
+        },
+        {
+          "name": "same context label persists independently across tenants",
+          "ok": true
+        },
+        {
+          "name": "productive Intelligence run accepted before Research",
+          "ok": true,
+          "detail": "HTTP 202"
+        },
+        {
+          "name": "bounded background processor completed durably",
+          "ok": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "owner reloads durable result",
+          "ok": true
+        },
+        {
+          "name": "other tenant cannot load result",
+          "ok": true
+        },
+        {
+          "name": "Lead Hunter run reference persisted",
+          "ok": true
+        },
+        {
+          "name": "Candidate Universe durable and owner-scoped",
+          "ok": true,
+          "detail": "n=7"
+        },
+        {
+          "name": "canonical Cases generated",
+          "ok": true
+        },
+        {
+          "name": "initial accepted Case set entered Account Memory",
+          "ok": true,
+          "detail": "snapshots=0, delivered=0"
+        },
+        {
+          "name": "Monitor correctly unavailable without delivered accounts",
+          "ok": true
+        },
+        {
+          "name": "completed retry is idempotent and avoids new Research",
+          "ok": true
+        },
+        {
+          "name": "same labels cannot collide cross-tenant",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "file": "customer-e2e-1787844300348.json",
+      "soak_id": "co_fleet_operations",
+      "phase": "D",
+      "run_id": "intel_230ff601f771879068d3d7b7418cf6fd",
+      "context": "Vendemos software de mantenimiento, rutas y telemetría a empresas colombianas medianas y grandes con flota propia o control operacional directo. Buscamos compras de vehículos, nuevas rutas, contratos materiales, expansión regional o modernización reciente. Excluir autoridades, sistemas públicos sin cuenta comercial, medios, fabricantes sin operación de flota y transporte totalmente tercerizado.",
+      "universe": 15,
+      "researched": 2,
+      "delivered": 0,
+      "timings": {
+        "stage_a_ms": 14664,
+        "confirmation_ms": 709,
+        "start_request_ms": 552,
+        "background_completion_ms": 187484,
+        "total_ms": 206163
+      },
+      "usage": {
+        "anthropic": {
+          "calls": 8,
+          "errors": 0,
+          "input_tokens": 10008,
+          "output_tokens": 6863,
+          "calculated_cost_usd": 0.132969,
+          "pricing_source": "Anthropic Sonnet 4.6 public list price, verified 2026-07-22"
+        },
+        "brave": {
+          "calls": 11,
+          "errors": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "calculated_cost_usd": 0,
+          "pricing_source": null
+        },
+        "serper": {
+          "calls": 1,
+          "errors": 1,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "calculated_cost_usd": 0,
+          "pricing_source": null
+        },
+        "tavily": {
+          "calls": 13,
+          "errors": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "calculated_cost_usd": 0,
+          "pricing_source": null
+        }
+      },
+      "outcome": "completed_no_strong_opportunity",
+      "checks": [
+        {
+          "name": "real authenticated owners created",
+          "ok": true
+        },
+        {
+          "name": "Stage A reachable and confirmable",
+          "ok": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "explicit confirmation persisted through customer API",
+          "ok": true
+        },
+        {
+          "name": "same context label persists independently across tenants",
+          "ok": true
+        },
+        {
+          "name": "productive Intelligence run accepted before Research",
+          "ok": true,
+          "detail": "HTTP 202"
+        },
+        {
+          "name": "bounded background processor completed durably",
+          "ok": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "owner reloads durable result",
+          "ok": true
+        },
+        {
+          "name": "other tenant cannot load result",
+          "ok": true
+        },
+        {
+          "name": "Lead Hunter run reference persisted",
+          "ok": true
+        },
+        {
+          "name": "Candidate Universe durable and owner-scoped",
+          "ok": true,
+          "detail": "n=15"
+        },
+        {
+          "name": "canonical Cases generated",
+          "ok": true
+        },
+        {
+          "name": "initial accepted Case set entered Account Memory",
+          "ok": true,
+          "detail": "snapshots=0, delivered=0"
+        },
+        {
+          "name": "Monitor correctly unavailable without delivered accounts",
+          "ok": true
+        },
+        {
+          "name": "completed retry is idempotent and avoids new Research",
+          "ok": true
+        },
+        {
+          "name": "same labels cannot collide cross-tenant",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "file": "customer-e2e-1787844556342.json",
+      "soak_id": "us_sparse_negative_control",
+      "phase": "D",
+      "run_id": "intel_ec7d219a6a6002c6ab9ed43dbc208ce7",
+      "context": "We sell operations planning and workflow integration software to small independent accounting firms in the United States. We only target firms that recently announced a material acquisition, merger, new operating location, or service-delivery transformation. Exclude generic hiring, awards, thought leadership, directories, publishers, government, and undated company descriptions.",
+      "universe": 1,
+      "researched": 1,
+      "delivered": 0,
+      "timings": {
+        "stage_a_ms": 9840,
+        "confirmation_ms": 969,
+        "start_request_ms": 780,
+        "background_completion_ms": 91360,
+        "total_ms": 105926
+      },
+      "usage": {
+        "anthropic": {
+          "calls": 6,
+          "errors": 0,
+          "input_tokens": 6061,
+          "output_tokens": 3648,
+          "calculated_cost_usd": 0.072903,
+          "pricing_source": "Anthropic Sonnet 4.6 public list price, verified 2026-07-22"
+        },
+        "brave": {
+          "calls": 6,
+          "errors": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "calculated_cost_usd": 0,
+          "pricing_source": null
+        },
+        "serper": {
+          "calls": 1,
+          "errors": 1,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "calculated_cost_usd": 0,
+          "pricing_source": null
+        },
+        "tavily": {
+          "calls": 1,
+          "errors": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "calculated_cost_usd": 0,
+          "pricing_source": null
+        }
+      },
+      "outcome": "completed_no_strong_opportunity",
+      "checks": [
+        {
+          "name": "real authenticated owners created",
+          "ok": true
+        },
+        {
+          "name": "Stage A reachable and confirmable",
+          "ok": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "explicit confirmation persisted through customer API",
+          "ok": true
+        },
+        {
+          "name": "same context label persists independently across tenants",
+          "ok": true
+        },
+        {
+          "name": "productive Intelligence run accepted before Research",
+          "ok": true,
+          "detail": "HTTP 202"
+        },
+        {
+          "name": "bounded background processor completed durably",
+          "ok": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "name": "owner reloads durable result",
+          "ok": true
+        },
+        {
+          "name": "other tenant cannot load result",
+          "ok": true
+        },
+        {
+          "name": "Lead Hunter run reference persisted",
+          "ok": true
+        },
+        {
+          "name": "Candidate Universe durable and owner-scoped",
+          "ok": true,
+          "detail": "n=1"
+        },
+        {
+          "name": "canonical Cases generated",
+          "ok": true
+        },
+        {
+          "name": "initial accepted Case set entered Account Memory",
+          "ok": true,
+          "detail": "snapshots=0, delivered=0"
+        },
+        {
+          "name": "Monitor correctly unavailable without delivered accounts",
+          "ok": true
+        },
+        {
+          "name": "completed retry is idempotent and avoids new Research",
+          "ok": true
+        },
+        {
+          "name": "same labels cannot collide cross-tenant",
+          "ok": true
+        }
+      ]
+    }
+  ],
+  "account_reviews": [
+    {
+      "soak_id": "us_manufacturing_automation",
+      "phase": "A",
+      "account": {
+        "risks": [
+          "This account may be misidentified — 'Ferguson Industrial' could refer to a unit of Ferguson Enterprises (distribution, not manufacturing), making the offer irrelevant",
+          "No verified public signals exist — the 80% confidence score is unsubstantiated and should not drive outreach decisions",
+          "Company size is unknown and may fall below the economic threshold for enterprise automation software",
+          "A competitor solution may already be in place, and there is no signal of an active evaluation or replacement cycle"
+        ],
+        "domain": "industrialspec.com",
+        "company": "Ferguson Industrial",
+        "country": "United States",
+        "reasons": [
+          "case_missing"
+        ],
+        "category": "COLD",
+        "fitScore": 4.5,
+        "qcStatus": "REVIEW_NEEDED",
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "nextQuestion": "Is 'Ferguson Industrial' a standalone industrial manufacturing company, or is it a division of Ferguson Enterprises — and if standalone, how many production facilities does it operate and what plant-floor software (MES, SCADA, CMMS) is currently in use?",
+        "evidenceClaims": [
+          {
+            "date": null,
+            "type": "weak_inference",
+            "claim": "Ferguson Industrial is in industrial manufacturing in the United States",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "inferred_from_context",
+            "claim": "The company faces pain related to fragmented or manual plant operations",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "80% public source confidence score indicates verified relevance",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Ferguson Industrial is a standalone industrial manufacturer, not a division of Ferguson Enterprises",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "The company is currently evaluating or lacks automation/plant operations software",
+            "source_url": null
+          }
+        ],
+        "canonicalDecision": "hold",
+        "researchConfidence": 0.15
+      },
+      "system_decision": "Hold",
+      "human_label": {
+        "identity": "ambiguous",
+        "target_match": "weak",
+        "evidence_quality": "invalid",
+        "temporal_quality": "no_event",
+        "case_defensibility": "not_defensible",
+        "human_decision": "Reject",
+        "research_useful": false,
+        "waste_reason": "identity_issue",
+        "note": "Observed domain did not establish the named manufacturer."
+      },
+      "disagreement": true
+    },
+    {
+      "soak_id": "us_manufacturing_automation",
+      "phase": "A",
+      "account": {
+        "risks": [
+          "Amazon's subsidiary structure and internal engineering depth may mean all automation integration is handled in-house, making external vendor engagement unlikely",
+          "Segment mismatch risk: the offer targets industrial/plant operations, while Whole Foods is a grocery retailer — the use case must be clearly scoped to food retail automation",
+          "The Mill Commercial deployment is a third-party managed solution that may already bundle its own integration software, closing the gap this offer addresses",
+          "No confirmed buyer persona or procurement team at Whole Foods responsible for automation software decisions is publicly identifiable"
+        ],
+        "domain": "wholefoodsmarket.com",
+        "company": "Whole Foods Market",
+        "country": "United States",
+        "reasons": [
+          "case_missing"
+        ],
+        "category": "COLD",
+        "fitScore": 4.5,
+        "qcStatus": "REVIEW_NEEDED",
+        "sourceUrl": "https://chainstoreage.com/whole-foods-market-automate-store-food-recycling",
+        "signalDate": "2025-12-16",
+        "signalType": null,
+        "nextQuestion": "Does Whole Foods Market manage automation software procurement at the store operations level independently, or does Amazon corporate engineering own integration decisions for in-store automated systems?",
+        "evidenceClaims": [
+          {
+            "date": "2025-12-16",
+            "type": "verified_public_signal",
+            "claim": "Whole Foods Market will deploy the automated Mill Commercial food recycling solution starting in 2027",
+            "source_url": "https://chainstoreage.com/whole-foods-market-automate-store-food-recycling"
+          },
+          {
+            "date": "2025-10-23",
+            "type": "verified_public_signal",
+            "claim": "Whole Foods Market Daily Shop opened in Crystal City, Arlington, Virginia on October 23, 2025",
+            "source_url": "https://chainstoreage.com/whole-foods-market-automate-store-food-recycling"
+          },
+          {
+            "date": "2025-08-13",
+            "type": "verified_public_signal",
+            "claim": "Amazon operates microfulfillment centers supporting Whole Foods Market same-day delivery",
+            "source_url": "https://chainstoreage.com/whole-foods-market-automate-store-food-recycling"
+          },
+          {
+            "date": null,
+            "type": "inferred_from_context",
+            "claim": "Whole Foods Market is actively expanding its small-format Daily Shop store concept",
+            "source_url": "https://chainstoreage.com/whole-foods-market-automate-store-food-recycling"
+          },
+          {
+            "date": null,
+            "type": "inferred_from_context",
+            "claim": "The 2027 automation rollout creates a near-term software integration evaluation window",
+            "source_url": "https://chainstoreage.com/whole-foods-market-automate-store-food-recycling"
+          },
+          {
+            "date": null,
+            "type": "weak_inference",
+            "claim": "Whole Foods faces operational complexity managing multiple automated systems across store formats",
+            "source_url": "https://chainstoreage.com/whole-foods-market-automate-store-food-recycling"
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Whole Foods has a stated or active need for third-party plant operations software",
+            "source_url": "https://chainstoreage.com/whole-foods-market-automate-store-food-recycling"
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Technology procurement decisions are made at Whole Foods level vs. Amazon corporate level",
+            "source_url": "https://chainstoreage.com/whole-foods-market-automate-store-food-recycling"
+          }
+        ],
+        "canonicalDecision": "hold",
+        "researchConfidence": 0.52
+      },
+      "system_decision": "Hold",
+      "human_label": {
+        "identity": "correct",
+        "target_match": "wrong_target",
+        "evidence_quality": "adequate",
+        "temporal_quality": "valid_material_change",
+        "case_defensibility": "not_defensible",
+        "human_decision": "Reject",
+        "research_useful": false,
+        "waste_reason": "wrong_target_type",
+        "note": "Retail/store automation is outside the confirmed manufacturing target."
+      },
+      "disagreement": true
+    },
+    {
+      "soak_id": "us_manufacturing_automation",
+      "phase": "A",
+      "account": {
+        "risks": [
+          "Segment mismatch risk: plant operations software is primarily industrial/manufacturing — Sprouts is a retailer, and the offer may not map cleanly to their operational environment",
+          "No confirmed buying signal: capex growth reflects real estate and store buildout, not necessarily automation technology procurement",
+          "Budget risk: Sprouts internally flagged 2026 as 'challenging,' which may indicate conservative discretionary tech spending despite revenue growth",
+          "Unclear buyer: without knowing whether Sprouts operates its own DCs or uses third-party logistics, the relevant decision-maker and budget owner cannot be identified"
+        ],
+        "domain": "sprouts.com",
+        "company": "Sprouts Farmers Market",
+        "country": "United States",
+        "reasons": [
+          "case_missing"
+        ],
+        "category": "COLD",
+        "fitScore": 4.5,
+        "qcStatus": "REVIEW_NEEDED",
+        "sourceUrl": "https://investors.sprouts.com/news/news-details/2026/Sprouts-Farmers-Market-Inc--Reports-First-Quarter-2026-Results/default.aspx",
+        "signalDate": "2026-04-29",
+        "signalType": null,
+        "nextQuestion": "Does Sprouts Farmers Market operate its own distribution centers or fresh food processing/production facilities, and if so, what software or systems currently manage those plant operations?",
+        "evidenceClaims": [
+          {
+            "date": "2026-02-20",
+            "type": "verified_public_signal",
+            "claim": "Sprouts opened 37 new stores in 2025, ending with 477 stores in 24 states",
+            "source_url": "https://investors.sprouts.com/news/news-details/2026/Sprouts-Farmers-Market-Inc--Reports-First-Quarter-2026-Results/default.aspx"
+          },
+          {
+            "date": "2026-02-20",
+            "type": "verified_public_signal",
+            "claim": "Sprouts has 95+ executed leases and 140+ approved new stores in its pipeline",
+            "source_url": "https://investors.sprouts.com/news/news-details/2026/Sprouts-Farmers-Market-Inc--Reports-First-Quarter-2026-Results/default.aspx"
+          },
+          {
+            "date": "2026-04-29",
+            "type": "verified_public_signal",
+            "claim": "Q1 2026 capex on property and equipment was $101.15M vs. $59.48M in prior year period",
+            "source_url": "https://investors.sprouts.com/news/news-details/2026/Sprouts-Farmers-Market-Inc--Reports-First-Quarter-2026-Results/default.aspx"
+          },
+          {
+            "date": "2026-02-20",
+            "type": "verified_public_signal",
+            "claim": "Full-year 2026 net sales guidance of 4.5%–6.5% growth",
+            "source_url": "https://investors.sprouts.com/news/news-details/2026/Sprouts-Farmers-Market-Inc--Reports-First-Quarter-2026-Results/default.aspx"
+          },
+          {
+            "date": null,
+            "type": "inferred_from_context",
+            "claim": "Rapid store expansion creates downstream pressure on distribution center and back-of-house operational efficiency",
+            "source_url": "https://investors.sprouts.com/news/news-details/2026/Sprouts-Farmers-Market-Inc--Reports-First-Quarter-2026-Results/default.aspx"
+          },
+          {
+            "date": null,
+            "type": "weak_inference",
+            "claim": "Sprouts may operate distribution centers or fresh food processing infrastructure suitable for automation integration",
+            "source_url": "https://investors.sprouts.com/news/news-details/2026/Sprouts-Farmers-Market-Inc--Reports-First-Quarter-2026-Results/default.aspx"
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Sprouts is actively evaluating or purchasing plant operations or automation software",
+            "source_url": "https://investors.sprouts.com/news/news-details/2026/Sprouts-Farmers-Market-Inc--Reports-First-Quarter-2026-Results/default.aspx"
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Sprouts' internal technology stack or existing automation vendor relationships",
+            "source_url": "https://investors.sprouts.com/news/news-details/2026/Sprouts-Farmers-Market-Inc--Reports-First-Quarter-2026-Results/default.aspx"
+          }
+        ],
+        "canonicalDecision": "hold",
+        "researchConfidence": 0.42
+      },
+      "system_decision": "Hold",
+      "human_label": {
+        "identity": "correct",
+        "target_match": "wrong_target",
+        "evidence_quality": "strong",
+        "temporal_quality": "valid_material_change",
+        "case_defensibility": "not_defensible",
+        "human_decision": "Reject",
+        "research_useful": false,
+        "waste_reason": "wrong_target_type",
+        "note": "Retail expansion is real but outside the confirmed manufacturing target."
+      },
+      "disagreement": true
+    },
+    {
+      "soak_id": "us_logistics_wms",
+      "phase": "A",
+      "account": {
+        "risks": [
+          "Entire account thesis is built on segment assumption with no supporting company-specific evidence",
+          "Company may be too small or operationally simple to require or afford warehouse automation investment",
+          "Fulfillment may be outsourced, removing the core use case entirely",
+          "Outreach without a confirmed trigger event risks low response rates and credibility loss with the account"
+        ],
+        "domain": "advancedillumination.com",
+        "company": "Advanced Illumination",
+        "country": "United States",
+        "reasons": [
+          "case_missing"
+        ],
+        "category": "COLD",
+        "fitScore": 4,
+        "qcStatus": "REVIEW_NEEDED",
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "nextQuestion": "Does Advanced Illumination manage its own warehouse and fulfillment operations in-house, and if so, what systems are currently used to track inventory and process orders?",
+        "evidenceClaims": [
+          {
+            "date": null,
+            "type": "weak_inference",
+            "claim": "Advanced Illumination is a U.S.-based manufacturer in the machine vision lighting sector",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "inferred_from_context",
+            "claim": "Company likely manages physical inventory of components and finished goods",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "weak_inference",
+            "claim": "Company may rely on ERP-linked or manual warehouse processes",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "No operational events, expansions, funding rounds, or system migrations are confirmed",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Company size, revenue, and headcount",
+            "source_url": null
+          }
+        ],
+        "canonicalDecision": "hold",
+        "researchConfidence": 0.18
+      },
+      "system_decision": "Hold",
+      "human_label": {
+        "identity": "correct",
+        "target_match": "plausible",
+        "evidence_quality": "invalid",
+        "temporal_quality": "no_event",
+        "case_defensibility": "not_defensible",
+        "human_decision": "Hold",
+        "research_useful": true,
+        "waste_reason": null,
+        "note": "Manufacturer was reasonable to probe; no owned-warehouse event was found."
+      },
+      "disagreement": false
+    },
+    {
+      "soak_id": "us_logistics_wms",
+      "phase": "A",
+      "account": {
+        "risks": [
+          "Amazon likely controls or heavily influences Whole Foods' warehouse automation and WMS technology decisions, making external vendor penetration extremely difficult",
+          "No public RFP, vendor evaluation, or technology gap signal has been identified — any buying intent is inferred, not confirmed",
+          "The confirmed automation signal (Mill Commercial food recycling) is operationally unrelated to warehouse management or inventory orchestration, making it a weak proxy",
+          "Engaging at the Whole Foods brand level risks misidentifying the actual buyer — Amazon supply chain or AWS teams may be the true decision-makers"
+        ],
+        "domain": "wholefoodsmarket.com",
+        "company": "Whole Foods Market",
+        "country": "United States",
+        "reasons": [
+          "case_missing"
+        ],
+        "category": "COLD",
+        "fitScore": 5,
+        "qcStatus": "REVIEW_NEEDED",
+        "sourceUrl": "https://chainstoreage.com/whole-foods-market-automate-store-food-recycling",
+        "signalDate": "2025-12-16",
+        "signalType": null,
+        "nextQuestion": "Does Whole Foods Market independently procure and manage its warehouse management systems and inventory orchestration technology, or is this governed by Amazon's central logistics and supply chain technology organization?",
+        "evidenceClaims": [
+          {
+            "date": "2025-10-06",
+            "type": "verified_public_signal",
+            "claim": "Whole Foods Market will open a new Daily Shop location in Crystal City, Arlington, Virginia on October 23, 2025",
+            "source_url": "https://chainstoreage.com/whole-foods-market-automate-store-food-recycling"
+          },
+          {
+            "date": "2025-12-16",
+            "type": "verified_public_signal",
+            "claim": "Whole Foods Market will launch the automated Mill Commercial food recycling solution starting in 2027",
+            "source_url": "https://chainstoreage.com/whole-foods-market-automate-store-food-recycling"
+          },
+          {
+            "date": "2025-08-13",
+            "type": "verified_public_signal",
+            "claim": "Amazon microfulfillment centers process Whole Foods Market same-day delivery orders and are converting customers to full-service grocery shopping",
+            "source_url": "https://chainstoreage.com/whole-foods-market-automate-store-food-recycling"
+          },
+          {
+            "date": null,
+            "type": "inferred_from_context",
+            "claim": "Whole Foods faces inventory orchestration complexity from multi-format store expansion",
+            "source_url": "https://chainstoreage.com/whole-foods-market-automate-store-food-recycling"
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Whole Foods controls its own WMS and inventory technology decisions independently from Amazon",
+            "source_url": "https://chainstoreage.com/whole-foods-market-automate-store-food-recycling"
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Whole Foods is actively evaluating third-party warehouse automation or WMS integration vendors",
+            "source_url": "https://chainstoreage.com/whole-foods-market-automate-store-food-recycling"
+          },
+          {
+            "date": null,
+            "type": "weak_inference",
+            "claim": "Adoption of Mill Commercial food recycling automation signals broader organizational readiness for operational automation investment",
+            "source_url": "https://chainstoreage.com/whole-foods-market-automate-store-food-recycling"
+          }
+        ],
+        "canonicalDecision": "hold",
+        "researchConfidence": 0.42
+      },
+      "system_decision": "Hold",
+      "human_label": {
+        "identity": "correct",
+        "target_match": "wrong_target",
+        "evidence_quality": "adequate",
+        "temporal_quality": "valid_material_change",
+        "case_defensibility": "not_defensible",
+        "human_decision": "Reject",
+        "research_useful": false,
+        "waste_reason": "wrong_target_type",
+        "note": "Retailer was not among the confirmed manufacturer/distributor target types."
+      },
+      "disagreement": true
+    },
+    {
+      "soak_id": "us_logistics_wms",
+      "phase": "A",
+      "account": {
+        "risks": [
+          "No verified technology procurement or supply chain investment signal — outreach may be premature without further qualification",
+          "The 'challenging 2026' signal is ambiguous and may not relate to supply chain operations at all",
+          "Sprouts' lean format and strong margin profile may reduce urgency for large capital automation investments",
+          "Incumbent WMS or automation vendor relationships are unknown and could represent significant displacement barriers"
+        ],
+        "domain": "sprouts.com",
+        "company": "Sprouts Farmers Market",
+        "country": "United States",
+        "reasons": [
+          "case_missing"
+        ],
+        "category": "COLD",
+        "fitScore": 5.5,
+        "qcStatus": "REVIEW_NEEDED",
+        "sourceUrl": "https://finance.yahoo.com/markets/stocks/articles/sprouts-stores-still-justify-growth-122727365.html",
+        "signalDate": "2026-06-07",
+        "signalType": null,
+        "nextQuestion": "What specific operational challenges does Sprouts' head of supply chain or VP of logistics attribute to the 'challenging 2026' outlook — and are those challenges infrastructure/technology-related or primarily demand/margin-driven?",
+        "evidenceClaims": [
+          {
+            "date": "2026-02-20",
+            "type": "verified_public_signal",
+            "claim": "Sprouts Farmers Market expects 2026 to be a challenging year",
+            "source_url": "https://finance.yahoo.com/markets/stocks/articles/sprouts-stores-still-justify-growth-122727365.html"
+          },
+          {
+            "date": "2026-06-07",
+            "type": "verified_public_signal",
+            "claim": "Sprouts outperforms peers on profit per square foot based on 10-K filings",
+            "source_url": "https://finance.yahoo.com/markets/stocks/articles/sprouts-stores-still-justify-growth-122727365.html"
+          },
+          {
+            "date": "2025-10-30",
+            "type": "verified_public_signal",
+            "claim": "Sprouts is positioned as a specialized nutrition/natural grocery retailer with fresh produce focus",
+            "source_url": "https://finance.yahoo.com/markets/stocks/articles/sprouts-stores-still-justify-growth-122727365.html"
+          },
+          {
+            "date": null,
+            "type": "inferred_from_context",
+            "claim": "Sprouts faces operational complexity managing perishable inventory across a growing store network",
+            "source_url": "https://finance.yahoo.com/markets/stocks/articles/sprouts-stores-still-justify-growth-122727365.html"
+          },
+          {
+            "date": null,
+            "type": "weak_inference",
+            "claim": "Sprouts may have WMS capability gaps or fulfillment inefficiencies",
+            "source_url": "https://finance.yahoo.com/markets/stocks/articles/sprouts-stores-still-justify-growth-122727365.html"
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Current technology stack, DC count, or active vendor evaluations",
+            "source_url": "https://finance.yahoo.com/markets/stocks/articles/sprouts-stores-still-justify-growth-122727365.html"
+          }
+        ],
+        "canonicalDecision": "hold",
+        "researchConfidence": 0.42
+      },
+      "system_decision": "Hold",
+      "human_label": {
+        "identity": "correct",
+        "target_match": "wrong_target",
+        "evidence_quality": "weak",
+        "temporal_quality": "no_event",
+        "case_defensibility": "not_defensible",
+        "human_decision": "Reject",
+        "research_useful": false,
+        "waste_reason": "wrong_target_type",
+        "note": "Performance commentary did not establish the required logistics event."
+      },
+      "disagreement": true
+    },
+    {
+      "soak_id": "us_enterprise_operations",
+      "phase": "A",
+      "account": {
+        "risks": [
+          "Zero account-specific public signals available — outreach would be cold with no trigger to reference",
+          "Company scale may be too small for enterprise-tier software, creating a product-market size mismatch",
+          "No evidence of active evaluation, budget allocation, or strategic change that would indicate near-term buying intent",
+          "Irrelevant signals surfaced in research (HashMicro, Jaykay) suggest the intelligence pipeline may not be correctly scoped to this account"
+        ],
+        "domain": "advancedillumination.com",
+        "company": "Advanced Illumination",
+        "country": "United States",
+        "reasons": [
+          "case_missing"
+        ],
+        "category": "COLD",
+        "fitScore": 5.5,
+        "qcStatus": "REVIEW_NEEDED",
+        "sourceUrl": "https://www.manilatimes.net/2026/07/10/tmt-newswire/pr-newswire/hashmicro-advances-manufacturers-with-ai-native-capabilities-through-hashmicro-x/2382116",
+        "signalDate": "2026-07-10",
+        "signalType": null,
+        "nextQuestion": "What operations or ERP software is Advanced Illumination currently using, and have they shown any intent signals around systems evaluation or operational scaling?",
+        "evidenceClaims": [
+          {
+            "date": null,
+            "type": "inferred_from_context",
+            "claim": "Advanced Illumination is a U.S.-based manufacturer of industrial LED and machine vision lighting products",
+            "source_url": "https://www.manilatimes.net/2026/07/10/tmt-newswire/pr-newswire/hashmicro-advances-manufacturers-with-ai-native-capabilities-through-hashmicro-x/2382116"
+          },
+          {
+            "date": "2026-07-10",
+            "type": "verified_public_signal",
+            "claim": "HashMicro announced AI-native manufacturing capabilities via HashMicro X",
+            "source_url": "https://www.manilatimes.net/2026/07/10/tmt-newswire/pr-newswire/hashmicro-advances-manufacturers-with-ai-native-capabilities-through-hashmicro-x/2382116"
+          },
+          {
+            "date": "2026-04-14",
+            "type": "verified_public_signal",
+            "claim": "Jaykay Enterprises acquired a defence manufacturing business",
+            "source_url": "https://www.manilatimes.net/2026/07/10/tmt-newswire/pr-newswire/hashmicro-advances-manufacturers-with-ai-native-capabilities-through-hashmicro-x/2382116"
+          },
+          {
+            "date": null,
+            "type": "weak_inference",
+            "claim": "Advanced Illumination may be using fragmented or legacy operations systems",
+            "source_url": "https://www.manilatimes.net/2026/07/10/tmt-newswire/pr-newswire/hashmicro-advances-manufacturers-with-ai-native-capabilities-through-hashmicro-x/2382116"
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Advanced Illumination's current ERP/MES stack, headcount, revenue, or active technology evaluation",
+            "source_url": "https://www.manilatimes.net/2026/07/10/tmt-newswire/pr-newswire/hashmicro-advances-manufacturers-with-ai-native-capabilities-through-hashmicro-x/2382116"
+          }
+        ],
+        "canonicalDecision": "hold",
+        "researchConfidence": 0.18
+      },
+      "system_decision": "Hold",
+      "human_label": {
+        "identity": "correct",
+        "target_match": "strong",
+        "evidence_quality": "invalid",
+        "temporal_quality": "invalid",
+        "case_defensibility": "not_defensible",
+        "human_decision": "Reject",
+        "research_useful": true,
+        "waste_reason": null,
+        "note": "Structurally in target, but Research attached HashMicro/Jaykay evidence from other companies."
+      },
+      "disagreement": true
+    },
+    {
+      "soak_id": "co_logistics_automation",
+      "phase": "A",
+      "account": {
+        "risks": [
+          "Identity risk: Sunon Inc. may be a subsidiary with procurement decided outside Colombia, making local outreach ineffective",
+          "Scale risk: if the company is small, the deal size may not justify the sales investment",
+          "No trigger: without a confirmed pain event or initiative, outreach will land cold with no hook",
+          "Competitive risk: if the company is part of a global group, incumbent ERP/WMS vendors (SAP, Oracle, JDA) may already be entrenched"
+        ],
+        "domain": "sunonusa.com",
+        "company": "Sunon Inc.",
+        "country": "Colombia",
+        "reasons": [
+          "case_missing"
+        ],
+        "category": "COLD",
+        "fitScore": 4.5,
+        "qcStatus": "REVIEW_NEEDED",
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "nextQuestion": "Is Sunon Inc. Colombia an independent entity or a subsidiary of the Taiwanese Sunon group, and what is the scale of their warehouse or distribution operation in Colombia?",
+        "evidenceClaims": [
+          {
+            "date": null,
+            "type": "weak_inference",
+            "claim": "Sunon Inc. is a manufacturing company located in Colombia",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "inferred_from_context",
+            "claim": "Manufacturing companies in Colombia face warehouse and inventory management inefficiencies",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Sunon Inc. currently lacks WMS integration or warehouse automation",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Company size, revenue, and operational footprint",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Whether this is the same entity as Sunon (Taiwan) or an unrelated company",
+            "source_url": null
+          }
+        ],
+        "canonicalDecision": "hold",
+        "researchConfidence": 0.12
+      },
+      "system_decision": "Hold",
+      "human_label": {
+        "identity": "wrong",
+        "target_match": "wrong_target",
+        "evidence_quality": "invalid",
+        "temporal_quality": "no_event",
+        "case_defensibility": "not_defensible",
+        "human_decision": "Reject",
+        "research_useful": false,
+        "waste_reason": "geography_mismatch",
+        "note": "US domain was represented as a Colombian operating account."
+      },
+      "disagreement": true
+    },
+    {
+      "soak_id": "co_logistics_automation",
+      "phase": "A",
+      "account": {
+        "risks": [
+          "No confirmed signal that logistics or WMS technology is within scope of the 2026 investment plan — the budget may be entirely capex for physical stores.",
+          "Grupo Éxito's scale means a long, structured procurement process is likely — this is not a fast-close account.",
+          "Improved operational efficiency reported in 2025 may reduce perceived urgency internally for supply chain upgrades.",
+          "No identified internal champion or logistics technology decision-maker from public sources."
+        ],
+        "domain": "grupoexito.com.co",
+        "company": "Grupo Éxito",
+        "country": "Colombia",
+        "reasons": [
+          "opportunity_test_reject",
+          "hard_blocker_stale_beyond_180d"
+        ],
+        "category": "WARM",
+        "fitScore": 7.8,
+        "qcStatus": "APPROVED",
+        "sourceUrl": "https://www.valoraanalitik.com/grupo-exito-16-nuevas-tiendas-2026",
+        "signalDate": "2026-01-22",
+        "signalType": null,
+        "nextQuestion": "Is any portion of Grupo Éxito's 2026 capital investment plan allocated to distribution center technology, WMS modernization, or warehouse automation — and who owns that technology roadmap internally?",
+        "evidenceClaims": [
+          {
+            "date": "2026-01-22",
+            "type": "verified_public_signal",
+            "claim": "Grupo Éxito plans to open 16 new stores in 2026",
+            "source_url": "https://www.valoraanalitik.com/grupo-exito-16-nuevas-tiendas-2026"
+          },
+          {
+            "date": "2026-01-22",
+            "type": "verified_public_signal",
+            "claim": "2026 capital investment will approximately double the ~USD 80 million invested in 2025",
+            "source_url": "https://www.valoraanalitik.com/grupo-exito-16-nuevas-tiendas-2026"
+          },
+          {
+            "date": "2026-01-22",
+            "type": "verified_public_signal",
+            "claim": "~50% of 2025 USD 80M investment went to expansion, renovation, and store maintenance",
+            "source_url": "https://www.valoraanalitik.com/grupo-exito-16-nuevas-tiendas-2026"
+          },
+          {
+            "date": "2026-05-13",
+            "type": "verified_public_signal",
+            "claim": "Q1 2026 consolidated operating revenues were COP 5.5 trillion, +3.5% YoY (ex-FX)",
+            "source_url": "https://www.valoraanalitik.com/grupo-exito-16-nuevas-tiendas-2026"
+          },
+          {
+            "date": "2026-03-19",
+            "type": "verified_public_signal",
+            "claim": "2025 net profit exceeded COP 592 billion, a tenfold increase from 2024",
+            "source_url": "https://www.valoraanalitik.com/grupo-exito-16-nuevas-tiendas-2026"
+          },
+          {
+            "date": null,
+            "type": "inferred_from_context",
+            "claim": "Rapid store expansion is likely stressing existing warehouse and inventory management systems",
+            "source_url": "https://www.valoraanalitik.com/grupo-exito-16-nuevas-tiendas-2026"
+          },
+          {
+            "date": null,
+            "type": "weak_inference",
+            "claim": "The doubling investment budget may include logistics and supply chain technology spend",
+            "source_url": "https://www.valoraanalitik.com/grupo-exito-16-nuevas-tiendas-2026"
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Grupo Éxito's current WMS vendor or warehouse automation maturity level",
+            "source_url": "https://www.valoraanalitik.com/grupo-exito-16-nuevas-tiendas-2026"
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Whether Grupo Éxito has an active procurement process for WMS or automation",
+            "source_url": "https://www.valoraanalitik.com/grupo-exito-16-nuevas-tiendas-2026"
+          }
+        ],
+        "canonicalDecision": "hold",
+        "researchConfidence": 0.72
+      },
+      "system_decision": "Hold",
+      "human_label": {
+        "identity": "correct",
+        "target_match": "strong",
+        "evidence_quality": "adequate",
+        "temporal_quality": "historical_only",
+        "case_defensibility": "not_defensible",
+        "human_decision": "Hold",
+        "research_useful": true,
+        "waste_reason": null,
+        "note": "Expansion was real but stale and did not prove logistics technology scope."
+      },
+      "disagreement": false
+    },
+    {
+      "soak_id": "co_logistics_automation",
+      "phase": "A",
+      "account": {
+        "risks": [
+          "No confirmed buying trigger or technology gap signal — the opportunity may not exist in active form",
+          "Alkosto may already have an enterprise WMS solution in place (e.g., SAP, Manhattan, or equivalent), making displacement difficult",
+          "Decision-making authority for supply chain technology is unclear — could sit with a parent group or holding company",
+          "Thin public evidence base means outreach could be mistargeted at the wrong pain or wrong moment"
+        ],
+        "domain": "alkosto.com",
+        "company": "Alkosto",
+        "country": "Colombia",
+        "reasons": [
+          "opportunity_test_reject",
+          "hard_blocker_stale_beyond_180d"
+        ],
+        "category": "WARM",
+        "fitScore": 7.5,
+        "qcStatus": "APPROVED",
+        "sourceUrl": "https://needl.co/company/alkosto",
+        "signalDate": "2025-08-31",
+        "signalType": null,
+        "nextQuestion": "Does Alkosto currently operate with a centralized WMS platform (e.g., SAP EWM, Manhattan, Oracle WMS), and who within the organization owns warehouse and inventory technology decisions — logistics operations, IT, or a holding-level supply chain function?",
+        "evidenceClaims": [
+          {
+            "date": "2025-08-31",
+            "type": "verified_public_signal",
+            "claim": "Alkosto operates as a multi-category Colombian retail chain (electronics, appliances, tires, motorcycles, groceries, household goods)",
+            "source_url": "https://needl.co/company/alkosto"
+          },
+          {
+            "date": "2026-06-25",
+            "type": "verified_public_signal",
+            "claim": "Alkosto integrates physical and digital channels allowing online purchases and inventory consultation",
+            "source_url": "https://needl.co/company/alkosto"
+          },
+          {
+            "date": "2025-12-29",
+            "type": "verified_public_signal",
+            "claim": "Alkosto ran a major year-end promotional event with up to 60% discounts in December 2025",
+            "source_url": "https://needl.co/company/alkosto"
+          },
+          {
+            "date": null,
+            "type": "inferred_from_context",
+            "claim": "Alkosto faces warehouse orchestration complexity due to multi-category SKU range and omnichannel demands",
+            "source_url": "https://needl.co/company/alkosto"
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Alkosto's current WMS or warehouse automation stack is insufficient or outdated",
+            "source_url": "https://needl.co/company/alkosto"
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Alkosto has an active technology procurement or logistics modernization initiative",
+            "source_url": "https://needl.co/company/alkosto"
+          },
+          {
+            "date": null,
+            "type": "weak_inference",
+            "claim": "Peak promotional events create measurable strain on Alkosto's fulfillment and inventory systems",
+            "source_url": "https://needl.co/company/alkosto"
+          }
+        ],
+        "canonicalDecision": "hold",
+        "researchConfidence": 0.42
+      },
+      "system_decision": "Hold",
+      "human_label": {
+        "identity": "correct",
+        "target_match": "plausible",
+        "evidence_quality": "weak",
+        "temporal_quality": "historical_only",
+        "case_defensibility": "not_defensible",
+        "human_decision": "Hold",
+        "research_useful": true,
+        "waste_reason": null,
+        "note": "Reference-page facts did not establish a fresh material logistics change."
+      },
+      "disagreement": false
+    },
+    {
+      "soak_id": "us_sparse_professional_services",
+      "phase": "A",
+      "account": {
+        "risks": [
+          "Account is almost entirely unresearched — no company-specific public signals found",
+          "LLC designation and generic name suggest potential small size or nascent stage, reducing likelihood of a consulting budget",
+          "Sector-level signals do not translate to company-level buying intent without further validation",
+          "Risk of wasted outreach effort without first confirming basic company profile (size, service line, decision-maker)"
+        ],
+        "domain": "iprofessional.com",
+        "company": "First Professional Services LLC",
+        "country": "United States",
+        "reasons": [
+          "case_missing"
+        ],
+        "category": "COLD",
+        "fitScore": 4,
+        "qcStatus": "REVIEW_NEEDED",
+        "sourceUrl": "https://www.stantonchase.com/insights/white-papers/the-professional-services-ownership-dilemma-partnership-private-equity-or-something-else-entirely",
+        "signalDate": "2025-11-15",
+        "signalType": null,
+        "nextQuestion": "What specific professional services does First Professional Services LLC deliver, how large is the firm, and has it experienced any recent growth, ownership change, or operational challenge that would create demand for external operations consulting?",
+        "evidenceClaims": [
+          {
+            "date": "2025-04-01",
+            "type": "verified_public_signal",
+            "claim": "Grant Thornton UK completed a £1.5 billion transaction with Cinven",
+            "source_url": "https://www.stantonchase.com/insights/white-papers/the-professional-services-ownership-dilemma-partnership-private-equity-or-something-else-entirely"
+          },
+          {
+            "date": null,
+            "type": "verified_public_signal",
+            "claim": "Grant Thornton US received New Mountain Capital investment and merged with Grant Thornton Ireland",
+            "source_url": "https://www.stantonchase.com/insights/white-papers/the-professional-services-ownership-dilemma-partnership-private-equity-or-something-else-entirely"
+          },
+          {
+            "date": "2025-12-08",
+            "type": "verified_public_signal",
+            "claim": "MSA Professional Services acquired Haddad Engineering",
+            "source_url": "https://www.stantonchase.com/insights/white-papers/the-professional-services-ownership-dilemma-partnership-private-equity-or-something-else-entirely"
+          },
+          {
+            "date": null,
+            "type": "weak_inference",
+            "claim": "First Professional Services LLC is experiencing operational or strategic pressure",
+            "source_url": "https://www.stantonchase.com/insights/white-papers/the-professional-services-ownership-dilemma-partnership-private-equity-or-something-else-entirely"
+          },
+          {
+            "date": null,
+            "type": "weak_inference",
+            "claim": "First Professional Services LLC operates in a sub-sector affected by PE consolidation",
+            "source_url": "https://www.stantonchase.com/insights/white-papers/the-professional-services-ownership-dilemma-partnership-private-equity-or-something-else-entirely"
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Company size, revenue, ownership structure, or service lines",
+            "source_url": "https://www.stantonchase.com/insights/white-papers/the-professional-services-ownership-dilemma-partnership-private-equity-or-something-else-entirely"
+          }
+        ],
+        "canonicalDecision": "hold",
+        "researchConfidence": 0.15
+      },
+      "system_decision": "Hold",
+      "human_label": {
+        "identity": "ambiguous",
+        "target_match": "plausible",
+        "evidence_quality": "invalid",
+        "temporal_quality": "invalid",
+        "case_defensibility": "not_defensible",
+        "human_decision": "Reject",
+        "research_useful": false,
+        "waste_reason": "identity_issue",
+        "note": "Research evidence described Grant Thornton/MSA, not this account."
+      },
+      "disagreement": true
+    },
+    {
+      "soak_id": "us_sparse_professional_services",
+      "phase": "A",
+      "account": {
+        "risks": [
+          "No verified company identity — 'Specialty Distributors' is ambiguous and could refer to multiple entities",
+          "Entire opportunity case rests on inferred and sector-level signals, not account-specific evidence",
+          "Unknown company size may disqualify the account from operations consulting engagement thresholds",
+          "Without a confirmed buyer or decision-maker, outreach has no validated entry point"
+        ],
+        "domain": "rtspecialty.com",
+        "company": "Specialty Distributors",
+        "country": "United States",
+        "reasons": [
+          "case_missing"
+        ],
+        "category": "DISCARD",
+        "fitScore": 1,
+        "qcStatus": "REVIEW_NEEDED",
+        "sourceUrl": "https://www.yourvalley.net/stories/new-building-materials-and-distribution-sector-maintains-steady-capital-investment-in-may-2026,700166",
+        "signalDate": "2026-06-23",
+        "signalType": null,
+        "nextQuestion": "What is Specialty Distributors' specific distribution vertical, approximate revenue scale, and ownership structure — and is there a confirmed operational challenge or recent business change that has made them open to external consulting?",
+        "evidenceClaims": [
+          {
+            "date": "2026-06-23",
+            "type": "verified_public_signal",
+            "claim": "Building materials and distribution sector maintained steady capital investment in May 2026",
+            "source_url": "https://www.yourvalley.net/stories/new-building-materials-and-distribution-sector-maintains-steady-capital-investment-in-may-2026,700166"
+          },
+          {
+            "date": null,
+            "type": "weak_inference",
+            "claim": "Specialty Distributors operates in the building materials or industrial distribution segment",
+            "source_url": "https://www.yourvalley.net/stories/new-building-materials-and-distribution-sector-maintains-steady-capital-investment-in-may-2026,700166"
+          },
+          {
+            "date": null,
+            "type": "inferred_from_context",
+            "claim": "The company faces operational inefficiencies typical of specialty distributors",
+            "source_url": "https://www.yourvalley.net/stories/new-building-materials-and-distribution-sector-maintains-steady-capital-investment-in-may-2026,700166"
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Company size, revenue, ownership, and leadership",
+            "source_url": "https://www.yourvalley.net/stories/new-building-materials-and-distribution-sector-maintains-steady-capital-investment-in-may-2026,700166"
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Any company-specific trigger event (hiring, expansion, restructuring, funding)",
+            "source_url": "https://www.yourvalley.net/stories/new-building-materials-and-distribution-sector-maintains-steady-capital-investment-in-may-2026,700166"
+          }
+        ],
+        "canonicalDecision": "hold",
+        "researchConfidence": 0.08
+      },
+      "system_decision": "Hold",
+      "human_label": {
+        "identity": "wrong",
+        "target_match": "wrong_target",
+        "evidence_quality": "invalid",
+        "temporal_quality": "invalid",
+        "case_defensibility": "not_defensible",
+        "human_decision": "Reject",
+        "research_useful": false,
+        "waste_reason": "wrong_target_type",
+        "note": "Ambiguous distributor/insurance identity was unrelated to professional-services target."
+      },
+      "disagreement": true
+    },
+    {
+      "soak_id": "us_sparse_professional_services",
+      "phase": "A",
+      "account": {
+        "risks": [
+          "Company may be too small to afford or justify a specialized operations consulting engagement",
+          "No trigger event or confirmed pain signal exists — outreach would be entirely cold and hypothesis-driven",
+          "Industry segment interpretation is based on a name inference and may be incorrect",
+          "Buyer identity and internal decision-making structure are completely unknown, making engagement targeting impossible"
+        ],
+        "domain": "exhibitexperience.com",
+        "company": "mackenzie EXHIBIT",
+        "country": "United States",
+        "reasons": [
+          "case_missing"
+        ],
+        "category": "DISCARD",
+        "fitScore": 3,
+        "qcStatus": "REVIEW_NEEDED",
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "nextQuestion": "What specific services does mackenzie EXHIBIT offer, and how many concurrent projects or clients does it typically manage at one time — is there genuine operational complexity that a consulting engagement could address?",
+        "evidenceClaims": [
+          {
+            "date": null,
+            "type": "verified_public_signal",
+            "claim": "mackenzie EXHIBIT is a US-based company in the professional services industry",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "weak_inference",
+            "claim": "The company likely operates in exhibit, trade show, or event display services based on its name",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "inferred_from_context",
+            "claim": "The company may face operational fragmentation typical of project-based event services firms",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Company size, revenue, headcount, leadership, and operational maturity",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Any active growth initiative, hiring surge, or technology adoption that would signal buying readiness",
+            "source_url": null
+          }
+        ],
+        "canonicalDecision": "hold",
+        "researchConfidence": 0.12
+      },
+      "system_decision": "Hold",
+      "human_label": {
+        "identity": "correct",
+        "target_match": "plausible",
+        "evidence_quality": "weak",
+        "temporal_quality": "no_event",
+        "case_defensibility": "not_defensible",
+        "human_decision": "Hold",
+        "research_useful": true,
+        "waste_reason": null,
+        "note": "Plausible project-services firm; no qualifying event or scale evidence."
+      },
+      "disagreement": false
+    },
+    {
+      "soak_id": "us_industrial_distribution",
+      "phase": "D",
+      "account": {
+        "risks": [
+          "Single thin news signal with no operational, technology, or buying intent data — outreach could land without a relevant internal conversation underway",
+          "Ferguson Enterprises' scale may mean any enterprise software decision is centralized at a corporate IT or supply chain leadership level, not at the Ferguson Industrial segment",
+          "No evidence of dissatisfaction with current inventory or warehouse systems — incumbent solution lock-in is a realistic risk",
+          "The 'slight' sales decline may not create sufficient urgency to justify a new software investment in the near term"
+        ],
+        "domain": "fergusonindustrial.com",
+        "company": "Ferguson Industrial",
+        "country": "United States",
+        "reasons": [
+          "opportunity_test_reject",
+          "hard_blocker_stale_beyond_180d"
+        ],
+        "category": "WARM",
+        "fitScore": 7.5,
+        "qcStatus": "APPROVED",
+        "sourceUrl": "https://www.inddist.com/earnings/news/22920588/ferguson-posts-slight-decline-in-annual-sales",
+        "signalDate": "2024-09-17",
+        "signalType": null,
+        "nextQuestion": "Does Ferguson Industrial operate its own distinct warehouse management and inventory planning systems, or are these managed centrally at the Ferguson Enterprises level — and is there a known initiative or pain point in this area?",
+        "evidenceClaims": [
+          {
+            "date": "2024-09-17",
+            "type": "verified_public_signal",
+            "claim": "Ferguson posted a slight decline in annual sales for its recently completed fiscal year",
+            "source_url": "https://www.inddist.com/earnings/news/22920588/ferguson-posts-slight-decline-in-annual-sales"
+          },
+          {
+            "date": "2024-09-17",
+            "type": "verified_public_signal",
+            "claim": "Ferguson saw a slight increase in its latest quarter and anticipates similar growth in the new year",
+            "source_url": "https://www.inddist.com/earnings/news/22920588/ferguson-posts-slight-decline-in-annual-sales"
+          },
+          {
+            "date": null,
+            "type": "inferred_from_context",
+            "claim": "Ferguson Industrial operates a complex multi-location distribution network",
+            "source_url": "https://www.inddist.com/earnings/news/22920588/ferguson-posts-slight-decline-in-annual-sales"
+          },
+          {
+            "date": null,
+            "type": "inferred_from_context",
+            "claim": "Sales pressure creates conditions where inventory and warehouse efficiency become operational priorities",
+            "source_url": "https://www.inddist.com/earnings/news/22920588/ferguson-posts-slight-decline-in-annual-sales"
+          },
+          {
+            "date": null,
+            "type": "weak_inference",
+            "claim": "Ferguson may have an incumbent WMS or ERP system creating switching costs",
+            "source_url": "https://www.inddist.com/earnings/news/22920588/ferguson-posts-slight-decline-in-annual-sales"
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Ferguson Industrial's current technology stack for inventory planning",
+            "source_url": "https://www.inddist.com/earnings/news/22920588/ferguson-posts-slight-decline-in-annual-sales"
+          }
+        ],
+        "canonicalDecision": "hold",
+        "researchConfidence": 0.42
+      },
+      "system_decision": "Hold",
+      "human_label": {
+        "identity": "correct",
+        "target_match": "strong",
+        "evidence_quality": "weak",
+        "temporal_quality": "historical_only",
+        "case_defensibility": "not_defensible",
+        "human_decision": "Hold",
+        "research_useful": true,
+        "waste_reason": null,
+        "note": "Correct distributor, but stale parent sales result was not an operational trigger."
+      },
+      "disagreement": false
+    },
+    {
+      "soak_id": "us_industrial_distribution",
+      "phase": "D",
+      "account": {
+        "risks": [
+          "Schneider Electric competes directly in warehouse management and automation software — positioning this offer risks immediate dismissal or adversarial reception.",
+          "Enterprise-scale operations almost certainly run SAP/Oracle or proprietary EcoStruxure-integrated WMS, making mid-market software a poor fit.",
+          "No verified internal demand signal — pursuing this account would be speculative and resource-intensive.",
+          "Identifying and reaching the correct internal buyer for supply chain software at a 150,000+ employee global company without a warm introduction is a significant practical barrier."
+        ],
+        "domain": "electricalmarketing.com",
+        "company": "Schneider Electric",
+        "country": "United States",
+        "reasons": [
+          "case_missing"
+        ],
+        "category": "COLD",
+        "fitScore": 4.5,
+        "qcStatus": "REVIEW_NEEDED",
+        "sourceUrl": "https://www.se.com/ww/en/assets/pdf/release-hy-results-2026",
+        "signalDate": "2026-07-29",
+        "signalType": null,
+        "nextQuestion": "Does Schneider Electric have any U.S.-based subsidiary, regional distribution division, or recently acquired entity that operates independently and might make mid-market software purchasing decisions outside of corporate IT?",
+        "evidenceClaims": [
+          {
+            "date": "2026-07-29",
+            "type": "verified_public_signal",
+            "claim": "Schneider Electric acquired Cognite as part of H1 2026 portfolio updates",
+            "source_url": "https://www.se.com/ww/en/assets/pdf/release-hy-results-2026"
+          },
+          {
+            "date": "2025-11-23",
+            "type": "verified_public_signal",
+            "claim": "Schneider Electric offers warehouse management and autonomous yard solutions for metal industries",
+            "source_url": "https://www.se.com/ww/en/assets/pdf/release-hy-results-2026"
+          },
+          {
+            "date": "2026-07-01",
+            "type": "verified_public_signal",
+            "claim": "Schneider Electric is a major contributor to the global industrial automation market via EcoStruxure",
+            "source_url": "https://www.se.com/ww/en/assets/pdf/release-hy-results-2026"
+          },
+          {
+            "date": null,
+            "type": "weak_inference",
+            "claim": "Schneider Electric's internal distribution operations may face inventory planning complexity due to acquisitions",
+            "source_url": "https://www.se.com/ww/en/assets/pdf/release-hy-results-2026"
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Schneider Electric has internal gaps in inventory planning or warehouse process integration software",
+            "source_url": "https://www.se.com/ww/en/assets/pdf/release-hy-results-2026"
+          },
+          {
+            "date": null,
+            "type": "inferred_from_context",
+            "claim": "Schneider Electric runs a multi-tier U.S. distribution supply chain requiring external software support",
+            "source_url": "https://www.se.com/ww/en/assets/pdf/release-hy-results-2026"
+          }
+        ],
+        "canonicalDecision": "hold",
+        "researchConfidence": 0.2
+      },
+      "system_decision": "Hold",
+      "human_label": {
+        "identity": "wrong",
+        "target_match": "wrong_target",
+        "evidence_quality": "adequate",
+        "temporal_quality": "valid_material_change",
+        "case_defensibility": "not_defensible",
+        "human_decision": "Reject",
+        "research_useful": false,
+        "waste_reason": "wrong_target_type",
+        "note": "Candidate domain was unrelated and the company competes in the offered category."
+      },
+      "disagreement": true
+    },
+    {
+      "soak_id": "us_fleet_operations",
+      "phase": "D",
+      "account": {
+        "risks": [
+          "Fleet ownership cannot be confirmed — Clever Wholesale may outsource all delivery and have no use case for this offer",
+          "No identifiable decision-maker, budget cycle, or procurement signal to time or target outreach",
+          "Thin company identity data increases risk of misaligned messaging or wasted sales resources",
+          "Segment confidence score of 80% lacks a verifiable source, making it unreliable as a prioritization signal"
+        ],
+        "domain": "cleverwholesale.com",
+        "company": "Clever Wholesale",
+        "country": "United States",
+        "reasons": [
+          "case_missing"
+        ],
+        "category": "COLD",
+        "fitScore": 4.5,
+        "qcStatus": "REVIEW_NEEDED",
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "nextQuestion": "Does Clever Wholesale operate a proprietary delivery or transfer fleet, and if so, how many vehicles and how is routing and maintenance currently managed?",
+        "evidenceClaims": [
+          {
+            "date": null,
+            "type": "weak_inference",
+            "claim": "Clever Wholesale is a U.S.-based wholesale distribution company",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "inferred_from_context",
+            "claim": "Company operates in a segment where fleet delivery is common",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Company size is unknown",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "No fleet, telematics, or route planning technology signals are available",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "weak_inference",
+            "claim": "80% public signal confidence rating is assigned to this account",
+            "source_url": null
+          }
+        ],
+        "canonicalDecision": "hold",
+        "researchConfidence": 0.18
+      },
+      "system_decision": "Hold",
+      "human_label": {
+        "identity": "correct",
+        "target_match": "plausible",
+        "evidence_quality": "invalid",
+        "temporal_quality": "no_event",
+        "case_defensibility": "not_defensible",
+        "human_decision": "Hold",
+        "research_useful": true,
+        "waste_reason": null,
+        "note": "Distributor was reasonable to probe; fleet ownership remained unknown."
+      },
+      "disagreement": false
+    },
+    {
+      "soak_id": "us_fleet_operations",
+      "phase": "D",
+      "account": {
+        "risks": [
+          "High probability of incumbent fleet management vendor already in place, making displacement the actual sales challenge",
+          "No confirmed trigger event — outreach without a specific hook risks low response rates at the decision-maker level",
+          "Orgill's procurement process at this scale likely involves long evaluation cycles and multi-stakeholder approval",
+          "Research is based entirely on general industry knowledge with zero company-specific signals from provided sources"
+        ],
+        "domain": "orgill.com",
+        "company": "Orgill",
+        "country": "United States",
+        "reasons": [
+          "opportunity_test_reject",
+          "hard_blocker_no_source",
+          "hard_blocker_no_material_event",
+          "hard_blocker_no_valid_date"
+        ],
+        "category": "WARM",
+        "fitScore": 6.5,
+        "qcStatus": "APPROVED",
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "nextQuestion": "Does Orgill currently use a fleet telematics or route optimization platform, and if so, who is the incumbent vendor and when does that contract renew?",
+        "evidenceClaims": [
+          {
+            "date": null,
+            "type": "verified_public_signal",
+            "claim": "Orgill is one of the largest independent hardlines wholesale distributors in the United States",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "verified_public_signal",
+            "claim": "Orgill operates multiple large distribution centers across North America",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "inferred_from_context",
+            "claim": "Orgill runs a proprietary delivery fleet to service independent retailers",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "inferred_from_context",
+            "claim": "The company faces pressure on delivery cost per mile, fleet uptime, and regulatory compliance",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Orgill does not currently have an adequate fleet telematics or route planning platform",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "There is an active or near-term buying process for fleet software at Orgill",
+            "source_url": null
+          }
+        ],
+        "canonicalDecision": "hold",
+        "researchConfidence": 0.38
+      },
+      "system_decision": "Hold",
+      "human_label": {
+        "identity": "correct",
+        "target_match": "strong",
+        "evidence_quality": "weak",
+        "temporal_quality": "no_event",
+        "case_defensibility": "not_defensible",
+        "human_decision": "Hold",
+        "research_useful": true,
+        "waste_reason": null,
+        "note": "Strong fleet-operating hypothesis but no dated company trigger or source."
+      },
+      "disagreement": false
+    },
+    {
+      "soak_id": "us_channel_partnerships",
+      "phase": "D",
+      "account": {
+        "risks": [
+          "Entire relevance case is built on industry inference with no account-level evidence — risk of wasted outreach effort",
+          "Company size unknown — may be too small to justify enterprise integration software investment",
+          "No identified buyer or decision-maker role confirmed within the organization",
+          "Possible mismatch if company is a service center or niche specialty metals operation rather than a volume manufacturer with active distributor channels"
+        ],
+        "domain": "specialtysteel.com",
+        "company": "Associated Steel Corporation",
+        "country": "United States",
+        "reasons": [
+          "case_missing"
+        ],
+        "category": "COLD",
+        "fitScore": 5.5,
+        "qcStatus": "REVIEW_NEEDED",
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "nextQuestion": "Does Associated Steel Corporation actively manage a network of independent distributors or channel partners, and if so, how do they currently track partner-held inventory and replenishment orders?",
+        "evidenceClaims": [
+          {
+            "date": null,
+            "type": "weak_inference",
+            "claim": "Associated Steel Corporation is a U.S.-based steel manufacturer",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "inferred_from_context",
+            "claim": "Company likely manages distributor and channel partner relationships",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "weak_inference",
+            "claim": "Company faces inventory visibility challenges across its channel",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Company revenue, headcount, and current tech stack",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Any recent trigger event (M&A, expansion, system change) creating urgency",
+            "source_url": null
+          }
+        ],
+        "canonicalDecision": "hold",
+        "researchConfidence": 0.18
+      },
+      "system_decision": "Hold",
+      "human_label": {
+        "identity": "correct",
+        "target_match": "plausible",
+        "evidence_quality": "weak",
+        "temporal_quality": "no_event",
+        "case_defensibility": "not_defensible",
+        "human_decision": "Hold",
+        "research_useful": true,
+        "waste_reason": null,
+        "note": "Manufacturer was plausible; channel model and event were unverified."
+      },
+      "disagreement": false
+    },
+    {
+      "soak_id": "us_channel_partnerships",
+      "phase": "D",
+      "account": {
+        "risks": [
+          "Near-zero evidence base makes this account essentially unresearched — outreach risk is high without qualification",
+          "Unknown company size may mean the account is too small to afford or operationally justify integration middleware",
+          "No confirmation that the company uses distributors or channel partners at all — the core use case may not apply",
+          "Generic company name increases risk of misidentification or misdirected research effort"
+        ],
+        "domain": "generalspecialtiesmfg.com",
+        "company": "General Devices Company, Inc.",
+        "country": "United States",
+        "reasons": [
+          "case_missing"
+        ],
+        "category": "COLD",
+        "fitScore": 4,
+        "qcStatus": "REVIEW_NEEDED",
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "nextQuestion": "Does General Devices Company sell through third-party distributors or channel partners, and if so, how many tiers and partners does its channel network include?",
+        "evidenceClaims": [
+          {
+            "date": null,
+            "type": "verified_public_signal",
+            "claim": "General Devices Company, Inc. is a U.S.-based manufacturer",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "weak_inference",
+            "claim": "Company likely uses distributor or channel networks to bring products to market",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "weak_inference",
+            "claim": "Company faces fragmented distributor inventory visibility",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Company size, revenue, product lines, and tech stack",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Company has no current integration tooling for partner operations",
+            "source_url": null
+          }
+        ],
+        "canonicalDecision": "hold",
+        "researchConfidence": 0.15
+      },
+      "system_decision": "Hold",
+      "human_label": {
+        "identity": "ambiguous",
+        "target_match": "plausible",
+        "evidence_quality": "invalid",
+        "temporal_quality": "no_event",
+        "case_defensibility": "not_defensible",
+        "human_decision": "Reject",
+        "research_useful": false,
+        "waste_reason": "identity_issue",
+        "note": "Name/domain relationship and channel operation were unverified."
+      },
+      "disagreement": true
+    },
+    {
+      "soak_id": "co_fleet_operations",
+      "phase": "D",
+      "account": {
+        "risks": [
+          "Entire account thesis is inferential — no public signal confirms active need, budget allocation, or technology gap",
+          "Enterprise-scale procurement cycle may be 12-24 months, with incumbent vendor lock-in reducing near-term opportunity",
+          "Fleet operations may be partially or fully outsourced, meaning the company is not the direct buyer of fleet management software",
+          "Without a known internal champion or relevant contact, initial outreach may not reach the right decision-maker"
+        ],
+        "domain": "argos.co",
+        "company": "Cementos Argos",
+        "country": "Colombia",
+        "reasons": [
+          "opportunity_test_reject",
+          "hard_blocker_no_source",
+          "hard_blocker_no_material_event",
+          "hard_blocker_no_valid_date"
+        ],
+        "category": "WARM",
+        "fitScore": 7.5,
+        "qcStatus": "APPROVED",
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "nextQuestion": "Does Cementos Argos currently use a centralized fleet management or telematics platform, or is maintenance and route tracking managed through ERP modules or disconnected tools — and who owns that decision?",
+        "evidenceClaims": [
+          {
+            "date": null,
+            "type": "verified_public_signal",
+            "claim": "Cementos Argos is one of the largest cement producers in Latin America with operations in Colombia, the US, and Central America",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "inferred_from_context",
+            "claim": "The company operates cement plants, quarries, concrete mixing facilities, and distribution networks requiring significant fleet assets",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "inferred_from_context",
+            "claim": "Cementos Argos likely has an extensive fleet of heavy vehicles and industrial equipment",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "weak_inference",
+            "claim": "The company may currently use fragmented or legacy fleet management tools",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "There is an active or recent fleet technology procurement initiative at Cementos Argos",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "The identity and seniority of the fleet/logistics technology buyer within the organization",
+            "source_url": null
+          }
+        ],
+        "canonicalDecision": "hold",
+        "researchConfidence": 0.42
+      },
+      "system_decision": "Hold",
+      "human_label": {
+        "identity": "correct",
+        "target_match": "plausible",
+        "evidence_quality": "weak",
+        "temporal_quality": "no_event",
+        "case_defensibility": "not_defensible",
+        "human_decision": "Hold",
+        "research_useful": true,
+        "waste_reason": null,
+        "note": "Operational account is plausible, but fleet control and trigger were inferred."
+      },
+      "disagreement": false
+    },
+    {
+      "soak_id": "co_fleet_operations",
+      "phase": "D",
+      "account": {
+        "risks": [
+          "Alta probabilidad de que la logística esté tercerizada, eliminando la necesidad del software ofertado",
+          "Decisiones de tecnología pueden estar centralizadas en la matriz de EE.UU. (Tecnoglass Inc. / NASDAQ), fuera del alcance local",
+          "Sin señal de urgencia o evento catalizador, el ciclo de venta puede ser muy largo",
+          "Posible existencia de contratos ERP corporativos que incluyan módulos de mantenimiento ya implementados"
+        ],
+        "domain": "tecnoglass.com",
+        "company": "Tecnoglass",
+        "country": "Colombia",
+        "reasons": [
+          "case_missing"
+        ],
+        "category": "COLD",
+        "fitScore": 5.5,
+        "qcStatus": "REVIEW_NEEDED",
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "nextQuestion": "¿Tecnoglass gestiona internamente su flota de distribución y/o maquinaria en planta, o externaliza completamente la logística a terceros?",
+        "evidenceClaims": [
+          {
+            "date": null,
+            "type": "verified_public_signal",
+            "claim": "Tecnoglass es un fabricante de vidrio ubicado en Colombia",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "inferred_from_context",
+            "claim": "La empresa opera a escala industrial con logística de distribución física",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "weak_inference",
+            "claim": "Tecnoglass gestiona una flota propia de vehículos o maquinaria",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "La empresa no tiene sistemas actuales de mantenimiento o telemetría",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Existe un responsable interno de flota u operaciones con poder de compra",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Hay un evento de crecimiento o expansión reciente que genere urgencia",
+            "source_url": null
+          }
+        ],
+        "canonicalDecision": "hold",
+        "researchConfidence": 0.28
+      },
+      "system_decision": "Hold",
+      "human_label": {
+        "identity": "correct",
+        "target_match": "plausible",
+        "evidence_quality": "weak",
+        "temporal_quality": "no_event",
+        "case_defensibility": "not_defensible",
+        "human_decision": "Hold",
+        "research_useful": true,
+        "waste_reason": null,
+        "note": "Industrial account is plausible, but owned fleet and event were unverified."
+      },
+      "disagreement": false
+    },
+    {
+      "soak_id": "us_sparse_negative_control",
+      "phase": "D",
+      "account": {
+        "risks": [
+          "Extremely thin evidence base — pursuing outreach without further enrichment risks low response rates and wasted effort",
+          "Company size may fall below the minimum viable threshold for operations software ROI (e.g., solo or 2-person firm)",
+          "Accounting-specific vertical software may already address workflow needs, reducing differentiation opportunity",
+          "No decision-maker, budget signal, or organizational pain point has been confirmed — cold outreach would be entirely speculative"
+        ],
+        "domain": "accountsjunction.com",
+        "company": "Accounts Junction",
+        "country": "United States",
+        "reasons": [
+          "case_missing"
+        ],
+        "category": "COLD",
+        "fitScore": 4,
+        "qcStatus": "REVIEW_NEEDED",
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "nextQuestion": "How many staff does Accounts Junction employ, and do they manage concurrent client engagements across multiple service lines — or is this a solo/micro practice where workflow software ROI would be negligible?",
+        "evidenceClaims": [
+          {
+            "date": null,
+            "type": "verified_public_signal",
+            "claim": "Accounts Junction is a U.S.-based accounting services firm",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "verified_public_signal",
+            "claim": "Company operates in the accounting industry",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "inferred_from_context",
+            "claim": "Firm likely uses fragmented, manual workflows common to boutique accounting firms",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "weak_inference",
+            "claim": "Company is a boutique or small firm based on name and positioning",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Current technology stack and workflow tooling",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Headcount, revenue, and growth stage",
+            "source_url": null
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Active buying cycle or operational initiative underway",
+            "source_url": null
+          }
+        ],
+        "canonicalDecision": "hold",
+        "researchConfidence": 0.18
+      },
+      "system_decision": "Hold",
+      "human_label": {
+        "identity": "correct",
+        "target_match": "plausible",
+        "evidence_quality": "weak",
+        "temporal_quality": "no_event",
+        "case_defensibility": "not_defensible",
+        "human_decision": "Hold",
+        "research_useful": true,
+        "waste_reason": null,
+        "note": "Correct sparse target; no material event, size, or active need."
+      },
+      "disagreement": false
+    }
+  ],
+  "monitor_soak": {
+    "baselines": 3,
+    "reviews": 3,
+    "completed_no_change": 3,
+    "changed": 0,
+    "insufficient": 0,
+    "false_novelty": 0,
+    "provider_failures_seen": 3,
+    "search_results_considered": 24,
+    "pages_escalated": 0,
+    "pages_fetched": 0,
+    "events_accepted": 0,
+    "durations_ms": [
+      3062,
+      1251,
+      1243
+    ]
+  },
+  "metrics": {
+    "researched_accounts": 22,
+    "research_ready_useful": 12,
+    "research_ready_wasted": 10,
+    "research_ready_structural_precision": 0.5454545454545454,
+    "delivered_cases": 0,
+    "defensible_researched_cases": 0,
+    "delivered_case_defensibility": null,
+    "observed_opportunity_capture_rate": null,
+    "customer_facing_false_positive_rate": null,
+    "exact_system_human_decision_agreement": 0.5,
+    "completed_with_opportunities": 0,
+    "completed_no_strong_opportunity": 10,
+    "insufficient_research": 0,
+    "failed": 0,
+    "false_what_changed": 0,
+    "unsupported_timing": 0,
+    "historical_cases_reviewed": 3,
+    "historical_cases_correctly_held": 3,
+    "provider_totals": {
+      "anthropic": {
+        "calls": 84,
+        "errors": 0,
+        "known_cost_usd": 1.372653
+      },
+      "brave": {
+        "calls": 74,
+        "errors": 0,
+        "known_cost_usd": null
+      },
+      "serper": {
+        "calls": 10,
+        "errors": 10,
+        "known_cost_usd": null
+      },
+      "tavily": {
+        "calls": 85,
+        "errors": 0,
+        "known_cost_usd": null
+      }
+    },
+    "calls_per_run": 25.3,
+    "calls_per_researched_account": 11.5,
+    "calls_per_defensible_case": null,
+    "known_llm_cost_usd": 1.372653,
+    "llm_cost_per_run_usd": 0.13726529999999998,
+    "latency_ms": {
+      "min": 91360,
+      "median": 163323,
+      "p90": 284488,
+      "p95": 311793,
+      "max": 311793
+    },
+    "runtime_classification": {
+      "safe": 8,
+      "near_limit": 1,
+      "exceeded": 1
+    },
+    "runtime_human_interventions": 0
+  }
+}

@@ -37,6 +37,7 @@ export interface VerticalPack {
 const FLEET: VerticalPack = {
   id: "fleet_software",
   name: "Software de gestión de flotas",
+  target_countries: ["Colombia"],
   match: /(flota|fleet|transporte de carga|log[ií]stica de transporte|veh[ií]culos|rutas|telemetr)/i,
   operations: ["flota propia de vehículos", "control de rutas", "mantenimiento de vehículos", "distribución propia"],
   problems: ["costos operativos de flota", "rutas ineficientes", "mantenimiento reactivo", "sin visibilidad de vehículos"],
@@ -62,6 +63,7 @@ const FLEET: VerticalPack = {
 const LOGISTICS: VerticalPack = {
   id: "logistics_automation",
   name: "Automatización de bodegas y WMS",
+  target_countries: ["Colombia"],
   match: /(bodega|almac[eé]n|warehouse|wms|centro de distribuci[oó]n|log[ií]stica|automatizaci[oó]n|supply chain|picking)/i,
   operations: ["centro de distribución propio", "inventario propio", "operación de picking", "almacenamiento"],
   problems: ["capacidad de bodega insuficiente", "picking ineficiente", "inventario sin integrar", "errores de despacho"],
@@ -88,6 +90,7 @@ const LOGISTICS: VerticalPack = {
 const OPERATIONAL_SW: VerticalPack = {
   id: "operational_software",
   name: "Software operativo (planificación/integración/inventarios)",
+  target_countries: ["Colombia"],
   match: /(manufactura|distribuci[oó]n|planificaci[oó]n|inventarios?|integraci[oó]n|erp|operaciones|producci[oó]n)/i,
   operations: ["plantas de producción", "distribución multi-sede", "inventarios multi-instalación", "operación en expansión"],
   problems: ["complejidad operativa creciente", "sistemas sin integrar", "planificación manual", "inventarios descoordinados"],
@@ -113,7 +116,7 @@ const OPERATIONAL_SW: VerticalPack = {
 const WELLNESS_CHANNELS_US: VerticalPack = {
   id: "wellness_channels_us",
   name: "Canales retail y hospitality para bebidas de bienestar",
-  match: /(wellness|wellbeing|bienestar|herbal|botanical|infusion|tea|beverage|natural products?|spa|hotel|resort|whole foods?)/i,
+  match: /(wellness|wellbeing|bienestar|herbal|botanical|infusion|tea brand|beverage brand|beverage distributor|natural products?|spa|resort|whole foods?)/i,
   target_countries: ["United States"],
   operations: ["retail de productos naturales", "programas de spa y bienestar", "hospitality con oferta de alimentos y bebidas", "curaduría de productos wellness"],
   problems: ["diferenciar la oferta de bienestar", "ampliar surtido funcional", "crear experiencias de wellness", "incorporar bebidas naturales para rutinas de sueño, energía y digestión"],

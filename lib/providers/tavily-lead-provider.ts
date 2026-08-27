@@ -82,9 +82,16 @@ export async function researchTavilyForLead(company: string, industry?: string, 
 }
 
 export function filterAccountResearchResults(company: string, results: TavilySearchResult[]): TavilySearchResult[] {
-  const token = company.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(/[^a-z0-9]+/).find(t => t.length >= 5) ?? company.toLowerCase();
+  const normalizedCompany = company.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+  const generic = new Set(["first", "advanced", "professional", "services", "specialty", "industrial", "industries", "international", "group", "company", "corporation", "inc", "llc", "ltd", "market"]);
+  const tokens = normalizedCompany.split(/\s+/).filter(t => t.length >= 4 && !generic.has(t));
   const blocked = /(instagram|facebook|linkedin|youtube|tiktok|wikipedia|crunchbase)\.com/i;
-  return results.filter(r => !blocked.test(r.url) && `${r.title} ${r.content}`.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(token));
+  return results.filter(r => {
+    if (blocked.test(r.url)) return false;
+    const hay = `${r.title} ${r.content}`.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " ");
+    if (hay.includes(normalizedCompany)) return true;
+    return tokens.length > 0 && tokens.every(token => new RegExp(`(?:^|\\s)${token}(?:\\s|$)`).test(hay));
+  });
 }
 
 export async function searchTavilyForLead(company: string, title?: string): Promise<string> {

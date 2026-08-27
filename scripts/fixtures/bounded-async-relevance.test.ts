@@ -9,6 +9,7 @@ import { assessResearchReadiness, prioritizeResearch } from "@/lib/lead-hunter/r
 import type { CandidateAccount, DiscoveryPlan } from "@/lib/lead-hunter/candidate-universe";
 import type { LeadLensReport, PipelineInput } from "@/types";
 import { filterAccountResearchResults } from "@/lib/providers/tavily-lead-provider";
+import { matchVerticalPack } from "@/lib/discovery/vertical-packs";
 
 let n = 0;
 const t = (name: string, fn: () => void) => { fn(); n++; console.log(`ok - ${name}`); };
@@ -26,6 +27,11 @@ const candidate = (name: string, type: string, domain?: string): CandidateAccoun
 
 t("manufacturer is research-ready for confirmed manufacturing context", () => assert.equal(assessResearchReadiness(candidate("Acme", "Industrial manufacturer", "acme.example"), plan).status, "research_ready"));
 t("retailer does not silently broaden manufacturer/distributor scope", () => assert.equal(assessResearchReadiness(candidate("Sprouts", "Grocery retailer", "sprouts.example"), plan).status, "wrong_target_type"));
+t("vertical-seed provenance cannot bypass an explicit target-family mismatch", () => {
+  const retailer = candidate("Sprouts", "Grocery retailer", "sprouts.example");
+  retailer.provenance = [{ route: "fixture", origin: "vertical_seed", discoveredName: "Sprouts", discoveredAt: new Date(0).toISOString() }];
+  assert.equal(assessResearchReadiness(retailer, plan).status, "wrong_target_type");
+});
 t("domainless organization requires identity validation before expensive Research", () => assert.equal(assessResearchReadiness(candidate("ALAC", "Manufacturer"), plan).status, "needs_identity_validation"));
 t("priority handoff contains only inspectable research-ready candidates", () => assert.deepEqual(prioritizeResearch([candidate("Sprouts", "Retailer", "sprouts.example"), candidate("Acme", "Manufacturer", "acme.example")], plan).map(x => x.identity.canonicalName), ["Acme"]));
 t("Research refuses social/reference pages and other-company results before LLM spend", () => assert.deepEqual(filterAccountResearchResults("Cementos Argos", [
@@ -33,6 +39,14 @@ t("Research refuses social/reference pages and other-company results before LLM 
   { title: "Other company", url: "https://news.example/other", content: "Unrelated event", score: 1 },
   { title: "Cementos Argos expands", url: "https://news.example/argos", content: "Cementos Argos expanded capacity", score: 1 },
 ]).map(x => x.url), ["https://news.example/argos"]));
+t("Research rejects a generic professional-services article for First Professional Services", () => assert.equal(filterAccountResearchResults("First Professional Services LLC", [
+  { title: "The professional services ownership dilemma", url: "https://example.com/article", content: "Grant Thornton and other firms completed transactions.", score: 1 },
+]).length, 0));
+t("US manufacturing cannot select Colombia packs or generic beverage wellness", () => assert.equal(matchVerticalPack({
+  target_industries: ["Industrial manufacturing", "Food and beverage production"], disqualifiers: [],
+} as any, {
+  target_geography: ["United States"], offer_summary: "industrial automation and plant operations software", value_proposition: "modernize production capacity",
+} as any), null));
 
 const run = async () => {
   const contexts = new InMemoryConfirmedContextStore();

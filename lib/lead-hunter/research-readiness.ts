@@ -43,7 +43,7 @@ export function assessResearchReadiness(candidate: CandidateAccount, plan: Disco
   const verticalSeed = candidate.provenance.some(p => p.origin === "vertical_seed");
   const familyMatch = targetFamilies.some(f => observedFamilies.includes(f));
   const lexicalMatch = words(observed).some(w => words(targets).includes(w));
-  if (verticalSeed) {
+  if (verticalSeed && (familyMatch || lexicalMatch)) {
     return { status: "research_ready", reasons: ["Verified company belongs to the matched vertical pack; downstream Research must still prove the event and opportunity."], priorityBand: 2 };
   }
   if (targetFamilies.length && observedFamilies.length && !familyMatch) {

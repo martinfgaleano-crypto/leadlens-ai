@@ -100,6 +100,7 @@ export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLen
   }
 
   console.log(`[pipeline] ${processedLeads.length} leads processed`);
+  input.onResearchComplete?.(structuredClone(processedLeads));
 
   // Post-qualification vault hint pass — enriches learning metadata, never changes scores
   const leadsAfterVault = applyVaultHints(processedLeads, vaultPatterns);
