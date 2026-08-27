@@ -330,6 +330,16 @@ export interface LeadCandidate {
   account_role_evidence?: string[];
   /** Lead Hunter lineage only. It is discovery context, never claim Evidence. */
   discovery_provenance?: Array<{ route: string; origin: string; provider?: string; sourceUrl?: string }>;
+  /** Canonical Lead Hunter identity lineage for durable Monitor re-observation. */
+  account_identity?: {
+    canonicalName: string;
+    domain?: string;
+    country?: string;
+    organizationType?: string;
+    aliases?: string[];
+    confidence: "verified" | "plausible" | "ambiguous";
+    fromUniverse: true;
+  };
 }
 
 // ─── Evidence discipline ──────────────────────────────────────────────────────

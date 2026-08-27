@@ -168,7 +168,8 @@
     "pilot:discovery-v2-6-usa-manufacturing:recover": "npx -y tsx --tsconfig tsconfig.json scripts/sources/recover-usa-manufacturing-v2-6-live.ts",
     "test:discovery-v2-6-recovery": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/discovery-v2-6-recovery-persistence.test.ts",
     "pilot:discovery-v2-6-usa-manufacturing:reprocess": "npx -y tsx --tsconfig tsconfig.json scripts/sources/reprocess-usa-manufacturing-v2-6.ts",
-    "test:productive-spine": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/productive-intelligence-spine.test.ts"
+    "test:productive-spine": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/productive-intelligence-spine.test.ts",
+    "test:monitor-consolidation": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/monitor-consolidation-v1.test.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.27.0",

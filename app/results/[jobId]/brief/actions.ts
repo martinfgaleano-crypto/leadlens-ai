@@ -94,7 +94,9 @@ export async function getBriefForViewer(jobId: string, accessToken: string | nul
       const { fromInstitutionalReport } = await import("@/lib/deliverable/adapters");
       const { SupabaseAccountMemoryRepo, persistAndLoadMemory } = await import("@/lib/deliverable/account-memory-store");
       const vm = fromInstitutionalReport(report, experience);
-      const clientKey = vm.meta.client ?? searchId ?? snapshot.job_id;
+      // A search-backed report must use the durable search id as Monitor scope;
+      // customer display metadata (email/name) is not a stable account namespace.
+      const clientKey = searchId ?? vm.meta.client ?? snapshot.job_id;
       const contextVersion = ob?.product_code ?? snapshot.plan ?? "default";
       const scope = { ownerUserId: searchId ? ((await db.from("lead_searches").select("user_id").eq("id", searchId).maybeSingle()).data?.user_id ?? null) : null, clientKey };
       memory = await persistAndLoadMemory(

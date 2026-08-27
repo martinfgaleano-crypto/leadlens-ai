@@ -58,6 +58,8 @@ interface MonitorRun {
   is_baseline: boolean;
   is_stale?: boolean;
   visible_changes: number | null;
+  is_canonical_monitor?: boolean;
+  monitor_summary?: { attempted: number; changed: number; no_change: number; insufficient: number; failed: number } | null;
 }
 
 interface MonitorHistory {
@@ -748,14 +750,16 @@ export default function SearchDetailPage() {
                       </div>
                       <div style={{ color: "#64748b", fontSize: "0.75rem", marginTop: "0.15rem" }}>
                         {run.status === "completed"
-                          ? <>{run.lead_count ?? "—"} accounts · {run.hot_count ?? 0} hot · {run.warm_count ?? 0} warm{run.visible_changes != null && <> · {run.visible_changes} change{run.visible_changes === 1 ? "" : "s"}</>}</>
+                          ? run.is_canonical_monitor && run.monitor_summary
+                            ? <>{run.monitor_summary.attempted} reviewed · {run.monitor_summary.changed} changed · {run.monitor_summary.no_change} no material change{run.monitor_summary.insufficient > 0 && <> · {run.monitor_summary.insufficient} limited</>}</>
+                            : <>{run.lead_count ?? "—"} accounts · {run.hot_count ?? 0} hot · {run.warm_count ?? 0} warm{run.visible_changes != null && <> · {run.visible_changes} change{run.visible_changes === 1 ? "" : "s"}</>}</>
                           : run.status === "processing"
                             ? (run.is_stale ? "Taking longer than expected — you can start a new run" : "In progress…")
                             : "Run did not complete"}
                       </div>
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexShrink: 0 }}>
-                      {run.status === "completed" && (
+                      {run.status === "completed" && !run.is_canonical_monitor && (
                         <Link href={`/results/${run.job_id}`} style={{ color: "#0ea5e9", fontWeight: 600, fontSize: "0.75rem", textDecoration: "none" }}>
                           View report
                         </Link>

@@ -34,6 +34,7 @@ interface RunRow {
   avg_score: number | null;
   created_at: string;
   change_summary: { client_visible_count?: number } | null;
+  report_json: { kind?: string; _monitor_run?: { observability?: Record<string, number> } } | null;
 }
 
 export async function GET(
@@ -78,7 +79,7 @@ export async function GET(
 
   const { data, error } = await db
     .from("snapshot_reports")
-    .select("job_id, status, lead_count, hot_count, warm_count, avg_score, created_at, change_summary:report_json->change_summary")
+    .select("job_id, status, lead_count, hot_count, warm_count, avg_score, created_at, report_json, change_summary:report_json->change_summary")
     .eq("search_id", searchId)
     .order("created_at", { ascending: true })
     .limit(100);
@@ -93,7 +94,9 @@ export async function GET(
   let completedSeen = 0;
   const enriched = rows.map((r) => {
     const isCompleted = r.status === "completed";
-    if (isCompleted) completedSeen++;
+    const isCanonicalMonitor = r.report_json?.kind === "monitor_run";
+    if (isCompleted && !isCanonicalMonitor) completedSeen++;
+    const obs = isCanonicalMonitor ? r.report_json?._monitor_run?.observability ?? null : null;
     return {
       job_id:      r.job_id,
       status:      r.status,
@@ -102,7 +105,13 @@ export async function GET(
       hot_count:   r.hot_count,
       warm_count:  r.warm_count,
       avg_score:   r.avg_score,
-      is_baseline: isCompleted && completedSeen === 1,
+      is_baseline: isCompleted && !isCanonicalMonitor && completedSeen === 1,
+      is_canonical_monitor: isCanonicalMonitor,
+      monitor_summary: obs ? {
+        attempted: obs.attempted ?? 0, changed: obs.completedChanged ?? 0,
+        no_change: obs.completedNoChange ?? 0, insufficient: obs.insufficient ?? 0,
+        failed: obs.failed ?? 0,
+      } : null,
       // processing row past the stale cutoff — worker died or trigger was lost
       is_stale:    r.status === "processing" && !isProcessingFresh(r.created_at),
       visible_changes: r.change_summary && typeof r.change_summary === "object"
@@ -112,7 +121,7 @@ export async function GET(
   });
 
   const newestFirst = [...enriched].reverse();
-  const latestCompleted = newestFirst.find((r) => r.status === "completed");
+  const latestCompleted = newestFirst.find((r) => r.status === "completed" && !r.is_canonical_monitor);
 
   return NextResponse.json({
     search_id:           searchId,

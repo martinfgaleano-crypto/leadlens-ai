@@ -2,9 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createServerClient } from "@/lib/supabase/server";
 import { checkRateLimit } from "@/lib/security/rate-limit";
-import { SupabaseAccountMemoryRepo } from "@/lib/deliverable/account-memory-store";
-import { runMonitor } from "@/lib/monitor/monitor-cycle";
-import { loadCurrentSnapshots, persistMonitorRun, defaultReobserver } from "@/lib/monitor/monitor-store";
+import { executeCanonicalMonitor } from "@/lib/monitor/canonical-monitor-service";
 
 // Authenticated MANUAL trigger for a bounded recurring intelligence review.
 // Recurring re-evaluation of KNOWN accounts — NOT real-time monitoring. The
@@ -33,19 +31,11 @@ export async function POST(req: NextRequest) {
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
 
   const scope = { ownerUserId: user.id, clientKey: parsed.data.client_key };
-  const { states, priorById } = await loadCurrentSnapshots(db, scope);
-  if (states.length === 0) return NextResponse.json({ error: "no_monitored_accounts" }, { status: 404 });
+  const result = await executeCanonicalMonitor(db, { scope, cycleKey: new Date().toISOString().slice(0, 10), origin: "customer" });
+  if (!result.ok) return NextResponse.json({ error: result.reason }, { status: 404 });
+  const run = result.run;
 
-  const runId = `mon_${scope.clientKey}_${new Date().toISOString().slice(0, 10)}`;
-  const run = await runMonitor({
-    runId, scope, states, priorById,
-    reobserve: defaultReobserver,
-    memoryRepo: new SupabaseAccountMemoryRepo(db),
-    reviewIdFor: (accountId) => `${runId}_${accountId}`,
-  });
-  try { await persistMonitorRun(db, run); } catch { /* run summary best-effort; account snapshots already persisted */ }
-
-  console.log(`[analytics] ${JSON.stringify({ event: "monitor_run", runId, ...run.observability })}`);
+  console.log(`[analytics] ${JSON.stringify({ event: "monitor_run", runId: run.runId, ...run.observability })}`);
   // Return only curated observability + alert contracts — never raw snapshots.
-  return NextResponse.json({ runId, status: run.status, observability: run.observability, alerts: run.alerts }, { status: 201 });
+  return NextResponse.json({ runId: run.runId, status: run.status, observability: run.observability, alerts: run.alerts }, { status: 201 });
 }

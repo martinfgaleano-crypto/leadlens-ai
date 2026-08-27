@@ -22,6 +22,7 @@ const NOW = new Date("2026-08-26T00:00:00.000Z");
 const daysAgo = (d: number) => new Date(NOW.getTime() - d * 86_400_000).toISOString();
 const snap = (o: Partial<AccountReviewSnapshot> & { accountId: string; decision: AccountReviewSnapshot["decision"] }): AccountReviewSnapshot => ({
   reviewId: `r_${o.accountId}_1`, reviewedAt: daysAgo(40), contextVersion: "ctx_v1",
+  accountIdentity: { stableAccountKey: o.accountId, canonicalName: `Company ${o.accountId}`, domain: `${o.accountId}.example`, aliases: [], country: "US", organizationType: "private_company", confidence: "verified", fromUniverse: true, lineage: "candidate_universe" },
   fit: "Moderate", timing: "Limited", evidence: "Moderate", changeKeys: [], hasVerifiedChange: false,
   evidenceOrigins: ["reuters.com"], independentSupport: false, counterCount: 0, hasMaterialCounter: false,
   validationThemeKeys: [], decisionCriticalThemeKeys: [], hasRevisitTrigger: false, ...o,

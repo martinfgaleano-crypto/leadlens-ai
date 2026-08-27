@@ -106,6 +106,7 @@ export function toResearchCandidates(universe: CandidateAccountUniverse): LeadCa
     // Deliberately NOT mapped to source_url: discovery provenance is context,
     // never Evidence. Research must independently recover and accept a source.
     discovery_provenance: c.provenance.map((p) => ({ route: p.route, origin: p.origin, provider: p.provider, sourceUrl: p.sourceUrl })),
+    account_identity: { ...c.identity, fromUniverse: true as const },
     // IDENTITY confidence only (not an opportunity/lead score): how sure we are
     // this is the right organization. Research owns Fit/Timing/Decision.
     confidence_score: c.identity.confidence === "verified" ? 0.8 : 0.5,

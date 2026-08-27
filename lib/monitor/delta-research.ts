@@ -8,6 +8,7 @@
 // counterevidence.
 
 import type { AccountReviewSnapshot } from "@/lib/deliverable/account-memory";
+import type { MonitorableAccountIdentity } from "@/lib/deliverable/account-memory";
 import type { MonitoredAccountState } from "./monitor-eligibility";
 import { EVIDENCE_FRESHNESS_DAYS } from "./monitor-config";
 
@@ -16,6 +17,8 @@ const kindOf = (changeKey: string): string => changeKey.split(":")[0];
 
 export interface MonitorReviewPlan {
   accountId: string;
+  identity: MonitorableAccountIdentity;
+  identityRequiresValidation: boolean;
   since: { previousReviewId: string; previousReviewedAt: string; contextVersion: string };
   focusValidationKeys: string[];
   revisitTriggerActive: boolean;
@@ -37,6 +40,8 @@ export function planMonitorReview(state: MonitoredAccountState, prior: AccountRe
   if (themes.length === 0) themes.push("case_freshness");
   return {
     accountId: state.accountId,
+    identity: state.identity,
+    identityRequiresValidation: state.identity.confidence === "ambiguous" || !state.identity.canonicalName,
     since: { previousReviewId: prior.reviewId, previousReviewedAt: prior.reviewedAt, contextVersion: prior.contextVersion },
     focusValidationKeys: state.unresolvedDecisionCritical,
     revisitTriggerActive: prior.hasRevisitTrigger,
@@ -71,6 +76,19 @@ export interface AccountObservation {
   providersFailed: string[];
   routesAttempted: number;
   operatingMode: "full" | "degraded" | "stopped";
+  queryIdentities?: string[];
+  metrics?: {
+    searchResultsConsidered: number;
+    pagesEscalated: number;
+    pagesFetched: number;
+    fetchFailures: number;
+    llmExtractionCalls: number;
+    claimsProposed: number;
+    eventsProposed: number;
+    eventsAccepted: number;
+    temporalRejects: number;
+    materialityRejects: number;
+  };
 }
 
 export type DeltaDisposition =

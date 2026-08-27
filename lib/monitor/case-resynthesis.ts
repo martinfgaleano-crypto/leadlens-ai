@@ -39,18 +39,19 @@ export function recurringToCanonicalInput(prior: AccountReviewSnapshot, delta: D
   const signalEvent = latest(delta.acceptedEvents) ?? latest(delta.historicalEvidence);
   return {
     accountId: prior.accountId,
-    identityVerified: true, fromUniverse: true,
+    identityVerified: prior.accountIdentity?.confidence === "verified",
+    fromUniverse: prior.accountIdentity?.fromUniverse === true,
     signalKind: signalEvent?.kind ?? null,
     signalDate: signalEvent?.eventDate ?? (prior.changeKeys[0]?.split(":")[1] ?? null),
-    dateConfidence: signalEvent ? "high" : "medium",
-    sourceHost: signalEvent?.origins[0] ?? prior.evidenceOrigins[0] ?? "unknown.com",
-    materialEvent: true,
+    dateConfidence: signalEvent ? "high" : "none",
+    sourceHost: signalEvent?.origins[0] ?? prior.evidenceOrigins[0] ?? null,
+    materialEvent: Boolean(signalEvent),
     hasMaterialCounter: delta.hasMaterialCounter,
     openDecisionCritical: prior.decisionCriticalThemeKeys.filter((k) => !delta.resolvedValidationKeys.includes(k)),
     priorFit: prior.fit, priorTiming: prior.timing, priorEvidence: prior.evidence,
     independentSupportNew: [...delta.acceptedEvents, ...delta.historicalEvidence].some((e) => e.independentSupport),
     hasPostReviewEvent: delta.acceptedEvents.length > 0,
-    geographyConfirmed: true, regionRequired: false,
+    geographyConfirmed: Boolean(prior.accountIdentity?.country), regionRequired: false,
   };
 }
 

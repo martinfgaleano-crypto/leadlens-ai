@@ -6,7 +6,7 @@
 // scheduling.
 
 import type { DecisionState } from "@/lib/deliverable/deliverable-view-model";
-import type { AccountReviewSnapshot } from "@/lib/deliverable/account-memory";
+import type { AccountReviewSnapshot, MonitorableAccountIdentity } from "@/lib/deliverable/account-memory";
 import { REVIEW_CADENCE_DAYS, type MonitorBudget, DEFAULT_MONITOR_BUDGET } from "./monitor-config";
 
 const DAY_MS = 86_400_000;
@@ -17,6 +17,7 @@ export interface MonitoredAccountState {
   ownerUserId: string | null;
   clientKey: string;
   accountId: string;
+  identity: MonitorableAccountIdentity;
   contextVersion: string;
   currentDecision: DecisionState;
   lastReviewId: string;
@@ -31,10 +32,12 @@ export function monitoredStateFromSnapshot(
   snap: AccountReviewSnapshot,
   scope: { ownerUserId: string | null; clientKey: string },
 ): MonitoredAccountState {
+  const identity = snap.accountIdentity ?? legacyIdentity(snap.accountId);
   return {
     ownerUserId: scope.ownerUserId,
     clientKey: scope.clientKey,
     accountId: snap.accountId,
+    identity,
     contextVersion: snap.contextVersion,
     currentDecision: snap.decision,
     lastReviewId: snap.reviewId,
@@ -43,6 +46,22 @@ export function monitoredStateFromSnapshot(
     unresolvedDecisionCritical: snap.decisionCriticalThemeKeys,
     evidenceOrigins: snap.evidenceOrigins,
     changeKeys: snap.changeKeys,
+  };
+}
+
+const OPAQUE_ID = /^(?:acct|account|lead|case|dossier|opp)[_-]|^[0-9a-f]{8}-[0-9a-f-]{27,}$/i;
+function legacyIdentity(accountId: string): MonitorableAccountIdentity {
+  const ambiguous = OPAQUE_ID.test(accountId) || !/[a-zA-ZÀ-ÿ]{2}/.test(accountId);
+  return {
+    stableAccountKey: accountId,
+    canonicalName: ambiguous ? "" : accountId,
+    domain: null,
+    aliases: [],
+    country: null,
+    organizationType: null,
+    confidence: ambiguous ? "ambiguous" : "plausible",
+    fromUniverse: false,
+    lineage: "legacy_snapshot",
   };
 }
 

@@ -61,6 +61,12 @@ export interface AccountBriefVM {
   segment: string | null;     // industry / commercial route
   geography: string | null;
   domain: string | null;
+  monitorIdentity?: {
+    canonicalName: string; domain: string | null; country: string | null;
+    organizationType: string | null; aliases: string[];
+    confidence: "verified" | "strong" | "plausible" | "ambiguous";
+    fromUniverse: boolean;
+  } | null;
   /** Architecture-ready for multi-role opportunities (§8). Null unless the
    *  source explicitly provides them — never fabricated. */
   accountRole: string | null;     // Potential Customer / Supplier / Distributor / Partner …

@@ -7,7 +7,8 @@
 // budget-exceeding work stays due; accepted snapshots are idempotent.
 
 import type { AccountMemoryRepo, SnapshotScope } from "@/lib/deliverable/account-memory-store";
-import { runMonitor, type Reobserver, type MonitorRun } from "./monitor-cycle";
+import type { Reobserver, MonitorRun } from "./monitor-cycle";
+import { runCanonicalMonitor } from "./canonical-monitor-service";
 import { buildReviewQueue } from "./monitor-eligibility";
 import { DEFAULT_MONITOR_BUDGET, DEFAULT_SCHEDULER_BUDGET, type SchedulerBudget, type MonitorBudget } from "./monitor-config";
 import type { TenantWork } from "./monitor-store";
@@ -17,6 +18,7 @@ export interface ScheduledRunSummary {
   origin: "scheduled" | "manual";
   startedAt: string;
   completedAt: string;
+  durationMs: number;
   tenantsConsidered: number;
   tenantsProcessed: number;
   tenantsDeferred: number;
@@ -48,7 +50,8 @@ export interface SchedulerInput {
  * ids so a duplicate wake re-upserts the same snapshot (idempotent).
  */
 export async function runScheduledMonitor(input: SchedulerInput): Promise<ScheduledRunSummary> {
-  const now = (input.now ?? (() => new Date()))();
+  const clock = input.now ?? (() => new Date());
+  const now = clock();
   const budget = input.budget ?? DEFAULT_SCHEDULER_BUDGET;
   const accountBudget: MonitorBudget = input.accountBudget ?? DEFAULT_MONITOR_BUDGET;
   const startedAt = now.toISOString();
@@ -70,13 +73,9 @@ export async function runScheduledMonitor(input: SchedulerInput): Promise<Schedu
     if (accountsBudgetLeft <= 0) { tenantsDeferredForAccountBudget++; continue; }
     // Per-tenant account cap = min(tenant policy, remaining run account budget).
     const perTenant: MonitorBudget = { ...accountBudget, maxAccountsPerRun: Math.min(accountBudget.maxAccountsPerRun, accountsBudgetLeft) };
-    const runId = `sched_${input.wakeId}_${scopeKey(tw.scope)}`;
     try {
-      const run = await runMonitor({
-        runId, scope: tw.scope, states: tw.states, priorById: tw.priorById,
-        reobserve: input.reobserve, memoryRepo: input.memoryRepo,
-        reviewIdFor: (accountId) => `${input.wakeId}_${scopeKey(tw.scope)}_${accountId}`, // stable → idempotent
-        now: () => now, budget: perTenant,
+      const run = await runCanonicalMonitor(tw, { cycleKey: input.wakeId, origin: "scheduled" }, {
+        reobserve: input.reobserve, memoryRepo: input.memoryRepo, now: () => now, budget: perTenant,
       });
       runs.push(run);
       accountsReviewed += run.observability.attempted;
@@ -92,9 +91,10 @@ export async function runScheduledMonitor(input: SchedulerInput): Promise<Schedu
     failed: a.failed + r.observability.failed,
   }), { accountsDeferred: 0, completedNoChange: 0, completedChanged: 0, insufficient: 0, failed: 0 });
 
+  const completedAt = clock();
   return {
     runId: `sched_${input.wakeId}`, origin: input.origin ?? "scheduled",
-    startedAt, completedAt: new Date().toISOString(),
+    startedAt, completedAt: completedAt.toISOString(), durationMs: Math.max(0, completedAt.getTime() - now.getTime()),
     tenantsConsidered: input.tenants.length,
     tenantsProcessed: runs.length,
     tenantsDeferred: deferredTenants.length + tenantsDeferredForAccountBudget,

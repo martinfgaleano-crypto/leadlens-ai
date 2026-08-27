@@ -83,6 +83,7 @@ function dossierToBrief(d: AccountDossier, i: number, status: StatusVerdict | nu
     segment: d.industry,
     geography: d.location,
     domain: d.domain,
+    monitorIdentity: d.monitor_identity ?? null,
     accountRole: oc?.classification.accountRole?.value ?? null,
     opportunityType: oc?.classification.opportunityType?.value ?? null,
     opportunityDescriptor: oc?.classification.opportunityDescriptor ?? null,

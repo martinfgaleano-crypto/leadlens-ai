@@ -97,6 +97,7 @@ t("parity guard: recurring resynthesis delegates to canonical synthesizeCase (no
 // ─── SCHEDULER ────────────────────────────────────────────────────────────────
 const snap = (o: Partial<AccountReviewSnapshot> & { accountId: string; decision: AccountReviewSnapshot["decision"] }): AccountReviewSnapshot => ({
   reviewId: `r_${o.accountId}`, reviewedAt: daysAgo(40), contextVersion: "ctx", fit: "Moderate", timing: "Limited", evidence: "Moderate",
+  accountIdentity: { stableAccountKey: o.accountId, canonicalName: `Company ${o.accountId}`, domain: `${o.accountId}.example`, aliases: [], country: "US", organizationType: "private_company", confidence: "verified", fromUniverse: true, lineage: "candidate_universe" },
   changeKeys: [], hasVerifiedChange: false, evidenceOrigins: ["reuters.com"], independentSupport: false, counterCount: 0, hasMaterialCounter: false,
   validationThemeKeys: [], decisionCriticalThemeKeys: [], hasRevisitTrigger: false, ...o,
 });
@@ -166,8 +167,11 @@ const routeSrc = readFileSync("app/api/internal/monitor-scheduler/route.ts", "ut
 t("route: server-authed by CRON_SECRET / internal secret, 401 otherwise (no browser trigger)",
   /CRON_SECRET/.test(routeSrc) && /INTERNAL_RUN_SECRET|ADMIN_SECRET_TOKEN/.test(routeSrc) && /401/.test(routeSrc));
 t("route: kill switch — refuses to run when scheduler disabled", /schedulerEnabled\(\)/.test(routeSrc) && /disabled/.test(routeSrc));
-t("route: scheduled path uses the SAME monitor service (runScheduledMonitor→runMonitor); manual trigger retained",
-  /runScheduledMonitor/.test(routeSrc) && /runMonitor/.test(readFileSync("lib/monitor/scheduler.ts", "utf8")) && readFileSync("app/api/customer/monitor/route.ts", "utf8").includes("runMonitor"));
+t("route: scheduled, customer and dashboard paths use the SAME canonical monitor service",
+  /runScheduledMonitor/.test(routeSrc)
+  && /runCanonicalMonitor/.test(readFileSync("lib/monitor/scheduler.ts", "utf8"))
+  && readFileSync("app/api/customer/monitor/route.ts", "utf8").includes("executeCanonicalMonitor")
+  && readFileSync("app/api/monitor/[id]/run/route.ts", "utf8").includes("executeCanonicalMonitor"));
 t("cron: vercel.json registers the scheduler cron", /monitor-scheduler/.test(readFileSync("vercel.json", "utf8")));
 
 console.log(`\n${passed} passed, ${failed} failed`);

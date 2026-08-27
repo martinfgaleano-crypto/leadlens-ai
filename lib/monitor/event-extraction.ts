@@ -33,7 +33,13 @@ export interface EventCandidate {
   resolvesValidationKey?: string | null;
 }
 
-export interface ResolvedEventDate { eventDate: string | null; precision: TemporalPrecision; basis: "iso" | "absolute_text" | "relative_anchored" | "none" }
+export interface ResolvedEventDate {
+  eventDate: string | null;
+  precision: TemporalPrecision;
+  basis: "iso" | "absolute_text" | "relative_anchored" | "none";
+  rangeStart?: string | null;
+  rangeEnd?: string | null;
+}
 
 const ISO_FULL = /^\s*(\d{4})-(\d{2})-(\d{2})\s*$/;
 const ISO_MONTH = /^\s*(\d{4})-(\d{2})\s*$/;
@@ -81,8 +87,25 @@ export function resolveEventDate(candidate: EventCandidate): ResolvedEventDate {
   if (RELATIVE.test(raw) && candidate.publicationDate) {
     const anchor = parseEnglishDate(candidate.publicationDate) ?? parseSpanishDate(candidate.publicationDate) ?? (ISO_FULL.test(candidate.publicationDate.trim()) ? candidate.publicationDate.trim() : null);
     if (anchor) {
-      // Anchor to the publication month — a bounded, defensible approximation.
-      return { eventDate: `${anchor.slice(0, 7)}-01`, precision: "relative_bounded", basis: "relative_anchored" };
+      const at = new Date(`${anchor}T00:00:00Z`);
+      const lower = raw.toLowerCase();
+      if (/last month|el mes pasado/.test(lower)) {
+        const start = new Date(Date.UTC(at.getUTCFullYear(), at.getUTCMonth() - 1, 1));
+        const end = new Date(Date.UTC(at.getUTCFullYear(), at.getUTCMonth(), 0));
+        const rangeStart = start.toISOString().slice(0, 10), rangeEnd = end.toISOString().slice(0, 10);
+        return { eventDate: rangeStart, rangeStart, rangeEnd, precision: "relative_bounded", basis: "relative_anchored" };
+      }
+      const weeks = lower.match(/(?:hace\s+)?(\d+)\s+(?:semanas?|weeks?)(?:\s+ago)?/) ?? (lower.includes("two weeks ago") ? (["", "2"] as unknown as RegExpMatchArray) : null);
+      if (weeks) {
+        const center = new Date(at.getTime() - Number(weeks[1]) * 7 * 86_400_000);
+        const start = new Date(center.getTime() - 3 * 86_400_000), end = new Date(center.getTime() + 3 * 86_400_000);
+        const rangeStart = start.toISOString().slice(0, 10), rangeEnd = end.toISOString().slice(0, 10);
+        return { eventDate: rangeStart, rangeStart, rangeEnd, precision: "relative_bounded", basis: "relative_anchored" };
+      }
+      if (/earlier this year|este a[ñn]o/.test(lower)) {
+        const rangeStart = `${at.getUTCFullYear()}-01-01`, rangeEnd = anchor;
+        return { eventDate: rangeStart, rangeStart, rangeEnd, precision: "relative_bounded", basis: "relative_anchored" };
+      }
     }
   }
   return { eventDate: null, precision: "unknown", basis: "none" };

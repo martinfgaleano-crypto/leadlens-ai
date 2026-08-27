@@ -31,6 +31,12 @@ export interface AccountDossier {
   industry: string | null;
   location: string | null;
   domain: string | null;
+  monitor_identity?: {
+    canonicalName: string; domain: string | null; country: string | null;
+    organizationType: string | null; aliases: string[];
+    confidence: "verified" | "strong" | "plausible" | "ambiguous";
+    fromUniverse: boolean;
+  } | null;
   tier: string;               // HOT/WARM/COLD/DISCARD (baseline category — unchanged)
   actionability_status: "act_now" | "validate_first" | "monitor" | "exclude" | null;
   actionability_reasons: string[];

@@ -58,6 +58,9 @@ export interface AccountReviewOutcome {
   alert?: AlertContract;
   /** Where the current Decision came from (canonical engine vs retained vs fallback). */
   decisionSource?: DecisionSource;
+  providerFailures: number;
+  durationMs: number;
+  researchMetrics?: AccountObservation["metrics"];
 }
 
 /**
@@ -106,17 +109,21 @@ export async function reviewAccount(
   budget: MonitorBudget = DEFAULT_MONITOR_BUDGET,
 ): Promise<AccountReviewOutcome> {
   const plan = planMonitorReview(state, prior);
+  const accountStarted = Date.now();
+  if (plan.identityRequiresValidation) {
+    return { accountId: state.accountId, status: "insufficient_review", reasons: ["identity_requires_validation"], nextReviewAt: nextReviewFor(prior.decision, prior.reviewedAt), providerFailures: 0, durationMs: Date.now() - accountStarted };
+  }
   let obs: AccountObservation;
   try {
     obs = await reobserve(plan);
   } catch {
-    return { accountId: state.accountId, status: "failed", reasons: ["reobservation_error"], nextReviewAt: nextReviewFor(prior.decision, prior.reviewedAt) };
+    return { accountId: state.accountId, status: "failed", reasons: ["reobservation_error"], nextReviewAt: nextReviewFor(prior.decision, prior.reviewedAt), providerFailures: 1, durationMs: Date.now() - accountStarted };
   }
 
   // Research sufficiency gate: an all-provider failure or too few routes means we
   // do NOT know whether anything changed → INSUFFICIENT_REVIEW (never "no change").
   if (obs.operatingMode === "stopped" || obs.providersAvailable.length === 0 || obs.routesAttempted < budget.minRoutesForSufficiency) {
-    return { accountId: state.accountId, status: "insufficient_review", reasons: ["insufficient_research_coverage"], nextReviewAt: nextReviewFor(prior.decision, prior.reviewedAt) };
+    return { accountId: state.accountId, status: "insufficient_review", reasons: ["insufficient_research_coverage"], nextReviewAt: nextReviewFor(prior.decision, prior.reviewedAt), providerFailures: obs.providersFailed.length, durationMs: Date.now() - accountStarted, researchMetrics: obs.metrics };
   }
 
   const delta = classifyDelta(plan, obs, now);
@@ -134,7 +141,7 @@ export async function reviewAccount(
     revisitTriggerMet: diff.revisitTriggerMet,
     reviewId: meta.reviewId,
   };
-  return { accountId: state.accountId, status, reasons: [`change_category_${changeCategory}`, `decision_source_${decisionSource}`], delta, diff, snapshot: next, nextReviewAt: nextReviewFor(next.decision, meta.reviewedAt), alert, decisionSource };
+  return { accountId: state.accountId, status, reasons: [`change_category_${changeCategory}`, `decision_source_${decisionSource}`], delta, diff, snapshot: next, nextReviewAt: nextReviewFor(next.decision, meta.reviewedAt), alert, decisionSource, providerFailures: obs.providersFailed.length, durationMs: Date.now() - accountStarted, researchMetrics: obs.metrics };
 }
 
 // ─── Run orchestration ────────────────────────────────────────────────────────
@@ -156,6 +163,17 @@ export interface MonitorRunObservability {
   caseResynthesisCanonical: number;
   caseResynthesisFallback: number;
   providerFailuresSeen: number;
+  durationMs: number;
+  searchResultsConsidered: number;
+  pagesEscalated: number;
+  pagesFetched: number;
+  fetchFailures: number;
+  llmExtractionCalls: number;
+  claimsProposed: number;
+  eventsProposed: number;
+  eventsAccepted: number;
+  temporalRejects: number;
+  materialityRejects: number;
 }
 
 export interface MonitorRun {
@@ -189,7 +207,8 @@ export interface MonitorRunInput {
  * immutable snapshots (batch isolation: one failure never drops the others).
  */
 export async function runMonitor(input: MonitorRunInput): Promise<MonitorRun> {
-  const now = (input.now ?? (() => new Date()))();
+  const clock = input.now ?? (() => new Date());
+  const now = clock();
   const budget = input.budget ?? DEFAULT_MONITOR_BUDGET;
   const queue = buildReviewQueue(input.states, now, budget, input.scope);
   const startedAt = now.toISOString();
@@ -200,7 +219,7 @@ export async function runMonitor(input: MonitorRunInput): Promise<MonitorRun> {
   for (const sel of queue.selected) {
     const state = sel.state;
     const prior = input.priorById[state.accountId];
-    if (!prior) { outcomes.push({ accountId: state.accountId, status: "failed", reasons: ["no_prior_accepted_review"], nextReviewAt: null }); continue; }
+    if (!prior) { outcomes.push({ accountId: state.accountId, status: "failed", reasons: ["no_prior_accepted_review"], nextReviewAt: null, providerFailures: 0, durationMs: 0 }); continue; }
     const meta: ReviewMeta = { reviewId: input.reviewIdFor(state.accountId), reviewedAt: startedAt, contextVersion: state.contextVersion };
     const outcome = await reviewAccount(state, prior, input.reobserve, meta, now, budget);
     outcomes.push(outcome);
@@ -210,7 +229,7 @@ export async function runMonitor(input: MonitorRunInput): Promise<MonitorRun> {
     }
   }
   for (const def of queue.deferred) {
-    outcomes.push({ accountId: def.state.accountId, status: "deferred_due_to_budget", reasons: def.reasons, nextReviewAt: null });
+    outcomes.push({ accountId: def.state.accountId, status: "deferred_due_to_budget", reasons: def.reasons, nextReviewAt: null, providerFailures: 0, durationMs: 0 });
   }
 
   // Batch isolation: persist accepted snapshots; a store failure is logged but does
@@ -218,6 +237,8 @@ export async function runMonitor(input: MonitorRunInput): Promise<MonitorRun> {
   let persistOk = true;
   if (toPersist.length) { try { await input.memoryRepo.persist(toPersist); } catch { persistOk = false; } }
 
+  const completedAt = clock();
+  const metric = (key: keyof NonNullable<AccountObservation["metrics"]>) => outcomes.reduce((n, o) => n + (o.researchMetrics?.[key] ?? 0), 0);
   const observability: MonitorRunObservability = {
     accountsDue: queue.eligibleCount,
     accountsSelected: queue.selected.length,
@@ -234,11 +255,15 @@ export async function runMonitor(input: MonitorRunInput): Promise<MonitorRun> {
     newHistoricalEvidence: outcomes.reduce((n, o) => n + (o.delta?.counters.newly_discovered_historical ?? 0), 0),
     caseResynthesisCanonical: outcomes.filter((o) => o.decisionSource === "canonical_opportunity_test").length,
     caseResynthesisFallback: outcomes.filter((o) => o.decisionSource === "fallback_conservative").length,
-    providerFailuresSeen: outcomes.reduce((n, o) => n + ((o.delta && o.diff) ? 0 : 0), 0),
+    providerFailuresSeen: outcomes.reduce((n, o) => n + o.providerFailures, 0),
+    durationMs: Math.max(0, completedAt.getTime() - now.getTime()),
+    searchResultsConsidered: metric("searchResultsConsidered"), pagesEscalated: metric("pagesEscalated"), pagesFetched: metric("pagesFetched"),
+    fetchFailures: metric("fetchFailures"), llmExtractionCalls: metric("llmExtractionCalls"), claimsProposed: metric("claimsProposed"),
+    eventsProposed: metric("eventsProposed"), eventsAccepted: metric("eventsAccepted"), temporalRejects: metric("temporalRejects"), materialityRejects: metric("materialityRejects"),
   };
 
   return {
-    runId: input.runId, scope: input.scope, startedAt, completedAt: now.toISOString(),
+    runId: input.runId, scope: input.scope, startedAt, completedAt: completedAt.toISOString(),
     status: (observability.failed > 0 || observability.insufficient > 0 || !persistOk) ? "completed_with_failures" : "completed",
     budget, queue, outcomes, observability,
     alerts: outcomes.filter((o) => o.alert).map((o) => o.alert as AlertContract),

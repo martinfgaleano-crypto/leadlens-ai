@@ -13,6 +13,24 @@ import type { AccountBriefVM, DecisionState, Strength } from "./deliverable-view
 
 export const ACCOUNT_MEMORY_VERSION = "account-memory-v1";
 
+export type MonitorIdentityConfidence = "verified" | "strong" | "plausible" | "ambiguous";
+
+/** Durable research identity carried by Account Memory. `verified` is reserved
+ * for upstream identity resolution; a domain alone never earns that state. */
+export interface MonitorableAccountIdentity {
+  stableAccountKey: string;
+  canonicalName: string;
+  domain: string | null;
+  aliases: string[];
+  country: string | null;
+  organizationType: string | null;
+  confidence: MonitorIdentityConfidence;
+  fromUniverse: boolean;
+  lineage: "candidate_universe" | "research_report" | "legacy_snapshot";
+  parentCompany?: string | null;
+  operatingEntity?: string | null;
+}
+
 // canonical taxonomies (locale-independent keys) — kept local so the frozen
 // Portfolio Intelligence module is not reopened.
 const CONTRADICTORY = /\b(layoff|lay off|job cuts?|clos(e|es|ed|ure|ing)|shut|declin|decline|contract(ion|ing)?|loss(es)?|soft|muted|downturn|lawsuit|reduc(e|tion|ing)|cut(s|ting)?|despido|cierre|p[eé]rdida|recorte|demanda|ca[ií]da)\b/i;
@@ -34,6 +52,9 @@ export interface AccountReviewSnapshot {
   reviewedAt: string;            // evaluation timestamp (ordering only, §78)
   contextVersion: string;        // client context version (§11)
   accountId: string;
+  /** Payload V2 evolution; historical rows without it are interpreted
+   * conservatively by Monitor and never rewritten in place. */
+  accountIdentity?: MonitorableAccountIdentity;
   decision: DecisionState;
   fit: Strength | null;
   timing: Strength | null;
@@ -65,6 +86,28 @@ export function snapshotAccountReview(a: AccountBriefVM, review: { reviewId: str
   const dcKeys = Array.from(new Set(details.filter(v => v.decisionCritical).map(v => validationKey(v.question)).filter(Boolean) as string[]));
   return {
     reviewId: review.reviewId, reviewedAt: review.reviewedAt, contextVersion: review.contextVersion, accountId: a.id,
+    accountIdentity: a.monitorIdentity ? {
+      stableAccountKey: a.id,
+      canonicalName: a.monitorIdentity.canonicalName,
+      domain: a.monitorIdentity.domain,
+      aliases: a.monitorIdentity.aliases,
+      country: a.monitorIdentity.country,
+      organizationType: a.monitorIdentity.organizationType,
+      confidence: a.monitorIdentity.confidence,
+      fromUniverse: a.monitorIdentity.fromUniverse,
+      lineage: a.monitorIdentity.fromUniverse ? "candidate_universe" : "research_report",
+    } : {
+      stableAccountKey: a.id,
+      canonicalName: a.company,
+      domain: a.domain,
+      aliases: [],
+      country: a.geography,
+      organizationType: a.segment,
+      // Report fields establish a plausible/strong identity, not legal verification.
+      confidence: a.domain && a.geography ? "strong" : "plausible",
+      fromUniverse: false,
+      lineage: "research_report",
+    },
     decision: a.decision, fit: dimOf(a, "Fit"), timing: dimOf(a, "Timing"), evidence: dimOf(a, "Evidence") ?? a.evidence.strength,
     changeKeys, hasVerifiedChange: changeKeys.length > 0,
     evidenceOrigins: origins, independentSupport: a.evidence.corroborated === true,
@@ -75,7 +118,7 @@ export function snapshotAccountReview(a: AccountBriefVM, review: { reviewId: str
 
 /** Canonical fingerprint for idempotency (§80-81/§121): same intelligence ⇒ same string. */
 export function snapshotFingerprint(s: AccountReviewSnapshot): string {
-  return JSON.stringify([s.accountId, s.decision, s.fit, s.timing, s.evidence, [...s.changeKeys].sort(), [...s.evidenceOrigins].sort(), s.independentSupport, s.hasMaterialCounter, [...s.validationThemeKeys].sort(), [...s.decisionCriticalThemeKeys].sort()]);
+  return JSON.stringify([s.accountId, s.accountIdentity ?? null, s.decision, s.fit, s.timing, s.evidence, [...s.changeKeys].sort(), [...s.evidenceOrigins].sort(), s.independentSupport, s.hasMaterialCounter, [...s.validationThemeKeys].sort(), [...s.decisionCriticalThemeKeys].sort()]);
 }
 
 export type StrengthDirection = "strengthened" | "weakened" | "unchanged";

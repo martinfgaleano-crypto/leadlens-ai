@@ -17,6 +17,7 @@ const daysAgo = (d: number) => new Date(NOW.getTime() - d * 86_400_000).toISOStr
 const scope = { ownerUserId: "o", clientKey: "c" };
 const snap = (o: Partial<AccountReviewSnapshot> & { accountId: string; decision: AccountReviewSnapshot["decision"] }): AccountReviewSnapshot => ({
   reviewId: `r_${o.accountId}`, reviewedAt: daysAgo(40), contextVersion: "ctx_v1", fit: "Moderate", timing: "Limited", evidence: "Moderate",
+  accountIdentity: { stableAccountKey: o.accountId, canonicalName: `Company ${o.accountId}`, domain: `${o.accountId}.example`, aliases: [], country: "US", organizationType: "private_company", confidence: "verified", fromUniverse: true, lineage: "candidate_universe" },
   changeKeys: [], hasVerifiedChange: false, evidenceOrigins: ["reuters.com"], independentSupport: false, counterCount: 0, hasMaterialCounter: false,
   validationThemeKeys: [], decisionCriticalThemeKeys: [], hasRevisitTrigger: false, ...o,
 });
@@ -40,7 +41,7 @@ t("date: publication date is NEVER the event date (event phrase 'March 2026', pu
   (() => { const r = resolveEventDate(cand({ eventDateRaw: "March 2026", publicationDate: "2026-08-01" })); return r.eventDate === "2026-03-01" && r.precision === "month"; })());
 t("date: quarter precision (Q2 2026)", (() => { const r = resolveEventDate(cand({ eventDateRaw: "Q2 2026" })); return r.eventDate === "2026-04-01" && r.precision === "quarter"; })());
 t("date: year-only precision", (() => { const r = resolveEventDate(cand({ eventDateRaw: "2025" })); return r.eventDate === "2025-01-01" && r.precision === "year"; })());
-t("date: relative phrase anchored to publication → relative_bounded", (() => { const r = resolveEventDate(cand({ eventDateRaw: "last month", publicationDate: "2026-07-15" })); return r.precision === "relative_bounded" && r.eventDate === "2026-07-01"; })());
+t("date: relative phrase anchored to PREVIOUS publication month → relative_bounded", (() => { const r = resolveEventDate(cand({ eventDateRaw: "last month", publicationDate: "2026-07-15" })); return r.precision === "relative_bounded" && r.eventDate === "2026-06-01" && r.rangeEnd === "2026-06-30"; })());
 t("date: relative phrase with NO anchor → unknown (never fabricated)", (() => { const r = resolveEventDate(cand({ eventDateRaw: "earlier this year", publicationDate: null })); return r.eventDate === null && r.precision === "unknown"; })());
 t("date: retrieval date is never used as event date", (() => { const r = resolveEventDate(cand({ eventDateRaw: null, publicationDate: null })); return r.eventDate === null; })());
 
