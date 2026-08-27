@@ -105,8 +105,10 @@ No route was deleted in this sprint, so bookmarks and operational deep links rem
 - Admin auth: 48/48.
 - Admin login routing: 58/58.
 - TypeScript: clean.
+- Next.js production build: passed, 151 static pages generated; new `/admin/beta-readiness` and `/api/admin/intelligence/launch-readiness` routes included.
+- Browser acceptance: unauthenticated navigation to `/admin/beta-readiness` redirected to `/admin/login?reason=unauthorized`; the Supabase Admin login rendered and no security bypass was used.
 
-The final Next.js production build result is recorded in the commit handoff.
+The build emitted the repository's existing Edge-runtime/static-generation warning; it did not fail the build.
 
 ## Immediate operational action
 
