@@ -169,6 +169,7 @@ async function runIntelligenceExecution(
         signalDate: lead.candidate.signal_date ?? null, sourceUrl: lead.candidate.source_url ?? null,
         signalType: lead.candidate.signal_type ?? null,
         researchConfidence: lead.enrichment.research_confidence ?? null,
+        accountResearch: lead.enrichment.account_research ?? null,
         evidenceClaims: (lead.enrichment.evidence_discipline ?? []).map(claim => ({
           type: claim.type, claim: claim.claim, date: claim.date ?? null,
           source_url: lead.candidate.source_url ?? null,

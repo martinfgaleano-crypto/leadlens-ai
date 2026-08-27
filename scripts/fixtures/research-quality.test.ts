@@ -36,6 +36,7 @@ t("14 counterevidence query planned", plan.accepted.some((q) => q.stage === "cou
 t("15 client query requires context", plan.accepted.some((q) => q.stage === "client_relevance"));
 t("16 no context means no client query", !planAccountResearch(profile, null).accepted.some((q) => q.stage === "client_relevance"));
 t("17 strong query uses account identity", plan.accepted.every((q) => q.query.includes("BioPlaza")));
+t("17b official-domain queries are domain constrained", plan.accepted.filter((q) => q.stage !== "client_relevance").every((q) => q.query.includes("site:bioplaza.com.co")));
 t("18 source tier A registry", sourceTier({ url: "https://rues.org.co/company", official_domain: null }).tier === "A");
 t("19 official domain is tier B", sourceTier({ url: "https://bioplaza.com.co", official_domain: "bioplaza.com.co" }).tier === "B");
 t("20 official social is tier C", sourceTier({ url: "https://instagram.com/bioplaza", official_domain: "bioplaza.com.co" }).tier === "C");

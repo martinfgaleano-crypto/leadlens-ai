@@ -92,14 +92,21 @@ export function buildLaunchReadiness(input: LaunchReadinessInput): LaunchReadine
   const byId = new Map(input.control_plane.capabilities.map((item) => [item.capability.id, item]));
   const gates = DEFINITIONS.map((def) => gateFrom(def, byId));
   const configChecks = Object.values(input.production_config);
+  const coreConfigReady = input.production_config.supabase && input.production_config.admin_auth &&
+    input.production_config.app_url && input.production_config.demo_off && input.database_available;
+  const fullConfigReady = coreConfigReady && input.production_config.internal_run_auth;
   gates.push({
     id: "production_configuration", label: "Production configuration", weight: 10,
-    state: configChecks.every(Boolean) && input.database_available ? "pass" : "fail",
+    state: !coreConfigReady ? "fail" : fullConfigReady ? "pass" : "degraded",
     score: Math.round((configChecks.filter(Boolean).length + Number(input.database_available)) / (configChecks.length + 1) * 100),
     sample_size: configChecks.length + 1,
-    reason: configChecks.every(Boolean) && input.database_available ? "Required runtime configuration and database access are present." : "One or more required runtime controls or database access are unavailable.",
+    reason: !coreConfigReady
+      ? "A core database, Admin-auth, application URL, or demo-isolation control is unavailable."
+      : fullConfigReady
+        ? "Required runtime configuration and database access are present."
+        : "Internal guided pilots remain available, but the authenticated asynchronous customer worker is unavailable without INTERNAL_RUN_SECRET.",
     evidence: ["runtime environment presence checks", "database-backed Admin loader"], capability_ids: [],
-    next_action: configChecks.every(Boolean) && input.database_available ? null : "Restore missing runtime controls or database access.",
+    next_action: fullConfigReady ? null : !coreConfigReady ? "Restore missing core runtime controls or database access." : "Configure INTERNAL_RUN_SECRET before closed-alpha or self-serve asynchronous execution.",
   });
 
   const totalWeight = gates.reduce((sum, gate) => sum + gate.weight, 0);
@@ -113,11 +120,17 @@ export function buildLaunchReadiness(input: LaunchReadinessInput): LaunchReadine
   const sampleSize = Math.max(0, ...gates.map((gate) => gate.sample_size));
   const confidence = measuredGates.length >= gates.length * 0.8 && sampleSize >= 8 ? "high" : measuredGates.length >= gates.length * 0.5 ? "medium" : "low";
   const level: LaunchReadinessLevel = score >= 90 ? "launch_ready" : score >= 75 ? "limited_launch" : score >= 55 ? "guided_beta" : score >= 30 ? "internal_pilot" : "not_ready";
+  const materialEvidenceDates = input.control_plane.capabilities
+    .flatMap((item) => item.evidence.map((e) => e.date).filter((date): date is string => Boolean(date)))
+    .filter((date) => Number.isFinite(new Date(date).getTime()))
+    .sort();
   return {
     version: LAUNCH_READINESS_VERSION, evaluated_at: input.now, score, level, confidence, sample_size: sampleSize, gates,
     blockers: gates.filter((gate) => gate.state === "fail").map((gate) => `${gate.label}: ${gate.reason}`),
     limitations: gates.filter((gate) => gate.state === "degraded" || gate.state === "unmeasured").map((gate) => `${gate.label}: ${gate.reason}`),
-    source_data_cutoff: input.control_plane.generated_at || null, automatic: true,
+    // Evaluation time is not evidence time. A page refresh must not create a
+    // material-history snapshot when the underlying evidence did not change.
+    source_data_cutoff: materialEvidenceDates.at(-1) ?? null, automatic: true,
     policy: [
       "Readiness is recomputed from current evidence; no browser checkbox or manually edited percentage contributes.",
       "Real production and human evidence overrides implementation and unit-test presence.",

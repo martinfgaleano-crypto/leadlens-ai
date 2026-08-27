@@ -21,6 +21,17 @@ export interface ControlPlaneMemoryRecord {
   observed_at: string;
 }
 
+export interface ControlPlaneHistorySummary {
+  state: "insufficient_history" | "stable" | "changed";
+  current: ControlPlaneMemoryRecord | null;
+  previous: ControlPlaneMemoryRecord | null;
+  readiness_delta: number | null;
+  capability_delta: number | null;
+  last_material_change_at: string | null;
+  gate_transitions: Array<{ gate_id: string; from: string; to: string }>;
+  capability_transitions: Array<{ capability_id: string; from: string; to: string }>;
+}
+
 type StoreDb = {
   from(table: string): {
     upsert(value: unknown, options?: Record<string, unknown>): Promise<{ error: { message: string } | null }>;
@@ -68,4 +79,20 @@ export async function loadControlPlaneHistory(db: StoreDb, limit = 30): Promise<
   } catch (error) {
     return { records: [], error: error instanceof Error ? error.message : "control plane history unavailable" };
   }
+}
+
+export function summarizeControlPlaneHistory(records: ControlPlaneMemoryRecord[]): ControlPlaneHistorySummary {
+  const current = records[0] ?? null;
+  const previous = records[1] ?? null;
+  if (!current || !previous) return { state: "insufficient_history", current, previous: null, readiness_delta: null, capability_delta: null, last_material_change_at: null, gate_transitions: [], capability_transitions: [] };
+  const currentGates = new Map(current.snapshot.launch_readiness.gates.map((gate) => [gate.id, gate.state]));
+  const previousGates = new Map(previous.snapshot.launch_readiness.gates.map((gate) => [gate.id, gate.state]));
+  const gateTransitions = Array.from(currentGates).flatMap(([id, state]) => previousGates.has(id) && previousGates.get(id) !== state ? [{ gate_id: id, from: previousGates.get(id)!, to: state }] : []);
+  const currentCapabilities = new Map(current.snapshot.control_plane.capabilities.map((item) => [item.capability.id, item.state]));
+  const previousCapabilities = new Map(previous.snapshot.control_plane.capabilities.map((item) => [item.capability.id, item.state]));
+  const capabilityTransitions = Array.from(currentCapabilities).flatMap(([id, state]) => previousCapabilities.has(id) && previousCapabilities.get(id) !== state ? [{ capability_id: id, from: previousCapabilities.get(id)!, to: state }] : []);
+  const readinessDelta = current.launch_readiness_score - previous.launch_readiness_score;
+  const capabilityDelta = current.capability_score === null || previous.capability_score === null ? null : current.capability_score - previous.capability_score;
+  const changed = readinessDelta !== 0 || capabilityDelta !== 0 || gateTransitions.length > 0 || capabilityTransitions.length > 0;
+  return { state: changed ? "changed" : "stable", current, previous, readiness_delta: readinessDelta, capability_delta: capabilityDelta, last_material_change_at: changed ? current.observed_at : previous.observed_at, gate_transitions: gateTransitions, capability_transitions: capabilityTransitions };
 }

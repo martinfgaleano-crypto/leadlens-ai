@@ -46,7 +46,7 @@ const ISO_MONTH = /^\s*(\d{4})-(\d{2})\s*$/;
 const YEAR_ONLY = /^\s*(\d{4})\s*$/;
 const QUARTER = /\bq([1-4])\s*(\d{4})\b|\b(primer|segundo|tercer|cuarto)\s+trimestre\s+(?:de\s+)?(\d{4})\b/i;
 const Q_MAP: Record<string, number> = { primer: 1, segundo: 2, tercer: 3, cuarto: 4 };
-const RELATIVE = /\b(last month|el mes pasado|earlier this year|este a[ñn]o|a principios de|hace\s+\d+\s+(d[ií]as?|semanas?|meses?|a[ñn]os?)|\d+\s+(weeks?|months?|days?)\s+ago|two weeks ago)\b/i;
+const RELATIVE = /\b(today|hoy|last month|el mes pasado|earlier this year|este a[ñn]o|a principios de|hace\s+\d+\s+(d[ií]as?|semanas?|meses?|a[ñn]os?)|\d+\s+(weeks?|months?|days?)\s+ago|two weeks ago)\b/i;
 const MONTHS: Record<string, number> = {
   january: 1, february: 2, march: 3, april: 4, may: 5, june: 6, july: 7, august: 8, september: 9, october: 10, november: 11, december: 12,
   jan: 1, feb: 2, mar: 3, apr: 4, jun: 6, jul: 7, aug: 8, sep: 9, sept: 9, oct: 10, nov: 11, dec: 12,
@@ -85,10 +85,12 @@ export function resolveEventDate(candidate: EventCandidate): ResolvedEventDate {
   if ((m = raw.match(YEAR_ONLY))) return { eventDate: `${m[1]}-01-01`, precision: "year", basis: "absolute_text" };
   // Relative phrase → anchor to publication date if present; else unknown.
   if (RELATIVE.test(raw) && candidate.publicationDate) {
-    const anchor = parseEnglishDate(candidate.publicationDate) ?? parseSpanishDate(candidate.publicationDate) ?? (ISO_FULL.test(candidate.publicationDate.trim()) ? candidate.publicationDate.trim() : null);
+    const isoPrefix = candidate.publicationDate.match(/^(\d{4}-\d{2}-\d{2})(?:T|\s|$)/)?.[1] ?? null;
+    const anchor = parseEnglishDate(candidate.publicationDate) ?? parseSpanishDate(candidate.publicationDate) ?? isoPrefix ?? (ISO_FULL.test(candidate.publicationDate.trim()) ? candidate.publicationDate.trim() : null);
     if (anchor) {
       const at = new Date(`${anchor}T00:00:00Z`);
       const lower = raw.toLowerCase();
+      if (/^(today|hoy)$/.test(lower)) return { eventDate: anchor, precision: "exact_date", basis: "relative_anchored" };
       if (/last month|el mes pasado/.test(lower)) {
         const start = new Date(Date.UTC(at.getUTCFullYear(), at.getUTCMonth() - 1, 1));
         const end = new Date(Date.UTC(at.getUTCFullYear(), at.getUTCMonth(), 0));

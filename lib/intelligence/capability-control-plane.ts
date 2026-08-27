@@ -45,7 +45,7 @@ D("candidate_universe", "Candidate Universe", "discovery", ["company_discovery"]
 D("corporate_identity", "Corporate Identity", "discovery", ["company_verification", "entity_resolution"], ["lib/discovery/corporate-identity.ts"], ["candidate_universe"]);
 D("dynamic_universe_discovery", "Dynamic Universe Discovery", "discovery", ["company_discovery"], ["lib/discovery/company-universe.ts"], ["candidate_universe"]);
 D("pre_research_relevance", "Pre-Research Relevance Gate", "discovery", ["structural_account_ranking"], ["lib/lead-hunter/candidate-universe.ts"], ["corporate_identity"]);
-D("initial_research", "Initial Research", "research", ["deep_account_research"], ["lib/intelligence/productive-spine.ts"], ["pre_research_relevance"]);
+D("initial_research", "Initial Research", "research", ["deep_account_research"], ["lib/intelligence/productive-spine.ts", "lib/intelligence/account-deep-research.ts"], ["pre_research_relevance"]);
 D("provider_routing", "Provider Routing", "operations", [], ["lib/monitor/provider-routing.ts"], ["initial_research"]);
 D("source_quality", "Source Quality", "research", [], ["lib/discovery/source-intelligence-store.ts"], ["provider_routing"]);
 D("source_association", "Source Association", "research", [], ["lib/discovery/company-first-discovery.ts"], ["corporate_identity", "source_quality"]);

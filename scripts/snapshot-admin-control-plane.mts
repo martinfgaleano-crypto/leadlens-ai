@@ -20,6 +20,8 @@ const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 if (!url || !key) throw new Error("Supabase service configuration unavailable");
 const db = createClient(url, key, { auth: { persistSession: false } });
 const model = await loadAdminIntelligenceViewModel({ db: db as never });
+const existing = await db.from("intelligence_control_plane_snapshots").select("snapshot_key", { count: "exact", head: true });
+if (existing.error) throw new Error(`Control Plane history unavailable: ${existing.error.message}`);
 const readiness = buildLaunchReadiness({
   now: new Date().toISOString(), control_plane: model.control_plane,
   database_available: model.availability.database !== "unavailable",
@@ -31,7 +33,8 @@ const readiness = buildLaunchReadiness({
   },
 });
 const result = await persistControlPlaneMemory(db as never, buildControlPlaneMemoryRecord({
-  control_plane: model.control_plane, launch_readiness: readiness, trigger_type: "operational_snapshot",
+  control_plane: model.control_plane, launch_readiness: readiness,
+  trigger_type: existing.count === 0 ? "control_plane_baseline_v1" : "operational_snapshot",
   trigger_ref: process.env.GIT_COMMIT_SHA ?? null,
 }));
 console.log(JSON.stringify({ persisted: result.persisted, error: result.error, readiness: readiness.score, level: readiness.level, confidence: readiness.confidence, sample_size: readiness.sample_size, blockers: readiness.blockers.length }));

@@ -1,4 +1,6 @@
 import { assessEntityMatch, domainFromUrl, type ClientContext } from "./evidence-temporal";
+import { classifySignalKind } from "@/lib/discovery/event-vs-metric";
+import { classifyMateriality } from "@/lib/discovery/materiality";
 
 export const RESEARCH_QUALITY_VERSION = "research-quality-v1";
 
@@ -165,25 +167,27 @@ export function assessQueryQuality(input: {
   };
 }
 
-function candidateQueries(profile: AccountResearchProfile, context: ClientContext | null): Array<{ stage: ResearchStage; query: string; gap: ResearchGap; tier: SourceTier }> {
+function candidateQueries(profile: AccountResearchProfile, context: ClientContext | null, signalTerms: string[] = []): Array<{ stage: ResearchStage; query: string; gap: ResearchGap; tier: SourceTier }> {
   const name = `"${profile.canonical_company_name}"`;
   const geo = [profile.city_or_region, profile.country].filter(Boolean).join(" ");
   const domain = profile.domain ?? "";
+  const official = domain ? `site:${domain}` : "";
+  const triggers = signalTerms.filter(Boolean).slice(0, 4).map((x) => `"${x.replace(/"/g, "")}"`).join(" OR ") || "apertura OR expansión OR inversión OR contrato";
   const segment = profile.segment ?? profile.business_type ?? "";
   const rows: Array<{ stage: ResearchStage; query: string; gap: ResearchGap; tier: SourceTier }> = [
-    { stage: "identity", query: `${name} ${domain} ${geo} sitio oficial ubicación`, gap: "identity", tier: "B" },
-    { stage: "commercial_footprint", query: `${name} ${domain} ${geo} ${segment} tiendas sedes distribución productos`, gap: "commercial_footprint", tier: "B" },
-    { stage: "current_activity", query: `${name} ${domain} ${geo} apertura expansión alianza lanzamiento 2025 2026`, gap: "recent_signals", tier: "B" },
-    { stage: "counterevidence", query: `${name} ${domain} ${geo} cierre inactivo contracción retiró descontinuado`, gap: "counterevidence", tier: "B" },
+    { stage: "identity", query: `${name} ${official} ${geo} sitio oficial ubicación`, gap: "identity", tier: "B" },
+    { stage: "commercial_footprint", query: `${name} ${official} ${geo} ${segment} tiendas sedes distribución productos`, gap: "commercial_footprint", tier: "B" },
+    { stage: "current_activity", query: `${name} ${official} ${geo} (${triggers}) 2025 2026`, gap: "recent_signals", tier: "B" },
+    { stage: "counterevidence", query: `${name} ${official} ${geo} cierre inactivo contracción retiró descontinuado cancelado`, gap: "counterevidence", tier: "B" },
   ];
   if (context) rows.push({ stage: "client_relevance", query: `${name} ${domain} ${geo} ${context.offering ?? ""} ${profile.segment ?? ""}`, gap: "client_relevance", tier: "B" });
   return rows;
 }
 
-export function planAccountResearch(profile: AccountResearchProfile, context: ClientContext | null, maxQueries = 5): { accepted: PlannedResearchQuery[]; rejected: PlannedResearchQuery[] } {
+export function planAccountResearch(profile: AccountResearchProfile, context: ClientContext | null, maxQueries = 5, signalTerms: string[] = []): { accepted: PlannedResearchQuery[]; rejected: PlannedResearchQuery[] } {
   const accepted: PlannedResearchQuery[] = [], rejected: PlannedResearchQuery[] = [];
   const previous: string[] = [];
-  for (const row of candidateQueries(profile, context).slice(0, maxQueries)) {
+  for (const row of candidateQueries(profile, context, signalTerms).slice(0, maxQueries)) {
     const assessed = assessQueryQuality({ query: row.query, profile, stage: row.stage, target_gap: row.gap, expected_source_tier: row.tier, previous_queries: previous });
     const planned: PlannedResearchQuery = {
       ...assessed, query_id: `rq_${hash(`${profile.profile_id}:${row.stage}:${row.query}`)}`,
@@ -231,7 +235,10 @@ export function assessEvidenceCandidate(profile: AccountResearchProfile, candida
   const entityState: EntityState = exactDomain ? "confirmed" : entityConfidence >= .9 ? "high_confidence" : entityConfidence >= .65 ? "probable" : entityConfidence >= .4 ? "ambiguous" : "wrong_entity";
   const tier = sourceTier({ url: candidate.canonical_url, source_type: candidate.source_type, official_domain: profile.domain, publisher: candidate.publisher });
   const text = `${candidate.title ?? ""} ${candidate.excerpt ?? ""}`;
-  const highCommercial = /\b(apertura|expansi[oó]n|alianza|lanzamiento|distribuci[oó]n|nueva sede|nuevo hotel|contrato|inversi[oó]n|contratando|hiring|cierre|retir[oó]|descontinu)/i.test(text);
+  const signal = classifySignalKind(text);
+  const materiality = classifyMateriality(text);
+  const highCommercial = (signal.can_trigger && materiality.level !== "low")
+    || /\b(apertura|abri[oó]|expansi[oó]n|expand(?:s|ed|ing)?|open(?:s|ed|ing)?|new (?:plant|facility|distribution center|production line)|alianza|lanzamiento|nueva sede|nuevo hotel|signed (?:a )?contract|won (?:a )?contract|awarded (?:a )?contract|inversi[oó]n|invest(?:s|ed|ment)|contratando|hiring|cierre|retir[oó]|descontinu)/i.test(text);
   const mediumCommercial = /\b(tiendas?|sedes?|productos?|servicios?|cobertura|ubicaci[oó]n|mayorista|spa|hotel|retail)\b/i.test(text);
   const commercial_relevance = highCommercial ? "high" : mediumCommercial ? "medium" : "low";
   const reasons: ResearchReasonCode[] = [];
@@ -265,8 +272,8 @@ export interface AtomicResearchClaim {
 }
 
 const eventPatterns: Array<{ re: RegExp; label: string; category: AtomicResearchClaim["category"] }> = [
-  { re: /\b(apertura|abri[oó]|nueva sede|nuevo local|new location)\b/i, label: "anunció o registra una nueva ubicación", category: "current_activity" },
-  { re: /\b(expansi[oó]n|expand|crecimiento geogr[aá]fico)\b/i, label: "reporta una expansión", category: "current_activity" },
+  { re: /\b(apertura|abri[oó]|nueva sede|nuevo local|new (?:location|plant|facility)|open(?:s|ed|ing)?)\b/i, label: "anunció o registra una nueva ubicación", category: "current_activity" },
+  { re: /\b(expansi[oó]n|expand(?:s|ed|ing)?|crecimiento geogr[aá]fico)\b/i, label: "reporta una expansión", category: "current_activity" },
   { re: /\b(alianza|partnership|convenio|acuerdo de distribuci[oó]n)\b/i, label: "reporta una alianza o acuerdo", category: "current_activity" },
   { re: /\b(cierre|cerr[oó]|inactivo|liquidaci[oó]n|bankruptcy|descontinu)/i, label: "presenta un evento operativo negativo", category: "negative_event" },
   { re: /\b(tiendas?|sedes?|distribuidores?|mayorista|hotel|spa|productos?)\b/i, label: "mantiene una huella comercial verificable", category: "commercial_footprint" },

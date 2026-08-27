@@ -9,6 +9,8 @@ export const MATERIALITY_VERSION = "materiality-v1";
 export type Materiality = "high" | "medium" | "low";
 
 const HIGH = /\b(nueva planta|nueva f[aá]brica|nueva bodega|nueva tienda|abre (una )?nueva|abrir[aá] \d+ nuevas?|apertura de (una|un) nuev[ao]|nuevo centro de distribuci[oó]n|centro log[ií]stico|inaugur[oó]|inaugurat|expansi[oó]n regional|adquiri[oó]|adquisici[oó]n|compr[oó] (a|la|el)|nuevo contrato|adjudic[oó]|gan[oó] (el|un|la) (contrato|licitaci[oó]n)|amplí[oa] (su )?(capacidad|surtido)|nueva categor[ií]a|programa de bienestar|nueva operaci[oó]n|entra (a|al) (mercado|pa[ií]s)|ingres[oó] (a|al)|incorpor[oó] (\d+ )?veh[ií]culos|ampl[ií][oó] (su )?flota|crecimiento de (su )?flota|nueva flota|invierte|inversi[oó]n de|nueva ruta|nuevas rutas|new plant|new facility|new warehouse|new distribution center|acquired|acquisition|awarded (a )?contract|expanded (its )?(capacity|fleet|operations|footprint|production)|invests|new operation|enters (the )?(market|country)|open(?:ed|s|ing)? (?:a |its |the )?(?:new )?(?:plant|facility|factory|warehouse|distribution cent(?:er|re)|manufacturing (?:plant|facility)|production (?:plant|facility))|beg(?:an|un|ins) (?:its )?(?:production|operations|manufacturing)|start(?:ed|s|ing)? (?:its )?(?:production|operations)|commenc(?:ed|es|ing) (?:production|operations)|launch(?:ed|es|ing)? (?:its )?operations|commission(?:ed|s|ing)? (?:a |its |the )?(?:new )?(?:plant|facility|line)|entered (?:a )?(?:new )?market|expand(?:ed|s|ing)? into|established (?:a )?(?:new )?(?:presence|operations|plant|facility)|merger|merged with|took over|appointed (?:a )?(?:new )?distributor|named (?:a )?(?:new )?distributor|sign(?:ed|s|ing)? (?:a )?distribution agreement|enter(?:ed|s|ing)? (?:a |into a )?strategic (?:alliance|partnership)|strategic alliance|distribution agreement|channel partnership)\b/i;
+const HIGH_VARIANTS = /\bopen(?:ed|s|ing)? (?:a |its |the )?(?:(?:largest|major|additional) )?(?:plant|facility|factory|warehouse|distribution cent(?:er|re)|manufacturing (?:plant|facility)|production (?:plant|facility))\b/i;
+const HIGH_DESCRIPTIVE_OPEN = /\bopen(?:ed|s|ing)? (?:a |its |the )?(?:[a-z-]+ ){0,6}(?:plant|facility|factory|warehouse|distribution cent(?:er|re)|manufacturing (?:plant|facility)|production (?:plant|facility))\b/i;
 const MEDIUM = /\b(alianza|acuerdo|partnership|firm[oó]|lanz[oó]|lanzamiento|piloto|prueba|actualiz[oó]|moderniz[oó]|contrat[oó] (personal|equipo|gerente)|hir(ed|ing)|launch(ed)?|pilot|upgrade|renov[oó]|implementa)\b/i;
 const LOW = /\b(premio|galard[oó]n|reconocimiento|entrevista|opini[oó]n|columna|feria|expo|stand|patrocin|campa[ñn]a|celebra|anivers|ranking|informe|estudio|tendencia|award|interview|webinar|sponsor|campaign|anniversary|trends?|report|profile|perfil|aplicaci[oó]n|app store|s[ií]guenos|redes sociales|tiktok|instagram)\b/i;
 
@@ -22,7 +24,7 @@ export function classifyMateriality(titleAndContent: string): { level: Materiali
   const neg = hay.match(NEGATIVE); if (neg) return { level: "low", matched: `negativo: ${neg[0]}` };
   // Pure PR vetoes UNLESS a concrete high-materiality change is also present.
   const pr = hay.match(PURE_PR);
-  const h = hay.match(HIGH);
+  const h = hay.match(HIGH) ?? hay.match(HIGH_VARIANTS) ?? hay.match(HIGH_DESCRIPTIVE_OPEN);
   if (pr && !h) return { level: "low", matched: `pr: ${pr[0]}` };
   if (h) return { level: "high", matched: h[0] };
   // A low-materiality marker vetoes a medium one (a "feria" mention wins over "lanzó").

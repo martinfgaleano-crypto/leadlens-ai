@@ -1,0 +1,919 @@
+{
+  "acceptance": "customer-intelligence-e2e-v1",
+  "ran_at": "2026-08-27T21:44:47.902Z",
+  "soak_id": null,
+  "soak_phase": null,
+  "synthetic_context": "Vendemos automatización de bodegas, integración WMS y orquestación de inventarios a fabricantes y distribuidores medianos y grandes en Colombia. Buscamos empresas que operen directamente centros de distribución, bodegas o plantas y que hayan abierto, ampliado, automatizado o invertido recientemente en infraestructura logística. Excluir entidades públicas, medios, consultoras, empresas de software puro, retailers sin operación logística propia y operaciones totalmente tercerizadas.",
+  "run_id": "intel_d68e19b83848bad31169bd75be2a7fc7",
+  "lead_hunter_run_id": "lh_e2e_context_1787866586088_v1_2026-08-27_153e0ddd-6b33-4b6f-90d5-15e3a18fa61b_intel_d68e1",
+  "candidate_universe": {
+    "total": 15,
+    "coverage": {
+      "gaps": [
+        {
+          "type": "provider_unavailable",
+          "detail": "Providers unavailable: serper."
+        }
+      ],
+      "eligible": 13,
+      "excluded": 0,
+      "routeYield": [
+        {
+          "route": "industry_category",
+          "queries": 2,
+          "resultPages": 11,
+          "groundedNames": 15,
+          "acceptedCompanies": 15
+        },
+        {
+          "route": "geo_category",
+          "queries": 1,
+          "resultPages": 5,
+          "groundedNames": 10,
+          "acceptedCompanies": 10
+        },
+        {
+          "route": "source_ecosystem",
+          "queries": 2,
+          "resultPages": 8,
+          "groundedNames": 1,
+          "acceptedCompanies": 1
+        }
+      ],
+      "duplicateRate": 0,
+      "operatingMode": "full_discovery",
+      "likelyEligible": 2,
+      "needsValidation": 0,
+      "providersFailed": [
+        "serper"
+      ],
+      "routesAttempted": 3,
+      "candidatesUnique": 15,
+      "identityAmbiguous": 0,
+      "providersAvailable": [
+        "brave",
+        "tavily"
+      ],
+      "candidatesDiscovered": 15
+    },
+    "companies": [
+      {
+        "name": "Melonn",
+        "domain": "melonn.com",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "industry_category",
+            "origin": "dynamic_enumeration",
+            "provider": "engine",
+            "discoveredAt": "2026-08-27T21:36:42.357Z",
+            "discoveredName": "Melonn"
+          }
+        ]
+      },
+      {
+        "name": "Logisfashion",
+        "domain": "logisfashion.com",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "industry_category",
+            "origin": "dynamic_enumeration",
+            "provider": "engine",
+            "discoveredAt": "2026-08-27T21:36:42.357Z",
+            "discoveredName": "Logisfashion"
+          }
+        ]
+      },
+      {
+        "name": "Quick",
+        "domain": "quick.com.co",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "industry_category",
+            "origin": "dynamic_enumeration",
+            "provider": "engine",
+            "discoveredAt": "2026-08-27T21:36:42.357Z",
+            "discoveredName": "Quick"
+          }
+        ]
+      },
+      {
+        "name": "Sedial",
+        "domain": "sedialgroup.com.co",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "industry_category",
+            "origin": "dynamic_enumeration",
+            "provider": "engine",
+            "discoveredAt": "2026-08-27T21:36:42.357Z",
+            "discoveredName": "Sedial"
+          }
+        ]
+      },
+      {
+        "name": "Fulppi",
+        "domain": "fulppi.com",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "industry_category",
+            "origin": "dynamic_enumeration",
+            "provider": "engine",
+            "discoveredAt": "2026-08-27T21:36:42.357Z",
+            "discoveredName": "Fulppi"
+          }
+        ]
+      },
+      {
+        "name": "Thomas MTI",
+        "domain": "thomasgregandsons.com",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "industry_category",
+            "origin": "dynamic_enumeration",
+            "provider": "engine",
+            "discoveredAt": "2026-08-27T21:36:42.357Z",
+            "discoveredName": "Thomas MTI"
+          }
+        ]
+      },
+      {
+        "name": "Farmu",
+        "status": "likely_eligible",
+        "confidence": "plausible",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "source_ecosystem",
+            "origin": "dynamic_enumeration",
+            "provider": "engine",
+            "discoveredAt": "2026-08-27T21:36:42.357Z",
+            "discoveredName": "Farmu"
+          }
+        ]
+      },
+      {
+        "name": "Grupo Éxito",
+        "domain": "grupoexito.com.co",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-08-27T21:36:42.357Z",
+            "discoveredName": "Grupo Éxito"
+          }
+        ]
+      },
+      {
+        "name": "Sercomlog",
+        "domain": "sercomlog.com",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "industry_category",
+            "origin": "dynamic_enumeration",
+            "provider": "engine",
+            "discoveredAt": "2026-08-27T21:36:42.357Z",
+            "discoveredName": "Sercomlog"
+          }
+        ]
+      },
+      {
+        "name": "Alkosto",
+        "domain": "alkosto.com",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-08-27T21:36:42.357Z",
+            "discoveredName": "Alkosto"
+          }
+        ]
+      },
+      {
+        "name": "Almacafé",
+        "domain": "almacafe.com.co",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "industry_category",
+            "origin": "dynamic_enumeration",
+            "provider": "engine",
+            "discoveredAt": "2026-08-27T21:36:42.357Z",
+            "discoveredName": "Almacafé"
+          }
+        ]
+      },
+      {
+        "name": "Olímpica",
+        "domain": "olimpica.com",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-08-27T21:36:42.357Z",
+            "discoveredName": "Olímpica"
+          }
+        ]
+      },
+      {
+        "name": "Falabella de Colombia",
+        "domain": "falabella.com.co",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-08-27T21:36:42.357Z",
+            "discoveredName": "Falabella de Colombia"
+          }
+        ]
+      },
+      {
+        "name": "Samsung SDS Colombia",
+        "status": "likely_eligible",
+        "confidence": "plausible",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "industry_category",
+            "origin": "dynamic_enumeration",
+            "provider": "engine",
+            "discoveredAt": "2026-08-27T21:36:42.357Z",
+            "discoveredName": "Samsung SDS Colombia"
+          }
+        ]
+      },
+      {
+        "name": "Sodimac Colombia",
+        "domain": "homecenter.com.co",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-08-27T21:36:42.357Z",
+            "discoveredName": "Sodimac Colombia"
+          }
+        ]
+      }
+    ]
+  },
+  "delivered_accounts": [],
+  "research_audit": [
+    {
+      "risks": [
+        "Segment mismatch: Melonn is a 3PL, not a manufacturer with own logistics — the offer may not be designed for this buyer profile",
+        "Melonn may have proprietary tech as a core differentiator, making external WMS procurement unlikely",
+        "No confirmed buying signal — any outreach would be entirely cold with high risk of irrelevance",
+        "Company size and budget capacity are unknown, making deal sizing and qualification impossible without enrichment"
+      ],
+      "domain": "melonn.com",
+      "company": "Melonn",
+      "country": "Colombia",
+      "reasons": [
+        "case_missing"
+      ],
+      "category": "COLD",
+      "fitScore": 5,
+      "qcStatus": "REVIEW_NEEDED",
+      "sourceUrl": "https://www.melonn.com/colombia/operador-logistico/",
+      "signalDate": "2026-07-02",
+      "signalType": null,
+      "nextQuestion": "Does Melonn build and own its WMS technology internally, or does it procure warehouse management and inventory orchestration systems from external vendors?",
+      "evidenceClaims": [
+        {
+          "date": "2026-07-02",
+          "type": "verified_public_signal",
+          "claim": "Melonn operates 4 CEDIs in Colombia: Bogotá, Medellín, Cali, Barranquilla",
+          "source_url": "https://www.melonn.com/colombia/operador-logistico/"
+        },
+        {
+          "date": "2026-07-03",
+          "type": "verified_public_signal",
+          "claim": "Melonn is expanding into Mexico and active in that market as of mid-2026",
+          "source_url": "https://www.melonn.com/colombia/operador-logistico/"
+        },
+        {
+          "date": "2026-07-02",
+          "type": "verified_public_signal",
+          "claim": "Melonn manages a single centralized inventory for omnichannel distribution across multiple sales channels",
+          "source_url": "https://www.melonn.com/colombia/operador-logistico/"
+        },
+        {
+          "date": "2026-06-18",
+          "type": "verified_public_signal",
+          "claim": "Melonn faces delivery errors (delays, damage, poor returns) as operational risk factors",
+          "source_url": "https://www.melonn.com/colombia/operador-logistico/"
+        },
+        {
+          "date": null,
+          "type": "inferred_from_context",
+          "claim": "Melonn's multi-CEDI operation creates WMS and inventory orchestration complexity requiring automation",
+          "source_url": "https://www.melonn.com/colombia/operador-logistico/"
+        },
+        {
+          "date": null,
+          "type": "weak_inference",
+          "claim": "Melonn is in a scaling phase that would trigger procurement of warehouse automation or WMS tools",
+          "source_url": "https://www.melonn.com/colombia/operador-logistico/"
+        },
+        {
+          "date": null,
+          "type": "missing_evidence",
+          "claim": "Melonn's current WMS technology stack and automation maturity level",
+          "source_url": "https://www.melonn.com/colombia/operador-logistico/"
+        },
+        {
+          "date": null,
+          "type": "missing_evidence",
+          "claim": "Melonn has a procurement process or budget cycle open for logistics tech investment",
+          "source_url": "https://www.melonn.com/colombia/operador-logistico/"
+        }
+      ],
+      "accountResearch": {
+        "domain": "melonn.com",
+        "account": "Melonn",
+        "version": "account-deep-research-v1",
+        "query_audit": [
+          {
+            "stage": "identity",
+            "results": 5,
+            "accepted": 4,
+            "provider": "brave",
+            "query_id": "rq_116nf84"
+          },
+          {
+            "stage": "identity",
+            "results": 5,
+            "accepted": 4,
+            "provider": "tavily",
+            "query_id": "rq_116nf84"
+          },
+          {
+            "stage": "commercial_footprint",
+            "results": 5,
+            "accepted": 2,
+            "provider": "brave",
+            "query_id": "rq_zke3mf"
+          },
+          {
+            "stage": "commercial_footprint",
+            "results": 5,
+            "accepted": 4,
+            "provider": "tavily",
+            "query_id": "rq_zke3mf"
+          },
+          {
+            "stage": "current_activity",
+            "results": 0,
+            "accepted": 0,
+            "provider": "brave",
+            "query_id": "rq_l5mev1"
+          },
+          {
+            "stage": "current_activity",
+            "results": 0,
+            "accepted": 0,
+            "provider": "tavily",
+            "query_id": "rq_l5mev1"
+          },
+          {
+            "stage": "counterevidence",
+            "results": 5,
+            "accepted": 3,
+            "provider": "brave",
+            "query_id": "rq_11rbrj4"
+          },
+          {
+            "stage": "counterevidence",
+            "results": 0,
+            "accepted": 0,
+            "provider": "tavily",
+            "query_id": "rq_11rbrj4"
+          },
+          {
+            "stage": "client_relevance",
+            "results": 5,
+            "accepted": 0,
+            "provider": "brave",
+            "query_id": "rq_1q0cskm"
+          },
+          {
+            "stage": "client_relevance",
+            "results": 5,
+            "accepted": 1,
+            "provider": "tavily",
+            "query_id": "rq_1q0cskm"
+          }
+        ],
+        "results_seen": 35,
+        "dated_evidence": 5,
+        "provider_calls": 15,
+        "pages_extracted": 0,
+        "planned_queries": 5,
+        "claims_recovered": 1,
+        "executed_queries": 5,
+        "early_stop_reason": "budget_exhausted",
+        "evidence_accepted": 18,
+        "evidence_rejected": 17,
+        "provider_failures": 5,
+        "extraction_failures": 0,
+        "independent_domains": 2,
+        "counterevidence_checked": true,
+        "structured_extraction_calls": 0
+      },
+      "canonicalDecision": "hold",
+      "researchConfidence": 0.42
+    },
+    {
+      "risks": [
+        "Segment mismatch: Logisfashion is a 3PL, not a manufacturer with own logistics — the offer may be misaligned with their buyer profile or already-solved by existing enterprise WMS",
+        "Decision authority risk: Technology investment decisions for Colombia operations may be centralized in Spain, making local outreach ineffective",
+        "No urgency signal: Absence of any confirmed automation project, procurement process, or public technology initiative means low immediate conversion probability",
+        "Competitive displacement risk: A benchmark 3PL operator likely already has WMS infrastructure in place, making displacement of incumbent vendors difficult without a clear gap or trigger"
+      ],
+      "domain": "logisfashion.com",
+      "company": "Logisfashion",
+      "country": "Colombia",
+      "reasons": [
+        "case_missing"
+      ],
+      "category": "COLD",
+      "fitScore": 5.5,
+      "qcStatus": "REVIEW_NEEDED",
+      "sourceUrl": "https://www.logisfashion.com/es/logistica-moda/",
+      "signalDate": "1996-01-01",
+      "signalType": null,
+      "nextQuestion": "Does Logisfashion Colombia operate its own fulfillment center infrastructure and make technology investment decisions locally, or is warehouse technology centrally managed from the Spain headquarters?",
+      "evidenceClaims": [
+        {
+          "date": "2026-04-22",
+          "type": "verified_public_signal",
+          "claim": "Logisfashion has operational presence in Colombia, Mexico, Chile, Uruguay, and Panama",
+          "source_url": "https://www.logisfashion.com/es/logistica-moda/"
+        },
+        {
+          "date": "2025-08-27",
+          "type": "verified_public_signal",
+          "claim": "Logisfashion operates multiple fulfillment centers in the Santiago metropolitan region of Chile",
+          "source_url": "https://www.logisfashion.com/es/logistica-moda/"
+        },
+        {
+          "date": "2026-05-06",
+          "type": "verified_public_signal",
+          "claim": "Logisfashion offers omnichannel logistics solutions across the complete supply chain",
+          "source_url": "https://www.logisfashion.com/es/logistica-moda/"
+        },
+        {
+          "date": "2026-04-20",
+          "type": "verified_public_signal",
+          "claim": "Logisfashion published analysis on hidden logistics costs citing USMCA, customs reform, and tariff pressures in 2026",
+          "source_url": "https://www.logisfashion.com/es/logistica-moda/"
+        },
+        {
+          "date": null,
+          "type": "inferred_from_context",
+          "claim": "Logisfashion manages high-SKU, multi-channel inventory requiring WMS orchestration",
+          "source_url": "https://www.logisfashion.com/es/logistica-moda/"
+        },
+        {
+          "date": null,
+          "type": "weak_inference",
+          "claim": "Logisfashion Colombia faces inventory visibility or WMS coordination challenges",
+          "source_url": "https://www.logisfashion.com/es/logistica-moda/"
+        },
+        {
+          "date": null,
+          "type": "missing_evidence",
+          "claim": "Logisfashion is evaluating or planning warehouse automation investments",
+          "source_url": "https://www.logisfashion.com/es/logistica-moda/"
+        },
+        {
+          "date": null,
+          "type": "missing_evidence",
+          "claim": "Current WMS or automation technology stack used by Logisfashion",
+          "source_url": "https://www.logisfashion.com/es/logistica-moda/"
+        },
+        {
+          "date": null,
+          "type": "missing_evidence",
+          "claim": "Technology decision-making authority resides in Colombia vs. Spain headquarters",
+          "source_url": "https://www.logisfashion.com/es/logistica-moda/"
+        }
+      ],
+      "accountResearch": {
+        "domain": "logisfashion.com",
+        "account": "Logisfashion",
+        "version": "account-deep-research-v1",
+        "query_audit": [
+          {
+            "stage": "identity",
+            "results": 5,
+            "accepted": 5,
+            "provider": "brave",
+            "query_id": "rq_1kn111x"
+          },
+          {
+            "stage": "identity",
+            "results": 5,
+            "accepted": 4,
+            "provider": "tavily",
+            "query_id": "rq_1kn111x"
+          },
+          {
+            "stage": "commercial_footprint",
+            "results": 5,
+            "accepted": 2,
+            "provider": "brave",
+            "query_id": "rq_19mspow"
+          },
+          {
+            "stage": "commercial_footprint",
+            "results": 5,
+            "accepted": 3,
+            "provider": "tavily",
+            "query_id": "rq_19mspow"
+          },
+          {
+            "stage": "current_activity",
+            "results": 5,
+            "accepted": 4,
+            "provider": "brave",
+            "query_id": "rq_t9ugpi"
+          },
+          {
+            "stage": "current_activity",
+            "results": 1,
+            "accepted": 1,
+            "provider": "tavily",
+            "query_id": "rq_t9ugpi"
+          },
+          {
+            "stage": "counterevidence",
+            "results": 5,
+            "accepted": 4,
+            "provider": "brave",
+            "query_id": "rq_16ampyt"
+          },
+          {
+            "stage": "counterevidence",
+            "results": 0,
+            "accepted": 0,
+            "provider": "tavily",
+            "query_id": "rq_16ampyt"
+          },
+          {
+            "stage": "client_relevance",
+            "results": 5,
+            "accepted": 2,
+            "provider": "brave",
+            "query_id": "rq_z0j3x5"
+          },
+          {
+            "stage": "client_relevance",
+            "results": 5,
+            "accepted": 1,
+            "provider": "tavily",
+            "query_id": "rq_z0j3x5"
+          }
+        ],
+        "results_seen": 41,
+        "dated_evidence": 18,
+        "provider_calls": 15,
+        "pages_extracted": 1,
+        "planned_queries": 5,
+        "claims_recovered": 2,
+        "executed_queries": 5,
+        "early_stop_reason": "budget_exhausted",
+        "evidence_accepted": 26,
+        "evidence_rejected": 15,
+        "provider_failures": 5,
+        "extraction_failures": 0,
+        "independent_domains": 1,
+        "counterevidence_checked": true,
+        "structured_extraction_calls": 1
+      },
+      "canonicalDecision": "hold",
+      "researchConfidence": 0.55
+    },
+    {
+      "risks": [
+        "Segment mismatch: Quick is a logistics operator, not a manufacturer — the core ICP definition may not apply",
+        "Build-vs-buy risk: Quick has an internal software development team and may prefer to extend its own platform rather than adopt third-party WMS",
+        "No urgency signal: no confirmed pain point, RFP, or technology dissatisfaction has been observed",
+        "Unclear warehouse scale: without SKU volume or throughput data, ROI justification for automation investment is unverifiable"
+      ],
+      "domain": "quick.com.co",
+      "company": "Quick",
+      "country": "Colombia",
+      "reasons": [
+        "case_missing"
+      ],
+      "category": "COLD",
+      "fitScore": 5,
+      "qcStatus": "REVIEW_NEEDED",
+      "sourceUrl": "https://www.quick.com.co/sobre-nosotros/",
+      "signalDate": "2026-06-22",
+      "signalType": null,
+      "nextQuestion": "Does Quick's internal development team manage warehouse inventory through its own proprietary platform, or is there a gap in WMS functionality that is currently handled manually or by a third-party system?",
+      "evidenceClaims": [
+        {
+          "date": "2018-01-01",
+          "type": "verified_public_signal",
+          "claim": "Quick opened multi-client warehouse facilities and launched 3PL/e-commerce fulfillment services",
+          "source_url": "https://www.quick.com.co/sobre-nosotros/"
+        },
+        {
+          "date": "2022-01-01",
+          "type": "verified_public_signal",
+          "claim": "Quick acquired a Florida-based transport company",
+          "source_url": "https://www.quick.com.co/sobre-nosotros/"
+        },
+        {
+          "date": null,
+          "type": "verified_public_signal",
+          "claim": "Quick has a dedicated Warehouse Colombia Manager (Juan Carlos Rojas)",
+          "source_url": "https://www.quick.com.co/sobre-nosotros/"
+        },
+        {
+          "date": null,
+          "type": "verified_public_signal",
+          "claim": "Quick operates FCL container pickup, DTA/OTM transit, and port desconsolidation services",
+          "source_url": "https://www.quick.com.co/sobre-nosotros/"
+        },
+        {
+          "date": "2016-01-01",
+          "type": "verified_public_signal",
+          "claim": "Quick builds proprietary logistics platforms using AI/ML in-house since 2016",
+          "source_url": "https://www.quick.com.co/sobre-nosotros/"
+        },
+        {
+          "date": null,
+          "type": "weak_inference",
+          "claim": "Quick's warehouse operations may lack a formal WMS or inventory orchestration system",
+          "source_url": "https://www.quick.com.co/sobre-nosotros/"
+        },
+        {
+          "date": null,
+          "type": "inferred_from_context",
+          "claim": "Growing multi-country complexity creates pressure on inventory management",
+          "source_url": "https://www.quick.com.co/sobre-nosotros/"
+        },
+        {
+          "date": null,
+          "type": "missing_evidence",
+          "claim": "Quick has budget or active interest in third-party WMS automation",
+          "source_url": "https://www.quick.com.co/sobre-nosotros/"
+        },
+        {
+          "date": null,
+          "type": "missing_evidence",
+          "claim": "Quick's 3PL clients have SLA requirements that create urgency for inventory accuracy",
+          "source_url": "https://www.quick.com.co/sobre-nosotros/"
+        }
+      ],
+      "accountResearch": {
+        "domain": "quick.com.co",
+        "account": "Quick",
+        "version": "account-deep-research-v1",
+        "query_audit": [
+          {
+            "stage": "identity",
+            "results": 5,
+            "accepted": 5,
+            "provider": "brave",
+            "query_id": "rq_1szrijt"
+          },
+          {
+            "stage": "identity",
+            "results": 5,
+            "accepted": 3,
+            "provider": "tavily",
+            "query_id": "rq_1szrijt"
+          },
+          {
+            "stage": "commercial_footprint",
+            "results": 5,
+            "accepted": 4,
+            "provider": "brave",
+            "query_id": "rq_vfkhr8"
+          },
+          {
+            "stage": "commercial_footprint",
+            "results": 5,
+            "accepted": 4,
+            "provider": "tavily",
+            "query_id": "rq_vfkhr8"
+          },
+          {
+            "stage": "current_activity",
+            "results": 0,
+            "accepted": 0,
+            "provider": "brave",
+            "query_id": "rq_evbpes"
+          },
+          {
+            "stage": "current_activity",
+            "results": 0,
+            "accepted": 0,
+            "provider": "tavily",
+            "query_id": "rq_evbpes"
+          },
+          {
+            "stage": "counterevidence",
+            "results": 5,
+            "accepted": 1,
+            "provider": "brave",
+            "query_id": "rq_142h8y3"
+          },
+          {
+            "stage": "counterevidence",
+            "results": 0,
+            "accepted": 0,
+            "provider": "tavily",
+            "query_id": "rq_142h8y3"
+          },
+          {
+            "stage": "client_relevance",
+            "results": 5,
+            "accepted": 3,
+            "provider": "brave",
+            "query_id": "rq_2b27qx"
+          },
+          {
+            "stage": "client_relevance",
+            "results": 5,
+            "accepted": 2,
+            "provider": "tavily",
+            "query_id": "rq_2b27qx"
+          }
+        ],
+        "results_seen": 35,
+        "dated_evidence": 13,
+        "provider_calls": 15,
+        "pages_extracted": 2,
+        "planned_queries": 5,
+        "claims_recovered": 2,
+        "executed_queries": 5,
+        "early_stop_reason": "budget_exhausted",
+        "evidence_accepted": 22,
+        "evidence_rejected": 13,
+        "provider_failures": 5,
+        "extraction_failures": 1,
+        "independent_domains": 1,
+        "counterevidence_checked": true,
+        "structured_extraction_calls": 2
+      },
+      "canonicalDecision": "hold",
+      "researchConfidence": 0.52
+    }
+  ],
+  "monitor_run_id": null,
+  "timings": {
+    "stage_a_ms": 13481,
+    "confirmation_ms": 845,
+    "start_request_ms": 495,
+    "background_completion_ms": 483904,
+    "total_ms": 501814
+  },
+  "usage_delta": {
+    "anthropic": {
+      "calls": 14,
+      "errors": 0,
+      "input_tokens": 36740,
+      "output_tokens": 15051,
+      "calculated_cost_usd": 0.335985,
+      "pricing_source": "Anthropic Sonnet 4.6 public list price, verified 2026-07-22"
+    },
+    "brave": {
+      "calls": 30,
+      "errors": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "calculated_cost_usd": 0,
+      "pricing_source": null
+    },
+    "serper": {
+      "calls": 16,
+      "errors": 16,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "calculated_cost_usd": 0,
+      "pricing_source": null
+    },
+    "tavily": {
+      "calls": 30,
+      "errors": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "calculated_cost_usd": 0,
+      "pricing_source": null
+    }
+  },
+  "checks": [
+    {
+      "name": "real authenticated owners created",
+      "ok": true
+    },
+    {
+      "name": "Stage A reachable and confirmable",
+      "ok": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "name": "explicit confirmation persisted through customer API",
+      "ok": true
+    },
+    {
+      "name": "same context label persists independently across tenants",
+      "ok": true
+    },
+    {
+      "name": "productive Intelligence run accepted before Research",
+      "ok": true,
+      "detail": "HTTP 202"
+    },
+    {
+      "name": "bounded background processor completed durably",
+      "ok": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "name": "owner reloads durable result",
+      "ok": true
+    },
+    {
+      "name": "other tenant cannot load result",
+      "ok": true
+    },
+    {
+      "name": "Lead Hunter run reference persisted",
+      "ok": true
+    },
+    {
+      "name": "Candidate Universe durable and owner-scoped",
+      "ok": true,
+      "detail": "n=15"
+    },
+    {
+      "name": "canonical Cases generated",
+      "ok": true
+    },
+    {
+      "name": "initial accepted Case set entered Account Memory",
+      "ok": true,
+      "detail": "snapshots=0, delivered=0"
+    },
+    {
+      "name": "Monitor correctly unavailable without delivered accounts",
+      "ok": true
+    },
+    {
+      "name": "completed retry is idempotent and avoids new Research",
+      "ok": true
+    },
+    {
+      "name": "same labels cannot collide cross-tenant",
+      "ok": true
+    }
+  ]
+}

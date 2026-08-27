@@ -1,0 +1,2164 @@
+{
+  "audit": "account-deep-research-positive-control-v1",
+  "generated_at": "2026-08-27T21:34:17.572Z",
+  "diagnostic_only": true,
+  "production_seeded": false,
+  "interpretation_limit": "Named accounts are a bounded retrieval control, not a production universe and not a global recall estimate.",
+  "providers": [
+    {
+      "id": "brave",
+      "status": "available",
+      "reason": null
+    },
+    {
+      "id": "tavily",
+      "status": "available",
+      "reason": null
+    }
+  ],
+  "budget": {
+    "accounts": 8,
+    "max_queries_per_account": 4,
+    "max_results_per_query": 5,
+    "max_extractions_per_account": 2,
+    "retries": 0
+  },
+  "summary": {
+    "references": 8,
+    "captured_defensibly": 1,
+    "bounded_capture_rate": 0.125,
+    "duration_ms": 185475,
+    "provider_calls": 62,
+    "extractions": 14,
+    "observed_cost_usd": null
+  },
+  "accounts": [
+    {
+      "reference": "Nestlé USA — Arvin / distribution center",
+      "company": "Nestlé USA",
+      "domain": "nestleusa.com",
+      "expected_terms": [
+        "Arvin",
+        "distribution center"
+      ],
+      "matched_terms": [
+        "Arvin",
+        "distribution center"
+      ],
+      "captured_defensibly": true,
+      "strongest_source_url": "https://www.nestleusa.com/media/pressreleases/largest-distribution-center-arvin",
+      "strongest_publication_date": "2026-06-10T00:00:00",
+      "validated_events": [
+        {
+          "url": "https://www.nestleusa.com/media/pressreleases/largest-distribution-center-arvin",
+          "source_host": "nestleusa.com",
+          "kind": "corporate_event",
+          "event_date": "2026-06-10",
+          "matched_expected_terms": [
+            "Arvin",
+            "distribution center"
+          ]
+        }
+      ],
+      "telemetry": {
+        "version": "account-deep-research-v1",
+        "account": "Nestlé USA",
+        "domain": "nestleusa.com",
+        "planned_queries": 4,
+        "executed_queries": 4,
+        "provider_calls": 8,
+        "provider_failures": 0,
+        "results_seen": 30,
+        "evidence_accepted": 23,
+        "evidence_rejected": 7,
+        "pages_extracted": 1,
+        "extraction_failures": 0,
+        "structured_extraction_calls": 0,
+        "dated_evidence": 8,
+        "independent_domains": 1,
+        "claims_recovered": 1,
+        "counterevidence_checked": true,
+        "early_stop_reason": "budget_exhausted",
+        "query_audit": [
+          {
+            "query_id": "rq_st923p",
+            "stage": "identity",
+            "provider": "brave",
+            "results": 5,
+            "accepted": 5
+          },
+          {
+            "query_id": "rq_st923p",
+            "stage": "identity",
+            "provider": "tavily",
+            "results": 5,
+            "accepted": 4
+          },
+          {
+            "query_id": "rq_19w6gb3",
+            "stage": "commercial_footprint",
+            "provider": "brave",
+            "results": 5,
+            "accepted": 3
+          },
+          {
+            "query_id": "rq_19w6gb3",
+            "stage": "commercial_footprint",
+            "provider": "tavily",
+            "results": 5,
+            "accepted": 4
+          },
+          {
+            "query_id": "rq_9mydp8",
+            "stage": "current_activity",
+            "provider": "brave",
+            "results": 0,
+            "accepted": 0
+          },
+          {
+            "query_id": "rq_9mydp8",
+            "stage": "current_activity",
+            "provider": "tavily",
+            "results": 1,
+            "accepted": 1
+          },
+          {
+            "query_id": "rq_17u1qsr",
+            "stage": "counterevidence",
+            "provider": "brave",
+            "results": 4,
+            "accepted": 3
+          },
+          {
+            "query_id": "rq_17u1qsr",
+            "stage": "counterevidence",
+            "provider": "tavily",
+            "results": 5,
+            "accepted": 3
+          }
+        ]
+      },
+      "accepted_evidence": [
+        {
+          "url": "https://www.nestleusa.com/",
+          "title": "Nestlé: Good food, Good life | Nestlé USA",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.nestleusa.com/brands",
+          "title": "Nestlé's Brands in the United States| Nestlé USA",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.nestleusa.com/media/pressreleases/nestle-usa-hq-va",
+          "title": "Nestlé USA To Move Headquarters To Virginia | Nestlé USA",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.nestleusa.com/sites/g/files/pydnoa536/files/asset-library/documents/media/pressrelease/nestle_us_factsheet.pdf",
+          "title": "Stamford, CT New York, NY Florham Park, NJ Bridgewater, NJ Solon, OH Nestlé USA",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.nestleusa.com/search-jobs/companies",
+          "title": "Companies | Nestlé USA",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.nestleusa.com/privacy_es",
+          "title": "Política de Privacidad Nestlé EE.UU.",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "medium"
+        },
+        {
+          "url": "https://www.nestleusa.com/terms-es",
+          "title": "Términos y Condiciones",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.nestleusa.com/notice-collection-es",
+          "title": "Aviso de Recopilación y Requisitos de Privacidad Estatales",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.nestleusa.com/brands/ice-cream",
+          "title": "Welcome | Dreyer's Grand Ice Cream Co. | Froneri",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.nestleusa.com/media/pressreleases/largest-distribution-center-arvin",
+          "title": "Nestlé USA Opens Its Largest and Most Technologically Advanced Distribution Center in Arvin, California",
+          "publication_date": "2026-06-10T00:00:00",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "high"
+        },
+        {
+          "url": "https://www.nestleusa.com/about-us",
+          "title": "About Us: This is Nestlé | Nestlé USA",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.nestleusa.com/sites/g/files/pydnoa536/files/asset-library/documents/media/nestledreyersicecream.pdf",
+          "title": "NESTLÉ USA NESTLÉ DREYER’S ICE CREAM COMPANY HEADQUARTERS 5929 College Avenue",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.nestleusa.com/sites/g/files/pydnoa536/files/asset-library/documents/media/nusa_internet.pdf",
+          "title": "[PDF] NESTLÉ USA",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.nestleusa.com/sites/g/files/pydnoa536/files/asset-library/documents/creatingsharedvalue/nestle-united-states-csv-report-2018.pdf",
+          "title": "Nestlé in the United States Creating Shared Value 2018",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.nestleusa.com/sites/g/files/pydnoa536/files/asset-library/documents/pdfs/nestle-usa-csv-report-2015.pdf",
+          "title": "[PDF] Nestlé in the United States - Nestle USA",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.nestleusa.com/media/facts-and-figures",
+          "title": "Key Facts about Nestlé in the United States - Nestle USA",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.nestleusa.com/media/pressreleases/recall-lean-cuisine-stouffers-frozen-meals",
+          "title": "Nestlé USA Recalls Limited Quantity of Lean Cuisine® and STOUFFER’S® Frozen Meals - Nestlé USA",
+          "publication_date": "Mon, 17 Mar 2025 15:00:00 GMT",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.nestleusa.com/stories/delivering-our-promise-out-fdc-colors",
+          "title": "Delivering on Our Promise to Consumers: We’re Out of FD&C Colors",
+          "publication_date": "2026-06-15T00:00:00",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.nestleusa.com/media/pressreleases/chef%E2%80%91crafted-sauces",
+          "title": "Nestlé USA Enters Condiments with Minor’s Kitchen Sauces | Nestlé USA",
+          "publication_date": "2026-04-28T00:00:00",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.nestleusa.com/media/pressreleases/magical-collab-harry-potter-coffee-mate",
+          "title": "Harry Potter® X Coffee Mate® Honeydukes Cafe in Chicago | Nestlé USA",
+          "publication_date": "2026-07-30T00:00:00",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.nestleusa.com/media/pressreleases/removal-of-fdc-colors-across-us-portfolio",
+          "title": "Nestlé USA Completes Removal of FD&C Colors Across ...",
+          "publication_date": "Mon, 15 Jun 2026 00:00:00 GMT",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.nestleusa.com/jobs",
+          "title": "Nestlé Careers: Jobs Opportunities in the U.S.",
+          "publication_date": "Mon, 24 Aug 2026 21:00:00 GMT",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.nestleusa.com/media/pressreleases/nestle-top-us-employer-2026",
+          "title": "Nestlé Recognized as a Top U.S. Employer in 2026",
+          "publication_date": "Tue, 24 Feb 2026 00:00:00 GMT",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        }
+      ],
+      "rejection_reasons": [
+        "duplicate_source",
+        "weak_commercial_relevance",
+        "missing_publication_date",
+        "low_quality_source"
+      ]
+    },
+    {
+      "reference": "Conagra Brands — Fayetteville / expansion",
+      "company": "Conagra Brands",
+      "domain": "conagrabrands.com",
+      "expected_terms": [
+        "Fayetteville",
+        "expansion"
+      ],
+      "matched_terms": [],
+      "captured_defensibly": false,
+      "strongest_source_url": "https://www.conagrabrands.com/news-room/news-conagra-brands-to-expand-manufacturing-operations-in-fayetteville-arkansas",
+      "strongest_publication_date": "Fri, 06 Mar 2026 00:00:00 GMT",
+      "validated_events": [],
+      "telemetry": {
+        "version": "account-deep-research-v1",
+        "account": "Conagra Brands",
+        "domain": "conagrabrands.com",
+        "planned_queries": 4,
+        "executed_queries": 4,
+        "provider_calls": 8,
+        "provider_failures": 0,
+        "results_seen": 28,
+        "evidence_accepted": 19,
+        "evidence_rejected": 9,
+        "pages_extracted": 1,
+        "extraction_failures": 0,
+        "structured_extraction_calls": 1,
+        "dated_evidence": 8,
+        "independent_domains": 1,
+        "claims_recovered": 1,
+        "counterevidence_checked": true,
+        "early_stop_reason": "budget_exhausted",
+        "query_audit": [
+          {
+            "query_id": "rq_srt73r",
+            "stage": "identity",
+            "provider": "brave",
+            "results": 5,
+            "accepted": 5
+          },
+          {
+            "query_id": "rq_srt73r",
+            "stage": "identity",
+            "provider": "tavily",
+            "results": 5,
+            "accepted": 5
+          },
+          {
+            "query_id": "rq_jtv59p",
+            "stage": "commercial_footprint",
+            "provider": "brave",
+            "results": 5,
+            "accepted": 3
+          },
+          {
+            "query_id": "rq_jtv59p",
+            "stage": "commercial_footprint",
+            "provider": "tavily",
+            "results": 5,
+            "accepted": 0
+          },
+          {
+            "query_id": "rq_fzv3he",
+            "stage": "current_activity",
+            "provider": "brave",
+            "results": 0,
+            "accepted": 0
+          },
+          {
+            "query_id": "rq_fzv3he",
+            "stage": "current_activity",
+            "provider": "tavily",
+            "results": 2,
+            "accepted": 2
+          },
+          {
+            "query_id": "rq_nnqf6p",
+            "stage": "counterevidence",
+            "provider": "brave",
+            "results": 5,
+            "accepted": 3
+          },
+          {
+            "query_id": "rq_nnqf6p",
+            "stage": "counterevidence",
+            "provider": "tavily",
+            "results": 1,
+            "accepted": 1
+          }
+        ]
+      },
+      "accepted_evidence": [
+        {
+          "url": "https://www.conagrabrands.com/",
+          "title": "Home | Conagra Brands",
+          "publication_date": "2026-07-15T17:15:04",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.conagrabrands.com/our-company/overview",
+          "title": "Company Overview | Conagra Brands",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.conagrabrands.com/site-map",
+          "title": "Site Map | Conagra Brands",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.conagrabrands.com/contact-us/new-business-step-2",
+          "title": "Quality Consumer Foods and Commercial Foods | Conagra Brands",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.conagrabrands.com/contact-us/thank-you",
+          "title": "Contact Us - Thank You | Conagra Brands",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.conagrabrands.com/news-room/news-conagra-brands-recognized-as-one-of-the-50-most-community-minded-companies-in-the-united-states-for-the-fourth-consecutive-year-prn-122818",
+          "title": "CONAGRA BRANDS RECOGNIZED AS ONE OF THE 50 MOST COMMUNITY-MINDED COMPANIES IN THE UNITED STATES FOR THE FOURTH CONSECUTIVE YEAR | Conagra Brands",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.conagrabrands.com/news-room/news-conagra-brands-recognizes-10-facilities-as-2021-zero-waste-champions-prn-122790",
+          "title": "Conagra Brands Recognizes 10 Facilities as 2021 Zero Waste Champions | Conagra Brands",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.conagrabrands.com/news-room/news-conagra-brands-issues-fiscal-2021-citizenship-report-prn-122803",
+          "title": "Conagra Brands Issues Fiscal 2021 Citizenship Report | Conagra Brands",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.conagrabrands.com/news-room/news-conagra-brands-enters-into-a-definitive-agreement-to-divest-its-518-ownership-stake-in-agro-tech-foods-limited-prn-122880",
+          "title": "Conagra Brands Enters Into a Definitive Agreement to Divest its 51.8% Ownership Stake in Agro Tech Foods Limited | Conagra Brands",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.conagrabrands.com/news-room/news-conagra-brands-commits-to-higher-standards-for-welfare-of-broiler-chickens-prn-122693",
+          "title": "Conagra Brands Commits To Higher Standards For Welfare Of Broiler Chickens | Conagra Brands",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.conagrabrands.com/news-room/news-conagra-foods-and-sigma-alimentos-form-frozen-prepared-foods-joint-venture-188475",
+          "title": "ConAgra Foods and Sigma Alimentos Form Frozen Prepared Foods Joint Venture | Conagra Brands",
+          "publication_date": "2001-07-05T00:00:00",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.conagrabrands.com/contact-us/new-business-step-2/order-minimum",
+          "title": "Quality Consumer Foods and Commercial Foods | Conagra Brands",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.conagrabrands.com/our-company",
+          "title": "Company | Conagra Brands",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.conagrabrands.com/news-room/news-conagra-brands-to-expand-manufacturing-operations-in-fayetteville-arkansas",
+          "title": "Conagra Brands to Expand Manufacturing Operations in ...",
+          "publication_date": "Fri, 06 Mar 2026 00:00:00 GMT",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "high"
+        },
+        {
+          "url": "https://www.conagrabrands.com/files/2026-annual-report-and-proxy",
+          "title": "2026 Annual Report Proxy Statement",
+          "publication_date": "Tue, 11 Aug 2026 00:00:00 GMT",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.conagrabrands.com/investor-relations",
+          "title": "Investor Relations | Conagra Brands",
+          "publication_date": "2026-08-04T13:58:43",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.conagrabrands.com/news-room/news-conagra-brands-brings-exciting-array-of-snacks-sweet-treats-to-2026-sweets-snacks-expo-prn-122954",
+          "title": "Conagra Brands Brings Exciting Array of Snacks, Sweet Treats to 2026 Sweets & Snacks Expo | Conagra Brands",
+          "publication_date": "2026-05-18T00:00:00",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.conagrabrands.com/files/events/2026-04-01/Q3FY26-Earnings-Press-Release",
+          "title": "News Release For more information, please contact: MEDIA: Mike Cummins",
+          "publication_date": "2026-04-01T00:00:00",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.conagrabrands.com/news-room/news-conagra-brands-appoints-john-brase-as-president-and-chief-executive-officer-prn-122951",
+          "title": "Conagra Brands Appoints John Brase as President and Chief Executive Officer - Conagra Brands",
+          "publication_date": "Mon, 13 Apr 2026 11:30:00 GMT",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        }
+      ],
+      "rejection_reasons": [
+        "duplicate_source",
+        "weak_commercial_relevance",
+        "missing_publication_date",
+        "low_quality_source",
+        "wrong_entity"
+      ]
+    },
+    {
+      "reference": "Quad — Salt Lake / packaging facility",
+      "company": "Quad",
+      "domain": "quad.com",
+      "expected_terms": [
+        "Salt Lake",
+        "packaging facility"
+      ],
+      "matched_terms": [],
+      "captured_defensibly": false,
+      "strongest_source_url": "https://www.quad.com/newsroom/quad-expands-packaging-operations",
+      "strongest_publication_date": "2026-08-07T16:22:17",
+      "validated_events": [],
+      "telemetry": {
+        "version": "account-deep-research-v1",
+        "account": "Quad",
+        "domain": "quad.com",
+        "planned_queries": 4,
+        "executed_queries": 4,
+        "provider_calls": 8,
+        "provider_failures": 0,
+        "results_seen": 30,
+        "evidence_accepted": 23,
+        "evidence_rejected": 7,
+        "pages_extracted": 2,
+        "extraction_failures": 0,
+        "structured_extraction_calls": 2,
+        "dated_evidence": 16,
+        "independent_domains": 1,
+        "claims_recovered": 3,
+        "counterevidence_checked": true,
+        "early_stop_reason": "budget_exhausted",
+        "query_audit": [
+          {
+            "query_id": "rq_kk8fhv",
+            "stage": "identity",
+            "provider": "brave",
+            "results": 5,
+            "accepted": 5
+          },
+          {
+            "query_id": "rq_kk8fhv",
+            "stage": "identity",
+            "provider": "tavily",
+            "results": 5,
+            "accepted": 5
+          },
+          {
+            "query_id": "rq_1fhbtal",
+            "stage": "commercial_footprint",
+            "provider": "brave",
+            "results": 5,
+            "accepted": 3
+          },
+          {
+            "query_id": "rq_1fhbtal",
+            "stage": "commercial_footprint",
+            "provider": "tavily",
+            "results": 5,
+            "accepted": 1
+          },
+          {
+            "query_id": "rq_11mzvko",
+            "stage": "current_activity",
+            "provider": "brave",
+            "results": 0,
+            "accepted": 0
+          },
+          {
+            "query_id": "rq_11mzvko",
+            "stage": "current_activity",
+            "provider": "tavily",
+            "results": 5,
+            "accepted": 5
+          },
+          {
+            "query_id": "rq_1l7nob7",
+            "stage": "counterevidence",
+            "provider": "brave",
+            "results": 5,
+            "accepted": 4
+          },
+          {
+            "query_id": "rq_1l7nob7",
+            "stage": "counterevidence",
+            "provider": "tavily",
+            "results": 0,
+            "accepted": 0
+          }
+        ]
+      },
+      "accepted_evidence": [
+        {
+          "url": "https://www.quad.com/about/locations",
+          "title": "About us | Where we are located | Quad",
+          "publication_date": "2026-01-30T20:54:29",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.quad.com/newsroom/quad-expands-packaging-operations",
+          "title": "Quad expands national packaging footprint | Quad",
+          "publication_date": "2026-08-07T16:22:17",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "high"
+        },
+        {
+          "url": "https://www.quad.com/",
+          "title": "Quad MX Solutions: Smarter Marketing, Better Results",
+          "publication_date": "2026-07-16T00:00:00",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.quad.com/wp-content/uploads/2024/08/quad-form-10Q-Q2-2024.pdf",
+          "title": "UNITED STATES SECURITIES AND EXCHANGE COMMISSION Washington, D.C. 20549",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.quad.com/newsroom/welcome-marketing-experience-innovation-center",
+          "title": "Welcome, Marketing Experience Innovation Center | Quad",
+          "publication_date": "2026-04-23T18:01:54",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.quad.com/newsroom/quad-announces-strategic-partnership-with-scandinavian-designs",
+          "title": "Quad announces partnership with Scandinavian Designs | Quad",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.quad.com/wp-content/uploads/2023/09/quad-fsc-certificate-2022-02.pdf",
+          "title": "CERTIFICATE OF REGISTRATION",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.quad.com?p=8365",
+          "title": "Quad announces partnership with Scandinavian Designs | Quad",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.quad.com/es/legal/terms-of-service",
+          "title": "Legal | Condiciones del servicio | Quad Soluciones de marketing",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "high"
+        },
+        {
+          "url": "https://www.quad.com?p=9064",
+          "title": "Press Kit: The Return of Touch | Quad",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "medium"
+        },
+        {
+          "url": "https://www.quad.com/solutions/production",
+          "title": "Production services & postal logistics solutions | Quad",
+          "publication_date": "2026-06-09T19:33:54",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.quad.com/solutions/production/in-store",
+          "title": "In-store and retail display manufacturing | Quad",
+          "publication_date": "2026-06-01T15:26:53",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "medium"
+        },
+        {
+          "url": "https://www.quad.com/industries/retail",
+          "title": "Retail | Quad",
+          "publication_date": "2026-01-15T16:16:17",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "medium"
+        },
+        {
+          "url": "https://www.quad.com/newsroom/quad-completes-divestiture-of-its-book-manufacturing-platform",
+          "title": "Quad Finalizes Divestiture of Book Manufacturing | Quad",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "high"
+        },
+        {
+          "url": "https://www.quad.com/newsroom/quad-reports-fourth-quarter-and-full-year-2025-results",
+          "title": "Quad reports fourth quarter and full-year 2025 results | Quad",
+          "publication_date": "Tue, 17 Feb 2026 21:31:26 GMT",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.quad.com/insights/postal-optimization/postal-paper-logistics-update-january-2026",
+          "title": "Postal, Paper & Logistics update: January 2026 | Quad",
+          "publication_date": "Thu, 29 Jan 2026 20:30:59 GMT",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.quad.com/newsroom/quad-reports-third-quarter-and-year-to-date-2025-results",
+          "title": "Quad reports third quarter 2025 results | Quad",
+          "publication_date": "Tue, 28 Oct 2025 20:30:56 GMT",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "high"
+        },
+        {
+          "url": "https://www.quad.com/insights/postal-optimization/postal-paper-logistics-update-april-2026",
+          "title": "Postal, Paper & Logistics update: April 2026",
+          "publication_date": "Thu, 30 Apr 2026 00:00:00 GMT",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.quad.com/newsroom/quad-declares-quarterly-dividend-of-0-10-per-share-july-2026",
+          "title": "Quad declares quarterly dividend of $0.10 per share",
+          "publication_date": "Tue, 21 Jul 2026 00:00:00 GMT",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.quad.com/investor-relations/stock-information",
+          "title": "Stock & analyst information | Quad",
+          "publication_date": "2026-04-15T14:20:53",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.quad.com/suppliers",
+          "title": "Supplier Resources | Better Marketing Results | Quad",
+          "publication_date": "2026-07-22T00:00:00",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.quad.com/investor-relations/annual-reports",
+          "title": "Investor relations | Annual reports | Quad",
+          "publication_date": "2026-04-15T16:59:01",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.quad.com/insights/postal-optimization/postal-paper-logistics-update-july-2026",
+          "title": "Postal, Paper & Logistics update: July 2026 | Quad",
+          "publication_date": "2026-07-30T15:13:04",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        }
+      ],
+      "rejection_reasons": [
+        "duplicate_source",
+        "weak_commercial_relevance",
+        "missing_publication_date"
+      ]
+    },
+    {
+      "reference": "voestalpine — Indiana / production facility",
+      "company": "voestalpine",
+      "domain": "voestalpine.com",
+      "expected_terms": [
+        "Indiana",
+        "production facility"
+      ],
+      "matched_terms": [],
+      "captured_defensibly": false,
+      "strongest_source_url": "https://www.voestalpine.com/group/en/investors/ad-hoc-news/2026-08-05-corporate-news-meldung",
+      "strongest_publication_date": "Wed, 05 Aug 2026 00:00:00 GMT",
+      "validated_events": [],
+      "telemetry": {
+        "version": "account-deep-research-v1",
+        "account": "voestalpine",
+        "domain": "voestalpine.com",
+        "planned_queries": 4,
+        "executed_queries": 4,
+        "provider_calls": 8,
+        "provider_failures": 0,
+        "results_seen": 27,
+        "evidence_accepted": 20,
+        "evidence_rejected": 7,
+        "pages_extracted": 2,
+        "extraction_failures": 0,
+        "structured_extraction_calls": 2,
+        "dated_evidence": 7,
+        "independent_domains": 1,
+        "claims_recovered": 3,
+        "counterevidence_checked": true,
+        "early_stop_reason": "budget_exhausted",
+        "query_audit": [
+          {
+            "query_id": "rq_hkvol3",
+            "stage": "identity",
+            "provider": "brave",
+            "results": 5,
+            "accepted": 4
+          },
+          {
+            "query_id": "rq_hkvol3",
+            "stage": "identity",
+            "provider": "tavily",
+            "results": 5,
+            "accepted": 5
+          },
+          {
+            "query_id": "rq_159t3mh",
+            "stage": "commercial_footprint",
+            "provider": "brave",
+            "results": 5,
+            "accepted": 1
+          },
+          {
+            "query_id": "rq_159t3mh",
+            "stage": "commercial_footprint",
+            "provider": "tavily",
+            "results": 5,
+            "accepted": 4
+          },
+          {
+            "query_id": "rq_17vwqh4",
+            "stage": "current_activity",
+            "provider": "brave",
+            "results": 0,
+            "accepted": 0
+          },
+          {
+            "query_id": "rq_17vwqh4",
+            "stage": "current_activity",
+            "provider": "tavily",
+            "results": 2,
+            "accepted": 2
+          },
+          {
+            "query_id": "rq_68s2dv",
+            "stage": "counterevidence",
+            "provider": "brave",
+            "results": 5,
+            "accepted": 4
+          },
+          {
+            "query_id": "rq_68s2dv",
+            "stage": "counterevidence",
+            "provider": "tavily",
+            "results": 0,
+            "accepted": 0
+          }
+        ]
+      },
+      "accepted_evidence": [
+        {
+          "url": "https://www.voestalpine.com/precision-strip/company/locations-worldwide/united-states1/locations1",
+          "title": "voestalpine Precision Strip - COMPANY - Locations Worldwide - United States - Locations",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.voestalpine.com/eurostahl/International-sales-and-distribution/USA/Location",
+          "title": "voestalpine USA LLC Location",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.voestalpine.com/highperformancemetals/usa/en-us/global-locations/",
+          "title": "Global locations | voestalpine HPM US",
+          "publication_date": "2025-03-07T10:17:30",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.voestalpine.com/eurostahl/International-sales-and-distribution/USA",
+          "title": "voestalpine USA LLC",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.voestalpine.com/precision-strip/company/locations-worldwide/spain1/about-the-company",
+          "title": "voestalpine Precision Strip - COMPANY - Locations Worldwide - Spain - About the company",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.voestalpine.com/precision-strip/company/locations-worldwide/spain1/brands",
+          "title": "voestalpine Precision Strip - COMPANY",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "medium"
+        },
+        {
+          "url": "https://www.voestalpine.com/group-it/en/Company/Brazil",
+          "title": "Brazil - voestalpine group-IT GmbH",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.voestalpine.com/search/en?category=",
+          "title": "voestalpine Corporate Search - voestalpine",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.voestalpine.com/precision-strip/company/locations-worldwide/austria/locations",
+          "title": "Austria - voestalpine Precision Strip",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.voestalpine.com/metalforming/en/DIVISION/Companies",
+          "title": "Eine Division - mehr als 50 Standorte",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.voestalpine.com/metalforming/en/CUSTOMER-SEGMENTS/Machine-and-tool-manufacturing",
+          "title": "Machine and tool manufacturing",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.voestalpine.com/highperformancemetals/usa/en-us/products-brands/distributor-sales",
+          "title": "Distributor Sales | voestalpine HPM US",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.voestalpine.com/highperformancemetals/usa/en-us/the-company",
+          "title": "About Us | voestalpine HPM US",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.voestalpine.com/welding/us-en/contact/locations/voestalpine-bohler-welding-usa-llc",
+          "title": "voestalpine Bohler Welding USA LLC - voestalpine Böhler Welding",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.voestalpine.com/group/en/investors/ad-hoc-news/2026-08-05-corporate-news-meldung",
+          "title": "Corporate News regarding report for Q1 2026/27",
+          "publication_date": "Wed, 05 Aug 2026 00:00:00 GMT",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "high"
+        },
+        {
+          "url": "https://www.voestalpine.com/group/static/sites/group/.downloads/en/publications-2025-26/2025-26-h1-report.pdf",
+          "title": "REPORT FOR THE FIRST HALF OF 2025/26",
+          "publication_date": "Wed, 12 Nov 2025 06:33:32 GMT",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "high"
+        },
+        {
+          "url": "https://www.voestalpine.com/highperformancemetals/usa/en-us/news-events/",
+          "title": "News & events | voestalpine HPM US",
+          "publication_date": "2026-01-22T18:30:27",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.voestalpine.com/stahl/en",
+          "title": "voestalpine Steel Division for premium steel and premium support",
+          "publication_date": "2026-08-07T06:55:04",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.voestalpine.com/highperformancemetals/usa/en-us/",
+          "title": "Tool Steel Supplier | High Performance Tool Steel | voestalpine High Performance Metals",
+          "publication_date": "2026-05-21T15:13:58",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.voestalpine.com/highperformancemetals/usa/en-us/contact-us/",
+          "title": "Contact us | voestalpine HPM US",
+          "publication_date": "2026-02-18T20:38:56",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        }
+      ],
+      "rejection_reasons": [
+        "low_quality_source",
+        "weak_commercial_relevance",
+        "missing_publication_date",
+        "duplicate_source"
+      ]
+    },
+    {
+      "reference": "Hitachi Energy — South Boston / expansion",
+      "company": "Hitachi Energy",
+      "domain": "hitachienergy.com",
+      "expected_terms": [
+        "South Boston",
+        "expansion"
+      ],
+      "matched_terms": [],
+      "captured_defensibly": false,
+      "strongest_source_url": "https://www.hitachienergy.com/news-and-events/press-releases/2026/04/hitachi-energy-expands-its-u-s-footprint-with-10-million-investment-in-north-carolina-to-meet-surging-electricity-demand",
+      "strongest_publication_date": "Fri, 03 Apr 2026 00:00:00 GMT",
+      "validated_events": [],
+      "telemetry": {
+        "version": "account-deep-research-v1",
+        "account": "Hitachi Energy",
+        "domain": "hitachienergy.com",
+        "planned_queries": 4,
+        "executed_queries": 4,
+        "provider_calls": 8,
+        "provider_failures": 0,
+        "results_seen": 35,
+        "evidence_accepted": 27,
+        "evidence_rejected": 8,
+        "pages_extracted": 2,
+        "extraction_failures": 0,
+        "structured_extraction_calls": 2,
+        "dated_evidence": 15,
+        "independent_domains": 1,
+        "claims_recovered": 2,
+        "counterevidence_checked": true,
+        "early_stop_reason": "budget_exhausted",
+        "query_audit": [
+          {
+            "query_id": "rq_1miwnnp",
+            "stage": "identity",
+            "provider": "brave",
+            "results": 5,
+            "accepted": 5
+          },
+          {
+            "query_id": "rq_1miwnnp",
+            "stage": "identity",
+            "provider": "tavily",
+            "results": 5,
+            "accepted": 4
+          },
+          {
+            "query_id": "rq_1vhrq3n",
+            "stage": "commercial_footprint",
+            "provider": "brave",
+            "results": 5,
+            "accepted": 2
+          },
+          {
+            "query_id": "rq_1vhrq3n",
+            "stage": "commercial_footprint",
+            "provider": "tavily",
+            "results": 5,
+            "accepted": 4
+          },
+          {
+            "query_id": "rq_18fy0jg",
+            "stage": "current_activity",
+            "provider": "brave",
+            "results": 0,
+            "accepted": 0
+          },
+          {
+            "query_id": "rq_18fy0jg",
+            "stage": "current_activity",
+            "provider": "tavily",
+            "results": 5,
+            "accepted": 5
+          },
+          {
+            "query_id": "rq_f7ikpb",
+            "stage": "counterevidence",
+            "provider": "brave",
+            "results": 5,
+            "accepted": 3
+          },
+          {
+            "query_id": "rq_f7ikpb",
+            "stage": "counterevidence",
+            "provider": "tavily",
+            "results": 5,
+            "accepted": 4
+          }
+        ]
+      },
+      "accepted_evidence": [
+        {
+          "url": "https://www.hitachienergy.com/us/en",
+          "title": "Hitachi Energy en LATAM – Impulsando un futuro energético ...",
+          "publication_date": "2026-07-28T17:04:58",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://hitachienergy.com/us/en/about-us/company-profile/location-map",
+          "title": "Locations Map | Hitachi Energy",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.hitachienergy.com/company/company-profile/country-and-regional-information",
+          "title": "Locations | Hitachi Energy",
+          "publication_date": "2026-08-22T15:05:06",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.hitachienergy.com/us/en/company/company-profile/north-america-customer-experience-center",
+          "title": "Top 3 reasons to visit the North America Customer Experience Center | Hitachi Energy",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.hitachienergy.com/us/en/company/company-profile/hitachi-energy-in-the-usa",
+          "title": "Hitachi Energy in the United States | Hitachi Energy",
+          "publication_date": "2025-04-07T13:01:09",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.hitachienergy.com/es/es/careers/open-jobs/details/JID3-212720",
+          "title": "Onsite Technology Support Experienced Professional",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.hitachienergy.com/latam/es/news-and-events/press-releases/2025/09/hitachi-announces-historic-1-billion-usd-manufacturing-investment-to-power-america-s-energy-future-through-production-of-critical-grid-infrastructure",
+          "title": "Hitachi announces historic $1 billion USD manufacturing investment to power America’s energy future through production of critical grid infrastructure",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "high"
+        },
+        {
+          "url": "https://www.hitachienergy.com/company/company-profile/location-map",
+          "title": "Locations Map | Hitachi Energy",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.hitachienergy.com/es/es/careers/open-jobs/details/JID3-212376",
+          "title": "Factory Director Senior Leader | South Boston, United ...",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "medium"
+        },
+        {
+          "url": "https://www.hitachienergy.com/us/en/about-us/partners",
+          "title": "Partners | Hitachi Energy",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.hitachienergy.com/us/en/markets",
+          "title": "Markets | Hitachi Energy",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.hitachienergy.com/us/en/about-us/company-profile/hitachi-energy-in-the-usa",
+          "title": "Hitachi Energy in the United States | Hitachi Energy",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.hitachienergy.com/latam/es/products-and-solutions/transformers/distribution-transformers",
+          "title": "Transformadores de distribución | Hitachi Energy",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.hitachienergy.com/es/es/products-and-solutions/semiconductors/t-d",
+          "title": "Transmisión y distribución | Hitachi Energy",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "medium"
+        },
+        {
+          "url": "https://www.hitachienergy.com/es/es/products-and-solutions/transformers/distribution-transformers",
+          "title": "Transformadores de distribución | Hitachi Energy",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "medium"
+        },
+        {
+          "url": "https://www.hitachienergy.com/news-and-events/press-releases/2026/04/hitachi-energy-expands-its-u-s-footprint-with-10-million-investment-in-north-carolina-to-meet-surging-electricity-demand",
+          "title": "Hitachi Energy expands its U.S. footprint with $10 million USD investment in North Carolina to meet surging electricity demand",
+          "publication_date": "Fri, 03 Apr 2026 00:00:00 GMT",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "high"
+        },
+        {
+          "url": "https://www.hitachienergy.com/news-and-events/press-releases/2026/06/hitachi-energy-breaks-ground-on-the-nation-s-largest-facility-for-the-production-of-large-power-transformers-in-south-boston-virginia",
+          "title": "Hitachi Energy breaks ground on the nation’s largest facility for the production of large power transformers in South Boston, Virginia",
+          "publication_date": "Mon, 29 Jun 2026 00:00:00 GMT",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "high"
+        },
+        {
+          "url": "https://www.hitachienergy.com/news-and-events/press-releases/2026/03/hitachi-at-ceraweek-2026",
+          "title": "Hitachi highlights speed-to-power initiatives and North America expansion to support AI acceleration at CERAWeek 26",
+          "publication_date": "Mon, 23 Mar 2026 00:00:00 GMT",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "high"
+        },
+        {
+          "url": "https://www.hitachienergy.com/news-and-events/features/2026/03/hitachi-energy-reaffirms-commitment-to-latin-america-through-an-additional-150-million-usd-investment-to-expand-power-transformer-manufacturing-capacity",
+          "title": "Hitachi Energy reaffirms commitment to Latin America through an additional $150 million USD investment to expand power transformer manufacturing capacity",
+          "publication_date": "Mon, 09 Mar 2026 00:00:00 GMT",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "high"
+        },
+        {
+          "url": "https://www.hitachienergy.com/news-and-events/press-releases/2026/08/hitachi-energy-invests-300-million-in-china-to-bolster-global-manufacturing-capacity-for-critical-grid-infrastructure",
+          "title": "Hitachi Energy invests $300 million in China to bolster global manufacturing capacity for critical grid infrastructure",
+          "publication_date": "Sun, 23 Aug 2026 21:00:00 GMT",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "high"
+        },
+        {
+          "url": "https://www.hitachienergy.com/us/en/contact-us",
+          "title": "Contact Us | Hitachi Energy",
+          "publication_date": "2026-08-22T12:27:03",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.hitachienergy.com/products-and-solutions",
+          "title": "Products & Solutions | Hitachi Energy",
+          "publication_date": "2026-07-11T10:53:18",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.hitachienergy.com/us/en/products-and-solutions/scada",
+          "title": "SCADA and Control Systems | Hitachi Energy",
+          "publication_date": "2026-08-02T19:30:02",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.hitachienergy.com/careers/open-jobs/details/JID3-196616",
+          "title": "Manufacturing Continuous Improvement Leader | Jefferson City, United States of America | Hitachi Energy",
+          "publication_date": "Wed, 27 May 2026 00:00:00 GMT",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.hitachienergy.com/news-and-events/press-releases/2026/07/hitachi-energy-and-eve-air-mobility-accelerate-electrification-infrastructure-powering-urban-air-mobility-at-scale",
+          "title": "Hitachi Energy and Eve Air Mobility accelerate electrification infrastructure powering urban air mobility at scale",
+          "publication_date": "Fri, 17 Jul 2026 00:00:00 GMT",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.hitachienergy.com/careers/open-jobs/details/JID3-200638",
+          "title": "Account Director, Data Centers | Remote - California, United States of America | Hitachi Energy",
+          "publication_date": "Thu, 18 Jun 2026 00:00:00 GMT",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.hitachienergy.com/careers/open-jobs/details/JID3-200848",
+          "title": "Senior IT Technical Project Manager | Raleigh, United States of America | Hitachi Energy",
+          "publication_date": "Fri, 19 Jun 2026 00:00:00 GMT",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        }
+      ],
+      "rejection_reasons": [
+        "duplicate_source",
+        "weak_commercial_relevance",
+        "missing_publication_date"
+      ]
+    },
+    {
+      "reference": "John Deere — factory / distribution center",
+      "company": "John Deere",
+      "domain": "deere.com",
+      "expected_terms": [
+        "factory",
+        "distribution center"
+      ],
+      "matched_terms": [],
+      "captured_defensibly": false,
+      "strongest_source_url": "https://www.deere.com/en-us/john-deere-news/pdc",
+      "strongest_publication_date": "Tue, 26 May 2026 00:00:00 GMT",
+      "validated_events": [],
+      "telemetry": {
+        "version": "account-deep-research-v1",
+        "account": "John Deere",
+        "domain": "deere.com",
+        "planned_queries": 4,
+        "executed_queries": 4,
+        "provider_calls": 7,
+        "provider_failures": 0,
+        "results_seen": 28,
+        "evidence_accepted": 19,
+        "evidence_rejected": 9,
+        "pages_extracted": 2,
+        "extraction_failures": 0,
+        "structured_extraction_calls": 2,
+        "dated_evidence": 7,
+        "independent_domains": 2,
+        "claims_recovered": 1,
+        "counterevidence_checked": true,
+        "early_stop_reason": "sufficient_evidence",
+        "query_audit": [
+          {
+            "query_id": "rq_1nudb80",
+            "stage": "identity",
+            "provider": "brave",
+            "results": 5,
+            "accepted": 4
+          },
+          {
+            "query_id": "rq_1nudb80",
+            "stage": "identity",
+            "provider": "tavily",
+            "results": 5,
+            "accepted": 2
+          },
+          {
+            "query_id": "rq_1lt182k",
+            "stage": "commercial_footprint",
+            "provider": "brave",
+            "results": 5,
+            "accepted": 1
+          },
+          {
+            "query_id": "rq_1lt182k",
+            "stage": "commercial_footprint",
+            "provider": "tavily",
+            "results": 5,
+            "accepted": 5
+          },
+          {
+            "query_id": "rq_mke5o5",
+            "stage": "current_activity",
+            "provider": "brave",
+            "results": 0,
+            "accepted": 0
+          },
+          {
+            "query_id": "rq_mke5o5",
+            "stage": "current_activity",
+            "provider": "tavily",
+            "results": 3,
+            "accepted": 3
+          },
+          {
+            "query_id": "rq_3rg0vw",
+            "stage": "counterevidence",
+            "provider": "brave",
+            "results": 5,
+            "accepted": 4
+          }
+        ]
+      },
+      "accepted_evidence": [
+        {
+          "url": "https://www.deere.com/en-us/our-company/locations/us-locations",
+          "title": "U.S. Locations | John Deere US",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.deere.com/en-us/our-company/locations",
+          "title": "Our Locations | John Deere US",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.deere.com/assets/pdfs/common/our-company/about/jd-world-locations-8-27-20.pdf",
+          "title": "All locations | Region 1 | Region 2 | Region 3 | Region 4 | U.S. locations",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.deere.com/en/our-company/contact-us/locations/",
+          "title": "Worldwide Locations | John Deere US",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.deere.com/assets/pdfs/common/stellarsupport/2017-10-06%20Mobile%20RTK%20Signal%20(Leica)_EN_ES.pdf",
+          "title": "Contrato de suscripción a la Mobile RTK Signal Network ...",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.deere.com/en-us",
+          "title": "Home | John Deere US",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://about.deere.com/en-us/locations/us-locations",
+          "title": "U.S. Locations | John Deere US",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "high_confidence",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.deere.com/assets/pdfs/common/our-company/careers/uslocations_ead071d666220a93f99455fa8c632d59ce08204f.pdf",
+          "title": "[PDF] JOHN DEERE UNITED STATES",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.deere.com/en/stories/featured/john-deere-us-manufacturing",
+          "title": "Myth Busted: John Deere is NOT Freezing U.S. Manufacturing",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.deere.com/latin-america/es/repuestos-servicio/repuestos/productos-complemantarios",
+          "title": "Productos de mantenimiento | Posventa | John Deere",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "medium"
+        },
+        {
+          "url": "https://www.deere.com/latin-america/es",
+          "title": "John Deere | Información de productos y servicio",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "medium"
+        },
+        {
+          "url": "https://www.deere.com/latin-america/es/index.html",
+          "title": "John Deere | Información de productos y servicio",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "medium"
+        },
+        {
+          "url": "https://www.deere.com/en-us/john-deere-news/pdc",
+          "title": "PDC Investments | John Deere US",
+          "publication_date": "Tue, 26 May 2026 00:00:00 GMT",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "high"
+        },
+        {
+          "url": "https://www.deere.com/en-us/our-company/locations/factories/kernersville",
+          "title": "Kernersville | John Deere US",
+          "publication_date": "Tue, 27 Jan 2026 00:00:00 GMT",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "high"
+        },
+        {
+          "url": "https://www.deere.com/en-us/our-company/service-repair-resources",
+          "title": "Service & Repair Resources",
+          "publication_date": "Mon, 24 Nov 2025 00:00:00 GMT",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.deere.com/en-us/content-library",
+          "title": "Content Library | John Deere US",
+          "publication_date": "2026-07-29T07:50:30",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.deere.com/en-us/parts-owner-support/parts",
+          "title": "Parts | John Deere US",
+          "publication_date": "2026-07-03T02:13:20",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.deere.com/en-us/1651340--1651340",
+          "title": "| John Deere US",
+          "publication_date": "2026-06-27T02:07:28",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.deere.com/en-us/media-center",
+          "title": "Media Center | John Deere US",
+          "publication_date": "2026-07-01T16:03:56",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        }
+      ],
+      "rejection_reasons": [
+        "low_quality_source",
+        "weak_commercial_relevance",
+        "missing_publication_date",
+        "wrong_entity",
+        "duplicate_source"
+      ]
+    },
+    {
+      "reference": "UFP — South Carolina / packaging facility",
+      "company": "UFP",
+      "domain": "ufpi.com",
+      "expected_terms": [
+        "South Carolina",
+        "packaging facility"
+      ],
+      "matched_terms": [],
+      "captured_defensibly": false,
+      "strongest_source_url": "https://ufpi.com/ufp-packaging-expands-with-new-packaging-design-and-development-center-in-newnan-georgia/",
+      "strongest_publication_date": "2025-01-28T20:15:42",
+      "validated_events": [],
+      "telemetry": {
+        "version": "account-deep-research-v1",
+        "account": "UFP",
+        "domain": "ufpi.com",
+        "planned_queries": 4,
+        "executed_queries": 4,
+        "provider_calls": 8,
+        "provider_failures": 0,
+        "results_seen": 24,
+        "evidence_accepted": 15,
+        "evidence_rejected": 9,
+        "pages_extracted": 2,
+        "extraction_failures": 0,
+        "structured_extraction_calls": 2,
+        "dated_evidence": 8,
+        "independent_domains": 1,
+        "claims_recovered": 2,
+        "counterevidence_checked": true,
+        "early_stop_reason": "budget_exhausted",
+        "query_audit": [
+          {
+            "query_id": "rq_o50kwy",
+            "stage": "identity",
+            "provider": "brave",
+            "results": 5,
+            "accepted": 5
+          },
+          {
+            "query_id": "rq_o50kwy",
+            "stage": "identity",
+            "provider": "tavily",
+            "results": 3,
+            "accepted": 2
+          },
+          {
+            "query_id": "rq_1vew2tm",
+            "stage": "commercial_footprint",
+            "provider": "brave",
+            "results": 5,
+            "accepted": 3
+          },
+          {
+            "query_id": "rq_1vew2tm",
+            "stage": "commercial_footprint",
+            "provider": "tavily",
+            "results": 5,
+            "accepted": 3
+          },
+          {
+            "query_id": "rq_1vwkruv",
+            "stage": "current_activity",
+            "provider": "brave",
+            "results": 0,
+            "accepted": 0
+          },
+          {
+            "query_id": "rq_1vwkruv",
+            "stage": "current_activity",
+            "provider": "tavily",
+            "results": 1,
+            "accepted": 1
+          },
+          {
+            "query_id": "rq_flpt36",
+            "stage": "counterevidence",
+            "provider": "brave",
+            "results": 5,
+            "accepted": 1
+          },
+          {
+            "query_id": "rq_flpt36",
+            "stage": "counterevidence",
+            "provider": "tavily",
+            "results": 0,
+            "accepted": 0
+          }
+        ]
+      },
+      "accepted_evidence": [
+        {
+          "url": "https://ufpi.com/industry/protective-packaging/",
+          "title": "Protective Packaging | UFP Industries",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://ufpi.com/ufp-packaging-expands-with-new-packaging-design-and-development-center-in-newnan-georgia/",
+          "title": "UFP Packaging Expands with New Packaging Design and Development Center in Newnan, Georgia | UFP Industries",
+          "publication_date": "2025-01-28T20:15:42",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "high"
+        },
+        {
+          "url": "https://ufpi.com/about/ufp-locations/",
+          "title": "UFP Locations | UFP Industries",
+          "publication_date": "2026-03-18T19:56:30",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://ufpi.com/locations/ufp-transportation-inc/",
+          "title": "UFP Transportation, Inc. | UFP Industries",
+          "publication_date": "2025-02-06T04:01:02",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://ufpi.com/industry/ufp-factory-built/",
+          "title": "UFP Factory Built | UFP Industries",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://ufpi.com/careers",
+          "title": "Careers | UFP Industries",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "high"
+        },
+        {
+          "url": "https://ufpi.com",
+          "title": "UFP Industries",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://ufpi.com/our-businesses/",
+          "title": "Our Businesses | UFP Industries",
+          "publication_date": "2026-04-08T14:16:04",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "medium"
+        },
+        {
+          "url": "https://ufpi.com/our-businesses/ufp-packaging/",
+          "title": "Packaging | UFP Industries",
+          "publication_date": "2026-06-01T14:20:07",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://ufpi.com/our-businesses/ufp-construction/",
+          "title": "Construction | UFP Industries",
+          "publication_date": "2026-05-19T18:08:04",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://ufpi.com/ufp-industries-announces-3rd-corrugated-packaging-facility",
+          "title": "UFP Industries Announces 3rd Corrugated Packaging Facility | UFP Industries",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "medium"
+        },
+        {
+          "url": "https://ufpi.com/market/ufp-packaging",
+          "title": "UFP Packaging | UFP Industries",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://ufpi.com/ufp-industries-acquires-ultra-aluminum-manufacturing-expanding-its-fence-and-railing-offerings",
+          "title": "UFP Industries acquires Ultra Aluminum Manufacturing, expanding its fence and railing offerings | UFP Industries",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "high"
+        },
+        {
+          "url": "https://ufpi.com/ufp-industries-announces-third-quarter-2025-results",
+          "title": "UFP Industries Announces Third Quarter 2025 Results",
+          "publication_date": "Thu, 30 Oct 2025 15:33:40 GMT",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "high"
+        },
+        {
+          "url": "https://ufpi.com/contact-us/",
+          "title": "Contact Us | UFP Industries",
+          "publication_date": "2026-06-12T13:18:43",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        }
+      ],
+      "rejection_reasons": [
+        "duplicate_source",
+        "weak_commercial_relevance",
+        "missing_publication_date"
+      ]
+    },
+    {
+      "reference": "Mondi — Pittsburgh / automated packaging",
+      "company": "Mondi",
+      "domain": "mondigroup.com",
+      "expected_terms": [
+        "Pittsburgh",
+        "automated packaging"
+      ],
+      "matched_terms": [],
+      "captured_defensibly": false,
+      "strongest_source_url": "https://www.mondigroup.com/globalassets/mondigroup.com/investors/results-reports-and-presentations/2025/fy-results/mondi-group---full-year-results-announcement-2025.pdf",
+      "strongest_publication_date": "2026-02-19T00:00:00",
+      "validated_events": [],
+      "telemetry": {
+        "version": "account-deep-research-v1",
+        "account": "Mondi",
+        "domain": "mondigroup.com",
+        "planned_queries": 4,
+        "executed_queries": 4,
+        "provider_calls": 7,
+        "provider_failures": 0,
+        "results_seen": 31,
+        "evidence_accepted": 20,
+        "evidence_rejected": 11,
+        "pages_extracted": 2,
+        "extraction_failures": 0,
+        "structured_extraction_calls": 2,
+        "dated_evidence": 10,
+        "independent_domains": 2,
+        "claims_recovered": 2,
+        "counterevidence_checked": true,
+        "early_stop_reason": "sufficient_evidence",
+        "query_audit": [
+          {
+            "query_id": "rq_e1f1f9",
+            "stage": "identity",
+            "provider": "brave",
+            "results": 5,
+            "accepted": 4
+          },
+          {
+            "query_id": "rq_e1f1f9",
+            "stage": "identity",
+            "provider": "tavily",
+            "results": 5,
+            "accepted": 4
+          },
+          {
+            "query_id": "rq_j06j3f",
+            "stage": "commercial_footprint",
+            "provider": "brave",
+            "results": 5,
+            "accepted": 1
+          },
+          {
+            "query_id": "rq_j06j3f",
+            "stage": "commercial_footprint",
+            "provider": "tavily",
+            "results": 5,
+            "accepted": 1
+          },
+          {
+            "query_id": "rq_1liencs",
+            "stage": "current_activity",
+            "provider": "brave",
+            "results": 1,
+            "accepted": 1
+          },
+          {
+            "query_id": "rq_1liencs",
+            "stage": "current_activity",
+            "provider": "tavily",
+            "results": 5,
+            "accepted": 4
+          },
+          {
+            "query_id": "rq_19xjwkh",
+            "stage": "counterevidence",
+            "provider": "brave",
+            "results": 5,
+            "accepted": 5
+          }
+        ]
+      },
+      "accepted_evidence": [
+        {
+          "url": "https://www.mondigroup.com/locations/",
+          "title": "Locations | Mondi",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.mondigroup.com/locations/usa/mondi-minneapolis/",
+          "title": "Mondi Minneapolis Logistic Center | USA | Mondi Group",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.mondigroup.com/locations/usa/herzka-associates/",
+          "title": "Herzka Associates | USA | Mondi Group",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.mondigroup.com/news-and-insight/2026/mondi-opens-new-paper-bags-plant-in-pittsburgh-pennsylvania-to-support-growing-ecommerce-and-industrial-customer-demand/",
+          "title": "Mondi opens new paper bags plant in Pittsburgh, Pennsylvania, to support growing eCommerce and industrial customer demand",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "high"
+        },
+        {
+          "url": "https://www.mondigroup.com/globalassets/mondigroup.com/locations/germany/mondi-julich/mondi-juelich-iso14001-annex-en.pdf",
+          "title": "Mondi AG",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.mondigroup.com/globalassets/mondigroup.com/locations/austria/mondi-coating-zeltweg-gmbh/mondi-iso9001-coating-zeltweg-styria-en.pdf",
+          "title": "[PDF] CERTIFICATE - Mondi",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.mondigroup.com/globalassets/mondigroup.com/locations/poland/mondi-poznan/mondi-flep-annex-to-iso-45001-certificate-en.pdf",
+          "title": "[PDF] Mondi AG",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.mondigroup.com/globalassets/mondigroup.com/locations/usa/mondi-tekkote/mondi-tekkote-iso14001-de.pdf",
+          "title": "[PDF] ZERTIFIKAT - Mondi Group",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://northamerica.mondigroup.com/about-mondi-north-america/",
+          "title": "About Mondi North America - Flexible and Custom Packaging Manufacturer",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "high_confidence",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.mondigroup.com/globalassets/mondigroup.com/investors/shareholder-information/demerger-of-mpact-limited/circular_to_mondi_limited_shareholders_and_notice_of_general_meeting.pdf",
+          "title": "[PDF] MONDI LIMITED",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.mondigroup.com/globalassets/mondigroup.com/investors/results-reports-and-presentations/2025/fy-results/mondi-group---full-year-results-announcement-2025.pdf",
+          "title": "Mondi plc (Incorporated in England and Wales) (Registered number: 6209386)",
+          "publication_date": "2026-02-19T00:00:00",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "high"
+        },
+        {
+          "url": "https://www.mondigroup.com/news-and-insight/2025/trading-update-q3-2025",
+          "title": "Trading update Q3 2025",
+          "publication_date": "Mon, 06 Oct 2025 00:00:00 GMT",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "high"
+        },
+        {
+          "url": "https://www.mondigroup.com/news-and-insight/2026/mondi-strengthens-corrugated-solutions-operations-in-germany-through-targeted-site-upgrades",
+          "title": "Mondi strengthens corrugated solutions operations in Germany through targeted site upgrades",
+          "publication_date": "Mon, 01 Jun 2026 00:00:00 GMT",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "high"
+        },
+        {
+          "url": "https://www.mondigroup.com/news-and-insight/2026/mondi-launches-its-2025-integrated-and-sustainable-development-reporting-suite",
+          "title": "Mondi launches its 2025 Integrated and Sustainable Development reporting suite",
+          "publication_date": "Thu, 05 Mar 2026 00:00:00 GMT",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "high"
+        },
+        {
+          "url": "https://www.mondigroup.com/news-and-insight/2025/mondi-launches-extended-corrugated-and-solid-board-portfolio-for-the-food-packaging-industry",
+          "title": "Mondi launches extended corrugated and solid board portfolio for the food packaging industry | Mondi",
+          "publication_date": "Tue, 18 Nov 2025 00:00:00 GMT",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "high"
+        },
+        {
+          "url": "https://www.mondigroup.com/about-mondi/what-we-do/",
+          "title": "What we do | Sustainable Packaging and Paper | Mondi",
+          "publication_date": "2026-07-24T02:14:51",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.mondigroup.com/products-and-solutions/",
+          "title": "Packaging Products & Solutions | Mondi",
+          "publication_date": "2026-08-21T07:47:56",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.mondigroup.com/about-mondi/our-businesses/",
+          "title": "Our Businesses | Mondi",
+          "publication_date": "2026-08-21T07:07:27",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.mondigroup.com/products-and-solutions/product-finder/",
+          "title": "Product Finder | Mondi",
+          "publication_date": "2026-08-13T23:02:22",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.mondigroup.com/about-mondi/who-we-are/",
+          "title": "Who we are | Mondi",
+          "publication_date": "2026-08-14T19:59:42",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        }
+      ],
+      "rejection_reasons": [
+        "low_quality_source",
+        "weak_commercial_relevance",
+        "missing_publication_date",
+        "duplicate_source"
+      ]
+    }
+  ]
+}

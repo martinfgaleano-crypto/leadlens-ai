@@ -3,7 +3,7 @@ import { requireAdmin } from "@/lib/auth/require-admin";
 import { getEnvHealth } from "@/lib/config/env-health";
 import { loadAdminIntelligenceViewModel } from "@/lib/intelligence/admin-view-model";
 import { buildLaunchReadiness } from "@/lib/intelligence/launch-readiness";
-import { buildControlPlaneMemoryRecord, loadControlPlaneHistory, persistControlPlaneMemory } from "@/lib/intelligence/control-plane-store";
+import { buildControlPlaneMemoryRecord, loadControlPlaneHistory, persistControlPlaneMemory, summarizeControlPlaneHistory } from "@/lib/intelligence/control-plane-store";
 
 export const dynamic = "force-dynamic";
 
@@ -43,6 +43,7 @@ export async function GET(req: NextRequest) {
         observed_at: row.observed_at, score: row.launch_readiness_score, level: row.launch_readiness_level,
         confidence: row.confidence, blocker_count: row.blocker_count, capability_score: row.capability_score,
       })),
+      history_summary: summarizeControlPlaneHistory(history.records),
       persistence: { available: persistence.persisted || !persistence.error, persisted: persistence.persisted, error: persistence.error ?? history.error },
     }, { headers: { "Cache-Control": "private, no-store", "X-Robots-Tag": "noindex, nofollow" } });
   } catch (error) {

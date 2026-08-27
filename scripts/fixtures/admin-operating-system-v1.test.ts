@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { buildCapabilityControlPlane, type CapabilityControlPlaneInput, type DynamicRecallSignals } from "@/lib/intelligence/capability-control-plane";
 import { buildLaunchReadiness } from "@/lib/intelligence/launch-readiness";
-import { buildControlPlaneMemoryRecord, persistControlPlaneMemory } from "@/lib/intelligence/control-plane-store";
+import { buildControlPlaneMemoryRecord, persistControlPlaneMemory, summarizeControlPlaneHistory } from "@/lib/intelligence/control-plane-store";
 import { ADMIN_DEPRECATED_NAVIGATION, ADMIN_NAVIGATION } from "@/lib/admin/admin-information-architecture";
 import { measured, type IntelligenceCapabilityAssessment } from "@/lib/intelligence/os-contracts";
 
@@ -32,10 +32,12 @@ async function run() {
   const poor = buildLaunchReadiness({ now, control_plane: plane(0), production_config: config, database_available: true });
   const better = buildLaunchReadiness({ now, control_plane: plane(4), production_config: config, database_available: true });
   const unsafe = buildLaunchReadiness({ now, control_plane: plane(4), production_config: { ...config, admin_auth: false }, database_available: true });
+  const internalOnly = buildLaunchReadiness({ now, control_plane: plane(0), production_config: { ...config, internal_run_auth: false }, database_available: true });
   test("1 readiness is explicitly automatic", poor.automatic && poor.policy.some((x) => /no browser checkbox/i.test(x)));
   test("2 zero human-positive Cases caps readiness below guided beta", poor.score <= 49);
   test("3 improved empirical capture raises readiness", better.score > poor.score);
   test("4 missing production control lowers and caps readiness", unsafe.score <= 39 && unsafe.gates.find((g) => g.id === "production_configuration")?.state === "fail");
+  test("4b missing worker secret degrades closed-alpha/self-serve but does not block internal pilot", internalOnly.level === "internal_pilot" && internalOnly.gates.find((g) => g.id === "production_configuration")?.state === "degraded");
   test("5 every gate has machine-readable capability sources and n", poor.gates.every((g) => Array.isArray(g.capability_ids) && Number.isInteger(g.sample_size)));
   test("6 payments and Apollo are not launch-quality gates", poor.gates.every((g) => !/payment|apollo/i.test(g.id + g.label)));
   const first = buildControlPlaneMemoryRecord({ control_plane: plane(0), launch_readiness: poor });
@@ -43,6 +45,14 @@ async function run() {
   const changed = buildControlPlaneMemoryRecord({ control_plane: plane(4), launch_readiness: better });
   test("7 snapshot key is idempotent for identical evidence", first.snapshot_key === same.snapshot_key);
   test("8 changed empirical evidence creates new durable snapshot", first.snapshot_key !== changed.snapshot_key);
+  const refreshedPlane = { ...plane(0), generated_at: "2026-08-27T13:00:00.000Z" };
+  const refreshed = buildLaunchReadiness({ now: "2026-08-27T13:00:00.000Z", control_plane: refreshedPlane, production_config: config, database_available: true });
+  const refreshedRecord = buildControlPlaneMemoryRecord({ control_plane: refreshedPlane, launch_readiness: refreshed });
+  test("8b evaluation clock alone does not create material history", first.snapshot_key === refreshedRecord.snapshot_key);
+  const insufficientHistory = summarizeControlPlaneHistory([first]);
+  const changedHistory = summarizeControlPlaneHistory([changed, first]);
+  test("8c one baseline produces no invented trend", insufficientHistory.state === "insufficient_history" && insufficientHistory.readiness_delta === null);
+  test("8d material evidence change produces explicit history delta", changedHistory.state === "changed" && changedHistory.readiness_delta !== null);
   let writes = 0;
   const db = { from: () => ({ upsert: async () => { writes++; return { error: null }; } }) };
   const persisted = await persistControlPlaneMemory(db as never, first);

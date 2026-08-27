@@ -381,6 +381,9 @@ export interface EnrichedLead {
   recommended_action?: RecommendedActionType;    // Preliminary action recommendation
   recommended_action_reason?: string;
   next_best_question?: string;       // What to validate before contacting
+  /** Bounded, account-specific second-pass telemetry. Server-side audit data;
+   *  reports may summarize it but must never expose raw provider payloads. */
+  account_research?: import("@/lib/intelligence/account-deep-research").AccountDeepResearchTelemetry;
 }
 
 // ─── Score dimensions (0–100 per axis) ───────────────────────────────────────

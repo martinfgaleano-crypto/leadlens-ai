@@ -406,7 +406,7 @@ function extractKeySignal(rawContext: string): string {
   return byLength[0] ?? rawContext.slice(0, 110).replace(/\.$/, "");
 }
 
-// ─── Claude + Tavily enrichment ───────────────────────────────────────────────
+// ─── Claude + bounded account-level research ─────────────────────────────────
 
 async function buildClaudeEnrichment(
   candidate: LeadCandidate,
@@ -415,19 +415,23 @@ async function buildClaudeEnrichment(
   const { callClaudeJSON } = await import("@/lib/anthropic");
 
   let webContext = "";
-  if (process.env.TAVILY_API_KEY && candidate.company) {
+  let accountResearch: import("@/lib/intelligence/account-deep-research").AccountDeepResearchTelemetry | undefined;
+  if (candidate.company) {
     try {
-      const { researchTavilyForLead } = await import("@/lib/providers/tavily-lead-provider");
-      const researched = await researchTavilyForLead(candidate.company, candidate.industry, criteria.offer_summary, criteria.buying_signals);
+      const { deepenAccountResearch } = await import("@/lib/intelligence/account-deep-research");
+      const researched = await deepenAccountResearch(candidate, criteria);
       webContext = researched.context;
+      accountResearch = researched.telemetry;
       if (researched.sourceUrl) candidate.source_url = researched.sourceUrl;
-      if (researched.publishedDate) {
-        const parsedDate = Date.parse(researched.publishedDate);
+      const defensibleDate = researched.eventDate ?? researched.publishedDate;
+      if (defensibleDate) {
+        const parsedDate = Date.parse(defensibleDate);
         if (Number.isFinite(parsedDate)) candidate.signal_date = new Date(parsedDate).toISOString().slice(0, 10);
       }
-      if (webContext) candidate.raw_context = [candidate.raw_context, webContext].filter(Boolean).join(" | ").slice(0, 4000);
+      if (webContext) candidate.raw_context = [candidate.raw_context, webContext].filter(Boolean).join(" | ").slice(0, 9000);
     } catch {
-      // Tavily failure is non-blocking
+      // Provider/extraction failure is non-blocking and remains visible through
+      // the normal missing-evidence path. Research never fabricates coverage.
     }
   }
 
@@ -490,5 +494,5 @@ Return JSON:
 }`;
 
   const result = await callClaudeJSON<Omit<EnrichedLead, "candidate">>(SYSTEM, userMsg, 2500);
-  return { candidate, ...result };
+  return { candidate, ...result, account_research: accountResearch };
 }
