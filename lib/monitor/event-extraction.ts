@@ -89,7 +89,7 @@ export function resolveEventDate(candidate: EventCandidate): ResolvedEventDate {
 }
 
 // Stem-matched (no trailing boundary) so "cancels"/"cancellation"/"suspended" match.
-const NEGATIVE_KIND = /\b(cancel|cancelaci|closure|cierre|shutdown|reversal|reversi|paus|suspend|layoff|despido|withdraw|retiro|shut down)/i;
+const NEGATIVE_KIND = /\b(cancel|cancelaci|closure|cierre|shutdown|reversal|reversi|paus|suspend|layoff|despido|withdraw|retiro|shut down|postpon|delay|halt|divest|discontinu|exit(?:ed|s|ing)? (?:the )?market|clos(?:ed|es|ing) (?:its|the))/i;
 
 export interface ExtractedEvent {
   item: ObservedItem;

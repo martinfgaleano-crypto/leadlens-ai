@@ -101,8 +101,20 @@ function scrapeDatePhrase(text: string): string | null {
 }
 
 export async function defaultReobserver(plan: MonitorReviewPlan): Promise<AccountObservation> {
-  const { braveProvider, tavilyProvider } = await import("@/lib/sources/access/providers");
-  const providers = [braveProvider, tavilyProvider];
+  const { braveProvider, tavilyProvider, serperProvider } = await import("@/lib/sources/access/providers");
+  const { planRoute } = await import("./provider-routing");
+  // Task-aware, health-aware routing: a monitor_delta review prefers recent-event
+  // routes and skips unavailable providers up front (no wasted latency).
+  const byId = { brave: braveProvider, tavily: tavilyProvider, serper: serperProvider };
+  const health = Object.fromEntries(await Promise.all(
+    (Object.keys(byId) as Array<keyof typeof byId>).map(async (id) => {
+      const h = await byId[id].health().catch(() => null);
+      return [id, h?.status === "available" ? "available" : "unavailable"] as const;
+    }),
+  )) as Record<string, "available" | "unavailable">;
+  const route = planRoute({ task: "monitor_delta", accountKnown: true, temporal: true, needsFullText: false }, health);
+  const orderedIds = [...route.primary, ...route.fallback].map((s) => s.provider).filter((id): id is keyof typeof byId => id in byId);
+  const providers = (orderedIds.length ? orderedIds : (["brave", "tavily"] as Array<keyof typeof byId>)).map((id) => byId[id]);
   const available: string[] = [];
   const failed: string[] = [];
   const items: ObservedItem[] = [];
