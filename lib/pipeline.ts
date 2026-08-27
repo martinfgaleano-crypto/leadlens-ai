@@ -83,14 +83,15 @@ export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLen
   const targetCount = product ? product.entitlements.opportunity_target : PLAN_LEAD_COUNT[plan];
   if (product) console.log(`[pipeline] product=${product.product_code} tier=${product.tier} opportunity_target=${targetCount}`);
 
-  for (let i = 0; i < Math.min(candidates.length, targetCount); i++) {
+  const researchCount = Math.min(candidates.length, Math.max(targetCount, input.researchCandidateLimit ?? targetCount));
+  for (let i = 0; i < researchCount; i++) {
     const candidate = candidates[i];
     try {
       const checkpoint = input.checkpointDir ? await readLeadCheckpoint(input.checkpointDir, candidate.id) : null;
       const lead = checkpoint ?? await processOneLead(candidate, criteria, icp, onboardingData, input.decisionOnly === true);
       if (!checkpoint && input.checkpointDir) await writeLeadCheckpoint(input.checkpointDir, candidate.id, lead);
       processedLeads.push(lead);
-      console.log(`[pipeline] lead ${i + 1}/${targetCount}: ${candidate.company} → ${lead.qualification.category} (${lead.qualification.fit_score}) gen=${lead.outreach.genericness_risk ?? "?"} hal=${lead.outreach.hallucination_risk ?? "?"}${checkpoint ? " checkpoint=reused" : ""}`);
+      console.log(`[pipeline] lead ${i + 1}/${researchCount}: ${candidate.company} → ${lead.qualification.category} (${lead.qualification.fit_score}) gen=${lead.outreach.genericness_risk ?? "?"} hal=${lead.outreach.hallucination_risk ?? "?"}${checkpoint ? " checkpoint=reused" : ""}`);
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : String(err);
       console.error(`[pipeline] failed to process ${candidate.company}: ${errMsg.slice(0, 120)}`);
@@ -171,7 +172,7 @@ export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLen
     }
   }
 
-  const report = applyChangeSinceLastReportToReport(reportWithEQ, prevSnapshot);
+  let report = applyChangeSinceLastReportToReport(reportWithEQ, prevSnapshot);
 
   // Monitor series context — never affects scoring/ranking. Snapshot rows keep
   // the authoritative search_id; carrying it in the payload gives feedback and
@@ -187,9 +188,15 @@ export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLen
   const { applyIntelligenceFoundation } = await import("./intelligence/feature-snapshot");
   await applyIntelligenceFoundation(report, leadsWithQuality);
 
+  // Selection is downstream from bounded Research: commercial delivery limits
+  // never silently reduce how many plausible accounts receive intelligence work.
+  report = limitReportDelivery(report, input.deliveryLimit ?? targetCount, candidates.length, researchCount);
+  const deliveredIds = new Set(report.processed_leads.map((lead) => lead.id));
+  const deliveredLeads = leadsWithQuality.filter((lead) => deliveredIds.has(lead.id));
+
   // Write account memory updates after report is built (best-effort, fire-and-forget)
   if (!IS_DEMO) {
-    updateAccountMemoryFromReport(leadsWithQuality, id, clientKey, memoryMap).catch(() => {});
+    updateAccountMemoryFromReport(deliveredLeads, id, clientKey, memoryMap).catch(() => {});
   }
 
   // Honest coverage context: attach the discovery operating mode so the report
@@ -221,6 +228,35 @@ export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLen
   };
 
   return report;
+}
+
+function limitReportDelivery(report: LeadLensReport, limit: number, considered: number, researched: number): LeadLensReport {
+  const bounded = Math.max(0, Math.floor(limit));
+  const ranked = [...(report.ranked_opportunities ?? [])].sort((a, b) => a.rank - b.rank).slice(0, bounded);
+  const selected = new Set(ranked.map((item) => item.lead_id));
+  const leads = report.ranked_opportunities
+    ? report.processed_leads.filter((lead) => selected.has(lead.id))
+    : report.processed_leads.slice(0, bounded);
+  const counts = { HOT: 0, WARM: 0, COLD: 0, DISCARD: 0 };
+  for (const lead of leads) counts[lead.qualification.category]++;
+  const avg = leads.length ? leads.reduce((sum, lead) => sum + lead.qualification.fit_score, 0) / leads.length : 0;
+  return {
+    ...report,
+    processed_leads: leads,
+    ranked_opportunities: ranked,
+    total_leads: leads.length,
+    hot_count: counts.HOT,
+    warm_count: counts.WARM,
+    cold_count: counts.COLD,
+    discard_count: counts.DISCARD,
+    avg_score: Math.round(avg * 10) / 10,
+    report_intelligence: {
+      ...(report.report_intelligence ?? { rejection_reasons: {} }),
+      companies_considered: considered,
+      companies_selected: leads.length,
+      companies_rejected: Math.max(0, researched - leads.length),
+    },
+  };
 }
 
 async function readLeadCheckpoint(dir: string, candidateId: string): Promise<ProcessedLead | null> {

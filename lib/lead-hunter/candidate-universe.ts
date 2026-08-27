@@ -306,7 +306,7 @@ function ambiguousNames(orgs: RawDiscoveredOrg[]): Set<string> {
   return out;
 }
 
-function classifyGroup(g: Grouped, plan: DiscoveryPlan, ambiguous: Set<string>): CandidateAccount {
+function classifyGroup(g: Grouped, plan: DiscoveryPlan, ambiguous: Set<string>, discoveredAt: string): CandidateAccount {
   const primary = g.orgs.find((o) => o.domain) ?? g.orgs[0];
   const name = primary.name;
   const domain = primary.domain;
@@ -316,7 +316,7 @@ function classifyGroup(g: Grouped, plan: DiscoveryPlan, ambiguous: Set<string>):
 
   const provenance: DiscoveryProvenance[] = g.orgs.map((o) => ({
     route: o.route, origin: o.origin, provider: o.provider, sourceUrl: o.sourceUrl,
-    discoveredName: o.name, discoveredAt: primaryDiscoveredAt,
+    discoveredName: o.name, discoveredAt,
   }));
 
   const excl = matchesExclusion({ industry: primary.industry, organizationType: orgType, country, name }, plan.exclusions);
@@ -358,19 +358,25 @@ function classifyGroup(g: Grouped, plan: DiscoveryPlan, ambiguous: Set<string>):
   };
 }
 
-let primaryDiscoveredAt = "1970-01-01T00:00:00.000Z"; // replaced per-run in hunt()
+// Discovery timestamps are passed per invocation; no module-global mutable run state.
 
 // ─── Hunt (orchestration) ─────────────────────────────────────────────────────
 
 export interface HuntOptions {
   now?: () => Date;
   opportunityConditionIds?: string[];
+  runScope?: string;
+}
+
+function safeRunScope(value: string | undefined): string {
+  if (!value) return "unscoped";
+  return value.replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 48) || "unscoped";
 }
 
 export async function hunt(plan: DiscoveryPlan, runner: DiscoveryRunner, opts: HuntOptions = {}): Promise<CandidateAccountUniverse> {
   const now = (opts.now ?? (() => new Date()))();
-  primaryDiscoveredAt = now.toISOString();
-  const runId = `lh_${plan.contextRef.contextId}_v${plan.contextRef.version}_${now.toISOString().slice(0, 10)}`;
+  const discoveredAt = now.toISOString();
+  const runId = `lh_${plan.contextRef.contextId}_v${plan.contextRef.version}_${now.toISOString().slice(0, 10)}_${safeRunScope(opts.runScope)}`;
   const base = { runId, contextRef: plan.contextRef, generatedAt: now.toISOString(), plan };
 
   // Insufficient target → do not run providers; honest failure.
@@ -400,7 +406,7 @@ export async function hunt(plan: DiscoveryPlan, runner: DiscoveryRunner, opts: H
   const ambiguous = ambiguousNames(orgs);
   const groups = groupByIdentity(orgs);
   const candidates = groups.map((g) => {
-    const c = classifyGroup(g, plan, ambiguous);
+    const c = classifyGroup(g, plan, ambiguous, discoveredAt);
     c.opportunityConditionIds = opts.opportunityConditionIds ?? [];
     return c;
   });

@@ -44,7 +44,10 @@ export async function runAndPersistLeadHunter(
   runner: DiscoveryRunner,
   opts: HuntOptions = {},
 ): Promise<LeadHunterRunResult> {
-  const hunted = await huntFromConfirmedContext(contextStore, userId, selector, runner, opts);
+  const hunted = await huntFromConfirmedContext(contextStore, userId, selector, runner, {
+    ...opts,
+    runScope: opts.runScope ? `${userId}_${opts.runScope}` : userId,
+  });
   if (!hunted.ok) return { ok: false, reason: hunted.reason };
 
   const universe = hunted.universe;
@@ -100,9 +103,9 @@ export function toResearchCandidates(universe: CandidateAccountUniverse): LeadCa
     country: c.identity.country ?? null,
     industry: c.identity.organizationType,
     source: "public_signal" as const,
-    // Discovery provenance URL (context only). Research must re-validate any
-    // source before it can become Evidence for a specific claim.
-    source_url: c.provenance.find((p) => p.sourceUrl)?.sourceUrl,
+    // Deliberately NOT mapped to source_url: discovery provenance is context,
+    // never Evidence. Research must independently recover and accept a source.
+    discovery_provenance: c.provenance.map((p) => ({ route: p.route, origin: p.origin, provider: p.provider, sourceUrl: p.sourceUrl })),
     // IDENTITY confidence only (not an opportunity/lead score): how sure we are
     // this is the right organization. Research owns Fit/Timing/Decision.
     confidence_score: c.identity.confidence === "verified" ? 0.8 : 0.5,

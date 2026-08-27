@@ -328,6 +328,8 @@ export interface LeadCandidate {
   account_role?: "buyer_channel" | "hospitality_operator" | "end_user_operator" | "brand_owner" | "seller_network" | "service_provider" | "unknown";
   account_role_confidence?: "high" | "medium" | "low";
   account_role_evidence?: string[];
+  /** Lead Hunter lineage only. It is discovery context, never claim Evidence. */
+  discovery_provenance?: Array<{ route: string; origin: string; provider?: string; sourceUrl?: string }>;
 }
 
 // ─── Evidence discipline ──────────────────────────────────────────────────────
@@ -704,6 +706,18 @@ export interface LeadLensReport {
   report_quality_notes?: string[];                // Issues found at batch level
   report_risks?: string[];                        // Risks in the overall report
   recommended_fix_before_delivery?: string;       // If quality issues detected, what to fix
+  canonical_cases?: Array<{
+    lead_id: string;
+    account_id: string;
+    decision: "prioritize" | "validate" | "monitor" | "hold";
+    decision_source: "canonical_opportunity_test" | "fallback_conservative";
+    verdict_status: "opportunity" | "investigate" | "monitor" | "reject";
+    reasons: string[];
+    fit: "Strong" | "Moderate" | "Limited" | null;
+    timing: "Strong" | "Moderate" | "Limited" | null;
+    evidence: "Strong" | "Moderate" | "Limited" | null;
+    first_review: true;
+  }>;
 }
 
 // ─── Pipeline I/O ─────────────────────────────────────────────────────────────
@@ -729,6 +743,10 @@ export interface PipelineInput {
   /** Local managed-run resilience only. Completed lead chains are reused after
    * interruption; public/serverless callers omit this. */
   checkpointDir?: string;
+  /** Technical intelligence breadth, independent from customer delivery count. */
+  researchCandidateLimit?: number;
+  /** Customer-visible maximum, applied only after Research and ranking. */
+  deliveryLimit?: number;
 }
 
 // ─── Provider result ──────────────────────────────────────────────────────────

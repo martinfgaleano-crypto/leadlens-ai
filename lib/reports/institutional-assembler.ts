@@ -32,7 +32,7 @@ function daysSince(iso: string | null | undefined): number | null {
   return d >= 0 ? d : null;
 }
 
-function buildDossier(opp: Json, lead: Json | undefined, es = false, clientObjective: string | null = null): AccountDossier {
+function buildDossier(opp: Json, lead: Json | undefined, es = false, clientObjective: string | null = null, canonicalCase: Json | null = null): AccountDossier {
   const c = lead?.candidate ?? {};
   const e = lead?.enrichment ?? {};
   const q = lead?.qualification ?? {};
@@ -93,15 +93,19 @@ function buildDossier(opp: Json, lead: Json | undefined, es = false, clientObjec
     : { basis: "recommendation", text: es ? "Validar la señal y el fit antes de cualquier contacto." : "Validate the signal and fit before any outreach.", evidence: es ? "control por defecto" : "default guardrail" };
 
   const legacyAction = opp?.recommended_action ?? e.recommended_action ?? null;
-  const actionabilityStatus = opp?.actionability_status ?? (
+  const canonicalAction = canonicalCase?.decision === "prioritize" ? "act_now"
+    : canonicalCase?.decision === "validate" ? "validate_first"
+    : canonicalCase?.decision === "hold" ? "exclude"
+    : canonicalCase?.decision === "monitor" ? "monitor" : null;
+  const actionabilityStatus = canonicalAction ?? opp?.actionability_status ?? (
     legacyAction === "send_outreach_now" ? "act_now" :
     legacyAction === "validate_source_first" || legacyAction === "enrich_manually" ? "validate_first" :
     legacyAction === "exclude" ? "exclude" :
     legacyAction ? "monitor" : null
   );
-  const decisionState = actionabilityStatus === "act_now" ? "prioritize"
+  const decisionState = canonicalCase?.decision ?? (actionabilityStatus === "act_now" ? "prioritize"
     : actionabilityStatus === "validate_first" ? "validate"
-    : actionabilityStatus === "exclude" ? "hold" : "monitor";
+    : actionabilityStatus === "exclude" ? "hold" : "monitor");
   const materialSignal = signalDate && c.source_url && clean(e.timing_signals?.[0] ?? e.what_changed ?? e.material_change)
     ? { label: clean(e.timing_signals?.[0] ?? e.what_changed ?? e.material_change)!, date: signalDate, sourceLabel: (() => { try { return new URL(c.source_url).hostname.replace(/^www\./, ""); } catch { return "primary source"; } })(), url: c.source_url }
     : null;
@@ -132,7 +136,7 @@ function buildDossier(opp: Json, lead: Json | undefined, es = false, clientObjec
     domain: c.domain ?? null,
     tier: opp?.category ?? q?.category ?? "UNSCORED",
     actionability_status: actionabilityStatus,
-    actionability_reasons: Array.isArray(opp?.actionability_reasons) ? opp.actionability_reasons : [],
+    actionability_reasons: canonicalCase?.reasons ?? (Array.isArray(opp?.actionability_reasons) ? opp.actionability_reasons : []),
     actionability_blockers: Array.isArray(opp?.actionability_blockers) ? opp.actionability_blockers : [],
     fit_score: opp?.fit_score ?? q?.fit_score ?? null,
     thesis, why_now, why_this_company, why_this_quarter, risks,
@@ -154,8 +158,9 @@ export function assembleInstitutionalReport(
   const es = reportJson?.onboarding?.output_language === "es";
   const opps: Json[] = Array.isArray(reportJson.ranked_opportunities) ? reportJson.ranked_opportunities : [];
   const leadsById = new Map<string, Json>((reportJson.processed_leads ?? []).map((l: Json) => [l.id, l]));
+  const canonicalById = new Map<string, Json>((reportJson.canonical_cases ?? []).map((c: Json) => [c.lead_id, c]));
   const commercialObjective = clean(reportJson?.onboarding?.commercial_objective ?? reportJson?.commercial_context?.objective ?? reportJson?.commercial_intent?.objective);
-  const dossiers = opps.map((o) => buildDossier(o, leadsById.get(o.lead_id), es, commercialObjective)).sort((a, b) => (a.rank ?? 999) - (b.rank ?? 999));
+  const dossiers = opps.map((o) => buildDossier(o, leadsById.get(o.lead_id), es, commercialObjective, canonicalById.get(o.lead_id) ?? null)).sort((a, b) => (a.rank ?? 999) - (b.rank ?? 999));
 
   const regions = Array.from(new Set(dossiers.map((d) => d.location).filter(Boolean))) as string[];
   const industries = Array.from(new Set(dossiers.map((d) => d.industry).filter(Boolean))) as string[];

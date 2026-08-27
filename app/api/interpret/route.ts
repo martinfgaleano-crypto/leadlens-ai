@@ -18,7 +18,7 @@ const schema = z.object({
 
 /** Authenticated callers get a looser abuse limit than anonymous ones. Detection
  *  is cheap: only when an Authorization header is present do we verify it. */
-async function resolveLimit(req: NextRequest): Promise<{ key: string; limit: number; windowMs: number }> {
+async function resolveLimit(req: NextRequest): Promise<{ key: string; limit: number; windowMs: number; userId: string | null }> {
   const auth = req.headers.get("authorization");
   if (auth) {
     try {
@@ -26,10 +26,10 @@ async function resolveLimit(req: NextRequest): Promise<{ key: string; limit: num
       const db = createServerClient();
       const token = auth.replace(/^Bearer\s+/i, "");
       const { data: { user } } = (await db?.auth.getUser(token)) ?? { data: { user: null } };
-      if (user) return { key: `interpret:auth:${user.id}`, limit: AUTH_RATE.limit, windowMs: AUTH_RATE.windowMs };
+      if (user) return { key: `interpret:auth:${user.id}`, limit: AUTH_RATE.limit, windowMs: AUTH_RATE.windowMs, userId: user.id };
     } catch { /* fall through to anonymous */ }
   }
-  return { key: `interpret:anon:${requestClientKey(req.headers)}`, limit: ANON_RATE.limit, windowMs: ANON_RATE.windowMs };
+  return { key: `interpret:anon:${requestClientKey(req.headers)}`, limit: ANON_RATE.limit, windowMs: ANON_RATE.windowMs, userId: null };
 }
 
 function respond(outcome: InterpretOutcome, body: Record<string, unknown>, status: number, headers?: Record<string, string>) {
@@ -84,8 +84,12 @@ export async function POST(req: NextRequest) {
       locale,
     }));
 
+    const confirmationToken = rate.userId && projection.status === "ready_for_confirmation"
+      ? (await import("@/lib/interpretation/confirmation-token")).issueConfirmationToken(rate.userId, result.interpretation)
+      : null;
     return respond(outcome, {
       interpretation: projection,
+      ...(confirmationToken ? { confirmation_token: confirmationToken } : {}),
       // Non-sensitive operational signals the client may surface (degraded read,
       // exhausted clarification). Never provider internals or raw output.
       meta: {
