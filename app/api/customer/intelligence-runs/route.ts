@@ -50,10 +50,19 @@ export async function POST(req: NextRequest) {
     pipeline: (await import("@/lib/pipeline")).runLeadLensPipeline,
   });
   if (!result.ok) return NextResponse.json({ error: result.reason, run_id: result.runId ?? null }, { status: 422 });
+  if (result.run.status === "completed" && result.run.report) {
+    const { initializeProductiveAccountMemory } = await import("@/lib/intelligence/initialize-account-memory");
+    await initializeProductiveAccountMemory(db, {
+      report: result.run.report,
+      runId: result.run.runId,
+      userId: user.id,
+      contextRef: result.run.contextRef,
+    }).catch((memoryError) => console.error("[productive-memory]", memoryError instanceof Error ? memoryError.message : "unavailable"));
+  }
   return NextResponse.json({
     run_id: result.run.runId, status: result.run.status, stage: result.run.stage,
     context: result.run.contextRef, lead_hunter_run_id: result.run.leadHunterRunId,
-    report_url: `/api/customer/intelligence-runs/${result.run.runId}`,
+    report_url: `/results/${result.run.runId}`, client_key: result.run.runId,
     reused: result.reused,
   }, { status: result.reused ? 200 : 201 });
 }

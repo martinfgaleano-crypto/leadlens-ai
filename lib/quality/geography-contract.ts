@@ -36,8 +36,16 @@ export function assertGeographyContract(onboarding: OnboardingData, criteria: Le
 
 export function candidateMatchesTargetGeography(candidate: LeadCandidate, targetCountries: string[]): boolean {
   if (targetCountries.length === 0) return true;
-  const location = norm([candidate.country, candidate.location].filter(Boolean).join(" "));
-  return targetCountries.map(norm).some(country => location.includes(country));
+  // Normalize each field independently before combining it. Joining first made
+  // exact aliases such as `USA` become `usa usa`, so a valid US candidate was
+  // rejected against canonical `united states`.
+  const locations = [candidate.country, candidate.location].filter((value): value is string => Boolean(value)).map((value) => {
+    const exact = norm(value);
+    return exact
+      .replace(/\bu\.?s\.?a?\.?\b/gi, "united states")
+      .replace(/\s+/g, " ");
+  });
+  return targetCountries.map(norm).some(country => locations.some(location => location === country || location.includes(country)));
 }
 
 export function enforceCandidateGeography(candidates: LeadCandidate[], targetCountries: string[]): LeadCandidate[] {

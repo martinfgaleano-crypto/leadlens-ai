@@ -55,7 +55,7 @@ export interface DiscoveryMetrics {
   universe_visibility_counts: Record<string, number>;
   universe_role_counts: Record<string, number>;
   universe_accounts: Array<{
-    company: string; domain: string | null; sector: string | null;
+    company: string; domain: string | null; sector: string | null; country: string | null;
     origin: string; visibility: string; role: string; score: number | null;
   }>;
   dynamic_companies_with_verified_domain: number;
@@ -304,7 +304,7 @@ export async function runCompanyFirstDiscovery(
     universe_rejected: universe.stats.rejected,
     universe_origin_counts: {}, universe_visibility_counts: {}, universe_role_counts: {},
     universe_accounts: universe.companies.map(c => ({
-      company: c.name, domain: c.domain, sector: c.sector,
+      company: c.name, domain: c.domain, sector: c.sector, country: c.country,
       origin: c.universe_origin ?? "unknown", visibility: c.visibility_tier ?? "unknown",
       role: c.account_role ?? "unknown", score: c.universe_score ?? null,
     })),

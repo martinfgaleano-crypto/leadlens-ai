@@ -57,6 +57,7 @@ export const defaultDiscoveryRunner: DiscoveryRunner = async (plan): Promise<Dis
   const orgs: RawDiscoveredOrg[] = (metrics.universe_accounts ?? []).map((a) => ({
     name: a.company,
     domain: a.domain ?? undefined,
+    country: a.country ?? undefined,
     organizationType: a.sector ?? undefined,
     origin: a.origin ?? "unknown",
     provider: "engine",

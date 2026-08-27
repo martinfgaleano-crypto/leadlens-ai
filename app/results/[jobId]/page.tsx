@@ -25,6 +25,7 @@ export default function ResultsPage() {
   const [report, setReport] = useState<LeadLensReport | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [monitorState, setMonitorState] = useState<"idle" | "running" | "completed" | "unavailable" | "error">("idle");
 
   // Reports are ownership-protected: attach the Supabase session token when a
   // session exists. Without a session (and outside demo mode) the API returns
@@ -53,7 +54,14 @@ export default function ResultsPage() {
       if (stopped) return;
       try {
         const headers = await authHeaders();
-        const res = await fetch(`/api/report?job_id=${jobId}`, { headers });
+        // Productive Intelligence runs are owner-scoped directly by user_id and
+        // have no legacy lead_searches row. Load them through their canonical
+        // authenticated status endpoint; legacy/search-backed jobs keep the
+        // existing report endpoint.
+        const endpoint = /^intel_[a-f0-9]{32}$/.test(jobId)
+          ? `/api/customer/intelligence-runs/${jobId}`
+          : `/api/report?job_id=${jobId}`;
+        const res = await fetch(endpoint, { headers });
         if (stopped) return;
         if (res.status === 401) {
           setStatus("unauthorized");
@@ -99,6 +107,21 @@ export default function ResultsPage() {
       a.click();
       URL.revokeObjectURL(url);
     } catch { /* best-effort */ }
+  }
+
+  async function runMonitorReview() {
+    if (!/^intel_[a-f0-9]{32}$/.test(jobId)) return;
+    setMonitorState("running");
+    try {
+      const headers = await authHeaders();
+      const res = await fetch("/api/customer/monitor", {
+        method: "POST",
+        headers: { "content-type": "application/json", ...headers },
+        body: JSON.stringify({ client_key: jobId }),
+      });
+      if (res.status === 404) setMonitorState("unavailable");
+      else setMonitorState(res.ok ? "completed" : "error");
+    } catch { setMonitorState("error"); }
   }
 
   const rankingMap = useMemo(() => {
@@ -217,6 +240,9 @@ export default function ResultsPage() {
               </span>
             </div>
             <div className="flex gap-3 flex-shrink-0">
+              {/^intel_[a-f0-9]{32}$/.test(jobId) && <button onClick={runMonitorReview} disabled={monitorState === "running"} className="bg-white/10 border border-white/20 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-white/20 disabled:opacity-60">
+                {monitorState === "running" ? "Reviewing…" : "Review again"}
+              </button>}
               <button onClick={() => download("csv")} className="bg-white/10 border border-white/20 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-white/20">
                 ⬇ CSV
               </button>
@@ -225,6 +251,9 @@ export default function ResultsPage() {
               </button>
             </div>
           </div>
+          {monitorState !== "idle" && monitorState !== "running" && <p className="mt-4 text-xs text-sky-100" role="status">
+            {monitorState === "completed" ? "Review completed. The latest account state is now stored in Account Memory." : monitorState === "unavailable" ? "No account is due for review yet." : "The review could not be completed. Your current report is unchanged."}
+          </p>}
         </div>
 
         {report.actionability_summary && (

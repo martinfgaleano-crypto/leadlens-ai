@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useId } from "react";
 import type { LeadLensReport, ProcessedLead, PlanType, QCStatus, OutputLanguage, MarketRegion } from "@/types";
 import { safeConversionPayload, type ConversionEvent, type ConversionMetadata } from "@/lib/analytics/conversion-events";
-import { requestInterpretation, type PublicInterpretation } from "@/lib/interpretation/interpret-client";
+import { confirmAndStartIntelligence, requestInterpretation, type PublicInterpretation } from "@/lib/interpretation/interpret-client";
 import { NORTHSTAR_WHAT_CHANGED } from "@/lib/landing/fixtures/northstar-change";
 import { NORTHSTAR_EVIDENCE } from "@/lib/landing/fixtures/northstar-evidence";
 import { LANDING_COMPARISON, leadersOn, dimValue, type CompareDimension } from "@/lib/landing/fixtures/landing-comparison";
@@ -3644,6 +3644,12 @@ function HeroCarousel({ lang }: { lang: OutputLanguage }) {
 function CompanyInterpretationExperience({ lang, onBridge }: { lang: OutputLanguage; onBridge: () => void }) {
   const ui = INTERPRETATION_COPY[lang];
   const sa = SA_COPY[lang];
+  const journeyCopy = {
+    en: { start: "Confirm and start Intelligence", starting: "Starting Intelligence…", error: "Could not start Intelligence. Please try again." },
+    es: { start: "Confirmar e iniciar Intelligence", starting: "Iniciando Intelligence…", error: "No pudimos iniciar Intelligence. Inténtalo de nuevo." },
+    pt: { start: "Confirmar e iniciar Intelligence", starting: "Iniciando Intelligence…", error: "Não foi possível iniciar Intelligence. Tente novamente." },
+    ja: { start: "確認して Intelligence を開始", starting: "Intelligence を開始しています…", error: "Intelligence を開始できませんでした。もう一度お試しください。" },
+  }[lang];
   const examples = INTERPRET_EXAMPLES[lang];
   const [input, setInput] = useState(examples[0].text);
   const [clarification, setClarification] = useState("");
@@ -3651,6 +3657,8 @@ function CompanyInterpretationExperience({ lang, onBridge }: { lang: OutputLangu
   // on passive view. Only real user actions call /api/interpret.
   const [status, setStatus] = useState<"loading" | "done" | "error">("done");
   const [result, setResult] = useState<PublicInterpretation | null>(DEFAULT_INTERPRETATION);
+  const [confirmationToken, setConfirmationToken] = useState<string | null>(null);
+  const [journeyStatus, setJourneyStatus] = useState<"idle" | "starting" | "error">("idle");
   const [expanded, setExpanded] = useState(false);
   const inputId = useId();
   const clarificationId = useId();
@@ -3661,10 +3669,12 @@ function CompanyInterpretationExperience({ lang, onBridge }: { lang: OutputLangu
     const ac = new AbortController();
     abortRef.current = ac;
     setStatus("loading");
+    setConfirmationToken(null);
+    setJourneyStatus("idle");
     setExpanded(false);
     requestInterpretation(text, clarify, lang, ac.signal).then((r) => {
       if (ac.signal.aborted) return;
-      if (r.ok) { setResult(r.interpretation); setStatus("done"); }
+      if (r.ok) { setResult(r.interpretation); setConfirmationToken(r.confirmationToken); setStatus("done"); }
       else { setStatus("error"); }
     });
   };
@@ -3674,6 +3684,18 @@ function CompanyInterpretationExperience({ lang, onBridge }: { lang: OutputLangu
   const onInterpret = () => { setClarification(""); run(input); };
   const onClarify = () => run(input, clarification);
   const useExample = (text: string) => { setInput(text); setClarification(""); run(text); };
+  const continueJourney = async () => {
+    if (!confirmationToken) { onBridge(); return; }
+    setJourneyStatus("starting");
+    const contextId = `ctx_${crypto.randomUUID().replace(/-/g, "")}`;
+    const started = await confirmAndStartIntelligence(confirmationToken, contextId);
+    if (!started.ok) {
+      setJourneyStatus("error");
+      if (started.reason === "signin_required") window.location.assign("/login");
+      return;
+    }
+    window.location.assign(`/results/${started.runId}`);
+  };
 
   const r = result;
   const rowsWrap: React.CSSProperties = { display: "flex", flexDirection: "column", gap: ".4rem" };
@@ -3803,8 +3825,9 @@ function CompanyInterpretationExperience({ lang, onBridge }: { lang: OutputLangu
                   <div style={{ fontSize: ".55rem", fontWeight: 800, letterSpacing: ".06em", textTransform: "uppercase", color: "#64748b", marginBottom: ".3rem" }}>{bc.nextLabel}</div>
                   <div style={{ fontSize: ".76rem", color: "#475569", lineHeight: 1.5 }}>{bc.next}</div>
                   <div style={{ display: "flex", justifyContent: "flex-end", marginTop: ".4rem" }}>
-                    <button type="button" onClick={onBridge} style={{ minHeight: 40, border: 0, background: "transparent", color: "#0284c7", fontWeight: 750, fontFamily: "inherit", cursor: "pointer", padding: ".3rem 0" }}>{ui.bridge} <span aria-hidden>↗</span></button>
+                    <button type="button" onClick={continueJourney} disabled={journeyStatus === "starting"} style={{ minHeight: 40, border: 0, background: "transparent", color: "#0284c7", fontWeight: 750, fontFamily: "inherit", cursor: journeyStatus === "starting" ? "default" : "pointer", padding: ".3rem 0" }}>{confirmationToken ? (journeyStatus === "starting" ? journeyCopy.starting : journeyCopy.start) : ui.bridge} <span aria-hidden>↗</span></button>
                   </div>
+                  {journeyStatus === "error" && <div role="alert" style={{ color: "#b91c1c", fontSize: ".72rem", textAlign: "right" }}>{journeyCopy.error}</div>}
                 </div>
               </>); })()}
             </div>

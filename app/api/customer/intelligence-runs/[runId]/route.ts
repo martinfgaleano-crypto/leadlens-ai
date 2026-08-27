@@ -11,6 +11,6 @@ export async function GET(req: NextRequest, { params }: { params: { runId: strin
   if (!/^intel_[a-f0-9]{32}$/.test(params.runId)) return NextResponse.json({ error: "Run not found." }, { status: 404 });
   const run = await new SupabaseIntelligenceRunStore(db).load(params.runId, user.id);
   if (!run) return NextResponse.json({ error: "Run not found." }, { status: 404 });
-  if (run.status === "completed") return NextResponse.json({ status: run.status, stage: run.stage, context: run.contextRef, report: run.report });
+  if (run.status === "completed") return NextResponse.json({ status: run.status, stage: run.stage, context: run.contextRef, client_key: run.runId, report: run.report });
   return NextResponse.json({ status: run.status, stage: run.stage, context: run.contextRef, failure: run.failureCode });
 }
