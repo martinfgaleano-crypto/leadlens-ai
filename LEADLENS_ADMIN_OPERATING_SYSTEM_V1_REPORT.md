@@ -9,7 +9,8 @@ Current measured evaluation on 2026-08-27:
 - Launch readiness: **39/100 — internal_pilot**.
 - Confidence: **high** about the observed limitations, because the largest supporting telemetry sample is `n=1357`; this does not mean commercial quality is high.
 - Intelligence capability maturity: capped at **59/100** while the latest bounded positive-control artifact contains zero human-defensible positive Cases.
-- Primary measured blocker: no defensible positive Case in the current `0/8` positive-control sample.
+- Failing launch gate: production configuration is incomplete because `INTERNAL_RUN_SECRET` is absent in the current environment; the model therefore applies the 39-point configuration cap.
+- Primary Intelligence limitation: no defensible positive Case in the current `0/8` positive-control sample; independently, this applies the 49-point empirical-quality cap.
 - Durable database history: code and migration are ready, but migration `055` is not yet applied to the connected Supabase schema. The attempted write failed closed with `schema cache: table not found`; no history was fabricated.
 
 ## Canonical sources of truth
