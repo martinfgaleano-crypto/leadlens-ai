@@ -22,6 +22,7 @@ import {
   type LeadHunterRunRecord,
 } from "./run-store";
 import type { ConfirmedContextStore, ContextSelector } from "@/lib/interpretation/confirmed-context-store";
+import { prioritizeResearch } from "./research-readiness";
 
 export type LeadHunterRunResult =
   | { ok: true; runId: string; universe: CandidateAccountUniverse; created: boolean; reused: boolean }
@@ -84,7 +85,7 @@ export async function loadLeadHunterUniverse(
  *  EXCLUDED and IDENTITY_AMBIGUOUS candidates are held for exception handling —
  *  they never block the valid subset (§20). */
 export function researchReadyCandidates(universe: CandidateAccountUniverse): CandidateAccount[] {
-  return universe.candidates.filter((c) => c.status === "eligible" || c.status === "likely_eligible" || c.status === "needs_validation");
+  return prioritizeResearch(universe.candidates, universe.plan);
 }
 
 /**

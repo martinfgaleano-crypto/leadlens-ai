@@ -1,6 +1,6 @@
 import type { LeadLensReport, PlanType } from "@/types";
 
-export type IntelligenceRunStage = "lead_hunter" | "research" | "case_synthesis" | "report";
+export type IntelligenceRunStage = "queued" | "lead_hunter" | "research" | "case_synthesis" | "report";
 export type IntelligenceRunStatus = "processing" | "completed" | "failed";
 
 export interface IntelligenceRunRecord {
@@ -15,6 +15,9 @@ export interface IntelligenceRunRecord {
   report: LeadLensReport | null;
   failureCode: string | null;
   attempt: number;
+  deliveryLimit: number;
+  researchLimit: number;
+  researchAudit?: Array<{ company: string; category: string; fitScore: number; signalDate: string | null; sourceUrl: string | null; canonicalDecision: string; reasons: string[] }>;
   createdAt: string;
   updatedAt: string;
 }
@@ -23,6 +26,7 @@ export interface IntelligenceRunStore {
   load(runId: string, userId: string): Promise<IntelligenceRunRecord | null>;
   create(record: IntelligenceRunRecord): Promise<{ created: boolean }>;
   save(record: IntelligenceRunRecord): Promise<void>;
+  claim(runId: string, userId: string, allowed: IntelligenceRunStatus[], forceProcessing?: boolean): Promise<boolean>;
 }
 
 export class InMemoryIntelligenceRunStore implements IntelligenceRunStore {
@@ -40,6 +44,12 @@ export class InMemoryIntelligenceRunStore implements IntelligenceRunStore {
     const prior = this.rows.get(record.runId);
     if (!prior || prior.userId !== record.userId) throw new Error("intelligence_run_not_owned");
     this.rows.set(record.runId, structuredClone(record));
+  }
+  async claim(runId: string, userId: string, allowed: IntelligenceRunStatus[], forceProcessing = false) {
+    const row = this.rows.get(runId);
+    if (!row || row.userId !== userId || !allowed.includes(row.status) || (row.status === "processing" && row.stage !== "queued" && !forceProcessing)) return false;
+    this.rows.set(runId, { ...row, status: "processing", stage: "lead_hunter", updatedAt: new Date().toISOString() });
+    return true;
   }
 }
 
@@ -61,6 +71,9 @@ export class SupabaseIntelligenceRunStore implements IntelligenceRunStore {
       report: data.status === "completed" && Array.isArray(data.report_json?.processed_leads) ? data.report_json : null,
       failureCode: payload.failureCode ?? null,
       attempt: payload.attempt ?? 1,
+      deliveryLimit: payload.deliveryLimit ?? 2,
+      researchLimit: payload.researchLimit ?? 5,
+      researchAudit: payload.researchAudit ?? [],
       createdAt: payload.createdAt ?? data.created_at,
       updatedAt: payload.updatedAt ?? data.created_at,
     };
@@ -89,6 +102,14 @@ export class SupabaseIntelligenceRunStore implements IntelligenceRunStore {
       .eq("job_id", record.runId).eq("user_id", record.userId).select("job_id");
     if (error || !data?.length) throw new Error("save intelligence run failed or not owned");
   }
+
+  async claim(runId: string, userId: string, allowed: IntelligenceRunStatus[], forceProcessing = false): Promise<boolean> {
+    let query = this.db.from("snapshot_reports").update({ status: "processing" })
+      .eq("job_id", runId).eq("user_id", userId).in("status", allowed);
+    if (allowed.includes("processing") && !forceProcessing) query = query.contains("report_json", { _intelligence_run: { stage: "queued" } });
+    const { data, error } = await query.select("job_id");
+    return !error && Boolean(data?.length);
+  }
 }
 
 function metadata(record: IntelligenceRunRecord) {
@@ -96,6 +117,11 @@ function metadata(record: IntelligenceRunRecord) {
     kind: "productive_intelligence_spine_v1", contextRef: record.contextRef,
     clientId: record.clientId, stage: record.stage, leadHunterRunId: record.leadHunterRunId,
     failureCode: record.failureCode, attempt: record.attempt, createdAt: record.createdAt, updatedAt: record.updatedAt,
+    deliveryLimit: record.deliveryLimit, researchLimit: record.researchLimit,
+    researchAudit: record.researchAudit ?? [],
+    commercialOutcome: record.report
+      ? (record.report.processed_leads.length ? "completed_with_opportunities" : "completed_no_strong_opportunity")
+      : record.status === "failed" ? "insufficient_research" : null,
   };
 }
 

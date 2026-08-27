@@ -32,17 +32,20 @@ import type { AccountCommercialRole } from "./account-role";
 
 export const DISCOVERY_VERSION = "company-first-v1";
 
-export interface DiscoveryBudget { maxCompanies: number; queriesPerCompany: number; maxExtractions: number; }
+export interface DiscoveryBudget {
+  maxCompanies: number; queriesPerCompany: number; maxExtractions: number;
+  maxProviderCalls: number; maxProviderCallsPerCompany: number; maxRetries: number;
+}
 // Stage-1 org rejection + the 5-min wall-clock cap protect runtime, so we can
 // afford more per-company event queries to recover recall (the lean budgets
 // alone drove recall too low: only 1 opportunity across 3 ICPs in the
 // 2026-07-20 benchmark). More queries on ELIGIBLE companies = better event
 // coverage without spending on public/ineligible ones.
 export const TIER_BUDGET: Record<string, DiscoveryBudget> = {
-  preview: { maxCompanies: 15, queriesPerCompany: 1, maxExtractions: 18 },
-  brief: { maxCompanies: 24, queriesPerCompany: 4, maxExtractions: 40 },
-  intelligence: { maxCompanies: 36, queriesPerCompany: 4, maxExtractions: 64 },
-  premium: { maxCompanies: 48, queriesPerCompany: 5, maxExtractions: 96 },
+  preview: { maxCompanies: 15, queriesPerCompany: 1, maxExtractions: 12, maxProviderCalls: 20, maxProviderCallsPerCompany: 3, maxRetries: 0 },
+  brief: { maxCompanies: 24, queriesPerCompany: 2, maxExtractions: 24, maxProviderCalls: 40, maxProviderCallsPerCompany: 4, maxRetries: 1 },
+  intelligence: { maxCompanies: 36, queriesPerCompany: 3, maxExtractions: 40, maxProviderCalls: 64, maxProviderCallsPerCompany: 5, maxRetries: 1 },
+  premium: { maxCompanies: 48, queriesPerCompany: 3, maxExtractions: 60, maxProviderCalls: 90, maxProviderCallsPerCompany: 6, maxRetries: 1 },
 };
 // Wall-clock cap so a pilot never runs unbounded (network latency/retries).
 const MAX_DISCOVERY_MS = 5 * 60 * 1000;
@@ -61,6 +64,7 @@ export interface DiscoveryMetrics {
   dynamic_companies_with_verified_domain: number;
   universe_quality: UniverseQuality;
   company_signal_queries: number; urls: number; extractions: number; junk_urls_skipped: number;
+  provider_calls: number; provider_calls_by_provider: Record<string, number>; provider_cooldowns: Record<string, string>;
   candidates_with_valid_date: number; candidates_company_matched: number;
   opp_status_counts: Record<OppStatus, number>;
   materiality_counts: Record<string, number>;
@@ -311,6 +315,7 @@ export async function runCompanyFirstDiscovery(
     dynamic_companies_with_verified_domain: universe.companies.filter(c => c.universe_origin === "dynamic_enumeration" && c.confidence === "verified" && !!c.domain).length,
     universe_quality: evaluateUniverseQuality(universe.companies),
     company_signal_queries: 0, urls: 0, extractions: 0, junk_urls_skipped: 0,
+    provider_calls: 0, provider_calls_by_provider: {}, provider_cooldowns: {},
     candidates_with_valid_date: 0, candidates_company_matched: 0,
     opp_status_counts: { opportunity: 0, investigate: 0, monitor: 0, reject: 0 },
     materiality_counts: {}, signal_kind_counts: {}, role_counts: {}, direction_counts: {}, channel_evidence_grades: {}, org_rejected: {}, rubric_verdicts: {}, homonyms_rejected: 0,
@@ -351,6 +356,7 @@ export async function runCompanyFirstDiscovery(
 
   const provYield: Record<string, number> = {};
   const providerRunStatus: Record<string, string> = {};
+  const providerHardFailures: Record<string, number> = {};
   const daysOld = (iso: string | null) => { if (!iso) return null; const d = Math.round((Date.now() - new Date(iso).getTime()) / 86_400_000); return Number.isFinite(d) && d >= 0 ? d : null; };
 
   for (const company of universe.companies) {
@@ -367,6 +373,7 @@ export async function runCompanyFirstDiscovery(
     let identity: CorporateIdentity | null = null;
     let sellerDirectionObserved = false;
     const companyDomains = new Set<string>();  // independent source domains for corroboration
+    let companyProviderCalls = 0;
 
     for (let round = 0; round < 2 && shouldContinueCompanySearch(best, tier); round++) {
       const queries = buildCompanyQueries(company.name, company.domain, needs, spanish, budget.queriesPerCompany, round === 1, enableChannelAccess, company.account_role);
@@ -382,29 +389,40 @@ export async function runCompanyFirstDiscovery(
           query_type: "company_specific" as const,
           ...(queryKind === "event" ? { freshness_days: 180 } : {}),
         };
-        // Three complementary search sources. Tavily surfaces real editorial/news
-        // domains (Serper alone floods social media; Brave is unavailable without
-        // a key), so it materially lifts real-event recall.
-        const catchErr = (e: unknown) => ({ results: [] as never[], ok: false, error: e instanceof Error ? e.message : String(e) });
-        const [brave, serper, tavily] = await Promise.all([
-          braveProvider.search({ query: q, ...sOpts }).catch(catchErr),
-          serperProvider.search({ query: q, ...sOpts }).catch(catchErr),
-          tavilyProvider.search({ query: q, ...sOpts }).catch(catchErr),
-        ]);
-        // Per-run provider status: a provider that ever returns results is
-        // "available"; one that only ever errors is recorded with WHY (quota vs
-        // auth vs request), so coverage never conflates "down" with "no hits".
-        for (const [name, resp] of [["brave", brave], ["serper", serper], ["tavily", tavily]] as const) {
-          if (resp.results.length) { provYield[name] = (provYield[name] ?? 0) + resp.results.length; providerRunStatus[name] = "available"; }
-          else if ((resp as { ok?: boolean }).ok === false && providerRunStatus[name] !== "available") providerRunStatus[name] = classifyProviderError((resp as { error?: string }).error);
-          else if (!providerRunStatus[name]) providerRunStatus[name] = "healthy_no_results";
+        // Primary → assess yield → fallback. The old Promise.all fan-out charged
+        // all three providers for every query (≈262 calls in acceptance).
+        const providers = [["tavily", tavilyProvider], ["brave", braveProvider], ["serper", serperProvider]] as const;
+        const providerResults: typeof results = [];
+        for (const [name, provider] of providers) {
+          if (metrics.provider_calls >= budget.maxProviderCalls || companyProviderCalls >= budget.maxProviderCallsPerCompany) {
+            budgetExhausted = metrics.provider_calls >= budget.maxProviderCalls;
+            tax("provider_budget_exhausted");
+            break;
+          }
+          if (metrics.provider_cooldowns[name]) continue;
+          metrics.provider_calls++; companyProviderCalls++;
+          metrics.provider_calls_by_provider[name] = (metrics.provider_calls_by_provider[name] ?? 0) + 1;
+          const resp = await provider.search({ query: q, ...sOpts }).catch((e: unknown) => ({ results: [] as never[], ok: false, error: e instanceof Error ? e.message : String(e) }));
+          if (resp.results.length) {
+            provYield[name] = (provYield[name] ?? 0) + resp.results.length;
+            providerRunStatus[name] = "available";
+            providerResults.push(...resp.results.map(r => ({ ...r, snippet: r.snippet ?? null, query_kind: queryKind, query: q })));
+          } else if ((resp as { ok?: boolean }).ok === false) {
+            const status = classifyProviderError((resp as { error?: string }).error);
+            providerRunStatus[name] = status;
+            providerHardFailures[name] = (providerHardFailures[name] ?? 0) + 1;
+            if (providerHardFailures[name] > budget.maxRetries || /exhausted|invalid|rate_limited/.test(status)) metrics.provider_cooldowns[name] = status;
+          } else if (!providerRunStatus[name]) providerRunStatus[name] = "healthy_no_results";
+          // One provider with at least two company-associated results is enough;
+          // fallback is for weak yield, not mandatory breadth.
+          if (resp.results.filter(r => companyNameInText(company.name, `${r.title ?? ""} ${r.snippet ?? ""}`)).length >= 2) break;
         }
-        for (const r of [...brave.results, ...serper.results, ...tavily.results]) {
+        for (const r of providerResults) {
           const dedupeKey = companyUrlKey(company.name, r.canonical_url);
           if (seenCompanyUrl.has(dedupeKey)) continue;
           seenCompanyUrl.add(dedupeKey);
           if (isJunkUrl(r.canonical_url, spanish)) { metrics.junk_urls_skipped++; tax("prefilter_junk_or_foreign"); continue; }
-          results.push({ ...r, snippet: r.snippet ?? null, query_kind: queryKind, query: q }); metrics.urls++;
+          results.push(r); metrics.urls++;
           try { const resultDomain = new URL(r.canonical_url).host.replace(/^www\./, ""); touchedDomains.add(resultDomain); noteUrl(sourceLedger, resultDomain); } catch { /* ignore */ }
         }
       }

@@ -206,7 +206,7 @@ async function extractCompanyNames(pages: { title: string | null; snippet: strin
 export async function buildCompanyUniverse(
   icp: ICP, criteria: LeadSearchCriteria, needs: NeedsMap, opts: { maxCompanies?: number } = {},
 ): Promise<UniverseResult> {
-  const { braveProvider, serperProvider } = await import("@/lib/sources/access/providers");
+  const { braveProvider, serperProvider, tavilyProvider } = await import("@/lib/sources/access/providers");
   const spanish = criteria.output_language === "es" || criteria.target_market_region === "latin_america";
   const gl = criteria.target_market_region === "latin_america" ? "co" : "us";
   const queries = enumerationQueries(icp, criteria.target_geography[0] ?? "", needs, spanish);
@@ -216,12 +216,21 @@ export async function buildCompanyUniverse(
   // 1. Gather enumeration pages (no freshness limit — directories are evergreen).
   const seen = new Set<string>();
   const pages: { title: string | null; snippet: string | null; url: string }[] = [];
+  const providerCooldown = new Set<string>();
+  let providerCalls = 0;
+  const maxEnumerationProviderCalls = 8;
   for (const q of queries) {
-    const [brave, serper] = await Promise.all([
-      braveProvider.search({ query: q, language: spanish ? "es" : "en", region: gl, max_results: 8, query_type: "industry_discovery" }).catch(() => ({ results: [] })),
-      serperProvider.search({ query: q, language: spanish ? "es" : "en", region: gl, max_results: 8, query_type: "industry_discovery" }).catch(() => ({ results: [] })),
-    ]);
-    for (const r of [...brave.results, ...serper.results]) {
+    const gathered: Array<{ canonical_url: string; title: string | null; snippet: string | null }> = [];
+    for (const [name, provider] of [["brave", braveProvider], ["tavily", tavilyProvider], ["serper", serperProvider]] as const) {
+      if (providerCalls >= maxEnumerationProviderCalls || providerCooldown.has(name)) continue;
+      providerCalls++;
+      const response = await provider.search({ query: q, language: spanish ? "es" : "en", region: gl, max_results: 8, query_type: "industry_discovery" }).catch(() => ({ ok: false, results: [], error: "request_failed" }));
+      gathered.push(...response.results);
+      if ((response as { ok?: boolean }).ok === false) providerCooldown.add(name);
+      // Enumeration needs candidate breadth, not automatic provider consensus.
+      if (response.results.length >= 5) break;
+    }
+    for (const r of gathered) {
       if (seen.has(r.canonical_url)) continue;
       seen.add(r.canonical_url);
       pages.push({ title: r.title, snippet: r.snippet, url: r.canonical_url });

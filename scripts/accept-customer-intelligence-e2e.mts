@@ -19,6 +19,7 @@ const { createServerClient } = await import("@/lib/supabase/server");
 const { POST: interpret } = await import("@/app/api/interpret/route");
 const { POST: confirm } = await import("@/app/api/customer/contexts/confirm/route");
 const { POST: startRun } = await import("@/app/api/customer/intelligence-runs/route");
+const { POST: processRun } = await import("@/app/api/internal/intelligence-runs/[runId]/process/route");
 const { GET: loadRun } = await import("@/app/api/customer/intelligence-runs/[runId]/route");
 const { POST: monitor } = await import("@/app/api/customer/monitor/route");
 const { verifyConfirmationToken, issueConfirmationToken } = await import("@/lib/interpretation/confirmation-token");
@@ -32,7 +33,7 @@ const emailA = `ll-e2e-a-${stamp}@example.com`;
 const emailB = `ll-e2e-b-${stamp}@example.com`;
 const password = `E2e-${stamp}-Aa!`;
 const contextId = `e2e_context_${stamp}`;
-const contextText = "We sell warehouse automation, WMS integration, and inventory orchestration to mid-market and enterprise manufacturers and distributors in the United States. We want companies operating their own warehouses or distribution centers that recently opened, expanded, automated, or invested in logistics infrastructure. Exclude government agencies, publishers, consultants, pure software companies, and businesses whose warehouse operation is fully outsourced.";
+const contextText = "Vendemos automatización de bodegas, integración WMS y orquestación de inventarios a fabricantes y distribuidores medianos y grandes en Colombia. Buscamos empresas que operen directamente centros de distribución, bodegas o plantas y que hayan abierto, ampliado, automatizado o invertido recientemente en infraestructura logística. Excluir entidades públicas, medios, consultoras, empresas de software puro, retailers sin operación logística propia y operaciones totalmente tercerizadas.";
 const startedAt = Date.now();
 const timings: Record<string, number> = {};
 const checks: Array<{ name: string; ok: boolean; detail?: string }> = [];
@@ -60,7 +61,7 @@ try {
   check("real authenticated owners created", Boolean(userA && userB));
 
   let t = Date.now();
-  const interpreted = await interpret(req("/api/interpret", tokenA, { input: contextText, locale: "en" }));
+  const interpreted = await interpret(req("/api/interpret", tokenA, { input: contextText, locale: "es" }));
   timings.stage_a_ms = Date.now() - t;
   const interpretationBody = await interpreted.json() as { interpretation?: { status?: string }; confirmation_token?: string };
   check("Stage A reachable and confirmable", interpreted.status === 200 && interpretationBody.interpretation?.status === "ready_for_confirmation" && Boolean(interpretationBody.confirmation_token), `HTTP ${interpreted.status}`);
@@ -84,12 +85,21 @@ try {
     context_id: contextId, version: confirmedBody.context.version, plan: "sample",
     idempotency_key: `accept_${stamp}`, delivery_limit: 2,
   }));
-  timings.intelligence_run_ms = Date.now() - t;
+  timings.start_request_ms = Date.now() - t;
   const startedBody = await started.json() as { run_id?: string; status?: string; lead_hunter_run_id?: string; client_key?: string; error?: string };
   runId = startedBody.run_id ?? ""; leadHunterRunId = startedBody.lead_hunter_run_id ?? "";
-  check("productive Intelligence run completed", [200, 201].includes(started.status) && startedBody.status === "completed", startedBody.error ?? `HTTP ${started.status}`);
-  check("Lead Hunter run reference persisted", Boolean(leadHunterRunId));
+  check("productive Intelligence run accepted before Research", [200, 202].includes(started.status) && ["queued", "processing"].includes(startedBody.status ?? ""), startedBody.error ?? `HTTP ${started.status}`);
   if (!runId) throw new Error(`intelligence_start_failed:${startedBody.error ?? started.status}`);
+
+  const internalSecret = process.env.INTERNAL_RUN_SECRET || `acceptance-${stamp}-internal-only`;
+  process.env.INTERNAL_RUN_SECRET = internalSecret;
+  t = Date.now();
+  const processed = await processRun(new NextRequest(`http://localhost/api/internal/intelligence-runs/${runId}/process`, {
+    method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${internalSecret}` }, body: JSON.stringify({ user_id: userA }),
+  }), { params: { runId } });
+  timings.background_completion_ms = Date.now() - t;
+  const processBody = await processed.json() as { status?: string; error?: string };
+  check("bounded background processor completed durably", processBody.status === "completed", processBody.error ?? `HTTP ${processed.status}`);
 
   const loadedA = await loadRun(req(`/api/customer/intelligence-runs/${runId}`, tokenA), { params: { runId } });
   const loadedBody = await loadedA.json() as { status?: string; report?: { processed_leads?: unknown[]; canonical_cases?: unknown[] } };
@@ -97,6 +107,9 @@ try {
   const loadedB = await loadRun(req(`/api/customer/intelligence-runs/${runId}`, tokenB), { params: { runId } });
   check("other tenant cannot load result", loadedB.status === 404);
 
+  const runRow = (await db.from("snapshot_reports").select("report_json").eq("job_id", runId).maybeSingle()).data;
+  leadHunterRunId = runRow?.report_json?._intelligence_run?.leadHunterRunId ?? "";
+  check("Lead Hunter run reference persisted", Boolean(leadHunterRunId));
   const universeRow = leadHunterRunId ? (await db.from("snapshot_reports").select("report_json,user_id").eq("job_id", leadHunterRunId).maybeSingle()).data : null;
   const universe = universeRow?.report_json?._lead_hunter_universe?.universe;
   const companies = Array.isArray(universe?.candidates) ? universe.candidates : [];
@@ -146,6 +159,7 @@ try {
     synthetic_context: contextText, run_id: runId, lead_hunter_run_id: leadHunterRunId,
     candidate_universe: { total: companies.length, companies: companies.map((c: any) => ({ name: c.identity?.canonicalName, domain: c.identity?.domain, status: c.status, confidence: c.identity?.confidence, country: c.identity?.country })) },
     delivered_accounts: delivered,
+    research_audit: runRow?.report_json?._intelligence_run?.researchAudit ?? [],
     monitor_run_id: monitorRunId || null, timings: { ...timings, total_ms: Date.now() - startedAt },
     usage_delta: usageDelta, checks,
   };

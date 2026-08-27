@@ -24,6 +24,7 @@ import {
   type ConfirmedContextStore,
   type ContextSelector,
 } from "@/lib/interpretation/confirmed-context-store";
+import type { ResearchReadinessAssessment } from "./research-readiness";
 
 // ─── Candidate model ──────────────────────────────────────────────────────────
 
@@ -64,6 +65,7 @@ export interface CandidateAccount {
   opportunityConditionIds: string[];
   watchSignalFamilies: SignalFamily[];
   openQualificationQuestions: string[];
+  researchReadiness?: ResearchReadinessAssessment;
 }
 
 // ─── Discovery plan ───────────────────────────────────────────────────────────
@@ -366,6 +368,7 @@ export interface HuntOptions {
   now?: () => Date;
   opportunityConditionIds?: string[];
   runScope?: string;
+  budget?: DiscoveryBudget;
 }
 
 function safeRunScope(value: string | undefined): string {
@@ -484,7 +487,7 @@ export async function huntFromConfirmedContext(
   }
   if (!record) return { ok: false, reason: "context_not_found" };
 
-  const plan = planDiscovery(record.context);
+  const plan = planDiscovery(record.context, opts.budget ?? DEFAULT_DISCOVERY_BUDGET);
   const conditionIds = record.context.opportunityConditions.map((c) => c.id);
   const universe = await hunt(plan, runner, { ...opts, opportunityConditionIds: conditionIds });
   return { ok: true, universe };

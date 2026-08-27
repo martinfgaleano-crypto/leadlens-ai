@@ -3,9 +3,9 @@ import { z } from "zod";
 import { createServerClient } from "@/lib/supabase/server";
 import { checkRateLimit } from "@/lib/security/rate-limit";
 import { SupabaseConfirmedContextStore } from "@/lib/interpretation/confirmed-context-store";
-import { SupabaseLeadHunterRunStore } from "@/lib/lead-hunter/run-store";
 import { SupabaseIntelligenceRunStore } from "@/lib/intelligence/productive-spine-store";
-import { startIntelligenceRun } from "@/lib/intelligence/productive-spine";
+import { enqueueIntelligenceRun } from "@/lib/intelligence/productive-spine";
+import { dispatchIntelligenceRun } from "@/lib/intelligence/intelligence-run-dispatch";
 
 export const maxDuration = 300;
 
@@ -19,7 +19,9 @@ const schema = z.object({
 }).strict();
 
 const PLAN_DELIVERY = { sample: 2, starter: 6, standard: 12, pro: 18 } as const;
-const PLAN_RESEARCH = { sample: 8, starter: 18, standard: 30, pro: 40 } as const;
+// Research is the expensive phase. Delivery entitlement never authorizes an
+// unbounded research breadth; larger plans get coverage, not provider fan-out.
+const PLAN_RESEARCH = { sample: 3, starter: 5, standard: 8, pro: 10 } as const;
 
 export async function POST(req: NextRequest) {
   const db = createServerClient();
@@ -34,7 +36,7 @@ export async function POST(req: NextRequest) {
   if (!parsed.success) return NextResponse.json({ error: "Invalid run request." }, { status: 400 });
   const requested = parsed.data.delivery_limit ?? PLAN_DELIVERY[parsed.data.plan];
   const deliveryLimit = Math.min(requested, PLAN_DELIVERY[parsed.data.plan]);
-  const result = await startIntelligenceRun({
+  const result = await enqueueIntelligenceRun({
     userId: user.id,
     context: { contextId: parsed.data.context_id, version: parsed.data.version },
     clientId: parsed.data.client_id,
@@ -44,25 +46,16 @@ export async function POST(req: NextRequest) {
     researchLimit: PLAN_RESEARCH[parsed.data.plan],
   }, {
     contextStore: new SupabaseConfirmedContextStore(db as never),
-    leadHunterStore: new SupabaseLeadHunterRunStore(db as never),
     runStore: new SupabaseIntelligenceRunStore(db),
-    discoveryRunner: (await import("@/lib/lead-hunter/discovery-runner")).defaultDiscoveryRunner,
-    pipeline: (await import("@/lib/pipeline")).runLeadLensPipeline,
   });
   if (!result.ok) return NextResponse.json({ error: result.reason, run_id: result.runId ?? null }, { status: 422 });
-  if (result.run.status === "completed" && result.run.report) {
-    const { initializeProductiveAccountMemory } = await import("@/lib/intelligence/initialize-account-memory");
-    await initializeProductiveAccountMemory(db, {
-      report: result.run.report,
-      runId: result.run.runId,
-      userId: user.id,
-      contextRef: result.run.contextRef,
-    }).catch((memoryError) => console.error("[productive-memory]", memoryError instanceof Error ? memoryError.message : "unavailable"));
+  if ((result.run.status === "processing" && result.run.stage === "queued") || result.run.status === "failed") {
+    dispatchIntelligenceRun(req.nextUrl.origin, result.run.runId, user.id);
   }
   return NextResponse.json({
     run_id: result.run.runId, status: result.run.status, stage: result.run.stage,
     context: result.run.contextRef, lead_hunter_run_id: result.run.leadHunterRunId,
     report_url: `/results/${result.run.runId}`, client_key: result.run.runId,
     reused: result.reused,
-  }, { status: result.reused ? 200 : 201 });
+  }, { status: result.reused ? 200 : 202 });
 }

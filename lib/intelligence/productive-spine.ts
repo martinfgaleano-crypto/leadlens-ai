@@ -7,6 +7,7 @@ import type { LeadHunterRunStore } from "@/lib/lead-hunter/run-store";
 import { loadLeadHunterUniverse, runAndPersistLeadHunter, toResearchCandidates } from "@/lib/lead-hunter/hunt-and-persist";
 import { synthesizeCase } from "@/lib/monitor/canonical-case";
 import type { IntelligenceRunRecord, IntelligenceRunStore } from "./productive-spine-store";
+import type { DiscoveryBudget } from "@/lib/lead-hunter/candidate-universe";
 
 export interface StartIntelligenceRunInput {
   userId: string;
@@ -31,6 +32,49 @@ export type StartIntelligenceRunResult =
   | { ok: true; run: IntelligenceRunRecord; reused: boolean }
   | { ok: false; reason: string; runId?: string };
 
+export async function enqueueIntelligenceRun(
+  input: StartIntelligenceRunInput,
+  deps: Pick<ProductiveSpineDeps, "contextStore" | "runStore" | "now">,
+): Promise<StartIntelligenceRunResult> {
+  const runId = intelligenceRunId(input);
+  const existing = await deps.runStore.load(runId, input.userId);
+  if (existing) return { ok: true, run: existing, reused: true };
+  const built = await buildDiscoveryJobInput(deps.contextStore, input.userId, input.context, { plan: input.plan });
+  if (!built.ok) return { ok: false, reason: built.reason, runId };
+  const now = (deps.now ?? (() => new Date()))().toISOString();
+  const run: IntelligenceRunRecord = {
+    runId, userId: input.userId, contextRef: built.input.contextRef, clientId: input.clientId ?? null,
+    plan: input.plan, status: "processing", stage: "queued", leadHunterRunId: null,
+    report: null, failureCode: null, attempt: 1, deliveryLimit: input.deliveryLimit,
+    researchLimit: input.researchLimit, createdAt: now, updatedAt: now,
+  };
+  const created = await deps.runStore.create(run);
+  if (!created.created) {
+    const raced = await deps.runStore.load(runId, input.userId);
+    if (raced) return { ok: true, run: raced, reused: true };
+    return { ok: false, reason: "run_creation_race", runId };
+  }
+  return { ok: true, run, reused: false };
+}
+
+export async function executeIntelligenceRun(
+  runId: string,
+  userId: string,
+  deps: ProductiveSpineDeps,
+): Promise<StartIntelligenceRunResult> {
+  const record = await deps.runStore.load(runId, userId);
+  if (!record) return { ok: false, reason: "run_not_found", runId };
+  if (record.status === "completed") return { ok: true, run: record, reused: true };
+  const stale = record.status === "processing" && Date.now() - new Date(record.updatedAt).getTime() > 15 * 60_000;
+  const claimed = await deps.runStore.claim(runId, userId, record.status === "failed" ? ["failed"] : ["processing"], stale);
+  if (!claimed) return { ok: true, run: record, reused: true };
+  const input: StartIntelligenceRunInput = {
+    userId, context: record.contextRef, plan: record.plan, clientId: record.clientId ?? undefined,
+    deliveryLimit: record.deliveryLimit, researchLimit: record.researchLimit,
+  };
+  return runIntelligenceExecution(input, deps, record, runId);
+}
+
 export function intelligenceRunId(input: Pick<StartIntelligenceRunInput, "userId" | "context" | "idempotencyKey">): string {
   const stable = `${input.userId}|${input.context.contextId}|${input.context.version ?? "latest"}|${input.idempotencyKey ?? "initial"}`;
   return `intel_${createHash("sha256").update(stable).digest("hex").slice(0, 32)}`;
@@ -43,30 +87,27 @@ export async function startIntelligenceRun(
   input: StartIntelligenceRunInput,
   deps: ProductiveSpineDeps,
 ): Promise<StartIntelligenceRunResult> {
-  const runId = intelligenceRunId(input);
-  const existing = await deps.runStore.load(runId, input.userId);
-  if (existing?.status === "completed") return { ok: true, run: existing, reused: true };
+  const queued = await enqueueIntelligenceRun(input, deps);
+  if (!queued.ok || queued.run.status === "completed") return queued;
+  return executeIntelligenceRun(queued.run.runId, input.userId, deps);
+}
+
+async function runIntelligenceExecution(
+  input: StartIntelligenceRunInput,
+  deps: ProductiveSpineDeps,
+  initial: IntelligenceRunRecord,
+  runId: string,
+): Promise<StartIntelligenceRunResult> {
+  const existing = initial;
 
   const built = await buildDiscoveryJobInput(deps.contextStore, input.userId, input.context, { plan: input.plan });
   if (!built.ok) return { ok: false, reason: built.reason, runId };
   // Exact version is resolved once and frozen. A later V2 cannot alter this run.
   const contextRef = built.input.contextRef;
   const now = (deps.now ?? (() => new Date()))();
-  let run: IntelligenceRunRecord = existing ?? {
-    runId, userId: input.userId, contextRef, clientId: input.clientId ?? null,
-    plan: input.plan, status: "processing", stage: "lead_hunter", leadHunterRunId: null,
-    report: null, failureCode: null, attempt: 1, createdAt: now.toISOString(), updatedAt: now.toISOString(),
-  };
-  if (!existing) {
-    const created = await deps.runStore.create(run);
-    if (!created.created) {
-      const raced = await deps.runStore.load(runId, input.userId);
-      if (raced?.status === "completed") return { ok: true, run: raced, reused: true };
-      if (raced) run = raced;
-    }
-  }
+  let run: IntelligenceRunRecord = existing;
 
-  if (existing?.status === "failed") run = { ...run, attempt: run.attempt + 1 };
+  if (existing.status === "failed") run = { ...run, attempt: run.attempt + 1 };
 
   const saveStage = async (stage: IntelligenceRunRecord["stage"], patch: Partial<IntelligenceRunRecord> = {}) => {
     run = { ...run, ...patch, stage, status: "processing", failureCode: null, updatedAt: (deps.now ?? (() => new Date()))().toISOString() };
@@ -82,7 +123,7 @@ export async function startIntelligenceRun(
     if (!persistedUniverse) {
       const hunted = await runAndPersistLeadHunter(
         deps.contextStore, deps.leadHunterStore, input.userId, contextRef,
-        deps.discoveryRunner, { now: () => new Date(run.createdAt), runScope: `${runId}_a${run.attempt}` },
+        deps.discoveryRunner, { now: () => new Date(run.createdAt), runScope: `${runId}_a${run.attempt}`, budget: runDiscoveryBudget(input.plan) },
       );
       if (!hunted.ok || !hunted.universe.ok) throw new Error(hunted.ok ? (hunted.universe.failureReason ?? "lead_hunter_failed") : hunted.reason);
       leadHunterRunId = hunted.runId;
@@ -108,6 +149,7 @@ export async function startIntelligenceRun(
       candidatesOverride: candidates,
       researchCandidateLimit: researchLimit,
       deliveryLimit: input.deliveryLimit,
+      deliveryQualityFloor: "warm",
       decisionOnly: true,
     });
 
@@ -116,10 +158,29 @@ export async function startIntelligenceRun(
       const item = canonicalCaseForLead(lead);
       return item ? [item] : [];
     });
+    run.researchAudit = report.processed_leads.map(lead => {
+      const c = report.canonical_cases?.find(item => item.lead_id === lead.id);
+      return { company: lead.candidate.company, category: lead.qualification.category, fitScore: lead.qualification.fit_score, signalDate: lead.candidate.signal_date ?? null, sourceUrl: lead.candidate.source_url ?? null, canonicalDecision: c?.decision ?? "hold", reasons: c?.reasons ?? ["case_missing"] };
+    });
+    // WARM is not enough for customer delivery. The canonical Case owns the
+    // commercial truth: Monitor/Hold research remains counted but is not
+    // presented as a strong opportunity result.
+    const deliverableIds = new Set(report.canonical_cases.filter(c => c.decision === "prioritize" || c.decision === "validate").map(c => c.lead_id));
+    report.canonical_cases = report.canonical_cases.filter(c => deliverableIds.has(c.lead_id));
+    report.processed_leads = report.processed_leads.filter(lead => deliverableIds.has(lead.id));
+    report.ranked_opportunities = (report.ranked_opportunities ?? []).filter(item => deliverableIds.has(item.lead_id));
+    report.total_leads = report.processed_leads.length;
+    report.hot_count = report.processed_leads.filter(lead => lead.qualification.category === "HOT").length;
+    report.warm_count = report.processed_leads.filter(lead => lead.qualification.category === "WARM").length;
+    report.cold_count = report.processed_leads.filter(lead => lead.qualification.category === "COLD").length;
+    report.discard_count = report.processed_leads.filter(lead => lead.qualification.category === "DISCARD").length;
+    report.avg_score = report.processed_leads.length ? Math.round(report.processed_leads.reduce((sum, lead) => sum + lead.qualification.fit_score, 0) / report.processed_leads.length * 10) / 10 : 0;
+    if (report.report_intelligence) report.report_intelligence.companies_selected = report.processed_leads.length;
     (report as LeadLensReport & { _intelligence_run?: unknown })._intelligence_run = {
       kind: "productive_intelligence_spine_v1", contextRef, leadHunterRunId,
       stage: "report", researched: researchLimit, delivered: report.processed_leads.length,
       discoveryProvenanceIsEvidence: false, firstReview: true,
+      commercialOutcome: report.processed_leads.length > 0 ? "completed_with_opportunities" : "completed_no_strong_opportunity",
     };
 
     run = { ...run, status: "completed", stage: "report", report, failureCode: null, updatedAt: (deps.now ?? (() => new Date()))().toISOString() };
@@ -131,6 +192,13 @@ export async function startIntelligenceRun(
     await deps.runStore.save(run).catch(() => {});
     return { ok: false, reason: code, runId };
   }
+}
+
+function runDiscoveryBudget(plan: PlanType): DiscoveryBudget {
+  if (plan === "sample") return { maxRoutes: 4, maxProviderCalls: 20, maxCandidatesPerRoute: 15, maxExtractions: 12, maxRetries: 0, timeoutMs: 120_000 };
+  if (plan === "starter") return { maxRoutes: 5, maxProviderCalls: 40, maxCandidatesPerRoute: 24, maxExtractions: 24, maxRetries: 1, timeoutMs: 180_000 };
+  if (plan === "standard") return { maxRoutes: 6, maxProviderCalls: 64, maxCandidatesPerRoute: 36, maxExtractions: 40, maxRetries: 1, timeoutMs: 240_000 };
+  return { maxRoutes: 6, maxProviderCalls: 90, maxCandidatesPerRoute: 48, maxExtractions: 60, maxRetries: 1, timeoutMs: 270_000 };
 }
 
 function strength(score: number): "Strong" | "Moderate" | "Limited" {

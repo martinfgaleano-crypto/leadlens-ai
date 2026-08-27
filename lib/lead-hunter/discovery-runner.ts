@@ -51,7 +51,7 @@ export const defaultDiscoveryRunner: DiscoveryRunner = async (plan): Promise<Dis
   const limit = Math.max(1, plan.budget.maxCandidatesPerRoute);
   // Tier is derived from the technical budget (NOT a commercial plan): a small
   // candidate budget runs the cheaper/faster discovery tier.
-  const tier = limit <= 3 ? "preview" : limit <= 6 ? "brief" : "intelligence";
+  const tier = plan.budget.maxProviderCalls <= 24 ? "preview" : plan.budget.maxProviderCalls <= 48 ? "brief" : "intelligence";
   const { metrics } = await runCompanyFirstDiscovery(icp, criteria, tier, limit, { costCapUsd: 0.5 });
 
   const orgs: RawDiscoveredOrg[] = (metrics.universe_accounts ?? []).map((a) => ({

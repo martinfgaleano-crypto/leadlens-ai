@@ -417,8 +417,15 @@ async function buildClaudeEnrichment(
   let webContext = "";
   if (process.env.TAVILY_API_KEY && candidate.company) {
     try {
-      const { searchTavilyForLead } = await import("@/lib/providers/tavily-lead-provider");
-      webContext = await searchTavilyForLead(candidate.company, candidate.industry);
+      const { researchTavilyForLead } = await import("@/lib/providers/tavily-lead-provider");
+      const researched = await researchTavilyForLead(candidate.company, candidate.industry, criteria.offer_summary, criteria.buying_signals);
+      webContext = researched.context;
+      if (researched.sourceUrl) candidate.source_url = researched.sourceUrl;
+      if (researched.publishedDate) {
+        const parsedDate = Date.parse(researched.publishedDate);
+        if (Number.isFinite(parsedDate)) candidate.signal_date = new Date(parsedDate).toISOString().slice(0, 10);
+      }
+      if (webContext) candidate.raw_context = [candidate.raw_context, webContext].filter(Boolean).join(" | ").slice(0, 4000);
     } catch {
       // Tavily failure is non-blocking
     }

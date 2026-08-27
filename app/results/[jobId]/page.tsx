@@ -132,13 +132,13 @@ export default function ResultsPage() {
     return map;
   }, [report]);
 
-  if (status === "pending" || status === "processing") {
+  if (status === "pending" || status === "queued" || status === "processing") {
     return (
       <main className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-6 animate-pulse">⚙️</div>
-          <h1 className="text-2xl font-bold mb-3">Building your opportunity report…</h1>
-          <p className="text-gray-500 mb-2">The AI agents are researching accounts and gathering evidence.</p>
+          <h1 className="text-2xl font-bold mb-3">{status === "queued" ? "Your intelligence run is queued" : "Building your opportunity report…"}</h1>
+          <p className="text-gray-500 mb-2">{status === "queued" ? "The run is safely saved and will begin without keeping this page open." : "LeadLens is researching accounts and verifying evidence."}</p>
           <p className="text-gray-400 text-sm">This takes 15–45 minutes. You can close this page and come back.</p>
           <p className="text-gray-300 text-xs mt-6">Report ID: {jobId}</p>
         </div>

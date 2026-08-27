@@ -18,6 +18,7 @@ interface TavilySearchResult {
   url: string;
   content: string;
   score: number;
+  published_date?: string;
 }
 
 interface TavilyResponse {
@@ -61,28 +62,38 @@ export const tavilyLeadProvider: LeadProvider = {
 
 // ─── Tavily web search helper (also used by research-agent) ──────────────────
 
-export async function searchTavilyForLead(company: string, title?: string): Promise<string> {
+export async function researchTavilyForLead(company: string, industry?: string, offer?: string, signals: string[] = []): Promise<{ context: string; sourceUrl: string | null; publishedDate: string | null }> {
   const apiKey = process.env.TAVILY_API_KEY;
-  if (!apiKey) return "";
+  if (!apiKey) return { context: "", sourceUrl: null, publishedDate: null };
 
-  const query = title
-    ? `${company} ${title} B2B SaaS sales pipeline 2024`
-    : `${company} company B2B growth news 2024`;
+  const trigger = signals.slice(0, 3).join(" OR ") || "opened expanded invested acquired implemented";
+  const query = `"${company}" ${industry ?? "company"} (${trigger}) ${offer?.slice(0, 80) ?? "operations"} 2025 2026`;
 
   try {
-    const results = await searchTavily(apiKey, query);
-    return results
+    const raw = await searchTavily(apiKey, query, { news: true });
+    const results = filterAccountResearchResults(company, raw);
+    return { context: results
       .slice(0, 3)
-      .map(r => r.content.slice(0, 200))
-      .join(" | ");
+      .map(r => `${r.published_date ? `[${r.published_date}] ` : ""}${r.content.slice(0, 260)} (source: ${r.url})`)
+      .join(" | "), sourceUrl: results[0]?.url ?? null, publishedDate: results[0]?.published_date ?? null };
   } catch {
-    return "";
+    return { context: "", sourceUrl: null, publishedDate: null };
   }
+}
+
+export function filterAccountResearchResults(company: string, results: TavilySearchResult[]): TavilySearchResult[] {
+  const token = company.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(/[^a-z0-9]+/).find(t => t.length >= 5) ?? company.toLowerCase();
+  const blocked = /(instagram|facebook|linkedin|youtube|tiktok|wikipedia|crunchbase)\.com/i;
+  return results.filter(r => !blocked.test(r.url) && `${r.title} ${r.content}`.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(token));
+}
+
+export async function searchTavilyForLead(company: string, title?: string): Promise<string> {
+  return (await researchTavilyForLead(company, title)).context;
 }
 
 // ─── Internal helpers ─────────────────────────────────────────────────────────
 
-async function searchTavily(apiKey: string, query: string): Promise<TavilySearchResult[]> {
+async function searchTavily(apiKey: string, query: string, opts: { news?: boolean } = {}): Promise<TavilySearchResult[]> {
   const res = await fetch(TAVILY_API_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -91,7 +102,7 @@ async function searchTavily(apiKey: string, query: string): Promise<TavilySearch
       query,
       search_depth: "basic",
       max_results: 10,
-      include_domains: ["linkedin.com", "crunchbase.com", "g2.com", "producthunt.com"],
+      ...(opts.news ? { topic: "news", days: 730 } : {}),
     }),
   });
 

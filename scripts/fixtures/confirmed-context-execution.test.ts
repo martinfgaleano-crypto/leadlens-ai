@@ -168,12 +168,13 @@ t("§21 signal hypotheses arrive as buying_signals config (canonical tokens), no
 // ─── ROUTE boundary (source-level): server resolves owner, browser can't inject ─
 const routeSrc = readFileSync("app/api/customer/discovery/route.ts", "utf8");
 const productiveRouteSrc = readFileSync("app/api/customer/intelligence-runs/route.ts", "utf8");
+const productiveWorkerSrc = readFileSync("app/api/internal/intelligence-runs/[runId]/process/route.ts", "utf8");
 t("route: authenticates + resolves owner server-side (auth.getUser → user.id), body only names context_id/version",
   /auth\.getUser\(auth\)/.test(productiveRouteSrc) && /user\.id/.test(productiveRouteSrc) && /context_id:/.test(productiveRouteSrc) && !/z\.object\([^)]*payload/.test(productiveRouteSrc));
 t("route: browser cannot supply a trusted context object (no full-context field in schema)",
   !/companyProfile|opportunityConditions|objective:\s*z\./.test(routeSrc));
 t("route: legacy discovery aliases the durable productive spine + real pipeline, fails safe on store/lookup",
-  /startProductiveIntelligenceRun/.test(routeSrc) && /startIntelligenceRun/.test(productiveRouteSrc) && /SupabaseConfirmedContextStore/.test(productiveRouteSrc) && /503/.test(productiveRouteSrc));
+  /startProductiveIntelligenceRun/.test(routeSrc) && /enqueueIntelligenceRun/.test(productiveRouteSrc) && /executeIntelligenceRun/.test(productiveWorkerSrc) && /runLeadLensPipeline/.test(productiveWorkerSrc) && /SupabaseConfirmedContextStore/.test(productiveRouteSrc) && /503/.test(productiveRouteSrc));
 
 // ─── isolation: execution seam imports no provider/LLM/network ────────────────
 t("isolation: execution seam imports no provider/LLM/network", (() => {

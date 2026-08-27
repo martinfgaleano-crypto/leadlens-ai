@@ -97,7 +97,7 @@ export function synthesizeCase(input: CanonicalCaseInput): CanonicalCase {
 
   const dec = caseDecision(artifactReject ? "monitor" : verdict.status, input.openDecisionCritical, input.hasMaterialCounter);
   let decision = dec.decision;
-  const reasons: string[] = [...dec.reasons, ...verdict.soft_flags];
+  const reasons: string[] = [...dec.reasons, ...verdict.hard_blockers.map(b => `hard_blocker_${b}`), ...verdict.soft_flags];
   if (artifactReject) { decisionSource = "fallback_conservative"; reasons.push("fallback_input_artifact"); }
 
   const remainingDecisionCritical = input.openDecisionCritical;

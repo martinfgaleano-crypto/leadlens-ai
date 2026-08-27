@@ -757,6 +757,9 @@ export interface PipelineInput {
   researchCandidateLimit?: number;
   /** Customer-visible maximum, applied only after Research and ranking. */
   deliveryLimit?: number;
+  /** Productive Intelligence may refuse to present COLD/DISCARD research as a
+   * useful opportunity result. Research remains visible in run metadata. */
+  deliveryQualityFloor?: "warm";
 }
 
 // ─── Provider result ──────────────────────────────────────────────────────────

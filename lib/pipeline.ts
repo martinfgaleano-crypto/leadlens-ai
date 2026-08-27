@@ -190,7 +190,7 @@ export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLen
 
   // Selection is downstream from bounded Research: commercial delivery limits
   // never silently reduce how many plausible accounts receive intelligence work.
-  report = limitReportDelivery(report, input.deliveryLimit ?? targetCount, candidates.length, researchCount);
+  report = limitReportDelivery(report, input.deliveryLimit ?? targetCount, candidates.length, researchCount, input.deliveryQualityFloor);
   const deliveredIds = new Set(report.processed_leads.map((lead) => lead.id));
   const deliveredLeads = leadsWithQuality.filter((lead) => deliveredIds.has(lead.id));
 
@@ -230,13 +230,14 @@ export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLen
   return report;
 }
 
-function limitReportDelivery(report: LeadLensReport, limit: number, considered: number, researched: number): LeadLensReport {
+function limitReportDelivery(report: LeadLensReport, limit: number, considered: number, researched: number, floor?: "warm"): LeadLensReport {
   const bounded = Math.max(0, Math.floor(limit));
-  const ranked = [...(report.ranked_opportunities ?? [])].sort((a, b) => a.rank - b.rank).slice(0, bounded);
+  const eligibleIds = new Set(report.processed_leads.filter(lead => floor !== "warm" || lead.qualification.category === "HOT" || lead.qualification.category === "WARM").map(lead => lead.id));
+  const ranked = [...(report.ranked_opportunities ?? [])].filter(item => eligibleIds.has(item.lead_id)).sort((a, b) => a.rank - b.rank).slice(0, bounded);
   const selected = new Set(ranked.map((item) => item.lead_id));
   const leads = report.ranked_opportunities
     ? report.processed_leads.filter((lead) => selected.has(lead.id))
-    : report.processed_leads.slice(0, bounded);
+    : report.processed_leads.filter(lead => eligibleIds.has(lead.id)).slice(0, bounded);
   const counts = { HOT: 0, WARM: 0, COLD: 0, DISCARD: 0 };
   for (const lead of leads) counts[lead.qualification.category]++;
   const avg = leads.length ? leads.reduce((sum, lead) => sum + lead.qualification.fit_score, 0) / leads.length : 0;
