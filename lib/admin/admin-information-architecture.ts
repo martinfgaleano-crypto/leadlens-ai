@@ -10,7 +10,7 @@ export const ADMIN_NAVIGATION: AdminNavSection[] = [
     { href: "/admin/beta-readiness", label: "Launch Readiness", disposition: "primary", purpose: "Automatic evidence-based launch gates" },
     { href: "/admin/intelligence", label: "Intelligence OS", disposition: "primary", purpose: "Capability maturity and evidence" },
     { href: "/admin/operations/providers", label: "Provider Health", disposition: "primary", purpose: "Provider availability, limits and cost" },
-    { href: "/admin/system-health", label: "Runtime Health", disposition: "secondary", purpose: "Infrastructure and queue diagnostics" },
+    { href: "/admin/system-health", label: "Runtime & Exceptions", disposition: "primary", purpose: "Canonical Intelligence lifecycle, latency and failures" },
   ] },
   { id: "execute", label: "Execute", items: [
     { href: "/admin/pilot", label: "Pilot Console", disposition: "primary", purpose: "Create and run customer pilots" },
@@ -23,7 +23,6 @@ export const ADMIN_NAVIGATION: AdminNavSection[] = [
     { href: "/admin/lead-hunter", label: "Lead Hunter", disposition: "primary", purpose: "Candidate universe and review" },
     { href: "/admin/vault-foundation", label: "Vault Foundation", disposition: "primary", purpose: "Verified companies, signals and sources" },
     { href: "/admin/vault", label: "Vault", disposition: "secondary", purpose: "Reusable account evidence" },
-    { href: "/admin/companies", label: "Companies", disposition: "secondary", purpose: "Company records" },
     { href: "/admin/intelligence/sources", label: "Source Intelligence", disposition: "primary", purpose: "Source access and utility" },
     { href: "/admin/intelligence/review", label: "Human Review", disposition: "primary", purpose: "Validation queue" },
   ] },
@@ -46,4 +45,5 @@ export const ADMIN_DEPRECATED_NAVIGATION: AdminNavItem[] = [
   { href: "/admin/sources", label: "Sources", disposition: "deprecated_navigation", purpose: "Consolidated into Source Intelligence" },
   { href: "/admin/source-config", label: "Source Config", disposition: "deprecated_navigation", purpose: "Contextual from Source Intelligence" },
   { href: "/admin/source-runs", label: "Source Runs", disposition: "deprecated_navigation", purpose: "Contextual from Source Intelligence" },
+  { href: "/admin/companies", label: "Legacy Companies", disposition: "deprecated_navigation", purpose: "Merged into Lead Hunter and Vault Foundation; legacy company_profiles was lead/contact-scoring data" },
 ];

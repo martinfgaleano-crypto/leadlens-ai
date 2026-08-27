@@ -1,0 +1,40 @@
+import { strict as assert } from "node:assert";
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import { buildCapabilityControlPlane } from "@/lib/intelligence/capability-control-plane";
+import { buildLaunchReadiness } from "@/lib/intelligence/launch-readiness";
+import { buildControlPlaneMemoryRecord } from "@/lib/intelligence/control-plane-store";
+import { buildProductionConfigChecks, canonicalHistory, productionConfigFromChecks, selectCanonicalControlPlane } from "@/lib/intelligence/admin-production-parity";
+import { measured, type IntelligenceCapabilityAssessment } from "@/lib/intelligence/os-contracts";
+import type { EnvHealth } from "@/lib/config/env-health";
+
+let passed = 0;
+const test = (name: string, value: boolean) => { assert.equal(value, true, name); passed++; console.log(`ok - ${name}`); };
+const now = "2026-08-27T19:16:18.441Z";
+const assessment: IntelligenceCapabilityAssessment = { capability_id: "account_memory", capability_version: "test", scope: { kind: "global" }, methodology_version: "test", mode: "production", maturity_level: "structured_knowledge", maturity_confidence: .9, measurement_state: "measured", evidence: [{ id: "memory", kind: "exercised_run", ref: "controlled:memory", date: now }], sample_size: 21, last_exercised: now, success_metric: "observed", success_rate: measured(90, .9, 21), known_failure_modes: [], limitations: [], blocked_reason: null, ranking_impact: "none", report_impact: "medium", next_milestone: null, promotion_criteria: [], human_review_state: "human_reviewed", assessed_at: now, source_data_cutoff: now };
+const live = buildCapabilityControlPlane({ now, snapshot_capabilities: [], dynamic_recall: null, soak: null, monitor_sample: 0, monitor_false_novelty: null, account_memory_records: 0 });
+const durablePlane = buildCapabilityControlPlane({ now, snapshot_capabilities: ["market_interpretation", "company_discovery", "company_verification", "structural_account_ranking", "deep_account_research", "signal_detection", "temporal_reasoning", "recommendation_generation", "client_specific_opportunity_assessment", "portfolio_strategy", "account_memory", "anti_repetition", "report_readiness_assessment"].map((capability_id) => ({ ...assessment, capability_id, evidence: [{ ...assessment.evidence[0], id: capability_id }] })), dynamic_recall: null, soak: null, account_memory_records: 21, monitor_sample: 21, monitor_false_novelty: 0 });
+const readiness = buildLaunchReadiness({ now, control_plane: durablePlane, database_available: true, production_config: { supabase: true, admin_auth: true, internal_run_auth: false, app_url: true, demo_off: true } });
+const durable = buildControlPlaneMemoryRecord({ control_plane: durablePlane, launch_readiness: readiness, trigger_type: "controlled_acceptance_ingestion" });
+const invalidZero = buildControlPlaneMemoryRecord({ control_plane: live, launch_readiness: buildLaunchReadiness({ now, control_plane: live, database_available: false, production_config: { supabase: false, admin_auth: false, internal_run_auth: false, app_url: false, demo_off: true } }) });
+
+const env: EnvHealth = { supabase_url_set: true, supabase_anon_key_set: true, supabase_service_role_set: true, admin_secret_set: false, admin_session_secret_set: true, internal_run_secret_set: false, cron_secret_set: false, app_url_set: true, vercel_url_set: true, demo_mode: false, node_env: "production", supabase_ready: true, report_auth_ready: true, processor_ready: false, drainer_ready: false, cron_ready: false, production_safe: false, missing_for_production: ["INTERNAL_RUN_SECRET", "CRON_SECRET"] };
+const checks = buildProductionConfigChecks({ env, databaseAvailable: true, serviceRoleQuerySucceeded: true });
+const selected = selectCanonicalControlPlane({ live, history: [invalidZero, durable] });
+test("1 missing deployment artifacts use last durable evaluation, not zero", selected.source === "last_durable_evaluation" && selected.control_plane.overall.state === "measured");
+test("2 invalid zero observation is excluded from canonical history", canonicalHistory([invalidZero, durable]).length === 1);
+test("3 production Admin session is recognized without shared dev token", checks.find((x) => x.id === "admin_auth")?.state === "present");
+test("4 worker secret is independently degraded", checks.find((x) => x.id === "internal_worker")?.state === "missing" && productionConfigFromChecks(checks).admin_auth);
+test("5 database and service-role access are separate passing checks", checks.find((x) => x.id === "database")?.state === "present" && checks.find((x) => x.id === "supabase_service_access")?.state === "present");
+
+const route = readFileSync(path.join(process.cwd(), "app/api/admin/intelligence/launch-readiness/route.ts"), "utf8");
+const runtime = readFileSync(path.join(process.cwd(), "app/api/admin/system-health/route.ts"), "utf8");
+const runtimePage = readFileSync(path.join(process.cwd(), "app/admin/system-health/page.tsx"), "utf8");
+const companies = readFileSync(path.join(process.cwd(), "app/admin/companies/page.tsx"), "utf8");
+test("6 Admin route exposes telemetry source, config breakdown and build", /telemetry:/.test(route) && /production_configuration/.test(route) && /VERCEL_GIT_COMMIT_SHA/.test(route));
+test("7 Runtime Health consumes productive runs, Monitor and Control Plane", /snapshot_reports/.test(runtime) && /intelligence_monitoring_runs/.test(runtime) && /intelligence_control_plane_snapshots/.test(runtime));
+test("8 Apollo and payments cannot lower Runtime Health", !/apollo|payment|lemonsqueezy/i.test(runtime + runtimePage));
+test("9 no competing runtime percentage exists", !/delivery_score|overallScore|ScoreCard/.test(runtime + runtimePage));
+test("10 legacy Companies redirects to canonical Lead Hunter", /redirect\("\/admin\/lead-hunter"\)/.test(companies));
+test("11 missing current and durable telemetry cannot return a zero readiness", /Readiness was not converted to zero/.test(route) && /status: 503/.test(route));
+console.log(`\n${passed} passed, 0 failed`);

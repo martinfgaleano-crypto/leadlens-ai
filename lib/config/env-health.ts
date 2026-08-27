@@ -9,9 +9,11 @@ export interface EnvHealth {
   supabase_anon_key_set: boolean;
   supabase_service_role_set: boolean;
   admin_secret_set: boolean;
+  admin_session_secret_set: boolean;
   internal_run_secret_set: boolean;
   cron_secret_set: boolean;
   app_url_set: boolean;
+  vercel_url_set: boolean;
   demo_mode: boolean;
   node_env: string;
 
@@ -35,9 +37,11 @@ export function getEnvHealth(): EnvHealth {
   const supabaseAnon    = !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   const supabaseService = !!process.env.SUPABASE_SERVICE_ROLE_KEY;
   const adminSecret     = !!process.env.ADMIN_SECRET_TOKEN;
+  const adminSession    = !!process.env.ADMIN_SESSION_SECRET;
   const internalSecret  = !!process.env.INTERNAL_RUN_SECRET;
   const cronSecret      = !!process.env.CRON_SECRET;
   const appUrl          = !!process.env.NEXT_PUBLIC_APP_URL;
+  const vercelUrl       = !!process.env.VERCEL_URL;
   const demoMode        = process.env.DEMO_MODE === "true";
 
   const supabaseReady  = supabaseUrl && supabaseService;
@@ -49,24 +53,26 @@ export function getEnvHealth(): EnvHealth {
   if (!supabaseUrl)     missing.push("NEXT_PUBLIC_SUPABASE_URL");
   if (!supabaseAnon)    missing.push("NEXT_PUBLIC_SUPABASE_ANON_KEY");
   if (!supabaseService) missing.push("SUPABASE_SERVICE_ROLE_KEY");
-  if (!adminSecret)     missing.push("ADMIN_SECRET_TOKEN");
+  if (!adminSecret && !adminSession) missing.push("ADMIN_SESSION_SECRET");
   if (!internalSecret)  missing.push("INTERNAL_RUN_SECRET");
   if (!cronSecret)      missing.push("CRON_SECRET");
-  if (!appUrl)          missing.push("NEXT_PUBLIC_APP_URL");
+  if (!appUrl && !vercelUrl) missing.push("NEXT_PUBLIC_APP_URL");
 
   return {
     supabase_url_set:          supabaseUrl,
     supabase_anon_key_set:     supabaseAnon,
     supabase_service_role_set: supabaseService,
     admin_secret_set:          adminSecret,
+    admin_session_secret_set:  adminSession,
     internal_run_secret_set:   internalSecret,
     cron_secret_set:           cronSecret,
     app_url_set:               appUrl,
+    vercel_url_set:            vercelUrl,
     demo_mode:                 demoMode,
     node_env:                  process.env.NODE_ENV ?? "unknown",
 
     supabase_ready:    supabaseReady,
-    report_auth_ready: supabaseReady && adminSecret,
+    report_auth_ready: supabaseReady && (adminSession || adminSecret),
     processor_ready:   processorReady,
     drainer_ready:     drainerReady,
     cron_ready:        cronReady,

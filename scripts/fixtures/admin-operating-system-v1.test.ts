@@ -61,6 +61,7 @@ async function run() {
   test("10 Admin IA has four named operational groups", ADMIN_NAVIGATION.length === 4 && new Set(ADMIN_NAVIGATION.map((s) => s.id)).size === 4);
   test("11 every primary surface has explicit operational purpose", primary.every((item) => item.purpose.length > 5));
   test("12 duplicate legacy source and Vault surfaces leave primary navigation", ADMIN_DEPRECATED_NAVIGATION.some((x) => x.href === "/admin/sources") && !primary.some((x) => x.href === "/admin/sources"));
+  test("12b legacy Companies leaves primary navigation", ADMIN_DEPRECATED_NAVIGATION.some((x) => x.href === "/admin/companies") && !primary.some((x) => x.href === "/admin/companies"));
   const layout = readFileSync(path.join(process.cwd(), "app/admin/_components/AdminLayout.tsx"), "utf8");
   const beta = readFileSync(path.join(process.cwd(), "app/admin/beta-readiness/page.tsx"), "utf8");
   const route = readFileSync(path.join(process.cwd(), "app/api/admin/intelligence/launch-readiness/route.ts"), "utf8");
