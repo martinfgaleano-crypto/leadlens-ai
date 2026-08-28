@@ -47,6 +47,14 @@ function measuredCapabilityCount(plane: IntelligenceControlPlane): number {
   return plane.capabilities.filter((item) => item.evidence.some((evidence) => !["schema_exists", "unit_test_passing"].includes(evidence.kind)) || (item.score.state === "measured" && item.score.sample_size > 0)).length;
 }
 
+function controlPlaneEvidenceCutoff(plane: IntelligenceControlPlane): string | null {
+  const dates = [
+    ...plane.capabilities.flatMap((item) => item.evidence.map((evidence) => evidence.date)),
+    ...(plane.validation_evidence ?? []).map((item) => item.observed_at),
+  ].filter((value): value is string => typeof value === "string" && Number.isFinite(Date.parse(value)));
+  return dates.sort((a, b) => Date.parse(b) - Date.parse(a))[0] ?? null;
+}
+
 export function selectCanonicalControlPlane(input: {
   live: IntelligenceControlPlane;
   history: ControlPlaneMemoryRecord[];
@@ -58,16 +66,21 @@ export function selectCanonicalControlPlane(input: {
   explanation: string;
 } {
   const liveMeasured = measuredCapabilityCount(input.live);
-  if (liveMeasured > 0 && input.live.overall.state === "measured") {
+  const durable = input.history.find((record) => record.source_data_cutoff && measuredCapabilityCount(record.snapshot.control_plane) > 0) ?? null;
+  const liveCutoff = controlPlaneEvidenceCutoff(input.live);
+  const durableCutoff: string | null = durable?.source_data_cutoff ?? null;
+  const liveIsAtLeastAsFresh = durableCutoff === null || Boolean(liveCutoff && Date.parse(liveCutoff) >= Date.parse(durableCutoff));
+  if (liveMeasured > 0 && input.live.overall.state === "measured" && liveIsAtLeastAsFresh) {
     return { control_plane: input.live, source: "live_runtime", telemetry_state: "current", durable_record: null, explanation: `${liveMeasured} capabilities have current runtime evidence.` };
   }
-  const durable = input.history.find((record) => record.source_data_cutoff && measuredCapabilityCount(record.snapshot.control_plane) > 0) ?? null;
   if (durable) return {
     control_plane: durable.snapshot.control_plane,
     source: "last_durable_evaluation",
     telemetry_state: "degraded_using_last_durable",
     durable_record: durable,
-    explanation: "Controlled acceptance artifacts are unavailable in this deployment; the last durable canonical evaluation is retained instead of converting unavailable telemetry to zero.",
+    explanation: liveMeasured > 0
+      ? `Local runtime evidence is older than the durable canonical evaluation (${liveCutoff ?? "unknown cutoff"} < ${durableCutoff}); the newer durable evaluation is retained.`
+      : "Controlled acceptance artifacts are unavailable in this deployment; the last durable canonical evaluation is retained instead of converting unavailable telemetry to zero.",
   };
   return { control_plane: input.live, source: "unavailable", telemetry_state: "unavailable", durable_record: null, explanation: "Neither current runtime evidence nor a durable canonical evaluation is available." };
 }

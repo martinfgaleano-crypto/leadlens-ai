@@ -1,4 +1,5 @@
-import { readFileSync } from "fs";
+import { readFileSync, mkdtempSync } from "fs";
+import os from "node:os";
 import path from "path";
 import { NextRequest } from "next/server";
 import {
@@ -7,6 +8,10 @@ import {
 } from "@/lib/intelligence/admin-view-model";
 import { loadSnapshotInputs } from "@/lib/intelligence/snapshot-loader";
 import { GET } from "@/app/api/admin/intelligence/command-center/route";
+import { buildControlPlaneMemoryRecord } from "@/lib/intelligence/control-plane-store";
+import { buildLaunchReadiness } from "@/lib/intelligence/launch-readiness";
+import type { ControlPlaneValidationEvidenceV1 } from "@/lib/intelligence/control-plane-validation-evidence";
+import validationEvidenceJson from "@/ml/data/acceptance/control-plane-validation-evidence-positive-commercial-case-v1.json";
 
 let passed = 0, failed = 0;
 const test = (name: string, ok: boolean, detail = "") => {
@@ -34,7 +39,7 @@ async function run() {
   test("11 zero outcomes explains performance", /Fewer than five attributable outcomes/.test(local.empty_states.outcomes));
   test("12 gaps ordered by priority", local.snapshot.gaps.every((g, i, rows) => i === 0 || rows[i - 1].priority >= g.priority));
   test("13 actions derived from gaps", local.snapshot.actions.length === local.snapshot.gaps.length && local.snapshot.actions.every((a) => a.affected_gaps.length > 0));
-  test("14 readiness exposes blockers", local.snapshot.readiness.blockers.length > 0 && /Current blockers/.test(pageSource));
+  test("14 canonical readiness surface never substitutes legacy snapshot readiness", /model\.canonical\.launch_readiness/.test(pageSource) && !/const r = model\.snapshot\.readiness/.test(pageSource));
   test("15 zero corroboration is explained", local.evidence.corroborated === 0 && /0 corroborated evidence items/.test(local.evidence.explanation));
   test("16 knowledge is labeled infrastructure", local.knowledge.label === "Knowledge Infrastructure" && /do not directly determine Intelligence Maturity/.test(local.knowledge.disclaimer));
   test("17 limitations derive from gaps", local.unsupported_claims.length > 0 && local.unsupported_claims.some((x) => local.snapshot.gaps.some((g) => g.impact === x)));
@@ -84,6 +89,28 @@ async function run() {
   test("41 Intelligence Score reuses canonical Control Plane overall", local.intelligence_score.score === (local.control_plane.overall.state === "measured" ? local.control_plane.overall.score : null));
   test("42 UI distinguishes Intelligence Score from Launch Readiness", pageSource.includes("Intelligence Score") && pageSource.includes("Launch Readiness") && pageSource.includes("intelligence_score"));
   test("43 component scores are explainable and sample-aware", local.intelligence_score.components.length === 8 && local.intelligence_score.components.every((component) => component.sample_size >= 0 && component.state));
+
+  const durablePlane = {
+    ...local.control_plane,
+    generated_at: "2026-08-28T12:00:00.000Z",
+    overall: { state: "measured" as const, score: 76, confidence: 0.84, sample_size: 8 },
+    overall_confidence: "high" as const,
+    validation_evidence: [validationEvidenceJson as ControlPlaneValidationEvidenceV1],
+  };
+  const durableReadiness = {
+    ...buildLaunchReadiness({ now: "2026-08-28T12:00:00.000Z", control_plane: durablePlane, database_available: true, production_config: { supabase: true, admin_auth: true, internal_run_auth: true, app_url: true, demo_off: true } }),
+    score: 72, level: "guided_beta" as const,
+  };
+  const durableRecord = buildControlPlaneMemoryRecord({ control_plane: durablePlane, launch_readiness: durableReadiness });
+  const emptyRoot = mkdtempSync(path.join(os.tmpdir(), "leadlens-command-center-parity-"));
+  const emptyInput = await loadSnapshotInputs({ root: emptyRoot, now: "2026-08-28T13:00:00.000Z" });
+  const durableFallback = buildAdminIntelligenceViewModel({ ...fallbackData, input: emptyInput, control_plane_history: [durableRecord] });
+  test("44 local acceptance artifacts absent falls back to latest durable canonical plane", durableFallback.canonical.source === "last_durable_evaluation" && durableFallback.intelligence_score.score === 76);
+  test("45 Evidence may remain unmeasured while canonical overall remains measured", durableFallback.intelligence_score.components.find((item) => item.id === "evidence")?.score === null && durableFallback.control_plane.overall.state === "measured" && durableFallback.intelligence_score.score === 76);
+  test("46 human-positive durable validation removes the false no-commercial-outcome diagnosis", durableFallback.canonical.human_validation.positive_cases === 3 && !pageSource.includes("no commercial outcome"));
+  test("47 Intelligence OS exposes the same durable readiness score and stage", durableFallback.launch_readiness_summary?.score === 72 && durableFallback.canonical.launch_readiness?.level === "guided_beta");
+  test("48 stale local diagnosis no longer drives canonical Overview", !/snapshot\.diagnosis\.(headline|strongest_capability|weakest_capability|top_bottleneck|highest_leverage_action)/.test(pageSource));
+  test("49 canonical source, freshness and human validation are visible", /model\.canonical\.(source|source_data_cutoff|human_validation)/.test(pageSource));
   if (saved.node === undefined) delete env.NODE_ENV; else env.NODE_ENV = saved.node;
   if (saved.secret === undefined) delete env.ADMIN_SESSION_SECRET; else env.ADMIN_SESSION_SECRET = saved.secret;
   if (saved.token === undefined) delete env.ADMIN_SECRET_TOKEN; else env.ADMIN_SECRET_TOKEN = saved.token;

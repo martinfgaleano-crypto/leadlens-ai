@@ -4,7 +4,7 @@ import { getEnvHealth } from "@/lib/config/env-health";
 import { loadAdminIntelligenceViewModel } from "@/lib/intelligence/admin-view-model";
 import { buildLaunchReadiness } from "@/lib/intelligence/launch-readiness";
 import { buildControlPlaneMemoryRecord, loadControlPlaneHistory, persistControlPlaneMemory, summarizeControlPlaneHistory } from "@/lib/intelligence/control-plane-store";
-import { buildProductionConfigChecks, canonicalHistory, productionConfigFromChecks, selectCanonicalControlPlane } from "@/lib/intelligence/admin-production-parity";
+import { buildProductionConfigChecks, canonicalHistory, productionConfigFromChecks } from "@/lib/intelligence/admin-production-parity";
 import { applyControlPlaneValidationEvidence } from "@/lib/intelligence/capability-control-plane";
 import { validateControlPlaneValidationEvidence } from "@/lib/intelligence/control-plane-validation-evidence";
 import bundledValidationEvidence from "@/ml/data/acceptance/control-plane-validation-evidence-v1.json";
@@ -26,14 +26,20 @@ export async function GET(req: NextRequest) {
     }
     const serviceRoleQuerySucceeded = !history.error;
     const configChecks = buildProductionConfigChecks({ env, databaseAvailable: model.availability.database !== "unavailable" && serviceRoleQuerySucceeded, serviceRoleQuerySucceeded });
-    const selected = selectCanonicalControlPlane({ live: model.control_plane, history: history.records });
+    const selected = {
+      control_plane: model.control_plane,
+      source: model.canonical.source,
+      telemetry_state: model.canonical.telemetry_state,
+      durable_record: history.records.find((row) => row.snapshot_key === model.canonical.durable_snapshot_key) ?? null,
+      explanation: model.canonical.explanation,
+    };
     const deployment = { commit: process.env.VERCEL_GIT_COMMIT_SHA ?? process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA ?? null, environment: process.env.VERCEL_ENV ?? process.env.NODE_ENV ?? "unknown" };
     if (selected.telemetry_state === "unavailable") return NextResponse.json({
       error: "Control Plane telemetry is unavailable. Readiness was not converted to zero.", readiness: null,
       telemetry: { state: selected.telemetry_state, source: selected.source, explanation: selected.explanation, store_available: serviceRoleQuerySucceeded, last_durable_snapshot_key: null },
       production_configuration: configChecks, deployment,
     }, { status: 503, headers: { "Cache-Control": "private, no-store", "X-Robots-Tag": "noindex, nofollow" } });
-    const readiness = buildLaunchReadiness({
+    const readiness = model.canonical.launch_readiness ?? buildLaunchReadiness({
       now: new Date().toISOString(), control_plane: selected.control_plane,
       database_available: configChecks.find((check) => check.id === "database")?.state === "present",
       production_config: productionConfigFromChecks(configChecks),
@@ -80,7 +86,12 @@ export async function POST(req: NextRequest) {
     const db = createServerClient();
     const [model, history] = await Promise.all([loadAdminIntelligenceViewModel(), loadControlPlaneHistory(db as never, 30)]);
     if (history.error) return NextResponse.json({ error: "Durable Control Plane history unavailable." }, { status: 503 });
-    const selected = selectCanonicalControlPlane({ live: model.control_plane, history: history.records });
+    const selected = {
+      control_plane: model.control_plane,
+      source: model.canonical.source,
+      telemetry_state: model.canonical.telemetry_state,
+      durable_record: history.records.find((row) => row.snapshot_key === model.canonical.durable_snapshot_key) ?? null,
+    };
     if (selected.telemetry_state === "unavailable") return NextResponse.json({ error: "No canonical Control Plane baseline is available." }, { status: 503 });
     const alreadyPresent = (selected.control_plane.validation_evidence ?? []).some((item) => item.source_fingerprint === parsed.evidence.source_fingerprint);
     if (alreadyPresent) return NextResponse.json({ accepted: true, duplicate: true, persisted: false, source_fingerprint: parsed.evidence.source_fingerprint, readiness: selected.durable_record?.snapshot.launch_readiness ?? null });

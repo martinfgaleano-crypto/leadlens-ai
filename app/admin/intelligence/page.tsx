@@ -63,6 +63,15 @@ function Overview({ model }: { model: AdminIntelligenceViewModel }) {
   const { snapshot } = model;
   const control = model.control_plane;
   const intelligence = model.intelligence_score;
+  const primaryBlocker = intelligence.blockers[0] ?? intelligence.components.find((item) => item.main_blocker)?.main_blocker ?? "No explicit blocker in canonical telemetry.";
+  const weakest = intelligence.weakest[0] ?? intelligence.components.find((item) => item.score === null)?.label ?? "Not measured";
+  const evidenceComponent = intelligence.components.find((item) => item.id === "evidence");
+  const highestLeverage = evidenceComponent?.score === null
+    ? "Measure source quality, association, corroboration, counterevidence and traceability as separate Evidence dimensions."
+    : primaryBlocker;
+  const headline = intelligence.score === null
+    ? "Canonical Intelligence telemetry is unavailable; no score was substituted."
+    : `Canonical Intelligence is ${intelligence.score}/100 from ${words(model.canonical.source)} telemetry. Inspect the components and evidence before trusting the score.`;
   return <>
     <section className={styles.hero}>
       <div>
@@ -70,24 +79,29 @@ function Overview({ model }: { model: AdminIntelligenceViewModel }) {
         <h1>Intelligence Score</h1>
         <div className={styles.measurement}><StatePill value={control.overall.state}/><strong className={styles.score}>{intelligence.score ?? "Not measured"}{intelligence.score !== null && <small>/100</small>}</strong><span className={styles.muted}>confidence {words(intelligence.confidence)} · n={intelligence.sample_size}</span></div>
         <p className={styles.muted}>{intelligence.trend === "insufficient_history" ? "No durable prior score; no trend inferred." : `Previous ${intelligence.previous}/100 · ${intelligence.delta! >= 0 ? "+" : ""}${intelligence.delta} · trend ${intelligence.trend}.`}</p>
-        <p className={styles.diagnosis}>{snapshot.diagnosis.headline}</p>
+        <p className={styles.diagnosis}>{headline}</p>
       </div>
       <dl className={styles.heroFacts}>
         <div><dt>Maturity confidence</dt><dd>{words(control.overall_confidence)}</dd></div>
-        <div><dt>Live / soak validated</dt><dd>{control.state_counts.live_validated + control.state_counts.soak_validated}</dd></div>
+        <div><dt>Human-validated Cases</dt><dd>{model.canonical.human_validation.positive_cases} positive / {model.canonical.human_validation.reviewed_cases} reviewed</dd></div>
         <div><dt>Degraded / blocked</dt><dd>{control.state_counts.degraded + control.state_counts.blocked}</dd></div>
-        <div><dt>Strongest capability</dt><dd>{words(snapshot.diagnosis.strongest_capability)}</dd></div>
-        <div><dt>Weakest capability</dt><dd>{words(snapshot.diagnosis.weakest_capability)}</dd></div>
-        <div><dt>Primary bottleneck</dt><dd>{words(snapshot.diagnosis.top_bottleneck) ?? "None identified"}</dd></div>
-        <div><dt>Highest-leverage action</dt><dd>{words(snapshot.diagnosis.highest_leverage_action)}</dd></div>
-        <div><dt>Report readiness</dt><dd>{words(snapshot.readiness.readiness_level)}</dd></div>
+        <div><dt>Strongest component</dt><dd>{intelligence.strongest.join(" · ") || "Not measured"}</dd></div>
+        <div><dt>Weakest component</dt><dd>{weakest}</dd></div>
+        <div><dt>Primary bottleneck</dt><dd>{primaryBlocker}</dd></div>
+        <div><dt>Highest-leverage action</dt><dd>{highestLeverage}</dd></div>
+        <div><dt>Launch stage</dt><dd>{words(model.canonical.launch_readiness?.level ?? model.launch_readiness_summary?.level)}</dd></div>
       </dl>
       <footer>
-        <span>Calculated {new Date(snapshot.calculated_at).toLocaleString()}</span>
-        <span>Cutoff {snapshot.source_data_cutoff}</span>
+        <span>Evaluated {new Date(control.generated_at).toLocaleString()}</span>
+        <span>Evidence cutoff {model.canonical.source_data_cutoff ?? "Unavailable"}</span>
         <span>{control.version}</span>
       </footer>
     </section>
+
+    <div className={styles.availability} role="status">
+      <strong>Canonical telemetry · {words(model.canonical.telemetry_state)}</strong><span>{model.canonical.explanation}</span>
+      <StatePill value={model.canonical.source} />
+    </div>
 
     <section className={styles.panel}>
       <SectionHeader eyebrow="Canonical automatic metrics" title="Intelligence quality and launch safety are separate" text="Intelligence measures reasoning quality from canonical capability telemetry. Launch Readiness additionally consumes runtime, configuration, security, report safety and operational blockers."/>
@@ -402,8 +416,9 @@ function Validation({ model, reload }: { model: AdminIntelligenceViewModel; relo
     } finally { setRunning(false); }
   }
   return <section><SectionHeader eyebrow="Output → outcome → learning" title="Validation and learning funnel" text={`Primary lifecycle bottleneck: ${words(s.lifecycle_bottleneck)}`} />
+    <section className={styles.panel}><h3>Canonical controlled validation</h3><div className={styles.metricGrid}><Metric label="Human-reviewed Cases" value={model.canonical.human_validation.reviewed_cases}/><Metric label="Customer-safe human-positive Cases" value={model.canonical.human_validation.positive_cases}/></div><p>These durable QA labels validate commercial defensibility without mutating the original system Decisions.</p></section>
     <div className={styles.funnel} aria-label="Validation funnel">{funnel.map(([name, count], index) => <div key={name}><span>{index+1}</span><strong>{count}</strong><small>{name}</small></div>)}</div>
-    {!s.reviewed_count && <EmptyState title="No persisted human reviews">{model.empty_states.validation} This is expected until an Admin reviews an output through the server-mediated lifecycle.</EmptyState>}
+    {!s.reviewed_count && model.canonical.human_validation.reviewed_cases === 0 && <EmptyState title="No persisted human reviews">{model.empty_states.validation} This is expected until an Admin reviews an output through the server-mediated lifecycle.</EmptyState>}
     {!s.acted_upon_count && <EmptyState title="No acted-upon outputs">No commercial action has yet been linked to an intelligence output. Link a real action before recording an outcome.</EmptyState>}
     {!s.confirmed_count && !s.partially_confirmed_count && !s.refuted_count && <EmptyState title="No attributable outcomes">{model.empty_states.outcomes}</EmptyState>}
     <div className={styles.twoCol}>
@@ -427,6 +442,7 @@ function Gaps({ model }: { model: AdminIntelligenceViewModel }) {
   const actions = model.snapshot.actions;
   const fastest = [...actions].sort((a,b) => ["xs","s","m","l","xl"].indexOf(a.effort)-["xs","s","m","l","xl"].indexOf(b.effort) || b.priority-a.priority)[0];
   return <section><SectionHeader eyebrow={`${gaps.length} active gaps`} title="Intelligence gaps and action queue" text="Priorities are ordinal decision aids, not precise forecasts." />
+    <section className={styles.panel}><h3>Canonical score blockers</h3>{model.intelligence_score.blockers.length ? <ul>{model.intelligence_score.blockers.map((item) => <li key={item}>{item}</li>)}</ul> : <p>No explicit blocker in current canonical telemetry.</p>}<p className={styles.muted}>The artifact-derived queue below is secondary diagnostic context and does not determine the canonical Intelligence Score.</p></section>
     {model.signal_benchmark && <section className={styles.panel}><h3>Signal calibration gaps · benchmark preliminary</h3>
       <ul>
         {Object.entries(model.signal_benchmark.gate_failures).sort((a,b) => b[1]-a[1]).slice(0,5).map(([name,count]) => <li key={name}><strong>{words(name)}:</strong> {count} fixture gate failures. Next action: calibrate the category-specific recovery path without weakening the gate.</li>)}
@@ -442,22 +458,25 @@ function Gaps({ model }: { model: AdminIntelligenceViewModel }) {
 }
 
 function Readiness({ model }: { model: AdminIntelligenceViewModel }) {
-  const r = model.snapshot.readiness;
-  const levels = ["not_ready","snapshot_ready","brief_ready","intelligence_report_ready","premium_report_ready"];
-  const current = levels.indexOf(r.readiness_level);
-  return <section><SectionHeader eyebrow="System-level assessment" title="Report readiness" text="Brief-ready is not equivalent to premium intelligence." />
+  const r = model.canonical.launch_readiness;
+  if (!r) return <section><SectionHeader eyebrow="Canonical automatic assessment" title="Launch Readiness"/><EmptyState title="Readiness unavailable">No valid canonical readiness evaluation is available. No legacy report-readiness state was substituted.</EmptyState></section>;
+  const levels = ["not_ready","internal_pilot","guided_beta","limited_launch","launch_ready"];
+  const current = levels.indexOf(r.level);
+  return <section><SectionHeader eyebrow="Canonical automatic assessment" title="Launch Readiness" text="The same durable capability authority used by Beta Readiness; Intelligence quality and launch safety remain separate." />
     <div className={styles.readiness}>{levels.map((level, i) => <div className={i <= current ? styles.reached : ""} key={level}><span>{i+1}</span><strong>{words(level)}</strong></div>)}</div>
-    <div className={styles.metricGrid}><Metric label="Current level" value={words(r.readiness_level)}/><Metric label="Confidence" value={pct(r.confidence)}/><Metric label="Customer-safe outputs" value={r.customer_safe_outputs.length}/><Metric label="Internal-only outputs" value={r.unsafe_outputs.length}/></div>
-    <div className={styles.twoCol}><section className={styles.panel}><h3>Current blockers</h3><ul className={styles.cleanList}>{r.blockers.map((b, i) => <li key={`${b.gap_id}-${i}`}><StatePill value={b.severity}/> {b.description}</li>)}</ul></section>
-      <section className={styles.panel}><h3>Supportable sections</h3><ul className={styles.cleanList}>{r.supportable_sections.map((x) => <li key={x}>{x}</li>)}</ul><h3>Still superficial</h3><ul className={styles.cleanList}>{r.superficial_sections.map((x) => <li key={x}>{x}</li>)}</ul></section></div>
-    <EmptyState title="Intelligence Lift">{model.empty_states.lift}</EmptyState><EmptyState title="Historical trends">{model.empty_states.trends}</EmptyState>
+    <div className={styles.metricGrid}><Metric label="Score" value={`${r.score}/100`}/><Metric label="Stage" value={words(r.level)}/><Metric label="Confidence" value={words(r.confidence)}/><Metric label="Sample" value={`n=${r.sample_size}`}/></div>
+    <div className={styles.twoCol}><section className={styles.panel}><h3>Current blockers</h3>{r.blockers.length ? <ul className={styles.cleanList}>{r.blockers.map((item) => <li key={item}>{item}</li>)}</ul> : <p>No failing launch gate in the canonical evaluation.</p>}</section>
+      <section className={styles.panel}><h3>Degraded or unmeasured gates</h3><ul className={styles.cleanList}>{r.limitations.map((item) => <li key={item}>{item}</li>)}</ul></section></div>
+    <div className={styles.tableWrap}><table><thead><tr><th>Gate</th><th>State</th><th>Score</th><th>Sample</th><th>Reason</th></tr></thead><tbody>{r.gates.map((gate) => <tr key={gate.id}><td>{gate.label}</td><td><StatePill value={gate.state}/></td><td>{gate.score ?? "Not measured"}</td><td>n={gate.sample_size}</td><td>{gate.reason}</td></tr>)}</tbody></table></div>
   </section>;
 }
 
 function Evidence({ model }: { model: AdminIntelligenceViewModel }) {
   const e = model.evidence;
   const deep = model.deep_accounts;
+  const canonicalEvidence = model.intelligence_score.components.find((item) => item.id === "evidence");
   return <section><SectionHeader eyebrow="Availability ≠ quality" title="Evidence integrity" text={e.explanation}/>
+    <section className={styles.panel}><h3>Canonical Evidence component</h3><div className={styles.metricGrid}><Metric label="State" value={words(canonicalEvidence?.state)}/><Metric label="Score" value={canonicalEvidence?.score === null || canonicalEvidence?.score === undefined ? "Not measured" : `${canonicalEvidence.score}/100`}/><Metric label="Sample" value={`n=${canonicalEvidence?.sample_size ?? 0}`}/></div><p>{canonicalEvidence?.main_blocker ?? "No explicit canonical Evidence blocker."} The overall Intelligence Score remains independently measurable when sufficient other domains have evidence.</p></section>
     <div className={styles.evidenceHero}><Measurement value={e.availability}/><p>Evidence availability, quality, corroboration, freshness and counterevidence are tracked separately.</p></div>
     <div className={styles.metricGrid}><Metric label="Evidence items" value={e.total ?? "Unavailable"}/><Metric label="Dated" value={e.dated ?? "Unavailable"}/><Metric label="Corroborated" value={e.corroborated ?? "Unavailable"}/><Metric label="Stale" value={e.stale ?? "Unavailable"}/><Metric label="Source classes" value={e.source_classes ?? "Unavailable"}/><Metric label="Counterevidence" value={e.counterevidence_instrumented === null ? "Unavailable" : e.counterevidence_instrumented ? "Instrumented" : "Not instrumented"}/></div>
     {model.signal_benchmark && <section className={styles.panel}><h3>Signal benchmark diagnostics · preliminary</h3>

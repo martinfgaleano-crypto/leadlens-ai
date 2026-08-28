@@ -9,6 +9,9 @@ import type { LearnedPreferenceSource } from "./pattern-registry";
 import type { OutputValidationLifecycle } from "./validation-lifecycle";
 import { buildIntelligenceScoreView, type IntelligenceScoreView } from "./intelligence-score";
 import { loadControlPlaneHistory, type ControlPlaneMemoryRecord } from "./control-plane-store";
+import { buildLaunchReadiness, type LaunchReadinessAssessment } from "./launch-readiness";
+import { buildProductionConfigChecks, canonicalHistory, productionConfigFromChecks, selectCanonicalControlPlane } from "./admin-production-parity";
+import { getEnvHealth } from "@/lib/config/env-health";
 import {
   buildCapabilityControlPlane,
   type CapabilityControlPlaneInput,
@@ -46,7 +49,16 @@ export interface AdminIntelligenceViewModel {
   snapshot: IntelligenceSnapshot;
   control_plane: IntelligenceControlPlane;
   intelligence_score: IntelligenceScoreView;
-  launch_readiness_summary: { score: number; confidence: string; observed_at: string } | null;
+  launch_readiness_summary: { score: number; level: string; confidence: string; observed_at: string } | null;
+  canonical: {
+    source: "live_runtime" | "last_durable_evaluation" | "unavailable";
+    telemetry_state: "current" | "degraded_using_last_durable" | "unavailable";
+    explanation: string;
+    source_data_cutoff: string | null;
+    durable_snapshot_key: string | null;
+    launch_readiness: LaunchReadinessAssessment | null;
+    human_validation: { reviewed_cases: number; positive_cases: number };
+  };
   feedback: FeedbackObservability;
   pattern_threshold: number;
   knowledge: {
@@ -113,6 +125,17 @@ export function buildAdminIntelligenceViewModel(data: AdminIntelligenceLoadedDat
     account_memory_records: data.input.knowledge.account_memory_records,
     provider_usage: data.provider_usage,
   });
+  const history = canonicalHistory(data.control_plane_history ?? []);
+  const canonical = selectCanonicalControlPlane({ live: controlPlane, history });
+  const canonicalPlane = canonical.control_plane;
+  const readinessRecord = canonical.durable_record
+    ?? history.find((row) => row.snapshot.control_plane.generated_at === canonicalPlane.generated_at)
+    ?? null;
+  const validationEvidence = canonicalPlane.validation_evidence ?? [];
+  const humanValidation = validationEvidence.reduce((summary, item) => ({
+    reviewed_cases: summary.reviewed_cases + item.metrics.human_validation.true_positives + item.metrics.human_validation.false_positives + item.metrics.human_validation.false_negatives + item.metrics.human_validation.true_negatives,
+    positive_cases: summary.positive_cases + item.metrics.human_validation.customer_safe_cases,
+  }), { reviewed_cases: 0, positive_cases: 0 });
   const artifact = data.input.artifact;
   const evidenceDimension = snapshot.index.dimensions.find((d) => d.id === "evidence_integrity")!;
   const corroborated = data.input.evidence?.corroborated ?? artifact?.evidence_corroborated ?? null;
@@ -132,13 +155,23 @@ export function buildAdminIntelligenceViewModel(data: AdminIntelligenceLoadedDat
     generated_at: data.input.now,
     availability: data.availability,
     snapshot,
-    control_plane: controlPlane,
-    intelligence_score: buildIntelligenceScoreView(controlPlane, data.control_plane_history ?? []),
-    launch_readiness_summary: data.control_plane_history?.[0] ? {
-      score: data.control_plane_history[0].launch_readiness_score,
-      confidence: data.control_plane_history[0].confidence,
-      observed_at: data.control_plane_history[0].observed_at,
+    control_plane: canonicalPlane,
+    intelligence_score: buildIntelligenceScoreView(canonicalPlane, history),
+    launch_readiness_summary: readinessRecord ? {
+      score: readinessRecord.launch_readiness_score,
+      level: readinessRecord.launch_readiness_level,
+      confidence: readinessRecord.confidence,
+      observed_at: readinessRecord.observed_at,
     } : null,
+    canonical: {
+      source: canonical.source,
+      telemetry_state: canonical.telemetry_state,
+      explanation: canonical.explanation,
+      source_data_cutoff: readinessRecord?.source_data_cutoff ?? canonicalPlane.generated_at ?? null,
+      durable_snapshot_key: canonical.durable_record?.snapshot_key ?? null,
+      launch_readiness: readinessRecord?.snapshot.launch_readiness ?? null,
+      human_validation: humanValidation,
+    },
     feedback: data.feedback,
     pattern_threshold: MIN_PATTERN_SAMPLE,
     knowledge: {
@@ -306,12 +339,16 @@ export async function loadAdminIntelligenceViewModel(options: {
   input.feedback.outcomes = realOutcomes;
 
   let controlPlaneHistory: ControlPlaneMemoryRecord[] = [];
+  let controlPlaneStoreAvailable = false;
   if (db) {
     const history = await loadControlPlaneHistory(db as never, 30);
-    if (!history.error) controlPlaneHistory = history.records;
+    if (!history.error) {
+      controlPlaneHistory = history.records;
+      controlPlaneStoreAvailable = true;
+    }
   }
 
-  return buildAdminIntelligenceViewModel({
+  const model = buildAdminIntelligenceViewModel({
     input, feedback, deep_accounts: deepAccounts, research_quality: researchQuality, signal_temporal: signalTemporal,
     signal_benchmark: signalBenchmark, signal_monitoring_operation: signalMonitoringOperation, entity_resolution: entityResolution, opportunity_synthesis:opportunitySynthesis,client_context_review:clientContextReview,
     dynamic_recall: dynamicRecall, positive_capture: positiveCapture, soak, provider_usage: providerUsage, control_plane_history: controlPlaneHistory,
@@ -327,4 +364,20 @@ export async function loadAdminIntelligenceViewModel(options: {
           : "Some database-backed intelligence is unavailable; missing sections are labeled explicitly.",
     },
   });
+  if (model.canonical.telemetry_state !== "unavailable") {
+    const configChecks = buildProductionConfigChecks({
+      env: getEnvHealth(),
+      databaseAvailable: databaseState !== "unavailable" && controlPlaneStoreAvailable,
+      serviceRoleQuerySucceeded: controlPlaneStoreAvailable,
+    });
+    const readiness = buildLaunchReadiness({
+      now,
+      control_plane: model.control_plane,
+      database_available: configChecks.find((check) => check.id === "database")?.state === "present",
+      production_config: productionConfigFromChecks(configChecks),
+    });
+    model.canonical.launch_readiness = readiness;
+    model.launch_readiness_summary = { score: readiness.score, level: readiness.level, confidence: readiness.confidence, observed_at: readiness.evaluated_at };
+  }
+  return model;
 }

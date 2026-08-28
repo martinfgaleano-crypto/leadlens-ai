@@ -42,4 +42,16 @@ test("12 API selection uses newest valid durable snapshot", selectCanonicalContr
 test("13 current files unavailable but durable evidence exists uses durable snapshot", selectCanonicalControlPlane({ live, history: [newerDurable] }).telemetry_state === "degraded_using_last_durable");
 test("14 no current telemetry and no durable snapshot is unavailable, never 0/100", selectCanonicalControlPlane({ live, history: [] }).telemetry_state === "unavailable");
 test("15 ingestion API is Admin-gated and persists a controlled-validation trigger", /export async function POST/.test(route) && /requireAdmin\(req\)/.test(route) && /controlled_acceptance_ingestion/.test(route));
+const staleMeasuredLive = {
+  ...durablePlane,
+  generated_at: "2026-08-28T01:00:00.000Z",
+  validation_evidence: [],
+  capabilities: durablePlane.capabilities.map((item) => ({ ...item, evidence: item.evidence.map((evidence) => ({ ...evidence, date: "2026-08-26T00:00:00.000Z" })) })),
+};
+test("16 stale measured local artifacts cannot displace a newer durable canonical evaluation", selectCanonicalControlPlane({ live: staleMeasuredLive, history: [newerDurable] }).source === "last_durable_evaluation");
+const freshMeasuredLive = {
+  ...staleMeasuredLive,
+  capabilities: staleMeasuredLive.capabilities.map((item) => ({ ...item, evidence: item.evidence.map((evidence) => ({ ...evidence, date: "2026-08-29T00:00:00.000Z" })) })),
+};
+test("17 genuinely newer measured runtime evidence remains canonical", selectCanonicalControlPlane({ live: freshMeasuredLive, history: [newerDurable] }).source === "live_runtime");
 console.log(`\n${passed} passed, 0 failed`);
