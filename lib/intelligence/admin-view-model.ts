@@ -133,7 +133,9 @@ export function buildAdminIntelligenceViewModel(data: AdminIntelligenceLoadedDat
     ?? null;
   const validationEvidence = canonicalPlane.validation_evidence ?? [];
   const humanValidation = validationEvidence.reduce((summary, item) => ({
-    reviewed_cases: summary.reviewed_cases + item.metrics.human_validation.true_positives + item.metrics.human_validation.false_positives + item.metrics.human_validation.false_negatives + item.metrics.human_validation.true_negatives,
+    // Retrieval TP/FN counts are a diagnostic sample, not Opportunity Case
+    // reviews. customer_safe_cases is the durable Case-level confirmation.
+    reviewed_cases: summary.reviewed_cases + item.metrics.human_validation.customer_safe_cases,
     positive_cases: summary.positive_cases + item.metrics.human_validation.customer_safe_cases,
   }), { reviewed_cases: 0, positive_cases: 0 });
   const artifact = data.input.artifact;

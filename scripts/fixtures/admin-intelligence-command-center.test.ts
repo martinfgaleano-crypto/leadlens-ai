@@ -107,10 +107,11 @@ async function run() {
   const durableFallback = buildAdminIntelligenceViewModel({ ...fallbackData, input: emptyInput, control_plane_history: [durableRecord] });
   test("44 local acceptance artifacts absent falls back to latest durable canonical plane", durableFallback.canonical.source === "last_durable_evaluation" && durableFallback.intelligence_score.score === 76);
   test("45 Evidence may remain unmeasured while canonical overall remains measured", durableFallback.intelligence_score.components.find((item) => item.id === "evidence")?.score === null && durableFallback.control_plane.overall.state === "measured" && durableFallback.intelligence_score.score === 76);
-  test("46 human-positive durable validation removes the false no-commercial-outcome diagnosis", durableFallback.canonical.human_validation.positive_cases === 3 && !pageSource.includes("no commercial outcome"));
+  test("46 human-positive durable validation distinguishes three reviewed Cases from the 6/8 retrieval diagnostic", durableFallback.canonical.human_validation.reviewed_cases === 3 && durableFallback.canonical.human_validation.positive_cases === 3 && !pageSource.includes("no commercial outcome"));
   test("47 Intelligence OS exposes the same durable readiness score and stage", durableFallback.launch_readiness_summary?.score === 72 && durableFallback.canonical.launch_readiness?.level === "guided_beta");
   test("48 stale local diagnosis no longer drives canonical Overview", !/snapshot\.diagnosis\.(headline|strongest_capability|weakest_capability|top_bottleneck|highest_leverage_action)/.test(pageSource));
   test("49 canonical source, freshness and human validation are visible", /model\.canonical\.(source|source_data_cutoff|human_validation)/.test(pageSource));
+  test("50 main Intelligence Score cards render control_plane.overall directly while Evidence remains component-scoped", (pageSource.match(/overallScore/g) ?? []).length >= 6 && /control\.overall\.state === "measured"/.test(pageSource) && /canonicalEvidence\?\.score/.test(pageSource) && durableFallback.control_plane.overall.state === "measured" && durableFallback.control_plane.overall.score === 76 && durableFallback.intelligence_score.components.find((item) => item.id === "evidence")?.score === null);
   if (saved.node === undefined) delete env.NODE_ENV; else env.NODE_ENV = saved.node;
   if (saved.secret === undefined) delete env.ADMIN_SESSION_SECRET; else env.ADMIN_SESSION_SECRET = saved.secret;
   if (saved.token === undefined) delete env.ADMIN_SECRET_TOKEN; else env.ADMIN_SECRET_TOKEN = saved.token;

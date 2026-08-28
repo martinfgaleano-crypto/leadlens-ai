@@ -63,21 +63,23 @@ function Overview({ model }: { model: AdminIntelligenceViewModel }) {
   const { snapshot } = model;
   const control = model.control_plane;
   const intelligence = model.intelligence_score;
+  const overallScore = control.overall.state === "measured" ? control.overall.score : null;
+  const overallSample = control.overall.state === "measured" ? control.overall.sample_size : 0;
   const primaryBlocker = intelligence.blockers[0] ?? intelligence.components.find((item) => item.main_blocker)?.main_blocker ?? "No explicit blocker in canonical telemetry.";
   const weakest = intelligence.weakest[0] ?? intelligence.components.find((item) => item.score === null)?.label ?? "Not measured";
   const evidenceComponent = intelligence.components.find((item) => item.id === "evidence");
   const highestLeverage = evidenceComponent?.score === null
     ? "Measure source quality, association, corroboration, counterevidence and traceability as separate Evidence dimensions."
     : primaryBlocker;
-  const headline = intelligence.score === null
+  const headline = overallScore === null
     ? "Canonical Intelligence telemetry is unavailable; no score was substituted."
-    : `Canonical Intelligence is ${intelligence.score}/100 from ${words(model.canonical.source)} telemetry. Inspect the components and evidence before trusting the score.`;
+    : `Canonical Intelligence is ${overallScore}/100 from ${words(model.canonical.source)} telemetry. Inspect the components and evidence before trusting the score.`;
   return <>
     <section className={styles.hero}>
       <div>
         <span className={styles.eyebrow}>LeadLens Intelligence Control Plane</span>
         <h1>Intelligence Score</h1>
-        <div className={styles.measurement}><StatePill value={control.overall.state}/><strong className={styles.score}>{intelligence.score ?? "Not measured"}{intelligence.score !== null && <small>/100</small>}</strong><span className={styles.muted}>confidence {words(intelligence.confidence)} · n={intelligence.sample_size}</span></div>
+        <div className={styles.measurement}><StatePill value={control.overall.state}/><strong className={styles.score}>{overallScore ?? "Not measured"}{overallScore !== null && <small>/100</small>}</strong><span className={styles.muted}>confidence {words(control.overall_confidence)} · n={overallSample}</span></div>
         <p className={styles.muted}>{intelligence.trend === "insufficient_history" ? "No durable prior score; no trend inferred." : `Previous ${intelligence.previous}/100 · ${intelligence.delta! >= 0 ? "+" : ""}${intelligence.delta} · trend ${intelligence.trend}.`}</p>
         <p className={styles.diagnosis}>{headline}</p>
       </div>
@@ -106,7 +108,7 @@ function Overview({ model }: { model: AdminIntelligenceViewModel }) {
     <section className={styles.panel}>
       <SectionHeader eyebrow="Canonical automatic metrics" title="Intelligence quality and launch safety are separate" text="Intelligence measures reasoning quality from canonical capability telemetry. Launch Readiness additionally consumes runtime, configuration, security, report safety and operational blockers."/>
       <div className={styles.metricGrid}>
-        <Metric label="Intelligence Score" value={intelligence.score === null ? "Not measured" : `${intelligence.score}/100`} note={`${intelligence.confidence} confidence · n=${intelligence.sample_size}`}/>
+        <Metric label="Intelligence Score" value={overallScore === null ? "Not measured" : `${overallScore}/100`} note={`${control.overall_confidence} confidence · n=${overallSample}`}/>
         <Metric label="Launch Readiness" value={model.launch_readiness_summary ? `${model.launch_readiness_summary.score}/100` : "Open Launch Readiness"} note={model.launch_readiness_summary ? `${model.launch_readiness_summary.confidence} confidence` : "No durable readiness snapshot available"}/>
         <Metric label="Strongest" value={intelligence.strongest.join(" · ") || "Not measured"}/>
         <Metric label="Weakest" value={intelligence.weakest.join(" · ") || "Not measured"}/>
