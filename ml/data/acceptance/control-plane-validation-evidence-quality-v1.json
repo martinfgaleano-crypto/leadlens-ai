@@ -1,0 +1,66 @@
+{
+  "version": "control-plane-validation-evidence-v1",
+  "evidence_id": "evidence-quality-validation-2026-08-28",
+  "source_type": "controlled_acceptance",
+  "observed_at": "2026-08-28T00:00:00.000Z",
+  "artifact_version": "evidence-quality-v1",
+  "evaluator_compatibility": [
+    "capability-control-plane-v1",
+    "launch-readiness-v1"
+  ],
+  "capability_ids": [
+    "source_association",
+    "source_quality",
+    "corroboration",
+    "counterevidence",
+    "evidence"
+  ],
+  "provenance": [
+    {
+      "ref": "scripts/build-evidence-quality-control-plane-evidence.ts",
+      "kind": "human_review"
+    }
+  ],
+  "metrics": {
+    "evidence_quality": {
+      "association": {
+        "correct": 10,
+        "controls": 11
+      },
+      "grounding": {
+        "grounded": 11,
+        "controls": 11
+      },
+      "source_quality": {
+        "adequate": 10,
+        "controls": 11
+      },
+      "temporal_validity": {
+        "valid": 10,
+        "controls": 10
+      },
+      "materiality": {
+        "material": 9,
+        "controls": 10
+      },
+      "corroboration": {
+        "independent_correct": 8,
+        "controls": 10
+      },
+      "duplicate_origin_rejected": {
+        "rejected": 1,
+        "controls": 1
+      },
+      "counterevidence_handled": {
+        "handled": 11,
+        "controls": 11
+      },
+      "customer_safe": {
+        "safe": 10,
+        "controls": 11
+      },
+      "reviewed_relationships": 11
+    }
+  },
+  "source_fingerprint": "574a9f8c8314994abba2d6c003a9e2b21914b932d5bee562889f435b62121779"
+}
