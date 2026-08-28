@@ -43,6 +43,14 @@ export interface LaunchReadinessInput {
     internal_run_auth: boolean;
     app_url: boolean;
     demo_off: boolean;
+    checks?: Array<{
+      id: string;
+      label: string;
+      state: "present" | "missing" | "invalid" | "not_applicable" | "unverified";
+      launch_stage: "internal_pilot" | "closed_alpha" | "limited_self_serve" | "paid_public";
+      detail: string;
+      hard_blocking_readiness: boolean;
+    }>;
   };
   database_available: boolean;
 }
@@ -91,22 +99,34 @@ function gateFrom(def: GateDefinition, byId: Map<string, CapabilityMaturityEvalu
 export function buildLaunchReadiness(input: LaunchReadinessInput): LaunchReadinessAssessment {
   const byId = new Map(input.control_plane.capabilities.map((item) => [item.capability.id, item]));
   const gates = DEFINITIONS.map((def) => gateFrom(def, byId));
-  const configChecks = Object.values(input.production_config);
-  const coreConfigReady = input.production_config.supabase && input.production_config.admin_auth &&
-    input.production_config.app_url && input.production_config.demo_off && input.database_available;
-  const fullConfigReady = coreConfigReady && input.production_config.internal_run_auth;
+  const configChecks = input.production_config.checks ?? [
+    { id: "database", label: "Database", state: input.database_available ? "present" as const : "missing" as const, launch_stage: "internal_pilot" as const, detail: "Database availability check.", hard_blocking_readiness: !input.database_available },
+    { id: "admin_auth", label: "Admin auth", state: input.production_config.admin_auth ? "present" as const : "missing" as const, launch_stage: "internal_pilot" as const, detail: "Admin session configuration check.", hard_blocking_readiness: !input.production_config.admin_auth },
+    { id: "application_url", label: "Application URL", state: input.production_config.app_url ? "present" as const : "missing" as const, launch_stage: "closed_alpha" as const, detail: "Application URL check.", hard_blocking_readiness: false },
+    { id: "demo_isolation", label: "Demo isolation", state: input.production_config.demo_off ? "present" as const : "invalid" as const, launch_stage: "internal_pilot" as const, detail: "Demo isolation check.", hard_blocking_readiness: !input.production_config.demo_off },
+    { id: "internal_worker", label: "Internal worker secret", state: input.production_config.internal_run_auth ? "present" as const : "missing" as const, launch_stage: "closed_alpha" as const, detail: "Internal worker authentication check.", hard_blocking_readiness: false },
+    { id: "supabase_service_access", label: "Supabase service access", state: input.production_config.supabase ? "present" as const : "unverified" as const, launch_stage: "internal_pilot" as const, detail: "Supabase service access check.", hard_blocking_readiness: !input.production_config.supabase },
+  ];
+  const unavailable = configChecks.filter((check) => !["present", "not_applicable"].includes(check.state));
+  const internalFailures = unavailable.filter((check) => check.launch_stage === "internal_pilot" || check.hard_blocking_readiness);
+  const laterStageFailures = unavailable.filter((check) => !internalFailures.includes(check));
+  const unavailableLabels = (rows: typeof configChecks) => rows.map((check) => `${check.label} (${check.state})`).join("; ");
   gates.push({
     id: "production_configuration", label: "Production configuration", weight: 10,
-    state: !coreConfigReady ? "fail" : fullConfigReady ? "pass" : "degraded",
-    score: Math.round((configChecks.filter(Boolean).length + Number(input.database_available)) / (configChecks.length + 1) * 100),
-    sample_size: configChecks.length + 1,
-    reason: !coreConfigReady
-      ? "A core database, Admin-auth, application URL, or demo-isolation control is unavailable."
-      : fullConfigReady
-        ? "Required runtime configuration and database access are present."
-        : "Internal guided pilots remain available, but the authenticated asynchronous customer worker is unavailable without INTERNAL_RUN_SECRET.",
-    evidence: ["runtime environment presence checks", "database-backed Admin loader"], capability_ids: [],
-    next_action: fullConfigReady ? null : !coreConfigReady ? "Restore missing core runtime controls or database access." : "Configure INTERNAL_RUN_SECRET before closed-alpha or self-serve asynchronous execution.",
+    state: internalFailures.length ? "fail" : laterStageFailures.length ? "degraded" : "pass",
+    score: Math.round(configChecks.filter((check) => ["present", "not_applicable"].includes(check.state)).length / configChecks.length * 100),
+    sample_size: configChecks.length,
+    reason: internalFailures.length
+      ? `Internal Pilot is blocked by: ${unavailableLabels(internalFailures)}.`
+      : laterStageFailures.length
+        ? `Internal Pilot configuration is valid; later stages are blocked by: ${unavailableLabels(laterStageFailures)}.`
+        : "Required runtime configuration and database access are present.",
+    evidence: configChecks.map((check) => `${check.label}: ${check.state} · ${check.launch_stage}`), capability_ids: [],
+    next_action: internalFailures.length
+      ? `Restore: ${internalFailures.map((check) => check.label).join(", ")}.`
+      : laterStageFailures.length
+        ? `Before ${laterStageFailures[0].launch_stage.replace(/_/g, " ")}: configure ${laterStageFailures.map((check) => check.label).join(", ")}.`
+        : null,
   });
 
   const totalWeight = gates.reduce((sum, gate) => sum + gate.weight, 0);

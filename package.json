@@ -103,6 +103,7 @@
     "preview:control-plane-evidence-ingestion": "node --import tsx scripts/preview-control-plane-evidence-ingestion.ts",
     "test:admin-operating-system": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/admin-operating-system-v1.test.ts",
     "test:admin-production-parity": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/admin-production-parity.test.ts",
+    "test:production-configuration-closeout": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/production-configuration-closeout.test.ts",
     "acceptance:admin-production-parity": "npx -y tsx --tsconfig tsconfig.json scripts/accept-admin-production-parity.mts",
     "admin:snapshot-control-plane": "npx -y tsx --tsconfig tsconfig.json scripts/snapshot-admin-control-plane.mts",
     "audit:admin-information-architecture": "npx -y tsx --tsconfig tsconfig.json scripts/audit-admin-information-architecture.mts",

@@ -14,6 +14,7 @@ export interface EnvHealth {
   cron_secret_set: boolean;
   app_url_set: boolean;
   vercel_url_set: boolean;
+  vercel_production_url_set: boolean;
   demo_mode: boolean;
   node_env: string;
 
@@ -42,6 +43,7 @@ export function getEnvHealth(): EnvHealth {
   const cronSecret      = !!process.env.CRON_SECRET;
   const appUrl          = !!process.env.NEXT_PUBLIC_APP_URL;
   const vercelUrl       = !!process.env.VERCEL_URL;
+  const vercelProductionUrl = !!process.env.VERCEL_PROJECT_PRODUCTION_URL;
   const demoMode        = process.env.DEMO_MODE === "true";
 
   const supabaseReady  = supabaseUrl && supabaseService;
@@ -56,7 +58,7 @@ export function getEnvHealth(): EnvHealth {
   if (!adminSecret && !adminSession) missing.push("ADMIN_SESSION_SECRET");
   if (!internalSecret)  missing.push("INTERNAL_RUN_SECRET");
   if (!cronSecret)      missing.push("CRON_SECRET");
-  if (!appUrl && !vercelUrl) missing.push("NEXT_PUBLIC_APP_URL");
+  if (!appUrl && !vercelUrl && !vercelProductionUrl) missing.push("NEXT_PUBLIC_APP_URL");
 
   return {
     supabase_url_set:          supabaseUrl,
@@ -68,6 +70,7 @@ export function getEnvHealth(): EnvHealth {
     cron_secret_set:           cronSecret,
     app_url_set:               appUrl,
     vercel_url_set:            vercelUrl,
+    vercel_production_url_set: vercelProductionUrl,
     demo_mode:                 demoMode,
     node_env:                  process.env.NODE_ENV ?? "unknown",
 

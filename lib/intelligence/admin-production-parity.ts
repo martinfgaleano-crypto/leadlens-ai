@@ -9,8 +9,10 @@ export interface ProductionConfigCheck {
   id: "database" | "admin_auth" | "application_url" | "demo_isolation" | "internal_worker" | "supabase_service_access";
   label: string;
   state: ConfigCheckState;
-  launch_stage: "internal_pilot" | "closed_alpha" | "self_serve";
+  launch_stage: "internal_pilot" | "closed_alpha" | "limited_self_serve" | "paid_public";
   detail: string;
+  hard_blocking_readiness: boolean;
+  founder_action_required: boolean;
 }
 
 export function buildProductionConfigChecks(input: {
@@ -20,12 +22,12 @@ export function buildProductionConfigChecks(input: {
 }): ProductionConfigCheck[] {
   const { env } = input;
   return [
-    { id: "database", label: "Database", state: input.databaseAvailable ? "present" : "missing", launch_stage: "internal_pilot", detail: input.databaseAvailable ? "Canonical database queries succeeded." : "Canonical database access is unavailable." },
-    { id: "admin_auth", label: "Admin auth", state: env.admin_session_secret_set || env.admin_secret_set ? "present" : "missing", launch_stage: "internal_pilot", detail: env.admin_session_secret_set ? "Signed Admin sessions are configured." : env.admin_secret_set ? "Development/shared Admin credential only." : "No Admin credential chain is configured." },
-    { id: "application_url", label: "Application URL", state: env.app_url_set || env.vercel_url_set ? "present" : "missing", launch_stage: "closed_alpha", detail: env.app_url_set ? "Canonical application URL is configured." : env.vercel_url_set ? "Vercel deployment URL is available; canonical public URL is not explicit." : "No application URL is available." },
-    { id: "demo_isolation", label: "Demo isolation", state: env.demo_mode ? "invalid" : "present", launch_stage: "internal_pilot", detail: env.demo_mode ? "DEMO_MODE is enabled in this runtime." : "Demo mode is disabled." },
-    { id: "internal_worker", label: "Internal worker secret", state: env.internal_run_secret_set ? "present" : "missing", launch_stage: "closed_alpha", detail: env.internal_run_secret_set ? "Asynchronous customer worker authentication is configured." : "Guided Admin pilots remain available; asynchronous customer execution is degraded." },
-    { id: "supabase_service_access", label: "Supabase service access", state: input.serviceRoleQuerySucceeded ? "present" : env.supabase_service_role_set ? "unverified" : "missing", launch_stage: "internal_pilot", detail: input.serviceRoleQuerySucceeded ? "Service-role Control Plane query succeeded." : env.supabase_service_role_set ? "Credential is present but the Control Plane query did not succeed." : "Service-role credential is absent." },
+    { id: "database", label: "Database", state: input.databaseAvailable ? "present" : "missing", launch_stage: "internal_pilot", detail: input.databaseAvailable ? "Canonical database queries succeeded." : "Canonical database access is unavailable.", hard_blocking_readiness: !input.databaseAvailable, founder_action_required: !input.databaseAvailable },
+    { id: "admin_auth", label: "Admin auth", state: env.admin_session_secret_set ? "present" : "missing", launch_stage: "internal_pilot", detail: env.admin_session_secret_set ? "Signed Admin sessions are configured." : env.admin_secret_set ? "Legacy ADMIN_SECRET_TOKEN is present but cannot satisfy canonical production Admin auth." : "ADMIN_SESSION_SECRET is not configured.", hard_blocking_readiness: !env.admin_session_secret_set, founder_action_required: !env.admin_session_secret_set },
+    { id: "application_url", label: "Application URL", state: env.app_url_set || env.vercel_production_url_set || env.vercel_url_set ? "present" : "missing", launch_stage: "closed_alpha", detail: env.app_url_set ? "Canonical application URL is configured." : env.vercel_production_url_set ? "Vercel canonical production URL is available." : env.vercel_url_set ? "Vercel deployment URL is available; canonical public URL is not explicit." : "No canonical or Vercel production URL is available.", hard_blocking_readiness: false, founder_action_required: !env.app_url_set && !env.vercel_production_url_set && !env.vercel_url_set },
+    { id: "demo_isolation", label: "Demo isolation", state: env.demo_mode ? "invalid" : "present", launch_stage: "internal_pilot", detail: env.demo_mode ? "DEMO_MODE is enabled in production and production data isolation cannot be asserted." : "Demo mode is disabled; no legacy demo flag is required.", hard_blocking_readiness: env.demo_mode, founder_action_required: env.demo_mode },
+    { id: "internal_worker", label: "Internal worker secret", state: env.internal_run_secret_set ? "present" : "missing", launch_stage: "closed_alpha", detail: env.internal_run_secret_set ? "Asynchronous customer worker authentication is configured." : "Guided Admin pilots remain available; closed-alpha asynchronous execution requires INTERNAL_RUN_SECRET.", hard_blocking_readiness: false, founder_action_required: !env.internal_run_secret_set },
+    { id: "supabase_service_access", label: "Supabase service access", state: input.serviceRoleQuerySucceeded ? "present" : env.supabase_service_role_set ? "unverified" : "missing", launch_stage: "internal_pilot", detail: input.serviceRoleQuerySucceeded ? "Service-role Control Plane query succeeded." : env.supabase_service_role_set ? "Credential is present but the Control Plane query did not succeed." : "Service-role credential is absent.", hard_blocking_readiness: !input.serviceRoleQuerySucceeded, founder_action_required: !input.serviceRoleQuerySucceeded },
   ];
 }
 
@@ -37,6 +39,7 @@ export function productionConfigFromChecks(checks: ProductionConfigCheck[]) {
     internal_run_auth: state("internal_worker"),
     app_url: state("application_url"),
     demo_off: state("demo_isolation"),
+    checks: checks.map(({ id, label, state: checkState, launch_stage, detail, hard_blocking_readiness }) => ({ id, label, state: checkState, launch_stage, detail, hard_blocking_readiness })),
   };
 }
 
