@@ -447,7 +447,7 @@ export function applyControlPlaneValidationEvidence(
 ): IntelligenceControlPlane {
   const existing = dedupeValidationEvidence(plane.validation_evidence ?? []);
   const rows = dedupeValidationEvidence([...existing, ...incoming]);
-  if (rows.length === existing.length) return plane;
+  if (rows.map((row) => row.source_fingerprint).sort().join("|") === existing.map((row) => row.source_fingerprint).sort().join("|")) return plane;
   const input: CapabilityControlPlaneInput = {
     now, snapshot_capabilities: [], dynamic_recall: null, soak: null,
     monitor_sample: 0, monitor_false_novelty: null, account_memory_records: null,

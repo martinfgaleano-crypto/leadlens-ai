@@ -5,6 +5,8 @@ export const CONTROL_PLANE_VALIDATION_EVIDENCE_VERSION = "control-plane-validati
 export interface ControlPlaneValidationEvidenceV1 {
   version: typeof CONTROL_PLANE_VALIDATION_EVIDENCE_VERSION;
   evidence_id: string;
+  /** Fingerprint of an earlier observation of the same controlled sample. */
+  supersedes_source_fingerprint?: string;
   source_type: "controlled_acceptance";
   source_fingerprint: string;
   observed_at: string;
@@ -71,10 +73,13 @@ export function validateControlPlaneValidationEvidence(value: unknown): { ok: tr
     const { source_fingerprint: _ignored, ...projection } = raw as unknown as ControlPlaneValidationEvidenceV1;
     if (validationEvidenceFingerprint(projection) !== raw.source_fingerprint) errors.push("source_fingerprint does not match evidence payload");
   }
+  if (raw.supersedes_source_fingerprint !== undefined && (!/^[a-f0-9]{64}$/.test(raw.supersedes_source_fingerprint) || raw.supersedes_source_fingerprint === raw.source_fingerprint)) errors.push("supersedes_source_fingerprint is invalid");
   return errors.length ? { ok: false, errors } : { ok: true, evidence: raw as unknown as ControlPlaneValidationEvidenceV1 };
 }
 
 export function dedupeValidationEvidence(values: ControlPlaneValidationEvidenceV1[]): ControlPlaneValidationEvidenceV1[] {
   const seen = new Set<string>();
-  return values.filter((value) => seen.has(value.source_fingerprint) ? false : (seen.add(value.source_fingerprint), true));
+  const unique = values.filter((value) => seen.has(value.source_fingerprint) ? false : (seen.add(value.source_fingerprint), true));
+  const superseded = new Set(unique.map((value) => value.supersedes_source_fingerprint).filter((value): value is string => Boolean(value)));
+  return unique.filter((value) => !superseded.has(value.source_fingerprint));
 }

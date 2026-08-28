@@ -49,5 +49,17 @@ t("17 repeated evidence creates no new material plane", () => assert.equal(apply
 t("18 source cutoff advances to controlled evidence", () => assert.equal(readiness.source_data_cutoff, at));
 t("19 runtime blocker remains visible", () => assert.match(applied.capabilities.find(x => x.capability.id === "runtime_latency")!.blockers.join(" "), /304912ms/));
 t("20 controlled acceptance is not labeled production observation", () => assert.equal(evidence.source_type, "controlled_acceptance"));
+const { source_fingerprint: _fingerprint, ...replacementInput } = evidence;
+const replacement = createControlPlaneValidationEvidence({
+  ...replacementInput,
+  evidence_id: "intelligence-super-sprint-commercial-review-2026-08-28",
+  supersedes_source_fingerprint: evidence.source_fingerprint,
+  observed_at: "2026-08-28T14:00:00.000Z",
+  metrics: { ...evidence.metrics, human_validation: { ...evidence.metrics.human_validation, customer_safe_cases: 3 } },
+});
+const replaced = applyControlPlaneValidationEvidence(applied, [replacement], replacement.observed_at);
+t("21 a reviewed update supersedes rather than duplicates the same controlled sample", () => { assert.equal(replaced.validation_evidence?.length, 1); assert.equal(replaced.validation_evidence?.[0].source_fingerprint, replacement.source_fingerprint); });
+t("22 supersession updates human-positive Cases without doubling retrieval n", () => { const c = replaced.capabilities.find(x => x.capability.id === "opportunity_case")!; assert.equal(c.supporting_metrics.human_positive_cases, 3); assert.equal(c.supporting_metrics.positive_controls, 8); });
+t("23 invalid or self-referential supersession fails closed", () => assert.equal(validateControlPlaneValidationEvidence({ ...replacement, supersedes_source_fingerprint: replacement.source_fingerprint }).ok, false));
 
 console.log(`\n${passed} passed, 0 failed`);
