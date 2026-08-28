@@ -25,6 +25,7 @@ import {
   type ContextSelector,
 } from "@/lib/interpretation/confirmed-context-store";
 import type { ResearchReadinessAssessment } from "./research-readiness";
+import { classifyOrganization } from "@/lib/discovery/organization-type";
 
 // ─── Candidate model ──────────────────────────────────────────────────────────
 
@@ -265,6 +266,49 @@ function matchesExclusion(org: { industry?: string; organizationType?: string; c
   return { excluded: false, certain: true };
 }
 
+/** Discovery can resolve a web domain without resolving a commercial account.
+ * Keep this boundary deterministic and narrow: it rejects known non-account
+ * ecosystems and category/page labels, while target-family fit remains owned by
+ * research-readiness. A verified domain is identity evidence, not eligibility. */
+function nonAccountReason(input: {
+  name: string;
+  domain?: string;
+  organizationType?: string;
+  industry?: string;
+  sourceUrls: Array<string | undefined>;
+}): string | null {
+  const name = norm(input.name).normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const domain = norm(input.domain ?? "").replace(/^www\./, "");
+  const sourceText = input.sourceUrls.filter(Boolean).join(" ").toLowerCase();
+  const org = classifyOrganization({
+    name: input.name,
+    description: [input.organizationType, input.industry].filter(Boolean).join(" "),
+    domain: input.domain,
+  });
+  if (!org.eligible_for_icp) return `Non-commercial organization: ${org.organization_type}.`;
+
+  // A social/search/directory/government/reference host can discover a company,
+  // but cannot itself become the candidate's canonical corporate domain.
+  if (/^(?:[a-z0-9-]+\.)?(?:tiktok\.com|kompass\.com|datos\.gov\.co|trade\.gov|wikipedia\.org|facebook\.com|instagram\.com|linkedin\.com)$/.test(domain)) {
+    return "Resolved domain belongs to a directory, social, government, or reference ecosystem rather than the account.";
+  }
+
+  const categoryLabels = new Set([
+    "base", "grandes", "fabrica", "clasificacion", "expos", "exhibitions",
+    "trade shows", "datos abiertos colombia", "distribuidores mayoristas colombia",
+    "importadorasasociadas", "importadoras asociadas",
+  ]);
+  if (categoryLabels.has(name)) return "Discovered label is a category/reference phrase, not a resolved organization.";
+
+  // Source URL may be a discovery surface; only reject when its host was also
+  // promoted as the candidate domain. This preserves real companies discovered
+  // through directories while preventing the directory itself from becoming one.
+  if (domain && sourceText.includes(domain) && /(?:directory|directorio|trade[- ]?show|datos abiertos)/i.test(`${input.name} ${input.organizationType ?? ""}`)) {
+    return "Discovery/reference surface was promoted as the account itself.";
+  }
+  return null;
+}
+
 // ─── Identity resolution + dedup ──────────────────────────────────────────────
 
 /** Canonical key: domain when present, else normalized name + country. Same name
@@ -324,11 +368,21 @@ function classifyGroup(g: Grouped, plan: DiscoveryPlan, ambiguous: Set<string>, 
   }));
 
   const excl = matchesExclusion({ industry: primary.industry, organizationType: orgType, country, name }, plan.exclusions);
+  const nonAccount = nonAccountReason({
+    name,
+    domain,
+    organizationType: orgType,
+    industry: primary.industry,
+    sourceUrls: g.orgs.map((o) => o.sourceUrl),
+  });
   let status: CandidateStatus;
   let statusReason: string;
   const openQ: string[] = [];
 
-  if (excl.excluded && excl.certain) {
+  if (nonAccount) {
+    status = "excluded";
+    statusReason = nonAccount;
+  } else if (excl.excluded && excl.certain) {
     status = "excluded";
     statusReason = `Hard exclusion matched: ${excl.rule}`;
   } else if (ambiguous.has(norm(name)) || !domain && g.orgs.every((o) => !o.domain) && !country) {

@@ -135,6 +135,37 @@ t("golden partnerships: reaches an ok universe", (await goldenRun(GOLDEN_FIXTURE
     u.candidates[0].status === "likely_eligible" && u.coverage.gaps.some((g) => g.type === "low_public_footprint"));
 }
 
+// ─── DOMAIN IS NOT AUTOMATICALLY A COMMERCIAL ACCOUNT ────────────────────────
+{
+  const ctx = confirmOf(GOLDEN_FIXTURES.software_manufacturing);
+  const plan = planDiscovery(ctx);
+  const noise = [
+    { name: "Kompass", domain: "co.kompass.com", organizationType: "manufacturing directory" },
+    { name: "TikTok", domain: "tiktok.com", organizationType: "technology" },
+    { name: "Datos Abiertos Colombia", domain: "datos.gov.co", organizationType: "manufacturing data" },
+    { name: "Trade Shows", domain: "trade.gov", organizationType: "manufacturing events" },
+    { name: "Base", domain: "example.com", organizationType: "manufacturer" },
+    { name: "Distribuidores Mayoristas Colombia", domain: "example.org", organizationType: "distributor" },
+  ];
+  const runner: DiscoveryRunner = async () => ({
+    orgs: noise.map(O), providersAvailable: ["brave"], providersFailed: [], operatingMode: "full_discovery",
+  });
+  const u = await hunt(plan, runner, { now: clock });
+  t("non-account surfaces: directory/social/government/category labels are excluded despite having domains",
+    u.candidates.length === noise.length && u.candidates.every((c) => c.status === "excluded"));
+}
+
+{
+  const ctx = confirmOf(GOLDEN_FIXTURES.software_manufacturing);
+  const plan = planDiscovery(ctx);
+  const runner: DiscoveryRunner = async () => ({
+    orgs: [O({ name: "Acme Packaging Colombia", domain: "acmepackaging.co", organizationType: "manufacturer" })],
+    providersAvailable: ["brave"], providersFailed: [], operatingMode: "full_discovery",
+  });
+  const u = await hunt(plan, runner, { now: clock });
+  t("non-account boundary: preserves a resolved commercial manufacturer", u.candidates[0]?.status === "eligible");
+}
+
 // ─── PROVIDER FAILURE (degraded) vs ALL-FAIL (honest failure) ─────────────────
 {
   const plan = planDiscovery(confirmOf(GOLDEN_FIXTURES.software_manufacturing));

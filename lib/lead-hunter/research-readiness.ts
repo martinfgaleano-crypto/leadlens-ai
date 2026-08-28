@@ -19,7 +19,7 @@ const FAMILY: Record<string, string[]> = {
   logistics: ["logistics", "logistica", "3pl", "transport", "freight"],
   retailer: ["retail", "retailer", "minorista", "supermarket", "grocery"],
   software: ["software", "saas", "technology", "tecnologia"],
-  financial: ["bank", "financial", "financiero", "fintech", "insurance"],
+  financial: ["bank", "banco", "bancoldex", "financial", "financiero", "fintech", "insurance", "seguros"],
   hospitality: ["hotel", "hospitality", "tourism", "turismo"],
 };
 
@@ -35,14 +35,23 @@ export function assessResearchReadiness(candidate: CandidateAccount, plan: Disco
     return { status: "needs_identity_validation", reasons: ["Canonical corporate domain is not verified."], priorityBand: 4 };
   }
   const observed = `${candidate.identity.organizationType ?? ""}`.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const identityText = `${candidate.identity.canonicalName} ${candidate.identity.domain ?? ""}`.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   const targets = [...plan.organizationTypes, ...plan.industries].join(" ").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   if (!observed) return { status: "structural_match_uncertain", reasons: ["Organization type and industry are unconfirmed."], priorityBand: 4 };
 
   const targetFamilies = families(targets);
   const observedFamilies = families(observed);
+  const identityFamilies = families(identityText);
   const verticalSeed = candidate.provenance.some(p => p.origin === "vertical_seed");
   const familyMatch = targetFamilies.some(f => observedFamilies.includes(f));
   const lexicalMatch = words(observed).some(w => words(targets).includes(w));
+  // Provider/list context can incorrectly stamp the requested target type onto a
+  // discovered organization (for example Bancóldex inside a manufacturer list).
+  // An explicit, conflicting family in the canonical name/domain dominates that
+  // contextual label and prevents expensive Research on a known wrong target.
+  if (identityFamilies.length && !identityFamilies.some(f => targetFamilies.includes(f))) {
+    return { status: "wrong_target_type", reasons: [`Canonical identity indicates ${identityFamilies.join("/")}, outside the confirmed target families.`], priorityBand: 5 };
+  }
   if (verticalSeed && (familyMatch || lexicalMatch)) {
     return { status: "research_ready", reasons: ["Verified company belongs to the matched vertical pack; downstream Research must still prove the event and opportunity."], priorityBand: 2 };
   }

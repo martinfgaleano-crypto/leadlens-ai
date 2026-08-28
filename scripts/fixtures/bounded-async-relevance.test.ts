@@ -27,6 +27,7 @@ const candidate = (name: string, type: string, domain?: string): CandidateAccoun
 
 t("manufacturer is research-ready for confirmed manufacturing context", () => assert.equal(assessResearchReadiness(candidate("Acme", "Industrial manufacturer", "acme.example"), plan).status, "research_ready"));
 t("retailer does not silently broaden manufacturer/distributor scope", () => assert.equal(assessResearchReadiness(candidate("Sprouts", "Grocery retailer", "sprouts.example"), plan).status, "wrong_target_type"));
+t("canonical financial identity dominates a misleading manufacturer label", () => assert.equal(assessResearchReadiness(candidate("Bancóldex", "Manufacturer", "bancoldex.com"), plan).status, "wrong_target_type"));
 t("vertical-seed provenance cannot bypass an explicit target-family mismatch", () => {
   const retailer = candidate("Sprouts", "Grocery retailer", "sprouts.example");
   retailer.provenance = [{ route: "fixture", origin: "vertical_seed", discoveredName: "Sprouts", discoveredAt: new Date(0).toISOString() }];
