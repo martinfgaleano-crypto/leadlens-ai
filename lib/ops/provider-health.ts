@@ -6,6 +6,7 @@
 // Anthropic) and cached; the admin console rate-limits manual tests.
 
 import { getUsage, recordProviderCall, type ProviderUsage } from "./usage-ledger";
+import { MODEL as ANTHROPIC_MODEL } from "@/lib/anthropic";
 
 export const PROVIDER_HEALTH_VERSION = "provider-health-v1";
 
@@ -114,12 +115,12 @@ export const PROVIDER_DEFS: ProviderDef[] = [
     probe: async () => {
       const k = key("ANTHROPIC_API_KEY"); if (!k) return { state: "missing", detail: null, latency_ms: null };
       const s = t0();
-      const r = await http("https://api.anthropic.com/v1/messages", { method: "POST", headers: { "x-api-key": k, "anthropic-version": "2023-06-01", "content-type": "application/json" }, body: JSON.stringify({ model: "claude-haiku-4-5-20251001", max_tokens: 1, messages: [{ role: "user", content: "." }] }) });
+      const r = await http("https://api.anthropic.com/v1/messages", { method: "POST", headers: { "x-api-key": k, "anthropic-version": "2023-06-01", "content-type": "application/json" }, body: JSON.stringify({ model: ANTHROPIC_MODEL, max_tokens: 1, messages: [{ role: "user", content: "." }] }) });
       const lat = ms(s);
       if (r.status === 200) return { state: "ok", detail: null, latency_ms: lat };
       if (r.status === 401) return { state: "invalid", detail: "credencial rechazada", latency_ms: lat };
       if (r.status === 429) return { state: "rate_limited", detail: "429 rate limit", latency_ms: lat };
-      if (/usage limits/i.test(r.body)) {
+      if (/(?:usage limits?|credit balance|balance is too low|insufficient credits?|billing limit)/i.test(r.body)) {
         const m = r.body.match(/regain access on ([0-9-]+ at [0-9:]+ UTC|[0-9-]+T[0-9:]+Z?)/i);
         return { state: "exhausted", detail: m ? `límite alcanzado — reset ${m[1]}` : "límite de uso alcanzado", latency_ms: lat };
       }
