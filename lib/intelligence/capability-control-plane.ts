@@ -114,10 +114,26 @@ export interface SoakSignals {
   runs?: unknown[];
 }
 
+export interface PositiveCaptureSignals {
+  generated_at: string;
+  diagnostic_only: true;
+  production_seeded: false;
+  summary: {
+    references: number;
+    captured_defensibly: number;
+    bounded_capture_rate: number;
+    duration_ms: number;
+    provider_calls: number;
+    extractions: number;
+    observed_cost_usd: number | null;
+  };
+}
+
 export interface CapabilityControlPlaneInput {
   now: string;
   snapshot_capabilities: IntelligenceCapabilityAssessment[];
   dynamic_recall: DynamicRecallSignals | null;
+  positive_capture?: PositiveCaptureSignals | null;
   soak: SoakSignals | null;
   monitor_sample: number;
   monitor_false_novelty: number | null;
@@ -229,12 +245,19 @@ function dynamicOverrides(def: CapabilityDefinition, dimensions: Record<Capabili
   if (["dynamic_universe_discovery", "us_coverage", "initial_research", "opportunity_case", "decision", "human_calibration", "launch_readiness"].includes(def.id)) {
     // Real outcome truth overrides implementation/tests. Zero captured positives
     // is a measured poor result, never an unearned 100% precision.
-    dimensions.real_world_validation = measured(clamp(m.bounded_capture_rate * 100), 0.58, m.bounded_positive_controls);
-    dimensions.quality = measured(clamp(m.bounded_capture_rate * 100), 0.58, m.bounded_positive_controls);
-    metrics.positive_controls = m.bounded_positive_controls;
-    metrics.positive_controls_captured = m.bounded_positive_controls_captured_defensibly;
+    const positive = input.positive_capture?.summary;
+    const controls = positive?.references ?? m.bounded_positive_controls;
+    const captured = positive?.captured_defensibly ?? m.bounded_positive_controls_captured_defensibly;
+    const rate = positive?.bounded_capture_rate ?? m.bounded_capture_rate;
+    dimensions.real_world_validation = measured(clamp(rate * 100), 0.58, controls);
+    dimensions.quality = measured(clamp(rate * 100), 0.58, controls);
+    metrics.positive_controls = controls;
+    metrics.positive_controls_captured = captured;
+    metrics.positive_capture_rate = rate;
     metrics.human_positive_cases = m.human_positive_outcomes;
-    blockers.push("No human-defensible positive Case in the latest positive-control sample (0/8 capture proxy).");
+    if (input.positive_capture) evidence.push({ id: `${def.id}:positive-capture-v1`, kind: "exercised_run", ref: "ml/data/acceptance/account-deep-research-positive-control-v1.json", dated: true, date: input.positive_capture.generated_at });
+    if (captured === 0) blockers.push(`No defensibly captured event in the latest positive-control sample (0/${controls}).`);
+    else if (m.human_positive_outcomes === 0) blockers.push(`${captured}/${controls} diagnostic events were captured, but no customer-safe Case has been human-confirmed.`);
   }
   if (["cogs_instrumentation", "provider_budget"].includes(def.id)) {
     dimensions.integration = measured(90, 0.75, runCount);

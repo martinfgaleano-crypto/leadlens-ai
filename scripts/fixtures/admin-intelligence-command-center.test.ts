@@ -75,8 +75,9 @@ async function run() {
   const denied = await GET(new NextRequest("https://leadlensintel.com/api/admin/intelligence/command-center"));
   test("36 normal user is denied by command-center API", denied.status === 401);
   test("37 command center exposes the canonical automatic capability registry", local.control_plane.capabilities.length === 47);
-  test("38 latest real 0/8 capture overrides implementation and degrades dynamic recall",
-    local.control_plane.capabilities.find((c) => c.capability.id === "dynamic_universe_discovery")?.state === "degraded");
+  const dynamicDiscovery = local.control_plane.capabilities.find((c) => c.capability.id === "dynamic_universe_discovery");
+  test("38 latest bounded capture evidence validates retrieval while preserving the customer-safe Case blocker",
+    dynamicDiscovery?.state === "live_validated" && dynamicDiscovery.blockers.some((b) => /no customer-safe Case has been human-confirmed/i.test(b)));
   test("39 global score is anti-inflation capped while no human-positive Case exists",
     local.control_plane.overall.state === "measured" && local.control_plane.overall.score <= 59);
   test("40 command center no longer carries manually maintained pilot counts", !pageSource.includes('value="17"') && !pageSource.includes('value="10"'));

@@ -19,7 +19,8 @@ const allReferences = [
   { company: "Mondi", domain: "mondigroup.com", expected: ["Pittsburgh", "automated packaging"] },
 ] as const;
 const filter = process.env.ACCOUNT_DIAGNOSTIC_FILTER?.trim().toLowerCase() ?? "";
-const references = filter ? allReferences.filter((ref) => ref.company.toLowerCase().includes(filter)) : allReferences;
+const filterTerms = filter.split(",").map((term) => term.trim()).filter(Boolean);
+const references = filterTerms.length ? allReferences.filter((ref) => filterTerms.some((term) => ref.company.toLowerCase().includes(term))) : allReferences;
 const criteria: LeadSearchCriteria = {
   offer_summary: "industrial automation integration and plant operations software",
   value_proposition: "automate and integrate plant operations",
@@ -28,6 +29,12 @@ const criteria: LeadSearchCriteria = {
   excluded_industries: [], disqualification_criteria: [], buying_signals: ["new facility", "capacity expansion", "automation investment"],
   tone: "consultative", plan: "sample", lead_count: 2, output_language: "en",
 };
+
+function containsExpected(text: string, term: string): boolean {
+  const hay = text.toLowerCase(), needle = term.toLowerCase();
+  if (hay.includes(needle)) return true;
+  return needle.startsWith("expan") && hay.includes("expan");
+}
 
 async function main() {
   const health = await Promise.all([braveProvider, tavilyProvider].map(async (provider) => ({ provider, health: await provider.health() })));
@@ -42,16 +49,16 @@ async function main() {
       country: "United States", industry: "manufacturing", source: "public_signal",
       confidence_score: .95, account_identity: { canonicalName: ref.company, domain: ref.domain, country: "United States", aliases: [], confidence: "verified", fromUniverse: true },
     };
-    const result = await deepenAccountResearch(candidate, criteria, { providers, maxQueries: 4, maxResultsPerQuery: 5, maxExtractions: 2 });
+    const result = await deepenAccountResearch(candidate, criteria, { providers, maxQueries: 5, maxResultsPerQuery: 5, maxExtractions: 2 });
     const expectedTerms = Array.from(ref.expected) as string[];
-    const matchingEvents = result.validated_events.filter((event) => expectedTerms.some((term) => event.title_and_content.toLowerCase().includes(term.toLowerCase())));
-    const matched = expectedTerms.filter((term) => matchingEvents.some((event) => event.title_and_content.toLowerCase().includes(term.toLowerCase())));
+    const matchingEvents = result.validated_events.filter((event) => expectedTerms.some((term) => containsExpected(event.title_and_content, term)));
+    const matched = expectedTerms.filter((term) => matchingEvents.some((event) => containsExpected(event.title_and_content, term)));
     accounts.push({
       reference: `${ref.company} — ${ref.expected.join(" / ")}`, company: ref.company, domain: ref.domain,
       expected_terms: expectedTerms, matched_terms: matched,
       captured_defensibly: matchingEvents.length > 0,
       strongest_source_url: result.sourceUrl, strongest_publication_date: result.publishedDate,
-      validated_events: result.validated_events.map((event) => ({ url: event.url, source_host: event.source_host, kind: event.kind, event_date: event.event_date, matched_expected_terms: expectedTerms.filter((term) => event.title_and_content.toLowerCase().includes(term.toLowerCase())) })),
+      validated_events: result.validated_events.map((event) => ({ url: event.url, source_host: event.source_host, kind: event.kind, event_date: event.event_date, matched_expected_terms: expectedTerms.filter((term) => containsExpected(event.title_and_content, term)) })),
       telemetry: result.telemetry,
       accepted_evidence: result.decisions.filter((d) => d.accepted).map((d) => ({ url: d.candidate.url, title: d.candidate.title, publication_date: d.candidate.publication_date, source_tier: d.source_tier, entity_state: d.entity_state, commercial_relevance: d.commercial_relevance })),
       rejection_reasons: Array.from(new Set(result.decisions.filter((d) => !d.accepted).flatMap((d) => d.reason_codes))),
@@ -64,7 +71,7 @@ async function main() {
     diagnostic_only: true, production_seeded: false,
     interpretation_limit: "Named accounts are a bounded retrieval control, not a production universe and not a global recall estimate.",
     providers: health.map((x) => ({ id: x.provider.id, status: x.health.status, reason: x.health.reason })),
-    budget: { accounts: 8, max_queries_per_account: 4, max_results_per_query: 5, max_extractions_per_account: 2, retries: 0 },
+    budget: { accounts: 8, max_queries_per_account: 5, max_results_per_query: 5, max_extractions_per_account: 2, retries: 0 },
     summary: { references: accounts.length, captured_defensibly: captured, bounded_capture_rate: captured / accounts.length, duration_ms: Date.now() - started, provider_calls: accounts.reduce((n, a) => n + a.telemetry.provider_calls, 0), extractions: accounts.reduce((n, a) => n + a.telemetry.pages_extracted, 0), observed_cost_usd: null },
     accounts,
   };

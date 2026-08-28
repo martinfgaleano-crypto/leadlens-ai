@@ -42,6 +42,7 @@ export interface ResolvedEventDate {
 }
 
 const ISO_FULL = /^\s*(\d{4})-(\d{2})-(\d{2})\s*$/;
+const US_FULL = /^\s*(\d{1,2})\/(\d{1,2})\/(\d{4})\s*$/;
 const ISO_MONTH = /^\s*(\d{4})-(\d{2})\s*$/;
 const YEAR_ONLY = /^\s*(\d{4})\s*$/;
 const QUARTER = /\bq([1-4])\s*(\d{4})\b|\b(primer|segundo|tercer|cuarto)\s+trimestre\s+(?:de\s+)?(\d{4})\b/i;
@@ -65,6 +66,13 @@ export function resolveEventDate(candidate: EventCandidate): ResolvedEventDate {
 
   let m: RegExpMatchArray | null;
   if ((m = raw.match(ISO_FULL))) return { eventDate: `${m[1]}-${m[2]}-${m[3]}`, precision: "exact_date", basis: "iso" };
+  if ((m = raw.match(US_FULL))) {
+    const month = Number(m[1]), day = Number(m[2]), year = Number(m[3]);
+    const date = new Date(Date.UTC(year, month - 1, day));
+    if (month >= 1 && month <= 12 && day >= 1 && date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day) {
+      return { eventDate: `${year}-${pad2(month)}-${pad2(day)}`, precision: "exact_date", basis: "absolute_text" };
+    }
+  }
   if ((m = raw.match(ISO_MONTH))) return { eventDate: `${m[1]}-${m[2]}-01`, precision: "month", basis: "iso" };
   if ((m = raw.match(QUARTER))) {
     const q = m[1] ? Number(m[1]) : Q_MAP[(m[3] ?? "").toLowerCase()];

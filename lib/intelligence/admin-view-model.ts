@@ -11,6 +11,7 @@ import {
   buildCapabilityControlPlane,
   type CapabilityControlPlaneInput,
   type DynamicRecallSignals,
+  type PositiveCaptureSignals,
   type IntelligenceControlPlane,
   type SoakSignals,
 } from "./capability-control-plane";
@@ -94,13 +95,14 @@ export interface AdminIntelligenceLoadedData {
 
 const label = (value: string): string => value.replace(/_/g, " ");
 
-export function buildAdminIntelligenceViewModel(data: AdminIntelligenceLoadedData & { deep_accounts?: DeepEvidenceArtifact | null; research_quality?: ResearchQualityArtifact | null; signal_temporal?: SignalTemporalArtifact | null; signal_benchmark?: SignalBenchmarkArtifact | null; signal_monitoring_operation?: SignalMonitoringOperationArtifact | null; entity_resolution?: EntityResolutionArtifact | null; opportunity_synthesis?:OpportunitySynthesisArtifact|null;client_context_review?:ClientContextReviewArtifact|null; dynamic_recall?: DynamicRecallSignals | null; soak?: SoakSignals | null; provider_usage?: CapabilityControlPlaneInput["provider_usage"] }): AdminIntelligenceViewModel {
+export function buildAdminIntelligenceViewModel(data: AdminIntelligenceLoadedData & { deep_accounts?: DeepEvidenceArtifact | null; research_quality?: ResearchQualityArtifact | null; signal_temporal?: SignalTemporalArtifact | null; signal_benchmark?: SignalBenchmarkArtifact | null; signal_monitoring_operation?: SignalMonitoringOperationArtifact | null; entity_resolution?: EntityResolutionArtifact | null; opportunity_synthesis?:OpportunitySynthesisArtifact|null;client_context_review?:ClientContextReviewArtifact|null; dynamic_recall?: DynamicRecallSignals | null; positive_capture?: PositiveCaptureSignals | null; soak?: SoakSignals | null; provider_usage?: CapabilityControlPlaneInput["provider_usage"] }): AdminIntelligenceViewModel {
   const snapshot = buildIntelligenceSnapshot(data.input);
   const telemetry = data.dynamic_recall;
   const controlPlane = buildCapabilityControlPlane({
     now: data.input.now,
     snapshot_capabilities: snapshot.capability_assessments,
     dynamic_recall: telemetry ?? null,
+    positive_capture: data.positive_capture ?? null,
     soak: data.soak ?? null,
     monitor_sample: data.signal_temporal?.summary.accounts ?? 0,
     monitor_false_novelty: null,
@@ -276,11 +278,13 @@ export async function loadAdminIntelligenceViewModel(options: {
   const providerUsage = getUsage();
   const root = options.root ?? process.cwd();
   let dynamicRecall: DynamicRecallSignals | null = null;
+  let positiveCapture: PositiveCaptureSignals | null = null;
   let soak: SoakSignals | null = null;
   try {
     const { promises: fs } = await import("node:fs");
     const path = await import("node:path");
     dynamicRecall = JSON.parse(await fs.readFile(path.join(root, "ml/data/acceptance/dynamic-universe-recall-v1.json"), "utf8")) as DynamicRecallSignals;
+    try { positiveCapture = JSON.parse(await fs.readFile(path.join(root, "ml/data/acceptance/account-deep-research-positive-control-v1.json"), "utf8")) as PositiveCaptureSignals; } catch { /* optional positive retrieval evidence */ }
     try { soak = JSON.parse(await fs.readFile(path.join(root, "ml/data/acceptance/intelligence-soak-v1.json"), "utf8")) as SoakSignals; } catch { /* optional historical evidence */ }
   } catch { /* control plane labels missing acceptance evidence honestly */ }
   input.validation_lifecycles = lifecycles;
@@ -294,7 +298,7 @@ export async function loadAdminIntelligenceViewModel(options: {
   return buildAdminIntelligenceViewModel({
     input, feedback, deep_accounts: deepAccounts, research_quality: researchQuality, signal_temporal: signalTemporal,
     signal_benchmark: signalBenchmark, signal_monitoring_operation: signalMonitoringOperation, entity_resolution: entityResolution, opportunity_synthesis:opportunitySynthesis,client_context_review:clientContextReview,
-    dynamic_recall: dynamicRecall, soak, provider_usage: providerUsage,
+    dynamic_recall: dynamicRecall, positive_capture: positiveCapture, soak, provider_usage: providerUsage,
     availability: {
       artifact: input.artifact ? "available" : "unavailable",
       database: databaseState,

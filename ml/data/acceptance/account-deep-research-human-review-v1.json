@@ -1,0 +1,86 @@
+{
+  "version": "account-deep-research-human-review-v1",
+  "reviewed_at": "2026-08-27T23:55:00.000Z",
+  "scope": "primary-source event retrieval only",
+  "not_customer_safe_case_validation": true,
+  "ground_truth": "Eight curated positive controls, manually checked against official corporate sources after the bounded run.",
+  "summary": {
+    "n": 8,
+    "true_positives": 6,
+    "false_positives": 0,
+    "false_negatives": 2,
+    "true_negatives": 0,
+    "precision": 1,
+    "recall": 0.75,
+    "false_positive_rate": null,
+    "precision_note": "6/6 captured controls matched the intended company, event and official source; n remains too small for a launch claim.",
+    "recall_note": "Two official positive events were missed by the bounded retrieval run.",
+    "commercial_cases_confirmed": 0
+  },
+  "reviews": [
+    {
+      "company": "Nestlé USA",
+      "system_captured": true,
+      "human_label": "true_positive",
+      "official_source": "https://www.nestleusa.com/media/pressreleases/largest-distribution-center-arvin",
+      "event_date": "2026-06-10",
+      "reason": "Official corporate announcement confirms the Arvin distribution-center opening; system matched company, place and event. This validates retrieval, not client-specific commercial fit."
+    },
+    {
+      "company": "Conagra Brands",
+      "system_captured": true,
+      "human_label": "true_positive",
+      "official_source": "https://www.conagrabrands.com/news-room/news-conagra-brands-to-expand-manufacturing-operations-in-fayetteville-arkansas",
+      "event_date": "2026-03-06",
+      "reason": "Official corporate announcement confirms a quantified Fayetteville manufacturing expansion; identity, geography and event family match."
+    },
+    {
+      "company": "Quad",
+      "system_captured": true,
+      "human_label": "true_positive",
+      "official_source": "https://www.quad.com/newsroom/quad-expands-packaging-operations",
+      "event_date": "2026-07-16",
+      "reason": "Official newsroom page confirms expansion of packaging operations with the Salt Lake facility; the event date was recovered from full text."
+    },
+    {
+      "company": "voestalpine",
+      "system_captured": false,
+      "human_label": "false_negative",
+      "official_source": "https://www.voestalpine.com/group/en/media/press-releases/2026-07-24-voestalpine-opens-new-production-facility-in-the-US/",
+      "event_date": "2026-07-28",
+      "reason": "Official source confirms the Jeffersonville, Indiana facility opening and capacity expansion; bounded retrieval selected an unrelated investor page."
+    },
+    {
+      "company": "Hitachi Energy",
+      "system_captured": true,
+      "human_label": "true_positive",
+      "official_source": "https://www.hitachienergy.com/us/en/news-and-events/press-releases/2026/06/hitachi-energy-breaks-ground-on-the-nation-s-largest-facility-for-the-production-of-large-power-transformers-in-south-boston-virginia",
+      "event_date": "2026-06-29",
+      "reason": "Official source confirms the South Boston groundbreaking; the final bounded run recovered the correct company, location, date and strategic facility event."
+    },
+    {
+      "company": "John Deere",
+      "system_captured": true,
+      "human_label": "true_positive",
+      "official_source": "https://www.deere.com/en-us/john-deere-news/two-new-us-facilities",
+      "event_date": "2026-01-29",
+      "reason": "Official source confirms both a Hebron distribution center and Kernersville factory; the final run recovered the concrete facility commitment and exact US numeric date."
+    },
+    {
+      "company": "UFP Industries",
+      "system_captured": false,
+      "human_label": "false_negative",
+      "official_source": "https://ufpi.com/ufp-industries-to-expand-structural-packaging-capacity-with-new-south-carolina-manufacturing-facility/",
+      "event_date": "2026-08-13",
+      "reason": "Official source confirms a new South Carolina packaging facility; retrieval found an older Georgia facility instead."
+    },
+    {
+      "company": "Mondi",
+      "system_captured": true,
+      "human_label": "true_positive",
+      "official_source": "https://www.mondigroup.com/news-and-insight/2026/mondi-opens-new-paper-bags-plant-in-pittsburgh-pennsylvania-to-support-growing-ecommerce-and-industrial-customer-demand/",
+      "event_date": "2026-04-22",
+      "reason": "Official source confirms the automated Pittsburgh plant; the final run recovered the day-first English date and intended event without treating the stale Colombia event as the target."
+    }
+  ]
+}

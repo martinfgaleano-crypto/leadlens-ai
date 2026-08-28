@@ -62,9 +62,13 @@ export async function runReportAgent(
       && ["preliminary", "insufficient"].includes(l.candidate.channel_evidence_grade ?? "insufficient")).length,
   });
 
+  const deterministicSummary = () => buildDemoSummary(leads, hot, warm, cold, discard, avgScore, plan, withConfirmedSignals.length);
   const executive_summary = IS_DEMO || !process.env.ANTHROPIC_API_KEY
-    ? buildDemoSummary(leads, hot, warm, cold, discard, avgScore, plan, withConfirmedSignals.length)
-    : await buildClaudeSummary(leads, hot, warm, cold, avgScore, icp, withConfirmedSignals.length, ranked_opportunities, onboarding.output_language ?? "en");
+    ? deterministicSummary()
+    : await resolveExecutiveSummary(
+      () => buildClaudeSummary(leads, hot, warm, cold, avgScore, icp, withConfirmedSignals.length, ranked_opportunities, onboarding.output_language ?? "en"),
+      deterministicSummary,
+    );
 
   return {
     job_id: jobId,
@@ -93,6 +97,25 @@ export async function runReportAgent(
     report_risks: reportQC.risks,
     recommended_fix_before_delivery: reportQC.fix,
   };
+}
+
+/**
+ * Report prose is not an evidence gate. If the model becomes unavailable after
+ * account research, preserve the already-computed deterministic report and its
+ * delivery-readiness decision instead of turning an honest empty/blocked report
+ * into a failed run. This never promotes an account or changes ranking.
+ */
+export async function resolveExecutiveSummary(
+  generate: () => Promise<string>,
+  deterministicFallback: () => string,
+): Promise<string> {
+  try {
+    return await generate();
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.warn(`[report-agent] model summary unavailable; deterministic customer-safe summary used: ${message.slice(0, 80)}`);
+    return deterministicFallback();
+  }
 }
 
 // ─── Curation tiers ───────────────────────────────────────────────────────────

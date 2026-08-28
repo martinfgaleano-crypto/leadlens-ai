@@ -93,7 +93,7 @@ export function snippetIsPromising(candidate: SearchCandidate): boolean {
   return true;                                        // promising: escalate to full text
 }
 
-const EVENT_DATE_PHRASE = /\b\d{4}-\d{2}-\d{2}\b|\b(?:january|february|march|april|may|june|july|august|september|october|november|december)\s+\d{1,2}(?:st|nd|rd|th)?,?\s+\d{4}\b|\b\d{1,2}\s+(?:de\s+)?(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)(?:\s+de)?,?\s+\d{4}\b|\b(?:january|february|march|april|may|june|july|august|september|october|november|december|enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)\s+(?:de\s+)?\d{4}\b|\bq[1-4]\s*\d{4}\b|\b(?:today|hoy)\b/i;
+const EVENT_DATE_PHRASE = /\b\d{4}-\d{2}-\d{2}\b|\b\d{1,2}\/\d{1,2}\/\d{4}\b|\b(?:january|february|march|april|may|june|july|august|september|october|november|december)\s+\d{1,2}(?:st|nd|rd|th)?,?\s+\d{4}\b|\b\d{1,2}(?:st|nd|rd|th)?\s+(?:january|february|march|april|may|june|july|august|september|october|november|december),?\s+\d{4}\b|\b\d{1,2}\s+(?:de\s+)?(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)(?:\s+de)?,?\s+\d{4}\b|\b(?:january|february|march|april|may|june|july|august|september|october|november|december|enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)\s+(?:de\s+)?\d{4}\b|\bq[1-4]\s*\d{4}\b|\b(?:today|hoy)\b/i;
 
 /**
  * Escalate promising candidates: fetch full text (bounded), neutralize it, and run
@@ -140,10 +140,12 @@ export async function escalateAndExtract(
       if (result) {
         metrics.claimsProposed += result.claimsProposed; metrics.eventsProposed += result.events.length;
         const src = { sourceHost: c.sourceHost, sourceUrl: c.sourceUrl, publicationDate: c.publishedDate, retrievedAt: c.retrievedAt, accountId: c.accountId };
-        for (const it of proposalsToObservedItems(result.events, src, watchFamilies)) acceptItem(it);
-        continue;
+        const proposed = proposalsToObservedItems(result.events, src, watchFamilies);
+        const accepted = proposed.filter((item) => item.isDatedMaterialEvent).length;
+        for (const it of proposed) acceptItem(it);
+        if (accepted > 0) continue;
       }
-      metrics.extractionFallbacks++; // fall through to deterministic
+      metrics.extractionFallbacks++; // null/empty/rejected result → deterministic
     }
 
     // Deterministic path (also the fallback).

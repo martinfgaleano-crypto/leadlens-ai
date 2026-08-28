@@ -172,12 +172,18 @@ function candidateQueries(profile: AccountResearchProfile, context: ClientContex
   const geo = [profile.city_or_region, profile.country].filter(Boolean).join(" ");
   const domain = profile.domain ?? "";
   const official = domain ? `site:${domain}` : "";
+  const eventIdentity = official || name;
   const triggers = signalTerms.filter(Boolean).slice(0, 4).map((x) => `"${x.replace(/"/g, "")}"`).join(" OR ") || "apertura OR expansión OR inversión OR contrato";
-  const segment = profile.segment ?? profile.business_type ?? "";
   const rows: Array<{ stage: ResearchStage; query: string; gap: ResearchGap; tier: SourceTier }> = [
     { stage: "identity", query: `${name} ${official} ${geo} sitio oficial ubicación`, gap: "identity", tier: "B" },
-    { stage: "commercial_footprint", query: `${name} ${official} ${geo} ${segment} tiendas sedes distribución productos`, gap: "commercial_footprint", tier: "B" },
-    { stage: "current_activity", query: `${name} ${official} ${geo} (${triggers}) 2025 2026`, gap: "recent_signals", tier: "B" },
+    // Account Deepening starts from an identified candidate. Its second scarce
+    // query therefore targets primary-source operating changes rather than
+    // repeating broad commercial-footprint discovery already represented by
+    // the persisted universe. Concrete verbs/assets outperform generic
+    // "expansion" searches on corporate newsrooms and remain fail-closed at
+    // event/date/materiality validation.
+    { stage: "current_activity", query: `${eventIdentity} (opened OR opens OR announced OR expands OR "breaks ground") (facility OR plant OR warehouse OR "distribution center") 2026`, gap: "recent_signals", tier: "B" },
+    { stage: "current_activity", query: `${name} ${official} (${triggers}) 2025 2026`, gap: "recent_signals", tier: "B" },
     { stage: "counterevidence", query: `${name} ${official} ${geo} cierre inactivo contracción retiró descontinuado cancelado`, gap: "counterevidence", tier: "B" },
   ];
   if (context) rows.push({ stage: "client_relevance", query: `${name} ${domain} ${geo} ${context.offering ?? ""} ${profile.segment ?? ""}`, gap: "client_relevance", tier: "B" });

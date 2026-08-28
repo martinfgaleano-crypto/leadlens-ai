@@ -76,6 +76,7 @@
     "test:pilot-run-gate": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/pilot-run-gate.test.ts",
     "test:actionability-gate": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/actionability-gate.test.ts",
     "test:report-delivery-gate": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/report-delivery-gate.test.ts",
+    "test:report-agent-resilience": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/report-agent-resilience.test.ts",
     "test:pilot-scorecard": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/pilot-scorecard.test.ts",
     "pilot:scorecard": "npx -y tsx --tsconfig tsconfig.json scripts/sources/build-pilot-scorecard.ts",
     "test:wellness-vertical": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/wellness-vertical.test.ts",

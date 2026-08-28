@@ -3,6 +3,7 @@ import {
   buildCapabilityControlPlane,
   type CapabilityControlPlaneInput,
   type DynamicRecallSignals,
+  type PositiveCaptureSignals,
 } from "@/lib/intelligence/capability-control-plane";
 import { measured, type IntelligenceCapabilityAssessment } from "@/lib/intelligence/os-contracts";
 
@@ -50,6 +51,24 @@ const input = (dynamic_recall: DynamicRecallSignals | null): CapabilityControlPl
 
 const poor = buildCapabilityControlPlane(input(recall(0, 304_900)));
 const better = buildCapabilityControlPlane(input(recall(4, 180_000)));
+const diagnosticPositive: PositiveCaptureSignals = {
+  generated_at: now,
+  diagnostic_only: true,
+  production_seeded: false,
+  summary: {
+    references: 8,
+    captured_defensibly: 3,
+    bounded_capture_rate: 3 / 8,
+    duration_ms: 151_008,
+    provider_calls: 70,
+    extractions: 14,
+    observed_cost_usd: null,
+  },
+};
+const positiveRetrievalOnly = buildCapabilityControlPlane({
+  ...input(recall(0, 304_900)),
+  positive_capture: diagnosticPositive,
+});
 const providerObserved = buildCapabilityControlPlane({ ...input(recall(0)), provider_usage: {
   brave: { calls_today: 10, errors_today: 2, calculated_cost_usd_today: 0, last_failure: now, last_error: "rate_limited" },
   anthropic: { calls_today: 10, errors_today: 0, calculated_cost_usd_today: 0.12, last_success: now },
@@ -65,6 +84,9 @@ test("registry: all requested capability areas are represented without UI duplic
 test("registry: metadata contains no manually maintained score", INTELLIGENCE_CAPABILITY_REGISTRY.every((item) => !("score" in item)));
 test("evidence hierarchy: 0/8 live capture degrades dynamic discovery despite passing implementation/tests", byId(poor, "dynamic_universe_discovery").state === "degraded");
 test("sample truth: 0 captured is a poor measured validation, not 100% precision", byId(poor, "dynamic_universe_discovery").dimensions.quality.state === "measured" && byId(poor, "dynamic_universe_discovery").dimensions.quality.score === 0 && byId(poor, "dynamic_universe_discovery").dimensions.quality.sample_size === 8);
+test("positive-control artifact overrides stale retrieval proxy with measured 3/8", byId(positiveRetrievalOnly, "dynamic_universe_discovery").dimensions.quality.state === "measured" && byId(positiveRetrievalOnly, "dynamic_universe_discovery").dimensions.quality.score === 38 && byId(positiveRetrievalOnly, "dynamic_universe_discovery").dimensions.quality.sample_size === 8 && byId(positiveRetrievalOnly, "dynamic_universe_discovery").supporting_metrics.positive_controls_captured === 3);
+test("diagnostic event capture does not invent a human-confirmed customer-safe Case", byId(positiveRetrievalOnly, "opportunity_case").supporting_metrics.human_positive_cases === 0 && byId(positiveRetrievalOnly, "opportunity_case").blockers.some((blocker) => blocker.includes("3/8 diagnostic events") && blocker.includes("no customer-safe Case")));
+test("positive-control evidence is an exercised run, not invented human review", byId(positiveRetrievalOnly, "dynamic_universe_discovery").evidence.some((item) => item.ref.endsWith("account-deep-research-positive-control-v1.json") && item.kind === "exercised_run") && recall(0).metrics.bounded_positive_controls_captured_defensibly === 0);
 test("score moves up: improved real capture raises dynamic discovery score", scoreOf(better, "dynamic_universe_discovery") !== null && scoreOf(poor, "dynamic_universe_discovery") !== null && scoreOf(better, "dynamic_universe_discovery")! > scoreOf(poor, "dynamic_universe_discovery")!);
 test("score moves down: live truth overrides a high deterministic success assessment", scoreOf(poor, "dynamic_universe_discovery") !== null && scoreOf(poor, "dynamic_universe_discovery")! < 80);
 test("overall anti-inflation: no human positive caps overall maturity", poor.overall.state === "measured" && poor.overall.score <= 59);

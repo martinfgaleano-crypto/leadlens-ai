@@ -2,6 +2,7 @@ import type { LeadCandidate, LeadSearchCriteria } from "@/types";
 import {
   assessEvidenceCandidate,
   buildResearchProfile,
+  planCorroborationQuery,
   planAccountResearch,
   recoverAtomicClaims,
   type EvidenceCandidate,
@@ -10,6 +11,9 @@ import {
 } from "./research-quality";
 import { buildClientContext } from "./evidence-temporal";
 import type { SearchProvider } from "@/lib/sources/access/provider-contract";
+import type { ExtractDeps } from "@/lib/monitor/claim-event-extractor";
+import { classifySignalKind } from "@/lib/discovery/event-vs-metric";
+import { classifyMateriality } from "@/lib/discovery/materiality";
 
 export const ACCOUNT_DEEP_RESEARCH_VERSION = "account-deep-research-v1";
 
@@ -29,10 +33,13 @@ export interface AccountDeepResearchTelemetry {
   structured_extraction_calls: number;
   dated_evidence: number;
   independent_domains: number;
+  corroboration_attempted: boolean;
+  corroborating_domains: number;
   claims_recovered: number;
   counterevidence_checked: boolean;
   early_stop_reason: "sufficient_evidence" | "no_material_event" | "budget_exhausted" | "providers_unavailable";
   query_audit: Array<{ query_id: string; stage: string; provider: string; results: number; accepted: number }>;
+  extraction_audit: Array<{ url: string; stage: string; date_phrase: string | null; signal_kind: string; materiality: string; accepted_events: number; evidence_excerpt: string }>;
 }
 
 export interface AccountDeepResearchResult {
@@ -52,6 +59,7 @@ export interface AccountDeepResearchDeps {
   maxQueries?: number;
   maxResultsPerQuery?: number;
   maxExtractions?: number;
+  structured?: ExtractDeps;
 }
 
 /**
@@ -82,14 +90,23 @@ export async function deepenAccountResearch(
     objective: "account opportunity intelligence",
     priority_segments: criteria.target_industries,
   });
-  const plan = planAccountResearch(profile, context, deps.maxQueries ?? 5, criteria.buying_signals);
+  const queryBudget = deps.maxQueries ?? 5;
+  // Four core stages own identity, footprint, event probe and counterevidence.
+  // When a fifth slot exists it is reserved for claim-derived corroboration,
+  // but spent only after a dated material event survives deterministic gates.
+  const initialQueryBudget = queryBudget >= 5 ? queryBudget - 1 : queryBudget;
+  const plan = planAccountResearch(profile, context, initialQueryBudget, criteria.buying_signals);
   const providers = deps.providers ?? await productiveProviders();
   const extract = deps.extract ?? defaultExtract;
   const seen = new Set<string>();
+  const acceptedByCanonical = new Map<string, EvidenceDecision>();
+  const extractedUrls = new Set<string>();
   const decisions: EvidenceDecision[] = [];
   const contexts: Array<{ text: string; rank: number }> = [];
   const validatedEvents: AccountDeepResearchResult["validated_events"] = [];
   const queryAudit: AccountDeepResearchTelemetry["query_audit"] = [];
+  const extractionAudit: AccountDeepResearchTelemetry["extraction_audit"] = [];
+  const corroboratingHosts = new Set<string>();
   let providerCalls = 0, providerFailures = 0, resultsSeen = 0, pagesExtracted = 0, extractionFailures = 0, structuredExtractionCalls = 0, stoppedNoEvent = false;
   const maxResults = deps.maxResultsPerQuery ?? 5;
   const maxExtractions = deps.maxExtractions ?? 4;
@@ -115,61 +132,130 @@ export async function deepenAccountResearch(
           excerpt: item.snippet, provider: provider.id, source_type: item.source_type,
           publication_date: item.published_date, retrieved_at: item.retrieved_at,
         };
+        const previouslyAccepted = acceptedByCanonical.get(evidence.canonical_url) ?? null;
         const decision = assessEvidenceCandidate(profile, evidence, seen);
         decisions.push(decision);
         seen.add(evidence.canonical_url);
-        if (!decision.accepted) continue;
+        if (decision.accepted) acceptedByCanonical.set(evidence.canonical_url, decision);
+        // Search engines commonly return the same official newsroom URL during
+        // identity and current-activity stages. The duplicate remains auditable,
+        // but the already-accepted URL may still be deepened once in the stage
+        // that owns event retrieval. Otherwise identity consumes/poisons recall.
+        const effectiveDecision = decision.accepted ? decision : previouslyAccepted;
+        if (!effectiveDecision) continue;
         acceptedForQuery++;
         let fullText = "";
-        // Full-text budget belongs to plausible EVENTS, not identity/profile
-        // pages. Identity evidence still remains accepted and auditable.
-        if (pagesExtracted < maxExtractions && decision.commercial_relevance === "high") {
+        // Full-text budget belongs to event/counterevidence retrieval, never to
+        // identity or static-footprint pages. A duplicate URL can be extracted
+        // here if it was accepted earlier but has not yet consumed the budget.
+        if (pagesExtracted < maxExtractions && effectiveDecision.commercial_relevance === "high" && isEventExtractionCandidate(item.title, item.snippet) && !extractedUrls.has(item.canonical_url)) {
           const fetched = await extract(item.url).catch(() => ({ ok: false, content: null }));
           if (fetched.ok && fetched.content) {
-            pagesExtracted++; fullText = relevantContentWindow(fetched.content, [candidate.company, ...criteria.buying_signals], 9000);
+            pagesExtracted++; extractedUrls.add(item.canonical_url); fullText = relevantContentWindow(fetched.content, [candidate.company, ...criteria.buying_signals], 9000);
             try {
               const { extractEvent } = await import("@/lib/monitor/event-extraction");
               const { scrapeEventDatePhrase } = await import("@/lib/monitor/full-text-extraction");
               const sourceHost = new URL(item.url).hostname.replace(/^www\./, "").toLowerCase();
               const titleAndContent = `${item.title ?? ""}. ${fullText}`;
-              const event = extractEvent({
+              const acceptedBeforeExtraction = validatedEvents.length;
+              const datePhrase = scrapeEventDatePhrase(fullText);
+              const eventResult = extractEvent({
                 accountId: candidate.company, sourceHost, sourceUrl: item.url, originId: null,
-                titleAndContent, eventDateRaw: scrapeEventDatePhrase(fullText),
+                titleAndContent, eventDateRaw: datePhrase,
                 publicationDate: item.published_date, retrievedAt: item.retrieved_at,
-              }, criteria.buying_signals).item;
-              if (event.isDatedMaterialEvent && event.eventDate) validatedEvents.push({ url: item.url, source_host: sourceHost, kind: event.kind, event_date: event.eventDate, title_and_content: titleAndContent.slice(0, 2500) });
+              }, criteria.buying_signals);
+              const event = eventResult.item;
+              if (event.isDatedMaterialEvent && event.eventDate) validatedEvents.push({ url: item.url, source_host: sourceHost, kind: event.kind, event_date: event.eventDate, title_and_content: titleAndContent.slice(0, 9000) });
               else if (structuredExtractionCalls < 2) {
                 // Existing canonical structured extractor proposes only. Its
                 // proposals still pass event/date/materiality gates below.
                 const { extractStructured, proposalsToObservedItems } = await import("@/lib/monitor/claim-event-extractor");
-                const structured = await extractStructured(fullText, candidate.company);
+                const structured = await extractStructured(fullText, candidate.company, deps.structured);
                 structuredExtractionCalls += structured.calls;
+                const acceptedBefore = validatedEvents.length;
                 if (structured.result) {
                   const proposed = proposalsToObservedItems(structured.result.events, {
                     sourceHost, sourceUrl: item.url, publicationDate: item.published_date, retrievedAt: item.retrieved_at, accountId: candidate.company,
                   }, criteria.buying_signals);
                   for (const proposedEvent of proposed) if (proposedEvent.isDatedMaterialEvent && proposedEvent.eventDate) {
-                    validatedEvents.push({ url: item.url, source_host: sourceHost, kind: proposedEvent.kind, event_date: proposedEvent.eventDate, title_and_content: titleAndContent.slice(0, 2500) });
+                    validatedEvents.push({ url: item.url, source_host: sourceHost, kind: proposedEvent.kind, event_date: proposedEvent.eventDate, title_and_content: titleAndContent.slice(0, 9000) });
                   }
                 }
+                // A syntactically valid model response with zero deterministically
+                // accepted events is not extraction success. Fall back to the
+                // canonical text/date parser before declaring the page eventless.
+                if (validatedEvents.length === acceptedBefore) {
+                  const fallback = extractEvent({
+                    accountId: candidate.company, sourceHost, sourceUrl: item.url, originId: null,
+                    titleAndContent, eventDateRaw: scrapeEventDatePhrase(fullText),
+                    publicationDate: item.published_date, retrievedAt: item.retrieved_at,
+                  }, criteria.buying_signals).item;
+                  if (fallback.isDatedMaterialEvent && fallback.eventDate) validatedEvents.push({
+                    url: item.url, source_host: sourceHost, kind: fallback.kind,
+                    event_date: fallback.eventDate, title_and_content: titleAndContent.slice(0, 9000),
+                  });
+                }
               }
+              extractionAudit.push({
+                url: item.url, stage: query.stage, date_phrase: datePhrase,
+                signal_kind: eventResult.signalKind, materiality: eventResult.materiality,
+                accepted_events: validatedEvents.length - acceptedBeforeExtraction,
+                evidence_excerpt: diagnosticExcerpt(fullText, datePhrase),
+              });
             } catch { /* deterministic event validation remains best-effort */ }
           }
           else extractionFailures++;
         }
         contexts.push({
           text: `${item.published_date ? `[${item.published_date}] ` : ""}${item.title ?? ""}. ${fullText || item.snippet || ""} (source: ${item.url})`,
-          rank: evidenceRank(decision) + (query.stage === "current_activity" ? 5 : query.stage === "counterevidence" ? 4 : 0),
+          rank: evidenceRank(effectiveDecision) + (query.stage === "current_activity" ? 5 : query.stage === "counterevidence" ? 4 : 0),
         });
       }
       queryAudit.push({ query_id: query.query_id, stage: query.stage, provider: provider.id, results: response.results.length, accepted: acceptedForQuery });
       // Counterevidence is mandatory. Even two-source positive evidence cannot
       // stop the plan before the bounded counterevidence stage has run.
-      if (query.stage === "counterevidence" && hasSufficientEvidence(decisions)) break outer;
+      if (query.stage === "counterevidence" && validatedEvents.length > 0 && hasSufficientEvidence(decisions)) break outer;
     }
-    if (query.stage === "counterevidence" && !decisions.some((d) => d.accepted && d.commercial_relevance === "high" && !!d.candidate.publication_date)) {
+    if (query.stage === "counterevidence" && validatedEvents.length === 0) {
       stoppedNoEvent = true;
       break;
+    }
+  }
+
+  let corroborationAttempted = false;
+  const primaryEvent = [...validatedEvents].sort((a, b) => b.event_date.localeCompare(a.event_date))[0] ?? null;
+  if (primaryEvent && new Set(queryAudit.map((q) => q.query_id)).size < queryBudget) {
+    corroborationAttempted = true;
+    const primaryHost = primaryEvent.source_host;
+    const primaryClaim = primaryEvent.title_and_content.split(".")[0]?.slice(0, 180) || primaryEvent.kind;
+    const query = planCorroborationQuery(profile, {
+      claim_id: `${profile.profile_id}:${primaryEvent.event_date}:${primaryEvent.kind}`,
+      claim_statement: primaryClaim, known_domain: primaryHost, known_source_tier: "B",
+    });
+    if (query.accepted) for (const provider of providers) {
+      providerCalls++;
+      let response;
+      try {
+        response = await provider.search({ query: query.query, max_results: maxResults, freshness_days: 730, query_type: "news", language: profile.likely_language ?? undefined });
+      } catch { providerFailures++; continue; }
+      if (!response.ok) { providerFailures++; continue; }
+      let acceptedForQuery = 0;
+      resultsSeen += response.results.length;
+      for (const item of response.results) {
+        let host = ""; try { host = new URL(item.canonical_url).hostname.replace(/^www\./, "").toLowerCase(); } catch { continue; }
+        if (host === primaryHost) continue;
+        const evidence: EvidenceCandidate = {
+          url: item.url, canonical_url: item.canonical_url, title: item.title, excerpt: item.snippet,
+          provider: provider.id, source_type: item.source_type, publication_date: item.published_date, retrieved_at: item.retrieved_at,
+        };
+        const decision = assessEvidenceCandidate(profile, evidence, seen);
+        decisions.push(decision); seen.add(evidence.canonical_url);
+        if (!decision.accepted || decision.commercial_relevance !== "high" || !corroboratesPrimaryEvent(primaryEvent.title_and_content, `${item.title ?? ""} ${item.snippet ?? ""}`)) continue;
+        acceptedByCanonical.set(evidence.canonical_url, decision); corroboratingHosts.add(host); acceptedForQuery++;
+        contexts.push({ text: `${item.published_date ? `[${item.published_date}] ` : ""}${item.title ?? ""}. ${item.snippet ?? ""} (source: ${item.url})`, rank: evidenceRank(decision) + 6 });
+      }
+      queryAudit.push({ query_id: query.query_id, stage: "corroboration", provider: provider.id, results: response.results.length, accepted: acceptedForQuery });
+      if (acceptedForQuery > 0) break;
     }
   }
 
@@ -187,9 +273,11 @@ export async function deepenAccountResearch(
     structured_extraction_calls: structuredExtractionCalls,
     dated_evidence: accepted.filter((d) => d.candidate.publication_date).length,
     independent_domains: domains.size, claims_recovered: claims.length,
+    corroboration_attempted: corroborationAttempted,
+    corroborating_domains: corroboratingHosts.size,
     counterevidence_checked: queryAudit.some((q) => q.stage === "counterevidence"),
-    early_stop_reason: hasSufficientEvidence(decisions) ? "sufficient_evidence" : stoppedNoEvent ? "no_material_event" : providers.length === 0 || providerCalls === providerFailures ? "providers_unavailable" : "budget_exhausted",
-    query_audit: queryAudit,
+    early_stop_reason: validatedEvents.length > 0 && hasSufficientEvidence(decisions) ? "sufficient_evidence" : stoppedNoEvent || validatedEvents.length === 0 ? "no_material_event" : providers.length === 0 || providerCalls === providerFailures ? "providers_unavailable" : "budget_exhausted",
+    query_audit: queryAudit, extraction_audit: extractionAudit,
   };
   return {
     context: contexts.sort((a, b) => b.rank - a.rank).slice(0, 8).map((x) => x.text).join(" | ").slice(0, 9000),
@@ -199,6 +287,32 @@ export async function deepenAccountResearch(
     validated_events: validatedEvents,
     decisions, telemetry,
   };
+}
+
+/** Financial reporting remains useful context but must not take the scarce
+ * event-extraction slot ahead of a concrete operating-change page. */
+export function isEventExtractionCandidate(title: string | null, snippet: string | null): boolean {
+  const heading = (title ?? "").toLowerCase();
+  if (/\b(quarter(?:ly)?|full[- ]year|year[- ]to[- ]date|financial) (?:and )?(?:results?|earnings)|reports? (?:first|second|third|fourth|q[1-4]) quarter|declares? (?:a )?(?:quarterly )?dividend\b/i.test(heading)) return false;
+  const hay = `${title ?? ""} ${snippet ?? ""}`;
+  return /\b(new|opened?|expan(?:d|ds|ded|ding|sion)|acquir(?:e|es|ed|ing|isition)|invest(?:s|ed|ing|ment)|facility|plant|warehouse|distribution cent(?:er|re)|production line|contract|partnership|closure|cancel|suspend|nuev[ao]|abri[oó]|apertura|expansi[oó]n|adquisici[oó]n|inversi[oó]n|planta|bodega|centro de distribuci[oó]n|contrato|alianza|cierre)\b/i.test(hay);
+}
+
+function diagnosticExcerpt(text: string, anchor: string | null): string {
+  const lower = text.toLowerCase();
+  const index = anchor ? lower.indexOf(anchor.toLowerCase()) : -1;
+  const start = index >= 0 ? Math.max(0, index - 180) : 0;
+  return text.slice(start, start + 1200).replace(/\s+/g, " ").trim();
+}
+
+const CLAIM_STOP = new Set(["about", "after", "company", "expands", "expanding", "with", "from", "into", "new", "operations", "operation", "official"]);
+export function corroboratesPrimaryEvent(primaryText: string, candidateText: string): boolean {
+  const tokens = (value: string) => new Set(value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").match(/[a-z0-9-]{5,}/g)?.filter((x) => !CLAIM_STOP.has(x)) ?? []);
+  const primary = tokens(primaryText.slice(0, 1200)), candidate = tokens(candidateText);
+  const overlap = Array.from(candidate).filter((token) => primary.has(token)).length;
+  const signal = classifySignalKind(candidateText);
+  const material = classifyMateriality(candidateText);
+  return overlap >= 2 && (signal.can_trigger || material.level === "high");
 }
 
 function hasSufficientEvidence(decisions: EvidenceDecision[]): boolean {

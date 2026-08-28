@@ -42,6 +42,14 @@ const MAX_RETRIES = 2;
 // The client is created on first actual call.
 
 let _client: Anthropic | null = null;
+let _terminalFailure: { reason: string; until: number } | null = null;
+const TERMINAL_FAILURE_COOLDOWN_MS = 5 * 60_000;
+
+export function classifyAnthropicTerminalFailure(message: string): "credits_exhausted" | "authentication_failed" | null {
+  if (/credit balance is too low|usage limit|billing limit|insufficient credits/i.test(message)) return "credits_exhausted";
+  if (/authentication_error|invalid (?:x-api-key|api key)|unauthorized/i.test(message)) return "authentication_failed";
+  return null;
+}
 
 function getClient(): Anthropic {
   if (_client) return _client;
@@ -69,6 +77,8 @@ export async function callClaude(
   userMessage: string,
   maxTokens = 2000
 ): Promise<string> {
+  if (_terminalFailure && _terminalFailure.until > Date.now()) throw new Error(`[anthropic] CIRCUIT_OPEN: ${_terminalFailure.reason}`);
+  if (_terminalFailure) _terminalFailure = null;
   await assertRunBudget(systemPrompt, userMessage, maxTokens);
   const client = getClient();
   let lastError: Error | null = null;
@@ -102,6 +112,8 @@ export async function callClaude(
     } catch (err) {
       lastError = err instanceof Error ? err : new Error(String(err));
       const msg = lastError.message;
+      const terminal = classifyAnthropicTerminalFailure(msg);
+      if (terminal) _terminalFailure = { reason: terminal, until: Date.now() + TERMINAL_FAILURE_COOLDOWN_MS };
       try { const { recordProviderCall } = await import("@/lib/ops/usage-ledger"); recordProviderCall("anthropic", false, 0, msg); } catch { /* ledger best-effort */ }
 
       const isRetryable =

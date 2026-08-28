@@ -1,6 +1,8 @@
 import { strict as assert } from "node:assert";
-import { deepenAccountResearch, relevantContentWindow } from "@/lib/intelligence/account-deep-research";
+import { corroboratesPrimaryEvent, deepenAccountResearch, isEventExtractionCandidate, relevantContentWindow } from "@/lib/intelligence/account-deep-research";
 import { scrapeEventDatePhrase } from "@/lib/monitor/full-text-extraction";
+import { classifySignalKind } from "@/lib/discovery/event-vs-metric";
+import { resolveEventDate } from "@/lib/monitor/event-extraction";
 import type { SearchProvider } from "@/lib/sources/access/provider-contract";
 import type { LeadCandidate, LeadSearchCriteria } from "@/types";
 
@@ -32,17 +34,77 @@ test("counterevidence stage is mandatory before early stop", result.telemetry.co
 test("official and independent evidence are retained", result.telemetry.independent_domains === 2);
 test("dated evidence is measured", result.telemetry.dated_evidence >= 2);
 test("full text is bounded", result.telemetry.pages_extracted > 0 && result.telemetry.pages_extracted <= 2);
+test("extraction audit identifies URL, stage and gate outcome", result.telemetry.extraction_audit.length > 0 && result.telemetry.extraction_audit.every((x) => x.url && x.stage && Number.isInteger(x.accepted_events)));
 test("best source favors official company domain", result.sourceUrl === "https://acme.com/news/new-plant");
 test("research context contains source provenance", result.context.includes("source: https://acme.com/news/new-plant"));
 test("full text must produce a dated material event before it can be a trigger", result.validated_events.length > 0 && !!result.eventDate);
 test("telemetry never claims unavailable cost", !("cost" in result.telemetry));
 test("long-page window skips boilerplate and retains event", relevantContentWindow(`${"cookie navigation ".repeat(1000)}Acme Manufacturing opened a new plant on August 10, 2026.`, ["Acme Manufacturing", "new plant"], 1200).includes("opened a new plant"));
 test("full date phrase with day is recovered", scrapeEventDatePhrase("Acme opened the plant on August 10, 2026 after construction.") === "August 10, 2026");
+test("day-first English corporate date is recovered", scrapeEventDatePhrase("Press release 22 April, 2026. Acme officially opened the plant.") === "22 April, 2026");
+test("US numeric corporate date is recovered", scrapeEventDatePhrase("Corporate calendar 01/29/2026. Acme announced the facility.") === "01/29/2026");
+test("US numeric corporate date resolves exactly", resolveEventDate({ accountId: "acme", sourceHost: "acme.com", sourceUrl: "https://acme.com/event", titleAndContent: "event", eventDateRaw: "01/29/2026", publicationDate: null, retrievedAt: now }).eventDate === "2026-01-29");
 test("explicit today event phrase is recoverable for publication anchoring", scrapeEventDatePhrase("Acme today opened its largest distribution center.") === "today");
 
 const noEventProvider: SearchProvider = { ...provider, search: async (q) => ({ ok: true, provider: "fixture", query: q, latency_ms: 1, cost_estimate_usd: 0, error: null, results: [] }) };
 const noEvent = await deepenAccountResearch(candidate, criteria, { providers: [noEventProvider], now: () => new Date(now), maxQueries: 5 });
 test("weak account stops after bounded counterevidence without client/dossier depth", noEvent.telemetry.early_stop_reason === "no_material_event" && noEvent.telemetry.executed_queries === 4);
+
+const datedContextProvider: SearchProvider = { ...provider, search: async (q) => ({
+  ok: true, provider: "fixture", query: q, latency_ms: 1, cost_estimate_usd: 0, error: null,
+  results: ["https://acme.com/news/update", "https://industry.example/acme-update"].map((url, index) => ({
+    url, canonical_url: url, title: "Acme Manufacturing expansion update", snippet: "Company overview and historical footprint.",
+    published_date: "2026-08-10", retrieved_at: now, source_type: index ? "trade_publication" : "official", provider: "fixture", rank: index + 1, locale: "en",
+  })),
+}) };
+const datedContextOnly = await deepenAccountResearch(candidate, criteria, {
+  providers: [datedContextProvider], now: () => new Date(now), maxQueries: 5, maxExtractions: 2,
+  extract: async () => ({ ok: true, content: "Acme Manufacturing company profile and historical locations. No current operating change is announced." }),
+});
+test("dated relevant pages without a validated event are not labeled sufficient evidence", datedContextOnly.validated_events.length === 0 && datedContextOnly.telemetry.early_stop_reason === "no_material_event");
+
+let stage = 0;
+const repeatedOfficialProvider: SearchProvider = {
+  ...provider,
+  search: async (q) => {
+    stage++;
+    const event = { url: "https://acme.com/news/repeated-event", canonical_url: "https://acme.com/news/repeated-event", title: "Acme Manufacturing opened a new plant", snippet: "Acme opened a new plant in August 2026.", published_date: "2026-08-10", retrieved_at: now, source_type: "official", provider: "fixture", rank: 1, locale: "en" };
+    return { ok: true, provider: "fixture", query: q, latency_ms: 1, cost_estimate_usd: 0, error: null, results: q.query.includes("cierre") ? [] : [event] };
+  },
+};
+const extractedStages: number[] = [];
+const repeated = await deepenAccountResearch(candidate, criteria, {
+  providers: [repeatedOfficialProvider], now: () => new Date(now), maxQueries: 4, maxExtractions: 1,
+  extract: async () => { extractedStages.push(stage); return { ok: true, content: "Acme Manufacturing opened a new production plant on August 10, 2026." }; },
+});
+test("an event-bearing URL may be deepened once even when first recovered during identity", extractedStages.length === 1);
+test("accepted official URL repeated in current activity can still yield an event", repeated.validated_events.length === 1 && repeated.eventDate === "2026-08-10");
+
+const emptyStructured = await deepenAccountResearch(candidate, criteria, {
+  providers: [repeatedOfficialProvider], now: () => new Date(now), maxQueries: 4, maxExtractions: 1,
+  extract: async () => ({ ok: true, content: "SUSSEX, Wis., July 16, 2026 — Acme Manufacturing is expanding operations with a new production plant." }),
+  structured: { call: async () => ({ claims: [], events: [] }) },
+});
+test("empty structured extraction falls back to deterministic event/date recovery", emptyStructured.validated_events.length === 1 && emptyStructured.eventDate === "2026-07-16");
+
+const activeExpansion = await deepenAccountResearch(candidate, criteria, {
+  providers: [repeatedOfficialProvider], now: () => new Date(now), maxQueries: 4, maxExtractions: 1,
+  extract: async () => ({ ok: true, content: "SUSSEX, Wis., July 16, 2026 — Acme Manufacturing is expanding its packaging operations with a new manufacturing facility." }),
+  structured: { call: async () => ({ claims: [], events: [] }) },
+});
+test("dated active expansion with a concrete new facility is a material event", activeExpansion.validated_events.length === 1 && activeExpansion.eventDate === "2026-07-16");
+test("qualified operations phrase does not fall through to About us reference", classifySignalKind("Quad is expanding its packaging operations with a new manufacturing facility. About us").can_trigger);
+test("financial results do not consume event extraction priority", !isEventExtractionCandidate("Quad reports third quarter and year-to-date 2025 results", "expanded adjusted EBITDA") && isEventExtractionCandidate("Quad expands national packaging footprint", "New Salt Lake City facility strengthens packaging operations"));
+test("static identity page does not consume event extraction priority", !isEventExtractionCandidate("About Acme Manufacturing", "Company profile and locations"));
+test("quantified capacity commitment is a strategic decision", classifySignalKind("Approximately $220 million investment will add new production capacity and create more than 100 jobs.").kind === "strategic_decision");
+test("announced quantified expansion plan is a strategic decision", classifySignalKind("Conagra announced plans to expand its existing manufacturing facility through a multi-year investment of approximately $220 million.").kind === "strategic_decision");
+test("geographic abbreviation does not break quantified commitment", classifySignalKind("Conagra announced plans to expand its existing manufacturing facility in Fayetteville, Ark. through a multi-year investment of approximately $220 million.").kind === "strategic_decision");
+test("generic future expansion remains non-triggering", !classifySignalKind("The company hopes to expand operations someday.").can_trigger);
+test("groundbreaking is a concrete strategic facility event", classifySignalKind("Hitachi Energy broke ground on a major expansion of its South Boston campus.").kind === "strategic_decision");
+test("announced multi-facility opening plan is concrete, not generic aspiration", classifySignalKind("John Deere announced plans to open two new U.S.-based facilities: a distribution center and an excavator factory.").kind === "strategic_decision");
+test("claim-derived corroboration requires same material event", corroboratesPrimaryEvent("Quad expands packaging operations with a Salt Lake City manufacturing facility", "Industry source confirms Quad opened its Salt Lake City packaging facility") && !corroboratesPrimaryEvent("Quad expands packaging operations with a Salt Lake City manufacturing facility", "Quad reports quarterly earnings and a dividend"));
+test("corroboration slot is attempted only after a validated event", result.telemetry.corroboration_attempted && !noEvent.telemetry.corroboration_attempted);
+test("corroborating domains count only claim-matched corroboration results", Number.isInteger(result.telemetry.corroborating_domains) && result.telemetry.corroborating_domains >= 0);
 console.log(`\n${passed} passed, 0 failed`);
 }
 main().catch((error) => { console.error(error); process.exit(1); });
