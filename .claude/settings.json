@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc*)",
+      "Bash(npx -y tsx*)",
+      "Bash(npx tsx*)",
+      "Bash(npm run test:*)",
+      "Bash(npm run build*)",
+      "Bash(npm run lint*)",
+      "Bash(git status*)",
+      "Bash(git log*)",
+      "Bash(git diff*)",
+      "Bash(git show*)",
+      "Bash(git rev-parse*)",
+      "Bash(git ls-files*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "node .claude/hooks/bash-guard.mjs" }
+        ]
+      }
+    ]
+  }
+}

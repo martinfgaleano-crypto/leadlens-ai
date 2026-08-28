@@ -21,3 +21,6 @@ Thumbs.db
 
 # TypeScript
 tsconfig.tsbuildinfo
+
+# Claude Code personal/local overrides (shared config stays tracked)
+.claude/settings.local.json
