@@ -88,6 +88,17 @@ D("launch_readiness", "Launch Readiness", "readiness", ["report_readiness_assess
 
 export const INTELLIGENCE_CAPABILITY_REGISTRY = Object.freeze([...registry]);
 
+export const INTELLIGENCE_SCORE_DOMAINS = Object.freeze([
+  { id: "context", label: "Context", weight: 0.10, capability_ids: ["stage_a_interpretation", "confirmed_commercial_context", "context_execution_handoff"] },
+  { id: "discovery", label: "Discovery & identity", weight: 0.16, capability_ids: ["lead_hunter", "candidate_universe", "corporate_identity", "dynamic_universe_discovery", "pre_research_relevance", "us_coverage", "colombia_coverage", "private_company_coverage"] },
+  { id: "research", label: "Research", weight: 0.15, capability_ids: ["initial_research", "full_text_extraction", "structured_claim_extraction", "event_extraction"] },
+  { id: "evidence", label: "Evidence", weight: 0.14, capability_ids: ["source_quality", "source_association", "corroboration", "counterevidence", "evidence"] },
+  { id: "temporal", label: "Temporal", weight: 0.10, capability_ids: ["event_dating", "temporal_what_changed", "timing"] },
+  { id: "opportunity_reasoning", label: "Opportunity reasoning", weight: 0.15, capability_ids: ["materiality", "fit", "opportunity_case", "decision", "portfolio_intelligence"] },
+  { id: "commercial_validation", label: "Commercial validation", weight: 0.12, capability_ids: ["human_calibration"] },
+  { id: "memory_monitor", label: "Memory & Monitor", weight: 0.08, capability_ids: ["account_memory", "monitor", "monitor_identity", "monitor_full_text"] },
+] as const);
+
 export interface DynamicRecallSignals {
   generated_at: string;
   metrics: {
@@ -211,6 +222,53 @@ function scoreDimensions(dimensions: Record<CapabilityDimensionId, MeasurementRe
   const confidence = measuredDimensions.reduce((sum, id) => sum + (dimensions[id] as { confidence: number }).confidence * DIMENSION_WEIGHTS[id], 0) / weight;
   const sample = Math.max(...measuredDimensions.map((id) => (dimensions[id] as { sample_size: number }).sample_size));
   return measured(clamp(score), Math.min(0.9, confidence), sample);
+}
+
+export interface IntelligenceScoreComponent {
+  id: (typeof INTELLIGENCE_SCORE_DOMAINS)[number]["id"];
+  label: string;
+  weight: number;
+  score: MeasurementResult;
+  capability_ids: string[];
+  blockers: string[];
+  evidence_refs: string[];
+}
+
+export function intelligenceScoreComponents(capabilities: CapabilityMaturityEvaluation[]): IntelligenceScoreComponent[] {
+  const byId = new Map(capabilities.map((item) => [item.capability.id, item]));
+  return INTELLIGENCE_SCORE_DOMAINS.map((domain) => {
+    const members = domain.capability_ids.map((id) => byId.get(id)).filter((item): item is CapabilityMaturityEvaluation => Boolean(item));
+    const measuredMembers = members.filter((item) => isMeasured(item.score));
+    let score: MeasurementResult = measuredMembers.length
+      ? measured(
+          clamp(measuredMembers.reduce((sum, item) => sum + (item.score as { score: number }).score, 0) / measuredMembers.length),
+          Math.min(0.9, measuredMembers.reduce((sum, item) => sum + (item.score as { confidence: number }).confidence, 0) / members.length),
+          Math.max(...measuredMembers.map((item) => (item.score as { sample_size: number }).sample_size)),
+        )
+      : unmeasured("insufficient_evidence", `0/${members.length} capabilities measured`, 0);
+    const blockers = Array.from(new Set(members.flatMap((item) => item.blockers))).slice(0, 3);
+    if (domain.id === "commercial_validation" && isMeasured(score) && blockers.some((item) => /no customer-safe Case has been human-confirmed/i.test(item))) {
+      score = measured(Math.min(score.score, 59), Math.min(score.confidence, 0.62), score.sample_size);
+    }
+    return {
+      id: domain.id, label: domain.label, weight: domain.weight, score,
+      capability_ids: [...domain.capability_ids],
+      blockers,
+      evidence_refs: Array.from(new Set(members.flatMap((item) => item.evidence.map((entry) => entry.ref)))).slice(0, 5),
+    };
+  });
+}
+
+function scoreIntelligenceCapabilities(capabilities: CapabilityMaturityEvaluation[]): MeasurementResult {
+  const components = intelligenceScoreComponents(capabilities);
+  const scored = components.filter((component) => isMeasured(component.score));
+  if (scored.length < 5) return unmeasured("insufficient_evidence", `only ${scored.length}/${components.length} Intelligence domains measured`, scored.length);
+  const measuredWeight = scored.reduce((sum, component) => sum + component.weight, 0);
+  const score = scored.reduce((sum, component) => sum + (component.score as { score: number }).score * component.weight, 0) / measuredWeight;
+  const confidence = scored.reduce((sum, component) => sum + (component.score as { confidence: number }).confidence * component.weight, 0);
+  const sample = Math.max(...scored.map((component) => (component.score as { sample_size: number }).sample_size));
+  const missingDomains = components.length - scored.length;
+  return measured(clamp(score - missingDomains * 5), Math.min(0.9, confidence), sample);
 }
 
 function stateFor(dimensions: Record<CapabilityDimensionId, MeasurementResult>, score: MeasurementResult, blockers: string[]): CapabilityState {
@@ -411,14 +469,7 @@ export function applyControlPlaneValidationEvidence(
       evidence_freshness_days: freshnessDays(dates.at(-1), now), last_evaluated_at: now,
     };
   });
-  const scored = capabilities.filter((item) => isMeasured(item.score));
-  let overall: MeasurementResult = scored.length >= 10
-    ? measured(
-        clamp(scored.reduce((sum, item) => sum + (item.score as { score: number }).score, 0) / scored.length),
-        Math.min(0.85, scored.reduce((sum, item) => sum + (item.score as { confidence: number }).confidence, 0) / scored.length),
-        scored.length,
-      )
-    : unmeasured("insufficient_evidence", `only ${scored.length}/${capabilities.length} capabilities have multidimensional evidence`, scored.length);
+  let overall = scoreIntelligenceCapabilities(capabilities);
   const humanCases = rows.reduce((sum, row) => sum + row.metrics.human_validation.customer_safe_cases, 0);
   if (isMeasured(overall) && humanCases === 0) overall = measured(Math.min(overall.score, 59), Math.min(overall.confidence, 0.62), overall.sample_size);
   const state_counts = Object.fromEntries(CAPABILITY_STATES.map((state) => [state, capabilities.filter((item) => item.state === state).length])) as Record<CapabilityState, number>;
@@ -489,14 +540,7 @@ export function buildCapabilityControlPlane(input: CapabilityControlPlaneInput):
     };
   });
 
-  const scored = capabilities.filter((item) => isMeasured(item.score));
-  let overall: MeasurementResult = scored.length >= 10
-    ? measured(
-        clamp(scored.reduce((sum, item) => sum + (item.score as { score: number }).score, 0) / scored.length),
-        Math.min(0.85, scored.reduce((sum, item) => sum + (item.score as { confidence: number }).confidence, 0) / scored.length),
-        scored.length,
-      )
-    : unmeasured("insufficient_evidence", `only ${scored.length}/${capabilities.length} capabilities have multidimensional evidence`, scored.length);
+  let overall = scoreIntelligenceCapabilities(capabilities);
   // A control-plane score cannot outrun its latest real commercial validation.
   const controlledHumanCases = dedupeValidationEvidence(input.controlled_validation_evidence ?? []).reduce((sum, row) => sum + row.metrics.human_validation.customer_safe_cases, 0);
   if (isMeasured(overall) && (input.dynamic_recall?.metrics.human_positive_outcomes === 0 || ((input.controlled_validation_evidence?.length ?? 0) > 0 && controlledHumanCases === 0))) overall = measured(Math.min(overall.score, 59), Math.min(overall.confidence, 0.62), overall.sample_size);
@@ -513,6 +557,7 @@ export function buildCapabilityControlPlane(input: CapabilityControlPlaneInput):
       "Unit tests and code presence can establish implementation/correctness only, never live validation.",
       "A rate with denominator zero is not measured.",
       "Scores may decrease when runtime, failure, quality, or human validation worsens.",
+      "Unmeasured Intelligence domains reduce confidence and maturity; they are never converted to zero or success.",
     ],
     validation_evidence: dedupeValidationEvidence(input.controlled_validation_evidence ?? []),
   };

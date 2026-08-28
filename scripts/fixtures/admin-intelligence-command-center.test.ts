@@ -55,7 +55,7 @@ async function run() {
   test("29 outputs retain ranking off", local.snapshot.outputs.every((o) => o.ranking_impact === "none"));
   test("30 trends remain explicitly uninstrumented", /not instrumented/.test(local.empty_states.trends));
   test("31 lift remains explicit not measured", /Not measured/.test(local.empty_states.lift));
-  test("32 command-center loader remains read-only; durable launch history is isolated behind its Admin endpoint", !/intelligence_control_plane_snapshots/.test(loaderSource + routeSource));
+  test("32 command-center reads canonical durable score history without writing snapshots", /loadControlPlaneHistory/.test(loaderSource) && !/persistControlPlaneMemory/.test(loaderSource + routeSource));
   test("33 source links preserved", ["growth","review","sources","source-review"].every((x) => pageSource.includes(`/admin/intelligence/${x}`)));
   test("34 page performs one command-center load", (pageSource.match(/adminFetch\("\/api\/admin\/intelligence\/command-center"/g) ?? []).length === 1);
 
@@ -81,6 +81,9 @@ async function run() {
   test("39 global score is anti-inflation capped while no human-positive Case exists",
     local.control_plane.overall.state === "measured" && local.control_plane.overall.score <= 59);
   test("40 command center no longer carries manually maintained pilot counts", !pageSource.includes('value="17"') && !pageSource.includes('value="10"'));
+  test("41 Intelligence Score reuses canonical Control Plane overall", local.intelligence_score.score === (local.control_plane.overall.state === "measured" ? local.control_plane.overall.score : null));
+  test("42 UI distinguishes Intelligence Score from Launch Readiness", pageSource.includes("Intelligence Score") && pageSource.includes("Launch Readiness") && pageSource.includes("intelligence_score"));
+  test("43 component scores are explainable and sample-aware", local.intelligence_score.components.length === 8 && local.intelligence_score.components.every((component) => component.sample_size >= 0 && component.state));
   if (saved.node === undefined) delete env.NODE_ENV; else env.NODE_ENV = saved.node;
   if (saved.secret === undefined) delete env.ADMIN_SESSION_SECRET; else env.ADMIN_SESSION_SECRET = saved.secret;
   if (saved.token === undefined) delete env.ADMIN_SECRET_TOKEN; else env.ADMIN_SECRET_TOKEN = saved.token;

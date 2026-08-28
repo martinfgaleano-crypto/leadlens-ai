@@ -65,6 +65,7 @@
     "test:counterevidence": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/counterevidence.test.ts",
     "test:provider-health": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/provider-health.test.ts",
     "test:provider-health-isolation": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/provider-health-isolation.test.ts",
+    "test:intelligence-score": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/intelligence-score.test.ts",
     "test:ops-modes": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/ops-modes.test.ts",
     "test:processing-auth": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/processing-authorization.test.ts",
     "test:demo-safety": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/demo-safety.test.ts",

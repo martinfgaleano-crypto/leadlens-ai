@@ -51,6 +51,7 @@ const input = (dynamic_recall: DynamicRecallSignals | null): CapabilityControlPl
 
 const poor = buildCapabilityControlPlane(input(recall(0, 304_900)));
 const better = buildCapabilityControlPlane(input(recall(4, 180_000)));
+const runtimeOnlyBetter = buildCapabilityControlPlane(input(recall(0, 180_000)));
 const diagnosticPositive: PositiveCaptureSignals = {
   generated_at: now,
   diagnostic_only: true,
@@ -92,6 +93,7 @@ test("score moves down: live truth overrides a high deterministic success assess
 test("overall anti-inflation: no human positive caps overall maturity", poor.overall.state === "measured" && poor.overall.score <= 59);
 test("runtime: ceiling breach is visible and degrades reliability", byId(poor, "runtime_latency").dimensions.reliability.state === "measured" && byId(poor, "runtime_latency").dimensions.reliability.score === 45 && byId(poor, "runtime_latency").blockers.length > 0);
 test("runtime: lower p95 improves the same capability automatically", scoreOf(better, "runtime_latency") !== null && scoreOf(poor, "runtime_latency") !== null && scoreOf(better, "runtime_latency")! > scoreOf(poor, "runtime_latency")!);
+test("runtime improvement does not directly inflate Intelligence Score", runtimeOnlyBetter.overall.state === "measured" && poor.overall.state === "measured" && runtimeOnlyBetter.overall.score === poor.overall.score);
 test("monitor: repeated zero false novelty produces high quality with explicit n", byId(poor, "monitor").dimensions.quality.state === "measured" && byId(poor, "monitor").dimensions.quality.score === 95 && byId(poor, "monitor").dimensions.quality.sample_size === 10);
 test("scheduler: implemented infrastructure is not represented as validated production", ["implemented", "domain_proven"].includes(byId(poor, "scheduler").state));
 test("ML: shadow learning never becomes production validated from implementation presence", !["production_wired", "live_validated", "soak_validated"].includes(byId(poor, "ml_shadow_learning").state));

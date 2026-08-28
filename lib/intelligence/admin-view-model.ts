@@ -7,6 +7,8 @@ import { loadSnapshotInputs } from "./snapshot-loader";
 import { loadLatestDeepEvidence, loadLatestResearchQuality, loadLatestSignalTemporal, loadLatestSignalBenchmark, loadLatestSignalMonitoringOperation, loadLatestEntityResolution, loadLatestOpportunitySynthesis, loadLatestClientContextReview, type DeepEvidenceArtifact, type ResearchQualityArtifact, type SignalTemporalArtifact, type SignalBenchmarkArtifact, type SignalMonitoringOperationArtifact, type EntityResolutionArtifact, type OpportunitySynthesisArtifact, type ClientContextReviewArtifact } from "./snapshot-loader";
 import type { LearnedPreferenceSource } from "./pattern-registry";
 import type { OutputValidationLifecycle } from "./validation-lifecycle";
+import { buildIntelligenceScoreView, type IntelligenceScoreView } from "./intelligence-score";
+import { loadControlPlaneHistory, type ControlPlaneMemoryRecord } from "./control-plane-store";
 import {
   buildCapabilityControlPlane,
   type CapabilityControlPlaneInput,
@@ -43,6 +45,8 @@ export interface AdminIntelligenceViewModel {
   availability: AdminIntelligenceAvailability;
   snapshot: IntelligenceSnapshot;
   control_plane: IntelligenceControlPlane;
+  intelligence_score: IntelligenceScoreView;
+  launch_readiness_summary: { score: number; confidence: string; observed_at: string } | null;
   feedback: FeedbackObservability;
   pattern_threshold: number;
   knowledge: {
@@ -95,7 +99,7 @@ export interface AdminIntelligenceLoadedData {
 
 const label = (value: string): string => value.replace(/_/g, " ");
 
-export function buildAdminIntelligenceViewModel(data: AdminIntelligenceLoadedData & { deep_accounts?: DeepEvidenceArtifact | null; research_quality?: ResearchQualityArtifact | null; signal_temporal?: SignalTemporalArtifact | null; signal_benchmark?: SignalBenchmarkArtifact | null; signal_monitoring_operation?: SignalMonitoringOperationArtifact | null; entity_resolution?: EntityResolutionArtifact | null; opportunity_synthesis?:OpportunitySynthesisArtifact|null;client_context_review?:ClientContextReviewArtifact|null; dynamic_recall?: DynamicRecallSignals | null; positive_capture?: PositiveCaptureSignals | null; soak?: SoakSignals | null; provider_usage?: CapabilityControlPlaneInput["provider_usage"] }): AdminIntelligenceViewModel {
+export function buildAdminIntelligenceViewModel(data: AdminIntelligenceLoadedData & { deep_accounts?: DeepEvidenceArtifact | null; research_quality?: ResearchQualityArtifact | null; signal_temporal?: SignalTemporalArtifact | null; signal_benchmark?: SignalBenchmarkArtifact | null; signal_monitoring_operation?: SignalMonitoringOperationArtifact | null; entity_resolution?: EntityResolutionArtifact | null; opportunity_synthesis?:OpportunitySynthesisArtifact|null;client_context_review?:ClientContextReviewArtifact|null; dynamic_recall?: DynamicRecallSignals | null; positive_capture?: PositiveCaptureSignals | null; soak?: SoakSignals | null; provider_usage?: CapabilityControlPlaneInput["provider_usage"]; control_plane_history?: ControlPlaneMemoryRecord[] }): AdminIntelligenceViewModel {
   const snapshot = buildIntelligenceSnapshot(data.input);
   const telemetry = data.dynamic_recall;
   const controlPlane = buildCapabilityControlPlane({
@@ -129,6 +133,12 @@ export function buildAdminIntelligenceViewModel(data: AdminIntelligenceLoadedDat
     availability: data.availability,
     snapshot,
     control_plane: controlPlane,
+    intelligence_score: buildIntelligenceScoreView(controlPlane, data.control_plane_history ?? []),
+    launch_readiness_summary: data.control_plane_history?.[0] ? {
+      score: data.control_plane_history[0].launch_readiness_score,
+      confidence: data.control_plane_history[0].confidence,
+      observed_at: data.control_plane_history[0].observed_at,
+    } : null,
     feedback: data.feedback,
     pattern_threshold: MIN_PATTERN_SAMPLE,
     knowledge: {
@@ -295,10 +305,16 @@ export async function loadAdminIntelligenceViewModel(options: {
   }));
   input.feedback.outcomes = realOutcomes;
 
+  let controlPlaneHistory: ControlPlaneMemoryRecord[] = [];
+  if (db) {
+    const history = await loadControlPlaneHistory(db as never, 30);
+    if (!history.error) controlPlaneHistory = history.records;
+  }
+
   return buildAdminIntelligenceViewModel({
     input, feedback, deep_accounts: deepAccounts, research_quality: researchQuality, signal_temporal: signalTemporal,
     signal_benchmark: signalBenchmark, signal_monitoring_operation: signalMonitoringOperation, entity_resolution: entityResolution, opportunity_synthesis:opportunitySynthesis,client_context_review:clientContextReview,
-    dynamic_recall: dynamicRecall, positive_capture: positiveCapture, soak, provider_usage: providerUsage,
+    dynamic_recall: dynamicRecall, positive_capture: positiveCapture, soak, provider_usage: providerUsage, control_plane_history: controlPlaneHistory,
     availability: {
       artifact: input.artifact ? "available" : "unavailable",
       database: databaseState,

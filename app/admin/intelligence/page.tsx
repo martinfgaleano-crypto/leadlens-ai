@@ -62,12 +62,14 @@ function SectionHeader({ title, eyebrow, text }: { title: string; eyebrow?: stri
 function Overview({ model }: { model: AdminIntelligenceViewModel }) {
   const { snapshot } = model;
   const control = model.control_plane;
+  const intelligence = model.intelligence_score;
   return <>
     <section className={styles.hero}>
       <div>
         <span className={styles.eyebrow}>LeadLens Intelligence Control Plane</span>
-        <h1>Capability maturity</h1>
-        <Measurement value={control.overall} />
+        <h1>Intelligence Score</h1>
+        <div className={styles.measurement}><StatePill value={control.overall.state}/><strong className={styles.score}>{intelligence.score ?? "Not measured"}{intelligence.score !== null && <small>/100</small>}</strong><span className={styles.muted}>confidence {words(intelligence.confidence)} · n={intelligence.sample_size}</span></div>
+        <p className={styles.muted}>{intelligence.trend === "insufficient_history" ? "No durable prior score; no trend inferred." : `Previous ${intelligence.previous}/100 · ${intelligence.delta! >= 0 ? "+" : ""}${intelligence.delta} · trend ${intelligence.trend}.`}</p>
         <p className={styles.diagnosis}>{snapshot.diagnosis.headline}</p>
       </div>
       <dl className={styles.heroFacts}>
@@ -85,6 +87,23 @@ function Overview({ model }: { model: AdminIntelligenceViewModel }) {
         <span>Cutoff {snapshot.source_data_cutoff}</span>
         <span>{control.version}</span>
       </footer>
+    </section>
+
+    <section className={styles.panel}>
+      <SectionHeader eyebrow="Canonical automatic metrics" title="Intelligence quality and launch safety are separate" text="Intelligence measures reasoning quality from canonical capability telemetry. Launch Readiness additionally consumes runtime, configuration, security, report safety and operational blockers."/>
+      <div className={styles.metricGrid}>
+        <Metric label="Intelligence Score" value={intelligence.score === null ? "Not measured" : `${intelligence.score}/100`} note={`${intelligence.confidence} confidence · n=${intelligence.sample_size}`}/>
+        <Metric label="Launch Readiness" value={model.launch_readiness_summary ? `${model.launch_readiness_summary.score}/100` : "Open Launch Readiness"} note={model.launch_readiness_summary ? `${model.launch_readiness_summary.confidence} confidence` : "No durable readiness snapshot available"}/>
+        <Metric label="Strongest" value={intelligence.strongest.join(" · ") || "Not measured"}/>
+        <Metric label="Weakest" value={intelligence.weakest.join(" · ") || "Not measured"}/>
+      </div>
+      {intelligence.movement_reasons.length > 0 && <p><strong>Last material movement:</strong> {intelligence.movement_reasons.join("; ")}.</p>}
+      {intelligence.blockers.length > 0 && <div><strong>What would materially raise Intelligence:</strong><ul>{intelligence.blockers.map((item) => <li key={item}>{item}</li>)}</ul></div>}
+    </section>
+
+    <section className={styles.panel}>
+      <SectionHeader eyebrow="Explainable subscores" title="Intelligence components" text="Unmeasured domains reduce confidence; they are never converted to zero or perfect performance."/>
+      <div className={styles.tableWrap}><table><thead><tr><th>Domain</th><th>Score</th><th>Confidence</th><th>Sample</th><th>Main blocker</th></tr></thead><tbody>{intelligence.components.map((component) => <tr key={component.id}><td>{component.label}</td><td>{component.score === null ? "Not measured" : `${component.score}/100`}</td><td>{component.confidence === null ? "—" : pct(component.confidence)}</td><td>n={component.sample_size}</td><td>{component.main_blocker ?? "No explicit blocker in current evidence."}</td></tr>)}</tbody></table></div>
     </section>
 
     <div className={styles.availability} role="status">
