@@ -135,8 +135,8 @@ export function buildAdminIntelligenceViewModel(data: AdminIntelligenceLoadedDat
   const humanValidation = validationEvidence.reduce((summary, item) => ({
     // Retrieval TP/FN counts are a diagnostic sample, not Opportunity Case
     // reviews. customer_safe_cases is the durable Case-level confirmation.
-    reviewed_cases: summary.reviewed_cases + item.metrics.human_validation.customer_safe_cases,
-    positive_cases: summary.positive_cases + item.metrics.human_validation.customer_safe_cases,
+    reviewed_cases: summary.reviewed_cases + (item.metrics.human_validation?.customer_safe_cases ?? 0),
+    positive_cases: summary.positive_cases + (item.metrics.human_validation?.customer_safe_cases ?? 0),
   }), { reviewed_cases: 0, positive_cases: 0 });
   const artifact = data.input.artifact;
   const evidenceDimension = snapshot.index.dimensions.find((d) => d.id === "evidence_integrity")!;

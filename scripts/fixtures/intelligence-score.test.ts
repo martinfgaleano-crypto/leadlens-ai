@@ -56,9 +56,9 @@ test("better event capture raises Research", () => { const poor = plane({ signal
 const bundled = JSON.parse(readFileSync("ml/data/acceptance/control-plane-validation-evidence-v1.json", "utf8")) as ControlPlaneValidationEvidenceV1;
 const commerciallyValidated = structuredClone(bundled);
 commerciallyValidated.source_fingerprint = "fixture-commercial-validation";
-commerciallyValidated.metrics.human_validation.customer_safe_cases = 4;
-commerciallyValidated.metrics.human_validation.true_positives = 8;
-commerciallyValidated.metrics.human_validation.false_negatives = 0;
+commerciallyValidated.metrics.human_validation!.customer_safe_cases = 4;
+commerciallyValidated.metrics.human_validation!.true_positives = 8;
+commerciallyValidated.metrics.human_validation!.false_negatives = 0;
 test("positive commercial validation raises Commercial Validation", () => assert(componentScore(plane({}, [commerciallyValidated]), "commercial_validation")! > componentScore(plane({}, [bundled]), "commercial_validation")!));
 test("wrong-entity incident lowers Discovery and score", () => { const incident = plane({ entity_resolution: 15, company_verification: 25 }); assert(componentScore(incident, "discovery")! < componentScore(base, "discovery")! && score(incident)! < score(base)!); });
 test("false What Changed lowers Temporal and score", () => { const incident = plane({ temporal_reasoning: 10 }); assert(componentScore(incident, "temporal")! < componentScore(base, "temporal")! && score(incident)! < score(base)!); });

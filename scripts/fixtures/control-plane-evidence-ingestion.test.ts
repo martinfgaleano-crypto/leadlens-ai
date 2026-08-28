@@ -55,7 +55,7 @@ const replacement = createControlPlaneValidationEvidence({
   evidence_id: "intelligence-super-sprint-commercial-review-2026-08-28",
   supersedes_source_fingerprint: evidence.source_fingerprint,
   observed_at: "2026-08-28T14:00:00.000Z",
-  metrics: { ...evidence.metrics, human_validation: { ...evidence.metrics.human_validation, customer_safe_cases: 3 } },
+  metrics: { ...evidence.metrics, human_validation: { ...evidence.metrics.human_validation!, customer_safe_cases: 3 } },
 });
 const replaced = applyControlPlaneValidationEvidence(applied, [replacement], replacement.observed_at);
 t("21 a reviewed update supersedes rather than duplicates the same controlled sample", () => { assert.equal(replaced.validation_evidence?.length, 1); assert.equal(replaced.validation_evidence?.[0].source_fingerprint, replacement.source_fingerprint); });
