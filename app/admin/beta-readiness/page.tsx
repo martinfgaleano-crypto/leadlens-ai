@@ -14,6 +14,7 @@ type Payload = {
   telemetry: { state: "current" | "degraded_using_last_durable" | "unavailable"; source: string; explanation: string; store_available: boolean; last_durable_snapshot_key: string | null };
   production_configuration: Array<{ id: string; label: string; state: string; launch_stage: string; detail: string }>;
   deployment: { commit: string | null; environment: string };
+  validation_evidence: Array<{ evidence_id: string; source_type: string; source_fingerprint: string; observed_at: string; artifact_version: string; provenance: Array<{ ref: string; kind: string }> }>;
 };
 
 const colors: Record<string, string> = { pass: "#15803d", degraded: "#b45309", fail: "#b91c1c", unmeasured: "#64748b" };
@@ -37,6 +38,7 @@ export default function LaunchReadinessPage() {
   const [data, setData] = useState<Payload | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [ingestion, setIngestion] = useState<string | null>(null);
   const refresh = useCallback(async () => {
     setLoading(true); setError(null);
     try {
@@ -48,13 +50,23 @@ export default function LaunchReadinessPage() {
     finally { setLoading(false); }
   }, []);
   useEffect(() => { void refresh(); }, [refresh]);
+  const ingestEvidence = useCallback(async () => {
+    setIngestion("Persisting validated evidence…");
+    try {
+      const response = await adminFetch("/api/admin/intelligence/launch-readiness", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ use_bundled_evidence: true }) });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error ?? "Evidence ingestion failed");
+      setIngestion(body.duplicate ? "Evidence already present; no duplicate snapshot created." : "Evidence persisted; readiness recomputed from underlying metrics.");
+      await refresh();
+    } catch (cause) { setIngestion(cause instanceof Error ? cause.message : "Evidence ingestion failed"); }
+  }, [refresh]);
 
   const r = data?.readiness;
   const scoreColor = !r ? "#64748b" : r.score >= 75 ? "#15803d" : r.score >= 50 ? "#b45309" : "#b91c1c";
   return <AdminLayout><main style={{ maxWidth: 1120, margin: "0 auto", color: "#0f172a" }}>
     <header style={{ display: "flex", justifyContent: "space-between", gap: 20, alignItems: "flex-start", marginBottom: 22 }}>
       <div><span style={{ color: "#0284c7", fontSize: ".7rem", fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase" }}>Automatic control · internal</span><h1 style={{ fontSize: "1.55rem", margin: ".3rem 0" }}>Launch Readiness</h1><p style={{ color: "#64748b", maxWidth: 720, margin: 0, lineHeight: 1.5 }}>Computed from current capability telemetry, production controls and empirical validation. No manual percentage or browser checklist contributes.</p>{data && <p style={{ color: "#94a3b8", fontSize: ".7rem", margin: ".35rem 0 0" }}>Build {data.deployment.commit?.slice(0, 12) ?? "unavailable"} · {data.deployment.environment}</p>}</div>
-      <button onClick={() => void refresh()} disabled={loading} style={{ border: 0, borderRadius: 8, padding: ".62rem .9rem", background: "#0f172a", color: "#fff", fontWeight: 700 }}>{loading ? "Evaluating…" : "Re-evaluate"}</button>
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}><button onClick={() => void ingestEvidence()} disabled={loading} style={{ border: "1px solid #cbd5e1", borderRadius: 8, padding: ".62rem .9rem", background: "#fff", color: "#0f172a", fontWeight: 700 }}>Ingest validated evidence</button><button onClick={() => void refresh()} disabled={loading} style={{ border: 0, borderRadius: 8, padding: ".62rem .9rem", background: "#0f172a", color: "#fff", fontWeight: 700 }}>{loading ? "Evaluating…" : "Re-evaluate"}</button>{ingestion && <div role="status" style={{ flexBasis: "100%", color: "#64748b", fontSize: ".7rem", textAlign: "right" }}>{ingestion}</div>}</div>
     </header>
     {error && <section style={{ padding: 16, border: "1px solid #fecaca", background: "#fef2f2", borderRadius: 10, color: "#991b1b" }}><strong>No score substituted.</strong> {error}</section>}
     {r && <>
@@ -64,6 +76,7 @@ export default function LaunchReadinessPage() {
       </section>
       {!data?.persistence.available && <section style={{ background: "#fffbeb", border: "1px solid #fde68a", color: "#92400e", padding: 12, borderRadius: 8, marginBottom: 16 }}><strong>History not durable yet.</strong> Apply migration 055. Current evaluation remains live and honest; no trend is claimed.</section>}
       {data.telemetry.state !== "current" && <section style={{ background: "#fffbeb", border: "1px solid #fde68a", color: "#92400e", padding: 12, borderRadius: 8, marginBottom: 16 }}><strong>{data.telemetry.state === "unavailable" ? "Control Plane telemetry unavailable." : "Using last durable Control Plane evaluation."}</strong> {data.telemetry.explanation}</section>}
+      {data.validation_evidence.length > 0 && <section style={{ marginBottom: 18, background: "#fff", border: "1px solid #e2e8f0", borderRadius: 12, padding: 18 }}><h2 style={{ fontSize: "1rem", marginTop: 0 }}>Controlled validation evidence</h2><p style={{ color: "#64748b", fontSize: ".76rem" }}>Compact acceptance summaries persisted durably. These are not production observations and never ingest a readiness score.</p>{data.validation_evidence.map((item) => <div key={item.source_fingerprint} style={{ borderTop: "1px solid #e2e8f0", paddingTop: 9, marginTop: 9, fontSize: ".74rem" }}><strong>{item.evidence_id}</strong> · {item.source_type} · observed {new Date(item.observed_at).toLocaleString()}<div style={{ color: "#64748b" }}>Fingerprint {item.source_fingerprint.slice(0, 16)}… · {item.artifact_version}</div></div>)}</section>}
       <section style={{ marginBottom: 18, background: "#fff", border: "1px solid #e2e8f0", borderRadius: 12, padding: 18 }}><h2 style={{ fontSize: "1rem", marginTop: 0 }}>Production configuration</h2><div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: 10 }}>{data.production_configuration.map((check) => <div key={check.id} style={{ border: "1px solid #e2e8f0", borderRadius: 8, padding: 10 }}><strong style={{ fontSize: ".78rem" }}>{check.label}</strong><div style={{ color: check.state === "present" ? "#15803d" : check.state === "missing" || check.state === "invalid" ? "#b91c1c" : "#a16207", fontSize: ".7rem", fontWeight: 800, textTransform: "uppercase", margin: "3px 0" }}>{check.state}</div><div style={{ color: "#64748b", fontSize: ".7rem" }}>{check.detail} Affects {words(check.launch_stage)}.</div></div>)}</div></section>
       <section><h2 style={{ fontSize: "1rem" }}>Launch gates</h2><div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))", gap: 12 }}>{r.gates.map((gate) => <Gate key={gate.id} gate={gate} />)}</div></section>
       <section style={{ marginTop: 22, background: "#fff", border: "1px solid #e2e8f0", borderRadius: 12, padding: 18 }}><h2 style={{ fontSize: "1rem", marginTop: 0 }}>Durable history</h2>{data.history_summary.state === "insufficient_history" && <p style={{ color: "#64748b", fontSize: ".8rem" }}>One baseline exists. History is insufficient for a trend; no delta is inferred.</p>}{data.history_summary.state !== "insufficient_history" && <p style={{ color: "#334155", fontSize: ".8rem" }}>Readiness delta: <strong>{data.history_summary.readiness_delta! >= 0 ? "+" : ""}{data.history_summary.readiness_delta}</strong> · Capability delta: <strong>{data.history_summary.capability_delta ?? "unmeasured"}</strong> · {data.history_summary.gate_transitions.length} gate transitions.</p>}{data.history.length ? <div style={{ overflowX: "auto" }}><table style={{ borderCollapse: "collapse", width: "100%", fontSize: ".76rem" }}><thead><tr>{["Observed", "Readiness", "Level", "Capability", "Confidence", "Blockers"].map((x) => <th key={x} style={{ textAlign: "left", padding: 8, borderBottom: "1px solid #cbd5e1" }}>{x}</th>)}</tr></thead><tbody>{data.history.map((x) => <tr key={`${x.observed_at}:${x.score}`}><td style={{ padding: 8 }}>{new Date(x.observed_at).toLocaleString()}</td><td>{x.score}</td><td>{words(x.level)}</td><td>{x.capability_score ?? "unmeasured"}</td><td>{x.confidence}</td><td>{x.blocker_count}</td></tr>)}</tbody></table></div> : <p style={{ color: "#64748b", fontSize: ".8rem" }}>No persisted history is available. This is an honest empty state, not a zero trend.</p>}</section>

@@ -1,0 +1,26 @@
+{
+  "version": "control-plane-validation-evidence-v1",
+  "evidence_id": "intelligence-quality-acceleration-2026-08-28",
+  "source_type": "controlled_acceptance",
+  "observed_at": "2026-08-28T00:03:49.760Z",
+  "artifact_version": "intelligence-quality-acceleration-v1",
+  "evaluator_compatibility": ["capability-control-plane-v1", "launch-readiness-v1"],
+  "capability_ids": ["dynamic_universe_discovery", "initial_research", "event_extraction", "opportunity_case", "decision", "human_calibration", "tenant_isolation", "customer_run_lifecycle", "production_soak", "portfolio_intelligence", "launch_readiness", "candidate_universe", "pre_research_relevance", "runtime_latency", "provider_cooldown", "provider_routing", "exception_handling"],
+  "provenance": [
+    { "ref": "ml/data/acceptance/account-deep-research-positive-control-v1.json", "kind": "controlled_acceptance", "sha256": "353a8c443c894b640cf55e4db730dba26c86ee16477b90e776a06d451df6a980" },
+    { "ref": "ml/data/acceptance/account-deep-research-human-review-v1.json", "kind": "human_review", "sha256": "e706a3cab14f29e61f32e31c3e8be12be03967335bebde716f468bff954a0415" },
+    { "ref": "controlled:customer-e2e-1787875820660", "kind": "controlled_acceptance" },
+    { "ref": "scripts/fixtures/report-delivery-gate.test.ts", "kind": "controlled_acceptance" },
+    { "ref": "scripts/fixtures/control-plane-evidence-ingestion.test.ts", "kind": "controlled_acceptance" }
+  ],
+  "metrics": {
+    "positive_capture": { "captured": 6, "controls": 8 },
+    "human_validation": { "true_positives": 6, "false_positives": 0, "false_negatives": 2, "true_negatives": 0, "customer_safe_cases": 0 },
+    "tenant_isolation": { "passed": 15, "controls": 15, "real_acceptance_runs": 1 },
+    "report_safety": { "passed": 16, "controls": 16, "false_successes": 0, "real_acceptance_runs": 1 },
+    "runtime": { "recent_ms": 137481, "historical_p95_ms": 304912, "historical_sample": 7 },
+    "candidate_hygiene": { "rejected_non_accounts": 7, "controls": 7, "leaks": 0 },
+    "provider_degradation": { "passed": 7, "controls": 7, "observed_failures": 1, "provider_state": "exhausted" }
+  },
+  "source_fingerprint": "aced105953060e182918663da9d816ca50b66d5db53591f1bcb89e506bee0402"
+}

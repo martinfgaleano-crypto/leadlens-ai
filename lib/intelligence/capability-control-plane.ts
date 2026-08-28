@@ -2,6 +2,7 @@ import {
   isMeasured, measured, unmeasured,
   type IntelligenceCapabilityAssessment, type IntelligenceEvidenceReference, type MeasurementResult,
 } from "./os-contracts";
+import { dedupeValidationEvidence, type ControlPlaneValidationEvidenceV1 } from "./control-plane-validation-evidence";
 
 export const CAPABILITY_CONTROL_PLANE_VERSION = "capability-control-plane-v1";
 
@@ -143,6 +144,7 @@ export interface CapabilityControlPlaneInput {
     last_failure?: string | null; last_error?: string | null;
     calculated_cost_usd_today?: number | null;
   }>;
+  controlled_validation_evidence?: ControlPlaneValidationEvidenceV1[];
 }
 
 export interface CapabilityMaturityEvaluation {
@@ -167,6 +169,7 @@ export interface IntelligenceControlPlane {
   capabilities: CapabilityMaturityEvaluation[];
   critical_blockers: string[];
   evidence_policy: string[];
+  validation_evidence?: ControlPlaneValidationEvidenceV1[];
 }
 
 const DIMENSION_WEIGHTS: Record<CapabilityDimensionId, number> = {
@@ -220,6 +223,12 @@ function stateFor(dimensions: Record<CapabilityDimensionId, MeasurementResult>, 
   if (isMeasured(dimensions.correctness) && dimensions.correctness.score >= 75) return "domain_proven";
   if (isMeasured(dimensions.implementation)) return "implemented";
   return "not_started";
+}
+
+function stateWithSemanticBlockers(def: CapabilityDefinition, dimensions: Record<CapabilityDimensionId, MeasurementResult>, score: MeasurementResult, blockers: string[]): CapabilityState {
+  const state = stateFor(dimensions, score, blockers);
+  if (["opportunity_case", "decision", "human_calibration", "launch_readiness"].includes(def.id) && blockers.some((blocker) => /no customer-safe Case has been human-confirmed/i.test(blocker))) return "degraded";
+  return state;
 }
 
 function dynamicOverrides(def: CapabilityDefinition, dimensions: Record<CapabilityDimensionId, MeasurementResult>, input: CapabilityControlPlaneInput, metrics: Record<string, number | string | null>, blockers: string[], evidence: IntelligenceEvidenceReference[]) {
@@ -278,6 +287,145 @@ function dynamicOverrides(def: CapabilityDefinition, dimensions: Record<Capabili
   }
 }
 
+function controlledAcceptanceOverrides(def: CapabilityDefinition, dimensions: Record<CapabilityDimensionId, MeasurementResult>, input: CapabilityControlPlaneInput, metrics: Record<string, number | string | null>, blockers: string[], evidence: IntelligenceEvidenceReference[]) {
+  const rows = dedupeValidationEvidence(input.controlled_validation_evidence ?? []);
+  if (!rows.length) return;
+  const sum = (pick: (row: ControlPlaneValidationEvidenceV1) => number) => rows.reduce((total, row) => total + pick(row), 0);
+  const latest = [...rows].sort((a, b) => Date.parse(b.observed_at) - Date.parse(a.observed_at))[0];
+  const ref = { id: `${def.id}:controlled-validation:${latest.source_fingerprint.slice(0, 12)}`, kind: "exercised_run" as const, ref: `controlled_acceptance:${latest.evidence_id}`, dated: true, date: latest.observed_at };
+  const positiveControls = sum((r) => r.metrics.positive_capture.controls);
+  const positiveCaptured = sum((r) => r.metrics.positive_capture.captured);
+  const positiveRate = positiveControls ? positiveCaptured / positiveControls : 0;
+  const customerSafeCases = sum((r) => r.metrics.human_validation.customer_safe_cases);
+
+  if (["dynamic_universe_discovery", "initial_research", "event_extraction", "opportunity_case", "decision", "human_calibration", "launch_readiness"].includes(def.id)) {
+    dimensions.real_world_validation = measured(clamp(positiveRate * 100), 0.68, positiveControls);
+    dimensions.quality = measured(clamp(positiveRate * 100), 0.68, positiveControls);
+    metrics.positive_controls = positiveControls;
+    metrics.positive_controls_captured = positiveCaptured;
+    metrics.positive_capture_rate = positiveRate;
+    metrics.human_positive_cases = customerSafeCases;
+    evidence.push(ref);
+    if (customerSafeCases === 0) blockers.push(`${positiveCaptured}/${positiveControls} diagnostic events were captured, but no customer-safe Case has been human-confirmed.`);
+  }
+
+  if (def.id === "human_calibration") {
+    const tp = sum((r) => r.metrics.human_validation.true_positives);
+    const fp = sum((r) => r.metrics.human_validation.false_positives);
+    const fn = sum((r) => r.metrics.human_validation.false_negatives);
+    const tn = sum((r) => r.metrics.human_validation.true_negatives);
+    const precisionN = tp + fp;
+    const recallN = tp + fn;
+    if (precisionN) dimensions.correctness = measured(clamp(tp / precisionN * 100), 0.72, precisionN);
+    if (recallN) dimensions.quality = measured(clamp(tp / recallN * 100), 0.7, recallN);
+    metrics.true_positives = tp; metrics.false_positives = fp; metrics.false_negatives = fn; metrics.true_negatives = tn;
+  }
+
+  if (["tenant_isolation", "customer_run_lifecycle"].includes(def.id)) {
+    const controls = sum((r) => r.metrics.tenant_isolation.controls);
+    const passed = sum((r) => r.metrics.tenant_isolation.passed);
+    const realRuns = sum((r) => r.metrics.tenant_isolation.real_acceptance_runs);
+    const rate = controls ? passed / controls : 0;
+    dimensions.integration = measured(92, 0.76, controls);
+    dimensions.correctness = measured(clamp(rate * 100), 0.78, controls);
+    dimensions.real_world_validation = measured(clamp(rate * 100), 0.7, Math.max(1, realRuns));
+    dimensions.reliability = measured(clamp(rate * 100), 0.72, controls);
+    dimensions.quality = measured(clamp(rate * 100), 0.72, controls);
+    metrics.controlled_acceptance_passed = passed; metrics.controlled_acceptance_controls = controls; metrics.real_acceptance_runs = realRuns;
+    evidence.push(ref);
+  }
+
+  if (["production_soak", "portfolio_intelligence", "launch_readiness"].includes(def.id)) {
+    const controls = sum((r) => r.metrics.report_safety.controls);
+    const passed = sum((r) => r.metrics.report_safety.passed);
+    const falseSuccesses = sum((r) => r.metrics.report_safety.false_successes);
+    const realRuns = sum((r) => r.metrics.report_safety.real_acceptance_runs);
+    const rate = controls ? passed / controls : 0;
+    dimensions.correctness = measured(clamp(rate * 100), 0.75, controls);
+    dimensions.reliability = measured(clamp((1 - falseSuccesses / Math.max(1, controls)) * 100), 0.72, controls);
+    if (realRuns) dimensions.real_world_validation = measured(clamp(rate * 100), 0.62, realRuns);
+    metrics.report_safety_passed = passed; metrics.report_safety_controls = controls; metrics.false_successes = falseSuccesses;
+    evidence.push(ref);
+  }
+
+  if (["candidate_universe", "pre_research_relevance"].includes(def.id)) {
+    const controls = sum((r) => r.metrics.candidate_hygiene.controls);
+    const rejected = sum((r) => r.metrics.candidate_hygiene.rejected_non_accounts);
+    const leaks = sum((r) => r.metrics.candidate_hygiene.leaks);
+    dimensions.correctness = measured(clamp(rejected / Math.max(1, controls) * 100), 0.7, controls);
+    dimensions.quality = measured(clamp((1 - leaks / Math.max(1, controls)) * 100), 0.7, controls);
+    metrics.non_account_controls = controls; metrics.non_accounts_rejected = rejected; metrics.candidate_leaks = leaks;
+    evidence.push(ref);
+  }
+
+  if (def.id === "runtime_latency") {
+    const historicalP95 = Math.max(...rows.map((r) => r.metrics.runtime.historical_p95_ms));
+    const recent = latest.metrics.runtime.recent_ms;
+    const sample = sum((r) => r.metrics.runtime.historical_sample);
+    const latencyScore = historicalP95 <= 180_000 ? 90 : historicalP95 <= 300_000 ? 65 : historicalP95 <= 360_000 ? 45 : 20;
+    dimensions.reliability = measured(latencyScore, 0.74, sample);
+    dimensions.observability = measured(92, 0.8, sample);
+    metrics.recent_runtime_ms = recent; metrics.p95_runtime_ms = historicalP95;
+    evidence.push(ref);
+    if (historicalP95 > 300_000) blockers.push(`Runtime p95/max ${historicalP95}ms exceeds the 300000ms operating ceiling.`);
+  }
+
+  if (["provider_cooldown", "provider_routing", "exception_handling"].includes(def.id)) {
+    const controls = sum((r) => r.metrics.provider_degradation.controls);
+    const passed = sum((r) => r.metrics.provider_degradation.passed);
+    const failures = sum((r) => r.metrics.provider_degradation.observed_failures);
+    dimensions.integration = measured(92, 0.75, controls);
+    dimensions.reliability = measured(clamp(passed / Math.max(1, controls) * 100), 0.72, controls);
+    dimensions.observability = measured(92, 0.8, controls);
+    metrics.degradation_controls = controls; metrics.degradation_passed = passed; metrics.observed_provider_failures = failures; metrics.provider_state = latest.metrics.provider_degradation.provider_state;
+    evidence.push(ref);
+  }
+}
+
+export function applyControlPlaneValidationEvidence(
+  plane: IntelligenceControlPlane,
+  incoming: ControlPlaneValidationEvidenceV1[],
+  now = new Date().toISOString(),
+): IntelligenceControlPlane {
+  const existing = dedupeValidationEvidence(plane.validation_evidence ?? []);
+  const rows = dedupeValidationEvidence([...existing, ...incoming]);
+  if (rows.length === existing.length) return plane;
+  const input: CapabilityControlPlaneInput = {
+    now, snapshot_capabilities: [], dynamic_recall: null, soak: null,
+    monitor_sample: 0, monitor_false_novelty: null, account_memory_records: null,
+    controlled_validation_evidence: rows,
+  };
+  const replaceableBlocker = /(?:No defensibly captured event|No human-defensible positive Case|diagnostic events were captured, but no customer-safe Case|Runtime p95\/max .* operating ceiling)/i;
+  const capabilities = plane.capabilities.map((item) => {
+    const dimensions = { ...item.dimensions };
+    const supporting_metrics = { ...item.supporting_metrics };
+    const evidence = [...item.evidence];
+    const blockers = item.blockers.filter((blocker) => !replaceableBlocker.test(blocker));
+    controlledAcceptanceOverrides(item.capability, dimensions, input, supporting_metrics, blockers, evidence);
+    const score = scoreDimensions(dimensions);
+    const state = stateWithSemanticBlockers(item.capability, dimensions, score, blockers);
+    const dates = evidence.map((entry) => entry.date).filter((date): date is string => Boolean(date)).sort();
+    return {
+      ...item, dimensions, supporting_metrics, evidence, blockers, score, state,
+      confidence: confidenceLabel(isMeasured(score) ? score.confidence : 0.2),
+      evidence_freshness_days: freshnessDays(dates.at(-1), now), last_evaluated_at: now,
+    };
+  });
+  const scored = capabilities.filter((item) => isMeasured(item.score));
+  let overall: MeasurementResult = scored.length >= 10
+    ? measured(
+        clamp(scored.reduce((sum, item) => sum + (item.score as { score: number }).score, 0) / scored.length),
+        Math.min(0.85, scored.reduce((sum, item) => sum + (item.score as { confidence: number }).confidence, 0) / scored.length),
+        scored.length,
+      )
+    : unmeasured("insufficient_evidence", `only ${scored.length}/${capabilities.length} capabilities have multidimensional evidence`, scored.length);
+  const humanCases = rows.reduce((sum, row) => sum + row.metrics.human_validation.customer_safe_cases, 0);
+  if (isMeasured(overall) && humanCases === 0) overall = measured(Math.min(overall.score, 59), Math.min(overall.confidence, 0.62), overall.sample_size);
+  const state_counts = Object.fromEntries(CAPABILITY_STATES.map((state) => [state, capabilities.filter((item) => item.state === state).length])) as Record<CapabilityState, number>;
+  const critical_blockers = Array.from(new Set(capabilities.filter((item) => ["blocked", "degraded"].includes(item.state) || item.capability.id === "launch_readiness").flatMap((item) => item.blockers))).slice(0, 12);
+  return { ...plane, generated_at: now, overall, overall_confidence: confidenceLabel(isMeasured(overall) ? overall.confidence : 0.2), state_counts, capabilities, critical_blockers, validation_evidence: rows };
+}
+
 export function buildCapabilityControlPlane(input: CapabilityControlPlaneInput): IntelligenceControlPlane {
   const sourceByAlias = new Map<string, IntelligenceCapabilityAssessment>();
   for (const source of input.snapshot_capabilities) sourceByAlias.set(source.capability_id, source);
@@ -289,6 +437,7 @@ export function buildCapabilityControlPlane(input: CapabilityControlPlaneInput):
     const supporting_metrics: Record<string, number | string | null> = {};
     const blockers: string[] = [];
     dynamicOverrides(def, dimensions, input, supporting_metrics, blockers, evidence);
+    controlledAcceptanceOverrides(def, dimensions, input, supporting_metrics, blockers, evidence);
 
     if (["provider_routing", "provider_cooldown", "cogs_instrumentation"].includes(def.id) && input.provider_usage) {
       const usageRows = Object.entries(input.provider_usage);
@@ -329,7 +478,7 @@ export function buildCapabilityControlPlane(input: CapabilityControlPlaneInput):
     if (def.id === "ml_shadow_learning") blockers.push("Shadow/observation only; ranking impact remains OFF.");
 
     const score = scoreDimensions(dimensions);
-    const state = stateFor(dimensions, score, blockers);
+    const state = stateWithSemanticBlockers(def, dimensions, score, blockers);
     const confidenceValue = isMeasured(score) ? score.confidence : 0.2;
     const dates = evidence.map((item) => item.date).filter((date): date is string => Boolean(date));
     const latest = dates.sort().at(-1) ?? source?.last_exercised ?? null;
@@ -349,7 +498,8 @@ export function buildCapabilityControlPlane(input: CapabilityControlPlaneInput):
       )
     : unmeasured("insufficient_evidence", `only ${scored.length}/${capabilities.length} capabilities have multidimensional evidence`, scored.length);
   // A control-plane score cannot outrun its latest real commercial validation.
-  if (isMeasured(overall) && input.dynamic_recall?.metrics.human_positive_outcomes === 0) overall = measured(Math.min(overall.score, 59), Math.min(overall.confidence, 0.62), overall.sample_size);
+  const controlledHumanCases = dedupeValidationEvidence(input.controlled_validation_evidence ?? []).reduce((sum, row) => sum + row.metrics.human_validation.customer_safe_cases, 0);
+  if (isMeasured(overall) && (input.dynamic_recall?.metrics.human_positive_outcomes === 0 || ((input.controlled_validation_evidence?.length ?? 0) > 0 && controlledHumanCases === 0))) overall = measured(Math.min(overall.score, 59), Math.min(overall.confidence, 0.62), overall.sample_size);
 
   const state_counts = Object.fromEntries(CAPABILITY_STATES.map((state) => [state, capabilities.filter((item) => item.state === state).length])) as Record<CapabilityState, number>;
   const critical_blockers = Array.from(new Set(capabilities.filter((item) => ["blocked", "degraded"].includes(item.state) || item.capability.id === "launch_readiness").flatMap((item) => item.blockers))).slice(0, 12);
@@ -364,5 +514,6 @@ export function buildCapabilityControlPlane(input: CapabilityControlPlaneInput):
       "A rate with denominator zero is not measured.",
       "Scores may decrease when runtime, failure, quality, or human validation worsens.",
     ],
+    validation_evidence: dedupeValidationEvidence(input.controlled_validation_evidence ?? []),
   };
 }

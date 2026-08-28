@@ -37,4 +37,9 @@ test("8 Apollo and payments cannot lower Runtime Health", !/apollo|payment|lemon
 test("9 no competing runtime percentage exists", !/delivery_score|overallScore|ScoreCard/.test(runtime + runtimePage));
 test("10 legacy Companies redirects to canonical Lead Hunter", /redirect\("\/admin\/lead-hunter"\)/.test(companies));
 test("11 missing current and durable telemetry cannot return a zero readiness", /Readiness was not converted to zero/.test(route) && /status: 503/.test(route));
+const newerDurable = { ...durable, snapshot_key: "new-material", observed_at: "2026-08-28T00:03:49.760Z", source_data_cutoff: "2026-08-28T00:03:49.760Z" };
+test("12 API selection uses newest valid durable snapshot", selectCanonicalControlPlane({ live, history: [newerDurable, durable] }).durable_record?.snapshot_key === "new-material");
+test("13 current files unavailable but durable evidence exists uses durable snapshot", selectCanonicalControlPlane({ live, history: [newerDurable] }).telemetry_state === "degraded_using_last_durable");
+test("14 no current telemetry and no durable snapshot is unavailable, never 0/100", selectCanonicalControlPlane({ live, history: [] }).telemetry_state === "unavailable");
+test("15 ingestion API is Admin-gated and persists a controlled-validation trigger", /export async function POST/.test(route) && /requireAdmin\(req\)/.test(route) && /controlled_acceptance_ingestion/.test(route));
 console.log(`\n${passed} passed, 0 failed`);

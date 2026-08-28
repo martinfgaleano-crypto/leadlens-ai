@@ -47,7 +47,8 @@ export function buildControlPlaneMemoryRecord(input: {
   trigger_type?: string;
   trigger_ref?: string | null;
 }): ControlPlaneMemoryRecord {
-  const raw = launchReadinessFingerprint(input.launch_readiness);
+  const evidenceFingerprints = (input.control_plane.validation_evidence ?? []).map((item) => item.source_fingerprint).sort().join("|");
+  const raw = `${launchReadinessFingerprint(input.launch_readiness)}|validation:${evidenceFingerprints}`;
   const key = createHash("sha256").update(raw).digest("hex");
   const overall = input.control_plane.overall;
   return {
