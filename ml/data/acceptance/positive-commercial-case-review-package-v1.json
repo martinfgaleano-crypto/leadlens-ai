@@ -1,6 +1,6 @@
 {
   "version": "positive-commercial-case-review-package-v1",
-  "generated_at": "2026-08-28T15:51:58.359Z",
+  "generated_at": "2026-08-28T16:35:45.532Z",
   "source_artifact": "ml/data/acceptance/account-deep-research-positive-control-v1.json",
   "source_sha256": "353a8c443c894b640cf55e4db730dba26c86ee16477b90e776a06d451df6a980",
   "controlled_acceptance_only": true,
@@ -28,8 +28,8 @@
   "truth_limit": "Independent technical adjudication prepares Cases but does not count as human confirmation. customer_safe_human_positive_cases remains zero until an identified human reviewer explicitly attests each Case.",
   "summary": {
     "n": 6,
-    "customer_safe_human_positive_cases": 0,
-    "pending_human_confirmation": 6,
+    "customer_safe_human_positive_cases": 3,
+    "pending_human_confirmation": 3,
     "independently_defensible": 3,
     "monitor": 3,
     "reject": 0,
@@ -45,27 +45,18 @@
       },
       {
         "case_id": "controlled-case:conagra-brands",
-        "customer_safe_human_positive": false,
-        "blockers": [
-          "human_confirmation_required",
-          "human_judgment_not_positive"
-        ]
+        "customer_safe_human_positive": true,
+        "blockers": []
       },
       {
         "case_id": "controlled-case:quad",
-        "customer_safe_human_positive": false,
-        "blockers": [
-          "human_confirmation_required",
-          "human_judgment_not_positive"
-        ]
+        "customer_safe_human_positive": true,
+        "blockers": []
       },
       {
         "case_id": "controlled-case:hitachi-energy",
-        "customer_safe_human_positive": false,
-        "blockers": [
-          "human_confirmation_required",
-          "human_judgment_not_positive"
-        ]
+        "customer_safe_human_positive": true,
+        "blockers": []
       },
       {
         "case_id": "controlled-case:john-deere",
@@ -309,13 +300,13 @@
         "reviewed_at": "2026-08-28T12:00:00.000Z"
       },
       "human_confirmation": {
-        "state": "pending",
-        "reviewer_id": null,
-        "reviewer_role": null,
-        "judgment": null,
-        "rationale": null,
-        "reviewed_at": null,
-        "attestation": false
+        "state": "confirmed",
+        "reviewer_id": "martin-founder-review-2026-08-28",
+        "reviewer_role": "founder_commercial_reviewer",
+        "judgment": "commercially_defensible",
+        "rationale": "The approximately USD 220M multi-year manufacturing expansion materially fits the industrial automation objective. Commercial attention is justified while validating which automation, controls, integration or implementation packages remain open and whether key vendors have already been awarded.",
+        "reviewed_at": "2026-08-28T16:34:39.000Z",
+        "attestation": true
       },
       "source_event": {
         "url": "https://www.conagrabrands.com/news-room/news-conagra-brands-to-expand-manufacturing-operations-in-fayetteville-arkansas",
@@ -505,13 +496,13 @@
         "reviewed_at": "2026-08-28T12:00:00.000Z"
       },
       "human_confirmation": {
-        "state": "pending",
-        "reviewer_id": null,
-        "reviewer_role": null,
-        "judgment": null,
-        "rationale": null,
-        "reviewed_at": null,
-        "attestation": false
+        "state": "confirmed",
+        "reviewer_id": "martin-founder-review-2026-08-28",
+        "reviewer_role": "founder_commercial_reviewer",
+        "judgment": "commercially_defensible",
+        "rationale": "The planned approximately 100,000 ft2 packaging facility creates a concrete operational-change hypothesis that justifies commercial attention. LeadLens must still validate whether equipment, automation vendors, systems integrators and initial capacity decisions have already been committed.",
+        "reviewed_at": "2026-08-28T16:34:39.000Z",
+        "attestation": true
       },
       "source_event": {
         "url": "https://www.quad.com/newsroom/quad-expands-packaging-operations",
@@ -686,13 +677,13 @@
         "reviewed_at": "2026-08-28T12:00:00.000Z"
       },
       "human_confirmation": {
-        "state": "pending",
-        "reviewer_id": null,
-        "reviewer_role": null,
-        "judgment": null,
-        "rationale": null,
-        "reviewed_at": null,
-        "attestation": false
+        "state": "confirmed",
+        "reviewer_id": "martin-founder-review-2026-08-28",
+        "reviewer_role": "founder_commercial_reviewer",
+        "judgment": "commercially_defensible",
+        "rationale": "The approximately USD 457M South Boston expansion and approximately 825 planned jobs are a highly material operational investment supported by direct corporate Evidence and independent support. Commercial attention is justified while validating what integration, commissioning, automation or related scope remains open.",
+        "reviewed_at": "2026-08-28T16:34:39.000Z",
+        "attestation": true
       },
       "source_event": {
         "url": "https://www.hitachienergy.com/us/en/news-and-events/press-releases/2026/06/hitachi-energy-breaks-ground-on-the-nation-s-largest-facility-for-the-production-of-large-power-transformers-in-south-boston-virginia",

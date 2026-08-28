@@ -1,4 +1,5 @@
 import { strict as assert } from "node:assert";
+import { readFileSync } from "node:fs";
 import { summarizePositiveCommercialCases, validatePositiveCommercialCase, type PositiveCommercialCaseReview } from "@/lib/intelligence/positive-commercial-case-validation";
 
 let passed = 0;
@@ -30,4 +31,10 @@ test("14 non-positive independent review blocks promotion", validatePositiveComm
 test("15 fallback decisions cannot be promoted by review", validatePositiveCommercialCase({ ...base, decision_source: "fallback_conservative" }).blockers.includes("noncanonical_decision_source"));
 const summary = summarizePositiveCommercialCases([base, { ...base, case_id: "case:pending", human_confirmation: { state: "pending", reviewer_id: null, reviewer_role: null, judgment: null, rationale: null, reviewed_at: null, attestation: false } }]);
 test("16 summary preserves n and does not count pending review", summary.n === 2 && summary.customer_safe_human_positive_cases === 1 && summary.pending_human_confirmation === 1);
+const persisted = JSON.parse(readFileSync("ml/data/acceptance/positive-commercial-case-review-package-v1.json", "utf8")) as { cases: PositiveCommercialCaseReview[] };
+const persistedSummary = summarizePositiveCommercialCases(persisted.cases);
+const confirmedAccounts = persisted.cases.filter((item) => validatePositiveCommercialCase(item).customer_safe_human_positive).map((item) => item.account).sort();
+test("17 canonical human labels persist exactly three approved Validate Cases", persistedSummary.customer_safe_human_positive_cases === 3 && assert.deepEqual(confirmedAccounts, ["Conagra Brands", "Hitachi Energy", "Quad"]) === undefined);
+test("18 human validation does not promote any Case to Prioritize", persisted.cases.filter((item) => item.human_confirmation.state === "confirmed").every((item) => item.decision === "validate"));
+test("19 non-positive Cases remain outside human-positive evidence", ["Nestlé USA", "Mondi", "John Deere"].every((account) => persisted.cases.find((item) => item.account === account)?.human_confirmation.state === "pending"));
 console.log(`\n${passed} passed, 0 failed`);
