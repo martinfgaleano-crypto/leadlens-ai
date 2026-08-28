@@ -1,0 +1,1248 @@
+{
+  "version": "positive-commercial-case-review-package-v1",
+  "generated_at": "2026-08-28T15:51:58.359Z",
+  "source_artifact": "ml/data/acceptance/account-deep-research-positive-control-v1.json",
+  "source_sha256": "353a8c443c894b640cf55e4db730dba26c86ee16477b90e776a06d451df6a980",
+  "controlled_acceptance_only": true,
+  "production_seeded": false,
+  "customer_context": {
+    "context_id": "controlled-context:industrial-automation-us-v1",
+    "offer_summary": "Industrial automation integration and plant-operations software",
+    "value_proposition": "Integrate and control new or materially expanded manufacturing and distribution operations",
+    "target_industries": [
+      "manufacturing",
+      "packaging",
+      "industrial operations",
+      "distribution"
+    ],
+    "target_geography": [
+      "United States"
+    ],
+    "buying_signals": [
+      "new facility",
+      "capacity expansion",
+      "automation investment"
+    ],
+    "truth_limit": "The context establishes what deserves validation; it is not external evidence and does not establish buying intent."
+  },
+  "truth_limit": "Independent technical adjudication prepares Cases but does not count as human confirmation. customer_safe_human_positive_cases remains zero until an identified human reviewer explicitly attests each Case.",
+  "summary": {
+    "n": 6,
+    "customer_safe_human_positive_cases": 0,
+    "pending_human_confirmation": 6,
+    "independently_defensible": 3,
+    "monitor": 3,
+    "reject": 0,
+    "results": [
+      {
+        "case_id": "controlled-case:nestle-usa",
+        "customer_safe_human_positive": false,
+        "blockers": [
+          "independent_review_not_positive",
+          "human_confirmation_required",
+          "human_judgment_not_positive"
+        ]
+      },
+      {
+        "case_id": "controlled-case:conagra-brands",
+        "customer_safe_human_positive": false,
+        "blockers": [
+          "human_confirmation_required",
+          "human_judgment_not_positive"
+        ]
+      },
+      {
+        "case_id": "controlled-case:quad",
+        "customer_safe_human_positive": false,
+        "blockers": [
+          "human_confirmation_required",
+          "human_judgment_not_positive"
+        ]
+      },
+      {
+        "case_id": "controlled-case:hitachi-energy",
+        "customer_safe_human_positive": false,
+        "blockers": [
+          "human_confirmation_required",
+          "human_judgment_not_positive"
+        ]
+      },
+      {
+        "case_id": "controlled-case:john-deere",
+        "customer_safe_human_positive": false,
+        "blockers": [
+          "decision_not_commercially_positive",
+          "independent_review_not_positive",
+          "human_confirmation_required",
+          "human_judgment_not_positive"
+        ]
+      },
+      {
+        "case_id": "controlled-case:mondi",
+        "customer_safe_human_positive": false,
+        "blockers": [
+          "independent_review_not_positive",
+          "human_confirmation_required",
+          "human_judgment_not_positive"
+        ]
+      }
+    ]
+  },
+  "cases": [
+    {
+      "case_id": "controlled-case:nestle-usa",
+      "account": "Nestlé USA",
+      "decision": "validate",
+      "decision_source": "canonical_opportunity_test",
+      "identity_confirmed": true,
+      "target_organization_confirmed": true,
+      "commercial_context_confirmed": true,
+      "client_fit_confirmed": true,
+      "evidence_traceable": true,
+      "event_observed": true,
+      "event_date": "2026-06-10",
+      "timing_claimed": true,
+      "timing_grounded": true,
+      "counterevidence_explicit": true,
+      "weakening_factors_explicit": true,
+      "next_action_explicit": true,
+      "buying_intent_claimed": false,
+      "independent_review": {
+        "reviewer_id": "codex-independent-commercial-adjudication-v1",
+        "reviewer_kind": "independent_technical_review",
+        "judgment": "monitor",
+        "rationale": "Real high-materiality event and fit context, but present commercial timing is not yet defensible.",
+        "reviewed_at": "2026-08-28T12:00:00.000Z"
+      },
+      "human_confirmation": {
+        "state": "pending",
+        "reviewer_id": null,
+        "reviewer_role": null,
+        "judgment": null,
+        "rationale": null,
+        "reviewed_at": null,
+        "attestation": false
+      },
+      "source_event": {
+        "url": "https://www.nestleusa.com/media/pressreleases/largest-distribution-center-arvin",
+        "source_host": "nestleusa.com",
+        "kind": "corporate_event",
+        "event_date": "2026-06-10",
+        "matched_expected_terms": [
+          "Arvin",
+          "distribution center"
+        ]
+      },
+      "primary_source": "https://www.nestleusa.com/media/pressreleases/largest-distribution-center-arvin",
+      "independent_source": "https://consumergoods.com/nestle-opens-high-tech-distribution-center-california",
+      "commercial_analysis": {
+        "verified_fact": "Nestlé USA opened a $330 million, 700,000-square-foot Arvin distribution center with targeted automation and an automated storage and retrieval system.",
+        "why_now": "The opening confirms a material operating change, but the principal automation implementation is already in place.",
+        "fit_reasons": [
+          "Large directly operated distribution asset",
+          "Automation and digital supply-chain capabilities are explicit"
+        ],
+        "counterevidence": "The facility is already operational and equipped with automation, so the initial vendor-selection window may be closed.",
+        "alternative_explanation": "The relevant work may be owned by incumbent integrators or internal Nestlé teams rather than an external new supplier.",
+        "decision_critical_question": "Are post-go-live integration, optimization or multi-site orchestration scopes still open to external vendors?",
+        "next_action": "Monitor post-go-live operating disclosures; validate incumbent systems and unresolved integration scope before allocating outreach."
+      },
+      "canonical_case": {
+        "decision": "validate",
+        "decisionSource": "canonical_opportunity_test",
+        "verdictStatus": "opportunity",
+        "reasons": [
+          "opportunity_test_opportunity",
+          "open_decision_critical_caps_at_validate"
+        ],
+        "fit": "Moderate",
+        "timing": "Moderate",
+        "evidence": "Moderate",
+        "remainingDecisionCritical": [
+          "Are post-go-live integration, optimization or multi-site orchestration scopes still open to external vendors?"
+        ],
+        "hasMaterialCounter": true
+      },
+      "opportunity_case": {
+        "version": "opportunity-case-v1",
+        "classification": {
+          "accountRole": {
+            "value": "Potential Customer",
+            "basis": "explicit",
+            "source": "commercial opportunity context",
+            "rationale": "Explicit account relationship classification."
+          },
+          "opportunityType": {
+            "value": "Technology Modernization",
+            "basis": "explicit",
+            "source": "commercial opportunity context",
+            "rationale": "Controlled type accepted only after Role × Type coherence validation."
+          },
+          "opportunityDescriptor": "Post-opening distribution automation integration"
+        },
+        "fit": {
+          "value": "Moderate",
+          "basis": "inferred",
+          "source": "qualification.fit_score + fit_reasons",
+          "rationale": "Large directly operated distribution asset · Automation and digital supply-chain capabilities are explicit"
+        },
+        "timing": {
+          "value": "Moderate",
+          "basis": "inferred",
+          "source": "validated dated source signal",
+          "rationale": "A dated event makes present evaluation relevant but does not establish buying intent."
+        },
+        "changes": [
+          {
+            "event": "Nestlé USA opened a $330 million, 700,000-square-foot Arvin distribution center with targeted automation and an automated storage and retrieval system.",
+            "date": "2026-06-10",
+            "sourceLabel": "nestleusa.com",
+            "relevance": "The opening confirms a material operating change, but the principal automation implementation is already in place."
+          }
+        ],
+        "whyNow": {
+          "value": "The opening confirms a material operating change, but the principal automation implementation is already in place.",
+          "basis": "inferred",
+          "source": "dated signal + client commercial objective",
+          "rationale": "Interpretation connects an observed event to the explicit client context; it is not buying intent."
+        },
+        "evidence": [
+          {
+            "claim": "Nestlé USA opened a $330 million, 700,000-square-foot Arvin distribution center with targeted automation and an automated storage and retrieval system.",
+            "observation": "Nestlé USA opened a $330 million, 700,000-square-foot Arvin distribution center with targeted automation and an automated storage and retrieval system.",
+            "sourceLabel": "nestleusa.com",
+            "url": "https://www.nestleusa.com/media/pressreleases/largest-distribution-center-arvin",
+            "date": "2026-06-10",
+            "relation": "direct",
+            "basis": "observed",
+            "impacts": [
+              "what_changed",
+              "timing"
+            ],
+            "independenceKey": "nestleusa.com"
+          },
+          {
+            "claim": "Independent source corroborates the event for Nestlé USA.",
+            "observation": "Independent source corroborates the event for Nestlé USA.",
+            "sourceLabel": "consumergoods.com",
+            "url": "https://consumergoods.com/nestle-opens-high-tech-distribution-center-california",
+            "date": "2026-06-10",
+            "relation": "context",
+            "basis": "observed",
+            "impacts": [
+              "fit"
+            ],
+            "independenceKey": "consumergoods.com"
+          }
+        ],
+        "independentSupport": true,
+        "weaknesses": [
+          {
+            "value": "The facility is already operational and equipped with automation, so the initial vendor-selection window may be closed.",
+            "basis": "inferred",
+            "source": "pipeline risk evaluation",
+            "rationale": "Material factor that can weaken the case."
+          },
+          {
+            "value": "The relevant work may be owned by incumbent integrators or internal Nestlé teams rather than an external new supplier.",
+            "basis": "inferred",
+            "source": "pipeline risk evaluation",
+            "rationale": "Material factor that can weaken the case."
+          }
+        ],
+        "unknowns": [
+          {
+            "value": "Are post-go-live integration, optimization or multi-site orchestration scopes still open to external vendors?",
+            "basis": "explicit",
+            "source": "actionability blockers",
+            "rationale": "Unresolved fact, not counterevidence."
+          }
+        ],
+        "validations": [
+          {
+            "question": "Are post-go-live integration, optimization or multi-site orchestration scopes still open to external vendors?",
+            "decisionCritical": true,
+            "howToValidate": "Monitor post-go-live operating disclosures; validate incumbent systems and unresolved integration scope before allocating outreach.",
+            "changesDecisionBecause": "Resolving this blocker determines whether active prioritization is justified."
+          }
+        ],
+        "decisionRationale": {
+          "value": "validate: encaje moderate, señal temporal verificada y evidencia con soporte independiente explícito; queda por resolver: Are post-go-live integration, optimization or multi-site orchestration scopes still open to external vendors?.",
+          "basis": "inferred",
+          "source": "fit + timing + evidence + uncertainty + existing decision",
+          "rationale": "Qualitative synthesis; no aggregate score and no purchase-intent claim."
+        },
+        "recommendedNextStep": {
+          "value": "Monitor post-go-live operating disclosures; validate incumbent systems and unresolved integration scope before allocating outreach.",
+          "basis": "explicit",
+          "source": "pipeline recommendation",
+          "rationale": "Action follows the existing decision."
+        },
+        "revisitWhen": null,
+        "potentialValue": null,
+        "feasibility": null
+      }
+    },
+    {
+      "case_id": "controlled-case:conagra-brands",
+      "account": "Conagra Brands",
+      "decision": "validate",
+      "decision_source": "canonical_opportunity_test",
+      "identity_confirmed": true,
+      "target_organization_confirmed": true,
+      "commercial_context_confirmed": true,
+      "client_fit_confirmed": true,
+      "evidence_traceable": true,
+      "event_observed": true,
+      "event_date": "2026-03-06",
+      "timing_claimed": true,
+      "timing_grounded": true,
+      "counterevidence_explicit": true,
+      "weakening_factors_explicit": true,
+      "next_action_explicit": true,
+      "buying_intent_claimed": false,
+      "independent_review": {
+        "reviewer_id": "codex-independent-commercial-adjudication-v1",
+        "reviewer_kind": "independent_technical_review",
+        "judgment": "commercially_defensible",
+        "rationale": "Correct account, material planned capacity change, direct operational fit, grounded timing and a concrete validation action; Validate is justified without claiming intent.",
+        "reviewed_at": "2026-08-28T12:00:00.000Z"
+      },
+      "human_confirmation": {
+        "state": "pending",
+        "reviewer_id": null,
+        "reviewer_role": null,
+        "judgment": null,
+        "rationale": null,
+        "reviewed_at": null,
+        "attestation": false
+      },
+      "source_event": {
+        "url": "https://www.conagrabrands.com/news-room/news-conagra-brands-to-expand-manufacturing-operations-in-fayetteville-arkansas",
+        "source_host": "conagrabrands.com",
+        "kind": "strategic_decision",
+        "event_date": "2026-03-06",
+        "matched_expected_terms": [
+          "Fayetteville",
+          "expansion"
+        ]
+      },
+      "primary_source": "https://www.conagrabrands.com/news-room/news-conagra-brands-to-expand-manufacturing-operations-in-fayetteville-arkansas",
+      "independent_source": "https://www.fayetteville-ar.gov/DocumentCenter/View/40273/Q1-2026-COF-Economic-Development-Report-5_11_26?bidId=",
+      "commercial_analysis": {
+        "verified_fact": "Conagra announced an approximately $220 million multi-year expansion of its Fayetteville plant, with construction planned for 2026 and a significant increase in chicken-production capacity.",
+        "why_now": "The project is announced and construction is upcoming, creating a bounded period to validate controls, integration and plant-software workstreams before implementation is complete.",
+        "fit_reasons": [
+          "Existing manufacturing operation is directly controlled by Conagra",
+          "The project materially changes production capacity",
+          "Supply-chain innovation is named in the announcement"
+        ],
+        "counterevidence": "The announcement does not disclose vendor-selection status, control architecture or whether automation scope is already awarded.",
+        "alternative_explanation": "Most of the investment may fund construction and production equipment under an incumbent EPC or integrator contract.",
+        "decision_critical_question": "Which automation, controls, data-integration and plant-operations packages remain unawarded?",
+        "next_action": "Validate project phase, incumbent EPC/integrators and remaining controls or plant-software packages before contacting Conagra supply-chain engineering."
+      },
+      "canonical_case": {
+        "decision": "validate",
+        "decisionSource": "canonical_opportunity_test",
+        "verdictStatus": "monitor",
+        "reasons": [
+          "opportunity_test_monitor",
+          "material_counterevidence_requires_revalidation",
+          "aging_signal"
+        ],
+        "fit": "Strong",
+        "timing": "Moderate",
+        "evidence": "Moderate",
+        "remainingDecisionCritical": [
+          "Which automation, controls, data-integration and plant-operations packages remain unawarded?"
+        ],
+        "hasMaterialCounter": true
+      },
+      "opportunity_case": {
+        "version": "opportunity-case-v1",
+        "classification": {
+          "accountRole": {
+            "value": "Potential Customer",
+            "basis": "explicit",
+            "source": "commercial opportunity context",
+            "rationale": "Explicit account relationship classification."
+          },
+          "opportunityType": {
+            "value": "Capacity Expansion",
+            "basis": "explicit",
+            "source": "commercial opportunity context",
+            "rationale": "Controlled type accepted only after Role × Type coherence validation."
+          },
+          "opportunityDescriptor": "Multi-year manufacturing-capacity expansion"
+        },
+        "fit": {
+          "value": "Strong",
+          "basis": "inferred",
+          "source": "qualification.fit_score + fit_reasons",
+          "rationale": "Existing manufacturing operation is directly controlled by Conagra · The project materially changes production capacity · Supply-chain innovation is named in the announcement"
+        },
+        "timing": {
+          "value": "Moderate",
+          "basis": "inferred",
+          "source": "validated dated source signal",
+          "rationale": "A dated event makes present evaluation relevant but does not establish buying intent."
+        },
+        "changes": [
+          {
+            "event": "Conagra announced an approximately $220 million multi-year expansion of its Fayetteville plant, with construction planned for 2026 and a significant increase in chicken-production capacity.",
+            "date": "2026-03-06",
+            "sourceLabel": "conagrabrands.com",
+            "relevance": "The project is announced and construction is upcoming, creating a bounded period to validate controls, integration and plant-software workstreams before implementation is complete."
+          }
+        ],
+        "whyNow": {
+          "value": "The project is announced and construction is upcoming, creating a bounded period to validate controls, integration and plant-software workstreams before implementation is complete.",
+          "basis": "inferred",
+          "source": "dated signal + client commercial objective",
+          "rationale": "Interpretation connects an observed event to the explicit client context; it is not buying intent."
+        },
+        "evidence": [
+          {
+            "claim": "Conagra announced an approximately $220 million multi-year expansion of its Fayetteville plant, with construction planned for 2026 and a significant increase in chicken-production capacity.",
+            "observation": "Conagra announced an approximately $220 million multi-year expansion of its Fayetteville plant, with construction planned for 2026 and a significant increase in chicken-production capacity.",
+            "sourceLabel": "conagrabrands.com",
+            "url": "https://www.conagrabrands.com/news-room/news-conagra-brands-to-expand-manufacturing-operations-in-fayetteville-arkansas",
+            "date": "2026-03-06",
+            "relation": "direct",
+            "basis": "observed",
+            "impacts": [
+              "what_changed",
+              "timing"
+            ],
+            "independenceKey": "conagrabrands.com"
+          },
+          {
+            "claim": "Independent source corroborates the event for Conagra Brands.",
+            "observation": "Independent source corroborates the event for Conagra Brands.",
+            "sourceLabel": "fayetteville-ar.gov",
+            "url": "https://www.fayetteville-ar.gov/DocumentCenter/View/40273/Q1-2026-COF-Economic-Development-Report-5_11_26?bidId=",
+            "date": "2026-03-06",
+            "relation": "context",
+            "basis": "observed",
+            "impacts": [
+              "fit"
+            ],
+            "independenceKey": "fayetteville-ar.gov"
+          }
+        ],
+        "independentSupport": true,
+        "weaknesses": [
+          {
+            "value": "The announcement does not disclose vendor-selection status, control architecture or whether automation scope is already awarded.",
+            "basis": "inferred",
+            "source": "pipeline risk evaluation",
+            "rationale": "Material factor that can weaken the case."
+          },
+          {
+            "value": "Most of the investment may fund construction and production equipment under an incumbent EPC or integrator contract.",
+            "basis": "inferred",
+            "source": "pipeline risk evaluation",
+            "rationale": "Material factor that can weaken the case."
+          }
+        ],
+        "unknowns": [
+          {
+            "value": "Which automation, controls, data-integration and plant-operations packages remain unawarded?",
+            "basis": "explicit",
+            "source": "actionability blockers",
+            "rationale": "Unresolved fact, not counterevidence."
+          }
+        ],
+        "validations": [
+          {
+            "question": "Which automation, controls, data-integration and plant-operations packages remain unawarded?",
+            "decisionCritical": true,
+            "howToValidate": "Validate project phase, incumbent EPC/integrators and remaining controls or plant-software packages before contacting Conagra supply-chain engineering.",
+            "changesDecisionBecause": "Resolving this blocker determines whether active prioritization is justified."
+          }
+        ],
+        "decisionRationale": {
+          "value": "validate: encaje strong, señal temporal verificada y evidencia con soporte independiente explícito; queda por resolver: Which automation, controls, data-integration and plant-operations packages remain unawarded?.",
+          "basis": "inferred",
+          "source": "fit + timing + evidence + uncertainty + existing decision",
+          "rationale": "Qualitative synthesis; no aggregate score and no purchase-intent claim."
+        },
+        "recommendedNextStep": {
+          "value": "Validate project phase, incumbent EPC/integrators and remaining controls or plant-software packages before contacting Conagra supply-chain engineering.",
+          "basis": "explicit",
+          "source": "pipeline recommendation",
+          "rationale": "Action follows the existing decision."
+        },
+        "revisitWhen": null,
+        "potentialValue": null,
+        "feasibility": null
+      }
+    },
+    {
+      "case_id": "controlled-case:quad",
+      "account": "Quad",
+      "decision": "validate",
+      "decision_source": "canonical_opportunity_test",
+      "identity_confirmed": true,
+      "target_organization_confirmed": true,
+      "commercial_context_confirmed": true,
+      "client_fit_confirmed": true,
+      "evidence_traceable": true,
+      "event_observed": true,
+      "event_date": "2026-07-16",
+      "timing_claimed": true,
+      "timing_grounded": true,
+      "counterevidence_explicit": true,
+      "weakening_factors_explicit": true,
+      "next_action_explicit": true,
+      "buying_intent_claimed": false,
+      "independent_review": {
+        "reviewer_id": "codex-independent-commercial-adjudication-v1",
+        "reviewer_kind": "independent_technical_review",
+        "judgment": "commercially_defensible",
+        "rationale": "A single primary source limits Evidence strength, but the future commissioning date, direct operation and specific unresolved scope justify Validate rather than Prioritize.",
+        "reviewed_at": "2026-08-28T12:00:00.000Z"
+      },
+      "human_confirmation": {
+        "state": "pending",
+        "reviewer_id": null,
+        "reviewer_role": null,
+        "judgment": null,
+        "rationale": null,
+        "reviewed_at": null,
+        "attestation": false
+      },
+      "source_event": {
+        "url": "https://www.quad.com/newsroom/quad-expands-packaging-operations",
+        "source_host": "quad.com",
+        "kind": "corporate_event",
+        "event_date": "2026-07-16",
+        "matched_expected_terms": [
+          "Salt Lake"
+        ]
+      },
+      "primary_source": "https://www.quad.com/newsroom/quad-expands-packaging-operations",
+      "independent_source": null,
+      "commercial_analysis": {
+        "verified_fact": "Quad announced a new 100,000-square-foot Salt Lake City packaging facility planned to become operational in Q4 2026, extending its packaging network across multiple US sites.",
+        "why_now": "The site is not yet operational, so integration of production equipment, workflows and cross-site operations may still require validation.",
+        "fit_reasons": [
+          "The new manufacturing site is directly operated by Quad",
+          "The event creates a multi-site packaging-production footprint",
+          "Concrete production equipment and launch timing are disclosed"
+        ],
+        "counterevidence": "The source states the facility launches with existing client volume and named production equipment, indicating substantial implementation decisions may already be complete.",
+        "alternative_explanation": "Quad may use existing internal platforms and incumbent equipment vendors for all integration work.",
+        "decision_critical_question": "Are plant-data, scheduling, quality or cross-site integration workstreams still open before Q4 commissioning?",
+        "next_action": "Validate commissioning status and the ownership of plant integration before approaching Quad Packaging operations."
+      },
+      "canonical_case": {
+        "decision": "validate",
+        "decisionSource": "canonical_opportunity_test",
+        "verdictStatus": "opportunity",
+        "reasons": [
+          "opportunity_test_opportunity",
+          "open_decision_critical_caps_at_validate"
+        ],
+        "fit": "Strong",
+        "timing": "Moderate",
+        "evidence": "Limited",
+        "remainingDecisionCritical": [
+          "Are plant-data, scheduling, quality or cross-site integration workstreams still open before Q4 commissioning?"
+        ],
+        "hasMaterialCounter": true
+      },
+      "opportunity_case": {
+        "version": "opportunity-case-v1",
+        "classification": {
+          "accountRole": {
+            "value": "Potential Customer",
+            "basis": "explicit",
+            "source": "commercial opportunity context",
+            "rationale": "Explicit account relationship classification."
+          },
+          "opportunityType": {
+            "value": "Operations Expansion",
+            "basis": "explicit",
+            "source": "commercial opportunity context",
+            "rationale": "Controlled type accepted only after Role × Type coherence validation."
+          },
+          "opportunityDescriptor": "New packaging facility and multi-site production footprint"
+        },
+        "fit": {
+          "value": "Strong",
+          "basis": "inferred",
+          "source": "qualification.fit_score + fit_reasons",
+          "rationale": "The new manufacturing site is directly operated by Quad · The event creates a multi-site packaging-production footprint · Concrete production equipment and launch timing are disclosed"
+        },
+        "timing": {
+          "value": "Moderate",
+          "basis": "inferred",
+          "source": "validated dated source signal",
+          "rationale": "A dated event makes present evaluation relevant but does not establish buying intent."
+        },
+        "changes": [
+          {
+            "event": "Quad announced a new 100,000-square-foot Salt Lake City packaging facility planned to become operational in Q4 2026, extending its packaging network across multiple US sites.",
+            "date": "2026-07-16",
+            "sourceLabel": "quad.com",
+            "relevance": "The site is not yet operational, so integration of production equipment, workflows and cross-site operations may still require validation."
+          }
+        ],
+        "whyNow": {
+          "value": "The site is not yet operational, so integration of production equipment, workflows and cross-site operations may still require validation.",
+          "basis": "inferred",
+          "source": "dated signal + client commercial objective",
+          "rationale": "Interpretation connects an observed event to the explicit client context; it is not buying intent."
+        },
+        "evidence": [
+          {
+            "claim": "Quad announced a new 100,000-square-foot Salt Lake City packaging facility planned to become operational in Q4 2026, extending its packaging network across multiple US sites.",
+            "observation": "Quad announced a new 100,000-square-foot Salt Lake City packaging facility planned to become operational in Q4 2026, extending its packaging network across multiple US sites.",
+            "sourceLabel": "quad.com",
+            "url": "https://www.quad.com/newsroom/quad-expands-packaging-operations",
+            "date": "2026-07-16",
+            "relation": "direct",
+            "basis": "observed",
+            "impacts": [
+              "what_changed",
+              "timing"
+            ],
+            "independenceKey": "quad.com"
+          }
+        ],
+        "independentSupport": false,
+        "weaknesses": [
+          {
+            "value": "The source states the facility launches with existing client volume and named production equipment, indicating substantial implementation decisions may already be complete.",
+            "basis": "inferred",
+            "source": "pipeline risk evaluation",
+            "rationale": "Material factor that can weaken the case."
+          },
+          {
+            "value": "Quad may use existing internal platforms and incumbent equipment vendors for all integration work.",
+            "basis": "inferred",
+            "source": "pipeline risk evaluation",
+            "rationale": "Material factor that can weaken the case."
+          }
+        ],
+        "unknowns": [
+          {
+            "value": "Are plant-data, scheduling, quality or cross-site integration workstreams still open before Q4 commissioning?",
+            "basis": "explicit",
+            "source": "actionability blockers",
+            "rationale": "Unresolved fact, not counterevidence."
+          }
+        ],
+        "validations": [
+          {
+            "question": "Are plant-data, scheduling, quality or cross-site integration workstreams still open before Q4 commissioning?",
+            "decisionCritical": true,
+            "howToValidate": "Validate commissioning status and the ownership of plant integration before approaching Quad Packaging operations.",
+            "changesDecisionBecause": "Resolving this blocker determines whether active prioritization is justified."
+          }
+        ],
+        "decisionRationale": {
+          "value": "validate: encaje strong, señal temporal verificada y evidencia con una sola fuente; queda por resolver: Are plant-data, scheduling, quality or cross-site integration workstreams still open before Q4 commissioning?.",
+          "basis": "inferred",
+          "source": "fit + timing + evidence + uncertainty + existing decision",
+          "rationale": "Qualitative synthesis; no aggregate score and no purchase-intent claim."
+        },
+        "recommendedNextStep": {
+          "value": "Validate commissioning status and the ownership of plant integration before approaching Quad Packaging operations.",
+          "basis": "explicit",
+          "source": "pipeline recommendation",
+          "rationale": "Action follows the existing decision."
+        },
+        "revisitWhen": null,
+        "potentialValue": null,
+        "feasibility": null
+      }
+    },
+    {
+      "case_id": "controlled-case:hitachi-energy",
+      "account": "Hitachi Energy",
+      "decision": "validate",
+      "decision_source": "canonical_opportunity_test",
+      "identity_confirmed": true,
+      "target_organization_confirmed": true,
+      "commercial_context_confirmed": true,
+      "client_fit_confirmed": true,
+      "evidence_traceable": true,
+      "event_observed": true,
+      "event_date": "2026-06-29",
+      "timing_claimed": true,
+      "timing_grounded": true,
+      "counterevidence_explicit": true,
+      "weakening_factors_explicit": true,
+      "next_action_explicit": true,
+      "buying_intent_claimed": false,
+      "independent_review": {
+        "reviewer_id": "codex-independent-commercial-adjudication-v1",
+        "reviewer_kind": "independent_technical_review",
+        "judgment": "commercially_defensible",
+        "rationale": "Identity, project, magnitude and timing are corroborated; direct operational fit and an explicit remaining validation question support Validate.",
+        "reviewed_at": "2026-08-28T12:00:00.000Z"
+      },
+      "human_confirmation": {
+        "state": "pending",
+        "reviewer_id": null,
+        "reviewer_role": null,
+        "judgment": null,
+        "rationale": null,
+        "reviewed_at": null,
+        "attestation": false
+      },
+      "source_event": {
+        "url": "https://www.hitachienergy.com/us/en/news-and-events/press-releases/2026/06/hitachi-energy-breaks-ground-on-the-nation-s-largest-facility-for-the-production-of-large-power-transformers-in-south-boston-virginia",
+        "source_host": "hitachienergy.com",
+        "kind": "strategic_decision",
+        "event_date": "2026-06-29",
+        "matched_expected_terms": [
+          "South Boston",
+          "expansion"
+        ]
+      },
+      "primary_source": "https://www.hitachienergy.com/us/en/news-and-events/press-releases/2026/06/hitachi-energy-breaks-ground-on-the-nation-s-largest-facility-for-the-production-of-large-power-transformers-in-south-boston-virginia",
+      "independent_source": "https://electrek.co/2026/06/29/us-largest-transformer-factory-is-coming-for-the-ai-power-boom/",
+      "commercial_analysis": {
+        "verified_fact": "Hitachi Energy broke ground on a $457 million South Boston expansion intended to establish the largest US large-power-transformer facility and add about 825 jobs.",
+        "why_now": "Groundbreaking marks active implementation of a major capacity expansion, making current validation of manufacturing integration workstreams timely.",
+        "fit_reasons": [
+          "Directly operated advanced-manufacturing campus",
+          "Large, irreversible capacity expansion",
+          "Active construction phase and quantified operational scale"
+        ],
+        "counterevidence": "The expansion follows a previously announced investment, so strategic vendors and core technology packages may already be selected.",
+        "alternative_explanation": "Internal Hitachi Energy capabilities or established engineering partners may control the relevant integration scope.",
+        "decision_critical_question": "Which controls, production-data integration or commissioning work packages remain externally addressable?",
+        "next_action": "Map the project delivery partners and validate unawarded integration or commissioning scope before contacting the South Boston expansion team."
+      },
+      "canonical_case": {
+        "decision": "validate",
+        "decisionSource": "canonical_opportunity_test",
+        "verdictStatus": "opportunity",
+        "reasons": [
+          "opportunity_test_opportunity",
+          "open_decision_critical_caps_at_validate"
+        ],
+        "fit": "Strong",
+        "timing": "Moderate",
+        "evidence": "Moderate",
+        "remainingDecisionCritical": [
+          "Which controls, production-data integration or commissioning work packages remain externally addressable?"
+        ],
+        "hasMaterialCounter": true
+      },
+      "opportunity_case": {
+        "version": "opportunity-case-v1",
+        "classification": {
+          "accountRole": {
+            "value": "Potential Customer",
+            "basis": "explicit",
+            "source": "commercial opportunity context",
+            "rationale": "Explicit account relationship classification."
+          },
+          "opportunityType": {
+            "value": "Capacity Expansion",
+            "basis": "explicit",
+            "source": "commercial opportunity context",
+            "rationale": "Controlled type accepted only after Role × Type coherence validation."
+          },
+          "opportunityDescriptor": "Large-transformer manufacturing expansion"
+        },
+        "fit": {
+          "value": "Strong",
+          "basis": "inferred",
+          "source": "qualification.fit_score + fit_reasons",
+          "rationale": "Directly operated advanced-manufacturing campus · Large, irreversible capacity expansion · Active construction phase and quantified operational scale"
+        },
+        "timing": {
+          "value": "Moderate",
+          "basis": "inferred",
+          "source": "validated dated source signal",
+          "rationale": "A dated event makes present evaluation relevant but does not establish buying intent."
+        },
+        "changes": [
+          {
+            "event": "Hitachi Energy broke ground on a $457 million South Boston expansion intended to establish the largest US large-power-transformer facility and add about 825 jobs.",
+            "date": "2026-06-29",
+            "sourceLabel": "hitachienergy.com",
+            "relevance": "Groundbreaking marks active implementation of a major capacity expansion, making current validation of manufacturing integration workstreams timely."
+          }
+        ],
+        "whyNow": {
+          "value": "Groundbreaking marks active implementation of a major capacity expansion, making current validation of manufacturing integration workstreams timely.",
+          "basis": "inferred",
+          "source": "dated signal + client commercial objective",
+          "rationale": "Interpretation connects an observed event to the explicit client context; it is not buying intent."
+        },
+        "evidence": [
+          {
+            "claim": "Hitachi Energy broke ground on a $457 million South Boston expansion intended to establish the largest US large-power-transformer facility and add about 825 jobs.",
+            "observation": "Hitachi Energy broke ground on a $457 million South Boston expansion intended to establish the largest US large-power-transformer facility and add about 825 jobs.",
+            "sourceLabel": "hitachienergy.com",
+            "url": "https://www.hitachienergy.com/us/en/news-and-events/press-releases/2026/06/hitachi-energy-breaks-ground-on-the-nation-s-largest-facility-for-the-production-of-large-power-transformers-in-south-boston-virginia",
+            "date": "2026-06-29",
+            "relation": "direct",
+            "basis": "observed",
+            "impacts": [
+              "what_changed",
+              "timing"
+            ],
+            "independenceKey": "hitachienergy.com"
+          },
+          {
+            "claim": "Independent source corroborates the event for Hitachi Energy.",
+            "observation": "Independent source corroborates the event for Hitachi Energy.",
+            "sourceLabel": "electrek.co",
+            "url": "https://electrek.co/2026/06/29/us-largest-transformer-factory-is-coming-for-the-ai-power-boom/",
+            "date": "2026-06-29",
+            "relation": "context",
+            "basis": "observed",
+            "impacts": [
+              "fit"
+            ],
+            "independenceKey": "electrek.co"
+          }
+        ],
+        "independentSupport": true,
+        "weaknesses": [
+          {
+            "value": "The expansion follows a previously announced investment, so strategic vendors and core technology packages may already be selected.",
+            "basis": "inferred",
+            "source": "pipeline risk evaluation",
+            "rationale": "Material factor that can weaken the case."
+          },
+          {
+            "value": "Internal Hitachi Energy capabilities or established engineering partners may control the relevant integration scope.",
+            "basis": "inferred",
+            "source": "pipeline risk evaluation",
+            "rationale": "Material factor that can weaken the case."
+          }
+        ],
+        "unknowns": [
+          {
+            "value": "Which controls, production-data integration or commissioning work packages remain externally addressable?",
+            "basis": "explicit",
+            "source": "actionability blockers",
+            "rationale": "Unresolved fact, not counterevidence."
+          }
+        ],
+        "validations": [
+          {
+            "question": "Which controls, production-data integration or commissioning work packages remain externally addressable?",
+            "decisionCritical": true,
+            "howToValidate": "Map the project delivery partners and validate unawarded integration or commissioning scope before contacting the South Boston expansion team.",
+            "changesDecisionBecause": "Resolving this blocker determines whether active prioritization is justified."
+          }
+        ],
+        "decisionRationale": {
+          "value": "validate: encaje strong, señal temporal verificada y evidencia con soporte independiente explícito; queda por resolver: Which controls, production-data integration or commissioning work packages remain externally addressable?.",
+          "basis": "inferred",
+          "source": "fit + timing + evidence + uncertainty + existing decision",
+          "rationale": "Qualitative synthesis; no aggregate score and no purchase-intent claim."
+        },
+        "recommendedNextStep": {
+          "value": "Map the project delivery partners and validate unawarded integration or commissioning scope before contacting the South Boston expansion team.",
+          "basis": "explicit",
+          "source": "pipeline recommendation",
+          "rationale": "Action follows the existing decision."
+        },
+        "revisitWhen": null,
+        "potentialValue": null,
+        "feasibility": null
+      }
+    },
+    {
+      "case_id": "controlled-case:john-deere",
+      "account": "John Deere",
+      "decision": "hold",
+      "decision_source": "canonical_opportunity_test",
+      "identity_confirmed": true,
+      "target_organization_confirmed": true,
+      "commercial_context_confirmed": true,
+      "client_fit_confirmed": true,
+      "evidence_traceable": true,
+      "event_observed": true,
+      "event_date": "2026-01-29",
+      "timing_claimed": true,
+      "timing_grounded": true,
+      "counterevidence_explicit": true,
+      "weakening_factors_explicit": true,
+      "next_action_explicit": true,
+      "buying_intent_claimed": false,
+      "independent_review": {
+        "reviewer_id": "codex-independent-commercial-adjudication-v1",
+        "reviewer_kind": "independent_technical_review",
+        "judgment": "monitor",
+        "rationale": "The operating changes are real, but the dated event exceeds the canonical 180-day window; without a fresh implementation update it cannot support current Timing.",
+        "reviewed_at": "2026-08-28T12:00:00.000Z"
+      },
+      "human_confirmation": {
+        "state": "pending",
+        "reviewer_id": null,
+        "reviewer_role": null,
+        "judgment": null,
+        "rationale": null,
+        "reviewed_at": null,
+        "attestation": false
+      },
+      "source_event": {
+        "url": "https://www.deere.com/en-us/john-deere-news/two-new-us-facilities",
+        "source_host": "deere.com",
+        "kind": "strategic_decision",
+        "event_date": "2026-01-29",
+        "matched_expected_terms": [
+          "factory",
+          "distribution center"
+        ]
+      },
+      "primary_source": "https://www.deere.com/en-us/john-deere-news/two-new-us-facilities",
+      "independent_source": "https://www.supplychainbrain.com/articles/43358-john-deere-to-open-pair-of-new-us-facilities-in-2026",
+      "commercial_analysis": {
+        "verified_fact": "John Deere announced a new parts distribution center near Hebron and a $70 million excavator factory in Kernersville, with production shifting from Japan and both facilities expected to open in the following year.",
+        "why_now": "The facilities are in development rather than mature operation, so production, distribution and system-integration decisions remain worth validating now.",
+        "fit_reasons": [
+          "Both facilities are direct Deere operations",
+          "The event combines manufacturing relocation and distribution expansion",
+          "Advanced technology is explicitly part of the factory plan"
+        ],
+        "counterevidence": "Deere has extensive internal digital capabilities and the principal facility partners or platforms may already be contracted.",
+        "alternative_explanation": "The opportunity may be limited to incumbent enterprise systems or construction partners rather than a new plant-operations supplier.",
+        "decision_critical_question": "Which manufacturing, warehouse and cross-facility integration scopes remain open to external vendors?",
+        "next_action": "Validate project ownership, incumbent platforms and procurement status separately for Hebron and Kernersville before outreach."
+      },
+      "canonical_case": {
+        "decision": "hold",
+        "decisionSource": "canonical_opportunity_test",
+        "verdictStatus": "reject",
+        "reasons": [
+          "opportunity_test_reject",
+          "hard_blocker_stale_beyond_180d"
+        ],
+        "fit": "Moderate",
+        "timing": "Moderate",
+        "evidence": "Moderate",
+        "remainingDecisionCritical": [
+          "Which manufacturing, warehouse and cross-facility integration scopes remain open to external vendors?"
+        ],
+        "hasMaterialCounter": true
+      },
+      "opportunity_case": {
+        "version": "opportunity-case-v1",
+        "classification": {
+          "accountRole": {
+            "value": "Potential Customer",
+            "basis": "explicit",
+            "source": "commercial opportunity context",
+            "rationale": "Explicit account relationship classification."
+          },
+          "opportunityType": {
+            "value": "Operations Expansion",
+            "basis": "explicit",
+            "source": "commercial opportunity context",
+            "rationale": "Controlled type accepted only after Role × Type coherence validation."
+          },
+          "opportunityDescriptor": "New excavator factory and parts distribution center"
+        },
+        "fit": {
+          "value": "Moderate",
+          "basis": "inferred",
+          "source": "qualification.fit_score + fit_reasons",
+          "rationale": "Both facilities are direct Deere operations · The event combines manufacturing relocation and distribution expansion · Advanced technology is explicitly part of the factory plan"
+        },
+        "timing": {
+          "value": "Moderate",
+          "basis": "inferred",
+          "source": "validated dated source signal",
+          "rationale": "A dated event makes present evaluation relevant but does not establish buying intent."
+        },
+        "changes": [
+          {
+            "event": "John Deere announced a new parts distribution center near Hebron and a $70 million excavator factory in Kernersville, with production shifting from Japan and both facilities expected to open in the following year.",
+            "date": "2026-01-29",
+            "sourceLabel": "deere.com",
+            "relevance": "The facilities are in development rather than mature operation, so production, distribution and system-integration decisions remain worth validating now."
+          }
+        ],
+        "whyNow": {
+          "value": "The facilities are in development rather than mature operation, so production, distribution and system-integration decisions remain worth validating now.",
+          "basis": "inferred",
+          "source": "dated signal + client commercial objective",
+          "rationale": "Interpretation connects an observed event to the explicit client context; it is not buying intent."
+        },
+        "evidence": [
+          {
+            "claim": "John Deere announced a new parts distribution center near Hebron and a $70 million excavator factory in Kernersville, with production shifting from Japan and both facilities expected to open in the following year.",
+            "observation": "John Deere announced a new parts distribution center near Hebron and a $70 million excavator factory in Kernersville, with production shifting from Japan and both facilities expected to open in the following year.",
+            "sourceLabel": "deere.com",
+            "url": "https://www.deere.com/en-us/john-deere-news/two-new-us-facilities",
+            "date": "2026-01-29",
+            "relation": "direct",
+            "basis": "observed",
+            "impacts": [
+              "what_changed",
+              "timing"
+            ],
+            "independenceKey": "deere.com"
+          },
+          {
+            "claim": "Independent source corroborates the event for John Deere.",
+            "observation": "Independent source corroborates the event for John Deere.",
+            "sourceLabel": "supplychainbrain.com",
+            "url": "https://www.supplychainbrain.com/articles/43358-john-deere-to-open-pair-of-new-us-facilities-in-2026",
+            "date": "2026-01-29",
+            "relation": "context",
+            "basis": "observed",
+            "impacts": [
+              "fit"
+            ],
+            "independenceKey": "supplychainbrain.com"
+          }
+        ],
+        "independentSupport": true,
+        "weaknesses": [
+          {
+            "value": "Deere has extensive internal digital capabilities and the principal facility partners or platforms may already be contracted.",
+            "basis": "inferred",
+            "source": "pipeline risk evaluation",
+            "rationale": "Material factor that can weaken the case."
+          },
+          {
+            "value": "The opportunity may be limited to incumbent enterprise systems or construction partners rather than a new plant-operations supplier.",
+            "basis": "inferred",
+            "source": "pipeline risk evaluation",
+            "rationale": "Material factor that can weaken the case."
+          }
+        ],
+        "unknowns": [
+          {
+            "value": "Which manufacturing, warehouse and cross-facility integration scopes remain open to external vendors?",
+            "basis": "explicit",
+            "source": "actionability blockers",
+            "rationale": "Unresolved fact, not counterevidence."
+          }
+        ],
+        "validations": [
+          {
+            "question": "Which manufacturing, warehouse and cross-facility integration scopes remain open to external vendors?",
+            "decisionCritical": false,
+            "howToValidate": "Validate project ownership, incumbent platforms and procurement status separately for Hebron and Kernersville before outreach.",
+            "changesDecisionBecause": null
+          }
+        ],
+        "decisionRationale": {
+          "value": "hold: encaje moderate, señal temporal verificada y evidencia con soporte independiente explícito; queda por resolver: Which manufacturing, warehouse and cross-facility integration scopes remain open to external vendors?.",
+          "basis": "inferred",
+          "source": "fit + timing + evidence + uncertainty + existing decision",
+          "rationale": "Qualitative synthesis; no aggregate score and no purchase-intent claim."
+        },
+        "recommendedNextStep": {
+          "value": "Validate project ownership, incumbent platforms and procurement status separately for Hebron and Kernersville before outreach.",
+          "basis": "explicit",
+          "source": "pipeline recommendation",
+          "rationale": "Action follows the existing decision."
+        },
+        "revisitWhen": null,
+        "potentialValue": null,
+        "feasibility": null
+      }
+    },
+    {
+      "case_id": "controlled-case:mondi",
+      "account": "Mondi",
+      "decision": "validate",
+      "decision_source": "canonical_opportunity_test",
+      "identity_confirmed": true,
+      "target_organization_confirmed": true,
+      "commercial_context_confirmed": true,
+      "client_fit_confirmed": true,
+      "evidence_traceable": true,
+      "event_observed": true,
+      "event_date": "2026-04-22",
+      "timing_claimed": true,
+      "timing_grounded": true,
+      "counterevidence_explicit": true,
+      "weakening_factors_explicit": true,
+      "next_action_explicit": true,
+      "buying_intent_claimed": false,
+      "independent_review": {
+        "reviewer_id": "codex-independent-commercial-adjudication-v1",
+        "reviewer_kind": "independent_technical_review",
+        "judgment": "monitor",
+        "rationale": "The event is true and commercially relevant in structure, but the initial buying window appears substantially complete.",
+        "reviewed_at": "2026-08-28T12:00:00.000Z"
+      },
+      "human_confirmation": {
+        "state": "pending",
+        "reviewer_id": null,
+        "reviewer_role": null,
+        "judgment": null,
+        "rationale": null,
+        "reviewed_at": null,
+        "attestation": false
+      },
+      "source_event": {
+        "url": "https://www.mondigroup.com/news-and-insight/2026/mondi-opens-new-paper-bags-plant-in-pittsburgh-pennsylvania-to-support-growing-ecommerce-and-industrial-customer-demand/",
+        "source_host": "mondigroup.com",
+        "kind": "corporate_event",
+        "event_date": "2026-04-22",
+        "matched_expected_terms": [
+          "Pittsburgh"
+        ]
+      },
+      "primary_source": "https://www.mondigroup.com/news-and-insight/2026/mondi-opens-new-paper-bags-plant-in-pittsburgh-pennsylvania-to-support-growing-ecommerce-and-industrial-customer-demand/",
+      "independent_source": "https://dced.pa.gov/newsroom/creating-jobs-in-allegheny-county-governor-shapiro-announces-mondi-bags-usa-selects-pennsylvania-for-manufacturing-expansion-creating-approximately-170-new-jobs/",
+      "commercial_analysis": {
+        "verified_fact": "Mondi opened a highly automated Pittsburgh paper-bag plant supporting eCommerce and industrial demand, with approximately 170 expected jobs.",
+        "why_now": "The opening is recent, but the disclosed automation is already installed and operating.",
+        "fit_reasons": [
+          "Directly operated manufacturing facility",
+          "Automation and scalable production are explicit"
+        ],
+        "counterevidence": "The plant has already opened with advanced automated production technology, weakening the timing for initial implementation work.",
+        "alternative_explanation": "Any remaining need may be routine optimization handled by existing Mondi systems and vendors.",
+        "decision_critical_question": "Is there a post-go-live optimization or integration gap that is material enough for an external supplier?",
+        "next_action": "Monitor operating ramp and validate unresolved post-go-live integration needs before considering outreach."
+      },
+      "canonical_case": {
+        "decision": "validate",
+        "decisionSource": "canonical_opportunity_test",
+        "verdictStatus": "monitor",
+        "reasons": [
+          "opportunity_test_monitor",
+          "material_counterevidence_requires_revalidation",
+          "aging_signal"
+        ],
+        "fit": "Moderate",
+        "timing": "Moderate",
+        "evidence": "Moderate",
+        "remainingDecisionCritical": [
+          "Is there a post-go-live optimization or integration gap that is material enough for an external supplier?"
+        ],
+        "hasMaterialCounter": true
+      },
+      "opportunity_case": {
+        "version": "opportunity-case-v1",
+        "classification": {
+          "accountRole": {
+            "value": "Potential Customer",
+            "basis": "explicit",
+            "source": "commercial opportunity context",
+            "rationale": "Explicit account relationship classification."
+          },
+          "opportunityType": {
+            "value": "Technology Modernization",
+            "basis": "explicit",
+            "source": "commercial opportunity context",
+            "rationale": "Controlled type accepted only after Role × Type coherence validation."
+          },
+          "opportunityDescriptor": "Post-opening automated paper-bag production"
+        },
+        "fit": {
+          "value": "Moderate",
+          "basis": "inferred",
+          "source": "qualification.fit_score + fit_reasons",
+          "rationale": "Directly operated manufacturing facility · Automation and scalable production are explicit"
+        },
+        "timing": {
+          "value": "Moderate",
+          "basis": "inferred",
+          "source": "validated dated source signal",
+          "rationale": "A dated event makes present evaluation relevant but does not establish buying intent."
+        },
+        "changes": [
+          {
+            "event": "Mondi opened a highly automated Pittsburgh paper-bag plant supporting eCommerce and industrial demand, with approximately 170 expected jobs.",
+            "date": "2026-04-22",
+            "sourceLabel": "mondigroup.com",
+            "relevance": "The opening is recent, but the disclosed automation is already installed and operating."
+          }
+        ],
+        "whyNow": {
+          "value": "The opening is recent, but the disclosed automation is already installed and operating.",
+          "basis": "inferred",
+          "source": "dated signal + client commercial objective",
+          "rationale": "Interpretation connects an observed event to the explicit client context; it is not buying intent."
+        },
+        "evidence": [
+          {
+            "claim": "Mondi opened a highly automated Pittsburgh paper-bag plant supporting eCommerce and industrial demand, with approximately 170 expected jobs.",
+            "observation": "Mondi opened a highly automated Pittsburgh paper-bag plant supporting eCommerce and industrial demand, with approximately 170 expected jobs.",
+            "sourceLabel": "mondigroup.com",
+            "url": "https://www.mondigroup.com/news-and-insight/2026/mondi-opens-new-paper-bags-plant-in-pittsburgh-pennsylvania-to-support-growing-ecommerce-and-industrial-customer-demand/",
+            "date": "2026-04-22",
+            "relation": "direct",
+            "basis": "observed",
+            "impacts": [
+              "what_changed",
+              "timing"
+            ],
+            "independenceKey": "mondigroup.com"
+          },
+          {
+            "claim": "Independent source corroborates the event for Mondi.",
+            "observation": "Independent source corroborates the event for Mondi.",
+            "sourceLabel": "dced.pa.gov",
+            "url": "https://dced.pa.gov/newsroom/creating-jobs-in-allegheny-county-governor-shapiro-announces-mondi-bags-usa-selects-pennsylvania-for-manufacturing-expansion-creating-approximately-170-new-jobs/",
+            "date": "2026-04-22",
+            "relation": "context",
+            "basis": "observed",
+            "impacts": [
+              "fit"
+            ],
+            "independenceKey": "dced.pa.gov"
+          }
+        ],
+        "independentSupport": true,
+        "weaknesses": [
+          {
+            "value": "The plant has already opened with advanced automated production technology, weakening the timing for initial implementation work.",
+            "basis": "inferred",
+            "source": "pipeline risk evaluation",
+            "rationale": "Material factor that can weaken the case."
+          },
+          {
+            "value": "Any remaining need may be routine optimization handled by existing Mondi systems and vendors.",
+            "basis": "inferred",
+            "source": "pipeline risk evaluation",
+            "rationale": "Material factor that can weaken the case."
+          }
+        ],
+        "unknowns": [
+          {
+            "value": "Is there a post-go-live optimization or integration gap that is material enough for an external supplier?",
+            "basis": "explicit",
+            "source": "actionability blockers",
+            "rationale": "Unresolved fact, not counterevidence."
+          }
+        ],
+        "validations": [
+          {
+            "question": "Is there a post-go-live optimization or integration gap that is material enough for an external supplier?",
+            "decisionCritical": true,
+            "howToValidate": "Monitor operating ramp and validate unresolved post-go-live integration needs before considering outreach.",
+            "changesDecisionBecause": "Resolving this blocker determines whether active prioritization is justified."
+          }
+        ],
+        "decisionRationale": {
+          "value": "validate: encaje moderate, señal temporal verificada y evidencia con soporte independiente explícito; queda por resolver: Is there a post-go-live optimization or integration gap that is material enough for an external supplier?.",
+          "basis": "inferred",
+          "source": "fit + timing + evidence + uncertainty + existing decision",
+          "rationale": "Qualitative synthesis; no aggregate score and no purchase-intent claim."
+        },
+        "recommendedNextStep": {
+          "value": "Monitor operating ramp and validate unresolved post-go-live integration needs before considering outreach.",
+          "basis": "explicit",
+          "source": "pipeline recommendation",
+          "rationale": "Action follows the existing decision."
+        },
+        "revisitWhen": null,
+        "potentialValue": null,
+        "feasibility": null
+      }
+    }
+  ]
+}
