@@ -17,13 +17,20 @@ export type DenominatorPopulation =
   | "diagnostic_event_sample"
   | "human_reviewed_cases"
   | "evidence_relationships"
-  | "expanded_run_sample";
+  | "expanded_run_sample"
+  // Runtime + live validation instrumentation V1 populations (§14):
+  | "live_researched_accounts"
+  | "provider_operations"
+  | "commercial_usefulness_reviews";
 
 export const DENOMINATOR_POPULATIONS: Record<DenominatorPopulation, { measures: string }> = {
   diagnostic_event_sample: { measures: "event retrieval (material-event capture)" },
   human_reviewed_cases: { measures: "commercial usefulness / customer safety (human-confirmed)" },
   evidence_relationships: { measures: "evidence quality (source→claim relationships)" },
   expanded_run_sample: { measures: "repeatability across a broader bounded sample" },
+  live_researched_accounts: { measures: "runtime / autonomy / research-depth per researched account" },
+  provider_operations: { measures: "provider call reliability / cost per external operation" },
+  commercial_usefulness_reviews: { measures: "QA usefulness over completed Cases (never a runtime score)" },
 };
 
 export interface PopulationCount {
