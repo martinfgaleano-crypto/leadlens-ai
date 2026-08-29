@@ -40,6 +40,11 @@ export interface AccountDeepResearchTelemetry {
   early_stop_reason: "sufficient_evidence" | "no_material_event" | "budget_exhausted" | "providers_unavailable";
   query_audit: Array<{ query_id: string; stage: string; provider: string; results: number; accepted: number }>;
   extraction_audit: Array<{ url: string; stage: string; date_phrase: string | null; signal_kind: string; materiality: string; accepted_events: number; evidence_excerpt: string }>;
+  // Deep runtime instrumentation (LIVE EXECUTION TRACE V1 §7-14): one entry per REAL
+  // external operation, timed at the operation boundary. A search's duration_ms is
+  // dominated by external provider wait; local processing is excluded. Optional for
+  // back-compat — absent on telemetry produced before this instrumentation.
+  provider_ops?: Array<{ provider: string; operation: "search" | "full_text" | "llm"; stage: string; duration_ms: number; ok: boolean; timeout: boolean; results: number | null }>;
 }
 
 export interface AccountDeepResearchResult {
@@ -106,6 +111,7 @@ export async function deepenAccountResearch(
   const validatedEvents: AccountDeepResearchResult["validated_events"] = [];
   const queryAudit: AccountDeepResearchTelemetry["query_audit"] = [];
   const extractionAudit: AccountDeepResearchTelemetry["extraction_audit"] = [];
+  const providerOps: NonNullable<AccountDeepResearchTelemetry["provider_ops"]> = [];
   const corroboratingHosts = new Set<string>();
   let providerCalls = 0, providerFailures = 0, resultsSeen = 0, pagesExtracted = 0, extractionFailures = 0, structuredExtractionCalls = 0, stoppedNoEvent = false;
   const maxResults = deps.maxResultsPerQuery ?? 5;
@@ -115,6 +121,7 @@ export async function deepenAccountResearch(
     for (const provider of providers) {
       providerCalls++;
       let response;
+      const _searchStart = Date.now();
       try {
         response = await provider.search({
           query: query.query, max_results: maxResults,
@@ -122,8 +129,9 @@ export async function deepenAccountResearch(
           query_type: query.stage === "current_activity" || query.stage === "counterevidence" ? "news" : "company_specific",
           language: profile.likely_language ?? undefined,
         });
-      } catch { providerFailures++; continue; }
-      if (!response.ok) { providerFailures++; continue; }
+      } catch { providerFailures++; providerOps.push({ provider: provider.id, operation: "search", stage: query.stage, duration_ms: Date.now() - _searchStart, ok: false, timeout: false, results: null }); continue; }
+      if (!response.ok) { providerFailures++; providerOps.push({ provider: provider.id, operation: "search", stage: query.stage, duration_ms: Date.now() - _searchStart, ok: false, timeout: false, results: null }); continue; }
+      providerOps.push({ provider: provider.id, operation: "search", stage: query.stage, duration_ms: Date.now() - _searchStart, ok: true, timeout: false, results: response.results.length });
       let acceptedForQuery = 0;
       resultsSeen += response.results.length;
       for (const item of response.results) {
@@ -149,7 +157,9 @@ export async function deepenAccountResearch(
         // identity or static-footprint pages. A duplicate URL can be extracted
         // here if it was accepted earlier but has not yet consumed the budget.
         if (pagesExtracted < maxExtractions && effectiveDecision.commercial_relevance === "high" && isEventExtractionCandidate(item.title, item.snippet) && !extractedUrls.has(item.canonical_url)) {
+          const _fetchStart = Date.now();
           const fetched = await extract(item.url).catch(() => ({ ok: false, content: null }));
+          providerOps.push({ provider: "full_text", operation: "full_text", stage: query.stage, duration_ms: Date.now() - _fetchStart, ok: fetched.ok, timeout: false, results: fetched.ok ? 1 : 0 });
           if (fetched.ok && fetched.content) {
             pagesExtracted++; extractedUrls.add(item.canonical_url); fullText = relevantContentWindow(fetched.content, [candidate.company, ...criteria.buying_signals], 9000);
             try {
@@ -170,7 +180,9 @@ export async function deepenAccountResearch(
                 // Existing canonical structured extractor proposes only. Its
                 // proposals still pass event/date/materiality gates below.
                 const { extractStructured, proposalsToObservedItems } = await import("@/lib/monitor/claim-event-extractor");
+                const _llmStart = Date.now();
                 const structured = await extractStructured(fullText, candidate.company, deps.structured);
+                providerOps.push({ provider: "anthropic", operation: "llm", stage: query.stage, duration_ms: Date.now() - _llmStart, ok: structured.calls > 0, timeout: false, results: structured.result ? 1 : 0 });
                 structuredExtractionCalls += structured.calls;
                 const acceptedBefore = validatedEvents.length;
                 if (structured.result) {
@@ -235,10 +247,12 @@ export async function deepenAccountResearch(
     if (query.accepted) for (const provider of providers) {
       providerCalls++;
       let response;
+      const _corrStart = Date.now();
       try {
         response = await provider.search({ query: query.query, max_results: maxResults, freshness_days: 730, query_type: "news", language: profile.likely_language ?? undefined });
-      } catch { providerFailures++; continue; }
-      if (!response.ok) { providerFailures++; continue; }
+      } catch { providerFailures++; providerOps.push({ provider: provider.id, operation: "search", stage: "corroboration", duration_ms: Date.now() - _corrStart, ok: false, timeout: false, results: null }); continue; }
+      if (!response.ok) { providerFailures++; providerOps.push({ provider: provider.id, operation: "search", stage: "corroboration", duration_ms: Date.now() - _corrStart, ok: false, timeout: false, results: null }); continue; }
+      providerOps.push({ provider: provider.id, operation: "search", stage: "corroboration", duration_ms: Date.now() - _corrStart, ok: true, timeout: false, results: response.results.length });
       let acceptedForQuery = 0;
       resultsSeen += response.results.length;
       for (const item of response.results) {
@@ -277,7 +291,7 @@ export async function deepenAccountResearch(
     corroborating_domains: corroboratingHosts.size,
     counterevidence_checked: queryAudit.some((q) => q.stage === "counterevidence"),
     early_stop_reason: validatedEvents.length > 0 && hasSufficientEvidence(decisions) ? "sufficient_evidence" : stoppedNoEvent || validatedEvents.length === 0 ? "no_material_event" : providers.length === 0 || providerCalls === providerFailures ? "providers_unavailable" : "budget_exhausted",
-    query_audit: queryAudit, extraction_audit: extractionAudit,
+    query_audit: queryAudit, extraction_audit: extractionAudit, provider_ops: providerOps,
   };
   return {
     context: contexts.sort((a, b) => b.rank - a.rank).slice(0, 8).map((x) => x.text).join(" | ").slice(0, 9000),

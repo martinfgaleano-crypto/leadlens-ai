@@ -61,33 +61,32 @@ export function buildAccountRunTrace(input: AccountTraceInput): IntelligenceRunT
   rec.addDepth("identity_verification");
 
   if (t) {
-    // Search / retrieval — attributed batch research duration (§ granularity note).
-    const search = rec.stage("search_retrieval");
-    clock += Math.max(0, input.research_stage_ms);
-    search({ calls: t.provider_calls, ok: t.provider_failures < t.provider_calls || t.provider_calls === 0 });
     if (t.executed_queries > 0) rec.addDepth("targeted_event_search");
 
-    // Provider operations, derived from the real query/extraction audit.
-    for (const q of t.query_audit) {
-      rec.recordProviderOp({ provider: q.provider, operation: "search", duration_ms: 0, ok: true, timeout: false, circuit_state: "unknown", retries: 0, results: q.results, cost_usd: null, input_tokens: null, output_tokens: null });
-      rec.recordQuery({ category: q.stage || "search", hash: hashQuery(q.query_id), state: "executed", skipped_reason: null });
-    }
-    // Provider failures the real run observed (no fabricated result count).
-    for (let i = 0; i < t.provider_failures; i++) {
-      rec.recordProviderOp({ provider: "unknown", operation: "search", duration_ms: 0, ok: false, timeout: false, circuit_state: "unknown", retries: 0, results: null, cost_usd: null, input_tokens: null, output_tokens: null });
-    }
+    // Queries are recorded from the real query audit (counts + category), stored as
+    // hash+category only.
+    for (const q of t.query_audit) rec.recordQuery({ category: q.stage || "search", hash: hashQuery(q.query_id), state: "executed", skipped_reason: null });
     // Queries planned but not executed = deduplicated/skipped work the run avoided.
     const skipped = Math.max(0, t.planned_queries - t.executed_queries);
     for (let i = 0; i < skipped; i++) rec.recordQuery({ category: "planned", hash: hashQuery(`${input.accountId}:skipped:${i}`), state: "skipped", skipped_reason: "already_sufficient" });
 
-    if (t.pages_extracted > 0) {
-      const ft = rec.stage("full_text"); ft({ calls: t.pages_extracted });
-      rec.addDepth("full_text_validation");
-      for (let i = 0; i < t.pages_extracted; i++) rec.recordProviderOp({ provider: "firecrawl", operation: "full_text", duration_ms: 0, ok: true, timeout: false, circuit_state: "unknown", retries: 0, results: 1, cost_usd: null, input_tokens: null, output_tokens: null });
-    }
-    if (t.structured_extraction_calls > 0) {
-      const ex = rec.stage("structured_extraction"); ex({ calls: t.structured_extraction_calls });
-      for (let i = 0; i < t.structured_extraction_calls; i++) rec.recordProviderOp({ provider: "anthropic", operation: "llm", duration_ms: 0, ok: true, timeout: false, circuit_state: "unknown", retries: 0, results: null, cost_usd: null, input_tokens: null, output_tokens: null });
+    if (t.provider_ops && t.provider_ops.length) {
+      // Prefer REAL per-operation durations from deep instrumentation (§8/§9). A
+      // search's duration is dominated by external provider wait.
+      for (const op of t.provider_ops) rec.recordProviderOp({ provider: op.provider, operation: op.operation, duration_ms: op.duration_ms, ok: op.ok, timeout: op.timeout, circuit_state: "unknown", retries: 0, results: op.results, cost_usd: null, input_tokens: null, output_tokens: null });
+      const stageMs = (kind: "search" | "full_text" | "llm") => t.provider_ops!.filter((o) => o.operation === kind).reduce((n, o) => n + o.duration_ms, 0);
+      if (t.provider_ops.some((o) => o.operation === "full_text")) rec.addDepth("full_text_validation");
+      // Record measured stage durations from the real per-op timings.
+      const searchStop = rec.stage("search_retrieval"); clock += stageMs("search"); searchStop({ calls: t.provider_ops.filter((o) => o.operation === "search").length });
+      if (stageMs("full_text") > 0) { const ftStop = rec.stage("full_text"); clock += stageMs("full_text"); ftStop({ calls: t.pages_extracted }); }
+      if (stageMs("llm") > 0) { const llmStop = rec.stage("structured_extraction"); clock += stageMs("llm"); llmStop({ calls: t.structured_extraction_calls }); }
+    } else {
+      // Back-compat fallback: telemetry without per-op timing → count-based ops.
+      const searchStop = rec.stage("search_retrieval"); clock += Math.max(0, input.research_stage_ms); searchStop({ calls: t.provider_calls, ok: t.provider_failures < t.provider_calls || t.provider_calls === 0 });
+      for (const q of t.query_audit) rec.recordProviderOp({ provider: q.provider, operation: "search", duration_ms: 0, ok: true, timeout: false, circuit_state: "unknown", retries: 0, results: q.results, cost_usd: null, input_tokens: null, output_tokens: null });
+      for (let i = 0; i < t.provider_failures; i++) rec.recordProviderOp({ provider: "unknown", operation: "search", duration_ms: 0, ok: false, timeout: false, circuit_state: "unknown", retries: 0, results: null, cost_usd: null, input_tokens: null, output_tokens: null });
+      if (t.pages_extracted > 0) { rec.addDepth("full_text_validation"); const ft = rec.stage("full_text"); ft({ calls: t.pages_extracted }); for (let i = 0; i < t.pages_extracted; i++) rec.recordProviderOp({ provider: "firecrawl", operation: "full_text", duration_ms: 0, ok: true, timeout: false, circuit_state: "unknown", retries: 0, results: 1, cost_usd: null, input_tokens: null, output_tokens: null }); }
+      if (t.structured_extraction_calls > 0) { const ex = rec.stage("structured_extraction"); ex({ calls: t.structured_extraction_calls }); for (let i = 0; i < t.structured_extraction_calls; i++) rec.recordProviderOp({ provider: "anthropic", operation: "llm", duration_ms: 0, ok: true, timeout: false, circuit_state: "unknown", retries: 0, results: null, cost_usd: null, input_tokens: null, output_tokens: null }); }
     }
 
     // Corroboration / counterevidence — real observed state, no fabrication (§12/§13).

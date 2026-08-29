@@ -6,6 +6,7 @@ import { SupabaseConfirmedContextStore } from "@/lib/interpretation/confirmed-co
 import { SupabaseLeadHunterRunStore } from "@/lib/lead-hunter/run-store";
 import { SupabaseIntelligenceRunStore } from "@/lib/intelligence/productive-spine-store";
 import { executeIntelligenceRun } from "@/lib/intelligence/productive-spine";
+import { SupabaseRunTraceSink } from "@/lib/intelligence/run-trace-sink";
 
 export const maxDuration = 300;
 const bodySchema = z.object({ user_id: z.string().uuid() }).strict();
@@ -24,12 +25,19 @@ export async function POST(req: NextRequest, { params }: { params: { runId: stri
   if (!parsed.success) return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   const db = createServerClient();
   if (!db) return NextResponse.json({ error: "Persistence unavailable" }, { status: 503 });
+  // This is real runtime execution against real providers → LIVE provenance. It is
+  // fixed server-side and can never be set by the request body/params (§6). Trace
+  // persistence is failure-isolated: a sink error is swallowed and never fails the
+  // customer Intelligence run (§5).
+  const traceSink = new SupabaseRunTraceSink(db);
   const result = await executeIntelligenceRun(params.runId, parsed.data.user_id, {
     contextStore: new SupabaseConfirmedContextStore(db as never),
     leadHunterStore: new SupabaseLeadHunterRunStore(db as never),
     runStore: new SupabaseIntelligenceRunStore(db),
     discoveryRunner: (await import("@/lib/lead-hunter/discovery-runner")).defaultDiscoveryRunner,
     pipeline: (await import("@/lib/pipeline")).runLeadLensPipeline,
+    traceProvenance: "live",
+    onAccountTrace: (trace) => { void traceSink.persist(trace).catch(() => { /* telemetry never fails a run */ }); },
   });
   if (!result.ok) return NextResponse.json({ run_id: params.runId, status: "failed", error: result.reason }, { status: 422 });
   if (result.run.status === "completed" && result.run.report) {
