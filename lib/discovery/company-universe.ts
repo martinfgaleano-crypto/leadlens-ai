@@ -16,6 +16,7 @@ import { classifyOrganization } from "./organization-type";
 import { inferAccountCommercialRole, rolePriority, type AccountCommercialRole } from "./account-role";
 import { getUsage } from "@/lib/ops/usage-ledger";
 import { classifyProviderError } from "@/lib/ops/provider-health";
+import type { SearchProvider } from "@/lib/sources/access/provider-contract";
 
 export const COMPANY_UNIVERSE_VERSION = "company-universe-v2";
 
@@ -235,9 +236,12 @@ async function extractCompanyNames(pages: { title: string | null; snippet: strin
 }
 
 export async function buildCompanyUniverse(
-  icp: ICP, criteria: LeadSearchCriteria, needs: NeedsMap, opts: { maxCompanies?: number } = {},
+  icp: ICP, criteria: LeadSearchCriteria, needs: NeedsMap,
+  opts: { maxCompanies?: number; providersOverride?: { braveProvider: SearchProvider; tavilyProvider: SearchProvider; serperProvider: SearchProvider } } = {},
 ): Promise<UniverseResult> {
-  const { braveProvider, serperProvider, tavilyProvider } = await import("@/lib/sources/access/providers");
+  // providersOverride is a controlled-test seam only (provider-resilience doubles);
+  // production always uses the real configured provider stack.
+  const { braveProvider, serperProvider, tavilyProvider } = opts.providersOverride ?? await import("@/lib/sources/access/providers");
   const spanish = criteria.output_language === "es" || criteria.target_market_region === "latin_america";
   const gl = criteria.target_market_region === "latin_america" ? "co" : "us";
   const routeQueries = enumerationRouteQueries(icp, criteria.target_geography[0] ?? "", needs, spanish);
@@ -269,13 +273,20 @@ export async function buildCompanyUniverse(
     const gathered: Array<{ canonical_url: string; title: string | null; snippet: string | null }> = [];
     for (const [name, provider] of [["brave", braveProvider], ["tavily", tavilyProvider], ["serper", serperProvider]] as const) {
       if (providerCalls >= maxEnumerationProviderCalls || providerCooldown.has(name)) continue;
-      providerCalls++;
       const response = await provider.search({ query: q, language: spanish ? "es" : "en", region: gl, max_results: 8, query_type: "industry_discovery" }).catch(() => ({ ok: false, results: [], error: "request_failed" }));
-      gathered.push(...response.results);
-      if ((response as { ok?: boolean }).ok === false) { providerCooldown.add(name); providersFailed.add(name); }
-      else providersAvailable.add(name);
       if (enumerationTrace.length < 12) enumerationTrace.push({ route: rq.route, query: q, provider: name, result_count: response.results.length, results: response.results.slice(0, 5).map(x => ({ title: x.title, url: x.canonical_url })) });
-      // Enumeration needs candidate breadth, not automatic provider consensus.
+      if ((response as { ok?: boolean }).ok === false) {
+        // A failed/rate-limited provider is cooled down AND must NOT consume the shared
+        // enumeration budget — otherwise a degrading primary (e.g. Brave) starves the
+        // healthy fallback providers and Discovery falsely collapses to zero (§10/§11).
+        providerCooldown.add(name); providersFailed.add(name);
+        continue;
+      }
+      providerCalls++;
+      providersAvailable.add(name);
+      gathered.push(...response.results);
+      // Enumeration needs candidate breadth, not automatic provider consensus: stop at
+      // the first provider that supplies sufficient usable results (normal path = 1).
       if (response.results.length >= 5) break;
     }
     for (const r of gathered) {
