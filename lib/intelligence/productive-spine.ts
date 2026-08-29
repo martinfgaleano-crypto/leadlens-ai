@@ -249,7 +249,7 @@ function strength(score: number): "Strong" | "Moderate" | "Limited" {
   return score >= 7 ? "Strong" : score >= 4 ? "Moderate" : "Limited";
 }
 
-function canonicalCaseForLead(lead: ProcessedLead): NonNullable<LeadLensReport["canonical_cases"]>[number] | null {
+export function canonicalCaseForLead(lead: ProcessedLead): NonNullable<LeadLensReport["canonical_cases"]>[number] | null {
   if (lead.outreach.qc_status === "FAILED") return null;
   const c = lead.candidate;
   const e = lead.enrichment;
@@ -258,6 +258,16 @@ function canonicalCaseForLead(lead: ProcessedLead): NonNullable<LeadLensReport["
   const sourceHost = (() => { try { return c.source_url ? new URL(c.source_url).hostname : null; } catch { return null; } })();
   const verifiedSignal = Boolean(signalDate && sourceHost && datedClaim);
   const evidenceStrength = sourceHost ? (e.research_confidence >= 0.75 ? "Strong" : "Moderate") : "Limited";
+  // Preserve independent support computed during Account Deep Research (previously
+  // hardcoded false, discarding real corroboration). The Research corroboration loop
+  // already required a DISTINCT origin (host !== primary) corroborating the SAME
+  // primary event, so primary + >=1 corroborating domain = >=2 distinct origins
+  // (CLAUDE.md independence rule). Credited only when the Case rests on a material
+  // event (claim-relative, §13/§15) — never on a static or unverified signal.
+  const ar = e.account_research;
+  const independentSupportNew = verifiedSignal
+    && ar?.corroboration_attempted === true
+    && (ar?.corroborating_domains ?? 0) >= 1;
   const canonical = synthesizeCase({
     accountId: c.company,
     identityVerified: Boolean(c.domain),
@@ -272,7 +282,7 @@ function canonicalCaseForLead(lead: ProcessedLead): NonNullable<LeadLensReport["
     priorFit: strength(lead.qualification.fit_score),
     priorTiming: verifiedSignal ? "Moderate" : "Limited",
     priorEvidence: evidenceStrength,
-    independentSupportNew: false,
+    independentSupportNew,
     hasPostReviewEvent: false,
     geographyConfirmed: Boolean(c.country || c.location),
     regionRequired: false,
