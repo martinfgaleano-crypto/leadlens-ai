@@ -48,6 +48,16 @@ export async function POST(req: NextRequest, { params }: { params: { runId: stri
         } catch { /* Vault accretion is best-effort and never affects the run */ }
       })();
     },
+    // Accrete validated research EVENTS + SOURCES into the durable Vault (best-effort;
+    // universal facts only; over all researched accounts regardless of Case outcome).
+    onResearchedAccounts: (accounts) => {
+      void (async () => {
+        try {
+          const { accreteResearchedAccounts, productionResearchAccretionDeps } = await import("@/lib/vault/vault-research-accretion");
+          await accreteResearchedAccounts(accounts, "customer_run", await productionResearchAccretionDeps());
+        } catch { /* Vault accretion is best-effort and never affects the run */ }
+      })();
+    },
   });
   if (!result.ok) return NextResponse.json({ run_id: params.runId, status: "failed", error: result.reason }, { status: 422 });
   if (result.run.status === "completed" && result.run.report) {

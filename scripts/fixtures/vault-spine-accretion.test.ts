@@ -10,7 +10,8 @@ import type { DiscoveryRunner, RawDiscoveredOrg } from "@/lib/lead-hunter/candid
 import { InMemoryIntelligenceRunStore } from "@/lib/intelligence/productive-spine-store";
 import { startIntelligenceRun } from "@/lib/intelligence/productive-spine";
 import { accreteDiscoveredCompanies, type VaultAccretionDeps } from "@/lib/vault/vault-accretion";
-import type { VaultCompany } from "@/lib/vault/vault-types";
+import { accreteResearchedAccounts, type ResearchAccretionDeps } from "@/lib/vault/vault-research-accretion";
+import type { VaultCompany, VaultSignal, VaultSource } from "@/lib/vault/vault-types";
 import type { LeadCandidate, LeadLensReport, PipelineInput, ProcessedLead } from "@/types";
 
 let passed = 0;
@@ -35,6 +36,19 @@ function vaultDouble(fail = false) {
   return { deps, rows, creates };
 }
 
+function researchDouble(fail = false) {
+  const companies = new Map<string, VaultCompany>(); const signals: VaultSignal[] = []; const sources: VaultSource[] = [];
+  let cid = 0, sid = 0, gid = 0;
+  const deps: ResearchAccretionDeps = {
+    findByDomain: async (d) => companies.get(d) ?? null,
+    createCompany: async (i) => { const r = { id: `c${cid++}`, name: i.name!, domain: i.domain ?? null, website_url: null, linkedin_company_url: null, industry: i.industry ?? null, region: null, country: i.country ?? null, company_size: null, description: null, source_status: i.source_status ?? null, vault_status: "candidate" as const, suppression_status: "active", created_at: "", updated_at: "" }; if (i.domain) companies.set(i.domain, r); return r; },
+    listSignalsByCompany: async (id) => signals.filter((s) => s.company_id === id),
+    createSource: async (i) => { const r = { id: `s${sid++}`, provider_id: null, source_type: i.source_type, source_url: i.source_url ?? null, source_title: null, retrieved_at: i.retrieved_at ?? null, published_at: i.published_at ?? null, freshness_status: null, confidence_score: null, usage_rights_status: "unverified" as const, notes: null, raw_metadata: i.raw_metadata ?? null, created_at: "" }; sources.push(r); return r; },
+    createSignal: async (i) => { if (fail) throw new Error("signal_down"); const r = { id: `g${gid++}`, company_id: i.company_id ?? null, contact_id: null, source_id: i.source_id ?? null, signal_type: i.signal_type, signal_summary: i.signal_summary ?? null, signal_date: i.signal_date ?? null, expires_at: null, strength_score: null, confidence_score: null, review_status: "pending_review" as const, data_origin: i.data_origin, production_eligible: false, origin_reason: i.origin_reason ?? null, created_at: "", updated_at: "" }; signals.push(r); return r; },
+  };
+  return { deps, companies, signals, sources };
+}
+
 const pipeline = async (input: PipelineInput): Promise<LeadLensReport> => {
   const researched = (input.candidatesOverride ?? []).slice(0, 4).map(leadFor);
   input.onResearchComplete?.(researched);
@@ -44,15 +58,20 @@ const pipeline = async (input: PipelineInput): Promise<LeadLensReport> => {
 const run = async () => {
   // §28/§43 — Discovery accretes automatically; Case still produced; universal only.
   const v = vaultDouble();
+  const r = researchDouble();
   const contextStore = new InMemoryConfirmedContextStore();
   await persistConfirmedContext(contextStore, fixture, { userId: "owner-a", contextId: "shared", now: clock });
   const res = await startIntelligenceRun(
     { userId: "owner-a", context: { contextId: "shared", version: 1 }, plan: "sample", deliveryLimit: 4, researchLimit: 4 },
     { contextStore, leadHunterStore: new InMemoryLeadHunterRunStore(), runStore: new InMemoryIntelligenceRunStore(), discoveryRunner: discovery, pipeline, now: clock,
-      onDiscoveredCompanies: (companies) => { void accreteDiscoveredCompanies(companies, "customer_run", v.deps); } },
+      onDiscoveredCompanies: (companies) => { void accreteDiscoveredCompanies(companies, "customer_run", v.deps); },
+      onResearchedAccounts: (accounts) => { void accreteResearchedAccounts(accounts, "customer_run", r.deps); } },
   );
   t("spine run completed", res.ok && res.run.status === "completed");
   t("Discovery accreted companies into Vault automatically", v.rows.size >= 1);
+  t("§17 Research accreted validated events into Vault automatically", r.signals.length >= 1 && r.sources.length >= 1);
+  t("§7 accreted event carries the event date (not observed date)", r.signals.every((s) => s.signal_date === "2026-08-20"));
+  t("§22 no customer-relative field in any Research Vault write", JSON.stringify({ c: Array.from(r.companies.values()), s: r.signals, src: r.sources }).toLowerCase().split(/[^a-z_]+/).every((w) => !["fit", "timing", "decision", "prioritize", "monitor", "hold", "thesis"].includes(w)));
   t("Case still produced (accretion did not alter the run)", Boolean(res.ok && (res.run.report?.canonical_cases?.length ?? 0) >= 0 && res.run.report));
   t("§4/§5 only universal fields persisted (no Fit/Timing/Decision)", v.creates.every((c) => {
     const s = JSON.stringify(c).toLowerCase();
@@ -61,15 +80,17 @@ const run = async () => {
 
   // §30 — Vault write failure must not break the run.
   const vf = vaultDouble(true);
+  const rf = researchDouble(true);
   const cs2 = new InMemoryConfirmedContextStore();
   await persistConfirmedContext(cs2, fixture, { userId: "owner-b", contextId: "shared", now: clock });
   const res2 = await startIntelligenceRun(
     { userId: "owner-b", context: { contextId: "shared", version: 1 }, plan: "sample", deliveryLimit: 4, researchLimit: 4 },
     { contextStore: cs2, leadHunterStore: new InMemoryLeadHunterRunStore(), runStore: new InMemoryIntelligenceRunStore(), discoveryRunner: discovery, pipeline, now: clock,
-      onDiscoveredCompanies: (companies) => { void accreteDiscoveredCompanies(companies, "customer_run", vf.deps); } },
+      onDiscoveredCompanies: (companies) => { void accreteDiscoveredCompanies(companies, "customer_run", vf.deps); },
+      onResearchedAccounts: (accounts) => { void accreteResearchedAccounts(accounts, "customer_run", rf.deps); } },
   );
-  t("§30 Vault write failure does not break the Intelligence run", res2.ok && res2.run.status === "completed");
-  t("§30 failed accretion persisted nothing", vf.rows.size === 0);
+  t("§18/§30 Vault write failure does not break the Intelligence run", res2.ok && res2.run.status === "completed");
+  t("§18/§30 failed accretion persisted nothing", vf.rows.size === 0 && rf.signals.length === 0);
 
   // §31 — retry idempotency: re-run reuses completed run; no duplicate accretion path re-executes.
   t("run is idempotent (accretion tied to a single execution)", v.rows.size === 4);

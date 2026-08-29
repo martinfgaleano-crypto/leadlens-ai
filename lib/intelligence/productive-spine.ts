@@ -40,6 +40,14 @@ export interface ProductiveSpineDeps {
   // any error is swallowed and NEVER alters the Intelligence run (§30). Only public
   // facts are passed — no Fit/Timing/Decision/customer context (§4/§5).
   onDiscoveredCompanies?: (companies: Array<{ name: string; domain: string | null; country?: string | null; industry?: string | null }>) => void | Promise<void>;
+  // Optional Vault RESEARCH accretion sink. Receives the researched accounts projected
+  // to UNIVERSAL factual events (verified_public_signal claims + their sources), over ALL
+  // researched accounts regardless of Case outcome (§3). Best-effort/failure-isolated
+  // (§18). Carries no Fit/Timing/Decision/thesis/customer context (§5/§22).
+  onResearchedAccounts?: (accounts: Array<{
+    company: { name: string; domain: string | null; country?: string | null; industry?: string | null };
+    events: Array<{ event_type: string | null; claim: string; event_date: string | null; source_url: string | null; corroborating_domains?: number | null }>;
+  }>) => void | Promise<void>;
 }
 
 export type StartIntelligenceRunResult =
@@ -212,6 +220,26 @@ async function runIntelligenceExecution(
     // telemetry + measured durations, over ALL researched accounts (before the
     // deliverable filter). Best-effort; never affects the run outcome (§39).
     if (deps.onAccountTrace) emitAccountTraces(runId, contextRefSafe, researchedLeads, report.canonical_cases ?? [], Date.now() - runStartedMs, researchMs, Date.now() - caseSynthStartedMs, deps.onAccountTrace, deps.traceProvenance ?? "controlled");
+    // Vault RESEARCH accretion (best-effort, failure-isolated, §18): project ALL
+    // researched accounts (before the deliverable filter, §3) to UNIVERSAL factual events
+    // — only verified_public_signal claims with a source. NO Fit/Timing/Decision/customer
+    // context is ever passed. A failure here can never alter the run (§18).
+    if (deps.onResearchedAccounts) {
+      try {
+        await deps.onResearchedAccounts(researchedLeads.map((lead) => ({
+          company: { name: lead.candidate.company, domain: lead.candidate.domain ?? null, country: lead.candidate.country ?? lead.candidate.location ?? null, industry: lead.candidate.industry ?? null },
+          events: (lead.enrichment.evidence_discipline ?? [])
+            .filter((claim) => claim.type === "verified_public_signal" && Boolean(lead.candidate.source_url))
+            .map((claim) => ({
+              event_type: lead.candidate.signal_type ?? null,
+              claim: claim.claim,
+              event_date: claim.date ?? null,
+              source_url: lead.candidate.source_url ?? null,
+              corroborating_domains: lead.enrichment.account_research?.corroborating_domains ?? null,
+            })),
+        })));
+      } catch { /* Vault accretion must never break a run */ }
+    }
     // WARM is not enough for customer delivery. The canonical Case owns the
     // commercial truth: Monitor/Hold research remains counted but is not
     // presented as a strong opportunity result.
