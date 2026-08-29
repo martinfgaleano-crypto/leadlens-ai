@@ -1,0 +1,90 @@
+{
+  "generated_from": "real_productive_spine_execution",
+  "provenance": "controlled",
+  "summary": {
+    "version": "runtime-observability-artifact-v1",
+    "provenance": "controlled",
+    "sample_fingerprint": "c7f1f026d11c203b",
+    "eligible_runs": 5,
+    "runtime_ms": {
+      "median": 11,
+      "p75": 11,
+      "p90": 11,
+      "p95": 11,
+      "max": 11
+    },
+    "per_run": {
+      "provider_calls": 6.2,
+      "search_calls": 1.6,
+      "full_text_calls": 2.4,
+      "llm_calls": 2.2,
+      "queries_deduplicated": 0,
+      "queries_reused": 0
+    },
+    "autonomy": {
+      "automatic_completion_rate": 1,
+      "runtime_intervention_rate": 0,
+      "post_run_qa_rate": 0
+    },
+    "stop_reason_distribution": {
+      "evidence_sufficient": 3,
+      "provider_degraded": 1,
+      "evidence_insufficient": 1
+    },
+    "failure_distribution": {
+      "none": 4,
+      "provider": 1
+    },
+    "commercial_usefulness": {
+      "evaluable_runs": 5,
+      "evaluable_rate": 1
+    },
+    "cost": {
+      "runs_with_known_cost": 0,
+      "total_known_cost_usd": null,
+      "cost_fully_known": false
+    }
+  },
+  "control_plane_contract": {
+    "ready": true,
+    "requires_live": true,
+    "mappings": [
+      {
+        "capability_id": "runtime_latency",
+        "metric": "runtime_ms.p95",
+        "dimension": "reliability",
+        "note": "p95 wall-clock vs the 300000ms operating ceiling"
+      },
+      {
+        "capability_id": "runtime_latency",
+        "metric": "runtime_ms.median",
+        "dimension": "observability",
+        "note": "median wall-clock per account"
+      },
+      {
+        "capability_id": "cogs_instrumentation",
+        "metric": "cost.total_known_cost_usd",
+        "dimension": "economics",
+        "note": "known provider+LLM cost per sample; unknown stays unknown"
+      },
+      {
+        "capability_id": "provider_routing",
+        "metric": "per_run.provider_calls",
+        "dimension": "economics",
+        "note": "provider calls per completed account"
+      },
+      {
+        "capability_id": "initial_research",
+        "metric": "commercial_usefulness.evaluable_rate",
+        "dimension": "real_world_validation",
+        "note": "share of runs whose Case can be QA-evaluated"
+      },
+      {
+        "capability_id": "launch_readiness",
+        "metric": "autonomy.automatic_completion_rate",
+        "dimension": "autonomy",
+        "note": "self-serve automatic completion over completed runs"
+      }
+    ]
+  }
+}

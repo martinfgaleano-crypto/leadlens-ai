@@ -8,6 +8,8 @@ import { loadLeadHunterUniverse, runAndPersistLeadHunter, toResearchCandidates }
 import { synthesizeCase } from "@/lib/monitor/canonical-case";
 import type { IntelligenceRunRecord, IntelligenceRunStore } from "./productive-spine-store";
 import type { DiscoveryBudget } from "@/lib/lead-hunter/candidate-universe";
+import type { IntelligenceRunTrace } from "@/lib/intelligence/run-trace";
+import { buildAccountRunTrace, buildRunFailureTrace } from "@/lib/intelligence/run-trace-wiring";
 
 export interface StartIntelligenceRunInput {
   userId: string;
@@ -26,6 +28,13 @@ export interface ProductiveSpineDeps {
   discoveryRunner: DiscoveryRunner;
   pipeline: (input: PipelineInput) => Promise<LeadLensReport>;
   now?: () => Date;
+  // Optional runtime-observability sink. Receives one IntelligenceRunTrace per
+  // researched account (and one run-level failure trace when a run fails before
+  // research). Emission is best-effort and NEVER alters the run outcome (§39).
+  onAccountTrace?: (trace: IntelligenceRunTrace) => void;
+  // Whether this run used real providers. Only the caller knows; defaults to
+  // "controlled" so a doubled run is never mislabeled as live evidence.
+  traceProvenance?: "live" | "controlled";
 }
 
 export type StartIntelligenceRunResult =
@@ -106,6 +115,8 @@ async function runIntelligenceExecution(
   const contextRef = built.input.contextRef;
   const now = (deps.now ?? (() => new Date()))();
   let run: IntelligenceRunRecord = existing;
+  const runStartedMs = Date.now();
+  const contextRefSafe = typeof contextRef === "string" ? contextRef : ((contextRef as { contextId?: string }).contextId ?? "context");
 
   if (existing.status === "failed") run = { ...run, attempt: run.attempt + 1 };
 
@@ -141,6 +152,7 @@ async function runIntelligenceExecution(
 
     const researchLimit = Math.min(candidates.length, Math.max(input.deliveryLimit, input.researchLimit));
     let researchedLeads: ProcessedLead[] = [];
+    const researchStartedMs = Date.now();
     const report = await deps.pipeline({
       onboardingData: built.input.onboardingData,
       plan: input.plan,
@@ -155,7 +167,9 @@ async function runIntelligenceExecution(
       onResearchComplete: (leads) => { researchedLeads = leads; },
     });
 
+    const researchMs = Date.now() - researchStartedMs;
     await saveStage("case_synthesis");
+    const caseSynthStartedMs = Date.now();
     report.canonical_cases = report.processed_leads.flatMap((lead) => {
       const item = canonicalCaseForLead(lead);
       return item ? [item] : [];
@@ -180,6 +194,10 @@ async function runIntelligenceExecution(
         canonicalDecision: c?.decision ?? "hold", reasons: c?.reasons ?? ["case_missing"],
       };
     });
+    // Emit one runtime-observability trace per researched account from the REAL
+    // telemetry + measured durations, over ALL researched accounts (before the
+    // deliverable filter). Best-effort; never affects the run outcome (§39).
+    if (deps.onAccountTrace) emitAccountTraces(runId, contextRefSafe, researchedLeads, report.canonical_cases ?? [], Date.now() - runStartedMs, researchMs, Date.now() - caseSynthStartedMs, deps.onAccountTrace, deps.traceProvenance ?? "controlled");
     // WARM is not enough for customer delivery. The canonical Case owns the
     // commercial truth: Monitor/Hold research remains counted but is not
     // presented as a strong opportunity result.
@@ -206,6 +224,14 @@ async function runIntelligenceExecution(
     return { ok: true, run, reused: false };
   } catch (error) {
     const code = safeFailureCode(error);
+    // A run that failed before/without account research still finalizes ONE bounded
+    // trace so no diagnostics are lost (§22). Best-effort; never rethrows.
+    if (deps.onAccountTrace) {
+      try {
+        const failureClass = /timeout/i.test(code) ? "timeout" : /provider|lead_hunter|discovery/i.test(code) ? "provider" : /candidate/i.test(code) ? "discovery" : "case_synthesis";
+        deps.onAccountTrace(buildRunFailureTrace({ runId, contextRefSafe, failure_class: failureClass, provenance: deps.traceProvenance ?? "controlled" }));
+      } catch { /* telemetry must never break failure handling */ }
+    }
     run = { ...run, status: "failed", failureCode: code, updatedAt: (deps.now ?? (() => new Date()))().toISOString() };
     await deps.runStore.save(run).catch(() => {});
     return { ok: false, reason: code, runId };
@@ -257,6 +283,35 @@ function canonicalCaseForLead(lead: ProcessedLead): NonNullable<LeadLensReport["
     reasons: canonical.reasons, fit: canonical.fit, timing: canonical.timing,
     evidence: canonical.evidence, first_review: true,
   };
+}
+
+// Emit one run-trace per researched account from REAL execution telemetry + REAL
+// measured durations. Best-effort: any error here is swallowed so a telemetry fault
+// can never change the run outcome (§39). Only safe references are used (§24).
+function emitAccountTraces(
+  runId: string, contextRefSafe: string,
+  researchedLeads: ProcessedLead[], cases: NonNullable<LeadLensReport["canonical_cases"]>,
+  runWallMs: number, researchMs: number, caseSynthMs: number,
+  onAccountTrace: (trace: IntelligenceRunTrace) => void, provenance: "live" | "controlled",
+): void {
+  const n = Math.max(1, researchedLeads.length);
+  for (const lead of researchedLeads) {
+    try {
+      const c = cases.find((item) => item.lead_id === lead.id) ?? null;
+      onAccountTrace(buildAccountRunTrace({
+        runId,
+        accountId: lead.candidate.domain ?? lead.candidate.company,
+        contextRefSafe,
+        telemetry: lead.enrichment.account_research ?? null,
+        decision: c?.decision ?? null,
+        caseCompleted: Boolean(c),
+        wall_clock_ms: runWallMs,
+        research_stage_ms: Math.round(researchMs / n),
+        case_synthesis_ms: Math.round(caseSynthMs / n),
+        provenance,
+      }));
+    } catch { /* telemetry must never break a run */ }
+  }
 }
 
 function safeFailureCode(error: unknown): string {
