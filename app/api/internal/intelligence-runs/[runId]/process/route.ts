@@ -38,6 +38,16 @@ export async function POST(req: NextRequest, { params }: { params: { runId: stri
     pipeline: (await import("@/lib/pipeline")).runLeadLensPipeline,
     traceProvenance: "live",
     onAccountTrace: (trace) => { void traceSink.persist(trace).catch(() => { /* telemetry never fails a run */ }); },
+    // Accrete valid discovered companies into the durable, customer-independent Vault
+    // registry (best-effort; universal facts only). Never blocks or alters the run.
+    onDiscoveredCompanies: (companies) => {
+      void (async () => {
+        try {
+          const { accreteDiscoveredCompanies, productionVaultAccretionDeps } = await import("@/lib/vault/vault-accretion");
+          await accreteDiscoveredCompanies(companies, "customer_run", await productionVaultAccretionDeps());
+        } catch { /* Vault accretion is best-effort and never affects the run */ }
+      })();
+    },
   });
   if (!result.ok) return NextResponse.json({ run_id: params.runId, status: "failed", error: result.reason }, { status: 422 });
   if (result.run.status === "completed" && result.run.report) {

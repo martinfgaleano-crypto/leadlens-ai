@@ -35,6 +35,11 @@ export interface ProductiveSpineDeps {
   // Whether this run used real providers. Only the caller knows; defaults to
   // "controlled" so a doubled run is never mislabeled as live evidence.
   traceProvenance?: "live" | "controlled";
+  // Optional Vault accretion sink. Receives the discovered candidate companies so
+  // valid, customer-INDEPENDENT company facts can accumulate durably. Best-effort:
+  // any error is swallowed and NEVER alters the Intelligence run (§30). Only public
+  // facts are passed — no Fit/Timing/Decision/customer context (§4/§5).
+  onDiscoveredCompanies?: (companies: Array<{ name: string; domain: string | null; country?: string | null; industry?: string | null }>) => void | Promise<void>;
 }
 
 export type StartIntelligenceRunResult =
@@ -149,6 +154,15 @@ async function runIntelligenceExecution(
     if (!persistedUniverse) throw new Error("persisted_universe_unavailable");
     const candidates = toResearchCandidates(persistedUniverse);
     if (candidates.length === 0) throw new Error("no_research_ready_candidates");
+
+    // Vault accretion (best-effort, failure-isolated): valid discovered companies
+    // accumulate as reusable universal facts. NEVER passes customer-relative fields,
+    // and a failure here can never alter the Intelligence run (§30).
+    if (deps.onDiscoveredCompanies) {
+      try {
+        await deps.onDiscoveredCompanies(candidates.map((c) => ({ name: c.company, domain: c.domain ?? null, country: c.country ?? c.location ?? null, industry: c.industry ?? null })));
+      } catch { /* Vault accretion must never break a run */ }
+    }
 
     const researchLimit = Math.min(candidates.length, Math.max(input.deliveryLimit, input.researchLimit));
     let researchedLeads: ProcessedLead[] = [];
