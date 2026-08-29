@@ -493,6 +493,20 @@ Return JSON:
   "next_best_question": "The single most important question the user should validate before contacting or during the first conversation"
 }`;
 
-  const result = await callClaudeJSON<Omit<EnrichedLead, "candidate">>(SYSTEM, userMsg, 2500);
+  let result: Omit<EnrichedLead, "candidate">;
+  try {
+    result = await callClaudeJSON<Omit<EnrichedLead, "candidate">>(SYSTEM, userMsg, 2500);
+  } catch (err) {
+    // The enrichment LLM failed (e.g. Anthropic quota/circuit). Preserve the partial
+    // Research telemetry that already ran (search/full-text ops) so the account trace
+    // reflects what actually happened, and mark the provider failure so it is not
+    // misclassified downstream (§3-§6). This never fabricates coverage or a Case (§7/§16):
+    // the failure still propagates and the caller builds the same missing-evidence lead.
+    const { isProviderDegradedError } = await import("@/lib/intelligence/account-deep-research");
+    const msg = err instanceof Error ? err.message : String(err);
+    if (accountResearch) accountResearch = { ...accountResearch, enrichment_failed: { provider: "anthropic", reason: isProviderDegradedError(msg) ? "provider_degraded" : "error" } };
+    (err as { partialAccountResearch?: typeof accountResearch }).partialAccountResearch = accountResearch;
+    throw err;
+  }
   return { candidate, ...result, account_research: accountResearch };
 }

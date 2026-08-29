@@ -45,6 +45,28 @@ export interface AccountDeepResearchTelemetry {
   // dominated by external provider wait; local processing is excluded. Optional for
   // back-compat — absent on telemetry produced before this instrumentation.
   provider_ops?: Array<{ provider: string; operation: "search" | "full_text" | "llm"; stage: string; duration_ms: number; ok: boolean; timeout: boolean; results: number | null }>;
+  // Set when the downstream enrichment LLM (outside deepenAccountResearch) fails, so a
+  // provider/quota failure is not misclassified as a structural disqualifier (§4-§6).
+  // Operational telemetry only — never Evidence, never a commercial outcome (§7).
+  enrichment_failed?: { provider: string; reason: "provider_degraded" | "error" } | null;
+}
+
+/** Is an error message a provider quota / circuit / rate-limit failure (not a bug)? */
+export function isProviderDegradedError(message: string): boolean {
+  return /circuit_open|credit|quota|rate.?limit|\b429\b|\b529\b|overloaded|insufficient[_\s]?balance|balance is too low/i.test(message);
+}
+
+/** A zeroed telemetry that only records a downstream enrichment-provider failure, for
+ *  the case where no partial Research telemetry survived. Operational only. */
+export function minimalFailedTelemetry(account: string, domain: string | null, reason: "provider_degraded" | "error", provider = "anthropic"): AccountDeepResearchTelemetry {
+  return {
+    version: ACCOUNT_DEEP_RESEARCH_VERSION, account, domain,
+    planned_queries: 0, executed_queries: 0, provider_calls: 0, provider_failures: 0, results_seen: 0,
+    evidence_accepted: 0, evidence_rejected: 0, pages_extracted: 0, extraction_failures: 0, structured_extraction_calls: 0,
+    dated_evidence: 0, independent_domains: 0, corroboration_attempted: false, corroborating_domains: 0, claims_recovered: 0,
+    counterevidence_checked: false, early_stop_reason: "providers_unavailable",
+    query_audit: [], extraction_audit: [], provider_ops: [], enrichment_failed: { provider, reason },
+  };
 }
 
 export interface AccountDeepResearchResult {

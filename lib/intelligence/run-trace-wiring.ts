@@ -18,7 +18,7 @@ import type { AccountDeepResearchTelemetry } from "@/lib/intelligence/account-de
 import type { DecisionState } from "@/lib/deliverable/deliverable-view-model";
 import {
   RunTraceRecorder, fromEarlyStopReason, hashQuery,
-  type IntelligenceRunTrace, type RunFailureClass,
+  type IntelligenceRunTrace, type RunFailureClass, type RunStopReason,
 } from "@/lib/intelligence/run-trace";
 
 export interface AccountTraceInput {
@@ -32,13 +32,29 @@ export interface AccountTraceInput {
   research_stage_ms: number;         // measured batch research duration (attributed to stage_work)
   case_synthesis_ms: number;         // measured per-account case synthesis duration
   provenance?: "live" | "controlled";
+  // True only for a genuine structural QC rejection (never a provider/processing failure §6).
+  structural_disqualifier?: boolean;
 }
 
-function failureClassFor(t: AccountDeepResearchTelemetry | null, completed: boolean): RunFailureClass {
-  if (!t) return completed ? "none" : "discovery";
-  if (t.provider_calls > 0 && t.provider_failures === t.provider_calls) return "provider";
-  if (t.early_stop_reason === "providers_unavailable") return "provider";
-  return "none";
+/**
+ * Classify the account outcome into a bounded (stop_reason, failure_class). A provider
+ * quota/circuit failure is ALWAYS classified as provider/provider_degraded and NEVER as
+ * a structural disqualifier (§4-§6); structural_disqualifier is reserved for a genuine
+ * structural QC rejection. A provider failure never becomes a commercial outcome (§7).
+ */
+function classifyOutcome(t: AccountDeepResearchTelemetry | null, completed: boolean, structuralDisqualifier: boolean): { stop: RunStopReason; failure: RunFailureClass } {
+  const providerDegraded = Boolean(
+    t && (t.enrichment_failed?.reason === "provider_degraded"
+      || t.early_stop_reason === "providers_unavailable"
+      || (t.provider_calls > 0 && t.provider_failures === t.provider_calls)),
+  );
+  if (providerDegraded) return { stop: "provider_degraded", failure: "provider" };
+  if (structuralDisqualifier) return { stop: "structural_disqualifier", failure: "identity" };
+  if (t?.enrichment_failed?.reason === "error") return { stop: "evidence_insufficient", failure: "case_synthesis" };
+  if (completed) return { stop: t ? fromEarlyStopReason(t.early_stop_reason) : "research_complete", failure: "none" };
+  // Researched (or attempted) but no Case and no provider failure: an honest
+  // insufficient-evidence outcome — never a structural disqualifier (§6).
+  return { stop: t ? fromEarlyStopReason(t.early_stop_reason) : "evidence_insufficient", failure: "insufficient_public_evidence" };
 }
 
 /**
@@ -102,19 +118,17 @@ export function buildAccountRunTrace(input: AccountTraceInput): IntelligenceRunT
     });
 
     rec.recordEvidence(t.evidence_accepted, t.evidence_rejected);
-    rec.setStopReason(fromEarlyStopReason(t.early_stop_reason));
-  } else {
-    // No research telemetry → the account was rejected/failed before research (§5).
-    rec.setStopReason(input.caseCompleted ? "research_complete" : "structural_disqualifier");
   }
 
   const cs = rec.stage("case_synthesis");
   clock += Math.max(0, input.case_synthesis_ms);
   cs();
 
+  const outcome = classifyOutcome(t, input.caseCompleted, input.structural_disqualifier ?? false);
   rec.setDecision(input.decision);
   rec.setCompletion(input.caseCompleted ? "completed" : "failed");
-  rec.setFailureClass(failureClassFor(t, input.caseCompleted));
+  rec.setStopReason(outcome.stop);
+  rec.setFailureClass(outcome.failure);
   // The productive spine runs autonomously; a later human QA never makes it non-autonomous.
   rec.setAutonomy({ runtime_intervention_required: false, post_run_qa: false });
   rec.setCommercialUsefulnessEvaluable(input.caseCompleted && input.decision !== null);

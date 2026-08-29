@@ -11,6 +11,7 @@ import type {
 } from "@/types";
 import { PLAN_LEAD_COUNT } from "@/types";
 import { applyLearningHints, applyVaultHints } from "@/lib/learning";
+import { isProviderDegradedError, minimalFailedTelemetry } from "@/lib/intelligence/account-deep-research";
 
 export type { PipelineInput };
 export { applyLearningHints, applyVaultHints };
@@ -95,7 +96,10 @@ export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLen
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : String(err);
       console.error(`[pipeline] failed to process ${candidate.company}: ${errMsg.slice(0, 120)}`);
-      processedLeads.push(buildFailedLead(candidate, errMsg));
+      // Partial Research telemetry (search/full-text ops that ran before the failure)
+      // rides on the error so the account trace reflects what actually happened (§3).
+      const partial = (err as { partialAccountResearch?: import("@/lib/intelligence/account-deep-research").AccountDeepResearchTelemetry }).partialAccountResearch;
+      processedLeads.push(buildFailedLead(candidate, errMsg, partial));
     }
   }
 
@@ -421,7 +425,15 @@ function buildLearningMetadata(
 
 // ─── Fallback stub for leads that failed processing ───────────────────────────
 
-function buildFailedLead(candidate: LeadCandidate, errorMsg: string): ProcessedLead {
+function buildFailedLead(candidate: LeadCandidate, errorMsg: string, partialAccountResearch?: import("@/lib/intelligence/account-deep-research").AccountDeepResearchTelemetry): ProcessedLead {
+  // Preserve any partial Research telemetry that survived the failure. If none
+  // survived but the error is a provider quota/circuit failure, record a minimal
+  // provider-degraded telemetry so the account trace classifies it as a provider
+  // failure — never a structural disqualifier (§3-§6). Operational only, no Evidence.
+  const accountResearch = partialAccountResearch
+    ?? (isProviderDegradedError(errorMsg)
+      ? minimalFailedTelemetry(candidate.company, candidate.domain ?? null, "provider_degraded")
+      : undefined);
   const stub: import("@/types").EnrichedLead = {
     candidate,
     company_summary: `${candidate.company} — processing failed`,
@@ -435,6 +447,7 @@ function buildFailedLead(candidate: LeadCandidate, errorMsg: string): ProcessedL
     pain_hypothesis: undefined,
     risks_weaknesses: ["Processing error — data not available"],
     evidence_discipline: [],
+    account_research: accountResearch,
   };
 
   const qualification: import("@/types").QualifiedLead = {

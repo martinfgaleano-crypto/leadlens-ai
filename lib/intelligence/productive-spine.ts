@@ -305,6 +305,8 @@ function emitAccountTraces(
         telemetry: lead.enrichment.account_research ?? null,
         decision: c?.decision ?? null,
         caseCompleted: Boolean(c),
+        // A genuine structural QC rejection (never a provider/processing failure, §6).
+        structural_disqualifier: lead.outreach.qc_status === "FAILED",
         wall_clock_ms: runWallMs,
         research_stage_ms: Math.round(researchMs / n),
         case_synthesis_ms: Math.round(caseSynthMs / n),
