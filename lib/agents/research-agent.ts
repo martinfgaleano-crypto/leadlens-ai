@@ -9,8 +9,14 @@ export async function runResearchAgent(
   candidate: LeadCandidate,
   criteria: LeadSearchCriteria
 ): Promise<EnrichedLead> {
-  if (IS_DEMO || !process.env.ANTHROPIC_API_KEY) {
-    return buildDemoEnrichment(candidate, criteria);
+  // Demo enrichment is deterministic placeholder content — it must ONLY be used for
+  // an EXPLICIT demo (DEMO_MODE=true). In a real run a missing Anthropic key must
+  // FAIL CLOSED, not silently substitute demo data (which would contaminate a real
+  // customer/validation run with fabricated coverage). The caller's failed-lead path
+  // then records it honestly as a provider-degraded account.
+  if (IS_DEMO) return buildDemoEnrichment(candidate, criteria);
+  if (!process.env.ANTHROPIC_API_KEY) {
+    throw new Error("anthropic_key_missing: enrichment unavailable (fail-closed; not demo)");
   }
   return buildClaudeEnrichment(candidate, criteria);
 }
