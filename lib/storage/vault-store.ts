@@ -47,8 +47,19 @@ export async function createVaultCompany(input: Partial<VaultCompany> & { name: 
     description: input.description ?? null,
     source_status: input.source_status ?? null,
   }).select("*").single();
-  if (error) { console.error("[vault-store] createVaultCompany:", error.message); return null; }
-  return data as VaultCompany;
+  if (!error) return data as VaultCompany;
+  // Concurrency safety (RUNTIME SCALE SAFETY V1): once migration 057's UNIQUE(domain) index
+  // exists, two concurrent accretions of the same canonical company have exactly one winner;
+  // the loser gets a unique-violation (23505). Resolve it idempotently to the durable row
+  // instead of surfacing an error — so the read-before-insert is no longer the SOLE guard.
+  // Pre-057 (no constraint) this branch never triggers, so behavior is unchanged until the
+  // index is applied. Never merges distinct entities (domain is the canonical key, §10).
+  if ((error.code === "23505" || /duplicate key|already exists|unique/i.test(error.message)) && input.domain) {
+    const existing = await findVaultCompanyByDomain(input.domain);
+    if (existing) return existing;
+  }
+  console.error("[vault-store] createVaultCompany:", error.message);
+  return null;
 }
 
 export async function getVaultCompanyById(id: string): Promise<VaultCompany | null> {
