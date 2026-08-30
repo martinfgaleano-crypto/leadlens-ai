@@ -92,7 +92,7 @@ const run = async () => {
     const v = vaultDouble();
     const m = await accreteResearchedAccounts([acct("Acme Mfg", "acme.com", [
       ev({ claim: "Opened a new plant", event_date: "2026-06-10", source_url: "https://news.example/same" }),
-      ev({ claim: "Named a new COO", event_type: "leadership_change", event_date: "2026-06-12", source_url: "https://news.example/same" }),
+      ev({ claim: "Broke ground on a new warehouse", event_type: "expansion", event_date: "2026-06-12", source_url: "https://news.example/same" }),
     ])], "controlled_validation", v.deps);
     assert.equal(m.events_new, 2); assert.equal(m.sources_new, 1); assert.equal(m.sources_rediscovered, 1);
   });
@@ -116,8 +116,8 @@ const run = async () => {
   // §21 — cross-tenant SAME public company: one global identity, one public event.
   await t("21 cross-tenant same company shares global identity + dedups public event", async () => {
     const v = vaultDouble(); // one GLOBAL registry shared by both tenants
-    await accreteResearchedAccounts([acct("Nestle", "nestle.com", [ev({ claim: "Announced a factory expansion", event_date: "2026-05-01" })])], "customer_run", v.deps); // tenant A
-    const mB = await accreteResearchedAccounts([acct("Nestle", "nestle.com", [ev({ claim: "Announced a factory expansion", event_date: "2026-05-01", source_url: "https://tenantB.example/x" })])], "customer_run", v.deps); // tenant B
+    await accreteResearchedAccounts([acct("Nestle", "nestle.com", [ev({ claim: "Opened a new factory", event_date: "2026-05-01" })])], "customer_run", v.deps); // tenant A
+    const mB = await accreteResearchedAccounts([acct("Nestle", "nestle.com", [ev({ claim: "Opened a new factory", event_date: "2026-05-01", source_url: "https://tenantB.example/x" })])], "customer_run", v.deps); // tenant B
     assert.equal(v.companies.size, 1);               // same global company
     assert.equal(mB.companies_new, 0);
     assert.equal(mB.events_rediscovered, 1);         // same public event deduped globally
@@ -140,7 +140,7 @@ const run = async () => {
   await t("23 weaker identity does not downgrade stronger existing company", async () => {
     const v = vaultDouble();
     await accreteResearchedAccounts([{ company: { name: "Strong Co", domain: "strong.com", country: "United States", industry: "Manufacturing", website_url: "https://strong.com" }, events: [ev()] }], "customer_run", v.deps);
-    await accreteResearchedAccounts([{ company: { name: "Strong Co", domain: "strong.com" }, events: [ev({ claim: "Second event", event_date: "2026-07-01", source_url: "https://news.example/2" })] }], "customer_run", v.deps);
+    await accreteResearchedAccounts([{ company: { name: "Strong Co", domain: "strong.com" }, events: [ev({ claim: "Acquired a logistics firm", event_date: "2026-07-01", source_url: "https://news.example/2" })] }], "customer_run", v.deps);
     const c = v.companies.get("strong.com")!;
     assert.equal(c.country, "United States"); assert.equal(c.industry, "Manufacturing"); // retained
     assert.equal(v.companies.size, 1);

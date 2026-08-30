@@ -429,7 +429,10 @@ async function buildClaudeEnrichment(
       webContext = researched.context;
       accountResearch = researched.telemetry;
       if (researched.sourceUrl) candidate.source_url = researched.sourceUrl;
-      const defensibleDate = researched.eventDate ?? researched.publishedDate;
+      // The signal/event date may ONLY be a deterministically validated EVENT date
+      // (§7/§8). Publication date ≠ event date and must NEVER stand in for it — doing so
+      // turned "a recent article about an old/static fact" into false current Timing.
+      const defensibleDate = researched.eventDate;
       if (defensibleDate) {
         const parsedDate = Date.parse(defensibleDate);
         if (Number.isFinite(parsedDate)) candidate.signal_date = new Date(parsedDate).toISOString().slice(0, 10);

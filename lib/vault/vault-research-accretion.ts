@@ -25,6 +25,7 @@
 //   §16 Write-only: this module never reads Vault back into Case/Discovery reasoning.
 
 import { classifyEntity } from "@/lib/vault/entity-resolution";
+import { isMaterialEventClaim } from "@/lib/intelligence/evidence-materiality";
 import type { VaultCompany, VaultSignal, VaultSource, VaultSignalType, DataOrigin } from "@/lib/vault/vault-types";
 import type { VaultProvenance } from "@/lib/vault/vault-accretion";
 
@@ -189,6 +190,9 @@ export async function accreteResearchedAccounts(
         m.events_evaluated++;
         // Reject events lacking a factual claim or any source/provenance (§5).
         if (!ev.claim || !ev.claim.trim() || !ev.source_url) { m.events_rejected++; continue; }
+        // MATERIALITY gate (§6/§15): a verified static company FACT is not a material
+        // EVENT and must never become a vault_signal, however true or well-sourced.
+        if (!isMaterialEventClaim(ev.claim)) { m.events_rejected++; continue; }
 
         const type = mapEventType(ev.event_type);
         const fp = eventFingerprint(type, ev.event_date ?? null, ev.claim);

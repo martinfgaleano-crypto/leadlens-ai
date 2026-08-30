@@ -6,6 +6,7 @@ import type { DiscoveryRunner } from "@/lib/lead-hunter/candidate-universe";
 import type { LeadHunterRunStore } from "@/lib/lead-hunter/run-store";
 import { loadLeadHunterUniverse, runAndPersistLeadHunter, toResearchCandidates } from "@/lib/lead-hunter/hunt-and-persist";
 import { synthesizeCase } from "@/lib/monitor/canonical-case";
+import { isMaterialEventClaim } from "@/lib/intelligence/evidence-materiality";
 import type { IntelligenceRunRecord, IntelligenceRunStore } from "./productive-spine-store";
 import type { DiscoveryBudget } from "@/lib/lead-hunter/candidate-universe";
 import type { IntelligenceRunTrace } from "@/lib/intelligence/run-trace";
@@ -229,7 +230,7 @@ async function runIntelligenceExecution(
         await deps.onResearchedAccounts(researchedLeads.map((lead) => ({
           company: { name: lead.candidate.company, domain: lead.candidate.domain ?? null, country: lead.candidate.country ?? lead.candidate.location ?? null, industry: lead.candidate.industry ?? null },
           events: (lead.enrichment.evidence_discipline ?? [])
-            .filter((claim) => claim.type === "verified_public_signal" && Boolean(lead.candidate.source_url))
+            .filter((claim) => claim.type === "verified_public_signal" && Boolean(lead.candidate.source_url) && isMaterialEventClaim(claim.claim))
             .map((claim) => ({
               event_type: lead.candidate.signal_type ?? null,
               claim: claim.claim,
@@ -295,10 +296,16 @@ export function canonicalCaseForLead(lead: ProcessedLead): NonNullable<LeadLensR
   if (lead.outreach.qc_status === "FAILED") return null;
   const c = lead.candidate;
   const e = lead.enrichment;
-  const datedClaim = e.evidence_discipline?.find((claim) => claim.type === "verified_public_signal" && claim.date);
-  const signalDate = c.signal_date ?? datedClaim?.date ?? null;
+  // A verified_public_signal claim is only a MATERIAL dated event when its text is a real
+  // corporate change, not a static company fact/metric (§3/§6). A validated event date on
+  // the candidate (set upstream ONLY from a deterministically validated event, §7) is an
+  // independent, trustworthy material-event indicator; the loose evidence_discipline claim
+  // is the fallback and must pass the same materiality gate.
+  const materialClaim = e.evidence_discipline?.find((claim) => claim.type === "verified_public_signal" && claim.date && isMaterialEventClaim(claim.claim));
+  const hasValidatedEvent = Boolean(c.signal_date);
+  const signalDate = c.signal_date ?? materialClaim?.date ?? null;
   const sourceHost = (() => { try { return c.source_url ? new URL(c.source_url).hostname : null; } catch { return null; } })();
-  const verifiedSignal = Boolean(signalDate && sourceHost && datedClaim);
+  const verifiedSignal = Boolean(signalDate && sourceHost && (hasValidatedEvent || materialClaim));
   const evidenceStrength = sourceHost ? (e.research_confidence >= 0.75 ? "Strong" : "Moderate") : "Limited";
   // Preserve independent support computed during Account Deep Research (previously
   // hardcoded false, discarding real corroboration). The Research corroboration loop
