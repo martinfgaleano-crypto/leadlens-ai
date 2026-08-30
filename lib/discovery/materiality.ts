@@ -19,11 +19,21 @@ const LOW = /\b(premio|galard[oó]n|reconocimiento|entrevista|opini[oó]n|column
 // Negative events and pure PR are NOT commercial opportunities even if a
 // growth word appears alongside — they veto to low materiality.
 const NEGATIVE = /\b(aplaz[oó] (los )?pagos|incumpl|impag|mora|demand[oó]|demanda judicial|crisis|p[eé]rdidas|quiebra|liquidaci[oó]n|cierre de|despidos|recorte|sanci[oó]n|multa|investigaci[oó]n por|escándalo|paro|huelga|postpon(?:ed|es|ing)|delay(?:ed|s|ing)? (?:its |the )?(?:project|facility|plant|expansion|opening)|suspend(?:ed|s|ing)|halt(?:ed|s|ing)|shut(?: |-)?down|shut (?:down )?(?:its|the) (?:plant|facility|operation)|clos(?:ed|es|ing) (?:its|the) (?:plant|facility|operation|division)|divest(?:ed|s|ing)|exit(?:ed|s|ing)? (?:the )?market|withdrew from|withdraw(?:s|ing)? from|discontinu(?:ed|es|ing)|cancel(?:l?ed|s|l?ing))\b/i;
+
+// Bounded materiality-recall patch (SELF-SERVE VALIDATION V1 §3): a real teaming
+// agreement / joint venture / strategic partnership is a material commercial CHANGE, but
+// ONLY when a change verb forms it. Generic legal/contract/"partners with customers"
+// language is vetoed (§4) so "agreement"/"partnership" vocabulary alone is never material.
+const NON_MATERIAL_AGREEMENT = /\b(?:agree(?:s|d)? (?:to|with) (?:the |our )?(?:terms|privacy|policy|conditions)|privacy policy|terms of (?:service|use)|(?:existing|current|prior) (?:agreement|contract|partnership) (?:remains|stays|continues|is still)|standard (?:supplier|vendor|service|customer) agreement|works? in (?:close )?partnership with (?:its |our |their )?(?:customers|clients)|in partnership with (?:its |our |their )?(?:customers|clients)|agreement referenced)\b/i;
+const MATERIAL_PARTNERSHIP = /\b(?:enter(?:ed|s|ing)? into|sign(?:ed|s|ing)?|announc(?:ed|es|ing)?|form(?:ed|s|ing)?|establish(?:ed|es|ing)?|struck|launch(?:ed|es|ing)?|creat(?:ed|es|ing)?|forg(?:ed|es|ing)?) (?:an? |its |a new |the )?(?:exclusive |strategic |multi-?year |long-?term |global |new )*(?:teaming agreement|joint venture|strategic partnership|strategic alliance|partnership agreement|commercial partnership|distribution partnership|joint[- ]development agreement|co-?development agreement)\b/i;
 const PURE_PR = /\b(sostenibilidad|responsabilidad social|huella de carbono|voluntariado|donaci[oó]n|reconoc(e|ió) a sus|d[ií]a de|celebra(ci[oó]n)?|campa[ñn]a de marca)\b/i;
 
 export function classifyMateriality(titleAndContent: string): { level: Materiality; matched: string | null } {
   const hay = titleAndContent.toLowerCase();
   const neg = hay.match(NEGATIVE); if (neg) return { level: "low", matched: `negativo: ${neg[0]}` };
+  // Generic legal/contract/"partners with customers" language is NOT a material event,
+  // even though it contains "agreement"/"partnership" (§4). Vetoed before any medium match.
+  const nma = hay.match(NON_MATERIAL_AGREEMENT); if (nma) return { level: "low", matched: `non_material_agreement: ${nma[0]}` };
   // Pure PR vetoes UNLESS a concrete high-materiality change is also present.
   const pr = hay.match(PURE_PR);
   const h = hay.match(HIGH) ?? hay.match(HIGH_VARIANTS) ?? hay.match(HIGH_DESCRIPTIVE_OPEN) ?? hay.match(HIGH_ACTIVE_EXPANSION) ?? hay.match(HIGH_COMMITTED_INVESTMENT);
@@ -31,6 +41,10 @@ export function classifyMateriality(titleAndContent: string): { level: Materiali
   if (h) return { level: "high", matched: h[0] };
   // A low-materiality marker vetoes a medium one (a "feria" mention wins over "lanzó").
   const l = hay.match(LOW);
+  // A verb-formed teaming agreement / JV / strategic partnership is a material commercial
+  // change (medium — demands stronger fit + corroboration downstream, §3).
+  const mp = hay.match(MATERIAL_PARTNERSHIP);
+  if (mp && !l) return { level: "medium", matched: mp[0] };
   const m = hay.match(MEDIUM);
   if (m && !l) return { level: "medium", matched: m[0] };
   return { level: "low", matched: l ? l[0] : null };
