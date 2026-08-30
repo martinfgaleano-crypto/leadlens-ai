@@ -766,6 +766,11 @@ export interface PipelineInput {
   /** Acceptance/soak observability hook. Receives every account that consumed
    * Research before delivery selection; never affects ranking or output. */
   onResearchComplete?: (leads: ProcessedLead[]) => void;
+  /** Bounded account-research concurrency (RUNTIME SCALE SAFETY V1). Default 1 = serial
+   * (unchanged behavior). >1 researches accounts through a bounded worker pool while
+   * preserving candidate order, per-account failure isolation, and checkpoints. Safe only
+   * once run-lease fencing + Vault company uniqueness are live (they are). Never unbounded. */
+  researchConcurrency?: number;
 }
 
 // ─── Provider result ──────────────────────────────────────────────────────────

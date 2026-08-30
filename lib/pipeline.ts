@@ -11,6 +11,7 @@ import type {
 } from "@/types";
 import { PLAN_LEAD_COUNT } from "@/types";
 import { applyLearningHints, applyVaultHints } from "@/lib/learning";
+import { boundedOrderedMap } from "@/lib/pipeline-concurrency";
 import { isProviderDegradedError, minimalFailedTelemetry } from "@/lib/intelligence/account-deep-research";
 
 export type { PipelineInput };
@@ -85,22 +86,35 @@ export async function runLeadLensPipeline(input: PipelineInput): Promise<LeadLen
   if (product) console.log(`[pipeline] product=${product.product_code} tier=${product.tier} opportunity_target=${targetCount}`);
 
   const researchCount = Math.min(candidates.length, Math.max(targetCount, input.researchCandidateLimit ?? targetCount));
-  for (let i = 0; i < researchCount; i++) {
+
+  // Research one candidate → ProcessedLead. Independent per account: no shared mutable state,
+  // so it is safe to run through a bounded worker pool. Failure-isolated (buildFailedLead).
+  const researchOne = async (i: number): Promise<ProcessedLead> => {
     const candidate = candidates[i];
     try {
       const checkpoint = input.checkpointDir ? await readLeadCheckpoint(input.checkpointDir, candidate.id) : null;
       const lead = checkpoint ?? await processOneLead(candidate, criteria, icp, onboardingData, input.decisionOnly === true);
       if (!checkpoint && input.checkpointDir) await writeLeadCheckpoint(input.checkpointDir, candidate.id, lead);
-      processedLeads.push(lead);
       console.log(`[pipeline] lead ${i + 1}/${researchCount}: ${candidate.company} → ${lead.qualification.category} (${lead.qualification.fit_score}) gen=${lead.outreach.genericness_risk ?? "?"} hal=${lead.outreach.hallucination_risk ?? "?"}${checkpoint ? " checkpoint=reused" : ""}`);
+      return lead;
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : String(err);
       console.error(`[pipeline] failed to process ${candidate.company}: ${errMsg.slice(0, 120)}`);
       // Partial Research telemetry (search/full-text ops that ran before the failure)
       // rides on the error so the account trace reflects what actually happened (§3).
       const partial = (err as { partialAccountResearch?: import("@/lib/intelligence/account-deep-research").AccountDeepResearchTelemetry }).partialAccountResearch;
-      processedLeads.push(buildFailedLead(candidate, errMsg, partial));
+      return buildFailedLead(candidate, errMsg, partial);
     }
+  };
+
+  const concurrency = Math.max(1, Math.min(input.researchConcurrency ?? 1, researchCount || 1));
+  if (concurrency === 1) {
+    // Serial path — byte-for-byte unchanged default behavior.
+    for (let i = 0; i < researchCount; i++) processedLeads.push(await researchOne(i));
+  } else {
+    // Bounded worker pool (order-preserving; completion order NEVER becomes ranking).
+    const ordered = await boundedOrderedMap(researchCount, concurrency, researchOne);
+    for (const lead of ordered) processedLeads.push(lead);
   }
 
   console.log(`[pipeline] ${processedLeads.length} leads processed`);
