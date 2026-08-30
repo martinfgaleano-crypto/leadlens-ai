@@ -134,15 +134,23 @@ export function buildAccountRunTrace(input: AccountTraceInput): IntelligenceRunT
   rec.setAutonomy({ runtime_intervention_required: false, post_run_qa: false });
   rec.setCommercialUsefulnessEvaluable(input.caseCompleted && input.decision !== null);
 
-  // Per-account wall clock (RUNTIME ATTRIBUTION V1): the account's OWN measured work
-  // window — the sum of ITS real stage durations (from provider_ops / measured case
-  // synthesis) — NOT the whole-run elapsed. Accounts research in a batch, so per-account
-  // wall clocks may overlap and MUST NOT be summed to derive the run wall clock (that is
-  // a separate run-level clock, §1.4/§1.5). Replaces the previous run-shared overwrite
-  // (`input.wall_clock_ms`, the whole-run elapsed) that made every account report the
-  // same time. `input.wall_clock_ms` is now an optional back-compat hint, used only when
-  // the account produced no measurable stage work at all (no telemetry).
-  clock = accountWorkMs > 0 ? accountWorkMs : Math.max(0, input.wall_clock_ms ?? 0);
+  // Per-account WALL CLOCK vs ACTIVE WORK (RUNTIME SEMANTICS CORRECTION).
+  //
+  // HISTORICAL (RUNTIME ATTRIBUTION V1, commit d30d19f): wall_clock_ms was set to the SUM
+  // of the account's stage durations (accountWorkMs) — i.e. ACTIVE WORK, not true elapsed.
+  // Codex correctly challenged this: a sum of provider-op durations is not a wall clock.
+  //
+  // NEW: when the research agent measured the account's TRUE elapsed window
+  // (telemetry.account_elapsed_ms — real monotonic time across deep research + the
+  // enrichment LLM + gaps), wall_clock_ms is that true elapsed. stage_work_ms remains the
+  // summed active stage work, so the two are now correctly distinct: wall_clock_ms may
+  // EXCEED stage_work_ms (unattributed enrichment LLM + orchestration gaps) or be LESS
+  // under intra-account concurrency. Falls back to the active-work sum only for legacy
+  // telemetry without account_elapsed_ms (documented, not silently mislabeled).
+  const trueElapsed = t?.account_elapsed_ms;
+  clock = typeof trueElapsed === "number" && trueElapsed >= 0
+    ? trueElapsed
+    : (accountWorkMs > 0 ? accountWorkMs : Math.max(0, input.wall_clock_ms ?? 0));
   return rec.finalize();
 }
 

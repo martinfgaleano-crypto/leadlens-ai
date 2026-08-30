@@ -422,6 +422,10 @@ async function buildClaudeEnrichment(
 
   let webContext = "";
   let accountResearch: import("@/lib/intelligence/account-deep-research").AccountDeepResearchTelemetry | undefined;
+  // TRUE per-account elapsed (RUNTIME SEMANTICS CORRECTION): real monotonic wall-clock
+  // spanning the account's WHOLE enrichment — deep research + the enrichment LLM + gaps —
+  // NOT a sum of provider-op durations. This is the honest account elapsed window.
+  const accountStartedMs = Date.now();
   if (candidate.company) {
     try {
       const { deepenAccountResearch } = await import("@/lib/intelligence/account-deep-research");
@@ -513,9 +517,10 @@ Return JSON:
     // the failure still propagates and the caller builds the same missing-evidence lead.
     const { isProviderDegradedError } = await import("@/lib/intelligence/account-deep-research");
     const msg = err instanceof Error ? err.message : String(err);
-    if (accountResearch) accountResearch = { ...accountResearch, enrichment_failed: { provider: "anthropic", reason: isProviderDegradedError(msg) ? "provider_degraded" : "error" } };
+    if (accountResearch) accountResearch = { ...accountResearch, enrichment_failed: { provider: "anthropic", reason: isProviderDegradedError(msg) ? "provider_degraded" : "error" }, account_elapsed_ms: Date.now() - accountStartedMs };
     (err as { partialAccountResearch?: typeof accountResearch }).partialAccountResearch = accountResearch;
     throw err;
   }
+  if (accountResearch) accountResearch = { ...accountResearch, account_elapsed_ms: Date.now() - accountStartedMs };
   return { candidate, ...result, account_research: accountResearch };
 }

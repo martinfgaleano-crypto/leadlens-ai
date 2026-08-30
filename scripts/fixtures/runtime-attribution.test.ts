@@ -47,8 +47,18 @@ const failed = buildAccountRunTrace({ runId: "intel_x", accountId: "down.com", c
 t("G: provider-failure account -> provider_degraded stop, failure=provider", failed.stop_reason === "provider_degraded" && failed.failure_class === "provider");
 t("G: provider-failure trace is complete (wall clock present)", failed.wall_clock_ms >= 120);
 
+// RUNTIME SEMANTICS CORRECTION — wall_clock = TRUE elapsed (account_elapsed_ms), distinct
+// from stage_work = active-work sum.
+// E/§6 — true elapsed EXCEEDS active-work sum (unattributed enrichment LLM + gaps).
+const withElapsed = buildAccountRunTrace({ runId: "intel_x", accountId: "elapsed.com", contextRefSafe: "ctx", telemetry: telemetry({ provider_ops: ops(300, 200, 500), account_elapsed_ms: 12000 }), decision: "validate", caseCompleted: true, research_stage_ms: 0, case_synthesis_ms: 1, provenance: "controlled" });
+t("E true elapsed uses account_elapsed_ms (12000ms), not the ~1001ms active sum", withElapsed.wall_clock_ms === 12000);
+t("E wall_clock EXCEEDS stage_work when enrichment LLM + gaps are unattributed", withElapsed.wall_clock_ms > withElapsed.stage_work_ms && withElapsed.stage_work_ms >= 1000);
+// C/§7 — under intra-account concurrency, active work sum EXCEEDS true elapsed (labeled correctly).
+const concurrent = buildAccountRunTrace({ runId: "intel_x", accountId: "concurrent.com", contextRefSafe: "ctx", telemetry: telemetry({ provider_ops: ops(100, 100, 0), account_elapsed_ms: 100 }), decision: "hold", caseCompleted: true, research_stage_ms: 0, case_synthesis_ms: 0, provenance: "controlled" });
+t("C parallel ops: active-work sum (>=200) exceeds true elapsed (100) — not double-counted as wall clock", concurrent.stage_work_ms >= 200 && concurrent.wall_clock_ms === 100);
+
 // J/K/M — no negative durations, no 1970 epoch, monotonic (relative clock ≥ 0).
-for (const tr of [fast, slow, noCase, failed]) {
+for (const tr of [fast, slow, noCase, failed, withElapsed, concurrent]) {
   t(`J/K ${tr.account_id}: wall_clock >= 0 and stage_work >= 0 (no negatives / epoch-zero)`, tr.wall_clock_ms >= 0 && tr.stage_work_ms >= 0);
 }
 

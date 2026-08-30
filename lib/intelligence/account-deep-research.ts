@@ -49,6 +49,12 @@ export interface AccountDeepResearchTelemetry {
   // provider/quota failure is not misclassified as a structural disqualifier (§4-§6).
   // Operational telemetry only — never Evidence, never a commercial outcome (§7).
   enrichment_failed?: { provider: string; reason: "provider_degraded" | "error" } | null;
+  // TRUE per-account elapsed wall-clock (ms), measured monotonically across the account's
+  // WHOLE enrichment (deep research + enrichment LLM + gaps) by the research agent. This is
+  // real elapsed time, NOT a sum of provider-op durations — so it may exceed the summed
+  // stage work (unattributed enrichment LLM + orchestration gaps) or, under intra-account
+  // concurrency, be less than the active-work sum. Optional (absent on pre-instrumentation).
+  account_elapsed_ms?: number;
 }
 
 /** Is an error message a provider quota / circuit / rate-limit failure (not a bug)? */
