@@ -18,8 +18,8 @@ import type { VaultCompany } from "@/lib/vault/vault-types";
 /** Production binding: the real durable Vault registry (global service-role table
  * vault_companies). Kept lazy so tests never touch the DB and can inject doubles. */
 export async function productionVaultAccretionDeps(): Promise<VaultAccretionDeps> {
-  const { findVaultCompanyByDomain, createVaultCompany } = await import("@/lib/storage/vault-store");
-  return { findByDomain: findVaultCompanyByDomain, create: createVaultCompany };
+  const { findVaultCompanyByDomain, createVaultCompany, touchVaultCompanyObservation } = await import("@/lib/storage/vault-store");
+  return { findByDomain: findVaultCompanyByDomain, create: createVaultCompany, touch: touchVaultCompanyObservation };
 }
 
 export type VaultProvenance = "live_validation" | "controlled_validation" | "customer_run" | "diagnostic_control" | "monitor_update";
@@ -37,6 +37,8 @@ export interface DiscoveredCompanyInput {
 export interface VaultAccretionDeps {
   findByDomain: (domain: string) => Promise<VaultCompany | null>;
   create: (input: Partial<VaultCompany> & { name: string }) => Promise<VaultCompany | null>;
+  /** Record a re-observation of an existing company (advances last_seen_at). Best-effort. */
+  touch?: (id: string) => Promise<boolean>;
   classify?: typeof classifyEntity;
 }
 
@@ -86,7 +88,12 @@ export async function accreteDiscoveredCompanies(
       seenDomains.add(domain);
 
       const existing = await deps.findByDomain(domain);
-      if (existing) { m.existing_rediscovered++; continue; }
+      if (existing) {
+        m.existing_rediscovered++;
+        // Re-observation: advance last_seen_at so reuse is visible (never duplicates identity).
+        if (deps.touch) { try { await deps.touch(existing.id); } catch { /* best-effort */ } }
+        continue;
+      }
 
       // Universal facts ONLY. No Fit/Timing/Decision/Opportunity ever reaches Vault —
       // the VaultCompany shape has no such fields, and we pass only public facts.

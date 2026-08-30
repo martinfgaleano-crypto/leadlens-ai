@@ -46,6 +46,7 @@ export async function productionResearchAccretionDeps(): Promise<ResearchAccreti
   return {
     findByDomain: s.findVaultCompanyByDomain,
     createCompany: s.createVaultCompany,
+    touch: s.touchVaultCompanyObservation,
     listSignalsByCompany: s.listSignalsByCompany,
     createSource: s.createVaultSource,
     createSignal: s.createVaultSignal,
@@ -72,6 +73,8 @@ export interface ResearchedAccountInput {
 export interface ResearchAccretionDeps {
   findByDomain: (domain: string) => Promise<VaultCompany | null>;
   createCompany: (input: Partial<VaultCompany> & { name: string }) => Promise<VaultCompany | null>;
+  /** Record a re-observation of an existing company (advances last_seen_at). Best-effort. */
+  touch?: (id: string) => Promise<boolean>;
   listSignalsByCompany: (companyId: string) => Promise<VaultSignal[]>;
   createSource: (input: Partial<VaultSource> & { source_type: string }) => Promise<VaultSource | null>;
   createSignal: (input: Partial<VaultSignal> & { signal_type: string }) => Promise<VaultSignal | null>;
@@ -176,6 +179,9 @@ export async function accreteResearchedAccounts(
           source_status: provenance,
         });
         if (company) m.companies_new++;
+      } else if (deps.touch) {
+        // Existing company re-observed by this research run: advance last_seen_at (visible reuse).
+        try { await deps.touch(company.id); } catch { /* best-effort */ }
       }
       if (!company) { m.errors++; continue; }
       m.companies_resolved++;

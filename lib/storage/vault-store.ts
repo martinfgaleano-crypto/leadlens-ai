@@ -35,6 +35,7 @@ const LIST_LIMIT = 100;
 export async function createVaultCompany(input: Partial<VaultCompany> & { name: string }): Promise<VaultCompany | null> {
   const db = await getDb();
   if (!db) { warnNoDb("createVaultCompany"); return null; }
+  const nowIso = new Date().toISOString();
   const { data, error } = await db.from("vault_companies").insert({
     name: input.name,
     domain: input.domain ?? null,
@@ -46,6 +47,9 @@ export async function createVaultCompany(input: Partial<VaultCompany> & { name: 
     company_size: input.company_size ?? null,
     description: input.description ?? null,
     source_status: input.source_status ?? null,
+    // Observation tracking (migration 059): a new company is observed once, now.
+    first_seen_at: nowIso,
+    last_seen_at: nowIso,
   }).select("*").single();
   if (!error) return data as VaultCompany;
   // Concurrency safety (RUNTIME SCALE SAFETY V1): once migration 057's UNIQUE(domain) index
@@ -67,6 +71,20 @@ export async function getVaultCompanyById(id: string): Promise<VaultCompany | nu
   if (!db) return null;
   const { data } = await db.from("vault_companies").select("*").eq("id", id).maybeSingle();
   return (data as VaultCompany) ?? null;
+}
+
+/** Record that an existing canonical company was OBSERVED again by a productive run
+ * (CANONICAL VAULT V2, migration 059). Advances last_seen_at; first_seen_at is never
+ * touched (immutable). Concurrency-safe: a plain timestamp set (last-writer-wins is
+ * correct for "most recent observation"). observation_count is NOT incremented here —
+ * an accurate, retry-idempotent count needs the atomic RPC in migration 060 (deferred);
+ * last_seen_at alone already makes reuse visible. Failure-isolated: best-effort. */
+export async function touchVaultCompanyObservation(id: string): Promise<boolean> {
+  const db = await getDb();
+  if (!db) return false;
+  const { error } = await db.from("vault_companies").update({ last_seen_at: new Date().toISOString() }).eq("id", id);
+  if (error) { console.error("[vault-store] touchVaultCompanyObservation:", error.message); return false; }
+  return true;
 }
 
 export async function findVaultCompanyByDomain(domain: string): Promise<VaultCompany | null> {
