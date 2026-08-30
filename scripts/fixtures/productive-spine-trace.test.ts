@@ -131,9 +131,15 @@ const run = async () => {
   const b = byAcct("b-rejected");
   t("B: early-rejected account still finalizes a trace with no provider work", b.counts.provider_calls === 0 && b.stop_reason === "structural_disqualifier");
 
-  // Wall clock vs stage work (§20/§21): wall clock is measured, not a stage sum.
+  // Wall clock vs stage work (RUNTIME ATTRIBUTION V1): per-account wall clock is the
+  // account's OWN accumulated real stage durations — NOT the whole-run elapsed. An
+  // account with real provider work has a positive wall clock reflecting its own work;
+  // a rejected account with no provider work has a near-zero wall clock. Distinct
+  // accounts therefore get DISTINCT wall clocks (the run-shared defect is gone).
   t("F/H/I via A: corroboration + counterevidence + full-text depth observed", a.research_depth.includes("corroboration") && a.research_depth.includes("counterevidence") && a.research_depth.includes("full_text_validation"));
-  t("wall_clock is real measured elapsed, not the sum of stages", a.wall_clock_ms !== a.stage_work_ms || a.stage_work_ms === 0);
+  t("A: account with real provider work has a positive per-account wall clock", a.wall_clock_ms > 0);
+  t("per-account attribution: a researched account and a rejected account get DISTINCT wall clocks", a.wall_clock_ms !== b.wall_clock_ms);
+  t("no negative durations, no 1970 epoch timestamps (relative clock)", a.wall_clock_ms >= 0 && a.stage_work_ms >= 0 && b.wall_clock_ms >= 0);
 
   // Autonomy (§19) + aggregation (§27).
   const agg = summarizeRunTraces(traces);

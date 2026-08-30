@@ -193,8 +193,14 @@ async function runIntelligenceExecution(
     const researchMs = Date.now() - researchStartedMs;
     await saveStage("case_synthesis");
     const caseSynthStartedMs = Date.now();
+    // Real per-account case-synthesis timing (RUNTIME ATTRIBUTION V1) — measured per lead,
+    // never a run-total divided by N. Case synthesis is deterministic and fast; this is a
+    // truthful (if small) per-account component, not fabricated precision.
+    const caseSynthMsByLead = new Map<string, number>();
     report.canonical_cases = report.processed_leads.flatMap((lead) => {
+      const s = Date.now();
       const item = canonicalCaseForLead(lead);
+      caseSynthMsByLead.set(lead.id, Date.now() - s);
       return item ? [item] : [];
     });
     run.researchAudit = researchedLeads.map(lead => {
@@ -220,7 +226,7 @@ async function runIntelligenceExecution(
     // Emit one runtime-observability trace per researched account from the REAL
     // telemetry + measured durations, over ALL researched accounts (before the
     // deliverable filter). Best-effort; never affects the run outcome (§39).
-    if (deps.onAccountTrace) emitAccountTraces(runId, contextRefSafe, researchedLeads, report.canonical_cases ?? [], Date.now() - runStartedMs, researchMs, Date.now() - caseSynthStartedMs, deps.onAccountTrace, deps.traceProvenance ?? "controlled");
+    if (deps.onAccountTrace) emitAccountTraces(runId, contextRefSafe, researchedLeads, report.canonical_cases ?? [], caseSynthMsByLead, deps.onAccountTrace, deps.traceProvenance ?? "controlled");
     // Vault RESEARCH accretion (best-effort, failure-isolated, §18): project ALL
     // researched accounts (before the deliverable filter, §3) to UNIVERSAL factual events
     // — only verified_public_signal claims with a source. NO Fit/Timing/Decision/customer
@@ -350,10 +356,12 @@ export function canonicalCaseForLead(lead: ProcessedLead): NonNullable<LeadLensR
 function emitAccountTraces(
   runId: string, contextRefSafe: string,
   researchedLeads: ProcessedLead[], cases: NonNullable<LeadLensReport["canonical_cases"]>,
-  runWallMs: number, researchMs: number, caseSynthMs: number,
+  caseSynthMsByLead: Map<string, number>,
   onAccountTrace: (trace: IntelligenceRunTrace) => void, provenance: "live" | "controlled",
 ): void {
-  const n = Math.max(1, researchedLeads.length);
+  // Per-account attribution (RUNTIME ATTRIBUTION V1): each account's wall clock and stage
+  // durations come from ITS OWN telemetry (provider_ops real per-op durations) + ITS OWN
+  // measured case-synthesis time — never the whole-run elapsed divided by N.
   for (const lead of researchedLeads) {
     try {
       const c = cases.find((item) => item.lead_id === lead.id) ?? null;
@@ -366,9 +374,11 @@ function emitAccountTraces(
         caseCompleted: Boolean(c),
         // A genuine structural QC rejection (never a provider/processing failure, §6).
         structural_disqualifier: lead.outreach.qc_status === "FAILED",
-        wall_clock_ms: runWallMs,
-        research_stage_ms: Math.round(researchMs / n),
-        case_synthesis_ms: Math.round(caseSynthMs / n),
+        // No synthetic per-account research time: real per-op durations come from the
+        // telemetry's provider_ops inside buildAccountRunTrace. 0 = "not separately
+        // measurable" for legacy telemetry without per-op timing (honest, not divided).
+        research_stage_ms: 0,
+        case_synthesis_ms: caseSynthMsByLead.get(lead.id) ?? 0,
         provenance,
       }));
     } catch { /* telemetry must never break a run */ }

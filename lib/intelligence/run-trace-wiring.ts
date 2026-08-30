@@ -28,7 +28,7 @@ export interface AccountTraceInput {
   telemetry: AccountDeepResearchTelemetry | null;
   decision: DecisionState | null;
   caseCompleted: boolean;
-  wall_clock_ms: number;             // REAL measured elapsed (§20) — never a sum of stages
+  wall_clock_ms?: number;            // back-compat hint only; per-account wall clock is now derived from the account's own stage durations (RUNTIME ATTRIBUTION V1)
   research_stage_ms: number;         // measured batch research duration (attributed to stage_work)
   case_synthesis_ms: number;         // measured per-account case synthesis duration
   provenance?: "live" | "controlled";
@@ -123,6 +123,7 @@ export function buildAccountRunTrace(input: AccountTraceInput): IntelligenceRunT
   const cs = rec.stage("case_synthesis");
   clock += Math.max(0, input.case_synthesis_ms);
   cs();
+  const accountWorkMs = clock; // the account's OWN accumulated real stage durations
 
   const outcome = classifyOutcome(t, input.caseCompleted, input.structural_disqualifier ?? false);
   rec.setDecision(input.decision);
@@ -133,9 +134,15 @@ export function buildAccountRunTrace(input: AccountTraceInput): IntelligenceRunT
   rec.setAutonomy({ runtime_intervention_required: false, post_run_qa: false });
   rec.setCommercialUsefulnessEvaluable(input.caseCompleted && input.decision !== null);
 
-  // Wall clock is the REAL measured elapsed (§20), set independently of the summed
-  // stage durations, so stage_work_ms may legitimately exceed wall_clock_ms (§21).
-  clock = Math.max(0, input.wall_clock_ms);
+  // Per-account wall clock (RUNTIME ATTRIBUTION V1): the account's OWN measured work
+  // window — the sum of ITS real stage durations (from provider_ops / measured case
+  // synthesis) — NOT the whole-run elapsed. Accounts research in a batch, so per-account
+  // wall clocks may overlap and MUST NOT be summed to derive the run wall clock (that is
+  // a separate run-level clock, §1.4/§1.5). Replaces the previous run-shared overwrite
+  // (`input.wall_clock_ms`, the whole-run elapsed) that made every account report the
+  // same time. `input.wall_clock_ms` is now an optional back-compat hint, used only when
+  // the account produced no measurable stage work at all (no telemetry).
+  clock = accountWorkMs > 0 ? accountWorkMs : Math.max(0, input.wall_clock_ms ?? 0);
   return rec.finalize();
 }
 

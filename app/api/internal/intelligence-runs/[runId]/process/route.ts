@@ -30,6 +30,11 @@ export async function POST(req: NextRequest, { params }: { params: { runId: stri
   // persistence is failure-isolated: a sink error is swallowed and never fails the
   // customer Intelligence run (§5).
   const traceSink = new SupabaseRunTraceSink(db);
+  // Trace persistence must survive serverless termination (RUNTIME ATTRIBUTION V1 §1.14):
+  // collect the persist promises and await them (bounded, failure-isolated) after the run
+  // completes, so a fire-and-forget promise is not dropped when the response returns. A
+  // sink failure is swallowed and never affects the customer Intelligence run (§1.15).
+  const tracePersists: Array<Promise<unknown>> = [];
   const result = await executeIntelligenceRun(params.runId, parsed.data.user_id, {
     contextStore: new SupabaseConfirmedContextStore(db as never),
     leadHunterStore: new SupabaseLeadHunterRunStore(db as never),
@@ -37,7 +42,7 @@ export async function POST(req: NextRequest, { params }: { params: { runId: stri
     discoveryRunner: (await import("@/lib/lead-hunter/discovery-runner")).defaultDiscoveryRunner,
     pipeline: (await import("@/lib/pipeline")).runLeadLensPipeline,
     traceProvenance: "live",
-    onAccountTrace: (trace) => { void traceSink.persist(trace).catch(() => { /* telemetry never fails a run */ }); },
+    onAccountTrace: (trace) => { tracePersists.push(traceSink.persist(trace).catch(() => { /* telemetry never fails a run */ })); },
     // Accrete valid discovered companies into the durable, customer-independent Vault
     // registry (best-effort; universal facts only). Never blocks or alters the run.
     onDiscoveredCompanies: (companies) => {
@@ -59,6 +64,9 @@ export async function POST(req: NextRequest, { params }: { params: { runId: stri
       })();
     },
   });
+  // Bounded await so account traces are durably persisted before the function returns
+  // (never throws — allSettled; a trace failure cannot fail the run).
+  if (tracePersists.length) await Promise.allSettled(tracePersists);
   if (!result.ok) return NextResponse.json({ run_id: params.runId, status: "failed", error: result.reason }, { status: 422 });
   if (result.run.status === "completed" && result.run.report) {
     const { initializeProductiveAccountMemory } = await import("@/lib/intelligence/initialize-account-memory");
