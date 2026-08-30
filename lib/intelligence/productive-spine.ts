@@ -7,6 +7,7 @@ import type { LeadHunterRunStore } from "@/lib/lead-hunter/run-store";
 import { loadLeadHunterUniverse, runAndPersistLeadHunter, toResearchCandidates } from "@/lib/lead-hunter/hunt-and-persist";
 import { synthesizeCase } from "@/lib/monitor/canonical-case";
 import { isMaterialEventClaim } from "@/lib/intelligence/evidence-materiality";
+import { classifyRunCoverage } from "@/lib/intelligence/account-deep-research";
 import type { IntelligenceRunRecord, IntelligenceRunStore } from "./productive-spine-store";
 import type { DiscoveryBudget } from "@/lib/lead-hunter/candidate-universe";
 import type { IntelligenceRunTrace } from "@/lib/intelligence/run-trace";
@@ -269,14 +270,19 @@ async function runIntelligenceExecution(
     report.discard_count = report.processed_leads.filter(lead => lead.qualification.category === "DISCARD").length;
     report.avg_score = report.processed_leads.length ? Math.round(report.processed_leads.reduce((sum, lead) => sum + lead.qualification.fit_score, 0) / report.processed_leads.length * 10) / 10 : 0;
     if (report.report_intelligence) report.report_intelligence.companies_selected = report.processed_leads.length;
+    // Failure honesty: classify run-level coverage from the REAL per-account telemetry so a
+    // degraded/insufficient run is not reported as a healthy "no strong opportunity" (§4).
+    const coverageState = classifyRunCoverage(researchedLeads.map((lead) => lead.enrichment.account_research ?? null));
+    const commercialOutcome = report.processed_leads.length > 0 ? "completed_with_opportunities"
+      : coverageState === "insufficient" ? "completed_insufficient_coverage" : "completed_no_strong_opportunity";
     (report as LeadLensReport & { _intelligence_run?: unknown })._intelligence_run = {
       kind: "productive_intelligence_spine_v1", contextRef, leadHunterRunId,
       stage: "report", researched: researchLimit, delivered: report.processed_leads.length,
       discoveryProvenanceIsEvidence: false, firstReview: true,
-      commercialOutcome: report.processed_leads.length > 0 ? "completed_with_opportunities" : "completed_no_strong_opportunity",
+      coverageState, commercialOutcome,
     };
 
-    run = { ...run, status: "completed", stage: "report", report, failureCode: null, updatedAt: (deps.now ?? (() => new Date()))().toISOString() };
+    run = { ...run, coverageState, status: "completed", stage: "report", report, failureCode: null, updatedAt: (deps.now ?? (() => new Date()))().toISOString() };
     // Fenced finalize: a stale executor cannot overwrite a newer attempt's completed result.
     if (!(await deps.runStore.save(run))) return { ok: true, run, reused: true };
     return { ok: true, run, reused: false };

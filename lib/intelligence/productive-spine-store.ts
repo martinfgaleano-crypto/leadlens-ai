@@ -19,6 +19,9 @@ export interface IntelligenceRunRecord {
    *  every authoritative save/finalize fences on it so a stale (superseded) executor cannot
    *  overwrite a newer attempt's result. Distinct from `attempt` (logical retry count). */
   executionGeneration: number;
+  /** Run-level coverage honesty: sufficient | partial | insufficient. Lets the durable
+   *  commercialOutcome distinguish an insufficient-coverage run from a healthy abstention. */
+  coverageState?: "sufficient" | "partial" | "insufficient";
   deliveryLimit: number;
   researchLimit: number;
   researchAudit?: Array<{
@@ -167,8 +170,13 @@ function metadata(record: IntelligenceRunRecord) {
     failureCode: record.failureCode, attempt: record.attempt, createdAt: record.createdAt, updatedAt: record.updatedAt,
     deliveryLimit: record.deliveryLimit, researchLimit: record.researchLimit,
     researchAudit: record.researchAudit ?? [],
+    coverageState: record.coverageState ?? null,
+    // Failure honesty: a run with no delivered opportunities is only a genuine commercial
+    // abstention when coverage was NOT insufficient; degraded coverage is reported as such
+    // rather than masquerading as "no strong opportunity".
     commercialOutcome: record.report
-      ? (record.report.processed_leads.length ? "completed_with_opportunities" : "completed_no_strong_opportunity")
+      ? (record.report.processed_leads.length ? "completed_with_opportunities"
+        : record.coverageState === "insufficient" ? "completed_insufficient_coverage" : "completed_no_strong_opportunity")
       : record.status === "failed" ? "insufficient_research" : null,
   };
 }

@@ -57,6 +57,25 @@ export interface AccountDeepResearchTelemetry {
   account_elapsed_ms?: number;
 }
 
+/** Run-level coverage honesty (FAILURE HONESTY): distinguish a healthy run that simply found
+ *  no strong opportunity from one where provider/enrichment degradation left coverage too weak
+ *  to draw a strong commercial conclusion. Provider failure is operational, never a commercial
+ *  Hold/counterevidence by itself. "insufficient" only when a material share of researched
+ *  accounts were degraded; a minority is "partial"; none is "sufficient". */
+export function classifyRunCoverage(telemetries: Array<AccountDeepResearchTelemetry | null | undefined>): "sufficient" | "partial" | "insufficient" {
+  const present = telemetries.filter((t): t is AccountDeepResearchTelemetry => Boolean(t));
+  const n = present.length;
+  if (n === 0) return "insufficient";
+  const degraded = present.filter((t) =>
+    t.enrichment_failed?.reason === "provider_degraded"
+    || t.early_stop_reason === "providers_unavailable"
+    || (t.provider_calls > 0 && t.provider_failures === t.provider_calls),
+  ).length;
+  if (degraded === 0) return "sufficient";
+  if (degraded >= Math.ceil(n / 2)) return "insufficient";
+  return "partial";
+}
+
 /** Is an error message a provider quota / circuit / rate-limit failure (not a bug)? */
 export function isProviderDegradedError(message: string): boolean {
   return /circuit_open|credit|quota|rate.?limit|\b429\b|\b529\b|overloaded|insufficient[_\s]?balance|balance is too low/i.test(message);
