@@ -26,6 +26,7 @@ import {
 } from "@/lib/interpretation/confirmed-context-store";
 import type { ResearchReadinessAssessment } from "./research-readiness";
 import { classifyOrganization } from "@/lib/discovery/organization-type";
+import { isOfferSidePeer } from "@/lib/discovery/offer-side-peer";
 
 // ─── Candidate model ──────────────────────────────────────────────────────────
 
@@ -385,6 +386,13 @@ function classifyGroup(g: Grouped, plan: DiscoveryPlan, ambiguous: Set<string>, 
   } else if (excl.excluded && excl.certain) {
     status = "excluded";
     statusReason = `Hard exclusion matched: ${excl.rule}`;
+  } else if (isOfferSidePeer({ name, organizationType: orgType, industry: primary.industry }, { organizationTypes: plan.organizationTypes, industries: plan.industries, objectiveType: plan.objectiveType, targetRelationship: plan.targetRelationship })) {
+    // Offer-side peer safety net (§5): a service/consulting/agency firm surfaced under a
+    // buyer profile that does NOT target service firms is the seller's own category, not a
+    // target. Excluded deterministically; never triggers when the buyer wants services or
+    // the objective is partnerships.
+    status = "excluded";
+    statusReason = "Offer-side peer: service/consulting firm not in the buyer target profile";
   } else if (ambiguous.has(norm(name)) || !domain && g.orgs.every((o) => !o.domain) && !country) {
     status = "identity_ambiguous";
     statusReason = "Could not resolve to one canonical organization (no domain and ambiguous name).";
