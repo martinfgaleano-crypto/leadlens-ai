@@ -111,10 +111,30 @@ export class SupabaseIntelligenceRunStore implements IntelligenceRunStore {
   }
 
   async claim(runId: string, userId: string, allowed: IntelligenceRunStatus[], forceProcessing = false): Promise<boolean> {
-    let query = this.db.from("snapshot_reports").update({ status: "processing" })
-      .eq("job_id", runId).eq("user_id", userId).in("status", allowed);
-    if (allowed.includes("processing") && !forceProcessing) query = query.contains("report_json", { _intelligence_run: { stage: "queued" } });
-    const { data, error } = await query.select("job_id");
+    // Initial queued claim (RUNTIME SCALE SAFETY V1): the run is status=processing +
+    // stage=queued. Previously the claim only SET status=processing — a no-op on an
+    // already-processing row — so the contains(stage:queued) guard stayed true and TWO
+    // concurrent claims both matched → double execution. Fix: atomically advance the
+    // nested stage OUT of "queued" in the SAME conditional update. Postgres serializes the
+    // row: the first claim flips stage→lead_hunter, so the second claim's
+    // contains(stage:queued) guard no longer matches (0 rows) → exactly one winner.
+    if (allowed.includes("processing") && !forceProcessing) {
+      const rec = await this.load(runId, userId);
+      if (!rec || rec.status !== "processing" || rec.stage !== "queued") return false;
+      const claimed = serialize({ ...rec, stage: "lead_hunter", updatedAt: new Date().toISOString() });
+      const { data, error } = await this.db.from("snapshot_reports")
+        .update({ status: "processing", report_json: claimed })
+        .eq("job_id", runId).eq("user_id", userId).eq("status", "processing")
+        .contains("report_json", { _intelligence_run: { stage: "queued" } })
+        .select("job_id");
+      return !error && Boolean(data?.length);
+    }
+    // Failed-retry / forced (stale) reclaim: atomic CAS on the top-level status column.
+    // (WHERE status IN allowed flips a failed run to processing exactly once; a forced
+    // stale reclaim of a hung processing run is a bounded recovery edge.)
+    const { data, error } = await this.db.from("snapshot_reports").update({ status: "processing" })
+      .eq("job_id", runId).eq("user_id", userId).in("status", allowed)
+      .select("job_id");
     return !error && Boolean(data?.length);
   }
 }
