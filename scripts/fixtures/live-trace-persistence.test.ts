@@ -95,7 +95,7 @@ const run = async () => {
   // Deep timing (§8/§9/§15): real per-op durations map into the trace + stage work.
   const timed = buildAccountRunTrace({
     runId: "r", accountId: "acct.example", contextRefSafe: "ctx",
-    telemetry: tel({ provider_ops: [
+    telemetry: tel({ account_elapsed_ms: 4000, provider_ops: [
       { provider: "tavily", operation: "search", stage: "event", duration_ms: 1800, ok: true, timeout: false, results: 5 },
       { provider: "full_text", operation: "full_text", stage: "event", duration_ms: 2600, ok: true, timeout: false, results: 1 },
       { provider: "anthropic", operation: "llm", stage: "event", duration_ms: 900, ok: true, timeout: false, results: 1 },

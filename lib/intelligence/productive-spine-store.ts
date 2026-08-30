@@ -15,6 +15,10 @@ export interface IntelligenceRunRecord {
   report: LeadLensReport | null;
   failureCode: string | null;
   attempt: number;
+  /** Execution generation (migration 058, top-level column). The atomic claim bumps it;
+   *  every authoritative save/finalize fences on it so a stale (superseded) executor cannot
+   *  overwrite a newer attempt's result. Distinct from `attempt` (logical retry count). */
+  executionGeneration: number;
   deliveryLimit: number;
   researchLimit: number;
   researchAudit?: Array<{
@@ -32,8 +36,14 @@ export interface IntelligenceRunRecord {
 export interface IntelligenceRunStore {
   load(runId: string, userId: string): Promise<IntelligenceRunRecord | null>;
   create(record: IntelligenceRunRecord): Promise<{ created: boolean }>;
-  save(record: IntelligenceRunRecord): Promise<void>;
-  claim(runId: string, userId: string, allowed: IntelligenceRunStatus[], forceProcessing?: boolean): Promise<boolean>;
+  /** Fenced authoritative write. Returns true if written; FALSE (no throw) when the row's
+   *  execution_generation no longer matches record.executionGeneration — i.e. a stale
+   *  (superseded) executor whose write must be a no-op. Throws only on a genuine DB error. */
+  save(record: IntelligenceRunRecord): Promise<boolean>;
+  /** Atomic claim: advances execution_generation and returns the NEW generation the caller
+   *  must carry (and fence all its writes on). Returns null when the run is not claimable
+   *  (already completed, wrong owner, mid-flight without force, or lost the generation CAS). */
+  claim(runId: string, userId: string, allowed: IntelligenceRunStatus[], forceProcessing?: boolean): Promise<number | null>;
 }
 
 export class InMemoryIntelligenceRunStore implements IntelligenceRunStore {
@@ -47,16 +57,20 @@ export class InMemoryIntelligenceRunStore implements IntelligenceRunStore {
     this.rows.set(record.runId, structuredClone(record));
     return { created: true };
   }
-  async save(record: IntelligenceRunRecord) {
+  async save(record: IntelligenceRunRecord): Promise<boolean> {
     const prior = this.rows.get(record.runId);
     if (!prior || prior.userId !== record.userId) throw new Error("intelligence_run_not_owned");
+    // Fence: a stale executor (older generation) cannot overwrite a newer attempt.
+    if ((prior.executionGeneration ?? 0) !== (record.executionGeneration ?? 0)) return false;
     this.rows.set(record.runId, structuredClone(record));
-  }
-  async claim(runId: string, userId: string, allowed: IntelligenceRunStatus[], forceProcessing = false) {
-    const row = this.rows.get(runId);
-    if (!row || row.userId !== userId || !allowed.includes(row.status) || (row.status === "processing" && row.stage !== "queued" && !forceProcessing)) return false;
-    this.rows.set(runId, { ...row, status: "processing", stage: "lead_hunter", updatedAt: new Date().toISOString() });
     return true;
+  }
+  async claim(runId: string, userId: string, allowed: IntelligenceRunStatus[], forceProcessing = false): Promise<number | null> {
+    const row = this.rows.get(runId);
+    if (!row || row.userId !== userId || !allowed.includes(row.status) || (row.status === "processing" && row.stage !== "queued" && !forceProcessing)) return null;
+    const nextGen = (row.executionGeneration ?? 0) + 1;
+    this.rows.set(runId, { ...row, status: "processing", stage: "lead_hunter", executionGeneration: nextGen, updatedAt: new Date().toISOString() });
+    return nextGen;
   }
 }
 
@@ -66,7 +80,7 @@ export class SupabaseIntelligenceRunStore implements IntelligenceRunStore {
 
   async load(runId: string, userId: string): Promise<IntelligenceRunRecord | null> {
     const { data, error } = await this.db.from("snapshot_reports")
-      .select("job_id,user_id,plan,status,report_json,created_at")
+      .select("job_id,user_id,plan,status,report_json,created_at,execution_generation")
       .eq("job_id", runId).eq("user_id", userId).maybeSingle();
     if (error || !data) return null;
     const payload = data.report_json?._intelligence_run;
@@ -78,6 +92,7 @@ export class SupabaseIntelligenceRunStore implements IntelligenceRunStore {
       report: data.status === "completed" && Array.isArray(data.report_json?.processed_leads) ? data.report_json : null,
       failureCode: payload.failureCode ?? null,
       attempt: payload.attempt ?? 1,
+      executionGeneration: data.execution_generation ?? 0,
       deliveryLimit: payload.deliveryLimit ?? 2,
       researchLimit: payload.researchLimit ?? 5,
       researchAudit: payload.researchAudit ?? [],
@@ -89,7 +104,7 @@ export class SupabaseIntelligenceRunStore implements IntelligenceRunStore {
   async create(record: IntelligenceRunRecord): Promise<{ created: boolean }> {
     const { error } = await this.db.from("snapshot_reports").insert({
       job_id: record.runId, user_id: record.userId, plan: record.plan, status: record.status,
-      report_json: serialize(record),
+      report_json: serialize(record), execution_generation: record.executionGeneration ?? 0,
     });
     if (error) {
       if (error.code === "23505" || /duplicate key|already exists/i.test(error.message)) return { created: false };
@@ -98,44 +113,50 @@ export class SupabaseIntelligenceRunStore implements IntelligenceRunStore {
     return { created: true };
   }
 
-  async save(record: IntelligenceRunRecord): Promise<void> {
+  async save(record: IntelligenceRunRecord): Promise<boolean> {
     const payload = record.report ? { ...record.report, _intelligence_run: metadata(record) } : serialize(record);
     const counts = record.report ? {
       lead_count: record.report.total_leads, hot_count: record.report.hot_count,
       warm_count: record.report.warm_count, avg_score: record.report.avg_score,
     } : {};
+    // FENCE (migration 058): only the current execution generation may mutate authoritative
+    // run state. save() never changes execution_generation (the claim owns it) and requires
+    // it to still equal this executor's generation. A stale/superseded executor matches 0
+    // rows → returns false (a clean no-op), so it can never overwrite a newer attempt.
     const { data, error } = await this.db.from("snapshot_reports")
       .update({ status: record.status, report_json: payload, ...counts })
-      .eq("job_id", record.runId).eq("user_id", record.userId).select("job_id");
-    if (error || !data?.length) throw new Error("save intelligence run failed or not owned");
+      .eq("job_id", record.runId).eq("user_id", record.userId)
+      .eq("execution_generation", record.executionGeneration ?? 0)
+      .select("job_id");
+    if (error) throw new Error(`save intelligence run failed: ${error.message}`);
+    return Boolean(data?.length); // false = fenced out (stale executor), not an error
   }
 
-  async claim(runId: string, userId: string, allowed: IntelligenceRunStatus[], forceProcessing = false): Promise<boolean> {
-    // Initial queued claim (RUNTIME SCALE SAFETY V1): the run is status=processing +
-    // stage=queued. Previously the claim only SET status=processing — a no-op on an
-    // already-processing row — so the contains(stage:queued) guard stayed true and TWO
-    // concurrent claims both matched → double execution. Fix: atomically advance the
-    // nested stage OUT of "queued" in the SAME conditional update. Postgres serializes the
-    // row: the first claim flips stage→lead_hunter, so the second claim's
-    // contains(stage:queued) guard no longer matches (0 rows) → exactly one winner.
-    if (allowed.includes("processing") && !forceProcessing) {
-      const rec = await this.load(runId, userId);
-      if (!rec || rec.status !== "processing" || rec.stage !== "queued") return false;
-      const claimed = serialize({ ...rec, stage: "lead_hunter", updatedAt: new Date().toISOString() });
-      const { data, error } = await this.db.from("snapshot_reports")
-        .update({ status: "processing", report_json: claimed })
-        .eq("job_id", runId).eq("user_id", userId).eq("status", "processing")
-        .contains("report_json", { _intelligence_run: { stage: "queued" } })
-        .select("job_id");
-      return !error && Boolean(data?.length);
-    }
-    // Failed-retry / forced (stale) reclaim: atomic CAS on the top-level status column.
-    // (WHERE status IN allowed flips a failed run to processing exactly once; a forced
-    // stale reclaim of a hung processing run is a bounded recovery edge.)
-    const { data, error } = await this.db.from("snapshot_reports").update({ status: "processing" })
-      .eq("job_id", runId).eq("user_id", userId).in("status", allowed)
+  async claim(runId: string, userId: string, allowed: IntelligenceRunStatus[], forceProcessing = false): Promise<number | null> {
+    // Atomic claim via execution_generation CAS (migration 058). The claim advances the
+    // generation and returns it; the executor fences every authoritative write on it. The
+    // .eq("execution_generation", currentGen) predicate is the exclusivity primitive for
+    // ALL paths — initial queued claim, failed-retry, and stale reclaim: two concurrent
+    // claimants both read gen=N and both UPDATE …WHERE execution_generation=N SET =N+1;
+    // Postgres serializes the row so exactly one matches (→N+1) and the other matches 0.
+    const rec = await this.load(runId, userId);
+    if (!rec || !allowed.includes(rec.status)) return null;
+    const isQueued = rec.status === "processing" && rec.stage === "queued";
+    // A mid-flight processing run is not claimable unless it is the initial queued state or
+    // a forced (stale) reclaim.
+    if (rec.status === "processing" && !isQueued && !forceProcessing) return null;
+    const currentGen = rec.executionGeneration ?? 0;
+    const nextGen = currentGen + 1;
+    const upd: Record<string, unknown> = { status: "processing", execution_generation: nextGen };
+    // For the initial queued claim, also advance stage out of "queued" so a later GET does
+    // not redundantly redispatch a run that is already being executed.
+    if (isQueued) upd.report_json = serialize({ ...rec, stage: "lead_hunter", executionGeneration: nextGen, updatedAt: new Date().toISOString() });
+    const { data, error } = await this.db.from("snapshot_reports")
+      .update(upd)
+      .eq("job_id", runId).eq("user_id", userId)
+      .eq("execution_generation", currentGen).in("status", allowed)
       .select("job_id");
-    return !error && Boolean(data?.length);
+    return (!error && Boolean(data?.length)) ? nextGen : null;
   }
 }
 

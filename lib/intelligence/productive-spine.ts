@@ -68,7 +68,7 @@ export async function enqueueIntelligenceRun(
   const run: IntelligenceRunRecord = {
     runId, userId: input.userId, contextRef: built.input.contextRef, clientId: input.clientId ?? null,
     plan: input.plan, status: "processing", stage: "queued", leadHunterRunId: null,
-    report: null, failureCode: null, attempt: 1, deliveryLimit: input.deliveryLimit,
+    report: null, failureCode: null, attempt: 1, executionGeneration: 0, deliveryLimit: input.deliveryLimit,
     researchLimit: input.researchLimit, createdAt: now, updatedAt: now,
   };
   const created = await deps.runStore.create(run);
@@ -89,13 +89,15 @@ export async function executeIntelligenceRun(
   if (!record) return { ok: false, reason: "run_not_found", runId };
   if (record.status === "completed") return { ok: true, run: record, reused: true };
   const stale = record.status === "processing" && Date.now() - new Date(record.updatedAt).getTime() > 15 * 60_000;
-  const claimed = await deps.runStore.claim(runId, userId, record.status === "failed" ? ["failed"] : ["processing"], stale);
-  if (!claimed) return { ok: true, run: record, reused: true };
+  const generation = await deps.runStore.claim(runId, userId, record.status === "failed" ? ["failed"] : ["processing"], stale);
+  if (generation === null) return { ok: true, run: record, reused: true };
   const input: StartIntelligenceRunInput = {
     userId, context: record.contextRef, plan: record.plan, clientId: record.clientId ?? undefined,
     deliveryLimit: record.deliveryLimit, researchLimit: record.researchLimit,
   };
-  return runIntelligenceExecution(input, deps, record, runId);
+  // Carry the claimed generation so every authoritative write in this execution fences on
+  // it — a stale/superseded executor can never overwrite this attempt's result (§19).
+  return runIntelligenceExecution(input, deps, { ...record, executionGeneration: generation }, runId);
 }
 
 export function intelligenceRunId(input: Pick<StartIntelligenceRunInput, "userId" | "context" | "idempotencyKey">): string {
@@ -136,7 +138,9 @@ async function runIntelligenceExecution(
 
   const saveStage = async (stage: IntelligenceRunRecord["stage"], patch: Partial<IntelligenceRunRecord> = {}) => {
     run = { ...run, ...patch, stage, status: "processing", failureCode: null, updatedAt: (deps.now ?? (() => new Date()))().toISOString() };
-    await deps.runStore.save(run);
+    // Fenced write: if this executor's generation was superseded (a newer attempt reclaimed
+    // the run), save() returns false → abort cleanly so we never overwrite the newer attempt.
+    if (!(await deps.runStore.save(run))) throw new StaleExecutorError();
   };
 
   try {
@@ -269,9 +273,13 @@ async function runIntelligenceExecution(
     };
 
     run = { ...run, status: "completed", stage: "report", report, failureCode: null, updatedAt: (deps.now ?? (() => new Date()))().toISOString() };
-    await deps.runStore.save(run);
+    // Fenced finalize: a stale executor cannot overwrite a newer attempt's completed result.
+    if (!(await deps.runStore.save(run))) return { ok: true, run, reused: true };
     return { ok: true, run, reused: false };
   } catch (error) {
+    // A superseded executor aborts silently — it must not write a failure over the newer
+    // attempt that reclaimed the run (§18/§24).
+    if (error instanceof StaleExecutorError) return { ok: true, run, reused: true };
     const code = safeFailureCode(error);
     // A run that failed before/without account research still finalizes ONE bounded
     // trace so no diagnostics are lost (§22). Best-effort; never rethrows.
@@ -383,6 +391,12 @@ function emitAccountTraces(
       }));
     } catch { /* telemetry must never break a run */ }
   }
+}
+
+/** Thrown when a fenced write finds this executor's generation superseded — the executor
+ *  aborts cleanly rather than overwriting the newer attempt (RUNTIME SCALE SAFETY V1 §19). */
+class StaleExecutorError extends Error {
+  constructor() { super("stale_executor"); this.name = "StaleExecutorError"; }
 }
 
 function safeFailureCode(error: unknown): string {
