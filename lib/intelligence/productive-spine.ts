@@ -36,6 +36,9 @@ export interface ProductiveSpineDeps {
   // Whether this run used real providers. Only the caller knows; defaults to
   // "controlled" so a doubled run is never mislabeled as live evidence.
   traceProvenance?: "live" | "controlled";
+  /** Bounded account-research concurrency (default 1 = serial). Env-gated at the route so
+   * production stays serial until a live A/B validates the parallel path. */
+  researchConcurrency?: number;
   // Optional Vault accretion sink. Receives the discovered candidate companies so
   // valid, customer-INDEPENDENT company facts can accumulate durably. Best-effort:
   // any error is swallowed and NEVER alters the Intelligence run (§30). Only public
@@ -191,6 +194,7 @@ async function runIntelligenceExecution(
       deliveryLimit: input.deliveryLimit,
       deliveryQualityFloor: "warm",
       decisionOnly: true,
+      researchConcurrency: deps.researchConcurrency ?? 1,
       onResearchComplete: (leads) => { researchedLeads = leads; },
     });
 

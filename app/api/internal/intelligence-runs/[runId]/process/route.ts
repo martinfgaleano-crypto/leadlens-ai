@@ -42,6 +42,9 @@ export async function POST(req: NextRequest, { params }: { params: { runId: stri
     discoveryRunner: (await import("@/lib/lead-hunter/discovery-runner")).defaultDiscoveryRunner,
     pipeline: (await import("@/lib/pipeline")).runLeadLensPipeline,
     traceProvenance: "live",
+    // Env-gated bounded account-research concurrency (default 1 = serial). Enabled only for
+    // the controlled live A/B until it is validated for production.
+    researchConcurrency: Math.max(1, Number(process.env.INTELLIGENCE_RESEARCH_CONCURRENCY) || 1),
     onAccountTrace: (trace) => { tracePersists.push(traceSink.persist(trace).catch(() => { /* telemetry never fails a run */ })); },
     // Accrete valid discovered companies into the durable, customer-independent Vault
     // registry (best-effort; universal facts only). Never blocks or alters the run.
