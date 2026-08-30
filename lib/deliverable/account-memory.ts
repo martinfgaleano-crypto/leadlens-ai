@@ -77,17 +77,43 @@ const hostKey = (label: string | null, url: string | null): string | null => {
   catch { return label ? label.toLowerCase().trim() : null; }
 };
 
+/** Canonical account key (ACCOUNT MEMORY CANONICAL LINEAGE V1 §A6/§A7): the stable
+ *  cross-run identity of an account — its verified canonical domain, NOT the index-suffixed
+ *  presentation slug (`alpha-0`) which forks lineage on report reorder. Falls back to the VM
+ *  id only when no domain is available (identity unresolved → not a durable key). */
+export function canonicalAccountKey(a: AccountBriefVM): string {
+  const raw = a.monitorIdentity?.domain ?? a.domain ?? "";
+  const dom = raw.trim().toLowerCase().replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/.*$/, "").replace(/\.$/, "");
+  return dom ? `domain:${dom}` : a.id;
+}
+
+/** Canonical customer scope key (§A3/§A4). A run/job/snapshot identifier is NOT a stable
+ *  customer scope — a later run under the same logical context must find its predecessor, so
+ *  a run-derived clientKey collapses to the logical context. A real context/client scope
+ *  (already `context:`/`client:`-formed) is used as-is so distinct contexts stay separate. */
+export function canonicalClientKey(clientKey: string, contextVersion: string): string {
+  if (/^(intel_run|intel_[a-f0-9]|job_|snap_|run_|search_)/i.test(clientKey)) return `context:${contextVersion}`;
+  return clientKey;
+}
+
+/** A structural disqualifier (wrong entity / non-company / hard ICP reject) never enters
+ *  active Account Memory (§A27/§32 — Hold != structural reject). */
+export function isStructuralReject(a: AccountBriefVM): boolean {
+  return (a.decisionNote ?? "").toLowerCase().includes("structural_disqualifier");
+}
+
 /** Derive a canonical snapshot from a customer-facing Case + review identity. */
 export function snapshotAccountReview(a: AccountBriefVM, review: { reviewId: string; reviewedAt: string; contextVersion: string }): AccountReviewSnapshot {
+  const accountKey = canonicalAccountKey(a);
   const changeKeys = Array.from(new Set(a.whatChanged.filter(c => isVerified(c.kind) && c.date).map(c => `${c.kind}:${c.date}`)));
   const origins = Array.from(new Set(a.sources.map(s => hostKey(s.label, s.url)).filter(Boolean) as string[]));
   const details = a.validationDetails ?? a.validations.map(q => ({ question: q, decisionCritical: false, howToValidate: null, changesDecisionBecause: null }));
   const themeKeys = Array.from(new Set(details.map(v => validationKey(v.question)).filter(Boolean) as string[]));
   const dcKeys = Array.from(new Set(details.filter(v => v.decisionCritical).map(v => validationKey(v.question)).filter(Boolean) as string[]));
   return {
-    reviewId: review.reviewId, reviewedAt: review.reviewedAt, contextVersion: review.contextVersion, accountId: a.id,
+    reviewId: review.reviewId, reviewedAt: review.reviewedAt, contextVersion: review.contextVersion, accountId: accountKey,
     accountIdentity: a.monitorIdentity ? {
-      stableAccountKey: a.id,
+      stableAccountKey: accountKey,
       canonicalName: a.monitorIdentity.canonicalName,
       domain: a.monitorIdentity.domain,
       aliases: a.monitorIdentity.aliases,
@@ -97,7 +123,7 @@ export function snapshotAccountReview(a: AccountBriefVM, review: { reviewId: str
       fromUniverse: a.monitorIdentity.fromUniverse,
       lineage: a.monitorIdentity.fromUniverse ? "candidate_universe" : "research_report",
     } : {
-      stableAccountKey: a.id,
+      stableAccountKey: accountKey,
       canonicalName: a.company,
       domain: a.domain,
       aliases: [],

@@ -5,7 +5,7 @@
 // idempotent, owner/client/context scoped. Fails closed to first-review behavior
 // when storage is unavailable (§51).
 import type { AccountReviewSnapshot } from "./account-memory";
-import { snapshotAccountReview, snapshotFingerprint } from "./account-memory";
+import { snapshotAccountReview, snapshotFingerprint, canonicalAccountKey, canonicalClientKey, isStructuralReject } from "./account-memory";
 import type { AccountBriefVM } from "./deliverable-view-model";
 
 export const ACCOUNT_MEMORY_STORE_VERSION = "account-memory-store-v1";
@@ -29,9 +29,11 @@ export function toRow(snap: AccountReviewSnapshot, scope: SnapshotScope): Review
   return { ownerUserId: scope.ownerUserId, clientKey: scope.clientKey, accountId: snap.accountId, reviewId: snap.reviewId, contextVersion: snap.contextVersion, reviewedAt: snap.reviewedAt, snapshot: snap, fingerprint: snapshotFingerprint(snap) };
 }
 
-/** Build the canonical rows for a completed review from its view-model accounts. */
+/** Build the canonical rows for a completed review from its view-model accounts. Structural
+ *  rejects (wrong entity / non-company / hard ICP disqualifier) are excluded — they never
+ *  enter active Account Memory (§A27). */
 export function rowsForReview(accounts: AccountBriefVM[], scope: SnapshotScope, meta: ReviewMeta): ReviewSnapshotRow[] {
-  return accounts.map((a) => toRow(snapshotAccountReview(a, meta), scope));
+  return accounts.filter((a) => !isStructuralReject(a)).map((a) => toRow(snapshotAccountReview(a, meta), scope));
 }
 
 /** Pure predecessor selection: the latest prior row for the SAME account within
@@ -58,8 +60,12 @@ export class InMemoryAccountMemoryRepo implements AccountMemoryRepo {
   rows: ReviewSnapshotRow[] = [];
   async persist(rows: ReviewSnapshotRow[]): Promise<void> {
     for (const row of rows) {
-      const i = this.rows.findIndex((r) => r.ownerUserId === row.ownerUserId && r.clientKey === row.clientKey && r.accountId === row.accountId && r.reviewId === row.reviewId);
-      if (i >= 0) this.rows[i] = row; else this.rows.push(row);   // idempotent
+      const existing = this.rows.find((r) => r.ownerUserId === row.ownerUserId && r.clientKey === row.clientKey && r.accountId === row.accountId && r.reviewId === row.reviewId);
+      // IMMUTABLE (§A12/§A23/§A24): same (owner,client,account,review) is insert-once. An
+      // identical re-ingest is idempotent (no-op); a CHANGED fingerprint is a CONFLICT — the
+      // original is preserved, never overwritten (no last-writer mutation of history).
+      if (existing) continue;
+      this.rows.push(row);
     }
   }
   async loadPredecessors(scope: SnapshotScope, accountIds: string[], current: { reviewId: string; reviewedAt: string }): Promise<Record<string, AccountReviewSnapshot>> {
@@ -78,9 +84,12 @@ export class SupabaseAccountMemoryRepo implements AccountMemoryRepo {
   constructor(private db: any) {}
   async persist(rows: ReviewSnapshotRow[]): Promise<void> {
     if (!rows.length) return;
+    // IMMUTABLE (§A12): ignoreDuplicates so a re-ingest of an existing
+    // (owner,client,account,review) is a no-op — history is never overwritten (a changed
+    // payload under the same review is a conflict resolved in favour of the original).
     await this.db.from("account_review_snapshots").upsert(
       rows.map((r) => ({ owner_user_id: r.ownerUserId, client_key: r.clientKey, account_id: r.accountId, review_id: r.reviewId, context_version: r.contextVersion, reviewed_at: r.reviewedAt, snapshot: r.snapshot, fingerprint: r.fingerprint })),
-      { onConflict: "owner_user_id,client_key,account_id,review_id" },
+      { onConflict: "owner_user_id,client_key,account_id,review_id", ignoreDuplicates: true },
     );
   }
   async loadPredecessors(scope: SnapshotScope, accountIds: string[], current: { reviewId: string; reviewedAt: string }): Promise<Record<string, AccountReviewSnapshot>> {
@@ -106,9 +115,21 @@ export interface ReviewMemory { current: ReviewMeta; previousById: Record<string
  *  closed — any repo error yields null (first-review behavior), never a throw. */
 export async function persistAndLoadMemory(repo: AccountMemoryRepo, accounts: AccountBriefVM[], scope: SnapshotScope, meta: ReviewMeta, onError?: (e: unknown) => void): Promise<ReviewMemory | null> {
   try {
-    const rows = rowsForReview(accounts, scope, meta);
+    // Canonical scope (§A3/§A4): a run-derived clientKey collapses to the logical context so
+    // a later run finds its predecessor; a real context/client scope is preserved as-is.
+    const canonScope: SnapshotScope = { ownerUserId: scope.ownerUserId, clientKey: canonicalClientKey(scope.clientKey, meta.contextVersion) };
+    const rows = rowsForReview(accounts, canonScope, meta);
     await repo.persist(rows);
-    const previousById = await repo.loadPredecessors(scope, accounts.map((a) => a.id), meta);
+    // Predecessors are matched on the CANONICAL account key (domain), but returned keyed by
+    // the caller's VM id so report reorder / index-suffixed ids still resolve lineage (§A6/§A21).
+    const keyByVmId = new Map(accounts.map((a) => [a.id, canonicalAccountKey(a)] as const));
+    const canonicalKeys = Array.from(new Set(accounts.map((a) => canonicalAccountKey(a))));
+    const predsByCanonical = await repo.loadPredecessors(canonScope, canonicalKeys, meta);
+    const previousById: Record<string, AccountReviewSnapshot> = {};
+    for (const a of accounts) {
+      const pred = predsByCanonical[keyByVmId.get(a.id)!];
+      if (pred) previousById[a.id] = pred;
+    }
     return Object.keys(previousById).length ? { current: meta, previousById } : null;
   } catch (e) { onError?.(e); return null; }
 }
