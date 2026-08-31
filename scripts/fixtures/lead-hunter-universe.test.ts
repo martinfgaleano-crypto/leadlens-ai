@@ -146,6 +146,8 @@ t("golden partnerships: reaches an ok universe", (await goldenRun(GOLDEN_FIXTURE
     { name: "Trade Shows", domain: "trade.gov", organizationType: "manufacturing events" },
     { name: "Base", domain: "example.com", organizationType: "manufacturer" },
     { name: "Distribuidores Mayoristas Colombia", domain: "example.org", organizationType: "distributor" },
+    { name: "Computrabajo", domain: "co.computrabajo.com", organizationType: "manufacturer" },
+    { name: "Más Colombia", domain: "mascolombia.com", organizationType: "manufacturer" },
   ];
   const runner: DiscoveryRunner = async () => ({
     orgs: noise.map(O), providersAvailable: ["brave"], providersFailed: [], operatingMode: "full_discovery",

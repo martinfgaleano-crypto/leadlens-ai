@@ -18,6 +18,8 @@ const allContexts = [
   base("us_logistics", ["logistics operator", "distributor"], ["logistics and distribution"], "United States", ["new_facility", "contract_award", "capacity"]),
   base("us_operations_saas", ["software company"], ["B2B operational software"], "United States", ["expansion", "new_market", "partnership"]),
   base("co_manufacturing", ["fabricante"], ["manufactura de alimentos y bebidas"], "Colombia", ["new_facility", "capacity", "investment"]),
+  base("co_industrial_manufacturing", ["fabricante", "empresa industrial"], ["manufactura industrial"], "Colombia", ["new_facility", "capacity", "investment", "operational_transformation"]),
+  base("co_industrial_customer_context", ["Fabricantes industriales medianos con planta propia en Colombia", "Fabricantes industriales grandes con operaciones propias en Colombia", "Empresas manufactureras con expansión reciente de capacidad productiva en Colombia"], ["manufactura industrial"], "Colombia", ["new_facility", "capacity", "investment", "operational_transformation"]),
   base("co_logistics", ["operador logistico", "distribuidor"], ["logistica y distribucion"], "Colombia", ["new_facility", "contract_award", "capacity"]),
 ];
 const requested = new Set(process.argv.slice(2));

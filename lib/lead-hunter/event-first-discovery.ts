@@ -32,6 +32,7 @@ export interface EventDiscoveryCandidate {
   event_type_hint: EventFamily;
   event_date_hint: string | null;
   headline: string;
+  source_excerpt: string | null;
   source_url: string;
   source_origin: string;
   provider: string;
@@ -50,6 +51,12 @@ export interface EventFirstMetrics {
   rejected: Record<string, number>;
   provider_calls: Record<string, number>;
   provider_failures: Record<string, string>;
+  result_types: Record<string, number>;
+  company_mentions: number;
+  domains_resolved: number;
+  geography_resolved: number;
+  target_valid: number;
+  result_audit: Array<{ provider: string; type: EventResultType; title: string | null; url: string; subjects: string[]; recent: boolean }>;
   result_sample: Array<{ query: string; title: string | null; url: string; published_date: string | null; provider: string }>;
 }
 
@@ -85,10 +92,26 @@ const compact = (value: string) => value.trim().replace(/\s+/g, " ");
 const normalize = (value: string) => value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 const slug = (value: string) => normalize(value).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
 
+const LEGAL_SUFFIX = /(?:,?\s+(?:s\.?\s*a\.?\s*s\.?|s\.?\s*a\.?|ltda\.?|limitada|s\.?\s*a\.?\s*s\.?\s+bic|s\.?\s*a\.?\s+bic))\.?$/i;
+export function normalizeLatamCompanyName(value: string): string {
+  return compact(value)
+    .replace(/^(?:(?:la|el)\s+)?(?:empresa|compa[ñn][ií]a|firma|fabricante|operador(?:a)?\s+log[ií]stic[oa])(?:\s+(?:colombian[oa]|cale[ñn]a|pais[ao]|nacional))?\s+/i, "")
+    .replace(LEGAL_SUFFIX, "")
+    .replace(/[,:;-]+$/g, "")
+    .trim();
+}
+
 export function planEventFirstQueries(plan: DiscoveryPlan, maxQueries = 6): EventFirstQuery[] {
   const geography = plan.geographies[0] || "United States";
   const language: "en" | "es" = /colombia|latinoam|méxico|mexico|españa|spain/i.test(geography) ? "es" : "en";
-  const buyerTerms = [...plan.organizationTypes, ...plan.industries].map(compact).filter(Boolean).slice(0, 3);
+  const targetText = normalize([...plan.organizationTypes, ...plan.industries].join(" "));
+  const buyerTerms = language === "es" && /manufactur|fabricant|industrial|planta/.test(targetText)
+    ? ["fabricante", "empresa industrial"]
+    : language === "es" && /logistic|distribut|transport|bodega/.test(targetText)
+      ? ["operador logistico", "distribuidor"]
+      : /software|saas|technology|tecnologia/.test(targetText)
+        ? (language === "es" ? ["empresa de software"] : ["software company"])
+        : [...plan.organizationTypes, ...plan.industries].map(compact).filter(Boolean).map(x => x.slice(0, 48)).slice(0, 3);
   if (!buyerTerms.length) return [];
   const buyer = buyerTerms.length > 1 ? `(${buyerTerms.map(x => `"${x}"`).join(" OR ")})` : `"${buyerTerms[0]}"`;
   const requested = Array.from(new Set(plan.watchSignalFamilies.flatMap(f => SIGNAL_TO_FAMILY[String(f)] ?? [])));
@@ -97,34 +120,71 @@ export function planEventFirstQueries(plan: DiscoveryPlan, maxQueries = 6): Even
   const queries: EventFirstQuery[] = [];
   for (const family of families) {
     for (const term of FAMILY_TERMS[family][language].slice(0, 2)) {
-      queries.push({ family, geography, language, query: `${buyer} "${term}" "${geography}" (${currentYear} OR ${currentYear - 1})` });
+      const query = language === "es"
+        ? `${term.includes(" ") ? `"${term}"` : term} empresa ${geography} (${currentYear} OR ${currentYear - 1}) ${buyer}`
+        : `${buyer} "${term}" "${geography}" (${currentYear} OR ${currentYear - 1})`;
+      queries.push({ family, geography, language, query });
       if (queries.length >= maxQueries) return queries;
     }
   }
   return queries;
 }
 
-const EVENT_ACTION = /\b(?:announces?|plans?|opens?|launches?|builds?|expands?|invests?|acquires?|wins?|awarded|signs?|partners?|inaugurates?|anuncia|anuncio|planea|abre|abrio|abrira|inaugura|inauguro|construye|construyo|expande|expandio|amplia|amplio|invierte|invirtio|adquiere|adquirio|gana|firma|se asocia)\b/i;
-const BAD_SUBJECT = /^(?:breaking|exclusive|report|analysis|news|update|companies|manufacturers|manufacturer|industry|market|sector|colombia|united states|us|u\.s\.)$/i;
+const EVENT_ACTION = /\b(?:announces?|plans?|opens?|launches?|builds?|expands?|invests?|acquires?|wins?|awarded|signs?|partners?|inaugurates?|anuncia|anuncio|planea|abre|abrio|abrira|inaugura|inauguro|construye|construyo|expande|expandio|amplia|amplio|invierte|invirtio|adquiere|adquirio|gana|firma|impulsa|acelera|fortalece|se asocia)\b/i;
+const BAD_SUBJECT = /^(?:breaking|exclusive|report|analysis|news|update|companies|manufacturers|manufacturer|industry|market|sector|others?|otros?|colombia|united states|us|u\.s\.|alianza(?:\s+tambien)?|consulado\b.*|colombia nos une)$/i;
+const plausibleSubject = (name: string) => /^[A-ZÁÉÍÓÚÑ]/.test(name) && !BAD_SUBJECT.test(name) && (!rejectEnumeratedName(name) || /^[A-Z0-9&]{3,6}$/.test(name));
 
 /** Deterministic, deliberately conservative title-subject extraction. It only
  * accepts a named prefix immediately governing a material-change verb. */
-export function extractEventSubjects(headline: string): string[] {
+function subjectsFromText(headline: string): string[] {
   const full = compact(headline).replace(/^(?:breaking|exclusive|update|news)\s*:\s*/i, "");
   // Corporate newsrooms often lead with the event and put the company after a
   // dash: “Inauguración del Centro de Distribución - P.A.N. COLOMBIA”.
   const suffixPattern = /^(?:inauguraci[oó]n|apertura|expansi[oó]n|inversi[oó]n|ampliaci[oó]n)\b.{3,100}\s+-\s+(.{2,60})$/i.exec(full);
   if (suffixPattern) {
-    const suffix = suffixPattern[1].replace(/\b(?:colombia|united states|usa)\b/ig, "").trim();
-    if (suffix.length >= 3 && !BAD_SUBJECT.test(suffix) && !rejectEnumeratedName(suffix)) return [suffix];
+    const suffix = normalizeLatamCompanyName(suffixPattern[1].replace(/\b(?:colombia|united states|usa)\b/ig, "").trim());
+    if (suffix.length >= 3 && plausibleSubject(suffix)) return [suffix];
   }
   const original = compact(full.split(/\s+[|–—]\s+/)[0] ?? "");
   const title = original.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   const match = EVENT_ACTION.exec(title);
   if (!match || match.index < 2 || match.index > 100) return [];
   const prefix = original.slice(0, match.index).replace(/^(?:the|la|el)\s+/i, "").replace(/[,:;-]+$/g, "").trim();
-  const parts = prefix.split(/\s+(?:and|y|&)\s+/i).map(x => x.replace(/^(?:manufacturer|company|empresa)\s+/i, "").trim());
-  return Array.from(new Set(parts.filter(name => name.length >= 3 && name.length <= 80 && !BAD_SUBJECT.test(name) && !rejectEnumeratedName(name))));
+  if (/###|»|<|\bver m[aá]s\b/i.test(prefix) || prefix.length > 80) return [];
+  const parts = prefix.split(/\s*,\s*|\s+(?:and|y|&)\s+/i).map(normalizeLatamCompanyName);
+  return Array.from(new Set(parts.filter(name => name.length >= 3 && name.length <= 80 && plausibleSubject(name))));
+}
+
+/** Extracts only explicit event actors. Snippet fallback is allowed when it
+ * contains a named actor governing the event verb; pronoun-only coreference is
+ * deliberately not attempted. */
+export function extractEventSubjects(headline: string, snippet = ""): string[] {
+  const direct = subjectsFromText(headline);
+  if (direct.length) return direct;
+  const objectFirst = /^(?:nueva|nuevo|ampliaci[oó]n de|expansi[oó]n de|inversi[oó]n de)\s+(?:planta|centro(?: de distribuci[oó]n)?|operaci[oó]n|capacidad)?\s*(?:de|para)\s+([A-ZÁÉÍÓÚÑ][\wÁÉÍÓÚÑáéíóúñ&., -]{2,70}?)(?:\s+en\s+|\s+por\s+|[|–—:-]|$)/i.exec(compact(headline));
+  if (objectFirst) {
+    const name = normalizeLatamCompanyName(objectFirst[1]);
+    if (plausibleSubject(name)) return [name];
+  }
+  for (const sentence of compact(snippet).split(/(?<=[.!?])\s+/).slice(0, 3)) {
+    const found = subjectsFromText(sentence);
+    if (found.length) return found;
+  }
+  return [];
+}
+
+export type EventResultType = "company_direct" | "news_article" | "trade_publication" | "directory" | "association" | "government" | "social" | "event_page" | "other";
+export function classifyEventResult(item: Pick<SearchResultItem, "canonical_url" | "title" | "snippet">): EventResultType {
+  const host = sourceHost(item.canonical_url) ?? "";
+  const text = normalize(`${item.title ?? ""} ${item.snippet ?? ""}`);
+  if (/(?:facebook|instagram|linkedin|youtube|tiktok|x)\.com$/.test(host)) return "social";
+  if (/\.gov\.|\.gov$|\.gob\.|colombiacompra|secop/.test(host)) return "government";
+  if (/directorio|directory|paginasamarillas|infodatos|colombialicita/.test(host)) return "directory";
+  if (/camara|chamber|andi|amcham|asociacion|association/.test(host)) return "association";
+  if (/feria|evento|eventos|expo|alimentec/.test(`${host} ${text}`)) return "event_page";
+  if (/larepublica|portafolio|semana|forbes|eltiempo|elespectador|valoraanalitik|reuters|bloomberg/.test(host)) return "news_article";
+  if (/logistica|foodnews|foodengineering|industry|manufacturing|racking|nosh/.test(host)) return "trade_publication";
+  return domainLooksCorporate((item.title ?? "").split(/[|–—:-]/)[0], host) ? "company_direct" : "other";
 }
 
 function sourceHost(url: string): string | null {
@@ -138,8 +198,11 @@ function hintKey(company: string, family: EventFamily, url: string): string {
 
 function domainLooksCorporate(company: string, domain: string | null): boolean {
   if (!domain || /(?:reuters|bloomberg|forbes|news|press|prnewswire|businesswire|globenewswire|yahoo|msn|magazine|buyer|middleeast|industrytoday|foodengineering|nosh|gov\.)/i.test(domain)) return false;
-  const tokens = normalize(company).split(/[^a-z0-9]+/).filter(x => x.length >= 3 && !/^(company|corporation|group|grupo|industries|industry|logistics|distribution|manufacturing|foods|food|partners|equity|capital|holdings|international)$/.test(x));
-  const host = normalize(domain.split(".")[0]);
+  const normalizedCompany = normalize(normalizeLatamCompanyName(company));
+  const tokens = normalizedCompany.split(/[^a-z0-9]+/).filter(x => x.length >= 3 && !/^(company|corporation|group|grupo|industries|industry|logistics|distribution|manufacturing|foods|food|partners|equity|capital|holdings|international)$/.test(x));
+  const initialism = normalizedCompany.replace(/[^a-z0-9]/g, "");
+  if (/[.]/.test(company) && initialism.length >= 3) tokens.push(initialism);
+  const host = normalize(domain.split(".").slice(0, -1).join(""));
   return tokens.some(token => token.length === 3 ? host === token || host.startsWith(token) || host.endsWith(token) : host.includes(token));
 }
 
@@ -155,11 +218,26 @@ function isRecentHint(date: string | null, nowIso: string, url: string, title: s
   return ageDays >= -31 && ageDays <= 540;
 }
 
+function resultSupportsTargetGeography(item: Pick<SearchResultItem, "title" | "snippet" | "canonical_url">, geography: string): boolean {
+  const text = normalize(`${item.title ?? ""} ${item.snippet ?? ""} ${item.canonical_url}`);
+  if (/colombia/i.test(geography)) {
+    return /\bcolombia\b|\bbogota\b|\bmedellin\b|\bcali\b|\bbarranquilla\b|\bcartagena\b|\bantioquia\b|\bcundinamarca\b|\bvalle del cauca\b/.test(text);
+  }
+  if (/united states|usa|u\.s\./i.test(geography)) {
+    return /\bunited states\b|\busa\b|\bu s\b|\bamerican\b/.test(text);
+  }
+  return new RegExp(`\\b${normalize(geography).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(text);
+}
+
 function targetContextSupported(plan: DiscoveryPlan, text: string): boolean {
   const target = normalize([...plan.organizationTypes, ...plan.industries].join(" "));
   const observed = normalize(text);
   if (/software|saas|technology|tecnologia/.test(target)) return /software|saas|platform|technology|tecnologia|aplicacion empresarial/.test(observed) && !/private equity|investment firm|venture capital|fondo de inversion/.test(observed);
-  if (/manufactur|fabricant|productor/.test(target)) return /manufactur|fabricant|produccion|producer|processing|plant|planta/.test(observed);
+  if (/manufactur|fabricant|productor/.test(target)) {
+    if (!/manufactur|fabricant|produccion|producer|processing|plant|planta/.test(observed)) return false;
+    if (/alimento|bebida|food|beverage/.test(target) && !/alimento|bebida|food|beverage|snack|panader|lacte|cervec|fruit|drink/.test(observed)) return false;
+    return true;
+  }
   if (/logistic|distribut|transport|freight/.test(target)) return /logistic|distribut|transport|freight|warehouse|bodega|supply chain/.test(observed);
   return true;
 }
@@ -169,7 +247,7 @@ export async function runEventFirstDiscovery(
   providers: SearchProvider[],
   opts: { maxQueries?: number; maxIdentityQueries?: number; now?: () => Date } = {},
 ): Promise<EventFirstResult> {
-  const metrics: EventFirstMetrics = { queries: 0, raw_hints: 0, unique_hints: 0, subjects_extracted: 0, canonical_companies: 0, rejected: {}, provider_calls: {}, provider_failures: {}, result_sample: [] };
+  const metrics: EventFirstMetrics = { queries: 0, raw_hints: 0, unique_hints: 0, subjects_extracted: 0, canonical_companies: 0, rejected: {}, provider_calls: {}, provider_failures: {}, result_types: {}, company_mentions: 0, domains_resolved: 0, geography_resolved: 0, target_valid: 0, result_audit: [], result_sample: [] };
   const reject = (reason: string) => { metrics.rejected[reason] = (metrics.rejected[reason] ?? 0) + 1; };
   const now = (opts.now ?? (() => new Date()))().toISOString();
   const queries = planEventFirstQueries(plan, opts.maxQueries ?? 6);
@@ -181,9 +259,26 @@ export async function runEventFirstDiscovery(
       const response = await provider.search({ query: query.query, region: query.language === "es" ? "co" : "us", language: query.language, max_results: 6, freshness_days: 365, query_type: "signal_specific" }).catch(error => ({ ok: false, results: [], error: error instanceof Error ? error.message : String(error) } as never));
       if (!response.ok) metrics.provider_failures[provider.id] = response.error ?? "unknown";
       raw.push(...response.results.map(item => ({ query, item })));
+      for (const item of response.results) {
+        const type = classifyEventResult(item); metrics.result_types[type] = (metrics.result_types[type] ?? 0) + 1;
+        if (metrics.result_audit.length < 120) metrics.result_audit.push({ provider: item.provider, type, title: item.title, url: item.canonical_url, subjects: extractEventSubjects(item.title ?? "", item.snippet ?? ""), recent: isRecentHint(item.published_date, now, item.canonical_url, item.title) });
+      }
       for (const item of response.results.slice(0, 3)) if (metrics.result_sample.length < 40) metrics.result_sample.push({ query: query.query, title: item.title, url: item.canonical_url, published_date: item.published_date, provider: item.provider });
-      // One useful provider is enough per query; fallbacks preserve resilience.
-      if (response.results.length >= 3) break;
+      // Result volume and foreign event subjects are not utility. Continue to
+      // the next provider until at least one recent, explicit subject also has
+      // evidence for the requested geography. Canonical country validation is
+      // still performed later; this only controls provider fallback.
+      const usefulSubjects = response.results.filter(item => {
+        const subjects = extractEventSubjects(item.title ?? "", item.snippet ?? "");
+        const host = sourceHost(item.canonical_url);
+        return isRecentHint(item.published_date, now, item.canonical_url, item.title)
+          && subjects.length > 0
+          && resultSupportsTargetGeography(item, query.geography)
+          // A news mention is a valuable hint, but it is not enough to stop
+          // provider fallback before a company-owned identity surface appears.
+          && subjects.some(subject => domainLooksCorporate(subject, host));
+      }).length;
+      if (usefulSubjects > 0) break;
     }
   }
   metrics.raw_hints = raw.length;
@@ -192,9 +287,10 @@ export async function runEventFirstDiscovery(
   const seen = new Set<string>();
   for (const { query, item } of raw) {
     if (!isRecentHint(item.published_date, now, item.canonical_url, item.title)) { reject("stale_hint"); continue; }
-    const subjects = extractEventSubjects(item.title ?? "");
+    const subjects = extractEventSubjects(item.title ?? "", item.snippet ?? "");
     if (!subjects.length) { reject("no_subject"); continue; }
     metrics.subjects_extracted += subjects.length;
+    metrics.company_mentions += subjects.length;
     for (const company of subjects) {
       const text = `${item.title ?? ""} ${item.snippet ?? ""}`;
       const org = classifyOrganization({ name: company, description: text });
@@ -208,7 +304,7 @@ export async function runEventFirstDiscovery(
         event_hint_id: `eh_${slug(key)}`, company_name_hint: company,
         company_domain_hint: corporate ? host : null,
         event_type_hint: query.family, event_date_hint: item.published_date,
-        headline: item.title ?? "", source_url: item.canonical_url,
+        headline: item.title ?? "", source_excerpt: item.snippet, source_url: item.canonical_url,
         source_origin: item.source_type ?? "search_result", provider: item.provider,
         discovered_at: now, query_family: query.family, target_geography: query.geography,
         confidence: corporate ? "moderate" : "low",
@@ -223,26 +319,42 @@ export async function runEventFirstDiscovery(
   const orgs: RawDiscoveredOrg[] = [];
   const identityBudget = opts.maxIdentityQueries ?? 4;
   let identityCalls = 0;
-  for (const hint of hints) {
+  const geoRank = (hint: EventDiscoveryCandidate) => {
+    const text = `${hint.headline} ${hint.source_excerpt ?? ""}`;
+    const target = hint.target_geography;
+    const targetSignal = target === "Colombia" ? /\bcolombia\b|\bbogot[aá]\b|\bmedell[ií]n\b|\bcali\b|\bbarranquilla\b/i.test(text) : new RegExp(`\\b${target.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(text);
+    const foreignSignal = target === "Colombia" && /\bm[eé]xico\b|\bquer[eé]taro\b|\bnuevo le[oó]n\b|\bguanajuato\b|\brep[uú]blica dominicana\b|\bespa[ñn]a\b|\bargentina\b|\bchile\b/i.test(text);
+    const targetTypeSignal = targetContextSupported(plan, text);
+    return (hint.company_domain_hint ? 5 : 0) + (targetSignal ? 4 : 0) + (targetTypeSignal ? 3 : 0) - (foreignSignal ? 6 : 0);
+  };
+  const rankedHints = [...hints].sort((a, b) => geoRank(b) - geoRank(a));
+  for (const hint of rankedHints) {
     let domain = hint.company_domain_hint;
-    let country: string | null = domain ? hint.target_geography : null;
-    let identityContext = `${hint.headline}`;
-    if (!domain && identityCalls < identityBudget) {
-      const provider = providers[0];
-      if (provider) {
+    const discoveryPage = [{ title: hint.headline, snippet: hint.source_excerpt, url: hint.source_url }];
+    let country: string | null = domain ? inferEnumeratedCountry(hint.company_name_hint, discoveryPage, hint.target_geography).country : null;
+    let identityContext = `${hint.headline} ${hint.source_excerpt ?? ""}`;
+    if ((!domain || !country || !targetContextSupported(plan, identityContext)) && identityCalls < identityBudget) {
+      for (const provider of providers) {
+        if (identityCalls >= identityBudget || (domain && country && targetContextSupported(plan, identityContext))) break;
         identityCalls++;
         metrics.provider_calls[provider.id] = (metrics.provider_calls[provider.id] ?? 0) + 1;
-        const response = await provider.search({ query: `"${hint.company_name_hint}" official company "${hint.target_geography}"`, region: hint.target_geography === "Colombia" ? "co" : "us", language: hint.target_geography === "Colombia" ? "es" : "en", max_results: 5, query_type: "official_domain" }).catch(() => ({ ok: false, results: [] } as never));
+        const spanishIdentity = hint.target_geography === "Colombia";
+        const response = await provider.search({ query: spanishIdentity ? `"${hint.company_name_hint}" sitio oficial empresa Colombia` : `"${hint.company_name_hint}" official company "${hint.target_geography}"`, region: spanishIdentity ? "co" : "us", language: spanishIdentity ? "es" : "en", max_results: 5, query_type: "official_domain" }).catch(() => ({ ok: false, results: [] } as never));
         const pages = response.results.map(x => ({ title: x.title, snippet: x.snippet, url: x.canonical_url }));
-        domain = inferEnumeratedDomain(hint.company_name_hint, pages).domain;
-        country = inferEnumeratedCountry(hint.company_name_hint, pages, hint.target_geography).country;
+        domain = domain ?? inferEnumeratedDomain(hint.company_name_hint, pages).domain;
+        country = country ?? inferEnumeratedCountry(hint.company_name_hint, pages, hint.target_geography).country;
         identityContext += ` ${pages.map(x => `${x.title ?? ""} ${x.snippet ?? ""}`).join(" ")}`;
       }
     }
     if (!domain) { reject("identity_unresolved"); continue; }
     if (!domainLooksCorporate(hint.company_name_hint, domain)) { reject("identity_domain_mismatch"); continue; }
+    metrics.domains_resolved++;
     if (!country) { reject("geography_unresolved"); continue; }
+    metrics.geography_resolved++;
+    const resolvedOrg = classifyOrganization({ name: hint.company_name_hint, description: identityContext });
+    if (!resolvedOrg.eligible_for_icp) { reject(`resolved_organization:${resolvedOrg.organization_type}`); continue; }
     if (!targetContextSupported(plan, identityContext)) { reject("wrong_target_type"); continue; }
+    metrics.target_valid++;
     orgs.push({
       name: hint.company_name_hint, domain, country,
       organizationType: plan.organizationTypes[0] ?? plan.industries[0],

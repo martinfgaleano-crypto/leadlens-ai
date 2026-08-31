@@ -301,7 +301,7 @@ function nonAccountReason(input: {
 
   // A social/search/directory/government/reference host can discover a company,
   // but cannot itself become the candidate's canonical corporate domain.
-  if (/^(?:[a-z0-9-]+\.)?(?:tiktok\.com|kompass\.com|datos\.gov\.co|trade\.gov|wikipedia\.org|facebook\.com|instagram\.com|linkedin\.com)$/.test(domain)) {
+  if (/^(?:[a-z0-9-]+\.)?(?:tiktok\.com|kompass\.com|computrabajo\.com|indeed\.com|glassdoor\.com|mascolombia\.com|datos\.gov\.co|trade\.gov|wikipedia\.org|facebook\.com|instagram\.com|linkedin\.com)$/.test(domain)) {
     return "Resolved domain belongs to a directory, social, government, or reference ecosystem rather than the account.";
   }
 

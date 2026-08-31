@@ -95,6 +95,10 @@ export function inferEnumeratedDomain(company: string, pages: { title: string | 
   // carry the complete distinctive token, so this does not weaken the
   // directory/media or unrelated-host guards.
   const tokens = company.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(/[^a-z0-9]+/).filter(t => t.length >= 4 && !GENERIC_COMPANY_WORD.has(t) && !/^(company|compania|corporation|incorporated|limited|internacional)$/.test(t));
+  // Explicit uppercase corporate initialisms (WEG, DHL) are common and can be
+  // verified safely when the official host carries the exact compact token.
+  const initialism = company.replace(/[^A-Z0-9]/g, "");
+  if (/^[A-Z0-9&. -]{3,8}$/.test(company.trim()) && initialism.length >= 3 && initialism.length <= 6) tokens.push(initialism.toLowerCase());
   const mentioned = pages.filter(p => norm(`${p.title ?? ""} ${p.snippet ?? ""}`).includes(companyNorm) || tokens.some(t => norm(`${p.title ?? ""} ${p.snippet ?? ""}`).includes(t)));
   for (const p of mentioned) {
     const domain = domainOf(p.url);
@@ -128,7 +132,7 @@ export function inferEnumeratedCountry(company: string, pages: { title: string |
   const geoPattern = /^colombia$/i.test(country)
     ? /\bcolombia\b|\bbogot[aá]\b|\bmedell[ií]n\b|\bcali\b|\bbarranquilla\b|\bcartagena\b|\bbucaramanga\b|\bpereira\b/i
     : /^(united states|usa|us|u\.s\.)$/i.test(country)
-      ? /\bunited states\b|\bu\.s\.a?\b|\busa\b|\bamerican\b/i
+      ? /\bunited states\b|\bu\.s\.a?\b|\busa\b|\bamerican\b|\balabama\b|\balaska\b|\barizona\b|\barkansas\b|\bcalifornia\b|\bcolorado\b|\bconnecticut\b|\bdelaware\b|\bflorida\b|\bgeorgia\b|\bhawaii\b|\bidaho\b|\billinois\b|\bindiana\b|\biowa\b|\bkansas\b|\bkentucky\b|\blouisiana\b|\bmaine\b|\bmaryland\b|\bmassachusetts\b|\bmichigan\b|\bminnesota\b|\bmississippi\b|\bmissouri\b|\bmontana\b|\bnebraska\b|\bnevada\b|\bnew hampshire\b|\bnew jersey\b|\bnew mexico\b|\bnew york\b|\bnorth carolina\b|\bnorth dakota\b|\bohio\b|\boklahoma\b|\boregon\b|\bpennsylvania\b|\brhode island\b|\bsouth carolina\b|\bsouth dakota\b|\btennessee\b|\btexas\b|\butah\b|\bvermont\b|\bvirginia\b|\bwashington\b|\bwest virginia\b|\bwisconsin\b|\bwyoming\b/i
       : new RegExp(`\\b${country.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i");
   for (const p of pages) {
     const text = `${p.title ?? ""} ${p.snippet ?? ""}`;
