@@ -68,6 +68,10 @@ export interface CandidateAccount {
   watchSignalFamilies: SignalFamily[];
   openQualificationQuestions: string[];
   researchReadiness?: ResearchReadinessAssessment;
+  /** Candidate-Universe continuity only. This is never a commercial Decision. */
+  universeState?: "stable_reused" | "new" | "revalidated" | "excluded" | "unresolved";
+  firstSeenAt?: string;
+  lastSeenAt?: string;
 }
 
 // ─── Discovery plan ───────────────────────────────────────────────────────────
@@ -146,6 +150,10 @@ export interface CoverageSummary {
   excluded: number;
   identityAmbiguous: number;
   duplicateRate: number;
+  priorCandidatesConsidered?: number;
+  candidatesReused?: number;
+  freshCandidates?: number;
+  stableCorePercent?: number;
   gaps: DiscoveryGap[];
 }
 
@@ -433,6 +441,9 @@ export interface HuntOptions {
   opportunityConditionIds?: string[];
   runScope?: string;
   budget?: DiscoveryBudget;
+  /** Owner/context-scoped prior snapshot. Candidates are reclassified below;
+   * prior membership is not eligibility, Evidence, Fit, Timing or Decision. */
+  previousUniverse?: CandidateAccountUniverse | null;
 }
 
 function safeRunScope(value: string | undefined): string {
@@ -462,19 +473,58 @@ export async function hunt(plan: DiscoveryPlan, runner: DiscoveryRunner, opts: H
       coverage: emptyCoverage("stopped", [], [], [{ type: "provider_unavailable", detail: "Discovery runner failed." }]) };
   }
 
-  // All providers failed / nothing usable → honest failure, no fabricated accounts.
-  if (out.providersAvailable.length === 0 || out.operatingMode === "stopped") {
+  const priorCandidates = (opts.previousUniverse?.contextRef.contextId === plan.contextRef.contextId
+    && opts.previousUniverse.contextRef.version === plan.contextRef.version)
+    ? opts.previousUniverse.candidates.filter((candidate) =>
+        candidate.status !== "excluded"
+        && candidate.status !== "identity_ambiguous"
+        && Boolean(candidate.identity.domain)
+        && (plan.geographies.length === 0 || Boolean(candidate.identity.country)))
+    : [];
+  const priorOrgs: RawDiscoveredOrg[] = priorCandidates.flatMap((candidate) => {
+    const priorProvenance = candidate.provenance.length ? candidate.provenance : [{
+      route: "context_memory", origin: "context_memory", provider: "durable_snapshot",
+      discoveredName: candidate.identity.canonicalName, discoveredAt: opts.previousUniverse!.generatedAt,
+    }];
+    return priorProvenance.map((p) => ({
+      name: candidate.identity.canonicalName,
+      domain: candidate.identity.domain,
+      country: candidate.identity.country,
+      organizationType: candidate.identity.organizationType,
+      industry: candidate.identity.organizationType,
+      origin: p.origin === "context_memory" ? p.origin : `context_memory:${p.origin}`,
+      provider: p.provider ?? "durable_snapshot",
+      route: p.route,
+      sourceUrl: p.sourceUrl,
+      confidence: candidate.identity.confidence === "verified" ? "verified" : "plausible",
+    }));
+  });
+
+  // All providers failed remains an operational degradation. A verified prior
+  // universe may preserve account coverage, but never claims fresh discovery.
+  if ((out.providersAvailable.length === 0 || out.operatingMode === "stopped") && priorOrgs.length === 0) {
     return { ...base, candidates: [], ok: false, failureReason: "provider_unavailable",
       reviewRequired: ["provider_anomaly"],
       coverage: emptyCoverage("stopped", out.providersAvailable, out.providersFailed, [{ type: "provider_unavailable", detail: "No providers available for discovery." }]) };
   }
 
-  const orgs = out.orgs.filter((o) => clean(o.name));
+  const freshOrgs = out.orgs.filter((o) => clean(o.name));
+  const orgs = [...freshOrgs, ...priorOrgs];
   const ambiguous = ambiguousNames(orgs);
   const groups = groupByIdentity(orgs);
   const candidates = groups.map((g) => {
     const c = classifyGroup(g, plan, ambiguous, discoveredAt);
     c.opportunityConditionIds = opts.opportunityConditionIds ?? [];
+    const hasMemory = g.orgs.some((o) => o.origin.startsWith("context_memory"));
+    const hasFresh = g.orgs.some((o) => !o.origin.startsWith("context_memory"));
+    c.universeState = c.status === "excluded" ? "excluded"
+      : c.status === "identity_ambiguous" ? "unresolved"
+      : hasMemory && hasFresh ? "revalidated"
+      : hasMemory ? "stable_reused" : "new";
+    const priorMatch = priorCandidates.find((prior) => (prior.identity.domain && prior.identity.domain === c.identity.domain)
+      || (!prior.identity.domain && prior.identity.canonicalName.toLowerCase() === c.identity.canonicalName.toLowerCase()));
+    c.firstSeenAt = priorMatch?.firstSeenAt ?? priorMatch?.provenance.map((p) => p.discoveredAt).sort()[0] ?? discoveredAt;
+    c.lastSeenAt = discoveredAt;
     return c;
   });
 
@@ -486,6 +536,8 @@ export async function hunt(plan: DiscoveryPlan, runner: DiscoveryRunner, opts: H
     identityAmbiguous: candidates.filter((c) => c.status === "identity_ambiguous").length,
   };
   const inScope = candidates.filter((c) => c.status !== "excluded");
+  const reusedCount = inScope.filter((c) => c.universeState === "stable_reused" || c.universeState === "revalidated").length;
+  const freshCount = inScope.filter((c) => c.universeState === "new" || c.universeState === "revalidated").length;
   const duplicateRate = orgs.length ? 1 - candidates.length / orgs.length : 0;
 
   const gaps: DiscoveryGap[] = [];
@@ -501,7 +553,7 @@ export async function hunt(plan: DiscoveryPlan, runner: DiscoveryRunner, opts: H
   if (inScope.length === 0) reviewRequired.push("repeated_zero_yield");
 
   const coverage: CoverageSummary = {
-    operatingMode: out.operatingMode,
+    operatingMode: out.providersAvailable.length === 0 && reusedCount > 0 ? "context_memory_reuse" : out.operatingMode,
     providersAvailable: out.providersAvailable,
     providersFailed: out.providersFailed,
     routesAttempted: plan.routes.length,
@@ -510,6 +562,10 @@ export async function hunt(plan: DiscoveryPlan, runner: DiscoveryRunner, opts: H
     candidatesUnique: candidates.length,
     ...counts,
     duplicateRate: Math.round(duplicateRate * 100) / 100,
+    priorCandidatesConsidered: priorCandidates.length,
+    candidatesReused: reusedCount,
+    freshCandidates: freshCount,
+    stableCorePercent: priorCandidates.length ? Math.round((reusedCount / priorCandidates.length) * 100) : 0,
     gaps,
   };
 

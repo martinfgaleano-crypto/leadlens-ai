@@ -94,6 +94,32 @@ async function seedCtx(fixture: (typeof GOLDEN_FIXTURES)["software_manufacturing
     degraded.ok && degraded.universe.ok && degraded.universe.coverage.gaps.some((g) => g.type === "provider_unavailable"));
 }
 
+// ─── CONTEXT-SCOPED CANDIDATE MEMORY (stable core, no Evidence) ───────────────
+{
+  const cs = await seedCtx(GOLDEN_FIXTURES.software_manufacturing, "ucm");
+  const rs = new InMemoryLeadHunterRunStore();
+  const first = await runAndPersistLeadHunter(cs, rs, "ucm", { contextId: "run" }, runnerOf(MANU), { now: clock });
+  const second = await runAndPersistLeadHunter(cs, rs, "ucm", { contextId: "run" }, runnerOf([]), { now: () => new Date("2026-08-27T12:00:00.000Z") });
+  const u = second.ok ? second.universe : null;
+  t("context memory: a zero-yield fresh pass retains the previously verified stable core",
+    first.ok && !!u && u.candidates.length === 3 && u.candidates.every((c) => c.universeState === "stable_reused"));
+  t("context memory: reuse telemetry is explicit and does not claim fresh candidates",
+    !!u && u.coverage.priorCandidatesConsidered === 3 && u.coverage.candidatesReused === 3 && u.coverage.freshCandidates === 0 && u.coverage.stableCorePercent === 100);
+  t("context memory: candidate reuse remains Discovery provenance, never Evidence or Decision",
+    !!u && u.candidates.every((c) => c.provenance.some((p) => p.origin.startsWith("context_memory")))
+      && !/(\"evidence\"|\"decision\"|\"timing\")/i.test(JSON.stringify(u.candidates)));
+}
+
+{
+  const cs = await seedCtx(GOLDEN_FIXTURES.software_manufacturing, "ucmf");
+  const rs = new InMemoryLeadHunterRunStore();
+  await runAndPersistLeadHunter(cs, rs, "ucmf", { contextId: "run" }, runnerOf(MANU), { now: clock });
+  const failedProviders: DiscoveryRunner = async () => ({ orgs: [], providersAvailable: [], providersFailed: ["brave", "tavily"], operatingMode: "stopped" });
+  const continued = await runAndPersistLeadHunter(cs, rs, "ucmf", { contextId: "run" }, failedProviders, { now: () => new Date("2026-08-27T12:00:00.000Z") });
+  t("context memory: provider outage preserves verified account coverage in an explicit degraded mode",
+    continued.ok && continued.universe.ok && continued.universe.coverage.operatingMode === "context_memory_reuse" && continued.universe.coverage.providersFailed.length === 2);
+}
+
 // ─── OWNER ISOLATION ──────────────────────────────────────────────────────────
 {
   const cs = await seedCtx(GOLDEN_FIXTURES.software_manufacturing, "owner");

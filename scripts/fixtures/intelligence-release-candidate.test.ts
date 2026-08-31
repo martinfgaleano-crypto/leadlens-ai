@@ -3,7 +3,7 @@ import { deriveAccountActionabilityFunnel, summarizeActionabilityFunnel } from "
 import { bindVerifiedClaimToSources, stableSourceId } from "../../lib/intelligence/claim-provenance";
 import { isAffirmativeCounterevidence, shouldDeepenSearchResult, type AccountDeepResearchTelemetry } from "../../lib/intelligence/account-deep-research";
 import { resolveResearchConcurrency } from "../../lib/intelligence/research-concurrency";
-import { enumerationRouteQueries, recoverGroundedCompanyNames } from "../../lib/discovery/company-universe";
+import { enumerationRouteQueries, extractStructuredCompanyEntities, recoverGroundedCompanyNames } from "../../lib/discovery/company-universe";
 
 let passed = 0;
 function test(name: string, fn: () => void) { fn(); passed++; console.log(`✓ ${name}`); }
@@ -102,5 +102,17 @@ test("19 single-word brands are not recovered by deterministic thin-universe fal
   const names = recoverGroundedCompanyNames([{ title: "Beverage portfolio", snippet: "Dasani and smartwater are beverage brands. Milo's Tea Company operates a plant." }]);
   assert.deepEqual(names, ["Milo's Tea Company"]);
 });
+test("20 directory page extracts explicitly linked companies, not the directory owner", () => {
+  const entities = extractStructuredCompanyEntities('<h1>Packaging Association</h1><a href="https://www.acmepackaging.com/about">Acme Packaging Corporation</a>', "https://packagingassociation.org/members");
+  assert.deepEqual(entities.map((entity) => [entity.name, entity.domain]), [["Acme Packaging Corporation", "acmepackaging.com"]]);
+});
+test("21 same-origin directory links and unrelated hosts cannot become corporate identities", () => {
+  const entities = extractStructuredCompanyEntities('<a href="/members/acme">Acme Packaging Corporation</a><a href="https://unrelated.example">Acme Packaging Corporation</a>', "https://directory.example/members");
+  assert.equal(entities.length, 0);
+});
+test("22 JSON-LD organization with exact outbound identity is recoverable", () => {
+  const entities = extractStructuredCompanyEntities('{"@type":"Organization","name":"Beta Foods Incorporated","url":"https:\\/\\/betafoods.com"}', "https://trade.example/exhibitors");
+  assert.equal(entities[0]?.domain, "betafoods.com");
+});
 
-console.log(`\n${passed}/19 intelligence release-candidate contracts passed`);
+console.log(`\n${passed}/22 intelligence release-candidate contracts passed`);

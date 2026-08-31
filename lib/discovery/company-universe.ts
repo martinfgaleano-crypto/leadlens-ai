@@ -45,7 +45,7 @@ export interface EnumerationRouteMetric { route: string; queries: number; result
 export interface EnumerationTrace { route: string; query: string; provider: string; result_count: number; results: Array<{ title: string | null; url: string }> }
 export interface UniverseResult {
   companies: UniverseCompany[];
-  stats: { enumeration_queries: number; domain_resolution_queries: number; raw_names: number; raw_name_sample: string[]; classified_company: number; rejected: Record<string, number>; degraded_seed_pack?: string | null; route_metrics: EnumerationRouteMetric[]; enumeration_trace: EnumerationTrace[]; providers_available: string[]; providers_failed: string[]; llm_extraction_used: boolean };
+  stats: { enumeration_queries: number; domain_resolution_queries: number; structured_pages_extracted: number; structured_entities_found: number; raw_names: number; raw_name_sample: string[]; classified_company: number; rejected: Record<string, number>; degraded_seed_pack?: string | null; route_metrics: EnumerationRouteMetric[]; enumeration_trace: EnumerationTrace[]; providers_available: string[]; providers_failed: string[]; llm_extraction_used: boolean };
 }
 
 // Publisher/media and directory hosts never seed a company name from their own
@@ -293,6 +293,39 @@ export function recoverGroundedCompanyNames(pages: { title: string | null; snipp
   return Array.from(names).slice(0, 30);
 }
 
+export interface StructuredCompanyEntity { name: string; domain: string; source_url: string; official_url: string; }
+
+/** Deterministic extraction from directory/member/exhibitor pages. Only an
+ * explicit outbound corporate URL can create an entity; headings and page-owner
+ * names alone cannot. The enumeration page remains provenance, never account. */
+export function extractStructuredCompanyEntities(content: string, sourceUrl: string): StructuredCompanyEntity[] {
+  let sourceHost = "";
+  try { sourceHost = new URL(sourceUrl).host.replace(/^www\./, "").toLowerCase(); } catch { return []; }
+  const candidates: Array<{ name: string; url: string }> = [];
+  const push = (nameRaw: string, urlRaw: string) => {
+    const name = nameRaw.replace(/<[^>]+>/g, " ").replace(/&amp;/g, "&").replace(/&#39;|&apos;/g, "'").replace(/&quot;/g, '"').replace(/\s+/g, " ").trim();
+    if (!name || rejectEnumeratedName(name) || name.length > 90) return;
+    let url: URL;
+    try { url = new URL(urlRaw, sourceUrl); } catch { return; }
+    if (!/^https?:$/.test(url.protocol)) return;
+    const host = url.host.replace(/^www\./, "").toLowerCase();
+    if (!host || host === sourceHost || host.endsWith(`.${sourceHost}`) || /(?:facebook|linkedin|instagram|youtube|twitter|x)\.com$/i.test(host) || MEDIA_OR_DIRECTORY.test(host)) return;
+    const inferred = inferEnumeratedDomain(name, [{ title: name, snippet: "official website", url: url.toString() }]);
+    if (inferred.domain !== host) return;
+    candidates.push({ name, url: url.toString() });
+  };
+  for (const match of content.matchAll(/<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi)) push(match[2], match[1]);
+  for (const match of content.matchAll(/\[([^\]\n]{3,90})\]\((https?:\/\/[^)\s]+)\)/g)) push(match[1], match[2]);
+  for (const match of content.matchAll(/"@type"\s*:\s*"(?:Organization|Corporation|LocalBusiness)"[\s\S]{0,900}?"name"\s*:\s*"([^"]{3,90})"[\s\S]{0,900}?"url"\s*:\s*"(https?:\\?\/\\?\/[^"\\]+)"/gi)) push(match[1], match[2].replace(/\\\//g, "/"));
+  const unique = new Map<string, StructuredCompanyEntity>();
+  for (const item of candidates) {
+    const domain = domainOf(item.url);
+    if (!domain || unique.has(domain)) continue;
+    unique.set(domain, { name: item.name, domain, source_url: sourceUrl, official_url: item.url });
+  }
+  return Array.from(unique.values()).slice(0, 30);
+}
+
 export async function buildCompanyUniverse(
   icp: ICP, criteria: LeadSearchCriteria, needs: NeedsMap,
   opts: { maxCompanies?: number; providersOverride?: { braveProvider: SearchProvider; tavilyProvider: SearchProvider; serperProvider: SearchProvider } } = {},
@@ -357,8 +390,28 @@ export async function buildCompanyUniverse(
 
   // 2. Mine company names from the pages.
   const targetFamily = Array.from(new Set(icp.target_industries)).join("; ");
-  const { names: rawNames, llm_ok } = await extractCompanyNames(pages, spanish, targetFamily);
-  const enumeratedEvidence = new Map(rawNames.map(name => [name.toLowerCase(), inferEnumeratedDomain(name, pages)]));
+  const extractedNames = await extractCompanyNames(pages, spanish, targetFamily);
+  let rawNames = extractedNames.names;
+  let structuredPagesExtracted = 0;
+  const structuredEntities: StructuredCompanyEntity[] = [];
+  if (rawNames.length < 5) {
+    const sourcePages = pages.filter((p) => p.route === "source_ecosystem").slice(0, 2);
+    if (sourcePages.length) {
+      const { extractWithFallback } = await import("@/lib/sources/access/extractors");
+      for (const page of sourcePages) {
+        const extraction = await extractWithFallback(page.url).catch(() => null);
+        if (!extraction?.ok || !extraction.content) continue;
+        structuredPagesExtracted++;
+        structuredEntities.push(...extractStructuredCompanyEntities(extraction.content, page.url));
+      }
+      rawNames = Array.from(new Set([...rawNames, ...structuredEntities.map((entity) => entity.name)])).slice(0, 40);
+    }
+  }
+  const structuredByName = new Map(structuredEntities.map((entity) => [entity.name.toLowerCase(), entity]));
+  const enumeratedEvidence = new Map(rawNames.map(name => {
+    const structured = structuredByName.get(name.toLowerCase());
+    return [name.toLowerCase(), structured ? { domain: structured.domain, source: structured.source_url } : inferEnumeratedDomain(name, pages)] as const;
+  }));
   const targetCountry = criteria.target_geography[0] ?? "";
   const enumeratedGeography = new Map(rawNames.map(name => [name.toLowerCase(), inferEnumeratedCountry(name, pages, targetCountry)]));
 
@@ -376,7 +429,7 @@ export async function buildCompanyUniverse(
   const { matchVerticalPack } = await import("./vertical-packs");
   const pack = matchVerticalPack(icp, criteria);
   if (pack) {
-    if (!llm_ok) degraded_seed_pack = pack.id;
+    if (!extractedNames.llm_ok) degraded_seed_pack = pack.id;
     for (const s of pack.seed_companies) {
       packSeedNames.push(s.name);
       if (s.domain) packDomains.set(s.name.toLowerCase(), s.domain);
@@ -527,7 +580,7 @@ export async function buildCompanyUniverse(
   const companies = prioritizeUniverse(geographySafe, opts.maxCompanies ?? 40);
   return {
     companies,
-    stats: { enumeration_queries: queries.length, domain_resolution_queries: domainResolutionQueries, raw_names: rawNames.length, raw_name_sample: rawNames.slice(0, 30), classified_company: companies.length, rejected, degraded_seed_pack, route_metrics: Array.from(routeMetrics.values()), enumeration_trace: enumerationTrace, providers_available: Array.from(providersAvailable), providers_failed: Array.from(providersFailed), llm_extraction_used: llm_ok },
+    stats: { enumeration_queries: queries.length, domain_resolution_queries: domainResolutionQueries, structured_pages_extracted: structuredPagesExtracted, structured_entities_found: structuredEntities.length, raw_names: rawNames.length, raw_name_sample: rawNames.slice(0, 30), classified_company: companies.length, rejected, degraded_seed_pack, route_metrics: Array.from(routeMetrics.values()), enumeration_trace: enumerationTrace, providers_available: Array.from(providersAvailable), providers_failed: Array.from(providersFailed), llm_extraction_used: extractedNames.llm_ok },
   };
 }
 

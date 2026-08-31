@@ -30,6 +30,8 @@ export interface LeadHunterRunStore {
   persist(record: LeadHunterRunRecord): Promise<{ created: boolean }>;
   /** Owner-scoped load by runId. Returns null when absent or not owned. */
   load(runId: string, userId: string | null): Promise<LeadHunterRunRecord | null>;
+  /** Latest completed snapshot for the same owner + exact context version. */
+  loadLatestForContext(contextRef: LeadHunterRunRecord["contextRef"], userId: string | null, excludeRunId?: string): Promise<LeadHunterRunRecord | null>;
 }
 
 // ─── In-memory store (tests) ──────────────────────────────────────────────────
@@ -48,6 +50,16 @@ export class InMemoryLeadHunterRunStore implements LeadHunterRunStore {
     if (!r) return null;
     if (r.userId !== null && r.userId !== userId) return null; // owner isolation
     return structuredClone(r);
+  }
+
+  async loadLatestForContext(contextRef: LeadHunterRunRecord["contextRef"], userId: string | null, excludeRunId?: string): Promise<LeadHunterRunRecord | null> {
+    const rows = Array.from(this.rows.values()).filter((r) => r.runId !== excludeRunId
+      && r.status === "completed"
+      && r.userId === userId
+      && r.contextRef.contextId === contextRef.contextId
+      && r.contextRef.version === contextRef.version)
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+    return rows[0] ? structuredClone(rows[0]) : null;
   }
 }
 
@@ -107,5 +119,33 @@ export class SupabaseLeadHunterRunStore implements LeadHunterRunStore {
       universe: payload.universe,
       createdAt: payload.createdAt ?? (data.created_at as string),
     };
+  }
+
+  async loadLatestForContext(contextRef: LeadHunterRunRecord["contextRef"], userId: string | null, excludeRunId?: string): Promise<LeadHunterRunRecord | null> {
+    // snapshot_reports predates context columns. Read a small owner-scoped window
+    // and inspect the namespaced immutable payload server-side; no migration and
+    // no cross-tenant query are required.
+    let query: any = (this.db as any).from(TABLE)
+      .select("job_id, user_id, status, report_json, created_at")
+      .eq("plan", "lead_hunter")
+      .eq("status", "completed");
+    query = userId === null ? query.is("user_id", null) : query.eq("user_id", userId);
+    const { data, error } = await query.order("created_at", { ascending: false }).limit(50);
+    if (error) throw new Error(`load latest lead hunter context failed: ${error.message}`);
+    for (const dataRow of (data ?? []) as Record<string, unknown>[]) {
+      if (dataRow.job_id === excludeRunId) continue;
+      const json = (dataRow.report_json ?? {}) as Record<string, unknown>;
+      const payload = json[NS] as { contextRef: LeadHunterRunRecord["contextRef"]; universe: CandidateAccountUniverse; createdAt: string } | undefined;
+      if (!payload || payload.contextRef.contextId !== contextRef.contextId || payload.contextRef.version !== contextRef.version) continue;
+      return {
+        runId: dataRow.job_id as string,
+        userId: (dataRow.user_id as string | null) ?? null,
+        status: "completed",
+        contextRef: payload.contextRef,
+        universe: payload.universe,
+        createdAt: payload.createdAt ?? (dataRow.created_at as string),
+      };
+    }
+    return null;
   }
 }

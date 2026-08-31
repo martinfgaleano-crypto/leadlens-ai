@@ -22,6 +22,7 @@ import {
   type LeadHunterRunRecord,
 } from "./run-store";
 import type { ConfirmedContextStore, ContextSelector } from "@/lib/interpretation/confirmed-context-store";
+import { loadConfirmedContext } from "@/lib/interpretation/confirmed-context-store";
 import { prioritizeResearch } from "./research-readiness";
 
 export type LeadHunterRunResult =
@@ -45,8 +46,14 @@ export async function runAndPersistLeadHunter(
   runner: DiscoveryRunner,
   opts: HuntOptions = {},
 ): Promise<LeadHunterRunResult> {
+  const contextRecord = await loadConfirmedContext(contextStore, userId, selector).catch(() => null);
+  if (!contextRecord) return { ok: false, reason: "context_not_found" };
+  const previous = await runStore.loadLatestForContext(
+    { contextId: contextRecord.contextId, version: contextRecord.version }, userId,
+  ).catch(() => null);
   const hunted = await huntFromConfirmedContext(contextStore, userId, selector, runner, {
     ...opts,
+    previousUniverse: opts.previousUniverse ?? previous?.universe ?? null,
     runScope: opts.runScope ? `${userId}_${opts.runScope}` : userId,
   });
   if (!hunted.ok) return { ok: false, reason: hunted.reason };
