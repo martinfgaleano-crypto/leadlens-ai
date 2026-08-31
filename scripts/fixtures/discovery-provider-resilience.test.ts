@@ -32,6 +32,8 @@ const run = async () => {
     const u = await buildCompanyUniverse(icp, criteria, needs, { providersOverride: { braveProvider: provider("ok", bn), tavilyProvider: provider("ok", tn), serperProvider: provider("ok") } });
     assert.ok(u.stats.providers_available.includes("brave"));
     assert.equal(tn.n, 0, "tavily must not be called when brave already supplies results");
+    assert.ok(u.companies.length > 0, "grounded names must survive until bounded identity/geography resolution");
+    assert.ok(u.companies.every((company) => company.country === "United States"), "target geography is explicit evidence, not query intent");
   });
 
   // §16 — Brave rate-limited, Tavily healthy: recovery, budget NOT starved (CORE FIX).
@@ -50,6 +52,16 @@ const run = async () => {
     assert.equal(u.stats.providers_available.length, 0);
     assert.ok(u.stats.providers_failed.length >= 1);
     assert.equal(u.companies.length, 0, "no companies fabricated when every provider fails");
+  });
+
+  await t("19 foreign identity remains rejected after deferred geography resolution", async () => {
+    const foreign: SearchProvider = {
+      id: "double" as never,
+      search: (async () => ({ ok: true, results: [{ ...item("Omni Pac Limited", "https://omnipac.co.uk/about"), snippet: "Omni Pac Limited operates manufacturing plants and is headquartered in London, United Kingdom." }] })) as never,
+    } as never;
+    const u = await buildCompanyUniverse(icp, criteria, needs, { providersOverride: { braveProvider: foreign, tavilyProvider: foreign, serperProvider: foreign } });
+    assert.equal(u.companies.length, 0);
+    assert.ok((u.stats.rejected.dynamic_geography_unverified ?? 0) >= 1);
   });
 
   console.log(`\n${passed} passed, 0 failed`);

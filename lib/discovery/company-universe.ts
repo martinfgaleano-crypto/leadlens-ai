@@ -423,7 +423,11 @@ export async function buildCompanyUniverse(
     const geography = enumeratedGeography.get(name.toLowerCase());
     const resolvedDomain = packDomains.get(cls.primary_account.toLowerCase()) ?? (!isSeed ? enumerated?.domain : null) ?? null;
     if (!isSeed && resolvedDomain && claimedDomains.has(resolvedDomain)) { bump("duplicate_domain_identity"); continue; }
-    if (!isSeed && targetCountry && geography?.country !== targetCountry) { bump("dynamic_geography_unverified"); continue; }
+    // Geography is finalized AFTER bounded corporate identity expansion below.
+    // Rejecting here made country a prerequisite for domain research and caused
+    // literal US manufacturers to disappear merely because an enumeration
+    // snippet omitted "United States". Target geography itself is still never
+    // evidence: unresolved/conflicting companies are removed after expansion.
     const roleText = isSeed
       ? `${pack?.seed_companies.find(s => s.name.toLowerCase() === name.toLowerCase())?.sector ?? ""} ${name}`
       : pages.filter(p => norm(`${p.title ?? ""} ${p.snippet ?? ""}`).includes(norm(name))).map(p => `${p.title ?? ""} ${p.snippet ?? ""}`).join(" ");
@@ -466,7 +470,8 @@ export async function buildCompanyUniverse(
   // named-account expansion because the names came from upstream discovery.
   // The existing host/name guard remains authoritative, so search snippets can
   // never turn a directory or unrelated company into an official domain.
-  const unresolved = Array.from(universe.values()).filter(c => c.universe_origin === "dynamic_enumeration" && !c.domain).slice(0, 6);
+  const unresolved = Array.from(universe.values()).filter(c => c.universe_origin === "dynamic_enumeration"
+    && (!c.domain || Boolean(targetCountry && c.country !== targetCountry))).slice(0, 6);
   const identityProvider = providersAvailable.has("brave") && !providerCooldown.has("brave")
     ? (["brave", braveProvider] as const)
     : providersAvailable.has("tavily") && !providerCooldown.has("tavily") ? (["tavily", tavilyProvider] as const) : null;
@@ -480,17 +485,33 @@ export async function buildCompanyUniverse(
       const identityPages = response.results.map(r => ({ title: r.title, snippet: r.snippet, url: r.canonical_url }));
       if (enumerationTrace.length < 20) enumerationTrace.push({ route: "named_account_expansion", query: q, provider: identityProvider[0], result_count: response.results.length, results: response.results.slice(0, 5).map(x => ({ title: x.title, url: x.canonical_url })) });
       const inferred = inferEnumeratedDomain(company.name, identityPages);
-      if (!inferred.domain) continue;
-      const claimed = claimedDomains.get(inferred.domain);
-      if (claimed && claimed !== company.name.toLowerCase()) { bump("duplicate_domain_identity"); continue; }
-      company.domain = inferred.domain;
-      company.confidence = "verified";
-      company.discovery_source = `${company.discovery_source}; corporate identity: ${inferred.source}`;
-      claimedDomains.set(inferred.domain, company.name.toLowerCase());
+      const inferredCountry = inferEnumeratedCountry(company.name, identityPages, targetCountry);
+      if (inferred.domain) {
+        const claimed = claimedDomains.get(inferred.domain);
+        if (claimed && claimed !== company.name.toLowerCase()) { bump("duplicate_domain_identity"); continue; }
+        company.domain = inferred.domain;
+        company.confidence = "verified";
+        company.discovery_source = `${company.discovery_source}; corporate identity: ${inferred.source}`;
+        claimedDomains.set(inferred.domain, company.name.toLowerCase());
+      }
+      if (inferredCountry.country) {
+        company.country = inferredCountry.country;
+        company.country_confidence = inferredCountry.confidence;
+        company.country_evidence = inferredCountry.evidence;
+      }
     }
   }
 
-  const companies = prioritizeUniverse(Array.from(universe.values()), opts.maxCompanies ?? 40);
+  // Final geography gate: target geography is never accepted from query intent.
+  // A dynamic company must have explicit page/domain evidence collected either
+  // during enumeration or corporate identity expansion.
+  const geographySafe = Array.from(universe.values()).filter((company) => {
+    if (company.universe_origin !== "dynamic_enumeration" || !targetCountry) return true;
+    if (company.country === targetCountry) return true;
+    bump("dynamic_geography_unverified");
+    return false;
+  });
+  const companies = prioritizeUniverse(geographySafe, opts.maxCompanies ?? 40);
   return {
     companies,
     stats: { enumeration_queries: queries.length, domain_resolution_queries: domainResolutionQueries, raw_names: rawNames.length, raw_name_sample: rawNames.slice(0, 30), classified_company: companies.length, rejected, degraded_seed_pack, route_metrics: Array.from(routeMetrics.values()), enumeration_trace: enumerationTrace, providers_available: Array.from(providersAvailable), providers_failed: Array.from(providersFailed), llm_extraction_used: llm_ok },
