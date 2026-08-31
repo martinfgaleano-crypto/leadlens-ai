@@ -3,7 +3,7 @@ import { deriveAccountActionabilityFunnel, summarizeActionabilityFunnel } from "
 import { bindVerifiedClaimToSources, stableSourceId } from "../../lib/intelligence/claim-provenance";
 import { isAffirmativeCounterevidence, shouldDeepenSearchResult, type AccountDeepResearchTelemetry } from "../../lib/intelligence/account-deep-research";
 import { resolveResearchConcurrency } from "../../lib/intelligence/research-concurrency";
-import { enumerationRouteQueries, extractStructuredCompanyEntities, recoverGroundedCompanyNames } from "../../lib/discovery/company-universe";
+import { enumerationRouteQueries, extractStructuredCompanyEntities, inferEnumeratedDomain, isBrandOnlyIdentity, recoverGroundedCompanyNames } from "../../lib/discovery/company-universe";
 
 let passed = 0;
 function test(name: string, fn: () => void) { fn(); passed++; console.log(`✓ ${name}`); }
@@ -114,5 +114,16 @@ test("22 JSON-LD organization with exact outbound identity is recoverable", () =
   const entities = extractStructuredCompanyEntities('{"@type":"Organization","name":"Beta Foods Incorporated","url":"https:\\/\\/betafoods.com"}', "https://trade.example/exhibitors");
   assert.equal(entities[0]?.domain, "betafoods.com");
 });
+test("23 explicit product brand identity cannot become an operating account", () => {
+  assert.equal(isBrandOnlyIdentity("Hillshire Farm", [{ title: "Hillshire Farm (brand)", snippet: "Hillshire Farm is a brand of Tyson Foods", url: "https://example.org" }]), true);
+  assert.equal(isBrandOnlyIdentity("Hillshire Farm", [{ title: "Smoked Sausage | Hillshire Farm® Brand", snippet: "Products", url: "https://hillshirefarm.com" }]), true);
+});
+test("24 a corporation that owns brands is not rejected as a brand", () => {
+  assert.equal(isBrandOnlyIdentity("Tyson Foods", [{ title: "Tyson Foods", snippet: "Tyson Foods is a food company that owns multiple brands", url: "https://tysonfoods.com" }]), false);
+});
+test("25 generic supply token cannot assign an unrelated industry host", () => {
+  assert.equal(inferEnumeratedDomain("HD Supply", [{ title: "HD Supply profile", snippet: "industrial distribution", url: "https://supplychainconnect.com/hd-supply" }]).domain, null);
+  assert.equal(inferEnumeratedDomain("HD Supply", [{ title: "HD Supply", snippet: "official website", url: "https://hdsupply.com" }]).domain, "hdsupply.com");
+});
 
-console.log(`\n${passed}/22 intelligence release-candidate contracts passed`);
+console.log(`\n${passed}/25 intelligence release-candidate contracts passed`);

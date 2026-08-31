@@ -62,6 +62,7 @@ const GENERIC_COMPANY_WORD = new Set([
   "tienda", "mercado", "supermercado", "distribuidor", "distribuidores", "hotel", "hoteles", "spa", "resort",
   "empresa", "grupo", "colombia", "bogota", "medellin", "cali", "barranquilla", "cartagena", "global", "servicios",
   "packaging", "paper", "foods", "food", "beverage", "industrial", "industries", "manufacturing", "distribution", "enterprises",
+  "supply", "supplies", "direct", "international",
 ]);
 
 export function rejectEnumeratedName(name: string): string | null {
@@ -136,6 +137,16 @@ export function inferEnumeratedCountry(company: string, pages: { title: string |
     if (/^colombia$/i.test(country) && domain && /\.co$/i.test(domain)) return { country, confidence: "medium", evidence: p.url };
   }
   return { country: null, confidence: "unknown", evidence: null };
+}
+
+/** Explicit brand-only identity is not an operating account. This deliberately
+ * requires a company-specific construction; a corporation mentioning that it
+ * owns brands is not rejected. */
+export function isBrandOnlyIdentity(company: string, pages: { title: string | null; snippet: string | null; url: string }[]): boolean {
+  const escaped = company.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  if (!escaped) return false;
+  const exactBrand = new RegExp(`(?:${escaped}\\s*\\(brand\\)|${escaped}\\s*(?:®)?\\s+brand\\b|${escaped}\\s+(?:is|was)\\s+(?:an?\\s+)?(?:[a-z-]+\\s+){0,3}brand\\b|${escaped}[^.]{0,45}brand\\s+(?:of|owned by|belonging to))`, "i");
+  return pages.some((page) => exactBrand.test(`${page.title ?? ""}. ${page.snippet ?? ""}`));
 }
 
 /** Enumeration queries: find PAGES THAT LIST companies matching the ICP —
@@ -453,6 +464,7 @@ export async function buildCompanyUniverse(
     const isSeedName = seedKeys.has(name.toLowerCase());
     const nameRejection = isSeedName ? null : rejectEnumeratedName(name);
     if (nameRejection) { bump(nameRejection); continue; }
+    if (!isSeedName && isBrandOnlyIdentity(name, pages)) { bump("brand_not_operating_company"); continue; }
     const cls = classifyEntity({ name, signalType: null });
     if (cls.entity_class !== "single_company" || !cls.primary_account) { bump(`entity_${cls.entity_class}`); continue; }
     if (excludedAccountKeys.has(norm(cls.primary_account))) {
@@ -537,6 +549,7 @@ export async function buildCompanyUniverse(
   const identityProvider = providersAvailable.has("brave") && !providerCooldown.has("brave")
     ? (["brave", braveProvider] as const)
     : providersAvailable.has("tavily") && !providerCooldown.has("tavily") ? (["tavily", tavilyProvider] as const) : null;
+  const brandOnlyKeys = new Set<string>();
   if (identityProvider) {
     for (const company of unresolved) {
       if (providerCalls >= 12) break;
@@ -546,6 +559,11 @@ export async function buildCompanyUniverse(
       if ((response as { ok?: boolean }).ok === false) { providersFailed.add(identityProvider[0]); break; }
       const identityPages = response.results.map(r => ({ title: r.title, snippet: r.snippet, url: r.canonical_url }));
       if (enumerationTrace.length < 20) enumerationTrace.push({ route: "named_account_expansion", query: q, provider: identityProvider[0], result_count: response.results.length, results: response.results.slice(0, 5).map(x => ({ title: x.title, url: x.canonical_url })) });
+      if (isBrandOnlyIdentity(company.name, identityPages)) {
+        brandOnlyKeys.add(company.name.toLowerCase());
+        bump("brand_not_operating_company");
+        continue;
+      }
       const inferred = inferEnumeratedDomain(company.name, identityPages);
       const inferredCountry = inferEnumeratedCountry(company.name, identityPages, targetCountry);
       if (inferred.domain) {
@@ -568,6 +586,7 @@ export async function buildCompanyUniverse(
   // A dynamic company must have explicit page/domain evidence collected either
   // during enumeration or corporate identity expansion.
   const geographySafe = Array.from(universe.values()).filter((company) => {
+    if (brandOnlyKeys.has(company.name.toLowerCase())) return false;
     if (company.universe_origin !== "dynamic_enumeration" || !targetCountry) return true;
     // Dynamic self-serve candidates must resolve to a corporate domain. A brand
     // name plus target-country prose is not a canonical account identity.
