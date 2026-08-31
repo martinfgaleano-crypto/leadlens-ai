@@ -75,6 +75,15 @@ test("08 same URL is deduplicated by stable source identity", () => {
   const sources = bindVerifiedClaimToSources({ claim: "Acme Foods opened a new production plant adding packaging lines", type: "verified_public_signal", date: "2026-08-20", telemetry: telemetry({ validated_events: [event, { ...event, url: "https://acme.com/news/new-plant" }] }) });
   assert.equal(sources.length, 1);
 });
+test("08b independently corroborating source remains auditable and claim-bound", () => {
+  const sources = bindVerifiedClaimToSources({
+    claim: "Acme Foods opened a new production plant with two packaging lines",
+    type: "verified_public_signal", date: "2026-08-20",
+    telemetry: telemetry({ corroborating_sources: [{ url: "https://trade.example/acme-plant", source_host: "trade.example", event_date: "2026-08-20", claim_excerpt: "Acme Foods opened a production plant adding two packaging lines" }] }),
+  });
+  assert.deepEqual(sources.map(x => x.support_role), ["PRIMARY_DIRECT", "INDEPENDENT_CORROBORATION"]);
+  assert.equal(sources[1].url, "https://trade.example/acme-plant");
+});
 
 test("09 affirmative cancellation is counterevidence", () => assert.equal(isAffirmativeCounterevidence("The company cancelled the plant expansion"), true));
 test("10 unknown budget is not counterevidence", () => assert.equal(isAffirmativeCounterevidence("No public budget information was found"), false));
@@ -147,4 +156,4 @@ test("27 generic Spanish industry token cannot assign another company's domain",
   assert.equal(inferEnumeratedDomain("Pepsico Alimentos Colombia Ltda.", [{ title: "PepsiCo Colombia", snippet: "sitio corporativo", url: "https://pepsico.com" }]).domain, "pepsico.com");
 });
 
-console.log(`\n${passed}/28 intelligence release-candidate contracts passed`);
+console.log(`\n${passed}/29 intelligence release-candidate contracts passed`);

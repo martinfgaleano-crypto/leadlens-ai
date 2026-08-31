@@ -25,10 +25,14 @@ export function bindVerifiedClaimToSources(input: {
   const candidates = (input.telemetry.validated_events ?? []).filter((event) =>
     event.event_date === input.date && event.materiality_valid && tokenOverlap(claimTokens, significantTokens(event.claim_excerpt)) >= 2,
   );
-  const bindings = candidates.map((event, index) => ({
+  const primaryBindings = candidates.map((event) => ({
     source_id: stableSourceId(event.url), url: canonicalUrl(event.url), origin: event.source_host,
-    support_role: (index === 0 ? "PRIMARY_DIRECT" : "INDEPENDENT_CORROBORATION") as ClaimSupportRole,
+    support_role: "PRIMARY_DIRECT" as ClaimSupportRole,
   }));
+  const corroboratingBindings = (input.telemetry.corroborating_sources ?? [])
+    .filter((source) => source.event_date === input.date && tokenOverlap(claimTokens, significantTokens(source.claim_excerpt)) >= 2)
+    .map((source) => ({ source_id: stableSourceId(source.url), url: canonicalUrl(source.url), origin: source.source_host, support_role: "INDEPENDENT_CORROBORATION" as ClaimSupportRole }));
+  const bindings = [...primaryBindings, ...corroboratingBindings];
   const seen = new Set<string>();
   return bindings.filter((binding) => !seen.has(binding.source_id) && Boolean(seen.add(binding.source_id)));
 }

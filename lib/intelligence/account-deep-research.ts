@@ -41,6 +41,10 @@ export interface AccountDeepResearchTelemetry {
   query_audit: Array<{ query_id: string; stage: string; provider: string; results: number; accepted: number }>;
   extraction_audit: Array<{ url: string; stage: string; date_phrase: string | null; signal_kind: string; materiality: string; accepted_events: number; evidence_excerpt: string }>;
   validated_events?: Array<{ url: string; source_host: string; event_date: string; kind: string; claim_excerpt: string; stage: string; materiality_valid: boolean; counterevidence: boolean }>;
+  /** Independent search results that passed claim-relative corroboration for the
+   * primary event. Persisted for audit/source binding; snippets are not promoted
+   * to canonical events and never create Timing on their own. */
+  corroborating_sources?: Array<{ url: string; source_host: string; event_date: string; claim_excerpt: string }>;
   counterevidence_material_found?: boolean;
   // Deep runtime instrumentation (LIVE EXECUTION TRACE V1 §7-14): one entry per REAL
   // external operation, timed at the operation boundary. A search's duration_ms is
@@ -162,6 +166,7 @@ export async function deepenAccountResearch(
   const extractionAudit: AccountDeepResearchTelemetry["extraction_audit"] = [];
   const providerOps: NonNullable<AccountDeepResearchTelemetry["provider_ops"]> = [];
   const corroboratingHosts = new Set<string>();
+  const corroboratingSources: NonNullable<AccountDeepResearchTelemetry["corroborating_sources"]> = [];
   let providerCalls = 0, providerFailures = 0, resultsSeen = 0, pagesExtracted = 0, extractionFailures = 0, structuredExtractionCalls = 0, stoppedNoEvent = false;
   const maxResults = deps.maxResultsPerQuery ?? 5;
   const maxExtractions = deps.maxExtractions ?? 4;
@@ -321,6 +326,10 @@ export async function deepenAccountResearch(
         decisions.push(decision); seen.add(evidence.canonical_url);
         if (!decision.accepted || decision.commercial_relevance !== "high" || !corroboratesPrimaryEvent(primaryEvent.title_and_content, `${item.title ?? ""} ${item.snippet ?? ""}`)) continue;
         acceptedByCanonical.set(evidence.canonical_url, decision); corroboratingHosts.add(host); acceptedForQuery++;
+        corroboratingSources.push({
+          url: item.canonical_url, source_host: host, event_date: primaryEvent.event_date,
+          claim_excerpt: `${item.title ?? ""}. ${item.snippet ?? ""}`.slice(0, 1200),
+        });
         contexts.push({ text: `${item.published_date ? `[${item.published_date}] ` : ""}${item.title ?? ""}. ${item.snippet ?? ""} (source: ${item.url})`, rank: evidenceRank(decision) + 6 });
       }
       queryAudit.push({ query_id: query.query_id, stage: "corroboration", provider: provider.id, results: response.results.length, accepted: acceptedForQuery });
@@ -344,6 +353,7 @@ export async function deepenAccountResearch(
     independent_domains: domains.size, claims_recovered: claims.length,
     corroboration_attempted: corroborationAttempted,
     corroborating_domains: corroboratingHosts.size,
+    corroborating_sources: corroboratingSources,
     counterevidence_checked: queryAudit.some((q) => q.stage === "counterevidence"),
     early_stop_reason: validatedEvents.length > 0 && hasSufficientEvidence(decisions) ? "sufficient_evidence" : stoppedNoEvent || validatedEvents.length === 0 ? "no_material_event" : providers.length === 0 || providerCalls === providerFailures ? "providers_unavailable" : "budget_exhausted",
     query_audit: queryAudit, extraction_audit: extractionAudit, provider_ops: providerOps,
