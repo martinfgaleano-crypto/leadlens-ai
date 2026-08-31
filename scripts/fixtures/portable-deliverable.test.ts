@@ -106,11 +106,15 @@ t("36 a real listed HTML resolves and stays inside the base dir", (() => { const
 const listRoute = readFileSync("app/api/admin/deliverables/route.ts", "utf8");
 const fileRoute = readFileSync("app/api/admin/deliverables/file/route.ts", "utf8");
 const adminPage = readFileSync("app/admin/deliverables/page.tsx", "utf8");
-const adminNav = readFileSync("app/admin/_components/AdminLayout.tsx", "utf8");
+// Admin navigation derives from the canonical information architecture (ADMIN_NAVIGATION),
+// which AdminLayout renders — assert against that source, not a literal href in the layout.
+const adminNav = readFileSync("lib/admin/admin-information-architecture.ts", "utf8");
+const adminLayout = readFileSync("app/admin/_components/AdminLayout.tsx", "utf8");
 t("37 list route requires admin auth", /requireAdmin\(req\)/.test(listRoute) && /if \(deny\) return deny/.test(listRoute));
 t("38 file route requires admin auth + validates via resolver", /requireAdmin\(req\)/.test(fileRoute) && /resolveDeliverableFile/.test(fileRoute) && /nosniff/.test(fileRoute));
 t("39 admin page exposes Preview + Download HTML + CSV actions", /Preview/.test(adminPage) && /Download HTML/.test(adminPage) && /Portfolio CSV/.test(adminPage) && /Evidence CSV/.test(adminPage));
-t("40 admin nav links Deliverables", /href: "\/admin\/deliverables"/.test(adminNav));
+t("40 admin nav links Deliverables (canonical IA, rendered by AdminLayout)",
+  /href: "\/admin\/deliverables"/.test(adminNav) && /ADMIN_NAVIGATION/.test(adminLayout));
 t("41 no public (non-admin) deliverables index route exists",
   !existsSync("app/deliverables") && !existsSync("app/api/deliverables") && !existsSync("app/api/deliverable"));
 
