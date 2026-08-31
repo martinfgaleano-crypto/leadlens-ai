@@ -153,10 +153,10 @@ export function enumerationRouteQueries(icp: ICP, geo0: string, needs: NeedsMap,
   const wellness = /wellness|bienestar|productos? naturales|bebidas? funcional|spa|hotel|resort|retail/i.test(`${industry} ${needs.target_company_profile} ${needs.expected_need}`);
   if (spanish) {
     if (wellness) return [
-      { route: "industry_category", query: `empresas ${industry} ${geo}` },
-      { route: "geo_category", query: `${geo} cadenas tiendas naturistas distribuidores multimarca empresas` },
+      { route: "industry_category", query: `empresas compran venden distribuyen ${industry} ${geo}` },
+      { route: "geo_category", query: `${geo} Bogotá Medellín Cali cadenas tiendas naturistas distribuidores multimarca ${industry}` },
       { route: "source_ecosystem", query: `miembros asociación gremio ${industry} ${geo}` },
-      { route: "source_ecosystem", query: `expositores feria ${industry} ${geo} empresas` },
+      { route: "source_ecosystem", query: `hoteles boutique spa resorts ${industry} ${geo}` },
       { route: "geo_category", query: `${industry} operadores regionales independientes ${geo}` },
     ];
     return [
