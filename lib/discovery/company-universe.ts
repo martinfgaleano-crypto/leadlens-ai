@@ -268,7 +268,7 @@ async function extractCompanyNames(pages: { title: string | null; snippet: strin
   return { names: Array.from(names).slice(0, 40), llm_ok: false };
 }
 
-const ENUMERATION_PHRASE_REJECT = /\b(top|best|list|companies|company|manufacturers?|manufacturing|industry|association|members?|directory|market|united states|america|news|report|guide|suppliers?|vendors?|food|beverage|consumer goods)\b/i;
+const ENUMERATION_PHRASE_REJECT = /\b(top|best|list|manufacturers?|manufacturing|industry|association|members?|directory|market|united states|america|news|report|guide|suppliers?|vendors?|food|beverage|consumer goods)\b/i;
 
 /** Deterministic thin-universe recovery. It never invents a name: every result is
  * a literal capitalized phrase from a title/snippet and must pass the same strict
@@ -285,7 +285,7 @@ export function recoverGroundedCompanyNames(pages: { title: string | null; snipp
       // one-word heading fragments ("Expansion", "Solutions") are the dominant
       // false-positive class. Distinctive one-word brands still come through LLM
       // extraction or verified vertical packs.
-      if (name.length < 4 || name.length > 70 || !/\s/.test(name) || ENUMERATION_PHRASE_REJECT.test(name)) continue;
+      if (name.length < 4 || name.length > 70 || !/\s/.test(name) || /\b(?:and|of|de|del|la)$/i.test(name) || ENUMERATION_PHRASE_REJECT.test(name)) continue;
       if (!companyNameGroundedInPages(name, [page])) continue;
       names.add(name);
     }
@@ -470,8 +470,17 @@ export async function buildCompanyUniverse(
   // named-account expansion because the names came from upstream discovery.
   // The existing host/name guard remains authoritative, so search snippets can
   // never turn a directory or unrelated company into an official domain.
+  const identityPriority = (company: UniverseCompany): number => {
+    if (company.domain) return 100;
+    const name = company.name;
+    const corporateForm = /\b(company|co\.?|corp(?:oration)?|inc\.?|llc|ltd|brands?|foods?|industries|holdings|labs?|supply|group)\b/i.test(name) ? 35 : 0;
+    const words = name.trim().split(/\s+/).length;
+    return corporateForm + Math.min(words, 4) * 5;
+  };
   const unresolved = Array.from(universe.values()).filter(c => c.universe_origin === "dynamic_enumeration"
-    && (!c.domain || Boolean(targetCountry && c.country !== targetCountry))).slice(0, 6);
+    && (!c.domain || Boolean(targetCountry && c.country !== targetCountry)))
+    .sort((a, b) => identityPriority(b) - identityPriority(a) || a.name.localeCompare(b.name))
+    .slice(0, 6);
   const identityProvider = providersAvailable.has("brave") && !providerCooldown.has("brave")
     ? (["brave", braveProvider] as const)
     : providersAvailable.has("tavily") && !providerCooldown.has("tavily") ? (["tavily", tavilyProvider] as const) : null;
@@ -507,10 +516,14 @@ export async function buildCompanyUniverse(
   // during enumeration or corporate identity expansion.
   const geographySafe = Array.from(universe.values()).filter((company) => {
     if (company.universe_origin !== "dynamic_enumeration" || !targetCountry) return true;
-    if (company.country === targetCountry) return true;
+    // Dynamic self-serve candidates must resolve to a corporate domain. A brand
+    // name plus target-country prose is not a canonical account identity.
+    if (company.domain && company.country === targetCountry) return true;
+    if (!company.domain) bump("dynamic_identity_unresolved");
     bump("dynamic_geography_unverified");
     return false;
   });
+  for (const metric of Array.from(routeMetrics.values())) metric.accepted_companies = geographySafe.filter((company) => company.discovery_route === metric.route).length;
   const companies = prioritizeUniverse(geographySafe, opts.maxCompanies ?? 40);
   return {
     companies,

@@ -34,6 +34,7 @@ const run = async () => {
     assert.equal(tn.n, 0, "tavily must not be called when brave already supplies results");
     assert.ok(u.companies.length > 0, "grounded names must survive until bounded identity/geography resolution");
     assert.ok(u.companies.every((company) => company.country === "United States"), "target geography is explicit evidence, not query intent");
+    assert.ok(u.companies.every((company) => Boolean(company.domain)), "dynamic accounts require resolved corporate domains");
   });
 
   // §16 — Brave rate-limited, Tavily healthy: recovery, budget NOT starved (CORE FIX).

@@ -98,5 +98,9 @@ test("18 canonical stale reason wins when stale events were rejected upstream", 
   const l = lead({ enrichment: { account_research: telemetry({ validated_events: [], early_stop_reason: "no_material_event" }) } });
   assert.equal(deriveAccountActionabilityFunnel(l, "hold", ["hard_blocker_stale_beyond_180d"]).hold_reason, "STALE_EVENT");
 });
+test("19 single-word brands are not recovered by deterministic thin-universe fallback", () => {
+  const names = recoverGroundedCompanyNames([{ title: "Beverage portfolio", snippet: "Dasani and smartwater are beverage brands. Milo's Tea Company operates a plant." }]);
+  assert.deepEqual(names, ["Milo's Tea Company"]);
+});
 
-console.log(`\n${passed}/18 intelligence release-candidate contracts passed`);
+console.log(`\n${passed}/19 intelligence release-candidate contracts passed`);
