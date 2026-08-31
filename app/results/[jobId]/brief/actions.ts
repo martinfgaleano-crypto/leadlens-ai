@@ -34,19 +34,23 @@ export async function getBriefForViewer(jobId: string, accessToken: string | nul
 
   const searchId = (snapshot as { search_id?: string | null }).search_id ?? null;
 
-  // Linked report → real ownership check.
-  if (searchId) {
+  // Any owner-linked report → real ownership check. Productive Intelligence
+  // runs have user_id even when they are not attached to a legacy lead_search.
+  if (searchId || snapshot.user_id) {
     const db = await serverDb();
     if (!db) return { state: "unavailable" };
-    const { data: search } = await db.from("lead_searches").select("user_id").eq("id", searchId).maybeSingle();
-    const ownerId = search?.user_id ?? null;
+    const { data: search } = searchId
+      ? await db.from("lead_searches").select("user_id").eq("id", searchId).maybeSingle()
+      : { data: null };
+    const ownerId = search?.user_id ?? snapshot.user_id ?? null;
     if (ownerId) {
       if (!accessToken) return { state: "signin_required" };
       const { data: { user }, error } = await db.auth.getUser(accessToken);
       if (error || !user) return { state: "signin_required" };
       if (user.id !== ownerId) return { state: "forbidden" };
     }
-    // ownerId null (orphaned search) → fall through to link-access
+    // A linked search without an owner remains legacy link-access; productive
+    // owner-linked reports can no longer fall through to anonymous access.
   }
   // Unlinked (legacy) → link-access, unchanged.
 
@@ -94,11 +98,20 @@ export async function getBriefForViewer(jobId: string, accessToken: string | nul
       const { fromInstitutionalReport } = await import("@/lib/deliverable/adapters");
       const { SupabaseAccountMemoryRepo, persistAndLoadMemory } = await import("@/lib/deliverable/account-memory-store");
       const vm = fromInstitutionalReport(report, experience);
-      // A search-backed report must use the durable search id as Monitor scope;
-      // customer display metadata (email/name) is not a stable account namespace.
-      const clientKey = searchId ?? vm.meta.client ?? snapshot.job_id;
-      const contextVersion = ob?.product_code ?? snapshot.plan ?? "default";
-      const scope = { ownerUserId: searchId ? ((await db.from("lead_searches").select("user_id").eq("id", searchId).maybeSingle()).data?.user_id ?? null) : null, clientKey };
+      const intelligenceMeta = (snapshot.report_json as {
+        _intelligence_run?: { contextRef?: { contextId?: string; version?: number } };
+      })._intelligence_run;
+      const contextId = intelligenceMeta?.contextRef?.contextId ?? null;
+      const contextVersion = contextId
+        ? `${contextId}:v${intelligenceMeta?.contextRef?.version ?? 1}`
+        : (ob?.product_code ?? snapshot.plan ?? "default");
+      // Productive reviews share the confirmed commercial-context namespace.
+      // Legacy search-series reports retain their stable search namespace.
+      const clientKey = contextId ? `context:${contextId}` : (searchId ?? vm.meta.client ?? snapshot.job_id);
+      const searchOwner = searchId
+        ? ((await db.from("lead_searches").select("user_id").eq("id", searchId).maybeSingle()).data?.user_id ?? null)
+        : null;
+      const scope = { ownerUserId: snapshot.user_id ?? searchOwner, clientKey };
       memory = await persistAndLoadMemory(
         new SupabaseAccountMemoryRepo(db), vm.accounts, scope,
         { reviewId: snapshot.job_id, reviewedAt: snapshot.created_at ?? new Date().toISOString(), contextVersion },

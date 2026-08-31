@@ -27,7 +27,10 @@ export async function initializeProductiveAccountMemory(db: any, input: {
   const vm = fromInstitutionalReport(institutional, experience);
   const rows = rowsForReview(
     vm.accounts,
-    { ownerUserId: input.userId, clientKey: input.runId },
+    // A productive run is an execution attempt, never the customer/context
+    // namespace. All reviews of the same confirmed commercial context must land
+    // in one lineage so Monitor and the customer brief resolve the same state.
+    { ownerUserId: input.userId, clientKey: `context:${input.contextRef.contextId}` },
     {
       reviewId: input.runId,
       reviewedAt: input.report.created_at ?? new Date().toISOString(),
