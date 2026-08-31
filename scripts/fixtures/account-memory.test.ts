@@ -101,6 +101,23 @@ t("§88 decision transition references concrete drivers", d23.decision.changed &
   t("§117 aging alone (same origins/strengths) ⇒ not counterevidence, not weakened", !d.counterevidenceAdded && d.evidenceStrength.direction === "unchanged" && d.material === false);
 }
 
+// Re-running the same sources through a non-deterministic analyst can vary
+// dimensions and omit a validation question. Without an externally observed
+// delta this is model variance, not customer-facing What Changed.
+{
+  const noisy = snapshotAccountReview(acct({
+    decision: "prioritize",
+    whatChanged: [{ event: "Opened new terminals", date: "2026-06-20", age: "3mo", source: "freightwaves.com", kind: "true_change" }],
+    evidence: { sourceCount: 2, datedCount: 1, corroborated: true, latestAge: "3mo", strength: "Moderate" },
+    sources: [{ label: "freightwaves.com", url: null, date: "2026-06-22", age: "3mo", relation: "direct", claim: null }, { label: "globenewswire.com", url: null, date: "2026-05-21", age: "4mo", relation: "corroborating", claim: null }],
+    dimensions: [{ label: "Fit", value: "Moderate" }, { label: "Timing", value: "Moderate" }, { label: "Evidence", value: "Moderate" }],
+    validations: [],
+  }), rev("r2-noisy", "2026-06-29"));
+  const d = diffAccountCase(T2, noisy);
+  t("same external evidence + analyst variance is not material change", d.material === false);
+  t("omitted validation without new evidence is not marked resolved", d.validationResolved.length === 0);
+}
+
 // §118 client-objective change distinguished from account change
 {
   const T2ctx = snapshotAccountReview(acct({ decision: "validate", whatChanged: [{ event: "Opened new terminals", date: "2026-06-20", age: "2mo", source: "freightwaves.com", kind: "true_change" }], evidence: { sourceCount: 2, datedCount: 1, corroborated: true, latestAge: "2mo", strength: "Strong" }, sources: [{ label: "freightwaves.com", url: null, date: "2026-06-22", age: "2mo", relation: "direct", claim: null }, { label: "globenewswire.com", url: null, date: "2026-05-21", age: "3mo", relation: "corroborating", claim: null }], dimensions: [{ label: "Fit", value: "Strong" }, { label: "Timing", value: "Strong" }, { label: "Evidence", value: "Strong" }] }), rev("r2e", "2026-07-10", "asteron-v2"));

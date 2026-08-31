@@ -227,7 +227,7 @@ export function diffAccountCase(prev: AccountReviewSnapshot | null, next: Accoun
   const independentSupportAdded = next.independentSupport && !prev.independentSupport;
   const counterevidenceAdded = next.hasMaterialCounter && !prev.hasMaterialCounter;
   const counterevidenceResolved = prev.hasMaterialCounter && !next.hasMaterialCounter;
-  const validationResolved = prev.validationThemeKeys.filter(k => !next.validationThemeKeys.includes(k));
+  const rawValidationResolved = prev.validationThemeKeys.filter(k => !next.validationThemeKeys.includes(k));
   const validationStillOpen = next.validationThemeKeys.filter(k => prev.validationThemeKeys.includes(k));
   const decisionCriticalResolved = prev.decisionCriticalThemeKeys.filter(k => !next.decisionCriticalThemeKeys.includes(k));
   const timing = { from: prev.timing, to: next.timing, direction: dir(prev.timing, next.timing) };
@@ -235,6 +235,18 @@ export function diffAccountCase(prev: AccountReviewSnapshot | null, next: Accoun
   const evidenceStrength = { from: prev.evidence, to: next.evidence, direction: dir(prev.evidence, next.evidence) };
   // Revisit trigger met: prev was a watch decision with a trigger, and a genuinely new verified change appeared (§31).
   const revisitTriggerMet = prev.hasRevisitTrigger && (prev.decision === "monitor" || prev.decision === "hold") && newChangeKeys.length > 0;
+  // A second LLM-backed review can phrase dimensions or validation questions
+  // differently while observing exactly the same external world. That is model
+  // variance, not What Changed. Resolution and dimension movement become
+  // customer-material only when grounded by a new event/source/corroboration,
+  // explicit counterevidence transition, changed customer context, or a
+  // sufficiently later review whose weaker Timing/Evidence can honestly reflect
+  // aging. Absence of a regenerated question is never proof it was resolved.
+  const externallyGroundedDelta = newChangeKeys.length > 0 || evidenceAdded.length > 0 || independentSupportAdded
+    || counterevidenceAdded || counterevidenceResolved || contextChanged || revisitTriggerMet;
+  const elapsedDays = Math.max(0, (new Date(next.reviewedAt).getTime() - new Date(prev.reviewedAt).getTime()) / 86_400_000);
+  const groundedAging = elapsedDays >= 30 && (timing.direction === "weakened" || evidenceStrength.direction === "weakened");
+  const validationResolved = externallyGroundedDelta ? rawValidationResolved : [];
 
   const drivers: DecisionDriver[] = [];
   const decisionChanged = prev.decision !== next.decision;
@@ -247,9 +259,7 @@ export function diffAccountCase(prev: AccountReviewSnapshot | null, next: Accoun
   if (revisitTriggerMet) drivers.push("revisit_trigger_met");
   if (contextChanged) drivers.push("client_objective_changed");
 
-  const material = decisionChanged || newChangeKeys.length > 0 || evidenceAdded.length > 0 || independentSupportAdded
-    || counterevidenceAdded || counterevidenceResolved || validationResolved.length > 0 || timing.direction !== "unchanged"
-    || fit.direction !== "unchanged" || evidenceStrength.direction !== "unchanged" || revisitTriggerMet || contextChanged;
+  const material = externallyGroundedDelta || validationResolved.length > 0 || groundedAging;
 
   return {
     ...base, isFirstReview: false, isSameReview: false, contextChanged,
