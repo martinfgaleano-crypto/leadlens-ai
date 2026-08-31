@@ -326,9 +326,9 @@ export function extractStructuredCompanyEntities(content: string, sourceUrl: str
     if (inferred.domain !== host) return;
     candidates.push({ name, url: url.toString() });
   };
-  for (const match of content.matchAll(/<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi)) push(match[2], match[1]);
-  for (const match of content.matchAll(/\[([^\]\n]{3,90})\]\((https?:\/\/[^)\s]+)\)/g)) push(match[1], match[2]);
-  for (const match of content.matchAll(/"@type"\s*:\s*"(?:Organization|Corporation|LocalBusiness)"[\s\S]{0,900}?"name"\s*:\s*"([^"]{3,90})"[\s\S]{0,900}?"url"\s*:\s*"(https?:\\?\/\\?\/[^"\\]+)"/gi)) push(match[1], match[2].replace(/\\\//g, "/"));
+  for (const match of Array.from(content.matchAll(/<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi))) push(match[2], match[1]);
+  for (const match of Array.from(content.matchAll(/\[([^\]\n]{3,90})\]\((https?:\/\/[^)\s]+)\)/g))) push(match[1], match[2]);
+  for (const match of Array.from(content.matchAll(/"@type"\s*:\s*"(?:Organization|Corporation|LocalBusiness)"[\s\S]{0,900}?"name"\s*:\s*"([^"]{3,90})"[\s\S]{0,900}?"url"\s*:\s*"(https?:\\?\/\\?\/[^"\\]+)"/gi))) push(match[1], match[2].replace(/\\\//g, "/"));
   const unique = new Map<string, StructuredCompanyEntity>();
   for (const item of candidates) {
     const domain = domainOf(item.url);
