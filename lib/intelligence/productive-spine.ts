@@ -225,10 +225,12 @@ async function runIntelligenceExecution(
       const canonical = report.canonical_cases.find(item => item.lead_id === lead.id) ?? null;
       reconcileLeadNarrativeWithCanonicalCase(lead, canonical);
       const ranked = report.ranked_opportunities?.find(item => item.lead_id === lead.id);
-      if (ranked?.decision && canonical && canonicalMissingEvent(canonical.reasons)) {
-        ranked.decision.why_now = lead.enrichment.why_now ?? "No current dated material event was validated.";
-        ranked.decision.why_this_quarter = "No quarter-level urgency is evidenced by a validated current event.";
-        ranked.decision.evidence_grounded = false;
+      if (ranked?.decision && canonical) {
+        ranked.decision.why_now = lead.enrichment.why_now ?? "No current timing conclusion is available.";
+        if (canonicalMissingEvent(canonical.reasons)) {
+          ranked.decision.why_this_quarter = "No quarter-level urgency is evidenced by a validated current event.";
+          ranked.decision.evidence_grounded = false;
+        }
       }
     }
     run.researchAudit = researchedLeads.map(lead => {
@@ -433,9 +435,20 @@ export function reconcileLeadNarrativeWithCanonicalCase(
 ): void {
   if (!canonical) return;
   const noCurrentEvent = canonicalMissingEvent(canonical.reasons);
-  if (!noCurrentEvent) return;
-  lead.enrichment.why_now = "No current dated material event was validated. The account may fit structurally, but there is no verified reason to act now rather than monitor for a new trigger.";
-  lead.enrichment.buying_window_reason = "No buying window is inferred without a validated current material event.";
+  if (noCurrentEvent) {
+    lead.enrichment.why_now = "No current dated material event was validated. The account may fit structurally, but there is no verified reason to act now rather than monitor for a new trigger.";
+    lead.enrichment.buying_window_reason = "No buying window is inferred without a validated current material event.";
+    return;
+  }
+  const date = lead.candidate.signal_date ? ` (${lead.candidate.signal_date})` : "";
+  const question = lead.enrichment.next_best_question ? ` Validation question: ${lead.enrichment.next_best_question}` : "";
+  if (canonical.decision === "monitor") {
+    lead.enrichment.why_now = `A current dated material event was validated${date}, but the evidence or timing does not justify immediate action. This is not proof of buying intent; monitor the account and revisit when the open condition changes.${question}`;
+  } else if (canonical.decision === "validate") {
+    lead.enrichment.why_now = `A current dated material event was validated${date} and the account merits commercial validation now, but a decision-critical uncertainty remains. This is not proof of buying intent.${question}`;
+  } else if (canonical.decision === "prioritize") {
+    lead.enrichment.why_now = `A current dated material event was validated${date} with sufficient fit and evidence for prioritized commercial attention. This is not proof of buying intent.${question}`;
+  }
 }
 
 function canonicalMissingEvent(reasons: string[]): boolean {

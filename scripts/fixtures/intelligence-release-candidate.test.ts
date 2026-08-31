@@ -151,9 +151,20 @@ test("28 canonical Hold removes contradictory confirmed-now prose from customer 
   assert.match(l.enrichment.why_now ?? "", /No current dated material event was validated/);
   assert.doesNotMatch(l.enrichment.why_now ?? "", /Confirmed: a new plant/);
 });
+test("29 canonical non-Hold narrative cannot claim immediate demand or buying intent", () => {
+  const l = lead({
+    candidate: { company: "Acme Foods", domain: "acme.com", country: "United States", signal_date: "2026-08-20", source_url: "https://acme.com/news/new-plant", signal_type: "corporate_event" },
+    enrichment: { account_research: telemetry(), why_now: "This expansion creates immediate demand for our software.", next_best_question: "Confirm whether vendor selection remains open." },
+  }) as unknown as { enrichment: { why_now?: string } };
+  const c = canonicalCaseForLead(l as never)!;
+  assert.equal(c.decision, "validate");
+  reconcileLeadNarrativeWithCanonicalCase(l as never, c);
+  assert.match(l.enrichment.why_now ?? "", /not proof of buying intent/i);
+  assert.doesNotMatch(l.enrichment.why_now ?? "", /creates immediate demand/i);
+});
 test("27 generic Spanish industry token cannot assign another company's domain", () => {
   assert.equal(inferEnumeratedDomain("Pepsico Alimentos Colombia Ltda.", [{ title: "Pepsico Alimentos Colombia", snippet: "fabricante", url: "https://alimentossas.com" }]).domain, null);
   assert.equal(inferEnumeratedDomain("Pepsico Alimentos Colombia Ltda.", [{ title: "PepsiCo Colombia", snippet: "sitio corporativo", url: "https://pepsico.com" }]).domain, "pepsico.com");
 });
 
-console.log(`\n${passed}/29 intelligence release-candidate contracts passed`);
+console.log(`\n${passed}/30 intelligence release-candidate contracts passed`);
