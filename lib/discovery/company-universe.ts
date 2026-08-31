@@ -107,6 +107,22 @@ export function inferEnumeratedCountry(company: string, pages: { title: string |
   const companyNorm = norm(company);
   const country = targetCountry.trim();
   if (!country) return { country: null, confidence: "unknown", evidence: null };
+  // Search-result prose often repeats the requested geography even when the
+  // organization is explicitly foreign (observed: "Omni-Pac UK" on a US
+  // packaging query). A contradictory company marker or country-code domain
+  // dominates that query-context mention. Global .com domains remain eligible
+  // because multinationals may operate legitimately in the target market.
+  const targetIsUs = /^(united states|usa|us|u\.s\.)$/i.test(country);
+  const targetIsColombia = /^colombia$/i.test(country);
+  const explicitUk = /(?:^|\s)(?:uk|u\.k\.|united kingdom)(?:$|\s)/i.test(company);
+  const foreignCountryHost = pages.some(p => {
+    const domain = domainOf(p.url);
+    if (!domain) return false;
+    if (targetIsUs) return /\.(?:co\.uk|uk|co|de|fr|es|it|br|mx|ca|au|in|jp)$/i.test(domain);
+    if (targetIsColombia) return /\.(?:co\.uk|uk|us|de|fr|es|it|br|mx|ca|au|in|jp)$/i.test(domain);
+    return false;
+  });
+  if ((targetIsUs && explicitUk) || foreignCountryHost) return { country: null, confidence: "unknown", evidence: null };
   const geoPattern = /^colombia$/i.test(country)
     ? /\bcolombia\b|\bbogot[aá]\b|\bmedell[ií]n\b|\bcali\b|\bbarranquilla\b|\bcartagena\b|\bbucaramanga\b|\bpereira\b/i
     : /^(united states|usa|us|u\.s\.)$/i.test(country)
