@@ -217,6 +217,20 @@ async function runIntelligenceExecution(
       caseSynthMsByLead.set(lead.id, Date.now() - s);
       return item ? [item] : [];
     });
+    // Canonical Case is the customer-truth authority. Research prose is generated
+    // before deterministic event validation and may describe a plausible event
+    // that did not survive temporal/materiality gates. Reconcile presentation
+    // only; never mutate score, ranking or the canonical Decision.
+    for (const lead of report.processed_leads) {
+      const canonical = report.canonical_cases.find(item => item.lead_id === lead.id) ?? null;
+      reconcileLeadNarrativeWithCanonicalCase(lead, canonical);
+      const ranked = report.ranked_opportunities?.find(item => item.lead_id === lead.id);
+      if (ranked?.decision && canonical && canonicalMissingEvent(canonical.reasons)) {
+        ranked.decision.why_now = lead.enrichment.why_now ?? "No current dated material event was validated.";
+        ranked.decision.why_this_quarter = "No quarter-level urgency is evidenced by a validated current event.";
+        ranked.decision.evidence_grounded = false;
+      }
+    }
     run.researchAudit = researchedLeads.map(lead => {
       const c = report.canonical_cases?.find(item => item.lead_id === lead.id);
       return {
@@ -409,6 +423,23 @@ export function canonicalCaseForLead(lead: ProcessedLead): NonNullable<LeadLensR
     reasons: canonical.reasons, fit: canonical.fit, timing: canonical.timing,
     evidence: canonical.evidence, first_review: true,
   };
+}
+
+/** Keep pre-validation analyst prose from contradicting the canonical Case.
+ * This is a presentation reconciliation, not a Decision/scoring override. */
+export function reconcileLeadNarrativeWithCanonicalCase(
+  lead: ProcessedLead,
+  canonical: NonNullable<LeadLensReport["canonical_cases"]>[number] | null,
+): void {
+  if (!canonical) return;
+  const noCurrentEvent = canonicalMissingEvent(canonical.reasons);
+  if (!noCurrentEvent) return;
+  lead.enrichment.why_now = "No current dated material event was validated. The account may fit structurally, but there is no verified reason to act now rather than monitor for a new trigger.";
+  lead.enrichment.buying_window_reason = "No buying window is inferred without a validated current material event.";
+}
+
+function canonicalMissingEvent(reasons: string[]): boolean {
+  return reasons.some(reason => /(?:^|_)no_(?:current_)?event$|no_material_event|no_valid_date/.test(reason));
 }
 
 // Emit one run-trace per researched account from REAL execution telemetry + REAL

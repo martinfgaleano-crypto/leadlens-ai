@@ -4,7 +4,7 @@ import { bindVerifiedClaimToSources, stableSourceId } from "../../lib/intelligen
 import { isAffirmativeCounterevidence, shouldDeepenSearchResult, type AccountDeepResearchTelemetry } from "../../lib/intelligence/account-deep-research";
 import { resolveResearchConcurrency } from "../../lib/intelligence/research-concurrency";
 import { enumerationRouteQueries, extractStructuredCompanyEntities, inferEnumeratedDomain, isBrandOnlyIdentity, recoverGroundedCompanyNames } from "../../lib/discovery/company-universe";
-import { canonicalCaseForLead } from "../../lib/intelligence/productive-spine";
+import { canonicalCaseForLead, reconcileLeadNarrativeWithCanonicalCase } from "../../lib/intelligence/productive-spine";
 
 let passed = 0;
 function test(name: string, fn: () => void) { fn(); passed++; console.log(`✓ ${name}`); }
@@ -133,9 +133,18 @@ test("26 LLM claim cannot create Validate when deep telemetry accepted zero even
   } as never);
   assert.equal(canonicalCaseForLead(l as never)?.decision, "hold");
 });
+
+test("28 canonical Hold removes contradictory confirmed-now prose from customer narrative", () => {
+  const l = lead({ enrichment: { account_research: telemetry({ validated_events: [], early_stop_reason: "no_material_event" }), why_now: "Confirmed: a new plant creates an active buying trigger right now." } }) as unknown as { enrichment: { why_now?: string } };
+  const c = canonicalCaseForLead(l as never)!;
+  assert.equal(c.decision, "hold");
+  reconcileLeadNarrativeWithCanonicalCase(l as never, c);
+  assert.match(l.enrichment.why_now ?? "", /No current dated material event was validated/);
+  assert.doesNotMatch(l.enrichment.why_now ?? "", /Confirmed: a new plant/);
+});
 test("27 generic Spanish industry token cannot assign another company's domain", () => {
   assert.equal(inferEnumeratedDomain("Pepsico Alimentos Colombia Ltda.", [{ title: "Pepsico Alimentos Colombia", snippet: "fabricante", url: "https://alimentossas.com" }]).domain, null);
   assert.equal(inferEnumeratedDomain("Pepsico Alimentos Colombia Ltda.", [{ title: "PepsiCo Colombia", snippet: "sitio corporativo", url: "https://pepsico.com" }]).domain, "pepsico.com");
 });
 
-console.log(`\n${passed}/27 intelligence release-candidate contracts passed`);
+console.log(`\n${passed}/28 intelligence release-candidate contracts passed`);
