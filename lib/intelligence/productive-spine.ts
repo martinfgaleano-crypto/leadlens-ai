@@ -227,7 +227,7 @@ async function runIntelligenceExecution(
         accountResearch: lead.enrichment.account_research ?? null,
         evidenceClaims: (lead.enrichment.evidence_discipline ?? []).map(claim => ({
           type: claim.type, claim: claim.claim, date: claim.date ?? null,
-          source_url: lead.candidate.source_url ?? null,
+          source_url: evidenceClaimSourceUrl(claim.type, lead.candidate.source_url),
         })),
         risks: lead.enrichment.opportunity_risks ?? [],
         nextQuestion: lead.enrichment.next_best_question ?? null,
@@ -340,6 +340,15 @@ function runDiscoveryBudget(plan: PlanType): DiscoveryBudget {
 
 function strength(score: number): "Strong" | "Moderate" | "Limited" {
   return score >= 7 ? "Strong" : score >= 4 ? "Moderate" : "Limited";
+}
+
+/** A primary source may be attached only to claims Research classified as
+ * externally verified. Context inference, weak inference and missing evidence
+ * must never inherit the candidate's primary URL merely because they appear in
+ * the same analyst response. This is conservative until the Research contract
+ * carries a validated source id for every individual claim. */
+export function evidenceClaimSourceUrl(type: string, primaryUrl: string | null | undefined): string | null {
+  return type === "verified_public_signal" ? (primaryUrl ?? null) : null;
 }
 
 export function canonicalCaseForLead(lead: ProcessedLead): NonNullable<LeadLensReport["canonical_cases"]>[number] | null {

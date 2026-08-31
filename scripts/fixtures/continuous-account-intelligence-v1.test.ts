@@ -4,6 +4,7 @@ import { InMemoryAccountMemoryRepo, persistAndLoadMemory, applyCurrentMemoryToAc
 import { snapshotAccountReview, diffAccountCase, type AccountReviewSnapshot } from "@/lib/deliverable/account-memory";
 import { monitoredStateFromSnapshot, evaluateEligibility } from "@/lib/monitor/monitor-eligibility";
 import type { AccountBriefVM } from "@/lib/deliverable/deliverable-view-model";
+import { evidenceClaimSourceUrl } from "@/lib/intelligence/productive-spine";
 
 let passed = 0;
 const test = async (name: string, run: () => void | Promise<void>) => { await run(); passed += 1; console.log(`ok - ${name}`); };
@@ -62,6 +63,13 @@ await test("actual customer route exposes bounded Monitor refresh and continuity
   assert.match(page, /This is not real-time monitoring/);
   assert.match(page, /Previous review/);
   assert.match(page, /Current review/);
+});
+
+await test("only externally verified claims inherit the accepted primary source", () => {
+  assert.equal(evidenceClaimSourceUrl("verified_public_signal", "https://corp.example/news"), "https://corp.example/news");
+  assert.equal(evidenceClaimSourceUrl("inferred_from_context", "https://corp.example/news"), null);
+  assert.equal(evidenceClaimSourceUrl("weak_inference", "https://corp.example/news"), null);
+  assert.equal(evidenceClaimSourceUrl("missing_evidence", "https://corp.example/news"), null);
 });
 
 console.log(`\n${passed} passed, 0 failed`);
