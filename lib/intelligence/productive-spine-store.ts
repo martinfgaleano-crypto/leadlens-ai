@@ -28,7 +28,8 @@ export interface IntelligenceRunRecord {
     company: string; domain: string | null; country: string | null; category: string;
     fitScore: number; signalDate: string | null; sourceUrl: string | null;
     signalType: string | null; researchConfidence: number | null;
-    evidenceClaims: Array<{ type: string; claim: string; date: string | null; source_url: string | null }>;
+    evidenceClaims: Array<{ type: string; claim: string; date: string | null; source_url: string | null; source_id?: string | null; supporting_sources?: Array<{ source_id: string; url: string; origin: string; support_role: string }> }>;
+    actionability?: import("@/lib/intelligence/actionability-funnel").AccountActionabilityFunnel;
     risks: string[]; nextQuestion: string | null; qcStatus: string | null;
     canonicalDecision: string; reasons: string[];
   }>;

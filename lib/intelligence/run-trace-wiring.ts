@@ -114,7 +114,8 @@ export function buildAccountRunTrace(input: AccountTraceInput): IntelligenceRunT
     if (t.counterevidence_checked) { rec.addDepth("counterevidence"); const s = rec.stage("counterevidence"); s(); }
     rec.setCounterevidence({
       warranted: t.counterevidence_checked, attempted: t.counterevidence_checked,
-      result: t.counterevidence_checked ? "bounded_none" : "not_searched", materially_affected_case: false,
+      result: t.counterevidence_material_found ? "material_found" : t.counterevidence_checked ? "bounded_none" : "not_searched",
+      materially_affected_case: t.counterevidence_material_found === true,
     });
 
     rec.recordEvidence(t.evidence_accepted, t.evidence_rejected);

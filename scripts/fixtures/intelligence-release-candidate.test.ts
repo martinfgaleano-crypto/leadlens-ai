@@ -1,0 +1,84 @@
+import assert from "node:assert/strict";
+import { deriveAccountActionabilityFunnel, summarizeActionabilityFunnel } from "../../lib/intelligence/actionability-funnel";
+import { bindVerifiedClaimToSources, stableSourceId } from "../../lib/intelligence/claim-provenance";
+import { isAffirmativeCounterevidence, type AccountDeepResearchTelemetry } from "../../lib/intelligence/account-deep-research";
+import { resolveResearchConcurrency } from "../../lib/intelligence/research-concurrency";
+
+let passed = 0;
+function test(name: string, fn: () => void) { fn(); passed++; console.log(`✓ ${name}`); }
+
+const telemetry = (over: Partial<AccountDeepResearchTelemetry> = {}): AccountDeepResearchTelemetry => ({
+  version: "account-deep-research-v1", account: "Acme Foods", domain: "acme.com",
+  planned_queries: 4, executed_queries: 4, provider_calls: 4, provider_failures: 0,
+  results_seen: 12, evidence_accepted: 2, evidence_rejected: 3, pages_extracted: 2,
+  extraction_failures: 0, structured_extraction_calls: 1, dated_evidence: 2,
+  independent_domains: 2, corroboration_attempted: true, corroborating_domains: 1,
+  claims_recovered: 2, counterevidence_checked: true, early_stop_reason: "sufficient_evidence",
+  query_audit: [], extraction_audit: [], provider_ops: [],
+  validated_events: [{ url: "https://acme.com/news/new-plant?utm_source=x", source_host: "acme.com", event_date: "2026-08-20", kind: "corporate_event", claim_excerpt: "Acme Foods opened a new production plant in Ohio adding two packaging lines", stage: "current_activity", materiality_valid: true, counterevidence: false }],
+  ...over,
+});
+
+const lead = (over: Record<string, unknown> = {}) => ({
+  id: "lead-1", candidate: { company: "Acme Foods", domain: "acme.com", confidence_score: .9 },
+  qualification: { fit_score: 8, category: "WARM" }, outreach: { qc_status: "APPROVED" },
+  enrichment: { account_research: telemetry(), evidence_discipline: [] }, ...over,
+}) as never;
+
+test("01 actionable account exposes every diagnostic funnel stage", () => {
+  const row = deriveAccountActionabilityFunnel(lead(), "validate", []);
+  assert.equal(row.target_valid, true); assert.equal(row.temporal_valid_events, 1);
+  assert.equal(row.materiality_valid_events, 1); assert.equal(row.evidence_valid, true);
+  assert.equal(row.independent_support, true); assert.equal(row.hold_reason, null);
+});
+
+test("02 provider degradation is insufficient coverage, never a commercial negative", () => {
+  const l = lead({ enrichment: { account_research: telemetry({ early_stop_reason: "providers_unavailable", enrichment_failed: { provider: "tavily", reason: "provider_degraded" } }) } });
+  const row = deriveAccountActionabilityFunnel(l, "hold", []);
+  assert.equal(row.research_coverage, "insufficient"); assert.equal(row.hold_reason, "INSUFFICIENT_COVERAGE");
+});
+
+test("03 no validated event maps to NO_CURRENT_EVENT", () => {
+  const l = lead({ enrichment: { account_research: telemetry({ validated_events: [], early_stop_reason: "no_material_event" }) } });
+  assert.equal(deriveAccountActionabilityFunnel(l, "hold", []).hold_reason, "NO_CURRENT_EVENT");
+});
+
+test("04 aggregate denominator and decisions remain account-based", () => {
+  const rows = [deriveAccountActionabilityFunnel(lead(), "validate", []), deriveAccountActionabilityFunnel(lead({ enrichment: { account_research: telemetry({ validated_events: [] }) } }), "hold", [])];
+  const out = summarizeActionabilityFunnel(rows);
+  assert.equal(out.accounts, 2); assert.equal(out.decisions.validate, 1); assert.equal(out.decisions.hold, 1);
+});
+
+test("05 verified claim binds only exact validated event source", () => {
+  const sources = bindVerifiedClaimToSources({ claim: "Acme Foods opened a new production plant with two packaging lines", type: "verified_public_signal", date: "2026-08-20", telemetry: telemetry() });
+  assert.equal(sources.length, 1); assert.equal(sources[0].url, "https://acme.com/news/new-plant");
+  assert.equal(sources[0].source_id, stableSourceId("https://acme.com/news/new-plant"));
+});
+
+test("06 claim A never inherits unrelated source B", () => {
+  const t = telemetry({ validated_events: [
+    ...telemetry().validated_events!,
+    { url: "https://other.com/news/warehouse", source_host: "other.com", event_date: "2026-08-20", kind: "corporate_event", claim_excerpt: "Other Holdings acquired a warehouse operator in Texas", stage: "current_activity", materiality_valid: true, counterevidence: false },
+  ] });
+  const sources = bindVerifiedClaimToSources({ claim: "Acme Foods opened a production plant with packaging lines", type: "verified_public_signal", date: "2026-08-20", telemetry: t });
+  assert.deepEqual(sources.map((source) => source.origin), ["acme.com"]);
+});
+
+test("07 inference never inherits verified URL", () => {
+  assert.deepEqual(bindVerifiedClaimToSources({ claim: "Acme may need automation", type: "inferred_from_context", date: "2026-08-20", telemetry: telemetry() }), []);
+});
+
+test("08 same URL is deduplicated by stable source identity", () => {
+  const event = telemetry().validated_events![0];
+  const sources = bindVerifiedClaimToSources({ claim: "Acme Foods opened a new production plant adding packaging lines", type: "verified_public_signal", date: "2026-08-20", telemetry: telemetry({ validated_events: [event, { ...event, url: "https://acme.com/news/new-plant" }] }) });
+  assert.equal(sources.length, 1);
+});
+
+test("09 affirmative cancellation is counterevidence", () => assert.equal(isAffirmativeCounterevidence("The company cancelled the plant expansion"), true));
+test("10 unknown budget is not counterevidence", () => assert.equal(isAffirmativeCounterevidence("No public budget information was found"), false));
+test("11 provider failure is not counterevidence", () => assert.equal(isAffirmativeCounterevidence("Search provider unavailable due to quota"), false));
+test("12 stale event alone is not counterevidence", () => assert.equal(isAffirmativeCounterevidence("The expansion announcement is two years old"), false));
+test("13 productive research defaults to validated concurrency 2", () => assert.equal(resolveResearchConcurrency(undefined), 2));
+test("14 concurrency retains serial rollback and hard ceiling", () => { assert.equal(resolveResearchConcurrency("1"), 1); assert.equal(resolveResearchConcurrency("8"), 2); });
+
+console.log(`\n${passed}/14 intelligence release-candidate contracts passed`);

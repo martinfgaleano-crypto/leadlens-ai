@@ -40,6 +40,8 @@ export interface AccountDeepResearchTelemetry {
   early_stop_reason: "sufficient_evidence" | "no_material_event" | "budget_exhausted" | "providers_unavailable";
   query_audit: Array<{ query_id: string; stage: string; provider: string; results: number; accepted: number }>;
   extraction_audit: Array<{ url: string; stage: string; date_phrase: string | null; signal_kind: string; materiality: string; accepted_events: number; evidence_excerpt: string }>;
+  validated_events?: Array<{ url: string; source_host: string; event_date: string; kind: string; claim_excerpt: string; stage: string; materiality_valid: boolean; counterevidence: boolean }>;
+  counterevidence_material_found?: boolean;
   // Deep runtime instrumentation (LIVE EXECUTION TRACE V1 §7-14): one entry per REAL
   // external operation, timed at the operation boundary. A search's duration_ms is
   // dominated by external provider wait; local processing is excluded. Optional for
@@ -99,7 +101,7 @@ export interface AccountDeepResearchResult {
   sourceUrl: string | null;
   publishedDate: string | null;
   eventDate: string | null;
-  validated_events: Array<{ url: string; source_host: string; kind: string; event_date: string; title_and_content: string }>;
+  validated_events: Array<{ url: string; source_host: string; kind: string; event_date: string; title_and_content: string; stage: string }>;
   decisions: EvidenceDecision[];
   telemetry: AccountDeepResearchTelemetry;
 }
@@ -222,7 +224,7 @@ export async function deepenAccountResearch(
                 publicationDate: item.published_date, retrievedAt: item.retrieved_at,
               }, criteria.buying_signals);
               const event = eventResult.item;
-              if (event.isDatedMaterialEvent && event.eventDate) validatedEvents.push({ url: item.url, source_host: sourceHost, kind: event.kind, event_date: event.eventDate, title_and_content: titleAndContent.slice(0, 9000) });
+              if (event.isDatedMaterialEvent && event.eventDate) validatedEvents.push({ url: item.url, source_host: sourceHost, kind: event.kind, event_date: event.eventDate, title_and_content: titleAndContent.slice(0, 9000), stage: query.stage });
               else if (structuredExtractionCalls < 2) {
                 // Existing canonical structured extractor proposes only. Its
                 // proposals still pass event/date/materiality gates below.
@@ -237,7 +239,7 @@ export async function deepenAccountResearch(
                     sourceHost, sourceUrl: item.url, publicationDate: item.published_date, retrievedAt: item.retrieved_at, accountId: candidate.company,
                   }, criteria.buying_signals);
                   for (const proposedEvent of proposed) if (proposedEvent.isDatedMaterialEvent && proposedEvent.eventDate) {
-                    validatedEvents.push({ url: item.url, source_host: sourceHost, kind: proposedEvent.kind, event_date: proposedEvent.eventDate, title_and_content: titleAndContent.slice(0, 9000) });
+                    validatedEvents.push({ url: item.url, source_host: sourceHost, kind: proposedEvent.kind, event_date: proposedEvent.eventDate, title_and_content: titleAndContent.slice(0, 9000), stage: query.stage });
                   }
                 }
                 // A syntactically valid model response with zero deterministically
@@ -251,7 +253,7 @@ export async function deepenAccountResearch(
                   }, criteria.buying_signals).item;
                   if (fallback.isDatedMaterialEvent && fallback.eventDate) validatedEvents.push({
                     url: item.url, source_host: sourceHost, kind: fallback.kind,
-                    event_date: fallback.eventDate, title_and_content: titleAndContent.slice(0, 9000),
+                    event_date: fallback.eventDate, title_and_content: titleAndContent.slice(0, 9000), stage: query.stage,
                   });
                 }
               }
@@ -339,6 +341,12 @@ export async function deepenAccountResearch(
     counterevidence_checked: queryAudit.some((q) => q.stage === "counterevidence"),
     early_stop_reason: validatedEvents.length > 0 && hasSufficientEvidence(decisions) ? "sufficient_evidence" : stoppedNoEvent || validatedEvents.length === 0 ? "no_material_event" : providers.length === 0 || providerCalls === providerFailures ? "providers_unavailable" : "budget_exhausted",
     query_audit: queryAudit, extraction_audit: extractionAudit, provider_ops: providerOps,
+    validated_events: validatedEvents.map((event) => ({
+      url: event.url, source_host: event.source_host, event_date: event.event_date, kind: event.kind,
+      claim_excerpt: event.title_and_content.slice(0, 1200), stage: event.stage,
+      materiality_valid: true, counterevidence: event.stage === "counterevidence" && isAffirmativeCounterevidence(event.title_and_content),
+    })),
+    counterevidence_material_found: validatedEvents.some((event) => event.stage === "counterevidence" && isAffirmativeCounterevidence(event.title_and_content)),
   };
   return {
     context: contexts.sort((a, b) => b.rank - a.rank).slice(0, 8).map((x) => x.text).join(" | ").slice(0, 9000),
@@ -348,6 +356,10 @@ export async function deepenAccountResearch(
     validated_events: validatedEvents,
     decisions, telemetry,
   };
+}
+
+export function isAffirmativeCounterevidence(text: string): boolean {
+  return /\b(cancel(?:led|ed|lation)?|postpon(?:ed|ement)|delay(?:ed|s)?|closed? (?:the |its )?(?:facility|plant|project)|budget (?:was )?cut|initiative (?:was )?(?:replaced|abandoned)|contract (?:was )?awarded (?:to|elsewhere)|suspend(?:ed|sion)|cancelad[ao]|aplazad[ao]|retrasad[ao]|cerr[oó] (?:la |el )?(?:planta|proyecto)|recorte (?:de )?presupuesto)\b/i.test(text);
 }
 
 /** Financial reporting remains useful context but must not take the scarce

@@ -13,6 +13,8 @@ import type { IntelligenceRunRecord, IntelligenceRunStore } from "./productive-s
 import type { DiscoveryBudget } from "@/lib/lead-hunter/candidate-universe";
 import type { IntelligenceRunTrace } from "@/lib/intelligence/run-trace";
 import { buildAccountRunTrace, buildRunFailureTrace } from "@/lib/intelligence/run-trace-wiring";
+import { deriveAccountActionabilityFunnel, summarizeActionabilityFunnel } from "@/lib/intelligence/actionability-funnel";
+import { bindVerifiedClaimToSources } from "@/lib/intelligence/claim-provenance";
 
 export interface StartIntelligenceRunInput {
   userId: string;
@@ -225,14 +227,16 @@ async function runIntelligenceExecution(
         signalType: lead.candidate.signal_type ?? null,
         researchConfidence: lead.enrichment.research_confidence ?? null,
         accountResearch: lead.enrichment.account_research ?? null,
-        evidenceClaims: (lead.enrichment.evidence_discipline ?? []).map(claim => ({
-          type: claim.type, claim: claim.claim, date: claim.date ?? null,
-          source_url: evidenceClaimSourceUrl(claim.type, lead.candidate.source_url),
-        })),
+        evidenceClaims: (lead.enrichment.evidence_discipline ?? []).map(claim => {
+          const supporting_sources = bindVerifiedClaimToSources({ claim: claim.claim, type: claim.type, date: claim.date ?? null, telemetry: lead.enrichment.account_research });
+          return { type: claim.type, claim: claim.claim, date: claim.date ?? null,
+            source_url: supporting_sources[0]?.url ?? null, source_id: supporting_sources[0]?.source_id ?? null, supporting_sources };
+        }),
         risks: lead.enrichment.opportunity_risks ?? [],
         nextQuestion: lead.enrichment.next_best_question ?? null,
         qcStatus: lead.outreach.qc_status ?? null,
         canonicalDecision: c?.decision ?? "hold", reasons: c?.reasons ?? ["case_missing"],
+        actionability: deriveAccountActionabilityFunnel(lead, c?.decision ?? null, c?.reasons ?? ["case_missing"]),
       };
     });
     // Emit one runtime-observability trace per researched account from the REAL
@@ -299,13 +303,14 @@ async function runIntelligenceExecution(
     // Failure honesty: classify run-level coverage from the REAL per-account telemetry so a
     // degraded/insufficient run is not reported as a healthy "no strong opportunity" (§4).
     const coverageState = classifyRunCoverage(researchedLeads.map((lead) => lead.enrichment.account_research ?? null));
+    const actionabilityFunnel = summarizeActionabilityFunnel((run.researchAudit ?? []).flatMap((item) => item.actionability ? [item.actionability] : []));
     const commercialOutcome = strongCount > 0 ? "completed_with_opportunities"
       : coverageState === "insufficient" ? "completed_insufficient_coverage" : "completed_no_strong_opportunity";
     (report as LeadLensReport & { _intelligence_run?: unknown })._intelligence_run = {
       kind: "productive_intelligence_spine_v1", contextRef, leadHunterRunId,
       stage: "report", researched: researchLimit, delivered: strongCount, portfolioAccounts: report.processed_leads.length,
       discoveryProvenanceIsEvidence: false, firstReview: true,
-      coverageState, commercialOutcome,
+      coverageState, commercialOutcome, actionabilityFunnel,
     };
 
     run = { ...run, coverageState, status: "completed", stage: "report", report, failureCode: null, updatedAt: (deps.now ?? (() => new Date()))().toISOString() };
@@ -385,7 +390,8 @@ export function canonicalCaseForLead(lead: ProcessedLead): NonNullable<LeadLensR
     dateConfidence: verifiedSignal ? "high" : signalDate ? "medium" : "none",
     sourceHost,
     materialEvent: verifiedSignal,
-    hasMaterialCounter: (e.opportunity_risks ?? []).some((risk) => /cancel|contradict|insolven|third.party|terceriz/i.test(risk)),
+    hasMaterialCounter: e.account_research?.counterevidence_material_found === true
+      || (e.opportunity_risks ?? []).some((risk) => /cancel|contradict|insolven|third.party|terceriz/i.test(risk)),
     openDecisionCritical: e.next_best_question ? [e.next_best_question] : [],
     priorFit: strength(lead.qualification.fit_score),
     priorTiming: verifiedSignal ? "Moderate" : "Limited",

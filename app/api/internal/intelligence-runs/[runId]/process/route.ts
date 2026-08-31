@@ -7,6 +7,7 @@ import { SupabaseLeadHunterRunStore } from "@/lib/lead-hunter/run-store";
 import { SupabaseIntelligenceRunStore } from "@/lib/intelligence/productive-spine-store";
 import { executeIntelligenceRun } from "@/lib/intelligence/productive-spine";
 import { SupabaseRunTraceSink } from "@/lib/intelligence/run-trace-sink";
+import { resolveResearchConcurrency } from "@/lib/intelligence/research-concurrency";
 
 export const maxDuration = 300;
 const bodySchema = z.object({ user_id: z.string().uuid() }).strict();
@@ -42,9 +43,9 @@ export async function POST(req: NextRequest, { params }: { params: { runId: stri
     discoveryRunner: (await import("@/lib/lead-hunter/discovery-runner")).defaultDiscoveryRunner,
     pipeline: (await import("@/lib/pipeline")).runLeadLensPipeline,
     traceProvenance: "live",
-    // Env-gated bounded account-research concurrency (default 1 = serial). Enabled only for
-    // the controlled live A/B until it is validated for production.
-    researchConcurrency: Math.max(1, Number(process.env.INTELLIGENCE_RESEARCH_CONCURRENCY) || 1),
+    // Bounded account-research concurrency. c=2 is the validated production default;
+    // env=1 is the immediate rollback switch and values above 2 are never accepted.
+    researchConcurrency: resolveResearchConcurrency(),
     onAccountTrace: (trace) => { tracePersists.push(traceSink.persist(trace).catch(() => { /* telemetry never fails a run */ })); },
     // Accrete valid discovered companies into the durable, customer-independent Vault
     // registry (best-effort; universal facts only). Never blocks or alters the run.
