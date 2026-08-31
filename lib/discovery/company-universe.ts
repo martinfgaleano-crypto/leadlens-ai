@@ -63,6 +63,7 @@ const GENERIC_COMPANY_WORD = new Set([
   "empresa", "grupo", "colombia", "bogota", "medellin", "cali", "barranquilla", "cartagena", "global", "servicios",
   "packaging", "paper", "foods", "food", "beverage", "industrial", "industries", "manufacturing", "distribution", "enterprises",
   "supply", "supplies", "direct", "international",
+  "alimento", "alimentos", "bebida", "bebidas", "comercial", "comerciales",
 ]);
 
 export function rejectEnumeratedName(name: string): string | null {

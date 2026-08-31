@@ -133,5 +133,9 @@ test("26 LLM claim cannot create Validate when deep telemetry accepted zero even
   } as never);
   assert.equal(canonicalCaseForLead(l as never)?.decision, "hold");
 });
+test("27 generic Spanish industry token cannot assign another company's domain", () => {
+  assert.equal(inferEnumeratedDomain("Pepsico Alimentos Colombia Ltda.", [{ title: "Pepsico Alimentos Colombia", snippet: "fabricante", url: "https://alimentossas.com" }]).domain, null);
+  assert.equal(inferEnumeratedDomain("Pepsico Alimentos Colombia Ltda.", [{ title: "PepsiCo Colombia", snippet: "sitio corporativo", url: "https://pepsico.com" }]).domain, "pepsico.com");
+});
 
-console.log(`\n${passed}/26 intelligence release-candidate contracts passed`);
+console.log(`\n${passed}/27 intelligence release-candidate contracts passed`);
