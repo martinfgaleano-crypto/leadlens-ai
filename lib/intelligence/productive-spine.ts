@@ -8,6 +8,7 @@ import { loadLeadHunterUniverse, runAndPersistLeadHunter, toResearchCandidates }
 import { synthesizeCase } from "@/lib/monitor/canonical-case";
 import { isMaterialEventClaim } from "@/lib/intelligence/evidence-materiality";
 import { classifyRunCoverage } from "@/lib/intelligence/account-deep-research";
+import { selectPortfolioAdmission } from "@/lib/intelligence/portfolio-admission";
 import type { IntelligenceRunRecord, IntelligenceRunStore } from "./productive-spine-store";
 import type { DiscoveryBudget } from "@/lib/lead-hunter/candidate-universe";
 import type { IntelligenceRunTrace } from "@/lib/intelligence/run-trace";
@@ -256,13 +257,24 @@ async function runIntelligenceExecution(
         })));
       } catch { /* Vault accretion must never break a run */ }
     }
-    // WARM is not enough for customer delivery. The canonical Case owns the
-    // commercial truth: Monitor/Hold research remains counted but is not
-    // presented as a strong opportunity result.
-    const deliverableIds = new Set(report.canonical_cases.filter(c => c.decision === "prioritize" || c.decision === "validate").map(c => c.lead_id));
-    report.canonical_cases = report.canonical_cases.filter(c => deliverableIds.has(c.lead_id));
-    report.processed_leads = report.processed_leads.filter(lead => deliverableIds.has(lead.id));
-    report.ranked_opportunities = (report.ranked_opportunities ?? []).filter(item => deliverableIds.has(item.lead_id));
+    // DECISION-FIRST PORTFOLIO: the customer result is a portfolio of evaluated
+    // accounts, not only "strong" ones. Prioritize/Validate (attention now) AND
+    // Monitor + eligible Hold (worth remembering + reevaluating) are all retained,
+    // so account continuity (Account Memory), What-Changed, and Portfolio
+    // Intelligence see the full evaluated set. Only NON-account noise is dropped:
+    // structural rejects (qc FAILED — wrong entity / invalid identity, §4-§6) and
+    // DISCARD-tier candidates. Failure honesty (§4) is preserved via a SEPARATE
+    // strong-opportunity count below — never inferred from portfolio size.
+    // Strong count (Prioritize/Validate ONLY) is computed here — never the full
+    // portfolio size — so a Monitor/Hold-only run is an honest abstention, not
+    // "opportunities found" (§4, failure honesty).
+    const { portfolioIds, strongCount } = selectPortfolioAdmission(
+      report.canonical_cases.map(c => ({ lead_id: c.lead_id, decision: c.decision })),
+      report.processed_leads.map(l => ({ id: l.id, qc_status: l.outreach?.qc_status ?? null, category: l.qualification?.category ?? null })),
+    );
+    report.canonical_cases = report.canonical_cases.filter(c => portfolioIds.has(c.lead_id));
+    report.processed_leads = report.processed_leads.filter(lead => portfolioIds.has(lead.id));
+    report.ranked_opportunities = (report.ranked_opportunities ?? []).filter(item => portfolioIds.has(item.lead_id));
     report.total_leads = report.processed_leads.length;
     report.hot_count = report.processed_leads.filter(lead => lead.qualification.category === "HOT").length;
     report.warm_count = report.processed_leads.filter(lead => lead.qualification.category === "WARM").length;
@@ -273,11 +285,11 @@ async function runIntelligenceExecution(
     // Failure honesty: classify run-level coverage from the REAL per-account telemetry so a
     // degraded/insufficient run is not reported as a healthy "no strong opportunity" (§4).
     const coverageState = classifyRunCoverage(researchedLeads.map((lead) => lead.enrichment.account_research ?? null));
-    const commercialOutcome = report.processed_leads.length > 0 ? "completed_with_opportunities"
+    const commercialOutcome = strongCount > 0 ? "completed_with_opportunities"
       : coverageState === "insufficient" ? "completed_insufficient_coverage" : "completed_no_strong_opportunity";
     (report as LeadLensReport & { _intelligence_run?: unknown })._intelligence_run = {
       kind: "productive_intelligence_spine_v1", contextRef, leadHunterRunId,
-      stage: "report", researched: researchLimit, delivered: report.processed_leads.length,
+      stage: "report", researched: researchLimit, delivered: strongCount, portfolioAccounts: report.processed_leads.length,
       discoveryProvenanceIsEvidence: false, firstReview: true,
       coverageState, commercialOutcome,
     };
