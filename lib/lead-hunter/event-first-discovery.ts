@@ -50,6 +50,7 @@ export interface EventFirstMetrics {
   rejected: Record<string, number>;
   provider_calls: Record<string, number>;
   provider_failures: Record<string, string>;
+  result_sample: Array<{ query: string; title: string | null; url: string; published_date: string | null; provider: string }>;
 }
 
 export interface EventFirstResult {
@@ -103,16 +104,25 @@ export function planEventFirstQueries(plan: DiscoveryPlan, maxQueries = 6): Even
   return queries;
 }
 
-const EVENT_ACTION = /\b(?:announces?|plans?|opens?|launches?|builds?|expands?|invests?|acquires?|wins?|awarded|signs?|partners?|inaugurates?|anuncia|planea|abre|abrira|inaugura|construye|expande|amplia|invierte|adquiere|gana|firma|se asocia)\b/i;
+const EVENT_ACTION = /\b(?:announces?|plans?|opens?|launches?|builds?|expands?|invests?|acquires?|wins?|awarded|signs?|partners?|inaugurates?|anuncia|anuncio|planea|abre|abrio|abrira|inaugura|inauguro|construye|construyo|expande|expandio|amplia|amplio|invierte|invirtio|adquiere|adquirio|gana|firma|se asocia)\b/i;
 const BAD_SUBJECT = /^(?:breaking|exclusive|report|analysis|news|update|companies|manufacturers|manufacturer|industry|market|sector|colombia|united states|us|u\.s\.)$/i;
 
 /** Deterministic, deliberately conservative title-subject extraction. It only
  * accepts a named prefix immediately governing a material-change verb. */
 export function extractEventSubjects(headline: string): string[] {
-  const title = compact(headline.split(/\s+[|–—]\s+/)[0] ?? "").replace(/^(?:breaking|exclusive|update|news)\s*:\s*/i, "");
+  const full = compact(headline).replace(/^(?:breaking|exclusive|update|news)\s*:\s*/i, "");
+  // Corporate newsrooms often lead with the event and put the company after a
+  // dash: “Inauguración del Centro de Distribución - P.A.N. COLOMBIA”.
+  const suffixPattern = /^(?:inauguraci[oó]n|apertura|expansi[oó]n|inversi[oó]n|ampliaci[oó]n)\b.{3,100}\s+-\s+(.{2,60})$/i.exec(full);
+  if (suffixPattern) {
+    const suffix = suffixPattern[1].replace(/\b(?:colombia|united states|usa)\b/ig, "").trim();
+    if (suffix.length >= 3 && !BAD_SUBJECT.test(suffix) && !rejectEnumeratedName(suffix)) return [suffix];
+  }
+  const original = compact(full.split(/\s+[|–—]\s+/)[0] ?? "");
+  const title = original.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   const match = EVENT_ACTION.exec(title);
   if (!match || match.index < 2 || match.index > 100) return [];
-  const prefix = title.slice(0, match.index).replace(/^(?:the|la|el)\s+/i, "").replace(/[,:;-]+$/g, "").trim();
+  const prefix = original.slice(0, match.index).replace(/^(?:the|la|el)\s+/i, "").replace(/[,:;-]+$/g, "").trim();
   const parts = prefix.split(/\s+(?:and|y|&)\s+/i).map(x => x.replace(/^(?:manufacturer|company|empresa)\s+/i, "").trim());
   return Array.from(new Set(parts.filter(name => name.length >= 3 && name.length <= 80 && !BAD_SUBJECT.test(name) && !rejectEnumeratedName(name))));
 }
@@ -127,10 +137,31 @@ function hintKey(company: string, family: EventFamily, url: string): string {
 }
 
 function domainLooksCorporate(company: string, domain: string | null): boolean {
-  if (!domain || /(?:reuters|bloomberg|forbes|news|prnewswire|businesswire|globenewswire|yahoo|msn|gov\.)/i.test(domain)) return false;
-  const tokens = normalize(company).split(/[^a-z0-9]+/).filter(x => x.length >= 4 && !/^(company|corporation|group|grupo|industries)$/.test(x));
+  if (!domain || /(?:reuters|bloomberg|forbes|news|press|prnewswire|businesswire|globenewswire|yahoo|msn|magazine|buyer|middleeast|industrytoday|foodengineering|nosh|gov\.)/i.test(domain)) return false;
+  const tokens = normalize(company).split(/[^a-z0-9]+/).filter(x => x.length >= 3 && !/^(company|corporation|group|grupo|industries|industry|logistics|distribution|manufacturing|foods|food|partners|equity|capital|holdings|international)$/.test(x));
   const host = normalize(domain.split(".")[0]);
-  return tokens.some(token => host.includes(token));
+  return tokens.some(token => token.length === 3 ? host === token || host.startsWith(token) || host.endsWith(token) : host.includes(token));
+}
+
+function isRecentHint(date: string | null, nowIso: string, url: string, title: string | null): boolean {
+  const currentYear = new Date(nowIso).getUTCFullYear();
+  const explicitYears = `${url} ${title ?? ""}`.match(/\b20\d{2}\b/g)?.map(Number) ?? [];
+  if (explicitYears.some(year => year < currentYear - 1)) return false;
+  if (!date) return true; // unknown stays a hint; canonical Research must date it.
+  const eventTime = new Date(date).getTime();
+  const nowTime = new Date(nowIso).getTime();
+  if (!Number.isFinite(eventTime) || !Number.isFinite(nowTime)) return true;
+  const ageDays = (nowTime - eventTime) / 86_400_000;
+  return ageDays >= -31 && ageDays <= 540;
+}
+
+function targetContextSupported(plan: DiscoveryPlan, text: string): boolean {
+  const target = normalize([...plan.organizationTypes, ...plan.industries].join(" "));
+  const observed = normalize(text);
+  if (/software|saas|technology|tecnologia/.test(target)) return /software|saas|platform|technology|tecnologia|aplicacion empresarial/.test(observed) && !/private equity|investment firm|venture capital|fondo de inversion/.test(observed);
+  if (/manufactur|fabricant|productor/.test(target)) return /manufactur|fabricant|produccion|producer|processing|plant|planta/.test(observed);
+  if (/logistic|distribut|transport|freight/.test(target)) return /logistic|distribut|transport|freight|warehouse|bodega|supply chain/.test(observed);
+  return true;
 }
 
 export async function runEventFirstDiscovery(
@@ -138,7 +169,7 @@ export async function runEventFirstDiscovery(
   providers: SearchProvider[],
   opts: { maxQueries?: number; maxIdentityQueries?: number; now?: () => Date } = {},
 ): Promise<EventFirstResult> {
-  const metrics: EventFirstMetrics = { queries: 0, raw_hints: 0, unique_hints: 0, subjects_extracted: 0, canonical_companies: 0, rejected: {}, provider_calls: {}, provider_failures: {} };
+  const metrics: EventFirstMetrics = { queries: 0, raw_hints: 0, unique_hints: 0, subjects_extracted: 0, canonical_companies: 0, rejected: {}, provider_calls: {}, provider_failures: {}, result_sample: [] };
   const reject = (reason: string) => { metrics.rejected[reason] = (metrics.rejected[reason] ?? 0) + 1; };
   const now = (opts.now ?? (() => new Date()))().toISOString();
   const queries = planEventFirstQueries(plan, opts.maxQueries ?? 6);
@@ -150,6 +181,7 @@ export async function runEventFirstDiscovery(
       const response = await provider.search({ query: query.query, region: query.language === "es" ? "co" : "us", language: query.language, max_results: 6, freshness_days: 365, query_type: "signal_specific" }).catch(error => ({ ok: false, results: [], error: error instanceof Error ? error.message : String(error) } as never));
       if (!response.ok) metrics.provider_failures[provider.id] = response.error ?? "unknown";
       raw.push(...response.results.map(item => ({ query, item })));
+      for (const item of response.results.slice(0, 3)) if (metrics.result_sample.length < 40) metrics.result_sample.push({ query: query.query, title: item.title, url: item.canonical_url, published_date: item.published_date, provider: item.provider });
       // One useful provider is enough per query; fallbacks preserve resilience.
       if (response.results.length >= 3) break;
     }
@@ -159,6 +191,7 @@ export async function runEventFirstDiscovery(
   const hints: EventDiscoveryCandidate[] = [];
   const seen = new Set<string>();
   for (const { query, item } of raw) {
+    if (!isRecentHint(item.published_date, now, item.canonical_url, item.title)) { reject("stale_hint"); continue; }
     const subjects = extractEventSubjects(item.title ?? "");
     if (!subjects.length) { reject("no_subject"); continue; }
     metrics.subjects_extracted += subjects.length;
@@ -193,6 +226,7 @@ export async function runEventFirstDiscovery(
   for (const hint of hints) {
     let domain = hint.company_domain_hint;
     let country: string | null = domain ? hint.target_geography : null;
+    let identityContext = `${hint.headline}`;
     if (!domain && identityCalls < identityBudget) {
       const provider = providers[0];
       if (provider) {
@@ -202,10 +236,13 @@ export async function runEventFirstDiscovery(
         const pages = response.results.map(x => ({ title: x.title, snippet: x.snippet, url: x.canonical_url }));
         domain = inferEnumeratedDomain(hint.company_name_hint, pages).domain;
         country = inferEnumeratedCountry(hint.company_name_hint, pages, hint.target_geography).country;
+        identityContext += ` ${pages.map(x => `${x.title ?? ""} ${x.snippet ?? ""}`).join(" ")}`;
       }
     }
     if (!domain) { reject("identity_unresolved"); continue; }
+    if (!domainLooksCorporate(hint.company_name_hint, domain)) { reject("identity_domain_mismatch"); continue; }
     if (!country) { reject("geography_unresolved"); continue; }
+    if (!targetContextSupported(plan, identityContext)) { reject("wrong_target_type"); continue; }
     orgs.push({
       name: hint.company_name_hint, domain, country,
       organizationType: plan.organizationTypes[0] ?? plan.industries[0],

@@ -21,7 +21,7 @@ const plan = (overrides: Partial<DiscoveryPlan> = {}): DiscoveryPlan => ({
   planGaps: [], ...overrides,
 });
 
-const item = (title: string, url: string, snippet = "United States food manufacturer", published = "2026-08-20"): SearchResultItem => ({
+const item = (title: string, url: string, snippet = "United States food manufacturer", published: string | null = "2026-08-20"): SearchResultItem => ({
   title, url, canonical_url: url, snippet, published_date: published, retrieved_at: "2026-08-31T00:00:00Z",
   source_type: "news", provider: "fixture", rank: 1, locale: "en-US",
 });
@@ -54,6 +54,12 @@ await test("extracts the governing event subject, not article suffix", () => {
 
 await test("represents both subjects of a joint announcement", () => {
   assert.deepEqual(extractEventSubjects("Acme Foods and Beta Logistics announce operational partnership"), ["Acme Foods", "Beta Logistics"]);
+});
+
+await test("extracts accented Spanish event verbs", () => {
+  assert.deepEqual(extractEventSubjects("Nutresa amplió su capacidad de producción en Colombia"), ["Nutresa"]);
+  assert.deepEqual(extractEventSubjects("Alpina inauguró una nueva planta en Cundinamarca"), ["Alpina"]);
+  assert.deepEqual(extractEventSubjects("Inauguración del Centro de Distribución - P.A.N. COLOMBIA"), ["P.A.N."]);
 });
 
 await test("does not treat an editorial category as a company", () => {
@@ -100,6 +106,36 @@ await test("provider failure is telemetry, not a commercial rejection", async ()
   const result = await runEventFirstDiscovery(plan(), [failing], { maxQueries: 1 });
   assert.equal(result.metrics.provider_failures.down, "rate_limited");
   assert.equal(result.orgs.length, 0);
+});
+
+await test("rejects stale event hints even when provider freshness leaks them", async () => {
+  const p = provider(() => [item("PepsiCo opens new manufacturing plant", "https://pepsico.com/news/plant", "United States manufacturer", "2012-06-01")]);
+  const result = await runEventFirstDiscovery(plan(), [p], { maxQueries: 1, maxIdentityQueries: 0, now: () => new Date("2026-08-31T00:00:00Z") });
+  assert.equal(result.hints.length, 0);
+  assert.equal(result.metrics.rejected.stale_hint, 1);
+});
+
+await test("rejects old year embedded in URL when provider omits the date", async () => {
+  const p = provider(() => [item("SunOpta opens manufacturing facility", "https://news.example/2023/02/sunopta", "United States manufacturer", null)]);
+  const result = await runEventFirstDiscovery(plan(), [p], { maxQueries: 1, maxIdentityQueries: 0, now: () => new Date("2026-08-31T00:00:00Z") });
+  assert.equal(result.hints.length, 0);
+  assert.equal(result.metrics.rejected.stale_hint, 1);
+});
+
+await test("rejects media domains that merely contain a generic company token", async () => {
+  const p = provider(q => q.query_type === "official_domain"
+    ? [item("XPO Logistics company profile", "https://logistics-buyer.com/xpo", "United States logistics company")]
+    : [item("XPO Logistics awarded Tesco contract", "https://logistics-buyer.com/xpo-contract")]);
+  const result = await runEventFirstDiscovery(plan({ organizationTypes: ["logistics operator"], industries: ["logistics"] }), [p], { maxQueries: 1, maxIdentityQueries: 1 });
+  assert.equal(result.orgs.length, 0);
+  assert.equal(result.metrics.rejected.identity_domain_mismatch, 1);
+});
+
+await test("rejects investment firms surfaced for an operational SaaS target", async () => {
+  const p = provider(() => [item("Vista Equity announces strategic partnership", "https://vistaequitypartners.com/news", "Private equity investment firm in the United States")]);
+  const result = await runEventFirstDiscovery(plan({ organizationTypes: ["software company"], industries: ["B2B operational software"], watchSignalFamilies: ["partnership"] }), [p], { maxQueries: 1, maxIdentityQueries: 0 });
+  assert.equal(result.orgs.length, 0);
+  assert.equal(result.metrics.rejected.wrong_target_type, 1);
 });
 
 await test("account-first and event-first identities fuse by canonical domain", async () => {
