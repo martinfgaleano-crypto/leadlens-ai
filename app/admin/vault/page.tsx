@@ -1,369 +1,158 @@
 "use client";
-import { useEffect, useState, useCallback } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import AdminLayout from "../_components/AdminLayout";
 import { adminFetch } from "@/lib/admin/admin-client";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-interface VaultLead {
-  id: string;
-  company_name: string;
-  normalized_company: string | null;
-  contact_name: string | null;
-  title: string | null;
-  normalized_title: string | null;
-  email: string | null;
-  country: string | null;
-  industry: string | null;
-  source: string | null;
-  times_seen: number;
-  lead_score: number | null;
-  opportunity_score: number | null;
-  temperature: string | null;
-  buyer_fit: string | null;
-  seniority: string | null;
-  created_at: string;
-  last_seen: string;
+interface CompanyView {
+  id: string; name: string; domain: string | null; industry: string | null; country: string | null;
+  companyType: string; first_seen_at: string | null; last_seen_at: string | null;
+  observation_count: number | null; eventCount: number; sourceCount: number;
 }
-
-interface ListResponse {
-  leads: VaultLead[];
-  total: number;
-  page: number;
-  per_page: number;
-  total_pages: number;
+interface Summary {
+  companies: number; events: number; sources: number; countries: number; companyTypes: number;
+  newCompanies24h: number; reobserved24h: number; newCompanies7d: number; reobserved7d: number;
+  byCountry: Array<{ key: string; count: number }>; byType: Array<{ key: string; count: number }>;
 }
+interface Resp { summary: Summary; inventory: { items: CompanyView[]; total: number; page: number; pageSize: number; pages: number }; }
 
-interface Stats {
-  total: number;
-  countries: number;
-  industries: number;
-  avg_opportunity: number;
-  top_score: number;
-  repeat_rate: number;
-  repeat_count: number;
-}
-
-const PER_PAGE = 25;
-const TEMPERATURES = ["Hot", "Warm", "Cold"];
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-function ScoreBadge({ score }: { score: number | null }) {
-  if (score == null) return <span style={{ color: "#cbd5e1" }}>—</span>;
-  let bg: string, color: string;
-  if      (score >= 90) { bg = "#dcfce7"; color = "#15803d"; }
-  else if (score >= 70) { bg = "#dbeafe"; color = "#1d4ed8"; }
-  else if (score >= 50) { bg = "#fef9c3"; color = "#854d0e"; }
-  else                  { bg = "#f1f5f9"; color = "#64748b"; }
-  return (
-    <span style={{ display: "inline-block", background: bg, color, borderRadius: 999, padding: "0.15rem 0.55rem", fontSize: "0.72rem", fontWeight: 700, minWidth: 26, textAlign: "center" }}>
-      {score}
-    </span>
-  );
-}
-
-function TempPill({ value }: { value: string | null }) {
-  if (!value) return <span style={{ color: "#cbd5e1" }}>—</span>;
-  const map: Record<string, { bg: string; color: string }> = {
-    Hot:  { bg: "#fee2e2", color: "#dc2626" },
-    Warm: { bg: "#fef9c3", color: "#854d0e" },
-    Cold: { bg: "#f1f5f9", color: "#64748b" },
-  };
-  const s = map[value] ?? { bg: "#f1f5f9", color: "#64748b" };
-  return (
-    <span style={{ background: s.bg, color: s.color, borderRadius: 999, padding: "0.1rem 0.5rem", fontSize: "0.68rem", fontWeight: 700 }}>
-      {value}
-    </span>
-  );
-}
-
-function StatCard({ label, value, sub }: { label: string; value: string | number; sub?: string }) {
-  return (
-    <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "0.65rem", padding: "1rem 1.25rem", minWidth: 110 }}>
-      <div style={{ fontSize: "1.4rem", fontWeight: 800, color: "#0f172a", letterSpacing: "-0.02em" }}>{value}</div>
-      <div style={{ fontSize: "0.72rem", color: "#64748b", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em", marginTop: "0.2rem" }}>{label}</div>
-      {sub && <div style={{ fontSize: "0.68rem", color: "#94a3b8", marginTop: "0.15rem" }}>{sub}</div>}
-    </div>
-  );
-}
-
-// ─── Component ────────────────────────────────────────────────────────────────
+const card: React.CSSProperties = { background: "#fff", border: "1px solid #e2e8f0", borderRadius: 8, padding: "0.9rem 1rem" };
+const label: React.CSSProperties = { fontSize: "0.7rem", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.04em" };
+const metric: React.CSSProperties = { fontSize: "1.6rem", fontWeight: 700, color: "#0f172a" };
+const th: React.CSSProperties = { textAlign: "left", fontSize: "0.7rem", color: "#64748b", textTransform: "uppercase", padding: "0.5rem 0.6rem", borderBottom: "1px solid #e2e8f0", whiteSpace: "nowrap" };
+const td: React.CSSProperties = { fontSize: "0.85rem", padding: "0.5rem 0.6rem", borderBottom: "1px solid #f1f5f9", color: "#0f172a" };
+const sel: React.CSSProperties = { padding: "0.4rem 0.5rem", border: "1px solid #cbd5e1", borderRadius: 6, fontSize: "0.85rem", background: "#fff" };
+const fmtDate = (d: string | null) => d ? new Date(d).toLocaleDateString(undefined, { year: "2-digit", month: "short", day: "numeric" }) : "—";
 
 export default function VaultPage() {
-  const [leads, setLeads]         = useState<VaultLead[]>([]);
-  const [stats, setStats]         = useState<Stats | null>(null);
-  const [total, setTotal]         = useState(0);
-  const [page, setPage]           = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading]     = useState(true);
-  const [statsLoading, setStatsLoading] = useState(true);
-  const [error, setError]         = useState("");
+  const [data, setData] = useState<Resp | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [q, setQ] = useState("");
+  const [debouncedQ, setDebouncedQ] = useState("");
+  const [country, setCountry] = useState("");
+  const [type, setType] = useState("");
+  const [page, setPage] = useState(1);
 
-  // Filters
-  const [q, setQ]                     = useState("");
-  const [debouncedQ, setDebouncedQ]   = useState("");
-  const [country, setCountry]         = useState("");
-  const [industry, setIndustry]       = useState("");
-  const [temperature, setTemperature] = useState("");
+  useEffect(() => { const t = setTimeout(() => setDebouncedQ(q), 300); return () => clearTimeout(t); }, [q]);
+  useEffect(() => { setPage(1); }, [debouncedQ, country, type]);
 
-  // Debounce search input
-  useEffect(() => {
-    const t = setTimeout(() => setDebouncedQ(q), 350);
-    return () => clearTimeout(t);
-  }, [q]);
+  const load = useCallback(async () => {
+    setLoading(true); setError("");
+    const params = new URLSearchParams();
+    if (debouncedQ) params.set("q", debouncedQ);
+    if (country) params.set("country", country);
+    if (type) params.set("type", type);
+    params.set("page", String(page));
+    const res = await adminFetch(`/api/admin/vault?${params.toString()}`);
+    if (!res.ok) { setError(res.status === 401 || res.status === 403 ? "Admin sign-in required." : `Failed to load (HTTP ${res.status}).`); setLoading(false); return; }
+    setData(await res.json()); setLoading(false);
+  }, [debouncedQ, country, type, page]);
+  useEffect(() => { void load(); }, [load]);
 
-  // Load stats once
-  useEffect(() => {
-    setStatsLoading(true);
-    adminFetch("/api/admin/vault/stats")
-      .then(r => r.ok ? r.json() : null)
-      .then(d => { if (d) setStats(d as Stats); })
-      .finally(() => setStatsLoading(false));
-  }, []);
-
-  // Load leads on filter/page change
-  const loadLeads = useCallback(async () => {
-    setLoading(true);
-    setError("");
-    const params = new URLSearchParams({ page: String(page), per_page: String(PER_PAGE) });
-    if (debouncedQ)   params.set("q", debouncedQ);
-    if (country)      params.set("country", country);
-    if (industry)     params.set("industry", industry);
-    if (temperature)  params.set("temperature", temperature);
-
-    const res = await adminFetch(`/api/admin/vault?${params}`);
-    if (!res.ok) {
-      const d = await res.json().catch(() => ({}));
-      setError((d as { error?: string }).error ?? `Error ${res.status}`);
-    } else {
-      const d = await res.json() as ListResponse;
-      setLeads(d.leads);
-      setTotal(d.total);
-      setTotalPages(d.total_pages);
-    }
-    setLoading(false);
-  }, [page, debouncedQ, country, industry, temperature]);
-
-  useEffect(() => { loadLeads(); }, [loadLeads]);
-
-  // Reset page on filter change
-  useEffect(() => { setPage(1); }, [debouncedQ, country, industry, temperature]);
-
-  // ─── Render ───────────────────────────────────────────────────────────────
+  const s = data?.summary;
+  const inv = data?.inventory;
+  const countryOptions = useMemo(() => s?.byCountry.map(c => c.key) ?? [], [s]);
+  const typeOptions = useMemo(() => s?.byType.map(c => c.key) ?? [], [s]);
 
   return (
     <AdminLayout>
-      {/* Header */}
-      <div style={{ marginBottom: "1.5rem" }}>
-        <h1 style={{ color: "#0f172a", fontSize: "1.4rem", fontWeight: 800, margin: 0, letterSpacing: "-0.02em" }}>
-          LeadLens Vault
-        </h1>
-        <p style={{ color: "#64748b", fontSize: "0.8rem", margin: "0.35rem 0 0" }}>
-          Global lead intelligence — every contact ever discovered, deduplicated and enriched.
+      <div style={{ maxWidth: 1180, margin: "0 auto", padding: "1rem" }}>
+        <h1 style={{ fontSize: "1.4rem", fontWeight: 700, color: "#0f172a", margin: "0 0 0.25rem" }}>LeadLens Vault</h1>
+        <p style={{ color: "#64748b", fontSize: "0.85rem", margin: "0 0 1rem" }}>
+          Reusable account intelligence accumulated automatically from validated LeadLens research.
         </p>
-      </div>
 
-      {/* Stats row */}
-      {!statsLoading && stats && (
-        <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", marginBottom: "1.5rem" }}>
-          <StatCard label="Total leads"   value={stats.total.toLocaleString()} />
-          <StatCard label="Countries"     value={stats.countries} />
-          <StatCard label="Industries"    value={stats.industries} />
-          <StatCard label="Avg opp. score" value={stats.avg_opportunity} />
-          <StatCard label="Top score"     value={stats.top_score} />
-          <StatCard
-            label="Repeat rate"
-            value={`${stats.repeat_rate}%`}
-            sub={`${stats.repeat_count} seen 2+ times`}
-          />
+        {error && <div style={{ ...card, borderColor: "#fca5a5", color: "#b91c1c", marginBottom: "1rem" }}>{error}</div>}
+
+        {/* Top metrics */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(130px,1fr))", gap: "0.6rem", marginBottom: "0.6rem" }}>
+          <div style={card}><div style={label}>Companies</div><div style={metric}>{s?.companies ?? "—"}</div></div>
+          <div style={card}><div style={label}>Material Events</div><div style={metric}>{s?.events ?? "—"}</div></div>
+          <div style={card}><div style={label}>Sources</div><div style={metric}>{s?.sources ?? "—"}</div></div>
+          <div style={card}><div style={label}>Countries</div><div style={metric}>{s?.countries ?? "—"}</div></div>
+          <div style={card}><div style={label}>Company Types</div><div style={metric}>{s?.companyTypes ?? "—"}</div></div>
         </div>
-      )}
-      {statsLoading && (
-        <div style={{ marginBottom: "1.5rem", color: "#94a3b8", fontSize: "0.8rem" }}>Loading stats…</div>
-      )}
-
-      {/* Filters */}
-      <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "0.75rem", padding: "1rem 1.25rem", marginBottom: "1.25rem", display: "flex", gap: "0.75rem", flexWrap: "wrap", alignItems: "center" }}>
-        <input
-          type="search"
-          placeholder="Search company, contact, email…"
-          value={q}
-          onChange={e => setQ(e.target.value)}
-          style={{ flex: "1 1 220px", padding: "0.55rem 0.75rem", border: "1px solid #e2e8f0", borderRadius: "0.45rem", fontSize: "0.875rem", fontFamily: "inherit", outline: "none", color: "#0f172a" }}
-        />
-        <select value={country} onChange={e => setCountry(e.target.value)} style={selectStyle}>
-          <option value="">All countries</option>
-          <option value="United States">United States</option>
-          <option value="Canada">Canada</option>
-          <option value="United Kingdom">United Kingdom</option>
-          <option value="Australia">Australia</option>
-          <option value="Germany">Germany</option>
-          <option value="France">France</option>
-        </select>
-        <select value={industry} onChange={e => setIndustry(e.target.value)} style={selectStyle}>
-          <option value="">All industries</option>
-          <option value="Technology">Technology</option>
-          <option value="Healthcare">Healthcare</option>
-          <option value="Finance">Finance</option>
-          <option value="Manufacturing">Manufacturing</option>
-          <option value="Retail">Retail</option>
-        </select>
-        <select value={temperature} onChange={e => setTemperature(e.target.value)} style={selectStyle}>
-          <option value="">All temperatures</option>
-          {TEMPERATURES.map(t => <option key={t} value={t}>{t}</option>)}
-        </select>
-        {(q || country || industry || temperature) && (
-          <button
-            onClick={() => { setQ(""); setCountry(""); setIndustry(""); setTemperature(""); }}
-            style={{ background: "none", border: "1px solid #e2e8f0", borderRadius: "0.4rem", padding: "0.5rem 0.75rem", fontSize: "0.78rem", color: "#64748b", cursor: "pointer", fontFamily: "inherit" }}
-          >
-            Clear
-          </button>
-        )}
-      </div>
-
-      {/* Error */}
-      {error && (
-        <div style={{ background: "#fee2e2", border: "1px solid #fca5a5", borderRadius: "0.65rem", padding: "0.75rem 1rem", color: "#dc2626", fontSize: "0.85rem", marginBottom: "1rem" }}>
-          {error}
-        </div>
-      )}
-
-      {/* Table */}
-      <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "0.75rem", overflow: "hidden" }}>
-        <div style={{ padding: "0.75rem 1.25rem", borderBottom: "1px solid #f1f5f9", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <span style={{ fontWeight: 700, fontSize: "0.875rem", color: "#0f172a" }}>
-            Vault Leads {!loading && `(${total.toLocaleString()})`}
-          </span>
-          <span style={{ fontSize: "0.72rem", color: "#94a3b8" }}>Read-only · Click row to view profile</span>
+        {/* Growth */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(130px,1fr))", gap: "0.6rem", marginBottom: "1rem" }}>
+          <div style={card}><div style={label}>New · 24h</div><div style={metric}>{s?.newCompanies24h ?? "—"}</div></div>
+          <div style={card}><div style={label}>Re-observed · 24h</div><div style={metric}>{s?.reobserved24h ?? "—"}</div></div>
+          <div style={card}><div style={label}>New · 7d</div><div style={metric}>{s?.newCompanies7d ?? "—"}</div></div>
+          <div style={card}><div style={label}>Re-observed · 7d</div><div style={metric}>{s?.reobserved7d ?? "—"}</div></div>
         </div>
 
-        {loading ? (
-          <div style={{ padding: "3rem 1.25rem", textAlign: "center", color: "#94a3b8", fontSize: "0.875rem" }}>
-            Loading vault…
+        {/* Composition */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.6rem", marginBottom: "1rem" }}>
+          <div style={card}>
+            <div style={{ ...label, marginBottom: "0.4rem" }}>By Country</div>
+            {(s?.byCountry ?? []).slice(0, 8).map(c => <div key={c.key} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", padding: "0.15rem 0" }}><span>{c.key}</span><strong>{c.count}</strong></div>)}
+            {!s && <div style={{ color: "#94a3b8", fontSize: "0.85rem" }}>…</div>}
           </div>
-        ) : leads.length === 0 ? (
-          <div style={{ padding: "3rem 1.25rem", textAlign: "center" }}>
-            <div style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>🏛️</div>
-            <div style={{ fontWeight: 700, fontSize: "0.9rem", color: "#0f172a", marginBottom: "0.3rem" }}>
-              {total === 0 ? "Vault is empty" : "No results"}
-            </div>
-            <div style={{ color: "#64748b", fontSize: "0.8rem" }}>
-              {total === 0
-                ? "Vault will populate automatically as searches are processed."
-                : "Try adjusting your search or filters."}
-            </div>
+          <div style={card}>
+            <div style={{ ...label, marginBottom: "0.4rem" }}>By Company Type</div>
+            {(s?.byType ?? []).slice(0, 8).map(c => <div key={c.key} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", padding: "0.15rem 0" }}><span>{c.key}</span><strong>{c.count}</strong></div>)}
+            {!s && <div style={{ color: "#94a3b8", fontSize: "0.85rem" }}>…</div>}
           </div>
-        ) : (
-          <>
-            <div style={{ overflowX: "auto" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 800 }}>
-                <thead>
-                  <tr style={{ background: "#f8fafc" }}>
-                    {["Company", "Contact", "Title", "Country", "Industry", "Source", "Seen", "Lead Score", "Opportunity", "Temp"].map(h => (
-                      <th key={h} style={{ padding: "0.65rem 1rem", textAlign: "left", fontSize: "0.67rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid #e2e8f0", whiteSpace: "nowrap" }}>
-                        {h}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {leads.map((lead, i) => (
-                    <tr
-                      key={lead.id}
-                      style={{ borderBottom: i < leads.length - 1 ? "1px solid #f1f5f9" : "none", cursor: "pointer" }}
-                      onClick={() => window.location.href = `/admin/vault/${lead.id}`}
-                    >
-                      <td style={{ padding: "0.7rem 1rem", fontSize: "0.82rem", fontWeight: 600, color: "#0f172a", whiteSpace: "nowrap" }}>
-                        {lead.normalized_company ?? lead.company_name}
-                      </td>
-                      <td style={{ padding: "0.7rem 1rem", fontSize: "0.8rem", color: "#0f172a", whiteSpace: "nowrap" }}>
-                        {lead.contact_name ?? <span style={{ color: "#cbd5e1" }}>—</span>}
-                      </td>
-                      <td style={{ padding: "0.7rem 1rem", fontSize: "0.78rem", color: "#64748b", whiteSpace: "nowrap", maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis" }}>
-                        {lead.normalized_title ?? lead.title ?? <span style={{ color: "#cbd5e1" }}>—</span>}
-                      </td>
-                      <td style={{ padding: "0.7rem 1rem", fontSize: "0.78rem", color: "#64748b", whiteSpace: "nowrap" }}>
-                        {lead.country ?? <span style={{ color: "#cbd5e1" }}>—</span>}
-                      </td>
-                      <td style={{ padding: "0.7rem 1rem", fontSize: "0.78rem", color: "#64748b", whiteSpace: "nowrap" }}>
-                        {lead.industry ?? <span style={{ color: "#cbd5e1" }}>—</span>}
-                      </td>
-                      <td style={{ padding: "0.7rem 1rem", fontSize: "0.72rem", color: "#64748b", whiteSpace: "nowrap" }}>
-                        {lead.source
-                          ? <span style={{ background: "#f1f5f9", borderRadius: 999, padding: "0.1rem 0.45rem", fontWeight: 600 }}>{lead.source}</span>
-                          : <span style={{ color: "#cbd5e1" }}>—</span>}
-                      </td>
-                      <td style={{ padding: "0.7rem 1rem", whiteSpace: "nowrap" }}>
-                        <span style={{
-                          display: "inline-block",
-                          background: lead.times_seen > 1 ? "#fef9c3" : "#f1f5f9",
-                          color:      lead.times_seen > 1 ? "#854d0e" : "#64748b",
-                          borderRadius: 999, padding: "0.1rem 0.5rem",
-                          fontSize: "0.72rem", fontWeight: 700,
-                        }}>
-                          {lead.times_seen}×
-                        </span>
-                      </td>
-                      <td style={{ padding: "0.7rem 1rem", whiteSpace: "nowrap" }}>
-                        <ScoreBadge score={lead.lead_score} />
-                      </td>
-                      <td style={{ padding: "0.7rem 1rem", whiteSpace: "nowrap" }}>
-                        <ScoreBadge score={lead.opportunity_score} />
-                      </td>
-                      <td style={{ padding: "0.7rem 1rem", whiteSpace: "nowrap" }}>
-                        <TempPill value={lead.temperature} />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+        </div>
 
-            {/* Pagination */}
-            <div style={{ padding: "0.75rem 1.25rem", borderTop: "1px solid #f1f5f9", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <span style={{ fontSize: "0.78rem", color: "#64748b" }}>
-                Showing {((page - 1) * PER_PAGE) + 1}–{Math.min(page * PER_PAGE, total)} of {total.toLocaleString()}
-              </span>
-              <div style={{ display: "flex", gap: "0.5rem" }}>
-                <button
-                  onClick={() => setPage(p => Math.max(1, p - 1))}
-                  disabled={page <= 1}
-                  style={{ ...paginationBtn, opacity: page <= 1 ? 0.4 : 1, cursor: page <= 1 ? "not-allowed" : "pointer" }}
-                >
-                  ← Prev
-                </button>
-                <span style={{ fontSize: "0.78rem", color: "#64748b", padding: "0.4rem 0.5rem" }}>
-                  {page} / {totalPages}
-                </span>
-                <button
-                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                  disabled={page >= totalPages}
-                  style={{ ...paginationBtn, opacity: page >= totalPages ? 0.4 : 1, cursor: page >= totalPages ? "not-allowed" : "pointer" }}
-                >
-                  Next →
-                </button>
-              </div>
-            </div>
-          </>
+        {/* Filters */}
+        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "0.6rem" }}>
+          <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search company or domain…" style={{ ...sel, minWidth: 240, flex: 1 }} />
+          <select value={country} onChange={e => setCountry(e.target.value)} style={sel}>
+            <option value="">All countries</option>
+            {countryOptions.map(c => <option key={c} value={c}>{c}</option>)}
+          </select>
+          <select value={type} onChange={e => setType(e.target.value)} style={sel}>
+            <option value="">All types</option>
+            {typeOptions.map(t => <option key={t} value={t}>{t}</option>)}
+          </select>
+        </div>
+
+        {/* Inventory */}
+        <div style={{ ...card, padding: 0, overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 900 }}>
+            <thead><tr>
+              <th style={th}>Company</th><th style={th}>Type</th><th style={th}>Industry</th><th style={th}>Country</th>
+              <th style={th}>First Seen</th><th style={th}>Last Seen</th><th style={th}>Obs.</th><th style={th}>Events</th><th style={th}>Sources</th>
+            </tr></thead>
+            <tbody>
+              {loading && <tr><td style={td} colSpan={9}>Loading…</td></tr>}
+              {!loading && inv?.items.length === 0 && <tr><td style={td} colSpan={9}>No companies match.</td></tr>}
+              {!loading && inv?.items.map(c => (
+                <tr key={c.id}>
+                  <td style={td}><Link href={`/admin/vault/${c.id}`} style={{ color: "#2563eb", textDecoration: "none", fontWeight: 600 }}>{c.name}</Link>{c.domain && <div style={{ color: "#94a3b8", fontSize: "0.72rem" }}>{c.domain}</div>}</td>
+                  <td style={td}>{c.companyType}</td>
+                  <td style={td}>{c.industry || <span style={{ color: "#cbd5e1" }}>Unknown</span>}</td>
+                  <td style={td}>{c.country || <span style={{ color: "#cbd5e1" }}>Unknown</span>}</td>
+                  <td style={td}>{fmtDate(c.first_seen_at)}</td>
+                  <td style={td}>{fmtDate(c.last_seen_at)}</td>
+                  <td style={td}>{c.observation_count ?? 1}</td>
+                  <td style={td}>{c.eventCount}</td>
+                  <td style={td}>{c.sourceCount}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination */}
+        {inv && (
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "0.6rem", fontSize: "0.85rem", color: "#475569" }}>
+            <span>{inv.total === 0 ? "0" : `${(inv.page - 1) * inv.pageSize + 1}–${Math.min(inv.page * inv.pageSize, inv.total)}`} of {inv.total}</span>
+            <span style={{ display: "flex", gap: "0.5rem" }}>
+              <button disabled={inv.page <= 1} onClick={() => setPage(p => Math.max(1, p - 1))} style={sel}>Previous</button>
+              <span style={{ padding: "0.4rem 0" }}>Page {inv.page} / {inv.pages}</span>
+              <button disabled={inv.page >= inv.pages} onClick={() => setPage(p => p + 1)} style={sel}>Next</button>
+            </span>
+          </div>
         )}
+
+        <p style={{ color: "#94a3b8", fontSize: "0.72rem", marginTop: "1rem" }}>
+          Companies and material events accrete automatically from productive Intelligence runs — no manual intake required.
+          Human review is optional calibration and does not block productive Intelligence.
+          {" "}<Link href="/admin/intelligence/review" style={{ color: "#64748b" }}>Calibration queue →</Link>
+        </p>
       </div>
     </AdminLayout>
   );
 }
-
-// ─── Styles ───────────────────────────────────────────────────────────────────
-
-const selectStyle: React.CSSProperties = {
-  padding: "0.5rem 0.65rem", border: "1px solid #e2e8f0", borderRadius: "0.45rem",
-  fontSize: "0.825rem", background: "#fff", fontFamily: "inherit", outline: "none",
-  color: "#374151", minWidth: 130,
-};
-
-const paginationBtn: React.CSSProperties = {
-  background: "#f1f5f9", border: "1px solid #e2e8f0", borderRadius: "0.4rem",
-  padding: "0.4rem 0.85rem", fontSize: "0.78rem", fontWeight: 600,
-  color: "#374151", fontFamily: "inherit",
-};

@@ -1,59 +1,48 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/require-admin";
+import { createServerClient } from "@/lib/supabase/server";
+import { buildCompanyViews, summarize, inventory, type VaultCompanyRow } from "@/lib/admin/vault-view";
 
-async function db() {
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) return null;
-  const { createServerClient } = await import("@/lib/supabase/server");
-  return createServerClient();
-}
-
-// ── GET /api/admin/vault ─────────────────────────────────────────────────────
-// Paginated, filtered vault lead list.
-
+// Canonical LeadLens Vault admin API. Reads the canonical global tables (vault_companies /
+// vault_signals / vault_sources) and returns server-aggregated summary + composition + growth
+// + a filtered, sorted, paginated company inventory. No contacts/emails/temperature/leads.
+// No customer-relative fields. Admin-only.
 export async function GET(req: NextRequest) {
   const deny = requireAdmin(req);
   if (deny) return deny;
+  const db = createServerClient();
+  if (!db) return NextResponse.json({ error: "Persistence unavailable" }, { status: 503 });
 
-  const client = await db();
-  if (!client) return NextResponse.json({ error: "Supabase not configured." }, { status: 503 });
+  // The canonical company table is small (hundreds), so we aggregate once in memory rather
+  // than issue GROUP BY / per-row queries (no N+1). Only bounded projections leave the server.
+  const [companiesRes, signalsRes, sourcesCount] = await Promise.all([
+    db.from("vault_companies").select("id,name,domain,industry,region,country,source_status,first_seen_at,last_seen_at,observation_count"),
+    db.from("vault_signals").select("company_id,source_id"),
+    db.from("vault_sources").select("id", { count: "exact" }).limit(1),
+  ]);
+  if (companiesRes.error) return NextResponse.json({ error: companiesRes.error.message }, { status: 500 });
 
-  const { searchParams } = new URL(req.url);
-  const q           = searchParams.get("q")?.trim()           ?? "";
-  const country     = searchParams.get("country")?.trim()     ?? "";
-  const industry    = searchParams.get("industry")?.trim()    ?? "";
-  const temperature = searchParams.get("temperature")?.trim() ?? "";
-  const page        = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
-  const perPage     = Math.min(100, Math.max(1, parseInt(searchParams.get("per_page") ?? "25", 10)));
-  const from        = (page - 1) * perPage;
-  const to          = from + perPage - 1;
-
-  let query = client
-    .from("vault_leads")
-    .select(
-      "id, company_name, normalized_company, contact_name, title, normalized_title, email, country, industry, source, times_seen, lead_score, opportunity_score, temperature, buyer_fit, seniority, created_at, last_seen",
-      { count: "exact" },
-    );
-
-  if (q) {
-    query = query.or(
-      `company_name.ilike.%${q}%,contact_name.ilike.%${q}%,email.ilike.%${q}%,normalized_company.ilike.%${q}%`,
-    );
+  const companies = (companiesRes.data ?? []) as VaultCompanyRow[];
+  const agg = new Map<string, { events: number; sourceIds: Set<string> }>();
+  for (const s of (signalsRes.data ?? []) as Array<{ company_id: string | null; source_id: string | null }>) {
+    if (!s.company_id) continue;
+    const e = agg.get(s.company_id) ?? { events: 0, sourceIds: new Set<string>() };
+    e.events += 1;
+    if (s.source_id) e.sourceIds.add(s.source_id);
+    agg.set(s.company_id, e);
   }
-  if (country)     query = query.eq("country", country);
-  if (industry)    query = query.eq("industry", industry);
-  if (temperature) query = query.eq("temperature", temperature);
+  const views = buildCompanyViews(companies, agg);
+  const eventsTotal = (signalsRes.data ?? []).length;
+  const sourcesTotal = sourcesCount.count ?? 0;
+  const summary = summarize(views, eventsTotal, sourcesTotal);
 
-  const { data, error, count } = await query
-    .order("created_at", { ascending: false })
-    .range(from, to);
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-
-  return NextResponse.json({
-    leads:       data ?? [],
-    total:       count ?? 0,
-    page,
-    per_page:    perPage,
-    total_pages: Math.ceil((count ?? 0) / perPage),
+  const sp = req.nextUrl.searchParams;
+  const page = inventory(views, {
+    q: sp.get("q") ?? undefined,
+    country: sp.get("country") ?? undefined,
+    companyType: sp.get("type") ?? undefined,
+    page: sp.get("page") ? Number(sp.get("page")) : 1,
+    pageSize: sp.get("pageSize") ? Number(sp.get("pageSize")) : 50,
   });
+  return NextResponse.json({ summary, inventory: page, generatedAt: new Date().toISOString() });
 }

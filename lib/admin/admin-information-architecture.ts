@@ -21,8 +21,7 @@ export const ADMIN_NAVIGATION: AdminNavSection[] = [
   ] },
   { id: "intelligence", label: "Intelligence Assets", items: [
     { href: "/admin/lead-hunter", label: "Lead Hunter", disposition: "primary", purpose: "Candidate universe and review" },
-    { href: "/admin/vault-foundation", label: "Vault Foundation", disposition: "primary", purpose: "Verified companies, signals and sources" },
-    { href: "/admin/vault", label: "Vault", disposition: "secondary", purpose: "Reusable account evidence" },
+    { href: "/admin/vault", label: "Vault", disposition: "primary", purpose: "Reusable account intelligence: companies, material events and sources" },
     { href: "/admin/intelligence/sources", label: "Source Intelligence", disposition: "primary", purpose: "Source access and utility" },
     { href: "/admin/intelligence/review", label: "Human Review", disposition: "primary", purpose: "Validation queue" },
   ] },
@@ -37,6 +36,7 @@ export const ADMIN_NAVIGATION: AdminNavSection[] = [
 ];
 
 export const ADMIN_DEPRECATED_NAVIGATION: AdminNavItem[] = [
+  { href: "/admin/vault-foundation", label: "Vault Foundation", disposition: "deprecated_navigation", purpose: "Redirects to the canonical Vault" },
   { href: "/admin/snapshots", label: "Snapshots", disposition: "deprecated_navigation", purpose: "Reachable contextually from Jobs and reports" },
   { href: "/admin/vault-report-bridge", label: "Vault Bridge", disposition: "deprecated_navigation", purpose: "Legacy implementation surface" },
   { href: "/admin/notifications", label: "Notifications", disposition: "deprecated_navigation", purpose: "Contextual operational surface" },
