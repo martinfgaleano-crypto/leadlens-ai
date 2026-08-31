@@ -83,7 +83,7 @@ export function canonicalizeUrl(raw: string): string {
 export function classifySourceType(url: string): string | null {
   const u = url.toLowerCase();
   if (/careers|jobs|greenhouse|lever\.co|workable/.test(u)) return "careers";
-  if (/news|press|prensa|forbes|bloomberg|reuters|techcrunch/.test(u)) return "news";
+  if (/news|press|prensa|forbes|bloomberg|reuters|techcrunch|portafolio\.co|larepublica\.co|eltiempo\.com|elespectador\.com|valoraanalitik/.test(u)) return "news";
   if (/investor|newsroom|about/.test(u)) return "official";
   if (/gov\.|\.gov|registry|registro/.test(u)) return "regulatory";
   return null;

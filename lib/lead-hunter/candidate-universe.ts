@@ -49,6 +49,18 @@ export interface DiscoveryProvenance {
   discoveredAt: string;
 }
 
+/** Discovery-only pointer that lets Research revisit an event-led source first.
+ * It is never Evidence, Timing, or a validated event until canonical Research
+ * independently fetches and accepts the source. */
+export interface EventResearchHint {
+  eventTypeHint: string;
+  eventDateHint: string | null;
+  sourceUrlHint: string;
+  headline: string;
+  sourceExcerpt?: string | null;
+  provider: string;
+}
+
 export interface CandidateIdentity {
   canonicalName: string;
   domain?: string;
@@ -64,6 +76,8 @@ export interface CandidateAccount {
   statusReason: string;
   /** Multiple discovery origins collapsed here — NOT independent evidence. */
   provenance: DiscoveryProvenance[];
+  researchHints?: EventResearchHint[];
+  originFlags?: Array<"ACCOUNT_FIRST" | "EVENT_FIRST" | "BOTH" | "VAULT_REUSED" | "CONTEXT_REUSED">;
   /** Handoff hints for Research (configuration, never observations). */
   opportunityConditionIds: string[];
   watchSignalFamilies: SignalFamily[];
@@ -193,6 +207,7 @@ export interface RawDiscoveredOrg {
   provider: string;
   route: string;
   sourceUrl?: string;
+  researchHint?: EventResearchHint;
   confidence: "verified" | "plausible";
 }
 
@@ -378,6 +393,18 @@ function classifyGroup(g: Grouped, plan: DiscoveryPlan, ambiguous: Set<string>, 
     route: o.route, origin: o.origin, provider: o.provider, sourceUrl: o.sourceUrl,
     discoveredName: o.name, discoveredAt,
   }));
+  const researchHints = Array.from(new Map(g.orgs
+    .map((o) => o.researchHint)
+    .filter((hint): hint is EventResearchHint => Boolean(hint))
+    .map((hint) => [hint.sourceUrlHint, hint])).values());
+  const hasEventFirst = g.orgs.some((o) => o.origin === "event_first" || o.origin.endsWith(":event_first"));
+  const hasAccountFirst = g.orgs.some((o) => !o.origin.includes("event_first") && !o.origin.startsWith("context_memory") && !o.origin.startsWith("vault"));
+  const originFlags: NonNullable<CandidateAccount["originFlags"]> = [];
+  if (hasEventFirst && hasAccountFirst) originFlags.push("BOTH");
+  else if (hasEventFirst) originFlags.push("EVENT_FIRST");
+  else if (hasAccountFirst) originFlags.push("ACCOUNT_FIRST");
+  if (g.orgs.some((o) => o.origin.startsWith("vault"))) originFlags.push("VAULT_REUSED");
+  if (g.orgs.some((o) => o.origin.startsWith("context_memory"))) originFlags.push("CONTEXT_REUSED");
 
   const excl = matchesExclusion({ industry: primary.industry, organizationType: orgType, country, name }, plan.exclusions);
   const nonAccount = nonAccountReason({
@@ -429,6 +456,8 @@ function classifyGroup(g: Grouped, plan: DiscoveryPlan, ambiguous: Set<string>, 
     identity: { canonicalName: name, domain, country, organizationType: orgType, aliases: aliases.length ? aliases : undefined, confidence: identityConfidence },
     status, statusReason,
     provenance,
+    researchHints: researchHints.length ? researchHints : undefined,
+    originFlags,
     opportunityConditionIds: [], // populated by hunt() from plan context
     watchSignalFamilies: plan.watchSignalFamilies,
     openQualificationQuestions: openQ,
@@ -499,6 +528,7 @@ export async function hunt(plan: DiscoveryPlan, runner: DiscoveryRunner, opts: H
       provider: p.provider ?? "durable_snapshot",
       route: p.route,
       sourceUrl: p.sourceUrl,
+      researchHint: candidate.researchHints?.find((hint) => hint.sourceUrlHint === p.sourceUrl),
       confidence: candidate.identity.confidence === "verified" ? "verified" : "plausible",
     }));
   });

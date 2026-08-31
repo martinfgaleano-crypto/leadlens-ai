@@ -228,6 +228,35 @@ await test("rejects media domains that merely contain a generic company token", 
   assert.equal(result.metrics.rejected.identity_domain_mismatch, 1);
 });
 
+await test("failed identity provider does not consume the successful-resolution budget", async () => {
+  const failing: SearchProvider = {
+    id: "failing", capabilities: () => ({ search: true, extract: false, regions: "global", supports_dates: true }),
+    health: async () => ({ provider: "failing", status: "degraded", reason: "quota", credentials_present: true }),
+    search: async query => query.query_type === "official_domain"
+      ? ({ ok: false, provider: "failing", query, results: [], latency_ms: 1, cost_estimate_usd: null, error: "quota" })
+      : ({ ok: true, provider: "failing", query, results: [item("Rainforest Distribution opens Fort Pierce, Florida distribution center", "https://trade.example/rainforest", "Rainforest Distribution expands logistics coverage in Florida")], latency_ms: 1, cost_estimate_usd: 0, error: null }),
+  };
+  const resolving = provider(q => q.query_type === "official_domain"
+    ? [item("Rainforest Distribution | Florida", "https://rainforestdistribution.com/about", "Food distributor operating in Florida, United States")]
+    : []);
+  const result = await runEventFirstDiscovery(plan({ organizationTypes: ["distributor"], industries: ["logistics and distribution"] }), [failing, resolving], { maxQueries: 1, maxIdentityQueries: 1 });
+  assert.equal(result.orgs[0]?.domain, "rainforestdistribution.com");
+  assert.equal(result.orgs[0]?.country, "United States");
+});
+
+await test("event-page geography survives while identity resolves on a separate official page", async () => {
+  const p = provider(q => q.query_type === "official_domain"
+    ? [item("Rainforest Distribution", "https://rainforestdistribution.com/about", "Food and beverage distributor")]
+    : [item("Rainforest Distribution opens Fort Pierce, Florida distribution center", "https://nosh.com/pr/rainforest", "Rainforest Distribution expands logistics coverage across Florida")]);
+  const result = await runEventFirstDiscovery(plan({ organizationTypes: ["distributor"], industries: ["logistics and distribution"] }), [p], { maxQueries: 1, maxIdentityQueries: 1 });
+  assert.equal(result.orgs[0]?.domain, "rainforestdistribution.com");
+  assert.equal(result.orgs[0]?.country, "United States");
+});
+
+await test("rejects an editorial headline prefix before identity resolution", () => {
+  assert.deepEqual(extractEventSubjects("Lejos del petróleo, Colombia inaugura planta industrial para producto único"), []);
+});
+
 await test("rejects investment firms surfaced for an operational SaaS target", async () => {
   const p = provider(() => [item("Vista Equity announces strategic partnership", "https://vistaequitypartners.com/news", "Private equity investment firm in the United States")]);
   const result = await runEventFirstDiscovery(plan({ organizationTypes: ["software company"], industries: ["B2B operational software"], watchSignalFamilies: ["partnership"] }), [p], { maxQueries: 1, maxIdentityQueries: 0 });

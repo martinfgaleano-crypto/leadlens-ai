@@ -1,5 +1,5 @@
 import { strict as assert } from "node:assert";
-import { corroboratesPrimaryEvent, deepenAccountResearch, isEventExtractionCandidate, relevantContentWindow } from "@/lib/intelligence/account-deep-research";
+import { corroboratesPrimaryEvent, deepenAccountResearch, eventGeographyMatches, isEventExtractionCandidate, relevantContentWindow } from "@/lib/intelligence/account-deep-research";
 import { scrapeEventDatePhrase } from "@/lib/monitor/full-text-extraction";
 import { classifySignalKind } from "@/lib/discovery/event-vs-metric";
 import { resolveEventDate } from "@/lib/monitor/event-extraction";
@@ -27,7 +27,7 @@ const criteria: LeadSearchCriteria = { offer_summary: "industrial automation and
 async function main() {
 const result = await deepenAccountResearch(candidate, criteria, {
   providers: [provider], now: () => new Date(now), maxQueries: 5, maxExtractions: 2,
-  extract: async (url) => ({ ok: true, content: `${url} Acme opened a new production plant in August 2026 and increased capacity.` }),
+  extract: async (url) => ({ ok: true, content: `${url} Acme opened a new production plant in the United States in August 2026 and increased capacity.` }),
 });
 test("account plan executes company-specific queries", result.telemetry.executed_queries >= 4);
 test("counterevidence stage is mandatory before early stop", result.telemetry.counterevidence_checked);
@@ -38,6 +38,7 @@ test("extraction audit identifies URL, stage and gate outcome", result.telemetry
 test("best source favors official company domain", result.sourceUrl === "https://acme.com/news/new-plant");
 test("research context contains source provenance", result.context.includes("source: https://acme.com/news/new-plant"));
 test("full text must produce a dated material event before it can be a trigger", result.validated_events.length > 0 && !!result.eventDate);
+test("global-company event must be grounded in the target operating geography", eventGeographyMatches("Colombia", "Mapei opened a new plant in Bogotá, Colombia", "https://mapei.com/co/news") && !eventGeographyMatches("Colombia", "Mapei opened a new laboratory in Greater London, United Kingdom", "https://mapei.com/it/en/news"));
 test("telemetry never claims unavailable cost", !("cost" in result.telemetry));
 test("long-page window skips boilerplate and retains event", relevantContentWindow(`${"cookie navigation ".repeat(1000)}Acme Manufacturing opened a new plant on August 10, 2026.`, ["Acme Manufacturing", "new plant"], 1200).includes("opened a new plant"));
 test("full date phrase with day is recovered", scrapeEventDatePhrase("Acme opened the plant on August 10, 2026 after construction.") === "August 10, 2026");
@@ -75,21 +76,21 @@ const repeatedOfficialProvider: SearchProvider = {
 const extractedStages: number[] = [];
 const repeated = await deepenAccountResearch(candidate, criteria, {
   providers: [repeatedOfficialProvider], now: () => new Date(now), maxQueries: 4, maxExtractions: 1,
-  extract: async () => { extractedStages.push(stage); return { ok: true, content: "Acme Manufacturing opened a new production plant on August 10, 2026." }; },
+  extract: async () => { extractedStages.push(stage); return { ok: true, content: "Acme Manufacturing opened a new production plant in Wisconsin, United States on August 10, 2026." }; },
 });
 test("an event-bearing URL may be deepened once even when first recovered during identity", extractedStages.length === 1);
 test("accepted official URL repeated in current activity can still yield an event", repeated.validated_events.length === 1 && repeated.eventDate === "2026-08-10");
 
 const emptyStructured = await deepenAccountResearch(candidate, criteria, {
   providers: [repeatedOfficialProvider], now: () => new Date(now), maxQueries: 4, maxExtractions: 1,
-  extract: async () => ({ ok: true, content: "SUSSEX, Wis., July 16, 2026 — Acme Manufacturing is expanding operations with a new production plant." }),
+  extract: async () => ({ ok: true, content: "SUSSEX, Wisconsin, United States, July 16, 2026 — Acme Manufacturing is expanding operations with a new production plant." }),
   structured: { call: async () => ({ claims: [], events: [] }) },
 });
 test("empty structured extraction falls back to deterministic event/date recovery", emptyStructured.validated_events.length === 1 && emptyStructured.eventDate === "2026-07-16");
 
 const activeExpansion = await deepenAccountResearch(candidate, criteria, {
   providers: [repeatedOfficialProvider], now: () => new Date(now), maxQueries: 4, maxExtractions: 1,
-  extract: async () => ({ ok: true, content: "SUSSEX, Wis., July 16, 2026 — Acme Manufacturing is expanding its packaging operations with a new manufacturing facility." }),
+  extract: async () => ({ ok: true, content: "SUSSEX, Wisconsin, United States, July 16, 2026 — Acme Manufacturing is expanding its packaging operations with a new manufacturing facility." }),
   structured: { call: async () => ({ claims: [], events: [] }) },
 });
 test("dated active expansion with a concrete new facility is a material event", activeExpansion.validated_events.length === 1 && activeExpansion.eventDate === "2026-07-16");

@@ -88,6 +88,7 @@
     "test:provider-error-taxonomy": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/provider-error-taxonomy.test.ts",
     "test:event-first-queries": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/event-first-queries.test.ts",
     "test:event-first-discovery": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/event-first-discovery.test.ts",
+    "test:productive-event-first-parity": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/productive-event-first-parity.test.ts",
     "benchmark:event-first-recall": "npx -y tsx --tsconfig tsconfig.json scripts/sources/run-event-first-recall-benchmark.ts",
     "test:market-to-account": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/market-to-account.test.ts",
     "test:premium-report-contract": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/premium-report-contract.test.ts",

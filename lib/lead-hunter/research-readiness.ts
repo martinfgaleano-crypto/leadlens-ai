@@ -74,7 +74,8 @@ export function prioritizeResearch(candidates: CandidateAccount[], plan: Discove
       candidate, index, assessment: assessResearchReadiness(candidate, plan),
       // Event-first changes Research order only. It cannot change eligibility,
       // Evidence, Timing, score or Decision.
-      eventHint: candidate.provenance.some(p => p.origin === "event_first") ? 1 : 0,
+      eventHint: (candidate.researchHints?.length ?? 0) > 0
+        || candidate.provenance.some(p => p.origin === "event_first" || p.origin.endsWith(":event_first")) ? 1 : 0,
     }))
     .filter(x => x.assessment.status === "research_ready")
     .sort((a, b) => a.assessment.priorityBand - b.assessment.priorityBand || b.eventHint - a.eventHint || a.index - b.index)

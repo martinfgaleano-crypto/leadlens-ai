@@ -10,7 +10,7 @@ import {
   type PlannedResearchQuery,
 } from "./research-quality";
 import { buildClientContext } from "./evidence-temporal";
-import type { SearchProvider } from "@/lib/sources/access/provider-contract";
+import { canonicalizeUrl, classifySourceType, type SearchProvider } from "@/lib/sources/access/provider-contract";
 import type { ExtractDeps } from "@/lib/monitor/claim-event-extractor";
 import { classifySignalKind } from "@/lib/discovery/event-vs-metric";
 import { classifyMateriality } from "@/lib/discovery/materiality";
@@ -46,6 +46,10 @@ export interface AccountDeepResearchTelemetry {
    * to canonical events and never create Timing on their own. */
   corroborating_sources?: Array<{ url: string; source_host: string; event_date: string; claim_excerpt: string }>;
   counterevidence_material_found?: boolean;
+  event_hints_received?: number;
+  event_hints_fetched?: number;
+  event_hints_validated?: number;
+  event_geography_rejected?: number;
   // Deep runtime instrumentation (LIVE EXECUTION TRACE V1 §7-14): one entry per REAL
   // external operation, timed at the operation boundary. A search's duration_ms is
   // dominated by external provider wait; local processing is excluded. Optional for
@@ -171,6 +175,90 @@ export async function deepenAccountResearch(
   const maxResults = deps.maxResultsPerQuery ?? 5;
   const maxExtractions = deps.maxExtractions ?? 4;
 
+  // Event-First fast path. Hints remain discovery configuration until the URL is
+  // freshly fetched and passes the same entity/event/date/materiality machinery
+  // as normal Research. A failed or mismatched hint never fails the account; the
+  // bounded generic plan below still runs.
+  let eventHintsFetched = 0;
+  let eventHintsValidated = 0;
+  let eventGeographyRejected = 0;
+  for (const hint of candidate.research_hints ?? []) {
+    if (pagesExtracted >= maxExtractions || extractedUrls.has(canonicalizeUrl(hint.source_url_hint))) break;
+    const canonicalUrl = canonicalizeUrl(hint.source_url_hint);
+    const evidence: EvidenceCandidate = {
+      url: hint.source_url_hint,
+      canonical_url: canonicalUrl,
+      title: hint.headline,
+      excerpt: hint.source_excerpt ?? null,
+      provider: hint.provider,
+      source_type: classifySourceType(hint.source_url_hint),
+      // Discovery's event_date_hint is intentionally not promoted to a source
+      // publication date. Canonical extraction must recover its own event date.
+      publication_date: null,
+      retrieved_at: now.toISOString(),
+    };
+    const decision = assessEvidenceCandidate(profile, evidence, seen);
+    seen.add(canonicalUrl);
+    if (!decision.accepted) {
+      decisions.push(decision);
+      queryAudit.push({ query_id: `event_hint:${canonicalUrl}`, stage: "event_hint", provider: hint.provider, results: 1, accepted: 0 });
+      continue;
+    }
+    const fetchStarted = Date.now();
+    const fetched = await extract(hint.source_url_hint).catch(() => ({ ok: false, content: null }));
+    providerOps.push({ provider: "full_text", operation: "full_text", stage: "event_hint", duration_ms: Date.now() - fetchStarted, ok: fetched.ok, timeout: false, results: fetched.ok ? 1 : 0 });
+    if (!fetched.ok || !fetched.content) {
+      extractionFailures++;
+      queryAudit.push({ query_id: `event_hint:${canonicalUrl}`, stage: "event_hint", provider: hint.provider, results: 1, accepted: 0 });
+      continue;
+    }
+    eventHintsFetched++;
+    pagesExtracted++;
+    extractedUrls.add(canonicalUrl);
+    decisions.push(decision);
+    acceptedByCanonical.set(canonicalUrl, decision);
+    const fullText = relevantContentWindow(fetched.content, [candidate.company, ...criteria.buying_signals], 9000);
+    const sourceHost = new URL(hint.source_url_hint).hostname.replace(/^www\./, "").toLowerCase();
+    const titleAndContent = `${hint.headline}. ${fullText}`;
+    const { extractEvent } = await import("@/lib/monitor/event-extraction");
+    const { scrapeEventDatePhrase } = await import("@/lib/monitor/full-text-extraction");
+    const datePhrase = scrapeEventDatePhrase(fullText);
+    const eventResult = extractEvent({
+      accountId: candidate.company,
+      sourceHost,
+      sourceUrl: hint.source_url_hint,
+      originId: null,
+      titleAndContent,
+      eventDateRaw: datePhrase,
+      publicationDate: null,
+      retrievedAt: now.toISOString(),
+    }, criteria.buying_signals);
+    if (eventResult.item.isDatedMaterialEvent && eventResult.item.eventDate && eventGeographyMatches(profile.country, titleAndContent, hint.source_url_hint)) {
+      validatedEvents.push({
+        url: hint.source_url_hint,
+        source_host: sourceHost,
+        kind: eventResult.item.kind,
+        event_date: eventResult.item.eventDate,
+        title_and_content: titleAndContent.slice(0, 9000),
+        stage: "event_hint",
+      });
+      eventHintsValidated++;
+    } else if (eventResult.item.isDatedMaterialEvent && eventResult.item.eventDate) {
+      eventGeographyRejected++;
+    }
+    extractionAudit.push({
+      url: hint.source_url_hint,
+      stage: "event_hint",
+      date_phrase: datePhrase,
+      signal_kind: eventResult.signalKind,
+      materiality: eventResult.materiality,
+      accepted_events: eventResult.item.isDatedMaterialEvent ? 1 : 0,
+      evidence_excerpt: diagnosticExcerpt(fullText, datePhrase),
+    });
+    contexts.push({ text: `${hint.headline}. ${fullText} (source: ${hint.source_url_hint})`, rank: evidenceRank(decision) + 7 });
+    queryAudit.push({ query_id: `event_hint:${canonicalUrl}`, stage: "event_hint", provider: hint.provider, results: 1, accepted: 1 });
+  }
+
   outer: for (const query of plan.accepted) {
     for (const provider of providers) {
       providerCalls++;
@@ -230,7 +318,8 @@ export async function deepenAccountResearch(
                 publicationDate: item.published_date, retrievedAt: item.retrieved_at,
               }, criteria.buying_signals);
               const event = eventResult.item;
-              if (event.isDatedMaterialEvent && event.eventDate) validatedEvents.push({ url: item.url, source_host: sourceHost, kind: event.kind, event_date: event.eventDate, title_and_content: titleAndContent.slice(0, 9000), stage: query.stage });
+              if (event.isDatedMaterialEvent && event.eventDate && eventGeographyMatches(profile.country, titleAndContent, item.url)) validatedEvents.push({ url: item.url, source_host: sourceHost, kind: event.kind, event_date: event.eventDate, title_and_content: titleAndContent.slice(0, 9000), stage: query.stage });
+              else if (event.isDatedMaterialEvent && event.eventDate) eventGeographyRejected++;
               else if (structuredExtractionCalls < 2) {
                 // Existing canonical structured extractor proposes only. Its
                 // proposals still pass event/date/materiality gates below.
@@ -244,9 +333,9 @@ export async function deepenAccountResearch(
                   const proposed = proposalsToObservedItems(structured.result.events, {
                     sourceHost, sourceUrl: item.url, publicationDate: item.published_date, retrievedAt: item.retrieved_at, accountId: candidate.company,
                   }, criteria.buying_signals);
-                  for (const proposedEvent of proposed) if (proposedEvent.isDatedMaterialEvent && proposedEvent.eventDate) {
+                  for (const proposedEvent of proposed) if (proposedEvent.isDatedMaterialEvent && proposedEvent.eventDate && eventGeographyMatches(profile.country, titleAndContent, item.url)) {
                     validatedEvents.push({ url: item.url, source_host: sourceHost, kind: proposedEvent.kind, event_date: proposedEvent.eventDate, title_and_content: titleAndContent.slice(0, 9000), stage: query.stage });
-                  }
+                  } else if (proposedEvent.isDatedMaterialEvent && proposedEvent.eventDate) eventGeographyRejected++;
                 }
                 // A syntactically valid model response with zero deterministically
                 // accepted events is not extraction success. Fall back to the
@@ -257,10 +346,11 @@ export async function deepenAccountResearch(
                     titleAndContent, eventDateRaw: scrapeEventDatePhrase(fullText),
                     publicationDate: item.published_date, retrievedAt: item.retrieved_at,
                   }, criteria.buying_signals).item;
-                  if (fallback.isDatedMaterialEvent && fallback.eventDate) validatedEvents.push({
+                  if (fallback.isDatedMaterialEvent && fallback.eventDate && eventGeographyMatches(profile.country, titleAndContent, item.url)) validatedEvents.push({
                     url: item.url, source_host: sourceHost, kind: fallback.kind,
                     event_date: fallback.eventDate, title_and_content: titleAndContent.slice(0, 9000), stage: query.stage,
                   });
+                  else if (fallback.isDatedMaterialEvent && fallback.eventDate) eventGeographyRejected++;
                 }
               }
               extractionAudit.push({
@@ -363,6 +453,10 @@ export async function deepenAccountResearch(
       materiality_valid: true, counterevidence: event.stage === "counterevidence" && isAffirmativeCounterevidence(event.title_and_content),
     })),
     counterevidence_material_found: validatedEvents.some((event) => event.stage === "counterevidence" && isAffirmativeCounterevidence(event.title_and_content)),
+    event_hints_received: candidate.research_hints?.length ?? 0,
+    event_hints_fetched: eventHintsFetched,
+    event_hints_validated: eventHintsValidated,
+    event_geography_rejected: eventGeographyRejected,
   };
   return {
     context: contexts.sort((a, b) => b.rank - a.rank).slice(0, 8).map((x) => x.text).join(" | ").slice(0, 9000),
@@ -372,6 +466,22 @@ export async function deepenAccountResearch(
     validated_events: validatedEvents,
     decisions, telemetry,
   };
+}
+
+/** A global company event is not automatically an event for its target-country
+ * operating account. Research requires positive local grounding; query intent
+ * and candidate country alone are never sufficient. */
+export function eventGeographyMatches(country: string | null, text: string, url = ""): boolean {
+  if (!country) return true;
+  const normalized = `${text} ${url}`.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const target = country.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  if (target === "colombia") {
+    return /\bcolombia(?:n[ao]s?)?\b|\bbogota\b|\bmedellin\b|\bcali\b|\bbarranquilla\b|\bcartagena\b|\bantioquia\b|\bcundinamarca\b|\bvalle del cauca\b|\/co\//i.test(normalized);
+  }
+  if (target === "united states" || target === "usa" || target === "us") {
+    return /\bunited states\b|\bu\. ?s\. ?a?\b|\busa\b|\b(?:alabama|alaska|arizona|arkansas|california|colorado|connecticut|delaware|florida|georgia|hawaii|idaho|illinois|indiana|iowa|kansas|kentucky|louisiana|maine|maryland|massachusetts|michigan|minnesota|mississippi|missouri|montana|nebraska|nevada|new hampshire|new jersey|new mexico|new york|north carolina|north dakota|ohio|oklahoma|oregon|pennsylvania|rhode island|south carolina|south dakota|tennessee|texas|utah|vermont|virginia|washington|west virginia|wisconsin|wyoming)\b|\/us\//i.test(normalized);
+  }
+  return normalized.includes(target.replace(/\s+/g, " "));
 }
 
 export function isAffirmativeCounterevidence(text: string): boolean {

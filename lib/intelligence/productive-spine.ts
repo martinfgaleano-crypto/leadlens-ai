@@ -4,7 +4,7 @@ import type { ConfirmedContextStore, ContextSelector } from "@/lib/interpretatio
 import { buildDiscoveryJobInput } from "@/lib/interpretation/confirmed-context-execution";
 import type { DiscoveryRunner } from "@/lib/lead-hunter/candidate-universe";
 import type { LeadHunterRunStore } from "@/lib/lead-hunter/run-store";
-import { loadLeadHunterUniverse, runAndPersistLeadHunter, toResearchCandidates } from "@/lib/lead-hunter/hunt-and-persist";
+import { loadLeadHunterUniverse, orderResearchCandidatesForBudget, runAndPersistLeadHunter, toResearchCandidates } from "@/lib/lead-hunter/hunt-and-persist";
 import { synthesizeCase } from "@/lib/monitor/canonical-case";
 import { isMaterialEventClaim } from "@/lib/intelligence/evidence-materiality";
 import { classifyRunCoverage } from "@/lib/intelligence/account-deep-research";
@@ -172,7 +172,7 @@ async function runIntelligenceExecution(
     // Mandatory reload proves Research consumes durable Lead Hunter output, not
     // the transient return value and not an independent discovery path.
     if (!persistedUniverse) throw new Error("persisted_universe_unavailable");
-    const candidates = toResearchCandidates(persistedUniverse);
+    let candidates = toResearchCandidates(persistedUniverse);
     if (candidates.length === 0) throw new Error("no_research_ready_candidates");
 
     // Vault accretion (best-effort, failure-isolated): valid discovered companies
@@ -185,6 +185,7 @@ async function runIntelligenceExecution(
     }
 
     const researchLimit = Math.min(candidates.length, Math.max(input.deliveryLimit, input.researchLimit));
+    candidates = orderResearchCandidatesForBudget(candidates, researchLimit);
     let researchedLeads: ProcessedLead[] = [];
     const researchStartedMs = Date.now();
     const report = await deps.pipeline({
@@ -241,6 +242,8 @@ async function runIntelligenceExecution(
         category: lead.qualification.category, fitScore: lead.qualification.fit_score,
         signalDate: lead.candidate.signal_date ?? null, sourceUrl: lead.candidate.source_url ?? null,
         signalType: lead.candidate.signal_type ?? null,
+        candidateOrigin: lead.candidate.discovery_origin_flags ?? [],
+        eventHintCount: lead.candidate.research_hints?.length ?? 0,
         researchConfidence: lead.enrichment.research_confidence ?? null,
         accountResearch: lead.enrichment.account_research ?? null,
         evidenceClaims: (lead.enrichment.evidence_discipline ?? []).map(claim => {
@@ -320,6 +323,13 @@ async function runIntelligenceExecution(
     // degraded/insufficient run is not reported as a healthy "no strong opportunity" (§4).
     const coverageState = classifyRunCoverage(researchedLeads.map((lead) => lead.enrichment.account_research ?? null));
     const actionabilityFunnel = summarizeActionabilityFunnel((run.researchAudit ?? []).flatMap((item) => item.actionability ? [item.actionability] : []));
+    const eventFirstCandidates = candidates.filter((candidate) => (candidate.research_hints?.length ?? 0) > 0);
+    const selectedCandidates = candidates.slice(0, researchLimit);
+    const eventFirstSelected = selectedCandidates.filter((candidate) => (candidate.research_hints?.length ?? 0) > 0);
+    const eventFirstResearched = researchedLeads.filter((lead) => (lead.candidate.research_hints?.length ?? 0) > 0);
+    const eventFirstValidatedEvents = eventFirstResearched.reduce((sum, lead) => sum + (lead.enrichment.account_research?.validated_events?.length ?? 0), 0);
+    const eventFirstIds = new Set(eventFirstResearched.map((lead) => lead.id));
+    const eventFirstCases = report.canonical_cases.filter((item) => eventFirstIds.has(item.lead_id)).length;
     const commercialOutcome = strongCount > 0 ? "completed_with_opportunities"
       : coverageState === "insufficient" ? "completed_insufficient_coverage" : "completed_no_strong_opportunity";
     (report as LeadLensReport & { _intelligence_run?: unknown })._intelligence_run = {
@@ -327,6 +337,13 @@ async function runIntelligenceExecution(
       stage: "report", researched: researchLimit, delivered: strongCount, portfolioAccounts: report.processed_leads.length,
       discoveryProvenanceIsEvidence: false, firstReview: true,
       coverageState, commercialOutcome, actionabilityFunnel,
+      originConversion: {
+        event_first_candidates: eventFirstCandidates.length,
+        event_first_selected: eventFirstSelected.length,
+        event_first_researched: eventFirstResearched.length,
+        event_first_validated_events: eventFirstValidatedEvents,
+        event_first_cases: eventFirstCases,
+      },
     };
 
     run = { ...run, coverageState, status: "completed", stage: "report", report, failureCode: null, updatedAt: (deps.now ?? (() => new Date()))().toISOString() };

@@ -224,7 +224,7 @@ function resultSupportsTargetGeography(item: Pick<SearchResultItem, "title" | "s
     return /\bcolombia\b|\bbogota\b|\bmedellin\b|\bcali\b|\bbarranquilla\b|\bcartagena\b|\bantioquia\b|\bcundinamarca\b|\bvalle del cauca\b/.test(text);
   }
   if (/united states|usa|u\.s\./i.test(geography)) {
-    return /\bunited states\b|\busa\b|\bu s\b|\bamerican\b/.test(text);
+    return /\bunited states\b|\busa\b|\bu s\b|\bamerican\b|\b(?:alabama|alaska|arizona|arkansas|california|colorado|connecticut|delaware|florida|georgia|hawaii|idaho|illinois|indiana|iowa|kansas|kentucky|louisiana|maine|maryland|massachusetts|michigan|minnesota|mississippi|missouri|montana|nebraska|nevada|new hampshire|new jersey|new mexico|new york|north carolina|north dakota|ohio|oklahoma|oregon|pennsylvania|rhode island|south carolina|south dakota|tennessee|texas|utah|vermont|virginia|washington|west virginia|wisconsin|wyoming)\b/.test(text);
   }
   return new RegExp(`\\b${normalize(geography).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(text);
 }
@@ -319,10 +319,11 @@ export async function runEventFirstDiscovery(
   const orgs: RawDiscoveredOrg[] = [];
   const identityBudget = opts.maxIdentityQueries ?? 4;
   let identityCalls = 0;
+  let identityAttempts = 0;
   const geoRank = (hint: EventDiscoveryCandidate) => {
     const text = `${hint.headline} ${hint.source_excerpt ?? ""}`;
     const target = hint.target_geography;
-    const targetSignal = target === "Colombia" ? /\bcolombia\b|\bbogot[aá]\b|\bmedell[ií]n\b|\bcali\b|\bbarranquilla\b/i.test(text) : new RegExp(`\\b${target.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(text);
+    const targetSignal = resultSupportsTargetGeography({ title: hint.headline, snippet: hint.source_excerpt, canonical_url: hint.source_url }, target);
     const foreignSignal = target === "Colombia" && /\bm[eé]xico\b|\bquer[eé]taro\b|\bnuevo le[oó]n\b|\bguanajuato\b|\brep[uú]blica dominicana\b|\bespa[ñn]a\b|\bargentina\b|\bchile\b/i.test(text);
     const targetTypeSignal = targetContextSupported(plan, text);
     return (hint.company_domain_hint ? 5 : 0) + (targetSignal ? 4 : 0) + (targetTypeSignal ? 3 : 0) - (foreignSignal ? 6 : 0);
@@ -331,15 +332,21 @@ export async function runEventFirstDiscovery(
   for (const hint of rankedHints) {
     let domain = hint.company_domain_hint;
     const discoveryPage = [{ title: hint.headline, snippet: hint.source_excerpt, url: hint.source_url }];
-    let country: string | null = domain ? inferEnumeratedCountry(hint.company_name_hint, discoveryPage, hint.target_geography).country : null;
+    // Event-page geography and corporate-domain identity are independent facts.
+    // A media result can explicitly ground Florida/Colombia before the separate
+    // official-domain query resolves the organization; requiring the domain first
+    // silently discarded valid event-led companies.
+    let country: string | null = inferEnumeratedCountry(hint.company_name_hint, discoveryPage, hint.target_geography).country;
     let identityContext = `${hint.headline} ${hint.source_excerpt ?? ""}`;
     if ((!domain || !country || !targetContextSupported(plan, identityContext)) && identityCalls < identityBudget) {
       for (const provider of providers) {
-        if (identityCalls >= identityBudget || (domain && country && targetContextSupported(plan, identityContext))) break;
-        identityCalls++;
+        if (identityCalls >= identityBudget || identityAttempts >= identityBudget * Math.max(1, providers.length) || (domain && country && targetContextSupported(plan, identityContext))) break;
+        identityAttempts++;
         metrics.provider_calls[provider.id] = (metrics.provider_calls[provider.id] ?? 0) + 1;
         const spanishIdentity = hint.target_geography === "Colombia";
         const response = await provider.search({ query: spanishIdentity ? `"${hint.company_name_hint}" sitio oficial empresa Colombia` : `"${hint.company_name_hint}" official company "${hint.target_geography}"`, region: spanishIdentity ? "co" : "us", language: spanishIdentity ? "es" : "en", max_results: 5, query_type: "official_domain" }).catch(() => ({ ok: false, results: [] } as never));
+        if (!response.ok) continue;
+        identityCalls++;
         const pages = response.results.map(x => ({ title: x.title, snippet: x.snippet, url: x.canonical_url }));
         domain = domain ?? inferEnumeratedDomain(hint.company_name_hint, pages).domain;
         country = country ?? inferEnumeratedCountry(hint.company_name_hint, pages, hint.target_geography).country;
@@ -361,6 +368,14 @@ export async function runEventFirstDiscovery(
       industry: plan.industries[0] ?? plan.organizationTypes[0],
       origin: "event_first", provider: hint.provider, route: `event_first:${hint.query_family}`,
       sourceUrl: hint.source_url, confidence: "verified",
+      researchHint: {
+        eventTypeHint: hint.event_type_hint,
+        eventDateHint: hint.event_date_hint,
+        sourceUrlHint: hint.source_url,
+        headline: hint.headline,
+        sourceExcerpt: hint.source_excerpt,
+        provider: hint.provider,
+      },
     });
   }
   metrics.canonical_companies = new Set(orgs.map(x => x.domain)).size;

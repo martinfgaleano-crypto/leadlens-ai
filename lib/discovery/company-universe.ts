@@ -71,6 +71,7 @@ export function rejectEnumeratedName(name: string): string | null {
   const normalized = clean.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
   if (!normalized || normalized.length < 4) return "name_too_short";
   if (/^(quienes|enes) somos$|^(inicio|contacto|nosotros|home|about us)$/i.test(normalized)) return "navigation_fragment";
+  if (/^(?:lejos (?:del?|de la|de los|de las)|como|por que|cuando|donde|estas son|estos son)\b/i.test(normalized)) return "editorial_phrase";
   const words = normalized.split(" ").filter(Boolean);
   if (words.every(w => GENERIC_COMPANY_WORD.has(w))) return "generic_commercial_phrase";
   if (AMBIGUOUS_NAME.test(clean)) return "entity_ambiguous_generic_name";

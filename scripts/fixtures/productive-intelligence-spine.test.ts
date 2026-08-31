@@ -38,8 +38,15 @@ t("confirmation: unsupported objective cannot persist", !unsupported.ok);
 
 const org = (i: number): RawDiscoveredOrg => ({
   name: `Verified Manufacturer ${i}`, domain: `verified-${i}.example`, country: "United States",
-  organizationType: "Manufacturer", industry: "Manufacturing", origin: "dynamic_enumeration",
+  organizationType: "Manufacturer", industry: "Manufacturing", origin: i === 1 ? "event_first" : "dynamic_enumeration",
   provider: "test_provider", route: "industry_category", sourceUrl: `https://directory.example/${i}`, confidence: "verified",
+  ...(i === 1 ? { researchHint: {
+    eventTypeHint: "new_facility", eventDateHint: "2026-08-20",
+    sourceUrlHint: "https://verified-1.example/news/new-facility",
+    headline: "Verified Manufacturer 1 opens a new production facility",
+    sourceExcerpt: "The company opened a new production facility in Ohio.",
+    provider: "test_provider",
+  } } : {}),
 });
 const discovery: DiscoveryRunner = async () => ({
   orgs: [...Array.from({ length: 7 }, (_, i) => org(i + 1)), {
@@ -73,6 +80,7 @@ const pipeline = async (input: PipelineInput): Promise<LeadLensReport> => {
   researchedInput = Math.min(input.candidatesOverride?.length ?? 0, input.researchCandidateLimit ?? 0);
   provenanceContaminatedEvidence = (input.candidatesOverride ?? []).some((c) => Boolean(c.source_url));
   const researched = (input.candidatesOverride ?? []).slice(0, researchedInput).map(processed);
+  input.onResearchComplete?.(researched);
   const delivered = researched.slice(0, input.deliveryLimit ?? researched.length);
   return {
     job_id: input.jobId!, plan: input.plan, total_leads: delivered.length,
@@ -93,6 +101,13 @@ t("spine: Lead Hunter universe persisted and linked", first.ok && Boolean(first.
 t("spine: Research receives persisted eligible subset, ambiguous candidate held", researchedInput === 6 && first.ok && first.run.report?.report_intelligence?.companies_considered === 7);
 t("spine: research breadth exceeds delivery count", researchedInput === 6 && first.ok && first.run.report?.processed_leads.length === 2);
 t("spine: discovery provenance is not passed as source Evidence", provenanceContaminatedEvidence === false);
+t("spine: event-first conversion is observable without turning hints into Evidence", Boolean(first.ok
+  && (first.run.report as LeadLensReport & { _intelligence_run?: { originConversion?: { event_first_candidates: number; event_first_selected: number; event_first_researched: number; event_first_cases: number } } })._intelligence_run?.originConversion?.event_first_candidates === 1
+  && (first.run.report as LeadLensReport & { _intelligence_run?: { originConversion?: { event_first_candidates: number; event_first_selected: number; event_first_researched: number; event_first_cases: number } } })._intelligence_run?.originConversion?.event_first_selected === 1
+  && (first.run.report as LeadLensReport & { _intelligence_run?: { originConversion?: { event_first_candidates: number; event_first_selected: number; event_first_researched: number; event_first_cases: number } } })._intelligence_run?.originConversion?.event_first_researched === 1
+  && (first.run.report as LeadLensReport & { _intelligence_run?: { originConversion?: { event_first_candidates: number; event_first_selected: number; event_first_researched: number; event_first_cases: number } } })._intelligence_run?.originConversion?.event_first_cases === 1));
+t("spine: durable research audit records bounded origin and hint count", Boolean(first.ok
+  && first.run.researchAudit?.some((item) => item.candidateOrigin?.includes("EVENT_FIRST") && item.eventHintCount === 1)));
 t("spine: full canonical synthesis produces customer Case decisions", first.ok && first.run.report?.canonical_cases?.length === 2 && first.run.report.canonical_cases.every((c) => c.first_review));
 t("spine: first review has no predecessor semantics", Boolean(first.ok && first.run.report?.canonical_cases?.every((c) => c.first_review === true)));
 const customerReport = first.ok && first.run.report ? assembleInstitutionalReport(first.run.report as never, { job_id: first.run.runId, plan: first.run.plan, search_id: null, customer_ref: null, created_at: first.run.createdAt }) : null;

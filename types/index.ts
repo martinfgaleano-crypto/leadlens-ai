@@ -330,6 +330,17 @@ export interface LeadCandidate {
   account_role_evidence?: string[];
   /** Lead Hunter lineage only. It is discovery context, never claim Evidence. */
   discovery_provenance?: Array<{ route: string; origin: string; provider?: string; sourceUrl?: string }>;
+  /** Discovery-only event pointers. Canonical Research must independently fetch,
+   * validate and bind them before they may become Evidence or Timing. */
+  research_hints?: Array<{
+    event_type_hint: string;
+    event_date_hint: string | null;
+    source_url_hint: string;
+    headline: string;
+    source_excerpt?: string | null;
+    provider: string;
+  }>;
+  discovery_origin_flags?: Array<"ACCOUNT_FIRST" | "EVENT_FIRST" | "BOTH" | "VAULT_REUSED" | "CONTEXT_REUSED">;
   /** Canonical Lead Hunter identity lineage for durable Monitor re-observation. */
   account_identity?: {
     canonicalName: string;

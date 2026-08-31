@@ -114,9 +114,36 @@ export function toResearchCandidates(universe: CandidateAccountUniverse): LeadCa
     // Deliberately NOT mapped to source_url: discovery provenance is context,
     // never Evidence. Research must independently recover and accept a source.
     discovery_provenance: c.provenance.map((p) => ({ route: p.route, origin: p.origin, provider: p.provider, sourceUrl: p.sourceUrl })),
+    research_hints: c.researchHints?.map((hint) => ({
+      event_type_hint: hint.eventTypeHint,
+      event_date_hint: hint.eventDateHint,
+      source_url_hint: hint.sourceUrlHint,
+      headline: hint.headline,
+      source_excerpt: hint.sourceExcerpt,
+      provider: hint.provider,
+    })),
+    discovery_origin_flags: c.originFlags,
     account_identity: { ...c.identity, fromUniverse: true as const },
     // IDENTITY confidence only (not an opportunity/lead score): how sure we are
     // this is the right organization. Research owns Fit/Timing/Decision.
     confidence_score: c.identity.confidence === "verified" ? 0.8 : 0.5,
   }));
+}
+
+/** Put a balanced, bounded selection prefix in front of the full candidate list.
+ * Event-led candidates receive scarce Research coverage but cannot consume the
+ * whole cap while a structurally strong Account-First candidate exists. No hint
+ * changes eligibility, Evidence, score, or Decision. */
+export function orderResearchCandidatesForBudget(candidates: LeadCandidate[], limit: number): LeadCandidate[] {
+  if (limit <= 0 || candidates.length <= 1) return candidates;
+  const eventLed = candidates.filter((c) => (c.research_hints?.length ?? 0) > 0);
+  const structural = candidates.filter((c) => (c.research_hints?.length ?? 0) === 0);
+  if (!eventLed.length || !structural.length) return candidates;
+  const eventSlots = limit === 1 ? 1 : Math.min(eventLed.length, Math.max(1, limit - 1), Math.ceil(limit * 2 / 3));
+  const selected: LeadCandidate[] = [];
+  selected.push(...eventLed.slice(0, eventSlots));
+  selected.push(...structural.slice(0, Math.max(0, limit - selected.length)));
+  if (selected.length < limit) selected.push(...eventLed.slice(eventSlots, eventSlots + limit - selected.length));
+  const selectedIds = new Set(selected.map((c) => c.id));
+  return [...selected, ...candidates.filter((c) => !selectedIds.has(c.id))];
 }
