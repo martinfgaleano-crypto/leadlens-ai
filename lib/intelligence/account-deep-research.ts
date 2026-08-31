@@ -159,7 +159,7 @@ export async function deepenAccountResearch(
   const initialQueryBudget = queryBudget >= 5 ? queryBudget - 1 : queryBudget;
   const plan = planAccountResearch(profile, context, initialQueryBudget, criteria.buying_signals);
   const providers = deps.providers ?? await productiveProviders();
-  const extract = deps.extract ?? defaultExtract;
+  const extract = deps.extract ?? ((url: string) => defaultExtract(url, candidate.domain ?? null));
   const seen = new Set<string>();
   const acceptedByCanonical = new Map<string, EvidenceDecision>();
   const extractedUrls = new Set<string>();
@@ -548,10 +548,50 @@ async function productiveProviders(): Promise<SearchProvider[]> {
   return health.filter((x) => x.health?.status === "available").map((x) => x.provider);
 }
 
-async function defaultExtract(url: string): Promise<{ ok: boolean; content: string | null }> {
+export function isAllowedCorporateFetchUrl(url: string, corporateDomain: string | null): boolean {
+  if (!corporateDomain) return false;
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.toLowerCase().replace(/^www\./, "");
+    const domain = corporateDomain.toLowerCase().replace(/^www\./, "");
+    if (parsed.protocol !== "https:" || !host || host === "localhost" || /^\d+(?:\.\d+){3}$/.test(host)) return false;
+    return host === domain || host.endsWith(`.${domain}`);
+  } catch { return false; }
+}
+
+function htmlToResearchText(html: string): string {
+  return html
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ")
+    .replace(/<noscript\b[^>]*>[\s\S]*?<\/noscript>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;|&#160;/gi, " ")
+    .replace(/&amp;/gi, "&").replace(/&quot;/gi, '"').replace(/&#39;|&apos;/gi, "'")
+    .replace(/&lt;/gi, "<").replace(/&gt;/gi, ">")
+    .replace(/\s+/g, " ").trim();
+}
+
+async function defaultExtract(url: string, corporateDomain: string | null): Promise<{ ok: boolean; content: string | null }> {
   const { extractWithFallback } = await import("@/lib/sources/access/extractors");
   const result = await extractWithFallback(url);
-  return { ok: result.ok, content: result.content };
+  if (result.ok && result.content) return { ok: true, content: result.content };
+  // Last bounded fallback for an already verified corporate host. Search
+  // snippets remain discovery hints; this fetch obtains the actual page. The
+  // host restriction prevents arbitrary provider URLs from becoming an SSRF
+  // surface and intentionally excludes independent/non-corporate sources.
+  if (!isAllowedCorporateFetchUrl(url, corporateDomain)) return { ok: false, content: null };
+  try {
+    const response = await fetch(url, {
+      headers: { accept: "text/html,application/xhtml+xml", "user-agent": "LeadLens research validation/1.0" },
+      redirect: "follow", signal: AbortSignal.timeout(20_000),
+    });
+    if (!response.ok) return { ok: false, content: null };
+    const type = response.headers.get("content-type") ?? "";
+    if (!type.includes("text/html") && !type.includes("application/xhtml+xml")) return { ok: false, content: null };
+    const raw = (await response.text()).slice(0, 1_500_000);
+    const content = htmlToResearchText(raw);
+    return { ok: content.length >= 200, content: content.length >= 200 ? content : null };
+  } catch { return { ok: false, content: null }; }
 }
 
 /** Select event-bearing windows from long HTML/markdown instead of spending the

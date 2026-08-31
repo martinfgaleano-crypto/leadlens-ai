@@ -45,6 +45,18 @@ export function icpFromPlan(plan: DiscoveryPlan): ICP {
   };
 }
 
+/** Keep bounded discovery lanes ordered when provider capacity is degraded.
+ * Event-First is the recall lane for observed changes, so it must not compete
+ * with the broader Account-First fan-out for the only healthy search provider. */
+export async function runDiscoveryLanes<TEvent, TAccount>(
+  eventLane: () => Promise<TEvent>,
+  accountLane: () => Promise<TAccount>,
+): Promise<{ eventResult: TEvent; accountResult: TAccount }> {
+  const eventResult = await eventLane();
+  const accountResult = await accountLane();
+  return { eventResult, accountResult };
+}
+
 /** Real discovery runner backed by the existing engine. Bounded by the plan's
  *  budget (lead_count) and the engine's own cost cap. */
 export const defaultDiscoveryRunner: DiscoveryRunner = async (plan): Promise<DiscoveryRunOutput> => {
@@ -57,16 +69,18 @@ export const defaultDiscoveryRunner: DiscoveryRunner = async (plan): Promise<Dis
   // Tier is derived from the technical budget (NOT a commercial plan): a small
   // candidate budget runs the cheaper/faster discovery tier.
   const tier = plan.budget.maxProviderCalls <= 24 ? "preview" : plan.budget.maxProviderCalls <= 48 ? "brief" : "intelligence";
-  // Account-first and event-first enumerate concurrently. Event-first is tightly
-  // bounded and only contributes discovery candidates; canonical Research still
-  // owns event/date/materiality/Evidence/Decision validation.
-  const [accountResult, eventResult] = await Promise.all([
-    runCompanyFirstDiscovery(icp, criteria, tier, limit, { costCapUsd: 0.5 }),
-    runEventFirstDiscovery(plan, [tavilyProvider, braveProvider, serperProvider], {
+  // Run Event-First before Account-First. With only one healthy search provider,
+  // concurrent lane fan-out caused the productive lane to receive successful but
+  // empty responses while the identical controlled Event-First plan converted a
+  // canonical company. Sequential bounded lanes avoid provider contention; they
+  // do not change eligibility, Evidence, Timing, materiality, or Decision.
+  const { eventResult, accountResult } = await runDiscoveryLanes(
+    () => runEventFirstDiscovery(plan, [tavilyProvider, braveProvider, serperProvider], {
       maxQueries: tier === "preview" ? 4 : 6,
       maxIdentityQueries: tier === "preview" ? 3 : 5,
     }),
-  ]);
+    () => runCompanyFirstDiscovery(icp, criteria, tier, limit, { costCapUsd: 0.5 }),
+  );
   const { metrics } = accountResult;
 
   const accountOrgs: RawDiscoveredOrg[] = (metrics.universe_accounts ?? []).map((a) => ({

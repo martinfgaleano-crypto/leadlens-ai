@@ -1,5 +1,5 @@
 import { strict as assert } from "node:assert";
-import { corroboratesPrimaryEvent, deepenAccountResearch, eventGeographyMatches, isEventExtractionCandidate, relevantContentWindow } from "@/lib/intelligence/account-deep-research";
+import { corroboratesPrimaryEvent, deepenAccountResearch, eventGeographyMatches, isAllowedCorporateFetchUrl, isEventExtractionCandidate, relevantContentWindow } from "@/lib/intelligence/account-deep-research";
 import { scrapeEventDatePhrase } from "@/lib/monitor/full-text-extraction";
 import { classifySignalKind } from "@/lib/discovery/event-vs-metric";
 import { resolveEventDate } from "@/lib/monitor/event-extraction";
@@ -42,6 +42,7 @@ test("global-company event must be grounded in the target operating geography", 
 test("telemetry never claims unavailable cost", !("cost" in result.telemetry));
 test("long-page window skips boilerplate and retains event", relevantContentWindow(`${"cookie navigation ".repeat(1000)}Acme Manufacturing opened a new plant on August 10, 2026.`, ["Acme Manufacturing", "new plant"], 1200).includes("opened a new plant"));
 test("full date phrase with day is recovered", scrapeEventDatePhrase("Acme opened the plant on August 10, 2026 after construction.") === "August 10, 2026");
+test("abbreviated corporate press date is recovered", scrapeEventDatePhrase("WESTERVILLE, Ohio - Aug. 20, 2026 Forward stocking network expanded.") === "Aug. 20, 2026");
 test("day-first English corporate date is recovered", scrapeEventDatePhrase("Press release 22 April, 2026. Acme officially opened the plant.") === "22 April, 2026");
 test("US numeric corporate date is recovered", scrapeEventDatePhrase("Corporate calendar 01/29/2026. Acme announced the facility.") === "01/29/2026");
 test("US numeric corporate date resolves exactly", resolveEventDate({ accountId: "acme", sourceHost: "acme.com", sourceUrl: "https://acme.com/event", titleAndContent: "event", eventDateRaw: "01/29/2026", publicationDate: null, retrievedAt: now }).eventDate === "2026-01-29");
@@ -101,6 +102,9 @@ test("quantified capacity commitment is a strategic decision", classifySignalKin
 test("announced quantified expansion plan is a strategic decision", classifySignalKind("Conagra announced plans to expand its existing manufacturing facility through a multi-year investment of approximately $220 million.").kind === "strategic_decision");
 test("geographic abbreviation does not break quantified commitment", classifySignalKind("Conagra announced plans to expand its existing manufacturing facility in Fayetteville, Ark. through a multi-year investment of approximately $220 million.").kind === "strategic_decision");
 test("generic future expansion remains non-triggering", !classifySignalKind("The company hopes to expand operations someday.").can_trigger);
+test("corporate history page cannot turn historical operations into a fresh event", classifySignalKind("Our History - Logistics Leaders Since 1925 | Burris Logistics. Change has come through modernized fleets and facilities. Freight brokerage grew from a few loads per week in 2018 to over 50,000 loads per month in 2026. Today Burris supports its operating companies.").kind === "reference_information");
+test("quantified logistics network expansion is a triggering operational change", classifySignalKind("DHL Supply Chain expands service logistics capabilities. Forward stocking network expanded to more than 150 U.S. and Canadian locations.").can_trigger);
+test("direct extraction fallback is restricted to the verified corporate HTTPS host", isAllowedCorporateFetchUrl("https://www.dhl.com/us-en/news/event.html", "dhl.com") && !isAllowedCorporateFetchUrl("https://publisher.example/dhl-event", "dhl.com") && !isAllowedCorporateFetchUrl("http://dhl.com/event", "dhl.com"));
 test("groundbreaking is a concrete strategic facility event", classifySignalKind("Hitachi Energy broke ground on a major expansion of its South Boston campus.").kind === "strategic_decision");
 test("announced multi-facility opening plan is concrete, not generic aspiration", classifySignalKind("John Deere announced plans to open two new U.S.-based facilities: a distribution center and an excavator factory.").kind === "strategic_decision");
 test("claim-derived corroboration requires same material event", corroboratesPrimaryEvent("Quad expands packaging operations with a Salt Lake City manufacturing facility", "Industry source confirms Quad opened its Salt Lake City packaging facility") && !corroboratesPrimaryEvent("Quad expands packaging operations with a Salt Lake City manufacturing facility", "Quad reports quarterly earnings and a dividend"));

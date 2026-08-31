@@ -105,7 +105,7 @@ export function inferEnumeratedDomain(company: string, pages: { title: string | 
     const domain = domainOf(p.url);
     if (!domain || MEDIA_OR_DIRECTORY.test(domain)) continue;
     const hostNorm = norm(domain.split(".").slice(0, -1).join(""));
-    if ((companyNorm.length >= 5 && hostNorm.includes(companyNorm)) || tokens.some(t => hostNorm.includes(t))) return { domain, source: p.url };
+    if ((companyNorm.length >= 5 && (hostNorm === companyNorm || hostNorm.startsWith(companyNorm))) || tokens.some(t => hostNorm === t || hostNorm.startsWith(t))) return { domain, source: p.url };
   }
   return { domain: null, source: mentioned[0]?.url ?? null };
 }

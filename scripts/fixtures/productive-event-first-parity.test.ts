@@ -6,6 +6,8 @@ import { orderResearchCandidatesForBudget, toResearchCandidates } from "@/lib/le
 import { deepenAccountResearch } from "@/lib/intelligence/account-deep-research";
 import type { SearchProvider } from "@/lib/sources/access/provider-contract";
 import type { LeadSearchCriteria } from "@/types";
+import { runDiscoveryLanes } from "@/lib/lead-hunter/discovery-runner";
+import { intelligenceRunMetadata } from "@/lib/intelligence/productive-spine-store";
 
 let passed = 0;
 const test = (name: string, ok: boolean) => { assert.equal(ok, true, name); passed++; console.log(`ok - ${name}`); };
@@ -26,6 +28,13 @@ const org = (input: Partial<RawDiscoveredOrg> & { name: string }): RawDiscovered
 });
 
 async function main() {
+  const laneOrder: string[] = [];
+  const lanes = await runDiscoveryLanes(
+    async () => { laneOrder.push("event:start"); await Promise.resolve(); laneOrder.push("event:end"); return "event"; },
+    async () => { laneOrder.push("account:start"); await Promise.resolve(); laneOrder.push("account:end"); return "account"; },
+  );
+  test("productive discovery completes Event-First before Account-First", laneOrder.join(",") === "event:start,event:end,account:start,account:end" && lanes.eventResult === "event" && lanes.accountResult === "account");
+
   const universe = await hunt(plan, async () => ({
     orgs: [
       org({ name: "Mapei Colombia", domain: "mapei.com", country: "Colombia", organizationType: "manufacturer" }),
@@ -78,6 +87,14 @@ async function main() {
   test("Deep Research fetches the hinted source before generic search", deep.telemetry.event_hints_received === 1 && deep.telemetry.event_hints_fetched === 1);
   test("hint becomes a canonical event only after fresh fetch and validation", deep.telemetry.event_hints_validated === 1 && deep.validated_events[0]?.stage === "event_hint" && deep.eventDate === "2026-08-10");
   test("counterevidence remains mandatory after fast-path validation", deep.telemetry.counterevidence_checked);
+
+  const originConversion = { event_first_candidates: 1, event_first_selected: 1, event_first_researched: 1, event_first_cases: 1 };
+  const durableMetadata = intelligenceRunMetadata({
+    runId: "event-origin-durability", contextRef: "context", status: "completed", stage: "report",
+    failureCode: null, attempt: 1, createdAt: now, updatedAt: now, deliveryLimit: 2, researchLimit: 3,
+    report: { _intelligence_run: { commercialOutcome: "natural_validate", originConversion } } as never,
+  } as never);
+  test("durable run metadata preserves Event-First origin conversion", JSON.stringify(durableMetadata.originConversion) === JSON.stringify(originConversion));
 
   console.log(`\n${passed} passed, 0 failed`);
 }

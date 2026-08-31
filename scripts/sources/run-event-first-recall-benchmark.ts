@@ -16,6 +16,7 @@ const base = (id: string, organizationTypes: string[], industries: string[], geo
 const allContexts = [
   base("us_manufacturing", ["manufacturer"], ["food and beverage manufacturing"], "United States", ["new_facility", "capacity", "investment"]),
   base("us_logistics", ["logistics operator", "distributor"], ["logistics and distribution"], "United States", ["new_facility", "contract_award", "capacity"]),
+  base("us_logistics_expansion", ["Logistics operators with owned/leased warehouse or DC networks", "Third-party logistics providers (3PLs) operating physical facilities", "Regional and national distributors with active DC operations"], ["Logistics and supply chain", "Wholesale distribution"], "United States", ["new_facility", "expansion", "technology_change", "capacity", "operational_transformation"]),
   base("us_operations_saas", ["software company"], ["B2B operational software"], "United States", ["expansion", "new_market", "partnership"]),
   base("co_manufacturing", ["fabricante"], ["manufactura de alimentos y bebidas"], "Colombia", ["new_facility", "capacity", "investment"]),
   base("co_industrial_manufacturing", ["fabricante", "empresa industrial"], ["manufactura industrial"], "Colombia", ["new_facility", "capacity", "investment", "operational_transformation"]),

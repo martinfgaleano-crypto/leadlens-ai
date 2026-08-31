@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { classifyEventResult, extractEventSubjects, normalizeLatamCompanyName, planEventFirstQueries, runEventFirstDiscovery } from "../../lib/lead-hunter/event-first-discovery";
+import { classifyEventResult, domainLooksCorporate, extractEventSubjects, normalizeLatamCompanyName, planEventFirstQueries, runEventFirstDiscovery, targetContextSupported } from "../../lib/lead-hunter/event-first-discovery";
 import type { DiscoveryPlan } from "../../lib/lead-hunter/candidate-universe";
 import { hunt } from "../../lib/lead-hunter/candidate-universe";
 import { prioritizeResearch } from "../../lib/lead-hunter/research-readiness";
@@ -54,8 +54,32 @@ await test("long Colombia ICP descriptions compress into searchable buyer famili
   assert.ok(rows.every(x => !x.query.includes("Fabricantes industriales medianos con planta propia")));
 });
 
+await test("long US logistics labels compress into stable searchable buyer families", () => {
+  const rows = planEventFirstQueries(plan({ organizationTypes: ["Logistics operators with owned/operated warehouses", "Third-party logistics (3PL) providers", "Regional and national distributors with DC operations"], industries: ["Logistics and supply chain"] }), 2);
+  assert.ok(rows.every(x => x.query.includes('"logistics operator"') && x.query.includes('"3PL"') && x.query.includes('"distributor"')));
+  assert.ok(rows.every(x => !x.query.includes("Logistics operators with owned/operated warehouses")));
+});
+
+await test("US logistics expansion uses event language observed in corporate newsrooms", () => {
+  const rows = planEventFirstQueries(plan({ organizationTypes: ["Third-party logistics providers (3PLs) operating physical facilities"], industries: ["Logistics and supply chain"], watchSignalFamilies: ["expansion"] }), 2);
+  assert.deepEqual(rows.map(x => x.query.includes("expands network") || x.query.includes("expands service logistics")), [true, true]);
+  assert.ok(rows[0].query.includes('"3PL"') && !rows[1].query.includes('"3PL"'));
+});
+
 await test("extracts the governing event subject, not article suffix", () => {
   assert.deepEqual(extractEventSubjects("Acme Foods opens new Ohio plant | Industry Today"), ["Acme Foods"]);
+});
+
+await test("corporate domain matching rejects embedded company-name substrings", () => {
+  assert.equal(domainLooksCorporate("Ryder", "stryderusa.com"), false);
+  assert.equal(domainLooksCorporate("Stryder USA", "stryderusa.com"), true);
+  assert.equal(domainLooksCorporate("DHL Supply Chain", "dhl.com"), true);
+});
+
+await test("multi-family target accepts logistics evidence without requiring manufacturing evidence", () => {
+  const mixed = plan({ organizationTypes: ["Third-party logistics providers", "Manufacturers with in-house distribution"], industries: ["Logistics and supply chain", "Manufacturing"] });
+  assert.equal(targetContextSupported(mixed, "DHL Supply Chain expands its logistics network across 150 locations"), true);
+  assert.equal(targetContextSupported(mixed, "A private equity fund announced a new portfolio"), false);
 });
 
 await test("represents both subjects of a joint announcement", () => {

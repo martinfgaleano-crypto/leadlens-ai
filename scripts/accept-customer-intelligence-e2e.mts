@@ -83,6 +83,15 @@ try {
 
   // Same label, different authenticated owner, still through the confirmation API.
   const fullInterpretation = verifyConfirmationToken(interpretationBody.confirmation_token, userA!);
+  const contextDiagnostic = fullInterpretation ? {
+    objective_type: fullInterpretation.commercialObjective.objectiveType,
+    organization_types: fullInterpretation.targetAccountProfile.organizationTypes ?? [],
+    industries: fullInterpretation.targetAccountProfile.industries ?? [],
+    geographies: (fullInterpretation.targetAccountProfile.geographies ?? []).map((item) => item.label),
+    signal_families: fullInterpretation.signalHypotheses.map((item) => item.family),
+    definition_status: fullInterpretation.targetAccountProfile.definitionStatus,
+  } : null;
+  console.log(`confirmed context :: ${JSON.stringify(contextDiagnostic)}`);
   const tokenForB = fullInterpretation ? issueConfirmationToken(userB!, fullInterpretation) : null;
   const confirmedB = tokenForB ? await confirm(req("/api/customer/contexts/confirm", tokenB, { confirmation_token: tokenForB, context_id: contextId, client_id: `customer_${stamp}` })) : null;
   check("same context label persists independently across tenants", Boolean(confirmedB && [200, 201].includes(confirmedB.status)));
@@ -163,7 +172,8 @@ try {
   }).filter(([, value]) => (value as { calls: number }).calls > 0));
   const artifact = {
     acceptance: "customer-intelligence-e2e-v1", ran_at: new Date().toISOString(), soak_id: soakId, soak_phase: soakPhase,
-    synthetic_context: contextText, run_id: runId, lead_hunter_run_id: leadHunterRunId,
+    synthetic_context: contextText, confirmed_context_diagnostic: contextDiagnostic,
+    run_id: runId, lead_hunter_run_id: leadHunterRunId,
     candidate_universe: {
       total: companies.length,
       coverage: universe?.coverage ?? null,

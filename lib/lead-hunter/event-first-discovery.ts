@@ -109,6 +109,10 @@ export function planEventFirstQueries(plan: DiscoveryPlan, maxQueries = 6): Even
     ? ["fabricante", "empresa industrial"]
     : language === "es" && /logistic|distribut|transport|bodega/.test(targetText)
       ? ["operador logistico", "distribuidor"]
+      : language === "en" && /logistic|supply chain|3pl|distribut|warehouse|fulfillment/.test(targetText)
+        ? ["logistics operator", "3PL", "distributor"]
+        : language === "en" && /manufactur|industrial|plant|factory/.test(targetText)
+          ? ["manufacturer", "industrial company"]
       : /software|saas|technology|tecnologia/.test(targetText)
         ? (language === "es" ? ["empresa de software"] : ["software company"])
         : [...plan.organizationTypes, ...plan.industries].map(compact).filter(Boolean).map(x => x.slice(0, 48)).slice(0, 3);
@@ -119,10 +123,14 @@ export function planEventFirstQueries(plan: DiscoveryPlan, maxQueries = 6): Even
   const currentYear = new Date().getUTCFullYear();
   const queries: EventFirstQuery[] = [];
   for (const family of families) {
-    for (const term of FAMILY_TERMS[family][language].slice(0, 2)) {
+    const familyTerms = language === "en" && family === "expansion" && /logistic|supply chain|3pl|distribut|warehouse|fulfillment/.test(targetText)
+      ? ["expands network", "expands service logistics"]
+      : FAMILY_TERMS[family][language].slice(0, 2);
+    for (const term of familyTerms) {
+      const eventOnly = language === "en" && family === "expansion" && term === "expands service logistics";
       const query = language === "es"
         ? `${term.includes(" ") ? `"${term}"` : term} empresa ${geography} (${currentYear} OR ${currentYear - 1}) ${buyer}`
-        : `${buyer} "${term}" "${geography}" (${currentYear} OR ${currentYear - 1})`;
+        : `${eventOnly ? "" : `${buyer} `}"${term}" "${geography}" (${currentYear} OR ${currentYear - 1})`;
       queries.push({ family, geography, language, query });
       if (queries.length >= maxQueries) return queries;
     }
@@ -196,14 +204,14 @@ function hintKey(company: string, family: EventFamily, url: string): string {
   return `${slug(company)}:${family}:${host}:${slug(url.split("?")[0].split("/").pop() ?? url)}`;
 }
 
-function domainLooksCorporate(company: string, domain: string | null): boolean {
+export function domainLooksCorporate(company: string, domain: string | null): boolean {
   if (!domain || /(?:reuters|bloomberg|forbes|news|press|prnewswire|businesswire|globenewswire|yahoo|msn|magazine|buyer|middleeast|industrytoday|foodengineering|nosh|gov\.)/i.test(domain)) return false;
   const normalizedCompany = normalize(normalizeLatamCompanyName(company));
   const tokens = normalizedCompany.split(/[^a-z0-9]+/).filter(x => x.length >= 3 && !/^(company|corporation|group|grupo|industries|industry|logistics|distribution|manufacturing|foods|food|partners|equity|capital|holdings|international)$/.test(x));
   const initialism = normalizedCompany.replace(/[^a-z0-9]/g, "");
   if (/[.]/.test(company) && initialism.length >= 3) tokens.push(initialism);
   const host = normalize(domain.split(".").slice(0, -1).join(""));
-  return tokens.some(token => token.length === 3 ? host === token || host.startsWith(token) || host.endsWith(token) : host.includes(token));
+  return tokens.some(token => token.length === 3 ? host === token || host.startsWith(token) || host.endsWith(token) : host === token || host.startsWith(token));
 }
 
 function isRecentHint(date: string | null, nowIso: string, url: string, title: string | null): boolean {
@@ -229,16 +237,19 @@ function resultSupportsTargetGeography(item: Pick<SearchResultItem, "title" | "s
   return new RegExp(`\\b${normalize(geography).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(text);
 }
 
-function targetContextSupported(plan: DiscoveryPlan, text: string): boolean {
+export function targetContextSupported(plan: DiscoveryPlan, text: string): boolean {
   const target = normalize([...plan.organizationTypes, ...plan.industries].join(" "));
   const observed = normalize(text);
-  if (/software|saas|technology|tecnologia/.test(target)) return /software|saas|platform|technology|tecnologia|aplicacion empresarial/.test(observed) && !/private equity|investment firm|venture capital|fondo de inversion/.test(observed);
-  if (/manufactur|fabricant|productor/.test(target)) {
-    if (!/manufactur|fabricant|produccion|producer|processing|plant|planta/.test(observed)) return false;
-    if (/alimento|bebida|food|beverage/.test(target) && !/alimento|bebida|food|beverage|snack|panader|lacte|cervec|fruit|drink/.test(observed)) return false;
-    return true;
-  }
-  if (/logistic|distribut|transport|freight/.test(target)) return /logistic|distribut|transport|freight|warehouse|bodega|supply chain/.test(observed);
+  const wantsSoftware = /software|saas|technology|tecnologia/.test(target);
+  const wantsManufacturing = /manufactur|fabricant|productor/.test(target);
+  const wantsLogistics = /logistic|distribut|transport|freight|warehouse|fulfillment/.test(target);
+  const softwareMatch = wantsSoftware && /software|saas|platform|technology|tecnologia|aplicacion empresarial/.test(observed)
+    && !/private equity|investment firm|venture capital|fondo de inversion/.test(observed);
+  const manufacturingMatch = wantsManufacturing
+    && /manufactur|fabricant|produccion|producer|processing|plant|planta/.test(observed)
+    && (!/alimento|bebida|food|beverage/.test(target) || /alimento|bebida|food|beverage|snack|panader|lacte|cervec|fruit|drink/.test(observed));
+  const logisticsMatch = wantsLogistics && /logistic|distribut|transport|freight|warehouse|bodega|supply chain|fulfillment/.test(observed);
+  if (wantsSoftware || wantsManufacturing || wantsLogistics) return softwareMatch || manufacturingMatch || logisticsMatch;
   return true;
 }
 

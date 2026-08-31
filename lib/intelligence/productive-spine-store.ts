@@ -120,7 +120,7 @@ export class SupabaseIntelligenceRunStore implements IntelligenceRunStore {
   }
 
   async save(record: IntelligenceRunRecord): Promise<boolean> {
-    const payload = record.report ? { ...record.report, _intelligence_run: metadata(record) } : serialize(record);
+    const payload = record.report ? { ...record.report, _intelligence_run: intelligenceRunMetadata(record) } : serialize(record);
     const counts = record.report ? {
       lead_count: record.report.total_leads, hot_count: record.report.hot_count,
       warm_count: record.report.warm_count, avg_score: record.report.avg_score,
@@ -166,9 +166,12 @@ export class SupabaseIntelligenceRunStore implements IntelligenceRunStore {
   }
 }
 
-function metadata(record: IntelligenceRunRecord) {
+export function intelligenceRunMetadata(record: IntelligenceRunRecord) {
+  const reportMetadata = record.report
+    ? (record.report as LeadLensReport & { _intelligence_run?: { commercialOutcome?: string; originConversion?: Record<string, number> } })._intelligence_run
+    : null;
   const authoritativeOutcome = record.report
-    ? (record.report as LeadLensReport & { _intelligence_run?: { commercialOutcome?: string } })._intelligence_run?.commercialOutcome
+    ? reportMetadata?.commercialOutcome
     : null;
   return {
     kind: "productive_intelligence_spine_v1", contextRef: record.contextRef,
@@ -176,6 +179,7 @@ function metadata(record: IntelligenceRunRecord) {
     failureCode: record.failureCode, attempt: record.attempt, createdAt: record.createdAt, updatedAt: record.updatedAt,
     deliveryLimit: record.deliveryLimit, researchLimit: record.researchLimit,
     researchAudit: record.researchAudit ?? [],
+    originConversion: reportMetadata?.originConversion ?? null,
     coverageState: record.coverageState ?? null,
     // Failure honesty: a run with no delivered opportunities is only a genuine commercial
     // abstention when coverage was NOT insufficient; degraded coverage is reported as such
@@ -187,5 +191,5 @@ function metadata(record: IntelligenceRunRecord) {
 }
 
 function serialize(record: IntelligenceRunRecord) {
-  return { _status: record.status, job_id: record.runId, _intelligence_run: metadata(record) };
+  return { _status: record.status, job_id: record.runId, _intelligence_run: intelligenceRunMetadata(record) };
 }
