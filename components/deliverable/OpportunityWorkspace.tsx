@@ -25,8 +25,22 @@ export interface WorkspaceMemory { current: { reviewId: string; reviewedAt: stri
 function SinceLastReview({ a, memory, es }: { a: AccountBriefVM; memory?: WorkspaceMemory; es: boolean }) {
   if (!memory) return null;
   const prev = memory.previousById[a.id]; if (!prev) return null;
-  const summary = sinceLastReview(diffAccountCase(prev, snapshotAccountReview(a, memory.current)), es);
-  if (!summary) return null;
+  const diff = diffAccountCase(prev, snapshotAccountReview(a, memory.current));
+  if (diff.isFirstReview) return null;   // no predecessor → not a returning account
+  const summary = sinceLastReview(diff, es);
+  const title = es ? "Desde la última revisión" : "Since last review";
+  if (!summary) {
+    // Known account, no material change — a first-class, useful continuity outcome
+    // (§3.7/§4.3): the customer learns the prior read still holds, not silence.
+    return (
+      <div className="dlv-card dlv-mem">
+        <p className="dlv-label">{title}</p>
+        <ul className="dlv-mem-l"><li>{es
+          ? `Sin cambios materiales desde la revisión anterior. Decisión: ${decisionLabel(a.decision, es)} (sin cambios).`
+          : `No material change since last review. Decision: ${decisionLabel(a.decision, es)} (unchanged).`}</li></ul>
+      </div>
+    );
+  }
   return (
     <div className="dlv-card dlv-mem">
       <p className="dlv-label">{summary.title}</p>

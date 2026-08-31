@@ -152,9 +152,26 @@ export default function DevBriefPreview({ searchParams }: { searchParams?: { sou
   // ?memory=1 — synthesize a SECOND review by rolling back a prior review (dev
   // QA only; obviously synthetic timeline, never a claim of real history).
   if (searchParams?.memory === "1") {
+    // Synthesize a distinct EARLIER review so account continuity (What Changed) renders
+    // for every account — obviously synthetic timeline, never a claim of real history.
+    // Each account's prior review is a weaker state so the current review reads as a
+    // genuine change; accounts whose current decision is already Hold read as "no
+    // material change since last review" (a first-class, useful outcome).
+    const downgrade: Record<string, "monitor" | "hold"> = { prioritize: "monitor", validate: "monitor", monitor: "hold", hold: "hold" };
     const prior = vm.accounts.map((a) => {
-      const changed = a.whatChanged.some((c) => c.kind === "true_change" || c.kind === "recent_event");
-      const prev = changed ? { ...a, decision: "monitor" as const, dimensions: a.dimensions.map((d) => d.label === "Timing" || d.label === "Evidence" ? { ...d, value: "Limited" as const } : d), whatChanged: [{ event: "No verified recent change", date: null, age: null, source: null, kind: "unknown" as const }], evidence: { ...a.evidence, corroborated: null, datedCount: 0, strength: "Limited" as const }, sources: [], validations: ["Confirm current planning systems / vendor"], validationDetails: [{ question: "Confirm current planning systems / vendor", decisionCritical: true, howToValidate: null, changesDecisionBecause: null }], revisitWhen: a.revisitWhen ?? "A new facility is announced" } : a;
+      const isStillHold = a.decision === "hold";
+      const prev = {
+        ...a,
+        decision: downgrade[a.decision] ?? "hold",
+        dimensions: a.dimensions.map((d) => d.label === "Timing" || d.label === "Evidence" ? { ...d, value: "Limited" as const } : d),
+        // A prior review with no verified recent change (so a current dated event reads as new).
+        whatChanged: isStillHold ? a.whatChanged : [{ event: "No verified recent change", date: null, age: null, source: null, kind: "unknown" as const }],
+        evidence: isStillHold ? a.evidence : { ...a.evidence, corroborated: null, datedCount: 0, strength: "Limited" as const },
+        sources: isStillHold ? a.sources : [],
+        validations: isStillHold ? a.validations : ["Confirm current planning systems / vendor"],
+        validationDetails: isStillHold ? a.validationDetails : [{ question: "Confirm current planning systems / vendor", decisionCritical: true, howToValidate: null, changesDecisionBecause: null }],
+        revisitWhen: a.revisitWhen ?? "A new facility is announced",
+      };
       return [a.id, snapshotAccountReview(prev, { reviewId: "dev-review-1", reviewedAt: "2026-03-15", contextVersion: "dev-v1" })] as const;
     });
     const memory = { current: { reviewId: "dev-review-2", reviewedAt: "2026-08-22", contextVersion: "dev-v1" }, previousById: Object.fromEntries(prior) };
