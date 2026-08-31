@@ -82,9 +82,20 @@ export async function getVaultCompanyById(id: string): Promise<VaultCompany | nu
 export async function touchVaultCompanyObservation(id: string): Promise<boolean> {
   const db = await getDb();
   if (!db) return false;
-  const { error } = await db.from("vault_companies").update({ last_seen_at: new Date().toISOString() }).eq("id", id);
-  if (error) { console.error("[vault-store] touchVaultCompanyObservation:", error.message); return false; }
-  return true;
+  // Atomic observation (migration 060 live): increments observation_count and advances
+  // last_seen_at in one statement — no read-modify-write race under concurrent runs.
+  // first_seen_at is never touched. Falls back to a plain last_seen UPDATE only if the RPC
+  // is unavailable (pre-060), so behavior degrades safely. Best-effort/failure-isolated.
+  const { error } = await db.rpc("vault_observe_company", { p_id: id });
+  if (!error) return true;
+  if (/function .*vault_observe_company|does not exist|schema cache|not find/i.test(error.message)) {
+    const { error: fbErr } = await db.from("vault_companies").update({ last_seen_at: new Date().toISOString() }).eq("id", id);
+    if (!fbErr) return true;
+    console.error("[vault-store] touchVaultCompanyObservation fallback:", fbErr.message);
+    return false;
+  }
+  console.error("[vault-store] touchVaultCompanyObservation:", error.message);
+  return false;
 }
 
 export async function findVaultCompanyByDomain(domain: string): Promise<VaultCompany | null> {
