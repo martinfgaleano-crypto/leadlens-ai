@@ -86,7 +86,13 @@ function norm(value: string): string { return value.toLowerCase().normalize("NFD
  * provenance, never an asserted official domain. */
 export function inferEnumeratedDomain(company: string, pages: { title: string | null; snippet: string | null; url: string }[]): { domain: string | null; source: string | null } {
   const companyNorm = norm(company);
-  const tokens = company.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(/[^a-z0-9]+/).filter(t => t.length >= 5 && !GENERIC_COMPANY_WORD.has(t) && !/^(company|compania|corporation|incorporated|limited|internacional)$/.test(t));
+  // Four-character corporate brands are common (Lear, Quad, UFPW-like names).
+  // Requiring five characters made an otherwise exact official host such as
+  // Lear Corporation -> lear.com impossible to verify after legal suffixes were
+  // removed. Generic commercial tokens remain excluded, and the host must still
+  // carry the complete distinctive token, so this does not weaken the
+  // directory/media or unrelated-host guards.
+  const tokens = company.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(/[^a-z0-9]+/).filter(t => t.length >= 4 && !GENERIC_COMPANY_WORD.has(t) && !/^(company|compania|corporation|incorporated|limited|internacional)$/.test(t));
   const mentioned = pages.filter(p => norm(`${p.title ?? ""} ${p.snippet ?? ""}`).includes(companyNorm) || tokens.some(t => norm(`${p.title ?? ""} ${p.snippet ?? ""}`).includes(t)));
   for (const p of mentioned) {
     const domain = domainOf(p.url);
