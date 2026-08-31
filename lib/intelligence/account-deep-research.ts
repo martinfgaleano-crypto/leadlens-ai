@@ -402,10 +402,16 @@ const CLAIM_STOP = new Set(["about", "after", "company", "expands", "expanding",
 export function corroboratesPrimaryEvent(primaryText: string, candidateText: string): boolean {
   const tokens = (value: string) => new Set(value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").match(/[a-z0-9-]{5,}/g)?.filter((x) => !CLAIM_STOP.has(x)) ?? []);
   const primary = tokens(primaryText.slice(0, 1200)), candidate = tokens(candidateText);
+  // Related-link modules can repeat the primary event under a page whose actual
+  // headline concerns a different event. Corroboration must be present in the
+  // result's leading claim, not merely somewhere in its navigation/snippet.
+  const leadingClaim = candidateText.split(/[.!?](?:\s|$)/, 1)[0]?.slice(0, 320) ?? candidateText.slice(0, 320);
+  const leading = tokens(leadingClaim);
   const overlap = Array.from(candidate).filter((token) => primary.has(token)).length;
-  const signal = classifySignalKind(candidateText);
-  const material = classifyMateriality(candidateText);
-  return overlap >= 2 && (signal.can_trigger || material.level === "high");
+  const leadingOverlap = Array.from(leading).filter((token) => primary.has(token)).length;
+  const signal = classifySignalKind(leadingClaim);
+  const material = classifyMateriality(leadingClaim);
+  return overlap >= 2 && leadingOverlap >= 2 && (signal.can_trigger || material.level === "high");
 }
 
 function hasSufficientEvidence(decisions: EvidenceDecision[]): boolean {

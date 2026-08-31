@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import type { AccountDeepResearchTelemetry } from "@/lib/intelligence/account-deep-research";
+import { corroboratesPrimaryEvent } from "@/lib/intelligence/account-deep-research";
 
 export type ClaimSupportRole = "PRIMARY_DIRECT" | "INDEPENDENT_CORROBORATION" | "CONTEXT_ONLY";
 
@@ -30,7 +31,9 @@ export function bindVerifiedClaimToSources(input: {
     support_role: "PRIMARY_DIRECT" as ClaimSupportRole,
   }));
   const corroboratingBindings = (input.telemetry.corroborating_sources ?? [])
-    .filter((source) => source.event_date === input.date && tokenOverlap(claimTokens, significantTokens(source.claim_excerpt)) >= 2)
+    .filter((source) => source.event_date === input.date
+      && tokenOverlap(claimTokens, significantTokens(source.claim_excerpt)) >= 2
+      && corroboratesPrimaryEvent(input.claim, source.claim_excerpt))
     .map((source) => ({ source_id: stableSourceId(source.url), url: canonicalUrl(source.url), origin: source.source_host, support_role: "INDEPENDENT_CORROBORATION" as ClaimSupportRole }));
   const bindings = [...primaryBindings, ...corroboratingBindings];
   const seen = new Set<string>();

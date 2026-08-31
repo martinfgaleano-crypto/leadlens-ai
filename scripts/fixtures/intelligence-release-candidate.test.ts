@@ -84,6 +84,17 @@ test("08b independently corroborating source remains auditable and claim-bound",
   assert.deepEqual(sources.map(x => x.support_role), ["PRIMARY_DIRECT", "INDEPENDENT_CORROBORATION"]);
   assert.equal(sources[1].url, "https://trade.example/acme-plant");
 });
+test("08c unrelated headline with a related-link mention is not independent corroboration", () => {
+  const sources = bindVerifiedClaimToSources({
+    claim: "SunOpta invested over $25M in a new fruit snacks production line at Omak, increasing capacity by 25%",
+    type: "verified_public_signal", date: "2026-06-01",
+    telemetry: telemetry({ validated_events: [], corroborating_sources: [{
+      url: "https://businesswire.example/refresco-acquisition", source_host: "businesswire.example", event_date: "2026-06-01",
+      claim_excerpt: "SunOpta Announces Shareholder Approval of Proposed Acquisition by Refresco. Contacts. One More Line, Lots More Snacks: SunOpta Expands Production in Omak.",
+    }] }),
+  });
+  assert.deepEqual(sources, []);
+});
 
 test("09 affirmative cancellation is counterevidence", () => assert.equal(isAffirmativeCounterevidence("The company cancelled the plant expansion"), true));
 test("10 unknown budget is not counterevidence", () => assert.equal(isAffirmativeCounterevidence("No public budget information was found"), false));
