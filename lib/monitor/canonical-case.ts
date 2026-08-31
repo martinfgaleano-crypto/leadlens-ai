@@ -75,7 +75,7 @@ export function synthesizeCase(input: CanonicalCaseInput): CanonicalCase {
   const verdict = opportunityTest({
     company: input.accountId,
     company_from_universe: input.fromUniverse,
-    signal_summary: input.signalKind ? `${input.signalKind}${input.signalDate ? ` on ${input.signalDate}` : ""}` : "monitored account — prior verified change",
+    signal_summary: input.signalKind ? `${input.signalKind}${input.signalDate ? ` on ${input.signalDate}` : ""}` : null,
     signal_type: input.signalKind,
     signal_date: input.signalDate,
     date_confidence: input.dateConfidence,

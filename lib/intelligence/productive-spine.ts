@@ -365,11 +365,14 @@ export function canonicalCaseForLead(lead: ProcessedLead): NonNullable<LeadLensR
   // the candidate (set upstream ONLY from a deterministically validated event, §7) is an
   // independent, trustworthy material-event indicator; the loose evidence_discipline claim
   // is the fallback and must pass the same materiality gate.
-  const materialClaim = e.evidence_discipline?.find((claim) => claim.type === "verified_public_signal" && claim.date && isMaterialEventClaim(claim.claim));
   const hasValidatedEvent = Boolean(c.signal_date);
-  const signalDate = c.signal_date ?? materialClaim?.date ?? null;
+  const signalDate = c.signal_date ?? null;
   const sourceHost = (() => { try { return c.source_url ? new URL(c.source_url).hostname : null; } catch { return null; } })();
-  const verifiedSignal = Boolean(signalDate && sourceHost && (hasValidatedEvent || materialClaim));
+  const ar = e.account_research;
+  const telemetryConfirmsEvent = ar
+    ? (ar.validated_events ?? []).some((event) => event.materiality_valid && event.event_date === signalDate)
+    : true; // compatibility for older persisted/controlled records without deep telemetry
+  const verifiedSignal = Boolean(hasValidatedEvent && signalDate && sourceHost && telemetryConfirmsEvent);
   const evidenceStrength = sourceHost ? (e.research_confidence >= 0.75 ? "Strong" : "Moderate") : "Limited";
   // Preserve independent support computed during Account Deep Research (previously
   // hardcoded false, discarding real corroboration). The Research corroboration loop
@@ -377,7 +380,6 @@ export function canonicalCaseForLead(lead: ProcessedLead): NonNullable<LeadLensR
   // primary event, so primary + >=1 corroborating domain = >=2 distinct origins
   // (CLAUDE.md independence rule). Credited only when the Case rests on a material
   // event (claim-relative, §13/§15) — never on a static or unverified signal.
-  const ar = e.account_research;
   const independentSupportNew = verifiedSignal
     && ar?.corroboration_attempted === true
     && (ar?.corroborating_domains ?? 0) >= 1;

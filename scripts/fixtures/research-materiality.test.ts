@@ -53,11 +53,12 @@ const staticCase = canonicalCaseForLead(leadWith(baseCandidate({ signal_date: nu
 t("D/E static fact + date does NOT become a verified material signal (timing not Strong)", staticCase.timing !== "Strong");
 t("D/E static-fact Case is not prioritized on a fabricated event", staticCase.decision === "hold" || staticCase.decision === "monitor" || staticCase.decision === "validate");
 
-// A real material event claim (verified_public_signal + date) IS credited.
+// A model-produced material-event claim is not credited without the deterministic
+// candidate/telemetry validation path.
 const eventCase = canonicalCaseForLead(leadWith(baseCandidate({ signal_date: null }), [
   { claim: "Opened a new automated distribution center in Texas", type: "verified_public_signal", date: "2026-07-01" },
 ]))!;
-t("recent material event claim is credited as a verified signal", eventCase.timing === "Moderate" || eventCase.timing === "Strong");
+t("material claim without deterministic event validation does not create Timing", eventCase.decision === "hold" && eventCase.timing === "Limited");
 
 // A deterministically validated event date on the candidate is trusted independently
 // even if the evidence_discipline claim wording is terse/low-materiality.

@@ -4,6 +4,7 @@ import { bindVerifiedClaimToSources, stableSourceId } from "../../lib/intelligen
 import { isAffirmativeCounterevidence, shouldDeepenSearchResult, type AccountDeepResearchTelemetry } from "../../lib/intelligence/account-deep-research";
 import { resolveResearchConcurrency } from "../../lib/intelligence/research-concurrency";
 import { enumerationRouteQueries, extractStructuredCompanyEntities, inferEnumeratedDomain, isBrandOnlyIdentity, recoverGroundedCompanyNames } from "../../lib/discovery/company-universe";
+import { canonicalCaseForLead } from "../../lib/intelligence/productive-spine";
 
 let passed = 0;
 function test(name: string, fn: () => void) { fn(); passed++; console.log(`✓ ${name}`); }
@@ -125,5 +126,12 @@ test("25 generic supply token cannot assign an unrelated industry host", () => {
   assert.equal(inferEnumeratedDomain("HD Supply", [{ title: "HD Supply profile", snippet: "industrial distribution", url: "https://supplychainconnect.com/hd-supply" }]).domain, null);
   assert.equal(inferEnumeratedDomain("HD Supply", [{ title: "HD Supply", snippet: "official website", url: "https://hdsupply.com" }]).domain, "hdsupply.com");
 });
+test("26 LLM claim cannot create Validate when deep telemetry accepted zero events", () => {
+  const l = lead({
+    candidate: { company: "Bronco Wine Co.", domain: "broncowine.com", country: "United States", source_url: "https://broncowine.com/press" },
+    enrichment: { account_research: telemetry({ validated_events: [], early_stop_reason: "no_material_event" }), research_confidence: 0.62, evidence_discipline: [{ claim: "Acquisition of a portfolio brand", type: "verified_public_signal", date: "2026-06-16" }], next_best_question: "Confirm plant impact." },
+  } as never);
+  assert.equal(canonicalCaseForLead(l as never)?.decision, "hold");
+});
 
-console.log(`\n${passed}/25 intelligence release-candidate contracts passed`);
+console.log(`\n${passed}/26 intelligence release-candidate contracts passed`);

@@ -15,6 +15,7 @@ const tel = (over: Partial<AccountDeepResearchTelemetry> = {}): AccountDeepResea
   version: "v1", account: "Acme", domain: "acme.com", planned_queries: 4, executed_queries: 4, provider_calls: 6, provider_failures: 0,
   results_seen: 12, evidence_accepted: 4, evidence_rejected: 1, pages_extracted: 1, extraction_failures: 0, structured_extraction_calls: 1,
   dated_evidence: 1, independent_domains: 1, corroboration_attempted: false, corroborating_domains: 0, claims_recovered: 1,
+  validated_events: [{ url: "https://acme.com/news/new-plant", source_host: "acme.com", event_date: "2026-08-20", kind: "corporate_event", claim_excerpt: "Opened a new plant", stage: "current_activity", materiality_valid: true, counterevidence: false }],
   counterevidence_checked: true, early_stop_reason: "sufficient_evidence", query_audit: [], extraction_audit: [], ...over,
 });
 
