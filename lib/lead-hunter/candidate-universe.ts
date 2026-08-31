@@ -27,6 +27,7 @@ import {
 import type { ResearchReadinessAssessment } from "./research-readiness";
 import { classifyOrganization } from "@/lib/discovery/organization-type";
 import { isOfferSidePeer } from "@/lib/discovery/offer-side-peer";
+import type { EventFirstMetrics } from "./event-first-discovery";
 
 // ─── Candidate model ──────────────────────────────────────────────────────────
 
@@ -154,6 +155,7 @@ export interface CoverageSummary {
   candidatesReused?: number;
   freshCandidates?: number;
   stableCorePercent?: number;
+  eventFirst?: EventFirstMetrics;
   gaps: DiscoveryGap[];
 }
 
@@ -200,6 +202,7 @@ export interface DiscoveryRunOutput {
   providersFailed: string[];
   operatingMode: string;
   routeMetrics?: Array<{ route: string; queries: number; resultPages: number; groundedNames: number; acceptedCompanies: number }>;
+  eventFirst?: EventFirstMetrics;
 }
 
 export type DiscoveryRunner = (plan: DiscoveryPlan) => Promise<DiscoveryRunOutput>;
@@ -566,6 +569,7 @@ export async function hunt(plan: DiscoveryPlan, runner: DiscoveryRunner, opts: H
     candidatesReused: reusedCount,
     freshCandidates: freshCount,
     stableCorePercent: priorCandidates.length ? Math.round((reusedCount / priorCandidates.length) * 100) : 0,
+    eventFirst: out.eventFirst,
     gaps,
   };
 

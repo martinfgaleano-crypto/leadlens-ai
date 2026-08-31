@@ -70,8 +70,13 @@ export function assessResearchReadiness(candidate: CandidateAccount, plan: Disco
 
 export function prioritizeResearch(candidates: CandidateAccount[], plan: DiscoveryPlan): CandidateAccount[] {
   return candidates
-    .map((candidate, index) => ({ candidate, index, assessment: assessResearchReadiness(candidate, plan) }))
+    .map((candidate, index) => ({
+      candidate, index, assessment: assessResearchReadiness(candidate, plan),
+      // Event-first changes Research order only. It cannot change eligibility,
+      // Evidence, Timing, score or Decision.
+      eventHint: candidate.provenance.some(p => p.origin === "event_first") ? 1 : 0,
+    }))
     .filter(x => x.assessment.status === "research_ready")
-    .sort((a, b) => a.assessment.priorityBand - b.assessment.priorityBand || a.index - b.index)
+    .sort((a, b) => a.assessment.priorityBand - b.assessment.priorityBand || b.eventHint - a.eventHint || a.index - b.index)
     .map(x => ({ ...x.candidate, researchReadiness: x.assessment }));
 }

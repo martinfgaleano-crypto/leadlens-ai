@@ -49,15 +49,27 @@ export function icpFromPlan(plan: DiscoveryPlan): ICP {
  *  budget (lead_count) and the engine's own cost cap. */
 export const defaultDiscoveryRunner: DiscoveryRunner = async (plan): Promise<DiscoveryRunOutput> => {
   const { runCompanyFirstDiscovery } = await import("@/lib/discovery/company-first-discovery");
+  const { runEventFirstDiscovery } = await import("./event-first-discovery");
+  const { tavilyProvider, braveProvider, serperProvider } = await import("@/lib/sources/access/providers");
   const criteria = criteriaFromPlan(plan);
   const icp = icpFromPlan(plan);
   const limit = Math.max(1, plan.budget.maxCandidatesPerRoute);
   // Tier is derived from the technical budget (NOT a commercial plan): a small
   // candidate budget runs the cheaper/faster discovery tier.
   const tier = plan.budget.maxProviderCalls <= 24 ? "preview" : plan.budget.maxProviderCalls <= 48 ? "brief" : "intelligence";
-  const { metrics } = await runCompanyFirstDiscovery(icp, criteria, tier, limit, { costCapUsd: 0.5 });
+  // Account-first and event-first enumerate concurrently. Event-first is tightly
+  // bounded and only contributes discovery candidates; canonical Research still
+  // owns event/date/materiality/Evidence/Decision validation.
+  const [accountResult, eventResult] = await Promise.all([
+    runCompanyFirstDiscovery(icp, criteria, tier, limit, { costCapUsd: 0.5 }),
+    runEventFirstDiscovery(plan, [tavilyProvider, braveProvider, serperProvider], {
+      maxQueries: tier === "preview" ? 4 : 6,
+      maxIdentityQueries: tier === "preview" ? 3 : 5,
+    }),
+  ]);
+  const { metrics } = accountResult;
 
-  const orgs: RawDiscoveredOrg[] = (metrics.universe_accounts ?? []).map((a) => ({
+  const accountOrgs: RawDiscoveredOrg[] = (metrics.universe_accounts ?? []).map((a) => ({
     name: a.company,
     domain: a.domain ?? undefined,
     country: a.country ?? undefined,
@@ -67,6 +79,7 @@ export const defaultDiscoveryRunner: DiscoveryRunner = async (plan): Promise<Dis
     route: a.route ?? "engine",
     confidence: a.domain ? "verified" : "plausible",
   }));
+  const orgs = [...accountOrgs, ...eventResult.orgs];
 
   return {
     orgs,
@@ -74,5 +87,6 @@ export const defaultDiscoveryRunner: DiscoveryRunner = async (plan): Promise<Dis
     providersFailed: metrics.providers_missing ?? [],
     operatingMode: metrics.operating_mode ?? "provider_limited",
     routeMetrics: (metrics.universe_route_metrics ?? []).map(x => ({ route: x.route, queries: x.queries, resultPages: x.result_pages, groundedNames: x.grounded_names, acceptedCompanies: x.accepted_companies })),
+    eventFirst: eventResult.metrics,
   };
 };
