@@ -39,7 +39,9 @@ t("eligibility: Monitor case due by cadence is eligible", evaluateEligibility(st
 t("eligibility: Prioritize freshness protection when due", (() => { const e = evaluateEligibility(stateOf(snap({ accountId: "a", decision: "prioritize", reviewedAt: daysAgo(40) })), NOW); return e.eligible && e.reasons.includes("prioritize_freshness_protection"); })());
 t("eligibility: Validate with unresolved decision-critical is eligible even if not due", (() => { const e = evaluateEligibility(stateOf(snap({ accountId: "a", decision: "validate", reviewedAt: daysAgo(1), decisionCriticalThemeKeys: ["ops_start"] })), NOW); return e.eligible && e.reasons.includes("validate_unresolved_decision_critical"); })());
 t("eligibility: Hold with no trigger is NOT eligible (no recurring research)", !evaluateEligibility(stateOf(snap({ accountId: "a", decision: "hold", reviewedAt: daysAgo(400) })), NOW).eligible);
-t("eligibility: Hold WITH revisit trigger is eligible", evaluateEligibility(stateOf(snap({ accountId: "a", decision: "hold", hasRevisitTrigger: true })), NOW).eligible);
+t("eligibility: Hold revisit CONDITION alone is not proof that it fired", !evaluateEligibility(stateOf(snap({ accountId: "a", decision: "hold", hasRevisitTrigger: true })), NOW).eligible);
+t("eligibility: explicit trusted refresh can re-evaluate Hold", (() => { const s = stateOf(snap({ accountId: "a", decision: "hold", hasRevisitTrigger: true })); s.refreshRequested = true; return evaluateEligibility(s, NOW).eligible; })());
+t("eligibility: not-due Monitor trigger text does not create an immediate refresh loop", !evaluateEligibility(stateOf(snap({ accountId: "a", decision: "monitor", reviewedAt: daysAgo(1), hasRevisitTrigger: true })), NOW).eligible);
 t("eligibility: not-due Monitor with nothing pending is not eligible", !evaluateEligibility(stateOf(snap({ accountId: "a", decision: "monitor", reviewedAt: daysAgo(1) })), NOW).eligible);
 
 // ─── PRIORITY + QUEUE ─────────────────────────────────────────────────────────
@@ -81,6 +83,18 @@ t("temporal: publication new but EVENT old (before cutoff), not previously known
   (() => { const d = classifyDelta(planF, obs("acc", [item({ kind: "acquisition", eventDate: daysAgo(200), publicationDate: daysAgo(1) })]), NOW); return d.counters.newly_discovered_historical === 1 && d.newChangeKeys.length === 0; })());
 t("temporal: same canonical event already known → rediscovered, not new",
   classifyDelta(planF, obs("acc", [item({ kind: "new_facility", eventDate: "2026-01-01" })]), NOW).counters.rediscovered === 1);
+t("event identity: two same-day/same-family events remain distinct when normalized identities differ", (() => {
+  const d = classifyDelta(planF, obs("acc", [
+    item({ kind: "expansion", eventDate: daysAgo(10), eventIdentity: "plant_texas" }),
+    item({ kind: "expansion", eventDate: daysAgo(10), eventIdentity: "warehouse_ohio" }),
+  ]), NOW);
+  return d.acceptedEvents.length === 2 && d.newChangeKeys.length === 2;
+})());
+t("event identity: historical kind+date key remains backward-compatible", (() => {
+  const legacy = snap({ accountId: "legacy", decision: "monitor", reviewedAt: daysAgo(60), changeKeys: [`expansion:${daysAgo(10)}`] });
+  const p = planMonitorReview(stateOf(legacy), legacy);
+  return classifyDelta(p, obs("legacy", [item({ kind: "expansion", eventDate: daysAgo(10), eventIdentity: "plant_texas" })]), NOW).counters.rediscovered === 1;
+})());
 t("temporal: static page (not a dated material event) → contextual_only",
   classifyDelta(planF, obs("acc", [item({ isDatedMaterialEvent: false, eventDate: null })]), NOW).counters.contextual_only === 1);
 
@@ -130,6 +144,12 @@ t("GOLDEN A no-change: only rediscovered → completed_no_change, decision uncha
   const r = await review(prioritized, obs("acc", [item({ kind: "cancellation", eventDate: daysAgo(3), isCounterevidence: true })]));
   t("GOLDEN C weakened: material counterevidence → Case weakened, decision re-evaluated to validate",
     r.status === "completed_changed" && r.snapshot?.hasMaterialCounter === true && r.snapshot?.decision === "validate");
+}
+{
+  const weakened = snap({ accountId: "acc", decision: "validate", reviewedAt: daysAgo(30), hasMaterialCounter: true, counterCount: 1 });
+  const r = await review(weakened, obs("acc", [item({ kind: "operations_resumed", eventDate: daysAgo(2), resolvesCounterevidence: true })]));
+  t("COUNTEREVIDENCE_RESOLVED: supported reversal clears prior material counter and is a material delta",
+    r.status === "completed_changed" && r.delta?.counterevidenceResolved === true && r.snapshot?.hasMaterialCounter === false && r.diff?.counterevidenceResolved === true);
 }
 {
   const validate = snap({ accountId: "acc", decision: "validate", reviewedAt: daysAgo(20), decisionCriticalThemeKeys: ["ops_start"] });

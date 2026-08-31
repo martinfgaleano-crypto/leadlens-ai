@@ -29,7 +29,7 @@ const plan = planMonitorReview(state, prior);
 
 const run = async () => {
 
-t("identity: stable account key preserved", prior.accountIdentity?.stableAccountKey === "acct_17_a");
+t("identity: stable account key is canonical domain, not presentation id", prior.accountIdentity?.stableAccountKey === "domain:acme.example");
 t("identity: canonical name preserved", prior.accountIdentity?.canonicalName === "Acme Manufacturing");
 t("identity: domain preserved", prior.accountIdentity?.domain === "acme.example");
 t("identity: aliases preserved", prior.accountIdentity?.aliases.includes("Acme Mfg") === true);

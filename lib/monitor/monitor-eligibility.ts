@@ -26,6 +26,11 @@ export interface MonitoredAccountState {
   unresolvedDecisionCritical: string[];
   evidenceOrigins: string[];
   changeKeys: string[];
+  revisitTrigger: AccountReviewSnapshot["revisitTrigger"];
+  /** Set only by a trusted explicit customer/admin refresh request. A stored
+   * revisit condition describes what to watch for; it is not itself proof that
+   * the condition has occurred. */
+  refreshRequested?: boolean;
 }
 
 export function monitoredStateFromSnapshot(
@@ -46,6 +51,7 @@ export function monitoredStateFromSnapshot(
     unresolvedDecisionCritical: snap.decisionCriticalThemeKeys,
     evidenceOrigins: snap.evidenceOrigins,
     changeKeys: snap.changeKeys,
+    revisitTrigger: snap.revisitTrigger ?? null,
   };
 }
 
@@ -70,6 +76,7 @@ export type EligibilityReason =
   | "validate_unresolved_decision_critical"
   | "prioritize_freshness_protection"
   | "revisit_trigger_present"
+  | "user_requested_refresh"
   | "review_by_reached"
   | "hold_no_recurring_research";
 
@@ -97,7 +104,8 @@ export function evaluateEligibility(state: MonitoredAccountState, now: Date, _bu
   const due = (() => { const t = nextEligibleAt(state); return t !== null && now.getTime() >= new Date(t).getTime(); })();
 
   if (state.currentDecision === "hold") {
-    if (state.hasRevisitTrigger) { reasons.push("revisit_trigger_present"); return { eligible: true, reasons, nextEligibleAt: nextEligibleAt(state) }; }
+    if (state.refreshRequested) { reasons.push("user_requested_refresh"); return { eligible: true, reasons, nextEligibleAt: null }; }
+    if (state.hasRevisitTrigger) reasons.push("revisit_trigger_present");
     reasons.push("hold_no_recurring_research");
     return { eligible: false, reasons, nextEligibleAt: null };
   }
@@ -107,10 +115,11 @@ export function evaluateEligibility(state: MonitoredAccountState, now: Date, _bu
   if (state.currentDecision === "prioritize") reasons.push("prioritize_freshness_protection");
   if (state.currentDecision === "monitor") reasons.push("decision_monitor");
   if (due) reasons.push("review_by_reached");
+  if (state.refreshRequested) reasons.push("user_requested_refresh");
 
   // Eligible when due by cadence, OR an unresolved decision-critical exists, OR a
   // revisit trigger is present. A not-yet-due case with none of these is not eligible.
-  const eligible = due || state.unresolvedDecisionCritical.length > 0 || state.hasRevisitTrigger;
+  const eligible = due || state.unresolvedDecisionCritical.length > 0 || state.refreshRequested === true;
   return { eligible, reasons, nextEligibleAt: nextEligibleAt(state) };
 }
 

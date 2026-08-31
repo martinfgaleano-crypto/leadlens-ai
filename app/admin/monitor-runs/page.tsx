@@ -30,6 +30,11 @@ type Overview = {
     unscoped_processing: number;
   };
   recent: OverviewJob[];
+  monitored: Array<{
+    owner_user_id: string | null; client_key: string; account_id: string; company: string; domain: string | null;
+    decision: "prioritize" | "validate" | "monitor" | "hold"; last_reviewed_at: string; next_review_after: string | null;
+    revisit_trigger: { type: string; condition: string } | null; status: "due" | "waiting" | "hold"; due_reasons: string[];
+  }>;
 };
 
 type DrainSummary = {
@@ -209,6 +214,20 @@ export default function MonitorOpsPage() {
           </div>
 
           {/* Recent jobs */}
+          <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "0.75rem", overflow: "hidden", marginBottom: "1.5rem" }}>
+            <div style={{ padding: "1rem 1.25rem", borderBottom: "1px solid #f1f5f9", fontWeight: 700, fontSize: "0.875rem", color: "#0f172a" }}>
+              Canonical monitored accounts ({overview.monitored?.length ?? 0})
+            </div>
+            {!overview.monitored?.length ? <div style={{ padding: "2rem", color: "#94a3b8", fontSize: "0.85rem", textAlign: "center" }}>No accepted Account Memory state is currently eligible for Monitor.</div> : overview.monitored.map((account) => (
+              <div key={`${account.owner_user_id}:${account.client_key}:${account.account_id}`} style={{ padding: "0.85rem 1.25rem", borderBottom: "1px solid #f8fafc", display: "grid", gridTemplateColumns: "minmax(180px,2fr) repeat(3,minmax(120px,1fr))", gap: "0.75rem", alignItems: "center" }}>
+                <div style={{ minWidth: 0 }}><strong style={{ color: "#0f172a", fontSize: "0.83rem" }}>{account.company}</strong><div style={{ color: "#94a3b8", fontSize: "0.67rem", overflow: "hidden", textOverflow: "ellipsis" }}>{account.domain ?? account.account_id} · {account.client_key}</div></div>
+                <div><span style={{ fontSize: "0.68rem", fontWeight: 800, textTransform: "uppercase", color: account.status === "due" ? "#b45309" : "#64748b" }}>{account.status}</span><div style={{ color: "#64748b", fontSize: "0.7rem" }}>{account.decision}</div></div>
+                <div style={{ color: "#64748b", fontSize: "0.7rem" }}>Last {new Date(account.last_reviewed_at).toLocaleDateString()}<br />Next {account.next_review_after ? new Date(account.next_review_after).toLocaleDateString() : "trigger only"}</div>
+                <div style={{ color: "#64748b", fontSize: "0.7rem" }}>{account.revisit_trigger ? <><strong>{account.revisit_trigger.type}</strong><br />{account.revisit_trigger.condition}</> : "Cadence-based review"}</div>
+              </div>
+            ))}
+          </div>
+
           <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "0.75rem", overflow: "hidden" }}>
             <div style={{ padding: "1rem 1.25rem", borderBottom: "1px solid #f1f5f9", fontWeight: 700, fontSize: "0.875rem", color: "#0f172a" }}>
               Recent runs ({overview.recent.length})

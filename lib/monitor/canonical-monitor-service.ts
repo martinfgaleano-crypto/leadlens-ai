@@ -58,7 +58,10 @@ export async function executeCanonicalMonitor(db: any, input: {
 }): Promise<{ ok: true; run: MonitorRun } | { ok: false; reason: "no_monitored_accounts" }> {
   const work = await loadCurrentSnapshots(db, input.scope);
   if (work.states.length === 0) return { ok: false, reason: "no_monitored_accounts" };
-  const run = await runCanonicalMonitor({ ...work, scope: input.scope }, { cycleKey: input.cycleKey, origin: input.origin }, {
+  // An authenticated customer/dashboard action is the explicit safe trigger.
+  // Merely storing a textual revisit condition never makes an account instantly due.
+  const states = work.states.map((state) => ({ ...state, refreshRequested: true }));
+  const run = await runCanonicalMonitor({ ...work, states, scope: input.scope }, { cycleKey: input.cycleKey, origin: input.origin }, {
     reobserve: defaultReobserver,
     memoryRepo: new SupabaseAccountMemoryRepo(db),
     persistRun: (result) => persistMonitorRun(db, result),

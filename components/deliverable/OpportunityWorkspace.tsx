@@ -20,12 +20,13 @@ import { AccountBrief, DecisionBadge, SourceList } from "./primitives";
 /** Optional Account Memory input for a second-or-later review (§68). Dormant when
  *  absent or on first review — no fake history (§65/§77). Diffs canonical
  *  structured state only (locale-independent). */
-export interface WorkspaceMemory { current: { reviewId: string; reviewedAt: string; contextVersion: string }; previousById: Record<string, AccountReviewSnapshot> }
+export interface WorkspaceMemory { current: { reviewId: string; reviewedAt: string; contextVersion: string }; currentById?: Record<string, AccountReviewSnapshot>; previousById: Record<string, AccountReviewSnapshot> }
 
 function SinceLastReview({ a, memory, es }: { a: AccountBriefVM; memory?: WorkspaceMemory; es: boolean }) {
   if (!memory) return null;
   const prev = memory.previousById[a.id]; if (!prev) return null;
-  const diff = diffAccountCase(prev, snapshotAccountReview(a, memory.current));
+  const current = memory.currentById?.[a.id] ?? snapshotAccountReview(a, memory.current);
+  const diff = diffAccountCase(prev, current);
   if (diff.isFirstReview) return null;   // no predecessor → not a returning account
   const summary = sinceLastReview(diff, es);
   const title = es ? "Desde la última revisión" : "Since last review";
@@ -35,6 +36,7 @@ function SinceLastReview({ a, memory, es }: { a: AccountBriefVM; memory?: Worksp
     return (
       <div className="dlv-card dlv-mem">
         <p className="dlv-label">{title}</p>
+        <p className="dlv-note">{es ? "Revisión anterior" : "Previous review"}: {new Date(prev.reviewedAt).toLocaleDateString(es ? "es-CO" : "en-US")} · {es ? "Revisión actual" : "Current review"}: {new Date(current.reviewedAt).toLocaleDateString(es ? "es-CO" : "en-US")}</p>
         <ul className="dlv-mem-l"><li>{es
           ? `Sin cambios materiales desde la revisión anterior. Decisión: ${decisionLabel(a.decision, es)} (sin cambios).`
           : `No material change since last review. Decision: ${decisionLabel(a.decision, es)} (unchanged).`}</li></ul>
@@ -44,6 +46,7 @@ function SinceLastReview({ a, memory, es }: { a: AccountBriefVM; memory?: Worksp
   return (
     <div className="dlv-card dlv-mem">
       <p className="dlv-label">{summary.title}</p>
+      <p className="dlv-note">{es ? "Revisión anterior" : "Previous review"}: {new Date(prev.reviewedAt).toLocaleDateString(es ? "es-CO" : "en-US")} · {es ? "Revisión actual" : "Current review"}: {new Date(current.reviewedAt).toLocaleDateString(es ? "es-CO" : "en-US")}</p>
       <ul className="dlv-mem-l">{summary.items.map((it, i) => <li key={i} className={it.kind === "decision" ? "dlv-mem-decision" : undefined}>{it.text}</li>)}</ul>
     </div>
   );
@@ -64,7 +67,7 @@ function downloadText(filename: string, text: string, mime: string) {
   } catch { /* download unavailable in this context */ }
 }
 
-export default function OpportunityWorkspace({ vm, memory }: { vm: DeliverableViewModel; memory?: WorkspaceMemory }) {
+export default function OpportunityWorkspace({ vm, memory, monitorClientKey }: { vm: DeliverableViewModel; memory?: WorkspaceMemory; monitorClientKey?: string }) {
   const es = vm.meta.language === "es";
   const t = useMemo(() => LABELS(es), [es]);
   const cc = useMemo(() => toClientCanvasVM(vm), [vm]);   // client is the subject
@@ -169,7 +172,7 @@ export default function OpportunityWorkspace({ vm, memory }: { vm: DeliverableVi
         {tab === "intelligence" && <PortfolioIntelligenceTab vm={vm} t={t} es={es} onOpen={openAccount} memory={memory} />}
       </main>
 
-      <UtilityBar vm={vm} t={t} es={es} />
+      <UtilityBar vm={vm} t={t} es={es} monitorClientKey={monitorClientKey} />
 
       {/* Print/PDF-only: the full deliverable stacked in a stable reading order.
           Hidden on screen; the interactive main is hidden in print (§86–90). */}
@@ -402,7 +405,7 @@ function PortfolioTab({ vm, t, es, onOpen, onExplorePI }: { vm: DeliverableViewM
 function PortfolioIntelligenceTab({ vm, es, onOpen, memory }: { vm: DeliverableViewModel; t: L; es: boolean; onOpen: (id: string) => void; memory?: WorkspaceMemory }) {
   const pi = buildPortfolioIntelligence(vm);
   const L = pi.labels;
-  const change = memory ? portfolioChange(vm.accounts, memory.previousById, memory.current, es) : null;
+  const change = memory ? portfolioChange(vm.accounts, memory.previousById, memory.current, es, memory.currentById ?? {}) : null;
   const nameOf = (id: string) => vm.accounts.find((a) => a.id === id)?.company ?? id;
   const Chips = ({ ids }: { ids: string[] }) => (
     <div className="dlv-chips">{ids.slice(0, 6).map((id) => <button key={id} className="dlv-chip" onClick={() => onOpen(id)}>{nameOf(id)}</button>)}{ids.length > 6 && <span className="dlv-note" style={{ margin: 0 }}>+{ids.length - 6}</span>}</div>
@@ -442,9 +445,28 @@ function PortfolioIntelligenceTab({ vm, es, onOpen, memory }: { vm: DeliverableV
   );
 }
 
-function UtilityBar({ vm, t, es }: { vm: DeliverableViewModel; t: L; es: boolean }) {
+function UtilityBar({ vm, t, es, monitorClientKey }: { vm: DeliverableViewModel; t: L; es: boolean; monitorClientKey?: string }) {
+  const [refreshing, setRefreshing] = useState(false);
+  const [refreshStatus, setRefreshStatus] = useState<string | null>(null);
+  const refresh = async () => {
+    if (!monitorClientKey || refreshing) return;
+    setRefreshing(true); setRefreshStatus(null);
+    try {
+      const { getSupabaseClient } = await import("@/lib/supabase/client");
+      const supabase = getSupabaseClient();
+      const token = supabase ? (await supabase.auth.getSession()).data.session?.access_token ?? null : null;
+      if (!token) { setRefreshStatus(es ? "Inicia sesión para actualizar." : "Sign in to refresh."); return; }
+      const response = await fetch("/api/customer/monitor", { method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${token}` }, body: JSON.stringify({ client_key: monitorClientKey }) });
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) { setRefreshStatus(body.error ?? (es ? "No se pudo actualizar." : "Refresh unavailable.")); return; }
+      setRefreshStatus(es ? "Revisión completada. Actualizando el portafolio…" : "Review completed. Refreshing the portfolio…");
+      window.location.reload();
+    } catch { setRefreshStatus(es ? "No se pudo actualizar." : "Refresh unavailable."); }
+    finally { setRefreshing(false); }
+  };
   return (
     <aside className="dlv-utilities" aria-label={t.utilities}>
+      {monitorClientKey && <details className="dlv-utility"><summary>{es ? "Continuidad" : "Continuity"}</summary><div className="dlv-utility-body"><p>{es ? "Reinvestiga las cuentas conocidas con fuentes actuales. No es monitoreo en tiempo real." : "Re-research known accounts with current sources. This is not real-time monitoring."}</p><button type="button" onClick={refresh} disabled={refreshing} className="dlv-filter-chip">{refreshing ? (es ? "Revisando…" : "Reviewing…") : (es ? "Revisar cuentas ahora" : "Review accounts now")}</button>{refreshStatus && <p>{refreshStatus}</p>}</div></details>}
       <details className="dlv-utility"><summary>{t.howToRead}</summary><div className="dlv-utility-body"><p>{t.absenceNote}</p>{vm.methodology.length > 0 && <ul>{vm.methodology.map((item, i) => <li key={i}>{item}</li>)}</ul>}<p>{decisionLabel("prioritize", es)} → {decisionLabel("validate", es)} → {decisionLabel("monitor", es)} → {decisionLabel("hold", es)}</p></div></details>
       {vm.capabilities.showDownloadsTab && <details className="dlv-utility"><summary>{t.downloads}</summary><div className="dlv-utility-body"><DownloadsTab vm={vm} t={t} /></div></details>}
     </aside>

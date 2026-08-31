@@ -76,6 +76,28 @@ export async function GET(req: NextRequest) {
     nameMap = Object.fromEntries(((searches ?? []) as { id: string; name: string }[]).map(s => [s.id, s.name]));
   }
 
+  // Canonical Monitor state comes from the latest immutable Account Memory
+  // snapshots — not from legacy job counters or a parallel watchlist table.
+  const { loadDueMonitoredWork } = await import("@/lib/monitor/monitor-store");
+  const { evaluateEligibility, nextEligibleAt } = await import("@/lib/monitor/monitor-eligibility");
+  const now = new Date();
+  const monitored = (await loadDueMonitoredWork(db, 500)).flatMap((tenant) => tenant.states.map((state) => {
+    const eligibility = evaluateEligibility(state, now);
+    return {
+      owner_user_id: state.ownerUserId,
+      client_key: state.clientKey,
+      account_id: state.accountId,
+      company: state.identity.canonicalName || state.accountId,
+      domain: state.identity.domain,
+      decision: state.currentDecision,
+      last_reviewed_at: state.lastReviewedAt,
+      next_review_after: nextEligibleAt(state),
+      revisit_trigger: state.revisitTrigger,
+      status: eligibility.eligible ? "due" : state.currentDecision === "hold" ? "hold" : "waiting",
+      due_reasons: eligibility.reasons,
+    };
+  })).sort((a, b) => (a.status === "due" ? -1 : 1) - (b.status === "due" ? -1 : 1) || a.company.localeCompare(b.company));
+
   return NextResponse.json({
     totals: {
       processing:           processingRes.count ?? 0,
@@ -85,5 +107,6 @@ export async function GET(req: NextRequest) {
       unscoped_processing:  unscopedProcessing,
     },
     recent: recent.map(r => ({ ...r, search_name: r.search_id ? nameMap[r.search_id] ?? null : null })),
+    monitored,
   });
 }

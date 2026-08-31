@@ -164,6 +164,9 @@ export class SupabaseIntelligenceRunStore implements IntelligenceRunStore {
 }
 
 function metadata(record: IntelligenceRunRecord) {
+  const authoritativeOutcome = record.report
+    ? (record.report as LeadLensReport & { _intelligence_run?: { commercialOutcome?: string } })._intelligence_run?.commercialOutcome
+    : null;
   return {
     kind: "productive_intelligence_spine_v1", contextRef: record.contextRef,
     clientId: record.clientId, stage: record.stage, leadHunterRunId: record.leadHunterRunId,
@@ -175,8 +178,7 @@ function metadata(record: IntelligenceRunRecord) {
     // abstention when coverage was NOT insufficient; degraded coverage is reported as such
     // rather than masquerading as "no strong opportunity".
     commercialOutcome: record.report
-      ? (record.report.processed_leads.length ? "completed_with_opportunities"
-        : record.coverageState === "insufficient" ? "completed_insufficient_coverage" : "completed_no_strong_opportunity")
+      ? (authoritativeOutcome ?? (record.coverageState === "insufficient" ? "completed_insufficient_coverage" : "completed_no_strong_opportunity"))
       : record.status === "failed" ? "insufficient_research" : null,
   };
 }

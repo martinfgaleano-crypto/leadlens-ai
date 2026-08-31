@@ -63,7 +63,7 @@ export function resynthesizeCase(prior: AccountReviewSnapshot, delta: DeltaEvide
   const remainingDecisionCritical = prior.decisionCriticalThemeKeys.filter((k) => !delta.resolvedValidationKeys.includes(k));
   const independentSupportNew = [...delta.acceptedEvents, ...delta.historicalEvidence].some((e) => e.independentSupport);
 
-  const hasMaterialNewInfo = delta.acceptedEvents.length > 0 || delta.historicalEvidence.length > 0 || delta.hasMaterialCounter || delta.resolvedValidationKeys.length > 0;
+  const hasMaterialNewInfo = delta.acceptedEvents.length > 0 || delta.historicalEvidence.length > 0 || delta.hasMaterialCounter || delta.counterevidenceResolved || delta.resolvedValidationKeys.length > 0;
 
   // No material new info → RETAIN prior decision (do not re-decide from aging).
   if (!hasMaterialNewInfo) {

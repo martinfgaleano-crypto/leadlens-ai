@@ -82,7 +82,7 @@ function buildNextSnapshot(prior: AccountReviewSnapshot, delta: DeltaEvidenceRes
     changeKeys, hasVerifiedChange: changeKeys.length > 0,
     evidenceOrigins, independentSupport,
     counterCount: prior.counterCount + delta.acceptedEvents.filter((e) => e.isCounterevidence).length,
-    hasMaterialCounter: prior.hasMaterialCounter || delta.hasMaterialCounter,
+    hasMaterialCounter: delta.counterevidenceResolved ? false : (prior.hasMaterialCounter || delta.hasMaterialCounter),
     decisionCriticalThemeKeys: rc.remainingDecisionCritical,
   };
   return { snapshot, decisionSource: rc.decisionSource };

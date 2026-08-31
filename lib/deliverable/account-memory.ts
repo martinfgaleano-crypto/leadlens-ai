@@ -14,6 +14,13 @@ import type { AccountBriefVM, DecisionState, Strength } from "./deliverable-view
 export const ACCOUNT_MEMORY_VERSION = "account-memory-v1";
 
 export type MonitorIdentityConfidence = "verified" | "strong" | "plausible" | "ambiguous";
+export type RevisitTriggerType =
+  | "NEW_MATERIAL_EVENT"
+  | "NEW_INDEPENDENT_SUPPORT"
+  | "VALIDATION_RESOLVED"
+  | "COUNTEREVIDENCE_RESOLVED"
+  | "TIME_REFRESH"
+  | "USER_REQUESTED_REFRESH";
 
 /** Durable research identity carried by Account Memory. `verified` is reserved
  * for upstream identity resolution; a domain alone never earns that state. */
@@ -68,6 +75,8 @@ export interface AccountReviewSnapshot {
   validationThemeKeys: string[];
   decisionCriticalThemeKeys: string[];
   hasRevisitTrigger: boolean;
+  monitorReason?: string | null;
+  revisitTrigger?: { type: RevisitTriggerType; condition: string } | null;
 }
 
 const dimOf = (a: AccountBriefVM, label: string): Strength | null => a.dimensions.find(d => d.label === label)?.value ?? null;
@@ -76,6 +85,17 @@ const hostKey = (label: string | null, url: string | null): string | null => {
   try { return new URL(raw.startsWith("http") ? raw : `https://${raw}`).host.replace(/^www\./, "").toLowerCase(); }
   catch { return label ? label.toLowerCase().trim() : null; }
 };
+
+export function inferRevisitTrigger(condition: string | null | undefined): AccountReviewSnapshot["revisitTrigger"] {
+  const text = condition?.trim();
+  if (!text) return null;
+  const type: RevisitTriggerType = /independent|second source|segunda fuente|corrobor/i.test(text) ? "NEW_INDEPENDENT_SUPPORT"
+    : /validat|confirm|verify|validar|confirmar|verificar/i.test(text) ? "VALIDATION_RESOLVED"
+    : /counter|contradict|riesgo|negative|negativ/i.test(text) ? "COUNTEREVIDENCE_RESOLVED"
+    : /\b(day|week|month|quarter|d[ií]a|semana|mes|trimestre|q[1-4])\b/i.test(text) ? "TIME_REFRESH"
+    : "NEW_MATERIAL_EVENT";
+  return { type, condition: text };
+}
 
 /** Canonical account key (ACCOUNT MEMORY CANONICAL LINEAGE V1 §A6/§A7): the stable
  *  cross-run identity of an account — its verified canonical domain, NOT the index-suffixed
@@ -105,11 +125,15 @@ export function isStructuralReject(a: AccountBriefVM): boolean {
 /** Derive a canonical snapshot from a customer-facing Case + review identity. */
 export function snapshotAccountReview(a: AccountBriefVM, review: { reviewId: string; reviewedAt: string; contextVersion: string }): AccountReviewSnapshot {
   const accountKey = canonicalAccountKey(a);
+  // Initial report prose may be localized. Its immutable baseline therefore
+  // uses kind+date only; recurring Research adds the stronger normalized event
+  // identity directly from source extraction without making locale part of truth.
   const changeKeys = Array.from(new Set(a.whatChanged.filter(c => isVerified(c.kind) && c.date).map(c => `${c.kind}:${c.date}`)));
   const origins = Array.from(new Set(a.sources.map(s => hostKey(s.label, s.url)).filter(Boolean) as string[]));
   const details = a.validationDetails ?? a.validations.map(q => ({ question: q, decisionCritical: false, howToValidate: null, changesDecisionBecause: null }));
   const themeKeys = Array.from(new Set(details.map(v => validationKey(v.question)).filter(Boolean) as string[]));
   const dcKeys = Array.from(new Set(details.filter(v => v.decisionCritical).map(v => validationKey(v.question)).filter(Boolean) as string[]));
+  const revisitTrigger = inferRevisitTrigger(a.revisitWhen);
   return {
     reviewId: review.reviewId, reviewedAt: review.reviewedAt, contextVersion: review.contextVersion, accountId: accountKey,
     accountIdentity: a.monitorIdentity ? {
@@ -138,13 +162,15 @@ export function snapshotAccountReview(a: AccountBriefVM, review: { reviewId: str
     changeKeys, hasVerifiedChange: changeKeys.length > 0,
     evidenceOrigins: origins, independentSupport: a.evidence.corroborated === true,
     counterCount: a.counterSignals.length, hasMaterialCounter: a.counterSignals.some(s => CONTRADICTORY.test(s)),
-    validationThemeKeys: themeKeys, decisionCriticalThemeKeys: dcKeys, hasRevisitTrigger: !!a.revisitWhen,
+    validationThemeKeys: themeKeys, decisionCriticalThemeKeys: dcKeys, hasRevisitTrigger: Boolean(revisitTrigger),
+    monitorReason: a.decision === "monitor" ? a.decisionNote : null,
+    revisitTrigger,
   };
 }
 
 /** Canonical fingerprint for idempotency (§80-81/§121): same intelligence ⇒ same string. */
 export function snapshotFingerprint(s: AccountReviewSnapshot): string {
-  return JSON.stringify([s.accountId, s.accountIdentity ?? null, s.decision, s.fit, s.timing, s.evidence, [...s.changeKeys].sort(), [...s.evidenceOrigins].sort(), s.independentSupport, s.hasMaterialCounter, [...s.validationThemeKeys].sort(), [...s.decisionCriticalThemeKeys].sort()]);
+  return JSON.stringify([s.accountId, s.accountIdentity ?? null, s.decision, s.fit, s.timing, s.evidence, [...s.changeKeys].sort(), [...s.evidenceOrigins].sort(), s.independentSupport, s.hasMaterialCounter, [...s.validationThemeKeys].sort(), [...s.decisionCriticalThemeKeys].sort(), s.monitorReason ?? null, s.revisitTrigger ?? null]);
 }
 
 export type StrengthDirection = "strengthened" | "weakened" | "unchanged";
@@ -165,6 +191,7 @@ export interface AccountCaseDiff {
   evidenceAdded: string[];         // origins in next not prev (dedup, §21)
   independentSupportAdded: boolean;
   counterevidenceAdded: boolean;   // material counter newly present (§28)
+  counterevidenceResolved: boolean;
   validationResolved: string[];    // theme keys in prev not next (§25-26)
   validationStillOpen: string[];   // theme keys in both
   decisionCriticalResolved: string[];
@@ -184,7 +211,7 @@ export function diffAccountCase(prev: AccountReviewSnapshot | null, next: Accoun
     accountId: next.accountId, timing: { from: null, to: next.timing, direction: "unchanged" as StrengthDirection },
     fit: { from: null, to: next.fit, direction: "unchanged" as StrengthDirection },
     evidenceStrength: { from: null, to: next.evidence, direction: "unchanged" as StrengthDirection },
-    newChangeKeys: [], evidenceAdded: [], independentSupportAdded: false, counterevidenceAdded: false,
+    newChangeKeys: [], evidenceAdded: [], independentSupportAdded: false, counterevidenceAdded: false, counterevidenceResolved: false,
     validationResolved: [], validationStillOpen: [], decisionCriticalResolved: [], revisitTriggerMet: false,
   };
   if (!prev) return { ...base, isFirstReview: true, isSameReview: false, contextChanged: false, decision: { from: next.decision, to: next.decision, changed: false, drivers: [] }, material: false };
@@ -199,6 +226,7 @@ export function diffAccountCase(prev: AccountReviewSnapshot | null, next: Accoun
   const evidenceAdded = next.evidenceOrigins.filter(o => !prev.evidenceOrigins.includes(o));
   const independentSupportAdded = next.independentSupport && !prev.independentSupport;
   const counterevidenceAdded = next.hasMaterialCounter && !prev.hasMaterialCounter;
+  const counterevidenceResolved = prev.hasMaterialCounter && !next.hasMaterialCounter;
   const validationResolved = prev.validationThemeKeys.filter(k => !next.validationThemeKeys.includes(k));
   const validationStillOpen = next.validationThemeKeys.filter(k => prev.validationThemeKeys.includes(k));
   const decisionCriticalResolved = prev.decisionCriticalThemeKeys.filter(k => !next.decisionCriticalThemeKeys.includes(k));
@@ -220,13 +248,13 @@ export function diffAccountCase(prev: AccountReviewSnapshot | null, next: Accoun
   if (contextChanged) drivers.push("client_objective_changed");
 
   const material = decisionChanged || newChangeKeys.length > 0 || evidenceAdded.length > 0 || independentSupportAdded
-    || counterevidenceAdded || validationResolved.length > 0 || timing.direction !== "unchanged"
+    || counterevidenceAdded || counterevidenceResolved || validationResolved.length > 0 || timing.direction !== "unchanged"
     || fit.direction !== "unchanged" || evidenceStrength.direction !== "unchanged" || revisitTriggerMet || contextChanged;
 
   return {
     ...base, isFirstReview: false, isSameReview: false, contextChanged,
     decision: { from: prev.decision, to: next.decision, changed: decisionChanged, drivers: decisionChanged ? drivers : drivers.filter(d => d !== "client_objective_changed" || contextChanged) },
-    timing, fit, evidenceStrength, newChangeKeys, evidenceAdded, independentSupportAdded, counterevidenceAdded,
+    timing, fit, evidenceStrength, newChangeKeys, evidenceAdded, independentSupportAdded, counterevidenceAdded, counterevidenceResolved,
     validationResolved, validationStillOpen, decisionCriticalResolved, revisitTriggerMet, material,
   };
 }
@@ -253,6 +281,7 @@ export function portfolioChange(
   previousById: Record<string, AccountReviewSnapshot>,
   current: { reviewId: string; reviewedAt: string; contextVersion: string },
   es: boolean,
+  currentById: Record<string, AccountReviewSnapshot> = {},
 ): { title: string; items: MemoryItem[] } | null {
   const decWord: Record<DecisionState, string> = es
     ? { prioritize: "Priorizar", validate: "Validar", monitor: "Monitorear", hold: "En espera" }
@@ -261,7 +290,7 @@ export function portfolioChange(
   let strengthened = 0, weakened = 0, validationsResolved = 0, newChanges = 0, revisitsMet = 0, any = false;
   for (const a of accounts) {
     const prev = previousById[a.id]; if (!prev) continue;
-    const d = diffAccountCase(prev, snapshotAccountReview(a, current));
+    const d = diffAccountCase(prev, currentById[a.id] ?? snapshotAccountReview(a, current));
     if (!d.material || d.isSameReview) continue; any = true;
     if (d.decision.changed && d.decision.to === "prioritize") toPrioritize.push(a.company);
     if (d.decision.changed && d.decision.from === "prioritize") droppedFromPrioritize.push(a.company);
@@ -303,6 +332,7 @@ export function sinceLastReview(diff: AccountCaseDiff, es: boolean): { title: st
   if (diff.newChangeKeys.length) items.push({ kind: "new", text: es ? `Nuevo desde la última revisión: ${diff.newChangeKeys.length} desarrollo(s) material(es) verificado(s)` : `New since last review: ${diff.newChangeKeys.length} verified material development(s)` });
   if (diff.evidenceAdded.length) items.push({ kind: "evidence", text: `${es ? "Evidencia añadida" : "Evidence added"}: +${diff.evidenceAdded.length} ${es ? "origen(es) independiente(s)" : "independent origin(s)"}${diff.independentSupportAdded ? (es ? " (ahora corroborado)" : " (now corroborated)") : ""}` });
   if (diff.counterevidenceAdded) items.push({ kind: "evidence", text: es ? "Contraevidencia material añadida — el caso se debilitó" : "Material counterevidence added — the Case weakened" });
+  if (diff.counterevidenceResolved) items.push({ kind: "evidence", text: es ? "Contraevidencia material resuelta — el caso fue reevaluado" : "Material counterevidence resolved — the Case was re-evaluated" });
   if (diff.timing.direction === "strengthened") items.push({ kind: "new", text: es ? `El momento se fortaleció (${diff.timing.from ?? "—"} → ${diff.timing.to})` : `Timing strengthened (${diff.timing.from ?? "—"} → ${diff.timing.to})` });
   else if (diff.timing.direction === "weakened") items.push({ kind: "new", text: es ? `El momento se debilitó (${diff.timing.from ?? "—"} → ${diff.timing.to})` : `Timing weakened (${diff.timing.from ?? "—"} → ${diff.timing.to})` });
   if (diff.validationResolved.length) items.push({ kind: "validation", text: `${es ? "Validación resuelta" : "Validation resolved"}: ${diff.validationResolved.length}${diff.decisionCriticalResolved.length ? (es ? ` (${diff.decisionCriticalResolved.length} crítica)` : ` (${diff.decisionCriticalResolved.length} decision-critical)`) : ""}` });

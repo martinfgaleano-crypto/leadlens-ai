@@ -13,7 +13,7 @@ import type { ReportExperience } from "@/lib/products/report-experience";
 import type { ReviewMemory } from "@/lib/deliverable/account-memory-store";
 
 export type BriefResult =
-  | { state: "ok"; report: InstitutionalOpportunityReportV1; experience: ReportExperience; memory: ReviewMemory | null }
+  | { state: "ok"; report: InstitutionalOpportunityReportV1; experience: ReportExperience; memory: ReviewMemory | null; monitorClientKey: string | null }
   | { state: "unavailable" }        // missing / non-completed — never confirms existence
   | { state: "processing" }
   | { state: "forbidden" }          // linked report, viewer is not the owner
@@ -92,6 +92,7 @@ export async function getBriefForViewer(jobId: string, accessToken: string | nul
   // power the Living Case. Owner/client/context scoped; server-side only; fails
   // closed to first-review behavior. Never blocks the deliverable (§51/§108).
   let memory: ReviewMemory | null = null;
+  let monitorClientKey: string | null = null;
   try {
     const db = await serverDb();
     if (db) {
@@ -108,6 +109,7 @@ export async function getBriefForViewer(jobId: string, accessToken: string | nul
       // Productive reviews share the confirmed commercial-context namespace.
       // Legacy search-series reports retain their stable search namespace.
       const clientKey = contextId ? `context:${contextId}` : (searchId ?? vm.meta.client ?? snapshot.job_id);
+      monitorClientKey = clientKey;
       const searchOwner = searchId
         ? ((await db.from("lead_searches").select("user_id").eq("id", searchId).maybeSingle()).data?.user_id ?? null)
         : null;
@@ -116,9 +118,10 @@ export async function getBriefForViewer(jobId: string, accessToken: string | nul
         new SupabaseAccountMemoryRepo(db), vm.accounts, scope,
         { reviewId: snapshot.job_id, reviewedAt: snapshot.created_at ?? new Date().toISOString(), contextVersion },
         (e) => console.error("[account-memory] persistence failed:", e instanceof Error ? e.message : e),
+        { preferLatestAccepted: true },
       );
     }
   } catch (e) { console.error("[account-memory] unavailable:", e instanceof Error ? e.message : e); }
 
-  return { state: "ok", report, experience, memory };
+  return { state: "ok", report, experience, memory, monitorClientKey };
 }

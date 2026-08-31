@@ -53,6 +53,7 @@ export function selectPredecessor(rows: ReviewSnapshotRow[], scope: SnapshotScop
 export interface AccountMemoryRepo {
   persist(rows: ReviewSnapshotRow[]): Promise<void>;   // idempotent upsert on (owner,client,account,review)
   loadPredecessors(scope: SnapshotScope, accountIds: string[], current: { reviewId: string; reviewedAt: string }): Promise<Record<string, AccountReviewSnapshot>>;
+  loadRecent?(scope: SnapshotScope, accountIds: string[], limitPerAccount?: number): Promise<Record<string, AccountReviewSnapshot[]>>;
 }
 
 /** In-memory repo — the same pure logic production relies on, for tests. */
@@ -71,6 +72,15 @@ export class InMemoryAccountMemoryRepo implements AccountMemoryRepo {
   async loadPredecessors(scope: SnapshotScope, accountIds: string[], current: { reviewId: string; reviewedAt: string }): Promise<Record<string, AccountReviewSnapshot>> {
     const out: Record<string, AccountReviewSnapshot> = {};
     for (const id of accountIds) { const p = selectPredecessor(this.rows, scope, id, current); if (p) out[id] = p.snapshot; }
+    return out;
+  }
+  async loadRecent(scope: SnapshotScope, accountIds: string[], limitPerAccount = 2): Promise<Record<string, AccountReviewSnapshot[]>> {
+    const out: Record<string, AccountReviewSnapshot[]> = {};
+    for (const id of accountIds) {
+      out[id] = this.rows.filter((r) => r.ownerUserId === scope.ownerUserId && r.clientKey === scope.clientKey && r.accountId === id)
+        .sort((a, b) => new Date(b.reviewedAt).getTime() - new Date(a.reviewedAt).getTime())
+        .slice(0, limitPerAccount).map((r) => r.snapshot);
+    }
     return out;
   }
 }
@@ -106,30 +116,71 @@ export class SupabaseAccountMemoryRepo implements AccountMemoryRepo {
     for (const row of data as Array<{ account_id: string; snapshot: AccountReviewSnapshot }>) { if (!out[row.account_id]) out[row.account_id] = row.snapshot; }
     return out;
   }
+  async loadRecent(scope: SnapshotScope, accountIds: string[], limitPerAccount = 2): Promise<Record<string, AccountReviewSnapshot[]>> {
+    if (!accountIds.length) return {};
+    const q = this.db.from("account_review_snapshots").select("account_id,reviewed_at,snapshot")
+      .eq("client_key", scope.clientKey).in("account_id", accountIds).order("reviewed_at", { ascending: false });
+    const scoped = scope.ownerUserId ? q.eq("owner_user_id", scope.ownerUserId) : q.is("owner_user_id", null);
+    const { data, error } = await scoped;
+    if (error || !data) return {};
+    const out: Record<string, AccountReviewSnapshot[]> = {};
+    for (const row of data as Array<{ account_id: string; snapshot: AccountReviewSnapshot }>) {
+      const list = out[row.account_id] ?? [];
+      if (list.length < limitPerAccount) list.push(row.snapshot);
+      out[row.account_id] = list;
+    }
+    return out;
+  }
 }
 
-export interface ReviewMemory { current: ReviewMeta; previousById: Record<string, AccountReviewSnapshot> }
+export interface ReviewMemory { current: ReviewMeta; currentById: Record<string, AccountReviewSnapshot>; previousById: Record<string, AccountReviewSnapshot> }
 
 /** Full write-then-read cycle for a completed review: persist current snapshots
  *  (idempotent) and return the predecessor-derived memory (null if none). Fails
  *  closed — any repo error yields null (first-review behavior), never a throw. */
-export async function persistAndLoadMemory(repo: AccountMemoryRepo, accounts: AccountBriefVM[], scope: SnapshotScope, meta: ReviewMeta, onError?: (e: unknown) => void): Promise<ReviewMemory | null> {
+export async function persistAndLoadMemory(repo: AccountMemoryRepo, accounts: AccountBriefVM[], scope: SnapshotScope, meta: ReviewMeta, onError?: (e: unknown) => void, options: { preferLatestAccepted?: boolean } = {}): Promise<ReviewMemory | null> {
   try {
     // Canonical scope (§A3/§A4): a run-derived clientKey collapses to the logical context so
     // a later run finds its predecessor; a real context/client scope is preserved as-is.
     const canonScope: SnapshotScope = { ownerUserId: scope.ownerUserId, clientKey: canonicalClientKey(scope.clientKey, meta.contextVersion) };
     const rows = rowsForReview(accounts, canonScope, meta);
+    const currentRowByCanonical = new Map(rows.map((row) => [row.accountId, row.snapshot] as const));
     await repo.persist(rows);
     // Predecessors are matched on the CANONICAL account key (domain), but returned keyed by
     // the caller's VM id so report reorder / index-suffixed ids still resolve lineage (§A6/§A21).
     const keyByVmId = new Map(accounts.map((a) => [a.id, canonicalAccountKey(a)] as const));
     const canonicalKeys = Array.from(new Set(accounts.map((a) => canonicalAccountKey(a))));
+    const recentByCanonical = repo.loadRecent ? await repo.loadRecent(canonScope, canonicalKeys, 2) : {};
     const predsByCanonical = await repo.loadPredecessors(canonScope, canonicalKeys, meta);
+    const currentById: Record<string, AccountReviewSnapshot> = {};
     const previousById: Record<string, AccountReviewSnapshot> = {};
     for (const a of accounts) {
-      const pred = predsByCanonical[keyByVmId.get(a.id)!];
-      if (pred) previousById[a.id] = pred;
+      const key = keyByVmId.get(a.id)!;
+      const recent = recentByCanonical[key] ?? [];
+      const current = options.preferLatestAccepted ? recent[0] : currentRowByCanonical.get(key);
+      const predecessor = options.preferLatestAccepted ? recent[1] : predsByCanonical[key];
+      if (current) currentById[a.id] = current;
+      if (predecessor) previousById[a.id] = predecessor;
     }
-    return Object.keys(previousById).length ? { current: meta, previousById } : null;
+    return Object.keys(previousById).length ? { current: meta, currentById, previousById } : null;
   } catch (e) { onError?.(e); return null; }
+}
+
+/** Overlay accepted review state only. Memory never supplies source claims or
+ * events; those remain in the current report/evidence path. */
+export function applyCurrentMemoryToAccounts(accounts: AccountBriefVM[], memory: ReviewMemory | null): AccountBriefVM[] {
+  if (!memory) return accounts;
+  return accounts.map((account) => {
+    const current = memory.currentById[account.id];
+    if (!current) return account;
+    const dimensions = account.dimensions.map((dimension) => {
+      const value = dimension.label === "Fit" ? current.fit : dimension.label === "Timing" ? current.timing : dimension.label === "Evidence" ? current.evidence : null;
+      return value ? { ...dimension, value } : dimension;
+    });
+    return { ...account, decision: current.decision, dimensions,
+      decisionNote: current.decision === "monitor" ? (current.monitorReason ?? account.decisionNote) : account.decisionNote,
+      revisitWhen: current.revisitTrigger?.condition ?? account.revisitWhen,
+      evidence: { ...account.evidence, strength: current.evidence ?? account.evidence.strength, corroborated: current.independentSupport },
+    };
+  });
 }

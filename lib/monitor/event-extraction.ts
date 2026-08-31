@@ -123,6 +123,18 @@ export function resolveEventDate(candidate: EventCandidate): ResolvedEventDate {
 
 // Stem-matched (no trailing boundary) so "cancels"/"cancellation"/"suspended" match.
 const NEGATIVE_KIND = /\b(cancel|cancelaci|closure|cierre|shutdown|reversal|reversi|paus|suspend|layoff|despido|withdraw|retiro|shut down|postpon|delay|halt|divest|discontinu|exit(?:ed|s|ing)? (?:the )?market|clos(?:ed|es|ing) (?:its|the))/i;
+const EVENT_STOP = new Set(["the", "a", "an", "and", "or", "of", "to", "in", "for", "with", "its", "company", "announced", "said", "el", "la", "los", "las", "de", "del", "y", "o", "en", "para", "con", "empresa", "anuncio"]);
+
+/** Stable bounded identity for same-day/same-family events. Sorting meaningful
+ * tokens makes harmless word-order changes stable; historical kind:date keys
+ * remain compatible in classifyDelta. */
+export function normalizeEventIdentity(text: string): string | null {
+  const tokens = text.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ").trim().split(/\s+/)
+    .filter((token) => token.length >= 3 && !EVENT_STOP.has(token));
+  const bounded = Array.from(new Set(tokens)).sort().slice(0, 12);
+  return bounded.length ? bounded.join("_") : null;
+}
 
 export interface ExtractedEvent {
   item: ObservedItem;
@@ -165,7 +177,7 @@ export function extractEvent(candidate: EventCandidate, watchFamilies: string[] 
 
   const item: ObservedItem = {
     sourceHost: candidate.sourceHost.toLowerCase(), sourceUrl: candidate.sourceUrl, originId: candidate.originId ?? null,
-    kind, eventDate: date.eventDate, publicationDate: candidate.publicationDate ?? null, retrievedAt: candidate.retrievedAt,
+    kind, eventIdentity: normalizeEventIdentity(candidate.titleAndContent), eventDate: date.eventDate, publicationDate: candidate.publicationDate ?? null, retrievedAt: candidate.retrievedAt,
     isDatedMaterialEvent, relevantToCase,
     resolvesValidationKey: candidate.resolvesValidationKey ?? null,
     isCounterevidence: isNegative,

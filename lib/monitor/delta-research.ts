@@ -36,7 +36,8 @@ export function planMonitorReview(state: MonitoredAccountState, prior: AccountRe
   // Decision-critical unknowns drive the most targeted themes.
   for (const k of state.unresolvedDecisionCritical) themes.push(`resolve:${k}`);
   for (const f of families) themes.push(`change:${f}`);
-  if (prior.hasRevisitTrigger) themes.push("revisit_trigger");
+  if (prior.revisitTrigger) themes.push(`revisit:${prior.revisitTrigger.type.toLowerCase()}`);
+  else if (prior.hasRevisitTrigger) themes.push("revisit_trigger");
   if (themes.length === 0) themes.push("case_freshness");
   return {
     accountId: state.accountId,
@@ -60,6 +61,8 @@ export interface ObservedItem {
   /** Wire/press-release/company-statement id. Same origin ⇒ NOT independent. */
   originId?: string | null;
   kind: string;
+  /** Bounded normalized event/claim identity. Never rendered prose. */
+  eventIdentity?: string | null;
   eventDate?: string | null;
   publicationDate?: string | null;
   retrievedAt: string;
@@ -67,6 +70,7 @@ export interface ObservedItem {
   relevantToCase: boolean;
   resolvesValidationKey?: string | null;
   isCounterevidence?: boolean;
+  resolvesCounterevidence?: boolean;
 }
 
 export interface AccountObservation {
@@ -122,6 +126,7 @@ export interface DeltaEvidenceResult {
   newOrigins: string[];
   resolvedValidationKeys: string[];
   hasMaterialCounter: boolean;
+  counterevidenceResolved: boolean;
   freshnessGap: boolean;
 }
 
@@ -135,14 +140,15 @@ export function classifyDelta(plan: MonitorReviewPlan, obs: AccountObservation, 
   const known = new Set(plan.knownChangeKeys);
   const knownOrigins = new Set(plan.knownOrigins.map((h) => h.toLowerCase()));
   const classified: ClassifiedItem[] = [];
-  type Grp = { kind: string; eventDate: string; origins: Set<string>; originIds: Set<string>; isCounter: boolean };
+  type Grp = { kind: string; eventDate: string; origins: Set<string>; originIds: Set<string>; isCounter: boolean; resolvesCounter: boolean };
   const acceptedByKey = new Map<string, Grp>();
   const historicalByKey = new Map<string, Grp>();
   const addTo = (m: Map<string, Grp>, changeKey: string, item: ObservedItem, eventDate: string) => {
-    const g = m.get(changeKey) ?? { kind: item.kind, eventDate, origins: new Set<string>(), originIds: new Set<string>(), isCounter: false };
+    const g = m.get(changeKey) ?? { kind: item.kind, eventDate, origins: new Set<string>(), originIds: new Set<string>(), isCounter: false, resolvesCounter: false };
     g.origins.add(item.sourceHost.toLowerCase());
     if (item.originId) g.originIds.add(item.originId);
     if (item.isCounterevidence) g.isCounter = true;
+    if (item.resolvesCounterevidence) g.resolvesCounter = true;
     m.set(changeKey, g);
   };
 
@@ -159,10 +165,11 @@ export function classifyDelta(plan: MonitorReviewPlan, obs: AccountObservation, 
       classified.push({ item, disposition: "rejected_temporal", reason: "no defensible event date (retrieval/publication date is not the event date)" });
       continue;
     }
-    const changeKey = `${item.kind}:${eventDate}`;
+    const baseKey = `${item.kind}:${eventDate}`;
+    const changeKey = item.eventIdentity ? `${baseKey}:${item.eventIdentity}` : baseKey;
     const et = new Date(eventDate).getTime();
     // 3. Already known → rediscovered (new retrieval time is not novelty).
-    if (known.has(changeKey)) {
+    if (known.has(changeKey) || known.has(baseKey)) {
       classified.push({ item, disposition: "rediscovered", changeKey, reason: "same canonical event already in the prior accepted Case" });
       continue;
     }
@@ -214,11 +221,12 @@ export function classifyDelta(plan: MonitorReviewPlan, obs: AccountObservation, 
     }).map((i) => i.resolvesValidationKey as string),
   ));
   const hasMaterialCounter = acceptedEvents.some((e) => e.isCounterevidence);
+  const counterevidenceResolved = [...Array.from(acceptedByKey.values()), ...Array.from(historicalByKey.values())].some((e) => e.resolvesCounter);
 
   // Aging ALONE is not counterevidence — only a freshness gap that may motivate a
   // validate/next review. It applies only when nothing new was accepted.
   const ageDays = (now.getTime() - cutoff) / DAY_MS;
   const freshnessGap = counters.accepted_new === 0 && ageDays > EVIDENCE_FRESHNESS_DAYS;
 
-  return { classified, counters, acceptedEvents, historicalEvidence, newChangeKeys, newOrigins, resolvedValidationKeys, hasMaterialCounter, freshnessGap };
+  return { classified, counters, acceptedEvents, historicalEvidence, newChangeKeys, newOrigins, resolvedValidationKeys, hasMaterialCounter, counterevidenceResolved, freshnessGap };
 }

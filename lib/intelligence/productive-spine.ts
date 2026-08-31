@@ -193,8 +193,10 @@ async function runIntelligenceExecution(
       icpOverride: built.input.icp,
       candidatesOverride: candidates,
       researchCandidateLimit: researchLimit,
-      deliveryLimit: input.deliveryLimit,
-      deliveryQualityFloor: "warm",
+      // The productive spine needs the bounded EVALUATED set to synthesize
+      // canonical Monitor/Hold Cases. Tier limits are applied below only to
+      // actionable Prioritize/Validate accounts; they must not erase continuity.
+      deliveryLimit: researchLimit,
       decisionOnly: true,
       researchConcurrency: deps.researchConcurrency ?? 1,
       onResearchComplete: (leads) => { researchedLeads = leads; },
@@ -268,10 +270,22 @@ async function runIntelligenceExecution(
     // Strong count (Prioritize/Validate ONLY) is computed here — never the full
     // portfolio size — so a Monitor/Hold-only run is an honest abstention, not
     // "opportunities found" (§4, failure honesty).
-    const { portfolioIds, strongCount } = selectPortfolioAdmission(
+    const admitted = selectPortfolioAdmission(
       report.canonical_cases.map(c => ({ lead_id: c.lead_id, decision: c.decision })),
       report.processed_leads.map(l => ({ id: l.id, qc_status: l.outreach?.qc_status ?? null, category: l.qualification?.category ?? null })),
     );
+    const decisionById = new Map(report.canonical_cases.map((c) => [c.lead_id, c.decision] as const));
+    const rankedIds = (report.ranked_opportunities ?? []).map((item) => item.lead_id);
+    const fallbackIds = report.canonical_cases.map((item) => item.lead_id);
+    const strongIds = new Set([...rankedIds, ...fallbackIds]
+      .filter((id, index, all) => all.indexOf(id) === index)
+      .filter((id) => admitted.portfolioIds.has(id) && (decisionById.get(id) === "prioritize" || decisionById.get(id) === "validate"))
+      .slice(0, input.deliveryLimit));
+    const portfolioIds = new Set(Array.from(admitted.portfolioIds).filter((id) => {
+      const decision = decisionById.get(id);
+      return decision === "monitor" || decision === "hold" || strongIds.has(id);
+    }));
+    const strongCount = strongIds.size;
     report.canonical_cases = report.canonical_cases.filter(c => portfolioIds.has(c.lead_id));
     report.processed_leads = report.processed_leads.filter(lead => portfolioIds.has(lead.id));
     report.ranked_opportunities = (report.ranked_opportunities ?? []).filter(item => portfolioIds.has(item.lead_id));

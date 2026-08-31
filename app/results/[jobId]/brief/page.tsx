@@ -10,6 +10,7 @@ import { getSupabaseClient } from "@/lib/supabase/client";
 import { getBriefForViewer, type BriefResult } from "./actions";
 import OpportunityWorkspace from "@/components/deliverable/OpportunityWorkspace";
 import { fromInstitutionalReport } from "@/lib/deliverable/adapters";
+import { applyCurrentMemoryToAccounts } from "@/lib/deliverable/account-memory-store";
 
 function Neutral({ text }: { text: string }) {
   return (
@@ -40,7 +41,13 @@ export default function BriefPage() {
 
   if (!result) return <Neutral text="Preparing your brief…" />;
   switch (result.state) {
-    case "ok": return <OpportunityWorkspace vm={fromInstitutionalReport(result.report, result.experience)} memory={result.memory ?? undefined} />;
+    case "ok": {
+      const vm = fromInstitutionalReport(result.report, result.experience);
+      const accounts = applyCurrentMemoryToAccounts(vm.accounts, result.memory);
+      const counts = { prioritize: 0, validate: 0, monitor: 0, hold: 0 };
+      for (const account of accounts) counts[account.decision] += 1;
+      return <OpportunityWorkspace vm={{ ...vm, accounts, portfolio: { ...vm.portfolio, counts } }} memory={result.memory ?? undefined} monitorClientKey={result.monitorClientKey ?? undefined} />;
+    }
     case "processing": return <Neutral text="Your brief is being generated. This can take a few minutes — refresh shortly." />;
     case "signin_required": return <Neutral text="Please sign in to view this brief." />;
     case "forbidden": return <Neutral text="This brief is not available." />;
