@@ -33,6 +33,10 @@ const emailA = `ll-e2e-a-${stamp}@example.com`;
 const emailB = `ll-e2e-b-${stamp}@example.com`;
 const password = `E2e-${stamp}-Aa!`;
 const contextId = `e2e_context_${stamp}`;
+// Productive Account Memory is scoped to the confirmed commercial context, not
+// to a one-off run id. The acceptance must exercise the same durable lineage the
+// customer brief and recurring Monitor use.
+const memoryClientKey = `context:${contextId}`;
 const contextText = process.env.LEADLENS_ACCEPTANCE_CONTEXT ?? "Vendemos automatización de bodegas, integración WMS y orquestación de inventarios a fabricantes y distribuidores medianos y grandes en Colombia. Buscamos empresas que operen directamente centros de distribución, bodegas o plantas y que hayan abierto, ampliado, automatizado o invertido recientemente en infraestructura logística. Excluir entidades públicas, medios, consultoras, empresas de software puro, retailers sin operación logística propia y operaciones totalmente tercerizadas.";
 const locale = process.env.LEADLENS_ACCEPTANCE_LOCALE === "en" ? "en" : "es";
 const soakId = process.env.LEADLENS_SOAK_ID ?? null;
@@ -120,17 +124,17 @@ try {
   const delivered = loadedBody.report?.processed_leads ?? [];
   check("canonical Cases generated", Array.isArray(loadedBody.report?.canonical_cases));
 
-  const memoryBefore = (await db.from("account_review_snapshots").select("review_id,account_id").eq("owner_user_id", userA).eq("client_key", runId)).data ?? [];
+  const memoryBefore = (await db.from("account_review_snapshots").select("review_id,account_id").eq("owner_user_id", userA).eq("client_key", memoryClientKey)).data ?? [];
   check("initial accepted Case set entered Account Memory", memoryBefore.length === delivered.length, `snapshots=${memoryBefore.length}, delivered=${delivered.length}`);
 
   if (memoryBefore.length > 0) {
     t = Date.now();
-    const monitored = await monitor(req("/api/customer/monitor", tokenA, { client_key: runId }));
+    const monitored = await monitor(req("/api/customer/monitor", tokenA, { client_key: memoryClientKey }));
     timings.monitor_ms = Date.now() - t;
     const monitorBody = await monitored.json() as { runId?: string; status?: string; observability?: Record<string, unknown>; error?: string };
     monitorRunId = monitorBody.runId ?? "";
     check("manual customer Monitor reached canonical engine", [201, 404].includes(monitored.status), monitorBody.error ?? monitorBody.status);
-    const memoryAfter = (await db.from("account_review_snapshots").select("review_id,account_id").eq("owner_user_id", userA).eq("client_key", runId)).data ?? [];
+    const memoryAfter = (await db.from("account_review_snapshots").select("review_id,account_id").eq("owner_user_id", userA).eq("client_key", memoryClientKey)).data ?? [];
     check("Monitor outcome is durably observable", monitored.status === 404 || memoryAfter.length >= memoryBefore.length, `before=${memoryBefore.length}, after=${memoryAfter.length}`);
   } else {
     check("Monitor correctly unavailable without delivered accounts", delivered.length === 0);
