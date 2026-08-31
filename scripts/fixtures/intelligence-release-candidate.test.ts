@@ -3,6 +3,7 @@ import { deriveAccountActionabilityFunnel, summarizeActionabilityFunnel } from "
 import { bindVerifiedClaimToSources, stableSourceId } from "../../lib/intelligence/claim-provenance";
 import { isAffirmativeCounterevidence, type AccountDeepResearchTelemetry } from "../../lib/intelligence/account-deep-research";
 import { resolveResearchConcurrency } from "../../lib/intelligence/research-concurrency";
+import { enumerationRouteQueries, recoverGroundedCompanyNames } from "../../lib/discovery/company-universe";
 
 let passed = 0;
 function test(name: string, fn: () => void) { fn(); passed++; console.log(`✓ ${name}`); }
@@ -80,5 +81,14 @@ test("11 provider failure is not counterevidence", () => assert.equal(isAffirmat
 test("12 stale event alone is not counterevidence", () => assert.equal(isAffirmativeCounterevidence("The expansion announcement is two years old"), false));
 test("13 productive research defaults to validated concurrency 2", () => assert.equal(resolveResearchConcurrency(undefined), 2));
 test("14 concurrency retains serial rollback and hard ceiling", () => { assert.equal(resolveResearchConcurrency("1"), 1); assert.equal(resolveResearchConcurrency("8"), 2); });
+test("15 multi-industry enumeration uses alternatives, not impossible conjunction", () => {
+  const queries = enumerationRouteQueries({ target_industries: ["Food manufacturing", "Beverage manufacturing", "Consumer goods manufacturing"] } as never, "United States", { target_company_profile: "manufacturers", expected_need: "capacity" } as never, false);
+  assert.match(queries[0].query, /Food manufacturing.*OR.*Beverage manufacturing/);
+  assert.doesNotMatch(queries[0].query, /Food manufacturing and Beverage manufacturing/);
+});
+test("16 thin-universe recovery keeps literal company names and rejects list headings", () => {
+  const names = recoverGroundedCompanyNames([{ title: "Expansion leaders", snippet: "Conagra Brands opened a plant. Top Food Manufacturers in America." }]);
+  assert.deepEqual(names, ["Conagra Brands"]);
+});
 
-console.log(`\n${passed}/14 intelligence release-candidate contracts passed`);
+console.log(`\n${passed}/16 intelligence release-candidate contracts passed`);

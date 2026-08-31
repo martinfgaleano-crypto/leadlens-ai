@@ -147,7 +147,13 @@ export interface EnumerationRouteQuery { route: "industry_category" | "geo_categ
  * Events belong to Research. Every query repeats the confirmed target family so
  * routing cannot silently broaden "manufacturers" into "any warehouse user". */
 export function enumerationRouteQueries(icp: ICP, geo0: string, needs: NeedsMap, spanish: boolean): EnumerationRouteQuery[] {
-  const target = Array.from(new Set(icp.target_industries.map(x => x.trim()).filter(Boolean))).join(" and ").slice(0, 100);
+  const targetTerms = Array.from(new Set(icp.target_industries.map(x => x.trim()).filter(Boolean))).slice(0, 3);
+  // Search engines interpret a long "A and B and C" phrase as one impossible
+  // category. Preserve every confirmed buyer family, but express alternatives
+  // explicitly so one vertical cannot suppress the others.
+  const target = targetTerms.length > 1
+    ? `(${targetTerms.map((term) => `"${term.slice(0, 48)}"`).join(" OR ")})`
+    : (targetTerms[0] ?? "");
   const industry = target || needs.target_company_profile.slice(0, 100);
   const geo = (geo0 || (spanish ? "Colombia" : "United States")).slice(0, 40);
   const wellness = /wellness|bienestar|productos? naturales|bebidas? funcional|spa|hotel|resort|retail/i.test(`${industry} ${needs.target_company_profile} ${needs.expected_need}`);
@@ -245,7 +251,12 @@ async function extractCompanyNames(pages: { title: string | null; snippet: strin
 - Si no estás seguro de que sea una empresa real, NO la incluyas.
 - Devuelve SOLO JSON: {"companies": ["Nombre 1","Nombre 2", ...]}`;
       const r = await callClaudeJSON<{ companies: string[] }>(SYSTEM, `Fragmentos:\n${corpus}\n\nExtrae hasta 30 nombres de empresas reales ${spanish ? "colombianas" : ""}.`, 1200);
-      return { names: (r.companies ?? []).filter(Boolean).filter(n => companyNameGroundedInPages(n, pages)).slice(0, 40), llm_ok: true };
+      const llmNames = (r.companies ?? []).filter(Boolean).filter(n => companyNameGroundedInPages(n, pages));
+      // A syntactically successful but near-empty extraction is a recall failure,
+      // not proof that 20+ result snippets name no companies. Recover only literal,
+      // grounded proper names; all normal entity/geography/domain gates still run.
+      const recovered = llmNames.length < 5 ? recoverGroundedCompanyNames(pages) : [];
+      return { names: Array.from(new Set([...llmNames, ...recovered])).slice(0, 40), llm_ok: true };
     } catch { /* fall through — key may exist but be EXHAUSTED at runtime */ }
   }
   // Fallback: capitalized 1-3 word tokens from titles (weak, flagged low).
@@ -255,6 +266,31 @@ async function extractCompanyNames(pages: { title: string | null; snippet: strin
     for (const n of m) if (n.length >= 4 && n.length <= 40) names.add(n.trim());
   }
   return { names: Array.from(names).slice(0, 40), llm_ok: false };
+}
+
+const ENUMERATION_PHRASE_REJECT = /\b(top|best|list|companies|company|manufacturers?|manufacturing|industry|association|members?|directory|market|united states|america|news|report|guide|suppliers?|vendors?|food|beverage|consumer goods)\b/i;
+
+/** Deterministic thin-universe recovery. It never invents a name: every result is
+ * a literal capitalized phrase from a title/snippet and must pass the same strict
+ * page-grounding boundary as LLM output. Subsequent entity/geography/domain gates
+ * remain authoritative. */
+export function recoverGroundedCompanyNames(pages: { title: string | null; snippet: string | null }[]): string[] {
+  const names = new Set<string>();
+  for (const page of pages) {
+    const text = `${page.title ?? ""}. ${page.snippet ?? ""}`;
+    const matches = text.match(/(?:^|[.!?;:]\s+)([A-Z][A-Za-z0-9&'’.-]*(?:\s+(?:[A-Z][A-Za-z0-9&'’.-]*|of|and|de|del|la)){0,4})/g) ?? [];
+    for (const raw of matches) {
+      const name = raw.replace(/^[.!?;:]\s*/, "").replace(/[.,;:]$/, "").trim();
+      // Recovery is deliberately more conservative than the LLM path: generic
+      // one-word heading fragments ("Expansion", "Solutions") are the dominant
+      // false-positive class. Distinctive one-word brands still come through LLM
+      // extraction or verified vertical packs.
+      if (name.length < 4 || name.length > 70 || !/\s/.test(name) || ENUMERATION_PHRASE_REJECT.test(name)) continue;
+      if (!companyNameGroundedInPages(name, [page])) continue;
+      names.add(name);
+    }
+  }
+  return Array.from(names).slice(0, 30);
 }
 
 export async function buildCompanyUniverse(
