@@ -458,6 +458,7 @@ Evidence discipline rules — this is critical:
 - inferred_from_context: a reasonable inference based on industry, company size, or segment patterns
 - weak_inference: a guess with thin supporting evidence — be honest about this
 - missing_evidence: something we don't know and shouldn't pretend to know
+- Keep the response concise: maximum 6 evidence_discipline claims, maximum 4 items in every other array, and no field longer than 3 sentences. Prefer the claims that can change the commercial Decision. This is a hard output contract, not permission to omit material counterevidence.
 
 Signal date rules — strictly enforced:
 - The "date" field in evidence_discipline is OPTIONAL and must only be set for verified_public_signal claims

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { deriveAccountActionabilityFunnel, summarizeActionabilityFunnel } from "../../lib/intelligence/actionability-funnel";
 import { bindVerifiedClaimToSources, stableSourceId } from "../../lib/intelligence/claim-provenance";
-import { isAffirmativeCounterevidence, type AccountDeepResearchTelemetry } from "../../lib/intelligence/account-deep-research";
+import { isAffirmativeCounterevidence, shouldDeepenSearchResult, type AccountDeepResearchTelemetry } from "../../lib/intelligence/account-deep-research";
 import { resolveResearchConcurrency } from "../../lib/intelligence/research-concurrency";
 import { enumerationRouteQueries, recoverGroundedCompanyNames } from "../../lib/discovery/company-universe";
 
@@ -90,5 +90,13 @@ test("16 thin-universe recovery keeps literal company names and rejects list hea
   const names = recoverGroundedCompanyNames([{ title: "Expansion leaders", snippet: "Conagra Brands opened a plant. Top Food Manufacturers in America." }]);
   assert.deepEqual(names, ["Conagra Brands"]);
 });
+test("17 identity pages never consume event extraction or structured LLM budget", () => {
+  assert.equal(shouldDeepenSearchResult("identity", "high", "Company announces new plant", "Expansion"), false);
+  assert.equal(shouldDeepenSearchResult("current_activity", "high", "Company announces new plant", "Expansion"), true);
+});
+test("18 canonical stale reason wins when stale events were rejected upstream", () => {
+  const l = lead({ enrichment: { account_research: telemetry({ validated_events: [], early_stop_reason: "no_material_event" }) } });
+  assert.equal(deriveAccountActionabilityFunnel(l, "hold", ["hard_blocker_stale_beyond_180d"]).hold_reason, "STALE_EVENT");
+});
 
-console.log(`\n${passed}/16 intelligence release-candidate contracts passed`);
+console.log(`\n${passed}/18 intelligence release-candidate contracts passed`);

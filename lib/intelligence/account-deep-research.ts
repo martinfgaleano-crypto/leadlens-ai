@@ -205,7 +205,8 @@ export async function deepenAccountResearch(
         // Full-text budget belongs to event/counterevidence retrieval, never to
         // identity or static-footprint pages. A duplicate URL can be extracted
         // here if it was accepted earlier but has not yet consumed the budget.
-        if (pagesExtracted < maxExtractions && effectiveDecision.commercial_relevance === "high" && isEventExtractionCandidate(item.title, item.snippet) && !extractedUrls.has(item.canonical_url)) {
+        if (shouldDeepenSearchResult(query.stage, effectiveDecision.commercial_relevance, item.title, item.snippet)
+          && pagesExtracted < maxExtractions && !extractedUrls.has(item.canonical_url)) {
           const _fetchStart = Date.now();
           const fetched = await extract(item.url).catch(() => ({ ok: false, content: null }));
           providerOps.push({ provider: "full_text", operation: "full_text", stage: query.stage, duration_ms: Date.now() - _fetchStart, ok: fetched.ok, timeout: false, results: fetched.ok ? 1 : 0 });
@@ -273,6 +274,11 @@ export async function deepenAccountResearch(
         });
       }
       queryAudit.push({ query_id: query.query_id, stage: query.stage, provider: provider.id, results: response.results.length, accepted: acceptedForQuery });
+      // Identity needs one credible source set, not provider consensus. Once a
+      // provider yields three accepted identity results, another provider adds
+      // latency but no event recall or corroboration value. Event and
+      // counterevidence stages still use the full diversified provider set.
+      if (query.stage === "identity" && acceptedForQuery >= 3) break;
       // Counterevidence is mandatory. Even two-source positive evidence cannot
       // stop the plan before the bounded counterevidence stage has run.
       if (query.stage === "counterevidence" && validatedEvents.length > 0 && hasSufficientEvidence(decisions)) break outer;
@@ -369,6 +375,10 @@ export function isEventExtractionCandidate(title: string | null, snippet: string
   if (/\b(quarter(?:ly)?|full[- ]year|year[- ]to[- ]date|financial) (?:and )?(?:results?|earnings)|reports? (?:first|second|third|fourth|q[1-4]) quarter|declares? (?:a )?(?:quarterly )?dividend\b/i.test(heading)) return false;
   const hay = `${title ?? ""} ${snippet ?? ""}`;
   return /\b(new|opened?|expan(?:d|ds|ded|ding|sion)|acquir(?:e|es|ed|ing|isition)|invest(?:s|ed|ing|ment)|facility|plant|warehouse|distribution cent(?:er|re)|production line|contract|partnership|closure|cancel|suspend|nuev[ao]|abri[oó]|apertura|expansi[oó]n|adquisici[oó]n|inversi[oó]n|planta|bodega|centro de distribuci[oó]n|contrato|alianza|cierre)\b/i.test(hay);
+}
+
+export function shouldDeepenSearchResult(stage: string, relevance: string, title: string | null, snippet: string | null): boolean {
+  return stage !== "identity" && relevance === "high" && isEventExtractionCandidate(title, snippet);
 }
 
 function diagnosticExcerpt(text: string, anchor: string | null): string {

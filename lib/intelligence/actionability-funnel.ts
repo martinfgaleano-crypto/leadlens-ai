@@ -83,8 +83,9 @@ function classifyHoldReason(input: {
   if (!input.targetValid) return "WRONG_TARGET";
   if (input.degraded) return "INSUFFICIENT_COVERAGE";
   if (input.fit === "limited") return "LOW_FIT";
+  if (/stale|old event|freshness/.test(reason)) return "STALE_EVENT";
   if (input.events === 0) return "NO_CURRENT_EVENT";
-  if (input.temporal === 0 || /stale|old event|freshness/.test(reason)) return "STALE_EVENT";
+  if (input.temporal === 0) return "STALE_EVENT";
   if (!input.evidenceValid) return "INSUFFICIENT_EVIDENCE";
   if (/material/.test(reason)) return "NO_MATERIALITY";
   return "OTHER_EXISTING_CANONICAL_REASON";
