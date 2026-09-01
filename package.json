@@ -117,6 +117,7 @@
     "test:evidence-temporal-intelligence": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/evidence-temporal-intelligence.test.ts",
     "test:research-quality": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/research-quality.test.ts",
     "test:account-deep-research": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/account-deep-research.test.ts",
+    "test:material-event-positive-control": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/material-event-positive-control.test.ts",
     "acceptance:account-deep-research": "npx -y tsx --tsconfig tsconfig.json scripts/sources/run-account-deep-research-positive-control.ts",
     "test:signal-temporal-monitoring": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/signal-temporal-monitoring.test.ts",
     "test:signal-recovery-benchmark": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/signal-recovery-benchmark.test.ts",
