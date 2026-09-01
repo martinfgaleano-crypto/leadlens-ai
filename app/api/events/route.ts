@@ -27,7 +27,7 @@ const EVENT_NAMES = [
   // Customer Activation V1 funnel (app/activate): started -> interpreted ->
   // (clarified) -> confirmed -> run started. Structured-logged like the rest.
   "activation_started", "interpretation_generated", "clarification_requested",
-  "context_confirmed", "intelligence_run_started",
+  "context_confirmed", "intelligence_run_started", "first_result_viewed", "activation_completed",
   ...CONVERSION_EVENTS,
 ] as const;
 

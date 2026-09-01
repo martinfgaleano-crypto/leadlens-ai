@@ -1,9 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import type { LeadLensReport, OpportunityRanking, ProcessedLead } from "@/types";
 import { getSupabaseClient } from "@/lib/supabase/client";
+
+// Deterministic activation-funnel close (§24/§25): fire-and-forget; no raw content.
+function trackEvent(event: string, meta: Record<string, string> = {}) {
+  void fetch("/api/events", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ event, meta }) }).catch(() => null);
+}
 
 /**
  * /results/[jobId] — Account-level Opportunity Report (customer-facing).
@@ -26,6 +31,7 @@ export default function ResultsPage() {
   const [error, setError] = useState<string | null>(null);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [monitorState, setMonitorState] = useState<"idle" | "running" | "completed" | "unavailable" | "error">("idle");
+  const activationFiredRef = useRef(false);   // once per view: first completed result reaching the owner
 
   // Reports are ownership-protected: attach the Supabase session token when a
   // session exists. Without a session (and outside demo mode) the API returns
@@ -78,6 +84,13 @@ export default function ResultsPage() {
         if (stopped) return;
         setStatus(data.status ?? (data.report ? "completed" : "error"));
         if (data.report) setReport(data.report);
+        // Activation funnel close: the owner reached a completed real result. Only
+        // for productive Intelligence runs, once per mounted view (§25).
+        if (data.report && /^intel_[a-f0-9]{32}$/.test(jobId) && !activationFiredRef.current) {
+          activationFiredRef.current = true;
+          trackEvent("first_result_viewed", { job_id: jobId });
+          trackEvent("activation_completed", { job_id: jobId });
+        }
         if (data.report || data.status === "completed" || data.status === "failed" || data.status === "error") stop();
       } catch {
         if (stopped) return;
