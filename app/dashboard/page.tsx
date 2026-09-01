@@ -320,6 +320,13 @@ export default function DashboardPage() {
       {/* Quick links */}
       <div style={S.quickGrid}>
         <QuickLink
+          href="/activate"
+          icon="✨"
+          title="Start an opportunity run"
+          desc="Describe your commercial goal — see what LeadLens understands, then run real intelligence."
+          cta="Start a run →"
+        />
+        <QuickLink
           href="/dashboard/icp"
           icon="🎯"
           title="ICP (Ideal Customer Profile) Builder"
