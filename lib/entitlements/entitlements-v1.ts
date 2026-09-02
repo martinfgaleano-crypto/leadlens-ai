@@ -17,6 +17,7 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { resolveProduct } from "@/lib/products/catalog";
+import { subscriptionAccess, type SubscriptionRecord } from "@/lib/billing/subscription-lifecycle";
 
 export type AccessSource = "internal" | "subscription" | "one_time" | "beta" | "none";
 
@@ -61,6 +62,7 @@ const PROFILE_BY_TIER: Record<string, { limits: Limits }> = {
 export async function resolveEntitlements(db: any, userId: string): Promise<EffectiveEntitlement> {
   let planCode = "free";
   let credits = 0;
+  let subscription: SubscriptionRecord | null = null;
   try {
     const [{ data: profile }, { data: creditRow }] = await Promise.all([
       db.from("profiles").select("plan").eq("id", userId).maybeSingle(),
@@ -69,16 +71,26 @@ export async function resolveEntitlements(db: any, userId: string): Promise<Effe
     if (profile?.plan) planCode = String(profile.plan);
     if (creditRow?.credit_balance != null) credits = Number(creditRow.credit_balance) || 0;
   } catch { /* fail closed below: unknown state → beta-open is NOT granted to a blocked plan */ }
+  // Normalized subscription state (Billing Core V1). Best-effort: absent table (migration 061 not
+  // yet applied) or no row → unchanged behavior. The most recently updated row wins.
+  try {
+    const { data } = await db.from("customer_subscriptions")
+      .select("*").eq("user_id", userId).order("updated_at", { ascending: false }).limit(1);
+    subscription = (data && data[0]) ? (data[0] as SubscriptionRecord) : null;
+  } catch { subscription = null; }
 
   // profiles.plan holds a legacy plan name (free|sample|starter|standard|pro); product_codes
   // (preview_launch_v0…) may also appear for newer orders. Resolve either.
-  const product = resolveProduct(planCode);
-  const tier = product?.tier ?? (planCode in LEGACY_PLAN_TIER ? LEGACY_PLAN_TIER[planCode] : null);
+  const subAccess = subscriptionAccess(subscription);
+  const effectivePlanCode = subAccess?.planCode ?? planCode;
+  const product = resolveProduct(effectivePlanCode);
+  const tier = product?.tier ?? (effectivePlanCode in LEGACY_PLAN_TIER ? LEGACY_PLAN_TIER[effectivePlanCode] : null);
   const isPaidPlan = (product && product.billing_type === "one_time") || (!FREE_PLANS.has(planCode) && !BLOCKED_PLANS.has(planCode) && !INTERNAL_PLANS.has(planCode));
 
-  // Access source provenance (server-authoritative). Subscription slots in here when billing lands.
+  // Access source provenance (server-authoritative). An access-bearing subscription wins.
   const accessSource: AccessSource =
-    BLOCKED_PLANS.has(planCode) ? "none"
+    BLOCKED_PLANS.has(planCode) ? "none"           // an explicit block overrides everything
+    : subAccess ? "subscription"                    // billing → entitlement sync
     : INTERNAL_PLANS.has(planCode) ? "internal"
     : isPaidPlan || credits > 0 ? "one_time"       // a non-free plan or positive credits = active customer
     : "beta";                                       // authenticated free customer → Limited Beta (open)
@@ -90,7 +102,7 @@ export async function resolveEntitlements(db: any, userId: string): Promise<Effe
   const limits = (tier ? PROFILE_BY_TIER[tier]?.limits : undefined) ?? { max_runs_per_period: null, max_active_monitors: activeCustomer ? 1 : 0 };
 
   return {
-    userId, planCode, tier, accessSource,
+    userId, planCode: accessSource === "subscription" ? effectivePlanCode : planCode, tier, accessSource,
     capabilities: {
       can_run_intelligence: allowed,       // Limited Beta: open to any authenticated, non-blocked account
       can_create_monitor: allowed,         // creation is cheap/self-serve (unchanged)
