@@ -10,6 +10,7 @@ import {
 } from "@/lib/storage/saas-store";
 import { addCredits } from "@/lib/credits/add-credits";
 import { createNotification } from "@/lib/notifications/create-notification";
+import { isSubscriptionEvent, handleSubscriptionEvent } from "@/lib/billing/subscription-webhook";
 
 // Credits granted per plan on confirmed payment.
 const PLAN_CREDITS: Record<PlanType, number> = {
@@ -96,6 +97,32 @@ export async function POST(req: NextRequest) {
   const eventId    = String((meta as Record<string,unknown>).webhook_id ?? lsOrderId);
 
   console.log(`[lemon-webhook] received event=${eventName} ls_order_id=${lsOrderId}`);
+
+  // ── Subscription lifecycle events (Billing → Entitlement Live V1) ──────────
+  // Handled additively; the one-time order flow below is untouched. Owner is resolved from
+  // trusted provenance (checkout custom_data / persisted row), never from payload email.
+  if (isSubscriptionEvent(eventName)) {
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      return NextResponse.json({ received: true, warning: "Supabase not configured — subscription not persisted" });
+    }
+    const { createServerClient } = await import("@/lib/supabase/server");
+    const client = createServerClient();
+    if (!client) return NextResponse.json({ received: true, warning: "Persistence unavailable" });
+
+    const outcome = await handleSubscriptionEvent(client, payload);
+    if (outcome.handled && outcome.action === "rejected") {
+      console.warn(`[lemon-webhook] subscription ${eventName} rejected: ${outcome.reason}`);
+      // Client-side conditions (unmapped variant, missing mapping) return 200 to stop useless
+      // retries but are logged for diagnostics; only a transient persist failure asks for retry.
+      const retryable = outcome.reason === "persist_failed";
+      return NextResponse.json(
+        { received: true, subscription: { action: "rejected", reason: outcome.reason } },
+        { status: retryable ? 500 : 200 },
+      );
+    }
+    console.log(`[lemon-webhook] subscription ${eventName} → ${outcome.handled ? outcome.action : "unhandled"}`);
+    return NextResponse.json({ received: true, subscription: outcome });
+  }
 
   // ── Only handle order events ───────────────────────────────────────────────
   if (!eventName.startsWith("order_")) {

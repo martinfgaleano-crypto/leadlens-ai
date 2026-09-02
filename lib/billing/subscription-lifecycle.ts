@@ -43,17 +43,24 @@ export function normalizeSubscriptionStatus(providerStatus: string | null | unde
   return PROVIDER_STATUS[(providerStatus ?? "").toLowerCase()] ?? "expired";
 }
 
-/** A subscription confers access while active/trialing, and while "canceled but not yet ended"
- *  (cancel_at_period_end honored). past_due is a policy seam — Pricing owns grace duration, so we
- *  keep access during past_due here rather than inventing a cutoff (billing state is represented;
- *  a future policy can revoke). expired/ended never confers access. */
+/** Frozen matrix §20: paid entitlement continues for a bounded grace after a subscription first
+ *  goes past_due, then ends. The grace is anchored to the renewal boundary (current_period_end) —
+ *  a failed renewal drives past_due at ~period end — so no extra timestamp column is needed. */
+export const PAST_DUE_GRACE_DAYS = 7;
+const PAST_DUE_GRACE_MS = PAST_DUE_GRACE_DAYS * 86400e3;
+
+/** A subscription confers access while active/trialing, while "canceled but not yet ended"
+ *  (cancel_at_period_end honored), and during the 7-day past_due grace. expired/ended never
+ *  confers access. */
 export function subscriptionGrantsAccess(sub: Pick<SubscriptionRecord, "status" | "current_period_end" | "ended_at">, now = Date.now()): boolean {
   if (sub.ended_at && new Date(sub.ended_at).getTime() <= now) return false;
   switch (sub.status) {
     case "active":
     case "trialing":
-    case "past_due":
       return true;
+    case "past_due":
+      // Frozen 7-day grace from the renewal boundary; no anchor → do not revoke (rare).
+      return sub.current_period_end ? new Date(sub.current_period_end).getTime() + PAST_DUE_GRACE_MS > now : true;
     case "canceled":
       // Access continues until the paid period actually ends.
       return sub.current_period_end ? new Date(sub.current_period_end).getTime() > now : false;
