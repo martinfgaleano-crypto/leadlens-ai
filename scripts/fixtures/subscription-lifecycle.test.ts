@@ -30,7 +30,9 @@ const base: SubscriptionRecord = {
 };
 t("active grants access", subscriptionGrantsAccess(base, NOW));
 t("trialing grants access", subscriptionGrantsAccess({ ...base, status: "trialing" }, NOW));
-t("past_due grants access (policy seam, no invented cutoff)", subscriptionGrantsAccess({ ...base, status: "past_due" }, NOW));
+t("past_due grants access within grace (period end future)", subscriptionGrantsAccess({ ...base, status: "past_due" }, NOW));
+t("past_due within 7-day grace after renewal boundary → access", subscriptionGrantsAccess({ ...base, status: "past_due", current_period_end: iso(-3 * 86400e3) }, NOW));
+t("past_due after 7-day grace expires → no access", !subscriptionGrantsAccess({ ...base, status: "past_due", current_period_end: iso(-10 * 86400e3) }, NOW));
 t("canceled but period not ended → access", subscriptionGrantsAccess({ ...base, status: "canceled" }, NOW));
 t("canceled and period ended → no access", !subscriptionGrantsAccess({ ...base, status: "canceled", current_period_end: iso(-1) }, NOW));
 t("expired → no access", !subscriptionGrantsAccess({ ...base, status: "expired" }, NOW));
