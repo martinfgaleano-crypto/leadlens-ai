@@ -9,6 +9,7 @@ import { synthesizeCase } from "@/lib/monitor/canonical-case";
 import { isMaterialEventClaim } from "@/lib/intelligence/evidence-materiality";
 import { classifyRunCoverage } from "@/lib/intelligence/account-deep-research";
 import { selectPortfolioAdmission } from "@/lib/intelligence/portfolio-admission";
+import { staleThresholdMs } from "@/lib/intelligence/run-recovery";
 import type { IntelligenceRunRecord, IntelligenceRunStore } from "./productive-spine-store";
 import type { DiscoveryBudget } from "@/lib/lead-hunter/candidate-universe";
 import type { IntelligenceRunTrace } from "@/lib/intelligence/run-trace";
@@ -95,7 +96,7 @@ export async function executeIntelligenceRun(
   const record = await deps.runStore.load(runId, userId);
   if (!record) return { ok: false, reason: "run_not_found", runId };
   if (record.status === "completed") return { ok: true, run: record, reused: true };
-  const stale = record.status === "processing" && Date.now() - new Date(record.updatedAt).getTime() > 15 * 60_000;
+  const stale = record.status === "processing" && Date.now() - new Date(record.updatedAt).getTime() > staleThresholdMs();
   const generation = await deps.runStore.claim(runId, userId, record.status === "failed" ? ["failed"] : ["processing"], stale);
   if (generation === null) return { ok: true, run: record, reused: true };
   const input: StartIntelligenceRunInput = {
