@@ -44,6 +44,16 @@ export interface ProductiveSpineDeps {
   /** Bounded account-research concurrency (default 1 = serial). Env-gated at the route so
    * production stays serial until a live A/B validates the parallel path. */
   researchConcurrency?: number;
+  /** Optional metered PRODUCTION cap (matrix §9). Returns the customer's remaining Account
+   *  Intelligence Credits for the current period; the run caps its research budget by this so it
+   *  never paid-materializes more accounts than the allowance. null = unmetered (one_time/internal)
+   *  → no cap. Best-effort: a failure falls back to uncapped and never breaks the run. */
+  accountBudget?: (userId: string) => Promise<number | null>;
+  /** Optional per-account CHARGE-commit on durable completion (matrix §6). Receives the runId
+   *  (logical analysis id) and the materialized canonical account_ids (structural rejects already
+   *  excluded from canonical_cases). Best-effort + idempotent per (user, runId, account); NEVER
+   *  alters the run outcome. */
+  onRunMaterialized?: (runId: string, accountIds: string[]) => void | Promise<void>;
   // Optional Vault accretion sink. Receives the discovered candidate companies so
   // valid, customer-INDEPENDENT company facts can accumulate durably. Best-effort:
   // any error is swallowed and NEVER alters the Intelligence run (§30). Only public
@@ -185,7 +195,15 @@ async function runIntelligenceExecution(
       } catch { /* Vault accretion must never break a run */ }
     }
 
-    const researchLimit = Math.min(candidates.length, Math.max(input.deliveryLimit, input.researchLimit));
+    let researchLimit = Math.min(candidates.length, Math.max(input.deliveryLimit, input.researchLimit));
+    // Metered production cap (matrix §9): never paid-materialize more accounts than the customer's
+    // remaining allowance. Unmetered (one_time/internal) or a failed check → uncapped (unchanged).
+    if (deps.accountBudget) {
+      try {
+        const budget = await deps.accountBudget(input.userId);
+        if (budget != null) researchLimit = Math.min(researchLimit, Math.max(0, budget));
+      } catch { /* budget check must never break a run */ }
+    }
     candidates = orderResearchCandidatesForBudget(candidates, researchLimit);
     let researchedLeads: ProcessedLead[] = [];
     const researchStartedMs = Date.now();
@@ -350,6 +368,13 @@ async function runIntelligenceExecution(
     run = { ...run, coverageState, status: "completed", stage: "report", report, failureCode: null, updatedAt: (deps.now ?? (() => new Date()))().toISOString() };
     // Fenced finalize: a stale executor cannot overwrite a newer attempt's completed result.
     if (!(await deps.runStore.save(run))) return { ok: true, run, reused: true };
+    // Commit per-account commercial usage on durable completion (matrix §6; metered plans only).
+    // Idempotent per (user, runId, account_id) — a retry/re-dispatch never double-charges. A newer
+    // attempt that reclaimed the run (save→false above) does not reach here. NEVER alters outcome.
+    if (deps.onRunMaterialized) {
+      try { await deps.onRunMaterialized(runId, (report.canonical_cases ?? []).map((c) => c.account_id)); }
+      catch { /* metering must never break a completed run */ }
+    }
     return { ok: true, run, reused: false };
   } catch (error) {
     // A superseded executor aborts silently — it must not write a failure over the newer

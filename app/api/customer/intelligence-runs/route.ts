@@ -6,7 +6,7 @@ import { SupabaseConfirmedContextStore } from "@/lib/interpretation/confirmed-co
 import { SupabaseIntelligenceRunStore } from "@/lib/intelligence/productive-spine-store";
 import { enqueueIntelligenceRun } from "@/lib/intelligence/productive-spine";
 import { dispatchIntelligenceRun } from "@/lib/intelligence/intelligence-run-dispatch";
-import { resolveEntitlements, intelligenceRunGate, consumeRunSlotAtomic } from "@/lib/entitlements/entitlements-v1";
+import { resolveEntitlements, intelligenceRunGate } from "@/lib/entitlements/entitlements-v1";
 
 export const maxDuration = 300;
 
@@ -56,14 +56,13 @@ export async function POST(req: NextRequest) {
     runStore: new SupabaseIntelligenceRunStore(db),
   });
   if (!result.ok) return NextResponse.json({ error: result.reason, run_id: result.runId ?? null }, { status: 422 });
-  // Usage consumption for FINITE plans only, and ONLY when a NEW run was created — a replay
-  // reuses the run (result.reused) and never double-consumes (the run id is the idempotency key).
-  // Beta/unlimited plans (max_runs_per_period === null) consume nothing. Best-effort + atomic:
-  // consumption never blocks or unwinds an already-durable run (dead runs are recovered, not
-  // re-charged), matching current no-deduction-on-dead-run doctrine.
-  if (!result.reused && entitlement.limits.max_runs_per_period !== null) {
-    await consumeRunSlotAtomic(db, user.id, 1).catch(() => undefined);
-  }
+  // Commercial usage is PER-ACCOUNT and charged at MATERIALIZATION (matrix §5/§6), not per-run at
+  // the route: a run can materialize multiple accounts, and dead/duplicate runs must never charge.
+  // The gate above (intelligenceRunGate) is the pre-check that blocks starting a run with no
+  // remaining allowance; the executor caps production at the remaining allowance and commits one
+  // Account Intelligence Credit per durably-materialized account via lib/billing/account-metering.
+  // (No per-run customer_credits deduction here — that would wrongly draw down a subscriber's
+  // preserved one-time balance and mis-count multi-account runs.)
   if ((result.run.status === "processing" && result.run.stage === "queued") || result.run.status === "failed") {
     dispatchIntelligenceRun(req.nextUrl.origin, result.run.runId, user.id);
   }

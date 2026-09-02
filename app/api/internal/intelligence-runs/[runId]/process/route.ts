@@ -30,6 +30,12 @@ export async function POST(req: NextRequest, { params }: { params: { runId: stri
   // fixed server-side and can never be set by the request body/params (§6). Trace
   // persistence is failure-isolated: a sink error is swallowed and never fails the
   // customer Intelligence run (§5).
+  // Resolve entitlement ONCE for metered per-account usage (matrix §5/§6/§9). Best-effort: any
+  // failure leaves the run uncapped/unmetered rather than blocking Intelligence.
+  const { resolveEntitlements } = await import("@/lib/entitlements/entitlements-v1");
+  const { remainingAllowanceForRun, chargeMaterializedAccounts } = await import("@/lib/billing/account-metering");
+  const entitlement = await resolveEntitlements(db, parsed.data.user_id).catch(() => null);
+
   const traceSink = new SupabaseRunTraceSink(db);
   // Trace persistence must survive serverless termination (RUNTIME ATTRIBUTION V1 §1.14):
   // collect the persist promises and await them (bounded, failure-isolated) after the run
@@ -46,6 +52,13 @@ export async function POST(req: NextRequest, { params }: { params: { runId: stri
     // Bounded account-research concurrency. c=2 is the validated production default;
     // env=1 is the immediate rollback switch and values above 2 are never accepted.
     researchConcurrency: resolveResearchConcurrency(),
+    // Metered PRODUCTION cap (matrix §9): a subscription/beta run never paid-materializes more
+    // accounts than the remaining allowance (own prior charges added back so recovery re-runs are
+    // not starved). Unmetered/one-time → null → uncapped. Best-effort; never breaks a run.
+    accountBudget: entitlement ? (() => remainingAllowanceForRun(db, entitlement, Date.now(), params.runId)) : undefined,
+    // Per-account CHARGE-commit on durable completion (matrix §6): one credit per materialized
+    // account, idempotent per (user, runId, account). Best-effort; never alters the run outcome.
+    onRunMaterialized: entitlement ? ((runId, accountIds) => { void chargeMaterializedAccounts(db, entitlement, { runId }, accountIds).catch(() => undefined); }) : undefined,
     onAccountTrace: (trace) => { tracePersists.push(traceSink.persist(trace).catch(() => { /* telemetry never fails a run */ })); },
     // Accrete valid discovered companies into the durable, customer-independent Vault
     // registry (best-effort; universal facts only). Never blocks or alters the run.

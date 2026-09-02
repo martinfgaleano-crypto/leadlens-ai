@@ -3,7 +3,8 @@
 --
 -- WHY (frozen OPERATIONAL ENTITLEMENT MATRIX V1, owner-accepted engineering implications):
 --   #1 The commercial unit is 1 ACCOUNT INTELLIGENCE CREDIT (one account materialized/re-
---      analyzed), idempotent per (period, account) — NOT per run/job.
+--      analyzed), idempotent per (user, analysis_key/review_id, account) — NOT per run/job, and
+--      NOT per (period, account) which would wrongly cap paid reviews at one per account per month.
 --   #2 The subscription/Beta periodic allowance is DISTINCT from durable one-time
 --      customer_credits, so subscription consumption never draws down preserved one-time
 --      rights (§13). That allowance lives here, not in customer_credits.
@@ -48,20 +49,29 @@ CREATE TRIGGER subscription_usage_periods_set_updated_at
   BEFORE UPDATE ON public.subscription_usage_periods
   FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 
--- ── Per-account idempotency ledger (insert-once = exactly one credit per account per period) ──
+-- ── Per-account idempotency ledger (insert-once = exactly one credit per logical analysis) ──
+-- The commercial unit is 1 ACCOUNT INTELLIGENCE CREDIT per *material analysis/re-analysis* of an
+-- account (matrix §5/§6). The idempotency key is therefore (user, analysis_key, account_key) where
+-- analysis_key is the LOGICAL analysis identity (the review_id / run id) — NOT the period. This is
+-- critical:
+--   • a technical RETRY of the same logical analysis reuses analysis_key → conflict → 0-cost no-op;
+--   • a NEW legitimate re-analysis of the same account is a NEW review_id → new row → +1 credit.
+-- Keying on (user, period_start, account) instead would WRONGLY cap paid reviews at one per account
+-- per month. period_start is retained for allowance accounting (which period the charge counts to),
+-- not for idempotency. This mirrors the Account Memory key (owner, client, account, review_id).
 CREATE TABLE IF NOT EXISTS public.account_intelligence_charges (
   id            UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id       UUID        NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   period_start  TIMESTAMPTZ NOT NULL,
   account_key   TEXT        NOT NULL,
+  analysis_key  TEXT        NOT NULL,   -- logical analysis/review id (review_id); stable across retries
   run_id        TEXT,
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
-  -- The idempotency key: one charge per account per period. A duplicate/retry insert conflicts
-  -- → 0-cost no-op (per-account crediting, matrix §5/§6).
-  UNIQUE (user_id, period_start, account_key)
+  UNIQUE (user_id, analysis_key, account_key)
 );
 
 CREATE INDEX IF NOT EXISTS account_intelligence_charges_period_idx ON public.account_intelligence_charges (user_id, period_start);
+CREATE INDEX IF NOT EXISTS account_intelligence_charges_account_idx ON public.account_intelligence_charges (user_id, account_key);
 
 ALTER TABLE public.account_intelligence_charges ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "account_intelligence_charges_select_own" ON public.account_intelligence_charges;
