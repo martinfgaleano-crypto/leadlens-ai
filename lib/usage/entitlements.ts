@@ -33,31 +33,19 @@ export interface Entitlements {
 const FREE_PLANS = new Set(["free"]);
 
 export async function getEntitlements(db: any, userId: string): Promise<Entitlements> {
-  let planName = "free";
-  let credits = 0;
-
-  try {
-    const [{ data: profile }, { data: creditRow }] = await Promise.all([
-      db.from("profiles").select("plan").eq("id", userId).maybeSingle(),
-      db.from("customer_credits").select("credit_balance").eq("user_id", userId).maybeSingle(),
-    ]);
-    if (profile?.plan) planName = String(profile.plan);
-    if (creditRow?.credit_balance != null) credits = Number(creditRow.credit_balance) || 0;
-  } catch {
-    // Fail closed for runs, open for reads: unknown state blocks nothing that
-    // is already public, but a run gate with no data should not fake access.
-  }
-
-  const isActiveCustomer = !FREE_PLANS.has(planName) || credits > 0;
-
+  // Delegates to the ONE canonical resolver (Entitlements V1) so the Monitor path and the
+  // primary Intelligence path derive capabilities from the same server-authoritative truth.
+  // Kept as a thin backward-compatible shape for existing callers (/api/monitor/[id]/run,
+  // /api/credits). Note: can_run_monitor now follows the resolved capability, which is beta-open
+  // for authenticated Limited Beta customers (previously required an "active customer").
+  const { resolveEntitlements } = await import("@/lib/entitlements/entitlements-v1");
+  const e = await resolveEntitlements(db, userId);
   return {
-    plan_name: planName,
-    credits_remaining: credits,
-    can_create_monitor: true, // search creation is already self-serve and cheap
-    can_run_monitor: isActiveCustomer,
-    monthly_run_limit: null,
-    blocked_reason: isActiveCustomer
-      ? null
-      : "Monitor runs are available on paid plans. Contact us to activate your plan.",
+    plan_name: e.planCode,
+    credits_remaining: e.usage.credits_remaining,
+    can_create_monitor: e.capabilities.can_create_monitor,
+    can_run_monitor: e.capabilities.can_run_monitor,
+    monthly_run_limit: e.limits.max_runs_per_period,
+    blocked_reason: e.blocked_reason,
   };
 }

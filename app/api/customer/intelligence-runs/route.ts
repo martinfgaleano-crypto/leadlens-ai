@@ -6,6 +6,7 @@ import { SupabaseConfirmedContextStore } from "@/lib/interpretation/confirmed-co
 import { SupabaseIntelligenceRunStore } from "@/lib/intelligence/productive-spine-store";
 import { enqueueIntelligenceRun } from "@/lib/intelligence/productive-spine";
 import { dispatchIntelligenceRun } from "@/lib/intelligence/intelligence-run-dispatch";
+import { resolveEntitlements, intelligenceRunGate, consumeRunSlotAtomic } from "@/lib/entitlements/entitlements-v1";
 
 export const maxDuration = 300;
 
@@ -34,6 +35,12 @@ export async function POST(req: NextRequest) {
   }
   const parsed = schema.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Invalid run request." }, { status: 400 });
+  // Server-authoritative entitlement gate (Entitlements V1). Resolved from durable state, never
+  // the client. Beta customers remain allowed; only an explicitly blocked account is denied. A
+  // partial run is never created after denial (this precedes enqueue).
+  const entitlement = await resolveEntitlements(db, user.id);
+  const denial = intelligenceRunGate(entitlement);
+  if (denial) return NextResponse.json({ error: denial.message, code: denial.code }, { status: denial.status });
   const requested = parsed.data.delivery_limit ?? PLAN_DELIVERY[parsed.data.plan];
   const deliveryLimit = Math.min(requested, PLAN_DELIVERY[parsed.data.plan]);
   const result = await enqueueIntelligenceRun({
@@ -49,6 +56,14 @@ export async function POST(req: NextRequest) {
     runStore: new SupabaseIntelligenceRunStore(db),
   });
   if (!result.ok) return NextResponse.json({ error: result.reason, run_id: result.runId ?? null }, { status: 422 });
+  // Usage consumption for FINITE plans only, and ONLY when a NEW run was created — a replay
+  // reuses the run (result.reused) and never double-consumes (the run id is the idempotency key).
+  // Beta/unlimited plans (max_runs_per_period === null) consume nothing. Best-effort + atomic:
+  // consumption never blocks or unwinds an already-durable run (dead runs are recovered, not
+  // re-charged), matching current no-deduction-on-dead-run doctrine.
+  if (!result.reused && entitlement.limits.max_runs_per_period !== null) {
+    await consumeRunSlotAtomic(db, user.id, 1).catch(() => undefined);
+  }
   if ((result.run.status === "processing" && result.run.stage === "queued") || result.run.status === "failed") {
     dispatchIntelligenceRun(req.nextUrl.origin, result.run.runId, user.id);
   }
