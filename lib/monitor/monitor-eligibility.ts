@@ -106,6 +106,18 @@ export function evaluateEligibility(state: MonitoredAccountState, now: Date, _bu
   if (state.currentDecision === "hold") {
     if (state.refreshRequested) { reasons.push("user_requested_refresh"); return { eligible: true, reasons, nextEligibleAt: null }; }
     if (state.hasRevisitTrigger) reasons.push("revisit_trigger_present");
+    // Frozen Intelligence Option B: a HOLD is scheduler-reviewable ONLY when it carries an
+    // UNRESOLVED decision-critical validation requirement — a stable canonical theme key derived
+    // from structured validationDetails (`decisionCritical`), never customer prose. This path is
+    // trigger-based, not cadence: nextEligibleAt stays null so a HOLD never acquires a fixed review
+    // clock, and the Decision itself remains HOLD (eligibility ≠ decision). When the requirement
+    // later resolves, the latest accepted snapshot's decisionCriticalThemeKeys shrink and this path
+    // stops matching — so a stale historical key cannot create a permanent review loop. Generic
+    // HOLD uncertainty (no decision-critical key) stays not eligible / trigger-only.
+    if (state.unresolvedDecisionCritical.length > 0) {
+      reasons.push("validate_unresolved_decision_critical");
+      return { eligible: true, reasons, nextEligibleAt: null };
+    }
     reasons.push("hold_no_recurring_research");
     return { eligible: false, reasons, nextEligibleAt: null };
   }
