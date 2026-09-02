@@ -149,6 +149,21 @@ const v2 = structuredClone(fixture);
 await persistConfirmedContext(contextStore, v2, { userId: "owner-a", contextId: "shared", now: clock });
 t("lineage: V1 durable run remains attached to V1 after V2", first.ok && (await runStore.load(first.run.runId, "owner-a"))?.contextRef.version === 1);
 
+// ── Billing → Entitlement metering hooks (matrix §9 production cap + §6 charge-commit) ──
+// Default-off (no hooks) is proven by every test above; here we prove the additive hooks.
+let materialized: { runId: string; accountIds: string[] } | null = null;
+const capped = await startIntelligenceRun(
+  { ...base, idempotencyKey: "metered-cap" },
+  { contextStore, leadHunterStore: new InMemoryLeadHunterRunStore(), runStore: new InMemoryIntelligenceRunStore(), discoveryRunner: discovery, pipeline, now: clock,
+    accountBudget: async () => 1,
+    onRunMaterialized: (runId, accountIds) => { materialized = { runId, accountIds }; } });
+t("metered cap: production limited to remaining allowance (budget 1 → exactly 1 case)", capped.ok && (capped.run.report?.canonical_cases?.length ?? 0) === 1);
+t("metered charge: onRunMaterialized fired with runId + materialized account_ids", Boolean(capped.ok && materialized && (materialized as { runId: string }).runId === capped.run.runId && (materialized as { accountIds: string[] }).accountIds.length === 1));
+const zero = await startIntelligenceRun(
+  { ...base, idempotencyKey: "metered-zero" },
+  { contextStore, leadHunterStore: new InMemoryLeadHunterRunStore(), runStore: new InMemoryIntelligenceRunStore(), discoveryRunner: discovery, pipeline, now: clock, accountBudget: async () => 0 });
+t("metered cap: zero budget → zero paid-materialized accounts", zero.ok && (zero.run.report?.canonical_cases?.length ?? 0) === 0);
+
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed) process.exit(1);
 };
