@@ -85,7 +85,7 @@ Send/say **before** they judge results (reduces false-negative perception):
 - LeadLens identifies **account opportunities, not guaranteed buyers**.
 - **PRIORITIZE ≠ purchase guarantee.** **HOLD is a valid, useful result** — absence of a current opportunity can prevent wasted effort.
 - **Evidence quality varies** with an account's public footprint.
-- **Coverage is bounded** today (strongest: US manufacturing/equipment/operations; Colombia guided). Not universal.
+- **Coverage is bounded** today (strongest: **USA** — manufacturing/equipment/operations; **South America** — guided). Not universal.
 - A run **takes several minutes** — not instant.
 - **Monitor is periodic re-evaluation, not real-time streaming.**
 - LeadLens **does not deliver contact lists** and **does not perform outreach**.
