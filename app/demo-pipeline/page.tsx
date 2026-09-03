@@ -79,7 +79,6 @@ const COPY = {
     monthlySub: "Monthly refreshed opportunities, signal updates, weekly opportunity digest, and recurring briefs — for teams that need periodic account re-evaluation.",
     monitorSubMobile: "Periodic account re-evaluation — monthly refreshes and recurring briefs.",
     monitorCTA: "Join pilot waitlist",
-    monitorPrice: "From $99/mo",
     planNames: { sample: "Preview", starter: "Brief", standard: "Intelligence", pro: "Premium" },
     planDescs: {
       sample:   "See whether LeadLens can find defensible opportunities for your business — validate the quality before committing.",
@@ -403,7 +402,6 @@ const COPY = {
     monthlySub: "Oportunidades actualizadas mensualmente, señales nuevas, resumen semanal de oportunidades y briefs recurrentes — para equipos que necesitan reevaluación periódica de cuentas.",
     monitorSubMobile: "Reevaluación periódica de cuentas: actualizaciones mensuales y briefs recurrentes.",
     monitorCTA: "Unirse a la lista piloto",
-    monitorPrice: "Desde $99/mes",
     planNames: { sample: "Preview", starter: "Brief", standard: "Intelligence", pro: "Premium" },
     planDescs: {
       sample:   "Comprueba si LeadLens encuentra oportunidades defendibles para tu negocio — valida la calidad antes de comprometerte.",
@@ -727,7 +725,6 @@ const COPY = {
     monthlySub: "Oportunidades atualizadas mensalmente, novos sinais, resumo semanal e briefs recorrentes — para equipes que precisam de reavaliação periódica de contas.",
     monitorSubMobile: "Reavaliação periódica de contas: atualizações mensais e briefs recorrentes.",
     monitorCTA: "Entrar na lista piloto",
-    monitorPrice: "A partir de $99/mês",
     planNames: { sample: "Preview", starter: "Brief", standard: "Intelligence", pro: "Premium" },
     planDescs: {
       sample:   "Veja se a LeadLens encontra oportunidades defensáveis para o seu negócio — valide a qualidade antes de se comprometer.",
@@ -1051,7 +1048,6 @@ const COPY = {
     monthlySub: "毎月更新されるオポチュニティ、シグナル更新、週次オポチュニティダイジェスト、定期ブリーフ — 定期的なアカウント再評価を必要とするチーム向け。",
     monitorSubMobile: "定期的なアカウント再評価 — 毎月の更新と定期ブリーフ。",
     monitorCTA: "パイロットウェイトリストに登録",
-    monitorPrice: "$99/月から",
     planNames: { sample: "Preview", starter: "Brief", standard: "Intelligence", pro: "Premium" },
     planDescs: {
       sample:   "LeadLensがあなたのビジネスに根拠のあるオポチュニティを見つけられるか確認 — コミット前に品質を検証。",
@@ -2211,7 +2207,6 @@ export default function DemoPipelinePage() {
                 <span style={{ display: "inline-block", background: "#0ea5e9", color: "#fff", fontSize: ".65rem", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".07em", padding: ".2rem .65rem", borderRadius: 999 }}>
                   {copy.monthlyTag}
                 </span>
-                <span style={{ fontSize: ".8rem", fontWeight: 600, color: "#0284c7" }}>{copy.monitorPrice}</span>
               </div>
               <h3 className="ll-monitor-title" style={{ fontSize: "1.1rem", fontWeight: 800, color: "#0f172a", letterSpacing: "-.02em", marginBottom: ".375rem" }}>{copy.monthlyTitle}</h3>
               <p className="ll-monitor-copy ll-monitor-copy-full" style={{ fontSize: ".875rem", color: "#475569", lineHeight: 1.6, margin: 0, maxWidth: "40rem" }}>{copy.monthlySub}</p>

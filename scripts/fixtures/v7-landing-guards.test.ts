@@ -190,10 +190,12 @@ t("O4 After You Buy is a disclosure: open on desktop/SSR, collapsible on mobile"
   /const \[afterOpen, setAfterOpen\] = useState\(true\)/.test(src) &&
   /<details className="ll-afterbuy" open=\{afterOpen\}/.test(src) &&
   /matchMedia\("\(max-width: 640px\)"\)\.matches\) setAfterOpen\(false\)/.test(src));
-t("O5 Opportunity Monitor: coming-soon/pilot, periodic (no real-time/continuous), $99/mo",
+t("O5 Opportunity Monitor: coming-soon/pilot, periodic (no real-time/continuous), NO subscription price",
   /monthlyTag:\s*"Coming soon — Pilot access"/.test(src) &&
   /monitorSubMobile:\s*"Periodic account re-evaluation/.test(src) &&
-  /monitorPrice:\s*"From \$99\/mo"/.test(src) &&
+  // Canonical Pricing decision: the orphaned "$99/mo" teaser price is removed and no subscription
+  // price is exposed on the coming-soon strip (frozen matrix prices are not surfaced pre-launch).
+  !/monitorPrice/.test(src) && !/\$99/.test(src) &&
   !/real-time/i.test(src) && !/always-on/i.test(src) && !/continuous market intelligence/i.test(src));
 t("O6 monitorSubMobile (compact teaser) localized in 4 locales", count(/monitorSubMobile:/g) === 4);
 t("O7 per-card 'One-time payment' hidden on mobile (intro already states one-time)",
