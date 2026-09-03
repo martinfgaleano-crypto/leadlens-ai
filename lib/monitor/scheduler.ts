@@ -12,6 +12,7 @@ import { runCanonicalMonitor } from "./canonical-monitor-service";
 import { buildReviewQueue } from "./monitor-eligibility";
 import { DEFAULT_MONITOR_BUDGET, DEFAULT_SCHEDULER_BUDGET, type SchedulerBudget, type MonitorBudget } from "./monitor-config";
 import type { TenantWork } from "./monitor-store";
+import type { EffectiveEntitlement } from "@/lib/entitlements/entitlements-v1";
 
 export interface ScheduledRunSummary {
   runId: string;
@@ -41,6 +42,9 @@ export interface SchedulerInput {
   now?: () => Date;
   budget?: SchedulerBudget;
   accountBudget?: MonitorBudget;
+  /** Optional per-tenant recurring-usage enforcement (matrix §5/§6). Resolves the entitlement +
+   *  db for a tenant so scheduled reviews meter Account Intelligence Credits. Absent = unmetered. */
+  resolveUsageMeter?: (scope: SnapshotScope) => Promise<{ db: unknown; entitlement: EffectiveEntitlement } | undefined>;
 }
 
 /**
@@ -74,8 +78,9 @@ export async function runScheduledMonitor(input: SchedulerInput): Promise<Schedu
     // Per-tenant account cap = min(tenant policy, remaining run account budget).
     const perTenant: MonitorBudget = { ...accountBudget, maxAccountsPerRun: Math.min(accountBudget.maxAccountsPerRun, accountsBudgetLeft) };
     try {
+      const usageMeter = input.resolveUsageMeter ? await input.resolveUsageMeter(tw.scope) : undefined;
       const run = await runCanonicalMonitor(tw, { cycleKey: input.wakeId, origin: "scheduled" }, {
-        reobserve: input.reobserve, memoryRepo: input.memoryRepo, now: () => now, budget: perTenant,
+        reobserve: input.reobserve, memoryRepo: input.memoryRepo, now: () => now, budget: perTenant, usageMeter,
       });
       runs.push(run);
       accountsReviewed += run.observability.attempted;

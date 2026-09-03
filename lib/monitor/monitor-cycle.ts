@@ -31,7 +31,17 @@ export type AccountOutcomeStatus =
   | "completed_changed"
   | "insufficient_review"
   | "failed"
-  | "deferred_due_to_budget";
+  | "deferred_due_to_budget"
+  | "deferred_due_to_usage";   // no remaining Account Intelligence Credit (matrix §5/§6/§16)
+
+/** Optional recurring-usage enforcement (matrix §5/§6/§9). Absent = unmetered (current behavior).
+ *  `remaining()` caps how many accounts may materialize this cycle; `claim(accountId)` reserves one
+ *  credit at materialization (idempotent per runId+account, CAS-bounded) and returns false when the
+ *  allowance is exhausted, in which case the account is NOT researched-to-persistence. */
+export interface MonitorUsageGate {
+  remaining(): Promise<number | null>;
+  claim(accountId: string): Promise<boolean>;
+}
 
 export type ChangeCategory = "none" | "minor" | "material";
 
@@ -199,6 +209,7 @@ export interface MonitorRunInput {
   reviewIdFor: (accountId: string) => string;   // stable per-cycle review id (idempotent)
   now?: () => Date;
   budget?: MonitorBudget;
+  usageGate?: MonitorUsageGate;   // optional recurring-usage enforcement (default: unmetered)
 }
 
 /**
@@ -216,17 +227,37 @@ export async function runMonitor(input: MonitorRunInput): Promise<MonitorRun> {
   const outcomes: AccountReviewOutcome[] = [];
   const toPersist: ReturnType<typeof toRow>[] = [];
 
+  // Recurring-usage PRODUCTION cap (matrix §9): never materialize more accounts than the owner's
+  // remaining Account Intelligence Credits. null = unmetered → no cap. A failed check falls back to
+  // uncapped and never breaks the cycle.
+  let usageCap = Infinity;
+  if (input.usageGate) {
+    try { const r = await input.usageGate.remaining(); if (r != null) usageCap = Math.max(0, r); } catch { /* uncapped on error */ }
+  }
+  let researched = 0;
+
   for (const sel of queue.selected) {
     const state = sel.state;
     const prior = input.priorById[state.accountId];
     if (!prior) { outcomes.push({ accountId: state.accountId, status: "failed", reasons: ["no_prior_accepted_review"], nextReviewAt: null, providerFailures: 0, durationMs: 0 }); continue; }
+    // Do not research beyond the remaining allowance (no wasted material research when exhausted).
+    if (researched >= usageCap) { outcomes.push({ accountId: state.accountId, status: "deferred_due_to_usage", reasons: ["usage_allowance_reached"], nextReviewAt: null, providerFailures: 0, durationMs: 0 }); continue; }
     const meta: ReviewMeta = { reviewId: input.reviewIdFor(state.accountId), reviewedAt: startedAt, contextVersion: state.contextVersion };
     const outcome = await reviewAccount(state, prior, input.reobserve, meta, now, budget);
-    outcomes.push(outcome);
-    // Persist ONLY accepted reviews. Insufficient/failed never become memory.
-    if ((outcome.status === "completed_changed" || outcome.status === "completed_no_change") && outcome.snapshot) {
-      toPersist.push(toRow(outcome.snapshot, input.scope));
+    researched++;
+    const accepted = (outcome.status === "completed_changed" || outcome.status === "completed_no_change") && Boolean(outcome.snapshot);
+    // COMMIT one credit at materialization (matrix §6): idempotent per runId+account, CAS-bounded.
+    // If the allowance was exhausted by a concurrent review, do NOT persist — at most one crosses.
+    if (accepted && input.usageGate) {
+      const authorized = await input.usageGate.claim(state.accountId).catch(() => true);
+      if (!authorized) {
+        outcomes.push({ accountId: state.accountId, status: "deferred_due_to_usage", reasons: ["usage_exhausted"], nextReviewAt: null, providerFailures: outcome.providerFailures, durationMs: outcome.durationMs });
+        continue;
+      }
     }
+    outcomes.push(outcome);
+    // Persist ONLY accepted reviews. Insufficient/failed never become memory (0 charge).
+    if (accepted) toPersist.push(toRow(outcome.snapshot!, input.scope));
   }
   for (const def of queue.deferred) {
     outcomes.push({ accountId: def.state.accountId, status: "deferred_due_to_budget", reasons: def.reasons, nextReviewAt: null, providerFailures: 0, durationMs: 0 });
@@ -242,8 +273,8 @@ export async function runMonitor(input: MonitorRunInput): Promise<MonitorRun> {
   const observability: MonitorRunObservability = {
     accountsDue: queue.eligibleCount,
     accountsSelected: queue.selected.length,
-    accountsDeferred: queue.deferred.length,
-    attempted: queue.selected.length,
+    accountsDeferred: queue.deferred.length + outcomes.filter((o) => o.status === "deferred_due_to_usage").length,
+    attempted: input.usageGate ? researched : queue.selected.length,
     completedNoChange: outcomes.filter((o) => o.status === "completed_no_change").length,
     completedChanged: outcomes.filter((o) => o.status === "completed_changed").length,
     insufficient: outcomes.filter((o) => o.status === "insufficient_review").length,

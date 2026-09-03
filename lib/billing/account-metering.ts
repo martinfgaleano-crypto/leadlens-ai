@@ -79,6 +79,26 @@ export async function remainingAllowanceForRun(db: any, e: EffectiveEntitlement,
   return remaining + await ownPriorCharges(db, e.userId, analysisKey);
 }
 
+/** Usage gate for the RECURRING monitor path (matrix §5/§6/§9). Same commercial unit and ledger
+ *  as the primary run path; here consumption is enforced per materialized account of a scheduled/
+ *  manual Monitor review, keyed on the monitor runId (the logical review) so a duplicate wake or a
+ *  recovery re-run is idempotent (exactly one eventual charge). `remaining()` caps how many accounts
+ *  the review may materialize (own prior charges for this runId added back so a retry is not starved;
+ *  null = unmetered → no cap). `claim(accountId)` reserves+commits one credit at materialization,
+ *  CAS-bounded so concurrent reviews with one slot let at most one cross; returns true when
+ *  authorized to persist (charged or idempotently already-charged), false when exhausted. */
+export function monitorUsageGate(db: any, e: EffectiveEntitlement, runId: string, now: number = Date.now()) {
+  return {
+    remaining: () => remainingAllowanceForRun(db, e, now, runId),
+    claim: async (accountId: string): Promise<boolean> => {
+      const period = await meteredPeriod(db, e, now);
+      if (!period) return true; // unmetered (one_time/internal) → authorized, no ledger charge
+      const r = await claimAccountIntelligenceCredit(db, { userId: e.userId, periodStart: period.period_start, accountKey: accountId, analysisKey: runId, runId });
+      return r.charged || r.alreadyCharged === true;
+    },
+  };
+}
+
 export interface MeteringResult { metered: boolean; charged: string[]; already: string[]; exhausted: string[] }
 
 /** Charge one credit per materialized account (analysis_key = runId), idempotent + allowance-bounded.

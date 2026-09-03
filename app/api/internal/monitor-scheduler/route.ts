@@ -33,8 +33,14 @@ export async function POST(req: NextRequest) {
 
   const tenants = await loadDueMonitoredWork(db);
   const wakeId = new Date().toISOString().slice(0, 13).replace(/[:T]/g, ""); // stable within the hour → idempotent
+  // Recurring reviews meter Account Intelligence Credits under the frozen commercial contract:
+  // resolve each tenant's entitlement so the scheduled cycle enforces per-account usage.
+  const { resolveEntitlements } = await import("@/lib/entitlements/entitlements-v1");
   const summary = await runScheduledMonitor({
     wakeId, tenants, reobserve: defaultReobserver, memoryRepo: new SupabaseAccountMemoryRepo(db), origin: "scheduled",
+    resolveUsageMeter: async (scope) => scope.ownerUserId
+      ? { db, entitlement: await resolveEntitlements(db, scope.ownerUserId) }
+      : undefined,
   });
   // Persist per-tenant run summaries (best-effort observability).
   for (const run of summary.runs) { try { await persistMonitorRun(db, run); } catch { /* best-effort */ } }
