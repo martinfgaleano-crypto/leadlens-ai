@@ -2,103 +2,126 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Terms of Service — LeadLens AI",
-  description: "Terms and conditions for using LeadLens AI.",
+  title: "Terms of Service — LeadLens",
+  description: "Terms and conditions for using LeadLens.",
 };
 
 export default function TermsPage() {
   return (
     <div style={{ fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif", color: "#0f172a", background: "#fff", lineHeight: 1.6 }}>
       <div style={{ maxWidth: "48rem", margin: "0 auto", padding: "4rem 1.5rem" }}>
-        <Link href="/demo-pipeline" style={{ color: "#0ea5e9", textDecoration: "none", fontSize: ".875rem", fontWeight: 600 }}>
-          ← Back to LeadLens AI
+        <Link href="/" style={{ color: "#0ea5e9", textDecoration: "none", fontSize: ".875rem", fontWeight: 600 }}>
+          ← Back to LeadLens
         </Link>
 
         <h1 style={{ fontSize: "2rem", fontWeight: 800, letterSpacing: "-.02em", marginTop: "2rem", marginBottom: ".5rem" }}>
           Terms of Service
         </h1>
         <p style={{ color: "#64748b", fontSize: ".875rem", marginBottom: "2.5rem" }}>
-          Last updated: June 2026
+          Last updated: September 2026
         </p>
 
-        <Section title="1. Service description">
+        <Section title="1. The service">
           <p>
-            LeadLens AI provides B2B lead research and outreach copywriting as a service. Upon
-            payment, we research qualified leads matching your ideal customer profile and deliver a
-            report containing lead data, qualification scores, and personalized outreach copy via
-            CSV and Markdown files.
+            LeadLens provides <strong>Account Opportunity Intelligence</strong> through web software and related digital
+            outputs. Depending on your access, outputs may include researched organizations, Opportunity Cases,
+            referenced Evidence, Fit and Timing assessments, Decisions, portfolio analysis and comparison, Monitor /
+            recurring review, and Account Memory / What Changed. LeadLens helps you decide which accounts deserve
+            attention; it does not send outreach and does not deliver contact lists or email databases.
           </p>
         </Section>
 
-        <Section title="2. Acceptance of terms">
+        <Section title="2. Acceptance">
           <p>
-            By purchasing or using LeadLens AI, you agree to these Terms of Service. If you do not
-            agree, do not use the service.
+            By creating an account, purchasing, or using LeadLens, you agree to these Terms and to our{" "}
+            <Link href="/privacy" style={{ color: "#0ea5e9" }}>Privacy Policy</Link>. If you do not agree, do not use
+            the service.
           </p>
         </Section>
 
-        <Section title="3. What you receive">
+        <Section title="3. Accounts">
+          <p>
+            You must provide accurate information, keep your credentials secure, and are responsible for activity under
+            your account. Access is for your organization&rsquo;s internal commercial and business-development use.
+          </p>
+        </Section>
+
+        <Section title="4. Permitted and prohibited use">
+          <p>Use LeadLens for legitimate internal commercial decision support. You will not:</p>
           <ul>
-            <li>A batch of qualified B2B leads matching the ICP (Ideal Customer Profile) you described.</li>
-            <li>Personalized email drafts, LinkedIn DMs, and follow-up sequences per lead.</li>
-            <li>CSV + Markdown export of all lead data and outreach copy.</li>
-            <li>Delivery within 24–48 hours of order confirmation during our beta period.</li>
+            <li>use the service for unlawful activity, or to violate privacy, anti-spam, or other applicable laws;</li>
+            <li>attack, disrupt, or attempt unauthorized access to the service or its systems;</li>
+            <li>resell or redistribute access or outputs without our permission;</li>
+            <li>present LeadLens outputs as guaranteed facts where validation is required.</li>
           </ul>
         </Section>
 
-        <Section title="4. What you agree to">
-          <ul>
-            <li>You are responsible for reviewing all outreach copy before sending it.</li>
-            <li>You will not use LeadLens outputs to send unsolicited bulk email (spam).</li>
-            <li>You will comply with applicable anti-spam laws (CAN-SPAM, GDPR, CASL, etc.) in your jurisdiction.</li>
-            <li>LeadLens AI does not send emails or messages on your behalf — you control all outreach.</li>
-            <li>You will not resell or redistribute the lead data or outreach copy without permission.</li>
-          </ul>
-        </Section>
-
-        <Section title="5. No outcome guarantees">
+        <Section title="5. No outcome guarantee">
           <p>
-            LeadLens AI provides research and copywriting assistance. We do not guarantee specific
-            sales results, reply rates, meetings booked, or revenue generated. Results depend on
-            your product, market, and outreach execution.
+            LeadLens supports commercial judgment; it does not guarantee buyer intent, responses, meetings,
+            transactions, customers, revenue, procurement, or any commercial outcome. A &ldquo;Prioritize&rdquo; decision
+            is not a guarantee of a sale, and a &ldquo;Hold&rdquo; is a valid, useful result.
           </p>
         </Section>
 
-        <Section title="6. Payment and billing">
+        <Section title="6. Information limitations and your responsibility">
           <p>
-            Payments are processed by Lemon Squeezy. All prices are in USD. Beta batch purchases
-            are one-time payments — there are no recurring charges unless you purchase additional
-            batches. See our{" "}
-            <Link href="/refund" style={{ color: "#0ea5e9" }}>Refund Policy</Link>{" "}
-            for information on refunds.
+            LeadLens relies substantially on public/business information and automated research and reasoning.
+            Information may be incomplete, delayed, unavailable, contradictory, or updated later, and may require your
+            validation. You remain responsible for your commercial decisions, for validating outputs before acting, and
+            for conducting any outreach lawfully and in compliance with applicable laws.
           </p>
         </Section>
 
-        <Section title="7. Limitation of liability">
+        <Section title="7. No professional advice">
           <p>
-            LeadLens AI is provided &ldquo;as is&rdquo; during our beta period. To the maximum extent
-            permitted by law, our liability is limited to the amount you paid for the service. We
-            are not liable for indirect, incidental, or consequential damages.
+            LeadLens does not provide legal, financial, investment, tax, or other regulated professional advice. Its
+            outputs are commercial decision-support information only.
           </p>
         </Section>
 
-        <Section title="8. Intellectual property">
+        <Section title="8. Your content and our intellectual property">
           <p>
-            The outreach copy and reports we generate are yours to use. We retain the right to
-            improve our models and service using anonymized, aggregated usage patterns.
+            You retain ownership of the commercial context and information you provide. You grant LeadLens a limited
+            license to process that information to interpret your context, run Intelligence, store relevant state and
+            history, operate the service, and provide support. We do not claim ownership of your content. LeadLens
+            retains all rights in its software, product, methods, interfaces, and trademarks; you receive a limited right
+            to use the service and its outputs according to your access. We may improve the service using anonymized,
+            aggregated usage patterns.
           </p>
         </Section>
 
-        <Section title="9. Changes to these terms">
+        <Section title="9. Availability and changes">
           <p>
-            We may update these Terms of Service as our service evolves. We will update the date
-            at the top of this page. Continued use constitutes acceptance of updated terms.
+            The service is provided on an evolving basis and may include maintenance, product changes, beta/evaluation
+            features, and third-party provider interruptions. We do not promise uninterrupted service. We may suspend or
+            terminate access for misuse, security risk, legal violation, or non-payment where payment applies.
           </p>
         </Section>
 
-        <Section title="10. Contact">
+        <Section title="10. Payment">
           <p>
-            Questions about these terms? Email{" "}
+            Where paid products are available, prices are in USD and are shown at the point of purchase. LeadLens
+            currently offers one-time digital Intelligence products; paid products or subscription plans are described as
+            &ldquo;available&rdquo; only where and when they are actually offered. See our{" "}
+            <Link href="/refund" style={{ color: "#0ea5e9" }}>Refund Policy</Link>. Invited evaluation or pilot access may
+            be provided temporarily and does not create a permanent free entitlement; functionality and access terms may
+            change, and future paid plans may differ.
+          </p>
+        </Section>
+
+        <Section title="11. Limitation of liability">
+          <p>
+            LeadLens is provided &ldquo;as is.&rdquo; To the maximum extent permitted by law, our total liability is
+            limited to the amount you paid for the service in the preceding period, and we are not liable for indirect,
+            incidental, or consequential damages.
+          </p>
+        </Section>
+
+        <Section title="12. Changes and contact">
+          <p>
+            We may update these Terms as the service evolves; we will post the updated date above, and continued use
+            constitutes acceptance. Questions? Email{" "}
             <a href="mailto:operations@leadlensintel.com" style={{ color: "#0ea5e9" }}>operations@leadlensintel.com</a>.
           </p>
         </Section>
@@ -106,6 +129,10 @@ export default function TermsPage() {
         <div style={{ borderTop: "1px solid #f1f5f9", paddingTop: "2rem", marginTop: "2rem", fontSize: ".82rem", color: "#94a3b8" }}>
           Questions? Email{" "}
           <a href="mailto:operations@leadlensintel.com" style={{ color: "#0ea5e9" }}>operations@leadlensintel.com</a>
+          {" · "}
+          <Link href="/privacy" style={{ color: "#94a3b8" }}>Privacy</Link>
+          {" · "}
+          <Link href="/refund" style={{ color: "#94a3b8" }}>Refund Policy</Link>
         </div>
       </div>
     </div>

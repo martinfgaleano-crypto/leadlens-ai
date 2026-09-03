@@ -252,8 +252,8 @@ Lightweight spreadsheet / Notion (NOT a CRM). One row per prospect:
 Flag for review before the gate opens (do **not** draft policy here):
 - **Terms & Privacy** — confirm current customer-facing surfaces are acceptable for paid/beta use (LeadLens analyzes public company signals, not personal data — the footer already states this; confirm sufficiency).
 - **Product-data consent** — confirm the beta/eval terms cover using a customer's commercial context to run Intelligence.
-- **Feedback / testimonial permission** — get explicit opt-in before quoting or naming a customer.
-- **Call-recording permission** — required before recording any interview.
+- **Feedback / testimonial permission** — beta/product use does **not** grant testimonial rights; get explicit affirmative opt-in (operational written permission is enough for V1) before quoting, naming, or using a customer's name/logo/screenshot/case study.
+- **Call recording — canonical V1 rule: DO NOT record customer calls by default.** Use written notes. Only record if you obtain **explicit affirmative consent before recording begins**; if there is any jurisdictional uncertainty, do not record.
 Separate legal requirements from marketing claims; route legal questions to authority, not to GTM.
 
 ## DOMAIN DEPENDENCIES

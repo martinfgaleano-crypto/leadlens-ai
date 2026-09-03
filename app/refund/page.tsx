@@ -2,54 +2,55 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Refund Policy — LeadLens AI",
-  description: "LeadLens AI refund and satisfaction policy for beta batch purchases.",
+  title: "Refund Policy — LeadLens",
+  description: "LeadLens refund and satisfaction policy for one-time Intelligence products.",
 };
 
 export default function RefundPage() {
   return (
     <div style={{ fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif", color: "#0f172a", background: "#fff", lineHeight: 1.6 }}>
       <div style={{ maxWidth: "48rem", margin: "0 auto", padding: "4rem 1.5rem" }}>
-        <Link href="/demo-pipeline" style={{ color: "#0ea5e9", textDecoration: "none", fontSize: ".875rem", fontWeight: 600 }}>
-          ← Back to LeadLens AI
+        <Link href="/" style={{ color: "#0ea5e9", textDecoration: "none", fontSize: ".875rem", fontWeight: 600 }}>
+          ← Back to LeadLens
         </Link>
 
         <h1 style={{ fontSize: "2rem", fontWeight: 800, letterSpacing: "-.02em", marginTop: "2rem", marginBottom: ".5rem" }}>
           Refund Policy
         </h1>
         <p style={{ color: "#64748b", fontSize: ".875rem", marginBottom: "2.5rem" }}>
-          Last updated: June 2026
+          Last updated: September 2026
         </p>
 
         <div style={{ background: "#f0f9ff", border: "1px solid #bae6fd", borderRadius: ".875rem", padding: "1.25rem 1.5rem", marginBottom: "2.5rem" }}>
           <p style={{ margin: 0, color: "#0284c7", fontSize: ".9375rem" }}>
-            <strong>Summary:</strong> We want you to be satisfied with your LeadLens report. If
-            your report was not delivered or did not match your ICP (Ideal Customer Profile) description, contact us within
-            7 days and we will make it right — reprocess your batch or issue a refund.
+            <strong>Summary:</strong> We want you to be satisfied with your LeadLens Intelligence. If your result was not
+            delivered, or materially did not match the commercial context you described and confirmed, contact us within
+            7 days and we will make it right — reprocess your run or issue a refund.
           </p>
         </div>
 
         <Section title="1. Our commitment">
           <p>
-            LeadLens AI is in beta. We stand behind the quality of our research and outreach copy.
-            If the report we deliver does not match the ICP and requirements you described in the
-            form, we will fix it or refund you.
+            LeadLens stands behind the quality of its Account Opportunity Intelligence. This policy applies to one-time
+            digital Intelligence products. If a delivered result materially fails to match the commercial context you
+            described and confirmed, we will reprocess it or refund you.
           </p>
         </Section>
 
         <Section title="2. Eligible refund scenarios">
           <ul>
-            <li><strong>Non-delivery</strong> — Your report was not delivered within 72 hours of payment and we did not communicate a delay.</li>
-            <li><strong>Significant ICP mismatch</strong> — The leads in your report do not match the target customer, industry, or company size you described in your order form.</li>
-            <li><strong>Technical failure</strong> — The report file is corrupted, unreadable, or missing key sections (email copy, qualification scores).</li>
+            <li><strong>Non-delivery</strong> — your result was not delivered within a reasonable time of payment and we did not communicate a delay.</li>
+            <li><strong>Significant mismatch</strong> — the accounts or analysis materially do not match the commercial context, geography, or sector you described and confirmed.</li>
+            <li><strong>Technical failure</strong> — the report is corrupted, unreadable, or missing key sections (Opportunity Cases, Evidence, or Decisions).</li>
           </ul>
         </Section>
 
         <Section title="3. Non-refundable scenarios">
           <ul>
-            <li>You changed your mind after the report was delivered.</li>
-            <li>Leads did not reply to your outreach (we cannot control reply rates).</li>
-            <li>You provided inaccurate or vague ICP information in the form.</li>
+            <li>You changed your mind after the result was delivered.</li>
+            <li>An account did not respond or convert — LeadLens supports account decisions, does not guarantee commercial outcomes, and does not perform outreach.</li>
+            <li>A valid result you didn&rsquo;t prefer — a Hold, Validate, or Monitor decision, or a small, defensible portfolio, is a legitimate output, not a defect.</li>
+            <li>You provided inaccurate or vague commercial context.</li>
             <li>More than 7 days have passed since delivery.</li>
           </ul>
         </Section>
@@ -63,18 +64,17 @@ export default function RefundPage() {
           <ul>
             <li>Your order email address</li>
             <li>The reason for your refund request</li>
-            <li>Any relevant details (e.g., examples of leads that did not match your ICP)</li>
+            <li>Any relevant details (e.g., how the result did not match the context you confirmed)</li>
           </ul>
           <p>
-            We will respond within 2 business days. If your request is valid, we will either
-            reprocess your batch at no charge or issue a full refund to your original payment method.
+            We will respond within 2 business days. If your request is valid, we will either reprocess your run at no
+            charge or issue a full refund to your original payment method.
           </p>
         </Section>
 
         <Section title="5. Processing time">
           <p>
-            Approved refunds are processed within 5–10 business days depending on your payment
-            provider and bank.
+            Approved refunds are processed within 5–10 business days depending on your payment provider and bank.
           </p>
         </Section>
 
