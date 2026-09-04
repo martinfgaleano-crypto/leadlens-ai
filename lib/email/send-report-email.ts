@@ -127,7 +127,7 @@ function buildEmailHtml(opts: {
     </div>
     <div style="background:#f8fafc;padding:16px 32px;border-top:1px solid #f1f5f9;">
       <p style="color:#94a3b8;font-size:12px;margin:0;">
-        LeadLens AI — Human-reviewed outreach. No automated sending.
+        LeadLens — Account Opportunity Intelligence.
         This report was generated on ${new Date(report.created_at).toLocaleDateString()}.
       </p>
     </div>
