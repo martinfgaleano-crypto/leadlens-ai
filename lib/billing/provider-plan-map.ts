@@ -63,6 +63,17 @@ export function oneTimeLegacyPlanToVariant(legacyPlan: string, env: NodeJS.Proce
   return env[`LEMONSQUEEZY_VARIANT_${slug.toUpperCase()}`]?.trim() || null;
 }
 
+/** Lemon variant ID → one-time legacy plan slug (server-owned authority for fulfillment), or null.
+ *  The webhook uses THIS (not client-declared product_code) to decide what a paid order grants. */
+export function variantToOneTimeLegacyPlan(variantId: string | number | undefined | null, env: NodeJS.ProcessEnv = process.env): string | null {
+  const id = variantId == null ? "" : String(variantId).trim();
+  if (!id) return null;
+  for (const slug of ONE_TIME_LEGACY_SLUGS) {
+    if (env[`LEMONSQUEEZY_VARIANT_${slug.toUpperCase()}`]?.trim() === id) return slug;
+  }
+  return null;
+}
+
 /** Which one-time products have a configured variant. Diagnostics only — no values. */
 export function configuredOneTimeCombinations(env: NodeJS.ProcessEnv = process.env): Array<{ legacyPlan: string; configured: boolean }> {
   return ONE_TIME_LEGACY_SLUGS.map((slug) => ({ legacyPlan: slug, configured: Boolean(env[`LEMONSQUEEZY_VARIANT_${slug.toUpperCase()}`]?.trim()) }));

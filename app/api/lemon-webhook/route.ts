@@ -11,6 +11,8 @@ import {
 import { addCredits } from "@/lib/credits/add-credits";
 import { createNotification } from "@/lib/notifications/create-notification";
 import { isSubscriptionEvent, handleSubscriptionEvent } from "@/lib/billing/subscription-webhook";
+import { planOneTimeFulfillment, fulfillCanonicalOrder } from "@/lib/billing/one-time-fulfillment";
+import { variantToOneTimeLegacyPlan } from "@/lib/billing/provider-plan-map";
 
 // Credits granted per plan on confirmed payment.
 const PLAN_CREDITS: Record<PlanType, number> = {
@@ -141,6 +143,83 @@ export async function POST(req: NextRequest) {
       received: true,
       warning: "Supabase not configured — order not persisted. Configure SUPABASE env vars.",
     });
+  }
+
+  // ── Canonical CURRENT-PRODUCT one-time fulfillment (frozen 2026-09-04) ──────
+  // A NEW canonical order (created by our own Lemon checkout) carries the trusted
+  // meta.custom_data.user_id. It grants current-product credits (2/6/12/18) to that tenant and
+  // returns — it NEVER reaches the legacy path below (no lead_searches, no runLeadLensPipeline,
+  // no PLAN_CREDITS, no email-only attribution, no Stripe). Legacy/historical orders (no trusted
+  // user_id) fall through to the unchanged path.
+  const customData = (meta.custom_data ?? {}) as Record<string, unknown>;
+  if (typeof customData.user_id === "string" && customData.user_id.trim()) {
+    const firstItemC = (attrs.first_order_item ?? {}) as Record<string, unknown>;
+    const variantIdC = firstItemC.variant_id as string | number | undefined;
+    const plan = planOneTimeFulfillment({ custom: customData, variantId: variantIdC });
+
+    const { createServerClient } = await import("@/lib/supabase/server");
+    const client = createServerClient();
+    if (!client) return NextResponse.json({ received: true, warning: "Persistence unavailable" });
+
+    const legacySlugC = variantToOneTimeLegacyPlan(variantIdC) ?? "sample";
+    const currencyC = String(attrs.currency ?? "USD").toUpperCase();
+    const totalCentsC = Number(attrs.total ?? attrs.subtotal_usd ?? 0);
+    const emailC = String(attrs.user_email ?? attrs.customer_email ?? "");
+
+    const outcome = await fulfillCanonicalOrder(
+      {
+        getOrderByExternalId: (id) => getOrderByExternalId(id) as Promise<{ id: string } | null>,
+        createOrder: (rec) => createOrder({
+          external_order_id: rec.external_order_id,
+          payment_provider: "lemon_squeezy",
+          provider_event_id: rec.provider_event_id,
+          customer_email: rec.customer_email,   // billing/contact metadata only
+          customer_name: null,
+          plan: rec.plan as PlanType,           // order record only; grant unit is credits below
+          amount_cents: rec.amount_cents,
+          currency: rec.currency,
+          checkout_id: null,
+          raw_payload: rec.raw_payload as Record<string, unknown> | null,
+          intake_status: "pending",
+          delivery_status: "pending",
+        }) as Promise<{ id: string } | null>,
+        addCredits: (userId, amount, description) => addCredits(client, userId, amount, description, "grant"),
+      },
+      {
+        plan,
+        lsOrderId,
+        record: {
+          external_order_id: lsOrderId || null,
+          provider_event_id: eventId,
+          plan: legacySlugC,
+          amount_cents: totalCentsC > 0 ? totalCentsC : 0,
+          currency: currencyC,
+          customer_email: emailC,
+          raw_payload: payload,
+        },
+      },
+    );
+
+    if (outcome.status === "rejected") {
+      // Client-side condition (unmapped variant / mismatch / missing tenant): 200 to stop retries,
+      // logged for diagnostics. No credits granted, no legacy fallback.
+      console.warn(`[lemon-webhook] canonical one-time rejected: ${outcome.reason} (ls_order_id=${lsOrderId})`);
+      return NextResponse.json({ received: true, one_time: { status: "rejected", reason: outcome.reason } }, { status: 200 });
+    }
+    if (outcome.status === "persist_failed") {
+      return NextResponse.json({ error: "Failed to persist order" }, { status: 500 });
+    }
+    if (outcome.status === "granted") {
+      await createNotification(client, {
+        userId: outcome.userId!,
+        type: "credits_added",
+        title: "Your LeadLens credits are ready",
+        message: `Payment confirmed — ${outcome.credits} account intelligence credit${outcome.credits === 1 ? "" : "s"} added to your workspace.`,
+        metadata: { credits: outcome.credits, product_code: outcome.productCode, ls_order_id: lsOrderId },
+      }).catch(() => {});
+    }
+    console.log(`[lemon-webhook] canonical one-time ${outcome.status}: user=${outcome.userId} product=${outcome.productCode} credits=${outcome.credits ?? 0}`);
+    return NextResponse.json({ received: true, one_time: { status: outcome.status, credits: outcome.credits ?? 0, product_code: outcome.productCode } });
   }
 
   // ── Deduplication: skip if order already exists ────────────────────────────
