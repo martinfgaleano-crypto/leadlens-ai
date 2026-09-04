@@ -10,13 +10,13 @@ const t = (n: string, ok: boolean) => { (ok ? passed++ : failed++); if (!ok) con
 
 // ── Frozen matrix values (must match docs/PRICING_OPERATIONAL_ENTITLEMENT_MATRIX_V1.md) ──
 t("WATCH: 3 credits / 3 monitors / 30d / $7·$69", SUBSCRIPTION_PLANS.watch.credits_per_period === 3 && SUBSCRIPTION_PLANS.watch.max_active_monitors === 3 && SUBSCRIPTION_PLANS.watch.cadence_min_days === 30 && SUBSCRIPTION_PLANS.watch.price_usd.month === 7 && SUBSCRIPTION_PLANS.watch.price_usd.year === 69);
-t("MONITOR: 30 credits / 15 monitors / 14d / $49·$490", SUBSCRIPTION_PLANS.monitor.credits_per_period === 30 && SUBSCRIPTION_PLANS.monitor.max_active_monitors === 15 && SUBSCRIPTION_PLANS.monitor.cadence_min_days === 14 && SUBSCRIPTION_PLANS.monitor.price_usd.month === 49 && SUBSCRIPTION_PLANS.monitor.price_usd.year === 490);
-t("INTELLIGENCE: 100 credits / 50 monitors / 7d / $149·$1490", SUBSCRIPTION_PLANS.intelligence.credits_per_period === 100 && SUBSCRIPTION_PLANS.intelligence.max_active_monitors === 50 && SUBSCRIPTION_PLANS.intelligence.cadence_min_days === 7 && SUBSCRIPTION_PLANS.intelligence.price_usd.month === 149 && SUBSCRIPTION_PLANS.intelligence.price_usd.year === 1490);
+t("MONITOR: 30 credits / 20 monitors / 14d / $49·$490", SUBSCRIPTION_PLANS.monitor.credits_per_period === 30 && SUBSCRIPTION_PLANS.monitor.max_active_monitors === 20 && SUBSCRIPTION_PLANS.monitor.cadence_min_days === 14 && SUBSCRIPTION_PLANS.monitor.price_usd.month === 49 && SUBSCRIPTION_PLANS.monitor.price_usd.year === 490);
+t("INTELLIGENCE: 100 credits / 60 monitors / 7d / $149·$1490", SUBSCRIPTION_PLANS.intelligence.credits_per_period === 100 && SUBSCRIPTION_PLANS.intelligence.max_active_monitors === 60 && SUBSCRIPTION_PLANS.intelligence.cadence_min_days === 7 && SUBSCRIPTION_PLANS.intelligence.price_usd.month === 149 && SUBSCRIPTION_PLANS.intelligence.price_usd.year === 1490);
 t("BETA: 10 credits / 5 monitors / 14d", BETA_CONFIG.credits_per_period === 10 && BETA_CONFIG.max_active_monitors === 5 && BETA_CONFIG.cadence_min_days === 14);
 
 t("isSubscriptionPlanCode true for canonical", isSubscriptionPlanCode("watch") && isSubscriptionPlanCode("monitor") && isSubscriptionPlanCode("intelligence"));
 t("isSubscriptionPlanCode false for junk/legacy", !isSubscriptionPlanCode("starter") && !isSubscriptionPlanCode("premium_launch_v0") && !isSubscriptionPlanCode(null));
-t("subscriptionPlanConfig maps / rejects", subscriptionPlanConfig("intelligence")?.max_active_monitors === 50 && subscriptionPlanConfig("nope") === null);
+t("subscriptionPlanConfig maps / rejects", subscriptionPlanConfig("intelligence")?.max_active_monitors === 60 && subscriptionPlanConfig("nope") === null);
 
 // ── Provider variant mapping (env is config, not pricing) ──
 const env = {
