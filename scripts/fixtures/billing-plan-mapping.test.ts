@@ -2,8 +2,8 @@
 // Deterministic; no network. Env is injected explicitly (never reads real secrets).
 
 import { SUBSCRIPTION_PLANS, BETA_CONFIG, subscriptionPlanConfig, isSubscriptionPlanCode } from "../../lib/entitlements/plan-config";
-import { variantToCanonicalPlan, canonicalPlanToVariant, configuredCombinations } from "../../lib/billing/provider-plan-map";
-import { createSubscriptionCheckout } from "../../lib/billing/lemon-checkout";
+import { variantToCanonicalPlan, canonicalPlanToVariant, configuredCombinations, oneTimeLegacyPlanToVariant, configuredOneTimeCombinations } from "../../lib/billing/provider-plan-map";
+import { createSubscriptionCheckout, createOneTimeCheckout } from "../../lib/billing/lemon-checkout";
 
 let passed = 0, failed = 0;
 const t = (n: string, ok: boolean) => { (ok ? passed++ : failed++); if (!ok) console.error(`FAIL: ${n}`); };
@@ -41,12 +41,33 @@ t("plan→variant: invalid plan/interval → null", canonicalPlanToVariant("star
 const combos = configuredCombinations(env);
 t("configuredCombinations: 6 combos, 4 configured", combos.length === 6 && combos.filter((c) => c.configured).length === 4);
 
-// Checkout config boundary (no network): fails safe + diagnostic when provider/variant absent.
+// ── One-time product → Lemon variant (frozen §9 — one-time uses Lemon, same variant env as webhook) ──
+const oneTimeEnv = {
+  LEMONSQUEEZY_VARIANT_SAMPLE: "10",
+  LEMONSQUEEZY_VARIANT_STARTER: "20",
+  LEMONSQUEEZY_VARIANT_STANDARD: "30",
+  // pro deliberately unconfigured to prove fail-safe
+} as any;
+t("one-time variant: sample/starter/standard mapped", oneTimeLegacyPlanToVariant("sample", oneTimeEnv) === "10" && oneTimeLegacyPlanToVariant("starter", oneTimeEnv) === "20" && oneTimeLegacyPlanToVariant("standard", oneTimeEnv) === "30");
+t("one-time variant: unconfigured pro → null (fail safe)", oneTimeLegacyPlanToVariant("pro", oneTimeEnv) === null);
+t("one-time variant: junk slug → null", oneTimeLegacyPlanToVariant("watch", oneTimeEnv) === null && oneTimeLegacyPlanToVariant("", oneTimeEnv) === null);
+const otCombos = configuredOneTimeCombinations(oneTimeEnv);
+t("configuredOneTimeCombinations: 4 products, 3 configured", otCombos.length === 4 && otCombos.filter((c) => c.configured).length === 3);
+
+// Checkout config boundary (no network): fails safe + diagnostic when provider/variant/product absent.
 async function checkoutBoundary() {
   const noProvider = await createSubscriptionCheckout({ userId: "u", email: "a@b.c", planCode: "watch", interval: "month" }, {} as any);
   t("checkout: no provider config → configured:false provider_not_configured", noProvider.configured === false && noProvider.reason === "provider_not_configured");
   const noVariant = await createSubscriptionCheckout({ userId: "u", email: "a@b.c", planCode: "monitor", interval: "year" }, { LEMONSQUEEZY_API_KEY: "k", LEMONSQUEEZY_STORE_ID: "1", ...env } as any);
   t("checkout: provider set but variant missing → variant_not_configured", noVariant.configured === false && noVariant.reason === "variant_not_configured");
+
+  // One-time checkout boundary
+  const otBadProduct = await createOneTimeCheckout({ userId: "u", email: "a@b.c", productCode: "watch" }, { LEMONSQUEEZY_API_KEY: "k", LEMONSQUEEZY_STORE_ID: "1", ...oneTimeEnv } as any);
+  t("one-time checkout: non-one-time/invalid product → invalid_product", otBadProduct.configured === false && otBadProduct.reason === "invalid_product");
+  const otNoProvider = await createOneTimeCheckout({ userId: "u", email: "a@b.c", productCode: "preview_launch_v0" }, {} as any);
+  t("one-time checkout: valid product, no provider → provider_not_configured", otNoProvider.configured === false && otNoProvider.reason === "provider_not_configured");
+  const otNoVariant = await createOneTimeCheckout({ userId: "u", email: "a@b.c", productCode: "premium_launch_v0" }, { LEMONSQUEEZY_API_KEY: "k", LEMONSQUEEZY_STORE_ID: "1", ...oneTimeEnv } as any);
+  t("one-time checkout: provider set but variant missing (pro) → variant_not_configured", otNoVariant.configured === false && otNoVariant.reason === "variant_not_configured");
 }
 
 checkoutBoundary().then(() => {

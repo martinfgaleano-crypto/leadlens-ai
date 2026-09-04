@@ -49,6 +49,25 @@ export function canonicalPlanToVariant(planCode: string, billingInterval: string
   return env[key]?.trim() || null;
 }
 
+// ─── One-time product ⇄ Lemon variant ─────────────────────────────────────────
+// One-time products are keyed by the catalog's legacy plan slug (sample|starter|standard|pro)
+// so a SINGLE set of variant IDs — LEMONSQUEEZY_VARIANT_{SAMPLE|STARTER|STANDARD|PRO}, the same
+// env the order webhook (app/api/lemon-webhook) already reads for fulfillment — drives BOTH
+// checkout creation and fulfillment. No new env surface, no duplicate mapping.
+const ONE_TIME_LEGACY_SLUGS = ["sample", "starter", "standard", "pro"] as const;
+
+/** One-time product (legacy plan slug) → configured Lemon variant ID, or null when unconfigured. */
+export function oneTimeLegacyPlanToVariant(legacyPlan: string, env: NodeJS.ProcessEnv = process.env): string | null {
+  const slug = String(legacyPlan ?? "").trim().toLowerCase();
+  if (!(ONE_TIME_LEGACY_SLUGS as readonly string[]).includes(slug)) return null;
+  return env[`LEMONSQUEEZY_VARIANT_${slug.toUpperCase()}`]?.trim() || null;
+}
+
+/** Which one-time products have a configured variant. Diagnostics only — no values. */
+export function configuredOneTimeCombinations(env: NodeJS.ProcessEnv = process.env): Array<{ legacyPlan: string; configured: boolean }> {
+  return ONE_TIME_LEGACY_SLUGS.map((slug) => ({ legacyPlan: slug, configured: Boolean(env[`LEMONSQUEEZY_VARIANT_${slug.toUpperCase()}`]?.trim()) }));
+}
+
 /** Which canonical (plan, interval) combinations have a configured variant. Diagnostics only — no values. */
 export function configuredCombinations(env: NodeJS.ProcessEnv = process.env): Array<{ plan: SubscriptionPlanCode; interval: BillingInterval; configured: boolean }> {
   return ENV_KEYS.map(({ plan, interval, env: key }) => ({ plan, interval, configured: Boolean(env[key]?.trim()) }));
