@@ -1523,10 +1523,10 @@ export default function DemoPipelinePage() {
     trackConversion("onboarding_start", { plan: p, source_cta: source });
     // Canonical commercial routing (frozen CTA contract): the legacy in-page demo form/processing/
     // results is production-dead (DEMO_MODE off → /api/demo 404) and must NOT be the purchase path.
-    // Route to the authenticated flow — /signup carries the product intent and, once the account is
-    // activated, leads to the tenant-bound Lemon checkout (/api/billing/checkout-one-time). No orphan
-    // or email-only purchase. DEMO_MODE stays off; the demo pipeline is not resurrected.
-    window.location.href = `/signup?product_code=${encodeURIComponent(PLANS[p].productCode)}`;
+    // Every purchase CTA enters the premium commercial journey at /get-started (choose one-time vs
+    // ongoing → /pricing → auth → checkout). Authenticated, tenant-bound checkout only; no orphan or
+    // email-only purchase; DEMO_MODE stays off; the demo pipeline is not resurrected.
+    window.location.href = "/get-started";
   }
 
   function goToDemo() {

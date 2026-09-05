@@ -18,14 +18,14 @@ export interface CheckoutResult { configured: boolean; url?: string; reason?: st
 /** Shared provider-hosted checkout POST. Callers verify provider config + variant first, so this
  *  only issues the request. `custom` is echoed back on every webhook so ownership is provenance-bound
  *  end to end (never derived from payload email). No card data touches LeadLens. */
-async function postLemonCheckout(variant: string, email: string, custom: Record<string, string>, apiKey: string, storeId: string, env: NodeJS.ProcessEnv): Promise<CheckoutResult> {
+async function postLemonCheckout(variant: string, email: string, custom: Record<string, string>, redirectPath: string, apiKey: string, storeId: string, env: NodeJS.ProcessEnv): Promise<CheckoutResult> {
   const appUrl = (env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000").replace(/=+$/, "");
   const requestBody = {
     data: {
       type: "checkouts",
       attributes: {
         checkout_data: { email, custom },
-        checkout_options: { redirect_url: `${appUrl}/billing/success` },
+        checkout_options: { redirect_url: `${appUrl}${redirectPath}` },
       },
       relationships: {
         store: { data: { type: "stores", id: String(storeId) } },
@@ -54,7 +54,8 @@ export async function createSubscriptionCheckout(input: CheckoutInput, env: Node
   if (!apiKey || !storeId) return { configured: false, reason: "provider_not_configured" };
   const variant = canonicalPlanToVariant(input.planCode, input.interval, env);
   if (!variant) return { configured: false, reason: "variant_not_configured" };
-  return postLemonCheckout(variant, input.email, { user_id: input.userId }, apiKey, storeId, env);
+  const redirect = `/success?kind=subscription&plan_code=${encodeURIComponent(input.planCode)}&billing_interval=${encodeURIComponent(input.interval)}`;
+  return postLemonCheckout(variant, input.email, { user_id: input.userId }, redirect, apiKey, storeId, env);
 }
 
 /** Canonical customer ONE-TIME checkout on Lemon (frozen §9 — one-time must use Lemon, not Stripe/mock).
@@ -69,5 +70,6 @@ export async function createOneTimeCheckout(input: OneTimeCheckoutInput, env: No
   if (!apiKey || !storeId) return { configured: false, reason: "provider_not_configured" };
   const variant = oneTimeLegacyPlanToVariant(product.legacy_plan, env);
   if (!variant) return { configured: false, reason: "variant_not_configured" };
-  return postLemonCheckout(variant, input.email, { user_id: input.userId, product_code: product.product_code }, apiKey, storeId, env);
+  const redirect = `/success?kind=one_time&product_code=${encodeURIComponent(product.product_code)}`;
+  return postLemonCheckout(variant, input.email, { user_id: input.userId, product_code: product.product_code }, redirect, apiKey, storeId, env);
 }
