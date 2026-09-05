@@ -41,7 +41,7 @@ t("G. signup is OTP-first (signInWithOtp, no password field)", signup.includes("
 t("G. signup routes to /verify", signup.includes("/verify?email="));
 
 const verify = read("app/verify/page.tsx");
-t("H. verify uses verifyOtp + resend + friendly errors", verify.includes("verifyOtp") && verify.includes("Resend code") && verify.includes("friendlyAuthError"));
+t("H. verify uses verifyOtp + resend + friendly errors", verify.includes("verifyOtp") && verify.includes("Resend email") && verify.includes("friendlyAuthError"));
 t("I. verification resumes selected plan into checkout continuation", verify.includes("/checkout/continue${commercialFlowQuery(flow)}"));
 
 const cont = read("app/checkout/continue/page.tsx");
@@ -52,15 +52,20 @@ t("O. no Stripe / no DEMO in continuation", !cont.toLowerCase().includes("stripe
 const success = read("app/success/page.tsx");
 t("P. success routes coherently (one-time→/activate, subscription→/dashboard)", success.includes('href: "/activate"') && success.includes('href: "/dashboard"'));
 
-// ── Dual-mode auth: magic-link fallback preserves purchase intent (B/C/D) ──
-t("dual-mode: signup promises a secure sign-in link (works without custom SMTP)", signup.includes("secure sign-in link") && !signup.includes("6-digit code"));
-t("dual-mode: verify supports link OR code", verify.includes("sign-in link") && verify.includes("6-digit code"));
-const callback = read("app/auth/callback/route.ts");
-t("D. magic-link callback forwards code + intent to browser exchange", callback.includes("/auth/continue?") && callback.includes("parseCommercialFlowState"));
-t("D. recovery path preserved (not routed through /auth/continue)", callback.includes("/reset-password?"));
+// ── Dual-mode auth: real Supabase magic link (implicit flow) preserves purchase intent (B/C/D) ──
+t("copy: signup promises a secure sign-in link (default template has no numeric code)", signup.includes("secure sign-in link") && !signup.includes("6-digit code"));
+t("copy: verify leads with the sign-in link, code is secondary", verify.includes("Open the sign-in link") && verify.includes("6-digit code"));
+// The real fix: signup/resend land the link on the CLIENT /auth/continue (not the server callback),
+// because the default implicit flow returns the session in the URL fragment (server can't read it).
+t("A. signup emailRedirectTo lands on client /auth/continue (implicit-flow fragment readable)", signup.includes("/auth/continue${commercialFlowQuery(flow)}") && !signup.includes("/auth/callback?type=signup"));
+t("A. resend also lands on /auth/continue", verify.includes("/auth/continue${commercialFlowQuery(flow)}"));
 const authCont = read("app/auth/continue/page.tsx");
-t("D. magic-link exchanges in browser and resumes selected plan into checkout", authCont.includes("exchangeCodeForSession") && authCont.includes("/checkout/continue${commercialFlowQuery(flow)}"));
-t("D. magic-link with no intent → dashboard (no dead-end, no forced checkout)", authCont.includes('window.location.replace(flow ? `/checkout/continue'));
+t("A. continue handles implicit fragment (getSession) AND pkce code (exchangeCodeForSession)", authCont.includes("getSession") && authCont.includes("exchangeCodeForSession"));
+t("C/D. continue resumes exact selection into checkout (else dashboard when no intent)", authCont.includes("/checkout/continue${commercialFlowQuery(f)}") && authCont.includes('replace(f ? `/checkout/continue'));
+t("H. already-authenticated session continues (getSession checked first)", authCont.indexOf("getSession()).data.session") < authCont.indexOf("exchangeCodeForSession"));
+t("E. failed/expired link shows recovery, not a silent dead-end", authCont.includes("couldn’t complete sign-in") && authCont.includes("Send a new sign-in email"));
+const callback = read("app/auth/callback/route.ts");
+t("D. server callback still forwards any ?code + recovery safely (belt-and-suspenders)", callback.includes("/auth/continue?") && callback.includes("/reset-password?"));
 
 // Canonical checkout routes remain auth-bound + server-authoritative.
 const subRoute = read("app/api/billing/subscribe/route.ts");

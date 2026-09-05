@@ -14,6 +14,10 @@ function track(event: string, meta: Record<string, string> = {}) {
   try { void fetch("/api/events", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ event, ...meta }), keepalive: true }); } catch { /* never block */ }
 }
 
+// The current Supabase default template sends a secure sign-in LINK (no numeric code). So the LINK is
+// the primary path here: clicking it lands on /auth/continue, which establishes the session and
+// resumes checkout. The 6-digit entry is kept as a secondary, future-capable path (it works once the
+// email template includes {{ .Token }} with custom SMTP) — never promised as the current delivery.
 export default function VerifyPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -23,13 +27,13 @@ export default function VerifyPage() {
   const [verifying, setVerifying] = useState(false);
   const [resendIn, setResendIn] = useState(RESEND_SECONDS);
   const [resending, setResending] = useState(false);
+  const [showCode, setShowCode] = useState(false);
   const inputs = useRef<Array<HTMLInputElement | null>>([]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     setEmail(params.get("email") ?? "");
     setFlow(parseCommercialFlowState(params));
-    inputs.current[0]?.focus();
   }, []);
 
   useEffect(() => {
@@ -48,37 +52,31 @@ export default function VerifyPage() {
       setError(friendlyAuthError(err?.message ?? "invalid code"));
       setDigits(["", "", "", "", "", ""]);
       inputs.current[0]?.focus();
-      track("verification_failed");
+      track("verification_failed", { method: "code" });
       return;
     }
     await ensureProfile(supabase, data.user.id, data.user.email ?? email);
     await persistCommercialIntent(data.session.access_token, flow);
-    track("verification_completed", flow?.selection.kind ? { kind: flow.selection.kind } : {});
-    const dest = flow ? `/checkout/continue${commercialFlowQuery(flow)}` : "/dashboard";
-    router.replace(dest);
+    track("verification_completed", { method: "code" });
+    router.replace(flow ? `/checkout/continue${commercialFlowQuery(flow)}` : "/dashboard");
   }, [email, flow, router]);
 
   function setDigit(i: number, val: string) {
     const clean = val.replace(/\D/g, "");
-    if (!clean) { const next = [...digits]; next[i] = ""; setDigits(next); return; }
     const next = [...digits];
-    // paste of full code
     if (clean.length > 1) {
       const chars = clean.slice(0, 6).split("");
       for (let k = 0; k < 6; k++) next[k] = chars[k] ?? "";
       setDigits(next);
-      const filled = next.filter(Boolean).length;
-      inputs.current[Math.min(filled, 5)]?.focus();
+      inputs.current[Math.min(next.filter(Boolean).length, 5)]?.focus();
       if (next.every(Boolean)) void submit(next.join(""));
       return;
     }
     next[i] = clean;
-    setDigits(next);
-    setError("");
-    if (i < 5) inputs.current[i + 1]?.focus();
+    setDigits(next); setError("");
+    if (clean && i < 5) inputs.current[i + 1]?.focus();
     if (next.every(Boolean)) void submit(next.join(""));
   }
-
   function onKeyDown(i: number, e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Backspace" && !digits[i] && i > 0) inputs.current[i - 1]?.focus();
     if (e.key === "ArrowLeft" && i > 0) inputs.current[i - 1]?.focus();
@@ -91,7 +89,7 @@ export default function VerifyPage() {
     setResending(true); setError("");
     const origin = window.location.origin;
     const { error: err } = await supabase.auth.signInWithOtp({
-      email, options: { shouldCreateUser: true, emailRedirectTo: `${origin}/auth/callback?type=signup${commercialFlowQuery(flow).replace("?", "&")}` },
+      email, options: { shouldCreateUser: true, emailRedirectTo: `${origin}/auth/continue${commercialFlowQuery(flow)}` },
     });
     setResending(false);
     if (err) { setError(friendlyAuthError(err.message)); return; }
@@ -102,50 +100,57 @@ export default function VerifyPage() {
   return (
     <div style={S.page}>
       <div style={S.card}>
-        <div style={{ textAlign: "center", marginBottom: "1.8rem" }}>
-          <div style={S.logoBox}>✓</div>
+        <div style={{ textAlign: "center", marginBottom: "1.6rem" }}>
+          <div style={S.logoBox}>✉</div>
           <h1 style={S.h1}>Check your inbox</h1>
           <p style={S.sub}>
-            We sent a secure sign-in email to <strong style={{ color: C.ink }}>{email || "your email"}</strong>. Open the sign-in link in that email to continue — or, if it includes a 6-digit code, enter it below.
+            We sent a secure sign-in email to <strong style={{ color: C.ink }}>{email || "your email"}</strong>. Open the sign-in link in that email and we&apos;ll bring you right back to your selection.
           </p>
         </div>
 
-        <div role="group" aria-label="Verification code" style={{ display: "flex", gap: ".55rem", justifyContent: "center", marginBottom: "1.1rem" }}>
-          {digits.map((d, i) => (
-            <input
-              key={i}
-              ref={(el) => { inputs.current[i] = el; }}
-              inputMode="numeric" autoComplete="one-time-code" maxLength={i === 0 ? 6 : 1}
-              aria-label={`Digit ${i + 1}`} value={d}
-              onChange={(e) => setDigit(i, e.target.value)}
-              onKeyDown={(e) => onKeyDown(i, e)}
-              disabled={verifying}
-              className="ll-otp"
-              style={{
-                width: "3rem", height: "3.4rem", textAlign: "center", fontSize: "1.4rem", fontWeight: 700,
-                fontFamily: font, color: C.ink, border: `1px solid ${error ? "#fca5a5" : C.line}`, borderRadius: ".65rem",
-                background: verifying ? C.bg : C.card, outline: "none",
-              }}
-            />
-          ))}
+        <div style={{ background: C.skySoft, border: `1px solid ${C.skyLine}`, borderRadius: ".75rem", padding: ".9rem 1rem", fontSize: ".85rem", color: C.skyInk, lineHeight: 1.5 }}>
+          Tip: open the link in <strong>this same browser</strong> so we can finish signing you in. Can&apos;t find it? Check spam.
         </div>
 
-        {error && <div style={S.errorBox} role="alert">{error}</div>}
-        {verifying && <p style={{ textAlign: "center", color: C.muted, fontSize: ".85rem", margin: ".2rem 0 0" }}>Verifying…</p>}
+        {error && <div style={{ ...S.errorBox, marginTop: "1rem", marginBottom: 0 }} role="alert">{error}</div>}
 
-        <div style={{ textAlign: "center", marginTop: "1.2rem", fontSize: ".85rem", color: C.sub }}>
+        <div style={{ textAlign: "center", marginTop: "1.3rem", fontSize: ".85rem", color: C.sub }}>
           {resendIn > 0 ? (
-            <span style={{ color: C.muted }}>Resend code in {resendIn}s</span>
+            <span style={{ color: C.muted }}>Resend email in {resendIn}s</span>
           ) : (
             <button onClick={resend} disabled={resending} style={{ background: "none", border: "none", color: C.skyInk, fontWeight: 700, cursor: "pointer", fontSize: ".85rem", padding: 0 }}>
-              {resending ? "Sending…" : "Resend code"}
+              {resending ? "Sending…" : "Resend email"}
             </button>
           )}
+          <span style={{ color: C.faint }}> · </span>
+          <Link href={`/signup${commercialFlowQuery(flow)}`} style={{ color: C.skyInk, fontWeight: 700, textDecoration: "none" }}>Change email</Link>
         </div>
 
-        <p style={S.footer}>
-          Wrong email? <Link href={`/signup${commercialFlowQuery(flow)}`} style={S.link}>Change email</Link>
-        </p>
+        {/* Secondary, future-capable path — a numeric code (only when the email includes one). */}
+        <div style={{ borderTop: `1px solid ${C.lineSoft}`, marginTop: "1.4rem", paddingTop: "1.1rem", textAlign: "center" }}>
+          {!showCode ? (
+            <button onClick={() => setShowCode(true)} style={{ background: "none", border: "none", color: C.muted, fontWeight: 600, cursor: "pointer", fontSize: ".82rem" }}>
+              Your email included a 6-digit code? Enter it →
+            </button>
+          ) : (
+            <>
+              <p style={{ fontSize: ".82rem", color: C.sub, margin: "0 0 .7rem" }}>Enter the 6-digit code from your email</p>
+              <div role="group" aria-label="Verification code" style={{ display: "flex", gap: ".5rem", justifyContent: "center" }}>
+                {digits.map((d, i) => (
+                  <input
+                    key={i} ref={(el) => { inputs.current[i] = el; }}
+                    inputMode="numeric" autoComplete="one-time-code" maxLength={i === 0 ? 6 : 1}
+                    aria-label={`Digit ${i + 1}`} value={d} disabled={verifying}
+                    onChange={(e) => setDigit(i, e.target.value)} onKeyDown={(e) => onKeyDown(i, e)}
+                    className="ll-otp"
+                    style={{ width: "2.7rem", height: "3.2rem", textAlign: "center", fontSize: "1.3rem", fontWeight: 700, fontFamily: font, color: C.ink, border: `1px solid ${error ? "#fca5a5" : C.line}`, borderRadius: ".6rem", background: verifying ? C.bg : C.card, outline: "none" }}
+                  />
+                ))}
+              </div>
+              {verifying && <p style={{ color: C.muted, fontSize: ".82rem", margin: ".6rem 0 0" }}>Verifying…</p>}
+            </>
+          )}
+        </div>
       </div>
       <style>{`.ll-otp:focus-visible{outline:none;border-color:${C.sky};box-shadow:${focusRing}}`}</style>
     </div>

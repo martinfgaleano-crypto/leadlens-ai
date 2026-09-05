@@ -35,12 +35,14 @@ export default function SignupPage() {
     // Passwordless sign-in: signInWithOtp sends a magic link by default (current Supabase template),
     // and a numeric code once the email template includes the token. emailRedirectTo routes the link
     // through /auth/callback → /auth/continue so the browser establishes the session either way.
+    // emailRedirectTo lands on the CLIENT page /auth/continue (not the server /auth/callback), because
+    // the default implicit flow returns the session in the URL fragment, which only a browser can read.
     const origin = window.location.origin;
     const { error: authError } = await supabase.auth.signInWithOtp({
       email: email.trim(),
       options: {
         shouldCreateUser: true,
-        emailRedirectTo: `${origin}/auth/callback?type=signup${commercialFlowQuery(flow).replace("?", "&")}`,
+        emailRedirectTo: `${origin}/auth/continue${commercialFlowQuery(flow)}`,
       },
     });
 
