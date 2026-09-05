@@ -91,7 +91,7 @@ export default function PrivacyPage() {
             You may request access to, correction of, or deletion of your personal data, and ask questions about how we
             process it, by emailing{" "}
             <a href="mailto:operations@leadlensintel.com" style={{ color: "#0ea5e9" }}>operations@leadlensintel.com</a>.
-            We will respond within a reasonable time, and within 30 days where required by applicable law.
+            We respond to privacy and data-rights requests within the timeframes required by applicable law.
           </p>
         </Section>
 

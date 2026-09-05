@@ -2,21 +2,21 @@
 // Deterministic; no network. Env is injected explicitly (never reads real secrets).
 
 import { SUBSCRIPTION_PLANS, BETA_CONFIG, subscriptionPlanConfig, isSubscriptionPlanCode } from "../../lib/entitlements/plan-config";
-import { variantToCanonicalPlan, canonicalPlanToVariant, configuredCombinations } from "../../lib/billing/provider-plan-map";
-import { createSubscriptionCheckout } from "../../lib/billing/lemon-checkout";
+import { variantToCanonicalPlan, canonicalPlanToVariant, configuredCombinations, oneTimeLegacyPlanToVariant, configuredOneTimeCombinations } from "../../lib/billing/provider-plan-map";
+import { createSubscriptionCheckout, createOneTimeCheckout } from "../../lib/billing/lemon-checkout";
 
 let passed = 0, failed = 0;
 const t = (n: string, ok: boolean) => { (ok ? passed++ : failed++); if (!ok) console.error(`FAIL: ${n}`); };
 
 // ── Frozen matrix values (must match docs/PRICING_OPERATIONAL_ENTITLEMENT_MATRIX_V1.md) ──
 t("WATCH: 3 credits / 3 monitors / 30d / $7·$69", SUBSCRIPTION_PLANS.watch.credits_per_period === 3 && SUBSCRIPTION_PLANS.watch.max_active_monitors === 3 && SUBSCRIPTION_PLANS.watch.cadence_min_days === 30 && SUBSCRIPTION_PLANS.watch.price_usd.month === 7 && SUBSCRIPTION_PLANS.watch.price_usd.year === 69);
-t("MONITOR: 30 credits / 15 monitors / 14d / $49·$490", SUBSCRIPTION_PLANS.monitor.credits_per_period === 30 && SUBSCRIPTION_PLANS.monitor.max_active_monitors === 15 && SUBSCRIPTION_PLANS.monitor.cadence_min_days === 14 && SUBSCRIPTION_PLANS.monitor.price_usd.month === 49 && SUBSCRIPTION_PLANS.monitor.price_usd.year === 490);
-t("INTELLIGENCE: 100 credits / 50 monitors / 7d / $149·$1490", SUBSCRIPTION_PLANS.intelligence.credits_per_period === 100 && SUBSCRIPTION_PLANS.intelligence.max_active_monitors === 50 && SUBSCRIPTION_PLANS.intelligence.cadence_min_days === 7 && SUBSCRIPTION_PLANS.intelligence.price_usd.month === 149 && SUBSCRIPTION_PLANS.intelligence.price_usd.year === 1490);
+t("MONITOR: 30 credits / 20 monitors / 14d / $49·$490", SUBSCRIPTION_PLANS.monitor.credits_per_period === 30 && SUBSCRIPTION_PLANS.monitor.max_active_monitors === 20 && SUBSCRIPTION_PLANS.monitor.cadence_min_days === 14 && SUBSCRIPTION_PLANS.monitor.price_usd.month === 49 && SUBSCRIPTION_PLANS.monitor.price_usd.year === 490);
+t("INTELLIGENCE: 100 credits / 60 monitors / 7d / $149·$1490", SUBSCRIPTION_PLANS.intelligence.credits_per_period === 100 && SUBSCRIPTION_PLANS.intelligence.max_active_monitors === 60 && SUBSCRIPTION_PLANS.intelligence.cadence_min_days === 7 && SUBSCRIPTION_PLANS.intelligence.price_usd.month === 149 && SUBSCRIPTION_PLANS.intelligence.price_usd.year === 1490);
 t("BETA: 10 credits / 5 monitors / 14d", BETA_CONFIG.credits_per_period === 10 && BETA_CONFIG.max_active_monitors === 5 && BETA_CONFIG.cadence_min_days === 14);
 
 t("isSubscriptionPlanCode true for canonical", isSubscriptionPlanCode("watch") && isSubscriptionPlanCode("monitor") && isSubscriptionPlanCode("intelligence"));
 t("isSubscriptionPlanCode false for junk/legacy", !isSubscriptionPlanCode("starter") && !isSubscriptionPlanCode("premium_launch_v0") && !isSubscriptionPlanCode(null));
-t("subscriptionPlanConfig maps / rejects", subscriptionPlanConfig("intelligence")?.max_active_monitors === 50 && subscriptionPlanConfig("nope") === null);
+t("subscriptionPlanConfig maps / rejects", subscriptionPlanConfig("intelligence")?.max_active_monitors === 60 && subscriptionPlanConfig("nope") === null);
 
 // ── Provider variant mapping (env is config, not pricing) ──
 const env = {
@@ -41,12 +41,33 @@ t("plan→variant: invalid plan/interval → null", canonicalPlanToVariant("star
 const combos = configuredCombinations(env);
 t("configuredCombinations: 6 combos, 4 configured", combos.length === 6 && combos.filter((c) => c.configured).length === 4);
 
-// Checkout config boundary (no network): fails safe + diagnostic when provider/variant absent.
+// ── One-time product → Lemon variant (frozen §9 — one-time uses Lemon, same variant env as webhook) ──
+const oneTimeEnv = {
+  LEMONSQUEEZY_VARIANT_SAMPLE: "10",
+  LEMONSQUEEZY_VARIANT_STARTER: "20",
+  LEMONSQUEEZY_VARIANT_STANDARD: "30",
+  // pro deliberately unconfigured to prove fail-safe
+} as any;
+t("one-time variant: sample/starter/standard mapped", oneTimeLegacyPlanToVariant("sample", oneTimeEnv) === "10" && oneTimeLegacyPlanToVariant("starter", oneTimeEnv) === "20" && oneTimeLegacyPlanToVariant("standard", oneTimeEnv) === "30");
+t("one-time variant: unconfigured pro → null (fail safe)", oneTimeLegacyPlanToVariant("pro", oneTimeEnv) === null);
+t("one-time variant: junk slug → null", oneTimeLegacyPlanToVariant("watch", oneTimeEnv) === null && oneTimeLegacyPlanToVariant("", oneTimeEnv) === null);
+const otCombos = configuredOneTimeCombinations(oneTimeEnv);
+t("configuredOneTimeCombinations: 4 products, 3 configured", otCombos.length === 4 && otCombos.filter((c) => c.configured).length === 3);
+
+// Checkout config boundary (no network): fails safe + diagnostic when provider/variant/product absent.
 async function checkoutBoundary() {
   const noProvider = await createSubscriptionCheckout({ userId: "u", email: "a@b.c", planCode: "watch", interval: "month" }, {} as any);
   t("checkout: no provider config → configured:false provider_not_configured", noProvider.configured === false && noProvider.reason === "provider_not_configured");
   const noVariant = await createSubscriptionCheckout({ userId: "u", email: "a@b.c", planCode: "monitor", interval: "year" }, { LEMONSQUEEZY_API_KEY: "k", LEMONSQUEEZY_STORE_ID: "1", ...env } as any);
   t("checkout: provider set but variant missing → variant_not_configured", noVariant.configured === false && noVariant.reason === "variant_not_configured");
+
+  // One-time checkout boundary
+  const otBadProduct = await createOneTimeCheckout({ userId: "u", email: "a@b.c", productCode: "watch" }, { LEMONSQUEEZY_API_KEY: "k", LEMONSQUEEZY_STORE_ID: "1", ...oneTimeEnv } as any);
+  t("one-time checkout: non-one-time/invalid product → invalid_product", otBadProduct.configured === false && otBadProduct.reason === "invalid_product");
+  const otNoProvider = await createOneTimeCheckout({ userId: "u", email: "a@b.c", productCode: "preview_launch_v0" }, {} as any);
+  t("one-time checkout: valid product, no provider → provider_not_configured", otNoProvider.configured === false && otNoProvider.reason === "provider_not_configured");
+  const otNoVariant = await createOneTimeCheckout({ userId: "u", email: "a@b.c", productCode: "premium_launch_v0" }, { LEMONSQUEEZY_API_KEY: "k", LEMONSQUEEZY_STORE_ID: "1", ...oneTimeEnv } as any);
+  t("one-time checkout: provider set but variant missing (pro) → variant_not_configured", otNoVariant.configured === false && otNoVariant.reason === "variant_not_configured");
 }
 
 checkoutBoundary().then(() => {

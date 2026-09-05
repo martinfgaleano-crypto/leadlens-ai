@@ -35,12 +35,12 @@ export const SUBSCRIPTION_PLANS: Record<SubscriptionPlanCode, PlanConfig> = {
   },
   monitor: {
     plan_code: "monitor", display_name: "MONITOR",
-    credits_per_period: 30, max_active_monitors: 15, cadence_min_days: 14,
+    credits_per_period: 30, max_active_monitors: 20, cadence_min_days: 14,
     price_usd: { month: 49, year: 490 },
   },
   intelligence: {
     plan_code: "intelligence", display_name: "INTELLIGENCE",
-    credits_per_period: 100, max_active_monitors: 50, cadence_min_days: 7,
+    credits_per_period: 100, max_active_monitors: 60, cadence_min_days: 7,
     price_usd: { month: 149, year: 1490 },
   },
 };

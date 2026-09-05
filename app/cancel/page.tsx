@@ -56,7 +56,7 @@ export default function CancelPage() {
             marginBottom: "1.5rem",
           }}
         >
-          ← Return to LeadLens AI
+          ← Return to LeadLens
         </a>
 
         <p style={{ color: "#94a3b8", fontSize: ".8rem", margin: 0 }}>

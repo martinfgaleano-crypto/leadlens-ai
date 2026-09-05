@@ -113,7 +113,7 @@ const COPY = {
     mostPopular: "Recommended",
     formTag: "Start your Opportunity Portfolio",
     formTitle: "Tell LeadLens about your business",
-    formSub: "The more context you give, the better the opportunities and outreach strategy we can find for you.",
+    formSub: "The more context you give, the better the opportunities and strategy we can find for you.",
     step1: "1. Select plan",
     step2: "2. Describe your business",
     useSampleData: "Use sample data",
@@ -144,9 +144,8 @@ const COPY = {
       "Market Mapping — identifying 6–8 buyer segments",
       "Account Discovery — finding companies per segment",
       "Signal Detection — reading job postings, news, funding, expansions",
-      "Opportunity Scoring — ranking accounts by fit and timing",
+      "Opportunity Evaluation — assessing Fit, Timing and Evidence per account",
       "Brief Generation — writing context and strategy per account",
-      "Outreach Writing — email, LinkedIn DM, cold call opener",
     ],
     reportReady: "Opportunity Portfolio ready",
     reportTitle: "Your Opportunity Portfolio",
@@ -259,7 +258,7 @@ const COPY = {
     sampleTeaserText: "Want the full reasoning behind a decision? See a complete Account Brief — the change, the evidence and counterevidence, what to validate, and the decision.",
     sampleTeaserCTA: "View full sample →",
     sampleTeaserNote: "Illustrative synthetic sample — no real company data.",
-    trustItems: ["Source-verified signals", "Human-reviewed output", "No contact databases", "7-day refund policy"] as string[],
+    trustItems: ["Source-verified signals", "Evidence-backed decisions", "No contact databases", "7-day refund policy"] as string[],
     afterPurchaseTitle: "After you buy:",
     afterPurchaseSteps: [
       "Share your commercial context — ICP optional.",
@@ -270,7 +269,7 @@ const COPY = {
     afterPurchaseNote: "Typical delivery: 24–48h. Nothing is sent automatically. You review every brief before acting.",
     faqCtaBridge: "Want to see the format first?",
     resultsUpgradeTitle: "Ready for real commercial intelligence?",
-    resultsUpgradeSub: "An Opportunity Portfolio delivers 5 company briefs with signals, opportunity scores, and outreach strategy — researched and reviewed by our team in 24–48h.",
+    resultsUpgradeSub: "An Opportunity Portfolio delivers 5 Account Briefs — each with what changed, the evidence and its limits, Fit and Timing, and a decision with what to validate — in 24–48h.",
     resultsUpgradeCTA: "Get your Opportunity Report — from $7 →",
     checkoutEarlyBanner: "Checkout is in final review. Preview the sample report format while you wait.",
     comparisonTag: "How we compare",
@@ -467,9 +466,8 @@ const COPY = {
       "Market Mapping — identificando 6–8 segmentos de compradores",
       "Account Discovery — encontrando empresas por segmento",
       "Signal Detection — analizando ofertas de trabajo, noticias, financiamiento y expansiones",
-      "Opportunity Scoring — rankeando cuentas por fit y timing",
+      "Opportunity Evaluation — evaluando Fit, Timing y Evidencia por cuenta",
       "Brief Generation — redactando contexto y estrategia por cuenta",
-      "Outreach Writing — email, LinkedIn DM y cold call opener",
     ],
     reportReady: "Opportunity Portfolio listo",
     reportTitle: "Tu Opportunity Portfolio está listo",
@@ -582,7 +580,7 @@ const COPY = {
     sampleTeaserText: "¿Quieres el razonamiento completo detrás de una decisión? Mira un Account Brief completo — el cambio, la evidencia y la contraevidencia, qué validar y la decisión.",
     sampleTeaserCTA: "Ver muestra completa →",
     sampleTeaserNote: "Muestra sintética ilustrativa — sin datos de empresas reales.",
-    trustItems: ["Señales verificadas en fuentes", "Output revisado por humanos", "Sin bases de datos de contactos", "Política de reembolso de 7 días"] as string[],
+    trustItems: ["Señales verificadas en fuentes", "Decisiones con evidencia", "Sin bases de datos de contactos", "Política de reembolso de 7 días"] as string[],
     afterPurchaseTitle: "Después de comprar:",
     afterPurchaseSteps: [
       "Comparte tu contexto comercial — ICP opcional.",
@@ -593,7 +591,7 @@ const COPY = {
     afterPurchaseNote: "Entrega típica: 24–48h. Nada se envía automáticamente. Tú revisas cada brief antes de actuar.",
     faqCtaBridge: "¿Quieres ver el formato primero?",
     resultsUpgradeTitle: "¿Listo para inteligencia comercial real?",
-    resultsUpgradeSub: "Un Opportunity Portfolio entrega 5 briefs de empresa con señales, scores de oportunidad y estrategia de outreach — investigado y revisado por nuestro equipo en 24–48h.",
+    resultsUpgradeSub: "Un Opportunity Portfolio entrega 5 Account Briefs — cada uno con qué cambió, la evidencia y sus límites, Fit y Timing, y una decisión con qué validar — en 24–48h.",
     resultsUpgradeCTA: "Obtener tu Opportunity Report — desde $7 →",
     checkoutEarlyBanner: "El checkout está en revisión final. Puedes ver el formato del Opportunity Portfolio de muestra mientras esperas.",
     comparisonTag: "Cómo nos comparamos",
@@ -790,9 +788,8 @@ const COPY = {
       "Market Mapping — identificando 6–8 segmentos de compradores",
       "Account Discovery — encontrando empresas por segmento",
       "Signal Detection — analisando vagas, notícias, financiamento e expansões",
-      "Opportunity Scoring — ranqueando contas por fit e timing",
+      "Opportunity Evaluation — avaliando Fit, Timing e Evidência por conta",
       "Brief Generation — escrevendo contexto e estratégia por conta",
-      "Outreach Writing — e-mail, LinkedIn DM e cold call opener",
     ],
     reportReady: "Opportunity Portfolio pronto",
     reportTitle: "Seu Opportunity Portfolio está pronto",
@@ -905,7 +902,7 @@ const COPY = {
     sampleTeaserText: "Quer o raciocínio completo por trás de uma decisão? Veja um Account Brief completo — a mudança, a evidência e a contraevidência, o que validar e a decisão.",
     sampleTeaserCTA: "Ver amostra completa →",
     sampleTeaserNote: "Amostra sintética ilustrativa — sem dados de empresas reais.",
-    trustItems: ["Sinais verificados em fontes", "Output revisado por humanos", "Sem bancos de dados de contatos", "Política de reembolso de 7 dias"] as string[],
+    trustItems: ["Sinais verificados em fontes", "Decisões com evidência", "Sem bancos de dados de contatos", "Política de reembolso de 7 dias"] as string[],
     afterPurchaseTitle: "Após a compra:",
     afterPurchaseSteps: [
       "Compartilhe seu contexto comercial — ICP opcional.",
@@ -916,7 +913,7 @@ const COPY = {
     afterPurchaseNote: "Entrega típica: 24–48h. Nada é enviado automaticamente. Você revisa cada brief antes de agir.",
     faqCtaBridge: "Quer ver o formato primeiro?",
     resultsUpgradeTitle: "Pronto para inteligência comercial real?",
-    resultsUpgradeSub: "Um Opportunity Portfolio entrega 5 briefs de empresa com sinais, scores de oportunidade e estratégia de outreach — pesquisado e revisado pela nossa equipe em 24–48h.",
+    resultsUpgradeSub: "Um Opportunity Portfolio entrega 5 Account Briefs — cada um com o que mudou, a evidência e seus limites, Fit e Timing, e uma decisão com o que validar — em 24–48h.",
     resultsUpgradeCTA: "Obter seu Opportunity Report — a partir de $7 →",
     checkoutEarlyBanner: "O checkout está em revisão final. Visualize o formato do Opportunity Portfolio de exemplo enquanto espera.",
     comparisonTag: "Como nos comparamos",
@@ -1113,9 +1110,8 @@ const COPY = {
       "マーケットマッピング — 6〜8の購買者セグメントを特定",
       "アカウントディスカバリー — セグメントごとに企業を発見",
       "シグナル検出 — 求人、ニュース、資金調達、事業拡大を分析",
-      "オポチュニティスコアリング — フィットとタイミングでアカウントをランク付け",
+      "オポチュニティ評価 — アカウントごとにFit・Timing・Evidenceを評価",
       "ブリーフ作成 — アカウントごとにコンテキストと戦略を作成",
-      "アウトリーチライティング — メール、LinkedIn DM、コールドコールオープナー",
     ],
     reportReady: "Opportunity Portfolio完成",
     reportTitle: "Opportunity Portfolioが完成しました",
@@ -1228,7 +1224,7 @@ const COPY = {
     sampleTeaserText: "意思決定の背後にある完全な根拠をご覧になりたいですか？完全なAccount Briefをご覧ください — 変化、エビデンスと反証、検証すべきこと、そして意思決定。",
     sampleTeaserCTA: "完全なサンプルを見る →",
     sampleTeaserNote: "説明用の合成サンプル — 実企業データは含みません。",
-    trustItems: ["ソース検証済みシグナル", "人によるレビュー済み出力", "コンタクトデータベースなし", "7日間返金ポリシー"] as string[],
+    trustItems: ["ソース検証済みシグナル", "根拠に基づく判断", "コンタクトデータベースなし", "7日間返金ポリシー"] as string[],
     afterPurchaseTitle: "購入後の流れ：",
     afterPurchaseSteps: [
       "商業的コンテキストを共有 — ICPは任意。",
@@ -1239,7 +1235,7 @@ const COPY = {
     afterPurchaseNote: "通常の納品時間：24〜48時間。自動送信は一切ありません。行動する前に各ブリーフをご確認いただけます。",
     faqCtaBridge: "まず形式をご覧になりますか？",
     resultsUpgradeTitle: "実際のコマーシャルインテリジェンスを試す準備ができましたか？",
-    resultsUpgradeSub: "Opportunity Portfolioはシグナル、オポチュニティスコア、アウトリーチ戦略付きの5件の企業ブリーフをお届けします — チームによる調査とレビュー済み、24〜48時間で。",
+    resultsUpgradeSub: "Opportunity Portfolioは5件のAccount Briefをお届けします — 各ブリーフには「何が変わったか」、エビデンスとその限界、Fitとタイミング、意思決定と検証すべき点が含まれます（24〜48時間）。",
     resultsUpgradeCTA: "Opportunity Report — $7から →",
     checkoutEarlyBanner: "チェックアウトはローンチ前の最終審査中です。お待ちの間、サンプルOpportunity Portfolioのフォーマットをご確認いただけます。",
     comparisonTag: "比較",
@@ -1525,10 +1521,12 @@ export default function DemoPipelinePage() {
     }
     track("onboarding_started", { product_code: PLANS[p].productCode, product_version: "launch_v0" });
     trackConversion("onboarding_start", { plan: p, source_cta: source });
-    setPlan(p);
-    setFormMode("paid_batch");
-    setView("form");
-    setTimeout(() => formRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
+    // Canonical commercial routing (frozen CTA contract): the legacy in-page demo form/processing/
+    // results is production-dead (DEMO_MODE off → /api/demo 404) and must NOT be the purchase path.
+    // Every purchase CTA enters the premium commercial journey at /get-started (choose one-time vs
+    // ongoing → /pricing → auth → checkout). Authenticated, tenant-bound checkout only; no orphan or
+    // email-only purchase; DEMO_MODE stays off; the demo pipeline is not resurrected.
+    window.location.href = "/get-started";
   }
 
   function goToDemo() {

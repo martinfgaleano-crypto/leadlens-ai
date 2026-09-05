@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
 import { commercialFlowQuery, parseCommercialFlowState } from "@/lib/commercial/customer-flow";
 
 /**
@@ -26,21 +25,16 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(`${origin}/reset-password?${recovery.toString()}`);
   }
 
-  if (code && process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    );
-
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
-
-    if (!error) {
-      // Email verification success — tell login page to show success banner
-      const suffix = flowQuery ? `&${flowQuery.slice(1)}` : "";
-      return NextResponse.redirect(`${origin}/login?verified=1${suffix}`);
-    }
+  // Passwordless sign-in / magic-link (signup, magiclink, or bare code): the PKCE code_verifier
+  // lives in the browser that started sign-in, so the exchange MUST run client-side. Forward the
+  // code + commercial selection to /auth/continue, which establishes the session and continues to
+  // checkout with the exact selected product/interval preserved.
+  if (code) {
+    const cont = new URLSearchParams({ code });
+    if (flowQuery) new URLSearchParams(flowQuery.slice(1)).forEach((value, key) => cont.set(key, value));
+    return NextResponse.redirect(`${origin}/auth/continue?${cont.toString()}`);
   }
 
-  // Verification failed or missing code
+  // Missing code
   return NextResponse.redirect(`${origin}/login?error=verification-failed`);
 }

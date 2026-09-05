@@ -26,16 +26,21 @@ const routeSource = readFileSync(path.join(ROOT, "app/api/admin/intelligence/com
 
 async function run() {
   const local = await loadAdminIntelligenceViewModel({ root: ROOT, now: NOW, db: null });
+  // The pilot artifacts (ml/data/pilot-amor-de-gea) are gitignored generated data — present in local
+  // dev, absent on a clean checkout (CI). Assertions that require the artifact's EXACT output count
+  // are gated on its presence: strict when present (real regression check), tolerant when absent
+  // (the loader correctly yields zero outputs). Fixes a local-pass/CI-fail on gitignored data.
+  const artifactPresent = (await loadSnapshotInputs({ root: ROOT, now: NOW })).artifact != null;
   test("1 loader returns versioned real snapshot", local.version === ADMIN_INTELLIGENCE_VIEW_VERSION && local.snapshot.id.startsWith("snapshot:"));
   test("2 DB-unavailable mode remains honest", local.availability.database === "unavailable" && local.feedback.total_events === null);
   test("3 unavailable DB metrics do not become zero", local.knowledge.vault_records === null && local.feedback.with_snapshot === null);
   test("4 unmeasured dimensions expose state and reason", local.snapshot.index.dimensions.filter((d) => d.measurement.state !== "measured").every((d) => "reason" in d.measurement));
   test("5 capability map uses snapshot assessments", local.snapshot.capability_assessments.length >= 25 && /snapshot\.capability_assessments/.test(pageSource));
-  test("6 current artifact produces six real outputs", local.snapshot.outputs.length === 6, `got ${local.snapshot.outputs.length}`);
+  test("6 current artifact produces six real outputs when present", !artifactPresent || local.snapshot.outputs.length === 6, `got ${local.snapshot.outputs.length}`);
   test("7 output validation/eligibility preserved", local.snapshot.outputs.every((o) => o.validation_state === "unreviewed" && o.report_eligibility === "not_eligible"));
   test("8 zero patterns has informative empty state", local.snapshot.patterns.length === 0 && /No valid patterns yet/.test(local.empty_states.patterns));
   test("9 pattern threshold is canonical", local.pattern_threshold === 5 && /pattern_threshold/.test(loaderSource));
-  test("10 validation funnel derives real counts", local.snapshot.validation_summary.output_count === 6 && local.snapshot.validation_summary.reviewed_count === 0);
+  test("10 validation funnel derives real counts", (!artifactPresent || local.snapshot.validation_summary.output_count === 6) && local.snapshot.validation_summary.reviewed_count === 0);
   test("11 zero outcomes explains performance", /Fewer than five attributable outcomes/.test(local.empty_states.outcomes));
   test("12 gaps ordered by priority", local.snapshot.gaps.every((g, i, rows) => i === 0 || rows[i - 1].priority >= g.priority));
   test("13 actions derived from gaps", local.snapshot.actions.length === local.snapshot.gaps.length && local.snapshot.actions.every((a) => a.affected_gaps.length > 0));
@@ -71,7 +76,7 @@ async function run() {
     availability: { artifact: "available", database: "partial", validation_persistence: "migration_missing", learned_preferences: "unavailable", message: "partial fixture" },
   };
   const partial = buildAdminIntelligenceViewModel(fallbackData);
-  test("35 partial mode retains artifact intelligence", partial.snapshot.outputs.length === 6 && partial.availability.database === "partial");
+  test("35 partial mode retains artifact intelligence", partial.snapshot.outputs.length === (artifactPresent ? 6 : 0) && partial.availability.database === "partial");
 
   const env = process.env as Record<string, string | undefined>;
   const saved = { node: env.NODE_ENV, secret: env.ADMIN_SESSION_SECRET, token: env.ADMIN_SECRET_TOKEN, bypass: env.ADMIN_LOCAL_BYPASS };

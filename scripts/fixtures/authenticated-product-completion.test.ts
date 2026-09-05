@@ -9,8 +9,8 @@ let passed = 0;
 function test(name: string, ok: boolean) { if (!ok) throw new Error(`FAIL: ${name}`); passed++; console.log(`PASS: ${name}`); }
 
 const flow = parseCommercialFlowState(new URLSearchParams("product_code=intelligence_launch_v0&source_cta=pricing&locale=es&return_to=%2Fdashboard"));
-test("canonical product survives auth query", flow?.product_code === "intelligence_launch_v0" && commercialFlowQuery(flow).includes("product_code=intelligence_launch_v0"));
-test("legacy plan resolves to canonical product", parseCommercialFlowState(new URLSearchParams("plan=starter"))?.product_code === "brief_launch_v0");
+test("canonical product survives auth query", flow?.selection.kind === "one_time" && flow.selection.productCode === "intelligence_launch_v0" && commercialFlowQuery(flow).includes("product_code=intelligence_launch_v0"));
+test("legacy plan resolves to canonical product", (() => { const f = parseCommercialFlowState(new URLSearchParams("plan=starter")); return f?.selection.kind === "one_time" && f.selection.productCode === "brief_launch_v0"; })());
 test("unknown product fails closed", parseCommercialFlowState(new URLSearchParams("product_code=enterprise")) === null);
 test("external redirect blocked", safeCustomerReturnPath("https://evil.example/x") === "/dashboard");
 test("protocol-relative redirect blocked", safeCustomerReturnPath("//evil.example/x") === "/dashboard");
@@ -49,7 +49,7 @@ test("onboarding RLS owner policies exist", onboardingMigration.includes("auth.u
 test("onboarding administrative writes are server-only", onboardingMigration.includes("Writes remain server-only") && !onboardingMigration.includes("for update to authenticated"));
 test("onboarding API derives owner from verified JWT", onboardingRoute.includes("db.auth.getUser(token)") && onboardingRoute.includes("user_id: auth.user.id"));
 test("onboarding requires explicit target countries", onboardingRoute.includes("target_countries") && onboardingRoute.includes(".min(1).max(12)"));
-test("normal login preserves customer return path after admin check", loginPage.includes('decidePostLoginRoute(bridge, flow?.return_to ?? "/dashboard")'));
+test("normal login resumes purchase into checkout continuation", loginPage.includes("`/checkout/continue${commercialFlowQuery(flow)}`") && loginPage.includes("decidePostLoginRoute(bridge, customerDest)"));
 test("onboarding bootstraps missing customer profile server-side", onboardingRoute.includes('from("profiles").upsert') && onboardingRoute.includes('ignoreDuplicates: true'));
 test("onboarding claims intent before persistence", onboardingRoute.includes('status: "onboarding_started"') && onboardingRoute.includes('.eq("status", "captured").select("id")'));
 test("completed onboarding retry returns existing row", onboardingRoute.includes("intent.onboarding_id") && onboardingRoute.includes("idempotent: true"));
