@@ -10,6 +10,9 @@ export function friendlyAuthError(raw: string): string {
     return "That code isn’t right. Check the latest email and try again.";
   }
   if (m.includes("email") && m.includes("invalid")) return "That email address doesn’t look right. Please check it.";
+  if (m.includes("error sending") || m.includes("failed to send") || m.includes("smtp") || m.includes("email not") ) {
+    return "We couldn’t send the verification email. Please try again shortly.";
+  }
   if (m.includes("signups not allowed") || m.includes("disabled")) {
     return "Account creation is temporarily unavailable. Please try again shortly.";
   }

@@ -41,7 +41,7 @@ t("G. signup is OTP-first (signInWithOtp, no password field)", signup.includes("
 t("G. signup routes to /verify", signup.includes("/verify?email="));
 
 const verify = read("app/verify/page.tsx");
-t("H. verify uses verifyOtp + resend + friendly errors", verify.includes("verifyOtp") && verify.includes("Resend email") && verify.includes("friendlyAuthError"));
+t("H. verify uses verifyOtp + resend + friendly errors", verify.includes("verifyOtp") && verify.includes("Resend code") && verify.includes("friendlyAuthError"));
 t("I. verification resumes selected plan into checkout continuation", verify.includes("/checkout/continue${commercialFlowQuery(flow)}"));
 
 const cont = read("app/checkout/continue/page.tsx");
@@ -53,8 +53,11 @@ const success = read("app/success/page.tsx");
 t("P. success routes coherently (one-time→/activate, subscription→/dashboard)", success.includes('href: "/activate"') && success.includes('href: "/dashboard"'));
 
 // ── Dual-mode auth: real Supabase magic link (implicit flow) preserves purchase intent (B/C/D) ──
-t("copy: signup promises a secure sign-in link (default template has no numeric code)", signup.includes("secure sign-in link") && !signup.includes("6-digit code"));
-t("copy: verify leads with the sign-in link, code is secondary", verify.includes("Open the sign-in link") && verify.includes("6-digit code"));
+// CANONICAL OTP: signup + verify lead with the numeric code; magic link is a muted fallback only.
+t("OTP: signup promises a 6-digit verification code (not a magic link as primary)", signup.includes("6-digit verification code") && !signup.includes("secure sign-in link"));
+t("OTP: verify leads with the 6-digit code + Verify button + submit form", verify.includes("6-digit verification code") && verify.includes("Verify email") && verify.includes("void submit(digits.join"));
+t("OTP: verify does NOT present the magic link as the primary instruction", !verify.includes("Open the sign-in link"));
+t("OTP: verifyOtp uses the correct email contract (type: email)", verify.includes('type: "email"'));
 // The real fix: signup/resend land the link on the CLIENT /auth/continue (not the server callback),
 // because the default implicit flow returns the session in the URL fragment (server can't read it).
 t("A. signup emailRedirectTo lands on client /auth/continue (implicit-flow fragment readable)", signup.includes("/auth/continue${commercialFlowQuery(flow)}") && !signup.includes("/auth/callback?type=signup"));

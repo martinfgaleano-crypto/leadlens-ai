@@ -29,17 +29,20 @@ Public/indexable: `/`, `/get-started`, `/pricing`. Noindex: `/signup`, `/verify`
 the browser sends only product/plan(+interval); the server maps to the Lemon variant. One-time intent is
 also recorded server-side (`/api/commercial-intents`) as a best-effort backup.
 
-## 3. Auth modes (real Supabase behavior)
-- Browser client uses the **implicit flow** (default). The email link returns the session in the URL
-  **fragment** (`#access_token=…`), which only a **client** page can read — so `emailRedirectTo` lands on
-  `/auth/continue` (NOT the server `/auth/callback`).
-- `/auth/continue`: `getSession()` (already-authed / detected fragment) → `exchangeCodeForSession` fallback
-  for a PKCE `?code` → brief poll for async detection → detects `#error=` for fast recovery. On success:
-  ensure profile + persist intent + resume `/checkout/continue` with the exact selection; on failure: a real
-  recovery UI. **Never logs tokens or fragments.**
+## 3. Auth modes — CANONICAL: numeric 6-digit OTP
+**Final product decision (2026-09-05):** new-account creation is **passwordless numeric OTP**, entered
+inside LeadLens — **not** a magic link. Flow: `/signup` (work email → `signInWithOtp({email, shouldCreateUser:true})`)
+→ `/verify` (6 boxes, auto-advance/paste, "Verify email", Enter submits) → `verifyOtp({email, token, type:"email"})`
+→ session confirmed → resume `/checkout/continue` with the exact selection. SDK: `@supabase/supabase-js`
+2.108.2 (`EmailOtpType` includes `'email'`). Telemetry: otp_verification_started/otp_verified/otp_failed/otp_resent.
+- **Requires custom SMTP + `{{ .Token }}` template** to deliver the code (P0 — see §7). Until then the OTP
+  UI is code-ready but the code is not delivered by the default template.
+- **Magic-link = compatibility fallback only** (never the presented flow): `signInWithOtp` still sets
+  `emailRedirectTo=/auth/continue`, a CLIENT page that reads the implicit-flow session from the URL
+  **fragment** (`getSession`/detect) with a PKCE `?code` fallback, `#error=` recovery, intent restore, and
+  a real recovery UI. Never logs tokens/fragments. `/verify` mentions the link once, muted.
 - Existing users: password `/login` retained; resumes the same selection into `/checkout/continue`.
-- **Future (public launch):** numeric 6-digit OTP via `{{ .Token }}` once **custom SMTP** is configured
-  (see §7). The 6-digit UI already exists as a secondary path.
+- No redirect/Site-URL/fragment dependency in the primary OTP path — the user stays on `/verify`.
 
 ## 4. Billing (canonical)
 - Checkout: `POST /api/billing/checkout-one-time` (product_code) · `POST /api/billing/subscribe`
@@ -70,16 +73,28 @@ Subscriptions: WATCH/MONITOR/INTELLIGENCE monthly & annual → `customer_subscri
 a replayed webhook grants nothing extra. Deterministic proof of the fulfillment logic:
 `scripts/fixtures/one-time-fulfillment.test.ts` (18/18) — NOT a substitute for a real provider event.
 
-## 7. Email delivery — pre-public-launch spec (do NOT configure now)
-Founder configures before public launch:
-- **Custom SMTP** in Supabase (Auth → SMTP): a real sending domain with **SPF + DKIM + DMARC**.
-- **Branded template**: From `LeadLens <no-reply@your-domain>`, subject e.g. "Your LeadLens verification
-  code"; premium minimal body.
-- Add **`{{ .Token }}`** to the confirmation/magic-link template → enables the numeric 6-digit OTP as the
-  primary launch experience (the code UI already exists).
-- Ensure the Preview/Prod origins are in Supabase Auth → URL Configuration → **Redirect URLs**.
-- Mind Supabase auth email **rate limits** (default sender is throttled to a few/hour — test with a real
-  inbox and check spam).
+## 7. Custom SMTP + OTP email — P0 launch requirement (founder configures; do NOT do now)
+The canonical OTP flow (§3) needs the code delivered by email. Supabase blocks template edits until
+custom SMTP is set, so this is **P0 for account creation / public launch** (no longer optional cleanup).
+Founder checklist — exact, in order (I never touch DNS, dashboards, or credentials; never paste secrets here):
+1. **Sending domain (DNS, one-time):** add **SPF + DKIM + DMARC** for the chosen sender domain
+   (e.g. `leadlensintel.com`) at whatever ESP/SMTP the founder uses. Do not rotate existing mail creds.
+2. **Supabase → Authentication → SMTP settings** — enable custom SMTP and fill: **SMTP host · SMTP port ·
+   SMTP user · SMTP password · sender email** (e.g. `no-reply@leadlensintel.com`) · **sender name**
+   (`LeadLens`). (Exact values come from the founder's ESP; none are invented or stored in the repo.)
+3. **Supabase → Authentication → Email Templates** — open the template invoked by `signInWithOtp`
+   (confirm in-dashboard which one fires; typically **Magic Link**). Replace the default link-primary body
+   with the OTP body in **`docs/supabase-otp-email-template.html`** (renders the code from **`{{ .Token }}`**
+   in the BODY, not the subject). Subject: `Your LeadLens verification code`.
+4. **Supabase → Authentication → URL Configuration → Redirect URLs** — keep the Preview/Prod origins
+   allow-listed so the magic-link *fallback* still works (`/auth/continue`). Do **not** point global Site URL
+   at the Preview.
+5. Mind Supabase auth **rate limits** (test inbox; check spam). Code UI is already built — nothing else
+   code-side is needed once SMTP + template are live.
+Existing email infra: no LeadLens SMTP/domain provider is configured in the repo today (only the sender
+strings `operations@leadlensintel.com` in legal/runbook + `no-reply` placeholders). Shortest path = point
+Supabase SMTP at the founder's existing `leadlensintel.com` mail provider if it exposes SMTP; else a
+transactional ESP (e.g. a standard SMTP relay). Founder decision — not made here.
 
 ## 8. Billing truth states
 `LEMON MERCHANT: APPROVED` · `CURRENT BILLING: TEST-CONFIGURED — PROVIDER ACCEPTANCE REMAINING`.

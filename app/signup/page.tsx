@@ -32,11 +32,10 @@ export default function SignupPage() {
     setError(""); setLoading(true);
     track("signup_started", flow?.selection.kind ? { kind: flow.selection.kind } : {});
 
-    // Passwordless sign-in: signInWithOtp sends a magic link by default (current Supabase template),
-    // and a numeric code once the email template includes the token. emailRedirectTo routes the link
-    // through /auth/callback → /auth/continue so the browser establishes the session either way.
-    // emailRedirectTo lands on the CLIENT page /auth/continue (not the server /auth/callback), because
-    // the default implicit flow returns the session in the URL fragment, which only a browser can read.
+    // CANONICAL: passwordless numeric OTP. signInWithOtp emails a 6-digit code (delivered once the
+    // Supabase template includes {{ .Token }} + custom SMTP — a P0 launch requirement); the user enters
+    // it on /verify and never leaves LeadLens. emailRedirectTo is retained ONLY as a safe compatibility
+    // fallback (a magic link still lands on the client /auth/continue) — it is never the presented flow.
     const origin = window.location.origin;
     const { error: authError } = await supabase.auth.signInWithOtp({
       email: email.trim(),
@@ -60,7 +59,7 @@ export default function SignupPage() {
           <div style={S.logoBox}>L</div>
           <div style={S.eyebrow}>Account Opportunity Intelligence</div>
           <h1 style={S.h1}>Create your LeadLens account</h1>
-          <p style={S.sub}>Save your selection, connect purchases to your workspace, and access your intelligence as it develops. We&apos;ll email you a secure sign-in link — no password to remember.</p>
+          <p style={S.sub}>Save your selection, connect purchases to your workspace, and access your intelligence as it develops. We&apos;ll email you a 6-digit verification code — no password to remember.</p>
         </div>
 
         <form onSubmit={handleSubmit}>
