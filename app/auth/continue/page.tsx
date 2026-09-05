@@ -26,6 +26,16 @@ export default function AuthContinuePage() {
       const supabase = getSupabaseClient();
       if (!supabase) { setFailed(true); return; }
 
+      // Supabase returns auth failures (expired/denied link) in the URL FRAGMENT (#error=…). Detect
+      // it up front and go straight to recovery — don't poll for a session that will never arrive.
+      // (We read only the error flag; access/refresh tokens are never read or logged here.)
+      const hashParams = new URLSearchParams((window.location.hash || "").replace(/^#/, ""));
+      if (hashParams.get("error")) {
+        setFailed(true);
+        try { void fetch("/api/events", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ event: "verification_failed", meta: { method: "magic_link", reason: "link_error" } }), keepalive: true }); } catch { /* ignore */ }
+        return;
+      }
+
       // 1. Already signed in (link opened in an authenticated session) → continue immediately.
       let session = (await supabase.auth.getSession()).data.session;
 

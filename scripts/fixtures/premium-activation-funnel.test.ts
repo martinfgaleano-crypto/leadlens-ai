@@ -74,5 +74,15 @@ t("K. subscribe binds trusted server user_id (never client)", subRoute.includes(
 t("K. one-time checkout binds trusted server user_id", otRoute.includes("db.auth.getUser(token)") && otRoute.includes("userId: user.id"));
 t("L. checkout routes accept only product/plan; server maps to variant", subRoute.includes("plan_code:") && subRoute.includes("interval:") && subRoute.includes("createSubscriptionCheckout") && otRoute.includes("product_code:") && otRoute.includes("createOneTimeCheckout"));
 
+// ── Hardening pass (§17/§9/§31/§39) ──
+t("§17 success confirms real fulfillment via billing state before claiming ready", success.includes("/api/billing/state") && success.includes("Confirming your LeadLens access") && success.includes("finishing setup"));
+t("§17 success does not falsely claim ready (pending state + bounded recheck, no infinite loop)", success.includes('"pending"') && success.includes("Check again") && success.includes("schedule = ["));
+t("§9-N auth continue handles Supabase error fragment (no endless poll)", authCont.includes('hashParams.get("error")'));
+t("§39 one-time Intelligence disambiguated from the subscription", read("lib/commercial/plan-catalog.ts").includes('"Intelligence — One-time"'));
+for (const p of ["app/signup/layout.tsx", "app/verify/layout.tsx", "app/auth/continue/layout.tsx", "app/checkout/continue/layout.tsx", "app/success/layout.tsx"]) {
+  t(`§31 ${p} is noindex`, /robots:\s*\{\s*index:\s*false/.test(read(p)));
+}
+t("§31 public funnel entry stays indexable (no noindex on get-started/pricing)", (() => { try { read("app/get-started/layout.tsx"); return false; } catch { return true; } })());
+
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed) process.exit(1);

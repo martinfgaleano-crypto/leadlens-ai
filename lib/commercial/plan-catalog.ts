@@ -71,13 +71,19 @@ const SUBSCRIPTION_COPY: Record<SubscriptionPlanCode, { name: string; headline: 
 const ONE_TIME_ORDER: ProductCode[] = ["preview_launch_v0", "brief_launch_v0", "intelligence_launch_v0", "premium_launch_v0"];
 const SUB_ORDER: SubscriptionPlanCode[] = ["watch", "monitor", "intelligence"];
 
+// Customer-facing display names. The one-time "Intelligence" is explicitly qualified so it can never
+// be confused with the ongoing "Intelligence" subscription (§39). Never renames the catalog itself.
+const ONE_TIME_DISPLAY_NAME: Partial<Record<ProductCode, string>> = {
+  intelligence_launch_v0: "Intelligence — One-time",
+};
+
 export function oneTimeCards(): OneTimeCard[] {
   return ONE_TIME_ORDER.map((code) => {
     const p = PRODUCTS[code];
     const n = p.entitlements.opportunity_target;
     return {
       productCode: code,
-      name: p.display_name,
+      name: ONE_TIME_DISPLAY_NAME[code] ?? p.display_name,
       price: p.price_amount,
       headline: ONE_TIME_COPY[code].headline,
       body: ONE_TIME_COPY[code].body,
