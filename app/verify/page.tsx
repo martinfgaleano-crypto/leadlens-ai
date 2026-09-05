@@ -106,7 +106,7 @@ export default function VerifyPage() {
           <div style={S.logoBox}>✓</div>
           <h1 style={S.h1}>Check your inbox</h1>
           <p style={S.sub}>
-            We sent a 6-digit code to <strong style={{ color: C.ink }}>{email || "your email"}</strong>. Enter it below to continue.
+            We sent a secure sign-in email to <strong style={{ color: C.ink }}>{email || "your email"}</strong>. Open the sign-in link in that email to continue — or, if it includes a 6-digit code, enter it below.
           </p>
         </div>
 

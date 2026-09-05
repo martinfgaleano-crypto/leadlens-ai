@@ -12,6 +12,10 @@ function track(event: string, meta: Record<string, string> = {}) {
   try { void fetch("/api/events", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ event, ...meta }), keepalive: true }); } catch { /* never block */ }
 }
 
+// Build marker busts stale App Router/RSC caches from older deployments (guarded by
+// admin-login-routing). OTP-first signup is passwordless, so this marker distinguishes it.
+const LOGIN_BUILD = "signup-otp-v1";
+
 export default function SignupPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -28,8 +32,9 @@ export default function SignupPage() {
     setError(""); setLoading(true);
     track("signup_started", flow?.selection.kind ? { kind: flow.selection.kind } : {});
 
-    // OTP-first: send a 6-digit code (email template must include the token). emailRedirectTo keeps
-    // the magic-link fallback working via /auth/callback for anyone who clicks the link instead.
+    // Passwordless sign-in: signInWithOtp sends a magic link by default (current Supabase template),
+    // and a numeric code once the email template includes the token. emailRedirectTo routes the link
+    // through /auth/callback → /auth/continue so the browser establishes the session either way.
     const origin = window.location.origin;
     const { error: authError } = await supabase.auth.signInWithOtp({
       email: email.trim(),
@@ -47,13 +52,13 @@ export default function SignupPage() {
   }
 
   return (
-    <div style={S.page} data-login-build="otp-v1">
+    <div style={S.page} data-login-build={LOGIN_BUILD}>
       <div style={S.card}>
         <div style={{ textAlign: "center", marginBottom: "1.9rem" }}>
           <div style={S.logoBox}>L</div>
           <div style={S.eyebrow}>Account Opportunity Intelligence</div>
           <h1 style={S.h1}>Create your LeadLens account</h1>
-          <p style={S.sub}>Save your selection, connect purchases to your workspace, and access your intelligence as it develops. We&apos;ll email you a 6-digit code — no password to remember.</p>
+          <p style={S.sub}>Save your selection, connect purchases to your workspace, and access your intelligence as it develops. We&apos;ll email you a secure sign-in link — no password to remember.</p>
         </div>
 
         <form onSubmit={handleSubmit}>

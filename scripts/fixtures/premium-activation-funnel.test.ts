@@ -52,6 +52,16 @@ t("O. no Stripe / no DEMO in continuation", !cont.toLowerCase().includes("stripe
 const success = read("app/success/page.tsx");
 t("P. success routes coherently (one-time→/activate, subscription→/dashboard)", success.includes('href: "/activate"') && success.includes('href: "/dashboard"'));
 
+// ── Dual-mode auth: magic-link fallback preserves purchase intent (B/C/D) ──
+t("dual-mode: signup promises a secure sign-in link (works without custom SMTP)", signup.includes("secure sign-in link") && !signup.includes("6-digit code"));
+t("dual-mode: verify supports link OR code", verify.includes("sign-in link") && verify.includes("6-digit code"));
+const callback = read("app/auth/callback/route.ts");
+t("D. magic-link callback forwards code + intent to browser exchange", callback.includes("/auth/continue?") && callback.includes("parseCommercialFlowState"));
+t("D. recovery path preserved (not routed through /auth/continue)", callback.includes("/reset-password?"));
+const authCont = read("app/auth/continue/page.tsx");
+t("D. magic-link exchanges in browser and resumes selected plan into checkout", authCont.includes("exchangeCodeForSession") && authCont.includes("/checkout/continue${commercialFlowQuery(flow)}"));
+t("D. magic-link with no intent → dashboard (no dead-end, no forced checkout)", authCont.includes('window.location.replace(flow ? `/checkout/continue'));
+
 // Canonical checkout routes remain auth-bound + server-authoritative.
 const subRoute = read("app/api/billing/subscribe/route.ts");
 const otRoute = read("app/api/billing/checkout-one-time/route.ts");
