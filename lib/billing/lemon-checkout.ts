@@ -20,12 +20,15 @@ export interface CheckoutResult { configured: boolean; url?: string; reason?: st
  *  end to end (never derived from payload email). No card data touches LeadLens. */
 async function postLemonCheckout(variant: string, email: string, custom: Record<string, string>, redirectPath: string, apiKey: string, storeId: string, env: NodeJS.ProcessEnv): Promise<CheckoutResult> {
   const appUrl = (env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000").replace(/=+$/, "");
+  // Lemon Squeezy "Create a checkout": redirect_url belongs under product_options (NOT checkout_options,
+  // whose schema is UI toggles only — an unknown key there can 422 the whole request). custom is echoed
+  // back on every webhook as meta.custom_data, binding ownership end to end.
   const requestBody = {
     data: {
       type: "checkouts",
       attributes: {
         checkout_data: { email, custom },
-        checkout_options: { redirect_url: `${appUrl}${redirectPath}` },
+        product_options: { redirect_url: `${appUrl}${redirectPath}` },
       },
       relationships: {
         store: { data: { type: "stores", id: String(storeId) } },
@@ -39,11 +42,21 @@ async function postLemonCheckout(variant: string, email: string, custom: Record<
       headers: { "Content-Type": "application/vnd.api+json", Accept: "application/vnd.api+json", Authorization: `Bearer ${apiKey}` },
       body: JSON.stringify(requestBody),
     });
-    if (!res.ok) return { configured: true, reason: `provider_error_${res.status}` };
+    if (!res.ok) {
+      // Surface the provider reason for diagnosis WITHOUT secrets: Lemon returns JSON:API errors[].detail
+      // (e.g. "variant not found" for a test/live mismatch, "Unauthenticated" for a wrong-mode key). The
+      // API key/store/variant IDs are never logged.
+      let detail = "";
+      try { const body: any = await res.json(); detail = (body?.errors?.[0]?.detail ?? body?.message ?? "").toString().slice(0, 200); } catch { /* non-JSON body */ }
+      console.error(`[lemon-checkout] provider_error status=${res.status} detail=${JSON.stringify(detail)} store_set=${Boolean(storeId)} variant_set=${Boolean(variant)}`);
+      return { configured: true, reason: `provider_error_${res.status}` };
+    }
     const json: any = await res.json();
     const url = json?.data?.attributes?.url;
-    return url ? { configured: true, url } : { configured: true, reason: "no_url" };
-  } catch {
+    if (!url) { console.error("[lemon-checkout] provider returned 2xx but no checkout url"); return { configured: true, reason: "no_url" }; }
+    return { configured: true, url };
+  } catch (err) {
+    console.error(`[lemon-checkout] provider_unreachable: ${err instanceof Error ? err.message : "unknown"}`);
     return { configured: true, reason: "provider_unreachable" };
   }
 }

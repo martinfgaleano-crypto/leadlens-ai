@@ -1,6 +1,7 @@
 // Billing V1 — canonical plan config (frozen matrix) + provider variant⇄plan mapping.
 // Deterministic; no network. Env is injected explicitly (never reads real secrets).
 
+import { readFileSync } from "node:fs";
 import { SUBSCRIPTION_PLANS, BETA_CONFIG, subscriptionPlanConfig, isSubscriptionPlanCode } from "../../lib/entitlements/plan-config";
 import { variantToCanonicalPlan, canonicalPlanToVariant, configuredCombinations, oneTimeLegacyPlanToVariant, configuredOneTimeCombinations } from "../../lib/billing/provider-plan-map";
 import { createSubscriptionCheckout, createOneTimeCheckout } from "../../lib/billing/lemon-checkout";
@@ -69,6 +70,11 @@ async function checkoutBoundary() {
   const otNoVariant = await createOneTimeCheckout({ userId: "u", email: "a@b.c", productCode: "premium_launch_v0" }, { LEMONSQUEEZY_API_KEY: "k", LEMONSQUEEZY_STORE_ID: "1", ...oneTimeEnv } as any);
   t("one-time checkout: provider set but variant missing (pro) → variant_not_configured", otNoVariant.configured === false && otNoVariant.reason === "variant_not_configured");
 }
+
+// ── Lemon checkout payload correctness + diagnostics (checkout-creation debug) ──
+const checkoutSrc = readFileSync("lib/billing/lemon-checkout.ts", "utf8");
+t("Lemon checkout: redirect_url is under product_options (Lemon spec), not checkout_options", checkoutSrc.includes("product_options: { redirect_url:") && !/checkout_options:\s*\{\s*redirect_url/.test(checkoutSrc));
+t("Lemon checkout: provider errors logged with sanitized detail (no api key)", checkoutSrc.includes("[lemon-checkout] provider_error") && !/console\.error\([^)]*apiKey/.test(checkoutSrc));
 
 checkoutBoundary().then(() => {
   console.log(`\n${passed} passed, ${failed} failed`);
