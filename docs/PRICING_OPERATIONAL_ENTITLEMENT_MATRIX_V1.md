@@ -51,9 +51,11 @@ Active monitored account = an account under a standing recurring-review Monitor 
 
 | | WATCH | MONITOR | INTELLIGENCE |
 |---|---|---|---|
-| Max active monitored accounts | 3 | 15 | 50 |
+| Max active monitored accounts | 3 | 20 | 60 |
 
 At limit: **block new Monitor creation / require upgrade**. Existing Monitors are **preserved**.
+
+> **Amendment (2026-09-04, POST-LEMON Option C):** MONITOR 15→**20**, INTELLIGENCE 50→**60**. Monthly Account Intelligence Credits stay **3 / 30 / 100** (single-bucket unchanged). The proposed separate deep-research allowance (0/2/6) and hard market caps (1/1/3) are **DEFERRED — Pricing V2 hypothesis**, not Billing V1 entitlements.
 
 ## 8. Monitor cadence rights (FROZEN)
 

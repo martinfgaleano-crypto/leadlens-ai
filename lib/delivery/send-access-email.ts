@@ -54,7 +54,7 @@ export async function sendDeliveryAccessEmail(
     This link expires in ${expiryDays} days. Reply to this email if you have any questions.
   </p>
   <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 28px 0;">
-  <p style="font-size: 12px; color: #cbd5e1; margin: 0;">LeadLens AI · Opportunity Snapshot</p>
+  <p style="font-size: 12px; color: #cbd5e1; margin: 0;">LeadLens · Opportunity Snapshot</p>
 </body>
 </html>`.trim();
 
@@ -68,7 +68,7 @@ ${input.signedUrl}
 
 This link expires in ${expiryDays} days.
 
-— LeadLens AI
+— LeadLens
 `.trim();
 
   try {
