@@ -2,10 +2,12 @@
 // Web/PDF/CSV. Deterministic; no network. Proves: tier caps + dossier depth + section gating, honest
 // recount, channel policy, three consistent outputs from one document, and no content invention.
 
+import { readFileSync } from "node:fs";
 import type { DeliverableViewModel, AccountBriefVM, DecisionState } from "../../lib/deliverable/deliverable-view-model";
 import {
   fromDeliverableViewModel, composeForTier, TIER_COMPOSITION, toPresentationModel, presentAllChannels,
   renderCsv, renderPdfHtml, toWebPresentation, deliveryFilename, EXPORT_POLICY, CSV_COLUMNS, DELIVERY_DOCUMENT_SCHEMA,
+  CHANNEL_AVAILABILITY, tierOffersChannel, isDeliveryTier, offeredChannels,
 } from "../../lib/delivery-system";
 
 let passed = 0, failed = 0;
@@ -107,6 +109,26 @@ t("filenames are safe + channel-tagged", deliveryFilename(all.csv, "csv") === "l
 // ── Policy table integrity ──
 t("three channels declared", Object.keys(EXPORT_POLICY).sort().join(",") === "csv,pdf,web");
 t("only csv carries csvColumns", EXPORT_POLICY.csv.csvColumns !== null && EXPORT_POLICY.web.csvColumns === null && EXPORT_POLICY.pdf.csvColumns === null);
+
+// ── Tier × channel availability (Phase A gating) ──
+t("csv offered ONLY for intelligence + premium", tierOffersChannel("intelligence", "csv") && tierOffersChannel("premium", "csv") && !tierOffersChannel("preview", "csv") && !tierOffersChannel("brief", "csv"));
+t("web + pdf offered for every tier", (["preview", "brief", "intelligence", "premium"] as const).every((tr) => tierOffersChannel(tr, "web") && tierOffersChannel(tr, "pdf")));
+t("isDeliveryTier accepts the four tiers, rejects junk", isDeliveryTier("premium") && !isDeliveryTier("enterprise") && !isDeliveryTier(null));
+t("offeredChannels: preview = web,pdf (no csv)", offeredChannels("preview").join(",") === "web,pdf" && Object.keys(CHANNEL_AVAILABILITY).length === 4);
+
+// ── CSV export route contract (auth, server tier, gating, headers) ──
+const csvRoute = readFileSync("app/api/results/[jobId]/export/csv/route.ts", "utf8");
+t("csv route: authenticated via bearer token", csvRoute.includes('req.headers.get("authorization")') && csvRoute.includes("deliverableForViewer(params.jobId, token)"));
+t("csv route: owner/cross-tenant denial (401/403/404 from viewer bridge)", csvRoute.includes("if (!v.ok) return new NextResponse(null, { status: v.status })"));
+t("csv route: tier-gated (channel availability), server tier not client", csvRoute.includes('tierOffersChannel(v.tier, "csv")') && !csvRoute.includes("searchParams") && !/req\.(url|nextUrl)[^;]*tier/.test(csvRoute));
+t("csv route: correct content-type + attachment + noindex", csvRoute.includes('"Content-Type": "text/csv; charset=utf-8"') && csvRoute.includes("attachment; filename=") && csvRoute.includes('"X-Robots-Tag": "noindex"'));
+t("csv route: no raw JSON / no research call / no credit consumption", !csvRoute.includes("report_json") && !csvRoute.includes("consumeRunSlot") && !csvRoute.includes("claimAccountIntelligenceCredit") && !csvRoute.includes("runLeadLensPipeline"));
+
+// ── Viewer bridge: proven ownership + no research/credit ──
+const bridge = readFileSync("lib/delivery-system/server/deliverable-for-viewer.ts", "utf8");
+t("viewer bridge reuses getBriefForViewer ownership (owner-only, cross-tenant denied)", bridge.includes("getBriefForViewer(jobId, accessToken)") && bridge.includes('status: 403') && bridge.includes('status: 401'));
+t("viewer bridge: server-authoritative tier from experience (client can't escalate)", bridge.includes("brief.experience.tier") && bridge.includes("isDeliveryTier"));
+t("viewer bridge: no credit/pipeline call (starts from immutable snapshot)", !bridge.includes("consumeRunSlot") && !bridge.includes("claimAccountIntelligenceCredit") && !bridge.includes("runLeadLensPipeline") && !bridge.includes("provider-routing"));
 
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed) process.exit(1);
