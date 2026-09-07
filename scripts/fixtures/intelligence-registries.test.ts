@@ -12,6 +12,9 @@ import {
   buildIntelligenceSnapshot, type SnapshotArtifactSignals, type SnapshotInput,
 } from "@/lib/intelligence/snapshot-engine";
 import { loadSnapshotInputs } from "@/lib/intelligence/snapshot-loader";
+import { mkdtemp, mkdir, rm, writeFile } from "fs/promises";
+import { tmpdir } from "os";
+import { join } from "path";
 
 let p = 0, f = 0;
 const t = (n: string, ok: boolean, d = "") => { console.log(`${ok ? "✅" : "❌"} ${n}${ok || !d ? "" : ` (${d})`}`); ok ? p++ : f++; };
@@ -91,8 +94,30 @@ t("25 output claims preserve evidence", outputs.every((o) => o.claim.evidence.le
 t("26 primary limitation remains explicit", typeof snap.registry_summary.primary_pattern_limitation === "string");
 
 (async () => {
-  const live = await loadSnapshotInputs({ now: NOW });
-  t("27 real artifact produces supported outputs", (live.outputs?.length ?? 0) > 0);
-  t("28 no learned rows supplied ⇒ no patterns fabricated", (live.patterns?.length ?? 0) === 0);
+  const root = await mkdtemp(join(tmpdir(), "leadlens-registry-loader-"));
+  const runDir = join(root, "ml/data/pilot-amor-de-gea", "2026-07-29T00-00-00-000Z");
+  try {
+    await mkdir(runDir, { recursive: true });
+    await writeFile(join(runDir, "segment-universe.json"), JSON.stringify({
+      segment_distribution: { retail: 2 },
+      raw_candidate_count: 5,
+      deduped_company_count: 4,
+      verified_company_count: 2,
+      probable_company_count: 1,
+      excluded_company_count: 1,
+    }));
+    await writeFile(join(runDir, "staged-pipeline.json"), JSON.stringify({
+      version: "market-to-account-pipeline-v1",
+      shortlist: [{ company: "Account A" }],
+      signal_coverage: { with_timing: 0 },
+      evidence_coverage: { corroborated: 0, weak: 1, total_shortlist: 1 },
+      deep_research_status: { complete: 0 },
+    }));
+    const live = await loadSnapshotInputs({ now: NOW, root });
+    t("27 isolated artifact produces supported outputs", (live.outputs?.length ?? 0) > 0);
+    t("28 no learned rows supplied ⇒ no patterns fabricated", (live.patterns?.length ?? 0) === 0);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
   console.log(`\n${p} passed, ${f} failed`); if (f) process.exit(1);
 })();
