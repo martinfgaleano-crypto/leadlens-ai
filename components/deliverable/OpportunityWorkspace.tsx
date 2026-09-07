@@ -12,7 +12,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { DeliverableViewModel, DecisionState, AccountBriefVM } from "@/lib/deliverable/deliverable-view-model";
 import { DECISION_TOKENS, STRENGTH_TOKENS, decisionLabel, orderByAttention, accountRoleLabel, opportunityTypeLabel } from "@/lib/deliverable/deliverable-view-model";
 import { portfolioCsv, evidenceCsv, deliverableFilename } from "@/lib/deliverable/exports";
-import { tierOffersChannel } from "@/lib/delivery-system/channel-availability";
+import { downloadableChannels } from "@/lib/delivery-system/channel-availability";
 import type { DeliveryTier } from "@/lib/delivery-system/tier-composer";
 import { toClientCanvasVM } from "@/lib/deliverable/client-canvas-vm";
 import { buildPortfolioIntelligence } from "@/lib/deliverable/portfolio-intelligence";
@@ -646,11 +646,14 @@ function DownloadsTab({ vm, t, exportContext }: { vm: DeliverableViewModel; t: L
 
   if (exportContext) {
     const { jobId, tier, getToken } = exportContext;
-    // Real PDF — every tier is offered the full snapshot artifact.
-    items.push({ key: "pdf", title: t.dlPdf, desc: t.dlPdfDesc, action: () => run("pdf", `/api/results/${jobId}/export/pdf`, getToken) });
-    // Operational CSV — only the tiers the channel matrix offers it to.
-    if (tierOffersChannel(tier, "csv")) {
-      items.push({ key: "csv", title: t.dlPortfolioCsv, desc: t.dlPortfolioCsvDesc, action: () => run("csv", `/api/results/${jobId}/export/csv`, getToken) });
+    // Controls derive DIRECTLY from Delivery policy (downloadableChannels): pdf every tier, csv only
+    // where offered. The routes enforce the same policy — the UI never grants what the server denies.
+    const meta: Record<"pdf" | "csv", { title: string; desc: string }> = {
+      pdf: { title: t.dlPdf, desc: t.dlPdfDesc },
+      csv: { title: t.dlPortfolioCsv, desc: t.dlPortfolioCsvDesc },
+    };
+    for (const channel of downloadableChannels(tier)) {
+      items.push({ key: channel, title: meta[channel].title, desc: meta[channel].desc, action: () => run(channel, `/api/results/${jobId}/export/${channel}`, getToken) });
     }
   } else {
     if (vm.downloads.pdf) items.push({ key: "pdf", title: t.dlPdf, desc: t.dlPdfDesc, action: () => window.print() });

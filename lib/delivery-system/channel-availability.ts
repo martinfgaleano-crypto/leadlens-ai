@@ -27,3 +27,11 @@ export function isDeliveryTier(v: string | null | undefined): v is DeliveryTier 
 export function offeredChannels(tier: DeliveryTier): readonly DeliveryChannel[] {
   return CHANNEL_AVAILABILITY[tier];
 }
+
+/** The customer's downloadable Export controls for a tier — the offered channels minus "web" (the
+ *  living product is the surface itself, not a download). This is the SINGLE source the customer UI
+ *  uses to decide which export buttons to show, so control exposure is provably equal to policy; the
+ *  export routes independently enforce the same policy (hiding a control never grants authorization). */
+export function downloadableChannels(tier: DeliveryTier): readonly Exclude<DeliveryChannel, "web">[] {
+  return offeredChannels(tier).filter((c): c is Exclude<DeliveryChannel, "web"> => c !== "web");
+}
