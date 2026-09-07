@@ -1,0 +1,63 @@
+name: Intelligence run recovery
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+# The workflow only performs an authenticated HTTPS GET. It does not need
+# repository, package, deployment or identity-token permissions.
+permissions: {}
+
+concurrency:
+  group: intelligence-run-recovery-production
+  cancel-in-progress: false
+
+jobs:
+  recover-stale-runs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    env:
+      LEADLENS_PRODUCTION_URL: ${{ secrets.LEADLENS_PRODUCTION_URL }}
+      CRON_SECRET: ${{ secrets.CRON_SECRET }}
+    steps:
+      - name: Invoke authenticated recovery endpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ -z "${LEADLENS_PRODUCTION_URL}" ]]; then
+            echo "::error::LEADLENS_PRODUCTION_URL repository secret is not configured."
+            exit 1
+          fi
+          if [[ -z "${CRON_SECRET}" ]]; then
+            echo "::error::CRON_SECRET repository secret is not configured."
+            exit 1
+          fi
+
+          base_url="${LEADLENS_PRODUCTION_URL%/}"
+          if [[ "${base_url}" != https://* ]]; then
+            echo "::error::LEADLENS_PRODUCTION_URL must be an HTTPS origin."
+            exit 1
+          fi
+
+          status="$(
+            curl \
+              --silent \
+              --show-error \
+              --output "${RUNNER_TEMP}/intelligence-recovery-response.json" \
+              --write-out "%{http_code}" \
+              --max-time 60 \
+              --retry 2 \
+              --retry-delay 5 \
+              --retry-connrefused \
+              --header "Authorization: Bearer ${CRON_SECRET}" \
+              "${base_url}/api/internal/intelligence-runs/recover"
+          )"
+
+          if [[ ! "${status}" =~ ^2[0-9][0-9]$ ]]; then
+            echo "::error::Intelligence recovery endpoint returned HTTP ${status}."
+            exit 1
+          fi
+
+          echo "Intelligence recovery endpoint accepted the scheduled wake (HTTP ${status})."

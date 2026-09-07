@@ -9,14 +9,24 @@
 //   • is not linked from any customer surface.
 // It exists solely to close the authenticated-QA gap for design review.
 import { notFound } from "next/navigation";
-import OpportunityWorkspace from "@/components/deliverable/OpportunityWorkspace";
 import { assembleInstitutionalReport } from "@/lib/reports/institutional-assembler";
 import { resolveReportExperience } from "@/lib/products/report-experience";
 import { fromInstitutionalReport, fromAmorPilot } from "@/lib/deliverable/adapters";
 import { snapshotAccountReview } from "@/lib/deliverable/account-memory";
 import type { DeliverableViewModel } from "@/lib/deliverable/deliverable-view-model";
+import DevExportWorkspace from "./DevExportWorkspace";
+import { isDeliveryTier } from "@/lib/delivery-system/channel-availability";
+import type { DeliveryTier } from "@/lib/delivery-system/tier-composer";
 
 export const dynamic = "force-dynamic";
+
+// DEV visual-smoke: render the REAL authenticated Export control set (PDF always + CSV only where the
+// tier offers it). ?tier= overrides the resolved tier so each tier's control set can be smoked
+// (preview/brief/intelligence/premium). The getToken function is built in the client wrapper — a
+// Server Component cannot pass a function to a Client Component.
+function devTier(searchParams: { tier?: string } | undefined, fallback: DeliveryTier): DeliveryTier {
+  return isDeliveryTier(searchParams?.tier) ? (searchParams!.tier as DeliveryTier) : fallback;
+}
 
 const NOW = "2026-08-14T00:00:00.000Z";
 
@@ -133,14 +143,14 @@ function loadAmorViewModel(): DeliverableViewModel | null {
   }
 }
 
-export default function DevBriefPreview({ searchParams }: { searchParams?: { source?: string; report?: string; memory?: string } }) {
+export default function DevBriefPreview({ searchParams }: { searchParams?: { source?: string; report?: string; memory?: string; tier?: string } }) {
   if (process.env.NODE_ENV === "production") notFound();
 
   // ?source=amor renders the real legacy pilot through the SAME workspace,
   // proving generic compatibility. Default: synthetic institutional report.
   if (searchParams?.source === "amor") {
     const vm = loadAmorViewModel();
-    if (vm) return <OpportunityWorkspace vm={vm} />;
+    if (vm) return <DevExportWorkspace vm={vm} jobId="dev-preview" tier={devTier(searchParams, "premium")} />;
   }
 
   // ?report=alt renders the second fixture (6 EU accounts, mixed density).
@@ -175,7 +185,7 @@ export default function DevBriefPreview({ searchParams }: { searchParams?: { sou
       return [a.id, snapshotAccountReview(prev, { reviewId: "dev-review-1", reviewedAt: "2026-03-15", contextVersion: "dev-v1" })] as const;
     });
     const memory = { current: { reviewId: "dev-review-2", reviewedAt: "2026-08-22", contextVersion: "dev-v1" }, previousById: Object.fromEntries(prior) };
-    return <OpportunityWorkspace vm={vm} memory={memory} />;
+    return <DevExportWorkspace vm={vm} memory={memory} jobId="dev-preview" tier={devTier(searchParams, experience.tier as DeliveryTier)} />;
   }
-  return <OpportunityWorkspace vm={vm} />;
+  return <DevExportWorkspace vm={vm} jobId="dev-preview" tier={devTier(searchParams, experience.tier as DeliveryTier)} />;
 }

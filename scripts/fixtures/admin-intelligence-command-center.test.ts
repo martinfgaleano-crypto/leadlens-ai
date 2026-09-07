@@ -1,4 +1,5 @@
 import { readFileSync, mkdtempSync } from "fs";
+import { mkdir, rm, writeFile } from "fs/promises";
 import os from "node:os";
 import path from "path";
 import { NextRequest } from "next/server";
@@ -25,17 +26,36 @@ const loaderSource = readFileSync(path.join(ROOT, "lib/intelligence/admin-view-m
 const routeSource = readFileSync(path.join(ROOT, "app/api/admin/intelligence/command-center/route.ts"), "utf8");
 
 async function run() {
+  const artifactRoot = mkdtempSync(path.join(os.tmpdir(), "leadlens-command-center-artifact-"));
+  const artifactRunDir = path.join(artifactRoot, "ml/data/pilot-amor-de-gea/2026-07-29T00-00-00-000Z");
+  await mkdir(artifactRunDir, { recursive: true });
+  await writeFile(path.join(artifactRunDir, "segment-universe.json"), JSON.stringify({
+    segment_distribution: { retail: 2 }, raw_candidate_count: 5, deduped_company_count: 4,
+    verified_company_count: 2, probable_company_count: 1, excluded_company_count: 1,
+  }));
+  await writeFile(path.join(artifactRunDir, "staged-pipeline.json"), JSON.stringify({
+    version: "market-to-account-pipeline-v1", shortlist: [{ company: "Account A" }],
+    signal_coverage: { with_timing: 0 }, evidence_coverage: { corroborated: 0, weak: 1, total_shortlist: 1 },
+    deep_research_status: { complete: 0 },
+  }));
+  const artifactInput = await loadSnapshotInputs({ root: artifactRoot, now: NOW });
+  const artifactData: AdminIntelligenceLoadedData = {
+    input: artifactInput,
+    feedback: { available: false, total_events: null, with_reason_codes: null, with_snapshot: null, with_versions: null, sentiment: null, top_reason_codes: [], reason: "fixture unavailable" },
+    availability: { artifact: "available", database: "partial", validation_persistence: "migration_missing", learned_preferences: "unavailable", message: "isolated artifact fixture" },
+  };
+  const artifactLocal = buildAdminIntelligenceViewModel(artifactData);
   const local = await loadAdminIntelligenceViewModel({ root: ROOT, now: NOW, db: null });
   test("1 loader returns versioned real snapshot", local.version === ADMIN_INTELLIGENCE_VIEW_VERSION && local.snapshot.id.startsWith("snapshot:"));
   test("2 DB-unavailable mode remains honest", local.availability.database === "unavailable" && local.feedback.total_events === null);
   test("3 unavailable DB metrics do not become zero", local.knowledge.vault_records === null && local.feedback.with_snapshot === null);
   test("4 unmeasured dimensions expose state and reason", local.snapshot.index.dimensions.filter((d) => d.measurement.state !== "measured").every((d) => "reason" in d.measurement));
   test("5 capability map uses snapshot assessments", local.snapshot.capability_assessments.length >= 25 && /snapshot\.capability_assessments/.test(pageSource));
-  test("6 current artifact produces six real outputs", local.snapshot.outputs.length === 6, `got ${local.snapshot.outputs.length}`);
+  test("6 isolated artifact produces six real outputs", artifactLocal.snapshot.outputs.length === 6, `got ${artifactLocal.snapshot.outputs.length}`);
   test("7 output validation/eligibility preserved", local.snapshot.outputs.every((o) => o.validation_state === "unreviewed" && o.report_eligibility === "not_eligible"));
   test("8 zero patterns has informative empty state", local.snapshot.patterns.length === 0 && /No valid patterns yet/.test(local.empty_states.patterns));
   test("9 pattern threshold is canonical", local.pattern_threshold === 5 && /pattern_threshold/.test(loaderSource));
-  test("10 validation funnel derives real counts", local.snapshot.validation_summary.output_count === 6 && local.snapshot.validation_summary.reviewed_count === 0);
+  test("10 validation funnel derives isolated artifact counts", artifactLocal.snapshot.validation_summary.output_count === 6 && artifactLocal.snapshot.validation_summary.reviewed_count === 0);
   test("11 zero outcomes explains performance", /Fewer than five attributable outcomes/.test(local.empty_states.outcomes));
   test("12 gaps ordered by priority", local.snapshot.gaps.every((g, i, rows) => i === 0 || rows[i - 1].priority >= g.priority));
   test("13 actions derived from gaps", local.snapshot.actions.length === local.snapshot.gaps.length && local.snapshot.actions.every((a) => a.affected_gaps.length > 0));
@@ -64,9 +84,8 @@ async function run() {
   test("33 source links preserved", ["growth","review","sources","source-review"].every((x) => pageSource.includes(`/admin/intelligence/${x}`)));
   test("34 page performs one command-center load", (pageSource.match(/adminFetch\("\/api\/admin\/intelligence\/command-center"/g) ?? []).length === 1);
 
-  const input = await loadSnapshotInputs({ root: ROOT, now: NOW });
   const fallbackData: AdminIntelligenceLoadedData = {
-    input,
+    input: artifactInput,
     feedback: { available: false, total_events: null, with_reason_codes: null, with_snapshot: null, with_versions: null, sentiment: null, top_reason_codes: [], reason: "fixture unavailable" },
     availability: { artifact: "available", database: "partial", validation_persistence: "migration_missing", learned_preferences: "unavailable", message: "partial fixture" },
   };
@@ -116,6 +135,7 @@ async function run() {
   if (saved.secret === undefined) delete env.ADMIN_SESSION_SECRET; else env.ADMIN_SESSION_SECRET = saved.secret;
   if (saved.token === undefined) delete env.ADMIN_SECRET_TOKEN; else env.ADMIN_SECRET_TOKEN = saved.token;
   if (saved.bypass === undefined) delete env.ADMIN_LOCAL_BYPASS; else env.ADMIN_LOCAL_BYPASS = saved.bypass;
+  await rm(artifactRoot, { recursive: true, force: true });
 
   console.log(`\n${passed} passed, ${failed} failed`);
   if (failed) process.exit(1);
