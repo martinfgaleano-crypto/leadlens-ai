@@ -7,8 +7,9 @@ import type { DeliverableViewModel, AccountBriefVM, DecisionState } from "../../
 import {
   fromDeliverableViewModel, composeForTier, TIER_COMPOSITION, toPresentationModel, presentAllChannels,
   renderCsv, renderPdfHtml, toWebPresentation, deliveryFilename, EXPORT_POLICY, CSV_COLUMNS, DELIVERY_DOCUMENT_SCHEMA,
-  CHANNEL_AVAILABILITY, tierOffersChannel, isDeliveryTier, offeredChannels,
+  CHANNEL_AVAILABILITY, tierOffersChannel, isDeliveryTier, offeredChannels, renderPdfBuffer,
 } from "../../lib/delivery-system";
+import type { DeliveryTier } from "../../lib/delivery-system";
 
 let passed = 0, failed = 0;
 const t = (n: string, ok: boolean) => { (ok ? passed++ : failed++); if (!ok) console.error(`FAIL: ${n}`); };
@@ -109,6 +110,31 @@ t("filenames are safe + channel-tagged", deliveryFilename(all.csv, "csv") === "l
 // ── Policy table integrity ──
 t("three channels declared", Object.keys(EXPORT_POLICY).sort().join(",") === "csv,pdf,web");
 t("only csv carries csvColumns", EXPORT_POLICY.csv.csvColumns !== null && EXPORT_POLICY.web.csvColumns === null && EXPORT_POLICY.pdf.csvColumns === null);
+
+// ── Phase B: REAL PDF bytes for every tier (application/pdf, valid structure) ──
+const isPdf = (b: Buffer) => b.subarray(0, 5).toString("latin1") === "%PDF-" && b.includes(Buffer.from("%%EOF")) && b.length > 1500;
+for (const tier of ["preview", "brief", "intelligence", "premium"] as DeliveryTier[]) {
+  const buf = renderPdfBuffer(toPresentationModel(doc, tier, "pdf"));
+  t(`pdf ${tier}: real PDF bytes (%PDF header + %%EOF + size)`, Buffer.isBuffer(buf) && isPdf(buf));
+}
+// Edge cases must not throw and still produce a valid PDF.
+const edge = fromDeliverableViewModel({
+  ...vm,
+  accounts: [{
+    ...acc("edge", "hold", 1),
+    company: "A Really, Really Long Manufacturing & Distribution Company Name, Incorporated (LATAM)",
+    dimensions: [{ label: "Fit", value: "Strong" }, { label: "Evidence", value: "Limited" }], // no Timing
+    counterSignals: [], whatChanged: [],
+    sources: [{ label: "Very long source title that wraps across multiple lines in the artifact", url: "https://example.com/a/very/long/path/that/should/wrap/nicely/in/the/pdf/output?q=1&x=2", date: "2026-07-01", age: "60d", relation: "direct", claim: "x" }],
+  }],
+  portfolio: { ...vm.portfolio, counts: { prioritize: 0, validate: 0, monitor: 0, hold: 1 } },
+});
+t("pdf edge (long name/url, no timing, empty counter, zero prioritize) → valid PDF, no throw", isPdf(renderPdfBuffer(toPresentationModel(edge, "premium", "pdf"))));
+
+// ── PDF export route contract ──
+const pdfRoute = readFileSync("app/api/results/[jobId]/export/pdf/route.ts", "utf8");
+t("pdf route: nodejs runtime + application/pdf + attachment + noindex", pdfRoute.includes('runtime = "nodejs"') && pdfRoute.includes('"Content-Type": "application/pdf"') && pdfRoute.includes("attachment; filename=") && pdfRoute.includes('"X-Robots-Tag": "noindex"'));
+t("pdf route: authenticated, owner-gated, server tier, offered for tier", pdfRoute.includes("deliverableForViewer(params.jobId, token)") && pdfRoute.includes("if (!v.ok) return new NextResponse(null, { status: v.status })") && pdfRoute.includes('tierOffersChannel(v.tier, "pdf")') && !pdfRoute.includes("report_json"));
 
 // ── Tier × channel availability (Phase A gating) ──
 t("csv offered ONLY for intelligence + premium", tierOffersChannel("intelligence", "csv") && tierOffersChannel("premium", "csv") && !tierOffersChannel("preview", "csv") && !tierOffersChannel("brief", "csv"));
