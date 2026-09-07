@@ -86,7 +86,7 @@ async function run() {
   const sub = await resolveEntitlements(fakeDb({ u: { plan: "free", credits: 0, subscription: activeSub("monitor") } }), "u");
   t("subscription: accessSource subscription", sub.accessSource === "subscription");
   t("subscription: planCode = monitor", sub.planCode === "monitor");
-  t("subscription: MONITOR limits 30 credits / 15 monitors / 14d", sub.limits.max_runs_per_period === 30 && sub.limits.max_active_monitors === 15 && sub.limits.cadence_min_days === 14);
+  t("subscription: MONITOR limits 30 credits / 20 monitors / 14d", sub.limits.max_runs_per_period === 30 && sub.limits.max_active_monitors === 20 && sub.limits.cadence_min_days === 14);
   t("subscription: can_run_intelligence + monitor", sub.capabilities.can_run_intelligence && sub.capabilities.can_run_monitor);
   t("subscription: usage pending_ledger → full allowance, gate allows", sub.usage.credits_remaining === 30 && intelligenceRunGate(sub) === null);
 

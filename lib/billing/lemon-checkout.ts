@@ -7,26 +7,28 @@
 // or user id. Fails safe + diagnostic when provider config is absent (no silent wrong-variant).
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { canonicalPlanToVariant } from "@/lib/billing/provider-plan-map";
+import { canonicalPlanToVariant, oneTimeLegacyPlanToVariant } from "@/lib/billing/provider-plan-map";
+import { resolveProduct } from "@/lib/products/catalog";
 import type { SubscriptionPlanCode, BillingInterval } from "@/lib/entitlements/plan-config";
 
 export interface CheckoutInput { userId: string; email: string; planCode: SubscriptionPlanCode; interval: BillingInterval }
+export interface OneTimeCheckoutInput { userId: string; email: string; productCode: string }
 export interface CheckoutResult { configured: boolean; url?: string; reason?: string }
 
-export async function createSubscriptionCheckout(input: CheckoutInput, env: NodeJS.ProcessEnv = process.env): Promise<CheckoutResult> {
-  const apiKey = env.LEMONSQUEEZY_API_KEY?.trim();
-  const storeId = env.LEMONSQUEEZY_STORE_ID?.trim();
-  const variant = canonicalPlanToVariant(input.planCode, input.interval, env);
-  if (!apiKey || !storeId) return { configured: false, reason: "provider_not_configured" };
-  if (!variant) return { configured: false, reason: "variant_not_configured" };
-
+/** Shared provider-hosted checkout POST. Callers verify provider config + variant first, so this
+ *  only issues the request. `custom` is echoed back on every webhook so ownership is provenance-bound
+ *  end to end (never derived from payload email). No card data touches LeadLens. */
+async function postLemonCheckout(variant: string, email: string, custom: Record<string, string>, redirectPath: string, apiKey: string, storeId: string, env: NodeJS.ProcessEnv): Promise<CheckoutResult> {
   const appUrl = (env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000").replace(/=+$/, "");
+  // Lemon Squeezy "Create a checkout": redirect_url belongs under product_options (NOT checkout_options,
+  // whose schema is UI toggles only — an unknown key there can 422 the whole request). custom is echoed
+  // back on every webhook as meta.custom_data, binding ownership end to end.
   const requestBody = {
     data: {
       type: "checkouts",
       attributes: {
-        checkout_data: { email: input.email, custom: { user_id: input.userId } },
-        checkout_options: { redirect_url: `${appUrl}/billing/success` },
+        checkout_data: { email, custom },
+        product_options: { redirect_url: `${appUrl}${redirectPath}` },
       },
       relationships: {
         store: { data: { type: "stores", id: String(storeId) } },
@@ -34,18 +36,53 @@ export async function createSubscriptionCheckout(input: CheckoutInput, env: Node
       },
     },
   };
-
   try {
     const res = await fetch("https://api.lemonsqueezy.com/v1/checkouts", {
       method: "POST",
       headers: { "Content-Type": "application/vnd.api+json", Accept: "application/vnd.api+json", Authorization: `Bearer ${apiKey}` },
       body: JSON.stringify(requestBody),
     });
-    if (!res.ok) return { configured: true, reason: `provider_error_${res.status}` };
+    if (!res.ok) {
+      // Surface the provider reason for diagnosis WITHOUT secrets: Lemon returns JSON:API errors[].detail
+      // (e.g. "variant not found" for a test/live mismatch, "Unauthenticated" for a wrong-mode key). The
+      // API key/store/variant IDs are never logged.
+      let detail = "";
+      try { const body: any = await res.json(); detail = (body?.errors?.[0]?.detail ?? body?.message ?? "").toString().slice(0, 200); } catch { /* non-JSON body */ }
+      console.error(`[lemon-checkout] provider_error status=${res.status} detail=${JSON.stringify(detail)} store_set=${Boolean(storeId)} variant_set=${Boolean(variant)}`);
+      return { configured: true, reason: `provider_error_${res.status}` };
+    }
     const json: any = await res.json();
     const url = json?.data?.attributes?.url;
-    return url ? { configured: true, url } : { configured: true, reason: "no_url" };
-  } catch {
+    if (!url) { console.error("[lemon-checkout] provider returned 2xx but no checkout url"); return { configured: true, reason: "no_url" }; }
+    return { configured: true, url };
+  } catch (err) {
+    console.error(`[lemon-checkout] provider_unreachable: ${err instanceof Error ? err.message : "unknown"}`);
     return { configured: true, reason: "provider_unreachable" };
   }
+}
+
+export async function createSubscriptionCheckout(input: CheckoutInput, env: NodeJS.ProcessEnv = process.env): Promise<CheckoutResult> {
+  const apiKey = env.LEMONSQUEEZY_API_KEY?.trim();
+  const storeId = env.LEMONSQUEEZY_STORE_ID?.trim();
+  if (!apiKey || !storeId) return { configured: false, reason: "provider_not_configured" };
+  const variant = canonicalPlanToVariant(input.planCode, input.interval, env);
+  if (!variant) return { configured: false, reason: "variant_not_configured" };
+  const redirect = `/success?kind=subscription&plan_code=${encodeURIComponent(input.planCode)}&billing_interval=${encodeURIComponent(input.interval)}`;
+  return postLemonCheckout(variant, input.email, { user_id: input.userId }, redirect, apiKey, storeId, env);
+}
+
+/** Canonical customer ONE-TIME checkout on Lemon (frozen §9 — one-time must use Lemon, not Stripe/mock).
+ *  Client supplies only a product code; the SERVER resolves it to the catalog product, maps its legacy
+ *  plan slug to the configured Lemon one-time variant, and binds the trusted owner id + product code in
+ *  custom_data. Fails safe + diagnostic when the product is invalid or provider config is absent. */
+export async function createOneTimeCheckout(input: OneTimeCheckoutInput, env: NodeJS.ProcessEnv = process.env): Promise<CheckoutResult> {
+  const product = resolveProduct(input.productCode);
+  if (!product || product.billing_type !== "one_time") return { configured: false, reason: "invalid_product" };
+  const apiKey = env.LEMONSQUEEZY_API_KEY?.trim();
+  const storeId = env.LEMONSQUEEZY_STORE_ID?.trim();
+  if (!apiKey || !storeId) return { configured: false, reason: "provider_not_configured" };
+  const variant = oneTimeLegacyPlanToVariant(product.legacy_plan, env);
+  if (!variant) return { configured: false, reason: "variant_not_configured" };
+  const redirect = `/success?kind=one_time&product_code=${encodeURIComponent(product.product_code)}`;
+  return postLemonCheckout(variant, input.email, { user_id: input.userId, product_code: product.product_code }, redirect, apiKey, storeId, env);
 }

@@ -124,9 +124,12 @@ t("session + bridge unavailable → /dashboard (not trapped)", rFail.action === 
     // The single most important structural fact: the auth page never calls
     // getSession/onAuthStateChange on mount — nothing async precedes the form.
     t(`${name}: NO getSession/onAuthStateChange (pure static form)`, !/\.auth\.getSession\s*\(/.test(code) && !/onAuthStateChange/.test(code));
-    t(`${name}: form fields rendered unconditionally`, /onSubmit=\{handleSubmit\}/.test(code) && /type="email"/.test(code) && /type="password"/.test(code));
+    // /signup is OTP-first (passwordless): email field is rendered unconditionally, no password.
+    // /login and /admin/login remain password-based for existing users.
+    const requiresPassword = name !== "/signup";
+    t(`${name}: form fields rendered unconditionally`, /onSubmit=\{handleSubmit\}/.test(code) && /type="email"/.test(code) && (!requiresPassword || /type="password"/.test(code)));
     t(`${name}: NO Suspense loading-only fallback`, !/<Suspense/.test(code) && !/fallback=/.test(code));
-    const expectedMarker = name === "/signup" ? "auth-nonblocking-v4" : "auth-nonblocking-v6";
+    const expectedMarker = name === "/signup" ? "signup-otp-v1" : "auth-nonblocking-v6";
     t(`${name}: current build marker`, new RegExp(`LOGIN_BUILD\\s*=\\s*["']${expectedMarker}["']`).test(code) && /data-login-build=\{LOGIN_BUILD\}/.test(code));
     t(`${name}: NOT the superseded v2/v3 markers`, !/form-first-v2|form-always-visible-v3/.test(code));
   }
