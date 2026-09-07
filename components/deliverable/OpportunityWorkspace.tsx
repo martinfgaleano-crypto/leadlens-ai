@@ -12,6 +12,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { DeliverableViewModel, DecisionState, AccountBriefVM } from "@/lib/deliverable/deliverable-view-model";
 import { DECISION_TOKENS, STRENGTH_TOKENS, decisionLabel, orderByAttention, accountRoleLabel, opportunityTypeLabel } from "@/lib/deliverable/deliverable-view-model";
 import { portfolioCsv, evidenceCsv, deliverableFilename } from "@/lib/deliverable/exports";
+import { tierOffersChannel } from "@/lib/delivery-system/channel-availability";
+import type { DeliveryTier } from "@/lib/delivery-system/tier-composer";
 import { toClientCanvasVM } from "@/lib/deliverable/client-canvas-vm";
 import { buildPortfolioIntelligence } from "@/lib/deliverable/portfolio-intelligence";
 import { snapshotAccountReview, diffAccountCase, sinceLastReview, portfolioChange, type AccountReviewSnapshot } from "@/lib/deliverable/account-memory";
@@ -67,7 +69,33 @@ function downloadText(filename: string, text: string, mime: string) {
   } catch { /* download unavailable in this context */ }
 }
 
-export default function OpportunityWorkspace({ vm, memory, monitorClientKey }: { vm: DeliverableViewModel; memory?: WorkspaceMemory; monitorClientKey?: string }) {
+/** Authenticated server export context (Delivery System V1). Present on the authenticated results
+ *  surface: exports then come from the server-authoritative routes (real application/pdf; tier-gated
+ *  operational CSV) rather than the portable client-side fallbacks. The tier is server-resolved —
+ *  the client only *reads* it to decide which controls to show; the routes are the real authority. */
+export interface ExportContext { jobId: string; tier: DeliveryTier; getToken: () => Promise<string | null>; }
+
+/** Save a file produced by an authenticated export route. Sends the viewer's bearer token, streams the
+ *  response as a blob, and honors the server's Content-Disposition filename. Returns an error string
+ *  (never throws) so the UI can report failure honestly instead of silently doing nothing. */
+async function downloadAuthed(path: string, getToken: () => Promise<string | null>): Promise<string | null> {
+  try {
+    const token = await getToken();
+    const res = await fetch(path, { headers: token ? { Authorization: `Bearer ${token}` } : {}, cache: "no-store" });
+    if (!res.ok) return res.status === 401 ? "signin" : res.status === 403 ? "forbidden" : "error";
+    const blob = await res.blob();
+    const cd = res.headers.get("Content-Disposition") ?? "";
+    const filename = /filename="?([^"]+)"?/.exec(cd)?.[1] ?? path.split("/").pop() ?? "leadlens-export";
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    return null;
+  } catch { return "error"; }
+}
+
+export default function OpportunityWorkspace({ vm, memory, monitorClientKey, exportContext }: { vm: DeliverableViewModel; memory?: WorkspaceMemory; monitorClientKey?: string; exportContext?: ExportContext }) {
   const es = vm.meta.language === "es";
   const t = useMemo(() => LABELS(es), [es]);
   const cc = useMemo(() => toClientCanvasVM(vm), [vm]);   // client is the subject
@@ -172,7 +200,7 @@ export default function OpportunityWorkspace({ vm, memory, monitorClientKey }: {
         {tab === "intelligence" && <PortfolioIntelligenceTab vm={vm} t={t} es={es} onOpen={openAccount} memory={memory} />}
       </main>
 
-      <UtilityBar vm={vm} t={t} es={es} monitorClientKey={monitorClientKey} />
+      <UtilityBar vm={vm} t={t} es={es} monitorClientKey={monitorClientKey} exportContext={exportContext} />
 
       {/* Print/PDF-only: the full deliverable stacked in a stable reading order.
           Hidden on screen; the interactive main is hidden in print (§86–90). */}
@@ -445,7 +473,7 @@ function PortfolioIntelligenceTab({ vm, es, onOpen, memory }: { vm: DeliverableV
   );
 }
 
-function UtilityBar({ vm, t, es, monitorClientKey }: { vm: DeliverableViewModel; t: L; es: boolean; monitorClientKey?: string }) {
+function UtilityBar({ vm, t, es, monitorClientKey, exportContext }: { vm: DeliverableViewModel; t: L; es: boolean; monitorClientKey?: string; exportContext?: ExportContext }) {
   const [refreshing, setRefreshing] = useState(false);
   const [refreshStatus, setRefreshStatus] = useState<string | null>(null);
   const refresh = async () => {
@@ -468,7 +496,7 @@ function UtilityBar({ vm, t, es, monitorClientKey }: { vm: DeliverableViewModel;
     <aside className="dlv-utilities" aria-label={t.utilities}>
       {monitorClientKey && <details className="dlv-utility"><summary>{es ? "Continuidad" : "Continuity"}</summary><div className="dlv-utility-body"><p>{es ? "Reinvestiga las cuentas conocidas con fuentes actuales. No es monitoreo en tiempo real." : "Re-research known accounts with current sources. This is not real-time monitoring."}</p><button type="button" onClick={refresh} disabled={refreshing} className="dlv-filter-chip">{refreshing ? (es ? "Revisando…" : "Reviewing…") : (es ? "Revisar cuentas ahora" : "Review accounts now")}</button>{refreshStatus && <p>{refreshStatus}</p>}</div></details>}
       <details className="dlv-utility"><summary>{t.howToRead}</summary><div className="dlv-utility-body"><p>{t.absenceNote}</p>{vm.methodology.length > 0 && <ul>{vm.methodology.map((item, i) => <li key={i}>{item}</li>)}</ul>}<p>{decisionLabel("prioritize", es)} → {decisionLabel("validate", es)} → {decisionLabel("monitor", es)} → {decisionLabel("hold", es)}</p></div></details>
-      {vm.capabilities.showDownloadsTab && <details className="dlv-utility"><summary>{t.downloads}</summary><div className="dlv-utility-body"><DownloadsTab vm={vm} t={t} /></div></details>}
+      {vm.capabilities.showDownloadsTab && <details className="dlv-utility"><summary>{t.downloads}</summary><div className="dlv-utility-body"><DownloadsTab vm={vm} t={t} exportContext={exportContext} /></div></details>}
     </aside>
   );
 }
@@ -597,12 +625,39 @@ function EvidenceTab({ vm, t, es, onOpen }: { vm: DeliverableViewModel; t: L; es
   );
 }
 
-// ─── Downloads tab — portable exports (§84–101). Only real capabilities. ──────
-function DownloadsTab({ vm, t }: { vm: DeliverableViewModel; t: L }) {
-  const items: { title: string; desc: string; action: () => void }[] = [];
-  if (vm.downloads.pdf) items.push({ title: t.dlPdf, desc: t.dlPdfDesc, action: () => window.print() });
-  if (vm.downloads.portfolioCsv) items.push({ title: t.dlPortfolioCsv, desc: t.dlPortfolioCsvDesc, action: () => downloadText(deliverableFilename(vm, "portfolio", "csv"), portfolioCsv(vm), "text/csv;charset=utf-8") });
-  if (vm.downloads.evidenceCsv) items.push({ title: t.dlEvidenceCsv, desc: t.dlEvidenceCsvDesc, action: () => downloadText(deliverableFilename(vm, "evidence", "csv"), evidenceCsv(vm), "text/csv;charset=utf-8") });
+// ─── Downloads tab — the one Export control (§84–101). ────────────────────────
+// On the authenticated results surface (exportContext present) exports come from the
+// server-authoritative Delivery System routes: a real application/pdf snapshot (every tier) and
+// operational portfolio CSV (only tiers offered it — intelligence/premium). The tier is resolved
+// on the server; here it only decides which controls to SHOW — the routes are the real authority
+// and re-deny an escalated request. Without an exportContext (portable preview / admin), it falls
+// back to the existing client-side exports so those surfaces are unchanged.
+function DownloadsTab({ vm, t, exportContext }: { vm: DeliverableViewModel; t: L; exportContext?: ExportContext }) {
+  const [busy, setBusy] = useState<string | null>(null);
+  const [msg, setMsg] = useState<string | null>(null);
+  const items: { key: string; title: string; desc: string; action: () => void | Promise<void> }[] = [];
+
+  async function run(key: string, path: string, getToken: () => Promise<string | null>) {
+    setMsg(null); setBusy(key);
+    const err = await downloadAuthed(path, getToken);
+    setBusy(null);
+    if (err) setMsg(err === "signin" ? t.dlSignin : err === "forbidden" ? t.dlForbidden : t.dlError);
+  }
+
+  if (exportContext) {
+    const { jobId, tier, getToken } = exportContext;
+    // Real PDF — every tier is offered the full snapshot artifact.
+    items.push({ key: "pdf", title: t.dlPdf, desc: t.dlPdfDesc, action: () => run("pdf", `/api/results/${jobId}/export/pdf`, getToken) });
+    // Operational CSV — only the tiers the channel matrix offers it to.
+    if (tierOffersChannel(tier, "csv")) {
+      items.push({ key: "csv", title: t.dlPortfolioCsv, desc: t.dlPortfolioCsvDesc, action: () => run("csv", `/api/results/${jobId}/export/csv`, getToken) });
+    }
+  } else {
+    if (vm.downloads.pdf) items.push({ key: "pdf", title: t.dlPdf, desc: t.dlPdfDesc, action: () => window.print() });
+    if (vm.downloads.portfolioCsv) items.push({ key: "pcsv", title: t.dlPortfolioCsv, desc: t.dlPortfolioCsvDesc, action: () => downloadText(deliverableFilename(vm, "portfolio", "csv"), portfolioCsv(vm), "text/csv;charset=utf-8") });
+    if (vm.downloads.evidenceCsv) items.push({ key: "ecsv", title: t.dlEvidenceCsv, desc: t.dlEvidenceCsvDesc, action: () => downloadText(deliverableFilename(vm, "evidence", "csv"), evidenceCsv(vm), "text/csv;charset=utf-8") });
+  }
+
   return (
     <div className="dlv-panel">
       <div className="dlv-card">
@@ -611,12 +666,13 @@ function DownloadsTab({ vm, t }: { vm: DeliverableViewModel; t: L }) {
         <div className="dlv-dl-grid">
           {items.length === 0 && <span className="dlv-note">{t.noDownloads}</span>}
           {items.map((it) => (
-            <button key={it.title} className="dlv-dl-card" onClick={it.action}>
-              <span className="dlv-dl-title">{it.title}</span>
+            <button key={it.key} className="dlv-dl-card" onClick={it.action} disabled={busy !== null} aria-busy={busy === it.key}>
+              <span className="dlv-dl-title">{it.title}{busy === it.key ? ` · ${t.dlWorking}` : ""}</span>
               <span className="dlv-dl-desc">{it.desc}</span>
             </button>
           ))}
         </div>
+        {msg && <p className="dlv-note" role="alert" style={{ marginTop: 12 }}>{msg}</p>}
       </div>
     </div>
   );
@@ -665,6 +721,10 @@ function LABELS(es: boolean) {
     dlPortfolioCsvDesc: es ? "Una fila por cuenta: decisión, dimensiones, límite y validación — para Excel/CRM." : "One row per account: decision, dimensions, limiter and validation — for Excel/CRM.",
     dlEvidenceCsv: es ? "CSV de evidencia" : "Evidence CSV",
     dlEvidenceCsvDesc: es ? "Una fila por fuente: afirmación, relación, fecha y enlace." : "One row per source: claim, relation, date and link.",
+    dlWorking: es ? "preparando…" : "preparing…",
+    dlSignin: es ? "Iniciá sesión de nuevo para exportar." : "Please sign in again to export.",
+    dlForbidden: es ? "Esta exportación no está disponible para este informe." : "This export isn’t available for this report.",
+    dlError: es ? "No se pudo generar la exportación. Intentá de nuevo." : "Couldn’t generate the export. Please try again.",
     emptyPortfolio: es ? "Este portafolio no contiene cuentas todavía." : "This portfolio contains no accounts yet.",
     ago: es ? "atrás" : "ago",
     // Commercial context
