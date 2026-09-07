@@ -7,6 +7,10 @@ import {
 } from "@/lib/intelligence/snapshot-engine";
 import { isMeasured, type IntelligenceOutcome } from "@/lib/intelligence/os-contracts";
 import { loadLatestArtifactSignals } from "@/lib/intelligence/snapshot-loader";
+import { readFileSync } from "fs";
+import { mkdtemp, mkdir, rm, writeFile } from "fs/promises";
+import { tmpdir } from "os";
+import { join } from "path";
 
 let p = 0, f = 0;
 const t = (n: string, ok: boolean, d = "") => { console.log(`${ok ? "✅" : "❌"} ${n}${ok || !d ? "" : `  (${d})`}`); ok ? p++ : f++; };
@@ -96,13 +100,26 @@ t("18 diagnosis matches data", snap.diagnosis.maturity_level === snap.index.leve
 t("19 cutoff + methodology present", snap.source_data_cutoff === CUT && snap.index.methodology_version === INTELLIGENCE_SNAPSHOT_METHODOLOGY_VERSION);
 
 // 20. Existing ranking not modified — engine imports nothing from ranking/selector.
-import { readFileSync } from "fs";
 const engineSrc = readFileSync("lib/intelligence/snapshot-engine.ts", "utf8");
 t("20 no ranking/selector import (ranking untouched)", !/vault-opportunity-selector|lib\/ranking|opportunity-decision/.test(engineSrc));
 
-// Bonus: loader reads the real latest artifact deterministically.
+// Bonus: loader reads a repository-independent artifact deterministically.
 (async () => {
-  const { signals } = await loadLatestArtifactSignals();
-  t("+ loader reads real artifact", signals !== null && signals.verified >= 1 && signals.segments >= 1, signals ? `verified=${signals.verified}` : "no artifact");
+  const root = await mkdtemp(join(tmpdir(), "leadlens-snapshot-loader-"));
+  const run = "2026-07-27T01-35-36-464Z";
+  const runDir = join(root, "ml/data/pilot-amor-de-gea", run);
+  try {
+    await mkdir(runDir, { recursive: true });
+    await writeFile(join(runDir, "segment-universe.json"), JSON.stringify({
+      segment_distribution: { retail: 2 },
+      verified_company_count: 2,
+      probable_company_count: 1,
+      excluded_company_count: 3,
+    }));
+    const { signals, cutoff } = await loadLatestArtifactSignals(root);
+    t("+ loader reads isolated artifact", signals !== null && signals.verified === 2 && signals.segments === 1 && cutoff === run, signals ? `verified=${signals.verified}` : "no artifact");
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
   console.log(`\n${p} passed, ${f} failed`); if (f) process.exit(1);
 })();
