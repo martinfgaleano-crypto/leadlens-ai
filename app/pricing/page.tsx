@@ -162,8 +162,15 @@ function OneTimeCardView({ card, onSelect }: { card: OneTimeCard; onSelect: () =
         <span style={{ color: C.muted, fontSize: ".76rem", fontWeight: 600 }}>one-time</span>
       </div>
       <p style={{ fontSize: ".86rem", fontWeight: 700, color: C.ink, lineHeight: 1.4, margin: 0 }}>{card.headline}</p>
-      <p style={{ fontSize: ".82rem", color: C.sub, lineHeight: 1.5, margin: 0, flex: 1 }}>{card.body}</p>
-      <div style={{ fontSize: ".77rem", color: C.muted, borderTop: `1px solid ${C.lineSoft}`, paddingTop: ".55rem" }}>{card.capacity}</div>
+      <p style={{ fontSize: ".82rem", color: C.sub, lineHeight: 1.5, margin: 0 }}>{card.body}</p>
+      <ul style={{ listStyle: "none", margin: 0, padding: ".6rem 0 0", borderTop: `1px solid ${C.lineSoft}`, display: "flex", flexDirection: "column", gap: ".35rem", flex: 1 }}>
+        {card.bullets.map((b, i) => (
+          <li key={i} style={{ fontSize: ".78rem", color: C.body, lineHeight: 1.4, paddingLeft: ".85rem", position: "relative" }}>
+            <span aria-hidden style={{ position: "absolute", left: 0, top: ".42rem", width: ".32rem", height: ".32rem", borderRadius: "50%", background: C.sky }} />
+            {b}
+          </li>
+        ))}
+      </ul>
       <button onClick={onSelect} className="ll-plan-btn" style={{ marginTop: ".3rem", fontFamily: font, cursor: "pointer", border: `1px solid ${C.ink}`, background: "transparent", color: C.ink, borderRadius: ".6rem", padding: ".6rem 1rem", fontSize: ".86rem", fontWeight: 700 }}>
         Choose {card.name}
       </button>

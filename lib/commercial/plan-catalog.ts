@@ -16,6 +16,7 @@ export interface OneTimeCard {
   headline: string;   // the outcome
   body: string;
   capacity: string;   // secondary metadata
+  bullets: string[];  // 3–4 high-signal, comparable differentiators (breadth/depth/comparison/export)
 }
 
 export interface SubscriptionCard {
@@ -71,10 +72,43 @@ const SUBSCRIPTION_COPY: Record<SubscriptionPlanCode, { name: string; headline: 
 const ONE_TIME_ORDER: ProductCode[] = ["preview_launch_v0", "brief_launch_v0", "intelligence_launch_v0", "premium_launch_v0"];
 const SUB_ORDER: SubscriptionPlanCode[] = ["watch", "monitor", "intelligence"];
 
-// Customer-facing display names. The one-time "Intelligence" is explicitly qualified so it can never
-// be confused with the ongoing "Intelligence" subscription (§39). Never renames the catalog itself.
+// Customer-facing display names. The $59 one-time tier is called "Portfolio" so it can never be
+// confused with the ongoing "Intelligence" subscription tier or the "Account Opportunity Intelligence"
+// category (§39). This is a DISPLAY rename only — the internal identifier stays intelligence_launch_v0
+// (→ STANDARD variant → 12 accounts); nothing about billing, entitlement or Delivery changes.
 const ONE_TIME_DISPLAY_NAME: Partial<Record<ProductCode, string>> = {
-  intelligence_launch_v0: "Intelligence — One-time",
+  intelligence_launch_v0: "Portfolio",
+};
+
+// High-signal, comparable, customer-facing differentiators. Every bullet corresponds to something the
+// product actually delivers: account count (opportunity_target), Delivery dossier depth (mini→standard
+// →full), CSV export (intelligence+premium only), and market breadth (regions max 1/1/2/3). No invented
+// marketing claims; same Intelligence truth quality across tiers — higher tiers add breadth/depth/export.
+const ONE_TIME_BULLETS: Record<ProductCode, string[]> = {
+  preview_launch_v0: [
+    "2 accounts evaluated",
+    "Each Decision with its Fit, Timing and Evidence",
+    "Delivered as web and PDF",
+    "A low-risk first look before a larger set",
+  ],
+  brief_launch_v0: [
+    "6 accounts evaluated",
+    "Opportunity cases with dated evidence",
+    "Compare and prioritize across a small set",
+    "Delivered as web and PDF",
+  ],
+  intelligence_launch_v0: [
+    "12 accounts, across up to 2 markets",
+    "Full portfolio prioritization and comparison",
+    "Complete case detail with validation steps",
+    "Adds CSV export (web, PDF and CSV)",
+  ],
+  premium_launch_v0: [
+    "18 accounts, across up to 3 markets",
+    "The deepest, most corroborated study in the catalog",
+    "Full cases, comparison and CSV export",
+    "Built toward a defensible commercial strategy",
+  ],
 };
 
 export function oneTimeCards(): OneTimeCard[] {
@@ -88,6 +122,7 @@ export function oneTimeCards(): OneTimeCard[] {
       headline: ONE_TIME_COPY[code].headline,
       body: ONE_TIME_COPY[code].body,
       capacity: `${n} account evaluation${n === 1 ? "" : "s"}`,
+      bullets: ONE_TIME_BULLETS[code],
     };
   });
 }
