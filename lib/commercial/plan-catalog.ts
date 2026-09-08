@@ -31,22 +31,27 @@ export interface SubscriptionCard {
   featured?: boolean;
 }
 
+// Plain-language-first descriptions for first-touch surfaces (§7/§20): lead with what the buyer
+// decides, in words a new customer understands (companies, attention, evidence, what to confirm),
+// before LeadLens ontology. Claim-safe (§19): no "most corroborated", no "defensible strategy",
+// no unsupported Timing/quality-by-tier. Every one-time tier is REAL Intelligence (§3/§4); higher
+// tiers add breadth/depth/comparison/synthesis/export, never better truth.
 const ONE_TIME_COPY: Record<ProductCode, { headline: string; body: string }> = {
   preview_launch_v0: {
-    headline: "See where attention is justified — on a small, defined set of accounts.",
-    body: "A bounded, point-in-time read: Fit, Timing and the Evidence behind each Decision.",
+    headline: "See which of 2 companies deserves your attention first — and why.",
+    body: "LeadLens researches both, weighs how well each fits what you're looking for and whether there's a reason to act now, and gives you a clear, evidence-backed call.",
   },
   brief_launch_v0: {
-    headline: "A focused, comparable opportunity set for a real commercial decision.",
-    body: "Account and market intelligence across a compact portfolio, with Decisions you can act on.",
+    headline: "Evaluate 6 companies and decide where to focus first.",
+    body: "LeadLens assesses each in your commercial context, shows what supports the case and what still needs confirming, and points you to where attention is best spent.",
   },
   intelligence_launch_v0: {
-    headline: "A deeper, prioritized study of where to spend commercial effort now.",
-    body: "Reinforced Evidence and portfolio prioritization across a broader set of accounts.",
+    headline: "Prioritize 12 companies and see what the set reveals.",
+    body: "A full one-time portfolio: LeadLens ranks where attention should go, compares the companies side by side, and surfaces the patterns across your set.",
   },
   premium_launch_v0: {
-    headline: "The most comprehensive one-time study in the catalog.",
-    body: "Maximum depth and corroboration, built toward a defensible commercial strategy.",
+    headline: "The broadest one-time portfolio — 18 companies, ranked and compared.",
+    body: "For a wider evaluation across more markets and segments: the same full portfolio analysis as Portfolio, at LeadLens's largest one-time scope.",
   },
 };
 
@@ -84,30 +89,39 @@ const ONE_TIME_DISPLAY_NAME: Partial<Record<ProductCode, string>> = {
 // product actually delivers: account count (opportunity_target), Delivery dossier depth (mini→standard
 // →full), CSV export (intelligence+premium only), and market breadth (regions max 1/1/2/3). No invented
 // marketing claims; same Intelligence truth quality across tiers — higher tiers add breadth/depth/export.
+// 4–5 comparable bullets per tier along shared dimensions (§22/§39): scope → real evaluation +
+// Decision → comparison/prioritization → case depth → delivery. Every bullet maps to something the
+// current Delivery System actually produces (tier-composer sections + channel-availability): mini
+// depth (Preview) → +context/validation/what-changed (Brief) → +ranking/Compare/full-depth/CSV
+// (Portfolio) → +breadth of companies/markets/segments (Premium). No invented capability (§14/§26).
 const ONE_TIME_BULLETS: Record<ProductCode, string[]> = {
   preview_launch_v0: [
-    "2 accounts evaluated",
-    "Each Decision with its Fit, Timing and Evidence",
-    "Delivered as web and PDF",
-    "A low-risk first look before a larger set",
+    "2 companies researched and evaluated",
+    "A clear Decision for each — where attention is justified, and why",
+    "The evidence behind each call",
+    "A recommendation on which to focus on first",
+    "Delivered as a web report and PDF",
   ],
   brief_launch_v0: [
-    "6 accounts evaluated",
-    "Opportunity cases with dated evidence",
-    "Compare and prioritize across a small set",
-    "Delivered as web and PDF",
+    "6 companies researched and evaluated",
+    "A clear Decision for each, in your commercial context",
+    "What supports each case — and what still needs confirming",
+    "What recently changed for each company",
+    "Delivered as a web report and PDF",
   ],
   intelligence_launch_v0: [
-    "12 accounts, across up to 2 markets",
-    "Full portfolio prioritization and comparison",
-    "Complete case detail with validation steps",
-    "Adds CSV export (web, PDF and CSV)",
+    "12 companies evaluated, across up to 2 markets",
+    "A ranked view of where to focus first",
+    "Side-by-side comparison across the companies",
+    "Full case detail — what supports each, what weakens it, what to confirm",
+    "What the set reveals, plus CSV export for your CRM",
   ],
   premium_launch_v0: [
-    "18 accounts, across up to 3 markets",
-    "The deepest, most corroborated study in the catalog",
-    "Full cases, comparison and CSV export",
-    "Built toward a defensible commercial strategy",
+    "18 companies evaluated — LeadLens's largest one-time scope",
+    "Across up to 3 markets and multiple segments",
+    "Ranked priorities and side-by-side comparison",
+    "Full case detail on every company",
+    "Delivered as web report, PDF and CSV",
   ],
 };
 
@@ -121,7 +135,7 @@ export function oneTimeCards(): OneTimeCard[] {
       price: p.price_amount,
       headline: ONE_TIME_COPY[code].headline,
       body: ONE_TIME_COPY[code].body,
-      capacity: `${n} account evaluation${n === 1 ? "" : "s"}`,
+      capacity: `${n} ${n === 1 ? "company" : "companies"} evaluated`,
       bullets: ONE_TIME_BULLETS[code],
     };
   });

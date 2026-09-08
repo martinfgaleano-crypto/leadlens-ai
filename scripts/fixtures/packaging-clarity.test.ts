@@ -12,16 +12,16 @@ const t = (n: string, ok: boolean) => { (ok ? passed++ : failed++); if (!ok) con
 const portfolio = oneTimeCardFor("intelligence_launch_v0")!;
 t("one-time $59 tier renamed to Portfolio", portfolio.name === "Portfolio");
 t("Portfolio is $59", portfolio.price === 59);
-t("Portfolio capacity = 12 account evaluations", portfolio.capacity === "12 account evaluations");
+t("Portfolio capacity = 12 companies evaluated (plain language)", portfolio.capacity === "12 companies evaluated");
 t("NO customer-facing one-time card is named 'Intelligence' / 'Intelligence — One-time'",
   oneTimeCards().every((c) => !/intelligence/i.test(c.name)));
 
 // ── Frozen economics unchanged (price + account count per tier). ──
 const byName = Object.fromEntries(oneTimeCards().map((c) => [c.productCode, c]));
-t("Preview $7 / 2", byName["preview_launch_v0"].name === "Preview" && byName["preview_launch_v0"].price === 7 && byName["preview_launch_v0"].capacity === "2 account evaluations");
-t("Brief $25 / 6", byName["brief_launch_v0"].name === "Brief" && byName["brief_launch_v0"].price === 25 && byName["brief_launch_v0"].capacity === "6 account evaluations");
-t("Portfolio $59 / 12", byName["intelligence_launch_v0"].price === 59 && byName["intelligence_launch_v0"].capacity === "12 account evaluations");
-t("Premium $129 / 18", byName["premium_launch_v0"].name === "Premium" && byName["premium_launch_v0"].price === 129 && byName["premium_launch_v0"].capacity === "18 account evaluations");
+t("Preview $7 / 2", byName["preview_launch_v0"].name === "Preview" && byName["preview_launch_v0"].price === 7 && byName["preview_launch_v0"].capacity === "2 companies evaluated");
+t("Brief $25 / 6", byName["brief_launch_v0"].name === "Brief" && byName["brief_launch_v0"].price === 25 && byName["brief_launch_v0"].capacity === "6 companies evaluated");
+t("Portfolio $59 / 12", byName["intelligence_launch_v0"].price === 59 && byName["intelligence_launch_v0"].capacity === "12 companies evaluated");
+t("Premium $129 / 18", byName["premium_launch_v0"].name === "Premium" && byName["premium_launch_v0"].price === 129 && byName["premium_launch_v0"].capacity === "18 companies evaluated");
 
 // ── Subscription "Intelligence" tier is UNTOUCHED (the word is correct there). ──
 t("ongoing Intelligence subscription still named 'Intelligence'", subscriptionCardFor("intelligence")!.name === "Intelligence");
@@ -36,7 +36,7 @@ for (const [slug, code, n] of [["sample", "preview_launch_v0", 2], ["starter", "
 
 // ── Bullets: 3–4 per plan, non-empty, comparable; CSV only where truthful (Portfolio+Premium). ──
 for (const c of oneTimeCards()) {
-  t(`${c.name}: 3–4 bullets`, c.bullets.length >= 3 && c.bullets.length <= 4);
+  t(`${c.name}: 4–5 bullets`, c.bullets.length >= 4 && c.bullets.length <= 5);
   t(`${c.name}: bullets non-empty`, c.bullets.every((b) => b.trim().length > 0));
 }
 const csvMentions = (code: string) => oneTimeCardFor(code)!.bullets.some((b) => /csv/i.test(b));
@@ -46,6 +46,16 @@ t("Preview bullets do NOT claim CSV (not offered)", !csvMentions("preview_launch
 t("Brief bullets do NOT claim CSV (not offered)", !csvMentions("brief_launch_v0"));
 // First bullet leads with the real account count for every tier.
 t("account counts lead each plan's bullets", oneTimeCardFor("preview_launch_v0")!.bullets[0].startsWith("2 ") && oneTimeCardFor("brief_launch_v0")!.bullets[0].startsWith("6 ") && oneTimeCardFor("intelligence_launch_v0")!.bullets[0].startsWith("12 ") && oneTimeCardFor("premium_launch_v0")!.bullets[0].startsWith("18 "));
+
+// ── Claim safety (§19/§20): no prohibited or over-reaching customer-facing claims. ──
+const allText = oneTimeCards().flatMap((c) => [c.name, c.headline, c.body, ...c.bullets]).join("  ").toLowerCase();
+for (const banned of ["most corroborated", "defensible commercial strategy", "defensible strategy", "hot", "warm", "cold", "buyer intent", "ready to buy", "sales-ready", "lead score", "outreach"]) {
+  t(`no prohibited claim: "${banned}"`, !allText.includes(banned));
+}
+// Plain-language-first: every one-time plan speaks in "companies", not ontology-only.
+t("all one-time plans use plain 'companies' language", oneTimeCards().every((c) => /compan(y|ies)/i.test([c.headline, c.body, ...c.bullets].join(" "))));
+// Truth-quality parity: no tier claims better/deeper *truth or evidence quality* than another.
+t("no tier claims superior truth/evidence quality", !/(better|superior|higher.?quality|more accurate)\s+(evidence|truth|intelligence)/i.test(allText));
 
 console.log(`${passed} passed, ${failed} failed`);
 if (failed > 0) process.exit(1);
