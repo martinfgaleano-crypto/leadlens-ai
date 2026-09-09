@@ -209,8 +209,14 @@ export interface PremiumExecutivePortfolioV1 {
   validationPriorities: string[];
   decisionCriticalBriefRefs: string[];  // accountIds of the selected briefs
   synthesis: AdvancedPortfolioSynthesisV1;
+  /** Gate-B contextual Intelligence (benchmark/competitors/discovery/ecosystem). null when no context
+   *  research is available/supported — a valid, fail-closed Premium result (§NO SECTION-FILLING). */
+  context: import("@/lib/intelligence/premium/premium-context").PremiumContextV1 | null;
 }
-export function buildPremiumExecutivePortfolio(accounts: AccountBriefVM[]): PremiumExecutivePortfolioV1 {
+export function buildPremiumExecutivePortfolio(
+  accounts: AccountBriefVM[],
+  context: import("@/lib/intelligence/premium/premium-context").PremiumContextV1 | null = null,
+): PremiumExecutivePortfolioV1 {
   const synthesis = buildAdvancedSynthesis(accounts);
   const priorityMap = [...accounts]
     .sort((a, b) => (DECISION_WEIGHT[b.decision] - DECISION_WEIGHT[a.decision]) || ((a.rank ?? 1e9) - (b.rank ?? 1e9)))
@@ -225,6 +231,7 @@ export function buildPremiumExecutivePortfolio(accounts: AccountBriefVM[]): Prem
     validationPriorities: dedupe(accounts.flatMap((a) => decisionCriticalValidations(a))),
     decisionCriticalBriefRefs: briefs.map((b) => b.accountId),
     synthesis,
+    context,
   };
 }
 
