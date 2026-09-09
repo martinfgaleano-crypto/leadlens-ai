@@ -33,6 +33,10 @@ t("stale evidence flagged (not presented as current)", stale.benchmark.recurring
 t("stale 'current movement' suppressed (must be current)", stale.benchmark.currentMovements.length === 0);
 const fresh = assemblePremiumContext({ benchmark: { currentMovements: [note("Recent movement", [RECENT])] } }, NOW);
 t("fresh current movement retained", fresh.benchmark.currentMovements.length === 1 && fresh.benchmark.currentMovements[0].stale === false);
+// FRESHNESS DOCTRINE (HQ 2026-09-09): 180d is a ceiling for TIME-SENSITIVE claims, NOT universal expiry.
+// A durable structural fact with OLD evidence is RETAINED (age-flagged, not dropped); only a time-sensitive
+// "current movement" is dropped when stale. This keeps existing LeadLens freshness semantics.
+t("durable stale note RETAINED (age ≠ expiry), only flagged", stale.benchmark.recurringNeeds.length === 1 && stale.benchmark.recurringNeeds[0].stale === true && stale.benchmark.state === "PRESENT");
 
 // ── Competitor context: relevant retained; irrelevant (no whyRelevant / no evidence) suppressed; cap 5. ──
 const comp = (whyRelevant: string, withEv: boolean): CompetitorContextV1 => ({ entity: `C${Math.random()}`, role: "competitor", whyRelevant, affects: "benchmark", positioning: withEv ? [note("positioned on price", [RECENT])] : [note("no evidence", [])], counterevidence: [], unknowns: [], confidence: "Moderate" });

@@ -125,6 +125,11 @@ function gateNote(n: GroundedNote, now: number): GroundedNote { return { ...n, s
  *  raw research. Never adds content; only filters/annotates. Deterministic (stable order preserved). */
 export function assemblePremiumContext(raw: RawPremiumResearch, now: number = asOf()): PremiumContextV1 {
   // Benchmark: keep only evidence-backed notes; cap entities; fail closed when nothing survives.
+  // FRESHNESS DOCTRINE (HQ 2026-09-09): freshnessDays is a ceiling for TIME-SENSITIVE claims, NOT a
+  // universal evidence-expiry rule. Durable structural context (recurringNeeds/offerPositioning/
+  // differentiatedWhere) is RETAINED regardless of evidence age — the `stale` flag is transparency
+  // (age is visible), never a drop verdict. Only currentMovements are time-sensitive: a stale one is
+  // no longer "current", so it is DROPPED (cannot be presented as a current movement).
   const b = raw.benchmark ?? {};
   const recurringNeeds = (b.recurringNeeds ?? []).filter(noteHasEvidence).slice(0, PREMIUM_BUDGETS.benchmarkEntities).map((n) => gateNote(n, now));
   const offerPositioning = (b.offerPositioning ?? []).filter(noteHasEvidence).map((n) => gateNote(n, now));
