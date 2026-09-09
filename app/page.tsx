@@ -54,12 +54,7 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
           {c.trust.items.map((item) => <p key={item.title}><strong>{item.title}</strong><span>{item.body}</span></p>)}
         </section>
 
-        <section className={styles.section} id="product">
-          <SectionIntro eyebrow={c.outcomes.eyebrow} title={c.outcomes.title} body={c.outcomes.body} />
-          <div className={styles.outcomes}>{c.outcomes.items.map((item, i) => <article key={item.title}><span aria-hidden>{String(i + 1).padStart(2, "0")}</span><h3>{item.title}</h3><p>{item.body}</p></article>)}</div>
-        </section>
-
-        <section className={`${styles.section} ${styles.soft}`} id="how">
+        <section className={`${styles.section} ${styles.howSection}`} id="how">
           <SectionIntro eyebrow={c.flow.eyebrow} title={c.flow.title} body={c.flow.body} />
           <ol className={styles.flow}>{c.flow.items.map((item, i) => <li key={item.title}><span>{i + 1}</span><div><h3>{item.title}</h3><p>{item.body}</p></div></li>)}</ol>
         </section>
@@ -109,22 +104,27 @@ function SectionIntro({ eyebrow, title, body }: { eyebrow: string; title: string
 }
 
 function ExecutivePortfolio({ copy: c }: { copy: ReturnType<typeof getLandingV2Copy> }) {
-  return <div className={styles.portfolio} aria-label={c.portfolio.label}>
-    <div className={styles.portfolioHead}><div><span>{c.portfolio.kicker}</span><strong>{c.portfolio.title}</strong></div><small>{c.portfolio.disclosure}</small></div>
-    <div className={styles.portfolioColumns} aria-hidden><span>{c.portfolio.company}</span><span>{c.portfolio.why}</span><span>{c.portfolio.decision}</span></div>
-    {LANDING_COMPARISON.accounts.map((account, index) => <div className={`${styles.companyRow}${index === 0 ? ` ${styles.companyRowSelected}` : ""}`} key={account.name}>
-      <div><strong>{account.name}</strong><small>{account.segment}</small></div>
-      <div><span>{account.changed}</span><small>{account.fresh} · {c.portfolio.evidence}: {account.evidence}</small></div>
-      <div><b data-decision={account.decision}>{decisionLabel(account.decision, c)}</b><small>{c.portfolio.confirm}: {account.unknown}</small></div>
-    </div>)}
+  const [priority, ...secondary] = LANDING_COMPARISON.accounts;
+  return <div className={styles.portfolio} id="product" aria-label={c.portfolio.label}>
+    <div className={styles.portfolioHead}><span>{c.portfolio.kicker}</span><small>{c.portfolio.disclosure}</small></div>
+    <article className={styles.priorityCompany}>
+      <div className={styles.priorityMeta}><strong>{priority.name}</strong><b>{decisionLabel(priority.decision, c)}</b></div>
+      <h2>{priority.changed}</h2>
+      <div className={styles.priorityProof}><span>{priority.fresh} · {c.portfolio.evidence}: {priority.evidence}</span><span>{c.portfolio.confirm}: {priority.unknown}</span></div>
+    </article>
+    <div className={styles.secondaryCompanies}>
+      {secondary.map((account) => <div className={styles.companyRow} key={account.name}>
+        <strong>{account.name}</strong><span>{account.changed}</span><b data-decision={account.decision}>{decisionLabel(account.decision, c)}</b>
+      </div>)}
+    </div>
     <p className={styles.synthetic}>{c.synthetic}</p>
   </div>;
 }
 
 function CompanyCase({ copy: c }: { copy: ReturnType<typeof getLandingV2Copy> }) {
   const a = LANDING_COMPARISON.accounts[0];
-  return <details className={styles.companyCase} open>
-    <summary><span><strong>{a.name}</strong><small>{a.segment}</small></span><b>{decisionLabel(a.decision, c)}</b><em>{c.case.inspect}</em></summary>
+  return <details className={styles.companyCase}>
+    <summary><span><strong>{a.name}</strong><small>{a.changed}</small></span><b>{decisionLabel(a.decision, c)}</b><em>{c.case.inspect}</em></summary>
     <div className={styles.caseBody}>
       <div><h3>{c.case.fact}</h3><p>{a.changed} · {a.fresh}</p><small>{c.case.factNote}</small></div>
       <div><h3>{c.case.analysis}</h3><p>{c.case.thesis}</p><small>{c.case.inference}</small></div>

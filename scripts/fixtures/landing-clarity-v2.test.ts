@@ -5,6 +5,7 @@ import { oneTimeCards } from "../../lib/commercial/plan-catalog";
 const root = process.cwd();
 const page = readFileSync(`${root}/app/page.tsx`, "utf8");
 const copy = readFileSync(`${root}/lib/landing/v2-copy.ts`, "utf8");
+const styles = readFileSync(`${root}/app/landing-v2.module.css`, "utf8");
 const pricing = readFileSync(`${root}/app/pricing/page.tsx`, "utf8");
 
 function check(name: string, fn: () => void) {
@@ -41,6 +42,24 @@ check("one executive portfolio and one deeper company case are the only product 
   assert.doesNotMatch(page + copy, /Opportunity Canvas|Decision Desk|Hero carousel/i);
 });
 
+check("V3 portfolio leads with one decision instead of a dashboard table", () => {
+  assert.match(page, /priorityCompany/);
+  assert.match(page, /secondaryCompanies/);
+  assert.doesNotMatch(page, /portfolioColumns|companyRowSelected/);
+});
+
+check("V3 company reasoning is progressive disclosure", () => {
+  assert.match(page, /<details className=\{styles\.companyCase\}>/);
+  assert.doesNotMatch(page, /<details className=\{styles\.companyCase\} open>/);
+  assert.match(copy, /inspect: "Inspect case"/);
+});
+
+check("V3 pricing presents a restrained decision ladder", () => {
+  assert.match(styles, /\.planGrid\{[^}]*grid-template-columns:repeat\(4,1fr\)/);
+  assert.match(styles, /\.plan ul\{display:none\}/);
+  assert.match(styles, /\.planFeatured\{background:var\(--ink\);color:#fff\}/);
+});
+
 check("sample data is disclosed and never presented as live research", () => {
   assert.match(page, /c\.synthetic/);
   assert.match(copy, /Illustrative sample|Muestra ilustrativa/);
@@ -71,4 +90,4 @@ check("all high-intent landing actions route to real customer surfaces", () => {
   assert.match(page, /\/pricing\?commercial_path=ongoing/);
 });
 
-console.log("Landing Clarity V2 contract: 9 checks passed");
+console.log("Landing Clarity V3 contract: 12 checks passed");
