@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ["latin"] });
 const APP_URL = (process.env.NEXT_PUBLIC_APP_URL || "https://leadlensintel.com").replace(/\/$/, "");
 const OG_TITLE = "LeadLens — Account Opportunity Intelligence";
 const OG_DESC =
-  "Tell us your commercial context. LeadLens tells you which accounts to prioritize now, why they matter, and the public evidence behind each opportunity — account-level intelligence, not a contact list.";
+  "LeadLens researches and compares companies to show which deserve commercial attention, why, what evidence supports the case, and what still needs confirmation.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
