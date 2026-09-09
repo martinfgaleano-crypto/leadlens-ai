@@ -42,7 +42,7 @@ const ONE_TIME_COPY: Record<ProductCode, { headline: string; body: string }> = {
     body: "LeadLens researches both, weighs how well each fits what you're looking for and whether there's a reason to act now, and gives you a clear, evidence-backed call.",
   },
   brief_launch_v0: {
-    headline: "Evaluate a 5-company shortlist and decide where to focus first.",
+    headline: "Evaluate a 6-company shortlist and decide where to focus first.",
     body: "LeadLens assesses each in your commercial context, shows what supports the case and what still needs confirming, and points you to where attention is best spent.",
   },
   intelligence_launch_v0: {
@@ -103,7 +103,7 @@ const ONE_TIME_BULLETS: Record<ProductCode, string[]> = {
     "Delivered as a web report and PDF",
   ],
   brief_launch_v0: [
-    "5 companies researched and evaluated",
+    "6 companies researched and evaluated",
     "A clear Decision for each, in your commercial context",
     "What supports each case — and what still needs confirming",
     "Recent developments found for each company",

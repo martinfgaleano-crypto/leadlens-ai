@@ -2,7 +2,7 @@
 //
 // Frozen ONE-TIME FULFILLMENT decision (2026-09-04): a NEW canonical Lemon one-time order fulfills
 // the CURRENT Account Opportunity Intelligence product — it grants exactly the catalog's
-// `opportunity_target` current-product credits (Preview 2 / Brief 5 / Intelligence 12 / Premium 18)
+// `opportunity_target` current-product credits (Preview 2 / Brief 6 / Intelligence 12 / Premium 18)
 // to the TRUSTED tenant (meta.custom_data.user_id), idempotently. It must NEVER create lead_searches,
 // invoke runLeadLensPipeline, generate outreach, use Stripe, or grant legacy PLAN_CREDITS (5/25/50/100).
 //

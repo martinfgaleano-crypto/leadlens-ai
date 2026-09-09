@@ -39,7 +39,7 @@ export const publicSignalProvider: LeadProvider = {
     };
     // Tier drives the discovery budget (effort ≠ delivered count).
     const tier = (criteria as { discovery_tier?: string }).discovery_tier
-      ?? (limit <= 2 ? "preview" : limit <= 5 ? "brief" : limit <= 12 ? "intelligence" : "premium");
+      ?? (limit <= 2 ? "preview" : limit <= 6 ? "brief" : limit <= 12 ? "intelligence" : "premium");
     const { candidates, metrics } = await runCompanyFirstDiscovery(icp, criteria, tier, limit);
     console.log(`[analytics] ${JSON.stringify({ event: "discovery_completed", version: "company-first-v1", tier, ...metrics })}`);
     // Stash coverage context so the report can HONESTLY explain limited coverage

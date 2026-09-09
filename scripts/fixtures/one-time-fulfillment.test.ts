@@ -24,7 +24,7 @@ const USER = "user-abc-123";
 // ── 1. Frozen catalog authority: each mapped variant grants exactly the catalog opportunity_target ──
 const EXPECT: Array<[string, string, string, number]> = [
   ["v_sample_2", "preview_launch_v0", "Preview", 2],
-  ["v_starter_6", "brief_launch_v0", "Brief", 5],
+  ["v_starter_6", "brief_launch_v0", "Brief", 6],
   ["v_standard_12", "intelligence_launch_v0", "Intelligence", 12],
   ["v_pro_18", "premium_launch_v0", "Premium", 18],
 ];

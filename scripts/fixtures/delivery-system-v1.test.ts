@@ -65,7 +65,7 @@ t("preview hides context/validationQueue/coverage/methodology", preview.commerci
 t("preview RECOUNTS synthesis to the 2 surviving accounts", preview.portfolioSynthesis.total === 2 && (preview.portfolioSynthesis.counts.prioritize + preview.portfolioSynthesis.counts.validate + preview.portfolioSynthesis.counts.monitor + preview.portfolioSynthesis.counts.hold) === 2);
 
 const brief = composeForTier(doc, "brief");
-t("brief caps to 5, standard depth (keeps narrative, drops deep internals)", brief.accounts.length === 5 && brief.accounts[0].thesis !== null && brief.accounts[0].validationDetails === undefined && brief.accounts[0].monitorIdentity === null);
+t("brief caps to 6, standard depth (keeps narrative, drops deep internals)", brief.accounts.length === 6 && brief.accounts[0].thesis !== null && brief.accounts[0].validationDetails === undefined && brief.accounts[0].monitorIdentity === null);
 t("brief includes context+validationQueue+coverage, not allocation/methodology", brief.commercialContext !== null && brief.validationQueue.length > 0 && brief.coverage !== null && brief.portfolioSynthesis.allocation === null && brief.methodology.length === 0);
 
 const intel = composeForTier(doc, "intelligence");
@@ -104,7 +104,7 @@ t("web is the living product (interactive)", web.interactive === true);
 
 // ── One document → three consistent outputs ──
 const all = presentAllChannels(doc, "brief");
-t("presentAllChannels: web/pdf/csv all from the same brief-composed document (5 accounts)", all.web.document.accounts.length === 5 && all.pdf.document.accounts.length === 5 && all.csv.document.accounts.length === 5);
+t("presentAllChannels: web/pdf/csv all from the same brief-composed document (6 accounts)", all.web.document.accounts.length === 6 && all.pdf.document.accounts.length === 6 && all.csv.document.accounts.length === 6);
 t("filenames are safe + channel-tagged", deliveryFilename(all.csv, "csv") === "leadlens-northstar-co-brief-csv.csv");
 
 // ── Policy table integrity ──
