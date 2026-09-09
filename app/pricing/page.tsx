@@ -73,8 +73,8 @@ export default function PricingPage() {
           </p>
         </div>
 
-        {/* Pre-orient by the customer's chosen path; ongoing is the default primary. */}
-        {path === "one_time" ? <>{project}{ongoing}</> : <>{ongoing}{project}</>}
+        {/* One-time is the simplest first purchase; preserve ongoing-first only for an explicit ongoing path. */}
+        {path === "ongoing" ? <>{ongoing}{project}</> : <>{project}{ongoing}</>}
 
         <p style={{ textAlign: "center", color: C.muted, fontSize: ".82rem", marginTop: "1rem" }}>
           Prices in USD. You&apos;ll create an account before checkout — no charge until you confirm. Billing securely processed by Lemon Squeezy.
