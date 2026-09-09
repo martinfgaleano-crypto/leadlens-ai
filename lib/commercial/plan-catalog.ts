@@ -42,7 +42,7 @@ const ONE_TIME_COPY: Record<ProductCode, { headline: string; body: string }> = {
     body: "LeadLens researches both, weighs how well each fits what you're looking for and whether there's a reason to act now, and gives you a clear, evidence-backed call.",
   },
   brief_launch_v0: {
-    headline: "Evaluate 6 companies and decide where to focus first.",
+    headline: "Evaluate a 5-company shortlist and decide where to focus first.",
     body: "LeadLens assesses each in your commercial context, shows what supports the case and what still needs confirming, and points you to where attention is best spent.",
   },
   intelligence_launch_v0: {
@@ -103,10 +103,10 @@ const ONE_TIME_BULLETS: Record<ProductCode, string[]> = {
     "Delivered as a web report and PDF",
   ],
   brief_launch_v0: [
-    "6 companies researched and evaluated",
+    "5 companies researched and evaluated",
     "A clear Decision for each, in your commercial context",
     "What supports each case — and what still needs confirming",
-    "What recently changed for each company",
+    "Recent developments found for each company",
     "Delivered as a web report and PDF",
   ],
   intelligence_launch_v0: [
@@ -114,7 +114,7 @@ const ONE_TIME_BULLETS: Record<ProductCode, string[]> = {
     "A ranked view of where to focus first",
     "Side-by-side comparison across the companies",
     "Full case detail — what supports each, what weakens it, what to confirm",
-    "What the set reveals, plus CSV export for your CRM",
+    "What the set reveals, plus a structured CSV portfolio export",
   ],
   premium_launch_v0: [
     "18 companies evaluated — LeadLens's largest one-time scope",

@@ -118,7 +118,7 @@ export const PRODUCTS: Record<ProductCode, ProductDefinition> = {
     price_amount: 25, cta: "Build my opportunity brief",
     legacy_plan: "starter",
     entitlements: {
-      icps: { min: 1, max: 1 }, regions: { min: 1, max: 1 }, opportunity_target: 6, deep_dossiers: 0,
+      icps: { min: 1, max: 1 }, regions: { min: 1, max: 1 }, opportunity_target: 5, deep_dossiers: 0,
       what_changed: true, sources_and_freshness: true, evidence_quality: "standard",
       why_now: true, fit_timing: "basic", portfolio_statuses: "basic",
       portfolio_allocation: "summary", opportunity_clusters: "summary", coverage_gaps: "none",

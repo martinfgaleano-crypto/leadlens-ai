@@ -19,7 +19,7 @@ t("NO customer-facing one-time card is named 'Intelligence' / 'Intelligence — 
 // ── Frozen economics unchanged (price + account count per tier). ──
 const byName = Object.fromEntries(oneTimeCards().map((c) => [c.productCode, c]));
 t("Preview $7 / 2", byName["preview_launch_v0"].name === "Preview" && byName["preview_launch_v0"].price === 7 && byName["preview_launch_v0"].capacity === "2 companies evaluated");
-t("Brief $25 / 6", byName["brief_launch_v0"].name === "Brief" && byName["brief_launch_v0"].price === 25 && byName["brief_launch_v0"].capacity === "6 companies evaluated");
+t("Brief $25 / 5 (HQ 6→5 migration)", byName["brief_launch_v0"].name === "Brief" && byName["brief_launch_v0"].price === 25 && byName["brief_launch_v0"].capacity === "5 companies evaluated");
 t("Portfolio $59 / 12", byName["intelligence_launch_v0"].price === 59 && byName["intelligence_launch_v0"].capacity === "12 companies evaluated");
 t("Premium $129 / 18", byName["premium_launch_v0"].name === "Premium" && byName["premium_launch_v0"].price === 129 && byName["premium_launch_v0"].capacity === "18 companies evaluated");
 
@@ -30,7 +30,7 @@ t("ongoing Intelligence subscription still named 'Intelligence'", subscriptionCa
 t("internal id intelligence_launch_v0 unchanged", PRODUCTS["intelligence_launch_v0"].product_code === "intelligence_launch_v0");
 t("STANDARD legacy slug still maps to the 12-account one-time product", PRODUCTS["intelligence_launch_v0"].legacy_plan === "standard" && PRODUCTS["intelligence_launch_v0"].entitlements.opportunity_target === 12);
 t("resolveProduct('standard') → intelligence_launch_v0 (variant STANDARD authority intact)", resolveProduct("standard")?.product_code === "intelligence_launch_v0");
-for (const [slug, code, n] of [["sample", "preview_launch_v0", 2], ["starter", "brief_launch_v0", 6], ["standard", "intelligence_launch_v0", 12], ["pro", "premium_launch_v0", 18]] as const) {
+for (const [slug, code, n] of [["sample", "preview_launch_v0", 2], ["starter", "brief_launch_v0", 5], ["standard", "intelligence_launch_v0", 12], ["pro", "premium_launch_v0", 18]] as const) {
   t(`${slug} → ${code} → ${n} accounts`, resolveProduct(slug)?.product_code === code && resolveProduct(slug)?.entitlements.opportunity_target === n);
 }
 
@@ -45,7 +45,12 @@ t("Premium bullets mention CSV export", csvMentions("premium_launch_v0"));
 t("Preview bullets do NOT claim CSV (not offered)", !csvMentions("preview_launch_v0"));
 t("Brief bullets do NOT claim CSV (not offered)", !csvMentions("brief_launch_v0"));
 // First bullet leads with the real account count for every tier.
-t("account counts lead each plan's bullets", oneTimeCardFor("preview_launch_v0")!.bullets[0].startsWith("2 ") && oneTimeCardFor("brief_launch_v0")!.bullets[0].startsWith("6 ") && oneTimeCardFor("intelligence_launch_v0")!.bullets[0].startsWith("12 ") && oneTimeCardFor("premium_launch_v0")!.bullets[0].startsWith("18 "));
+t("account counts lead each plan's bullets (2/5/12/18)", oneTimeCardFor("preview_launch_v0")!.bullets[0].startsWith("2 ") && oneTimeCardFor("brief_launch_v0")!.bullets[0].startsWith("5 ") && oneTimeCardFor("intelligence_launch_v0")!.bullets[0].startsWith("12 ") && oneTimeCardFor("premium_launch_v0")!.bullets[0].startsWith("18 "));
+// §14: no CRM-tooling positioning on exports. §10: one-time copy must not misuse canonical "What Changed"
+// (no prior LeadLens state on a first one-time run) — "recent developments" is the correct framing.
+const allBulletText = oneTimeCards().flatMap((c) => [c.headline, c.body, ...c.bullets]).join("  ").toLowerCase();
+t("no 'for your CRM' export positioning", !allBulletText.includes("for your crm"));
+t("no canonical 'What Changed' claim in one-time copy (use recent developments)", !/what changed/i.test(allBulletText));
 
 // ── Claim safety (§19/§20): no prohibited or over-reaching customer-facing claims. ──
 const allText = oneTimeCards().flatMap((c) => [c.name, c.headline, c.body, ...c.bullets]).join("  ").toLowerCase();

@@ -31,7 +31,7 @@ export interface TierComposition {
   sections: TierSections;
 }
 
-// Mirrors the frozen catalog operating limits (Preview 2 / Brief 6 / Intelligence 12 / Premium 18)
+// Mirrors the frozen catalog operating limits (Preview 2 / Brief 5 / Intelligence 12 / Premium 18)
 // and value progression (mini verdict → comparable set → prioritized portfolio → defensible strategy).
 export const TIER_COMPOSITION: Record<DeliveryTier, TierComposition> = {
   preview: {
@@ -39,7 +39,7 @@ export const TIER_COMPOSITION: Record<DeliveryTier, TierComposition> = {
     sections: { commercialContext: false, portfolioSynthesis: true, allocation: false, validationQueue: false, whatChanged: false, compare: false, coverage: false, methodology: false },
   },
   brief: {
-    label: "Brief", maxAccounts: 6, dossierDepth: "standard",
+    label: "Brief", maxAccounts: 5, dossierDepth: "standard",
     sections: { commercialContext: true, portfolioSynthesis: true, allocation: false, validationQueue: true, whatChanged: true, compare: false, coverage: true, methodology: false },
   },
   intelligence: {

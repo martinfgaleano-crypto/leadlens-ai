@@ -30,12 +30,12 @@ export function resolveReportExperience(planOrCode: string | null | undefined, l
   const e = p.entitlements;
   const es = language === "es";
   const upgrade: Record<string, string | null> = es ? {
-    preview: "Validaste la calidad. Brief te da un conjunto enfocado y comparado de 6 cuentas.",
+    preview: "Validaste la calidad. Brief te da un conjunto enfocado y comparado de 5 empresas.",
     brief: "Ya tienes cuentas que vale la pena investigar. Intelligence prioriza el portafolio completo y dónde poner tu esfuerzo.",
     intelligence: "Ya sabes dónde enfocarte. Premium convierte el portafolio en una estrategia comercial más profunda.",
     premium: null,
   } : {
-    preview: "You validated the quality. Brief gives you a focused, compared set of 6 accounts.",
+    preview: "You validated the quality. Brief gives you a focused, compared set of 5 companies.",
     brief: "You have accounts worth investigating. Intelligence prioritizes the full portfolio and where to put your effort.",
     intelligence: "You know where to focus. Premium turns the portfolio into a deeper commercial strategy.",
     premium: null,

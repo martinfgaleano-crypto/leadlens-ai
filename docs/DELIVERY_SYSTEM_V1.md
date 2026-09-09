@@ -34,7 +34,7 @@ them into explicit, testable stages so one snapshot yields Web/PDF/CSV from a si
 - **`tier-composer.ts` — TierComposer**: `TIER_COMPOSITION` (preview/brief/intelligence/premium →
   account cap + dossier depth `mini|standard|full` + section flags) + `composeForTier(doc, tier)`.
   Caps accounts, trims each dossier to depth, gates portfolio sections, and **recounts** the synthesis
-  from the surviving accounts (numbers stay honest). Mirrors the frozen catalog limits (2/6/12/18).
+  from the surviving accounts (numbers stay honest). Mirrors the frozen catalog limits (2/5/12/18).
 - **`export-policy.ts` — ExportPolicy**: `EXPORT_POLICY` per channel (`web`=living product, `pdf`=
   snapshot artifact, `csv`=operational data) — which sections/fields each channel renders, orthogonal
   to tier. CSV columns are decision-oriented (no outreach, no opaque score — product truth).
