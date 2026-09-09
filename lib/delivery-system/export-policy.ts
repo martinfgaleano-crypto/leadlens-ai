@@ -26,6 +26,8 @@ export interface ExportSections {
   coverage: boolean;
   methodology: boolean;
   limitations: boolean;
+  /** Premium decision-architecture (narrative). Rendered on web + PDF; CSV stays flat operational data. */
+  premiumArchitecture: boolean;
 }
 
 export interface ExportPolicy {
@@ -41,7 +43,7 @@ const ALL_SECTIONS: ExportSections = {
   header: true, commercialContext: true, portfolioSynthesis: true, accounts: true,
   accountThesis: true, accountDimensions: true, accountEvidence: true, accountSources: true,
   accountWhatChanged: true, accountCounterSignals: true, accountValidations: true, accountNextStep: true,
-  validationQueue: true, coverage: true, methodology: true, limitations: true,
+  validationQueue: true, coverage: true, methodology: true, limitations: true, premiumArchitecture: true,
 };
 
 /** Operational CSV columns — decision-oriented, flat, no outreach/score (product truth). */
@@ -71,7 +73,7 @@ export const EXPORT_POLICY: Record<DeliveryChannel, ExportPolicy> = {
       header: false, commercialContext: false, portfolioSynthesis: false, accounts: true,
       accountThesis: false, accountDimensions: true, accountEvidence: true, accountSources: false,
       accountWhatChanged: true, accountCounterSignals: true, accountValidations: true, accountNextStep: true,
-      validationQueue: false, coverage: false, methodology: false, limitations: false,
+      validationQueue: false, coverage: false, methodology: false, limitations: false, premiumArchitecture: false,
     },
     csvColumns: CSV_COLUMNS,
   },

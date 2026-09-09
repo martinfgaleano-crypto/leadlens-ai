@@ -13,8 +13,32 @@
 import type {
   DeliverableViewModel, AccountBriefVM, CommercialContextVM, ValidationQueueItemVM, DecisionState, Strength,
 } from "@/lib/deliverable/deliverable-view-model";
+import {
+  buildPremiumExecutivePortfolio, selectDecisionCriticalBriefs,
+  type PremiumExecutivePortfolioV1, type DecisionCriticalBriefV1,
+} from "@/lib/intelligence/premium/premium-decision-architecture";
+import type { PremiumContextV1 } from "@/lib/intelligence/premium/premium-context";
 
 export type { AccountBriefVM, CommercialContextVM, ValidationQueueItemVM, DecisionState, Strength };
+export type { PremiumExecutivePortfolioV1, DecisionCriticalBriefV1, PremiumContextV1 };
+
+/** Premium-only delivery layer: the deterministic decision-architecture (Advanced Synthesis, Decision
+ *  Pathways, Decision-Critical Briefs, Executive Portfolio) computed from the tier-composed accounts,
+ *  PLUS any gated research context. Computed at compose time for the premium tier only — additive, so
+ *  every other tier (Portfolio included) is byte-for-byte unchanged. */
+export interface PremiumDeliverySection {
+  executivePortfolio: PremiumExecutivePortfolioV1;   // includes synthesis + (optional) context
+  decisionCriticalBriefs: DecisionCriticalBriefV1[];  // full briefs (each carries its conditional pathway)
+}
+
+/** Build the Premium delivery section from a set of accounts (already tier-capped) + optional research
+ *  context. Pure and deterministic; fail-closed (empty accounts → empty portfolio, no briefs). */
+export function buildPremiumDeliverySection(accounts: AccountBriefVM[], context: PremiumContextV1 | null = null): PremiumDeliverySection {
+  return {
+    executivePortfolio: buildPremiumExecutivePortfolio(accounts, context),
+    decisionCriticalBriefs: selectDecisionCriticalBriefs(accounts),
+  };
+}
 
 export const DELIVERY_DOCUMENT_SCHEMA = "delivery_document_v1" as const;
 
@@ -55,6 +79,12 @@ export interface DeliveryDocumentV1 {
   coverage: DeliveryCoverage | null;
   methodology: string[];
   limitations: string[];
+  /** Optional research context produced during a premium run (persisted with the snapshot). null until
+   *  premium-run production + persistence is wired — fail-closed: absent context is a valid result. */
+  premiumContext?: PremiumContextV1 | null;
+  /** Composed premium decision-architecture section — set by the TierComposer for the premium tier
+   *  only; null/absent for every other tier. Additive: never affects non-premium composition. */
+  premium?: PremiumDeliverySection | null;
 }
 
 /** Build the canonical document from the proven DeliverableViewModel. Pure; drops tier `capabilities`
@@ -84,6 +114,8 @@ export function fromDeliverableViewModel(vm: DeliverableViewModel): DeliveryDocu
     coverage: vm.coverage,
     methodology: vm.methodology,
     limitations: vm.limitations,
+    premiumContext: null,   // attached upstream when a premium run produces + persists it
+    premium: null,          // composed by the TierComposer for the premium tier only
   };
 }
 

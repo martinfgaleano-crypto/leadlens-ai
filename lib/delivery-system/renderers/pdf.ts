@@ -82,6 +82,53 @@ export function renderPdfBuffer(pm: PresentationModel): Buffer {
     }
   }
 
+  // ── Premium decision architecture (premium tier only; deterministic, computed from the accounts) ──
+  if (s.premiumArchitecture && doc.premium && doc.premium.executivePortfolio.total > 0) {
+    const ep = doc.premium.executivePortfolio;
+    const companyOf = new Map(ep.priorityMap.map((p) => [p.accountId, p.company]));
+    const names = (ids: string[]) => ids.map((id) => ascii(companyOf.get(id) ?? id)).join(", ");
+    heading("Executive decision architecture (Premium)");
+    const d = ep.decisionDistribution;
+    text(`${ep.total} account(s): ${d.prioritize} prioritize, ${d.validate} validate, ${d.monitor} monitor, ${d.hold} hold`, M, 9.5);
+    if (ep.topOpportunities.length) text(`Where attention goes first: ${names(ep.topOpportunities)}`, M, 9.5, "bold", [51, 65, 85]);
+    if (ep.synthesis.clusters.length) text(`Patterns: ${ep.synthesis.clusters.map((c) => `${ascii(c.key)} (${c.accountIds.length})`).join("   ")}`, M, 9, "normal", [71, 85, 105]);
+    if (ep.synthesis.contradictions.length) bullets("Tensions to resolve", ep.synthesis.contradictions.map((c) => `${ascii(companyOf.get(c.accountId) ?? c.accountId)}: ${ascii(c.note)}`), [180, 83, 9]);
+    if (ep.validationPriorities.length) bullets("Validation priorities", ep.validationPriorities.slice(0, 6).map(ascii));
+    text(ep.synthesis.scopeNote, M, 8, "normal", [100, 116, 139]);
+
+    // Optional research context — rendered only when a premium run produced + persisted it.
+    const ctx = ep.context;
+    if (ctx && ctx.benchmark.state === "PRESENT") {
+      heading("Commercial benchmark (Premium)");
+      const notes = [...ctx.benchmark.recurringNeeds, ...ctx.benchmark.offerPositioning, ...ctx.benchmark.differentiatedWhere];
+      bullets("", notes.slice(0, 6).map((n) => `${ascii(n.statement)}${n.stale ? " (older evidence)" : ""}`));
+      if (ctx.competitors.length) text(`Alternatives considered: ${ctx.competitors.map((c) => ascii(c.entity)).join(", ")}`, M, 9, "normal", [71, 85, 105]);
+      if (ctx.additionalOpportunities.length) text(`Additional opportunities: ${ctx.additionalOpportunities.map((o) => ascii(o.entity)).join(", ")}`, M, 9, "normal", [71, 85, 105]);
+      if (ctx.ecosystem.length) text(`Ecosystem actors: ${ctx.ecosystem.map((e) => ascii(e.entity)).join(", ")}`, M, 9, "normal", [71, 85, 105]);
+      text(ctx.benchmark.scopeNote, M, 8, "normal", [100, 116, 139]);
+    }
+
+    // Decision-critical briefs — each carries a conditional pathway (never a predicted future Decision).
+    const briefs = doc.premium.decisionCriticalBriefs;
+    if (briefs.length) {
+      heading("Decision-critical briefs (Premium)");
+      for (const b of briefs) {
+        space(20); gap(1);
+        pdf.setFont("helvetica", "bold"); pdf.setFontSize(10.5); pdf.setTextColor(15, 23, 42);
+        pdf.text(ascii(b.company), M, y);
+        pdf.setFontSize(8.5); pdf.setTextColor(...rgb[b.decision]);
+        pdf.text(DECISION_TOKENS[b.decision].label.toUpperCase(), W - M, y, { align: "right" });
+        y += 5;
+        if (b.whyMatters) text(b.whyMatters, M, 9, "normal", [51, 65, 85]);
+        if (b.whyNow) text(`Why now: ${b.whyNow}`, M, 9, "normal", [51, 65, 85]);
+        if (b.validationPriority.length) bullets("Validate first", b.validationPriority.map(ascii));
+        if (b.pathway.state === "OPEN") text(b.pathway.conditionalNote, M, 8, "normal", [100, 116, 139]);
+        if (b.whatCouldChange) text(`What could change it: ${b.whatCouldChange}`, M, 8, "normal", [100, 116, 139]);
+        gap(1);
+      }
+    }
+  }
+
   // ── Opportunity Cases (accounts) ──
   if (s.accounts && doc.accounts.length) {
     heading("Opportunity Cases");

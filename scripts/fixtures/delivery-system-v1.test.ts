@@ -99,7 +99,8 @@ t("pdf escapes HTML in content", renderPdfHtml(toPresentationModel(fromDeliverab
 
 // ── Web renderer ──
 const web = toWebPresentation(webPM);
-t("web section order + presence honors policy/content", web.sections.map((s) => s.kind).join(",") === "header,commercialContext,portfolioSynthesis,accounts,validationQueue,coverage,methodology,limitations" && web.sections.find((s) => s.kind === "accounts")!.present === true);
+t("web section order + presence honors policy/content", web.sections.map((s) => s.kind).join(",") === "header,commercialContext,portfolioSynthesis,premiumArchitecture,accounts,validationQueue,coverage,methodology,limitations" && web.sections.find((s) => s.kind === "accounts")!.present === true);
+t("web premiumArchitecture absent for non-premium tier", web.sections.find((s) => s.kind === "premiumArchitecture")!.present === false);
 t("web is the living product (interactive)", web.interactive === true);
 
 // ── One document → three consistent outputs ──

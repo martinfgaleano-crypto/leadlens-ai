@@ -33,6 +33,7 @@ export function toPresentationModel(doc: DeliveryDocumentV1, tier: DeliveryTier,
     coverage: s.coverage ? composed.coverage : null,
     methodology: s.methodology ? composed.methodology : [],
     limitations: s.limitations ? composed.limitations : [],
+    premium: s.premiumArchitecture ? composed.premium : null,
   };
   return {
     channel, tier, tierLabel: TIER_COMPOSITION[tier].label,
