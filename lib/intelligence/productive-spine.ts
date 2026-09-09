@@ -16,6 +16,8 @@ import type { IntelligenceRunTrace } from "@/lib/intelligence/run-trace";
 import { buildAccountRunTrace, buildRunFailureTrace } from "@/lib/intelligence/run-trace-wiring";
 import { deriveAccountActionabilityFunnel, summarizeActionabilityFunnel } from "@/lib/intelligence/actionability-funnel";
 import { bindVerifiedClaimToSources } from "@/lib/intelligence/claim-provenance";
+import type { PremiumContextResearcher } from "@/lib/intelligence/premium/premium-context";
+import { isPremiumEligible, deriveResearchInput, producePremiumContext } from "@/lib/intelligence/premium/premium-production";
 
 export interface StartIntelligenceRunInput {
   userId: string;
@@ -67,6 +69,11 @@ export interface ProductiveSpineDeps {
     company: { name: string; domain: string | null; country?: string | null; industry?: string | null };
     events: Array<{ event_type: string | null; claim: string; event_date: string | null; source_url: string | null; corroborating_domains?: number | null }>;
   }>) => void | Promise<void>;
+  /** Optional Premium contextual researcher — runs bounded contextual research for the PREMIUM tier
+   *  ONLY, after canonical Account Intelligence completes. Best-effort + fail-closed: a failure NEVER
+   *  fails the paid report (an honest envelope is persisted instead). Default (eligible + omitted) =
+   *  the live provider+LLM researcher. Injected as a stub in tests so no spend occurs. */
+  premiumContextResearcher?: PremiumContextResearcher;
 }
 
 export type StartIntelligenceRunResult =
@@ -364,6 +371,22 @@ async function runIntelligenceExecution(
         event_first_cases: eventFirstCases,
       },
     };
+
+    // ── Premium-only bounded contextual research (Phase 2). Runs AFTER canonical Account Intelligence
+    // is finalized so it can never delay or corrupt it. Server-authoritative eligibility (premium tier
+    // only). producePremiumContext NEVER throws — on any failure it returns an honest fail-closed
+    // envelope; the paid canonical report always completes. Persisted INSIDE report JSON (additive). ──
+    if (isPremiumEligible(input.plan)) {
+      try {
+        const researchInput = deriveResearchInput({
+          onboardingData: built.input.onboardingData,
+          criteria: built.input.criteria,
+          companies: (report.processed_leads ?? []).map((l) => l.candidate.company),
+        });
+        const premiumEnvelope = await producePremiumContext(researchInput, { researcher: deps.premiumContextResearcher });
+        (report as LeadLensReport & { _premium_context?: unknown })._premium_context = premiumEnvelope;
+      } catch { /* belt-and-suspenders: producePremiumContext is already fail-closed */ }
+    }
 
     run = { ...run, coverageState, status: "completed", stage: "report", report, failureCode: null, updatedAt: (deps.now ?? (() => new Date()))().toISOString() };
     // Fenced finalize: a stale executor cannot overwrite a newer attempt's completed result.

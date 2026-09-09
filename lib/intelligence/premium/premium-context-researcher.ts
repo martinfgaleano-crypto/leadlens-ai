@@ -17,7 +17,7 @@
 // Deterministic by construction under injected seams (providers + llm + cost probe) so the researcher
 // LOGIC is provable at ZERO spend; the live wiring is exercised only by the funded acceptance run.
 
-import type { SearchProvider, SearchQuery, SearchResultItem } from "@/lib/sources/access/provider-contract";
+import type { SearchProvider, SearchQuery, SearchResultItem, SearchProviderResponse } from "@/lib/sources/access/provider-contract";
 import { REAL_PROVIDERS } from "@/lib/sources/access/providers";
 import {
   PREMIUM_BUDGETS,
@@ -50,6 +50,7 @@ export interface LiveResearcherLimits {
   cogsTargetUsd: number;        // soft — surfaced in cost for the founder, never a hard stop
   perQueryResults: number;      // max_results per search
   freshnessDays: number;        // ceiling for TIME-SENSITIVE queries only (see doctrine)
+  searchConcurrency: number;    // bounded parallelism for INDEPENDENT searches (latency; never a burst)
 }
 export const DEFAULT_LIVE_LIMITS: LiveResearcherLimits = {
   maxProviderSearches: 8,
@@ -58,6 +59,7 @@ export const DEFAULT_LIVE_LIMITS: LiveResearcherLimits = {
   cogsTargetUsd: 4,    // <$4 = target per HQ
   perQueryResults: 6,
   freshnessDays: PREMIUM_BUDGETS.freshnessDays,
+  searchConcurrency: 3, // 6 sequential searches (~78s) → ~2 waves; bounded so providers are never bursted
 };
 
 export interface LiveResearcherDeps {
@@ -221,20 +223,34 @@ export function createLivePremiumContextResearcher(deps: LiveResearcherDeps = {}
       }
 
       // Bounded search: one provider per query (round-robin over available), respecting the call cap.
+      // Independent searches run with bounded concurrency (latency), but results are folded into the
+      // evidence pool in PLAN order — so the pool indices are DETERMINISTIC regardless of which search
+      // returns first (the anti-hallucination indices must be stable).
       const plan = planQueries(input, limits);
+      const tasks = plan.slice(0, limits.maxProviderSearches).map((step, order) => ({ step, provider: available[order % available.length], order }));
+      const responses: Array<{ order: number; resp: SearchProviderResponse | null }> = [];
+      let cursor = 0;
+      const worker = async () => {
+        for (;;) {
+          const i = cursor++;
+          if (i >= tasks.length) return;
+          const { step, provider, order } = tasks[i];
+          const query: SearchQuery = {
+            query: step.q, max_results: limits.perQueryResults, query_type: step.type,
+            freshness_days: step.timeSensitive ? limits.freshnessDays : null,
+          };
+          try { responses.push({ order, resp: await provider.search(query) }); }
+          catch { responses.push({ order, resp: null }); }
+        }
+      };
+      const concurrency = clampInt(limits.searchConcurrency, 1, 6);
+      await Promise.all(Array.from({ length: Math.min(concurrency, tasks.length) }, () => worker()));
+      const providerCalls = tasks.length;   // every planned search was attempted (success or failure)
+      let providerCostUsd = 0, allProviderCostMeasured = true;
       const pool: PoolItem[] = [];
       const seenUrl = new Set<string>();
-      let providerCalls = 0, providerCostUsd = 0, allProviderCostMeasured = true;
-      for (let i = 0; i < plan.length && providerCalls < limits.maxProviderSearches; i++) {
-        const provider = available[i % available.length];
-        const step = plan[i];
-        const query: SearchQuery = {
-          query: step.q, max_results: limits.perQueryResults, query_type: step.type,
-          freshness_days: step.timeSensitive ? limits.freshnessDays : null,
-        };
-        let resp;
-        try { resp = await provider.search(query); } catch { providerCalls++; continue; }
-        providerCalls++;
+      for (const { resp } of responses.sort((a, b) => a.order - b.order)) {
+        if (!resp) continue;
         if (resp.cost_estimate_usd == null) allProviderCostMeasured = false; else providerCostUsd += resp.cost_estimate_usd;
         for (const item of resp.results) {
           const key = item.canonical_url || item.url;
