@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { CompanyInterpretationV2 } from "@/components/landing-v2/CompanyInterpretationV2";
 import { LanguageSwitcher } from "@/components/landing-v2/LanguageSwitcher";
-import { HeroAttentionField } from "@/components/landing-v5/HeroAttentionField";
+import { CommercialIntelligenceExplorer } from "@/components/landing-v6/CommercialIntelligenceExplorer";
 import { oneTimeCards } from "@/lib/commercial/plan-catalog";
 import { LANDING_COMPARISON } from "@/lib/landing/fixtures/landing-comparison";
 import { getLandingV2Copy, type LandingLocale } from "@/lib/landing/v2-copy";
@@ -45,10 +45,10 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
         <section className={styles.hero}>
           <div className={styles.heroCopy}>
             <p className={styles.eyebrow}>{c.category}</p><h1>{c.hero.title}</h1><p className={styles.heroLead}>{c.hero.lead}</p>
-            <div className={styles.ctas}><Link className={styles.primary} href={START_PATH}>{c.primary}</Link><Link className={styles.secondary} href="/sample">{c.secondary}</Link></div>
+            <div className={styles.ctas}><Link className={styles.primary} href={START_PATH}>{c.primary}</Link></div>
             <p className={styles.heroInput}>{c.hero.inputOutput}</p>
           </div>
-          <HeroAttentionField locale={locale} />
+          <CommercialIntelligenceExplorer locale={locale} />
         </section>
 
         <section className={styles.trustStrip} aria-label={c.trust.label}>
@@ -60,13 +60,13 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
           <ExecutivePortfolio copy={c} />
         </section>
 
+        <section className={styles.section} id="case">
+          <SectionIntro eyebrow={c.case.eyebrow} title={c.case.title} body={c.case.body} /><CompanyCase copy={c} />
+        </section>
+
         <section className={`${styles.section} ${styles.howSection}`} id="how">
           <SectionIntro eyebrow={c.flow.eyebrow} title={c.flow.title} body={c.flow.body} />
           <ol className={styles.flow}>{c.flow.items.map((item, i) => <li key={item.title}><span>{i + 1}</span><div><h3>{item.title}</h3><p>{item.body}</p></div></li>)}</ol>
-        </section>
-
-        <section className={styles.section} id="case">
-          <SectionIntro eyebrow={c.case.eyebrow} title={c.case.title} body={c.case.body} /><CompanyCase copy={c} />
         </section>
 
         <CompanyInterpretationV2 locale={locale} copy={c.interpretation} />

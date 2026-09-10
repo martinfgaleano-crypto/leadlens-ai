@@ -8,8 +8,8 @@ const page = readFileSync(`${root}/app/page.tsx`, "utf8");
 const copy = readFileSync(`${root}/lib/landing/v2-copy.ts`, "utf8");
 const styles = readFileSync(`${root}/app/landing-v2.module.css`, "utf8");
 const pricing = readFileSync(`${root}/app/pricing/page.tsx`, "utf8");
-const attention = readFileSync(`${root}/components/landing-v5/HeroAttentionField.tsx`, "utf8");
-const attentionStyles = readFileSync(`${root}/components/landing-v5/hero-attention-field.module.css`, "utf8");
+const attention = readFileSync(`${root}/components/landing-v6/CommercialIntelligenceExplorer.tsx`, "utf8");
+const attentionStyles = readFileSync(`${root}/components/landing-v6/commercial-intelligence-explorer.module.css`, "utf8");
 
 function check(name: string, fn: () => void) {
   fn();
@@ -37,14 +37,14 @@ check("landing remains server-rendered with bounded client islands", () => {
   assert.doesNotMatch(page.slice(0, 80), /["']use client["']/);
   assert.match(page, /CompanyInterpretationV2/);
   assert.match(page, /LanguageSwitcher/);
-  assert.match(page, /HeroAttentionField/);
+  assert.match(page, /CommercialIntelligenceExplorer/);
 });
 
-check("V5 introduces one bounded attention field before the product proof", () => {
+check("V6 introduces one bounded benefit explorer before the product proof", () => {
   assert.match(attention.slice(0, 80), /["']use client["']/);
-  assert.match(page, /<HeroAttentionField locale=\{locale\} \/>/);
-  assert.ok(page.indexOf("<HeroAttentionField") < page.indexOf("<ExecutivePortfolio"));
-  assert.match(attention, /aria-pressed=\{selected === index\}/);
+  assert.match(page, /<CommercialIntelligenceExplorer locale=\{locale\} \/>/);
+  assert.ok(page.indexOf("<CommercialIntelligenceExplorer") < page.indexOf("<ExecutivePortfolio"));
+  assert.match(attention, /aria-pressed=\{selected === lens\}/);
   assert.match(attention, /aria-live="polite"/);
 });
 
@@ -54,18 +54,36 @@ check("one executive portfolio and one deeper company case remain the page-wide 
   assert.doesNotMatch(page + copy, /Opportunity Canvas|Decision Desk|Hero carousel/i);
 });
 
-check("V5 attention field exposes evidence, uncertainty and a synthetic-data disclosure", () => {
-  assert.match(attention, /Evidence trace/);
-  assert.match(attention, /Still unresolved/);
-  assert.match(attention, /Illustrative sample/);
+check("V6 benefit explorer teaches the decision system without a fictional company", () => {
+  assert.match(attention, /Prioritize/);
+  assert.match(attention, /Why now/);
+  assert.match(attention, /Evidence/);
+  assert.match(attention, /Validate/);
+  assert.match(attention, /Monitor/);
   assert.match(attentionStyles, /prefers-reduced-motion:reduce/);
-  assert.doesNotMatch(attention, /score|live research/i);
+  assert.doesNotMatch(attention, /Northstar|live research/i);
 });
 
-check("final attention field remains explorable on mobile", () => {
+check("final explorer remains explorable on mobile", () => {
   assert.match(styles, /\.planLadder/);
-  assert.match(attentionStyles, /\.companyPicker button:not\(\.selectedCompany\)\{display:flex\}/);
-  assert.match(attention, /key=\{account\.name\}/);
+  assert.match(attentionStyles, /overflow-x:auto/);
+  assert.match(attention, /key=\{lens\}/);
+});
+
+check("V6 public category broadens while preserving account opportunity methodology", () => {
+  assert.equal(getLandingV2Copy("en").category, "Commercial Intelligence");
+  assert.match(copy, /Account Opportunity Intelligence/);
+});
+
+check("hero uses one primary CTA and the explorer as secondary engagement", () => {
+  const hero = page.slice(page.indexOf("<section className={styles.hero}"), page.indexOf("<section className={styles.trustStrip}"));
+  assert.equal((hero.match(/href=\{START_PATH\}/g) ?? []).length, 1);
+  assert.doesNotMatch(hero, /href="\/sample"/);
+});
+
+check("the first product half progresses from portfolio to case to process", () => {
+  assert.ok(page.indexOf("<ExecutivePortfolio") < page.indexOf("<CompanyCase"));
+  assert.ok(page.indexOf("<CompanyCase") < page.indexOf('id="how"'));
 });
 
 check("final CTA system leads with attention allocation", () => {
@@ -138,4 +156,4 @@ check("footer closes with product, sample, pricing and sign-in navigation", () =
   assert.match(page, /href="\/login"/);
 });
 
-console.log("Landing V5 product experience contract: 16 checks passed");
+console.log("Landing V6 product experience contract passed");
