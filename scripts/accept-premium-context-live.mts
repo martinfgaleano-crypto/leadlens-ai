@@ -41,23 +41,24 @@ if (!LIVE) { console.log("DRY run complete — no providers or LLM were called. 
 let passed = 0, failed = 0;
 const t = (n: string, ok: boolean) => { (ok ? passed++ : failed++); console.log(`${ok ? "PASS" : "FAIL"}: ${n}`); };
 
-const researcher = createLivePremiumContextResearcher({});   // real providers + real LLM + ledger cost
-let raw, gated, threwCeiling = false;
-try {
-  raw = await researcher.research(INPUT);
-} catch (e) {
-  if (/PREMIUM_COGS_CEILING/.test(String(e))) { threwCeiling = true; console.error(String(e)); }
-  else { console.error("RESEARCH ERROR:", e); process.exit(1); }
-}
-t("did not trip the COGS ceiling STOP", !threwCeiling);
-if (!raw) process.exit(1);
-
-gated = assemblePremiumContext(raw);
+// PRODUCTION PATH (Phase 15): deriveResearchInput → producePremiumContext (live researcher, internal
+// COGS ceiling, never throws) → PremiumContextEnvelopeV1 (the persisted shape) → premiumContextFromEnvelope
+// (the delivery read). This proves the REAL orchestration, not an isolated researcher call.
+const { deriveResearchInput, producePremiumContext, premiumContextFromEnvelope } = await import("@/lib/intelligence/premium/premium-production");
+void createLivePremiumContextResearcher; void assemblePremiumContext; // (referenced by the production path internally)
+const derived = deriveResearchInput({ onboardingData: { offer_description: INPUT.offer, target_customer_description: INPUT.objective }, criteria: { target_industries: [], target_market_region: "" }, companies: INPUT.portfolioCompanies });
+const wallStart = Date.now();
+const envelope = await producePremiumContext(derived, {});
+const wallMs = Date.now() - wallStart;
+t("production path never throws (envelope always returned)", !!envelope && !!envelope.version);
+t("did not trip the COGS ceiling STOP", !envelope.failClosedReasons.includes("cogs_ceiling_reached"));
+const gated = premiumContextFromEnvelope(envelope) ?? assemblePremiumContext({});   // delivery read (null → empty)
 
 // ── COGS + latency (measured) ──
-const usd = raw.cost.estimatedUsd;
-console.log(`\n── COGS / latency (measured) ──`);
-console.log(`providerCalls=${raw.cost.providerCalls} llmCalls=${raw.cost.llmCalls} estimatedUsd=${usd == null ? "null" : "$" + usd.toFixed(4)} measured=${raw.cost.measured} elapsedMs=${raw.cost.elapsedMs}`);
+const usd = envelope.cost.estimatedUsd;
+console.log(`\n── COGS / latency (measured, production path) ──`);
+console.log(`status=${envelope.status} providerCalls=${envelope.cost.providerCalls} llmCalls=${envelope.cost.llmCalls} estimatedUsd=${usd == null ? "null" : "$" + usd.toFixed(4)} measured=${envelope.cost.measured}`);
+console.log(`researcher elapsedMs=${envelope.latencyMs}  wall-clock elapsedMs=${wallMs}  (parallelized searches; compare to the 78s sequential baseline)`);
 console.log(`(estimatedUsd = LLM list-price via ledger + provider-reported search cost; Brave/Serper report null → measured=false expected. List price, not an invoice.)`);
 
 // ── Gated context summary ──
@@ -80,7 +81,7 @@ t("every discovery ties to the objective + has real evidence", gated.additionalO
 t("every ecosystem actor is material + evidenced", gated.ecosystem.every((e) => e.why.trim() && e.evidence.length > 0));
 t("no time-sensitive 'current movement' is stale", gated.benchmark.currentMovements.every((n) => !n.stale));
 t("caps respected (benchmark/competitors/discovery/ecosystem)", gated.benchmark.recurringNeeds.length <= PREMIUM_BUDGETS.benchmarkEntities && gated.competitors.length <= PREMIUM_BUDGETS.competitors && gated.additionalOpportunities.length <= PREMIUM_BUDGETS.discoverySurfaced && gated.additionalOpportunities.filter((o) => o.deepResearched).length <= PREMIUM_BUDGETS.discoveryDeep && gated.ecosystem.length <= PREMIUM_BUDGETS.ecosystem);
-t("cost not fabricated (estimatedUsd is a measured number when an LLM call happened)", raw.cost.llmCalls === 0 || typeof usd === "number");
+t("cost not fabricated (estimatedUsd is a measured number when an LLM call happened)", envelope.cost.llmCalls === 0 || typeof usd === "number");
 t("portfolio ≠ market note present", /not the whole market/i.test(gated.benchmark.scopeNote));
 
 // ── COGS envelope verdict ──

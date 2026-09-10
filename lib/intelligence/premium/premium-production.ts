@@ -98,11 +98,36 @@ export async function producePremiumContext(
     const hasAny = context.benchmark.state === "PRESENT" || context.competitors.length > 0 || context.additionalOpportunities.length > 0 || context.ecosystem.length > 0;
     const reasons: string[] = [];
     if (!hasAny) reasons.push("no_defensible_context_found");
-    return envelope(hasAny ? "present" : "unavailable", scope, startedAt, { context: hasAny ? context : null, cost, latencyMs, failClosedReasons: reasons });
+    const env = envelope(hasAny ? "present" : "unavailable", scope, startedAt, { context: hasAny ? context : null, cost, latencyMs, failClosedReasons: reasons });
+    logPremiumObservability(env, context);
+    return env;
   } catch (err) {
     const reason = /PREMIUM_COGS_CEILING/.test(String(err)) ? "cogs_ceiling_reached" : "research_error";
-    return envelope("failed", scope, startedAt, { latencyMs: now() - startedAt, failClosedReasons: [reason] });
+    const env = envelope("failed", scope, startedAt, { latencyMs: now() - startedAt, failClosedReasons: [reason] });
+    logPremiumObservability(env, null);
+    return env;
   }
+}
+
+/** Phase 10 — sanitized, deterministic production observability. NEVER emits provider names, raw model
+ *  output, URLs, or secrets — only counts, status, cost, latency and fail-closed reasons. Best-effort. */
+function logPremiumObservability(env: PremiumContextEnvelopeV1, ctx: PremiumContextV1 | null): void {
+  try {
+    console.info("[premium-context]", JSON.stringify({
+      status: env.status,
+      capabilityGeneration: env.capabilityGeneration,
+      benchmark: ctx?.benchmark.state ?? "NONE",
+      competitors: ctx?.competitors.length ?? 0,
+      additionalOpportunities: ctx?.additionalOpportunities.length ?? 0,
+      ecosystem: ctx?.ecosystem.length ?? 0,
+      providerCalls: env.cost.providerCalls,
+      llmCalls: env.cost.llmCalls,
+      estimatedUsd: env.cost.estimatedUsd,
+      measured: env.cost.measured,
+      latencyMs: env.latencyMs,
+      failClosedReasons: env.failClosedReasons,
+    }));
+  } catch { /* observability must never affect the run */ }
 }
 
 /** Delivery read: the gated context a renderer should show, or null (fail-closed) for any non-present

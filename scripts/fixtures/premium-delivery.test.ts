@@ -51,6 +51,16 @@ t("Portfolio (intelligence) tier: premium section is NULL (hero preserved, unwea
 t("Portfolio keeps its full sections (accounts/commercialContext/methodology/coverage) unchanged", port.accounts.length === 12 && !!port.commercialContext && port.methodology.length > 0 && !!port.coverage);
 t("BREADTH held constant: both tiers deliver the same 12 accounts", prem.accounts.length === port.accounts.length && prem.accounts.length === 12);
 
+// ── Lower-tier isolation (§14): NO tier below premium composes a premium section. ──
+for (const lt of ["preview", "brief", "intelligence"] as const) {
+  const c = composeForTier(doc, lt);
+  t(`lower-tier isolation: ${lt} has no premium section`, c.premium == null);
+  const pdf = renderPdfHtml(toPresentationModel(doc, lt, "pdf"));
+  t(`lower-tier isolation: ${lt} PDF renders no premium architecture`, !/Executive decision architecture|Decision-critical briefs/.test(pdf));
+  const web = toWebPresentation(toPresentationModel(doc, lt, "web"));
+  t(`lower-tier isolation: ${lt} web has no premiumArchitecture section present`, web.sections.find((s) => s.kind === "premiumArchitecture")!.present === false);
+}
+
 // ── GOLDEN DIFFERENTIATION: same breadth, Premium PDF strictly adds decision architecture. ──
 const premPdf = renderPdfHtml(toPresentationModel(doc, "premium", "pdf"));
 const portPdf = renderPdfHtml(toPresentationModel(doc, "intelligence", "pdf"));

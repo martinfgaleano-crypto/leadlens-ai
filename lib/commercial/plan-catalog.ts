@@ -50,8 +50,8 @@ const ONE_TIME_COPY: Record<ProductCode, { headline: string; body: string }> = {
     body: "A full one-time portfolio: LeadLens ranks where attention should go, compares the companies side by side, and surfaces the patterns across your set.",
   },
   premium_launch_v0: {
-    headline: "The broadest one-time portfolio — 18 companies, ranked and compared.",
-    body: "For a wider evaluation across more markets and segments: the same full portfolio analysis as Portfolio, at LeadLens's largest one-time scope.",
+    headline: "The deepest one-time evaluation — 18 companies, plus the context around your decisions.",
+    body: "Everything in Portfolio, across more markets and segments — plus deeper decision context: how the set fits the wider commercial landscape, the relevant alternatives, what could change each key decision, and additional possibilities to investigate where the evidence supports them.",
   },
 };
 
@@ -117,11 +117,11 @@ const ONE_TIME_BULLETS: Record<ProductCode, string[]> = {
     "What the set reveals, plus a structured CSV portfolio export",
   ],
   premium_launch_v0: [
-    "18 companies evaluated — LeadLens's largest one-time scope",
-    "Across up to 3 markets and multiple segments",
-    "Ranked priorities and side-by-side comparison",
-    "Full case detail on every company",
-    "Delivered as web report, PDF and CSV",
+    "18 companies evaluated, across up to 3 markets and multiple segments",
+    "Everything in Portfolio — ranked priorities, side-by-side comparison, full case detail",
+    "Decision-critical briefs: what to validate next and what could change each decision",
+    "Broader commercial context and relevant alternatives, where the evidence supports it",
+    "Delivered as web report, PDF and structured CSV export",
   ],
 };
 
