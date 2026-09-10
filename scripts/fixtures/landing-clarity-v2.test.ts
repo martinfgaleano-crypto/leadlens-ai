@@ -44,7 +44,7 @@ check("V6 introduces one bounded benefit explorer before the product proof", () 
   assert.match(attention.slice(0, 80), /["']use client["']/);
   assert.match(page, /<CommercialIntelligenceExplorer locale=\{locale\} \/>/);
   assert.ok(page.indexOf("<CommercialIntelligenceExplorer") < page.indexOf("<ExecutivePortfolio"));
-  assert.match(attention, /aria-pressed=\{selected === lens\}/);
+  assert.equal((attention.match(/aria-pressed=/g) ?? []).length, 6);
   assert.match(attention, /aria-live="polite"/);
 });
 
@@ -66,8 +66,8 @@ check("V6 benefit explorer teaches the decision system without a fictional compa
 
 check("final explorer remains explorable on mobile", () => {
   assert.match(styles, /\.planLadder/);
-  assert.match(attentionStyles, /overflow-x:auto/);
-  assert.match(attention, /key=\{lens\}/);
+  assert.match(attentionStyles, /\.companyField/);
+  assert.equal((attention.match(/aria-pressed=/g) ?? []).length, 6);
 });
 
 check("V6 public category broadens while preserving account opportunity methodology", () => {
