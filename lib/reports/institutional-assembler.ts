@@ -215,7 +215,7 @@ export function assembleInstitutionalReport(
       cold: reportJson.cold_count ?? dossiers.filter((d) => d.tier === "COLD").length,
       discard: reportJson.discard_count ?? 0,
       avg_fit_score: typeof reportJson.avg_score === "number" ? reportJson.avg_score : null,
-      tier_note: "Tiers are the pipeline's existing categories — unchanged by this presentation layer.",
+      tier_note: es ? "Estos conteos reflejan las cuentas evaluadas en esta revisión." : "These counts reflect the accounts evaluated in this review.",
       funnel: ri ? { considered: ri.companies_considered, rejected: ri.companies_rejected, selected: ri.companies_selected, rejection_reasons: ri.rejection_reasons ?? {} } : null,
     },
     market_landscape: landscape ? {

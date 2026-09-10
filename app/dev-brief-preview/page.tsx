@@ -176,7 +176,11 @@ export default function DevBriefPreview({ searchParams }: { searchParams?: { sou
   const alt = searchParams?.report === "alt";
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const report = assembleInstitutionalReport((alt ? RAW_ALT : RAW) as any, alt ? META_ALT : META);
-  const experience = resolveReportExperience(alt ? "premium_launch_v0" : "intelligence_launch_v0");
+  // Resolve the experience from ?tier so the workspace CAPABILITIES (tabs) authentically match the
+  // tier being smoked — preview/brief/portfolio(intelligence)/premium — not a fixed one.
+  const TIER_PRODUCT: Record<string, string> = { preview: "preview_launch_v0", brief: "brief_launch_v0", intelligence: "intelligence_launch_v0", premium: "premium_launch_v0" };
+  const tierProduct = TIER_PRODUCT[searchParams?.tier ?? ""] ?? (alt ? "premium_launch_v0" : "intelligence_launch_v0");
+  const experience = resolveReportExperience(tierProduct);
   const vm = fromInstitutionalReport(report, experience);
   // ?memory=1 — synthesize a SECOND review by rolling back a prior review (dev
   // QA only; obviously synthetic timeline, never a claim of real history).
