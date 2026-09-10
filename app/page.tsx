@@ -65,11 +65,11 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
           <ol className={styles.flow}>{c.flow.items.map((item, i) => <li key={item.title}><span>{i + 1}</span><div><h3>{item.title}</h3><p>{item.body}</p></div></li>)}</ol>
         </section>
 
-        <CompanyInterpretationV2 locale={locale} copy={c.interpretation} />
-
         <section className={styles.section} id="case">
           <SectionIntro eyebrow={c.case.eyebrow} title={c.case.title} body={c.case.body} /><CompanyCase copy={c} />
         </section>
+
+        <CompanyInterpretationV2 locale={locale} copy={c.interpretation} />
 
         <section className={`${styles.section} ${styles.audience}`}>
           <div><p className={styles.eyebrow}>{c.audience.eyebrow}</p><h2>{c.audience.title}</h2></div>
@@ -78,14 +78,14 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
 
         <section className={`${styles.section} ${styles.soft}`} id="pricing">
           <SectionIntro eyebrow={c.pricing.eyebrow} title={c.pricing.title} body={c.pricing.body} />
-          <div className={styles.planGrid}>{plans.map((plan) => {
+          <div className={styles.planLadder}>{plans.map((plan, index) => {
             const pc = c.pricing.plans[plan.productCode];
             const highlighted = plan.productCode === "intelligence_launch_v0";
-            return <article className={`${styles.plan}${highlighted ? ` ${styles.planFeatured}` : ""}`} key={plan.productCode}>
-              {highlighted && <span className={styles.recommended}>{c.pricing.recommended}</span>}
-              <div className={styles.planTop}><h3>{plan.name}</h3><strong>${plan.price}</strong></div><p className={styles.capacity}>{plan.capacity}</p><p>{pc.job}</p>
-              <ul>{pc.points.slice(0, 3).map((point) => <li key={point}>{point}</li>)}</ul>
-              <Link href={`/signup?commercial_path=one_time&product_code=${plan.productCode}`}>{c.pricing.choose} {plan.name}</Link>
+            return <article className={`${styles.planRow}${highlighted ? ` ${styles.planFeatured}` : ""}`} key={plan.productCode}>
+              <div className={styles.planIdentity}><span>0{index + 1}</span><h3>{plan.name}</h3>{highlighted && <b className={styles.recommended}>{c.pricing.recommended}</b>}</div>
+              <div className={styles.planDecision}><h4>{pc.job}</h4><p>{pc.points[0]}</p></div>
+              <ul>{pc.points.slice(1).map((point) => <li key={point}>{point}</li>)}</ul>
+              <div className={styles.planAction}><strong>${plan.price}</strong><small>{plan.capacity}</small><Link href={`/signup?commercial_path=one_time&product_code=${plan.productCode}`}>{c.pricing.choose} {plan.name}</Link></div>
             </article>;
           })}</div>
           <div className={styles.compareLink}><Link href="/pricing?commercial_path=one_time">{c.pricing.compare}</Link></div>
