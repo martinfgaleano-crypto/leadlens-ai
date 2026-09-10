@@ -12,8 +12,8 @@ const DETAILS = [
 ] as const;
 
 const LABELS = {
-  en: { title: "Attention field", hint: "Choose a company to inspect", observed: "Observed change", meaning: "Commercial meaning", evidence: "Evidence trace", open: "Still unresolved", sample: "Illustrative sample — synthetic companies and evidence." },
-  es: { title: "Campo de atención", hint: "Elige una empresa para examinar", observed: "Cambio observado", meaning: "Significado comercial", evidence: "Rastro de evidencia", open: "Aún sin resolver", sample: "Muestra ilustrativa — empresas y evidencia sintéticas." },
+  en: { title: "Attention field", hint: "3 companies · 1 attention decision", observed: "Observed change", meaning: "Commercial meaning", evidence: "Evidence trace", open: "Still unresolved", sample: "Illustrative sample — synthetic companies and evidence." },
+  es: { title: "Campo de atención", hint: "3 empresas · 1 decisión de atención", observed: "Cambio observado", meaning: "Significado comercial", evidence: "Rastro de evidencia", open: "Aún sin resolver", sample: "Muestra ilustrativa — empresas y evidencia sintéticas." },
   pt: { title: "Campo de atenção", hint: "Escolha uma empresa para examinar", observed: "Mudança observada", meaning: "Significado comercial", evidence: "Rastro de evidência", open: "Ainda não resolvido", sample: "Amostra ilustrativa — empresas e evidências sintéticas." },
   ja: { title: "注目フィールド", hint: "企業を選んで確認", observed: "観測された変化", meaning: "商業的意味", evidence: "根拠の経路", open: "未解決", sample: "説明用サンプル — 企業と根拠は合成データです。" },
 } as const;
@@ -51,7 +51,7 @@ export function HeroAttentionField({ locale }: { locale: LandingLocale }) {
         ><span>{item.short}</span><small>{DECISIONS[locale][item.decision]}</small></button>)}
       </div>
 
-      <article className={styles.focus} aria-live="polite">
+      <article className={styles.focus} aria-live="polite" key={account.name}>
         <div className={styles.corners} aria-hidden="true"><i /><i /><i /><i /></div>
         <div className={styles.focusTop}><span>{account.name}</span><b data-decision={account.decision}>{DECISIONS[locale][account.decision]}</b></div>
         <p className={styles.label}>{copy.observed}</p><h2>{account.changed}</h2>

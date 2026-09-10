@@ -62,6 +62,17 @@ check("V5 attention field exposes evidence, uncertainty and a synthetic-data dis
   assert.doesNotMatch(attention, /score|live research/i);
 });
 
+check("final attention field remains explorable on mobile", () => {
+  assert.match(styles, /\.planLadder/);
+  assert.match(attentionStyles, /\.companyPicker button:not\(\.selectedCompany\)\{display:flex\}/);
+  assert.match(attention, /key=\{account\.name\}/);
+});
+
+check("final CTA system leads with attention allocation", () => {
+  assert.equal(getLandingV2Copy("en").primary, "Find where to focus");
+  assert.equal(getLandingV2Copy("es").primary, "Encuentra dónde enfocarte");
+});
+
 check("V3 portfolio leads with one decision instead of a dashboard table", () => {
   assert.match(page, /priorityCompany/);
   assert.match(page, /secondaryCompanies/);
@@ -74,18 +85,19 @@ check("V3 company reasoning is progressive disclosure", () => {
   assert.match(copy, /inspect: "Inspect case"/);
 });
 
-check("V3 pricing presents a restrained decision ladder", () => {
-  assert.match(styles, /\.planGrid\{[^}]*grid-template-columns:repeat\(4,1fr\)/);
-  assert.match(styles, /\.plan ul\{[^}]*display:grid/);
-  assert.match(styles, /\.planFeatured\{background:var\(--ink\);color:#fff\}/);
+check("final pricing presents a decision-first editorial ladder", () => {
+  assert.match(page, /styles\.planLadder/);
+  assert.match(styles, /\.planRow\{[^}]*grid-template-columns:/);
+  assert.match(styles, /\.planDecision h4\{/);
+  assert.match(styles, /\.planFeatured\{[^}]*background:var\(--ink\)/);
 });
 
 check("V4 ladder explains each product with no more than three concrete outcomes", () => {
   assert.deepEqual(Object.values(getLandingV2Copy("en").pricing.plans).map((plan) => plan.points.length), [3, 3, 3, 3]);
-  assert.match(copy, /A focused two-company analysis/);
-  assert.match(copy, /A focused six-company comparison/);
-  assert.match(copy, /A ranked twelve-company portfolio/);
-  assert.match(copy, /A guided eighteen-company analysis/);
+  assert.match(copy, /Decide which company deserves attention first/);
+  assert.match(copy, /Turn a shortlist into a clear next focus/);
+  assert.match(copy, /Allocate attention across a commercial portfolio/);
+  assert.match(copy, /Review a wider, multi-market decision set/);
 });
 
 check("sample data is disclosed and never presented as live research", () => {
