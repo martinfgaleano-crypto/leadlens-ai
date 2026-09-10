@@ -10,6 +10,8 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { DeliverableViewModel, DecisionState, AccountBriefVM } from "@/lib/deliverable/deliverable-view-model";
+import { buildPremiumDeliverySection, type PremiumDeliverySection } from "@/lib/delivery-system/delivery-document";
+import type { PremiumContextV1 } from "@/lib/intelligence/premium/premium-context";
 import { DECISION_TOKENS, STRENGTH_TOKENS, decisionLabel, orderByAttention, accountRoleLabel, opportunityTypeLabel } from "@/lib/deliverable/deliverable-view-model";
 import { portfolioCsv, evidenceCsv, deliverableFilename } from "@/lib/deliverable/exports";
 import { downloadableChannels } from "@/lib/delivery-system/channel-availability";
@@ -54,7 +56,7 @@ function SinceLastReview({ a, memory, es }: { a: AccountBriefVM; memory?: Worksp
   );
 }
 
-type Tab = "portfolio" | "accounts" | "evidence" | "compare" | "intelligence";
+type Tab = "portfolio" | "accounts" | "evidence" | "compare" | "intelligence" | "premium";
 const DECISION_ORDER: DecisionState[] = ["prioritize", "validate", "monitor", "hold"];
 
 /** Client-side download of a text blob (customer action; no server round-trip). */
@@ -95,20 +97,28 @@ async function downloadAuthed(path: string, getToken: () => Promise<string | nul
   } catch { return "error"; }
 }
 
-export default function OpportunityWorkspace({ vm, memory, monitorClientKey, exportContext }: { vm: DeliverableViewModel; memory?: WorkspaceMemory; monitorClientKey?: string; exportContext?: ExportContext }) {
+export default function OpportunityWorkspace({ vm, memory, monitorClientKey, exportContext, premiumContext }: { vm: DeliverableViewModel; memory?: WorkspaceMemory; monitorClientKey?: string; exportContext?: ExportContext; premiumContext?: PremiumContextV1 | null }) {
   const es = vm.meta.language === "es";
+  // Premium-only: the deterministic decision-architecture (+ any gated research context) computed from
+  // the SAME accounts. Tier is the hard gate (server-resolved); non-premium never builds this.
+  const premium = useMemo<PremiumDeliverySection | null>(
+    () => (exportContext?.tier === "premium" ? buildPremiumDeliverySection(vm.accounts, premiumContext ?? null) : null),
+    [exportContext?.tier, vm.accounts, premiumContext],
+  );
+  const hasPremium = !!premium && premium.executivePortfolio.total > 0;
   const t = useMemo(() => LABELS(es), [es]);
   const cc = useMemo(() => toClientCanvasVM(vm), [vm]);   // client is the subject
 
   const tabs = useMemo<Tab[]>(() => {
     const list: Tab[] = [];
     if (vm.capabilities.showPortfolioTab) list.push("portfolio");
+    if (hasPremium) list.push("premium");   // premium tier only, and only when there is real content
     list.push("accounts");
     if (vm.capabilities.showEvidenceTab) list.push("evidence");
     if (vm.capabilities.showCompareTab) list.push("compare");
     list.push("intelligence");
     return list;
-  }, [vm]);
+  }, [vm, hasPremium]);
 
   const [tab, setTab] = useState<Tab>(tabs[0] ?? "accounts");
   const [accountId, setAccountId] = useState<string>(vm.accounts[0]?.id ?? "");
@@ -198,6 +208,8 @@ export default function OpportunityWorkspace({ vm, memory, monitorClientKey, exp
         {tab === "evidence" && vm.capabilities.showEvidenceTab && <EvidenceTab vm={vm} t={t} es={es} onOpen={openAccount} />}
 
         {tab === "intelligence" && <PortfolioIntelligenceTab vm={vm} t={t} es={es} onOpen={openAccount} memory={memory} />}
+
+        {tab === "premium" && premium && <PremiumContextTab premium={premium} es={es} onOpen={openAccount} />}
       </main>
 
       <UtilityBar vm={vm} t={t} es={es} monitorClientKey={monitorClientKey} exportContext={exportContext} />
@@ -473,6 +485,69 @@ function PortfolioIntelligenceTab({ vm, es, onOpen, memory }: { vm: DeliverableV
   );
 }
 
+// Premium-only "Decision context": the deterministic decision-architecture (+ any gated research
+// context) in plain buyer language. Empty/absent capabilities are OMITTED, never shown as "0" or as
+// empty shells (§7). Never exposes provider names, schema names, cost internals, or raw model output.
+function PremiumContextTab({ premium, es, onOpen }: { premium: PremiumDeliverySection; es: boolean; onOpen: (id: string) => void }) {
+  const ep = premium.executivePortfolio;
+  const ctx = ep.context;
+  const nameOf = (id: string) => ep.priorityMap.find((p) => p.accountId === id)?.company ?? id;
+  const Chips = ({ ids }: { ids: string[] }) => (
+    <div className="dlv-chips">{ids.slice(0, 6).map((id) => <button key={id} className="dlv-chip" onClick={() => onOpen(id)}>{nameOf(id)}</button>)}{ids.length > 6 && <span className="dlv-note" style={{ margin: 0 }}>+{ids.length - 6}</span>}</div>
+  );
+  const benchmarkNotes = ctx && ctx.benchmark.state === "PRESENT"
+    ? [...ctx.benchmark.recurringNeeds, ...ctx.benchmark.offerPositioning, ...ctx.benchmark.differentiatedWhere]
+    : [];
+  return (
+    <div className="dlv-panel">
+      {/* Executive */}
+      <div className="dlv-card">
+        <p className="dlv-label">{es ? "Contexto ejecutivo" : "Executive context"}</p>
+        <div className="dlv-distlegend">{DECISION_ORDER.filter((d) => ep.decisionDistribution[d] > 0).map((d) => <span key={d} className="dlv-distitem"><span className="dlv-nav-dot" style={{ background: DECISION_TOKENS[d].dot }} /><strong>{ep.decisionDistribution[d]}</strong> {decisionLabel(d, es).toLowerCase()}</span>)}</div>
+        {ep.topOpportunities.length > 0 && <><p className="dlv-note" style={{ marginTop: ".5rem" }}>{es ? "Dónde enfocar primero" : "Where attention goes first"}</p><Chips ids={ep.topOpportunities} /></>}
+        <p className="dlv-note" style={{ marginTop: ".5rem", color: "#64748b" }}>{ep.synthesis.scopeNote}</p>
+      </div>
+
+      {/* Portfolio patterns + tensions */}
+      {(ep.synthesis.clusters.length > 0 || ep.synthesis.contradictions.length > 0) && (
+        <div className="dlv-card">
+          <p className="dlv-label">{es ? "Patrones del portafolio" : "Portfolio patterns"}</p>
+          {ep.synthesis.clusters.map((c) => <div key={`${c.kind}:${c.key}`} className="dlv-pat"><div className="dlv-pat-h">{c.key} <span className="dlv-tag">{c.accountIds.length}</span></div><Chips ids={c.accountIds} /></div>)}
+          {ep.synthesis.contradictions.map((x) => <p key={x.accountId} className="dlv-note" style={{ margin: ".25rem 0", color: "#b45309" }}><strong>{nameOf(x.accountId)}:</strong> {x.note}</p>)}
+        </div>
+      )}
+
+      {/* Commercial context / benchmark — only when research context is present */}
+      {benchmarkNotes.length > 0 && ctx && (
+        <div className="dlv-card">
+          <p className="dlv-label">{es ? "Contexto comercial" : "Commercial context"}</p>
+          <ul className="dlv-limits-list">{benchmarkNotes.slice(0, 6).map((n, i) => <li key={i}>{n.statement}{n.stale ? <span className="dlv-note" style={{ margin: 0, color: "#94a3b8" }}> {es ? "(evidencia anterior)" : "(older evidence)"}</span> : null}</li>)}</ul>
+          {ctx.competitors.length > 0 && <p className="dlv-note" style={{ marginTop: ".5rem" }}><strong>{es ? "Alternativas relevantes:" : "Relevant alternatives:"}</strong> {ctx.competitors.map((c) => c.entity).join(", ")}</p>}
+          {ctx.additionalOpportunities.length > 0 && <p className="dlv-note" style={{ margin: ".25rem 0" }}><strong>{es ? "Oportunidades adicionales a investigar:" : "Additional opportunities to investigate:"}</strong> {ctx.additionalOpportunities.map((o) => o.entity).join(", ")}</p>}
+          {ctx.ecosystem.length > 0 && <p className="dlv-note" style={{ margin: ".25rem 0" }}><strong>{es ? "Actores del ecosistema:" : "Ecosystem routes:"}</strong> {ctx.ecosystem.map((e) => e.entity).join(", ")}</p>}
+          <p className="dlv-note" style={{ marginTop: ".4rem", color: "#64748b" }}>{ctx.benchmark.scopeNote}</p>
+        </div>
+      )}
+
+      {/* Decision-critical briefs */}
+      {premium.decisionCriticalBriefs.length > 0 && (
+        <div className="dlv-card">
+          <p className="dlv-label">{es ? "Informes críticos para decidir" : "Decision-critical briefs"}</p>
+          {premium.decisionCriticalBriefs.map((b) => (
+            <div key={b.accountId} className="dlv-pat">
+              <div className="dlv-pat-h"><button className="dlv-chip" onClick={() => onOpen(b.accountId)}>{b.company}</button> <span className="dlv-tag">{decisionLabel(b.decision, es)}</span></div>
+              {b.whyMatters && <p className="dlv-note" style={{ margin: ".25rem 0" }}>{b.whyMatters}</p>}
+              {b.whyNow && <p className="dlv-note" style={{ margin: ".25rem 0" }}><strong>{es ? "Por qué ahora:" : "Why now:"}</strong> {b.whyNow}</p>}
+              {b.validationPriority.length > 0 && <><p className="dlv-note" style={{ margin: ".25rem 0 .1rem" }}><strong>{es ? "Qué validar a continuación" : "What to validate next"}</strong></p><ul className="dlv-limits-list">{b.validationPriority.map((v, i) => <li key={i}>{v}</li>)}</ul></>}
+              {b.pathway.state === "OPEN" && <p className="dlv-note" style={{ margin: ".25rem 0", color: "#475569" }}><strong>{es ? "Qué podría cambiar esta decisión:" : "What could change this decision:"}</strong> {b.whatCouldChange}</p>}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function UtilityBar({ vm, t, es, monitorClientKey, exportContext }: { vm: DeliverableViewModel; t: L; es: boolean; monitorClientKey?: string; exportContext?: ExportContext }) {
   const [refreshing, setRefreshing] = useState(false);
   const [refreshStatus, setRefreshStatus] = useState<string | null>(null);
@@ -700,6 +775,7 @@ function LABELS(es: boolean) {
       evidence: es ? "Evidencia" : "Evidence",
       compare: es ? "Comparar" : "Compare",
       intelligence: es ? "Inteligencia del portafolio" : "Portfolio Intelligence",
+      premium: es ? "Contexto de decisión" : "Decision context",
     } as Record<Tab, string>,
     filterByDecision: es ? "Filtrar por decisión" : "Filter by decision",
     all: es ? "Todas" : "All",
