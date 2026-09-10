@@ -50,8 +50,8 @@ const ONE_TIME_COPY: Record<ProductCode, { headline: string; body: string }> = {
     body: "A full one-time portfolio: LeadLens ranks where attention should go, compares the companies side by side, and surfaces the patterns across your set.",
   },
   premium_launch_v0: {
-    headline: "The deepest one-time evaluation — 18 companies, plus the context around your decisions.",
-    body: "Everything in Portfolio, across more markets and segments — plus deeper decision context: how the set fits the wider commercial landscape, the relevant alternatives, what could change each key decision, and additional possibilities to investigate where the evidence supports them.",
+    headline: "The most comprehensive one-time evaluation — 18 companies, plus the context around your decisions.",
+    body: "Everything in Portfolio, across more markets and segments — plus added decision context: how the set fits the wider commercial landscape, the relevant alternatives, what could change each key decision, and additional possibilities to investigate where the evidence supports them.",
   },
 };
 
