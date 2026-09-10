@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CompanyInterpretationV2 } from "@/components/landing-v2/CompanyInterpretationV2";
 import { LanguageSwitcher } from "@/components/landing-v2/LanguageSwitcher";
+import { HeroAttentionField } from "@/components/landing-v5/HeroAttentionField";
 import { oneTimeCards } from "@/lib/commercial/plan-catalog";
 import { LANDING_COMPARISON } from "@/lib/landing/fixtures/landing-comparison";
 import { getLandingV2Copy, type LandingLocale } from "@/lib/landing/v2-copy";
@@ -47,11 +48,16 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
             <div className={styles.ctas}><Link className={styles.primary} href={START_PATH}>{c.primary}</Link><Link className={styles.secondary} href="/sample">{c.secondary}</Link></div>
             <p className={styles.heroInput}>{c.hero.inputOutput}</p>
           </div>
-          <ExecutivePortfolio copy={c} />
+          <HeroAttentionField locale={locale} />
         </section>
 
         <section className={styles.trustStrip} aria-label={c.trust.label}>
           {c.trust.items.map((item) => <p key={item.title}><strong>{item.title}</strong><span>{item.body}</span></p>)}
+        </section>
+
+        <section className={styles.portfolioChapter} id="product">
+          <SectionIntro eyebrow={c.portfolio.kicker} title={c.portfolio.title} body={c.outcomes.body} />
+          <ExecutivePortfolio copy={c} />
         </section>
 
         <section className={`${styles.section} ${styles.howSection}`} id="how">
@@ -94,7 +100,11 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
         <section className={styles.finalCta}><h2>{c.final.title}</h2><p>{c.final.body}</p><div className={styles.ctas}><Link className={styles.primary} href={START_PATH}>{c.primary}</Link><Link className={styles.secondary} href="/sample">{c.secondary}</Link></div></section>
       </main>
 
-      <footer className={styles.footer}><span>© {new Date().getFullYear()} LeadLens</span><div><Link href="/privacy">{c.footer.privacy}</Link><Link href="/terms">{c.footer.terms}</Link><Link href="/refund">{c.footer.refund}</Link></div></footer>
+      <footer className={styles.footer}>
+        <span>© {new Date().getFullYear()} LeadLens</span>
+        <nav aria-label={c.navigation}><a href="#product">{c.nav.product}</a><Link href="/sample">{c.nav.sample}</Link><a href="#pricing">{c.nav.pricing}</a><Link href="/login">{c.nav.signIn}</Link></nav>
+        <div><Link href="/privacy">{c.footer.privacy}</Link><Link href="/terms">{c.footer.terms}</Link><Link href="/refund">{c.footer.refund}</Link></div>
+      </footer>
     </div>
   );
 }
@@ -105,7 +115,7 @@ function SectionIntro({ eyebrow, title, body }: { eyebrow: string; title: string
 
 function ExecutivePortfolio({ copy: c }: { copy: ReturnType<typeof getLandingV2Copy> }) {
   const [priority, ...secondary] = LANDING_COMPARISON.accounts;
-  return <div className={styles.portfolio} id="product" aria-label={c.portfolio.label}>
+  return <div className={styles.portfolio} aria-label={c.portfolio.label}>
     <div className={styles.portfolioHead}><span>{c.portfolio.kicker}</span><small>{c.portfolio.disclosure}</small></div>
     <article className={styles.priorityCompany}>
       <div className={styles.priorityMeta}><strong>{priority.name}</strong><b>{decisionLabel(priority.decision, c)}</b></div>
