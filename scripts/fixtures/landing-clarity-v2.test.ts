@@ -115,7 +115,8 @@ check("V4 ladder explains each product with no more than three concrete outcomes
   assert.match(copy, /Decide which company deserves attention first/);
   assert.match(copy, /Turn a shortlist into a clear next focus/);
   assert.match(copy, /Allocate attention across a commercial portfolio/);
-  assert.match(copy, /Review a wider, multi-market decision set/);
+  assert.match(copy, /See the commercial context that could change the decision/);
+  assert.match(copy, /decision-critical briefs and open questions/);
 });
 
 check("sample data is disclosed and never presented as live research", () => {
@@ -129,10 +130,11 @@ check("one-time appears before ongoing by default on both public purchase surfac
   assert.match(pricing, /path === "ongoing" \? <>{ongoing}{project}<\/> : <>{project}{ongoing}<\/>/);
 });
 
-check("landing removes stale evidence-quality tiers and speculative Premium claims", () => {
+check("landing removes stale evidence tiers and keeps Premium differentiation claim-safe", () => {
   const publicLanding = `${page}\n${copy}`;
   assert.doesNotMatch(publicLanding, /Standard Evidence|Full Evidence|Reinforced Evidence/i);
-  assert.doesNotMatch(publicLanding, /Decision Pathways|Decision-Critical Briefs|commercial benchmark|competitor context|What Changed/i);
+  assert.doesNotMatch(publicLanding, /Decision Pathways|commercial benchmark|competitor context|What Changed/i);
+  assert.match(publicLanding, /decision-critical briefs and open questions/i);
 });
 
 check("all four locale variants disclose synthetic evidence in their own language", () => {
