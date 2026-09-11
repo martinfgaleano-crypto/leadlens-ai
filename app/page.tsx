@@ -24,8 +24,8 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
   const locale = localeFrom(searchParams?.lang);
   const c = getLandingV2Copy(locale);
   const proof = locale === "es"
-    ? { eyebrow: "El resultado", title: "Cómo se ve cuando ya evaluó empresas", body: "El campo de arriba explica cómo LeadLens decide. Aquí está el resultado en casos de empresas: una decisión por empresa, con evidencia, incertidumbre y qué validar." }
-    : { eyebrow: "The result", title: "What it looks like once it has evaluated companies", body: "The field above shows how LeadLens decides. Here is the result across company cases — one decision per company, with the evidence, the uncertainty and what to validate." };
+    ? { eyebrow: "El resultado", title: "De la investigación a una decisión", body: "Para cada empresa evaluada: una decisión clara, por qué ahora, la evidencia que la sostiene y qué queda por validar." }
+    : { eyebrow: "The result", title: "From research to a decision", body: "For each company evaluated: a clear Decision, why now, the evidence behind it, and what still needs validating." };
   // Portfolio-level view (illustrative): the SHAPE of the whole researched set — distribution across
   // decisions, where attention concentrates, and the pattern the set reveals. No per-company cards
   // (that is FocusBoard's job) and no invented score — canonical decision states only.
@@ -33,6 +33,10 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
     ? { funnel: "40 consideradas → 12 evaluadas", attention: "2 de 12 justifican atención ahora; 3 más vale la pena validar.", pattern: "El fit es común en el conjunto — un cambio reciente y fechado es lo que separa a las pocas que merecen atención.", patternLabel: "Lo que revela el conjunto", allocationLabel: "A dónde va la atención", scope: "Observado dentro de este portafolio investigado — no todo el mercado." }
     : { funnel: "40 considered → 12 evaluated", attention: "2 of 12 justify attention now; 3 more are worth validating.", pattern: "Fit is common across the set — a recent, dated change is what separates the few that deserve attention.", patternLabel: "What the set reveals", allocationLabel: "Where attention goes", scope: "Observed within this researched portfolio — not the whole market." };
   const portfolioDist: { k: "prioritize" | "validate" | "monitor" | "hold"; n: number }[] = [{ k: "prioritize", n: 2 }, { k: "validate", n: 3 }, { k: "monitor", n: 5 }, { k: "hold", n: 2 }];
+  // Salvaged from the production landing: a 5-second category distinction. No named competitors.
+  const category3 = locale === "es"
+    ? { eyebrow: "Dónde encaja LeadLens", rows: [{ k: "Bases de datos", v: "Quién existe." }, { k: "Herramientas de señales", v: "Qué pasó." }, { k: "LeadLens", v: "Por qué importa — y a dónde debe ir la atención.", me: true }] }
+    : { eyebrow: "Where LeadLens fits", rows: [{ k: "Databases", v: "Who exists." }, { k: "Signal tools", v: "What happened." }, { k: "LeadLens", v: "Why it matters — and where attention belongs.", me: true }] };
   const plans = oneTimeCards();
 
   return (
@@ -62,13 +66,17 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
           <AttentionField locale={locale} />
         </section>
 
+        <CompanyInterpretationV2 locale={locale} copy={c.interpretation} />
+
         <section className={styles.trustStrip} aria-label={c.trust.label}>
           {c.trust.items.map((item) => <p key={item.title}><strong>{item.title}</strong><span>{item.body}</span></p>)}
         </section>
 
         <section className={styles.section} id="product" aria-label={proof.title}>
-          <SectionIntro eyebrow={proof.eyebrow} title={proof.title} body={proof.body} />
-          <div className={styles.proofBoard}><FocusBoard locale={locale} /></div>
+          <div className={styles.proofRow}>
+            <div className={styles.proofText}><p className={styles.eyebrow}>{proof.eyebrow}</p><h2>{proof.title}</h2><p>{proof.body}</p></div>
+            <div className={styles.proofBoard}><FocusBoard locale={locale} /></div>
+          </div>
         </section>
 
         <section className={styles.portfolioChapter} id="portfolio">
@@ -85,11 +93,16 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
           <ol className={styles.flow}>{c.flow.items.map((item, i) => <li key={item.title}><span>{i + 1}</span><div><h3>{item.title}</h3><p>{item.body}</p></div></li>)}</ol>
         </section>
 
-        <CompanyInterpretationV2 locale={locale} copy={c.interpretation} />
-
         <section className={`${styles.section} ${styles.audience}`}>
           <div><p className={styles.eyebrow}>{c.audience.eyebrow}</p><h2>{c.audience.title}</h2></div>
           <ul>{c.audience.items.map((item) => <li key={item}>{item}</li>)}</ul>
+        </section>
+
+        <section className={styles.section} aria-label={category3.eyebrow}>
+          <p className={styles.eyebrow} style={{ textAlign: "center", marginBottom: "2.5rem" }}>{category3.eyebrow}</p>
+          <div className={styles.catRow}>
+            {category3.rows.map((x) => <div key={x.k} className={"me" in x && x.me ? styles.catMe : styles.catCol}><span>{x.k}</span><p>{x.v}</p></div>)}
+          </div>
         </section>
 
         <section className={`${styles.section} ${styles.soft}`} id="pricing">
