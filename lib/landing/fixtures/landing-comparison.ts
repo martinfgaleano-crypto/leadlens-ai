@@ -16,8 +16,10 @@ export interface LandingCompareAccount {
   fit: Strength;
   timing: Strength;
   evidence: Strength;
+  before: string;    // the prior state — what was true before the change (causality: BEFORE)
   changed: string;   // the material change (ties to What Changed)
   fresh: string;     // freshness of that change
+  now: string;       // what the change makes true now (causality: NOW)
   unknown: string;   // what remains unresolved
 }
 
@@ -43,9 +45,9 @@ export function leadersOn(c: LandingComparison, d: CompareDimension): string[] {
 
 export const LANDING_COMPARISON: LandingComparison = {
   accounts: [
-    { name: "Northstar Logistics", short: "Northstar", segment: "Mid-market logistics", decision: "prioritize", fit: "Strong", timing: "Strong", evidence: "Strong", changed: "Signed a regional distribution agreement", fresh: "9d", unknown: "Procurement ownership not confirmed" },
-    { name: "FreshRoute Foods", short: "FreshRoute", segment: "Regional food distribution", decision: "validate", fit: "Strong", timing: "Moderate", evidence: "Moderate", changed: "Opened two new distribution sites", fresh: "14d", unknown: "Decision scope may be regional" },
-    { name: "Atlas Clinics Group", short: "Atlas", segment: "Multi-location healthcare", decision: "monitor", fit: "Moderate", timing: "Limited", evidence: "Moderate", changed: "Announced two new clinic locations", fresh: "21d", unknown: "Only one source on the expansion" },
+    { name: "Northstar Logistics", short: "Northstar", segment: "Mid-market logistics", decision: "prioritize", fit: "Strong", timing: "Strong", evidence: "Strong", before: "Operated from a single regional base with no public expansion signal", changed: "Signed a regional distribution agreement", fresh: "9d", now: "Standing up new distribution capacity — plausibly widening supplier and tooling needs before procurement is formalized", unknown: "Procurement ownership not confirmed" },
+    { name: "FreshRoute Foods", short: "FreshRoute", segment: "Regional food distribution", decision: "validate", fit: "Strong", timing: "Moderate", evidence: "Moderate", before: "Served a fixed set of distribution routes", changed: "Opened two new distribution sites", fresh: "14d", now: "Expanding footprint, though the scope of the decision is not yet clear", unknown: "Decision scope may be regional" },
+    { name: "Atlas Clinics Group", short: "Atlas", segment: "Multi-location healthcare", decision: "monitor", fit: "Moderate", timing: "Limited", evidence: "Moderate", before: "Ran an established set of clinic locations", changed: "Announced two new clinic locations", fresh: "21d", now: "Signaling growth, but the change is older and rests on a single source", unknown: "Only one source on the expansion" },
   ],
   why: {
     Fit: "Fit is Strong for both Northstar and FreshRoute — so Fit alone does not decide this. Timing does.",

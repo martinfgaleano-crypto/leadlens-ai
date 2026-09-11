@@ -147,7 +147,10 @@ check("one-time appears before ongoing by default on both public purchase surfac
 check("landing removes stale evidence tiers and keeps Premium differentiation claim-safe", () => {
   const publicLanding = `${page}\n${copy}`;
   assert.doesNotMatch(publicLanding, /Standard Evidence|Full Evidence|Reinforced Evidence/i);
-  assert.doesNotMatch(publicLanding, /Decision Pathways|commercial benchmark|competitor context|What Changed/i);
+  // "What Changed" as a stale premium *feature/tier* name stays banned; but the Deep Case now uses
+  // "What changed" as a Before → What changed → Now causality label (founder-mandated), which is
+  // truthful and on-brand — so guard the stale feature framings, not the generic causality word.
+  assert.doesNotMatch(publicLanding, /Decision Pathways|commercial benchmark|competitor context/i);
   assert.match(publicLanding, /decision-critical briefs and open questions/i);
 });
 

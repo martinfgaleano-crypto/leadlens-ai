@@ -30,8 +30,8 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
   // decisions, where attention concentrates, and the pattern the set reveals. No per-company cards
   // (that is FocusBoard's job) and no invented score — canonical decision states only.
   const portfolioView = locale === "es"
-    ? { funnel: "40 consideradas → 12 evaluadas", attention: "2 de 12 justifican atención ahora; 3 más vale la pena validar.", pattern: "El fit es común en el conjunto — un cambio reciente y fechado es lo que separa a las pocas que merecen atención.", patternLabel: "Lo que revela el conjunto", allocationLabel: "A dónde va la atención", scope: "Observado dentro de este portafolio investigado — no todo el mercado." }
-    : { funnel: "40 considered → 12 evaluated", attention: "2 of 12 justify attention now; 3 more are worth validating.", pattern: "Fit is common across the set — a recent, dated change is what separates the few that deserve attention.", patternLabel: "What the set reveals", allocationLabel: "Where attention goes", scope: "Observed within this researched portfolio — not the whole market." };
+    ? { funnel: "12 evaluadas", attention: "2 de 12 justifican atención ahora; 3 más vale la pena validar.", pattern: "El fit es común en el conjunto — un cambio reciente y fechado es lo que separa a las pocas que merecen atención.", patternLabel: "Lo que revela el conjunto", allocationLabel: "A dónde va la atención", scope: "Observado dentro de este portafolio investigado — no todo el mercado." }
+    : { funnel: "12 evaluated", attention: "2 of 12 justify attention now; 3 more are worth validating.", pattern: "Fit is common across the set — a recent, dated change is what separates the few that deserve attention.", patternLabel: "What the set reveals", allocationLabel: "Where attention goes", scope: "Observed within this researched portfolio — not the whole market." };
   const portfolioDist: { k: "prioritize" | "validate" | "monitor" | "hold"; n: number }[] = [{ k: "prioritize", n: 2 }, { k: "validate", n: 3 }, { k: "monitor", n: 5 }, { k: "hold", n: 2 }];
   // Salvaged from the production landing: a 5-second category distinction. No named competitors.
   const category3 = locale === "es"
@@ -69,7 +69,10 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
         <CompanyInterpretationV2 locale={locale} copy={c.interpretation} />
 
         <section className={styles.trustStrip} aria-label={c.trust.label}>
-          {c.trust.items.map((item) => <p key={item.title}><strong>{item.title}</strong><span>{item.body}</span></p>)}
+          <div className={styles.trustItems}>
+            {c.trust.items.map((item) => <p key={item.title}><strong>{item.title}</strong><span>{item.body}</span></p>)}
+          </div>
+          <p className={styles.trustBoundary}>{c.trust.boundary}</p>
         </section>
 
         <section className={styles.section} id="product" aria-label={proof.title}>
@@ -156,7 +159,7 @@ function ExecutivePortfolio({ copy: c, view, dist }: {
   const distText = dist.map((d) => `${d.n} ${decisionLabel(d.k, c).toLowerCase()}`).join(" · ");
   return <div className={styles.portfolio} aria-label={c.portfolio.label}>
     <div className={styles.portfolioHead}><span>{c.portfolio.kicker}</span><small>{view.funnel}</small></div>
-    <div className={styles.distTotal}><strong>{total}</strong><span>{c.portfolio.disclosure.replace(/\d+/, String(total))}</span></div>
+    <div className={styles.distTotal}><strong>{total}</strong><span>{c.portfolio.disclosure.replace(/^\d+\s*/, "")}</span></div>
     <div className={styles.distBar} role="img" aria-label={distText}>
       {dist.filter((d) => d.n > 0).map((d) => <span key={d.k} style={{ flex: d.n, background: DEC_COLOR[d.k] }} />)}
     </div>
@@ -175,12 +178,18 @@ function CompanyCase({ copy: c }: { copy: ReturnType<typeof getLandingV2Copy> })
   const a = LANDING_COMPARISON.accounts[0];
   return <details className={styles.companyCase}>
     <summary><span><strong>{a.name}</strong><small>{a.changed}</small></span><b>{decisionLabel(a.decision, c)}</b><em>{c.case.inspect}</em></summary>
+    <ol className={styles.caseCausality} aria-label={`${c.case.beforeLabel} → ${c.case.changeLabel} → ${c.case.nowLabel}`}>
+      <li><span>{c.case.beforeLabel}</span><p>{a.before}</p></li>
+      <li className={styles.caseChange}><span>{c.case.changeLabel}</span><p>{a.changed} · {a.fresh}</p></li>
+      <li><span>{c.case.nowLabel}</span><p>{a.now}</p></li>
+    </ol>
     <div className={styles.caseBody}>
       <div><h3>{c.case.fact}</h3><p>{a.changed} · {a.fresh}</p><small>{c.case.factNote}</small></div>
       <div><h3>{c.case.analysis}</h3><p>{c.case.thesis}</p><small>{c.case.inference}</small></div>
       <div className={styles.caseRisk}><h3>{c.case.weakness}</h3><p>{c.case.weaknessText}</p><small>{c.case.uncertainty}</small></div>
       <div><h3>{c.case.next}</h3><p>{c.case.validationText}</p><small>{c.case.recommendation}</small></div>
     </div>
+    <p className={styles.caseTrust}>{c.case.trustLine}</p>
     <div className={styles.caseFooter}><span>{c.synthetic}</span><Link href="/sample">{c.case.full}</Link></div>
   </details>;
 }
