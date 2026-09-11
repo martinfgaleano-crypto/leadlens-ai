@@ -26,6 +26,13 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
   const proof = locale === "es"
     ? { eyebrow: "El resultado", title: "Cómo se ve cuando ya evaluó empresas", body: "El campo de arriba explica cómo LeadLens decide. Aquí está el resultado en casos de empresas: una decisión por empresa, con evidencia, incertidumbre y qué validar." }
     : { eyebrow: "The result", title: "What it looks like once it has evaluated companies", body: "The field above shows how LeadLens decides. Here is the result across company cases — one decision per company, with the evidence, the uncertainty and what to validate." };
+  // Portfolio-level view (illustrative): the SHAPE of the whole researched set — distribution across
+  // decisions, where attention concentrates, and the pattern the set reveals. No per-company cards
+  // (that is FocusBoard's job) and no invented score — canonical decision states only.
+  const portfolioView = locale === "es"
+    ? { funnel: "40 consideradas → 12 evaluadas", attention: "2 de 12 justifican atención ahora; 3 más vale la pena validar.", pattern: "El fit es común en el conjunto — un cambio reciente y fechado es lo que separa a las pocas que merecen atención.", patternLabel: "Lo que revela el conjunto", allocationLabel: "A dónde va la atención", scope: "Observado dentro de este portafolio investigado — no todo el mercado." }
+    : { funnel: "40 considered → 12 evaluated", attention: "2 of 12 justify attention now; 3 more are worth validating.", pattern: "Fit is common across the set — a recent, dated change is what separates the few that deserve attention.", patternLabel: "What the set reveals", allocationLabel: "Where attention goes", scope: "Observed within this researched portfolio — not the whole market." };
+  const portfolioDist: { k: "prioritize" | "validate" | "monitor" | "hold"; n: number }[] = [{ k: "prioritize", n: 2 }, { k: "validate", n: 3 }, { k: "monitor", n: 5 }, { k: "hold", n: 2 }];
   const plans = oneTimeCards();
 
   return (
@@ -66,7 +73,7 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
 
         <section className={styles.portfolioChapter} id="portfolio">
           <SectionIntro eyebrow={c.portfolio.kicker} title={c.portfolio.title} body={c.outcomes.body} />
-          <ExecutivePortfolio copy={c} />
+          <ExecutivePortfolio copy={c} view={portfolioView} dist={portfolioDist} />
         </section>
 
         <section className={styles.section} id="case">
@@ -122,21 +129,32 @@ function SectionIntro({ eyebrow, title, body }: { eyebrow: string; title: string
   return <div className={styles.sectionIntro}><p className={styles.eyebrow}>{eyebrow}</p><h2>{title}</h2>{body && <p>{body}</p>}</div>;
 }
 
-function ExecutivePortfolio({ copy: c }: { copy: ReturnType<typeof getLandingV2Copy> }) {
-  const [priority, ...secondary] = LANDING_COMPARISON.accounts;
+const DEC_COLOR: Record<string, string> = { prioritize: "#7dd3fc", validate: "#f0c477", monitor: "#9fb0c2", hold: "#5c6a7a" };
+
+// Portfolio-LEVEL proof: the shape of the whole researched set (distribution + allocation + pattern),
+// NOT another list of account cards (that is FocusBoard). Illustrative distribution; canonical decision
+// states only; no invented score.
+function ExecutivePortfolio({ copy: c, view, dist }: {
+  copy: ReturnType<typeof getLandingV2Copy>;
+  view: { funnel: string; attention: string; pattern: string; patternLabel: string; allocationLabel: string; scope: string };
+  dist: { k: "prioritize" | "validate" | "monitor" | "hold"; n: number }[];
+}) {
+  const total = dist.reduce((s, d) => s + d.n, 0);
+  const distText = dist.map((d) => `${d.n} ${decisionLabel(d.k, c).toLowerCase()}`).join(" · ");
   return <div className={styles.portfolio} aria-label={c.portfolio.label}>
-    <div className={styles.portfolioHead}><span>{c.portfolio.kicker}</span><small>{c.portfolio.disclosure}</small></div>
-    <article className={styles.priorityCompany}>
-      <div className={styles.priorityMeta}><strong>{priority.name}</strong><b>{decisionLabel(priority.decision, c)}</b></div>
-      <h2>{priority.changed}</h2>
-      <div className={styles.priorityProof}><span>{priority.fresh} · {c.portfolio.evidence}: {priority.evidence}</span><span>{c.portfolio.confirm}: {priority.unknown}</span></div>
-    </article>
-    <div className={styles.secondaryCompanies}>
-      {secondary.map((account) => <div className={styles.companyRow} key={account.name}>
-        <strong>{account.name}</strong><span>{account.changed}</span><b data-decision={account.decision}>{decisionLabel(account.decision, c)}</b>
-      </div>)}
+    <div className={styles.portfolioHead}><span>{c.portfolio.kicker}</span><small>{view.funnel}</small></div>
+    <div className={styles.distTotal}><strong>{total}</strong><span>{c.portfolio.disclosure.replace(/\d+/, String(total))}</span></div>
+    <div className={styles.distBar} role="img" aria-label={distText}>
+      {dist.filter((d) => d.n > 0).map((d) => <span key={d.k} style={{ flex: d.n, background: DEC_COLOR[d.k] }} />)}
     </div>
-    <p className={styles.synthetic}>{c.synthetic}</p>
+    <ul className={styles.distLegend}>
+      {dist.map((d) => <li key={d.k}><i style={{ background: DEC_COLOR[d.k] }} /><strong>{d.n}</strong> {decisionLabel(d.k, c).toLowerCase()}</li>)}
+    </ul>
+    <div className={styles.portfolioGrid}>
+      <div><span>{view.allocationLabel}</span><p>{view.attention}</p></div>
+      <div><span>{view.patternLabel}</span><p>{view.pattern}</p></div>
+    </div>
+    <p className={styles.synthetic}>{view.scope} · {c.synthetic}</p>
   </div>;
 }
 

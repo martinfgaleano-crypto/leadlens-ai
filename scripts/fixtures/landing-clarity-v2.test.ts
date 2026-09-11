@@ -102,10 +102,13 @@ check("final CTA system leads with attention allocation", () => {
   assert.equal(getLandingV2Copy("es").primary, "Encuentra dónde enfocarte");
 });
 
-check("V3 portfolio leads with one decision instead of a dashboard table", () => {
-  assert.match(page, /priorityCompany/);
-  assert.match(page, /secondaryCompanies/);
-  assert.doesNotMatch(page, /portfolioColumns|companyRowSelected/);
+check("executive portfolio is portfolio-LEVEL (distribution + allocation), not account cards", () => {
+  // FocusBoard shows per-company decisions; the Executive Portfolio must raise to the shape of the
+  // whole set — a decision distribution + allocation + pattern — and NOT repeat account rows/cards.
+  assert.match(page, /distBar/);
+  assert.match(page, /distLegend/);
+  assert.match(page, /portfolioGrid/);
+  assert.doesNotMatch(page, /priorityCompany|secondaryCompanies|companyRow/);
 });
 
 check("V3 company reasoning is progressive disclosure", () => {

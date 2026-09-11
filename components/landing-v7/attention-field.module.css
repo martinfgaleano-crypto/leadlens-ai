@@ -40,7 +40,8 @@
 }
 .tile:hover{background:#fff; border-color:#d6e2ea; box-shadow:0 16px 30px -16px rgba(7,17,31,.42); z-index:7}
 .label{display:block; font-size:.82rem; font-weight:650; letter-spacing:-.01em}
-.cue{display:flex; align-items:center; gap:.5rem; margin-top:.5rem}
+.cue{display:flex; align-items:center; gap:.42rem; margin-top:.5rem}
+.cue b{color:#7a8794; font-size:.66rem; font-weight:750; letter-spacing:.01em}
 .cdot{width:.5rem; height:.5rem; border-radius:50%}
 .cMon{background:var(--mon)} .cHold{background:var(--hold)}
 .cev{display:inline-flex; gap:2.5px}

@@ -18,7 +18,7 @@ type Reading = { focus: number; validate: number; change: string; evidence: [str
 
 interface Copy {
   aria: string; objectiveLabel: string; objectives: string[]; sectors: string[];
-  chips: { prioritize: string; validate: string }; whyNow: string; evidence: string; openQuestion: string;
+  chips: { prioritize: string; validate: string }; cueLabels: { monitor: string; hold: string }; whyNow: string; evidence: string; openQuestion: string;
   because: string; watching: string; readout: Record<Phase, string>;
   readings: Reading[];
 }
@@ -28,7 +28,7 @@ const EN: Copy = {
   objectiveLabel: "Objective",
   objectives: ["Expand into a new market", "Find new partners", "Win new clients", "Prioritize target accounts"],
   sectors: ["Regional logistics", "Multi-site healthcare", "Specialty manufacturing", "Food distribution", "Industrial services", "Field services"],
-  chips: { prioritize: "Prioritize", validate: "Validate" },
+  chips: { prioritize: "Prioritize", validate: "Validate" }, cueLabels: { monitor: "Monitor", hold: "Hold" },
   whyNow: "Why now", evidence: "Evidence", openQuestion: "Open question",
   because: "Attention here because of a recent change and evidence you can inspect.",
   watching: "Kept in view — watched for change.",
@@ -50,7 +50,7 @@ const ES: Copy = {
   objectiveLabel: "Objetivo",
   objectives: ["Entrar a un nuevo mercado", "Encontrar socios", "Ganar nuevos clientes", "Priorizar cuentas objetivo"],
   sectors: ["Logística regional", "Salud multisede", "Manufactura especializada", "Distribución de alimentos", "Servicios industriales", "Servicios de campo"],
-  chips: { prioritize: "Priorizar", validate: "Validar" },
+  chips: { prioritize: "Priorizar", validate: "Validar" }, cueLabels: { monitor: "Monitorear", hold: "Reservar" },
   whyNow: "Por qué ahora", evidence: "Evidencia", openQuestion: "Pregunta abierta",
   because: "Atención aquí por un cambio reciente y evidencia que puedes revisar.",
   watching: "En vista — en observación por cambios.",
@@ -162,9 +162,9 @@ export function AttentionField({ locale }: { locale: LandingLocale }) {
               {isVal && <span className={styles.q}><em>{c.openQuestion}</em>{r.open}</span>}
 
               {concentrated && (L.role === "context" || L.role === "faint") &&
-                <span className={styles.cue} aria-hidden="true">
-                  <i className={`${styles.cdot} ${cue.d === "hold" ? styles.cHold : styles.cMon}`} />
-                  <span className={styles.cev}>{[0, 1, 2].map((d) => <i key={d} className={d < cue.ev ? styles.on : ""} />)}</span>
+                <span className={styles.cue}>
+                  <i className={`${styles.cdot} ${cue.d === "hold" ? styles.cHold : styles.cMon}`} aria-hidden="true" />
+                  <b>{cue.d === "hold" ? c.cueLabels.hold : c.cueLabels.monitor}</b>
                 </span>}
             </button>
           );
