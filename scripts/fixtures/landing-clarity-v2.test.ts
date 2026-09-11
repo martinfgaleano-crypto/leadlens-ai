@@ -10,6 +10,7 @@ const styles = readFileSync(`${root}/app/landing-v2.module.css`, "utf8");
 const pricing = readFileSync(`${root}/app/pricing/page.tsx`, "utf8");
 const attention = readFileSync(`${root}/components/landing-v7/FocusBoard.tsx`, "utf8");
 const attentionStyles = readFileSync(`${root}/components/landing-v7/focus-board.module.css`, "utf8");
+const heroExplainer = readFileSync(`${root}/components/landing-v7/AttentionField.tsx`, "utf8");
 
 function check(name: string, fn: () => void) {
   fn();
@@ -37,17 +38,24 @@ check("landing remains server-rendered with bounded client islands", () => {
   assert.doesNotMatch(page.slice(0, 80), /["']use client["']/);
   assert.match(page, /CompanyInterpretationV2/);
   assert.match(page, /LanguageSwitcher/);
+  assert.match(page, /AttentionField/);
   assert.match(page, /FocusBoard/);
 });
 
-check("V7 hero integrates one product object (the focus board) before the product proof", () => {
+check("V7 hero explains the mechanism; the focus board is the product proof below it", () => {
+  assert.match(heroExplainer.slice(0, 80), /["']use client["']/);
   assert.match(attention.slice(0, 80), /["']use client["']/);
+  // Hero = AttentionField (explanation), then FocusBoard (proof), then ExecutivePortfolio (summary).
+  assert.match(page, /<AttentionField locale=\{locale\} \/>/);
   assert.match(page, /<FocusBoard locale=\{locale\} \/>/);
+  assert.ok(page.indexOf("<AttentionField") < page.indexOf("<FocusBoard"));
   assert.ok(page.indexOf("<FocusBoard") < page.indexOf("<ExecutivePortfolio"));
-  // Six lenses drive the object (role=tab + aria-selected), not six identical pills.
-  assert.equal((attention.match(/aria-selected=/g) ?? []).length, 1); // one dynamic expression covering all lens tabs
+  // The hero explainer teaches the system WITHOUT sample company names.
+  assert.doesNotMatch(heroExplainer, /Northwind|Cascade|Atlas|Meridian/);
+  assert.match(heroExplainer, /aria-live="polite"/);
+  // The focus board keeps the six-lens decision system (role=tab, not six pills).
+  assert.equal((attention.match(/aria-selected=/g) ?? []).length, 1);
   assert.match(attention, /role="tab"/);
-  assert.match(attention, /aria-live="polite"/);
 });
 
 check("one executive portfolio and one deeper company case remain the page-wide product proofs", () => {

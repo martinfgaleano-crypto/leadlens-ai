@@ -2,6 +2,7 @@ import Link from "next/link";
 import { CompanyInterpretationV2 } from "@/components/landing-v2/CompanyInterpretationV2";
 import { LanguageSwitcher } from "@/components/landing-v2/LanguageSwitcher";
 import { FocusBoard } from "@/components/landing-v7/FocusBoard";
+import { AttentionField } from "@/components/landing-v7/AttentionField";
 import { oneTimeCards } from "@/lib/commercial/plan-catalog";
 import { LANDING_COMPARISON } from "@/lib/landing/fixtures/landing-comparison";
 import { getLandingV2Copy, type LandingLocale } from "@/lib/landing/v2-copy";
@@ -22,6 +23,9 @@ function decisionLabel(decision: string, c: ReturnType<typeof getLandingV2Copy>)
 export default function LandingV2({ searchParams }: { searchParams?: { lang?: string | string[] } }) {
   const locale = localeFrom(searchParams?.lang);
   const c = getLandingV2Copy(locale);
+  const proof = locale === "es"
+    ? { eyebrow: "El resultado", title: "Cómo se ve cuando ya evaluó empresas", body: "El campo de arriba explica cómo LeadLens decide. Aquí está el resultado en casos de empresas: una decisión por empresa, con evidencia, incertidumbre y qué validar." }
+    : { eyebrow: "The result", title: "What it looks like once it has evaluated companies", body: "The field above shows how LeadLens decides. Here is the result across company cases — one decision per company, with the evidence, the uncertainty and what to validate." };
   const plans = oneTimeCards();
 
   return (
@@ -48,14 +52,19 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
             <div className={styles.ctas}><Link className={styles.primary} href={START_PATH}>{c.primary}</Link></div>
             <p className={styles.heroInput}>{c.hero.inputOutput}</p>
           </div>
-          <FocusBoard locale={locale} />
+          <AttentionField locale={locale} />
         </section>
 
         <section className={styles.trustStrip} aria-label={c.trust.label}>
           {c.trust.items.map((item) => <p key={item.title}><strong>{item.title}</strong><span>{item.body}</span></p>)}
         </section>
 
-        <section className={styles.portfolioChapter} id="product">
+        <section className={styles.section} id="product" aria-label={proof.title}>
+          <SectionIntro eyebrow={proof.eyebrow} title={proof.title} body={proof.body} />
+          <div className={styles.proofBoard}><FocusBoard locale={locale} /></div>
+        </section>
+
+        <section className={styles.portfolioChapter} id="portfolio">
           <SectionIntro eyebrow={c.portfolio.kicker} title={c.portfolio.title} body={c.outcomes.body} />
           <ExecutivePortfolio copy={c} />
         </section>

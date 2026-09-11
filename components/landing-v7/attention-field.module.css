@@ -1,0 +1,90 @@
+/* LeadLens hero — "attention field". Tactile possibility tiles that concentrate into a justified
+   focus as research/change/evidence/uncertainty arrive. Meaningful motion, not decoration. */
+.wrap{
+  --pri:#036b9f; --pri-bg:rgba(7,159,227,.12);
+  --val:#9a651a; --val-bg:rgba(199,138,36,.15);
+  --tile:#ffffff; --brd:#e6edf2;
+  position:relative; min-width:0; display:flex; flex-direction:column; gap:1rem;
+}
+
+/* Objective token — the interactive hook (no form). */
+.objective{
+  align-self:flex-start; display:inline-flex; align-items:center; gap:.7rem;
+  padding:.6rem .95rem .6rem 1rem; border:1px solid #d7e2ea; border-radius:999px;
+  background:linear-gradient(180deg,#fff,#f4f9fc); box-shadow:0 8px 20px -12px rgba(7,17,31,.25);
+  cursor:pointer; font:inherit; transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.objective:hover{transform:translateY(-1px); box-shadow:0 12px 26px -12px rgba(7,17,31,.32); border-color:#bcd4e2}
+.objective span{color:#7c8a99; font-size:.62rem; font-weight:800; letter-spacing:.11em; text-transform:uppercase}
+.objective b{color:#0b1a27; font-size:.98rem; font-weight:750; letter-spacing:-.02em}
+.objective i{color:var(--pri); font-style:normal; font-size:1.05rem; transition:transform .2s ease}
+.objective:hover i{transform:translateX(3px)}
+
+/* The field. */
+.stage{
+  position:relative; height:31rem;
+  border-radius:1.4rem; overflow:hidden;
+  background:
+    radial-gradient(120% 90% at 26% 52%, rgba(7,159,227,.09), rgba(7,159,227,0) 46%),
+    linear-gradient(180deg,#fbfdfe,#eef4f8);
+  border:1px solid #eaf0f4;
+}
+.stage::after{ /* faint focus zone, only once concentrated */
+  content:""; position:absolute; left:2%; top:24%; width:44%; height:52%; border-radius:1rem;
+  background:radial-gradient(60% 60% at 40% 45%, rgba(7,159,227,.07), rgba(7,159,227,0) 70%);
+  opacity:0; transition:opacity .6s ease;
+}
+[data-phase=focus] .stage::after{opacity:1}
+
+/* Possibility tile. */
+.tile{
+  position:absolute; width:8.9rem; padding:.7rem .8rem; text-align:left;
+  border:1px solid var(--brd); border-radius:.85rem; background:var(--tile);
+  box-shadow:0 10px 24px -16px rgba(7,17,31,.32);
+  transform-origin:top left; transform:scale(var(--s,1)); opacity:var(--o,1);
+  cursor:pointer; font:inherit; color:#1d2735;
+  transition:left .62s cubic-bezier(.2,.7,.2,1), top .62s cubic-bezier(.2,.7,.2,1), transform .5s cubic-bezier(.2,.7,.2,1), opacity .5s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.tile:hover{border-color:#cddbe6; box-shadow:0 16px 30px -16px rgba(7,17,31,.4); z-index:6}
+.label{display:block; font-size:.82rem; font-weight:650; letter-spacing:-.01em}
+.ev{display:inline-flex; gap:3px; margin-top:.5rem}
+.ev i{width:5px; height:5px; border-radius:50%; background:#dbe4ea}
+.ev i.on{background:var(--pri)}
+
+/* Focus tile — the justified concentration. */
+.tFocus{width:12.5rem; z-index:5; border-color:#cfe6f2; box-shadow:0 26px 55px -22px rgba(3,107,159,.5)}
+.tFocus::before{content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--pri); border-radius:.85rem 0 0 .85rem}
+.tFocus .label{font-size:1rem}
+.chip{display:inline-block; margin-bottom:.4rem; padding:.2rem .55rem; border-radius:999px; font-size:.62rem; font-weight:800; letter-spacing:.02em; color:var(--pri); background:var(--pri-bg)}
+.chipVal{color:var(--val); background:var(--val-bg)}
+.why{display:block; margin-top:.45rem; color:#41505f; font-size:.76rem; line-height:1.35}
+.change{position:absolute; right:.7rem; top:.7rem; width:.5rem; height:.5rem; border-radius:50%; background:var(--pri); box-shadow:0 0 0 4px rgba(7,159,227,.16); animation:pulse 2.4s ease-in-out infinite}
+
+/* Validate tile — uncertainty stays visible. */
+.tVal{width:11rem; z-index:4; border-color:#ecdcbf}
+.tVal::before{content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--val); border-radius:.85rem 0 0 .85rem}
+.q{display:block; margin-top:.4rem; color:#5a4a2c; font-size:.74rem; line-height:1.35}
+.q b{display:block; color:var(--val); font-size:.6rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase; margin-bottom:.1rem}
+.tFaint{box-shadow:none; background:#f7fafc}
+
+.readout{margin:0 .15rem; color:#6b7788; font-size:.82rem; line-height:1.4; min-height:1.2rem}
+
+@keyframes pulse{0%,100%{box-shadow:0 0 0 4px rgba(7,159,227,.16)}50%{box-shadow:0 0 0 7px rgba(7,159,227,.05)}}
+
+@media(max-width:760px){
+  /* Absolute concentration doesn't fit a narrow column — become a clean vertical stack that reads
+     the same story top-down: focus, then the open question, then the considered set. */
+  .stage{display:flex; flex-direction:column; gap:.55rem; height:auto; padding:1rem;
+    background:linear-gradient(180deg,#fbfdfe,#eef4f8)}
+  .stage::after{display:none}
+  .tile{position:static; width:100% !important; transform:none !important; opacity:1 !important;
+    padding:.85rem .9rem; box-shadow:0 8px 20px -14px rgba(7,17,31,.3); order:2}
+  .tFocus{order:0} .tVal{order:1} .tFaint{order:3; opacity:.72 !important}
+  .change{top:.85rem; right:.85rem}
+  .label{font-size:.9rem}
+  .tFocus .label{font-size:1.05rem}
+}
+@media(prefers-reduced-motion:reduce){
+  .tile{transition:opacity .2s ease}
+  .change{animation:none}
+}
