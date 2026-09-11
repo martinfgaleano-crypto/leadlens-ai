@@ -8,8 +8,8 @@ const page = readFileSync(`${root}/app/page.tsx`, "utf8");
 const copy = readFileSync(`${root}/lib/landing/v2-copy.ts`, "utf8");
 const styles = readFileSync(`${root}/app/landing-v2.module.css`, "utf8");
 const pricing = readFileSync(`${root}/app/pricing/page.tsx`, "utf8");
-const attention = readFileSync(`${root}/components/landing-v6/CommercialIntelligenceExplorer.tsx`, "utf8");
-const attentionStyles = readFileSync(`${root}/components/landing-v6/commercial-intelligence-explorer.module.css`, "utf8");
+const attention = readFileSync(`${root}/components/landing-v7/FocusBoard.tsx`, "utf8");
+const attentionStyles = readFileSync(`${root}/components/landing-v7/focus-board.module.css`, "utf8");
 
 function check(name: string, fn: () => void) {
   fn();
@@ -37,14 +37,16 @@ check("landing remains server-rendered with bounded client islands", () => {
   assert.doesNotMatch(page.slice(0, 80), /["']use client["']/);
   assert.match(page, /CompanyInterpretationV2/);
   assert.match(page, /LanguageSwitcher/);
-  assert.match(page, /CommercialIntelligenceExplorer/);
+  assert.match(page, /FocusBoard/);
 });
 
-check("V6 introduces one bounded benefit explorer before the product proof", () => {
+check("V7 hero integrates one product object (the focus board) before the product proof", () => {
   assert.match(attention.slice(0, 80), /["']use client["']/);
-  assert.match(page, /<CommercialIntelligenceExplorer locale=\{locale\} \/>/);
-  assert.ok(page.indexOf("<CommercialIntelligenceExplorer") < page.indexOf("<ExecutivePortfolio"));
-  assert.equal((attention.match(/aria-pressed=/g) ?? []).length, 6);
+  assert.match(page, /<FocusBoard locale=\{locale\} \/>/);
+  assert.ok(page.indexOf("<FocusBoard") < page.indexOf("<ExecutivePortfolio"));
+  // Six lenses drive the object (role=tab + aria-selected), not six identical pills.
+  assert.equal((attention.match(/aria-selected=/g) ?? []).length, 1); // one dynamic expression covering all lens tabs
+  assert.match(attention, /role="tab"/);
   assert.match(attention, /aria-live="polite"/);
 });
 
@@ -64,10 +66,11 @@ check("V6 benefit explorer teaches the decision system without a fictional compa
   assert.doesNotMatch(attention, /Northstar|live research/i);
 });
 
-check("final explorer remains explorable on mobile", () => {
+check("hero product object stays legible and responsive on mobile", () => {
   assert.match(styles, /\.planLadder/);
-  assert.match(attentionStyles, /\.companyField/);
-  assert.equal((attention.match(/aria-pressed=/g) ?? []).length, 6);
+  assert.match(attentionStyles, /\.board/);
+  assert.match(attentionStyles, /@media\(max-width:760px\)/);
+  assert.match(attention, /role="tab"/);
 });
 
 check("V6 public category broadens while preserving account opportunity methodology", () => {

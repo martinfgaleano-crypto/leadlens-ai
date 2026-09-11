@@ -1,0 +1,91 @@
+/* LeadLens focus board — hero product object. Calm, editorial, product-native.
+   Decision colour is the only accent; everything else is type + whitespace. */
+.board{
+  --pri:#036b9f; --pri-bg:rgba(7,159,227,.12);
+  --val:#9a651a; --val-bg:rgba(199,138,36,.15);
+  --mon:#54627240; --mon-c:#566575; --mon-bg:rgba(86,101,117,.11);
+  --hold-c:#7c8797; --hold-bg:rgba(124,135,151,.13);
+  --brd:#e7edf2; --panel:#fff;
+  position:relative; display:flex; flex-direction:column; min-width:0;
+  padding:1.35rem 1.35rem 1.15rem; border:1px solid var(--brd); border-radius:1.4rem;
+  background:linear-gradient(180deg,#fbfdfe,#f4f8fb); box-shadow:0 34px 80px -32px rgba(7,17,31,.28), 0 2px 6px rgba(7,17,31,.04);
+}
+.head{display:flex; align-items:baseline; justify-content:space-between; gap:1rem; padding:.1rem .25rem .95rem}
+.brand{font-size:.82rem; font-weight:850; letter-spacing:-.03em; color:#07111f}
+.head p{margin:0; color:#6b7788; font-size:.72rem}
+
+.stage{display:grid; gap:.7rem}
+
+/* ── Focus card ── */
+.focus{position:relative; padding:1.15rem 1.2rem 1.2rem; background:var(--panel); border:1px solid var(--brd); border-radius:1rem; box-shadow:0 12px 30px -18px rgba(7,17,31,.25); overflow:hidden; animation:rise .34s cubic-bezier(.2,.7,.2,1)}
+.focus::before{content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--pri)}
+.focus.d_validate::before{background:var(--val)} .focus.d_monitor::before{background:var(--mon-c)} .focus.d_hold::before{background:var(--hold-c)}
+.focusTop{display:flex; align-items:center; justify-content:space-between}
+.rank{color:#aeb8c4; font-size:.72rem; font-weight:700; font-variant-numeric:tabular-nums}
+.chip{padding:.24rem .6rem; border-radius:999px; font-size:.68rem; font-weight:800; letter-spacing:.01em; color:var(--pri); background:var(--pri-bg)}
+.d_validate .chip{color:var(--val); background:var(--val-bg)}
+.d_monitor .chip{color:var(--mon-c); background:var(--mon-bg)}
+.d_hold .chip{color:var(--hold-c); background:var(--hold-bg)}
+.focus h3{margin:.7rem 0 .15rem; font-size:clamp(1.5rem,2.4vw,1.95rem); line-height:1.03; letter-spacing:-.035em; color:#07111f}
+.segment{margin:0; color:#8592a1; font-size:.76rem; font-weight:600}
+.why{margin:.6rem 0 0; color:#3b485b; font-size:.92rem; line-height:1.45; max-width:30rem}
+
+.ribbon{margin-top:.95rem; padding:.6rem .8rem; border-radius:.6rem; background:rgba(7,159,227,.07); border:1px solid rgba(7,159,227,.16)}
+.ribbon span{display:block; color:var(--pri); font-size:.62rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase}
+.ribbon b{display:block; margin-top:.15rem; color:#1d2735; font-size:.86rem; font-weight:650}
+
+.trail{margin-top:.95rem}
+.trail>span{color:var(--pri); font-size:.62rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase}
+.trail ol{margin:.5rem 0 .45rem; padding:0; list-style:none; display:flex; flex-wrap:wrap; align-items:center; gap:.35rem}
+.trail li{position:relative; padding:.3rem .6rem; background:#f2f7fa; border-radius:.45rem; color:#28323f; font-size:.76rem; font-weight:560}
+.trail li:not(:last-child)::after{content:"→"; margin-left:.5rem; color:#9fb4c2; font-weight:700}
+.trail small{color:#8592a1; font-size:.68rem}
+
+.question{margin-top:.95rem; padding:.6rem .8rem; border-radius:.6rem; background:var(--val-bg); border:1px solid rgba(199,138,36,.24)}
+.question span{display:block; color:var(--val); font-size:.62rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase}
+.question b{display:block; margin-top:.15rem; color:#3a2f1c; font-size:.86rem; font-weight:600}
+
+.watch{margin-top:.95rem; display:flex; align-items:center; gap:.5rem; color:#54627a; font-size:.8rem; font-weight:560}
+.pulse{width:.55rem; height:.55rem; border-radius:50%; background:var(--mon-c); box-shadow:0 0 0 4px rgba(86,101,117,.14); animation:pulse 2.4s ease-in-out infinite}
+
+.dims{margin-top:1rem; display:flex; gap:1.6rem}
+.dims>div{display:flex; align-items:center; gap:.45rem}
+.dims em{color:#8592a1; font-size:.7rem; font-style:normal; font-weight:650}
+.dots{display:inline-flex; gap:3px}
+.dots i{width:6px; height:6px; border-radius:50%; background:#dbe3ea}
+.dots i.on{background:var(--pri)}
+.d_validate .dots i.on{background:var(--val)}
+
+/* ── Supporting companies ── */
+.others{margin:0; padding:0; list-style:none; display:grid; gap:.3rem}
+.others button{width:100%; display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:.7rem .8rem;
+  padding:.72rem .8rem; border:1px solid transparent; border-radius:.75rem; background:transparent; text-align:left; cursor:pointer; transition:background .18s ease, border-color .18s ease, transform .18s ease}
+.others button:hover{background:#fff; border-color:var(--brd); transform:translateY(-1px)}
+.dot{width:.6rem; height:.6rem; border-radius:50%; background:var(--pri)}
+.dot.d_validate{background:var(--val)} .dot.d_monitor{background:var(--mon-c)} .dot.d_hold{background:var(--hold-c)}
+.oName{color:#1d2735; font-size:.9rem; font-weight:650; letter-spacing:-.01em}
+.oSeg{grid-column:2; color:#95a1af; font-size:.72rem}
+.oChip{grid-row:1/3; grid-column:3; align-self:center; padding:.18rem .5rem; border-radius:999px; font-size:.64rem; font-weight:750; color:var(--pri); background:var(--pri-bg)}
+.oChip.d_validate{color:var(--val); background:var(--val-bg)} .oChip.d_monitor{color:var(--mon-c); background:var(--mon-bg)} .oChip.d_hold{color:var(--hold-c); background:var(--hold-bg)}
+.oDims{grid-row:1/3; grid-column:3; align-self:center; display:flex; gap:.55rem}
+
+/* ── Lens rail ── */
+.rail{display:flex; flex-wrap:wrap; gap:.15rem; margin-top:1.15rem; padding-top:.9rem; border-top:1px solid var(--brd)}
+.rail button{padding:.4rem .6rem; border:0; background:transparent; color:#7a8797; font:inherit; font-size:.82rem; font-weight:650; letter-spacing:-.01em; cursor:pointer; border-radius:.5rem; position:relative; transition:color .16s ease}
+.rail button:hover{color:#33404f}
+.rail button.railOn{color:#07111f}
+.rail button.railOn::after{content:""; position:absolute; left:.6rem; right:.6rem; bottom:.05rem; height:2px; border-radius:2px; background:var(--pri)}
+.readout{margin:.7rem .25rem 0; color:#6b7788; font-size:.8rem; line-height:1.4}
+
+@keyframes rise{from{opacity:.35; transform:translateY(6px)}to{opacity:1; transform:none}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 4px rgba(86,101,117,.14)}50%{box-shadow:0 0 0 7px rgba(86,101,117,.05)}}
+
+@media(max-width:760px){
+  .board{padding:1.1rem 1rem 1rem; border-radius:1.15rem}
+  .focus h3{font-size:1.5rem}
+  .dims{gap:1.1rem}
+  .rail{gap:0}
+  .rail button{padding:.4rem .5rem; font-size:.8rem}
+  .oSeg{display:none}
+}
+@media(prefers-reduced-motion:reduce){.focus,.pulse{animation:none}.others button{transition:none}}

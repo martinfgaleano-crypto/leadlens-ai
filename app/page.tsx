@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { CompanyInterpretationV2 } from "@/components/landing-v2/CompanyInterpretationV2";
 import { LanguageSwitcher } from "@/components/landing-v2/LanguageSwitcher";
-import { CommercialIntelligenceExplorer } from "@/components/landing-v6/CommercialIntelligenceExplorer";
+import { FocusBoard } from "@/components/landing-v7/FocusBoard";
 import { oneTimeCards } from "@/lib/commercial/plan-catalog";
 import { LANDING_COMPARISON } from "@/lib/landing/fixtures/landing-comparison";
 import { getLandingV2Copy, type LandingLocale } from "@/lib/landing/v2-copy";
@@ -48,7 +48,7 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
             <div className={styles.ctas}><Link className={styles.primary} href={START_PATH}>{c.primary}</Link></div>
             <p className={styles.heroInput}>{c.hero.inputOutput}</p>
           </div>
-          <CommercialIntelligenceExplorer locale={locale} />
+          <FocusBoard locale={locale} />
         </section>
 
         <section className={styles.trustStrip} aria-label={c.trust.label}>
