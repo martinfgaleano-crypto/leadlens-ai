@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { CompanyInterpretationV2 } from "@/components/landing-v2/CompanyInterpretationV2";
 import { LanguageSwitcher } from "@/components/landing-v2/LanguageSwitcher";
@@ -14,6 +15,33 @@ const START_PATH = "/get-started?commercial_path=one_time";
 function localeFrom(raw: string | string[] | undefined): LandingLocale {
   const value = Array.isArray(raw) ? raw[0] : raw;
   return value && VALID_LOCALES.has(value as LandingLocale) ? value as LandingLocale : "en";
+}
+
+// Per-locale document metadata. Locale is query-param based (?lang=xx), so the static root layout
+// cannot localize <html lang>/<title>. generateMetadata (SSR) localizes the crawlable metadata for
+// the "/" route; the runtime <html lang> is corrected by a tiny inline script (accessibility/SR).
+const APP_URL = (process.env.NEXT_PUBLIC_APP_URL || "https://leadlensintel.com").replace(/\/$/, "");
+const META: Record<LandingLocale, { title: string; description: string; ogLocale: string }> = {
+  en: { title: "LeadLens — Commercial Intelligence", description: "LeadLens researches and compares companies so teams can focus commercial effort where it matters most, with evidence and uncertainty behind every decision.", ogLocale: "en_US" },
+  es: { title: "LeadLens — Inteligencia Comercial", description: "LeadLens investiga y compara empresas para que los equipos enfoquen el esfuerzo comercial donde más importa, con evidencia e incertidumbre detrás de cada decisión.", ogLocale: "es_ES" },
+  pt: { title: "LeadLens — Inteligência Comercial", description: "A LeadLens pesquisa e compara empresas para que as equipes concentrem o esforço comercial onde mais importa, com evidência e incerteza por trás de cada decisão.", ogLocale: "pt_BR" },
+  ja: { title: "LeadLens — コマーシャル・インテリジェンス", description: "LeadLensは企業を調査・比較し、各判断の根拠と不確実性を示しながら、営業リソースを最も重要な企業に集中できるようにします。", ogLocale: "ja_JP" },
+};
+const localePath = (l: LandingLocale) => (l === "en" ? "/" : `/?lang=${l}`);
+
+export function generateMetadata({ searchParams }: { searchParams?: { lang?: string | string[] } }): Metadata {
+  const locale = localeFrom(searchParams?.lang);
+  const m = META[locale];
+  return {
+    title: m.title,
+    description: m.description,
+    alternates: {
+      canonical: localePath(locale),
+      languages: { en: "/", es: "/?lang=es", pt: "/?lang=pt", ja: "/?lang=ja", "x-default": "/" },
+    },
+    openGraph: { title: m.title, description: m.description, url: `${APP_URL}${localePath(locale)}`, siteName: "LeadLens", locale: m.ogLocale, type: "website", images: [{ url: `${APP_URL}/api/og`, width: 1200, height: 630, alt: m.title }] },
+    twitter: { card: "summary_large_image", title: m.title, description: m.description, images: [`${APP_URL}/api/og`] },
+  };
 }
 
 function decisionLabel(decision: string, c: ReturnType<typeof getLandingV2Copy>) {
@@ -41,6 +69,7 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
 
   return (
     <div className={styles.page}>
+      {locale !== "en" && <script dangerouslySetInnerHTML={{ __html: `document.documentElement.lang=${JSON.stringify(locale)}` }} />}
       <a className={styles.skip} href="#main">{c.skip}</a>
       <header className={styles.header}>
         <nav className={styles.nav} aria-label={c.navigation}>
@@ -177,12 +206,17 @@ function ExecutivePortfolio({ copy: c, view, dist }: {
 function CompanyCase({ copy: c }: { copy: ReturnType<typeof getLandingV2Copy> }) {
   const a = LANDING_COMPARISON.accounts[0];
   return <details className={styles.companyCase}>
-    <summary><span><strong>{a.name}</strong><small>{a.changed}</small></span><b>{decisionLabel(a.decision, c)}</b><em>{c.case.inspect}</em></summary>
-    <ol className={styles.caseCausality} aria-label={`${c.case.beforeLabel} → ${c.case.changeLabel} → ${c.case.nowLabel}`}>
-      <li><span>{c.case.beforeLabel}</span><p>{a.before}</p></li>
-      <li className={styles.caseChange}><span>{c.case.changeLabel}</span><p>{a.changed} · {a.fresh}</p></li>
-      <li><span>{c.case.nowLabel}</span><p>{a.now}</p></li>
-    </ol>
+    <summary>
+      <div className={styles.caseHead}>
+        <span><strong>{a.name}</strong><small>{a.changed}</small></span><b>{decisionLabel(a.decision, c)}</b><em>{c.case.inspect}</em>
+      </div>
+      {/* P1-1: causality is visible in the collapsed default state — cause → decision change → reason to inspect. */}
+      <ol className={styles.caseCausality} aria-label={`${c.case.beforeLabel} → ${c.case.changeLabel} → ${c.case.nowLabel}`}>
+        <li><span>{c.case.beforeLabel}</span><p>{a.before}</p></li>
+        <li className={styles.caseChange}><span>{c.case.changeLabel}</span><p>{a.changed} · {a.fresh}</p></li>
+        <li><span>{c.case.nowLabel}</span><p>{a.now}</p><b className={styles.caseNowDecision}>{decisionLabel(a.decision, c)}</b></li>
+      </ol>
+    </summary>
     <div className={styles.caseBody}>
       <div><h3>{c.case.fact}</h3><p>{a.changed} · {a.fresh}</p><small>{c.case.factNote}</small></div>
       <div><h3>{c.case.analysis}</h3><p>{c.case.thesis}</p><small>{c.case.inference}</small></div>

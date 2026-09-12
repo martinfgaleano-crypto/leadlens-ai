@@ -47,8 +47,8 @@ export function CompanyInterpretationV2({ locale, copy }: { locale: LandingLocal
       <button type="button" onClick={interpret} disabled={status === "loading"}>{status === "loading" ? copy.loading : copy.action}</button>
       {status === "error" && <p role="alert" className={styles.error}>{copy.error}</p>}
     </div>
-    <div className={styles.interpretResult} aria-live="polite">
-      <span>{copy.result}</span>
+    <div className={`${styles.interpretResult}${status === "loading" ? " " + styles.pending : ""}`} aria-live="polite" aria-busy={status === "loading"}>
+      <span>{copy.result}{status === "loading" && <em className={styles.readPending}>{copy.loading}</em>}</span>
       <dl className={styles.readFields}>
         <div><dt>{copy.sell}</dt><dd>{summary}</dd></div>
         <div><dt>{copy.target}</dt><dd>{target}</dd></div>
