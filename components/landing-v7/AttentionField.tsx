@@ -15,7 +15,7 @@ type Phase = "release" | "research" | "focus";
 type Reading = { focus: number; validate: number; change: string; evidence: [string, string, string]; open: string };
 
 interface Copy {
-  aria: string; objectiveLabel: string; objectives: string[]; sectors: string[];
+  aria: string; objectiveLabel: string; objectives: string[]; objectivesShort: string[]; tryHint: string; sectors: string[];
   chips: { prioritize: string; validate: string }; cueLabels: { monitor: string; hold: string };
   whyNow: string; evidence: string; openQuestion: string; setLabel: string;
   readout: Record<Phase, string>;
@@ -24,8 +24,9 @@ interface Copy {
 
 const EN: Copy = {
   aria: "How LeadLens concentrates attention — an interactive decision surface",
-  objectiveLabel: "Commercial objective",
+  objectiveLabel: "Pick a commercial objective",
   objectives: ["Expand into a new market", "Find new partners", "Win new clients", "Prioritize target accounts"],
+  objectivesShort: ["New market", "New partners", "New clients", "Target accounts"], tryHint: "Switch the objective — the reading changes",
   sectors: ["Regional logistics", "Multi-site healthcare", "Specialty manufacturing", "Food distribution", "Industrial services", "Field services"],
   chips: { prioritize: "Prioritize", validate: "Validate" }, cueLabels: { monitor: "Monitor", hold: "Hold" },
   whyNow: "Why now", evidence: "Evidence", openQuestion: "Open question", setLabel: "The considered set",
@@ -44,8 +45,9 @@ const EN: Copy = {
 
 const ES: Copy = {
   aria: "Cómo LeadLens concentra la atención — una superficie de decisión interactiva",
-  objectiveLabel: "Objetivo comercial",
+  objectiveLabel: "Elige un objetivo comercial",
   objectives: ["Entrar a un nuevo mercado", "Encontrar socios", "Ganar nuevos clientes", "Priorizar cuentas objetivo"],
+  objectivesShort: ["Nuevo mercado", "Socios", "Clientes", "Cuentas objetivo"], tryHint: "Cambia el objetivo — la lectura cambia",
   sectors: ["Logística regional", "Salud multisede", "Manufactura especializada", "Distribución de alimentos", "Servicios industriales", "Servicios de campo"],
   chips: { prioritize: "Priorizar", validate: "Validar" }, cueLabels: { monitor: "Monitorear", hold: "Reservar" },
   whyNow: "Por qué ahora", evidence: "Evidencia", openQuestion: "Pregunta abierta", setLabel: "El conjunto considerado",
@@ -86,7 +88,6 @@ export function AttentionField({ locale }: { locale: LandingLocale }) {
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [obj]);
 
-  const nextObjective = () => setObj((o) => (o + 1) % c.objectives.length);
   const concentrated = phase === "focus";
 
   // Role + decision label for each ledger row.
@@ -102,13 +103,15 @@ export function AttentionField({ locale }: { locale: LandingLocale }) {
     <section className={`${styles.wrap} ${styles[phase]}`} aria-label={c.aria}>
       <div className={styles.instrument}>
         <div className={styles.head}>
-          <button type="button" className={styles.objective} onClick={nextObjective}
-            aria-label={`${c.objectiveLabel}: ${c.objectives[obj]} — ${locale === "es" ? "cambiar objetivo" : "change objective"}`}>
-            <span className={styles.objEyebrow}>{c.objectiveLabel}</span>
-            <span className={styles.objValue}>{c.objectives[obj]}</span>
-            <span className={styles.objSwap} aria-hidden="true">⇄</span>
-          </button>
-          <span className={styles.tick} aria-hidden="true" />
+          <span className={styles.objEyebrow}>{c.objectiveLabel}</span>
+          <div className={styles.objTabs} role="tablist" aria-label={c.objectiveLabel}>
+            {c.objectives.map((o, i) => (
+              <button key={o} type="button" role="tab" aria-selected={obj === i}
+                className={`${styles.objTab}${obj === i ? " " + styles.objTabOn : ""}`}
+                aria-label={o} onClick={() => setObj(i)}>{c.objectivesShort[i]}</button>
+            ))}
+          </div>
+          <span className={styles.objHint}><i aria-hidden="true">↻</i> {c.tryHint}</span>
         </div>
 
         <div className={styles.grid}>
