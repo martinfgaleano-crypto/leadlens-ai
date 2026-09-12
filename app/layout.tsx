@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+// Body voice: Inter (clean grotesque). Display voice: Space Grotesk — precise, technical-editorial,
+// distinctive at large scale. Exposed as CSS variables so the landing can assign display vs body.
+const inter = Inter({ subsets: ["latin"], variable: "--font-body", display: "swap" });
+const display = Space_Grotesk({ subsets: ["latin"], variable: "--font-display", weight: ["500", "600", "700"], display: "swap" });
 
 // Canonical production domain. Env-driven so preview/prod resolve correctly;
 // fallback is the production domain (leadlensintel.com), NOT the Vercel URL.
@@ -46,7 +49,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={`${inter.variable} ${display.variable} ${inter.className}`}>{children}</body>
     </html>
   );
 }
