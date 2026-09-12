@@ -105,7 +105,7 @@ check("final CTA system leads with attention allocation", () => {
 check("executive portfolio is portfolio-LEVEL (distribution + allocation), not account cards", () => {
   // FocusBoard shows per-company decisions; the Executive Portfolio must raise to the shape of the
   // whole set — a decision distribution + allocation + pattern — and NOT repeat account rows/cards.
-  assert.match(page, /distBar/);
+  assert.match(page, /allocGrid/);
   assert.match(page, /distLegend/);
   assert.match(page, /portfolioGrid/);
   assert.doesNotMatch(page, /priorityCompany|secondaryCompanies|companyRow/);
