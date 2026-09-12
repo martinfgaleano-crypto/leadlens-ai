@@ -4,7 +4,7 @@
 //   2. Capability flags stay HONEST — not-yet-automated capabilities are never
 //      silently "active" (Premium strategy/playbooks/reinforced evidence).
 //   3. Customer-facing metadata no longer sells the legacy "lead-gen + outreach"
-//      category; it reflects Account Opportunity Intelligence.
+//      category; it reflects the public Commercial Intelligence umbrella.
 // Run: npm run test:commercial-continuity
 import { readFileSync } from "node:fs";
 import { PRODUCTS, CAPABILITY_FLAGS, resolveProduct, resolveEntitlementsForJob } from "@/lib/products/catalog";
@@ -34,10 +34,10 @@ const layout = readFileSync("app/layout.tsx", "utf8");
 const og = readFileSync("app/api/og/route.tsx", "utf8");
 t("12 root metadata no longer brands 'LeadLens AI'", !/LeadLens AI/.test(layout));
 t("13 root metadata no longer says 'Opportunity Snapshots'", !/Opportunity Snapshots/.test(layout));
-t("14 root metadata states the canonical category", /Account Opportunity Intelligence/.test(layout));
+t("14 root metadata states the public category", /Commercial Intelligence/.test(layout));
 t("15 OG image no longer sells 'Qualified B2B leads'", !/Qualified B2B leads/.test(og));
 t("16 OG image no longer sells 'outreach drafts'/'write the outreach'", !/outreach drafts|write the outreach/.test(og));
-t("17 OG image reflects account-level intelligence positioning", /Account Opportunity Intelligence|accounts worth working now|account-level intelligence/i.test(og));
+t("17 OG image reflects commercial intelligence positioning", /Commercial Intelligence/.test(og) && /Research and compare companies/.test(og));
 
 console.log(`\n${passed}/${passed + failed} passed`);
 process.exit(failed ? 1 : 0);
