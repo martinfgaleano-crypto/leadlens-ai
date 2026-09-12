@@ -1,12 +1,11 @@
 "use client";
 
-// LeadLens hero product object — the "focus board".
-// One tactile commercial-intelligence surface: a small set of REAL-feeling companies, each with a
-// canonical Decision (Prioritize / Validate / Monitor / Hold), a one-line reason, and inspectable
-// evidence. Moving through the six lenses transforms the board — attention shifts to the justified
-// focus, a dated change surfaces, the evidence trail opens, the set becomes comparable, an open
-// question appears, a monitored company stays visible. No opaque scores, no fake activity: only the
-// decision states and evidence the real product produces. Synthetic, illustrative companies.
+// LeadLens Product surface — "the decision brief you receive".
+// Not an example company card: the deliverable itself. The DECISION is the protagonist; the company is
+// an anonymized archetype (relevance without a meaningless name). Every brief shows the full structure a
+// buyer receives — Decision, Why now, Evidence trail, what stays Uncertain, and what to Validate next.
+// The lens rail lets a visitor inspect any company across the researched set. No opaque scores, no fake
+// activity — only the decision states and dated evidence the real product produces. Synthetic, illustrative.
 
 import { useState } from "react";
 import type { LandingLocale } from "@/lib/landing/v2-copy";
@@ -14,73 +13,67 @@ import styles from "./focus-board.module.css";
 
 type Lens = "prioritize" | "why" | "evidence" | "compare" | "validate" | "monitor";
 type Decision = "prioritize" | "validate" | "monitor" | "hold";
-type Strength = 3 | 2 | 1; // Strong / Moderate / Limited
+type Strength = 3 | 2 | 1;
 
 interface Company {
-  id: string; name: string; segment: string; decision: Decision;
-  why: string; change: string | null; question: string | null;
-  fit: Strength; timing: Strength; evidence: Strength; sources: number;
-  evidenceTrail: [string, string, string]; // source · fact · date
+  id: string; archetype: string; region: string; decision: Decision;
+  headline: string; change: string | null; evidenceTrail: [string, string, string]; sources: number;
+  uncertainty: string; validate: string; fit: Strength; timing: Strength; evidence: Strength;
 }
 
 interface Copy {
-  aria: string; brand: string; objective: string;
-  lenses: Record<Lens, string>;
-  decisions: Record<Decision, string>;
+  aria: string; eyebrow: string; objective: string;
+  lenses: Record<Lens, string>; decisions: Record<Decision, string>;
   dims: { fit: string; timing: string; evidence: string };
-  readout: Record<Lens, string>;
-  whyNow: string; evidenceLabel: string; validateLabel: string; monitorLabel: string;
-  watching: string; sourcesLabel: (n: number) => string; companies: Company[];
-  hint: string;
+  labels: { whyNow: string; evidence: string; uncertainty: string; validate: string; rest: string; sources: (n: number) => string };
+  readout: Record<Lens, string>; hint: string; companies: Company[];
 }
 
 const EN: Copy = {
-  aria: "LeadLens focus board — an interactive example",
-  brand: "LeadLens", objective: "Objective: expanding US & LatAm operators",
+  aria: "A LeadLens decision brief — an interactive example of what you receive",
+  eyebrow: "The decision brief you receive", objective: "Objective: expanding US & LatAm operators",
   lenses: { prioritize: "Prioritize", why: "Why now", evidence: "Evidence", compare: "Compare", validate: "Validate", monitor: "Monitor" },
   decisions: { prioritize: "Prioritize", validate: "Validate", monitor: "Monitor", hold: "Hold" },
   dims: { fit: "Fit", timing: "Timing", evidence: "Evidence" },
+  labels: { whyNow: "Why now", evidence: "Evidence", uncertainty: "What stays uncertain", validate: "Validate next", rest: "The rest of your set", sources: (n) => `${n} dated source${n === 1 ? "" : "s"}` },
   readout: {
-    prioritize: "One company justifies attention first — the rest stay visible.",
-    why: "A dated development changes what matters now.",
-    evidence: "Every decision traces back to a dated source.",
-    compare: "The same objective, applied across the set.",
-    validate: "The open question that could change the decision.",
-    monitor: "Still relevant — watched for material change.",
+    prioritize: "One company justifies attention first — with the reasoning attached.",
+    why: "A dated development is what makes it worth pursuing now.",
+    evidence: "Every decision traces back to a dated source you can inspect.",
+    compare: "The same objective, applied consistently across the set.",
+    validate: "The open question that should be resolved before you commit.",
+    monitor: "Still relevant — kept in view, watched for a material change.",
   },
-  whyNow: "Why now", evidenceLabel: "Evidence trail", validateLabel: "Open question", monitorLabel: "Monitoring",
-  watching: "Watching for a material change", sourcesLabel: (n) => `${n} source${n === 1 ? "" : "s"} · dated`,
-  hint: "Move through the lenses",
+  hint: "Inspect any company in the set",
   companies: [
-    { id: "nw", name: "Northwind Logistics", segment: "Logistics · US", decision: "prioritize", why: "Expanding regional operations — the strongest current case.", change: "Signed a regional distribution deal · 9 days ago", question: null, fit: 3, timing: 3, evidence: 3, sources: 3, evidenceTrail: ["Company press release", "Distribution agreement", "9 days ago"] },
-    { id: "cf", name: "Cascade Foods", segment: "Food distribution · US", decision: "validate", why: "Opened two sites — promising, but one question is unresolved.", change: "2 new distribution sites · 14 days ago", question: "Is procurement decided centrally, or per site?", fit: 3, timing: 2, evidence: 2, sources: 2, evidenceTrail: ["Regional business journal", "Two new sites", "14 days ago"] },
-    { id: "at", name: "Atlas Clinics", segment: "Healthcare · LatAm", decision: "monitor", why: "Multi-site operator, but no operational change is visible yet.", change: null, question: null, fit: 2, timing: 1, evidence: 1, sources: 1, evidenceTrail: ["Company profile", "Multi-site footprint", "undated"] },
-    { id: "mw", name: "Meridian Works", segment: "Manufacturing · US", decision: "hold", why: "Weak category fit on the current evidence.", change: null, question: null, fit: 1, timing: 1, evidence: 1, sources: 1, evidenceTrail: ["Directory listing", "Category mismatch", "undated"] },
+    { id: "nw", archetype: "Regional logistics operator", region: "US", decision: "prioritize", headline: "Worth pursuing now — expanding regional operations with a dated, corroborated change.", change: "Signed a regional distribution agreement · 9 days ago", evidenceTrail: ["Company press release", "Distribution agreement", "9 days ago"], sources: 3, uncertainty: "Whether procurement is decided centrally or per region is not yet confirmed.", validate: "Confirm where purchasing authority sits before outreach.", fit: 3, timing: 3, evidence: 3 },
+    { id: "cf", archetype: "Multi-site food distributor", region: "US", decision: "validate", headline: "Promising, but one question should be resolved before you commit effort.", change: "Opened two new distribution sites · 14 days ago", evidenceTrail: ["Regional business journal", "Two new sites", "14 days ago"], sources: 2, uncertainty: "The scope of the decision — regional or group-wide — is unclear.", validate: "Confirm whether procurement is decided centrally or per site.", fit: 3, timing: 2, evidence: 2 },
+    { id: "at", archetype: "Multi-site clinics group", region: "LatAm", decision: "monitor", headline: "Relevant, but no dated operational change is visible yet — worth watching.", change: null, evidenceTrail: ["Company profile", "Multi-site footprint", "undated"], sources: 1, uncertainty: "No recent, dated change ties this to your objective right now.", validate: "Revisit if an expansion or operational change is announced.", fit: 2, timing: 1, evidence: 1 },
+    { id: "mw", archetype: "Specialty manufacturer", region: "US", decision: "hold", headline: "Weak category fit on the current evidence — not worth effort today.", change: null, evidenceTrail: ["Directory listing", "Category mismatch", "undated"], sources: 1, uncertainty: "The offer-to-need fit is weak on what is observable.", validate: "Hold unless the category fit materially changes.", fit: 1, timing: 1, evidence: 1 },
   ],
 };
 
 const ES: Copy = {
-  aria: "Tablero de enfoque de LeadLens — un ejemplo interactivo",
-  brand: "LeadLens", objective: "Objetivo: operadores de EE. UU. y LatAm en expansión",
+  aria: "Un informe de decisión de LeadLens — un ejemplo interactivo de lo que recibes",
+  eyebrow: "El informe de decisión que recibes", objective: "Objetivo: operadores de EE. UU. y LatAm en expansión",
   lenses: { prioritize: "Priorizar", why: "Por qué ahora", evidence: "Evidencia", compare: "Comparar", validate: "Validar", monitor: "Monitorear" },
   decisions: { prioritize: "Priorizar", validate: "Validar", monitor: "Monitorear", hold: "Reservar" },
   dims: { fit: "Fit", timing: "Timing", evidence: "Evidencia" },
+  labels: { whyNow: "Por qué ahora", evidence: "Evidencia", uncertainty: "Qué queda incierto", validate: "Validar después", rest: "El resto de tu conjunto", sources: (n) => `${n} fuente${n === 1 ? "" : "s"} con fecha` },
   readout: {
-    prioritize: "Una empresa justifica la atención primero — las demás siguen visibles.",
-    why: "Un cambio fechado altera lo que importa ahora.",
-    evidence: "Cada decisión se remonta a una fuente con fecha.",
-    compare: "El mismo objetivo, aplicado a todo el conjunto.",
-    validate: "La pregunta abierta que podría cambiar la decisión.",
-    monitor: "Sigue siendo relevante — en observación por cambios.",
+    prioritize: "Una empresa justifica la atención primero — con el razonamiento adjunto.",
+    why: "Un cambio fechado es lo que la hace merecer atención ahora.",
+    evidence: "Cada decisión se remonta a una fuente con fecha que puedes revisar.",
+    compare: "El mismo objetivo, aplicado de forma consistente a todo el conjunto.",
+    validate: "La pregunta abierta que conviene resolver antes de comprometer esfuerzo.",
+    monitor: "Sigue siendo relevante — en observación por un cambio material.",
   },
-  whyNow: "Por qué ahora", evidenceLabel: "Rastro de evidencia", validateLabel: "Pregunta abierta", monitorLabel: "En observación",
-  watching: "En observación por un cambio material", sourcesLabel: (n) => `${n} fuente${n === 1 ? "" : "s"} · con fecha`,
-  hint: "Recorre los lentes",
+  hint: "Revisa cualquier empresa del conjunto",
   companies: [
-    { id: "nw", name: "Northwind Logistics", segment: "Logística · EE. UU.", decision: "prioritize", why: "Amplía operaciones regionales — el caso más sólido hoy.", change: "Firmó un acuerdo de distribución regional · hace 9 días", question: null, fit: 3, timing: 3, evidence: 3, sources: 3, evidenceTrail: ["Comunicado de la empresa", "Acuerdo de distribución", "hace 9 días"] },
-    { id: "cf", name: "Cascade Foods", segment: "Distribución de alimentos · EE. UU.", decision: "validate", why: "Abrió dos sedes — prometedor, pero queda una pregunta.", change: "2 nuevas sedes · hace 14 días", question: "¿Las compras se deciden de forma central o por sede?", fit: 3, timing: 2, evidence: 2, sources: 2, evidenceTrail: ["Diario de negocios regional", "Dos nuevas sedes", "hace 14 días"] },
-    { id: "at", name: "Atlas Clinics", segment: "Salud · LatAm", decision: "monitor", why: "Operador multisede, pero aún no hay cambio operativo visible.", change: null, question: null, fit: 2, timing: 1, evidence: 1, sources: 1, evidenceTrail: ["Perfil de la empresa", "Presencia multisede", "sin fecha"] },
-    { id: "mw", name: "Meridian Works", segment: "Manufactura · EE. UU.", decision: "hold", why: "Bajo encaje de categoría con la evidencia actual.", change: null, question: null, fit: 1, timing: 1, evidence: 1, sources: 1, evidenceTrail: ["Directorio", "Categoría no coincide", "sin fecha"] },
+    { id: "nw", archetype: "Operador de logística regional", region: "EE. UU.", decision: "prioritize", headline: "Vale la pena perseguirla ahora — amplía operaciones regionales con un cambio fechado y corroborado.", change: "Firmó un acuerdo de distribución regional · hace 9 días", evidenceTrail: ["Comunicado de la empresa", "Acuerdo de distribución", "hace 9 días"], sources: 3, uncertainty: "No está confirmado si las compras se deciden de forma central o por región.", validate: "Confirma dónde reside la autoridad de compras antes del contacto.", fit: 3, timing: 3, evidence: 3 },
+    { id: "cf", archetype: "Distribuidor de alimentos multisede", region: "EE. UU.", decision: "validate", headline: "Prometedora, pero conviene resolver una pregunta antes de invertir esfuerzo.", change: "Abrió dos nuevas sedes · hace 14 días", evidenceTrail: ["Diario de negocios regional", "Dos nuevas sedes", "hace 14 días"], sources: 2, uncertainty: "El alcance de la decisión — regional o de todo el grupo — no está claro.", validate: "Confirma si las compras se deciden de forma central o por sede.", fit: 3, timing: 2, evidence: 2 },
+    { id: "at", archetype: "Grupo de clínicas multisede", region: "LatAm", decision: "monitor", headline: "Relevante, pero aún no hay un cambio operativo fechado — vale la pena observarla.", change: null, evidenceTrail: ["Perfil de la empresa", "Presencia multisede", "sin fecha"], sources: 1, uncertainty: "Ningún cambio reciente y fechado la conecta con tu objetivo ahora.", validate: "Revisar si se anuncia una expansión o cambio operativo.", fit: 2, timing: 1, evidence: 1 },
+    { id: "mw", archetype: "Fabricante especializado", region: "EE. UU.", decision: "hold", headline: "Bajo encaje de categoría con la evidencia actual — hoy no vale el esfuerzo.", change: null, evidenceTrail: ["Directorio", "Categoría no coincide", "sin fecha"], sources: 1, uncertainty: "El encaje entre oferta y necesidad es débil con lo observable.", validate: "Reservar salvo que el encaje de categoría cambie de forma material.", fit: 1, timing: 1, evidence: 1 },
   ],
 };
 
@@ -96,74 +89,61 @@ export function FocusBoard({ locale }: { locale: LandingLocale }) {
   const [lens, setLens] = useState<Lens>("prioritize");
   const [pinned, setPinned] = useState<string | null>(null);
 
-  // Which company is the focus for this lens (or the one the visitor pinned).
   const lensFocus = lens === "validate" ? "cf" : lens === "monitor" ? "at" : "nw";
   const focusId = pinned ?? lensFocus;
   const focus = c.companies.find((x) => x.id === focusId) ?? c.companies[0];
   const others = c.companies.filter((x) => x.id !== focus.id);
-  const compare = lens === "compare";
 
   const pick = (id: string) => { setPinned(id); const co = c.companies.find((x) => x.id === id); if (co) setLens(co.decision === "hold" ? "prioritize" : (co.decision as Lens)); };
 
   return (
-    <section className={styles.board} data-lens={lens} aria-label={c.aria}>
+    <section className={styles.board} data-decision={focus.decision} aria-label={c.aria}>
       <header className={styles.head}>
-        <span className={styles.brand}>{c.brand}</span>
+        <span className={styles.brand}>{c.eyebrow}</span>
         <p>{c.objective}</p>
       </header>
 
-      <div className={styles.stage}>
-        {/* Focus card — the justified attention */}
-        <article className={`${styles.focus} ${styles[`d_${focus.decision}`]}`} aria-live="polite" key={focus.id + lens}>
-          <div className={styles.focusTop}>
-            <span className={styles.chip}>{c.decisions[focus.decision]}</span>
-            <span className={styles.rank}>01</span>
+      {/* The decision brief — the deliverable. Decision is the protagonist; the company is context. */}
+      <article className={`${styles.focus} ${styles[`d_${focus.decision}`]}`} aria-live="polite" key={focus.id + lens}>
+        <div className={styles.focusTop}>
+          <span className={styles.chip}>{c.decisions[focus.decision]}</span>
+          <span className={styles.archetype}>{focus.archetype} · {focus.region}</span>
+        </div>
+        <h3 className={styles.headline}>{focus.headline}</h3>
+
+        <div className={styles.brief}>
+          <div className={styles.briefRow}><span>{c.labels.whyNow}</span><p>{focus.change ?? "—"}</p></div>
+          <div className={styles.briefRow}><span>{c.labels.evidence}</span>
+            <div className={styles.eviVal}><ol className={styles.trail}>{focus.evidenceTrail.map((t, i) => <li key={i}>{t}</li>)}</ol><small>{c.labels.sources(focus.sources)}</small></div>
           </div>
-          <h3>{focus.name}</h3>
-          <p className={styles.segment}>{focus.segment}</p>
-          <p className={styles.why}>{focus.why}</p>
+          <div className={styles.briefRow}><span>{c.labels.uncertainty}</span><p className={styles.soft}>{focus.uncertainty}</p></div>
+          <div className={`${styles.briefRow} ${styles.validateRow}`}><span>{c.labels.validate}</span><p>{focus.validate}</p></div>
+        </div>
 
-          {(lens === "why" || lens === "prioritize") && focus.change &&
-            <div className={styles.ribbon}><span>{c.whyNow}</span><b>{focus.change}</b></div>}
+        <div className={styles.dims}>
+          <div><em>{c.dims.fit}</em><Dots value={focus.fit} /></div>
+          <div><em>{c.dims.timing}</em><Dots value={focus.timing} /></div>
+          <div><em>{c.dims.evidence}</em><Dots value={focus.evidence} /></div>
+        </div>
+      </article>
 
-          {lens === "evidence" &&
-            <div className={styles.trail}><span>{c.evidenceLabel}</span>
-              <ol>{focus.evidenceTrail.map((t, i) => <li key={i}>{t}</li>)}</ol>
-              <small>{c.sourcesLabel(focus.sources)}</small>
-            </div>}
-
-          {lens === "validate" && focus.question &&
-            <div className={styles.question}><span>{c.validateLabel}</span><b>{focus.question}</b></div>}
-
-          {lens === "monitor" &&
-            <div className={styles.watch}><span aria-hidden="true" className={styles.pulse} />{c.watching}</div>}
-
-          {(compare || lens === "prioritize") &&
-            <div className={styles.dims}>
-              <div><em>{c.dims.fit}</em><Dots value={focus.fit} /></div>
-              <div><em>{c.dims.timing}</em><Dots value={focus.timing} /></div>
-              <div><em>{c.dims.evidence}</em><Dots value={focus.evidence} /></div>
-            </div>}
-        </article>
-
-        {/* Supporting companies — visible, comparable, never hidden */}
+      {/* The rest of the researched set — visible, comparable, never hidden. */}
+      <div className={styles.restWrap}>
+        <span className={styles.restLabel}>{c.labels.rest}</span>
         <ul className={styles.others}>
           {others.map((o) => (
             <li key={o.id}>
-              <button type="button" onClick={() => pick(o.id)} aria-label={`${o.name} — ${c.decisions[o.decision]}`}>
+              <button type="button" onClick={() => pick(o.id)} aria-label={`${o.archetype} — ${c.decisions[o.decision]}`}>
                 <span className={`${styles.dot} ${styles[`d_${o.decision}`]}`} aria-hidden="true" />
-                <span className={styles.oName}>{o.name}</span>
-                <span className={styles.oSeg}>{o.segment}</span>
-                {compare
-                  ? <span className={styles.oDims}><Dots value={o.fit} /><Dots value={o.timing} /><Dots value={o.evidence} /></span>
-                  : <span className={`${styles.oChip} ${styles[`d_${o.decision}`]}`}>{c.decisions[o.decision]}</span>}
+                <span className={styles.oName}>{o.archetype}</span>
+                <span className={`${styles.oChip} ${styles[`d_${o.decision}`]}`}>{c.decisions[o.decision]}</span>
               </button>
             </li>
           ))}
         </ul>
       </div>
 
-      {/* Lens rail — the six ways LeadLens reasons about the set (not six identical pills) */}
+      {/* Lens rail — inspect the set the way LeadLens reasons about it (not six identical pills). */}
       <div className={styles.rail} role="tablist" aria-label={c.hint}>
         {LENS_ORDER.map((l) => (
           <button key={l} role="tab" aria-selected={lens === l} className={lens === l ? styles.railOn : ""}
