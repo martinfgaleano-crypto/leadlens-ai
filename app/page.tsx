@@ -52,8 +52,8 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
   const locale = localeFrom(searchParams?.lang);
   const c = getLandingV2Copy(locale);
   const proof = locale === "es"
-    ? { eyebrow: "El resultado", title: "De la investigación a una decisión", body: "Para cada empresa evaluada: una decisión clara, por qué ahora, la evidencia que la sostiene y qué queda por validar." }
-    : { eyebrow: "The result", title: "From research to a decision", body: "For each company evaluated: a clear Decision, why now, the evidence behind it, and what still needs validating." };
+    ? { eyebrow: "Lo que recibes", title: "Cada empresa vuelve como una decisión sobre la que puedes actuar.", body: "No una lista por trabajar. Para cada una: la decisión, por qué ahora, la evidencia detrás, qué queda incierto y qué validar después.", inside: ["Decisión", "Por qué ahora", "Evidencia con fecha", "Qué queda incierto", "Qué validar después"] }
+    : { eyebrow: "What you receive", title: "Every company comes back as a decision you can act on.", body: "Not a list to work through. For each one: the decision, why now, the evidence behind it, what stays uncertain, and what to validate next.", inside: ["Decision", "Why now", "Dated evidence", "What stays uncertain", "What to validate next"] };
   // Portfolio-level view (illustrative): the SHAPE of the whole researched set — distribution across
   // decisions, where attention concentrates, and the pattern the set reveals. No per-company cards
   // (that is FocusBoard's job) and no invented score — canonical decision states only.
@@ -65,6 +65,10 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
   const category3 = locale === "es"
     ? { eyebrow: "Dónde encaja LeadLens", rows: [{ k: "Bases de datos", v: "Quién existe." }, { k: "Herramientas de señales", v: "Qué pasó." }, { k: "LeadLens", v: "Por qué importa — y a dónde debe ir la atención.", me: true }] }
     : { eyebrow: "Where LeadLens fits", rows: [{ k: "Databases", v: "Who exists." }, { k: "Signal tools", v: "What happened." }, { k: "LeadLens", v: "Why it matters — and where attention belongs.", me: true }] };
+  // Purchase-confidence band before pricing: inspect the real deliverable before paying.
+  const sample = locale === "es"
+    ? { eyebrow: "Míralo tú mismo", title: "Revisa un informe de decisión completo antes de comprar.", body: "No una captura — el razonamiento real detrás de una recomendación: la decisión, la evidencia con fecha, qué queda incierto y qué validar después.", chips: ["Evidencia con fecha", "Incertidumbre visible", "Próxima validación"], cta: "Ver una muestra" }
+    : { eyebrow: "See it for yourself", title: "Inspect a full decision brief before you buy.", body: "Not a screenshot — the real reasoning behind a recommendation: the decision, the dated evidence, what stays uncertain, and what to validate next.", chips: ["Dated evidence", "Uncertainty shown", "Next validation"], cta: "View a sample" };
   const plans = oneTimeCards();
   // Decision-depth progression (visible even if price/count are hidden): one decision → shortlist → allocation → strategic context.
   const tierLabel: Record<string, string> = locale === "es"
@@ -110,7 +114,7 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
 
         <section className={styles.section} id="product" aria-label={proof.title}>
           <div className={styles.proofRow}>
-            <div className={styles.proofText}><p className={styles.eyebrow}>{proof.eyebrow}</p><h2>{proof.title}</h2><p>{proof.body}</p></div>
+            <div className={styles.proofText}><p className={styles.eyebrow}>{proof.eyebrow}</p><h2>{proof.title}</h2><p>{proof.body}</p><ul className={styles.proofInside}>{proof.inside.map((x) => <li key={x}>{x}</li>)}</ul></div>
             <div className={styles.proofBoard}><FocusBoard locale={locale} /></div>
           </div>
         </section>
@@ -138,6 +142,16 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
           <p className={styles.eyebrow} style={{ textAlign: "center", marginBottom: "2.5rem" }}>{category3.eyebrow}</p>
           <div className={styles.catRow}>
             {category3.rows.map((x) => <div key={x.k} className={"me" in x && x.me ? styles.catMe : styles.catCol}><span>{x.k}</span><p>{x.v}</p></div>)}
+          </div>
+        </section>
+
+        <section className={styles.sampleBand} aria-label={sample.eyebrow}>
+          <div className={styles.sampleInner}>
+            <p className={styles.eyebrow}>{sample.eyebrow}</p>
+            <h2>{sample.title}</h2>
+            <p className={styles.sampleBody}>{sample.body}</p>
+            <ul className={styles.sampleChips}>{sample.chips.map((x) => <li key={x}>{x}</li>)}</ul>
+            <Link className={styles.primary} href="/sample">{sample.cta}</Link>
           </div>
         </section>
 

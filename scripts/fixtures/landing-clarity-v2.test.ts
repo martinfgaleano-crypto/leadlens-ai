@@ -126,11 +126,12 @@ check("final pricing presents a decision-first editorial ladder", () => {
 
 check("V4 ladder explains each product with no more than three concrete outcomes", () => {
   assert.deepEqual(Object.values(getLandingV2Copy("en").pricing.plans).map((plan) => plan.points.length), [3, 3, 3, 3]);
-  assert.match(copy, /Decide which company deserves attention first/);
-  assert.match(copy, /Turn a shortlist into a clear next focus/);
-  assert.match(copy, /Allocate attention across a commercial portfolio/);
-  assert.match(copy, /See the commercial context that could change the decision/);
-  assert.match(copy, /decision-critical briefs and open questions/);
+  // Buyer-language, outcome-led ladder (Conversion Core V1): promise names the decision the buyer makes.
+  assert.match(copy, /Get a real decision on where to focus first/);
+  assert.match(copy, /Resolve a shortlist into a clear next move/);
+  assert.match(copy, /See where your commercial effort belongs across the set/);
+  assert.match(copy, /Understand the context that could change your decision/);
+  assert.match(copy, /Decision-ready briefs/);
 });
 
 check("sample data is disclosed and never presented as live research", () => {
@@ -151,7 +152,7 @@ check("landing removes stale evidence tiers and keeps Premium differentiation cl
   // "What changed" as a Before → What changed → Now causality label (founder-mandated), which is
   // truthful and on-brand — so guard the stale feature framings, not the generic causality word.
   assert.doesNotMatch(publicLanding, /Decision Pathways|commercial benchmark|competitor context/i);
-  assert.match(publicLanding, /decision-critical briefs and open questions/i);
+  assert.match(publicLanding, /Decision-ready briefs/i);
 });
 
 check("all four locale variants disclose synthetic evidence in their own language", () => {
