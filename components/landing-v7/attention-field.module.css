@@ -1,105 +1,100 @@
-/* LeadLens hero — the Attention Instrument (light). A clear, premium decision surface: pick a
-   commercial objective (obvious segmented control) and attention concentrates from the considered set
-   onto one justified, evidence-backed decision. Light + legible; decision colour is the accent. */
+/* LeadLens hero — the Attention Field (light). A spatial field of companies (nodes) with lines of
+   attention converging on the one worth pursuing now (the focus card). Pick an objective and the
+   field re-reads. Light + premium; decision colour is the only accent. */
 .wrap{
   --pri:#036b9f; --pri-strong:#0a84d6; --pri-bg:rgba(7,159,227,.09);
-  --val:#9a651a; --val-bg:rgba(199,138,36,.12);
-  --mon:#5b6b7d; --hold:#8b97a5;
-  --line:#e4ecf2; --text:#0a1420; --body:#3a485b; --muted:#65717e; --dim:#8593a3;
+  --val:#9a651a; --val-strong:#d99a2a; --val-bg:rgba(199,138,36,.12);
+  --line-c:#c3cfdb; --line:#e4ecf2; --text:#0a1420; --body:#3a485b; --muted:#65717e; --dim:#8593a3;
   min-width:0; color:var(--text);
 }
 
 .instrument{
-  position:relative; display:flex; flex-direction:column; gap:1rem;
-  padding:1.25rem 1.35rem 1.15rem;
-  border:1px solid var(--line); border-radius:1.25rem;
-  background:linear-gradient(180deg,#ffffff 0%, #f7fbfd 100%);
+  position:relative; display:flex; flex-direction:column; gap:.95rem;
+  padding:1.2rem 1.3rem 1.1rem; border:1px solid var(--line); border-radius:1.25rem;
+  background:linear-gradient(180deg,#ffffff 0%, #f6fafd 100%);
   box-shadow:0 34px 66px -40px rgba(10,25,55,.3), 0 2px 8px rgba(10,25,55,.05);
 }
 
-/* Objective — an obvious segmented control (this is the interaction). */
-.head{display:flex; flex-direction:column; align-items:flex-start; gap:.55rem}
+/* Objective — an obvious segmented control (the interaction). */
+.head{display:flex; flex-direction:column; align-items:flex-start; gap:.5rem}
 .objEyebrow{color:var(--pri); font-size:.62rem; font-weight:850; letter-spacing:.13em; text-transform:uppercase; font-family:var(--font-display),inherit}
-.objTabs{display:inline-flex; flex-wrap:wrap; gap:.25rem; padding:.28rem; border:1px solid #dbe6ee; border-radius:.75rem; background:#eef4f8}
-.objTab{padding:.42rem .72rem; border:0; border-radius:.55rem; background:transparent; color:#4a596b; font:inherit; font-size:.82rem; font-weight:640; letter-spacing:-.01em; cursor:pointer; transition:background .16s ease, color .16s ease, box-shadow .16s ease}
+.objTabs{display:inline-flex; flex-wrap:wrap; gap:.25rem; padding:.26rem; border:1px solid #dbe6ee; border-radius:.75rem; background:#eef4f8}
+.objTab{padding:.4rem .7rem; border:0; border-radius:.55rem; background:transparent; color:#4a596b; font:inherit; font-size:.82rem; font-weight:640; letter-spacing:-.01em; cursor:pointer; transition:background .16s ease, color .16s ease, box-shadow .16s ease}
 .objTab:hover{background:rgba(255,255,255,.75); color:var(--text)}
 .objTabOn,.objTabOn:hover{color:#fff; background:linear-gradient(180deg,#1aa9e8,#0a84d6); box-shadow:0 6px 14px -6px rgba(10,132,214,.55)}
 .objTab:focus-visible{outline:2px solid rgba(10,132,214,.4); outline-offset:2px}
 .objHint{display:inline-flex; align-items:center; gap:.4rem; color:var(--muted); font-size:.74rem}
-.objHint i{color:var(--pri-strong); font-style:normal; font-size:.9rem; animation:spinhint 6s ease-in-out infinite}
+.objHint i{color:var(--pri-strong); font-style:normal; font-size:.9rem; animation:spinhint 5.5s ease-in-out infinite}
 
-.grid{display:grid; grid-template-columns:.92fr 1.08fr; gap:1.1rem; align-items:stretch}
+/* Stage — field (left) + focus card (right). */
+.stage{display:grid; grid-template-columns:1.14fr 1fr; gap:.5rem; align-items:center}
 
-/* ── Considered-set ledger ── */
-.ledgerWrap{display:flex; flex-direction:column; gap:.5rem; min-width:0}
-.colLabel{color:var(--muted); font-size:.58rem; font-weight:850; letter-spacing:.13em; text-transform:uppercase; font-family:var(--font-display),inherit}
-.ledger{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:.32rem}
-.row{
-  display:grid; grid-template-columns:auto 1fr auto auto; align-items:center; gap:.6rem;
-  padding:.5rem .55rem; border:1px solid transparent; border-radius:.6rem;
-  transition:opacity .45s ease, background .3s ease, border-color .3s ease, transform .45s cubic-bezier(.2,.7,.2,1);
-}
-.dot{width:.5rem; height:.5rem; border-radius:50%; flex:none}
-.dot[data-d="focus"]{background:var(--pri-strong); box-shadow:0 0 0 3px rgba(10,132,214,.14)}
-.dot[data-d="validate"]{background:#d99a2a}
-.dot[data-d="monitor"]{background:var(--mon)} .dot[data-d="hold"]{background:var(--hold)}
-.rowName{color:var(--text); font-size:.86rem; font-weight:540; letter-spacing:-.01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-.bars{display:inline-flex; gap:2.5px}
-.bars i{width:4px; height:4px; border-radius:1px; background:#dbe3ea}
-.bars i.on{background:#a9b6c4}
-.rowDec{font-size:.58rem; font-weight:850; letter-spacing:.08em; text-transform:uppercase; font-family:var(--font-display),inherit; color:var(--dim)}
-.rowDec[data-d="focus"]{color:var(--pri)} .rowDec[data-d="validate"]{color:var(--val)}
-.row[data-role="focus"]{background:var(--pri-bg); border-color:#c7e2f2}
-.row[data-role="focus"] .rowName{color:var(--text); font-weight:680}
-.row[data-role="validate"]{background:var(--val-bg); border-color:#ecd6a8}
-.row[data-role="monitor"],.row[data-role="hold"]{opacity:.72}
-.wrap.release .row{opacity:.5; transform:translateX(-4px)}
-.wrap.research .row[data-role="focus"],.wrap.research .row[data-role="validate"]{opacity:1}
+.field{width:100%; aspect-ratio:400/330; overflow:visible}
+.anchorGlow{transition:opacity .55s ease}
+.wrap.release .anchorGlow,.wrap.research .anchorGlow{opacity:0}
 
-/* ── Concentrated decision ── */
+.line{fill:none; stroke-linecap:round; transition:stroke .55s ease, stroke-width .55s ease, opacity .55s ease}
+/* Focus line = a flowing stream of attention toward the one worth pursuing now. */
+.l_focus{stroke:var(--pri-strong); stroke-width:2.6; opacity:1; stroke-dasharray:2 7; filter:drop-shadow(0 1px 3px rgba(10,132,214,.4))}
+.wrap.focus .l_focus{animation:flow 1.5s linear infinite}
+.l_validate{stroke:var(--val-strong); stroke-width:1.4; opacity:.7}
+.l_monitor,.l_hold{stroke:var(--line-c); stroke-width:1; opacity:.34}
+.wrap.release .line{opacity:.22; stroke-width:1}
+.wrap.release .l_focus,.wrap.research .l_focus{stroke-width:1.4; opacity:.45; animation:none}
+
+.node .dot{transition:r .5s cubic-bezier(.2,.7,.2,1), fill .4s ease}
+.n_focus .dot{fill:var(--pri-strong); stroke:#fff; stroke-width:2; filter:drop-shadow(0 2px 6px rgba(10,132,214,.5))}
+.n_validate .dot{fill:var(--val-strong); stroke:#fff; stroke-width:1.5}
+.n_monitor .dot,.n_hold .dot{fill:#a6b4c3}
+.n_monitor,.n_hold{opacity:.62}
+.nlabel{font-family:var(--font-body),inherit; font-size:11px; font-weight:560; fill:var(--body); transition:fill .4s ease}
+.n_focus .nlabel{fill:var(--text); font-weight:750}
+.n_monitor .nlabel,.n_hold .nlabel{fill:var(--dim); font-weight:500}
+.pulse{fill:none; stroke:var(--pri-strong); stroke-width:1.5; opacity:0; transform-box:fill-box; transform-origin:center}
+.wrap.focus .n_focus .pulse{animation:ring 2.6s ease-out infinite}
+
+/* Focus card — the concentrated decision. */
 .focus{
   position:relative; display:flex; flex-direction:column; min-width:0;
-  padding:1rem 1.05rem 1.05rem 1.2rem; border-radius:.9rem;
+  padding:.95rem 1rem 1rem 1.15rem; border-radius:.9rem;
   border:1px solid #cfe4f1; background:#fff;
-  box-shadow:0 22px 44px -26px rgba(3,107,159,.32), inset 0 1px 0 #fff;
+  box-shadow:0 24px 46px -26px rgba(3,107,159,.34), inset 0 1px 0 #fff;
+  animation:rise .5s cubic-bezier(.2,.7,.2,1);
 }
-.focus::before{content:""; position:absolute; left:0; top:.9rem; bottom:.9rem; width:3px; border-radius:3px;
-  background:linear-gradient(180deg,#1aa9e8,#0a84d6)}
-.wrap.focus .focus{animation:rise .5s cubic-bezier(.2,.7,.2,1)}
+.focus::before{content:""; position:absolute; left:0; top:.9rem; bottom:.9rem; width:3px; border-radius:3px; background:linear-gradient(180deg,#1aa9e8,#0a84d6)}
+.worth{display:block; margin-bottom:.5rem; color:var(--pri); font-size:.58rem; font-weight:850; letter-spacing:.11em; text-transform:uppercase; font-family:var(--font-display),inherit}
 .focusTop{display:flex; align-items:center; justify-content:space-between}
-.chip{padding:.24rem .62rem; border-radius:999px; font-size:.62rem; font-weight:850; letter-spacing:.05em; text-transform:uppercase;
-  font-family:var(--font-display),inherit; color:#fff; background:linear-gradient(180deg,#1aa9e8,#0a84d6); box-shadow:0 5px 12px -5px rgba(10,132,214,.5)}
+.chip{padding:.24rem .62rem; border-radius:999px; font-size:.62rem; font-weight:850; letter-spacing:.05em; text-transform:uppercase; font-family:var(--font-display),inherit; color:#fff; background:linear-gradient(180deg,#1aa9e8,#0a84d6); box-shadow:0 5px 12px -5px rgba(10,132,214,.5)}
 .focusScope{color:var(--dim); font-size:.66rem; font-weight:700; font-variant-numeric:tabular-nums; letter-spacing:.04em}
-.focusName{margin:.6rem 0 0; font-family:var(--font-display),inherit; font-size:clamp(1.3rem,1.7vw,1.62rem); line-height:1.06; letter-spacing:-.03em; color:var(--text)}
-
+.focusName{margin:.55rem 0 0; font-family:var(--font-display),inherit; font-size:clamp(1.28rem,1.7vw,1.6rem); line-height:1.06; letter-spacing:-.03em; color:var(--text)}
 .microLabel{display:block; color:var(--muted); font-size:.58rem; font-weight:850; letter-spacing:.1em; text-transform:uppercase; font-family:var(--font-display),inherit}
 .microLabel[data-d="validate"]{color:var(--val)}
-
-.why{margin-top:.8rem; padding:.55rem .7rem; border-radius:.55rem; background:var(--pri-bg); border:1px solid #d6e9f5}
-.why b{display:block; margin-top:.2rem; color:var(--text); font-size:.86rem; font-weight:640; letter-spacing:-.01em}
-
-.rail{margin-top:.7rem}
-.railTrack{margin:.4rem 0 0; padding:0; list-style:none; display:flex; flex-wrap:wrap; align-items:center; gap:.3rem}
-.railTrack li{position:relative; padding:.26rem .5rem; border-radius:.4rem; background:#f1f6fa; border:1px solid #e0e9f0; color:var(--body); font-size:.72rem; font-weight:540}
+.why{margin-top:.75rem; padding:.52rem .68rem; border-radius:.55rem; background:var(--pri-bg); border:1px solid #d6e9f5}
+.why b{display:block; margin-top:.18rem; color:var(--text); font-size:.85rem; font-weight:640; letter-spacing:-.01em}
+.rail{margin-top:.68rem}
+.railTrack{margin:.38rem 0 0; padding:0; list-style:none; display:flex; flex-wrap:wrap; align-items:center; gap:.3rem}
+.railTrack li{position:relative; padding:.24rem .5rem; border-radius:.4rem; background:#f1f6fa; border:1px solid #e0e9f0; color:var(--body); font-size:.71rem; font-weight:540}
 .railTrack li:not(:last-child)::after{content:"→"; margin-left:.4rem; color:#9fb4c2; font-weight:700}
+.open{margin-top:.7rem; padding-top:.65rem; border-top:1px dashed #e6cfa0}
+.open b{display:block; margin-top:.16rem; color:#5a4a2c; font-size:.8rem; font-weight:560; line-height:1.35}
 
-.open{margin-top:.75rem; padding-top:.7rem; border-top:1px dashed #e6cfa0}
-.open b{display:block; margin-top:.18rem; color:#5a4a2c; font-size:.82rem; font-weight:560; line-height:1.35}
+.readout{margin:.1rem .1rem 0; color:var(--muted); font-size:.78rem; line-height:1.4; min-height:1.1rem}
 
-.readout{margin:.15rem .1rem 0; color:var(--muted); font-size:.78rem; line-height:1.4; min-height:1.1rem}
+@keyframes rise{from{opacity:.35; transform:translateY(8px)}to{opacity:1; transform:none}}
+@keyframes ring{0%{transform:scale(.55); opacity:.55}70%{opacity:0}100%{transform:scale(1.5); opacity:0}}
+@keyframes flow{to{stroke-dashoffset:-18}}
+@keyframes spinhint{0%,80%,100%{transform:rotate(0)}88%{transform:rotate(-180deg)}96%{transform:rotate(-360deg)}}
 
-@keyframes rise{from{opacity:.4; transform:translateY(8px)}to{opacity:1; transform:none}}
-@keyframes spinhint{0%,82%,100%{transform:rotate(0)}88%{transform:rotate(-180deg)}94%{transform:rotate(-360deg)}}
-
-/* Mobile — the instrument stacks: objective control, focus, then the ledger. */
+/* Mobile — field on top (labels hidden to stay clean), focus card below. */
 @media(max-width:760px){
-  .instrument{padding:1.1rem 1rem 1rem; border-radius:1.1rem}
+  .instrument{padding:1.05rem 1rem 1rem; border-radius:1.1rem}
   .objTabs{width:100%}
-  .grid{grid-template-columns:1fr; gap:1rem}
+  .stage{grid-template-columns:1fr; gap:.7rem}
+  .field{aspect-ratio:400/210; order:1}
+  .nlabel{display:none}
   .focus{order:0}
-  .ledgerWrap{order:1}
 }
 @media(prefers-reduced-motion:reduce){
-  .row,.focus{transition:none; animation:none; opacity:1 !important; transform:none !important}
-  .objHint i{animation:none}
+  .line,.node .dot,.anchorGlow,.focus{transition:none}
+  .wrap.focus .l_focus,.pulse,.objHint i,.focus{animation:none !important}
 }
