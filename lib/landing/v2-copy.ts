@@ -6,7 +6,7 @@ type PlanCopy = { job: string; points: string[] };
 export interface LandingV2Copy {
   skip: string; navigation: string; language: string; category: string; primary: string; secondary: string; synthetic: string;
   nav: { product: string; sample: string; pricing: string; how: string; signIn: string };
-  hero: { title: string; lead: string; inputOutput: string };
+  hero: { title: string; titleAccent: string; lead: string; inputOutput: string };
   decisions: { prioritize: string; validate: string; monitor: string; hold: string };
   portfolio: { label: string; kicker: string; title: string; disclosure: string; company: string; why: string; decision: string; evidence: string; confirm: string };
   trust: { label: string; items: Array<{ title: string; body: string }>; boundary: string };
@@ -26,7 +26,7 @@ export interface LandingV2Copy {
 const en: LandingV2Copy = {
   skip: "Skip to content", navigation: "Main navigation", language: "Language", category: "Commercial Intelligence", primary: "Find where to focus", secondary: "View sample", synthetic: "Illustrative sample — synthetic companies and evidence.",
   nav: { product: "Product", sample: "Sample", pricing: "Pricing", how: "How it works", signIn: "Sign in" },
-  hero: { title: "Know which companies deserve your attention — and why.", lead: "LeadLens researches and compares companies so you can focus commercial effort where it can contribute most to growth — with evidence behind every decision and uncertainty kept visible.", inputOutput: "Your commercial objective in. A prioritized, evidence-backed company portfolio out." },
+  hero: { title: "Know which companies are worth pursuing", titleAccent: "— and why now.", lead: "LeadLens weighs recent change against evidence across a researched set, then concentrates your attention on the few worth pursuing now — reasoning and uncertainty in view.", inputOutput: "Your commercial objective in. A prioritized, evidence-backed company portfolio out." },
   decisions: { prioritize: "Prioritize", validate: "Validate", monitor: "Monitor", hold: "Hold" },
   portfolio: { label: "Illustrative executive portfolio", kicker: "Executive portfolio", title: "Where attention is justified", disclosure: "3 companies evaluated", company: "Company", why: "Recent development and evidence", decision: "Attention", evidence: "Evidence", confirm: "Confirm" },
   trust: { label: "How LeadLens earns trust", items: [
@@ -68,7 +68,7 @@ const en: LandingV2Copy = {
 const es: LandingV2Copy = {
   ...en, skip: "Saltar al contenido", navigation: "Navegación principal", language: "Idioma", category: "Inteligencia comercial", primary: "Encuentra dónde enfocarte", secondary: "Ver muestra", synthetic: "Muestra ilustrativa — empresas y evidencia sintéticas.",
   nav: { product: "Producto", sample: "Muestra", pricing: "Precios", how: "Cómo funciona", signIn: "Ingresar" },
-  hero: { title: "Descubre qué empresas merecen tu atención — y por qué.", lead: "LeadLens investiga y compara empresas para que enfoques el esfuerzo comercial donde más puede contribuir al crecimiento, con evidencia detrás de cada decisión y la incertidumbre siempre visible.", inputOutput: "Entra tu objetivo comercial. Sale un portafolio priorizado con evidencia." },
+  hero: { title: "Sabe qué empresas vale la pena priorizar", titleAccent: "— y por qué ahora.", lead: "LeadLens contrasta cambios recientes con evidencia en un conjunto investigado y concentra tu atención en las pocas que vale la pena priorizar ahora — con el razonamiento y la incertidumbre a la vista.", inputOutput: "Entra tu objetivo comercial. Sale un portafolio priorizado con evidencia." },
   decisions: { prioritize: "Priorizar", validate: "Validar", monitor: "Monitorear", hold: "Reservar" },
   portfolio: { label: "Portafolio ejecutivo ilustrativo", kicker: "Portafolio ejecutivo", title: "Dónde se justifica la atención", disclosure: "3 empresas evaluadas", company: "Empresa", why: "Cambio reciente y evidencia", decision: "Atención", evidence: "Evidencia", confirm: "Confirmar" },
   trust: { label: "Cómo genera confianza LeadLens", items: [{ title: "Sabe dónde enfocarte", body: "Una decisión priorizada, no una lista más larga por trabajar." }, { title: "Entiende qué cambió", body: "El cambio reciente y fechado que hace que una empresa merezca atención ahora." }, { title: "Actúa con evidencia", body: "La base pública detrás de cada caso — con la incertidumbre a la vista." }], boundary: "Sin base de contactos. Sin lista de correos. Inteligencia comercial para decidir dónde poner la atención." },
@@ -93,7 +93,7 @@ const es: LandingV2Copy = {
 const pt: LandingV2Copy = {
   ...en, skip: "Ir para o conteúdo", navigation: "Navegação principal", language: "Idioma", category: "Inteligência comercial", primary: "Encontrar onde focar", secondary: "Ver amostra", synthetic: "Amostra ilustrativa — empresas e evidências sintéticas.",
   nav: { product: "Produto", sample: "Amostra", pricing: "Preços", how: "Como funciona", signIn: "Entrar" },
-  hero: { title: "Saiba quais empresas merecem sua atenção — e por quê.", lead: "A LeadLens pesquisa e compara empresas para concentrar o esforço comercial onde ele pode contribuir mais para o crescimento, mantendo evidências e incertezas visíveis.", inputOutput: "Seu objetivo comercial entra. Um portfólio priorizado com evidências sai." },
+  hero: { title: "Saiba quais empresas vale a pena priorizar", titleAccent: "— e por que agora.", lead: "A LeadLens contrasta mudanças recentes com evidências em um conjunto pesquisado e concentra sua atenção nas poucas que valem a pena priorizar agora — com o raciocínio e a incerteza à vista.", inputOutput: "Seu objetivo comercial entra. Um portfólio priorizado com evidências sai." },
   decisions: { prioritize: "Priorizar", validate: "Validar", monitor: "Monitorar", hold: "Manter" },
   portfolio: { ...en.portfolio, label: "Portfólio executivo ilustrativo", kicker: "Portfólio executivo", title: "Onde a atenção se justifica", disclosure: "3 empresas avaliadas", company: "Empresa", why: "Mudança recente e evidência", decision: "Atenção", evidence: "Evidência", confirm: "Confirmar" },
   trust: { label: "Como a LeadLens gera confiança", items: [{ title: "Evidência verificável", body: "Veja a base pública e datada de cada caso." }, { title: "Incerteza visível", body: "Saiba o que enfraquece o caso e o que permanece desconhecido." }, { title: "Uma decisão, não uma lista", body: "Foque onde a investigação merece o tempo da equipe." }], boundary: "No contact database. No email list. Commercial intelligence for deciding where attention belongs." },
@@ -115,7 +115,7 @@ const pt: LandingV2Copy = {
 const ja: LandingV2Copy = {
   ...en, skip: "本文へ移動", navigation: "メインナビゲーション", language: "言語", category: "コマーシャルインテリジェンス", primary: "注力先を見つける", secondary: "サンプルを見る", synthetic: "説明用サンプル — 企業と根拠は合成データです。",
   nav: { product: "製品", sample: "サンプル", pricing: "料金", how: "仕組み", signIn: "ログイン" },
-  hero: { title: "今、注目すべき企業と、その理由を明確に。", lead: "LeadLensは企業を調査・比較し、成長につながる商業活動の注力先を、根拠と不確実性を明示して示します。", inputOutput: "商業目標を入力。優先順位と根拠を備えた企業ポートフォリオを出力。" },
+  hero: { title: "今、追うべき企業", titleAccent: "— その理由も今。", lead: "LeadLensは最近の変化を根拠と照らし合わせ、今追う価値のある数社に注意を集中させます—根拠と不確実性を明示して。", inputOutput: "商業目標を入力。優先順位と根拠を備えた企業ポートフォリオを出力。" },
   decisions: { prioritize: "優先", validate: "検証", monitor: "監視", hold: "保留" },
   portfolio: { ...en.portfolio, label: "例示エグゼクティブポートフォリオ", kicker: "エグゼクティブポートフォリオ", title: "注目が正当化される企業", disclosure: "3社を評価", company: "企業", why: "最近の変化と根拠", decision: "判断", evidence: "根拠", confirm: "確認" },
   trust: { label: "LeadLensの信頼性", items: [{ title: "確認できる根拠", body: "各ケースの公開情報と日付を確認できます。" }, { title: "不確実性を明示", body: "ケースを弱める要因と未知の点を示します。" }, { title: "リストではなく判断", body: "調査する価値のある企業に集中できます。" }], boundary: "No contact database. No email list. Commercial intelligence for deciding where attention belongs." },

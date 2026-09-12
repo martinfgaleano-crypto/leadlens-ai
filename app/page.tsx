@@ -66,6 +66,10 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
     ? { eyebrow: "Dónde encaja LeadLens", rows: [{ k: "Bases de datos", v: "Quién existe." }, { k: "Herramientas de señales", v: "Qué pasó." }, { k: "LeadLens", v: "Por qué importa — y a dónde debe ir la atención.", me: true }] }
     : { eyebrow: "Where LeadLens fits", rows: [{ k: "Databases", v: "Who exists." }, { k: "Signal tools", v: "What happened." }, { k: "LeadLens", v: "Why it matters — and where attention belongs.", me: true }] };
   const plans = oneTimeCards();
+  // Decision-depth progression (visible even if price/count are hidden): one decision → shortlist → allocation → strategic context.
+  const tierLabel: Record<string, string> = locale === "es"
+    ? { preview_launch_v0: "Una decisión", brief_launch_v0: "Decisión de lista corta", intelligence_launch_v0: "Decisión de asignación", premium_launch_v0: "Contexto estratégico" }
+    : { preview_launch_v0: "One decision", brief_launch_v0: "Shortlist decision", intelligence_launch_v0: "Allocation decision", premium_launch_v0: "Strategic context" };
 
   return (
     <div className={styles.page}>
@@ -88,7 +92,7 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
       <main id="main">
         <section className={styles.hero}>
           <div className={styles.heroCopy}>
-            <p className={styles.eyebrow}>{c.category}</p><h1>{c.hero.title}</h1><p className={styles.heroLead}>{c.hero.lead}</p>
+            <p className={styles.eyebrow}>{c.category}</p><h1>{c.hero.title} <span className={styles.heroAccent}>{c.hero.titleAccent}</span></h1><p className={styles.heroLead}>{c.hero.lead}</p>
             <div className={styles.ctas}><Link className={styles.primary} href={START_PATH}>{c.primary}</Link></div>
             <p className={styles.heroInput}>{c.hero.inputOutput}</p>
           </div>
@@ -130,7 +134,7 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
           <ul>{c.audience.items.map((item) => <li key={item}>{item}</li>)}</ul>
         </section>
 
-        <section className={styles.section} aria-label={category3.eyebrow}>
+        <section className={`${styles.section} ${styles.catBand}`} aria-label={category3.eyebrow}>
           <p className={styles.eyebrow} style={{ textAlign: "center", marginBottom: "2.5rem" }}>{category3.eyebrow}</p>
           <div className={styles.catRow}>
             {category3.rows.map((x) => <div key={x.k} className={"me" in x && x.me ? styles.catMe : styles.catCol}><span>{x.k}</span><p>{x.v}</p></div>)}
@@ -143,7 +147,7 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
             const pc = c.pricing.plans[plan.productCode];
             const highlighted = plan.productCode === "intelligence_launch_v0";
             return <article className={`${styles.planRow}${highlighted ? ` ${styles.planFeatured}` : ""}`} key={plan.productCode}>
-              <div className={styles.planIdentity}><span>0{index + 1}</span><h3>{plan.name}</h3>{highlighted && <b className={styles.recommended}>{c.pricing.recommended}</b>}</div>
+              <div className={styles.planIdentity}><span>0{index + 1}</span><h3>{plan.name}</h3><em className={styles.planTier} data-code={plan.productCode}>{tierLabel[plan.productCode]}</em>{highlighted && <b className={styles.recommended}>{c.pricing.recommended}</b>}</div>
               <div className={styles.planDecision}><h4>{pc.job}</h4><p>{pc.points[0]}</p></div>
               <ul>{pc.points.slice(1).map((point) => <li key={point}>{point}</li>)}</ul>
               <div className={styles.planAction}><strong>${plan.price}</strong><small>{plan.capacity}</small><Link href={`/signup?commercial_path=one_time&product_code=${plan.productCode}`}>{c.pricing.choose} {plan.name}</Link></div>
@@ -186,11 +190,14 @@ function ExecutivePortfolio({ copy: c, view, dist }: {
 }) {
   const total = dist.reduce((s, d) => s + d.n, 0);
   const distText = dist.map((d) => `${d.n} ${decisionLabel(d.k, c).toLowerCase()}`).join(" · ");
+  // Attention-allocation grid: each evaluated company is one cell, coloured by its decision and ordered
+  // from act-now to hold — a LeadLens-specific view of how attention concentrates across the set.
+  const cells = dist.flatMap((d) => Array.from({ length: d.n }, () => d.k));
   return <div className={styles.portfolio} aria-label={c.portfolio.label}>
     <div className={styles.portfolioHead}><span>{c.portfolio.kicker}</span><small>{view.funnel}</small></div>
     <div className={styles.distTotal}><strong>{total}</strong><span>{c.portfolio.disclosure.replace(/^\d+\s*/, "")}</span></div>
-    <div className={styles.distBar} role="img" aria-label={distText}>
-      {dist.filter((d) => d.n > 0).map((d) => <span key={d.k} style={{ flex: d.n, background: DEC_COLOR[d.k] }} />)}
+    <div className={styles.allocGrid} role="img" aria-label={distText}>
+      {cells.map((k, i) => <span key={i} className={styles.allocCell} data-d={k} style={{ background: DEC_COLOR[k] }} />)}
     </div>
     <ul className={styles.distLegend}>
       {dist.map((d) => <li key={d.k}><i style={{ background: DEC_COLOR[d.k] }} /><strong>{d.n}</strong> {decisionLabel(d.k, c).toLowerCase()}</li>)}
