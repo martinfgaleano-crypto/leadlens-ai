@@ -61,6 +61,9 @@ const preview = composeForTier(doc, "preview");
 t("preview caps to 2 accounts", preview.accounts.length === 2 && TIER_COMPOSITION.preview.maxAccounts === 2);
 t("preview mini depth trims narrative + sources≤2", preview.accounts[0].thesis === null && preview.accounts[0].whatChanged.length === 0 && preview.accounts[0].sources.length <= 2 && preview.accounts[0].validationDetails === undefined);
 t("preview keeps the verdict (decision + dimensions + note)", preview.accounts[0].decision !== undefined && preview.accounts[0].dimensions.length === 3 && preview.accounts[0].decisionNote !== null);
+// Preview is "small but complete": it keeps a bounded "what to validate next" + one uncertainty (the
+// Preview signature), NOT a stripped verdict — while still dropping the fuller narrative (thesis).
+t("preview keeps a bounded validation + uncertainty (small but complete, not crippled)", preview.accounts[0].validations.length === 1 && (preview.accounts[0].counterSignals.length + preview.accounts[0].limitations.length) >= 1);
 t("preview hides context/validationQueue/coverage/methodology", preview.commercialContext === null && preview.validationQueue.length === 0 && preview.coverage === null && preview.methodology.length === 0);
 t("preview RECOUNTS synthesis to the 2 surviving accounts", preview.portfolioSynthesis.total === 2 && (preview.portfolioSynthesis.counts.prioritize + preview.portfolioSynthesis.counts.validate + preview.portfolioSynthesis.counts.monitor + preview.portfolioSynthesis.counts.hold) === 2);
 
@@ -99,7 +102,8 @@ t("pdf escapes HTML in content", renderPdfHtml(toPresentationModel(fromDeliverab
 
 // ── Web renderer ──
 const web = toWebPresentation(webPM);
-t("web section order + presence honors policy/content", web.sections.map((s) => s.kind).join(",") === "header,commercialContext,portfolioSynthesis,accounts,validationQueue,coverage,methodology,limitations" && web.sections.find((s) => s.kind === "accounts")!.present === true);
+t("web section order + presence honors policy/content", web.sections.map((s) => s.kind).join(",") === "header,commercialContext,portfolioSynthesis,premiumArchitecture,accounts,validationQueue,coverage,methodology,limitations" && web.sections.find((s) => s.kind === "accounts")!.present === true);
+t("web premiumArchitecture absent for non-premium tier", web.sections.find((s) => s.kind === "premiumArchitecture")!.present === false);
 t("web is the living product (interactive)", web.interactive === true);
 
 // ── One document → three consistent outputs ──

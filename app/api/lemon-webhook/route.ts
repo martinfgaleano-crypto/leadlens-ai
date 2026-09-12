@@ -147,7 +147,7 @@ export async function POST(req: NextRequest) {
 
   // ── Canonical CURRENT-PRODUCT one-time fulfillment (frozen 2026-09-04) ──────
   // A NEW canonical order (created by our own Lemon checkout) carries the trusted
-  // meta.custom_data.user_id. It grants current-product credits (2/6/12/18) to that tenant and
+  // meta.custom_data.user_id. It grants current-product credits (2/5/12/18) to that tenant and
   // returns — it NEVER reaches the legacy path below (no lead_searches, no runLeadLensPipeline,
   // no PLAN_CREDITS, no email-only attribution, no Stripe). Legacy/historical orders (no trusted
   // user_id) fall through to the unchanged path.

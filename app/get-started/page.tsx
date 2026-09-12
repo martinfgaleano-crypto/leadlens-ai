@@ -30,23 +30,23 @@ export default function GetStartedPage() {
             <p style={{ fontSize: ".78rem", fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: C.skyInk, margin: "0 0 .9rem" }}>Account Opportunity Intelligence</p>
             <h1 style={{ fontSize: "clamp(1.7rem,4.4vw,2.5rem)", fontWeight: 800, letterSpacing: "-.025em", lineHeight: 1.12, margin: 0 }}>How would you like to use LeadLens?</h1>
             <p style={{ color: C.sub, fontSize: "1.02rem", lineHeight: 1.6, margin: ".9rem auto 0", maxWidth: "34rem" }}>
-              LeadLens helps you decide which accounts deserve attention now — with the evidence behind every decision. Choose where to start.
+              LeadLens helps you decide which companies deserve attention now — with the evidence behind every decision. Choose where to start.
             </p>
           </div>
 
           <div className="ll-gs-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem" }}>
             <PathCard
               eyebrow="One-time"
-              title="Analyze an opportunity now"
-              body="Evaluate a defined set of accounts, understand the market around them, and see where commercial attention is justified — as a bounded, point-in-time study."
-              cta="Explore one-time intelligence"
+              title="Evaluate a set of companies now"
+              body="Pick a defined set of companies and get a clear, evidence-backed read on which deserve your attention right now — a bounded, one-time study you keep."
+              cta="See one-time plans"
               onClick={() => choose("one_time")}
             />
             <PathCard
               eyebrow="Ongoing"
-              title="Keep opportunities under observation"
-              body="Continuously reassess your accounts, detect what changed, and keep commercial priorities current — with Account Memory that builds over time."
-              cta="Explore ongoing intelligence"
+              title="Keep companies under review over time"
+              body="LeadLens re-checks your companies on a schedule, flags what changed, and keeps your priorities current — with a memory that builds over time."
+              cta="See ongoing plans"
               featured
               onClick={() => choose("ongoing")}
             />

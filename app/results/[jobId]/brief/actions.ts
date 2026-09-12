@@ -11,9 +11,11 @@ import type { InstitutionalOpportunityReportV1 } from "@/lib/reports/institution
 
 import type { ReportExperience } from "@/lib/products/report-experience";
 import type { ReviewMemory } from "@/lib/deliverable/account-memory-store";
+import { premiumContextFromEnvelope } from "@/lib/intelligence/premium/premium-production";
+import type { PremiumContextV1 } from "@/lib/intelligence/premium/premium-context";
 
 export type BriefResult =
-  | { state: "ok"; report: InstitutionalOpportunityReportV1; experience: ReportExperience; memory: ReviewMemory | null; monitorClientKey: string | null }
+  | { state: "ok"; report: InstitutionalOpportunityReportV1; experience: ReportExperience; memory: ReviewMemory | null; monitorClientKey: string | null; premiumContext: PremiumContextV1 | null }
   | { state: "unavailable" }        // missing / non-completed — never confirms existence
   | { state: "processing" }
   | { state: "forbidden" }          // linked report, viewer is not the owner
@@ -123,5 +125,10 @@ export async function getBriefForViewer(jobId: string, accessToken: string | nul
     }
   } catch (e) { console.error("[account-memory] unavailable:", e instanceof Error ? e.message : e); }
 
-  return { state: "ok", report, experience, memory, monitorClientKey };
+  // Premium contextual Intelligence, if this report is a Premium run that produced + persisted it.
+  // Fail-closed: any non-present/absent/version-mismatch envelope → null (never rendered). Only the
+  // premium Delivery tier composes it downstream, so a non-premium reader can never surface it.
+  const premiumContext = premiumContextFromEnvelope((snapshot.report_json as { _premium_context?: unknown })?._premium_context);
+
+  return { state: "ok", report, experience, memory, monitorClientKey, premiumContext };
 }

@@ -17,6 +17,25 @@ import type { DeliverableViewModel } from "@/lib/deliverable/deliverable-view-mo
 import DevExportWorkspace from "./DevExportWorkspace";
 import { isDeliveryTier } from "@/lib/delivery-system/channel-availability";
 import type { DeliveryTier } from "@/lib/delivery-system/tier-composer";
+import { assemblePremiumContext, type PremiumContextV1 } from "@/lib/intelligence/premium/premium-context";
+
+/** DEV-ONLY synthetic Premium research context (?ctx=1) — obviously synthetic, never a real claim.
+ *  Lets the visual harness show the full "Decision context" tab incl. the commercial benchmark card. */
+function devPremiumContext(searchParams: { ctx?: string } | undefined): PremiumContextV1 | null {
+  if (searchParams?.ctx !== "1") return null;
+  const ev = (url: string) => [{ sourceId: url, url, observedDate: "2026-08-01", claim: "observed" }];
+  const note = (statement: string, url: string) => ({ statement, basis: "signal" as const, evidence: ev(url), confidence: "Moderate" as const, stale: false });
+  return assemblePremiumContext({
+    benchmark: {
+      recurringNeeds: [note("Buyers in this segment repeatedly cite supply-chain resilience and lead-time pressure.", "https://example.com/a")],
+      offerPositioning: [note("Operations-consulting offers here tend to compete on speed-to-impact and domain depth.", "https://example.com/b")],
+      differentiatedWhere: [note("Sector-specific operating playbooks appear to be a differentiator versus generalist firms.", "https://example.com/c")],
+    },
+    competitors: [{ entity: "Generalist ops consultancies", role: "alternative", whyRelevant: "The most common alternative buyers weigh.", affects: "benchmark", positioning: [note("Broad footprint, less sector depth.", "https://example.com/d")], counterevidence: [], unknowns: [], confidence: "Moderate" }],
+    additionalOpportunities: [{ entity: "Regional 3PL cluster", role: "adjacent_segment", whyDiscovered: "Surfaced adjacent to the evaluated portfolio.", connectionToObjective: "Same buyer, adjacent operational need.", evidence: ev("https://example.com/e"), worthInvestigatingBecause: "Fits the stated objective.", unknowns: [], deepResearched: false }],
+    ecosystem: [{ entity: "Industry association", role: "platform", materialTo: "access", why: "Controls access to the target segment's decision-makers.", evidence: ev("https://example.com/f") }],
+  });
+}
 
 export const dynamic = "force-dynamic";
 
@@ -143,7 +162,7 @@ function loadAmorViewModel(): DeliverableViewModel | null {
   }
 }
 
-export default function DevBriefPreview({ searchParams }: { searchParams?: { source?: string; report?: string; memory?: string; tier?: string } }) {
+export default function DevBriefPreview({ searchParams }: { searchParams?: { source?: string; report?: string; memory?: string; tier?: string; ctx?: string } }) {
   if (process.env.NODE_ENV === "production") notFound();
 
   // ?source=amor renders the real legacy pilot through the SAME workspace,
@@ -157,7 +176,11 @@ export default function DevBriefPreview({ searchParams }: { searchParams?: { sou
   const alt = searchParams?.report === "alt";
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const report = assembleInstitutionalReport((alt ? RAW_ALT : RAW) as any, alt ? META_ALT : META);
-  const experience = resolveReportExperience(alt ? "premium_launch_v0" : "intelligence_launch_v0");
+  // Resolve the experience from ?tier so the workspace CAPABILITIES (tabs) authentically match the
+  // tier being smoked — preview/brief/portfolio(intelligence)/premium — not a fixed one.
+  const TIER_PRODUCT: Record<string, string> = { preview: "preview_launch_v0", brief: "brief_launch_v0", intelligence: "intelligence_launch_v0", premium: "premium_launch_v0" };
+  const tierProduct = TIER_PRODUCT[searchParams?.tier ?? ""] ?? (alt ? "premium_launch_v0" : "intelligence_launch_v0");
+  const experience = resolveReportExperience(tierProduct);
   const vm = fromInstitutionalReport(report, experience);
   // ?memory=1 — synthesize a SECOND review by rolling back a prior review (dev
   // QA only; obviously synthetic timeline, never a claim of real history).
@@ -185,7 +208,7 @@ export default function DevBriefPreview({ searchParams }: { searchParams?: { sou
       return [a.id, snapshotAccountReview(prev, { reviewId: "dev-review-1", reviewedAt: "2026-03-15", contextVersion: "dev-v1" })] as const;
     });
     const memory = { current: { reviewId: "dev-review-2", reviewedAt: "2026-08-22", contextVersion: "dev-v1" }, previousById: Object.fromEntries(prior) };
-    return <DevExportWorkspace vm={vm} memory={memory} jobId="dev-preview" tier={devTier(searchParams, experience.tier as DeliveryTier)} />;
+    return <DevExportWorkspace vm={vm} memory={memory} jobId="dev-preview" tier={devTier(searchParams, experience.tier as DeliveryTier)} premiumContext={devPremiumContext(searchParams)} />;
   }
-  return <DevExportWorkspace vm={vm} jobId="dev-preview" tier={devTier(searchParams, experience.tier as DeliveryTier)} />;
+  return <DevExportWorkspace vm={vm} jobId="dev-preview" tier={devTier(searchParams, experience.tier as DeliveryTier)} premiumContext={devPremiumContext(searchParams)} />;
 }

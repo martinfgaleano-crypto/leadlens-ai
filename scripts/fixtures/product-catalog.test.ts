@@ -15,7 +15,7 @@ t("premium $129", PRODUCTS.premium_launch_v0.price_amount === 129);
 t("all one-time launch prices", Object.values(PRODUCTS).every((p) => p.billing_type === "one_time" && p.launch_price === true));
 
 // Operating limits (not the promise)
-t("opportunity targets 2/6/12/18", [2, 6, 12, 18].join() === Object.values(PRODUCTS).map((p) => p.entitlements.opportunity_target).join());
+t("opportunity targets 2/6/12/18 (canonical one-time matrix)", [2, 6, 12, 18].join() === Object.values(PRODUCTS).map((p) => p.entitlements.opportunity_target).join());
 
 // Server-side resolution: new codes, legacy plans, unknown fails closed
 t("resolves new code", resolveProduct("intelligence_launch_v0")?.tier === "intelligence");

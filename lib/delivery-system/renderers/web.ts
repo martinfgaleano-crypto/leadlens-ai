@@ -7,7 +7,7 @@ import type { PresentationModel } from "@/lib/delivery-system/presentation-model
 import type { DeliveryDocumentV1 } from "@/lib/delivery-system/delivery-document";
 
 export type WebSectionKind =
-  | "header" | "commercialContext" | "portfolioSynthesis" | "accounts"
+  | "header" | "commercialContext" | "portfolioSynthesis" | "premiumArchitecture" | "accounts"
   | "validationQueue" | "coverage" | "methodology" | "limitations";
 
 export interface WebSection { kind: WebSectionKind; present: boolean; }
@@ -30,13 +30,14 @@ export function toWebPresentation(pm: PresentationModel): WebPresentation {
     header: s.header && (Boolean(d.headline) || Boolean(d.summary) || Boolean(d.meta.client)),
     commercialContext: s.commercialContext && Boolean(d.commercialContext),
     portfolioSynthesis: s.portfolioSynthesis && d.portfolioSynthesis.total > 0,
+    premiumArchitecture: s.premiumArchitecture && Boolean(d.premium) && (d.premium?.executivePortfolio.total ?? 0) > 0,
     accounts: s.accounts && d.accounts.length > 0,
     validationQueue: s.validationQueue && d.validationQueue.length > 0,
     coverage: s.coverage && Boolean(d.coverage),
     methodology: s.methodology && d.methodology.length > 0,
     limitations: s.limitations && d.limitations.length > 0,
   };
-  const order: WebSectionKind[] = ["header", "commercialContext", "portfolioSynthesis", "accounts", "validationQueue", "coverage", "methodology", "limitations"];
+  const order: WebSectionKind[] = ["header", "commercialContext", "portfolioSynthesis", "premiumArchitecture", "accounts", "validationQueue", "coverage", "methodology", "limitations"];
   return {
     tier: pm.tier, tierLabel: pm.tierLabel, interactive: pm.interactive, document: d,
     sections: order.map((kind) => ({ kind, present: has[kind] })),

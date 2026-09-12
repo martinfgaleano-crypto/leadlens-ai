@@ -20,7 +20,9 @@ export async function deliverableForViewer(jobId: string, accessToken: string | 
   if (brief.state === "forbidden") return { ok: false, status: 403 };
   if (brief.state !== "ok") return { ok: false, status: 404 }; // unavailable / processing — never confirms existence
   const vm = fromInstitutionalReport(brief.report, brief.experience);
-  const document = fromDeliverableViewModel(vm);
+  // Thread the persisted Premium context onto the document (null for non-premium / older reports).
+  // The TierComposer only composes it for the premium tier, so tier remains the hard gate.
+  const document: DeliveryDocumentV1 = { ...fromDeliverableViewModel(vm), premiumContext: brief.premiumContext ?? null };
   // Server-authoritative tier (from the resolved product experience). Defensive fallback only.
   const tier: DeliveryTier = isDeliveryTier(brief.experience.tier) ? brief.experience.tier : "intelligence";
   return { ok: true, document, tier };

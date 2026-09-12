@@ -61,7 +61,7 @@ export default function BriefPage() {
       // real gate. Tier is defensive-fallback only when the experience tier isn't a known delivery tier.
       const tier = isDeliveryTier(result.experience.tier) ? result.experience.tier : "intelligence";
       const exportContext = { jobId, tier, getToken: currentAccessToken };
-      return <OpportunityWorkspace vm={{ ...vm, accounts, portfolio: { ...vm.portfolio, counts } }} memory={result.memory ?? undefined} monitorClientKey={result.monitorClientKey ?? undefined} exportContext={exportContext} />;
+      return <OpportunityWorkspace vm={{ ...vm, accounts, portfolio: { ...vm.portfolio, counts } }} memory={result.memory ?? undefined} monitorClientKey={result.monitorClientKey ?? undefined} exportContext={exportContext} premiumContext={result.premiumContext ?? undefined} />;
     }
     case "processing": return <Neutral text="Your brief is being generated. This can take a few minutes — refresh shortly." />;
     case "signin_required": return <Neutral text="Please sign in to view this brief." />;

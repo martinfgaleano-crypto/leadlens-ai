@@ -6,7 +6,7 @@
 // Evidence. Output is a DeliveryDocumentV1 (same schema) shaped for the tier.
 
 import {
-  type DeliveryDocumentV1, type AccountBriefVM, recountPortfolio,
+  type DeliveryDocumentV1, type AccountBriefVM, recountPortfolio, buildPremiumDeliverySection,
 } from "@/lib/delivery-system/delivery-document";
 
 export type DeliveryTier = "preview" | "brief" | "intelligence" | "premium";
@@ -21,6 +21,8 @@ export interface TierSections {
   compare: boolean;
   coverage: boolean;
   methodology: boolean;
+  /** Premium-only: the deterministic decision-architecture layer (synthesis/pathways/briefs/exec). */
+  premiumArchitecture: boolean;
 }
 
 export interface TierComposition {
@@ -36,35 +38,45 @@ export interface TierComposition {
 export const TIER_COMPOSITION: Record<DeliveryTier, TierComposition> = {
   preview: {
     label: "Preview", maxAccounts: 2, dossierDepth: "mini",
-    sections: { commercialContext: false, portfolioSynthesis: true, allocation: false, validationQueue: false, whatChanged: false, compare: false, coverage: false, methodology: false },
+    sections: { commercialContext: false, portfolioSynthesis: true, allocation: false, validationQueue: false, whatChanged: false, compare: false, coverage: false, methodology: false, premiumArchitecture: false },
   },
   brief: {
     label: "Brief", maxAccounts: 6, dossierDepth: "standard",
-    sections: { commercialContext: true, portfolioSynthesis: true, allocation: false, validationQueue: true, whatChanged: true, compare: false, coverage: true, methodology: false },
+    sections: { commercialContext: true, portfolioSynthesis: true, allocation: false, validationQueue: true, whatChanged: true, compare: false, coverage: true, methodology: false, premiumArchitecture: false },
   },
   intelligence: {
     label: "Intelligence", maxAccounts: 12, dossierDepth: "full",
-    sections: { commercialContext: true, portfolioSynthesis: true, allocation: true, validationQueue: true, whatChanged: true, compare: true, coverage: true, methodology: true },
+    sections: { commercialContext: true, portfolioSynthesis: true, allocation: true, validationQueue: true, whatChanged: true, compare: true, coverage: true, methodology: true, premiumArchitecture: false },
   },
   premium: {
     label: "Premium", maxAccounts: 18, dossierDepth: "full",
-    sections: { commercialContext: true, portfolioSynthesis: true, allocation: true, validationQueue: true, whatChanged: true, compare: true, coverage: true, methodology: true },
+    // Premium ADDS the deterministic decision-architecture on top of everything Portfolio receives.
+    sections: { commercialContext: true, portfolioSynthesis: true, allocation: true, validationQueue: true, whatChanged: true, compare: true, coverage: true, methodology: true, premiumArchitecture: true },
   },
 };
 
-/** Trim one account dossier to the tier depth. Returns a copy; never fabricates. mini = the verdict
- *  (Decision + Fit/Timing/Evidence + one-line why + up to 2 sources); standard = full narrative minus
- *  the deep validation/monitor internals; full = everything. */
+/** Trim one account dossier to the tier depth. Returns a copy; never fabricates. mini = "small but
+ *  complete" — the full LeadLens signature at concise depth (Decision + Fit/Timing/Evidence + one-line
+ *  why + the single most important thing to validate + one uncertainty + up to 2 sources), reserving the
+ *  full narrative for standard+. standard = full narrative minus the deep validation/monitor internals;
+ *  full = everything. Preview must read as a complete small verdict, NOT a stripped Brief (§Preview). */
 export function composeAccountForDepth(a: AccountBriefVM, depth: DossierDepth): AccountBriefVM {
   if (depth === "full") return a;
   if (depth === "standard") {
     return { ...a, validationDetails: undefined, monitorIdentity: null };
   }
-  // mini
+  // mini (Preview): keep the decision rationale (decisionNote), Fit/Timing/Evidence, the evidence
+  // summary, and a BOUNDED "what's uncertain / what to validate next" — the Preview signature — while
+  // dropping the fuller narrative (thesis, What-Changed, next step, deep internals). No invention:
+  // every retained field already exists on the account; Preview simply shows a concise, complete slice.
   return {
     ...a,
     thesis: null, whyItMatters: null,
-    whatChanged: [], counterSignals: [], limitations: [], validations: [], validationDetails: undefined,
+    whatChanged: [],                                   // Preview is a first look — no prior-state comparison
+    counterSignals: a.counterSignals.slice(0, 1),      // one genuine uncertainty (UNKNOWN != negative)
+    limitations: a.limitations.slice(0, 1),
+    validations: a.validations.slice(0, 1),             // the single most important thing to validate next
+    validationDetails: undefined,
     nextStep: null, revisitWhen: null, monitorIdentity: null,
     sources: a.sources.slice(0, 2),
   };
@@ -97,5 +109,8 @@ export function composeForTier(doc: DeliveryDocumentV1, tier: DeliveryTier): Del
     validationQueue: c.sections.validationQueue ? doc.validationQueue.filter((q) => accounts.some((a) => a.id === q.accountId)) : [],
     coverage: c.sections.coverage ? doc.coverage : null,
     methodology: c.sections.methodology ? doc.methodology : [],
+    // Premium-only: build the deterministic decision-architecture from the surviving (tier-capped)
+    // accounts + any persisted research context. null for every other tier — Portfolio is unchanged.
+    premium: c.sections.premiumArchitecture ? buildPremiumDeliverySection(accounts, doc.premiumContext ?? null) : null,
   };
 }
