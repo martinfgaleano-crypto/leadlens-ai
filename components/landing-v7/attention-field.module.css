@@ -1,19 +1,17 @@
-/* LeadLens hero — "noise → focus". A whole market of companies (a field of dots) that LeadLens reads
-   and concentrates into the few worth pursuing now. Light + premium; decision colour is the accent. */
+/* LeadLens hero — Market → LeadLens reads → Focus. Three legible stages; light + premium; decision
+   colour is the accent. Pick an objective and the whole reading updates left → right. */
 .wrap{
-  --pri:#036b9f; --pri-strong:#0a84d6; --val:#d99a2a; --neutral:#b8c5d2;
-  --line:#e4ecf2; --text:#0a1420; --body:#3a485b; --muted:#65717e; --dim:#8593a3;
+  --pri:#036b9f; --pri-strong:#0a84d6; --pri-bg:rgba(7,159,227,.09);
+  --val:#9a651a; --val-strong:#d99a2a; --val-bg:rgba(217,154,42,.1);
+  --line:#e4ecf2; --text:#0a1420; --body:#3a485b; --muted:#65717e; --dim:#8593a3; --neutral:#aab6c4;
   min-width:0; color:var(--text);
 }
-
-.instrument{
-  position:relative; display:flex; flex-direction:column; gap:.9rem;
+.instrument{position:relative; display:flex; flex-direction:column; gap:.95rem;
   padding:1.2rem 1.3rem 1.1rem; border:1px solid var(--line); border-radius:1.25rem;
   background:linear-gradient(180deg,#ffffff 0%, #f6fafd 100%);
-  box-shadow:0 34px 66px -40px rgba(10,25,55,.3), 0 2px 8px rgba(10,25,55,.05);
-}
+  box-shadow:0 34px 66px -40px rgba(10,25,55,.3), 0 2px 8px rgba(10,25,55,.05)}
 
-/* Objective — an obvious segmented control (the interaction). */
+/* Objective — obvious segmented control. */
 .head{display:flex; flex-direction:column; align-items:flex-start; gap:.5rem}
 .objEyebrow{color:var(--pri); font-size:.62rem; font-weight:850; letter-spacing:.13em; text-transform:uppercase; font-family:var(--font-display),inherit}
 .objTabs{display:inline-flex; flex-wrap:wrap; gap:.25rem; padding:.26rem; border:1px solid #dbe6ee; border-radius:.75rem; background:#eef4f8}
@@ -24,43 +22,69 @@
 .objHint{display:inline-flex; align-items:center; gap:.4rem; color:var(--muted); font-size:.74rem}
 .objHint i{color:var(--pri-strong); font-style:normal; font-size:.9rem; animation:spinhint 5.5s ease-in-out infinite}
 
-/* Stage — the market field + the live count. */
-.stage{position:relative}
-.field{width:100%; aspect-ratio:440/300; display:block; overflow:visible}
-.zone{transition:opacity .6s ease}
-.wrap.market .zone,.wrap.reading .zone{opacity:0}
+/* Pipeline: market | → | reading | → | focus */
+.pipe{display:grid; grid-template-columns:1fr auto .92fr auto 1.18fr; gap:.55rem; align-items:center}
+.stage{display:flex; flex-direction:column; gap:.5rem; min-width:0}
+.stageLabel{color:var(--dim); font-size:.56rem; font-weight:850; letter-spacing:.11em; text-transform:uppercase; font-family:var(--font-display),inherit}
+.stageLabel[data-lens],.stageLabel[data-focus]{color:var(--pri)}
 
-.dot{fill:var(--neutral); opacity:.55;
-  transition:cx .75s cubic-bezier(.3,.85,.3,1), cy .75s cubic-bezier(.3,.85,.3,1), r .5s ease, fill .45s ease, opacity .55s ease}
-.wrap.focus .d_prioritize{fill:var(--pri-strong); opacity:1; filter:drop-shadow(0 2px 5px rgba(10,132,214,.5))}
-.wrap.focus .d_validate{fill:var(--val); opacity:.95}
-.wrap.focus .d_rest{fill:var(--neutral); opacity:.3}
+.flow{position:relative; width:1.1rem; height:1.4rem}
+.flow::before{content:"→"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:var(--pri-strong); font-weight:700; opacity:.7}
+.wrap.reading .flow::before,.wrap.reset .flow::before{opacity:.35}
 
-/* Live count — the concentration, front and centre. */
-.count{position:absolute; left:.1rem; top:.1rem; display:flex; flex-direction:column; line-height:1; pointer-events:none;
-  text-shadow:0 1px 0 #fff, 0 0 10px #fff, 0 0 18px #fff}
-.count strong{font-family:var(--font-display),inherit; font-size:clamp(2.6rem,4.4vw,3.6rem); font-weight:600; letter-spacing:-.04em; color:var(--pri-strong); transition:color .4s ease}
-.wrap.market .count strong,.wrap.reading .count strong{color:var(--dim)}
-.count span{margin-top:.2rem; font-family:var(--font-display),inherit; font-size:.82rem; font-weight:700; letter-spacing:-.01em; color:var(--text)}
-.count small{margin-top:.15rem; color:var(--muted); font-size:.68rem; font-weight:520}
+/* MARKET */
+.market{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:.26rem}
+.mRow{display:flex; align-items:center; gap:.45rem; padding:.28rem .4rem; border:1px solid transparent; border-radius:.5rem; transition:background .35s ease, border-color .35s ease, opacity .4s ease}
+.mRow span{font-size:.78rem; font-weight:520; color:var(--body); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.mDot{width:.42rem; height:.42rem; border-radius:50%; background:var(--neutral); flex:none}
+.mDot[data-role="focus"]{background:var(--pri-strong)} .mDot[data-role="validate"]{background:var(--val-strong)}
+.wrap.focus .mRow[data-role="focus"]{background:var(--pri-bg); border-color:#c7e2f2}
+.wrap.focus .mRow[data-role="focus"] span{color:var(--text); font-weight:640}
+.wrap.focus .mRow[data-role="validate"]{background:var(--val-bg); border-color:#ecd6a8}
+.wrap.focus .mRow[data-role="rest"]{opacity:.62}
 
-/* Decision legend + the "how". */
-.legend{display:flex; flex-wrap:wrap; gap:.4rem 1.1rem; padding-top:.15rem}
-.lg{display:inline-flex; align-items:center; gap:.4rem; color:var(--body); font-size:.76rem; font-weight:560}
-.lg i{width:.55rem; height:.55rem; border-radius:50%}
-.lg[data-d="prioritize"] i{background:var(--pri-strong)} .lg[data-d="validate"] i{background:var(--val)} .lg[data-d="rest"] i{background:var(--neutral)}
-.why{margin:0; color:var(--muted); font-size:.8rem; line-height:1.45; max-width:36rem}
+/* INTELLIGENCE */
+.reads{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:.42rem}
+.crit{display:flex; align-items:center; justify-content:space-between; gap:.4rem; padding:.34rem .5rem; border-radius:.5rem; background:#f2f7fb; border:1px solid #e3edf3; transition:background .4s ease, border-color .4s ease}
+.crit[data-hot="true"]{background:var(--pri-bg); border-color:#c7e2f2}
+.critName{font-size:.72rem; font-weight:560; color:var(--body)}
+.crit[data-hot="true"] .critName{color:var(--pri); font-weight:750}
+.meter{display:inline-flex; gap:2.5px}
+.meter i{width:5px; height:5px; border-radius:50%; background:#d4dde6; transition:background .4s ease}
+.meter i.on{background:var(--neutral)}
+.crit[data-hot="true"] .meter i.on{background:var(--pri-strong)}
+.wrap.reset .reads{opacity:.3}
+
+/* FOCUS */
+.result{display:flex; flex-direction:column; gap:.5rem; animation:rise .5s cubic-bezier(.2,.7,.2,1)}
+.wrap.reset .result,.wrap.reading .result{opacity:.35}
+.card{position:relative; padding:.6rem .7rem .62rem .8rem; border-radius:.65rem; background:#fff; border:1px solid #cfe4f1;
+  box-shadow:0 16px 32px -22px rgba(3,107,159,.3)}
+.card::before{content:""; position:absolute; left:0; top:.6rem; bottom:.6rem; width:3px; border-radius:3px; background:linear-gradient(180deg,#1aa9e8,#0a84d6)}
+.card[data-d="validate"]{border-color:#ecd6a8; box-shadow:0 14px 28px -22px rgba(217,154,42,.32)}
+.card[data-d="validate"]::before{background:linear-gradient(180deg,#eab54e,#d99a2a)}
+.chip{display:inline-block; padding:.16rem .5rem; border-radius:999px; font-size:.56rem; font-weight:850; letter-spacing:.05em; text-transform:uppercase; font-family:var(--font-display),inherit; color:#fff; background:linear-gradient(180deg,#1aa9e8,#0a84d6)}
+.card[data-d="validate"] .chip{background:linear-gradient(180deg,#eab54e,#d99a2a); color:#3a2c0c}
+.cardName{display:block; margin:.35rem 0 0; font-family:var(--font-display),inherit; font-size:.98rem; font-weight:600; letter-spacing:-.02em; color:var(--text)}
+.cardWhy{display:block; margin-top:.32rem; color:var(--body); font-size:.76rem; line-height:1.35}
+.cardWhy em{display:block; color:var(--muted); font-style:normal; font-size:.55rem; font-weight:850; letter-spacing:.09em; text-transform:uppercase; font-family:var(--font-display),inherit}
+.card[data-d="validate"] .cardWhy em{color:var(--val)}
+.cardEv{display:block; margin-top:.32rem; padding-top:.32rem; border-top:1px solid var(--line); color:var(--dim); font-size:.68rem}
+
 .readout{margin:.1rem 0 0; color:var(--pri); font-size:.76rem; font-weight:560; line-height:1.4; min-height:1.05rem}
 
+@keyframes rise{from{opacity:.35; transform:translateY(8px)}to{opacity:1; transform:none}}
 @keyframes spinhint{0%,80%,100%{transform:rotate(0)}88%{transform:rotate(-180deg)}96%{transform:rotate(-360deg)}}
 
+/* Mobile — the three stages stack; arrows point down. */
 @media(max-width:760px){
   .instrument{padding:1.05rem 1rem 1rem; border-radius:1.1rem}
   .objTabs{width:100%}
-  .field{aspect-ratio:440/280}
-  .count strong{font-size:2.4rem}
+  .pipe{grid-template-columns:1fr; gap:.7rem}
+  .flow{width:100%; height:1rem}
+  .flow::before{content:"↓"}
 }
 @media(prefers-reduced-motion:reduce){
-  .dot,.zone,.count strong{transition:none}
+  .mRow,.crit,.meter i,.result,.flow::before{transition:none; animation:none}
   .objHint i{animation:none}
 }

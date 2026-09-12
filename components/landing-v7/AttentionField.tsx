@@ -1,109 +1,100 @@
 "use client";
 
-// LeadLens hero — "noise → focus". A product explainer, not a company sample: a whole market of
-// companies (a field of ~48 dots) that LeadLens reads and concentrates into the few worth pursuing
-// now. Pick a commercial objective and the market re-reads — most companies recede, a few brighten
-// (Prioritize / Validate) and pull into focus, and a live count shows the concentration ("3 of 48
-// worth pursuing now"). This teaches what LeadLens IS — turning commercial noise into a disciplined
-// focus — through interaction. No opaque scores, no contact lists, no fake activity; every dot is a
-// company, colour is the canonical Decision. Synthetic, illustrative.
+// LeadLens hero — "Market → LeadLens reads → Focus".
+// A product explainer with three legible stages: a researched MARKET (a set of companies), the
+// INTELLIGENCE LeadLens applies (weighing recent change, evidence, timing and uncertainty for your
+// objective), and the resulting FOCUS (the few worth pursuing now, with why-now, an evidence cue and
+// the open question). Pick a commercial objective and the whole pipeline re-reads: the weighting
+// shifts, the market re-highlights, a different focus emerges. No opaque scores, no fake activity,
+// no contact list — colour is the canonical Decision. Synthetic, illustrative.
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { LandingLocale } from "@/lib/landing/v2-copy";
 import styles from "./attention-field.module.css";
 
-type Phase = "market" | "reading" | "focus";
+type Phase = "reset" | "reading" | "focus";
+type Reading = { focus: number; validate: number; change: string; evidence: string; open: string };
 
 interface Copy {
   aria: string; objectiveLabel: string; objectives: string[]; objectivesShort: string[]; tryHint: string;
-  worthPre: string; worthPost: string; poolWord: string; considered: string; prioritize: string; validate: string; rest: string;
-  why: string; readout: Record<Phase, string>;
+  stages: { market: string; reading: string; focus: string };
+  criteria: string[]; sectors: string[]; chips: { prioritize: string; validate: string };
+  whyNow: string; evidence: string; openQuestion: string;
+  readout: Record<Phase, string>; readings: Reading[]; weights: number[][];
 }
 
 const EN: Copy = {
-  aria: "How LeadLens turns a whole market into a few companies worth pursuing — interactive",
+  aria: "How LeadLens reads a market into a commercial focus — interactive",
   objectiveLabel: "Your commercial objective",
   objectives: ["Expand into a new market", "Find new partners", "Win new clients", "Prioritize target accounts"],
   objectivesShort: ["New market", "New partners", "New clients", "Target accounts"],
-  tryHint: "Switch the objective — watch the market re-read",
-  worthPre: "", worthPost: "worth pursuing now", poolWord: "companies", considered: "of 48 in the market",
-  prioritize: "Prioritize", validate: "Validate", rest: "The rest can wait",
-  why: "LeadLens weighs recent change, evidence and timing — and keeps the uncertainty visible.",
+  tryHint: "Pick an objective — the reading updates",
+  stages: { market: "The market", reading: "LeadLens reads", focus: "Worth pursuing now" },
+  criteria: ["Recent change", "Evidence", "Timing", "Uncertainty"],
+  sectors: ["Regional logistics", "Multi-site healthcare", "Specialty manufacturing", "Food distribution", "Industrial services", "Field services"],
+  chips: { prioritize: "Prioritize", validate: "Validate" },
+  whyNow: "Why now", evidence: "Evidence", openQuestion: "Open question",
   readout: {
-    market: "A whole market of companies you could pursue.",
-    reading: "LeadLens reads the market for your objective…",
-    focus: "It concentrates commercial effort on the few worth pursuing now.",
+    reset: "A researched market of companies.",
+    reading: "Weighing recent change, evidence, timing and uncertainty…",
+    focus: "A few companies justify attention now — with the reason attached.",
   },
+  readings: [
+    { focus: 0, validate: 3, change: "Opened a regional hub · 9 days ago", evidence: "Company announcement · dated", open: "Central or per-region procurement?" },
+    { focus: 2, validate: 1, change: "New production certification · 12 days ago", evidence: "Trade registry · dated", open: "Sourcing decided at group level?" },
+    { focus: 5, validate: 4, change: "Won a large service contract · 6 days ago", evidence: "Regional press · dated", open: "Is the budget owner identified?" },
+    { focus: 1, validate: 0, change: "Announced two new sites · 15 days ago", evidence: "Business journal · dated", open: "Does the change affect your category?" },
+  ],
+  weights: [[3, 2, 3, 1], [2, 3, 2, 2], [2, 3, 3, 1], [3, 2, 2, 3]],
 };
 
 const ES: Copy = {
-  aria: "Cómo LeadLens convierte todo un mercado en unas pocas empresas que vale la pena perseguir — interactivo",
+  aria: "Cómo LeadLens lee un mercado hasta un foco comercial — interactivo",
   objectiveLabel: "Tu objetivo comercial",
   objectives: ["Entrar a un nuevo mercado", "Encontrar socios", "Ganar nuevos clientes", "Priorizar cuentas objetivo"],
   objectivesShort: ["Nuevo mercado", "Socios", "Clientes", "Cuentas objetivo"],
-  tryHint: "Cambia el objetivo — mira releerse el mercado",
-  worthPre: "", worthPost: "que vale la pena ahora", poolWord: "empresas", considered: "de 48 en el mercado",
-  prioritize: "Priorizar", validate: "Validar", rest: "El resto puede esperar",
-  why: "LeadLens pondera cambios recientes, evidencia y timing — y mantiene la incertidumbre a la vista.",
+  tryHint: "Elige un objetivo — la lectura se actualiza",
+  stages: { market: "El mercado", reading: "LeadLens lee", focus: "Vale la pena ahora" },
+  criteria: ["Cambio reciente", "Evidencia", "Timing", "Incertidumbre"],
+  sectors: ["Logística regional", "Salud multisede", "Manufactura especializada", "Distribución de alimentos", "Servicios industriales", "Servicios de campo"],
+  chips: { prioritize: "Priorizar", validate: "Validar" },
+  whyNow: "Por qué ahora", evidence: "Evidencia", openQuestion: "Pregunta abierta",
   readout: {
-    market: "Todo un mercado de empresas que podrías perseguir.",
-    reading: "LeadLens lee el mercado para tu objetivo…",
-    focus: "Concentra el esfuerzo comercial en las pocas que valen la pena ahora.",
+    reset: "Un mercado investigado de empresas.",
+    reading: "Ponderando cambio reciente, evidencia, timing e incertidumbre…",
+    focus: "Unas pocas empresas merecen atención ahora — con la razón adjunta.",
   },
+  readings: [
+    { focus: 0, validate: 3, change: "Abrió un hub regional · hace 9 días", evidence: "Anuncio de la empresa · fechado", open: "¿Compras central o por región?" },
+    { focus: 2, validate: 1, change: "Nueva certificación de producción · hace 12 días", evidence: "Registro comercial · fechado", open: "¿Compras a nivel de grupo?" },
+    { focus: 5, validate: 4, change: "Ganó un contrato de servicios grande · hace 6 días", evidence: "Prensa regional · fechado", open: "¿Se identificó quién decide el presupuesto?" },
+    { focus: 1, validate: 0, change: "Anunció dos nuevas sedes · hace 15 días", evidence: "Diario de negocios · fechado", open: "¿El cambio afecta tu categoría?" },
+  ],
+  weights: [[3, 2, 3, 1], [2, 3, 2, 2], [2, 3, 3, 1], [3, 2, 2, 3]],
 };
 
 const COPY: Record<LandingLocale, Copy> = { en: EN, es: ES, pt: EN, ja: EN };
-
-// ── The market: 48 companies at deterministic phyllotaxis (golden-angle) positions. ──
-const N = 48;
-const CX = 168, CY = 158, MAXR = 150;
-const BASE = Array.from({ length: N }, (_, i) => {
-  const rr = Math.sqrt((i + 0.5) / N) * MAXR;
-  const a = i * 2.399963229; // golden angle
-  return { x: +(CX + rr * Math.cos(a)).toFixed(1), y: +(CY + rr * Math.sin(a)).toFixed(1) };
-});
-// Focus cluster (right side) the chosen companies pull into.
-const FOCAL = [
-  { x: 356, y: 108 }, { x: 394, y: 150 }, { x: 352, y: 192 },
-  { x: 392, y: 106 }, { x: 396, y: 210 }, { x: 358, y: 150 },
-];
-// Per-objective winners (fixed, illustrative). pri = Prioritize, val = Validate.
-const OBJ = [
-  { pri: [5, 22], val: [11, 31, 40] },
-  { pri: [8, 27, 44], val: [3, 19] },
-  { pri: [14, 35], val: [2, 24, 46] },
-  { pri: [1, 18, 38], val: [9, 29] },
-];
 
 export function AttentionField({ locale }: { locale: LandingLocale }) {
   const c = COPY[locale] ?? EN;
   const [obj, setObj] = useState(0);
   const [phase, setPhase] = useState<Phase>("focus");
   const reduce = useRef(false);
-  const o = OBJ[obj];
+  const r = c.readings[obj];
+  const w = c.weights[obj];
 
   useEffect(() => {
     reduce.current = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
     if (reduce.current) { setPhase("focus"); return; }
-    setPhase("market");
-    const t1 = setTimeout(() => setPhase("reading"), 260);
-    const t2 = setTimeout(() => setPhase("focus"), 900);
+    setPhase("reset");
+    const t1 = setTimeout(() => setPhase("reading"), 240);
+    const t2 = setTimeout(() => setPhase("focus"), 820);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [obj]);
 
-  // Role + target position + focal slot for each company under the current objective.
-  const dots = useMemo(() => {
-    const slot = new Map<number, number>();
-    [...o.pri, ...o.val].forEach((idx, k) => slot.set(idx, k));
-    return BASE.map((p, i) => {
-      const role = o.pri.includes(i) ? "prioritize" : o.val.includes(i) ? "validate" : "rest";
-      const target = role === "rest" ? p : FOCAL[slot.get(i) ?? 0];
-      return { i, role, base: p, target };
-    });
-  }, [obj]);
-
+  const marketRole = useMemo(() => c.sectors.map((_, i) =>
+    i === r.focus ? "focus" : i === r.validate ? "validate" : "rest"), [c.sectors, r.focus, r.validate]);
   const concentrated = phase === "focus";
-  const priCount = o.pri.length;
 
   return (
     <section className={`${styles.wrap} ${styles[phase]}`} aria-label={c.aria}>
@@ -120,35 +111,58 @@ export function AttentionField({ locale }: { locale: LandingLocale }) {
           <span className={styles.objHint}><i aria-hidden="true">↻</i> {c.tryHint}</span>
         </div>
 
-        <div className={styles.stage}>
-          <svg className={styles.field} viewBox="0 0 440 320" preserveAspectRatio="xMidYMid meet"
-            role="img" aria-label={`${N} ${c.considered}. ${concentrated ? priCount : N} ${c.worthPost}.`}>
-            <defs>
-              <radialGradient id="af-glow" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stopColor="rgba(26,169,232,.22)" /><stop offset="100%" stopColor="rgba(26,169,232,0)" />
-              </radialGradient>
-            </defs>
-            <circle className={styles.zone} cx="374" cy="158" r="78" fill="url(#af-glow)" />
-            {dots.map((d) => {
-              const at = concentrated ? d.target : d.base;
-              return <circle key={d.i} className={`${styles.dot} ${styles[`d_${d.role}`]}`}
-                cx={at.x} cy={at.y} r={concentrated && d.role !== "rest" ? (d.role === "prioritize" ? 6.5 : 5) : 3.4} />;
-            })}
-          </svg>
+        <div className={styles.pipe}>
+          {/* MARKET */}
+          <div className={styles.stage}>
+            <span className={styles.stageLabel}>{c.stages.market}</span>
+            <ul className={styles.market}>
+              {c.sectors.map((s, i) => (
+                <li key={s} className={styles.mRow} data-role={marketRole[i]}>
+                  <i className={styles.mDot} data-role={marketRole[i]} aria-hidden="true" />
+                  <span>{s}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-          <div className={styles.count} aria-hidden="true">
-            <strong>{concentrated ? priCount : N}</strong>
-            <span>{concentrated ? c.worthPost : c.poolWord}</span>
-            <small>{c.considered}</small>
+          <span className={styles.flow} aria-hidden="true" />
+
+          {/* INTELLIGENCE */}
+          <div className={styles.stage}>
+            <span className={styles.stageLabel} data-lens="1">{c.stages.reading}</span>
+            <ul className={styles.reads}>
+              {c.criteria.map((cr, i) => (
+                <li key={cr} className={styles.crit} data-hot={w[i] >= 3}>
+                  <span className={styles.critName}>{cr}</span>
+                  <span className={styles.meter} aria-hidden="true">
+                    {[0, 1, 2].map((b) => <i key={b} className={b < w[i] ? styles.on : ""} />)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <span className={styles.flow} aria-hidden="true" />
+
+          {/* FOCUS */}
+          <div className={styles.stage} data-live={concentrated}>
+            <span className={styles.stageLabel} data-focus="1">{c.stages.focus}</span>
+            <div className={styles.result} key={obj}>
+              <div className={styles.card} data-d="prioritize">
+                <span className={styles.chip} data-d="prioritize">{c.chips.prioritize}</span>
+                <b className={styles.cardName}>{c.sectors[r.focus]}</b>
+                <span className={styles.cardWhy}><em>{c.whyNow}</em>{r.change}</span>
+                <span className={styles.cardEv}>{r.evidence}</span>
+              </div>
+              <div className={styles.card} data-d="validate">
+                <span className={styles.chip} data-d="validate">{c.chips.validate}</span>
+                <b className={styles.cardName}>{c.sectors[r.validate]}</b>
+                <span className={styles.cardWhy}><em>{c.openQuestion}</em>{r.open}</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className={styles.legend}>
-          <span className={styles.lg} data-d="prioritize"><i />{c.prioritize}</span>
-          <span className={styles.lg} data-d="validate"><i />{c.validate}</span>
-          <span className={styles.lg} data-d="rest"><i />{c.rest}</span>
-        </div>
-        <p className={styles.why}>{c.why}</p>
         <p className={styles.readout} aria-live="polite">{c.readout[phase]}</p>
       </div>
     </section>
