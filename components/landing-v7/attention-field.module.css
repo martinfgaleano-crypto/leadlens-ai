@@ -11,10 +11,10 @@
 }
 
 /* The instrument window — capped + centred so it never over-stretches when the hero is single-column */
-.instrument{position:relative; display:flex; flex-direction:column; gap:1.15rem; max-width:57rem; margin-inline:auto;
-  padding:1.4rem 1.5rem 1.25rem; border:1px solid var(--line); border-radius:1.35rem;
-  background:linear-gradient(180deg,#ffffff 0%, #f7fbfe 100%);
-  box-shadow:0 44px 84px -48px rgba(9,40,80,.34), 0 2px 10px rgba(9,40,80,.05)}
+.instrument{position:relative; display:flex; flex-direction:column; gap:1.05rem; max-width:58rem; margin-inline:auto;
+  padding:1.3rem 1.4rem 1.15rem; border:1px solid #dde8f0; border-radius:1.35rem;
+  background:linear-gradient(180deg,#ffffff 0%, #f6fafe 100%);
+  box-shadow:0 50px 90px -46px rgba(9,40,80,.4), 0 3px 12px rgba(9,40,80,.06)}
 .instrument::before{content:""; position:absolute; inset:0 0 auto; height:1px; border-radius:1.35rem 1.35rem 0 0;
   background:linear-gradient(90deg,rgba(26,169,232,0),rgba(26,169,232,.5),rgba(26,169,232,0))}
 
@@ -43,9 +43,8 @@
 .conn{width:100%; height:100%; min-height:7rem; overflow:visible}
 .conn path{fill:none; stroke:var(--pri-strong); stroke-width:1.1; vector-effect:non-scaling-stroke; opacity:.28}
 .conn .connMid{opacity:.4}
-.conn .connPri{stroke:var(--pri-strong); stroke-width:1.4; opacity:.62}
-.conn .connVal{stroke:var(--val-strong); stroke-width:1.4; opacity:.62}
-.conn .connFaint{opacity:.13}
+.conn .connPri{stroke:var(--pri-strong); stroke-width:1.7; opacity:.8; stroke-linecap:round}
+.conn .connVal{stroke:var(--val-strong); stroke-width:1.7; opacity:.8; stroke-linecap:round}
 .wrap.reset .conn,.wrap.reading .conn{opacity:.55; transition:opacity .35s ease}
 
 /* STAGE 1 — MARKET (a broad researched universe) */
@@ -59,7 +58,7 @@
 .wrap.focus .mRow[data-role="focus"] span{color:var(--text); font-weight:650}
 .wrap.focus .mRow[data-role="validate"]{background:var(--val-bg); border-color:var(--val-line)}
 .wrap.focus .mRow[data-role="validate"] span{color:var(--text); font-weight:600}
-.wrap.focus .mRow[data-role="rest"]{opacity:.5}
+.wrap.focus .mRow[data-role="rest"]{opacity:.72}
 .marketMore{display:flex; align-items:center; gap:.45rem; padding:.12rem .44rem 0; color:var(--dim); font-size:.68rem; font-weight:500}
 .marketMore::before{content:""; width:.62rem; height:.62rem; border-radius:2.5px; flex:none;
   background:repeating-linear-gradient(90deg,var(--neutral) 0 2px,transparent 2px 4px); opacity:.6}
@@ -114,25 +113,52 @@
 @keyframes rise{from{opacity:.35; transform:translateY(9px)}to{opacity:1; transform:none}}
 @keyframes spinhint{0%,80%,100%{transform:rotate(0)}88%{transform:rotate(-180deg)}96%{transform:rotate(-360deg)}}
 
+/* ===== MOBILE COMPOSITION (rendered only ≤760 via the media toggle; hidden otherwise) ===== */
+.mobile{display:none; flex-direction:column; gap:.34rem}
+.mContext{display:flex; flex-direction:column; gap:.34rem; padding:.1rem .1rem 0}
+.mBand{display:flex; align-items:center; flex-wrap:wrap; gap:.3rem .5rem}
+.mBandLabel{color:var(--dim); font-size:.56rem; font-weight:850; letter-spacing:.1em; text-transform:uppercase; font-family:var(--font-display),inherit; flex:none}
+.mBand+.mBand .mBandLabel{color:var(--pri)}
+.mChips{display:flex; flex-wrap:wrap; gap:.28rem}
+.mChip{padding:.2rem .4rem; border-radius:.42rem; background:#fff; border:1px solid var(--line); font-size:.72rem; color:var(--body); white-space:nowrap}
+.mChipMore{padding:.2rem .38rem; border-radius:.42rem; border:1px dashed var(--neutral); color:var(--dim); font-size:.7rem; font-weight:650}
+.mLens{display:flex; flex-wrap:wrap; gap:.26rem}
+.mLensItem{padding:.2rem .46rem; border-radius:999px; font-size:.72rem; font-weight:600; border:1px solid var(--line); background:#fff; color:var(--muted)}
+.mLensItem[data-w="2"]{color:var(--body)}
+.mLensItem[data-w="3"]{background:var(--pri-bg); border-color:var(--pri-line); color:var(--pri); font-weight:800}
+.mArrow{align-self:center; width:1.2rem; height:.55rem; display:flex; align-items:center; justify-content:center}
+.mArrow::before{content:"↓"; color:var(--dim); font-size:.78rem; font-weight:700}
+.mFocus{display:flex; flex-direction:column; gap:.38rem; animation:rise .5s cubic-bezier(.2,.7,.2,1)}
+.mFocusLabel{display:flex; align-items:center; gap:.4rem; color:var(--pri); font-size:.58rem; font-weight:850; letter-spacing:.1em; text-transform:uppercase; font-family:var(--font-display),inherit}
+.mFocusLabel::before{content:""; width:.3rem; height:.74rem; border-radius:2px; background:linear-gradient(180deg,#1aa9e8,#0a84d6)}
+.mCard{position:relative; padding:.7rem .8rem .72rem .9rem; border-radius:.8rem; background:#fff; border:1px solid var(--pri-line); box-shadow:0 22px 38px -26px rgba(3,107,159,.42)}
+.mCard::before{content:""; position:absolute; left:0; top:.6rem; bottom:.6rem; width:3.5px; border-radius:3px; background:linear-gradient(180deg,#1aa9e8,#0a84d6)}
+.mCardName{display:block; margin:.34rem 0 0; font-family:var(--font-display),inherit; font-size:1.12rem; font-weight:600; letter-spacing:-.02em; color:var(--text); line-height:1.08}
+.mValidate{position:relative; display:flex; flex-direction:column; gap:.22rem; padding:.52rem .65rem .54rem .75rem; border-radius:.68rem; background:#fff; border:1px solid var(--val-line)}
+.mValidate::before{content:""; position:absolute; left:0; top:.5rem; bottom:.5rem; width:3px; border-radius:3px; background:linear-gradient(180deg,#eab54e,#d99a2a)}
+.mValidate .chip{background:linear-gradient(180deg,#eab54e,#d99a2a); color:#3a2c0c; align-self:flex-start}
+.mValName{font-family:var(--font-display),inherit; font-size:.94rem; font-weight:600; letter-spacing:-.02em; color:var(--text)}
+.mValOpen{color:var(--body); font-size:.76rem; line-height:1.32}
+.mValOpen em{margin-right:.32rem; color:var(--val); font-style:normal; font-weight:850; font-size:.53rem; letter-spacing:.09em; text-transform:uppercase; font-family:var(--font-display),inherit}
+
 /* Tablet — the instrument is full width (single-column hero); keep it horizontal but tighten */
 @media(min-width:761px) and (max-width:1024px){
   .pipe{grid-template-columns:minmax(0,.9fr) minmax(30px,.28fr) minmax(0,1.24fr) minmax(30px,.28fr) minmax(0,1.08fr); gap:.1rem}
 }
 
-/* Mobile — the three stages stack; connectors become a downward chevron */
+/* Mobile ≤760 — hide the desktop pipeline entirely and show the compact mobile composition.
+   Objective control becomes a 2×2 grid with 44px tap targets. Desktop (≥761) is untouched. */
 @media(max-width:760px){
-  .instrument{padding:1.15rem 1.05rem 1.05rem; border-radius:1.15rem; gap:.95rem}
-  .objTabs{width:100%}
-  .pipe{grid-template-columns:1fr; gap:.55rem; align-items:stretch}
-  .stage[data-kind="lens"]{justify-content:flex-start}
-  .flow{min-height:1.5rem; align-items:center}
-  .conn{display:none}
-  .flow::after{content:"›"; color:var(--pri-strong); font-weight:800; font-size:1.05rem; transform:rotate(90deg);
-    width:1.5rem; height:1.5rem; display:flex; align-items:center; justify-content:center;
-    border-radius:50%; background:#fff; border:1px solid var(--pri-line); box-shadow:0 4px 10px -5px rgba(10,90,150,.4)}
-  .engine{padding:.55rem}
+  .instrument{padding:.9rem .85rem .85rem; border-radius:1.15rem; gap:.52rem; max-width:none}
+  .head{gap:.45rem}
+  .objTabs{display:grid; grid-template-columns:1fr 1fr; gap:.28rem; width:100%}
+  .objTab{width:100%; justify-content:center; min-height:44px; display:inline-flex; align-items:center; font-size:.85rem}
+  .objHint{display:none}
+  .pipe{display:none}
+  .mobile{display:flex}
+  .readout{margin-top:.05rem; font-size:.75rem}
 }
 @media(prefers-reduced-motion:reduce){
-  .mRow,.dim,.dim::before,.dimName,.dimTag,.dimSub,.result,.conn,.mSwatch{transition:none; animation:none}
+  .mRow,.dim,.dim::before,.dimName,.dimTag,.dimSub,.result,.conn,.mSwatch,.mFocus,.mLensItem{transition:none; animation:none}
   .objHint i{animation:none}
 }

@@ -96,13 +96,11 @@ function ConnectorIn() {
 }
 
 function ConnectorOut() {
-  // A few justified opportunities emerging from the engine.
+  // Two precise, causal paths: cyan docks into PRIORITIZE, amber docks into VALIDATE.
   return (
     <svg className={styles.conn} viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-      <path className={styles.connFaint} d="M0,50 C42,50 56,16 100,16" />
-      <path className={styles.connFaint} d="M0,50 C42,50 56,84 100,84" />
-      <path className={styles.connPri} d="M0,50 C46,50 56,31 100,31" />
-      <path className={styles.connVal} d="M0,50 C46,50 56,70 100,70" />
+      <path className={styles.connPri} d="M0,50 C40,50 74,37 100,37" />
+      <path className={styles.connVal} d="M0,50 C40,50 74,84 100,84" />
     </svg>
   );
 }
@@ -195,6 +193,42 @@ export function AttentionField({ locale }: { locale: LandingLocale }) {
                   <span><em>{c.openQuestion}</em>{r.open}</span>
                 </span>
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* MOBILE — a compact, payoff-first composition (shares the same state as the desktop pipe) */}
+        <div className={styles.mobile}>
+          <div className={styles.mContext}>
+            <div className={styles.mBand}>
+              <span className={styles.mBandLabel}>{c.stages.market}</span>
+              <div className={styles.mChips}>
+                {c.sectors.slice(0, 2).map((s) => <span key={s} className={styles.mChip}>{s}</span>)}
+                <span className={styles.mChipMore}>+{c.sectors.length - 2}</span>
+              </div>
+            </div>
+            <div className={styles.mBand}>
+              <span className={styles.mBandLabel}>{c.stages.reading}</span>
+              <div className={styles.mLens}>
+                {c.criteria.map((cr, i) => <span key={cr} className={styles.mLensItem} data-w={w[i]}>{cr}</span>)}
+              </div>
+            </div>
+          </div>
+
+          <span className={styles.mArrow} aria-hidden="true" />
+
+          <div className={styles.mFocus} key={obj}>
+            <span className={styles.mFocusLabel}>{c.stages.focus}</span>
+            <div className={styles.mCard} data-d="prioritize">
+              <div className={styles.cardTop}><span className={styles.chip}>{c.chips.prioritize}</span></div>
+              <b className={styles.mCardName}>{c.sectors[r.focus]}</b>
+              <span className={styles.cardWhy}><em>{c.whyNow}</em>{r.change}</span>
+              <span className={styles.cardEv}>{r.evidence}</span>
+            </div>
+            <div className={styles.mValidate} data-d="validate">
+              <span className={styles.chip}>{c.chips.validate}</span>
+              <b className={styles.mValName}>{c.sectors[r.validate]}</b>
+              <span className={styles.mValOpen}><em>{c.openQuestion}</em>{r.open}</span>
             </div>
           </div>
         </div>
