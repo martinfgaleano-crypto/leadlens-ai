@@ -1,66 +1,138 @@
-/* LeadLens hero — "noise → focus". A whole market of companies (a field of dots) that LeadLens reads
-   and concentrates into the few worth pursuing now. Light + premium; decision colour is the accent. */
+/* LeadLens hero explainer — one composed instrument: MARKET → LEADLENS READS → WORTH PURSUING NOW.
+   Three legible stages connected by a flow; predominantly light; decision colour is the only accent.
+   Pick an objective and the whole reading re-resolves left → right. Premium, calm, product-native. */
 .wrap{
-  --pri:#036b9f; --pri-strong:#0a84d6; --val:#d99a2a; --neutral:#b8c5d2;
-  --line:#e4ecf2; --text:#0a1420; --body:#3a485b; --muted:#65717e; --dim:#8593a3;
+  --pri:#036b9f; --pri-strong:#0a84d6; --pri-bright:#1aa9e8; --pri-bg:rgba(9,150,220,.08); --pri-line:#c4e0f2;
+  --val:#956018; --val-strong:#d99a2a; --val-bg:rgba(217,154,42,.09); --val-line:#ecd6a8;
+  --line:#e6eef4; --line-soft:#eef4f8; --text:#0a1420; --body:#3a485b; --muted:#67737f; --dim:#8a97a5; --neutral:#b3bfcb;
   min-width:0; color:var(--text);
 }
 
-.instrument{
-  position:relative; display:flex; flex-direction:column; gap:.9rem;
-  padding:1.2rem 1.3rem 1.1rem; border:1px solid var(--line); border-radius:1.25rem;
-  background:linear-gradient(180deg,#ffffff 0%, #f6fafd 100%);
-  box-shadow:0 34px 66px -40px rgba(10,25,55,.3), 0 2px 8px rgba(10,25,55,.05);
-}
+/* The instrument window */
+.instrument{position:relative; display:flex; flex-direction:column; gap:1.05rem;
+  padding:1.35rem 1.4rem 1.2rem; border:1px solid var(--line); border-radius:1.3rem;
+  background:linear-gradient(180deg,#ffffff 0%, #f7fbfe 100%);
+  box-shadow:0 40px 80px -46px rgba(9,40,80,.34), 0 2px 10px rgba(9,40,80,.05)}
+.instrument::before{content:""; position:absolute; inset:0 0 auto; height:1px; border-radius:1.3rem 1.3rem 0 0;
+  background:linear-gradient(90deg,rgba(26,169,232,0),rgba(26,169,232,.5),rgba(26,169,232,0))}
 
-/* Objective — an obvious segmented control (the interaction). */
-.head{display:flex; flex-direction:column; align-items:flex-start; gap:.5rem}
-.objEyebrow{color:var(--pri); font-size:.62rem; font-weight:850; letter-spacing:.13em; text-transform:uppercase; font-family:var(--font-display),inherit}
-.objTabs{display:inline-flex; flex-wrap:wrap; gap:.25rem; padding:.26rem; border:1px solid #dbe6ee; border-radius:.75rem; background:#eef4f8}
-.objTab{padding:.4rem .7rem; border:0; border-radius:.55rem; background:transparent; color:#4a596b; font:inherit; font-size:.82rem; font-weight:640; letter-spacing:-.01em; cursor:pointer; transition:background .16s ease, color .16s ease, box-shadow .16s ease}
-.objTab:hover{background:rgba(255,255,255,.75); color:var(--text)}
-.objTabOn,.objTabOn:hover{color:#fff; background:linear-gradient(180deg,#1aa9e8,#0a84d6); box-shadow:0 6px 14px -6px rgba(10,132,214,.55)}
-.objTab:focus-visible{outline:2px solid rgba(10,132,214,.4); outline-offset:2px}
-.objHint{display:inline-flex; align-items:center; gap:.4rem; color:var(--muted); font-size:.74rem}
-.objHint i{color:var(--pri-strong); font-style:normal; font-size:.9rem; animation:spinhint 5.5s ease-in-out infinite}
+/* Objective — an obvious, calm segmented control */
+.head{display:flex; flex-direction:column; align-items:flex-start; gap:.55rem}
+.objEyebrow{color:var(--pri); font-size:.62rem; font-weight:850; letter-spacing:.14em; text-transform:uppercase; font-family:var(--font-display),inherit}
+.objTabs{display:inline-flex; flex-wrap:wrap; gap:.25rem; padding:.26rem; border:1px solid #dbe7ef; border-radius:.8rem; background:#eef4f8}
+.objTab{padding:.42rem .74rem; border:0; border-radius:.58rem; background:transparent; color:#4a596b; font:inherit; font-size:.82rem; font-weight:640; letter-spacing:-.01em; cursor:pointer; transition:background .18s ease, color .18s ease, box-shadow .18s ease}
+.objTab:hover{background:rgba(255,255,255,.8); color:var(--text)}
+.objTabOn,.objTabOn:hover{color:#fff; background:linear-gradient(180deg,#1aa9e8,#0a84d6); box-shadow:0 7px 15px -7px rgba(10,132,214,.6)}
+.objTab:focus-visible{outline:2px solid rgba(10,132,214,.45); outline-offset:2px}
+.objHint{display:inline-flex; align-items:center; gap:.42rem; color:var(--muted); font-size:.75rem}
+.objHint i{color:var(--pri-strong); font-style:normal; font-size:.88rem; animation:spinhint 6s ease-in-out infinite}
 
-/* Stage — the market field + the live count. */
-.stage{position:relative}
-.field{width:100%; aspect-ratio:440/300; display:block; overflow:visible}
-.zone{transition:opacity .6s ease}
-.wrap.market .zone,.wrap.reading .zone{opacity:0}
+/* Pipeline grid: market | flow | reads | flow | focus */
+.pipe{display:grid; grid-template-columns:1.26fr auto 1.12fr auto .84fr; gap:.3rem; align-items:center}
+.stage{display:flex; flex-direction:column; gap:.55rem; min-width:0; align-self:stretch}
+.stageHead{display:flex; align-items:center; gap:.4rem}
+.stageHead::before{content:""; width:.3rem; height:.72rem; border-radius:2px; background:var(--neutral); flex:none}
+.stage[data-kind="lens"] .stageHead::before,.stage[data-kind="focus"] .stageHead::before{background:linear-gradient(180deg,#1aa9e8,#0a84d6)}
+.stageLabel{color:var(--dim); font-size:.58rem; font-weight:850; letter-spacing:.11em; text-transform:uppercase; font-family:var(--font-display),inherit}
+.stage[data-kind="lens"] .stageLabel,.stage[data-kind="focus"] .stageLabel{color:var(--pri)}
 
-.dot{fill:var(--neutral); opacity:.55;
-  transition:cx .75s cubic-bezier(.3,.85,.3,1), cy .75s cubic-bezier(.3,.85,.3,1), r .5s ease, fill .45s ease, opacity .55s ease}
-.wrap.focus .d_prioritize{fill:var(--pri-strong); opacity:1; filter:drop-shadow(0 2px 5px rgba(10,132,214,.5))}
-.wrap.focus .d_validate{fill:var(--val); opacity:.95}
-.wrap.focus .d_rest{fill:var(--neutral); opacity:.3}
+/* Flow connector — a calm chevron node between stages */
+.flow{position:relative; align-self:center; width:1.5rem; height:1.5rem; display:flex; align-items:center; justify-content:center}
+.flow::before{content:""; position:absolute; width:1.4rem; height:1.4rem; border-radius:50%; background:#fff; border:1px solid var(--pri-line); box-shadow:0 4px 10px -5px rgba(10,90,150,.4)}
+.flow::after{content:"›"; position:relative; color:var(--pri-strong); font-weight:800; font-size:1.02rem; line-height:1; transform:translateY(-1px)}
+.wrap.reading .flow,.wrap.reset .flow{opacity:.5}
+.flow{transition:opacity .35s ease}
 
-/* Live count — the concentration, front and centre. */
-.count{position:absolute; left:.1rem; top:.1rem; display:flex; flex-direction:column; line-height:1; pointer-events:none;
-  text-shadow:0 1px 0 #fff, 0 0 10px #fff, 0 0 18px #fff}
-.count strong{font-family:var(--font-display),inherit; font-size:clamp(2.6rem,4.4vw,3.6rem); font-weight:600; letter-spacing:-.04em; color:var(--pri-strong); transition:color .4s ease}
-.wrap.market .count strong,.wrap.reading .count strong{color:var(--dim)}
-.count span{margin-top:.2rem; font-family:var(--font-display),inherit; font-size:.82rem; font-weight:700; letter-spacing:-.01em; color:var(--text)}
-.count small{margin-top:.15rem; color:var(--muted); font-size:.68rem; font-weight:520}
+/* STAGE 1 — MARKET (a broad researched universe) */
+.market{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:.24rem}
+.mRow{display:flex; align-items:center; gap:.5rem; padding:.3rem .42rem; border:1px solid transparent; border-radius:.55rem; transition:background .38s ease, border-color .38s ease, opacity .42s ease}
+.mRow span{font-size:.79rem; font-weight:520; color:var(--body); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.mSwatch{width:.5rem; height:.5rem; border-radius:2.5px; background:var(--neutral); flex:none; transition:background .38s ease, transform .38s ease}
+.mRow[data-role="focus"] .mSwatch{background:linear-gradient(150deg,#1aa9e8,#0a84d6)}
+.mRow[data-role="validate"] .mSwatch{background:linear-gradient(150deg,#eab54e,#d99a2a)}
+.wrap.focus .mRow[data-role="focus"]{background:var(--pri-bg); border-color:var(--pri-line)}
+.wrap.focus .mRow[data-role="focus"] span{color:var(--text); font-weight:650}
+.wrap.focus .mRow[data-role="validate"]{background:var(--val-bg); border-color:var(--val-line)}
+.wrap.focus .mRow[data-role="validate"] span{color:var(--text); font-weight:600}
+.wrap.focus .mRow[data-role="rest"]{opacity:.5}
+.marketMore{display:flex; align-items:center; gap:.45rem; padding:.1rem .42rem 0; color:var(--dim); font-size:.68rem; font-weight:500}
+.marketMore::before{content:""; width:.5rem; height:.5rem; border-radius:2.5px; flex:none;
+  background:repeating-linear-gradient(90deg,var(--neutral) 0 2px,transparent 2px 4px); opacity:.6}
 
-/* Decision legend + the "how". */
-.legend{display:flex; flex-wrap:wrap; gap:.4rem 1.1rem; padding-top:.15rem}
-.lg{display:inline-flex; align-items:center; gap:.4rem; color:var(--body); font-size:.76rem; font-weight:560}
-.lg i{width:.55rem; height:.55rem; border-radius:50%}
-.lg[data-d="prioritize"] i{background:var(--pri-strong)} .lg[data-d="validate"] i{background:var(--val)} .lg[data-d="rest"] i{background:var(--neutral)}
-.why{margin:0; color:var(--muted); font-size:.8rem; line-height:1.45; max-width:36rem}
-.readout{margin:.1rem 0 0; color:var(--pri); font-size:.76rem; font-weight:560; line-height:1.4; min-height:1.05rem}
+/* STAGE 2 — LEADLENS READS (the intelligence centre, subtly elevated) */
+.reads{margin:0; padding:.5rem .5rem; list-style:none; display:flex; flex-direction:column; gap:.34rem;
+  border:1px solid var(--pri-line); border-radius:.8rem;
+  background:linear-gradient(180deg,#fbfdff, #f2f8fd);
+  box-shadow:inset 0 1px 0 #fff, 0 18px 34px -28px rgba(10,90,150,.45)}
+.crit{display:flex; align-items:center; justify-content:space-between; gap:.4rem; padding:.36rem .5rem; border-radius:.5rem;
+  background:#fff; border:1px solid var(--line); position:relative; overflow:hidden;
+  transition:background .42s ease, border-color .42s ease, opacity .42s ease}
+.crit::before{content:""; position:absolute; left:0; top:0; bottom:0; width:2.5px; background:transparent; transition:background .42s ease}
+.critName{font-size:.74rem; font-weight:560; color:var(--body); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; transition:color .42s ease, font-weight .42s ease}
+.critTag{flex:none; margin-left:.3rem; font-size:.46rem; font-weight:850; letter-spacing:.04em; text-transform:uppercase; font-family:var(--font-display),inherit; color:var(--dim); opacity:0; transition:opacity .42s ease}
+/* weight tiers — qualitative emphasis, never a score or meter */
+.crit[data-w="1"]{background:var(--line-soft); border-color:var(--line)}
+.crit[data-w="1"] .critName{color:var(--muted); font-weight:520}
+.crit[data-w="2"]{background:#fff}
+.crit[data-w="3"]{background:var(--pri-bg); border-color:var(--pri-line)}
+.crit[data-w="3"]::before{background:linear-gradient(180deg,#1aa9e8,#0a84d6)}
+.crit[data-w="3"] .critName{color:var(--pri); font-weight:760}
+.crit[data-w="3"] .critTag{opacity:1; color:var(--pri-strong)}
+.wrap.reset .reads{opacity:.32}
 
+/* STAGE 3 — WORTH PURSUING NOW (commercial judgment, not a lead list) */
+.result{display:flex; flex-direction:column; gap:.55rem; animation:rise .52s cubic-bezier(.2,.7,.2,1)}
+.wrap.reset .result,.wrap.reading .result{opacity:.35}
+.card{position:relative; padding:.64rem .72rem .66rem .82rem; border-radius:.7rem; background:#fff; border:1px solid var(--pri-line);
+  box-shadow:0 20px 38px -26px rgba(3,107,159,.4)}
+.card::before{content:""; position:absolute; left:0; top:.62rem; bottom:.62rem; width:3px; border-radius:3px; background:linear-gradient(180deg,#1aa9e8,#0a84d6)}
+.card[data-d="validate"]{border-color:var(--val-line); box-shadow:0 16px 30px -26px rgba(217,154,42,.4)}
+.card[data-d="validate"]::before{background:linear-gradient(180deg,#eab54e,#d99a2a)}
+.cardTop{display:flex; align-items:center; gap:.45rem}
+.chip{display:inline-flex; align-items:center; padding:.17rem .5rem; border-radius:999px; font-size:.55rem; font-weight:850; letter-spacing:.06em; text-transform:uppercase; font-family:var(--font-display),inherit; color:#fff; background:linear-gradient(180deg,#1aa9e8,#0a84d6)}
+.card[data-d="validate"] .chip{background:linear-gradient(180deg,#eab54e,#d99a2a); color:#3a2c0c}
+.cardName{display:block; margin:.36rem 0 0; font-family:var(--font-display),inherit; font-size:1rem; font-weight:600; letter-spacing:-.02em; color:var(--text); line-height:1.1}
+.cardWhy{display:block; margin-top:.34rem; color:var(--body); font-size:.77rem; line-height:1.36}
+.cardWhy em{display:block; margin-bottom:.06rem; color:var(--muted); font-style:normal; font-size:.54rem; font-weight:850; letter-spacing:.09em; text-transform:uppercase; font-family:var(--font-display),inherit}
+.card[data-d="validate"] .cardWhy em{color:var(--val)}
+.cardEv{display:flex; align-items:center; gap:.36rem; margin-top:.4rem; padding-top:.36rem; border-top:1px solid var(--line-soft); color:var(--dim); font-size:.68rem}
+.cardEv::before{content:""; width:.62rem; height:.62rem; flex:none; border-radius:2px;
+  background:linear-gradient(135deg,#cbe6f6,#a9d5ef); box-shadow:inset 0 0 0 1px rgba(10,90,150,.18)}
+.cardOpen .cardWhy{display:flex; gap:.36rem; align-items:baseline}
+.qMark{flex:none; width:.9rem; height:.9rem; border-radius:50%; display:inline-flex; align-items:center; justify-content:center;
+  background:var(--val-bg); color:var(--val-strong); font-size:.6rem; font-weight:850; align-self:flex-start; margin-top:.1rem}
+
+.readout{display:flex; align-items:center; gap:.5rem; margin:.05rem 0 0; color:var(--pri); font-size:.77rem; font-weight:540; line-height:1.4; min-height:1.05rem}
+.readout::before{content:""; width:.42rem; height:.42rem; border-radius:50%; background:var(--pri-strong); flex:none; box-shadow:0 0 0 3px var(--pri-bg)}
+
+@keyframes rise{from{opacity:.35; transform:translateY(9px)}to{opacity:1; transform:none}}
 @keyframes spinhint{0%,80%,100%{transform:rotate(0)}88%{transform:rotate(-180deg)}96%{transform:rotate(-360deg)}}
 
+/* Tablet (single-column hero → the instrument is full width) — keep the pipeline horizontal */
+@media(max-width:1000px) and (min-width:761px){
+  .pipe{grid-template-columns:1fr auto 1fr auto 1.1fr; gap:.25rem}
+  .cardName{font-size:.95rem}
+}
+
+/* Cramped desktop zone (two-column hero, so the instrument is only ~half width): the three-across
+   pipeline gets tight — especially in longer languages — so stack it vertically and point the flow
+   down. Each stage then gets the instrument's full width and nothing truncates. */
+@media(min-width:1051px) and (max-width:1400px){
+  .pipe{grid-template-columns:1fr; gap:.5rem}
+  .flow{width:100%; height:1.4rem}
+  .flow::after{transform:rotate(90deg)}
+}
+
+/* Mobile — the three stages stack; the flow points down */
 @media(max-width:760px){
-  .instrument{padding:1.05rem 1rem 1rem; border-radius:1.1rem}
+  .instrument{padding:1.15rem 1.05rem 1.05rem; border-radius:1.15rem; gap:.95rem}
   .objTabs{width:100%}
-  .field{aspect-ratio:440/280}
-  .count strong{font-size:2.4rem}
+  .pipe{grid-template-columns:1fr; gap:.55rem}
+  .flow{width:100%; height:1.4rem}
+  .flow::after{transform:rotate(90deg)}
+  .reads{padding:.5rem}
 }
 @media(prefers-reduced-motion:reduce){
-  .dot,.zone,.count strong{transition:none}
+  .mRow,.crit,.crit::before,.critName,.critTag,.result,.flow,.mSwatch{transition:none; animation:none}
   .objHint i{animation:none}
 }
