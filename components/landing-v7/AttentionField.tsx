@@ -1,12 +1,13 @@
 "use client";
 
-// LeadLens hero — "Market → LeadLens reads → Focus".
-// A product explainer with three legible stages: a researched MARKET (a set of companies), the
-// INTELLIGENCE LeadLens applies (weighing recent change, evidence, timing and uncertainty for your
-// objective), and the resulting FOCUS (the few worth pursuing now, with why-now, an evidence cue and
-// the open question). Pick a commercial objective and the whole pipeline re-reads: the weighting
-// shifts, the market re-highlights, a different focus emerges. No opaque scores, no fake activity,
-// no contact list — colour is the canonical Decision. Synthetic, illustrative.
+// LeadLens hero explainer — "Market → LeadLens reads → Worth pursuing now".
+// One composed instrument with three legible stages: a researched MARKET (a broad set of company
+// archetypes), the INTELLIGENCE LeadLens applies (weighing recent change, evidence, timing and
+// uncertainty for your objective — shown as qualitative emphasis, never a score), and the resulting
+// FOCUS (the few worth pursuing now, each with why-now, an evidence cue and the open question).
+// Pick a commercial objective and the whole pipeline re-reads: the weighting shifts, the market
+// re-highlights, a different focus emerges. No opaque scores, no meters, no fake activity, no contact
+// list — colour is the canonical Decision. Synthetic, illustrative.
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { LandingLocale } from "@/lib/landing/v2-copy";
@@ -17,7 +18,7 @@ type Reading = { focus: number; validate: number; change: string; evidence: stri
 
 interface Copy {
   aria: string; objectiveLabel: string; objectives: string[]; objectivesShort: string[]; tryHint: string;
-  stages: { market: string; reading: string; focus: string };
+  stages: { market: string; reading: string; focus: string }; marketMore: string; weightTag: string;
   criteria: string[]; sectors: string[]; chips: { prioritize: string; validate: string };
   whyNow: string; evidence: string; openQuestion: string;
   readout: Record<Phase, string>; readings: Reading[]; weights: number[][];
@@ -30,6 +31,8 @@ const EN: Copy = {
   objectivesShort: ["New market", "New partners", "New clients", "Target accounts"],
   tryHint: "Pick an objective — the reading updates",
   stages: { market: "The market", reading: "LeadLens reads", focus: "Worth pursuing now" },
+  marketMore: "…and more in scope",
+  weightTag: "Weighted",
   criteria: ["Recent change", "Evidence", "Timing", "Uncertainty"],
   sectors: ["Regional logistics", "Multi-site healthcare", "Specialty manufacturing", "Food distribution", "Industrial services", "Field services"],
   chips: { prioritize: "Prioritize", validate: "Validate" },
@@ -55,6 +58,8 @@ const ES: Copy = {
   objectivesShort: ["Nuevo mercado", "Socios", "Clientes", "Cuentas objetivo"],
   tryHint: "Elige un objetivo — la lectura se actualiza",
   stages: { market: "El mercado", reading: "LeadLens lee", focus: "Vale la pena ahora" },
+  marketMore: "…y más en juego",
+  weightTag: "Ponderado",
   criteria: ["Cambio reciente", "Evidencia", "Timing", "Incertidumbre"],
   sectors: ["Logística regional", "Salud multisede", "Manufactura especializada", "Distribución de alimentos", "Servicios industriales", "Servicios de campo"],
   chips: { prioritize: "Priorizar", validate: "Validar" },
@@ -94,7 +99,6 @@ export function AttentionField({ locale }: { locale: LandingLocale }) {
 
   const marketRole = useMemo(() => c.sectors.map((_, i) =>
     i === r.focus ? "focus" : i === r.validate ? "validate" : "rest"), [c.sectors, r.focus, r.validate]);
-  const concentrated = phase === "focus";
 
   return (
     <section className={`${styles.wrap} ${styles[phase]}`} aria-label={c.aria}>
@@ -112,31 +116,30 @@ export function AttentionField({ locale }: { locale: LandingLocale }) {
         </div>
 
         <div className={styles.pipe}>
-          {/* MARKET */}
-          <div className={styles.stage}>
-            <span className={styles.stageLabel}>{c.stages.market}</span>
+          {/* STAGE 1 — MARKET */}
+          <div className={styles.stage} data-kind="market">
+            <div className={styles.stageHead}><span className={styles.stageLabel}>{c.stages.market}</span></div>
             <ul className={styles.market}>
               {c.sectors.map((s, i) => (
                 <li key={s} className={styles.mRow} data-role={marketRole[i]}>
-                  <i className={styles.mDot} data-role={marketRole[i]} aria-hidden="true" />
+                  <i className={styles.mSwatch} data-role={marketRole[i]} aria-hidden="true" />
                   <span>{s}</span>
                 </li>
               ))}
             </ul>
+            <span className={styles.marketMore}>{c.marketMore}</span>
           </div>
 
           <span className={styles.flow} aria-hidden="true" />
 
-          {/* INTELLIGENCE */}
-          <div className={styles.stage}>
-            <span className={styles.stageLabel} data-lens="1">{c.stages.reading}</span>
+          {/* STAGE 2 — LEADLENS READS (intelligence centre) */}
+          <div className={styles.stage} data-kind="lens">
+            <div className={styles.stageHead}><span className={styles.stageLabel}>{c.stages.reading}</span></div>
             <ul className={styles.reads}>
               {c.criteria.map((cr, i) => (
-                <li key={cr} className={styles.crit} data-hot={w[i] >= 3}>
+                <li key={cr} className={styles.crit} data-w={w[i]}>
                   <span className={styles.critName}>{cr}</span>
-                  <span className={styles.meter} aria-hidden="true">
-                    {[0, 1, 2].map((b) => <i key={b} className={b < w[i] ? styles.on : ""} />)}
-                  </span>
+                  <span className={styles.critTag} aria-hidden="true">{c.weightTag}</span>
                 </li>
               ))}
             </ul>
@@ -144,20 +147,23 @@ export function AttentionField({ locale }: { locale: LandingLocale }) {
 
           <span className={styles.flow} aria-hidden="true" />
 
-          {/* FOCUS */}
-          <div className={styles.stage} data-live={concentrated}>
-            <span className={styles.stageLabel} data-focus="1">{c.stages.focus}</span>
+          {/* STAGE 3 — WORTH PURSUING NOW */}
+          <div className={styles.stage} data-kind="focus">
+            <div className={styles.stageHead}><span className={styles.stageLabel}>{c.stages.focus}</span></div>
             <div className={styles.result} key={obj}>
               <div className={styles.card} data-d="prioritize">
-                <span className={styles.chip} data-d="prioritize">{c.chips.prioritize}</span>
+                <div className={styles.cardTop}><span className={styles.chip}>{c.chips.prioritize}</span></div>
                 <b className={styles.cardName}>{c.sectors[r.focus]}</b>
                 <span className={styles.cardWhy}><em>{c.whyNow}</em>{r.change}</span>
                 <span className={styles.cardEv}>{r.evidence}</span>
               </div>
-              <div className={styles.card} data-d="validate">
-                <span className={styles.chip} data-d="validate">{c.chips.validate}</span>
+              <div className={`${styles.card} ${styles.cardOpen}`} data-d="validate">
+                <div className={styles.cardTop}><span className={styles.chip}>{c.chips.validate}</span></div>
                 <b className={styles.cardName}>{c.sectors[r.validate]}</b>
-                <span className={styles.cardWhy}><em>{c.openQuestion}</em>{r.open}</span>
+                <span className={styles.cardWhy}>
+                  <span className={styles.qMark} aria-hidden="true">?</span>
+                  <span><em>{c.openQuestion}</em>{r.open}</span>
+                </span>
               </div>
             </div>
           </div>
