@@ -96,7 +96,7 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
       <main id="main">
         <section className={styles.hero}>
           <div className={styles.heroCopy}>
-            <p className={styles.eyebrow}>{c.category}</p><h1>{c.hero.title} <span className={styles.heroAccent}>{c.hero.titleAccent}</span></h1><p className={styles.heroLead}>{c.hero.lead}</p>
+            <p className={styles.eyebrow}>{c.category}</p><h1>{c.hero.title} <span className={styles.heroAccent}>{c.hero.titleAccent}</span></h1><p className={styles.heroLead}><span className={styles.heroLeadFull}>{c.hero.lead}</span><span className={styles.heroLeadShort}>{c.hero.lead.split(/\.\s/)[0]}.</span></p>
             <div className={styles.ctas}><Link className={styles.primary} href={START_PATH}>{c.primary}</Link></div>
             <p className={styles.heroInput}>{c.hero.inputOutput}</p>
           </div>

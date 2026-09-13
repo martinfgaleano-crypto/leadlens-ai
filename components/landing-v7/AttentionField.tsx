@@ -197,6 +197,42 @@ export function AttentionField({ locale }: { locale: LandingLocale }) {
           </div>
         </div>
 
+        {/* MOBILE — a compact, payoff-first composition (shares the same state as the desktop pipe) */}
+        <div className={styles.mobile}>
+          <div className={styles.mContext}>
+            <div className={styles.mBand}>
+              <span className={styles.mBandLabel}>{c.stages.market}</span>
+              <div className={styles.mChips}>
+                {c.sectors.slice(0, 2).map((s) => <span key={s} className={styles.mChip}>{s}</span>)}
+                <span className={styles.mChipMore}>+{c.sectors.length - 2}</span>
+              </div>
+            </div>
+            <div className={styles.mBand}>
+              <span className={styles.mBandLabel}>{c.stages.reading}</span>
+              <div className={styles.mLens}>
+                {c.criteria.map((cr, i) => <span key={cr} className={styles.mLensItem} data-w={w[i]}>{cr}</span>)}
+              </div>
+            </div>
+          </div>
+
+          <span className={styles.mArrow} aria-hidden="true" />
+
+          <div className={styles.mFocus} key={obj}>
+            <span className={styles.mFocusLabel}>{c.stages.focus}</span>
+            <div className={styles.mCard} data-d="prioritize">
+              <div className={styles.cardTop}><span className={styles.chip}>{c.chips.prioritize}</span></div>
+              <b className={styles.mCardName}>{c.sectors[r.focus]}</b>
+              <span className={styles.cardWhy}><em>{c.whyNow}</em>{r.change}</span>
+              <span className={styles.cardEv}>{r.evidence}</span>
+            </div>
+            <div className={styles.mValidate} data-d="validate">
+              <span className={styles.chip}>{c.chips.validate}</span>
+              <b className={styles.mValName}>{c.sectors[r.validate]}</b>
+              <span className={styles.mValOpen}><em>{c.openQuestion}</em>{r.open}</span>
+            </div>
+          </div>
+        </div>
+
         <p className={styles.readout} aria-live="polite">{c.readout[phase]}</p>
       </div>
     </section>
