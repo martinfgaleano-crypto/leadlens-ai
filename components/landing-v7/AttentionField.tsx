@@ -96,13 +96,11 @@ function ConnectorIn() {
 }
 
 function ConnectorOut() {
-  // A few justified opportunities emerging from the engine.
+  // Two precise, causal paths: cyan docks into PRIORITIZE, amber docks into VALIDATE.
   return (
     <svg className={styles.conn} viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-      <path className={styles.connFaint} d="M0,50 C42,50 56,16 100,16" />
-      <path className={styles.connFaint} d="M0,50 C42,50 56,84 100,84" />
-      <path className={styles.connPri} d="M0,50 C46,50 56,31 100,31" />
-      <path className={styles.connVal} d="M0,50 C46,50 56,70 100,70" />
+      <path className={styles.connPri} d="M0,50 C40,50 74,37 100,37" />
+      <path className={styles.connVal} d="M0,50 C40,50 74,84 100,84" />
     </svg>
   );
 }
