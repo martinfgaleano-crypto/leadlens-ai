@@ -1,13 +1,13 @@
 "use client";
 
-// LeadLens hero explainer — "Market → LeadLens reads → Worth pursuing now".
-// One composed instrument with three legible stages: a researched MARKET (a broad set of company
-// archetypes), the INTELLIGENCE LeadLens applies (weighing recent change, evidence, timing and
-// uncertainty for your objective — shown as qualitative emphasis, never a score), and the resulting
-// FOCUS (the few worth pursuing now, each with why-now, an evidence cue and the open question).
-// Pick a commercial objective and the whole pipeline re-reads: the weighting shifts, the market
-// re-highlights, a different focus emerges. No opaque scores, no meters, no fake activity, no contact
-// list — colour is the canonical Decision. Synthetic, illustrative.
+// LeadLens hero explainer — a wide, horizontal, simultaneous instrument:
+//   THE MARKET  →  LEADLENS INTELLIGENCE  →  OPPORTUNITIES
+// Left: a broad market of organisation archetypes. Center (dominant): the reasoning engine that
+// weighs Change · Evidence · Timing · Uncertainty for your objective. Right: the few opportunities
+// that emerge (Prioritize + Validate), each with why-now / evidence / open question. Routed
+// connectors show many possibilities converging into intelligence and a few emerging as focus.
+// Pick a commercial objective and the whole instrument re-reads. No opaque scores, no fake activity,
+// no contact list — colour is the canonical Decision. Synthetic, illustrative.
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { LandingLocale } from "@/lib/landing/v2-copy";
@@ -19,7 +19,7 @@ type Reading = { focus: number; validate: number; change: string; evidence: stri
 interface Copy {
   aria: string; objectiveLabel: string; objectives: string[]; objectivesShort: string[]; tryHint: string;
   stages: { market: string; reading: string; focus: string }; marketMore: string; weightTag: string;
-  criteria: string[]; sectors: string[]; chips: { prioritize: string; validate: string };
+  criteria: string[]; criteriaSub: string[]; sectors: string[]; chips: { prioritize: string; validate: string };
   whyNow: string; evidence: string; openQuestion: string;
   readout: Record<Phase, string>; readings: Reading[]; weights: number[][];
 }
@@ -30,16 +30,17 @@ const EN: Copy = {
   objectives: ["Expand into a new market", "Find new partners", "Win new clients", "Prioritize target accounts"],
   objectivesShort: ["New market", "New partners", "New clients", "Target accounts"],
   tryHint: "Pick an objective — the reading updates",
-  stages: { market: "The market", reading: "LeadLens reads", focus: "Worth pursuing now" },
+  stages: { market: "The market", reading: "LeadLens intelligence", focus: "Opportunities" },
   marketMore: "…and more in scope",
-  weightTag: "Weighted",
-  criteria: ["Recent change", "Evidence", "Timing", "Uncertainty"],
+  weightTag: "Weighing",
+  criteria: ["Change", "Evidence", "Timing", "Uncertainty"],
+  criteriaSub: ["What's materially changed?", "What supports it?", "Why now?", "What's unresolved?"],
   sectors: ["Regional logistics", "Multi-site healthcare", "Specialty manufacturing", "Food distribution", "Industrial services", "Field services"],
   chips: { prioritize: "Prioritize", validate: "Validate" },
   whyNow: "Why now", evidence: "Evidence", openQuestion: "Open question",
   readout: {
     reset: "A researched market of companies.",
-    reading: "Weighing recent change, evidence, timing and uncertainty…",
+    reading: "Weighing change, evidence, timing and uncertainty…",
     focus: "A few companies justify attention now — with the reason attached.",
   },
   readings: [
@@ -57,16 +58,17 @@ const ES: Copy = {
   objectives: ["Entrar a un nuevo mercado", "Encontrar socios", "Ganar nuevos clientes", "Priorizar cuentas objetivo"],
   objectivesShort: ["Nuevo mercado", "Socios", "Clientes", "Cuentas objetivo"],
   tryHint: "Elige un objetivo — la lectura se actualiza",
-  stages: { market: "El mercado", reading: "LeadLens lee", focus: "Vale la pena ahora" },
+  stages: { market: "El mercado", reading: "Inteligencia LeadLens", focus: "Oportunidades" },
   marketMore: "…y más en juego",
-  weightTag: "Ponderado",
-  criteria: ["Cambio reciente", "Evidencia", "Timing", "Incertidumbre"],
+  weightTag: "Pondera",
+  criteria: ["Cambio", "Evidencia", "Timing", "Incertidumbre"],
+  criteriaSub: ["¿Qué cambió?", "¿Qué lo respalda?", "¿Por qué ahora?", "¿Qué falta resolver?"],
   sectors: ["Logística regional", "Salud multisede", "Manufactura especializada", "Distribución de alimentos", "Servicios industriales", "Servicios de campo"],
   chips: { prioritize: "Priorizar", validate: "Validar" },
   whyNow: "Por qué ahora", evidence: "Evidencia", openQuestion: "Pregunta abierta",
   readout: {
     reset: "Un mercado investigado de empresas.",
-    reading: "Ponderando cambio reciente, evidencia, timing e incertidumbre…",
+    reading: "Ponderando cambio, evidencia, timing e incertidumbre…",
     focus: "Unas pocas empresas merecen atención ahora — con la razón adjunta.",
   },
   readings: [
@@ -79,6 +81,31 @@ const ES: Copy = {
 };
 
 const COPY: Record<LandingLocale, Copy> = { en: EN, es: ES, pt: EN, ja: EN };
+
+function ConnectorIn() {
+  // Many market possibilities converging into the intelligence engine.
+  return (
+    <svg className={styles.conn} viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0,12 C46,12 54,50 100,50" />
+      <path d="M0,31 C46,31 58,50 100,50" />
+      <path className={styles.connMid} d="M0,50 L100,50" />
+      <path d="M0,69 C46,69 58,50 100,50" />
+      <path d="M0,88 C46,88 54,50 100,50" />
+    </svg>
+  );
+}
+
+function ConnectorOut() {
+  // A few justified opportunities emerging from the engine.
+  return (
+    <svg className={styles.conn} viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      <path className={styles.connFaint} d="M0,50 C42,50 56,16 100,16" />
+      <path className={styles.connFaint} d="M0,50 C42,50 56,84 100,84" />
+      <path className={styles.connPri} d="M0,50 C46,50 56,31 100,31" />
+      <path className={styles.connVal} d="M0,50 C46,50 56,70 100,70" />
+    </svg>
+  );
+}
 
 export function AttentionField({ locale }: { locale: LandingLocale }) {
   const c = COPY[locale] ?? EN;
@@ -116,7 +143,7 @@ export function AttentionField({ locale }: { locale: LandingLocale }) {
         </div>
 
         <div className={styles.pipe}>
-          {/* STAGE 1 — MARKET */}
+          {/* THE MARKET */}
           <div className={styles.stage} data-kind="market">
             <div className={styles.stageHead}><span className={styles.stageLabel}>{c.stages.market}</span></div>
             <ul className={styles.market}>
@@ -130,24 +157,27 @@ export function AttentionField({ locale }: { locale: LandingLocale }) {
             <span className={styles.marketMore}>{c.marketMore}</span>
           </div>
 
-          <span className={styles.flow} aria-hidden="true" />
+          <span className={styles.flow} aria-hidden="true"><ConnectorIn /></span>
 
-          {/* STAGE 2 — LEADLENS READS (intelligence centre) */}
+          {/* LEADLENS INTELLIGENCE — the reasoning engine (dominant) */}
           <div className={styles.stage} data-kind="lens">
             <div className={styles.stageHead}><span className={styles.stageLabel}>{c.stages.reading}</span></div>
-            <ul className={styles.reads}>
+            <ul className={styles.engine}>
               {c.criteria.map((cr, i) => (
-                <li key={cr} className={styles.crit} data-w={w[i]}>
-                  <span className={styles.critName}>{cr}</span>
-                  <span className={styles.critTag} aria-hidden="true">{c.weightTag}</span>
+                <li key={cr} className={styles.dim} data-w={w[i]}>
+                  <span className={styles.dimHead}>
+                    <span className={styles.dimName}>{cr}</span>
+                    <span className={styles.dimTag} aria-hidden="true">{c.weightTag}</span>
+                  </span>
+                  <span className={styles.dimSub}>{c.criteriaSub[i]}</span>
                 </li>
               ))}
             </ul>
           </div>
 
-          <span className={styles.flow} aria-hidden="true" />
+          <span className={styles.flow} aria-hidden="true"><ConnectorOut /></span>
 
-          {/* STAGE 3 — WORTH PURSUING NOW */}
+          {/* OPPORTUNITIES */}
           <div className={styles.stage} data-kind="focus">
             <div className={styles.stageHead}><span className={styles.stageLabel}>{c.stages.focus}</span></div>
             <div className={styles.result} key={obj}>
