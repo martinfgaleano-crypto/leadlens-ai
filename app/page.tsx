@@ -3,7 +3,8 @@ import Link from "next/link";
 import { CompanyInterpretationV2 } from "@/components/landing-v2/CompanyInterpretationV2";
 import { LanguageSwitcher } from "@/components/landing-v2/LanguageSwitcher";
 import { FocusBoard } from "@/components/landing-v7/FocusBoard";
-import { AttentionField } from "@/components/landing-v7/AttentionField";
+import { DecisionBrief } from "@/components/landing-v7/DecisionBrief";
+import { Shortlist } from "@/components/landing-v7/Shortlist";
 import { oneTimeCards } from "@/lib/commercial/plan-catalog";
 import { LANDING_COMPARISON } from "@/lib/landing/fixtures/landing-comparison";
 import { getLandingV2Copy, type LandingLocale } from "@/lib/landing/v2-copy";
@@ -97,11 +98,13 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
         <section className={styles.hero}>
           <div className={styles.heroCopy}>
             <p className={styles.eyebrow}>{c.category}</p><h1>{c.hero.title} <span className={styles.heroAccent}>{c.hero.titleAccent}</span></h1><p className={styles.heroLead}><span className={styles.heroLeadFull}>{c.hero.lead}</span><span className={styles.heroLeadShort}>{c.hero.lead.split(/\.\s/)[0]}.</span></p>
-            <div className={styles.ctas}><Link className={styles.primary} href={START_PATH}>{c.primary}</Link></div>
+            <div className={styles.ctas}><Link className={styles.primary} href={START_PATH}>{c.primary}</Link><Link className={styles.secondary} href="/sample">{c.secondary}</Link></div>
             <p className={styles.heroInput}>{c.hero.inputOutput}</p>
           </div>
-          <AttentionField locale={locale} />
+          <DecisionBrief locale={locale} />
         </section>
+
+        <Shortlist locale={locale} />
 
         <CompanyInterpretationV2 locale={locale} copy={c.interpretation} />
 

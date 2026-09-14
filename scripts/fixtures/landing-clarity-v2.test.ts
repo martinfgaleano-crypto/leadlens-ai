@@ -10,7 +10,9 @@ const styles = readFileSync(`${root}/app/landing-v2.module.css`, "utf8");
 const pricing = readFileSync(`${root}/app/pricing/page.tsx`, "utf8");
 const attention = readFileSync(`${root}/components/landing-v7/FocusBoard.tsx`, "utf8");
 const attentionStyles = readFileSync(`${root}/components/landing-v7/focus-board.module.css`, "utf8");
-const heroExplainer = readFileSync(`${root}/components/landing-v7/AttentionField.tsx`, "utf8");
+const brief = readFileSync(`${root}/components/landing-v7/DecisionBrief.tsx`, "utf8");
+const shortlist = readFileSync(`${root}/components/landing-v7/Shortlist.tsx`, "utf8");
+const briefStyles = readFileSync(`${root}/components/landing-v7/the-brief.module.css`, "utf8");
 
 function check(name: string, fn: () => void) {
   fn();
@@ -38,22 +40,30 @@ check("landing remains server-rendered with bounded client islands", () => {
   assert.doesNotMatch(page.slice(0, 80), /["']use client["']/);
   assert.match(page, /CompanyInterpretationV2/);
   assert.match(page, /LanguageSwitcher/);
-  assert.match(page, /AttentionField/);
+  assert.match(page, /DecisionBrief/);
   assert.match(page, /FocusBoard/);
 });
 
-check("V7 hero explains the mechanism; the focus board is the product proof below it", () => {
-  assert.match(heroExplainer.slice(0, 80), /["']use client["']/);
-  assert.match(attention.slice(0, 80), /["']use client["']/);
-  // Hero = AttentionField (explanation), then FocusBoard (proof), then ExecutivePortfolio (summary).
-  assert.match(page, /<AttentionField locale=\{locale\} \/>/);
-  assert.match(page, /<FocusBoard locale=\{locale\} \/>/);
-  assert.ok(page.indexOf("<AttentionField") < page.indexOf("<FocusBoard"));
-  assert.ok(page.indexOf("<FocusBoard") < page.indexOf("<ExecutivePortfolio"));
-  // The hero explainer teaches the system WITHOUT sample company names.
-  assert.doesNotMatch(heroExplainer, /Northwind|Cascade|Atlas|Meridian/);
-  assert.match(heroExplainer, /aria-live="polite"/);
-  // The focus board keeps the six-lens decision system (role=tab, not six pills).
+check("hero leads with the OUTPUT (a decision brief), then the shortlist proves it scales", () => {
+  // "The Brief" direction: the hero IS the output the buyer receives, not a mechanism explainer.
+  assert.match(page, /<DecisionBrief locale=\{locale\} \/>/);
+  assert.match(page, /<Shortlist locale=\{locale\} \/>/);
+  assert.ok(page.indexOf("<DecisionBrief") < page.indexOf("<Shortlist"));
+  assert.ok(page.indexOf("<Shortlist") < page.indexOf("<FocusBoard"));
+  // The old interactive market→intelligence→opportunities explainer is gone — no remnants.
+  assert.doesNotMatch(page, /AttentionField/);
+  // The brief carries the decision grammar + evidence + uncertainty + next validation.
+  for (const token of [/Prioritize/, /Why now/, /Evidence/, /Uncertain/, /Validate/]) assert.match(brief, token);
+  // Output artifact is static + accessible, and uses archetypes (no fictional company brand names).
+  assert.doesNotMatch(brief.slice(0, 40), /["']use client["']/);
+  assert.match(brief, /role="figure"/);
+  assert.doesNotMatch(brief + shortlist, /Northwind|Cascade|Atlas|Meridian|Northstar/);
+  // Shortlist keeps the four-state decision grammar as commercial judgment.
+  for (const token of [/Prioritize/, /Validate/, /Monitor/]) assert.match(shortlist, token);
+  // The brief is responsive (a real mobile composition, not a scaled desktop artifact).
+  assert.match(briefStyles, /@media\(max-width:760px\)/);
+  assert.match(briefStyles, /prefers-reduced-motion:reduce/);
+  // The focus board below keeps the six-lens decision system (role=tab, one selected).
   assert.equal((attention.match(/aria-selected=/g) ?? []).length, 1);
   assert.match(attention, /role="tab"/);
 });
@@ -86,10 +96,12 @@ check("V6 public category broadens while preserving account opportunity methodol
   assert.match(copy, /Account Opportunity Intelligence/);
 });
 
-check("hero uses one primary CTA and the explorer as secondary engagement", () => {
-  const hero = page.slice(page.indexOf("<section className={styles.hero}"), page.indexOf("<section className={styles.trustStrip}"));
+check("hero uses one primary CTA and 'see a sample brief' as the secondary", () => {
+  const hero = page.slice(page.indexOf("<section className={styles.hero}"), page.indexOf("<Shortlist"));
   assert.equal((hero.match(/href=\{START_PATH\}/g) ?? []).length, 1);
-  assert.doesNotMatch(hero, /href="\/sample"/);
+  // Output-led secondary: the sample brief (reinforces "this is what you get").
+  assert.equal((hero.match(/href="\/sample"/g) ?? []).length, 1);
+  assert.equal(getLandingV2Copy("en").secondary, "See a sample brief");
 });
 
 check("the first product half progresses from portfolio to case to process", () => {
