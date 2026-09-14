@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { Inter, Space_Grotesk, Fraunces, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 
-// Body voice: Inter (clean grotesque). Display voice: Space Grotesk — precise, technical-editorial,
-// distinctive at large scale. Exposed as CSS variables so the landing can assign display vs body.
+// Body voice: Inter (clean grotesque). Display voice: Space Grotesk — precise, technical-editorial.
+// "The Brief" hero adds an analyst-grade pairing: Fraunces (editorial serif, the headline + decision
+// word) and IBM Plex Mono (dated sources / metadata). All exposed as CSS variables.
 const inter = Inter({ subsets: ["latin"], variable: "--font-body", display: "swap" });
 const display = Space_Grotesk({ subsets: ["latin"], variable: "--font-display", weight: ["500", "600", "700"], display: "swap" });
+const serif = Fraunces({ subsets: ["latin"], variable: "--font-serif", weight: ["400", "500", "600"], style: ["normal", "italic"], display: "swap" });
+const mono = IBM_Plex_Mono({ subsets: ["latin"], variable: "--font-mono", weight: ["400", "500"], display: "swap" });
 
 // Canonical production domain. Env-driven so preview/prod resolve correctly;
 // fallback is the production domain (leadlensintel.com), NOT the Vercel URL.
@@ -49,7 +52,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${display.variable} ${inter.className}`}>{children}</body>
+      <body className={`${inter.variable} ${display.variable} ${serif.variable} ${mono.variable} ${inter.className}`}>{children}</body>
     </html>
   );
 }

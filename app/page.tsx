@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CompanyInterpretationV2 } from "@/components/landing-v2/CompanyInterpretationV2";
 import { LanguageSwitcher } from "@/components/landing-v2/LanguageSwitcher";
-import { FocusBoard } from "@/components/landing-v7/FocusBoard";
-import { AttentionField } from "@/components/landing-v7/AttentionField";
+import { DecisionBrief } from "@/components/landing-v7/DecisionBrief";
+import { Shortlist } from "@/components/landing-v7/Shortlist";
 import { oneTimeCards } from "@/lib/commercial/plan-catalog";
-import { LANDING_COMPARISON } from "@/lib/landing/fixtures/landing-comparison";
 import { getLandingV2Copy, type LandingLocale } from "@/lib/landing/v2-copy";
 import styles from "./landing-v2.module.css";
 
@@ -44,34 +42,44 @@ export function generateMetadata({ searchParams }: { searchParams?: { lang?: str
   };
 }
 
-function decisionLabel(decision: string, c: ReturnType<typeof getLandingV2Copy>) {
-  return c.decisions[decision as keyof typeof c.decisions] ?? decision;
-}
-
+// "The Brief" landing — one coherent, output-led page:
+// HERO (a decision brief) → TRUST/CATEGORY → SHORTLIST → HOW IT THINKS → PRICING → FAQ → FINAL CTA.
 export default function LandingV2({ searchParams }: { searchParams?: { lang?: string | string[] } }) {
   const locale = localeFrom(searchParams?.lang);
   const c = getLandingV2Copy(locale);
-  const proof = locale === "es"
-    ? { eyebrow: "Lo que recibes", title: "Cada empresa vuelve como una decisión sobre la que puedes actuar.", body: "No una lista por trabajar. Para cada una: la decisión, por qué ahora, la evidencia detrás, qué queda incierto y qué validar después.", inside: ["Decisión", "Por qué ahora", "Evidencia con fecha", "Qué queda incierto", "Qué validar después"] }
-    : { eyebrow: "What you receive", title: "Every company comes back as a decision you can act on.", body: "Not a list to work through. For each one: the decision, why now, the evidence behind it, what stays uncertain, and what to validate next.", inside: ["Decision", "Why now", "Dated evidence", "What stays uncertain", "What to validate next"] };
-  // Portfolio-level view (illustrative): the SHAPE of the whole researched set — distribution across
-  // decisions, where attention concentrates, and the pattern the set reveals. No per-company cards
-  // (that is FocusBoard's job) and no invented score — canonical decision states only.
-  const portfolioView = locale === "es"
-    ? { funnel: "12 evaluadas", attention: "2 de 12 justifican atención ahora; 3 más vale la pena validar.", pattern: "El fit es común en el conjunto — un cambio reciente y fechado es lo que separa a las pocas que merecen atención.", patternLabel: "Lo que revela el conjunto", allocationLabel: "A dónde va la atención", scope: "Observado dentro de este portafolio investigado — no todo el mercado." }
-    : { funnel: "12 evaluated", attention: "2 of 12 justify attention now; 3 more are worth validating.", pattern: "Fit is common across the set — a recent, dated change is what separates the few that deserve attention.", patternLabel: "What the set reveals", allocationLabel: "Where attention goes", scope: "Observed within this researched portfolio — not the whole market." };
-  const portfolioDist: { k: "prioritize" | "validate" | "monitor" | "hold"; n: number }[] = [{ k: "prioritize", n: 2 }, { k: "validate", n: 3 }, { k: "monitor", n: 5 }, { k: "hold", n: 2 }];
-  // Salvaged from the production landing: a 5-second category distinction. No named competitors.
-  const category3 = locale === "es"
+  const es = locale === "es";
+  // 5-second category distinction (no named competitors).
+  const category = es
     ? { eyebrow: "Dónde encaja LeadLens", rows: [{ k: "Bases de datos", v: "Quién existe." }, { k: "Herramientas de señales", v: "Qué pasó." }, { k: "LeadLens", v: "Por qué importa — y a dónde debe ir la atención.", me: true }] }
     : { eyebrow: "Where LeadLens fits", rows: [{ k: "Databases", v: "Who exists." }, { k: "Signal tools", v: "What happened." }, { k: "LeadLens", v: "Why it matters — and where attention belongs.", me: true }] };
-  // Purchase-confidence band before pricing: inspect the real deliverable before paying.
-  const sample = locale === "es"
-    ? { eyebrow: "Míralo tú mismo", title: "Revisa un informe de decisión completo antes de comprar.", body: "No una captura — el razonamiento real detrás de una recomendación: la decisión, la evidencia con fecha, qué queda incierto y qué validar después.", chips: ["Evidencia con fecha", "Incertidumbre visible", "Próxima validación"], cta: "Ver una muestra" }
-    : { eyebrow: "See it for yourself", title: "Inspect a full decision brief before you buy.", body: "Not a screenshot — the real reasoning behind a recommendation: the decision, the dated evidence, what stays uncertain, and what to validate next.", chips: ["Dated evidence", "Uncertainty shown", "Next validation"], cta: "View a sample" };
+  // How LeadLens thinks — three reasoning principles + one before → now example (folds the old Deep Case).
+  const thinks = es
+    ? { eyebrow: "Cómo razona LeadLens", title: "Un criterio que puedes inspeccionar — no un puntaje.",
+        principles: [
+          { k: "Qué cambió", v: "Un desarrollo reciente y fechado que hace que una empresa merezca atención ahora — no un dato estático." },
+          { k: "Evidencia + timing", v: "Las fuentes públicas detrás de la decisión, cada una con fecha, para que verifiques el razonamiento." },
+          { k: "Qué falta verificar", v: "La incertidumbre queda a la vista, con lo siguiente por validar antes de invertir esfuerzo." },
+        ],
+        exLabel: "Una decisión, en tres pasos",
+        steps: [
+          { k: "Antes", v: "Una empresa mediana, sin una razón clara para actuar." },
+          { k: "Qué cambió", v: "Abrió una nueva sede regional — hace 9 días, según un anuncio público fechado." },
+          { k: "Ahora", v: "Priorizar — con la pregunta abierta (¿quién decide la compra?) como próxima verificación." },
+        ] }
+    : { eyebrow: "How LeadLens thinks", title: "Judgment you can inspect — not a score.",
+        principles: [
+          { k: "What changed", v: "A recent, dated development that makes a company worth attention now — not a static fact." },
+          { k: "Evidence + timing", v: "The public sources behind the call, each dated, so you can check the reasoning yourself." },
+          { k: "What still needs checking", v: "The uncertainty stays in view, with the next thing to validate before you commit effort." },
+        ],
+        exLabel: "One call, in three moves",
+        steps: [
+          { k: "Before", v: "A mid-market company, no clear reason to engage." },
+          { k: "What changed", v: "Opened a new regional facility — 9 days ago, from a dated public announcement." },
+          { k: "Now", v: "Prioritize — with the open question (who owns procurement?) named as the next check." },
+        ] };
   const plans = oneTimeCards();
-  // Decision-depth progression (visible even if price/count are hidden): one decision → shortlist → allocation → strategic context.
-  const tierLabel: Record<string, string> = locale === "es"
+  const tierLabel: Record<string, string> = es
     ? { preview_launch_v0: "Una decisión", brief_launch_v0: "Decisión de lista corta", intelligence_launch_v0: "Decisión de asignación", premium_launch_v0: "Contexto estratégico" }
     : { preview_launch_v0: "One decision", brief_launch_v0: "Shortlist decision", intelligence_launch_v0: "Allocation decision", premium_launch_v0: "Strategic context" };
 
@@ -83,7 +91,7 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
         <nav className={styles.nav} aria-label={c.navigation}>
           <Link className={styles.logo} href={locale === "en" ? "/" : `/?lang=${locale}`}>Lead<span>Lens</span></Link>
           <div className={styles.navLinks}>
-            <a href="#product">{c.nav.product}</a><Link href="/sample">{c.nav.sample}</Link><a href="#pricing">{c.nav.pricing}</a><a href="#how">{c.nav.how}</a>
+            <a href="#how">{c.nav.how}</a><Link href="/sample">{c.nav.sample}</Link><a href="#pricing">{c.nav.pricing}</a>
           </div>
           <div className={styles.navActions}>
             <Link className={styles.signIn} href="/login">{c.nav.signIn}</Link>
@@ -94,67 +102,42 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
       </header>
 
       <main id="main">
+        {/* 1. HERO — the output the buyer receives */}
         <section className={styles.hero}>
           <div className={styles.heroCopy}>
             <p className={styles.eyebrow}>{c.category}</p><h1>{c.hero.title} <span className={styles.heroAccent}>{c.hero.titleAccent}</span></h1><p className={styles.heroLead}><span className={styles.heroLeadFull}>{c.hero.lead}</span><span className={styles.heroLeadShort}>{c.hero.lead.split(/\.\s/)[0]}.</span></p>
-            <div className={styles.ctas}><Link className={styles.primary} href={START_PATH}>{c.primary}</Link></div>
+            <div className={styles.ctas}><Link className={styles.primary} href={START_PATH}>{c.primary}</Link><Link className={styles.secondary} href="/sample">{c.secondary}</Link></div>
             <p className={styles.heroInput}>{c.hero.inputOutput}</p>
           </div>
-          <AttentionField locale={locale} />
+          <DecisionBrief locale={locale} />
         </section>
 
-        <CompanyInterpretationV2 locale={locale} copy={c.interpretation} />
-
-        <section className={styles.trustStrip} aria-label={c.trust.label}>
-          <div className={styles.trustItems}>
-            {c.trust.items.map((item) => <p key={item.title}><strong>{item.title}</strong><span>{item.body}</span></p>)}
+        {/* 2. TRUST / CATEGORY — where LeadLens fits, and the honesty boundary */}
+        <section className={styles.catBand} aria-label={category.eyebrow}>
+          <p className={styles.eyebrow}>{category.eyebrow}</p>
+          <div className={styles.catRow}>
+            {category.rows.map((x) => <div key={x.k} className={"me" in x && x.me ? styles.catMe : styles.catCol}><span>{x.k}</span><p>{x.v}</p></div>)}
           </div>
           <p className={styles.trustBoundary}>{c.trust.boundary}</p>
         </section>
 
-        <section className={styles.section} id="product" aria-label={proof.title}>
-          <div className={styles.proofRow}>
-            <div className={styles.proofText}><p className={styles.eyebrow}>{proof.eyebrow}</p><h2>{proof.title}</h2><p>{proof.body}</p><ul className={styles.proofInside}>{proof.inside.map((x) => <li key={x}>{x}</li>)}</ul></div>
-            <div className={styles.proofBoard}><FocusBoard locale={locale} /></div>
+        {/* 3. SHORTLIST — the one product proof */}
+        <Shortlist locale={locale} />
+
+        {/* 4. HOW LEADLENS THINKS — reasoning principles + one before → now example */}
+        <section className={`${styles.section} ${styles.thinks}`} id="how" aria-label={thinks.title}>
+          <SectionIntro eyebrow={thinks.eyebrow} title={thinks.title} />
+          <div className={styles.thinksGrid}>
+            {thinks.principles.map((p) => <div key={p.k} className={styles.principle}><span>{p.k}</span><p>{p.v}</p></div>)}
           </div>
-        </section>
-
-        <section className={styles.portfolioChapter} id="portfolio">
-          <SectionIntro eyebrow={c.portfolio.kicker} title={c.portfolio.title} body={c.outcomes.body} />
-          <ExecutivePortfolio copy={c} view={portfolioView} dist={portfolioDist} />
-        </section>
-
-        <section className={styles.section} id="case">
-          <SectionIntro eyebrow={c.case.eyebrow} title={c.case.title} body={c.case.body} /><CompanyCase copy={c} />
-        </section>
-
-        <section className={`${styles.section} ${styles.howSection}`} id="how">
-          <SectionIntro eyebrow={c.flow.eyebrow} title={c.flow.title} body={c.flow.body} />
-          <ol className={styles.flow}>{c.flow.items.map((item, i) => <li key={item.title}><span>{i + 1}</span><div><h3>{item.title}</h3><p>{item.body}</p></div></li>)}</ol>
-        </section>
-
-        <section className={`${styles.section} ${styles.audience}`}>
-          <div><p className={styles.eyebrow}>{c.audience.eyebrow}</p><h2>{c.audience.title}</h2></div>
-          <ul>{c.audience.items.map((item) => <li key={item}>{item}</li>)}</ul>
-        </section>
-
-        <section className={`${styles.section} ${styles.catBand}`} aria-label={category3.eyebrow}>
-          <p className={styles.eyebrow} style={{ textAlign: "center", marginBottom: "2.5rem" }}>{category3.eyebrow}</p>
-          <div className={styles.catRow}>
-            {category3.rows.map((x) => <div key={x.k} className={"me" in x && x.me ? styles.catMe : styles.catCol}><span>{x.k}</span><p>{x.v}</p></div>)}
+          <div className={styles.causality} aria-label={thinks.exLabel}>
+            <span className={styles.exLabel}>{thinks.exLabel}</span>
+            <ol>{thinks.steps.map((s, i) => <li key={s.k} className={i === 1 ? styles.stepChange : undefined}><span>{s.k}</span><p>{s.v}</p></li>)}</ol>
           </div>
+          <p className={styles.synthetic}>{c.synthetic}</p>
         </section>
 
-        <section className={styles.sampleBand} aria-label={sample.eyebrow}>
-          <div className={styles.sampleInner}>
-            <p className={styles.eyebrow}>{sample.eyebrow}</p>
-            <h2>{sample.title}</h2>
-            <p className={styles.sampleBody}>{sample.body}</p>
-            <ul className={styles.sampleChips}>{sample.chips.map((x) => <li key={x}>{x}</li>)}</ul>
-            <Link className={styles.primary} href="/sample">{sample.cta}</Link>
-          </div>
-        </section>
-
+        {/* 5. PRICING — buyer-language ladder */}
         <section className={`${styles.section} ${styles.soft}`} id="pricing">
           <SectionIntro eyebrow={c.pricing.eyebrow} title={c.pricing.title} body={c.pricing.body} />
           <div className={styles.planLadder}>{plans.map((plan, index) => {
@@ -167,21 +150,22 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
               <div className={styles.planAction}><strong>${plan.price}</strong><small>{plan.capacity}</small><Link href={`/signup?commercial_path=one_time&product_code=${plan.productCode}`}>{c.pricing.choose} {plan.name}</Link></div>
             </article>;
           })}</div>
-          <div className={styles.compareLink}><Link href="/pricing?commercial_path=one_time">{c.pricing.compare}</Link></div>
+          <div className={styles.compareLink}><Link href="/pricing?commercial_path=one_time">{c.pricing.compare}</Link><Link href="/pricing?commercial_path=ongoing">{c.ongoing.action}</Link></div>
         </section>
 
-        <section className={styles.ongoing}><div><p className={styles.eyebrow}>{c.ongoing.eyebrow}</p><h2>{c.ongoing.title}</h2><p>{c.ongoing.body}</p></div><Link href="/pricing?commercial_path=ongoing">{c.ongoing.action}</Link></section>
+        {/* 6. FAQ — a few high-intent objections */}
+        <section className={`${styles.section} ${styles.faq}`}>
+          <SectionIntro eyebrow={c.faq.eyebrow} title={c.faq.title} />
+          <div>{c.faq.items.slice(0, 5).map((item) => <details key={item.q}><summary>{item.q}</summary><p>{item.a}</p></details>)}</div>
+        </section>
 
-        <section className={`${styles.section} ${styles.method}`}><div><p className={styles.eyebrow}>{c.method.eyebrow}</p><h2>{c.method.title}</h2><p>{c.method.body}</p></div><ul>{c.method.items.map((item) => <li key={item}>{item}</li>)}</ul></section>
-
-        <section className={`${styles.section} ${styles.faq}`}><SectionIntro eyebrow={c.faq.eyebrow} title={c.faq.title} /><div>{c.faq.items.map((item) => <details key={item.q}><summary>{item.q}</summary><p>{item.a}</p></details>)}</div></section>
-
+        {/* 7. FINAL CTA */}
         <section className={styles.finalCta}><h2>{c.final.title}</h2><p>{c.final.body}</p><div className={styles.ctas}><Link className={styles.primary} href={START_PATH}>{c.primary}</Link><Link className={styles.secondary} href="/sample">{c.secondary}</Link></div></section>
       </main>
 
       <footer className={styles.footer}>
         <span>© {new Date().getFullYear()} LeadLens</span>
-        <nav aria-label={c.navigation}><a href="#product">{c.nav.product}</a><Link href="/sample">{c.nav.sample}</Link><a href="#pricing">{c.nav.pricing}</a><Link href="/login">{c.nav.signIn}</Link></nav>
+        <nav aria-label={c.navigation}><a href="#how">{c.nav.how}</a><Link href="/sample">{c.nav.sample}</Link><a href="#pricing">{c.nav.pricing}</a><Link href="/login">{c.nav.signIn}</Link></nav>
         <div><Link href="/privacy">{c.footer.privacy}</Link><Link href="/terms">{c.footer.terms}</Link><Link href="/refund">{c.footer.refund}</Link></div>
       </footer>
     </div>
@@ -190,61 +174,4 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
 
 function SectionIntro({ eyebrow, title, body }: { eyebrow: string; title: string; body?: string }) {
   return <div className={styles.sectionIntro}><p className={styles.eyebrow}>{eyebrow}</p><h2>{title}</h2>{body && <p>{body}</p>}</div>;
-}
-
-const DEC_COLOR: Record<string, string> = { prioritize: "#7dd3fc", validate: "#f0c477", monitor: "#9fb0c2", hold: "#5c6a7a" };
-
-// Portfolio-LEVEL proof: the shape of the whole researched set (distribution + allocation + pattern),
-// NOT another list of account cards (that is FocusBoard). Illustrative distribution; canonical decision
-// states only; no invented score.
-function ExecutivePortfolio({ copy: c, view, dist }: {
-  copy: ReturnType<typeof getLandingV2Copy>;
-  view: { funnel: string; attention: string; pattern: string; patternLabel: string; allocationLabel: string; scope: string };
-  dist: { k: "prioritize" | "validate" | "monitor" | "hold"; n: number }[];
-}) {
-  const total = dist.reduce((s, d) => s + d.n, 0);
-  const distText = dist.map((d) => `${d.n} ${decisionLabel(d.k, c).toLowerCase()}`).join(" · ");
-  // Attention-allocation grid: each evaluated company is one cell, coloured by its decision and ordered
-  // from act-now to hold — a LeadLens-specific view of how attention concentrates across the set.
-  const cells = dist.flatMap((d) => Array.from({ length: d.n }, () => d.k));
-  return <div className={styles.portfolio} aria-label={c.portfolio.label}>
-    <div className={styles.portfolioHead}><span>{c.portfolio.kicker}</span><small>{view.funnel}</small></div>
-    <div className={styles.distTotal}><strong>{total}</strong><span>{c.portfolio.disclosure.replace(/^\d+\s*/, "")}</span></div>
-    <div className={styles.allocGrid} role="img" aria-label={distText}>
-      {cells.map((k, i) => <span key={i} className={styles.allocCell} data-d={k} style={{ background: DEC_COLOR[k] }} />)}
-    </div>
-    <ul className={styles.distLegend}>
-      {dist.map((d) => <li key={d.k}><i style={{ background: DEC_COLOR[d.k] }} /><strong>{d.n}</strong> {decisionLabel(d.k, c).toLowerCase()}</li>)}
-    </ul>
-    <div className={styles.portfolioGrid}>
-      <div><span>{view.allocationLabel}</span><p>{view.attention}</p></div>
-      <div><span>{view.patternLabel}</span><p>{view.pattern}</p></div>
-    </div>
-    <p className={styles.synthetic}>{view.scope} · {c.synthetic}</p>
-  </div>;
-}
-
-function CompanyCase({ copy: c }: { copy: ReturnType<typeof getLandingV2Copy> }) {
-  const a = LANDING_COMPARISON.accounts[0];
-  return <details className={styles.companyCase}>
-    <summary>
-      <div className={styles.caseHead}>
-        <span><strong>{a.name}</strong><small>{a.changed}</small></span><b>{decisionLabel(a.decision, c)}</b><em>{c.case.inspect}</em>
-      </div>
-      {/* P1-1: causality is visible in the collapsed default state — cause → decision change → reason to inspect. */}
-      <ol className={styles.caseCausality} aria-label={`${c.case.beforeLabel} → ${c.case.changeLabel} → ${c.case.nowLabel}`}>
-        <li><span>{c.case.beforeLabel}</span><p>{a.before}</p></li>
-        <li className={styles.caseChange}><span>{c.case.changeLabel}</span><p>{a.changed} · {a.fresh}</p></li>
-        <li><span>{c.case.nowLabel}</span><p>{a.now}</p><b className={styles.caseNowDecision}>{decisionLabel(a.decision, c)}</b></li>
-      </ol>
-    </summary>
-    <div className={styles.caseBody}>
-      <div><h3>{c.case.fact}</h3><p>{a.changed} · {a.fresh}</p><small>{c.case.factNote}</small></div>
-      <div><h3>{c.case.analysis}</h3><p>{c.case.thesis}</p><small>{c.case.inference}</small></div>
-      <div className={styles.caseRisk}><h3>{c.case.weakness}</h3><p>{c.case.weaknessText}</p><small>{c.case.uncertainty}</small></div>
-      <div><h3>{c.case.next}</h3><p>{c.case.validationText}</p><small>{c.case.recommendation}</small></div>
-    </div>
-    <p className={styles.caseTrust}>{c.case.trustLine}</p>
-    <div className={styles.caseFooter}><span>{c.synthetic}</span><Link href="/sample">{c.case.full}</Link></div>
-  </details>;
 }
