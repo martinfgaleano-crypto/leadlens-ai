@@ -1,164 +1,152 @@
-/* HeroCarousel — the hero's right-side visual. A dark "Commercial Intelligence console":
-   a single deliberate instrument (not five white cards) that explains LeadLens across five
-   manual, visitor-controlled slides. Each slide has its own composition; copy is HQ-frozen.
-   Lightweight: React state + CSS only. No autoplay, no carousel dependency. */
+/* HeroCarousel — the hero's right-side visual. A warm, editorial "story card": a single elegant
+   light panel that explains LeadLens across five manual, visitor-controlled slides. Premium and
+   friendly — soft paper surfaces, big clear headlines, generous space, one confident accent.
+   Each slide communicates one idea. Copy is HQ-frozen. React state + CSS only; no dependency. */
 .wrap{min-width:0; width:100%}
 
 .panel{
-  --ink:#0a1024; --ink-2:#111a35; --tile:#0f1730;
-  --edge:rgba(255,255,255,.10); --edge-2:rgba(255,255,255,.17);
-  --tx:#f4f7ff; --tx-b:rgba(223,230,248,.76); --tx-d:rgba(200,210,236,.46);
-  --cobalt:#5c82f8; --cobalt-2:#89a6ff; --cobalt-deep:#3a5fe0; --cobalt-soft:rgba(92,130,248,.14);
-  --amber:#e7b667;
+  --paper:#fffdf9; --paper-2:#f7f4ee; --card:#ffffff;
+  --ink:#211f28; --body:#5d574f; --muted:#948d83; --line:#ece5da; --line-soft:#f2ede4;
+  --cobalt:#2f56e6; --cobalt-ink:#2440c4; --cobalt-2:#5479f6; --cobalt-bg:#eef1fd; --cobalt-line:#d7defb;
+  --amber:#b07d1e; --amber-bg:#f8f0dc;
   --disp:var(--font-display),Manrope,system-ui,sans-serif;
-  --mono:var(--font-mono),"IBM Plex Mono",ui-monospace,monospace;
   position:relative; isolation:isolate; overflow:hidden;
-  display:flex; flex-direction:column; min-height:33.5rem;
-  padding:1.75rem 1.9rem 1.55rem;
-  border-radius:1.4rem; border:1px solid var(--edge);
+  display:flex; flex-direction:column; min-height:33rem;
+  padding:2.05rem 2.15rem 1.65rem;
+  border-radius:1.65rem; border:1px solid var(--line);
   background:
-    radial-gradient(120% 80% at 88% -8%, rgba(92,130,248,.28), transparent 55%),
-    radial-gradient(90% 70% at 6% 108%, rgba(58,95,224,.16), transparent 60%),
-    linear-gradient(158deg,#0c1430 0%, var(--ink) 62%, #080d1e 100%);
-  box-shadow:0 1px 0 rgba(255,255,255,.06) inset, 0 44px 90px -44px rgba(9,17,48,.72), 0 8px 24px -14px rgba(9,17,48,.5);
+    radial-gradient(135% 95% at 92% -12%, rgba(47,86,230,.08), transparent 52%),
+    radial-gradient(120% 80% at 4% 112%, rgba(176,125,30,.06), transparent 60%),
+    linear-gradient(180deg,#ffffff 0%, var(--paper) 100%);
+  box-shadow:0 1px 0 #fff inset, 0 48px 90px -46px rgba(48,40,28,.34), 0 10px 26px -16px rgba(48,40,28,.16);
 }
-/* faint intelligence grid + focus reticle motif (the "lens") */
-.panel::before{content:""; position:absolute; inset:0; z-index:-1; opacity:.5;
-  background-image:linear-gradient(var(--edge) 1px,transparent 1px),linear-gradient(90deg,var(--edge) 1px,transparent 1px);
-  background-size:34px 34px; background-position:center;
-  -webkit-mask-image:radial-gradient(120% 90% at 82% 0%, #000 0%, transparent 68%);
-  mask-image:radial-gradient(120% 90% at 82% 0%, #000 0%, transparent 68%)}
 
-/* ---- header: the frozen question + counter ---- */
-.header{display:flex; align-items:center; justify-content:space-between; gap:1rem;
-  padding-bottom:1rem; border-bottom:1px solid var(--edge)}
-.label{display:inline-flex; align-items:center; gap:.55rem; font-family:var(--mono); font-size:.7rem; letter-spacing:.13em;
-  text-transform:uppercase; color:var(--cobalt-2)}
-.label::before{content:""; width:.4rem; height:.4rem; border-radius:50%; background:var(--cobalt); box-shadow:0 0 0 3px var(--cobalt-soft)}
-.counter{font-family:var(--mono); font-size:.72rem; letter-spacing:.08em; color:var(--tx-d); font-variant-numeric:tabular-nums}
-.counter b{color:var(--tx); font-weight:500}
+/* ---- header: the frozen question (friendly, sentence-case) + step ---- */
+.header{display:flex; align-items:center; justify-content:space-between; gap:1rem; padding-bottom:1.2rem}
+.label{display:inline-flex; align-items:center; gap:.55rem; font-family:var(--disp); font-weight:650;
+  font-size:.86rem; letter-spacing:-.005em; color:var(--cobalt-ink)}
+.label::before{content:""; width:.9rem; height:.9rem; border-radius:.32rem; flex:none;
+  background:linear-gradient(140deg,var(--cobalt-2),var(--cobalt)); box-shadow:0 3px 8px -3px rgba(47,86,230,.6)}
+.counter{font-size:.82rem; font-weight:600; color:var(--muted); font-variant-numeric:tabular-nums; letter-spacing:.02em}
+.counter b{color:var(--cobalt-ink); font-weight:700}
 
 /* ---- stage ---- */
-.stage{flex:1 1 auto; position:relative; padding-top:1.35rem; min-height:0}
-.slide{display:flex; flex-direction:column; height:100%;
-  animation:slideIn .34s cubic-bezier(.4,0,.2,1)}
-@keyframes slideIn{from{opacity:0; transform:translateY(6px)}to{opacity:1; transform:none}}
-.headline{margin:0; font-family:var(--disp); font-weight:600; color:var(--tx);
-  font-size:clamp(1.28rem,1.75vw,1.62rem); line-height:1.24; letter-spacing:-.017em; text-wrap:balance}
-.headline em{font-style:normal; color:var(--cobalt-2)}
-.body{margin:.9rem 0 0; color:var(--tx-b); font-size:.95rem; line-height:1.58; max-width:56ch}
-.body b{color:var(--tx); font-weight:600}
-.secondary{margin:1rem 0 0; padding-left:.9rem; border-left:2px solid var(--cobalt);
-  color:var(--tx); font-size:.92rem; line-height:1.5; max-width:52ch}
-.spacer{flex:1 1 auto; min-height:1rem}
-/* slide 04 carries the densest copy — tighten its rhythm so the panel height stays close to the others */
-.slide[data-kind="deliver"] .body{font-size:.88rem; line-height:1.5; margin-top:.7rem}
-.slide[data-kind="deliver"] .secondary{margin-top:.7rem; font-size:.86rem}
+.stage{flex:1 1 auto; position:relative; min-height:0}
+.slide{display:flex; flex-direction:column; height:100%; animation:riseIn .38s cubic-bezier(.22,.61,.36,1)}
+@keyframes riseIn{from{opacity:0; transform:translateY(9px)}to{opacity:1; transform:none}}
+.headline{margin:0; font-family:var(--disp); font-weight:650; color:var(--ink);
+  font-size:clamp(1.5rem,2.05vw,1.95rem); line-height:1.16; letter-spacing:-.021em; text-wrap:balance}
+.headline em{font-style:normal; color:var(--cobalt-ink)}
+.body{margin:1rem 0 0; color:var(--body); font-size:1rem; line-height:1.62; max-width:52ch}
+.body b{color:var(--ink); font-weight:600}
+.secondary{margin:1.05rem 0 0; padding:.85rem 1.05rem; border-radius:.95rem; background:var(--cobalt-bg);
+  color:var(--cobalt-ink); font-size:.92rem; line-height:1.5; font-weight:500}
+.spacer{flex:1 1 auto; min-height:1.1rem}
+.slide[data-kind="deliver"] .body{font-size:.92rem; line-height:1.55; margin-top:.8rem}
+.slide[data-kind="deliver"] .secondary{margin-top:.85rem; font-size:.88rem}
 
-/* ---- Slide 01 — fragments resolve into structured intelligence ---- */
-.define{margin-top:1.3rem; display:grid; grid-template-columns:1fr auto 1.05fr; align-items:center; gap:1rem}
-.frags{display:flex; flex-wrap:wrap; gap:.4rem; max-width:15rem}
-.frag{font-family:var(--mono); font-size:.66rem; letter-spacing:.03em; color:var(--tx-d);
-  padding:.28rem .5rem; border:1px solid var(--edge); border-radius:.45rem; background:rgba(255,255,255,.02)}
-.resolve{color:var(--cobalt-2); font-size:1.1rem; opacity:.8; justify-self:center}
-.object{position:relative; padding:.9rem 1rem; border-radius:.7rem; border:1px solid var(--cobalt-deep);
-  background:linear-gradient(180deg,var(--cobalt-soft),rgba(92,130,248,.03)); box-shadow:0 0 0 4px rgba(92,130,248,.06)}
-.object span{font-family:var(--mono); font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; color:var(--cobalt-2)}
-.object b{display:block; margin:.4rem 0 .8rem; font-family:var(--disp); font-weight:600; font-size:.95rem; color:var(--tx)}
-.object i{display:block; height:3px; border-radius:3px; margin-top:.4rem; background:linear-gradient(90deg,var(--cobalt) 15%, var(--edge-2) 15%)}
-.object i:nth-of-type(2){width:82%}
-.object i:nth-of-type(3){width:62%}
+/* ---- Slide 01 — fragments gather into one clear intelligence ---- */
+.define{margin-top:1.5rem; display:flex; align-items:center; gap:1.05rem; flex-wrap:wrap}
+.frags{display:flex; flex-wrap:wrap; gap:.5rem; flex:1 1 11rem; min-width:0}
+.frag{font-size:.82rem; color:var(--muted); background:var(--paper-2); padding:.42rem .78rem; border-radius:999px}
+.resolve{color:var(--cobalt); font-size:1.5rem; line-height:1; flex:none}
+.object{display:flex; align-items:center; gap:.8rem; flex:1 1 13rem; padding:1rem 1.15rem; border-radius:1.1rem;
+  background:var(--card); border:1px solid var(--cobalt-line); box-shadow:0 18px 36px -22px rgba(47,86,230,.4)}
+.objCheck{width:2rem; height:2rem; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center;
+  color:#fff; font-size:1rem; background:linear-gradient(150deg,var(--cobalt-2),var(--cobalt)); box-shadow:0 8px 16px -8px rgba(47,86,230,.7)}
+.objText{min-width:0}
+.objKicker{font-size:.68rem; letter-spacing:.07em; text-transform:uppercase; color:var(--muted); font-weight:600}
+.object b{display:block; margin-top:.15rem; font-family:var(--disp); font-weight:700; font-size:1.05rem; color:var(--ink); line-height:1.2}
 
-/* ---- Slide 02 — comparative ladder (the frozen body, typeset) ---- */
-.ladder{margin:1.2rem 0 0; display:flex; flex-direction:column; gap:.5rem}
-.rung{display:grid; grid-template-columns:auto 1fr; gap:.75rem; align-items:baseline;
-  padding:.62rem .8rem; border-radius:.6rem; border:1px solid var(--edge)}
-.rung dt{font-family:var(--disp); font-weight:600; font-size:.9rem; color:var(--tx-d); white-space:nowrap}
-.rung dd{margin:0; color:var(--tx-d); font-size:.9rem; line-height:1.4}
-.rungMe{border-color:var(--cobalt-deep); background:linear-gradient(180deg,var(--cobalt-soft),rgba(92,130,248,.02))}
-.rungMe dt{color:var(--cobalt-2)}
-.rungMe dd{color:var(--tx)}
+/* ---- Slide 02 — a soft comparative ladder (the frozen body, given air) ---- */
+.ladder{margin:1.4rem 0 0; display:flex; flex-direction:column; gap:.6rem}
+.rung{display:flex; gap:.65rem; align-items:baseline; padding:.82rem 1.05rem; border-radius:.95rem; background:var(--paper-2)}
+.rung dt{margin:0; font-family:var(--disp); font-weight:700; font-size:.98rem; color:var(--body); white-space:nowrap}
+.rung dd{margin:0; color:var(--muted); font-size:.95rem; line-height:1.45}
+.rungMe{background:var(--cobalt-bg); box-shadow:0 16px 34px -22px rgba(47,86,230,.5)}
+.rungMe dt{color:var(--cobalt-ink)}
+.rungMe dd{color:var(--ink)}
 
-/* ---- Slide 03 — compressed decision work ---- */
-.value{margin-top:1.25rem; display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:1rem}
-.manual{display:flex; flex-direction:column; gap:.4rem}
-.manual span{font-family:var(--mono); font-size:.66rem; letter-spacing:.03em; color:var(--tx-d);
-  padding:.34rem .55rem; border:1px dashed var(--edge-2); border-radius:.45rem}
-.compress{justify-self:center; color:var(--cobalt-2); font-size:1.05rem; display:flex; flex-direction:column; align-items:center; gap:.25rem}
-.compress small{font-family:var(--mono); font-size:.54rem; letter-spacing:.1em; text-transform:uppercase; color:var(--tx-d)}
-.decision{padding:1rem; border-radius:.7rem; border:1px solid var(--cobalt-deep);
-  background:linear-gradient(180deg,var(--cobalt-soft),rgba(92,130,248,.03)); text-align:left}
-.decision span{font-family:var(--mono); font-size:.58rem; letter-spacing:.12em; text-transform:uppercase; color:var(--cobalt-2)}
-.decision b{display:block; margin-top:.4rem; font-family:var(--disp); font-weight:600; font-size:1rem; line-height:1.2; color:var(--tx)}
+/* ---- Slide 03 — manual work resolves into one confident decision ---- */
+.value{margin-top:1.45rem; display:flex; align-items:center; gap:1.1rem; flex-wrap:wrap}
+.manual{display:flex; flex-wrap:wrap; gap:.5rem; flex:1 1 10rem}
+.manual span{font-size:.84rem; color:var(--muted); background:var(--paper-2); padding:.44rem .78rem; border-radius:999px}
+.compress{display:flex; flex-direction:column; align-items:center; gap:.25rem; flex:none; color:var(--cobalt)}
+.compress small{font-size:.6rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:600}
+.compress span{font-size:1.4rem; line-height:1}
+.decision{flex:1 1 12rem; padding:1.1rem 1.2rem; border-radius:1.1rem; background:var(--cobalt-bg);
+  box-shadow:0 18px 36px -22px rgba(47,86,230,.45)}
+.decision span{font-size:.68rem; letter-spacing:.07em; text-transform:uppercase; color:var(--cobalt-ink); font-weight:600}
+.decision b{display:block; margin-top:.3rem; font-family:var(--disp); font-weight:700; font-size:1.12rem; line-height:1.2; color:var(--ink)}
 
-/* ---- Slide 04 — intelligence record artifact ---- */
-.record{margin-top:1.15rem; border:1px solid var(--edge); border-radius:.75rem; overflow:hidden; background:rgba(255,255,255,.015)}
-.recTop{display:flex; align-items:center; justify-content:space-between; gap:.75rem; padding:.7rem .85rem; border-bottom:1px solid var(--edge)}
-.pill{display:inline-flex; align-items:center; gap:.45rem; font-family:var(--mono); font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; font-weight:500;
-  color:#fff; background:linear-gradient(180deg,var(--cobalt),var(--cobalt-deep)); padding:.32rem .6rem; border-radius:999px}
-.pill::before{content:""; width:.4rem; height:.4rem; border-radius:50%; background:rgba(255,255,255,.9)}
-.recTop small{font-family:var(--mono); font-size:.64rem; color:var(--tx-d)}
-.recTop small b{color:var(--cobalt-2); font-weight:500}
-.recRows{display:grid; grid-template-columns:1fr 1fr; gap:.1rem 0}
-.recRows div{padding:.6rem .85rem; border-top:1px solid var(--edge)}
-.recRows div:nth-child(odd){border-right:1px solid var(--edge)}
-.recRows span{display:block; font-family:var(--mono); font-size:.56rem; letter-spacing:.11em; text-transform:uppercase; color:var(--tx-d)}
-.recRows p{margin:.28rem 0 0; font-size:.82rem; line-height:1.35; color:var(--tx)}
-.recRows em{font-style:normal; color:var(--amber)}
-.recRows .full{grid-column:1/-1; border-right:0}
+/* ---- Slide 04 — a friendly, evidence-backed brief card ---- */
+.record{margin-top:1.35rem; border-radius:1.2rem; background:var(--card); border:1px solid var(--line);
+  box-shadow:0 26px 50px -30px rgba(48,40,28,.36)}
+.recTop{display:flex; align-items:center; justify-content:space-between; gap:.85rem; padding:1rem 1.15rem .2rem}
+.pill{display:inline-flex; align-items:center; gap:.5rem; font-weight:700; font-size:.8rem; letter-spacing:.01em;
+  color:#fff; background:linear-gradient(150deg,var(--cobalt-2),var(--cobalt)); padding:.42rem .85rem; border-radius:999px;
+  box-shadow:0 10px 20px -10px rgba(47,86,230,.6)}
+.pill::before{content:""; width:.45rem; height:.45rem; border-radius:50%; background:rgba(255,255,255,.95)}
+.recTop small{color:var(--muted); font-size:.8rem; font-weight:500}
+.recRows{display:grid; grid-template-columns:1fr 1fr; gap:.95rem 1.5rem; padding:.95rem 1.15rem 1.15rem}
+.recRows span{display:block; font-size:.68rem; letter-spacing:.05em; text-transform:uppercase; color:var(--muted); font-weight:600}
+.recRows p{margin:.28rem 0 0; font-size:.92rem; line-height:1.35; color:var(--ink)}
+.recRows em{font-style:normal; color:var(--amber); font-weight:600}
+.recRows .full{grid-column:1/-1}
 
-/* ---- Slide 05 — guided start + CTA ---- */
-.steps{margin:1.2rem 0 0; display:grid; grid-template-columns:1fr auto 1fr auto 1fr; align-items:center; gap:.55rem}
-.stepCard{padding:.75rem .7rem; border-radius:.6rem; border:1px solid var(--edge); text-align:center; min-height:4.4rem; display:flex; flex-direction:column; justify-content:center; gap:.35rem}
-.stepCard b{font-family:var(--mono); font-size:.6rem; letter-spacing:.1em; color:var(--cobalt-2)}
-.stepCard span{font-size:.78rem; line-height:1.25; color:var(--tx)}
-.stepArrow{color:var(--tx-d); font-size:.9rem; justify-self:center}
-.ctaRow{display:flex; flex-wrap:wrap; align-items:center; gap:.85rem 1.2rem; margin-top:1.25rem}
-.primary{display:inline-flex; align-items:center; min-height:44px; padding:.7rem 1.25rem; border-radius:999px; font-weight:600; font-size:.95rem;
-  color:#fff!important; text-decoration:none; background:linear-gradient(180deg,var(--cobalt),var(--cobalt-deep));
-  box-shadow:0 12px 26px -12px rgba(58,95,224,.75); transition:transform .16s ease, box-shadow .16s ease, filter .16s ease}
-.primary:hover{transform:translateY(-1px) scale(1.015); box-shadow:0 16px 32px -12px rgba(58,95,224,.85); filter:brightness(1.05)}
+/* ---- Slide 05 — a gentle three-step start + CTA ---- */
+.steps{margin:1.45rem 0 0; display:grid; grid-template-columns:1fr auto 1fr auto 1fr; align-items:stretch; gap:.6rem}
+.stepCard{padding:1rem .85rem; border-radius:1.1rem; background:var(--paper-2); text-align:center;
+  display:flex; flex-direction:column; align-items:center; gap:.55rem}
+.stepCard b{width:1.95rem; height:1.95rem; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-family:var(--disp); font-weight:700; font-size:.85rem; color:var(--cobalt-ink); background:var(--cobalt-bg)}
+.stepCard span{font-size:.84rem; line-height:1.28; color:var(--ink); font-weight:500}
+.stepArrow{align-self:center; color:var(--muted); font-size:1.05rem}
+.ctaRow{display:flex; flex-wrap:wrap; align-items:center; gap:.9rem 1.3rem; margin-top:1.4rem}
+.primary{display:inline-flex; align-items:center; min-height:46px; padding:.75rem 1.4rem; border-radius:999px; font-weight:650; font-size:.98rem;
+  color:#fff!important; text-decoration:none; background:linear-gradient(150deg,var(--cobalt-2),var(--cobalt));
+  box-shadow:0 14px 28px -12px rgba(47,86,230,.62); transition:transform .16s ease, box-shadow .16s ease, filter .16s ease}
+.primary:hover{transform:translateY(-1px) scale(1.015); box-shadow:0 18px 34px -12px rgba(47,86,230,.72); filter:brightness(1.03)}
 .primary:active{transform:scale(.99)}
-.secondaryLink{font-weight:600; font-size:.92rem; color:var(--cobalt-2); text-decoration:none}
-.secondaryLink:hover{color:var(--tx); text-decoration:underline}
+.secondaryLink{font-weight:650; font-size:.95rem; color:var(--cobalt-ink); text-decoration:none}
+.secondaryLink:hover{text-decoration:underline}
 
 /* ---- controls ---- */
-.controls{display:flex; align-items:center; gap:1rem; margin-top:1.35rem; padding-top:1.15rem; border-top:1px solid var(--edge)}
-.seg{flex:1 1 auto; display:flex; align-items:center; gap:.4rem; padding:0; margin:0; list-style:none}
-.seg button{flex:1 1 auto; height:4px; padding:0; border:0; border-radius:999px; cursor:pointer;
-  background:rgba(255,255,255,.13); transition:background .2s ease, transform .2s ease}
-.seg button:hover{background:rgba(255,255,255,.28)}
-.seg button[data-state="done"]{background:var(--cobalt-deep)}
-.seg button[data-state="active"]{background:linear-gradient(90deg,var(--cobalt-2),var(--cobalt)); height:5px; box-shadow:0 0 12px rgba(92,130,248,.55)}
-.seg button:focus-visible{outline:2px solid var(--cobalt-2); outline-offset:3px}
-.arrows{display:flex; align-items:center; gap:.55rem; flex:none}
-.arrow{width:2.35rem; height:2.35rem; border-radius:50%; display:flex; align-items:center; justify-content:center;
-  border:1px solid var(--edge-2); background:rgba(255,255,255,.04); color:var(--tx); font-size:1.15rem; line-height:1; cursor:pointer;
-  transition:transform .16s ease, background .16s ease, border-color .16s ease}
-.arrow:hover:not(:disabled){transform:translateY(-1px); background:var(--cobalt-soft); border-color:var(--cobalt-deep)}
+.controls{display:flex; align-items:center; gap:1.1rem; margin-top:1.5rem; padding-top:1.25rem; border-top:1px solid var(--line-soft)}
+.seg{flex:1 1 auto; display:flex; align-items:center; gap:.45rem; padding:0; margin:0; list-style:none}
+.seg button{flex:1 1 auto; height:5px; padding:0; border:0; border-radius:999px; cursor:pointer;
+  background:var(--line); transition:background .2s ease, height .2s ease}
+.seg button:hover{background:var(--cobalt-line)}
+.seg button[data-state="done"]{background:var(--cobalt-line)}
+.seg button[data-state="active"]{background:linear-gradient(90deg,var(--cobalt-2),var(--cobalt)); box-shadow:0 3px 10px -2px rgba(47,86,230,.5)}
+.seg button:focus-visible{outline:2px solid var(--cobalt); outline-offset:3px}
+.arrows{display:flex; align-items:center; gap:.6rem; flex:none}
+.arrow{width:2.5rem; height:2.5rem; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  border:1px solid var(--line); background:var(--card); color:var(--ink); font-size:1.2rem; line-height:1; cursor:pointer;
+  box-shadow:0 6px 16px -8px rgba(48,40,28,.28); transition:transform .16s ease, background .16s ease, border-color .16s ease}
+.arrow:hover:not(:disabled){transform:translateY(-1px); background:var(--cobalt-bg); border-color:var(--cobalt-line)}
 .arrow:active:not(:disabled){transform:scale(.95)}
-.arrow:focus-visible{outline:2px solid var(--cobalt-2); outline-offset:2px}
-.arrow:disabled{opacity:.32; cursor:default}
+.arrow:focus-visible{outline:2px solid var(--cobalt); outline-offset:2px}
+.arrow:disabled{opacity:.4; cursor:default}
 
 /* ---- responsive ---- */
-@media(max-width:1050px){
-  .panel{min-height:0}
-}
+@media(max-width:1050px){ .panel{min-height:0} }
 @media(max-width:760px){
-  .panel{border-radius:1.15rem; padding:1.35rem 1.25rem 1.3rem; min-height:0}
-  .headline{font-size:clamp(1.24rem,5.2vw,1.5rem)}
-  .body{font-size:.92rem; max-width:none}
-  .define{grid-template-columns:1fr; gap:.75rem; text-align:left}
-  .resolve{transform:rotate(90deg); justify-self:start}
-  .frags{max-width:none}
-  .value{grid-template-columns:1fr; gap:.7rem}
-  .compress{flex-direction:row; gap:.5rem}
+  .panel{border-radius:1.35rem; padding:1.5rem 1.35rem 1.4rem; min-height:0}
+  .headline{font-size:clamp(1.42rem,5.6vw,1.75rem)}
+  .body{font-size:.95rem; max-width:none}
+  .define{gap:.85rem}
+  .frags{flex-basis:100%}
+  .object{flex-basis:100%}
+  .value{gap:.85rem}
+  .manual{flex-basis:100%}
+  .compress{flex-direction:row; gap:.5rem; align-self:flex-start}
   .compress span{transform:rotate(90deg)}
-  .recRows{grid-template-columns:1fr}
-  .recRows div:nth-child(odd){border-right:0}
-  .steps{grid-template-columns:1fr; gap:.45rem}
+  .decision{flex-basis:100%}
+  .recRows{grid-template-columns:1fr; gap:.85rem}
+  .steps{grid-template-columns:1fr; gap:.5rem}
+  .stepCard{flex-direction:row; text-align:left; justify-content:flex-start; gap:.75rem}
   .stepArrow{transform:rotate(90deg); justify-self:start}
-  .stepCard{min-height:0; text-align:left; align-items:flex-start}
 }
 @media(prefers-reduced-motion:reduce){
   .slide{animation:none}
