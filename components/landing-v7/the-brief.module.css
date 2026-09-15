@@ -4,9 +4,9 @@
 .scope{
   --ink:#1a1712; --body:#463f34; --mut:#7d7565; --dim:#9a9182;
   --paper:#fffdf8; --line:#e7e0d0; --line-soft:#efe9db;
-  --cyan:#0a6fbe; --cyan-ink:#0a5a97; --cyan-bright:#1a95e0; --cyan-bg:#e8f3fc;
+  --cyan:#2647cf; --cyan-ink:#223fbf; --cyan-bright:#3f6cf2; --cyan-bg:#e9edfd;
   --amber:#a9741a; --amber-bg:#f5edd6; --amber-line:#ecd9a9;
-  --serif:var(--font-serif),Fraunces,Georgia,serif;
+  --serif:var(--font-display),Manrope,system-ui,sans-serif;
   --mono:var(--font-mono),"IBM Plex Mono",ui-monospace,monospace;
 }
 
@@ -25,7 +25,7 @@
 .head{display:flex; align-items:center; gap:.8rem; margin-top:.85rem; flex-wrap:wrap}
 .chip{display:inline-flex; align-items:center; gap:.5rem; font-family:var(--font-body),sans-serif; font-size:.74rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:#fff;
   background:linear-gradient(180deg,var(--cyan-bright),var(--cyan)); padding:.42rem .78rem; border-radius:999px;
-  box-shadow:0 8px 16px -8px rgba(10,111,190,.7)}
+  box-shadow:0 8px 16px -8px rgba(38,71,207,.7)}
 .chip .tick{width:.5rem; height:.5rem; border-radius:50%; background:rgba(255,255,255,.92)}
 .arche{font-size:.9rem; color:var(--mut); line-height:1.3}
 

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { LanguageSwitcher } from "@/components/landing-v2/LanguageSwitcher";
 import { DecisionBrief } from "@/components/landing-v7/DecisionBrief";
+import { StoryDeck } from "@/components/landing-v7/StoryDeck";
 import { Shortlist } from "@/components/landing-v7/Shortlist";
 import { oneTimeCards } from "@/lib/commercial/plan-catalog";
 import { getLandingV2Copy, type LandingLocale } from "@/lib/landing/v2-copy";
@@ -48,10 +49,6 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
   const locale = localeFrom(searchParams?.lang);
   const c = getLandingV2Copy(locale);
   const es = locale === "es";
-  // 5-second category distinction (no named competitors).
-  const category = es
-    ? { eyebrow: "Dónde encaja LeadLens", rows: [{ k: "Bases de datos", v: "Quién existe." }, { k: "Herramientas de señales", v: "Qué pasó." }, { k: "LeadLens", v: "Por qué importa — y a dónde debe ir la atención.", me: true }] }
-    : { eyebrow: "Where LeadLens fits", rows: [{ k: "Databases", v: "Who exists." }, { k: "Signal tools", v: "What happened." }, { k: "LeadLens", v: "Why it matters — and where attention belongs.", me: true }] };
   // How LeadLens thinks — three reasoning principles + one before → now example (folds the old Deep Case).
   const thinks = es
     ? { eyebrow: "Cómo razona LeadLens", title: "Un criterio que puedes inspeccionar — no un puntaje.",
@@ -105,21 +102,15 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
         {/* 1. HERO — the output the buyer receives */}
         <section className={styles.hero}>
           <div className={styles.heroCopy}>
-            <p className={styles.eyebrow}>{c.category}</p><h1>{c.hero.title} <span className={styles.heroAccent}>{c.hero.titleAccent}</span></h1><p className={styles.heroLead}><span className={styles.heroLeadFull}>{c.hero.lead}</span><span className={styles.heroLeadShort}>{c.hero.lead.split(/\.\s/)[0]}.</span></p>
+            <p className={styles.eyebrow}>{c.category}</p><h1>{c.hero.title} <span className={styles.heroAccent}>{c.hero.titleAccent}</span></h1>
             <div className={styles.ctas}><Link className={styles.primary} href={START_PATH}>{c.primary}</Link><Link className={styles.secondary} href="/sample">{c.secondary}</Link></div>
-            <p className={styles.heroInput}>{c.hero.inputOutput}</p>
+            <p className={styles.heroInput}>{c.hero.lead}</p>
           </div>
-          <DecisionBrief locale={locale} />
+          <StoryDeck locale={locale} brief={<DecisionBrief locale={locale} />} primaryHref={START_PATH} />
         </section>
 
-        {/* 2. TRUST / CATEGORY — where LeadLens fits, and the honesty boundary */}
-        <section className={styles.catBand} aria-label={category.eyebrow}>
-          <p className={styles.eyebrow}>{category.eyebrow}</p>
-          <div className={styles.catRow}>
-            {category.rows.map((x) => <div key={x.k} className={"me" in x && x.me ? styles.catMe : styles.catCol}><span>{x.k}</span><p>{x.v}</p></div>)}
-          </div>
-          <p className={styles.trustBoundary}>{c.trust.boundary}</p>
-        </section>
+        {/* 2. Honesty boundary — one line, product-truth */}
+        <section className={styles.boundary}><p>{c.trust.boundary}</p></section>
 
         {/* 3. SHORTLIST — the one product proof */}
         <Shortlist locale={locale} />
