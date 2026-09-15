@@ -1,0 +1,167 @@
+/* HeroCarousel — the hero's right-side visual. A dark "Commercial Intelligence console":
+   a single deliberate instrument (not five white cards) that explains LeadLens across five
+   manual, visitor-controlled slides. Each slide has its own composition; copy is HQ-frozen.
+   Lightweight: React state + CSS only. No autoplay, no carousel dependency. */
+.wrap{min-width:0; width:100%}
+
+.panel{
+  --ink:#0a1024; --ink-2:#111a35; --tile:#0f1730;
+  --edge:rgba(255,255,255,.10); --edge-2:rgba(255,255,255,.17);
+  --tx:#f4f7ff; --tx-b:rgba(223,230,248,.76); --tx-d:rgba(200,210,236,.46);
+  --cobalt:#5c82f8; --cobalt-2:#89a6ff; --cobalt-deep:#3a5fe0; --cobalt-soft:rgba(92,130,248,.14);
+  --amber:#e7b667;
+  --disp:var(--font-display),Manrope,system-ui,sans-serif;
+  --mono:var(--font-mono),"IBM Plex Mono",ui-monospace,monospace;
+  position:relative; isolation:isolate; overflow:hidden;
+  display:flex; flex-direction:column; min-height:33.5rem;
+  padding:1.75rem 1.9rem 1.55rem;
+  border-radius:1.4rem; border:1px solid var(--edge);
+  background:
+    radial-gradient(120% 80% at 88% -8%, rgba(92,130,248,.28), transparent 55%),
+    radial-gradient(90% 70% at 6% 108%, rgba(58,95,224,.16), transparent 60%),
+    linear-gradient(158deg,#0c1430 0%, var(--ink) 62%, #080d1e 100%);
+  box-shadow:0 1px 0 rgba(255,255,255,.06) inset, 0 44px 90px -44px rgba(9,17,48,.72), 0 8px 24px -14px rgba(9,17,48,.5);
+}
+/* faint intelligence grid + focus reticle motif (the "lens") */
+.panel::before{content:""; position:absolute; inset:0; z-index:-1; opacity:.5;
+  background-image:linear-gradient(var(--edge) 1px,transparent 1px),linear-gradient(90deg,var(--edge) 1px,transparent 1px);
+  background-size:34px 34px; background-position:center;
+  -webkit-mask-image:radial-gradient(120% 90% at 82% 0%, #000 0%, transparent 68%);
+  mask-image:radial-gradient(120% 90% at 82% 0%, #000 0%, transparent 68%)}
+
+/* ---- header: the frozen question + counter ---- */
+.header{display:flex; align-items:center; justify-content:space-between; gap:1rem;
+  padding-bottom:1rem; border-bottom:1px solid var(--edge)}
+.label{display:inline-flex; align-items:center; gap:.55rem; font-family:var(--mono); font-size:.7rem; letter-spacing:.13em;
+  text-transform:uppercase; color:var(--cobalt-2)}
+.label::before{content:""; width:.4rem; height:.4rem; border-radius:50%; background:var(--cobalt); box-shadow:0 0 0 3px var(--cobalt-soft)}
+.counter{font-family:var(--mono); font-size:.72rem; letter-spacing:.08em; color:var(--tx-d); font-variant-numeric:tabular-nums}
+.counter b{color:var(--tx); font-weight:500}
+
+/* ---- stage ---- */
+.stage{flex:1 1 auto; position:relative; padding-top:1.35rem; min-height:0}
+.slide{display:flex; flex-direction:column; height:100%;
+  animation:slideIn .34s cubic-bezier(.4,0,.2,1)}
+@keyframes slideIn{from{opacity:0; transform:translateY(6px)}to{opacity:1; transform:none}}
+.headline{margin:0; font-family:var(--disp); font-weight:600; color:var(--tx);
+  font-size:clamp(1.28rem,1.75vw,1.62rem); line-height:1.24; letter-spacing:-.017em; text-wrap:balance}
+.headline em{font-style:normal; color:var(--cobalt-2)}
+.body{margin:.9rem 0 0; color:var(--tx-b); font-size:.95rem; line-height:1.58; max-width:56ch}
+.body b{color:var(--tx); font-weight:600}
+.secondary{margin:1rem 0 0; padding-left:.9rem; border-left:2px solid var(--cobalt);
+  color:var(--tx); font-size:.92rem; line-height:1.5; max-width:52ch}
+.spacer{flex:1 1 auto; min-height:1rem}
+/* slide 04 carries the densest copy — tighten its rhythm so the panel height stays close to the others */
+.slide[data-kind="deliver"] .body{font-size:.88rem; line-height:1.5; margin-top:.7rem}
+.slide[data-kind="deliver"] .secondary{margin-top:.7rem; font-size:.86rem}
+
+/* ---- Slide 01 — fragments resolve into structured intelligence ---- */
+.define{margin-top:1.3rem; display:grid; grid-template-columns:1fr auto 1.05fr; align-items:center; gap:1rem}
+.frags{display:flex; flex-wrap:wrap; gap:.4rem; max-width:15rem}
+.frag{font-family:var(--mono); font-size:.66rem; letter-spacing:.03em; color:var(--tx-d);
+  padding:.28rem .5rem; border:1px solid var(--edge); border-radius:.45rem; background:rgba(255,255,255,.02)}
+.resolve{color:var(--cobalt-2); font-size:1.1rem; opacity:.8; justify-self:center}
+.object{position:relative; padding:.9rem 1rem; border-radius:.7rem; border:1px solid var(--cobalt-deep);
+  background:linear-gradient(180deg,var(--cobalt-soft),rgba(92,130,248,.03)); box-shadow:0 0 0 4px rgba(92,130,248,.06)}
+.object span{font-family:var(--mono); font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; color:var(--cobalt-2)}
+.object b{display:block; margin:.4rem 0 .8rem; font-family:var(--disp); font-weight:600; font-size:.95rem; color:var(--tx)}
+.object i{display:block; height:3px; border-radius:3px; margin-top:.4rem; background:linear-gradient(90deg,var(--cobalt) 15%, var(--edge-2) 15%)}
+.object i:nth-of-type(2){width:82%}
+.object i:nth-of-type(3){width:62%}
+
+/* ---- Slide 02 — comparative ladder (the frozen body, typeset) ---- */
+.ladder{margin:1.2rem 0 0; display:flex; flex-direction:column; gap:.5rem}
+.rung{display:grid; grid-template-columns:auto 1fr; gap:.75rem; align-items:baseline;
+  padding:.62rem .8rem; border-radius:.6rem; border:1px solid var(--edge)}
+.rung dt{font-family:var(--disp); font-weight:600; font-size:.9rem; color:var(--tx-d); white-space:nowrap}
+.rung dd{margin:0; color:var(--tx-d); font-size:.9rem; line-height:1.4}
+.rungMe{border-color:var(--cobalt-deep); background:linear-gradient(180deg,var(--cobalt-soft),rgba(92,130,248,.02))}
+.rungMe dt{color:var(--cobalt-2)}
+.rungMe dd{color:var(--tx)}
+
+/* ---- Slide 03 — compressed decision work ---- */
+.value{margin-top:1.25rem; display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:1rem}
+.manual{display:flex; flex-direction:column; gap:.4rem}
+.manual span{font-family:var(--mono); font-size:.66rem; letter-spacing:.03em; color:var(--tx-d);
+  padding:.34rem .55rem; border:1px dashed var(--edge-2); border-radius:.45rem}
+.compress{justify-self:center; color:var(--cobalt-2); font-size:1.05rem; display:flex; flex-direction:column; align-items:center; gap:.25rem}
+.compress small{font-family:var(--mono); font-size:.54rem; letter-spacing:.1em; text-transform:uppercase; color:var(--tx-d)}
+.decision{padding:1rem; border-radius:.7rem; border:1px solid var(--cobalt-deep);
+  background:linear-gradient(180deg,var(--cobalt-soft),rgba(92,130,248,.03)); text-align:left}
+.decision span{font-family:var(--mono); font-size:.58rem; letter-spacing:.12em; text-transform:uppercase; color:var(--cobalt-2)}
+.decision b{display:block; margin-top:.4rem; font-family:var(--disp); font-weight:600; font-size:1rem; line-height:1.2; color:var(--tx)}
+
+/* ---- Slide 04 — intelligence record artifact ---- */
+.record{margin-top:1.15rem; border:1px solid var(--edge); border-radius:.75rem; overflow:hidden; background:rgba(255,255,255,.015)}
+.recTop{display:flex; align-items:center; justify-content:space-between; gap:.75rem; padding:.7rem .85rem; border-bottom:1px solid var(--edge)}
+.pill{display:inline-flex; align-items:center; gap:.45rem; font-family:var(--mono); font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; font-weight:500;
+  color:#fff; background:linear-gradient(180deg,var(--cobalt),var(--cobalt-deep)); padding:.32rem .6rem; border-radius:999px}
+.pill::before{content:""; width:.4rem; height:.4rem; border-radius:50%; background:rgba(255,255,255,.9)}
+.recTop small{font-family:var(--mono); font-size:.64rem; color:var(--tx-d)}
+.recTop small b{color:var(--cobalt-2); font-weight:500}
+.recRows{display:grid; grid-template-columns:1fr 1fr; gap:.1rem 0}
+.recRows div{padding:.6rem .85rem; border-top:1px solid var(--edge)}
+.recRows div:nth-child(odd){border-right:1px solid var(--edge)}
+.recRows span{display:block; font-family:var(--mono); font-size:.56rem; letter-spacing:.11em; text-transform:uppercase; color:var(--tx-d)}
+.recRows p{margin:.28rem 0 0; font-size:.82rem; line-height:1.35; color:var(--tx)}
+.recRows em{font-style:normal; color:var(--amber)}
+.recRows .full{grid-column:1/-1; border-right:0}
+
+/* ---- Slide 05 — guided start + CTA ---- */
+.steps{margin:1.2rem 0 0; display:grid; grid-template-columns:1fr auto 1fr auto 1fr; align-items:center; gap:.55rem}
+.stepCard{padding:.75rem .7rem; border-radius:.6rem; border:1px solid var(--edge); text-align:center; min-height:4.4rem; display:flex; flex-direction:column; justify-content:center; gap:.35rem}
+.stepCard b{font-family:var(--mono); font-size:.6rem; letter-spacing:.1em; color:var(--cobalt-2)}
+.stepCard span{font-size:.78rem; line-height:1.25; color:var(--tx)}
+.stepArrow{color:var(--tx-d); font-size:.9rem; justify-self:center}
+.ctaRow{display:flex; flex-wrap:wrap; align-items:center; gap:.85rem 1.2rem; margin-top:1.25rem}
+.primary{display:inline-flex; align-items:center; min-height:44px; padding:.7rem 1.25rem; border-radius:999px; font-weight:600; font-size:.95rem;
+  color:#fff!important; text-decoration:none; background:linear-gradient(180deg,var(--cobalt),var(--cobalt-deep));
+  box-shadow:0 12px 26px -12px rgba(58,95,224,.75); transition:transform .16s ease, box-shadow .16s ease, filter .16s ease}
+.primary:hover{transform:translateY(-1px) scale(1.015); box-shadow:0 16px 32px -12px rgba(58,95,224,.85); filter:brightness(1.05)}
+.primary:active{transform:scale(.99)}
+.secondaryLink{font-weight:600; font-size:.92rem; color:var(--cobalt-2); text-decoration:none}
+.secondaryLink:hover{color:var(--tx); text-decoration:underline}
+
+/* ---- controls ---- */
+.controls{display:flex; align-items:center; gap:1rem; margin-top:1.35rem; padding-top:1.15rem; border-top:1px solid var(--edge)}
+.seg{flex:1 1 auto; display:flex; align-items:center; gap:.4rem; padding:0; margin:0; list-style:none}
+.seg button{flex:1 1 auto; height:4px; padding:0; border:0; border-radius:999px; cursor:pointer;
+  background:rgba(255,255,255,.13); transition:background .2s ease, transform .2s ease}
+.seg button:hover{background:rgba(255,255,255,.28)}
+.seg button[data-state="done"]{background:var(--cobalt-deep)}
+.seg button[data-state="active"]{background:linear-gradient(90deg,var(--cobalt-2),var(--cobalt)); height:5px; box-shadow:0 0 12px rgba(92,130,248,.55)}
+.seg button:focus-visible{outline:2px solid var(--cobalt-2); outline-offset:3px}
+.arrows{display:flex; align-items:center; gap:.55rem; flex:none}
+.arrow{width:2.35rem; height:2.35rem; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  border:1px solid var(--edge-2); background:rgba(255,255,255,.04); color:var(--tx); font-size:1.15rem; line-height:1; cursor:pointer;
+  transition:transform .16s ease, background .16s ease, border-color .16s ease}
+.arrow:hover:not(:disabled){transform:translateY(-1px); background:var(--cobalt-soft); border-color:var(--cobalt-deep)}
+.arrow:active:not(:disabled){transform:scale(.95)}
+.arrow:focus-visible{outline:2px solid var(--cobalt-2); outline-offset:2px}
+.arrow:disabled{opacity:.32; cursor:default}
+
+/* ---- responsive ---- */
+@media(max-width:1050px){
+  .panel{min-height:0}
+}
+@media(max-width:760px){
+  .panel{border-radius:1.15rem; padding:1.35rem 1.25rem 1.3rem; min-height:0}
+  .headline{font-size:clamp(1.24rem,5.2vw,1.5rem)}
+  .body{font-size:.92rem; max-width:none}
+  .define{grid-template-columns:1fr; gap:.75rem; text-align:left}
+  .resolve{transform:rotate(90deg); justify-self:start}
+  .frags{max-width:none}
+  .value{grid-template-columns:1fr; gap:.7rem}
+  .compress{flex-direction:row; gap:.5rem}
+  .compress span{transform:rotate(90deg)}
+  .recRows{grid-template-columns:1fr}
+  .recRows div:nth-child(odd){border-right:0}
+  .steps{grid-template-columns:1fr; gap:.45rem}
+  .stepArrow{transform:rotate(90deg); justify-self:start}
+  .stepCard{min-height:0; text-align:left; align-items:flex-start}
+}
+@media(prefers-reduced-motion:reduce){
+  .slide{animation:none}
+  .primary,.arrow,.seg button{transition:none}
+  .primary:hover,.arrow:hover:not(:disabled){transform:none}
+}
