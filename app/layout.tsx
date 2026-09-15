@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk, Fraunces, IBM_Plex_Mono } from "next/font/google";
+import { Inter, Manrope, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 
-// Body voice: Inter (clean grotesque). Display voice: Space Grotesk — precise, technical-editorial.
-// "The Brief" hero adds an analyst-grade pairing: Fraunces (editorial serif, the headline + decision
-// word) and IBM Plex Mono (dated sources / metadata). All exposed as CSS variables.
+// Type system (Landing Experience Refinement V1): a modern commercial-software voice.
+// Display = Manrope (geometric-humanist, professional, distinctive — not editorial, not the
+// Inter/Space-Grotesk default). Body = Inter. Metadata/dates = IBM Plex Mono (used sparingly).
 const inter = Inter({ subsets: ["latin"], variable: "--font-body", display: "swap" });
-const display = Space_Grotesk({ subsets: ["latin"], variable: "--font-display", weight: ["500", "600", "700"], display: "swap" });
-const serif = Fraunces({ subsets: ["latin"], variable: "--font-serif", weight: ["400", "500", "600"], style: ["normal", "italic"], display: "swap" });
+const display = Manrope({ subsets: ["latin"], variable: "--font-display", weight: ["500", "600", "700", "800"], display: "swap" });
 const mono = IBM_Plex_Mono({ subsets: ["latin"], variable: "--font-mono", weight: ["400", "500"], display: "swap" });
 
 // Canonical production domain. Env-driven so preview/prod resolve correctly;
@@ -52,7 +51,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${display.variable} ${serif.variable} ${mono.variable} ${inter.className}`}>{children}</body>
+      <body className={`${inter.variable} ${display.variable} ${mono.variable} ${inter.className}`}>{children}</body>
     </html>
   );
 }

@@ -1,0 +1,106 @@
+/* Guided story deck — hero centerpiece. Manual, visitor-controlled; CSS transforms only. */
+.deck{
+  --ink:#0f1622; --body:#3d4655; --mut:#6b7480; --line:#e6e8ef; --paper:#ffffff;
+  --cobalt:#2f56e6; --cobalt-d:#2442c9; --cobalt-ink:#223fbf; --cobalt-bg:#eef1fd; --cobalt-line:#cdd7f6;
+  --amber:#a9741a; --amber-bg:#f6edd7; --slate:#64748b;
+  --disp:var(--font-display),Manrope,system-ui,sans-serif; --mono:var(--font-mono),"IBM Plex Mono",ui-monospace,monospace;
+  position:relative; outline:none;
+}
+.deck:focus-visible{outline:2px solid var(--cobalt); outline-offset:6px; border-radius:1.2rem}
+.rail{overflow:hidden; border-radius:1.15rem}
+.slide{width:100%; min-width:0; display:grid; grid-template-columns:1fr; gap:1.4rem; align-content:start;
+  padding:1.7rem 1.8rem; border:1px solid var(--line); border-radius:1.15rem; background:var(--paper);
+  box-shadow:0 40px 80px -50px rgba(15,30,70,.34), 0 2px 8px rgba(15,30,70,.04);
+  animation:slideIn .32s cubic-bezier(.4,0,.2,1)}
+@keyframes slideIn{from{opacity:0; transform:translateX(14px)}to{opacity:1; transform:none}}
+@media(min-width:720px){ .slide{grid-template-columns:.92fr 1.08fr; gap:2.2rem; align-items:center; padding:2rem 2.1rem} }
+.copy{min-width:0}
+.kicker{font-family:var(--mono); font-size:.66rem; letter-spacing:.16em; text-transform:uppercase; color:var(--cobalt-ink)}
+.head{font-family:var(--disp); font-weight:700; font-size:clamp(1.5rem,2.5vw,2.1rem); line-height:1.12; letter-spacing:-.02em; color:var(--ink); margin:.75rem 0 0; text-wrap:balance}
+.body{margin:.85rem 0 0; color:var(--body); font-size:1.02rem; line-height:1.55; max-width:34ch}
+.cta{display:flex; flex-wrap:wrap; align-items:center; gap:.9rem 1.2rem; margin-top:1.4rem}
+.primary{display:inline-flex; align-items:center; min-height:46px; padding:.75rem 1.3rem; border-radius:999px; font-weight:700; color:#fff!important; text-decoration:none;
+  background:linear-gradient(180deg,#4a76f5,var(--cobalt)); box-shadow:0 12px 24px -12px rgba(47,86,230,.6); transition:transform .16s ease, box-shadow .16s ease, filter .16s ease}
+.primary:hover{transform:translateY(-1px) scale(1.015); box-shadow:0 16px 30px -12px rgba(47,86,230,.7)}
+.primary:active{transform:scale(.99)}
+.secondary{font-weight:650; color:var(--cobalt-ink); text-decoration:none; font-size:.98rem}
+.secondary:hover{text-decoration:underline}
+
+/* ---- slide visuals ---- */
+.visual{min-width:0}
+.briefWrap{display:flex; justify-content:center}
+/* shortlist glance */
+.glance{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.5rem}
+.gRow{display:flex; align-items:center; gap:.85rem; padding:.75rem .9rem; border:1px solid var(--line); border-radius:.75rem; background:#fff;
+  box-shadow:0 10px 22px -18px rgba(15,30,70,.4); transition:transform .18s ease, border-color .18s ease}
+.gRow:hover{transform:translateY(-2px); border-color:var(--cobalt-line)}
+.gVerdict{font-family:var(--mono); font-size:.7rem; letter-spacing:.1em; text-transform:uppercase; font-weight:500; white-space:nowrap; display:inline-flex; align-items:center; gap:.5rem}
+.gVerdict::before{content:""; width:.55rem; height:.55rem; border-radius:50%; flex:none}
+.gRow[data-d="p"] .gVerdict{color:var(--cobalt-ink)} .gRow[data-d="p"] .gVerdict::before{background:var(--cobalt)}
+.gRow[data-d="v"] .gVerdict{color:var(--amber)} .gRow[data-d="v"] .gVerdict::before{background:var(--amber)}
+.gRow[data-d="m"] .gVerdict{color:var(--slate)} .gRow[data-d="m"] .gVerdict::before{background:#9aa4b2}
+.gCo{font-weight:600; color:var(--ink); font-size:.98rem}
+/* why contrast */
+.why{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.55rem}
+.why li{display:flex; align-items:baseline; gap:1rem; padding:.7rem .9rem; border-radius:.72rem; border:1px solid var(--line)}
+.why li span{font-family:var(--mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--mut); flex:none; width:8.5rem}
+.why li p{margin:0; color:var(--body); font-size:.98rem}
+.whyMe{border-color:var(--cobalt-line); background:linear-gradient(180deg,var(--cobalt-bg),#fff)}
+.whyMe span{color:var(--cobalt-ink)} .whyMe p{color:var(--ink); font-weight:600}
+/* worth contrast */
+.worth{display:grid; grid-template-columns:1fr auto 1fr; gap:.9rem; align-items:stretch}
+.wCol{padding:1rem 1.05rem; border:1px solid var(--line); border-radius:.85rem; background:#fff}
+.wCol>span{font-family:var(--mono); font-size:.64rem; letter-spacing:.1em; text-transform:uppercase; color:var(--mut)}
+.wCol ul{margin:.6rem 0 0; padding:0; list-style:none; display:flex; flex-direction:column; gap:.4rem}
+.wCol li{color:var(--body); font-size:.86rem; line-height:1.35; padding-left:.85rem; position:relative}
+.wCol li::before{content:""; position:absolute; left:0; top:.5rem; width:.32rem; height:.32rem; border-radius:50%; background:#c3c9d4}
+.wCol[data-tone="cold"]{background:#f6f7f9}
+.wColMe{border-color:var(--cobalt-line); background:linear-gradient(180deg,var(--cobalt-bg),#fff)}
+.wColMe>span{color:var(--cobalt-ink)} .wColMe li{color:var(--ink)} .wColMe li::before{background:var(--cobalt)}
+.wArrow{align-self:center; color:var(--mut); font-size:1.2rem}
+/* start steps */
+.steps{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.7rem; counter-reset:s}
+.steps li{display:flex; align-items:flex-start; gap:.85rem; padding:.75rem .9rem; border:1px solid var(--line); border-radius:.75rem; background:#fff}
+.steps b{flex:none; width:1.6rem; height:1.6rem; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:var(--disp); font-weight:700; font-size:.86rem; color:var(--cobalt-ink); background:var(--cobalt-bg)}
+.steps span{color:var(--ink); font-size:.95rem; line-height:1.4}
+
+/* ---- controls ---- */
+.controls{display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-top:1.1rem; flex-wrap:wrap}
+.progress{list-style:none; margin:0; padding:0; display:flex; gap:.35rem; flex-wrap:wrap; min-width:0}
+.step{position:relative; display:inline-flex; align-items:center; gap:.5rem; padding:.4rem .55rem .55rem; border:0; background:transparent; cursor:pointer; color:var(--mut); font:inherit; transition:color .16s ease}
+.step::after{content:""; position:absolute; left:.55rem; right:.55rem; bottom:.1rem; height:2px; border-radius:2px; background:var(--cobalt); transform:scaleX(0); transform-origin:left; transition:transform .2s cubic-bezier(.4,0,.2,1)}
+.step:hover{color:var(--ink)}
+.step:hover::after{transform:scaleX(.5); background:var(--cobalt-line)}
+.step:focus-visible{outline:2px solid var(--cobalt); outline-offset:2px; border-radius:.4rem}
+.stepNum{font-family:var(--mono); font-size:.66rem; letter-spacing:.06em}
+.stepName{font-size:.8rem; font-weight:560}
+.step.on{color:var(--ink)}
+.step.on::after{transform:scaleX(1)}
+.step.on .stepNum{color:var(--cobalt-ink)}
+.step.on .stepName{font-weight:680}
+.arrows{display:flex; align-items:center; gap:.6rem; flex:none}
+.count{font-family:var(--mono); font-size:.72rem; color:var(--mut)}
+.arrow{width:2.3rem; height:2.3rem; border-radius:50%; border:1px solid var(--line); background:#fff; color:var(--ink); font-size:1.2rem; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:transform .16s ease, border-color .16s ease, background .16s ease}
+.arrow:hover:not(:disabled){transform:translateY(-1px); border-color:var(--cobalt-line); background:var(--cobalt-bg)}
+.arrow:active:not(:disabled){transform:scale(.95)}
+.arrow:focus-visible{outline:2px solid var(--cobalt); outline-offset:2px}
+.arrow:disabled{opacity:.4; cursor:default}
+
+/* ---- mobile ---- */
+@media(max-width:719px){
+  .slide{padding:1.4rem 1.25rem; gap:1.2rem}
+  .head{font-size:clamp(1.4rem,6vw,1.75rem)}
+  .body{font-size:.98rem; max-width:none}
+  .worth{grid-template-columns:1fr}
+  .wArrow{transform:rotate(90deg); justify-self:center}
+  .why li span{width:6.5rem}
+  .stepName{display:none}
+  .step{padding:.5rem}
+  .progress{gap:.25rem}
+}
+@media(prefers-reduced-motion:reduce){
+  .slide{animation:none}
+  .primary,.gRow,.arrow,.step::after{transition:none}
+  .primary:hover,.gRow:hover,.arrow:hover{transform:none}
+  .step:hover::after{transform:scaleX(0)}
+}

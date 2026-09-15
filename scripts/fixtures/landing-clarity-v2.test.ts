@@ -10,6 +10,8 @@ const styles = readFileSync(`${root}/app/landing-v2.module.css`, "utf8");
 const pricing = readFileSync(`${root}/app/pricing/page.tsx`, "utf8");
 const brief = readFileSync(`${root}/components/landing-v7/DecisionBrief.tsx`, "utf8");
 const shortlist = readFileSync(`${root}/components/landing-v7/Shortlist.tsx`, "utf8");
+const story = readFileSync(`${root}/components/landing-v7/StoryDeck.tsx`, "utf8");
+const storyStyles = readFileSync(`${root}/components/landing-v7/story-deck.module.css`, "utf8");
 const briefStyles = readFileSync(`${root}/components/landing-v7/the-brief.module.css`, "utf8");
 
 function check(name: string, fn: () => void) {
@@ -41,24 +43,32 @@ check("landing remains server-rendered with bounded client islands", () => {
   assert.match(page, /Shortlist/);
 });
 
-check("hero leads with the OUTPUT (a decision brief), then the shortlist proves it scales", () => {
-  // "The Brief" direction: the hero IS the output the buyer receives, not a mechanism explainer.
-  assert.match(page, /<DecisionBrief locale=\{locale\} \/>/);
+check("hero is a guided story deck whose slide 04 is the real decision brief; shortlist scales it", () => {
+  // Experience Refinement V1: a manual, visitor-controlled story deck carries What/Why/Worth/Receive/Start.
+  assert.match(page, /<StoryDeck locale=\{locale\}/);
+  assert.match(page, /brief=\{<DecisionBrief locale=\{locale\} \/>\}/); // the real output IS slide 04
   assert.match(page, /<Shortlist locale=\{locale\} \/>/);
-  // Page order: hero(brief) → trust/category → shortlist → how it thinks → pricing.
-  assert.ok(page.indexOf("<DecisionBrief") < page.indexOf("styles.catBand"));
-  assert.ok(page.indexOf("styles.catBand") < page.indexOf("<Shortlist"));
+  // Page order: hero(story) → boundary → shortlist → how it thinks → pricing.
+  assert.ok(page.indexOf("<StoryDeck") < page.indexOf("styles.boundary"));
+  assert.ok(page.indexOf("styles.boundary") < page.indexOf("<Shortlist"));
   assert.ok(page.indexOf("<Shortlist") < page.indexOf('id="how"'));
   assert.ok(page.indexOf('id="how"') < page.indexOf('id="pricing"'));
+  // Story deck is a bounded client island: manual (no autoplay), semantic, keyboard + swipe + reduced motion.
+  assert.match(story.slice(0, 40), /["']use client["']/);
+  assert.match(story, /aria-roledescription="carousel"/);
+  assert.match(story, /aria-roledescription="slide"/);
+  assert.match(story, /onKeyDown/);
+  assert.match(story, /onTouchStart/);
+  assert.doesNotMatch(story, /setInterval\(/); // no auto-rotation timer
+  assert.match(storyStyles, /prefers-reduced-motion:reduce/);
   // The brief carries the decision grammar + evidence + uncertainty + next validation.
   for (const token of [/Prioritize/, /Why now/, /Evidence/, /Uncertain/, /Validate/]) assert.match(brief, token);
-  // Output artifact is static + accessible, and uses archetypes (no fictional company brand names).
   assert.doesNotMatch(brief.slice(0, 40), /["']use client["']/);
   assert.match(brief, /role="figure"/);
-  assert.doesNotMatch(brief + shortlist, /Northwind|Cascade|Atlas|Meridian|Northstar/);
+  assert.doesNotMatch(brief + shortlist + story, /Northwind|Cascade|Atlas|Meridian|Northstar/);
   // Shortlist keeps the four-state decision grammar as commercial judgment.
   for (const token of [/Prioritize/, /Validate/, /Monitor/]) assert.match(shortlist, token);
-  // The brief is responsive (a real mobile composition) with reduced-motion support.
+  // The brief is responsive with reduced-motion support.
   assert.match(briefStyles, /@media\(max-width:760px\)/);
   assert.match(briefStyles, /prefers-reduced-motion:reduce/);
 });
@@ -71,7 +81,7 @@ check("the interactive pipeline hero and all legacy product sections are removed
 });
 
 check("the page is one coherent, shorter architecture: hero, trust, shortlist, how-it-thinks, pricing, final CTA", () => {
-  assert.match(page, /styles\.catBand/);        // trust / category strip
+  assert.match(page, /styles\.boundary/);  // honesty boundary strip
   assert.match(page, /styles\.thinks/);          // how LeadLens thinks
   assert.match(page, /id="pricing"/);
   assert.match(page, /styles\.finalCta/);
@@ -79,11 +89,13 @@ check("the page is one coherent, shorter architecture: hero, trust, shortlist, h
   assert.doesNotMatch(page, /Market → |node|dotField|pipeline/i);
 });
 
-check("typography is one system: Fraunces display + IBM Plex Mono metadata", () => {
-  assert.match(styles, /--fd:var\(--font-serif\)/);
+check("typography is one modern-commercial system: Manrope display + IBM Plex Mono metadata", () => {
+  assert.match(styles, /--fd:var\(--font-display\)/);
   assert.match(styles, /--mono:var\(--font-mono\)/);
-  // eyebrows use the mono metadata voice (analyst-grade), not the display face.
+  // eyebrows use the mono metadata voice, not the display face.
   assert.match(styles, /\.eyebrow\{[^}]*font-family:var\(--mono\)/);
+  // Editorial serif retired in favour of a modern grotesk display.
+  assert.doesNotMatch(styles, /Fraunces/);
 });
 
 check("V6 public category broadens while preserving account opportunity methodology", () => {
@@ -92,7 +104,7 @@ check("V6 public category broadens while preserving account opportunity methodol
 });
 
 check("hero uses one primary CTA and 'see a sample brief' as the secondary", () => {
-  const hero = page.slice(page.indexOf("<section className={styles.hero}"), page.indexOf("styles.catBand"));
+  const hero = page.slice(page.indexOf("<section className={styles.hero}"), page.indexOf("styles.boundary"));
   assert.equal((hero.match(/href=\{START_PATH\}/g) ?? []).length, 1);
   assert.equal((hero.match(/href="\/sample"/g) ?? []).length, 1);
   assert.equal(getLandingV2Copy("en").secondary, "See a sample brief");
