@@ -8,10 +8,9 @@ const page = readFileSync(`${root}/app/page.tsx`, "utf8");
 const copy = readFileSync(`${root}/lib/landing/v2-copy.ts`, "utf8");
 const styles = readFileSync(`${root}/app/landing-v2.module.css`, "utf8");
 const pricing = readFileSync(`${root}/app/pricing/page.tsx`, "utf8");
-const brief = readFileSync(`${root}/components/landing-v7/DecisionBrief.tsx`, "utf8");
 const shortlist = readFileSync(`${root}/components/landing-v7/Shortlist.tsx`, "utf8");
-const story = readFileSync(`${root}/components/landing-v7/StoryDeck.tsx`, "utf8");
-const storyStyles = readFileSync(`${root}/components/landing-v7/story-deck.module.css`, "utf8");
+const carousel = readFileSync(`${root}/components/landing-v7/HeroCarousel.tsx`, "utf8");
+const carouselStyles = readFileSync(`${root}/components/landing-v7/hero-carousel.module.css`, "utf8");
 const briefStyles = readFileSync(`${root}/components/landing-v7/the-brief.module.css`, "utf8");
 
 function check(name: string, fn: () => void) {
@@ -39,36 +38,46 @@ check("public one-time matrix is Preview 2, Brief 6, Portfolio 12, Premium 18", 
 check("landing remains server-rendered with bounded client islands", () => {
   assert.doesNotMatch(page.slice(0, 80), /["']use client["']/);
   assert.match(page, /LanguageSwitcher/);
-  assert.match(page, /DecisionBrief/);
+  assert.match(page, /HeroCarousel/);
   assert.match(page, /Shortlist/);
 });
 
-check("hero is a guided story deck whose slide 04 is the real decision brief; shortlist scales it", () => {
-  // Experience Refinement V1: a manual, visitor-controlled story deck carries What/Why/Worth/Receive/Start.
-  assert.match(page, /<StoryDeck locale=\{locale\}/);
-  assert.match(page, /brief=\{<DecisionBrief locale=\{locale\} \/>\}/); // the real output IS slide 04
+check("hero is a two-column composition: preserved left copy + a five-slide Commercial Intelligence carousel", () => {
+  // HQ Carousel V3: restore the left hero (promise + lead + CTA); the right graphic is a manual carousel.
+  assert.match(page, /<HeroCarousel locale=\{locale\} primaryHref=\{START_PATH\} \/>/);
+  assert.match(page, /styles\.heroLead/);       // the left hero support copy is restored (visible)
+  assert.match(page, /styles\.heroLeadFull/);
   assert.match(page, /<Shortlist locale=\{locale\} \/>/);
-  // Page order: hero(story) → boundary → shortlist → how it thinks → pricing.
-  assert.ok(page.indexOf("<StoryDeck") < page.indexOf("styles.boundary"));
+  // Page order: hero(carousel) → boundary → shortlist → how it thinks → pricing.
+  assert.ok(page.indexOf("<HeroCarousel") < page.indexOf("styles.boundary"));
   assert.ok(page.indexOf("styles.boundary") < page.indexOf("<Shortlist"));
   assert.ok(page.indexOf("<Shortlist") < page.indexOf('id="how"'));
   assert.ok(page.indexOf('id="how"') < page.indexOf('id="pricing"'));
-  // Story deck is a bounded client island: manual (no autoplay), semantic, keyboard + swipe + reduced motion.
-  assert.match(story.slice(0, 40), /["']use client["']/);
-  assert.match(story, /aria-roledescription="carousel"/);
-  assert.match(story, /aria-roledescription="slide"/);
-  assert.match(story, /onKeyDown/);
-  assert.match(story, /onTouchStart/);
-  assert.doesNotMatch(story, /setInterval\(/); // no auto-rotation timer
-  assert.match(storyStyles, /prefers-reduced-motion:reduce/);
-  // The brief carries the decision grammar + evidence + uncertainty + next validation.
-  for (const token of [/Prioritize/, /Why now/, /Evidence/, /Uncertain/, /Validate/]) assert.match(brief, token);
-  assert.doesNotMatch(brief.slice(0, 40), /["']use client["']/);
-  assert.match(brief, /role="figure"/);
-  assert.doesNotMatch(brief + shortlist + story, /Northwind|Cascade|Atlas|Meridian|Northstar/);
+  // The carousel is a bounded client island: manual (no autoplay), semantic, keyboard + swipe + reduced motion.
+  assert.match(carousel.slice(0, 40), /["']use client["']/);
+  assert.match(carousel, /aria-roledescription="carousel"/);
+  assert.match(carousel, /aria-roledescription="slide"/);
+  assert.match(carousel, /onKeyDown/);
+  assert.match(carousel, /onTouchStart/);
+  assert.doesNotMatch(carousel, /setInterval\(/); // no auto-rotation timer
+  assert.match(carouselStyles, /prefers-reduced-motion:reduce/);
+  // HQ-frozen carousel copy is present verbatim (definition / difference / value / deliverable / start).
+  for (const frozen of [
+    /LeadLens is a Commercial Intelligence platform that turns fragmented market and company evidence into structured, evidence-backed commercial decisions\./,
+    /Most tools help you find more information\./,
+    /You are not paying for a list of company names\./,
+    /LeadLens delivers Commercial Intelligence at both company and portfolio level\./,
+    /Start with your commercial context\./,
+    /The deliverable is not a lead list\./,
+  ]) assert.match(carousel, frozen);
+  // Full decision grammar preserved — broader than a shortlist: Prioritize / Validate / Monitor / Hold.
+  assert.match(carousel, /prioritized, validated, monitored, or held/);
+  assert.match(carousel, /Prioritize \/ Validate \/ Monitor \/ Hold/);
+  // The rejected hero graphic is not recycled inside the carousel.
+  assert.doesNotMatch(carousel, /Multi-site healthcare|Regional logistics|Specialty manufacturer|Northwind|Cascade|Atlas|Meridian|Northstar/);
   // Shortlist keeps the four-state decision grammar as commercial judgment.
   for (const token of [/Prioritize/, /Validate/, /Monitor/]) assert.match(shortlist, token);
-  // The brief is responsive with reduced-motion support.
+  // Shortlist rows are responsive with reduced-motion support (shared the-brief stylesheet).
   assert.match(briefStyles, /@media\(max-width:760px\)/);
   assert.match(briefStyles, /prefers-reduced-motion:reduce/);
 });
