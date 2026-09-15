@@ -47,6 +47,7 @@ check("hero is a two-column composition: preserved left copy + a five-slide Comm
   assert.match(page, /<HeroCarousel locale=\{locale\} primaryHref=\{START_PATH\} \/>/);
   assert.match(page, /styles\.heroLead/);       // the left hero support copy is restored (visible)
   assert.match(page, /styles\.heroLeadFull/);
+  assert.equal(getLandingV2Copy("en").hero.title, "Find the companies worth pursuing now"); // leading verb
   assert.match(page, /<Shortlist locale=\{locale\} \/>/);
   // Page order: hero(carousel) → boundary → shortlist → how it thinks → pricing.
   assert.ok(page.indexOf("<HeroCarousel") < page.indexOf("styles.boundary"));
@@ -61,18 +62,24 @@ check("hero is a two-column composition: preserved left copy + a five-slide Comm
   assert.match(carousel, /onTouchStart/);
   assert.doesNotMatch(carousel, /setInterval\(/); // no auto-rotation timer
   assert.match(carouselStyles, /prefers-reduced-motion:reduce/);
-  // HQ-frozen carousel copy is present verbatim (definition / difference / value / deliverable / start).
+  // Six HQ-frozen cards, present verbatim (what/why/worth/what-is-CI/deliverable/start).
+  assert.match(carousel, /in six steps/);
   for (const frozen of [
     /LeadLens is a Commercial Intelligence platform that turns fragmented market and company evidence into structured, evidence-backed commercial decisions\./,
-    /Most tools help you find more information\./,
-    /You are not paying for a list of company names\./,
+    /Most alternatives stop too early\./,
+    /You are paying for better commercial judgment/,
+    /Commercial Intelligence is the decision layer/,
+    /decision-oriented intelligence for commercial focus\./,
     /LeadLens delivers Commercial Intelligence at both company and portfolio level\./,
     /Start with your commercial context\./,
-    /The deliverable is not a lead list\./,
   ]) assert.match(carousel, frozen);
-  // Full decision grammar preserved — broader than a shortlist: Prioritize / Validate / Monitor / Hold.
+  // The "What is Commercial Intelligence?" card is inserted BEFORE the deliverable card.
+  assert.ok(carousel.indexOf("What is Commercial Intelligence?") < carousel.indexOf("LeadLens delivers Commercial Intelligence at both company"));
+  // Full decision grammar preserved — broader than a shortlist.
   assert.match(carousel, /prioritized, validated, monitored, or held/);
-  assert.match(carousel, /Prioritize \/ Validate \/ Monitor \/ Hold/);
+  // Side arrows are the primary navigation affordance (vertically centered on the card).
+  assert.match(carousel, /styles\.navPrev/);
+  assert.match(carousel, /styles\.navNext/);
   // The rejected hero graphic is not recycled inside the carousel.
   assert.doesNotMatch(carousel, /Multi-site healthcare|Regional logistics|Specialty manufacturer|Northwind|Cascade|Atlas|Meridian|Northstar/);
   // Shortlist keeps the four-state decision grammar as commercial judgment.

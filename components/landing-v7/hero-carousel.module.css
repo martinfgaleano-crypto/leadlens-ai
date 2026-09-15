@@ -10,7 +10,7 @@
   --cobalt:#2f56e6; --cobalt-ink:#2440c4; --cobalt-2:#5479f6; --cobalt-bg:#eef1fd; --cobalt-line:#d7defb;
   --amber:#b07d1e; --amber-bg:#f8f0dc;
   --disp:var(--font-display),Manrope,system-ui,sans-serif;
-  position:relative; isolation:isolate; overflow:hidden;
+  position:relative; isolation:isolate;
   display:flex; flex-direction:column; min-height:33rem;
   padding:2.05rem 2.15rem 1.65rem;
   border-radius:1.65rem; border:1px solid var(--line);
@@ -34,7 +34,7 @@
 /* All slides stacked in one grid cell → the stage is always as tall as the tallest slide,
    so every slide occupies an identical footprint and navigating never changes the frame height. */
 .stage{flex:1 1 auto; position:relative; display:grid; grid-template-columns:1fr; min-height:0}
-.slide{grid-column:1; grid-row:1; display:flex; flex-direction:column; visibility:hidden}
+.slide{grid-column:1; grid-row:1; display:flex; flex-direction:column; justify-content:center; visibility:hidden}
 .slide[data-active="true"]{visibility:visible; animation:riseIn .38s cubic-bezier(.22,.61,.36,1)}
 @keyframes riseIn{from{opacity:0; transform:translateY(9px)}to{opacity:1; transform:none}}
 .headline{margin:0; font-family:var(--disp); font-weight:650; color:var(--ink);
@@ -44,7 +44,7 @@
 .body b{color:var(--ink); font-weight:600}
 .secondary{margin:1.05rem 0 0; padding:.85rem 1.05rem; border-radius:.95rem; background:var(--cobalt-bg);
   color:var(--cobalt-ink); font-size:.92rem; line-height:1.5; font-weight:500}
-.spacer{flex:1 1 auto; min-height:1.1rem}
+.spacer{display:none}
 .slide[data-kind="deliver"] .body{font-size:.92rem; line-height:1.55; margin-top:.8rem}
 .slide[data-kind="deliver"] .secondary{margin-top:.85rem; font-size:.88rem}
 
@@ -82,6 +82,19 @@
 .decision span{font-size:.68rem; letter-spacing:.07em; text-transform:uppercase; color:var(--cobalt-ink); font-weight:600}
 .decision b{display:block; margin-top:.3rem; font-family:var(--disp); font-weight:700; font-size:1.12rem; line-height:1.2; color:var(--ink)}
 
+/* ---- Card 04 — What is Commercial Intelligence? (two levels + a closing line) ---- */
+.concept{margin-top:1.2rem; display:flex; flex-direction:column; gap:.85rem}
+.levels{display:grid; grid-template-columns:1fr 1fr; gap:.8rem}
+.level{padding:.9rem 1rem; border-radius:.95rem; background:var(--paper-2)}
+.levelAlt{background:var(--cobalt-bg)}
+.levelTag{display:inline-block; margin-bottom:.4rem; font-size:.64rem; letter-spacing:.07em; text-transform:uppercase; color:var(--muted); font-weight:700}
+.levelAlt .levelTag{color:var(--cobalt-ink)}
+.level p{margin:0; font-size:.85rem; line-height:1.42; color:var(--body)}
+.level p b{color:var(--ink); font-weight:700}
+.levelAlt p{color:var(--ink)}
+.levelAlt p b{color:var(--cobalt-ink)}
+.conceptClose{margin:0; font-size:.86rem; line-height:1.45; color:var(--muted)}
+
 /* ---- Slide 04 — a friendly, evidence-backed brief card ---- */
 .record{margin-top:1.35rem; border-radius:1.2rem; background:var(--card); border:1px solid var(--line);
   box-shadow:0 26px 50px -30px rgba(48,40,28,.36)}
@@ -113,29 +126,41 @@
 .primary:active{transform:scale(.99)}
 .secondaryLink{font-weight:650; font-size:.95rem; color:var(--cobalt-ink); text-decoration:none}
 .secondaryLink:hover{text-decoration:underline}
+.ctaSupport{margin:.85rem 0 0; font-size:.82rem; line-height:1.45; color:var(--muted); max-width:48ch}
 
 /* ---- controls ---- */
 .controls{display:flex; align-items:center; gap:1.1rem; margin-top:1.5rem; padding-top:1.25rem; border-top:1px solid var(--line-soft)}
 .seg{flex:1 1 auto; display:flex; align-items:center; gap:.45rem; padding:0; margin:0; list-style:none}
+.seg li{flex:1 1 auto; display:flex}
 .seg button{flex:1 1 auto; height:5px; padding:0; border:0; border-radius:999px; cursor:pointer;
   background:var(--line); transition:background .2s ease, height .2s ease}
 .seg button:hover{background:var(--cobalt-line)}
 .seg button[data-state="done"]{background:var(--cobalt-line)}
 .seg button[data-state="active"]{background:linear-gradient(90deg,var(--cobalt-2),var(--cobalt)); box-shadow:0 3px 10px -2px rgba(47,86,230,.5)}
 .seg button:focus-visible{outline:2px solid var(--cobalt); outline-offset:3px}
-.arrows{display:flex; align-items:center; gap:.6rem; flex:none}
-.arrow{width:2.5rem; height:2.5rem; border-radius:50%; display:flex; align-items:center; justify-content:center;
-  border:1px solid var(--line); background:var(--card); color:var(--ink); font-size:1.2rem; line-height:1; cursor:pointer;
-  box-shadow:0 6px 16px -8px rgba(48,40,28,.28); transition:transform .16s ease, background .16s ease, border-color .16s ease}
-.arrow:hover:not(:disabled){transform:translateY(-1px); background:var(--cobalt-bg); border-color:var(--cobalt-line)}
-.arrow:active:not(:disabled){transform:scale(.95)}
-.arrow:focus-visible{outline:2px solid var(--cobalt); outline-offset:2px}
-.arrow:disabled{opacity:.4; cursor:default}
+
+/* side arrows — vertically centered on the card edges (primary nav); reflow to the bottom row on mobile */
+.navPrev,.navNext{position:absolute; top:50%; z-index:4;
+  width:2.9rem; height:2.9rem; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  border:1px solid var(--line); background:var(--card); color:var(--ink); font-size:1.4rem; line-height:1; cursor:pointer;
+  box-shadow:0 12px 26px -10px rgba(48,40,28,.42), 0 2px 6px rgba(48,40,28,.12);
+  transition:transform .16s ease, background .16s ease, border-color .16s ease, box-shadow .16s ease}
+.navPrev{left:-1.35rem; transform:translateY(-50%)}
+.navNext{right:-1.35rem; transform:translateY(-50%)}
+.navPrev:hover:not(:disabled){transform:translateY(-50%) translateX(-2px); background:var(--cobalt-bg); border-color:var(--cobalt-line); box-shadow:0 16px 30px -10px rgba(47,86,230,.42)}
+.navNext:hover:not(:disabled){transform:translateY(-50%) translateX(2px); background:var(--cobalt-bg); border-color:var(--cobalt-line); box-shadow:0 16px 30px -10px rgba(47,86,230,.42)}
+.navPrev:active:not(:disabled),.navNext:active:not(:disabled){transform:translateY(-50%) scale(.94)}
+.navPrev:focus-visible,.navNext:focus-visible{outline:2px solid var(--cobalt); outline-offset:2px}
+.navPrev:disabled,.navNext:disabled{opacity:.32; cursor:default; box-shadow:0 6px 14px -8px rgba(48,40,28,.3)}
 
 /* ---- responsive ---- */
 @media(max-width:1050px){ .panel{min-height:0} }
 @media(max-width:760px){
   .panel{border-radius:1.35rem; padding:1.5rem 1.35rem 1.4rem; min-height:0}
+  /* On mobile the cards vary a lot in length; equalizing to the tallest would leave large blank
+     space, so show only the active card at its natural height, top-aligned. */
+  .slide{justify-content:flex-start}
+  .slide:not([data-active="true"]){display:none}
   .headline{font-size:clamp(1.42rem,5.6vw,1.75rem)}
   .body{font-size:.95rem; max-width:none}
   .define{gap:.85rem}
@@ -147,9 +172,15 @@
   .compress span{transform:rotate(90deg)}
   .decision{flex-basis:100%}
   .recRows{grid-template-columns:1fr; gap:.85rem}
+  .levels{grid-template-columns:1fr; gap:.6rem}
   .steps{grid-template-columns:1fr; gap:.5rem}
   .stepCard{flex-direction:row; text-align:left; justify-content:flex-start; gap:.75rem}
   .stepArrow{transform:rotate(90deg); justify-self:start}
+  /* arrows leave the card edges and sit in the bottom row beside the progress bar */
+  .navPrev,.navNext{position:static; transform:none; width:2.5rem; height:2.5rem; font-size:1.2rem; box-shadow:0 6px 16px -8px rgba(48,40,28,.3)}
+  .navPrev:hover:not(:disabled),.navNext:hover:not(:disabled){transform:translateY(-1px)}
+  .navPrev:active:not(:disabled),.navNext:active:not(:disabled){transform:scale(.95)}
+  .controls{gap:.85rem}
 }
 @media(prefers-reduced-motion:reduce){
   .slide[data-active="true"]{animation:none}
