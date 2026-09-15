@@ -188,7 +188,8 @@ function renderVisual(kind: Kind, c: Copy, primaryHref: string): ReactNode {
       <div className={styles.frags}>{c.frags.map((f) => <span key={f} className={styles.frag}>{f}</span>)}</div>
       <span className={styles.resolve} aria-hidden="true">→</span>
       <div className={styles.object}>
-        <span>Structured</span><b>{c.object}</b><i /><i /><i />
+        <span className={styles.objCheck} aria-hidden="true">✓</span>
+        <span className={styles.objText}><span className={styles.objKicker}>Structured</span><b>{c.object}</b></span>
       </div>
     </div>
   );
