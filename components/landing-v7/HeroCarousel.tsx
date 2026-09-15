@@ -150,15 +150,21 @@ export function HeroCarousel({ locale, primaryHref }: { locale: LandingLocale; p
           <span className={styles.counter} aria-hidden="true"><b>{pad(i + 1)}</b> / {pad(n)}</span>
         </div>
 
+        {/* All five slides are stacked in one grid cell, so the frame is always as tall as the
+            tallest slide — identical footprint on every slide, no height jump. Only the active
+            slide is visible (and reachable by AT / keyboard). */}
         <div className={styles.stage} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} aria-live="polite">
-          <article key={i} className={styles.slide} data-kind={s.kind} role="group" aria-roledescription="slide"
-            aria-label={`${pad(i + 1)} of ${pad(n)} — ${s.label}`}>
-            <h2 className={styles.headline}>{s.headline}</h2>
-            {s.body && <p className={styles.body}>{s.body}</p>}
-            {s.kind === "deliver" && <p className={styles.secondary}>{c.secondary4}</p>}
-            {renderVisual(s.kind, c, primaryHref)}
-            <div className={styles.spacer} />
-          </article>
+          {c.slides.map((sl, idx) => (
+            <article key={sl.label} className={styles.slide} data-kind={sl.kind} data-active={idx === i}
+              role="group" aria-roledescription="slide" aria-hidden={idx !== i}
+              aria-label={`${pad(idx + 1)} of ${pad(n)} — ${sl.label}`}>
+              <h2 className={styles.headline}>{sl.headline}</h2>
+              {sl.body && <p className={styles.body}>{sl.body}</p>}
+              {sl.kind === "deliver" && <p className={styles.secondary}>{c.secondary4}</p>}
+              {renderVisual(sl.kind, c, primaryHref)}
+              <div className={styles.spacer} />
+            </article>
+          ))}
         </div>
 
         <div className={styles.controls}>

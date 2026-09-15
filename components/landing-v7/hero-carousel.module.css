@@ -31,8 +31,11 @@
 .counter b{color:var(--cobalt-ink); font-weight:700}
 
 /* ---- stage ---- */
-.stage{flex:1 1 auto; position:relative; min-height:0}
-.slide{display:flex; flex-direction:column; height:100%; animation:riseIn .38s cubic-bezier(.22,.61,.36,1)}
+/* All slides stacked in one grid cell → the stage is always as tall as the tallest slide,
+   so every slide occupies an identical footprint and navigating never changes the frame height. */
+.stage{flex:1 1 auto; position:relative; display:grid; grid-template-columns:1fr; min-height:0}
+.slide{grid-column:1; grid-row:1; display:flex; flex-direction:column; visibility:hidden}
+.slide[data-active="true"]{visibility:visible; animation:riseIn .38s cubic-bezier(.22,.61,.36,1)}
 @keyframes riseIn{from{opacity:0; transform:translateY(9px)}to{opacity:1; transform:none}}
 .headline{margin:0; font-family:var(--disp); font-weight:650; color:var(--ink);
   font-size:clamp(1.5rem,2.05vw,1.95rem); line-height:1.16; letter-spacing:-.021em; text-wrap:balance}
@@ -149,7 +152,7 @@
   .stepArrow{transform:rotate(90deg); justify-self:start}
 }
 @media(prefers-reduced-motion:reduce){
-  .slide{animation:none}
+  .slide[data-active="true"]{animation:none}
   .primary,.arrow,.seg button{transition:none}
   .primary:hover,.arrow:hover:not(:disabled){transform:none}
 }
