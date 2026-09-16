@@ -42,7 +42,7 @@ check("landing remains server-rendered with bounded client islands", () => {
   assert.match(page, /Shortlist/);
 });
 
-check("hero is a two-column composition: preserved left copy + a five-slide Commercial Intelligence carousel", () => {
+check("hero is a two-column composition: preserved left copy + a six-slide Commercial Intelligence carousel", () => {
   // HQ Carousel V3: restore the left hero (promise + lead + CTA); the right graphic is a manual carousel.
   assert.match(page, /<HeroCarousel locale=\{locale\} primaryHref=\{START_PATH\} \/>/);
   assert.match(page, /styles\.heroLead/);       // the left hero support copy is restored (visible)
@@ -62,21 +62,22 @@ check("hero is a two-column composition: preserved left copy + a five-slide Comm
   assert.match(carousel, /onTouchStart/);
   assert.doesNotMatch(carousel, /setInterval\(/); // no auto-rotation timer
   assert.match(carouselStyles, /prefers-reduced-motion:reduce/);
-  // Six HQ-frozen cards, present verbatim (what/why/worth/what-is-CI/deliverable/start).
+  // Six cards retain their source-of-truth concepts while their supporting copy stays compact.
   assert.match(carousel, /in six steps/);
-  for (const frozen of [
-    /LeadLens is a Commercial Intelligence platform that turns fragmented market and company evidence into structured, evidence-backed commercial decisions\./,
-    /Most alternatives stop too early\./,
-    /You are paying for better commercial judgment/,
+  for (const concept of [
+    /LeadLens is a Commercial Intelligence platform\./,
+    /fragmented market, company, and change evidence/,
+    /Not a contact database, signal feed, or generic research/,
+    /one inspectable commercial judgment/,
     /Commercial Intelligence is the decision layer/,
-    /decision-oriented intelligence for commercial focus\./,
+    /companyLabel: "Company level"[\s\S]*portfolioLabel: "Portfolio level"/,
     /LeadLens delivers Commercial Intelligence at both company and portfolio level\./,
-    /Start with your commercial context\./,
-  ]) assert.match(carousel, frozen);
+    /Share your context\. Inspect the intelligence/,
+  ]) assert.match(carousel, concept);
   // The "What is Commercial Intelligence?" card is inserted BEFORE the deliverable card.
   assert.ok(carousel.indexOf("What is Commercial Intelligence?") < carousel.indexOf("LeadLens delivers Commercial Intelligence at both company"));
   // Full decision grammar preserved — broader than a shortlist.
-  assert.match(carousel, /prioritized, validated, monitored, or held/);
+  assert.match(carousel, /prioritize, validate, monitor, or hold/);
   // Side arrows are the primary navigation affordance (vertically centered on the card).
   assert.match(carousel, /styles\.navPrev/);
   assert.match(carousel, /styles\.navNext/);
