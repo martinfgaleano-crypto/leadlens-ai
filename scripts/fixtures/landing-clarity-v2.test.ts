@@ -8,9 +8,12 @@ const page = readFileSync(`${root}/app/page.tsx`, "utf8");
 const copy = readFileSync(`${root}/lib/landing/v2-copy.ts`, "utf8");
 const styles = readFileSync(`${root}/app/landing-v2.module.css`, "utf8");
 const pricing = readFileSync(`${root}/app/pricing/page.tsx`, "utf8");
-const brief = readFileSync(`${root}/components/landing-v7/DecisionBrief.tsx`, "utf8");
 const shortlist = readFileSync(`${root}/components/landing-v7/Shortlist.tsx`, "utf8");
+const carousel = readFileSync(`${root}/components/landing-v7/HeroCarousel.tsx`, "utf8");
+const carouselStyles = readFileSync(`${root}/components/landing-v7/hero-carousel.module.css`, "utf8");
 const briefStyles = readFileSync(`${root}/components/landing-v7/the-brief.module.css`, "utf8");
+const mobileNav = readFileSync(`${root}/components/landing-v7/MobileNav.tsx`, "utf8");
+const mobileNavStyles = readFileSync(`${root}/components/landing-v7/mobile-nav.module.css`, "utf8");
 
 function check(name: string, fn: () => void) {
   fn();
@@ -37,28 +40,79 @@ check("public one-time matrix is Preview 2, Brief 6, Portfolio 12, Premium 18", 
 check("landing remains server-rendered with bounded client islands", () => {
   assert.doesNotMatch(page.slice(0, 80), /["']use client["']/);
   assert.match(page, /LanguageSwitcher/);
-  assert.match(page, /DecisionBrief/);
+  assert.match(page, /HeroCarousel/);
   assert.match(page, /Shortlist/);
+  assert.match(page, /<MobileNav locale=\{locale\} \/>/);
 });
 
-check("hero leads with the OUTPUT (a decision brief), then the shortlist proves it scales", () => {
-  // "The Brief" direction: the hero IS the output the buyer receives, not a mechanism explainer.
-  assert.match(page, /<DecisionBrief locale=\{locale\} \/>/);
+check("mobile navigation exposes the approved routes and accessible controls", () => {
+  assert.match(mobileNav, /aria-expanded=\{open\}/);
+  assert.match(mobileNav, /aria-controls="mobile-navigation"/);
+  assert.match(mobileNav, /event\.key === "Escape"/);
+  assert.match(mobileNav, /href="#how"/);
+  assert.match(mobileNav, /href="\/sample"/);
+  assert.match(mobileNav, /href="#pricing"/);
+  assert.match(mobileNav, /href="\/login"/);
+  assert.match(mobileNav, /get-started\?commercial_path=one_time/);
+  assert.match(mobileNav, /LanguageSwitcher/);
+  assert.match(mobileNavStyles, /min-height:4[46]px/);
+  assert.match(mobileNavStyles, /@media\(max-width:700px\)/);
+});
+
+check("hero is a two-column composition: preserved left copy + a six-slide Commercial Intelligence carousel", () => {
+  // HQ Carousel V3: restore the left hero; the right graphic is a calm, circular carousel.
+  assert.match(page, /<HeroCarousel locale=\{locale\} primaryHref=\{START_PATH\} \/>/);
+  assert.match(page, /styles\.heroLead/);       // the left hero support copy is restored (visible)
+  assert.match(page, /styles\.heroLeadFull/);
+  assert.equal(getLandingV2Copy("en").hero.title, "Find the companies worth pursuing now"); // leading verb
   assert.match(page, /<Shortlist locale=\{locale\} \/>/);
-  // Page order: hero(brief) → trust/category → shortlist → how it thinks → pricing.
-  assert.ok(page.indexOf("<DecisionBrief") < page.indexOf("styles.catBand"));
-  assert.ok(page.indexOf("styles.catBand") < page.indexOf("<Shortlist"));
+  // Page order: hero(carousel) → boundary → shortlist → how it thinks → pricing.
+  assert.ok(page.indexOf("<HeroCarousel") < page.indexOf("styles.boundary"));
+  assert.ok(page.indexOf("styles.boundary") < page.indexOf("<Shortlist"));
   assert.ok(page.indexOf("<Shortlist") < page.indexOf('id="how"'));
   assert.ok(page.indexOf('id="how"') < page.indexOf('id="pricing"'));
-  // The brief carries the decision grammar + evidence + uncertainty + next validation.
-  for (const token of [/Prioritize/, /Why now/, /Evidence/, /Uncertain/, /Validate/]) assert.match(brief, token);
-  // Output artifact is static + accessible, and uses archetypes (no fictional company brand names).
-  assert.doesNotMatch(brief.slice(0, 40), /["']use client["']/);
-  assert.match(brief, /role="figure"/);
-  assert.doesNotMatch(brief + shortlist, /Northwind|Cascade|Atlas|Meridian|Northstar/);
+  // The carousel is a bounded client island: autoplay, circular manual controls, keyboard + swipe + reduced motion.
+  assert.match(carousel.slice(0, 40), /["']use client["']/);
+  assert.match(carousel, /aria-roledescription="carousel"/);
+  assert.match(carousel, /aria-roledescription="slide"/);
+  assert.match(carousel, /onKeyDown/);
+  assert.match(carousel, /onPointerDown/);
+  assert.match(carousel, /setPointerCapture/);
+  assert.match(carouselStyles, /touch-action:pan-y/);
+  assert.doesNotMatch(carouselStyles, /\.slide:not\(\[data-active="true"\]\)\{display:none\}/);
+  assert.match(carousel, /AUTOPLAY_MS = 6800/);
+  assert.match(carousel, /window\.setTimeout/);
+  assert.match(carousel, /document\.visibilityState/);
+  assert.match(carousel, /prefers-reduced-motion: reduce/);
+  assert.match(carousel, /const wrap = useCallback/);
+  assert.doesNotMatch(carousel, /disabled=\{i === (?:0|n - 1)\}/);
+  assert.match(carousel, /aria-live="off"/);
+  assert.match(carousel, /aria-live="polite"/);
+  assert.match(carouselStyles, /prefers-reduced-motion:reduce/);
+  // Six cards retain their source-of-truth concepts while their supporting copy stays compact.
+  assert.match(carousel, /in six steps/);
+  for (const concept of [
+    /LeadLens is a Commercial Intelligence platform\./,
+    /fragmented market, company, and change evidence/,
+    /Not a contact database, signal feed, or generic research/,
+    /one inspectable commercial judgment/,
+    /Commercial Intelligence is the decision layer/,
+    /companyLabel: "Company level"[\s\S]*portfolioLabel: "Portfolio level"/,
+    /LeadLens delivers Commercial Intelligence at both company and portfolio level\./,
+    /Share your context\. Inspect the intelligence/,
+  ]) assert.match(carousel, concept);
+  // The "What is Commercial Intelligence?" card is inserted BEFORE the deliverable card.
+  assert.ok(carousel.indexOf("What is Commercial Intelligence?") < carousel.indexOf("LeadLens delivers Commercial Intelligence at both company"));
+  // Full decision grammar preserved — broader than a shortlist.
+  assert.match(carousel, /prioritize, validate, monitor, or hold/);
+  // Side arrows are the primary navigation affordance (vertically centered on the card).
+  assert.match(carousel, /styles\.navPrev/);
+  assert.match(carousel, /styles\.navNext/);
+  // The rejected hero graphic is not recycled inside the carousel.
+  assert.doesNotMatch(carousel, /Multi-site healthcare|Regional logistics|Specialty manufacturer|Northwind|Cascade|Atlas|Meridian|Northstar/);
   // Shortlist keeps the four-state decision grammar as commercial judgment.
   for (const token of [/Prioritize/, /Validate/, /Monitor/]) assert.match(shortlist, token);
-  // The brief is responsive (a real mobile composition) with reduced-motion support.
+  // Shortlist rows are responsive with reduced-motion support (shared the-brief stylesheet).
   assert.match(briefStyles, /@media\(max-width:760px\)/);
   assert.match(briefStyles, /prefers-reduced-motion:reduce/);
 });
@@ -71,7 +125,7 @@ check("the interactive pipeline hero and all legacy product sections are removed
 });
 
 check("the page is one coherent, shorter architecture: hero, trust, shortlist, how-it-thinks, pricing, final CTA", () => {
-  assert.match(page, /styles\.catBand/);        // trust / category strip
+  assert.match(page, /styles\.boundary/);  // honesty boundary strip
   assert.match(page, /styles\.thinks/);          // how LeadLens thinks
   assert.match(page, /id="pricing"/);
   assert.match(page, /styles\.finalCta/);
@@ -79,11 +133,13 @@ check("the page is one coherent, shorter architecture: hero, trust, shortlist, h
   assert.doesNotMatch(page, /Market → |node|dotField|pipeline/i);
 });
 
-check("typography is one system: Fraunces display + IBM Plex Mono metadata", () => {
-  assert.match(styles, /--fd:var\(--font-serif\)/);
+check("typography is one modern-commercial system: Manrope display + IBM Plex Mono metadata", () => {
+  assert.match(styles, /--fd:var\(--font-display\)/);
   assert.match(styles, /--mono:var\(--font-mono\)/);
-  // eyebrows use the mono metadata voice (analyst-grade), not the display face.
+  // eyebrows use the mono metadata voice, not the display face.
   assert.match(styles, /\.eyebrow\{[^}]*font-family:var\(--mono\)/);
+  // Editorial serif retired in favour of a modern grotesk display.
+  assert.doesNotMatch(styles, /Fraunces/);
 });
 
 check("V6 public category broadens while preserving account opportunity methodology", () => {
@@ -92,7 +148,7 @@ check("V6 public category broadens while preserving account opportunity methodol
 });
 
 check("hero uses one primary CTA and 'see a sample brief' as the secondary", () => {
-  const hero = page.slice(page.indexOf("<section className={styles.hero}"), page.indexOf("styles.catBand"));
+  const hero = page.slice(page.indexOf("<section className={styles.hero}"), page.indexOf("styles.boundary"));
   assert.equal((hero.match(/href=\{START_PATH\}/g) ?? []).length, 1);
   assert.equal((hero.match(/href="\/sample"/g) ?? []).length, 1);
   assert.equal(getLandingV2Copy("en").secondary, "See a sample brief");
