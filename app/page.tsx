@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { LanguageSwitcher } from "@/components/landing-v2/LanguageSwitcher";
 import { HeroCarousel } from "@/components/landing-v7/HeroCarousel";
+import { MobileNav } from "@/components/landing-v7/MobileNav";
 import { Shortlist } from "@/components/landing-v7/Shortlist";
 import { oneTimeCards } from "@/lib/commercial/plan-catalog";
 import { getLandingV2Copy, type LandingLocale } from "@/lib/landing/v2-copy";
@@ -94,6 +95,7 @@ export default function LandingV2({ searchParams }: { searchParams?: { lang?: st
             <LanguageSwitcher locale={locale} label={c.language} />
             <Link className={styles.primarySmall} href={START_PATH}>{c.primary}</Link>
           </div>
+          <MobileNav locale={locale} />
         </nav>
       </header>
 
