@@ -122,3 +122,6 @@
   .primary,.secondary,.primarySmall,.principle,.causality,.planRow{transition:none}
   .primary:hover,.primarySmall:hover,.principle:hover,.causality:hover,.planRow:hover{transform:none}
 }
+
+/* Final mobile header: logo + one deliberate navigation control. */
+@media(max-width:700px){.navActions{display:none}}

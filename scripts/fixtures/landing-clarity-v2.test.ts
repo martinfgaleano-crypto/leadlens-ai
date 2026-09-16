@@ -12,6 +12,8 @@ const shortlist = readFileSync(`${root}/components/landing-v7/Shortlist.tsx`, "u
 const carousel = readFileSync(`${root}/components/landing-v7/HeroCarousel.tsx`, "utf8");
 const carouselStyles = readFileSync(`${root}/components/landing-v7/hero-carousel.module.css`, "utf8");
 const briefStyles = readFileSync(`${root}/components/landing-v7/the-brief.module.css`, "utf8");
+const mobileNav = readFileSync(`${root}/components/landing-v7/MobileNav.tsx`, "utf8");
+const mobileNavStyles = readFileSync(`${root}/components/landing-v7/mobile-nav.module.css`, "utf8");
 
 function check(name: string, fn: () => void) {
   fn();
@@ -40,6 +42,21 @@ check("landing remains server-rendered with bounded client islands", () => {
   assert.match(page, /LanguageSwitcher/);
   assert.match(page, /HeroCarousel/);
   assert.match(page, /Shortlist/);
+  assert.match(page, /<MobileNav locale=\{locale\} \/>/);
+});
+
+check("mobile navigation exposes the approved routes and accessible controls", () => {
+  assert.match(mobileNav, /aria-expanded=\{open\}/);
+  assert.match(mobileNav, /aria-controls="mobile-navigation"/);
+  assert.match(mobileNav, /event\.key === "Escape"/);
+  assert.match(mobileNav, /href="#how"/);
+  assert.match(mobileNav, /href="\/sample"/);
+  assert.match(mobileNav, /href="#pricing"/);
+  assert.match(mobileNav, /href="\/login"/);
+  assert.match(mobileNav, /get-started\?commercial_path=one_time/);
+  assert.match(mobileNav, /LanguageSwitcher/);
+  assert.match(mobileNavStyles, /min-height:4[46]px/);
+  assert.match(mobileNavStyles, /@media\(max-width:700px\)/);
 });
 
 check("hero is a two-column composition: preserved left copy + a six-slide Commercial Intelligence carousel", () => {
@@ -62,6 +79,7 @@ check("hero is a two-column composition: preserved left copy + a six-slide Comme
   assert.match(carousel, /onPointerDown/);
   assert.match(carousel, /setPointerCapture/);
   assert.match(carouselStyles, /touch-action:pan-y/);
+  assert.doesNotMatch(carouselStyles, /\.slide:not\(\[data-active="true"\]\)\{display:none\}/);
   assert.match(carousel, /AUTOPLAY_MS = 6800/);
   assert.match(carousel, /window\.setTimeout/);
   assert.match(carousel, /document\.visibilityState/);
