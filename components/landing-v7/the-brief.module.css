@@ -52,7 +52,8 @@
 .slHead h2{font-family:var(--serif); font-weight:500; font-size:clamp(1.6rem,3vw,2.15rem); letter-spacing:-.015em; margin:0; color:var(--ink); text-wrap:balance}
 .slHead p{margin:0; color:var(--mut); font-size:.95rem}
 .sl{display:flex; flex-direction:column}
-.slRow{display:grid; grid-template-columns:9.5rem 1fr auto; gap:.5rem 1.6rem; align-items:center; padding:1.15rem 0; border-top:1px solid var(--line-soft)}
+.slRow{display:grid; grid-template-columns:9.5rem 1fr auto; gap:.5rem 1.6rem; align-items:center; padding:1.15rem .7rem; margin:0 -.7rem; border-top:1px solid var(--line-soft); border-radius:.65rem;
+  transition:transform .18s ease,background .18s ease,box-shadow .18s ease}
 .slRow:first-child{border-top:0}
 .verdict{font-family:var(--mono); font-size:.72rem; letter-spacing:.13em; text-transform:uppercase; font-weight:500; display:inline-flex; align-items:center; gap:.55rem}
 .verdict::before{content:""; width:.55rem; height:.55rem; border-radius:50%; flex:none}
@@ -63,6 +64,10 @@
 .slWhy{color:var(--body); font-size:.94rem; line-height:1.4; margin-top:.15rem}
 .slSrc{font-family:var(--mono); font-size:.74rem; color:var(--mut); text-align:right; white-space:nowrap}
 .slNote{margin:1.5rem 0 0; font-size:.84rem; color:var(--dim)}
+@media(hover:hover) and (pointer:fine){
+  .slRow:hover{transform:translateX(3px);background:rgba(233,237,253,.46);box-shadow:inset 3px 0 0 rgba(38,71,207,.28)}
+  .slRow:hover .slCo{color:var(--cyan-ink)}
+}
 
 /* ---------------- Mobile ---------------- */
 @media(max-width:900px){
@@ -82,4 +87,7 @@
   .slRow .verdict{order:-1}
   .slSrc{text-align:left}
 }
-@media(prefers-reduced-motion:reduce){ .brief{transition:none} }
+@media(prefers-reduced-motion:reduce){
+  .brief,.slRow{transition:none}
+  .slRow:hover{transform:none}
+}

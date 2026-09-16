@@ -43,7 +43,7 @@ check("landing remains server-rendered with bounded client islands", () => {
 });
 
 check("hero is a two-column composition: preserved left copy + a six-slide Commercial Intelligence carousel", () => {
-  // HQ Carousel V3: restore the left hero (promise + lead + CTA); the right graphic is a manual carousel.
+  // HQ Carousel V3: restore the left hero; the right graphic is a calm, circular carousel.
   assert.match(page, /<HeroCarousel locale=\{locale\} primaryHref=\{START_PATH\} \/>/);
   assert.match(page, /styles\.heroLead/);       // the left hero support copy is restored (visible)
   assert.match(page, /styles\.heroLeadFull/);
@@ -54,13 +54,22 @@ check("hero is a two-column composition: preserved left copy + a six-slide Comme
   assert.ok(page.indexOf("styles.boundary") < page.indexOf("<Shortlist"));
   assert.ok(page.indexOf("<Shortlist") < page.indexOf('id="how"'));
   assert.ok(page.indexOf('id="how"') < page.indexOf('id="pricing"'));
-  // The carousel is a bounded client island: manual (no autoplay), semantic, keyboard + swipe + reduced motion.
+  // The carousel is a bounded client island: autoplay, circular manual controls, keyboard + swipe + reduced motion.
   assert.match(carousel.slice(0, 40), /["']use client["']/);
   assert.match(carousel, /aria-roledescription="carousel"/);
   assert.match(carousel, /aria-roledescription="slide"/);
   assert.match(carousel, /onKeyDown/);
-  assert.match(carousel, /onTouchStart/);
-  assert.doesNotMatch(carousel, /setInterval\(/); // no auto-rotation timer
+  assert.match(carousel, /onPointerDown/);
+  assert.match(carousel, /setPointerCapture/);
+  assert.match(carouselStyles, /touch-action:pan-y/);
+  assert.match(carousel, /AUTOPLAY_MS = 6800/);
+  assert.match(carousel, /window\.setTimeout/);
+  assert.match(carousel, /document\.visibilityState/);
+  assert.match(carousel, /prefers-reduced-motion: reduce/);
+  assert.match(carousel, /const wrap = useCallback/);
+  assert.doesNotMatch(carousel, /disabled=\{i === (?:0|n - 1)\}/);
+  assert.match(carousel, /aria-live="off"/);
+  assert.match(carousel, /aria-live="polite"/);
   assert.match(carouselStyles, /prefers-reduced-motion:reduce/);
   // Six cards retain their source-of-truth concepts while their supporting copy stays compact.
   assert.match(carousel, /in six steps/);
