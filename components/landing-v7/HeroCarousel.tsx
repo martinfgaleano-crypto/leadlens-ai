@@ -30,40 +30,40 @@ const EN: Copy = {
   primary: "Find where to focus", secondary: "See a sample brief",
   slides: [
     { label: "What is LeadLens?", kind: "define",
-      headline: "LeadLens is a Commercial Intelligence platform that turns fragmented market and company evidence into structured, evidence-backed commercial decisions.",
-      body: "It researches markets and companies, identifies meaningful change, weighs evidence and timing, makes uncertainty explicit, and helps businesses understand where commercial opportunity and attention belong." },
+      headline: "LeadLens is a Commercial Intelligence platform.",
+      body: "It turns fragmented market, company, and change evidence into structured, evidence-backed commercial decisions. It researches markets and companies, identifies meaningful change, weighs timing and evidence, and makes uncertainty explicit." },
     { label: "Why LeadLens?", kind: "ladder",
-      headline: <>Most alternatives stop too early. <em>LeadLens goes further.</em></> },
+      headline: <>Not a contact database, signal feed, or generic research. <em>A decision about where attention belongs.</em></> },
     { label: "Why is it worth it?", kind: "value",
-      headline: <>You are paying for better commercial judgment — <em>not just more data.</em></>,
-      body: "Without LeadLens, teams have to research companies manually, compare signals, judge relevance, check timing, and still decide under uncertainty. LeadLens compresses that work into a structured commercial judgment, so commercial effort can be allocated faster, more clearly, and with stronger reasoning behind it." },
+      headline: <>LeadLens compresses scattered manual work into <em>one inspectable commercial judgment.</em></>,
+      body: "Instead of researching and comparing many companies yourself, see where to focus, why now, what supports the case, what remains uncertain, and what to validate next." },
     { label: "What is Commercial Intelligence?", kind: "concept",
       headline: <>Commercial Intelligence is the decision layer <em>between raw market information and commercial action.</em></>,
-      body: "For LeadLens, Commercial Intelligence means turning fragmented company, market, and change evidence into structured, evidence-backed judgments about where commercial attention belongs." },
+      body: "For LeadLens, it structures fragmented company, market, and change evidence into evidence-backed judgments about where commercial attention belongs." },
     { label: "What do you get?", kind: "deliver",
       headline: "LeadLens delivers Commercial Intelligence at both company and portfolio level.",
-      body: "At the company level, you get a clear commercial judgment on whether an account deserves attention now, the why-now, the public evidence behind it, what is uncertain, and what to validate next. At the portfolio level, you get a structured view across the researched set: where attention is justified now, which accounts should be prioritized, validated, monitored, or held, and what cross-account patterns matter. This is not a lead list. It is a Commercial Intelligence deliverable." },
-    { label: "How do you start?", kind: "start",
-      headline: "Start with your commercial context. LeadLens does the rest of the intelligence work.",
-      body: "You begin by showing LeadLens what you sell, to whom, and what you are trying to achieve. LeadLens then researches the relevant market and companies, evaluates where attention belongs, and returns Commercial Intelligence at company and portfolio level. From there, you can inspect the reasoning, review the evidence, and decide where to focus first." },
+      body: "Company decision briefs, portfolio allocation, visible evidence and uncertainty, and clear next validation steps." },
+    { label: "How to start", kind: "start",
+      headline: "Share your context. Inspect the intelligence. Decide where to focus.",
+      body: "Tell LeadLens your market and commercial objective. It researches and evaluates the set, then returns Commercial Intelligence you can inspect." },
   ],
   frags: ["press", "filings", "hiring", "registry", "announcements", "expansion"],
   object: "Commercial Intelligence",
   ladder: [
     { t: "Databases", d: "show who exists." },
-    { t: "Signal tools", d: "show that something happened." },
-    { t: "Generic research", d: "gathers information." },
+    { t: "Signal tools", d: "show what happened." },
+    { t: "Generic research", d: "gives more information." },
   ],
-  ladderMe: { t: "LeadLens", d: "turns fragmented evidence into a commercial decision about where attention belongs now — with the reasoning attached, uncertainty visible, and the next validation step clear." },
+  ladderMe: { t: "LeadLens", d: "shows where attention belongs — and why." },
   manual: ["Research", "Compare signals", "Judge relevance", "Check timing", "Decide"],
   compress: "compressed into",
   decisionLabel: "The result",
   decision: "A structured commercial judgment",
   concept: {
     companyLabel: "Company level", portfolioLabel: "Portfolio level",
-    company: { lead: "At the company level,", rest: " it shows which specific accounts deserve attention, why now, what supports the case, what remains uncertain, and what to validate next." },
-    portfolio: { lead: "At the portfolio level,", rest: " it shows how attention should be allocated across a researched set, what patterns matter, and where to prioritize, validate, monitor, or hold." },
-    closing: "It is not a contact list, a generic research report, or a simple signal feed. It is decision-oriented intelligence for commercial focus.",
+    company: { lead: "Which accounts merit attention", rest: " — why now, the evidence, uncertainty, and next validation." },
+    portfolio: { lead: "Where to focus across the set", rest: " — patterns and what to prioritize, validate, monitor, or hold." },
+    closing: "Evidence-backed judgments, not a contact list or a signal feed.",
   },
   record: {
     decision: "Prioritize", stamp: "company + portfolio level",
@@ -75,9 +75,9 @@ const EN: Copy = {
       { k: "Portfolio", v: "How attention is allocated across the set", full: true },
     ],
   },
-  secondary5: "For the higher tiers, the output is not limited to isolated company decisions. It also includes portfolio-level Commercial Intelligence.",
-  steps: ["Your commercial context", "Research + evaluation", "Commercial Intelligence"],
-  ctaSupport: "If you want to see the output first, you can start by reviewing a sample brief.",
+  secondary5: "Not a lead list. A commercial decision system.",
+  steps: ["Share your market + objective", "Research + evaluation", "Inspect the intelligence"],
+  ctaSupport: "See a sample brief before you start.",
 };
 
 const ES: Copy = {
@@ -85,40 +85,40 @@ const ES: Copy = {
   primary: "Encuentra dónde enfocarte", secondary: "Ver un informe de muestra",
   slides: [
     { label: "¿Qué es LeadLens?", kind: "define",
-      headline: "LeadLens es una plataforma de Inteligencia Comercial que convierte evidencia fragmentada de mercados y empresas en decisiones comerciales estructuradas y respaldadas por evidencia.",
-      body: "Investiga mercados y empresas, identifica cambios relevantes, pondera evidencia y timing, hace explícita la incertidumbre y ayuda a los negocios a entender dónde corresponden la oportunidad y la atención comercial." },
+      headline: "LeadLens es una plataforma de Inteligencia Comercial.",
+      body: "Convierte evidencia fragmentada de mercados, empresas y cambios en decisiones comerciales estructuradas y respaldadas. Investiga mercados y empresas, identifica cambios relevantes, pondera fechas y evidencia, y hace explícita la incertidumbre." },
     { label: "¿Por qué LeadLens?", kind: "ladder",
-      headline: <>La mayoría de las alternativas se quedan cortas. <em>LeadLens va más allá.</em></> },
+      headline: <>No es una base de contactos, un feed de señales ni investigación genérica. <em>Ayuda a decidir dónde enfocar la atención.</em></> },
     { label: "¿Por qué vale la pena?", kind: "value",
-      headline: <>Pagas por mejor criterio comercial — <em>no solo por más datos.</em></>,
-      body: "Sin LeadLens, los equipos tienen que investigar empresas manualmente, comparar señales, juzgar relevancia, verificar el timing y aun así decidir bajo incertidumbre. LeadLens comprime ese trabajo en un criterio comercial estructurado, para asignar el esfuerzo comercial más rápido, con más claridad y con mejor razonamiento detrás." },
+      headline: <>LeadLens comprime el trabajo manual disperso en <em>un criterio comercial que puedes examinar.</em></>,
+      body: "En vez de investigar y comparar muchas empresas por tu cuenta, ves dónde enfocarte, por qué ahora, qué respalda el caso, qué sigue incierto y qué validar después." },
     { label: "¿Qué es la Inteligencia Comercial?", kind: "concept",
       headline: <>La Inteligencia Comercial es la capa de decisión <em>entre la información de mercado en bruto y la acción comercial.</em></>,
-      body: "Para LeadLens, la Inteligencia Comercial consiste en convertir evidencia fragmentada de empresas, mercados y cambios en juicios estructurados y respaldados por evidencia sobre dónde corresponde la atención comercial." },
+      body: "Para LeadLens, estructura evidencia fragmentada de empresas, mercados y cambios en criterios respaldados sobre dónde corresponde la atención comercial." },
     { label: "¿Qué recibes?", kind: "deliver",
       headline: "LeadLens entrega Inteligencia Comercial a nivel de empresa y de portafolio.",
-      body: "A nivel de empresa, recibes un criterio comercial claro sobre si una cuenta merece atención ahora, el porqué ahora, la evidencia pública detrás, qué es incierto y qué validar después. A nivel de portafolio, recibes una vista estructurada del conjunto investigado: dónde se justifica la atención ahora, qué cuentas priorizar, validar, monitorear o mantener, y qué patrones entre cuentas importan. Esto no es una lista de leads. Es un entregable de Inteligencia Comercial." },
+      body: "Informes por empresa, asignación de atención en el portafolio, decisiones respaldadas por evidencia con incertidumbre visible y próximos pasos de validación." },
     { label: "¿Cómo empiezas?", kind: "start",
-      headline: "Empieza con tu contexto comercial. LeadLens hace el resto del trabajo de inteligencia.",
-      body: "Empiezas mostrándole a LeadLens qué vendes, a quién y qué intentas lograr. Luego LeadLens investiga el mercado y las empresas relevantes, evalúa dónde corresponde la atención y devuelve Inteligencia Comercial a nivel de empresa y de portafolio. Desde ahí, puedes inspeccionar el razonamiento, revisar la evidencia y decidir dónde enfocarte primero." },
+      headline: "Comparte tu contexto. Examina la inteligencia. Decide dónde enfocarte.",
+      body: "Indica tu mercado y objetivo comercial. LeadLens investiga y evalúa el conjunto; luego entrega Inteligencia Comercial que puedes examinar." },
   ],
   frags: ["prensa", "registros", "contrataciones", "anuncios", "expansión", "informes"],
   object: "Inteligencia Comercial",
   ladder: [
     { t: "Las bases de datos", d: "muestran quién existe." },
-    { t: "Las señales", d: "muestran que algo pasó." },
-    { t: "La investigación genérica", d: "reúne información." },
+    { t: "Las herramientas de señales", d: "muestran qué pasó." },
+    { t: "La investigación genérica", d: "ofrece más información." },
   ],
-  ladderMe: { t: "LeadLens", d: "convierte la evidencia fragmentada en una decisión comercial sobre dónde corresponde la atención ahora — con el razonamiento incluido, la incertidumbre visible y el siguiente paso de validación claro." },
+  ladderMe: { t: "LeadLens", d: "muestra dónde enfocar la atención — y por qué." },
   manual: ["Investigar", "Comparar señales", "Juzgar relevancia", "Verificar timing", "Decidir"],
   compress: "se comprime en",
   decisionLabel: "El resultado",
   decision: "Un criterio comercial estructurado",
   concept: {
     companyLabel: "Nivel empresa", portfolioLabel: "Nivel portafolio",
-    company: { lead: "A nivel de empresa,", rest: " muestra qué cuentas específicas merecen atención, por qué ahora, qué respalda el caso, qué queda incierto y qué validar después." },
-    portfolio: { lead: "A nivel de portafolio,", rest: " muestra cómo debería asignarse la atención en un conjunto investigado, qué patrones importan y dónde priorizar, validar, monitorear o mantener." },
-    closing: "No es una lista de contactos, un informe de investigación genérico ni un simple feed de señales. Es inteligencia orientada a la decisión para el enfoque comercial.",
+    company: { lead: "Qué cuentas merecen atención", rest: " — por qué ahora, evidencia, incertidumbre y próxima validación." },
+    portfolio: { lead: "Dónde enfocarse en el conjunto", rest: " — patrones y qué priorizar, validar, monitorear o reservar." },
+    closing: "Criterios respaldados por evidencia, no una lista de contactos ni un feed de señales.",
   },
   record: {
     decision: "Priorizar", stamp: "nivel empresa + portafolio",
@@ -130,9 +130,9 @@ const ES: Copy = {
       { k: "Portafolio", v: "Cómo se asigna la atención en el conjunto", full: true },
     ],
   },
-  secondary5: "En los niveles superiores, el resultado no se limita a decisiones aisladas por empresa. También incluye Inteligencia Comercial a nivel de portafolio.",
-  steps: ["Tu contexto comercial", "Investigación + evaluación", "Inteligencia Comercial"],
-  ctaSupport: "Si prefieres ver primero el resultado, puedes empezar revisando un informe de muestra.",
+  secondary5: "No es una lista de leads. Es un sistema de decisión comercial.",
+  steps: ["Mercado + objetivo", "Investigación + evaluación", "Examinar la inteligencia"],
+  ctaSupport: "Puedes ver un informe de muestra antes de empezar.",
 };
 
 const COPY: Record<LandingLocale, Copy> = { en: EN, es: ES, pt: EN, ja: EN };
@@ -158,6 +158,10 @@ export function HeroCarousel({ locale, primaryHref }: { locale: LandingLocale; p
 
   const s = c.slides[i];
   const pad = (x: number) => String(x).padStart(2, "0");
+  const choose = (to: number, e: React.MouseEvent<HTMLButtonElement>) => {
+    go(to);
+    if (e.detail > 0) e.currentTarget.blur(); // Pointer activation must not leave a keyboard focus ring.
+  };
 
   return (
     <div className={styles.wrap}>
@@ -188,18 +192,18 @@ export function HeroCarousel({ locale, primaryHref }: { locale: LandingLocale; p
         {/* Side arrows (vertically centered on the card) are the primary affordance; the segmented
             bar shows position. On mobile the arrows reflow into the bottom row beside the bar. */}
         <div className={styles.controls}>
-          <button type="button" className={styles.navPrev} onClick={() => go(i - 1)} disabled={i === 0} aria-label={c.prev}>‹</button>
+          <button type="button" className={styles.navPrev} onClick={(e) => choose(i - 1, e)} disabled={i === 0} aria-label={c.prev}>‹</button>
           <ol className={styles.seg}>
             {c.slides.map((sl, idx) => (
               <li key={sl.label}>
                 <button type="button" aria-label={`${sl.label} (${pad(idx + 1)} of ${pad(n)})`}
                   aria-current={idx === i ? "true" : undefined}
                   data-state={idx === i ? "active" : idx < i ? "done" : "todo"}
-                  onClick={() => go(idx)} />
+                  onClick={(e) => choose(idx, e)} />
               </li>
             ))}
           </ol>
-          <button type="button" className={styles.navNext} onClick={() => go(i + 1)} disabled={i === n - 1} aria-label={c.next}>›</button>
+          <button type="button" className={styles.navNext} onClick={(e) => choose(i + 1, e)} disabled={i === n - 1} aria-label={c.next}>›</button>
         </div>
       </section>
     </div>
