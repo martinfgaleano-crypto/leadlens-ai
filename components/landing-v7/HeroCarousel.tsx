@@ -1,12 +1,12 @@
 "use client";
 
 // HeroCarousel — the hero's right-side visual: a warm, editorial "story card" that explains LeadLens
-// across six manual, visitor-controlled cards. Copy is HQ-frozen (exact English; faithful Spanish).
-// No autoplay. Side arrows (vertically centered) + segmented progress + counter + keyboard + swipe.
+// across six visitor-controlled cards. Copy is HQ-frozen (exact English; faithful Spanish).
+// Calm autoplay + circular arrows, segmented progress, counter, keyboard and swipe.
 // All cards are stacked in one grid cell so the frame is always the tallest card's size (no jump).
 // Reduced-motion honored. React state + CSS only; no carousel dependency.
 
-import { useCallback, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import type { LandingLocale } from "@/lib/landing/v2-copy";
 import styles from "./hero-carousel.module.css";
@@ -136,24 +136,77 @@ const ES: Copy = {
 };
 
 const COPY: Record<LandingLocale, Copy> = { en: EN, es: ES, pt: EN, ja: EN };
+const AUTOPLAY_MS = 6800;
 
 export function HeroCarousel({ locale, primaryHref }: { locale: LandingLocale; primaryHref: string }) {
   const c = COPY[locale] ?? EN;
   const n = c.slides.length;
   const [i, setI] = useState(0);
-  const touchX = useRef<number | null>(null);
-  const go = useCallback((to: number) => setI(() => Math.max(0, Math.min(n - 1, to))), [n]);
+  const [timerEpoch, setTimerEpoch] = useState(0);
+  const [hovered, setHovered] = useState(false);
+  const [focusWithin, setFocusWithin] = useState(false);
+  const [touching, setTouching] = useState(false);
+  const [pageHidden, setPageHidden] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const [announcement, setAnnouncement] = useState("");
+  const swipeX = useRef<number | null>(null);
+  const swipePointer = useRef<number | null>(null);
+  const wrap = useCallback((to: number) => (to + n) % n, [n]);
+  const restartTimer = useCallback(() => setTimerEpoch((value) => value + 1), []);
+  const go = useCallback((to: number, announce = true) => {
+    const next = wrap(to);
+    setI(next);
+    restartTimer();
+    if (announce) setAnnouncement(`${c.slides[next].label} (${next + 1} of ${n})`);
+  }, [c.slides, n, restartTimer, wrap]);
+
+  useEffect(() => {
+    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const sync = () => setReducedMotion(query.matches);
+    sync();
+    query.addEventListener("change", sync);
+    return () => query.removeEventListener("change", sync);
+  }, []);
+
+  useEffect(() => {
+    const sync = () => setPageHidden(document.visibilityState !== "visible");
+    sync();
+    document.addEventListener("visibilitychange", sync);
+    return () => document.removeEventListener("visibilitychange", sync);
+  }, []);
+
+  useEffect(() => {
+    if (hovered || focusWithin || touching || pageHidden || reducedMotion) return;
+    const timer = window.setTimeout(() => setI((current) => wrap(current + 1)), AUTOPLAY_MS);
+    return () => window.clearTimeout(timer);
+  }, [focusWithin, hovered, i, pageHidden, reducedMotion, timerEpoch, touching, wrap]);
 
   const onKey = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === "ArrowRight") { e.preventDefault(); setI((p) => Math.min(n - 1, p + 1)); }
-    else if (e.key === "ArrowLeft") { e.preventDefault(); setI((p) => Math.max(0, p - 1)); }
-  }, [n]);
-  const onTouchStart = (e: React.TouchEvent) => { touchX.current = e.touches[0].clientX; };
-  const onTouchEnd = (e: React.TouchEvent) => {
-    if (touchX.current == null) return;
-    const dx = e.changedTouches[0].clientX - touchX.current;
-    if (Math.abs(dx) > 45) setI((p) => Math.max(0, Math.min(n - 1, p + (dx < 0 ? 1 : -1))));
-    touchX.current = null;
+    if (e.key === "ArrowRight") { e.preventDefault(); go(i + 1); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); go(i - 1); }
+  }, [go, i]);
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType === "mouse") return;
+    setTouching(true);
+    swipeX.current = e.clientX;
+    swipePointer.current = e.pointerId;
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+  const onPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (swipePointer.current === e.pointerId && swipeX.current != null) {
+      const dx = e.clientX - swipeX.current;
+      if (Math.abs(dx) > 45) go(i + (dx < 0 ? 1 : -1));
+      else restartTimer();
+    }
+    swipeX.current = null;
+    swipePointer.current = null;
+    setTouching(false);
+  };
+  const onPointerCancel = () => {
+    swipeX.current = null;
+    swipePointer.current = null;
+    setTouching(false);
+    restartTimer();
   };
 
   const s = c.slides[i];
@@ -166,7 +219,15 @@ export function HeroCarousel({ locale, primaryHref }: { locale: LandingLocale; p
   return (
     <div className={styles.wrap}>
       <section className={styles.panel} aria-roledescription="carousel" aria-label={c.aria}
-        tabIndex={0} onKeyDown={onKey}>
+        tabIndex={0} onKeyDown={onKey}
+        onMouseEnter={() => setHovered(true)} onMouseLeave={() => { setHovered(false); restartTimer(); }}
+        onFocusCapture={() => setFocusWithin(true)}
+        onBlurCapture={(e) => {
+          if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+            setFocusWithin(false);
+            restartTimer();
+          }
+        }}>
         <div className={styles.header}>
           <span className={styles.label}>{s.label}</span>
           <span className={styles.counter} aria-hidden="true"><b>{pad(i + 1)}</b> / {pad(n)}</span>
@@ -175,7 +236,8 @@ export function HeroCarousel({ locale, primaryHref }: { locale: LandingLocale; p
         {/* All cards are stacked in one grid cell, so the frame is always as tall as the tallest
             card — identical footprint on every card, no height jump. Only the active card is
             visible (and reachable by AT / keyboard). */}
-        <div className={styles.stage} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} aria-live="polite">
+        <div className={styles.stage} onPointerDown={onPointerDown} onPointerUp={onPointerUp}
+          onPointerCancel={onPointerCancel} aria-live="off">
           {c.slides.map((sl, idx) => (
             <article key={sl.label} className={styles.slide} data-kind={sl.kind} data-active={idx === i}
               role="group" aria-roledescription="slide" aria-hidden={idx !== i}
@@ -192,7 +254,7 @@ export function HeroCarousel({ locale, primaryHref }: { locale: LandingLocale; p
         {/* Side arrows (vertically centered on the card) are the primary affordance; the segmented
             bar shows position. On mobile the arrows reflow into the bottom row beside the bar. */}
         <div className={styles.controls}>
-          <button type="button" className={styles.navPrev} onClick={(e) => choose(i - 1, e)} disabled={i === 0} aria-label={c.prev}>‹</button>
+          <button type="button" className={styles.navPrev} onClick={(e) => choose(i - 1, e)} aria-label={c.prev}>‹</button>
           <ol className={styles.seg}>
             {c.slides.map((sl, idx) => (
               <li key={sl.label}>
@@ -203,8 +265,9 @@ export function HeroCarousel({ locale, primaryHref }: { locale: LandingLocale; p
               </li>
             ))}
           </ol>
-          <button type="button" className={styles.navNext} onClick={(e) => choose(i + 1, e)} disabled={i === n - 1} aria-label={c.next}>›</button>
+          <button type="button" className={styles.navNext} onClick={(e) => choose(i + 1, e)} aria-label={c.next}>›</button>
         </div>
+        <p className={styles.srOnly} aria-live="polite" aria-atomic="true">{announcement}</p>
       </section>
     </div>
   );

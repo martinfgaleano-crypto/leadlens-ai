@@ -110,11 +110,15 @@
 .primary:focus-visible,.primarySmall:focus-visible,.secondary:focus-visible,.navLinks a:focus-visible,.signIn:focus-visible{outline:2px solid var(--sky);outline-offset:3px;border-radius:6px}
 .secondary:hover{color:var(--sky-dark)}
 .principle{transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
-.principle:hover{transform:translateY(-2px);border-color:#bcccf5;box-shadow:0 20px 34px -26px rgba(20,40,90,.4)}
 .faq summary{transition:color .16s ease}
 .faq summary:hover{color:var(--sky-dark)}
 .faq details[open] summary{color:var(--ink)}
+@media(hover:hover) and (pointer:fine){
+  .principle:hover{transform:translateY(-3px) scale(1.008);border-color:#bcccf5;box-shadow:0 22px 38px -26px rgba(20,40,90,.42)}
+  .causality:hover{transform:translateY(-2px);border-color:#c8d5f3;box-shadow:0 28px 52px -38px rgba(10,25,55,.46)}
+}
+.causality{transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
 @media(prefers-reduced-motion:reduce){
-  .primary,.secondary,.primarySmall,.principle,.planRow{transition:none}
-  .primary:hover,.primarySmall:hover,.principle:hover,.planRow:hover{transform:none}
+  .primary,.secondary,.primarySmall,.principle,.causality,.planRow{transition:none}
+  .primary:hover,.primarySmall:hover,.principle:hover,.causality:hover,.planRow:hover{transform:none}
 }
