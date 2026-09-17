@@ -1,6 +1,6 @@
 {
   "audit": "account-deep-research-positive-control-v1",
-  "generated_at": "2026-09-17T00:30:07.758Z",
+  "generated_at": "2026-09-17T00:44:32.890Z",
   "diagnostic_only": true,
   "production_seeded": false,
   "interpretation_limit": "Named accounts are a bounded retrieval control, not a production universe and not a global recall estimate.",
@@ -25,11 +25,11 @@
   },
   "summary": {
     "references": 8,
-    "captured_defensibly": 4,
-    "bounded_capture_rate": 0.5,
-    "duration_ms": 319621,
-    "provider_calls": 64,
-    "extractions": 16,
+    "captured_defensibly": 5,
+    "bounded_capture_rate": 0.625,
+    "duration_ms": 222261,
+    "provider_calls": 66,
+    "extractions": 15,
     "observed_cost_usd": null
   },
   "accounts": [
@@ -179,7 +179,7 @@
             "provider": "brave",
             "operation": "search",
             "stage": "identity",
-            "duration_ms": 1163,
+            "duration_ms": 1297,
             "ok": true,
             "timeout": false,
             "results": 5
@@ -188,7 +188,7 @@
             "provider": "brave",
             "operation": "search",
             "stage": "current_activity",
-            "duration_ms": 376,
+            "duration_ms": 434,
             "ok": true,
             "timeout": false,
             "results": 2
@@ -197,7 +197,7 @@
             "provider": "full_text",
             "operation": "full_text",
             "stage": "current_activity",
-            "duration_ms": 6311,
+            "duration_ms": 1965,
             "ok": true,
             "timeout": false,
             "results": 1
@@ -206,7 +206,7 @@
             "provider": "tavily",
             "operation": "search",
             "stage": "current_activity",
-            "duration_ms": 5507,
+            "duration_ms": 3976,
             "ok": true,
             "timeout": false,
             "results": 1
@@ -215,7 +215,7 @@
             "provider": "full_text",
             "operation": "full_text",
             "stage": "current_activity",
-            "duration_ms": 11447,
+            "duration_ms": 1583,
             "ok": true,
             "timeout": false,
             "results": 1
@@ -224,7 +224,7 @@
             "provider": "brave",
             "operation": "search",
             "stage": "current_activity",
-            "duration_ms": 675,
+            "duration_ms": 702,
             "ok": true,
             "timeout": false,
             "results": 0
@@ -233,7 +233,7 @@
             "provider": "tavily",
             "operation": "search",
             "stage": "current_activity",
-            "duration_ms": 4926,
+            "duration_ms": 3656,
             "ok": true,
             "timeout": false,
             "results": 1
@@ -242,7 +242,7 @@
             "provider": "brave",
             "operation": "search",
             "stage": "counterevidence",
-            "duration_ms": 863,
+            "duration_ms": 490,
             "ok": true,
             "timeout": false,
             "results": 2
@@ -251,7 +251,7 @@
             "provider": "tavily",
             "operation": "search",
             "stage": "counterevidence",
-            "duration_ms": 4247,
+            "duration_ms": 107,
             "ok": true,
             "timeout": false,
             "results": 5
@@ -260,7 +260,7 @@
             "provider": "brave",
             "operation": "search",
             "stage": "corroboration",
-            "duration_ms": 1049,
+            "duration_ms": 589,
             "ok": true,
             "timeout": false,
             "results": 0
@@ -269,7 +269,7 @@
             "provider": "tavily",
             "operation": "search",
             "stage": "corroboration",
-            "duration_ms": 4045,
+            "duration_ms": 101,
             "ok": true,
             "timeout": false,
             "results": 5
@@ -321,14 +321,6 @@
           "commercial_relevance": "high"
         },
         {
-          "url": "https://www.nestleusa.com/brands",
-          "title": "Nestlé's Brands in the United States| Nestlé USA",
-          "publication_date": null,
-          "source_tier": "B",
-          "entity_state": "confirmed",
-          "commercial_relevance": "low"
-        },
-        {
           "url": "https://www.nestleusa.com/sites/g/files/pydnoa536/files/asset-library/documents/media/pressrelease/nestle_us_factsheet.pdf",
           "title": "Stamford, CT New York, NY Florham Park, NJ Bridgewater, NJ Solon, OH Nestlé USA",
           "publication_date": null,
@@ -339,6 +331,14 @@
         {
           "url": "https://www.nestleusa.com/media/pressreleases/nestle-usa-hq-va",
           "title": "Nestlé USA To Move Headquarters To Virginia | Nestlé USA",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.nestleusa.com/brands",
+          "title": "Nestlé's Brands in the United States| Nestlé USA",
           "publication_date": null,
           "source_tier": "B",
           "entity_state": "confirmed",
@@ -444,17 +444,30 @@
         "provider_calls": 9,
         "provider_failures": 0,
         "results_seen": 19,
-        "evidence_accepted": 14,
-        "evidence_rejected": 5,
+        "evidence_accepted": 15,
+        "evidence_rejected": 4,
         "pages_extracted": 2,
         "extraction_failures": 0,
         "structured_extraction_calls": 1,
-        "dated_evidence": 9,
-        "independent_domains": 3,
+        "dated_evidence": 10,
+        "independent_domains": 4,
         "claims_recovered": 1,
         "corroboration_attempted": true,
-        "corroborating_domains": 0,
-        "corroborating_sources": [],
+        "corroborating_domains": 2,
+        "corroborating_sources": [
+          {
+            "url": "https://www.just-food.com/news/conagra-brands-invests-us-factory",
+            "source_host": "just-food.com",
+            "event_date": "2026-03-06",
+            "claim_excerpt": "Conagra Brands invests in US poultry factory - Global Food Industry News. The company said that the expansion will “significantly increase” chicken production capacity at the Fayetteville plant. Conagra Brands is investing to expand existing manufacturing operations at its Fayetteville, Arkansas site. The US-based frozen foods and snacks maker has committed a multi-year i"
+          },
+          {
+            "url": "https://www.fooddive.com/news/conagra-fayetteville-arkansas-manufacturing-investment/814194",
+            "source_host": "fooddive.com",
+            "event_date": "2026-03-06",
+            "claim_excerpt": "Conagra invests $220M to expand Arkansas manufacturing plant - Food Dive. The frozen food maker is set to grow its chicken production capacity as it sees substantial growth in high-protein offerings. Conagra Brands is spending $220 million to expand a chicken production plant in Fayetteville, Arkansas, as the company looks to strengthen its frozen foods business by focusi"
+          }
+        ],
         "counterevidence_checked": true,
         "early_stop_reason": "sufficient_evidence",
         "query_audit": [
@@ -508,18 +521,18 @@
             "accepted": 1
           },
           {
-            "query_id": "rq_386t7t",
+            "query_id": "rq_fvj0b3",
             "stage": "corroboration",
             "provider": "brave",
             "results": 0,
             "accepted": 0
           },
           {
-            "query_id": "rq_386t7t",
+            "query_id": "rq_fvj0b3",
             "stage": "corroboration",
             "provider": "tavily",
             "results": 5,
-            "accepted": 0
+            "accepted": 2
           }
         ],
         "extraction_audit": [
@@ -547,7 +560,7 @@
             "provider": "brave",
             "operation": "search",
             "stage": "identity",
-            "duration_ms": 945,
+            "duration_ms": 584,
             "ok": true,
             "timeout": false,
             "results": 5
@@ -556,7 +569,7 @@
             "provider": "brave",
             "operation": "search",
             "stage": "current_activity",
-            "duration_ms": 447,
+            "duration_ms": 535,
             "ok": true,
             "timeout": false,
             "results": 0
@@ -565,7 +578,7 @@
             "provider": "tavily",
             "operation": "search",
             "stage": "current_activity",
-            "duration_ms": 4994,
+            "duration_ms": 7396,
             "ok": true,
             "timeout": false,
             "results": 1
@@ -574,7 +587,7 @@
             "provider": "brave",
             "operation": "search",
             "stage": "current_activity",
-            "duration_ms": 880,
+            "duration_ms": 812,
             "ok": true,
             "timeout": false,
             "results": 0
@@ -583,7 +596,7 @@
             "provider": "tavily",
             "operation": "search",
             "stage": "current_activity",
-            "duration_ms": 5728,
+            "duration_ms": 5909,
             "ok": true,
             "timeout": false,
             "results": 2
@@ -592,7 +605,7 @@
             "provider": "full_text",
             "operation": "full_text",
             "stage": "current_activity",
-            "duration_ms": 514,
+            "duration_ms": 287,
             "ok": true,
             "timeout": false,
             "results": 1
@@ -601,7 +614,7 @@
             "provider": "full_text",
             "operation": "full_text",
             "stage": "current_activity",
-            "duration_ms": 529,
+            "duration_ms": 573,
             "ok": true,
             "timeout": false,
             "results": 1
@@ -610,7 +623,7 @@
             "provider": "anthropic",
             "operation": "llm",
             "stage": "current_activity",
-            "duration_ms": 10398,
+            "duration_ms": 10647,
             "ok": true,
             "timeout": false,
             "results": 0
@@ -619,7 +632,7 @@
             "provider": "brave",
             "operation": "search",
             "stage": "counterevidence",
-            "duration_ms": 985,
+            "duration_ms": 991,
             "ok": true,
             "timeout": false,
             "results": 5
@@ -628,7 +641,7 @@
             "provider": "tavily",
             "operation": "search",
             "stage": "counterevidence",
-            "duration_ms": 3010,
+            "duration_ms": 2467,
             "ok": true,
             "timeout": false,
             "results": 1
@@ -637,7 +650,7 @@
             "provider": "brave",
             "operation": "search",
             "stage": "corroboration",
-            "duration_ms": 558,
+            "duration_ms": 577,
             "ok": true,
             "timeout": false,
             "results": 0
@@ -646,7 +659,7 @@
             "provider": "tavily",
             "operation": "search",
             "stage": "corroboration",
-            "duration_ms": 4271,
+            "duration_ms": 5055,
             "ok": true,
             "timeout": false,
             "results": 5
@@ -658,7 +671,7 @@
             "source_host": "conagrabrands.com",
             "event_date": "2026-03-06",
             "kind": "strategic_decision",
-            "claim_excerpt": "Conagra Brands to Expand Manufacturing Operations in Fayetteville, Arkansas | Conagra Brands. ![ConAgra Homepage Logo](/sites/g/files/qyyrlu371/files/DT_Header_ConagraLogo.png) ![ConAgra Logo](/sites/g/files/qyyrlu371/themes/site/corporate/images/conagra-logo-mobile.png) ## Mobile Navigation ### [Who We Are](/who-we-are) ### [Our Impact](/our-company/conagra-brands-foundation/community-impact-grants) ### [Join Our Team](https://careers.conagrabrands.com/) ### [News](/news-room) ### [Investors](/investor-relations) ## Mobile Navigation ### CREATING SHAREHOLDER VALUE THROUGH INNOVATION ### [Financial Reports & Filings](/investor-relations/financial-reports) ### [Events & Presentations](/investor-relations/financial-news/events-calendar) ### [Financial News](/investor-relations/financial-news) ### [Stocks](/investor-relations/stock-information) ### [Corporate Governance Documents](/investor-relations/corporate-governance) ## Mobile Navigation ### Continuously Contemporizing Our Business & Culture ### [Our Leadership](/our-company/corporate-leadership) ### [Our Brands](/brands) ### [Innovation](/innovation) ### [Suppliers & Retailers](/our-company/suppliers) ## Mobile Navigation ### No",
+            "claim_excerpt": "Conagra Brands to Expand Manufacturing Operations in Fayetteville .... ![ConAgra Homepage Logo](/sites/g/files/qyyrlu371/files/DT_Header_ConagraLogo.png) ![ConAgra Logo](/sites/g/files/qyyrlu371/themes/site/corporate/images/conagra-logo-mobile.png) ## Mobile Navigation ### [Who We Are](/who-we-are) ### [Our Impact](/our-company/conagra-brands-foundation/community-impact-grants) ### [Join Our Team](https://careers.conagrabrands.com/) ### [News](/news-room) ### [Investors](/investor-relations) ## Mobile Navigation ### CREATING SHAREHOLDER VALUE THROUGH INNOVATION ### [Financial Reports & Filings](/investor-relations/financial-reports) ### [Events & Presentations](/investor-relations/financial-news/events-calendar) ### [Financial News](/investor-relations/financial-news) ### [Stocks](/investor-relations/stock-information) ### [Corporate Governance Documents](/investor-relations/corporate-governance) ## Mobile Navigation ### Continuously Contemporizing Our Business & Culture ### [Our Leadership](/our-company/corporate-leadership) ### [Our Brands](/brands) ### [Innovation](/innovation) ### [Suppliers & Retailers](/our-company/suppliers) ## Mobile Navigation ### Nourishing our people, th",
             "stage": "current_activity",
             "materiality_valid": true,
             "counterevidence": false
@@ -680,14 +693,6 @@
           "commercial_relevance": "low"
         },
         {
-          "url": "https://www.conagrabrands.com/site-map",
-          "title": "Site Map | Conagra Brands",
-          "publication_date": null,
-          "source_tier": "B",
-          "entity_state": "confirmed",
-          "commercial_relevance": "low"
-        },
-        {
           "url": "https://www.conagrabrands.com/our-company/overview",
           "title": "Company Overview | Conagra Brands",
           "publication_date": null,
@@ -696,8 +701,16 @@
           "commercial_relevance": "low"
         },
         {
-          "url": "https://www.conagrabrands.com/contact-us/new-business-step-2",
-          "title": "Quality Consumer Foods and Commercial Foods | Conagra Brands",
+          "url": "https://www.conagrabrands.com/contact-us/thank-you",
+          "title": "Contact Us - Thank You | Conagra Brands",
+          "publication_date": null,
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.conagrabrands.com/site-map",
+          "title": "Site Map | Conagra Brands",
           "publication_date": null,
           "source_tier": "B",
           "entity_state": "confirmed",
@@ -721,7 +734,7 @@
         },
         {
           "url": "https://www.conagrabrands.com/news-room/news-conagra-brands-to-expand-manufacturing-operations-in-fayetteville-arkansas",
-          "title": "Conagra Brands to Expand Manufacturing Operations in Fayetteville, Arkansas | Conagra Brands",
+          "title": "Conagra Brands to Expand Manufacturing Operations in Fayetteville ...",
           "publication_date": "Fri, 06 Mar 2026 00:00:00 GMT",
           "source_tier": "B",
           "entity_state": "confirmed",
@@ -752,14 +765,6 @@
           "commercial_relevance": "low"
         },
         {
-          "url": "https://www.conagrabrands.com/news-room/news-conagra-brands-kicks-off-summer-with-exciting-new-introductions-prn-122956",
-          "title": "Conagra Brands Kicks Off Summer with Exciting New Introductions | Conagra Brands",
-          "publication_date": "2026-06-24T00:00:00",
-          "source_tier": "B",
-          "entity_state": "confirmed",
-          "commercial_relevance": "low"
-        },
-        {
           "url": "https://www.conagrabrands.com/news-room/news-conagra-brands-provides-senior-leadership-update-prn-122959",
           "title": "Conagra Brands Provides Senior Leadership Update | Conagra Brands",
           "publication_date": "2026-07-28T00:00:00",
@@ -768,17 +773,33 @@
           "commercial_relevance": "low"
         },
         {
-          "url": "https://www.sedc.org/news/conagra-brands-to-expand-manufacturing-operations-in-fayetteville-arkansas",
-          "title": "Conagra Brands to Expand Manufacturing Operations in Fayetteville, Arkansas - Southern Economic Development Council",
-          "publication_date": "Mon, 09 Mar 2026 00:00:00 GMT",
+          "url": "https://www.conagrabrands.com/files/events/2026-04-01/Q3FY26-Earnings-Press-Release",
+          "title": "News Release For more information, please contact: MEDIA: Mike Cummins",
+          "publication_date": "2026-04-01T00:00:00",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.manilatimes.net/2026/03/06/tmt-newswire/globenewswire/conagra-brands-to-expand-manufacturing-operations-in-fayetteville-arkansas/2294986",
+          "title": "Conagra Brands to Expand Manufacturing Operations in Fayetteville, Arkansas - The Manila Times",
+          "publication_date": "Fri, 06 Mar 2026 15:23:18 GMT",
           "source_tier": "B",
           "entity_state": "high_confidence",
           "commercial_relevance": "high"
         },
         {
-          "url": "https://www.nwahomepage.com/news/northwest-arkansas-business-news/conagra-brands-announces-220m-expansion-at-fayetteville-manufacturing-facility",
-          "title": "Conagra Brands announces $220M expansion at Fayetteville ...",
-          "publication_date": "Fri, 06 Mar 2026 00:00:00 GMT",
+          "url": "https://www.just-food.com/news/conagra-brands-invests-us-factory/",
+          "title": "Conagra Brands invests in US poultry factory - Global Food Industry News",
+          "publication_date": "Mon, 09 Mar 2026 10:24:58 GMT",
+          "source_tier": "B",
+          "entity_state": "high_confidence",
+          "commercial_relevance": "high"
+        },
+        {
+          "url": "https://www.fooddive.com/news/conagra-fayetteville-arkansas-manufacturing-investment/814194/",
+          "title": "Conagra invests $220M to expand Arkansas manufacturing plant - Food Dive",
+          "publication_date": "Mon, 09 Mar 2026 11:31:00 GMT",
           "source_tier": "B",
           "entity_state": "high_confidence",
           "commercial_relevance": "high"
@@ -799,33 +820,45 @@
         "Salt Lake",
         "packaging facility"
       ],
-      "matched_terms": [],
-      "captured_defensibly": false,
+      "matched_terms": [
+        "Salt Lake"
+      ],
+      "captured_defensibly": true,
       "strongest_source_url": "https://www.quad.com/newsroom/quad-expands-packaging-operations",
       "strongest_publication_date": "2026-08-07T16:22:17",
-      "validated_events": [],
+      "validated_events": [
+        {
+          "url": "https://www.quad.com/newsroom/quad-expands-packaging-operations",
+          "source_host": "quad.com",
+          "kind": "strategic_decision",
+          "event_date": "2026-08-07",
+          "matched_expected_terms": [
+            "Salt Lake"
+          ]
+        }
+      ],
       "telemetry": {
         "version": "account-deep-research-v1",
         "account": "Quad",
         "domain": "quad.com",
         "planned_queries": 4,
-        "executed_queries": 4,
-        "provider_calls": 7,
+        "executed_queries": 5,
+        "provider_calls": 9,
         "provider_failures": 0,
-        "results_seen": 21,
-        "evidence_accepted": 15,
-        "evidence_rejected": 6,
+        "results_seen": 26,
+        "evidence_accepted": 16,
+        "evidence_rejected": 10,
         "pages_extracted": 2,
         "extraction_failures": 0,
-        "structured_extraction_calls": 2,
-        "dated_evidence": 14,
-        "independent_domains": 1,
+        "structured_extraction_calls": 1,
+        "dated_evidence": 15,
+        "independent_domains": 2,
         "claims_recovered": 3,
-        "corroboration_attempted": false,
+        "corroboration_attempted": true,
         "corroborating_domains": 0,
         "corroborating_sources": [],
         "counterevidence_checked": true,
-        "early_stop_reason": "no_material_event",
+        "early_stop_reason": "sufficient_evidence",
         "query_audit": [
           {
             "query_id": "rq_kk8fhv",
@@ -875,6 +908,20 @@
             "provider": "tavily",
             "results": 0,
             "accepted": 0
+          },
+          {
+            "query_id": "rq_15z35v9",
+            "stage": "corroboration",
+            "provider": "brave",
+            "results": 0,
+            "accepted": 0
+          },
+          {
+            "query_id": "rq_15z35v9",
+            "stage": "corroboration",
+            "provider": "tavily",
+            "results": 5,
+            "accepted": 0
           }
         ],
         "extraction_audit": [
@@ -882,9 +929,9 @@
             "url": "https://www.quad.com/newsroom/quad-expands-packaging-operations",
             "stage": "current_activity",
             "date_phrase": "today",
-            "signal_kind": "none",
+            "signal_kind": "strategic_decision",
             "materiality": "high",
-            "accepted_events": 0,
+            "accepted_events": 1,
             "evidence_excerpt": "d package goods on behalf of CPGs. “This investment expands Quad’s ability to efficiently serve both national consumer brands and regional companies with the speed and flexibility today’s market demands,” said Tim Ohnmacht, Division President of Quad Packaging. “By establishing a presence in Salt Lake City, we’re closer to brands in high-growth markets like food and beverage and health and wellness, creating new opportunities to continue growing our packaging business.” The new facility launches with existing client volume and capacity commitments from brands headquartered in the western U.S. “Existing client work will provide a strong operational foundation for Quad’s launch in Salt Lake City while also benefitting brands by providing quicker turn times and improved logistics,” Ohnmacht explained. “This is a clear example of Quad’s long-term strategy to grow in high-value, fast-growing categories like packaging,” Quadracci said. “Expanding west and adding capacity across our U.S. network strengthens our ability to meet client demand while building on the momentum of our packaging business.” This cutting-edge facility will deliver end-to-end packaging services to ensure swift marke"
           },
           {
@@ -902,7 +949,7 @@
             "provider": "brave",
             "operation": "search",
             "stage": "identity",
-            "duration_ms": 1120,
+            "duration_ms": 963,
             "ok": true,
             "timeout": false,
             "results": 5
@@ -911,7 +958,7 @@
             "provider": "brave",
             "operation": "search",
             "stage": "current_activity",
-            "duration_ms": 509,
+            "duration_ms": 443,
             "ok": true,
             "timeout": false,
             "results": 1
@@ -920,25 +967,16 @@
             "provider": "full_text",
             "operation": "full_text",
             "stage": "current_activity",
-            "duration_ms": 127,
+            "duration_ms": 115,
             "ok": true,
             "timeout": false,
             "results": 1
           },
           {
-            "provider": "anthropic",
-            "operation": "llm",
-            "stage": "current_activity",
-            "duration_ms": 9181,
-            "ok": true,
-            "timeout": false,
-            "results": 0
-          },
-          {
             "provider": "tavily",
             "operation": "search",
             "stage": "current_activity",
-            "duration_ms": 5929,
+            "duration_ms": 596,
             "ok": true,
             "timeout": false,
             "results": 5
@@ -947,7 +985,7 @@
             "provider": "full_text",
             "operation": "full_text",
             "stage": "current_activity",
-            "duration_ms": 387,
+            "duration_ms": 181,
             "ok": true,
             "timeout": false,
             "results": 1
@@ -956,16 +994,16 @@
             "provider": "anthropic",
             "operation": "llm",
             "stage": "current_activity",
-            "duration_ms": 9894,
+            "duration_ms": 11546,
             "ok": true,
             "timeout": false,
-            "results": 1
+            "results": 0
           },
           {
             "provider": "brave",
             "operation": "search",
             "stage": "current_activity",
-            "duration_ms": 798,
+            "duration_ms": 784,
             "ok": true,
             "timeout": false,
             "results": 0
@@ -974,7 +1012,7 @@
             "provider": "tavily",
             "operation": "search",
             "stage": "current_activity",
-            "duration_ms": 3966,
+            "duration_ms": 343,
             "ok": true,
             "timeout": false,
             "results": 5
@@ -983,7 +1021,7 @@
             "provider": "brave",
             "operation": "search",
             "stage": "counterevidence",
-            "duration_ms": 510,
+            "duration_ms": 531,
             "ok": true,
             "timeout": false,
             "results": 5
@@ -992,13 +1030,42 @@
             "provider": "tavily",
             "operation": "search",
             "stage": "counterevidence",
-            "duration_ms": 5835,
+            "duration_ms": 4171,
             "ok": true,
             "timeout": false,
             "results": 0
+          },
+          {
+            "provider": "brave",
+            "operation": "search",
+            "stage": "corroboration",
+            "duration_ms": 1045,
+            "ok": true,
+            "timeout": false,
+            "results": 0
+          },
+          {
+            "provider": "tavily",
+            "operation": "search",
+            "stage": "corroboration",
+            "duration_ms": 5963,
+            "ok": true,
+            "timeout": false,
+            "results": 5
           }
         ],
-        "validated_events": [],
+        "validated_events": [
+          {
+            "url": "https://www.quad.com/newsroom/quad-expands-packaging-operations",
+            "source_host": "quad.com",
+            "event_date": "2026-08-07",
+            "kind": "strategic_decision",
+            "claim_excerpt": "Quad expands national packaging footprint | Quad. ![Quad wordmark and distinctive company icon in black](data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%271225%27%20height%3D%27303%27%20viewBox%3D%270%200%201225%20303%27%3E%3Crect%20width%3D%271225%27%20height%3D%27303%27%20fill-opacity%3D%220%22%2F%3E%3C%2Fsvg%3E) [Solutions](https://www.quad.com/solutions) [Production](https://www.quad.com/solutions/production) [Creative](https://www.quad.com/solutions/creative) [Media](https://www.quad.com/solutions/media) [Intelligence](https://www.quad.com/solutions/intelligence) [Technology](https://www.quad.com/solutions/technology) Our Agencies ![](data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27606%27%20height%3D%27287%27%20viewBox%3D%270%200%20606%20287%27%3E%3Crect%20width%3D%27606%27%20height%3D%27287%27%20fill-opacity%3D%220%22%2F%3E%3C%2Fsvg%3E \"Logo-Rise\") Omnichannel Media ![](data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27314%27%20height%3D%27127%27%20viewBox%3D%270%200%20314%20127%27%3E%3Crect%20width%3D%27314%27%20height%3D%27127%27%20fill-opacity%3D%",
+            "stage": "current_activity",
+            "materiality_valid": true,
+            "counterevidence": false
+          }
+        ],
         "counterevidence_material_found": false,
         "event_hints_received": 0,
         "event_hints_fetched": 0,
@@ -1125,11 +1192,21 @@
           "source_tier": "B",
           "entity_state": "confirmed",
           "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.facebook.com/quadcitieschamber/posts/marco-technologies-marks-major-milestone-opens-logistics-center-in-des-moines-th/1345320784291368",
+          "title": "Marco Technologies marks... - Quad Cities Chamber of Commerce",
+          "publication_date": "Tue, 17 Mar 2026 07:00:00 GMT",
+          "source_tier": "C",
+          "entity_state": "high_confidence",
+          "commercial_relevance": "high"
         }
       ],
       "rejection_reasons": [
         "duplicate_source",
-        "weak_commercial_relevance"
+        "weak_commercial_relevance",
+        "low_quality_source",
+        "wrong_entity"
       ]
     },
     {
@@ -1167,13 +1244,13 @@
         "executed_queries": 5,
         "provider_calls": 9,
         "provider_failures": 0,
-        "results_seen": 21,
-        "evidence_accepted": 20,
-        "evidence_rejected": 1,
+        "results_seen": 26,
+        "evidence_accepted": 21,
+        "evidence_rejected": 5,
         "pages_extracted": 2,
         "extraction_failures": 0,
         "structured_extraction_calls": 1,
-        "dated_evidence": 17,
+        "dated_evidence": 18,
         "independent_domains": 5,
         "claims_recovered": 2,
         "corroboration_attempted": true,
@@ -1214,8 +1291,8 @@
             "query_id": "rq_19tzpxz",
             "stage": "current_activity",
             "provider": "tavily",
-            "results": 0,
-            "accepted": 0
+            "results": 5,
+            "accepted": 5
           },
           {
             "query_id": "rq_68s2dv",
@@ -1271,7 +1348,7 @@
             "provider": "brave",
             "operation": "search",
             "stage": "identity",
-            "duration_ms": 925,
+            "duration_ms": 872,
             "ok": true,
             "timeout": false,
             "results": 5
@@ -1280,7 +1357,7 @@
             "provider": "brave",
             "operation": "search",
             "stage": "current_activity",
-            "duration_ms": 509,
+            "duration_ms": 459,
             "ok": true,
             "timeout": false,
             "results": 1
@@ -1289,7 +1366,7 @@
             "provider": "tavily",
             "operation": "search",
             "stage": "current_activity",
-            "duration_ms": 3790,
+            "duration_ms": 102,
             "ok": true,
             "timeout": false,
             "results": 5
@@ -1298,7 +1375,7 @@
             "provider": "full_text",
             "operation": "full_text",
             "stage": "current_activity",
-            "duration_ms": 584,
+            "duration_ms": 556,
             "ok": true,
             "timeout": false,
             "results": 1
@@ -1307,7 +1384,7 @@
             "provider": "full_text",
             "operation": "full_text",
             "stage": "current_activity",
-            "duration_ms": 410,
+            "duration_ms": 405,
             "ok": true,
             "timeout": false,
             "results": 1
@@ -1316,7 +1393,7 @@
             "provider": "anthropic",
             "operation": "llm",
             "stage": "current_activity",
-            "duration_ms": 10155,
+            "duration_ms": 9427,
             "ok": true,
             "timeout": false,
             "results": 0
@@ -1325,7 +1402,7 @@
             "provider": "brave",
             "operation": "search",
             "stage": "current_activity",
-            "duration_ms": 845,
+            "duration_ms": 817,
             "ok": true,
             "timeout": false,
             "results": 0
@@ -1334,16 +1411,16 @@
             "provider": "tavily",
             "operation": "search",
             "stage": "current_activity",
-            "duration_ms": 11025,
+            "duration_ms": 3319,
             "ok": true,
             "timeout": false,
-            "results": 0
+            "results": 5
           },
           {
             "provider": "brave",
             "operation": "search",
             "stage": "counterevidence",
-            "duration_ms": 925,
+            "duration_ms": 533,
             "ok": true,
             "timeout": false,
             "results": 5
@@ -1352,7 +1429,7 @@
             "provider": "tavily",
             "operation": "search",
             "stage": "counterevidence",
-            "duration_ms": 7970,
+            "duration_ms": 7879,
             "ok": true,
             "timeout": false,
             "results": 0
@@ -1361,7 +1438,7 @@
             "provider": "brave",
             "operation": "search",
             "stage": "corroboration",
-            "duration_ms": 940,
+            "duration_ms": 908,
             "ok": true,
             "timeout": false,
             "results": 0
@@ -1370,7 +1447,7 @@
             "provider": "tavily",
             "operation": "search",
             "stage": "corroboration",
-            "duration_ms": 2864,
+            "duration_ms": 113,
             "ok": true,
             "timeout": false,
             "results": 5
@@ -1476,6 +1553,14 @@
           "commercial_relevance": "low"
         },
         {
+          "url": "https://www.voestalpine.com/group/static/sites/group/.downloads/en/share/grouppresentation/2025-26-h1-financial-year-presentation.pdf",
+          "title": "2025-26-h1-financial-year-presentation.pdf",
+          "publication_date": "Wed, 12 Nov 2025 14:21:08 GMT",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "high"
+        },
+        {
           "url": "https://www.voestalpine.com/group/en/",
           "title": "voestalpine: technology group - voestalpine",
           "publication_date": "2026-09-03T13:46:14",
@@ -1559,7 +1644,8 @@
       "rejection_reasons": [
         "low_quality_source",
         "weak_commercial_relevance",
-        "missing_publication_date"
+        "missing_publication_date",
+        "duplicate_source"
       ]
     },
     {
@@ -1598,12 +1684,12 @@
         "provider_calls": 9,
         "provider_failures": 0,
         "results_seen": 30,
-        "evidence_accepted": 27,
-        "evidence_rejected": 3,
+        "evidence_accepted": 28,
+        "evidence_rejected": 2,
         "pages_extracted": 2,
         "extraction_failures": 0,
         "structured_extraction_calls": 1,
-        "dated_evidence": 22,
+        "dated_evidence": 23,
         "independent_domains": 4,
         "claims_recovered": 2,
         "corroboration_attempted": true,
@@ -1694,13 +1780,13 @@
             "evidence_excerpt": "PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc5MzYnIGhlaWdodD0nNTI3JyB2aWV3Qm94PScwIDAgOTM2IDUyNyc+PC9zdmc+) Artist rendition for new factory. **South Boston, VA, June 29, 2026** – Hitachi Energy today broke ground on a major expansion of its South Boston campus, marking the next phase of a [previously announced investment](/us/en/news-and-events/press-releases/2025/09/hitachi-announces-historic-1-billion-usd-manufacturing-investment-to-power-america-s-energy-future-through-production-of-critical-grid-infrastructure) to establish the nation’s largest facility for the production of large power transformers, one of the most critical and in-demand electrical grid components. The $457 million project will bring about 825 new jobs to Halifax County. Joined by Governor Abigail Spanberger, Senator Mark Warner, Cong … ning the nation’s energy security. The large power transformers produced in South Boston will help ensure reliable electricity for communities, businesses, and industries across the country. > This groundbreaking is a monumental event for Southern Virginia and the entire Commonwealth. Hitachi Energy’s $457 million investment and the creation of 825 new jobs w"
           },
           {
-            "url": "https://www.hitachienergy.com/us/en/news-and-events/press-releases/2021/02/hitachi-abb-power-grids-opens-new-customer-experience-center-in-raleigh-north-carolina",
+            "url": "https://www.hitachienergy.com/news-and-events/press-releases/2026/06/hitachi-energy-expands-power-semiconductor-production-at-swiss-site",
             "stage": "current_activity",
-            "date_phrase": "9 February, 2021",
+            "date_phrase": "today",
             "signal_kind": "none",
-            "materiality": "low",
+            "materiality": "high",
             "accepted_events": 0,
-            "evidence_excerpt": "# State-of-the-art facility enables visitors to explore the company’s technology and solutions portfolio through rich virtual and in-person interactions **Raleigh, North Carolina, 9 February, 2021 –**Hitachi Energy today announced the inauguration of its new Customer Experience Center (“the Center”) at the company’s North American headquarters in Raleigh, NC. Located in a state-of-the-art facility on the Centennial Campus of North Carolina State University, the Center gives Hitachi Energy a powerful new way to collaborate with customers, partners, and other stakeholders on strategies to facilitate the shift toward electricity as the backbone of the entire energy system. Built using an advanced digital platform, the Center provides visitors, both in-person and virtual, with a 3D, interactive immersion in Hitachi Energy’s portfolio of technologies and solutions for power utilities, renewables, data centers, transportation, and other asset-intensive industries. The Center will also support both virtual and in-person guided tours and collaboration sessions for customers, partners, and select guests. The Center offers 3D, interactive demonstrations across the full breadth of the company"
+            "evidence_excerpt": "| 2 min read New facility reinforces long-term commitment to advanced power semiconductor manufacturing and sustainable growth Hitachi Energy, a global leader in electrification, today marked a significant milestone with the groundbreaking of a new facility at its power semiconductor manufacturing site in Lenzburg, Switzerland. This underscores the company’s commitment in expanding its operations and strengthening its production capacity to meet the growing global demand for semiconductors and power electronics from utility, industry, data center, and transportation sectors. The expansion is part of Hitachi Energy’s $9 billion USD global investment program to increase capacity and add 15,000 people to scale manufacturing, R&D, and digitalization, including boosting efficiency through AI-enabled processes. With this, the award-winning, highly automated semiconductor site in Lenzburg will further contribute to scale production, enhance operational performance, and reliably serve production, enhance operational performance, and reliably serve customers worldwide. As Hitachi Energy builds the grid and leads the evolution of the energy system toward a fully electrified world, power sem"
           }
         ],
         "provider_ops": [
@@ -1708,7 +1794,7 @@
             "provider": "brave",
             "operation": "search",
             "stage": "identity",
-            "duration_ms": 711,
+            "duration_ms": 611,
             "ok": true,
             "timeout": false,
             "results": 5
@@ -1717,7 +1803,7 @@
             "provider": "brave",
             "operation": "search",
             "stage": "current_activity",
-            "duration_ms": 616,
+            "duration_ms": 1031,
             "ok": true,
             "timeout": false,
             "results": 5
@@ -1726,7 +1812,7 @@
             "provider": "full_text",
             "operation": "full_text",
             "stage": "current_activity",
-            "duration_ms": 195,
+            "duration_ms": 120,
             "ok": true,
             "timeout": false,
             "results": 1
@@ -1735,7 +1821,7 @@
             "provider": "full_text",
             "operation": "full_text",
             "stage": "current_activity",
-            "duration_ms": 328,
+            "duration_ms": 323,
             "ok": true,
             "timeout": false,
             "results": 1
@@ -1744,7 +1830,7 @@
             "provider": "anthropic",
             "operation": "llm",
             "stage": "current_activity",
-            "duration_ms": 10855,
+            "duration_ms": 9501,
             "ok": true,
             "timeout": false,
             "results": 0
@@ -1753,7 +1839,7 @@
             "provider": "tavily",
             "operation": "search",
             "stage": "current_activity",
-            "duration_ms": 3905,
+            "duration_ms": 317,
             "ok": true,
             "timeout": false,
             "results": 5
@@ -1762,7 +1848,7 @@
             "provider": "brave",
             "operation": "search",
             "stage": "current_activity",
-            "duration_ms": 922,
+            "duration_ms": 1083,
             "ok": true,
             "timeout": false,
             "results": 0
@@ -1771,7 +1857,7 @@
             "provider": "tavily",
             "operation": "search",
             "stage": "current_activity",
-            "duration_ms": 8113,
+            "duration_ms": 6718,
             "ok": true,
             "timeout": false,
             "results": 0
@@ -1780,7 +1866,7 @@
             "provider": "brave",
             "operation": "search",
             "stage": "counterevidence",
-            "duration_ms": 927,
+            "duration_ms": 985,
             "ok": true,
             "timeout": false,
             "results": 5
@@ -1789,7 +1875,7 @@
             "provider": "tavily",
             "operation": "search",
             "stage": "counterevidence",
-            "duration_ms": 7603,
+            "duration_ms": 99,
             "ok": true,
             "timeout": false,
             "results": 5
@@ -1798,7 +1884,7 @@
             "provider": "brave",
             "operation": "search",
             "stage": "corroboration",
-            "duration_ms": 1021,
+            "duration_ms": 204,
             "ok": true,
             "timeout": false,
             "results": 0
@@ -1807,7 +1893,7 @@
             "provider": "tavily",
             "operation": "search",
             "stage": "corroboration",
-            "duration_ms": 6350,
+            "duration_ms": 108,
             "ok": true,
             "timeout": false,
             "results": 5
@@ -1881,25 +1967,25 @@
           "commercial_relevance": "high"
         },
         {
-          "url": "https://www.hitachienergy.com/us/en/news-and-events/press-releases/2021/02/hitachi-abb-power-grids-opens-new-customer-experience-center-in-raleigh-north-carolina",
+          "url": "https://www.hitachienergy.com/news-and-events/press-releases/2026/06/hitachi-energy-expands-power-semiconductor-production-at-swiss-site",
+          "title": "Hitachi Energy expands power semiconductor production at Swiss site",
+          "publication_date": "2026-07-03T14:26:12",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "high"
+        },
+        {
+          "url": "https://www.hitachienergy.com/news-and-events/press-releases/2025/09/hitachi-energy-invests-an-additional-270-million-cad-195-million-usd-to-expand-large-power-transformer-manufacturing-capacity-in-varennes-quebec",
+          "title": "Hitachi Energy invests an additional $270 million CAD ($195 million USD) to expand large power transformer manufacturing capacity in Varennes, Quebec",
+          "publication_date": "2025-09-29T14:26:27",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "high"
+        },
+        {
+          "url": "https://www.hitachienergy.com/uk-ie/en/news-and-events/press-releases/2021/02/hitachi-abb-power-grids-opens-new-customer-experience-center-in-raleigh-north-carolina",
           "title": "Hitachi Energy opens new Customer Experience Center in Raleigh, North Carolina",
           "publication_date": "2026-04-15T08:23:26",
-          "source_tier": "B",
-          "entity_state": "confirmed",
-          "commercial_relevance": "high"
-        },
-        {
-          "url": "https://www.hitachienergy.com/us/en/news-and-events/press-releases/2022/10/hitachi-energy-invests-us-37-million-to-expand-transformer-manufacturing-facility-in-south-boston-virginia",
-          "title": "Hitachi Energy invests US$37 million to expand transformer manufacturing facility in South Boston, Virginia",
-          "publication_date": "2026-04-13T05:20:33",
-          "source_tier": "B",
-          "entity_state": "confirmed",
-          "commercial_relevance": "high"
-        },
-        {
-          "url": "https://www.hitachienergy.com/us/en/news-and-events/features/2026/06/hitachi-energy-inaugurates-power-transformers-factory-and-service-center-in-dilovas-turkiye",
-          "title": "Hitachi Energy inaugurates Power Transformers Factory and Service Center in Dilovası, Türkiye",
-          "publication_date": "2026-06-04T04:03:36",
           "source_tier": "B",
           "entity_state": "confirmed",
           "commercial_relevance": "high"
@@ -1964,6 +2050,14 @@
           "url": "https://www.hitachienergy.com/us/en/products-and-solutions",
           "title": "Products & Solutions | Hitachi Energy",
           "publication_date": "2026-09-08T18:09:08",
+          "source_tier": "B",
+          "entity_state": "confirmed",
+          "commercial_relevance": "low"
+        },
+        {
+          "url": "https://www.hitachienergy.com/",
+          "title": "Hitachi Energy - Powering the electricity era",
+          "publication_date": "2026-09-13T02:35:18",
           "source_tier": "B",
           "entity_state": "confirmed",
           "commercial_relevance": "low"
@@ -2050,10 +2144,9 @@
         }
       ],
       "rejection_reasons": [
-        "duplicate_source",
-        "weak_commercial_relevance",
         "wrong_entity",
         "low_quality_source",
+        "weak_commercial_relevance",
         "missing_publication_date"
       ]
     },
@@ -2079,12 +2172,12 @@
         "provider_calls": 7,
         "provider_failures": 0,
         "results_seen": 16,
-        "evidence_accepted": 12,
-        "evidence_rejected": 4,
-        "pages_extracted": 2,
+        "evidence_accepted": 10,
+        "evidence_rejected": 6,
+        "pages_extracted": 1,
         "extraction_failures": 0,
-        "structured_extraction_calls": 2,
-        "dated_evidence": 9,
+        "structured_extraction_calls": 1,
+        "dated_evidence": 7,
         "independent_domains": 1,
         "claims_recovered": 1,
         "corroboration_attempted": false,
@@ -2152,15 +2245,6 @@
             "materiality": "low",
             "accepted_events": 0,
             "evidence_excerpt": "Skip to main content Our Commitment to Customers John Deere Supports Our Customers' Ability to Diagnose, Repair, and Protect Their Equipment At John Deere, we support our customers’ ability to maintain, diagnose, repair, and protect their equipment. Through various tools, we empower owners to keep their machines running efficiently—while helping ensure safety, regulatory compliance, and machine quality. Our commitment is to provide transparent, accessible repair options that meet the evolving needs of our customers. error To view videos hosted by YouTube, click on the Cookie Settings link and accept Targeting cookies. Update cookie settings to view videos Learn How PRO Service Helps Customers Make Repairs John Deere customers are problem solvers by nature. When something isn’t working, they want to understand why, decide what comes next, and get back to work on their terms. That mindset shaped the development of John Deere Operations Center PRO Service, which gives equipment owners access to tools that help them diagnose issues and make repairs when they choose. Learn More About PRO Service Connected Support Manuals Owner Support Warranty & Protection Service and Repair Resources S"
-          },
-          {
-            "url": "https://www.deere.com/en-us/our-company/locations/factories/kernersville",
-            "stage": "current_activity",
-            "date_phrase": null,
-            "signal_kind": "none",
-            "materiality": "low",
-            "accepted_events": 0,
-            "evidence_excerpt": "Skip to main content Kernersville Welcome to Kernersville John Deere Kernersville, based in North Carolina, has been producing mid-sized excavators since 1988. This factory manufactures a wide range of models that support the construction and forestry division with reliable performance and capability. 3K+ Each machine uses over 3 thousand bolts 1.7M The facility spans 1.7 million square feet, about 10 times the size of the Biltmore Estate 13M hours Hours without a lost time injury from 2014 - 2023 Welcome to Kernersville, NC \"The dedication, precision, and pride our Kernersville team brings to their work have made this factory an industry leader. Our commitment to quality sets a high standard and reflects the passion behind John Deere’s mission.\" — Steve Brewer, Factory Manager, Kernersville Factory History John Deere’s Kernersville facility has been a leader in construction equipment manufacturing since 1988. Known for its precision and innovation, the factory plays a key role in producing mid-sized excavators and advancing John Deere’s construction capabilities. 1988 Excavator production begins in Kernersville. The boom and arm were built locally, while the base unit was imported"
           }
         ],
         "provider_ops": [
@@ -2168,7 +2252,7 @@
             "provider": "brave",
             "operation": "search",
             "stage": "identity",
-            "duration_ms": 1038,
+            "duration_ms": 382,
             "ok": true,
             "timeout": false,
             "results": 5
@@ -2177,7 +2261,7 @@
             "provider": "brave",
             "operation": "search",
             "stage": "current_activity",
-            "duration_ms": 478,
+            "duration_ms": 205,
             "ok": true,
             "timeout": false,
             "results": 0
@@ -2186,7 +2270,7 @@
             "provider": "tavily",
             "operation": "search",
             "stage": "current_activity",
-            "duration_ms": 6700,
+            "duration_ms": 7694,
             "ok": true,
             "timeout": false,
             "results": 2
@@ -2195,7 +2279,7 @@
             "provider": "full_text",
             "operation": "full_text",
             "stage": "current_activity",
-            "duration_ms": 6170,
+            "duration_ms": 2759,
             "ok": true,
             "timeout": false,
             "results": 1
@@ -2204,7 +2288,7 @@
             "provider": "anthropic",
             "operation": "llm",
             "stage": "current_activity",
-            "duration_ms": 14289,
+            "duration_ms": 13866,
             "ok": true,
             "timeout": false,
             "results": 0
@@ -2213,7 +2297,7 @@
             "provider": "brave",
             "operation": "search",
             "stage": "current_activity",
-            "duration_ms": 894,
+            "duration_ms": 559,
             "ok": true,
             "timeout": false,
             "results": 0
@@ -2222,34 +2306,16 @@
             "provider": "tavily",
             "operation": "search",
             "stage": "current_activity",
-            "duration_ms": 3994,
+            "duration_ms": 5169,
             "ok": true,
             "timeout": false,
             "results": 2
-          },
-          {
-            "provider": "full_text",
-            "operation": "full_text",
-            "stage": "current_activity",
-            "duration_ms": 6519,
-            "ok": true,
-            "timeout": false,
-            "results": 1
-          },
-          {
-            "provider": "anthropic",
-            "operation": "llm",
-            "stage": "current_activity",
-            "duration_ms": 10579,
-            "ok": true,
-            "timeout": false,
-            "results": 0
           },
           {
             "provider": "brave",
             "operation": "search",
             "stage": "counterevidence",
-            "duration_ms": 835,
+            "duration_ms": 709,
             "ok": true,
             "timeout": false,
             "results": 5
@@ -2258,7 +2324,7 @@
             "provider": "tavily",
             "operation": "search",
             "stage": "counterevidence",
-            "duration_ms": 2740,
+            "duration_ms": 2238,
             "ok": true,
             "timeout": false,
             "results": 2
@@ -2321,22 +2387,6 @@
           "commercial_relevance": "low"
         },
         {
-          "url": "https://www.deere.com/en-us/our-company/locations/factories/kernersville",
-          "title": "Kernersville | John Deere US",
-          "publication_date": "Fri, 30 Jan 2026 00:00:00 GMT",
-          "source_tier": "B",
-          "entity_state": "confirmed",
-          "commercial_relevance": "high"
-        },
-        {
-          "url": "https://www.deere.com/en-us/john-deere-news/pdc",
-          "title": "PDC Investments | John Deere US",
-          "publication_date": "Tue, 26 May 2026 00:00:00 GMT",
-          "source_tier": "B",
-          "entity_state": "confirmed",
-          "commercial_relevance": "high"
-        },
-        {
           "url": "https://www.deere.com/en-us/parts-owner-support/parts",
           "title": "Parts | John Deere US",
           "publication_date": "2026-07-03T02:13:20",
@@ -2397,9 +2447,9 @@
         "executed_queries": 4,
         "provider_calls": 7,
         "provider_failures": 0,
-        "results_seen": 12,
+        "results_seen": 13,
         "evidence_accepted": 12,
-        "evidence_rejected": 0,
+        "evidence_rejected": 1,
         "pages_extracted": 2,
         "extraction_failures": 0,
         "structured_extraction_calls": 1,
@@ -2444,8 +2494,8 @@
             "query_id": "rq_1pzkftw",
             "stage": "current_activity",
             "provider": "tavily",
-            "results": 0,
-            "accepted": 0
+            "results": 1,
+            "accepted": 1
           },
           {
             "query_id": "rq_flpt36",
@@ -2487,7 +2537,7 @@
             "provider": "brave",
             "operation": "search",
             "stage": "identity",
-            "duration_ms": 546,
+            "duration_ms": 366,
             "ok": true,
             "timeout": false,
             "results": 5
@@ -2496,7 +2546,7 @@
             "provider": "brave",
             "operation": "search",
             "stage": "current_activity",
-            "duration_ms": 481,
+            "duration_ms": 227,
             "ok": true,
             "timeout": false,
             "results": 2
@@ -2505,7 +2555,7 @@
             "provider": "full_text",
             "operation": "full_text",
             "stage": "current_activity",
-            "duration_ms": 123,
+            "duration_ms": 115,
             "ok": true,
             "timeout": false,
             "results": 1
@@ -2514,7 +2564,7 @@
             "provider": "anthropic",
             "operation": "llm",
             "stage": "current_activity",
-            "duration_ms": 8872,
+            "duration_ms": 8341,
             "ok": true,
             "timeout": false,
             "results": 0
@@ -2523,7 +2573,7 @@
             "provider": "full_text",
             "operation": "full_text",
             "stage": "current_activity",
-            "duration_ms": 458,
+            "duration_ms": 448,
             "ok": true,
             "timeout": false,
             "results": 1
@@ -2532,7 +2582,7 @@
             "provider": "tavily",
             "operation": "search",
             "stage": "current_activity",
-            "duration_ms": 10495,
+            "duration_ms": 9699,
             "ok": true,
             "timeout": false,
             "results": 0
@@ -2541,7 +2591,7 @@
             "provider": "brave",
             "operation": "search",
             "stage": "current_activity",
-            "duration_ms": 813,
+            "duration_ms": 543,
             "ok": true,
             "timeout": false,
             "results": 0
@@ -2550,16 +2600,16 @@
             "provider": "tavily",
             "operation": "search",
             "stage": "current_activity",
-            "duration_ms": 7461,
+            "duration_ms": 4817,
             "ok": true,
             "timeout": false,
-            "results": 0
+            "results": 1
           },
           {
             "provider": "brave",
             "operation": "search",
             "stage": "counterevidence",
-            "duration_ms": 944,
+            "duration_ms": 1292,
             "ok": true,
             "timeout": false,
             "results": 5
@@ -2568,7 +2618,7 @@
             "provider": "tavily",
             "operation": "search",
             "stage": "counterevidence",
-            "duration_ms": 6063,
+            "duration_ms": 4990,
             "ok": true,
             "timeout": false,
             "results": 0
@@ -2679,7 +2729,9 @@
           "commercial_relevance": "medium"
         }
       ],
-      "rejection_reasons": []
+      "rejection_reasons": [
+        "duplicate_source"
+      ]
     },
     {
       "reference": "Mondi — Pittsburgh / automated packaging",
@@ -2702,13 +2754,13 @@
         "executed_queries": 4,
         "provider_calls": 7,
         "provider_failures": 0,
-        "results_seen": 15,
-        "evidence_accepted": 14,
+        "results_seen": 12,
+        "evidence_accepted": 11,
         "evidence_rejected": 1,
         "pages_extracted": 2,
         "extraction_failures": 0,
         "structured_extraction_calls": 1,
-        "dated_evidence": 10,
+        "dated_evidence": 7,
         "independent_domains": 1,
         "claims_recovered": 0,
         "corroboration_attempted": false,
@@ -2735,8 +2787,8 @@
             "query_id": "rq_1q9kltc",
             "stage": "current_activity",
             "provider": "tavily",
-            "results": 3,
-            "accepted": 3
+            "results": 0,
+            "accepted": 0
           },
           {
             "query_id": "rq_136c7d7",
@@ -2792,7 +2844,7 @@
             "provider": "brave",
             "operation": "search",
             "stage": "identity",
-            "duration_ms": 1000,
+            "duration_ms": 600,
             "ok": true,
             "timeout": false,
             "results": 5
@@ -2801,7 +2853,7 @@
             "provider": "brave",
             "operation": "search",
             "stage": "current_activity",
-            "duration_ms": 509,
+            "duration_ms": 214,
             "ok": true,
             "timeout": false,
             "results": 1
@@ -2810,7 +2862,7 @@
             "provider": "full_text",
             "operation": "full_text",
             "stage": "current_activity",
-            "duration_ms": 129,
+            "duration_ms": 117,
             "ok": true,
             "timeout": false,
             "results": 1
@@ -2819,16 +2871,16 @@
             "provider": "tavily",
             "operation": "search",
             "stage": "current_activity",
-            "duration_ms": 4457,
+            "duration_ms": 10449,
             "ok": true,
             "timeout": false,
-            "results": 3
+            "results": 0
           },
           {
             "provider": "brave",
             "operation": "search",
             "stage": "current_activity",
-            "duration_ms": 1042,
+            "duration_ms": 583,
             "ok": true,
             "timeout": false,
             "results": 1
@@ -2837,7 +2889,7 @@
             "provider": "full_text",
             "operation": "full_text",
             "stage": "current_activity",
-            "duration_ms": 515,
+            "duration_ms": 524,
             "ok": true,
             "timeout": false,
             "results": 1
@@ -2846,7 +2898,7 @@
             "provider": "anthropic",
             "operation": "llm",
             "stage": "current_activity",
-            "duration_ms": 8106,
+            "duration_ms": 7924,
             "ok": true,
             "timeout": false,
             "results": 0
@@ -2855,7 +2907,7 @@
             "provider": "tavily",
             "operation": "search",
             "stage": "current_activity",
-            "duration_ms": 9381,
+            "duration_ms": 6814,
             "ok": true,
             "timeout": false,
             "results": 0
@@ -2864,7 +2916,7 @@
             "provider": "brave",
             "operation": "search",
             "stage": "counterevidence",
-            "duration_ms": 1070,
+            "duration_ms": 708,
             "ok": true,
             "timeout": false,
             "results": 5
@@ -2873,7 +2925,7 @@
             "provider": "tavily",
             "operation": "search",
             "stage": "counterevidence",
-            "duration_ms": 7352,
+            "duration_ms": 5444,
             "ok": true,
             "timeout": false,
             "results": 0
@@ -2926,30 +2978,6 @@
           "source_tier": "B",
           "entity_state": "confirmed",
           "commercial_relevance": "high"
-        },
-        {
-          "url": "https://www.mondigroup.com/products-and-solutions/containerboard/kraft",
-          "title": "Containerboard Brown | Containerboard | Mondi Group",
-          "publication_date": "Fri, 06 Feb 2026 00:00:00 GMT",
-          "source_tier": "B",
-          "entity_state": "confirmed",
-          "commercial_relevance": "low"
-        },
-        {
-          "url": "https://www.mondigroup.com/products-and-solutions/containerboard/appearance",
-          "title": "Containerboard White | Containerboard | Mondi Group",
-          "publication_date": "Wed, 04 Feb 2026 00:00:00 GMT",
-          "source_tier": "B",
-          "entity_state": "confirmed",
-          "commercial_relevance": "low"
-        },
-        {
-          "url": "https://www.mondigroup.com/products-and-solutions/containerboard/news-subscription",
-          "title": "Containerboard newsletter | Mondi",
-          "publication_date": "Sat, 20 Dec 2025 00:00:00 GMT",
-          "source_tier": "B",
-          "entity_state": "confirmed",
-          "commercial_relevance": "low"
         },
         {
           "url": "https://www.mondigroup.com/globalassets/mondigroup.com/investors/results-reports-and-presentations/2025/fy-results/mondi-group---full-year-results-announcement-2025.pdf",

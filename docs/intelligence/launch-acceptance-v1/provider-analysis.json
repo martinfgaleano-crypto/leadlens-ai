@@ -1,0 +1,49 @@
+{
+  "version": "intelligence-launch-acceptance-v1-provider-analysis",
+  "observations": {
+    "anthropic": {
+      "baseline_calls": 47,
+      "baseline_observed_cost_usd": 0.879282,
+      "post_fix_valid_calls": 30,
+      "post_fix_valid_observed_cost_usd": 0.538269,
+      "terminal_state": "exhausted_mid_rerun",
+      "impact": "Three Track A reruns could not be quality-scored or started."
+    },
+    "brave": {
+      "baseline_calls": 103,
+      "post_fix_valid_calls": 67,
+      "terminal_state": "available",
+      "unique_value": "Search coverage and fallback results; exact marginal yield is not isolated by current artifact schema."
+    },
+    "tavily": {
+      "baseline_calls": 112,
+      "post_fix_valid_calls": 60,
+      "terminal_state": "available",
+      "unique_value": "Search coverage and extraction; baseline ledger emitted an invalid negative error delta, so baseline error rate is not reportable."
+    },
+    "serper": {
+      "baseline_calls": 28,
+      "baseline_errors": 28,
+      "post_fix_valid_calls": 16,
+      "post_fix_valid_errors": 16,
+      "terminal_state": "exhausted",
+      "unique_value": "none observed",
+      "remediation": "Event-First now health-checks and skips terminally exhausted, invalid or rate-limited providers before issuing queries."
+    },
+    "firecrawl": {
+      "terminal_state": "available_at_preflight",
+      "unique_value": "Extraction fallback; the acceptance artifacts do not isolate call-level marginal yield."
+    }
+  },
+  "routing_acceptance": {
+    "fixture": "scripts/fixtures/event-first-discovery.test.ts",
+    "result": "39/39",
+    "assertion": "An exhausted provider receives zero search calls while a healthy provider still runs."
+  },
+  "measurement_gaps": [
+    "Search-provider cost is unavailable for Brave/Tavily/Firecrawl.",
+    "Unique accepted-company and accepted-event yield is not attributed per provider in the Track A artifact.",
+    "Baseline Tavily error delta was negative and therefore invalid.",
+    "Per-provider p50/p95 latency is not preserved in the final acceptance artifact."
+  ]
+}

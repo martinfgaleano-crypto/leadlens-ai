@@ -1,0 +1,1167 @@
+{
+  "acceptance": "customer-intelligence-e2e-v1",
+  "ran_at": "2026-09-17T00:48:50.914Z",
+  "soak_id": null,
+  "soak_phase": null,
+  "synthetic_context": "We sell industrial automation, controls integration, commissioning, and operational data integration services to mid-sized and large manufacturers, distributors, and logistics operators in the United States. We seek companies that directly operate plants, warehouses, or distribution centers and have recently opened, expanded, automated, acquired, or materially invested in operational infrastructure. Exclude public authorities, publishers, software-only firms, fully outsourced operations, and completed projects where all relevant packages have already been awarded.",
+  "confirmed_context_diagnostic": {
+    "organization_types": [
+      "Mid-sized manufacturers operating production plants",
+      "Large manufacturers with multi-site operations",
+      "Regional and national distributors with warehouse or DC infrastructure",
+      "Third-party logistics (3PL) operators",
+      "E-commerce fulfillment operators"
+    ],
+    "industries": [
+      "Manufacturing (general industrial)",
+      "Food & beverage manufacturing",
+      "Consumer packaged goods",
+      "Pharmaceuticals & life sciences manufacturing",
+      "Automotive & tier suppliers"
+    ],
+    "geographies": [
+      "United States"
+    ],
+    "signal_families": [
+      "new_facility",
+      "expansion",
+      "technology_change",
+      "acquisition",
+      "investment"
+    ],
+    "definition_status": "defined"
+  },
+  "run_id": "intel_3b4b5bd56bb30c276d94357c2bc91fb9",
+  "lead_hunter_run_id": "lh_e2e_context_1789605933925_v1_2026-09-17_e256ad94-314a-4027-844b-061c8d5acd1a_intel_3b4b5",
+  "candidate_universe": {
+    "total": 1,
+    "coverage": {
+      "gaps": [
+        {
+          "type": "candidate_volume_too_low",
+          "detail": "Only 1 in-scope candidate(s) discovered."
+        }
+      ],
+      "eligible": 1,
+      "excluded": 0,
+      "eventFirst": {
+        "queries": 4,
+        "rejected": {
+          "no_subject": 38,
+          "identity_unresolved": 12
+        },
+        "raw_hints": 48,
+        "result_audit": [
+          {
+            "url": "https://www.expertmarketresearch.com/reports/united-states-third-party-logistics-3pl-market",
+            "type": "other",
+            "title": "United States Third-Party Logistics (3PL) Market 2026-2035",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://blog.solistica.com/en/tag/3pl-logistics-operator",
+            "type": "company_direct",
+            "title": "Transport and Logistics Blog | Third Party Logistics | 3PL logistics operator",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.researchandmarkets.com/reports/6095986/united-states-third-party-logistics-3pl-market",
+            "type": "other",
+            "title": "United States Third-Party Logistics (3PL) Market Report and Forecast 2025-2034",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://finance.yahoo.com/news/circle-logistics-recognized-2025-top-125300164.html",
+            "type": "other",
+            "title": "Circle Logistics Recognized as a 2025 Top 3PL & Cold Storage Provider by Food Logistics",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.einpresswire.com/article/790553215/vertex-wireless-opens-secondary-distribution-center-to-meet-growing-demand-for-technology-solutions-3pl-services",
+            "type": "other",
+            "title": "Vertex Wireless Opens Secondary Distribution Center to Meet Growing Demand for Technology Solutions & 3PL Services",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": [
+              "Vertex Wireless"
+            ]
+          },
+          {
+            "url": "https://www.scribd.com/document/934633549/eyefortransport-Location-of-North-American-3PL-Headquarters",
+            "type": "other",
+            "title": "North American 3PL Headquarters Overview | PDF | Companies Of The United States | Logistics",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://redstagfulfillment.com/biggest-3pl-companies",
+            "type": "other",
+            "title": "Biggest 3PL Companies | U.S. & Global | 5 Metrics Measured",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.technavio.com/report/3pl-market-in-the-us-industry-analysis",
+            "type": "other",
+            "title": "US Third-party Logistics (3PL) Market Growth Analysis - Size and Forecast 2026-2030 | Technavio",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.freightwaves.com/checkpoint/top-3pl-companies",
+            "type": "other",
+            "title": "Top 3PL Companies in 2026: Rankings, Revenue, & Costs - Freightwaves Checkpoint",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.mordorintelligence.com/industry-reports/us-3pl-market",
+            "type": "other",
+            "title": "USA (3PL) Third-Party Logistics Market Trends | Industry Analysis, Size & Growth Report",
+            "recent": true,
+            "provider": "brave",
+            "subjects": [
+              "Value-Added Warehousing",
+              "Distribution is forecast to"
+            ]
+          },
+          {
+            "url": "https://www.speedcommerce.com/insights/the-20-biggest-3pls-in-the-us",
+            "type": "other",
+            "title": "The 20 Largest 3PLs in the US & Globally, 2026 Edition | Speed Commerce",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.thebusinessresearchcompany.com/report/third-party-logistics-3pl-global-market-report",
+            "type": "other",
+            "title": "Third-Party Logistics (3PL) Market Trends Analysis Report 2026-2030",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.mapquest.com/us/pennsylvania/ghg-logistics-llc-distribution-center-364701243",
+            "type": "other",
+            "title": "GHG Logistics LLC Distribution Center, 6390 Hedgewood Dr, Unit 300, Allentown, PA 18106, US - MapQuest",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.inboundlogistics.com/articles/west-pak-avocado-grows-a-ripe-3pl-partnership",
+            "type": "other",
+            "title": "West Pak Avocado Grows a Ripe 3PL Partnership - Inbound Logistics",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.mapquest.com/us/new-jersey/tyler-distribution-center-355744002",
+            "type": "other",
+            "title": "Tyler Distribution Center, 7 Corn Rd, Ste 1, Dayton, NJ 08810, US - MapQuest",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://leadiq.com/c/3pl-center/5f59bdecb09dd5375bb5523f",
+            "type": "other",
+            "title": "3PL CENTER Company Overview, Contact Details & Competitors | LeadIQ",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.dol.gov/agencies/ebsa/employers-and-advisers/guidance/field-assistance-bulletins/2026-01",
+            "type": "government",
+            "title": "Field Assistance Bulletin No. 2026-01",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.fsb.org/2025/10/g20-roadmap-for-cross-border-payments-consolidated-progress-report-for-2025",
+            "type": "other",
+            "title": "G20 Roadmap for Cross-border Payments",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://dclcorp.com/blog/fulfillment/3pl-warehouse-infrastructure-trends-2026",
+            "type": "other",
+            "title": "3PL Warehouse Infrastructure That Will Best Serve High-Performance Brands in 2026 | DCL Logistics",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://redstagfulfillment.com/biggest-3pl-companies",
+            "type": "other",
+            "title": "Biggest 3PL Companies | U.S. & Global | 5 Metrics Measured",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://terrapincg.com/news/average-cost-to-build-3pl-logistics-warehouse-usa",
+            "type": "other",
+            "title": "3PL Warehouse Build Cost USA 2026: TI vs Ground-Up",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.speedcommerce.com/insights/the-20-biggest-3pls-in-the-us",
+            "type": "other",
+            "title": "The 20 Largest 3PLs in the US & Globally, 2026 Edition | Speed Commerce",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.technavio.com/report/3pl-market-in-the-us-industry-analysis",
+            "type": "other",
+            "title": "US Third-party Logistics (3PL) Market Growth Analysis - Size and Forecast 2026-2030 | Technavio",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.mordorintelligence.com/industry-reports/us-3pl-market",
+            "type": "other",
+            "title": "USA (3PL) Third-Party Logistics Market Trends | Industry Analysis, Size & Growth Report",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://news.delta.com/delta-expands-saf-access-through-multi-airport-collaboration-shell-aviation",
+            "type": "other",
+            "title": "Delta expands SAF access through multi-airport ...",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": [
+              "Delta"
+            ]
+          },
+          {
+            "url": "https://ir.talenenergy.com/news-releases/news-release-details/talen-energy-expands-nuclear-energy-relationship-amazon",
+            "type": "other",
+            "title": "Talen Energy Expands Nuclear Energy Relationship with Amazon | Wed, 06/11/2025 - 06:00",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": [
+              "Talen Energy"
+            ]
+          },
+          {
+            "url": "https://www.expandenergy.com/",
+            "type": "other",
+            "title": "Home - Expand Energy Corporation",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": [
+              "Skip to content"
+            ]
+          },
+          {
+            "url": "https://pubmed.ncbi.nlm.nih.gov/26972725",
+            "type": "government",
+            "title": "AIRE expands: new roles in immune tolerance and beyond - PubMed",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": [
+              "AIRE"
+            ]
+          },
+          {
+            "url": "https://expands.eu/",
+            "type": "company_direct",
+            "title": "expands.eu",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://pubmed.ncbi.nlm.nih.gov/38426492",
+            "type": "government",
+            "title": "A humanized IL-2 mutein expands Tregs and prolongs ...",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": [
+              "A humanized IL-2 mutein"
+            ]
+          },
+          {
+            "url": "https://www.zoominfo.com/c/pls-logistics-services/62983718",
+            "type": "other",
+            "title": "PLS Logistics - Overview, News & Similar companies | ZoomInfo.com",
+            "recent": true,
+            "provider": "brave",
+            "subjects": [
+              "Acquisition"
+            ]
+          },
+          {
+            "url": "https://www.mordorintelligence.com/industry-reports/us-3pl-market",
+            "type": "other",
+            "title": "USA (3PL) Third-Party Logistics Market Trends | Industry Analysis, Size & Growth Report",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.speedcommerce.com/insights/the-20-biggest-3pls-in-the-us",
+            "type": "other",
+            "title": "The 20 Largest 3PLs in the US & Globally, 2026 Edition | Speed Commerce",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://redstagfulfillment.com/biggest-3pl-companies",
+            "type": "other",
+            "title": "Biggest 3PL Companies | U.S. & Global | 5 Metrics Measured",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.freightwaves.com/checkpoint/top-3pl-companies",
+            "type": "other",
+            "title": "Top 3PL Companies in 2026: Rankings, Revenue, & Costs - Freightwaves Checkpoint",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.technavio.com/report/3pl-market-in-the-us-industry-analysis",
+            "type": "other",
+            "title": "US Third-party Logistics (3PL) Market Growth Analysis - Size and Forecast 2026-2030 | Technavio",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.uscg.mil/",
+            "type": "other",
+            "title": "United States Coast Guard",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://ballotpedia.org/States",
+            "type": "other",
+            "title": "States",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.copyright.gov/",
+            "type": "government",
+            "title": "U.S. Copyright Office",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.usbg.gov/",
+            "type": "government",
+            "title": "United States Botanic Garden: Home",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": [
+              "On June 18",
+              "July 16",
+              "August 27"
+            ]
+          },
+          {
+            "url": "https://www.usgs.gov/",
+            "type": "government",
+            "title": "USGS.gov | Science for a changing world",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.archives.gov/founding-docs/constitution-transcript",
+            "type": "government",
+            "title": "The Constitution of the United States: A Transcription",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.dhl.com/us-en/home/press/press-archive/2026/dhl-supply-chain-expands-service-logistics-capabilities-to-accelerate-data-center-infrastructure-parts-delivery.html",
+            "type": "company_direct",
+            "title": "DHL Supply Chain Expands Service Logistics Capabilities to Accelerate Data Center Infrastructure Parts Delivery - DHL - United States of America",
+            "recent": true,
+            "provider": "brave",
+            "subjects": [
+              "DHL Supply Chain"
+            ]
+          },
+          {
+            "url": "https://www.mordorintelligence.com/industry-reports/united-states-finished-vehicle-logistics-market",
+            "type": "other",
+            "title": "United States Finished Vehicle Logistics Market Size, Share & 2031 Growth Trends Report",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.mordorintelligence.com/industry-reports/united-states-defense-logistics-market",
+            "type": "other",
+            "title": "United States Defense Logistics Market Size, Share & 2031 Growth Trends Report",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.the-lmi.com/july-2026-logistics-managers-index.html",
+            "type": "other",
+            "title": "July 2026 Logistics Managers' Index - LOGISTICS MANAGERS' INDEX",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.cdslogistics.net/2026-logistics-trends",
+            "type": "other",
+            "title": "2025 Logistics Trends & 2026 Outlook | CDS Logistics",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.ttnews.com/logistics/rankings/2026",
+            "type": "other",
+            "title": "2026 Top 100 Logistics | Transport Topics",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          }
+        ],
+        "result_types": {
+          "other": 38,
+          "government": 7,
+          "company_direct": 3
+        },
+        "target_valid": 1,
+        "unique_hints": 13,
+        "result_sample": [
+          {
+            "url": "https://www.expertmarketresearch.com/reports/united-states-third-party-logistics-3pl-market",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"opens new plant\" \"United States\" (2026 OR 2025)",
+            "title": "United States Third-Party Logistics (3PL) Market 2026-2035",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://blog.solistica.com/en/tag/3pl-logistics-operator",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"opens new plant\" \"United States\" (2026 OR 2025)",
+            "title": "Transport and Logistics Blog | Third Party Logistics | 3PL logistics operator",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.researchandmarkets.com/reports/6095986/united-states-third-party-logistics-3pl-market",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"opens new plant\" \"United States\" (2026 OR 2025)",
+            "title": "United States Third-Party Logistics (3PL) Market Report and Forecast 2025-2034",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://redstagfulfillment.com/biggest-3pl-companies",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"opens new plant\" \"United States\" (2026 OR 2025)",
+            "title": "Biggest 3PL Companies | U.S. & Global | 5 Metrics Measured",
+            "provider": "brave",
+            "published_date": "2026-08-14T00:00:00"
+          },
+          {
+            "url": "https://www.technavio.com/report/3pl-market-in-the-us-industry-analysis",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"opens new plant\" \"United States\" (2026 OR 2025)",
+            "title": "US Third-party Logistics (3PL) Market Growth Analysis - Size and Forecast 2026-2030 | Technavio",
+            "provider": "brave",
+            "published_date": "2026-03-10T00:00:00"
+          },
+          {
+            "url": "https://www.freightwaves.com/checkpoint/top-3pl-companies",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"opens new plant\" \"United States\" (2026 OR 2025)",
+            "title": "Top 3PL Companies in 2026: Rankings, Revenue, & Costs - Freightwaves Checkpoint",
+            "provider": "brave",
+            "published_date": "2026-08-10T13:07:04"
+          },
+          {
+            "url": "https://www.mapquest.com/us/pennsylvania/ghg-logistics-llc-distribution-center-364701243",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"new distribution center\" \"United States\" (2026 OR 2025)",
+            "title": "GHG Logistics LLC Distribution Center, 6390 Hedgewood Dr, Unit 300, Allentown, PA 18106, US - MapQuest",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.inboundlogistics.com/articles/west-pak-avocado-grows-a-ripe-3pl-partnership",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"new distribution center\" \"United States\" (2026 OR 2025)",
+            "title": "West Pak Avocado Grows a Ripe 3PL Partnership - Inbound Logistics",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.mapquest.com/us/new-jersey/tyler-distribution-center-355744002",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"new distribution center\" \"United States\" (2026 OR 2025)",
+            "title": "Tyler Distribution Center, 7 Corn Rd, Ste 1, Dayton, NJ 08810, US - MapQuest",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://dclcorp.com/blog/fulfillment/3pl-warehouse-infrastructure-trends-2026",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"new distribution center\" \"United States\" (2026 OR 2025)",
+            "title": "3PL Warehouse Infrastructure That Will Best Serve High-Performance Brands in 2026 | DCL Logistics",
+            "provider": "brave",
+            "published_date": "2026-01-21T13:41:15"
+          },
+          {
+            "url": "https://redstagfulfillment.com/biggest-3pl-companies",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"new distribution center\" \"United States\" (2026 OR 2025)",
+            "title": "Biggest 3PL Companies | U.S. & Global | 5 Metrics Measured",
+            "provider": "brave",
+            "published_date": "2026-08-14T00:00:00"
+          },
+          {
+            "url": "https://terrapincg.com/news/average-cost-to-build-3pl-logistics-warehouse-usa",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"new distribution center\" \"United States\" (2026 OR 2025)",
+            "title": "3PL Warehouse Build Cost USA 2026: TI vs Ground-Up",
+            "provider": "brave",
+            "published_date": "2026-04-12T23:06:36"
+          },
+          {
+            "url": "https://news.delta.com/delta-expands-saf-access-through-multi-airport-collaboration-shell-aviation",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"expands network\" \"United States\" (2026 OR 2025)",
+            "title": "Delta expands SAF access through multi-airport ...",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://ir.talenenergy.com/news-releases/news-release-details/talen-energy-expands-nuclear-energy-relationship-amazon",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"expands network\" \"United States\" (2026 OR 2025)",
+            "title": "Talen Energy Expands Nuclear Energy Relationship with Amazon | Wed, 06/11/2025 - 06:00",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.expandenergy.com/",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"expands network\" \"United States\" (2026 OR 2025)",
+            "title": "Home - Expand Energy Corporation",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.zoominfo.com/c/pls-logistics-services/62983718",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"expands network\" \"United States\" (2026 OR 2025)",
+            "title": "PLS Logistics - Overview, News & Similar companies | ZoomInfo.com",
+            "provider": "brave",
+            "published_date": "2026-08-20T00:00:00"
+          },
+          {
+            "url": "https://www.mordorintelligence.com/industry-reports/us-3pl-market",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"expands network\" \"United States\" (2026 OR 2025)",
+            "title": "USA (3PL) Third-Party Logistics Market Trends | Industry Analysis, Size & Growth Report",
+            "provider": "brave",
+            "published_date": "2026-03-10T00:00:00"
+          },
+          {
+            "url": "https://www.speedcommerce.com/insights/the-20-biggest-3pls-in-the-us",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"expands network\" \"United States\" (2026 OR 2025)",
+            "title": "The 20 Largest 3PLs in the US & Globally, 2026 Edition | Speed Commerce",
+            "provider": "brave",
+            "published_date": "2026-08-24T00:00:00"
+          },
+          {
+            "url": "https://www.uscg.mil/",
+            "query": "\"expands service logistics\" \"United States\" (2026 OR 2025)",
+            "title": "United States Coast Guard",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://ballotpedia.org/States",
+            "query": "\"expands service logistics\" \"United States\" (2026 OR 2025)",
+            "title": "States",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.copyright.gov/",
+            "query": "\"expands service logistics\" \"United States\" (2026 OR 2025)",
+            "title": "U.S. Copyright Office",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.dhl.com/us-en/home/press/press-archive/2026/dhl-supply-chain-expands-service-logistics-capabilities-to-accelerate-data-center-infrastructure-parts-delivery.html",
+            "query": "\"expands service logistics\" \"United States\" (2026 OR 2025)",
+            "title": "DHL Supply Chain Expands Service Logistics Capabilities to Accelerate Data Center Infrastructure Parts Delivery - DHL - United States of America",
+            "provider": "brave",
+            "published_date": "2026-08-20T13:11:03"
+          },
+          {
+            "url": "https://www.mordorintelligence.com/industry-reports/united-states-finished-vehicle-logistics-market",
+            "query": "\"expands service logistics\" \"United States\" (2026 OR 2025)",
+            "title": "United States Finished Vehicle Logistics Market Size, Share & 2031 Growth Trends Report",
+            "provider": "brave",
+            "published_date": "2026-07-09T00:00:00"
+          },
+          {
+            "url": "https://www.mordorintelligence.com/industry-reports/united-states-defense-logistics-market",
+            "query": "\"expands service logistics\" \"United States\" (2026 OR 2025)",
+            "title": "United States Defense Logistics Market Size, Share & 2031 Growth Trends Report",
+            "provider": "brave",
+            "published_date": "2026-07-02T00:00:00"
+          }
+        ],
+        "provider_calls": {
+          "brave": 5,
+          "serper": 4,
+          "tavily": 6
+        },
+        "company_mentions": 13,
+        "domains_resolved": 1,
+        "provider_failures": {
+          "serper": "HTTP 400: {\"message\":\"Not enough credits\",\"statusCode\":400}"
+        },
+        "geography_resolved": 1,
+        "subjects_extracted": 13,
+        "canonical_companies": 1
+      },
+      "routeYield": [
+        {
+          "route": "industry_category",
+          "queries": 2,
+          "resultPages": 8,
+          "groundedNames": 1,
+          "acceptedCompanies": 0
+        },
+        {
+          "route": "geo_category",
+          "queries": 1,
+          "resultPages": 8,
+          "groundedNames": 7,
+          "acceptedCompanies": 0
+        },
+        {
+          "route": "source_ecosystem",
+          "queries": 2,
+          "resultPages": 13,
+          "groundedNames": 1,
+          "acceptedCompanies": 0
+        }
+      ],
+      "duplicateRate": 0,
+      "operatingMode": "provider_limited",
+      "likelyEligible": 0,
+      "freshCandidates": 1,
+      "needsValidation": 0,
+      "providersFailed": [],
+      "routesAttempted": 3,
+      "candidatesReused": 0,
+      "candidatesUnique": 1,
+      "identityAmbiguous": 0,
+      "stableCorePercent": 0,
+      "providersAvailable": [
+        "brave",
+        "tavily"
+      ],
+      "candidatesDiscovered": 1,
+      "priorCandidatesConsidered": 0
+    },
+    "companies": [
+      {
+        "name": "DHL Supply Chain",
+        "domain": "dhl.com",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "United States",
+        "provenance": [
+          {
+            "route": "event_first:expansion",
+            "origin": "event_first",
+            "provider": "brave",
+            "sourceUrl": "https://www.dhl.com/us-en/home/press/press-archive/2026/dhl-supply-chain-expands-service-logistics-capabilities-to-accelerate-data-center-infrastructure-parts-delivery.html",
+            "discoveredAt": "2026-09-17T00:45:52.312Z",
+            "discoveredName": "DHL Supply Chain"
+          }
+        ]
+      }
+    ]
+  },
+  "delivered_accounts": [],
+  "research_audit": [
+    {
+      "risks": [
+        "Segment mismatch is material: DHL Supply Chain is not a manufacturer and may not be a valid target for industrial automation and controls integration services as described.",
+        "DHL is an enterprise-scale global company — deal complexity, procurement timelines, and vendor qualification requirements may be prohibitive for this offer.",
+        "The operational signals (logistics expansion) do not directly evidence a controls integration or commissioning need — the connection is a weak inference.",
+        "No identified internal champion or engineering buyer for automation/controls within DHL Supply Chain North America."
+      ],
+      "domain": "dhl.com",
+      "company": "DHL Supply Chain",
+      "country": "United States",
+      "reasons": [
+        "opportunity_test_reject",
+        "hard_blocker_no_event",
+        "hard_blocker_no_material_event",
+        "hard_blocker_no_valid_date"
+      ],
+      "category": "DISCARD",
+      "fitScore": 2.5,
+      "qcStatus": "REVIEW_NEEDED",
+      "sourceUrl": "https://www.dhl.com/au-en/home/press/press-archive/2026/dhl-supply-chain-strengthens-presence-in-western-sydney-with-new-facility-to-power-australias-technology-automotive-sectors.html",
+      "signalDate": null,
+      "signalType": null,
+      "nextQuestion": "Does DHL Supply Chain's U.S. warehouse network operate proprietary automated sortation, conveyor, or controls systems that require third-party integration and commissioning, or is facility automation managed entirely by equipment OEMs or in-house teams?",
+      "actionability": {
+        "fit_state": "limited",
+        "hold_reason": "LOW_FIT",
+        "target_valid": true,
+        "timing_state": "limited",
+        "evidence_valid": false,
+        "final_decision": "hold",
+        "search_results": 29,
+        "research_coverage": "sufficient",
+        "independent_support": false,
+        "temporal_valid_events": 0,
+        "company_identity_valid": true,
+        "materiality_valid_events": 0,
+        "material_event_candidates": 0
+      },
+      "eventHintCount": 1,
+      "evidenceClaims": [
+        {
+          "date": "2026-03-18",
+          "type": "verified_public_signal",
+          "claim": "DHL Supply Chain launched a national forward-stocking solution for data center infrastructure parts across 150+ U.S. and Canadian locations",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": "2026-03-18",
+          "type": "verified_public_signal",
+          "claim": "DHL Supply Chain opened a new 21,078 sqm warehouse in Western Sydney serving technology and automotive sectors",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": null,
+          "type": "weak_inference",
+          "claim": "DHL Supply Chain's warehouse expansions require automation and controls integration services",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": null,
+          "type": "missing_evidence",
+          "claim": "DHL Supply Chain has internal gaps in operational data integration between facility systems and enterprise platforms",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": null,
+          "type": "weak_inference",
+          "claim": "DHL Supply Chain fits the target segment of mid-sized manufacturers operating production plants",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": null,
+          "type": "missing_evidence",
+          "claim": "DHL Supply Chain's U.S. facility engineering or automation procurement contact and decision process",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        }
+      ],
+      "accountResearch": {
+        "domain": "dhl.com",
+        "account": "DHL Supply Chain",
+        "version": "account-deep-research-v1",
+        "query_audit": [
+          {
+            "stage": "event_hint",
+            "results": 1,
+            "accepted": 1,
+            "provider": "brave",
+            "query_id": "event_hint:https://www.dhl.com/us-en/home/press/press-archive/2026/dhl-supply-chain-expands-service-logistics-capabilities-to-accelerate-data-center-infrastructure-parts-delivery.html"
+          },
+          {
+            "stage": "identity",
+            "results": 5,
+            "accepted": 5,
+            "provider": "brave",
+            "query_id": "rq_1utf5gw"
+          },
+          {
+            "stage": "current_activity",
+            "results": 5,
+            "accepted": 3,
+            "provider": "brave",
+            "query_id": "rq_kabpa4"
+          },
+          {
+            "stage": "current_activity",
+            "results": 5,
+            "accepted": 4,
+            "provider": "tavily",
+            "query_id": "rq_kabpa4"
+          },
+          {
+            "stage": "current_activity",
+            "results": 5,
+            "accepted": 3,
+            "provider": "brave",
+            "query_id": "rq_7qz9cg"
+          },
+          {
+            "stage": "current_activity",
+            "results": 2,
+            "accepted": 2,
+            "provider": "tavily",
+            "query_id": "rq_7qz9cg"
+          },
+          {
+            "stage": "counterevidence",
+            "results": 5,
+            "accepted": 3,
+            "provider": "brave",
+            "query_id": "rq_1a6rc3a"
+          },
+          {
+            "stage": "counterevidence",
+            "results": 2,
+            "accepted": 2,
+            "provider": "tavily",
+            "query_id": "rq_1a6rc3a"
+          }
+        ],
+        "provider_ops": [
+          {
+            "ok": true,
+            "stage": "event_hint",
+            "results": 1,
+            "timeout": false,
+            "provider": "full_text",
+            "operation": "full_text",
+            "duration_ms": 319
+          },
+          {
+            "ok": true,
+            "stage": "identity",
+            "results": 5,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 598
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 5,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 652
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 1,
+            "timeout": false,
+            "provider": "full_text",
+            "operation": "full_text",
+            "duration_ms": 10983
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 0,
+            "timeout": false,
+            "provider": "anthropic",
+            "operation": "llm",
+            "duration_ms": 9337
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 1,
+            "timeout": false,
+            "provider": "full_text",
+            "operation": "full_text",
+            "duration_ms": 12419
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 5,
+            "timeout": false,
+            "provider": "tavily",
+            "operation": "search",
+            "duration_ms": 5587
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 1,
+            "timeout": false,
+            "provider": "full_text",
+            "operation": "full_text",
+            "duration_ms": 389
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 0,
+            "timeout": false,
+            "provider": "anthropic",
+            "operation": "llm",
+            "duration_ms": 8745
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 5,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 995
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 2,
+            "timeout": false,
+            "provider": "tavily",
+            "operation": "search",
+            "duration_ms": 3925
+          },
+          {
+            "ok": true,
+            "stage": "counterevidence",
+            "results": 5,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 617
+          },
+          {
+            "ok": true,
+            "stage": "counterevidence",
+            "results": 2,
+            "timeout": false,
+            "provider": "tavily",
+            "operation": "search",
+            "duration_ms": 4028
+          }
+        ],
+        "results_seen": 29,
+        "dated_evidence": 12,
+        "provider_calls": 7,
+        "pages_extracted": 4,
+        "planned_queries": 4,
+        "claims_recovered": 3,
+        "executed_queries": 5,
+        "extraction_audit": [
+          {
+            "url": "https://www.dhl.com/us-en/home/press/press-archive/2026/dhl-supply-chain-expands-service-logistics-capabilities-to-accelerate-data-center-infrastructure-parts-delivery.html",
+            "stage": "event_hint",
+            "date_phrase": null,
+            "materiality": "medium",
+            "signal_kind": "corporate_event",
+            "accepted_events": 0,
+            "evidence_excerpt": "![DHL Homepage](/content/dam/dhl/global/core/images/logos/dhl-logo.svg) ## Document and Package ## Pallets, Containers and Cargo (Business Only) ## DHL for Your Business Our Supply Chain division creates custom solutions for enterprise-sized organizations. Discover what makes DHL Supply Chain the perfect fit as your outsourced logistics provider (3PL). ## START SHIPPING ![](/content/experience-fragments/dhl/en/core/primary_navigation/flyouts/ship_desktop/standard_dgf_exp_dsc_ecs/shipping_guidance_st3a_sme_hub_countries/_jcr_content/root/container_copy/container/teaser.coreimg.svg/1785528162326/manifest-received-rgb-red.svg) ![](/content/experience-fragments/dhl/en/core/primary_navigation/flyouts/ship_desktop/standard_dgf_exp_dsc_ecs/shipping_guidance_st3a_sme_hub_countries/_jcr_content/root/container_copy/container/teaser_copy.coreimg.svg/1785528162350/calendar-rgb-red.svg) ![](/content/experience-fragments/dhl/en/core/primary_navigation/flyouts/ship_desktop/standard_dgf_exp_dsc_ecs/shipping_guidance_st3a_sme_hub_countries/_jcr_content/root/container_copy/container/teaser_copy_copy.coreimg.svg/1785528162375/glo-core-gogreen-warehousing.svg) ## Learn more about ### Document and Pack"
+          },
+          {
+            "url": "https://group.dhl.com/en/media-relations/press-releases/2026/dhl-expands-asia-pacific-data-center-logistics-capabilities-to-support-growing-regional-demand.html",
+            "stage": "current_activity",
+            "date_phrase": "06/09/2026",
+            "materiality": "low",
+            "signal_kind": "none",
+            "accepted_events": 0,
+            "evidence_excerpt": "Navigation and Content Skip to main content Skip to main footer DHL expands Asia Pacific data center logistics capabilities to support growing regional demand 06/09/2026, 03:00 PM CEST The expansion includes more than 30,000 square meters of dedicated warehouse capacity currently in operation across Asia Pacific, with a further 130,000 square meters of committed expansion. DHL Supply Chain adds more than 160,000 sqm of dedicated warehousing capacity in Asia Pacific to meet rising demand for data centers Enhanced capabilities include upskilling workforce in advanced white glove handling and investing in specialized technical services Expansion directly responds to Asia Pacific's rapid data center growth, with the region set to become the world's next major data center hub, attracting approximately USD$800 billion (~EUR730 billion) investment by 2030 Bonn, Singapore - DHL Supply Chain (DHL) today announced the expansion of its data center logistics capabilities across the Asia Pacific region, strengthening its position as a strategic partner for hyperscalers and data center operators as AI investment accelerates and large-scale deployments move into execution. Press release pdf 85.5"
+          },
+          {
+            "url": "https://www.dhl.com/au-en/home/press/press-archive/2026/dhl-supply-chain-strengthens-presence-in-western-sydney-with-new-facility-to-power-australias-technology-automotive-sectors.html",
+            "stage": "current_activity",
+            "date_phrase": "18 March 2026",
+            "materiality": "high",
+            "signal_kind": "corporate_event",
+            "accepted_events": 0,
+            "evidence_excerpt": "t a different country Close DHL Supply Chain Strengthens Presence in Western Sydney With New Facility to Power Australia’s Technology and Automotive Sectors Press Release: Sydney, 18 March 2026 Multi-customer facility offers integrated logistics solutions for finished goods and spare parts Supports evolving customer requirements with expanded capacity, agility and scalable solutions DHL Supply Chain Australia (DHL) has officially opened its newest warehouse facility in Erskine Park, New South Wales, marking a significant milestone in its commitment to supporting the evolving logistics requirements of Australia’s technology and automotive sectors. The 21,078 square metre warehouse, strategically located in Western Sydney, enhances DHL’s national distribution capabilities to best serve customer requirements and offers proximity to the upcoming DHL transport hub. The facility offers ambient storage with selective racking and block stack areas, eight recessed docks, six on-grade doors, and a mezzanine for rework and value-added services. Examples of built-in measures include several energy and resource efficient features such as 256 kWp rooftop solar panels that reduce grid electricity"
+          },
+          {
+            "url": "https://www.dhl.com/us-en/home/press/press-archive/2026/dhl-expands-its-north-america-logistics-infrastructure-amid-growing-global-demand-for-data-center-logistics-services.html",
+            "stage": "current_activity",
+            "date_phrase": "March 19, 2026",
+            "materiality": "low",
+            "signal_kind": "none",
+            "accepted_events": 0,
+            "evidence_excerpt": "* [Business Shipping Guide](https://www.dhl.com/us-en/home/ship.html) ### DHL for Your Busi … rowing Global Demand for Data Center Logistics Services Press Release:Bonn, Germany, March 19, 2026 ![Image 11](https://www.dhl.com/us-en/home/press/press-archive/2026/dhl-expands-its-north-america-logistics-infrastructure-amid-growing-global-demand-for-data-center-logistics-services/_jcr_content/parsysPath/container_855445714/image.coreimg.80.1197.jpeg/1773916927778/us-core-pr-03192026.jpeg) * **DHL Supply Chain adds 10 dedicated sites and more than 7 million sq ft of warehousing capacity in North America to accelerate hyperscale data center growth** * **Independent research shows 85% of data center operators prefer a single end‑to‑end logistics partner** * **New facilities provide white‑glove handling, rack pre‑configuration, and specialized transport, supported by the DHL Global Forwarding network for fast, secure movement of high‑value IT hardware** DHL today announced a significant expansion of its North America data center logistics (DCL) infrastructure with 10 dedicated warehouse sites totaling more than seven million square feet of capacity set to go live in 2026. Designed for hyp"
+          }
+        ],
+        "validated_events": [],
+        "early_stop_reason": "no_material_event",
+        "evidence_accepted": 17,
+        "evidence_rejected": 13,
+        "provider_failures": 0,
+        "account_elapsed_ms": 93419,
+        "event_hints_fetched": 1,
+        "extraction_failures": 0,
+        "independent_domains": 2,
+        "event_hints_received": 1,
+        "corroborating_domains": 0,
+        "corroborating_sources": [],
+        "event_hints_validated": 0,
+        "corroboration_attempted": false,
+        "counterevidence_checked": true,
+        "event_geography_rejected": 1,
+        "structured_extraction_calls": 2,
+        "counterevidence_material_found": false
+      },
+      "candidateOrigin": [
+        "EVENT_FIRST"
+      ],
+      "canonicalDecision": "hold",
+      "researchConfidence": 0.3
+    }
+  ],
+  "monitor_run_id": null,
+  "timings": {
+    "stage_a_ms": 14403,
+    "confirmation_ms": 1078,
+    "start_request_ms": 880,
+    "background_completion_ms": 176698,
+    "total_ms": 196989
+  },
+  "usage_delta": {
+    "anthropic": {
+      "calls": 8,
+      "errors": 0,
+      "input_tokens": 15186,
+      "output_tokens": 5784,
+      "calculated_cost_usd": 0.132318,
+      "pricing_source": "Anthropic Sonnet 4.6 public list price, verified 2026-07-22"
+    },
+    "brave": {
+      "calls": 17,
+      "errors": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "calculated_cost_usd": 0,
+      "pricing_source": null
+    },
+    "serper": {
+      "calls": 4,
+      "errors": 4,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "calculated_cost_usd": 0,
+      "pricing_source": null
+    },
+    "tavily": {
+      "calls": 13,
+      "errors": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "calculated_cost_usd": 0,
+      "pricing_source": null
+    }
+  },
+  "checks": [
+    {
+      "name": "real authenticated owners created",
+      "ok": true
+    },
+    {
+      "name": "Stage A reachable and confirmable",
+      "ok": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "name": "explicit confirmation persisted through customer API",
+      "ok": true
+    },
+    {
+      "name": "same context label persists independently across tenants",
+      "ok": true
+    },
+    {
+      "name": "productive Intelligence run accepted before Research",
+      "ok": true,
+      "detail": "HTTP 202"
+    },
+    {
+      "name": "bounded background processor completed durably",
+      "ok": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "name": "owner reloads durable result",
+      "ok": true
+    },
+    {
+      "name": "other tenant cannot load result",
+      "ok": true
+    },
+    {
+      "name": "Lead Hunter run reference persisted",
+      "ok": true
+    },
+    {
+      "name": "Candidate Universe durable and owner-scoped",
+      "ok": true,
+      "detail": "n=1"
+    },
+    {
+      "name": "canonical Cases generated",
+      "ok": true
+    },
+    {
+      "name": "initial accepted Case set entered Account Memory",
+      "ok": true,
+      "detail": "snapshots=0, delivered=0"
+    },
+    {
+      "name": "Monitor correctly unavailable without delivered accounts",
+      "ok": true
+    },
+    {
+      "name": "completed retry is idempotent and avoids new Research",
+      "ok": true
+    },
+    {
+      "name": "same labels cannot collide cross-tenant",
+      "ok": true
+    }
+  ]
+}

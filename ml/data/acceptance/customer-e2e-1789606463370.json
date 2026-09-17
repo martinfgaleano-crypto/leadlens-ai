@@ -1,0 +1,1171 @@
+{
+  "acceptance": "customer-intelligence-e2e-v1",
+  "ran_at": "2026-09-17T00:57:19.522Z",
+  "soak_id": null,
+  "soak_phase": null,
+  "synthetic_context": "We sell operational planning, inventory coordination, and systems integration software to mid-market manufacturers, distributors, and multi-site operators in the United States with direct operational control. Find accounts worth validating now because a recent expansion, acquisition, or other material operational change may create planning or integration complexity. Exclude generic growth statistics, advisory firms, financial distress, companies without direct operations, and consumer-only businesses.",
+  "confirmed_context_diagnostic": {
+    "organization_types": [
+      "Mid-market manufacturers with multi-site operations",
+      "Regional and national distributors",
+      "Multi-site operators with direct operational control",
+      "Manufacturers that have recently completed acquisitions",
+      "Distributors expanding into new geographies or product lines"
+    ],
+    "industries": [
+      "Manufacturing",
+      "Distribution",
+      "Wholesale operations",
+      "Multi-site industrial operations"
+    ],
+    "geographies": [
+      "United States"
+    ],
+    "signal_families": [
+      "acquisition",
+      "new_facility",
+      "technology_change",
+      "new_market",
+      "operational_transformation"
+    ],
+    "definition_status": "defined"
+  },
+  "run_id": "intel_bc8d860c4b9bb6db04856866d11b5aba",
+  "lead_hunter_run_id": "lh_e2e_context_1789606463370_v1_2026-09-17_a60d9d24-243e-404f-b784-bb3d06d14d6a_intel_bc8d8",
+  "candidate_universe": {
+    "total": 1,
+    "coverage": {
+      "gaps": [
+        {
+          "type": "candidate_volume_too_low",
+          "detail": "Only 1 in-scope candidate(s) discovered."
+        }
+      ],
+      "eligible": 1,
+      "excluded": 0,
+      "eventFirst": {
+        "queries": 4,
+        "rejected": {
+          "no_subject": 44,
+          "identity_unresolved": 6
+        },
+        "raw_hints": 48,
+        "result_audit": [
+          {
+            "url": "https://www.investing.com/news/company-news/universal-logistics-acquires-rail-terminal-operator-parsec-93CH-3641436",
+            "type": "company_direct",
+            "title": "Universal Logistics acquires rail terminal operator Parsec By Investing.com",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": [
+              "Universal Logistics"
+            ]
+          },
+          {
+            "url": "https://www.shipbob.com/3pl",
+            "type": "other",
+            "title": "Third-Party Logistics (3PL) Services & Guide",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://en.wikipedia.org/wiki/Operator",
+            "type": "other",
+            "title": "Operator",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://en.wikipedia.org/wiki/Distributor",
+            "type": "other",
+            "title": "Distributor",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.youtube.com/watch?v=XZMPBbCG3u4&vl=en-US",
+            "type": "social",
+            "title": "How to Play Thermite! Operator Guide 2026! - Rainbow Six Siege",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://openai.com/index/introducing-operator",
+            "type": "other",
+            "title": "Introducing Operator",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.thebusinessresearchcompany.com/report/third-party-logistics-3pl-global-market-report",
+            "type": "other",
+            "title": "Third-Party Logistics (3PL) Market Trends Analysis Report 2026-2030",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://ctacquisitions.com/logistics-mergers-and-acquisitions",
+            "type": "other",
+            "title": "Logistics M&A: 2026 Freight, 3PL, and Last-Mile Deal Activity - CT Acquisitions",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://redstagfulfillment.com/biggest-3pl-companies",
+            "type": "other",
+            "title": "Biggest 3PL Companies | U.S. & Global | 5 Metrics Measured",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.capstonepartners.com/insights/article-3pl-market-update",
+            "type": "other",
+            "title": "3PL Market Update – June 2026",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.fleetowner.com/news/mergers-acquistions/news/55402620/logistics-ma-and-partnerships-target-3pl-technology-fuel-and-cargo-security",
+            "type": "other",
+            "title": "Logistics M&A and partnerships target 3PL technology, fuel, and cargo security | FleetOwner",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.freightwaves.com/checkpoint/top-3pl-companies",
+            "type": "other",
+            "title": "Top 3PL Companies in 2026: Rankings, Revenue, & Costs - Freightwaves Checkpoint",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.mordorintelligence.com/industry-reports/us-3pl-market",
+            "type": "other",
+            "title": "USA (3PL) Third-Party Logistics Market Trends | Industry Analysis, Size & Growth Report",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.cencora.com/newsroom/cencora-enhances-global-pharmaceutical-logistics-services",
+            "type": "other",
+            "title": "Enhancing global pharmaceutical logistics services | Cencora",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": [
+              "Expanded capacity"
+            ]
+          },
+          {
+            "url": "https://www.fulfill.com/top-3pl-companies",
+            "type": "other",
+            "title": "Top 100 3PL Companies in the US (2026) | Fulfill.com",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://builtin.com/companies/hiring/remote/type/3pl-third-party-logistics-companies",
+            "type": "other",
+            "title": "Top 3PL: Third Party Logistics Companies Hiring Remote 2026 | Built In",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.youtube.com/watch?v=FzgO99JNzJg",
+            "type": "social",
+            "title": "Supply Chain Point: Launching a 3PL with Rodney Galeano",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": [
+              "Recorded live at Supply Chain Point 2025 (",
+              "Rodney"
+            ]
+          },
+          {
+            "url": "https://finance.yahoo.com/news/circle-logistics-recognized-2025-top-125300164.html",
+            "type": "other",
+            "title": "Circle Logistics Recognized as a 2025 Top 3PL & Cold Storage Provider by Food Logistics",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://redstagfulfillment.com/biggest-3pl-companies",
+            "type": "other",
+            "title": "Biggest 3PL Companies | U.S. & Global | 5 Metrics Measured",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.technavio.com/report/3pl-market-in-the-us-industry-analysis",
+            "type": "other",
+            "title": "US Third-party Logistics (3PL) Market Growth Analysis - Size and Forecast 2026-2030 | Technavio",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.freightwaves.com/checkpoint/top-3pl-companies",
+            "type": "other",
+            "title": "Top 3PL Companies in 2026: Rankings, Revenue, & Costs - Freightwaves Checkpoint",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.mordorintelligence.com/industry-reports/us-3pl-market",
+            "type": "other",
+            "title": "USA (3PL) Third-Party Logistics Market Trends | Industry Analysis, Size & Growth Report",
+            "recent": true,
+            "provider": "brave",
+            "subjects": [
+              "Value-Added Warehousing",
+              "Distribution is forecast to"
+            ]
+          },
+          {
+            "url": "https://www.speedcommerce.com/insights/the-20-biggest-3pls-in-the-us",
+            "type": "other",
+            "title": "The 20 Largest 3PLs in the US & Globally, 2026 Edition | Speed Commerce",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.thebusinessresearchcompany.com/report/third-party-logistics-3pl-global-market-report",
+            "type": "other",
+            "title": "Third-Party Logistics (3PL) Market Trends Analysis Report 2026-2030",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.mordorintelligence.com/industry-reports/us-3pl-market",
+            "type": "other",
+            "title": "United States 3PL Market Size & Share Analysis - Growth Trends ...",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://terrapincg.com/news/average-cost-to-build-3pl-logistics-warehouse-usa",
+            "type": "other",
+            "title": "3PL Warehouse Build Cost USA 2026: TI vs Ground-Up",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://stallion.ca/blog/best-3pl-companies-us",
+            "type": "other",
+            "title": "The Best 3PL Companies in the US (2026)",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.3plhub.co/find-a-3pl-in-the-united-states",
+            "type": "company_direct",
+            "title": "Find a 3PL in the US — Warehousing & Fulfillment Directory | 3PL Hub",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://warego.co/blog/3pl-fulfillment-companies",
+            "type": "other",
+            "title": "Best 3PL Fulfillment Companies in 2026 - WareGo",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.mapquest.com/us/pennsylvania/ghg-logistics-llc-distribution-center-364701243",
+            "type": "other",
+            "title": "GHG Logistics LLC Distribution Center, 6390 Hedgewood Dr, Unit 300, Allentown, PA 18106, US - MapQuest",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://dclcorp.com/blog/fulfillment/3pl-warehouse-infrastructure-trends-2026",
+            "type": "other",
+            "title": "3PL Warehouse Infrastructure That Will Best Serve High-Performance Brands in 2026 | DCL Logistics",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://redstagfulfillment.com/biggest-3pl-companies",
+            "type": "other",
+            "title": "Biggest 3PL Companies | U.S. & Global | 5 Metrics Measured",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://terrapincg.com/news/average-cost-to-build-3pl-logistics-warehouse-usa",
+            "type": "other",
+            "title": "3PL Warehouse Build Cost USA 2026: TI vs Ground-Up",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.speedcommerce.com/insights/the-20-biggest-3pls-in-the-us",
+            "type": "other",
+            "title": "The 20 Largest 3PLs in the US & Globally, 2026 Edition | Speed Commerce",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.technavio.com/report/3pl-market-in-the-us-industry-analysis",
+            "type": "other",
+            "title": "US Third-party Logistics (3PL) Market Growth Analysis - Size and Forecast 2026-2030 | Technavio",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.mordorintelligence.com/industry-reports/us-3pl-market",
+            "type": "other",
+            "title": "USA (3PL) Third-Party Logistics Market Trends | Industry Analysis, Size & Growth Report",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://tracxn.com/d/companies/3pl/__UQSheZXeZ9HmCa8JP2we1ApiJtk9dp7RvK-7kTfscdQ",
+            "type": "other",
+            "title": "3PL - 2026 Company Profile, Team & Competitors - Tracxn",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://finance.yahoo.com/news/circle-logistics-recognized-2025-top-125300164.html",
+            "type": "other",
+            "title": "Circle Logistics Recognized as a 2025 Top 3PL & Cold Storage Provider by Food Logistics",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://openai.com/index/introducing-operator",
+            "type": "other",
+            "title": "Introducing Operator",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.youtube.com/watch?v=gYqs-wUKZsM",
+            "type": "social",
+            "title": "Demonstrating Operator - YouTube",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.youtube.com/watch?v=RROGB9mi4j8",
+            "type": "social",
+            "title": "MOPAR DISTRIBUTOR REBUILD - YouTube",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://operatorframework.io/",
+            "type": "event_page",
+            "title": "Welcome to Operator framework",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.mordorintelligence.com/industry-reports/north-america-logistics-automation-market",
+            "type": "other",
+            "title": "North America Logistics Automation Market - Companies, Trends & Size",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://mtligroup.com/blog/top-warehouse-automation-trends-in-2026",
+            "type": "other",
+            "title": "Top Warehouse Automation Trends in 2026 | MTLI Group | MTLI Group",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.mordorintelligence.com/industry-reports/logistics-automation-market",
+            "type": "other",
+            "title": "Logistics Automation Market - Size, Companies & Growth",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.mordorintelligence.com/industry-reports/warehouse-automation-market",
+            "type": "other",
+            "title": "Warehouse Automation Market - Industry Size & Growth 2025 - 2031",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.technavio.com/report/3pl-market-in-the-us-industry-analysis",
+            "type": "other",
+            "title": "US Third-party Logistics (3PL) Market Growth Analysis - Size and Forecast 2026-2030 | Technavio",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.sellerscommerce.com/blog/warehouse-automation-statistics",
+            "type": "other",
+            "title": "Warehouse Automation Statistics (2026)",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          }
+        ],
+        "result_types": {
+          "other": 41,
+          "social": 4,
+          "event_page": 1,
+          "company_direct": 2
+        },
+        "target_valid": 0,
+        "unique_hints": 6,
+        "result_sample": [
+          {
+            "url": "https://www.investing.com/news/company-news/universal-logistics-acquires-rail-terminal-operator-parsec-93CH-3641436",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"acquires company\" \"United States\" (2026 OR 2025)",
+            "title": "Universal Logistics acquires rail terminal operator Parsec By Investing.com",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.shipbob.com/3pl",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"acquires company\" \"United States\" (2026 OR 2025)",
+            "title": "Third-Party Logistics (3PL) Services & Guide",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://en.wikipedia.org/wiki/Operator",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"acquires company\" \"United States\" (2026 OR 2025)",
+            "title": "Operator",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.thebusinessresearchcompany.com/report/third-party-logistics-3pl-global-market-report",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"acquires company\" \"United States\" (2026 OR 2025)",
+            "title": "Third-Party Logistics (3PL) Market Trends Analysis Report 2026-2030",
+            "provider": "brave",
+            "published_date": "2026-09-17T00:00:00"
+          },
+          {
+            "url": "https://ctacquisitions.com/logistics-mergers-and-acquisitions",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"acquires company\" \"United States\" (2026 OR 2025)",
+            "title": "Logistics M&A: 2026 Freight, 3PL, and Last-Mile Deal Activity - CT Acquisitions",
+            "provider": "brave",
+            "published_date": "2026-06-08T19:50:35"
+          },
+          {
+            "url": "https://redstagfulfillment.com/biggest-3pl-companies",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"acquires company\" \"United States\" (2026 OR 2025)",
+            "title": "Biggest 3PL Companies | U.S. & Global | 5 Metrics Measured",
+            "provider": "brave",
+            "published_date": "2026-08-14T00:00:00"
+          },
+          {
+            "url": "https://www.mordorintelligence.com/industry-reports/us-3pl-market",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"opens new plant\" \"United States\" (2026 OR 2025)",
+            "title": "USA (3PL) Third-Party Logistics Market Trends | Industry Analysis, Size & Growth Report",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.cencora.com/newsroom/cencora-enhances-global-pharmaceutical-logistics-services",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"opens new plant\" \"United States\" (2026 OR 2025)",
+            "title": "Enhancing global pharmaceutical logistics services | Cencora",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.fulfill.com/top-3pl-companies",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"opens new plant\" \"United States\" (2026 OR 2025)",
+            "title": "Top 100 3PL Companies in the US (2026) | Fulfill.com",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://redstagfulfillment.com/biggest-3pl-companies",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"opens new plant\" \"United States\" (2026 OR 2025)",
+            "title": "Biggest 3PL Companies | U.S. & Global | 5 Metrics Measured",
+            "provider": "brave",
+            "published_date": "2026-08-14T00:00:00"
+          },
+          {
+            "url": "https://www.technavio.com/report/3pl-market-in-the-us-industry-analysis",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"opens new plant\" \"United States\" (2026 OR 2025)",
+            "title": "US Third-party Logistics (3PL) Market Growth Analysis - Size and Forecast 2026-2030 | Technavio",
+            "provider": "brave",
+            "published_date": "2026-03-10T00:00:00"
+          },
+          {
+            "url": "https://www.freightwaves.com/checkpoint/top-3pl-companies",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"opens new plant\" \"United States\" (2026 OR 2025)",
+            "title": "Top 3PL Companies in 2026: Rankings, Revenue, & Costs - Freightwaves Checkpoint",
+            "provider": "brave",
+            "published_date": "2026-08-10T13:07:04"
+          },
+          {
+            "url": "https://www.mordorintelligence.com/industry-reports/us-3pl-market",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"new distribution center\" \"United States\" (2026 OR 2025)",
+            "title": "United States 3PL Market Size & Share Analysis - Growth Trends ...",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://terrapincg.com/news/average-cost-to-build-3pl-logistics-warehouse-usa",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"new distribution center\" \"United States\" (2026 OR 2025)",
+            "title": "3PL Warehouse Build Cost USA 2026: TI vs Ground-Up",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://stallion.ca/blog/best-3pl-companies-us",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"new distribution center\" \"United States\" (2026 OR 2025)",
+            "title": "The Best 3PL Companies in the US (2026)",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://dclcorp.com/blog/fulfillment/3pl-warehouse-infrastructure-trends-2026",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"new distribution center\" \"United States\" (2026 OR 2025)",
+            "title": "3PL Warehouse Infrastructure That Will Best Serve High-Performance Brands in 2026 | DCL Logistics",
+            "provider": "brave",
+            "published_date": "2026-01-21T13:41:15"
+          },
+          {
+            "url": "https://redstagfulfillment.com/biggest-3pl-companies",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"new distribution center\" \"United States\" (2026 OR 2025)",
+            "title": "Biggest 3PL Companies | U.S. & Global | 5 Metrics Measured",
+            "provider": "brave",
+            "published_date": "2026-08-14T00:00:00"
+          },
+          {
+            "url": "https://terrapincg.com/news/average-cost-to-build-3pl-logistics-warehouse-usa",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"new distribution center\" \"United States\" (2026 OR 2025)",
+            "title": "3PL Warehouse Build Cost USA 2026: TI vs Ground-Up",
+            "provider": "brave",
+            "published_date": "2026-04-12T23:06:36"
+          },
+          {
+            "url": "https://tracxn.com/d/companies/3pl/__UQSheZXeZ9HmCa8JP2we1ApiJtk9dp7RvK-7kTfscdQ",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"automation investment\" \"United States\" (2026 OR 2025)",
+            "title": "3PL - 2026 Company Profile, Team & Competitors - Tracxn",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://finance.yahoo.com/news/circle-logistics-recognized-2025-top-125300164.html",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"automation investment\" \"United States\" (2026 OR 2025)",
+            "title": "Circle Logistics Recognized as a 2025 Top 3PL & Cold Storage Provider by Food Logistics",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://openai.com/index/introducing-operator",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"automation investment\" \"United States\" (2026 OR 2025)",
+            "title": "Introducing Operator",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.mordorintelligence.com/industry-reports/north-america-logistics-automation-market",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"automation investment\" \"United States\" (2026 OR 2025)",
+            "title": "North America Logistics Automation Market - Companies, Trends & Size",
+            "provider": "brave",
+            "published_date": "2026-05-27T00:00:00"
+          },
+          {
+            "url": "https://mtligroup.com/blog/top-warehouse-automation-trends-in-2026",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"automation investment\" \"United States\" (2026 OR 2025)",
+            "title": "Top Warehouse Automation Trends in 2026 | MTLI Group | MTLI Group",
+            "provider": "brave",
+            "published_date": "2026-06-17T00:00:00"
+          },
+          {
+            "url": "https://www.mordorintelligence.com/industry-reports/logistics-automation-market",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"automation investment\" \"United States\" (2026 OR 2025)",
+            "title": "Logistics Automation Market - Size, Companies & Growth",
+            "provider": "brave",
+            "published_date": "2026-07-30T00:00:00"
+          }
+        ],
+        "provider_calls": {
+          "brave": 5,
+          "serper": 5,
+          "tavily": 6
+        },
+        "company_mentions": 6,
+        "domains_resolved": 0,
+        "provider_failures": {
+          "serper": "HTTP 400: {\"message\":\"Not enough credits\",\"statusCode\":400}"
+        },
+        "geography_resolved": 0,
+        "subjects_extracted": 6,
+        "canonical_companies": 0
+      },
+      "routeYield": [
+        {
+          "route": "industry_category",
+          "queries": 2,
+          "resultPages": 8,
+          "groundedNames": 1,
+          "acceptedCompanies": 0
+        },
+        {
+          "route": "geo_category",
+          "queries": 1,
+          "resultPages": 1,
+          "groundedNames": 0,
+          "acceptedCompanies": 0
+        },
+        {
+          "route": "source_ecosystem",
+          "queries": 2,
+          "resultPages": 15,
+          "groundedNames": 4,
+          "acceptedCompanies": 1
+        }
+      ],
+      "duplicateRate": 0,
+      "operatingMode": "provider_limited",
+      "likelyEligible": 0,
+      "freshCandidates": 1,
+      "needsValidation": 0,
+      "providersFailed": [],
+      "routesAttempted": 3,
+      "candidatesReused": 0,
+      "candidatesUnique": 1,
+      "identityAmbiguous": 0,
+      "stableCorePercent": 0,
+      "providersAvailable": [
+        "brave",
+        "tavily"
+      ],
+      "candidatesDiscovered": 1,
+      "priorCandidatesConsidered": 0
+    },
+    "companies": [
+      {
+        "name": "Village Super Market, Inc.",
+        "domain": "marketscreener.com",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "United States",
+        "provenance": [
+          {
+            "route": "source_ecosystem",
+            "origin": "dynamic_enumeration",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:54:41.402Z",
+            "discoveredName": "Village Super Market, Inc."
+          }
+        ]
+      }
+    ]
+  },
+  "delivered_accounts": [],
+  "research_audit": [
+    {
+      "risks": [
+        "Account is outside the stated target segment (retailer, not manufacturer) — fundamental fit question unresolved",
+        "Zero evidence from provided sources — research package may have been misrouted to wrong company",
+        "Wakefern co-op membership may centralize procurement decisions, bypassing Village Super Market's independent buying authority",
+        "Low urgency with no observable trigger event to create near-term buying motivation"
+      ],
+      "domain": "marketscreener.com",
+      "company": "Village Super Market, Inc.",
+      "country": "United States",
+      "reasons": [
+        "opportunity_test_opportunity",
+        "open_decision_critical_caps_at_validate"
+      ],
+      "category": "DISCARD",
+      "fitScore": 2.5,
+      "qcStatus": "REVIEW_NEEDED",
+      "sourceUrl": "https://www.marketscreener.com/news/atlas-copco-group-breaks-ground-on-service-center-of-the-future-in-lancaster-county-south-carolina-ce785bd2dc81f72d",
+      "signalDate": "2026-09-16",
+      "signalType": null,
+      "nextQuestion": "Does Village Super Market make independent technology purchasing decisions for inventory and planning systems, or are those decisions governed centrally by the Wakefern cooperative?",
+      "actionability": {
+        "fit_state": "limited",
+        "hold_reason": null,
+        "target_valid": true,
+        "timing_state": "moderate",
+        "evidence_valid": true,
+        "final_decision": "validate",
+        "search_results": 27,
+        "research_coverage": "sufficient",
+        "independent_support": false,
+        "temporal_valid_events": 1,
+        "company_identity_valid": true,
+        "materiality_valid_events": 1,
+        "material_event_candidates": 1
+      },
+      "eventHintCount": 0,
+      "evidenceClaims": [
+        {
+          "date": null,
+          "type": "inferred_from_context",
+          "claim": "Village Super Market operates multiple ShopRite-banner stores across New Jersey",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": null,
+          "type": "missing_evidence",
+          "claim": "No public signals about Village Super Market appear in the provided raw_context or web_context",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": "2026-04-14",
+          "type": "verified_public_signal",
+          "claim": "Echo Global Logistics expanded EchoChill temperature-controlled LTL with a new Sacramento facility",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": null,
+          "type": "weak_inference",
+          "claim": "Village Super Market's inventory and planning systems are legacy or inadequate",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": null,
+          "type": "inferred_from_context",
+          "claim": "Village Super Market is subject to Wakefern/ShopRite co-op procurement constraints that may limit independent software decisions",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": null,
+          "type": "missing_evidence",
+          "claim": "Village Super Market has active operational pain addressable by this offer right now",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        }
+      ],
+      "accountResearch": {
+        "domain": "marketscreener.com",
+        "account": "Village Super Market, Inc.",
+        "version": "account-deep-research-v1",
+        "query_audit": [
+          {
+            "stage": "identity",
+            "results": 5,
+            "accepted": 5,
+            "provider": "brave",
+            "query_id": "rq_1n8fp6f"
+          },
+          {
+            "stage": "current_activity",
+            "results": 5,
+            "accepted": 5,
+            "provider": "brave",
+            "query_id": "rq_ir7s24"
+          },
+          {
+            "stage": "current_activity",
+            "results": 5,
+            "accepted": 5,
+            "provider": "tavily",
+            "query_id": "rq_ir7s24"
+          },
+          {
+            "stage": "current_activity",
+            "results": 0,
+            "accepted": 0,
+            "provider": "brave",
+            "query_id": "rq_pp1yxh"
+          },
+          {
+            "stage": "current_activity",
+            "results": 5,
+            "accepted": 5,
+            "provider": "tavily",
+            "query_id": "rq_pp1yxh"
+          },
+          {
+            "stage": "counterevidence",
+            "results": 2,
+            "accepted": 2,
+            "provider": "brave",
+            "query_id": "rq_erj7wr"
+          },
+          {
+            "stage": "corroboration",
+            "results": 0,
+            "accepted": 0,
+            "provider": "brave",
+            "query_id": "rq_1txu5b4"
+          },
+          {
+            "stage": "corroboration",
+            "results": 5,
+            "accepted": 0,
+            "provider": "tavily",
+            "query_id": "rq_1txu5b4"
+          }
+        ],
+        "provider_ops": [
+          {
+            "ok": true,
+            "stage": "identity",
+            "results": 5,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 513
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 5,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 503
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 1,
+            "timeout": false,
+            "provider": "full_text",
+            "operation": "full_text",
+            "duration_ms": 3204
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 0,
+            "timeout": false,
+            "provider": "anthropic",
+            "operation": "llm",
+            "duration_ms": 9035
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 1,
+            "timeout": false,
+            "provider": "full_text",
+            "operation": "full_text",
+            "duration_ms": 3301
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 1,
+            "timeout": false,
+            "provider": "full_text",
+            "operation": "full_text",
+            "duration_ms": 4074
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 0,
+            "timeout": false,
+            "provider": "anthropic",
+            "operation": "llm",
+            "duration_ms": 11385
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 5,
+            "timeout": false,
+            "provider": "tavily",
+            "operation": "search",
+            "duration_ms": 5176
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 1,
+            "timeout": false,
+            "provider": "full_text",
+            "operation": "full_text",
+            "duration_ms": 389
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 0,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 925
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 5,
+            "timeout": false,
+            "provider": "tavily",
+            "operation": "search",
+            "duration_ms": 5071
+          },
+          {
+            "ok": true,
+            "stage": "counterevidence",
+            "results": 2,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 867
+          },
+          {
+            "ok": true,
+            "stage": "corroboration",
+            "results": 0,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 718
+          },
+          {
+            "ok": true,
+            "stage": "corroboration",
+            "results": 5,
+            "timeout": false,
+            "provider": "tavily",
+            "operation": "search",
+            "duration_ms": 5493
+          }
+        ],
+        "results_seen": 27,
+        "dated_evidence": 20,
+        "provider_calls": 8,
+        "pages_extracted": 4,
+        "planned_queries": 4,
+        "claims_recovered": 2,
+        "executed_queries": 5,
+        "extraction_audit": [
+          {
+            "url": "https://www.marketscreener.com/news/echo-global-logistics-inc-expands-operations-with-new-temperature-controlled-storage-facility-in-s-ce7e50dfd18bf124",
+            "stage": "current_activity",
+            "date_phrase": null,
+            "materiality": "high",
+            "signal_kind": "strategic_decision",
+            "accepted_events": 0,
+            "evidence_excerpt": "ECHO GLOBAL LOGISTICS, INC. Add to a list Inactive Instrument Echo Global Logistics, Inc. Stocks ECHO US27875T1016 Air Freight & Logistics Echo Global Logistics, Inc. Expands Operations With New Temperature-Controlled Storage Facility In Sacramento Published on 04/14/2026 at 04:52 pm EDT S&P Capital IQ Add MarketScreener to your sources Share ECHO GLOBAL LOGISTICS, INC. +0.04% Echo Global Logistics, Inc. announced the expansion of EchoChill, the company's consolidated refrigerated LTL solution, with a new storage cooler facility in Sacramento, California. The facility allows clients based out of the Pacific Northwest, northern California, and the upper mountain states to access cost-effective, chilled LTL transportation via strategic freight consolidation. EchoChill's expanded reach now offers strategic solutions for clients who ship outbound from the West Coast, Midwest, and Northeast regions. The Sacramento cooler offers extensive capacity and operates at a steady 34 degrees Fahrenheit. This new facility creates additional flexibility for west coast clients and expands the national, temperature-controlled footprint. © S&P Capital IQ - 2026 Add MarketScreener to your sources Share"
+          },
+          {
+            "url": "https://www.marketscreener.com/news/frasers-property-industrial-celebrates-the-opening-of-ive-group-s-new-facility-at-rubix-connect-ce7d50dcd88df523",
+            "stage": "current_activity",
+            "date_phrase": "2026-09-16",
+            "materiality": "high",
+            "signal_kind": "strategic_decision",
+            "accepted_events": 0,
+            "evidence_excerpt": "FRASERS PROPERTY LIMITED Add to a list PDF Report Frasers Property Limited Stocks TQ5 SG2G52000004 Real Estate Development & Operations Market Closed - Singapore S.E. 05:04:36 2026-09-16 am EDT 5-day change 1st Jan Change 0.9950 SGD +0.51% -2.45% -11.95% Sep. 13 Frasers Property Prices Nearly SG$2 Million Additional Fixed-Rate Bonds MT Sep. 01 Frasers Property to Redevelop Retail Mall Yishun 10 in Singapore MT Frasers Property : Industrial celebrates the opening of IVE Group's new facility at Rubix Connect Published on 12/18/2025 at 03:40 am EST - Modified on 12/18/2025 at 04:06 am EST Publicnow Add MarketScreener to your sources Share FRASERS PROPERTY LIMITED +0.51% We recently had the pleasure of celebrating a major milestone with IVE Group as they opened their sixth facility with Frasers Property Industrial at Rubix Connect. What started ten years ago with a 6,500 sqm speculative lease at our Keysborough estate has grown into a long-term relationship spanning six facilities and more than 80,000 sqm GLA across Victoria. That kind of scale-up story is exactly what energises our team and reinforces the value of deep, trust-based customer relationships. Matt Aitken, Managing Directo"
+          },
+          {
+            "url": "https://marketscreener.com/news/daimler-truck-expands-us-business-with-new-plant-ce7f50d2da88f321",
+            "stage": "current_activity",
+            "date_phrase": "2026-09-16",
+            "materiality": "high",
+            "signal_kind": "editorial_content",
+            "accepted_events": 0,
+            "evidence_excerpt": "DAIMLER TRUCK HOLDING AG Add to a list PDF Report Daimler Truck Holding AG Stocks DTG DE000DTR0CK8 Heavy Machinery & Vehicles Market Closed - Xetra 11:35:11 2026-09-16 am EDT 5-day change 1st Jan Change 43.56 EUR +0.74% -0.84% +16.72% Sep. 15 DAX Index Little Changed; German Economic Sentiment Improves MT Sep. 15 Toyota Motor, TotalEnergies Looking to Accelerate Hydrogen Vehicle Rollouts in Europe MT Daimler Truck expands US business with new plant Published on 08/07/2026 at 02:18 am EDT - Modified on 08/07/2026 at 04:50 am EDT Reuters - Translated by Marketscreener - See original Add MarketScreener to your sources Share DAIMLER TRUCK HOLDING AG +0.74% Daimler Truck, the truck maker, will be better able to sidestep the twists and turns of US tariff policy in the future by building a new plant in its key market. Another factory to produce specialty and long-haul trucks will be built starting at the end of this year and is expected to begin operations in three years, the company announced on Thursday evening. 'The new production plant strengthens our growth plans for North America,' said Daimler CEO Karin Radström. The higher import tariffs imposed under US President Donald Trump, me"
+          },
+          {
+            "url": "https://www.marketscreener.com/news/atlas-copco-group-breaks-ground-on-service-center-of-the-future-in-lancaster-county-south-carolina-ce785bd2dc81f72d",
+            "stage": "current_activity",
+            "date_phrase": "2026-09-16",
+            "materiality": "high",
+            "signal_kind": "corporate_event",
+            "accepted_events": 1,
+            "evidence_excerpt": "5&ShowAxis=0&DTstart=2026-09-16&Render=Line&BottomMargin=3&TopMargin=5&Prev=193.25) | | | | | --- | --- | --- | | Sep. 16 | [Atlas Copco builds new service center in South Carolina](/news/atlas-copco-builds-new-service-center-in-south-carolina-ce785bd2df8ef22d) | FW | | Sep. 16 | [Atlas Copco Starts Construction of New Large-scale Service Center in US](/news/atlas-copco-starts-construction-of-new-large-scale-service-center-in-us-ce785bd2df8ff320) | MT | # Atlas Copco Group Breaks Ground on Service Center of the Future in Lancaster County, South Carolina Published on 09/16/2026 at 09:16 am EDT ![Stock Atlas Copco AB](https://cdn.zonebourse.com/images/membre/chart3.png) ROCK HILL, S.C., Sept. 16, 2026 (GLOBE NEWSWIRE) -- ****Atlas Copco Group has broken ground on a new state-of-the-art North American Service Center in Lancaster County, South Carolina. The custom-built, 355,000-square-foot facility marks a significant investment in the future of the company’s logistics and service operations across North America. Operations are expected to begin at the new facility in June 2027.**** The new North American Service Center has been designed to meet the evolving needs of customers and the"
+          }
+        ],
+        "validated_events": [
+          {
+            "url": "https://www.marketscreener.com/news/atlas-copco-group-breaks-ground-on-service-center-of-the-future-in-lancaster-county-south-carolina-ce785bd2dc81f72d",
+            "kind": "corporate_event",
+            "stage": "current_activity",
+            "event_date": "2026-09-16",
+            "source_host": "marketscreener.com",
+            "claim_excerpt": "Atlas Copco Group Breaks Ground on Service Center of the Future in Lancaster County, South Carolina | MarketScreener. 5&ShowAxis=0&DTstart=2026-09-16&Render=Line&BottomMargin=3&TopMargin=5&Prev=193.25) | | | | | --- | --- | --- | | Sep. 16 | [Atlas Copco builds new service center in South Carolina](/news/atlas-copco-builds-new-service-center-in-south-carolina-ce785bd2df8ef22d) | FW | | Sep. 16 | [Atlas Copco Starts Construction of New Large-scale Service Center in US](/news/atlas-copco-starts-construction-of-new-large-scale-service-center-in-us-ce785bd2df8ff320) | MT | # Atlas Copco Group Breaks Ground on Service Center of the Future in Lancaster County, South Carolina Published on 09/16/2026 at 09:16 am EDT ![Stock Atlas Copco AB](https://cdn.zonebourse.com/images/membre/chart3.png) ROCK HILL, S.C., Sept. 16, 2026 (GLOBE NEWSWIRE) -- ****Atlas Copco Group has broken ground on a new state-of-the-art North American Service Center in Lancaster County, South Carolina. The custom-built, 355,000-square-foot facility marks a significant investment in the future of the company’s logistics and service operations across North America. Operations are expected to begin at the new facility in ",
+            "counterevidence": false,
+            "materiality_valid": true
+          }
+        ],
+        "early_stop_reason": "sufficient_evidence",
+        "evidence_accepted": 22,
+        "evidence_rejected": 5,
+        "provider_failures": 0,
+        "account_elapsed_ms": 80236,
+        "event_hints_fetched": 0,
+        "extraction_failures": 0,
+        "independent_domains": 2,
+        "event_hints_received": 0,
+        "corroborating_domains": 0,
+        "corroborating_sources": [],
+        "event_hints_validated": 0,
+        "corroboration_attempted": true,
+        "counterevidence_checked": true,
+        "event_geography_rejected": 1,
+        "structured_extraction_calls": 2,
+        "counterevidence_material_found": false
+      },
+      "candidateOrigin": [
+        "ACCOUNT_FIRST"
+      ],
+      "canonicalDecision": "validate",
+      "researchConfidence": 0.12
+    }
+  ],
+  "monitor_run_id": null,
+  "timings": {
+    "stage_a_ms": 14895,
+    "confirmation_ms": 733,
+    "start_request_ms": 981,
+    "background_completion_ms": 156561,
+    "total_ms": 176152
+  },
+  "usage_delta": {
+    "anthropic": {
+      "calls": 8,
+      "errors": 0,
+      "input_tokens": 15026,
+      "output_tokens": 5044,
+      "calculated_cost_usd": 0.120738,
+      "pricing_source": "Anthropic Sonnet 4.6 public list price, verified 2026-07-22"
+    },
+    "brave": {
+      "calls": 18,
+      "errors": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "calculated_cost_usd": 0,
+      "pricing_source": null
+    },
+    "serper": {
+      "calls": 5,
+      "errors": 5,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "calculated_cost_usd": 0,
+      "pricing_source": null
+    },
+    "tavily": {
+      "calls": 13,
+      "errors": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "calculated_cost_usd": 0,
+      "pricing_source": null
+    }
+  },
+  "checks": [
+    {
+      "name": "real authenticated owners created",
+      "ok": true
+    },
+    {
+      "name": "Stage A reachable and confirmable",
+      "ok": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "name": "explicit confirmation persisted through customer API",
+      "ok": true
+    },
+    {
+      "name": "same context label persists independently across tenants",
+      "ok": true
+    },
+    {
+      "name": "productive Intelligence run accepted before Research",
+      "ok": true,
+      "detail": "HTTP 202"
+    },
+    {
+      "name": "bounded background processor completed durably",
+      "ok": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "name": "owner reloads durable result",
+      "ok": true
+    },
+    {
+      "name": "other tenant cannot load result",
+      "ok": true
+    },
+    {
+      "name": "Lead Hunter run reference persisted",
+      "ok": true
+    },
+    {
+      "name": "Candidate Universe durable and owner-scoped",
+      "ok": true,
+      "detail": "n=1"
+    },
+    {
+      "name": "canonical Cases generated",
+      "ok": true
+    },
+    {
+      "name": "initial accepted Case set entered Account Memory",
+      "ok": true,
+      "detail": "snapshots=0, delivered=0"
+    },
+    {
+      "name": "Monitor correctly unavailable without delivered accounts",
+      "ok": true
+    },
+    {
+      "name": "completed retry is idempotent and avoids new Research",
+      "ok": true
+    },
+    {
+      "name": "same labels cannot collide cross-tenant",
+      "ok": true
+    }
+  ]
+}
