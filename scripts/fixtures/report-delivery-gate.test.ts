@@ -29,4 +29,11 @@ const historical = assembleInstitutionalReport({
   processed_leads: [{ id: "old", candidate: { company: "Legacy Co" }, enrichment: {}, qualification: { category: "HOT", fit_score: 8 } }],
 }, { job_id: "old", plan: "starter", search_id: null, customer_ref: null, created_at: new Date().toISOString() });
 test("historical reports retain legacy actionable priorities", historical.priority_opportunities.length === 1 && historical.account_dossiers[0].actionability_status === "act_now");
-console.log(`\n${passed}/15 delivery-gate assertions passed.`);
+const canonicalHold = assembleInstitutionalReport({
+  created_at: new Date().toISOString(), total_leads: 1, hot_count: 0, warm_count: 1, cold_count: 0, discard_count: 0,
+  ranked_opportunities: [{ lead_id: "geo", rank: 1, category: "WARM", recommended_action: "send_outreach_now" }],
+  processed_leads: [{ id: "geo", candidate: { company: "Mapei", country: "Colombia", source_url: "https://example.com/us-event", signal_date: null }, enrichment: { recommended_action: "send_outreach_now", timing_signals: ["Opened a plant in the United States"] }, qualification: { category: "WARM", fit_score: 7 } }],
+  canonical_cases: [{ lead_id: "geo", account_id: "Mapei", decision: "hold", reasons: ["hard_blocker_no_valid_date"], fit: "Moderate", timing: "Limited", evidence: "Limited", first_review: true }],
+}, { job_id: "geo", plan: "starter", search_id: null, customer_ref: null, created_at: new Date().toISOString() });
+test("canonical Hold suppresses unvalidated candidate URL and legacy outreach action", canonicalHold.account_dossiers[0].evidence_chain.length === 0 && canonicalHold.account_dossiers[0].recommended_next_step.text === "exclude");
+console.log(`\n${passed} delivery-gate assertions passed.`);

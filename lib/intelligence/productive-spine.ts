@@ -253,7 +253,9 @@ async function runIntelligenceExecution(
       reconcileLeadNarrativeWithCanonicalCase(lead, canonical);
       const ranked = report.ranked_opportunities?.find(item => item.lead_id === lead.id);
       if (ranked?.decision && canonical) {
-        ranked.recommended_action = lead.enrichment.recommended_action;
+        ranked.recommended_action = canonical.decision === "prioritize" ? "send_outreach_now"
+          : canonical.decision === "validate" ? "validate_source_first"
+          : canonical.decision === "monitor" ? "monitor_for_new_signal" : "exclude";
         ranked.actionability_status = canonical.decision === "prioritize" ? "act_now"
           : canonical.decision === "validate" ? "validate_first"
           : canonical.decision === "monitor" ? "monitor" : "exclude";

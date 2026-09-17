@@ -10,6 +10,7 @@
 import type { SearchProvider, SearchResultItem } from "@/lib/sources/access/provider-contract";
 import { classifyOrganization } from "@/lib/discovery/organization-type";
 import { inferEnumeratedCountry, inferEnumeratedDomain, rejectEnumeratedName } from "@/lib/discovery/company-universe";
+import { classifyProviderError } from "@/lib/ops/provider-health";
 import type { DiscoveryPlan, RawDiscoveredOrg } from "./candidate-universe";
 
 export const EVENT_FIRST_DISCOVERY_VERSION = "event-first-discovery-v1";
@@ -260,12 +261,30 @@ export async function runEventFirstDiscovery(
 ): Promise<EventFirstResult> {
   const metrics: EventFirstMetrics = { queries: 0, raw_hints: 0, unique_hints: 0, subjects_extracted: 0, canonical_companies: 0, rejected: {}, provider_calls: {}, provider_failures: {}, result_types: {}, company_mentions: 0, domains_resolved: 0, geography_resolved: 0, target_valid: 0, result_audit: [], result_sample: [] };
   const reject = (reason: string) => { metrics.rejected[reason] = (metrics.rejected[reason] ?? 0) + 1; };
+  const providerHealth = await Promise.all(providers.map(async (provider) => ({
+    provider,
+    health: await provider.health().catch((error) => ({
+      provider: provider.id,
+      status: "degraded" as const,
+      reason: error instanceof Error ? error.message : String(error),
+      credentials_present: true,
+    })),
+  })));
+  const productiveProviders = providerHealth.flatMap(({ provider, health }) => {
+    const terminal = health.status === "unavailable"
+      || ["exhausted", "invalid", "rate_limited"].includes(classifyProviderError(health.reason));
+    if (terminal) {
+      metrics.provider_failures[provider.id] = health.reason ?? health.status;
+      return [];
+    }
+    return [provider];
+  });
   const now = (opts.now ?? (() => new Date()))().toISOString();
   const queries = planEventFirstQueries(plan, opts.maxQueries ?? 6);
   const raw: Array<{ query: EventFirstQuery; item: SearchResultItem }> = [];
   for (const query of queries) {
     metrics.queries++;
-    for (const provider of providers) {
+    for (const provider of productiveProviders) {
       metrics.provider_calls[provider.id] = (metrics.provider_calls[provider.id] ?? 0) + 1;
       const response = await provider.search({ query: query.query, region: query.language === "es" ? "co" : "us", language: query.language, max_results: 6, freshness_days: 365, query_type: "signal_specific" }).catch(error => ({ ok: false, results: [], error: error instanceof Error ? error.message : String(error) } as never));
       if (!response.ok) metrics.provider_failures[provider.id] = response.error ?? "unknown";
@@ -350,8 +369,8 @@ export async function runEventFirstDiscovery(
     let country: string | null = inferEnumeratedCountry(hint.company_name_hint, discoveryPage, hint.target_geography).country;
     let identityContext = `${hint.headline} ${hint.source_excerpt ?? ""}`;
     if ((!domain || !country || !targetContextSupported(plan, identityContext)) && identityCalls < identityBudget) {
-      for (const provider of providers) {
-        if (identityCalls >= identityBudget || identityAttempts >= identityBudget * Math.max(1, providers.length) || (domain && country && targetContextSupported(plan, identityContext))) break;
+      for (const provider of productiveProviders) {
+        if (identityCalls >= identityBudget || identityAttempts >= identityBudget * Math.max(1, productiveProviders.length) || (domain && country && targetContextSupported(plan, identityContext))) break;
         identityAttempts++;
         metrics.provider_calls[provider.id] = (metrics.provider_calls[provider.id] ?? 0) + 1;
         const spanishIdentity = hint.target_geography === "Colombia";
