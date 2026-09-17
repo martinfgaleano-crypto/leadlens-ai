@@ -1,0 +1,89 @@
+{
+  "version": "intelligence-launch-acceptance-v1-baseline",
+  "git_commit": "c4007d07a6cb3bac0f0214ba8f5b6a4fd59cf8d8",
+  "measured_at": "2026-09-17T00:31:00Z",
+  "invalid_infrastructure_run": {
+    "artifact": "ml/data/acceptance/customer-e2e-1789590654319.json",
+    "quality_scored": false,
+    "reasons": ["supabase_dns_interruption", "host_clock_jump"]
+  },
+  "clock_acceptance": {
+    "system_utc": "2026-09-16T23:57:01Z",
+    "node_iso": "2026-09-16T23:57:04.432Z",
+    "wall_delta_ms": 2002,
+    "performance_delta_ms": 2002.668,
+    "hrtime_delta_ms": 2002.677116,
+    "wall_vs_monotonic_drift_ms": -0.668,
+    "stable": true
+  },
+  "track_a": {
+    "contexts": 3,
+    "runs": 6,
+    "usa_runs": 3,
+    "south_america_runs": 3,
+    "countries_requested": ["United States", "Colombia", "Brazil", "Chile", "Peru", "Argentina"],
+    "artifacts": [
+      "ml/data/acceptance/customer-e2e-1789603045864.json",
+      "ml/data/acceptance/customer-e2e-1789603437282.json",
+      "ml/data/acceptance/customer-e2e-1789603808948.json",
+      "ml/data/acceptance/customer-e2e-1789603910191.json",
+      "ml/data/acceptance/customer-e2e-1789604157575.json",
+      "ml/data/acceptance/customer-e2e-1789604411568.json"
+    ],
+    "funnel": {
+      "event_first_raw_hints": 226,
+      "event_first_canonical_companies": 3,
+      "candidate_universe_accounts": 50,
+      "researched_accounts": 9,
+      "portfolio_accounts": 7,
+      "canonical_decisions": {"prioritize": 0, "validate": 0, "monitor": 0, "hold": 9}
+    },
+    "runtime": {"total_ms": 1317866, "median_ms": 233839, "max_ms": 352687},
+    "observed_usage": {
+      "anthropic": {"calls": 47, "errors": 0, "cost_usd": 0.879282},
+      "brave": {"calls": 103, "errors": 0, "cost_unavailable": true},
+      "serper": {"calls": 28, "errors": 28, "status": "exhausted"},
+      "tavily": {"calls": 112, "errors": "ledger_delta_invalid_negative_value_observed", "cost_unavailable": true}
+    }
+  },
+  "track_b": {
+    "artifact": "ml/data/acceptance/account-deep-research-positive-control-v1.json",
+    "references": 8,
+    "captured_defensibly": 4,
+    "bounded_capture_rate": 0.5,
+    "duration_ms": 319621,
+    "provider_calls": 64,
+    "extractions": 16,
+    "captured": ["Nestlé USA", "Conagra Brands", "voestalpine", "Hitachi Energy"],
+    "missed": ["Quad", "John Deere", "UFP", "Mondi"]
+  },
+  "score": {
+    "overall": 56,
+    "usa": 53,
+    "south_america": 59,
+    "sample_note": "Small acceptance sample; scores are evidence-bounded, not population estimates.",
+    "pillars_0_to_4": {
+      "truth_and_grounding": 3.0,
+      "commercial_judgment": 1.75,
+      "signal_event_quality": 2.0,
+      "epistemic_honesty": 2.5,
+      "actionability": 1.5,
+      "operational_quality": 2.25
+    }
+  },
+  "hard_fails": [
+    {
+      "id": "HF-1",
+      "case": "Tecnoglass",
+      "type": "canonical_decision_action_contradiction",
+      "detail": "Canonical Hold/no-current-event coexists with customer-facing send_outreach_now recommendation."
+    },
+    {
+      "id": "HF-2",
+      "case": "Mapei",
+      "type": "wrong_geography_evidence_surface",
+      "detail": "Colombia account dossier retains a United States event URL after the event failed geography/timing validation."
+    }
+  ],
+  "baseline_verdict": "NOT_LAUNCH_READY"
+}

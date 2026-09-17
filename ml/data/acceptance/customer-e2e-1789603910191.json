@@ -1,0 +1,1950 @@
+{
+  "acceptance": "customer-intelligence-e2e-v1",
+  "ran_at": "2026-09-17T00:15:44.826Z",
+  "soak_id": null,
+  "soak_phase": null,
+  "synthetic_context": "Vendemos software de planificación operativa, coordinación de inventario e integración de sistemas a fabricantes, distribuidores y operadores multisede medianos en Colombia, Brasil, Chile, Perú y Argentina con control directo de sus operaciones. Buscamos cuentas con expansión, adquisición u otro cambio operativo material reciente que pueda crear complejidad de planificación o integración. Excluir estadísticas genéricas, consultoras, distress financiero, empresas sin operación directa y negocios solo de consumo.",
+  "confirmed_context_diagnostic": {
+    "organization_types": [
+      "Fabricantes medianos con operaciones propias",
+      "Distribuidores medianos con control directo de operaciones",
+      "Operadores multisede medianos con gestión centralizada"
+    ],
+    "industries": [
+      "Manufactura",
+      "Distribución",
+      "Operaciones multisede"
+    ],
+    "geographies": [
+      "Colombia",
+      "Brasil",
+      "Chile",
+      "Perú",
+      "Argentina"
+    ],
+    "signal_families": [
+      "expansion",
+      "acquisition",
+      "new_facility",
+      "operational_transformation",
+      "new_market"
+    ],
+    "definition_status": "defined"
+  },
+  "run_id": "intel_bf25495fc643a34b3951c6dba9dd498e",
+  "lead_hunter_run_id": "lh_e2e_context_1789603910191_v1_2026-09-17_60df386c-e690-46e1-a455-6cac9bf0fb7c_intel_bf254",
+  "candidate_universe": {
+    "total": 15,
+    "coverage": {
+      "gaps": [
+        {
+          "type": "provider_unavailable",
+          "detail": "Providers unavailable: brave."
+        }
+      ],
+      "eligible": 6,
+      "excluded": 0,
+      "eventFirst": {
+        "queries": 4,
+        "rejected": {
+          "no_subject": 27,
+          "identity_unresolved": 1
+        },
+        "raw_hints": 28,
+        "result_audit": [
+          {
+            "url": "https://rocketreach.co/empresa-profile_b4483856fcf6820b",
+            "type": "other",
+            "title": "[Empresa Information](/empresa-profile_b4483856fcf6820b \"Empresa Information\")",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.empresa.it/",
+            "type": "company_direct",
+            "title": "Empresa",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.cbinsights.com/company/empresa-nacional-de-energia-electrica",
+            "type": "other",
+            "title": "Empresa Nacional de Energia Electrica - Products, Competitors, Financials, Employees, Headquarters Locations",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.linkedin.com/help/linkedin/feature-launcher/urn:li:helpCenterArticle:(543852,LITHOGRAPH)",
+            "type": "social",
+            "title": "LinkedIn Company Page setup",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": [
+              "Keep me signed in"
+            ]
+          },
+          {
+            "url": "https://www.juntadeandalucia.es/organismos/empleoempresaytrabajoautonomo/consejeria/titular.html",
+            "type": "other",
+            "title": "Consejera - Empleo, Empresa y Trabajo Autónomo - Junta de Andalucía",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.empresaflats.com/",
+            "type": "company_direct",
+            "title": "Empresa | Apartments in Brockton, MA",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://rocketreach.co/empresa-profile_b4483856fcf6820b",
+            "type": "other",
+            "title": "[Empresa Information](/empresa-profile_b4483856fcf6820b \"Empresa Information\")",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-82078",
+            "type": "government",
+            "title": "NVD-CVE-2026-82078 - NIST",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://elsevier.digitalcommonsdata.com/datasets/btchxktzyw",
+            "type": "other",
+            "title": "August 2025 data-update for \"Updated science-wide author ...",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.cbinsights.com/company/empresa-nacional-de-energia-electrica",
+            "type": "other",
+            "title": "Empresa Nacional de Energia Electrica - Products, Competitors, Financials, Employees, Headquarters Locations",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.coe.int/en/web/education/european-year-of-digital-citizenship-education-2025",
+            "type": "other",
+            "title": "European Year of Digital Citizenship Education 2025",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.youtube.com/watch?v=898fwnkHoHg",
+            "type": "social",
+            "title": "Gracie Abrams - That's So True (Apple Music Live 2025)",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://ecosistemastartup.com/colombia-tech-2026-2-295-startups-y-us857m-en-inversion",
+            "type": "other",
+            "title": "Colombia Tech 2026: 2.295 startups y US$857M en inversión – El Ecosistema Startup",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.portafolio.co/amp/negocios/empresas/empresas-colombianas-convierten-activos-improductivos-en-liquidez-y-movilizan-mas-de-180-000-millones-en-499233",
+            "type": "news_article",
+            "title": "Empresas colombianas convierten activos improductivos en liquidez y movilizan más de $180.000 millones en 2026 - PORTAFOLIO.CO",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://ecosistemastartup.com/colombia-tech-report-2026-2-295-startups-y-el-reto-de-escalar",
+            "type": "other",
+            "title": "Colombia Tech Report 2026: 2.295 startups y el reto de escalar – El Ecosistema Startup",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.prensalibre.com/economia/vida-empresarial/una-empresa-competitiva-con-expansion-regional",
+            "type": "event_page",
+            "title": "Una empresa competitiva con expansión regional",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.bavaria.co/noticia/desarrollo-para-colombia-canpack-bavaria-invertiran-cop-548000-millones-nueva",
+            "type": "company_direct",
+            "title": "Canpack y Bavaria invertirán COP $548.000 millones en nueva ...",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.youtube.com/watch?v=78VlCzsv4OI",
+            "type": "social",
+            "title": "10 oportunidades sectoriales para seguir en 2026",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.instagram.com/reel/DP9KXzrji2v?hl=en",
+            "type": "social",
+            "title": "Instagram",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.youtube.com/watch?v=SxekeV2gUpg",
+            "type": "social",
+            "title": "Estrategias para abrir mercado en Colombia - YouTube",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.pnc.com/insights/es/small-business/growing-your-business/industries-expected-to-thrive.html",
+            "type": "other",
+            "title": "Industrias que se espera que prosperen en 2026",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.facebook.com/ForbesColombia/posts/cinco-compa%C3%B1%C3%ADas-colombianas-entraron-en-la-lista-de-fast-company-de-las-empresas/1410720837736326",
+            "type": "social",
+            "title": "Cinco compañías colombianas entraron en la lista de Fast Company ...",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.fedsmallbusiness.org/reports/survey/2026/2026-report-on-employer-firms",
+            "type": "other",
+            "title": "2026 Report on Employer Firms: Findings from the 2025 ...",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://rocketreach.co/empresa-profile_b4483856fcf6820b",
+            "type": "other",
+            "title": "[Empresa Information](/empresa-profile_b4483856fcf6820b \"Empresa Information\")",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-82078",
+            "type": "government",
+            "title": "NVD-CVE-2026-82078 - NIST",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-63030",
+            "type": "government",
+            "title": "NVD-CVE-2026-63030 - National Vulnerability Database",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://infrastructurereportcard.org/wp-content/uploads/2025/03/Full-Report-2025-Natl-IRC-WEB.pdf",
+            "type": "company_direct",
+            "title": "A Comprehensive Assessment of America's Infrastructure ...",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://tcc.iacr.org/2026",
+            "type": "company_direct",
+            "title": "TCC 2026",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          }
+        ],
+        "result_types": {
+          "other": 12,
+          "social": 6,
+          "event_page": 1,
+          "government": 3,
+          "news_article": 1,
+          "company_direct": 5
+        },
+        "target_valid": 0,
+        "unique_hints": 1,
+        "result_sample": [
+          {
+            "url": "https://rocketreach.co/empresa-profile_b4483856fcf6820b",
+            "query": "\"expande operaciones\" empresa Colombia (2026 OR 2025) (\"fabricante\" OR \"empresa industrial\")",
+            "title": "[Empresa Information](/empresa-profile_b4483856fcf6820b \"Empresa Information\")",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.empresa.it/",
+            "query": "\"expande operaciones\" empresa Colombia (2026 OR 2025) (\"fabricante\" OR \"empresa industrial\")",
+            "title": "Empresa",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.cbinsights.com/company/empresa-nacional-de-energia-electrica",
+            "query": "\"expande operaciones\" empresa Colombia (2026 OR 2025) (\"fabricante\" OR \"empresa industrial\")",
+            "title": "Empresa Nacional de Energia Electrica - Products, Competitors, Financials, Employees, Headquarters Locations",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://rocketreach.co/empresa-profile_b4483856fcf6820b",
+            "query": "\"expansion regional\" empresa Colombia (2026 OR 2025) (\"fabricante\" OR \"empresa industrial\")",
+            "title": "[Empresa Information](/empresa-profile_b4483856fcf6820b \"Empresa Information\")",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-82078",
+            "query": "\"expansion regional\" empresa Colombia (2026 OR 2025) (\"fabricante\" OR \"empresa industrial\")",
+            "title": "NVD-CVE-2026-82078 - NIST",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://elsevier.digitalcommonsdata.com/datasets/btchxktzyw",
+            "query": "\"expansion regional\" empresa Colombia (2026 OR 2025) (\"fabricante\" OR \"empresa industrial\")",
+            "title": "August 2025 data-update for \"Updated science-wide author ...",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://ecosistemastartup.com/colombia-tech-2026-2-295-startups-y-us857m-en-inversion",
+            "query": "\"expansion regional\" empresa Colombia (2026 OR 2025) (\"fabricante\" OR \"empresa industrial\")",
+            "title": "Colombia Tech 2026: 2.295 startups y US$857M en inversión – El Ecosistema Startup",
+            "provider": "brave",
+            "published_date": "2026-05-22T18:50:02"
+          },
+          {
+            "url": "https://www.portafolio.co/amp/negocios/empresas/empresas-colombianas-convierten-activos-improductivos-en-liquidez-y-movilizan-mas-de-180-000-millones-en-499233",
+            "query": "\"expansion regional\" empresa Colombia (2026 OR 2025) (\"fabricante\" OR \"empresa industrial\")",
+            "title": "Empresas colombianas convierten activos improductivos en liquidez y movilizan más de $180.000 millones en 2026 - PORTAFOLIO.CO",
+            "provider": "brave",
+            "published_date": "2026-07-29T15:23:00"
+          },
+          {
+            "url": "https://ecosistemastartup.com/colombia-tech-report-2026-2-295-startups-y-el-reto-de-escalar",
+            "query": "\"expansion regional\" empresa Colombia (2026 OR 2025) (\"fabricante\" OR \"empresa industrial\")",
+            "title": "Colombia Tech Report 2026: 2.295 startups y el reto de escalar – El Ecosistema Startup",
+            "provider": "brave",
+            "published_date": "2026-05-22T16:50:02"
+          },
+          {
+            "url": "https://www.bavaria.co/noticia/desarrollo-para-colombia-canpack-bavaria-invertiran-cop-548000-millones-nueva",
+            "query": "\"entra a nuevo mercado\" empresa Colombia (2026 OR 2025) (\"fabricante\" OR \"empresa industrial\")",
+            "title": "Canpack y Bavaria invertirán COP $548.000 millones en nueva ...",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.youtube.com/watch?v=78VlCzsv4OI",
+            "query": "\"entra a nuevo mercado\" empresa Colombia (2026 OR 2025) (\"fabricante\" OR \"empresa industrial\")",
+            "title": "10 oportunidades sectoriales para seguir en 2026",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.instagram.com/reel/DP9KXzrji2v?hl=en",
+            "query": "\"entra a nuevo mercado\" empresa Colombia (2026 OR 2025) (\"fabricante\" OR \"empresa industrial\")",
+            "title": "Instagram",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.fedsmallbusiness.org/reports/survey/2026/2026-report-on-employer-firms",
+            "query": "\"adquiere empresa\" empresa Colombia (2026 OR 2025) (\"fabricante\" OR \"empresa industrial\")",
+            "title": "2026 Report on Employer Firms: Findings from the 2025 ...",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://rocketreach.co/empresa-profile_b4483856fcf6820b",
+            "query": "\"adquiere empresa\" empresa Colombia (2026 OR 2025) (\"fabricante\" OR \"empresa industrial\")",
+            "title": "[Empresa Information](/empresa-profile_b4483856fcf6820b \"Empresa Information\")",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-82078",
+            "query": "\"adquiere empresa\" empresa Colombia (2026 OR 2025) (\"fabricante\" OR \"empresa industrial\")",
+            "title": "NVD-CVE-2026-82078 - NIST",
+            "provider": "tavily",
+            "published_date": null
+          }
+        ],
+        "provider_calls": {
+          "brave": 5,
+          "serper": 5,
+          "tavily": 5
+        },
+        "company_mentions": 1,
+        "domains_resolved": 0,
+        "provider_failures": {
+          "serper": "HTTP 400: {\"message\":\"Not enough credits\",\"statusCode\":400}"
+        },
+        "geography_resolved": 0,
+        "subjects_extracted": 1,
+        "canonical_companies": 0
+      },
+      "routeYield": [
+        {
+          "route": "industry_category",
+          "queries": 2,
+          "resultPages": 5,
+          "groundedNames": 1,
+          "acceptedCompanies": 0
+        },
+        {
+          "route": "geo_category",
+          "queries": 1,
+          "resultPages": 5,
+          "groundedNames": 4,
+          "acceptedCompanies": 0
+        },
+        {
+          "route": "source_ecosystem",
+          "queries": 2,
+          "resultPages": 14,
+          "groundedNames": 8,
+          "acceptedCompanies": 1
+        }
+      ],
+      "duplicateRate": 0,
+      "operatingMode": "full_discovery",
+      "likelyEligible": 9,
+      "freshCandidates": 15,
+      "needsValidation": 0,
+      "providersFailed": [
+        "brave"
+      ],
+      "routesAttempted": 3,
+      "candidatesReused": 0,
+      "candidatesUnique": 15,
+      "identityAmbiguous": 0,
+      "stableCorePercent": 0,
+      "providersAvailable": [
+        "brave",
+        "tavily"
+      ],
+      "candidatesDiscovered": 15,
+      "priorCandidatesConsidered": 0
+    },
+    "companies": [
+      {
+        "name": "CEVA Logistics",
+        "domain": "cevalogistics.com",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "source_ecosystem",
+            "origin": "dynamic_enumeration",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:12:05.690Z",
+            "discoveredName": "CEVA Logistics"
+          }
+        ]
+      },
+      {
+        "name": "Nalsani",
+        "status": "likely_eligible",
+        "confidence": "plausible",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:12:05.690Z",
+            "discoveredName": "Nalsani"
+          }
+        ]
+      },
+      {
+        "name": "Alpina",
+        "domain": "alpina.com",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:12:05.690Z",
+            "discoveredName": "Alpina"
+          }
+        ]
+      },
+      {
+        "name": "Colombina",
+        "domain": "colombina.com",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:12:05.690Z",
+            "discoveredName": "Colombina"
+          }
+        ]
+      },
+      {
+        "name": "Cementos Argos",
+        "domain": "argos.co",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:12:05.690Z",
+            "discoveredName": "Cementos Argos"
+          }
+        ]
+      },
+      {
+        "name": "Leonisa",
+        "domain": "leonisa.com",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:12:05.690Z",
+            "discoveredName": "Leonisa"
+          }
+        ]
+      },
+      {
+        "name": "Nutresa",
+        "status": "likely_eligible",
+        "confidence": "plausible",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:12:05.690Z",
+            "discoveredName": "Nutresa"
+          }
+        ]
+      },
+      {
+        "name": "Auteco",
+        "status": "likely_eligible",
+        "confidence": "plausible",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:12:05.690Z",
+            "discoveredName": "Auteco"
+          }
+        ]
+      },
+      {
+        "name": "Crystal",
+        "status": "likely_eligible",
+        "confidence": "plausible",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:12:05.690Z",
+            "discoveredName": "Crystal"
+          }
+        ]
+      },
+      {
+        "name": "Manuelita",
+        "status": "likely_eligible",
+        "confidence": "plausible",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:12:05.690Z",
+            "discoveredName": "Manuelita"
+          }
+        ]
+      },
+      {
+        "name": "Riopaila Castilla",
+        "status": "likely_eligible",
+        "confidence": "plausible",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:12:05.690Z",
+            "discoveredName": "Riopaila Castilla"
+          }
+        ]
+      },
+      {
+        "name": "Incauca",
+        "status": "likely_eligible",
+        "confidence": "plausible",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:12:05.690Z",
+            "discoveredName": "Incauca"
+          }
+        ]
+      },
+      {
+        "name": "Fabricato",
+        "status": "likely_eligible",
+        "confidence": "plausible",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:12:05.690Z",
+            "discoveredName": "Fabricato"
+          }
+        ]
+      },
+      {
+        "name": "Tecnoglass",
+        "domain": "tecnoglass.com",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:12:05.690Z",
+            "discoveredName": "Tecnoglass"
+          }
+        ]
+      },
+      {
+        "name": "Corona",
+        "status": "likely_eligible",
+        "confidence": "plausible",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:12:05.690Z",
+            "discoveredName": "Corona"
+          }
+        ]
+      }
+    ]
+  },
+  "delivered_accounts": [
+    {
+      "id": "lh_e2e_context_1789603910191_v1_2026-09-17_60df386c-e690-46e1-a455-6cac9bf0fb7c_intel_bf254_cand_0",
+      "learning": {
+        "qc_flags": [],
+        "change_tag": "new",
+        "change_type": "new_account",
+        "signal_date": "2026-03-04",
+        "signal_role": "context_only",
+        "source_name": "tecnoglass.com",
+        "source_type": "unknown",
+        "change_label": "New this cycle",
+        "signal_count": 3,
+        "source_count": 3,
+        "source_types": [
+          "unknown"
+        ],
+        "change_reason": "No previous record in Account Memory for this client",
+        "discovered_at": "2026-09-17T00:15:25.699Z",
+        "client_visible": true,
+        "current_action": "validate_source_first",
+        "feedback_hooks": [
+          "useful",
+          "not_useful",
+          "wrong_fit",
+          "contacted",
+          "meeting_booked",
+          "replied",
+          "add_to_vault"
+        ],
+        "source_summary": "3 verified sources (unknown) · context-only · signal date: 2026-03-04",
+        "freshness_label": "Stale signal (> 60 days) · Verify still active",
+        "freshness_score": 0.1,
+        "is_context_only": true,
+        "previous_action": null,
+        "segment_pattern": "manufactura de vidrio",
+        "signal_age_days": 197,
+        "signal_patterns": [
+          "Anuncio público del 4 de marzo de 2026: inversión de US$75 millones en maquinaria para ampliar capacidad en Barranquilla.",
+          "Declaración del COO sobre adquisición de terreno en Florida para montar una nueva planta de manufactura en EE.UU.",
+          "Ingresos récord de US$983,6 millones en 2025 reportados públicamente, con guía de crecimiento para 2026."
+        ],
+        "agent_confidence": 0.6,
+        "evidence_quality": "medium",
+        "evidence_summary": "Medium evidence quality — 3 verified source(s), 3 timing signal(s). Validate before outreach.",
+        "genericness_risk": "medium",
+        "is_timing_signal": false,
+        "reusable_pattern": "HOT/WARM manufactura de vidrio account with signal: Anuncio público del 4 de marzo de 2026: inversión de US$75 millones en maquinari",
+        "source_freshness": "stale",
+        "change_prev_score": null,
+        "improvement_notes": [
+          "Tecnoglass es una empresa madura de 43 años con procesos propios muy establecidos; puede tener ya un ERP robusto (SAP, Oracle) que reduzca el espacio de entrada."
+        ],
+        "region_confidence": "medium",
+        "source_confidence": "high",
+        "change_score_delta": null,
+        "fresh_signal_count": 0,
+        "hallucination_risk": "low",
+        "source_reliability": "unknown",
+        "current_signal_date": "2026-03-04",
+        "evidence_confidence": 0.772,
+        "reason_for_priority": "La cuenta es WARM y no HOT porque, aunque el ICP fit es alto y las señales de expansión son confirmadas públicamente, la planta en Florida no está operativa y no hay evidencia de evaluación tecnológica activa — el signal_strength no supera el umbral de 50 necesario para HOT con suficiente certeza de ventana de compra inmediata.",
+        "account_memory_state": "new_opportunity",
+        "change_prev_category": null,
+        "previous_signal_date": null,
+        "source_layer_applied": true,
+        "limited_region_coverage": false,
+        "current_evidence_quality": "medium",
+        "current_source_freshness": "stale",
+        "offer_market_fit_pattern": "manufactura de vidrio account + \"Anuncio público del 4 de marzo de 2026: inversión de US$75 m\" → ICP fit score 7.5/10",
+        "predicted_learning_value": "high",
+        "account_memory_times_seen": 0,
+        "previous_evidence_quality": null,
+        "previous_source_freshness": null,
+        "evidence_discipline_summary": "verified",
+        "original_recommended_action": "send_outreach_now",
+        "account_memory_last_fit_score": null,
+        "guardrailed_recommended_action": "validate_source_first",
+        "account_memory_last_feedback_signal": null,
+        "recommended_action_guardrail_applied": true
+      },
+      "outreach": {
+        "tone": "consultative",
+        "subject": "Tecnoglass — thought this was relevant",
+        "qc_notes": [],
+        "qc_status": "APPROVED",
+        "email_body": "Tecnoglass came up based on public signals that match what we track for accounts at this commercial stage.\n\nSoftware de planificación operativa, coordinación de inventario e integración de sistemas — applicable to industrial suppliers identifying new distrib.\n\nIndustrial B2B sales depend on catching accounts at the right moment — plant expansions, vendor consolidations, or new distribution channel openings.\n\nCurious whether this matches what you're prioritising right now — worth a quick call?",
+        "followup_1": "Following up in case this got buried. The fit looked strong for Tecnoglass's current stage — Software de planificación operativa, coordinación de inventario e inte. Worth a quick look?",
+        "followup_2": "Final follow-up on this one. If priorities have shifted or this doesn't match what Tecnoglass is working on, just say the word. No pressure.",
+        "call_opener": "Hi, reaching out because Tecnoglass came up as a strong fit for what we do — Software de planificación operativa, coordinación de inventario e inte. Do you have 90 seconds for a one-sentence overview?",
+        "linkedin_dm": "\"Tecnoglass [signal]\" — reference the specific event and ask if it reflects a broader commercial pri. Software de planificación operativa, coordinación de inventario e integración de — relevant for manufactura de vidrio teams at this stage. Happy to share more if it fits.",
+        "recommended_angle": "Signal-led angle: Reference the public signal directly — \"Anuncio público del 4 de marzo de 2026: inversión de US$75 millones en maquinari...\" — as the reason for reaching out now. This is the strongest entry point.",
+        "cta_recommendation": "Lead with the signal in the subject line — it's the strongest differentiator from generic outreach. Keep the CTA a soft 15-minute ask, not a demo request.",
+        "outreach_assumptions": "Tecnoglass has a confirmed public buying signal. This is the highest-quality timing to approach — the signal suggests an active commercial decision window of 30–90 days.",
+        "personalization_trigger": "Noticed that Tecnoglass anuncio público del 4 de marzo de 2026: inversión de US$75 millones en maquinaria para ampliar capacidad en Barranquilla. That kind of signal often correlates with commercial evaluation activity — wanted to reach out while the timing looks relevant.",
+        "what_to_avoid_in_outreach": "Do not claim to know their internal priorities. Do not over-interpret the signal — present it as context, not certainty. Avoid generic language like \"I saw you're growing.\""
+      },
+      "candidate": {
+        "id": "lh_e2e_context_1789603910191_v1_2026-09-17_60df386c-e690-46e1-a455-6cac9bf0fb7c_intel_bf254_cand_0",
+        "domain": "tecnoglass.com",
+        "source": "public_signal",
+        "company": "Tecnoglass",
+        "country": "Colombia",
+        "industry": "manufactura de vidrio",
+        "location": "Colombia",
+        "source_url": "https://www.tecnoglass.com/es/news/nosotros-no-vamos-a-desfallecer-estamos-invirtiendo-us75-millones-en-maquinaria",
+        "raw_context": "[Wed, 04 Mar 2026 00:00:00 GMT] \"Nosotros no vamos a desfallecer, estamos invirtiendo US$75 .... ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2019/12/LogoTecnoglassNegro.svg) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2019/12/Icon_Search_Negro.svg) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](https://www.tecnoglass.com/wp-content/plugins/tecnoglass-menus/img/Idioma-en-negro.svg) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2020/01/mov-menu.svg) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2019/12/LogoTecnoglassNegro.svg) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2020/01/mclose.svg) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2019/12/LogoTecnoglassNegro.svg) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2019/12/Icon_Search_Negro.svg) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](https://www.tecnoglass.com/wp-content/plugins/tecnoglass-menus/img/Idioma-en-negro.svg) ## “Nosotros no vamos a desfallecer, estamos invirtiendo US$75 millones en maquinaria” ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](https://www.tecnoglass.com/wp-content/uploads/2026/03/DSC_2622-copia-scaled.jpg) 4 de marzo de 2026 Christian Daes, COO de Tecnoglass, resaltó la apuesta por la producción en Barranquilla, pero reconoció la pertinencia de complementarse con operaciones en EE.UU. Después de haber reportado ingresos récord por $983,6 millones en 2025, Tecnoglass despliega una inversión de US$75 millones para potenciar su capacidad instalada en la fábrica de Barranquilla y, además, tienen en la mira el montaje de una planta en Florida; así lo reveló Christian Daes, COO de la compañía, que en 2026 apunta a facturar entre US$1.060 millones y US$1.310 millones. **¿A qué obedecen los ingresos récord de la compañía en 2025?** Se debe a muchos años en el mercado, son 43 en este negocio de los vidrios y las ventanas. También se debe a que seguimos haciendo la misma apuesta; una apuesta país, de querer darle un buen nombre al país por fuera y de seguir apostando a que en Colombia se pueden hacer cosas muy buenas. Yo no sé por qué razón no exportamos más: una de las ventajas competitivas que tiene Tecnoglass es lo barato que es exportar hacia Estados Unidos desde Colombia y la buena mano de obra calificada que se consigue en el país. **¿Han pensado en diversificar su portafolio más allá de la ventanería arquitectónica?** Nosotros lo que sí estamos haciendo es diversificando el riesgo: estamos comprando una tierra en Florida y queremos montar una planta allá para crecer en Estados Unidos y tener un pie afuera. Siempre es bueno invertir en varios mercados. Ahora, ¿por qué no cambio los productos y los vendo en otros sitios? Porque no hay un mercado tan grande como el americano. Además, el producto nuestro es de alta calidad y es muy necesario al mercado de EE.UU. **Fuente:** https://www.larepublica.co/empresas/nosotros-no-vamos-a-desfallecer-estamos-invirtiendo-us-75-millones-en-maquinaria-4339979 ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2019/12/logo_technoglass.png) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2020/01/logotecnoglassb.png) SÍGUENOS [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)![](/wp-content/uploads/2019/12/twitter.png)](https://twitter.com/tecnoglasssa) [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)![](/wp-content/uploads/2019/12/instagram.png)](https://www.instagram.com/tecnoglasssa) [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)![](/wp-content/uploads/2019/12/facebook.png)](https://es-la.facebook.com/TecnoglassSA) [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)![](/wp-content/uploads/2019/12/linkedin.png)](https://co.linkedin.com/company/tecnoglass)[![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)![](/wp-content/uploads/2021/03/Youtube.png)](https://www.youtube.com/channel/UCb63uolTnOx4O6GLriva8vQ) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2019/12/twitter.png) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2019/12/instagram.png) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2019/12/facebook.png) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2019/12/linkedin.png) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2021/03/Youtube.png) Suscríbete para recibir nuestras últimas noticias. Acepto el trato dado por Tecnoglass S.A.S. a estos datos, de acuerdo con las [Políticas de Privacidad](/pdf/Tecnoglass-PoliticaTratoDeDatosPersonales.pdf), de las cuales tengo conocimiento, y declaro saber. (source: https://www.tecnoglass.com/es/news/nosotros-no-vamos-a-desfallecer-estamos-invirtiendo-us75-millones-en-maquinaria) | [2026-06-19T19:46:39] Tecnoglass - Company. \"> Tecnoglass - Company [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)](/) * [PRODUCTS](https://www.tecnoglass.com/products/) + [INSULATING GLASS](https://www.tecnoglass.com/products/insulating-glass/) + [LAMINATED GLASS](https://www.tecnoglass.com/products/laminated-glass/) + [MONOLITHIC GLASS](https://www.tecnoglass.com/products/monolithic-glass/) + [LOW-E GLASS](https://www.tecnoglass.com/products/low-e-glass/) + [TECNOBEND](https://www.tecnoglass.com/products/tecnobend/) + [RESOURCES](https://www.tecnoglass.com/resources/) * [PERFORMANCE](https://www.tecnoglass.com/performance/) * [PROJECTS](https://www.tecnoglass.com/projects/) * [INVESTORS](https://investors.tecnoglass.com/overview/default.aspx) * [COMPANY](https://www.tecnoglass.com/company/) * [NEWS](https://www.tecnoglass.com/news/) * [CONTACT](https://www.tecnoglass.com/contact/) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)](https://www.tecnoglass.com/es/compania/) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)](/) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)](/) * [PRODUCTS](#) + [Insulating Glass](https://www.tecnoglass.com/products/insulating-glass/) + [Laminated Glass](https://www.tecnoglass.com/products/laminated-glass/) + [Monolithic Glass](https://www.tecnoglass.com/products/monolithic-glass/) + [Low-E Glass](https://www.tecnoglass.com/products/low-e-glass/) + [TecnoBend](https://www.tecnoglass.com/products/tecnobend/) + [View All](https://www.tecnoglass.com/products/) + [Resources](https://www.tecnoglass.com/resources/) * [PERFORMANCE](https://www.tecnoglass.com/performance/) * [PROJECTS](https://www.tecnoglass.com/projects/) * [INVESTORS](https://investors.tecnoglass.com/overview/default.aspx) * [COMPANY](https://www.tecnoglass.com/company/) * [NEWS](https://www.tecnoglass.com/news/) * [CONTACT](https://www.tecnoglass.com/contact/) [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)](https://w … on, their families, our stockholders and society. STRATEGIC LOCATION We are strategically located in the northern end of South America, along the Colombian Caribbean coast. Our company controls the manufacturing process from beginning to end. Therefore, we can guarantee our customers in Colombia, Panama, USA and other locations around the world the best quality and superb service at fair prices. * [1994](#1994) * [1996](#19",
+        "website_url": "https://tecnoglass.com",
+        "account_identity": {
+          "domain": "tecnoglass.com",
+          "country": "Colombia",
+          "confidence": "verified",
+          "fromUniverse": true,
+          "canonicalName": "Tecnoglass",
+          "organizationType": "manufactura de vidrio"
+        },
+        "confidence_score": 0.8,
+        "discovery_provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine"
+          }
+        ],
+        "discovery_origin_flags": [
+          "ACCOUNT_FIRST"
+        ]
+      },
+      "enrichment": {
+        "why_now": "No current dated material event was validated. The account may fit structurally, but there is no verified reason to act now rather than monitor for a new trigger.",
+        "evidence": [
+          "Entrevista pública con Christian Daes (COO) publicada el 4 de marzo de 2026 en La República y reproducida en tecnoglass.com, confirmando la inversión de US$75M y la nueva planta en Florida.",
+          "Guía de ingresos 2026 entre US$1.060M y US$1.310M declarada públicamente, lo que implica escala operativa que requiere mayor coordinación.",
+          "La compañía declara control vertical del proceso productivo desde Colombia, exportando a EE.UU., Panamá y otros mercados — operación multi-mercado confirmada."
+        ],
+        "candidate": {
+          "id": "lh_e2e_context_1789603910191_v1_2026-09-17_60df386c-e690-46e1-a455-6cac9bf0fb7c_intel_bf254_cand_0",
+          "domain": "tecnoglass.com",
+          "source": "public_signal",
+          "company": "Tecnoglass",
+          "country": "Colombia",
+          "industry": "manufactura de vidrio",
+          "location": "Colombia",
+          "source_url": "https://www.tecnoglass.com/es/news/nosotros-no-vamos-a-desfallecer-estamos-invirtiendo-us75-millones-en-maquinaria",
+          "raw_context": "[Wed, 04 Mar 2026 00:00:00 GMT] \"Nosotros no vamos a desfallecer, estamos invirtiendo US$75 .... ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2019/12/LogoTecnoglassNegro.svg) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2019/12/Icon_Search_Negro.svg) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](https://www.tecnoglass.com/wp-content/plugins/tecnoglass-menus/img/Idioma-en-negro.svg) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2020/01/mov-menu.svg) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2019/12/LogoTecnoglassNegro.svg) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2020/01/mclose.svg) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2019/12/LogoTecnoglassNegro.svg) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2019/12/Icon_Search_Negro.svg) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](https://www.tecnoglass.com/wp-content/plugins/tecnoglass-menus/img/Idioma-en-negro.svg) ## “Nosotros no vamos a desfallecer, estamos invirtiendo US$75 millones en maquinaria” ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](https://www.tecnoglass.com/wp-content/uploads/2026/03/DSC_2622-copia-scaled.jpg) 4 de marzo de 2026 Christian Daes, COO de Tecnoglass, resaltó la apuesta por la producción en Barranquilla, pero reconoció la pertinencia de complementarse con operaciones en EE.UU. Después de haber reportado ingresos récord por $983,6 millones en 2025, Tecnoglass despliega una inversión de US$75 millones para potenciar su capacidad instalada en la fábrica de Barranquilla y, además, tienen en la mira el montaje de una planta en Florida; así lo reveló Christian Daes, COO de la compañía, que en 2026 apunta a facturar entre US$1.060 millones y US$1.310 millones. **¿A qué obedecen los ingresos récord de la compañía en 2025?** Se debe a muchos años en el mercado, son 43 en este negocio de los vidrios y las ventanas. También se debe a que seguimos haciendo la misma apuesta; una apuesta país, de querer darle un buen nombre al país por fuera y de seguir apostando a que en Colombia se pueden hacer cosas muy buenas. Yo no sé por qué razón no exportamos más: una de las ventajas competitivas que tiene Tecnoglass es lo barato que es exportar hacia Estados Unidos desde Colombia y la buena mano de obra calificada que se consigue en el país. **¿Han pensado en diversificar su portafolio más allá de la ventanería arquitectónica?** Nosotros lo que sí estamos haciendo es diversificando el riesgo: estamos comprando una tierra en Florida y queremos montar una planta allá para crecer en Estados Unidos y tener un pie afuera. Siempre es bueno invertir en varios mercados. Ahora, ¿por qué no cambio los productos y los vendo en otros sitios? Porque no hay un mercado tan grande como el americano. Además, el producto nuestro es de alta calidad y es muy necesario al mercado de EE.UU. **Fuente:** https://www.larepublica.co/empresas/nosotros-no-vamos-a-desfallecer-estamos-invirtiendo-us-75-millones-en-maquinaria-4339979 ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2019/12/logo_technoglass.png) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2020/01/logotecnoglassb.png) SÍGUENOS [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)![](/wp-content/uploads/2019/12/twitter.png)](https://twitter.com/tecnoglasssa) [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)![](/wp-content/uploads/2019/12/instagram.png)](https://www.instagram.com/tecnoglasssa) [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)![](/wp-content/uploads/2019/12/facebook.png)](https://es-la.facebook.com/TecnoglassSA) [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)![](/wp-content/uploads/2019/12/linkedin.png)](https://co.linkedin.com/company/tecnoglass)[![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)![](/wp-content/uploads/2021/03/Youtube.png)](https://www.youtube.com/channel/UCb63uolTnOx4O6GLriva8vQ) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2019/12/twitter.png) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2019/12/instagram.png) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2019/12/facebook.png) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2019/12/linkedin.png) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2021/03/Youtube.png) Suscríbete para recibir nuestras últimas noticias. Acepto el trato dado por Tecnoglass S.A.S. a estos datos, de acuerdo con las [Políticas de Privacidad](/pdf/Tecnoglass-PoliticaTratoDeDatosPersonales.pdf), de las cuales tengo conocimiento, y declaro saber. (source: https://www.tecnoglass.com/es/news/nosotros-no-vamos-a-desfallecer-estamos-invirtiendo-us75-millones-en-maquinaria) | [2026-06-19T19:46:39] Tecnoglass - Company. \"> Tecnoglass - Company [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)](/) * [PRODUCTS](https://www.tecnoglass.com/products/) + [INSULATING GLASS](https://www.tecnoglass.com/products/insulating-glass/) + [LAMINATED GLASS](https://www.tecnoglass.com/products/laminated-glass/) + [MONOLITHIC GLASS](https://www.tecnoglass.com/products/monolithic-glass/) + [LOW-E GLASS](https://www.tecnoglass.com/products/low-e-glass/) + [TECNOBEND](https://www.tecnoglass.com/products/tecnobend/) + [RESOURCES](https://www.tecnoglass.com/resources/) * [PERFORMANCE](https://www.tecnoglass.com/performance/) * [PROJECTS](https://www.tecnoglass.com/projects/) * [INVESTORS](https://investors.tecnoglass.com/overview/default.aspx) * [COMPANY](https://www.tecnoglass.com/company/) * [NEWS](https://www.tecnoglass.com/news/) * [CONTACT](https://www.tecnoglass.com/contact/) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)](https://www.tecnoglass.com/es/compania/) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)](/) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)](/) * [PRODUCTS](#) + [Insulating Glass](https://www.tecnoglass.com/products/insulating-glass/) + [Laminated Glass](https://www.tecnoglass.com/products/laminated-glass/) + [Monolithic Glass](https://www.tecnoglass.com/products/monolithic-glass/) + [Low-E Glass](https://www.tecnoglass.com/products/low-e-glass/) + [TecnoBend](https://www.tecnoglass.com/products/tecnobend/) + [View All](https://www.tecnoglass.com/products/) + [Resources](https://www.tecnoglass.com/resources/) * [PERFORMANCE](https://www.tecnoglass.com/performance/) * [PROJECTS](https://www.tecnoglass.com/projects/) * [INVESTORS](https://investors.tecnoglass.com/overview/default.aspx) * [COMPANY](https://www.tecnoglass.com/company/) * [NEWS](https://www.tecnoglass.com/news/) * [CONTACT](https://www.tecnoglass.com/contact/) [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)](https://w … on, their families, our stockholders and society. STRATEGIC LOCATION We are strategically located in the northern end of South America, along the Colombian Caribbean coast. Our company controls the manufacturing process from beginning to end. Therefore, we can guarantee our customers in Colombia, Panama, USA and other locations around the world the best quality and superb service at fair prices. * [1994](#1994) * [1996](#19",
+          "website_url": "https://tecnoglass.com",
+          "account_identity": {
+            "domain": "tecnoglass.com",
+            "country": "Colombia",
+            "confidence": "verified",
+            "fromUniverse": true,
+            "canonicalName": "Tecnoglass",
+            "organizationType": "manufactura de vidrio"
+          },
+          "confidence_score": 0.8,
+          "discovery_provenance": [
+            {
+              "route": "vertical_seed",
+              "origin": "vertical_seed",
+              "provider": "engine"
+            }
+          ],
+          "discovery_origin_flags": [
+            "ACCOUNT_FIRST"
+          ]
+        },
+        "missing_data": [
+          "Stack tecnológico actual: no se conoce qué ERP, WMS o sistemas de planificación utiliza Tecnoglass.",
+          "Estado real del proyecto de planta en Florida: fecha de inicio, estructura operativa planificada y cronograma.",
+          "Existencia de un área o rol de transformación digital / IT que pueda ser interlocutor de la oferta.",
+          "Si ya existe un proceso de evaluación de software operativo en curso o planificado."
+        ],
+        "buying_window": "near_term",
+        "inferred_pain": "La expansión a una segunda planta en Florida, sumada a la inversión de US$75M en nueva maquinaria, aparenta generar una brecha de coordinación operativa entre sitios que puede incrementar el riesgo de desincronización de inventarios y tiempos de entrega hacia el mercado de EE.UU.",
+        "account_thesis": "Tecnoglass está ejecutando simultáneamente su mayor ciclo de inversión en capacidad productiva y su primer paso hacia operaciones en EE.UU., lo que aparenta crear una ventana real para sistemas de coordinación operativa multi-sitio. La hipótesis comercial es sólida en lógica, aunque la confirmación de una necesidad activa de compra requiere validación directa.",
+        "role_relevance": "La expansión simultánea de capacidad instalada en Barranquilla y la apertura de una planta en Florida crean una necesidad directa de software que coordine operaciones multi-sitio, inventario y flujos de integración entre dos geografías. El salto de escala hacia más de US$1.000 millones en ingresos sugiere que la complejidad operativa supera lo que sistemas actuales pueden manejar sin modernización.",
+        "timing_signals": [
+          "Anuncio público del 4 de marzo de 2026: inversión de US$75 millones en maquinaria para ampliar capacidad en Barranquilla.",
+          "Declaración del COO sobre adquisición de terreno en Florida para montar una nueva planta de manufactura en EE.UU.",
+          "Ingresos récord de US$983,6 millones en 2025 reportados públicamente, con guía de crecimiento para 2026."
+        ],
+        "company_summary": "Tecnoglass es un fabricante colombiano de vidrio arquitectónico y ventanería con 43 años de trayectoria, sede principal en Barranquilla y orientación predominantemente exportadora hacia el mercado estadounidense. Reportó ingresos récord de US$983,6 millones en 2025 y proyecta facturar entre US$1.060 y US$1.310 millones en 2026. Opera como empresa pública listada en bolsa con control vertical total del proceso productivo.",
+        "pain_hypothesis": "Si Tecnoglass opera la planta de Florida con sistemas desconectados de Barranquilla, experimentará desincronización de inventario, errores en planificación de producción y pérdida de visibilidad en tiempo real — problemas que el software de planificación operativa e integración de sistemas está diseñado para resolver.",
+        "account_research": {
+          "domain": "tecnoglass.com",
+          "account": "Tecnoglass",
+          "version": "account-deep-research-v1",
+          "query_audit": [
+            {
+              "stage": "identity",
+              "results": 5,
+              "accepted": 3,
+              "provider": "brave",
+              "query_id": "rq_1kcsift"
+            },
+            {
+              "stage": "current_activity",
+              "results": 0,
+              "accepted": 0,
+              "provider": "brave",
+              "query_id": "rq_18yfrel"
+            },
+            {
+              "stage": "current_activity",
+              "results": 5,
+              "accepted": 5,
+              "provider": "tavily",
+              "query_id": "rq_18yfrel"
+            },
+            {
+              "stage": "current_activity",
+              "results": 3,
+              "accepted": 3,
+              "provider": "brave",
+              "query_id": "rq_1gbfjjp"
+            },
+            {
+              "stage": "current_activity",
+              "results": 0,
+              "accepted": 0,
+              "provider": "tavily",
+              "query_id": "rq_1gbfjjp"
+            },
+            {
+              "stage": "counterevidence",
+              "results": 5,
+              "accepted": 5,
+              "provider": "brave",
+              "query_id": "rq_1viwftx"
+            },
+            {
+              "stage": "counterevidence",
+              "results": 0,
+              "accepted": 0,
+              "provider": "tavily",
+              "query_id": "rq_1viwftx"
+            }
+          ],
+          "provider_ops": [
+            {
+              "ok": true,
+              "stage": "identity",
+              "results": 5,
+              "timeout": false,
+              "provider": "brave",
+              "operation": "search",
+              "duration_ms": 817
+            },
+            {
+              "ok": true,
+              "stage": "current_activity",
+              "results": 0,
+              "timeout": false,
+              "provider": "brave",
+              "operation": "search",
+              "duration_ms": 337
+            },
+            {
+              "ok": true,
+              "stage": "current_activity",
+              "results": 5,
+              "timeout": false,
+              "provider": "tavily",
+              "operation": "search",
+              "duration_ms": 5972
+            },
+            {
+              "ok": true,
+              "stage": "current_activity",
+              "results": 1,
+              "timeout": false,
+              "provider": "full_text",
+              "operation": "full_text",
+              "duration_ms": 1776
+            },
+            {
+              "ok": true,
+              "stage": "current_activity",
+              "results": 1,
+              "timeout": false,
+              "provider": "anthropic",
+              "operation": "llm",
+              "duration_ms": 11241
+            },
+            {
+              "ok": true,
+              "stage": "current_activity",
+              "results": 3,
+              "timeout": false,
+              "provider": "brave",
+              "operation": "search",
+              "duration_ms": 715
+            },
+            {
+              "ok": true,
+              "stage": "current_activity",
+              "results": 1,
+              "timeout": false,
+              "provider": "full_text",
+              "operation": "full_text",
+              "duration_ms": 330
+            },
+            {
+              "ok": true,
+              "stage": "current_activity",
+              "results": 0,
+              "timeout": false,
+              "provider": "anthropic",
+              "operation": "llm",
+              "duration_ms": 8183
+            },
+            {
+              "ok": true,
+              "stage": "current_activity",
+              "results": 1,
+              "timeout": false,
+              "provider": "full_text",
+              "operation": "full_text",
+              "duration_ms": 307
+            },
+            {
+              "ok": true,
+              "stage": "current_activity",
+              "results": 0,
+              "timeout": false,
+              "provider": "tavily",
+              "operation": "search",
+              "duration_ms": 7571
+            },
+            {
+              "ok": true,
+              "stage": "counterevidence",
+              "results": 5,
+              "timeout": false,
+              "provider": "brave",
+              "operation": "search",
+              "duration_ms": 674
+            },
+            {
+              "ok": true,
+              "stage": "counterevidence",
+              "results": 0,
+              "timeout": false,
+              "provider": "tavily",
+              "operation": "search",
+              "duration_ms": 8996
+            }
+          ],
+          "results_seen": 18,
+          "dated_evidence": 15,
+          "provider_calls": 7,
+          "pages_extracted": 3,
+          "planned_queries": 4,
+          "claims_recovered": 3,
+          "executed_queries": 4,
+          "extraction_audit": [
+            {
+              "url": "https://www.tecnoglass.com/es/news/nosotros-no-vamos-a-desfallecer-estamos-invirtiendo-us75-millones-en-maquinaria",
+              "stage": "current_activity",
+              "date_phrase": "4 de marzo de 2026",
+              "materiality": "high",
+              "signal_kind": "none",
+              "accepted_events": 0,
+              "evidence_excerpt": "en maquinaria” ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](https://www.tecnoglass.com/wp-content/uploads/2026/03/DSC_2622-copia-scaled.jpg) 4 de marzo de 2026 Christian Daes, COO de Tecnoglass, resaltó la apuesta por la producción en Barranquilla, pero reconoció la pertinencia de complementarse con operaciones en EE.UU. Después de haber reportado ingresos récord por $983,6 millones en 2025, Tecnoglass despliega una inversión de US$75 millones para potenciar su capacidad instalada en la fábrica de Barranquilla y, además, tienen en la mira el montaje de una planta en Florida; así lo reveló Christian Daes, COO de la compañía, que en 2026 apunta a facturar entre US$1.060 millones y US$1.310 millones. **¿A qué obedecen los ingresos récord de la compañía en 2025?** Se debe a muchos años en el mercado, son 43 en este negocio de los vidrios y las ventanas. También se debe a que seguimos haciendo la misma apuesta; una apuesta país, de querer darle un buen nombre al país por fuera y de seguir apostando a que en Colombia se pueden hacer cosas muy buenas. Yo no sé por qué razón no exportamos más: una de las ventajas competitivas que tiene Tecnoglass es l"
+            },
+            {
+              "url": "https://www.tecnoglass.com/company/",
+              "stage": "current_activity",
+              "date_phrase": null,
+              "materiality": "high",
+              "signal_kind": "corporate_event",
+              "accepted_events": 0,
+              "evidence_excerpt": "\"> Tecnoglass - Company [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)](/) * [PRODUCTS](https://www.tecnoglass.com/products/) + [INSULATING GLASS](https://www.tecnoglass.com/products/insulating-glass/) + [LAMINATED GLASS](https://www.tecnoglass.com/products/laminated-glass/) + [MONOLITHIC GLASS](https://www.tecnoglass.com/products/monolithic-glass/) + [LOW-E GLASS](https://www.tecnoglass.com/products/low-e-glass/) + [TECNOBEND](https://www.tecnoglass.com/products/tecnobend/) + [RESOURCES](https://www.tecnoglass.com/resources/) * [PERFORMANCE](https://www.tecnoglass.com/performance/) * [PROJECTS](https://www.tecnoglass.com/projects/) * [INVESTORS](https://investors.tecnoglass.com/overview/default.aspx) * [COMPANY](https://www.tecnoglass.com/company/) * [NEWS](https://www.tecnoglass.com/news/) * [CONTACT](https://www.tecnoglass.com/contact/) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)](https://www.tecnoglass.com/es/compania/) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) [![](data:image/gif;base64,R0lG"
+            },
+            {
+              "url": "https://www.tecnoglass.com/news/tecnoglass-posts-record-q2-results-detailing-us-expansion-strategy-and-financial-performance/",
+              "stage": "current_activity",
+              "date_phrase": "December 15, 2025",
+              "materiality": "high",
+              "signal_kind": "editorial_content",
+              "accepted_events": 0,
+              "evidence_excerpt": "EALAAAAAABAAEAAAICTAEAOw==)](https://www.tecnoglass.com/news/tecnoglass-posts-record-q2-results-detailing-us-expansion-strategy-and-financial-performance/) [View all news](/news/) December 15, 2025 ## Tecnoglass Posts Record Q2 Results, Detailing US Expansion Strategy and Financial Performance ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) August 8th, 2025 [Tecnoglass, Inc.](https://www.tecnoglass.com/) (NYSE: TGLS), a prominent manufacturer of architectural glass and aluminum products, has reported record financial results for the second quarter of 2025. The company announced revenues of $255.5 million, a 16.3% increase year-over-year, driven by organic growth in its single-family and multifamily residential business segments. The results come as the company navigates a complex economic environment and continues its strategic expansion in the United States, including the recent acquisition of [Continental Glass Systems](https://www.cgsfl.com/). ### Detailed Financial Performance Analysis Tecnoglass’ second-quarter financial statements indicate a company in a strong financial position. A closer examination of the results provides insights for the in"
+            }
+          ],
+          "validated_events": [],
+          "early_stop_reason": "no_material_event",
+          "evidence_accepted": 15,
+          "evidence_rejected": 3,
+          "provider_failures": 0,
+          "account_elapsed_ms": 91718,
+          "event_hints_fetched": 0,
+          "extraction_failures": 0,
+          "independent_domains": 2,
+          "event_hints_received": 0,
+          "corroborating_domains": 0,
+          "corroborating_sources": [],
+          "event_hints_validated": 0,
+          "corroboration_attempted": false,
+          "counterevidence_checked": true,
+          "event_geography_rejected": 0,
+          "structured_extraction_calls": 2,
+          "counterevidence_material_found": false
+        },
+        "risks_weaknesses": [
+          "Tecnoglass es una empresa madura de 43 años con procesos propios muy establecidos; puede tener ya un ERP robusto (SAP, Oracle) que reduzca el espacio de entrada.",
+          "La planta en Florida está en etapa de planificación/adquisición de terreno, no operativa aún — el ciclo de compra de software puede estar 12-18 meses adelante.",
+          "No hay evidencia de iniciativas digitales públicas ni de roles tecnológicos visibles, lo que dificulta identificar el comprador interno.",
+          "Como empresa listada en bolsa, los ciclos de aprobación de gasto tecnológico pueden ser lentos y muy formales."
+        ],
+        "segment_fit_note": "Tecnoglass es un fabricante de manufactura compleja con exportación masiva y expansión multi-sitio en curso — encaje directo con el segmento objetivo de software de planificación operativa e integración de sistemas.",
+        "opportunity_risks": [
+          "Empresa con 43 años de operación puede tener sistemas propietarios o ERP de clase mundial ya implementados que cierren el espacio de entrada.",
+          "El interlocutor de compra en tecnología no está identificado públicamente — riesgo de no encontrar al decisor correcto.",
+          "La nueva planta en Florida puede estar aún a 1-2 años de operación, postergando la urgencia de integración de sistemas.",
+          "Como empresa pública en NASDAQ, el ciclo de aprobación presupuestaria para nuevas plataformas puede ser largo y altamente competido."
+        ],
+        "next_best_question": "¿Qué sistemas de planificación de producción e integración de inventario tiene Tecnoglass actualmente, y cómo planean extenderlos o reemplazarlos para soportar las operaciones de la nueva planta en Florida?",
+        "recommended_action": "send_outreach_now",
+        "evidence_discipline": [
+          {
+            "date": "2026-03-04",
+            "type": "verified_public_signal",
+            "claim": "Tecnoglass reportó ingresos récord de US$983,6 millones en 2025"
+          },
+          {
+            "date": "2026-03-04",
+            "type": "verified_public_signal",
+            "claim": "Inversión de US$75 millones en maquinaria para ampliar capacidad en Barranquilla anunciada por el COO"
+          },
+          {
+            "date": "2026-03-04",
+            "type": "verified_public_signal",
+            "claim": "Adquisición de terreno en Florida para nueva planta de manufactura en EE.UU. confirmada públicamente"
+          },
+          {
+            "date": null,
+            "type": "inferred_from_context",
+            "claim": "La expansión multi-sitio generará necesidades de coordinación de inventario y planificación operativa entre dos geografías"
+          },
+          {
+            "date": null,
+            "type": "weak_inference",
+            "claim": "Los sistemas tecnológicos actuales de Tecnoglass son insuficientes para la nueva escala operativa"
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Existencia de un proceso activo de evaluación o licitación de software de planificación operativa"
+          }
+        ],
+        "research_confidence": 0.62,
+        "buying_window_reason": "No buying window is inferred without a validated current material event.",
+        "signal_interpretation": "Una inversión de US$75M en maquinaria nueva más una segunda planta en otro país no es solo crecimiento — es un cambio estructural en la complejidad operativa que típicamente fuerza una revisión de los sistemas de planificación e integración existentes. Esto convierte el anuncio de expansión en un detonante comercial válido para la oferta.",
+        "evidence_quality_grade": "moderate_public",
+        "recommended_action_reason": "El anuncio de expansión es reciente y público, creando un argumento de outreach natural y relevante antes de que la empresa ya haya tomado decisiones tecnológicas para la nueva planta."
+      },
+      "qualification": {
+        "rank": 1,
+        "category": "WARM",
+        "fit_score": 7.5,
+        "enrichment": {
+          "why_now": "No current dated material event was validated. The account may fit structurally, but there is no verified reason to act now rather than monitor for a new trigger.",
+          "evidence": [
+            "Entrevista pública con Christian Daes (COO) publicada el 4 de marzo de 2026 en La República y reproducida en tecnoglass.com, confirmando la inversión de US$75M y la nueva planta en Florida.",
+            "Guía de ingresos 2026 entre US$1.060M y US$1.310M declarada públicamente, lo que implica escala operativa que requiere mayor coordinación.",
+            "La compañía declara control vertical del proceso productivo desde Colombia, exportando a EE.UU., Panamá y otros mercados — operación multi-mercado confirmada."
+          ],
+          "candidate": {
+            "id": "lh_e2e_context_1789603910191_v1_2026-09-17_60df386c-e690-46e1-a455-6cac9bf0fb7c_intel_bf254_cand_0",
+            "domain": "tecnoglass.com",
+            "source": "public_signal",
+            "company": "Tecnoglass",
+            "country": "Colombia",
+            "industry": "manufactura de vidrio",
+            "location": "Colombia",
+            "source_url": "https://www.tecnoglass.com/es/news/nosotros-no-vamos-a-desfallecer-estamos-invirtiendo-us75-millones-en-maquinaria",
+            "raw_context": "[Wed, 04 Mar 2026 00:00:00 GMT] \"Nosotros no vamos a desfallecer, estamos invirtiendo US$75 .... ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2019/12/LogoTecnoglassNegro.svg) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2019/12/Icon_Search_Negro.svg) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](https://www.tecnoglass.com/wp-content/plugins/tecnoglass-menus/img/Idioma-en-negro.svg) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2020/01/mov-menu.svg) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2019/12/LogoTecnoglassNegro.svg) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2020/01/mclose.svg) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2019/12/LogoTecnoglassNegro.svg) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2019/12/Icon_Search_Negro.svg) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](https://www.tecnoglass.com/wp-content/plugins/tecnoglass-menus/img/Idioma-en-negro.svg) ## “Nosotros no vamos a desfallecer, estamos invirtiendo US$75 millones en maquinaria” ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](https://www.tecnoglass.com/wp-content/uploads/2026/03/DSC_2622-copia-scaled.jpg) 4 de marzo de 2026 Christian Daes, COO de Tecnoglass, resaltó la apuesta por la producción en Barranquilla, pero reconoció la pertinencia de complementarse con operaciones en EE.UU. Después de haber reportado ingresos récord por $983,6 millones en 2025, Tecnoglass despliega una inversión de US$75 millones para potenciar su capacidad instalada en la fábrica de Barranquilla y, además, tienen en la mira el montaje de una planta en Florida; así lo reveló Christian Daes, COO de la compañía, que en 2026 apunta a facturar entre US$1.060 millones y US$1.310 millones. **¿A qué obedecen los ingresos récord de la compañía en 2025?** Se debe a muchos años en el mercado, son 43 en este negocio de los vidrios y las ventanas. También se debe a que seguimos haciendo la misma apuesta; una apuesta país, de querer darle un buen nombre al país por fuera y de seguir apostando a que en Colombia se pueden hacer cosas muy buenas. Yo no sé por qué razón no exportamos más: una de las ventajas competitivas que tiene Tecnoglass es lo barato que es exportar hacia Estados Unidos desde Colombia y la buena mano de obra calificada que se consigue en el país. **¿Han pensado en diversificar su portafolio más allá de la ventanería arquitectónica?** Nosotros lo que sí estamos haciendo es diversificando el riesgo: estamos comprando una tierra en Florida y queremos montar una planta allá para crecer en Estados Unidos y tener un pie afuera. Siempre es bueno invertir en varios mercados. Ahora, ¿por qué no cambio los productos y los vendo en otros sitios? Porque no hay un mercado tan grande como el americano. Además, el producto nuestro es de alta calidad y es muy necesario al mercado de EE.UU. **Fuente:** https://www.larepublica.co/empresas/nosotros-no-vamos-a-desfallecer-estamos-invirtiendo-us-75-millones-en-maquinaria-4339979 ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2019/12/logo_technoglass.png) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2020/01/logotecnoglassb.png) SÍGUENOS [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)![](/wp-content/uploads/2019/12/twitter.png)](https://twitter.com/tecnoglasssa) [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)![](/wp-content/uploads/2019/12/instagram.png)](https://www.instagram.com/tecnoglasssa) [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)![](/wp-content/uploads/2019/12/facebook.png)](https://es-la.facebook.com/TecnoglassSA) [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)![](/wp-content/uploads/2019/12/linkedin.png)](https://co.linkedin.com/company/tecnoglass)[![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)![](/wp-content/uploads/2021/03/Youtube.png)](https://www.youtube.com/channel/UCb63uolTnOx4O6GLriva8vQ) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2019/12/twitter.png) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2019/12/instagram.png) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2019/12/facebook.png) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2019/12/linkedin.png) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](/wp-content/uploads/2021/03/Youtube.png) Suscríbete para recibir nuestras últimas noticias. Acepto el trato dado por Tecnoglass S.A.S. a estos datos, de acuerdo con las [Políticas de Privacidad](/pdf/Tecnoglass-PoliticaTratoDeDatosPersonales.pdf), de las cuales tengo conocimiento, y declaro saber. (source: https://www.tecnoglass.com/es/news/nosotros-no-vamos-a-desfallecer-estamos-invirtiendo-us75-millones-en-maquinaria) | [2026-06-19T19:46:39] Tecnoglass - Company. \"> Tecnoglass - Company [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)](/) * [PRODUCTS](https://www.tecnoglass.com/products/) + [INSULATING GLASS](https://www.tecnoglass.com/products/insulating-glass/) + [LAMINATED GLASS](https://www.tecnoglass.com/products/laminated-glass/) + [MONOLITHIC GLASS](https://www.tecnoglass.com/products/monolithic-glass/) + [LOW-E GLASS](https://www.tecnoglass.com/products/low-e-glass/) + [TECNOBEND](https://www.tecnoglass.com/products/tecnobend/) + [RESOURCES](https://www.tecnoglass.com/resources/) * [PERFORMANCE](https://www.tecnoglass.com/performance/) * [PROJECTS](https://www.tecnoglass.com/projects/) * [INVESTORS](https://investors.tecnoglass.com/overview/default.aspx) * [COMPANY](https://www.tecnoglass.com/company/) * [NEWS](https://www.tecnoglass.com/news/) * [CONTACT](https://www.tecnoglass.com/contact/) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)](https://www.tecnoglass.com/es/compania/) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)](/) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)](/) * [PRODUCTS](#) + [Insulating Glass](https://www.tecnoglass.com/products/insulating-glass/) + [Laminated Glass](https://www.tecnoglass.com/products/laminated-glass/) + [Monolithic Glass](https://www.tecnoglass.com/products/monolithic-glass/) + [Low-E Glass](https://www.tecnoglass.com/products/low-e-glass/) + [TecnoBend](https://www.tecnoglass.com/products/tecnobend/) + [View All](https://www.tecnoglass.com/products/) + [Resources](https://www.tecnoglass.com/resources/) * [PERFORMANCE](https://www.tecnoglass.com/performance/) * [PROJECTS](https://www.tecnoglass.com/projects/) * [INVESTORS](https://investors.tecnoglass.com/overview/default.aspx) * [COMPANY](https://www.tecnoglass.com/company/) * [NEWS](https://www.tecnoglass.com/news/) * [CONTACT](https://www.tecnoglass.com/contact/) [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)](https://w … on, their families, our stockholders and society. STRATEGIC LOCATION We are strategically located in the northern end of South America, along the Colombian Caribbean coast. Our company controls the manufacturing process from beginning to end. Therefore, we can guarantee our customers in Colombia, Panama, USA and other locations around the world the best quality and superb service at fair prices. * [1994](#1994) * [1996](#19",
+            "website_url": "https://tecnoglass.com",
+            "account_identity": {
+              "domain": "tecnoglass.com",
+              "country": "Colombia",
+              "confidence": "verified",
+              "fromUniverse": true,
+              "canonicalName": "Tecnoglass",
+              "organizationType": "manufactura de vidrio"
+            },
+            "confidence_score": 0.8,
+            "discovery_provenance": [
+              {
+                "route": "vertical_seed",
+                "origin": "vertical_seed",
+                "provider": "engine"
+              }
+            ],
+            "discovery_origin_flags": [
+              "ACCOUNT_FIRST"
+            ]
+          },
+          "missing_data": [
+            "Stack tecnológico actual: no se conoce qué ERP, WMS o sistemas de planificación utiliza Tecnoglass.",
+            "Estado real del proyecto de planta en Florida: fecha de inicio, estructura operativa planificada y cronograma.",
+            "Existencia de un área o rol de transformación digital / IT que pueda ser interlocutor de la oferta.",
+            "Si ya existe un proceso de evaluación de software operativo en curso o planificado."
+          ],
+          "buying_window": "near_term",
+          "inferred_pain": "La expansión a una segunda planta en Florida, sumada a la inversión de US$75M en nueva maquinaria, aparenta generar una brecha de coordinación operativa entre sitios que puede incrementar el riesgo de desincronización de inventarios y tiempos de entrega hacia el mercado de EE.UU.",
+          "account_thesis": "Tecnoglass está ejecutando simultáneamente su mayor ciclo de inversión en capacidad productiva y su primer paso hacia operaciones en EE.UU., lo que aparenta crear una ventana real para sistemas de coordinación operativa multi-sitio. La hipótesis comercial es sólida en lógica, aunque la confirmación de una necesidad activa de compra requiere validación directa.",
+          "role_relevance": "La expansión simultánea de capacidad instalada en Barranquilla y la apertura de una planta en Florida crean una necesidad directa de software que coordine operaciones multi-sitio, inventario y flujos de integración entre dos geografías. El salto de escala hacia más de US$1.000 millones en ingresos sugiere que la complejidad operativa supera lo que sistemas actuales pueden manejar sin modernización.",
+          "timing_signals": [
+            "Anuncio público del 4 de marzo de 2026: inversión de US$75 millones en maquinaria para ampliar capacidad en Barranquilla.",
+            "Declaración del COO sobre adquisición de terreno en Florida para montar una nueva planta de manufactura en EE.UU.",
+            "Ingresos récord de US$983,6 millones en 2025 reportados públicamente, con guía de crecimiento para 2026."
+          ],
+          "company_summary": "Tecnoglass es un fabricante colombiano de vidrio arquitectónico y ventanería con 43 años de trayectoria, sede principal en Barranquilla y orientación predominantemente exportadora hacia el mercado estadounidense. Reportó ingresos récord de US$983,6 millones en 2025 y proyecta facturar entre US$1.060 y US$1.310 millones en 2026. Opera como empresa pública listada en bolsa con control vertical total del proceso productivo.",
+          "pain_hypothesis": "Si Tecnoglass opera la planta de Florida con sistemas desconectados de Barranquilla, experimentará desincronización de inventario, errores en planificación de producción y pérdida de visibilidad en tiempo real — problemas que el software de planificación operativa e integración de sistemas está diseñado para resolver.",
+          "account_research": {
+            "domain": "tecnoglass.com",
+            "account": "Tecnoglass",
+            "version": "account-deep-research-v1",
+            "query_audit": [
+              {
+                "stage": "identity",
+                "results": 5,
+                "accepted": 3,
+                "provider": "brave",
+                "query_id": "rq_1kcsift"
+              },
+              {
+                "stage": "current_activity",
+                "results": 0,
+                "accepted": 0,
+                "provider": "brave",
+                "query_id": "rq_18yfrel"
+              },
+              {
+                "stage": "current_activity",
+                "results": 5,
+                "accepted": 5,
+                "provider": "tavily",
+                "query_id": "rq_18yfrel"
+              },
+              {
+                "stage": "current_activity",
+                "results": 3,
+                "accepted": 3,
+                "provider": "brave",
+                "query_id": "rq_1gbfjjp"
+              },
+              {
+                "stage": "current_activity",
+                "results": 0,
+                "accepted": 0,
+                "provider": "tavily",
+                "query_id": "rq_1gbfjjp"
+              },
+              {
+                "stage": "counterevidence",
+                "results": 5,
+                "accepted": 5,
+                "provider": "brave",
+                "query_id": "rq_1viwftx"
+              },
+              {
+                "stage": "counterevidence",
+                "results": 0,
+                "accepted": 0,
+                "provider": "tavily",
+                "query_id": "rq_1viwftx"
+              }
+            ],
+            "provider_ops": [
+              {
+                "ok": true,
+                "stage": "identity",
+                "results": 5,
+                "timeout": false,
+                "provider": "brave",
+                "operation": "search",
+                "duration_ms": 817
+              },
+              {
+                "ok": true,
+                "stage": "current_activity",
+                "results": 0,
+                "timeout": false,
+                "provider": "brave",
+                "operation": "search",
+                "duration_ms": 337
+              },
+              {
+                "ok": true,
+                "stage": "current_activity",
+                "results": 5,
+                "timeout": false,
+                "provider": "tavily",
+                "operation": "search",
+                "duration_ms": 5972
+              },
+              {
+                "ok": true,
+                "stage": "current_activity",
+                "results": 1,
+                "timeout": false,
+                "provider": "full_text",
+                "operation": "full_text",
+                "duration_ms": 1776
+              },
+              {
+                "ok": true,
+                "stage": "current_activity",
+                "results": 1,
+                "timeout": false,
+                "provider": "anthropic",
+                "operation": "llm",
+                "duration_ms": 11241
+              },
+              {
+                "ok": true,
+                "stage": "current_activity",
+                "results": 3,
+                "timeout": false,
+                "provider": "brave",
+                "operation": "search",
+                "duration_ms": 715
+              },
+              {
+                "ok": true,
+                "stage": "current_activity",
+                "results": 1,
+                "timeout": false,
+                "provider": "full_text",
+                "operation": "full_text",
+                "duration_ms": 330
+              },
+              {
+                "ok": true,
+                "stage": "current_activity",
+                "results": 0,
+                "timeout": false,
+                "provider": "anthropic",
+                "operation": "llm",
+                "duration_ms": 8183
+              },
+              {
+                "ok": true,
+                "stage": "current_activity",
+                "results": 1,
+                "timeout": false,
+                "provider": "full_text",
+                "operation": "full_text",
+                "duration_ms": 307
+              },
+              {
+                "ok": true,
+                "stage": "current_activity",
+                "results": 0,
+                "timeout": false,
+                "provider": "tavily",
+                "operation": "search",
+                "duration_ms": 7571
+              },
+              {
+                "ok": true,
+                "stage": "counterevidence",
+                "results": 5,
+                "timeout": false,
+                "provider": "brave",
+                "operation": "search",
+                "duration_ms": 674
+              },
+              {
+                "ok": true,
+                "stage": "counterevidence",
+                "results": 0,
+                "timeout": false,
+                "provider": "tavily",
+                "operation": "search",
+                "duration_ms": 8996
+              }
+            ],
+            "results_seen": 18,
+            "dated_evidence": 15,
+            "provider_calls": 7,
+            "pages_extracted": 3,
+            "planned_queries": 4,
+            "claims_recovered": 3,
+            "executed_queries": 4,
+            "extraction_audit": [
+              {
+                "url": "https://www.tecnoglass.com/es/news/nosotros-no-vamos-a-desfallecer-estamos-invirtiendo-us75-millones-en-maquinaria",
+                "stage": "current_activity",
+                "date_phrase": "4 de marzo de 2026",
+                "materiality": "high",
+                "signal_kind": "none",
+                "accepted_events": 0,
+                "evidence_excerpt": "en maquinaria” ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](https://www.tecnoglass.com/wp-content/uploads/2026/03/DSC_2622-copia-scaled.jpg) 4 de marzo de 2026 Christian Daes, COO de Tecnoglass, resaltó la apuesta por la producción en Barranquilla, pero reconoció la pertinencia de complementarse con operaciones en EE.UU. Después de haber reportado ingresos récord por $983,6 millones en 2025, Tecnoglass despliega una inversión de US$75 millones para potenciar su capacidad instalada en la fábrica de Barranquilla y, además, tienen en la mira el montaje de una planta en Florida; así lo reveló Christian Daes, COO de la compañía, que en 2026 apunta a facturar entre US$1.060 millones y US$1.310 millones. **¿A qué obedecen los ingresos récord de la compañía en 2025?** Se debe a muchos años en el mercado, son 43 en este negocio de los vidrios y las ventanas. También se debe a que seguimos haciendo la misma apuesta; una apuesta país, de querer darle un buen nombre al país por fuera y de seguir apostando a que en Colombia se pueden hacer cosas muy buenas. Yo no sé por qué razón no exportamos más: una de las ventajas competitivas que tiene Tecnoglass es l"
+              },
+              {
+                "url": "https://www.tecnoglass.com/company/",
+                "stage": "current_activity",
+                "date_phrase": null,
+                "materiality": "high",
+                "signal_kind": "corporate_event",
+                "accepted_events": 0,
+                "evidence_excerpt": "\"> Tecnoglass - Company [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)](/) * [PRODUCTS](https://www.tecnoglass.com/products/) + [INSULATING GLASS](https://www.tecnoglass.com/products/insulating-glass/) + [LAMINATED GLASS](https://www.tecnoglass.com/products/laminated-glass/) + [MONOLITHIC GLASS](https://www.tecnoglass.com/products/monolithic-glass/) + [LOW-E GLASS](https://www.tecnoglass.com/products/low-e-glass/) + [TECNOBEND](https://www.tecnoglass.com/products/tecnobend/) + [RESOURCES](https://www.tecnoglass.com/resources/) * [PERFORMANCE](https://www.tecnoglass.com/performance/) * [PROJECTS](https://www.tecnoglass.com/projects/) * [INVESTORS](https://investors.tecnoglass.com/overview/default.aspx) * [COMPANY](https://www.tecnoglass.com/company/) * [NEWS](https://www.tecnoglass.com/news/) * [CONTACT](https://www.tecnoglass.com/contact/) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)](https://www.tecnoglass.com/es/compania/) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) [![](data:image/gif;base64,R0lG"
+              },
+              {
+                "url": "https://www.tecnoglass.com/news/tecnoglass-posts-record-q2-results-detailing-us-expansion-strategy-and-financial-performance/",
+                "stage": "current_activity",
+                "date_phrase": "December 15, 2025",
+                "materiality": "high",
+                "signal_kind": "editorial_content",
+                "accepted_events": 0,
+                "evidence_excerpt": "EALAAAAAABAAEAAAICTAEAOw==)](https://www.tecnoglass.com/news/tecnoglass-posts-record-q2-results-detailing-us-expansion-strategy-and-financial-performance/) [View all news](/news/) December 15, 2025 ## Tecnoglass Posts Record Q2 Results, Detailing US Expansion Strategy and Financial Performance ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) August 8th, 2025 [Tecnoglass, Inc.](https://www.tecnoglass.com/) (NYSE: TGLS), a prominent manufacturer of architectural glass and aluminum products, has reported record financial results for the second quarter of 2025. The company announced revenues of $255.5 million, a 16.3% increase year-over-year, driven by organic growth in its single-family and multifamily residential business segments. The results come as the company navigates a complex economic environment and continues its strategic expansion in the United States, including the recent acquisition of [Continental Glass Systems](https://www.cgsfl.com/). ### Detailed Financial Performance Analysis Tecnoglass’ second-quarter financial statements indicate a company in a strong financial position. A closer examination of the results provides insights for the in"
+              }
+            ],
+            "validated_events": [],
+            "early_stop_reason": "no_material_event",
+            "evidence_accepted": 15,
+            "evidence_rejected": 3,
+            "provider_failures": 0,
+            "account_elapsed_ms": 91718,
+            "event_hints_fetched": 0,
+            "extraction_failures": 0,
+            "independent_domains": 2,
+            "event_hints_received": 0,
+            "corroborating_domains": 0,
+            "corroborating_sources": [],
+            "event_hints_validated": 0,
+            "corroboration_attempted": false,
+            "counterevidence_checked": true,
+            "event_geography_rejected": 0,
+            "structured_extraction_calls": 2,
+            "counterevidence_material_found": false
+          },
+          "risks_weaknesses": [
+            "Tecnoglass es una empresa madura de 43 años con procesos propios muy establecidos; puede tener ya un ERP robusto (SAP, Oracle) que reduzca el espacio de entrada.",
+            "La planta en Florida está en etapa de planificación/adquisición de terreno, no operativa aún — el ciclo de compra de software puede estar 12-18 meses adelante.",
+            "No hay evidencia de iniciativas digitales públicas ni de roles tecnológicos visibles, lo que dificulta identificar el comprador interno.",
+            "Como empresa listada en bolsa, los ciclos de aprobación de gasto tecnológico pueden ser lentos y muy formales."
+          ],
+          "segment_fit_note": "Tecnoglass es un fabricante de manufactura compleja con exportación masiva y expansión multi-sitio en curso — encaje directo con el segmento objetivo de software de planificación operativa e integración de sistemas.",
+          "opportunity_risks": [
+            "Empresa con 43 años de operación puede tener sistemas propietarios o ERP de clase mundial ya implementados que cierren el espacio de entrada.",
+            "El interlocutor de compra en tecnología no está identificado públicamente — riesgo de no encontrar al decisor correcto.",
+            "La nueva planta en Florida puede estar aún a 1-2 años de operación, postergando la urgencia de integración de sistemas.",
+            "Como empresa pública en NASDAQ, el ciclo de aprobación presupuestaria para nuevas plataformas puede ser largo y altamente competido."
+          ],
+          "next_best_question": "¿Qué sistemas de planificación de producción e integración de inventario tiene Tecnoglass actualmente, y cómo planean extenderlos o reemplazarlos para soportar las operaciones de la nueva planta en Florida?",
+          "recommended_action": "send_outreach_now",
+          "evidence_discipline": [
+            {
+              "date": "2026-03-04",
+              "type": "verified_public_signal",
+              "claim": "Tecnoglass reportó ingresos récord de US$983,6 millones en 2025"
+            },
+            {
+              "date": "2026-03-04",
+              "type": "verified_public_signal",
+              "claim": "Inversión de US$75 millones en maquinaria para ampliar capacidad en Barranquilla anunciada por el COO"
+            },
+            {
+              "date": "2026-03-04",
+              "type": "verified_public_signal",
+              "claim": "Adquisición de terreno en Florida para nueva planta de manufactura en EE.UU. confirmada públicamente"
+            },
+            {
+              "date": null,
+              "type": "inferred_from_context",
+              "claim": "La expansión multi-sitio generará necesidades de coordinación de inventario y planificación operativa entre dos geografías"
+            },
+            {
+              "date": null,
+              "type": "weak_inference",
+              "claim": "Los sistemas tecnológicos actuales de Tecnoglass son insuficientes para la nueva escala operativa"
+            },
+            {
+              "date": null,
+              "type": "missing_evidence",
+              "claim": "Existencia de un proceso activo de evaluación o licitación de software de planificación operativa"
+            }
+          ],
+          "research_confidence": 0.62,
+          "buying_window_reason": "No buying window is inferred without a validated current material event.",
+          "signal_interpretation": "Una inversión de US$75M en maquinaria nueva más una segunda planta en otro país no es solo crecimiento — es un cambio estructural en la complejidad operativa que típicamente fuerza una revisión de los sistemas de planificación e integración existentes. Esto convierte el anuncio de expansión en un detonante comercial válido para la oferta.",
+          "evidence_quality_grade": "moderate_public",
+          "recommended_action_reason": "El anuncio de expansión es reciente y público, creando un argumento de outreach natural y relevante antes de que la empresa ya haya tomado decisiones tecnológicas para la nueva planta."
+        },
+        "fit_reasons": [
+          "Manufactura de vidrio arquitectónico con 43 años de trayectoria — encaja directamente en el segmento de manufactura del ICP con operaciones de alta complejidad productiva.",
+          "Operaciones multi-sitio activas: planta principal en Barranquilla + expansión confirmada en Florida — caso de uso directo para coordinación operativa entre geografías.",
+          "Señal de timing pública y documentada: US$75M en maquinaria + adquisición de terreno en Florida anunciados en marzo 2026, con ingresos récord de US$983,6M — expansión de escala real y verificable.",
+          "El salto proyectado a US$1.060–1.310M en 2026 implica complejidad operativa creciente que presiona los sistemas actuales, especialmente en planificación de producción e inventario cross-site.",
+          "Control vertical total del proceso productivo amplifica la necesidad de integración de sistemas — mayor superficie de datos sin coordinar entre plantas."
+        ],
+        "score_breakdown": {
+          "pain_fit": 2,
+          "role_fit": 2,
+          "company_fit": 2,
+          "reachability": 0.5,
+          "timing_signal": 2,
+          "strategic_relevance": 1
+        },
+        "score_dimensions": {
+          "timing": 60,
+          "icp_fit": 82,
+          "confidence": 58,
+          "signal_strength": 65,
+          "strategic_value": 80,
+          "evidence_quality": 65,
+          "disqualification_risk": 30
+        },
+        "comparative_notes": "At 7.5/10, Tecnoglass is close to HOT threshold — a confirmed signal would move it to the top tier",
+        "score_explanation": "Score is WARM because [ICP Fit: 82/100 — manufactura de gran escala con operaciones multi-sitio en expansión activa, encaje casi perfecto con el ICP en industria y complejidad operativa]. [Signal: 65/100 — señales de inversión públicas y confirmadas (US$75M maquinaria, planta Florida) son fuertes en intención de expansión, pero no confirman una iniciativa activa de evaluación de software — la ventana real puede ser posterior a 2026]. [Timing: 60/100 — los eventos de expansión están en curso pero la planta en Florida no es operativa aún, lo que aleja el punto de decisión tecnológica del corto plazo]. Key risk: sin visibilidad del stack tecnológico actual ni del comprador interno, la entrada requiere validación directa antes de invertir en outreach completo.",
+        "ranking_explanation": "Tecnoglass ranks first only within this limited batch (7.5/10), but remains WARM. The dated company event is not evidence of purchase intent; validate commercial relevance before any outreach.",
+        "signal_interpretation": "Tecnoglass presenta una hipótesis comercial sólida y bien fundamentada, pero las señales confirman expansión de capacidad física, no una decisión de compra tecnológica activa. Lo que bloquea el salto a HOT es la ausencia de evidencia de una iniciativa digital en curso y la distancia temporal entre los eventos públicos y una ventana de decisión real. El valor de este account es medio-largo plazo: si se valida el stack actual y se identifica un interlocutor IT/Ops, puede convertirse en oportunidad prioritaria en 6-12 meses.",
+        "opportunity_tier_reason": "WARM: Meets 2 of 3 HOT criteria — one key dimension (signal) is below HOT threshold",
+        "disqualification_reasons": [
+          "Empresa madura de 43 años con alta probabilidad de tener un ERP establecido (SAP/Oracle) — puede existir un stack tecnológico que reduzca el espacio de entrada o requiera integración compleja.",
+          "La planta de Florida está en etapa de planificación/terreno, no operativa — el ciclo de compra de software multi-sitio puede estar 12-18 meses alejado, fuera de la ventana de 30-90 días.",
+          "No hay evidencia de roles IT, transformación digital o iniciativa de evaluación tecnológica activa — el comprador interno no está identificado, lo que bloquea el acceso directo.",
+          "Como empresa listada en bolsa, los ciclos de aprobación presupuestaria son formales y lentos — riesgo de que la oportunidad sea real pero el ciclo de venta sea extenso."
+        ],
+        "qualification_confidence": 0.58
+      }
+    }
+  ],
+  "research_audit": [
+    {
+      "risks": [
+        "Empresa con 43 años de operación puede tener sistemas propietarios o ERP de clase mundial ya implementados que cierren el espacio de entrada.",
+        "El interlocutor de compra en tecnología no está identificado públicamente — riesgo de no encontrar al decisor correcto.",
+        "La nueva planta en Florida puede estar aún a 1-2 años de operación, postergando la urgencia de integración de sistemas.",
+        "Como empresa pública en NASDAQ, el ciclo de aprobación presupuestaria para nuevas plataformas puede ser largo y altamente competido."
+      ],
+      "domain": "tecnoglass.com",
+      "company": "Tecnoglass",
+      "country": "Colombia",
+      "reasons": [
+        "opportunity_test_reject",
+        "hard_blocker_no_event",
+        "hard_blocker_no_material_event",
+        "hard_blocker_no_valid_date"
+      ],
+      "category": "WARM",
+      "fitScore": 7.5,
+      "qcStatus": "APPROVED",
+      "sourceUrl": "https://www.tecnoglass.com/es/news/nosotros-no-vamos-a-desfallecer-estamos-invirtiendo-us75-millones-en-maquinaria",
+      "signalDate": null,
+      "signalType": null,
+      "nextQuestion": "¿Qué sistemas de planificación de producción e integración de inventario tiene Tecnoglass actualmente, y cómo planean extenderlos o reemplazarlos para soportar las operaciones de la nueva planta en Florida?",
+      "actionability": {
+        "fit_state": "strong",
+        "hold_reason": "NO_CURRENT_EVENT",
+        "target_valid": true,
+        "timing_state": "limited",
+        "evidence_valid": false,
+        "final_decision": "hold",
+        "search_results": 18,
+        "research_coverage": "sufficient",
+        "independent_support": false,
+        "temporal_valid_events": 0,
+        "company_identity_valid": true,
+        "materiality_valid_events": 0,
+        "material_event_candidates": 0
+      },
+      "eventHintCount": 0,
+      "evidenceClaims": [
+        {
+          "date": "2026-03-04",
+          "type": "verified_public_signal",
+          "claim": "Tecnoglass reportó ingresos récord de US$983,6 millones en 2025",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": "2026-03-04",
+          "type": "verified_public_signal",
+          "claim": "Inversión de US$75 millones en maquinaria para ampliar capacidad en Barranquilla anunciada por el COO",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": "2026-03-04",
+          "type": "verified_public_signal",
+          "claim": "Adquisición de terreno en Florida para nueva planta de manufactura en EE.UU. confirmada públicamente",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": null,
+          "type": "inferred_from_context",
+          "claim": "La expansión multi-sitio generará necesidades de coordinación de inventario y planificación operativa entre dos geografías",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": null,
+          "type": "weak_inference",
+          "claim": "Los sistemas tecnológicos actuales de Tecnoglass son insuficientes para la nueva escala operativa",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": null,
+          "type": "missing_evidence",
+          "claim": "Existencia de un proceso activo de evaluación o licitación de software de planificación operativa",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        }
+      ],
+      "accountResearch": {
+        "domain": "tecnoglass.com",
+        "account": "Tecnoglass",
+        "version": "account-deep-research-v1",
+        "query_audit": [
+          {
+            "stage": "identity",
+            "results": 5,
+            "accepted": 3,
+            "provider": "brave",
+            "query_id": "rq_1kcsift"
+          },
+          {
+            "stage": "current_activity",
+            "results": 0,
+            "accepted": 0,
+            "provider": "brave",
+            "query_id": "rq_18yfrel"
+          },
+          {
+            "stage": "current_activity",
+            "results": 5,
+            "accepted": 5,
+            "provider": "tavily",
+            "query_id": "rq_18yfrel"
+          },
+          {
+            "stage": "current_activity",
+            "results": 3,
+            "accepted": 3,
+            "provider": "brave",
+            "query_id": "rq_1gbfjjp"
+          },
+          {
+            "stage": "current_activity",
+            "results": 0,
+            "accepted": 0,
+            "provider": "tavily",
+            "query_id": "rq_1gbfjjp"
+          },
+          {
+            "stage": "counterevidence",
+            "results": 5,
+            "accepted": 5,
+            "provider": "brave",
+            "query_id": "rq_1viwftx"
+          },
+          {
+            "stage": "counterevidence",
+            "results": 0,
+            "accepted": 0,
+            "provider": "tavily",
+            "query_id": "rq_1viwftx"
+          }
+        ],
+        "provider_ops": [
+          {
+            "ok": true,
+            "stage": "identity",
+            "results": 5,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 817
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 0,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 337
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 5,
+            "timeout": false,
+            "provider": "tavily",
+            "operation": "search",
+            "duration_ms": 5972
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 1,
+            "timeout": false,
+            "provider": "full_text",
+            "operation": "full_text",
+            "duration_ms": 1776
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 1,
+            "timeout": false,
+            "provider": "anthropic",
+            "operation": "llm",
+            "duration_ms": 11241
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 3,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 715
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 1,
+            "timeout": false,
+            "provider": "full_text",
+            "operation": "full_text",
+            "duration_ms": 330
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 0,
+            "timeout": false,
+            "provider": "anthropic",
+            "operation": "llm",
+            "duration_ms": 8183
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 1,
+            "timeout": false,
+            "provider": "full_text",
+            "operation": "full_text",
+            "duration_ms": 307
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 0,
+            "timeout": false,
+            "provider": "tavily",
+            "operation": "search",
+            "duration_ms": 7571
+          },
+          {
+            "ok": true,
+            "stage": "counterevidence",
+            "results": 5,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 674
+          },
+          {
+            "ok": true,
+            "stage": "counterevidence",
+            "results": 0,
+            "timeout": false,
+            "provider": "tavily",
+            "operation": "search",
+            "duration_ms": 8996
+          }
+        ],
+        "results_seen": 18,
+        "dated_evidence": 15,
+        "provider_calls": 7,
+        "pages_extracted": 3,
+        "planned_queries": 4,
+        "claims_recovered": 3,
+        "executed_queries": 4,
+        "extraction_audit": [
+          {
+            "url": "https://www.tecnoglass.com/es/news/nosotros-no-vamos-a-desfallecer-estamos-invirtiendo-us75-millones-en-maquinaria",
+            "stage": "current_activity",
+            "date_phrase": "4 de marzo de 2026",
+            "materiality": "high",
+            "signal_kind": "none",
+            "accepted_events": 0,
+            "evidence_excerpt": "en maquinaria” ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) ![](https://www.tecnoglass.com/wp-content/uploads/2026/03/DSC_2622-copia-scaled.jpg) 4 de marzo de 2026 Christian Daes, COO de Tecnoglass, resaltó la apuesta por la producción en Barranquilla, pero reconoció la pertinencia de complementarse con operaciones en EE.UU. Después de haber reportado ingresos récord por $983,6 millones en 2025, Tecnoglass despliega una inversión de US$75 millones para potenciar su capacidad instalada en la fábrica de Barranquilla y, además, tienen en la mira el montaje de una planta en Florida; así lo reveló Christian Daes, COO de la compañía, que en 2026 apunta a facturar entre US$1.060 millones y US$1.310 millones. **¿A qué obedecen los ingresos récord de la compañía en 2025?** Se debe a muchos años en el mercado, son 43 en este negocio de los vidrios y las ventanas. También se debe a que seguimos haciendo la misma apuesta; una apuesta país, de querer darle un buen nombre al país por fuera y de seguir apostando a que en Colombia se pueden hacer cosas muy buenas. Yo no sé por qué razón no exportamos más: una de las ventajas competitivas que tiene Tecnoglass es l"
+          },
+          {
+            "url": "https://www.tecnoglass.com/company/",
+            "stage": "current_activity",
+            "date_phrase": null,
+            "materiality": "high",
+            "signal_kind": "corporate_event",
+            "accepted_events": 0,
+            "evidence_excerpt": "\"> Tecnoglass - Company [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)](/) * [PRODUCTS](https://www.tecnoglass.com/products/) + [INSULATING GLASS](https://www.tecnoglass.com/products/insulating-glass/) + [LAMINATED GLASS](https://www.tecnoglass.com/products/laminated-glass/) + [MONOLITHIC GLASS](https://www.tecnoglass.com/products/monolithic-glass/) + [LOW-E GLASS](https://www.tecnoglass.com/products/low-e-glass/) + [TECNOBEND](https://www.tecnoglass.com/products/tecnobend/) + [RESOURCES](https://www.tecnoglass.com/resources/) * [PERFORMANCE](https://www.tecnoglass.com/performance/) * [PROJECTS](https://www.tecnoglass.com/projects/) * [INVESTORS](https://investors.tecnoglass.com/overview/default.aspx) * [COMPANY](https://www.tecnoglass.com/company/) * [NEWS](https://www.tecnoglass.com/news/) * [CONTACT](https://www.tecnoglass.com/contact/) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)](https://www.tecnoglass.com/es/compania/) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) [![](data:image/gif;base64,R0lG"
+          },
+          {
+            "url": "https://www.tecnoglass.com/news/tecnoglass-posts-record-q2-results-detailing-us-expansion-strategy-and-financial-performance/",
+            "stage": "current_activity",
+            "date_phrase": "December 15, 2025",
+            "materiality": "high",
+            "signal_kind": "editorial_content",
+            "accepted_events": 0,
+            "evidence_excerpt": "EALAAAAAABAAEAAAICTAEAOw==)](https://www.tecnoglass.com/news/tecnoglass-posts-record-q2-results-detailing-us-expansion-strategy-and-financial-performance/) [View all news](/news/) December 15, 2025 ## Tecnoglass Posts Record Q2 Results, Detailing US Expansion Strategy and Financial Performance ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) August 8th, 2025 [Tecnoglass, Inc.](https://www.tecnoglass.com/) (NYSE: TGLS), a prominent manufacturer of architectural glass and aluminum products, has reported record financial results for the second quarter of 2025. The company announced revenues of $255.5 million, a 16.3% increase year-over-year, driven by organic growth in its single-family and multifamily residential business segments. The results come as the company navigates a complex economic environment and continues its strategic expansion in the United States, including the recent acquisition of [Continental Glass Systems](https://www.cgsfl.com/). ### Detailed Financial Performance Analysis Tecnoglass’ second-quarter financial statements indicate a company in a strong financial position. A closer examination of the results provides insights for the in"
+          }
+        ],
+        "validated_events": [],
+        "early_stop_reason": "no_material_event",
+        "evidence_accepted": 15,
+        "evidence_rejected": 3,
+        "provider_failures": 0,
+        "account_elapsed_ms": 91718,
+        "event_hints_fetched": 0,
+        "extraction_failures": 0,
+        "independent_domains": 2,
+        "event_hints_received": 0,
+        "corroborating_domains": 0,
+        "corroborating_sources": [],
+        "event_hints_validated": 0,
+        "corroboration_attempted": false,
+        "counterevidence_checked": true,
+        "event_geography_rejected": 0,
+        "structured_extraction_calls": 2,
+        "counterevidence_material_found": false
+      },
+      "candidateOrigin": [
+        "ACCOUNT_FIRST"
+      ],
+      "canonicalDecision": "hold",
+      "researchConfidence": 0.62
+    }
+  ],
+  "monitor_run_id": "mon_e5e482b6344281609ae258bde1cc2c40",
+  "timings": {
+    "stage_a_ms": 11799,
+    "confirmation_ms": 1223,
+    "start_request_ms": 889,
+    "background_completion_ms": 210482,
+    "monitor_ms": 6561,
+    "total_ms": 234635
+  },
+  "usage_delta": {
+    "anthropic": {
+      "calls": 8,
+      "errors": 0,
+      "input_tokens": 20374,
+      "output_tokens": 6352,
+      "calculated_cost_usd": 0.156402,
+      "pricing_source": "Anthropic Sonnet 4.6 public list price, verified 2026-07-22"
+    },
+    "brave": {
+      "calls": 18,
+      "errors": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "calculated_cost_usd": 0,
+      "pricing_source": null
+    },
+    "serper": {
+      "calls": 6,
+      "errors": 6,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "calculated_cost_usd": 0,
+      "pricing_source": null
+    },
+    "tavily": {
+      "calls": 27,
+      "errors": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "calculated_cost_usd": 0,
+      "pricing_source": null
+    }
+  },
+  "checks": [
+    {
+      "name": "real authenticated owners created",
+      "ok": true
+    },
+    {
+      "name": "Stage A reachable and confirmable",
+      "ok": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "name": "explicit confirmation persisted through customer API",
+      "ok": true
+    },
+    {
+      "name": "same context label persists independently across tenants",
+      "ok": true
+    },
+    {
+      "name": "productive Intelligence run accepted before Research",
+      "ok": true,
+      "detail": "HTTP 202"
+    },
+    {
+      "name": "bounded background processor completed durably",
+      "ok": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "name": "owner reloads durable result",
+      "ok": true
+    },
+    {
+      "name": "other tenant cannot load result",
+      "ok": true
+    },
+    {
+      "name": "Lead Hunter run reference persisted",
+      "ok": true
+    },
+    {
+      "name": "Candidate Universe durable and owner-scoped",
+      "ok": true,
+      "detail": "n=15"
+    },
+    {
+      "name": "canonical Cases generated",
+      "ok": true
+    },
+    {
+      "name": "initial accepted Case set entered Account Memory",
+      "ok": true,
+      "detail": "snapshots=1, delivered=1"
+    },
+    {
+      "name": "manual customer Monitor reached canonical engine",
+      "ok": true,
+      "detail": "completed"
+    },
+    {
+      "name": "Monitor outcome is durably observable",
+      "ok": true,
+      "detail": "before=1, after=1"
+    },
+    {
+      "name": "completed retry is idempotent and avoids new Research",
+      "ok": true
+    },
+    {
+      "name": "same labels cannot collide cross-tenant",
+      "ok": true
+    }
+  ]
+}
