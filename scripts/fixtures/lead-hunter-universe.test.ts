@@ -177,6 +177,12 @@ t("golden partnerships: reaches an ok universe", (await goldenRun(GOLDEN_FIXTURE
 }
 {
   const plan = planDiscovery(confirmOf(GOLDEN_FIXTURES.software_manufacturing));
+  const u = await hunt(plan, orgsRunner([O({ name: "Acme", domain: "acme.com", organizationType: "Manufacturer" })], { providersFailed: ["brave"], providersAvailable: ["brave"], operatingMode: "provider_limited" }), { now: clock });
+  t("provider recovered later in the run is not simultaneously reported unavailable",
+    u.ok && u.coverage.providersAvailable.includes("brave") && !u.coverage.providersFailed.includes("brave") && !u.coverage.gaps.some((g) => g.detail.includes("brave")));
+}
+{
+  const plan = planDiscovery(confirmOf(GOLDEN_FIXTURES.software_manufacturing));
   const allFail: DiscoveryRunner = async () => ({ orgs: [], providersAvailable: [], providersFailed: ["brave", "tavily", "serper"], operatingMode: "stopped" });
   const u = await hunt(plan, allFail, { now: clock });
   t("all-provider failure: honest failure, ZERO fabricated candidates", !u.ok && u.candidates.length === 0 && u.failureReason === "provider_unavailable");

@@ -113,6 +113,7 @@ t("spine: first review has no predecessor semantics", Boolean(first.ok && first.
 const customerReport = first.ok && first.run.report ? assembleInstitutionalReport(first.run.report as never, { job_id: first.run.runId, plan: first.run.plan, search_id: null, customer_ref: null, created_at: first.run.createdAt }) : null;
 const expectedAction = first.ok ? ({ prioritize: "act_now", validate: "validate_first", monitor: "monitor", hold: "exclude" } as const)[first.run.report?.canonical_cases?.[0]?.decision ?? "hold"] : null;
 t("report: customer dossier consumes canonical Case decision", Boolean(customerReport && customerReport.account_dossiers[0]?.actionability_status === expectedAction));
+t("report: canonical Case also owns recommended next action", Boolean(customerReport && customerReport.account_dossiers.every((d) => d.recommended_next_step.text === ({ act_now: "send outreach now", validate_first: "validate source first", monitor: "monitor for new signal", exclude: "exclude" } as const)[d.actionability_status ?? "exclude"])));
 
 const retry = await startIntelligenceRun(base, { contextStore, leadHunterStore, runStore, discoveryRunner: discovery, pipeline, now: clock });
 t("retry: completed run reloads without Research rerun", retry.ok && retry.reused && pipelineCalls === 1);

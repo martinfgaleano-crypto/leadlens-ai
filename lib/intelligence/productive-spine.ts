@@ -253,6 +253,10 @@ async function runIntelligenceExecution(
       reconcileLeadNarrativeWithCanonicalCase(lead, canonical);
       const ranked = report.ranked_opportunities?.find(item => item.lead_id === lead.id);
       if (ranked?.decision && canonical) {
+        ranked.recommended_action = lead.enrichment.recommended_action;
+        ranked.actionability_status = canonical.decision === "prioritize" ? "act_now"
+          : canonical.decision === "validate" ? "validate_first"
+          : canonical.decision === "monitor" ? "monitor" : "exclude";
         ranked.decision.why_now = lead.enrichment.why_now ?? "No current timing conclusion is available.";
         if (canonicalMissingEvent(canonical.reasons)) {
           ranked.decision.why_this_quarter = "No quarter-level urgency is evidenced by a validated current event.";
@@ -500,6 +504,12 @@ export function reconcileLeadNarrativeWithCanonicalCase(
   canonical: NonNullable<LeadLensReport["canonical_cases"]>[number] | null,
 ): void {
   if (!canonical) return;
+  // Canonical Case is also the authority for the customer-visible next action.
+  // Leaving pre-validation prose intact can otherwise produce the unsafe
+  // contradiction "Hold / no current event" + "send outreach now".
+  lead.enrichment.recommended_action = canonical.decision === "prioritize" ? "send_outreach_now"
+    : canonical.decision === "validate" ? "validate_source_first"
+    : canonical.decision === "monitor" ? "monitor_for_new_signal" : "exclude";
   const noCurrentEvent = canonicalMissingEvent(canonical.reasons);
   if (noCurrentEvent) {
     lead.enrichment.why_now = "No current dated material event was validated. The account may fit structurally, but there is no verified reason to act now rather than monitor for a new trigger.";

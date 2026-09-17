@@ -573,8 +573,14 @@ export async function hunt(plan: DiscoveryPlan, runner: DiscoveryRunner, opts: H
   const freshCount = inScope.filter((c) => c.universeState === "new" || c.universeState === "revalidated").length;
   const duplicateRate = orgs.length ? 1 - candidates.length / orgs.length : 0;
 
+  // A provider may fail one bounded route and later succeed through a fallback
+  // route. Availability wins for run-level coverage; never report the same
+  // provider as both available and unavailable.
+  const availableProviders = Array.from(new Set(out.providersAvailable));
+  const availableSet = new Set(availableProviders);
+  const failedProviders = Array.from(new Set(out.providersFailed)).filter((provider) => !availableSet.has(provider));
   const gaps: DiscoveryGap[] = [];
-  if (out.providersFailed.length) gaps.push({ type: "provider_unavailable", detail: `Providers unavailable: ${out.providersFailed.join(", ")}.` });
+  if (failedProviders.length) gaps.push({ type: "provider_unavailable", detail: `Providers unavailable: ${failedProviders.join(", ")}.` });
   if (counts.identityAmbiguous > 0) gaps.push({ type: "identity_ambiguity", detail: `${counts.identityAmbiguous} candidate(s) need identity validation.` });
   if (inScope.length < 3) gaps.push({ type: "candidate_volume_too_low", detail: `Only ${inScope.length} in-scope candidate(s) discovered.` });
   if (plan.geographies.length === 0) gaps.push({ type: "sparse_geographic_coverage", detail: "No geography constraint; coverage is broad and unverified." });
@@ -582,13 +588,13 @@ export async function hunt(plan: DiscoveryPlan, runner: DiscoveryRunner, opts: H
 
   const reviewRequired: ReviewClass[] = [];
   if (counts.identityAmbiguous > 0) reviewRequired.push("identity_ambiguity");
-  if (out.providersFailed.length && out.providersAvailable.length < 2) reviewRequired.push("provider_anomaly");
+  if (failedProviders.length && availableProviders.length < 2) reviewRequired.push("provider_anomaly");
   if (inScope.length === 0) reviewRequired.push("repeated_zero_yield");
 
   const coverage: CoverageSummary = {
     operatingMode: out.providersAvailable.length === 0 && reusedCount > 0 ? "context_memory_reuse" : out.operatingMode,
-    providersAvailable: out.providersAvailable,
-    providersFailed: out.providersFailed,
+    providersAvailable: availableProviders,
+    providersFailed: failedProviders,
     routesAttempted: plan.routes.length,
     routeYield: out.routeMetrics ?? [],
     candidatesDiscovered: orgs.length,

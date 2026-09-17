@@ -82,12 +82,18 @@ function buildDossier(opp: Json, lead: Json | undefined, es = false, clientObjec
   ].filter(Boolean) as Claim[];
 
   const evidence_chain: EvidenceLink[] = [];
-  if (c.source_url) evidence_chain.push({ label: (clean(e.timing_signals?.[0]) ?? (es ? "Fuente principal" : "Primary source")) + freshLabel, url: c.source_url, date: signalDate, date_basis: signalDate ? "fact" : "unknown" });
+  // A candidate URL is not automatically Case Evidence. Only expose it in the
+  // timing chain after deterministic event validation supplied signal_date.
+  if (c.source_url && signalDate) evidence_chain.push({ label: (clean(e.timing_signals?.[0]) ?? (es ? "Fuente principal" : "Primary source")) + freshLabel, url: c.source_url, date: signalDate, date_basis: "fact" });
   for (const ev of (Array.isArray(e.evidence) ? e.evidence : []).slice(0, 3)) {
     if (typeof ev === "string" && ev.trim()) evidence_chain.push({ label: (clean(ev) ?? "").slice(0, 160), url: null, date: null, date_basis: "unknown" });
   }
 
-  const actionText = clean(decision?.recommended_action) ?? clean(e.recommended_action) ?? clean(opp?.recommended_action);
+  const canonicalRecommendedAction = canonicalCase?.decision === "prioritize" ? "send_outreach_now"
+    : canonicalCase?.decision === "validate" ? "validate_source_first"
+    : canonicalCase?.decision === "monitor" ? "monitor_for_new_signal"
+    : canonicalCase?.decision === "hold" ? "exclude" : null;
+  const actionText = canonicalRecommendedAction ?? clean(decision?.recommended_action) ?? clean(e.recommended_action) ?? clean(opp?.recommended_action);
   const recommended_next_step: Claim = actionText
     ? { basis: "recommendation", text: (actionText).replace(/_/g, " "), evidence: clean(e.recommended_action_reason) ?? (es ? "acción recomendada por control de calidad" : "recommended action guardrail") }
     : { basis: "recommendation", text: es ? "Validar la señal y el fit antes de cualquier contacto." : "Validate the signal and fit before any outreach.", evidence: es ? "control por defecto" : "default guardrail" };
