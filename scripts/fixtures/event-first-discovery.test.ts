@@ -70,6 +70,16 @@ await test("extracts the governing event subject, not article suffix", () => {
   assert.deepEqual(extractEventSubjects("Acme Foods opens new Ohio plant | Industry Today"), ["Acme Foods"]);
 });
 
+await test("rejects headline-fragment names and dangling connectives as company subjects", () => {
+  // A broadened English universe query can surface headlines like these; the extractor must never
+  // emit a multi-word clause or a dangling connective as a company identity (observed regressions:
+  // "Novartis finalizes US manufacturing", "Cencora to"). Precision over count.
+  assert.deepEqual(extractEventSubjects("Novartis finalizes US manufacturing investment as it opens a plant"), []);
+  assert.deepEqual(extractEventSubjects("Cencora to build new distribution center in Ohio"), []);
+  // Clean multi-word operating companies are still accepted.
+  assert.deepEqual(extractEventSubjects("Ahold Delhaize opens new distribution center"), ["Ahold Delhaize"]);
+});
+
 await test("corporate domain matching rejects embedded company-name substrings", () => {
   assert.equal(domainLooksCorporate("Ryder", "stryderusa.com"), false);
   assert.equal(domainLooksCorporate("Stryder USA", "stryderusa.com"), true);

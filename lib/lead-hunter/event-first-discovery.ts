@@ -141,7 +141,12 @@ export function planEventFirstQueries(plan: DiscoveryPlan, maxQueries = 6): Even
 
 const EVENT_ACTION = /\b(?:announces?|plans?|opens?|launches?|builds?|expands?|invests?|acquires?|wins?|awarded|signs?|partners?|inaugurates?|anuncia|anuncio|planea|abre|abrio|abrira|inaugura|inauguro|construye|construyo|expande|expandio|amplia|amplio|invierte|invirtio|adquiere|adquirio|gana|firma|impulsa|acelera|fortalece|se asocia)\b/i;
 const BAD_SUBJECT = /^(?:breaking|exclusive|report|analysis|news|update|companies|manufacturers|manufacturer|industry|market|sector|others?|otros?|colombia|united states|us|u\.s\.|alianza(?:\s+tambien)?|consulado\b.*|colombia nos une)$/i;
-const plausibleSubject = (name: string) => /^[A-ZÁÉÍÓÚÑ]/.test(name) && !BAD_SUBJECT.test(name) && (!rejectEnumeratedName(name) || /^[A-Z0-9&]{3,6}$/.test(name));
+// A clean company name never contains an event/connective noise word or runs to a full clause.
+// This guards the title/snippet prefix extraction from emitting headline fragments such as
+// "Novartis finalizes US manufacturing" or a dangling "Cencora to" (observed once the English
+// universe queries were broadened). English-only vocabulary; Spanish corporate names are unaffected.
+const SUBJECT_NOISE = /\b(?:to|as|amid|after|will|finali[sz]es?|completes?|plans?|unveils?|reveals?|moves?|eyes?|weighs?|mulls?|sets?|adds?|brings?|expects?|seeks?|aims?|its|their)\b/i;
+const plausibleSubject = (name: string) => /^[A-ZÁÉÍÓÚÑ]/.test(name) && !BAD_SUBJECT.test(name) && !SUBJECT_NOISE.test(name) && name.trim().split(/\s+/).length <= 5 && (!rejectEnumeratedName(name) || /^[A-Z0-9&]{3,6}$/.test(name));
 
 /** Deterministic, deliberately conservative title-subject extraction. It only
  * accepts a named prefix immediately governing a material-change verb. */
