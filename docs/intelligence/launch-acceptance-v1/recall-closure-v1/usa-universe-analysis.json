@@ -1,0 +1,64 @@
+{
+  "version": "usa-universe-collapse-analysis-v1",
+  "source": "Frozen Track A baseline artifacts; no rerun or changed context.",
+  "contexts": [
+    {
+      "family": "industrial_automation",
+      "raw_provider_results": 48,
+      "unique_urls": 40,
+      "unique_subjects": 12,
+      "canonical_companies": 1,
+      "target_valid_companies": 1,
+      "event_first_candidates": 1,
+      "account_first_candidates": 0,
+      "merged_universe": 1,
+      "selected_research_accounts": 1,
+      "classification": "SYSTEMATICALLY_INCOMPLETE",
+      "first_major_collapse": "subject_to_canonical_identity",
+      "diagnostic": "39 no_subject and 11 identity_unresolved rejections were recorded; one DHL account survived."
+    },
+    {
+      "family": "operational_software",
+      "raw_provider_results": 48,
+      "unique_urls": 38,
+      "unique_subjects": 5,
+      "canonical_companies": 0,
+      "target_valid_companies": 0,
+      "event_first_candidates": 0,
+      "account_first_candidates": 0,
+      "merged_universe": 0,
+      "selected_research_accounts": 0,
+      "classification": "SYSTEMATICALLY_INCOMPLETE",
+      "first_major_collapse": "result_to_subject_extraction",
+      "diagnostic": "44 no_subject and 5 identity_unresolved rejections were recorded."
+    },
+    {
+      "family": "channel_partnership",
+      "raw_provider_results": 48,
+      "unique_urls": 38,
+      "unique_subjects": 3,
+      "canonical_companies": 2,
+      "target_valid_companies": 2,
+      "event_first_candidates": 0,
+      "account_first_candidates": 2,
+      "merged_universe": 2,
+      "selected_research_accounts": 2,
+      "classification": "THIN_BUT_DEFENSIBLE",
+      "first_major_collapse": "result_to_subject_extraction",
+      "diagnostic": "45 no_subject and 5 identity_unresolved rejections were recorded; two account-first candidates survived."
+    }
+  ],
+  "aggregate": {
+    "raw_provider_results": 144,
+    "unique_urls_sum": 116,
+    "unique_subjects_sum": 20,
+    "canonical_companies": 3,
+    "target_valid_companies": 3,
+    "merged_universe": 3,
+    "selected_research_accounts": 3,
+    "raw_to_subject_rate": 0.1389,
+    "raw_to_canonical_rate": 0.0208,
+    "raw_to_selected_rate": 0.0208,
+    "conclusion": "The frozen USA collapse occurs primarily before canonical identity: useful-looking result volume does not become extractable company subjects. It cannot be attributed only to provider absence."
+  }
+}

@@ -101,7 +101,7 @@ async function run() {
   test("37 command center exposes the canonical automatic capability registry", local.control_plane.capabilities.length === 47);
   const dynamicDiscovery = local.control_plane.capabilities.find((c) => c.capability.id === "dynamic_universe_discovery");
   test("38 latest bounded capture evidence is reflected without overstating validation",
-    dynamicDiscovery?.state === "production_wired" && dynamicDiscovery.supporting_metrics.positive_controls_captured === 5 && dynamicDiscovery.blockers.some((b) => /no customer-safe Case has been human-confirmed/i.test(b)));
+    dynamicDiscovery?.state === "soak_validated" && dynamicDiscovery.supporting_metrics.positive_controls_captured === 7 && dynamicDiscovery.blockers.some((b) => /no customer-safe Case has been human-confirmed/i.test(b)));
   test("39 global score is anti-inflation capped while the local sample has no human-positive Case",
     local.control_plane.overall.state === "measured" && local.control_plane.overall.score <= 59);
   test("40 command center no longer carries manually maintained pilot counts", !pageSource.includes('value="17"') && !pageSource.includes('value="10"'));
