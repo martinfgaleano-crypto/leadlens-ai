@@ -67,6 +67,40 @@ export interface QualificationResult {
 const NON_OPERATING_ROLE =
   /\b(press release|newswire|news wire|prnewswire|business ?wire|globe ?newswire|press releases distributed|editorial team|our newsroom|subscribe to our newsletter|breaking news|job (board|listings|openings|vacanc)|apply (now|today) for|browse (jobs|vacancies)|post a job|thousands of jobs|classifieds)\b/i;
 
+// ── Operating-role attribution (the DHL fix, generalizable + context-dependent) ──────────────
+// A company's target-family keyword can appear because it SERVES that family, not because it IS one
+// (e.g. a 3PL "logistics solutions for manufacturers" trips the manufacturer keyword). When the
+// content shows a clear self SERVICE-PROVIDER role in a family the customer is NOT targeting, the
+// matched target family must be corroborated by the company's OWN operational evidence — otherwise
+// the match is "customers served", not the company's role, and is rejected as wrong-target. This is
+// context-dependent: if the customer targets that service family, it is a valid target, not a conflict.
+const SERVICE_PROVIDER_ROLE: Record<string, RegExp> = {
+  logistics: /\b(3pl\b|third[- ]?party logistics|logistics (provider|company|services|solutions|partner|operator)|supply[- ]?chain (solutions|services|management|provider|partner)|freight forward\w*|fulfillment (services|provider|solutions)|contract logistics)\b/i,
+  software: /\b(software (company|provider|platform|vendor|solution)|saas\b|technology platform (for|that)|we build software|our (software|platform) (helps|enables|for))\b/i,
+  distributor: /\b(authorized distributor|wholesale distributor|we distribute\b|distribution partner for|reseller of)\b/i,
+  consulting: /\b(consult(ing|ancy) (firm|services|company|group)|advisory (firm|services)|management consult\w*|we advise\b)\b/i,
+};
+// First-person / own-operation evidence that the company itself performs the target-family activity.
+const SELF_OPERATION_ROLE: Record<string, RegExp> = {
+  manufacturer: /\b(manufacturer of|makers? of|producers? of|we (manufacture|produce|make|fabricate)\b|our (manufacturing|production) (facilit|plant|site|operation|process|capabilit|line)|manufactured (by us|in[- ]house|at our|in our)|our (own )?(plant|factor|production))\b/i,
+  distributor: /\b(we distribute\b|our distribution (network|centers?|operations?)|we are (a|an) .{0,20}distributor)\b/i,
+  logistics: /\b(we (provide|operate|run) (logistics|warehousing|fulfillment|freight)|our (logistics|fulfillment|warehouse) (network|operations?|centers?))\b/i,
+};
+
+/** The company's own service-provider role in a family the customer is NOT targeting (or null). */
+export function conflictingServiceRole(content: string, targetFamilies: string[]): string | null {
+  for (const [fam, re] of Object.entries(SERVICE_PROVIDER_ROLE)) {
+    if (!targetFamilies.includes(fam) && re.test(content)) return fam;
+  }
+  return null;
+}
+/** Whether the content shows the company itself operates in the matched target family. Families
+ * without a specific self-operation pattern fall back to keyword presence (unchanged behavior). */
+export function hasSelfOperationEvidence(content: string, family: string): boolean {
+  const re = SELF_OPERATION_ROLE[family];
+  return re ? re.test(content) : true;
+}
+
 /** PURE decision over fetched neutral evidence. No I/O. */
 export function qualifyFromEvidence(ev: CompanyEvidence, targetFamilies: string[], name: string): QualificationResult {
   if (!ev.ok) return { status: "OPS_BLOCKED_PROVIDER_FAILURE", reason: "Official source could not be retrieved (provider failure)." };
@@ -83,7 +117,15 @@ export function qualifyFromEvidence(ev: CompanyEvidence, targetFamilies: string[
   if (!observedFamilies.length) return { status: "UNRESOLVED_INSUFFICIENT_EVIDENCE", reason: "Current source does not establish a recognizable operating-role family." };
 
   const match = observedFamilies.find((f) => targetFamilies.includes(f));
-  if (match) return { status: "QUALIFIED_FOR_RESEARCH", observedRole: match, sourceRef: ev.sourceUrl, reason: `Current official source indicates ${match}, matching the customer target.` };
+  if (match) {
+    // Operating-role guard: reject when the company's own primary role is a NON-target service
+    // (it merely SERVES the target family) and there is no self-operational evidence for the match.
+    const conflict = conflictingServiceRole(content, targetFamilies);
+    if (conflict && !hasSelfOperationEvidence(content, match)) {
+      return { status: "REJECTED_WRONG_TARGET_TYPE", reason: `Primary operating role is ${conflict} (serves ${match}s but is not a ${match}); no self-operational ${match} evidence in current source.` };
+    }
+    return { status: "QUALIFIED_FOR_RESEARCH", observedRole: match, sourceRef: ev.sourceUrl, reason: `Current official source indicates ${match}, matching the customer target.` };
+  }
   return { status: "REJECTED_WRONG_TARGET_TYPE", reason: `Current official source indicates ${observedFamilies.join("/")}, outside the customer target families (${targetFamilies.join("/") || "none"}).` };
 }
 

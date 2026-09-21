@@ -34,6 +34,30 @@ async function main() {
     qualifyFromEvidence(ev("Alpina is a company with a long history and strong values serving communities."), TARGET, "Alpina").status === "UNRESOLVED_INSUFFICIENT_EVIDENCE");
   t("empty/too-short content → UNRESOLVED", qualifyFromEvidence(ev("   "), TARGET, "X").status === "UNRESOLVED_INSUFFICIENT_EVIDENCE");
   t("provider failure (ok:false) → OPS_BLOCKED, never wrong-target", qualifyFromEvidence(ev("", false), TARGET, "X").status === "OPS_BLOCKED_PROVIDER_FAILURE");
+
+  // ── operating-role attribution (DHL fix, §7–§15) — context-dependent, generalizable ──
+  const MFR = ["manufacturer"];
+  // CASE A: genuine US manufacturer with self-production evidence → QUALIFIED
+  t("A: genuine manufacturer (self-production evidence) → QUALIFIED",
+    qualifyFromEvidence(ev("We are a manufacturer of rigid packaging; our manufacturing plants produce millions of units."), MFR, "American Packaging").status === "QUALIFIED_FOR_RESEARCH");
+  // CASE B: contract-logistics operator serving manufacturers (the DHL pattern) → NOT QUALIFIED as manufacturer
+  t("B: 3PL/logistics serving manufacturers → REJECTED_WRONG_TARGET_TYPE (not a manufacturer)",
+    qualifyFromEvidence(ev("A leading third-party logistics and supply chain solutions provider. We run warehousing and fulfillment for manufacturers and help manufacturing customers optimize distribution."), MFR, "DHL Supply Chain").status === "REJECTED_WRONG_TARGET_TYPE");
+  // CASE C: pure software vendor serving manufacturers → NOT QUALIFIED as manufacturer
+  t("C: software platform for manufacturers → REJECTED_WRONG_TARGET_TYPE",
+    qualifyFromEvidence(ev("Our SaaS platform helps manufacturers run their factories. We build software for manufacturing operations."), MFR, "FactoryOS").status === "REJECTED_WRONG_TARGET_TYPE");
+  // CASE D: genuine manufacturer that ALSO operates distribution → QUALIFIED (self-mfg evidence present)
+  t("D: manufacturer that also distributes → QUALIFIED (own manufacturing evidence)",
+    qualifyFromEvidence(ev("We are a manufacturer of snack foods. We manufacture at our own production plants and also operate our distribution network of warehouses."), MFR, "Compact Industries").status === "QUALIFIED_FOR_RESEARCH");
+  // CASE E: ambiguous — logistics-provider role but NO self-manufacturing evidence → not auto-qualified
+  t("E: ambiguous logistics-provider role, no self-mfg evidence → NOT qualified",
+    qualifyFromEvidence(ev("We provide contract logistics and fulfillment services. Manufacturing sector expertise."), MFR, "Ambiguous Co").status !== "QUALIFIED_FOR_RESEARCH");
+  // CASE F: the SAME logistics company under a logistics-targeting ICP → QUALIFIED (context-dependent)
+  t("F: logistics company under a logistics-targeting ICP → QUALIFIED (not globally excluded)",
+    qualifyFromEvidence(ev("A leading third-party logistics and supply chain solutions provider running warehousing and fulfillment."), ["logistics"], "DHL Supply Chain").status === "QUALIFIED_FOR_RESEARCH");
+  // Guard is precise: a real manufacturer with NO conflicting service role still qualifies without explicit "we manufacture".
+  t("no conflicting service role → keyword-level manufacturer still qualifies",
+    qualifyFromEvidence(ev("Industrial manufacturing company. Producer of automotive components for the industrial sector."), MFR, "Acme Industrial").status === "QUALIFIED_FOR_RESEARCH");
   // A factory-ish NAME must NOT qualify without content evidence (§10).
   t("factory-sounding name but no content evidence → NOT qualified on name alone",
     qualifyFromEvidence(ev("", false), TARGET, "Global Manufacturing Solutions").status !== "QUALIFIED_FOR_RESEARCH");
