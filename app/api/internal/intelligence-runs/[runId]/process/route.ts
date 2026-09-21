@@ -43,15 +43,21 @@ export async function POST(req: NextRequest, { params }: { params: { runId: stri
   const { withVaultReuse } = await import("@/lib/lead-hunter/vault-identity-reuse");
   const { createVaultReuseDeps } = await import("@/lib/lead-hunter/vault-reuse-deps");
   const { resolveVaultReuseConfig, makeVaultReuseGate } = await import("@/lib/lead-hunter/vault-reuse-config");
+  const vaultReuseConfig = resolveVaultReuseConfig();
   const discoveryRunner = withVaultReuse(
     defaultDiscoveryRunner,
     createVaultReuseDeps(db as never),
     undefined,
     {
-      gate: makeVaultReuseGate(resolveVaultReuseConfig()),
+      gate: makeVaultReuseGate(vaultReuseConfig),
       onTelemetry: (t) => console.log(`[analytics] ${JSON.stringify({ event: "vault_reuse", surface: "intelligence_run", run_id: params.runId, ...t })}`),
     },
   );
+  // Reused-identity Research qualification: only wired when reuse is enabled (OFF → undefined →
+  // no qualification, no cost). Lets qualified reused operators reach Research; wrong-target/
+  // non-company identities are rejected. Fail-closed inside the spine.
+  const { createReuseQualificationDeps } = await import("@/lib/lead-hunter/vault-reuse-qualification-deps");
+  const reuseQualifier = vaultReuseConfig.mode === "OFF" ? undefined : createReuseQualificationDeps();
 
   const traceSink = new SupabaseRunTraceSink(db);
   // Trace persistence must survive serverless termination (RUNTIME ATTRIBUTION V1 §1.14):
@@ -64,6 +70,7 @@ export async function POST(req: NextRequest, { params }: { params: { runId: stri
     leadHunterStore: new SupabaseLeadHunterRunStore(db as never),
     runStore: new SupabaseIntelligenceRunStore(db),
     discoveryRunner,
+    reuseQualifier,
     pipeline: (await import("@/lib/pipeline")).runLeadLensPipeline,
     traceProvenance: "live",
     // Bounded account-research concurrency. c=2 is the validated production default;

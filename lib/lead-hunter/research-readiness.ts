@@ -13,7 +13,7 @@ export interface ResearchReadinessAssessment {
   priorityBand: 1 | 2 | 3 | 4 | 5;
 }
 
-const FAMILY: Record<string, string[]> = {
+export const FAMILY: Record<string, string[]> = {
   manufacturer: ["manufacturer", "manufacturing", "fabricante", "manufactura", "industrial", "producer", "productor"],
   distributor: ["distributor", "distribution", "distribuidor", "distribucion", "wholesale", "mayorista"],
   logistics: ["logistics", "logistica", "3pl", "transport", "freight"],
@@ -24,7 +24,9 @@ const FAMILY: Record<string, string[]> = {
 };
 
 const words = (value: string) => value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(/[^a-z0-9]+/).filter(x => x.length >= 4);
-const families = (value: string) => Object.entries(FAMILY).filter(([, terms]) => terms.some(t => value.includes(t))).map(([k]) => k);
+/** Target/observed FAMILY keys present in free text. Single source of truth reused by the
+ * reused-identity qualification stage so its role\u2194target matching stays identical to the gate. */
+export const families = (value: string): string[] => Object.entries(FAMILY).filter(([, terms]) => terms.some(t => value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(t))).map(([k]) => k);
 
 export function assessResearchReadiness(candidate: CandidateAccount, plan: DiscoveryPlan): ResearchReadinessAssessment {
   if (candidate.status === "excluded") return { status: "hard_excluded", reasons: [candidate.statusReason], priorityBand: 5 };

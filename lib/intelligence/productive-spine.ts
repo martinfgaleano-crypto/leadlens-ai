@@ -5,6 +5,7 @@ import { buildDiscoveryJobInput } from "@/lib/interpretation/confirmed-context-e
 import type { DiscoveryRunner } from "@/lib/lead-hunter/candidate-universe";
 import type { LeadHunterRunStore } from "@/lib/lead-hunter/run-store";
 import { loadLeadHunterUniverse, orderResearchCandidatesForBudget, runAndPersistLeadHunter, toResearchCandidates } from "@/lib/lead-hunter/hunt-and-persist";
+import { qualifyReusedCandidates, type ReuseQualificationDeps } from "@/lib/lead-hunter/vault-reuse-qualification";
 import { synthesizeCase } from "@/lib/monitor/canonical-case";
 import { isMaterialEventClaim } from "@/lib/intelligence/evidence-materiality";
 import { classifyRunCoverage } from "@/lib/intelligence/account-deep-research";
@@ -74,6 +75,13 @@ export interface ProductiveSpineDeps {
    *  fails the paid report (an honest envelope is persisted instead). Default (eligible + omitted) =
    *  the live provider+LLM researcher. Injected as a stub in tests so no spend occurs. */
   premiumContextResearcher?: PremiumContextResearcher;
+  /** Optional reused-identity Research qualification (Hybrid Candidate Universe). When present,
+   *  Vault-reused identities that lack an observed operating role are qualified from their OWN
+   *  current official source BEFORE the Research handoff, so genuinely relevant reused operators
+   *  can reach Research while wrong-target/non-company identities are rejected. Enrichment is on a
+   *  working copy (the persisted universe is immutable); best-effort/fail-closed — a failure leaves
+   *  the reused identities held, never breaking the run. Injected as a stub in tests (no spend). */
+  reuseQualifier?: ReuseQualificationDeps;
 }
 
 export type StartIntelligenceRunResult =
@@ -190,7 +198,22 @@ async function runIntelligenceExecution(
     // Mandatory reload proves Research consumes durable Lead Hunter output, not
     // the transient return value and not an independent discovery path.
     if (!persistedUniverse) throw new Error("persisted_universe_unavailable");
-    let candidates = toResearchCandidates(persistedUniverse);
+    // Hybrid Candidate Universe — reused-identity Research qualification (best-effort, fail-closed).
+    // Vault-reused identities carry no observed operating role, so the frozen research-readiness gate
+    // holds them out of Research. When a qualifier is injected, verify each reused identity's operating
+    // role from its OWN current official source on a WORKING COPY (the persisted snapshot stays
+    // immutable): qualified operators get a neutral organizationType and can reach Research; wrong-
+    // target/non-company identities are excluded; provider failures leave them held. A qualification
+    // failure never breaks the run.
+    let researchUniverse = persistedUniverse;
+    if (deps.reuseQualifier) {
+      try {
+        const { universe: qualified, metrics } = await qualifyReusedCandidates(persistedUniverse, deps.reuseQualifier);
+        researchUniverse = qualified;
+        console.log(`[analytics] ${JSON.stringify({ event: "vault_reuse_qualification", run_id: runId, ...metrics })}`);
+      } catch { /* qualification is best-effort; fall back to the un-enriched universe */ }
+    }
+    let candidates = toResearchCandidates(researchUniverse);
     if (candidates.length === 0) throw new Error("no_research_ready_candidates");
 
     // Vault accretion (best-effort, failure-isolated): valid discovered companies
