@@ -98,12 +98,33 @@ async function main() {
   t("unresolved reused identity does NOT reach Research", !readyNames.includes("Opaque SA"));
   t("fresh candidate still reaches Research (no regression)", readyNames.includes("Fresh Mfr"));
 
-  // ── budget bound: only maxQualify fetches attempted ──
+  // ── budget bound: only maxQualify candidates fetched (each qualifies on homepage → no subpage) ──
   const many: CandidateAccountUniverse = { ...universe, candidates: Array.from({ length: 30 }, (_, i) => mk(`Co${i}`, `co${i}.com`)) };
   let fetches = 0;
-  await qualifyReusedCandidates(many, { fetchCompanyEvidence: async ({ domain }) => { fetches++; return ev("manufacturer manufacturing", true, domain); } }, { maxQualify: 5 });
-  t("qualification respects the maxQualify budget", fetches === 5);
-  t("default budget is bounded", DEFAULT_REUSE_QUALIFICATION_BUDGET.maxQualify <= 20);
+  const okContent = "We are a manufacturer operating manufacturing plants that produce packaging for our clients across the region.";
+  await qualifyReusedCandidates(many, { fetchCompanyEvidence: async ({ domain }) => { fetches++; return ev(okContent, true, domain); } }, { maxQualify: 5 });
+  t("qualification respects the maxQualify budget (homepage-qualified → no subpages)", fetches === 5);
+  t("default budget is bounded", DEFAULT_REUSE_QUALIFICATION_BUDGET.maxQualify <= 20 && (DEFAULT_REUSE_QUALIFICATION_BUDGET.maxTotalFetches ?? 0) <= 40);
+
+  // ── subpage cascade: an ambiguous homepage is recovered by an official subpage (§16) ──
+  const subUniverse: CandidateAccountUniverse = { ...universe, candidates: [mk("Ambiguous Mfr", "ambig.com.co")] };
+  const bySubpath: Record<string, CompanyEvidence> = {
+    "https://ambig.com.co": ev("Bienvenidos. Nuestra empresa con más de 50 años de trayectoria y valores. Cookies.", true, "ambig.com.co"),
+    "https://ambig.com.co/nosotros": ev("Somos un fabricante: operamos plantas de manufactura y producción industrial de empaques.", true, "ambig.com.co"),
+  };
+  let subFetches = 0;
+  const subDeps: ReuseQualificationDeps = { fetchCompanyEvidence: async ({ domain, path }) => { subFetches++; return bySubpath[`https://${domain}${path ?? ""}`] ?? ev("", false, domain); } };
+  const { universe: subEnriched, metrics: subMetrics } = await qualifyReusedCandidates(subUniverse, subDeps);
+  t("ambiguous homepage recovered via official subpage → QUALIFIED", subMetrics.qualified === 1 && subMetrics.recoveredViaSubpage === 1);
+  t("subpage recovery sets a source-verified role and reaches Research",
+    prioritizeResearch(subEnriched.candidates, subEnriched.plan).some((c) => c.identity.canonicalName === "Ambiguous Mfr"));
+  t("subpage cascade consumed a bounded number of fetches (homepage + ≤ MAX subpages)", subFetches >= 2 && subFetches <= 3);
+
+  // ── §20: a real wrong-target homepage is NEVER overridden by subpage fishing ──
+  let wtFetches = 0;
+  const wtDeps: ReuseQualificationDeps = { fetchCompanyEvidence: async ({ domain, path }) => { wtFetches++; return ev(path ? "we also manufacture" : "We are a third-party logistics and freight transport operator.", true, domain); } };
+  const { metrics: wtMetrics } = await qualifyReusedCandidates({ ...universe, candidates: [mk("Logi Co", "logi.com")] }, wtDeps);
+  t("wrong-target homepage stays rejected (no subpage fishing, single fetch)", wtMetrics.rejectedWrongTarget === 1 && wtFetches === 1);
 
   // ── fail-closed: a throwing fetcher never breaks qualification, leaves candidate held ──
   const { metrics: m2 } = await qualifyReusedCandidates(

@@ -43,7 +43,16 @@ export interface CompanyEvidence {
   ok: boolean;
 }
 
-export type CompanySourceFetcher = (input: { domain: string; name: string; country?: string }) => Promise<CompanyEvidence>;
+export type CompanySourceFetcher = (input: { domain: string; name: string; country?: string; path?: string }) => Promise<CompanyEvidence>;
+
+/** Bounded official subpages tried when a homepage yields NO operating-role signal (§16). Spanish
+ * paths first (Colombia), then English. Never tried when the homepage already showed a role family
+ * (a real wrong-target signal is preserved, §20) or a non-company/provider failure. */
+export const QUALIFICATION_SUBPAGES = ["/nosotros", "/productos", "/quienes-somos", "/about", "/products", "/what-we-do"] as const;
+/** Max official-source fetches (homepage + subpages) across a whole run — caps cost/latency. */
+export const DEFAULT_MAX_TOTAL_FETCHES = 24;
+/** Max subpages tried per unresolved candidate. */
+export const MAX_SUBPAGES_PER_CANDIDATE = 2;
 
 export interface QualificationResult {
   status: QualificationStatus;
@@ -79,20 +88,31 @@ export function qualifyFromEvidence(ev: CompanyEvidence, targetFamilies: string[
 }
 
 export interface ReuseQualificationDeps { fetchCompanyEvidence: CompanySourceFetcher }
-export interface ReuseQualificationBudget { maxQualify: number }
-/** Bound the number of bounded source fetches per run. Preview economics + fairness (§15/§16). */
-export const DEFAULT_REUSE_QUALIFICATION_BUDGET: ReuseQualificationBudget = { maxQualify: 12 };
+export interface ReuseQualificationBudget { maxQualify: number; maxTotalFetches?: number }
+/** Bound the number of candidates + total source fetches per run. Preview economics + fairness (§15/§16). */
+export const DEFAULT_REUSE_QUALIFICATION_BUDGET: ReuseQualificationBudget = { maxQualify: 12, maxTotalFetches: DEFAULT_MAX_TOTAL_FETCHES };
 
 export interface ReuseQualificationMetrics {
   targetFamilies: string[];
   eligibleForQualification: number;
   attempted: number;
+  totalFetches: number;
   qualified: number;
+  recoveredViaSubpage: number;
   rejectedWrongTarget: number;
   rejectedNonCompany: number;
   rejectedWrongGeography: number;
   unresolved: number;
   opsBlocked: number;
+}
+
+/** Bounded official subpages to try for a domain, Spanish-first for Colombian TLDs. */
+export function subpagesFor(domain: string): string[] {
+  const co = /\.co($|\.)/.test(domain.toLowerCase());
+  const ordered = co
+    ? ["/nosotros", "/productos", "/quienes-somos", "/about", "/products"]
+    : ["/about", "/products", "/what-we-do", "/company", "/nosotros"];
+  return ordered.slice(0, MAX_SUBPAGES_PER_CANDIDATE);
 }
 
 /** True when a candidate should undergo qualification: a Vault-reused, in-scope, domain-verified
@@ -118,21 +138,43 @@ export async function qualifyReusedCandidates(
 ): Promise<{ universe: CandidateAccountUniverse; metrics: ReuseQualificationMetrics }> {
   const targetFamilies = targetFamiliesForPlan(universe.plan);
   const metrics: ReuseQualificationMetrics = {
-    targetFamilies, eligibleForQualification: 0, attempted: 0, qualified: 0,
+    targetFamilies, eligibleForQualification: 0, attempted: 0, totalFetches: 0, qualified: 0, recoveredViaSubpage: 0,
     rejectedWrongTarget: 0, rejectedNonCompany: 0, rejectedWrongGeography: 0, unresolved: 0, opsBlocked: 0,
   };
   const candidates = universe.candidates.map((c) => ({ ...c, identity: { ...c.identity } }));
+  const maxTotalFetches = budget.maxTotalFetches ?? DEFAULT_MAX_TOTAL_FETCHES;
   let attempts = 0;
   for (const c of candidates) {
     if (!needsReuseQualification(c)) continue;
     metrics.eligibleForQualification++;
-    if (attempts >= budget.maxQualify) continue; // bounded; the rest stay held (unresolved)
+    if (attempts >= budget.maxQualify || metrics.totalFetches >= maxTotalFetches) continue; // bounded; rest stay held
     attempts++;
     metrics.attempted++;
+    const name = c.identity.canonicalName;
+    const domain = c.identity.domain!;
     let result: QualificationResult;
     try {
-      const ev = await deps.fetchCompanyEvidence({ domain: c.identity.domain!, name: c.identity.canonicalName, country: c.identity.country });
-      result = qualifyFromEvidence(ev, targetFamilies, c.identity.canonicalName);
+      metrics.totalFetches++;
+      const ev = await deps.fetchCompanyEvidence({ domain, name, country: c.identity.country });
+      result = qualifyFromEvidence(ev, targetFamilies, name);
+      // Bounded subpage cascade — ONLY when the homepage gave no role signal (ambiguous). A real
+      // wrong-target / non-company / provider-failure signal is never overridden by subpage fishing (§20).
+      if (result.status === "UNRESOLVED_INSUFFICIENT_EVIDENCE" && ev.ok) {
+        let accContent = ev.content;
+        for (const path of subpagesFor(domain)) {
+          if (metrics.totalFetches >= maxTotalFetches) break;
+          metrics.totalFetches++;
+          const sev = await deps.fetchCompanyEvidence({ domain, name, country: c.identity.country, path });
+          if (!sev.ok || sev.content.trim().length < 40) continue;
+          accContent = `${accContent}\n${sev.content}`.slice(0, 12_000);
+          const r2 = qualifyFromEvidence({ domain: ev.domain, content: accContent, sourceUrl: sev.sourceUrl, ok: true }, targetFamilies, name);
+          if (r2.status !== "UNRESOLVED_INSUFFICIENT_EVIDENCE") {
+            result = r2;
+            if (r2.status === "QUALIFIED_FOR_RESEARCH") metrics.recoveredViaSubpage++;
+            break;
+          }
+        }
+      }
     } catch {
       result = { status: "OPS_BLOCKED_PROVIDER_FAILURE", reason: "Qualification fetch threw (failure-isolated)." };
     }
