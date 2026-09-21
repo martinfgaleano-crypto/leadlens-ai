@@ -97,9 +97,10 @@ try {
   check("same context label persists independently across tenants", Boolean(confirmedB && [200, 201].includes(confirmedB.status)));
 
   t = Date.now();
+  const deliveryLimit = Math.max(1, Math.min(18, Number(process.env.LEADLENS_ACCEPTANCE_DELIVERY_LIMIT ?? 2)));
   const started = await startRun(req("/api/customer/intelligence-runs", tokenA, {
     context_id: contextId, version: confirmedBody.context.version, plan: "sample",
-    idempotency_key: `accept_${stamp}`, delivery_limit: 2,
+    idempotency_key: `accept_${stamp}`, delivery_limit: deliveryLimit,
   }));
   timings.start_request_ms = Date.now() - t;
   const startedBody = await started.json() as { run_id?: string; status?: string; lead_hunter_run_id?: string; client_key?: string; error?: string };
@@ -151,7 +152,7 @@ try {
 
   const retry = await startRun(req("/api/customer/intelligence-runs", tokenA, {
     context_id: contextId, version: confirmedBody.context.version, plan: "sample",
-    idempotency_key: `accept_${stamp}`, delivery_limit: 2,
+    idempotency_key: `accept_${stamp}`, delivery_limit: deliveryLimit,
   }));
   const retryBody = await retry.json() as { run_id?: string; reused?: boolean };
   check("completed retry is idempotent and avoids new Research", retryBody.run_id === runId && retryBody.reused === true);
