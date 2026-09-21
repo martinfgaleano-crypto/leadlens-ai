@@ -3,6 +3,7 @@ import { hunt, DEFAULT_DISCOVERY_BUDGET } from "../../lib/lead-hunter/candidate-
 import type { DiscoveryPlan, DiscoveryRunner, DiscoveryRunOutput, RawDiscoveredOrg } from "../../lib/lead-hunter/candidate-universe";
 import { withVaultReuse } from "../../lib/lead-hunter/vault-identity-reuse";
 import type { NeutralVaultIdentity } from "../../lib/lead-hunter/vault-identity-reuse";
+import { prioritizeResearch } from "../../lib/lead-hunter/research-readiness";
 
 let p = 0; const t = (n: string, ok: boolean) => { assert.equal(ok, true, n); p++; console.log(`✅ ${n}`); };
 
@@ -97,6 +98,28 @@ async function main() {
     );
     const u = await hunt(plan(["United States"]), runner);
     t("closed gate → universe is fresh-only, vaultReusedCandidates = 0", !u.candidates.some((c) => c.originFlags?.includes("VAULT_REUSED")) && (u.coverage.vaultReusedCandidates ?? 0) === 0);
+  }
+
+  // ── DOCUMENTED BLOCKER (canary finding §34): the neutral projection omits org type,
+  // and the frozen research-readiness gate requires a confirmed/target-matching type, so
+  // reused identities are admitted to the Universe but do NOT reach Research yet. This is
+  // the identified loss stage (Research selection); enabling Research on reused identities
+  // is a scoped, separately-validated next step. Locked here so the behavior is explicit. ──
+  {
+    const runner = withVaultReuse(
+      baseRunner([fresh("Fresh Mfr", "freshmfr.com", "United States", "vertical_seed")]),
+      vaultRows([
+        { name: "American Packaging", domain: "americanpackaging.com", country: "United States", region: null },
+        { name: "Post Holdings", domain: "postholdings.com", country: "United States", region: null },
+      ]),
+      { maxCandidates: 40 }, { gate: () => true },
+    );
+    const u = await hunt(plan(["United States"]), runner);
+    const ready = prioritizeResearch(u.candidates, u.plan);
+    t("reused identities are admitted to the Universe (2 vault_reused)", u.coverage.vaultReusedCandidates === 2);
+    t("BLOCKER: type-free reused identities do NOT reach Research (loss at Research selection §34)",
+      ready.length >= 1 && ready.every((c) => !c.originFlags?.includes("VAULT_REUSED")));
+    t("fresh, type-confirmed candidate still reaches Research (no regression)", ready.some((c) => c.identity.canonicalName === "Fresh Mfr"));
   }
 
   console.log(`\n${p} passed, 0 failed`);
