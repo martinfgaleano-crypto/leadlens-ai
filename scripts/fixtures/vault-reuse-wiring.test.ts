@@ -26,7 +26,11 @@ function fakeDb(rows: unknown[]) {
       return {
         select(columns: string) {
           return {
-            async limit(n: number) { calls.push({ table, columns, limit: n }); return { data: rows, error: null }; },
+            order(_col: string, _opts: { ascending: boolean }) {
+              return {
+                async limit(n: number) { calls.push({ table, columns, limit: n }); return { data: rows, error: null }; },
+              };
+            },
           };
         },
       };
@@ -64,7 +68,7 @@ async function main() {
   // ── deps fail-closed on a null client and on a query error ──
   const nullDeps = createVaultReuseDeps(null);
   t("null db → deps return [] (fail-closed)", (await nullDeps.fetchNeutralIdentities(["United States"])).length === 0);
-  const errDb = { from() { return { select() { return { async limit() { return { data: null, error: { message: "boom" } }; } }; } }; } };
+  const errDb = { from() { return { select() { return { order() { return { async limit() { return { data: null, error: { message: "boom" } }; } }; } }; } }; } };
   const errDeps = createVaultReuseDeps(errDb as never);
   t("query error → deps return [] (fail-closed)", (await errDeps.fetchNeutralIdentities(["United States"])).length === 0);
 

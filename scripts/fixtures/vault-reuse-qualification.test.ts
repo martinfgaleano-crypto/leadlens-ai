@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import {
   qualifyFromEvidence, qualifyReusedCandidates, needsReuseQualification,
-  DEFAULT_REUSE_QUALIFICATION_BUDGET,
+  DEFAULT_REUSE_QUALIFICATION_BUDGET, adaptiveQualificationBudget, MAX_ADAPTIVE_QUALIFY,
   type CompanyEvidence, type ReuseQualificationDeps,
 } from "../../lib/lead-hunter/vault-reuse-qualification";
 import { prioritizeResearch } from "../../lib/lead-hunter/research-readiness";
@@ -105,6 +105,12 @@ async function main() {
   await qualifyReusedCandidates(many, { fetchCompanyEvidence: async ({ domain }) => { fetches++; return ev(okContent, true, domain); } }, { maxQualify: 5 });
   t("qualification respects the maxQualify budget (homepage-qualified → no subpages)", fetches === 5);
   t("default budget is bounded", DEFAULT_REUSE_QUALIFICATION_BUDGET.maxQualify <= 20 && (DEFAULT_REUSE_QUALIFICATION_BUDGET.maxTotalFetches ?? 0) <= 40);
+
+  // ── adaptive coverage budget (§17/§18): scales with delivery target, hard-capped ──
+  t("Preview (2) keeps the conservative floor of 12", adaptiveQualificationBudget(2).maxQualify === 12);
+  t("Brief (6) widens coverage to 18", adaptiveQualificationBudget(6).maxQualify === 18);
+  t("Portfolio (12) is capped at MAX_ADAPTIVE_QUALIFY", adaptiveQualificationBudget(12).maxQualify === MAX_ADAPTIVE_QUALIFY && MAX_ADAPTIVE_QUALIFY === 30);
+  t("adaptive maxTotalFetches stays bounded (2x maxQualify)", adaptiveQualificationBudget(6).maxTotalFetches === 36 && adaptiveQualificationBudget(18).maxTotalFetches === 60);
 
   // ── subpage cascade: an ambiguous homepage is recovered by an official subpage (§16) ──
   const subUniverse: CandidateAccountUniverse = { ...universe, candidates: [mk("Ambiguous Mfr", "ambig.com.co")] };

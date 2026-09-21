@@ -5,7 +5,7 @@ import { buildDiscoveryJobInput } from "@/lib/interpretation/confirmed-context-e
 import type { DiscoveryRunner } from "@/lib/lead-hunter/candidate-universe";
 import type { LeadHunterRunStore } from "@/lib/lead-hunter/run-store";
 import { loadLeadHunterUniverse, orderResearchCandidatesForBudget, runAndPersistLeadHunter, toResearchCandidates } from "@/lib/lead-hunter/hunt-and-persist";
-import { qualifyReusedCandidates, type ReuseQualificationDeps } from "@/lib/lead-hunter/vault-reuse-qualification";
+import { qualifyReusedCandidates, adaptiveQualificationBudget, type ReuseQualificationDeps } from "@/lib/lead-hunter/vault-reuse-qualification";
 import { synthesizeCase } from "@/lib/monitor/canonical-case";
 import { isMaterialEventClaim } from "@/lib/intelligence/evidence-materiality";
 import { classifyRunCoverage } from "@/lib/intelligence/account-deep-research";
@@ -208,7 +208,9 @@ async function runIntelligenceExecution(
     let researchUniverse = persistedUniverse;
     if (deps.reuseQualifier) {
       try {
-        const { universe: qualified, metrics } = await qualifyReusedCandidates(persistedUniverse, deps.reuseQualifier);
+        // Adaptive coverage: when fresh under-supplies (fallback fired), attempt enough eligible
+        // reused identities to plausibly meet the delivery target — bounded, relevance bar unchanged.
+        const { universe: qualified, metrics } = await qualifyReusedCandidates(persistedUniverse, deps.reuseQualifier, adaptiveQualificationBudget(input.deliveryLimit));
         researchUniverse = qualified;
         console.log(`[analytics] ${JSON.stringify({ event: "vault_reuse_qualification", run_id: runId, ...metrics })}`);
       } catch { /* qualification is best-effort; fall back to the un-enriched universe */ }

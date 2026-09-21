@@ -23,7 +23,9 @@ import type { NeutralVaultIdentity, VaultReuseDeps } from "./vault-identity-reus
 export interface VaultReadClient {
   from(table: string): {
     select(columns: string): {
-      limit(n: number): Promise<{ data: unknown; error: unknown }>;
+      order(column: string, opts: { ascending: boolean }): {
+        limit(n: number): Promise<{ data: unknown; error: unknown }>;
+      };
     };
   };
 }
@@ -43,9 +45,13 @@ export function createVaultReuseDeps(db: VaultReadClient | null): VaultReuseDeps
       if (!db) return [];
       try {
         // Column-narrowed projection: ONLY neutral public identity fields leave the DB.
+        // Deterministic order (by domain) so the bounded qualification batch is STABLE run-to-run —
+        // an unordered fetch made which identities got qualified vary between runs. Order by a neutral
+        // identity field only (never observation_count/last_seen — those are not commercial relevance).
         const { data, error } = await db
           .from("vault_companies")
           .select("name, domain, country, region")
+          .order("domain", { ascending: true })
           .limit(VAULT_REUSE_FETCH_LIMIT);
         if (error || !Array.isArray(data)) return [];
         return (data as NeutralRow[]).map((r) => ({

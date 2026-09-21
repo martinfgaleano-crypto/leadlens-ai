@@ -92,6 +92,17 @@ export interface ReuseQualificationBudget { maxQualify: number; maxTotalFetches?
 /** Bound the number of candidates + total source fetches per run. Preview economics + fairness (§15/§16). */
 export const DEFAULT_REUSE_QUALIFICATION_BUDGET: ReuseQualificationBudget = { maxQualify: 12, maxTotalFetches: DEFAULT_MAX_TOTAL_FETCHES };
 
+/** Adaptive qualification budget (§17/§18): when the thin-universe fallback fires, attempt enough
+ * eligible reused identities to plausibly fill the commercial delivery target, given observed
+ * per-batch yield, WITHOUT becoming an unbounded search. Scales with the delivery target and is hard-
+ * capped. It never lowers the bar (wrong_target/non-company gates are unchanged) — it only widens how
+ * many verified identities are checked when fresh Discovery under-supplies. */
+export const MAX_ADAPTIVE_QUALIFY = 30;
+export function adaptiveQualificationBudget(deliveryTarget: number): ReuseQualificationBudget {
+  const maxQualify = Math.min(MAX_ADAPTIVE_QUALIFY, Math.max(12, Math.ceil(deliveryTarget) * 3));
+  return { maxQualify, maxTotalFetches: maxQualify * 2 };
+}
+
 export interface ReuseQualificationMetrics {
   targetFamilies: string[];
   eligibleForQualification: number;
