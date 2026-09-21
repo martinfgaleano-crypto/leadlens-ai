@@ -57,6 +57,43 @@ t("composition preserves the base output envelope", composed.providersAvailable.
 const failComposed = await withVaultReuse(base, { fetchNeutralIdentities: async () => { throw new Error("db down"); } })(plan);
 t("reuse is fail-closed: a fetch error preserves the base output unchanged", failComposed.orgs.length === baseOut.orgs.length);
 
+// ── gate: a closed gate reads NOTHING and returns the base unchanged ──
+let fetchCalls = 0;
+const countingDeps: VaultReuseDeps = { fetchNeutralIdentities: async () => { fetchCalls++; return rows; } };
+const gatedClosed = await withVaultReuse(base, countingDeps, { maxCandidates: 40 }, { gate: () => false })(plan);
+t("closed gate returns the base output byte-for-byte and never reads the Vault", gatedClosed.orgs.length === baseOut.orgs.length && fetchCalls === 0);
+fetchCalls = 0;
+const gatedOpen = await withVaultReuse(base, countingDeps, { maxCandidates: 40 }, { gate: () => true })(plan);
+t("open gate appends reuse candidates and reads the Vault exactly once", gatedOpen.orgs.some((o) => o.origin === "vault_reuse") && fetchCalls === 1);
+
+// ── telemetry: counts only, duplicates accounted, no run/customer data ──
+let tel: Record<string, unknown> | null = null;
+await withVaultReuse(base, { fetchNeutralIdentities: async () => rows }, { maxCandidates: 40 }, { gate: () => true, onTelemetry: (x) => { tel = x as never; } })(plan);
+t("telemetry reports fetched/projected/appended and duplicatesRemoved (Mars already in base)",
+  !!tel && (tel as Record<string, number>).appended === 2 && (tel as Record<string, number>).duplicatesRemoved === 1 && (tel as Record<string, boolean>).gateOpen === true);
+t("telemetry carries only numeric counts + rejected map — no name/domain/run/customer fields",
+  !!tel && Object.keys(tel!).every((k) => ["gateOpen", "fetched", "projected", "appended", "duplicatesRemoved", "rejected"].includes(k)));
+
+// ── adversarial leakage: a hostile Vault row carrying another customer's context ──
+// Even if the backend leaks ICP/Fit/Timing/Decision/notes/run ids, the neutral projection
+// must strip them: only name/domain/country + safe provenance may reach Research (§29).
+const hostileRow = {
+  name: "Acme Foods", domain: "acmefoods.com", country: "United States", region: null,
+  industry: "Mid-market packaging manufacturers with owned plants (Customer A ICP)",
+  fit: "strong", timing: "act_now", decision: "prioritize",
+  opportunityThesis: "Customer A wants to sell packaging automation",
+  privateNotes: "call CFO", runId: "intel_deadbeef", ownerId: "customer-a-uuid",
+} as unknown as NeutralVaultIdentity;
+const hostileOut = await withVaultReuse(base, { fetchNeutralIdentities: async () => [hostileRow] }, { maxCandidates: 40 }, { gate: () => true })(plan);
+const projected = hostileOut.orgs.find((o) => o.name === "Acme Foods");
+t("hostile Vault row is neutralized: projected candidate exposes only whitelisted keys",
+  !!projected && Object.keys(projected).every((k) => NEUTRAL_KEYS.has(k))
+  && !("industry" in projected!) && !("fit" in projected!) && !("timing" in projected!)
+  && !("decision" in projected!) && !("opportunityThesis" in projected!)
+  && !("privateNotes" in projected!) && !("runId" in projected!) && !("ownerId" in projected!));
+t("hostile row's country identity still flows (neutral fact), reuse-origin marked",
+  !!projected && projected!.country === "United States" && projected!.origin === "vault_reuse" && projected!.route === "verified_identity_reuse");
+
 console.log(`\n${p} passed, 0 failed`);
 }
 main().catch((e) => { console.error(e); process.exit(1); });

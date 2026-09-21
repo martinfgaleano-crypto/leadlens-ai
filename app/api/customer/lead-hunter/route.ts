@@ -38,11 +38,26 @@ export async function POST(req: NextRequest) {
   const contextStore = new SupabaseConfirmedContextStore(db as never);
   const runStore = new SupabaseLeadHunterRunStore(db as never);
   const { defaultDiscoveryRunner } = await import("@/lib/lead-hunter/discovery-runner");
+  // Hybrid Candidate Universe: fresh Discovery runs first; neutral Vault identity reuse
+  // is a thin-universe FALLBACK, gated by the reversible VAULT_REUSE_MODE flag + measured
+  // fresh-coverage sufficiency. OFF (default) → gate closed → no Vault read, original behavior.
+  const { withVaultReuse } = await import("@/lib/lead-hunter/vault-identity-reuse");
+  const { createVaultReuseDeps } = await import("@/lib/lead-hunter/vault-reuse-deps");
+  const { resolveVaultReuseConfig, makeVaultReuseGate } = await import("@/lib/lead-hunter/vault-reuse-config");
+  const discoveryRunner = withVaultReuse(
+    defaultDiscoveryRunner,
+    createVaultReuseDeps(db as never),
+    undefined,
+    {
+      gate: makeVaultReuseGate(resolveVaultReuseConfig()),
+      onTelemetry: (t) => console.log(`[analytics] ${JSON.stringify({ event: "vault_reuse", surface: "lead_hunter", ...t })}`),
+    },
+  );
 
   const result = await runAndPersistLeadHunter(
     contextStore, runStore, user.id,
     { contextId: parsed.data.context_id, version: parsed.data.version },
-    defaultDiscoveryRunner,
+    discoveryRunner,
   );
 
   if (!result.ok) {

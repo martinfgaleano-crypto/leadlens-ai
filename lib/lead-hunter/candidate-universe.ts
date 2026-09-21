@@ -168,6 +168,11 @@ export interface CoverageSummary {
   priorCandidatesConsidered?: number;
   candidatesReused?: number;
   freshCandidates?: number;
+  /** In-scope candidates contributed by neutral Vault identity reuse (§14/§25). A
+   * reused identity is NOT counted as a fresh discovery; this is a separate axis from
+   * context-memory reuse (candidatesReused). Overlaps freshCandidates only when fresh
+   * Discovery independently found the same company. */
+  vaultReusedCandidates?: number;
   stableCorePercent?: number;
   eventFirst?: EventFirstMetrics;
   gaps: DiscoveryGap[];
@@ -570,7 +575,13 @@ export async function hunt(plan: DiscoveryPlan, runner: DiscoveryRunner, opts: H
   };
   const inScope = candidates.filter((c) => c.status !== "excluded");
   const reusedCount = inScope.filter((c) => c.universeState === "stable_reused" || c.universeState === "revalidated").length;
-  const freshCount = inScope.filter((c) => c.universeState === "new" || c.universeState === "revalidated").length;
+  // Fresh DISCOVERY = a genuine account-first/event-first origin found it this run.
+  // A neutral Vault-reused identity is NOT a fresh discovery (§14/§25); it is counted
+  // separately, and only overlaps when fresh Discovery independently found the company.
+  const isFreshDiscovery = (c: CandidateAccount): boolean =>
+    !!c.originFlags?.some((f) => f === "ACCOUNT_FIRST" || f === "EVENT_FIRST" || f === "BOTH");
+  const freshCount = inScope.filter(isFreshDiscovery).length;
+  const vaultReusedCount = inScope.filter((c) => c.originFlags?.includes("VAULT_REUSED")).length;
   const duplicateRate = orgs.length ? 1 - candidates.length / orgs.length : 0;
 
   // A provider may fail one bounded route and later succeed through a fallback
@@ -604,6 +615,7 @@ export async function hunt(plan: DiscoveryPlan, runner: DiscoveryRunner, opts: H
     priorCandidatesConsidered: priorCandidates.length,
     candidatesReused: reusedCount,
     freshCandidates: freshCount,
+    vaultReusedCandidates: vaultReusedCount,
     stableCorePercent: priorCandidates.length ? Math.round((reusedCount / priorCandidates.length) * 100) : 0,
     eventFirst: out.eventFirst,
     gaps,

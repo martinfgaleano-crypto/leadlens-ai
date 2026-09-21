@@ -92,20 +92,55 @@ export async function selectVaultReuseCandidates(
   return { orgs, metrics };
 }
 
+/** Telemetry for one composed run (counts only — never customer/run-private data). */
+export interface VaultReuseTelemetry {
+  gateOpen: boolean;
+  fetched: number;
+  projected: number;
+  appended: number;
+  duplicatesRemoved: number;
+  rejected: Record<string, number>;
+}
+
+export interface WithVaultReuseOptions {
+  /** When present and it returns false, reuse is SKIPPED for this run and the Vault is
+   * never read — the base output is returned unchanged (identical to reuse OFF). Used to
+   * apply the rollout flag + thin-universe sufficiency policy (see vault-reuse-config). */
+  gate?: (out: DiscoveryRunOutput, plan: DiscoveryPlan) => boolean;
+  /** Best-effort structured telemetry sink (counts only). Never throws into the run. */
+  onTelemetry?: (t: VaultReuseTelemetry) => void;
+}
+
 /** Additive composition: run the base productive discovery runner, then APPEND neutral Vault-reuse
  * identities as extra candidates. The base output (metrics, coverage, event-first/account-first orgs)
  * is preserved; hunt's existing per-customer target-validation, geography and canonical dedup then
  * evaluate the combined set — vault-reuse orgs never bypass a gate, and a reused identity carries no
  * Evidence/Timing/Decision. Enable at the productive runner-injection points to overcome a thin fresh
- * universe without a competing discovery engine. */
-export function withVaultReuse(base: DiscoveryRunner, deps: VaultReuseDeps, budget: VaultReuseBudget = DEFAULT_VAULT_REUSE_BUDGET): DiscoveryRunner {
+ * universe without a competing discovery engine. When `options.gate` is supplied it decides, per run,
+ * whether reuse is even attempted (thin-universe fallback + rollout flag); a closed gate reads nothing. */
+export function withVaultReuse(
+  base: DiscoveryRunner,
+  deps: VaultReuseDeps,
+  budget: VaultReuseBudget = DEFAULT_VAULT_REUSE_BUDGET,
+  options: WithVaultReuseOptions = {},
+): DiscoveryRunner {
   return async (plan: DiscoveryPlan): Promise<DiscoveryRunOutput> => {
     const out = await base(plan);
     try {
+      // Gate first: a closed gate means NO Vault read and byte-identical base behavior.
+      if (options.gate && !options.gate(out, plan)) return out;
       const reuse = await selectVaultReuseCandidates({ geographies: plan.geographies }, deps, budget);
-      if (!reuse.orgs.length) return out;
       const seen = new Set(out.orgs.map((o) => (o.domain ?? o.name).toLowerCase()));
       const extra = reuse.orgs.filter((o) => !seen.has((o.domain ?? o.name).toLowerCase()));
+      options.onTelemetry?.({
+        gateOpen: true,
+        fetched: reuse.metrics.fetched,
+        projected: reuse.orgs.length,
+        appended: extra.length,
+        duplicatesRemoved: reuse.orgs.length - extra.length,
+        rejected: reuse.metrics.rejected,
+      });
+      if (!extra.length) return out;
       return { ...out, orgs: [...out.orgs, ...extra] };
     } catch {
       return out; // fail-closed: reuse never breaks a customer discovery run
