@@ -11,10 +11,6 @@
     {
       "path": "/api/internal/monitor-scheduler",
       "schedule": "0 9 * * *"
-    },
-    {
-      "path": "/api/internal/intelligence-runs/recover",
-      "schedule": "*/15 * * * *"
     }
   ]
 }
