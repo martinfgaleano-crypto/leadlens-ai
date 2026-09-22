@@ -1,0 +1,2827 @@
+{
+  "acceptance": "customer-intelligence-e2e-v1",
+  "ran_at": "2026-09-17T00:19:46.266Z",
+  "soak_id": null,
+  "soak_phase": null,
+  "synthetic_context": "We sell market-entry and channel-partnership development to premium wellness and packaged-goods brands. In the United States, identify retail, hospitality, and distribution operators with a verified third-party assortment or supplier route where a recent channel change or procurement mechanism makes partnership validation timely. Exclude seller networks recruiting distributors, own-brand-only operators, static directories, consumer leads, and unsupported buying intent.",
+  "confirmed_context_diagnostic": {
+    "organization_types": [
+      "Specialty and natural food retailers with third-party supplier programmes",
+      "Premium hotel and resort groups with F&B or amenity procurement functions",
+      "Regional and national wellness-focused retail chains",
+      "Independent grocery and gourmet food distributors",
+      "Hospitality group purchasing organisations (GPOs)"
+    ],
+    "industries": [
+      "Specialty retail",
+      "Natural and organic grocery",
+      "Hospitality and lodging",
+      "Food and beverage distribution",
+      "Health and wellness retail"
+    ],
+    "geographies": [
+      "United States"
+    ],
+    "signal_families": [
+      "operational_transformation",
+      "new_market",
+      "new_facility",
+      "contract_award"
+    ],
+    "definition_status": "defined"
+  },
+  "run_id": "intel_1b9b0bfd238eed4d2ba833395542b71a",
+  "lead_hunter_run_id": "lh_e2e_context_1789604157575_v1_2026-09-17_2ad70116-6e77-4187-8556-429344c27879_intel_1b9b0",
+  "candidate_universe": {
+    "total": 2,
+    "coverage": {
+      "gaps": [
+        {
+          "type": "candidate_volume_too_low",
+          "detail": "Only 2 in-scope candidate(s) discovered."
+        }
+      ],
+      "eligible": 2,
+      "excluded": 0,
+      "eventFirst": {
+        "queries": 4,
+        "rejected": {
+          "no_subject": 45,
+          "identity_unresolved": 5
+        },
+        "raw_hints": 48,
+        "result_audit": [
+          {
+            "url": "https://tracxn.com/d/companies/3pl/__UQSheZXeZ9HmCa8JP2we1ApiJtk9dp7RvK-7kTfscdQ",
+            "type": "other",
+            "title": "3PL - 2026 Company Profile, Team & Competitors - Tracxn",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://finance.yahoo.com/news/circle-logistics-recognized-2025-top-125300164.html",
+            "type": "other",
+            "title": "Circle Logistics Recognized as a 2025 Top 3PL & Cold Storage Provider by Food Logistics",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://sdgs.un.org/goals",
+            "type": "other",
+            "title": "THE 17 GOALS - Sustainable Development Goals",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.united.com/en/us/book-flight/united-reservations",
+            "type": "other",
+            "title": "Book a Flight on More Than 80 Airlines",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.un.org/en",
+            "type": "other",
+            "title": "United Nations | Peace, dignity and equality on a healthy planet",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://x.com/united",
+            "type": "social",
+            "title": "United Airlines",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.mordorintelligence.com/industry-reports/north-america-logistics-automation-market",
+            "type": "other",
+            "title": "North America Logistics Automation Market - Companies, Trends & Size",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://mtligroup.com/blog/top-warehouse-automation-trends-in-2026",
+            "type": "other",
+            "title": "Top Warehouse Automation Trends in 2026 | MTLI Group | MTLI Group",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.mordorintelligence.com/industry-reports/logistics-automation-market",
+            "type": "other",
+            "title": "Logistics Automation Market - Size, Companies & Growth",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.mordorintelligence.com/industry-reports/warehouse-automation-market",
+            "type": "other",
+            "title": "Warehouse Automation Market - Industry Size & Growth 2025 - 2031",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.technavio.com/report/3pl-market-in-the-us-industry-analysis",
+            "type": "other",
+            "title": "US Third-party Logistics (3PL) Market Growth Analysis - Size and Forecast 2026-2030 | Technavio",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.sellerscommerce.com/blog/warehouse-automation-statistics",
+            "type": "other",
+            "title": "Warehouse Automation Statistics (2026)",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://finance.yahoo.com/news/circle-logistics-recognized-2025-top-125300164.html",
+            "type": "other",
+            "title": "Circle Logistics Recognized as a 2025 Top 3PL & Cold Storage Provider by Food Logistics",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.merriam-webster.com/dictionary/operational",
+            "type": "other",
+            "title": "OPERATIONAL Definition & Meaning",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.doi.gov/aviation/library/opm",
+            "type": "government",
+            "title": "Operational Procedures Memoranda Index",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.cbp.gov/document/guidance/cbp-forced-labor-enforcement-operational-guidance-importers",
+            "type": "government",
+            "title": "CBP Forced Labor Enforcement Operational Guidance for ...",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.youtube.com/watch?v=OQz1ydBcQSA",
+            "type": "social",
+            "title": "Complex Numbers - Basic Operations",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://cvsa.org/programs/operation-safe-driver/operation-safe-driver-week",
+            "type": "other",
+            "title": "Operation Safe Driver Week",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://getproductiv.com/blog/3pl-trends",
+            "type": "other",
+            "title": "8 3PL Trends in 2026: What's Actually Changing and What It Means for You | Productiv",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.marketdataforecast.com/market-reports/us-third-party-logistics-market",
+            "type": "other",
+            "title": "U.S. Third-party Logistics (3PL) Market Size & Growth, 2034",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://successknocks.com/third-party-logistics-3pl-outsourcing-trends",
+            "type": "other",
+            "title": "Third-Party Logistics 3PL Outsourcing Trends: What's Actually Changing Heading Into 2026 2026",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.technavio.com/report/3pl-market-in-the-us-industry-analysis",
+            "type": "other",
+            "title": "US Third-party Logistics (3PL) Market Growth Analysis - Size and Forecast 2026-2030 | Technavio",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.capstonepartners.com/insights/article-3pl-market-update",
+            "type": "other",
+            "title": "3PL Market Update – June 2026",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.speedcommerce.com/insights/the-20-biggest-3pls-in-the-us",
+            "type": "other",
+            "title": "The 20 Largest 3PLs in the US & Globally, 2026 Edition | Speed Commerce",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.reginfo.gov/public/do/eAgendaMain?operation=OPERATION_GET_AGENCY_RULE_LIST&currentPub=true&agencyCode=&showStage=active&agencyCd=3235",
+            "type": "government",
+            "title": "Agency Rule List - 2026",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.fedsmallbusiness.org/reports/survey/2026/2026-report-on-employer-firms",
+            "type": "other",
+            "title": "2026 Report on Employer Firms: Findings from the 2025 ...",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.dol.gov/agencies/ebsa/employers-and-advisers/guidance/field-assistance-bulletins/2026-01",
+            "type": "government",
+            "title": "Field Assistance Bulletin No. 2026-01",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://infrastructurereportcard.org/wp-content/uploads/2025/03/Full-Report-2025-Natl-IRC-WEB.pdf",
+            "type": "company_direct",
+            "title": "A Comprehensive Assessment of America's Infrastructure ...",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://x.com/karpathy/status/1886192184808149383?lang=en",
+            "type": "social",
+            "title": "Andrej Karpathy on X: \"There's a new kind of coding I call \" ...",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://academyofinventors.org/nai-welcomes-2025-class-of-fellows",
+            "type": "other",
+            "title": "NAI Welcomes 2025 Class of Fellows - National Academy of Inventors",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.mordorintelligence.com/industry-reports/us-3pl-market",
+            "type": "other",
+            "title": "USA (3PL) Third-Party Logistics Market Trends | Industry Analysis, Size & Growth Report",
+            "recent": true,
+            "provider": "brave",
+            "subjects": [
+              "Value-Added Warehousing",
+              "Distribution is forecast to"
+            ]
+          },
+          {
+            "url": "https://redstagfulfillment.com/biggest-3pl-companies",
+            "type": "other",
+            "title": "Biggest 3PL Companies | U.S. & Global | 5 Metrics Measured",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.technavio.com/report/3pl-market-in-the-us-industry-analysis",
+            "type": "other",
+            "title": "US Third-party Logistics (3PL) Market Growth Analysis - Size and Forecast 2026-2030 | Technavio",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.ajot.com/news/u.s-3pl-market-hits-323-billion-in-2025",
+            "type": "other",
+            "title": "U.S. 3PL market hits $323 billion in 2025 | AJOT.COM",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.marketdataforecast.com/market-reports/us-third-party-logistics-market",
+            "type": "other",
+            "title": "U.S. Third-party Logistics (3PL) Market Size & Growth, 2034",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.speedcommerce.com/insights/the-20-biggest-3pls-in-the-us",
+            "type": "other",
+            "title": "The 20 Largest 3PLs in the US & Globally, 2026 Edition | Speed Commerce",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.logisticsmgmt.com/",
+            "type": "other",
+            "title": "Welcome to Logistics Management",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://finance.yahoo.com/news/circle-logistics-recognized-2025-top-125300164.html",
+            "type": "other",
+            "title": "Circle Logistics Recognized as a 2025 Top 3PL & Cold Storage Provider by Food Logistics",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.logisticsplus.com/",
+            "type": "other",
+            "title": "Logistics+ | Global Logistics & Supply Chain Solutions",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": [
+              "Logistics Plus India"
+            ]
+          },
+          {
+            "url": "https://www.youtube.com/watch?v=zDDGThahR9g",
+            "type": "social",
+            "title": "What Is Logistics?",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.youtube.com/watch?v=8vHsXCTXM4U",
+            "type": "social",
+            "title": "V Rising - Kindred Logistics Mod Showcase",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.youtube.com/watch?v=WMgwQ6NJbrw",
+            "type": "social",
+            "title": "What is Logistics? | How does it work?",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://redstagfulfillment.com/biggest-3pl-companies",
+            "type": "other",
+            "title": "Biggest 3PL Companies | U.S. & Global | 5 Metrics Measured",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.technavio.com/report/3pl-market-in-the-us-industry-analysis",
+            "type": "other",
+            "title": "US Third-party Logistics (3PL) Market Growth Analysis - Size and Forecast 2026-2030 | Technavio",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.mordorintelligence.com/industry-reports/us-3pl-market",
+            "type": "other",
+            "title": "USA (3PL) Third-Party Logistics Market Trends | Industry Analysis, Size & Growth Report",
+            "recent": true,
+            "provider": "brave",
+            "subjects": [
+              "Value-Added Warehousing",
+              "Distribution is forecast to"
+            ]
+          },
+          {
+            "url": "https://www.speedcommerce.com/insights/the-20-biggest-3pls-in-the-us",
+            "type": "other",
+            "title": "The 20 Largest 3PLs in the US & Globally, 2026 Edition | Speed Commerce",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.freightwaves.com/checkpoint/top-3pl-companies",
+            "type": "other",
+            "title": "Top 3PL Companies in 2026: Rankings, Revenue, & Costs - Freightwaves Checkpoint",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.thebusinessresearchcompany.com/report/third-party-logistics-3pl-global-market-report",
+            "type": "other",
+            "title": "Third-Party Logistics (3PL) Market Trends Analysis Report 2026-2030",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          }
+        ],
+        "result_types": {
+          "other": 37,
+          "social": 6,
+          "government": 4,
+          "company_direct": 1
+        },
+        "target_valid": 0,
+        "unique_hints": 5,
+        "result_sample": [
+          {
+            "url": "https://tracxn.com/d/companies/3pl/__UQSheZXeZ9HmCa8JP2we1ApiJtk9dp7RvK-7kTfscdQ",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"automation investment\" \"United States\" (2026 OR 2025)",
+            "title": "3PL - 2026 Company Profile, Team & Competitors - Tracxn",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://finance.yahoo.com/news/circle-logistics-recognized-2025-top-125300164.html",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"automation investment\" \"United States\" (2026 OR 2025)",
+            "title": "Circle Logistics Recognized as a 2025 Top 3PL & Cold Storage Provider by Food Logistics",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://sdgs.un.org/goals",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"automation investment\" \"United States\" (2026 OR 2025)",
+            "title": "THE 17 GOALS - Sustainable Development Goals",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.mordorintelligence.com/industry-reports/north-america-logistics-automation-market",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"automation investment\" \"United States\" (2026 OR 2025)",
+            "title": "North America Logistics Automation Market - Companies, Trends & Size",
+            "provider": "brave",
+            "published_date": "2026-05-27T00:00:00"
+          },
+          {
+            "url": "https://mtligroup.com/blog/top-warehouse-automation-trends-in-2026",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"automation investment\" \"United States\" (2026 OR 2025)",
+            "title": "Top Warehouse Automation Trends in 2026 | MTLI Group | MTLI Group",
+            "provider": "brave",
+            "published_date": "2026-06-17T00:00:00"
+          },
+          {
+            "url": "https://www.mordorintelligence.com/industry-reports/logistics-automation-market",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"automation investment\" \"United States\" (2026 OR 2025)",
+            "title": "Logistics Automation Market - Size, Companies & Growth",
+            "provider": "brave",
+            "published_date": "2026-07-30T00:00:00"
+          },
+          {
+            "url": "https://finance.yahoo.com/news/circle-logistics-recognized-2025-top-125300164.html",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"operational transformation\" \"United States\" (2026 OR 2025)",
+            "title": "Circle Logistics Recognized as a 2025 Top 3PL & Cold Storage Provider by Food Logistics",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.merriam-webster.com/dictionary/operational",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"operational transformation\" \"United States\" (2026 OR 2025)",
+            "title": "OPERATIONAL Definition & Meaning",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.doi.gov/aviation/library/opm",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"operational transformation\" \"United States\" (2026 OR 2025)",
+            "title": "Operational Procedures Memoranda Index",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://getproductiv.com/blog/3pl-trends",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"operational transformation\" \"United States\" (2026 OR 2025)",
+            "title": "8 3PL Trends in 2026: What's Actually Changing and What It Means for You | Productiv",
+            "provider": "brave",
+            "published_date": "2026-03-28T00:00:00"
+          },
+          {
+            "url": "https://www.marketdataforecast.com/market-reports/us-third-party-logistics-market",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"operational transformation\" \"United States\" (2026 OR 2025)",
+            "title": "U.S. Third-party Logistics (3PL) Market Size & Growth, 2034",
+            "provider": "brave",
+            "published_date": "2026-07-01T00:00:00"
+          },
+          {
+            "url": "https://successknocks.com/third-party-logistics-3pl-outsourcing-trends",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"operational transformation\" \"United States\" (2026 OR 2025)",
+            "title": "Third-Party Logistics 3PL Outsourcing Trends: What's Actually Changing Heading Into 2026 2026",
+            "provider": "brave",
+            "published_date": "2026-09-10T06:44:53"
+          },
+          {
+            "url": "https://www.reginfo.gov/public/do/eAgendaMain?operation=OPERATION_GET_AGENCY_RULE_LIST&currentPub=true&agencyCode=&showStage=active&agencyCd=3235",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"enters new market\" \"United States\" (2026 OR 2025)",
+            "title": "Agency Rule List - 2026",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.fedsmallbusiness.org/reports/survey/2026/2026-report-on-employer-firms",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"enters new market\" \"United States\" (2026 OR 2025)",
+            "title": "2026 Report on Employer Firms: Findings from the 2025 ...",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.dol.gov/agencies/ebsa/employers-and-advisers/guidance/field-assistance-bulletins/2026-01",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"enters new market\" \"United States\" (2026 OR 2025)",
+            "title": "Field Assistance Bulletin No. 2026-01",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.mordorintelligence.com/industry-reports/us-3pl-market",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"enters new market\" \"United States\" (2026 OR 2025)",
+            "title": "USA (3PL) Third-Party Logistics Market Trends | Industry Analysis, Size & Growth Report",
+            "provider": "brave",
+            "published_date": "2026-03-10T00:00:00"
+          },
+          {
+            "url": "https://redstagfulfillment.com/biggest-3pl-companies",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"enters new market\" \"United States\" (2026 OR 2025)",
+            "title": "Biggest 3PL Companies | U.S. & Global | 5 Metrics Measured",
+            "provider": "brave",
+            "published_date": "2026-08-14T00:00:00"
+          },
+          {
+            "url": "https://www.technavio.com/report/3pl-market-in-the-us-industry-analysis",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"enters new market\" \"United States\" (2026 OR 2025)",
+            "title": "US Third-party Logistics (3PL) Market Growth Analysis - Size and Forecast 2026-2030 | Technavio",
+            "provider": "brave",
+            "published_date": "2026-03-10T00:00:00"
+          },
+          {
+            "url": "https://www.logisticsmgmt.com/",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"opens new plant\" \"United States\" (2026 OR 2025)",
+            "title": "Welcome to Logistics Management",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://finance.yahoo.com/news/circle-logistics-recognized-2025-top-125300164.html",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"opens new plant\" \"United States\" (2026 OR 2025)",
+            "title": "Circle Logistics Recognized as a 2025 Top 3PL & Cold Storage Provider by Food Logistics",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.logisticsplus.com/",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"opens new plant\" \"United States\" (2026 OR 2025)",
+            "title": "Logistics+ | Global Logistics & Supply Chain Solutions",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://redstagfulfillment.com/biggest-3pl-companies",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"opens new plant\" \"United States\" (2026 OR 2025)",
+            "title": "Biggest 3PL Companies | U.S. & Global | 5 Metrics Measured",
+            "provider": "brave",
+            "published_date": "2026-08-14T00:00:00"
+          },
+          {
+            "url": "https://www.technavio.com/report/3pl-market-in-the-us-industry-analysis",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"opens new plant\" \"United States\" (2026 OR 2025)",
+            "title": "US Third-party Logistics (3PL) Market Growth Analysis - Size and Forecast 2026-2030 | Technavio",
+            "provider": "brave",
+            "published_date": "2026-03-10T00:00:00"
+          },
+          {
+            "url": "https://www.mordorintelligence.com/industry-reports/us-3pl-market",
+            "query": "(\"logistics operator\" OR \"3PL\" OR \"distributor\") \"opens new plant\" \"United States\" (2026 OR 2025)",
+            "title": "USA (3PL) Third-Party Logistics Market Trends | Industry Analysis, Size & Growth Report",
+            "provider": "brave",
+            "published_date": "2026-03-10T00:00:00"
+          }
+        ],
+        "provider_calls": {
+          "brave": 5,
+          "serper": 5,
+          "tavily": 6
+        },
+        "company_mentions": 5,
+        "domains_resolved": 0,
+        "provider_failures": {
+          "serper": "HTTP 400: {\"message\":\"Not enough credits\",\"statusCode\":400}"
+        },
+        "geography_resolved": 0,
+        "subjects_extracted": 5,
+        "canonical_companies": 0
+      },
+      "routeYield": [
+        {
+          "route": "industry_category",
+          "queries": 2,
+          "resultPages": 8,
+          "groundedNames": 7,
+          "acceptedCompanies": 2
+        },
+        {
+          "route": "geo_category",
+          "queries": 1,
+          "resultPages": 5,
+          "groundedNames": 1,
+          "acceptedCompanies": 0
+        },
+        {
+          "route": "source_ecosystem",
+          "queries": 2,
+          "resultPages": 13,
+          "groundedNames": 0,
+          "acceptedCompanies": 0
+        }
+      ],
+      "duplicateRate": 0,
+      "operatingMode": "full_discovery",
+      "likelyEligible": 0,
+      "freshCandidates": 2,
+      "needsValidation": 0,
+      "providersFailed": [],
+      "routesAttempted": 3,
+      "candidatesReused": 0,
+      "candidatesUnique": 2,
+      "identityAmbiguous": 0,
+      "stableCorePercent": 0,
+      "providersAvailable": [
+        "brave",
+        "tavily"
+      ],
+      "candidatesDiscovered": 2,
+      "priorCandidatesConsidered": 0
+    },
+    "companies": [
+      {
+        "name": "Chex Finer Foods",
+        "domain": "chexfoods.com",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "United States",
+        "provenance": [
+          {
+            "route": "industry_category",
+            "origin": "dynamic_enumeration",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:16:18.707Z",
+            "discoveredName": "Chex Finer Foods"
+          }
+        ]
+      },
+      {
+        "name": "CoralTree Hospitality",
+        "domain": "coraltreehospitality.com",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "United States",
+        "provenance": [
+          {
+            "route": "industry_category",
+            "origin": "dynamic_enumeration",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:16:18.707Z",
+            "discoveredName": "CoralTree Hospitality"
+          }
+        ]
+      }
+    ]
+  },
+  "delivered_accounts": [
+    {
+      "id": "lh_e2e_context_1789604157575_v1_2026-09-17_2ad70116-6e77-4187-8556-429344c27879_intel_1b9b0_cand_0",
+      "learning": {
+        "qc_flags": [],
+        "change_tag": "new",
+        "change_type": "new_account",
+        "signal_date": "2026-01-28",
+        "signal_role": "context_only",
+        "source_name": "chexfoods.com",
+        "source_type": "unknown",
+        "change_label": "New this cycle",
+        "signal_count": 3,
+        "source_count": 3,
+        "source_types": [
+          "unknown"
+        ],
+        "change_reason": "No previous record in Account Memory for this client",
+        "discovered_at": "2026-09-17T00:19:05.354Z",
+        "client_visible": true,
+        "current_action": "enrich_manually",
+        "feedback_hooks": [
+          "useful",
+          "not_useful",
+          "wrong_fit",
+          "contacted",
+          "meeting_booked",
+          "replied",
+          "add_to_vault"
+        ],
+        "source_summary": "3 verified sources (unknown) · context-only · signal date: 2026-01-28",
+        "freshness_label": "Stale signal (> 60 days) · Verify still active",
+        "freshness_score": 0.1,
+        "is_context_only": true,
+        "previous_action": null,
+        "segment_pattern": "Specialty and natural food retailers with third-party supplier programmes",
+        "signal_age_days": 232,
+        "signal_patterns": [
+          "Chexpo 2026 held January 28, 2026 at Rhode Island Convention Center with 250+ curated exhibitors — confirmed brand showcase and vendor intake event.",
+          "60th anniversary press release issued October 21, 2025 — active PR and partnership positioning campaign underway.",
+          "Q1 retailer programme content published October 2025 promoting seasonal micro-holiday engagement for suppliers and retailers."
+        ],
+        "agent_confidence": 0.57,
+        "evidence_quality": "medium",
+        "evidence_summary": "Medium evidence quality — 3 verified source(s), 3 timing signal(s). Validate before outreach.",
+        "genericness_risk": "medium",
+        "is_timing_signal": false,
+        "source_freshness": "stale",
+        "change_prev_score": null,
+        "improvement_notes": [
+          "Chex is a distributor, not a brand — the offer targets brand market-entry, so the fit depends on whether Chex is the buyer of advisory services or the channel partner brands are advised to pursue."
+        ],
+        "region_confidence": "high",
+        "source_confidence": "high",
+        "change_score_delta": null,
+        "fresh_signal_count": 0,
+        "hallucination_risk": "low",
+        "source_reliability": "unknown",
+        "current_signal_date": "2026-01-28",
+        "evidence_confidence": 0.772,
+        "reason_for_demotion": "Chex is a distributor, not a brand owner or retailer — the offer targets brand market-entry advisory, making Chex a potential channel referral partner rather than a direct buyer of services. The commercial relationship and revenue model are ambiguous.",
+        "account_memory_state": "new_opportunity",
+        "change_prev_category": null,
+        "previous_signal_date": null,
+        "source_layer_applied": true,
+        "limited_region_coverage": false,
+        "current_evidence_quality": "medium",
+        "current_source_freshness": "stale",
+        "offer_market_fit_pattern": "Specialty and natural food retailers with third-party supplier programmes account + \"Chexpo 2026 held January 28, 2026 at Rhode Island Convention\" → ICP fit score 6.5/10",
+        "predicted_learning_value": "medium",
+        "account_memory_times_seen": 0,
+        "previous_evidence_quality": null,
+        "previous_source_freshness": null,
+        "evidence_discipline_summary": "verified",
+        "original_recommended_action": "validate_source_first",
+        "account_memory_last_fit_score": null,
+        "guardrailed_recommended_action": "validate_source_first",
+        "account_memory_last_feedback_signal": null,
+        "recommended_action_guardrail_applied": false
+      },
+      "outreach": {
+        "tone": "consultative",
+        "subject": "Following Chex Finer Foods's market activity",
+        "qc_notes": [],
+        "qc_status": "APPROVED",
+        "email_body": "Saw Chex Finer Foods is active at industry events this season — that typically signals active market development.\n\nMarket-entry and channel-partnership development services for premium wellness and packaged-goods br — adapted for food exporters and importers expand.\n\nIdentifying new wholesale buyers or distributors in a target market typically requires months of relationship groundwork. We surface accounts already \n\nHappy to put together a short example relevant to your target buyers.",
+        "followup_1": "Looping back on this. Still think the timing could work for Chex Finer Foods — Market-entry and channel-partnership development services for premium . Happy to share more context.",
+        "followup_2": "Leaving it here. If the moment isn't right for Chex Finer Foods, I'll circle back when the signals line up better. Reply \"not now\" and I'll respect that.",
+        "call_opener": "Hi, reaching out because Chex Finer Foods came up as a strong fit for what we do — Market-entry and channel-partnership development services for premium . Do you have 90 seconds for a one-sentence overview?",
+        "linkedin_dm": "\"Chex Finer Foods [signal]\" — reference the specific event and ask if it reflects a broader commerci. Market-entry and channel-partnership development services for premium wellness a — relevant for Specialty and natural food retailers with third-party supplier programmes teams at this stage. Happy to share more if it fits.",
+        "recommended_angle": "Signal-led angle: Reference the public signal directly — \"Chexpo 2026 held January 28, 2026 at Rhode Island Convention Center with 250+ cu...\" — as the reason for reaching out now. This is the strongest entry point.",
+        "cta_recommendation": "Lead with the signal in the subject line — it's the strongest differentiator from generic outreach. Keep the CTA a soft 15-minute ask, not a demo request.",
+        "outreach_assumptions": "Chex Finer Foods has a confirmed public buying signal. This is the highest-quality timing to approach — the signal suggests an active commercial decision window of 30–90 days.",
+        "personalization_trigger": "Noticed that Chex Finer Foods chexpo 2026 held January 28, 2026 at Rhode Island Convention Center with 250+ curated exhibitors — confirmed brand showcase and vendor intake event. That kind of signal often correlates with commercial evaluation activity — wanted to reach out while the timing looks relevant.",
+        "what_to_avoid_in_outreach": "Do not claim to know their internal priorities. Do not over-interpret the signal — present it as context, not certainty. Avoid generic language like \"I saw you're growing.\""
+      },
+      "candidate": {
+        "id": "lh_e2e_context_1789604157575_v1_2026-09-17_2ad70116-6e77-4187-8556-429344c27879_intel_1b9b0_cand_0",
+        "domain": "chexfoods.com",
+        "source": "public_signal",
+        "company": "Chex Finer Foods",
+        "country": "United States",
+        "industry": "Specialty and natural food retailers with third-party supplier programmes",
+        "location": "United States",
+        "source_url": "https://www.chexfoods.com/post/chex-finer-foods-celebrates-60-years-of-pioneering-partnership-and-growth",
+        "raw_context": "[2025-10-21T18:15:20] Chex Finer Foods Celebrates 60 Years of Pioneering, Partnership, and Growth. FOR IMMEDIATE RELEASEMansfield, MA — October 21, 2025 — Chex Finer Foods, a third-generation, family-owned specialty and natural foods distributor, proudly celebrates its 60th anniversary — marking six decades of fueling growth for retailers and brands across the East Coast. (source: https://www.chexfoods.com/post/chex-finer-foods-celebrates-60-years-of-pioneering-partnership-and-growth) | [2025-11-06T14:40:21] Get Ready: Chexpo 2026 Returns January 28, 2026!. &quot;Chexpo is where our industry comes together to celebrate innovation, strengthen partnerships, and chart the future of specialty and natural foods,&quot; says Jeremy Isenberg, President &amp; CEO of Chex Finer Foods. (source: https://www.chexfoods.com/post/get-ready-chexpo-2026-returns-january-28-2026) | [2026-02-04T21:33:37] Chexpo 2026 Recap —Delivering (even more) Excellence. On January 28, 2026, the specialty and natural foods community gathered in full force at the Rhode Island Convention Center for Chexpo 2026, Chex Finer Foods’ annual showcase of innovation, collaboration, and connection. With more than 250 curated exhibitors, this year’s Chexpo built on its stellar  (source: https://www.chexfoods.com/post/chexpo-2026-recap-delivering-even-more-excellence) | [2025-12-19T19:55:47] People of Chex- Kelly Burling. Chex Finer Foods Celebrates 60 Years of Pioneering, Partnership, and Growth (source: https://www.chexfoods.com/post/people-of-chex-kelly-burling) | [2025-10-10T15:50:30] Celebrate Small Moments in a Big Way. At Chex Finer Foods, our Q1 program is packed with opportunities for retailers to connect with customers through micro holidays — those fun, timely celebrations that inspire purchases and engagement. Here’s how your store can make the most of each one:Dry January: As customers embrace mindful ... (source: https://www.chexfoods.com/post/celebrate-small-moments-in-a-big-way) | Home | Chex Finer Foods. For more than 60 years, Chex Finer Foods has helped retailers and suppliers grow by delivering the products, expertise, and service they need to succeed. (source: https://www.chexfoods.com/) | Our Products | Chex Finer Foods. Chex carries the best selection of specialty and natural foods from the local New England region and all over the world · Chex offers a best-in-class portfolio of specialty and natural food products from category leaders to local products and emerging brands. (source: https://www.chexfoods.com/our-products) | Contact | Chex Finer Foods. Become a Customer Become a Vendor · To send us an email, click on the desired department icon: (source: https://www.chexfoods.com/contact)",
+        "website_url": "https://chexfoods.com",
+        "account_identity": {
+          "domain": "chexfoods.com",
+          "country": "United States",
+          "confidence": "verified",
+          "fromUniverse": true,
+          "canonicalName": "Chex Finer Foods",
+          "organizationType": "Specialty and natural food retailers with third-party supplier programmes"
+        },
+        "confidence_score": 0.8,
+        "discovery_provenance": [
+          {
+            "route": "industry_category",
+            "origin": "dynamic_enumeration",
+            "provider": "engine"
+          }
+        ],
+        "discovery_origin_flags": [
+          "ACCOUNT_FIRST"
+        ]
+      },
+      "enrichment": {
+        "why_now": "No current dated material event was validated. The account may fit structurally, but there is no verified reason to act now rather than monitor for a new trigger.",
+        "evidence": [
+          "Chexpo 2026 Recap (Feb 4, 2026) confirms 250+ exhibitors and active brand curation focus: chexfoods.com/post/chexpo-2026-recap",
+          "Website 'Become a Vendor' CTA and product page confirm active third-party supplier onboarding programme: chexfoods.com/contact, chexfoods.com/our-products",
+          "60th anniversary release (Oct 21, 2025) explicitly frames Chex as a growth partner for 'retailers and brands across the East Coast', confirming dual-sided channel role."
+        ],
+        "candidate": {
+          "id": "lh_e2e_context_1789604157575_v1_2026-09-17_2ad70116-6e77-4187-8556-429344c27879_intel_1b9b0_cand_0",
+          "domain": "chexfoods.com",
+          "source": "public_signal",
+          "company": "Chex Finer Foods",
+          "country": "United States",
+          "industry": "Specialty and natural food retailers with third-party supplier programmes",
+          "location": "United States",
+          "source_url": "https://www.chexfoods.com/post/chex-finer-foods-celebrates-60-years-of-pioneering-partnership-and-growth",
+          "raw_context": "[2025-10-21T18:15:20] Chex Finer Foods Celebrates 60 Years of Pioneering, Partnership, and Growth. FOR IMMEDIATE RELEASEMansfield, MA — October 21, 2025 — Chex Finer Foods, a third-generation, family-owned specialty and natural foods distributor, proudly celebrates its 60th anniversary — marking six decades of fueling growth for retailers and brands across the East Coast. (source: https://www.chexfoods.com/post/chex-finer-foods-celebrates-60-years-of-pioneering-partnership-and-growth) | [2025-11-06T14:40:21] Get Ready: Chexpo 2026 Returns January 28, 2026!. &quot;Chexpo is where our industry comes together to celebrate innovation, strengthen partnerships, and chart the future of specialty and natural foods,&quot; says Jeremy Isenberg, President &amp; CEO of Chex Finer Foods. (source: https://www.chexfoods.com/post/get-ready-chexpo-2026-returns-january-28-2026) | [2026-02-04T21:33:37] Chexpo 2026 Recap —Delivering (even more) Excellence. On January 28, 2026, the specialty and natural foods community gathered in full force at the Rhode Island Convention Center for Chexpo 2026, Chex Finer Foods’ annual showcase of innovation, collaboration, and connection. With more than 250 curated exhibitors, this year’s Chexpo built on its stellar  (source: https://www.chexfoods.com/post/chexpo-2026-recap-delivering-even-more-excellence) | [2025-12-19T19:55:47] People of Chex- Kelly Burling. Chex Finer Foods Celebrates 60 Years of Pioneering, Partnership, and Growth (source: https://www.chexfoods.com/post/people-of-chex-kelly-burling) | [2025-10-10T15:50:30] Celebrate Small Moments in a Big Way. At Chex Finer Foods, our Q1 program is packed with opportunities for retailers to connect with customers through micro holidays — those fun, timely celebrations that inspire purchases and engagement. Here’s how your store can make the most of each one:Dry January: As customers embrace mindful ... (source: https://www.chexfoods.com/post/celebrate-small-moments-in-a-big-way) | Home | Chex Finer Foods. For more than 60 years, Chex Finer Foods has helped retailers and suppliers grow by delivering the products, expertise, and service they need to succeed. (source: https://www.chexfoods.com/) | Our Products | Chex Finer Foods. Chex carries the best selection of specialty and natural foods from the local New England region and all over the world · Chex offers a best-in-class portfolio of specialty and natural food products from category leaders to local products and emerging brands. (source: https://www.chexfoods.com/our-products) | Contact | Chex Finer Foods. Become a Customer Become a Vendor · To send us an email, click on the desired department icon: (source: https://www.chexfoods.com/contact)",
+          "website_url": "https://chexfoods.com",
+          "account_identity": {
+            "domain": "chexfoods.com",
+            "country": "United States",
+            "confidence": "verified",
+            "fromUniverse": true,
+            "canonicalName": "Chex Finer Foods",
+            "organizationType": "Specialty and natural food retailers with third-party supplier programmes"
+          },
+          "confidence_score": 0.8,
+          "discovery_provenance": [
+            {
+              "route": "industry_category",
+              "origin": "dynamic_enumeration",
+              "provider": "engine"
+            }
+          ],
+          "discovery_origin_flags": [
+            "ACCOUNT_FIRST"
+          ]
+        },
+        "missing_data": [
+          "Annual revenue and headcount — company size is unconfirmed, making deal-size calibration difficult.",
+          "Current category gaps or whitespace in their portfolio (e.g., whether wellness/functional food is under-indexed vs. competitors).",
+          "Internal decision-making structure for new vendor acceptance beyond the public 'Become a Vendor' form.",
+          "Whether Chex engages third-party market-entry or channel advisory consultants vs. handling brand development internally."
+        ],
+        "buying_window": "near_term",
+        "inferred_pain": "As a regional distributor curating an expanding portfolio across wellness and specialty categories, Chex appears to face pressure to identify and vet high-quality emerging brands efficiently while differentiating its supplier mix from national distributors like UNFI or KeHE.",
+        "account_thesis": "Chex's active vendor intake infrastructure and post-Chexpo 2026 pipeline review phase create a narrow but real window to position market-entry advisory services either as a pre-qualification channel partner or as a service offered to brands being advised to target Chex as their East Coast distribution entry point.",
+        "role_relevance": "Chex Finer Foods is a direct channel-access vehicle for premium wellness and packaged-goods brands seeking East Coast retail placement without building their own distributor relationships. Their 'Become a Vendor' portal and Chexpo event framework indicate a formalised, recurring supplier intake process that market-entry advisory services can support or plug into.",
+        "timing_signals": [
+          "Chexpo 2026 held January 28, 2026 at Rhode Island Convention Center with 250+ curated exhibitors — confirmed brand showcase and vendor intake event.",
+          "60th anniversary press release issued October 21, 2025 — active PR and partnership positioning campaign underway.",
+          "Q1 retailer programme content published October 2025 promoting seasonal micro-holiday engagement for suppliers and retailers."
+        ],
+        "company_summary": "Chex Finer Foods is a third-generation, family-owned specialty and natural foods distributor headquartered in Mansfield, MA, celebrating its 60th anniversary in 2025 with East Coast regional distribution reach. The company operates a curated supplier programme connecting emerging and established brands to independent specialty and natural food retailers. It hosts an annual trade event (Chexpo) with 250+ exhibiting brands, signalling active, structured vendor onboarding activity.",
+        "pain_hypothesis": "Chex Finer Foods is receiving inbound vendor interest from premium wellness brands that lack East Coast retail relationships, but without a structured market-entry advisory partner, it may be vetting underprepared brands inefficiently — creating an opportunity for a service that pre-qualifies and positions brands before they enter Chex's pipeline.",
+        "account_research": {
+          "domain": "chexfoods.com",
+          "account": "Chex Finer Foods",
+          "version": "account-deep-research-v1",
+          "query_audit": [
+            {
+              "stage": "identity",
+              "results": 5,
+              "accepted": 5,
+              "provider": "brave",
+              "query_id": "rq_13d8e5t"
+            },
+            {
+              "stage": "current_activity",
+              "results": 0,
+              "accepted": 0,
+              "provider": "brave",
+              "query_id": "rq_z2fpy4"
+            },
+            {
+              "stage": "current_activity",
+              "results": 0,
+              "accepted": 0,
+              "provider": "tavily",
+              "query_id": "rq_z2fpy4"
+            },
+            {
+              "stage": "current_activity",
+              "results": 0,
+              "accepted": 0,
+              "provider": "brave",
+              "query_id": "rq_qsphbr"
+            },
+            {
+              "stage": "current_activity",
+              "results": 0,
+              "accepted": 0,
+              "provider": "tavily",
+              "query_id": "rq_qsphbr"
+            },
+            {
+              "stage": "counterevidence",
+              "results": 5,
+              "accepted": 5,
+              "provider": "brave",
+              "query_id": "rq_nuvuin"
+            },
+            {
+              "stage": "counterevidence",
+              "results": 0,
+              "accepted": 0,
+              "provider": "tavily",
+              "query_id": "rq_nuvuin"
+            }
+          ],
+          "provider_ops": [
+            {
+              "ok": true,
+              "stage": "identity",
+              "results": 5,
+              "timeout": false,
+              "provider": "brave",
+              "operation": "search",
+              "duration_ms": 821
+            },
+            {
+              "ok": true,
+              "stage": "current_activity",
+              "results": 0,
+              "timeout": false,
+              "provider": "brave",
+              "operation": "search",
+              "duration_ms": 407
+            },
+            {
+              "ok": true,
+              "stage": "current_activity",
+              "results": 0,
+              "timeout": false,
+              "provider": "tavily",
+              "operation": "search",
+              "duration_ms": 7840
+            },
+            {
+              "ok": true,
+              "stage": "current_activity",
+              "results": 0,
+              "timeout": false,
+              "provider": "brave",
+              "operation": "search",
+              "duration_ms": 611
+            },
+            {
+              "ok": true,
+              "stage": "current_activity",
+              "results": 0,
+              "timeout": false,
+              "provider": "tavily",
+              "operation": "search",
+              "duration_ms": 11506
+            },
+            {
+              "ok": true,
+              "stage": "counterevidence",
+              "results": 5,
+              "timeout": false,
+              "provider": "brave",
+              "operation": "search",
+              "duration_ms": 995
+            },
+            {
+              "ok": true,
+              "stage": "counterevidence",
+              "results": 0,
+              "timeout": false,
+              "provider": "tavily",
+              "operation": "search",
+              "duration_ms": 7804
+            }
+          ],
+          "results_seen": 10,
+          "dated_evidence": 5,
+          "provider_calls": 7,
+          "pages_extracted": 0,
+          "planned_queries": 4,
+          "claims_recovered": 1,
+          "executed_queries": 4,
+          "extraction_audit": [],
+          "validated_events": [],
+          "early_stop_reason": "no_material_event",
+          "evidence_accepted": 10,
+          "evidence_rejected": 0,
+          "provider_failures": 0,
+          "account_elapsed_ms": 67890,
+          "event_hints_fetched": 0,
+          "extraction_failures": 0,
+          "independent_domains": 1,
+          "event_hints_received": 0,
+          "corroborating_domains": 0,
+          "corroborating_sources": [],
+          "event_hints_validated": 0,
+          "corroboration_attempted": false,
+          "counterevidence_checked": true,
+          "event_geography_rejected": 0,
+          "structured_extraction_calls": 0,
+          "counterevidence_material_found": false
+        },
+        "risks_weaknesses": [
+          "Chex is a distributor, not a brand — the offer targets brand market-entry, so the fit depends on whether Chex is the buyer of advisory services or the channel partner brands are advised to pursue.",
+          "No evidence Chex pays for external market-entry or channel advisory services; they may see this as their own core competency.",
+          "Company size is unknown; if a small regional operator, budget for external consulting may be limited.",
+          "Post-Chexpo period may create short-term vendor intake saturation, reducing urgency to engage new advisory relationships immediately."
+        ],
+        "segment_fit_note": "Chex Finer Foods is a distributor rather than a brand, making it an adjacent fit — the offer is most precisely aimed at brands entering the market, but Chex could be a strategic channel partner or a buyer of advisory services that help brands arrive shelf-ready into their network.",
+        "opportunity_risks": [
+          "Role ambiguity: Chex may be a channel partner for your clients rather than a direct buyer of advisory services — conflating the two risks misaligned outreach.",
+          "No evidence of budget or precedent for external market-entry consulting at Chex.",
+          "Post-Chexpo vendor intake saturation may reduce responsiveness to new partner conversations in the immediate weeks following the event.",
+          "Regional footprint (East Coast only) may limit strategic fit if the offer targets national or multi-market brand launches."
+        ],
+        "next_best_question": "Is the goal to sell market-entry advisory services directly to Chex Finer Foods, or to position Chex as the East Coast channel destination for premium brands you are advising — because these require entirely different outreach strategies and buyer contacts?",
+        "recommended_action": "validate_source_first",
+        "evidence_discipline": [
+          {
+            "date": "2025-10-21",
+            "type": "verified_public_signal",
+            "claim": "Chex Finer Foods is a third-generation, family-owned specialty and natural foods distributor celebrating its 60th anniversary"
+          },
+          {
+            "date": "2026-01-28",
+            "type": "verified_public_signal",
+            "claim": "Chexpo 2026 took place January 28, 2026 with more than 250 curated exhibitors at the Rhode Island Convention Center"
+          },
+          {
+            "type": "verified_public_signal",
+            "claim": "Chex operates an active 'Become a Vendor' intake programme for new suppliers"
+          },
+          {
+            "type": "inferred_from_context",
+            "claim": "Chex faces pressure to differentiate its brand portfolio from national distributors like UNFI or KeHE"
+          },
+          {
+            "type": "missing_evidence",
+            "claim": "Chex engages or would pay for third-party market-entry advisory services"
+          },
+          {
+            "type": "weak_inference",
+            "claim": "Chex is actively seeking wellness or functional food category expansion beyond its current portfolio"
+          }
+        ],
+        "research_confidence": 0.62,
+        "buying_window_reason": "No buying window is inferred without a validated current material event.",
+        "signal_interpretation": "The Chexpo 2026 event with 250+ exhibitors and the simultaneous 60th anniversary PR push signals Chex is actively investing in brand partnership growth and East Coast market positioning — commercially, this means their vendor review cycle is active and decision-makers are accessible and engaged right now.",
+        "evidence_quality_grade": "moderate_public",
+        "recommended_action_reason": "Before outreach, clarify whether Chex is the intended buyer of advisory services or a channel partner to direct brands toward — this distinction fundamentally changes the pitch and contact strategy."
+      },
+      "qualification": {
+        "rank": 2,
+        "category": "WARM",
+        "fit_score": 6.5,
+        "enrichment": {
+          "why_now": "No current dated material event was validated. The account may fit structurally, but there is no verified reason to act now rather than monitor for a new trigger.",
+          "evidence": [
+            "Chexpo 2026 Recap (Feb 4, 2026) confirms 250+ exhibitors and active brand curation focus: chexfoods.com/post/chexpo-2026-recap",
+            "Website 'Become a Vendor' CTA and product page confirm active third-party supplier onboarding programme: chexfoods.com/contact, chexfoods.com/our-products",
+            "60th anniversary release (Oct 21, 2025) explicitly frames Chex as a growth partner for 'retailers and brands across the East Coast', confirming dual-sided channel role."
+          ],
+          "candidate": {
+            "id": "lh_e2e_context_1789604157575_v1_2026-09-17_2ad70116-6e77-4187-8556-429344c27879_intel_1b9b0_cand_0",
+            "domain": "chexfoods.com",
+            "source": "public_signal",
+            "company": "Chex Finer Foods",
+            "country": "United States",
+            "industry": "Specialty and natural food retailers with third-party supplier programmes",
+            "location": "United States",
+            "source_url": "https://www.chexfoods.com/post/chex-finer-foods-celebrates-60-years-of-pioneering-partnership-and-growth",
+            "raw_context": "[2025-10-21T18:15:20] Chex Finer Foods Celebrates 60 Years of Pioneering, Partnership, and Growth. FOR IMMEDIATE RELEASEMansfield, MA — October 21, 2025 — Chex Finer Foods, a third-generation, family-owned specialty and natural foods distributor, proudly celebrates its 60th anniversary — marking six decades of fueling growth for retailers and brands across the East Coast. (source: https://www.chexfoods.com/post/chex-finer-foods-celebrates-60-years-of-pioneering-partnership-and-growth) | [2025-11-06T14:40:21] Get Ready: Chexpo 2026 Returns January 28, 2026!. &quot;Chexpo is where our industry comes together to celebrate innovation, strengthen partnerships, and chart the future of specialty and natural foods,&quot; says Jeremy Isenberg, President &amp; CEO of Chex Finer Foods. (source: https://www.chexfoods.com/post/get-ready-chexpo-2026-returns-january-28-2026) | [2026-02-04T21:33:37] Chexpo 2026 Recap —Delivering (even more) Excellence. On January 28, 2026, the specialty and natural foods community gathered in full force at the Rhode Island Convention Center for Chexpo 2026, Chex Finer Foods’ annual showcase of innovation, collaboration, and connection. With more than 250 curated exhibitors, this year’s Chexpo built on its stellar  (source: https://www.chexfoods.com/post/chexpo-2026-recap-delivering-even-more-excellence) | [2025-12-19T19:55:47] People of Chex- Kelly Burling. Chex Finer Foods Celebrates 60 Years of Pioneering, Partnership, and Growth (source: https://www.chexfoods.com/post/people-of-chex-kelly-burling) | [2025-10-10T15:50:30] Celebrate Small Moments in a Big Way. At Chex Finer Foods, our Q1 program is packed with opportunities for retailers to connect with customers through micro holidays — those fun, timely celebrations that inspire purchases and engagement. Here’s how your store can make the most of each one:Dry January: As customers embrace mindful ... (source: https://www.chexfoods.com/post/celebrate-small-moments-in-a-big-way) | Home | Chex Finer Foods. For more than 60 years, Chex Finer Foods has helped retailers and suppliers grow by delivering the products, expertise, and service they need to succeed. (source: https://www.chexfoods.com/) | Our Products | Chex Finer Foods. Chex carries the best selection of specialty and natural foods from the local New England region and all over the world · Chex offers a best-in-class portfolio of specialty and natural food products from category leaders to local products and emerging brands. (source: https://www.chexfoods.com/our-products) | Contact | Chex Finer Foods. Become a Customer Become a Vendor · To send us an email, click on the desired department icon: (source: https://www.chexfoods.com/contact)",
+            "website_url": "https://chexfoods.com",
+            "account_identity": {
+              "domain": "chexfoods.com",
+              "country": "United States",
+              "confidence": "verified",
+              "fromUniverse": true,
+              "canonicalName": "Chex Finer Foods",
+              "organizationType": "Specialty and natural food retailers with third-party supplier programmes"
+            },
+            "confidence_score": 0.8,
+            "discovery_provenance": [
+              {
+                "route": "industry_category",
+                "origin": "dynamic_enumeration",
+                "provider": "engine"
+              }
+            ],
+            "discovery_origin_flags": [
+              "ACCOUNT_FIRST"
+            ]
+          },
+          "missing_data": [
+            "Annual revenue and headcount — company size is unconfirmed, making deal-size calibration difficult.",
+            "Current category gaps or whitespace in their portfolio (e.g., whether wellness/functional food is under-indexed vs. competitors).",
+            "Internal decision-making structure for new vendor acceptance beyond the public 'Become a Vendor' form.",
+            "Whether Chex engages third-party market-entry or channel advisory consultants vs. handling brand development internally."
+          ],
+          "buying_window": "near_term",
+          "inferred_pain": "As a regional distributor curating an expanding portfolio across wellness and specialty categories, Chex appears to face pressure to identify and vet high-quality emerging brands efficiently while differentiating its supplier mix from national distributors like UNFI or KeHE.",
+          "account_thesis": "Chex's active vendor intake infrastructure and post-Chexpo 2026 pipeline review phase create a narrow but real window to position market-entry advisory services either as a pre-qualification channel partner or as a service offered to brands being advised to target Chex as their East Coast distribution entry point.",
+          "role_relevance": "Chex Finer Foods is a direct channel-access vehicle for premium wellness and packaged-goods brands seeking East Coast retail placement without building their own distributor relationships. Their 'Become a Vendor' portal and Chexpo event framework indicate a formalised, recurring supplier intake process that market-entry advisory services can support or plug into.",
+          "timing_signals": [
+            "Chexpo 2026 held January 28, 2026 at Rhode Island Convention Center with 250+ curated exhibitors — confirmed brand showcase and vendor intake event.",
+            "60th anniversary press release issued October 21, 2025 — active PR and partnership positioning campaign underway.",
+            "Q1 retailer programme content published October 2025 promoting seasonal micro-holiday engagement for suppliers and retailers."
+          ],
+          "company_summary": "Chex Finer Foods is a third-generation, family-owned specialty and natural foods distributor headquartered in Mansfield, MA, celebrating its 60th anniversary in 2025 with East Coast regional distribution reach. The company operates a curated supplier programme connecting emerging and established brands to independent specialty and natural food retailers. It hosts an annual trade event (Chexpo) with 250+ exhibiting brands, signalling active, structured vendor onboarding activity.",
+          "pain_hypothesis": "Chex Finer Foods is receiving inbound vendor interest from premium wellness brands that lack East Coast retail relationships, but without a structured market-entry advisory partner, it may be vetting underprepared brands inefficiently — creating an opportunity for a service that pre-qualifies and positions brands before they enter Chex's pipeline.",
+          "account_research": {
+            "domain": "chexfoods.com",
+            "account": "Chex Finer Foods",
+            "version": "account-deep-research-v1",
+            "query_audit": [
+              {
+                "stage": "identity",
+                "results": 5,
+                "accepted": 5,
+                "provider": "brave",
+                "query_id": "rq_13d8e5t"
+              },
+              {
+                "stage": "current_activity",
+                "results": 0,
+                "accepted": 0,
+                "provider": "brave",
+                "query_id": "rq_z2fpy4"
+              },
+              {
+                "stage": "current_activity",
+                "results": 0,
+                "accepted": 0,
+                "provider": "tavily",
+                "query_id": "rq_z2fpy4"
+              },
+              {
+                "stage": "current_activity",
+                "results": 0,
+                "accepted": 0,
+                "provider": "brave",
+                "query_id": "rq_qsphbr"
+              },
+              {
+                "stage": "current_activity",
+                "results": 0,
+                "accepted": 0,
+                "provider": "tavily",
+                "query_id": "rq_qsphbr"
+              },
+              {
+                "stage": "counterevidence",
+                "results": 5,
+                "accepted": 5,
+                "provider": "brave",
+                "query_id": "rq_nuvuin"
+              },
+              {
+                "stage": "counterevidence",
+                "results": 0,
+                "accepted": 0,
+                "provider": "tavily",
+                "query_id": "rq_nuvuin"
+              }
+            ],
+            "provider_ops": [
+              {
+                "ok": true,
+                "stage": "identity",
+                "results": 5,
+                "timeout": false,
+                "provider": "brave",
+                "operation": "search",
+                "duration_ms": 821
+              },
+              {
+                "ok": true,
+                "stage": "current_activity",
+                "results": 0,
+                "timeout": false,
+                "provider": "brave",
+                "operation": "search",
+                "duration_ms": 407
+              },
+              {
+                "ok": true,
+                "stage": "current_activity",
+                "results": 0,
+                "timeout": false,
+                "provider": "tavily",
+                "operation": "search",
+                "duration_ms": 7840
+              },
+              {
+                "ok": true,
+                "stage": "current_activity",
+                "results": 0,
+                "timeout": false,
+                "provider": "brave",
+                "operation": "search",
+                "duration_ms": 611
+              },
+              {
+                "ok": true,
+                "stage": "current_activity",
+                "results": 0,
+                "timeout": false,
+                "provider": "tavily",
+                "operation": "search",
+                "duration_ms": 11506
+              },
+              {
+                "ok": true,
+                "stage": "counterevidence",
+                "results": 5,
+                "timeout": false,
+                "provider": "brave",
+                "operation": "search",
+                "duration_ms": 995
+              },
+              {
+                "ok": true,
+                "stage": "counterevidence",
+                "results": 0,
+                "timeout": false,
+                "provider": "tavily",
+                "operation": "search",
+                "duration_ms": 7804
+              }
+            ],
+            "results_seen": 10,
+            "dated_evidence": 5,
+            "provider_calls": 7,
+            "pages_extracted": 0,
+            "planned_queries": 4,
+            "claims_recovered": 1,
+            "executed_queries": 4,
+            "extraction_audit": [],
+            "validated_events": [],
+            "early_stop_reason": "no_material_event",
+            "evidence_accepted": 10,
+            "evidence_rejected": 0,
+            "provider_failures": 0,
+            "account_elapsed_ms": 67890,
+            "event_hints_fetched": 0,
+            "extraction_failures": 0,
+            "independent_domains": 1,
+            "event_hints_received": 0,
+            "corroborating_domains": 0,
+            "corroborating_sources": [],
+            "event_hints_validated": 0,
+            "corroboration_attempted": false,
+            "counterevidence_checked": true,
+            "event_geography_rejected": 0,
+            "structured_extraction_calls": 0,
+            "counterevidence_material_found": false
+          },
+          "risks_weaknesses": [
+            "Chex is a distributor, not a brand — the offer targets brand market-entry, so the fit depends on whether Chex is the buyer of advisory services or the channel partner brands are advised to pursue.",
+            "No evidence Chex pays for external market-entry or channel advisory services; they may see this as their own core competency.",
+            "Company size is unknown; if a small regional operator, budget for external consulting may be limited.",
+            "Post-Chexpo period may create short-term vendor intake saturation, reducing urgency to engage new advisory relationships immediately."
+          ],
+          "segment_fit_note": "Chex Finer Foods is a distributor rather than a brand, making it an adjacent fit — the offer is most precisely aimed at brands entering the market, but Chex could be a strategic channel partner or a buyer of advisory services that help brands arrive shelf-ready into their network.",
+          "opportunity_risks": [
+            "Role ambiguity: Chex may be a channel partner for your clients rather than a direct buyer of advisory services — conflating the two risks misaligned outreach.",
+            "No evidence of budget or precedent for external market-entry consulting at Chex.",
+            "Post-Chexpo vendor intake saturation may reduce responsiveness to new partner conversations in the immediate weeks following the event.",
+            "Regional footprint (East Coast only) may limit strategic fit if the offer targets national or multi-market brand launches."
+          ],
+          "next_best_question": "Is the goal to sell market-entry advisory services directly to Chex Finer Foods, or to position Chex as the East Coast channel destination for premium brands you are advising — because these require entirely different outreach strategies and buyer contacts?",
+          "recommended_action": "validate_source_first",
+          "evidence_discipline": [
+            {
+              "date": "2025-10-21",
+              "type": "verified_public_signal",
+              "claim": "Chex Finer Foods is a third-generation, family-owned specialty and natural foods distributor celebrating its 60th anniversary"
+            },
+            {
+              "date": "2026-01-28",
+              "type": "verified_public_signal",
+              "claim": "Chexpo 2026 took place January 28, 2026 with more than 250 curated exhibitors at the Rhode Island Convention Center"
+            },
+            {
+              "type": "verified_public_signal",
+              "claim": "Chex operates an active 'Become a Vendor' intake programme for new suppliers"
+            },
+            {
+              "type": "inferred_from_context",
+              "claim": "Chex faces pressure to differentiate its brand portfolio from national distributors like UNFI or KeHE"
+            },
+            {
+              "type": "missing_evidence",
+              "claim": "Chex engages or would pay for third-party market-entry advisory services"
+            },
+            {
+              "type": "weak_inference",
+              "claim": "Chex is actively seeking wellness or functional food category expansion beyond its current portfolio"
+            }
+          ],
+          "research_confidence": 0.62,
+          "buying_window_reason": "No buying window is inferred without a validated current material event.",
+          "signal_interpretation": "The Chexpo 2026 event with 250+ exhibitors and the simultaneous 60th anniversary PR push signals Chex is actively investing in brand partnership growth and East Coast market positioning — commercially, this means their vendor review cycle is active and decision-makers are accessible and engaged right now.",
+          "evidence_quality_grade": "moderate_public",
+          "recommended_action_reason": "Before outreach, clarify whether Chex is the intended buyer of advisory services or a channel partner to direct brands toward — this distinction fundamentally changes the pitch and contact strategy."
+        },
+        "fit_reasons": [
+          "Industry alignment is strong: Chex operates squarely in specialty and natural food distribution, directly adjacent to the ICP's target sectors (specialty retail, natural/organic grocery, food and beverage distribution).",
+          "Confirmed timing signal: Chexpo 2026 concluded January 28, 2026, placing this account in an active post-event vendor pipeline review window — a genuine, narrow outreach opportunity.",
+          "60th anniversary PR campaign and Q1 2025 retailer programme content confirm active external positioning and brand partnership investment.",
+          "Formalised 'Become a Vendor' portal and Chexpo infrastructure confirm structured, recurring brand intake — a plausible integration point for market-entry advisory services.",
+          "East Coast regional distribution reach and third-party supplier programme directly match the geographic and commercial model the ICP serves."
+        ],
+        "score_breakdown": {
+          "pain_fit": 1,
+          "role_fit": 1,
+          "company_fit": 2,
+          "reachability": 0.5,
+          "timing_signal": 2,
+          "strategic_relevance": 1
+        },
+        "score_dimensions": {
+          "timing": 70,
+          "icp_fit": 52,
+          "confidence": 50,
+          "signal_strength": 62,
+          "strategic_value": 55,
+          "evidence_quality": 65,
+          "disqualification_risk": 48
+        },
+        "score_explanation": "Score is WARM because [ICP Fit: 52/100 — Chex matches the industry and commercial model well, but as a distributor rather than a retailer or brand, it sits at the edge of direct ICP applicability; the offer's fit depends on whether Chex is the advisory buyer or merely the channel brands are being prepared to enter]. [Signal: 62/100 — Chexpo 2026 is a confirmed, credible timing event and the post-show vendor review window is real, but there is no signal that Chex is actively seeking external advisory or consulting partnerships]. [Timing: 70/100 — post-Chexpo Q1 2026 is the strongest available window; this is time-bounded and will close within 60–90 days as the vendor intake cycle normalises]. Key risk: the fundamental commercial ambiguity of whether Chex is the buyer or the channel means this account requires framing as a referral or co-positioning relationship rather than a direct service sale — without that clarity, outreach risks misalignment.",
+        "ranking_explanation": "Chex Finer Foods ranks #2 (6.5/10). Slightly below CoralTree Hospitality (6.5/10) — closely matched accounts, both worth contacting within the same wave.",
+        "signal_interpretation": "Chex presents genuine timing and industry alignment but is commercially ambiguous as an account: the strongest path is not to sell to Chex directly, but to position advisory services as a brand pre-qualification partner that improves the quality of Chex's inbound vendor pipeline — a value proposition Chex benefits from without necessarily paying for it. Unlocking this account requires confirming whether Chex has a commercial model for referring underprepared brands to external advisors, or whether a co-marketing or partnership structure (rather than a consulting sale) is the viable entry point.",
+        "opportunity_tier_reason": "WARM (<7): Has a confirmed company event but ICP fit is partial — validate commercial relevance and purchase intent before outreach",
+        "disqualification_reasons": [
+          "Chex is a distributor, not a brand owner or retailer — the offer targets brand market-entry advisory, making Chex a potential channel referral partner rather than a direct buyer of services. The commercial relationship and revenue model are ambiguous.",
+          "No evidence Chex purchases external market-entry or channel advisory services — they may view brand vetting and development as a core internal competency, creating high rejection risk.",
+          "Company size is unconfirmed; if headcount and revenue are small, budget authority for third-party consulting engagement is uncertain.",
+          "Disqualifier proximity risk: Chex's 'Become a Vendor' portal is structurally similar to a supplier-recruitment network — depending on offer definition, this could trigger the ICP disqualifier around seller/distributor-recruitment networks."
+        ],
+        "qualification_confidence": 0.52
+      }
+    },
+    {
+      "id": "lh_e2e_context_1789604157575_v1_2026-09-17_2ad70116-6e77-4187-8556-429344c27879_intel_1b9b0_cand_1",
+      "learning": {
+        "qc_flags": [],
+        "change_tag": "new",
+        "change_type": "new_account",
+        "signal_date": "2026-07-22",
+        "signal_role": "context_only",
+        "source_name": "coraltreehospitality.com",
+        "source_type": "unknown",
+        "change_label": "New this cycle",
+        "signal_count": 3,
+        "source_count": 2,
+        "source_types": [
+          "unknown"
+        ],
+        "change_reason": "No previous record in Account Memory for this client",
+        "discovered_at": "2026-09-17T00:19:05.356Z",
+        "client_visible": true,
+        "current_action": "enrich_manually",
+        "feedback_hooks": [
+          "useful",
+          "not_useful",
+          "wrong_fit",
+          "contacted",
+          "meeting_booked",
+          "replied",
+          "add_to_vault"
+        ],
+        "source_summary": "2 verified sources (unknown) · context-only · signal date: 2026-07-22",
+        "freshness_label": "Recent signal (31–60 days)",
+        "freshness_score": 0.5,
+        "is_context_only": true,
+        "previous_action": null,
+        "segment_pattern": "Specialty and natural food retailers with third-party supplier programmes",
+        "signal_age_days": 57,
+        "signal_patterns": [
+          "Announced expansion of Reef Capital Partners partnership adding four new managed properties (July 1, 2026)",
+          "Selected by Amaterra Hospitality Group to manage RiverPlace Hotel in Portland, OR (July 22, 2026)",
+          "New properties entering operational phase in summer 2026, including Golf Villas and Cottages at Tributer Resort"
+        ],
+        "agent_confidence": 0.52,
+        "evidence_quality": "medium",
+        "evidence_summary": "Medium evidence quality — 2 verified source(s), 3 timing signal(s). Validate before outreach.",
+        "genericness_risk": "medium",
+        "is_timing_signal": false,
+        "source_freshness": "recent",
+        "change_prev_score": null,
+        "improvement_notes": [
+          "CoralTree is a hospitality management company, not a retailer or distributor — the listed industry segment ('specialty and natural food retailers with third-party supplier programmes') is a mismatch with CoralTree's actual business model"
+        ],
+        "region_confidence": "high",
+        "source_confidence": "high",
+        "change_score_delta": null,
+        "fresh_signal_count": 0,
+        "hallucination_risk": "low",
+        "source_reliability": "unknown",
+        "current_signal_date": "2026-07-22",
+        "evidence_confidence": 0.772,
+        "reason_for_demotion": "CoralTree is a hospitality management company — it does not match any listed ICP industry segment (specialty retail, natural/organic grocery, health and wellness retail, F&B distribution); the assigned industry label is a factual mismatch",
+        "account_memory_state": "new_opportunity",
+        "change_prev_category": null,
+        "previous_signal_date": null,
+        "source_layer_applied": true,
+        "limited_region_coverage": false,
+        "current_evidence_quality": "medium",
+        "current_source_freshness": "recent",
+        "offer_market_fit_pattern": "Specialty and natural food retailers with third-party supplier programmes account + \"Announced expansion of Reef Capital Partners partnership add\" → ICP fit score 6.5/10",
+        "predicted_learning_value": "medium",
+        "account_memory_times_seen": 0,
+        "previous_evidence_quality": null,
+        "previous_source_freshness": null,
+        "evidence_discipline_summary": "verified",
+        "original_recommended_action": "validate_source_first",
+        "account_memory_last_fit_score": null,
+        "guardrailed_recommended_action": "validate_source_first",
+        "account_memory_last_feedback_signal": null,
+        "recommended_action_guardrail_applied": false
+      },
+      "outreach": {
+        "tone": "consultative",
+        "subject": "CoralTree Hospitality — thought this was relevant",
+        "qc_notes": [],
+        "qc_status": "APPROVED",
+        "email_body": "CoralTree Hospitality's recent structural changes suggest there may be a vendor review window opening up.\n\nMarket-entry and channel-partnership development services for premium wellness and packaged-goods br — adapted for food exporters and importers expand.\n\nIdentifying new wholesale buyers or distributors in a target market typically requires months of relationship groundwork. We surface accounts already \n\nOpen to a quick call to explore whether this matches what you're looking for?",
+        "followup_1": "Following up in case this got buried. The fit looked strong for CoralTree Hospitality's current stage — Market-entry and channel-partnership development services for premium . Worth a quick look?",
+        "followup_2": "Final follow-up on this one. If priorities have shifted or this doesn't match what CoralTree Hospitality is working on, just say the word. No pressure.",
+        "call_opener": "Hi, reaching out because CoralTree Hospitality came up as a strong fit for what we do — Market-entry and channel-partnership development services for premium . Do you have 90 seconds for a one-sentence overview?",
+        "linkedin_dm": "\"CoralTree Hospitality [signal]\" — reference the specific event and ask if it reflects a broader com. Market-entry and channel-partnership development services for premium wellness a — relevant for Specialty and natural food retailers with third-party supplier programmes teams at this stage. Happy to share more if it fits.",
+        "recommended_angle": "Signal-led angle: Reference the public signal directly — \"Announced expansion of Reef Capital Partners partnership adding four new managed...\" — as the reason for reaching out now. This is the strongest entry point.",
+        "cta_recommendation": "Lead with the signal in the subject line — it's the strongest differentiator from generic outreach. Keep the CTA a soft 15-minute ask, not a demo request.",
+        "outreach_assumptions": "CoralTree Hospitality has a confirmed public buying signal. This is the highest-quality timing to approach — the signal suggests an active commercial decision window of 30–90 days.",
+        "personalization_trigger": "Noticed that CoralTree Hospitality announced expansion of Reef Capital Partners partnership adding four new managed properties (July 1, 2026). That kind of signal often correlates with commercial evaluation activity — wanted to reach out while the timing looks relevant.",
+        "what_to_avoid_in_outreach": "Do not claim to know their internal priorities. Do not over-interpret the signal — present it as context, not certainty. Avoid generic language like \"I saw you're growing.\""
+      },
+      "candidate": {
+        "id": "lh_e2e_context_1789604157575_v1_2026-09-17_2ad70116-6e77-4187-8556-429344c27879_intel_1b9b0_cand_1",
+        "domain": "coraltreehospitality.com",
+        "source": "public_signal",
+        "company": "CoralTree Hospitality",
+        "country": "United States",
+        "industry": "Specialty and natural food retailers with third-party supplier programmes",
+        "location": "United States",
+        "source_url": "https://www.coraltreehospitality.com/site/assets/files/12910/newsrelease_reefmanagement_final.pdf",
+        "raw_context": "[Wed, 01 Jul 2026 00:00:00 GMT] [PDF] Reef Capital Partners Expands Partnership with CoralTree Hospitality. Reef Capital Partners Expands Partnership with CoralTree Hospitality Management Company Adds Four New Properties to Growing Collection DENVER – July 1, 2026 – CoralTree Hospitality today announced it has been selected by Reef Capital Partners to manage four additional properties, expanding their relationship to five properties nationwide. The new additions include Main & Sky and Pioche Village in Park City, Utah; Tributer Resort, a premier lakeside resort community at Lake Anna in Virginia; and Cornerstone Club, a private mountain community and hospitality destination near Montrose, Colo. The expanded relationship builds on CoralTree’s existing management of Black Desert Resort in Greater Zion Utah, reinforcing a shared vision between Reef and CoralTree for creating distinctive, experience‑driven resort and residential destinations in high‑growth leisure markets. “Reef continues to develop some of the most compelling resort and lifestyle communities in the country, and we’re proud to deepen our partnership as they bring these four exceptional properties into operation,” said Tom Luersen, president of CoralTree Hospitality. “Each destination reflects a strong sense of place, thoughtful design, and long‑term vision, which are qualities that align closely with CoralTree’s approach to hospitality.” Four Distinct Destinations, One Shared Vision Main & Sky – Park City, Utah Located on historic Main Street just steps from Town Lift, Main & Sky is a 33‑unit, all‑suite luxury boutique hotel offering a residential‑style experience in the heart of Park City. Featuring spacious one‑ to three‑bedroom suites and penthouses - many with private hot tubs, fireplaces, and full kitchens - the property is designed for families, groups, and discerning leisure travelers seeking both comfort and connection. Main & Sky joins the CoralTree Residence Collection, further strengthening CoralTree’s footprint in Utah’s premier mountain resort market. Tributer Resort – Lake Anna, Virginia Set across 1,000 acres along the shores of Lake Anna, Tributer Resort is an emerging luxury resort community centered around Cutalong, an 18‑hole championship golf course designed by Tom Clark. The course is known for its blend of strategic challenge and dramatic highland scenery overlooking Lake Anna. A second 18-hole championship course, developed in collaboration with TGR Design, was recently announced, further cementing Tributer's position as one of the premier multi-course golf destinations on the East Coast. With marina access, dining, outdoor recreation, and a master‑planned blend of residences and amenities, Tributer is rapidly gaining attention as one of the Mid‑Atlantic’s most compelling golf and lifestyle destinations. Beginning this summer, guests will be welcomed to newly opened Golf Villas and Cottages, marking CoralTree’s first managed property in Virginia. Cornerstone Club – Montrose, Colorado Nestled within a private mountain setting on Colorado’s Western Slope, Cornerstone Club is a refined alpine community offering a blend of luxury residences, curated amenities, and year‑round outdoor experiences. As Reef advances the evolution of Cornerstone Club as both a private club and hospitality destination, CoralTree will oversee the guest experience, operations, and residential hospitality services, bringing its expertise in high‑end mountain resorts to another iconic Colorado market. Pioche Village – Park City, Utah Pioche Village joins the CoralTree Residence Collection offering exceptional ski‑in/ski‑out access to Deer Valley’s Jordanelle Express Gondola and is ideally located about one mile from the emerging Deer Valley East Village base area, placing guests at the center of new terrain, dining, and year-round mountain recreation in the Wasatch and Uinta Mountains. The property features 402 accommodations, most of which are thoughtfully designed 450-square-foot studios, along with a limited selection of one- and two-bedroom residences, creating flexible options for couples, families, and adventure travelers. Guests enjoy an elevated yet approachable amenity set, including a game room, media and billiards rooms, fitness center with yoga studio, steam room, hot tubs, and multiple inviting social spaces for gathering, coworking, and après-ski relaxation. CoralTree now manages five Reef‑developed properties spanning resort, residential, private clubs, and mixed‑use destinations. Together, the companies are shaping communities designed for longevity where hospitality, recreation, and real estate come together to create vibrant, enduring value. “CoralTree has proven to be an ideal operating partner as we bring complex, experiential destinations to life,” said Harry Hirsch, chief hospitality officer at Reef Capital Partners. “Their ability to scale while maintaining authenticity and service excellence makes them a natural fit as we continue to expand our portfolio.” About Reef Capital Partners Reef Capital Partners is a vertically integrated real estate investment, development, and operations firm dedicated to enhancing communities through transformative and impactful projects across North America. Reef creates a sense of belonging to something extraordinary by delivering unforgettable experiences that endure for generations. By aligning investment expertise with development vision, Reef Capital Partners is reshaping the future of luxury living, hospitality, and recreation. About CoralTree Hospitality CoralTree Hospitality is one of the fastest-growing hospitality management companies in the United States with a diverse portfolio of more than 50 hotels, resorts, and vacation rentals. Formed in 2018 and based in Denver, CoralTree is dedicated to delivering distinctive and memorable experiences that celebrate the unique surroundings, culture, and community of each property. CoralTree’s collection includes independent, branded, and soft branded properties in key metropolitan areas and resort markets. By embracing the unique features of each location, CoralTree crafts personalized guest experiences across its collection, which includes resort communities, lifestyle hotels, the CoralTree Residence Collection and other exceptional properties. CoralTree’s brand pillars focus on serving from the heart and fostering empowering experiences for team members. This dedication has earned the company recognition as one of the top small companies to work for in Colorado by the Denver Post Top Workplace survey four years in a row. The company has developed initiatives to better serve its team members, communities, stakeholders, and customers, including Bloom, an environmental sustainability program, and CoralTree Cares, the company’s philanthropic platform. CoralTree is a wholly-owned subsidiary of Los Angeles-based Lowe, a real estate investment, management, and development firm. For more information, visit CoralTreeHospitality.com. ### Media Contacts: Kristin Yantis, Malen Yantis Public Relations, (970) 949-7919, kyantis@myprco.com For high resolution, downloadable images of properties in the CoralTree collection, please visit https://coraltree.intelligencebank.com (source: https://www.coraltreehospitality.com/site/assets/files/12910/newsrelease_reefmanagement_final.pdf) | [Wed, 22 Jul 2026 00:00:00 GMT] [PDF] Amaterra_Press Release_Acquisition of RiverPlace Hotel_FINAL. For Immediate Release Media Contacts: Jane Brigham Amaterra Hospitality Group 503-901-7983 jane@lawrence-pr.com Kristin Yantis CoralTree Hospitality 970-949-7919 kyantis@myprco.com Amaterra Hospitality Group Announces Acquisition of RiverPlace Hotel Owner of Amaterra Winery and Amaterra Kitchen + Social Club unveils hospitality arm and chooses CoralTree Hospitality group to manage Portland riverfront hotel Portland, Ore. (July 22, 2026) — Amaterra Hospitality Group, owners of Amaterra Winery in Portland and Amaterra Kitchen + Social Club in Bend, announces its next chapter: the acquisition of Portland’s landmark RiverPlace Hotel, a distinctive waterfront destination. This marks the beginning of a new chapter for the property, as Amaterra Hospitality Group focuses on participation in the revitalization of Portland’s waterfront and enhancing one of the city’s most prominent hospitality assets. Amaterra Hospitality Group selected CoralTree Hospitality to manage the property. Located along the Willamette River on Portland’s south waterfront, RiverPlace offers a rare resort-style experience in the heart of downtown. The property features 85 guestrooms and suites, many with sweeping river views and residential-inspired amenities, along with premier dining, outdoor gathering spaces and flexible meeting and event venues overlooking the marina and waterfront. The acquisition is a significant investment by lifelong Portlanders Colleen Nistler, Werner Nistler Jr. and Marcus Breuer of Amaterra, whose vision is centered ",
+        "website_url": "https://coraltreehospitality.com",
+        "account_identity": {
+          "domain": "coraltreehospitality.com",
+          "country": "United States",
+          "confidence": "verified",
+          "fromUniverse": true,
+          "canonicalName": "CoralTree Hospitality",
+          "organizationType": "Specialty and natural food retailers with third-party supplier programmes"
+        },
+        "confidence_score": 0.8,
+        "discovery_provenance": [
+          {
+            "route": "industry_category",
+            "origin": "dynamic_enumeration",
+            "provider": "engine"
+          }
+        ],
+        "discovery_origin_flags": [
+          "ACCOUNT_FIRST"
+        ]
+      },
+      "enrichment": {
+        "why_now": "No current dated material event was validated. The account may fit structurally, but there is no verified reason to act now rather than monitor for a new trigger.",
+        "evidence": [
+          "July 1, 2026 press release confirms CoralTree added four Reef-developed properties: Main & Sky, Pioche Village (Park City), Tributer Resort (Virginia), and Cornerstone Club (Colorado), bringing the Reef relationship to five properties",
+          "July 22, 2026 press release confirms CoralTree selected to manage RiverPlace Hotel in Portland for Amaterra Hospitality Group, a winery-affiliated owner signaling premium lifestyle alignment",
+          "CoralTree's 'Bloom' environmental sustainability program and 'CoralTree Cares' philanthropic platform are cited in official materials, indicating brand-level commitment to values-aligned partnerships"
+        ],
+        "candidate": {
+          "id": "lh_e2e_context_1789604157575_v1_2026-09-17_2ad70116-6e77-4187-8556-429344c27879_intel_1b9b0_cand_1",
+          "domain": "coraltreehospitality.com",
+          "source": "public_signal",
+          "company": "CoralTree Hospitality",
+          "country": "United States",
+          "industry": "Specialty and natural food retailers with third-party supplier programmes",
+          "location": "United States",
+          "source_url": "https://www.coraltreehospitality.com/site/assets/files/12910/newsrelease_reefmanagement_final.pdf",
+          "raw_context": "[Wed, 01 Jul 2026 00:00:00 GMT] [PDF] Reef Capital Partners Expands Partnership with CoralTree Hospitality. Reef Capital Partners Expands Partnership with CoralTree Hospitality Management Company Adds Four New Properties to Growing Collection DENVER – July 1, 2026 – CoralTree Hospitality today announced it has been selected by Reef Capital Partners to manage four additional properties, expanding their relationship to five properties nationwide. The new additions include Main & Sky and Pioche Village in Park City, Utah; Tributer Resort, a premier lakeside resort community at Lake Anna in Virginia; and Cornerstone Club, a private mountain community and hospitality destination near Montrose, Colo. The expanded relationship builds on CoralTree’s existing management of Black Desert Resort in Greater Zion Utah, reinforcing a shared vision between Reef and CoralTree for creating distinctive, experience‑driven resort and residential destinations in high‑growth leisure markets. “Reef continues to develop some of the most compelling resort and lifestyle communities in the country, and we’re proud to deepen our partnership as they bring these four exceptional properties into operation,” said Tom Luersen, president of CoralTree Hospitality. “Each destination reflects a strong sense of place, thoughtful design, and long‑term vision, which are qualities that align closely with CoralTree’s approach to hospitality.” Four Distinct Destinations, One Shared Vision Main & Sky – Park City, Utah Located on historic Main Street just steps from Town Lift, Main & Sky is a 33‑unit, all‑suite luxury boutique hotel offering a residential‑style experience in the heart of Park City. Featuring spacious one‑ to three‑bedroom suites and penthouses - many with private hot tubs, fireplaces, and full kitchens - the property is designed for families, groups, and discerning leisure travelers seeking both comfort and connection. Main & Sky joins the CoralTree Residence Collection, further strengthening CoralTree’s footprint in Utah’s premier mountain resort market. Tributer Resort – Lake Anna, Virginia Set across 1,000 acres along the shores of Lake Anna, Tributer Resort is an emerging luxury resort community centered around Cutalong, an 18‑hole championship golf course designed by Tom Clark. The course is known for its blend of strategic challenge and dramatic highland scenery overlooking Lake Anna. A second 18-hole championship course, developed in collaboration with TGR Design, was recently announced, further cementing Tributer's position as one of the premier multi-course golf destinations on the East Coast. With marina access, dining, outdoor recreation, and a master‑planned blend of residences and amenities, Tributer is rapidly gaining attention as one of the Mid‑Atlantic’s most compelling golf and lifestyle destinations. Beginning this summer, guests will be welcomed to newly opened Golf Villas and Cottages, marking CoralTree’s first managed property in Virginia. Cornerstone Club – Montrose, Colorado Nestled within a private mountain setting on Colorado’s Western Slope, Cornerstone Club is a refined alpine community offering a blend of luxury residences, curated amenities, and year‑round outdoor experiences. As Reef advances the evolution of Cornerstone Club as both a private club and hospitality destination, CoralTree will oversee the guest experience, operations, and residential hospitality services, bringing its expertise in high‑end mountain resorts to another iconic Colorado market. Pioche Village – Park City, Utah Pioche Village joins the CoralTree Residence Collection offering exceptional ski‑in/ski‑out access to Deer Valley’s Jordanelle Express Gondola and is ideally located about one mile from the emerging Deer Valley East Village base area, placing guests at the center of new terrain, dining, and year-round mountain recreation in the Wasatch and Uinta Mountains. The property features 402 accommodations, most of which are thoughtfully designed 450-square-foot studios, along with a limited selection of one- and two-bedroom residences, creating flexible options for couples, families, and adventure travelers. Guests enjoy an elevated yet approachable amenity set, including a game room, media and billiards rooms, fitness center with yoga studio, steam room, hot tubs, and multiple inviting social spaces for gathering, coworking, and après-ski relaxation. CoralTree now manages five Reef‑developed properties spanning resort, residential, private clubs, and mixed‑use destinations. Together, the companies are shaping communities designed for longevity where hospitality, recreation, and real estate come together to create vibrant, enduring value. “CoralTree has proven to be an ideal operating partner as we bring complex, experiential destinations to life,” said Harry Hirsch, chief hospitality officer at Reef Capital Partners. “Their ability to scale while maintaining authenticity and service excellence makes them a natural fit as we continue to expand our portfolio.” About Reef Capital Partners Reef Capital Partners is a vertically integrated real estate investment, development, and operations firm dedicated to enhancing communities through transformative and impactful projects across North America. Reef creates a sense of belonging to something extraordinary by delivering unforgettable experiences that endure for generations. By aligning investment expertise with development vision, Reef Capital Partners is reshaping the future of luxury living, hospitality, and recreation. About CoralTree Hospitality CoralTree Hospitality is one of the fastest-growing hospitality management companies in the United States with a diverse portfolio of more than 50 hotels, resorts, and vacation rentals. Formed in 2018 and based in Denver, CoralTree is dedicated to delivering distinctive and memorable experiences that celebrate the unique surroundings, culture, and community of each property. CoralTree’s collection includes independent, branded, and soft branded properties in key metropolitan areas and resort markets. By embracing the unique features of each location, CoralTree crafts personalized guest experiences across its collection, which includes resort communities, lifestyle hotels, the CoralTree Residence Collection and other exceptional properties. CoralTree’s brand pillars focus on serving from the heart and fostering empowering experiences for team members. This dedication has earned the company recognition as one of the top small companies to work for in Colorado by the Denver Post Top Workplace survey four years in a row. The company has developed initiatives to better serve its team members, communities, stakeholders, and customers, including Bloom, an environmental sustainability program, and CoralTree Cares, the company’s philanthropic platform. CoralTree is a wholly-owned subsidiary of Los Angeles-based Lowe, a real estate investment, management, and development firm. For more information, visit CoralTreeHospitality.com. ### Media Contacts: Kristin Yantis, Malen Yantis Public Relations, (970) 949-7919, kyantis@myprco.com For high resolution, downloadable images of properties in the CoralTree collection, please visit https://coraltree.intelligencebank.com (source: https://www.coraltreehospitality.com/site/assets/files/12910/newsrelease_reefmanagement_final.pdf) | [Wed, 22 Jul 2026 00:00:00 GMT] [PDF] Amaterra_Press Release_Acquisition of RiverPlace Hotel_FINAL. For Immediate Release Media Contacts: Jane Brigham Amaterra Hospitality Group 503-901-7983 jane@lawrence-pr.com Kristin Yantis CoralTree Hospitality 970-949-7919 kyantis@myprco.com Amaterra Hospitality Group Announces Acquisition of RiverPlace Hotel Owner of Amaterra Winery and Amaterra Kitchen + Social Club unveils hospitality arm and chooses CoralTree Hospitality group to manage Portland riverfront hotel Portland, Ore. (July 22, 2026) — Amaterra Hospitality Group, owners of Amaterra Winery in Portland and Amaterra Kitchen + Social Club in Bend, announces its next chapter: the acquisition of Portland’s landmark RiverPlace Hotel, a distinctive waterfront destination. This marks the beginning of a new chapter for the property, as Amaterra Hospitality Group focuses on participation in the revitalization of Portland’s waterfront and enhancing one of the city’s most prominent hospitality assets. Amaterra Hospitality Group selected CoralTree Hospitality to manage the property. Located along the Willamette River on Portland’s south waterfront, RiverPlace offers a rare resort-style experience in the heart of downtown. The property features 85 guestrooms and suites, many with sweeping river views and residential-inspired amenities, along with premier dining, outdoor gathering spaces and flexible meeting and event venues overlooking the marina and waterfront. The acquisition is a significant investment by lifelong Portlanders Colleen Nistler, Werner Nistler Jr. and Marcus Breuer of Amaterra, whose vision is centered ",
+          "website_url": "https://coraltreehospitality.com",
+          "account_identity": {
+            "domain": "coraltreehospitality.com",
+            "country": "United States",
+            "confidence": "verified",
+            "fromUniverse": true,
+            "canonicalName": "CoralTree Hospitality",
+            "organizationType": "Specialty and natural food retailers with third-party supplier programmes"
+          },
+          "confidence_score": 0.8,
+          "discovery_provenance": [
+            {
+              "route": "industry_category",
+              "origin": "dynamic_enumeration",
+              "provider": "engine"
+            }
+          ],
+          "discovery_origin_flags": [
+            "ACCOUNT_FIRST"
+          ]
+        },
+        "missing_data": [
+          "Whether CoralTree has a centralized procurement or supplier-partnership function vs. property-level purchasing decisions",
+          "Existing wellness or packaged-goods brand partnerships or exclusivity agreements across the portfolio",
+          "Annual F&B and amenity procurement budget or spend volume across the 50+ property portfolio"
+        ],
+        "buying_window": "near_term",
+        "inferred_pain": "Rapid multi-property expansion across diverse geographies appears to create fragmented and inconsistent in-property product curation, suggesting CoralTree may lack a scalable channel-partnership framework for premium wellness and packaged-goods brands across its growing collection.",
+        "account_thesis": "CoralTree's confirmed addition of five new properties in July 2026, combined with its premium lifestyle brand positioning and sustainability platform, makes it a plausible channel-development target for wellness brand placement at scale — but the commercial case depends on whether CoralTree controls centralized supplier decisions or defers to property-level management.",
+        "role_relevance": "CoralTree's rapidly expanding portfolio of premium resort, lifestyle, and residential properties represents a natural channel for curated wellness and packaged-goods brands seeking placement in high-dwell, affluent-guest environments. Their 'Bloom' sustainability program and experience-first brand identity suggest openness to premium, values-aligned supplier partnerships. Rapid portfolio growth creates immediate procurement and amenity-curation decisions across multiple new properties simultaneously.",
+        "timing_signals": [
+          "Announced expansion of Reef Capital Partners partnership adding four new managed properties (July 1, 2026)",
+          "Selected by Amaterra Hospitality Group to manage RiverPlace Hotel in Portland, OR (July 22, 2026)",
+          "New properties entering operational phase in summer 2026, including Golf Villas and Cottages at Tributer Resort"
+        ],
+        "company_summary": "CoralTree Hospitality is a fast-growing U.S. hospitality management company, founded in 2018 and headquartered in Denver, operating 50+ hotels, resorts, and vacation rentals across resort and urban markets. It is a wholly-owned subsidiary of Lowe, a Los Angeles-based real estate investment and development firm. The company manages a diverse mix of independent, branded, lifestyle, and residential resort properties with a stated emphasis on place-based, experience-driven guest experiences.",
+        "pain_hypothesis": "CoralTree's rapid addition of five properties in a single month suggests its central procurement and brand-partnership infrastructure may lag its operational growth, creating an opening for a market-entry service that can systematically place premium wellness brands across new and existing properties under a scalable channel framework.",
+        "account_research": {
+          "domain": "coraltreehospitality.com",
+          "account": "CoralTree Hospitality",
+          "version": "account-deep-research-v1",
+          "query_audit": [
+            {
+              "stage": "identity",
+              "results": 5,
+              "accepted": 4,
+              "provider": "brave",
+              "query_id": "rq_ctnvfd"
+            },
+            {
+              "stage": "current_activity",
+              "results": 0,
+              "accepted": 0,
+              "provider": "brave",
+              "query_id": "rq_yx1m26"
+            },
+            {
+              "stage": "current_activity",
+              "results": 4,
+              "accepted": 4,
+              "provider": "tavily",
+              "query_id": "rq_yx1m26"
+            },
+            {
+              "stage": "current_activity",
+              "results": 0,
+              "accepted": 0,
+              "provider": "brave",
+              "query_id": "rq_1ktq0gn"
+            },
+            {
+              "stage": "current_activity",
+              "results": 0,
+              "accepted": 0,
+              "provider": "tavily",
+              "query_id": "rq_1ktq0gn"
+            },
+            {
+              "stage": "counterevidence",
+              "results": 5,
+              "accepted": 5,
+              "provider": "brave",
+              "query_id": "rq_rd2z4j"
+            },
+            {
+              "stage": "counterevidence",
+              "results": 3,
+              "accepted": 3,
+              "provider": "tavily",
+              "query_id": "rq_rd2z4j"
+            }
+          ],
+          "provider_ops": [
+            {
+              "ok": true,
+              "stage": "identity",
+              "results": 5,
+              "timeout": false,
+              "provider": "brave",
+              "operation": "search",
+              "duration_ms": 826
+            },
+            {
+              "ok": true,
+              "stage": "current_activity",
+              "results": 0,
+              "timeout": false,
+              "provider": "brave",
+              "operation": "search",
+              "duration_ms": 395
+            },
+            {
+              "ok": true,
+              "stage": "current_activity",
+              "results": 4,
+              "timeout": false,
+              "provider": "tavily",
+              "operation": "search",
+              "duration_ms": 3787
+            },
+            {
+              "ok": true,
+              "stage": "current_activity",
+              "results": 1,
+              "timeout": false,
+              "provider": "full_text",
+              "operation": "full_text",
+              "duration_ms": 295
+            },
+            {
+              "ok": true,
+              "stage": "current_activity",
+              "results": 0,
+              "timeout": false,
+              "provider": "anthropic",
+              "operation": "llm",
+              "duration_ms": 11515
+            },
+            {
+              "ok": true,
+              "stage": "current_activity",
+              "results": 1,
+              "timeout": false,
+              "provider": "full_text",
+              "operation": "full_text",
+              "duration_ms": 293
+            },
+            {
+              "ok": true,
+              "stage": "current_activity",
+              "results": 0,
+              "timeout": false,
+              "provider": "anthropic",
+              "operation": "llm",
+              "duration_ms": 9844
+            },
+            {
+              "ok": true,
+              "stage": "current_activity",
+              "results": 0,
+              "timeout": false,
+              "provider": "brave",
+              "operation": "search",
+              "duration_ms": 725
+            },
+            {
+              "ok": true,
+              "stage": "current_activity",
+              "results": 0,
+              "timeout": false,
+              "provider": "tavily",
+              "operation": "search",
+              "duration_ms": 9262
+            },
+            {
+              "ok": true,
+              "stage": "counterevidence",
+              "results": 5,
+              "timeout": false,
+              "provider": "brave",
+              "operation": "search",
+              "duration_ms": 776
+            },
+            {
+              "ok": true,
+              "stage": "counterevidence",
+              "results": 3,
+              "timeout": false,
+              "provider": "tavily",
+              "operation": "search",
+              "duration_ms": 1948
+            }
+          ],
+          "results_seen": 17,
+          "dated_evidence": 9,
+          "provider_calls": 7,
+          "pages_extracted": 2,
+          "planned_queries": 4,
+          "claims_recovered": 2,
+          "executed_queries": 4,
+          "extraction_audit": [
+            {
+              "url": "https://www.coraltreehospitality.com/site/assets/files/12910/newsrelease_reefmanagement_final.pdf",
+              "stage": "current_activity",
+              "date_phrase": "July 1, 2026",
+              "materiality": "medium",
+              "signal_kind": "none",
+              "accepted_events": 0,
+              "evidence_excerpt": "Reef Capital Partners Expands Partnership with CoralTree Hospitality Management Company Adds Four New Properties to Growing Collection DENVER – July 1, 2026 – CoralTree Hospitality today announced it has been selected by Reef Capital Partners to manage four additional properties, expanding their relationship to five properties nationwide. The new additions include Main & Sky and Pioche Village in Park City, Utah; Tributer Resort, a premier lakeside resort community at Lake Anna in Virginia; and Cornerstone Club, a private mountain community and hospitality destination near Montrose, Colo. The expanded relationship builds on CoralTree’s existing management of Black Desert Resort in Greater Zion Utah, reinforcing a shared vision between Reef and CoralTree for creating distinctive, experience‑driven resort and residential destinations in high‑growth leisure markets. “Reef continues to develop some of the most compelling resort and lifestyle communities in the country, and we’re proud to deepen our partnership as they bring these four exceptional properties into operation,” said Tom Luersen, president of CoralTree Hospitality. “Each destination reflects a strong sense of place, thought"
+            },
+            {
+              "url": "https://www.coraltreehospitality.com/site/assets/files/13057/amaterra_press_release_acquisition_of_riverplace_hotel_final.pdf",
+              "stage": "current_activity",
+              "date_phrase": "July 22, 2026",
+              "materiality": "high",
+              "signal_kind": "marketing_claim",
+              "accepted_events": 0,
+              "evidence_excerpt": "tel Owner of Amaterra Winery and Amaterra Kitchen + Social Club unveils hospitality arm and chooses CoralTree Hospitality group to manage Portland riverfront hotel Portland, Ore. (July 22, 2026) — Amaterra Hospitality Group, owners of Amaterra Winery in Portland and Amaterra Kitchen + Social Club in Bend, announces its next chapter: the acquisition of Portland’s landmark RiverPlace Hotel, a distinctive waterfront destination. This marks the beginning of a new chapter for the property, as Amaterra Hospitality Group focuses on participation in the revitalization of Portland’s waterfront and enhancing one of the city’s most prominent hospitality assets. Amaterra Hospitality Group selected CoralTree Hospitality to manage the property. Located along the Willamette River on Portland’s south waterfront, RiverPlace offers a rare resort-style experience in the heart of downtown. The property features 85 guestrooms and suites, many with sweeping river views and residential-inspired amenities, along with premier dining, outdoor gathering spaces and flexible meeting and event venues overlooking the marina and waterfront. The acquisition is a significant investment by lifelong Portlanders Colle"
+            }
+          ],
+          "validated_events": [],
+          "early_stop_reason": "no_material_event",
+          "evidence_accepted": 13,
+          "evidence_rejected": 4,
+          "provider_failures": 0,
+          "account_elapsed_ms": 77186,
+          "event_hints_fetched": 0,
+          "extraction_failures": 0,
+          "independent_domains": 1,
+          "event_hints_received": 0,
+          "corroborating_domains": 0,
+          "corroborating_sources": [],
+          "event_hints_validated": 0,
+          "corroboration_attempted": false,
+          "counterevidence_checked": true,
+          "event_geography_rejected": 0,
+          "structured_extraction_calls": 2,
+          "counterevidence_material_found": false
+        },
+        "risks_weaknesses": [
+          "CoralTree is a hospitality management company, not a retailer or distributor — the listed industry segment ('specialty and natural food retailers with third-party supplier programmes') is a mismatch with CoralTree's actual business model",
+          "Procurement decisions may be decentralized to individual property general managers, making a portfolio-level partnership harder to execute",
+          "No public evidence of existing third-party wellness brand placement programmes or supplier RFP processes that would confirm buying intent"
+        ],
+        "segment_fit_note": "CoralTree is a hospitality management company, not a specialty or natural food retailer — it is adjacent to the target segment in that its properties are placement venues for premium wellness and packaged goods, but it is not itself a retailer or distributor.",
+        "opportunity_risks": [
+          "Segment mismatch: CoralTree is not a retailer — the offer must be reframed around in-property brand placement and channel access, not traditional retail distribution",
+          "Decentralized purchasing: property-level GMs may control amenity and F&B sourcing, making a central partnership difficult to initiate or enforce",
+          "No evidence of an active supplier RFP or wellness brand partnership programme, so urgency and buying intent are inferred not confirmed",
+          "CoralTree is a management company, not a property owner — ultimate spending authority may sit with Lowe or individual property owners like Reef Capital, not CoralTree itself"
+        ],
+        "next_best_question": "Does CoralTree Hospitality negotiate and hold portfolio-level supplier or brand-placement agreements centrally, or does each property owner and general manager independently select in-room and F&B product partners?",
+        "recommended_action": "validate_source_first",
+        "evidence_discipline": [
+          {
+            "date": "2026-07-01",
+            "type": "verified_public_signal",
+            "claim": "CoralTree added four new managed properties under the Reef Capital Partners relationship"
+          },
+          {
+            "date": "2026-07-22",
+            "type": "verified_public_signal",
+            "claim": "CoralTree selected to manage RiverPlace Hotel for Amaterra Hospitality Group in Portland"
+          },
+          {
+            "date": null,
+            "type": "inferred_from_context",
+            "claim": "CoralTree operates a 'Bloom' sustainability program suggesting values-alignment with premium wellness brands"
+          },
+          {
+            "date": null,
+            "type": "inferred_from_context",
+            "claim": "Rapid portfolio expansion creates fragmented supplier and amenity-curation decisions across new properties"
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "CoralTree has a centralized channel-partnership or wellness procurement function"
+          },
+          {
+            "date": null,
+            "type": "weak_inference",
+            "claim": "CoralTree fits the 'specialty and natural food retailer' segment classification in the offer brief"
+          }
+        ],
+        "research_confidence": 0.62,
+        "buying_window_reason": "No buying window is inferred without a validated current material event.",
+        "signal_interpretation": "Two confirmed press releases in a single month signal an organization in active portfolio expansion mode, which commercially translates to open procurement cycles, new F&B and amenity programs being stood up, and leadership attention on property differentiation — all conditions favorable for a wellness channel-partnership conversation.",
+        "evidence_quality_grade": "moderate_public",
+        "recommended_action_reason": "Before outreach, confirm whether CoralTree holds centralized procurement authority for amenities and F&B across managed properties or whether decisions reside with individual property owners or GMs."
+      },
+      "qualification": {
+        "rank": 1,
+        "category": "WARM",
+        "fit_score": 6.5,
+        "enrichment": {
+          "why_now": "No current dated material event was validated. The account may fit structurally, but there is no verified reason to act now rather than monitor for a new trigger.",
+          "evidence": [
+            "July 1, 2026 press release confirms CoralTree added four Reef-developed properties: Main & Sky, Pioche Village (Park City), Tributer Resort (Virginia), and Cornerstone Club (Colorado), bringing the Reef relationship to five properties",
+            "July 22, 2026 press release confirms CoralTree selected to manage RiverPlace Hotel in Portland for Amaterra Hospitality Group, a winery-affiliated owner signaling premium lifestyle alignment",
+            "CoralTree's 'Bloom' environmental sustainability program and 'CoralTree Cares' philanthropic platform are cited in official materials, indicating brand-level commitment to values-aligned partnerships"
+          ],
+          "candidate": {
+            "id": "lh_e2e_context_1789604157575_v1_2026-09-17_2ad70116-6e77-4187-8556-429344c27879_intel_1b9b0_cand_1",
+            "domain": "coraltreehospitality.com",
+            "source": "public_signal",
+            "company": "CoralTree Hospitality",
+            "country": "United States",
+            "industry": "Specialty and natural food retailers with third-party supplier programmes",
+            "location": "United States",
+            "source_url": "https://www.coraltreehospitality.com/site/assets/files/12910/newsrelease_reefmanagement_final.pdf",
+            "raw_context": "[Wed, 01 Jul 2026 00:00:00 GMT] [PDF] Reef Capital Partners Expands Partnership with CoralTree Hospitality. Reef Capital Partners Expands Partnership with CoralTree Hospitality Management Company Adds Four New Properties to Growing Collection DENVER – July 1, 2026 – CoralTree Hospitality today announced it has been selected by Reef Capital Partners to manage four additional properties, expanding their relationship to five properties nationwide. The new additions include Main & Sky and Pioche Village in Park City, Utah; Tributer Resort, a premier lakeside resort community at Lake Anna in Virginia; and Cornerstone Club, a private mountain community and hospitality destination near Montrose, Colo. The expanded relationship builds on CoralTree’s existing management of Black Desert Resort in Greater Zion Utah, reinforcing a shared vision between Reef and CoralTree for creating distinctive, experience‑driven resort and residential destinations in high‑growth leisure markets. “Reef continues to develop some of the most compelling resort and lifestyle communities in the country, and we’re proud to deepen our partnership as they bring these four exceptional properties into operation,” said Tom Luersen, president of CoralTree Hospitality. “Each destination reflects a strong sense of place, thoughtful design, and long‑term vision, which are qualities that align closely with CoralTree’s approach to hospitality.” Four Distinct Destinations, One Shared Vision Main & Sky – Park City, Utah Located on historic Main Street just steps from Town Lift, Main & Sky is a 33‑unit, all‑suite luxury boutique hotel offering a residential‑style experience in the heart of Park City. Featuring spacious one‑ to three‑bedroom suites and penthouses - many with private hot tubs, fireplaces, and full kitchens - the property is designed for families, groups, and discerning leisure travelers seeking both comfort and connection. Main & Sky joins the CoralTree Residence Collection, further strengthening CoralTree’s footprint in Utah’s premier mountain resort market. Tributer Resort – Lake Anna, Virginia Set across 1,000 acres along the shores of Lake Anna, Tributer Resort is an emerging luxury resort community centered around Cutalong, an 18‑hole championship golf course designed by Tom Clark. The course is known for its blend of strategic challenge and dramatic highland scenery overlooking Lake Anna. A second 18-hole championship course, developed in collaboration with TGR Design, was recently announced, further cementing Tributer's position as one of the premier multi-course golf destinations on the East Coast. With marina access, dining, outdoor recreation, and a master‑planned blend of residences and amenities, Tributer is rapidly gaining attention as one of the Mid‑Atlantic’s most compelling golf and lifestyle destinations. Beginning this summer, guests will be welcomed to newly opened Golf Villas and Cottages, marking CoralTree’s first managed property in Virginia. Cornerstone Club – Montrose, Colorado Nestled within a private mountain setting on Colorado’s Western Slope, Cornerstone Club is a refined alpine community offering a blend of luxury residences, curated amenities, and year‑round outdoor experiences. As Reef advances the evolution of Cornerstone Club as both a private club and hospitality destination, CoralTree will oversee the guest experience, operations, and residential hospitality services, bringing its expertise in high‑end mountain resorts to another iconic Colorado market. Pioche Village – Park City, Utah Pioche Village joins the CoralTree Residence Collection offering exceptional ski‑in/ski‑out access to Deer Valley’s Jordanelle Express Gondola and is ideally located about one mile from the emerging Deer Valley East Village base area, placing guests at the center of new terrain, dining, and year-round mountain recreation in the Wasatch and Uinta Mountains. The property features 402 accommodations, most of which are thoughtfully designed 450-square-foot studios, along with a limited selection of one- and two-bedroom residences, creating flexible options for couples, families, and adventure travelers. Guests enjoy an elevated yet approachable amenity set, including a game room, media and billiards rooms, fitness center with yoga studio, steam room, hot tubs, and multiple inviting social spaces for gathering, coworking, and après-ski relaxation. CoralTree now manages five Reef‑developed properties spanning resort, residential, private clubs, and mixed‑use destinations. Together, the companies are shaping communities designed for longevity where hospitality, recreation, and real estate come together to create vibrant, enduring value. “CoralTree has proven to be an ideal operating partner as we bring complex, experiential destinations to life,” said Harry Hirsch, chief hospitality officer at Reef Capital Partners. “Their ability to scale while maintaining authenticity and service excellence makes them a natural fit as we continue to expand our portfolio.” About Reef Capital Partners Reef Capital Partners is a vertically integrated real estate investment, development, and operations firm dedicated to enhancing communities through transformative and impactful projects across North America. Reef creates a sense of belonging to something extraordinary by delivering unforgettable experiences that endure for generations. By aligning investment expertise with development vision, Reef Capital Partners is reshaping the future of luxury living, hospitality, and recreation. About CoralTree Hospitality CoralTree Hospitality is one of the fastest-growing hospitality management companies in the United States with a diverse portfolio of more than 50 hotels, resorts, and vacation rentals. Formed in 2018 and based in Denver, CoralTree is dedicated to delivering distinctive and memorable experiences that celebrate the unique surroundings, culture, and community of each property. CoralTree’s collection includes independent, branded, and soft branded properties in key metropolitan areas and resort markets. By embracing the unique features of each location, CoralTree crafts personalized guest experiences across its collection, which includes resort communities, lifestyle hotels, the CoralTree Residence Collection and other exceptional properties. CoralTree’s brand pillars focus on serving from the heart and fostering empowering experiences for team members. This dedication has earned the company recognition as one of the top small companies to work for in Colorado by the Denver Post Top Workplace survey four years in a row. The company has developed initiatives to better serve its team members, communities, stakeholders, and customers, including Bloom, an environmental sustainability program, and CoralTree Cares, the company’s philanthropic platform. CoralTree is a wholly-owned subsidiary of Los Angeles-based Lowe, a real estate investment, management, and development firm. For more information, visit CoralTreeHospitality.com. ### Media Contacts: Kristin Yantis, Malen Yantis Public Relations, (970) 949-7919, kyantis@myprco.com For high resolution, downloadable images of properties in the CoralTree collection, please visit https://coraltree.intelligencebank.com (source: https://www.coraltreehospitality.com/site/assets/files/12910/newsrelease_reefmanagement_final.pdf) | [Wed, 22 Jul 2026 00:00:00 GMT] [PDF] Amaterra_Press Release_Acquisition of RiverPlace Hotel_FINAL. For Immediate Release Media Contacts: Jane Brigham Amaterra Hospitality Group 503-901-7983 jane@lawrence-pr.com Kristin Yantis CoralTree Hospitality 970-949-7919 kyantis@myprco.com Amaterra Hospitality Group Announces Acquisition of RiverPlace Hotel Owner of Amaterra Winery and Amaterra Kitchen + Social Club unveils hospitality arm and chooses CoralTree Hospitality group to manage Portland riverfront hotel Portland, Ore. (July 22, 2026) — Amaterra Hospitality Group, owners of Amaterra Winery in Portland and Amaterra Kitchen + Social Club in Bend, announces its next chapter: the acquisition of Portland’s landmark RiverPlace Hotel, a distinctive waterfront destination. This marks the beginning of a new chapter for the property, as Amaterra Hospitality Group focuses on participation in the revitalization of Portland’s waterfront and enhancing one of the city’s most prominent hospitality assets. Amaterra Hospitality Group selected CoralTree Hospitality to manage the property. Located along the Willamette River on Portland’s south waterfront, RiverPlace offers a rare resort-style experience in the heart of downtown. The property features 85 guestrooms and suites, many with sweeping river views and residential-inspired amenities, along with premier dining, outdoor gathering spaces and flexible meeting and event venues overlooking the marina and waterfront. The acquisition is a significant investment by lifelong Portlanders Colleen Nistler, Werner Nistler Jr. and Marcus Breuer of Amaterra, whose vision is centered ",
+            "website_url": "https://coraltreehospitality.com",
+            "account_identity": {
+              "domain": "coraltreehospitality.com",
+              "country": "United States",
+              "confidence": "verified",
+              "fromUniverse": true,
+              "canonicalName": "CoralTree Hospitality",
+              "organizationType": "Specialty and natural food retailers with third-party supplier programmes"
+            },
+            "confidence_score": 0.8,
+            "discovery_provenance": [
+              {
+                "route": "industry_category",
+                "origin": "dynamic_enumeration",
+                "provider": "engine"
+              }
+            ],
+            "discovery_origin_flags": [
+              "ACCOUNT_FIRST"
+            ]
+          },
+          "missing_data": [
+            "Whether CoralTree has a centralized procurement or supplier-partnership function vs. property-level purchasing decisions",
+            "Existing wellness or packaged-goods brand partnerships or exclusivity agreements across the portfolio",
+            "Annual F&B and amenity procurement budget or spend volume across the 50+ property portfolio"
+          ],
+          "buying_window": "near_term",
+          "inferred_pain": "Rapid multi-property expansion across diverse geographies appears to create fragmented and inconsistent in-property product curation, suggesting CoralTree may lack a scalable channel-partnership framework for premium wellness and packaged-goods brands across its growing collection.",
+          "account_thesis": "CoralTree's confirmed addition of five new properties in July 2026, combined with its premium lifestyle brand positioning and sustainability platform, makes it a plausible channel-development target for wellness brand placement at scale — but the commercial case depends on whether CoralTree controls centralized supplier decisions or defers to property-level management.",
+          "role_relevance": "CoralTree's rapidly expanding portfolio of premium resort, lifestyle, and residential properties represents a natural channel for curated wellness and packaged-goods brands seeking placement in high-dwell, affluent-guest environments. Their 'Bloom' sustainability program and experience-first brand identity suggest openness to premium, values-aligned supplier partnerships. Rapid portfolio growth creates immediate procurement and amenity-curation decisions across multiple new properties simultaneously.",
+          "timing_signals": [
+            "Announced expansion of Reef Capital Partners partnership adding four new managed properties (July 1, 2026)",
+            "Selected by Amaterra Hospitality Group to manage RiverPlace Hotel in Portland, OR (July 22, 2026)",
+            "New properties entering operational phase in summer 2026, including Golf Villas and Cottages at Tributer Resort"
+          ],
+          "company_summary": "CoralTree Hospitality is a fast-growing U.S. hospitality management company, founded in 2018 and headquartered in Denver, operating 50+ hotels, resorts, and vacation rentals across resort and urban markets. It is a wholly-owned subsidiary of Lowe, a Los Angeles-based real estate investment and development firm. The company manages a diverse mix of independent, branded, lifestyle, and residential resort properties with a stated emphasis on place-based, experience-driven guest experiences.",
+          "pain_hypothesis": "CoralTree's rapid addition of five properties in a single month suggests its central procurement and brand-partnership infrastructure may lag its operational growth, creating an opening for a market-entry service that can systematically place premium wellness brands across new and existing properties under a scalable channel framework.",
+          "account_research": {
+            "domain": "coraltreehospitality.com",
+            "account": "CoralTree Hospitality",
+            "version": "account-deep-research-v1",
+            "query_audit": [
+              {
+                "stage": "identity",
+                "results": 5,
+                "accepted": 4,
+                "provider": "brave",
+                "query_id": "rq_ctnvfd"
+              },
+              {
+                "stage": "current_activity",
+                "results": 0,
+                "accepted": 0,
+                "provider": "brave",
+                "query_id": "rq_yx1m26"
+              },
+              {
+                "stage": "current_activity",
+                "results": 4,
+                "accepted": 4,
+                "provider": "tavily",
+                "query_id": "rq_yx1m26"
+              },
+              {
+                "stage": "current_activity",
+                "results": 0,
+                "accepted": 0,
+                "provider": "brave",
+                "query_id": "rq_1ktq0gn"
+              },
+              {
+                "stage": "current_activity",
+                "results": 0,
+                "accepted": 0,
+                "provider": "tavily",
+                "query_id": "rq_1ktq0gn"
+              },
+              {
+                "stage": "counterevidence",
+                "results": 5,
+                "accepted": 5,
+                "provider": "brave",
+                "query_id": "rq_rd2z4j"
+              },
+              {
+                "stage": "counterevidence",
+                "results": 3,
+                "accepted": 3,
+                "provider": "tavily",
+                "query_id": "rq_rd2z4j"
+              }
+            ],
+            "provider_ops": [
+              {
+                "ok": true,
+                "stage": "identity",
+                "results": 5,
+                "timeout": false,
+                "provider": "brave",
+                "operation": "search",
+                "duration_ms": 826
+              },
+              {
+                "ok": true,
+                "stage": "current_activity",
+                "results": 0,
+                "timeout": false,
+                "provider": "brave",
+                "operation": "search",
+                "duration_ms": 395
+              },
+              {
+                "ok": true,
+                "stage": "current_activity",
+                "results": 4,
+                "timeout": false,
+                "provider": "tavily",
+                "operation": "search",
+                "duration_ms": 3787
+              },
+              {
+                "ok": true,
+                "stage": "current_activity",
+                "results": 1,
+                "timeout": false,
+                "provider": "full_text",
+                "operation": "full_text",
+                "duration_ms": 295
+              },
+              {
+                "ok": true,
+                "stage": "current_activity",
+                "results": 0,
+                "timeout": false,
+                "provider": "anthropic",
+                "operation": "llm",
+                "duration_ms": 11515
+              },
+              {
+                "ok": true,
+                "stage": "current_activity",
+                "results": 1,
+                "timeout": false,
+                "provider": "full_text",
+                "operation": "full_text",
+                "duration_ms": 293
+              },
+              {
+                "ok": true,
+                "stage": "current_activity",
+                "results": 0,
+                "timeout": false,
+                "provider": "anthropic",
+                "operation": "llm",
+                "duration_ms": 9844
+              },
+              {
+                "ok": true,
+                "stage": "current_activity",
+                "results": 0,
+                "timeout": false,
+                "provider": "brave",
+                "operation": "search",
+                "duration_ms": 725
+              },
+              {
+                "ok": true,
+                "stage": "current_activity",
+                "results": 0,
+                "timeout": false,
+                "provider": "tavily",
+                "operation": "search",
+                "duration_ms": 9262
+              },
+              {
+                "ok": true,
+                "stage": "counterevidence",
+                "results": 5,
+                "timeout": false,
+                "provider": "brave",
+                "operation": "search",
+                "duration_ms": 776
+              },
+              {
+                "ok": true,
+                "stage": "counterevidence",
+                "results": 3,
+                "timeout": false,
+                "provider": "tavily",
+                "operation": "search",
+                "duration_ms": 1948
+              }
+            ],
+            "results_seen": 17,
+            "dated_evidence": 9,
+            "provider_calls": 7,
+            "pages_extracted": 2,
+            "planned_queries": 4,
+            "claims_recovered": 2,
+            "executed_queries": 4,
+            "extraction_audit": [
+              {
+                "url": "https://www.coraltreehospitality.com/site/assets/files/12910/newsrelease_reefmanagement_final.pdf",
+                "stage": "current_activity",
+                "date_phrase": "July 1, 2026",
+                "materiality": "medium",
+                "signal_kind": "none",
+                "accepted_events": 0,
+                "evidence_excerpt": "Reef Capital Partners Expands Partnership with CoralTree Hospitality Management Company Adds Four New Properties to Growing Collection DENVER – July 1, 2026 – CoralTree Hospitality today announced it has been selected by Reef Capital Partners to manage four additional properties, expanding their relationship to five properties nationwide. The new additions include Main & Sky and Pioche Village in Park City, Utah; Tributer Resort, a premier lakeside resort community at Lake Anna in Virginia; and Cornerstone Club, a private mountain community and hospitality destination near Montrose, Colo. The expanded relationship builds on CoralTree’s existing management of Black Desert Resort in Greater Zion Utah, reinforcing a shared vision between Reef and CoralTree for creating distinctive, experience‑driven resort and residential destinations in high‑growth leisure markets. “Reef continues to develop some of the most compelling resort and lifestyle communities in the country, and we’re proud to deepen our partnership as they bring these four exceptional properties into operation,” said Tom Luersen, president of CoralTree Hospitality. “Each destination reflects a strong sense of place, thought"
+              },
+              {
+                "url": "https://www.coraltreehospitality.com/site/assets/files/13057/amaterra_press_release_acquisition_of_riverplace_hotel_final.pdf",
+                "stage": "current_activity",
+                "date_phrase": "July 22, 2026",
+                "materiality": "high",
+                "signal_kind": "marketing_claim",
+                "accepted_events": 0,
+                "evidence_excerpt": "tel Owner of Amaterra Winery and Amaterra Kitchen + Social Club unveils hospitality arm and chooses CoralTree Hospitality group to manage Portland riverfront hotel Portland, Ore. (July 22, 2026) — Amaterra Hospitality Group, owners of Amaterra Winery in Portland and Amaterra Kitchen + Social Club in Bend, announces its next chapter: the acquisition of Portland’s landmark RiverPlace Hotel, a distinctive waterfront destination. This marks the beginning of a new chapter for the property, as Amaterra Hospitality Group focuses on participation in the revitalization of Portland’s waterfront and enhancing one of the city’s most prominent hospitality assets. Amaterra Hospitality Group selected CoralTree Hospitality to manage the property. Located along the Willamette River on Portland’s south waterfront, RiverPlace offers a rare resort-style experience in the heart of downtown. The property features 85 guestrooms and suites, many with sweeping river views and residential-inspired amenities, along with premier dining, outdoor gathering spaces and flexible meeting and event venues overlooking the marina and waterfront. The acquisition is a significant investment by lifelong Portlanders Colle"
+              }
+            ],
+            "validated_events": [],
+            "early_stop_reason": "no_material_event",
+            "evidence_accepted": 13,
+            "evidence_rejected": 4,
+            "provider_failures": 0,
+            "account_elapsed_ms": 77186,
+            "event_hints_fetched": 0,
+            "extraction_failures": 0,
+            "independent_domains": 1,
+            "event_hints_received": 0,
+            "corroborating_domains": 0,
+            "corroborating_sources": [],
+            "event_hints_validated": 0,
+            "corroboration_attempted": false,
+            "counterevidence_checked": true,
+            "event_geography_rejected": 0,
+            "structured_extraction_calls": 2,
+            "counterevidence_material_found": false
+          },
+          "risks_weaknesses": [
+            "CoralTree is a hospitality management company, not a retailer or distributor — the listed industry segment ('specialty and natural food retailers with third-party supplier programmes') is a mismatch with CoralTree's actual business model",
+            "Procurement decisions may be decentralized to individual property general managers, making a portfolio-level partnership harder to execute",
+            "No public evidence of existing third-party wellness brand placement programmes or supplier RFP processes that would confirm buying intent"
+          ],
+          "segment_fit_note": "CoralTree is a hospitality management company, not a specialty or natural food retailer — it is adjacent to the target segment in that its properties are placement venues for premium wellness and packaged goods, but it is not itself a retailer or distributor.",
+          "opportunity_risks": [
+            "Segment mismatch: CoralTree is not a retailer — the offer must be reframed around in-property brand placement and channel access, not traditional retail distribution",
+            "Decentralized purchasing: property-level GMs may control amenity and F&B sourcing, making a central partnership difficult to initiate or enforce",
+            "No evidence of an active supplier RFP or wellness brand partnership programme, so urgency and buying intent are inferred not confirmed",
+            "CoralTree is a management company, not a property owner — ultimate spending authority may sit with Lowe or individual property owners like Reef Capital, not CoralTree itself"
+          ],
+          "next_best_question": "Does CoralTree Hospitality negotiate and hold portfolio-level supplier or brand-placement agreements centrally, or does each property owner and general manager independently select in-room and F&B product partners?",
+          "recommended_action": "validate_source_first",
+          "evidence_discipline": [
+            {
+              "date": "2026-07-01",
+              "type": "verified_public_signal",
+              "claim": "CoralTree added four new managed properties under the Reef Capital Partners relationship"
+            },
+            {
+              "date": "2026-07-22",
+              "type": "verified_public_signal",
+              "claim": "CoralTree selected to manage RiverPlace Hotel for Amaterra Hospitality Group in Portland"
+            },
+            {
+              "date": null,
+              "type": "inferred_from_context",
+              "claim": "CoralTree operates a 'Bloom' sustainability program suggesting values-alignment with premium wellness brands"
+            },
+            {
+              "date": null,
+              "type": "inferred_from_context",
+              "claim": "Rapid portfolio expansion creates fragmented supplier and amenity-curation decisions across new properties"
+            },
+            {
+              "date": null,
+              "type": "missing_evidence",
+              "claim": "CoralTree has a centralized channel-partnership or wellness procurement function"
+            },
+            {
+              "date": null,
+              "type": "weak_inference",
+              "claim": "CoralTree fits the 'specialty and natural food retailer' segment classification in the offer brief"
+            }
+          ],
+          "research_confidence": 0.62,
+          "buying_window_reason": "No buying window is inferred without a validated current material event.",
+          "signal_interpretation": "Two confirmed press releases in a single month signal an organization in active portfolio expansion mode, which commercially translates to open procurement cycles, new F&B and amenity programs being stood up, and leadership attention on property differentiation — all conditions favorable for a wellness channel-partnership conversation.",
+          "evidence_quality_grade": "moderate_public",
+          "recommended_action_reason": "Before outreach, confirm whether CoralTree holds centralized procurement authority for amenities and F&B across managed properties or whether decisions reside with individual property owners or GMs."
+        },
+        "fit_reasons": [
+          "Confirmed five new properties entered operational phases in July 2026, creating a concrete and time-bounded procurement window for amenity and wellness supplier decisions",
+          "Premium resort and lifestyle brand positioning with a documented sustainability platform ('Bloom') signals values-alignment with curated wellness and natural product brands",
+          "50+ property portfolio at scale creates meaningful channel volume if a centralized supplier partnership can be established",
+          "Rapid portfolio growth (five properties in one month) plausibly stresses procurement infrastructure, making a streamlined placement service genuinely valuable",
+          "Source confidence of 80% and dual confirmed press releases support the timing signals as reliable"
+        ],
+        "score_breakdown": {
+          "pain_fit": 1,
+          "role_fit": 1,
+          "company_fit": 1,
+          "reachability": 0.5,
+          "timing_signal": 2,
+          "strategic_relevance": 1
+        },
+        "score_dimensions": {
+          "timing": 75,
+          "icp_fit": 45,
+          "confidence": 45,
+          "signal_strength": 65,
+          "strategic_value": 65,
+          "evidence_quality": 60,
+          "disqualification_risk": 55
+        },
+        "comparative_notes": "Chex Finer Foods (just below) is nearly tied — consider them in the same outreach wave",
+        "score_explanation": "Score is WARM because [ICP Fit: 45/100 — CoralTree operates in hospitality management, not any listed ICP vertical; while it serves as a channel for wellness and F&B brands, it is not itself a retailer, grocer, or distributor, creating a structural ICP mismatch]. [Signal: 65/100 — five confirmed new properties announced in July 2026 via dual press releases represent genuine operational momentum and a time-bounded procurement window, but no signals confirm supplier partnership intent or centralized buying behaviour]. [Timing: 75/100 — summer 2026 property onboarding creates an active and narrow window for pre-opening supplier decisions, making this the best near-term access point]. Key risk: if procurement is decentralized to individual property GMs, there is no scalable portfolio-level entry point, and the commercial case collapses to a property-by-property cold outreach problem.",
+        "ranking_explanation": "CoralTree Hospitality ranks first only within this limited batch (6.5/10), but remains WARM. The dated company event is not evidence of purchase intent; validate commercial relevance before any outreach.",
+        "signal_interpretation": "The expansion signals are real and well-documented, but they confirm operational growth rather than supplier buying intent — CoralTree is adding properties, not necessarily opening a supplier programme. The commercial opportunity is contingent on a single unverified structural question: whether procurement is centralized. Without that confirmation, this account represents a plausible but speculative channel play, not an active pipeline opportunity.",
+        "opportunity_tier_reason": "WARM (<7): Has a confirmed company event but ICP fit is partial — validate commercial relevance and purchase intent before outreach",
+        "disqualification_reasons": [
+          "CoralTree is a hospitality management company — it does not match any listed ICP industry segment (specialty retail, natural/organic grocery, health and wellness retail, F&B distribution); the assigned industry label is a factual mismatch",
+          "No public evidence of centralized third-party supplier or wellness brand placement programmes; procurement may be fully decentralized to property GMs, negating portfolio-level scalability",
+          "No confirmed buying intent signals such as supplier RFPs, partnership announcements, or procurement role postings — expansion signals alone do not confirm supplier decision readiness",
+          "Disqualification risk is elevated (55/100) due to the ICP industry mismatch and structural uncertainty around procurement centralization"
+        ],
+        "qualification_confidence": 0.42
+      }
+    }
+  ],
+  "research_audit": [
+    {
+      "risks": [
+        "Role ambiguity: Chex may be a channel partner for your clients rather than a direct buyer of advisory services — conflating the two risks misaligned outreach.",
+        "No evidence of budget or precedent for external market-entry consulting at Chex.",
+        "Post-Chexpo vendor intake saturation may reduce responsiveness to new partner conversations in the immediate weeks following the event.",
+        "Regional footprint (East Coast only) may limit strategic fit if the offer targets national or multi-market brand launches."
+      ],
+      "domain": "chexfoods.com",
+      "company": "Chex Finer Foods",
+      "country": "United States",
+      "reasons": [
+        "opportunity_test_reject",
+        "hard_blocker_no_event",
+        "hard_blocker_no_material_event",
+        "hard_blocker_no_valid_date"
+      ],
+      "category": "WARM",
+      "fitScore": 6.5,
+      "qcStatus": "APPROVED",
+      "sourceUrl": "https://www.chexfoods.com/post/chex-finer-foods-celebrates-60-years-of-pioneering-partnership-and-growth",
+      "signalDate": null,
+      "signalType": null,
+      "nextQuestion": "Is the goal to sell market-entry advisory services directly to Chex Finer Foods, or to position Chex as the East Coast channel destination for premium brands you are advising — because these require entirely different outreach strategies and buyer contacts?",
+      "actionability": {
+        "fit_state": "moderate",
+        "hold_reason": "NO_CURRENT_EVENT",
+        "target_valid": true,
+        "timing_state": "limited",
+        "evidence_valid": false,
+        "final_decision": "hold",
+        "search_results": 10,
+        "research_coverage": "sufficient",
+        "independent_support": false,
+        "temporal_valid_events": 0,
+        "company_identity_valid": true,
+        "materiality_valid_events": 0,
+        "material_event_candidates": 0
+      },
+      "eventHintCount": 0,
+      "evidenceClaims": [
+        {
+          "date": "2025-10-21",
+          "type": "verified_public_signal",
+          "claim": "Chex Finer Foods is a third-generation, family-owned specialty and natural foods distributor celebrating its 60th anniversary",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": "2026-01-28",
+          "type": "verified_public_signal",
+          "claim": "Chexpo 2026 took place January 28, 2026 with more than 250 curated exhibitors at the Rhode Island Convention Center",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": null,
+          "type": "verified_public_signal",
+          "claim": "Chex operates an active 'Become a Vendor' intake programme for new suppliers",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": null,
+          "type": "inferred_from_context",
+          "claim": "Chex faces pressure to differentiate its brand portfolio from national distributors like UNFI or KeHE",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": null,
+          "type": "missing_evidence",
+          "claim": "Chex engages or would pay for third-party market-entry advisory services",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": null,
+          "type": "weak_inference",
+          "claim": "Chex is actively seeking wellness or functional food category expansion beyond its current portfolio",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        }
+      ],
+      "accountResearch": {
+        "domain": "chexfoods.com",
+        "account": "Chex Finer Foods",
+        "version": "account-deep-research-v1",
+        "query_audit": [
+          {
+            "stage": "identity",
+            "results": 5,
+            "accepted": 5,
+            "provider": "brave",
+            "query_id": "rq_13d8e5t"
+          },
+          {
+            "stage": "current_activity",
+            "results": 0,
+            "accepted": 0,
+            "provider": "brave",
+            "query_id": "rq_z2fpy4"
+          },
+          {
+            "stage": "current_activity",
+            "results": 0,
+            "accepted": 0,
+            "provider": "tavily",
+            "query_id": "rq_z2fpy4"
+          },
+          {
+            "stage": "current_activity",
+            "results": 0,
+            "accepted": 0,
+            "provider": "brave",
+            "query_id": "rq_qsphbr"
+          },
+          {
+            "stage": "current_activity",
+            "results": 0,
+            "accepted": 0,
+            "provider": "tavily",
+            "query_id": "rq_qsphbr"
+          },
+          {
+            "stage": "counterevidence",
+            "results": 5,
+            "accepted": 5,
+            "provider": "brave",
+            "query_id": "rq_nuvuin"
+          },
+          {
+            "stage": "counterevidence",
+            "results": 0,
+            "accepted": 0,
+            "provider": "tavily",
+            "query_id": "rq_nuvuin"
+          }
+        ],
+        "provider_ops": [
+          {
+            "ok": true,
+            "stage": "identity",
+            "results": 5,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 821
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 0,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 407
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 0,
+            "timeout": false,
+            "provider": "tavily",
+            "operation": "search",
+            "duration_ms": 7840
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 0,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 611
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 0,
+            "timeout": false,
+            "provider": "tavily",
+            "operation": "search",
+            "duration_ms": 11506
+          },
+          {
+            "ok": true,
+            "stage": "counterevidence",
+            "results": 5,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 995
+          },
+          {
+            "ok": true,
+            "stage": "counterevidence",
+            "results": 0,
+            "timeout": false,
+            "provider": "tavily",
+            "operation": "search",
+            "duration_ms": 7804
+          }
+        ],
+        "results_seen": 10,
+        "dated_evidence": 5,
+        "provider_calls": 7,
+        "pages_extracted": 0,
+        "planned_queries": 4,
+        "claims_recovered": 1,
+        "executed_queries": 4,
+        "extraction_audit": [],
+        "validated_events": [],
+        "early_stop_reason": "no_material_event",
+        "evidence_accepted": 10,
+        "evidence_rejected": 0,
+        "provider_failures": 0,
+        "account_elapsed_ms": 67890,
+        "event_hints_fetched": 0,
+        "extraction_failures": 0,
+        "independent_domains": 1,
+        "event_hints_received": 0,
+        "corroborating_domains": 0,
+        "corroborating_sources": [],
+        "event_hints_validated": 0,
+        "corroboration_attempted": false,
+        "counterevidence_checked": true,
+        "event_geography_rejected": 0,
+        "structured_extraction_calls": 0,
+        "counterevidence_material_found": false
+      },
+      "candidateOrigin": [
+        "ACCOUNT_FIRST"
+      ],
+      "canonicalDecision": "hold",
+      "researchConfidence": 0.62
+    },
+    {
+      "risks": [
+        "Segment mismatch: CoralTree is not a retailer — the offer must be reframed around in-property brand placement and channel access, not traditional retail distribution",
+        "Decentralized purchasing: property-level GMs may control amenity and F&B sourcing, making a central partnership difficult to initiate or enforce",
+        "No evidence of an active supplier RFP or wellness brand partnership programme, so urgency and buying intent are inferred not confirmed",
+        "CoralTree is a management company, not a property owner — ultimate spending authority may sit with Lowe or individual property owners like Reef Capital, not CoralTree itself"
+      ],
+      "domain": "coraltreehospitality.com",
+      "company": "CoralTree Hospitality",
+      "country": "United States",
+      "reasons": [
+        "opportunity_test_reject",
+        "hard_blocker_no_event",
+        "hard_blocker_no_material_event",
+        "hard_blocker_no_valid_date"
+      ],
+      "category": "WARM",
+      "fitScore": 6.5,
+      "qcStatus": "APPROVED",
+      "sourceUrl": "https://www.coraltreehospitality.com/site/assets/files/12910/newsrelease_reefmanagement_final.pdf",
+      "signalDate": null,
+      "signalType": null,
+      "nextQuestion": "Does CoralTree Hospitality negotiate and hold portfolio-level supplier or brand-placement agreements centrally, or does each property owner and general manager independently select in-room and F&B product partners?",
+      "actionability": {
+        "fit_state": "moderate",
+        "hold_reason": "NO_CURRENT_EVENT",
+        "target_valid": true,
+        "timing_state": "limited",
+        "evidence_valid": false,
+        "final_decision": "hold",
+        "search_results": 17,
+        "research_coverage": "sufficient",
+        "independent_support": false,
+        "temporal_valid_events": 0,
+        "company_identity_valid": true,
+        "materiality_valid_events": 0,
+        "material_event_candidates": 0
+      },
+      "eventHintCount": 0,
+      "evidenceClaims": [
+        {
+          "date": "2026-07-01",
+          "type": "verified_public_signal",
+          "claim": "CoralTree added four new managed properties under the Reef Capital Partners relationship",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": "2026-07-22",
+          "type": "verified_public_signal",
+          "claim": "CoralTree selected to manage RiverPlace Hotel for Amaterra Hospitality Group in Portland",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": null,
+          "type": "inferred_from_context",
+          "claim": "CoralTree operates a 'Bloom' sustainability program suggesting values-alignment with premium wellness brands",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": null,
+          "type": "inferred_from_context",
+          "claim": "Rapid portfolio expansion creates fragmented supplier and amenity-curation decisions across new properties",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": null,
+          "type": "missing_evidence",
+          "claim": "CoralTree has a centralized channel-partnership or wellness procurement function",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": null,
+          "type": "weak_inference",
+          "claim": "CoralTree fits the 'specialty and natural food retailer' segment classification in the offer brief",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        }
+      ],
+      "accountResearch": {
+        "domain": "coraltreehospitality.com",
+        "account": "CoralTree Hospitality",
+        "version": "account-deep-research-v1",
+        "query_audit": [
+          {
+            "stage": "identity",
+            "results": 5,
+            "accepted": 4,
+            "provider": "brave",
+            "query_id": "rq_ctnvfd"
+          },
+          {
+            "stage": "current_activity",
+            "results": 0,
+            "accepted": 0,
+            "provider": "brave",
+            "query_id": "rq_yx1m26"
+          },
+          {
+            "stage": "current_activity",
+            "results": 4,
+            "accepted": 4,
+            "provider": "tavily",
+            "query_id": "rq_yx1m26"
+          },
+          {
+            "stage": "current_activity",
+            "results": 0,
+            "accepted": 0,
+            "provider": "brave",
+            "query_id": "rq_1ktq0gn"
+          },
+          {
+            "stage": "current_activity",
+            "results": 0,
+            "accepted": 0,
+            "provider": "tavily",
+            "query_id": "rq_1ktq0gn"
+          },
+          {
+            "stage": "counterevidence",
+            "results": 5,
+            "accepted": 5,
+            "provider": "brave",
+            "query_id": "rq_rd2z4j"
+          },
+          {
+            "stage": "counterevidence",
+            "results": 3,
+            "accepted": 3,
+            "provider": "tavily",
+            "query_id": "rq_rd2z4j"
+          }
+        ],
+        "provider_ops": [
+          {
+            "ok": true,
+            "stage": "identity",
+            "results": 5,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 826
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 0,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 395
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 4,
+            "timeout": false,
+            "provider": "tavily",
+            "operation": "search",
+            "duration_ms": 3787
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 1,
+            "timeout": false,
+            "provider": "full_text",
+            "operation": "full_text",
+            "duration_ms": 295
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 0,
+            "timeout": false,
+            "provider": "anthropic",
+            "operation": "llm",
+            "duration_ms": 11515
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 1,
+            "timeout": false,
+            "provider": "full_text",
+            "operation": "full_text",
+            "duration_ms": 293
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 0,
+            "timeout": false,
+            "provider": "anthropic",
+            "operation": "llm",
+            "duration_ms": 9844
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 0,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 725
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 0,
+            "timeout": false,
+            "provider": "tavily",
+            "operation": "search",
+            "duration_ms": 9262
+          },
+          {
+            "ok": true,
+            "stage": "counterevidence",
+            "results": 5,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 776
+          },
+          {
+            "ok": true,
+            "stage": "counterevidence",
+            "results": 3,
+            "timeout": false,
+            "provider": "tavily",
+            "operation": "search",
+            "duration_ms": 1948
+          }
+        ],
+        "results_seen": 17,
+        "dated_evidence": 9,
+        "provider_calls": 7,
+        "pages_extracted": 2,
+        "planned_queries": 4,
+        "claims_recovered": 2,
+        "executed_queries": 4,
+        "extraction_audit": [
+          {
+            "url": "https://www.coraltreehospitality.com/site/assets/files/12910/newsrelease_reefmanagement_final.pdf",
+            "stage": "current_activity",
+            "date_phrase": "July 1, 2026",
+            "materiality": "medium",
+            "signal_kind": "none",
+            "accepted_events": 0,
+            "evidence_excerpt": "Reef Capital Partners Expands Partnership with CoralTree Hospitality Management Company Adds Four New Properties to Growing Collection DENVER – July 1, 2026 – CoralTree Hospitality today announced it has been selected by Reef Capital Partners to manage four additional properties, expanding their relationship to five properties nationwide. The new additions include Main & Sky and Pioche Village in Park City, Utah; Tributer Resort, a premier lakeside resort community at Lake Anna in Virginia; and Cornerstone Club, a private mountain community and hospitality destination near Montrose, Colo. The expanded relationship builds on CoralTree’s existing management of Black Desert Resort in Greater Zion Utah, reinforcing a shared vision between Reef and CoralTree for creating distinctive, experience‑driven resort and residential destinations in high‑growth leisure markets. “Reef continues to develop some of the most compelling resort and lifestyle communities in the country, and we’re proud to deepen our partnership as they bring these four exceptional properties into operation,” said Tom Luersen, president of CoralTree Hospitality. “Each destination reflects a strong sense of place, thought"
+          },
+          {
+            "url": "https://www.coraltreehospitality.com/site/assets/files/13057/amaterra_press_release_acquisition_of_riverplace_hotel_final.pdf",
+            "stage": "current_activity",
+            "date_phrase": "July 22, 2026",
+            "materiality": "high",
+            "signal_kind": "marketing_claim",
+            "accepted_events": 0,
+            "evidence_excerpt": "tel Owner of Amaterra Winery and Amaterra Kitchen + Social Club unveils hospitality arm and chooses CoralTree Hospitality group to manage Portland riverfront hotel Portland, Ore. (July 22, 2026) — Amaterra Hospitality Group, owners of Amaterra Winery in Portland and Amaterra Kitchen + Social Club in Bend, announces its next chapter: the acquisition of Portland’s landmark RiverPlace Hotel, a distinctive waterfront destination. This marks the beginning of a new chapter for the property, as Amaterra Hospitality Group focuses on participation in the revitalization of Portland’s waterfront and enhancing one of the city’s most prominent hospitality assets. Amaterra Hospitality Group selected CoralTree Hospitality to manage the property. Located along the Willamette River on Portland’s south waterfront, RiverPlace offers a rare resort-style experience in the heart of downtown. The property features 85 guestrooms and suites, many with sweeping river views and residential-inspired amenities, along with premier dining, outdoor gathering spaces and flexible meeting and event venues overlooking the marina and waterfront. The acquisition is a significant investment by lifelong Portlanders Colle"
+          }
+        ],
+        "validated_events": [],
+        "early_stop_reason": "no_material_event",
+        "evidence_accepted": 13,
+        "evidence_rejected": 4,
+        "provider_failures": 0,
+        "account_elapsed_ms": 77186,
+        "event_hints_fetched": 0,
+        "extraction_failures": 0,
+        "independent_domains": 1,
+        "event_hints_received": 0,
+        "corroborating_domains": 0,
+        "corroborating_sources": [],
+        "event_hints_validated": 0,
+        "corroboration_attempted": false,
+        "counterevidence_checked": true,
+        "event_geography_rejected": 0,
+        "structured_extraction_calls": 2,
+        "counterevidence_material_found": false
+      },
+      "candidateOrigin": [
+        "ACCOUNT_FIRST"
+      ],
+      "canonicalDecision": "hold",
+      "researchConfidence": 0.62
+    }
+  ],
+  "monitor_run_id": "mon_e9bd54784a85e917c40a061878101902",
+  "timings": {
+    "stage_a_ms": 18044,
+    "confirmation_ms": 771,
+    "start_request_ms": 887,
+    "background_completion_ms": 174805,
+    "monitor_ms": 30673,
+    "total_ms": 228691
+  },
+  "usage_delta": {
+    "anthropic": {
+      "calls": 12,
+      "errors": 0,
+      "input_tokens": 25657,
+      "output_tokens": 10318,
+      "calculated_cost_usd": 0.231741,
+      "pricing_source": "Anthropic Sonnet 4.6 public list price, verified 2026-07-22"
+    },
+    "brave": {
+      "calls": 25,
+      "errors": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "calculated_cost_usd": 0,
+      "pricing_source": null
+    },
+    "serper": {
+      "calls": 7,
+      "errors": 7,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "calculated_cost_usd": 0,
+      "pricing_source": null
+    },
+    "tavily": {
+      "calls": 21,
+      "errors": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "calculated_cost_usd": 0,
+      "pricing_source": null
+    }
+  },
+  "checks": [
+    {
+      "name": "real authenticated owners created",
+      "ok": true
+    },
+    {
+      "name": "Stage A reachable and confirmable",
+      "ok": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "name": "explicit confirmation persisted through customer API",
+      "ok": true
+    },
+    {
+      "name": "same context label persists independently across tenants",
+      "ok": true
+    },
+    {
+      "name": "productive Intelligence run accepted before Research",
+      "ok": true,
+      "detail": "HTTP 202"
+    },
+    {
+      "name": "bounded background processor completed durably",
+      "ok": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "name": "owner reloads durable result",
+      "ok": true
+    },
+    {
+      "name": "other tenant cannot load result",
+      "ok": true
+    },
+    {
+      "name": "Lead Hunter run reference persisted",
+      "ok": true
+    },
+    {
+      "name": "Candidate Universe durable and owner-scoped",
+      "ok": true,
+      "detail": "n=2"
+    },
+    {
+      "name": "canonical Cases generated",
+      "ok": true
+    },
+    {
+      "name": "initial accepted Case set entered Account Memory",
+      "ok": true,
+      "detail": "snapshots=2, delivered=2"
+    },
+    {
+      "name": "manual customer Monitor reached canonical engine",
+      "ok": true,
+      "detail": "completed"
+    },
+    {
+      "name": "Monitor outcome is durably observable",
+      "ok": true,
+      "detail": "before=2, after=2"
+    },
+    {
+      "name": "completed retry is idempotent and avoids new Research",
+      "ok": true
+    },
+    {
+      "name": "same labels cannot collide cross-tenant",
+      "ok": true
+    }
+  ]
+}

@@ -268,7 +268,14 @@ export async function deepenAccountResearch(
         response = await provider.search({
           query: query.query, max_results: maxResults,
           freshness_days: query.stage === "current_activity" || query.stage === "counterevidence" ? 730 : undefined,
-          query_type: query.stage === "current_activity" || query.stage === "counterevidence" ? "news" : "company_specific",
+          // Account Deepening searches a verified corporate domain. Tavily's
+          // news index routinely omits canonical company-newsroom releases
+          // that its general index returns (the Conagra positive control is a
+          // concrete example). Keep the temporal terms and freshness bound,
+          // but use company-specific web retrieval for current activity.
+          // Counterevidence remains news-oriented because closures and
+          // cancellations are commonly reported outside the company site.
+          query_type: query.stage === "counterevidence" ? "news" : "company_specific",
           language: profile.likely_language ?? undefined,
         });
       } catch { providerFailures++; providerOps.push({ provider: provider.id, operation: "search", stage: query.stage, duration_ms: Date.now() - _searchStart, ok: false, timeout: false, results: null }); continue; }
@@ -492,9 +499,12 @@ export function isAffirmativeCounterevidence(text: string): boolean {
  * event-extraction slot ahead of a concrete operating-change page. */
 export function isEventExtractionCandidate(title: string | null, snippet: string | null): boolean {
   const heading = (title ?? "").toLowerCase();
-  if (/\b(quarter(?:ly)?|full[- ]year|year[- ]to[- ]date|financial) (?:and )?(?:results?|earnings)|reports? (?:first|second|third|fourth|q[1-4]) quarter|declares? (?:a )?(?:quarterly )?dividend\b/i.test(heading)) return false;
+  if (/\b(quarter(?:ly)?|full[- ]year|year[- ]to[- ]date|financial) (?:and )?(?:results?|earnings)|reports? (?:first|second|third|fourth|q[1-4]) quarter|q[1-4]\s+\d{4}\s+trading update|trading update|declares? (?:a )?(?:quarterly )?dividend\b/i.test(heading)) return false;
   const hay = `${title ?? ""} ${snippet ?? ""}`;
-  return /\b(new|opened?|expan(?:d|ds|ded|ding|sion)|acquir(?:e|es|ed|ing|isition)|invest(?:s|ed|ing|ment)|facility|plant|warehouse|distribution cent(?:er|re)|production line|contract|partnership|closure|cancel|suspend|nuev[ao]|abri[oó]|apertura|expansi[oó]n|adquisici[oó]n|inversi[oó]n|planta|bodega|centro de distribuci[oó]n|contrato|alianza|cierre)\b/i.test(hay);
+  const change = /\b(new|opened?|opening|announc(?:e|es|ed|ing)|plan(?:s|ned)?|build(?:s|ing)?|breaks? ground|expan(?:d|ds|ded|ding|sion)|acquir(?:e|es|ed|ing|isition)|invest(?:s|ed|ing|ment)|moderniz(?:e|es|ed|ing|ation)|automat(?:e|es|ed|ing|ion)|closure|cancel|suspend|nuev[ao]|abri[oó]|apertura|anuncia|planea|construye|expansi[oó]n|adquisici[oó]n|inversi[oó]n|automatizaci[oó]n|cierre)\b/i.test(hay);
+  const operatingAsset = /\b(facilit(?:y|ies)|factor(?:y|ies)|plant|warehouse|distribution cent(?:er|re)|production line|manufacturing (?:site|facility|capacity)|packaging (?:site|facility|capacity)|service center|planta|f[aá]brica|bodega|centro de distribuci[oó]n|l[ií]nea de producci[oó]n|capacidad productiva)\b/i.test(hay);
+  const standaloneMaterialChange = /\b(acquir(?:e|es|ed|ing|isition)|contract awarded|joint venture|closure|cancel(?:led|ed|lation)?|suspend(?:ed|sion)|adquisici[oó]n|contrato adjudicado|empresa conjunta|cierre|cancelad[ao]|suspendid[ao])\b/i.test(hay);
+  return (change && operatingAsset) || standaloneMaterialChange;
 }
 
 export function shouldDeepenSearchResult(stage: string, relevance: string, title: string | null, snippet: string | null): boolean {

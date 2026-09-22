@@ -36,6 +36,29 @@ export async function POST(req: NextRequest, { params }: { params: { runId: stri
   const { remainingAllowanceForRun, chargeMaterializedAccounts } = await import("@/lib/billing/account-metering");
   const entitlement = await resolveEntitlements(db, parsed.data.user_id).catch(() => null);
 
+  // Hybrid Candidate Universe: wrap the productive discovery runner with the neutral
+  // Vault identity-reuse fallback. Gated by the reversible VAULT_REUSE_MODE flag + measured
+  // fresh-coverage sufficiency; OFF (default) → gate closed → no Vault read, original behavior.
+  const { defaultDiscoveryRunner } = await import("@/lib/lead-hunter/discovery-runner");
+  const { withVaultReuse } = await import("@/lib/lead-hunter/vault-identity-reuse");
+  const { createVaultReuseDeps } = await import("@/lib/lead-hunter/vault-reuse-deps");
+  const { resolveVaultReuseConfig, makeVaultReuseGate } = await import("@/lib/lead-hunter/vault-reuse-config");
+  const vaultReuseConfig = resolveVaultReuseConfig();
+  const discoveryRunner = withVaultReuse(
+    defaultDiscoveryRunner,
+    createVaultReuseDeps(db as never),
+    undefined,
+    {
+      gate: makeVaultReuseGate(vaultReuseConfig),
+      onTelemetry: (t) => console.log(`[analytics] ${JSON.stringify({ event: "vault_reuse", surface: "intelligence_run", run_id: params.runId, ...t })}`),
+    },
+  );
+  // Reused-identity Research qualification: only wired when reuse is enabled (OFF → undefined →
+  // no qualification, no cost). Lets qualified reused operators reach Research; wrong-target/
+  // non-company identities are rejected. Fail-closed inside the spine.
+  const { createReuseQualificationDeps } = await import("@/lib/lead-hunter/vault-reuse-qualification-deps");
+  const reuseQualifier = vaultReuseConfig.mode === "OFF" ? undefined : createReuseQualificationDeps();
+
   const traceSink = new SupabaseRunTraceSink(db);
   // Trace persistence must survive serverless termination (RUNTIME ATTRIBUTION V1 §1.14):
   // collect the persist promises and await them (bounded, failure-isolated) after the run
@@ -46,7 +69,8 @@ export async function POST(req: NextRequest, { params }: { params: { runId: stri
     contextStore: new SupabaseConfirmedContextStore(db as never),
     leadHunterStore: new SupabaseLeadHunterRunStore(db as never),
     runStore: new SupabaseIntelligenceRunStore(db),
-    discoveryRunner: (await import("@/lib/lead-hunter/discovery-runner")).defaultDiscoveryRunner,
+    discoveryRunner,
+    reuseQualifier,
     pipeline: (await import("@/lib/pipeline")).runLeadLensPipeline,
     traceProvenance: "live",
     // Bounded account-research concurrency. c=2 is the validated production default;

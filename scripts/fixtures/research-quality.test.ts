@@ -38,6 +38,7 @@ t("16 no context means no client query", !planAccountResearch(profile, null).acc
 t("17 strong query uses exact account name or verified domain identity", plan.accepted.every((q) => q.query.includes("BioPlaza") || q.query.includes("site:bioplaza.com.co")));
 t("17b official-domain queries are domain constrained", plan.accepted.filter((q) => q.stage !== "client_relevance").every((q) => q.query.includes("site:bioplaza.com.co")));
 t("17c identified-account plan allocates two distinct primary-event probes", plan.accepted.filter((q) => q.stage === "current_activity").length === 2 && plan.accepted.some((q) => q.query.includes('"breaks ground"') && q.query.includes('"distribution center"')));
+t("17d second primary-event probe avoids over-conjoined exact signal phrases", plan.accepted.some((q) => q.stage === "current_activity" && q.query.includes("expansion OR expands") && q.query.includes("factory OR plant") && !q.query.includes('"capacity expansion"')));
 t("18 source tier A registry", sourceTier({ url: "https://rues.org.co/company", official_domain: null }).tier === "A");
 t("19 official domain is tier B", sourceTier({ url: "https://bioplaza.com.co", official_domain: "bioplaza.com.co" }).tier === "B");
 t("20 official social is tier C", sourceTier({ url: "https://instagram.com/bioplaza", official_domain: "bioplaza.com.co" }).tier === "C");

@@ -70,6 +70,16 @@ await test("extracts the governing event subject, not article suffix", () => {
   assert.deepEqual(extractEventSubjects("Acme Foods opens new Ohio plant | Industry Today"), ["Acme Foods"]);
 });
 
+await test("rejects headline-fragment names and dangling connectives as company subjects", () => {
+  // A broadened English universe query can surface headlines like these; the extractor must never
+  // emit a multi-word clause or a dangling connective as a company identity (observed regressions:
+  // "Novartis finalizes US manufacturing", "Cencora to"). Precision over count.
+  assert.deepEqual(extractEventSubjects("Novartis finalizes US manufacturing investment as it opens a plant"), []);
+  assert.deepEqual(extractEventSubjects("Cencora to build new distribution center in Ohio"), []);
+  // Clean multi-word operating companies are still accepted.
+  assert.deepEqual(extractEventSubjects("Ahold Delhaize opens new distribution center"), ["Ahold Delhaize"]);
+});
+
 await test("corporate domain matching rejects embedded company-name substrings", () => {
   assert.equal(domainLooksCorporate("Ryder", "stryderusa.com"), false);
   assert.equal(domainLooksCorporate("Stryder USA", "stryderusa.com"), true);
@@ -168,6 +178,33 @@ await test("provider failure is telemetry, not a commercial rejection", async ()
   assert.equal(result.orgs.length, 0);
 });
 
+await test("terminally exhausted providers are skipped before event queries", async () => {
+  let exhaustedCalls = 0;
+  let healthyCalls = 0;
+  const exhausted: SearchProvider = {
+    ...provider(() => []),
+    id: "serper",
+    health: async () => ({ provider: "serper", status: "degraded", reason: "not enough credits", credentials_present: true }),
+    search: async query => {
+      exhaustedCalls++;
+      return { ok: false, provider: "serper", query, results: [], latency_ms: 1, cost_estimate_usd: null, error: "not enough credits" };
+    },
+  };
+  const healthy: SearchProvider = {
+    ...provider(() => []),
+    id: "brave",
+    search: async query => {
+      healthyCalls++;
+      return { ok: true, provider: "brave", query, results: [], latency_ms: 1, cost_estimate_usd: 0, error: null };
+    },
+  };
+  const result = await runEventFirstDiscovery(plan(), [exhausted, healthy], { maxQueries: 1, maxIdentityQueries: 0 });
+  assert.equal(exhaustedCalls, 0);
+  assert.equal(healthyCalls, 1);
+  assert.match(result.metrics.provider_failures.serper, /not enough credits/);
+  assert.equal(result.metrics.provider_calls.serper, undefined);
+});
+
 await test("fallback provider runs when the first provider returns volume without event subjects", async () => {
   const noisy = { ...provider(() => [item("Directorio de empresas", "https://directory.example/list")]), id: "noisy" };
   const useful = { ...provider(q => q.query_type === "official_domain"
@@ -255,7 +292,7 @@ await test("rejects media domains that merely contain a generic company token", 
 await test("failed identity provider does not consume the successful-resolution budget", async () => {
   const failing: SearchProvider = {
     id: "failing", capabilities: () => ({ search: true, extract: false, regions: "global", supports_dates: true }),
-    health: async () => ({ provider: "failing", status: "degraded", reason: "quota", credentials_present: true }),
+    health: async () => ({ provider: "failing", status: "available", reason: null, credentials_present: true }),
     search: async query => query.query_type === "official_domain"
       ? ({ ok: false, provider: "failing", query, results: [], latency_ms: 1, cost_estimate_usd: null, error: "quota" })
       : ({ ok: true, provider: "failing", query, results: [item("Rainforest Distribution opens Fort Pierce, Florida distribution center", "https://trade.example/rainforest", "Rainforest Distribution expands logistics coverage in Florida")], latency_ms: 1, cost_estimate_usd: 0, error: null }),

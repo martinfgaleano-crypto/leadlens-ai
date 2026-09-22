@@ -1,0 +1,37 @@
+{
+  "version": "intelligence-launch-acceptance-v1-independent-review",
+  "track_a_cases": [
+    {"company":"DHL Supply Chain","region":"USA","canonical_decision":"hold","assessment":"defensible","customer_value":"marginal","note":"Correct abstention after no objective-relevant material event survived."},
+    {"company":"Mapei","region":"South America","canonical_decision":"hold","assessment":"defensible_decision_unsafe_presentation","customer_value":"low_value","hard_fail":"wrong_geography_evidence_surface"},
+    {"company":"WEG","region":"South America","canonical_decision":"hold","assessment":"defensible","customer_value":"marginal","note":"No validated current event."},
+    {"company":"Logisfashion","region":"South America","canonical_decision":"hold","assessment":"defensible","customer_value":"low_value","note":"Static company page did not become Timing."},
+    {"company":"Tecnoglass","region":"South America","canonical_decision":"hold","assessment":"debatable_decision_unsafe_action","customer_value":"useful","hard_fail":"canonical_decision_action_contradiction"},
+    {"company":"Chex Finer Foods","region":"USA","canonical_decision":"hold","assessment":"defensible","customer_value":"marginal","note":"Anniversary/history did not become a material event."},
+    {"company":"CoralTree Hospitality","region":"USA","canonical_decision":"hold","assessment":"defensible","customer_value":"marginal","note":"No verified supplier or category-opening mechanism."},
+    {"company":"Koba Colombia","region":"South America","canonical_decision":"hold","assessment":"defensible","customer_value":"low_value","note":"Low fit and no current event."},
+    {"company":"Grupo Exito","region":"South America","canonical_decision":"hold","assessment":"defensible","customer_value":"useful","note":"Fashion channel evidence is stale and does not establish wellness procurement timing."}
+  ],
+  "track_b_funnel": [
+    {"company":"Nestlé USA","captured":true,"assessment":"true_positive"},
+    {"company":"Conagra Brands","captured":true,"assessment":"true_positive"},
+    {"company":"Quad","captured":false,"assessment":"false_negative","root_cause":"concrete packaging-operations expansion construction classified as none"},
+    {"company":"voestalpine","captured":true,"assessment":"true_positive"},
+    {"company":"Hitachi Energy","captured":true,"assessment":"true_positive"},
+    {"company":"John Deere","captured":false,"assessment":"unresolved_false_negative","root_cause":"target event not retrieved"},
+    {"company":"UFP","captured":false,"assessment":"false_negative","root_cause":"target South Carolina event not retrieved; unrelated acquisition page extracted"},
+    {"company":"Mondi","captured":false,"assessment":"false_negative","root_cause":"target Pittsburgh automation event not retrieved; financial update consumed extraction"}
+  ],
+  "decision_counts": {"defensible": 8, "debatable": 1, "undefensible_canonical_actionable": 0},
+  "presentation_hard_fails": 2,
+  "red_team": {
+    "generic_hiring_to_intent": "pass",
+    "funding_to_opportunity": "pass",
+    "expansion_to_automatic_need": "mixed",
+    "press_release_to_opportunity": "pass_canonical_fail_legacy_action",
+    "high_fit_to_timing": "pass_canonical_fail_legacy_action",
+    "publication_date_to_event_date": "pass",
+    "global_event_to_local_event": "fail_presentation",
+    "metric_to_change": "pass",
+    "single_source_to_independent_support": "pass"
+  }
+}

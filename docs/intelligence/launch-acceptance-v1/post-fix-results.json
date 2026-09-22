@@ -1,0 +1,71 @@
+{
+  "version": "intelligence-launch-acceptance-v1-post-fix",
+  "git_commit_under_test": "7fbb76540452fcd95aff03ae1bde44221f17fa0d",
+  "quality_scored_track_a_runs": 3,
+  "planned_track_a_runs": 6,
+  "track_a": {
+    "artifacts": [
+      "ml/data/acceptance/customer-e2e-1789605933925.json",
+      "ml/data/acceptance/customer-e2e-1789606146675.json",
+      "ml/data/acceptance/customer-e2e-1789606463370.json"
+    ],
+    "contexts_completed": [
+      "industrial-automation:USA",
+      "industrial-automation:South America",
+      "lean-operations-software:USA"
+    ],
+    "funnel": {
+      "event_first_raw_hints": 126,
+      "event_first_canonical_companies": 3,
+      "candidate_universe_accounts": 19,
+      "researched_accounts": 5,
+      "portfolio_accounts": 3,
+      "canonical_decisions": {"prioritize": 0, "validate": 1, "monitor": 0, "hold": 4},
+      "customer_visible_decisions": {"prioritize": 0, "validate": 0, "monitor": 0, "hold": 3}
+    },
+    "runtime": {"total_ms": 675228, "median_ms": 196989, "max_ms": 302087},
+    "observed_usage": {
+      "anthropic": {"calls": 30, "errors": 0, "cost_usd": 0.538269},
+      "brave": {"calls": 67, "cost_unavailable": true},
+      "serper": {"calls": 16, "errors": 16, "status": "exhausted", "fixed_after_measurement": true},
+      "tavily": {"calls": 60, "errors": 0, "cost_unavailable": true}
+    },
+    "presentation_acceptance": {
+      "canonical_action_contradictions": 0,
+      "unvalidated_candidate_urls_in_evidence": 0,
+      "false_provider_availability_gaps": 0
+    }
+  },
+  "infrastructure_only_runs": [
+    {
+      "artifact": "ml/data/acceptance/customer-e2e-1789606662665.json",
+      "context": "lean-operations-software:South America",
+      "quality_scored": false,
+      "reason": "anthropic_credits_exhausted_mid_run",
+      "behavior": "deterministic_fallback_completed_lifecycle_with_zero_deliveries"
+    }
+  ],
+  "not_rerun": [
+    "channel-partnerships:USA",
+    "channel-partnerships:South America"
+  ],
+  "not_rerun_reason": "Anthropic exhaustion made an exact comparable rerun impossible; no degraded output is presented as quality evidence.",
+  "track_b": {
+    "artifact": "ml/data/acceptance/account-deep-research-positive-control-v1.json",
+    "references": 8,
+    "captured_defensibly": 5,
+    "bounded_capture_rate": 0.625,
+    "duration_ms": 222261,
+    "provider_calls": 66,
+    "extractions": 15,
+    "captured": ["Nestlé USA", "Conagra Brands", "Quad", "voestalpine", "Hitachi Energy"],
+    "missed": ["John Deere", "UFP", "Mondi"]
+  },
+  "score": {
+    "overall": 65,
+    "sample_note": "Provisional evidence-bounded score. Only three of six exact Track A reruns completed before Anthropic exhaustion; it is not a population estimate.",
+    "hard_fails_in_scored_post_fix_subset": 0,
+    "baseline_hard_fails_fixed": 2
+  },
+  "verdict": "NOT_LAUNCH_READY"
+}

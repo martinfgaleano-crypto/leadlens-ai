@@ -1,0 +1,46 @@
+{
+  "version": "launch-acceptance-v1",
+  "frozen_at": "2026-09-16T20:30:00Z",
+  "anti_gaming": "Contexts were frozen before Track A outputs were generated. No company or event names are seeded.",
+  "contexts": [
+    {
+      "id": "industrial-automation",
+      "family": "specialized_b2b_consultancy",
+      "what_customer_sells": "Industrial automation, controls integration, commissioning and operational data integration services.",
+      "problem_solved": "New or expanded production and logistics assets need controls, integration and commissioning capacity without adding permanent specialist headcount.",
+      "target_company": "Mid-sized and large manufacturers, distributors and logistics operators that directly operate plants, warehouses or distribution centers.",
+      "commercial_objective": "Identify companies whose recent operational investments justify validation of still-open automation or integration scope.",
+      "important_exclusions": ["public authorities", "publishers", "software-only firms", "fully outsourced operations", "completed projects with all packages awarded"],
+      "runs": [
+        {"id": "industrial-automation-us", "geography": "United States", "locale": "en"},
+        {"id": "industrial-automation-sa", "geography": "South America: Colombia, Brazil, Chile, Peru and Argentina", "locale": "es"}
+      ]
+    },
+    {
+      "id": "lean-operations-software",
+      "family": "founder_led_b2b_sales",
+      "what_customer_sells": "Operational planning, inventory coordination and systems integration software for lean operating teams.",
+      "problem_solved": "Expansion, acquisition and multi-site complexity create fragmented planning, inventory and operational workflows.",
+      "target_company": "Mid-market manufacturers, distributors and multi-site operators with direct operational control.",
+      "commercial_objective": "Find accounts worth validating now because a material operational change may create integration or planning complexity.",
+      "important_exclusions": ["generic growth statistics", "advisory firms", "financial distress", "no direct operations", "consumer-only businesses"],
+      "runs": [
+        {"id": "lean-operations-software-us", "geography": "United States", "locale": "en"},
+        {"id": "lean-operations-software-sa", "geography": "South America: Colombia, Brazil, Chile, Peru and Argentina", "locale": "es"}
+      ]
+    },
+    {
+      "id": "channel-partnerships",
+      "family": "partnerships_oriented_agency",
+      "what_customer_sells": "Market-entry and channel-partnership development for premium wellness and packaged-goods brands.",
+      "problem_solved": "Brands need evidence-backed access to retailers, hospitality groups and distributors that can add third-party products.",
+      "target_company": "Retail, hospitality and distribution operators with a verified third-party assortment or supplier route.",
+      "commercial_objective": "Prioritize organizations where a current channel change or verified procurement mechanism makes partnership validation timely.",
+      "important_exclusions": ["seller networks recruiting distributors", "own-brand-only operators", "static directories", "consumer leads", "unsupported buying intent"],
+      "runs": [
+        {"id": "channel-partnerships-us", "geography": "United States", "locale": "en"},
+        {"id": "channel-partnerships-sa", "geography": "South America: Colombia, Brazil, Chile, Peru and Argentina", "locale": "es"}
+      ]
+    }
+  ]
+}

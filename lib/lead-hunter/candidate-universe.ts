@@ -168,6 +168,11 @@ export interface CoverageSummary {
   priorCandidatesConsidered?: number;
   candidatesReused?: number;
   freshCandidates?: number;
+  /** In-scope candidates contributed by neutral Vault identity reuse (§14/§25). A
+   * reused identity is NOT counted as a fresh discovery; this is a separate axis from
+   * context-memory reuse (candidatesReused). Overlaps freshCandidates only when fresh
+   * Discovery independently found the same company. */
+  vaultReusedCandidates?: number;
   stableCorePercent?: number;
   eventFirst?: EventFirstMetrics;
   gaps: DiscoveryGap[];
@@ -570,11 +575,23 @@ export async function hunt(plan: DiscoveryPlan, runner: DiscoveryRunner, opts: H
   };
   const inScope = candidates.filter((c) => c.status !== "excluded");
   const reusedCount = inScope.filter((c) => c.universeState === "stable_reused" || c.universeState === "revalidated").length;
-  const freshCount = inScope.filter((c) => c.universeState === "new" || c.universeState === "revalidated").length;
+  // Fresh DISCOVERY = a genuine account-first/event-first origin found it this run.
+  // A neutral Vault-reused identity is NOT a fresh discovery (§14/§25); it is counted
+  // separately, and only overlaps when fresh Discovery independently found the company.
+  const isFreshDiscovery = (c: CandidateAccount): boolean =>
+    !!c.originFlags?.some((f) => f === "ACCOUNT_FIRST" || f === "EVENT_FIRST" || f === "BOTH");
+  const freshCount = inScope.filter(isFreshDiscovery).length;
+  const vaultReusedCount = inScope.filter((c) => c.originFlags?.includes("VAULT_REUSED")).length;
   const duplicateRate = orgs.length ? 1 - candidates.length / orgs.length : 0;
 
+  // A provider may fail one bounded route and later succeed through a fallback
+  // route. Availability wins for run-level coverage; never report the same
+  // provider as both available and unavailable.
+  const availableProviders = Array.from(new Set(out.providersAvailable));
+  const availableSet = new Set(availableProviders);
+  const failedProviders = Array.from(new Set(out.providersFailed)).filter((provider) => !availableSet.has(provider));
   const gaps: DiscoveryGap[] = [];
-  if (out.providersFailed.length) gaps.push({ type: "provider_unavailable", detail: `Providers unavailable: ${out.providersFailed.join(", ")}.` });
+  if (failedProviders.length) gaps.push({ type: "provider_unavailable", detail: `Providers unavailable: ${failedProviders.join(", ")}.` });
   if (counts.identityAmbiguous > 0) gaps.push({ type: "identity_ambiguity", detail: `${counts.identityAmbiguous} candidate(s) need identity validation.` });
   if (inScope.length < 3) gaps.push({ type: "candidate_volume_too_low", detail: `Only ${inScope.length} in-scope candidate(s) discovered.` });
   if (plan.geographies.length === 0) gaps.push({ type: "sparse_geographic_coverage", detail: "No geography constraint; coverage is broad and unverified." });
@@ -582,13 +599,13 @@ export async function hunt(plan: DiscoveryPlan, runner: DiscoveryRunner, opts: H
 
   const reviewRequired: ReviewClass[] = [];
   if (counts.identityAmbiguous > 0) reviewRequired.push("identity_ambiguity");
-  if (out.providersFailed.length && out.providersAvailable.length < 2) reviewRequired.push("provider_anomaly");
+  if (failedProviders.length && availableProviders.length < 2) reviewRequired.push("provider_anomaly");
   if (inScope.length === 0) reviewRequired.push("repeated_zero_yield");
 
   const coverage: CoverageSummary = {
     operatingMode: out.providersAvailable.length === 0 && reusedCount > 0 ? "context_memory_reuse" : out.operatingMode,
-    providersAvailable: out.providersAvailable,
-    providersFailed: out.providersFailed,
+    providersAvailable: availableProviders,
+    providersFailed: failedProviders,
     routesAttempted: plan.routes.length,
     routeYield: out.routeMetrics ?? [],
     candidatesDiscovered: orgs.length,
@@ -598,6 +615,7 @@ export async function hunt(plan: DiscoveryPlan, runner: DiscoveryRunner, opts: H
     priorCandidatesConsidered: priorCandidates.length,
     candidatesReused: reusedCount,
     freshCandidates: freshCount,
+    vaultReusedCandidates: vaultReusedCount,
     stableCorePercent: priorCandidates.length ? Math.round((reusedCount / priorCandidates.length) * 100) : 0,
     eventFirst: out.eventFirst,
     gaps,

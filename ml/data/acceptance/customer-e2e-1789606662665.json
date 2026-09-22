@@ -1,0 +1,1261 @@
+{
+  "acceptance": "customer-intelligence-e2e-v1",
+  "ran_at": "2026-09-17T01:01:35.679Z",
+  "soak_id": null,
+  "soak_phase": null,
+  "synthetic_context": "Vendemos software de planificación operativa, coordinación de inventario e integración de sistemas a fabricantes, distribuidores y operadores multisede medianos en Colombia, Brasil, Chile, Perú y Argentina con control directo de sus operaciones. Buscamos cuentas con expansión, adquisición u otro cambio operativo material reciente que pueda crear complejidad de planificación o integración. Excluir estadísticas genéricas, consultoras, distress financiero, empresas sin operación directa y negocios solo de consumo.",
+  "confirmed_context_diagnostic": {
+    "organization_types": [
+      "Fabricantes medianos con operación directa multisede",
+      "Distribuidores medianos con control directo de operaciones",
+      "Operadores multisede medianos en sectores industriales o de consumo B2B"
+    ],
+    "industries": [
+      "Manufactura",
+      "Distribución y logística",
+      "Consumo masivo B2B",
+      "Agroindustria",
+      "Retail con operación propia de inventario"
+    ],
+    "geographies": [
+      "Colombia",
+      "Brasil",
+      "Chile",
+      "Perú",
+      "Argentina"
+    ],
+    "signal_families": [
+      "acquisition",
+      "new_facility",
+      "new_market",
+      "operational_transformation",
+      "capacity"
+    ],
+    "definition_status": "defined"
+  },
+  "run_id": "intel_cad8ca35c0f0f75f703dc280b9d09848",
+  "lead_hunter_run_id": "lh_e2e_context_1789606662665_v1_2026-09-17_e73a7bb6-e08c-4d17-995f-b583febf5010_intel_cad8c",
+  "candidate_universe": {
+    "total": 18,
+    "coverage": {
+      "gaps": [],
+      "eligible": 8,
+      "excluded": 0,
+      "eventFirst": {
+        "queries": 4,
+        "rejected": {
+          "no_subject": 24,
+          "identity_unresolved": 4
+        },
+        "raw_hints": 30,
+        "result_audit": [
+          {
+            "url": "https://www.fedsmallbusiness.org/reports/survey/2026/2026-report-on-employer-firms",
+            "type": "other",
+            "title": "2026 Report on Employer Firms: Findings from the 2025 ...",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://rocketreach.co/empresa-profile_b4483856fcf6820b",
+            "type": "other",
+            "title": "[Empresa Information](/empresa-profile_b4483856fcf6820b \"Empresa Information\")",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.reginfo.gov/public/do/eAgendaMain?operation=OPERATION_GET_AGENCY_RULE_LIST&currentPub=true&agencyCode=&showStage=active&agencyCd=3235",
+            "type": "government",
+            "title": "Agency Rule List - 2026",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.dol.gov/agencies/ebsa/employers-and-advisers/guidance/field-assistance-bulletins/2026-01",
+            "type": "government",
+            "title": "Field Assistance Bulletin No. 2026-01",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.ssa.gov/oact/tr/2026",
+            "type": "government",
+            "title": "The 2026 OASDI Trustees Report",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://infrastructurereportcard.org/wp-content/uploads/2025/03/Full-Report-2025-Natl-IRC-WEB.pdf",
+            "type": "company_direct",
+            "title": "A Comprehensive Assessment of America's Infrastructure ...",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://en.wikipedia.org/wiki/Industrial",
+            "type": "other",
+            "title": "Industrial",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.unido.org/IDDI",
+            "type": "other",
+            "title": "Industrial Deep Decarbonisation Initiative",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.industrialdefender.com/",
+            "type": "company_direct",
+            "title": "Industrial Defender: OT Cybersecurity & NERC CIP Compliance",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.weforum.org/stories/technological-innovation/the-fourth-industrial-revolution-what-it-means-and-how-to-respond",
+            "type": "other",
+            "title": "The Fourth Industrial Revolution: what it means and how to ...",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.energy.gov/mesc/industrial-assessment-centers-iacs",
+            "type": "government",
+            "title": "Industrial Training and Assessment Centers",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://dced.pa.gov/programs/industrial-sites-reuse-program-isrp",
+            "type": "government",
+            "title": "Industrial Sites Reuse Program (ISRP)",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.facebook.com/NTN24/videos/colombina-instalar%C3%A1-un-centro-de-distribuci%C3%B3n-en-clip-zona-franca-que-servir%C3%A1-co/720770071005565",
+            "type": "social",
+            "title": "3.5K views · 45 reactions | Dos gigantes de la industria vallecaucana en Colombia se unen para revolucionar la logística internacional. Colombina, líder en confitería, instalará un nuevo centro de distribución en CLIP Zona Franca en el municipio de Yotoco, donde se centralizará la producción de galletería y confitería destinada a la exportación. Este espacio servirá como puente para seguir llenando de nuevos sabores a más de 80 países del mundo. | NTN24",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.elcolombiano.com/negocios/exito-tiene-nuevo-centro-de-distribucion-en-colombia-KF15898938",
+            "type": "other",
+            "title": "Éxito tiene nuevo centro de distribución en Colombia",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.portafolio.co/contenido-patrocinado/nuevo-centro-industrial-de-ternium-en-colombia-550348",
+            "type": "news_article",
+            "title": "Nuevo centro industrial de Ternium en Colombia",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.youtube.com/watch?v=Bf4wc2xUXrk",
+            "type": "social",
+            "title": "Belcorp inaugura su nuevo Centro de Distribución en Colombia",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": [
+              "Belcorp"
+            ]
+          },
+          {
+            "url": "https://www.infor.com/latam/blog/fanalca-leading-distribution-company-in-the-automotive-sector-in-colombia-increases-by-40-its-productivity-with-infor-wms",
+            "type": "company_direct",
+            "title": "Fanalca, Empresa Líder de Distribución del Sector Automotriz en Colombia, aumenta un 40% su productividad con Infor WMS (LATAM)",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": [
+              "En el 2018",
+              "Fanalca realizó un"
+            ]
+          },
+          {
+            "url": "https://nmrk.lat/que-impulsara-el-mercado-industrial-y-logistico-de-colombia-en-2026",
+            "type": "other",
+            "title": "¿Qué impulsará el mercado industrial y logístico de Colombia en ...",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://americaretail-malls.com/paises/brasil/weg-fortalece-su-expansion-en-colombia-con-nuevo-centro-en-bogota",
+            "type": "other",
+            "title": "WEG fortalece su expansión en Colombia con nuevo centro en Bogotá - AmericaMalls & Retail",
+            "recent": true,
+            "provider": "brave",
+            "subjects": [
+              "WEG"
+            ]
+          },
+          {
+            "url": "https://www.acis.org.co/blog/noticias-2/coca-cola-femsa-colombia-fortalece-su-operacion-logistica-en-tolima-con-la-reubicacion-de-su-centro-de-distribucion-en-ibague-6407",
+            "type": "other",
+            "title": "Coca-Cola FEMSA Colombia fortalece su operación logística en Tolima con la reubicación de su centro de distribución en Ibagué | ACIS",
+            "recent": true,
+            "provider": "brave",
+            "subjects": [
+              "Coca-Cola FEMSA Colombia"
+            ]
+          },
+          {
+            "url": "https://www.eltiempo.com/amp/economia/empresas/la-apuesta-de-ford-por-los-negocios-colombianos-llega-sobre-ruedas-y-con-un-centro-logistico-de-talla-mundial-3562655",
+            "type": "news_article",
+            "title": "La apuesta de Ford por los negocios colombianos llega sobre ruedas y con un centro logístico de talla mundial - ELTIEMPO.COM",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://www.peru-retail.com/platanitos-inaugura-centro-de-distribucion-que-integra-e-commerce-y-tiendas-fisicas-como-es",
+            "type": "other",
+            "title": "Platanitos inaugura centro de distribución que integra e-commerce y tiendas físicas: ¿cómo es?",
+            "recent": true,
+            "provider": "brave",
+            "subjects": [
+              "Platanitos"
+            ]
+          },
+          {
+            "url": "https://comexonline.com.ar/noticias/val/52690/inauguran-nuevo-centro-de-distribucion-en-el-parque-industrial-de-pilar.html",
+            "type": "other",
+            "title": "Inauguran nuevo centro de distribución en el Parque Industrial de Pilar",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://espaciot.cl/starken-proyecta-nuevo-centro-de-distribucion-de-30-000-m%C2%B2-en-san-bernardo",
+            "type": "other",
+            "title": "Starken proyecta nuevo centro de distribución de 30 mil metros cuadrados en San Bernardo – EspacioT | Transporte y todo lo demás",
+            "recent": true,
+            "provider": "brave",
+            "subjects": []
+          },
+          {
+            "url": "https://colombia.a2bookmarks.com/story/grupo-diana-compra-una-empresa-de-alimento-para-mascotas-para-ingresar-a-un-nuevo-mercado",
+            "type": "other",
+            "title": "Grupo Diana Compra una Empresa de Alimento para Mascotas para Ingresar a un Nuevo Mercado - Colombia Social Bookmarking Website | A2Bookmarks Colombia",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://expoindustrial.com.co/la-empresa-industrial-en-colombia-un-mercado-de-crecimiento-y-oportunidades",
+            "type": "event_page",
+            "title": "La Empresa Industrial en Colombia: Un Mercado de Crecimiento y Oportunidades - Expoindustrial - Feria Industrial del Pacífico",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.bemparana.com.br/noticias/economia/empresa-do-parana-expande-negocios-e-entra-no-mercado-internacional",
+            "type": "other",
+            "title": "Empresa do Paraná expande negócios e entra no mercado internacional",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": [
+              "Title: Empresa do Paraná"
+            ]
+          },
+          {
+            "url": "https://exclusivo.com.br/negocios/empresa-irlandesa-entra-na-america-latina-com-compra-de-fabricante-de-calcados",
+            "type": "company_direct",
+            "title": "Empresa irlandesa entra na América Latina com compra de fabricante de calçados | Exclusivo",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.solvenquimicos.com.br/empresa-fabricante-detergente-industrial",
+            "type": "other",
+            "title": "Empresa fabricante de detergente industrial - Solven",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://bagminas.com/informacoes/empresa-fabricante-de-sacos-de-rafia",
+            "type": "other",
+            "title": "Empresa Fabricante de Sacos de ráfia - Bag Minas",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          }
+        ],
+        "result_types": {
+          "other": 16,
+          "social": 2,
+          "event_page": 1,
+          "government": 5,
+          "news_article": 2,
+          "company_direct": 4
+        },
+        "target_valid": 3,
+        "unique_hints": 7,
+        "result_sample": [
+          {
+            "url": "https://www.fedsmallbusiness.org/reports/survey/2026/2026-report-on-employer-firms",
+            "query": "\"adquiere empresa\" empresa Colombia (2026 OR 2025) (\"fabricante\" OR \"empresa industrial\")",
+            "title": "2026 Report on Employer Firms: Findings from the 2025 ...",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://rocketreach.co/empresa-profile_b4483856fcf6820b",
+            "query": "\"adquiere empresa\" empresa Colombia (2026 OR 2025) (\"fabricante\" OR \"empresa industrial\")",
+            "title": "[Empresa Information](/empresa-profile_b4483856fcf6820b \"Empresa Information\")",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.reginfo.gov/public/do/eAgendaMain?operation=OPERATION_GET_AGENCY_RULE_LIST&currentPub=true&agencyCode=&showStage=active&agencyCd=3235",
+            "query": "\"adquiere empresa\" empresa Colombia (2026 OR 2025) (\"fabricante\" OR \"empresa industrial\")",
+            "title": "Agency Rule List - 2026",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://en.wikipedia.org/wiki/Industrial",
+            "query": "\"abre nueva planta\" empresa Colombia (2026 OR 2025) (\"fabricante\" OR \"empresa industrial\")",
+            "title": "Industrial",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.unido.org/IDDI",
+            "query": "\"abre nueva planta\" empresa Colombia (2026 OR 2025) (\"fabricante\" OR \"empresa industrial\")",
+            "title": "Industrial Deep Decarbonisation Initiative",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.industrialdefender.com/",
+            "query": "\"abre nueva planta\" empresa Colombia (2026 OR 2025) (\"fabricante\" OR \"empresa industrial\")",
+            "title": "Industrial Defender: OT Cybersecurity & NERC CIP Compliance",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.facebook.com/NTN24/videos/colombina-instalar%C3%A1-un-centro-de-distribuci%C3%B3n-en-clip-zona-franca-que-servir%C3%A1-co/720770071005565",
+            "query": "\"nuevo centro de distribucion\" empresa Colombia (2026 OR 2025) (\"fabricante\" OR \"empresa industrial\")",
+            "title": "3.5K views · 45 reactions | Dos gigantes de la industria vallecaucana en Colombia se unen para revolucionar la logística internacional. Colombina, líder en confitería, instalará un nuevo centro de distribución en CLIP Zona Franca en el municipio de Yotoco, donde se centralizará la producción de galletería y confitería destinada a la exportación. Este espacio servirá como puente para seguir llenando de nuevos sabores a más de 80 países del mundo. | NTN24",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.elcolombiano.com/negocios/exito-tiene-nuevo-centro-de-distribucion-en-colombia-KF15898938",
+            "query": "\"nuevo centro de distribucion\" empresa Colombia (2026 OR 2025) (\"fabricante\" OR \"empresa industrial\")",
+            "title": "Éxito tiene nuevo centro de distribución en Colombia",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.portafolio.co/contenido-patrocinado/nuevo-centro-industrial-de-ternium-en-colombia-550348",
+            "query": "\"nuevo centro de distribucion\" empresa Colombia (2026 OR 2025) (\"fabricante\" OR \"empresa industrial\")",
+            "title": "Nuevo centro industrial de Ternium en Colombia",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://americaretail-malls.com/paises/brasil/weg-fortalece-su-expansion-en-colombia-con-nuevo-centro-en-bogota",
+            "query": "\"nuevo centro de distribucion\" empresa Colombia (2026 OR 2025) (\"fabricante\" OR \"empresa industrial\")",
+            "title": "WEG fortalece su expansión en Colombia con nuevo centro en Bogotá - AmericaMalls & Retail",
+            "provider": "brave",
+            "published_date": "2026-05-11T17:53:00"
+          },
+          {
+            "url": "https://www.acis.org.co/blog/noticias-2/coca-cola-femsa-colombia-fortalece-su-operacion-logistica-en-tolima-con-la-reubicacion-de-su-centro-de-distribucion-en-ibague-6407",
+            "query": "\"nuevo centro de distribucion\" empresa Colombia (2026 OR 2025) (\"fabricante\" OR \"empresa industrial\")",
+            "title": "Coca-Cola FEMSA Colombia fortalece su operación logística en Tolima con la reubicación de su centro de distribución en Ibagué | ACIS",
+            "provider": "brave",
+            "published_date": "2026-02-19T19:25:40"
+          },
+          {
+            "url": "https://www.eltiempo.com/amp/economia/empresas/la-apuesta-de-ford-por-los-negocios-colombianos-llega-sobre-ruedas-y-con-un-centro-logistico-de-talla-mundial-3562655",
+            "query": "\"nuevo centro de distribucion\" empresa Colombia (2026 OR 2025) (\"fabricante\" OR \"empresa industrial\")",
+            "title": "La apuesta de Ford por los negocios colombianos llega sobre ruedas y con un centro logístico de talla mundial - ELTIEMPO.COM",
+            "provider": "brave",
+            "published_date": "2026-06-06T22:03:46"
+          },
+          {
+            "url": "https://colombia.a2bookmarks.com/story/grupo-diana-compra-una-empresa-de-alimento-para-mascotas-para-ingresar-a-un-nuevo-mercado",
+            "query": "\"entra a nuevo mercado\" empresa Colombia (2026 OR 2025) (\"fabricante\" OR \"empresa industrial\")",
+            "title": "Grupo Diana Compra una Empresa de Alimento para Mascotas para Ingresar a un Nuevo Mercado - Colombia Social Bookmarking Website | A2Bookmarks Colombia",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://expoindustrial.com.co/la-empresa-industrial-en-colombia-un-mercado-de-crecimiento-y-oportunidades",
+            "query": "\"entra a nuevo mercado\" empresa Colombia (2026 OR 2025) (\"fabricante\" OR \"empresa industrial\")",
+            "title": "La Empresa Industrial en Colombia: Un Mercado de Crecimiento y Oportunidades - Expoindustrial - Feria Industrial del Pacífico",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.bemparana.com.br/noticias/economia/empresa-do-parana-expande-negocios-e-entra-no-mercado-internacional",
+            "query": "\"entra a nuevo mercado\" empresa Colombia (2026 OR 2025) (\"fabricante\" OR \"empresa industrial\")",
+            "title": "Empresa do Paraná expande negócios e entra no mercado internacional",
+            "provider": "tavily",
+            "published_date": null
+          }
+        ],
+        "provider_calls": {
+          "brave": 4,
+          "serper": 4,
+          "tavily": 7
+        },
+        "company_mentions": 7,
+        "domains_resolved": 3,
+        "provider_failures": {
+          "serper": "HTTP 400: {\"message\":\"Not enough credits\",\"statusCode\":400}"
+        },
+        "geography_resolved": 3,
+        "subjects_extracted": 7,
+        "canonical_companies": 3
+      },
+      "routeYield": [
+        {
+          "route": "industry_category",
+          "queries": 2,
+          "resultPages": 5,
+          "groundedNames": 4,
+          "acceptedCompanies": 0
+        },
+        {
+          "route": "geo_category",
+          "queries": 1,
+          "resultPages": 6,
+          "groundedNames": 9,
+          "acceptedCompanies": 0
+        },
+        {
+          "route": "source_ecosystem",
+          "queries": 2,
+          "resultPages": 9,
+          "groundedNames": 3,
+          "acceptedCompanies": 0
+        }
+      ],
+      "duplicateRate": 0,
+      "operatingMode": "full_discovery",
+      "likelyEligible": 10,
+      "freshCandidates": 18,
+      "needsValidation": 0,
+      "providersFailed": [],
+      "routesAttempted": 3,
+      "candidatesReused": 0,
+      "candidatesUnique": 18,
+      "identityAmbiguous": 0,
+      "stableCorePercent": 0,
+      "providersAvailable": [
+        "brave",
+        "tavily"
+      ],
+      "candidatesDiscovered": 18,
+      "priorCandidatesConsidered": 0
+    },
+    "companies": [
+      {
+        "name": "Nalsani",
+        "status": "likely_eligible",
+        "confidence": "plausible",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:58:00.872Z",
+            "discoveredName": "Nalsani"
+          }
+        ]
+      },
+      {
+        "name": "Alpina",
+        "domain": "alpina.com",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:58:00.872Z",
+            "discoveredName": "Alpina"
+          }
+        ]
+      },
+      {
+        "name": "Colombina",
+        "domain": "colombina.com",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:58:00.872Z",
+            "discoveredName": "Colombina"
+          }
+        ]
+      },
+      {
+        "name": "Cementos Argos",
+        "domain": "argos.co",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:58:00.872Z",
+            "discoveredName": "Cementos Argos"
+          }
+        ]
+      },
+      {
+        "name": "Leonisa",
+        "domain": "leonisa.com",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:58:00.872Z",
+            "discoveredName": "Leonisa"
+          }
+        ]
+      },
+      {
+        "name": "Nutresa",
+        "status": "likely_eligible",
+        "confidence": "plausible",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:58:00.872Z",
+            "discoveredName": "Nutresa"
+          }
+        ]
+      },
+      {
+        "name": "Auteco",
+        "status": "likely_eligible",
+        "confidence": "plausible",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:58:00.872Z",
+            "discoveredName": "Auteco"
+          }
+        ]
+      },
+      {
+        "name": "Crystal",
+        "status": "likely_eligible",
+        "confidence": "plausible",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:58:00.872Z",
+            "discoveredName": "Crystal"
+          }
+        ]
+      },
+      {
+        "name": "Manuelita",
+        "status": "likely_eligible",
+        "confidence": "plausible",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:58:00.872Z",
+            "discoveredName": "Manuelita"
+          }
+        ]
+      },
+      {
+        "name": "Riopaila Castilla",
+        "status": "likely_eligible",
+        "confidence": "plausible",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:58:00.872Z",
+            "discoveredName": "Riopaila Castilla"
+          }
+        ]
+      },
+      {
+        "name": "Incauca",
+        "status": "likely_eligible",
+        "confidence": "plausible",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:58:00.872Z",
+            "discoveredName": "Incauca"
+          }
+        ]
+      },
+      {
+        "name": "Fabricato",
+        "status": "likely_eligible",
+        "confidence": "plausible",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:58:00.872Z",
+            "discoveredName": "Fabricato"
+          }
+        ]
+      },
+      {
+        "name": "Tecnoglass",
+        "domain": "tecnoglass.com",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:58:00.872Z",
+            "discoveredName": "Tecnoglass"
+          }
+        ]
+      },
+      {
+        "name": "Corona",
+        "status": "likely_eligible",
+        "confidence": "plausible",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:58:00.872Z",
+            "discoveredName": "Corona"
+          }
+        ]
+      },
+      {
+        "name": "Fanalca",
+        "status": "likely_eligible",
+        "confidence": "plausible",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:58:00.872Z",
+            "discoveredName": "Fanalca"
+          }
+        ]
+      },
+      {
+        "name": "WEG",
+        "domain": "weg.net",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "event_first:facility",
+            "origin": "event_first",
+            "provider": "brave",
+            "sourceUrl": "https://americaretail-malls.com/paises/brasil/weg-fortalece-su-expansion-en-colombia-con-nuevo-centro-en-bogota",
+            "discoveredAt": "2026-09-17T00:58:00.872Z",
+            "discoveredName": "WEG"
+          }
+        ]
+      },
+      {
+        "name": "Coca-Cola FEMSA Colombia",
+        "domain": "femsa.com",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "event_first:facility",
+            "origin": "event_first",
+            "provider": "brave",
+            "sourceUrl": "https://www.acis.org.co/blog/noticias-2/coca-cola-femsa-colombia-fortalece-su-operacion-logistica-en-tolima-con-la-reubicacion-de-su-centro-de-distribucion-en-ibague-6407",
+            "discoveredAt": "2026-09-17T00:58:00.872Z",
+            "discoveredName": "Coca-Cola FEMSA Colombia"
+          }
+        ]
+      },
+      {
+        "name": "Belcorp",
+        "domain": "belcorp.com",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "event_first:facility",
+            "origin": "event_first",
+            "provider": "tavily",
+            "sourceUrl": "https://www.youtube.com/watch?v=Bf4wc2xUXrk",
+            "discoveredAt": "2026-09-17T00:58:00.872Z",
+            "discoveredName": "Belcorp"
+          }
+        ]
+      }
+    ]
+  },
+  "delivered_accounts": [],
+  "research_audit": [
+    {
+      "risks": [],
+      "domain": "weg.net",
+      "company": "WEG",
+      "country": "Colombia",
+      "reasons": [
+        "opportunity_test_reject",
+        "hard_blocker_no_event",
+        "hard_blocker_no_material_event",
+        "aging_signal"
+      ],
+      "category": "DISCARD",
+      "fitScore": 0,
+      "qcStatus": "REVIEW_NEEDED",
+      "sourceUrl": "https://www.weg.net/institutional/US/en/news/result-and-investiments/weg-announces-the-inauguration-of-a-new-industrial-coatings-distribution-center-in-colombia",
+      "signalDate": "2026-05-07",
+      "signalType": null,
+      "nextQuestion": null,
+      "actionability": {
+        "fit_state": "limited",
+        "hold_reason": "INSUFFICIENT_COVERAGE",
+        "target_valid": true,
+        "timing_state": "limited",
+        "evidence_valid": false,
+        "final_decision": "hold",
+        "search_results": 0,
+        "research_coverage": "insufficient",
+        "independent_support": false,
+        "temporal_valid_events": 0,
+        "company_identity_valid": true,
+        "materiality_valid_events": 0,
+        "material_event_candidates": 0
+      },
+      "eventHintCount": 1,
+      "evidenceClaims": [],
+      "accountResearch": {
+        "domain": "weg.net",
+        "account": "WEG",
+        "version": "account-deep-research-v1",
+        "query_audit": [],
+        "provider_ops": [],
+        "results_seen": 0,
+        "dated_evidence": 0,
+        "provider_calls": 0,
+        "pages_extracted": 0,
+        "planned_queries": 0,
+        "claims_recovered": 0,
+        "executed_queries": 0,
+        "extraction_audit": [],
+        "early_stop_reason": "providers_unavailable",
+        "enrichment_failed": {
+          "reason": "provider_degraded",
+          "provider": "anthropic"
+        },
+        "evidence_accepted": 0,
+        "evidence_rejected": 0,
+        "provider_failures": 0,
+        "extraction_failures": 0,
+        "independent_domains": 0,
+        "corroborating_domains": 0,
+        "corroboration_attempted": false,
+        "counterevidence_checked": false,
+        "structured_extraction_calls": 0
+      },
+      "candidateOrigin": [
+        "EVENT_FIRST"
+      ],
+      "canonicalDecision": "hold",
+      "researchConfidence": 0
+    },
+    {
+      "risks": [],
+      "domain": "femsa.com",
+      "company": "Coca-Cola FEMSA Colombia",
+      "country": "Colombia",
+      "reasons": [
+        "opportunity_test_reject",
+        "hard_blocker_no_event",
+        "hard_blocker_no_material_event",
+        "hard_blocker_no_valid_date"
+      ],
+      "category": "DISCARD",
+      "fitScore": 0,
+      "qcStatus": "REVIEW_NEEDED",
+      "sourceUrl": "https://www.femsa.com/es/sala-de-prensa/comunicado/fundacion-femsa-y-coca-cola-femsa-colombia-celebran-el-dia-mundial-del-agua-entregando-agua-a-los-colombianos/",
+      "signalDate": null,
+      "signalType": null,
+      "nextQuestion": null,
+      "actionability": {
+        "fit_state": "limited",
+        "hold_reason": "INSUFFICIENT_COVERAGE",
+        "target_valid": true,
+        "timing_state": "limited",
+        "evidence_valid": false,
+        "final_decision": "hold",
+        "search_results": 0,
+        "research_coverage": "insufficient",
+        "independent_support": false,
+        "temporal_valid_events": 0,
+        "company_identity_valid": true,
+        "materiality_valid_events": 0,
+        "material_event_candidates": 0
+      },
+      "eventHintCount": 1,
+      "evidenceClaims": [],
+      "accountResearch": {
+        "domain": "femsa.com",
+        "account": "Coca-Cola FEMSA Colombia",
+        "version": "account-deep-research-v1",
+        "query_audit": [],
+        "provider_ops": [],
+        "results_seen": 0,
+        "dated_evidence": 0,
+        "provider_calls": 0,
+        "pages_extracted": 0,
+        "planned_queries": 0,
+        "claims_recovered": 0,
+        "executed_queries": 0,
+        "extraction_audit": [],
+        "early_stop_reason": "providers_unavailable",
+        "enrichment_failed": {
+          "reason": "provider_degraded",
+          "provider": "anthropic"
+        },
+        "evidence_accepted": 0,
+        "evidence_rejected": 0,
+        "provider_failures": 0,
+        "extraction_failures": 0,
+        "independent_domains": 0,
+        "corroborating_domains": 0,
+        "corroboration_attempted": false,
+        "counterevidence_checked": false,
+        "structured_extraction_calls": 0
+      },
+      "candidateOrigin": [
+        "EVENT_FIRST"
+      ],
+      "canonicalDecision": "hold",
+      "researchConfidence": 0
+    },
+    {
+      "risks": [],
+      "domain": "tecnoglass.com",
+      "company": "Tecnoglass",
+      "country": "Colombia",
+      "reasons": [
+        "opportunity_test_reject",
+        "hard_blocker_no_event",
+        "hard_blocker_no_material_event",
+        "hard_blocker_no_valid_date"
+      ],
+      "category": "DISCARD",
+      "fitScore": 0,
+      "qcStatus": "REVIEW_NEEDED",
+      "sourceUrl": "https://www.tecnoglass.com/company/",
+      "signalDate": null,
+      "signalType": null,
+      "nextQuestion": null,
+      "actionability": {
+        "fit_state": "limited",
+        "hold_reason": "INSUFFICIENT_COVERAGE",
+        "target_valid": true,
+        "timing_state": "limited",
+        "evidence_valid": false,
+        "final_decision": "hold",
+        "search_results": 12,
+        "research_coverage": "insufficient",
+        "independent_support": false,
+        "temporal_valid_events": 0,
+        "company_identity_valid": true,
+        "materiality_valid_events": 0,
+        "material_event_candidates": 0
+      },
+      "eventHintCount": 0,
+      "evidenceClaims": [],
+      "accountResearch": {
+        "domain": "tecnoglass.com",
+        "account": "Tecnoglass",
+        "version": "account-deep-research-v1",
+        "query_audit": [
+          {
+            "stage": "identity",
+            "results": 5,
+            "accepted": 3,
+            "provider": "brave",
+            "query_id": "rq_1kcsift"
+          },
+          {
+            "stage": "current_activity",
+            "results": 0,
+            "accepted": 0,
+            "provider": "brave",
+            "query_id": "rq_18yfrel"
+          },
+          {
+            "stage": "current_activity",
+            "results": 0,
+            "accepted": 0,
+            "provider": "tavily",
+            "query_id": "rq_18yfrel"
+          },
+          {
+            "stage": "current_activity",
+            "results": 2,
+            "accepted": 2,
+            "provider": "brave",
+            "query_id": "rq_1i6mrkr"
+          },
+          {
+            "stage": "current_activity",
+            "results": 0,
+            "accepted": 0,
+            "provider": "tavily",
+            "query_id": "rq_1i6mrkr"
+          },
+          {
+            "stage": "counterevidence",
+            "results": 5,
+            "accepted": 5,
+            "provider": "brave",
+            "query_id": "rq_1viwftx"
+          },
+          {
+            "stage": "counterevidence",
+            "results": 0,
+            "accepted": 0,
+            "provider": "tavily",
+            "query_id": "rq_1viwftx"
+          }
+        ],
+        "provider_ops": [
+          {
+            "ok": true,
+            "stage": "identity",
+            "results": 5,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 923
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 0,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 456
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 0,
+            "timeout": false,
+            "provider": "tavily",
+            "operation": "search",
+            "duration_ms": 9626
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 2,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 1135
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 1,
+            "timeout": false,
+            "provider": "full_text",
+            "operation": "full_text",
+            "duration_ms": 287
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 0,
+            "timeout": false,
+            "provider": "anthropic",
+            "operation": "llm",
+            "duration_ms": 1
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 1,
+            "timeout": false,
+            "provider": "full_text",
+            "operation": "full_text",
+            "duration_ms": 324
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 0,
+            "timeout": false,
+            "provider": "anthropic",
+            "operation": "llm",
+            "duration_ms": 1
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 0,
+            "timeout": false,
+            "provider": "tavily",
+            "operation": "search",
+            "duration_ms": 7448
+          },
+          {
+            "ok": true,
+            "stage": "counterevidence",
+            "results": 5,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 757
+          },
+          {
+            "ok": true,
+            "stage": "counterevidence",
+            "results": 0,
+            "timeout": false,
+            "provider": "tavily",
+            "operation": "search",
+            "duration_ms": 5742
+          }
+        ],
+        "results_seen": 12,
+        "dated_evidence": 9,
+        "provider_calls": 7,
+        "pages_extracted": 2,
+        "planned_queries": 4,
+        "claims_recovered": 2,
+        "executed_queries": 4,
+        "extraction_audit": [
+          {
+            "url": "https://www.tecnoglass.com/company/",
+            "stage": "current_activity",
+            "date_phrase": null,
+            "materiality": "high",
+            "signal_kind": "corporate_event",
+            "accepted_events": 0,
+            "evidence_excerpt": "\"> Tecnoglass - Company [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)](/) * [PRODUCTS](https://www.tecnoglass.com/products/) + [INSULATING GLASS](https://www.tecnoglass.com/products/insulating-glass/) + [LAMINATED GLASS](https://www.tecnoglass.com/products/laminated-glass/) + [MONOLITHIC GLASS](https://www.tecnoglass.com/products/monolithic-glass/) + [LOW-E GLASS](https://www.tecnoglass.com/products/low-e-glass/) + [TECNOBEND](https://www.tecnoglass.com/products/tecnobend/) + [RESOURCES](https://www.tecnoglass.com/resources/) * [PERFORMANCE](https://www.tecnoglass.com/performance/) * [PROJECTS](https://www.tecnoglass.com/projects/) * [INVESTORS](https://investors.tecnoglass.com/overview/default.aspx) * [COMPANY](https://www.tecnoglass.com/company/) * [NEWS](https://www.tecnoglass.com/news/) * [CONTACT](https://www.tecnoglass.com/contact/) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) [![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==)](https://www.tecnoglass.com/es/compania/) ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) [![](data:image/gif;base64,R0lG"
+          },
+          {
+            "url": "https://www.tecnoglass.com/news/tecnoglass-posts-record-q2-results-detailing-us-expansion-strategy-and-financial-performance/",
+            "stage": "current_activity",
+            "date_phrase": "December 15, 2025",
+            "materiality": "high",
+            "signal_kind": "editorial_content",
+            "accepted_events": 0,
+            "evidence_excerpt": "EALAAAAAABAAEAAAICTAEAOw==)](https://www.tecnoglass.com/news/tecnoglass-posts-record-q2-results-detailing-us-expansion-strategy-and-financial-performance/) [View all news](/news/) December 15, 2025 ## Tecnoglass Posts Record Q2 Results, Detailing US Expansion Strategy and Financial Performance ![](data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==) August 8th, 2025 [Tecnoglass, Inc.](https://www.tecnoglass.com/) (NYSE: TGLS), a prominent manufacturer of architectural glass and aluminum products, has reported record financial results for the second quarter of 2025. The company announced revenues of $255.5 million, a 16.3% increase year-over-year, driven by organic growth in its single-family and multifamily residential business segments. The results come as the company navigates a complex economic environment and continues its strategic expansion in the United States, including the recent acquisition of [Continental Glass Systems](https://www.cgsfl.com/). ### Detailed Financial Performance Analysis Tecnoglass’ second-quarter financial statements indicate a company in a strong financial position. A closer examination of the results provides insights for the in"
+          }
+        ],
+        "validated_events": [],
+        "early_stop_reason": "no_material_event",
+        "enrichment_failed": {
+          "reason": "provider_degraded",
+          "provider": "anthropic"
+        },
+        "evidence_accepted": 9,
+        "evidence_rejected": 3,
+        "provider_failures": 0,
+        "account_elapsed_ms": 26725,
+        "event_hints_fetched": 0,
+        "extraction_failures": 0,
+        "independent_domains": 1,
+        "event_hints_received": 0,
+        "corroborating_domains": 0,
+        "corroborating_sources": [],
+        "event_hints_validated": 0,
+        "corroboration_attempted": false,
+        "counterevidence_checked": true,
+        "event_geography_rejected": 0,
+        "structured_extraction_calls": 2,
+        "counterevidence_material_found": false
+      },
+      "candidateOrigin": [
+        "ACCOUNT_FIRST"
+      ],
+      "canonicalDecision": "hold",
+      "researchConfidence": 0
+    }
+  ],
+  "monitor_run_id": null,
+  "timings": {
+    "stage_a_ms": 15095,
+    "confirmation_ms": 869,
+    "start_request_ms": 778,
+    "background_completion_ms": 212804,
+    "total_ms": 233014
+  },
+  "usage_delta": {
+    "anthropic": {
+      "calls": 9,
+      "errors": 2,
+      "input_tokens": 15464,
+      "output_tokens": 6319,
+      "calculated_cost_usd": 0.141177,
+      "pricing_source": "Anthropic Sonnet 4.6 public list price, verified 2026-07-22"
+    },
+    "brave": {
+      "calls": 28,
+      "errors": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "calculated_cost_usd": 0,
+      "pricing_source": null
+    },
+    "serper": {
+      "calls": 4,
+      "errors": 4,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "calculated_cost_usd": 0,
+      "pricing_source": null
+    },
+    "tavily": {
+      "calls": 34,
+      "errors": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "calculated_cost_usd": 0,
+      "pricing_source": null
+    }
+  },
+  "checks": [
+    {
+      "name": "real authenticated owners created",
+      "ok": true
+    },
+    {
+      "name": "Stage A reachable and confirmable",
+      "ok": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "name": "explicit confirmation persisted through customer API",
+      "ok": true
+    },
+    {
+      "name": "same context label persists independently across tenants",
+      "ok": true
+    },
+    {
+      "name": "productive Intelligence run accepted before Research",
+      "ok": true,
+      "detail": "HTTP 202"
+    },
+    {
+      "name": "bounded background processor completed durably",
+      "ok": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "name": "owner reloads durable result",
+      "ok": true
+    },
+    {
+      "name": "other tenant cannot load result",
+      "ok": true
+    },
+    {
+      "name": "Lead Hunter run reference persisted",
+      "ok": true
+    },
+    {
+      "name": "Candidate Universe durable and owner-scoped",
+      "ok": true,
+      "detail": "n=18"
+    },
+    {
+      "name": "canonical Cases generated",
+      "ok": true
+    },
+    {
+      "name": "initial accepted Case set entered Account Memory",
+      "ok": true,
+      "detail": "snapshots=0, delivered=0"
+    },
+    {
+      "name": "Monitor correctly unavailable without delivered accounts",
+      "ok": true
+    },
+    {
+      "name": "completed retry is idempotent and avoids new Research",
+      "ok": true
+    },
+    {
+      "name": "same labels cannot collide cross-tenant",
+      "ok": true
+    }
+  ]
+}

@@ -97,9 +97,12 @@ try {
   check("same context label persists independently across tenants", Boolean(confirmedB && [200, 201].includes(confirmedB.status)));
 
   t = Date.now();
+  const acceptancePlan = (["sample", "starter", "standard", "pro"].includes(process.env.LEADLENS_ACCEPTANCE_PLAN ?? "") ? process.env.LEADLENS_ACCEPTANCE_PLAN : "sample") as "sample" | "starter" | "standard" | "pro";
+  const planDeliveryCap = { sample: 2, starter: 6, standard: 12, pro: 18 }[acceptancePlan];
+  const deliveryLimit = Math.max(1, Math.min(planDeliveryCap, Number(process.env.LEADLENS_ACCEPTANCE_DELIVERY_LIMIT ?? planDeliveryCap)));
   const started = await startRun(req("/api/customer/intelligence-runs", tokenA, {
-    context_id: contextId, version: confirmedBody.context.version, plan: "sample",
-    idempotency_key: `accept_${stamp}`, delivery_limit: 2,
+    context_id: contextId, version: confirmedBody.context.version, plan: acceptancePlan,
+    idempotency_key: `accept_${stamp}`, delivery_limit: deliveryLimit,
   }));
   timings.start_request_ms = Date.now() - t;
   const startedBody = await started.json() as { run_id?: string; status?: string; lead_hunter_run_id?: string; client_key?: string; error?: string };
@@ -150,8 +153,8 @@ try {
   }
 
   const retry = await startRun(req("/api/customer/intelligence-runs", tokenA, {
-    context_id: contextId, version: confirmedBody.context.version, plan: "sample",
-    idempotency_key: `accept_${stamp}`, delivery_limit: 2,
+    context_id: contextId, version: confirmedBody.context.version, plan: acceptancePlan,
+    idempotency_key: `accept_${stamp}`, delivery_limit: deliveryLimit,
   }));
   const retryBody = await retry.json() as { run_id?: string; reused?: boolean };
   check("completed retry is idempotent and avoids new Research", retryBody.run_id === runId && retryBody.reused === true);

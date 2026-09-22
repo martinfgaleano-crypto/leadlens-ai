@@ -22,6 +22,11 @@ const CONCRETE_FACILITY_COMMITMENT = /\b(?:breaks?|broke) ground on (?:a |an |th
 // quantified investment or operating network. The asset/amount requirement is
 // deliberate: generic "announced expansion" language remains non-triggering.
 const CONCRETE_MATERIAL_ANNOUNCEMENT = /\bannounced (?:plans to expand[^.]{0,180}(?:new |additional |\$\s?[\d.,]+|investment)|(?:a |an |the )?(?:new |major )?(?:manufacturing )?(?:plant|facility|factory|warehouse|distribution cent(?:er|re)))\b|\bincreased (?:its )?planned [^.]{0,100}investment to \$\s?[\d.,]+\s*(?:million|billion|m|bn)?\b|\blaunch(?:ed|es) [^.]{0,100}(?:supply chain|logistics) services\b[^.]{0,180}\bopen(?:ed|ing) (?:its |the )?[^.]{0,80}\bnetwork\b|\bis expanding (?:its )?(?:[a-z-]+ ){0,3}operations with (?:a |an |the )?(?:new |additional )?(?:[\d,]+-square-foot |[a-z-]+ ){0,3}(?:plant|facility|factory|warehouse|distribution cent(?:er|re))\b|\bp(?:u|ú)so(?:ieron)? en operaci(?:o|ó)n (?:una |un )?nuev[ao] (?:planta|unidad|centro)\b|\bconstruyeron? (?:dos|tres|cuatro|\d+) (?:nuevas? )?(?:l[ií]neas|instalaciones|plantas)[^.]{0,120}\b(?:mw|capacidad|operaci[oó]n)\b/i;
+// A named operating-area expansion is concrete only when the same leading
+// claim also commits a physical facility. This captures constructions such as
+// "expands packaging operations ... new 100,000-square-foot facility" without
+// turning generic "expands operations" marketing copy into an event.
+const FACILITY_OPERATIONS_EXPANSION = /\bexpand(?:s|ed|ing) (?:its )?(?:[a-z-]+ ){0,3}operations\b[\s\S]{0,700}\b(?:new |cutting-edge |state-of-the-art |[\d,]+-square-foot )+facilit(?:y|ies)\b|\bnew (?:[\d,]+-square-foot )?facilit(?:y|ies)\s+(?:launch(?:es|ed)|open(?:s|ed)|begins? operations)\b/i;
 // A dated, official capital commitment is itself a strategic decision even
 // when construction/capacity comes later. Generic hopes or unquantified plans
 // remain non-triggering forecasts.
@@ -59,10 +64,11 @@ export function classifySignalKind(titleAndContent: string): { kind: SignalKind;
   const committed = hay.match(COMMITTED_EXPANSION);
   const facilityCommitment = hay.match(CONCRETE_FACILITY_COMMITMENT);
   const concreteAnnouncement = hay.match(CONCRETE_MATERIAL_ANNOUNCEMENT);
-  const c = hay.match(CHANGE) ?? hay.match(CHANGE_DESCRIPTIVE_OPEN) ?? hay.match(NETWORK_EXPANSION) ?? committed ?? facilityCommitment ?? concreteAnnouncement;
+  const facilityOperationsExpansion = hay.match(FACILITY_OPERATIONS_EXPANSION);
+  const c = hay.match(CHANGE) ?? hay.match(CHANGE_DESCRIPTIVE_OPEN) ?? hay.match(NETWORK_EXPANSION) ?? committed ?? facilityCommitment ?? concreteAnnouncement ?? facilityOperationsExpansion;
   if (c) {
     // Sub-classify from the full text (the matched fragment alone can be ambiguous).
-    const kind: SignalKind = committed || facilityCommitment || concreteAnnouncement || /(?:adquiri[oó]|adquisici[oó]n|compr[oó] una empresa|asumi[oó] el (?:100|control)|cambio de control|fusi[oó]n|acquired|merger)/i.test(hay) ? "strategic_decision"
+    const kind: SignalKind = committed || facilityCommitment || concreteAnnouncement || facilityOperationsExpansion || /(?:adquiri[oó]|adquisici[oó]n|compr[oó] una empresa|asumi[oó] el (?:100|control)|cambio de control|fusi[oó]n|acquired|merger)/i.test(hay) ? "strategic_decision"
       : /(?:inaugur[oó]|abri[oó] (?:una|un|su)|construy[oó]|amplí[oó]|moderniz[oó]|implement[oó]|inici[oó]|opened a new|entered the market|entr[oó] a)/i.test(hay) ? "operational_change"
       : "corporate_event";
     return { kind, matched: c[0], can_trigger: true };

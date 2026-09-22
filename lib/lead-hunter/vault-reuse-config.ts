@@ -1,0 +1,92 @@
+// ─── Hybrid Candidate Universe — Vault-reuse rollout + thin-universe policy ─────
+//
+// Governs WHEN the neutral Vault identity-reuse lane (lib/lead-hunter/vault-
+// identity-reuse.ts) contributes to a productive Candidate Universe. Two orthogonal
+// gates, both must pass:
+//
+//   1. ROLLOUT (reversible feature flag, env-driven):
+//        OFF               — default; reuse never runs (original behavior, no DB read).
+//        CANARY            — reuse runs ONLY for explicitly authorized context ids.
+//        ELIGIBLE_FALLBACK — reuse runs for any context (post-acceptance).
+//
+//   2. THIN-UNIVERSE SUFFICIENCY (per-run, measured pre-Research):
+//        reuse is considered ONLY when fresh Discovery did not already yield enough
+//        canonical, domain-verified, geography-matched operating identities for the
+//        run's tier. It is NOT triggered by low raw result counts, a missing event,
+//        or an all-Hold Decision distribution — only by insufficient candidate
+//        coverage (§10).
+//
+// The sufficiency signal is the strongest pre-Research qualification available at the
+// runner boundary: DISTINCT canonical (domain) identities whose country matches the
+// customer's requested geography. It is candidate COVERAGE, never target-validity,
+// Fit, Timing or Decision — those are established downstream by Research (§11).
+
+import type { DiscoveryPlan, DiscoveryRunOutput } from "./candidate-universe";
+import { geographyMatches } from "./vault-identity-reuse";
+
+export type VaultReuseMode = "OFF" | "CANARY" | "ELIGIBLE_FALLBACK";
+
+export interface VaultReuseConfig {
+  mode: VaultReuseMode;
+  /** Context ids allowed to run reuse while mode = CANARY. Ignored otherwise. */
+  canaryContextIds: Set<string>;
+}
+
+/** Tier-aware coverage sufficiency thresholds (distinct domain-verified, geography-
+ * matched fresh identities at/above which fresh Discovery is considered adequate and
+ * reuse stays OFF). Tier is derived from the technical discovery budget, mirroring
+ * defaultDiscoveryRunner. These are coverage floors, NOT commercial account caps. */
+export const FRESH_COVERAGE_SUFFICIENCY = { preview: 6, brief: 8, intelligence: 10 } as const;
+
+function tierFromBudget(plan: DiscoveryPlan): keyof typeof FRESH_COVERAGE_SUFFICIENCY {
+  const calls = plan.budget.maxProviderCalls;
+  return calls <= 24 ? "preview" : calls <= 48 ? "brief" : "intelligence";
+}
+
+export function resolveVaultReuseConfig(env: NodeJS.ProcessEnv = process.env): VaultReuseConfig {
+  const raw = (env.VAULT_REUSE_MODE ?? "OFF").trim().toUpperCase();
+  const mode: VaultReuseMode =
+    raw === "ELIGIBLE_FALLBACK" ? "ELIGIBLE_FALLBACK" : raw === "CANARY" ? "CANARY" : "OFF";
+  const canaryContextIds = new Set(
+    (env.VAULT_REUSE_CANARY_CONTEXTS ?? "")
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean),
+  );
+  return { mode, canaryContextIds };
+}
+
+/** Rollout gate only (does not consider sufficiency). */
+export function vaultReuseEnabledForPlan(config: VaultReuseConfig, plan: DiscoveryPlan): boolean {
+  if (config.mode === "ELIGIBLE_FALLBACK") return true;
+  if (config.mode === "CANARY") return config.canaryContextIds.has(plan.contextRef.contextId);
+  return false;
+}
+
+/** Distinct canonical (domain) fresh identities whose country matches the requested
+ * geography. Pre-Research candidate COVERAGE — not target-validity. Event-first and
+ * account-first fresh orgs both count; reuse/memory origins are excluded so the
+ * measure reflects only what FRESH Discovery produced. */
+export function freshDomainVerifiedCoverage(out: DiscoveryRunOutput, plan: DiscoveryPlan): number {
+  const seen = new Set<string>();
+  for (const o of out.orgs) {
+    if (o.origin.startsWith("vault") || o.origin.startsWith("context_memory")) continue;
+    if (!o.domain) continue;
+    if (plan.geographies.length > 0 && !geographyMatches({ name: o.name, domain: o.domain, country: o.country ?? null, region: null }, plan.geographies)) continue;
+    seen.add(o.domain.trim().toLowerCase());
+  }
+  return seen.size;
+}
+
+export function freshCoverageIsSufficient(out: DiscoveryRunOutput, plan: DiscoveryPlan): boolean {
+  return freshDomainVerifiedCoverage(out, plan) >= FRESH_COVERAGE_SUFFICIENCY[tierFromBudget(plan)];
+}
+
+/** Combined gate for withVaultReuse: reuse only when the rollout allows this plan AND
+ * fresh coverage is insufficient. Returns false (→ no Vault read, original behavior)
+ * whenever either condition fails. */
+export function makeVaultReuseGate(
+  config: VaultReuseConfig,
+): (out: DiscoveryRunOutput, plan: DiscoveryPlan) => boolean {
+  return (out, plan) => vaultReuseEnabledForPlan(config, plan) && !freshCoverageIsSufficient(out, plan);
+}

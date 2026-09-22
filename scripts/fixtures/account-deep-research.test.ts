@@ -9,17 +9,21 @@ import type { LeadCandidate, LeadSearchCriteria } from "@/types";
 let passed = 0;
 const test = (name: string, value: boolean) => { assert.equal(value, true, name); passed++; console.log(`✅ ${name}`); };
 const now = "2026-08-27T12:00:00.000Z";
+const observedQueries: Array<{ query: string; query_type?: string }> = [];
 const provider: SearchProvider = {
   id: "fixture",
   capabilities: () => ({ search: true, extract: false, regions: "global", supports_dates: true }),
   health: async () => ({ provider: "fixture", status: "available", reason: null, credentials_present: true }),
-  search: async (q) => ({
+  search: async (q) => {
+    observedQueries.push({ query: q.query, query_type: q.query_type });
+    return ({
     ok: true, provider: "fixture", query: q, latency_ms: 1, cost_estimate_usd: 0, error: null,
     results: q.query.includes("cierre") ? [] : [
       { url: "https://acme.com/news/new-plant", canonical_url: "https://acme.com/news/new-plant", title: "Acme Manufacturing anuncia apertura de planta", snippet: "Acme abrió la planta en agosto de 2026.", published_date: "2026-08-10", retrieved_at: now, source_type: "official", provider: "fixture", rank: 1, locale: "es" },
       { url: "https://industry.example/acme-plant", canonical_url: "https://industry.example/acme-plant", title: "Acme Manufacturing confirma expansión de planta", snippet: "Acme Manufacturing amplió capacidad en agosto de 2026.", published_date: "2026-08-11", retrieved_at: now, source_type: "trade_publication", provider: "fixture", rank: 2, locale: "es" },
     ],
-  }),
+    });
+  },
 };
 const candidate: LeadCandidate = { id: "acme", company: "Acme Manufacturing", domain: "acme.com", country: "United States", industry: "packaging manufacturing", source: "public_signal", confidence_score: .9 };
 const criteria: LeadSearchCriteria = { offer_summary: "industrial automation and plant operations software", value_proposition: "automate plant operations", target_industries: ["packaging manufacturing"], target_company_size: ["mid-market"], target_job_titles: [], target_geography: ["United States"], excluded_industries: [], buying_signals: ["new plant"], disqualification_criteria: [], tone: "consultative", plan: "sample", lead_count: 2, output_language: "en" };
@@ -30,6 +34,7 @@ const result = await deepenAccountResearch(candidate, criteria, {
   extract: async (url) => ({ ok: true, content: `${url} Acme opened a new production plant in the United States in August 2026 and increased capacity.` }),
 });
 test("account plan executes company-specific queries", result.telemetry.executed_queries >= 4);
+test("official current-activity retrieval uses the corporate web index while counterevidence remains news-oriented", observedQueries.some((q) => /opened OR opens/.test(q.query) && q.query_type === "company_specific") && observedQueries.some((q) => q.query.includes("cierre") && q.query_type === "news"));
 test("counterevidence stage is mandatory before early stop", result.telemetry.counterevidence_checked);
 test("official and independent evidence are retained", result.telemetry.independent_domains === 2);
 test("dated evidence is measured", result.telemetry.dated_evidence >= 2);
@@ -97,6 +102,8 @@ const activeExpansion = await deepenAccountResearch(candidate, criteria, {
 test("dated active expansion with a concrete new facility is a material event", activeExpansion.validated_events.length === 1 && activeExpansion.eventDate === "2026-07-16");
 test("qualified operations phrase does not fall through to About us reference", classifySignalKind("Quad is expanding its packaging operations with a new manufacturing facility. About us").can_trigger);
 test("financial results do not consume event extraction priority", !isEventExtractionCandidate("Quad reports third quarter and year-to-date 2025 results", "expanded adjusted EBITDA") && isEventExtractionCandidate("Quad expands national packaging footprint", "New Salt Lake City facility strengthens packaging operations"));
+test("trading updates and generic expansion do not consume scarce event extraction slots", !isEventExtractionCandidate("Q1 2026 Trading Update", "Recent capacity expansions supported volumes") && !isEventExtractionCandidate("John Deere Expands Self-Repair Solutions", "New tools help customers repair equipment"));
+test("concrete operating assets remain eligible for extraction", isEventExtractionCandidate("Mondi opens new paper bags plant in Pittsburgh", "Highly automated packaging facility supports ecommerce demand") && isEventExtractionCandidate("PDC Investments", "John Deere plans a new parts distribution center"));
 test("static identity page does not consume event extraction priority", !isEventExtractionCandidate("About Acme Manufacturing", "Company profile and locations"));
 test("quantified capacity commitment is a strategic decision", classifySignalKind("Approximately $220 million investment will add new production capacity and create more than 100 jobs.").kind === "strategic_decision");
 test("announced quantified expansion plan is a strategic decision", classifySignalKind("Conagra announced plans to expand its existing manufacturing facility through a multi-year investment of approximately $220 million.").kind === "strategic_decision");

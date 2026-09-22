@@ -1,0 +1,2202 @@
+{
+  "acceptance": "customer-intelligence-e2e-v1",
+  "ran_at": "2026-09-17T00:24:05.407Z",
+  "soak_id": null,
+  "soak_phase": null,
+  "synthetic_context": "Vendemos desarrollo de entrada a mercado y alianzas de canal para marcas premium de bienestar y bienes empacados. En Colombia, Brasil, Chile, Perú y Argentina buscamos retailers, grupos de hospitalidad y distribuidores con surtido de terceros o ruta de proveedores verificada, donde un cambio reciente de canal o mecanismo de compra haga oportuna la validación. Excluir redes que reclutan distribuidores, operadores solo de marca propia, directorios, consumidores e intención de compra no sustentada.",
+  "confirmed_context_diagnostic": {
+    "organization_types": [
+      "Retailers con surtido de terceros en categorías de bienestar y bienes empacados",
+      "Grupos de hospitalidad con compra a proveedores verificados",
+      "Distribuidores regionales con portafolio multimarca",
+      "Cadenas especializadas en bienestar y productos premium"
+    ],
+    "industries": [
+      "Retail de bienestar y bienes empacados",
+      "Hospitalidad (hoteles, resorts, spas)",
+      "Distribución mayorista de consumo premium"
+    ],
+    "geographies": [
+      "Colombia",
+      "Brasil",
+      "Chile",
+      "Perú",
+      "Argentina"
+    ],
+    "signal_families": [
+      "operational_transformation",
+      "expansion",
+      "new_market",
+      "partnership",
+      "technology_change"
+    ],
+    "definition_status": "defined"
+  },
+  "run_id": "intel_e09d0059fea1d256affdc8e9a9455266",
+  "lead_hunter_run_id": "lh_e2e_context_1789604411568_v1_2026-09-17_3d02def5-12f7-4718-abbe-02c65336339d_intel_e09d0",
+  "candidate_universe": {
+    "total": 15,
+    "coverage": {
+      "gaps": [],
+      "eligible": 7,
+      "excluded": 0,
+      "eventFirst": {
+        "queries": 4,
+        "rejected": {
+          "no_subject": 20,
+          "identity_unresolved": 3,
+          "identity_domain_mismatch": 1
+        },
+        "raw_hints": 24,
+        "result_audit": [
+          {
+            "url": "https://www.cercatechnology.com/automatizacion-logistica-colombia-2026",
+            "type": "other",
+            "title": "Automatización logística en Colombia 2026",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://startupslatam.com/ecoterra-levanta-us1-millon-con-capibara-para-expandirse-en-colombia-y-lanza-la-primera-leche-organica-producida-en-chile",
+            "type": "other",
+            "title": "Ecoterra levanta US$1 millón con Capibara para expandirse en Colombia y lanza la primera leche orgánica producida en Chile - Startups Latam",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": [
+              "Marcos Salles"
+            ]
+          },
+          {
+            "url": "https://rocketreach.co/compartamos-con-colombia-profile_b5dce07cf42e4bf7",
+            "type": "other",
+            "title": "Compartamos con Colombia Information",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.kraken.com/es/features/dollar-cost-averaging",
+            "type": "company_direct",
+            "title": "Kraken DCA | Inversión automática en criptomonedas con coste medio de adquisición",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://proveedores.com/empresa-de-servicios_t/proveedores-de-servicios",
+            "type": "other",
+            "title": "Empresa de servicios de Servicios",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.kraken.com/es-ar/prices/ai16z",
+            "type": "other",
+            "title": "Precio de ai16z hoy - Tendencias en directo y gráficos de precios de AI16Z",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://rocketreach.co/central-cervecera-de-colombia-profile_b451addafc773409",
+            "type": "other",
+            "title": "Central Cervecera de Colombia Information",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://rocketreach.co/compartamos-con-colombia-profile_b5dce07cf42e4bf7",
+            "type": "other",
+            "title": "Compartamos con Colombia Information",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://leibinger.eu/en/liquid-filling-machine/can-filling-machine/canning-machine-multima-lc",
+            "type": "other",
+            "title": "Canning Machine Multima LC – High Precision made in Germany",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://finance.yahoo.com/news/mexicana-herdez-acuerda-compra-negocio-local-helados-nestl%C3%A9-165535416--finance.html",
+            "type": "other",
+            "title": "Mexicana Herdez acuerda compra de negocio local de helados de Nestlé",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://lexlatin.com/noticias/solvento-prestamo-bbva-spark",
+            "type": "company_direct",
+            "title": "LexLatin | Solvento ampliará capacidades de financiación con préstamo de BBVA Spark",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://proveedores.com/empresa-de-servicios_t/proveedores-de-servicios",
+            "type": "other",
+            "title": "Empresa de servicios de Servicios",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.eltiempo.com/mas-contenido/scotiagbs-colombia-busca-el-talento-de-mas-de-100-personas-para-ampliar-sus-operaciones-3420054",
+            "type": "news_article",
+            "title": "ScotiaGBS Colombia busca el talento de más de 100 personas para ampliar sus operaciones",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://en.wikipedia.org/wiki/Colombia",
+            "type": "other",
+            "title": "Colombia - Wikipedia",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.opengovpartnership.org/members/colombia",
+            "type": "other",
+            "title": "Colombia",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://ustr.gov/trade-agreements/free-trade-agreements/colombia-tpa",
+            "type": "government",
+            "title": "United States- Colombia Trade Promotion Agreement",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.reddit.com/r/Colombia",
+            "type": "other",
+            "title": "r/Colombia",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://colombia.unmissions.org/en",
+            "type": "other",
+            "title": "Home | Colombia",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://es-us.noticias.yahoo.com/importante-almac%C3%A9n-cadena-acelera-expansi%C3%B3n-012000532.html",
+            "type": "other",
+            "title": "Importante almacén de cadena acelera su expansión en Colombia y proyecta nuevas tiendas en 2026 - Yahoo Noticias",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": [
+              "Importante almacén de cadena"
+            ]
+          },
+          {
+            "url": "https://www.valoraanalitik.com/grupo-exito-16-nuevas-tiendas-2026",
+            "type": "news_article",
+            "title": "Grupo Éxito abrirá 16 nuevas tiendas en Colombia en 2026",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": [
+              "Grupo Éxito"
+            ]
+          },
+          {
+            "url": "https://www.kantar.com/latin-america/inspiracion/consumidor/2025/cadenas-regionales-de-supermercado-siguen-consolidandose-en-colombia",
+            "type": "other",
+            "title": "Tendencias Retail 2025: Cadenas regionales de supermercado siguen consolidándose en Colombia",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://hmsintelligence.co/colombia-un-entorno-empresarial-en-expansion",
+            "type": "other",
+            "title": "Colombia: un entorno empresarial en expansión - HMS",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://proveedores.com/empresa-de-servicios_t/proveedores-de-servicios",
+            "type": "other",
+            "title": "Empresa de servicios de Servicios",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": []
+          },
+          {
+            "url": "https://www.kraken.com/es/learn/crypto-liquidity-pool",
+            "type": "other",
+            "title": "What is a liquidity pool and how to use one?",
+            "recent": true,
+            "provider": "tavily",
+            "subjects": [
+              "Image 1 Individuals Businesses VIP Affiliates Markets About Search / Log in"
+            ]
+          }
+        ],
+        "result_types": {
+          "other": 19,
+          "government": 1,
+          "news_article": 2,
+          "company_direct": 2
+        },
+        "target_valid": 0,
+        "unique_hints": 4,
+        "result_sample": [
+          {
+            "url": "https://www.cercatechnology.com/automatizacion-logistica-colombia-2026",
+            "query": "\"inversion en automatizacion\" empresa Colombia (2026 OR 2025) (\"Retailers con surtido de terceros en categorías \" OR \"Grupos de hospitalidad con compra a proveedores \" OR \"Distribuidores regionales con portafolio multima\")",
+            "title": "Automatización logística en Colombia 2026",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://startupslatam.com/ecoterra-levanta-us1-millon-con-capibara-para-expandirse-en-colombia-y-lanza-la-primera-leche-organica-producida-en-chile",
+            "query": "\"inversion en automatizacion\" empresa Colombia (2026 OR 2025) (\"Retailers con surtido de terceros en categorías \" OR \"Grupos de hospitalidad con compra a proveedores \" OR \"Distribuidores regionales con portafolio multima\")",
+            "title": "Ecoterra levanta US$1 millón con Capibara para expandirse en Colombia y lanza la primera leche orgánica producida en Chile - Startups Latam",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://rocketreach.co/compartamos-con-colombia-profile_b5dce07cf42e4bf7",
+            "query": "\"inversion en automatizacion\" empresa Colombia (2026 OR 2025) (\"Retailers con surtido de terceros en categorías \" OR \"Grupos de hospitalidad con compra a proveedores \" OR \"Distribuidores regionales con portafolio multima\")",
+            "title": "Compartamos con Colombia Information",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://rocketreach.co/central-cervecera-de-colombia-profile_b451addafc773409",
+            "query": "\"transformacion operativa\" empresa Colombia (2026 OR 2025) (\"Retailers con surtido de terceros en categorías \" OR \"Grupos de hospitalidad con compra a proveedores \" OR \"Distribuidores regionales con portafolio multima\")",
+            "title": "Central Cervecera de Colombia Information",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://rocketreach.co/compartamos-con-colombia-profile_b5dce07cf42e4bf7",
+            "query": "\"transformacion operativa\" empresa Colombia (2026 OR 2025) (\"Retailers con surtido de terceros en categorías \" OR \"Grupos de hospitalidad con compra a proveedores \" OR \"Distribuidores regionales con portafolio multima\")",
+            "title": "Compartamos con Colombia Information",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://leibinger.eu/en/liquid-filling-machine/can-filling-machine/canning-machine-multima-lc",
+            "query": "\"transformacion operativa\" empresa Colombia (2026 OR 2025) (\"Retailers con surtido de terceros en categorías \" OR \"Grupos de hospitalidad con compra a proveedores \" OR \"Distribuidores regionales con portafolio multima\")",
+            "title": "Canning Machine Multima LC – High Precision made in Germany",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.eltiempo.com/mas-contenido/scotiagbs-colombia-busca-el-talento-de-mas-de-100-personas-para-ampliar-sus-operaciones-3420054",
+            "query": "\"expande operaciones\" empresa Colombia (2026 OR 2025) (\"Retailers con surtido de terceros en categorías \" OR \"Grupos de hospitalidad con compra a proveedores \" OR \"Distribuidores regionales con portafolio multima\")",
+            "title": "ScotiaGBS Colombia busca el talento de más de 100 personas para ampliar sus operaciones",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://en.wikipedia.org/wiki/Colombia",
+            "query": "\"expande operaciones\" empresa Colombia (2026 OR 2025) (\"Retailers con surtido de terceros en categorías \" OR \"Grupos de hospitalidad con compra a proveedores \" OR \"Distribuidores regionales con portafolio multima\")",
+            "title": "Colombia - Wikipedia",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.opengovpartnership.org/members/colombia",
+            "query": "\"expande operaciones\" empresa Colombia (2026 OR 2025) (\"Retailers con surtido de terceros en categorías \" OR \"Grupos de hospitalidad con compra a proveedores \" OR \"Distribuidores regionales con portafolio multima\")",
+            "title": "Colombia",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://es-us.noticias.yahoo.com/importante-almac%C3%A9n-cadena-acelera-expansi%C3%B3n-012000532.html",
+            "query": "\"expansion regional\" empresa Colombia (2026 OR 2025) (\"Retailers con surtido de terceros en categorías \" OR \"Grupos de hospitalidad con compra a proveedores \" OR \"Distribuidores regionales con portafolio multima\")",
+            "title": "Importante almacén de cadena acelera su expansión en Colombia y proyecta nuevas tiendas en 2026 - Yahoo Noticias",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.valoraanalitik.com/grupo-exito-16-nuevas-tiendas-2026",
+            "query": "\"expansion regional\" empresa Colombia (2026 OR 2025) (\"Retailers con surtido de terceros en categorías \" OR \"Grupos de hospitalidad con compra a proveedores \" OR \"Distribuidores regionales con portafolio multima\")",
+            "title": "Grupo Éxito abrirá 16 nuevas tiendas en Colombia en 2026",
+            "provider": "tavily",
+            "published_date": null
+          },
+          {
+            "url": "https://www.kantar.com/latin-america/inspiracion/consumidor/2025/cadenas-regionales-de-supermercado-siguen-consolidandose-en-colombia",
+            "query": "\"expansion regional\" empresa Colombia (2026 OR 2025) (\"Retailers con surtido de terceros en categorías \" OR \"Grupos de hospitalidad con compra a proveedores \" OR \"Distribuidores regionales con portafolio multima\")",
+            "title": "Tendencias Retail 2025: Cadenas regionales de supermercado siguen consolidándose en Colombia",
+            "provider": "tavily",
+            "published_date": null
+          }
+        ],
+        "provider_calls": {
+          "brave": 5,
+          "serper": 5,
+          "tavily": 6
+        },
+        "company_mentions": 4,
+        "domains_resolved": 0,
+        "provider_failures": {
+          "serper": "HTTP 400: {\"message\":\"Not enough credits\",\"statusCode\":400}"
+        },
+        "geography_resolved": 0,
+        "subjects_extracted": 4,
+        "canonical_companies": 0
+      },
+      "routeYield": [
+        {
+          "route": "industry_category",
+          "queries": 2,
+          "resultPages": 13,
+          "groundedNames": 2,
+          "acceptedCompanies": 0
+        },
+        {
+          "route": "geo_category",
+          "queries": 1,
+          "resultPages": 6,
+          "groundedNames": 0,
+          "acceptedCompanies": 0
+        },
+        {
+          "route": "source_ecosystem",
+          "queries": 2,
+          "resultPages": 14,
+          "groundedNames": 15,
+          "acceptedCompanies": 2
+        }
+      ],
+      "duplicateRate": 0,
+      "operatingMode": "full_discovery",
+      "likelyEligible": 8,
+      "freshCandidates": 15,
+      "needsValidation": 0,
+      "providersFailed": [],
+      "routesAttempted": 3,
+      "candidatesReused": 0,
+      "candidatesUnique": 15,
+      "identityAmbiguous": 0,
+      "stableCorePercent": 0,
+      "providersAvailable": [
+        "brave",
+        "tavily"
+      ],
+      "candidatesDiscovered": 15,
+      "priorCandidatesConsidered": 0
+    },
+    "companies": [
+      {
+        "name": "Koba Colombia",
+        "domain": "koba-ti.com",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "source_ecosystem",
+            "origin": "dynamic_enumeration",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:20:30.562Z",
+            "discoveredName": "Koba Colombia"
+          }
+        ]
+      },
+      {
+        "name": "Grupo Exito",
+        "domain": "grupoexito.com.co",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "source_ecosystem",
+            "origin": "dynamic_enumeration",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:20:30.562Z",
+            "discoveredName": "Grupo Exito"
+          }
+        ]
+      },
+      {
+        "name": "Nalsani",
+        "status": "likely_eligible",
+        "confidence": "plausible",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:20:30.562Z",
+            "discoveredName": "Nalsani"
+          }
+        ]
+      },
+      {
+        "name": "Alpina",
+        "domain": "alpina.com",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:20:30.562Z",
+            "discoveredName": "Alpina"
+          }
+        ]
+      },
+      {
+        "name": "Colombina",
+        "domain": "colombina.com",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:20:30.562Z",
+            "discoveredName": "Colombina"
+          }
+        ]
+      },
+      {
+        "name": "Cementos Argos",
+        "domain": "argos.co",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:20:30.562Z",
+            "discoveredName": "Cementos Argos"
+          }
+        ]
+      },
+      {
+        "name": "Leonisa",
+        "domain": "leonisa.com",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:20:30.562Z",
+            "discoveredName": "Leonisa"
+          }
+        ]
+      },
+      {
+        "name": "Nutresa",
+        "status": "likely_eligible",
+        "confidence": "plausible",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:20:30.562Z",
+            "discoveredName": "Nutresa"
+          }
+        ]
+      },
+      {
+        "name": "Auteco",
+        "status": "likely_eligible",
+        "confidence": "plausible",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:20:30.562Z",
+            "discoveredName": "Auteco"
+          }
+        ]
+      },
+      {
+        "name": "Crystal",
+        "status": "likely_eligible",
+        "confidence": "plausible",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:20:30.562Z",
+            "discoveredName": "Crystal"
+          }
+        ]
+      },
+      {
+        "name": "Manuelita",
+        "status": "likely_eligible",
+        "confidence": "plausible",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:20:30.562Z",
+            "discoveredName": "Manuelita"
+          }
+        ]
+      },
+      {
+        "name": "Riopaila Castilla",
+        "status": "likely_eligible",
+        "confidence": "plausible",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:20:30.562Z",
+            "discoveredName": "Riopaila Castilla"
+          }
+        ]
+      },
+      {
+        "name": "Incauca",
+        "status": "likely_eligible",
+        "confidence": "plausible",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:20:30.562Z",
+            "discoveredName": "Incauca"
+          }
+        ]
+      },
+      {
+        "name": "Fabricato",
+        "status": "likely_eligible",
+        "confidence": "plausible",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:20:30.562Z",
+            "discoveredName": "Fabricato"
+          }
+        ]
+      },
+      {
+        "name": "Tecnoglass",
+        "domain": "tecnoglass.com",
+        "status": "eligible",
+        "confidence": "verified",
+        "country": "Colombia",
+        "provenance": [
+          {
+            "route": "vertical_seed",
+            "origin": "vertical_seed",
+            "provider": "engine",
+            "discoveredAt": "2026-09-17T00:20:30.562Z",
+            "discoveredName": "Tecnoglass"
+          }
+        ]
+      }
+    ]
+  },
+  "delivered_accounts": [
+    {
+      "id": "lh_e2e_context_1789604411568_v1_2026-09-17_3d02def5-12f7-4718-abbe-02c65336339d_intel_e09d0_cand_1",
+      "learning": {
+        "qc_flags": [],
+        "change_tag": "unchanged",
+        "change_type": "no_meaningful_change",
+        "signal_date": "2026-02-25",
+        "signal_role": "context_only",
+        "source_name": "grupoexito.com.co",
+        "source_type": "unknown",
+        "change_label": "No meaningful change",
+        "signal_count": 2,
+        "source_count": 2,
+        "source_types": [
+          "unknown"
+        ],
+        "change_reason": "Seen 1x; no commercially meaningful change detected",
+        "discovered_at": "2026-09-17T00:23:49.155Z",
+        "client_visible": false,
+        "current_action": "validate_source_first",
+        "feedback_hooks": [
+          "useful",
+          "not_useful",
+          "wrong_fit",
+          "contacted",
+          "meeting_booked",
+          "replied",
+          "add_to_vault"
+        ],
+        "source_summary": "2 verified sources (unknown) · context-only · signal date: 2026-02-25",
+        "freshness_label": "Stale signal (> 60 days) · Verify still active",
+        "freshness_score": 0.1,
+        "is_context_only": true,
+        "previous_action": null,
+        "segment_pattern": "Retailers con surtido de terceros en categorías de bienestar y bienes empacados",
+        "signal_age_days": 204,
+        "signal_patterns": [
+          "Announced strategic alliance with Cámara de Comercio de Bogotá (CCB) on November 6, 2025 to democratize fashion and open commercial vitrinas to emerging brands in physical and digital Éxito stores.",
+          "First Moda Éxito collaboration with designer brand Andrés Pajón launching at Bogotá Fashion Weekend, November 27-30, 2025."
+        ],
+        "agent_confidence": 0.58,
+        "evidence_quality": "medium",
+        "evidence_summary": "Medium evidence quality — 2 verified source(s), 2 timing signal(s). Validate before outreach.",
+        "genericness_risk": "medium",
+        "is_timing_signal": false,
+        "reusable_pattern": "HOT/WARM Retailers con surtido de terceros en categorías de bienestar y bienes empacados account with signal: Announced strategic alliance with Cámara de Comercio de Bogotá (CCB) on November",
+        "source_freshness": "stale",
+        "change_prev_score": 7.8,
+        "improvement_notes": [
+          "The confirmed alliance is fashion-focused; extension to wellness/packaged goods is an inference, not a verified signal."
+        ],
+        "region_confidence": "medium",
+        "source_confidence": "high",
+        "change_score_delta": -0.3,
+        "fresh_signal_count": 0,
+        "hallucination_risk": "low",
+        "source_reliability": "unknown",
+        "suppression_reason": "No significant change since last report",
+        "current_signal_date": "2026-02-25",
+        "evidence_confidence": 0.772,
+        "reason_for_priority": "Signal strength is the deciding factor — ICP fit and strategic value are strong, but the only confirmed signal is fashion-vertical-specific, making the wellness thesis an inference that requires validation before prioritized outreach.",
+        "account_memory_state": "previously_seen",
+        "change_prev_category": "WARM",
+        "previous_signal_date": null,
+        "source_layer_applied": true,
+        "limited_region_coverage": false,
+        "current_evidence_quality": "medium",
+        "current_source_freshness": "stale",
+        "offer_market_fit_pattern": "Retailers con surtido de terceros en categorías de bienestar y bienes empacados account + \"Announced strategic alliance with Cámara de Comercio de Bogo\" → ICP fit score 7.5/10",
+        "predicted_learning_value": "high",
+        "account_memory_times_seen": 1,
+        "previous_evidence_quality": null,
+        "previous_source_freshness": null,
+        "account_memory_last_seen_at": "2026-08-27T15:08:53.613395+00:00",
+        "evidence_discipline_summary": "verified",
+        "original_recommended_action": "validate_source_first",
+        "account_memory_last_category": "WARM",
+        "account_memory_last_fit_score": 7.8,
+        "guardrailed_recommended_action": "validate_source_first",
+        "account_memory_last_feedback_signal": null,
+        "recommended_action_guardrail_applied": false
+      },
+      "outreach": {
+        "tone": "consultative",
+        "subject": "Grupo Exito — thought this was relevant",
+        "qc_notes": [],
+        "qc_status": "APPROVED",
+        "email_body": "Grupo Exito came up based on public signals that match what we track for accounts at this commercial stage.\n\nDesarrollo de entrada a mercado y alianzas de canal para marcas premium de bienestar y bienes empaca — relevant for Retailers con surtido de terceros .\n\nVendemos desarrollo de entrada a mercado y alianzas de canal para marcas premium de bienestar y bienes empacados. En Colombia, Brasil, Chile, Perú y A\n\nCurious whether this matches what you're prioritising right now — worth a quick call?",
+        "followup_1": "Following up in case this got buried. The fit looked strong for Grupo Exito's current stage — Desarrollo de entrada a mercado y alianzas de canal para marcas premiu. Worth a quick look?",
+        "followup_2": "Final follow-up on this one. If priorities have shifted or this doesn't match what Grupo Exito is working on, just say the word. No pressure.",
+        "call_opener": "Hi, reaching out because Grupo Exito came up as a strong fit for what we do — Desarrollo de entrada a mercado y alianzas de canal para marcas premiu. Do you have 90 seconds for a one-sentence overview?",
+        "linkedin_dm": "\"Grupo Exito [signal]\" — reference the specific event and ask if it reflects a broader commercial pr. Desarrollo de entrada a mercado y alianzas de canal para marcas premium de biene — relevant for Retailers con surtido de terceros en categorías de bienestar y bienes empacados teams at this stage. Happy to share more if it fits.",
+        "recommended_angle": "Signal-led angle: Reference the public signal directly — \"Announced strategic alliance with Cámara de Comercio de Bogotá (CCB) on November...\" — as the reason for reaching out now. This is the strongest entry point.",
+        "cta_recommendation": "Lead with the signal in the subject line — it's the strongest differentiator from generic outreach. Keep the CTA a soft 15-minute ask, not a demo request.",
+        "outreach_assumptions": "Grupo Exito has a confirmed public buying signal. This is the highest-quality timing to approach — the signal suggests an active commercial decision window of 30–90 days.",
+        "personalization_trigger": "Noticed that Grupo Exito announced strategic alliance with Cámara de Comercio de Bogotá (CCB) on November 6, 2025 to democratize fashion and open commercial vitrinas to emerging brands in physical and digital Éxito stores. That kind of signal often correlates with commercial evaluation activity — wanted to reach out while the timing looks relevant.",
+        "what_to_avoid_in_outreach": "Do not claim to know their internal priorities. Do not over-interpret the signal — present it as context, not certainty. Avoid generic language like \"I saw you're growing.\""
+      },
+      "candidate": {
+        "id": "lh_e2e_context_1789604411568_v1_2026-09-17_3d02def5-12f7-4718-abbe-02c65336339d_intel_e09d0_cand_1",
+        "domain": "grupoexito.com.co",
+        "source": "public_signal",
+        "company": "Grupo Exito",
+        "country": "Colombia",
+        "industry": "Retailers con surtido de terceros en categorías de bienestar y bienes empacados",
+        "location": "Colombia",
+        "source_url": "https://www.grupoexito.com.co/es/noticias-grupo-exito/grupo-exito-consolida-un-desempeno-excepcional-en-2025-multiplico-por-10-su-utilidad-neta-la-cual-supero-los-592-mil-millones-de-pesos-0",
+        "raw_context": "[2025-11-07T10:35:15] La Cámara de Comercio de Bogotá (CCB) y el Grupo Éxito sellan alianza estratégica para impulsar la democratización en el sector moda | Grupo Éxito. ![Inicio](/sites/default/files/Logo%20grupo%20e%CC%81xito_0.png) El precio de la acción mostrado en esta sección corresponde al último dato disponible proporcionado por la Bolsa. Puede estar sujeto a actualizaciones y no reflejar el valor en tiempo real. ## Navegación Principal ![ok]() ![Gobierno corporativo]() ![Accionistas e Inversionistas]() ![Sostenibilidad]() ![Suppliers]() ![Prensa]() ![innovacion]() ![microfono-icono]() ![ok]() ![Nuestra Organización]() Somos un negocio dinámico que se adapta a las nuevas formas de consumo, a partir de la innovación como eje de la evolución del *retail,* de la transformación digital para cuidar el tiempo del cliente, de nuevas experiencias y de la sostenibilidad, a partir de una estrategia que construye país. ![okk](/sites/default/files/2020-03/Nuestra%20organizacio%CC%81n.png) ![ok](/sites/default/files/2020-03/icono%20mega%20menu1.png) ![Gobierno corporativo]() ![Gobierno Corporativo ]() Consideramos el Gobierno Corporativo como un conjunto de prácticas para lograr un balance en la relación de la compañía con sus diferentes grupos de interés. ![Gobierno corporativo](/sites/default/files/2019-11/Gobierno%20corporativo.png) ![Gobierno corporativo](/sites/default/files/2019-08/icno%20mega%20menu%204.png) ![Accionistas e Inversionistas]() ![Accionistas e inversionistas]() En el marco de transparencia, disponemos la información financiera, las comunicaciones al mercado, la información relevante y otros documentos que pueden ser de interés para nuestros accionistas e inversionistas. ![Accionistas e Inversionistas](/sites/default/files/2019-11/Accionistas%20e%20Inversionistas.png) ![Accionistas e Inversionistas](/sites/default/files/2019-08/icnono%20mega%20menu%205.png) ![Sostenibilidad]() ![Sostenibilidad]() Como Grupo Éxito, buscamos **Nutrir de Oportunidades a Colombia,** a través de estándares de calidad y transparencia que promuevan la erradicación de la nutrición crónica en nuestro país, la compra local y directa, el desarrollo de nuestros aliados y proveedores, la protección del planeta y la transición energética, hábitos de vida más saludable y el bienestar de nuestros colaboradores. ![Sostenibilidad](/sites/default/files/2019-11/Sostenibilidad.png) ![Sostenibilidad](/sites/default/files/2019-08/icono%20mega%20menu2.png) ![Suppliers]() ![Nuestra Organiza … gia que construye país. ![Suppliers](/sites/default/files/2019-08/icono%20mega%20menu%203.png) ![Prensa]() ![Sala de Prensa]() En nuestro propósito de mantener una relación cercana, informada y transparente con los diferentes públicos de interés, entre ellos los medios de comunicación, reseñamos los hechos noticiosos más importantes de la compañía. ![Sala de prensa](/sites/default/files/2019-11/Sala%20de%20prensa.png) ![Prensa](/sites/default/files/2019-08/icono%20mega%20menu%206.png) ![innovacion]() ![Innovación]() Un espacio en donde conocerás algunas de las innovaciones con las que estamos revolucionando la industria del retail en Colombia. ![innovacion](/sites/default/files/2022-06/Innovacio%CC%81n_i%CC%81cono.png) ![innovacion](/sites/default/files/2021-04/innovacion.png) ![microfono-icono]() ![microfono-icono](/sites/default/files/2022-10/40.png) ## Redes sociales ![facebook grupo exito](/sites/default/files/2019-08/facebook-f.png) ![instagram exito](/sites/default/files/2019-08/instagramlogo.png) ![twitter grupo exito](/sites/default/files/2019-08/twitter.png) ![youtube grupo exito](/sites/default/files/2019-08/youtube.png) ![linkedin grupo exito](/sites/default/files/2019-08/linked.png) ![Spotify](/sites/default/files/2020-08/spoti2.png) ## Header Lateral Derecho ## Ruta de navegación # La Cámara de Comercio de Bogotá (CCB) y el Grupo Éxito sellan alianza estratégica para impulsar la democratización en el sector moda ![](/sites/default/files/inline-images/Grupo%20exitooo.png) ![](/sites/default/files/inline-images/ccb.png) ![](/sites/default/files/inline-images/ccb.png) **La Cámara de Comercio de Bogotá (CCB) y el Grupo Éxito sellan alianza estratégica para impulsar la democratización en el sector moda** **Bogotá, noviembre 6 de 2025.** Con el propósito de democratizar la economía popular en el sector moda, la Cámara de Comercio de Bogotá (CCB) y el Grupo Éxito sellaron este jueves una alianza estratégica para sumar esfuerzos que se traduzcan en acciones conjuntas que impulsen la visibilidad, comercialización y proyección de las empresas asociadas a la moda en Bogotá y Región, posicionen a la capital como un referente del sector y potencien su proyección internacional. Esta iniciativa, que pone a las marcas y a los consumidores en primer lugar, une al sector privado a partir de sus apuestas por la democratización de la moda. En el caso de la CCB la democratización inició con el proyecto [ P U E N T E ] que busca integrar a empresarios de la moda popular al circuito global mediante procesos de curaduría, mentoría y proyección internacional. Gracias a ello, empresarios de San Victorino y Restrepo han participado en Bogotá Fashion Week, y en la Semana de la Moda de las principales plataformas internacionales como New York Fashion Week y la Feria Internacional de Moda en Madrid (MOMAD). Por su parte, el negocio textil del Grupo Éxito hace parte de su ADN, está presente desde sus orígenes: en 1949, el fundador de la compañía, abrió un pequeño almacén de 4x4 metros en el centro de Medellín donde vendía telas y retazos; ese fue el punto de partida de un legado que hoy es motor económico y social para Colombia. El 93,91% de las prendas de mar … ocida en el mundo por su estilo y calidad”.*** **La Alianza** Esta alianza se basa en **cinco ejes estratégicos** que buscan hacer de la moda un sector más accesible, participativo e inclusivo. A través de la participación oficial del Grupo Éxito en el Bogotá Fashion Weekend, se abrirán **espacios de exhibición y venta** que permitirán que diseñadores emergentes y marcas locales compartan escenario con referentes consolidados, acercando la moda a nuevos públicos. Las activaciones en almacenes Éxito, **con pasarelas y conversatorios en puntos priorizados de Bogotá** y Región, llevarán la experiencia de la moda a los territorios, conectando el diseño con la vida cotidiana de los ciudadanos. La **estrategia de comunicación** conjunta amplificará las voces del talento local en los canales de ambas entidades, visibilizando la diversidad creativa de la ciudad. A su vez, las **oportunidades de expansión comercial** permitirán que productos diseñados y confeccionados en Bogotá lleguen a vitrinas físicas y digitales del Grupo Éxito, integrando a pequeños y medianos empresarios en cadenas de valor más amplias. Finalmente, el eje de **internacionalización** impulsará la participación de empresas locales en ruedas de negocio y misiones internacionales, abriendo puertas a nuevos mercados y promoviendo la proyección global del talento bogotano. En conjunto, estos ejes hacen realidad el propósito compartido de democratizar la moda, acercando la creatividad a las audiencias, generando inclusión económica y fortaleciendo el tejido empresarial desde la base popular hasta los escenarios internacionales. **La firma Andrés Pajón en Bogotá Fashion Weekend con Moda Éxito** Esta alianza se da justo previo al lanzamiento de la primera colección de Moda Éxito en colaboración con la firma Andrés Pajón, una casa de moda que hace parte del ecosistema de Bogotá Fashion Week y que, a través de los programas de formación y acompañamiento de la Cámara de Comercio de Bogotá, ha fortalecido su proyección y su camino. Esta será la primera vez que la firma colombiana une su sello de sofisticación con un *retail*masivo. Además esta colección estará presente en el Bogotá Fashion Weekend del 27 al 30 de noviembre de 2025. ***“Como Pajón & Cartagena celebramos este tipo de alianzas, la cual además llega justo cuando preparamos nuestra primera colaboración con Grupo Éxito, una colección de Navidad que nos emociona profundamente porque nos permite reinterpretar la esencia de Pajón & Cartagena en nuevas categorías y acercar nuestro universo creativo a más colombianas, con unas prendas cercana, accesibles y que hagan parte de la cotidianidad de las mujeres que quieren sentirse hermosas con prendas de vestir como las nuestras”***, señalaron Andrés Pajón y Felipe Cartagena, directores creativos de la firma Andrés Pajón. **Cifras del sector moda** El potencial del sector moda en Bogotá – Región se ve reflejado en las siguientes cifras provenientes del registro mercantil de la Cámara de Comercio de Bogotá: Entre enero y agosto de 2025 estuvieron activas 31.777 empresas del macrosector moda, las cuales representan el 6,8 % del total de empresas activas en la jurisdicción de la Cámara de Come (source: https://www.grupoexito.com.co/es/noticias-grupo-exito/la-camara-de-comercio-",
+        "signal_date": "2026-02-25",
+        "website_url": "https://grupoexito.com.co",
+        "account_identity": {
+          "domain": "grupoexito.com.co",
+          "country": "Colombia",
+          "confidence": "verified",
+          "fromUniverse": true,
+          "canonicalName": "Grupo Exito",
+          "organizationType": "Retailers con surtido de terceros en categorías de bienestar y bienes empacados"
+        },
+        "confidence_score": 0.8,
+        "discovery_provenance": [
+          {
+            "route": "source_ecosystem",
+            "origin": "dynamic_enumeration",
+            "provider": "engine"
+          }
+        ],
+        "discovery_origin_flags": [
+          "ACCOUNT_FIRST"
+        ]
+      },
+      "enrichment": {
+        "why_now": "Confirmed timing: Grupo Éxito sealed a structured third-party brand channel alliance on November 6, 2025, demonstrating active appetite for curated external brand partnerships — this is a confirmed public signal, not an inference.",
+        "evidence": [
+          "November 6, 2025 press release on grupoexito.com.co confirms five-axis alliance with CCB including 'commercial expansion opportunities' allowing products from local brands to reach Éxito's physical and digital shelves.",
+          "Alliance explicitly mentions integration of small and medium enterprises into broader value chains, signaling an open-supplier channel model.",
+          "Sustainability section of Grupo Éxito's website highlights 'hábitos de vida más saludable' and wellness of collaborators as strategic pillars, indicating wellness category relevance."
+        ],
+        "candidate": {
+          "id": "lh_e2e_context_1789604411568_v1_2026-09-17_3d02def5-12f7-4718-abbe-02c65336339d_intel_e09d0_cand_1",
+          "domain": "grupoexito.com.co",
+          "source": "public_signal",
+          "company": "Grupo Exito",
+          "country": "Colombia",
+          "industry": "Retailers con surtido de terceros en categorías de bienestar y bienes empacados",
+          "location": "Colombia",
+          "source_url": "https://www.grupoexito.com.co/es/noticias-grupo-exito/grupo-exito-consolida-un-desempeno-excepcional-en-2025-multiplico-por-10-su-utilidad-neta-la-cual-supero-los-592-mil-millones-de-pesos-0",
+          "raw_context": "[2025-11-07T10:35:15] La Cámara de Comercio de Bogotá (CCB) y el Grupo Éxito sellan alianza estratégica para impulsar la democratización en el sector moda | Grupo Éxito. ![Inicio](/sites/default/files/Logo%20grupo%20e%CC%81xito_0.png) El precio de la acción mostrado en esta sección corresponde al último dato disponible proporcionado por la Bolsa. Puede estar sujeto a actualizaciones y no reflejar el valor en tiempo real. ## Navegación Principal ![ok]() ![Gobierno corporativo]() ![Accionistas e Inversionistas]() ![Sostenibilidad]() ![Suppliers]() ![Prensa]() ![innovacion]() ![microfono-icono]() ![ok]() ![Nuestra Organización]() Somos un negocio dinámico que se adapta a las nuevas formas de consumo, a partir de la innovación como eje de la evolución del *retail,* de la transformación digital para cuidar el tiempo del cliente, de nuevas experiencias y de la sostenibilidad, a partir de una estrategia que construye país. ![okk](/sites/default/files/2020-03/Nuestra%20organizacio%CC%81n.png) ![ok](/sites/default/files/2020-03/icono%20mega%20menu1.png) ![Gobierno corporativo]() ![Gobierno Corporativo ]() Consideramos el Gobierno Corporativo como un conjunto de prácticas para lograr un balance en la relación de la compañía con sus diferentes grupos de interés. ![Gobierno corporativo](/sites/default/files/2019-11/Gobierno%20corporativo.png) ![Gobierno corporativo](/sites/default/files/2019-08/icno%20mega%20menu%204.png) ![Accionistas e Inversionistas]() ![Accionistas e inversionistas]() En el marco de transparencia, disponemos la información financiera, las comunicaciones al mercado, la información relevante y otros documentos que pueden ser de interés para nuestros accionistas e inversionistas. ![Accionistas e Inversionistas](/sites/default/files/2019-11/Accionistas%20e%20Inversionistas.png) ![Accionistas e Inversionistas](/sites/default/files/2019-08/icnono%20mega%20menu%205.png) ![Sostenibilidad]() ![Sostenibilidad]() Como Grupo Éxito, buscamos **Nutrir de Oportunidades a Colombia,** a través de estándares de calidad y transparencia que promuevan la erradicación de la nutrición crónica en nuestro país, la compra local y directa, el desarrollo de nuestros aliados y proveedores, la protección del planeta y la transición energética, hábitos de vida más saludable y el bienestar de nuestros colaboradores. ![Sostenibilidad](/sites/default/files/2019-11/Sostenibilidad.png) ![Sostenibilidad](/sites/default/files/2019-08/icono%20mega%20menu2.png) ![Suppliers]() ![Nuestra Organiza … gia que construye país. ![Suppliers](/sites/default/files/2019-08/icono%20mega%20menu%203.png) ![Prensa]() ![Sala de Prensa]() En nuestro propósito de mantener una relación cercana, informada y transparente con los diferentes públicos de interés, entre ellos los medios de comunicación, reseñamos los hechos noticiosos más importantes de la compañía. ![Sala de prensa](/sites/default/files/2019-11/Sala%20de%20prensa.png) ![Prensa](/sites/default/files/2019-08/icono%20mega%20menu%206.png) ![innovacion]() ![Innovación]() Un espacio en donde conocerás algunas de las innovaciones con las que estamos revolucionando la industria del retail en Colombia. ![innovacion](/sites/default/files/2022-06/Innovacio%CC%81n_i%CC%81cono.png) ![innovacion](/sites/default/files/2021-04/innovacion.png) ![microfono-icono]() ![microfono-icono](/sites/default/files/2022-10/40.png) ## Redes sociales ![facebook grupo exito](/sites/default/files/2019-08/facebook-f.png) ![instagram exito](/sites/default/files/2019-08/instagramlogo.png) ![twitter grupo exito](/sites/default/files/2019-08/twitter.png) ![youtube grupo exito](/sites/default/files/2019-08/youtube.png) ![linkedin grupo exito](/sites/default/files/2019-08/linked.png) ![Spotify](/sites/default/files/2020-08/spoti2.png) ## Header Lateral Derecho ## Ruta de navegación # La Cámara de Comercio de Bogotá (CCB) y el Grupo Éxito sellan alianza estratégica para impulsar la democratización en el sector moda ![](/sites/default/files/inline-images/Grupo%20exitooo.png) ![](/sites/default/files/inline-images/ccb.png) ![](/sites/default/files/inline-images/ccb.png) **La Cámara de Comercio de Bogotá (CCB) y el Grupo Éxito sellan alianza estratégica para impulsar la democratización en el sector moda** **Bogotá, noviembre 6 de 2025.** Con el propósito de democratizar la economía popular en el sector moda, la Cámara de Comercio de Bogotá (CCB) y el Grupo Éxito sellaron este jueves una alianza estratégica para sumar esfuerzos que se traduzcan en acciones conjuntas que impulsen la visibilidad, comercialización y proyección de las empresas asociadas a la moda en Bogotá y Región, posicionen a la capital como un referente del sector y potencien su proyección internacional. Esta iniciativa, que pone a las marcas y a los consumidores en primer lugar, une al sector privado a partir de sus apuestas por la democratización de la moda. En el caso de la CCB la democratización inició con el proyecto [ P U E N T E ] que busca integrar a empresarios de la moda popular al circuito global mediante procesos de curaduría, mentoría y proyección internacional. Gracias a ello, empresarios de San Victorino y Restrepo han participado en Bogotá Fashion Week, y en la Semana de la Moda de las principales plataformas internacionales como New York Fashion Week y la Feria Internacional de Moda en Madrid (MOMAD). Por su parte, el negocio textil del Grupo Éxito hace parte de su ADN, está presente desde sus orígenes: en 1949, el fundador de la compañía, abrió un pequeño almacén de 4x4 metros en el centro de Medellín donde vendía telas y retazos; ese fue el punto de partida de un legado que hoy es motor económico y social para Colombia. El 93,91% de las prendas de mar … ocida en el mundo por su estilo y calidad”.*** **La Alianza** Esta alianza se basa en **cinco ejes estratégicos** que buscan hacer de la moda un sector más accesible, participativo e inclusivo. A través de la participación oficial del Grupo Éxito en el Bogotá Fashion Weekend, se abrirán **espacios de exhibición y venta** que permitirán que diseñadores emergentes y marcas locales compartan escenario con referentes consolidados, acercando la moda a nuevos públicos. Las activaciones en almacenes Éxito, **con pasarelas y conversatorios en puntos priorizados de Bogotá** y Región, llevarán la experiencia de la moda a los territorios, conectando el diseño con la vida cotidiana de los ciudadanos. La **estrategia de comunicación** conjunta amplificará las voces del talento local en los canales de ambas entidades, visibilizando la diversidad creativa de la ciudad. A su vez, las **oportunidades de expansión comercial** permitirán que productos diseñados y confeccionados en Bogotá lleguen a vitrinas físicas y digitales del Grupo Éxito, integrando a pequeños y medianos empresarios en cadenas de valor más amplias. Finalmente, el eje de **internacionalización** impulsará la participación de empresas locales en ruedas de negocio y misiones internacionales, abriendo puertas a nuevos mercados y promoviendo la proyección global del talento bogotano. En conjunto, estos ejes hacen realidad el propósito compartido de democratizar la moda, acercando la creatividad a las audiencias, generando inclusión económica y fortaleciendo el tejido empresarial desde la base popular hasta los escenarios internacionales. **La firma Andrés Pajón en Bogotá Fashion Weekend con Moda Éxito** Esta alianza se da justo previo al lanzamiento de la primera colección de Moda Éxito en colaboración con la firma Andrés Pajón, una casa de moda que hace parte del ecosistema de Bogotá Fashion Week y que, a través de los programas de formación y acompañamiento de la Cámara de Comercio de Bogotá, ha fortalecido su proyección y su camino. Esta será la primera vez que la firma colombiana une su sello de sofisticación con un *retail*masivo. Además esta colección estará presente en el Bogotá Fashion Weekend del 27 al 30 de noviembre de 2025. ***“Como Pajón & Cartagena celebramos este tipo de alianzas, la cual además llega justo cuando preparamos nuestra primera colaboración con Grupo Éxito, una colección de Navidad que nos emociona profundamente porque nos permite reinterpretar la esencia de Pajón & Cartagena en nuevas categorías y acercar nuestro universo creativo a más colombianas, con unas prendas cercana, accesibles y que hagan parte de la cotidianidad de las mujeres que quieren sentirse hermosas con prendas de vestir como las nuestras”***, señalaron Andrés Pajón y Felipe Cartagena, directores creativos de la firma Andrés Pajón. **Cifras del sector moda** El potencial del sector moda en Bogotá – Región se ve reflejado en las siguientes cifras provenientes del registro mercantil de la Cámara de Comercio de Bogotá: Entre enero y agosto de 2025 estuvieron activas 31.777 empresas del macrosector moda, las cuales representan el 6,8 % del total de empresas activas en la jurisdicción de la Cámara de Come (source: https://www.grupoexito.com.co/es/noticias-grupo-exito/la-camara-de-comercio-",
+          "signal_date": "2026-02-25",
+          "website_url": "https://grupoexito.com.co",
+          "account_identity": {
+            "domain": "grupoexito.com.co",
+            "country": "Colombia",
+            "confidence": "verified",
+            "fromUniverse": true,
+            "canonicalName": "Grupo Exito",
+            "organizationType": "Retailers con surtido de terceros en categorías de bienestar y bienes empacados"
+          },
+          "confidence_score": 0.8,
+          "discovery_provenance": [
+            {
+              "route": "source_ecosystem",
+              "origin": "dynamic_enumeration",
+              "provider": "engine"
+            }
+          ],
+          "discovery_origin_flags": [
+            "ACCOUNT_FIRST"
+          ]
+        },
+        "missing_data": [
+          "No public confirmation of a dedicated wellness or premium packaged goods incubation or fast-track supplier program beyond the fashion vertical.",
+          "Unknown: current category gaps or buyer mandates in wellness/packaged goods for 2025-2026.",
+          "Unknown: internal decision-making structure for new third-party brand onboarding in non-fashion categories."
+        ],
+        "buying_window": "near_term",
+        "inferred_pain": "Grupo Éxito appears to be actively expanding its third-party brand and supplier ecosystem, which may indicate a structured but complex onboarding and curation process that premium international brands find difficult to navigate without a local intermediary.",
+        "account_thesis": "Grupo Éxito has publicly activated a structured third-party brand channel partnership model as of November 2025, making it a timely target for a market-entry intermediary that can connect premium wellness brands to this newly formalized shelf access mechanism. The commercial thesis is partially confirmed (channel openness) and partially inferred (wellness category applicability).",
+        "role_relevance": "Grupo Éxito is a primary mass-market channel for consumer goods and wellness brands seeking distribution in Colombia, making it a high-relevance target for market-entry and channel partnership services aimed at premium wellness and packaged goods brands.",
+        "timing_signals": [
+          "Announced strategic alliance with Cámara de Comercio de Bogotá (CCB) on November 6, 2025 to democratize fashion and open commercial vitrinas to emerging brands in physical and digital Éxito stores.",
+          "First Moda Éxito collaboration with designer brand Andrés Pajón launching at Bogotá Fashion Weekend, November 27-30, 2025."
+        ],
+        "company_summary": "Grupo Éxito is Colombia's largest retail group, operating supermarkets, hypermarkets, and fashion stores across the country under banners including Éxito, Carulla, and Surtimax. It has a publicly listed stock and a strong omnichannel presence spanning physical stores and digital commerce. The company has deep roots in fashion/textile retail dating to its 1949 founding and actively pursues brand partnerships, supplier development, and category expansion.",
+        "pain_hypothesis": "Grupo Éxito is expanding its third-party brand channel (confirmed in fashion) but likely lacks a systematic, curated market-entry pathway for premium international wellness and packaged goods brands, creating an addressable gap that a channel partnership development offer could fill.",
+        "account_research": {
+          "domain": "grupoexito.com.co",
+          "account": "Grupo Exito",
+          "version": "account-deep-research-v1",
+          "query_audit": [
+            {
+              "stage": "identity",
+              "results": 5,
+              "accepted": 5,
+              "provider": "brave",
+              "query_id": "rq_ejscbj"
+            },
+            {
+              "stage": "current_activity",
+              "results": 0,
+              "accepted": 0,
+              "provider": "brave",
+              "query_id": "rq_3e42hg"
+            },
+            {
+              "stage": "current_activity",
+              "results": 0,
+              "accepted": 0,
+              "provider": "tavily",
+              "query_id": "rq_3e42hg"
+            },
+            {
+              "stage": "current_activity",
+              "results": 1,
+              "accepted": 1,
+              "provider": "brave",
+              "query_id": "rq_1869amp"
+            },
+            {
+              "stage": "current_activity",
+              "results": 0,
+              "accepted": 0,
+              "provider": "tavily",
+              "query_id": "rq_1869amp"
+            },
+            {
+              "stage": "counterevidence",
+              "results": 5,
+              "accepted": 5,
+              "provider": "brave",
+              "query_id": "rq_mud8xz"
+            },
+            {
+              "stage": "counterevidence",
+              "results": 0,
+              "accepted": 0,
+              "provider": "tavily",
+              "query_id": "rq_mud8xz"
+            },
+            {
+              "stage": "corroboration",
+              "results": 1,
+              "accepted": 0,
+              "provider": "brave",
+              "query_id": "rq_1efj6un"
+            },
+            {
+              "stage": "corroboration",
+              "results": 5,
+              "accepted": 0,
+              "provider": "tavily",
+              "query_id": "rq_1efj6un"
+            }
+          ],
+          "provider_ops": [
+            {
+              "ok": true,
+              "stage": "identity",
+              "results": 5,
+              "timeout": false,
+              "provider": "brave",
+              "operation": "search",
+              "duration_ms": 918
+            },
+            {
+              "ok": true,
+              "stage": "current_activity",
+              "results": 0,
+              "timeout": false,
+              "provider": "brave",
+              "operation": "search",
+              "duration_ms": 388
+            },
+            {
+              "ok": true,
+              "stage": "current_activity",
+              "results": 0,
+              "timeout": false,
+              "provider": "tavily",
+              "operation": "search",
+              "duration_ms": 9009
+            },
+            {
+              "ok": true,
+              "stage": "current_activity",
+              "results": 1,
+              "timeout": false,
+              "provider": "brave",
+              "operation": "search",
+              "duration_ms": 763
+            },
+            {
+              "ok": true,
+              "stage": "current_activity",
+              "results": 1,
+              "timeout": false,
+              "provider": "full_text",
+              "operation": "full_text",
+              "duration_ms": 3435
+            },
+            {
+              "ok": true,
+              "stage": "current_activity",
+              "results": 0,
+              "timeout": false,
+              "provider": "anthropic",
+              "operation": "llm",
+              "duration_ms": 9870
+            },
+            {
+              "ok": true,
+              "stage": "current_activity",
+              "results": 0,
+              "timeout": false,
+              "provider": "tavily",
+              "operation": "search",
+              "duration_ms": 8723
+            },
+            {
+              "ok": true,
+              "stage": "counterevidence",
+              "results": 5,
+              "timeout": false,
+              "provider": "brave",
+              "operation": "search",
+              "duration_ms": 828
+            },
+            {
+              "ok": true,
+              "stage": "counterevidence",
+              "results": 1,
+              "timeout": false,
+              "provider": "full_text",
+              "operation": "full_text",
+              "duration_ms": 2515
+            },
+            {
+              "ok": true,
+              "stage": "counterevidence",
+              "results": 0,
+              "timeout": false,
+              "provider": "tavily",
+              "operation": "search",
+              "duration_ms": 6055
+            },
+            {
+              "ok": true,
+              "stage": "corroboration",
+              "results": 1,
+              "timeout": false,
+              "provider": "brave",
+              "operation": "search",
+              "duration_ms": 857
+            },
+            {
+              "ok": true,
+              "stage": "corroboration",
+              "results": 5,
+              "timeout": false,
+              "provider": "tavily",
+              "operation": "search",
+              "duration_ms": 5042
+            }
+          ],
+          "results_seen": 17,
+          "dated_evidence": 6,
+          "provider_calls": 9,
+          "pages_extracted": 2,
+          "planned_queries": 4,
+          "claims_recovered": 3,
+          "executed_queries": 5,
+          "extraction_audit": [
+            {
+              "url": "https://www.grupoexito.com.co/es/noticias-grupo-exito/la-camara-de-comercio-de-bogota-ccb-y-el-grupo-exito-sellan-alianza-estrategica-para-impulsar-la-democratizacion-en-el-sector-moda",
+              "stage": "current_activity",
+              "date_phrase": "hoy",
+              "materiality": "low",
+              "signal_kind": "operational_change",
+              "accepted_events": 0,
+              "evidence_excerpt": "es: en 1949, el fundador de la compañía, abrió un pequeño almacén de 4x4 metros en el centro de Medellín donde vendía telas y retazos; ese fue el punto de partida de un legado que hoy es motor económico y social para Colombia. El 93,91% de las prendas de mar … ocida en el mundo por su estilo y calidad”.*** **La Alianza** Esta alianza se basa en **cinco ejes estratégicos** que buscan hacer de la moda un sector más accesible, participativo e inclusivo. A través de la participación oficial del Grupo Éxito en el Bogotá Fashion Weekend, se abrirán **espacios de exhibición y venta** que permitirán que diseñadores emergentes y marcas locales compartan escenario con referentes consolidados, acercando la moda a nuevos públicos. Las activaciones en almacenes Éxito, **con pasarelas y conversatorios en puntos priorizados de Bogotá** y Región, llevarán la experiencia de la moda a los territorios, conectando el diseño con la vida cotidiana de los ciudadanos. La **estrategia de comunicación** conjunta amplificará las voces del talento local en los canales de ambas entidades, visibilizando la diversidad creativa de la ciudad. A su vez, las **oportunidades de expansión comercial** permitirán que pr"
+            },
+            {
+              "url": "https://www.grupoexito.com.co/es/noticias-grupo-exito/grupo-exito-consolida-un-desempeno-excepcional-en-2025-multiplico-por-10-su-utilidad-neta-la-cual-supero-los-592-mil-millones-de-pesos-0",
+              "stage": "counterevidence",
+              "date_phrase": "25 de Febrero de 2026",
+              "materiality": "low",
+              "signal_kind": "operational_change",
+              "accepted_events": 1,
+              "evidence_excerpt": "2-billion-pesos) * [PT](/pt/node/2903) # Grupo Éxito consolida un desempeño excepcional en 2025, multiplicó por 10 su Utilidad Neta, la cual superó los $592 mil millones de pesos. 25 de Febrero de 2026 **Este resultado se explica por un buen desempeño en ventas y competitividad, una mejora en los resultados operativos y comerciales, un manejo disciplinado de planes de eficiencia y productividad, y una mayor contribución de los negocios complementarios.** **En conjunto, estos factores fortalecieron la rentabilidad del Grupo y consolidaron su posición para capturar nuevas oportunidades de crecimiento en 2026.** **Por su parte, los ingresos consolidados de la compañía llegaron a los $22 billones de pesos en el año 2025 con un crecimiento del 4% (excluyendo el efecto cambiario) frente al mismo período del año anterior, siendo Colombia el principal motor de los ingresos consolidados del Grupo, con un aporte del 77% en los mismos.** **El margen EBITDA recurrente al cierre de 2025 se ubicó en 8,8%, alcanzando los $1.9 billones de pesos, lo que representó crecimiento de 19,5% respecto a 2024 (excluyendo el efecto cambiario).** **Si bien los resultados de Grupo Éxito dan muestra de la trans"
+            }
+          ],
+          "validated_events": [
+            {
+              "url": "https://www.grupoexito.com.co/es/noticias-grupo-exito/grupo-exito-consolida-un-desempeno-excepcional-en-2025-multiplico-por-10-su-utilidad-neta-la-cual-supero-los-592-mil-millones-de-pesos-0",
+              "kind": "operational_change",
+              "stage": "counterevidence",
+              "event_date": "2026-02-25",
+              "source_host": "grupoexito.com.co",
+              "claim_excerpt": "Grupo Éxito consolida un desempeño excepcional en 2025, multiplicó por 10 su Utilidad Neta, la cual superó los $592 mil millones de pesos. | Grupo Éxito. [Pasar al contenido principal](#main-content) Sep 15,2026 El precio de la acción mostrado en esta sección corresponde al último dato disponible proporcionado por la Bolsa. Puede estar sujeto a actualizaciones y no reflejar el valor en tiempo real. * [ES](/es/noticias-grupo-exito/grupo-exito-consolida-un-desempeno-excepcional-en-2025-multiplico-por-10-su-utilidad-neta-la-cual-supero-los-592-mil-millones-de-pesos-0) * [EN](/en/news/grupo-exito-delivers-exceptional-performance-2025-multiplying-net-result-10-surpassing-592-billion-pesos) * [PT](/pt/node/2903) # Grupo Éxito consolida un desempeño excepcional en 2025, multiplicó por 10 su Utilidad Neta, la cual superó los $592 mil millones de pesos. 25 de Febrero de 2026 **Este resultado se explica por un buen desempeño en ventas y competitividad, una mejora en los resultados operativos y comerciales, un manejo disciplinado de planes de eficiencia y productividad, y una mayor contribución de los negocios complementarios.** **En conjunto, estos factores fortalecieron la rentabilidad del ",
+              "counterevidence": false,
+              "materiality_valid": true
+            }
+          ],
+          "early_stop_reason": "budget_exhausted",
+          "evidence_accepted": 11,
+          "evidence_rejected": 6,
+          "provider_failures": 0,
+          "account_elapsed_ms": 85193,
+          "event_hints_fetched": 0,
+          "extraction_failures": 0,
+          "independent_domains": 1,
+          "event_hints_received": 0,
+          "corroborating_domains": 0,
+          "corroborating_sources": [],
+          "event_hints_validated": 0,
+          "corroboration_attempted": true,
+          "counterevidence_checked": true,
+          "event_geography_rejected": 0,
+          "structured_extraction_calls": 1,
+          "counterevidence_material_found": false
+        },
+        "risks_weaknesses": [
+          "The confirmed alliance is fashion-focused; extension to wellness/packaged goods is an inference, not a verified signal.",
+          "Grupo Éxito is a large, bureaucratic retail group — procurement cycles for new categories may be long and require internal category manager buy-in not yet identified.",
+          "The offer targets 'premium' brands, while Grupo Éxito's alliance language emphasizes democratization and mass-market access, suggesting possible value proposition misalignment.",
+          "No evidence of a current RFP, budget allocation, or expressed need for an external market-entry advisory partner in wellness."
+        ],
+        "segment_fit_note": "Grupo Éxito fits the 'retailer with third-party assortment in wellness and packaged goods' segment directly, though the confirmed channel expansion signal is currently limited to the fashion category.",
+        "opportunity_risks": [
+          "Fashion-to-wellness category transfer is assumed, not confirmed — outreach may reach the wrong internal buyer or wrong moment in category planning.",
+          "Grupo Éxito's scale and existing supplier network may reduce perceived need for an external market-entry partner.",
+          "Premium brand positioning may conflict with Grupo Éxito's stated 'democratization' and mass-access retail strategy.",
+          "No identified champion or category manager contact for wellness/packaged goods limits outreach precision."
+        ],
+        "next_best_question": "Does Grupo Éxito currently have an open or planned supplier onboarding program for premium wellness and packaged goods brands, and who owns that category commercially?",
+        "recommended_action": "validate_source_first",
+        "evidence_discipline": [
+          {
+            "date": "2025-11-06",
+            "type": "verified_public_signal",
+            "claim": "Grupo Éxito and CCB signed a strategic alliance to open physical and digital commercial shelf space to third-party brands"
+          },
+          {
+            "date": "2025-11-06",
+            "type": "verified_public_signal",
+            "claim": "Grupo Éxito is launching a co-branded fashion collection with designer Andrés Pajón at Bogotá Fashion Weekend"
+          },
+          {
+            "date": null,
+            "type": "inferred_from_context",
+            "claim": "Grupo Éxito's wellness and healthy living are stated strategic pillars that may extend to packaged goods category curation"
+          },
+          {
+            "date": null,
+            "type": "weak_inference",
+            "claim": "The open-brand channel model confirmed in fashion likely applies or will extend to wellness and packaged goods categories"
+          },
+          {
+            "date": null,
+            "type": "missing_evidence",
+            "claim": "Existence of a dedicated budget or buyer mandate for premium international wellness brand partnerships"
+          },
+          {
+            "date": null,
+            "type": "inferred_from_context",
+            "claim": "Grupo Éxito has a structured, navigable supplier onboarding process that an intermediary could accelerate for premium brands"
+          }
+        ],
+        "research_confidence": 0.62,
+        "buying_window_reason": "A formal channel partnership program was just announced in November 2025, suggesting procurement and category conversations for adjacent categories are likely active within the next 1-2 quarters.",
+        "signal_interpretation": "The CCB alliance signals that Grupo Éxito is institutionalizing a curated, multi-brand channel strategy rather than pursuing ad hoc supplier deals — this structural shift creates a repeatable entry point that a market-entry advisory could systematically leverage for wellness brand clients, if the model extends beyond fashion.",
+        "evidence_quality_grade": "moderate_public",
+        "recommended_action_reason": "Before outreach, confirm whether Grupo Éxito's new channel partnership model extends to wellness/packaged goods categories and identify the relevant internal buyer, since the only confirmed signal is fashion-specific."
+      },
+      "qualification": {
+        "rank": 1,
+        "category": "WARM",
+        "fit_score": 7.5,
+        "enrichment": {
+          "why_now": "Confirmed timing: Grupo Éxito sealed a structured third-party brand channel alliance on November 6, 2025, demonstrating active appetite for curated external brand partnerships — this is a confirmed public signal, not an inference.",
+          "evidence": [
+            "November 6, 2025 press release on grupoexito.com.co confirms five-axis alliance with CCB including 'commercial expansion opportunities' allowing products from local brands to reach Éxito's physical and digital shelves.",
+            "Alliance explicitly mentions integration of small and medium enterprises into broader value chains, signaling an open-supplier channel model.",
+            "Sustainability section of Grupo Éxito's website highlights 'hábitos de vida más saludable' and wellness of collaborators as strategic pillars, indicating wellness category relevance."
+          ],
+          "candidate": {
+            "id": "lh_e2e_context_1789604411568_v1_2026-09-17_3d02def5-12f7-4718-abbe-02c65336339d_intel_e09d0_cand_1",
+            "domain": "grupoexito.com.co",
+            "source": "public_signal",
+            "company": "Grupo Exito",
+            "country": "Colombia",
+            "industry": "Retailers con surtido de terceros en categorías de bienestar y bienes empacados",
+            "location": "Colombia",
+            "source_url": "https://www.grupoexito.com.co/es/noticias-grupo-exito/grupo-exito-consolida-un-desempeno-excepcional-en-2025-multiplico-por-10-su-utilidad-neta-la-cual-supero-los-592-mil-millones-de-pesos-0",
+            "raw_context": "[2025-11-07T10:35:15] La Cámara de Comercio de Bogotá (CCB) y el Grupo Éxito sellan alianza estratégica para impulsar la democratización en el sector moda | Grupo Éxito. ![Inicio](/sites/default/files/Logo%20grupo%20e%CC%81xito_0.png) El precio de la acción mostrado en esta sección corresponde al último dato disponible proporcionado por la Bolsa. Puede estar sujeto a actualizaciones y no reflejar el valor en tiempo real. ## Navegación Principal ![ok]() ![Gobierno corporativo]() ![Accionistas e Inversionistas]() ![Sostenibilidad]() ![Suppliers]() ![Prensa]() ![innovacion]() ![microfono-icono]() ![ok]() ![Nuestra Organización]() Somos un negocio dinámico que se adapta a las nuevas formas de consumo, a partir de la innovación como eje de la evolución del *retail,* de la transformación digital para cuidar el tiempo del cliente, de nuevas experiencias y de la sostenibilidad, a partir de una estrategia que construye país. ![okk](/sites/default/files/2020-03/Nuestra%20organizacio%CC%81n.png) ![ok](/sites/default/files/2020-03/icono%20mega%20menu1.png) ![Gobierno corporativo]() ![Gobierno Corporativo ]() Consideramos el Gobierno Corporativo como un conjunto de prácticas para lograr un balance en la relación de la compañía con sus diferentes grupos de interés. ![Gobierno corporativo](/sites/default/files/2019-11/Gobierno%20corporativo.png) ![Gobierno corporativo](/sites/default/files/2019-08/icno%20mega%20menu%204.png) ![Accionistas e Inversionistas]() ![Accionistas e inversionistas]() En el marco de transparencia, disponemos la información financiera, las comunicaciones al mercado, la información relevante y otros documentos que pueden ser de interés para nuestros accionistas e inversionistas. ![Accionistas e Inversionistas](/sites/default/files/2019-11/Accionistas%20e%20Inversionistas.png) ![Accionistas e Inversionistas](/sites/default/files/2019-08/icnono%20mega%20menu%205.png) ![Sostenibilidad]() ![Sostenibilidad]() Como Grupo Éxito, buscamos **Nutrir de Oportunidades a Colombia,** a través de estándares de calidad y transparencia que promuevan la erradicación de la nutrición crónica en nuestro país, la compra local y directa, el desarrollo de nuestros aliados y proveedores, la protección del planeta y la transición energética, hábitos de vida más saludable y el bienestar de nuestros colaboradores. ![Sostenibilidad](/sites/default/files/2019-11/Sostenibilidad.png) ![Sostenibilidad](/sites/default/files/2019-08/icono%20mega%20menu2.png) ![Suppliers]() ![Nuestra Organiza … gia que construye país. ![Suppliers](/sites/default/files/2019-08/icono%20mega%20menu%203.png) ![Prensa]() ![Sala de Prensa]() En nuestro propósito de mantener una relación cercana, informada y transparente con los diferentes públicos de interés, entre ellos los medios de comunicación, reseñamos los hechos noticiosos más importantes de la compañía. ![Sala de prensa](/sites/default/files/2019-11/Sala%20de%20prensa.png) ![Prensa](/sites/default/files/2019-08/icono%20mega%20menu%206.png) ![innovacion]() ![Innovación]() Un espacio en donde conocerás algunas de las innovaciones con las que estamos revolucionando la industria del retail en Colombia. ![innovacion](/sites/default/files/2022-06/Innovacio%CC%81n_i%CC%81cono.png) ![innovacion](/sites/default/files/2021-04/innovacion.png) ![microfono-icono]() ![microfono-icono](/sites/default/files/2022-10/40.png) ## Redes sociales ![facebook grupo exito](/sites/default/files/2019-08/facebook-f.png) ![instagram exito](/sites/default/files/2019-08/instagramlogo.png) ![twitter grupo exito](/sites/default/files/2019-08/twitter.png) ![youtube grupo exito](/sites/default/files/2019-08/youtube.png) ![linkedin grupo exito](/sites/default/files/2019-08/linked.png) ![Spotify](/sites/default/files/2020-08/spoti2.png) ## Header Lateral Derecho ## Ruta de navegación # La Cámara de Comercio de Bogotá (CCB) y el Grupo Éxito sellan alianza estratégica para impulsar la democratización en el sector moda ![](/sites/default/files/inline-images/Grupo%20exitooo.png) ![](/sites/default/files/inline-images/ccb.png) ![](/sites/default/files/inline-images/ccb.png) **La Cámara de Comercio de Bogotá (CCB) y el Grupo Éxito sellan alianza estratégica para impulsar la democratización en el sector moda** **Bogotá, noviembre 6 de 2025.** Con el propósito de democratizar la economía popular en el sector moda, la Cámara de Comercio de Bogotá (CCB) y el Grupo Éxito sellaron este jueves una alianza estratégica para sumar esfuerzos que se traduzcan en acciones conjuntas que impulsen la visibilidad, comercialización y proyección de las empresas asociadas a la moda en Bogotá y Región, posicionen a la capital como un referente del sector y potencien su proyección internacional. Esta iniciativa, que pone a las marcas y a los consumidores en primer lugar, une al sector privado a partir de sus apuestas por la democratización de la moda. En el caso de la CCB la democratización inició con el proyecto [ P U E N T E ] que busca integrar a empresarios de la moda popular al circuito global mediante procesos de curaduría, mentoría y proyección internacional. Gracias a ello, empresarios de San Victorino y Restrepo han participado en Bogotá Fashion Week, y en la Semana de la Moda de las principales plataformas internacionales como New York Fashion Week y la Feria Internacional de Moda en Madrid (MOMAD). Por su parte, el negocio textil del Grupo Éxito hace parte de su ADN, está presente desde sus orígenes: en 1949, el fundador de la compañía, abrió un pequeño almacén de 4x4 metros en el centro de Medellín donde vendía telas y retazos; ese fue el punto de partida de un legado que hoy es motor económico y social para Colombia. El 93,91% de las prendas de mar … ocida en el mundo por su estilo y calidad”.*** **La Alianza** Esta alianza se basa en **cinco ejes estratégicos** que buscan hacer de la moda un sector más accesible, participativo e inclusivo. A través de la participación oficial del Grupo Éxito en el Bogotá Fashion Weekend, se abrirán **espacios de exhibición y venta** que permitirán que diseñadores emergentes y marcas locales compartan escenario con referentes consolidados, acercando la moda a nuevos públicos. Las activaciones en almacenes Éxito, **con pasarelas y conversatorios en puntos priorizados de Bogotá** y Región, llevarán la experiencia de la moda a los territorios, conectando el diseño con la vida cotidiana de los ciudadanos. La **estrategia de comunicación** conjunta amplificará las voces del talento local en los canales de ambas entidades, visibilizando la diversidad creativa de la ciudad. A su vez, las **oportunidades de expansión comercial** permitirán que productos diseñados y confeccionados en Bogotá lleguen a vitrinas físicas y digitales del Grupo Éxito, integrando a pequeños y medianos empresarios en cadenas de valor más amplias. Finalmente, el eje de **internacionalización** impulsará la participación de empresas locales en ruedas de negocio y misiones internacionales, abriendo puertas a nuevos mercados y promoviendo la proyección global del talento bogotano. En conjunto, estos ejes hacen realidad el propósito compartido de democratizar la moda, acercando la creatividad a las audiencias, generando inclusión económica y fortaleciendo el tejido empresarial desde la base popular hasta los escenarios internacionales. **La firma Andrés Pajón en Bogotá Fashion Weekend con Moda Éxito** Esta alianza se da justo previo al lanzamiento de la primera colección de Moda Éxito en colaboración con la firma Andrés Pajón, una casa de moda que hace parte del ecosistema de Bogotá Fashion Week y que, a través de los programas de formación y acompañamiento de la Cámara de Comercio de Bogotá, ha fortalecido su proyección y su camino. Esta será la primera vez que la firma colombiana une su sello de sofisticación con un *retail*masivo. Además esta colección estará presente en el Bogotá Fashion Weekend del 27 al 30 de noviembre de 2025. ***“Como Pajón & Cartagena celebramos este tipo de alianzas, la cual además llega justo cuando preparamos nuestra primera colaboración con Grupo Éxito, una colección de Navidad que nos emociona profundamente porque nos permite reinterpretar la esencia de Pajón & Cartagena en nuevas categorías y acercar nuestro universo creativo a más colombianas, con unas prendas cercana, accesibles y que hagan parte de la cotidianidad de las mujeres que quieren sentirse hermosas con prendas de vestir como las nuestras”***, señalaron Andrés Pajón y Felipe Cartagena, directores creativos de la firma Andrés Pajón. **Cifras del sector moda** El potencial del sector moda en Bogotá – Región se ve reflejado en las siguientes cifras provenientes del registro mercantil de la Cámara de Comercio de Bogotá: Entre enero y agosto de 2025 estuvieron activas 31.777 empresas del macrosector moda, las cuales representan el 6,8 % del total de empresas activas en la jurisdicción de la Cámara de Come (source: https://www.grupoexito.com.co/es/noticias-grupo-exito/la-camara-de-comercio-",
+            "signal_date": "2026-02-25",
+            "website_url": "https://grupoexito.com.co",
+            "account_identity": {
+              "domain": "grupoexito.com.co",
+              "country": "Colombia",
+              "confidence": "verified",
+              "fromUniverse": true,
+              "canonicalName": "Grupo Exito",
+              "organizationType": "Retailers con surtido de terceros en categorías de bienestar y bienes empacados"
+            },
+            "confidence_score": 0.8,
+            "discovery_provenance": [
+              {
+                "route": "source_ecosystem",
+                "origin": "dynamic_enumeration",
+                "provider": "engine"
+              }
+            ],
+            "discovery_origin_flags": [
+              "ACCOUNT_FIRST"
+            ]
+          },
+          "missing_data": [
+            "No public confirmation of a dedicated wellness or premium packaged goods incubation or fast-track supplier program beyond the fashion vertical.",
+            "Unknown: current category gaps or buyer mandates in wellness/packaged goods for 2025-2026.",
+            "Unknown: internal decision-making structure for new third-party brand onboarding in non-fashion categories."
+          ],
+          "buying_window": "near_term",
+          "inferred_pain": "Grupo Éxito appears to be actively expanding its third-party brand and supplier ecosystem, which may indicate a structured but complex onboarding and curation process that premium international brands find difficult to navigate without a local intermediary.",
+          "account_thesis": "Grupo Éxito has publicly activated a structured third-party brand channel partnership model as of November 2025, making it a timely target for a market-entry intermediary that can connect premium wellness brands to this newly formalized shelf access mechanism. The commercial thesis is partially confirmed (channel openness) and partially inferred (wellness category applicability).",
+          "role_relevance": "Grupo Éxito is a primary mass-market channel for consumer goods and wellness brands seeking distribution in Colombia, making it a high-relevance target for market-entry and channel partnership services aimed at premium wellness and packaged goods brands.",
+          "timing_signals": [
+            "Announced strategic alliance with Cámara de Comercio de Bogotá (CCB) on November 6, 2025 to democratize fashion and open commercial vitrinas to emerging brands in physical and digital Éxito stores.",
+            "First Moda Éxito collaboration with designer brand Andrés Pajón launching at Bogotá Fashion Weekend, November 27-30, 2025."
+          ],
+          "company_summary": "Grupo Éxito is Colombia's largest retail group, operating supermarkets, hypermarkets, and fashion stores across the country under banners including Éxito, Carulla, and Surtimax. It has a publicly listed stock and a strong omnichannel presence spanning physical stores and digital commerce. The company has deep roots in fashion/textile retail dating to its 1949 founding and actively pursues brand partnerships, supplier development, and category expansion.",
+          "pain_hypothesis": "Grupo Éxito is expanding its third-party brand channel (confirmed in fashion) but likely lacks a systematic, curated market-entry pathway for premium international wellness and packaged goods brands, creating an addressable gap that a channel partnership development offer could fill.",
+          "account_research": {
+            "domain": "grupoexito.com.co",
+            "account": "Grupo Exito",
+            "version": "account-deep-research-v1",
+            "query_audit": [
+              {
+                "stage": "identity",
+                "results": 5,
+                "accepted": 5,
+                "provider": "brave",
+                "query_id": "rq_ejscbj"
+              },
+              {
+                "stage": "current_activity",
+                "results": 0,
+                "accepted": 0,
+                "provider": "brave",
+                "query_id": "rq_3e42hg"
+              },
+              {
+                "stage": "current_activity",
+                "results": 0,
+                "accepted": 0,
+                "provider": "tavily",
+                "query_id": "rq_3e42hg"
+              },
+              {
+                "stage": "current_activity",
+                "results": 1,
+                "accepted": 1,
+                "provider": "brave",
+                "query_id": "rq_1869amp"
+              },
+              {
+                "stage": "current_activity",
+                "results": 0,
+                "accepted": 0,
+                "provider": "tavily",
+                "query_id": "rq_1869amp"
+              },
+              {
+                "stage": "counterevidence",
+                "results": 5,
+                "accepted": 5,
+                "provider": "brave",
+                "query_id": "rq_mud8xz"
+              },
+              {
+                "stage": "counterevidence",
+                "results": 0,
+                "accepted": 0,
+                "provider": "tavily",
+                "query_id": "rq_mud8xz"
+              },
+              {
+                "stage": "corroboration",
+                "results": 1,
+                "accepted": 0,
+                "provider": "brave",
+                "query_id": "rq_1efj6un"
+              },
+              {
+                "stage": "corroboration",
+                "results": 5,
+                "accepted": 0,
+                "provider": "tavily",
+                "query_id": "rq_1efj6un"
+              }
+            ],
+            "provider_ops": [
+              {
+                "ok": true,
+                "stage": "identity",
+                "results": 5,
+                "timeout": false,
+                "provider": "brave",
+                "operation": "search",
+                "duration_ms": 918
+              },
+              {
+                "ok": true,
+                "stage": "current_activity",
+                "results": 0,
+                "timeout": false,
+                "provider": "brave",
+                "operation": "search",
+                "duration_ms": 388
+              },
+              {
+                "ok": true,
+                "stage": "current_activity",
+                "results": 0,
+                "timeout": false,
+                "provider": "tavily",
+                "operation": "search",
+                "duration_ms": 9009
+              },
+              {
+                "ok": true,
+                "stage": "current_activity",
+                "results": 1,
+                "timeout": false,
+                "provider": "brave",
+                "operation": "search",
+                "duration_ms": 763
+              },
+              {
+                "ok": true,
+                "stage": "current_activity",
+                "results": 1,
+                "timeout": false,
+                "provider": "full_text",
+                "operation": "full_text",
+                "duration_ms": 3435
+              },
+              {
+                "ok": true,
+                "stage": "current_activity",
+                "results": 0,
+                "timeout": false,
+                "provider": "anthropic",
+                "operation": "llm",
+                "duration_ms": 9870
+              },
+              {
+                "ok": true,
+                "stage": "current_activity",
+                "results": 0,
+                "timeout": false,
+                "provider": "tavily",
+                "operation": "search",
+                "duration_ms": 8723
+              },
+              {
+                "ok": true,
+                "stage": "counterevidence",
+                "results": 5,
+                "timeout": false,
+                "provider": "brave",
+                "operation": "search",
+                "duration_ms": 828
+              },
+              {
+                "ok": true,
+                "stage": "counterevidence",
+                "results": 1,
+                "timeout": false,
+                "provider": "full_text",
+                "operation": "full_text",
+                "duration_ms": 2515
+              },
+              {
+                "ok": true,
+                "stage": "counterevidence",
+                "results": 0,
+                "timeout": false,
+                "provider": "tavily",
+                "operation": "search",
+                "duration_ms": 6055
+              },
+              {
+                "ok": true,
+                "stage": "corroboration",
+                "results": 1,
+                "timeout": false,
+                "provider": "brave",
+                "operation": "search",
+                "duration_ms": 857
+              },
+              {
+                "ok": true,
+                "stage": "corroboration",
+                "results": 5,
+                "timeout": false,
+                "provider": "tavily",
+                "operation": "search",
+                "duration_ms": 5042
+              }
+            ],
+            "results_seen": 17,
+            "dated_evidence": 6,
+            "provider_calls": 9,
+            "pages_extracted": 2,
+            "planned_queries": 4,
+            "claims_recovered": 3,
+            "executed_queries": 5,
+            "extraction_audit": [
+              {
+                "url": "https://www.grupoexito.com.co/es/noticias-grupo-exito/la-camara-de-comercio-de-bogota-ccb-y-el-grupo-exito-sellan-alianza-estrategica-para-impulsar-la-democratizacion-en-el-sector-moda",
+                "stage": "current_activity",
+                "date_phrase": "hoy",
+                "materiality": "low",
+                "signal_kind": "operational_change",
+                "accepted_events": 0,
+                "evidence_excerpt": "es: en 1949, el fundador de la compañía, abrió un pequeño almacén de 4x4 metros en el centro de Medellín donde vendía telas y retazos; ese fue el punto de partida de un legado que hoy es motor económico y social para Colombia. El 93,91% de las prendas de mar … ocida en el mundo por su estilo y calidad”.*** **La Alianza** Esta alianza se basa en **cinco ejes estratégicos** que buscan hacer de la moda un sector más accesible, participativo e inclusivo. A través de la participación oficial del Grupo Éxito en el Bogotá Fashion Weekend, se abrirán **espacios de exhibición y venta** que permitirán que diseñadores emergentes y marcas locales compartan escenario con referentes consolidados, acercando la moda a nuevos públicos. Las activaciones en almacenes Éxito, **con pasarelas y conversatorios en puntos priorizados de Bogotá** y Región, llevarán la experiencia de la moda a los territorios, conectando el diseño con la vida cotidiana de los ciudadanos. La **estrategia de comunicación** conjunta amplificará las voces del talento local en los canales de ambas entidades, visibilizando la diversidad creativa de la ciudad. A su vez, las **oportunidades de expansión comercial** permitirán que pr"
+              },
+              {
+                "url": "https://www.grupoexito.com.co/es/noticias-grupo-exito/grupo-exito-consolida-un-desempeno-excepcional-en-2025-multiplico-por-10-su-utilidad-neta-la-cual-supero-los-592-mil-millones-de-pesos-0",
+                "stage": "counterevidence",
+                "date_phrase": "25 de Febrero de 2026",
+                "materiality": "low",
+                "signal_kind": "operational_change",
+                "accepted_events": 1,
+                "evidence_excerpt": "2-billion-pesos) * [PT](/pt/node/2903) # Grupo Éxito consolida un desempeño excepcional en 2025, multiplicó por 10 su Utilidad Neta, la cual superó los $592 mil millones de pesos. 25 de Febrero de 2026 **Este resultado se explica por un buen desempeño en ventas y competitividad, una mejora en los resultados operativos y comerciales, un manejo disciplinado de planes de eficiencia y productividad, y una mayor contribución de los negocios complementarios.** **En conjunto, estos factores fortalecieron la rentabilidad del Grupo y consolidaron su posición para capturar nuevas oportunidades de crecimiento en 2026.** **Por su parte, los ingresos consolidados de la compañía llegaron a los $22 billones de pesos en el año 2025 con un crecimiento del 4% (excluyendo el efecto cambiario) frente al mismo período del año anterior, siendo Colombia el principal motor de los ingresos consolidados del Grupo, con un aporte del 77% en los mismos.** **El margen EBITDA recurrente al cierre de 2025 se ubicó en 8,8%, alcanzando los $1.9 billones de pesos, lo que representó crecimiento de 19,5% respecto a 2024 (excluyendo el efecto cambiario).** **Si bien los resultados de Grupo Éxito dan muestra de la trans"
+              }
+            ],
+            "validated_events": [
+              {
+                "url": "https://www.grupoexito.com.co/es/noticias-grupo-exito/grupo-exito-consolida-un-desempeno-excepcional-en-2025-multiplico-por-10-su-utilidad-neta-la-cual-supero-los-592-mil-millones-de-pesos-0",
+                "kind": "operational_change",
+                "stage": "counterevidence",
+                "event_date": "2026-02-25",
+                "source_host": "grupoexito.com.co",
+                "claim_excerpt": "Grupo Éxito consolida un desempeño excepcional en 2025, multiplicó por 10 su Utilidad Neta, la cual superó los $592 mil millones de pesos. | Grupo Éxito. [Pasar al contenido principal](#main-content) Sep 15,2026 El precio de la acción mostrado en esta sección corresponde al último dato disponible proporcionado por la Bolsa. Puede estar sujeto a actualizaciones y no reflejar el valor en tiempo real. * [ES](/es/noticias-grupo-exito/grupo-exito-consolida-un-desempeno-excepcional-en-2025-multiplico-por-10-su-utilidad-neta-la-cual-supero-los-592-mil-millones-de-pesos-0) * [EN](/en/news/grupo-exito-delivers-exceptional-performance-2025-multiplying-net-result-10-surpassing-592-billion-pesos) * [PT](/pt/node/2903) # Grupo Éxito consolida un desempeño excepcional en 2025, multiplicó por 10 su Utilidad Neta, la cual superó los $592 mil millones de pesos. 25 de Febrero de 2026 **Este resultado se explica por un buen desempeño en ventas y competitividad, una mejora en los resultados operativos y comerciales, un manejo disciplinado de planes de eficiencia y productividad, y una mayor contribución de los negocios complementarios.** **En conjunto, estos factores fortalecieron la rentabilidad del ",
+                "counterevidence": false,
+                "materiality_valid": true
+              }
+            ],
+            "early_stop_reason": "budget_exhausted",
+            "evidence_accepted": 11,
+            "evidence_rejected": 6,
+            "provider_failures": 0,
+            "account_elapsed_ms": 85193,
+            "event_hints_fetched": 0,
+            "extraction_failures": 0,
+            "independent_domains": 1,
+            "event_hints_received": 0,
+            "corroborating_domains": 0,
+            "corroborating_sources": [],
+            "event_hints_validated": 0,
+            "corroboration_attempted": true,
+            "counterevidence_checked": true,
+            "event_geography_rejected": 0,
+            "structured_extraction_calls": 1,
+            "counterevidence_material_found": false
+          },
+          "risks_weaknesses": [
+            "The confirmed alliance is fashion-focused; extension to wellness/packaged goods is an inference, not a verified signal.",
+            "Grupo Éxito is a large, bureaucratic retail group — procurement cycles for new categories may be long and require internal category manager buy-in not yet identified.",
+            "The offer targets 'premium' brands, while Grupo Éxito's alliance language emphasizes democratization and mass-market access, suggesting possible value proposition misalignment.",
+            "No evidence of a current RFP, budget allocation, or expressed need for an external market-entry advisory partner in wellness."
+          ],
+          "segment_fit_note": "Grupo Éxito fits the 'retailer with third-party assortment in wellness and packaged goods' segment directly, though the confirmed channel expansion signal is currently limited to the fashion category.",
+          "opportunity_risks": [
+            "Fashion-to-wellness category transfer is assumed, not confirmed — outreach may reach the wrong internal buyer or wrong moment in category planning.",
+            "Grupo Éxito's scale and existing supplier network may reduce perceived need for an external market-entry partner.",
+            "Premium brand positioning may conflict with Grupo Éxito's stated 'democratization' and mass-access retail strategy.",
+            "No identified champion or category manager contact for wellness/packaged goods limits outreach precision."
+          ],
+          "next_best_question": "Does Grupo Éxito currently have an open or planned supplier onboarding program for premium wellness and packaged goods brands, and who owns that category commercially?",
+          "recommended_action": "validate_source_first",
+          "evidence_discipline": [
+            {
+              "date": "2025-11-06",
+              "type": "verified_public_signal",
+              "claim": "Grupo Éxito and CCB signed a strategic alliance to open physical and digital commercial shelf space to third-party brands"
+            },
+            {
+              "date": "2025-11-06",
+              "type": "verified_public_signal",
+              "claim": "Grupo Éxito is launching a co-branded fashion collection with designer Andrés Pajón at Bogotá Fashion Weekend"
+            },
+            {
+              "date": null,
+              "type": "inferred_from_context",
+              "claim": "Grupo Éxito's wellness and healthy living are stated strategic pillars that may extend to packaged goods category curation"
+            },
+            {
+              "date": null,
+              "type": "weak_inference",
+              "claim": "The open-brand channel model confirmed in fashion likely applies or will extend to wellness and packaged goods categories"
+            },
+            {
+              "date": null,
+              "type": "missing_evidence",
+              "claim": "Existence of a dedicated budget or buyer mandate for premium international wellness brand partnerships"
+            },
+            {
+              "date": null,
+              "type": "inferred_from_context",
+              "claim": "Grupo Éxito has a structured, navigable supplier onboarding process that an intermediary could accelerate for premium brands"
+            }
+          ],
+          "research_confidence": 0.62,
+          "buying_window_reason": "A formal channel partnership program was just announced in November 2025, suggesting procurement and category conversations for adjacent categories are likely active within the next 1-2 quarters.",
+          "signal_interpretation": "The CCB alliance signals that Grupo Éxito is institutionalizing a curated, multi-brand channel strategy rather than pursuing ad hoc supplier deals — this structural shift creates a repeatable entry point that a market-entry advisory could systematically leverage for wellness brand clients, if the model extends beyond fashion.",
+          "evidence_quality_grade": "moderate_public",
+          "recommended_action_reason": "Before outreach, confirm whether Grupo Éxito's new channel partnership model extends to wellness/packaged goods categories and identify the relevant internal buyer, since the only confirmed signal is fashion-specific."
+        },
+        "fit_reasons": [
+          "Grupo Éxito is Colombia's largest retail group with confirmed third-party brand channel infrastructure — a direct structural match for a market-entry intermediary serving wellness and packaged goods brands seeking shelf access.",
+          "The company operates across multiple store formats (Éxito, Carulla, Surtimax) with an omnichannel presence, providing scalable distribution depth for premium brand partners.",
+          "Carulla banner specifically skews premium/upscale consumer — creating a credible sub-channel for premium wellness brands even if the broader Éxito network is mass-market.",
+          "Confirmed November 2025 structured alliance with Cámara de Comercio de Bogotá for brand channel access demonstrates active institutional appetite for curated external brand onboarding — a meaningful commercial signal.",
+          "Source confidence rated at 80% with publicly listed company status — company-level facts are highly verifiable and low-risk."
+        ],
+        "score_breakdown": {
+          "pain_fit": 1,
+          "role_fit": 2,
+          "company_fit": 2,
+          "reachability": 0.5,
+          "timing_signal": 1,
+          "strategic_relevance": 1
+        },
+        "score_dimensions": {
+          "timing": 45,
+          "icp_fit": 72,
+          "confidence": 52,
+          "signal_strength": 38,
+          "strategic_value": 80,
+          "evidence_quality": 62,
+          "disqualification_risk": 22
+        },
+        "comparative_notes": "At 7.5/10, Grupo Exito is close to HOT threshold — a confirmed signal would move it to the top tier",
+        "score_explanation": "Score is WARM because [ICP Fit: 72/100 — Grupo Éxito is a structurally strong match as Colombia's largest multi-format retailer with a live third-party brand channel; Carulla sub-banner provides a credible premium wellness entry point, but mass-market orientation creates partial ICP tension]. [Signal: 38/100 — the CCB fashion alliance is a confirmed public signal of channel openness, but it is vertical-specific and does not transfer directly to wellness or packaged goods without further validation]. [Timing: 45/100 — the November 2025 alliance announcement creates a credible narrative hook, but the 30–90 day actionable window is not confirmed for wellness category; no buyer mandate or RFP is visible]. Key risk: signal_strength at 38 disqualifies HOT categorization even though icp_fit and evidence_quality are near threshold — the fashion-to-wellness leap is the decisive blocker.",
+        "ranking_explanation": "Grupo Exito ranks first only within this limited batch (7.5/10), but remains WARM. The dated company event is not evidence of purchase intent; validate commercial relevance before any outreach.",
+        "signal_interpretation": "This account is commercially compelling on structure but prematurely activated on signal — the confirmed channel partnership model opens a real conversation, but the offer must be carefully bridged from fashion to wellness before outreach is credible. The account would unlock from WARM to HOT if a wellness or packaged goods category expansion signal, internal buyer mandate, or supplier program announcement is confirmed.",
+        "opportunity_tier_reason": "WARM: Meets 2 of 3 HOT criteria — one key dimension (signal) is below HOT threshold",
+        "disqualification_reasons": [
+          "Confirmed signal is fashion-only; extension to wellness/packaged goods category is an inference with no public confirmation — signal_strength cannot qualify as HOT.",
+          "The 'democratization' language in CCB alliance framing is potentially misaligned with a 'premium international brands' value proposition — there is a real risk of positioning friction.",
+          "No identified internal decision-makers for wellness category procurement — reachability is moderate at best, and procurement cycles in large Colombian retail groups are typically long.",
+          "No RFP, budget signal, or expressed category gap in wellness — timing is commercially plausible but not confirmed within a 30–90 day actionable window."
+        ],
+        "qualification_confidence": 0.55
+      }
+    }
+  ],
+  "research_audit": [
+    {
+      "risks": [
+        "Hard-discount format may reject premium pricing structures outright, making the offer commercially irrelevant to this account.",
+        "Only one public source line exists — account intelligence is too thin to support confident outreach.",
+        "No confirmed category expansion signal or internal champion identified.",
+        "Pursuing this account without validating premium brand acceptance risks misallocating business development resources."
+      ],
+      "domain": "koba-ti.com",
+      "company": "Koba Colombia",
+      "country": "Colombia",
+      "reasons": [
+        "opportunity_test_reject",
+        "hard_blocker_no_event",
+        "hard_blocker_no_material_event",
+        "hard_blocker_no_valid_date"
+      ],
+      "category": "DISCARD",
+      "fitScore": 3.5,
+      "qcStatus": "REVIEW_NEEDED",
+      "sourceUrl": "http://koba-ti.com/",
+      "signalDate": null,
+      "signalType": null,
+      "nextQuestion": "Does Tiendas D1 currently carry or plan to carry premium-positioned wellness brands, or is the assortment restricted to value-tier and private-label products?",
+      "actionability": {
+        "fit_state": "limited",
+        "hold_reason": "LOW_FIT",
+        "target_valid": true,
+        "timing_state": "limited",
+        "evidence_valid": false,
+        "final_decision": "hold",
+        "search_results": 6,
+        "research_coverage": "sufficient",
+        "independent_support": false,
+        "temporal_valid_events": 0,
+        "company_identity_valid": true,
+        "materiality_valid_events": 0,
+        "material_event_candidates": 0
+      },
+      "eventHintCount": 0,
+      "evidenceClaims": [
+        {
+          "date": null,
+          "type": "verified_public_signal",
+          "claim": "Tiendas D1 publicly states interest in long-term supplier relationships focused on low costs and high quality",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": null,
+          "type": "verified_public_signal",
+          "claim": "Koba Colombia S.A.S. is the legal entity behind Tiendas D1 with NIT 900276962",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": null,
+          "type": "weak_inference",
+          "claim": "Koba/D1 is open to onboarding new wellness or premium packaged goods brands",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": null,
+          "type": "missing_evidence",
+          "claim": "Company size, revenue, and store count are unknown from available sources",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": null,
+          "type": "inferred_from_context",
+          "claim": "D1 may be expanding premium SKU categories in response to Colombian consumer trade-up trends",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": null,
+          "type": "missing_evidence",
+          "claim": "A specific category manager or channel partnership decision-maker exists at Koba Colombia",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        }
+      ],
+      "accountResearch": {
+        "domain": "koba-ti.com",
+        "account": "Koba Colombia",
+        "version": "account-deep-research-v1",
+        "query_audit": [
+          {
+            "stage": "identity",
+            "results": 1,
+            "accepted": 1,
+            "provider": "brave",
+            "query_id": "rq_1bvrt41"
+          },
+          {
+            "stage": "identity",
+            "results": 5,
+            "accepted": 0,
+            "provider": "tavily",
+            "query_id": "rq_1bvrt41"
+          },
+          {
+            "stage": "current_activity",
+            "results": 0,
+            "accepted": 0,
+            "provider": "brave",
+            "query_id": "rq_19viwh1"
+          },
+          {
+            "stage": "current_activity",
+            "results": 0,
+            "accepted": 0,
+            "provider": "tavily",
+            "query_id": "rq_19viwh1"
+          },
+          {
+            "stage": "current_activity",
+            "results": 0,
+            "accepted": 0,
+            "provider": "brave",
+            "query_id": "rq_105z5z3"
+          },
+          {
+            "stage": "current_activity",
+            "results": 0,
+            "accepted": 0,
+            "provider": "tavily",
+            "query_id": "rq_105z5z3"
+          },
+          {
+            "stage": "counterevidence",
+            "results": 0,
+            "accepted": 0,
+            "provider": "brave",
+            "query_id": "rq_qnw4dh"
+          },
+          {
+            "stage": "counterevidence",
+            "results": 0,
+            "accepted": 0,
+            "provider": "tavily",
+            "query_id": "rq_qnw4dh"
+          }
+        ],
+        "provider_ops": [
+          {
+            "ok": true,
+            "stage": "identity",
+            "results": 1,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 718
+          },
+          {
+            "ok": true,
+            "stage": "identity",
+            "results": 5,
+            "timeout": false,
+            "provider": "tavily",
+            "operation": "search",
+            "duration_ms": 1097
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 0,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 280
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 0,
+            "timeout": false,
+            "provider": "tavily",
+            "operation": "search",
+            "duration_ms": 10059
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 0,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 270
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 0,
+            "timeout": false,
+            "provider": "tavily",
+            "operation": "search",
+            "duration_ms": 9206
+          },
+          {
+            "ok": true,
+            "stage": "counterevidence",
+            "results": 0,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 577
+          },
+          {
+            "ok": true,
+            "stage": "counterevidence",
+            "results": 0,
+            "timeout": false,
+            "provider": "tavily",
+            "operation": "search",
+            "duration_ms": 6221
+          }
+        ],
+        "results_seen": 6,
+        "dated_evidence": 0,
+        "provider_calls": 8,
+        "pages_extracted": 0,
+        "planned_queries": 4,
+        "claims_recovered": 1,
+        "executed_queries": 4,
+        "extraction_audit": [],
+        "validated_events": [],
+        "early_stop_reason": "no_material_event",
+        "evidence_accepted": 1,
+        "evidence_rejected": 5,
+        "provider_failures": 0,
+        "account_elapsed_ms": 56335,
+        "event_hints_fetched": 0,
+        "extraction_failures": 0,
+        "independent_domains": 1,
+        "event_hints_received": 0,
+        "corroborating_domains": 0,
+        "corroborating_sources": [],
+        "event_hints_validated": 0,
+        "corroboration_attempted": false,
+        "counterevidence_checked": true,
+        "event_geography_rejected": 0,
+        "structured_extraction_calls": 0,
+        "counterevidence_material_found": false
+      },
+      "candidateOrigin": [
+        "ACCOUNT_FIRST"
+      ],
+      "canonicalDecision": "hold",
+      "researchConfidence": 0.38
+    },
+    {
+      "risks": [
+        "Fashion-to-wellness category transfer is assumed, not confirmed — outreach may reach the wrong internal buyer or wrong moment in category planning.",
+        "Grupo Éxito's scale and existing supplier network may reduce perceived need for an external market-entry partner.",
+        "Premium brand positioning may conflict with Grupo Éxito's stated 'democratization' and mass-access retail strategy.",
+        "No identified champion or category manager contact for wellness/packaged goods limits outreach precision."
+      ],
+      "domain": "grupoexito.com.co",
+      "company": "Grupo Exito",
+      "country": "Colombia",
+      "reasons": [
+        "opportunity_test_reject",
+        "hard_blocker_stale_beyond_180d"
+      ],
+      "category": "WARM",
+      "fitScore": 7.5,
+      "qcStatus": "APPROVED",
+      "sourceUrl": "https://www.grupoexito.com.co/es/noticias-grupo-exito/grupo-exito-consolida-un-desempeno-excepcional-en-2025-multiplico-por-10-su-utilidad-neta-la-cual-supero-los-592-mil-millones-de-pesos-0",
+      "signalDate": "2026-02-25",
+      "signalType": null,
+      "nextQuestion": "Does Grupo Éxito currently have an open or planned supplier onboarding program for premium wellness and packaged goods brands, and who owns that category commercially?",
+      "actionability": {
+        "fit_state": "strong",
+        "hold_reason": "STALE_EVENT",
+        "target_valid": true,
+        "timing_state": "moderate",
+        "evidence_valid": true,
+        "final_decision": "hold",
+        "search_results": 17,
+        "research_coverage": "sufficient",
+        "independent_support": false,
+        "temporal_valid_events": 1,
+        "company_identity_valid": true,
+        "materiality_valid_events": 1,
+        "material_event_candidates": 1
+      },
+      "eventHintCount": 0,
+      "evidenceClaims": [
+        {
+          "date": "2025-11-06",
+          "type": "verified_public_signal",
+          "claim": "Grupo Éxito and CCB signed a strategic alliance to open physical and digital commercial shelf space to third-party brands",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": "2025-11-06",
+          "type": "verified_public_signal",
+          "claim": "Grupo Éxito is launching a co-branded fashion collection with designer Andrés Pajón at Bogotá Fashion Weekend",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": null,
+          "type": "inferred_from_context",
+          "claim": "Grupo Éxito's wellness and healthy living are stated strategic pillars that may extend to packaged goods category curation",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": null,
+          "type": "weak_inference",
+          "claim": "The open-brand channel model confirmed in fashion likely applies or will extend to wellness and packaged goods categories",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": null,
+          "type": "missing_evidence",
+          "claim": "Existence of a dedicated budget or buyer mandate for premium international wellness brand partnerships",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        },
+        {
+          "date": null,
+          "type": "inferred_from_context",
+          "claim": "Grupo Éxito has a structured, navigable supplier onboarding process that an intermediary could accelerate for premium brands",
+          "source_id": null,
+          "source_url": null,
+          "supporting_sources": []
+        }
+      ],
+      "accountResearch": {
+        "domain": "grupoexito.com.co",
+        "account": "Grupo Exito",
+        "version": "account-deep-research-v1",
+        "query_audit": [
+          {
+            "stage": "identity",
+            "results": 5,
+            "accepted": 5,
+            "provider": "brave",
+            "query_id": "rq_ejscbj"
+          },
+          {
+            "stage": "current_activity",
+            "results": 0,
+            "accepted": 0,
+            "provider": "brave",
+            "query_id": "rq_3e42hg"
+          },
+          {
+            "stage": "current_activity",
+            "results": 0,
+            "accepted": 0,
+            "provider": "tavily",
+            "query_id": "rq_3e42hg"
+          },
+          {
+            "stage": "current_activity",
+            "results": 1,
+            "accepted": 1,
+            "provider": "brave",
+            "query_id": "rq_1869amp"
+          },
+          {
+            "stage": "current_activity",
+            "results": 0,
+            "accepted": 0,
+            "provider": "tavily",
+            "query_id": "rq_1869amp"
+          },
+          {
+            "stage": "counterevidence",
+            "results": 5,
+            "accepted": 5,
+            "provider": "brave",
+            "query_id": "rq_mud8xz"
+          },
+          {
+            "stage": "counterevidence",
+            "results": 0,
+            "accepted": 0,
+            "provider": "tavily",
+            "query_id": "rq_mud8xz"
+          },
+          {
+            "stage": "corroboration",
+            "results": 1,
+            "accepted": 0,
+            "provider": "brave",
+            "query_id": "rq_1efj6un"
+          },
+          {
+            "stage": "corroboration",
+            "results": 5,
+            "accepted": 0,
+            "provider": "tavily",
+            "query_id": "rq_1efj6un"
+          }
+        ],
+        "provider_ops": [
+          {
+            "ok": true,
+            "stage": "identity",
+            "results": 5,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 918
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 0,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 388
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 0,
+            "timeout": false,
+            "provider": "tavily",
+            "operation": "search",
+            "duration_ms": 9009
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 1,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 763
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 1,
+            "timeout": false,
+            "provider": "full_text",
+            "operation": "full_text",
+            "duration_ms": 3435
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 0,
+            "timeout": false,
+            "provider": "anthropic",
+            "operation": "llm",
+            "duration_ms": 9870
+          },
+          {
+            "ok": true,
+            "stage": "current_activity",
+            "results": 0,
+            "timeout": false,
+            "provider": "tavily",
+            "operation": "search",
+            "duration_ms": 8723
+          },
+          {
+            "ok": true,
+            "stage": "counterevidence",
+            "results": 5,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 828
+          },
+          {
+            "ok": true,
+            "stage": "counterevidence",
+            "results": 1,
+            "timeout": false,
+            "provider": "full_text",
+            "operation": "full_text",
+            "duration_ms": 2515
+          },
+          {
+            "ok": true,
+            "stage": "counterevidence",
+            "results": 0,
+            "timeout": false,
+            "provider": "tavily",
+            "operation": "search",
+            "duration_ms": 6055
+          },
+          {
+            "ok": true,
+            "stage": "corroboration",
+            "results": 1,
+            "timeout": false,
+            "provider": "brave",
+            "operation": "search",
+            "duration_ms": 857
+          },
+          {
+            "ok": true,
+            "stage": "corroboration",
+            "results": 5,
+            "timeout": false,
+            "provider": "tavily",
+            "operation": "search",
+            "duration_ms": 5042
+          }
+        ],
+        "results_seen": 17,
+        "dated_evidence": 6,
+        "provider_calls": 9,
+        "pages_extracted": 2,
+        "planned_queries": 4,
+        "claims_recovered": 3,
+        "executed_queries": 5,
+        "extraction_audit": [
+          {
+            "url": "https://www.grupoexito.com.co/es/noticias-grupo-exito/la-camara-de-comercio-de-bogota-ccb-y-el-grupo-exito-sellan-alianza-estrategica-para-impulsar-la-democratizacion-en-el-sector-moda",
+            "stage": "current_activity",
+            "date_phrase": "hoy",
+            "materiality": "low",
+            "signal_kind": "operational_change",
+            "accepted_events": 0,
+            "evidence_excerpt": "es: en 1949, el fundador de la compañía, abrió un pequeño almacén de 4x4 metros en el centro de Medellín donde vendía telas y retazos; ese fue el punto de partida de un legado que hoy es motor económico y social para Colombia. El 93,91% de las prendas de mar … ocida en el mundo por su estilo y calidad”.*** **La Alianza** Esta alianza se basa en **cinco ejes estratégicos** que buscan hacer de la moda un sector más accesible, participativo e inclusivo. A través de la participación oficial del Grupo Éxito en el Bogotá Fashion Weekend, se abrirán **espacios de exhibición y venta** que permitirán que diseñadores emergentes y marcas locales compartan escenario con referentes consolidados, acercando la moda a nuevos públicos. Las activaciones en almacenes Éxito, **con pasarelas y conversatorios en puntos priorizados de Bogotá** y Región, llevarán la experiencia de la moda a los territorios, conectando el diseño con la vida cotidiana de los ciudadanos. La **estrategia de comunicación** conjunta amplificará las voces del talento local en los canales de ambas entidades, visibilizando la diversidad creativa de la ciudad. A su vez, las **oportunidades de expansión comercial** permitirán que pr"
+          },
+          {
+            "url": "https://www.grupoexito.com.co/es/noticias-grupo-exito/grupo-exito-consolida-un-desempeno-excepcional-en-2025-multiplico-por-10-su-utilidad-neta-la-cual-supero-los-592-mil-millones-de-pesos-0",
+            "stage": "counterevidence",
+            "date_phrase": "25 de Febrero de 2026",
+            "materiality": "low",
+            "signal_kind": "operational_change",
+            "accepted_events": 1,
+            "evidence_excerpt": "2-billion-pesos) * [PT](/pt/node/2903) # Grupo Éxito consolida un desempeño excepcional en 2025, multiplicó por 10 su Utilidad Neta, la cual superó los $592 mil millones de pesos. 25 de Febrero de 2026 **Este resultado se explica por un buen desempeño en ventas y competitividad, una mejora en los resultados operativos y comerciales, un manejo disciplinado de planes de eficiencia y productividad, y una mayor contribución de los negocios complementarios.** **En conjunto, estos factores fortalecieron la rentabilidad del Grupo y consolidaron su posición para capturar nuevas oportunidades de crecimiento en 2026.** **Por su parte, los ingresos consolidados de la compañía llegaron a los $22 billones de pesos en el año 2025 con un crecimiento del 4% (excluyendo el efecto cambiario) frente al mismo período del año anterior, siendo Colombia el principal motor de los ingresos consolidados del Grupo, con un aporte del 77% en los mismos.** **El margen EBITDA recurrente al cierre de 2025 se ubicó en 8,8%, alcanzando los $1.9 billones de pesos, lo que representó crecimiento de 19,5% respecto a 2024 (excluyendo el efecto cambiario).** **Si bien los resultados de Grupo Éxito dan muestra de la trans"
+          }
+        ],
+        "validated_events": [
+          {
+            "url": "https://www.grupoexito.com.co/es/noticias-grupo-exito/grupo-exito-consolida-un-desempeno-excepcional-en-2025-multiplico-por-10-su-utilidad-neta-la-cual-supero-los-592-mil-millones-de-pesos-0",
+            "kind": "operational_change",
+            "stage": "counterevidence",
+            "event_date": "2026-02-25",
+            "source_host": "grupoexito.com.co",
+            "claim_excerpt": "Grupo Éxito consolida un desempeño excepcional en 2025, multiplicó por 10 su Utilidad Neta, la cual superó los $592 mil millones de pesos. | Grupo Éxito. [Pasar al contenido principal](#main-content) Sep 15,2026 El precio de la acción mostrado en esta sección corresponde al último dato disponible proporcionado por la Bolsa. Puede estar sujeto a actualizaciones y no reflejar el valor en tiempo real. * [ES](/es/noticias-grupo-exito/grupo-exito-consolida-un-desempeno-excepcional-en-2025-multiplico-por-10-su-utilidad-neta-la-cual-supero-los-592-mil-millones-de-pesos-0) * [EN](/en/news/grupo-exito-delivers-exceptional-performance-2025-multiplying-net-result-10-surpassing-592-billion-pesos) * [PT](/pt/node/2903) # Grupo Éxito consolida un desempeño excepcional en 2025, multiplicó por 10 su Utilidad Neta, la cual superó los $592 mil millones de pesos. 25 de Febrero de 2026 **Este resultado se explica por un buen desempeño en ventas y competitividad, una mejora en los resultados operativos y comerciales, un manejo disciplinado de planes de eficiencia y productividad, y una mayor contribución de los negocios complementarios.** **En conjunto, estos factores fortalecieron la rentabilidad del ",
+            "counterevidence": false,
+            "materiality_valid": true
+          }
+        ],
+        "early_stop_reason": "budget_exhausted",
+        "evidence_accepted": 11,
+        "evidence_rejected": 6,
+        "provider_failures": 0,
+        "account_elapsed_ms": 85193,
+        "event_hints_fetched": 0,
+        "extraction_failures": 0,
+        "independent_domains": 1,
+        "event_hints_received": 0,
+        "corroborating_domains": 0,
+        "corroborating_sources": [],
+        "event_hints_validated": 0,
+        "corroboration_attempted": true,
+        "counterevidence_checked": true,
+        "event_geography_rejected": 0,
+        "structured_extraction_calls": 1,
+        "counterevidence_material_found": false
+      },
+      "candidateOrigin": [
+        "ACCOUNT_FIRST"
+      ],
+      "canonicalDecision": "hold",
+      "researchConfidence": 0.62
+    }
+  ],
+  "monitor_run_id": "mon_348b5e3f7b03f414d233baeb6f237e2f",
+  "timings": {
+    "stage_a_ms": 15468,
+    "confirmation_ms": 875,
+    "start_request_ms": 869,
+    "background_completion_ms": 207853,
+    "monitor_ms": 5004,
+    "total_ms": 233839
+  },
+  "usage_delta": {
+    "anthropic": {
+      "calls": 9,
+      "errors": 0,
+      "input_tokens": 19286,
+      "output_tokens": 7550,
+      "calculated_cost_usd": 0.171108,
+      "pricing_source": "Anthropic Sonnet 4.6 public list price, verified 2026-07-22"
+    },
+    "brave": {
+      "calls": 30,
+      "errors": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "calculated_cost_usd": 0,
+      "pricing_source": null
+    },
+    "serper": {
+      "calls": 6,
+      "errors": 6,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "calculated_cost_usd": 0,
+      "pricing_source": null
+    },
+    "tavily": {
+      "calls": 32,
+      "errors": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "calculated_cost_usd": 0,
+      "pricing_source": null
+    }
+  },
+  "checks": [
+    {
+      "name": "real authenticated owners created",
+      "ok": true
+    },
+    {
+      "name": "Stage A reachable and confirmable",
+      "ok": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "name": "explicit confirmation persisted through customer API",
+      "ok": true
+    },
+    {
+      "name": "same context label persists independently across tenants",
+      "ok": true
+    },
+    {
+      "name": "productive Intelligence run accepted before Research",
+      "ok": true,
+      "detail": "HTTP 202"
+    },
+    {
+      "name": "bounded background processor completed durably",
+      "ok": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "name": "owner reloads durable result",
+      "ok": true
+    },
+    {
+      "name": "other tenant cannot load result",
+      "ok": true
+    },
+    {
+      "name": "Lead Hunter run reference persisted",
+      "ok": true
+    },
+    {
+      "name": "Candidate Universe durable and owner-scoped",
+      "ok": true,
+      "detail": "n=15"
+    },
+    {
+      "name": "canonical Cases generated",
+      "ok": true
+    },
+    {
+      "name": "initial accepted Case set entered Account Memory",
+      "ok": true,
+      "detail": "snapshots=1, delivered=1"
+    },
+    {
+      "name": "manual customer Monitor reached canonical engine",
+      "ok": true,
+      "detail": "completed"
+    },
+    {
+      "name": "Monitor outcome is durably observable",
+      "ok": true,
+      "detail": "before=1, after=1"
+    },
+    {
+      "name": "completed retry is idempotent and avoids new Research",
+      "ok": true
+    },
+    {
+      "name": "same labels cannot collide cross-tenant",
+      "ok": true
+    }
+  ]
+}

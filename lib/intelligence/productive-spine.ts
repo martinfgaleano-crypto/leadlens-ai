@@ -5,6 +5,7 @@ import { buildDiscoveryJobInput } from "@/lib/interpretation/confirmed-context-e
 import type { DiscoveryRunner } from "@/lib/lead-hunter/candidate-universe";
 import type { LeadHunterRunStore } from "@/lib/lead-hunter/run-store";
 import { loadLeadHunterUniverse, orderResearchCandidatesForBudget, runAndPersistLeadHunter, toResearchCandidates } from "@/lib/lead-hunter/hunt-and-persist";
+import { qualifyReusedCandidates, adaptiveQualificationBudget, type ReuseQualificationDeps } from "@/lib/lead-hunter/vault-reuse-qualification";
 import { synthesizeCase } from "@/lib/monitor/canonical-case";
 import { isMaterialEventClaim } from "@/lib/intelligence/evidence-materiality";
 import { classifyRunCoverage } from "@/lib/intelligence/account-deep-research";
@@ -74,6 +75,13 @@ export interface ProductiveSpineDeps {
    *  fails the paid report (an honest envelope is persisted instead). Default (eligible + omitted) =
    *  the live provider+LLM researcher. Injected as a stub in tests so no spend occurs. */
   premiumContextResearcher?: PremiumContextResearcher;
+  /** Optional reused-identity Research qualification (Hybrid Candidate Universe). When present,
+   *  Vault-reused identities that lack an observed operating role are qualified from their OWN
+   *  current official source BEFORE the Research handoff, so genuinely relevant reused operators
+   *  can reach Research while wrong-target/non-company identities are rejected. Enrichment is on a
+   *  working copy (the persisted universe is immutable); best-effort/fail-closed — a failure leaves
+   *  the reused identities held, never breaking the run. Injected as a stub in tests (no spend). */
+  reuseQualifier?: ReuseQualificationDeps;
 }
 
 export type StartIntelligenceRunResult =
@@ -190,7 +198,24 @@ async function runIntelligenceExecution(
     // Mandatory reload proves Research consumes durable Lead Hunter output, not
     // the transient return value and not an independent discovery path.
     if (!persistedUniverse) throw new Error("persisted_universe_unavailable");
-    let candidates = toResearchCandidates(persistedUniverse);
+    // Hybrid Candidate Universe — reused-identity Research qualification (best-effort, fail-closed).
+    // Vault-reused identities carry no observed operating role, so the frozen research-readiness gate
+    // holds them out of Research. When a qualifier is injected, verify each reused identity's operating
+    // role from its OWN current official source on a WORKING COPY (the persisted snapshot stays
+    // immutable): qualified operators get a neutral organizationType and can reach Research; wrong-
+    // target/non-company identities are excluded; provider failures leave them held. A qualification
+    // failure never breaks the run.
+    let researchUniverse = persistedUniverse;
+    if (deps.reuseQualifier) {
+      try {
+        // Adaptive coverage: when fresh under-supplies (fallback fired), attempt enough eligible
+        // reused identities to plausibly meet the delivery target — bounded, relevance bar unchanged.
+        const { universe: qualified, metrics } = await qualifyReusedCandidates(persistedUniverse, deps.reuseQualifier, adaptiveQualificationBudget(input.deliveryLimit));
+        researchUniverse = qualified;
+        console.log(`[analytics] ${JSON.stringify({ event: "vault_reuse_qualification", run_id: runId, ...metrics })}`);
+      } catch { /* qualification is best-effort; fall back to the un-enriched universe */ }
+    }
+    let candidates = toResearchCandidates(researchUniverse);
     if (candidates.length === 0) throw new Error("no_research_ready_candidates");
 
     // Vault accretion (best-effort, failure-isolated): valid discovered companies
@@ -253,6 +278,12 @@ async function runIntelligenceExecution(
       reconcileLeadNarrativeWithCanonicalCase(lead, canonical);
       const ranked = report.ranked_opportunities?.find(item => item.lead_id === lead.id);
       if (ranked?.decision && canonical) {
+        ranked.recommended_action = canonical.decision === "prioritize" ? "send_outreach_now"
+          : canonical.decision === "validate" ? "validate_source_first"
+          : canonical.decision === "monitor" ? "monitor_for_new_signal" : "exclude";
+        ranked.actionability_status = canonical.decision === "prioritize" ? "act_now"
+          : canonical.decision === "validate" ? "validate_first"
+          : canonical.decision === "monitor" ? "monitor" : "exclude";
         ranked.decision.why_now = lead.enrichment.why_now ?? "No current timing conclusion is available.";
         if (canonicalMissingEvent(canonical.reasons)) {
           ranked.decision.why_this_quarter = "No quarter-level urgency is evidenced by a validated current event.";
@@ -500,6 +531,12 @@ export function reconcileLeadNarrativeWithCanonicalCase(
   canonical: NonNullable<LeadLensReport["canonical_cases"]>[number] | null,
 ): void {
   if (!canonical) return;
+  // Canonical Case is also the authority for the customer-visible next action.
+  // Leaving pre-validation prose intact can otherwise produce the unsafe
+  // contradiction "Hold / no current event" + "send outreach now".
+  lead.enrichment.recommended_action = canonical.decision === "prioritize" ? "send_outreach_now"
+    : canonical.decision === "validate" ? "validate_source_first"
+    : canonical.decision === "monitor" ? "monitor_for_new_signal" : "exclude";
   const noCurrentEvent = canonicalMissingEvent(canonical.reasons);
   if (noCurrentEvent) {
     lead.enrichment.why_now = "No current dated material event was validated. The account may fit structurally, but there is no verified reason to act now rather than monitor for a new trigger.";

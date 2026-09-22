@@ -7,6 +7,7 @@ import { assessEntityRole } from "@/lib/discovery/entity-role";
 import { classifyDirection } from "@/lib/discovery/sentiment";
 import { scoreOpportunityV2 } from "@/lib/discovery/quality-rubric";
 import { companyNameInText } from "@/lib/discovery/company-first-discovery";
+import { classifySignalKind } from "@/lib/discovery/event-vs-metric";
 import type { NeedsMap } from "@/lib/discovery/needs-map";
 
 let passed = 0, failed = 0;
@@ -90,6 +91,8 @@ t("'Mercado' NO matchea el sustantivo común pegado", !companyNameInText("Mercad
 t("'Rappi' matchea como palabra completa", companyNameInText("Rappi", "Rappi anunció su expansión en Colombia"));
 t("entity-role: 'Inter' no es acquirer en nota de Nu (sin token exacto)", assessEntityRole("Inter", "El banco brasileño Nu adquirió una fintech para su expansión internacional en EEUU").is_account === false);
 t("entity-role: token exacto sí funciona con boundary", assessEntityRole("Inter Rapidísimo", "Inter Rapidísimo invirtió en 200 vehículos nuevos").is_account === true);
+t("Quad: expansión de operaciones con nueva instalación es evento concreto", classifySignalKind("Quad expands packaging operations. The new 100,000-square-foot facility launches with existing client volume and capacity commitments.").can_trigger === true);
+t("expansión genérica de operaciones sin activo sigue sin ser trigger", classifySignalKind("The company expands operations to improve customer service.").can_trigger === false);
 
 // ── Vertical packs (vertical-packs-v1): fallback determinístico + moat ──
 import { matchVerticalPack, packNeedsMap, VERTICAL_PACKS } from "@/lib/discovery/vertical-packs";

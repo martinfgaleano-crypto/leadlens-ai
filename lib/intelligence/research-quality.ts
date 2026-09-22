@@ -173,7 +173,6 @@ function candidateQueries(profile: AccountResearchProfile, context: ClientContex
   const domain = profile.domain ?? "";
   const official = domain ? `site:${domain}` : "";
   const eventIdentity = official || name;
-  const triggers = signalTerms.filter(Boolean).slice(0, 4).map((x) => `"${x.replace(/"/g, "")}"`).join(" OR ") || "apertura OR expansión OR inversión OR contrato";
   const rows: Array<{ stage: ResearchStage; query: string; gap: ResearchGap; tier: SourceTier }> = [
     { stage: "identity", query: `${name} ${official} ${geo} sitio oficial ubicación`, gap: "identity", tier: "B" },
     // Account Deepening starts from an identified candidate. Its second scarce
@@ -183,7 +182,11 @@ function candidateQueries(profile: AccountResearchProfile, context: ClientContex
     // "expansion" searches on corporate newsrooms and remain fail-closed at
     // event/date/materiality validation.
     { stage: "current_activity", query: `${eventIdentity} (opened OR opens OR announced OR expands OR "breaks ground") (facility OR plant OR warehouse OR "distribution center") 2026`, gap: "recent_signals", tier: "B" },
-    { stage: "current_activity", query: `${name} ${official} (${triggers}) 2025 2026`, gap: "recent_signals", tier: "B" },
+    // Deliberately less conjunctive than the verb-led probe above. Corporate
+    // headlines often separate an ICP phrase (for example, "capacity" ...
+    // "new South Carolina manufacturing facility"), so exact multi-word
+    // signal quotes can hide the canonical newsroom page.
+    { stage: "current_activity", query: `${eventIdentity} (expansion OR expands OR investment OR acquisition OR automation OR capacity OR facility OR factory OR plant OR warehouse OR "distribution center") (2025 OR 2026)`, gap: "recent_signals", tier: "B" },
     { stage: "counterevidence", query: `${name} ${official} ${geo} cierre inactivo contracción retiró descontinuado cancelado`, gap: "counterevidence", tier: "B" },
   ];
   if (context) rows.push({ stage: "client_relevance", query: `${name} ${domain} ${geo} ${context.offering ?? ""} ${profile.segment ?? ""}`, gap: "client_relevance", tier: "B" });
