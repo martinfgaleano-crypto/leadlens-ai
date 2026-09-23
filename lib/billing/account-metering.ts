@@ -122,7 +122,7 @@ export function monitorUsageGate(db: any, e: EffectiveEntitlement, runId: string
   };
 }
 
-export interface MeteringResult { metered: boolean; charged: string[]; already: string[]; exhausted: string[] }
+export interface MeteringResult { metered: boolean; charged: string[]; already: string[]; exhausted: string[]; unavailable: string[] }
 
 /** Charge one credit per materialized account (analysis_key = runId), idempotent + allowance-bounded.
  *  `accountKeys` must be the accounts that durably materialized valid Intelligence (failures excluded). */
@@ -133,7 +133,7 @@ export async function chargeMaterializedAccounts(db: any, e: EffectiveEntitlemen
   // company, idempotent per (user, runId, account) and allowance-bounded by the balance. Retry/
   // recovery → alreadyCharged (0-cost); an exhausted balance → not charged (never negative).
   if (isOneTime(e)) {
-    const charged: string[] = [], already: string[] = [], exhausted: string[] = [];
+    const charged: string[] = [], already: string[] = [], exhausted: string[] = [], unavailable: string[] = [];
     const seen = new Set<string>();
     for (const accountKey of accountKeys) {
       if (!accountKey || seen.has(accountKey)) continue;
@@ -141,15 +141,16 @@ export async function chargeMaterializedAccounts(db: any, e: EffectiveEntitlemen
       const r = await claimOneTimeCredit(db, { userId: e.userId, accountKey, analysisKey: ctx.runId, runId: ctx.runId });
       if (r.charged) charged.push(accountKey);
       else if (r.alreadyCharged) already.push(accountKey);
+      else if (r.reason === "unavailable") unavailable.push(accountKey); // ledger error → NOT authorized, run stays recoverable
       else exhausted.push(accountKey);
     }
-    return { metered: true, charged, already, exhausted };
+    return { metered: true, charged, already, exhausted, unavailable };
   }
 
   const period = await meteredPeriod(db, e, now);
-  if (!period) return { metered: false, charged: [], already: [], exhausted: [] };
+  if (!period) return { metered: false, charged: [], already: [], exhausted: [], unavailable: [] };
 
-  const charged: string[] = [], already: string[] = [], exhausted: string[] = [];
+  const charged: string[] = [], already: string[] = [], exhausted: string[] = [], unavailable: string[] = [];
   const seen = new Set<string>();
   for (const accountKey of accountKeys) {
     if (!accountKey || seen.has(accountKey)) continue;
@@ -157,7 +158,8 @@ export async function chargeMaterializedAccounts(db: any, e: EffectiveEntitlemen
     const r = await claimAccountIntelligenceCredit(db, { userId: e.userId, periodStart: period.period_start, accountKey, analysisKey: ctx.runId, runId: ctx.runId });
     if (r.charged) charged.push(accountKey);
     else if (r.alreadyCharged) already.push(accountKey);
+    else if (r.reason === "unavailable" || r.reason === "no_period") unavailable.push(accountKey); // ledger error → NOT authorized
     else exhausted.push(accountKey);
   }
-  return { metered: true, charged, already, exhausted };
+  return { metered: true, charged, already, exhausted, unavailable };
 }

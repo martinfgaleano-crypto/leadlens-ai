@@ -150,24 +150,41 @@ export interface OneTimeClaimInput { userId: string; accountKey: string; analysi
  *       so a race resolves to exactly one debit + one charge row.
  *  Failed/aborted evaluations must simply never call this. */
 export async function claimOneTimeCredit(db: any, input: OneTimeClaimInput): Promise<ClaimResult> {
+  let reservedCredit = false;
   try {
     const pre = await db.from("account_intelligence_charges").select("id")
       .eq("user_id", input.userId).eq("analysis_key", input.analysisKey).eq("account_key", input.accountKey).limit(1);
+    if (pre.error) return { charged: false, reason: "unavailable" }; // cannot confirm idempotency → do NOT authorize
     if (pre.data && pre.data.length) return { charged: false, alreadyCharged: true };
 
     const newBalance = await decrementOneTimeCredit(db, input.userId);
     if (newBalance == null) return { charged: false, reason: "exhausted" };
+    reservedCredit = true;
 
     const ins = await db.from("account_intelligence_charges")
       .insert({ user_id: input.userId, period_start: ONE_TIME_CHARGE_PERIOD, account_key: input.accountKey, analysis_key: input.analysisKey, run_id: input.runId })
       .select("id");
-    if (ins.error) { await releaseOneTimeCredit(db, input.userId); return { charged: false, alreadyCharged: true }; }
+    if (ins.error) {
+      // A UNIQUE violation (23505) means a concurrent claim already recorded THIS exact evaluation:
+      // release our reserved credit → net one debit + one row (authorized: alreadyCharged). Any OTHER
+      // insert error means we could NOT durably record authorization → release and report UNAVAILABLE
+      // so the caller does NOT deliver an unpaid evaluation (the run stays recoverable).
+      await releaseOneTimeCredit(db, input.userId);
+      reservedCredit = false;
+      return ins.error.code === "23505" ? { charged: false, alreadyCharged: true } : { charged: false, reason: "unavailable" };
+    }
 
     await db.from("credit_transactions")
       .insert({ user_id: input.userId, type: "consume", amount: -1, description: `intelligence evaluation — ${input.accountKey} (run ${input.runId ?? input.analysisKey})` })
       .then(() => {}, () => {});
     return { charged: true };
-  } catch { return { charged: false, reason: "unavailable" }; }
+  } catch {
+    // A throw AFTER the reserving decrement (e.g. the insert rejected at the network layer) would
+    // otherwise strand the credit AND leave no charge row. Best-effort release so a retry is clean;
+    // report UNAVAILABLE (not authorized) so nothing is delivered without a durable charge.
+    if (reservedCredit) await releaseOneTimeCredit(db, input.userId).catch(() => {});
+    return { charged: false, reason: "unavailable" };
+  }
 }
 
 export async function claimAccountIntelligenceCredit(db: any, input: ClaimInput): Promise<ClaimResult> {

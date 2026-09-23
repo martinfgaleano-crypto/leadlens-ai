@@ -379,9 +379,11 @@ async function runIntelligenceExecution(
     if (deps.onRunMaterialized) {
       const accountIdByLead = new Map(report.canonical_cases.map((c) => [c.lead_id, c.account_id] as const));
       const chargeableAccountIds = Array.from(portfolioIds).map((id) => accountIdByLead.get(id)).filter((x): x is string => Boolean(x));
-      let authorized: string[] | void;
-      try { authorized = await deps.onRunMaterialized(runId, chargeableAccountIds); }
-      catch { authorized = undefined; }
+      // NO fail-open: a throw here (RecoverableChargeError on ledger unavailability, or any other
+      // error) propagates to the finalize catch — the run is never completed with an unauthorized
+      // account delivered. Only an explicit authorized array narrows delivery; genuinely-exhausted
+      // accounts (e.g. a concurrent run spent the last credit) are simply omitted and dropped.
+      const authorized = await deps.onRunMaterialized(runId, chargeableAccountIds);
       if (Array.isArray(authorized)) {
         const authAccounts = new Set(authorized);
         for (const id of Array.from(portfolioIds)) {
@@ -455,6 +457,11 @@ async function runIntelligenceExecution(
     // A superseded executor aborts silently — it must not write a failure over the newer
     // attempt that reclaimed the run (§18/§24).
     if (error instanceof StaleExecutorError) return { ok: true, run, reused: true };
+    // Ledger unavailable at charge time: do NOT mark the run failed (recovery only reclaims
+    // "processing" runs). Leave it in its last durable "processing" state so the recovery cron
+    // reclaims it and retries the idempotent charge when the ledger is healthy. Nothing was
+    // delivered without confirmed payment; an already-authorized replay reuses its charge.
+    if (error instanceof RecoverableChargeError) return { ok: false, reason: "credit_ledger_unavailable", runId };
     const code = safeFailureCode(error);
     // A run that failed before/without account research still finalizes ONE bounded
     // trace so no diagnostics are lost (§22). Best-effort; never rethrows.
@@ -618,6 +625,16 @@ function emitAccountTraces(
  *  aborts cleanly rather than overwriting the newer attempt (RUNTIME SCALE SAFETY V1 §19). */
 class StaleExecutorError extends Error {
   constructor() { super("stale_executor"); this.name = "StaleExecutorError"; }
+}
+
+/** Thrown from the materialization charge when the credit ledger is UNAVAILABLE and commercial
+ *  authorization for one or more evaluated companies could not be confirmed. The run is NOT
+ *  finalized and NOT marked failed — it is left in its last durable "processing" state so the
+ *  recovery cron reclaims it and retries the (idempotent) charge when the ledger is healthy. This
+ *  guarantees a newly evaluated company is never delivered without confirmed payment (fail-closed +
+ *  recoverable), while an already-authorized replay reuses its charge without a new debit. */
+export class RecoverableChargeError extends Error {
+  constructor() { super("credit_ledger_unavailable"); this.name = "RecoverableChargeError"; }
 }
 
 function safeFailureCode(error: unknown): string {

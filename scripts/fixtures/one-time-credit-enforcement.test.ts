@@ -43,6 +43,9 @@ class Query {
     if (this.mode === "insert") {
       const p = this.payload as Row;
       if (this.table === "account_intelligence_charges") {
+        // Fault injection for ledger-failure tests: a forced throw (network) or non-dup error.
+        const inject = this.db.injectChargeInsert; if (inject) { this.db.injectChargeInsert = null;
+          if (inject === "throw") throw new Error("network"); return { data: null, error: { code: inject } }; }
         const dup = rows.some((r) => r.user_id === p.user_id && r.analysis_key === p.analysis_key && r.account_key === p.account_key);
         if (dup) return { data: null, error: { code: "23505", message: "duplicate key" } };
       }
@@ -72,6 +75,7 @@ class Query {
   }
 }
 class FakeDb {
+  injectChargeInsert: string | null = null; // "throw" | "23505" | other error code — consumed once
   tables: Record<string, Row[]> = { customer_credits: [], account_intelligence_charges: [], credit_transactions: [], subscription_usage_periods: [], customer_subscriptions: [] };
   from(table: string) { return new Query(this, table); }
   grant(userId: string, amount: number) { this.tables.customer_credits.push({ user_id: userId, credit_balance: amount, lifetime_credits: amount }); }
@@ -188,6 +192,31 @@ async function run() {
     t("H4 beta exhausted → blocked by its own period limit", intelligenceRunGate(betaExhausted)?.code === "usage_limit_reached");
     const internal: EffectiveEntitlement = { ...oneTime("g4", 0), accessSource: "internal", usage: { credits_remaining: 0, metering: "unlimited" } };
     t("H5 internal → never blocked", intelligenceRunGate(internal) === null);
+  }
+
+  // ── L. Ledger-failure safety (pre-merge safety gate) — NEVER authorize without a durable charge ──
+  { // Non-duplicate insert error → UNAVAILABLE (not authorized), credit RELEASED, no charge row.
+    const db = new FakeDb(); db.grant("uL1", 2); db.injectChargeInsert = "08006"; // connection error code
+    const r = await claimOneTimeCredit(db as any, { userId: "uL1", accountKey: "a", analysisKey: "run1", runId: "run1" });
+    t("L1 non-dup insert error → unavailable, NOT alreadyCharged", r.charged === false && r.alreadyCharged !== true && r.reason === "unavailable");
+    t("L1 credit released (balance restored), no charge row", db.balance("uL1") === 2 && db.charges("uL1").length === 0);
+  }
+  { // Insert THROWS after the reserving decrement → released, unavailable, no stranded credit.
+    const db = new FakeDb(); db.grant("uL2", 2); db.injectChargeInsert = "throw";
+    const r = await claimOneTimeCredit(db as any, { userId: "uL2", accountKey: "a", analysisKey: "run1", runId: "run1" });
+    t("L2 insert throw → unavailable, credit not stranded", r.reason === "unavailable" && db.balance("uL2") === 2 && db.charges("uL2").length === 0);
+  }
+  { // A genuine UNIQUE(23505) violation (concurrent same evaluation) → alreadyCharged (authorized).
+    const db = new FakeDb(); db.grant("uL3", 2);
+    db.tables.account_intelligence_charges.push({ user_id: "uL3", analysis_key: "run1", account_key: "a", period_start: "x" }); // a concurrent claim already recorded it
+    const r = await claimOneTimeCredit(db as any, { userId: "uL3", accountKey: "a", analysisKey: "run1", runId: "run1" });
+    t("L3 true duplicate → alreadyCharged (authorized, no new debit)", r.alreadyCharged === true && db.balance("uL3") === 2 && db.charges("uL3").length === 1);
+  }
+  { // chargeMaterializedAccounts surfaces `unavailable` so the caller can fail-closed + recoverable.
+    const db = new FakeDb(); db.grant("uL4", 2); db.injectChargeInsert = "08006";
+    const r = await chargeMaterializedAccounts(db as any, oneTime("uL4", 2), { runId: "run1" }, ["a"]);
+    t("L4 ledger error → account reported UNAVAILABLE (not charged, not exhausted)", r.unavailable.length === 1 && r.charged.length === 0 && r.exhausted.length === 0);
+    t("L4 no unpaid authorization: charged∪already is empty", [...r.charged, ...r.already].length === 0 && db.balance("uL4") === 2);
   }
 
   // ── K. Tier-agnostic enforcement — Brief 6 / Portfolio 12 / Premium 18 (§16/§45) ──

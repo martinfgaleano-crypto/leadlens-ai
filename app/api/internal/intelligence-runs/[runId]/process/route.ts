@@ -5,7 +5,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import { SupabaseConfirmedContextStore } from "@/lib/interpretation/confirmed-context-store";
 import { SupabaseLeadHunterRunStore } from "@/lib/lead-hunter/run-store";
 import { SupabaseIntelligenceRunStore } from "@/lib/intelligence/productive-spine-store";
-import { executeIntelligenceRun } from "@/lib/intelligence/productive-spine";
+import { executeIntelligenceRun, RecoverableChargeError } from "@/lib/intelligence/productive-spine";
 import { SupabaseRunTraceSink } from "@/lib/intelligence/run-trace-sink";
 import { resolveResearchConcurrency } from "@/lib/intelligence/research-concurrency";
 
@@ -84,13 +84,17 @@ export async function POST(req: NextRequest, { params }: { params: { runId: stri
     // per (user, runId, account). AWAITED within this invocation (before the fenced finalize) and
     // RETURNS the accounts AUTHORIZED for delivery (charged or already-charged) so the spine drops
     // any the allowance could not cover — closing the concurrent-run free-delivery race. Unmetered
-    // (internal) → all accounts authorized. Failure-isolated: on any error, authorize all (fail-open,
-    // never over-charges) so a metering fault never withholds a completed customer result.
+    // (internal) → all authorized. FAIL-CLOSED on ledger unavailability: if the credit ledger cannot
+    // confirm authorization (throw, or any `unavailable` account), raise RecoverableChargeError so the
+    // run stays "processing" for the recovery cron and NO unpaid evaluation is ever delivered. A
+    // genuinely-exhausted account (a concurrent run spent the last credit) is simply not returned.
     onRunMaterialized: entitlement ? (async (runId, accountIds) => {
-      try {
-        const r = await chargeMaterializedAccounts(db, entitlement, { runId }, accountIds);
-        return r.metered ? [...r.charged, ...r.already] : accountIds;
-      } catch { return accountIds; }
+      let r;
+      try { r = await chargeMaterializedAccounts(db, entitlement, { runId }, accountIds); }
+      catch { throw new RecoverableChargeError(); }
+      if (!r.metered) return accountIds;
+      if (r.unavailable.length) throw new RecoverableChargeError();
+      return [...r.charged, ...r.already];
     }) : undefined,
     onAccountTrace: (trace) => { tracePersists.push(traceSink.persist(trace).catch(() => { /* telemetry never fails a run */ })); },
     // Accrete valid discovered companies into the durable, customer-independent Vault

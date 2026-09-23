@@ -5,7 +5,7 @@ import { InMemoryConfirmedContextStore, persistConfirmedContext } from "@/lib/in
 import { InMemoryLeadHunterRunStore } from "@/lib/lead-hunter/run-store";
 import type { DiscoveryRunner, RawDiscoveredOrg } from "@/lib/lead-hunter/candidate-universe";
 import { InMemoryIntelligenceRunStore } from "@/lib/intelligence/productive-spine-store";
-import { intelligenceRunId, startIntelligenceRun } from "@/lib/intelligence/productive-spine";
+import { intelligenceRunId, startIntelligenceRun, RecoverableChargeError } from "@/lib/intelligence/productive-spine";
 import { assembleInstitutionalReport } from "@/lib/reports/institutional-assembler";
 import type { LeadCandidate, LeadLensReport, PipelineInput, ProcessedLead } from "@/types";
 import { readFileSync } from "node:fs";
@@ -185,6 +185,17 @@ const gateOne = await startIntelligenceRun(
   { contextStore, leadHunterStore: new InMemoryLeadHunterRunStore(), runStore: new InMemoryIntelligenceRunStore(), discoveryRunner: discovery, pipeline, now: clock,
     onRunMaterialized: (_r, ids) => ids.slice(0, 1) });
 t("delivery gate: partial authorization → only authorized accounts delivered", gateOne.ok && (gateOne.run.report?.canonical_cases?.length ?? 0) === 1);
+
+// ── Ledger-unavailable safety (pre-merge gate): fail-CLOSED + recoverable, never deliver unpaid ──
+const ledgerStore = new InMemoryIntelligenceRunStore();
+const ledgerInput = { ...base, idempotencyKey: "ledger-down" };
+const ledgerDown = await startIntelligenceRun(ledgerInput,
+  { contextStore, leadHunterStore: new InMemoryLeadHunterRunStore(), runStore: ledgerStore, discoveryRunner: discovery, pipeline, now: clock,
+    onRunMaterialized: () => { throw new RecoverableChargeError(); } });
+t("ledger unavailable → run NOT completed (no unpaid delivery)", !ledgerDown.ok && (ledgerDown as { reason?: string }).reason === "credit_ledger_unavailable");
+const ledgerRec = await ledgerStore.load(intelligenceRunId(ledgerInput), "owner-a");
+// The recovery cron reclaims runs in "processing" — so a ledger-unavailable run MUST be left there.
+t("ledger unavailable → run left in 'processing' (recovery cron reclaims it)", ledgerRec != null && ledgerRec.status === "processing");
 
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed) process.exit(1);
