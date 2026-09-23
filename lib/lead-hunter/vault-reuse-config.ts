@@ -35,12 +35,20 @@ export interface VaultReuseConfig {
 /** Tier-aware coverage sufficiency thresholds (distinct domain-verified, geography-
  * matched fresh identities at/above which fresh Discovery is considered adequate and
  * reuse stays OFF). Tier is derived from the technical discovery budget, mirroring
- * defaultDiscoveryRunner. These are coverage floors, NOT commercial account caps. */
-export const FRESH_COVERAGE_SUFFICIENCY = { preview: 6, brief: 8, intelligence: 10 } as const;
+ * defaultDiscoveryRunner. These are coverage FLOORS, NOT commercial account caps.
+ *
+ * The floor must exceed the tier's DELIVERY target with headroom for the observed DISCARD
+ * rate, otherwise reuse never fires to top up a large order even when fresh coverage cannot
+ * fill it (the Portfolio 9/12 defect: fresh yielded 10, the old `intelligence` floor was 10,
+ * so 10>=10 read as "sufficient" and the Vault fallback — which held 60+ eligible Colombia
+ * companies — was never reached). Delivery targets: Preview 2, Brief 6, Portfolio 12, Premium
+ * 18; measured DISCARD ≈ 10%, so floors carry ~2 companies of headroom. Split standard/pro so
+ * a 12-company order isn't forced to over-collect for 18. */
+export const FRESH_COVERAGE_SUFFICIENCY = { preview: 6, brief: 8, standard: 14, pro: 20 } as const;
 
 function tierFromBudget(plan: DiscoveryPlan): keyof typeof FRESH_COVERAGE_SUFFICIENCY {
   const calls = plan.budget.maxProviderCalls;
-  return calls <= 24 ? "preview" : calls <= 48 ? "brief" : "intelligence";
+  return calls <= 24 ? "preview" : calls <= 48 ? "brief" : calls <= 80 ? "standard" : "pro";
 }
 
 export function resolveVaultReuseConfig(env: NodeJS.ProcessEnv = process.env): VaultReuseConfig {
