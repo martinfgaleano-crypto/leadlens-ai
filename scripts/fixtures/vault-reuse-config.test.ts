@@ -55,17 +55,29 @@ async function main() {
 
   // ── tier-aware sufficiency ──
   const enough = (n: number) => outWith(Array.from({ length: n }, (_, i) => org(`Co${i}`, `co${i}.com`, "United States")));
+  const enough2 = (country: string, n: number) => outWith(Array.from({ length: n }, (_, i) => org(`C${i}`, `c${i}.com`, country)));
   t("preview sufficient at threshold", freshCoverageIsSufficient(enough(FRESH_COVERAGE_SUFFICIENCY.preview), planFor("c", ["United States"], 24)));
   t("preview insufficient below threshold", !freshCoverageIsSufficient(enough(FRESH_COVERAGE_SUFFICIENCY.preview - 1), planFor("c", ["United States"], 24)));
-  t("intelligence tier needs a higher floor than preview", (() => {
-    const n = FRESH_COVERAGE_SUFFICIENCY.preview; // enough for preview, not for intelligence
+  t("higher tier needs a higher floor than preview", (() => {
+    const n = FRESH_COVERAGE_SUFFICIENCY.preview; // enough for preview, not for standard/pro
     return freshCoverageIsSufficient(enough(n), planFor("c", ["United States"], 24))
       && !freshCoverageIsSufficient(enough(n), planFor("c", ["United States"], 96));
   })());
+  // ── Portfolio/Premium supply regression (the 9/12 defect): the sufficiency FLOOR must exceed the
+  // delivery target so reuse fires to top up. Fresh 10 was the exact Portfolio universe. ──
+  const stdPlan = planFor("c", ["Colombia"], 64); // standard/Portfolio tier (floor 14)
+  const proPlan = planFor("c", ["Colombia"], 90); // pro/Premium tier (floor 20)
+  t("Portfolio: fresh 10 is INSUFFICIENT → reuse must be allowed to top up (was the 9/12 bug)",
+    !freshCoverageIsSufficient(outWith(Array.from({ length: 10 }, (_, i) => org(`C${i}`, `c${i}.com`, "Colombia"))), stdPlan));
+  t("Portfolio: fresh 14 (target+headroom) is sufficient", freshCoverageIsSufficient(enough2("Colombia", 14), stdPlan));
+  t("Premium: fresh 10 INSUFFICIENT, fresh 20 sufficient",
+    !freshCoverageIsSufficient(enough2("Colombia", 10), proPlan) && freshCoverageIsSufficient(enough2("Colombia", 20), proPlan));
+  t("standard floor (14) exceeds Portfolio target (12); pro floor (20) exceeds Premium target (18)",
+    FRESH_COVERAGE_SUFFICIENCY.standard > 12 && FRESH_COVERAGE_SUFFICIENCY.pro > 18);
 
   // ── combined gate: rollout AND insufficiency ──
   const thinUs = outWith([org("Rockwell", "rockwellautomation.com", "United States")]); // 1 → insufficient
-  const richUs = enough(12);                                                            // 12 → sufficient
+  const richUs = enough(FRESH_COVERAGE_SUFFICIENCY.preview);                            // sufficient for preview tier
   t("gate OPEN only when enabled AND fresh coverage insufficient", (() => {
     const gate = makeVaultReuseGate({ mode: "ELIGIBLE_FALLBACK", canaryContextIds: new Set() });
     return gate(thinUs, usPlan) && !gate(richUs, usPlan);
@@ -78,7 +90,7 @@ async function main() {
   // §10: fallback must NOT respond to commercial conclusions — only coverage. A rich
   // universe stays gated-closed regardless (the gate never sees Decisions/events).
   t("rich fresh universe keeps the gate closed (no reuse to manufacture opportunities)",
-    !makeVaultReuseGate({ mode: "ELIGIBLE_FALLBACK", canaryContextIds: new Set() })(richUs, planFor("c", ["United States"], 96)));
+    !makeVaultReuseGate({ mode: "ELIGIBLE_FALLBACK", canaryContextIds: new Set() })(enough(FRESH_COVERAGE_SUFFICIENCY.pro), planFor("c", ["United States"], 96)));
 
   console.log(`\n${p} passed, 0 failed`);
 }
