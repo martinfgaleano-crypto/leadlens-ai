@@ -35,7 +35,10 @@ const password = `Otc-${stamp}-Aa!`;
 const contextId = `otc_context_${stamp}`;
 const contextText = process.env.LEADLENS_ACCEPTANCE_CONTEXT ?? "Vendemos automatización de bodegas, integración WMS y orquestación de inventarios a fabricantes y distribuidores medianos y grandes en Colombia. Buscamos empresas que operen directamente centros de distribución, bodegas o plantas y que hayan abierto, ampliado, automatizado o invertido recientemente en infraestructura logística. Excluir entidades públicas, medios, consultoras, empresas de software puro, retailers sin operación logística propia y operaciones totalmente tercerizadas.";
 const locale = process.env.LEADLENS_ACCEPTANCE_LOCALE ?? "es";
-const PREVIEW_CREDITS = 2;
+// Tier-parameterized: PLAN → grant/allowance (frozen catalog). Preview default.
+const PLAN = (["sample", "starter", "standard", "pro"].includes(process.env.LEADLENS_ACCEPTANCE_PLAN ?? "") ? process.env.LEADLENS_ACCEPTANCE_PLAN : "sample") as "sample" | "starter" | "standard" | "pro";
+const PLAN_LABEL = { sample: "preview", starter: "brief", standard: "portfolio", pro: "premium" }[PLAN];
+const PREVIEW_CREDITS = ({ sample: 2, starter: 6, standard: 12, pro: 18 } as const)[PLAN]; // grant = opportunity_target
 
 const checks: Array<{ name: string; ok: boolean; detail?: string }> = [];
 const check = (name: string, ok: boolean, detail?: string) => { checks.push({ name, ok, detail }); console.log(`${ok ? "ok" : "FAIL"} - ${name}${detail ? ` :: ${detail}` : ""}`); };
@@ -72,22 +75,21 @@ try {
   // signup flow creates, and which customer_credits FK-references) must exist before a grant. Model
   // the purchaser: profiles.plan = "sample" so the customer resolves as one_time (gate enforces
   // exhaustion). The second tenant is a plain free profile.
-  const profA = await db.from("profiles").insert({ id: userA!, email: emailA, plan: "sample" }).select("id,plan");
+  const profA = await db.from("profiles").insert({ id: userA!, email: emailA, plan: PLAN }).select("id,plan");
   await db.from("profiles").insert({ id: userB!, email: emailB, plan: "free" }).then(() => {}, () => {});
-  check("purchaser profile established (plan=sample)", !profA.error && profA.data?.[0]?.plan === "sample", profA.error?.message);
+  check(`purchaser profile established (plan=${PLAN})`, !profA.error && profA.data?.[0]?.plan === PLAN, profA.error?.message);
 
-  // The profiles INSERT fires the legacy migration-010 trigger that grants 100 "welcome credits".
-  // That legacy pool commingles with purchase credits in customer_credits (a PRODUCTION blocker to
-  // Model B, documented separately). To prove the ENFORCEMENT MECHANISM against a clean purchase-only
-  // ledger, reset the disposable balance to exactly the Preview entitlement, then grant via the
-  // canonical primitive so the grant path is still exercised. No real customer balances touched.
+  // Post-migration-064 a fresh signup receives NO welcome credits (the legacy 100-credit bootstrap
+  // trigger was dropped), so customer_credits is a clean purchase-only ledger. We defensively reset
+  // to 0 (idempotent no-op when there is no row) and then grant exactly the tier entitlement through
+  // the canonical primitive. No real customer balances touched.
   ledger.welcome_credits_seen = await balanceOf(userA!);
   await db.from("customer_credits").update({ credit_balance: 0, lifetime_credits: 0 }).eq("user_id", userA!);
   ledger.before_grant = await balanceOf(userA!);
-  await addCredits(db, userA!, PREVIEW_CREDITS, `acceptance one-time preview grant ${stamp}`, "grant");
+  await addCredits(db, userA!, PREVIEW_CREDITS, `acceptance ${PLAN_LABEL} grant ${stamp}`, "grant");
   ledger.after_grant = await balanceOf(userA!);
-  check("legacy welcome-credit pool observed (production blocker)", ledger.welcome_credits_seen === 100, `welcome=${ledger.welcome_credits_seen}`);
-  check("Preview grant = exactly 2 one-time credits (clean ledger)", ledger.before_grant === 0 && ledger.after_grant === PREVIEW_CREDITS, `balance=${ledger.after_grant}`);
+  check("migration 064 applied — fresh signup has NO welcome credits (clean ledger)", ledger.welcome_credits_seen === 0, `welcome=${ledger.welcome_credits_seen}`);
+  check(`${PLAN_LABEL} grant = exactly ${PREVIEW_CREDITS} one-time credits`, ledger.before_grant === 0 && ledger.after_grant === PREVIEW_CREDITS, `balance=${ledger.after_grant}`);
 
   // ── Interpret → confirm → start (plan sample = Preview) ──
   const interpreted = await interpret(req("/api/interpret", tokenA, { input: contextText, locale }));
@@ -101,7 +103,7 @@ try {
 
   ledger.before_run = await balanceOf(userA!);
   const started = await startRun(req("/api/customer/intelligence-runs", tokenA, {
-    context_id: contextId, version: cBody.context.version, plan: "sample", idempotency_key: `otc_${stamp}`, delivery_limit: PREVIEW_CREDITS,
+    context_id: contextId, version: cBody.context.version, plan: PLAN, idempotency_key: `otc_${stamp}`, delivery_limit: PREVIEW_CREDITS,
   }));
   const sBody = await started.json() as { run_id?: string; status?: string; error?: string };
   runId = sBody.run_id ?? "";
@@ -128,13 +130,13 @@ try {
   ledger.charge_run_ids = Array.from(new Set(charges.map((c: any) => c.run_id)));
 
   check("owner reloads durable completed result", loadedA.status === 200 && lBody.status === "completed");
-  check("delivered evaluations ≤ Preview cap (2)", deliveredCount <= PREVIEW_CREDITS, `delivered=${deliveredCount}`);
+  check(`delivered evaluations ≤ ${PLAN_LABEL} cap (${PREVIEW_CREDITS})`, deliveredCount <= PREVIEW_CREDITS, `delivered=${deliveredCount}`);
   check("exactly one credit consumed per delivered evaluation", charges.length === deliveredCount, `charges=${charges.length}, delivered=${deliveredCount}`);
   check("remaining balance = grant − delivered (never negative)", ledger.after_run === PREVIEW_CREDITS - deliveredCount && (ledger.after_run as number) >= 0, `balance=${ledger.after_run}`);
   check("every charge keyed to THIS run (idempotency identity)", charges.every((c: any) => c.run_id === runId));
   check("charges attributed only to the purchaser (tenant isolation)", (await chargesOf(userB!)).length === 0);
   // Full Preview supply expectation: a healthy CO Preview delivers the full 2-cap.
-  check("Preview delivered the full purchased scope (2)", deliveredCount === PREVIEW_CREDITS, `delivered=${deliveredCount}`);
+  check(`${PLAN_LABEL} delivered the full purchased scope (${PREVIEW_CREDITS})`, deliveredCount === PREVIEW_CREDITS, `delivered=${deliveredCount}`);
 
   // ── Tenant isolation on the result ──
   const loadedB = await loadRun(req(`/api/customer/intelligence-runs/${runId}`, tokenB), { params: { runId } });
@@ -156,7 +158,7 @@ try {
   if ((ledger.after_run as number) <= 0) {
     const usagePre = structuredClone(getUsage());
     const third = await startRun(req("/api/customer/intelligence-runs", tokenA, {
-      context_id: contextId, version: cBody.context.version, plan: "sample", idempotency_key: `otc_third_${stamp}`, delivery_limit: PREVIEW_CREDITS,
+      context_id: contextId, version: cBody.context.version, plan: PLAN, idempotency_key: `otc_third_${stamp}`, delivery_limit: PREVIEW_CREDITS,
     }));
     const tBody = await third.json() as { code?: string; error?: string };
     check("exhausted one-time customer is blocked from a new billable run (402)", third.status === 402 && tBody.code === "usage_limit_reached", `HTTP ${third.status} ${tBody.code ?? ""}`);
@@ -176,7 +178,7 @@ try {
 
   const artifact = {
     acceptance: "one-time-credit-enforcement-v1", model: "B (1 credit / valid company evaluation)",
-    ran_at: new Date().toISOString(), run_id: runId, product: "preview", grant: PREVIEW_CREDITS,
+    ran_at: new Date().toISOString(), run_id: runId, product: PLAN_LABEL, grant: PREVIEW_CREDITS,
     delivered_count: deliveredCount, delivered_accounts: deliveredCases.map((c) => c.account_id),
     ledger, usage_delta: usageDelta, checks,
   };
