@@ -96,6 +96,80 @@ async function releaseSlot(db: any, userId: string, periodStart: string): Promis
  *    3. Insert the append-only charge; a concurrent duplicate insert releases the reserved slot.
  *  Failed/aborted account analyses must simply never call this. Best-effort against a missing
  *  ledger (pre-062) → reports "unavailable" without throwing. */
+// ─── One-time credit consumption (ENFORCEMENT V1 — Model B: 1 credit / valid company) ──────────
+//
+// One-time products (Preview 2 / Brief 6 / Intelligence 12 / Premium 18) consume durable
+// customer_credits — NOT the subscription period ledger (§13 separation). But the IDEMPOTENCY key
+// is the same commercial unit as the metered path: one credit per (customer, logical analysis =
+// runId, account). We therefore reuse the EXISTING account_intelligence_charges table + its
+// UNIQUE(user_id, analysis_key, account_key) constraint (migration 062) as the exactly-once record,
+// tagging one-time rows with a sentinel epoch period_start so they never collide with period
+// accounting. No new table/migration is required. The balance authority is customer_credits, whose
+// CHECK(credit_balance >= 0) is the last-line oversell guard.
+export const ONE_TIME_CHARGE_PERIOD = "1970-01-01T00:00:00.000Z";
+
+/** Atomic optimistic-CAS decrement of customer_credits by 1. Returns the new balance, or null when
+ *  the row is absent or the balance is insufficient. Two concurrent claims for the final credit let
+ *  at most one succeed (the loser sees the moved balance and fails the compare). */
+async function decrementOneTimeCredit(db: any, userId: string): Promise<number | null> {
+  for (let attempt = 0; attempt < 12; attempt++) {
+    const { data: row } = await db.from("customer_credits").select("credit_balance").eq("user_id", userId).maybeSingle();
+    if (!row) return null;
+    const balance = Number(row.credit_balance);
+    if (!(balance >= 1)) return null;
+    const { data: updated } = await db.from("customer_credits").update({ credit_balance: balance - 1 })
+      .eq("user_id", userId).eq("credit_balance", balance).select("credit_balance");
+    if (updated && updated.length) return balance - 1;
+  }
+  return null;
+}
+
+/** Best-effort CAS increment of customer_credits by 1 — releases a credit reserved by a decrement
+ *  whose append-only charge insert then lost the idempotency race (so net consumption stays exactly
+ *  one per logical evaluation). */
+async function releaseOneTimeCredit(db: any, userId: string): Promise<void> {
+  for (let attempt = 0; attempt < 12; attempt++) {
+    const { data: row } = await db.from("customer_credits").select("credit_balance").eq("user_id", userId).maybeSingle();
+    if (!row) return;
+    const balance = Number(row.credit_balance);
+    const { data: updated } = await db.from("customer_credits").update({ credit_balance: balance + 1 })
+      .eq("user_id", userId).eq("credit_balance", balance).select("credit_balance");
+    if (updated && updated.length) return;
+  }
+}
+
+export interface OneTimeClaimInput { userId: string; accountKey: string; analysisKey: string; runId: string | null }
+
+/** Claim ONE one-time credit for `accountKey` under logical analysis `analysisKey` (the runId).
+ *  Mirrors claimAccountIntelligenceCredit's exactly-once contract, but the balance lives in
+ *  customer_credits:
+ *    1. Idempotency pre-check on (user, analysis_key, account_key) — a retry/recovery of the SAME
+ *       logical evaluation is a 0-cost no-op (alreadyCharged); a new runId charges again.
+ *    2. Reserve: atomic CAS decrement of customer_credits (never below 0 — DB CHECK + CAS).
+ *    3. Record the append-only charge; a concurrent duplicate insert releases the reserved credit,
+ *       so a race resolves to exactly one debit + one charge row.
+ *  Failed/aborted evaluations must simply never call this. */
+export async function claimOneTimeCredit(db: any, input: OneTimeClaimInput): Promise<ClaimResult> {
+  try {
+    const pre = await db.from("account_intelligence_charges").select("id")
+      .eq("user_id", input.userId).eq("analysis_key", input.analysisKey).eq("account_key", input.accountKey).limit(1);
+    if (pre.data && pre.data.length) return { charged: false, alreadyCharged: true };
+
+    const newBalance = await decrementOneTimeCredit(db, input.userId);
+    if (newBalance == null) return { charged: false, reason: "exhausted" };
+
+    const ins = await db.from("account_intelligence_charges")
+      .insert({ user_id: input.userId, period_start: ONE_TIME_CHARGE_PERIOD, account_key: input.accountKey, analysis_key: input.analysisKey, run_id: input.runId })
+      .select("id");
+    if (ins.error) { await releaseOneTimeCredit(db, input.userId); return { charged: false, alreadyCharged: true }; }
+
+    await db.from("credit_transactions")
+      .insert({ user_id: input.userId, type: "consume", amount: -1, description: `intelligence evaluation — ${input.accountKey} (run ${input.runId ?? input.analysisKey})` })
+      .then(() => {}, () => {});
+    return { charged: true };
+  } catch { return { charged: false, reason: "unavailable" }; }
+}
+
 export async function claimAccountIntelligenceCredit(db: any, input: ClaimInput): Promise<ClaimResult> {
   try {
     const pre = await db.from("account_intelligence_charges").select("id")

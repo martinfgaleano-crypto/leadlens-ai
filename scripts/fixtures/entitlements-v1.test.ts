@@ -65,7 +65,12 @@ async function run() {
   const paid = await resolveEntitlements(fakeDb({ u: { plan: "starter", credits: 0 } }), "u");
   t("paid: accessSource one_time", paid.accessSource === "one_time");
   t("paid: can_run_intelligence + monitor", paid.capabilities.can_run_intelligence && paid.capabilities.can_run_monitor);
-  t("paid: one_time not period-gated", paid.limits.max_runs_per_period === null && intelligenceRunGate(paid) === null);
+  // ENFORCEMENT V1 (Model B): one_time is not PERIOD-gated (max_runs_per_period null) but IS
+  // balance-gated — an exhausted one-time balance can no longer START new billable research.
+  t("paid: one_time not period-gated (no per-period cap)", paid.limits.max_runs_per_period === null);
+  t("paid: one_time exhausted (0 credits) → run gate blocks (Model B)", intelligenceRunGate(paid)?.code === "usage_limit_reached");
+  const paidWithCredits = await resolveEntitlements(fakeDb({ u: { plan: "starter", credits: 2 } }), "u");
+  t("paid: one_time with credits → run gate allows", paidWithCredits.accessSource === "one_time" && intelligenceRunGate(paidWithCredits) === null);
 
   // credits-only active
   const cred = await resolveEntitlements(fakeDb({ u: { plan: "free", credits: 5 } }), "u");

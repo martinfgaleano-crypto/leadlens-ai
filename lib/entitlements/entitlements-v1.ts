@@ -173,6 +173,14 @@ export function intelligenceRunGate(e: EffectiveEntitlement): EntitlementDenial 
   if (!e.capabilities.can_run_intelligence) {
     return { status: 403, code: "access_not_enabled", message: "Your account isn’t enabled to run intelligence yet." };
   }
+  // One-time enforcement (ENFORCEMENT V1 — Model B): a purchased one-time entitlement authorizes a
+  // bounded number of company evaluations (Preview 2 / Brief 6 / Intelligence 12 / Premium 18),
+  // consumed one per materialized company. Once the durable balance is exhausted it can no longer
+  // START new billable research. Viewing an already-acquired report is a SEPARATE path (result
+  // routes resolve ownership, not this run gate), so a zero balance never blocks reopening a report.
+  if (e.accessSource === "one_time" && e.usage.credits_remaining <= 0) {
+    return { status: 402, code: "usage_limit_reached", message: "You’ve used all the company evaluations included in your purchase." };
+  }
   if (e.limits.max_runs_per_period !== null && e.usage.credits_remaining <= 0) {
     return { status: 402, code: "usage_limit_reached", message: "You’ve reached your plan’s analysis allowance for this period." };
   }
