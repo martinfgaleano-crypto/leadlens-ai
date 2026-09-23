@@ -81,8 +81,12 @@ export async function POST(req: NextRequest, { params }: { params: { runId: stri
     // not starved). Unmetered/one-time → null → uncapped. Best-effort; never breaks a run.
     accountBudget: entitlement ? (() => remainingAllowanceForRun(db, entitlement, Date.now(), params.runId)) : undefined,
     // Per-account CHARGE-commit on durable completion (matrix §6): one credit per materialized
-    // account, idempotent per (user, runId, account). Best-effort; never alters the run outcome.
-    onRunMaterialized: entitlement ? ((runId, accountIds) => { void chargeMaterializedAccounts(db, entitlement, { runId }, accountIds).catch(() => undefined); }) : undefined,
+    // account, idempotent per (user, runId, account). AWAITED within this invocation (the spine
+    // awaits onRunMaterialized after the fenced finalize) so the charge completes before the process
+    // responds — closing the fire-and-forget window where a completed run could return before its
+    // charge lands and then never be re-dispatched. Failure-isolated: a charge error is swallowed and
+    // never alters the completed run outcome; recovery re-runs are idempotent per (user, runId, account).
+    onRunMaterialized: entitlement ? (async (runId, accountIds) => { await chargeMaterializedAccounts(db, entitlement, { runId }, accountIds).catch(() => undefined); }) : undefined,
     onAccountTrace: (trace) => { tracePersists.push(traceSink.persist(trace).catch(() => { /* telemetry never fails a run */ })); },
     // Accrete valid discovered companies into the durable, customer-independent Vault
     // registry (best-effort; universal facts only). Never blocks or alters the run.
