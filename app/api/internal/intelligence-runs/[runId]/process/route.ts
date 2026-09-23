@@ -5,7 +5,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import { SupabaseConfirmedContextStore } from "@/lib/interpretation/confirmed-context-store";
 import { SupabaseLeadHunterRunStore } from "@/lib/lead-hunter/run-store";
 import { SupabaseIntelligenceRunStore } from "@/lib/intelligence/productive-spine-store";
-import { executeIntelligenceRun } from "@/lib/intelligence/productive-spine";
+import { executeIntelligenceRun, RecoverableChargeError } from "@/lib/intelligence/productive-spine";
 import { SupabaseRunTraceSink } from "@/lib/intelligence/run-trace-sink";
 import { resolveResearchConcurrency } from "@/lib/intelligence/research-concurrency";
 
@@ -80,9 +80,22 @@ export async function POST(req: NextRequest, { params }: { params: { runId: stri
     // accounts than the remaining allowance (own prior charges added back so recovery re-runs are
     // not starved). Unmetered/one-time → null → uncapped. Best-effort; never breaks a run.
     accountBudget: entitlement ? (() => remainingAllowanceForRun(db, entitlement, Date.now(), params.runId)) : undefined,
-    // Per-account CHARGE-commit on durable completion (matrix §6): one credit per materialized
-    // account, idempotent per (user, runId, account). Best-effort; never alters the run outcome.
-    onRunMaterialized: entitlement ? ((runId, accountIds) => { void chargeMaterializedAccounts(db, entitlement, { runId }, accountIds).catch(() => undefined); }) : undefined,
+    // Per-account CHARGE-commit at materialization (matrix §6): one credit per account, idempotent
+    // per (user, runId, account). AWAITED within this invocation (before the fenced finalize) and
+    // RETURNS the accounts AUTHORIZED for delivery (charged or already-charged) so the spine drops
+    // any the allowance could not cover — closing the concurrent-run free-delivery race. Unmetered
+    // (internal) → all authorized. FAIL-CLOSED on ledger unavailability: if the credit ledger cannot
+    // confirm authorization (throw, or any `unavailable` account), raise RecoverableChargeError so the
+    // run stays "processing" for the recovery cron and NO unpaid evaluation is ever delivered. A
+    // genuinely-exhausted account (a concurrent run spent the last credit) is simply not returned.
+    onRunMaterialized: entitlement ? (async (runId, accountIds) => {
+      let r;
+      try { r = await chargeMaterializedAccounts(db, entitlement, { runId }, accountIds); }
+      catch { throw new RecoverableChargeError(); }
+      if (!r.metered) return accountIds;
+      if (r.unavailable.length) throw new RecoverableChargeError();
+      return [...r.charged, ...r.already];
+    }) : undefined,
     onAccountTrace: (trace) => { tracePersists.push(traceSink.persist(trace).catch(() => { /* telemetry never fails a run */ })); },
     // Accrete valid discovered companies into the durable, customer-independent Vault
     // registry (best-effort; universal facts only). Never blocks or alters the run.

@@ -1,0 +1,31 @@
+-- 064_disable_welcome_credit_bootstrap.sql
+-- PROPOSED — NOT APPLIED by this repo (founder applies). Requires an explicit HQ commercial decision.
+--
+-- WHY: One-Time Credit Enforcement V1 (Model B — 1 credit per valid company evaluation) enforces a
+-- purchase by consuming customer_credits.credit_balance. But migration 010 installs a trigger
+-- (on_profile_created → bootstrap_customer_credits) that grants 100 "welcome credits" on every
+-- profiles INSERT (a legacy lead-gen-era default). Those 100 credits COMMINGLE with purchased
+-- one-time credits in the same balance, so a Preview buyer holds 100 + 2 = 102 and the 2-company
+-- purchase scope is NOT enforced. To make customer_credits a clean purchase-only ledger, new signups
+-- must not receive the legacy welcome grant.
+--
+-- SCOPE (deliberately minimal + forward-only):
+--   • Removes ONLY the trigger, so NEW signups get 0 welcome credits (customer_credits then reflects
+--     real grants/purchases only). The bootstrap_customer_credits FUNCTION is left intact so this is
+--     trivially reversible.
+--   • Does NOT touch existing balances (§28/§59 — no retroactive deduction). Existing users who
+--     already received 100 welcome credits KEEP them; that population is a SEPARATE reconciliation
+--     decision for HQ (see docs/intelligence/LEADLENS_ONE_TIME_CREDIT_ENFORCEMENT_V1.md).
+--   • Does NOT change customer_credits shape, RLS, or the one-time consumption path.
+--
+-- COMMERCIAL DECISION REQUIRED BEFORE APPLYING (HQ): confirm that new authenticated users should no
+-- longer receive 100 free welcome credits. If a free trial allowance is still desired, it should be a
+-- SEPARATE, explicit grant (a distinct beta/trial bucket), not commingled with purchase credits.
+--
+-- ROLLBACK (restore the legacy welcome grant for new signups):
+--   CREATE TRIGGER on_profile_created
+--     AFTER INSERT ON profiles
+--     FOR EACH ROW EXECUTE FUNCTION bootstrap_customer_credits();
+-- APPLY: Supabase SQL editor (or `supabase db push`). NOT APPLIED by this repo — founder applies.
+
+DROP TRIGGER IF EXISTS on_profile_created ON public.profiles;

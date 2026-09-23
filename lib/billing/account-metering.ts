@@ -18,10 +18,24 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { EffectiveEntitlement } from "@/lib/entitlements/entitlements-v1";
-import { currentUsagePeriod, seedUsagePeriod, claimAccountIntelligenceCredit, type UsagePeriod } from "@/lib/billing/usage-ledger";
+import { currentUsagePeriod, seedUsagePeriod, claimAccountIntelligenceCredit, claimOneTimeCredit, type UsagePeriod } from "@/lib/billing/usage-ledger";
 
 export function isMetered(e: EffectiveEntitlement): boolean {
   return e.accessSource === "subscription" || e.accessSource === "beta";
+}
+
+/** One-time products fund per-company evaluations from durable customer_credits (§13 separation).
+ *  This is a DISTINCT bucket from the subscription/beta period ledger; internal is unlimited. */
+function isOneTime(e: EffectiveEntitlement): boolean {
+  return e.accessSource === "one_time";
+}
+
+/** Durable one-time balance (customer_credits.credit_balance), 0 when absent. */
+async function oneTimeBalance(db: any, userId: string): Promise<number> {
+  try {
+    const { data } = await db.from("customer_credits").select("credit_balance").eq("user_id", userId).maybeSingle();
+    return data?.credit_balance != null ? Math.max(0, Number(data.credit_balance) || 0) : 0;
+  } catch { return 0; }
 }
 
 /** Resolve + lazily seed the current metered period for a subscription/beta customer. Subscription
@@ -72,6 +86,15 @@ async function ownPriorCharges(db: any, userId: string, analysisKey: string): Pr
  *  is given, this run's own prior charges are added back so a recovery re-run reproduces its own
  *  accounts rather than starving on slots it already claimed. */
 export async function remainingAllowanceForRun(db: any, e: EffectiveEntitlement, now: number = Date.now(), analysisKey?: string): Promise<number | null> {
+  // One-time (ENFORCEMENT V1): the production cap is the durable credit balance, so a run never
+  // paid-materializes more companies than the purchase funds. This run's own prior charges are
+  // added back (keyed on runId) so a recovery re-run reproduces its already-charged accounts
+  // instead of starving on credits it already spent.
+  if (isOneTime(e)) {
+    const balance = await oneTimeBalance(db, e.userId);
+    if (!analysisKey) return balance;
+    return balance + await ownPriorCharges(db, e.userId, analysisKey);
+  }
   const period = await meteredPeriod(db, e, now);
   if (!period) return null;
   const remaining = await readRemaining(db, e.userId, period.period_start, period.allowance);
@@ -99,16 +122,35 @@ export function monitorUsageGate(db: any, e: EffectiveEntitlement, runId: string
   };
 }
 
-export interface MeteringResult { metered: boolean; charged: string[]; already: string[]; exhausted: string[] }
+export interface MeteringResult { metered: boolean; charged: string[]; already: string[]; exhausted: string[]; unavailable: string[] }
 
 /** Charge one credit per materialized account (analysis_key = runId), idempotent + allowance-bounded.
  *  `accountKeys` must be the accounts that durably materialized valid Intelligence (failures excluded). */
 export async function chargeMaterializedAccounts(db: any, e: EffectiveEntitlement, ctx: { runId: string; now?: number }, accountKeys: string[]): Promise<MeteringResult> {
   const now = ctx.now ?? Date.now();
-  const period = await meteredPeriod(db, e, now);
-  if (!period) return { metered: false, charged: [], already: [], exhausted: [] };
 
-  const charged: string[] = [], already: string[] = [], exhausted: string[] = [];
+  // One-time (ENFORCEMENT V1 — Model B): charge exactly one customer_credits credit per materialized
+  // company, idempotent per (user, runId, account) and allowance-bounded by the balance. Retry/
+  // recovery → alreadyCharged (0-cost); an exhausted balance → not charged (never negative).
+  if (isOneTime(e)) {
+    const charged: string[] = [], already: string[] = [], exhausted: string[] = [], unavailable: string[] = [];
+    const seen = new Set<string>();
+    for (const accountKey of accountKeys) {
+      if (!accountKey || seen.has(accountKey)) continue;
+      seen.add(accountKey);
+      const r = await claimOneTimeCredit(db, { userId: e.userId, accountKey, analysisKey: ctx.runId, runId: ctx.runId });
+      if (r.charged) charged.push(accountKey);
+      else if (r.alreadyCharged) already.push(accountKey);
+      else if (r.reason === "unavailable") unavailable.push(accountKey); // ledger error → NOT authorized, run stays recoverable
+      else exhausted.push(accountKey);
+    }
+    return { metered: true, charged, already, exhausted, unavailable };
+  }
+
+  const period = await meteredPeriod(db, e, now);
+  if (!period) return { metered: false, charged: [], already: [], exhausted: [], unavailable: [] };
+
+  const charged: string[] = [], already: string[] = [], exhausted: string[] = [], unavailable: string[] = [];
   const seen = new Set<string>();
   for (const accountKey of accountKeys) {
     if (!accountKey || seen.has(accountKey)) continue;
@@ -116,7 +158,8 @@ export async function chargeMaterializedAccounts(db: any, e: EffectiveEntitlemen
     const r = await claimAccountIntelligenceCredit(db, { userId: e.userId, periodStart: period.period_start, accountKey, analysisKey: ctx.runId, runId: ctx.runId });
     if (r.charged) charged.push(accountKey);
     else if (r.alreadyCharged) already.push(accountKey);
+    else if (r.reason === "unavailable" || r.reason === "no_period") unavailable.push(accountKey); // ledger error → NOT authorized
     else exhausted.push(accountKey);
   }
-  return { metered: true, charged, already, exhausted };
+  return { metered: true, charged, already, exhausted, unavailable };
 }
