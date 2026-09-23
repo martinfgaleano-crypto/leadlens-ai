@@ -190,6 +190,19 @@ async function run() {
     t("H5 internal → never blocked", intelligenceRunGate(internal) === null);
   }
 
+  // ── K. Tier-agnostic enforcement — Brief 6 / Portfolio 12 / Premium 18 (§16/§45) ──
+  // The same seam enforces every one-time allowance from the server-resolved grant: exactly `grant`
+  // charged when `grant` materialize; the allowance cannot be exceeded; balance reconciles to 0.
+  for (const { tier, grant } of [{ tier: "brief", grant: 6 }, { tier: "portfolio", grant: 12 }, { tier: "premium", grant: 18 }]) {
+    const db = new FakeDb(); const u = `u_${tier}`; db.grant(u, grant);
+    // Offer more materialized accounts than the allowance → charge exactly `grant`, rest exhausted.
+    const accts = Array.from({ length: grant + 2 }, (_, i) => `${tier}_a${i}`);
+    const r = await chargeMaterializedAccounts(db as any, oneTime(u, grant), { runId: `run_${tier}` }, accts);
+    t(`K ${tier}: exactly ${grant} charged, 2 exhausted (allowance not exceeded)`, r.charged.length === grant && r.exhausted.length === 2);
+    t(`K ${tier}: balance 0, ${grant} charge rows`, db.balance(u) === 0 && db.charges(u).length === grant);
+    t(`K ${tier}: exhausted customer blocked from a new run`, intelligenceRunGate(oneTime(u, 0))?.code === "usage_limit_reached");
+  }
+
   // ── I. Subscription non-regression — the one-time bucket (customer_credits) is NOT touched ──
   { const db = new FakeDb(); db.grant("u8", 5); // customer holds one-time credits AND a subscription
     const sub: EffectiveEntitlement = { userId: "u8", planCode: "monitor", tier: null, accessSource: "subscription",

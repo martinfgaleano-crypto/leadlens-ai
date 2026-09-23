@@ -151,16 +151,51 @@ Migrations 010/062/063 are already applied (per project migration state) — thi
 migration**. It ships with the normal branch → PR → merge → deploy flow. `INTERNAL_RUN_SECRET` +
 `CRON_SECRET` remain the standing prod requirements for the processor/recovery cron (unchanged).
 
+## Concurrency closure (§8/§19 — CLOSED)
+The charge layer was atomic/idempotent, but two simultaneous runs could each pass the start gate and
+each DELIVER a company while only one charged — a free delivery a presentation cap cannot prevent.
+Closed by **gating delivery on charge**: at materialization the spine charges each portfolio account
+and `onRunMaterialized` returns the authorized subset (charged ∪ already-charged); the spine drops any
+account the allowance could not cover, so a concurrent loser delivers nothing. Charging moved before
+the fenced finalize; idempotent per (user, runId, account) so a superseded/recovery attempt re-charges
+as a no-op and no evaluation is lost or double-charged. No new table/reservation — reuses the existing
+CAS. Unmetered/internal → all authorized; fail-open on metering error (never withholds a completed
+result, never over-charges). Subscription/beta gains the same protection.
+- **Deterministic:** spine delivery-gate none/all/partial (`productive-intelligence-spine` 34/34);
+  concurrent-runs authorization + tier cases (`one-time-credit-enforcement` 39/39).
+- **LIVE vs real Supabase Postgres atomicity** (`accept-one-time-concurrency.mts` 10/10): 6 concurrent
+  claims / 1 credit → exactly 1 charged; duplicate → 1 net debit; 2 concurrent runs / 1 credit →
+  exactly one authorized; 3 runs / 2 credits → ≤2; tenant isolation. Never negative, never oversold.
+
+## Legacy welcome-credit audit (Phase 1, read-only)
+Aggregate audit of the live ledger (no PII): 7 `customer_credits` rows (5×100, 1×1-99, 1×101-102);
+20 `credit_transactions` (19 grants, 1 consume). Provenance is **clean and exact** — welcome grants
+carry description "Welcome credits — account created", paid grants "one-time … order …": 18
+welcome-grant users, 1 paid, **0 ambiguous**, 1 with both (a Preview buyer at 102). So historical
+reconciliation is exactly determinable from `credit_transactions` provenance; the affected population
+is tiny (early beta). **Reconciliation design (proposed, NOT executed per §7/§15):** for each user,
+`purchased_remaining = Σ(paid one-time grants) − Σ(one-time consumes)`; set `credit_balance` to that,
+dropping only the welcome portion — an auditable, provenance-based maintenance step run by the founder
+against a verified backup. No "subtract 100 from everyone" heuristic; ambiguous provenance (none
+found) would be preserved untouched. New-signup fix = migration 064 (drop the trigger).
+
+## Higher one-time tiers (Brief 6 / Portfolio 12 / Premium 18)
+**Enforcement: PASS (tier-agnostic).** The same cap + per-company charge + gate apply to every
+one-time product from the server-resolved grant (`opportunity_target`): deterministic tier cases
+(grant 6/12/18 → exactly N charged, allowance not exceeded, gate at 0) + plan mapping
+(`billing-plan-mapping` 29) + the live Preview charge path. **Full-order quality (6/12/18 distinct
+relevant companies): NOT ACCEPTED** — supply-bound for the frozen Colombia context (~2-3 fresh) and the
+strict US ICP (~5) without the `VAULT_REUSE_MODE` reuse fallback, which §35 forbids forcing/expanding.
+A supply-limited live higher-tier order would prove enforcement-at-scale (already proven
+deterministically) but not the commercial 6/12/18 count, so it was not run (§40). Full-order quality is
+a separate supply/rollout track (reuse-fallback flag is an HQ decision), not an enforcement gap.
+
 ## Remaining limitations / boundaries (returned to HQ, not fixed here)
-1. **Concurrent-run free-delivery residual.** The charge is atomic/idempotent (money is never
-   over-collected, balance never negative), and the budget cap reads the live balance. But a burst of
-   truly-simultaneous runs with DISTINCT contexts (past the 3/60s rate limit + idempotency dedupe)
-   could each pass the start gate and one could DELIVER a company that the exhausted balance then
-   can't charge — a bounded free delivery, never an overcharge. Closing it fully needs an
-   authorization-time reservation, which §20/§58 defer to a separate HQ decision.
-2. **Open-beta coexistence.** During open beta, an authed customer with 0 one-time credits and
-   `plan=free` resolves to `beta` (separate 10-credit metered bucket), so one-time exhaustion blocks
-   the one-time source but not beta access. Real one-time fulfillment does not set `profiles.plan`, so
-   the exhaustion gate bites for a purchaser whose plan reflects the purchase; whether to mark plan on
-   purchase / close beta is an HQ posture decision, not a Model B defect.
-3. **Higher-tier full-order live acceptance** not run (supply/runtime-bound, tracked separately).
+1. **Welcome-credit commingling (production blocker).** New signups: apply migration 064 (founder,
+   prod DDL). Existing 100-credit balances: the provenance-based reconciliation above (founder, backup).
+2. **Open-beta coexistence.** A customer with 0 one-time credits and `plan=free` resolves to `beta`
+   (separate 10-credit metered bucket), so one-time exhaustion blocks the one-time source but not beta
+   access. Real one-time fulfillment does not set `profiles.plan`; whether to mark plan on purchase /
+   close beta is an HQ posture decision, not a Model B defect.
+3. **Higher-tier full-order quality** (6/12/18 distinct relevant companies) is supply-bound — a
+   separate reuse-fallback/rollout decision, not an enforcement gap.
