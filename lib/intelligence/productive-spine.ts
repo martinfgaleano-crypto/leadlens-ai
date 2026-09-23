@@ -52,11 +52,14 @@ export interface ProductiveSpineDeps {
    *  never paid-materializes more accounts than the allowance. null = unmetered (one_time/internal)
    *  → no cap. Best-effort: a failure falls back to uncapped and never breaks the run. */
   accountBudget?: (userId: string) => Promise<number | null>;
-  /** Optional per-account CHARGE-commit on durable completion (matrix §6). Receives the runId
-   *  (logical analysis id) and the materialized canonical account_ids (structural rejects already
-   *  excluded from canonical_cases). Best-effort + idempotent per (user, runId, account); NEVER
-   *  alters the run outcome. */
-  onRunMaterialized?: (runId: string, accountIds: string[]) => void | Promise<void>;
+  /** Optional per-account CHARGE-commit at materialization (matrix §6). Receives the runId
+   *  (logical analysis id) and the candidate materialized account_ids. Charges one credit per
+   *  account, idempotent per (user, runId, account). RETURNS the subset AUTHORIZED for delivery
+   *  (charged or already-charged); accounts it could not charge (allowance exhausted — e.g. a
+   *  concurrent run spent the last credit) are omitted and the spine drops them from the customer
+   *  deliverable, so two concurrent runs can never deliver more than the customer owns. `void`/
+   *  undefined = no gating (unmetered/no entitlement) → all accounts delivered. NEVER throws. */
+  onRunMaterialized?: (runId: string, accountIds: string[]) => (string[] | void) | Promise<string[] | void>;
   // Optional Vault accretion sink. Receives the discovered candidate companies so
   // valid, customer-INDEPENDENT company facts can accumulate durably. Best-effort:
   // any error is swallowed and NEVER alters the Intelligence run (§30). Only public
@@ -365,6 +368,28 @@ async function runIntelligenceExecution(
       const decision = decisionById.get(id);
       return decision === "monitor" || decision === "hold" || strongIds.has(id);
     }));
+    // ── Charge-at-materialization + delivery authorization (matrix §6; concurrency §8/§19). Charge
+    // one credit per portfolio account BEFORE assembling the customer deliverable, and DROP any
+    // account the allowance could not cover — e.g. a concurrent run spent the customer's last credit.
+    // This closes the free-delivery race a presentation cap cannot: two simultaneous runs can never
+    // deliver more than the customer owns. Idempotent per (user, runId, account) → a recovery re-run
+    // re-charges its own accounts as no-ops. Charging before the fenced save is safe: if this executor
+    // is superseded, the winning attempt re-charges (already-charged) and delivers, so no evaluation
+    // is lost and none is double-charged. NEVER throws (metering must not break a completed run).
+    if (deps.onRunMaterialized) {
+      const accountIdByLead = new Map(report.canonical_cases.map((c) => [c.lead_id, c.account_id] as const));
+      const chargeableAccountIds = Array.from(portfolioIds).map((id) => accountIdByLead.get(id)).filter((x): x is string => Boolean(x));
+      let authorized: string[] | void;
+      try { authorized = await deps.onRunMaterialized(runId, chargeableAccountIds); }
+      catch { authorized = undefined; }
+      if (Array.isArray(authorized)) {
+        const authAccounts = new Set(authorized);
+        for (const id of Array.from(portfolioIds)) {
+          const accountId = accountIdByLead.get(id);
+          if (accountId && !authAccounts.has(accountId)) { portfolioIds.delete(id); strongIds.delete(id); }
+        }
+      }
+    }
     const strongCount = strongIds.size;
     report.canonical_cases = report.canonical_cases.filter(c => portfolioIds.has(c.lead_id));
     report.processed_leads = report.processed_leads.filter(lead => portfolioIds.has(lead.id));
@@ -420,15 +445,11 @@ async function runIntelligenceExecution(
     }
 
     run = { ...run, coverageState, status: "completed", stage: "report", report, failureCode: null, updatedAt: (deps.now ?? (() => new Date()))().toISOString() };
-    // Fenced finalize: a stale executor cannot overwrite a newer attempt's completed result.
+    // Fenced finalize: a stale executor cannot overwrite a newer attempt's completed result. The
+    // per-account commercial charge already ran above (charge-at-materialization, which also gated
+    // the delivered set); it is idempotent per (user, runId, account) so a superseded executor never
+    // double-charges and the winner's re-charge is a no-op.
     if (!(await deps.runStore.save(run))) return { ok: true, run, reused: true };
-    // Commit per-account commercial usage on durable completion (matrix §6; metered plans only).
-    // Idempotent per (user, runId, account_id) — a retry/re-dispatch never double-charges. A newer
-    // attempt that reclaimed the run (save→false above) does not reach here. NEVER alters outcome.
-    if (deps.onRunMaterialized) {
-      try { await deps.onRunMaterialized(runId, (report.canonical_cases ?? []).map((c) => c.account_id)); }
-      catch { /* metering must never break a completed run */ }
-    }
     return { ok: true, run, reused: false };
   } catch (error) {
     // A superseded executor aborts silently — it must not write a failure over the newer

@@ -163,6 +163,20 @@ async function run() {
     t("G2 post-failure retry charges exactly once", r2.charged.length === 1 && db.balance("u7b") === 0);
   }
 
+  // ── J. Concurrent RUNS (distinct runIds) share one credit → exactly one authorizes delivery ──
+  // This is the set the spine's delivery-gate consumes: the loser authorizes zero accounts and the
+  // spine drops them, so two simultaneous runs never deliver more than the customer owns.
+  { const db = new FakeDb(); db.grant("u9", 1);
+    const [ra, rb] = await Promise.all([
+      chargeMaterializedAccounts(db as any, oneTime("u9", 1), { runId: "runA" }, ["x"]),
+      chargeMaterializedAccounts(db as any, oneTime("u9", 1), { runId: "runB" }, ["y"]),
+    ]);
+    const authA = [...ra.charged, ...ra.already].length, authB = [...rb.charged, ...rb.already].length;
+    t("J1 exactly one concurrent run authorized a delivery", (authA === 1) !== (authB === 1));
+    t("J2 the losing run authorized zero accounts (delivers nothing)", authA === 0 || authB === 0);
+    t("J3 one credit spent, one charge row, never negative", db.balance("u9") === 0 && db.charges("u9").length === 1);
+  }
+
   // ── H. Run gate — one-time exhaustion blocks NEW billable work; positive balance allows ──
   { t("H1 one_time 0 credits → 402 usage_limit_reached", intelligenceRunGate(oneTime("g1", 0))?.code === "usage_limit_reached");
     t("H2 one_time 2 credits → allowed", intelligenceRunGate(oneTime("g2", 2)) === null);

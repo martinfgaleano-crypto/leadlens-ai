@@ -165,6 +165,27 @@ const zero = await startIntelligenceRun(
   { contextStore, leadHunterStore: new InMemoryLeadHunterRunStore(), runStore: new InMemoryIntelligenceRunStore(), discoveryRunner: discovery, pipeline, now: clock, accountBudget: async () => 0 });
 t("metered cap: zero budget → zero paid-materialized accounts", zero.ok && (zero.run.report?.canonical_cases?.length ?? 0) === 0);
 
+// ── Delivery authorization gate (concurrency §8/§19): the spine delivers only the accounts the
+// charge hook AUTHORIZED. A concurrent run whose accounts the allowance can't cover delivers none.
+const gateNone = await startIntelligenceRun(
+  { ...base, idempotencyKey: "gate-none" },
+  { contextStore, leadHunterStore: new InMemoryLeadHunterRunStore(), runStore: new InMemoryIntelligenceRunStore(), discoveryRunner: discovery, pipeline, now: clock,
+    onRunMaterialized: () => [] });
+t("delivery gate: zero authorized → zero delivered (concurrent loser delivers nothing)", gateNone.ok && (gateNone.run.report?.canonical_cases?.length ?? 0) === 0);
+
+let authedIds: string[] = [];
+const gateAll = await startIntelligenceRun(
+  { ...base, idempotencyKey: "gate-all" },
+  { contextStore, leadHunterStore: new InMemoryLeadHunterRunStore(), runStore: new InMemoryIntelligenceRunStore(), discoveryRunner: discovery, pipeline, now: clock,
+    onRunMaterialized: (_r, ids) => { authedIds = ids; return ids; } });
+t("delivery gate: all authorized → all delivered (unchanged normal path)", gateAll.ok && authedIds.length > 0 && (gateAll.run.report?.canonical_cases?.length ?? 0) === authedIds.length);
+
+const gateOne = await startIntelligenceRun(
+  { ...base, idempotencyKey: "gate-one" },
+  { contextStore, leadHunterStore: new InMemoryLeadHunterRunStore(), runStore: new InMemoryIntelligenceRunStore(), discoveryRunner: discovery, pipeline, now: clock,
+    onRunMaterialized: (_r, ids) => ids.slice(0, 1) });
+t("delivery gate: partial authorization → only authorized accounts delivered", gateOne.ok && (gateOne.run.report?.canonical_cases?.length ?? 0) === 1);
+
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed) process.exit(1);
 };

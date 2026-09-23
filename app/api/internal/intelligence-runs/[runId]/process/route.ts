@@ -80,13 +80,18 @@ export async function POST(req: NextRequest, { params }: { params: { runId: stri
     // accounts than the remaining allowance (own prior charges added back so recovery re-runs are
     // not starved). Unmetered/one-time → null → uncapped. Best-effort; never breaks a run.
     accountBudget: entitlement ? (() => remainingAllowanceForRun(db, entitlement, Date.now(), params.runId)) : undefined,
-    // Per-account CHARGE-commit on durable completion (matrix §6): one credit per materialized
-    // account, idempotent per (user, runId, account). AWAITED within this invocation (the spine
-    // awaits onRunMaterialized after the fenced finalize) so the charge completes before the process
-    // responds — closing the fire-and-forget window where a completed run could return before its
-    // charge lands and then never be re-dispatched. Failure-isolated: a charge error is swallowed and
-    // never alters the completed run outcome; recovery re-runs are idempotent per (user, runId, account).
-    onRunMaterialized: entitlement ? (async (runId, accountIds) => { await chargeMaterializedAccounts(db, entitlement, { runId }, accountIds).catch(() => undefined); }) : undefined,
+    // Per-account CHARGE-commit at materialization (matrix §6): one credit per account, idempotent
+    // per (user, runId, account). AWAITED within this invocation (before the fenced finalize) and
+    // RETURNS the accounts AUTHORIZED for delivery (charged or already-charged) so the spine drops
+    // any the allowance could not cover — closing the concurrent-run free-delivery race. Unmetered
+    // (internal) → all accounts authorized. Failure-isolated: on any error, authorize all (fail-open,
+    // never over-charges) so a metering fault never withholds a completed customer result.
+    onRunMaterialized: entitlement ? (async (runId, accountIds) => {
+      try {
+        const r = await chargeMaterializedAccounts(db, entitlement, { runId }, accountIds);
+        return r.metered ? [...r.charged, ...r.already] : accountIds;
+      } catch { return accountIds; }
+    }) : undefined,
     onAccountTrace: (trace) => { tracePersists.push(traceSink.persist(trace).catch(() => { /* telemetry never fails a run */ })); },
     // Accrete valid discovered companies into the durable, customer-independent Vault
     // registry (best-effort; universal facts only). Never blocks or alters the run.
