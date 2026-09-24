@@ -106,8 +106,10 @@ export function renderPdfBuffer(pm: PresentationModel): Buffer {
   const newPage = () => { pdf.addPage(); y = M + 2; };
 
   // ── Section band (premium-feeling header) ──
+  // Reserve enough room that a heading landing near the page bottom moves to the next page WITH its
+  // first content, instead of orphaning the heading alone above dead space.
   const band = (label: string, accent: RGB = SKY) => {
-    space(16); gap(4);
+    space(34); gap(4);
     setFill(accent); pdf.rect(M, y - 3.4, 1.6, 5.2, "F");           // accent tick
     pdf.setFont("helvetica", "bold"); pdf.setFontSize(12.5); setText(INK);
     pdf.text(latin1(label), M + 4, y + 0.8);
@@ -408,32 +410,39 @@ export function renderPdfBuffer(pm: PresentationModel): Buffer {
   }
 
   function accountCase(a: AccountBriefVM, sec: typeof s) {
-    space(30); gap(2.5);
-    const top = y - 4.5;
-    setFill(DEC_RGB[a.decision]); pdf.rect(M, top, 1.6, 6, "F");
-    pdf.setFont("helvetica", "bold"); pdf.setFontSize(12); setText(INK);
-    pdf.text(latin1(`${a.rank != null ? `${a.rank}. ` : ""}${a.company}`), M + 4, y);
+    // Keep the company header with its first lines (reserve room so it never orphans at a page bottom).
+    space(46); gap(6);
+    // Per-company divider so each dossier reads as a deliberate, distinct unit (premium separation).
+    pdf.setDrawColor(LINE[0], LINE[1], LINE[2]); pdf.setLineWidth(0.3); pdf.line(M, y - 3, W - M, y - 3);
+    gap(3);
+    // Tinted header strip behind the company row.
+    const stripTop = y - 4.6, stripH = 8.6;
+    setFill(PANEL); pdf.rect(M, stripTop, CW, stripH, "F");
+    setFill(DEC_RGB[a.decision]); pdf.rect(M, stripTop, 1.8, stripH, "F");   // decision accent bar
+    pdf.setFont("helvetica", "bold"); pdf.setFontSize(12.5); setText(INK);
+    pdf.text(latin1(`${a.rank != null ? `${a.rank}. ` : ""}${a.company}`), M + 4.5, y + 0.6);
     const chip = latin1(DECISION_TOKENS[a.decision].label.toUpperCase());
     pdf.setFont("helvetica", "bold"); pdf.setFontSize(7.5);
     const cwid = pdf.getTextWidth(chip) + 6;
-    setFill(DEC_RGB[a.decision]); pdf.roundedRect(W - M - cwid, top, cwid, 6, 1.2, 1.2, "F");
-    setText([255, 255, 255]); pdf.text(chip, W - M - cwid + 3, top + 4.2);
-    y += 5;
-    const sub = [a.segment, a.geography].filter(Boolean).map(latin1).join("  -  ");
-    if (sub) text(sub, M + 4, 8, "normal", FAINT);
+    setFill(DEC_RGB[a.decision]); pdf.roundedRect(W - M - cwid - 1.5, stripTop + 1.4, cwid, 5.8, 1.2, 1.2, "F");
+    setText([255, 255, 255]); pdf.text(chip, W - M - cwid + 1.5, stripTop + 5.4);
+    y += stripH - 2.2;
+    const sub = [a.segment, a.geography, a.accountRole, a.opportunityType].filter(Boolean).map((v) => latin1(String(v))).join("   -   ");
+    if (sub) text(sub, M + 4, 8, "normal", MUTE);
+    gap(1);
     if (a.decisionNote) text(`Why: ${a.decisionNote}`, M + 4, 9.5, "normal", SUB, CW - 4);
     if (sec.accountDimensions && a.dimensions.length) {
-      // Fit / Timing / Evidence inline chips
-      space(6); let cx = M + 4;
+      // Fit / Timing / Evidence inline chips (decision-coloured dot + label + value)
+      gap(2); space(7); let cx = M + 4;
       for (const d of a.dimensions) {
-        const label = latin1(`${d.label} ${d.value}`);
+        const label = latin1(`${d.label}: ${d.value}`);
         pdf.setFont("helvetica", "bold"); pdf.setFontSize(7.5);
-        const wch = pdf.getTextWidth(label) + 5;
-        setFill([238, 242, 247]); pdf.roundedRect(cx, y - 3.2, wch, 5, 1, 1, "F");
-        setText(SUB); pdf.text(label, cx + 2.5, y);
+        const wch = pdf.getTextWidth(label) + 6;
+        setFill([237, 242, 248]); setDraw(LINE); pdf.setLineWidth(0.15); pdf.roundedRect(cx, y - 3.4, wch, 5.4, 1.1, 1.1, "FD");
+        setText(SUB); pdf.text(label, cx + 3, y);
         cx += wch + 2.5;
       }
-      y += 4;
+      y += 5;
     }
     if (sec.accountThesis && a.thesis) text(a.thesis, M + 4, 9.5, "normal", SUB, CW - 4);
     if (sec.accountEvidence) text(`Evidence: ${a.evidence.sourceCount} source(s), ${a.evidence.datedCount} dated${a.evidence.latestAge ? `, latest ${a.evidence.latestAge}` : ""}${a.evidence.strength ? `, ${a.evidence.strength}` : ""}`, M + 4, 8.5, "normal", MUTE, CW - 4);
