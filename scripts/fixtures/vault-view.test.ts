@@ -53,6 +53,11 @@ eq("new 24h", sum.newCompanies24h, 1);
 eq("reobserved 24h", sum.reobserved24h, 1);
 eq("new 7d includes new24h only (others older)", sum.newCompanies7d, 1);
 eq("reobserved 7d", sum.reobserved7d, 1);
+// 30d window: all three first_seen within 30d (2h, 10d, 20.8d); only r1 re-observed after first_seen.
+eq("new 30d includes companies seen within 30d", sum.newCompanies30d, 3);
+eq("reobserved 30d", sum.reobserved30d, 1);
+eq("lastWriteAt = most recent first_seen", sum.lastWriteAt, iso(2));
+eq("lastObservationAt = most recent last_seen", sum.lastObservationAt, iso(2));
 check("byCountry sorted desc", sum.byCountry[0].count >= sum.byCountry[sum.byCountry.length - 1].count);
 check("companyTypes excludes Unknown from count", sum.companyTypes === 2); // Manufacturer + Financial Services (StaleCo Unknown)
 
