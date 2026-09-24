@@ -199,10 +199,10 @@ export function renderPdfBuffer(pm: PresentationModel): Buffer {
     const titleLines = pdf.splitTextToSize(latin1(doc.headline ?? "Opportunity Portfolio"), CW) as string[];
     for (const ln of titleLines.slice(0, 3)) { pdf.text(ln, M, cy); cy += 11.5; }
     cy += 2;
-    // meta
+    // meta (wrap within content width so a long client/market never clips at the page edge)
     pdf.setFont("helvetica", "normal"); pdf.setFontSize(11); setText(MUTE);
     const meta = [doc.meta.client, doc.meta.market, doc.meta.generatedLabel].filter(Boolean).map(latin1).join("   -   ");
-    if (meta) { pdf.text(meta, M, cy); cy += 10; }
+    if (meta) { for (const ln of pdf.splitTextToSize(meta, CW) as string[]) { pdf.text(ln, M, cy); cy += 6; } cy += 4; }
 
     // decision headline + distribution bar (immediate portfolio understanding)
     const total = p.total || doc.accounts.length;
@@ -297,6 +297,9 @@ export function renderPdfBuffer(pm: PresentationModel): Buffer {
     // @ts-expect-error jspdf-autotable augments lastAutoTable at runtime
     y = (pdf.lastAutoTable?.finalY ?? y) + 4;
     if (p.note) text(latin1(p.note), M, 8, "normal", MUTE);
+    // Fit × Timing scatter — the signature portfolio visual, matching the web report. Only when there
+    // are enough accounts to be meaningful (Preview's 2 don't warrant a scatter; §39).
+    if (doc.accounts.length >= 4) fitTimingChart();
   }
 
   // ══ Premium — Decision Context dossier (premium tier only) ══
@@ -440,6 +443,75 @@ export function renderPdfBuffer(pm: PresentationModel): Buffer {
     if (sec.accountSources) bullets("Sources", a.sources.map((src) => `${latin1(src.label)}${src.date ? ` (${src.date})` : ""}${src.url ? ` - ${latin1(src.url)}` : ""}`));
     if (sec.accountNextStep && a.nextStep) text(`Next step: ${a.nextStep}`, M + 4, 9.5, "bold", INK, CW - 4);
     gap(2.5);
+  }
+
+  // Fit × Timing scatter (vector; selectable text). Positions each account by the ORDINAL strength of
+  // its fit (x) against its timing (y) — the exact strengths Research already produced, never a
+  // fabricated numeric score. Each point carries the account's RANK NUMBER (matching the "#" column of
+  // the Portfolio table directly above) instead of a long company label, so 12–18 accounts stay legible
+  // and nothing collides. Colour follows the canonical decision (never the only signal — the number
+  // identifies the account and the axes are named). Accounts missing either strength are listed
+  // honestly as "not positioned" rather than dropped at a made-up coordinate.
+  function fitTimingChart() {
+    const es = doc.meta.language === "es";
+    const rankOf = (a: AccountBriefVM, labels: string[]): number | null => {
+      const v = a.dimensions.find((d) => labels.includes(d.label))?.value;
+      return v === "Strong" ? 3 : v === "Moderate" ? 2 : v === "Limited" ? 1 : null;
+    };
+    const placed = doc.accounts
+      .map((a, i) => ({ a, n: a.rank ?? i + 1, fx: rankOf(a, ["Fit", "Encaje"]), ty: rankOf(a, ["Timing", "Momento"]) }))
+      .filter((r): r is { a: AccountBriefVM; n: number; fx: number; ty: number } => r.fx != null && r.ty != null);
+    if (placed.length < 4) return;
+    const missing = doc.accounts.filter((a) => !placed.some((p2) => p2.a.id === a.id));
+
+    band(es ? "Encaje x Momento" : "Fit x Timing", SKY);
+    text(es ? "Cada punto es una cuenta, ubicada por la fuerza de su encaje y de su momento; el número corresponde a la tabla anterior."
+           : "Each point is an account, placed by the strength of its fit and timing; the number matches the table above.", M, 7.6, "normal", MUTE);
+    gap(1);
+    space(72);
+    const plotX = M + 14, plotW = 92, plotTop = y + 2, plotH = 50;
+    const padIn = 6; // keep extreme points off the axes/title
+    const ticks = es ? ["Limitado", "Moderado", "Fuerte"] : ["Limited", "Moderate", "Strong"];
+    const xAt = (v: number) => plotX + padIn + ((v - 1) / 2) * (plotW - 2 * padIn);
+    const yAt = (v: number) => plotTop + padIn + (1 - (v - 1) / 2) * (plotH - 2 * padIn);
+    // gridlines
+    setDraw([238, 242, 246]); pdf.setLineWidth(0.2);
+    for (const v of [1, 2, 3]) { pdf.line(xAt(v), plotTop, xAt(v), plotTop + plotH); pdf.line(plotX, yAt(v), plotX + plotW, yAt(v)); }
+    // axes
+    setDraw(FAINT); pdf.setLineWidth(0.3);
+    pdf.line(plotX, plotTop + plotH, plotX + plotW, plotTop + plotH);
+    pdf.line(plotX, plotTop, plotX, plotTop + plotH);
+    // tick labels
+    pdf.setFont("helvetica", "normal"); pdf.setFontSize(6.2); setText(MUTE);
+    for (let i = 0; i < 3; i++) {
+      pdf.text(latin1(ticks[i]), xAt(i + 1), plotTop + plotH + 3.4, { align: "center" } as never);
+      pdf.text(latin1(ticks[i]), plotX - 2, yAt(i + 1) + 1, { align: "right" } as never);
+    }
+    pdf.setFont("helvetica", "bold"); pdf.setFontSize(6.8); setText(INK);
+    pdf.text(latin1(es ? "Encaje ->" : "Fit ->"), plotX + plotW / 2, plotTop + plotH + 7, { align: "center" } as never);
+    pdf.text(latin1(es ? "Momento ->" : "Timing ->"), plotX - 9, plotTop + plotH / 2, { align: "center", angle: 90 } as never);
+    // points — numbered dots (jitter co-located cells)
+    const cell = new Map<string, number>();
+    for (const pnt of placed) {
+      const key = `${pnt.fx}-${pnt.ty}`; const k = cell.get(key) ?? 0; cell.set(key, k + 1);
+      const ang = k * 2.3, rad = k === 0 ? 0 : 3 + k * 0.9;
+      const cx = xAt(pnt.fx) + Math.cos(ang) * rad, cy = yAt(pnt.ty) + Math.sin(ang) * rad;
+      setFill(DEC_RGB[pnt.a.decision]); setDraw([255, 255, 255]); pdf.setLineWidth(0.4);
+      pdf.circle(cx, cy, 2.3, "FD");
+      pdf.setFont("helvetica", "bold"); pdf.setFontSize(6); setText([255, 255, 255]);
+      pdf.text(String(pnt.n), cx, cy + 1.05, { align: "center" } as never);
+    }
+    // legend (right of plot)
+    let ly = plotTop + 3; const lx = plotX + plotW + 10;
+    pdf.setFont("helvetica", "bold"); pdf.setFontSize(6.6); setText(MUTE); pdf.text(latin1(es ? "Decision" : "Decision"), lx, ly); ly += 4.4;
+    for (const d of DEC_ORDER) {
+      setFill(DEC_RGB[d]); pdf.circle(lx + 1.2, ly - 1, 1.3, "F");
+      pdf.setFont("helvetica", "normal"); pdf.setFontSize(6.6); setText(INK);
+      pdf.text(latin1(DECISION_TOKENS[d].label), lx + 3.8, ly); ly += 4.1;
+    }
+    y = plotTop + plotH + 10;
+    if (missing.length) text(latin1(`${es ? "Sin posicionar (encaje o momento no evaluado): " : "Not positioned (fit or timing not evaluated): "}${missing.map((a) => a.company).join(", ")}`), M, 7.5, "normal", MUTE);
+    gap(2);
   }
 }
 
