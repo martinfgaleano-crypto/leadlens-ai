@@ -14,6 +14,7 @@ import { buildPremiumDeliverySection, type PremiumDeliverySection } from "@/lib/
 import type { PremiumContextV1 } from "@/lib/intelligence/premium/premium-context";
 import { DECISION_TOKENS, STRENGTH_TOKENS, decisionLabel, orderByAttention, accountRoleLabel, opportunityTypeLabel } from "@/lib/deliverable/deliverable-view-model";
 import { portfolioCsv, evidenceCsv, deliverableFilename } from "@/lib/deliverable/exports";
+import FitTimingChart from "./FitTimingChart";
 import { downloadableChannels } from "@/lib/delivery-system/channel-availability";
 import type { DeliveryTier } from "@/lib/delivery-system/tier-composer";
 import { toClientCanvasVM } from "@/lib/deliverable/client-canvas-vm";
@@ -329,6 +330,9 @@ function PortfolioTab({ vm, t, es, onOpen, onExplorePI }: { vm: DeliverableViewM
           <button className="dlv-chip" style={{ marginTop: 8 }} onClick={onExplorePI}>{es ? "Explorar Inteligencia del portafolio →" : "Explore Portfolio Intelligence →"}</button>
         </div>
       )}
+
+      {/* Signature portfolio visual: Fit × Timing positioning (from the accounts' ordinal strengths). */}
+      {vm.accounts.length > 1 && <FitTimingChart accounts={vm.accounts} es={es} />}
 
       {/* Commercial context — what LeadLens evaluated against (§62–65) */}
       {vm.commercialContext && (vm.commercialContext.clientDescription || vm.commercialContext.summary || vm.commercialContext.regions.length > 0 || vm.commercialContext.industries.length > 0 || vm.commercialContext.criteria.length > 0) && (
@@ -669,7 +673,10 @@ function compareInsight(cols: AccountBriefVM[], es: boolean): string | null {
   const sorted = [...cols].sort((a, b) => DECISION_RANK[a.decision] - DECISION_RANK[b.decision] || days(a) - days(b));
   const lead = sorted[0], next = sorted[1];
   if (lead.decision === next.decision && lead.decisionNote === next.decisionNote && !lead.freshness) return null;
-  const leadReason = lead.decisionNote || lead.thesis;
+  // Language consistency: the account thesis is authored in the report's locale, whereas some upstream
+  // decision-rationale notes can be locale-inconsistent (e.g. a Spanish-pilot rationale leaking into an
+  // English report). Prefer the locale-safe thesis for this customer-facing comparison sentence.
+  const leadReason = lead.thesis || lead.decisionNote;
   const nextGap = next.limitations[0] || next.validations[0];
   if (!leadReason) return null;
   if (es) {

@@ -269,7 +269,8 @@ function compareInsight(accts: AccountBriefVM[], es: boolean): string | null {
   const days = (a: AccountBriefVM) => { const d = a.freshness?.age; return d && /\d/.test(d) ? parseInt(d, 10) : 9999; };
   const sorted = [...accts].sort((a, b) => DR[a.decision] - DR[b.decision] || days(a) - days(b));
   const lead = sorted[0], next = sorted[1];
-  const reason = lead.decisionNote || lead.thesis;
+  // Locale consistency: prefer the report-locale thesis over a possibly locale-inconsistent note.
+  const reason = lead.thesis || lead.decisionNote;
   const gap = next.limitations[0] || next.validations[0];
   if (!reason) return null;
   return es
