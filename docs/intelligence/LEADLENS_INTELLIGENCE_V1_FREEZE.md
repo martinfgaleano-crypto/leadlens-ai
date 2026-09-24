@@ -39,15 +39,20 @@ for `pro`. Preview/Brief/Portfolio/Premium contracts unchanged (catalog frozen).
 (fires whenever fresh coverage is insufficient). `ELIGIBLE_FALLBACK` alone is **global** (all markets/
 tiers) — which HQ does not authorize.
 
-**New server-side control (this freeze):** `VAULT_REUSE_ELIGIBLE_GEOS` — a lowercased geography
-allowlist. Under `ELIGIBLE_FALLBACK`, reuse now fires **only** when the run's target geography matches
-the allowlist; an empty allowlist preserves the (unscoped) acceptance-harness behavior. `CANARY` also
-requires the geography scope. Client cannot override (server-resolved config); the flag cannot change
-entitlements, bypass qualification, or expose cross-tenant data (reuse supplies only candidate
-identities that still pass identity/geography/operating-role/current-source qualification + fresh Deep
-Research; historical Vault membership/last_seen/observation_count never become event evidence, timing,
-or a decision). Regression: `vault-reuse-config` **26/26** (incl. scoped-Colombia enables, scoped-USA
-disabled with flag ON, empty-allowlist unscoped, CANARY+geo).
+**New server-side control (this freeze): `VAULT_REUSE_ELIGIBLE_GEOS` — a lowercased geography allowlist,
+FAIL-CLOSED.** Under `ELIGIBLE_FALLBACK`, reuse fires **only** when (a) the allowlist is **non-empty**
+AND (b) the run's target geography matches it. An absent / empty / whitespace-only allowlist **disables
+reuse entirely** — a missing or typo'd `VAULT_REUSE_ELIGIBLE_GEOS` can therefore only turn reuse OFF,
+**never** open global reuse (the production-safety invariant; the earlier design that treated an empty
+allowlist as "unscoped/global" was a fail-open hazard and was corrected). `CANARY` stays context-id
+gated (optionally geo-scoped) and cannot go global. Client cannot override (server-resolved config);
+the flag cannot change entitlements, bypass qualification, or expose cross-tenant data (reuse supplies
+only candidate identities that still pass identity/geography/operating-role/current-source qualification
++ fresh Deep Research; historical Vault membership/last_seen/observation_count never become event
+evidence, timing, or a decision). Regression: `vault-reuse-config` **26/26** (incl. scoped-Colombia
+enables, scoped-USA disabled with flag ON, empty-allowlist → DISABLED/fail-closed, whitespace allowlist
+→ DISABLED, CANARY+geo). The acceptance harness must now pass `VAULT_REUSE_ELIGIBLE_GEOS=Colombia`
+alongside `VAULT_REUSE_MODE=ELIGIBLE_FALLBACK`.
 
 **Recommended production rollout (founder, reversible):** set in Vercel prod
 `VAULT_REUSE_MODE=ELIGIBLE_FALLBACK` **and** `VAULT_REUSE_ELIGIBLE_GEOS=Colombia`. This activates reuse

@@ -88,11 +88,17 @@ function planGeographyEligible(config: VaultReuseConfig, plan: DiscoveryPlan): b
   });
 }
 
-/** Rollout gate only (does not consider sufficiency). CONTROLLED PRODUCTION ROLLOUT: ELIGIBLE_FALLBACK
- *  is additionally scoped to the eligible-geography allowlist when one is configured, so a global flag
- *  never activates reuse outside the accepted commercial envelope. */
+/** Rollout gate only (does not consider sufficiency). CONTROLLED PRODUCTION ROLLOUT — FAIL CLOSED:
+ *  ELIGIBLE_FALLBACK activates ONLY with a non-empty geography allowlist AND a geography match. An
+ *  absent / empty / whitespace-only VAULT_REUSE_ELIGIBLE_GEOS can therefore never open global reuse —
+ *  a misconfiguration can only turn reuse OFF, never broaden it (the production-safety invariant). The
+ *  narrow CANARY mode stays context-id gated (optionally geography-scoped); it cannot go global because
+ *  it requires an explicit per-context allowlist. */
 export function vaultReuseEnabledForPlan(config: VaultReuseConfig, plan: DiscoveryPlan): boolean {
-  if (config.mode === "ELIGIBLE_FALLBACK") return planGeographyEligible(config, plan);
+  if (config.mode === "ELIGIBLE_FALLBACK") {
+    if (config.eligibleGeographies.size === 0) return false; // FAIL CLOSED: no allowlist → no reuse (never global)
+    return planGeographyEligible(config, plan);
+  }
   if (config.mode === "CANARY") return config.canaryContextIds.has(plan.contextRef.contextId) && planGeographyEligible(config, plan);
   return false;
 }
