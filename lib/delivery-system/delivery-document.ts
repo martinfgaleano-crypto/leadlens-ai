@@ -126,3 +126,17 @@ export function recountPortfolio(accounts: AccountBriefVM[]): Record<DecisionSta
   for (const a of accounts) counts[a.decision] += 1;
   return counts;
 }
+
+/** Recompute evidence coverage over the ACTUAL (tier-limited) account set so a lower tier never shows
+ *  a metric aggregated over companies it does not contain. The three counts are company-scoped
+ *  (companies with sources / with dated evidence / with corroborated evidence), derived from each
+ *  account's evidence summary. The qualitative grade/note are carried from the source assessment. */
+export function recomputeCoverage(accounts: AccountBriefVM[], base: DeliveryCoverage | null): DeliveryCoverage {
+  return {
+    withSources: accounts.filter((a) => (a.evidence?.sourceCount ?? 0) > 0).length,
+    withDatedEvidence: accounts.filter((a) => (a.evidence?.datedCount ?? 0) > 0).length,
+    corroborated: accounts.filter((a) => a.evidence?.corroborated === true).length,
+    grade: base?.grade ?? null,
+    note: base?.note ?? null,
+  };
+}

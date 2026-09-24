@@ -15,7 +15,7 @@ interface Deliverable {
   html: string | null; portfolioCsv: string | null; evidenceCsv: string | null; files: FileInfo[];
 }
 interface ReportTemplate {
-  version: string; approvalState: string; effectiveDate: string; renderingSystem: string;
+  version: string; supersedes: string | null; approvalState: string; effectiveDate: string; renderingSystem: string;
   chartSystem: string[]; brandTokens: Record<string, string>; languages: Array<"en" | "es">;
   tiers: Array<{ tier: string; label: string; maxAccounts: number; price: number }>;
   knownLimitations: string[]; sourceCommit: string;
@@ -112,7 +112,7 @@ export default function AdminDeliverables() {
               <div>
                 <h2 style={S.name}>Report templates</h2>
                 <div style={S.meta}>
-                  <strong style={{ color: "#0f172a" }}>{template.version}</strong> · source {template.sourceCommit === "local" ? "local" : template.sourceCommit.slice(0, 7)} · effective {template.effectiveDate}
+                  <strong style={{ color: "#0f172a" }}>{template.version}</strong>{template.supersedes ? ` · supersedes ${template.supersedes}` : ""} · source {template.sourceCommit === "local" ? "local" : template.sourceCommit.slice(0, 7)} · effective {template.effectiveDate}
                 </div>
               </div>
               <span style={{ ...S.tag, background: (APPROVAL_COLORS[template.approvalState] ?? APPROVAL_COLORS.DRAFT).bg, color: (APPROVAL_COLORS[template.approvalState] ?? APPROVAL_COLORS.DRAFT).fg }}>
