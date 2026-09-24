@@ -2,6 +2,16 @@
 const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ["@anthropic-ai/sdk"],
+    // Admin Intelligence / Launch Readiness compute the capability plane from curated acceptance
+    // artifacts read at runtime via fs (ml/data/acceptance/*.json). Serverless file-tracing does not
+    // detect these dynamic reads, so in the deployed lambda they were ABSENT → the view model degraded
+    // to the last durable snapshot (a stale Aug-2026 evaluation, e.g. 76) instead of computing the
+    // current readiness. Bundling them makes the deployed admin recompute from current evidence.
+    outputFileTracingIncludes: {
+      "/api/admin/intelligence/launch-readiness": ["./ml/data/acceptance/**/*.json"],
+      "/api/admin/intelligence": ["./ml/data/acceptance/**/*.json"],
+      "/api/admin/intelligence/**": ["./ml/data/acceptance/**/*.json"],
+    },
   },
   async redirects() {
     return [
