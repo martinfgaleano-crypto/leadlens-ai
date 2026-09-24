@@ -30,6 +30,12 @@ export interface VaultReuseConfig {
   mode: VaultReuseMode;
   /** Context ids allowed to run reuse while mode = CANARY. Ignored otherwise. */
   canaryContextIds: Set<string>;
+  /** CONTROLLED PRODUCTION ROLLOUT (Intelligence V1 freeze): lowercased geography tokens the reuse
+   *  fallback is restricted to under mode = ELIGIBLE_FALLBACK. Non-empty → reuse fires ONLY when the
+   *  run's target geography matches one of these (the accepted commercial envelope, e.g. "colombia").
+   *  Empty → unchanged behavior (any geography), used by the isolated acceptance harness. Set in prod
+   *  via VAULT_REUSE_ELIGIBLE_GEOS so ELIGIBLE_FALLBACK never activates in untested markets (§11-§13). */
+  eligibleGeographies: Set<string>;
 }
 
 /** Tier-aware coverage sufficiency thresholds (distinct domain-verified, geography-
@@ -61,13 +67,33 @@ export function resolveVaultReuseConfig(env: NodeJS.ProcessEnv = process.env): V
       .map((s) => s.trim())
       .filter(Boolean),
   );
-  return { mode, canaryContextIds };
+  const eligibleGeographies = new Set(
+    (env.VAULT_REUSE_ELIGIBLE_GEOS ?? "")
+      .split(",")
+      .map((s) => s.trim().toLowerCase())
+      .filter(Boolean),
+  );
+  return { mode, canaryContextIds, eligibleGeographies };
 }
 
-/** Rollout gate only (does not consider sufficiency). */
+/** True when the run's target geography matches the controlled rollout allowlist. Case-insensitive
+ *  containment either way (allowlist "colombia" matches a plan geography label "Colombia"). */
+function planGeographyEligible(config: VaultReuseConfig, plan: DiscoveryPlan): boolean {
+  if (config.eligibleGeographies.size === 0) return true; // unscoped (acceptance harness / not configured)
+  const allow = Array.from(config.eligibleGeographies);
+  return (plan.geographies ?? []).some((g) => {
+    const label = String(g ?? "").trim().toLowerCase();
+    if (!label) return false;
+    return allow.some((a) => label.includes(a) || a.includes(label));
+  });
+}
+
+/** Rollout gate only (does not consider sufficiency). CONTROLLED PRODUCTION ROLLOUT: ELIGIBLE_FALLBACK
+ *  is additionally scoped to the eligible-geography allowlist when one is configured, so a global flag
+ *  never activates reuse outside the accepted commercial envelope. */
 export function vaultReuseEnabledForPlan(config: VaultReuseConfig, plan: DiscoveryPlan): boolean {
-  if (config.mode === "ELIGIBLE_FALLBACK") return true;
-  if (config.mode === "CANARY") return config.canaryContextIds.has(plan.contextRef.contextId);
+  if (config.mode === "ELIGIBLE_FALLBACK") return planGeographyEligible(config, plan);
+  if (config.mode === "CANARY") return config.canaryContextIds.has(plan.contextRef.contextId) && planGeographyEligible(config, plan);
   return false;
 }
 

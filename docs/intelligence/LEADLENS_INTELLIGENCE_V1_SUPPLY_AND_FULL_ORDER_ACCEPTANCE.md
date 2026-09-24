@@ -36,27 +36,29 @@ candidate-supply bottleneck is **removed**: universe grew **10 → 22**, comfort
 with headroom. Reused candidates still pass fresh qualification and fresh research (no stale-evidence
 promotion, provenance preserved, tenant isolation preserved).
 
-## Portfolio full-order live acceptance — BLOCKED on provider funds (not supply)
-Two clean re-runs were attempted after the fix:
-1. Universe **22** (fix working) → completed research → **failed at ledger reconciliation** due to a
-   transient Supabase DNS outage (`ENOTFOUND …supabase.co`) — environmental, not a code/product defect.
-2. Universe 11 → **every lead failed research** with `[anthropic] CIRCUIT_OPEN: credits_exhausted`
-   (`400 "Your credit balance is too low"`). **Anthropic funds are exhausted** (drained by this
-   session's Preview + Brief + first Portfolio runs).
+## Portfolio full-order live acceptance — PASS (12/12), after funds restored
+Run `intel_04565690` (plan `standard`, CO context, reuse fallback). Universe grew to **17** (fresh +
+qualified reused); 17 researched → 1 DISCARD → **12 delivered / 12 charged / balance 0**. Twelve
+distinct on-target CO companies — manufacturers (WEG, Cargill, Organización Corona, Mapei, Tecnoglass,
+Alimentos SAS) and logistics/DC operators (Logisfashion, Quick, Leschaco, Alcomex, Koba, Almacafé).
+Decision mix: 10 WARM / 6 COLD / 1 DISCARD among researched — a genuine spread, not padded. Third run
+→ **402**, replay/recovery → no extra debit, reopen free, second tenant → 404. **21/21** harness
+checks. COGS **$1.22** Anthropic (49 calls) ≈ $0.10/eval. **FULL_ORDER_ACCEPTED.**
 
-**Valuable negative proof from run 2:** under *total* research failure, delivered **0**, charged **0**,
-balance **12 fully preserved** — §22/§35 failed-generation + partial-order safety hold even when every
-company fails (no credit consumed, no fabricated evaluation delivered).
+(Two earlier post-fix attempts failed on environmental issues only — a transient Supabase DNS outage,
+then Anthropic funds exhaustion — during which delivered=0/charged=0/**balance preserved** proved
+failed-generation + partial-order safety under total provider failure.)
 
-**Verdict:** the qualified-supply blocker is **REMOVED and proven** (universe 10→22). A live Portfolio
-12/12 PASS now requires only **Anthropic credit top-up** (external/founder). It was not achievable this
-session because provider funds ran out (§2/§45 STOP).
-
-## Premium (18) — BLOCKED on the same funds (+ supply to be confirmed at 18)
-Not run: Anthropic funds exhausted. With the fix, the pro-tier floor (20) will fire reuse for an
-18-order; whether the CO Vault yields 18 *distinct on-target* companies after qualification/DISCARD
-needs one live measurement once funds are restored. Acceptance matrix unchanged (grant 18 → 18 valid →
-18 charged → 0 remaining → 19th blocked → premium differentiation rendered).
+## Premium full-order live acceptance — PASS (18/18)
+Run `intel_84ec8241` (plan `pro`, CO context, reuse fallback; pro-tier floor 20). Universe **23** →
+**18 delivered / 18 charged / balance 0**. Eighteen distinct on-target CO companies (food/beverage
+manufacturers: Coca-Cola FEMSA, Alpina, Colombina, Bavaria, Postobón, Cargill; industrial: WEG,
+Organización Corona, Mapei; logistics/DC operators: Logisfashion, Leschaco, Alcomex, Koba, Melonn,
+Distribuciones Madeg, Almacafé, Grupo Novargi, Alimentos SAS). Third run → **402**, replay/reopen safe,
+tenant 404. **Premium differentiation fires:** `isPremiumEligible("pro") === true` → the spine ran
+`producePremiumContext` and attached `_premium_context` (additive, fail-closed; composition verified by
+`premium-production` 18/18 + `premium-context-researcher`). **21/21** harness checks. COGS **$1.67**
+Anthropic (66 calls) ≈ $0.093/eval. **FULL_ORDER_ACCEPTED.**
 
 ## Cost (measured, this session, before exhaustion)
 Preview $0.218 (2 evals) · Brief $0.539 (6) · Portfolio(9) $0.856 · ≈ **$0.09–0.11 / valid evaluation**
@@ -65,15 +67,21 @@ rather than 12 — a **cost inefficiency** (pipeline `researchCount = max(PLAN_L
 overrides the spine's tighter research cap), not a safety issue (charge still caps at the balance via
 CAS + the delivery-gate). A follow-up could tighten research to `deliveryTarget + headroom`.
 
-## Release envelope (updated)
-- **Preview + Brief (Colombia): commercially accepted** (live, on deployed code).
-- **Portfolio (Colombia): supply RESOLVED**, full-order live PASS pending Anthropic funds.
-- **Premium (Colombia): pending funds + one 18-supply measurement.**
-- Production `VAULT_REUSE_MODE=OFF`: the reuse dependency is test-scoped. A production rollout of
-  `ELIGIBLE_FALLBACK` is a separate HQ decision supported by the measured incremental value above.
+## Release envelope (final)
+All four one-time tiers are now **commercially accepted (live) in the Colombia market** with correct
+per-company consumption, run gating, partial-order + failed-generation safety, idempotency, tenant
+isolation, and fail-closed ledger behavior — on the merged + deployed code (main includes the supply
+fix via PR #26), migration 064 applied:
+- **Preview 2/2 · Brief 6/6 · Portfolio 12/12 · Premium 18/18** — all PASS.
+- Portfolio/Premium supply depends on `VAULT_REUSE_MODE=ELIGIBLE_FALLBACK` (test-scoped here;
+  production default stays **OFF**). Enabling fallback in production is a separate HQ rollout decision,
+  now supported by measured incremental value (universe 10→17/23; 12 and 18 delivered).
+- USA market is a separate acceptance (prior strict-ICP benchmark ~5/6), not re-validated here.
 
 ## Remaining blockers (returned to HQ)
-1. **Anthropic credit top-up** — the only thing between here and a live Portfolio 12/12 (and Premium 18).
-2. **Production reuse-rollout decision** — Portfolio/Premium supply depends on `VAULT_REUSE_MODE`
-   (OFF in prod); the fix makes the gate correct, but enabling fallback in prod is HQ's call.
-3. **(Optional) research-cap tightening** — cost efficiency only; not blocking.
+1. **Production reuse-rollout decision** — Portfolio/Premium full supply needs `VAULT_REUSE_MODE`
+   enabled in prod (currently OFF). The gate is now correct; enabling fallback is HQ's call.
+2. **Existing legacy welcome balances** (≤6 accounts × 100 credits) — provenance-based reconciliation,
+   a separate founder maintenance step (new signups are clean post-064).
+3. **(Optional) research-cost tightening** — the pipeline researches the full reused universe rather
+   than `deliveryTarget + headroom`; ~2× cost, no safety impact.

@@ -31,12 +31,27 @@ async function main() {
   t("unknown mode falls back to OFF", resolveVaultReuseConfig({ VAULT_REUSE_MODE: "garbage" } as never).mode === "OFF");
 
   // ── rollout gate per plan ──
-  t("OFF disables every plan", !vaultReuseEnabledForPlan({ mode: "OFF", canaryContextIds: new Set() }, planFor("ctx_a", ["United States"])));
+  t("OFF disables every plan", !vaultReuseEnabledForPlan({ mode: "OFF", canaryContextIds: new Set(), eligibleGeographies: new Set<string>() }, planFor("ctx_a", ["United States"])));
   t("CANARY enables only allowlisted context", (() => {
-    const cfg = { mode: "CANARY" as const, canaryContextIds: new Set(["ctx_a"]) };
+    const cfg = { mode: "CANARY" as const, canaryContextIds: new Set(["ctx_a"]), eligibleGeographies: new Set<string>() };
     return vaultReuseEnabledForPlan(cfg, planFor("ctx_a", ["United States"])) && !vaultReuseEnabledForPlan(cfg, planFor("ctx_z", ["United States"]));
   })());
-  t("ELIGIBLE_FALLBACK enables any context", vaultReuseEnabledForPlan({ mode: "ELIGIBLE_FALLBACK", canaryContextIds: new Set() }, planFor("ctx_any", ["United States"])));
+  t("ELIGIBLE_FALLBACK enables any context", vaultReuseEnabledForPlan({ mode: "ELIGIBLE_FALLBACK", canaryContextIds: new Set(), eligibleGeographies: new Set<string>() }, planFor("ctx_any", ["United States"])));
+
+  // ── CONTROLLED PRODUCTION ROLLOUT: geography-scoped ELIGIBLE_FALLBACK (Intelligence V1 freeze) ──
+  const coScoped = { mode: "ELIGIBLE_FALLBACK" as const, canaryContextIds: new Set<string>(), eligibleGeographies: new Set(["colombia"]) };
+  t("scoped fallback ENABLES the accepted market (Colombia)", vaultReuseEnabledForPlan(coScoped, planFor("ctx_co", ["Colombia"])));
+  t("scoped fallback DISABLES an untested market (USA) even with the flag ON", !vaultReuseEnabledForPlan(coScoped, planFor("ctx_us", ["United States"])));
+  t("scoped fallback DISABLES a run with no geography", !vaultReuseEnabledForPlan(coScoped, planFor("ctx_none", [])));
+  t("empty geo allowlist preserves unscoped behavior (harness)", vaultReuseEnabledForPlan({ mode: "ELIGIBLE_FALLBACK", canaryContextIds: new Set(), eligibleGeographies: new Set<string>() }, planFor("ctx", ["United States"])));
+  t("resolveVaultReuseConfig parses VAULT_REUSE_ELIGIBLE_GEOS", (() => {
+    const c = resolveVaultReuseConfig({ VAULT_REUSE_MODE: "ELIGIBLE_FALLBACK", VAULT_REUSE_ELIGIBLE_GEOS: "Colombia, Mexico" } as never);
+    return c.eligibleGeographies.has("colombia") && c.eligibleGeographies.has("mexico");
+  })());
+  t("CANARY still requires the context allowlist AND geography scope", (() => {
+    const cfg = { mode: "CANARY" as const, canaryContextIds: new Set(["ctx_ok"]), eligibleGeographies: new Set(["colombia"]) };
+    return vaultReuseEnabledForPlan(cfg, planFor("ctx_ok", ["Colombia"])) && !vaultReuseEnabledForPlan(cfg, planFor("ctx_ok", ["United States"]));
+  })());
 
   // ── coverage measurement (pre-Research, domain-verified, geography-matched, fresh only) ──
   const usPlan = planFor("ctx_us", ["United States"]);
@@ -79,18 +94,18 @@ async function main() {
   const thinUs = outWith([org("Rockwell", "rockwellautomation.com", "United States")]); // 1 → insufficient
   const richUs = enough(FRESH_COVERAGE_SUFFICIENCY.preview);                            // sufficient for preview tier
   t("gate OPEN only when enabled AND fresh coverage insufficient", (() => {
-    const gate = makeVaultReuseGate({ mode: "ELIGIBLE_FALLBACK", canaryContextIds: new Set() });
+    const gate = makeVaultReuseGate({ mode: "ELIGIBLE_FALLBACK", canaryContextIds: new Set(), eligibleGeographies: new Set<string>() });
     return gate(thinUs, usPlan) && !gate(richUs, usPlan);
   })());
-  t("gate CLOSED when rollout OFF regardless of thin coverage", !makeVaultReuseGate({ mode: "OFF", canaryContextIds: new Set() })(thinUs, usPlan));
+  t("gate CLOSED when rollout OFF regardless of thin coverage", !makeVaultReuseGate({ mode: "OFF", canaryContextIds: new Set(), eligibleGeographies: new Set<string>() })(thinUs, usPlan));
   t("gate CLOSED for non-canary context even when thin", (() => {
-    const gate = makeVaultReuseGate({ mode: "CANARY", canaryContextIds: new Set(["ctx_allowed"]) });
+    const gate = makeVaultReuseGate({ mode: "CANARY", canaryContextIds: new Set(["ctx_allowed"]), eligibleGeographies: new Set<string>() });
     return !gate(thinUs, planFor("ctx_other", ["United States"])) && gate(thinUs, planFor("ctx_allowed", ["United States"]));
   })());
   // §10: fallback must NOT respond to commercial conclusions — only coverage. A rich
   // universe stays gated-closed regardless (the gate never sees Decisions/events).
   t("rich fresh universe keeps the gate closed (no reuse to manufacture opportunities)",
-    !makeVaultReuseGate({ mode: "ELIGIBLE_FALLBACK", canaryContextIds: new Set() })(enough(FRESH_COVERAGE_SUFFICIENCY.pro), planFor("c", ["United States"], 96)));
+    !makeVaultReuseGate({ mode: "ELIGIBLE_FALLBACK", canaryContextIds: new Set(), eligibleGeographies: new Set<string>() })(enough(FRESH_COVERAGE_SUFFICIENCY.pro), planFor("c", ["United States"], 96)));
 
   console.log(`\n${p} passed, 0 failed`);
 }
