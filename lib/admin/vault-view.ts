@@ -59,13 +59,16 @@ export function buildCompanyViews(
 export interface VaultSummary {
   companies: number; events: number; sources: number; countries: number; companyTypes: number;
   newCompanies24h: number; reobserved24h: number; newCompanies7d: number; reobserved7d: number;
+  newCompanies30d: number; reobserved30d: number;
+  /** Freshness (ISO): most recent first_seen (last new company) / last_seen (last observation). null when empty. */
+  lastWriteAt: string | null; lastObservationAt: string | null;
   byCountry: Array<{ key: string; count: number }>;
   byType: Array<{ key: string; count: number }>;
 }
 
 /** Aggregate summary + composition + growth over ALL company views (small table; done once). */
 export function summarize(views: VaultCompanyView[], eventsTotal: number, sourcesTotal: number, now = Date.now()): VaultSummary {
-  const H = 3600_000, d1 = 24 * H, d7 = 7 * d1;
+  const H = 3600_000, d1 = 24 * H, d7 = 7 * d1, d30 = 30 * d1;
   const inWin = (t: number, win: number) => Number.isFinite(t) && now - t <= win;
   // NEW = first_seen in window; REOBSERVED = last_seen in window AND strictly after first_seen.
   const isNew = (c: VaultCompanyView, win: number) => inWin(ms(c.first_seen_at), win);
@@ -77,6 +80,11 @@ export function summarize(views: VaultCompanyView[], eventsTotal: number, source
   };
   const byCountry = tally((c) => c.country);
   const byType = tally((c) => c.companyType);
+  const maxIso = (sel: (c: VaultCompanyView) => string | null): string | null => {
+    let best = -Infinity, iso: string | null = null;
+    for (const c of views) { const t = ms(sel(c)); if (Number.isFinite(t) && t > best) { best = t; iso = sel(c); } }
+    return iso;
+  };
   return {
     companies: views.length, events: eventsTotal, sources: sourcesTotal,
     countries: byCountry.filter((c) => c.key !== "Unknown").length,
@@ -85,6 +93,10 @@ export function summarize(views: VaultCompanyView[], eventsTotal: number, source
     reobserved24h: views.filter((c) => isReobs(c, d1)).length,
     newCompanies7d: views.filter((c) => isNew(c, d7)).length,
     reobserved7d: views.filter((c) => isReobs(c, d7)).length,
+    newCompanies30d: views.filter((c) => isNew(c, d30)).length,
+    reobserved30d: views.filter((c) => isReobs(c, d30)).length,
+    lastWriteAt: maxIso((c) => c.first_seen_at),
+    lastObservationAt: maxIso((c) => c.last_seen_at),
     byCountry, byType,
   };
 }

@@ -12,9 +12,17 @@ interface CompanyView {
 interface Summary {
   companies: number; events: number; sources: number; countries: number; companyTypes: number;
   newCompanies24h: number; reobserved24h: number; newCompanies7d: number; reobserved7d: number;
+  newCompanies30d: number; reobserved30d: number; lastWriteAt: string | null; lastObservationAt: string | null;
   byCountry: Array<{ key: string; count: number }>; byType: Array<{ key: string; count: number }>;
 }
-interface Resp { summary: Summary; inventory: { items: CompanyView[]; total: number; page: number; pageSize: number; pages: number }; }
+interface Resp { summary: Summary; inventory: { items: CompanyView[]; total: number; page: number; pageSize: number; pages: number }; generatedAt?: string; }
+interface WinCounts { total: number; last24h: number; last7d: number; last30d: number; last_activity_at: string | null }
+interface OpsActivity {
+  intelligence_runs: WinCounts & { distinct_runs: number };
+  delivered_evaluations: WinCounts & { distinct_analyses: number };
+  vault_new_companies: WinCounts;
+  generated_at: string;
+}
 
 const card: React.CSSProperties = { background: "#fff", border: "1px solid #e2e8f0", borderRadius: 8, padding: "0.9rem 1rem" };
 const label: React.CSSProperties = { fontSize: "0.7rem", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.04em" };
@@ -37,6 +45,7 @@ export default function VaultPage() {
   useEffect(() => { const t = setTimeout(() => setDebouncedQ(q), 300); return () => clearTimeout(t); }, [q]);
   useEffect(() => { setPage(1); }, [debouncedQ, country, type]);
 
+  const [ops, setOps] = useState<OpsActivity | null>(null);
   const load = useCallback(async () => {
     setLoading(true); setError("");
     const params = new URLSearchParams();
@@ -49,6 +58,10 @@ export default function VaultPage() {
     setData(await res.json()); setLoading(false);
   }, [debouncedQ, country, type, page]);
   useEffect(() => { void load(); }, [load]);
+  // Live operational activity (independent, always fresh) — real productive runs + delivered evaluations.
+  useEffect(() => { void (async () => {
+    try { const r = await adminFetch("/api/admin/operational-activity"); if (r.ok) { const b = await r.json(); setOps(b.activity ?? null); } } catch { /* panel shows unavailable */ }
+  })(); }, []);
 
   const s = data?.summary;
   const inv = data?.inventory;
@@ -73,12 +86,28 @@ export default function VaultPage() {
           <div style={card}><div style={label}>Countries</div><div style={metric}>{s?.countries ?? "—"}</div></div>
           <div style={card}><div style={label}>Company Types</div><div style={metric}>{s?.companyTypes ?? "—"}</div></div>
         </div>
-        {/* Growth */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(130px,1fr))", gap: "0.6rem", marginBottom: "1rem" }}>
+        {/* Vault growth */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(120px,1fr))", gap: "0.6rem", marginBottom: "0.4rem" }}>
           <div style={card}><div style={label}>New · 24h</div><div style={metric}>{s?.newCompanies24h ?? "—"}</div></div>
-          <div style={card}><div style={label}>Re-observed · 24h</div><div style={metric}>{s?.reobserved24h ?? "—"}</div></div>
           <div style={card}><div style={label}>New · 7d</div><div style={metric}>{s?.newCompanies7d ?? "—"}</div></div>
+          <div style={card}><div style={label}>New · 30d</div><div style={metric}>{s?.newCompanies30d ?? "—"}</div></div>
           <div style={card}><div style={label}>Re-observed · 7d</div><div style={metric}>{s?.reobserved7d ?? "—"}</div></div>
+          <div style={card}><div style={label}>Re-observed · 30d</div><div style={metric}>{s?.reobserved30d ?? "—"}</div></div>
+        </div>
+        <p style={{ color: "#94a3b8", fontSize: "0.72rem", margin: "0 0 1rem" }}>
+          Last new company: <strong style={{ color: "#475569" }}>{fmtDate(s?.lastWriteAt ?? null)}</strong> · last observation: <strong style={{ color: "#475569" }}>{fmtDate(s?.lastObservationAt ?? null)}</strong>{data?.generatedAt ? ` · refreshed ${new Date(data.generatedAt).toLocaleTimeString()}` : ""}
+        </p>
+
+        {/* Live operational activity — actual productive runs + delivered evaluations (canonical tables) */}
+        <div style={{ ...card, marginBottom: "1rem", background: "#f8fafc" }}>
+          <div style={{ ...label, marginBottom: "0.5rem" }}>Operational activity (live) {ops?.generated_at ? `· refreshed ${new Date(ops.generated_at).toLocaleTimeString()}` : ""}</div>
+          {!ops ? <div style={{ color: "#94a3b8", fontSize: "0.8rem" }}>Loading live activity… (unavailable if the operational sources cannot be read)</div> : (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))", gap: "0.6rem" }}>
+              <div><div style={label}>Intelligence runs</div><div style={metric}>{ops.intelligence_runs.distinct_runs}</div><div style={{ fontSize: "0.72rem", color: "#64748b" }}>24h {ops.intelligence_runs.last24h} · 7d {ops.intelligence_runs.last7d} · 30d {ops.intelligence_runs.last30d}</div><div style={{ fontSize: "0.68rem", color: "#94a3b8" }}>last {fmtDate(ops.intelligence_runs.last_activity_at)}</div></div>
+              <div><div style={label}>Delivered evaluations</div><div style={metric}>{ops.delivered_evaluations.total}</div><div style={{ fontSize: "0.72rem", color: "#64748b" }}>24h {ops.delivered_evaluations.last24h} · 7d {ops.delivered_evaluations.last7d} · 30d {ops.delivered_evaluations.last30d}</div><div style={{ fontSize: "0.68rem", color: "#94a3b8" }}>{ops.delivered_evaluations.distinct_analyses} distinct runs</div></div>
+              <div><div style={label}>Vault new (30d)</div><div style={metric}>{ops.vault_new_companies.last30d}</div><div style={{ fontSize: "0.72rem", color: "#64748b" }}>24h {ops.vault_new_companies.last24h} · 7d {ops.vault_new_companies.last7d} · total {ops.vault_new_companies.total}</div><div style={{ fontSize: "0.68rem", color: "#94a3b8" }}>last {fmtDate(ops.vault_new_companies.last_activity_at)}</div></div>
+            </div>
+          )}
         </div>
 
         {/* Composition */}
