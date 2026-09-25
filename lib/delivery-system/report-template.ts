@@ -34,16 +34,17 @@ export interface ReportTemplateVersion {
 
 /** History of report-template versions (newest first) — preserved so the Admin registry shows lineage. */
 export const TEMPLATE_HISTORY: Array<{ version: string; effectiveDate: string; note: string }> = [
+  { version: "CUSTOMER_DELIVERABLES_V2_2", effectiveDate: "2026-09-25", note: "Product-identity cover (product name as title, decision distribution secondary); per-tier 'What's included' band + Admin tier-contract matrix; defect closure (Premium language leak, John Deere HOLD framing, Portfolio copy, clickable source links, on-target sample)." },
   { version: "CUSTOMER_DELIVERABLES_V2_1", effectiveDate: "2026-09-24", note: "Differentiated sample; tier-scoped metrics; computed recency; localized PDF labels; premium-tension grouping." },
   { version: "CUSTOMER_DELIVERABLES_V2", effectiveDate: "2026-09-24", note: "Premium dossiers, Fit×Timing chart, Admin template registry." },
 ];
 
 export const REPORT_TEMPLATE: ReportTemplateVersion = {
-  version: "CUSTOMER_DELIVERABLES_V2_1",
-  supersedes: "CUSTOMER_DELIVERABLES_V2",
-  // NOT founder-approved until the founder reviews the four PDFs (§49). Starts in review.
+  version: "CUSTOMER_DELIVERABLES_V2_2",
+  supersedes: "CUSTOMER_DELIVERABLES_V2_1",
+  // NOT founder-approved until the founder reviews the four PDFs (§38). Starts in review.
   approvalState: "FOUNDER_REVIEW",
-  effectiveDate: "2026-09-24",
+  effectiveDate: "2026-09-25",
   renderingSystem: "DeliverableViewModel → TierComposer → PresentationModel → jsPDF (real application/pdf) / web / csv",
   chartSystem: [
     "Decision distribution bar (portfolio composition)",
@@ -323,21 +324,21 @@ const CASES: Case[] = [
     limitations: [bi("El encaje del servicio con el reciclaje es incierto.", "Service fit with recycling is uncertain.")],
   },
   {
-    company: "Agroexport Urabá", segment: bi("Agroindustria exportadora", "Export agribusiness"), geography: "Urabá, Colombia",
+    company: "Envases Metálicos Barranquilla", segment: bi("Empaques metálicos", "Metal packaging"), geography: "Barranquilla, Colombia",
     role: bi("Cliente potencial", "Potential Customer"), opp: null,
-    decision: "monitor", fit: "Moderate", timing: "Limited", evidence: "Limited", onTarget: false,
-    thesis: bi("Agroexport Urabá queda fuera de la geografía objetivo (Caribe) por poco y su timing es débil. Se incluye para transparencia del portafolio, pero su prioridad es baja: sin un cambio operativo claro dentro del alcance, la recomendación honesta es solo monitorear.",
-      "Agroexport Urabá sits just outside the target geography (the Caribbean) and its timing is weak. It is included for portfolio transparency, but its priority is low: without a clear in-scope operational change, the honest recommendation is only to monitor."),
-    decisionNote: bi("Fuera del foco geográfico y sin señal fuerte: monitorear con baja prioridad.", "Outside the geographic focus and without a strong signal: monitor at low priority."),
+    decision: "monitor", fit: "Moderate", timing: "Limited", evidence: "Limited", onTarget: true,
+    thesis: bi("Envases Metálicos Barranquilla encaja con la práctica de eficiencia de línea, pero no hay un cambio operativo reciente y fechado: solo un rumor de renovación de maquinaria sin confirmar. Está dentro del foco (Caribe, industria), así que se mantiene en monitoreo a la espera de una señal firme.",
+      "Envases Metálicos Barranquilla fits the line-efficiency practice, but there is no recent, dated operational change — only an unconfirmed machinery-renewal rumor. It is within focus (Caribbean, industry), so it stays on monitor pending a firm signal."),
+    decisionNote: bi("Dentro del foco pero sin señal reciente y fechada: monitorear.", "Within focus but no recent, dated signal: monitor."),
     events: [],
     sources: [
-      { label: bi("Perfil exportador (ejemplo)", "Exporter profile (example)"), url: "https://example.com/uraba-perfil", date: null, relation: "context", claim: bi("Establece actividad exportadora", "Establishes export activity") },
+      { label: bi("Directorio industrial (ejemplo)", "Industrial directory (example)"), url: "https://example.com/envases-directorio", date: null, relation: "context", claim: bi("Establece actividad de empaques metálicos", "Establishes metal-packaging activity") },
     ],
     claimSupportingSources: 0, corroborated: null,
-    counterSignals: [bi("Está fuera de la región priorizada por el cliente.", "It is outside the client's prioritized region.")],
-    validations: [bi("Confirmar si el cliente amplía su foco geográfico antes de invertir tiempo.", "Confirm whether the client widens its geographic focus before investing time.")],
-    nextStep: bi("Sin acción; revisar solo si cambia el foco del cliente.", "No action; revisit only if the client's focus changes."),
-    limitations: [bi("Fuera de la geografía objetivo declarada.", "Outside the declared target geography.")],
+    counterSignals: [bi("El rumor de renovación de maquinaria no está confirmado por ninguna fuente.", "The machinery-renewal rumor is not confirmed by any source.")],
+    validations: [bi("Buscar un anuncio formal de inversión en línea o maquinaria antes de actuar.", "Look for a formal line/machinery investment announcement before acting.")],
+    nextStep: bi("Vigilar señales formales de inversión; sin ellas, no hay caso accionable.", "Watch for formal investment signals; without them, there is no actionable case."),
+    limitations: [bi("Sin evento fechado; señal solo por rumor.", "No dated event; signal is rumor-only.")],
   },
   {
     company: "Petroquímica del Norte", segment: bi("Petroquímica", "Petrochemicals"), geography: "Cartagena, Colombia",

@@ -20,6 +20,10 @@ interface ReportTemplate {
   tiers: Array<{ tier: string; label: string; maxAccounts: number; price: number }>;
   knownLimitations: string[]; sourceCommit: string;
 }
+interface TierContract {
+  tier: string; displayName: string; price: number; opportunityTarget: number; valueVerb: string;
+  productPromise: string; reportRendered: string[]; workspace: string[]; contractedNotRendered: string[];
+}
 const APPROVAL_COLORS: Record<string, { bg: string; fg: string }> = {
   DRAFT: { bg: "#f1f5f9", fg: "#475569" },
   FOUNDER_REVIEW: { bg: "#fffbeb", fg: "#b45309" },
@@ -43,6 +47,7 @@ export default function AdminDeliverables() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [template, setTemplate] = useState<ReportTemplate | null>(null);
+  const [tierContract, setTierContract] = useState<TierContract[] | null>(null);
   const [lang, setLang] = useState<"es" | "en">("es");
   const [dataMode, setDataMode] = useState<"synthetic" | "real">("synthetic");
 
@@ -55,7 +60,7 @@ export default function AdminDeliverables() {
     })();
     (async () => {
       const r = await adminFetch("/api/admin/deliverables/template");
-      if (r.ok) { const j = await r.json(); setTemplate(j.template ?? null); }
+      if (r.ok) { const j = await r.json(); setTemplate(j.template ?? null); setTierContract(j.tierContract ?? null); }
     })();
   }, []);
 
@@ -169,6 +174,26 @@ export default function AdminDeliverables() {
                 </ul>
               </details>
             </div>
+
+            {tierContract && (
+              <details style={{ marginTop: 12 }}>
+                <summary style={{ cursor: "pointer", color: "#0369a1", fontWeight: 700, fontSize: 13 }}>Tier-contract matrix — what each tier delivers vs contracts</summary>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(230px, 1fr))", gap: 10, marginTop: 10 }}>
+                  {tierContract.map((tc) => (
+                    <div key={tc.tier} style={{ border: "1px solid #e2e8f0", borderRadius: 10, padding: "12px 14px", fontSize: 12 }}>
+                      <div style={{ fontSize: 14, fontWeight: 800, color: "#0f172a" }}>{tc.displayName} <span style={{ fontWeight: 500, color: "#64748b" }}>${tc.price} · {tc.opportunityTarget} · {tc.valueVerb}</span></div>
+                      <div style={{ color: "#334155", margin: "3px 0 8px" }}>{tc.productPromise}</div>
+                      <div style={{ fontWeight: 700, color: "#047857" }}>In report ({tc.reportRendered.length})</div>
+                      <ul style={{ margin: "3px 0 6px", paddingLeft: 16, color: "#475569" }}>{tc.reportRendered.map((x, i) => <li key={i}>{x}</li>)}</ul>
+                      {tc.workspace.length > 0 && <><div style={{ fontWeight: 700, color: "#0369a1" }}>Workspace / eligible ({tc.workspace.length})</div>
+                        <ul style={{ margin: "3px 0 6px", paddingLeft: 16, color: "#475569" }}>{tc.workspace.map((x, i) => <li key={i}>{x}</li>)}</ul></>}
+                      {tc.contractedNotRendered.length > 0 && <><div style={{ fontWeight: 700, color: "#b45309" }}>Contracted, not yet rendered ({tc.contractedNotRendered.length}) — HQ gap</div>
+                        <ul style={{ margin: "3px 0 0", paddingLeft: 16, color: "#92703b" }}>{tc.contractedNotRendered.map((x, i) => <li key={i}>{x}</li>)}</ul></>}
+                    </div>
+                  ))}
+                </div>
+              </details>
+            )}
           </div>
         )}
 

@@ -68,18 +68,21 @@ const W = 210, H = 297;    // A4
 const CW = W - 2 * M;      // content width
 
 // Customer-facing tier identity for the cover (maps the internal tierLabel → product identity), localized.
-const TIER_IDENTITY_L: Record<"en" | "es", Record<string, { eyebrow: string; kind: string }>> = {
+// `title` is the PRODUCT NAME — the dominant cover headline (the product the customer bought), NOT the
+// decision distribution (V2.2 §12). `promise` is the approved catalog product_promise (the descriptor).
+// `kind` stays as the short scope line at the cover footer. Sourced from lib/products/catalog.ts.
+const TIER_IDENTITY_L: Record<"en" | "es", Record<string, { eyebrow: string; title: string; promise: string; kind: string }>> = {
   en: {
-    Preview: { eyebrow: "PREVIEW", kind: "Opportunity preview" },
-    Brief: { eyebrow: "OPPORTUNITY BRIEF", kind: "Focused shortlist brief" },
-    Intelligence: { eyebrow: "OPPORTUNITY PORTFOLIO", kind: "Executive portfolio intelligence" },
-    Premium: { eyebrow: "COMMERCIAL INTELLIGENCE DOSSIER", kind: "Portfolio intelligence + decision context" },
+    Preview: { eyebrow: "PREVIEW", title: "Opportunity Preview", promise: "Validate the quality before committing.", kind: "Commercial intelligence — opportunity preview" },
+    Brief: { eyebrow: "OPPORTUNITY BRIEF", title: "Opportunity Brief", promise: "A compact, comparable opportunity set.", kind: "Commercial intelligence — focused opportunity brief" },
+    Intelligence: { eyebrow: "OPPORTUNITY PORTFOLIO", title: "Opportunity Portfolio", promise: "A prioritized portfolio, not just a list.", kind: "Commercial intelligence — prioritized portfolio" },
+    Premium: { eyebrow: "COMMERCIAL INTELLIGENCE DOSSIER", title: "Commercial Intelligence Dossier", promise: "From prioritized portfolio to defensible strategy.", kind: "Commercial intelligence — portfolio + decision strategy" },
   },
   es: {
-    Preview: { eyebrow: "VISTA PREVIA", kind: "Vista previa de oportunidades" },
-    Brief: { eyebrow: "INFORME DE OPORTUNIDADES", kind: "Informe corto y enfocado" },
-    Intelligence: { eyebrow: "PORTAFOLIO DE OPORTUNIDADES", kind: "Inteligencia de portafolio ejecutiva" },
-    Premium: { eyebrow: "DOSIER DE INTELIGENCIA COMERCIAL", kind: "Inteligencia de portafolio + contexto de decisión" },
+    Preview: { eyebrow: "VISTA PREVIA", title: "Vista Previa de Oportunidades", promise: "Valida la calidad antes de comprometerte.", kind: "Inteligencia comercial — vista previa de oportunidades" },
+    Brief: { eyebrow: "INFORME DE OPORTUNIDADES", title: "Informe de Oportunidades", promise: "Un conjunto de oportunidades enfocado y comparable.", kind: "Inteligencia comercial — informe enfocado" },
+    Intelligence: { eyebrow: "PORTAFOLIO DE OPORTUNIDADES", title: "Portafolio de Oportunidades", promise: "Un portafolio priorizado, no solo una lista.", kind: "Inteligencia comercial — portafolio priorizado" },
+    Premium: { eyebrow: "DOSIER DE INTELIGENCIA COMERCIAL", title: "Dosier de Inteligencia Comercial", promise: "Del portafolio priorizado a una estrategia defendible.", kind: "Inteligencia comercial — portafolio + estrategia de decisión" },
   },
 };
 
@@ -91,6 +94,7 @@ function locFrozen(sIn: string, es: boolean): string {
   const s = sIn.replace(/[—–]/g, "-").trim();
   if (/thin\/uncorroborated evidence/i.test(s)) return "Encaje fuerte pero evidencia limitada o sin corroborar - validar antes de comprometer esfuerzo";
   if (/Patterns describe only the evaluated portfolio/i.test(s)) return "Los patrones describen solo el portafolio evaluado y su evidencia disponible - no todo el mercado.";
+  if (/corroborated evidence or a dated timing signal could strengthen/i.test(s)) return "Evidencia corroborada adicional o una señal temporal fechada podrían fortalecer el caso.";
   return sIn;
 }
 
@@ -100,6 +104,24 @@ function labelsFor(es: boolean) {
   return {
     execSummary: L("Resumen ejecutivo", "Executive summary"),
     decisionDistribution: L("Distribución de decisiones", "Decision distribution"),
+    decisionSnapshot: L("Resumen de decisiones", "Decision snapshot"),
+    companiesEvaluated: (n: number) => L(`${n} empresa${n === 1 ? "" : "s"} evaluada${n === 1 ? "" : "s"}`, `${n} compan${n === 1 ? "y" : "ies"} evaluated`),
+    whatsIncluded: L("Qué incluye este producto", "What's included in this product"),
+    inThisReport: L("En este informe", "In this report"),
+    inYourWorkspace: L("En tu espacio de trabajo LeadLens", "In your LeadLens workspace"),
+    inc_decision: L("Decisión por empresa (Priorizar / Validar / Monitorear / En espera) con Encaje, Momento y Evidencia", "Per-company decision (Prioritize / Validate / Monitor / Hold) with Fit, Timing and Evidence"),
+    inc_evidence: L("Qué cambió con fecha, fuentes y señales en contra, y qué validar a continuación", "Dated What Changed, sources, counter-signals and what to validate next"),
+    inc_context: L("Contexto comercial del objetivo", "Commercial context for the objective"),
+    inc_queue: L("Cola de validación priorizada", "Prioritized validation queue"),
+    inc_coverage: L("Cobertura de evidencia del conjunto", "Evidence coverage of the set"),
+    inc_compare: L("Comparación de portafolio y asignación de atención", "Portfolio comparison and attention allocation"),
+    inc_premium: L("Contexto de decisión y capa de estrategia (Premium)", "Decision context and strategy layer (Premium)"),
+    inc_method: L("Metodología y limitaciones", "Methodology and limitations"),
+    inc_memory: L("Memoria de Cuenta: tus cuentas se recuerdan para tu próxima revisión", "Account Memory: your accounts are remembered for your next review"),
+    inc_monitor: L("Cuentas aptas para Monitor: actualizaciones recurrentes disponibles con un plan Monitor", "Monitor-eligible accounts: recurring updates available on a Monitor plan"),
+    valueVerb: (es
+      ? { Preview: "Valida la calidad", Brief: "Selecciona un conjunto enfocado", Intelligence: "Prioriza tu portafolio", Premium: "Conviértelo en estrategia" }
+      : { Preview: "Validate the quality", Brief: "Select a focused set", Intelligence: "Prioritize your portfolio", Premium: "Turn it into strategy" }) as Record<string, string>,
     whereAttentionFirst: L("Dónde concentrar la atención primero", "Where attention goes first"),
     commercialContext: L("Contexto comercial", "Commercial context"),
     portfolio: L("Portafolio", "Portfolio"),
@@ -153,14 +175,14 @@ function labelsFor(es: boolean) {
   };
 }
 
-export function renderPdfBuffer(pm: PresentationModel): Buffer {
+export function renderPdfBuffer(pm: PresentationModel, opts?: { compress?: boolean }): Buffer {
   const { document: doc, policy, tierLabel } = pm;
   const s = policy.sections;
   const es = doc.meta.language === "es";
   const L = labelsFor(es);
   const DEC_MEANING = DEC_MEANING_L[es ? "es" : "en"];
   const decLabel = (d: DecisionState) => (es ? DECISION_TOKENS[d].labelEs : DECISION_TOKENS[d].label);
-  const pdf = new jsPDF({ unit: "mm", format: "a4", compress: true, putOnlyUsedFonts: true });
+  const pdf = new jsPDF({ unit: "mm", format: "a4", compress: opts?.compress ?? true, putOnlyUsedFonts: true });
   let y = M;
 
   // ── Low-level helpers ──
@@ -222,6 +244,30 @@ export function renderPdfBuffer(pm: PresentationModel): Buffer {
       space(5);
       setFill(color); pdf.circle(M + 1.4, y - 1.1, 0.5, "F");
       text(it, M + 4, 9, "normal", color, CW - 4);
+    }
+    gap(1.2);
+  };
+
+  // Source references: a readable label + date, then the URL as a CLICKABLE, shortened link (the full
+  // URL stays in the link annotation) so long real URLs never split awkwardly across lines (§31).
+  const sourceBullets = (sources: AccountBriefVM["sources"]) => {
+    text(L.sources, M, 8.5, "bold", [51, 65, 85]);
+    for (const src of sources) {
+      space(5);
+      setFill(SUB); pdf.circle(M + 1.4, y - 1.1, 0.5, "F");
+      const head = `${src.label}${src.date ? ` (${src.date})` : ""}`;
+      pdf.setFont("helvetica", "normal"); pdf.setFontSize(9); setText(SUB);
+      pdf.text(latin1(head), M + 4, y);
+      let cx = M + 4 + pdf.getTextWidth(latin1(head));
+      if (src.url) {
+        const disp = latin1(shortUrl(src.url));
+        pdf.setTextColor(SKY[0], SKY[1], SKY[2]);
+        if (cx + pdf.getTextWidth(` - ${disp}`) > W - M) { y += 4.2; space(5); cx = M + 6; }
+        else { pdf.text(" - ", cx, y); cx += pdf.getTextWidth(" - "); }
+        try { (pdf as unknown as { textWithLink: (t: string, x: number, y: number, o: { url: string }) => void }).textWithLink(disp, cx, y, { url: src.url }); }
+        catch { pdf.text(disp, cx, y); }
+      }
+      y += 9 * 0.42 + 1.3;
     }
     gap(1.2);
   };
@@ -295,27 +341,38 @@ export function renderPdfBuffer(pm: PresentationModel): Buffer {
     setText([255, 255, 255]); pdf.text(identity.eyebrow, M + 4, cy);
     cy += 14;
 
-    // title
+    // TITLE = the PRODUCT the customer bought (its name), NOT the decision distribution (§12).
     pdf.setFont("helvetica", "bold"); pdf.setFontSize(30); setText(INK_DK);
-    const titleLines = pdf.splitTextToSize(latin1(doc.headline ?? "Opportunity Portfolio"), CW) as string[];
-    for (const ln of titleLines.slice(0, 3)) { pdf.text(ln, M, cy); cy += 11.5; }
-    cy += 2;
-    // meta (wrap within content width so a long client/market never clips at the page edge)
-    pdf.setFont("helvetica", "normal"); pdf.setFontSize(11); setText(MUTE);
-    const meta = [doc.meta.client, doc.meta.market, doc.meta.generatedLabel].filter(Boolean).map(latin1).join("   -   ");
-    if (meta) { for (const ln of pdf.splitTextToSize(meta, CW) as string[]) { pdf.text(ln, M, cy); cy += 6; } cy += 4; }
+    const titleLines = pdf.splitTextToSize(latin1(identity.title), CW) as string[];
+    for (const ln of titleLines.slice(0, 2)) { pdf.text(ln, M, cy); cy += 11.5; }
+    cy += 1.5;
+    // product promise (approved catalog descriptor)
+    pdf.setFont("helvetica", "normal"); pdf.setFontSize(11.5); setText(SUB);
+    for (const ln of pdf.splitTextToSize(latin1(identity.promise), CW) as string[]) { pdf.text(ln, M, cy); cy += 6.2; }
+    cy += 3;
+    // commercial context — market + objective (what this evaluation is about)
+    const ctxParts = [doc.meta.market, doc.commercialContext?.objective].filter(Boolean).map((v) => latin1(String(v)));
+    if (ctxParts.length) {
+      pdf.setFont("helvetica", "normal"); pdf.setFontSize(10.5); setText(MUTE);
+      for (const ln of pdf.splitTextToSize(ctxParts.join("   -   "), CW) as string[]) { pdf.text(ln, M, cy); cy += 5.8; }
+      cy += 2;
+    }
+    // client + report date (smaller)
+    const meta = [doc.meta.client, doc.meta.generatedLabel].filter(Boolean).map(latin1).join("   -   ");
+    if (meta) { pdf.setFont("helvetica", "normal"); pdf.setFontSize(9.5); setText(FAINT); for (const ln of pdf.splitTextToSize(meta, CW) as string[]) { pdf.text(ln, M, cy); cy += 5.4; } cy += 4; }
 
-    // decision headline + distribution bar (immediate portfolio understanding)
+    // SECONDARY decision snapshot band — a finding, labeled and demoted below the product identity.
     const total = p.total || doc.accounts.length;
     if (total > 0) {
-      cy += 4;
-      pdf.setFont("helvetica", "bold"); pdf.setFontSize(11); setText(SUB);
-      pdf.text(latin1(`${L.accountsWord(total)} - ${L.toPrioritize(p.counts.prioritize)}, ${L.toValidate(p.counts.validate)}`), M, cy);
-      cy += 6;
+      cy += 3;
+      pdf.setFont("helvetica", "bold"); pdf.setFontSize(8); setText(MUTE);
+      pdf.text(latin1(L.decisionSnapshot.toUpperCase()), M, cy); cy += 5.4;
+      pdf.setFont("helvetica", "bold"); pdf.setFontSize(10.5); setText(INK);
+      pdf.text(latin1(`${L.companiesEvaluated(total)}`), M, cy); cy += 5.4;
       distributionBar(M, cy, CW, p.counts, total);
-      cy += 10;
-      pdf.setFont("helvetica", "normal"); pdf.setFontSize(8); setText(MUTE);
-      const legend = DEC_ORDER.filter((d) => p.counts[d] > 0).map((d) => `${decLabel(d)} ${p.counts[d]}`).join("    ");
+      cy += 9;
+      pdf.setFont("helvetica", "normal"); pdf.setFontSize(8.5); setText(MUTE);
+      const legend = DEC_ORDER.filter((d) => p.counts[d] > 0).map((d) => `${decLabel(d)} ${p.counts[d]}`).join("     ");
       pdf.text(latin1(legend), M, cy);
     }
 
@@ -348,8 +405,29 @@ export function renderPdfBuffer(pm: PresentationModel): Buffer {
         .filter((a) => a.decision === "prioritize" || a.decision === "validate")
         .slice(0, 4).map((a) => latin1(a.company));
       if (focusFirst.length) text(`${L.whereAttentionFirst}: ${focusFirst.join(", ")}`, M, 9.5, "bold", INK);
-      if (p.allocation?.line) text(latin1(`${p.allocation.line}${p.allocation.detail ? ` ${sanitizeAllocation(p.allocation.detail)}` : ""}`), M, 9, "normal", SUB);
+      if (p.allocation?.line) text(latin1(`${p.allocation.line}${p.allocation.detail ? `: ${sanitizeAllocation(p.allocation.detail)}` : ""}`), M, 9, "normal", SUB);
     }
+  }
+
+  // ── What's included in this tier (contracted value, mapped to the actual delivery surface, §6/§10) ──
+  {
+    band(L.whatsIncluded);
+    const verb = L.valueVerb[tierLabel] ?? "";
+    if (verb) text(`${identity.title} - ${verb}.`, M, 10, "bold", INK);
+    // In this report — derived from the ACTUAL composed sections (never claims a section the tier omits).
+    const inReport: string[] = [L.inc_decision, L.inc_evidence];
+    if (s.commercialContext) inReport.push(L.inc_context);
+    if (s.validationQueue) inReport.push(L.inc_queue);
+    if (s.coverage) inReport.push(L.inc_coverage);
+    if (doc.portfolioSynthesis.allocation) inReport.push(L.inc_compare);
+    if (doc.premium && doc.premium.executivePortfolio.total > 0) inReport.push(L.inc_premium);
+    if (s.methodology) inReport.push(L.inc_method);
+    bullets(L.inThisReport, inReport);
+    // In your workspace — ongoing capabilities the catalog grants this tier (Account Memory / Monitor
+    // eligibility). Shown as workspace features, NOT as PDF content and NOT as an active subscription (§9).
+    const inWorkspace: string[] = [];
+    if (tierLabel === "Intelligence" || tierLabel === "Premium") { inWorkspace.push(L.inc_memory); inWorkspace.push(L.inc_monitor); }
+    if (inWorkspace.length) bullets(L.inYourWorkspace, inWorkspace, MUTE);
   }
 
   // ── Commercial context ──
@@ -515,7 +593,7 @@ export function renderPdfBuffer(pm: PresentationModel): Buffer {
     if (b.whyMatters) text(b.whyMatters, M + 4, 9, "normal", SUB, CW - 4);
     if (b.whyNow) { pdf.setFont("helvetica", "bold"); text(`${L.whyNow}: ${b.whyNow}`, M + 4, 9, "bold", INK, CW - 4); }
     if (b.validationPriority.length) bullets(L.whatToValidateNext, b.validationPriority.map(latin1));
-    if (b.pathway.state === "OPEN" && b.whatCouldChange) text(`${L.whatCouldChange}: ${b.whatCouldChange}`, M + 4, 8.5, "normal", MUTE, CW - 4);
+    if (b.pathway.state === "OPEN" && b.whatCouldChange) text(`${L.whatCouldChange}: ${locFrozen(b.whatCouldChange, es)}`, M + 4, 8.5, "normal", MUTE, CW - 4);
     gap(2.5);
   }
 
@@ -560,7 +638,7 @@ export function renderPdfBuffer(pm: PresentationModel): Buffer {
     if (sec.accountWhatChanged) bullets(L.whatChanged, a.whatChanged.map((c) => `${latin1(c.event)}${c.date ? ` (${c.date})` : ""}`));
     if (sec.accountCounterSignals) bullets(L.counterSignals, a.counterSignals.map(latin1), [217, 119, 6]);
     if (sec.accountValidations) bullets(L.validateBeforeActing, a.validations.map(latin1));
-    if (sec.accountSources) bullets(L.sources, a.sources.map((src) => `${latin1(src.label)}${src.date ? ` (${src.date})` : ""}${src.url ? ` - ${latin1(src.url)}` : ""}`));
+    if (sec.accountSources && a.sources.length) sourceBullets(a.sources);
     if (sec.accountNextStep && a.nextStep) text(`${L.nextStep}: ${a.nextStep}`, M + 4, 9.5, "bold", INK, CW - 4);
     gap(2.5);
   }
@@ -636,6 +714,16 @@ export function renderPdfBuffer(pm: PresentationModel): Buffer {
 }
 
 function truncate(s: string, n: number): string { const t = s.trim(); return t.length > n ? t.slice(0, n - 1).trimEnd() + "…" : t; }
+// A readable, non-wrapping URL for display (host + a trimmed path); the FULL url stays in the link.
+function shortUrl(u: string): string {
+  try {
+    const x = new URL(u);
+    const host = x.host.replace(/^www\./, "");
+    const path = x.pathname === "/" ? "" : x.pathname;
+    const shown = host + path;
+    return shown.length > 48 ? shown.slice(0, 47) + "…" : shown;
+  } catch { return u.length > 48 ? u.slice(0, 47) + "…" : u; }
+}
 // A clean, complete opening for the cover teaser: the first sentence when it fits, else a tidy trim —
 // never a mid-word cut ending in an ellipsis (§29).
 function firstSentence(s: string, max: number): string {

@@ -9,6 +9,7 @@ import { toPresentationModel } from "../../lib/delivery-system/presentation-mode
 import { renderPdfBuffer } from "../../lib/delivery-system/renderers/pdf";
 import { buildSampleDeliverable, REPORT_TEMPLATE } from "../../lib/delivery-system/report-template";
 import { buildRealAcceptanceDeliverable } from "../../lib/delivery-system/real-acceptance-sample";
+import { buildTierContractSummary } from "../../lib/products/tier-contract-matrix";
 import type { DeliveryTier } from "../../lib/delivery-system/tier-composer";
 
 let passed = 0, failed = 0;
@@ -19,8 +20,8 @@ const pdfText = (b: Buffer) => b.toString("latin1"); // decision on presence of 
 const caps: Record<DeliveryTier, number> = { preview: 2, brief: 6, intelligence: 12, premium: 18 };
 
 // ── Descriptor invariants ──
-t("version is CUSTOMER_DELIVERABLES_V2_1", REPORT_TEMPLATE.version === "CUSTOMER_DELIVERABLES_V2_1");
-t("supersedes V2", REPORT_TEMPLATE.supersedes === "CUSTOMER_DELIVERABLES_V2");
+t("version is CUSTOMER_DELIVERABLES_V2_2", REPORT_TEMPLATE.version === "CUSTOMER_DELIVERABLES_V2_2");
+t("supersedes V2_1", REPORT_TEMPLATE.supersedes === "CUSTOMER_DELIVERABLES_V2_1");
 t("approval state is FOUNDER_REVIEW (not auto-approved)", REPORT_TEMPLATE.approvalState === "FOUNDER_REVIEW");
 t("four tiers with frozen caps 2/6/12/18", JSON.stringify(REPORT_TEMPLATE.tiers.map((x) => x.maxAccounts)) === JSON.stringify([2, 6, 12, 18]));
 t("frozen prices 7/25/59/129", JSON.stringify(REPORT_TEMPLATE.tiers.map((x) => x.price)) === JSON.stringify([7, 25, 59, 129]));
@@ -97,6 +98,36 @@ const realBriefHL = toPresentationModel(realDoc, "brief", "pdf").document.headli
 t("real brief headline is honest + tier-scoped (5 to validate of 6)", /5 accounts to validate of 6 evaluated/.test(realBriefHL));
 t("real brief renders a real PDF", isPdf(renderPdfBuffer(toPresentationModel(realDoc, "brief", "pdf"))));
 t("real brief does NOT leak the artifact's mixed-language decisionRationale", !pdfText(renderPdfBuffer(toPresentationModel(realDoc, "brief", "pdf"))).includes("encaje moderate"));
+
+// ── V2.2 §12: cover leads with the PRODUCT NAME, not the decision distribution ──
+// Render UNCOMPRESSED so the PDF's text stream is searchable (production stays compressed).
+const premEsPdf = pdfText(renderPdfBuffer(toPresentationModel(doc, "premium", "pdf"), { compress: false }));
+const portEsPdf = pdfText(renderPdfBuffer(toPresentationModel(doc, "intelligence", "pdf"), { compress: false }));
+t("premium cover carries the product name (Dosier de Inteligencia Comercial)", premEsPdf.includes("Dosier de Inteligencia Comercial"));
+t("cover shows a Decision snapshot label (distribution is secondary)", premEsPdf.includes("RESUMEN DE DECISIONES"));
+t("report shows a 'What's included' tier-value band", premEsPdf.includes("incluye este producto"));
+
+// ── V2.2 defect regressions ──
+t("no Premium English leak 'Stronger corroborated' in ES", !premEsPdf.includes("Stronger corroborated") && !premEsPdf.includes("could strengthen the case"));
+t("premium localizes 'could change this decision' to Spanish", !premEsPdf.includes("could strengthen") );
+t("no Portfolio copy defect 'primero priorizar primero'", !portEsPdf.includes("primero priorizar primero"));
+
+// ── V2.2 §29: real HOLD (John Deere) is framed honestly, not as 'worth validating now' ──
+{
+  const jd = buildRealAcceptanceDeliverable().accounts.find((a) => /Deere/.test(a.company))!;
+  t("John Deere stays HOLD (verbatim)", jd.decision === "hold");
+  t("John Deere HOLD note is honest (stale >180d), not 'worth validating now'", /180 days|fresher signal/.test(jd.decisionNote ?? "") && !/worth validating now/.test(jd.decisionNote ?? ""));
+  t("John Deere HOLD next step is hold-consistent", /No outreach now/.test(jd.nextStep ?? ""));
+}
+
+// ── V2.2 §33: the synthetic full-order sample is all on-target (no off-geography delivered account) ──
+t("no off-target 'Agroexport Urabá' in the synthetic sample", !vmEs.accounts.some((a) => /Agroexport/.test(a.company)));
+
+// ── V2.2 §6/§36: tier-contract matrix is truthful (rendered vs contracted-not-rendered surfaced) ──
+const tcs = buildTierContractSummary();
+t("tier-contract summary covers all four tiers", tcs.length === 4 && tcs.map((x) => x.tier).join(",") === "preview,brief,intelligence,premium");
+t("premium surfaces contracted-not-rendered gaps to HQ (not hidden)", (tcs.find((x) => x.tier === "premium")?.contractedNotRendered.length ?? 0) > 0);
+t("Account Memory shown as workspace for intelligence + premium only", tcs.filter((x) => x.workspace.some((w) => /Account Memory/.test(w))).map((x) => x.tier).sort().join(",") === "intelligence,premium");
 
 // ── Admin routes fail closed for unauthenticated requests ──
 async function denyCheck() {

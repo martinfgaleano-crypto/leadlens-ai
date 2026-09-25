@@ -60,7 +60,18 @@ function toAccount(c: any, i: number): AccountBriefVM {
     : (Array.isArray(cc.remainingDecisionCritical) ? cc.remainingDecisionCritical.map(String) : (ca.decision_critical_question ? [String(ca.decision_critical_question)] : []));
 
   const fitReasons = Array.isArray(ca.fit_reasons) ? ca.fit_reasons.join("; ") : "";
-  const thesis = [ca.verified_fact ? String(ca.verified_fact) : "", ca.why_now ? String(ca.why_now) : "", fitReasons ? `Fit: ${fitReasons}.` : ""].filter(Boolean).join(" ");
+  // Honest HOLD framing (§29): when the canonical decision is HOLD, explain it from the canonical
+  // REASONS — never from the case's own why_now/next_action prose, which (e.g. John Deere) can read as
+  // "worth validating now" and contradict the HOLD. We keep the decision verbatim and present its real
+  // basis; the contradictory upstream prose is not used as the decision rationale.
+  const reasons: string[] = Array.isArray(cc.reasons) ? cc.reasons.map(String) : [];
+  const holdReason = (): string => {
+    if (reasons.some((r) => /stale_beyond_180d/.test(r))) return "The observed event is older than 180 days, so present timing is not defensible — hold until a fresher signal appears.";
+    if (reasons.some((r) => /reject/.test(r))) return "The opportunity test did not clear the bar for commercial attention now.";
+    return "Insufficient basis to justify commercial attention now.";
+  };
+  const isHold = decision === "hold";
+  const thesis = [ca.verified_fact ? String(ca.verified_fact) : "", !isHold && ca.why_now ? String(ca.why_now) : "", fitReasons ? `Fit: ${fitReasons}.` : ""].filter(Boolean).join(" ");
 
   return {
     id: `real-${i + 1}`, rank: i + 1, company: String(c.account ?? `Account ${i + 1}`),
@@ -69,9 +80,9 @@ function toAccount(c: any, i: number): AccountBriefVM {
     accountRole: oc.classification?.accountRole?.value ?? null,
     opportunityType: oc.classification?.opportunityType?.value ?? null,
     decision,
-    decisionNote: ca.why_now ? String(ca.why_now) : (Array.isArray(cc.reasons) ? cc.reasons.join("; ") : null),
+    decisionNote: isHold ? holdReason() : (ca.why_now ? String(ca.why_now) : (reasons.length ? reasons.join("; ") : null)),
     thesis: thesis || null,
-    whyItMatters: ca.why_now ? String(ca.why_now) : null,
+    whyItMatters: !isHold && ca.why_now ? String(ca.why_now) : null,
     dimensions: [
       { label: "Fit", value: asStrength(cc.fit ?? oc.fit?.value), note: oc.fit?.rationale ? String(oc.fit.rationale).slice(0, 120) : null },
       { label: "Timing", value: asStrength(cc.timing ?? oc.timing?.value), note: null },
@@ -83,7 +94,9 @@ function toAccount(c: any, i: number): AccountBriefVM {
     counterSignals: counter,
     limitations: [],
     validations,
-    nextStep: ca.next_action ? String(ca.next_action) : (oc.recommendedNextStep?.value ?? null),
+    // HOLD stays HOLD: an honest, hold-consistent next step (not the artifact's contradictory "validate
+    // before outreach", which belongs to a non-stale reading). Non-hold uses the Intelligence next action.
+    nextStep: isHold ? "No outreach now; revisit only if a fresher, dated signal appears." : (ca.next_action ? String(ca.next_action) : (oc.recommendedNextStep?.value ?? null)),
     freshness: latest ? { label: "Observed", age: ageLabel(latest) } : null,
     confidence: asStrength(cc.evidence),
   };
