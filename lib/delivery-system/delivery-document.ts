@@ -127,6 +127,19 @@ export function recountPortfolio(accounts: AccountBriefVM[]): Record<DecisionSta
   return counts;
 }
 
+/** Derive a headline that is CONSISTENT with the actual included company set (§8): it never claims a
+ *  count larger than the tier contains, and it never leaks a full-portfolio summary into a lower tier.
+ *  A truthful count statement — it never overstates strength (no "1 priority" when there are five). */
+export function deriveHeadline(counts: Record<DecisionState, number>, total: number, language: "en" | "es"): string {
+  const es = language === "es";
+  const acct = (n: number) => (es ? `${n} cuenta${n === 1 ? "" : "s"}` : `${n} account${n === 1 ? "" : "s"}`);
+  const of = (s: string) => (es ? `${s} de ${total} evaluada${total === 1 ? "" : "s"}` : `${s} of ${total} evaluated`);
+  if (counts.prioritize > 0) return of(es ? `${acct(counts.prioritize)} para priorizar y ${counts.validate} por validar` : `${acct(counts.prioritize)} to prioritize and ${counts.validate} to validate`);
+  if (counts.validate > 0) return of(es ? `${acct(counts.validate)} por validar` : `${acct(counts.validate)} to validate`);
+  if (counts.monitor > 0) return of(es ? `${acct(counts.monitor)} para monitorear` : `${acct(counts.monitor)} to monitor`);
+  return es ? `${acct(total)} evaluada${total === 1 ? "" : "s"}` : `${acct(total)} evaluated`;
+}
+
 /** Recompute evidence coverage over the ACTUAL (tier-limited) account set so a lower tier never shows
  *  a metric aggregated over companies it does not contain. The three counts are company-scoped
  *  (companies with sources / with dated evidence / with corroborated evidence), derived from each

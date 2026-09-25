@@ -44,6 +44,7 @@ export default function AdminDeliverables() {
   const [busy, setBusy] = useState<string | null>(null);
   const [template, setTemplate] = useState<ReportTemplate | null>(null);
   const [lang, setLang] = useState<"es" | "en">("es");
+  const [dataMode, setDataMode] = useState<"synthetic" | "real">("synthetic");
 
   useEffect(() => {
     (async () => {
@@ -62,7 +63,7 @@ export default function AdminDeliverables() {
   const openTemplatePdf = useCallback(async (tier: string, mode: "preview" | "download") => {
     setBusy(`tpl:${tier}:${mode}`);
     try {
-      const r = await adminFetch(`/api/admin/deliverables/template/preview?tier=${encodeURIComponent(tier)}&lang=${lang}&mode=${mode}`);
+      const r = await adminFetch(`/api/admin/deliverables/template/preview?tier=${encodeURIComponent(tier)}&lang=${lang}&mode=${mode}&data=${dataMode}`);
       if (!r.ok) { alert(`Could not render sample (${r.status}).`); return; }
       const blob = await r.blob();
       const url = URL.createObjectURL(blob);
@@ -74,7 +75,7 @@ export default function AdminDeliverables() {
       }
       setTimeout(() => URL.revokeObjectURL(url), 60_000);
     } finally { setBusy(null); }
-  }, [lang, template]);
+  }, [lang, dataMode, template]);
 
   const fileUrl = (d: Deliverable, file: string, mode: "preview" | "download") =>
     `/api/admin/deliverables/file?slug=${encodeURIComponent(d.slug)}&date=${encodeURIComponent(d.date)}&file=${encodeURIComponent(file)}&mode=${mode}`;
@@ -128,7 +129,20 @@ export default function AdminDeliverables() {
                   {l === "es" ? "Español" : "English"}
                 </button>
               ))}
-              <span style={{ fontSize: 11.5, color: "#94a3b8" }}>Samples use synthetic data — no customer research, no credit.</span>
+              <span style={{ fontSize: 11.5, color: "#94a3b8" }}>No customer research, no credit.</span>
+            </div>
+
+            <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 4 }}>
+              <span style={{ fontSize: 12, color: "#64748b" }}>Data:</span>
+              {([["synthetic", "Synthetic sample"], ["real", "Real acceptance (EN)"]] as const).map(([m, txt]) => (
+                <button key={m} onClick={() => setDataMode(m)}
+                  style={{ ...S.btn, padding: "4px 12px", ...(dataMode === m ? S.btnPrimary : {}) }}>
+                  {txt}
+                </button>
+              ))}
+              <span style={{ fontSize: 11.5, color: "#94a3b8" }}>
+                {dataMode === "real" ? "Controlled-acceptance data (6 real US companies) — not a paid customer." : "Differentiated synthetic design fixture."}
+              </span>
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(190px, 1fr))", gap: 10, marginTop: 10 }}>

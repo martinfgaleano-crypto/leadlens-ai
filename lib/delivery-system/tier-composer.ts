@@ -6,7 +6,7 @@
 // Evidence. Output is a DeliveryDocumentV1 (same schema) shaped for the tier.
 
 import {
-  type DeliveryDocumentV1, type AccountBriefVM, recountPortfolio, recomputeCoverage, buildPremiumDeliverySection,
+  type DeliveryDocumentV1, type AccountBriefVM, recountPortfolio, recomputeCoverage, deriveHeadline, buildPremiumDeliverySection,
 } from "@/lib/delivery-system/delivery-document";
 
 export type DeliveryTier = "preview" | "brief" | "intelligence" | "premium";
@@ -96,6 +96,9 @@ export function composeForTier(doc: DeliveryDocumentV1, tier: DeliveryTier): Del
   const counts = recountPortfolio(accounts);
   return {
     ...doc,
+    // Tier-scoped headline: consistent with THIS tier's companies (never leak a full-portfolio summary
+    // into a lower tier — V2.1 data-integrity fix, §8). Derived from the recounted distribution.
+    headline: deriveHeadline(counts, accounts.length, doc.meta.language),
     portfolioSynthesis: {
       ...doc.portfolioSynthesis,
       total: accounts.length,

@@ -8,6 +8,7 @@ import { fromDeliverableViewModel } from "../../lib/delivery-system/delivery-doc
 import { toPresentationModel } from "../../lib/delivery-system/presentation-model";
 import { renderPdfBuffer } from "../../lib/delivery-system/renderers/pdf";
 import { buildSampleDeliverable, REPORT_TEMPLATE } from "../../lib/delivery-system/report-template";
+import { buildRealAcceptanceDeliverable } from "../../lib/delivery-system/real-acceptance-sample";
 import type { DeliveryTier } from "../../lib/delivery-system/tier-composer";
 
 let passed = 0, failed = 0;
@@ -76,6 +77,26 @@ t("premium render is deterministic (equal byte length)", a.length === b.length);
 const enBuf = renderPdfBuffer(toPresentationModel(fromDeliverableViewModel(vmEn), "premium", "pdf"));
 t("en premium renders a real PDF", isPdf(enBuf));
 t("es and en premium differ (labels localized)", a.length !== enBuf.length && pdfText(a) !== pdfText(enBuf));
+
+// ── Finding #8: headline is tier-scoped (never claims a count beyond the tier's companies) ──
+const synPreviewHL = toPresentationModel(doc, "preview", "pdf").document.headline ?? "";
+const synPortfolioHL = toPresentationModel(doc, "intelligence", "pdf").document.headline ?? "";
+t("preview headline is scoped to 2 evaluadas (not 18)", /de 2 evaluad/.test(synPreviewHL) && !/de 18/.test(synPreviewHL));
+t("portfolio headline is scoped to 12 evaluadas (not 18)", /de 12 evaluad/.test(synPortfolioHL) && !/de 18/.test(synPortfolioHL));
+
+// ── MODE A: real controlled-acceptance data renders honestly (decisions taken verbatim) ──
+const real = buildRealAcceptanceDeliverable();
+t("real sample loads 6 controlled-acceptance cases", real.accounts.length === 6);
+t("real sample includes the known real company set (e.g. Nestlé USA)", real.accounts.some((a) => /Nestl/.test(a.company)));
+t("real decisions are taken from the artifact (no prioritize invented)", real.portfolio.counts.prioritize === 0 && real.portfolio.counts.validate === 5 && real.portfolio.counts.hold === 1);
+t("real sources use real public URLs (not example.*)", real.accounts.some((a) => a.sources.some((s) => /nestleusa\.com|conagrabrands\.com|hitachienergy\.com/.test(s.url ?? ""))));
+t("real per-account sourceCount reconciles with listed sources", real.accounts.every((a) => a.evidence.sourceCount === a.sources.length));
+t("real is labeled as controlled-acceptance (not a paid customer)", /controlled acceptance/i.test(real.meta.client ?? "") && /real/i.test(real.summary ?? ""));
+const realDoc = fromDeliverableViewModel(real);
+const realBriefHL = toPresentationModel(realDoc, "brief", "pdf").document.headline ?? "";
+t("real brief headline is honest + tier-scoped (5 to validate of 6)", /5 accounts to validate of 6 evaluated/.test(realBriefHL));
+t("real brief renders a real PDF", isPdf(renderPdfBuffer(toPresentationModel(realDoc, "brief", "pdf"))));
+t("real brief does NOT leak the artifact's mixed-language decisionRationale", !pdfText(renderPdfBuffer(toPresentationModel(realDoc, "brief", "pdf"))).includes("encaje moderate"));
 
 // ── Admin routes fail closed for unauthenticated requests ──
 async function denyCheck() {

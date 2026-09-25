@@ -6,15 +6,18 @@ import type { DeliveryTier } from "@/lib/delivery-system/tier-composer";
 import { isDeliveryTier } from "@/lib/delivery-system/channel-availability";
 import { renderPdfBuffer } from "@/lib/delivery-system/renderers/pdf";
 import { buildSampleDeliverable, REPORT_TEMPLATE_V2 } from "@/lib/delivery-system/report-template";
+import { buildRealAcceptanceDeliverable } from "@/lib/delivery-system/real-acceptance-sample";
 
 export const dynamic = "force-dynamic";
 
 /**
- * GET /api/admin/deliverables/template/preview?tier=preview|brief|intelligence|premium&lang=es|en&mode=preview|download
+ * GET /api/admin/deliverables/template/preview?tier=…&lang=es|en&mode=preview|download&data=synthetic|real
  *
- * Renders a DETERMINISTIC sample PDF of the requested tier from the synthetic template fixture, for
- * Admin template review. Admin-only. Consumes NO research, NO customer credit, and touches NO customer
- * data — it renders the same in-repo SAMPLE every time (same template version → equivalent output).
+ * Renders a DETERMINISTIC sample PDF of the requested tier, for Admin template review. Admin-only.
+ * Consumes NO research, NO customer credit, and touches NO paid-customer data.
+ *  - data=synthetic (default): the in-repo differentiated SYNTHETIC design fixture (ES/EN).
+ *  - data=real: a MODE-A preview from the committed CONTROLLED-ACCEPTANCE review package (6 real US
+ *    companies, real public source events, canonical decisions) — English; not a paid customer report.
  */
 export function GET(req: NextRequest) {
   const deny = requireAdmin(req);
@@ -28,12 +31,14 @@ export function GET(req: NextRequest) {
   const tier = tierParam as DeliveryTier;
   const lang = url.searchParams.get("lang") === "en" ? "en" : "es";
   const mode = url.searchParams.get("mode") === "download" ? "download" : "preview";
+  const dataMode = url.searchParams.get("data") === "real" ? "real" : "synthetic";
 
   try {
-    const doc = fromDeliverableViewModel(buildSampleDeliverable(lang));
+    const vm = dataMode === "real" ? buildRealAcceptanceDeliverable() : buildSampleDeliverable(lang);
+    const doc = fromDeliverableViewModel(vm);
     const pm = toPresentationModel(doc, tier, "pdf");
     const buf = renderPdfBuffer(pm);
-    const filename = `LeadLens_${tier}_${REPORT_TEMPLATE_V2.version}_sample.pdf`;
+    const filename = `LeadLens_${tier}_${REPORT_TEMPLATE_V2.version}_${dataMode}.pdf`;
     return new NextResponse(new Uint8Array(buf), {
       status: 200,
       headers: {
