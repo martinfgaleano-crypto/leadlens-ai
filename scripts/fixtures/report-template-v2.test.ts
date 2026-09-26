@@ -11,7 +11,7 @@ import { buildSampleDeliverable, REPORT_TEMPLATE } from "../../lib/delivery-syst
 import { buildRealAcceptanceDeliverable } from "../../lib/delivery-system/real-acceptance-sample";
 import { buildTierContractSummary } from "../../lib/products/tier-contract-matrix";
 import { checkAccountConsistency, reconcileAccountConsistency } from "../../lib/deliverable/decision-consistency";
-import { deriveCoverageGaps, derivePortfolioRisk, derivePlaybooks } from "../../lib/deliverable/portfolio-analytics";
+import { deriveCoverageGaps, derivePortfolioRisk, derivePlaybooks, deriveStakeholderFunctions, deepDossierIds } from "../../lib/deliverable/portfolio-analytics";
 import type { AccountBriefVM, DecisionState, Strength } from "../../lib/deliverable/deliverable-view-model";
 import type { DeliveryTier } from "../../lib/delivery-system/tier-composer";
 
@@ -23,8 +23,8 @@ const pdfText = (b: Buffer) => b.toString("latin1"); // decision on presence of 
 const caps: Record<DeliveryTier, number> = { preview: 2, brief: 6, intelligence: 12, premium: 18 };
 
 // ── Descriptor invariants ──
-t("version is CUSTOMER_DELIVERABLES_V2_3", REPORT_TEMPLATE.version === "CUSTOMER_DELIVERABLES_V2_3");
-t("supersedes V2_2", REPORT_TEMPLATE.supersedes === "CUSTOMER_DELIVERABLES_V2_2");
+t("version is CUSTOMER_DELIVERABLES_V2_4", REPORT_TEMPLATE.version === "CUSTOMER_DELIVERABLES_V2_4");
+t("supersedes V2_3", REPORT_TEMPLATE.supersedes === "CUSTOMER_DELIVERABLES_V2_3");
 t("approval state is FOUNDER_REVIEW (not auto-approved)", REPORT_TEMPLATE.approvalState === "FOUNDER_REVIEW");
 t("four tiers with frozen caps 2/6/12/18", JSON.stringify(REPORT_TEMPLATE.tiers.map((x) => x.maxAccounts)) === JSON.stringify([2, 6, 12, 18]));
 t("frozen prices 7/25/59/129", JSON.stringify(REPORT_TEMPLATE.tiers.map((x) => x.price)) === JSON.stringify([7, 25, 59, 129]));
@@ -180,7 +180,35 @@ t("momentum/decay honestly deferred to Monitor (not fabricated)", premEsPdf3.inc
 {
   const prem = buildTierContractSummary().find((x) => x.tier === "premium")!;
   t("coverage gaps + portfolio risk + playbooks are now in-report", ["Coverage gaps", "Portfolio risk", "playbooks"].every((k) => prem.reportRendered.some((r) => r.toLowerCase().includes(k.toLowerCase().split(" ")[0]))));
-  t("stakeholder hypotheses still flagged as contracted-not-rendered (HQ gap)", prem.contractedNotRendered.some((r) => /stakeholder/i.test(r)));
+}
+
+// ── V2.4 §9-16: deep dossiers (composition) + stakeholder FUNCTIONS (inferred), matrix now rendered ──
+{
+  const accts = buildSampleDeliverable("es").accounts;
+  // Deep-dossier selection is catalog-count-bounded and tier-monotonic (Preview 0 · Brief 0 · Portfolio 4 · Premium 6).
+  t("deep-dossier count is 0 below Portfolio", deepDossierIds(accts, 0).size === 0);
+  t("deep-dossier set is bounded by the catalog count", deepDossierIds(accts, 4).size === 4 && deepDossierIds(accts, 6).size === 6);
+  t("deep-dossier set is a subset (real account ids)", Array.from(deepDossierIds(accts, 6)).every((id) => accts.some((a) => a.id === id)));
+  // Stakeholder FUNCTIONS are inferred functional roles only — never named people.
+  const fns = accts.flatMap((a) => deriveStakeholderFunctions(a));
+  t("stakeholder functions emit functional roles only (no names/titles/emails)", fns.length > 0 && fns.every((f) => !/@|CEO|CFO|VP|Mr\.|Ms\.|Dr\./.test(f.function)));
+  // Matrix: both are now rendered; neither remains an HQ gap.
+  const prem = buildTierContractSummary().find((x) => x.tier === "premium")!;
+  t("deep dossiers are now in-report (rendered)", prem.reportRendered.some((r) => /deep dossier/i.test(r)));
+  t("stakeholder functions are now in-report (rendered, no longer a gap)", prem.reportRendered.some((r) => /stakeholder/i.test(r)) && !prem.contractedNotRendered.some((r) => /stakeholder/i.test(r)));
+  // Momentum/decay/market-patterns remain honestly conditional (Monitor / observed) — still HQ-flagged, never fabricated.
+  t("momentum/decay/market-patterns stay honestly conditional (not falsely 'rendered')", ["momentum", "decay", "market"].every((k) => prem.contractedNotRendered.some((r) => r.toLowerCase().includes(k))));
+}
+// PDF renders the deep-dossier chip + what-would-change; stakeholder functions are Premium-ONLY.
+{
+  const premEsPdf4 = pdfText(renderPdfBuffer(toPresentationModel(doc, "premium", "pdf"), { compress: false }));
+  const portEsPdf4 = pdfText(renderPdfBuffer(toPresentationModel(doc, "intelligence", "pdf"), { compress: false }));
+  const briefEsPdf4 = pdfText(renderPdfBuffer(toPresentationModel(doc, "brief", "pdf"), { compress: false }));
+  t("Portfolio + Premium render the DEEP DOSSIER treatment", premEsPdf4.includes("DOSIER PROFUNDO") && portEsPdf4.includes("DOSIER PROFUNDO"));
+  t("Brief does NOT render deep dossiers (catalog: 0)", !briefEsPdf4.includes("DOSIER PROFUNDO"));
+  t("deep dossiers render 'what would change the decision'", premEsPdf4.includes("cambiar") && premEsPdf4.includes("decisi"));
+  t("stakeholder functions render on Premium (inferred, unverified)", premEsPdf4.includes("Funciones de decisi") && premEsPdf4.includes("Funci") && premEsPdf4.includes("sin verificar"));
+  t("stakeholder functions do NOT leak into Portfolio (Premium-only)", !portEsPdf4.includes("Funciones de decisi"));
 }
 
 // ── Admin routes fail closed for unauthenticated requests ──

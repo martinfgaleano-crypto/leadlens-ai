@@ -50,6 +50,33 @@ export interface Playbook {
   holdWhen: string | null;          // organized from the first counter-signal
   nextStep: string | null;
 }
+export interface StakeholderFunction { function: string; whyRelevant: string; validate: string }
+// Functional-role hypotheses derived from the account's OWN opportunity type / segment. These are
+// INFERRED FUNCTIONS (unverified), never named people, titles, emails or budget authority (§15). The
+// map is conservative and only emits a function when the opportunity type clearly implies one.
+const FUNCTION_BY_OPP: Array<{ re: RegExp; fns: string[] }> = [
+  { re: /operations|capacity|expansion/i, fns: ["Operations", "Supply Chain"] },
+  { re: /technology|platform|vendor|modernization/i, fns: ["IT / Systems Integration", "Engineering"] },
+  { re: /market entry|channel|partnership/i, fns: ["Commercial / Partnerships"] },
+  { re: /construc|facilit|plant|infra/i, fns: ["Facilities", "Operations"] },
+];
+export function deriveStakeholderFunctions(a: AccountBriefVM): StakeholderFunction[] {
+  const key = `${a.opportunityType ?? ""} ${a.segment ?? ""}`;
+  const hit = FUNCTION_BY_OPP.find((f) => f.re.test(key));
+  const fns = hit ? hit.fns : (a.decision === "prioritize" || a.decision === "validate" ? ["Operations"] : []);
+  return fns.map((fn) => ({
+    function: fn,
+    whyRelevant: a.opportunityType ? `Relevant to the ${a.opportunityType.toLowerCase()} the evidence points to` : "Relevant to the observed operational change",
+    validate: `Confirm who owns the ${fn.toLowerCase()} decision before outreach`,
+  }));
+}
+
+/** The count of accounts that receive the deeper "deep dossier" treatment at each tier (catalog
+ *  deep_dossiers: Preview 0 · Brief 0 · Intelligence 4 · Premium 6). Attention order decides which. */
+export function deepDossierIds(accounts: AccountBriefVM[], count: number): Set<string> {
+  return new Set(accounts.slice(0, Math.max(0, count)).map((a) => a.id));
+}
+
 /** Structured playbooks for the accounts worth acting on (prioritize/validate) — a reorganization of the
  *  account's OWN fields into an entry plan. Never invents a purchasing process or a stakeholder. */
 export function derivePlaybooks(accounts: AccountBriefVM[], max = 8): Playbook[] {

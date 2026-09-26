@@ -45,12 +45,12 @@ export const TIER_CONTRACT_MATRIX: CapabilityRow[] = [
   row("portfolio_risk", "Portfolio risk (thin-evidence / concentration)", "report", "rendered", (e) => e.portfolio_risk),
   row("playbooks", "Commercial playbooks", "report", "rendered", (e) => e.playbooks),
   row("discovery_questions", "Discovery questions (decision-critical validations)", "report", "rendered", (e) => e.discovery_questions),
-  // Require observation history or new generation — honestly NOT in a one-time report; flagged for HQ.
-  row("deep_dossiers", "Deep dossiers — deeper corroboration (needs research depth)", "report", "contracted_not_rendered", (e) => e.deep_dossiers),
-  row("momentum", "Momentum — needs observation history (Monitor)", "report", "contracted_not_rendered", (e) => e.momentum),
-  row("decay", "Decay — needs observation history (Monitor)", "report", "contracted_not_rendered", (e) => e.decay),
-  row("market_patterns", "Market patterns — premium research context (often null)", "report", "contracted_not_rendered", (e) => e.market_patterns),
-  row("stakeholder_hypotheses", "Stakeholder hypotheses — needs generation", "report", "contracted_not_rendered", (e) => e.stakeholder_hypotheses),
+  row("deep_dossiers", "Deep dossiers — per-source provenance + what-would-change (composed)", "report", "rendered", (e) => e.deep_dossiers),
+  row("stakeholder_hypotheses", "Stakeholder functions — inferred functional roles (no names)", "report", "rendered", (e) => e.stakeholder_hypotheses),
+  // Conditional / require observation history — honestly NOT a static one-time-report guarantee.
+  row("momentum", "Momentum — freshness now; full history via Monitor", "report", "contracted_not_rendered", (e) => e.momentum),
+  row("decay", "Decay — via Monitor as history accumulates", "report", "contracted_not_rendered", (e) => e.decay),
+  row("market_patterns", "Market patterns — observed portfolio patterns (rendered when clusters exist)", "report", "contracted_not_rendered", (e) => e.market_patterns),
   row("account_memory", "Account Memory", "workspace", "app_live", (e) => e.account_memory),
   row("monitoring_eligible", "Monitor-eligible (recurring updates on a Monitor plan)", "eligible", "app_live", (e) => e.monitoring_eligible),
   row("watchlist", "Watchlist", "workspace", "contracted_not_rendered", (e) => e.watchlist),

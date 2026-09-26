@@ -15,7 +15,7 @@ import { DECISION_TOKENS } from "@/lib/deliverable/deliverable-view-model";
 import type { PresentationModel } from "@/lib/delivery-system/presentation-model";
 import type { AccountBriefVM, DecisionState } from "@/lib/delivery-system/delivery-document";
 import { dimensionValue } from "@/lib/delivery-system/renderers/shared";
-import { deriveCoverageGaps, derivePortfolioRisk, derivePlaybooks } from "@/lib/deliverable/portfolio-analytics";
+import { deriveCoverageGaps, derivePortfolioRisk, derivePlaybooks, deriveStakeholderFunctions, deepDossierIds } from "@/lib/deliverable/portfolio-analytics";
 
 type RGB = [number, number, number];
 // jsPDF's built-in fonts render Latin-1 / WinAnsi (which INCLUDES á é í ó ú ñ ü Á-Ú Ñ ¿ ¡). The old
@@ -136,6 +136,11 @@ function labelsFor(es: boolean) {
     pbValidate: L("Validar", "Validate"),
     pbAdvance: L("Avanzar si", "Advance if"),
     pbHold: L("Frenar si", "Hold if"),
+    deepDossier: L("DOSIER PROFUNDO", "DEEP DOSSIER"),
+    whatWouldChange: L("Qué cambiaría la decisión", "What would change the decision"),
+    stakeholderFunctions: L("Funciones de decisión probables (Premium)", "Likely decision functions (Premium)"),
+    inferredFunction: L("Función inferida (sin verificar) — no es una persona identificada", "Inferred function (unverified) — not an identified person"),
+    evRelation: (rel: string) => (es ? ({ direct: "Directa", corroborating: "Corroborante", context: "Contexto" } as Record<string, string>)[rel] ?? rel : ({ direct: "Direct", corroborating: "Corroborating", context: "Context" } as Record<string, string>)[rel] ?? rel),
     inc_memory: L("Memoria de Cuenta: tus cuentas se recuerdan para tu próxima revisión", "Account Memory: your accounts are remembered for your next review"),
     inc_monitor: L("Cuentas aptas para Monitor: actualizaciones recurrentes disponibles con un plan Monitor", "Monitor-eligible accounts: recurring updates available on a Monitor plan"),
     valueVerb: (es
@@ -507,9 +512,14 @@ export function renderPdfBuffer(pm: PresentationModel, opts?: { compress?: boole
   }
 
   // ── Opportunity Cases (accounts) ──
+  // Deep-dossier accounts (catalog deep_dossiers: Preview 0 · Brief 0 · Portfolio 4 · Premium 6) get a
+  // deeper treatment — per-source evidence provenance + "what would change the decision" — composed from
+  // existing data (§9/§10), not new research.
+  const DEEP_BY_TIER: Record<string, number> = { Preview: 0, Brief: 0, Intelligence: 4, Premium: 6 };
+  const deepSet = deepDossierIds(doc.accounts, DEEP_BY_TIER[tierLabel] ?? 0);
   if (s.accounts && doc.accounts.length) {
     band(L.opportunityCases);
-    for (const a of doc.accounts) accountCase(a, s);
+    for (const a of doc.accounts) accountCase(a, s, deepSet.has(a.id));
   }
 
   // ── Validation queue ──
@@ -664,7 +674,7 @@ export function renderPdfBuffer(pm: PresentationModel, opts?: { compress?: boole
     gap(2.5);
   }
 
-  function accountCase(a: AccountBriefVM, sec: typeof s) {
+  function accountCase(a: AccountBriefVM, sec: typeof s, deep = false) {
     // Keep the company header with its first lines (reserve room so it never orphans at a page bottom).
     space(46); gap(6);
     // Per-company divider so each dossier reads as a deliberate, distinct unit (premium separation).
@@ -681,6 +691,12 @@ export function renderPdfBuffer(pm: PresentationModel, opts?: { compress?: boole
     const cwid = pdf.getTextWidth(chip) + 6;
     setFill(DEC_RGB[a.decision]); pdf.roundedRect(W - M - cwid - 1.5, stripTop + 1.4, cwid, 5.8, 1.2, 1.2, "F");
     setText([255, 255, 255]); pdf.text(chip, W - M - cwid + 1.5, stripTop + 5.4);
+    // Deep-dossier marker (a deeper composed treatment for the top contracted accounts).
+    if (deep) {
+      pdf.setFont("helvetica", "bold"); pdf.setFontSize(6.4); setText(SKY);
+      const dchip = latin1(L.deepDossier);
+      pdf.text(dchip, W - M - cwid - 4 - pdf.getTextWidth(dchip), stripTop + 5.4);
+    }
     y += stripH - 2.2;
     const sub = [a.segment, a.geography, a.accountRole, a.opportunityType].filter(Boolean).map((v) => latin1(String(v))).join("   -   ");
     if (sub) text(sub, M + 4, 8, "normal", MUTE);
@@ -705,9 +721,43 @@ export function renderPdfBuffer(pm: PresentationModel, opts?: { compress?: boole
     if (sec.accountWhatChanged) bullets(L.whatChanged, a.whatChanged.map((c) => `${latin1(c.event)}${c.date ? ` (${c.date})` : ""}`));
     if (sec.accountCounterSignals) bullets(L.counterSignals, a.counterSignals.map(latin1), [217, 119, 6]);
     if (sec.accountValidations) bullets(L.validateBeforeActing, a.validations.map(latin1));
-    if (sec.accountSources && a.sources.length) sourceBullets(a.sources);
+    if (sec.accountSources && a.sources.length) { if (deep) deepSources(a.sources); else sourceBullets(a.sources); }
+    // Deep-dossier extras — composed from existing fields (§9/§10): what would flip the decision + the
+    // likely functional decision-owners (inferred, never a named person).
+    if (deep) {
+      const flip = a.counterSignals[0] ?? a.validations[0] ?? null;
+      if (flip) text(`${L.whatWouldChange}: ${flip}`, M + 4, 8.5, "normal", SUB, CW - 4);
+      // Stakeholder-function hypotheses are a Premium capability (catalog).
+      if (tierLabel === "Premium") {
+        const fns = deriveStakeholderFunctions(a);
+        if (fns.length) text(`${L.stakeholderFunctions.replace(" (Premium)", "")}: ${fns.map((f) => f.function).join(", ")} — ${L.inferredFunction}`, M + 4, 8, "normal", MUTE, CW - 4);
+      }
+    }
     if (sec.accountNextStep && a.nextStep) text(`${L.nextStep}: ${a.nextStep}`, M + 4, 9.5, "bold", INK, CW - 4);
     gap(2.5);
+  }
+
+  // Deeper evidence provenance for a deep dossier: per source, the relation (Direct/Corroborating/
+  // Context) and what it observes — the claim-level traceability the digital shows and the summary PDF
+  // otherwise compresses (§15). Full URL stays in a clickable link.
+  function deepSources(sources: AccountBriefVM["sources"]) {
+    text(L.sources, M, 8.5, "bold", [51, 65, 85]);
+    for (const src of sources) {
+      space(5);
+      setFill(SUB); pdf.circle(M + 1.4, y - 1.1, 0.5, "F");
+      const rel = src.relation ? ` [${L.evRelation(src.relation)}]` : "";
+      const obs = src.observation ? ` - ${src.observation}` : (src.claim ? ` - ${src.claim}` : "");
+      const head = `${src.label}${src.date ? ` (${src.date})` : ""}${rel}${obs}`;
+      pdf.setFont("helvetica", "normal"); pdf.setFontSize(8.5); setText(SUB);
+      for (const ln of pdf.splitTextToSize(latin1(head), CW - 6) as string[]) { space(4.2); pdf.text(ln, M + 4, y); y += 3.9; }
+      if (src.url) {
+        setText(SKY); const disp = latin1(shortUrl(src.url));
+        try { (pdf as unknown as { textWithLink: (t: string, x: number, y: number, o: { url: string }) => void }).textWithLink(disp, M + 4, y, { url: src.url }); }
+        catch { pdf.text(disp, M + 4, y); }
+        y += 4.2;
+      }
+    }
+    gap(1.2);
   }
 
   // Fit × Timing scatter (vector; selectable text). Positions each account by the ORDINAL strength of

@@ -34,6 +34,7 @@ export interface ReportTemplateVersion {
 
 /** History of report-template versions (newest first) — preserved so the Admin registry shows lineage. */
 export const TEMPLATE_HISTORY: Array<{ version: string; effectiveDate: string; note: string }> = [
+  { version: "CUSTOMER_DELIVERABLES_V2_4", effectiveDate: "2026-09-26", note: "Final commercial acceptance + canonical freeze: deep dossiers rendered by composition (per-source provenance + what-would-change, Portfolio 4 / Premium 6); stakeholder FUNCTION hypotheses (inferred functional roles, never named people) rendered Premium-only; momentum/decay/market-patterns worded as truthful conditionals (freshness-now / Monitor-history / observed-clusters), never fabricated trends; tier-contract matrix marks deep-dossiers + stakeholder-functions as rendered. Presentation-only; product truth + economics frozen." },
   { version: "CUSTOMER_DELIVERABLES_V2_3", effectiveDate: "2026-09-25", note: "Contract fulfillment: coverage-gaps + portfolio-risk + commercial playbooks (derived from existing data); discovery-questions mapped to validations; momentum/decay honestly deferred to Monitor; canonical decision-consistency guard (John Deere class) applied at the delivery seam for all channels." },
   { version: "CUSTOMER_DELIVERABLES_V2_2", effectiveDate: "2026-09-25", note: "Product-identity cover (product name as title, decision distribution secondary); per-tier 'What's included' band + Admin tier-contract matrix; defect closure (Premium language leak, John Deere HOLD framing, Portfolio copy, clickable source links, on-target sample)." },
   { version: "CUSTOMER_DELIVERABLES_V2_1", effectiveDate: "2026-09-24", note: "Differentiated sample; tier-scoped metrics; computed recency; localized PDF labels; premium-tension grouping." },
@@ -41,11 +42,11 @@ export const TEMPLATE_HISTORY: Array<{ version: string; effectiveDate: string; n
 ];
 
 export const REPORT_TEMPLATE: ReportTemplateVersion = {
-  version: "CUSTOMER_DELIVERABLES_V2_3",
-  supersedes: "CUSTOMER_DELIVERABLES_V2_2",
-  // NOT founder-approved until the founder reviews the four PDFs (§38). Starts in review.
+  version: "CUSTOMER_DELIVERABLES_V2_4",
+  supersedes: "CUSTOMER_DELIVERABLES_V2_3",
+  // NOT founder-approved until the founder reviews the four PDFs (§64). Starts in review.
   approvalState: "FOUNDER_REVIEW",
-  effectiveDate: "2026-09-25",
+  effectiveDate: "2026-09-26",
   renderingSystem: "DeliverableViewModel → TierComposer → PresentationModel → jsPDF (real application/pdf) / web / csv",
   chartSystem: [
     "Decision distribution bar (portfolio composition)",
@@ -64,6 +65,9 @@ export const REPORT_TEMPLATE: ReportTemplateVersion = {
     "Sample uses synthetic companies/sources (example.*) — representative of layout + variety only, not real Intelligence.",
     "PDF uses jsPDF standard fonts (WinAnsi/Latin-1): full coverage for English + Spanish (accents, ñ, ¿¡); non-Latin-1 scripts (e.g. CJK) are not yet supported and would require an embedded font.",
     "PDF evidence is summarized per account (source list + counts); the digital report additionally shows per-source Establishes/Observed/Affects relations.",
+    "Deep dossiers are a COMPOSITION treatment (fuller per-source provenance + 'what would change the decision' for the top accounts), not additional research beyond the evaluated evidence.",
+    "Stakeholder hypotheses are INFERRED FUNCTIONS (e.g. Operations, IT/Systems) derived from the account's own opportunity type — never named people, titles, emails or budget authority.",
+    "Momentum/decay reflect current evidence freshness; a full trajectory requires observation history via Monitor. Market patterns are the observed portfolio clusters, never an extrapolation to the whole market.",
     "Not founder-approved until the four PDFs are reviewed (state = FOUNDER_REVIEW).",
   ],
   sourceCommit:
