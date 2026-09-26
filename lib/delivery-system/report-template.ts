@@ -34,14 +34,15 @@ export interface ReportTemplateVersion {
 
 /** History of report-template versions (newest first) — preserved so the Admin registry shows lineage. */
 export const TEMPLATE_HISTORY: Array<{ version: string; effectiveDate: string; note: string }> = [
+  { version: "CUSTOMER_DELIVERABLES_V2_3", effectiveDate: "2026-09-25", note: "Contract fulfillment: coverage-gaps + portfolio-risk + commercial playbooks (derived from existing data); discovery-questions mapped to validations; momentum/decay honestly deferred to Monitor; canonical decision-consistency guard (John Deere class) applied at the delivery seam for all channels." },
   { version: "CUSTOMER_DELIVERABLES_V2_2", effectiveDate: "2026-09-25", note: "Product-identity cover (product name as title, decision distribution secondary); per-tier 'What's included' band + Admin tier-contract matrix; defect closure (Premium language leak, John Deere HOLD framing, Portfolio copy, clickable source links, on-target sample)." },
   { version: "CUSTOMER_DELIVERABLES_V2_1", effectiveDate: "2026-09-24", note: "Differentiated sample; tier-scoped metrics; computed recency; localized PDF labels; premium-tension grouping." },
   { version: "CUSTOMER_DELIVERABLES_V2", effectiveDate: "2026-09-24", note: "Premium dossiers, Fit×Timing chart, Admin template registry." },
 ];
 
 export const REPORT_TEMPLATE: ReportTemplateVersion = {
-  version: "CUSTOMER_DELIVERABLES_V2_2",
-  supersedes: "CUSTOMER_DELIVERABLES_V2_1",
+  version: "CUSTOMER_DELIVERABLES_V2_3",
+  supersedes: "CUSTOMER_DELIVERABLES_V2_2",
   // NOT founder-approved until the founder reviews the four PDFs (§38). Starts in review.
   approvalState: "FOUNDER_REVIEW",
   effectiveDate: "2026-09-25",

@@ -18,6 +18,7 @@ import {
   type PremiumExecutivePortfolioV1, type DecisionCriticalBriefV1,
 } from "@/lib/intelligence/premium/premium-decision-architecture";
 import type { PremiumContextV1 } from "@/lib/intelligence/premium/premium-context";
+import { reconcileAccounts } from "@/lib/deliverable/decision-consistency";
 
 export type { AccountBriefVM, CommercialContextVM, ValidationQueueItemVM, DecisionState, Strength };
 export type { PremiumExecutivePortfolioV1, DecisionCriticalBriefV1, PremiumContextV1 };
@@ -90,6 +91,9 @@ export interface DeliveryDocumentV1 {
 /** Build the canonical document from the proven DeliverableViewModel. Pure; drops tier `capabilities`
  *  and channel `downloads` (those move to the composer / policy stages). No content is invented. */
 export function fromDeliverableViewModel(vm: DeliverableViewModel): DeliveryDocumentV1 {
+  // Canonical decision/rationale consistency guard (channel-agnostic): neutralize a HOLD/MONITOR whose
+  // action text asserts an immediate trigger (the "John Deere class"). Decisions are never changed.
+  const { accounts: reconciledAccounts } = reconcileAccounts(vm.accounts, vm.meta.language);
   return {
     schema: DELIVERY_DOCUMENT_SCHEMA,
     meta: {
@@ -108,7 +112,7 @@ export function fromDeliverableViewModel(vm: DeliverableViewModel): DeliveryDocu
       funnel: vm.portfolio.funnel,
       note: vm.portfolio.note,
     },
-    accounts: vm.accounts,
+    accounts: reconciledAccounts,
     commercialContext: vm.commercialContext,
     validationQueue: vm.validationQueue,
     coverage: vm.coverage,

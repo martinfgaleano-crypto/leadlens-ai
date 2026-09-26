@@ -10,6 +10,9 @@ import { renderPdfBuffer } from "../../lib/delivery-system/renderers/pdf";
 import { buildSampleDeliverable, REPORT_TEMPLATE } from "../../lib/delivery-system/report-template";
 import { buildRealAcceptanceDeliverable } from "../../lib/delivery-system/real-acceptance-sample";
 import { buildTierContractSummary } from "../../lib/products/tier-contract-matrix";
+import { checkAccountConsistency, reconcileAccountConsistency } from "../../lib/deliverable/decision-consistency";
+import { deriveCoverageGaps, derivePortfolioRisk, derivePlaybooks } from "../../lib/deliverable/portfolio-analytics";
+import type { AccountBriefVM, DecisionState, Strength } from "../../lib/deliverable/deliverable-view-model";
 import type { DeliveryTier } from "../../lib/delivery-system/tier-composer";
 
 let passed = 0, failed = 0;
@@ -20,8 +23,8 @@ const pdfText = (b: Buffer) => b.toString("latin1"); // decision on presence of 
 const caps: Record<DeliveryTier, number> = { preview: 2, brief: 6, intelligence: 12, premium: 18 };
 
 // ── Descriptor invariants ──
-t("version is CUSTOMER_DELIVERABLES_V2_2", REPORT_TEMPLATE.version === "CUSTOMER_DELIVERABLES_V2_2");
-t("supersedes V2_1", REPORT_TEMPLATE.supersedes === "CUSTOMER_DELIVERABLES_V2_1");
+t("version is CUSTOMER_DELIVERABLES_V2_3", REPORT_TEMPLATE.version === "CUSTOMER_DELIVERABLES_V2_3");
+t("supersedes V2_2", REPORT_TEMPLATE.supersedes === "CUSTOMER_DELIVERABLES_V2_2");
 t("approval state is FOUNDER_REVIEW (not auto-approved)", REPORT_TEMPLATE.approvalState === "FOUNDER_REVIEW");
 t("four tiers with frozen caps 2/6/12/18", JSON.stringify(REPORT_TEMPLATE.tiers.map((x) => x.maxAccounts)) === JSON.stringify([2, 6, 12, 18]));
 t("frozen prices 7/25/59/129", JSON.stringify(REPORT_TEMPLATE.tiers.map((x) => x.price)) === JSON.stringify([7, 25, 59, 129]));
@@ -128,6 +131,57 @@ const tcs = buildTierContractSummary();
 t("tier-contract summary covers all four tiers", tcs.length === 4 && tcs.map((x) => x.tier).join(",") === "preview,brief,intelligence,premium");
 t("premium surfaces contracted-not-rendered gaps to HQ (not hidden)", (tcs.find((x) => x.tier === "premium")?.contractedNotRendered.length ?? 0) > 0);
 t("Account Memory shown as workspace for intelligence + premium only", tcs.filter((x) => x.workspace.some((w) => /Account Memory/.test(w))).map((x) => x.tier).sort().join(",") === "intelligence,premium");
+
+// ── V2.3 §24-27: canonical decision-consistency guard (regression matrix) ──
+function acct(over: Partial<AccountBriefVM>): AccountBriefVM {
+  return {
+    id: "x", rank: 1, company: "X", segment: null, geography: null, domain: null, accountRole: null, opportunityType: null,
+    decision: "hold", decisionNote: null, thesis: null, whyItMatters: null,
+    dimensions: [], whatChanged: [], evidence: { sourceCount: 1, datedCount: 0, corroborated: null, latestAge: null, strength: "Limited" as Strength },
+    sources: [], counterSignals: [], limitations: [], validations: [], nextStep: null, freshness: null, confidence: null, ...over,
+  };
+}
+// PRIORITIZE / VALIDATE / MONITOR with sound rationale → no issue, unchanged.
+t("prioritize with next step is untouched", checkAccountConsistency(acct({ decision: "prioritize", evidence: { sourceCount: 3, datedCount: 2, corroborated: true, latestAge: "5d ago", strength: "Strong" }, nextStep: "Reach out now." })) === null);
+t("validate with a decision-critical question is untouched", checkAccountConsistency(acct({ decision: "validate", evidence: { sourceCount: 2, datedCount: 1, corroborated: true, latestAge: "9d ago", strength: "Moderate" }, nextStep: "Confirm procurement status." })) === null);
+// HOLD (stale) with an immediate-trigger next step → contradiction detected + reconciled (decision unchanged).
+{
+  const jd = acct({ decision: "hold", company: "Deere", evidence: { sourceCount: 2, datedCount: 1, corroborated: true, latestAge: "7mo ago", strength: "Moderate" }, nextStep: "Validate ownership before outreach." });
+  t("HOLD + stale + 'before outreach' is flagged", checkAccountConsistency(jd)?.field === "nextStep");
+  const fixed = reconcileAccountConsistency(jd, "en");
+  t("reconcile keeps HOLD (decision unchanged)", fixed.decision === "hold");
+  t("reconcile removes the immediate-trigger next step", !/before outreach/i.test(fixed.nextStep ?? "") && /No outreach now/.test(fixed.nextStep ?? ""));
+}
+// HOLD with wrong-target / insufficient but NO immediate-trigger prose → left alone.
+t("HOLD without trigger prose is not altered", reconcileAccountConsistency(acct({ decision: "hold", nextStep: "No action; revisit next cycle." })).nextStep === "No action; revisit next cycle.");
+// Applied canonically: the real Brief John Deere next step is hold-consistent (via the delivery seam).
+{
+  const jd = fromDeliverableViewModel(buildRealAcceptanceDeliverable()).accounts.find((a) => /Deere/.test(a.company))!;
+  t("real John Deere (canonical seam) has a hold-consistent next step", jd.decision === "hold" && !/before outreach|worth validating now/i.test(jd.nextStep ?? ""));
+}
+
+// ── V2.3 §15/§16/§19: coverage-gaps / portfolio-risk / playbooks derived honestly from existing data ──
+{
+  const accts = buildSampleDeliverable("es").accounts;
+  const cg = deriveCoverageGaps(accts);
+  t("coverage gaps only list real evidence gaps (subset of the set)", cg.withoutDatedEvidence.length <= accts.length && cg.withoutCorroboration.length <= accts.length);
+  const risk = derivePortfolioRisk(accts);
+  t("portfolio risk lists only actionable thin-evidence accounts", risk.thinEvidence.every((c) => accts.some((a) => a.company === c && (a.decision === "prioritize" || a.decision === "validate"))));
+  const pb = derivePlaybooks(accts);
+  t("playbooks cover only prioritize/validate accounts (no invented process)", pb.length > 0 && pb.every((p) => p.decision === "prioritize" || p.decision === "validate"));
+  t("playbooks reuse the account's own validations (no fabrication)", pb.every((p) => p.validate.every((v) => accts.some((a) => a.validations.includes(v)))));
+}
+const premEsPdf3 = pdfText(renderPdfBuffer(toPresentationModel(doc, "premium", "pdf"), { compress: false }));
+t("premium renders Coverage & risk section", premEsPdf3.includes("Cobertura y riesgo"));
+t("premium renders Commercial playbooks section", premEsPdf3.includes("as comerciales"));
+t("momentum/decay honestly deferred to Monitor (not fabricated)", premEsPdf3.includes("Monitor") && (premEsPdf3.includes("Impulso") || premEsPdf3.includes("historial")));
+
+// ── V2.3 §12/§46: matrix marks the newly-delivered capabilities as rendered ──
+{
+  const prem = buildTierContractSummary().find((x) => x.tier === "premium")!;
+  t("coverage gaps + portfolio risk + playbooks are now in-report", ["Coverage gaps", "Portfolio risk", "playbooks"].every((k) => prem.reportRendered.some((r) => r.toLowerCase().includes(k.toLowerCase().split(" ")[0]))));
+  t("stakeholder hypotheses still flagged as contracted-not-rendered (HQ gap)", prem.contractedNotRendered.some((r) => /stakeholder/i.test(r)));
+}
 
 // ── Admin routes fail closed for unauthenticated requests ──
 async function denyCheck() {

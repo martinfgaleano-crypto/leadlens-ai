@@ -15,6 +15,7 @@ import { DECISION_TOKENS } from "@/lib/deliverable/deliverable-view-model";
 import type { PresentationModel } from "@/lib/delivery-system/presentation-model";
 import type { AccountBriefVM, DecisionState } from "@/lib/delivery-system/delivery-document";
 import { dimensionValue } from "@/lib/delivery-system/renderers/shared";
+import { deriveCoverageGaps, derivePortfolioRisk, derivePlaybooks } from "@/lib/deliverable/portfolio-analytics";
 
 type RGB = [number, number, number];
 // jsPDF's built-in fonts render Latin-1 / WinAnsi (which INCLUDES á é í ó ú ñ ü Á-Ú Ñ ¿ ¡). The old
@@ -117,6 +118,24 @@ function labelsFor(es: boolean) {
     inc_compare: L("Comparación de portafolio y asignación de atención", "Portfolio comparison and attention allocation"),
     inc_premium: L("Contexto de decisión y capa de estrategia (Premium)", "Decision context and strategy layer (Premium)"),
     inc_method: L("Metodología y limitaciones", "Methodology and limitations"),
+    coverageRisk: L("Cobertura y riesgo del portafolio", "Portfolio coverage & risk"),
+    covGapsTitle: L("Brechas de cobertura de evidencia", "Evidence coverage gaps"),
+    covNoDated: (n: number, names: string) => L(`${n} sin evidencia fechada: ${names}`, `${n} without dated evidence: ${names}`),
+    covNoCorrob: (n: number, names: string) => L(`${n} sin corroboración independiente: ${names}`, `${n} without independent corroboration: ${names}`),
+    covLimited: (n: number, names: string) => L(`${n} con evidencia limitada: ${names}`, `${n} with limited evidence: ${names}`),
+    covClean: L("Sin brechas materiales de cobertura en el conjunto evaluado.", "No material coverage gaps across the evaluated set."),
+    riskTitle: L("Riesgo del portafolio", "Portfolio risk"),
+    riskThin: (names: string) => L(`El caso se apoya en evidencia limitada o sin corroborar en: ${names}`, `The case rests on limited or uncorroborated evidence at: ${names}`),
+    riskStale: (names: string) => L(`Señal con meses de antigüedad en: ${names}`, `Months-old signal at: ${names}`),
+    riskConc: (seg: string) => L(`Concentración por segmento: ${seg}`, `Segment concentration: ${seg}`),
+    riskClean: L("Sin riesgos materiales de evidencia entre las cuentas accionables.", "No material evidence risks among the actionable accounts."),
+    momentumNote: L("Impulso y decaimiento: requieren historial de observaciones — disponibles en Monitor (revisiones recurrentes), no en un informe único.", "Momentum & decay: require observation history — available in Monitor (recurring reviews), not in a one-time report."),
+    playbooksTitle: L("Guías comerciales (Premium)", "Commercial playbooks (Premium)"),
+    pbObjective: L("Objetivo", "Objective"),
+    pbWhy: L("Por qué", "Why"),
+    pbValidate: L("Validar", "Validate"),
+    pbAdvance: L("Avanzar si", "Advance if"),
+    pbHold: L("Frenar si", "Hold if"),
     inc_memory: L("Memoria de Cuenta: tus cuentas se recuerdan para tu próxima revisión", "Account Memory: your accounts are remembered for your next review"),
     inc_monitor: L("Cuentas aptas para Monitor: actualizaciones recurrentes disponibles con un plan Monitor", "Monitor-eligible accounts: recurring updates available on a Monitor plan"),
     valueVerb: (es
@@ -479,6 +498,9 @@ export function renderPdfBuffer(pm: PresentationModel, opts?: { compress?: boole
     if (doc.accounts.length >= 4) fitTimingChart();
   }
 
+  // ── Portfolio coverage & risk (Intelligence/Premium; derived from existing evidence, no fabrication) ──
+  if (doc.portfolioSynthesis.allocation && doc.accounts.length) coverageRiskBlock();
+
   // ══ Premium — Decision Context dossier (premium tier only) ══
   if (s.premiumArchitecture && doc.premium && doc.premium.executivePortfolio.total > 0) {
     premiumDecisionContext();
@@ -574,6 +596,51 @@ export function renderPdfBuffer(pm: PresentationModel, opts?: { compress?: boole
       band(L.decisionCriticalBriefs, SKY);
       for (const b of briefs) briefCard(b);
     }
+    // Commercial playbooks (Premium) — a structured organization of each actionable account's OWN
+    // fields (objective / why / validate / advance-if / hold-if). Invents no purchasing process (§19).
+    const playbooks = derivePlaybooks(doc.accounts, 8);
+    if (playbooks.length) {
+      band(L.playbooksTitle, SKY);
+      for (const pb of playbooks) playbookCard(pb);
+    }
+  }
+
+  function playbookCard(pb: ReturnType<typeof derivePlaybooks>[number]) {
+    space(26); gap(1.5);
+    const top = y - 4.5;
+    setFill(DEC_RGB[pb.decision]); pdf.rect(M, top, 1.6, 6, "F");
+    pdf.setFont("helvetica", "bold"); pdf.setFontSize(10.5); setText(INK);
+    pdf.text(latin1(pb.company), M + 4, y);
+    const chip = latin1(decLabel(pb.decision).toUpperCase());
+    pdf.setFont("helvetica", "bold"); pdf.setFontSize(7.5);
+    const cwid = pdf.getTextWidth(chip) + 6;
+    setFill(DEC_RGB[pb.decision]); pdf.roundedRect(W - M - cwid, top, cwid, 6, 1.2, 1.2, "F");
+    setText([255, 255, 255]); pdf.text(chip, W - M - cwid + 3, top + 4.2);
+    y += 4.5;
+    if (pb.objective) text(`${L.pbObjective}: ${pb.objective}`, M + 4, 9, "bold", SUB, CW - 4);
+    if (pb.why) text(`${L.pbWhy}: ${pb.why}`, M + 4, 9, "normal", SUB, CW - 4);
+    if (pb.validate.length) bullets(L.pbValidate, pb.validate.map(latin1));
+    if (pb.holdWhen) text(`${L.pbHold}: ${pb.holdWhen}`, M + 4, 8.5, "normal", [217, 119, 6], CW - 4);
+    if (pb.nextStep) text(`${L.nextStep}: ${pb.nextStep}`, M + 4, 9, "bold", INK, CW - 4);
+    gap(2.5);
+  }
+
+  function coverageRiskBlock() {
+    const cg = deriveCoverageGaps(doc.accounts);
+    const risk = derivePortfolioRisk(doc.accounts);
+    const fmt = (arr: string[]) => arr.slice(0, 6).map(latin1).join(", ") + (arr.length > 6 ? ` +${arr.length - 6}` : "");
+    band(L.coverageRisk);
+    const gapLines: string[] = [];
+    if (cg.withoutDatedEvidence.length) gapLines.push(L.covNoDated(cg.withoutDatedEvidence.length, fmt(cg.withoutDatedEvidence)));
+    if (cg.withoutCorroboration.length) gapLines.push(L.covNoCorrob(cg.withoutCorroboration.length, fmt(cg.withoutCorroboration)));
+    if (cg.limitedEvidence.length) gapLines.push(L.covLimited(cg.limitedEvidence.length, fmt(cg.limitedEvidence)));
+    if (gapLines.length) bullets(L.covGapsTitle, gapLines); else text(L.covClean, M, 9, "normal", MUTE);
+    const riskLines: string[] = [];
+    if (risk.thinEvidence.length) riskLines.push(L.riskThin(fmt(risk.thinEvidence)));
+    if (risk.staleTiming.length) riskLines.push(L.riskStale(fmt(risk.staleTiming)));
+    if (risk.concentration) riskLines.push(L.riskConc(latin1(risk.concentration)));
+    if (riskLines.length) bullets(L.riskTitle, riskLines, [217, 119, 6]); else text(L.riskClean, M, 9, "normal", MUTE);
+    text(L.momentumNote, M, 8, "normal", MUTE);
   }
 
   function briefCard(b: NonNullable<typeof doc.premium>["decisionCriticalBriefs"][number]) {
