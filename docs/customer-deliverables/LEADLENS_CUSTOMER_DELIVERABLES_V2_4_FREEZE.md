@@ -68,21 +68,38 @@ QA (PyMuPDF): Preview/Brief carry **no** deep-dossier or stakeholder sections (c
 deep dossiers + what-would-change but **no** stakeholder functions; Premium shows all four; zero empty
 pages; no mojibake.
 
-### The one genuinely material external blocker (§35 / §65)
+### Real one-time full-order acceptance (2026-09-26)
 
-**Real Portfolio (12/12) and Premium (18/18) full-order acceptance on real data is BLOCKED.** The only real
-canonical dataset is the 6-company controlled-acceptance package, which covers Preview (2) and Brief (6)
-truthfully. To render a real 12/18 we would need one of:
+Executed live through the canonical one-time path (`scripts/accept-one-time-enforcement.mts` and the
+render-capturing `scripts/accept-one-time-deliverable-v2_4.mts`), reusing only production server-side
+seams — canonical grant primitive `addCredits`, `interpret → confirm → startRun → processRun`, the
+`account_intelligence_charges` ledger, and the production viewer path
+`deliverableForViewer → fromInstitutionalReport → fromDeliverableViewModel → TierComposer → renderPdfBuffer`.
+Disposable `@example.com` tenants; no Lemon purchase; all rows + auth users deleted in `finally`.
+Colombia WMS context; Vault `ELIGIBLE_FALLBACK` scoped to Colombia (fail-closed, off-geo rejected).
 
-- **Historical recovery from Supabase** — requires a production read, which the environment's auto-mode
-  classifier **denies** (`[Production Reads]`). Not bypassed.
-- **A fresh bounded live run** — cost-bearing and production-adjacent; `INTERNAL_RUN_SECRET` and
-  `BRAVE_API_KEY` are unset locally, and higher-tier full-order supply is Vault-reuse- and funds-gated per
-  standing memory.
+**PORTFOLIO — PASS (21/21 checks).** Grant = exactly 12 one-time credits (welcome=0, clean ledger);
+real pipeline delivered **12/12** valid Colombia accounts; **charges=12 = delivered=12, ending balance 0**,
+every charge keyed to the run (exactly-once), tenant-isolated (other tenant 404), replay/recovery = no
+extra debit, reopen free, exhausted 3rd run blocked `402 usage_limit_reached` with **zero** provider
+research on the blocked attempt. Provider cost **$1.39** (Anthropic 55 calls; Brave/Tavily free tier).
+The V2.4 real delivery path renders a real Portfolio PDF (10pp, 0 empty, no mojibake, no synthetic-label
+leak, DEEP DOSSIER present, real companies) with **zero credit** consumed on render/reopen.
 
-Per §65 this is the permitted "genuinely material external blocker." Portfolio/Premium are therefore
-rendered from **clearly-labeled synthetic** full-orders (layout + tier-composition proof), and real 12/18
-acceptance is a **FOUNDER ACTION**, not a code gap.
+**PREMIUM — BLOCKED (external funding).** The **Anthropic API credit balance is exhausted**
+(`invalid_request_error: "Your credit balance is too low to access the Anthropic API"` →
+`CIRCUIT_OPEN: credits_exhausted`), observed mid-run on the second Portfolio pass (delivered degraded to 9,
+balance stayed non-negative at 4 — charge-at-materialization remained safe under the outage). Claude is a
+hard dependency for interpretation, case synthesis, and the report agent, so a fresh Premium 18/18 run
+cannot complete until the Anthropic account is funded. This is **not** a product, supply, Vault, credit-path,
+persistence, delivery, or renderer defect — all of those are proven above and by the 88/88 suite. Session
+provider spend to date: **$2.19** (well under the $8 target / $12 ceiling); the blocker is the account
+balance, not the budget.
+
+**Smallest next correction:** top up the Anthropic API credit balance, then re-run
+`LEADLENS_ACCEPTANCE_PLAN=pro …/accept-one-time-deliverable-v2_4.mts` (Premium 18) and one clean
+`LEADLENS_ACCEPTANCE_PLAN=standard` render (Portfolio 12) — each ~$1.5–2.0, within budget — to produce the
+clean real 12/12 + 18/18 PDFs and flip the freeze to FREEZE_READY.
 
 ## 4. Reopening policy (§54)
 
