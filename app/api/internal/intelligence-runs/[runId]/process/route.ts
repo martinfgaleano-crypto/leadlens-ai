@@ -126,6 +126,29 @@ export async function POST(req: NextRequest, { params }: { params: { runId: stri
     const { initializeProductiveAccountMemory } = await import("@/lib/intelligence/initialize-account-memory");
     await initializeProductiveAccountMemory(db, { report: result.run.report, runId: result.run.runId, userId: parsed.data.user_id, contextRef: result.run.contextRef })
       .catch((error) => console.error("[productive-memory]", error instanceof Error ? error.message : "unavailable"));
+
+    // Report-ready notification (Phase D) — EXACTLY ONCE per durable completion. The notifications row
+    // (type search_completed, metadata.run_id) is the durable send-marker, so recovery/replay never
+    // re-notifies. The in-app notification guarantees discovery (no browser-tab dependency); the email
+    // is content-safe (identity + product + link + support only) and best-effort. Never fails the run.
+    try {
+      const uid = parsed.data.user_id;
+      const runId = result.run.runId;
+      const { data: notifs } = await db.from("notifications").select("metadata").eq("user_id", uid).eq("type", "search_completed").limit(100);
+      const alreadyNotified = (notifs ?? []).some((n: { metadata?: unknown }) => (n.metadata as { run_id?: string } | null)?.run_id === runId);
+      if (!alreadyNotified) {
+        const { createNotification } = await import("@/lib/notifications/create-notification");
+        // Claim the marker FIRST so a retry cannot re-send even if the email step below fails.
+        await createNotification(db, { userId: uid, type: "search_completed", title: "Your LeadLens report is ready", message: "Your intelligence report has finished and is ready to review in your workspace.", metadata: { run_id: runId, job_id: runId } }).catch(() => {});
+        const { data: prof } = await db.from("profiles").select("email").eq("id", uid).maybeSingle();
+        const email = typeof prof?.email === "string" ? prof.email : null;
+        if (email) {
+          const { sendReportReadyEmail } = await import("@/lib/email/send-report-email");
+          const productLabel = ({ sample: "Preview", starter: "Brief", standard: "Portfolio", pro: "Premium" } as Record<string, string>)[result.run.plan];
+          await sendReportReadyEmail({ to: email, jobId: runId, productLabel }).catch(() => {});
+        }
+      }
+    } catch { /* report-ready notification is best-effort; a completed, durable run is the source of truth */ }
   }
   return NextResponse.json({ run_id: result.run.runId, status: result.run.status, stage: result.run.stage });
 }
