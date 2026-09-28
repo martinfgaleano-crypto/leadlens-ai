@@ -42,6 +42,24 @@ const { renderPdfBuffer } = await import("@/lib/delivery-system/renderers/pdf");
 
 const db = createServerClient();
 if (!db) { console.error("BLOCKED: server Supabase unavailable"); process.exit(3); }
+
+// Standalone cleanup for KEEP-mode rows (§12): delete the named disposable users' rows + auth, then exit.
+if (process.env.LEADLENS_ACCEPTANCE_CLEANUP_USERS) {
+  const ids = process.env.LEADLENS_ACCEPTANCE_CLEANUP_USERS.split(",").map((s) => s.trim()).filter(Boolean);
+  for (const id of ids) {
+    await db.from("account_intelligence_charges").delete().eq("user_id", id);
+    await db.from("credit_transactions").delete().eq("user_id", id);
+    await db.from("customer_credits").delete().eq("user_id", id);
+    await db.from("account_review_snapshots").delete().eq("owner_user_id", id);
+    await db.from("snapshot_reports").delete().eq("user_id", id);
+    await db.from("confirmed_commercial_contexts").delete().eq("user_id", id);
+    await db.from("lead_searches").delete().eq("user_id", id);
+    await db.from("profiles").delete().eq("id", id);
+    await db.auth.admin.deleteUser(id).catch(() => undefined);
+  }
+  console.log(`cleanup :: removed ${ids.length} disposable KEEP users`);
+  process.exit(0);
+}
 const stamp = Date.now();
 const emailA = `ll-v24-a-${stamp}@example.com`;
 const emailB = `ll-v24-b-${stamp}@example.com`;
@@ -205,18 +223,27 @@ try {
   console.log(`cost :: $${totalCost.toFixed(4)} across providers :: ${JSON.stringify(usageDelta)}`);
   console.log(`decisions :: ${JSON.stringify(decisionDist)} :: off_target_geo=${geoOffTarget.length} dupes=${dupes}`);
 } finally {
-  for (const id of [userA, userB].filter((x): x is string => Boolean(x))) {
-    await db.from("account_intelligence_charges").delete().eq("user_id", id);
-    await db.from("credit_transactions").delete().eq("user_id", id);
-    await db.from("customer_credits").delete().eq("user_id", id);
-    await db.from("account_review_snapshots").delete().eq("owner_user_id", id);
-    await db.from("snapshot_reports").delete().eq("user_id", id);
-    await db.from("confirmed_commercial_contexts").delete().eq("user_id", id);
-    await db.from("lead_searches").delete().eq("user_id", id);
-    await db.from("profiles").delete().eq("id", id);
-    await db.auth.admin.deleteUser(id).catch(() => undefined);
+  // KEEP mode (§12): retain the disposable rows ONLY long enough for digital/Admin QA, then clean with
+  // the printed command. Disposable accounts only; never a default; no public route. Prints the ids so
+  // the operator can query/QA and then delete.
+  if (process.env.LEADLENS_ACCEPTANCE_KEEP) {
+    console.log(`KEEP :: retaining disposable rows for QA :: runId=${runId} userA=${userA} tokenA_present=${Boolean(tokenA)}`);
+    console.log(`KEEP :: cleanup with LEADLENS_ACCEPTANCE_CLEANUP_USERS="${[userA, userB].filter(Boolean).join(",")}" npx tsx --tsconfig tsconfig.json scripts/accept-one-time-deliverable-v2_4.mts`);
+    if (tokenA) writeFileSync(`${OUT}/keep-${PLAN_LABEL}-${stamp}.json`, JSON.stringify({ runId, userA, userB, tokenA, emailA }, null, 2));
+  } else {
+    for (const id of [userA, userB].filter((x): x is string => Boolean(x))) {
+      await db.from("account_intelligence_charges").delete().eq("user_id", id);
+      await db.from("credit_transactions").delete().eq("user_id", id);
+      await db.from("customer_credits").delete().eq("user_id", id);
+      await db.from("account_review_snapshots").delete().eq("owner_user_id", id);
+      await db.from("snapshot_reports").delete().eq("user_id", id);
+      await db.from("confirmed_commercial_contexts").delete().eq("user_id", id);
+      await db.from("lead_searches").delete().eq("user_id", id);
+      await db.from("profiles").delete().eq("id", id);
+      await db.auth.admin.deleteUser(id).catch(() => undefined);
+    }
+    console.log("cleanup :: disposable tenant rows and auth users deleted");
   }
-  console.log("cleanup :: disposable tenant rows and auth users deleted");
 }
 
 const failures = checks.filter((c) => !c.ok);
