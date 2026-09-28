@@ -378,6 +378,20 @@ async function runIntelligenceExecution(
     // is lost and none is double-charged. NEVER throws (metering must not break a completed run).
     if (deps.onRunMaterialized) {
       const accountIdByLead = new Map(report.canonical_cases.map((c) => [c.lead_id, c.account_id] as const));
+      // Account-level delivery uniqueness (BILLING INVARIANT: one delivered billable account = exactly
+      // one charge). Two candidate leads can resolve to the SAME canonical account_id (a duplicate
+      // company in the universe); charging dedupes by account_id, so delivery MUST dedupe too — otherwise
+      // the run delivers more accounts than it charges (the observed delivered=9 / charges=8 defect). Keep
+      // the first occurrence in canonical order; a case with no resolvable account_id can never be charged,
+      // so it is fail-closed excluded from a metered delivery. Runs BEFORE charging so chargeableAccountIds
+      // is already unique and delivered==charged holds by construction.
+      const seenAccount = new Set<string>();
+      for (const c of report.canonical_cases) {
+        if (!portfolioIds.has(c.lead_id)) continue;
+        const acctId = accountIdByLead.get(c.lead_id);
+        if (!acctId || seenAccount.has(acctId)) { portfolioIds.delete(c.lead_id); strongIds.delete(c.lead_id); continue; }
+        seenAccount.add(acctId);
+      }
       const chargeableAccountIds = Array.from(portfolioIds).map((id) => accountIdByLead.get(id)).filter((x): x is string => Boolean(x));
       // NO fail-open: a throw here (RecoverableChargeError on ledger unavailability, or any other
       // error) propagates to the finalize catch — the run is never completed with an unauthorized
@@ -388,7 +402,7 @@ async function runIntelligenceExecution(
         const authAccounts = new Set(authorized);
         for (const id of Array.from(portfolioIds)) {
           const accountId = accountIdByLead.get(id);
-          if (accountId && !authAccounts.has(accountId)) { portfolioIds.delete(id); strongIds.delete(id); }
+          if (!accountId || !authAccounts.has(accountId)) { portfolioIds.delete(id); strongIds.delete(id); }
         }
       }
     }

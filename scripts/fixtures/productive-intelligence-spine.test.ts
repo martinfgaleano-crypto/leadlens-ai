@@ -197,6 +197,33 @@ const ledgerRec = await ledgerStore.load(intelligenceRunId(ledgerInput), "owner-
 // The recovery cron reclaims runs in "processing" — so a ledger-unavailable run MUST be left there.
 t("ledger unavailable → run left in 'processing' (recovery cron reclaims it)", ledgerRec != null && ledgerRec.status === "processing");
 
+// ── Billing invariant regression (§8/§9): a DUPLICATE company (two candidate leads resolving to the
+// SAME canonical account_id, as account_id = company name) must be DELIVERED once and CHARGED once.
+// The production charger dedupes by account_id, so before the spine-level dedup the run delivered more
+// accounts than it charged (the real delivered=9 / charges=8 defect). Assert delivered==charged.
+const dupDiscovery: DiscoveryRunner = async () => ({
+  orgs: [
+    { name: "Duplicate Co", domain: "dup-a.example", country: "United States", organizationType: "Manufacturer", industry: "Manufacturing", origin: "dynamic_enumeration", provider: "test_provider", route: "industry_category", sourceUrl: "https://directory.example/dup-a", confidence: "verified" },
+    { name: "Duplicate Co", domain: "dup-b.example", country: "United States", organizationType: "Manufacturer", industry: "Manufacturing", origin: "dynamic_enumeration", provider: "test_provider", route: "industry_category", sourceUrl: "https://directory.example/dup-b", confidence: "verified" },
+    org(3),
+  ],
+  providersAvailable: ["test_provider"], providersFailed: [], operatingMode: "full_discovery",
+});
+let dupCharged: string[] = [];
+const dup = await startIntelligenceRun(
+  { ...base, deliveryLimit: 6, idempotencyKey: "dup-account" },
+  { contextStore, leadHunterStore: new InMemoryLeadHunterRunStore(), runStore: new InMemoryIntelligenceRunStore(), discoveryRunner: dupDiscovery, pipeline, now: clock,
+    // Mirror the production charger: it dedupes by account_id (one charge per unique account).
+    onRunMaterialized: (_r, ids) => { dupCharged = Array.from(new Set(ids)); return dupCharged; } });
+const dupCases = dup.ok ? (dup.run.report?.canonical_cases ?? []) : [];
+const dupAccountIds = new Set(dupCases.map((c) => c.account_id));
+if (process.env.DUP_DEBUG) console.log(`DUP_DEBUG considered=${dup.ok ? dup.run.report?.report_intelligence?.companies_considered : "?"} cases=${dupCases.length} accountIds=${JSON.stringify(dupCases.map((c)=>c.account_id))}`);
+// The duplicate must genuinely reach research (both candidates considered) so the spine-level dedup —
+// not an upstream universe dedup — is what collapses delivery to one account (proves the fix has teeth).
+t("billing invariant: duplicate candidates both reached research (3 considered)", dup.ok && dup.run.report?.report_intelligence?.companies_considered === 3);
+t("billing invariant: no duplicate account_id delivered (delivered accounts are unique)", dupAccountIds.size === dupCases.length);
+t("billing invariant: delivered accounts == charged accounts (delivered never exceeds charged)", dup.ok && dupCases.length === dupCharged.length);
+
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed) process.exit(1);
 };
