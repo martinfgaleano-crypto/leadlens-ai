@@ -96,9 +96,11 @@ t("csv escaping: a comma-bearing field is quoted", renderCsv(toPresentationModel
 // ── PDF renderer ──
 const pdf = renderPdfHtml(pdfPM);
 t("pdf is self-contained HTML, no scripts", pdf.startsWith("<!doctype html>") && !pdf.includes("<script"));
-t("pdf renders header + accounts + methodology (policy honored)", pdf.includes("Where to focus now") && pdf.includes("Acme 1") && pdf.includes("Methodology"));
+t("pdf renders header + accounts + methodology (policy honored)", pdf.includes(pdfPM.document.headline ?? "\u0000") && pdf.includes("Acme 1") && pdf.includes("Methodology"));
 t("pdf for CSV-only content is impossible — pdf keeps narrative", pdf.includes("Commercial context") && pdf.includes("Counter-signals"));
-t("pdf escapes HTML in content", renderPdfHtml(toPresentationModel(fromDeliverableViewModel({ ...vm, headline: "<b>x</b>" }), "brief", "pdf")).includes("&lt;b&gt;x&lt;/b&gt;"));
+// The headline is now server-COMPUTED (no longer user-passthrough), so XSS escaping is exercised via a
+// field that IS passthrough (summary) — esc() must still neutralize embedded HTML in rendered content.
+t("pdf escapes HTML in content", renderPdfHtml(toPresentationModel(fromDeliverableViewModel({ ...vm, summary: "<b>x</b>" }), "brief", "pdf")).includes("&lt;b&gt;x&lt;/b&gt;"));
 
 // ── Web renderer ──
 const web = toWebPresentation(webPM);
