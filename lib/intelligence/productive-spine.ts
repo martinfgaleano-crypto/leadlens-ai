@@ -168,6 +168,11 @@ async function runIntelligenceExecution(
   const now = (deps.now ?? (() => new Date()))();
   let run: IntelligenceRunRecord = existing;
   const runStartedMs = Date.now();
+  // CHARGE→REPORT RESILIENCE (§9): once per-account charging has committed, a paid customer must end
+  // with a durable report OR a resumable run — never charged-with-no-report-and-no-recovery. This flag
+  // makes the catch below leave a post-charge failure in the recoverable "processing" state (so the
+  // recovery cron reclaims it and the idempotent charge/persist completes), instead of "failed".
+  let materializedCharged = false;
   const contextRefSafe = typeof contextRef === "string" ? contextRef : ((contextRef as { contextId?: string }).contextId ?? "context");
 
   if (existing.status === "failed") run = { ...run, attempt: run.attempt + 1 };
@@ -398,6 +403,9 @@ async function runIntelligenceExecution(
       // account delivered. Only an explicit authorized array narrows delivery; genuinely-exhausted
       // accounts (e.g. a concurrent run spent the last credit) are simply omitted and dropped.
       const authorized = await deps.onRunMaterialized(runId, chargeableAccountIds);
+      // Charging has committed (the hook writes the per-account charges). From here on, a failure must
+      // NOT terminally fail the run — the customer has paid and we owe delivery or a resumable retry.
+      materializedCharged = true;
       if (Array.isArray(authorized)) {
         const authAccounts = new Set(authorized);
         for (const id of Array.from(portfolioIds)) {
@@ -476,6 +484,16 @@ async function runIntelligenceExecution(
     // reclaims it and retries the idempotent charge when the ledger is healthy. Nothing was
     // delivered without confirmed payment; an already-authorized replay reuses its charge.
     if (error instanceof RecoverableChargeError) return { ok: false, reason: "credit_ledger_unavailable", runId };
+    // CHARGE→REPORT RESILIENCE (§9): a failure AFTER charging must not mark the run "failed" (recovery
+    // only reclaims "processing"). Leave the last durable "processing" state so the recovery cron
+    // reclaims it and completes delivery; the charge is idempotent per (user, runId, account), so the
+    // retry re-charges as a no-op and delivers. Never: credit consumed + no report + no resumable state.
+    if (materializedCharged) {
+      if (deps.onAccountTrace) {
+        try { deps.onAccountTrace(buildRunFailureTrace({ runId, contextRefSafe, failure_class: "case_synthesis", provenance: deps.traceProvenance ?? "controlled" })); } catch { /* telemetry never breaks handling */ }
+      }
+      return { ok: false, reason: "post_charge_recoverable", runId };
+    }
     const code = safeFailureCode(error);
     // A run that failed before/without account research still finalizes ONE bounded
     // trace so no diagnostics are lost (§22). Best-effort; never rethrows.

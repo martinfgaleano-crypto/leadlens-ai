@@ -224,6 +224,34 @@ t("billing invariant: duplicate candidates both reached research (3 considered)"
 t("billing invariant: no duplicate account_id delivered (delivered accounts are unique)", dupAccountIds.size === dupCases.length);
 t("billing invariant: delivered accounts == charged accounts (delivered never exceeds charged)", dup.ok && dupCases.length === dupCharged.length);
 
+// ── Charge→report resilience (Phase B, §9): a persistence failure AFTER charging must leave the run
+// RECOVERABLE ("processing"), never "failed", so recovery completes delivery with exactly-once charge.
+// Never: credit consumed + no report + no resumable state. ──
+{
+  const base2 = new InMemoryIntelligenceRunStore();
+  let failCompletedOnce = true;
+  const flaky = {
+    load: (id: string, uid: string) => base2.load(id, uid),
+    create: (r: unknown) => base2.create(r as never),
+    claim: (id: string, uid: string, allowed: unknown, force?: boolean) => base2.claim(id, uid, allowed as never, force),
+    save: async (r: { status?: string }) => {
+      if (r.status === "completed" && failCompletedOnce) { failCompletedOnce = false; throw new Error("simulated persist failure after charge"); }
+      return base2.save(r as never);
+    },
+  } as unknown as typeof base2;
+  const chargedIds = new Set<string>();                     // models idempotent per-(run,account) charging
+  const chargeHook = (_r: string, ids: string[]) => { ids.forEach((id) => chargedIds.add(id)); return ids; };
+  const deps2 = { contextStore, leadHunterStore: new InMemoryLeadHunterRunStore(), runStore: flaky, discoveryRunner: discovery, pipeline, now: clock, onRunMaterialized: chargeHook };
+  const inp2 = { ...base, idempotencyKey: "post-charge-resilience" };
+  const attempt1 = await startIntelligenceRun(inp2, deps2);
+  const durable1 = await flaky.load(intelligenceRunId(inp2), "owner-a");
+  t("post-charge persist failure → not ok, reason post_charge_recoverable", !attempt1.ok && (attempt1 as { reason?: string }).reason === "post_charge_recoverable");
+  t("post-charge persist failure → run left RECOVERABLE (processing), never failed", durable1?.status === "processing");
+  const attempt2 = await startIntelligenceRun(inp2, deps2);   // recovery reclaims + completes
+  t("recovery re-run → completes durably", attempt2.ok && attempt2.run.status === "completed");
+  t("charge is exactly-once across the failed+recovered attempts", chargedIds.size === (attempt2.ok ? (attempt2.run.report?.canonical_cases?.length ?? -1) : -2));
+}
+
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed) process.exit(1);
 };
