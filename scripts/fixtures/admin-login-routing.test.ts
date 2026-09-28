@@ -124,19 +124,21 @@ t("session + bridge unavailable → /dashboard (not trapped)", rFail.action === 
     // The single most important structural fact: the auth page never calls
     // getSession/onAuthStateChange on mount — nothing async precedes the form.
     t(`${name}: NO getSession/onAuthStateChange (pure static form)`, !/\.auth\.getSession\s*\(/.test(code) && !/onAuthStateChange/.test(code));
-    // /signup is OTP-first (passwordless): email field is rendered unconditionally, no password.
-    // /login and /admin/login remain password-based for existing users.
-    const requiresPassword = name !== "/signup";
+    // /signup AND /login are OTP-first (passwordless): email rendered unconditionally, no password.
+    // Only /admin/login remains password-based (separate admin path).
+    const requiresPassword = name === "/admin/login";
     t(`${name}: form fields rendered unconditionally`, /onSubmit=\{handleSubmit\}/.test(code) && /type="email"/.test(code) && (!requiresPassword || /type="password"/.test(code)));
     t(`${name}: NO Suspense loading-only fallback`, !/<Suspense/.test(code) && !/fallback=/.test(code));
-    const expectedMarker = name === "/signup" ? "signup-otp-v1" : "auth-nonblocking-v6";
+    const expectedMarker = name === "/signup" ? "signup-otp-v1" : name === "/login" ? "auth-otp-v1" : "auth-nonblocking-v6";
     t(`${name}: current build marker`, new RegExp(`LOGIN_BUILD\\s*=\\s*["']${expectedMarker}["']`).test(code) && /data-login-build=\{LOGIN_BUILD\}/.test(code));
     t(`${name}: NOT the superseded v2/v3 markers`, !/form-first-v2|form-always-visible-v3/.test(code));
   }
   t("login: supabase init failure keeps form (authUnavailable inline note)", /authUnavailable/.test(loginSrc) && /Authentication is temporarily unavailable/.test(loginSrc));
-  t("login: explicit sign-in still routes via bridge", /signInWithPassword/.test(loginSrc) && /establishAdminSession/.test(loginSrc) && /decidePostLoginRoute/.test(loginSrc));
+  // /login is now passwordless OTP: it requests a code and hands off to /verify (the single post-auth
+  // router), never password sign-in or an in-page admin bridge. Admin routing lives on /admin/login.
+  t("login: is passwordless OTP handing off to /verify (no password, no in-page bridge)", /signInWithOtp/.test(loginSrc) && /\/verify\?email=/.test(loginSrc) && !/signInWithPassword/.test(loginSrc) && !/establishAdminSession/.test(loginSrc));
   t("admin login: explicit sign-in uses the same bounded bridge", /establishAdminSession/.test(adminLoginSrc) && /resolveLoginTarget/.test(adminLoginSrc));
-  t("login: successful routing is a hard navigation", /window\.location\.replace/.test(loginSrc));
+  t("login: hands off to /verify via the router", /router\.push\(`\/verify/.test(loginSrc));
   t("admin login: successful routing is a hard navigation", /window\.location\.replace/.test(adminLoginSrc));
 
   console.log(`\n${p} passed, ${f} failed`); if (f) process.exit(1);
