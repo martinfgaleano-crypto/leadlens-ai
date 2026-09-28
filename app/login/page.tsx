@@ -1,33 +1,32 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getSupabaseClient } from "@/lib/supabase/client";
-import { decidePostLoginRoute, establishAdminSession } from "@/lib/admin/admin-bootstrap";
-import { commercialFlowQuery, parseCommercialFlowState, persistCommercialIntent, type CommercialFlowState } from "@/lib/commercial/customer-flow";
+import { commercialFlowQuery, parseCommercialFlowState, type CommercialFlowState } from "@/lib/commercial/customer-flow";
 
 // Structural fail-safe: the login page is a PURE STATIC FORM. It performs NO
 // session discovery on mount — nothing async runs before or around the render,
 // so no getSession/refresh-token/bridge state can ever block, cover, disable or
-// gate the form. Redirects happen ONLY after an explicit successful sign-in.
-// A bumpable build marker proves which code production is serving.
-const LOGIN_BUILD = "auth-nonblocking-v6";
+// gate the form. It requests a one-time code and hands off to /verify (the single
+// post-auth router). A bumpable build marker proves which code production is serving.
+// CANONICAL: passwordless email OTP — the same model as /signup. Customers who signed
+// up with OTP have NO password, so returning login must not require one. Admins use the
+// separate /admin/login (password) path, which this change does not touch.
+const LOGIN_BUILD = "auth-otp-v1";
 
 function friendlyAuthError(msg: string): string {
   const m = msg.toLowerCase();
-  if (m.includes("invalid login") || m.includes("invalid credentials") || m.includes("wrong password"))
-    return "Incorrect email or password. Please try again.";
-  if (m.includes("email not confirmed"))
-    return "Please verify your email before signing in. Check your inbox.";
   if (m.includes("too many requests") || m.includes("rate limit"))
     return "Too many attempts. Please wait a moment and try again.";
-  if (m.includes("user not found"))
-    return "No account found with that email. Would you like to create one?";
-  return msg;
+  if (m.includes("signups not allowed") || m.includes("disabled"))
+    return "Sign-in is temporarily unavailable. Please try again shortly.";
+  return "We couldn't send your sign-in code. Please check the address and try again.";
 }
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail]       = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError]       = useState("");
   const [loading, setLoading]   = useState(false);
   const [authUnavailable, setAuthUnavailable] = useState(false);
@@ -45,7 +44,8 @@ export default function LoginPage() {
     setVerifyFailed(params.get("error") === "verification-failed");
   }, []);
 
-  // Redirect happens ONLY on an explicit successful sign-in.
+  // Passwordless: request a one-time code, then hand off to /verify (which verifies the code,
+  // establishes the session, persists commercial intent and routes to the right destination).
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const supabase = getSupabaseClient();
@@ -53,26 +53,18 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
     try {
-      const { data, error: authError } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-      if (authError || !data.session) { setLoading(false); setError(friendlyAuthError(authError?.message ?? "Sign-in failed.")); return; }
-      const bridge = await establishAdminSession(data.session.access_token);
-      if (bridge.status === 401) {
-        setLoading(false);
-        setError("Your session could not be verified. Please sign in again.");
-        return;
-      }
-      const intentSaved = await persistCommercialIntent(data.session.access_token, flow);
-      if (!intentSaved) {
-        setLoading(false);
-        setError("Your account is ready, but we could not save your selected plan. Please try again.");
-        return;
-      }
-      void fetch("/api/events", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ event: "auth_completed", product_code: flow?.selection.kind === "one_time" ? flow.selection.productCode : undefined, meta: { locale: flow?.locale ?? "en" } }) });
-      // Hard navigation deliberately bypasses stale App Router/RSC state from
-      // older deployments. The destination is same-origin and server-checked.
-      // Resume an in-progress purchase: carry the full selection into checkout continuation.
-      const customerDest = flow ? `/checkout/continue${commercialFlowQuery(flow)}` : "/dashboard";
-      window.location.replace(decidePostLoginRoute(bridge, customerDest));
+      // shouldCreateUser:true mirrors /signup — no user-enumeration and no dead-end for a mistyped
+      // "returning" email; the emailRedirectTo magic link is only a compatibility fallback.
+      const origin = window.location.origin;
+      const { error: authError } = await supabase.auth.signInWithOtp({
+        email: email.trim(),
+        options: { shouldCreateUser: true, emailRedirectTo: `${origin}/auth/continue${commercialFlowQuery(flow)}` },
+      });
+      setLoading(false);
+      if (authError) { setError(friendlyAuthError(authError.message)); return; }
+      void fetch("/api/events", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ event: "verification_sent", meta: { surface: "login", locale: flow?.locale ?? "en" } }) });
+      const q = commercialFlowQuery(flow).replace("?", "&");
+      router.push(`/verify?email=${encodeURIComponent(email.trim())}${q}`);
     } catch {
       setLoading(false);
       setError("Network error. Please try again.");
@@ -87,7 +79,7 @@ export default function LoginPage() {
           <div style={S.logoBox}>L</div>
           <div style={S.eyebrow}>Account Opportunity Intelligence</div>
           <h1 style={S.h1}>Sign in to your LeadLens workspace</h1>
-          <p style={S.sub}>Know which B2B accounts to work now — and why.</p>
+          <p style={S.sub}>Enter your email and we&apos;ll send you a one-time sign-in code.</p>
         </div>
 
         {authUnavailable && (
@@ -128,29 +120,11 @@ export default function LoginPage() {
             />
           </label>
 
-          <label style={S.label}>
-            <span style={S.labelText}>Password</span>
-            <input
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              placeholder="Your password"
-              required
-              autoComplete="current-password"
-              style={S.input}
-              onFocus={e => { e.target.style.borderColor = "#0ea5e9"; e.target.style.boxShadow = "0 0 0 3px rgba(14,165,233,0.12)"; }}
-              onBlur={e  => { e.target.style.borderColor = "#e2e8f0"; e.target.style.boxShadow = "none"; }}
-            />
-          </label>
-
           {error && <div style={S.errorBox}>{error}</div>}
 
           <button type="submit" disabled={loading} style={loading ? S.btnDisabled : S.btn}>
-            {loading ? "Signing in…" : "Sign in"}
+            {loading ? "Sending code…" : "Email me a sign-in code"}
           </button>
-          <div style={{ textAlign: "right", marginTop: "0.75rem" }}>
-            <Link href={`/forgot-password${commercialFlowQuery(flow)}`} style={S.link}>Forgot your password?</Link>
-          </div>
         </form>
 
         <p style={S.footer}>
