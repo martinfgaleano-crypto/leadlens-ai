@@ -74,23 +74,38 @@ export interface OneTimeOrderRecord {
 }
 
 export interface OneTimeFulfillmentDeps {
-  /** Existing order with this external id, or null. UNIQUE(external_order_id) closes the race. */
-  getOrderByExternalId: (externalId: string) => Promise<{ id: string } | null>;
+  /** Existing order with this external id, or null. UNIQUE(external_order_id) closes the create race.
+   *  `intake_status` is used only for the legacy fast-path dedup when `creditsAlreadyGranted` is absent. */
+  getOrderByExternalId: (externalId: string) => Promise<{ id: string; intake_status?: string } | null>;
   createOrder: (record: OneTimeOrderRecord) => Promise<{ id: string } | null>;
   /** Grants `amount` current-product credits to `userId` and records the transaction. */
   addCredits: (userId: string, amount: number, description: string) => Promise<{ credit_balance: number }>;
+  /** FINANCIAL IDEMPOTENCY SOURCE OF TRUTH: true iff credits for THIS order were already granted.
+   *  Lets a provider retry COMPLETE a grant that failed after the order row was persisted (no permanent
+   *  order↔credits strand), while never re-granting one that already succeeded. When absent, the owner
+   *  falls back to the historical order-existence dedup (safe against re-grant, but cannot self-heal a
+   *  grant that failed post-persist — so the webhook always supplies this). */
+  creditsAlreadyGranted?: (userId: string, lsOrderId: string) => Promise<boolean>;
+  /** Best-effort durable completion marker (audit + fast-path dedup). Never blocks the outcome. */
+  markOrderFulfilled?: (orderId: string) => Promise<void>;
 }
 
 export interface FulfillmentOutcome {
-  status: "granted" | "duplicate" | "rejected" | "persist_failed";
+  status: "granted" | "duplicate" | "rejected" | "persist_failed" | "grant_failed";
   credits?: number;
   userId?: string;
   productCode?: string;
   reason?: FulfillmentReason;
 }
 
-/** Thin owner: idempotent, single-grant fulfillment of a canonical one-time order. There is no
- *  lead_searches / pipeline / outreach / Stripe path reachable from here — by construction. */
+/** Thin owner: replay-safe, EXACTLY-ONCE fulfillment of a canonical one-time order.
+ *
+ *  Idempotency is keyed on whether credits were actually granted for this order (the financial truth),
+ *  NOT on order-row existence. This closes the order→credit strand: if `createOrder` succeeds but
+ *  `addCredits` fails, the provider's retry re-enters here, sees credits were NOT granted, and COMPLETES
+ *  the grant — instead of the old behavior (order exists → "duplicate" → credits never granted). A grant
+ *  that already succeeded is never repeated. There is no lead_searches / pipeline / outreach / Stripe
+ *  path reachable from here — by construction. */
 export async function fulfillCanonicalOrder(
   deps: OneTimeFulfillmentDeps,
   args: { plan: OneTimeFulfillmentPlan; lsOrderId: string; record: OneTimeOrderRecord },
@@ -98,15 +113,40 @@ export async function fulfillCanonicalOrder(
   const { plan, lsOrderId, record } = args;
   if (!plan.ok) return { status: "rejected", reason: plan.reason };
 
-  // Idempotency: an order already stored for this provider id → already fulfilled, no re-grant.
-  if (lsOrderId) {
-    const existing = await deps.getOrderByExternalId(lsOrderId);
-    if (existing) return { status: "duplicate", userId: plan.userId, productCode: plan.productCode };
+  const canVerifyGrant = Boolean(lsOrderId) && Boolean(deps.creditsAlreadyGranted);
+
+  // Financial idempotency FIRST: if credits for this order already landed, we are done — never re-grant.
+  if (canVerifyGrant && (await deps.creditsAlreadyGranted!(plan.userId!, lsOrderId))) {
+    return { status: "duplicate", userId: plan.userId, productCode: plan.productCode };
   }
 
-  const order = await deps.createOrder(record);
-  if (!order) return { status: "persist_failed" };
+  // Ensure a durable order record exists (audit). Reuse an existing row; create otherwise.
+  let orderId: string | null = null;
+  if (lsOrderId) {
+    const existing = await deps.getOrderByExternalId(lsOrderId);
+    if (existing) {
+      // Legacy fast-path (no grant verifier available): preserve the historical order-existence dedup.
+      if (!canVerifyGrant) return { status: "duplicate", userId: plan.userId, productCode: plan.productCode };
+      // New path: the order persisted but credits are NOT yet confirmed granted → complete the grant.
+      orderId = existing.id;
+    }
+  }
+  if (!orderId) {
+    const order = await deps.createOrder(record);
+    if (!order) return { status: "persist_failed" };
+    orderId = order.id;
+  }
 
-  await deps.addCredits(plan.userId!, plan.credits!, `one-time ${plan.productCode} — order ${lsOrderId}`);
+  // Grant exactly the catalog credits. A failure here leaves the order row persisted WITHOUT a grant;
+  // we report `grant_failed` (retryable) so the provider retries and the block above completes it.
+  try {
+    await deps.addCredits(plan.userId!, plan.credits!, `one-time ${plan.productCode} — order ${lsOrderId}`);
+  } catch {
+    return { status: "grant_failed", userId: plan.userId, productCode: plan.productCode };
+  }
+
+  // Best-effort durable completion marker (never fatal — the grant record is the real source of truth).
+  if (deps.markOrderFulfilled && orderId) { try { await deps.markOrderFulfilled(orderId); } catch { /* non-fatal */ } }
+
   return { status: "granted", credits: plan.credits, userId: plan.userId, productCode: plan.productCode };
 }

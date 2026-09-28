@@ -7,6 +7,7 @@ import {
   createSaasJob,
   addJobEvent,
   getOrderByExternalId,
+  updateOrderStatus,
 } from "@/lib/storage/saas-store";
 import { addCredits } from "@/lib/credits/add-credits";
 import { createNotification } from "@/lib/notifications/create-notification";
@@ -184,6 +185,19 @@ export async function POST(req: NextRequest) {
           delivery_status: "pending",
         }) as Promise<{ id: string } | null>,
         addCredits: (userId, amount, description) => addCredits(client, userId, amount, description, "grant"),
+        // Financial idempotency source of truth: a prior grant for THIS order exists in the ledger.
+        // Lets a retry complete a grant that failed after order persistence, without re-granting.
+        creditsAlreadyGranted: async (userId, orderId) => {
+          const { data } = await client
+            .from("credit_transactions")
+            .select("id")
+            .eq("user_id", userId)
+            .eq("type", "grant")
+            .ilike("description", `%order ${orderId}%`)
+            .limit(1);
+          return Array.isArray(data) && data.length > 0;
+        },
+        markOrderFulfilled: async (orderId) => { await updateOrderStatus(orderId, { intake_status: "complete" }); },
       },
       {
         plan,
@@ -208,6 +222,12 @@ export async function POST(req: NextRequest) {
     }
     if (outcome.status === "persist_failed") {
       return NextResponse.json({ error: "Failed to persist order" }, { status: 500 });
+    }
+    if (outcome.status === "grant_failed") {
+      // Order persisted but the credit grant failed. Return 500 so Lemon RETRIES; the retry re-enters
+      // fulfillCanonicalOrder, sees credits were not granted, and completes the grant (no strand).
+      console.error(`[lemon-webhook] canonical one-time grant_failed (ls_order_id=${lsOrderId}) — provider will retry`);
+      return NextResponse.json({ error: "Credit grant failed — retry expected" }, { status: 500 });
     }
     if (outcome.status === "granted") {
       await createNotification(client, {

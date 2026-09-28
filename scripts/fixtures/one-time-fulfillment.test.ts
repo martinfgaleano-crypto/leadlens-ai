@@ -56,21 +56,30 @@ t("client cannot escalate credits via product_code", mismatch.credits === undefi
 // ── 3. Idempotency + event ordering (Phase E) — in-memory deps ──
 async function main() {
 function makeDeps() {
-  const orders = new Map<string, { id: string }>();
+  const orders = new Map<string, { id: string; intake_status?: string }>();
   const grants: Array<{ userId: string; amount: number }> = [];
+  const grantedOrders = new Set<string>();   // lsOrderIds with a recorded grant (financial truth)
   let orderSeq = 0;
+  const state = { failNextGrant: false };
   const deps: OneTimeFulfillmentDeps = {
     getOrderByExternalId: async (id) => orders.get(id) ?? null,
     createOrder: async (rec) => {
       const key = rec.external_order_id ?? "";
       if (key && orders.has(key)) return null; // UNIQUE(external_order_id) violation → loser
-      const row = { id: `order-${++orderSeq}` };
+      const row = { id: `order-${++orderSeq}`, intake_status: "pending" };
       if (key) orders.set(key, row);
       return row;
     },
-    addCredits: async (userId, amount) => { grants.push({ userId, amount }); return { credit_balance: grants.filter(g => g.userId === userId).reduce((s, g) => s + g.amount, 0) }; },
+    addCredits: async (userId, amount, description) => {
+      if (state.failNextGrant) { state.failNextGrant = false; throw new Error("simulated grant failure"); }
+      grants.push({ userId, amount });
+      const m = /order (\S+)/.exec(description); if (m) grantedOrders.add(m[1]);
+      return { credit_balance: grants.filter(g => g.userId === userId).reduce((s, g) => s + g.amount, 0) };
+    },
+    creditsAlreadyGranted: async (_userId, lsOrderId) => grantedOrders.has(lsOrderId),
+    markOrderFulfilled: async (orderId) => { for (const v of Array.from(orders.values())) if (v.id === orderId) v.intake_status = "complete"; },
   };
-  return { deps, orders, grants };
+  return { deps, orders, grants, state };
 }
 const plan = planOneTimeFulfillment({ custom: { user_id: USER }, variantId: "v_standard_12", env: ENV }); // Intelligence, 12
 const record = { external_order_id: "ls-order-777", provider_event_id: "wh-1", plan: "standard", amount_cents: 5900, currency: "USD", customer_email: "buyer@example.com", raw_payload: {} };
@@ -115,6 +124,27 @@ const record = { external_order_id: "ls-order-777", provider_event_id: "wh-1", p
   await fulfillCanonicalOrder(deps, { plan, lsOrderId: "ls-A", record: { ...record, external_order_id: "ls-A" } });
   await fulfillCanonicalOrder(deps, { plan, lsOrderId: "ls-B", record: { ...record, external_order_id: "ls-B" } });
   t("two distinct orders → two grants", grants.length === 2 && grants.every(g => g.amount === 12));
+}
+// CASE (ORDER→CREDIT ATOMICITY, Phase A): order persists, the FIRST grant fails, the provider retries.
+// The retry must COMPLETE the grant exactly once — never a permanent order↔credits strand, never double.
+{
+  const { deps, grants, state, orders } = makeDeps();
+  state.failNextGrant = true;
+  const first = await fulfillCanonicalOrder(deps, { plan, lsOrderId: "ls-atom", record: { ...record, external_order_id: "ls-atom" } });
+  t("grant failure → grant_failed (retryable), order persisted, NO credits", first.status === "grant_failed" && grants.length === 0 && orders.has("ls-atom"));
+  const retry = await fulfillCanonicalOrder(deps, { plan, lsOrderId: "ls-atom", record: { ...record, external_order_id: "ls-atom" } });
+  t("retry after grant failure → COMPLETES grant (no strand)", retry.status === "granted" && grants.length === 1 && grants[0].amount === 12);
+  const replay1 = await fulfillCanonicalOrder(deps, { plan, lsOrderId: "ls-atom", record: { ...record, external_order_id: "ls-atom" } });
+  const replay2 = await fulfillCanonicalOrder(deps, { plan, lsOrderId: "ls-atom", record: { ...record, external_order_id: "ls-atom" } });
+  t("post-completion replays → duplicate, still exactly one grant", replay1.status === "duplicate" && replay2.status === "duplicate" && grants.length === 1);
+}
+// CASE (grant succeeded but completion-marker failed): retry must NOT double-grant (credits are truth).
+{
+  const { deps, grants } = makeDeps();
+  const noMark: OneTimeFulfillmentDeps = { ...deps, markOrderFulfilled: async () => { throw new Error("mark failed"); } };
+  const a = await fulfillCanonicalOrder(noMark, { plan, lsOrderId: "ls-mark", record: { ...record, external_order_id: "ls-mark" } });
+  const b = await fulfillCanonicalOrder(noMark, { plan, lsOrderId: "ls-mark", record: { ...record, external_order_id: "ls-mark" } });
+  t("grant ok + mark fails → still granted, replay is duplicate, one grant", a.status === "granted" && b.status === "duplicate" && grants.length === 1);
 }
 }
 
