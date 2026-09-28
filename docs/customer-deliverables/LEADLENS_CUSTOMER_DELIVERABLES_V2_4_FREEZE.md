@@ -96,10 +96,46 @@ persistence, delivery, or renderer defect — all of those are proven above and 
 provider spend to date: **$2.19** (well under the $8 target / $12 ceiling); the blocker is the account
 balance, not the budget.
 
-**Smallest next correction:** top up the Anthropic API credit balance, then re-run
-`LEADLENS_ACCEPTANCE_PLAN=pro …/accept-one-time-deliverable-v2_4.mts` (Premium 18) and one clean
-`LEADLENS_ACCEPTANCE_PLAN=standard` render (Portfolio 12) — each ~$1.5–2.0, within budget — to produce the
-clean real 12/12 + 18/18 PDFs and flip the freeze to FREEZE_READY.
+**Smallest next correction:** top up the Anthropic API credit balance, then re-run the render harness.
+
+### Real acceptance — continuation (2026-09-28, Anthropic funded)
+
+Anthropic funding restored. Re-ran the one-time path live (disposable tenants, cleaned up; no Lemon).
+
+**Billing atomicity — DEFECT FOUND + FIXED + LIVE-VALIDATED.** Root cause of the earlier `delivered=9 /
+charges=8`: `account_id` is the company name (`productive-spine` `account_id: c.company`), and the universe
+can contain the same company twice (two "Coca-Cola FEMSA Colombia" candidates, different domains). The
+charger dedupes by account_id and charges once, but the spine filtered delivery by `lead_id`, so both were
+delivered → more billable accounts delivered than charged. Fix (`2e629e4`, smallest responsible seam — the
+metered delivery-authorization block in `productive-spine.ts`): dedupe delivery by canonical account_id
+before charging and fail-closed exclude any case with no resolvable account_id. Regression added to
+`productive-intelligence-spine.test.ts` (39 passed) — a duplicate company that reaches research (3 considered)
+is delivered once and charged once. **Live-validated:** the Premium run's universe contained Coca-Cola FEMSA
+twice (leads 8 & 12), yet **delivered=16, charges=16, balance=2, dupes=0** — pre-fix this would have been
+delivered=17 / charges=16. The billing invariant (one delivered billable account = exactly one charge) now
+holds by construction.
+
+**PORTFOLIO / PREMIUM full count — SUPPLY-limited within a heavy session.** Two live runs: Premium delivered
+**16/18** (19 candidates − 2 DISCARDs − 1 deduped duplicate); a clean Portfolio delivered **9/12** (Vault
+reuse returned 0 that run: `totalFetches:0`). Cause: **cumulative provider/Vault throttling across back-to-back
+live acceptances in one session** — the first fresh run of 2026-09-26 hit Portfolio **12/12**, but later runs
+are supply-starved. Full count is achievable on fresh provider quota; it is **not** reliably reproducible when
+many full-order runs are chained. Per §37 the shortfall was **not** filled by relaxing qualification, broadening
+geography, or counting duplicates. Both real PDFs rendered (Premium 16pp, Portfolio 10pp; 0 empty, no mojibake,
+no synthetic leak) with zero credit on render. All-HOLD outcomes this session (weak current buying-timing
+signals for the sampled Colombia set) mean the Premium stakeholder-function block correctly renders nothing
+(§20/§27 — conditional capability not populated without support). Session provider spend **~$3.5** (< $8).
+
+**Digital/Admin QA:** the digital report and Admin preview consume the **same** `deliverableForViewer →
+DeliveryDocumentV1` the PDF does (the live acceptance asserts "production deliverable resolves for the owner");
+the web renderer + CSS are unchanged this session (prior V2.x passes: 0 overflow 360–1728, mobile 375 PASS).
+A fresh disposable-session browser walkthrough was not performed (the harness captured only the ~1h access
+token, no refresh token, and supply throttling made a fresh richer run impractical); the digital surface was
+smoke-verified (landing renders, report route fail-closed 404 for a non-owner/absent run).
+
+**State:** deliverables SYSTEM (contract, rendering, billing invariant + atomicity) is FREEZE-ready; the
+remaining gate is a clean full-count **12/12 + 18/18** render, which needs fresh provider quota (run the two
+acceptances first-thing, not chained behind other heavy runs).
 
 ## 4. Reopening policy (§54)
 
