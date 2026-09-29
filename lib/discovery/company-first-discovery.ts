@@ -312,7 +312,7 @@ export async function runCompanyFirstDiscovery(
   const spanish = criteria.output_language === "es" || criteria.target_market_region === "latin_america";
   const gl = criteria.target_market_region === "latin_america" ? "co" : "us";
 
-  const { braveProvider, serperProvider, tavilyProvider } = await import("@/lib/sources/access/providers");
+  const { braveProvider, serperProvider, tavilyProvider, firecrawlProvider } = await import("@/lib/sources/access/providers");
   const { extractWithFallback } = await import("@/lib/sources/access/extractors");
   const { resolvePublicationDate } = await import("@/lib/sources/access/date-resolver");
 
@@ -415,7 +415,7 @@ export async function runCompanyFirstDiscovery(
         };
         // Primary → assess yield → fallback. The old Promise.all fan-out charged
         // all three providers for every query (≈262 calls in acceptance).
-        const providers = [["tavily", tavilyProvider], ["brave", braveProvider], ["serper", serperProvider]] as const;
+        const providers = [["brave", braveProvider], ["tavily", tavilyProvider], ["firecrawl", firecrawlProvider], ["serper", serperProvider]] as const;
         const providerResults: typeof results = [];
         for (const [name, provider] of providers) {
           if (metrics.provider_calls >= budget.maxProviderCalls || companyProviderCalls >= budget.maxProviderCallsPerCompany) {

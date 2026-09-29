@@ -21,7 +21,8 @@ export function classifyProviderError(error: string | null | undefined): Extract
   const e = (error ?? "").toLowerCase();
   if (/not enough credits|quota|exhaust|payment required|\b402\b|\b432\b|insufficient (balance|credit)|usage limit/.test(e)) return "exhausted";
   if (/unauthor|forbidden|invalid (api )?key|auth|\b401\b|\b403\b/.test(e)) return "invalid";
-  if (/rate.?limit|too many requests|\b429\b/.test(e)) return "rate_limited";
+  // Tavily uses 433 = "rate limit exceeded" (distinct from 432 = plan limit above).
+  if (/rate.?limit|too many requests|\b429\b|\b433\b/.test(e)) return "rate_limited";
   return "unknown"; // request_failed / transport / timeout
 }
 
@@ -174,7 +175,7 @@ export const PROVIDER_DEFS: ProviderDef[] = [
       if (r.status === 200) return { state: "ok", detail: null, latency_ms: lat };
       if (r.status === 401 || r.status === 403) return { state: "invalid", detail: `HTTP ${r.status}`, latency_ms: lat };
       if (r.status === 432) return { state: "exhausted", detail: "432 — límite del plan Tavily alcanzado", latency_ms: lat };
-      if (r.status === 429) return { state: "rate_limited", detail: "429", latency_ms: lat };
+      if (r.status === 429 || r.status === 433) return { state: "rate_limited", detail: `${r.status} — rate limit Tavily`, latency_ms: lat };
       return { state: "unknown", detail: `HTTP ${r.status}`, latency_ms: lat };
     },
   },
@@ -322,10 +323,13 @@ export async function searchCoverageReadiness(force = false): Promise<{
   healthy_search: string[]; exhausted_search: string[]; sufficient: boolean; detail: string;
 }> {
   const statuses = await probeAll(force);
-  const search = statuses.filter((s) => ["brave", "serper", "tavily"].includes(s.id));
+  // Firecrawl is search-capable (its /v1/search returns real URLs) and is wired as
+  // an additional grounding fallback in discovery, so it counts toward coverage —
+  // this keeps readiness honest when the conventional web-search providers degrade.
+  const search = statuses.filter((s) => ["brave", "serper", "tavily", "firecrawl"].includes(s.id));
   const healthy = search.filter((s) => s.state === "ok").map((s) => s.id);
   const exhausted = search.filter((s) => s.state === "exhausted" || s.state === "rate_limited" || s.state === "invalid").map((s) => s.id);
-  const sufficient = healthy.length >= 2; // matches full_discovery threshold
+  const sufficient = healthy.length >= 2; // ≥2 healthy grounding providers = full_discovery threshold
   return {
     healthy_search: healthy, exhausted_search: exhausted, sufficient,
     detail: sufficient

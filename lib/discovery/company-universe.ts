@@ -345,11 +345,16 @@ export function extractStructuredCompanyEntities(content: string, sourceUrl: str
 
 export async function buildCompanyUniverse(
   icp: ICP, criteria: LeadSearchCriteria, needs: NeedsMap,
-  opts: { maxCompanies?: number; providersOverride?: { braveProvider: SearchProvider; tavilyProvider: SearchProvider; serperProvider: SearchProvider } } = {},
+  opts: { maxCompanies?: number; providersOverride?: { braveProvider: SearchProvider; tavilyProvider: SearchProvider; serperProvider: SearchProvider; firecrawlProvider?: SearchProvider } } = {},
 ): Promise<UniverseResult> {
   // providersOverride is a controlled-test seam only (provider-resilience doubles);
   // production always uses the real configured provider stack.
-  const { braveProvider, serperProvider, tavilyProvider } = opts.providersOverride ?? await import("@/lib/sources/access/providers");
+  const providerModule = opts.providersOverride ?? await import("@/lib/sources/access/providers");
+  const { braveProvider, serperProvider, tavilyProvider } = providerModule;
+  // Firecrawl is search-capable and used as an additional grounding fallback when
+  // the conventional web-search providers degrade together. Only present in the
+  // real module; test overrides may omit it (then it is simply not iterated).
+  const firecrawlProvider = (providerModule as { firecrawlProvider?: SearchProvider }).firecrawlProvider ?? null;
   const spanish = criteria.output_language === "es" || criteria.target_market_region === "latin_america";
   const gl = criteria.target_market_region === "latin_america" ? "co" : "us";
   const routeQueries = enumerationRouteQueries(icp, criteria.target_geography[0] ?? "", needs, spanish);
@@ -362,11 +367,17 @@ export async function buildCompanyUniverse(
   const pages: { title: string | null; snippet: string | null; url: string; route: EnumerationRouteQuery["route"]; query: string }[] = [];
   const routeMetrics = new Map<string, EnumerationRouteMetric>();
   const providerCooldown = new Set<string>();
-  const previousUsage = getUsage();
-  for (const id of ["serper", "tavily", "brave"] as const) {
-    const u = previousUsage[id];
-    if (!u?.last_failure || !u.last_error || Date.now() - new Date(u.last_failure).getTime() >= 86_400_000) continue;
-    if (/exhausted|invalid|rate_limited/.test(classifyProviderError(u.last_error))) providerCooldown.add(id);
+  // Seed cooldowns from the REAL usage ledger (a provider that failed within the
+  // last 24h starts cooled). This consults global process state, so it must be
+  // skipped when the controlled-test override seam is in use — otherwise a real
+  // run's recent rate-limit (e.g. Tavily 433) leaks into hermetic doubles.
+  if (!opts.providersOverride) {
+    const previousUsage = getUsage();
+    for (const id of ["serper", "tavily", "brave", "firecrawl"] as const) {
+      const u = previousUsage[id];
+      if (!u?.last_failure || !u.last_error || Date.now() - new Date(u.last_failure).getTime() >= 86_400_000) continue;
+      if (/exhausted|invalid|rate_limited/.test(classifyProviderError(u.last_error))) providerCooldown.add(id);
+    }
   }
   const providersAvailable = new Set<string>();
   const providersFailed = new Set<string>();
@@ -379,7 +390,13 @@ export async function buildCompanyUniverse(
     const rm = routeMetrics.get(rq.route) ?? { route: rq.route, queries: 0, result_pages: 0, grounded_names: 0, accepted_companies: 0 };
     rm.queries++; routeMetrics.set(rq.route, rm);
     const gathered: Array<{ canonical_url: string; title: string | null; snippet: string | null }> = [];
-    for (const [name, provider] of [["brave", braveProvider], ["tavily", tavilyProvider], ["serper", serperProvider]] as const) {
+    const enumProviders: Array<readonly [string, SearchProvider]> = [
+      ["brave", braveProvider],
+      ...(firecrawlProvider ? [["firecrawl", firecrawlProvider] as const] : []),
+      ["tavily", tavilyProvider],
+      ["serper", serperProvider],
+    ];
+    for (const [name, provider] of enumProviders) {
       if (providerCalls >= maxEnumerationProviderCalls || providerCooldown.has(name)) continue;
       const response = await provider.search({ query: q, language: spanish ? "es" : "en", region: gl, max_results: 8, query_type: "industry_discovery" }).catch(() => ({ ok: false, results: [], error: "request_failed" }));
       if (enumerationTrace.length < 12) enumerationTrace.push({ route: rq.route, query: q, provider: name, result_count: response.results.length, results: response.results.slice(0, 5).map(x => ({ title: x.title, url: x.canonical_url })) });
@@ -554,7 +571,8 @@ export async function buildCompanyUniverse(
     .slice(0, 6);
   const identityProvider = providersAvailable.has("brave") && !providerCooldown.has("brave")
     ? (["brave", braveProvider] as const)
-    : providersAvailable.has("tavily") && !providerCooldown.has("tavily") ? (["tavily", tavilyProvider] as const) : null;
+    : providersAvailable.has("tavily") && !providerCooldown.has("tavily") ? (["tavily", tavilyProvider] as const)
+    : firecrawlProvider && providersAvailable.has("firecrawl") && !providerCooldown.has("firecrawl") ? (["firecrawl", firecrawlProvider] as const) : null;
   const brandOnlyKeys = new Set<string>();
   if (identityProvider) {
     for (const company of unresolved) {

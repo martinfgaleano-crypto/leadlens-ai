@@ -13,6 +13,7 @@ import {
   type SearchResultItem,
 } from "./provider-contract";
 import { recordProviderCall } from "@/lib/ops/usage-ledger";
+import { resilientFetch } from "./resilience";
 
 function emptyResponse(provider: string, query: SearchQuery, error: string, latency = 0): SearchProviderResponse {
   try { recordProviderCall(provider, false, latency, error); } catch { /* ledger best-effort */ }
@@ -51,7 +52,7 @@ export const tavilyProvider: SearchProvider = {
       // the publication date — `published_date` is mapped only from the provider.
       const temporal = query.query_type === "news";
       const days = temporal ? Math.max(1, Math.min(query.freshness_days ?? 365, 730)) : undefined;
-      const res = await fetch("https://api.tavily.com/search", {
+      const res = await resilientFetch("tavily", "https://api.tavily.com/search", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
@@ -59,8 +60,7 @@ export const tavilyProvider: SearchProvider = {
           max_results: Math.min(query.max_results ?? 8, 20), include_answer: false,
           ...(temporal ? { topic: "news", days } : {}),
         }),
-        signal: AbortSignal.timeout(15_000),
-      });
+      }, { timeoutMs: 15_000 });
       const latency = Date.now() - started;
       if (!res.ok) return emptyResponse("tavily", query, `HTTP ${res.status}`, latency);
       const data = await res.json() as { results?: Array<{ url: string; title?: string; content?: string; published_date?: string }> };
@@ -106,10 +106,9 @@ export const braveProvider: SearchProvider = {
       if (query.language) params.set("search_lang", query.language);
       // Brave freshness buckets: pd/pw/pm/py — nearest bucket ≥ requested window.
       if (query.freshness_days) params.set("freshness", query.freshness_days <= 1 ? "pd" : query.freshness_days <= 7 ? "pw" : query.freshness_days <= 31 ? "pm" : "py");
-      const res = await fetch(`https://api.search.brave.com/res/v1/web/search?${params}`, {
+      const res = await resilientFetch("brave", `https://api.search.brave.com/res/v1/web/search?${params}`, {
         headers: { "X-Subscription-Token": braveKey()!, accept: "application/json" },
-        signal: AbortSignal.timeout(15_000),
-      });
+      }, { timeoutMs: 15_000 });
       const latency = Date.now() - started;
       if (!res.ok) return emptyResponse("brave", query, `HTTP ${res.status}`, latency);
       const data = await res.json() as { web?: { results?: Array<{ url: string; title?: string; description?: string; page_age?: string }> } };
@@ -146,7 +145,7 @@ export const serperProvider: SearchProvider = {
     if (!process.env.SERPER_API_KEY) return emptyResponse("serper", query, "SERPER_API_KEY missing");
     const started = Date.now();
     try {
-      const res = await fetch("https://google.serper.dev/search", {
+      const res = await resilientFetch("serper", "https://google.serper.dev/search", {
         method: "POST",
         headers: { "X-API-KEY": process.env.SERPER_API_KEY, "content-type": "application/json" },
         body: JSON.stringify({
@@ -155,8 +154,7 @@ export const serperProvider: SearchProvider = {
           // Serper tbs buckets: qdr:d/w/m/y — nearest bucket ≥ requested window.
           ...(query.freshness_days ? { tbs: query.freshness_days <= 1 ? "qdr:d" : query.freshness_days <= 7 ? "qdr:w" : query.freshness_days <= 31 ? "qdr:m" : "qdr:y" } : {}),
         }),
-        signal: AbortSignal.timeout(15_000),
-      });
+      }, { timeoutMs: 15_000 });
       const latency = Date.now() - started;
       if (!res.ok) {
         // Preserve a bounded, key-free diagnostic. Serper's HTTP status alone
@@ -198,12 +196,11 @@ export const firecrawlProvider: SearchProvider = {
     if (!process.env.FIRECRAWL_API_KEY) return emptyResponse("firecrawl", query, "FIRECRAWL_API_KEY missing");
     const started = Date.now();
     try {
-      const res = await fetch("https://api.firecrawl.dev/v1/search", {
+      const res = await resilientFetch("firecrawl", "https://api.firecrawl.dev/v1/search", {
         method: "POST",
         headers: { authorization: `Bearer ${process.env.FIRECRAWL_API_KEY}`, "content-type": "application/json" },
         body: JSON.stringify({ query: query.query, limit: Math.min(query.max_results ?? 8, 20) }),
-        signal: AbortSignal.timeout(20_000),
-      });
+      }, { timeoutMs: 20_000 });
       const latency = Date.now() - started;
       if (!res.ok) return emptyResponse("firecrawl", query, `HTTP ${res.status}`, latency);
       const data = await res.json() as { data?: Array<{ url: string; title?: string; description?: string }> };
@@ -248,7 +245,7 @@ export const exaProvider: SearchProvider = {
     const started = Date.now();
     try {
       const type = query.search_mode === "fast" ? "fast" : query.search_mode === "deep" ? "deep" : "auto";
-      const res = await fetch("https://api.exa.ai/search", {
+      const res = await resilientFetch("exa", "https://api.exa.ai/search", {
         method: "POST",
         headers: { "x-api-key": process.env.EXA_API_KEY, "content-type": "application/json" },
         body: JSON.stringify({
@@ -259,8 +256,7 @@ export const exaProvider: SearchProvider = {
           contents: { highlights: true },
           ...(query.include_domains?.length ? { includeDomains: query.include_domains } : {}),
         }),
-        signal: AbortSignal.timeout(type === "deep" ? 30_000 : 15_000),
-      });
+      }, { timeoutMs: type === "deep" ? 30_000 : 15_000 });
       const latency = Date.now() - started;
       if (!res.ok) return emptyResponse("exa", query, safeProviderError(res.status, await res.text().catch(() => "")), latency);
       const data = await res.json() as { results?: Array<{ id?: string; url: string; title?: string; publishedDate?: string; highlights?: string[] }>; costDollars?: { total?: number } };

@@ -62,7 +62,7 @@ export async function runDiscoveryLanes<TEvent, TAccount>(
 export const defaultDiscoveryRunner: DiscoveryRunner = async (plan): Promise<DiscoveryRunOutput> => {
   const { runCompanyFirstDiscovery } = await import("@/lib/discovery/company-first-discovery");
   const { runEventFirstDiscovery } = await import("./event-first-discovery");
-  const { tavilyProvider, braveProvider, serperProvider } = await import("@/lib/sources/access/providers");
+  const { tavilyProvider, braveProvider, serperProvider, firecrawlProvider } = await import("@/lib/sources/access/providers");
   const criteria = criteriaFromPlan(plan);
   const icp = icpFromPlan(plan);
   const limit = Math.max(1, plan.budget.maxCandidatesPerRoute);
@@ -75,7 +75,7 @@ export const defaultDiscoveryRunner: DiscoveryRunner = async (plan): Promise<Dis
   // canonical company. Sequential bounded lanes avoid provider contention; they
   // do not change eligibility, Evidence, Timing, materiality, or Decision.
   const { eventResult, accountResult } = await runDiscoveryLanes(
-    () => runEventFirstDiscovery(plan, [tavilyProvider, braveProvider, serperProvider], {
+    () => runEventFirstDiscovery(plan, [braveProvider, tavilyProvider, firecrawlProvider, serperProvider], {
       maxQueries: tier === "preview" ? 4 : 6,
       maxIdentityQueries: tier === "preview" ? 3 : 5,
     }),
