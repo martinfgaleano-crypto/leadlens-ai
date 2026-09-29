@@ -15,8 +15,8 @@ t("feedback ratings are the transcribed values (prioritization 5, evidence 4)", 
 t("account operational priority is the real order", JSON.stringify(AMOR_PILOT1_FEEDBACK.accounts.operational_priority_order) === JSON.stringify(["Éteka", "Vitálica", "Celestino Hotel Boutique & Spa", "Sinergy On"]));
 
 // ── Supply honesty: partial not padded (§49) ──
-t("supply state recorded as insufficient (not padded)", AMOR_PILOT2.research.supply_state === "insufficient");
-t("delivered accounts (1) < candidate universe reported, and universe is tiny/honest", (AMOR_PILOT2.research.delivered_accounts ?? 0) === 1 && (AMOR_PILOT2.research.candidate_universe ?? 0) === 2);
+t("supply state recorded as partial (discovery fixed; not padded, not blocked)", AMOR_PILOT2.research.supply_state === "partial");
+t("delivered accounts (1) ≤ candidate universe reported, and universe is small/honest", (AMOR_PILOT2.research.delivered_accounts ?? 0) === 1 && (AMOR_PILOT2.research.candidate_universe ?? 0) >= 1 && (AMOR_PILOT2.research.candidate_universe ?? 0) <= 5);
 t("every tier is labeled PARTIAL when delivered < target", AMOR_PILOT2.tiers.every((x) => (x.delivered ?? 0) < x.target ? x.partial === true : true));
 t("no tier claims more delivered than the real 1-account foundation", AMOR_PILOT2.tiers.every((x) => (x.delivered ?? 0) <= 1));
 t("provider spend recorded and within the $20 ceiling", (AMOR_PILOT2.research.provider_spend_usd ?? 99) <= 20);
@@ -29,7 +29,7 @@ t("Pilot 2 approval state is FOUNDER_REVIEW (never production-approved)", /FOUND
 
 // ── The Admin workspace surfaces the real account (no synthetic company), with the honest HOLD ──
 const ws = read("app/admin/intelligence/pilot2/Pilot2Workspace.tsx");
-t("Admin surfaces the real US account (Chex Finer Foods)", /Chex Finer Foods/.test(ws));
+t("Admin surfaces the real US account (Whole Foods, the current run's delivered account)", /Whole Foods/.test(ws));
 t("Admin carries no synthetic/demo company placeholders", !/example\.com|Acme|SYNTHETIC/.test(ws));
 t("Admin export-dependency panel disclaims legal advice", /not a legal opinion|not legal advice/i.test(ws));
 

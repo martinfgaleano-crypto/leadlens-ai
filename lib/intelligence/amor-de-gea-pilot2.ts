@@ -33,26 +33,35 @@ export const AMOR_PILOT2 = {
   research: {
     geography_target: "United States",
     vault_reuse: "OFF", // US stays fresh-discovery per standing policy
-    run_id: "intel_644f3bd29d102276027c1e09654441d9",
+    run_id: "intel_e3e119b1b73f738e3eeb58e1d48f8d01",
     ran_at: "2026-09-29",
-    provider_spend_usd: 0.19,          // real usage delta (Anthropic; Serper/Tavily free/errored)
-    candidate_universe: 2,             // only 2 candidates surfaced — provider discovery skipped (quota exhausted)
-    delivered_accounts: 1,             // 1 qualified US account (Chex Finer Foods, HOLD); Beehive Botanicals DISCARD
-    supply_state: "insufficient" as "pending" | "sufficient" | "partial" | "insufficient",
+    provider_spend_usd: 0.24,          // real usage delta this run (Anthropic; search providers free-tier)
+    candidate_universe: 3,             // 3 candidates researched (BASF Coatings + Singota DISCARD off-target; Whole Foods qualified)
+    delivered_accounts: 1,             // 1 qualified US account: Whole Foods (HOLD, Fit=Strong, Timing=none)
+    supply_state: "partial" as "pending" | "sufficient" | "partial" | "insufficient",
     supply_note:
-      "Diagnosed (2026-09-29, direct engine probe): NOT a lazy query and NOT blanket quota. Brave healthy for a single query but rate-limits under the multi-query discovery load; Tavily rate-limited (HTTP 433); Serper unfunded (no credits). Discovery engine ran 5 queries, grounded 1 name, ACCEPTED 0 — it correctly refused under-corroborated candidates (truth gate held, no fabrication). Best real foundation = 1 (Chex Finer Foods, HOLD, from a prior run). Full 2/6/12/18 needs provider capacity restored (fund Serper and/or fresh Brave/Tavily window); Exa/Firecrawl are not wired into discovery and must not be added here (§12).",
+      "Discovery COLLAPSE root-caused and FIXED (2026-09-29), not 'quota'. Root causes were reusable product defects: (1) no pacing/backoff at the search-provider layer, so Brave's free-tier burst-429 tripped a permanent per-run cooldown; (2) discovery hard-wired to [brave,tavily,serper] with no fallback to the healthy, search-capable Firecrawl; (3) Tavily 433 misclassified as 'unknown'; (4) manufacturing-centric research-readiness taxonomy that dropped consumer-goods buyers; (5) verbose interpreted org-type phrases used as search seeds → near-zero enumeration recall. All fixed + tested. Direct engine probe after the fix: operating_mode=full_discovery, providers_available=[brave,firecrawl], 34 result pages, 6 grounded names, 2 accepted (Whole Foods, Meyer Natural Foods). End-to-end run then DELIVERED 1 qualified account (Whole Foods, HOLD) where the pre-fix spine delivered 0. Residual gap to 6/12/18 is genuine per-pass supply for a narrow new US vertical (few in-scope buyers per pass) + the event-signal lane surfacing some off-target companies (correctly DISCARDed) — NOT a provider block and NOT a truth-gate relaxation. Exa remains excluded (§12).",
     provider_status: {
-      brave: "healthy for a single query; rate-limits across a multi-query discovery run (free-tier + heavy same-day use)",
-      tavily: "rate-limited (HTTP 433)",
-      serper: "unfunded (no credits)",
-      exa_firecrawl: "defined but NOT wired into discovery (do not add per §12)",
-      operating_mode: "provider_limited",
+      brave: "healthy; paced (≥1.1s spacing) + retry — 0 errors across a 14-call multi-query run after the fix",
+      tavily: "rate-limited (HTTP 433) — correctly classified and bypassed; not required",
+      serper: "unfunded (no credits) — cannot fund (§6); correctly bypassed; not required",
+      firecrawl: "ACTIVE search-capable discovery fallback (450 credits) — 0 errors, contributes grounding when brave degrades (§17/§64)",
+      exa: "defined but NOT wired into discovery (excluded per §12)",
+      operating_mode: "full_discovery",
     },
+    product_fixes: [
+      "resilience.ts: per-provider pacing + bounded retry honoring Retry-After (429/433/5xx retry; 401/402/432 immediate) — commit 9038aca",
+      "Firecrawl wired as a grounding fallback in all 3 discovery provider arrays (enumeration, company-first, event-first) — removes the 3-provider single point of failure (§18)",
+      "classifyProviderError: Tavily 433 → rate_limited (was 'unknown')",
+      "research-readiness FAMILY taxonomy: added importer/specialty-retail/food-beverage/gifting/spa channels for consumer-goods buyers (logistics/software still rejected) — commit 863072f",
+      "enumeration recall: concise interpreted industries seed search queries instead of verbose org-type sentences (specificity still enforced at the gates)",
+    ],
   },
   // Tier artifacts (regenerated through the canonical pipeline + V2.4 renderer — §66). Counts are truthful;
   // a tier below its target is labeled PARTIAL.
-  // All four rendered from ONE foundation (nesting verified). delivered=1 each → every tier is PARTIAL vs
-  // target; labeled honestly (§49/§81). Real US account: Chex Finer Foods (HOLD, Fit=Strong, Timing=none).
+  // All four rendered from ONE foundation (nesting verified: preview⊂brief⊂portfolio⊂premium). delivered=1
+  // each → every tier is PARTIAL vs target; labeled honestly (§49/§81). Real US account: Whole Foods
+  // (HOLD, Fit=Strong, Timing=none, evidence Limited/3 sources, counter-evidence + next-step present).
   tiers: [
     { tier: "Preview", target: 2, pdf: "LeadLens_AmorDeGea_Pilot2_Preview.pdf", delivered: 1, partial: true },
     { tier: "Brief", target: 6, pdf: "LeadLens_AmorDeGea_Pilot2_Brief.pdf", delivered: 1, partial: true },

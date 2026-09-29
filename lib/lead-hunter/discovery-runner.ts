@@ -14,10 +14,14 @@ import type { DiscoveryPlan, DiscoveryRunner, DiscoveryRunOutput, RawDiscoveredO
 
 export function criteriaFromPlan(plan: DiscoveryPlan): LeadSearchCriteria {
   return {
-    // Preserve the confirmed target organization family end-to-end. Previously
-    // organizationTypes disappeared here, allowing a manufacturer-only request
-    // to become a broad industry/event search downstream.
-    target_industries: Array.from(new Set([...plan.organizationTypes, ...plan.industries])),
+    // Both families are preserved end-to-end (organizationTypes never disappear).
+    // Order matters for one thing only: enumeration seeds its search queries from
+    // the first few target_industries, and search engines choke on long verbose
+    // organizationType SENTENCES (quoted/truncated → near-zero recall). Concise
+    // industry terms lead, so enumeration recall stays high; the specific target
+    // family is still enforced downstream by the eligibility/readiness gates,
+    // which read plan.organizationTypes directly (not this list).
+    target_industries: Array.from(new Set([...plan.industries, ...plan.organizationTypes])),
     target_company_size: [],
     target_job_titles: [],
     target_geography: plan.geographies,
@@ -35,7 +39,8 @@ export function criteriaFromPlan(plan: DiscoveryPlan): LeadSearchCriteria {
 
 export function icpFromPlan(plan: DiscoveryPlan): ICP {
   return {
-    target_industries: Array.from(new Set([...plan.organizationTypes, ...plan.industries])),
+    // Concise industry terms lead (enumeration recall); org-types still included.
+    target_industries: Array.from(new Set([...plan.industries, ...plan.organizationTypes])),
     target_titles: [],
     company_size_range: "",
     pain_points: [],

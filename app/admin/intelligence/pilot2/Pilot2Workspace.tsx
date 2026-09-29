@@ -133,7 +133,7 @@ export default function Pilot2Workspace({ durable }: { durable?: Durable }) {
 
       {tab === "universe" && <div style={S.card}><div style={S.h2}>Account universe (real)</div>
         <table style={S.table}><thead><tr><th style={S.th}>Company</th><th style={S.th}>Geo</th><th style={S.th}>Route</th><th style={S.th}>Decision</th><th style={S.th}>Note</th></tr></thead><tbody>
-          <tr><td style={S.td}><b>Chex Finer Foods</b></td><td style={S.td}>United States</td><td style={S.td}>Specialty importer/distributor</td><td style={S.td}><span style={S.chip(C.hold)}>hold</span></td><td style={S.td}>Fit=Strong but Timing=none (no current trigger) + Evidence=Limited → honest HOLD. 3 sources, counter-signal + next-step present.</td></tr>
+          <tr><td style={S.td}><b>Whole Foods</b></td><td style={S.td}>United States</td><td style={S.td}>Specialty food and beverage retail</td><td style={S.td}><span style={S.chip(C.hold)}>hold</span></td><td style={S.td}>Fit=Strong but Timing=none (no current trigger) + Evidence=Limited → honest HOLD. 3 sources, counter-signal + next-step present. (Prior run also qualified Chex Finer Foods, HOLD.)</td></tr>
           <tr><td style={S.td}>Beehive Botanicals, Inc.</td><td style={S.td}>United States</td><td style={S.td}>—</td><td style={S.td}><span style={S.chip(C.muted)}>discard</span></td><td style={S.td}>Rejected in qualification (score 1.5).</td></tr>
         </tbody></table>
         <div style={{ ...S.li, marginTop: 8, color: C.warn }}>Only 2 candidates surfaced (provider discovery skipped — same-day quota exhausted). NOT padded. A fresh-quota run is required for a 50–100 candidate universe.</div>
@@ -150,7 +150,7 @@ export default function Pilot2Workspace({ durable }: { durable?: Durable }) {
         <table style={S.table}><thead><tr><th style={S.th}>Dimension</th><th style={S.th}>Pilot 1 (Colombia)</th><th style={S.th}>Pilot 2 (US export)</th></tr></thead><tbody>
           {[["Objective", "Colombia domestic opportunity", "Colombia → US export (interpreted, US ICP built)"],
             ["Context depth", "Founder-curated", "Customer Context Intake V1 (guided + AI-assisted)"],
-            ["Accounts", "10 curated + 5 excluded", "1 qualified US (Chex Finer Foods) — supply-capped"],
+            ["Accounts", "10 curated + 5 excluded", "1 qualified US (Whole Foods, HOLD) — discovery fixed (full_discovery); per-pass supply niche-limited"],
             ["Buyer intelligence", "Route-level", "Stakeholder functions + buyer-access model"],
             ["Timing", "Present", "Correctly absent → HOLD (no fake intent)"],
             ["Economics", "Notes", "Constraints envelope + route-economics questions"],
