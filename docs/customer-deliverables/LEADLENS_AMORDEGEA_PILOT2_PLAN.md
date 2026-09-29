@@ -8,14 +8,14 @@ This document is a **plan grounded in real, verified Pilot 1 sources** — not a
 contain US accounts, buyers, volumes, margins, or compliance conclusions, because those require the real
 LeadLens pipeline (live research) and must never be fabricated (§0, §49–53, §70).
 
-## 1. Two material gates before Pilot 2 can be built (honest state)
-1. **Pilot 1 feedback has NOT been received.** The file `public/pilot-deliverables/Amor-de-Gea-LeadLens-Pilot-1-Feedback.pdf`
-   is a **blank feedback FORM** (empty checkboxes/fields), not customer responses. Pilot 1 is `FOUNDER REVIEW REQUIRED`
-   and its delivery email to the customer (`Juliana`) shows `sent: false`. Therefore the sprint's characterizations
-   of "Pilot 1 feedback said/requested X" are **founder hypotheses, not data** (prior session note: *"Do not infer the
-   feedback"*). A real Pilot 1 → Pilot 2 change map (§4) cannot be built from responses that do not exist; what follows
-   is a map against the feedback **instrument's dimensions**, clearly labeled as such.
-2. **Live US-export research is not authorized/feasible here.** Producing 2/6/12/18 real qualified US accounts requires
+## 1. Material gates before Pilot 2 can be *completed* (honest state)
+1. **Pilot 1 feedback — RECEIVED (real).** The founder provided the completed responses (respondent
+   **Juliana Maya Zuluaga**, Directora/Fundadora, Sep 2026), now persisted canonically in
+   `lib/intelligence/amor-de-gea-pilot1-feedback.ts` (ratings: prioritization/context/clarity/pilot2-likelihood/
+   value-vs-DB = 5; utility/relevance/briefs/evidence/confidence = 4). The repo `/public` PDF is the **blank
+   instrument** and is not the source. The reconciliation and Admin workspace surface the real values.
+   *(This gate is now closed.)*
+2. **Live US-export research supply.** Producing 2/6/12/18 real qualified US accounts requires
    running the LeadLens pipeline live (provider spend; throttled same-day quota; and an ICP — *US buyers/channels for a
    Colombian premium botanical export* — that the frozen Intelligence V1 was validated for US mfg/logistics, **not** this).
    No spend budget is set for this sprint. Fabricating accounts is prohibited (§53/§70). This is the gate for Phases D–H.
