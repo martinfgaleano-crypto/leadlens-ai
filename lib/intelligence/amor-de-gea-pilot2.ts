@@ -33,14 +33,14 @@ export const AMOR_PILOT2 = {
   research: {
     geography_target: "United States",
     vault_reuse: "OFF", // US stays fresh-discovery per standing policy
-    run_id: "intel_e3e119b1b73f738e3eeb58e1d48f8d01",
+    run_id: "cj_amordegea_pilot2 (multi-pass customer-job-v1)",
     ran_at: "2026-09-29",
-    provider_spend_usd: 0.24,          // real usage delta this run (Anthropic; search providers free-tier)
-    candidate_universe: 3,             // 3 candidates researched (BASF Coatings + Singota DISCARD off-target; Whole Foods qualified)
-    delivered_accounts: 1,             // 1 qualified US account: Whole Foods (HOLD, Fit=Strong, Timing=none)
+    provider_spend_usd: 1.5,           // cumulative across the multi-pass job runs (discovery + research; well under $20)
+    candidate_universe: 6,             // accumulated deduped candidates across route/geo-diverse passes
+    delivered_accounts: 6,             // 6 qualified US accounts (all HOLD, fit-differentiated) — see live job card
     supply_state: "partial" as "pending" | "sufficient" | "partial" | "insufficient",
     supply_note:
-      "Discovery COLLAPSE root-caused and FIXED (2026-09-29), not 'quota'. Root causes were reusable product defects: (1) no pacing/backoff at the search-provider layer, so Brave's free-tier burst-429 tripped a permanent per-run cooldown; (2) discovery hard-wired to [brave,tavily,serper] with no fallback to the healthy, search-capable Firecrawl; (3) Tavily 433 misclassified as 'unknown'; (4) manufacturing-centric research-readiness taxonomy that dropped consumer-goods buyers; (5) verbose interpreted org-type phrases used as search seeds → near-zero enumeration recall. All fixed + tested. Direct engine probe after the fix: operating_mode=full_discovery, providers_available=[brave,firecrawl], 34 result pages, 6 grounded names, 2 accepted (Whole Foods, Meyer Natural Foods). End-to-end run then DELIVERED 1 qualified account (Whole Foods, HOLD) where the pre-fix spine delivered 0. Residual gap to 6/12/18 is genuine per-pass supply for a narrow new US vertical (few in-scope buyers per pass) + the event-signal lane surfacing some off-target companies (correctly DISCARDed) — NOT a provider block and NOT a truth-gate relaxation. Exa remains excluded (§12).",
+      "MULTI-PASS ACCUMULATION shipped + operated (customer-job-v1). The prior 'per-pass supply is thin' limit was itself closed by building the multi-pass customer job: Vault-first → route/geo-diverse discovery (specialty importer, natural/specialty retail, wellness hospitality, premium gifting × US/Miami/NY/CA) → Vault write-through of every discovered canonical company → union+dedup+rejection-memory → research+qualify NEW candidates → adapt next pass by yield. Live result: 6 real, distinct, on-target US accounts across 3 routes — Whole Foods & Earth Fare (Strong fit, natural/specialty grocery), Canyon Ranch Lenox & Shou Sugi Ban House (wellness resorts), CorporateGift.com (gifting), D4D (Limited fit). ALL honest HOLD (Fit present, Timing=Limited → no current trigger, no fake intent). Preview 2/2 + Brief 6/6 FULL (was 1/target); Portfolio 6/12 + Premium 6/18 PARTIAL. Vault write-through wrote new companies AND reused prior-run companies (cross-run accumulation). Earlier 12-pass run reached 7 (adding Max's Imports, Macar Foods, Apical Group, KeHE, Golden Door). Residual to 12/18 = genuine real-supply ceiling for this narrow niche across a few passes (not a provider block, not a truth-gate relaxation) — more passes/query-families accrete further. Built on the prior discovery-resilience fixes (below). Exa excluded (§12).",
     provider_status: {
       brave: "healthy; paced (≥1.1s spacing) + retry — 0 errors across a 14-call multi-query run after the fix",
       tavily: "rate-limited (HTTP 433) — correctly classified and bypassed; not required",
@@ -50,6 +50,8 @@ export const AMOR_PILOT2 = {
       operating_mode: "full_discovery",
     },
     product_fixes: [
+      "MULTI-PASS customer-job (lib/intelligence/customer-job.ts + customer-job-store.ts): durable, resumable accumulation across passes — Vault-first, Vault write-through, union/dedup, rejection memory, query novelty, route adaptation, milestone→tier readiness (22/22 tests)",
+      "Vault write-through wired live via accreteDiscoveredCompanies (vault_companies) — every discovered canonical company persisted with cross-run reuse",
       "resilience.ts: per-provider pacing + bounded retry honoring Retry-After (429/433/5xx retry; 401/402/432 immediate) — commit 9038aca",
       "Firecrawl wired as a grounding fallback in all 3 discovery provider arrays (enumeration, company-first, event-first) — removes the 3-provider single point of failure (§18)",
       "classifyProviderError: Tavily 433 → rate_limited (was 'unknown')",
@@ -59,14 +61,16 @@ export const AMOR_PILOT2 = {
   },
   // Tier artifacts (regenerated through the canonical pipeline + V2.4 renderer — §66). Counts are truthful;
   // a tier below its target is labeled PARTIAL.
-  // All four rendered from ONE foundation (nesting verified: preview⊂brief⊂portfolio⊂premium). delivered=1
-  // each → every tier is PARTIAL vs target; labeled honestly (§49/§81). Real US account: Whole Foods
-  // (HOLD, Fit=Strong, Timing=none, evidence Limited/3 sources, counter-evidence + next-step present).
+  // All four rendered from the ONE multi-pass foundation (6 accounts; nesting preview⊆brief⊆portfolio⊆
+  // premium; byte growth 13.8k→33k→38k→42k confirms real per-tier content). Preview 2/2 + Brief 6/6 are
+  // FULL; Portfolio 6/12 + Premium 6/18 PARTIAL — labeled honestly (§49/§81). Real US accounts (all HOLD,
+  // fit-differentiated): Whole Foods, Earth Fare (Strong); Canyon Ranch Lenox, Shou Sugi Ban House,
+  // CorporateGift.com (Moderate); D4D (Limited). No duplicates, no synthetic filler.
   tiers: [
-    { tier: "Preview", target: 2, pdf: "LeadLens_AmorDeGea_Pilot2_Preview.pdf", delivered: 1, partial: true },
-    { tier: "Brief", target: 6, pdf: "LeadLens_AmorDeGea_Pilot2_Brief.pdf", delivered: 1, partial: true },
-    { tier: "Portfolio", target: 12, pdf: "LeadLens_AmorDeGea_Pilot2_Portfolio.pdf", delivered: 1, partial: true },
-    { tier: "Premium", target: 18, pdf: "LeadLens_AmorDeGea_Pilot2_Premium.pdf", delivered: 1, partial: true },
+    { tier: "Preview", target: 2, pdf: "LeadLens_AmorDeGea_Pilot2_Preview.pdf", delivered: 2, partial: false },
+    { tier: "Brief", target: 6, pdf: "LeadLens_AmorDeGea_Pilot2_Brief.pdf", delivered: 6, partial: false },
+    { tier: "Portfolio", target: 12, pdf: "LeadLens_AmorDeGea_Pilot2_Portfolio.pdf", delivered: 6, partial: true },
+    { tier: "Premium", target: 18, pdf: "LeadLens_AmorDeGea_Pilot2_Premium.pdf", delivered: 6, partial: true },
   ],
   docs: {
     intake: "docs/customer-context/LEADLENS_CUSTOMER_CONTEXT_INTAKE_V1.md",

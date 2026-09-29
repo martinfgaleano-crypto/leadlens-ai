@@ -64,3 +64,20 @@ export class SupabaseCustomerJobStore implements CustomerJobStore {
     return state ?? null;
   }
 }
+
+/** Best-effort read of the most recent customer job (for Admin observability).
+ *  Degrades gracefully (returns null) when Supabase / the table is unavailable. */
+export async function loadLatestCustomerJob(customer?: string): Promise<CustomerJobState | null> {
+  try {
+    const { createServerClient } = await import("@/lib/supabase/server");
+    const db = createServerClient();
+    if (!db) return null;
+    const { data, error } = await db.from(TABLE).select("report_json, created_at").eq("plan", "customer_job").order("created_at", { ascending: false }).limit(10);
+    if (error || !data) return null;
+    for (const row of data as Array<{ report_json?: Record<string, unknown> }>) {
+      const state = (row.report_json ?? {})[NS] as CustomerJobState | undefined;
+      if (state && (!customer || state.customer === customer)) return state;
+    }
+    return null;
+  } catch { return null; }
+}

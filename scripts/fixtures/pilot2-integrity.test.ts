@@ -16,9 +16,9 @@ t("account operational priority is the real order", JSON.stringify(AMOR_PILOT1_F
 
 // ── Supply honesty: partial not padded (§49) ──
 t("supply state recorded as partial (discovery fixed; not padded, not blocked)", AMOR_PILOT2.research.supply_state === "partial");
-t("delivered accounts (1) ≤ candidate universe reported, and universe is small/honest", (AMOR_PILOT2.research.delivered_accounts ?? 0) === 1 && (AMOR_PILOT2.research.candidate_universe ?? 0) >= 1 && (AMOR_PILOT2.research.candidate_universe ?? 0) <= 5);
-t("every tier is labeled PARTIAL when delivered < target", AMOR_PILOT2.tiers.every((x) => (x.delivered ?? 0) < x.target ? x.partial === true : true));
-t("no tier claims more delivered than the real 1-account foundation", AMOR_PILOT2.tiers.every((x) => (x.delivered ?? 0) <= 1));
+t("delivered accounts ≤ candidate universe (multi-pass foundation, honest)", (AMOR_PILOT2.research.delivered_accounts ?? 0) >= 2 && (AMOR_PILOT2.research.delivered_accounts ?? 0) <= (AMOR_PILOT2.research.candidate_universe ?? 0));
+t("every tier PARTIAL iff delivered < target (Preview/Brief full, Portfolio/Premium partial)", AMOR_PILOT2.tiers.every((x) => x.partial === ((x.delivered ?? 0) < x.target)));
+t("no tier claims more delivered than the real foundation (≤ delivered_accounts)", AMOR_PILOT2.tiers.every((x) => (x.delivered ?? 0) <= (AMOR_PILOT2.research.delivered_accounts ?? 0)));
 t("provider spend recorded and within the $20 ceiling", (AMOR_PILOT2.research.provider_spend_usd ?? 99) <= 20);
 
 // ── Repeat-suppression carries the 15 Pilot 1 accounts (§ no repeat) ──

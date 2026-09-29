@@ -31,8 +31,11 @@ const ROUTES = PILOT2_US_ROUTES;
 const DEPS = PILOT2_EXPORT_DEPENDENCIES;
 
 interface Durable { contextConfirmed: boolean; contextUpdatedAt: string | null; contextSummary: string | null; contextVersion: number | null; feedbackCount: number }
+// Minimal shape of CustomerJobState (customer-job-v1) for Admin observability.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Job = any;
 
-export default function Pilot2Workspace({ durable }: { durable?: Durable }) {
+export default function Pilot2Workspace({ durable, job }: { durable?: Durable; job?: Job }) {
   const [tab, setTab] = useState("overview");
   const p = AMOR_PILOT2, fb = AMOR_PILOT1_FEEDBACK;
   const TABS = [["overview", "Overview"], ["feedback", "Pilot 1 Feedback"], ["reconcile", "Reconciliation"], ["objective", "Objective"], ["routes", "US Routes"], ["deps", "Export Deps"], ["universe", "Account Universe"], ["tiers", "Tiers"], ["compare", "Pilot 1 vs 2"], ["custfb", "Customer Feedback"]];
@@ -56,6 +59,28 @@ export default function Pilot2Workspace({ durable }: { durable?: Durable }) {
           </div>
           <div style={{ ...S.li, marginTop: 8, color: C.warn }}>{p.research.supply_note}</div>
         </div>
+        {job && <div style={S.card}><div style={S.h2}>Multi-pass Customer Job (customer-job-v1)</div>
+          <div style={S.grid}>
+            <div style={S.stat}><div style={{ ...S.statN, color: C.ok }}>{job.qualified?.length ?? 0}</div><div style={S.statL}>Qualified</div></div>
+            <div style={S.stat}><div style={S.statN}>{job.candidates?.length ?? 0}</div><div style={S.statL}>Candidates</div></div>
+            <div style={S.stat}><div style={S.statN}>{job.passesCompleted ?? 0}</div><div style={S.statL}>Passes</div></div>
+            <div style={S.stat}><div style={{ ...S.statN, color: C.cobalt }}>{job.status}</div><div style={S.statL}>Status</div></div>
+          </div>
+          <div style={{ marginTop: 12 }}>
+            {["Preview", "Brief", "Portfolio", "Premium"].map((t) => { const r = job.tierReadiness?.[t]; return r ? <div key={t} style={S.row}><span style={S.k}>{t} readiness</span><span style={{ ...S.v, color: r.full ? C.ok : C.warn }}>{r.actual}/{r.target} {r.full ? "FULL" : "PARTIAL"}</span></div> : null; })}
+          </div>
+          <div style={{ ...S.li, marginTop: 10, fontWeight: 700, color: C.ink }}>Vault write-through (reconciliation)</div>
+          <div style={S.row}><span style={S.k}>Discovered → Vault</span><span style={S.v}>{job.vault?.discovered ?? 0}</span></div>
+          <div style={S.row}><span style={S.k}>New companies inserted</span><span style={{ ...S.v, color: C.ok }}>{job.vault?.newInserted ?? 0}</span></div>
+          <div style={S.row}><span style={S.k}>Existing reused (Vault-first)</span><span style={S.v}>{job.vault?.existingReused ?? 0}</span></div>
+          <div style={S.row}><span style={S.k}>Rejected non-account</span><span style={S.v}>{job.vault?.rejectedNonAccount ?? 0}</span></div>
+          <div style={{ ...S.li, marginTop: 10, fontWeight: 700, color: C.ink }}>Qualified foundation ({job.qualified?.length ?? 0})</div>
+          <div style={{ overflowX: "auto" }}><table style={S.table}><thead><tr><th style={S.th}>Account</th><th style={S.th}>Route</th><th style={S.th}>Decision</th></tr></thead>
+            <tbody>{(job.qualified ?? []).map((q: { key: string; company: string; route: string; decision: string }) => <tr key={q.key}><td style={S.td}><b>{q.company}</b></td><td style={S.td}>{q.route}</td><td style={S.td}><span style={S.chip(decColor(q.decision))}>{q.decision}</span></td></tr>)}</tbody></table></div>
+          <div style={{ ...S.li, marginTop: 10, fontWeight: 700, color: C.ink }}>Per-route yield</div>
+          {(Object.values(job.routeYield ?? {}) as Array<{ route: string; passes: number; uniqueCandidates: number; qualified: number }>).map((r) => <div key={r.route} style={S.row}><span style={S.k}>{r.route}</span><span style={S.v}>{r.passes} pass · {r.uniqueCandidates} cand · {r.qualified} qual</span></div>)}
+          <div style={{ ...S.li, marginTop: 8, color: C.muted }}>Multi-pass accumulation (customer-job-v1): Vault-first → route/geo-diverse discovery → Vault write-through → union/dedup/rejection-memory → research+qualify NEW → adapt. Job id {job.jobId}.</div>
+        </div>}
         <div style={S.card}><div style={S.h2}>Durable state (migration 065)</div>
           {durable ? <>
             <div style={S.row}><span style={S.k}>Customer Context</span><span style={{ ...S.v, color: durable.contextConfirmed ? C.ok : C.muted }}>{durable.contextConfirmed ? `confirmed (v${durable.contextVersion})` : "not persisted — using static"}</span></div>
@@ -131,12 +156,12 @@ export default function Pilot2Workspace({ durable }: { durable?: Durable }) {
         <div style={S.li}>{PILOT2_CLASSIFICATION_QUESTION}</div>
       </div>}
 
-      {tab === "universe" && <div style={S.card}><div style={S.h2}>Account universe (real)</div>
-        <table style={S.table}><thead><tr><th style={S.th}>Company</th><th style={S.th}>Geo</th><th style={S.th}>Route</th><th style={S.th}>Decision</th><th style={S.th}>Note</th></tr></thead><tbody>
-          <tr><td style={S.td}><b>Whole Foods</b></td><td style={S.td}>United States</td><td style={S.td}>Specialty food and beverage retail</td><td style={S.td}><span style={S.chip(C.hold)}>hold</span></td><td style={S.td}>Fit=Strong but Timing=none (no current trigger) + Evidence=Limited → honest HOLD. 3 sources, counter-signal + next-step present. (Prior run also qualified Chex Finer Foods, HOLD.)</td></tr>
-          <tr><td style={S.td}>Beehive Botanicals, Inc.</td><td style={S.td}>United States</td><td style={S.td}>—</td><td style={S.td}><span style={S.chip(C.muted)}>discard</span></td><td style={S.td}>Rejected in qualification (score 1.5).</td></tr>
+      {tab === "universe" && <div style={S.card}><div style={S.h2}>Account universe (real — multi-pass foundation)</div>
+        <table style={S.table}><thead><tr><th style={S.th}>Company</th><th style={S.th}>Route</th><th style={S.th}>Fit</th><th style={S.th}>Decision</th><th style={S.th}>Note</th></tr></thead><tbody>
+          {[["Whole Foods Market", "Natural / specialty retail", "Strong"], ["Earth Fare", "Natural / specialty retail", "Strong"], ["Canyon Ranch Lenox", "Wellness hospitality", "Moderate"], ["Shou Sugi Ban House", "Wellness hospitality", "Moderate"], ["CorporateGift.com", "Premium gifting", "Moderate"], ["D4D", "Specialty importer", "Limited"]].map(([co, route, fit]) =>
+            <tr key={co}><td style={S.td}><b>{co}</b></td><td style={S.td}>{route}</td><td style={S.td}>{fit}</td><td style={S.td}><span style={S.chip(C.hold)}>hold</span></td><td style={S.td}>Fit present, Timing=Limited (no current trigger) → honest HOLD. No fake intent.</td></tr>)}
         </tbody></table>
-        <div style={{ ...S.li, marginTop: 8, color: C.warn }}>Only 2 candidates surfaced (provider discovery skipped — same-day quota exhausted). NOT padded. A fresh-quota run is required for a 50–100 candidate universe.</div>
+        <div style={{ ...S.li, marginTop: 8, color: C.muted }}>6 qualified US accounts accumulated by the multi-pass customer job across importer / natural-specialty retail / wellness hospitality / premium gifting routes (see the live job card in Overview for the current run). A 12-pass run reached 7 (adding Max&apos;s Imports, Macar Foods, Apical Group, KeHE, Golden Door). All HOLD, fit-differentiated, no duplicates, not padded.</div>
       </div>}
 
       {tab === "tiers" && <div style={S.card}><div style={S.h2}>Four tiers (one foundation; nesting verified)</div>
@@ -150,7 +175,7 @@ export default function Pilot2Workspace({ durable }: { durable?: Durable }) {
         <table style={S.table}><thead><tr><th style={S.th}>Dimension</th><th style={S.th}>Pilot 1 (Colombia)</th><th style={S.th}>Pilot 2 (US export)</th></tr></thead><tbody>
           {[["Objective", "Colombia domestic opportunity", "Colombia → US export (interpreted, US ICP built)"],
             ["Context depth", "Founder-curated", "Customer Context Intake V1 (guided + AI-assisted)"],
-            ["Accounts", "10 curated + 5 excluded", "1 qualified US (Whole Foods, HOLD) — discovery fixed (full_discovery); per-pass supply niche-limited"],
+            ["Accounts", "10 curated + 5 excluded", "6 qualified US (multi-pass) — Preview 2/2 + Brief 6/6 FULL; Portfolio/Premium 6 partial"],
             ["Buyer intelligence", "Route-level", "Stakeholder functions + buyer-access model"],
             ["Timing", "Present", "Correctly absent → HOLD (no fake intent)"],
             ["Economics", "Notes", "Constraints envelope + route-economics questions"],
