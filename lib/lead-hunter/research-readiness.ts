@@ -15,12 +15,19 @@ export interface ResearchReadinessAssessment {
 
 export const FAMILY: Record<string, string[]> = {
   manufacturer: ["manufacturer", "manufacturing", "fabricante", "manufactura", "industrial", "producer", "productor"],
-  distributor: ["distributor", "distribution", "distribuidor", "distribucion", "wholesale", "mayorista"],
+  // Importers/brokers are a distribution channel (a buyer/carrier of a producer's
+  // goods), so they belong to the distributor family. "importer"/"importador" are
+  // used (not bare "import", which substring-matches "important").
+  distributor: ["distributor", "distribution", "distribuidor", "distribucion", "wholesale", "wholesaler", "mayorista", "importer", "importador", "broker"],
   logistics: ["logistics", "logistica", "3pl", "transport", "freight"],
-  retailer: ["retail", "retailer", "minorista", "supermarket", "grocery"],
+  // Retail includes specialty/natural/gourmet grocery — the consumer-goods channels
+  // (avoid bare "deli", which substring-matches "delivery").
+  retailer: ["retail", "retailer", "minorista", "supermarket", "grocery", "grocer", "gourmet", "specialty food", "natural food", "health food", "delicatessen"],
   software: ["software", "saas", "technology", "tecnologia"],
   financial: ["bank", "banco", "bancoldex", "financial", "financiero", "fintech", "insurance", "seguros"],
-  hospitality: ["hotel", "hospitality", "tourism", "turismo"],
+  hospitality: ["hotel", "hospitality", "tourism", "turismo", "spa", "resort"],
+  // Premium/corporate gifting is a distinct commercial channel for consumer goods.
+  gifting: ["gifting", "gift basket", "gift box", "gift company", "curated box", "corporate gift", "hamper", "regalo"],
 };
 
 const words = (value: string) => value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(/[^a-z0-9]+/).filter(x => x.length >= 4);
