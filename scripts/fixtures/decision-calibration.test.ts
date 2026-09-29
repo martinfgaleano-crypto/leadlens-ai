@@ -40,6 +40,16 @@ t("E: material event + material counter → validate", decideOf({ signalKind: "e
   const c = synthesizeCase(base({ channelAccessVerified: true }));
   t("verified channel → verdictStatus 'investigate' (channel-fit, not buying intent)", c.verdictStatus === "investigate");
   t("verified channel keeps timing Limited (channel-fit is not a timing signal)", c.timing === "Limited");
+  t("verified channel reason is channel-fit (verified access)", c.reasons.some((r) => r.includes("channel_fit_not_buying_intent")));
+}
+
+// §8.1 — strategic ROUTE validation is DISTINCT from verified channel access.
+{
+  const sr = synthesizeCase(base({ strategicRouteValidatable: true, channelAccessVerified: false, openDecisionCritical: ["Validate the route: category + onboarding"] }));
+  t("strategic-route-validatable → validate (no event, no verified access)", sr.decision === "validate" && sr.verdictStatus === "investigate");
+  t("strategic route is labeled route-validation, NOT verified channel access", sr.reasons.some((r) => r.includes("strategic_route_validation")) && sr.reasons.some((r) => r.includes("channel_access_not_verified")) && !sr.reasons.some((r) => r.includes("channel_fit_not_buying_intent")));
+  const neither = synthesizeCase(base({ strategicRouteValidatable: false, channelAccessVerified: false }));
+  t("neither access nor route basis + no event → hold", neither.decision === "hold");
 }
 
 // caseDecision mapping stays canonical.
@@ -58,9 +68,11 @@ t("caseDecision monitor → monitor", caseDecision("monitor").decision === "moni
     enrichment: { next_best_question: o.q, research_confidence: 0.5, evidence_discipline: [], opportunity_risks: [], account_research: null },
     qualification: { fit_score: o.fit },
   }) as never;
-  const dec = (o: { industry: string; fit: number; q: string | null }) => canonicalCaseForLead(lead(o))?.decision;
-  t("reseller lift: strong-fit natural grocery + open question → validate", dec({ industry: "Natural and organic grocery chain", fit: 8, q: "Confirm category fit and vendor onboarding" }) === "validate");
-  t("reseller lift: strong-fit distributor + open question → validate", dec({ industry: "Natural products distributor", fit: 8, q: "Confirm portfolio fit" }) === "validate");
+  const cc = (o: { industry: string; fit: number; q: string | null }) => canonicalCaseForLead(lead(o));
+  const dec = (o: { industry: string; fit: number; q: string | null }) => cc(o)?.decision;
+  t("reseller: strong-fit natural grocery + open question → validate (strategic ROUTE)", dec({ industry: "Natural and organic grocery chain", fit: 8, q: "Confirm category fit and vendor onboarding" }) === "validate");
+  t("reseller VALIDATE is strategic-route, NOT verified channel access (§8.1)", (cc({ industry: "Natural and organic grocery chain", fit: 8, q: "Confirm category fit" })?.reasons ?? []).some((r) => r.includes("strategic_route_validation")) && !(cc({ industry: "Natural and organic grocery chain", fit: 8, q: "Confirm category fit" })?.reasons ?? []).some((r) => r.includes("channel_fit_not_buying_intent")));
+  t("reseller: strong-fit distributor + open question → validate", dec({ industry: "Natural products distributor", fit: 8, q: "Confirm portfolio fit" }) === "validate");
   t("no lift: strong-fit SOFTWARE company (non-reseller) → hold", dec({ industry: "enterprise software", fit: 8, q: "Anything" }) === "hold");
   t("no lift: LIMITED-fit reseller → hold (not forced up)", dec({ industry: "grocery chain", fit: 3, q: "Anything" }) === "hold");
   t("no lift: strong reseller but NO open question → hold", dec({ industry: "grocery chain", fit: 8, q: null }) === "hold");

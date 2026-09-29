@@ -556,23 +556,21 @@ export function canonicalCaseForLead(lead: ProcessedLead): NonNullable<LeadLensR
   const independentSupportNew = verifiedSignal
     && ar?.corroboration_attempted === true
     && (ar?.corroborating_domains ?? 0) >= 1;
-  // Verified structural channel-fit → the account has a clear purchase mechanism, so
-  // a strong-fit account with a validatable unknown reaches VALIDATE rather than HOLD
-  // purely for lack of a dated event (§51/§52). This is NOT buying intent. Two honest
-  // bases, both structural (never inferred intent):
-  //   (a) a strong/moderate channel_fit grade from the account's OWN vendor/supplier page;
-  //   (b) a resolved-identity RESELLER (retailer / grocery / distributor / importer /
-  //       broker) that is STRONG fit AND carries a concrete decision-critical unknown —
-  //       a company verified to be a reseller is, by definition, a verified multi-brand
-  //       channel with a known onboarding mechanism; the open question is exactly what
-  //       VALIDATE resolves ("validate category, onboarding, decision-maker"). Moderate/
-  //       Limited fit, or no open question, is NOT lifted (stays HOLD — no forced positives).
+  // Two DISTINCT, honestly-separated bases for VALIDATE without a dated event (§8.1):
+  //  (a) channelAccessVerified = VERIFIED channel ACCESS: a strong/moderate channel_fit
+  //      grade earned from the account's OWN vendor/supplier/onboarding page. This is
+  //      real evidence of an accessible route — never inferred from company type.
+  //  (b) strategicRouteValidatable = strategic ROUTE-fit validation: a resolved-identity
+  //      STRONG-fit RESELLER (retail/grocery/distributor/importer) with a concrete
+  //      decision-critical unknown. This is route plausibility, NOT verified access —
+  //      it yields VALIDATE with an explicit "channel access NOT verified — validate
+  //      the route" reason. Moderate/Limited fit or no open question → HOLD (no forced
+  //      positives §45). Keeping these separate stops route-fit masquerading as access.
   const fitStrength = strength(lead.qualification.fit_score);
   const resellerOrgType = /retail|grocer|grocery|supermarket|distribut|wholesal|importer|broker|specialty (food|grocer|beverage)|natural (foods|products|grocer)/i.test(`${c.industry ?? ""}`);
   const hasOpenQuestion = Boolean(e.next_best_question);
-  const channelAccessVerified =
-    (c.opportunity_kind === "channel_fit" && ["strong", "moderate"].includes(c.channel_evidence_grade ?? ""))
-    || (Boolean(c.domain) && resellerOrgType && fitStrength === "Strong" && hasOpenQuestion);
+  const channelAccessVerified = c.opportunity_kind === "channel_fit" && ["strong", "moderate"].includes(c.channel_evidence_grade ?? "");
+  const strategicRouteValidatable = !channelAccessVerified && Boolean(c.domain) && resellerOrgType && fitStrength === "Strong" && hasOpenQuestion;
   const canonical = synthesizeCase({
     accountId: c.company,
     identityVerified: Boolean(c.domain),
@@ -580,10 +578,10 @@ export function canonicalCaseForLead(lead: ProcessedLead): NonNullable<LeadLensR
     // A verified channel-fit carries its own structural signal (the account's own
     // vendor/supplier page), sourced from the account domain, so it can reach the
     // VALIDATE (investigate) verdict instead of HOLD (§51).
-    signalKind: verifiedSignal ? (c.signal_type ?? "corporate_event") : channelAccessVerified ? "verified_channel_access" : null,
+    signalKind: verifiedSignal ? (c.signal_type ?? "corporate_event") : channelAccessVerified ? "verified_channel_access" : strategicRouteValidatable ? "strategic_route_validation" : null,
     signalDate,
     dateConfidence: verifiedSignal ? "high" : signalDate ? "medium" : "none",
-    sourceHost: sourceHost ?? (channelAccessVerified ? (c.domain ?? null) : null),
+    sourceHost: sourceHost ?? ((channelAccessVerified || strategicRouteValidatable) ? (c.domain ?? null) : null),
     materialEvent: verifiedSignal,
     hasMaterialCounter: e.account_research?.counterevidence_material_found === true
       || (e.opportunity_risks ?? []).some((risk) => /cancel|contradict|insolven|third.party|terceriz/i.test(risk)),
@@ -596,6 +594,7 @@ export function canonicalCaseForLead(lead: ProcessedLead): NonNullable<LeadLensR
     geographyConfirmed: Boolean(c.country || c.location),
     regionRequired: false,
     channelAccessVerified,
+    strategicRouteValidatable,
   });
   return {
     lead_id: lead.id, account_id: c.company, decision: canonical.decision,

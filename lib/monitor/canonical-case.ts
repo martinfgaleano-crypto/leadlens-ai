@@ -41,6 +41,12 @@ export interface CanonicalCaseInput {
    *  reach VALIDATE instead of collapsing to HOLD for lack of a dated event (§51/§52).
    *  Default false — only a genuinely verified multi-brand channel sets it. */
   channelAccessVerified?: boolean;
+  /** Strategic ROUTE validation (§8.1): a resolved-identity account in a plausible
+   *  commercial route (e.g. a verified reseller) worth validating as a market-entry
+   *  route WITHOUT verified channel access and WITHOUT a dated event. Distinct from
+   *  channelAccessVerified — it yields VALIDATE with an honest "channel access NOT
+   *  verified — validate the route" reason, never presented as verified access. */
+  strategicRouteValidatable?: boolean;
 }
 
 export type CanonicalDecisionSource = "canonical_opportunity_test" | "fallback_conservative";
@@ -95,6 +101,7 @@ export function synthesizeCase(input: CanonicalCaseInput): CanonicalCase {
     region_required: input.regionRequired,
     corporate_identity_verified: input.identityVerified,
     channel_access_verified: input.channelAccessVerified === true,
+    strategic_route_validatable: input.strategicRouteValidatable === true,
   });
 
   let decisionSource: CanonicalDecisionSource = "canonical_opportunity_test";

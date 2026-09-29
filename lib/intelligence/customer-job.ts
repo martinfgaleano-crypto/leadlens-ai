@@ -127,7 +127,7 @@ export interface CustomerJobState {
   routeYield: Record<string, RouteYield>;
   providerState: Record<string, string>;
   spendUsd: number;
-  vault: { discovered: number; existingReused: number; newInserted: number; rejectedNonAccount: number };
+  vault: { discovered: number; existingReused: number; newInserted: number; rejectedNonAccount: number; vaultFirstMatches?: number };
   tierReadiness: Record<string, TierReadiness>;
   createdAt: string;
   updatedAt: string;
@@ -172,6 +172,11 @@ export interface RunJobOptions {
   maxPasses?: number;        // hard guard against runaway (default 24)
   budgetUsd?: number;        // cumulative provider budget ceiling (default 20)
   minYieldToContinueRoute?: number; // route marked exhausted below this (default 0)
+  /** Vault-selection policy (§2): when false, Vault-first hits do NOT seed the
+   *  customer-facing candidate/selection pool — the shortlist is driven by fresh
+   *  external discovery, and Vault stays inventory/dedup/memory. Default true
+   *  (back-compat). Set from resolveVaultSelectionPolicy(vaultCount). */
+  vaultAsSelectionSource?: boolean;
 }
 
 const DEFAULT_MILESTONES = [2, 6, 12, 18];
@@ -272,14 +277,21 @@ export async function runOnePass(state: CustomerJobState, spec: PassSpec, deps: 
       state.vault.rejectedNonAccount += m.rejected_non_account;
     } catch { /* Vault write-through is best-effort; never breaks the job (§25) */ }
   }
-  state.vault.existingReused += vaultHitsRaw.length;
+  // Vault-first matches are a distinct metric from write-through rediscovery (§6.2):
+  // they are Vault records SURFACED for possible selection, not companies re-observed
+  // by fresh discovery. Track them separately; do not fold into existingReused.
+  state.vault.vaultFirstMatches = (state.vault.vaultFirstMatches ?? 0) + vaultHitsRaw.length;
 
   // 3. Union + dedup into the accumulated candidate universe (§38/§39: extend,
   //    never replace). Skip already-known keys and rejection-memory keys (§42).
+  // Vault-selection policy (§2): below the milestone, Vault-first does NOT seed the
+  // customer-facing selection pool — the shortlist is driven by fresh external
+  // discovery. Vault is still used for dedup + research memory (write-through above).
+  const vaultForSelection = opts.vaultAsSelectionSource === false ? [] : vaultHitsRaw;
   const known = new Map(state.candidates.map((c) => [c.key, c]));
   const rejected = new Set(state.rejectionMemory.map((r) => r.key));
   const union: Array<{ c: DiscoveredCompany; origin: "external" | "vault" }> = [
-    ...vaultHitsRaw.map((c) => ({ c, origin: "vault" as const })),
+    ...vaultForSelection.map((c) => ({ c, origin: "vault" as const })),
     ...disc.discovered.map((c) => ({ c, origin: "external" as const })),
   ];
   let newCount = 0;
