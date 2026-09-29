@@ -74,11 +74,13 @@ export default function Pilot2Workspace({ durable, job }: { durable?: Durable; j
             <div style={{ display: "flex", flexWrap: "wrap", gap: 6, margin: "4px 0" }}>{(["prioritize", "validate", "monitor", "hold"] as const).map((k) => <span key={k} style={S.chip(decColor(k))}>{k} {d[k]}</span>)}</div>
             {q.length >= 3 && holdShare > 0.8 && <div style={{ ...S.li, color: C.warn }}>⚠ HOLD &gt; 80% — calibration diagnostic: verify channel-access assessment + search universe breadth (decision-calibration tests gate the logic).</div>}
           </>; })()}
-          <div style={{ ...S.li, marginTop: 10, fontWeight: 700, color: C.ink }}>Vault write-through (reconciliation)</div>
-          <div style={S.row}><span style={S.k}>Discovered → Vault</span><span style={S.v}>{job.vault?.discovered ?? 0}</span></div>
-          <div style={S.row}><span style={S.k}>New companies inserted</span><span style={{ ...S.v, color: C.ok }}>{job.vault?.newInserted ?? 0}</span></div>
-          <div style={S.row}><span style={S.k}>Existing reused (Vault-first)</span><span style={S.v}>{job.vault?.existingReused ?? 0}</span></div>
+          <div style={{ ...S.li, marginTop: 10, fontWeight: 700, color: C.ink }}>Vault write-through (reconciliation §6.2)</div>
+          <div style={S.row}><span style={S.k}>Discovered (fresh, evaluated)</span><span style={S.v}>{job.vault?.discovered ?? 0}</span></div>
+          <div style={S.row}><span style={S.k}>Net-new companies inserted</span><span style={{ ...S.v, color: C.ok }}>{job.vault?.newInserted ?? 0}</span></div>
+          <div style={S.row}><span style={S.k}>Re-observed (already in Vault)</span><span style={S.v}>{job.vault?.existingReused ?? 0}</span></div>
+          <div style={S.row}><span style={S.k}>Vault-first matches NOT selected (§2)</span><span style={S.v}>{job.vault?.vaultFirstMatches ?? 0}</span></div>
           <div style={S.row}><span style={S.k}>Rejected non-account</span><span style={S.v}>{job.vault?.rejectedNonAccount ?? 0}</span></div>
+          <div style={{ ...S.li, marginTop: 4, color: C.muted }}>Vault-selection policy: below 5,000 companies Vault is inventory/dedup/memory — the shortlist is driven by fresh external discovery, not Vault reuse (§2).</div>
           <div style={{ ...S.li, marginTop: 10, fontWeight: 700, color: C.ink }}>Qualified foundation ({job.qualified?.length ?? 0})</div>
           <div style={{ overflowX: "auto" }}><table style={S.table}><thead><tr><th style={S.th}>Account</th><th style={S.th}>Route</th><th style={S.th}>Decision</th></tr></thead>
             <tbody>{(job.qualified ?? []).map((q: { key: string; company: string; route: string; decision: string }) => <tr key={q.key}><td style={S.td}><b>{q.company}</b></td><td style={S.td}>{q.route}</td><td style={S.td}><span style={S.chip(decColor(q.decision))}>{q.decision}</span></td></tr>)}</tbody></table></div>

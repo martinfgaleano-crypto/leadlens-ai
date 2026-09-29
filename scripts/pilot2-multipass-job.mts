@@ -86,7 +86,7 @@ const objectiveCriteria: any = {
 
 // ── Route × geo pass plan (§9/§26/§31): materially distinct discovery families for
 //    nationwide breadth (do not just rotate geography words). ──
-const ROUTES: Array<{ route: string; industries: string[] }> = [
+const BASE_ROUTES: Array<{ route: string; industries: string[] }> = [
   { route: "specialty_importer", industries: ["Specialty food importer and distributor", "Natural products importer"] },
   { route: "latin_premium_importer", industries: ["Latin American premium food importer", "Hispanic specialty beverage importer"] },
   { route: "natural_products_distributor", industries: ["Natural products distributor", "Premium beverage distributor"] },
@@ -98,6 +98,21 @@ const ROUTES: Array<{ route: string; industries: string[] }> = [
   { route: "premium_gifting", industries: ["Premium corporate gifting company", "Luxury gourmet gift company"] },
   { route: "specialty_broker", industries: ["Natural products broker", "Specialty food sales broker"] },
 ];
+// Novel families for NET-NEW universe expansion (§5.2) — distinct from BASE_ROUTES so
+// discovery reaches companies not already saturated in Vault.
+const GROWTH_ROUTES: Array<{ route: string; industries: string[] }> = [
+  { route: "specialty_coffee_tea", industries: ["Specialty coffee and tea retailer", "Premium tea house chain"] },
+  { route: "juice_smoothie_bar", industries: ["Juice and smoothie bar chain", "Cold-pressed juice retailer"] },
+  { route: "food_coop", industries: ["Food cooperative grocery", "Community natural foods co-op"] },
+  { route: "latino_supermarket", industries: ["Hispanic supermarket chain", "Latino grocery retailer"] },
+  { route: "gourmet_subscription", industries: ["Gourmet subscription box company", "Curated snack box service"] },
+  { route: "natural_apothecary", industries: ["Natural apothecary and wellness retailer", "Herbal remedy shop chain"] },
+  { route: "farm_to_table_group", industries: ["Farm-to-table restaurant group", "Organic cafe chain"] },
+  { route: "premium_convenience", industries: ["Premium grab-and-go retailer", "Upscale convenience market"] },
+  { route: "corporate_wellness", industries: ["Corporate wellness program provider", "Workplace pantry and wellness supplier"] },
+  { route: "distributor_dsd", industries: ["Direct store delivery beverage distributor", "Independent DSD food distributor"] },
+];
+const ROUTES = process.env.PILOT2_GROWTH === "1" ? GROWTH_ROUTES : BASE_ROUTES;
 const GEO = (process.env.PILOT2_GEO ?? "United States|Miami Florida|New York Northeast|California").split("|").map((s) => s.trim()).filter(Boolean);
 const PASS_PLAN: PassSpec[] = [];
 let pid = 0;
@@ -239,14 +254,25 @@ const deps = {
 };
 
 // ── Run the job ────────────────────────────────────────────────────────────────
+// Vault-selection policy (§2): below the 5,000 milestone the shortlist is driven by
+// fresh EXTERNAL discovery — Vault is inventory/dedup/memory only.
+const { resolveVaultSelectionPolicy } = await import("@/lib/intelligence/vault-selection-policy");
+const { count: vaultCount } = await db.from("vault_companies").select("*", { count: "exact", head: true });
+const policy = resolveVaultSelectionPolicy(vaultCount ?? 0, { VAULT_SELECTION_THRESHOLD: process.env.VAULT_SELECTION_THRESHOLD, VAULT_SELECTION_MODE: process.env.VAULT_SELECTION_MODE });
 const jobId = `cj_amordegea_pilot2_${Date.now()}`;
 let state = cj.newCustomerJobState({ jobId, customer: "Amor de Gea", objective: "US export market entry", contextVersion: 1, geography: "United States", requestedTier: "premium", targetCount: 18 });
 console.log(`\n=== CUSTOMER JOB ${jobId} — target 18, budget $${BUDGET}, ${PASS_PLAN.length} planned passes ===`);
-state = await cj.runCustomerJob(state, PASS_PLAN, deps as any, { maxPasses: MAX_PASSES, budgetUsd: BUDGET });
+console.log(`Vault-selection policy: ${policy.mode} (${policy.reason}) — vaultAsSelectionSource=${policy.vaultAsSelectionSource}`);
+state = await cj.runCustomerJob(state, PASS_PLAN, deps as any, { maxPasses: MAX_PASSES, budgetUsd: BUDGET, vaultAsSelectionSource: policy.vaultAsSelectionSource });
 
 console.log(`\n=== JOB DONE :: status=${state.status} passes=${state.passesCompleted} qualified=${state.qualified.length} candidates=${state.candidates.length} spend=$${state.spendUsd.toFixed(4)} ===`);
 console.log("qualified:", state.qualified.map((q) => `${q.company}[${q.decision}]`).join(" | ") || "(none)");
 console.log("vault:", JSON.stringify(state.vault));
+// Vault growth (§6.3) — always measured, even for a pure-discovery growth run.
+const { count: vaultCountEnd0 } = await db.from("vault_companies").select("*", { count: "exact", head: true });
+const vaultGrowth = { starting: vaultCount ?? 0, ending: vaultCountEnd0 ?? 0, net_new_persisted: (vaultCountEnd0 ?? 0) - (vaultCount ?? 0), write_through_new: state.vault.newInserted, write_through_rediscovered: state.vault.existingReused, vault_first_matches_not_selected: state.vault.vaultFirstMatches ?? 0, policy: policy.mode };
+console.log("vaultGrowth:", JSON.stringify(vaultGrowth));
+writeFileSync(`${OUT}/pilot2-vault-growth.json`, JSON.stringify(vaultGrowth, null, 2));
 console.log("tierReadiness:", JSON.stringify(state.tierReadiness));
 
 // ── Assemble ONE institutional report from the merged research (only qualified accounts) ──
@@ -287,6 +313,6 @@ for (const [tier, label, code] of TIERS) {
   tierOut.push({ tier, label, accounts, bytes: pdf.length, pdf: path });
 }
 
-writeFileSync(`${OUT}/pilot2-job-telemetry.json`, JSON.stringify({ job: state, tiers: tierOut, institutional_dossiers: institutional.account_dossiers.length }, null, 2));
+writeFileSync(`${OUT}/pilot2-job-telemetry.json`, JSON.stringify({ job: state, tiers: tierOut, institutional_dossiers: institutional.account_dossiers.length, vaultGrowth, policy }, null, 2));
 console.log(`\ntelemetry :: ${OUT}/pilot2-job-telemetry.json`);
 console.log(`jobId (for Admin/resume) :: ${jobId}`);
