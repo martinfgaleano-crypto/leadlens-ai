@@ -22,7 +22,8 @@ async function main() {
   // Store degrades gracefully when Supabase/table is unavailable (no throw).
   const { savePilotContext, loadLatestPilotContext, savePilotFeedback, loadPilotFeedback } = await import("../../lib/pilot/pilot-store");
   const { CUSTOMER_CONTEXT_SCHEMA } = await import("../../lib/pilot/customer-context");
-  const ctx = { schema: CUSTOMER_CONTEXT_SCHEMA, version: 1, company: { name: "Amor de Gea" }, offering: "x", objective: "export to US", target_market: "US", ideal_customer: "y", success: "z", provenance: { source: "guided" as const, fact_type: "CUSTOMER_CONFIRMED" as const, confirmed: true } };
+  type Ctx = import("../../lib/pilot/customer-context").CustomerContextIntake;
+  const ctx: Ctx = { schema: CUSTOMER_CONTEXT_SCHEMA, version: 1, company: { name: "Amor de Gea" }, offering: "x", objective: "export to US", target_market: "US", ideal_customer: "y", success: "z", provenance: { source: "guided", fact_type: "CUSTOMER_CONFIRMED", confirmed: true } };
   const save = await savePilotContext({ pilotId: "amor-de-gea", context: ctx, confirmed: false });
   t("savePilotContext returns a typed result, never throws", save.ok === true || (save.ok === false && (save.reason === "not_configured" || save.reason === "error")));
   const load = await loadLatestPilotContext("amor-de-gea");

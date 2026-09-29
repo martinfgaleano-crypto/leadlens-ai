@@ -30,7 +30,9 @@ const decColor = (d: string) => d === "prioritize" ? C.ok : d === "validate" ? C
 const ROUTES = PILOT2_US_ROUTES;
 const DEPS = PILOT2_EXPORT_DEPENDENCIES;
 
-export default function Pilot2Workspace() {
+interface Durable { contextConfirmed: boolean; contextUpdatedAt: string | null; contextSummary: string | null; contextVersion: number | null; feedbackCount: number }
+
+export default function Pilot2Workspace({ durable }: { durable?: Durable }) {
   const [tab, setTab] = useState("overview");
   const p = AMOR_PILOT2, fb = AMOR_PILOT1_FEEDBACK;
   const TABS = [["overview", "Overview"], ["feedback", "Pilot 1 Feedback"], ["reconcile", "Reconciliation"], ["objective", "Objective"], ["routes", "US Routes"], ["deps", "Export Deps"], ["universe", "Account Universe"], ["tiers", "Tiers"], ["compare", "Pilot 1 vs 2"], ["custfb", "Customer Feedback"]];
@@ -53,6 +55,14 @@ export default function Pilot2Workspace() {
             {[["Client", p.client], ["Objective", "US export market entry"], ["Source → Target", "Colombia → United States"], ["Template", p.template], ["Approval", p.approval_state], ["Vault reuse", p.research.vault_reuse], ["Feedback source", p.feedback_source], ["Run", p.research.run_id]].map(([k, v]) => <div key={k as string} style={S.row}><span style={S.k}>{k}</span><span style={S.v}>{v}</span></div>)}
           </div>
           <div style={{ ...S.li, marginTop: 8, color: C.warn }}>{p.research.supply_note}</div>
+        </div>
+        <div style={S.card}><div style={S.h2}>Durable state (migration 065)</div>
+          {durable ? <>
+            <div style={S.row}><span style={S.k}>Customer Context</span><span style={{ ...S.v, color: durable.contextConfirmed ? C.ok : C.muted }}>{durable.contextConfirmed ? `confirmed (v${durable.contextVersion})` : "not persisted — using static"}</span></div>
+            <div style={S.row}><span style={S.k}>Context last updated</span><span style={S.v}>{durable.contextUpdatedAt ? new Date(durable.contextUpdatedAt).toLocaleString() : "—"}</span></div>
+            <div style={S.row}><span style={S.k}>Persisted feedback records</span><span style={S.v}>{durable.feedbackCount}</span></div>
+            {durable.contextSummary && <><div style={{ ...S.li, marginTop: 8, color: C.muted }}>Bounded interpretation summary ({durable.contextSummary.length}/600):</div><div style={{ fontSize: 12, color: C.sub, background: C.faint, borderRadius: 8, padding: "8px 10px" }}>{durable.contextSummary}</div></>}
+          </> : <div style={S.li}>Store not wired / 065 not applied — Admin shows static modules.</div>}
         </div>
         <div style={S.card}><div style={S.h2}>Section status</div>
           {p.sections.map((s) => <div key={s.id} style={S.row}><span style={S.k}>{s.label}{s.note ? ` — ${s.note}` : ""}</span><span style={{ ...S.v, color: s.status === "ready_for_review" ? C.ok : s.status === "blocked" ? C.warn : C.muted }}>{s.status.replace(/_/g, " ")}</span></div>)}
