@@ -76,12 +76,13 @@ export async function loadLatestCustomerJob(customer?: string): Promise<Customer
     const { createServerClient } = await import("@/lib/supabase/server");
     const db = createServerClient();
     if (!db) return null;
-    const { data, error } = await db.from(TABLE).select("report_json, created_at").eq("plan", "customer_job").order("created_at", { ascending: false }).limit(10);
+    const { data, error } = await db.from(TABLE).select("report_json, created_at").eq("plan", "customer_job").order("created_at", { ascending: false }).limit(20);
     if (error || !data) return null;
-    for (const row of data as Array<{ report_json?: Record<string, unknown> }>) {
-      const state = (row.report_json ?? {})[NS] as CustomerJobState | undefined;
-      if (state && (!customer || state.customer === customer)) return state;
-    }
-    return null;
+    const matches = (data as Array<{ report_json?: Record<string, unknown> }>)
+      .map((row) => (row.report_json ?? {})[NS] as CustomerJobState | undefined)
+      .filter((s): s is CustomerJobState => Boolean(s) && (!customer || s!.customer === customer));
+    // Prefer the most recent job that produced an actual qualified shortlist — a
+    // pure-discovery growth run (0 qualified) must not shadow the deliverable foundation.
+    return matches.find((s) => (s.qualified?.length ?? 0) > 0) ?? matches[0] ?? null;
   } catch { return null; }
 }
