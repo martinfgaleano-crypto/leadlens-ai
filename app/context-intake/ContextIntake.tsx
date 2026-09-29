@@ -1,5 +1,6 @@
 "use client";
 import { useMemo, useState } from "react";
+import { buildBoundedContextSummary, CUSTOMER_CONTEXT_SCHEMA, type CustomerContextIntake } from "@/lib/pilot/customer-context";
 
 // Customer Context Intake — reusable product surface. Two modes (guided / AI-assisted) resolve into ONE
 // canonical intake object (leadlens.customer_context.intake.v1) that maps to ConfirmedCommercialContextV1.
@@ -52,11 +53,19 @@ export default function ContextIntake() {
   const missing = REQUIRED.filter((k) => !(vals[k] ?? "").trim());
   const shownFields = showAll ? FIELDS : FIELDS.filter((f) => f[2] === "REQUIRED");
 
-  // Concise objective summary for Stage-A interpretation (≤600 chars) — the rest persists as constraints.
-  const summary = useMemo(() => {
-    const s = [vals.offering, vals.objective && `Objective: ${vals.objective}`, vals.target_market && `Target market: ${vals.target_market}`, vals.ideal_customer && `Ideal customer: ${vals.ideal_customer}`, vals.exclude && `Exclude: ${vals.exclude}`].filter(Boolean).join(". ");
-    return s.length > 600 ? s.slice(0, 597) + "…" : s;
-  }, [vals]);
+  // Canonical structured context (the FULL truth) + the deterministic ≤600-char bounded summary for
+  // Stage-A interpretation. The full context is what persists + feeds downstream structured consumption.
+  const ctx: CustomerContextIntake = useMemo(() => ({
+    schema: CUSTOMER_CONTEXT_SCHEMA, version: 1,
+    company: { name: vals.company ?? "" },
+    offering: vals.offering, objective: vals.objective, success: vals.success,
+    target_market: vals.target_market, current_markets: vals.current_markets,
+    ideal_customer: vals.ideal_customer, exclude: vals.exclude, channels: vals.channels,
+    timeline: vals.timeline, competitors: vals.competitors,
+    constraints: { capacity: vals.capacity, moq: vals.moq, price: vals.price, packaging: vals.packaging, certifications: vals.certifications, customization: vals.customization },
+    provenance: { source: mode === "ai" ? "ai_assisted" : "guided", fact_type: mode === "ai" ? "EXTERNAL_AI_STRUCTURED" : "CUSTOMER_CONFIRMED", confirmed: false },
+  }), [vals, mode]);
+  const summary = useMemo(() => buildBoundedContextSummary(ctx), [ctx]);
 
   function parsePaste() {
     setParseErr("");

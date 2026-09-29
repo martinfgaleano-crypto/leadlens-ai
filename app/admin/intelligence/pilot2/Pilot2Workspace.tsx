@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { AMOR_PILOT2 } from "@/lib/intelligence/amor-de-gea-pilot2";
 import { AMOR_PILOT1_FEEDBACK } from "@/lib/intelligence/amor-de-gea-pilot1-feedback";
+import { PILOT2_US_ROUTES, PILOT2_EXPORT_DEPENDENCIES, PILOT2_CLASSIFICATION_QUESTION } from "@/lib/intelligence/pilot2-us-routes";
 
 const C = { ink: "#0f172a", sub: "#334155", muted: "#64748b", line: "#e2e8f0", faint: "#f8fafc", cobalt: "#0284c7", ok: "#047857", warn: "#b45309", hold: "#7c3aed" };
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -26,25 +27,8 @@ const S: Record<string, any> = {
 };
 const decColor = (d: string) => d === "prioritize" ? C.ok : d === "validate" ? C.cobalt : d === "monitor" ? C.warn : C.hold;
 
-const ROUTES = [
-  { route: "Specialty importer / distributor", decision: "validate", why: "The one qualified account (Chex Finer Foods) sits here; import-of-record + FSVP make this the most structurally plausible first US route.", unknown: "Which importer will carry a Colombian premium botanical liquid; margin layers." },
-  { route: "Premium / natural & specialty retail", decision: "validate", why: "Customer's top Colombia preference (5/5); premium assortment fit. In the US a distributor usually sits in front of retail.", unknown: "Direct-vs-distributor entry; shelf economics under landed cost." },
-  { route: "Wellness hospitality / hotel & spa", decision: "monitor", why: "Customer preference (5/5) and product fit for gifting/amenity, but US procurement is property/management-company mediated and slow.", unknown: "Autonomy of property vs group procurement; case-pack for glass." },
-  { route: "Premium & corporate gifting", decision: "monitor", why: "Customer rated 4/5; seasonal windows; personalization (sleeve/box/kit) fits their stated preference.", unknown: "Ingestible acceptance in gifting; seasonality; volume." },
-  { route: "Boutique / Latin-American specialty", decision: "monitor", why: "Origin story + premium positioning fit specialty Latin channels.", unknown: "Fragmented buyers; evidence availability." },
-  { route: "Direct B2B wholesale / regional distribution", decision: "hold", why: "Customer rated distribution lowest (2/5) in Colombia; direct US wholesale without an importer is heavy for a first-time exporter.", unknown: "Requires importer-of-record regardless." },
-  { route: "E-commerce / marketplace adjacency", decision: "hold", why: "Out of scope for a B2B commercial-route pilot; no identified buyer.", unknown: "—" },
-];
-const DEPS = [
-  { item: "US importer of record / FSVP importer", cls: "LIKELY APPLICABLE", impact: "A US importer/FSVP partner is typically required → changes route architecture (importer/distributor route leads)." },
-  { item: "FDA facility registration + US agent", cls: "CONDITIONAL ON PRODUCT CLASS", impact: "If a food/beverage or supplement, the producing facility likely registers with FDA and designates a US agent → time/cost before first shipment." },
-  { item: "Prior notice of imported shipments", cls: "LIKELY APPLICABLE", impact: "Each shipment needs prior notice → operational, low commercial risk once set up." },
-  { item: "Labeling / nutrition facts / claims / allergens", cls: "CONDITIONAL ON PRODUCT CLASS", impact: "US label rework (non-medical claims) → time/cost to pilot; personalization (sleeve/box) must not conflict." },
-  { item: "HS classification + duties", cls: "UNKNOWN / NEEDS SPECIALIST", impact: "Duty rate feeds landed cost → margin stack; must be confirmed for the exact product." },
-  { item: "Country-of-origin marking + commercial invoice + packing list", cls: "LIKELY APPLICABLE", impact: "Standard customs entry docs → low risk, must be complete." },
-  { item: "Glass freight / breakage / warehouse handling", cls: "VERIFIED APPLICABLE (commercial)", impact: "Raises minimum viable shipment + favors channels/warehouses that handle glass → route + order-size decision." },
-  { item: "Colombia side: DIAN export declaration, INVIMA (product), origin, ProColombia", cls: "CONDITIONAL ON PRODUCT CLASS", impact: "Colombian export + sanitary requirements → export readiness gate before US commercial motion." },
-];
+const ROUTES = PILOT2_US_ROUTES;
+const DEPS = PILOT2_EXPORT_DEPENDENCIES;
 
 export default function Pilot2Workspace() {
   const [tab, setTab] = useState("overview");
@@ -117,17 +101,19 @@ export default function Pilot2Workspace() {
       </div>}
 
       {tab === "routes" && <div style={S.card}><div style={S.h2}>US commercial routes (decisions, not scores)</div>
-        <table style={S.table}><thead><tr><th style={S.th}>Route</th><th style={S.th}>Decision</th><th style={S.th}>Why</th><th style={S.th}>Key unknown</th></tr></thead><tbody>
-          {ROUTES.map((r) => <tr key={r.route}><td style={S.td}><b>{r.route}</b></td><td style={S.td}><span style={S.chip(decColor(r.decision))}>{r.decision}</span></td><td style={S.td}>{r.why}</td><td style={S.td}>{r.unknown}</td></tr>)}
+        <table style={S.table}><thead><tr><th style={S.th}>Route</th><th style={S.th}>Decision</th><th style={S.th}>Buyer function</th><th style={S.th}>Purchase mechanism</th><th style={S.th}>Key unknown / what changes it</th></tr></thead><tbody>
+          {ROUTES.map((r) => <tr key={r.route}><td style={S.td}><b>{r.route}</b></td><td style={S.td}><span style={S.chip(decColor(r.decision))}>{r.decision}</span></td><td style={S.td}>{r.buyer_function}</td><td style={S.td}>{r.purchase_mechanism}</td><td style={S.td}>{r.unknowns}<div style={{ color: C.muted, marginTop: 3 }}>→ {r.changes_decision}</div></td></tr>)}
         </tbody></table>
-        <div style={{ ...S.li, marginTop: 8, color: C.muted }}>Colombia route preferences are customer context, not copied to the US; US evidence sets the ranking.</div>
+        <div style={{ ...S.li, marginTop: 8, color: C.muted }}>Colombia route preferences are customer context, not copied to the US; US evidence sets the ranking. Each route carries discovery-query seeds for the next fresh-quota run.</div>
       </div>}
 
       {tab === "deps" && <div style={S.card}><div style={S.h2}>Export / import dependency map — commercial, not legal advice</div>
         <table style={S.table}><thead><tr><th style={S.th}>Dependency</th><th style={S.th}>Classification</th><th style={S.th}>Commercial impact</th></tr></thead><tbody>
-          {DEPS.map((d) => <tr key={d.item}><td style={S.td}><b>{d.item}</b></td><td style={S.td}>{d.cls}</td><td style={S.td}>{d.impact}</td></tr>)}
+          {DEPS.map((d) => <tr key={d.item}><td style={S.td}><b>{d.item}</b></td><td style={S.td}>{d.classification}</td><td style={S.td}>{d.commercial_impact}</td></tr>)}
         </tbody></table>
-        <div style={{ ...S.li, marginTop: 8, color: C.warn }}>Not a legal opinion. Items are commercial dependencies requiring specialist confirmation for Amor de Gea's exact product classification.</div>
+        <div style={{ ...S.li, marginTop: 10, color: C.warn }}>Not a legal opinion. Items are commercial dependencies requiring specialist confirmation for Amor de Gea's exact product classification.</div>
+        <div style={{ ...S.h2, marginTop: 14, fontSize: 13.5 }}>Classification question (founder/customer)</div>
+        <div style={S.li}>{PILOT2_CLASSIFICATION_QUESTION}</div>
       </div>}
 
       {tab === "universe" && <div style={S.card}><div style={S.h2}>Account universe (real)</div>
