@@ -33,14 +33,14 @@ export const AMOR_PILOT2 = {
   research: {
     geography_target: "United States",
     vault_reuse: "OFF", // US stays fresh-discovery per standing policy
-    run_id: "cj_amordegea_pilot2 (multi-pass customer-job-v1)",
+    run_id: "cj_amordegea_pilot2 (multi-pass customer-job-v1, national)",
     ran_at: "2026-09-29",
-    provider_spend_usd: 1.5,           // cumulative across the multi-pass job runs (discovery + research; well under $20)
-    candidate_universe: 6,             // accumulated deduped candidates across route/geo-diverse passes
-    delivered_accounts: 6,             // 6 qualified US accounts (all HOLD, fit-differentiated) — see live job card
-    supply_state: "partial" as "pending" | "sufficient" | "partial" | "insufficient",
+    provider_spend_usd: 3.5,           // cumulative across the multi-pass job runs (well under $20)
+    candidate_universe: 75,            // nationwide discovered universe across 10 route families (§3/§20/§22)
+    delivered_accounts: 20,            // 20 qualified US accounts; tiers SELECT 18 of 20 (§56-57)
+    supply_state: "sufficient" as "pending" | "sufficient" | "partial" | "insufficient",
     supply_note:
-      "MULTI-PASS ACCUMULATION shipped + operated (customer-job-v1). The prior 'per-pass supply is thin' limit was itself closed by building the multi-pass customer job: Vault-first → route/geo-diverse discovery (specialty importer, natural/specialty retail, wellness hospitality, premium gifting × US/Miami/NY/CA) → Vault write-through of every discovered canonical company → union+dedup+rejection-memory → research+qualify NEW candidates → adapt next pass by yield. Live result: 6 real, distinct, on-target US accounts across 3 routes — Whole Foods & Earth Fare (Strong fit, natural/specialty grocery), Canyon Ranch Lenox & Shou Sugi Ban House (wellness resorts), CorporateGift.com (gifting), D4D (Limited fit). ALL honest HOLD (Fit present, Timing=Limited → no current trigger, no fake intent). Preview 2/2 + Brief 6/6 FULL (was 1/target); Portfolio 6/12 + Premium 6/18 PARTIAL. Vault write-through wrote new companies AND reused prior-run companies (cross-run accumulation). Earlier 12-pass run reached 7 (adding Max's Imports, Macar Foods, Apical Group, KeHE, Golden Door). Residual to 12/18 = genuine real-supply ceiling for this narrow niche across a few passes (not a provider block, not a truth-gate relaxation) — more passes/query-families accrete further. Built on the prior discovery-resilience fixes (below). Exa excluded (§12).",
+      "NATIONWIDE multi-pass completion (customer-job-v1) + DECISION CALIBRATION FIX. Discovered a large national universe (75 canonical companies) across 10 materially-distinct route families (specialty/Latin importer, natural-products/premium-beverage distributor, natural & specialty retail, regional premium grocery, specialty beverage retail, wellness hospitality, boutique hotel/spa, premium/luxury gifting, specialty broker) → 20 qualified decision-relevant US accounts → SELECT 18 for the tiers. Preview 2/2 · Brief 6/6 · Portfolio 12/12 · Premium 18/18 ALL FULL. CALIBRATION (§44-55): the initial 100%-HOLD was a real product bug — opportunityTest's channel-fit → VALIDATE verdict was unreachable (channel_access_verified never plumbed, and the no_event hard blocker fired first). Fixed generically (canonical-case + opportunity-test + productive-spine; decision-calibration 17/17): a verified channel-fit, OR a resolved-identity STRONG-fit RESELLER (retail/grocery/distributor/importer) with a concrete decision-critical unknown → VALIDATE; moderate/limited fit or no open question → HOLD (no forced positives). Calibrated distribution = 5 VALIDATE (Whole Foods, Sprouts Farmers Market, Natural Grocers, Dorothy Lane Market, Bristol Farms) / 15 HOLD. Vault write-through: 75 discovered, 14 new, 61 reused across runs (cross-run accumulation). Built on the discovery-resilience fixes (below). Exa excluded (§12).",
     provider_status: {
       brave: "healthy; paced (≥1.1s spacing) + retry — 0 errors across a 14-call multi-query run after the fix",
       tavily: "rate-limited (HTTP 433) — correctly classified and bypassed; not required",
@@ -61,16 +61,15 @@ export const AMOR_PILOT2 = {
   },
   // Tier artifacts (regenerated through the canonical pipeline + V2.4 renderer — §66). Counts are truthful;
   // a tier below its target is labeled PARTIAL.
-  // All four rendered from the ONE multi-pass foundation (6 accounts; nesting preview⊆brief⊆portfolio⊆
-  // premium; byte growth 13.8k→33k→38k→42k confirms real per-tier content). Preview 2/2 + Brief 6/6 are
-  // FULL; Portfolio 6/12 + Premium 6/18 PARTIAL — labeled honestly (§49/§81). Real US accounts (all HOLD,
-  // fit-differentiated): Whole Foods, Earth Fare (Strong); Canyon Ranch Lenox, Shou Sugi Ban House,
-  // CorporateGift.com (Moderate); D4D (Limited). No duplicates, no synthetic filler.
+  // All four SELECTED from the 20-account national foundation (nesting preview⊆brief⊆portfolio⊆premium;
+  // byte growth 13.6k→33k→59k→96k confirms real per-tier depth). ALL FULL. Distribution 5 VALIDATE / 15
+  // HOLD (calibrated). VALIDATE: Whole Foods, Sprouts, Natural Grocers, Dorothy Lane Market, Bristol
+  // Farms (strong-fit resellers). No duplicates, no synthetic filler, no forced positives.
   tiers: [
     { tier: "Preview", target: 2, pdf: "LeadLens_AmorDeGea_Pilot2_Preview.pdf", delivered: 2, partial: false },
     { tier: "Brief", target: 6, pdf: "LeadLens_AmorDeGea_Pilot2_Brief.pdf", delivered: 6, partial: false },
-    { tier: "Portfolio", target: 12, pdf: "LeadLens_AmorDeGea_Pilot2_Portfolio.pdf", delivered: 6, partial: true },
-    { tier: "Premium", target: 18, pdf: "LeadLens_AmorDeGea_Pilot2_Premium.pdf", delivered: 6, partial: true },
+    { tier: "Portfolio", target: 12, pdf: "LeadLens_AmorDeGea_Pilot2_Portfolio.pdf", delivered: 12, partial: false },
+    { tier: "Premium", target: 18, pdf: "LeadLens_AmorDeGea_Pilot2_Premium.pdf", delivered: 18, partial: false },
   ],
   docs: {
     intake: "docs/customer-context/LEADLENS_CUSTOMER_CONTEXT_INTAKE_V1.md",

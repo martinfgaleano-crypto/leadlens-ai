@@ -69,6 +69,11 @@ export default function Pilot2Workspace({ durable, job }: { durable?: Durable; j
           <div style={{ marginTop: 12 }}>
             {["Preview", "Brief", "Portfolio", "Premium"].map((t) => { const r = job.tierReadiness?.[t]; return r ? <div key={t} style={S.row}><span style={S.k}>{t} readiness</span><span style={{ ...S.v, color: r.full ? C.ok : C.warn }}>{r.actual}/{r.target} {r.full ? "FULL" : "PARTIAL"}</span></div> : null; })}
           </div>
+          {(() => { const q = job.qualified ?? []; const d = { prioritize: 0, validate: 0, monitor: 0, hold: 0 } as Record<string, number>; for (const a of q) d[a.decision] = (d[a.decision] ?? 0) + 1; const holdShare = q.length ? d.hold / q.length : 0; return <>
+            <div style={{ ...S.li, marginTop: 10, fontWeight: 700, color: C.ink }}>Decision distribution (calibrated)</div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6, margin: "4px 0" }}>{(["prioritize", "validate", "monitor", "hold"] as const).map((k) => <span key={k} style={S.chip(decColor(k))}>{k} {d[k]}</span>)}</div>
+            {q.length >= 3 && holdShare > 0.8 && <div style={{ ...S.li, color: C.warn }}>⚠ HOLD &gt; 80% — calibration diagnostic: verify channel-access assessment + search universe breadth (decision-calibration tests gate the logic).</div>}
+          </>; })()}
           <div style={{ ...S.li, marginTop: 10, fontWeight: 700, color: C.ink }}>Vault write-through (reconciliation)</div>
           <div style={S.row}><span style={S.k}>Discovered → Vault</span><span style={S.v}>{job.vault?.discovered ?? 0}</span></div>
           <div style={S.row}><span style={S.k}>New companies inserted</span><span style={{ ...S.v, color: C.ok }}>{job.vault?.newInserted ?? 0}</span></div>
@@ -156,12 +161,12 @@ export default function Pilot2Workspace({ durable, job }: { durable?: Durable; j
         <div style={S.li}>{PILOT2_CLASSIFICATION_QUESTION}</div>
       </div>}
 
-      {tab === "universe" && <div style={S.card}><div style={S.h2}>Account universe (real — multi-pass foundation)</div>
-        <table style={S.table}><thead><tr><th style={S.th}>Company</th><th style={S.th}>Route</th><th style={S.th}>Fit</th><th style={S.th}>Decision</th><th style={S.th}>Note</th></tr></thead><tbody>
-          {[["Whole Foods Market", "Natural / specialty retail", "Strong"], ["Earth Fare", "Natural / specialty retail", "Strong"], ["Canyon Ranch Lenox", "Wellness hospitality", "Moderate"], ["Shou Sugi Ban House", "Wellness hospitality", "Moderate"], ["CorporateGift.com", "Premium gifting", "Moderate"], ["D4D", "Specialty importer", "Limited"]].map(([co, route, fit]) =>
-            <tr key={co}><td style={S.td}><b>{co}</b></td><td style={S.td}>{route}</td><td style={S.td}>{fit}</td><td style={S.td}><span style={S.chip(C.hold)}>hold</span></td><td style={S.td}>Fit present, Timing=Limited (no current trigger) → honest HOLD. No fake intent.</td></tr>)}
+      {tab === "universe" && <div style={S.card}><div style={S.h2}>Account universe (real — national multi-pass foundation, 20 qualified)</div>
+        <table style={S.table}><thead><tr><th style={S.th}>Company</th><th style={S.th}>Route</th><th style={S.th}>Decision</th></tr></thead><tbody>
+          {[["Whole Foods Market", "Natural / specialty retail", "validate"], ["Sprouts Farmers Market", "Natural / specialty retail", "validate"], ["Natural Grocers", "Natural / specialty retail", "validate"], ["Dorothy Lane Market", "Regional premium grocery", "validate"], ["Bristol Farms", "Regional premium grocery", "validate"], ["Irvine Ranch Market", "Regional premium grocery", "hold"], ["Claro's Italian Markets", "Regional premium grocery", "hold"], ["Clover Grocery", "Specialty retail", "hold"], ["Wild Oats", "Natural retail", "hold"], ["The Vitamin Shoppe", "Wellness retail", "hold"], ["Iberia Foods", "Latin premium importer", "hold"], ["Sabanero NY", "Latin premium importer", "hold"], ["Thomas Foods International", "Distributor", "hold"], ["American Beverage Corporation", "Beverage distributor", "hold"], ["Alter Eco", "Premium natural brand", "hold"], ["Canyon Ranch", "Wellness hospitality", "hold"], ["Miraval Resorts", "Wellness hospitality", "hold"], ["Cellar Craft", "Specialty beverage", "hold"], ["Palko Services", "Specialty distribution", "hold"], ["BAVE", "Specialty beverage", "hold"]].map(([co, route, dec]) =>
+            <tr key={co}><td style={S.td}><b>{co}</b></td><td style={S.td}>{route}</td><td style={S.td}><span style={S.chip(decColor(dec))}>{dec}</span></td></tr>)}
         </tbody></table>
-        <div style={{ ...S.li, marginTop: 8, color: C.muted }}>6 qualified US accounts accumulated by the multi-pass customer job across importer / natural-specialty retail / wellness hospitality / premium gifting routes (see the live job card in Overview for the current run). A 12-pass run reached 7 (adding Max&apos;s Imports, Macar Foods, Apical Group, KeHE, Golden Door). All HOLD, fit-differentiated, no duplicates, not padded.</div>
+        <div style={{ ...S.li, marginTop: 8, color: C.muted }}>20 qualified US accounts SELECTED from a 75-company national universe across 10 route families (importer / distributor / natural &amp; specialty retail / regional premium grocery / specialty beverage / wellness hospitality / gifting / broker). Tiers select 18 of 20. Calibrated distribution: 5 VALIDATE (strong-fit resellers) / 15 HOLD — evidence-based, no forced positives. See the live job card in Overview.</div>
       </div>}
 
       {tab === "tiers" && <div style={S.card}><div style={S.h2}>Four tiers (one foundation; nesting verified)</div>
@@ -175,7 +180,7 @@ export default function Pilot2Workspace({ durable, job }: { durable?: Durable; j
         <table style={S.table}><thead><tr><th style={S.th}>Dimension</th><th style={S.th}>Pilot 1 (Colombia)</th><th style={S.th}>Pilot 2 (US export)</th></tr></thead><tbody>
           {[["Objective", "Colombia domestic opportunity", "Colombia → US export (interpreted, US ICP built)"],
             ["Context depth", "Founder-curated", "Customer Context Intake V1 (guided + AI-assisted)"],
-            ["Accounts", "10 curated + 5 excluded", "6 qualified US (multi-pass) — Preview 2/2 + Brief 6/6 FULL; Portfolio/Premium 6 partial"],
+            ["Accounts", "10 curated + 5 excluded", "20 qualified US (national multi-pass) — all tiers FULL; 5 VALIDATE / 15 HOLD calibrated"],
             ["Buyer intelligence", "Route-level", "Stakeholder functions + buyer-access model"],
             ["Timing", "Present", "Correctly absent → HOLD (no fake intent)"],
             ["Economics", "Notes", "Constraints envelope + route-economics questions"],

@@ -15,7 +15,7 @@ t("feedback ratings are the transcribed values (prioritization 5, evidence 4)", 
 t("account operational priority is the real order", JSON.stringify(AMOR_PILOT1_FEEDBACK.accounts.operational_priority_order) === JSON.stringify(["Éteka", "Vitálica", "Celestino Hotel Boutique & Spa", "Sinergy On"]));
 
 // ── Supply honesty: partial not padded (§49) ──
-t("supply state recorded as partial (discovery fixed; not padded, not blocked)", AMOR_PILOT2.research.supply_state === "partial");
+t("supply state recorded as sufficient (national foundation; all tiers full)", AMOR_PILOT2.research.supply_state === "sufficient");
 t("delivered accounts ≤ candidate universe (multi-pass foundation, honest)", (AMOR_PILOT2.research.delivered_accounts ?? 0) >= 2 && (AMOR_PILOT2.research.delivered_accounts ?? 0) <= (AMOR_PILOT2.research.candidate_universe ?? 0));
 t("every tier PARTIAL iff delivered < target (Preview/Brief full, Portfolio/Premium partial)", AMOR_PILOT2.tiers.every((x) => x.partial === ((x.delivered ?? 0) < x.target)));
 t("no tier claims more delivered than the real foundation (≤ delivered_accounts)", AMOR_PILOT2.tiers.every((x) => (x.delivered ?? 0) <= (AMOR_PILOT2.research.delivered_accounts ?? 0)));
