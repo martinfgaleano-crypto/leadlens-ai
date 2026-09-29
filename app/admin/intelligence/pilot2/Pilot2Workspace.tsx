@@ -64,6 +64,11 @@ export default function Pilot2Workspace({ durable }: { durable?: Durable }) {
             {durable.contextSummary && <><div style={{ ...S.li, marginTop: 8, color: C.muted }}>Bounded interpretation summary ({durable.contextSummary.length}/600):</div><div style={{ fontSize: 12, color: C.sub, background: C.faint, borderRadius: 8, padding: "8px 10px" }}>{durable.contextSummary}</div></>}
           </> : <div style={S.li}>Store not wired / 065 not applied — Admin shows static modules.</div>}
         </div>
+        <div style={S.card}><div style={S.h2}>Provider status (why supply is limited)</div>
+          {(["brave","tavily","serper","exa_firecrawl"] as const).map((k) => <div key={k} style={S.row}><span style={S.k}>{k.replace("_"," / ")}</span><span style={{ ...S.v, color: /healthy/.test((p.research as any).provider_status?.[k] ?? "") ? C.warn : C.muted, fontWeight: 600, maxWidth: 620 }}>{(p.research as any).provider_status?.[k] ?? "—"}</span></div>)}
+          <div style={{ ...S.row }}><span style={S.k}>operating mode</span><span style={{ ...S.v, color: C.warn }}>{(p.research as any).provider_status?.operating_mode ?? "—"}</span></div>
+          <div style={{ ...S.li, marginTop: 8, color: C.muted }}>The discovery engine refused under-corroborated candidates (truth gate held). Full counts need provider capacity restored — not a code fix.</div>
+        </div>
         <div style={S.card}><div style={S.h2}>Section status</div>
           {p.sections.map((s) => <div key={s.id} style={S.row}><span style={S.k}>{s.label}{s.note ? ` — ${s.note}` : ""}</span><span style={{ ...S.v, color: s.status === "ready_for_review" ? C.ok : s.status === "blocked" ? C.warn : C.muted }}>{s.status.replace(/_/g, " ")}</span></div>)}
         </div>

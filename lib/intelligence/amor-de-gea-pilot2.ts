@@ -40,7 +40,14 @@ export const AMOR_PILOT2 = {
     delivered_accounts: 1,             // 1 qualified US account (Chex Finer Foods, HOLD); Beehive Botanicals DISCARD
     supply_state: "insufficient" as "pending" | "sufficient" | "partial" | "insufficient",
     supply_note:
-      "Same-day provider quota exhausted → discovery skipped → 2 candidates → 1 qualified US account. NOT padded (§49). Full 2/6/12/18 counts require a fresh provider-quota run.",
+      "Diagnosed (2026-09-29, direct engine probe): NOT a lazy query and NOT blanket quota. Brave healthy for a single query but rate-limits under the multi-query discovery load; Tavily rate-limited (HTTP 433); Serper unfunded (no credits). Discovery engine ran 5 queries, grounded 1 name, ACCEPTED 0 — it correctly refused under-corroborated candidates (truth gate held, no fabrication). Best real foundation = 1 (Chex Finer Foods, HOLD, from a prior run). Full 2/6/12/18 needs provider capacity restored (fund Serper and/or fresh Brave/Tavily window); Exa/Firecrawl are not wired into discovery and must not be added here (§12).",
+    provider_status: {
+      brave: "healthy for a single query; rate-limits across a multi-query discovery run (free-tier + heavy same-day use)",
+      tavily: "rate-limited (HTTP 433)",
+      serper: "unfunded (no credits)",
+      exa_firecrawl: "defined but NOT wired into discovery (do not add per §12)",
+      operating_mode: "provider_limited",
+    },
   },
   // Tier artifacts (regenerated through the canonical pipeline + V2.4 renderer — §66). Counts are truthful;
   // a tier below its target is labeled PARTIAL.
