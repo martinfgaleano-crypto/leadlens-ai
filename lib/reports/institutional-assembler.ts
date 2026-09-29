@@ -82,10 +82,27 @@ function buildDossier(opp: Json, lead: Json | undefined, es = false, clientObjec
   ].filter(Boolean) as Claim[];
 
   const evidence_chain: EvidenceLink[] = [];
-  // A candidate URL is not automatically Case Evidence. Only expose it in the
-  // timing chain after deterministic event validation supplied signal_date.
-  if (c.source_url && signalDate) evidence_chain.push({ label: (clean(e.timing_signals?.[0]) ?? (es ? "Fuente principal" : "Primary source")) + freshLabel, url: c.source_url, date: signalDate, date_basis: "fact" });
-  for (const ev of (Array.isArray(e.evidence) ? e.evidence : []).slice(0, 3)) {
+  // Dated public signals from evidence discipline carry REAL event dates: each item
+  // was deterministically classified `verified_public_signal` and passed the
+  // materiality/temporal gate, so its date is trustworthy (never a crawl timestamp).
+  // These are the dates the candidate URL was found to be about — so they supply the
+  // validated date that lets the primary source appear in the timing chain (respecting
+  // the truth guard: a candidate URL surfaces only WITH a validated date, never bare).
+  const datedSignals = (Array.isArray(e.evidence_discipline) ? e.evidence_discipline : [])
+    .filter((x: Json) => x && typeof x === "object" && x.type === "verified_public_signal" && typeof x.claim === "string" && /^\d{4}-\d{2}-\d{2}$/.test(x.date ?? ""))
+    .slice(0, 3);
+  const primarySignal: Json | null = datedSignals[0] ?? null;
+  const primaryDate: string | null = signalDate ?? (primarySignal?.date ?? null);
+  if (c.source_url && primaryDate) {
+    // Primary source: the candidate's discovery source, dated by the validated signal.
+    evidence_chain.push({ label: ((clean(primarySignal?.claim) ?? clean(e.timing_signals?.[0]) ?? (es ? "Fuente principal" : "Primary source")).slice(0, 160)) + freshLabel, url: c.source_url, date: primaryDate, date_basis: "fact" });
+  }
+  // Additional dated public signals — date preserved; no distinct captured URL (honest).
+  for (const ev of datedSignals.slice(primarySignal ? 1 : 0)) {
+    evidence_chain.push({ label: (clean(ev.claim) ?? "").slice(0, 160), url: null, date: ev.date, date_basis: "fact" });
+  }
+  // Fallback: undated narrative evidence only when nothing dated/sourced survived.
+  if (!evidence_chain.length) for (const ev of (Array.isArray(e.evidence) ? e.evidence : []).slice(0, 3)) {
     if (typeof ev === "string" && ev.trim()) evidence_chain.push({ label: (clean(ev) ?? "").slice(0, 160), url: null, date: null, date_basis: "unknown" });
   }
 

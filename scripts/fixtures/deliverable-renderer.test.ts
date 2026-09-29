@@ -32,17 +32,23 @@ const RAW = {
     { lead_id: "a2", rank: 2, category: "WARM", recommended_action: "validate_source_first" },
     { lead_id: "a3", rank: 3, category: "COLD", recommended_action: "monitor" },
   ],
+  // Evidence provenance mirrors the REAL pipeline: dated public signals live in
+  // enrichment.evidence_discipline (type verified_public_signal + date), and the
+  // primary discovery URL is candidate.source_url (candidate.signal_date is often null).
   processed_leads: [
     { id: "a1", candidate: { company: "Northstar Logistics", source_url: "https://example.com/n", industry: "Logistics", location: "US · Midwest", domain: "example.com" },
       qualification: { category: "HOT", fit_score: 8, fit_reasons: ["Fit."] },
-      enrichment: { account_thesis: "Expanding distribution.", why_now: "Signed an agreement 9 days ago.", signal_date: "2026-08-05",
-        opportunity_risks: ["No procurement event confirmed."], next_best_question: "Confirm procurement centralization.", evidence_urls: ["https://example.com/careers"] } },
+      enrichment: { account_thesis: "Expanding distribution.", why_now: "Signed an agreement 9 days ago.",
+        evidence: ["Signed a distribution agreement."], evidence_discipline: [{ claim: "Signed a distribution agreement", type: "verified_public_signal", date: "2026-08-05" }],
+        opportunity_risks: ["No procurement event confirmed."], next_best_question: "Confirm procurement centralization." } },
     { id: "a2", candidate: { company: "FreshRoute Foods", source_url: "https://example.com/f", industry: "Food distribution", location: "US · Southeast", domain: "example.com" },
       qualification: { category: "WARM", fit_score: 6, fit_reasons: ["Fit."] },
-      enrichment: { account_thesis: "Opened 2 sites.", why_now: "Opened 2 sites 14 days ago.", signal_date: "2026-07-31", opportunity_risks: ["Single source."], next_best_question: "Check supplier network." } },
+      enrichment: { account_thesis: "Opened 2 sites.", why_now: "Opened 2 sites 14 days ago.",
+        evidence_discipline: [{ claim: "Opened two distribution sites", type: "verified_public_signal", date: "2026-07-31" }], opportunity_risks: ["Single source."], next_best_question: "Check supplier network." } },
     { id: "a3", candidate: { company: "Atlas Clinics Group", source_url: "", industry: "Healthcare", location: "US · West", domain: "example.com" },
       qualification: { category: "COLD", fit_score: 4, fit_reasons: ["Fit."] },
-      enrichment: { account_thesis: "Announced 2 clinics.", why_now: "Announced 2 clinics 21 days ago.", signal_date: "2026-07-24", opportunity_risks: ["No operations change yet."], next_best_question: "Verify category." } },
+      enrichment: { account_thesis: "Announced 2 clinics.", why_now: "Announced 2 clinics 21 days ago.",
+        evidence_discipline: [{ claim: "Announced two new clinics", type: "verified_public_signal", date: "2026-07-24" }], opportunity_risks: ["No operations change yet."], next_best_question: "Verify category." } },
   ],
 };
 const META = { job_id: "test", plan: "intelligence_launch_v0", search_id: null, customer_ref: null, created_at: NOW };
