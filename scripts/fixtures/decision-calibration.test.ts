@@ -3,6 +3,7 @@
 // not collapse to HOLD purely for lack of a dated event (§51/§52) — while an account
 // with NO current evidence at all still honestly resolves to HOLD (no forced positives).
 import { synthesizeCase, caseDecision, type CanonicalCaseInput } from "../../lib/monitor/canonical-case";
+import { canonicalCaseForLead } from "../../lib/intelligence/productive-spine";
 
 let passed = 0, failed = 0;
 const t = (name: string, cond: boolean) => { if (cond) { passed++; console.log("✅ " + name); } else { failed++; console.log("❌ " + name); } };
@@ -46,6 +47,24 @@ t("caseDecision investigate → validate", caseDecision("investigate").decision 
 t("caseDecision reject → hold", caseDecision("reject").decision === "hold");
 t("caseDecision opportunity → prioritize", caseDecision("opportunity").decision === "prioritize");
 t("caseDecision monitor → monitor", caseDecision("monitor").decision === "monitor");
+
+// ── canonicalCaseForLead reseller-channel lift (§51): a verified STRONG-fit reseller
+//    with a concrete decision-critical unknown → VALIDATE, not HOLD; non-resellers,
+//    weak fit, or no open question are NOT lifted (no forced positives). ──
+{
+  const lead = (o: { industry: string; fit: number; q: string | null }) => ({
+    id: "L", outreach: { qc_status: "PASSED" },
+    candidate: { company: "Acme", domain: "acme.com", industry: o.industry, signal_date: null, signal_type: null, source_url: null, country: "United States" },
+    enrichment: { next_best_question: o.q, research_confidence: 0.5, evidence_discipline: [], opportunity_risks: [], account_research: null },
+    qualification: { fit_score: o.fit },
+  }) as never;
+  const dec = (o: { industry: string; fit: number; q: string | null }) => canonicalCaseForLead(lead(o))?.decision;
+  t("reseller lift: strong-fit natural grocery + open question → validate", dec({ industry: "Natural and organic grocery chain", fit: 8, q: "Confirm category fit and vendor onboarding" }) === "validate");
+  t("reseller lift: strong-fit distributor + open question → validate", dec({ industry: "Natural products distributor", fit: 8, q: "Confirm portfolio fit" }) === "validate");
+  t("no lift: strong-fit SOFTWARE company (non-reseller) → hold", dec({ industry: "enterprise software", fit: 8, q: "Anything" }) === "hold");
+  t("no lift: LIMITED-fit reseller → hold (not forced up)", dec({ industry: "grocery chain", fit: 3, q: "Anything" }) === "hold");
+  t("no lift: strong reseller but NO open question → hold", dec({ industry: "grocery chain", fit: 8, q: null }) === "hold");
+}
 
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) process.exit(1);

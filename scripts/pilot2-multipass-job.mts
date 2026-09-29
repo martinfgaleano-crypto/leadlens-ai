@@ -23,6 +23,7 @@ const OUT = process.env.LEADLENS_RENDER_OUT || "/tmp/pilot2-multipass";
 mkdirSync(OUT, { recursive: true });
 const BUDGET = Number(process.env.PILOT2_BUDGET_USD ?? "8");
 const MAX_PASSES = Number(process.env.PILOT2_MAX_PASSES ?? "12");
+const MAX_RESEARCH_PER_PASS = Number(process.env.PILOT2_MAX_RESEARCH_PER_PASS ?? "6");
 
 const { runCompanyFirstDiscovery } = await import("@/lib/discovery/company-first-discovery");
 const { runLeadLensPipeline } = await import("@/lib/pipeline");
@@ -74,17 +75,28 @@ const objectiveIcp: any = {
 const objectiveCriteria: any = {
   target_industries: OBJECTIVE_INDUSTRIES, target_company_size: [], target_job_titles: [],
   target_geography: ["United States"], excluded_industries: ["mass retail", "pharmacy", "marketplace"],
-  buying_signals: [], disqualification_criteria: objectiveIcp.disqualifiers, offer_summary: "", value_proposition: "",
+  buying_signals: [], disqualification_criteria: objectiveIcp.disqualifiers,
+  // offer/value are set so channelAccessRelevant() enables channel-fit assessment
+  // (verified multi-brand vendor/supplier pages → the VALIDATE calibration path).
+  offer_summary: "premium botanical wellness beverages in glass bottles for US retail, hospitality and gifting channels",
+  value_proposition: "premium natural beverage brand seeking US distribution, specialty retail placement, and hospitality/spa/gifting programs",
   tone: "consultative", plan: "pro", lead_count: 18, require_real_discovery: true,
   output_language: "en", target_market_region: "north_america",
 };
 
-// ── Route × geo pass plan (§31/§36/§37): distinct enumeration per pass for breadth. ──
+// ── Route × geo pass plan (§9/§26/§31): materially distinct discovery families for
+//    nationwide breadth (do not just rotate geography words). ──
 const ROUTES: Array<{ route: string; industries: string[] }> = [
   { route: "specialty_importer", industries: ["Specialty food importer and distributor", "Natural products importer"] },
-  { route: "natural_specialty_retail", industries: ["Natural and organic grocery", "Specialty food and beverage retail"] },
-  { route: "wellness_hospitality", industries: ["Wellness resort and spa", "Boutique wellness hotel"] },
-  { route: "premium_gifting", industries: ["Premium gifting company", "Corporate gourmet gift company"] },
+  { route: "latin_premium_importer", industries: ["Latin American premium food importer", "Hispanic specialty beverage importer"] },
+  { route: "natural_products_distributor", industries: ["Natural products distributor", "Premium beverage distributor"] },
+  { route: "natural_specialty_retail", industries: ["Natural and organic grocery chain", "Specialty food and beverage retailer"] },
+  { route: "regional_premium_grocery", industries: ["Regional premium grocery chain", "Gourmet grocer"] },
+  { route: "specialty_beverage_retail", industries: ["Specialty beverage retailer", "Premium functional beverage shop"] },
+  { route: "wellness_hospitality", industries: ["Wellness resort and spa", "Destination wellness retreat"] },
+  { route: "boutique_hotel_spa", industries: ["Boutique hotel group", "Hotel spa retail program"] },
+  { route: "premium_gifting", industries: ["Premium corporate gifting company", "Luxury gourmet gift company"] },
+  { route: "specialty_broker", industries: ["Natural products broker", "Specialty food sales broker"] },
 ];
 const GEO = (process.env.PILOT2_GEO ?? "United States|Miami Florida|New York Northeast|California").split("|").map((s) => s.trim()).filter(Boolean);
 const PASS_PLAN: PassSpec[] = [];
@@ -96,23 +108,33 @@ const researchedLeadsById = new Map<string, any>();
 const rankedByCompany = new Map<string, any>();
 const canonicalByLead = new Map<string, any>();
 let lastExecSummary = "";
+// Channel-fit grade captured from discovery's opportunity-tested candidates, carried
+// into qualification so the VALIDATE calibration path (verified vendor channel) fires.
+const gradeByKey = new Map<string, { opportunity_kind?: string; channel_evidence_grade?: string; channel_proof_type?: string }>();
 
 function leadCandidatesFrom(cands: CanonicalCandidate[]): any[] {
-  return cands.map((c, i) => ({
-    id: `${c.key}_c${i}`, company: c.company, domain: c.domain ?? undefined,
-    website_url: c.domain ? `https://${c.domain}` : undefined, location: c.country ?? undefined,
-    country: c.country ?? null, industry: c.industry ?? undefined, source: "public_signal" as const,
-    confidence_score: c.domain ? 0.8 : 0.5,
-  }));
+  return cands.map((c, i) => {
+    const g = gradeByKey.get(c.key);
+    return {
+      id: `${c.key}_c${i}`, company: c.company, domain: c.domain ?? undefined,
+      website_url: c.domain ? `https://${c.domain}` : undefined, location: c.country ?? undefined,
+      country: c.country ?? null, industry: c.industry ?? undefined, source: "public_signal" as const,
+      confidence_score: c.domain ? 0.8 : 0.5,
+      ...(g?.opportunity_kind ? { opportunity_kind: g.opportunity_kind } : {}),
+      ...(g?.channel_evidence_grade ? { channel_evidence_grade: g.channel_evidence_grade } : {}),
+      ...(g?.channel_proof_type ? { channel_proof_type: g.channel_proof_type } : {}),
+    };
+  });
 }
 
 const accretionDeps = await productionVaultAccretionDeps();
 const routeMatches = (industry: string | null, route: string): boolean => {
   const t = (industry ?? "").toLowerCase();
-  if (route === "specialty_importer") return /import|distribut|broker|wholesale/.test(t);
-  if (route === "natural_specialty_retail") return /retail|grocer|grocery|natural|organic|gourmet|specialty|market/.test(t);
-  if (route === "wellness_hospitality") return /hotel|spa|resort|wellness|hospitality/.test(t);
-  if (route === "premium_gifting") return /gift|gifting|hamper/.test(t);
+  if (/importer|distributor/.test(route)) return /import|distribut|broker|wholesale/.test(t);
+  if (/retail|grocery|beverage/.test(route)) return /retail|grocer|grocery|natural|organic|gourmet|specialty|market|beverage|shop/.test(t);
+  if (/hospitality|hotel|spa/.test(route)) return /hotel|spa|resort|wellness|hospitality|retreat/.test(t);
+  if (/gifting/.test(route)) return /gift|gifting|hamper/.test(t);
+  if (/broker/.test(route)) return /broker|sales|distribut|import/.test(t);
   return true;
 };
 
@@ -135,8 +157,15 @@ const deps = {
     const routeCriteria = { ...objectiveCriteria, target_industries: spec.queries, target_geography: [spec.geoCluster ?? "United States"] };
     let discovered: DiscoveredCompany[] = [], providersAttempted: string[] = [], providerState: Record<string, string> = {}, raw = 0;
     try {
-      const { metrics } = await runCompanyFirstDiscovery(routeIcp, routeCriteria, "brief", 10, { costCapUsd: 0.4 });
+      const { candidates, metrics } = await runCompanyFirstDiscovery(routeIcp, routeCriteria, "brief", 10, { costCapUsd: 0.4 });
+      // Capture channel-fit grades from discovery's opportunity-tested candidates.
+      for (const cand of candidates ?? []) {
+        const key = cj.canonicalKey(cand.company, cand.domain ?? null);
+        if (cand.opportunity_kind || cand.channel_evidence_grade) gradeByKey.set(key, { opportunity_kind: cand.opportunity_kind, channel_evidence_grade: cand.channel_evidence_grade, channel_proof_type: cand.channel_proof_type });
+      }
       discovered = (metrics.universe_accounts ?? []).map((a: any) => ({ company: a.company, domain: a.domain ?? null, country: a.country ?? "United States", industry: a.sector ?? null }));
+      // Include graded candidates that the universe list may not surface (breadth).
+      for (const cand of candidates ?? []) if (cand.domain && !discovered.some((d) => cj.canonicalKey(d.company, d.domain) === cj.canonicalKey(cand.company, cand.domain ?? null))) discovered.push({ company: cand.company, domain: cand.domain ?? null, country: cand.country ?? "United States", industry: cand.industry ?? null });
       providersAttempted = metrics.providers_available ?? [];
       providerState = metrics.provider_status ?? {};
       raw = (metrics.universe_route_metrics ?? []).reduce((s: number, x: any) => s + (x.result_pages ?? 0), 0);
@@ -155,15 +184,28 @@ const deps = {
     } catch { return { evaluated: 0, new_companies: 0, existing_rediscovered: 0, rejected_non_account: 0 }; }
   },
   qualify: async (candidates: CanonicalCandidate[]): Promise<{ qualified: QualifiedAccount[]; rejected: RejectionMemoryEntry[] }> => {
-    const leads = leadCandidatesFrom(candidates);
+    // Candidate red-team (§101) + cost/yield discipline (§22): drop obvious non-buyers
+    // before expensive research, then research at most MAX_RESEARCH_PER_PASS, preferring
+    // channel-graded + domain-resolved candidates. Pre-filtered = rejection memory;
+    // over-cap = left as discovered candidates (in Vault) for a later pass.
+    const preRejected: RejectionMemoryEntry[] = [];
+    const inScope = candidates.filter((c) => {
+      if (/exhibit|logistics|freight|\b3pl\b|software|consult|staffing|recruit|advertising|marketing agency/i.test(`${c.company} ${c.industry ?? ""}`)) { preRejected.push({ key: c.key, company: c.company, reason: "OFF_TARGET_NON_BUYER", pass: c.firstSeenPass }); return false; }
+      return true;
+    });
+    const prioritized = [...inScope].sort((a, b) => (gradeByKey.has(b.key) ? 1 : 0) - (gradeByKey.has(a.key) ? 1 : 0) || (b.domain ? 1 : 0) - (a.domain ? 1 : 0));
+    const toResearch = prioritized.slice(0, MAX_RESEARCH_PER_PASS);
+    if (toResearch.length === 0) return { qualified: [], rejected: preRejected };
+    const leads = leadCandidatesFrom(toResearch);
     const before = usdNow();
     let report: any;
     try {
       report = await runLeadLensPipeline({
         onboardingData, plan: "pro", icpOverride: objectiveIcp, criteriaOverride: objectiveCriteria,
         candidatesOverride: leads, decisionOnly: true, researchCandidateLimit: leads.length, deliveryLimit: leads.length,
+        researchConcurrency: 3,
       });
-    } catch (e) { console.error("  qualify error:", e instanceof Error ? e.message : e); return { qualified: [], rejected: [] }; }
+    } catch (e) { console.error("  qualify error:", e instanceof Error ? e.message : e); return { qualified: [], rejected: preRejected }; }
     // Canonical decision authority (same as the productive spine): the raw pipeline
     // does NOT populate canonical_cases — the spine derives them per lead post-hoc.
     report.canonical_cases = (report.processed_leads ?? []).map((l: any) => canonicalCaseForLead(l)).filter(Boolean);
@@ -191,7 +233,7 @@ const deps = {
       const key = cj.canonicalKey(l.candidate.company, l.candidate.domain ?? null);
       rejected.push({ key, company: l.candidate.company, reason: (l.qualification?.category === "DISCARD" ? "OFF_TARGET_OR_INSUFFICIENT" : "NOT_QUALIFIED"), pass: candidates[0]?.firstSeenPass ?? 0 });
     }
-    return { qualified, rejected };
+    return { qualified, rejected: [...preRejected, ...rejected] };
   },
   save: async (state: any) => { try { await new SupabaseCustomerJobStore(db as any).save(state, null); } catch { /* best-effort */ } },
 };

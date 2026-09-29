@@ -1,0 +1,77 @@
+#!/usr/bin/env node
+/**
+ * Re-derive canonical decisions for a persisted multi-pass foundation with the CURRENT
+ * calibration (no re-research), then re-assemble + re-render the four V2.4 tiers.
+ * Reads pilot2-merged-report.json (written by pilot2-multipass-job.mts). Cost: $0.
+ */
+import { readFileSync, writeFileSync } from "node:fs";
+import { loadEnv } from "./lib/load-env.mjs";
+const env = loadEnv();
+for (const [k, v] of Object.entries(env)) if (typeof v === "string") process.env[k] = v;
+
+const OUT = process.env.LEADLENS_RENDER_OUT || "/tmp/pilot2-multipass";
+const { canonicalCaseForLead } = await import("@/lib/intelligence/productive-spine");
+const { assembleInstitutionalReport } = await import("@/lib/reports/institutional-assembler");
+const { fromInstitutionalReport } = await import("@/lib/deliverable/adapters");
+const { fromDeliverableViewModel } = await import("@/lib/delivery-system/delivery-document");
+const { toPresentationModel } = await import("@/lib/delivery-system/presentation-model");
+const { renderPdfBuffer } = await import("@/lib/delivery-system/renderers/pdf");
+const { resolveReportExperience } = await import("@/lib/products/report-experience");
+
+const merged = JSON.parse(readFileSync(`${OUT}/pilot2-merged-report.json`, "utf8"));
+const reportJson: any = merged.reportJson;
+const meta = merged.meta;
+
+// Re-derive canonical cases with the current calibration.
+const cases = (reportJson.processed_leads ?? []).map((l: any) => canonicalCaseForLead(l)).filter(Boolean);
+reportJson.canonical_cases = cases;
+
+// Reconcile ranked_opportunities' decision to the re-derived canonical (presentation only).
+const byLead = new Map(cases.map((c: any) => [c.lead_id, c]));
+for (const o of reportJson.ranked_opportunities ?? []) { const c: any = byLead.get(o.lead_id); if (c && o.decision) o.decision = { ...o.decision, decision: c.decision }; }
+// Rank by decision usefulness (prioritize>validate>monitor>hold) then keep order.
+const w = (d: string) => d === "prioritize" ? 4 : d === "validate" ? 3 : d === "monitor" ? 2 : 1;
+reportJson.ranked_opportunities = [...(reportJson.ranked_opportunities ?? [])]
+  .sort((a: any, b: any) => w((byLead.get(b.lead_id) as any)?.decision ?? "hold") - w((byLead.get(a.lead_id) as any)?.decision ?? "hold"))
+  .map((o: any, i: number) => ({ ...o, rank: i + 1 }));
+
+const dist: Record<string, number> = { prioritize: 0, validate: 0, monitor: 0, hold: 0 };
+for (const c of cases) dist[(c as any).decision] = (dist[(c as any).decision] ?? 0) + 1;
+console.log("re-derived decision distribution:", JSON.stringify(dist), "of", cases.length);
+console.log("validate/monitor accounts:", cases.filter((c: any) => c.decision === "validate" || c.decision === "monitor").map((c: any) => { const l = reportJson.processed_leads.find((x: any) => x.id === c.lead_id); return `${l?.candidate?.company}[${c.decision}]`; }).join(" | "));
+
+const institutional = assembleInstitutionalReport(reportJson, meta);
+console.log("institutional dossiers:", institutional.account_dossiers.length);
+
+const TIERS: Array<[string, string, string]> = [["preview", "Preview", "preview_launch_v0"], ["brief", "Brief", "brief_launch_v0"], ["intelligence", "Portfolio", "intelligence_launch_v0"], ["premium", "Premium", "premium_launch_v0"]];
+for (const [tier, label, code] of TIERS) {
+  const experience = resolveReportExperience(code, "en");
+  const vm = fromInstitutionalReport(institutional, experience);
+  const doc = { ...fromDeliverableViewModel(vm), premiumContext: null };
+  const pm = toPresentationModel(doc as any, tier as any, "pdf");
+  const pdf = await renderPdfBuffer(pm as any);
+  writeFileSync(`${OUT}/LeadLens_AmorDeGea_Pilot2_${label}.pdf`, pdf);
+  console.log(`ok ${label.padEnd(10)} bytes=${pdf.length}`);
+}
+// Persist the re-derived distribution into the job telemetry for Admin.
+try {
+  const tel = JSON.parse(readFileSync(`${OUT}/pilot2-job-telemetry.json`, "utf8"));
+  if (tel.job?.qualified) for (const q of tel.job.qualified) { const c: any = cases.find((x: any) => { const l = reportJson.processed_leads.find((y: any) => y.id === x.lead_id); return (l?.candidate?.company ?? "").toLowerCase() === q.company.toLowerCase(); }); if (c) q.decision = c.decision; }
+  writeFileSync(`${OUT}/pilot2-job-telemetry.json`, JSON.stringify(tel, null, 2));
+} catch { /* telemetry update best-effort */ }
+// Persist the job state (with calibrated decisions) to Supabase so Admin reflects it.
+try {
+  const { SupabaseCustomerJobStore } = await import("@/lib/intelligence/customer-job-store");
+  const { createServerClient } = await import("@/lib/supabase/server");
+  const db = createServerClient();
+  const tel = JSON.parse(readFileSync(`${OUT}/pilot2-job-telemetry.json`, "utf8"));
+  const job = tel.job;
+  if (db && job) {
+    const byCompany = new Map(cases.map((c: any) => { const l = reportJson.processed_leads.find((y: any) => y.id === c.lead_id); return [(l?.candidate?.company ?? "").toLowerCase(), c.decision]; }));
+    for (const q of job.qualified) { const d = byCompany.get(q.company.toLowerCase()); if (d) q.decision = d; }
+    job.tierReadiness = job.tierReadiness ?? {};
+    await new SupabaseCustomerJobStore(db as any).save(job, null);
+    console.log("persisted Supabase job state with calibrated decisions");
+  } else { console.log("no db/job for persistence"); }
+} catch (e) { console.log("job-state persist skipped:", e instanceof Error ? e.message : e); }
+console.log("done");

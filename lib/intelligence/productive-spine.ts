@@ -556,13 +556,23 @@ export function canonicalCaseForLead(lead: ProcessedLead): NonNullable<LeadLensR
   const independentSupportNew = verifiedSignal
     && ar?.corroboration_attempted === true
     && (ar?.corroborating_domains ?? 0) >= 1;
-  // Verified structural channel-fit (the account's OWN official source shows it
-  // accepts/distributes external brands). This is NOT buying intent — it lets a
-  // strong-fit account with a clear purchase mechanism reach VALIDATE rather than
-  // HOLD purely for lack of a dated event (§51/§52). Only a strong/moderate grade
-  // on a channel_fit candidate qualifies; preliminary/insufficient never does.
-  const channelAccessVerified = c.opportunity_kind === "channel_fit"
-    && ["strong", "moderate"].includes(c.channel_evidence_grade ?? "");
+  // Verified structural channel-fit → the account has a clear purchase mechanism, so
+  // a strong-fit account with a validatable unknown reaches VALIDATE rather than HOLD
+  // purely for lack of a dated event (§51/§52). This is NOT buying intent. Two honest
+  // bases, both structural (never inferred intent):
+  //   (a) a strong/moderate channel_fit grade from the account's OWN vendor/supplier page;
+  //   (b) a resolved-identity RESELLER (retailer / grocery / distributor / importer /
+  //       broker) that is STRONG fit AND carries a concrete decision-critical unknown —
+  //       a company verified to be a reseller is, by definition, a verified multi-brand
+  //       channel with a known onboarding mechanism; the open question is exactly what
+  //       VALIDATE resolves ("validate category, onboarding, decision-maker"). Moderate/
+  //       Limited fit, or no open question, is NOT lifted (stays HOLD — no forced positives).
+  const fitStrength = strength(lead.qualification.fit_score);
+  const resellerOrgType = /retail|grocer|grocery|supermarket|distribut|wholesal|importer|broker|specialty (food|grocer|beverage)|natural (foods|products|grocer)/i.test(`${c.industry ?? ""}`);
+  const hasOpenQuestion = Boolean(e.next_best_question);
+  const channelAccessVerified =
+    (c.opportunity_kind === "channel_fit" && ["strong", "moderate"].includes(c.channel_evidence_grade ?? ""))
+    || (Boolean(c.domain) && resellerOrgType && fitStrength === "Strong" && hasOpenQuestion);
   const canonical = synthesizeCase({
     accountId: c.company,
     identityVerified: Boolean(c.domain),

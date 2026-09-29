@@ -40,12 +40,16 @@ export class SupabaseCustomerJobStore implements CustomerJobStore {
   constructor(private readonly db: MinimalDb) {}
 
   async save(state: CustomerJobState, userId: string | null): Promise<void> {
+    // snapshot_reports.status has a CHECK constraint (processing|completed|failed).
+    // The real, richer job status lives in the namespaced payload; the column just
+    // takes a constraint-valid projection of it.
+    const colStatus = state.status === "complete" ? "completed" : state.status === "failed_terminal" ? "failed" : "processing";
     const { error } = await this.db.from(TABLE).upsert(
       {
         job_id: state.jobId,
         user_id: userId,
         plan: "customer_job",
-        status: state.status,
+        status: colStatus,
         report_json: { _status: state.status, job_id: state.jobId, kind: "customer_job", [NS]: state },
       },
       { onConflict: "job_id" },
