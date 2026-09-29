@@ -59,7 +59,14 @@ export function opportunityTest(i: OpportunityInput): OpportunityVerdict {
   if (!i.source_url) hard.push("no_source");
 
   // ── Event (hard/soft) ──
-  if (!i.signal_summary) hard.push("no_event");
+  // A verified multi-brand channel (the account's own official vendor/supplier
+  // page) is itself the qualifying structural signal for a channel-fit opportunity,
+  // so it exempts the dated-event blockers below (no_event / no_material_event /
+  // no_valid_date) exactly as the existing channel_access_verified exemptions do.
+  // Identity, grounding and source blockers still apply. Without this, the
+  // channel-fit → "investigate" verdict (line ~83) was unreachable for a null
+  // signal_summary and every no-trigger account collapsed to reject/HOLD (§51).
+  if (!i.signal_summary && !i.channel_access_verified) hard.push("no_event");
   if (!i.grounded) hard.push("ungrounded_claim");
   if (i.source_url && NON_EVENT_URL.test(i.source_url)) hard.push("non_event_reference_page");
   if (!i.matches_needs_family && !i.channel_access_verified) hard.push("no_material_event");

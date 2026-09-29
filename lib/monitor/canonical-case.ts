@@ -34,6 +34,13 @@ export interface CanonicalCaseInput {
   hasPostReviewEvent: boolean;
   geographyConfirmed: boolean;
   regionRequired: boolean;
+  /** Verified from the account's OWN official source that it accepts/distributes
+   *  external brands (supplier intake / external brand portfolio / category
+   *  distribution). A STRUCTURAL channel-fit signal, never buying intent: it lets
+   *  a strong-fit account with a clear purchase mechanism and a validatable unknown
+   *  reach VALIDATE instead of collapsing to HOLD for lack of a dated event (§51/§52).
+   *  Default false — only a genuinely verified multi-brand channel sets it. */
+  channelAccessVerified?: boolean;
 }
 
 export type CanonicalDecisionSource = "canonical_opportunity_test" | "fallback_conservative";
@@ -87,6 +94,7 @@ export function synthesizeCase(input: CanonicalCaseInput): CanonicalCase {
     geography_confirmed: input.geographyConfirmed,
     region_required: input.regionRequired,
     corporate_identity_verified: input.identityVerified,
+    channel_access_verified: input.channelAccessVerified === true,
   });
 
   let decisionSource: CanonicalDecisionSource = "canonical_opportunity_test";

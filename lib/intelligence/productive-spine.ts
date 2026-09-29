@@ -556,14 +556,24 @@ export function canonicalCaseForLead(lead: ProcessedLead): NonNullable<LeadLensR
   const independentSupportNew = verifiedSignal
     && ar?.corroboration_attempted === true
     && (ar?.corroborating_domains ?? 0) >= 1;
+  // Verified structural channel-fit (the account's OWN official source shows it
+  // accepts/distributes external brands). This is NOT buying intent — it lets a
+  // strong-fit account with a clear purchase mechanism reach VALIDATE rather than
+  // HOLD purely for lack of a dated event (§51/§52). Only a strong/moderate grade
+  // on a channel_fit candidate qualifies; preliminary/insufficient never does.
+  const channelAccessVerified = c.opportunity_kind === "channel_fit"
+    && ["strong", "moderate"].includes(c.channel_evidence_grade ?? "");
   const canonical = synthesizeCase({
     accountId: c.company,
     identityVerified: Boolean(c.domain),
     fromUniverse: true,
-    signalKind: verifiedSignal ? (c.signal_type ?? "corporate_event") : null,
+    // A verified channel-fit carries its own structural signal (the account's own
+    // vendor/supplier page), sourced from the account domain, so it can reach the
+    // VALIDATE (investigate) verdict instead of HOLD (§51).
+    signalKind: verifiedSignal ? (c.signal_type ?? "corporate_event") : channelAccessVerified ? "verified_channel_access" : null,
     signalDate,
     dateConfidence: verifiedSignal ? "high" : signalDate ? "medium" : "none",
-    sourceHost,
+    sourceHost: sourceHost ?? (channelAccessVerified ? (c.domain ?? null) : null),
     materialEvent: verifiedSignal,
     hasMaterialCounter: e.account_research?.counterevidence_material_found === true
       || (e.opportunity_risks ?? []).some((risk) => /cancel|contradict|insolven|third.party|terceriz/i.test(risk)),
@@ -575,6 +585,7 @@ export function canonicalCaseForLead(lead: ProcessedLead): NonNullable<LeadLensR
     hasPostReviewEvent: false,
     geographyConfirmed: Boolean(c.country || c.location),
     regionRequired: false,
+    channelAccessVerified,
   });
   return {
     lead_id: lead.id, account_id: c.company, decision: canonical.decision,
