@@ -252,16 +252,16 @@
   "deep_candidates": 0
  },
  "aol.com": {
-  "urls": 19,
+  "urls": 23,
   "extractions": 1,
   "valid_dates": 1,
   "trigger_events": 0,
   "deep_candidates": 0
  },
  "businesswire.com": {
-  "urls": 81,
+  "urls": 83,
   "extractions": 0,
-  "valid_dates": 18,
+  "valid_dates": 20,
   "trigger_events": 0,
   "deep_candidates": 0
  },
@@ -294,7 +294,7 @@
   "deep_candidates": 0
  },
  "uk.finance.yahoo.com": {
-  "urls": 91,
+  "urls": 95,
   "extractions": 0,
   "valid_dates": 0,
   "trigger_events": 0,
@@ -497,9 +497,9 @@
   "deep_candidates": 0
  },
  "prnewswire.com": {
-  "urls": 335,
+  "urls": 359,
   "extractions": 0,
-  "valid_dates": 18,
+  "valid_dates": 22,
   "trigger_events": 0,
   "deep_candidates": 0
  },
@@ -511,9 +511,9 @@
   "deep_candidates": 0
  },
  "finance.yahoo.com": {
-  "urls": 52,
+  "urls": 64,
   "extractions": 0,
-  "valid_dates": 18,
+  "valid_dates": 22,
   "trigger_events": 0,
   "deep_candidates": 0
  },
@@ -546,9 +546,9 @@
   "deep_candidates": 0
  },
  "wholefoodsmarket.com": {
-  "urls": 67,
+  "urls": 79,
   "extractions": 24,
-  "valid_dates": 19,
+  "valid_dates": 23,
   "trigger_events": 0,
   "deep_candidates": 0
  },
@@ -574,7 +574,7 @@
   "deep_candidates": 0
  },
  "progressivegrocer.com": {
-  "urls": 99,
+  "urls": 111,
   "extractions": 0,
   "valid_dates": 0,
   "trigger_events": 0,
@@ -658,7 +658,7 @@
   "deep_candidates": 0
  },
  "grocerydive.com": {
-  "urls": 54,
+  "urls": 62,
   "extractions": 24,
   "valid_dates": 0,
   "trigger_events": 0,
@@ -721,7 +721,7 @@
   "deep_candidates": 0
  },
  "ainvest.com": {
-  "urls": 63,
+  "urls": 67,
   "extractions": 0,
   "valid_dates": 0,
   "trigger_events": 0,
@@ -749,16 +749,16 @@
   "deep_candidates": 42
  },
  "sprouts.com": {
-  "urls": 99,
+  "urls": 107,
   "extractions": 24,
-  "valid_dates": 76,
+  "valid_dates": 84,
   "trigger_events": 0,
   "deep_candidates": 24
  },
  "about.sprouts.com": {
-  "urls": 114,
+  "urls": 130,
   "extractions": 0,
-  "valid_dates": 18,
+  "valid_dates": 22,
   "trigger_events": 0,
   "deep_candidates": 0
  },
@@ -791,14 +791,14 @@
   "deep_candidates": 0
  },
  "naturalgrocers.com": {
-  "urls": 179,
+  "urls": 199,
   "extractions": 0,
   "valid_dates": 0,
   "trigger_events": 0,
   "deep_candidates": 0
  },
  "wholefoodsmagazine.com": {
-  "urls": 60,
+  "urls": 64,
   "extractions": 0,
   "valid_dates": 0,
   "trigger_events": 0,
@@ -833,9 +833,9 @@
   "deep_candidates": 0
  },
  "investors.naturalgrocers.com": {
-  "urls": 228,
+  "urls": 232,
   "extractions": 0,
-  "valid_dates": 15,
+  "valid_dates": 19,
   "trigger_events": 0,
   "deep_candidates": 0
  },
@@ -2919,7 +2919,7 @@
   "deep_candidates": 0
  },
  "investingnews.com": {
-  "urls": 19,
+  "urls": 21,
   "extractions": 0,
   "valid_dates": 0,
   "trigger_events": 0,
@@ -3192,203 +3192,203 @@
   "deep_candidates": 0
  },
  "assets.wholefoodsmarket.com": {
-  "urls": 72,
+  "urls": 88,
   "extractions": 0,
   "valid_dates": 0,
   "trigger_events": 0,
   "deep_candidates": 0
  },
  "tastingtable.com": {
-  "urls": 18,
+  "urls": 22,
   "extractions": 0,
   "valid_dates": 0,
   "trigger_events": 0,
   "deep_candidates": 0
  },
  "financialcontent.com": {
-  "urls": 18,
+  "urls": 22,
   "extractions": 0,
-  "valid_dates": 18,
+  "valid_dates": 20,
   "trigger_events": 0,
   "deep_candidates": 0
  },
  "usatoday.com": {
-  "urls": 18,
+  "urls": 22,
   "extractions": 0,
   "valid_dates": 0,
   "trigger_events": 0,
   "deep_candidates": 0
  },
  "yahoo.com": {
-  "urls": 18,
+  "urls": 22,
   "extractions": 0,
   "valid_dates": 0,
   "trigger_events": 0,
   "deep_candidates": 0
  },
  "crehq.com": {
-  "urls": 18,
+  "urls": 22,
   "extractions": 0,
   "valid_dates": 0,
   "trigger_events": 0,
   "deep_candidates": 0
  },
  "einnews.com": {
-  "urls": 18,
+  "urls": 22,
   "extractions": 0,
-  "valid_dates": 0,
+  "valid_dates": 4,
   "trigger_events": 0,
   "deep_candidates": 0
  },
  "canyonranch.com": {
-  "urls": 90,
+  "urls": 110,
   "extractions": 0,
-  "valid_dates": 18,
+  "valid_dates": 22,
   "trigger_events": 0,
   "deep_candidates": 0
  },
  "grokipedia.com": {
-  "urls": 38,
+  "urls": 46,
   "extractions": 0,
-  "valid_dates": 15,
+  "valid_dates": 19,
   "trigger_events": 0,
   "deep_candidates": 0
  },
  "businessinsider.com": {
-  "urls": 18,
+  "urls": 22,
   "extractions": 0,
   "valid_dates": 0,
   "trigger_events": 0,
   "deep_candidates": 0
  },
  "houston.culturemap.com": {
-  "urls": 18,
+  "urls": 22,
   "extractions": 0,
   "valid_dates": 0,
   "trigger_events": 0,
   "deep_candidates": 0
  },
  "luxurytraveladvisor.com": {
-  "urls": 18,
+  "urls": 22,
   "extractions": 0,
-  "valid_dates": 18,
+  "valid_dates": 22,
   "trigger_events": 0,
   "deep_candidates": 0
  },
  "miravalresorts.com": {
-  "urls": 81,
+  "urls": 101,
   "extractions": 0,
-  "valid_dates": 0,
+  "valid_dates": 4,
   "trigger_events": 0,
   "deep_candidates": 0
  },
  "redseaglobal.com": {
-  "urls": 16,
+  "urls": 20,
   "extractions": 0,
   "valid_dates": 0,
   "trigger_events": 0,
   "deep_candidates": 0
  },
  "businesstraveller.com": {
-  "urls": 16,
+  "urls": 20,
   "extractions": 0,
   "valid_dates": 0,
   "trigger_events": 0,
   "deep_candidates": 0
  },
  "hotelnewsresource.com": {
-  "urls": 16,
+  "urls": 20,
   "extractions": 0,
-  "valid_dates": 16,
+  "valid_dates": 20,
   "trigger_events": 0,
   "deep_candidates": 0
  },
  "arabianbusiness.com": {
-  "urls": 16,
+  "urls": 20,
   "extractions": 0,
   "valid_dates": 16,
   "trigger_events": 0,
   "deep_candidates": 0
  },
  "storebrands.com": {
-  "urls": 34,
+  "urls": 42,
   "extractions": 0,
   "valid_dates": 0,
   "trigger_events": 0,
   "deep_candidates": 0
  },
  "wgntv.com": {
-  "urls": 17,
+  "urls": 21,
   "extractions": 0,
-  "valid_dates": 15,
+  "valid_dates": 19,
   "trigger_events": 0,
   "deep_candidates": 0
  },
  "investors.vitaminshoppe.com": {
-  "urls": 15,
+  "urls": 19,
   "extractions": 0,
   "valid_dates": 0,
   "trigger_events": 0,
   "deep_candidates": 0
  },
  "vitaminshoppe.com": {
-  "urls": 15,
+  "urls": 19,
   "extractions": 0,
   "valid_dates": 0,
   "trigger_events": 0,
   "deep_candidates": 0
  },
  "press.vitaminshoppe.com": {
-  "urls": 60,
+  "urls": 76,
   "extractions": 0,
-  "valid_dates": 30,
+  "valid_dates": 38,
   "trigger_events": 0,
   "deep_candidates": 0
  },
  "staging2.press.vitaminshoppe.com": {
-  "urls": 15,
+  "urls": 19,
   "extractions": 0,
   "valid_dates": 0,
   "trigger_events": 0,
   "deep_candidates": 0
  },
  "njbiz.com": {
-  "urls": 15,
+  "urls": 19,
   "extractions": 0,
-  "valid_dates": 15,
+  "valid_dates": 19,
   "trigger_events": 0,
   "deep_candidates": 0
  },
  "wwd.com": {
-  "urls": 15,
+  "urls": 19,
   "extractions": 0,
   "valid_dates": 0,
   "trigger_events": 0,
   "deep_candidates": 0
  },
  "nutraingredients.com": {
-  "urls": 15,
+  "urls": 19,
   "extractions": 0,
   "valid_dates": 0,
   "trigger_events": 0,
   "deep_candidates": 0
  },
  "thrivemarket.com": {
-  "urls": 90,
+  "urls": 114,
   "extractions": 0,
   "valid_dates": 0,
   "trigger_events": 0,
   "deep_candidates": 0
  },
  "cnbc.com": {
-  "urls": 15,
+  "urls": 19,
   "extractions": 0,
-  "valid_dates": 15,
+  "valid_dates": 19,
   "trigger_events": 0,
   "deep_candidates": 0
  },
  "thrivenextgen.com": {
-  "urls": 15,
+  "urls": 19,
   "extractions": 0,
   "valid_dates": 0,
   "trigger_events": 0,
@@ -3753,6 +3753,13 @@
  },
  "matrixbcg.com": {
   "urls": 1,
+  "extractions": 0,
+  "valid_dates": 0,
+  "trigger_events": 0,
+  "deep_candidates": 0
+ },
+ "inc.com": {
+  "urls": 4,
   "extractions": 0,
   "valid_dates": 0,
   "trigger_events": 0,

@@ -1,0 +1,674 @@
+{
+  "version": "pilot2-actionability-track-a-v1",
+  "created_at": "2026-09-30T16:22:16.079Z",
+  "accounts": 3,
+  "queries": 9,
+  "observations": [
+    {
+      "account": {
+        "company": "Sprouts Farmers Market",
+        "domain": "sprouts.com"
+      },
+      "family": "supplier_access",
+      "query": "site:sprouts.com Sprouts Farmers Market vendor supplier application submit product",
+      "provider": "brave",
+      "ok": true,
+      "error": null,
+      "latency_ms": 1425,
+      "results": [
+        {
+          "url": "https://about.sprouts.com/new-item-submission/",
+          "canonical_url": "https://about.sprouts.com/new-item-submission",
+          "title": "Grocery Supplier | Vendor Partner | Sprouts Farmers Market",
+          "snippet": "Sprouts has a new item submission ... New corporate office location for sample submissions Sprouts Farmers Market – <strong>Support Office 20700 N</strong>....",
+          "published_date": "2026-07-27T20:25:10",
+          "retrieved_at": "2026-09-30T16:22:07.962Z",
+          "source_type": "official",
+          "provider": "brave",
+          "rank": 1,
+          "locale": null
+        },
+        {
+          "url": "https://about.sprouts.com/new-item-submission-process/",
+          "canonical_url": "https://about.sprouts.com/new-item-submission-process",
+          "title": "New Item Submission Process - Sprouts Corporate: About, Sustainability, Press, Careers, Foundation, Investors",
+          "snippet": "In order for us to to consider your product for our stores, please <strong>submit an ingredient statement; a nutritional facts panel (per the new 2020 standards); and an allergen statement</strong>. There may be additional certifications and documentation requirements required later on, as part of o",
+          "published_date": "2026-07-27T20:28:10",
+          "retrieved_at": "2026-09-30T16:22:07.962Z",
+          "source_type": "official",
+          "provider": "brave",
+          "rank": 2,
+          "locale": null
+        },
+        {
+          "url": "https://www.sprouts.com/faqs/how-can-i-become-a-new-vendor-at-sprouts/",
+          "canonical_url": "https://www.sprouts.com/faqs/how-can-i-become-a-new-vendor-at-sprouts",
+          "title": "How can I become a new vendor at Sprouts? | Sprouts Farmers Market",
+          "snippet": "Sprouts regularly reviews new vendors and new products for every department. Suppliers must meet significant capacity, distribution, insurance, marketing and",
+          "published_date": "2020-06-22T23:07:25",
+          "retrieved_at": "2026-09-30T16:22:07.962Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 3,
+          "locale": null
+        },
+        {
+          "url": "https://about.sprouts.com/supplier-resources/",
+          "canonical_url": "https://about.sprouts.com/supplier-resources",
+          "title": "Supplier Resources - Sprouts Corporate: About, Sustainability, Press, Careers, Foundation, Investors",
+          "snippet": "Supplier Resources <strong>If you are a first-time supplier, please click here to initiate the Submission Process</strong>. Financials: Quick Links Log-In to Workday Financials, to: Check Payment Status Update Contact Information Retrieve POs Submit Invoices Supplier Workday Training Need Help?",
+          "published_date": "2023-09-18T22:46:37",
+          "retrieved_at": "2026-09-30T16:22:07.962Z",
+          "source_type": "official",
+          "provider": "brave",
+          "rank": 4,
+          "locale": null
+        },
+        {
+          "url": "https://about.sprouts.com/things-to-know/",
+          "canonical_url": "https://about.sprouts.com/things-to-know",
+          "title": "Things to Know - Sprouts Corporate: About, Sustainability, Press, Careers, Foundation, Investors",
+          "snippet": "Please label each package with the following information: New Items – [Brand Name] – [Category Name] (Example: New Items – Annie’s – Candy) Please mail your samples to the following address: <strong>Sprouts Farmers Market New Items – [Brand Name] – [Category Name] 20700 N</strong>.",
+          "published_date": "2026-07-27T20:27:43",
+          "retrieved_at": "2026-09-30T16:22:07.962Z",
+          "source_type": "official",
+          "provider": "brave",
+          "rank": 5,
+          "locale": null
+        }
+      ]
+    },
+    {
+      "account": {
+        "company": "Sprouts Farmers Market",
+        "domain": "sprouts.com"
+      },
+      "family": "category_review",
+      "query": "site:sprouts.com Sprouts Farmers Market new brands category review beverage buyer",
+      "provider": "brave",
+      "ok": true,
+      "error": null,
+      "latency_ms": 626,
+      "results": [
+        {
+          "url": "https://about.sprouts.com/new-item-submission/",
+          "canonical_url": "https://about.sprouts.com/new-item-submission",
+          "title": "Grocery Supplier | Vendor Partner | Sprouts Farmers Market",
+          "snippet": "Become a Sprouts Supplier or Private Label Partner We’re always looking for new and differentiated products to carry! Partner with us to sell your products in our stores, or work with us to develop innovative products with lifestyle-friendly ingredients! We hold ourselves and our vendors ...",
+          "published_date": "2026-07-27T20:25:10",
+          "retrieved_at": "2026-09-30T16:22:08.599Z",
+          "source_type": "official",
+          "provider": "brave",
+          "rank": 1,
+          "locale": null
+        },
+        {
+          "url": "https://www.sprouts.com/press-release/sprouts-focus-on-innovation-splashes-into-beverage-category/",
+          "canonical_url": "https://www.sprouts.com/press-release/sprouts-focus-on-innovation-splashes-into-beverage-category",
+          "title": "Sprouts' Focus on Innovation Splashes into Beverage Category | Sprouts Farmers Market",
+          "snippet": "PHOENIX, Ariz. – Dec. 16, 2020 – Sprouts Farmers Market has partnered with L.A. Libations, the preeminent beverage creator, incubator and accelerator, to launch emerging brands at 50 selected stores in California, as part of L.A. Libations’ SoCal Incubation Program (SIP).",
+          "published_date": "2020-12-16T00:00:00",
+          "retrieved_at": "2026-09-30T16:22:08.599Z",
+          "source_type": "news",
+          "provider": "brave",
+          "rank": 2,
+          "locale": null
+        },
+        {
+          "url": "https://www.sprouts.com/sprouts-brand/",
+          "canonical_url": "https://www.sprouts.com/sprouts-brand",
+          "title": "Explore Sprouts Brand | Sprouts Farmers Market",
+          "snippet": "Discover your new favorite finds, only at Sprouts!",
+          "published_date": "2026-06-04T23:30:34",
+          "retrieved_at": "2026-09-30T16:22:08.599Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 3,
+          "locale": null
+        },
+        {
+          "url": "https://about.sprouts.com/new-item-submission-process/",
+          "canonical_url": "https://about.sprouts.com/new-item-submission-process",
+          "title": "New Item Submission Process - Sprouts Corporate: About, Sustainability, Press, Careers, Foundation, Investors",
+          "snippet": "New Items – [Brand Name] – [Category Name] (Example: New Items – Annie’s – Candy) Please mail your samples to the following address: Sprouts Farmers Market New Items – [Brand Name] – [Category Name] 20700 N.",
+          "published_date": "2026-07-27T20:28:10",
+          "retrieved_at": "2026-09-30T16:22:08.599Z",
+          "source_type": "official",
+          "provider": "brave",
+          "rank": 4,
+          "locale": null
+        },
+        {
+          "url": "https://about.sprouts.com/things-to-know/",
+          "canonical_url": "https://about.sprouts.com/things-to-know",
+          "title": "Things to Know - Sprouts Corporate: About, Sustainability, Press, Careers, Foundation, Investors",
+          "snippet": "New Items – [Brand Name] – [Category Name] (Example: New Items – Annie’s – Candy) Please mail your samples to the following address: Sprouts Farmers Market New Items – [Brand Name] – [Category Name] 20700 N.",
+          "published_date": "2026-07-27T20:27:43",
+          "retrieved_at": "2026-09-30T16:22:08.599Z",
+          "source_type": "official",
+          "provider": "brave",
+          "rank": 5,
+          "locale": null
+        }
+      ]
+    },
+    {
+      "account": {
+        "company": "Sprouts Farmers Market",
+        "domain": "sprouts.com"
+      },
+      "family": "current_timing",
+      "query": "site:sprouts.com Sprouts Farmers Market 2026 new stores expansion opening",
+      "provider": "brave",
+      "ok": true,
+      "error": null,
+      "latency_ms": 1156,
+      "results": [
+        {
+          "url": "https://www.sprouts.com/press-release/sprouts-farmers-market-opens-new-flagship-store-in-phoenix-arizona/",
+          "canonical_url": "https://www.sprouts.com/press-release/sprouts-farmers-market-opens-new-flagship-store-in-phoenix-arizona",
+          "title": "Sprouts Farmers Market Opens New Flagship Store in Phoenix, Arizona | Sprouts Farmers Market",
+          "snippet": "Sprouts Farmers Market has announced it will open its new flagship store at CityNorth in Phoenix, Arizona on <strong>Friday, July 24,</strong> located at 20650 N. 56th St., Phoenix, AZ. The new location anchors a new development that features Sprouts’ new ...",
+          "published_date": "2026-07-21T00:00:00",
+          "retrieved_at": "2026-09-30T16:22:09.757Z",
+          "source_type": "news",
+          "provider": "brave",
+          "rank": 1,
+          "locale": null
+        },
+        {
+          "url": "https://www.sprouts.com/press-release/sprouts-farmers-market-opens-first-store-in-new-york-state-with-location-in-centereach-on-long-island/",
+          "canonical_url": "https://www.sprouts.com/press-release/sprouts-farmers-market-opens-first-store-in-new-york-state-with-location-in-centereach-on-long-island",
+          "title": "Sprouts Farmers Market Opens First Store in New York State with location in Centereach on Long Island | Sprouts Farmers Market",
+          "snippet": "Sprouts Farmers Market has announced it will open its first location in New York in Centereach, Long Island on <strong>Friday, January 30</strong> located at 1934 Middle Country Rd. A ribbon-cutting will take place on Friday at 6:45 a.m.",
+          "published_date": "2026-01-12T00:00:00",
+          "retrieved_at": "2026-09-30T16:22:09.757Z",
+          "source_type": "news",
+          "provider": "brave",
+          "rank": 2,
+          "locale": null
+        },
+        {
+          "url": "https://www.sprouts.com/press-release/sprouts-farmers-market-opens-new-store-in-weatherford-texas/",
+          "canonical_url": "https://www.sprouts.com/press-release/sprouts-farmers-market-opens-new-store-in-weatherford-texas",
+          "title": "Sprouts Farmers Market Opens New Store in Weatherford, Texas | Sprouts Farmers Market",
+          "snippet": "Sprouts Farmers Market has announced it will open a new store in Weatherford, Texas on <strong>Friday, July 31,</strong> located at 317 Center Point Rd., Weatherford, TX. A ribbon-cutting will take place on Friday at 6:45 a.m.",
+          "published_date": "2026-07-21T00:00:00",
+          "retrieved_at": "2026-09-30T16:22:09.757Z",
+          "source_type": "news",
+          "provider": "brave",
+          "rank": 3,
+          "locale": null
+        },
+        {
+          "url": "https://about.sprouts.com/press-release/sprouts-farmers-market-plans-to-hire-92-team-members-for-first-new-york-state-location-in-centereach-long-island/",
+          "canonical_url": "https://about.sprouts.com/press-release/sprouts-farmers-market-plans-to-hire-92-team-members-for-first-new-york-state-location-in-centereach-long-island",
+          "title": "Sprouts Farmers Market Plans to Hire 92 Team Members for First New York State Location in Centereach, Long Island - Sprouts Corporate: About, Sustainability, Press, Careers, Foundation, Investors",
+          "snippet": "Centereach, NY – Sprouts Farmers Market, named Progressive Grocer’s Retailer of the Year, is set to open a new store in Centereach, NY on Long Island on <strong>January 30, 2026</strong>.",
+          "published_date": "2025-11-20T22:53:58",
+          "retrieved_at": "2026-09-30T16:22:09.757Z",
+          "source_type": "news",
+          "provider": "brave",
+          "rank": 4,
+          "locale": null
+        },
+        {
+          "url": "https://www.sprouts.com/press-release/sprouts-farmers-market-opens-new-store-in-webster-texas/",
+          "canonical_url": "https://www.sprouts.com/press-release/sprouts-farmers-market-opens-new-store-in-webster-texas",
+          "title": "Sprouts Farmers Market Opens New Store in Webster, Texas | Sprouts Farmers Market",
+          "snippet": "Sprouts Farmers Market has announced it will open a new store in Webster, Texas on <strong>Friday, May 29,</strong> located at 1001 W. Bay Area Blvd. A ribbon-cutting will take place on Friday at 6:45 a.m.",
+          "published_date": "2026-06-04T00:00:00",
+          "retrieved_at": "2026-09-30T16:22:09.757Z",
+          "source_type": "news",
+          "provider": "brave",
+          "rank": 5,
+          "locale": null
+        }
+      ]
+    },
+    {
+      "account": {
+        "company": "Natural Grocers",
+        "domain": "naturalgrocers.com"
+      },
+      "family": "supplier_access",
+      "query": "site:naturalgrocers.com Natural Grocers vendor supplier application submit product",
+      "provider": "brave",
+      "ok": true,
+      "error": null,
+      "latency_ms": 1018,
+      "results": [
+        {
+          "url": "https://www.naturalgrocers.com/vendors",
+          "canonical_url": "https://www.naturalgrocers.com/vendors",
+          "title": "New Item Submissions | Natural Grocers",
+          "snippet": "Food product sold in larger quantities for consideration for our Natural Grocers Bulk program SUBMIT YOUR FOOD PRODUCTS",
+          "published_date": null,
+          "retrieved_at": "2026-09-30T16:22:10.782Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 1,
+          "locale": null
+        },
+        {
+          "url": "https://www.naturalgrocers.com/food-product-submissions",
+          "canonical_url": "https://www.naturalgrocers.com/food-product-submissions",
+          "title": "Food Product Submissions | Natural Grocers",
+          "snippet": "Brand and product information: Tell us about yourself! Let us know your main brand and/or product highlights. What makes the products stand out in the marketplace? Why are these products an ideal fit for Natural Grocers’ customers?",
+          "published_date": null,
+          "retrieved_at": "2026-09-30T16:22:10.782Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 2,
+          "locale": null
+        },
+        {
+          "url": "https://www.naturalgrocers.com/non-food-product-submissions",
+          "canonical_url": "https://www.naturalgrocers.com/non-food-product-submissions",
+          "title": "Non-Food Product Submissions | Natural Grocers",
+          "snippet": "Brand and product information: Tell us about yourself! Let us know your main brand and/or product highlights. What makes your products stand out in the marketplace? Why are these products an ideal fit for Natural Grocers’ customers?",
+          "published_date": null,
+          "retrieved_at": "2026-09-30T16:22:10.782Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 3,
+          "locale": null
+        },
+        {
+          "url": "https://www.naturalgrocers.com/produce-product-criteria",
+          "canonical_url": "https://www.naturalgrocers.com/produce-product-criteria",
+          "title": "Produce Product Criteria | Natural Grocers",
+          "snippet": "Please <strong>send all submissions and inquiries by email to Produce Purchasing at produce@naturalgrocers.com</strong> Every item needs to be submitted along with a copy of your current USDA Organic Certificate, including the certifier’s list of approved organic products. The certificate alone is n",
+          "published_date": null,
+          "retrieved_at": "2026-09-30T16:22:10.782Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 4,
+          "locale": null
+        },
+        {
+          "url": "https://www.naturalgrocers.com/vendor-demo-requests",
+          "canonical_url": "https://www.naturalgrocers.com/vendor-demo-requests",
+          "title": "Vendor Demo Requests | Natural Grocers",
+          "snippet": "Grand Openings &amp; Health FairsAppleton, WI - Grand Opening EventMcAllen, TX - Grand Opening EventClick any of the sign-up links below to host a vendor demonstration and provide passive sample support.",
+          "published_date": null,
+          "retrieved_at": "2026-09-30T16:22:10.782Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 5,
+          "locale": null
+        }
+      ]
+    },
+    {
+      "account": {
+        "company": "Natural Grocers",
+        "domain": "naturalgrocers.com"
+      },
+      "family": "category_review",
+      "query": "site:naturalgrocers.com Natural Grocers new brands category review beverage buyer",
+      "provider": "brave",
+      "ok": true,
+      "error": null,
+      "latency_ms": 1007,
+      "results": [
+        {
+          "url": "https://www.naturalgrocers.com/vendors",
+          "canonical_url": "https://www.naturalgrocers.com/vendors",
+          "title": "New Item Submissions | Natural Grocers",
+          "snippet": "Please select the link for the broad category that best fits your product submission: <strong>Shelf-stable food and beverage products for human consumption</strong>",
+          "published_date": null,
+          "retrieved_at": "2026-09-30T16:22:11.795Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 1,
+          "locale": null
+        },
+        {
+          "url": "https://www.naturalgrocers.com/natural-grocers-best-of-the-best-customer-survey-results",
+          "canonical_url": "https://www.naturalgrocers.com/natural-grocers-best-of-the-best-customer-survey-results",
+          "title": "Natural Grocers® Best Of The Best Customer Survey Results | Natural Grocers",
+          "snippet": "Thank you for participating in the 5th annual Best Of The Best at Natural Grocers®! You casted your vote on your favorite products and the results are in. We’ve carefully tallied all entries and are thrilled to share the winners so the whole neighborhood can join in on the deliciousness!The results ",
+          "published_date": null,
+          "retrieved_at": "2026-09-30T16:22:11.795Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 2,
+          "locale": null
+        },
+        {
+          "url": "https://www.naturalgrocers.com/awards",
+          "canonical_url": "https://www.naturalgrocers.com/awards",
+          "title": "Award-Winning, Customer Approved! | Natural Grocers",
+          "snippet": "Natural Grocers has been named the 2025 Retailer of the Year by Store Brands, an honor recognizing our leadership, innovation, and continued expansion of Natural Grocers Brand Products. This award highlights our mission-driven approach to private label development and our commitment to offering high",
+          "published_date": null,
+          "retrieved_at": "2026-09-30T16:22:11.795Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 3,
+          "locale": null
+        },
+        {
+          "url": "https://www.naturalgrocers.com/product-finder",
+          "canonical_url": "https://www.naturalgrocers.com/product-finder",
+          "title": "Product Finder | Natural Grocers",
+          "snippet": "Please, log into your {N}power account to see pricing, events and store details relevant to your preferred store · Just want to see prices and content for your local store",
+          "published_date": null,
+          "retrieved_at": "2026-09-30T16:22:11.795Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 4,
+          "locale": null
+        },
+        {
+          "url": "https://investors.naturalgrocers.com/2025-02-20-Natural-Grocers-R-Releases-New-House-Brand-Organic-Raw-Tepache-and-Organic-Raw-Kombucha",
+          "canonical_url": "https://investors.naturalgrocers.com/2025-02-20-Natural-Grocers-R-Releases-New-House-Brand-Organic-Raw-Tepache-and-Organic-Raw-Kombucha",
+          "title": "Natural Grocers® Releases New House-Brand Organic Raw Tepache and Organic Raw Kombucha - Feb 20, 2025",
+          "snippet": "With two new products and eight bold flavors, these additions expand the Natural Grocers® Brand beverage category.",
+          "published_date": "2025-02-20T00:00:00",
+          "retrieved_at": "2026-09-30T16:22:11.795Z",
+          "source_type": "official",
+          "provider": "brave",
+          "rank": 5,
+          "locale": null
+        }
+      ]
+    },
+    {
+      "account": {
+        "company": "Natural Grocers",
+        "domain": "naturalgrocers.com"
+      },
+      "family": "current_timing",
+      "query": "site:naturalgrocers.com Natural Grocers 2026 new stores expansion opening",
+      "provider": "brave",
+      "ok": true,
+      "error": null,
+      "latency_ms": 1117,
+      "results": [
+        {
+          "url": "https://investors.naturalgrocers.com/2026-04-28-Natural-Grocers-R-Expands-to-Rapid-City,-South-Dakota",
+          "canonical_url": "https://investors.naturalgrocers.com/2026-04-28-Natural-Grocers-R-Expands-to-Rapid-City,-South-Dakota",
+          "title": "Natural Grocers® Expands to Rapid City, South Dakota - Apr 28, 2026",
+          "snippet": "Family-operated grocery retailer ... organic and natural grocery retailer, plans to open a new store in <strong>Rapid City, South Dakota, this summer</strong>....",
+          "published_date": "2026-04-28T00:00:00",
+          "retrieved_at": "2026-09-30T16:22:12.916Z",
+          "source_type": "official",
+          "provider": "brave",
+          "rank": 1,
+          "locale": null
+        },
+        {
+          "url": "https://investors.naturalgrocers.com/2026-02-06-Natural-Grocers-R-Plans-Expansion-to-Lake-Geneva,-Wisconsin",
+          "canonical_url": "https://investors.naturalgrocers.com/2026-02-06-Natural-Grocers-R-Plans-Expansion-to-Lake-Geneva,-Wisconsin",
+          "title": "Natural Grocers® Plans Expansion to Lake Geneva, Wisconsin - Feb 6, 2026",
+          "snippet": "The organic and natural grocery retailer will host a Community Meet‑and‑Greet and Hiring Event in <strong>Lake Geneva, Wisconsin, Feb. 17–19</strong>, ahead of the opening of its first Wisconsin store this spring.",
+          "published_date": "2026-02-06T00:00:00",
+          "retrieved_at": "2026-09-30T16:22:12.916Z",
+          "source_type": "official",
+          "provider": "brave",
+          "rank": 2,
+          "locale": null
+        },
+        {
+          "url": "https://investors.naturalgrocers.com/2026-03-10-Natural-Grocers-R-Expands-to-Walla-Walla,-Washington",
+          "canonical_url": "https://investors.naturalgrocers.com/2026-03-10-Natural-Grocers-R-Expands-to-Walla-Walla,-Washington",
+          "title": "Natural Grocers® Expands to Walla Walla, Washington - Mar 10, 2026",
+          "snippet": "Natural Grocers announces expansion to <strong>Walla Walla, Washington</strong>, hosting a community meet-and-greet on March 24 and a two-day hiring event March 25–26 at the Courtyard® by Marriott in Walla Walla.",
+          "published_date": "2026-03-10T00:00:00",
+          "retrieved_at": "2026-09-30T16:22:12.916Z",
+          "source_type": "official",
+          "provider": "brave",
+          "rank": 3,
+          "locale": null
+        },
+        {
+          "url": "https://investors.naturalgrocers.com/2026-04-06-Natural-Grocers-R-Expands-to-McMinnville,-Oregon",
+          "canonical_url": "https://investors.naturalgrocers.com/2026-04-06-Natural-Grocers-R-Expands-to-McMinnville,-Oregon",
+          "title": "Natural Grocers® Expands to McMinnville, Oregon - Apr 6, 2026",
+          "snippet": "Family-operated grocery retailer to host virtual hiring fair and community meet-and-greet ahead of summer opening · LAKEWOOD, Colo., <strong>April 6, 2026</strong> /PRNewswire/ -- Natural Grocers®, the nation&#x27;s premier family-operated organic and natural grocery ...",
+          "published_date": "2026-04-06T00:00:00",
+          "retrieved_at": "2026-09-30T16:22:12.916Z",
+          "source_type": "official",
+          "provider": "brave",
+          "rank": 4,
+          "locale": null
+        },
+        {
+          "url": "https://investors.naturalgrocers.com/2026-01-02-Natural-Grocers-R-Expands-to-Rock-Springs,-Wyoming",
+          "canonical_url": "https://investors.naturalgrocers.com/2026-01-02-Natural-Grocers-R-Expands-to-Rock-Springs,-Wyoming",
+          "title": "Natural Grocers® Expands to Rock Springs, Wyoming - Jan 2, 2026",
+          "snippet": "Natural Grocers®, the nation&#x27;s premier family-operated organic and natural grocery retailer, plans to open a new store in <strong>Rock Springs, Wyoming, this spring</strong>. The location, in White Mountain Mall,...",
+          "published_date": "2026-01-02T00:00:00",
+          "retrieved_at": "2026-09-30T16:22:12.916Z",
+          "source_type": "official",
+          "provider": "brave",
+          "rank": 5,
+          "locale": null
+        }
+      ]
+    },
+    {
+      "account": {
+        "company": "Earth Fare",
+        "domain": "earthfare.com"
+      },
+      "family": "supplier_access",
+      "query": "site:earthfare.com Earth Fare vendor supplier application submit product",
+      "provider": "brave",
+      "ok": true,
+      "error": null,
+      "latency_ms": 1029,
+      "results": [
+        {
+          "url": "https://www.earthfare.com/",
+          "canonical_url": "https://www.earthfare.com/",
+          "title": "Natural & Organic Grocery Store in United States | Earth Fare",
+          "snippet": "Shop fresh organic produce, clean ingredients, and groceries at Earth Fare, a healthy food supermarket in the United States focused on wellness and quality.",
+          "published_date": "2017-08-17T13:41:39",
+          "retrieved_at": "2026-09-30T16:22:13.951Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 1,
+          "locale": null
+        },
+        {
+          "url": "https://order.earthfare.com/terms",
+          "canonical_url": "https://order.earthfare.com/terms",
+          "title": "Terms - Earth Fare",
+          "snippet": "You agree that if any applicable legal requirements for the delivery of alcohol are not met, Instacart reserves the right to cancel the alcohol-related portion of your order. Special requests or substitutions for the purchase of alcohol products will not be honored; all requests for the purchase of ",
+          "published_date": "2024-11-19T00:00:00",
+          "retrieved_at": "2026-09-30T16:22:13.951Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 2,
+          "locale": null
+        },
+        {
+          "url": "https://order.earthfare.com/",
+          "canonical_url": "https://order.earthfare.com/",
+          "title": "Earth Fare Powered by Instacart",
+          "snippet": "Healthy food delivered fast",
+          "published_date": null,
+          "retrieved_at": "2026-09-30T16:22:13.951Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 3,
+          "locale": null
+        },
+        {
+          "url": "https://order.earthfare.com/store/earth-fare-market/storefront",
+          "canonical_url": "https://order.earthfare.com/store/earth-fare-market/storefront",
+          "title": "Earth Fare Market Delivery or Pickup Near Me | Earth Fare",
+          "snippet": "Earth Fare Market same-day delivery or curbside pickup in as fast as 1 hour with Earth Fare. Start shopping online now with Earth Fare to get Earth Fare Market products on-demand.",
+          "published_date": null,
+          "retrieved_at": "2026-09-30T16:22:13.951Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 4,
+          "locale": null
+        },
+        {
+          "url": "https://order.earthfare.com/store/earth-fare-market/collections/rc-supplements-13288",
+          "canonical_url": "https://order.earthfare.com/store/earth-fare-market/collections/rc-supplements-13288",
+          "title": "Supplements Same-Day Delivery or Pickup | Earth Fare Market",
+          "snippet": "Get Earth Fare Market Supplements products you love delivered to you in as fast as 1 hour via Earth Fare or choose curbside or in-store pickup.",
+          "published_date": null,
+          "retrieved_at": "2026-09-30T16:22:13.951Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 5,
+          "locale": null
+        }
+      ]
+    },
+    {
+      "account": {
+        "company": "Earth Fare",
+        "domain": "earthfare.com"
+      },
+      "family": "category_review",
+      "query": "site:earthfare.com Earth Fare new brands category review beverage buyer",
+      "provider": "brave",
+      "ok": true,
+      "error": null,
+      "latency_ms": 1119,
+      "results": [
+        {
+          "url": "https://order.earthfare.com/store/earth-fare-market/collections/n-beverages-83192",
+          "canonical_url": "https://order.earthfare.com/store/earth-fare-market/collections/n-beverages-83192",
+          "title": "Beverages Same-Day Delivery or Pickup | Earth Fare Market",
+          "snippet": "Get Earth Fare Market Beverages products you love delivered to you in as fast as 1 hour via Earth Fare or choose curbside or in-store pickup. Your first delivery or pickup order is free!",
+          "published_date": null,
+          "retrieved_at": "2026-09-30T16:22:15.077Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 1,
+          "locale": null
+        },
+        {
+          "url": "https://order.earthfare.com/store/earth-fare-market/collections/spirits",
+          "canonical_url": "https://order.earthfare.com/store/earth-fare-market/collections/spirits",
+          "title": "Spirits Same-Day Delivery or Pickup | Earth Fare Market",
+          "snippet": "Brands Filters · Hiyo · Ghia · Kin · Leilo Kava · Devil&#x27;s Foot · Ste Agrestis · Agrestis · Hella Cocktail Co. ​ · St. Agrestis · Kin Euphorics · Devil&#x27;s Foot Beverage Company · Melograno · Ringa · St Agrestis · Devil&#x27;s Foot Brewing Co. Blake&#x27;s Zero Proof ·",
+          "published_date": null,
+          "retrieved_at": "2026-09-30T16:22:15.077Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 2,
+          "locale": null
+        },
+        {
+          "url": "https://order.earthfare.com/store/earth-fare-market/storefront",
+          "canonical_url": "https://order.earthfare.com/store/earth-fare-market/storefront",
+          "title": "Earth Fare Market Delivery or Pickup Near Me | Earth Fare",
+          "snippet": "Earth Fare Market same-day delivery or curbside pickup in as fast as 1 hour with Earth Fare. Start shopping online now with Earth Fare to get Earth Fare Market products on-demand.",
+          "published_date": null,
+          "retrieved_at": "2026-09-30T16:22:15.077Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 3,
+          "locale": null
+        },
+        {
+          "url": "https://www.earthfare.com/the-fare-share/",
+          "canonical_url": "https://www.earthfare.com/the-fare-share",
+          "title": "The Fare Share - Earth Fare",
+          "snippet": "– The Earth Fare Team · JOIN US! Filter · All Categories · Appetizer · Breakfast · Dessert · Dinner · Lunch · Smoothies &amp; Beverages · Prep: 5 min · Cook: 0 min · Ready In: 5 min · Level : Easy · 20260811183116 · Prep: 8 min · Cook: 10 min · Ready In: 20 min ·",
+          "published_date": "2025-07-25T20:23:45",
+          "retrieved_at": "2026-09-30T16:22:15.077Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 4,
+          "locale": null
+        },
+        {
+          "url": "https://order.earthfare.com/store/earth-fare-market/collections/34776-more-beverages",
+          "canonical_url": "https://order.earthfare.com/store/earth-fare-market/collections/34776-more-beverages",
+          "title": "More Beverages Same-Day Delivery or Pickup | Earth Fare Market",
+          "snippet": "Get Earth Fare Market More Beverages products you love delivered to you in as fast as 1 hour via Earth Fare or choose curbside or in-store pickup. Your first delivery or pickup order is free!",
+          "published_date": null,
+          "retrieved_at": "2026-09-30T16:22:15.077Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 5,
+          "locale": null
+        }
+      ]
+    },
+    {
+      "account": {
+        "company": "Earth Fare",
+        "domain": "earthfare.com"
+      },
+      "family": "current_timing",
+      "query": "site:earthfare.com Earth Fare 2026 new stores expansion opening",
+      "provider": "brave",
+      "ok": true,
+      "error": null,
+      "latency_ms": 998,
+      "results": [
+        {
+          "url": "https://www.earthfare.com/stores/",
+          "canonical_url": "https://www.earthfare.com/stores",
+          "title": "Earth Fare Store Locations | Shop Fresh Organic Groceries",
+          "snippet": "Find an Earth Fare store near you. Shop organic produce, natural groceries, and healthy foods &amp; wellness products across the Southeast. Visit our store today!",
+          "published_date": "2026-04-29T08:03:54",
+          "retrieved_at": "2026-09-30T16:22:16.077Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 1,
+          "locale": null
+        },
+        {
+          "url": "https://www.earthfare.com/stores/south-carolina/",
+          "canonical_url": "https://www.earthfare.com/stores/south-carolina",
+          "title": "Earth Fare Grocery Stores in South Carolina | Earth Fare",
+          "snippet": "Whether you are stocking your kitchen, filling your pantry, or exploring wellness products like vitamins and body care items, Earth Fare offers a curated selection to support a healthy lifestyle. We proudly serve shoppers throughout the state, with locations in Charleston, Columbia, Rock Hill, Fort ",
+          "published_date": "2025-12-09T01:51:08",
+          "retrieved_at": "2026-09-30T16:22:16.077Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 2,
+          "locale": null
+        },
+        {
+          "url": "https://www.earthfare.com/stores/tennessee/",
+          "canonical_url": "https://www.earthfare.com/stores/tennessee",
+          "title": "Earth Fare Grocery Stores in Tennessee",
+          "snippet": "It can be hard to find a grocery store that matches your wellness goals, but Earth Fare is here to help our Tennessee neighbors with fresh, healthy choices. With locations across the state, from the mountains in the east to our biggest cities, you can always count on finding top-quality organic prod",
+          "published_date": "2026-02-02T19:18:10",
+          "retrieved_at": "2026-09-30T16:22:16.077Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 3,
+          "locale": null
+        },
+        {
+          "url": "https://www.earthfare.com/stores/virginia/",
+          "canonical_url": "https://www.earthfare.com/stores/virginia",
+          "title": "Earth Fare Grocery Stores in Virginia | Earth Fare",
+          "snippet": "At Earth Fare in Greenville, we are committed to quality in every department. When you visit, you’ll see fresh, crisp organic produce ready for any occasion. Our meat and seafood counter features ethically sourced options that you can trust.",
+          "published_date": "2026-01-14T21:30:59",
+          "retrieved_at": "2026-09-30T16:22:16.077Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 4,
+          "locale": null
+        },
+        {
+          "url": "https://www.earthfare.com/stores/north-carolina/",
+          "canonical_url": "https://www.earthfare.com/stores/north-carolina",
+          "title": "Earth Fare Grocery Stores in North Carolina | Earth Fare",
+          "snippet": "Are you searching for healthy food options? At Earth Fare North Carolina we stock organic produce and natural goods ensuring our shelves hold only clean ingredients. You can shop with confidence and trust our high standards.",
+          "published_date": "2026-01-02T12:07:33",
+          "retrieved_at": "2026-09-30T16:22:16.077Z",
+          "source_type": null,
+          "provider": "brave",
+          "rank": 5,
+          "locale": null
+        }
+      ]
+    }
+  ]
+}

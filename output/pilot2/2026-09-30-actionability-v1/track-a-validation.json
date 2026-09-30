@@ -1,0 +1,701 @@
+{
+  "version": "pilot2-actionability-track-a-validation-v1",
+  "created_at": "2026-09-30T16:33:02.336Z",
+  "input": "output/pilot2/2026-09-30-actionability-v1/track-a-search.json",
+  "extractionAudit": [
+    {
+      "company": "Sprouts Farmers Market",
+      "url": "https://about.sprouts.com/new-item-submission/",
+      "http_status": 200,
+      "active_intake": false,
+      "observed_at": "2026-09-30T16:31:44.687Z"
+    },
+    {
+      "company": "Natural Grocers",
+      "url": "https://www.naturalgrocers.com/vendors",
+      "http_status": 200,
+      "active_intake": true,
+      "observed_at": "2026-09-30T16:31:45.479Z"
+    },
+    {
+      "company": "Earth Fare",
+      "status": "no_official_intake_result"
+    }
+  ],
+  "candidates": [
+    {
+      "company": "Natural Grocers",
+      "domain": "naturalgrocers.com",
+      "source_url": "https://investors.naturalgrocers.com/2026-02-05-Natural-Grocers-by-Vitamin-Cottage-Announces-First-Quarter-Fiscal-2026-Results",
+      "actionability_observed_at": "2026-09-30T16:31:45.480Z"
+    }
+  ],
+  "cases": [
+    {
+      "lead_id": "track_a_natural_grocers",
+      "account_id": "Natural Grocers",
+      "decision": "prioritize",
+      "decision_source": "canonical_opportunity_test",
+      "verdict_status": "opportunity",
+      "reasons": [
+        "opportunity_test_opportunity",
+        "ongoing_access_not_buying_intent"
+      ],
+      "fit": "Strong",
+      "timing": "Limited",
+      "evidence": "Moderate",
+      "first_review": true
+    }
+  ],
+  "processed_leads": [
+    {
+      "id": "track_a_natural_grocers",
+      "candidate": {
+        "id": "track_a_natural_grocers",
+        "company": "Natural Grocers",
+        "domain": "naturalgrocers.com",
+        "country": "United States",
+        "location": "United States",
+        "industry": "Natural and organic grocery",
+        "source": "public_signal",
+        "source_url": "https://investors.naturalgrocers.com/2026-02-05-Natural-Grocers-by-Vitamin-Cottage-Announces-First-Quarter-Fiscal-2026-Results",
+        "raw_context": "New Item Submissions | Natural Grocers\nFood product sold in larger quantities for consideration for our Natural Grocers Bulk program SUBMIT YOUR FOOD PRODUCTS | [2026-02-05T00:00:00] Natural Grocers by Vitamin Cottage Announces First Quarter Fiscal 2026 Results - Feb 5, 2026. The conference ID is &quot;Natural Grocers Q1 FY 2026 Earnings Call.&quot; A simultaneous audio webcast will be available at http://Investors.NaturalGrocers.com and archived for a minimum of 20 days. ... Natural Grocers by Vitamin Cottage, Inc. (NYSE: NGVC) is an expanding specialty retailer of natu (source: https://investors.naturalgrocers.com/2026-02-05-Natural-Grocers-by-Vitamin-Cottage-Announces-First-Quarter-Fiscal-2026-Results) | [2026-08-07T07:50:36] Natural Grocers by Vitamin Cottage Announces Third Quarter Fiscal 2026 Results - Aug 6, 2026. The conference ID is &quot;Natural Grocers Q3 FY 2026 Earnings Call.&quot; A simultaneous audio webcast will be available at http://Investors.NaturalGrocers.com and archived for a minimum of 20 days. ... Natural Grocers by Vitamin Cottage, Inc. (NYSE: NGVC) is an expanding specialty retailer of natu (source: https://investors.naturalgrocers.com/2026-08-06-Natural-Grocers-by-Vitamin-Cottage-Announces-Third-Quarter-Fiscal-2026-Results) | [2026-02-06T00:00:00] Natural Grocers® Plans Expansion to Lake Geneva, Wisconsin - Feb 6, 2026. LAKEWOOD, Colo., Feb. 6, 2026 /PRNewswire/ -- Natural Grocers®, the nation&#x27;s premier family-operated organic and natural grocery retailer, plans to open a new store in Lake Geneva, Wisconsin, this spring. The location, off North Edwards Boulevard, will be Natural Grocers&#x27; first store in Wi (source: https://investors.naturalgrocers.com/2026-02-06-Natural-Grocers-R-Plans-Expansion-to-Lake-Geneva,-Wisconsin) | [2026-01-02T00:00:00] Natural Grocers® Expands to Rock Springs, Wyoming - Jan 2, 2026. Natural Grocers®, the nation&#x27;s premier family-operated organic and natural grocery retailer, plans to open a new store in Rock Springs, Wyoming, this spring. The location, in White Mountain Mall,... (source: https://investors.naturalgrocers.com/2026-01-02-Natural-Grocers-R-Expands-to-Rock-Springs,-Wyoming) | [2025-12-29T00:00:00] Natural Grocers® Named 2025 Retailer of the Year by Store Brands - Dec 29, 2025. ABOUT NATURAL GROCERS BY VITAMIN COTTAGE Founded in 1955, Natural Grocers by Vitamin Cottage, Inc. (NYSE: NGVC) is an expanding specialty retailer of natural and organic groceries, body care products and dietary supplements. (source: https://investors.naturalgrocers.com/2025-12-29-Natural-Grocers-R-Named-2025-Retailer-of-the-Year-by-Store-Brands) | [2026-04-06T00:00:00] Natural Grocers® Expands to McMinnville, Oregon - Apr 6, 2026. <strong>Natural Grocers</strong> is committed to its Five Founding Principles—including its &quot;Commitment to Community&quot; and &quot;Commitment to Crew.&quot; In fiscal year 2025, the Company invested more than $16 million in incremental compensation and discretionary payments ... (source: https://investors.naturalgrocers.com/2026-04-06-Natural-Grocers-R-Expands-to-McMinnville,-Oregon) | [2026-03-10T00:00:00] Natural Grocers® Expands to Walla Walla, Washington - Mar 10, 2026. <strong>Natural Grocers</strong> is committed to its Five Founding Principles—including its &quot;Commitment to Community&quot; and &quot;Commitment to Crew.&quot; In fiscal year 2025, the Company invested more than $16 million in incremental compensation and discretionary payments ... (source: https://investors.naturalgrocers.com/2026-03-10-Natural-Grocers-R-Expands-to-Walla-Walla,-Washington) | [2026-04-28T00:00:00] Natural Grocers® Expands to Rapid City, South Dakota - Apr 28, 2026. Family-operated grocery retailer to host virtual hiring fair and community meet-and-greet ahead of opening LAKEWOOD, Colo., April 28, 2026 /PRNewswire/ -- Natural Grocers®, the nation&#x27;s largest... (source: https://investors.naturalgrocers.com/2026-04-28-Natural-Grocers-R-Expands-to-Rapid-City,-South-Dakota)",
+        "confidence_score": 0.9,
+        "signal_date": null,
+        "signal_type": null,
+        "opportunity_kind": "channel_fit",
+        "opportunity_kind_reason": "Official supplier/new-item intake fetched live.",
+        "channel_evidence_grade": "strong",
+        "channel_proof_type": "supplier_intake",
+        "channel_category_alignment": "plausible",
+        "channel_limitations": [
+          "A public submission path is not buying intent and does not guarantee acceptance."
+        ],
+        "current_actionability_verified": true,
+        "current_actionability_basis": "active_supplier_submission",
+        "commercial_mechanism": "supplier_intake",
+        "access_path_identified": true,
+        "access_verified": true,
+        "actionability_source_url": "https://www.naturalgrocers.com/vendors",
+        "actionability_observed_at": "2026-09-30T16:31:45.480Z",
+        "account_visibility": "established",
+        "discovery_value": "high",
+        "discovery_value_reason": "Live official commercial entry mechanism.",
+        "discovery_origin": "dynamic_enumeration",
+        "country_confidence": "high"
+      },
+      "enrichment": {
+        "candidate": {
+          "id": "track_a_natural_grocers",
+          "company": "Natural Grocers",
+          "domain": "naturalgrocers.com",
+          "country": "United States",
+          "location": "United States",
+          "industry": "Natural and organic grocery",
+          "source": "public_signal",
+          "source_url": "https://investors.naturalgrocers.com/2026-02-05-Natural-Grocers-by-Vitamin-Cottage-Announces-First-Quarter-Fiscal-2026-Results",
+          "raw_context": "New Item Submissions | Natural Grocers\nFood product sold in larger quantities for consideration for our Natural Grocers Bulk program SUBMIT YOUR FOOD PRODUCTS | [2026-02-05T00:00:00] Natural Grocers by Vitamin Cottage Announces First Quarter Fiscal 2026 Results - Feb 5, 2026. The conference ID is &quot;Natural Grocers Q1 FY 2026 Earnings Call.&quot; A simultaneous audio webcast will be available at http://Investors.NaturalGrocers.com and archived for a minimum of 20 days. ... Natural Grocers by Vitamin Cottage, Inc. (NYSE: NGVC) is an expanding specialty retailer of natu (source: https://investors.naturalgrocers.com/2026-02-05-Natural-Grocers-by-Vitamin-Cottage-Announces-First-Quarter-Fiscal-2026-Results) | [2026-08-07T07:50:36] Natural Grocers by Vitamin Cottage Announces Third Quarter Fiscal 2026 Results - Aug 6, 2026. The conference ID is &quot;Natural Grocers Q3 FY 2026 Earnings Call.&quot; A simultaneous audio webcast will be available at http://Investors.NaturalGrocers.com and archived for a minimum of 20 days. ... Natural Grocers by Vitamin Cottage, Inc. (NYSE: NGVC) is an expanding specialty retailer of natu (source: https://investors.naturalgrocers.com/2026-08-06-Natural-Grocers-by-Vitamin-Cottage-Announces-Third-Quarter-Fiscal-2026-Results) | [2026-02-06T00:00:00] Natural Grocers® Plans Expansion to Lake Geneva, Wisconsin - Feb 6, 2026. LAKEWOOD, Colo., Feb. 6, 2026 /PRNewswire/ -- Natural Grocers®, the nation&#x27;s premier family-operated organic and natural grocery retailer, plans to open a new store in Lake Geneva, Wisconsin, this spring. The location, off North Edwards Boulevard, will be Natural Grocers&#x27; first store in Wi (source: https://investors.naturalgrocers.com/2026-02-06-Natural-Grocers-R-Plans-Expansion-to-Lake-Geneva,-Wisconsin) | [2026-01-02T00:00:00] Natural Grocers® Expands to Rock Springs, Wyoming - Jan 2, 2026. Natural Grocers®, the nation&#x27;s premier family-operated organic and natural grocery retailer, plans to open a new store in Rock Springs, Wyoming, this spring. The location, in White Mountain Mall,... (source: https://investors.naturalgrocers.com/2026-01-02-Natural-Grocers-R-Expands-to-Rock-Springs,-Wyoming) | [2025-12-29T00:00:00] Natural Grocers® Named 2025 Retailer of the Year by Store Brands - Dec 29, 2025. ABOUT NATURAL GROCERS BY VITAMIN COTTAGE Founded in 1955, Natural Grocers by Vitamin Cottage, Inc. (NYSE: NGVC) is an expanding specialty retailer of natural and organic groceries, body care products and dietary supplements. (source: https://investors.naturalgrocers.com/2025-12-29-Natural-Grocers-R-Named-2025-Retailer-of-the-Year-by-Store-Brands) | [2026-04-06T00:00:00] Natural Grocers® Expands to McMinnville, Oregon - Apr 6, 2026. <strong>Natural Grocers</strong> is committed to its Five Founding Principles—including its &quot;Commitment to Community&quot; and &quot;Commitment to Crew.&quot; In fiscal year 2025, the Company invested more than $16 million in incremental compensation and discretionary payments ... (source: https://investors.naturalgrocers.com/2026-04-06-Natural-Grocers-R-Expands-to-McMinnville,-Oregon) | [2026-03-10T00:00:00] Natural Grocers® Expands to Walla Walla, Washington - Mar 10, 2026. <strong>Natural Grocers</strong> is committed to its Five Founding Principles—including its &quot;Commitment to Community&quot; and &quot;Commitment to Crew.&quot; In fiscal year 2025, the Company invested more than $16 million in incremental compensation and discretionary payments ... (source: https://investors.naturalgrocers.com/2026-03-10-Natural-Grocers-R-Expands-to-Walla-Walla,-Washington) | [2026-04-28T00:00:00] Natural Grocers® Expands to Rapid City, South Dakota - Apr 28, 2026. Family-operated grocery retailer to host virtual hiring fair and community meet-and-greet ahead of opening LAKEWOOD, Colo., April 28, 2026 /PRNewswire/ -- Natural Grocers®, the nation&#x27;s largest... (source: https://investors.naturalgrocers.com/2026-04-28-Natural-Grocers-R-Expands-to-Rapid-City,-South-Dakota)",
+          "confidence_score": 0.9,
+          "signal_date": null,
+          "signal_type": null,
+          "opportunity_kind": "channel_fit",
+          "opportunity_kind_reason": "Official supplier/new-item intake fetched live.",
+          "channel_evidence_grade": "strong",
+          "channel_proof_type": "supplier_intake",
+          "channel_category_alignment": "plausible",
+          "channel_limitations": [
+            "A public submission path is not buying intent and does not guarantee acceptance."
+          ],
+          "current_actionability_verified": true,
+          "current_actionability_basis": "active_supplier_submission",
+          "commercial_mechanism": "supplier_intake",
+          "access_path_identified": true,
+          "access_verified": true,
+          "actionability_source_url": "https://www.naturalgrocers.com/vendors",
+          "actionability_observed_at": "2026-09-30T16:31:45.480Z",
+          "account_visibility": "established",
+          "discovery_value": "high",
+          "discovery_value_reason": "Live official commercial entry mechanism.",
+          "discovery_origin": "dynamic_enumeration",
+          "country_confidence": "high"
+        },
+        "company_summary": "Natural Grocers by Vitamin Cottage (NYSE: NGVC) is a publicly traded, family-operated specialty retailer of natural and organic groceries, supplements, and body care products, founded in 1955 and headquartered in Lakewood, Colorado. The company operates in an active expansion phase, opening multiple new stores across the US in 2025–2026. It was named 2025 Retailer of the Year by Store Brands, signaling strong category management credibility.",
+        "role_relevance": "Natural Grocers is a natural-channel specialty grocer with a health-conscious, premium-oriented customer base that directly aligns with botanical wellness beverages in glass packaging. As an expanding retailer actively onboarding new items via a formal submission process, it represents a viable retail placement opportunity for the offer.",
+        "inferred_pain": "Rapid multi-state expansion appears to create pressure to differentiate shelves in new markets with premium, on-trend beverage SKUs that match the store's wellness identity and support the Retailer of the Year brand positioning.",
+        "timing_signals": [
+          "Natural Grocers announced expansion to Lake Geneva, Wisconsin on February 6, 2026 — its first Wisconsin location.",
+          "Natural Grocers announced expansions to Rock Springs, WY (January 2, 2026), Walla Walla, WA (March 10, 2026), McMinnville, OR (April 6, 2026), and Rapid City, SD (April 28, 2026).",
+          "Natural Grocers maintains an active New Item Submission portal for food products, including a Bulk program pathway.",
+          "Named 2025 Retailer of the Year by Store Brands on December 29, 2025."
+        ],
+        "evidence": [
+          "Public investor releases confirm at least five new store openings or announcements in Q1–Q3 FY2026, indicating active shelf-set planning cycles across new markets.",
+          "A live New Item Submission portal exists on the Natural Grocers website, providing a formal, confirmed pathway for vendor consideration.",
+          "The company's stated Five Founding Principles include community commitment and natural/organic product standards, consistent with premium botanical wellness positioning.",
+          "Store Brands Retailer of the Year award (December 2025) suggests strong private label and differentiated product strategy."
+        ],
+        "missing_data": [
+          "Specific beverage category buyer name, team structure, or direct contact within merchandising or category management.",
+          "Current beverage aisle assortment strategy — whether premium botanical/glass SKUs are already well-represented or a gap exists.",
+          "Minimum order quantities, slotting fee expectations, or margin requirements for new beverage vendors.",
+          "Whether the gifting or hospitality channel is relevant to Natural Grocers' model (it is primarily a retail grocer)."
+        ],
+        "research_confidence": 0.68,
+        "why_now": "Confirmed: Natural Grocers has announced five or more new store openings across new geographies in early-to-mid 2026, creating active planogram and new item review cycles — a confirmed structural buying window for new product submissions.",
+        "pain_hypothesis": "Natural Grocers' rapid geographic expansion into new states (Wisconsin, South Dakota, Wyoming) requires building differentiated, on-brand beverage sets for stores entering markets where brand recognition is lower; premium botanical wellness beverages in glass packaging may fill a functional and aesthetic shelf gap consistent with their positioning.",
+        "risks_weaknesses": [
+          "Natural Grocers is a value-conscious specialty grocer — premium price points on glass-packaged beverages may face resistance if they exceed shopper price expectations for this chain.",
+          "The gifting and hospitality channels cited in the offer are not relevant to Natural Grocers' core retail model, reducing the breadth of the pitch.",
+          "New item submissions go through a formal portal process with unknown review timelines and competitive volume — not a fast or guaranteed path.",
+          "No confirmed signal that beverage category is currently under-assorted or that botanical wellness is a stated gap."
+        ],
+        "evidence_discipline": [
+          {
+            "claim": "Natural Grocers announced expansion to Lake Geneva, Wisconsin — its first Wisconsin store",
+            "type": "verified_public_signal",
+            "date": "2026-02-06"
+          },
+          {
+            "claim": "Natural Grocers announced four additional new store locations across WY, WA, OR, and SD in Q1–Q2 2026",
+            "type": "verified_public_signal",
+            "date": "2026-04-28"
+          },
+          {
+            "claim": "Natural Grocers operates a live New Item Submission portal for food products",
+            "type": "verified_public_signal"
+          },
+          {
+            "claim": "Named 2025 Retailer of the Year by Store Brands, indicating strong category differentiation strategy",
+            "type": "verified_public_signal",
+            "date": "2025-12-29"
+          },
+          {
+            "claim": "Rapid expansion creates incremental demand for new premium beverage SKUs to differentiate new store shelves",
+            "type": "inferred_from_context"
+          },
+          {
+            "claim": "Natural Grocers' buyer identity, current beverage assortment gaps, and slotting economics are unknown",
+            "type": "missing_evidence"
+          }
+        ],
+        "segment_fit_note": "Natural Grocers is a direct fit for the retail channel of premium botanical wellness beverages, though it is not relevant to the hospitality or gifting channels also cited in the offer.",
+        "account_thesis": "Natural Grocers is actively expanding its physical footprint into new states in 2026 with a confirmed new item submission pathway, making this a structurally sound retail prospecting target for a premium botanical wellness beverage aligned with its natural/organic brand identity. The commercial case rests on expansion-driven planogram resets rather than any confirmed beverage gap.",
+        "signal_interpretation": "Multiple confirmed store opening announcements in 2026 mean category buyers are actively building new store assortments — this is the most actionable structural trigger for submitting new items, as planogram decisions are made ahead of each opening.",
+        "buying_window": "near_term",
+        "buying_window_reason": "Multiple confirmed new store openings in 2026 create recurring near-term new item review cycles, but the formal submission process introduces unknown lead time before any purchase decision.",
+        "evidence_quality_grade": "moderate_public",
+        "opportunity_risks": [
+          "Formal new item submission portal may mean a slow, competitive review process with no guaranteed timeline or outcome.",
+          "Price sensitivity: Natural Grocers serves a budget-conscious natural shopper segment that may resist premium glass-packaged price points.",
+          "Hospitality and gifting components of the offer are irrelevant to this retailer, narrowing the value proposition.",
+          "No evidence of a specific beverage category gap or stated buyer interest in botanical wellness as a growth priority."
+        ],
+        "recommended_action": "send_outreach_now",
+        "recommended_action_reason": "The confirmed new item submission portal and active 2026 store expansion cycle provide a legitimate, timely entry point to initiate contact through the formal vendor pathway.",
+        "next_best_question": "What are Natural Grocers' current assortment standards and price point thresholds for premium bottled beverages, and is there a category buyer we can engage before submitting through the portal?",
+        "account_research": {
+          "version": "account-deep-research-v1",
+          "account": "Natural Grocers",
+          "domain": "naturalgrocers.com",
+          "planned_queries": 4,
+          "executed_queries": 4,
+          "provider_calls": 7,
+          "provider_failures": 3,
+          "results_seen": 17,
+          "evidence_accepted": 15,
+          "evidence_rejected": 2,
+          "pages_extracted": 0,
+          "extraction_failures": 0,
+          "structured_extraction_calls": 0,
+          "dated_evidence": 10,
+          "independent_domains": 2,
+          "claims_recovered": 2,
+          "corroboration_attempted": false,
+          "corroborating_domains": 0,
+          "corroborating_sources": [],
+          "counterevidence_checked": true,
+          "early_stop_reason": "no_material_event",
+          "query_audit": [
+            {
+              "query_id": "rq_olzrvi",
+              "stage": "identity",
+              "provider": "brave",
+              "results": 5,
+              "accepted": 5
+            },
+            {
+              "query_id": "rq_1u29u8k",
+              "stage": "current_activity",
+              "provider": "brave",
+              "results": 2,
+              "accepted": 2
+            },
+            {
+              "query_id": "rq_8mjoh1",
+              "stage": "current_activity",
+              "provider": "brave",
+              "results": 5,
+              "accepted": 5
+            },
+            {
+              "query_id": "rq_3c5r24",
+              "stage": "counterevidence",
+              "provider": "brave",
+              "results": 5,
+              "accepted": 5
+            }
+          ],
+          "extraction_audit": [],
+          "provider_ops": [
+            {
+              "provider": "brave",
+              "operation": "search",
+              "stage": "identity",
+              "duration_ms": 1406,
+              "ok": true,
+              "timeout": false,
+              "results": 5
+            },
+            {
+              "provider": "brave",
+              "operation": "search",
+              "stage": "current_activity",
+              "duration_ms": 445,
+              "ok": true,
+              "timeout": false,
+              "results": 2
+            },
+            {
+              "provider": "tavily",
+              "operation": "search",
+              "stage": "current_activity",
+              "duration_ms": 2409,
+              "ok": false,
+              "timeout": false,
+              "results": null
+            },
+            {
+              "provider": "brave",
+              "operation": "search",
+              "stage": "current_activity",
+              "duration_ms": 530,
+              "ok": true,
+              "timeout": false,
+              "results": 5
+            },
+            {
+              "provider": "tavily",
+              "operation": "search",
+              "stage": "current_activity",
+              "duration_ms": 2145,
+              "ok": false,
+              "timeout": false,
+              "results": null
+            },
+            {
+              "provider": "brave",
+              "operation": "search",
+              "stage": "counterevidence",
+              "duration_ms": 597,
+              "ok": true,
+              "timeout": false,
+              "results": 5
+            },
+            {
+              "provider": "tavily",
+              "operation": "search",
+              "stage": "counterevidence",
+              "duration_ms": 2022,
+              "ok": false,
+              "timeout": false,
+              "results": null
+            }
+          ],
+          "validated_events": [],
+          "counterevidence_material_found": false,
+          "event_hints_received": 0,
+          "event_hints_fetched": 0,
+          "event_hints_validated": 0,
+          "event_geography_rejected": 0,
+          "account_elapsed_ms": 47276
+        }
+      },
+      "qualification": {
+        "enrichment": {
+          "candidate": {
+            "id": "track_a_natural_grocers",
+            "company": "Natural Grocers",
+            "domain": "naturalgrocers.com",
+            "country": "United States",
+            "location": "United States",
+            "industry": "Natural and organic grocery",
+            "source": "public_signal",
+            "source_url": "https://investors.naturalgrocers.com/2026-02-05-Natural-Grocers-by-Vitamin-Cottage-Announces-First-Quarter-Fiscal-2026-Results",
+            "raw_context": "New Item Submissions | Natural Grocers\nFood product sold in larger quantities for consideration for our Natural Grocers Bulk program SUBMIT YOUR FOOD PRODUCTS | [2026-02-05T00:00:00] Natural Grocers by Vitamin Cottage Announces First Quarter Fiscal 2026 Results - Feb 5, 2026. The conference ID is &quot;Natural Grocers Q1 FY 2026 Earnings Call.&quot; A simultaneous audio webcast will be available at http://Investors.NaturalGrocers.com and archived for a minimum of 20 days. ... Natural Grocers by Vitamin Cottage, Inc. (NYSE: NGVC) is an expanding specialty retailer of natu (source: https://investors.naturalgrocers.com/2026-02-05-Natural-Grocers-by-Vitamin-Cottage-Announces-First-Quarter-Fiscal-2026-Results) | [2026-08-07T07:50:36] Natural Grocers by Vitamin Cottage Announces Third Quarter Fiscal 2026 Results - Aug 6, 2026. The conference ID is &quot;Natural Grocers Q3 FY 2026 Earnings Call.&quot; A simultaneous audio webcast will be available at http://Investors.NaturalGrocers.com and archived for a minimum of 20 days. ... Natural Grocers by Vitamin Cottage, Inc. (NYSE: NGVC) is an expanding specialty retailer of natu (source: https://investors.naturalgrocers.com/2026-08-06-Natural-Grocers-by-Vitamin-Cottage-Announces-Third-Quarter-Fiscal-2026-Results) | [2026-02-06T00:00:00] Natural Grocers® Plans Expansion to Lake Geneva, Wisconsin - Feb 6, 2026. LAKEWOOD, Colo., Feb. 6, 2026 /PRNewswire/ -- Natural Grocers®, the nation&#x27;s premier family-operated organic and natural grocery retailer, plans to open a new store in Lake Geneva, Wisconsin, this spring. The location, off North Edwards Boulevard, will be Natural Grocers&#x27; first store in Wi (source: https://investors.naturalgrocers.com/2026-02-06-Natural-Grocers-R-Plans-Expansion-to-Lake-Geneva,-Wisconsin) | [2026-01-02T00:00:00] Natural Grocers® Expands to Rock Springs, Wyoming - Jan 2, 2026. Natural Grocers®, the nation&#x27;s premier family-operated organic and natural grocery retailer, plans to open a new store in Rock Springs, Wyoming, this spring. The location, in White Mountain Mall,... (source: https://investors.naturalgrocers.com/2026-01-02-Natural-Grocers-R-Expands-to-Rock-Springs,-Wyoming) | [2025-12-29T00:00:00] Natural Grocers® Named 2025 Retailer of the Year by Store Brands - Dec 29, 2025. ABOUT NATURAL GROCERS BY VITAMIN COTTAGE Founded in 1955, Natural Grocers by Vitamin Cottage, Inc. (NYSE: NGVC) is an expanding specialty retailer of natural and organic groceries, body care products and dietary supplements. (source: https://investors.naturalgrocers.com/2025-12-29-Natural-Grocers-R-Named-2025-Retailer-of-the-Year-by-Store-Brands) | [2026-04-06T00:00:00] Natural Grocers® Expands to McMinnville, Oregon - Apr 6, 2026. <strong>Natural Grocers</strong> is committed to its Five Founding Principles—including its &quot;Commitment to Community&quot; and &quot;Commitment to Crew.&quot; In fiscal year 2025, the Company invested more than $16 million in incremental compensation and discretionary payments ... (source: https://investors.naturalgrocers.com/2026-04-06-Natural-Grocers-R-Expands-to-McMinnville,-Oregon) | [2026-03-10T00:00:00] Natural Grocers® Expands to Walla Walla, Washington - Mar 10, 2026. <strong>Natural Grocers</strong> is committed to its Five Founding Principles—including its &quot;Commitment to Community&quot; and &quot;Commitment to Crew.&quot; In fiscal year 2025, the Company invested more than $16 million in incremental compensation and discretionary payments ... (source: https://investors.naturalgrocers.com/2026-03-10-Natural-Grocers-R-Expands-to-Walla-Walla,-Washington) | [2026-04-28T00:00:00] Natural Grocers® Expands to Rapid City, South Dakota - Apr 28, 2026. Family-operated grocery retailer to host virtual hiring fair and community meet-and-greet ahead of opening LAKEWOOD, Colo., April 28, 2026 /PRNewswire/ -- Natural Grocers®, the nation&#x27;s largest... (source: https://investors.naturalgrocers.com/2026-04-28-Natural-Grocers-R-Expands-to-Rapid-City,-South-Dakota)",
+            "confidence_score": 0.9,
+            "signal_date": null,
+            "signal_type": null,
+            "opportunity_kind": "channel_fit",
+            "opportunity_kind_reason": "Official supplier/new-item intake fetched live.",
+            "channel_evidence_grade": "strong",
+            "channel_proof_type": "supplier_intake",
+            "channel_category_alignment": "plausible",
+            "channel_limitations": [
+              "A public submission path is not buying intent and does not guarantee acceptance."
+            ],
+            "current_actionability_verified": true,
+            "current_actionability_basis": "active_supplier_submission",
+            "commercial_mechanism": "supplier_intake",
+            "access_path_identified": true,
+            "access_verified": true,
+            "actionability_source_url": "https://www.naturalgrocers.com/vendors",
+            "actionability_observed_at": "2026-09-30T16:31:45.480Z",
+            "account_visibility": "established",
+            "discovery_value": "high",
+            "discovery_value_reason": "Live official commercial entry mechanism.",
+            "discovery_origin": "dynamic_enumeration",
+            "country_confidence": "high"
+          },
+          "company_summary": "Natural Grocers by Vitamin Cottage (NYSE: NGVC) is a publicly traded, family-operated specialty retailer of natural and organic groceries, supplements, and body care products, founded in 1955 and headquartered in Lakewood, Colorado. The company operates in an active expansion phase, opening multiple new stores across the US in 2025–2026. It was named 2025 Retailer of the Year by Store Brands, signaling strong category management credibility.",
+          "role_relevance": "Natural Grocers is a natural-channel specialty grocer with a health-conscious, premium-oriented customer base that directly aligns with botanical wellness beverages in glass packaging. As an expanding retailer actively onboarding new items via a formal submission process, it represents a viable retail placement opportunity for the offer.",
+          "inferred_pain": "Rapid multi-state expansion appears to create pressure to differentiate shelves in new markets with premium, on-trend beverage SKUs that match the store's wellness identity and support the Retailer of the Year brand positioning.",
+          "timing_signals": [
+            "Natural Grocers announced expansion to Lake Geneva, Wisconsin on February 6, 2026 — its first Wisconsin location.",
+            "Natural Grocers announced expansions to Rock Springs, WY (January 2, 2026), Walla Walla, WA (March 10, 2026), McMinnville, OR (April 6, 2026), and Rapid City, SD (April 28, 2026).",
+            "Natural Grocers maintains an active New Item Submission portal for food products, including a Bulk program pathway.",
+            "Named 2025 Retailer of the Year by Store Brands on December 29, 2025."
+          ],
+          "evidence": [
+            "Public investor releases confirm at least five new store openings or announcements in Q1–Q3 FY2026, indicating active shelf-set planning cycles across new markets.",
+            "A live New Item Submission portal exists on the Natural Grocers website, providing a formal, confirmed pathway for vendor consideration.",
+            "The company's stated Five Founding Principles include community commitment and natural/organic product standards, consistent with premium botanical wellness positioning.",
+            "Store Brands Retailer of the Year award (December 2025) suggests strong private label and differentiated product strategy."
+          ],
+          "missing_data": [
+            "Specific beverage category buyer name, team structure, or direct contact within merchandising or category management.",
+            "Current beverage aisle assortment strategy — whether premium botanical/glass SKUs are already well-represented or a gap exists.",
+            "Minimum order quantities, slotting fee expectations, or margin requirements for new beverage vendors.",
+            "Whether the gifting or hospitality channel is relevant to Natural Grocers' model (it is primarily a retail grocer)."
+          ],
+          "research_confidence": 0.68,
+          "why_now": "Confirmed: Natural Grocers has announced five or more new store openings across new geographies in early-to-mid 2026, creating active planogram and new item review cycles — a confirmed structural buying window for new product submissions.",
+          "pain_hypothesis": "Natural Grocers' rapid geographic expansion into new states (Wisconsin, South Dakota, Wyoming) requires building differentiated, on-brand beverage sets for stores entering markets where brand recognition is lower; premium botanical wellness beverages in glass packaging may fill a functional and aesthetic shelf gap consistent with their positioning.",
+          "risks_weaknesses": [
+            "Natural Grocers is a value-conscious specialty grocer — premium price points on glass-packaged beverages may face resistance if they exceed shopper price expectations for this chain.",
+            "The gifting and hospitality channels cited in the offer are not relevant to Natural Grocers' core retail model, reducing the breadth of the pitch.",
+            "New item submissions go through a formal portal process with unknown review timelines and competitive volume — not a fast or guaranteed path.",
+            "No confirmed signal that beverage category is currently under-assorted or that botanical wellness is a stated gap."
+          ],
+          "evidence_discipline": [
+            {
+              "claim": "Natural Grocers announced expansion to Lake Geneva, Wisconsin — its first Wisconsin store",
+              "type": "verified_public_signal",
+              "date": "2026-02-06"
+            },
+            {
+              "claim": "Natural Grocers announced four additional new store locations across WY, WA, OR, and SD in Q1–Q2 2026",
+              "type": "verified_public_signal",
+              "date": "2026-04-28"
+            },
+            {
+              "claim": "Natural Grocers operates a live New Item Submission portal for food products",
+              "type": "verified_public_signal"
+            },
+            {
+              "claim": "Named 2025 Retailer of the Year by Store Brands, indicating strong category differentiation strategy",
+              "type": "verified_public_signal",
+              "date": "2025-12-29"
+            },
+            {
+              "claim": "Rapid expansion creates incremental demand for new premium beverage SKUs to differentiate new store shelves",
+              "type": "inferred_from_context"
+            },
+            {
+              "claim": "Natural Grocers' buyer identity, current beverage assortment gaps, and slotting economics are unknown",
+              "type": "missing_evidence"
+            }
+          ],
+          "segment_fit_note": "Natural Grocers is a direct fit for the retail channel of premium botanical wellness beverages, though it is not relevant to the hospitality or gifting channels also cited in the offer.",
+          "account_thesis": "Natural Grocers is actively expanding its physical footprint into new states in 2026 with a confirmed new item submission pathway, making this a structurally sound retail prospecting target for a premium botanical wellness beverage aligned with its natural/organic brand identity. The commercial case rests on expansion-driven planogram resets rather than any confirmed beverage gap.",
+          "signal_interpretation": "Multiple confirmed store opening announcements in 2026 mean category buyers are actively building new store assortments — this is the most actionable structural trigger for submitting new items, as planogram decisions are made ahead of each opening.",
+          "buying_window": "near_term",
+          "buying_window_reason": "Multiple confirmed new store openings in 2026 create recurring near-term new item review cycles, but the formal submission process introduces unknown lead time before any purchase decision.",
+          "evidence_quality_grade": "moderate_public",
+          "opportunity_risks": [
+            "Formal new item submission portal may mean a slow, competitive review process with no guaranteed timeline or outcome.",
+            "Price sensitivity: Natural Grocers serves a budget-conscious natural shopper segment that may resist premium glass-packaged price points.",
+            "Hospitality and gifting components of the offer are irrelevant to this retailer, narrowing the value proposition.",
+            "No evidence of a specific beverage category gap or stated buyer interest in botanical wellness as a growth priority."
+          ],
+          "recommended_action": "send_outreach_now",
+          "recommended_action_reason": "The confirmed new item submission portal and active 2026 store expansion cycle provide a legitimate, timely entry point to initiate contact through the formal vendor pathway.",
+          "next_best_question": "What are Natural Grocers' current assortment standards and price point thresholds for premium bottled beverages, and is there a category buyer we can engage before submitting through the portal?",
+          "account_research": {
+            "version": "account-deep-research-v1",
+            "account": "Natural Grocers",
+            "domain": "naturalgrocers.com",
+            "planned_queries": 4,
+            "executed_queries": 4,
+            "provider_calls": 7,
+            "provider_failures": 3,
+            "results_seen": 17,
+            "evidence_accepted": 15,
+            "evidence_rejected": 2,
+            "pages_extracted": 0,
+            "extraction_failures": 0,
+            "structured_extraction_calls": 0,
+            "dated_evidence": 10,
+            "independent_domains": 2,
+            "claims_recovered": 2,
+            "corroboration_attempted": false,
+            "corroborating_domains": 0,
+            "corroborating_sources": [],
+            "counterevidence_checked": true,
+            "early_stop_reason": "no_material_event",
+            "query_audit": [
+              {
+                "query_id": "rq_olzrvi",
+                "stage": "identity",
+                "provider": "brave",
+                "results": 5,
+                "accepted": 5
+              },
+              {
+                "query_id": "rq_1u29u8k",
+                "stage": "current_activity",
+                "provider": "brave",
+                "results": 2,
+                "accepted": 2
+              },
+              {
+                "query_id": "rq_8mjoh1",
+                "stage": "current_activity",
+                "provider": "brave",
+                "results": 5,
+                "accepted": 5
+              },
+              {
+                "query_id": "rq_3c5r24",
+                "stage": "counterevidence",
+                "provider": "brave",
+                "results": 5,
+                "accepted": 5
+              }
+            ],
+            "extraction_audit": [],
+            "provider_ops": [
+              {
+                "provider": "brave",
+                "operation": "search",
+                "stage": "identity",
+                "duration_ms": 1406,
+                "ok": true,
+                "timeout": false,
+                "results": 5
+              },
+              {
+                "provider": "brave",
+                "operation": "search",
+                "stage": "current_activity",
+                "duration_ms": 445,
+                "ok": true,
+                "timeout": false,
+                "results": 2
+              },
+              {
+                "provider": "tavily",
+                "operation": "search",
+                "stage": "current_activity",
+                "duration_ms": 2409,
+                "ok": false,
+                "timeout": false,
+                "results": null
+              },
+              {
+                "provider": "brave",
+                "operation": "search",
+                "stage": "current_activity",
+                "duration_ms": 530,
+                "ok": true,
+                "timeout": false,
+                "results": 5
+              },
+              {
+                "provider": "tavily",
+                "operation": "search",
+                "stage": "current_activity",
+                "duration_ms": 2145,
+                "ok": false,
+                "timeout": false,
+                "results": null
+              },
+              {
+                "provider": "brave",
+                "operation": "search",
+                "stage": "counterevidence",
+                "duration_ms": 597,
+                "ok": true,
+                "timeout": false,
+                "results": 5
+              },
+              {
+                "provider": "tavily",
+                "operation": "search",
+                "stage": "counterevidence",
+                "duration_ms": 2022,
+                "ok": false,
+                "timeout": false,
+                "results": null
+              }
+            ],
+            "validated_events": [],
+            "counterevidence_material_found": false,
+            "event_hints_received": 0,
+            "event_hints_fetched": 0,
+            "event_hints_validated": 0,
+            "event_geography_rejected": 0,
+            "account_elapsed_ms": 47276
+          }
+        },
+        "score_breakdown": {
+          "role_fit": 2,
+          "company_fit": 2,
+          "pain_fit": 1,
+          "timing_signal": 2,
+          "reachability": 0.5,
+          "strategic_relevance": 1
+        },
+        "score_dimensions": {
+          "icp_fit": 82,
+          "signal_strength": 68,
+          "timing": 75,
+          "evidence_quality": 72,
+          "strategic_value": 80,
+          "confidence": 65,
+          "disqualification_risk": 18
+        },
+        "fit_score": 8.5,
+        "category": "HOT",
+        "fit_reasons": [
+          "Natural Grocers operates squarely in the natural and organic grocery vertical — a named ICP industry — with a health-conscious, premium-oriented shopper base directly aligned with botanical wellness beverages in glass packaging.",
+          "Confirmed multi-location expansion in 2026 across five new markets (WI, WY, WA, OR, SD) creates structural planogram reset windows and active new item review cycles — a textbook structural buying signal.",
+          "Named 2025 Retailer of the Year by Store Brands, confirming strong category management credibility and a retailer identity that prizes differentiated, on-brand assortment over commodity SKUs.",
+          "Active New Item Submission portal and Bulk program pathway provide a confirmed, formal commercial entry point — eliminating speculation about whether a vendor path exists.",
+          "No hard disqualifiers apply: Natural Grocers is not a mass-market discounter, pharmacy, medical channel, or online marketplace."
+        ],
+        "disqualification_reasons": [
+          "Premium glass-packaged beverage price points may face friction given Natural Grocers' value-conscious positioning within the natural channel — price-to-shelf fit requires validation.",
+          "No confirmed signal that the beverage category is under-assorted or that botanical wellness represents a stated gap in current assortment strategy.",
+          "Gifting and hospitality ICP channels are irrelevant to this account's retail-only model — pitch scope is narrower than multi-channel offers.",
+          "Formal portal submission process introduces unknown review timelines and competitive queue volume — not a fast-path conversion even if fit is strong."
+        ],
+        "qualification_confidence": 0.74,
+        "score_explanation": "Score is HOT because [ICP Fit: 82/100 — Natural Grocers is a textbook natural and organic grocery retailer with a premium, health-conscious shopper base and no disqualifying characteristics]. [Signal: 68/100 — five confirmed new store openings in 2026 across new geographies create active planogram review cycles; a formal new item submission portal is verified; Retailer of the Year recognition signals category management investment]. [Timing: 75/100 — expansion announcements span February through April 2026, placing new item review windows in an active 30–90 day commercial horizon]. Key risk: no confirmed beverage category gap, premium price point friction possible, and formal portal submission introduces timeline uncertainty with no identified buyer contact.",
+        "signal_interpretation": "Natural Grocers represents a structurally sound, high-confidence retail prospecting target where confirmed geographic expansion creates a repeatable, defensible commercial rationale for outreach — even without a named buyer or confirmed category gap. The opportunity is real but gated by the formal submission process and price point fit, meaning the commercial priority should be getting into the submission queue now while planogram resets are actively underway across new-market stores.",
+        "opportunity_tier_reason": "HOT: Natural Grocers meets all HOT criteria — icp_fit ≥70 (82), signal_strength ≥50 (68), evidence_quality ≥60 (72), disqualification_risk ≤35 (18)",
+        "rank": 1,
+        "ranking_explanation": "Natural Grocers leads the batch because it combines a confirmed company event with the strongest ICP fit (8.5/10). It is the first account to consider for outreach, subject to the stated evidence guardrails."
+      },
+      "outreach": {
+        "personalization_trigger": "Noticed that Natural Grocers natural Grocers announced expansion to Lake Geneva, Wisconsin on February 6, 2026 — its first Wisconsin location. That kind of signal often correlates with commercial evaluation activity — wanted to reach out while the timing looks relevant.",
+        "recommended_angle": "Signal-led angle: Reference the public signal directly — \"Natural Grocers announced expansion to Lake Geneva, Wisconsin on February 6, 202...\" — as the reason for reaching out now. This is the strongest entry point.",
+        "subject": "Natural Grocers — thought this was relevant",
+        "email_body": "Noticed that Natural Grocers natural Grocers announced expansion to Lake Geneva — when accounts show that kind of activity, it's usually worth a short conversation to see if the timing is right.\n\nPremium botanical wellness beverages in glass, for US retail/hospitality/gifting channels. — adapted for food exporters and importers expanding wholes.\n\nIdentifying new wholesale buyers or distributors in a target market typically requires months of relationship groundwork. We surface accounts already \n\nHappy to share a short example relevant to your segment — just say the word.",
+        "linkedin_dm": "\"Natural Grocers [signal]\" — reference the specific event and ask if it reflects a broader commercia. Premium botanical wellness beverages in glass, for US retail/hospitality/gifting — relevant for Natural and organic grocery teams at this stage. Happy to share more if it fits.",
+        "followup_1": "Circling back — Premium botanical wellness beverages in glass, for US retail/hospitali for Natural and organic grocery teams. Happy to share a short example if that would help.",
+        "followup_2": "Last note. If this isn't the right timing for Natural Grocers, no problem — reply \"later\" and I'll check back. If there's someone else better placed to evaluate this, happy to reach them instead.",
+        "call_opener": "Hi, reaching out because Natural Grocers came up as a strong fit for what we do — Premium botanical wellness beverages in glass, for US retail/hospitali. Do you have 90 seconds for a one-sentence overview?",
+        "cta_recommendation": "Lead with the signal in the subject line — it's the strongest differentiator from generic outreach. Keep the CTA a soft 15-minute ask, not a demo request.",
+        "outreach_assumptions": "Natural Grocers has a confirmed public buying signal. This is the highest-quality timing to approach — the signal suggests an active commercial decision window of 30–90 days.",
+        "what_to_avoid_in_outreach": "Do not claim to know their internal priorities. Do not over-interpret the signal — present it as context, not certainty. Avoid generic language like \"I saw you're growing.\"",
+        "tone": "consultative",
+        "qc_status": "APPROVED",
+        "qc_notes": []
+      },
+      "learning": {
+        "agent_confidence": 0.71,
+        "qc_flags": [],
+        "genericness_risk": "medium",
+        "hallucination_risk": "low",
+        "evidence_discipline_summary": "verified",
+        "signal_patterns": [
+          "Natural Grocers announced expansion to Lake Geneva, Wisconsin on February 6, 2026 — its first Wisconsin location.",
+          "Natural Grocers announced expansions to Rock Springs, WY (January 2, 2026), Walla Walla, WA (March 10, 2026), McMinnville, OR (April 6, 2026), and Rapid City, SD (April 28, 2026).",
+          "Natural Grocers maintains an active New Item Submission portal for food products, including a Bulk program pathway.",
+          "Named 2025 Retailer of the Year by Store Brands on December 29, 2025."
+        ],
+        "improvement_notes": [
+          "Natural Grocers is a value-conscious specialty grocer — premium price points on glass-packaged beverages may face resistance if they exceed shopper price expectations for this chain."
+        ],
+        "segment_pattern": "Natural and organic grocery",
+        "reusable_pattern": "HOT/WARM Natural and organic grocery account with signal: Natural Grocers announced expansion to Lake Geneva, Wisconsin on February 6, 202",
+        "offer_market_fit_pattern": "Natural and organic grocery account + \"Natural Grocers announced expansion to Lake Geneva, Wisconsi\" → ICP fit score 8.5/10",
+        "reason_for_priority": "HOT because all four threshold criteria are met — strong ICP industry alignment, confirmed multi-store expansion signals, high-quality public evidence, and no meaningful disqualification risk — making this a structurally timed retail placement opportunity worth immediate outreach.",
+        "predicted_learning_value": "high",
+        "feedback_hooks": [
+          "useful",
+          "not_useful",
+          "wrong_fit",
+          "contacted",
+          "meeting_booked",
+          "replied",
+          "add_to_vault"
+        ],
+        "account_memory_state": "repeated_without_new_signal",
+        "account_memory_times_seen": 6,
+        "account_memory_last_seen_at": "2026-09-30T16:14:57.535+00:00",
+        "account_memory_last_category": "WARM",
+        "account_memory_last_fit_score": 7.5,
+        "account_memory_last_feedback_signal": null,
+        "change_tag": "unchanged",
+        "change_score_delta": 1,
+        "change_prev_category": "WARM",
+        "change_prev_score": 7.5,
+        "source_layer_applied": true,
+        "discovered_at": "2026-09-30T16:32:54.790Z",
+        "signal_date": "2026-04-28",
+        "signal_age_days": 155,
+        "source_type": "press_release",
+        "source_types": [
+          "press_release"
+        ],
+        "source_name": "investors.naturalgrocers.com",
+        "source_count": 4,
+        "signal_count": 4,
+        "fresh_signal_count": 0,
+        "is_context_only": false,
+        "is_timing_signal": true,
+        "signal_role": "timing_signal",
+        "source_freshness": "stale",
+        "source_reliability": "high",
+        "freshness_score": 0.1,
+        "region_confidence": "high",
+        "limited_region_coverage": false,
+        "freshness_label": "Stale signal (> 60 days) · Verify still active",
+        "source_summary": "4 verified sources (press release) · timing signal · signal date: 2026-04-28",
+        "evidence_quality": "medium",
+        "evidence_confidence": 0.808,
+        "source_confidence": "high",
+        "evidence_summary": "Medium evidence quality — 4 verified source(s), 4 timing signal(s). Validate before outreach.",
+        "recommended_action_guardrail_applied": true,
+        "original_recommended_action": "send_outreach_now",
+        "guardrailed_recommended_action": "validate_source_first",
+        "change_type": "signal_became_stale",
+        "change_label": "Signal appears stale",
+        "change_reason": "Seen 6x; current signal is stale (Stale signal (> 60 days) · Verify still active)",
+        "client_visible": true,
+        "suppression_reason": "Stale signal — verify before acting",
+        "previous_action": null,
+        "current_action": "validate_source_first",
+        "previous_evidence_quality": null,
+        "current_evidence_quality": "medium",
+        "previous_source_freshness": null,
+        "current_source_freshness": "stale",
+        "previous_signal_date": null,
+        "current_signal_date": "2026-04-28"
+      }
+    }
+  ],
+  "reprocessed_at": "2026-09-30T16:36:09.188Z",
+  "reprocess_reason": "Bind current actionability to actionability_source_url rather than mutable event research source_url."
+}
