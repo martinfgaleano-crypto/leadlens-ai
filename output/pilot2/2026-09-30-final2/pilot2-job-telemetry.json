@@ -1,0 +1,840 @@
+{
+  "job": {
+    "jobId": "cj_amordegea_pilot2_1790747118176",
+    "customer": "Amor de Gea",
+    "objective": "US export market entry",
+    "contextVersion": 1,
+    "geography": "United States",
+    "requestedTier": "premium",
+    "targetCount": 18,
+    "milestones": [
+      2,
+      6,
+      12,
+      18
+    ],
+    "status": "partial",
+    "passesCompleted": 6,
+    "candidates": [
+      {
+        "key": "d:wholefoodsmarket.com",
+        "company": "Whole Foods Market",
+        "domain": "wholefoodsmarket.com",
+        "country": "United States",
+        "industry": "natural grocery retail",
+        "route": "specialty_importer",
+        "origin": "external",
+        "firstSeenPass": 1,
+        "lastSeenPass": 6,
+        "researched": true,
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "opportunityKind": null,
+        "channelEvidenceGrade": null,
+        "channelProofType": null
+      },
+      {
+        "key": "d:sprouts.com",
+        "company": "Sprouts Farmers Market",
+        "domain": "sprouts.com",
+        "country": "United States",
+        "industry": "natural grocery retail",
+        "route": "specialty_importer",
+        "origin": "external",
+        "firstSeenPass": 1,
+        "lastSeenPass": 6,
+        "researched": true,
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "opportunityKind": null,
+        "channelEvidenceGrade": null,
+        "channelProofType": null
+      },
+      {
+        "key": "d:canyonranch.com",
+        "company": "Canyon Ranch",
+        "domain": "canyonranch.com",
+        "country": "United States",
+        "industry": "wellness resorts and spas",
+        "route": "specialty_importer",
+        "origin": "external",
+        "firstSeenPass": 1,
+        "lastSeenPass": 6,
+        "researched": true,
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "opportunityKind": null,
+        "channelEvidenceGrade": null,
+        "channelProofType": null
+      },
+      {
+        "key": "d:miravalresorts.com",
+        "company": "Miraval Resorts",
+        "domain": "miravalresorts.com",
+        "country": "United States",
+        "industry": "wellness resorts and spas",
+        "route": "specialty_importer",
+        "origin": "external",
+        "firstSeenPass": 1,
+        "lastSeenPass": 6,
+        "researched": true,
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "opportunityKind": null,
+        "channelEvidenceGrade": null,
+        "channelProofType": null
+      },
+      {
+        "key": "d:naturalgrocers.com",
+        "company": "Natural Grocers",
+        "domain": "naturalgrocers.com",
+        "country": "United States",
+        "industry": "natural grocery retail",
+        "route": "specialty_importer",
+        "origin": "external",
+        "firstSeenPass": 1,
+        "lastSeenPass": 6,
+        "researched": true,
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "opportunityKind": null,
+        "channelEvidenceGrade": null,
+        "channelProofType": null
+      },
+      {
+        "key": "d:vitaminshoppe.com",
+        "company": "The Vitamin Shoppe",
+        "domain": "vitaminshoppe.com",
+        "country": "United States",
+        "industry": "wellness retail",
+        "route": "specialty_importer",
+        "origin": "external",
+        "firstSeenPass": 1,
+        "lastSeenPass": 6,
+        "researched": true,
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "opportunityKind": null,
+        "channelEvidenceGrade": null,
+        "channelProofType": null
+      },
+      {
+        "key": "d:thrivemarket.com",
+        "company": "Thrive Market",
+        "domain": "thrivemarket.com",
+        "country": "United States",
+        "industry": "online natural products retail",
+        "route": "specialty_importer",
+        "origin": "external",
+        "firstSeenPass": 1,
+        "lastSeenPass": 6,
+        "researched": true,
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "opportunityKind": null,
+        "channelEvidenceGrade": null,
+        "channelProofType": null
+      },
+      {
+        "key": "d:freshthyme.com",
+        "company": "Fresh Thyme Market",
+        "domain": "freshthyme.com",
+        "country": "United States",
+        "industry": "natural grocery retail",
+        "route": "specialty_importer",
+        "origin": "external",
+        "firstSeenPass": 1,
+        "lastSeenPass": 6,
+        "researched": true,
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "opportunityKind": null,
+        "channelEvidenceGrade": null,
+        "channelProofType": null
+      },
+      {
+        "key": "d:earthfare.com",
+        "company": "Earth Fare",
+        "domain": "earthfare.com",
+        "country": "United States",
+        "industry": "natural grocery retail",
+        "route": "specialty_importer",
+        "origin": "external",
+        "firstSeenPass": 1,
+        "lastSeenPass": 6,
+        "researched": true,
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "opportunityKind": null,
+        "channelEvidenceGrade": null,
+        "channelProofType": null
+      },
+      {
+        "key": "d:aubergeresorts.com",
+        "company": "Auberge Resorts Collection",
+        "domain": "aubergeresorts.com",
+        "country": "United States",
+        "industry": "luxury hospitality and wellness",
+        "route": "specialty_importer",
+        "origin": "external",
+        "firstSeenPass": 1,
+        "lastSeenPass": 6,
+        "researched": true,
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "opportunityKind": null,
+        "channelEvidenceGrade": null,
+        "channelProofType": null
+      },
+      {
+        "key": "d:lifetime.life",
+        "company": "Life Time",
+        "domain": "lifetime.life",
+        "country": "United States",
+        "industry": "health clubs and wellness",
+        "route": "specialty_importer",
+        "origin": "external",
+        "firstSeenPass": 1,
+        "lastSeenPass": 6,
+        "researched": true,
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "opportunityKind": null,
+        "channelEvidenceGrade": null,
+        "channelProofType": null
+      },
+      {
+        "key": "d:equinox.com",
+        "company": "Equinox",
+        "domain": "equinox.com",
+        "country": "United States",
+        "industry": "fitness and wellness clubs",
+        "route": "specialty_importer",
+        "origin": "external",
+        "firstSeenPass": 1,
+        "lastSeenPass": 6,
+        "researched": true,
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "opportunityKind": null,
+        "channelEvidenceGrade": null,
+        "channelProofType": null
+      },
+      {
+        "key": "d:clovergrocery.com",
+        "company": "Clover Grocery",
+        "domain": "clovergrocery.com",
+        "country": "United States",
+        "industry": "Regional premium grocery chain",
+        "route": "regional_premium_grocery",
+        "origin": "external",
+        "firstSeenPass": 5,
+        "lastSeenPass": 5,
+        "researched": true,
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "opportunityKind": null,
+        "channelEvidenceGrade": null,
+        "channelProofType": null
+      },
+      {
+        "key": "d:dorothylane.com",
+        "company": "Dorothy Lane Market",
+        "domain": "dorothylane.com",
+        "country": "United States",
+        "industry": "Regional premium grocery chain",
+        "route": "regional_premium_grocery",
+        "origin": "external",
+        "firstSeenPass": 5,
+        "lastSeenPass": 5,
+        "researched": true,
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "opportunityKind": null,
+        "channelEvidenceGrade": null,
+        "channelProofType": null
+      },
+      {
+        "key": "d:irvineranchmarketoc.com",
+        "company": "Irvine Ranch Market",
+        "domain": "irvineranchmarketoc.com",
+        "country": "United States",
+        "industry": "Regional premium grocery chain",
+        "route": "regional_premium_grocery",
+        "origin": "external",
+        "firstSeenPass": 5,
+        "lastSeenPass": 5,
+        "researched": true,
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "opportunityKind": null,
+        "channelEvidenceGrade": null,
+        "channelProofType": null
+      },
+      {
+        "key": "d:claros.com",
+        "company": "Claro's Italian Markets",
+        "domain": "claros.com",
+        "country": "United States",
+        "industry": "Regional premium grocery chain",
+        "route": "regional_premium_grocery",
+        "origin": "external",
+        "firstSeenPass": 5,
+        "lastSeenPass": 5,
+        "researched": true,
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "opportunityKind": null,
+        "channelEvidenceGrade": null,
+        "channelProofType": null
+      },
+      {
+        "key": "d:themarketpasadena.com",
+        "company": "The Market Pasadena",
+        "domain": "themarketpasadena.com",
+        "country": "United States",
+        "industry": "Regional premium grocery chain",
+        "route": "regional_premium_grocery",
+        "origin": "external",
+        "firstSeenPass": 5,
+        "lastSeenPass": 5,
+        "researched": true,
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "opportunityKind": null,
+        "channelEvidenceGrade": null,
+        "channelProofType": null
+      }
+    ],
+    "qualified": [
+      {
+        "key": "d:wholefoodsmarket.com",
+        "company": "Whole Foods Market",
+        "domain": "wholefoodsmarket.com",
+        "route": "specialty_importer",
+        "decision": "monitor",
+        "fit": "Strong",
+        "timing": "Limited",
+        "evidenceCount": 6,
+        "qualifiedAtPass": 1
+      },
+      {
+        "key": "d:sprouts.com",
+        "company": "Sprouts Farmers Market",
+        "domain": "sprouts.com",
+        "route": "specialty_importer",
+        "decision": "validate",
+        "fit": "Strong",
+        "timing": "Limited",
+        "evidenceCount": 6,
+        "qualifiedAtPass": 1
+      },
+      {
+        "key": "d:canyonranch.com",
+        "company": "Canyon Ranch",
+        "domain": "canyonranch.com",
+        "route": "specialty_importer",
+        "decision": "hold",
+        "fit": "Strong",
+        "timing": "Limited",
+        "evidenceCount": 6,
+        "qualifiedAtPass": 1
+      },
+      {
+        "key": "d:miravalresorts.com",
+        "company": "Miraval Resorts",
+        "domain": "miravalresorts.com",
+        "route": "specialty_importer",
+        "decision": "hold",
+        "fit": "Strong",
+        "timing": "Limited",
+        "evidenceCount": 6,
+        "qualifiedAtPass": 1
+      },
+      {
+        "key": "d:naturalgrocers.com",
+        "company": "Natural Grocers",
+        "domain": "naturalgrocers.com",
+        "route": "specialty_importer",
+        "decision": "validate",
+        "fit": "Strong",
+        "timing": "Limited",
+        "evidenceCount": 6,
+        "qualifiedAtPass": 1
+      },
+      {
+        "key": "d:vitaminshoppe.com",
+        "company": "The Vitamin Shoppe",
+        "domain": "vitaminshoppe.com",
+        "route": "specialty_importer",
+        "decision": "hold",
+        "fit": "Moderate",
+        "timing": "Limited",
+        "evidenceCount": 6,
+        "qualifiedAtPass": 1
+      },
+      {
+        "key": "d:thrivemarket.com",
+        "company": "Thrive Market",
+        "domain": "thrivemarket.com",
+        "route": "specialty_importer",
+        "decision": "hold",
+        "fit": "Moderate",
+        "timing": "Limited",
+        "evidenceCount": 6,
+        "qualifiedAtPass": 1
+      },
+      {
+        "key": "d:freshthyme.com",
+        "company": "Fresh Thyme Market",
+        "domain": "freshthyme.com",
+        "route": "specialty_importer",
+        "decision": "hold",
+        "fit": "Moderate",
+        "timing": "Limited",
+        "evidenceCount": 6,
+        "qualifiedAtPass": 1
+      },
+      {
+        "key": "d:aubergeresorts.com",
+        "company": "Auberge Resorts Collection",
+        "domain": "aubergeresorts.com",
+        "route": "specialty_importer",
+        "decision": "hold",
+        "fit": "Moderate",
+        "timing": "Limited",
+        "evidenceCount": 6,
+        "qualifiedAtPass": 1
+      },
+      {
+        "key": "d:lifetime.life",
+        "company": "Life Time",
+        "domain": "lifetime.life",
+        "route": "specialty_importer",
+        "decision": "monitor",
+        "fit": "Strong",
+        "timing": "Limited",
+        "evidenceCount": 6,
+        "qualifiedAtPass": 1
+      },
+      {
+        "key": "d:clovergrocery.com",
+        "company": "Clover Grocery",
+        "domain": "clovergrocery.com",
+        "route": "regional_premium_grocery",
+        "decision": "hold",
+        "fit": "Moderate",
+        "timing": "Limited",
+        "evidenceCount": 6,
+        "qualifiedAtPass": 5
+      },
+      {
+        "key": "d:dorothylane.com",
+        "company": "Dorothy Lane Market",
+        "domain": "dorothylane.com",
+        "route": "regional_premium_grocery",
+        "decision": "validate",
+        "fit": "Strong",
+        "timing": "Limited",
+        "evidenceCount": 6,
+        "qualifiedAtPass": 5
+      },
+      {
+        "key": "d:irvineranchmarketoc.com",
+        "company": "Irvine Ranch Market",
+        "domain": "irvineranchmarketoc.com",
+        "route": "regional_premium_grocery",
+        "decision": "hold",
+        "fit": "Moderate",
+        "timing": "Limited",
+        "evidenceCount": 6,
+        "qualifiedAtPass": 5
+      },
+      {
+        "key": "d:claros.com",
+        "company": "Claro's Italian Markets",
+        "domain": "claros.com",
+        "route": "regional_premium_grocery",
+        "decision": "hold",
+        "fit": "Moderate",
+        "timing": "Limited",
+        "evidenceCount": 6,
+        "qualifiedAtPass": 5
+      },
+      {
+        "key": "d:themarketpasadena.com",
+        "company": "The Market Pasadena",
+        "domain": "themarketpasadena.com",
+        "route": "regional_premium_grocery",
+        "decision": "hold",
+        "fit": "Moderate",
+        "timing": "Limited",
+        "evidenceCount": 6,
+        "qualifiedAtPass": 5
+      }
+    ],
+    "rejectionMemory": [
+      {
+        "key": "d:earthfare.com",
+        "company": "Earth Fare",
+        "reason": "RESEARCH_MORE_COMMERCIAL_ROLE_AMBIGUOUS",
+        "pass": 1
+      },
+      {
+        "key": "d:equinox.com",
+        "company": "Equinox",
+        "reason": "RESEARCH_MORE_COMMERCIAL_ROLE_AMBIGUOUS",
+        "pass": 1
+      }
+    ],
+    "queryHistory": [
+      {
+        "route": "specialty_importer",
+        "queryFamilyId": "specialty_importer:United_States",
+        "pass": 1,
+        "rawResults": 0,
+        "newCandidates": 12,
+        "qualifiedAdded": 6,
+        "status": "productive"
+      },
+      {
+        "route": "latin_premium_importer",
+        "queryFamilyId": "latin_premium_importer:United_States",
+        "pass": 2,
+        "rawResults": 0,
+        "newCandidates": 0,
+        "qualifiedAdded": 4,
+        "status": "productive"
+      },
+      {
+        "route": "natural_products_distributor",
+        "queryFamilyId": "natural_products_distributor:United_States",
+        "pass": 3,
+        "rawResults": 0,
+        "newCandidates": 0,
+        "qualifiedAdded": 0,
+        "status": "exhausted"
+      },
+      {
+        "route": "natural_specialty_retail",
+        "queryFamilyId": "natural_specialty_retail:United_States",
+        "pass": 4,
+        "rawResults": 0,
+        "newCandidates": 0,
+        "qualifiedAdded": 0,
+        "status": "exhausted"
+      },
+      {
+        "route": "regional_premium_grocery",
+        "queryFamilyId": "regional_premium_grocery:United_States",
+        "pass": 5,
+        "rawResults": 10,
+        "newCandidates": 5,
+        "qualifiedAdded": 5,
+        "status": "productive"
+      },
+      {
+        "route": "specialty_beverage_retail",
+        "queryFamilyId": "specialty_beverage_retail:United_States",
+        "pass": 6,
+        "rawResults": 0,
+        "newCandidates": 0,
+        "qualifiedAdded": 0,
+        "status": "exhausted"
+      }
+    ],
+    "passHistory": [
+      {
+        "passId": 1,
+        "route": "specialty_importer",
+        "queryFamilyId": "specialty_importer:United_States",
+        "providersAttempted": [
+          "brave"
+        ],
+        "vaultHits": 0,
+        "newCandidates": 12,
+        "qualifiedAdditions": 6,
+        "costUsd": 0.339078,
+        "startedAt": "2026-09-30T05:45:18.180Z",
+        "completedAt": "2026-09-30T05:49:02.690Z",
+        "yield": 0.5,
+        "nextStrategy": "route 'specialty_importer' productive (+6) — allocate another family"
+      },
+      {
+        "passId": 2,
+        "route": "latin_premium_importer",
+        "queryFamilyId": "latin_premium_importer:United_States",
+        "providersAttempted": [
+          "brave"
+        ],
+        "vaultHits": 0,
+        "newCandidates": 0,
+        "qualifiedAdditions": 4,
+        "costUsd": 0.307425,
+        "startedAt": "2026-09-30T05:49:02.895Z",
+        "completedAt": "2026-09-30T05:52:38.334Z",
+        "yield": 4,
+        "nextStrategy": "route 'latin_premium_importer' productive (+4) — allocate another family"
+      },
+      {
+        "passId": 3,
+        "route": "natural_products_distributor",
+        "queryFamilyId": "natural_products_distributor:United_States",
+        "providersAttempted": [
+          "brave"
+        ],
+        "vaultHits": 0,
+        "newCandidates": 0,
+        "qualifiedAdditions": 0,
+        "costUsd": 0.011736,
+        "startedAt": "2026-09-30T05:52:38.493Z",
+        "completedAt": "2026-09-30T05:53:39.191Z",
+        "yield": 0,
+        "nextStrategy": "route 'natural_products_distributor' family 'natural_products_distributor:United_States' empty — deprioritize this route"
+      },
+      {
+        "passId": 4,
+        "route": "natural_specialty_retail",
+        "queryFamilyId": "natural_specialty_retail:United_States",
+        "providersAttempted": [
+          "brave"
+        ],
+        "vaultHits": 0,
+        "newCandidates": 0,
+        "qualifiedAdditions": 0,
+        "costUsd": 0.013788,
+        "startedAt": "2026-09-30T05:53:39.323Z",
+        "completedAt": "2026-09-30T05:54:35.124Z",
+        "yield": 0,
+        "nextStrategy": "route 'natural_specialty_retail' family 'natural_specialty_retail:United_States' empty — deprioritize this route"
+      },
+      {
+        "passId": 5,
+        "route": "regional_premium_grocery",
+        "queryFamilyId": "regional_premium_grocery:United_States",
+        "providersAttempted": [
+          "brave"
+        ],
+        "vaultHits": 0,
+        "newCandidates": 5,
+        "qualifiedAdditions": 5,
+        "costUsd": 0.244083,
+        "startedAt": "2026-09-30T05:54:35.232Z",
+        "completedAt": "2026-09-30T05:57:59.113Z",
+        "yield": 1,
+        "nextStrategy": "route 'regional_premium_grocery' productive (+5) — allocate another family"
+      },
+      {
+        "passId": 6,
+        "route": "specialty_beverage_retail",
+        "queryFamilyId": "specialty_beverage_retail:United_States",
+        "providersAttempted": [
+          "brave"
+        ],
+        "vaultHits": 0,
+        "newCandidates": 0,
+        "qualifiedAdditions": 0,
+        "costUsd": 0,
+        "startedAt": "2026-09-30T05:57:59.271Z",
+        "completedAt": "2026-09-30T05:58:37.012Z",
+        "yield": 0,
+        "nextStrategy": "route 'specialty_beverage_retail' family 'specialty_beverage_retail:United_States' empty — deprioritize this route"
+      }
+    ],
+    "routeYield": {
+      "specialty_importer": {
+        "route": "specialty_importer",
+        "passes": 1,
+        "rawCandidates": 0,
+        "uniqueCandidates": 12,
+        "qualified": 6
+      },
+      "latin_premium_importer": {
+        "route": "latin_premium_importer",
+        "passes": 1,
+        "rawCandidates": 0,
+        "uniqueCandidates": 0,
+        "qualified": 4
+      },
+      "natural_products_distributor": {
+        "route": "natural_products_distributor",
+        "passes": 1,
+        "rawCandidates": 0,
+        "uniqueCandidates": 0,
+        "qualified": 0
+      },
+      "natural_specialty_retail": {
+        "route": "natural_specialty_retail",
+        "passes": 1,
+        "rawCandidates": 0,
+        "uniqueCandidates": 0,
+        "qualified": 0
+      },
+      "regional_premium_grocery": {
+        "route": "regional_premium_grocery",
+        "passes": 1,
+        "rawCandidates": 10,
+        "uniqueCandidates": 5,
+        "qualified": 5
+      },
+      "specialty_beverage_retail": {
+        "route": "specialty_beverage_retail",
+        "passes": 1,
+        "rawCandidates": 0,
+        "uniqueCandidates": 0,
+        "qualified": 0
+      }
+    },
+    "providerState": {
+      "brave": "available",
+      "firecrawl": "exhausted"
+    },
+    "spendUsd": 0.91611,
+    "vault": {
+      "discovered": 77,
+      "existingReused": 77,
+      "newInserted": 0,
+      "rejectedNonAccount": 0,
+      "vaultFirstMatches": 0
+    },
+    "tierReadiness": {
+      "Preview": {
+        "target": 2,
+        "actual": 2,
+        "full": true
+      },
+      "Brief": {
+        "target": 6,
+        "actual": 6,
+        "full": true
+      },
+      "Portfolio": {
+        "target": 12,
+        "actual": 12,
+        "full": true
+      },
+      "Premium": {
+        "target": 18,
+        "actual": 15,
+        "full": false
+      }
+    },
+    "createdAt": "2026-09-30T05:45:18.177Z",
+    "updatedAt": "2026-09-30T05:58:37.131Z",
+    "selection": {
+      "version": "deterministic-tier-selection-v1",
+      "selected": [
+        "d:dorothylane.com",
+        "d:naturalgrocers.com",
+        "d:sprouts.com",
+        "d:wholefoodsmarket.com",
+        "d:lifetime.life",
+        "d:miravalresorts.com",
+        "d:canyonranch.com",
+        "d:aubergeresorts.com",
+        "d:claros.com",
+        "d:clovergrocery.com",
+        "d:irvineranchmarketoc.com",
+        "d:themarketpasadena.com",
+        "d:vitaminshoppe.com",
+        "d:thrivemarket.com",
+        "d:freshthyme.com"
+      ],
+      "selectedReasons": {
+        "d:dorothylane.com": "validate; fit=Strong; timing=Limited; evidence=Moderate; source=true; dated=false; access=false; corroborated=false",
+        "d:naturalgrocers.com": "validate; fit=Strong; timing=Limited; evidence=Moderate; source=true; dated=false; access=false; corroborated=false",
+        "d:sprouts.com": "validate; fit=Strong; timing=Limited; evidence=Moderate; source=true; dated=false; access=false; corroborated=false",
+        "d:wholefoodsmarket.com": "validate; fit=Strong; timing=Limited; evidence=Moderate; source=true; dated=false; access=false; corroborated=false",
+        "d:lifetime.life": "hold; fit=Strong; timing=Limited; evidence=Moderate; source=true; dated=false; access=false; corroborated=false",
+        "d:miravalresorts.com": "hold; fit=Strong; timing=Limited; evidence=Moderate; source=true; dated=false; access=false; corroborated=false",
+        "d:canyonranch.com": "hold; fit=Strong; timing=Limited; evidence=Limited; source=true; dated=false; access=false; corroborated=false",
+        "d:aubergeresorts.com": "hold; fit=Moderate; timing=Limited; evidence=Moderate; source=true; dated=false; access=false; corroborated=false",
+        "d:claros.com": "hold; fit=Moderate; timing=Limited; evidence=Moderate; source=true; dated=false; access=false; corroborated=false",
+        "d:clovergrocery.com": "hold; fit=Moderate; timing=Limited; evidence=Moderate; source=true; dated=false; access=false; corroborated=false",
+        "d:irvineranchmarketoc.com": "hold; fit=Moderate; timing=Limited; evidence=Moderate; source=true; dated=false; access=false; corroborated=false",
+        "d:themarketpasadena.com": "hold; fit=Moderate; timing=Limited; evidence=Moderate; source=true; dated=false; access=false; corroborated=false",
+        "d:vitaminshoppe.com": "hold; fit=Moderate; timing=Limited; evidence=Moderate; source=true; dated=false; access=false; corroborated=false",
+        "d:thrivemarket.com": "hold; fit=Moderate; timing=Limited; evidence=Moderate; source=true; dated=false; access=false; corroborated=false",
+        "d:freshthyme.com": "hold; fit=Moderate; timing=Limited; evidence=Limited; source=false; dated=false; access=false; corroborated=false"
+      },
+      "qualifiedNotSelected": []
+    }
+  },
+  "tiers": [
+    {
+      "tier": "preview",
+      "label": "Preview",
+      "accounts": 2,
+      "bytes": 13377,
+      "pdf": "/Users/martingaleano/leadlens-landing-v2/output/pilot2/2026-09-30-final2/LeadLens_AmorDeGea_Pilot2_Preview.pdf"
+    },
+    {
+      "tier": "brief",
+      "label": "Brief",
+      "accounts": 6,
+      "bytes": 34585,
+      "pdf": "/Users/martingaleano/leadlens-landing-v2/output/pilot2/2026-09-30-final2/LeadLens_AmorDeGea_Pilot2_Brief.pdf"
+    },
+    {
+      "tier": "intelligence",
+      "label": "Portfolio",
+      "accounts": 12,
+      "bytes": 61891,
+      "pdf": "/Users/martingaleano/leadlens-landing-v2/output/pilot2/2026-09-30-final2/LeadLens_AmorDeGea_Pilot2_Portfolio.pdf"
+    },
+    {
+      "tier": "premium",
+      "label": "Premium",
+      "accounts": 15,
+      "bytes": 84543,
+      "pdf": "/Users/martingaleano/leadlens-landing-v2/output/pilot2/2026-09-30-final2/LeadLens_AmorDeGea_Pilot2_Premium.pdf"
+    }
+  ],
+  "institutional_dossiers": 15,
+  "vaultGrowth": {
+    "starting": 263,
+    "ending": 263,
+    "net_new_persisted": 0,
+    "write_through_new": 0,
+    "write_through_rediscovered": 77,
+    "vault_first_matches_not_selected": 0,
+    "policy": "inventory_only"
+  },
+  "policy": {
+    "mode": "inventory_only",
+    "threshold": 5000,
+    "vaultCount": 263,
+    "vaultAsSelectionSource": false,
+    "reason": "Vault (263) < 5000 milestone → inventory/dedup/memory only; shortlist driven by fresh external discovery"
+  },
+  "premiumContext": {
+    "status": "present",
+    "provenance": "reused_verified_evidence",
+    "sourceJobId": "cj_amordegea_pilot2_1790745838258",
+    "cost": {
+      "providerCalls": 6,
+      "llmCalls": 1,
+      "estimatedUsd": 0.034095,
+      "measured": false
+    },
+    "latencyMs": 43733,
+    "failClosedReasons": []
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "starting": 263,
+  "ending": 263,
+  "net_new_persisted": 0,
+  "write_through_new": 0,
+  "write_through_rediscovered": 77,
+  "vault_first_matches_not_selected": 0,
+  "policy": "inventory_only"
+}
