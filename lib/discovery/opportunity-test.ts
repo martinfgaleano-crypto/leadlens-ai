@@ -29,6 +29,9 @@ export interface OpportunityInput {
    * brands (a found vendor/supplier/onboarding page). This is verified channel
    * ACCESS — a channel-fit investigation, never buying intent. */
   channel_access_verified?: boolean;
+  /** An official commercial-entry mechanism was fetched live and is currently
+   * usable (for example an active product-submission portal). Not buying intent. */
+  current_actionability_verified?: boolean;
   /** A resolved-identity account in a plausible commercial ROUTE (e.g. a verified
    * reseller) that is worth validating as a market-entry route — WITHOUT verified
    * channel access and WITHOUT a dated event. This is route-fit / strategic
@@ -98,6 +101,9 @@ export function opportunityTest(i: OpportunityInput): OpportunityVerdict {
   if (!i.company_from_universe) soft.push("company_not_in_verified_universe");
 
   if (hard.length) return { status: "reject", hard_blockers: hard, soft_flags: soft, reason: `Bloqueado por: ${hard.join(", ")}` };
+  if (i.channel_access_verified && i.current_actionability_verified) {
+    return { status: "opportunity", hard_blockers: [], soft_flags: ["ongoing_access_not_buying_intent", ...soft], reason: "Mecanismo comercial oficial y actualmente accesible verificado; justifica atención comercial ahora, sin afirmar intención de compra." };
+  }
   if (i.channel_access_verified && !i.matches_needs_family) {
     // Verified channel ACCESS: real onboarding/vendor evidence from the account's source.
     return { status: "investigate", hard_blockers: [], soft_flags: ["channel_fit_not_buying_intent", ...soft], reason: "Canal multimarca verificado en fuente corporativa; no prueba intención de compra ni timing. Validar categoría, onboarding y decisor." };

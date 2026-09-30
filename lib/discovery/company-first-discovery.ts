@@ -551,6 +551,10 @@ export async function runCompanyFirstDiscovery(
         }), sellerDirectionObserved) : null;
         if (channelEvidence) metrics.channel_evidence_grades[channelEvidence.grade] = (metrics.channel_evidence_grades[channelEvidence.grade] ?? 0) + 1;
         const verifiedAccess = !!channelEvidence?.eligible;
+        const currentActionabilityVerified = verifiedAccess && liveOfficialPage
+          && channelEvidence?.proof_type === "supplier_intake"
+          && /\b(submit|submission|apply|application|new item|new vendor|supplier portal|vendor portal|become a (?:new )?vendor)\b/i.test(`${item.title ?? ""} ${content}`)
+          && !/\b(closed|paused|not accepting|no longer accepting|discontinued)\b/i.test(`${item.title ?? ""} ${content}`);
         const effectiveAccess = { ...access, qualifies: verifiedAccess };
         if (access.status === "seller_recruitment") tax("channel_access_wrong_direction");
         else if (verifiedAccess) tax(`channel_access_verified_${channelEvidence?.grade ?? "unknown"}`);
@@ -568,6 +572,7 @@ export async function runCompanyFirstDiscovery(
           company_in_content: companyInContent, grounded: !!ext.ok && (companyInContent || !!item.title),
           matches_needs_family: famMatch, geography_confirmed: geoConfirmed, region_required: spanish,
           channel_access_verified: verifiedAccess,
+          current_actionability_verified: currentActionabilityVerified,
           corporate_identity_verified: officialDomain && !!company.domain,
         });
         metrics.opp_status_counts[verdict.status]++;
@@ -720,6 +725,13 @@ export async function runCompanyFirstDiscovery(
           channel_proof_type: channelEvidence?.proof_type,
           channel_category_alignment: channelEvidence?.category_alignment,
           channel_limitations: channelEvidence?.limitations,
+          current_actionability_verified: currentActionabilityVerified,
+          current_actionability_basis: currentActionabilityVerified ? "active_supplier_submission" : undefined,
+          commercial_mechanism: verifiedAccess ? channelEvidence?.proof_type : undefined,
+          access_path_identified: verifiedAccess,
+          access_verified: verifiedAccess,
+          actionability_source_url: currentActionabilityVerified ? item.canonical_url : undefined,
+          actionability_observed_at: currentActionabilityVerified ? new Date().toISOString() : undefined,
           discovery_origin: company.universe_origin ?? "unknown",
           discovery_source_detail: company.discovery_source,
           universe_score: company.universe_score,

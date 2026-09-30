@@ -67,8 +67,15 @@ export default function Pilot2Workspace({ durable, job }: { durable?: Durable; j
             <div style={S.stat}><div style={{ ...S.statN, color: C.cobalt }}>{job.status}</div><div style={S.statL}>Status</div></div>
           </div>
           <div style={{ marginTop: 12 }}>
-            {["Preview", "Brief", "Portfolio", "Premium"].map((t) => { const r = job.tierReadiness?.[t]; return r ? <div key={t} style={S.row}><span style={S.k}>{t} readiness</span><span style={{ ...S.v, color: r.full ? C.ok : C.warn }}>{r.actual}/{r.target} {r.full ? "FULL" : "PARTIAL"}</span></div> : null; })}
+            {["Preview", "Brief", "Portfolio", "Premium"].map((t) => { const r = job.tierReadiness?.[t]; return r ? <div key={t} style={S.row}><span style={S.k}>{t} readiness</span><span style={{ ...S.v, color: r.deliveryReady ?? r.full ? C.ok : C.warn }}>{r.actual}/{r.target} · capacity {r.capacityReady ?? r.actual >= r.target ? "READY" : "PARTIAL"} · actionability {r.actionabilityRequired ? (r.actionabilityReady ? "READY" : "RESEARCH REQUIRED") : "NOT REQUIRED"} · delivery {r.deliveryReady ?? r.full ? "READY" : "BLOCKED"}</span></div> : null; })}
           </div>
+          {job.actionabilityEscalation && <div style={{ marginTop: 10 }}>
+            <div style={{ ...S.li, fontWeight: 700, color: C.ink }}>Actionability research escalation</div>
+            <div style={S.row}><span style={S.k}>Status / pass</span><span style={S.v}>{job.actionabilityEscalation.status} · {job.actionabilityEscalation.pass}/{job.actionabilityEscalation.maxPasses}</span></div>
+            <div style={S.row}><span style={S.k}>Deepened / newly discovered</span><span style={S.v}>{job.actionabilityEscalation.accountsDeepened} / {job.actionabilityEscalation.accountsDiscovered}</span></div>
+            <div style={S.row}><span style={S.k}>Mechanisms / access / timing / Prioritize</span><span style={S.v}>{job.actionabilityEscalation.mechanismsVerified} / {job.actionabilityEscalation.accessPathsIdentified} / {job.actionabilityEscalation.currentTimingSignals} / {job.actionabilityEscalation.prioritizeFound}</span></div>
+            <div style={S.row}><span style={S.k}>Stop condition</span><span style={S.v}>{job.actionabilityEscalation.stopCondition ?? "running"}</span></div>
+          </div>}
           {(() => { const q = job.qualified ?? []; const d = { prioritize: 0, validate: 0, monitor: 0, hold: 0 } as Record<string, number>; for (const a of q) d[a.decision] = (d[a.decision] ?? 0) + 1; const holdShare = q.length ? d.hold / q.length : 0; return <>
             <div style={{ ...S.li, marginTop: 10, fontWeight: 700, color: C.ink }}>Decision distribution (calibrated)</div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 6, margin: "4px 0" }}>{(["prioritize", "validate", "monitor", "hold"] as const).map((k) => <span key={k} style={S.chip(decColor(k))}>{k} {d[k]}</span>)}</div>

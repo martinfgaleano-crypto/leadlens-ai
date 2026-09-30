@@ -31,6 +31,48 @@ export interface StartIntelligenceRunInput {
   researchLimit: number;
 }
 
+const ADVANCED_ACTIONABILITY_REASON = /requires at least one evidence-qualified Prioritize account/i;
+const ADVANCED_ACTIONABILITY_ACTION = /ACTIONABILITY_RESEARCH_REQUIRED/i;
+
+/** Reconciles the early report-agent readiness estimate with the canonical Case
+ * decisions synthesized later in the productive spine. A commercially plausible
+ * candidate is never allowed to satisfy the advanced-tier gate unless its final
+ * canonical decision is Prioritize and its own evidence contract is complete. */
+export function enforceCanonicalAdvancedTierReadiness(report: LeadLensReport, plan: PlanType): number {
+  const advanced = plan === "standard" || plan === "pro";
+  if (!advanced) return 0;
+  const leadById = new Map(report.processed_leads.map((lead) => [lead.id, lead]));
+  const qualified = (report.canonical_cases ?? []).filter((item) => {
+    if (item.decision !== "prioritize") return false;
+    const lead = leadById.get(item.lead_id);
+    if (!lead) return false;
+    const evidence = lead.learning?.evidence_quality;
+    const hasTimingBasis = Boolean(lead.candidate.signal_date) || lead.candidate.current_actionability_verified === true;
+    return lead.candidate.current_actionability_verified === true
+      && lead.candidate.access_verified === true
+      && Boolean(lead.candidate.actionability_source_url)
+      && hasTimingBasis
+      && lead.qualification.fit_score >= 7
+      && (evidence === "high" || evidence === "medium")
+      && lead.enrichment.account_research?.counterevidence_material_found !== true;
+  }).length;
+  const existing = report.delivery_readiness ?? { status: "ready" as const, reasons: [], required_actions: [] };
+  const otherReasons = existing.reasons.filter((reason) => !ADVANCED_ACTIONABILITY_REASON.test(reason));
+  const otherActions = existing.required_actions.filter((action) => !ADVANCED_ACTIONABILITY_ACTION.test(action));
+  if (qualified === 0) {
+    report.delivery_readiness = {
+      status: "blocked",
+      reasons: [...otherReasons, `${plan === "standard" ? "portfolio" : "premium"} delivery requires at least one evidence-qualified Prioritize account.`],
+      required_actions: [...otherActions, "ACTIONABILITY_RESEARCH_REQUIRED: run bounded actionability research; do not lower decision gates or pad the report."],
+    };
+  } else if (otherReasons.length === 0) {
+    report.delivery_readiness = { status: existing.status === "blocked" ? "ready" : existing.status, reasons: [], required_actions: otherActions };
+  } else {
+    report.delivery_readiness = { ...existing, reasons: otherReasons, required_actions: otherActions };
+  }
+  return qualified;
+}
+
 export interface ProductiveSpineDeps {
   contextStore: ConfirmedContextStore;
   leadHunterStore: LeadHunterRunStore;
@@ -279,6 +321,7 @@ async function runIntelligenceExecution(
       caseSynthMsByLead.set(lead.id, Date.now() - s);
       return item ? [item] : [];
     });
+    enforceCanonicalAdvancedTierReadiness(report, input.plan);
     // Canonical Case is the customer-truth authority. Research prose is generated
     // before deterministic event validation and may describe a plausible event
     // that did not survive temporal/materiality gates. Reconcile presentation
@@ -539,7 +582,10 @@ export function evidenceClaimSourceUrl(type: string, primaryUrl: string | null |
 export function decisionCriticalQuestionsForLead(lead: ProcessedLead): string[] {
   const question = lead.enrichment.next_best_question?.trim();
   if (!question) return [];
-  const critical = /\b(?:whether|if)\b[^.]{0,140}\b(?:category|program|submission|onboarding|vendor|supplier|expansion|investment|event|operation|commercial scope|procurement|route|channel)\b|\b(?:still|remains?)\s+(?:open|active|current|available)\b|\b(?:cancelled|canceled|completed|closed|exclusive|outsourc|third[- ]party|wrong entity|same company|controls? the decision)\b/i;
+  const currentAccess = lead.candidate.current_actionability_verified === true;
+  const critical = currentAccess
+    ? /\b(?:still|remains?)\s+(?:open|active|current|available)\b|\b(?:cancelled|canceled|completed|closed|exclusive|outsourc|third[- ]party|wrong entity|same company|controls? the decision)\b/i
+    : /\b(?:whether|if)\b[^.]{0,140}\b(?:category|program|submission|onboarding|vendor|supplier|expansion|investment|event|operation|commercial scope|procurement|route|channel)\b|\b(?:still|remains?)\s+(?:open|active|current|available)\b|\b(?:cancelled|canceled|completed|closed|exclusive|outsourc|third[- ]party|wrong entity|same company|controls? the decision)\b/i;
   return critical.test(question) ? [question] : [];
 }
 
@@ -555,6 +601,7 @@ export function canonicalCaseForLead(lead: ProcessedLead): NonNullable<LeadLensR
   const hasValidatedEvent = Boolean(c.signal_date);
   const signalDate = c.signal_date ?? null;
   const sourceHost = (() => { try { return c.source_url ? new URL(c.source_url).hostname : null; } catch { return null; } })();
+  const actionabilitySourceHost = (() => { try { return c.actionability_source_url ? new URL(c.actionability_source_url).hostname : null; } catch { return null; } })();
   const ar = e.account_research;
   const telemetryConfirmsEvent = ar
     ? (ar.validated_events ?? []).some((event) => event.materiality_valid && event.event_date === signalDate)
@@ -583,7 +630,8 @@ export function canonicalCaseForLead(lead: ProcessedLead): NonNullable<LeadLensR
   const fitStrength = strength(lead.qualification.fit_score);
   const resellerOrgType = /retail|grocer|grocery|supermarket|distribut|wholesal|importer|broker|specialty (food|grocer|beverage)|natural (foods|products|grocer)/i.test(`${c.industry ?? ""}`);
   const hasOpenQuestion = Boolean(e.next_best_question);
-  const channelAccessVerified = c.opportunity_kind === "channel_fit" && ["strong", "moderate"].includes(c.channel_evidence_grade ?? "");
+  const channelAccessVerified = (c.opportunity_kind === "channel_fit" || c.access_verified === true) && ["strong", "moderate"].includes(c.channel_evidence_grade ?? "");
+  const currentActionabilityVerified = c.current_actionability_verified === true && channelAccessVerified;
   const strategicRouteValidatable = !verifiedSignal && !channelAccessVerified && Boolean(c.domain) && resellerOrgType && fitStrength === "Strong" && hasOpenQuestion;
   const canonical = synthesizeCase({
     accountId: c.company,
@@ -595,7 +643,8 @@ export function canonicalCaseForLead(lead: ProcessedLead): NonNullable<LeadLensR
     signalKind: verifiedSignal ? (c.signal_type ?? "corporate_event") : channelAccessVerified ? "verified_channel_access" : strategicRouteValidatable ? "strategic_route_validation" : null,
     signalDate,
     dateConfidence: verifiedSignal ? "high" : signalDate ? "medium" : "none",
-    sourceHost: sourceHost ?? ((channelAccessVerified || strategicRouteValidatable) ? (c.domain ?? null) : null),
+    sourceHost: currentActionabilityVerified ? actionabilitySourceHost
+      : sourceHost ?? ((channelAccessVerified || strategicRouteValidatable) ? (c.domain ?? null) : null),
     materialEvent: verifiedSignal,
     hasMaterialCounter: e.account_research?.counterevidence_material_found === true
       || (e.opportunity_risks ?? []).some((risk) => /cancel|contradict|insolven|third.party|terceriz/i.test(risk)),
@@ -608,6 +657,7 @@ export function canonicalCaseForLead(lead: ProcessedLead): NonNullable<LeadLensR
     geographyConfirmed: Boolean(c.country || c.location),
     regionRequired: false,
     channelAccessVerified,
+    currentActionabilityVerified,
     strategicRouteValidatable,
   });
   return {

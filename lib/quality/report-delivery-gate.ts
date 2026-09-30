@@ -15,6 +15,8 @@ export interface DeliveryReadinessInput {
   /** Accounts backed by a dated timing signal or moderate/strong channel proof. */
   defensible_opportunities?: number;
   preliminary_channel_accounts?: number;
+  product_tier?: "preview" | "brief" | "portfolio" | "premium";
+  evidence_qualified_prioritize?: number;
 }
 
 export interface DeliveryReadinessDecision {
@@ -60,6 +62,11 @@ export function evaluateReportDeliveryReadiness(input: DeliveryReadinessInput): 
   if (input.total_accounts > 0 && input.defensible_opportunities === 0) {
     reasons.push("The report contains no defensible opportunity; all surviving accounts are preliminary hypotheses.");
     required_actions.push("Obtain a dated company event or moderate/strong live channel evidence before paid delivery.");
+  }
+  const advancedTier = input.product_tier === "portfolio" || input.product_tier === "premium";
+  if (advancedTier && (input.evidence_qualified_prioritize ?? 0) === 0) {
+    reasons.push(`${input.product_tier} delivery requires at least one evidence-qualified Prioritize account.`);
+    required_actions.push("ACTIONABILITY_RESEARCH_REQUIRED: run bounded actionability research; do not lower decision gates or pad the report.");
   }
   if (reasons.length > 0) return { status: "blocked", reasons, required_actions };
 

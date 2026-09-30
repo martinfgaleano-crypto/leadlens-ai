@@ -101,6 +101,16 @@ function buildDossier(opp: Json, lead: Json | undefined, es = false, clientObjec
   for (const ev of datedSignals.slice(primarySignal ? 1 : 0)) {
     evidence_chain.push({ label: (clean(ev.claim) ?? "").slice(0, 160), url: null, date: ev.date, date_basis: "fact" });
   }
+  // A live official access mechanism is its own provenance. It supports HOW the
+  // customer can enter the account, not an event date or buying-intent claim.
+  if (c.current_actionability_verified === true && c.actionability_source_url) {
+    evidence_chain.push({
+      label: es ? "Mecanismo comercial oficial activo: portal de proveedores / nuevos productos" : "Active official commercial mechanism: supplier / new-item submission",
+      url: c.actionability_source_url,
+      date: null,
+      date_basis: "unknown",
+    });
+  }
   // An undated source is still auditable provenance. It must never be promoted to
   // timing evidence, but dropping its URL makes the customer see an opaque
   // "stored evidence" placeholder even though the public source is known.

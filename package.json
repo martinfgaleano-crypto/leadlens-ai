@@ -77,6 +77,8 @@
     "test:http-security": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/http-surface-security.test.ts",
     "test:pilot-run-gate": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/pilot-run-gate.test.ts",
     "test:actionability-gate": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/actionability-gate.test.ts",
+    "test:advanced-tier-readiness": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/advanced-tier-readiness.test.ts",
+    "test:actionability-escalation": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/actionability-escalation.test.ts",
     "test:report-delivery-gate": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/report-delivery-gate.test.ts",
     "test:report-agent-resilience": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/report-agent-resilience.test.ts",
     "test:pilot-scorecard": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/pilot-scorecard.test.ts",

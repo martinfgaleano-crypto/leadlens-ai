@@ -76,6 +76,12 @@ export interface QualifiedAccount {
   timing: string | null;
   evidenceCount: number;
   qualifiedAtPass: number;
+  hasSource?: boolean;
+  hasValidatedDate?: boolean;
+  currentActionabilityBasis?: boolean;
+  commercialMechanismVerified?: boolean;
+  accessPathIdentified?: boolean;
+  counterevidenceMaterial?: boolean;
 }
 
 export interface RejectionMemoryEntry {
@@ -118,7 +124,15 @@ export interface PassRecord {
   nextStrategy: string;
 }
 
-export interface TierReadiness { target: number; actual: number; full: boolean; }
+export interface TierReadiness {
+  target: number; actual: number; full: boolean;
+  capacityReady?: boolean;
+  actionabilityRequired?: boolean;
+  actionabilityReady?: boolean;
+  evidenceQualifiedPrioritize?: number;
+  deliveryReady?: boolean;
+  reasonCodes?: string[];
+}
 
 export interface CustomerJobState {
   jobId: string;
@@ -141,8 +155,21 @@ export interface CustomerJobState {
   spendUsd: number;
   vault: { discovered: number; existingReused: number; newInserted: number; rejectedNonAccount: number; vaultFirstMatches?: number };
   tierReadiness: Record<string, TierReadiness>;
+  actionabilityEscalation?: import("@/lib/intelligence/actionability-escalation").ActionabilityEscalationState;
   createdAt: string;
   updatedAt: string;
+}
+
+function requestedTierReadiness(state: CustomerJobState): TierReadiness | undefined {
+  const normalized = state.requestedTier.toLowerCase();
+  const name = normalized === "intelligence" || normalized === "portfolio" ? "Portfolio"
+    : normalized === "premium" ? "Premium" : normalized === "brief" ? "Brief" : "Preview";
+  return state.tierReadiness[name];
+}
+
+export function customerJobDeliveryReady(state: CustomerJobState): boolean {
+  const readiness = requestedTierReadiness(state);
+  return readiness?.deliveryReady ?? readiness?.full ?? false;
 }
 
 export interface PassSpec {
@@ -225,7 +252,19 @@ export function tierReadinessFor(qualified: QualifiedAccount[], milestones: numb
   milestones.forEach((target, i) => {
     const name = names[i] ?? `Tier${target}`;
     const actual = Math.min(qualified.length, target);
-    out[name] = { target, actual, full: qualified.length >= target };
+    const capacityReady = qualified.length >= target;
+    const actionabilityRequired = name === "Portfolio" || name === "Premium";
+    const evidenceQualifiedPrioritize = qualified.filter((q) => q.decision === "prioritize"
+      && q.fit?.toLowerCase() === "strong" && q.commercialMechanismVerified === true
+      && q.hasSource === true && q.evidenceCount > 0
+      && (q.hasValidatedDate === true || q.currentActionabilityBasis === true)
+      && q.counterevidenceMaterial !== true).length;
+    const actionabilityReady = !actionabilityRequired || evidenceQualifiedPrioritize > 0;
+    const reasonCodes = [
+      ...(!capacityReady ? ["CAPACITY_INSUFFICIENT"] : []),
+      ...(!actionabilityReady ? ["ACTIONABILITY_RESEARCH_REQUIRED"] : []),
+    ];
+    out[name] = { target, actual, full: capacityReady && actionabilityReady, capacityReady, actionabilityRequired, actionabilityReady, evidenceQualifiedPrioritize, deliveryReady: capacityReady && actionabilityReady, reasonCodes };
   });
   return out;
 }
@@ -379,7 +418,7 @@ export async function runOnePass(state: CustomerJobState, spec: PassSpec, deps: 
   });
   state.passesCompleted += 1;
   state.tierReadiness = tierReadinessFor(state.qualified, state.milestones);
-  state.status = state.qualified.length >= state.targetCount ? "complete" : "partial";
+  state.status = customerJobDeliveryReady(state) ? "complete" : "partial";
   state.updatedAt = now().toISOString();
 
   if (deps.save) { try { await deps.save(state); } catch { state.status = "failed_recoverable"; } }
@@ -401,10 +440,10 @@ export async function runCustomerJob(state: CustomerJobState, plan: PassSpec[], 
   let guard = 0;
   while (guard < maxPasses) {
     guard++;
-    if (state.qualified.length >= state.targetCount) { state.status = "complete"; break; }
+    if (customerJobDeliveryReady(state)) { state.status = "complete"; break; }
     if (state.spendUsd >= budget) { state.status = "partial"; break; }
     const spec = selectNextPass(state, plan);
-    if (!spec) { state.status = state.qualified.length >= state.targetCount ? "complete" : "partial"; break; }
+    if (!spec) { state.status = customerJobDeliveryReady(state) ? "complete" : "partial"; break; }
     await runOnePass(state, spec, deps, opts);
   }
   state.updatedAt = (deps.now ?? (() => new Date()))().toISOString();

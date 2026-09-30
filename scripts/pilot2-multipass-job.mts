@@ -115,7 +115,17 @@ const GROWTH_ROUTES: Array<{ route: string; industries: string[] }> = [
   { route: "corporate_wellness", industries: ["Corporate wellness program provider", "Workplace pantry and wellness supplier"] },
   { route: "distributor_dsd", industries: ["Direct store delivery beverage distributor", "Independent DSD food distributor"] },
 ];
-const ROUTES = process.env.PILOT2_GROWTH === "1" ? GROWTH_ROUTES : BASE_ROUTES;
+// Actionability-first Track B: these are not looser ICPs. They focus the same
+// customer objective on observable commercial mechanisms/access paths that can
+// support a genuine Prioritize when the canonical pipeline confirms them.
+const ACTIONABILITY_ROUTES: Array<{ route: string; industries: string[] }> = [
+  { route: "vendor_onboarding_open", industries: ["Specialty grocery accepting new vendor applications", "Natural products retailer supplier onboarding"] },
+  { route: "distributor_brand_submission", industries: ["Specialty beverage distributor brand submission", "Natural products distributor new supplier program"] },
+  { route: "hospitality_local_sourcing", industries: ["Wellness resort local supplier program", "Boutique hotel food beverage vendor sourcing"] },
+  { route: "corporate_gifting_supplier", industries: ["Corporate gifting supplier application", "Premium gift company new brand submission"] },
+];
+const actionabilityOffset = Math.max(0, Number(process.env.PILOT2_ACTIONABILITY_OFFSET ?? "0"));
+const ROUTES = process.env.PILOT2_ACTIONABILITY === "1" ? ACTIONABILITY_ROUTES.slice(actionabilityOffset) : process.env.PILOT2_GROWTH === "1" ? GROWTH_ROUTES : BASE_ROUTES;
 const GEO = (process.env.PILOT2_GEO ?? "United States|Miami Florida|New York Northeast|California").split("|").map((s) => s.trim()).filter(Boolean);
 const PASS_PLAN: PassSpec[] = [];
 let pid = 0;
@@ -258,7 +268,21 @@ const deps = {
       const elig = assessAccountEligibility({ company, industry: lead.candidate.industry ?? null, country: lead.candidate.country ?? "United States", companySummary: lead.enrichment?.company_summary ?? null }, { geographies: ["United States"] });
       if (elig.outcome !== "eligible") { preRejected.push({ key, company, reason: `${elig.outcome === "exclude" ? "INELIGIBLE" : "RESEARCH_MORE"}_${elig.reason}`, pass: candidates[0]?.firstSeenPass ?? 0 }); continue; }
       qualifiedCompanies.add(company.toLowerCase());
-      qualified.push({ key, company, domain, route: candidates.find((c) => c.key === key)?.route ?? "unknown", decision: cc.decision, fit: cc.fit, timing: cc.timing, evidenceCount: (lead.enrichment?.evidence_discipline ?? []).length, qualifiedAtPass: candidates[0]?.firstSeenPass ?? 0 });
+      const research = lead.enrichment?.account_research;
+      const channelAccess = (lead.candidate?.opportunity_kind === "channel_fit" || lead.candidate?.access_verified === true)
+        && ["strong", "moderate"].includes(lead.candidate?.channel_evidence_grade ?? "");
+      qualified.push({
+        key, company, domain, route: candidates.find((c) => c.key === key)?.route ?? "unknown",
+        decision: cc.decision, fit: cc.fit, timing: cc.timing,
+        evidenceCount: (lead.enrichment?.evidence_discipline ?? []).length,
+        qualifiedAtPass: candidates[0]?.firstSeenPass ?? 0,
+        hasSource: Boolean(lead.candidate?.source_url),
+        hasValidatedDate: Boolean(lead.candidate?.signal_date),
+        currentActionabilityBasis: lead.candidate?.current_actionability_verified === true,
+        commercialMechanismVerified: channelAccess,
+        accessPathIdentified: channelAccess,
+        counterevidenceMaterial: research?.counterevidence_material_found === true,
+      });
     }
     const rejected: RejectionMemoryEntry[] = [];
     for (const l of report.processed_leads ?? []) {

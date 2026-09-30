@@ -47,6 +47,15 @@ export async function runReportAgent(
     const level = lead.learning?.evidence_quality;
     if (level) evidenceCounts[level]++;
   }
+  const productTier = plan === "sample" ? "preview" : plan === "starter" ? "brief" : plan === "standard" ? "portfolio" : "premium";
+  const evidenceQualifiedPrioritize = leads.filter((lead) => {
+    const evidence = lead.learning?.evidence_quality;
+    return lead.candidate.current_actionability_verified === true
+      && lead.candidate.access_verified === true
+      && lead.qualification.fit_score >= 7
+      && (evidence === "high" || evidence === "medium")
+      && lead.enrichment.account_research?.counterevidence_material_found !== true;
+  }).length;
   const delivery_readiness = evaluateReportDeliveryReadiness({
     total_accounts: leads.length,
     report_quality_score: reportQC.score,
@@ -60,6 +69,8 @@ export async function runReportAgent(
       || (l.candidate.opportunity_kind === "channel_fit" && ["strong", "moderate"].includes(l.candidate.channel_evidence_grade ?? ""))).length,
     preliminary_channel_accounts: leads.filter(l => l.candidate.opportunity_kind === "channel_fit"
       && ["preliminary", "insufficient"].includes(l.candidate.channel_evidence_grade ?? "insufficient")).length,
+    product_tier: productTier,
+    evidence_qualified_prioritize: evidenceQualifiedPrioritize,
   });
 
   const deterministicSummary = () => buildDemoSummary(leads, hot, warm, cold, discard, avgScore, plan, withConfirmedSignals.length);

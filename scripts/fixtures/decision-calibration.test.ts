@@ -21,6 +21,7 @@ const decideOf = (o: Partial<CanonicalCaseInput>) => synthesizeCase(base(o)).dec
 // CASE A — strong fit + VERIFIED channel + no dated event + a validatable unknown → VALIDATE.
 t("A: strong fit + verified channel + no trigger + open unknown → validate", decideOf({ channelAccessVerified: true, openDecisionCritical: ["Confirm category fit and onboarding path"] }) === "validate");
 t("A': strong fit + verified channel + no trigger (no explicit unknown) → validate (not hold)", decideOf({ channelAccessVerified: true }) === "validate");
+t("A'': verified live supplier intake → prioritize without claiming buying intent", decideOf({ channelAccessVerified: true, currentActionabilityVerified: true }) === "prioritize");
 
 // CASE B — verified recent material event + clear identity → PRIORITIZE.
 const recent = new Date(Date.now() - 20 * 86_400_000).toISOString().slice(0, 10);

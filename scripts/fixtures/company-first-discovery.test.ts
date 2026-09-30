@@ -51,6 +51,8 @@ t("sin verbo de evento (solo nombre) → reject", opportunityTest({ ...good, mat
 t("homónimo extranjero (geo no confirmada) → reject", opportunityTest({ ...good, geography_confirmed: false }).status === "reject");
 t("geo no requerida (EN) ignora el check", opportunityTest({ ...good, geography_confirmed: false, region_required: false }).status === "opportunity");
 t("canal oficial sin fecha → investigate, no opportunity", opportunityTest({ ...good, signal_date: null, date_confidence: "none", matches_needs_family: false, channel_access_verified: true }).status === "investigate");
+t("portal oficial activo + acceso verificado → opportunity sin fingir buying intent", (() => { const v = opportunityTest({ ...good, signal_date: null, date_confidence: "none", matches_needs_family: false, channel_access_verified: true, current_actionability_verified: true }); return v.status === "opportunity" && v.soft_flags.includes("ongoing_access_not_buying_intent"); })());
+t("actionability actual sin acceso verificado no promueve", opportunityTest({ ...good, signal_date: null, date_confidence: "none", matches_needs_family: false, current_actionability_verified: true, channel_access_verified: false }).status !== "opportunity");
 t("fecha histórica no invalida capacidad evergreen extraída en vivo", opportunityTest({ ...good, signal_date: "2018-01-25", matches_needs_family: false, channel_access_verified: true }).status === "investigate");
 
 const buyerChannel = assessChannelAccess("Distribuimos marcas nacionales e internacionales. Conoce nuestro portal de proveedores.", true);

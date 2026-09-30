@@ -141,7 +141,11 @@ async function main() {
     const r6 = tierReadinessFor(q(6), [2, 6, 12, 18]);
     t("6 qualified → Preview+Brief FULL, Portfolio partial", r6.Brief.full === true && r6.Portfolio.full === false && r6.Portfolio.actual === 6);
     const r18 = tierReadinessFor(q(18), [2, 6, 12, 18]);
-    t("18 qualified → all tiers FULL", r18.Premium.full === true && r18.Portfolio.full === true);
+    t("18 qualified without audited Prioritize → advanced tiers blocked", r18.Premium.full === false && r18.Portfolio.full === false && r18.Premium.capacityReady === true && r18.Premium.reasonCodes?.includes("ACTIONABILITY_RESEARCH_REQUIRED") === true);
+    const actionable = q(18);
+    actionable[0] = { ...actionable[0], decision: "prioritize", hasSource: true, hasValidatedDate: true, commercialMechanismVerified: true, counterevidenceMaterial: false };
+    const ready = tierReadinessFor(actionable, [2, 6, 12, 18]);
+    t("18 qualified plus audited Prioritize → advanced tiers FULL", ready.Premium.full === true && ready.Portfolio.full === true && ready.Premium.evidenceQualifiedPrioritize === 1);
   }
 
   // 7. Resume: persist, reload, continue — accumulated state preserved.

@@ -315,6 +315,15 @@ export interface LeadCandidate {
   channel_proof_type?: "supplier_intake" | "external_brand_portfolio" | "category_distribution" | "unknown";
   channel_category_alignment?: "confirmed" | "plausible" | "unknown";
   channel_limitations?: string[];
+  /** Ongoing official commercial-entry mechanism observed during this run.
+   * This is actionability, never buying intent. */
+  current_actionability_verified?: boolean;
+  current_actionability_basis?: "active_supplier_submission" | "active_vendor_onboarding" | "active_procurement_program";
+  commercial_mechanism?: string;
+  access_path_identified?: boolean;
+  access_verified?: boolean;
+  actionability_source_url?: string;
+  actionability_observed_at?: string;
   observed_fact?: string;
   client_relevance?: string;
   evidence_limit?: string;

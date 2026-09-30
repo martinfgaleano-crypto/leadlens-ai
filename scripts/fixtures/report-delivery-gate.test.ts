@@ -23,6 +23,12 @@ test("more than one obvious benchmark is blocked", gate({ ...base, novel_account
 test("all-low discovery value is blocked", gate({ ...base, novel_accounts: 0, obvious_accounts: 0, low_discovery_value: 5 }).status === "blocked");
 test("report made only of preliminary hypotheses is blocked", gate({ ...base, act_now: 0, validate_first: 0, monitor: 5, defensible_opportunities: 0, preliminary_channel_accounts: 5 }).status === "blocked");
 test("mixed report exposes preliminary accounts for review", gate({ ...base, defensible_opportunities: 4, preliminary_channel_accounts: 1 }).status === "review_required");
+test("Preview may deliver without evidence-qualified Prioritize", gate({ ...base, product_tier: "preview", act_now: 0, validate_first: 4, evidence_qualified_prioritize: 0 }).status === "review_required");
+test("Brief may deliver without evidence-qualified Prioritize", gate({ ...base, product_tier: "brief", act_now: 0, validate_first: 4, evidence_qualified_prioritize: 0 }).status === "review_required");
+test("Portfolio blocks without evidence-qualified Prioritize", gate({ ...base, product_tier: "portfolio", evidence_qualified_prioritize: 0 }).status === "blocked");
+test("Premium blocks without evidence-qualified Prioritize", gate({ ...base, product_tier: "premium", evidence_qualified_prioritize: 0 }).status === "blocked");
+test("Advanced gate emits escalation contract", gate({ ...base, product_tier: "premium", evidence_qualified_prioritize: 0 }).required_actions.some((x) => x.includes("ACTIONABILITY_RESEARCH_REQUIRED")));
+test("Premium can pass with evidence-qualified Prioritize", gate({ ...base, product_tier: "premium", evidence_qualified_prioritize: 1 }).status === "ready");
 const historical = assembleInstitutionalReport({
   created_at: new Date().toISOString(), total_leads: 1, hot_count: 1, warm_count: 0, cold_count: 0, discard_count: 0,
   ranked_opportunities: [{ lead_id: "old", rank: 1, category: "HOT", recommended_action: "send_outreach_now" }],
