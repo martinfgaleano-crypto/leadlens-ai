@@ -39,6 +39,7 @@ const { renderPdfBuffer } = await import("@/lib/delivery-system/renderers/pdf");
 const { resolveReportExperience } = await import("@/lib/products/report-experience");
 const { createServerClient } = await import("@/lib/supabase/server");
 const cj = await import("@/lib/intelligence/customer-job");
+const { assessAccountEligibility } = await import("@/lib/intelligence/account-eligibility");
 const { SupabaseCustomerJobStore } = await import("@/lib/intelligence/customer-job-store");
 
 type DiscoveredCompany = import("@/lib/intelligence/customer-job").DiscoveredCompany;
@@ -239,6 +240,10 @@ const deps = {
       if (!lead) continue;
       const company = lead.candidate.company; const domain = lead.candidate.domain ?? null;
       const key = cj.canonicalKey(company, domain);
+      // Eligibility gate (§4): a structurally-ineligible company (offer-side producer/
+      // brand, wrong geography) is EXCLUDED before selection — never held as a slot.
+      const elig = assessAccountEligibility({ company, industry: lead.candidate.industry ?? null, country: lead.candidate.country ?? "United States", companySummary: lead.enrichment?.company_summary ?? null }, { geographies: ["United States"] });
+      if (elig.outcome !== "eligible") { preRejected.push({ key, company, reason: `${elig.outcome === "exclude" ? "INELIGIBLE" : "RESEARCH_MORE"}_${elig.reason}`, pass: candidates[0]?.firstSeenPass ?? 0 }); continue; }
       qualifiedCompanies.add(company.toLowerCase());
       qualified.push({ key, company, domain, route: candidates.find((c) => c.key === key)?.route ?? "unknown", decision: cc.decision, fit: cc.fit, timing: cc.timing, evidenceCount: (lead.enrichment?.evidence_discipline ?? []).length, qualifiedAtPass: candidates[0]?.firstSeenPass ?? 0 });
     }

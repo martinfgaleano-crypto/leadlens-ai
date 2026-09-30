@@ -22,6 +22,22 @@ const merged = JSON.parse(readFileSync(`${OUT}/pilot2-merged-report.json`, "utf8
 const reportJson: any = merged.reportJson;
 const meta = merged.meta;
 
+// Account eligibility gate (§4): drop structurally-ineligible companies (offer-side
+// producers/brands, wrong geography) BEFORE selection — they must not consume a slot
+// as HOLD. Uses the research summary (authoritative role), not the discovery route.
+const { assessAccountEligibility } = await import("@/lib/intelligence/account-eligibility");
+const excluded: Array<{ company: string; reason: string }> = [];
+const eligibleLeads = (reportJson.processed_leads ?? []).filter((l: any) => {
+  const c = l.candidate ?? {}; const e = l.enrichment ?? {};
+  const r = assessAccountEligibility({ company: c.company, industry: c.industry ?? null, country: c.country ?? "United States", companySummary: e.company_summary ?? null }, { geographies: ["United States"] });
+  if (r.outcome !== "eligible") { excluded.push({ company: c.company, reason: `${r.outcome.toUpperCase()}_${r.reason ?? "UNKNOWN"}` }); return false; }
+  return true;
+});
+const eligibleIds = new Set(eligibleLeads.map((l: any) => l.id));
+reportJson.processed_leads = eligibleLeads;
+reportJson.ranked_opportunities = (reportJson.ranked_opportunities ?? []).filter((o: any) => eligibleIds.has(o.lead_id));
+console.log(`eligibility: ${eligibleLeads.length} eligible, ${excluded.length} EXCLUDED —`, excluded.map((x) => `${x.company}[${x.reason}]`).join(" | ") || "(none)");
+
 // Re-derive canonical cases with the current calibration.
 const cases = (reportJson.processed_leads ?? []).map((l: any) => canonicalCaseForLead(l)).filter(Boolean);
 reportJson.canonical_cases = cases;
@@ -68,8 +84,14 @@ try {
   const job = tel.job;
   if (db && job) {
     const byCompany = new Map(cases.map((c: any) => { const l = reportJson.processed_leads.find((y: any) => y.id === c.lead_id); return [(l?.candidate?.company ?? "").toLowerCase(), c.decision]; }));
+    // Drop structurally-excluded accounts from the customer foundation; keep them as an
+    // auditable excluded list (§4). Then re-derive tier readiness from the eligible set.
+    const excludedSet = new Set(excluded.map((x) => x.company.toLowerCase()));
+    job.excluded = excluded;
+    job.qualified = (job.qualified ?? []).filter((q: any) => !excludedSet.has(q.company.toLowerCase()));
     for (const q of job.qualified) { const d = byCompany.get(q.company.toLowerCase()); if (d) q.decision = d; }
-    job.tierReadiness = job.tierReadiness ?? {};
+    const N = job.qualified.length;
+    job.tierReadiness = { Preview: { target: 2, actual: Math.min(2, N), full: N >= 2 }, Brief: { target: 6, actual: Math.min(6, N), full: N >= 6 }, Portfolio: { target: 12, actual: Math.min(12, N), full: N >= 12 }, Premium: { target: 18, actual: Math.min(18, N), full: N >= 18 } };
     await new SupabaseCustomerJobStore(db as any).save(job, null);
     console.log("persisted Supabase job state with calibrated decisions");
   } else { console.log("no db/job for persistence"); }
