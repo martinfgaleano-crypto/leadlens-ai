@@ -39,6 +39,11 @@ export interface DiscoveredCompany {
   country: string | null;
   industry: string | null;
   sourceUrl?: string | null;
+  signalDate?: string | null;
+  signalType?: string | null;
+  opportunityKind?: string | null;
+  channelEvidenceGrade?: string | null;
+  channelProofType?: string | null;
 }
 
 export interface CanonicalCandidate {
@@ -52,6 +57,13 @@ export interface CanonicalCandidate {
   firstSeenPass: number;
   lastSeenPass: number;
   researched: boolean;
+  /** Best validated discovery evidence retained across pass persistence/resume. */
+  sourceUrl?: string | null;
+  signalDate?: string | null;
+  signalType?: string | null;
+  opportunityKind?: string | null;
+  channelEvidenceGrade?: string | null;
+  channelProofType?: string | null;
 }
 
 export interface QualifiedAccount {
@@ -304,11 +316,24 @@ export async function runOnePass(state: CustomerJobState, spec: PassSpec, deps: 
   for (const { c, origin } of union) {
     const key = canonicalKey(c.company, c.domain);
     const prior = known.get(key);
-    if (prior) { prior.lastSeenPass = spec.passId; continue; }        // dedup (§38)
+    if (prior) {
+      prior.lastSeenPass = spec.passId;
+      // A later rediscovery may carry stronger validated event/channel evidence.
+      // Preserve it rather than letting first-seen directory provenance shadow it.
+      if (c.sourceUrl && (!prior.sourceUrl || (c.signalDate && !prior.signalDate))) prior.sourceUrl = c.sourceUrl;
+      if (c.signalDate && (!prior.signalDate || c.signalDate > prior.signalDate)) { prior.signalDate = c.signalDate; prior.signalType = c.signalType ?? prior.signalType; }
+      if (c.opportunityKind) prior.opportunityKind = c.opportunityKind;
+      if (c.channelEvidenceGrade) prior.channelEvidenceGrade = c.channelEvidenceGrade;
+      if (c.channelProofType) prior.channelProofType = c.channelProofType;
+      continue;
+    }        // dedup (§38)
     if (rejected.has(key)) continue;                                  // rejection memory (§42)
     const cand: CanonicalCandidate = {
       key, company: c.company, domain: c.domain, country: c.country, industry: c.industry,
       route: spec.route, origin, firstSeenPass: spec.passId, lastSeenPass: spec.passId, researched: false,
+      sourceUrl: c.sourceUrl ?? null, signalDate: c.signalDate ?? null, signalType: c.signalType ?? null,
+      opportunityKind: c.opportunityKind ?? null, channelEvidenceGrade: c.channelEvidenceGrade ?? null,
+      channelProofType: c.channelProofType ?? null,
     };
     known.set(key, cand);
     state.candidates.push(cand);

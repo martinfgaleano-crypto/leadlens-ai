@@ -19,6 +19,7 @@ import { deriveAccountActionabilityFunnel, summarizeActionabilityFunnel } from "
 import { bindVerifiedClaimToSources } from "@/lib/intelligence/claim-provenance";
 import type { PremiumContextResearcher } from "@/lib/intelligence/premium/premium-context";
 import { isPremiumEligible, deriveResearchInput, producePremiumContext } from "@/lib/intelligence/premium/premium-production";
+import { promotePrimarySourceEvent } from "@/lib/intelligence/primary-source-event-promotion";
 
 export interface StartIntelligenceRunInput {
   userId: string;
@@ -273,6 +274,7 @@ async function runIntelligenceExecution(
     const caseSynthMsByLead = new Map<string, number>();
     report.canonical_cases = report.processed_leads.flatMap((lead) => {
       const s = Date.now();
+      promotePrimarySourceEvent(lead);
       const item = canonicalCaseForLead(lead);
       caseSynthMsByLead.set(lead.id, Date.now() - s);
       return item ? [item] : [];

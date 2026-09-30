@@ -65,6 +65,17 @@ t("5 separate dimensions exist (Fit/Timing/Evidence — not one score)", vm.acco
 t("6 no single opaque 'score' field on the account", !("score" in (vm.accounts[0] as unknown as Record<string, unknown>)));
 t("7 dimension values are ordinal strengths", vm.accounts[0].dimensions.every((d) => ["Strong", "Moderate", "Limited"].includes(d.value)));
 t("8 evidence provenance preserved (source label + url)", vm.accounts[0].sources.length > 0 && vm.accounts[0].sources[0].url !== undefined);
+t("8a undated source remains linked without becoming dated timing evidence", (() => {
+  const raw = {
+    onboarding: { output_language: "en" }, ranked_opportunities: [{ lead_id: "u1", rank: 1, category: "WARM" }],
+    processed_leads: [{ id: "u1", candidate: { company: "Undated Co", source_url: "https://undated.example/about" }, qualification: { category: "WARM", fit_score: 6 }, enrichment: { evidence: ["Official company profile confirms the operating model."] } }],
+  };
+  const r = assembleInstitutionalReport(raw as any, META);
+  return r.account_dossiers[0].evidence_chain[0]?.url === "https://undated.example/about"
+    && r.account_dossiers[0].evidence_chain[0]?.date === null
+    && r.coverage.accounts_with_dated_evidence === 0;
+})());
+t("8b missing secondary provenance is disclosed without opaque stored-evidence wording", !JSON.stringify(report).toLowerCase().includes("stored evidence"));
 t("9 what-changed dates are real or null (never fabricated)", vm.accounts.every((a) => a.whatChanged.every((c) => c.date === null || /^\d{4}-\d{2}-\d{2}$/.test(c.date))));
 t("10 counter-signals surface (risks are first-class)", vm.accounts[0].counterSignals.length > 0);
 t("11 what-to-validate surfaces", vm.accounts.some((a) => a.validations.length > 0));

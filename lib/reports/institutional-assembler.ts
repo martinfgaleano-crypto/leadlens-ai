@@ -101,7 +101,16 @@ function buildDossier(opp: Json, lead: Json | undefined, es = false, clientObjec
   for (const ev of datedSignals.slice(primarySignal ? 1 : 0)) {
     evidence_chain.push({ label: (clean(ev.claim) ?? "").slice(0, 160), url: null, date: ev.date, date_basis: "fact" });
   }
-  // Fallback: undated narrative evidence only when nothing dated/sourced survived.
+  // An undated source is still auditable provenance. It must never be promoted to
+  // timing evidence, but dropping its URL makes the customer see an opaque
+  // "stored evidence" placeholder even though the public source is known.
+  const canonicalHardBlocked = Array.isArray(canonicalCase?.reasons)
+    && canonicalCase.reasons.some((reason: unknown) => typeof reason === "string" && reason.startsWith("hard_blocker_"));
+  if (!evidence_chain.length && c.source_url && !canonicalHardBlocked) {
+    const label = clean(e.evidence?.[0]) ?? clean(e.company_summary) ?? (es ? "Fuente de investigación" : "Research source");
+    evidence_chain.push({ label: label.slice(0, 160), url: c.source_url, date: null, date_basis: "unknown" });
+  }
+  // Fallback: undated narrative evidence only when no linked provenance survived.
   if (!evidence_chain.length) for (const ev of (Array.isArray(e.evidence) ? e.evidence : []).slice(0, 3)) {
     if (typeof ev === "string" && ev.trim()) evidence_chain.push({ label: (clean(ev) ?? "").slice(0, 160), url: null, date: null, date_basis: "unknown" });
   }

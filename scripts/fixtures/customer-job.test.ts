@@ -91,6 +91,19 @@ async function main() {
     t("selectNextPass skips the already-run family", next?.queryFamilyId === "importer:f1");
   }
 
+  // Discovery provenance survives the durable candidate handoff and can improve
+  // on rediscovery; otherwise a validated event becomes an undated fit-only lead.
+  {
+    const calls = { vaultWrite: [] as DiscoveredCompany[][] };
+    const deps = makeDeps(calls);
+    DISCOVERY["event:f1"] = [{ ...co("Event Retail", "event.com"), sourceUrl: "https://event.com/news/opening", signalDate: "2026-08-20", signalType: "corporate_event" }];
+    const state = newCustomerJobState({ jobId: "event", customer: "C", objective: "O", contextVersion: 1, geography: "US" });
+    await runOnePass(state, { passId: 1, route: "retail", queryFamilyId: "event:f1", queries: [] }, deps);
+    const c = state.candidates[0];
+    t("validated discovery provenance survives candidate persistence", c.sourceUrl === "https://event.com/news/opening" && c.signalDate === "2026-08-20" && c.signalType === "corporate_event");
+    delete DISCOVERY["event:f1"];
+  }
+
   // 4. Route adaptation: an exhausted route (2 empty passes) is dropped.
   {
     const calls = { vaultWrite: [] as DiscoveredCompany[][] };

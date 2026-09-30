@@ -228,7 +228,7 @@ export function evaluateInstitutionalOpportunityCase(input: InstitutionalCaseEva
   const evidence: CaseEvidenceV1[] = input.sourceEvidence.map((e, index) => ({
     claim: index === 0 && input.signal ? input.signal.label : e.label,
     observation: e.label,
-    sourceLabel: (() => { try { return e.url ? new URL(e.url).hostname.replace(/^www\./, "") : "stored evidence"; } catch { return "stored evidence"; } })(),
+    sourceLabel: (() => { try { return e.url ? new URL(e.url).hostname.replace(/^www\./, "") : "Source URL unavailable"; } catch { return "Source URL unavailable"; } })(),
     url: e.url,
     date: e.date,
     relation: index === 0 ? "direct" : "context",
