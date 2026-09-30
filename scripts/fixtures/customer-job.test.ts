@@ -161,6 +161,27 @@ async function main() {
     t("tierReadiness reflects the 4-account foundation (Preview full, Brief partial)", state.tierReadiness.Preview.full === true && state.tierReadiness.Brief.full === false);
   }
 
+  // 9. Bounded qualification must preserve overflow and include its real cost.
+  {
+    const state = newCustomerJobState({ jobId: "j7", customer: "C", objective: "O", contextVersion: 1, geography: "US" });
+    let calls = 0;
+    const deps: CustomerJobDeps = {
+      now: () => new Date("2026-09-29T00:00:00Z"), vaultFirst: async () => [],
+      discover: async (spec) => ({ discovered: spec.passId === 1 ? [co("One", "one.com"), co("Two", "two.com"), co("Three", "three.com")] : [], providersAttempted: ["brave"], providerState: {}, rawResults: 3, costUsd: .01 }),
+      vaultWriteThrough: async (xs) => ({ evaluated: xs.length, new_companies: xs.length, existing_rediscovered: 0, rejected_non_account: 0 }),
+      qualify: async (xs) => {
+        calls++;
+        const attempted = xs.slice(0, 1), deferredKeys = xs.slice(1).map((x) => x.key);
+        return { qualified: attempted.map((c) => ({ key: c.key, company: c.company, domain: c.domain, route: c.route, decision: "hold" as const, fit: "Strong", timing: null, evidenceCount: 1, qualifiedAtPass: c.firstSeenPass })), rejected: [], deferredKeys, costUsd: .25 };
+      },
+    };
+    await runOnePass(state, { passId: 1, route: "r", queryFamilyId: "r:1", queries: [] }, deps);
+    t("bounded qualification leaves overflow unresearched", state.candidates.filter((c) => !c.researched).length === 2);
+    await runOnePass(state, { passId: 2, route: "r", queryFamilyId: "r:2", queries: [] }, deps);
+    t("later pass drains the deferred backlog", state.candidates.filter((c) => c.researched).length === 2 && calls === 2);
+    t("job budget includes discovery plus qualification spend", Math.abs(state.spendUsd - .52) < 1e-9);
+  }
+
   console.log(`\n${passed} passed, ${failed} failed`);
   if (failed > 0) process.exit(1);
 }

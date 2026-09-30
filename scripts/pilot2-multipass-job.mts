@@ -200,7 +200,7 @@ const deps = {
       return { evaluated: m.evaluated, new_companies: m.new_companies, existing_rediscovered: m.existing_rediscovered, rejected_non_account: m.rejected_non_account };
     } catch { return { evaluated: 0, new_companies: 0, existing_rediscovered: 0, rejected_non_account: 0 }; }
   },
-  qualify: async (candidates: CanonicalCandidate[]): Promise<{ qualified: QualifiedAccount[]; rejected: RejectionMemoryEntry[] }> => {
+  qualify: async (candidates: CanonicalCandidate[]): Promise<{ qualified: QualifiedAccount[]; rejected: RejectionMemoryEntry[]; deferredKeys: string[]; costUsd: number }> => {
     // Candidate red-team (§101) + cost/yield discipline (§22): drop obvious non-buyers
     // before expensive research, then research at most MAX_RESEARCH_PER_PASS, preferring
     // channel-graded + domain-resolved candidates. Pre-filtered = rejection memory;
@@ -212,7 +212,8 @@ const deps = {
     });
     const prioritized = [...inScope].sort((a, b) => (gradeByKey.has(b.key) ? 1 : 0) - (gradeByKey.has(a.key) ? 1 : 0) || (b.domain ? 1 : 0) - (a.domain ? 1 : 0));
     const toResearch = prioritized.slice(0, MAX_RESEARCH_PER_PASS);
-    if (toResearch.length === 0) return { qualified: [], rejected: preRejected };
+    const deferredKeys = prioritized.slice(MAX_RESEARCH_PER_PASS).map((c) => c.key);
+    if (toResearch.length === 0) return { qualified: [], rejected: preRejected, deferredKeys, costUsd: 0 };
     const leads = leadCandidatesFrom(toResearch);
     const before = usdNow();
     let report: any;
@@ -222,7 +223,7 @@ const deps = {
         candidatesOverride: leads, decisionOnly: true, researchCandidateLimit: leads.length, deliveryLimit: leads.length,
         researchConcurrency: 3,
       });
-    } catch (e) { console.error("  qualify error:", e instanceof Error ? e.message : e); return { qualified: [], rejected: preRejected }; }
+    } catch (e) { const costUsd = Math.max(0, usdNow() - before); console.error("  qualify error:", e instanceof Error ? e.message : e); return { qualified: [], rejected: preRejected, deferredKeys: candidates.map((c) => c.key), costUsd }; }
     // Canonical decision authority (same as the productive spine): the raw pipeline
     // does NOT populate canonical_cases — the spine derives them per lead post-hoc.
     report.canonical_cases = (report.processed_leads ?? []).map((l: any) => canonicalCaseForLead(l)).filter(Boolean);
@@ -254,7 +255,7 @@ const deps = {
       const key = cj.canonicalKey(l.candidate.company, l.candidate.domain ?? null);
       rejected.push({ key, company: l.candidate.company, reason: (l.qualification?.category === "DISCARD" ? "OFF_TARGET_OR_INSUFFICIENT" : "NOT_QUALIFIED"), pass: candidates[0]?.firstSeenPass ?? 0 });
     }
-    return { qualified, rejected: [...preRejected, ...rejected] };
+    return { qualified, rejected: [...preRejected, ...rejected], deferredKeys, costUsd: Math.max(0, usdNow() - before) };
   },
   save: async (state: any) => { try { await new SupabaseCustomerJobStore(db as any).save(state, null); } catch { /* best-effort */ } },
 };

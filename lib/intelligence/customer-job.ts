@@ -152,6 +152,11 @@ export interface DiscoverResult {
 export interface QualifyResult {
   qualified: QualifiedAccount[];
   rejected: RejectionMemoryEntry[];
+  /** Candidates intentionally deferred by a bounded research seam. They remain
+   *  unresearched and must be retried on a later pass instead of disappearing. */
+  deferredKeys?: string[];
+  /** Actual provider/LLM spend incurred by qualification. */
+  costUsd?: number;
 }
 
 export interface CustomerJobDeps {
@@ -311,11 +316,17 @@ export async function runOnePass(state: CustomerJobState, spec: PassSpec, deps: 
     newCount++;
   }
 
-  // 4. Research + qualify the NEW candidates only (§41). The seam owns the truth
-  //    bar; this module only accumulates the outcome.
+  // 4. Research + qualify the bounded backlog (§41). New candidates can exceed a
+  //    per-pass research ceiling; deferred candidates remain unresearched and are
+  //    retried on the next pass rather than silently disappearing.
   let qualifiedAdditions = 0;
-  if (newCandidates.length) {
-    const { qualified, rejected: rej } = await deps.qualify(newCandidates, state).catch((): QualifyResult => ({ qualified: [], rejected: [] }));
+  let qualificationCostUsd = 0;
+  const researchQueue = state.candidates.filter((c) => !c.researched && !rejected.has(c.key));
+  if (researchQueue.length) {
+    const result = await deps.qualify(researchQueue, state).catch((): QualifyResult => ({ qualified: [], rejected: [], deferredKeys: researchQueue.map((c) => c.key), costUsd: 0 }));
+    const { qualified, rejected: rej } = result;
+    qualificationCostUsd = result.costUsd || 0;
+    state.spendUsd = Number((state.spendUsd + qualificationCostUsd).toFixed(6));
     const haveQ = new Set(state.qualified.map((q) => q.key));
     for (const q of qualified) {
       if (haveQ.has(q.key)) continue;                                 // never double-count (§39)
@@ -325,7 +336,8 @@ export async function runOnePass(state: CustomerJobState, spec: PassSpec, deps: 
     }
     const haveR = new Set(state.rejectionMemory.map((r) => r.key));
     for (const r of rej) if (!haveR.has(r.key)) { haveR.add(r.key); state.rejectionMemory.push(r); }
-    for (const c of state.candidates) if (newCandidates.some((n) => n.key === c.key)) c.researched = true;
+    const deferred = new Set(result.deferredKeys ?? []);
+    for (const c of state.candidates) if (researchQueue.some((n) => n.key === c.key) && !deferred.has(c.key)) c.researched = true;
   }
 
   // 5. Record pass + query-family + route yield + tier readiness.
@@ -337,7 +349,7 @@ export async function runOnePass(state: CustomerJobState, spec: PassSpec, deps: 
   state.passHistory.push({
     passId: spec.passId, route: spec.route, queryFamilyId: spec.queryFamilyId,
     providersAttempted: disc.providersAttempted, vaultHits: vaultHitsRaw.length,
-    newCandidates: newCount, qualifiedAdditions, costUsd: Number((disc.costUsd || 0).toFixed(6)),
+    newCandidates: newCount, qualifiedAdditions, costUsd: Number(((disc.costUsd || 0) + qualificationCostUsd).toFixed(6)),
     startedAt, completedAt: now().toISOString(), yield: passYield, nextStrategy,
   });
   state.passesCompleted += 1;
