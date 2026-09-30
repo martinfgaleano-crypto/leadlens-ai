@@ -529,6 +529,18 @@ export function evidenceClaimSourceUrl(type: string, primaryUrl: string | null |
   return type === "verified_public_signal" ? (primaryUrl ?? null) : null;
 }
 
+/** Distinguish a decision-critical unknown from ordinary execution diligence.
+ *  Research always proposes a next question, including for otherwise actionable
+ *  accounts. Treating every question as decision-critical made Prioritize
+ *  structurally unreachable. Only questions whose answer can invalidate the
+ *  account, event, commercial route or still-open window cap at Validate. */
+export function decisionCriticalQuestionsForLead(lead: ProcessedLead): string[] {
+  const question = lead.enrichment.next_best_question?.trim();
+  if (!question) return [];
+  const critical = /\b(?:whether|if)\b[^.]{0,140}\b(?:category|program|submission|onboarding|vendor|supplier|expansion|investment|event|operation|commercial scope|procurement|route|channel)\b|\b(?:still|remains?)\s+(?:open|active|current|available)\b|\b(?:cancelled|canceled|completed|closed|exclusive|outsourc|third[- ]party|wrong entity|same company|controls? the decision)\b/i;
+  return critical.test(question) ? [question] : [];
+}
+
 export function canonicalCaseForLead(lead: ProcessedLead): NonNullable<LeadLensReport["canonical_cases"]>[number] | null {
   if (lead.outreach.qc_status === "FAILED") return null;
   const c = lead.candidate;
@@ -570,7 +582,7 @@ export function canonicalCaseForLead(lead: ProcessedLead): NonNullable<LeadLensR
   const resellerOrgType = /retail|grocer|grocery|supermarket|distribut|wholesal|importer|broker|specialty (food|grocer|beverage)|natural (foods|products|grocer)/i.test(`${c.industry ?? ""}`);
   const hasOpenQuestion = Boolean(e.next_best_question);
   const channelAccessVerified = c.opportunity_kind === "channel_fit" && ["strong", "moderate"].includes(c.channel_evidence_grade ?? "");
-  const strategicRouteValidatable = !channelAccessVerified && Boolean(c.domain) && resellerOrgType && fitStrength === "Strong" && hasOpenQuestion;
+  const strategicRouteValidatable = !verifiedSignal && !channelAccessVerified && Boolean(c.domain) && resellerOrgType && fitStrength === "Strong" && hasOpenQuestion;
   const canonical = synthesizeCase({
     accountId: c.company,
     identityVerified: Boolean(c.domain),
@@ -585,7 +597,7 @@ export function canonicalCaseForLead(lead: ProcessedLead): NonNullable<LeadLensR
     materialEvent: verifiedSignal,
     hasMaterialCounter: e.account_research?.counterevidence_material_found === true
       || (e.opportunity_risks ?? []).some((risk) => /cancel|contradict|insolven|third.party|terceriz/i.test(risk)),
-    openDecisionCritical: e.next_best_question ? [e.next_best_question] : [],
+    openDecisionCritical: decisionCriticalQuestionsForLead(lead),
     priorFit: strength(lead.qualification.fit_score),
     priorTiming: verifiedSignal ? "Moderate" : "Limited",
     priorEvidence: evidenceStrength,

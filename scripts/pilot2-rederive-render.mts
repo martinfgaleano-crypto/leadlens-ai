@@ -17,6 +17,7 @@ const { fromDeliverableViewModel } = await import("@/lib/delivery-system/deliver
 const { toPresentationModel } = await import("@/lib/delivery-system/presentation-model");
 const { renderPdfBuffer } = await import("@/lib/delivery-system/renderers/pdf");
 const { resolveReportExperience } = await import("@/lib/products/report-experience");
+const { selectDeterministically } = await import("@/lib/intelligence/deterministic-tier-selection");
 
 const merged = JSON.parse(readFileSync(`${OUT}/pilot2-merged-report.json`, "utf8"));
 const reportJson: any = merged.reportJson;
@@ -45,11 +46,21 @@ reportJson.canonical_cases = cases;
 // Reconcile ranked_opportunities' decision to the re-derived canonical (presentation only).
 const byLead = new Map(cases.map((c: any) => [c.lead_id, c]));
 for (const o of reportJson.ranked_opportunities ?? []) { const c: any = byLead.get(o.lead_id); if (c && o.decision) o.decision = { ...o.decision, decision: c.decision }; }
-// Rank by decision usefulness (prioritize>validate>monitor>hold) then keep order.
-const w = (d: string) => d === "prioritize" ? 4 : d === "validate" ? 3 : d === "monitor" ? 2 : 1;
-reportJson.ranked_opportunities = [...(reportJson.ranked_opportunities ?? [])]
-  .sort((a: any, b: any) => w((byLead.get(b.lead_id) as any)?.decision ?? "hold") - w((byLead.get(a.lead_id) as any)?.decision ?? "hold"))
-  .map((o: any, i: number) => ({ ...o, rank: i + 1 }));
+// Rank through the deterministic, auditable tier selector rather than incidental input order.
+const selectable = (reportJson.ranked_opportunities ?? []).map((o: any) => {
+  const lead = reportJson.processed_leads.find((l: any) => l.id === o.lead_id); const cc: any = byLead.get(o.lead_id); const ar = lead?.enrichment?.account_research;
+  return { id: o.lead_id, company: lead?.candidate?.company ?? o.lead_id, decision: cc?.decision ?? "hold", fit: cc?.fit ?? null, timing: cc?.timing ?? null, evidence: cc?.evidence ?? null,
+    evidenceCount: (lead?.enrichment?.evidence_discipline ?? []).length, hasSource: Boolean(lead?.candidate?.source_url), hasValidatedDate: Boolean(lead?.candidate?.signal_date),
+    independentlyCorroborated: Boolean(ar?.corroboration_attempted && (ar?.corroborating_domains ?? 0) >= 1), commercialMechanismVerified: lead?.candidate?.opportunity_kind === "channel_fit",
+    accessVerified: lead?.candidate?.opportunity_kind === "channel_fit" && ["strong", "moderate"].includes(lead?.candidate?.channel_evidence_grade ?? ""), counterevidenceMaterial: ar?.counterevidence_material_found === true };
+});
+const selection = selectDeterministically(selectable, 18);
+const orderedIds = selection.selected.map((a: any) => a.id);
+reportJson.ranked_opportunities = [...(reportJson.ranked_opportunities ?? [])].filter((o: any) => orderedIds.includes(o.lead_id))
+  .sort((a: any, b: any) => orderedIds.indexOf(a.lead_id) - orderedIds.indexOf(b.lead_id)).map((o: any, i: number) => ({ ...o, rank: i + 1 }));
+reportJson.processed_leads = reportJson.processed_leads.filter((l: any) => orderedIds.includes(l.id));
+reportJson.canonical_cases = cases.filter((c: any) => orderedIds.includes(c.lead_id));
+console.log("qualified-not-selected:", selection.qualifiedNotSelected.map((x: any) => `${x.account.company}: ${x.reason}`).join(" | ") || "(none)");
 
 const dist: Record<string, number> = { prioritize: 0, validate: 0, monitor: 0, hold: 0 };
 for (const c of cases) dist[(c as any).decision] = (dist[(c as any).decision] ?? 0) + 1;

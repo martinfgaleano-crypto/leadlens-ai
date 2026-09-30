@@ -98,11 +98,11 @@ export function opportunityTest(i: OpportunityInput): OpportunityVerdict {
   if (!i.company_from_universe) soft.push("company_not_in_verified_universe");
 
   if (hard.length) return { status: "reject", hard_blockers: hard, soft_flags: soft, reason: `Bloqueado por: ${hard.join(", ")}` };
-  if (i.channel_access_verified) {
+  if (i.channel_access_verified && !i.matches_needs_family) {
     // Verified channel ACCESS: real onboarding/vendor evidence from the account's source.
     return { status: "investigate", hard_blockers: [], soft_flags: ["channel_fit_not_buying_intent", ...soft], reason: "Canal multimarca verificado en fuente corporativa; no prueba intención de compra ni timing. Validar categoría, onboarding y decisor." };
   }
-  if (i.strategic_route_validatable) {
+  if (i.strategic_route_validatable && !i.matches_needs_family) {
     // Strategic ROUTE validation: plausible commercial route + verified identity, but
     // channel access is NOT verified and there is no dated event. Explicitly labeled
     // so it is never presented as verified access or buying intent (§8.1).

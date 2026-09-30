@@ -40,6 +40,7 @@ const { resolveReportExperience } = await import("@/lib/products/report-experien
 const { createServerClient } = await import("@/lib/supabase/server");
 const cj = await import("@/lib/intelligence/customer-job");
 const { assessAccountEligibility } = await import("@/lib/intelligence/account-eligibility");
+const { selectDeterministically } = await import("@/lib/intelligence/deterministic-tier-selection");
 const { SupabaseCustomerJobStore } = await import("@/lib/intelligence/customer-job-store");
 
 type DiscoveredCompany = import("@/lib/intelligence/customer-job").DiscoveredCompany;
@@ -281,12 +282,26 @@ writeFileSync(`${OUT}/pilot2-vault-growth.json`, JSON.stringify(vaultGrowth, nul
 console.log("tierReadiness:", JSON.stringify(state.tierReadiness));
 
 // ── Assemble ONE institutional report from the merged research (only qualified accounts) ──
-const qualifiedCompanySet = new Set(state.qualified.map((q) => q.company.toLowerCase()));
+const selectionInput = state.qualified.map((q) => {
+  const lead: any = [...researchedLeadsById.values()].find((l: any) => (l.candidate.company ?? "").toLowerCase() === q.company.toLowerCase());
+  const cc: any = lead ? canonicalByLead.get(lead.id) : null;
+  const ar = lead?.enrichment?.account_research;
+  return { id: q.key, company: q.company, decision: q.decision, fit: cc?.fit ?? null, timing: cc?.timing ?? null, evidence: cc?.evidence ?? null,
+    evidenceCount: q.evidenceCount, hasSource: Boolean(lead?.candidate?.source_url), hasValidatedDate: Boolean(lead?.candidate?.signal_date),
+    independentlyCorroborated: Boolean(ar?.corroboration_attempted && (ar?.corroborating_domains ?? 0) >= 1),
+    commercialMechanismVerified: lead?.candidate?.opportunity_kind === "channel_fit", accessVerified: lead?.candidate?.opportunity_kind === "channel_fit" && ["strong", "moderate"].includes(lead?.candidate?.channel_evidence_grade ?? ""),
+    counterevidenceMaterial: ar?.counterevidence_material_found === true };
+});
+const selection = selectDeterministically(selectionInput, 18);
+const selectedKeys = new Set(selection.selected.map((a: any) => a.id));
+(state as any).selection = { version: "deterministic-tier-selection-v1", selected: selection.selected.map((a: any) => a.id), selectedReasons: selection.selectedReasons, qualifiedNotSelected: selection.qualifiedNotSelected.map((x: any) => ({ key: x.account.id, company: x.account.company, reason: x.reason })) };
+const qualifiedCompanySet = new Set(state.qualified.filter((q) => selectedKeys.has(q.key)).map((q) => q.company.toLowerCase()));
 const mergedLeads = [...researchedLeadsById.values()].filter((l: any) => qualifiedCompanySet.has((l.candidate.company ?? "").toLowerCase()));
 const mergedCanonical = [...canonicalByLead.values()].filter((c: any) => mergedLeads.some((l: any) => l.id === c.lead_id));
-const rankWeight = (o: any): number => { const d = mergedCanonical.find((c: any) => c.lead_id === o.lead_id)?.decision; return d === "prioritize" ? 4 : d === "validate" ? 3 : d === "monitor" ? 2 : 1; };
+const orderedCompanies = selection.selected.map((x: any) => x.company.toLowerCase());
 const mergedRanked = [...rankedByCompany.entries()].filter(([co]) => qualifiedCompanySet.has(co)).map(([, o]) => o)
-  .sort((a: any, b: any) => rankWeight(b) - rankWeight(a)).map((o: any, i: number) => ({ ...o, rank: i + 1 }));
+  .sort((a: any, b: any) => orderedCompanies.indexOf((researchedLeadsById.get(a.lead_id)?.candidate?.company ?? "").toLowerCase()) - orderedCompanies.indexOf((researchedLeadsById.get(b.lead_id)?.candidate?.company ?? "").toLowerCase()))
+  .map((o: any, i: number) => ({ ...o, rank: i + 1 }));
 
 if (mergedLeads.length === 0) { console.error("\nNo qualified accounts to render — job produced an empty foundation."); writeFileSync(`${OUT}/pilot2-job-telemetry.json`, JSON.stringify(state, null, 2)); process.exit(0); }
 
