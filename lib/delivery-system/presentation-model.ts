@@ -34,6 +34,7 @@ export function toPresentationModel(doc: DeliveryDocumentV1, tier: DeliveryTier,
     methodology: s.methodology ? composed.methodology : [],
     limitations: s.limitations ? composed.limitations : [],
     premium: s.premiumArchitecture ? composed.premium : null,
+    intelligence: channel === "csv" ? null : composed.intelligence ?? null,
   };
   return {
     channel, tier, tierLabel: TIER_COMPOSITION[tier].label,

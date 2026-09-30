@@ -148,11 +148,21 @@ function labelsFor(es: boolean) {
       : { Preview: "Validate the quality", Brief: "Select a focused set", Intelligence: "Prioritize your portfolio", Premium: "Turn it into strategy" }) as Record<string, string>,
     whereAttentionFirst: L("Dónde concentrar la atención primero", "Where attention goes first"),
     commercialContext: L("Contexto comercial", "Commercial context"),
+    marketIntelligence: L("Inteligencia de mercado y portafolio", "Market & portfolio intelligence"),
+    leadlensRead: L("Lectura de LeadLens", "LeadLens read"),
+    commercialRoutes: L("Rutas comerciales observadas", "Observed commercial routes"),
+    marketMap: L("Mapa de mercado", "Market map"),
+    accountBenchmark: L("Benchmark de cuentas", "Account benchmark"),
+    evidenceCoverageDetailed: L("Cobertura de evidencia", "Evidence coverage"),
+    portfolioTensions: L("Tensiones del portafolio", "Portfolio tensions"),
+    validationThemes: L("Temas de validación", "Validation themes"),
     portfolio: L("Portafolio", "Portfolio"),
     accountsEvaluated: L("Cuentas evaluadas", "Accounts evaluated"),
     withSources: L("Con fuentes", "With sources"),
     datedEvidence: L("Evidencia fechada", "Dated evidence"),
     corroborated: L("Corroboradas", "Corroborated"),
+    visualIntelligence: L("Inteligencia visual", "Visual intelligence"),
+    evidenceCoverageChart: L("Cobertura de evidencia (población seleccionada)", "Evidence coverage (selected population)"),
     bySegment: L("Por segmento", "By segment"),
     opportunityCases: L("Casos de oportunidad", "Opportunity cases"),
     validationQueue: L("Cola de validación", "Validation queue"),
@@ -464,6 +474,8 @@ export function renderPdfBuffer(pm: PresentationModel, opts?: { compress?: boole
     if (facets.length) text(facets.join("     "), M, 8.5, "normal", MUTE);
   }
 
+  if (doc.intelligence && (tierLabel === "Intelligence" || tierLabel === "Premium")) canonicalIntelligenceBlock();
+
   // ── Portfolio (table + coverage stats = portfolio-level understanding) ──
   if (s.portfolioSynthesis && doc.accounts.length) {
     band(L.portfolio);
@@ -613,6 +625,78 @@ export function renderPdfBuffer(pm: PresentationModel, opts?: { compress?: boole
       band(L.playbooksTitle, SKY);
       for (const pb of playbooks) playbookCard(pb);
     }
+  }
+
+  function canonicalIntelligenceBlock() {
+    const intel = doc.intelligence!;
+    const ev = intel.evidence_coverage;
+    band(L.marketIntelligence, SKY);
+    text(intel.scope.scope_note, M, 8.5, "normal", MUTE);
+    text(L.leadlensRead, M, 10.5, "bold", INK);
+    text(intel.portfolio_intelligence.leadlens_read.text, M, 9.5, "normal", SUB);
+    statRow([
+      { label: L.accountsEvaluated, value: String(ev.denominator) },
+      { label: L.withSources, value: `${ev.usable_source}/${ev.denominator}` },
+      { label: L.datedEvidence, value: `${ev.validated_date}/${ev.denominator}` },
+      { label: L.corroborated, value: `${ev.corroborated}/${ev.denominator}` },
+    ]);
+
+    space(38);
+    text(L.visualIntelligence, M, 10.5, "bold", INK);
+    text(L.evidenceCoverageChart, M, 8.2, "normal", MUTE);
+    const coverageBars = [
+      [L.withSources, ev.usable_source, SKY],
+      [L.datedEvidence, ev.validated_date, [31, 94, 141] as RGB],
+      [es ? "Mecanismo comercial" : "Commercial mechanism", ev.commercial_mechanism, [217, 119, 6] as RGB],
+      [es ? "Acceso verificado" : "Verified access", ev.verified_access, [4, 120, 87] as RGB],
+    ] as const;
+    for (const [label, value, color] of coverageBars) {
+      space(7);
+      pdf.setFont("helvetica", "normal"); pdf.setFontSize(7.8); setText(SUB); pdf.text(latin1(label), M, y);
+      const barX = M + 42, barW = CW - 58, barH = 3.1;
+      setFill([237, 242, 247]); pdf.roundedRect(barX, y - 2.7, barW, barH, 0.8, 0.8, "F");
+      if (ev.denominator > 0 && value > 0) { setFill(color); pdf.roundedRect(barX, y - 2.7, barW * value / ev.denominator, barH, 0.8, 0.8, "F"); }
+      pdf.setFont("helvetica", "bold"); pdf.setFontSize(7.8); setText(INK); pdf.text(`${value}/${ev.denominator}`, W - M, y, { align: "right" });
+      y += 5.2;
+    }
+    gap(2);
+
+    text(L.commercialRoutes, M, 10.5, "bold", INK);
+    const routes = intel.market_intelligence.routes;
+    if (routes.length) {
+      autoTable(pdf, {
+        startY: y, margin: { left: M, right: M }, styles: { font: "helvetica", fontSize: 7.7, cellPadding: 1.8, textColor: [30, 41, 59], lineColor: [232, 238, 245], lineWidth: 0.1 },
+        headStyles: { fillColor: INK_DK, textColor: 255, fontStyle: "bold" },
+        head: [["Route", "Accounts", "P / V", "Mechanism", "Access", "Evidence"]],
+        body: routes.map((r) => [latin1(r.label), String(r.observed_accounts.length), `${r.decisions.prioritize} / ${r.decisions.validate}`, `${r.commercial_mechanism_coverage.numerator}/${r.commercial_mechanism_coverage.denominator}`, `${r.access_coverage.numerator}/${r.access_coverage.denominator}`, `${r.evidence_coverage.numerator}/${r.evidence_coverage.denominator}`]),
+      });
+      // @ts-expect-error jspdf-autotable augments lastAutoTable at runtime
+      y = (pdf.lastAutoTable?.finalY ?? y) + 5;
+    } else text(es ? "Datos insuficientes para estructurar rutas." : "Insufficient data to structure routes.", M, 9, "normal", MUTE);
+
+    band(L.marketMap);
+    for (const route of routes.slice(0, 8)) {
+      const buyers = route.buyer_types.length ? route.buyer_types.join(", ") : (es ? "función compradora no establecida" : "buyer function not established");
+      text(`${route.label} → ${buyers} → ${route.observed_accounts.join(", ")}`, M, 8.7, route.decisions.prioritize ? "bold" : "normal", route.decisions.prioritize ? SKY : SUB);
+    }
+    text(intel.market_map.scope_note, M, 8, "normal", MUTE);
+
+    band(L.accountBenchmark);
+    const dims = intel.benchmark.dimensions;
+    autoTable(pdf, {
+      startY: y, margin: { left: M, right: M }, styles: { font: "helvetica", fontSize: 7.2, cellPadding: 1.5, textColor: [30, 41, 59], lineColor: [232, 238, 245], lineWidth: 0.1 },
+      headStyles: { fillColor: INK_DK, textColor: 255, fontStyle: "bold" },
+      head: [["Account", "Decision", ...dims.map((d) => latin1(d.label))]],
+      body: intel.benchmark.accounts.map((row) => [latin1(row.account), decLabel(row.decision), ...dims.map((d) => row.cells.find((c) => c.dimension_id === d.dimension_id)?.state ?? "Unknown")]),
+    });
+    // @ts-expect-error jspdf-autotable augments lastAutoTable at runtime
+    y = (pdf.lastAutoTable?.finalY ?? y) + 4;
+    text(intel.benchmark.scope_note, M, 8, "normal", MUTE);
+
+    const tensions = intel.portfolio_intelligence.portfolio_tensions.map((x) => x.text);
+    if (tensions.length) bullets(L.portfolioTensions, tensions, [217, 119, 6]);
+    const themes = intel.portfolio_intelligence.validation_themes.map((x) => `${x.theme}: ${x.accounts.join(", ")}`);
+    if (themes.length) bullets(L.validationThemes, themes.slice(0, 6));
   }
 
   function playbookCard(pb: ReturnType<typeof derivePlaybooks>[number]) {

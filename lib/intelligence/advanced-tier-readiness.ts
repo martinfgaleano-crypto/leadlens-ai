@@ -1,4 +1,5 @@
 import type { QualifiedAccount } from "@/lib/intelligence/customer-job";
+import type { CanonicalIntelligenceDeliveryV1 } from "@/lib/intelligence/canonical-intelligence-delivery";
 
 export type IntelligenceTier = "preview" | "brief" | "portfolio" | "premium";
 export type ReadinessState = "ready" | "partial" | "actionability_research_required";
@@ -14,6 +15,14 @@ export interface AdvancedTierReadiness {
   deliveryReady: boolean;
   state: ReadinessState;
   reasonCodes: string[];
+}
+
+export interface CanonicalTierReadiness extends AdvancedTierReadiness {
+  marketIntelligenceReady: boolean;
+  benchmarkReady: boolean;
+  portfolioIntelligenceReady: boolean;
+  visualIntelligenceReady: boolean;
+  renderReady: boolean;
 }
 const TARGETS: Record<IntelligenceTier, number> = { preview: 2, brief: 6, portfolio: 12, premium: 18 };
 
@@ -50,4 +59,27 @@ export function evaluateAdvancedTierReadiness(
     state: deliveryReady ? "ready" : capacityReady && !actionabilityReady ? "actionability_research_required" : "partial",
     reasonCodes,
   };
+}
+
+export function evaluateCanonicalTierReadiness(
+  tier: IntelligenceTier,
+  accounts: QualifiedAccount[],
+  intelligence: CanonicalIntelligenceDeliveryV1 | null | undefined,
+  renderReady: boolean,
+): CanonicalTierReadiness {
+  const base = evaluateAdvancedTierReadiness(tier, accounts);
+  const portfolio = tier === "portfolio" || tier === "premium";
+  const premium = tier === "premium";
+  const marketIntelligenceReady = !premium || intelligence?.market_intelligence.state === "PRESENT";
+  const benchmarkReady = !portfolio || Boolean(intelligence?.benchmark.accounts.length && intelligence?.benchmark.dimensions.length);
+  const portfolioIntelligenceReady = !portfolio || Boolean(intelligence?.portfolio_intelligence.leadlens_read.text);
+  const visualIntelligenceReady = !portfolio || Boolean(intelligence?.charts.length && intelligence?.charts.every((chart) => chart.denominator === intelligence.scope.selected));
+  const reasonCodes = [...base.reasonCodes];
+  if (!marketIntelligenceReady) reasonCodes.push("MARKET_INTELLIGENCE_REQUIRED");
+  if (!benchmarkReady) reasonCodes.push("BENCHMARK_REQUIRED");
+  if (!portfolioIntelligenceReady) reasonCodes.push("PORTFOLIO_INTELLIGENCE_REQUIRED");
+  if (!visualIntelligenceReady) reasonCodes.push("VISUAL_INTELLIGENCE_REQUIRED");
+  if (!renderReady) reasonCodes.push("RENDER_NOT_READY");
+  const deliveryReady = base.deliveryReady && marketIntelligenceReady && benchmarkReady && portfolioIntelligenceReady && visualIntelligenceReady && renderReady;
+  return { ...base, deliveryReady, reasonCodes, state: deliveryReady ? "ready" : base.capacityReady && !base.actionabilityReady ? "actionability_research_required" : "partial", marketIntelligenceReady, benchmarkReady, portfolioIntelligenceReady, visualIntelligenceReady, renderReady };
 }

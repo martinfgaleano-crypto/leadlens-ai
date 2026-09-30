@@ -76,6 +76,14 @@ export default function Pilot2Workspace({ durable, job }: { durable?: Durable; j
             <div style={S.row}><span style={S.k}>Mechanisms / access / timing / Prioritize</span><span style={S.v}>{job.actionabilityEscalation.mechanismsVerified} / {job.actionabilityEscalation.accessPathsIdentified} / {job.actionabilityEscalation.currentTimingSignals} / {job.actionabilityEscalation.prioritizeFound}</span></div>
             <div style={S.row}><span style={S.k}>Stop condition</span><span style={S.v}>{job.actionabilityEscalation.stopCondition ?? "running"}</span></div>
           </div>}
+          {job.canonicalIntelligence && <div style={{ marginTop: 10 }}>
+            <div style={{ ...S.li, fontWeight: 700, color: C.ink }}>Canonical above-account intelligence</div>
+            <div style={S.row}><span style={S.k}>Market Intelligence</span><span style={S.v}>{job.canonicalIntelligence.market_intelligence?.state ?? "NOT_MEASURED"}</span></div>
+            <div style={S.row}><span style={S.k}>Selected / capacity target</span><span style={S.v}>{job.canonicalIntelligence.scope?.selected ?? 0} / {job.canonicalIntelligence.scope?.capacity_target ?? 0}</span></div>
+            <div style={S.row}><span style={S.k}>Commercial routes / buyer types</span><span style={S.v}>{job.canonicalIntelligence.market_intelligence?.routes?.length ?? 0} / {job.canonicalIntelligence.market_intelligence?.buyer_types?.length ?? 0}</span></div>
+            <div style={S.row}><span style={S.k}>Benchmark accounts / visual datasets</span><span style={S.v}>{job.canonicalIntelligence.benchmark?.accounts?.length ?? 0} / {job.canonicalIntelligence.charts?.length ?? 0}</span></div>
+            <div style={{ ...S.li, color: C.muted }}>{job.canonicalIntelligence.scope?.scope_note}</div>
+          </div>}
           {(() => { const q = job.qualified ?? []; const d = { prioritize: 0, validate: 0, monitor: 0, hold: 0 } as Record<string, number>; for (const a of q) d[a.decision] = (d[a.decision] ?? 0) + 1; const holdShare = q.length ? d.hold / q.length : 0; return <>
             <div style={{ ...S.li, marginTop: 10, fontWeight: 700, color: C.ink }}>Decision distribution (calibrated)</div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 6, margin: "4px 0" }}>{(["prioritize", "validate", "monitor", "hold"] as const).map((k) => <span key={k} style={S.chip(decColor(k))}>{k} {d[k]}</span>)}</div>

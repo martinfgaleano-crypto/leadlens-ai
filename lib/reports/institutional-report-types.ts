@@ -6,6 +6,7 @@
 // inference from hypothesis from recommendation from unknown.
 
 import type { OpportunityCaseIntelligenceV1 } from "@/lib/intelligence/opportunity-case-intelligence";
+import type { CanonicalIntelligenceDeliveryV1 } from "@/lib/intelligence/canonical-intelligence-delivery";
 
 export const INSTITUTIONAL_REPORT_VERSION = 1;
 
@@ -55,6 +56,11 @@ export interface AccountDossier {
   playbook: Record<string, string> | null; // HOT accounts (from Decision Engine when present)
   /** Curated evaluation/synthesis output; optional for every legacy snapshot. */
   opportunity_case?: OpportunityCaseIntelligenceV1 | null;
+  commercial_intelligence?: {
+    route_label: string | null; buyer_type: string | null; commercial_mechanism: string | null;
+    access_path: string | null; access_verified: boolean; current_actionability: boolean;
+    corroborated: boolean | null; counterevidence_researched: boolean;
+  };
 }
 
 export interface InstitutionalOpportunityReportV1 {
@@ -128,4 +134,5 @@ export interface InstitutionalOpportunityReportV1 {
     note: string;
   };
   versions: Record<string, string | number>;
+  intelligence?: CanonicalIntelligenceDeliveryV1 | null;
 }

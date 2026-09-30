@@ -19,6 +19,7 @@ import {
 } from "@/lib/intelligence/premium/premium-decision-architecture";
 import type { PremiumContextV1 } from "@/lib/intelligence/premium/premium-context";
 import { reconcileAccounts } from "@/lib/deliverable/decision-consistency";
+import type { CanonicalIntelligenceDeliveryV1 } from "@/lib/intelligence/canonical-intelligence-delivery";
 
 export type { AccountBriefVM, CommercialContextVM, ValidationQueueItemVM, DecisionState, Strength };
 export type { PremiumExecutivePortfolioV1, DecisionCriticalBriefV1, PremiumContextV1 };
@@ -86,6 +87,7 @@ export interface DeliveryDocumentV1 {
   /** Composed premium decision-architecture section — set by the TierComposer for the premium tier
    *  only; null/absent for every other tier. Additive: never affects non-premium composition. */
   premium?: PremiumDeliverySection | null;
+  intelligence?: CanonicalIntelligenceDeliveryV1 | null;
 }
 
 /** Build the canonical document from the proven DeliverableViewModel. Pure; drops tier `capabilities`
@@ -120,6 +122,7 @@ export function fromDeliverableViewModel(vm: DeliverableViewModel): DeliveryDocu
     limitations: vm.limitations,
     premiumContext: null,   // attached upstream when a premium run produces + persists it
     premium: null,          // composed by the TierComposer for the premium tier only
+    intelligence: vm.intelligence ?? null,
   };
 }
 

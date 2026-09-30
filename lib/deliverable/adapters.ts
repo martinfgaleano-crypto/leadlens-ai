@@ -171,6 +171,7 @@ export function fromInstitutionalReport(r: InstitutionalOpportunityReportV1, exp
     },
     methodology: r.methodology ?? [],
     limitations: r.limitations ?? [],
+    intelligence: r.intelligence ?? null,
     downloads: { pdf: true, portfolioCsv: true, evidenceCsv: accounts.some((a) => a.sources.length > 0) },
     capabilities: {
       showPortfolioTab: !experience || experience.show_portfolio,

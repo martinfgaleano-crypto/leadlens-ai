@@ -159,6 +159,7 @@ export interface DeliverableViewModel {
   limitations: string[];
   downloads: { pdf: boolean; portfolioCsv: boolean; evidenceCsv: boolean };
   capabilities: DeliverableCapabilities;
+  intelligence?: import("@/lib/intelligence/canonical-intelligence-delivery").CanonicalIntelligenceDeliveryV1 | null;
 }
 
 // ─── Design tokens — shared decision-state grammar (matches the landing) ──────

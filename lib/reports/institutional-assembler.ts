@@ -12,6 +12,7 @@ import {
   type InstitutionalOpportunityReportV1,
 } from "./institutional-report-types";
 import { evaluateInstitutionalOpportunityCase } from "@/lib/intelligence/opportunity-case-intelligence";
+import { buildCanonicalIntelligenceDelivery } from "@/lib/intelligence/canonical-intelligence-delivery";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type Json = Record<string, any>;
@@ -198,6 +199,16 @@ function buildDossier(opp: Json, lead: Json | undefined, es = false, clientObjec
     recommended_next_step,
     playbook: opp?.playbook ?? null,
     opportunity_case,
+    commercial_intelligence: {
+      route_label: clean(c.commercial_route ?? c.industry),
+      buyer_type: clean(decision?.buyer_function ?? opportunity_case?.classification.accountRole?.value),
+      commercial_mechanism: clean(c.commercial_mechanism),
+      access_path: clean(c.actionability_source_url),
+      access_verified: c.access_verified === true,
+      current_actionability: c.current_actionability_verified === true,
+      corroborated: typeof e.account_research?.corroborating_domains === "number" ? e.account_research.corroborating_domains > 0 : null,
+      counterevidence_researched: e.account_research?.counterevidence_checked === true,
+    },
   };
 }
 
@@ -221,7 +232,7 @@ export function assembleInstitutionalReport(
   const ri = reportJson.report_intelligence ?? null;
   const landscape = reportJson.market_landscape ?? null;
 
-  return {
+  const assembled: InstitutionalOpportunityReportV1 = {
     schema_version: INSTITUTIONAL_REPORT_VERSION,
     metadata: {
       job_id: meta.job_id,
@@ -337,4 +348,6 @@ export function assembleInstitutionalReport(
     })(),
     versions: reportJson._versions ?? { report_schema: "legacy", institutional_report: INSTITUTIONAL_REPORT_VERSION },
   };
+  assembled.intelligence = buildCanonicalIntelligenceDelivery(assembled, typeof reportJson?.delivery_capacity_target === "number" ? reportJson.delivery_capacity_target : null);
+  return assembled;
 }

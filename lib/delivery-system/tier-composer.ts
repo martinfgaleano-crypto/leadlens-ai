@@ -8,6 +8,7 @@
 import {
   type DeliveryDocumentV1, type AccountBriefVM, recountPortfolio, recomputeCoverage, deriveHeadline, buildPremiumDeliverySection,
 } from "@/lib/delivery-system/delivery-document";
+import { scopeCanonicalIntelligence } from "@/lib/intelligence/canonical-intelligence-delivery";
 
 export type DeliveryTier = "preview" | "brief" | "intelligence" | "premium";
 export type DossierDepth = "mini" | "standard" | "full";
@@ -117,5 +118,6 @@ export function composeForTier(doc: DeliveryDocumentV1, tier: DeliveryTier): Del
     // Premium-only: build the deterministic decision-architecture from the surviving (tier-capped)
     // accounts + any persisted research context. null for every other tier — Portfolio is unchanged.
     premium: c.sections.premiumArchitecture ? buildPremiumDeliverySection(accounts, doc.premiumContext ?? null) : null,
+    intelligence: tier === "intelligence" || tier === "premium" ? scopeCanonicalIntelligence(doc.intelligence, accounts.map((a) => a.company)) : null,
   };
 }
