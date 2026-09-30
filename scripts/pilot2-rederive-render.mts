@@ -18,10 +18,32 @@ const { toPresentationModel } = await import("@/lib/delivery-system/presentation
 const { renderPdfBuffer } = await import("@/lib/delivery-system/renderers/pdf");
 const { resolveReportExperience } = await import("@/lib/products/report-experience");
 const { selectDeterministically } = await import("@/lib/intelligence/deterministic-tier-selection");
+const { promotePrimarySourceEvent } = await import("@/lib/intelligence/primary-source-event-promotion");
 
 const merged = JSON.parse(readFileSync(`${OUT}/pilot2-merged-report.json`, "utf8"));
 const reportJson: any = merged.reportJson;
 const meta = merged.meta;
+const { premiumContextFromEnvelope } = await import("@/lib/intelligence/premium/premium-production");
+let premiumContext = premiumContextFromEnvelope(reportJson._premium_context);
+// A provider-limited re-render may reuse a SAME-CUSTOMER/SAME-OBJECTIVE Premium
+// envelope produced recently by an immediately preceding canonical run. This is
+// explicit reuse, never a fresh-search claim, and is rejected on scope/age mismatch.
+const reuseFrom = process.env.PILOT2_PREMIUM_CONTEXT_REUSE_FROM;
+if (!premiumContext && reuseFrom) {
+  const prior = JSON.parse(readFileSync(`${reuseFrom}/pilot2-merged-report.json`, "utf8"));
+  const env = prior?.reportJson?._premium_context;
+  const targetCompanies = new Set((reportJson.processed_leads ?? []).map((l: any) => (l.candidate?.company ?? "").toLowerCase()));
+  const sourceCompanies = env?.researchScope?.portfolioCompanies ?? [];
+  const overlap = sourceCompanies.filter((c: string) => targetCompanies.has(c.toLowerCase())).length;
+  const ageMs = Date.now() - new Date(env?.generatedAt ?? 0).getTime();
+  const objectiveFields = (r: any) => JSON.stringify({ target: r?.onboarding?.target_customer_description ?? null, offer: r?.onboarding?.offer_description ?? null, region: r?.onboarding?.target_market_region ?? null, countries: r?.onboarding?.target_countries ?? [] });
+  const sameScope = prior?.meta?.customer_ref === meta?.customer_ref && objectiveFields(prior.reportJson) === objectiveFields(reportJson);
+  if (env?.status === "present" && sameScope && overlap >= Math.min(5, sourceCompanies.length) && ageMs >= 0 && ageMs <= 86_400_000) {
+    reportJson._premium_context = { ...env, reuse: { provenance: "reused_verified_evidence", sourceJobId: prior.meta?.job_id ?? null, reusedAt: new Date().toISOString(), portfolioOverlap: overlap } };
+    premiumContext = premiumContextFromEnvelope(reportJson._premium_context);
+    console.log(`premium context reused from ${prior.meta?.job_id ?? "unknown"} (${overlap} overlapping accounts)`);
+  } else console.log("premium context reuse rejected: scope, overlap, status or age mismatch");
+}
 
 // Account eligibility gate (§4): drop structurally-ineligible companies (offer-side
 // producers/brands, wrong geography) BEFORE selection — they must not consume a slot
@@ -40,6 +62,7 @@ reportJson.ranked_opportunities = (reportJson.ranked_opportunities ?? []).filter
 console.log(`eligibility: ${eligibleLeads.length} eligible, ${excluded.length} EXCLUDED —`, excluded.map((x) => `${x.company}[${x.reason}]`).join(" | ") || "(none)");
 
 // Re-derive canonical cases with the current calibration.
+for (const l of reportJson.processed_leads ?? []) promotePrimarySourceEvent(l);
 const cases = (reportJson.processed_leads ?? []).map((l: any) => canonicalCaseForLead(l)).filter(Boolean);
 reportJson.canonical_cases = cases;
 
@@ -60,6 +83,7 @@ reportJson.ranked_opportunities = [...(reportJson.ranked_opportunities ?? [])].f
   .sort((a: any, b: any) => orderedIds.indexOf(a.lead_id) - orderedIds.indexOf(b.lead_id)).map((o: any, i: number) => ({ ...o, rank: i + 1 }));
 reportJson.processed_leads = reportJson.processed_leads.filter((l: any) => orderedIds.includes(l.id));
 reportJson.canonical_cases = cases.filter((c: any) => orderedIds.includes(c.lead_id));
+writeFileSync(`${OUT}/pilot2-merged-report.json`, JSON.stringify({ ...merged, reportJson, meta }, null, 2));
 console.log("qualified-not-selected:", selection.qualifiedNotSelected.map((x: any) => `${x.account.company}: ${x.reason}`).join(" | ") || "(none)");
 
 const dist: Record<string, number> = { prioritize: 0, validate: 0, monitor: 0, hold: 0 };
@@ -71,19 +95,33 @@ const institutional = assembleInstitutionalReport(reportJson, meta);
 console.log("institutional dossiers:", institutional.account_dossiers.length);
 
 const TIERS: Array<[string, string, string]> = [["preview", "Preview", "preview_launch_v0"], ["brief", "Brief", "brief_launch_v0"], ["intelligence", "Portfolio", "intelligence_launch_v0"], ["premium", "Premium", "premium_launch_v0"]];
+const tierOut: Array<{ tier: string; label: string; accounts: number; bytes: number; pdf: string }> = [];
 for (const [tier, label, code] of TIERS) {
   const experience = resolveReportExperience(code, "en");
   const vm = fromInstitutionalReport(institutional, experience);
-  const doc = { ...fromDeliverableViewModel(vm), premiumContext: null };
+  const doc = { ...fromDeliverableViewModel(vm), premiumContext: tier === "premium" ? premiumContext : null };
   const pm = toPresentationModel(doc as any, tier as any, "pdf");
   const pdf = await renderPdfBuffer(pm as any);
-  writeFileSync(`${OUT}/LeadLens_AmorDeGea_Pilot2_${label}.pdf`, pdf);
-  console.log(`ok ${label.padEnd(10)} bytes=${pdf.length}`);
+  const pdfPath = `${OUT}/LeadLens_AmorDeGea_Pilot2_${label}.pdf`;
+  writeFileSync(pdfPath, pdf);
+  const accounts = (pm as any).document?.accounts?.length ?? institutional.account_dossiers.length;
+  tierOut.push({ tier, label, accounts, bytes: pdf.length, pdf: pdfPath });
+  console.log(`ok ${label.padEnd(10)} accounts=${accounts} bytes=${pdf.length}`);
 }
 // Persist the re-derived distribution into the job telemetry for Admin.
 try {
   const tel = JSON.parse(readFileSync(`${OUT}/pilot2-job-telemetry.json`, "utf8"));
   if (tel.job?.qualified) for (const q of tel.job.qualified) { const c: any = cases.find((x: any) => { const l = reportJson.processed_leads.find((y: any) => y.id === x.lead_id); return (l?.candidate?.company ?? "").toLowerCase() === q.company.toLowerCase(); }); if (c) q.decision = c.decision; }
+  tel.tiers = tierOut;
+  tel.institutional_dossiers = institutional.account_dossiers.length;
+  tel.premiumContext = reportJson._premium_context ? {
+    status: reportJson._premium_context.status,
+    provenance: reportJson._premium_context.reuse?.provenance ?? "fresh_research",
+    sourceJobId: reportJson._premium_context.reuse?.sourceJobId ?? meta.job_id,
+    cost: reportJson._premium_context.cost ?? null,
+    latencyMs: reportJson._premium_context.latencyMs ?? null,
+    failClosedReasons: reportJson._premium_context.failClosedReasons ?? [],
+  } : { status: "unavailable", provenance: null };
   writeFileSync(`${OUT}/pilot2-job-telemetry.json`, JSON.stringify(tel, null, 2));
 } catch { /* telemetry update best-effort */ }
 // Persist the job state (with calibrated decisions) to Supabase so Admin reflects it.
@@ -104,6 +142,20 @@ try {
     const N = job.qualified.length;
     job.tierReadiness = { Preview: { target: 2, actual: Math.min(2, N), full: N >= 2 }, Brief: { target: 6, actual: Math.min(6, N), full: N >= 6 }, Portfolio: { target: 12, actual: Math.min(12, N), full: N >= 12 }, Premium: { target: 18, actual: Math.min(18, N), full: N >= 18 } };
     await new SupabaseCustomerJobStore(db as any).save(job, null);
+    // Freeze the exact assembled customer-facing report separately from the
+    // resumable customer-job state. This reuses migration 035 and never
+    // overwrites the customer-job namespace in snapshot_reports.
+    const { createHash } = await import("node:crypto");
+    const stable = { ...institutional, metadata: { ...institutional.metadata, assembled_at: "-" } };
+    const checksum = createHash("sha256").update(JSON.stringify(stable)).digest("hex");
+    const { error: snapshotError } = await db.from("institutional_report_snapshots").upsert({
+      job_id: meta.job_id,
+      schema_version: institutional.schema_version,
+      report: institutional,
+      checksum,
+      source_versions: institutional.metadata.source_versions,
+    }, { onConflict: "job_id,schema_version" });
+    if (snapshotError) throw new Error(`institutional snapshot persist failed: ${snapshotError.message}`);
     console.log("persisted Supabase job state with calibrated decisions");
   } else { console.log("no db/job for persistence"); }
 } catch (e) { console.log("job-state persist skipped:", e instanceof Error ? e.message : e); }

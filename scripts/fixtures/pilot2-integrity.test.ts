@@ -27,9 +27,12 @@ t("repeat-suppression on + 15 Pilot 1 accounts listed", AMOR_PILOT2.repeat_suppr
 // ── Approval discipline: PILOT/FOUNDER_REVIEW, never production-approved ──
 t("Pilot 2 approval state is FOUNDER_REVIEW (never production-approved)", /FOUNDER_REVIEW/.test(AMOR_PILOT2.approval_state) && !/APPROVED\b(?!.*REVIEW)/.test(AMOR_PILOT2.approval_state.replace("FOUNDER_REVIEW", "")));
 
-// ── The Admin workspace surfaces the real account (no synthetic company), with the honest HOLD ──
+// ── The Admin workspace reads the durable job rather than freezing a stale account set ──
 const ws = read("app/admin/intelligence/pilot2/Pilot2Workspace.tsx");
-t("Admin surfaces the real US account (Whole Foods, the current run's delivered account)", /Whole Foods/.test(ws));
+t("Admin renders the latest durable qualified foundation", /job\?\.qualified/.test(ws) && /latest durable customer job/i.test(ws));
+t("Admin exposes excluded and qualified-not-selected state", /job\.excluded/.test(ws) && /qualifiedNotSelected/.test(ws));
+t("Admin tier readiness comes from the durable job", /job\?\.tierReadiness/.test(ws));
+t("Admin removed stale fixed 20-account claims", !/20 qualified US accounts SELECTED|every tier PARTIAL \(1\/target\)/.test(ws));
 t("Admin carries no synthetic/demo company placeholders", !/example\.com|Acme|SYNTHETIC/.test(ws));
 t("Admin export-dependency panel disclaims legal advice", /not a legal opinion|not legal advice/i.test(ws));
 

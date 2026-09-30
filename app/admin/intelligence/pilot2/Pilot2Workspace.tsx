@@ -163,30 +163,37 @@ export default function Pilot2Workspace({ durable, job }: { durable?: Durable; j
         <div style={S.li}>{PILOT2_CLASSIFICATION_QUESTION}</div>
       </div>}
 
-      {tab === "universe" && <div style={S.card}><div style={S.h2}>Account universe (real — national multi-pass foundation, 20 qualified)</div>
+      {tab === "universe" && <div style={S.card}><div style={S.h2}>Account universe (durable latest customer foundation)</div>
         <table style={S.table}><thead><tr><th style={S.th}>Company</th><th style={S.th}>Route</th><th style={S.th}>Decision</th></tr></thead><tbody>
-          {[["Whole Foods Market", "Natural / specialty retail", "validate"], ["Sprouts Farmers Market", "Natural / specialty retail", "validate"], ["Natural Grocers", "Natural / specialty retail", "validate"], ["Dorothy Lane Market", "Regional premium grocery", "validate"], ["Bristol Farms", "Regional premium grocery", "validate"], ["Irvine Ranch Market", "Regional premium grocery", "hold"], ["Claro's Italian Markets", "Regional premium grocery", "hold"], ["Clover Grocery", "Specialty retail", "hold"], ["Wild Oats", "Natural retail", "hold"], ["The Vitamin Shoppe", "Wellness retail", "hold"], ["Iberia Foods", "Latin premium importer", "hold"], ["Sabanero NY", "Latin premium importer", "hold"], ["Thomas Foods International", "Distributor", "hold"], ["American Beverage Corporation", "Beverage distributor", "hold"], ["Alter Eco", "Premium natural brand", "hold"], ["Canyon Ranch", "Wellness hospitality", "hold"], ["Miraval Resorts", "Wellness hospitality", "hold"], ["Cellar Craft", "Specialty beverage", "hold"], ["Palko Services", "Specialty distribution", "hold"], ["BAVE", "Specialty beverage", "hold"]].map(([co, route, dec]) =>
-            <tr key={co}><td style={S.td}><b>{co}</b></td><td style={S.td}>{route}</td><td style={S.td}><span style={S.chip(decColor(dec))}>{dec}</span></td></tr>)}
+          {(job?.qualified ?? []).map((q: { key: string; company: string; route: string; decision: string }) =>
+            <tr key={q.key}><td style={S.td}><b>{q.company}</b></td><td style={S.td}>{q.route}</td><td style={S.td}><span style={S.chip(decColor(q.decision))}>{q.decision}</span></td></tr>)}
         </tbody></table>
-        <div style={{ ...S.li, marginTop: 8, color: C.muted }}>20 qualified US accounts SELECTED from a 75-company national universe across 10 route families (importer / distributor / natural &amp; specialty retail / regional premium grocery / specialty beverage / wellness hospitality / gifting / broker). Tiers select 18 of 20. Calibrated distribution: 5 VALIDATE (strong-fit resellers) / 15 HOLD — evidence-based, no forced positives. See the live job card in Overview.</div>
+        {!job && <div style={{ ...S.li, marginTop: 8, color: C.warn }}>No durable customer-job foundation is currently available.</div>}
+        {job && <>
+          <div style={{ ...S.li, marginTop: 8, color: C.muted }}>{job.qualified?.length ?? 0} qualified from {job.candidates?.length ?? 0} canonical candidates. This table is derived from the latest durable customer job, not a static Pilot 2 claim.</div>
+          <div style={{ ...S.li, marginTop: 10, fontWeight: 700, color: C.ink }}>Excluded before customer selection ({job.excluded?.length ?? 0})</div>
+          {(job.excluded ?? []).map((x: { company: string; reason: string }) => <div key={`${x.company}:${x.reason}`} style={S.row}><span style={S.k}>{x.company}</span><span style={S.v}>{x.reason}</span></div>)}
+          <div style={{ ...S.li, marginTop: 10, fontWeight: 700, color: C.ink }}>Qualified but not selected ({job.selection?.qualifiedNotSelected?.length ?? 0})</div>
+          {(job.selection?.qualifiedNotSelected ?? []).map((x: { key: string; company: string; reason: string }) => <div key={x.key} style={S.row}><span style={S.k}>{x.company}</span><span style={S.v}>{x.reason}</span></div>)}
+        </>}
       </div>}
 
       {tab === "tiers" && <div style={S.card}><div style={S.h2}>Four tiers (one foundation; nesting verified)</div>
         <table style={S.table}><thead><tr><th style={S.th}>Tier</th><th style={S.th}>Target</th><th style={S.th}>Delivered</th><th style={S.th}>Status</th><th style={S.th}>PDF</th></tr></thead><tbody>
-          {p.tiers.map((t) => <tr key={t.tier}><td style={S.td}><b>{t.tier}</b></td><td style={S.td}>{t.target}</td><td style={S.td}>{t.delivered ?? "—"}</td><td style={S.td}><span style={S.chip(t.partial ? C.warn : C.ok)}>{t.partial ? "PARTIAL" : "FULL"}</span> PILOT/FOUNDER_REVIEW</td><td style={S.td}>{t.pdf}</td></tr>)}
+          {p.tiers.map((t) => { const live = job?.tierReadiness?.[t.tier]; const partial = live ? !live.full : t.partial; return <tr key={t.tier}><td style={S.td}><b>{t.tier}</b></td><td style={S.td}>{live?.target ?? t.target}</td><td style={S.td}>{live?.actual ?? t.delivered ?? "—"}</td><td style={S.td}><span style={S.chip(partial ? C.warn : C.ok)}>{partial ? "PARTIAL" : "FULL"}</span> PILOT/FOUNDER_REVIEW</td><td style={S.td}>{t.pdf}</td></tr>; })}
         </tbody></table>
-        <div style={{ ...S.li, marginTop: 8, color: C.muted }}>Rendered via the canonical V2.4 renderer from ONE foundation; every tier PARTIAL (1/target). Not final customer deliverables until a fresh-quota run reaches real counts.</div>
+        <div style={{ ...S.li, marginTop: 8, color: C.muted }}>Rendered via the canonical V2.4 renderer from one durable foundation. Live readiness comes from the latest customer job; no tier is padded when fewer eligible accounts survive.</div>
       </div>}
 
       {tab === "compare" && <div style={S.card}><div style={S.h2}>Pilot 1 vs Pilot 2</div>
         <table style={S.table}><thead><tr><th style={S.th}>Dimension</th><th style={S.th}>Pilot 1 (Colombia)</th><th style={S.th}>Pilot 2 (US export)</th></tr></thead><tbody>
           {[["Objective", "Colombia domestic opportunity", "Colombia → US export (interpreted, US ICP built)"],
             ["Context depth", "Founder-curated", "Customer Context Intake V1 (guided + AI-assisted)"],
-            ["Accounts", "10 curated + 5 excluded", "20 qualified US (national multi-pass) — all tiers FULL; 5 VALIDATE / 15 HOLD calibrated"],
+            ["Accounts", "10 curated + 5 excluded", job ? `${job.qualified?.length ?? 0} qualified US from the latest national multi-pass foundation` : "No durable Pilot 2 foundation available"],
             ["Buyer intelligence", "Route-level", "Stakeholder functions + buyer-access model"],
             ["Timing", "Present", "Correctly absent → HOLD (no fake intent)"],
             ["Economics", "Notes", "Constraints envelope + route-economics questions"],
-            ["Deliverables", "Pilot 1 PDFs", "4 canonical V2.4 tiers (PARTIAL), verified nesting"]].map((r) => <tr key={r[0]}><td style={S.td}><b>{r[0]}</b></td><td style={S.td}>{r[1]}</td><td style={S.td}>{r[2]}</td></tr>)}
+            ["Deliverables", "Pilot 1 PDFs", "4 canonical V2.4 tiers, deterministic nesting; Premium may remain partial rather than fill"]].map((r) => <tr key={r[0]}><td style={S.td}><b>{r[0]}</b></td><td style={S.td}>{r[1]}</td><td style={S.td}>{r[2]}</td></tr>)}
         </tbody></table>
       </div>}
 

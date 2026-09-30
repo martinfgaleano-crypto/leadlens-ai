@@ -42,6 +42,7 @@ const cj = await import("@/lib/intelligence/customer-job");
 const { assessAccountEligibility } = await import("@/lib/intelligence/account-eligibility");
 const { selectDeterministically } = await import("@/lib/intelligence/deterministic-tier-selection");
 const { SupabaseCustomerJobStore } = await import("@/lib/intelligence/customer-job-store");
+const { promotePrimarySourceEvent } = await import("@/lib/intelligence/primary-source-event-promotion");
 
 type DiscoveredCompany = import("@/lib/intelligence/customer-job").DiscoveredCompany;
 type PassSpec = import("@/lib/intelligence/customer-job").PassSpec;
@@ -137,9 +138,12 @@ function leadCandidatesFrom(cands: CanonicalCandidate[]): any[] {
       website_url: c.domain ? `https://${c.domain}` : undefined, location: c.country ?? undefined,
       country: c.country ?? null, industry: c.industry ?? undefined, source: "public_signal" as const,
       confidence_score: c.domain ? 0.8 : 0.5,
-      ...(g?.opportunity_kind ? { opportunity_kind: g.opportunity_kind } : {}),
-      ...(g?.channel_evidence_grade ? { channel_evidence_grade: g.channel_evidence_grade } : {}),
-      ...(g?.channel_proof_type ? { channel_proof_type: g.channel_proof_type } : {}),
+      ...(c.sourceUrl ? { source_url: c.sourceUrl } : {}),
+      ...(c.signalDate ? { signal_date: c.signalDate } : {}),
+      ...(c.signalType ? { signal_type: c.signalType } : {}),
+      ...((c.opportunityKind ?? g?.opportunity_kind) ? { opportunity_kind: c.opportunityKind ?? g?.opportunity_kind } : {}),
+      ...((c.channelEvidenceGrade ?? g?.channel_evidence_grade) ? { channel_evidence_grade: c.channelEvidenceGrade ?? g?.channel_evidence_grade } : {}),
+      ...((c.channelProofType ?? g?.channel_proof_type) ? { channel_proof_type: c.channelProofType ?? g?.channel_proof_type } : {}),
     };
   });
 }
@@ -180,9 +184,15 @@ const deps = {
         const key = cj.canonicalKey(cand.company, cand.domain ?? null);
         if (cand.opportunity_kind || cand.channel_evidence_grade) gradeByKey.set(key, { opportunity_kind: cand.opportunity_kind, channel_evidence_grade: cand.channel_evidence_grade, channel_proof_type: cand.channel_proof_type });
       }
-      discovered = (metrics.universe_accounts ?? []).map((a: any) => ({ company: a.company, domain: a.domain ?? null, country: a.country ?? "United States", industry: a.sector ?? null }));
+      const candidateByKey = new Map((candidates ?? []).map((cand: any) => [cj.canonicalKey(cand.company, cand.domain ?? null), cand]));
+      discovered = (metrics.universe_accounts ?? []).map((a: any) => {
+        const cand: any = candidateByKey.get(cj.canonicalKey(a.company, a.domain ?? null));
+        return { company: a.company, domain: a.domain ?? null, country: a.country ?? "United States", industry: a.sector ?? null,
+          sourceUrl: cand?.source_url ?? null, signalDate: cand?.signal_date ?? null, signalType: cand?.signal_type ?? null,
+          opportunityKind: cand?.opportunity_kind ?? null, channelEvidenceGrade: cand?.channel_evidence_grade ?? null, channelProofType: cand?.channel_proof_type ?? null };
+      });
       // Include graded candidates that the universe list may not surface (breadth).
-      for (const cand of candidates ?? []) if (cand.domain && !discovered.some((d) => cj.canonicalKey(d.company, d.domain) === cj.canonicalKey(cand.company, cand.domain ?? null))) discovered.push({ company: cand.company, domain: cand.domain ?? null, country: cand.country ?? "United States", industry: cand.industry ?? null });
+      for (const cand of candidates ?? []) if (cand.domain && !discovered.some((d) => cj.canonicalKey(d.company, d.domain) === cj.canonicalKey(cand.company, cand.domain ?? null))) discovered.push({ company: cand.company, domain: cand.domain ?? null, country: cand.country ?? "United States", industry: cand.industry ?? null, sourceUrl: cand.source_url ?? null, signalDate: cand.signal_date ?? null, signalType: cand.signal_type ?? null, opportunityKind: cand.opportunity_kind ?? null, channelEvidenceGrade: cand.channel_evidence_grade ?? null, channelProofType: cand.channel_proof_type ?? null });
       providersAttempted = metrics.providers_available ?? [];
       providerState = metrics.provider_status ?? {};
       raw = (metrics.universe_route_metrics ?? []).reduce((s: number, x: any) => s + (x.result_pages ?? 0), 0);
@@ -226,6 +236,7 @@ const deps = {
     } catch (e) { const costUsd = Math.max(0, usdNow() - before); console.error("  qualify error:", e instanceof Error ? e.message : e); return { qualified: [], rejected: preRejected, deferredKeys: candidates.map((c) => c.key), costUsd }; }
     // Canonical decision authority (same as the productive spine): the raw pipeline
     // does NOT populate canonical_cases — the spine derives them per lead post-hoc.
+    for (const l of report.processed_leads ?? []) promotePrimarySourceEvent(l);
     report.canonical_cases = (report.processed_leads ?? []).map((l: any) => canonicalCaseForLead(l)).filter(Boolean);
     console.log(`  qualify: researched ${leads.length}, canonical_cases=${report.canonical_cases.length}, cost $${(usdNow() - before).toFixed(4)}`);
     // Accumulate for the single final assembly (dedup by company).
@@ -316,6 +327,22 @@ writeFileSync(`${OUT}/pilot2-merged-report.json`, JSON.stringify({ reportJson, m
 const institutional = assembleInstitutionalReport(reportJson, meta);
 console.log(`\ninstitutional dossiers: ${institutional.account_dossiers.length}`);
 
+// Premium market-entry context uses the canonical bounded production seam. It
+// is additive and fail-closed: provider/LLM failure never weakens the canonical
+// account report, and the envelope preserves measured cost and failure reasons.
+const { deriveResearchInput, producePremiumContext, premiumContextFromEnvelope } = await import("@/lib/intelligence/premium/premium-production");
+const premiumInput = deriveResearchInput({
+  onboardingData,
+  criteria: onboardingData?.criteria ?? { target_market_region: "United States" },
+  companies: institutional.account_dossiers.map((d: any) => d.company),
+});
+const premiumEnvelope = await producePremiumContext(premiumInput);
+reportJson._premium_context = premiumEnvelope;
+const premiumContext = premiumContextFromEnvelope(premiumEnvelope);
+// Rewrite the durable local foundation after contextual research so render-only
+// recovery preserves the exact Premium envelope without another paid call.
+writeFileSync(`${OUT}/pilot2-merged-report.json`, JSON.stringify({ reportJson, meta, jobState: state }, null, 2));
+
 const TIERS: Array<[string, string, string]> = [
   ["preview", "Preview", "preview_launch_v0"], ["brief", "Brief", "brief_launch_v0"],
   ["intelligence", "Portfolio", "intelligence_launch_v0"], ["premium", "Premium", "premium_launch_v0"],
@@ -324,16 +351,16 @@ const tierOut: any[] = [];
 for (const [tier, label, code] of TIERS) {
   const experience = resolveReportExperience(code, "en");
   const vm = fromInstitutionalReport(institutional, experience);
-  const doc = { ...fromDeliverableViewModel(vm), premiumContext: null };
+  const doc = { ...fromDeliverableViewModel(vm), premiumContext: tier === "premium" ? premiumContext : null };
   const pm = toPresentationModel(doc as any, tier as any, "pdf");
   const pdf = await renderPdfBuffer(pm as any);
   const path = `${OUT}/LeadLens_AmorDeGea_Pilot2_${label}.pdf`;
   writeFileSync(path, pdf);
-  const accounts = (doc as any).accounts?.length ?? institutional.account_dossiers.length;
+  const accounts = (pm as any).document?.accounts?.length ?? institutional.account_dossiers.length;
   console.log(`ok ${label.padEnd(10)} accounts=${accounts} bytes=${pdf.length} -> ${path}`);
   tierOut.push({ tier, label, accounts, bytes: pdf.length, pdf: path });
 }
 
-writeFileSync(`${OUT}/pilot2-job-telemetry.json`, JSON.stringify({ job: state, tiers: tierOut, institutional_dossiers: institutional.account_dossiers.length, vaultGrowth, policy }, null, 2));
+writeFileSync(`${OUT}/pilot2-job-telemetry.json`, JSON.stringify({ job: state, tiers: tierOut, institutional_dossiers: institutional.account_dossiers.length, vaultGrowth, policy, premiumContext: { status: premiumEnvelope.status, cost: premiumEnvelope.cost, latencyMs: premiumEnvelope.latencyMs, failClosedReasons: premiumEnvelope.failClosedReasons } }, null, 2));
 console.log(`\ntelemetry :: ${OUT}/pilot2-job-telemetry.json`);
 console.log(`jobId (for Admin/resume) :: ${jobId}`);
