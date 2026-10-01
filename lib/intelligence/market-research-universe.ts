@@ -66,6 +66,28 @@ export interface AccessPathResearch {
   limitations: string[];
 }
 
+export interface CommercialAccountResearch {
+  account_ref: string;
+  account_name: string;
+  domain: string;
+  route_id: string;
+  decision: "prioritize" | "validate" | "monitor" | "hold" | "not_selected";
+  research_status: ResearchCoverageState;
+  mechanism_status: ResearchCoverageState;
+  mechanism_type: string | null;
+  mechanism_source_ids: string[];
+  access_status: ResearchCoverageState;
+  access_path: string | null;
+  buyer_function_status: ResearchCoverageState;
+  buyer_functions: string[];
+  corroboration_status: "NOT_ATTEMPTED" | "ACHIEVED" | "NOT_FOUND" | "CONFLICTING" | "NOT_REQUIRED";
+  counterevidence: string[];
+  customer_dependency_ids: string[];
+  retrieval_failures: string[];
+  researched_at: string;
+  limitations: string[];
+}
+
 export interface CustomerDependency {
   dependency_id: string;
   label: string;
@@ -148,6 +170,7 @@ export interface MarketResearchUniverseV1 {
   buyer_types: Array<{ buyer_type: string; route_ids: string[]; evidence_source_ids: string[]; coverage_state: ResearchCoverageState }>;
   commercial_mechanisms: CommercialMechanismResearch[];
   access_paths: AccessPathResearch[];
+  commercial_account_research?: CommercialAccountResearch[];
   customer_dependencies: CustomerDependency[];
   ecosystem_entities: Array<{ entity_id: string; name: string; role: string; route_ids: string[]; account_eligible: boolean; source_ids: string[] }>;
   market_sources: MarketSource[];

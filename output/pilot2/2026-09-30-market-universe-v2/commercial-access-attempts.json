@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-01T02:38:19.250Z",
+  "generated_at": "2026-10-01T02:46:57.016Z",
   "attempts": [
     {
       "account": "Natural Grocers",
@@ -10,28 +10,28 @@
       "matched": true,
       "error": null,
       "failure": null,
-      "latency_ms": 1013,
+      "latency_ms": 282,
       "extraction_attempts": [
         {
           "extractor": "tavily",
           "ok": false,
           "error": "HTTP 433",
           "failure": null,
-          "latency_ms": 1191
+          "latency_ms": 771
         },
         {
           "extractor": "firecrawl",
           "ok": false,
           "error": "HTTP 402",
           "failure": "PAYMENT_EXHAUSTED",
-          "latency_ms": 642
+          "latency_ms": 416
         },
         {
           "extractor": "direct_http",
           "ok": true,
           "error": null,
           "failure": null,
-          "latency_ms": 1013
+          "latency_ms": 282
         }
       ],
       "provenance": {
@@ -39,7 +39,7 @@
         "final_url": "https://www.naturalgrocers.com/vendors",
         "domain": "www.naturalgrocers.com",
         "retrieval_method": "direct_http",
-        "retrieved_at": "2026-10-01T02:38:05.910Z",
+        "retrieved_at": "2026-10-01T02:46:54.184Z",
         "http_status": 200,
         "content_type": "text/html",
         "extractor": "basic_html",
@@ -60,28 +60,28 @@
       "matched": false,
       "error": "HTTP 403",
       "failure": "ACCESS_RESTRICTED",
-      "latency_ms": 583,
+      "latency_ms": 151,
       "extraction_attempts": [
         {
           "extractor": "tavily",
           "ok": false,
           "error": "HTTP 433",
           "failure": null,
-          "latency_ms": 146
+          "latency_ms": 127
         },
         {
           "extractor": "firecrawl",
           "ok": false,
           "error": "HTTP 402",
           "failure": "PAYMENT_EXHAUSTED",
-          "latency_ms": 251
+          "latency_ms": 226
         },
         {
           "extractor": "direct_http",
           "ok": false,
           "error": "HTTP 403",
           "failure": "ACCESS_RESTRICTED",
-          "latency_ms": 583
+          "latency_ms": 151
         }
       ],
       "provenance": {
@@ -89,7 +89,7 @@
         "final_url": "https://www.kehe.com/suppliers",
         "domain": "www.kehe.com",
         "retrieval_method": "direct_http",
-        "retrieved_at": "2026-10-01T02:38:07.325Z",
+        "retrieved_at": "2026-10-01T02:46:54.820Z",
         "http_status": 403,
         "content_type": "text/html",
         "extractor": "none",
@@ -110,28 +110,28 @@
       "matched": false,
       "error": null,
       "failure": null,
-      "latency_ms": 1573,
+      "latency_ms": 1246,
       "extraction_attempts": [
         {
           "extractor": "tavily",
           "ok": false,
           "error": "HTTP 433",
           "failure": null,
-          "latency_ms": 137
+          "latency_ms": 140
         },
         {
           "extractor": "firecrawl",
           "ok": false,
           "error": "HTTP 402",
           "failure": "PAYMENT_EXHAUSTED",
-          "latency_ms": 300
+          "latency_ms": 175
         },
         {
           "extractor": "direct_http",
           "ok": true,
           "error": null,
           "failure": null,
-          "latency_ms": 1573
+          "latency_ms": 1246
         }
       ],
       "provenance": {
@@ -139,7 +139,7 @@
         "final_url": "https://gourmetint.com/",
         "domain": "gourmetint.com",
         "retrieval_method": "direct_http",
-        "retrieved_at": "2026-10-01T02:38:08.345Z",
+        "retrieved_at": "2026-10-01T02:46:55.287Z",
         "http_status": 200,
         "content_type": "text/html",
         "extractor": "basic_html",
@@ -160,28 +160,28 @@
       "matched": false,
       "error": null,
       "failure": null,
-      "latency_ms": 8893,
+      "latency_ms": 116,
       "extraction_attempts": [
         {
           "extractor": "tavily",
           "ok": false,
           "error": "HTTP 433",
           "failure": null,
-          "latency_ms": 184
+          "latency_ms": 147
         },
         {
           "extractor": "firecrawl",
           "ok": false,
           "error": "HTTP 402",
           "failure": "PAYMENT_EXHAUSTED",
-          "latency_ms": 220
+          "latency_ms": 216
         },
         {
           "extractor": "direct_http",
           "ok": true,
           "error": null,
           "failure": null,
-          "latency_ms": 8893
+          "latency_ms": 116
         }
       ],
       "provenance": {
@@ -189,7 +189,7 @@
         "final_url": "https://www.savorimports.com/about-us/",
         "domain": "www.savorimports.com",
         "retrieval_method": "direct_http",
-        "retrieved_at": "2026-10-01T02:38:10.323Z",
+        "retrieved_at": "2026-10-01T02:46:56.896Z",
         "http_status": 200,
         "content_type": "text/html",
         "extractor": "basic_html",

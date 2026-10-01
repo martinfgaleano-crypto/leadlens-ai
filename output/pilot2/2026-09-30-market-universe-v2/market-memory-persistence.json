@@ -1,0 +1,9 @@
+{
+  "attempted_at": "2026-10-01T02:48:14.294Z",
+  "migration_required": "066_market_intelligence_memory.sql",
+  "configured": true,
+  "persisted": false,
+  "snapshot_fingerprint": "7d60eccfaa7d31b87595755fcaad063bcdc6a7797c1bdbd501ff984ffd6c348d",
+  "sources": 72,
+  "error": "market_memory_snapshot_failed:Could not find the table 'public.market_intelligence_snapshots' in the schema cache"
+}

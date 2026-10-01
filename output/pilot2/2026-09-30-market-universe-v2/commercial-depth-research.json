@@ -1,0 +1,1193 @@
+{
+  "generated_at": "2026-10-01T02:47:14.002Z",
+  "targets": [
+    {
+      "account_ref": "entity:naturalgrocers.com",
+      "account_name": "Natural Grocers",
+      "domain": "naturalgrocers.com",
+      "route_id": "natural_specialty_grocery",
+      "decision": "prioritize",
+      "research_status": "VERIFIED",
+      "mechanism_status": "VERIFIED",
+      "mechanism_type": "new_item_submission",
+      "mechanism_source_ids": [
+        "src:1"
+      ],
+      "access_status": "VERIFIED",
+      "access_path": "https://www.naturalgrocers.com/vendors",
+      "buyer_function_status": "VERIFIED",
+      "buyer_functions": [
+        "merchandising"
+      ],
+      "corroboration_status": "NOT_ATTEMPTED",
+      "counterevidence": [],
+      "customer_dependency_ids": [
+        "product_classification",
+        "landed_economics",
+        "minimum_order_quantity",
+        "importer_of_record"
+      ],
+      "retrieval_failures": [],
+      "researched_at": "2026-10-01T02:47:00.064Z",
+      "limitations": [
+        "A public access mechanism is not buying intent, product acceptance or evidence of open category capacity."
+      ]
+    },
+    {
+      "account_ref": "entity:sprouts.com",
+      "account_name": "Sprouts Farmers Market",
+      "domain": "sprouts.com",
+      "route_id": "natural_specialty_grocery",
+      "decision": "validate",
+      "research_status": "VERIFIED",
+      "mechanism_status": "VERIFIED",
+      "mechanism_type": "new_item_submission",
+      "mechanism_source_ids": [
+        "src:58",
+        "src:59"
+      ],
+      "access_status": "VERIFIED",
+      "access_path": "https://about.sprouts.com/new-item-submission/",
+      "buyer_function_status": "VERIFIED",
+      "buyer_functions": [
+        "category_management",
+        "merchandising"
+      ],
+      "corroboration_status": "NOT_ATTEMPTED",
+      "counterevidence": [],
+      "customer_dependency_ids": [
+        "product_classification",
+        "landed_economics",
+        "minimum_order_quantity",
+        "importer_of_record"
+      ],
+      "retrieval_failures": [],
+      "researched_at": "2026-10-01T02:47:01.345Z",
+      "limitations": [
+        "A public access mechanism is not buying intent, product acceptance or evidence of open category capacity."
+      ]
+    },
+    {
+      "account_ref": "entity:earthfare.com",
+      "account_name": "Earth Fare",
+      "domain": "earthfare.com",
+      "route_id": "natural_specialty_grocery",
+      "decision": "validate",
+      "research_status": "VERIFIED",
+      "mechanism_status": "RESEARCHED_NOT_FOUND",
+      "mechanism_type": null,
+      "mechanism_source_ids": [],
+      "access_status": "RESEARCHED_NOT_FOUND",
+      "access_path": null,
+      "buyer_function_status": "RESEARCHED_NOT_FOUND",
+      "buyer_functions": [],
+      "corroboration_status": "NOT_ATTEMPTED",
+      "counterevidence": [],
+      "customer_dependency_ids": [
+        "product_classification",
+        "landed_economics",
+        "minimum_order_quantity",
+        "importer_of_record"
+      ],
+      "retrieval_failures": [],
+      "researched_at": "2026-10-01T02:47:02.744Z",
+      "limitations": [
+        "A public access mechanism is not buying intent, product acceptance or evidence of open category capacity.",
+        "No official supplier/product mechanism was verified in the retrieved pages.",
+        "No buyer function was verified from retrieved public text."
+      ]
+    },
+    {
+      "account_ref": "entity:dorothylane.com",
+      "account_name": "Dorothy Lane Market",
+      "domain": "dorothylane.com",
+      "route_id": "natural_specialty_grocery",
+      "decision": "validate",
+      "research_status": "VERIFIED",
+      "mechanism_status": "RESEARCHED_NOT_FOUND",
+      "mechanism_type": null,
+      "mechanism_source_ids": [],
+      "access_status": "RESEARCHED_NOT_FOUND",
+      "access_path": null,
+      "buyer_function_status": "RESEARCHED_NOT_FOUND",
+      "buyer_functions": [],
+      "corroboration_status": "NOT_ATTEMPTED",
+      "counterevidence": [],
+      "customer_dependency_ids": [
+        "product_classification",
+        "landed_economics",
+        "minimum_order_quantity",
+        "importer_of_record"
+      ],
+      "retrieval_failures": [],
+      "researched_at": "2026-10-01T02:47:06.147Z",
+      "limitations": [
+        "A public access mechanism is not buying intent, product acceptance or evidence of open category capacity.",
+        "No official supplier/product mechanism was verified in the retrieved pages.",
+        "No buyer function was verified from retrieved public text."
+      ]
+    },
+    {
+      "account_ref": "entity:wholefoodsmarket.com",
+      "account_name": "Whole Foods Market",
+      "domain": "wholefoodsmarket.com",
+      "route_id": "natural_specialty_grocery",
+      "decision": "monitor",
+      "research_status": "VERIFIED",
+      "mechanism_status": "VERIFIED",
+      "mechanism_type": "local_supplier_program",
+      "mechanism_source_ids": [
+        "src:64"
+      ],
+      "access_status": "VERIFIED",
+      "access_path": "https://www.wholefoodsmarket.com/company-info/information-potential-suppliers",
+      "buyer_function_status": "RESEARCHED_NOT_FOUND",
+      "buyer_functions": [],
+      "corroboration_status": "NOT_ATTEMPTED",
+      "counterevidence": [],
+      "customer_dependency_ids": [
+        "product_classification",
+        "landed_economics",
+        "minimum_order_quantity",
+        "importer_of_record"
+      ],
+      "retrieval_failures": [
+        "https://assets.wholefoodsmarket.com/www/vendors/MW/Produce/20150213-MWProduce-WFM-Responsibly-Grown-Vendor-Manual-V1.pdf: CONTENT_UNUSABLE"
+      ],
+      "researched_at": "2026-10-01T02:47:07.905Z",
+      "limitations": [
+        "A public access mechanism is not buying intent, product acceptance or evidence of open category capacity.",
+        "No buyer function was verified from retrieved public text."
+      ]
+    },
+    {
+      "account_ref": "entity:lifetime.life",
+      "account_name": "Life Time",
+      "domain": "lifetime.life",
+      "route_id": "fitness_wellness_clubs",
+      "decision": "monitor",
+      "research_status": "FOUND_UNVERIFIED",
+      "mechanism_status": "FOUND_UNVERIFIED",
+      "mechanism_type": null,
+      "mechanism_source_ids": [],
+      "access_status": "FOUND_UNVERIFIED",
+      "access_path": null,
+      "buyer_function_status": "FOUND_UNVERIFIED",
+      "buyer_functions": [],
+      "corroboration_status": "NOT_ATTEMPTED",
+      "counterevidence": [],
+      "customer_dependency_ids": [
+        "product_classification",
+        "landed_economics",
+        "minimum_order_quantity"
+      ],
+      "retrieval_failures": [
+        "https://www.lifetime.life/content/dam/ltp/documents/sponsorship-terms-and-conditions-apr-2018.pdf: CONTENT_UNUSABLE",
+        "https://shop.lifetime.life/life-time-water-bottle: PROVIDER_UNAVAILABLE"
+      ],
+      "researched_at": "2026-10-01T02:47:08.905Z",
+      "limitations": [
+        "A public access mechanism is not buying intent, product acceptance or evidence of open category capacity.",
+        "No official supplier/product mechanism was verified in the retrieved pages.",
+        "No buyer function was verified from retrieved public text."
+      ]
+    },
+    {
+      "account_ref": "entity:kehe.com",
+      "account_name": "KeHE Distributors",
+      "domain": "kehe.com",
+      "route_id": "natural_products_distribution",
+      "decision": "not_selected",
+      "research_status": "FOUND_UNVERIFIED",
+      "mechanism_status": "FOUND_UNVERIFIED",
+      "mechanism_type": null,
+      "mechanism_source_ids": [],
+      "access_status": "FOUND_UNVERIFIED",
+      "access_path": null,
+      "buyer_function_status": "FOUND_UNVERIFIED",
+      "buyer_functions": [],
+      "corroboration_status": "NOT_ATTEMPTED",
+      "counterevidence": [],
+      "customer_dependency_ids": [
+        "product_classification",
+        "landed_economics",
+        "minimum_order_quantity",
+        "importer_of_record"
+      ],
+      "retrieval_failures": [
+        "https://www.kehe.com/trend-finder-product-discovery/: ACCESS_RESTRICTED",
+        "https://www.kehe.com/suppliers/: ACCESS_RESTRICTED"
+      ],
+      "researched_at": "2026-10-01T02:47:09.851Z",
+      "limitations": [
+        "A public access mechanism is not buying intent, product acceptance or evidence of open category capacity.",
+        "No official supplier/product mechanism was verified in the retrieved pages.",
+        "No buyer function was verified from retrieved public text."
+      ]
+    },
+    {
+      "account_ref": "entity:gourmetint.com",
+      "account_name": "Gourmet International",
+      "domain": "gourmetint.com",
+      "route_id": "specialty_food_beverage_import",
+      "decision": "not_selected",
+      "research_status": "VERIFIED",
+      "mechanism_status": "RESEARCHED_NOT_FOUND",
+      "mechanism_type": null,
+      "mechanism_source_ids": [],
+      "access_status": "RESEARCHED_NOT_FOUND",
+      "access_path": null,
+      "buyer_function_status": "VERIFIED",
+      "buyer_functions": [
+        "merchandising"
+      ],
+      "corroboration_status": "NOT_ATTEMPTED",
+      "counterevidence": [],
+      "customer_dependency_ids": [
+        "product_classification",
+        "landed_economics",
+        "minimum_order_quantity",
+        "importer_of_record"
+      ],
+      "retrieval_failures": [],
+      "researched_at": "2026-10-01T02:47:13.190Z",
+      "limitations": [
+        "A public access mechanism is not buying intent, product acceptance or evidence of open category capacity.",
+        "No official supplier/product mechanism was verified in the retrieved pages."
+      ]
+    },
+    {
+      "account_ref": "entity:savorimports.com",
+      "account_name": "Savor Imports",
+      "domain": "savorimports.com",
+      "route_id": "specialty_food_beverage_import",
+      "decision": "not_selected",
+      "research_status": "VERIFIED",
+      "mechanism_status": "RESEARCHED_NOT_FOUND",
+      "mechanism_type": null,
+      "mechanism_source_ids": [],
+      "access_status": "RESEARCHED_NOT_FOUND",
+      "access_path": null,
+      "buyer_function_status": "RESEARCHED_NOT_FOUND",
+      "buyer_functions": [],
+      "corroboration_status": "NOT_ATTEMPTED",
+      "counterevidence": [],
+      "customer_dependency_ids": [
+        "product_classification",
+        "landed_economics",
+        "minimum_order_quantity",
+        "importer_of_record"
+      ],
+      "retrieval_failures": [],
+      "researched_at": "2026-10-01T02:47:13.995Z",
+      "limitations": [
+        "A public access mechanism is not buying intent, product acceptance or evidence of open category capacity.",
+        "No official supplier/product mechanism was verified in the retrieved pages.",
+        "No buyer function was verified from retrieved public text."
+      ]
+    }
+  ],
+  "telemetry": [
+    {
+      "account": "Natural Grocers",
+      "query": "site:naturalgrocers.com vendor supplier new item product submission",
+      "search_ok": true,
+      "search_error": null,
+      "source_id": "src:1",
+      "url": "https://www.naturalgrocers.com/vendors",
+      "official": true,
+      "extraction_ok": true,
+      "extractor": "direct_http",
+      "failure": null,
+      "attempts": [
+        {
+          "extractor": "tavily",
+          "ok": false,
+          "error": "HTTP 433",
+          "failure": null,
+          "latency_ms": 320
+        },
+        {
+          "extractor": "firecrawl",
+          "ok": false,
+          "error": "HTTP 402",
+          "failure": "PAYMENT_EXHAUSTED",
+          "latency_ms": 421
+        },
+        {
+          "extractor": "direct_http",
+          "ok": true,
+          "error": null,
+          "failure": null,
+          "latency_ms": 269
+        }
+      ],
+      "provenance": {
+        "original_url": "https://www.naturalgrocers.com/vendors",
+        "final_url": "https://www.naturalgrocers.com/vendors",
+        "domain": "www.naturalgrocers.com",
+        "retrieval_method": "direct_http",
+        "retrieved_at": "2026-10-01T02:46:59.344Z",
+        "http_status": 200,
+        "content_type": "text/html",
+        "extractor": "basic_html",
+        "source_title": "New Item Submissions | Natural Grocers",
+        "publication_date": null,
+        "event_date": null,
+        "content_sha256": "a4e8a3bdf399b4c5b5642543901086bd8651eca6a29bb0b0f790f2ddfd59ff3b",
+        "redirects": []
+      }
+    },
+    {
+      "account": "Natural Grocers",
+      "query": "site:naturalgrocers.com vendor supplier new item product submission",
+      "search_ok": true,
+      "search_error": null,
+      "source_id": "src:10",
+      "url": "https://www.naturalgrocers.com/non-food-product-submissions",
+      "official": true,
+      "extraction_ok": true,
+      "extractor": "direct_http",
+      "failure": null,
+      "attempts": [
+        {
+          "extractor": "tavily",
+          "ok": false,
+          "error": "HTTP 433",
+          "failure": null,
+          "latency_ms": 164
+        },
+        {
+          "extractor": "firecrawl",
+          "ok": false,
+          "error": "HTTP 402",
+          "failure": "PAYMENT_EXHAUSTED",
+          "latency_ms": 189
+        },
+        {
+          "extractor": "direct_http",
+          "ok": true,
+          "error": null,
+          "failure": null,
+          "latency_ms": 99
+        }
+      ],
+      "provenance": {
+        "original_url": "https://www.naturalgrocers.com/non-food-product-submissions",
+        "final_url": "https://www.naturalgrocers.com/non-food-product-submissions",
+        "domain": "www.naturalgrocers.com",
+        "retrieval_method": "direct_http",
+        "retrieved_at": "2026-10-01T02:46:59.966Z",
+        "http_status": 200,
+        "content_type": "text/html",
+        "extractor": "basic_html",
+        "source_title": "Non-Food Product Submissions | Natural Grocers",
+        "publication_date": null,
+        "event_date": null,
+        "content_sha256": "2431dd57b077962bca05cf46af7ab5a2e974ed78fed72b89f8dddf8a9bda64c1",
+        "redirects": []
+      }
+    },
+    {
+      "account": "Sprouts Farmers Market",
+      "query": "site:sprouts.com supplier vendor submit product category",
+      "search_ok": true,
+      "search_error": null,
+      "source_id": "src:58",
+      "url": "https://about.sprouts.com/new-item-submission/",
+      "official": true,
+      "extraction_ok": true,
+      "extractor": "direct_http",
+      "failure": null,
+      "attempts": [
+        {
+          "extractor": "tavily",
+          "ok": false,
+          "error": "HTTP 433",
+          "failure": null,
+          "latency_ms": 135
+        },
+        {
+          "extractor": "firecrawl",
+          "ok": false,
+          "error": "HTTP 402",
+          "failure": "PAYMENT_EXHAUSTED",
+          "latency_ms": 267
+        },
+        {
+          "extractor": "direct_http",
+          "ok": true,
+          "error": null,
+          "failure": null,
+          "latency_ms": 280
+        }
+      ],
+      "provenance": {
+        "original_url": "https://about.sprouts.com/new-item-submission/",
+        "final_url": "https://about.sprouts.com/new-item-submission/",
+        "domain": "about.sprouts.com",
+        "retrieval_method": "direct_http",
+        "retrieved_at": "2026-10-01T02:47:00.649Z",
+        "http_status": 200,
+        "content_type": "text/html",
+        "extractor": "basic_html",
+        "source_title": "Grocery Supplier | Vendor Partner | Sprouts Farmers Market",
+        "publication_date": null,
+        "event_date": null,
+        "content_sha256": "a72e60516bba7ec0b09bf43e843c6bfef843c6fa6795662c2c1adc56e36e6281",
+        "redirects": []
+      }
+    },
+    {
+      "account": "Sprouts Farmers Market",
+      "query": "site:sprouts.com supplier vendor submit product category",
+      "search_ok": true,
+      "search_error": null,
+      "source_id": "src:59",
+      "url": "https://about.sprouts.com/new-item-submission-process/",
+      "official": true,
+      "extraction_ok": true,
+      "extractor": "direct_http",
+      "failure": null,
+      "attempts": [
+        {
+          "extractor": "tavily",
+          "ok": false,
+          "error": "HTTP 433",
+          "failure": null,
+          "latency_ms": 126
+        },
+        {
+          "extractor": "firecrawl",
+          "ok": false,
+          "error": "HTTP 402",
+          "failure": "PAYMENT_EXHAUSTED",
+          "latency_ms": 110
+        },
+        {
+          "extractor": "direct_http",
+          "ok": true,
+          "error": null,
+          "failure": null,
+          "latency_ms": 179
+        }
+      ],
+      "provenance": {
+        "original_url": "https://about.sprouts.com/new-item-submission-process/",
+        "final_url": "https://about.sprouts.com/new-item-submission-process/",
+        "domain": "about.sprouts.com",
+        "retrieval_method": "direct_http",
+        "retrieved_at": "2026-10-01T02:47:01.166Z",
+        "http_status": 200,
+        "content_type": "text/html",
+        "extractor": "basic_html",
+        "source_title": "New Item Submission Process - Sprouts Corporate: About, Sustainability, Press, Careers, Foundation, Investors",
+        "publication_date": null,
+        "event_date": null,
+        "content_sha256": "476bab59d05cd39b5bc62bfa99df3fbe77dd6541cd9fb558250f3f3e864b3087",
+        "redirects": []
+      }
+    },
+    {
+      "account": "Earth Fare",
+      "query": "site:earthfare.com supplier vendor product submission",
+      "search_ok": true,
+      "search_error": null,
+      "source_id": "src:60",
+      "url": "https://www.earthfare.com/",
+      "official": true,
+      "extraction_ok": true,
+      "extractor": "direct_http",
+      "failure": null,
+      "attempts": [
+        {
+          "extractor": "tavily",
+          "ok": false,
+          "error": "HTTP 433",
+          "failure": null,
+          "latency_ms": 146
+        },
+        {
+          "extractor": "firecrawl",
+          "ok": false,
+          "error": "HTTP 402",
+          "failure": "PAYMENT_EXHAUSTED",
+          "latency_ms": 205
+        },
+        {
+          "extractor": "direct_http",
+          "ok": true,
+          "error": null,
+          "failure": null,
+          "latency_ms": 325
+        }
+      ],
+      "provenance": {
+        "original_url": "https://www.earthfare.com/",
+        "final_url": "https://www.earthfare.com/",
+        "domain": "www.earthfare.com",
+        "retrieval_method": "direct_http",
+        "retrieved_at": "2026-10-01T02:47:01.901Z",
+        "http_status": 200,
+        "content_type": "text/html",
+        "extractor": "basic_html",
+        "source_title": "Natural & Organic Grocery Store in United States | Earth Fare",
+        "publication_date": null,
+        "event_date": null,
+        "content_sha256": "49ecf9ca323ccf757c1f97af45419a477015adf5c761dbdd8c2294684ed683b3",
+        "redirects": []
+      }
+    },
+    {
+      "account": "Earth Fare",
+      "query": "site:earthfare.com supplier vendor product submission",
+      "search_ok": true,
+      "search_error": null,
+      "source_id": "src:61",
+      "url": "https://order.earthfare.com/help/section/639415266/3042663021",
+      "official": true,
+      "extraction_ok": true,
+      "extractor": "direct_http",
+      "failure": null,
+      "attempts": [
+        {
+          "extractor": "tavily",
+          "ok": false,
+          "error": "HTTP 433",
+          "failure": null,
+          "latency_ms": 155
+        },
+        {
+          "extractor": "firecrawl",
+          "ok": false,
+          "error": "HTTP 402",
+          "failure": "PAYMENT_EXHAUSTED",
+          "latency_ms": 198
+        },
+        {
+          "extractor": "direct_http",
+          "ok": true,
+          "error": null,
+          "failure": null,
+          "latency_ms": 164
+        }
+      ],
+      "provenance": {
+        "original_url": "https://order.earthfare.com/help/section/639415266/3042663021",
+        "final_url": "https://order.earthfare.com/help/section/639415266/3042663021",
+        "domain": "order.earthfare.com",
+        "retrieval_method": "direct_http",
+        "retrieved_at": "2026-10-01T02:47:02.579Z",
+        "http_status": 200,
+        "content_type": "text/html",
+        "extractor": "basic_html",
+        "source_title": "Instacart Help Center - Item and Multi-Item Promotional Offer Terms",
+        "publication_date": null,
+        "event_date": null,
+        "content_sha256": "feca865751b7c61c08e0a087720ee6bb645477b2720cf07f276191dc74ac8733",
+        "redirects": []
+      }
+    },
+    {
+      "account": "Dorothy Lane Market",
+      "query": "site:dorothylane.com supplier vendor product submission",
+      "search_ok": true,
+      "search_error": null,
+      "source_id": "src:62",
+      "url": "https://www.dorothylane.com/locations/oakwood",
+      "official": true,
+      "extraction_ok": true,
+      "extractor": "direct_http",
+      "failure": null,
+      "attempts": [
+        {
+          "extractor": "tavily",
+          "ok": false,
+          "error": "HTTP 433",
+          "failure": null,
+          "latency_ms": 120
+        },
+        {
+          "extractor": "firecrawl",
+          "ok": false,
+          "error": "HTTP 429",
+          "failure": "RATE_LIMITED",
+          "latency_ms": 120
+        },
+        {
+          "extractor": "direct_http",
+          "ok": true,
+          "error": null,
+          "failure": null,
+          "latency_ms": 1521
+        }
+      ],
+      "provenance": {
+        "original_url": "https://www.dorothylane.com/locations/oakwood",
+        "final_url": "https://www.dorothylane.com/locations/oakwood",
+        "domain": "www.dorothylane.com",
+        "retrieval_method": "direct_http",
+        "retrieved_at": "2026-10-01T02:47:03.155Z",
+        "http_status": 200,
+        "content_type": "text/html",
+        "extractor": "basic_html",
+        "source_title": "Oakwood | Dorothy Lane Market",
+        "publication_date": null,
+        "event_date": null,
+        "content_sha256": "776221ce6595d7997d8cd4ea0e0e66978882e46fe0d123f26282f18a8eb23730",
+        "redirects": []
+      }
+    },
+    {
+      "account": "Dorothy Lane Market",
+      "query": "site:dorothylane.com supplier vendor product submission",
+      "search_ok": true,
+      "search_error": null,
+      "source_id": "src:63",
+      "url": "https://www.dorothylane.com/Item/1883MaisonRoutinVanillaSyrup",
+      "official": true,
+      "extraction_ok": true,
+      "extractor": "direct_http",
+      "failure": null,
+      "attempts": [
+        {
+          "extractor": "tavily",
+          "ok": false,
+          "error": "HTTP 433",
+          "failure": null,
+          "latency_ms": 118
+        },
+        {
+          "extractor": "firecrawl",
+          "ok": false,
+          "error": "HTTP 429",
+          "failure": "RATE_LIMITED",
+          "latency_ms": 96
+        },
+        {
+          "extractor": "direct_http",
+          "ok": true,
+          "error": null,
+          "failure": null,
+          "latency_ms": 1257
+        }
+      ],
+      "provenance": {
+        "original_url": "https://www.dorothylane.com/Item/1883MaisonRoutinVanillaSyrup",
+        "final_url": "https://www.dorothylane.com/Item/1883MaisonRoutinVanillaSyrup",
+        "domain": "www.dorothylane.com",
+        "retrieval_method": "direct_http",
+        "retrieved_at": "2026-10-01T02:47:04.890Z",
+        "http_status": 200,
+        "content_type": "text/html",
+        "extractor": "basic_html",
+        "source_title": "1883 Maison Routin Vanilla Syrup | Dorothy Lane Market",
+        "publication_date": null,
+        "event_date": null,
+        "content_sha256": "4a856494feb8ed82fb091d2d6cc35f6505a5954bd5cdcbc1f31a12e20b03d084",
+        "redirects": []
+      }
+    },
+    {
+      "account": "Whole Foods Market",
+      "query": "site:wholefoodsmarket.com supplier local producer vendor submit product",
+      "search_ok": true,
+      "search_error": null,
+      "source_id": "src:64",
+      "url": "https://www.wholefoodsmarket.com/company-info/information-potential-suppliers",
+      "official": true,
+      "extraction_ok": true,
+      "extractor": "direct_http",
+      "failure": null,
+      "attempts": [
+        {
+          "extractor": "tavily",
+          "ok": false,
+          "error": "HTTP 433",
+          "failure": null,
+          "latency_ms": 138
+        },
+        {
+          "extractor": "firecrawl",
+          "ok": false,
+          "error": "HTTP 429",
+          "failure": "RATE_LIMITED",
+          "latency_ms": 119
+        },
+        {
+          "extractor": "direct_http",
+          "ok": true,
+          "error": null,
+          "failure": null,
+          "latency_ms": 570
+        }
+      ],
+      "provenance": {
+        "original_url": "https://www.wholefoodsmarket.com/company-info/information-potential-suppliers",
+        "final_url": "https://www.wholefoodsmarket.com/company-info/information-potential-suppliers",
+        "domain": "www.wholefoodsmarket.com",
+        "retrieval_method": "direct_http",
+        "retrieved_at": "2026-10-01T02:47:06.589Z",
+        "http_status": 200,
+        "content_type": "text/html",
+        "extractor": "basic_html",
+        "source_title": "Information for Potential Suppliers | Whole Foods Market",
+        "publication_date": null,
+        "event_date": null,
+        "content_sha256": "6e0b5d1a14f16baad1c211fb6faaea34ec539c1b013b276fe25254ea100ed013",
+        "redirects": []
+      }
+    },
+    {
+      "account": "Whole Foods Market",
+      "query": "site:wholefoodsmarket.com supplier local producer vendor submit product",
+      "search_ok": true,
+      "search_error": null,
+      "source_id": "src:65",
+      "url": "https://assets.wholefoodsmarket.com/www/vendors/MW/Produce/20150213-MWProduce-WFM-Responsibly-Grown-Vendor-Manual-V1.pdf",
+      "official": true,
+      "extraction_ok": false,
+      "extractor": "none",
+      "failure": "CONTENT_UNUSABLE",
+      "attempts": [
+        {
+          "extractor": "tavily",
+          "ok": false,
+          "error": "HTTP 433",
+          "failure": null,
+          "latency_ms": 122
+        },
+        {
+          "extractor": "firecrawl",
+          "ok": false,
+          "error": "HTTP 429",
+          "failure": "RATE_LIMITED",
+          "latency_ms": 114
+        },
+        {
+          "extractor": "direct_http",
+          "ok": false,
+          "error": "Unsupported content type: application/pdf",
+          "failure": "CONTENT_UNUSABLE",
+          "latency_ms": 510
+        }
+      ],
+      "provenance": {
+        "original_url": "https://assets.wholefoodsmarket.com/www/vendors/MW/Produce/20150213-MWProduce-WFM-Responsibly-Grown-Vendor-Manual-V1.pdf",
+        "final_url": "https://assets.wholefoodsmarket.com/www/vendors/MW/Produce/20150213-MWProduce-WFM-Responsibly-Grown-Vendor-Manual-V1.pdf",
+        "domain": "assets.wholefoodsmarket.com",
+        "retrieval_method": "direct_http",
+        "retrieved_at": "2026-10-01T02:47:07.395Z",
+        "http_status": 200,
+        "content_type": "application/pdf",
+        "extractor": "none",
+        "source_title": null,
+        "publication_date": null,
+        "event_date": null,
+        "content_sha256": null,
+        "redirects": []
+      }
+    },
+    {
+      "account": "Life Time",
+      "query": "site:lifetime.life supplier vendor procurement beverage",
+      "search_ok": true,
+      "search_error": null,
+      "source_id": "src:66",
+      "url": "https://www.lifetime.life/content/dam/ltp/documents/sponsorship-terms-and-conditions-apr-2018.pdf",
+      "official": true,
+      "extraction_ok": false,
+      "extractor": "none",
+      "failure": "CONTENT_UNUSABLE",
+      "attempts": [
+        {
+          "extractor": "tavily",
+          "ok": false,
+          "error": "HTTP 433",
+          "failure": null,
+          "latency_ms": 117
+        },
+        {
+          "extractor": "firecrawl",
+          "ok": false,
+          "error": "HTTP 429",
+          "failure": "RATE_LIMITED",
+          "latency_ms": 116
+        },
+        {
+          "extractor": "direct_http",
+          "ok": false,
+          "error": "Unsupported content type: application/pdf",
+          "failure": "CONTENT_UNUSABLE",
+          "latency_ms": 85
+        }
+      ],
+      "provenance": {
+        "original_url": "https://www.lifetime.life/content/dam/ltp/documents/sponsorship-terms-and-conditions-apr-2018.pdf",
+        "final_url": "https://www.lifetime.life/content/dam/ltp/documents/sponsorship-terms-and-conditions-apr-2018.pdf",
+        "domain": "www.lifetime.life",
+        "retrieval_method": "direct_http",
+        "retrieved_at": "2026-10-01T02:47:08.324Z",
+        "http_status": 200,
+        "content_type": "application/pdf",
+        "extractor": "none",
+        "source_title": null,
+        "publication_date": null,
+        "event_date": null,
+        "content_sha256": null,
+        "redirects": []
+      }
+    },
+    {
+      "account": "Life Time",
+      "query": "site:lifetime.life supplier vendor procurement beverage",
+      "search_ok": true,
+      "search_error": null,
+      "source_id": "src:67",
+      "url": "https://shop.lifetime.life/life-time-water-bottle",
+      "official": true,
+      "extraction_ok": false,
+      "extractor": "none",
+      "failure": "PROVIDER_UNAVAILABLE",
+      "attempts": [
+        {
+          "extractor": "tavily",
+          "ok": false,
+          "error": "HTTP 433",
+          "failure": null,
+          "latency_ms": 162
+        },
+        {
+          "extractor": "firecrawl",
+          "ok": false,
+          "error": "HTTP 429",
+          "failure": "RATE_LIMITED",
+          "latency_ms": 129
+        },
+        {
+          "extractor": "direct_http",
+          "ok": false,
+          "error": "HTTP 500",
+          "failure": "PROVIDER_UNAVAILABLE",
+          "latency_ms": 204
+        }
+      ],
+      "provenance": {
+        "original_url": "https://shop.lifetime.life/life-time-water-bottle",
+        "final_url": "https://shop.lifetime.life/life-time-water-bottle",
+        "domain": "shop.lifetime.life",
+        "retrieval_method": "direct_http",
+        "retrieved_at": "2026-10-01T02:47:08.701Z",
+        "http_status": 500,
+        "content_type": "text/html",
+        "extractor": "none",
+        "source_title": null,
+        "publication_date": null,
+        "event_date": null,
+        "content_sha256": null,
+        "redirects": []
+      }
+    },
+    {
+      "account": "KeHE Distributors",
+      "query": "site:kehe.com suppliers submit products brand onboarding",
+      "search_ok": true,
+      "search_error": null,
+      "source_id": "src:68",
+      "url": "https://www.kehe.com/trend-finder-product-discovery/",
+      "official": true,
+      "extraction_ok": false,
+      "extractor": "none",
+      "failure": "ACCESS_RESTRICTED",
+      "attempts": [
+        {
+          "extractor": "tavily",
+          "ok": false,
+          "error": "HTTP 433",
+          "failure": null,
+          "latency_ms": 120
+        },
+        {
+          "extractor": "firecrawl",
+          "ok": false,
+          "error": "HTTP 429",
+          "failure": "RATE_LIMITED",
+          "latency_ms": 118
+        },
+        {
+          "extractor": "direct_http",
+          "ok": false,
+          "error": "HTTP 403",
+          "failure": "ACCESS_RESTRICTED",
+          "latency_ms": 134
+        }
+      ],
+      "provenance": {
+        "original_url": "https://www.kehe.com/trend-finder-product-discovery/",
+        "final_url": "https://www.kehe.com/trend-finder-product-discovery/",
+        "domain": "www.kehe.com",
+        "retrieval_method": "direct_http",
+        "retrieved_at": "2026-10-01T02:47:09.429Z",
+        "http_status": 403,
+        "content_type": "text/html",
+        "extractor": "none",
+        "source_title": null,
+        "publication_date": null,
+        "event_date": null,
+        "content_sha256": null,
+        "redirects": []
+      }
+    },
+    {
+      "account": "KeHE Distributors",
+      "query": "site:kehe.com suppliers submit products brand onboarding",
+      "search_ok": true,
+      "search_error": null,
+      "source_id": "src:69",
+      "url": "https://www.kehe.com/suppliers/",
+      "official": true,
+      "extraction_ok": false,
+      "extractor": "none",
+      "failure": "ACCESS_RESTRICTED",
+      "attempts": [
+        {
+          "extractor": "tavily",
+          "ok": false,
+          "error": "HTTP 433",
+          "failure": null,
+          "latency_ms": 123
+        },
+        {
+          "extractor": "firecrawl",
+          "ok": false,
+          "error": "HTTP 429",
+          "failure": "RATE_LIMITED",
+          "latency_ms": 110
+        },
+        {
+          "extractor": "direct_http",
+          "ok": false,
+          "error": "HTTP 403",
+          "failure": "ACCESS_RESTRICTED",
+          "latency_ms": 53
+        }
+      ],
+      "provenance": {
+        "original_url": "https://www.kehe.com/suppliers/",
+        "final_url": "https://www.kehe.com/suppliers/",
+        "domain": "www.kehe.com",
+        "retrieval_method": "direct_http",
+        "retrieved_at": "2026-10-01T02:47:09.797Z",
+        "http_status": 403,
+        "content_type": "text/html",
+        "extractor": "none",
+        "source_title": null,
+        "publication_date": null,
+        "event_date": null,
+        "content_sha256": null,
+        "redirects": []
+      }
+    },
+    {
+      "account": "Gourmet International",
+      "query": "site:gourmetint.com supplier brand wholesale contact",
+      "search_ok": true,
+      "search_error": null,
+      "source_id": "src:39",
+      "url": "https://gourmetint.com/",
+      "official": true,
+      "extraction_ok": true,
+      "extractor": "direct_http",
+      "failure": null,
+      "attempts": [
+        {
+          "extractor": "tavily",
+          "ok": false,
+          "error": "HTTP 433",
+          "failure": null,
+          "latency_ms": 153
+        },
+        {
+          "extractor": "firecrawl",
+          "ok": false,
+          "error": "HTTP 429",
+          "failure": "RATE_LIMITED",
+          "latency_ms": 240
+        },
+        {
+          "extractor": "direct_http",
+          "ok": true,
+          "error": null,
+          "failure": null,
+          "latency_ms": 1299
+        }
+      ],
+      "provenance": {
+        "original_url": "https://gourmetint.com/",
+        "final_url": "https://gourmetint.com/",
+        "domain": "gourmetint.com",
+        "retrieval_method": "direct_http",
+        "retrieved_at": "2026-10-01T02:47:10.677Z",
+        "http_status": 200,
+        "content_type": "text/html",
+        "extractor": "basic_html",
+        "source_title": "Gourmet International – Importers & Distributors of Specialty Foods",
+        "publication_date": null,
+        "event_date": null,
+        "content_sha256": "263596849ad0d723060ff923a93c1101e78b2583f77d5c0db7563b497166547c",
+        "redirects": []
+      }
+    },
+    {
+      "account": "Gourmet International",
+      "query": "site:gourmetint.com supplier brand wholesale contact",
+      "search_ok": true,
+      "search_error": null,
+      "source_id": "src:70",
+      "url": "https://gourmetint.com/brands/",
+      "official": true,
+      "extraction_ok": true,
+      "extractor": "direct_http",
+      "failure": null,
+      "attempts": [
+        {
+          "extractor": "tavily",
+          "ok": false,
+          "error": "HTTP 433",
+          "failure": null,
+          "latency_ms": 127
+        },
+        {
+          "extractor": "firecrawl",
+          "ok": false,
+          "error": "HTTP 429",
+          "failure": "RATE_LIMITED",
+          "latency_ms": 128
+        },
+        {
+          "extractor": "direct_http",
+          "ok": true,
+          "error": null,
+          "failure": null,
+          "latency_ms": 959
+        }
+      ],
+      "provenance": {
+        "original_url": "https://gourmetint.com/brands/",
+        "final_url": "https://gourmetint.com/brands/",
+        "domain": "gourmetint.com",
+        "retrieval_method": "direct_http",
+        "retrieved_at": "2026-10-01T02:47:12.231Z",
+        "http_status": 200,
+        "content_type": "text/html",
+        "extractor": "basic_html",
+        "source_title": "Brands – Gourmet International",
+        "publication_date": null,
+        "event_date": null,
+        "content_sha256": "b647e743800fe67acec2a8d3eb6bd21ab8009005c61194700a2c16d57867ab75",
+        "redirects": []
+      }
+    },
+    {
+      "account": "Savor Imports",
+      "query": "site:savorimports.com supplier brand wholesale contact",
+      "search_ok": true,
+      "search_error": null,
+      "source_id": "src:71",
+      "url": "https://www.savorimports.com/about-us/",
+      "official": true,
+      "extraction_ok": true,
+      "extractor": "direct_http",
+      "failure": null,
+      "attempts": [
+        {
+          "extractor": "tavily",
+          "ok": false,
+          "error": "HTTP 433",
+          "failure": null,
+          "latency_ms": 136
+        },
+        {
+          "extractor": "firecrawl",
+          "ok": false,
+          "error": "HTTP 429",
+          "failure": "RATE_LIMITED",
+          "latency_ms": 118
+        },
+        {
+          "extractor": "direct_http",
+          "ok": true,
+          "error": null,
+          "failure": null,
+          "latency_ms": 85
+        }
+      ],
+      "provenance": {
+        "original_url": "https://www.savorimports.com/about-us/",
+        "final_url": "https://www.savorimports.com/about-us/",
+        "domain": "www.savorimports.com",
+        "retrieval_method": "direct_http",
+        "retrieved_at": "2026-10-01T02:47:13.625Z",
+        "http_status": 200,
+        "content_type": "text/html",
+        "extractor": "basic_html",
+        "source_title": "About Us - Savor Imports",
+        "publication_date": null,
+        "event_date": null,
+        "content_sha256": "4ba9e27384b30733180edf5f17a12f13d66780011135c8ca50d00e7c529632a5",
+        "redirects": []
+      }
+    },
+    {
+      "account": "Savor Imports",
+      "query": "site:savorimports.com supplier brand wholesale contact",
+      "search_ok": true,
+      "search_error": null,
+      "source_id": "src:72",
+      "url": "https://www.savorimports.com/products/",
+      "official": true,
+      "extraction_ok": true,
+      "extractor": "direct_http",
+      "failure": null,
+      "attempts": [
+        {
+          "extractor": "tavily",
+          "ok": false,
+          "error": "HTTP 433",
+          "failure": null,
+          "latency_ms": 128
+        },
+        {
+          "extractor": "firecrawl",
+          "ok": false,
+          "error": "HTTP 429",
+          "failure": "RATE_LIMITED",
+          "latency_ms": 120
+        },
+        {
+          "extractor": "direct_http",
+          "ok": true,
+          "error": null,
+          "failure": null,
+          "latency_ms": 36
+        }
+      ],
+      "provenance": {
+        "original_url": "https://www.savorimports.com/products/",
+        "final_url": "https://www.savorimports.com/products/",
+        "domain": "www.savorimports.com",
+        "retrieval_method": "direct_http",
+        "retrieved_at": "2026-10-01T02:47:13.959Z",
+        "http_status": 200,
+        "content_type": "text/html",
+        "extractor": "basic_html",
+        "source_title": "Products - Savor Imports",
+        "publication_date": null,
+        "event_date": null,
+        "content_sha256": "7ec1d703c610d4abcec701ff8882f057b24a6c447d820747511f521f3c020aa8",
+        "redirects": []
+      }
+    }
+  ],
+  "validation_errors": []
+}
