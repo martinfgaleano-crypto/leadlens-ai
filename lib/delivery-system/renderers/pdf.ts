@@ -697,6 +697,44 @@ export function renderPdfBuffer(pm: PresentationModel, opts?: { compress?: boole
     if (tensions.length) bullets(L.portfolioTensions, tensions, [217, 119, 6]);
     const themes = intel.portfolio_intelligence.validation_themes.map((x) => `${x.theme}: ${x.accounts.join(", ")}`);
     if (themes.length) bullets(L.validationThemes, themes.slice(0, 6));
+
+    // Premium-only market universe. Portfolio remains selected-account intelligence;
+    // Premium adds independently researched routes and commercial-depth coverage.
+    const market = intel.market_research_universe;
+    if (tierLabel === "Premium" && market) {
+      band(es ? "Universo de investigación de mercado" : "Market research universe", SKY);
+      text(market.objective, M, 9, "normal", SUB);
+      statRow([
+        { label: es ? "Fuentes de mercado" : "Market sources", value: String(market.market_sources.length) },
+        { label: es ? "Rutas investigadas" : "Routes researched", value: `${market.coverage.routes_researched}/${market.route_research.length}` },
+        { label: es ? "Mecanismos verificados" : "Verified mechanisms", value: String(market.coverage.mechanisms_verified) },
+        { label: es ? "Accesos verificados" : "Verified access paths", value: String(market.coverage.access_verified) },
+      ]);
+      text(es ? "Cobertura por ruta" : "Route research coverage", M, 10.5, "bold", INK);
+      autoTable(pdf, {
+        startY: y, margin: { left: M, right: M }, styles: { font: "helvetica", fontSize: 7.2, cellPadding: 1.5, textColor: [30, 41, 59], lineColor: [232, 238, 245], lineWidth: 0.1 },
+        headStyles: { fillColor: INK_DK, textColor: 255, fontStyle: "bold" },
+        head: [[es ? "Ruta" : "Route", es ? "Estado" : "State", es ? "Fuentes" : "Sources", es ? "Acceso" : "Access", es ? "Soporte independiente" : "Independent support"]],
+        body: market.route_research.map((route) => [latin1(market.route_definitions.find((definition) => definition.canonical_route_id === route.route_id)?.display_label ?? route.route_id), route.lifecycle, String(route.source_ids.length), route.mechanism_research, String(route.independent_support_count)]),
+      });
+      // @ts-expect-error jspdf-autotable augments lastAutoTable at runtime
+      y = (pdf.lastAutoTable?.finalY ?? y) + 5;
+      const researched = market.commercial_account_research ?? [];
+      if (researched.length) {
+        band(es ? "Profundidad comercial" : "Commercial depth", SKY);
+        autoTable(pdf, {
+          startY: y, margin: { left: M, right: M }, styles: { font: "helvetica", fontSize: 7.1, cellPadding: 1.45, textColor: [30, 41, 59], lineColor: [232, 238, 245], lineWidth: 0.1 },
+          headStyles: { fillColor: INK_DK, textColor: 255, fontStyle: "bold" },
+          head: [[es ? "Cuenta" : "Account", es ? "Investigación" : "Research", es ? "Mecanismo" : "Mechanism", es ? "Acceso" : "Access", es ? "Función compradora" : "Buyer function", es ? "Corroboración" : "Corroboration"]],
+          body: researched.map((row) => [latin1(row.account_name), row.research_status, row.mechanism_status, row.access_status, latin1(row.buyer_functions.join(", ") || (es ? "No establecida" : "Not established")), row.corroboration_status]),
+        });
+        // @ts-expect-error jspdf-autotable augments lastAutoTable at runtime
+        y = (pdf.lastAutoTable?.finalY ?? y) + 5;
+      }
+      const dependencies = market.customer_dependencies.filter((dependency) => dependency.status !== "SATISFIED" && dependency.status !== "NOT_APPLICABLE");
+      if (dependencies.length) bullets(es ? "Dependencias del cliente" : "Customer dependencies", dependencies.map((dependency) => `${dependency.label}: ${dependency.validation_question}`).slice(0, 6), [217, 119, 6]);
+      text(market.limitations.join(" "), M, 8, "normal", MUTE);
+    }
   }
 
   function playbookCard(pb: ReturnType<typeof derivePlaybooks>[number]) {

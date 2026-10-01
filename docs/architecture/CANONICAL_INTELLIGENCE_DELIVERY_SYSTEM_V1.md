@@ -91,3 +91,21 @@ After each meaningful renderer change, regenerate all four PDFs, run `pdfinfo`, 
 - Most Pilot 2 buyer functions and access mechanisms remain unknown.
 - Independent corroboration coverage remains limited and must be displayed as such.
 - Premium is not delivery-ready at 17/18 and may not be padded.
+
+## Provider-resilient evidence acquisition
+
+`lib/sources/access/extractors.ts` is the canonical extraction entry point. It separates discovery from extraction and uses Tavily Extract, Firecrawl, then `retrievePublicPage()` from `lib/sources/access/safe-page-retrieval.ts`. The direct path validates scheme, credentials, DNS results and every redirect; localhost, private/link-local IP space, metadata hosts, unsafe schemes, oversized bodies and unsupported content types fail closed. It stores retrieval method, final URL, status, MIME type, title, dates, redirect chain and content hash. Firecrawl is useful but optional.
+
+Provider failure classes are preserved (`PAYMENT_EXHAUSTED`, `RATE_LIMITED`, `TIMEOUT`, `FETCH_BLOCKED`, `CONTENT_UNUSABLE`, `PAGE_NOT_FOUND`, `ACCESS_RESTRICTED`, `PROVIDER_UNAVAILABLE`). Search snippets are discovery observations and never become verified mechanism evidence merely because extraction failed.
+
+## Commercial depth
+
+`lib/intelligence/commercial-depth-research.ts` independently records research status, mechanism, access, buyer function, corroboration and retrieval failures. A generic contact page is not supplier access. A mechanism is verified only from retrieved first-party text; access does not establish buying intent or current category capacity. The bounded Pilot 2 runner is `scripts/sources/run-pilot2-commercial-depth.ts`.
+
+## Durable market memory
+
+`lib/intelligence/market-memory-store.ts` is the canonical scoped repository contract. Migration `066_market_intelligence_memory.sql` adds service-role-only `market_intelligence_snapshots` and `market_source_observations`. Memory is scoped by tenant/client, objective fingerprint, geography and category context; structural evidence can be reused while time-sensitive evidence is refreshed. Canonical URL and content hashes support anti-repetition. Until migration 066 is applied, the JSON artifact remains auditable but Market Memory must be reported as migration-blocked rather than durable-green.
+
+## Multidimensional readiness
+
+`evaluateCanonicalTierReadiness()` exposes capacity, actionability, market intelligence, commercial depth, corroboration, visual intelligence and evidence-integrity status separately. A partial capacity state cannot hide weak corroboration, and quality warnings do not alter canonical account decisions. Premium remains partial at 17/18.

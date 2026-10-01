@@ -24,6 +24,13 @@ export interface CanonicalTierReadiness extends AdvancedTierReadiness {
   portfolioIntelligenceReady: boolean;
   visualIntelligenceReady: boolean;
   renderReady: boolean;
+  capacityStatus: "FULL" | "PARTIAL";
+  actionabilityStatus: "READY" | "RESEARCH_REQUIRED";
+  marketIntelligenceStatus: "READY" | "LIMITED" | "INSUFFICIENT";
+  commercialDepthStatus: "STRONG" | "ADEQUATE" | "LIMITED" | "INSUFFICIENT";
+  corroborationStatus: "STRONG" | "ADEQUATE" | "LIMITED" | "INSUFFICIENT";
+  visualIntelligenceStatus: "READY" | "LIMITED";
+  evidenceIntegrityStatus: "READY" | "LIMITED";
 }
 const TARGETS: Record<IntelligenceTier, number> = { preview: 2, brief: 6, portfolio: 12, premium: 18 };
 
@@ -83,11 +90,24 @@ export function evaluateCanonicalTierReadiness(
   const portfolioIntelligenceReady = !portfolio || Boolean(intelligence?.portfolio_intelligence.leadlens_read.text);
   const visualIntelligenceReady = !portfolio || Boolean(intelligence?.charts.length && intelligence?.charts.every((chart) => chart.denominator === intelligence.scope.selected));
   const reasonCodes = [...base.reasonCodes];
+  const commercialRows = marketUniverse?.commercial_account_research ?? [];
+  const decisionCritical = commercialRows.filter((row) => ["prioritize", "validate", "monitor"].includes(row.decision));
+  const researchedCritical = decisionCritical.filter((row) => row.research_status !== "NOT_RESEARCHED").length;
+  const verifiedCriticalMechanisms = decisionCritical.filter((row) => row.mechanism_status === "VERIFIED").length;
+  const corroboratedCritical = decisionCritical.filter((row) => row.corroboration_status === "ACHIEVED").length;
+  const buyerFunctionsCritical = decisionCritical.filter((row) => row.buyer_functions.length > 0).length;
+  const commercialDepthStatus: CanonicalTierReadiness["commercialDepthStatus"] = !premium ? "ADEQUATE" : !decisionCritical.length ? "INSUFFICIENT" : researchedCritical < decisionCritical.length ? "LIMITED" : verifiedCriticalMechanisms === decisionCritical.length && buyerFunctionsCritical === decisionCritical.length ? "STRONG" : verifiedCriticalMechanisms > 0 ? "ADEQUATE" : "LIMITED";
+  const corroborationStatus: CanonicalTierReadiness["corroborationStatus"] = !premium ? "ADEQUATE" : !decisionCritical.length ? "INSUFFICIENT" : corroboratedCritical >= Math.ceil(decisionCritical.length * 0.75) ? "STRONG" : corroboratedCritical >= Math.ceil(decisionCritical.length * 0.4) ? "ADEQUATE" : "LIMITED";
+  const evidenceIntegrityStatus: CanonicalTierReadiness["evidenceIntegrityStatus"] = intelligence && (!marketUniverse || validateMarketResearchUniverse(marketUniverse).length === 0) ? "READY" : "LIMITED";
   if (!marketIntelligenceReady) reasonCodes.push("MARKET_INTELLIGENCE_REQUIRED");
   if (!benchmarkReady) reasonCodes.push("BENCHMARK_REQUIRED");
   if (!portfolioIntelligenceReady) reasonCodes.push("PORTFOLIO_INTELLIGENCE_REQUIRED");
   if (!visualIntelligenceReady) reasonCodes.push("VISUAL_INTELLIGENCE_REQUIRED");
   if (!renderReady) reasonCodes.push("RENDER_NOT_READY");
-  const deliveryReady = base.deliveryReady && marketIntelligenceReady && benchmarkReady && portfolioIntelligenceReady && visualIntelligenceReady && renderReady;
-  return { ...base, deliveryReady, reasonCodes, state: deliveryReady ? "ready" : base.capacityReady && !base.actionabilityReady ? "actionability_research_required" : "partial", marketIntelligenceReady, benchmarkReady, portfolioIntelligenceReady, visualIntelligenceReady, renderReady };
+  if (premium && ["LIMITED", "INSUFFICIENT"].includes(commercialDepthStatus)) reasonCodes.push("COMMERCIAL_DEPTH_LIMITED");
+  if (premium && ["LIMITED", "INSUFFICIENT"].includes(corroborationStatus)) reasonCodes.push("CORROBORATION_LIMITED");
+  const qualityReady = !premium || (commercialDepthStatus !== "INSUFFICIENT" && corroborationStatus !== "INSUFFICIENT" && evidenceIntegrityStatus === "READY");
+  const deliveryReady = base.deliveryReady && marketIntelligenceReady && benchmarkReady && portfolioIntelligenceReady && visualIntelligenceReady && renderReady && qualityReady;
+  return { ...base, deliveryReady, reasonCodes: Array.from(new Set(reasonCodes)), state: deliveryReady ? "ready" : base.capacityReady && !base.actionabilityReady ? "actionability_research_required" : "partial", marketIntelligenceReady, benchmarkReady, portfolioIntelligenceReady, visualIntelligenceReady, renderReady,
+    capacityStatus: base.capacityReady ? "FULL" : "PARTIAL", actionabilityStatus: base.actionabilityReady ? "READY" : "RESEARCH_REQUIRED", marketIntelligenceStatus: marketIntelligenceReady ? "READY" : marketUniverse ? "LIMITED" : "INSUFFICIENT", commercialDepthStatus, corroborationStatus, visualIntelligenceStatus: visualIntelligenceReady ? "READY" : "LIMITED", evidenceIntegrityStatus };
 }

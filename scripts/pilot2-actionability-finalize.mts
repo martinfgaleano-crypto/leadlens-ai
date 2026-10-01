@@ -19,6 +19,7 @@ const expansion = JSON.parse(readFileSync("output/pilot2/2026-09-30-actionabilit
 const trackA = JSON.parse(readFileSync("output/pilot2/2026-09-30-actionability-v1/track-a-validation.json", "utf8"));
 const trackASearch = JSON.parse(readFileSync("output/pilot2/2026-09-30-actionability-v1/track-a-search.json", "utf8"));
 const marketResearchUniverse = JSON.parse(readFileSync("output/pilot2/2026-09-30-market-universe-v2/market-research-universe.json", "utf8"));
+const commercialDepthByCompany = new Map((marketResearchUniverse.commercial_account_research ?? []).map((row: any) => [row.account_name.toLowerCase(), row]));
 const out = "output/pilot2/2026-09-30-actionability-final";
 mkdirSync(out, { recursive: true });
 const byCompany = new Map<string, any>();
@@ -26,6 +27,14 @@ for (const lead of [...base.reportJson.processed_leads, ...expansion.reportJson.
 const caseByCompany = new Map<string, any>();
 for (const c of [...base.reportJson.canonical_cases, ...expansion.reportJson.canonical_cases, ...trackA.cases]) caseByCompany.set(c.account_id.toLowerCase(), c);
 const leads = [...byCompany.values()];
+// Overlay only independently verified research fields. This never changes the canonical
+// decision or claims buying intent; access/mechanism remain distinct from current timing.
+for (const lead of leads) {
+  const research: any = commercialDepthByCompany.get(lead.candidate.company.toLowerCase());
+  if (!research) continue;
+  lead.enrichment = { ...lead.enrichment, account_research: { ...(lead.enrichment?.account_research ?? {}), counterevidence_checked: true, corroboration_attempted: research.corroboration_status !== "NOT_ATTEMPTED", corroborating_domains: research.corroboration_status === "ACHIEVED" ? 1 : 0, commercial_depth_status: research.research_status, retrieval_failures: research.retrieval_failures } };
+  if (research.mechanism_status === "VERIFIED") lead.candidate = { ...lead.candidate, commercial_mechanism: research.mechanism_type, actionability_source_url: research.access_path, access_path_identified: true, access_verified: research.access_status === "VERIFIED" };
+}
 const cases = [...caseByCompany.values()].filter((c) => byCompany.has(c.account_id.toLowerCase()));
 const qualified = cases.map((c) => {
   const lead = byCompany.get(c.account_id.toLowerCase());
@@ -40,7 +49,8 @@ const oldRank = new Map([...base.reportJson.ranked_opportunities, ...expansion.r
 const ranked = ordered.map((lead: any, i: number) => {
   const prior = oldRank.get(lead.candidate.company.toLowerCase()) ?? {};
   const c = caseByCompany.get(lead.candidate.company.toLowerCase());
-  return { ...prior, lead_id: lead.id, company: lead.candidate.company, rank: i + 1, fit_score: lead.qualification.fit_score, category: lead.qualification.category, recommended_action: c.decision === "prioritize" ? "send_outreach_now" : c.decision === "validate" ? "validate_source_first" : c.decision === "monitor" ? "monitor_for_new_signal" : "exclude", actionability_status: c.decision === "prioritize" ? "act_now" : c.decision === "validate" ? "validate_first" : c.decision, decision: { ...(prior.decision ?? {}), decision: c.decision } };
+  const research: any = commercialDepthByCompany.get(lead.candidate.company.toLowerCase());
+  return { ...prior, lead_id: lead.id, company: lead.candidate.company, rank: i + 1, fit_score: lead.qualification.fit_score, category: lead.qualification.category, recommended_action: c.decision === "prioritize" ? "send_outreach_now" : c.decision === "validate" ? "validate_source_first" : c.decision === "monitor" ? "monitor_for_new_signal" : "exclude", actionability_status: c.decision === "prioritize" ? "act_now" : c.decision === "validate" ? "validate_first" : c.decision, decision: { ...(prior.decision ?? {}), decision: c.decision, buyer_function: research?.buyer_functions?.[0] ?? prior.decision?.buyer_function ?? null } };
 });
 const reportJson = { ...base.reportJson, delivery_capacity_target: 18, processed_leads: ordered, canonical_cases: cases.filter((c) => order.has(byCompany.get(c.account_id.toLowerCase())?.id)), ranked_opportunities: ranked, executive_summary: "Pilot 2 actionability escalation produced one evidence-qualified Prioritize from a live official supplier-submission mechanism. The accumulated foundation remains one account short of Premium capacity; Premium is therefore not delivery-ready." };
 const institutional = assembleInstitutionalReport(reportJson, base.meta);

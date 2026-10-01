@@ -31,5 +31,6 @@ test("tier scoping rewrites narrative and benchmark cell denominators", () => as
 const accounts = Array.from({ length: 18 }, (_, i) => ({ key: `k${i}`, company: `C${i}`, domain: null, route: "r", decision: i === 0 ? "prioritize" as const : "hold" as const, fit: i === 0 ? "Strong" : "Moderate", timing: null, evidenceCount: 1, qualifiedAtPass: 1, hasSource: true, currentActionabilityBasis: i === 0, commercialMechanismVerified: i === 0, counterevidenceMaterial: false }));
 test("Premium readiness requires canonical above-account intelligence", () => assert.equal(evaluateCanonicalTierReadiness("premium", accounts, null, true).deliveryReady, false));
 test("Premium readiness fails closed when market intelligence is selected-account aggregation only", () => assert.equal(evaluateCanonicalTierReadiness("premium", accounts, intel, true).deliveryReady, false));
+test("multidimensional readiness exposes capacity and depth without changing decisions", () => { const readiness = evaluateCanonicalTierReadiness("premium", accounts, intel, true); assert.equal(readiness.capacityStatus, "FULL"); assert.equal(readiness.commercialDepthStatus, "INSUFFICIENT"); assert.equal(readiness.corroborationStatus, "INSUFFICIENT"); });
 
-console.log(`\n${passed}/10 canonical intelligence delivery checks passed`);
+console.log(`\n${passed}/11 canonical intelligence delivery checks passed`);

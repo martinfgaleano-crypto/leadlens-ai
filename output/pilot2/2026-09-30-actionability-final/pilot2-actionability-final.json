@@ -1,6 +1,6 @@
 {
   "version": "pilot2-actionability-final-v3",
-  "created_at": "2026-10-01T00:47:42.792Z",
+  "created_at": "2026-10-01T03:01:06.437Z",
   "jobId": "cj_amordegea_pilot2_1790747118176",
   "qualified": [
     {
@@ -17,7 +17,7 @@
       "hasValidatedDate": true,
       "currentActionabilityBasis": false,
       "commercialMechanismVerified": false,
-      "accessPathIdentified": false,
+      "accessPathIdentified": true,
       "counterevidenceMaterial": false
     },
     {
@@ -34,7 +34,7 @@
       "hasValidatedDate": false,
       "currentActionabilityBasis": false,
       "commercialMechanismVerified": false,
-      "accessPathIdentified": false,
+      "accessPathIdentified": true,
       "counterevidenceMaterial": false
     },
     {
@@ -309,7 +309,14 @@
       "benchmarkReady": true,
       "portfolioIntelligenceReady": true,
       "visualIntelligenceReady": true,
-      "renderReady": true
+      "renderReady": true,
+      "capacityStatus": "FULL",
+      "actionabilityStatus": "READY",
+      "marketIntelligenceStatus": "READY",
+      "commercialDepthStatus": "ADEQUATE",
+      "corroborationStatus": "ADEQUATE",
+      "visualIntelligenceStatus": "READY",
+      "evidenceIntegrityStatus": "READY"
     },
     "Brief": {
       "tier": "brief",
@@ -326,7 +333,14 @@
       "benchmarkReady": true,
       "portfolioIntelligenceReady": true,
       "visualIntelligenceReady": true,
-      "renderReady": true
+      "renderReady": true,
+      "capacityStatus": "FULL",
+      "actionabilityStatus": "READY",
+      "marketIntelligenceStatus": "READY",
+      "commercialDepthStatus": "ADEQUATE",
+      "corroborationStatus": "ADEQUATE",
+      "visualIntelligenceStatus": "READY",
+      "evidenceIntegrityStatus": "READY"
     },
     "Portfolio": {
       "tier": "portfolio",
@@ -343,7 +357,14 @@
       "benchmarkReady": true,
       "portfolioIntelligenceReady": true,
       "visualIntelligenceReady": true,
-      "renderReady": true
+      "renderReady": true,
+      "capacityStatus": "FULL",
+      "actionabilityStatus": "READY",
+      "marketIntelligenceStatus": "READY",
+      "commercialDepthStatus": "ADEQUATE",
+      "corroborationStatus": "ADEQUATE",
+      "visualIntelligenceStatus": "READY",
+      "evidenceIntegrityStatus": "READY"
     },
     "Premium": {
       "tier": "premium",
@@ -356,13 +377,21 @@
       "deliveryReady": false,
       "state": "partial",
       "reasonCodes": [
-        "CAPACITY_INSUFFICIENT"
+        "CAPACITY_INSUFFICIENT",
+        "CORROBORATION_LIMITED"
       ],
       "marketIntelligenceReady": true,
       "benchmarkReady": true,
       "portfolioIntelligenceReady": true,
       "visualIntelligenceReady": true,
-      "renderReady": true
+      "renderReady": true,
+      "capacityStatus": "PARTIAL",
+      "actionabilityStatus": "READY",
+      "marketIntelligenceStatus": "READY",
+      "commercialDepthStatus": "ADEQUATE",
+      "corroborationStatus": "LIMITED",
+      "visualIntelligenceStatus": "READY",
+      "evidenceIntegrityStatus": "READY"
     }
   },
   "legacyReadiness": {
@@ -415,7 +444,7 @@
   },
   "intelligence": {
     "version": "canonical-intelligence-delivery-v1",
-    "generated_at": "2026-10-01T00:47:41.457Z",
+    "generated_at": "2026-10-01T03:01:04.328Z",
     "scope": {
       "population": "selected_accounts",
       "selected": 17,
@@ -441,7 +470,9 @@
           "route_id": "natural-and-organic-grocery",
           "label": "Natural and organic grocery",
           "definition": "Observed commercial route within the 17-account researched universe.",
-          "buyer_types": [],
+          "buyer_types": [
+            "merchandising"
+          ],
           "observed_accounts": [
             "Natural Grocers"
           ],
@@ -487,6 +518,65 @@
             "Natural Grocers' rapid geographic expansion into new states (Wisconsin, South Dakota, Wyoming) requires building differentiated, on-brand beverage sets for stores entering markets where brand recognition is lower; premium botanical wellness beverages in glass packaging may fill a functional and aesthetic shelf gap consistent with their positioning.",
             "Rapid multi-state expansion appears to create pressure to differentiate shelves in new markets with premium, on-trend beverage SKUs that match the store's wellness identity and support the Retailer of the Year brand positioning.",
             "Validate before contact: What are Natural Grocers' current assortment standards and price point thresholds for premium bottled beverages, and is there a category buyer we can engage before submitting through the portal?"
+          ]
+        },
+        {
+          "route_id": "natural-grocery-retail",
+          "label": "natural grocery retail",
+          "definition": "Observed commercial route within the 17-account researched universe.",
+          "buyer_types": [
+            "category_management"
+          ],
+          "observed_accounts": [
+            "Sprouts Farmers Market",
+            "Earth Fare",
+            "Whole Foods Market",
+            "Fresh Thyme Market"
+          ],
+          "decisions": {
+            "prioritize": 0,
+            "validate": 2,
+            "monitor": 1,
+            "hold": 1
+          },
+          "commercial_mechanism_coverage": {
+            "numerator": 2,
+            "denominator": 4
+          },
+          "access_coverage": {
+            "numerator": 2,
+            "denominator": 4
+          },
+          "timing_coverage": {
+            "numerator": 3,
+            "denominator": 4
+          },
+          "evidence_coverage": {
+            "numerator": 3,
+            "denominator": 4
+          },
+          "opportunity_pattern": {
+            "basis": "unknown",
+            "text": "No evidence-qualified current access pattern was established for natural-grocery-retail.",
+            "evidence": "Sprouts Farmers Market, Earth Fare, Whole Foods Market, Fresh Thyme Market"
+          },
+          "barriers": [
+            "Retail buyer access is gated: Sprouts uses structured vendor portals and category review windows — cold outreach without a broker or warm introduction may stall",
+            "Slotting fees and volume minimums at a chain of Sprouts' scale may be prohibitive for a premium small-batch botanical brand",
+            "The offer's hospitality and gifting channels are irrelevant to Sprouts, reducing total opportunity scope",
+            "No confirmed signal of active botanical beverage sourcing — pursuit is based on segment fit, not observed buying intent"
+          ],
+          "unknowns": [
+            "If Sprouts is expanding store count while competing for health-conscious shoppers against Whole Foods and specialty independents, it may be actively sourcing premium, visually distinctive beverages (e.g., botanical, glass-bottled) to differentiate gondola sets in new locations — a gap this offer directly fills.",
+            "Sprouts appears to continuously seek differentiated, on-trend beverage offerings to stock new store locations and distinguish its assortment from mainstream grocery competitors.",
+            "Validate before contact: Does Sprouts currently carry glass-bottled premium botanical beverages, and who is the category buyer responsible for that segment — do you have a broker or distributor already approved in their vendor system?",
+            "Earth Fare's specialty beverage set appears to rely on broadly distributed natural brands; if they have limited access to premium, glass-packaged botanical wellness SKUs, they may be underserving the gifting and experiential wellness shopper segment relative to larger competitors."
+          ],
+          "validation_requirements": [
+            "If Sprouts is expanding store count while competing for health-conscious shoppers against Whole Foods and specialty independents, it may be actively sourcing premium, visually distinctive beverages (e.g., botanical, glass-bottled) to differentiate gondola sets in new locations — a gap this offer directly fills.",
+            "Sprouts appears to continuously seek differentiated, on-trend beverage offerings to stock new store locations and distinguish its assortment from mainstream grocery competitors.",
+            "Validate before contact: Does Sprouts currently carry glass-bottled premium botanical beverages, and who is the category buyer responsible for that segment — do you have a broker or distributor already approved in their vendor system?",
+            "Earth Fare's specialty beverage set appears to rely on broadly distributed natural brands; if they have limited access to premium, glass-packaged botanical wellness SKUs, they may be underserving the gifting and experiential wellness shopper segment relative to larger competitors."
           ]
         },
         {
@@ -545,63 +635,6 @@
             "As a regional independent grocer competing against national chains, DLM appears to need continuously differentiated, shelf-compelling beverage SKUs that reinforce its gourmet identity and cannot be found at mass-market competitors.",
             "Validate before contact: Does DLM currently carry any premium botanical or functional non-alcoholic beverages, and is their gift box team open to including glass-bottled items in curated shipments?",
             "If Claro's beverage section is dominated by Italian imported sodas and wines, they may lack a premium non-alcoholic wellness beverage in glass packaging that appeals to health-conscious shoppers and performs in the gifting channel — a gap botanical wellness beverages could fill."
-          ]
-        },
-        {
-          "route_id": "natural-grocery-retail",
-          "label": "natural grocery retail",
-          "definition": "Observed commercial route within the 17-account researched universe.",
-          "buyer_types": [],
-          "observed_accounts": [
-            "Earth Fare",
-            "Sprouts Farmers Market",
-            "Whole Foods Market",
-            "Fresh Thyme Market"
-          ],
-          "decisions": {
-            "prioritize": 0,
-            "validate": 2,
-            "monitor": 1,
-            "hold": 1
-          },
-          "commercial_mechanism_coverage": {
-            "numerator": 0,
-            "denominator": 4
-          },
-          "access_coverage": {
-            "numerator": 0,
-            "denominator": 4
-          },
-          "timing_coverage": {
-            "numerator": 3,
-            "denominator": 4
-          },
-          "evidence_coverage": {
-            "numerator": 3,
-            "denominator": 4
-          },
-          "opportunity_pattern": {
-            "basis": "unknown",
-            "text": "No evidence-qualified current access pattern was established for natural-grocery-retail.",
-            "evidence": "Earth Fare, Sprouts Farmers Market, Whole Foods Market, Fresh Thyme Market"
-          },
-          "barriers": [
-            "Unknown buyer identity and category management structure makes outreach targeting difficult",
-            "No confirmed gifting or hospitality program reduces total addressable opportunity within this account",
-            "Regional Southeast footprint may limit volume potential relative to national natural grocery chains",
-            "Thin evidence of active supplier discovery — may already have locked beverage sets for the season"
-          ],
-          "unknowns": [
-            "Earth Fare's specialty beverage set appears to rely on broadly distributed natural brands; if they have limited access to premium, glass-packaged botanical wellness SKUs, they may be underserving the gifting and experiential wellness shopper segment relative to larger competitors.",
-            "Earth Fare appears to face ongoing pressure to differentiate its specialty beverage assortment and gifting category against larger natural grocers, which may indicate demand for exclusive or premium SKUs that reinforce its clean-food positioning.",
-            "Validate before contact: Who owns the specialty beverage or wellness category at Earth Fare, and is there an open review window or new brand submission process for the fall 2026 set?",
-            "If Sprouts is expanding store count while competing for health-conscious shoppers against Whole Foods and specialty independents, it may be actively sourcing premium, visually distinctive beverages (e.g., botanical, glass-bottled) to differentiate gondola sets in new locations — a gap this offer directly fills."
-          ],
-          "validation_requirements": [
-            "Earth Fare's specialty beverage set appears to rely on broadly distributed natural brands; if they have limited access to premium, glass-packaged botanical wellness SKUs, they may be underserving the gifting and experiential wellness shopper segment relative to larger competitors.",
-            "Earth Fare appears to face ongoing pressure to differentiate its specialty beverage assortment and gifting category against larger natural grocers, which may indicate demand for exclusive or premium SKUs that reinforce its clean-food positioning.",
-            "Validate before contact: Who owns the specialty beverage or wellness category at Earth Fare, and is there an open review window or new brand submission process for the fall 2026 set?",
-            "If Sprouts is expanding store count while competing for health-conscious shoppers against Whole Foods and specialty independents, it may be actively sourcing premium, visually distinctive beverages (e.g., botanical, glass-bottled) to differentiate gondola sets in new locations — a gap this offer directly fills."
           ]
         },
         {
@@ -922,9 +955,64 @@
       ],
       "buyer_types": [
         {
+          "buyer_type": "merchandising",
+          "route_ids": [
+            "natural-and-organic-grocery"
+          ],
+          "commercial_function": "merchandising",
+          "observed_procurement_mechanisms": [
+            "new_item_submission"
+          ],
+          "observed_access_mechanisms": [
+            "https://www.naturalgrocers.com/vendors"
+          ],
+          "typical_validation_questions": [
+            "Natural Grocers' rapid geographic expansion into new states (Wisconsin, South Dakota, Wyoming) requires building differentiated, on-brand beverage sets for stores entering markets where brand recognition is lower; premium botanical wellness beverages in glass packaging may fill a functional and aesthetic shelf gap consistent with their positioning.",
+            "Rapid multi-state expansion appears to create pressure to differentiate shelves in new markets with premium, on-trend beverage SKUs that match the store's wellness identity and support the Retailer of the Year brand positioning.",
+            "Validate before contact: What are Natural Grocers' current assortment standards and price point thresholds for premium bottled beverages, and is there a category buyer we can engage before submitting through the portal?"
+          ],
+          "observed_barriers": [
+            "Buyer identity and procurement process are unconfirmed — outreach without knowing the category buyer risks landing in the wrong inbox",
+            "Natural Grocers may have strict supplier qualification processes that extend the sales cycle significantly",
+            "The offer's hospitality and gifting channels are not relevant to Natural Grocers' retail-only model, reducing total opportunity size",
+            "No evidence the beverage assortment has a gap — existing premium botanical brands may already occupy the relevant shelf space"
+          ],
+          "evidence_accounts": [
+            "Natural Grocers"
+          ],
+          "unknowns": []
+        },
+        {
+          "buyer_type": "category_management",
+          "route_ids": [
+            "natural-grocery-retail"
+          ],
+          "commercial_function": "category_management",
+          "observed_procurement_mechanisms": [
+            "new_item_submission"
+          ],
+          "observed_access_mechanisms": [
+            "https://about.sprouts.com/new-item-submission/"
+          ],
+          "typical_validation_questions": [
+            "If Sprouts is expanding store count while competing for health-conscious shoppers against Whole Foods and specialty independents, it may be actively sourcing premium, visually distinctive beverages (e.g., botanical, glass-bottled) to differentiate gondola sets in new locations — a gap this offer directly fills.",
+            "Sprouts appears to continuously seek differentiated, on-trend beverage offerings to stock new store locations and distinguish its assortment from mainstream grocery competitors.",
+            "Validate before contact: Does Sprouts currently carry glass-bottled premium botanical beverages, and who is the category buyer responsible for that segment — do you have a broker or distributor already approved in their vendor system?"
+          ],
+          "observed_barriers": [
+            "Retail buyer access is gated: Sprouts uses structured vendor portals and category review windows — cold outreach without a broker or warm introduction may stall",
+            "Slotting fees and volume minimums at a chain of Sprouts' scale may be prohibitive for a premium small-batch botanical brand",
+            "The offer's hospitality and gifting channels are irrelevant to Sprouts, reducing total opportunity scope",
+            "No confirmed signal of active botanical beverage sourcing — pursuit is based on segment fit, not observed buying intent"
+          ],
+          "evidence_accounts": [
+            "Sprouts Farmers Market"
+          ],
+          "unknowns": []
+        },
+        {
           "buyer_type": "Buyer function not established",
           "route_ids": [
-            "natural-and-organic-grocery",
             "regional-premium-grocery-chain",
             "natural-grocery-retail",
             "health-clubs-and-wellness",
@@ -936,32 +1024,30 @@
           ],
           "commercial_function": "Unknown",
           "observed_procurement_mechanisms": [
-            "supplier_intake"
+            "local_supplier_program"
           ],
           "observed_access_mechanisms": [
-            "https://www.naturalgrocers.com/vendors"
+            "https://www.wholefoodsmarket.com/company-info/information-potential-suppliers"
           ],
           "typical_validation_questions": [
-            "Natural Grocers' rapid geographic expansion into new states (Wisconsin, South Dakota, Wyoming) requires building differentiated, on-brand beverage sets for stores entering markets where brand recognition is lower; premium botanical wellness beverages in glass packaging may fill a functional and aesthetic shelf gap consistent with their positioning.",
-            "Rapid multi-state expansion appears to create pressure to differentiate shelves in new markets with premium, on-trend beverage SKUs that match the store's wellness identity and support the Retailer of the Year brand positioning.",
-            "Validate before contact: What are Natural Grocers' current assortment standards and price point thresholds for premium bottled beverages, and is there a category buyer we can engage before submitting through the portal?",
             "If DLM's wellness and premium non-alcoholic beverage set is underdeveloped relative to its artisan food assortment, then a botanically positioned, glass-bottled beverage with gifting-friendly packaging would fill a visible gap — falsifiable by auditing their current beverage shelf.",
-            "As a regional independent grocer competing against national chains, DLM appears to need continuously differentiated, shelf-compelling beverage SKUs that reinforce its gourmet identity and cannot be found at mass-market competitors."
+            "As a regional independent grocer competing against national chains, DLM appears to need continuously differentiated, shelf-compelling beverage SKUs that reinforce its gourmet identity and cannot be found at mass-market competitors.",
+            "Validate before contact: Does DLM currently carry any premium botanical or functional non-alcoholic beverages, and is their gift box team open to including glass-bottled items in curated shipments?",
+            "Earth Fare's specialty beverage set appears to rely on broadly distributed natural brands; if they have limited access to premium, glass-packaged botanical wellness SKUs, they may be underserving the gifting and experiential wellness shopper segment relative to larger competitors.",
+            "Earth Fare appears to face ongoing pressure to differentiate its specialty beverage assortment and gifting category against larger natural grocers, which may indicate demand for exclusive or premium SKUs that reinforce its clean-food positioning."
           ],
           "observed_barriers": [
-            "Buyer identity and procurement process are unconfirmed — outreach without knowing the category buyer risks landing in the wrong inbox",
-            "Natural Grocers may have strict supplier qualification processes that extend the sales cycle significantly",
-            "The offer's hospitality and gifting channels are not relevant to Natural Grocers' retail-only model, reducing total opportunity size",
-            "No evidence the beverage assortment has a gap — existing premium botanical brands may already occupy the relevant shelf space",
-            "Small store count (four locations) may make retail velocity too low to justify supplier investment"
+            "Small store count (four locations) may make retail velocity too low to justify supplier investment",
+            "No confirmed beverage category gap or active sourcing signal — pitch may land outside an active buying window",
+            "Glass bottle fragility could be a real operational objection for their shipped gift box format",
+            "Buyer identity unknown — outreach without a named contact at a small family-owned chain risks low response rates",
+            "Unknown buyer identity and category management structure makes outreach targeting difficult"
           ],
           "evidence_accounts": [
-            "Natural Grocers",
             "Dorothy Lane Market",
             "Earth Fare",
-            "Sprouts Farmers Market",
-            "Life Time",
             "Whole Foods Market",
+            "Life Time",
             "Canyon Ranch",
             "Miraval Resorts",
             "Auberge Resorts Collection",
@@ -994,9 +1080,9 @@
           "actionability": true
         },
         {
-          "id": "buyer:buyer-function-not-established",
+          "id": "buyer:merchandising",
           "kind": "buyer_type",
-          "label": "Buyer function not established"
+          "label": "merchandising"
         },
         {
           "id": "account:natural-grocers",
@@ -1007,10 +1093,34 @@
           "evidence": "Strong"
         },
         {
+          "id": "route:natural-grocery-retail",
+          "kind": "route",
+          "label": "natural grocery retail",
+          "actionability": false
+        },
+        {
+          "id": "buyer:category-management",
+          "kind": "buyer_type",
+          "label": "category_management"
+        },
+        {
+          "id": "account:sprouts-farmers-market",
+          "kind": "account",
+          "label": "Sprouts Farmers Market",
+          "decision": "validate",
+          "actionability": false,
+          "evidence": "Strong"
+        },
+        {
           "id": "route:regional-premium-grocery-chain",
           "kind": "route",
           "label": "Regional premium grocery chain",
           "actionability": false
+        },
+        {
+          "id": "buyer:buyer-function-not-established",
+          "kind": "buyer_type",
+          "label": "Buyer function not established"
         },
         {
           "id": "account:dorothy-lane-market",
@@ -1048,44 +1158,6 @@
           "id": "account:the-market-pasadena",
           "kind": "account",
           "label": "The Market Pasadena",
-          "decision": "hold",
-          "actionability": false,
-          "evidence": "Limited"
-        },
-        {
-          "id": "route:natural-grocery-retail",
-          "kind": "route",
-          "label": "natural grocery retail",
-          "actionability": false
-        },
-        {
-          "id": "account:earth-fare",
-          "kind": "account",
-          "label": "Earth Fare",
-          "decision": "validate",
-          "actionability": false,
-          "evidence": "Strong"
-        },
-        {
-          "id": "account:sprouts-farmers-market",
-          "kind": "account",
-          "label": "Sprouts Farmers Market",
-          "decision": "validate",
-          "actionability": false,
-          "evidence": "Strong"
-        },
-        {
-          "id": "account:whole-foods-market",
-          "kind": "account",
-          "label": "Whole Foods Market",
-          "decision": "monitor",
-          "actionability": false,
-          "evidence": "Strong"
-        },
-        {
-          "id": "account:fresh-thyme-market",
-          "kind": "account",
-          "label": "Fresh Thyme Market",
           "decision": "hold",
           "actionability": false,
           "evidence": "Limited"
@@ -1186,12 +1258,22 @@
       "edges": [
         {
           "from": "route:natural-and-organic-grocery",
-          "to": "buyer:buyer-function-not-established",
+          "to": "buyer:merchandising",
           "relation": "route_has_buyer"
         },
         {
-          "from": "buyer:buyer-function-not-established",
+          "from": "buyer:merchandising",
           "to": "account:natural-grocers",
+          "relation": "buyer_has_account"
+        },
+        {
+          "from": "route:natural-grocery-retail",
+          "to": "buyer:category-management",
+          "relation": "route_has_buyer"
+        },
+        {
+          "from": "buyer:category-management",
+          "to": "account:sprouts-farmers-market",
           "relation": "buyer_has_account"
         },
         {
@@ -1222,31 +1304,6 @@
         {
           "from": "buyer:buyer-function-not-established",
           "to": "account:the-market-pasadena",
-          "relation": "buyer_has_account"
-        },
-        {
-          "from": "route:natural-grocery-retail",
-          "to": "buyer:buyer-function-not-established",
-          "relation": "route_has_buyer"
-        },
-        {
-          "from": "buyer:buyer-function-not-established",
-          "to": "account:earth-fare",
-          "relation": "buyer_has_account"
-        },
-        {
-          "from": "buyer:buyer-function-not-established",
-          "to": "account:sprouts-farmers-market",
-          "relation": "buyer_has_account"
-        },
-        {
-          "from": "buyer:buyer-function-not-established",
-          "to": "account:whole-foods-market",
-          "relation": "buyer_has_account"
-        },
-        {
-          "from": "buyer:buyer-function-not-established",
-          "to": "account:fresh-thyme-market",
           "relation": "buyer_has_account"
         },
         {
@@ -1453,7 +1510,69 @@
               "state": "Strong",
               "known": true,
               "source_metric": "commercial_intelligence.commercial_mechanism + commercial_intelligence.access_verified",
-              "underlying_state": "supplier_intake",
+              "underlying_state": "new_item_submission",
+              "transformation": "Verified mechanism and access path",
+              "denominator": 17
+            },
+            {
+              "dimension_id": "validation_burden",
+              "state": "Moderate",
+              "known": true,
+              "source_metric": "hypotheses + actionability_blockers",
+              "underlying_state": 3,
+              "transformation": "Open validations and limitations",
+              "denominator": 17
+            }
+          ],
+          "coverage": {
+            "usable_source": true,
+            "validated_date": true,
+            "recent_or_current": true,
+            "commercial_mechanism": true,
+            "access_path": true,
+            "verified_access": true,
+            "corroborated": false,
+            "counterevidence_researched": true
+          }
+        },
+        {
+          "account": "Sprouts Farmers Market",
+          "route_id": "natural-grocery-retail",
+          "decision": "validate",
+          "cells": [
+            {
+              "dimension_id": "objective_fit",
+              "state": "Strong",
+              "known": true,
+              "source_metric": "fit_score + opportunity_case.fit",
+              "underlying_state": 7.5,
+              "transformation": "Canonical fit dimension",
+              "denominator": 17
+            },
+            {
+              "dimension_id": "timing",
+              "state": "Moderate",
+              "known": true,
+              "source_metric": "evidence_chain.date + commercial_intelligence.current_actionability",
+              "underlying_state": "2026-06-27",
+              "transformation": "Validated date or verified current access",
+              "denominator": 17
+            },
+            {
+              "dimension_id": "evidence",
+              "state": "Strong",
+              "known": true,
+              "source_metric": "evidence_chain + evidence_grounded",
+              "underlying_state": 1,
+              "transformation": "Usable sources and corroboration",
+              "denominator": 17
+            },
+            {
+              "dimension_id": "commercial_access",
+              "state": "Strong",
+              "known": true,
+              "source_metric": "commercial_intelligence.commercial_mechanism + commercial_intelligence.access_verified",
+              "underlying_state": "new_item_submission",
               "transformation": "Verified mechanism and access path",
               "denominator": 17
             },
@@ -1603,16 +1722,16 @@
           }
         },
         {
-          "account": "Sprouts Farmers Market",
+          "account": "Whole Foods Market",
           "route_id": "natural-grocery-retail",
-          "decision": "validate",
+          "decision": "monitor",
           "cells": [
             {
               "dimension_id": "objective_fit",
               "state": "Strong",
               "known": true,
               "source_metric": "fit_score + opportunity_case.fit",
-              "underlying_state": 7.5,
+              "underlying_state": 7.8,
               "transformation": "Canonical fit dimension",
               "denominator": 17
             },
@@ -1621,7 +1740,7 @@
               "state": "Moderate",
               "known": true,
               "source_metric": "evidence_chain.date + commercial_intelligence.current_actionability",
-              "underlying_state": "2026-06-27",
+              "underlying_state": "2026-05-13",
               "transformation": "Validated date or verified current access",
               "denominator": 17
             },
@@ -1636,10 +1755,10 @@
             },
             {
               "dimension_id": "commercial_access",
-              "state": "Unknown",
-              "known": false,
+              "state": "Strong",
+              "known": true,
               "source_metric": "commercial_intelligence.commercial_mechanism + commercial_intelligence.access_verified",
-              "underlying_state": null,
+              "underlying_state": "local_supplier_program",
               "transformation": "Verified mechanism and access path",
               "denominator": 17
             },
@@ -1657,9 +1776,9 @@
             "usable_source": true,
             "validated_date": true,
             "recent_or_current": true,
-            "commercial_mechanism": false,
-            "access_path": false,
-            "verified_access": false,
+            "commercial_mechanism": true,
+            "access_path": true,
+            "verified_access": true,
             "corroborated": false,
             "counterevidence_researched": true
           }
@@ -1684,68 +1803,6 @@
               "known": true,
               "source_metric": "evidence_chain.date + commercial_intelligence.current_actionability",
               "underlying_state": "2026-05-04",
-              "transformation": "Validated date or verified current access",
-              "denominator": 17
-            },
-            {
-              "dimension_id": "evidence",
-              "state": "Strong",
-              "known": true,
-              "source_metric": "evidence_chain + evidence_grounded",
-              "underlying_state": 1,
-              "transformation": "Usable sources and corroboration",
-              "denominator": 17
-            },
-            {
-              "dimension_id": "commercial_access",
-              "state": "Unknown",
-              "known": false,
-              "source_metric": "commercial_intelligence.commercial_mechanism + commercial_intelligence.access_verified",
-              "underlying_state": null,
-              "transformation": "Verified mechanism and access path",
-              "denominator": 17
-            },
-            {
-              "dimension_id": "validation_burden",
-              "state": "Moderate",
-              "known": true,
-              "source_metric": "hypotheses + actionability_blockers",
-              "underlying_state": 3,
-              "transformation": "Open validations and limitations",
-              "denominator": 17
-            }
-          ],
-          "coverage": {
-            "usable_source": true,
-            "validated_date": true,
-            "recent_or_current": true,
-            "commercial_mechanism": false,
-            "access_path": false,
-            "verified_access": false,
-            "corroborated": false,
-            "counterevidence_researched": true
-          }
-        },
-        {
-          "account": "Whole Foods Market",
-          "route_id": "natural-grocery-retail",
-          "decision": "monitor",
-          "cells": [
-            {
-              "dimension_id": "objective_fit",
-              "state": "Strong",
-              "known": true,
-              "source_metric": "fit_score + opportunity_case.fit",
-              "underlying_state": 7.8,
-              "transformation": "Canonical fit dimension",
-              "denominator": 17
-            },
-            {
-              "dimension_id": "timing",
-              "state": "Moderate",
-              "known": true,
-              "source_metric": "evidence_chain.date + commercial_intelligence.current_actionability",
-              "underlying_state": "2026-05-13",
               "transformation": "Validated date or verified current access",
               "denominator": 17
             },
@@ -2485,6 +2542,18 @@
           "evidence_coverage": "1/1"
         },
         {
+          "route_id": "natural-grocery-retail",
+          "accounts": 4,
+          "decisions": {
+            "prioritize": 0,
+            "validate": 2,
+            "monitor": 1,
+            "hold": 1
+          },
+          "mechanism_coverage": "2/4",
+          "evidence_coverage": "3/4"
+        },
+        {
           "route_id": "regional-premium-grocery-chain",
           "accounts": 5,
           "decisions": {
@@ -2495,18 +2564,6 @@
           },
           "mechanism_coverage": "0/5",
           "evidence_coverage": "3/5"
-        },
-        {
-          "route_id": "natural-grocery-retail",
-          "accounts": 4,
-          "decisions": {
-            "prioritize": 0,
-            "validate": 2,
-            "monitor": 1,
-            "hold": 1
-          },
-          "mechanism_coverage": "0/4",
-          "evidence_coverage": "3/4"
         },
         {
           "route_id": "health-clubs-and-wellness",
@@ -2600,17 +2657,17 @@
         {
           "decision": "validate",
           "accounts": [
+            "Sprouts Farmers Market",
             "Dorothy Lane Market",
-            "Earth Fare",
-            "Sprouts Farmers Market"
+            "Earth Fare"
           ],
           "guidance": "Resolve decision-critical unknowns before outreach."
         },
         {
           "decision": "monitor",
           "accounts": [
-            "Life Time",
-            "Whole Foods Market"
+            "Whole Foods Market",
+            "Life Time"
           ],
           "guidance": "Watch for a material change or stronger access signal."
         },
@@ -2636,7 +2693,7 @@
         {
           "basis": "inference",
           "text": "natural grocery retail contains 2 accounts currently worth prioritizing or validating.",
-          "evidence": "Earth Fare, Sprouts Farmers Market, Whole Foods Market, Fresh Thyme Market"
+          "evidence": "Sprouts Farmers Market, Earth Fare, Whole Foods Market, Fresh Thyme Market"
         }
       ],
       "change_patterns": [
@@ -2649,18 +2706,18 @@
       "coverage_gaps": [
         "4/17 accounts lack validated dated evidence.",
         "17/17 accounts lack confirmed independent corroboration.",
-        "16/17 accounts lack verified commercial access."
+        "14/17 accounts lack verified commercial access."
       ],
       "validation_themes": [
         {
           "theme": "Account-specific validation",
           "accounts": [
             "Natural Grocers",
+            "Sprouts Farmers Market",
             "Dorothy Lane Market",
             "Earth Fare",
-            "Sprouts Farmers Market",
-            "Life Time",
             "Whole Foods Market",
+            "Life Time",
             "Canyon Ranch",
             "Miraval Resorts",
             "Auberge Resorts Collection",
@@ -2674,10 +2731,10 @@
           "theme": "Buyer and category access",
           "accounts": [
             "Natural Grocers",
-            "Earth Fare",
             "Sprouts Farmers Market",
-            "Life Time",
+            "Earth Fare",
             "Whole Foods Market",
+            "Life Time",
             "Miraval Resorts",
             "Claro's Italian Markets",
             "Clover Grocery",
@@ -2710,7 +2767,7 @@
         {
           "basis": "inference",
           "text": "Several commercially relevant accounts still lack a verified access path.",
-          "evidence": "1/17 verified access"
+          "evidence": "3/17 verified access"
         }
       ],
       "strategic_guidance": [
@@ -2726,9 +2783,9 @@
       "usable_source": 13,
       "validated_date": 13,
       "recent_or_current": 13,
-      "commercial_mechanism": 1,
-      "access_path": 1,
-      "verified_access": 1,
+      "commercial_mechanism": 3,
+      "access_path": 3,
+      "verified_access": 3,
       "corroborated": 0,
       "counterevidence_researched": 17
     },
@@ -2787,17 +2844,17 @@
           },
           {
             "metric": "commercial_mechanism",
-            "value": 1,
+            "value": 3,
             "denominator": 17
           },
           {
             "metric": "access_path",
-            "value": 1,
+            "value": 3,
             "denominator": 17
           },
           {
             "metric": "verified_access",
-            "value": 1,
+            "value": 3,
             "denominator": 17
           },
           {
@@ -2820,7 +2877,7 @@
         "question_answered": "Which observed routes contain verified access?",
         "population": "selected accounts grouped by route",
         "denominator": 17,
-        "unknown_count": 17,
+        "unknown_count": 12,
         "data": [
           {
             "route": "Natural and organic grocery",
@@ -2830,15 +2887,15 @@
             "verified_access": 1
           },
           {
-            "route": "Regional premium grocery chain",
-            "accounts": 5,
-            "prioritize": 0,
-            "mechanisms": 0,
-            "verified_access": 0
-          },
-          {
             "route": "natural grocery retail",
             "accounts": 4,
+            "prioritize": 0,
+            "mechanisms": 2,
+            "verified_access": 2
+          },
+          {
+            "route": "Regional premium grocery chain",
+            "accounts": 5,
             "prioritize": 0,
             "mechanisms": 0,
             "verified_access": 0
@@ -2895,11 +2952,17 @@
         "question_answered": "Why does one account deserve more attention than another?",
         "population": "selected accounts",
         "denominator": 17,
-        "unknown_count": 20,
+        "unknown_count": 18,
         "data": [
           {
             "account": "Natural Grocers",
             "decision": "prioritize",
+            "known_dimensions": 5,
+            "dimensions": 5
+          },
+          {
+            "account": "Sprouts Farmers Market",
+            "decision": "validate",
             "known_dimensions": 5,
             "dimensions": 5
           },
@@ -2916,19 +2979,13 @@
             "dimensions": 5
           },
           {
-            "account": "Sprouts Farmers Market",
-            "decision": "validate",
-            "known_dimensions": 4,
+            "account": "Whole Foods Market",
+            "decision": "monitor",
+            "known_dimensions": 5,
             "dimensions": 5
           },
           {
             "account": "Life Time",
-            "decision": "monitor",
-            "known_dimensions": 4,
-            "dimensions": 5
-          },
-          {
-            "account": "Whole Foods Market",
             "decision": "monitor",
             "known_dimensions": 4,
             "dimensions": 5
@@ -3013,7 +3070,7 @@
       ],
       "population": {
         "population_type": "market_research_universe",
-        "population_size": 57,
+        "population_size": 72,
         "selection_scope": "Unique public route, ecosystem and commercial-access sources returned by bounded Brave research",
         "coverage_scope": "13 queries across 9 route hypotheses",
         "limitations": [
@@ -3265,7 +3322,16 @@
             "src:6",
             "src:7",
             "src:8",
-            "src:9"
+            "src:9",
+            "src:10",
+            "src:58",
+            "src:59",
+            "src:60",
+            "src:61",
+            "src:62",
+            "src:63",
+            "src:64",
+            "src:65"
           ],
           "candidate_account_refs": [
             "entity:naturalgrocers.com",
@@ -3279,7 +3345,7 @@
           "eligible_account_refs": [],
           "excluded_account_refs": [],
           "exclusion_reasons": [],
-          "mechanism_research": "FOUND_UNVERIFIED",
+          "mechanism_research": "VERIFIED",
           "corroboration_attempted": true,
           "independent_support_count": 1,
           "counterevidence": [],
@@ -3427,7 +3493,9 @@
             "src:29",
             "src:30",
             "src:31",
-            "src:32"
+            "src:32",
+            "src:66",
+            "src:67"
           ],
           "candidate_account_refs": [
             "entity:johnsonfitness.com",
@@ -3465,7 +3533,9 @@
             "src:35",
             "src:36",
             "src:37",
-            "src:38"
+            "src:38",
+            "src:68",
+            "src:69"
           ],
           "candidate_account_refs": [
             "entity:kehe.com",
@@ -3509,7 +3579,10 @@
             "src:45",
             "src:46",
             "src:47",
-            "src:48"
+            "src:48",
+            "src:70",
+            "src:71",
+            "src:72"
           ],
           "candidate_account_refs": [
             "entity:gourmetint.com",
@@ -3859,8 +3932,125 @@
           "coverage_state": "FOUND_UNVERIFIED"
         }
       ],
-      "commercial_mechanisms": [],
-      "access_paths": [],
+      "commercial_mechanisms": [
+        {
+          "mechanism_id": "mechanism:natural_specialty_grocery:natural-grocers",
+          "mechanism_type": "new_item_submission",
+          "lifecycle": "VERIFIED",
+          "description": "Official Natural Grocers page exposes a product/supplier submission mechanism.",
+          "official_url": "https://www.naturalgrocers.com/vendors",
+          "source_ids": [
+            "src:1"
+          ],
+          "verified_at": "2026-10-01T02:46:54.467Z",
+          "relevance": "Observable route to submit an external product or brand for commercial evaluation; not evidence of acceptance or buying intent.",
+          "account_ref": "entity:naturalgrocers.com",
+          "route_id": "natural_specialty_grocery",
+          "limitations": [
+            "Portal availability does not establish category fit, buyer interest, economics or approval."
+          ],
+          "required_customer_inputs": [
+            "product_classification",
+            "landed_economics",
+            "minimum_order_quantity",
+            "importer_of_record"
+          ],
+          "coverage_state": "VERIFIED"
+        },
+        {
+          "mechanism_id": "mechanism:natural_specialty_grocery:sprouts.com",
+          "mechanism_type": "new_item_submission",
+          "lifecycle": "VERIFIED",
+          "description": "Official Sprouts Farmers Market evidence exposes a supplier/product commercial mechanism.",
+          "official_url": "https://about.sprouts.com/new-item-submission/",
+          "source_ids": [
+            "src:58",
+            "src:59"
+          ],
+          "verified_at": "2026-10-01T02:47:01.345Z",
+          "relevance": "Observable route for external supplier/product evaluation; not evidence of acceptance, open capacity or buying intent.",
+          "account_ref": "entity:sprouts.com",
+          "route_id": "natural_specialty_grocery",
+          "limitations": [
+            "A public access mechanism is not buying intent, product acceptance or evidence of open category capacity."
+          ],
+          "required_customer_inputs": [
+            "product_classification",
+            "landed_economics",
+            "minimum_order_quantity",
+            "importer_of_record"
+          ],
+          "coverage_state": "VERIFIED"
+        },
+        {
+          "mechanism_id": "mechanism:natural_specialty_grocery:wholefoodsmarket.com",
+          "mechanism_type": "local_supplier_program",
+          "lifecycle": "VERIFIED",
+          "description": "Official Whole Foods Market evidence exposes a supplier/product commercial mechanism.",
+          "official_url": "https://www.wholefoodsmarket.com/company-info/information-potential-suppliers",
+          "source_ids": [
+            "src:64"
+          ],
+          "verified_at": "2026-10-01T02:47:07.905Z",
+          "relevance": "Observable route for external supplier/product evaluation; not evidence of acceptance, open capacity or buying intent.",
+          "account_ref": "entity:wholefoodsmarket.com",
+          "route_id": "natural_specialty_grocery",
+          "limitations": [
+            "A public access mechanism is not buying intent, product acceptance or evidence of open category capacity.",
+            "No buyer function was verified from retrieved public text."
+          ],
+          "required_customer_inputs": [
+            "product_classification",
+            "landed_economics",
+            "minimum_order_quantity",
+            "importer_of_record"
+          ],
+          "coverage_state": "VERIFIED"
+        }
+      ],
+      "access_paths": [
+        {
+          "access_id": "access:mechanism:natural_specialty_grocery:natural-grocers",
+          "mechanism_id": "mechanism:natural_specialty_grocery:natural-grocers",
+          "path_type": "official_product_or_supplier_page",
+          "url": "https://www.naturalgrocers.com/vendors",
+          "coverage_state": "VERIFIED",
+          "source_ids": [
+            "src:1"
+          ],
+          "limitations": [
+            "Public access path only; submission requirements and current intake status may change."
+          ]
+        },
+        {
+          "access_id": "access:mechanism:natural_specialty_grocery:sprouts.com",
+          "mechanism_id": "mechanism:natural_specialty_grocery:sprouts.com",
+          "path_type": "official_supplier_or_product_route",
+          "url": "https://about.sprouts.com/new-item-submission/",
+          "coverage_state": "VERIFIED",
+          "source_ids": [
+            "src:58",
+            "src:59"
+          ],
+          "limitations": [
+            "A public access mechanism is not buying intent, product acceptance or evidence of open category capacity."
+          ]
+        },
+        {
+          "access_id": "access:mechanism:natural_specialty_grocery:wholefoodsmarket.com",
+          "mechanism_id": "mechanism:natural_specialty_grocery:wholefoodsmarket.com",
+          "path_type": "official_supplier_or_product_route",
+          "url": "https://www.wholefoodsmarket.com/company-info/information-potential-suppliers",
+          "coverage_state": "VERIFIED",
+          "source_ids": [
+            "src:64"
+          ],
+          "limitations": [
+            "A public access mechanism is not buying intent, product acceptance or evidence of open category capacity.",
+            "No buyer function was verified from retrieved public text."
+          ]
+        }
+      ],
       "customer_dependencies": [
         {
           "dependency_id": "product_classification",
@@ -4665,7 +4855,8 @@
           "retrieved_at": "2026-10-01T00:45:37.304Z",
           "freshness": "structural",
           "route_ids": [
-            "online_natural_retail"
+            "online_natural_retail",
+            "natural_specialty_grocery"
           ],
           "account_refs": []
         },
@@ -5373,6 +5564,261 @@
             "corporate_gifting"
           ],
           "account_refs": []
+        },
+        {
+          "source_id": "src:58",
+          "url": "https://about.sprouts.com/new-item-submission/",
+          "domain": "about.sprouts.com",
+          "title": "Grocery Supplier | Vendor Partner | Sprouts Farmers Market",
+          "source_type": "official",
+          "relationship": "PRIMARY_OFFICIAL",
+          "published_at": "2026-07-27T20:25:10",
+          "retrieved_at": "2026-10-01T02:47:00.245Z",
+          "freshness": "current",
+          "route_ids": [
+            "natural_specialty_grocery"
+          ],
+          "account_refs": [
+            "entity:sprouts.com"
+          ]
+        },
+        {
+          "source_id": "src:59",
+          "url": "https://about.sprouts.com/new-item-submission-process/",
+          "domain": "about.sprouts.com",
+          "title": "New Item Submission Process - Sprouts Corporate: About, Sustainability, Press, Careers, Foundation, Investors",
+          "source_type": "official",
+          "relationship": "PRIMARY_OFFICIAL",
+          "published_at": "2026-07-27T20:28:10",
+          "retrieved_at": "2026-10-01T02:47:00.245Z",
+          "freshness": "current",
+          "route_ids": [
+            "natural_specialty_grocery"
+          ],
+          "account_refs": [
+            "entity:sprouts.com"
+          ]
+        },
+        {
+          "source_id": "src:60",
+          "url": "https://www.earthfare.com/",
+          "domain": "earthfare.com",
+          "title": "Natural & Organic Grocery Store in United States | Earth Fare",
+          "source_type": "official",
+          "relationship": "PRIMARY_OFFICIAL",
+          "published_at": "2017-08-17T13:41:39",
+          "retrieved_at": "2026-10-01T02:47:01.549Z",
+          "freshness": "current",
+          "route_ids": [
+            "natural_specialty_grocery"
+          ],
+          "account_refs": [
+            "entity:earthfare.com"
+          ]
+        },
+        {
+          "source_id": "src:61",
+          "url": "https://order.earthfare.com/help/section/639415266/3042663021",
+          "domain": "order.earthfare.com",
+          "title": "Instacart Help Center - Item and Multi-Item Promotional Offer Terms",
+          "source_type": "official",
+          "relationship": "PRIMARY_OFFICIAL",
+          "published_at": null,
+          "retrieved_at": "2026-10-01T02:47:01.549Z",
+          "freshness": "structural",
+          "route_ids": [
+            "natural_specialty_grocery"
+          ],
+          "account_refs": [
+            "entity:earthfare.com"
+          ]
+        },
+        {
+          "source_id": "src:62",
+          "url": "https://www.dorothylane.com/locations/oakwood",
+          "domain": "dorothylane.com",
+          "title": "Oakwood | Dorothy Lane Market",
+          "source_type": "official",
+          "relationship": "PRIMARY_OFFICIAL",
+          "published_at": null,
+          "retrieved_at": "2026-10-01T02:47:02.913Z",
+          "freshness": "structural",
+          "route_ids": [
+            "natural_specialty_grocery"
+          ],
+          "account_refs": [
+            "entity:dorothylane.com"
+          ]
+        },
+        {
+          "source_id": "src:63",
+          "url": "https://www.dorothylane.com/Item/1883MaisonRoutinVanillaSyrup",
+          "domain": "dorothylane.com",
+          "title": "1883 Maison Routin Vanilla Syrup | Dorothy Lane Market",
+          "source_type": "official",
+          "relationship": "PRIMARY_OFFICIAL",
+          "published_at": null,
+          "retrieved_at": "2026-10-01T02:47:02.913Z",
+          "freshness": "structural",
+          "route_ids": [
+            "natural_specialty_grocery"
+          ],
+          "account_refs": [
+            "entity:dorothylane.com"
+          ]
+        },
+        {
+          "source_id": "src:64",
+          "url": "https://www.wholefoodsmarket.com/company-info/information-potential-suppliers",
+          "domain": "wholefoodsmarket.com",
+          "title": "Information for Potential Suppliers | Whole Foods Market",
+          "source_type": "official",
+          "relationship": "PRIMARY_OFFICIAL",
+          "published_at": null,
+          "retrieved_at": "2026-10-01T02:47:06.331Z",
+          "freshness": "structural",
+          "route_ids": [
+            "natural_specialty_grocery"
+          ],
+          "account_refs": [
+            "entity:wholefoodsmarket.com"
+          ]
+        },
+        {
+          "source_id": "src:65",
+          "url": "https://assets.wholefoodsmarket.com/www/vendors/MW/Produce/20150213-MWProduce-WFM-Responsibly-Grown-Vendor-Manual-V1.pdf",
+          "domain": "assets.wholefoodsmarket.com",
+          "title": "Vendor Manual Version 1.0 | December, 2014",
+          "source_type": "official",
+          "relationship": "PRIMARY_OFFICIAL",
+          "published_at": null,
+          "retrieved_at": "2026-10-01T02:47:06.331Z",
+          "freshness": "structural",
+          "route_ids": [
+            "natural_specialty_grocery"
+          ],
+          "account_refs": [
+            "entity:wholefoodsmarket.com"
+          ]
+        },
+        {
+          "source_id": "src:66",
+          "url": "https://www.lifetime.life/content/dam/ltp/documents/sponsorship-terms-and-conditions-apr-2018.pdf",
+          "domain": "lifetime.life",
+          "title": "SPONSORSHIP TERMS AND CONDITIONS Page 1 of 4 Last Updated: April 23rd, 2018.",
+          "source_type": "official",
+          "relationship": "PRIMARY_OFFICIAL",
+          "published_at": "2018-04-23T00:00:00",
+          "retrieved_at": "2026-10-01T02:47:08.090Z",
+          "freshness": "current",
+          "route_ids": [
+            "fitness_wellness_clubs"
+          ],
+          "account_refs": [
+            "entity:lifetime.life"
+          ]
+        },
+        {
+          "source_id": "src:67",
+          "url": "https://shop.lifetime.life/life-time-water-bottle",
+          "domain": "shop.lifetime.life",
+          "title": "Life Time Water Bottle | LT Shop",
+          "source_type": "official",
+          "relationship": "PRIMARY_OFFICIAL",
+          "published_at": null,
+          "retrieved_at": "2026-10-01T02:47:08.090Z",
+          "freshness": "structural",
+          "route_ids": [
+            "fitness_wellness_clubs"
+          ],
+          "account_refs": [
+            "entity:lifetime.life"
+          ]
+        },
+        {
+          "source_id": "src:68",
+          "url": "https://www.kehe.com/trend-finder-product-discovery/",
+          "domain": "kehe.com",
+          "title": "KeHE Trend Finder - Virtual Product Discovery Events | KeHE.com",
+          "source_type": "official",
+          "relationship": "PRIMARY_OFFICIAL",
+          "published_at": "2026-04-21T19:42:06",
+          "retrieved_at": "2026-10-01T02:47:09.189Z",
+          "freshness": "current",
+          "route_ids": [
+            "natural_products_distribution"
+          ],
+          "account_refs": [
+            "entity:kehe.com"
+          ]
+        },
+        {
+          "source_id": "src:69",
+          "url": "https://www.kehe.com/suppliers/",
+          "domain": "kehe.com",
+          "title": "KeHE Brands - Submit Your Products",
+          "source_type": "official",
+          "relationship": "PRIMARY_OFFICIAL",
+          "published_at": "2022-07-12T20:51:59",
+          "retrieved_at": "2026-10-01T02:47:09.189Z",
+          "freshness": "current",
+          "route_ids": [
+            "natural_products_distribution"
+          ],
+          "account_refs": [
+            "entity:kehe.com"
+          ]
+        },
+        {
+          "source_id": "src:70",
+          "url": "https://gourmetint.com/brands/",
+          "domain": "gourmetint.com",
+          "title": "Brands – Gourmet International",
+          "source_type": "official",
+          "relationship": "PRIMARY_OFFICIAL",
+          "published_at": null,
+          "retrieved_at": "2026-10-01T02:47:10.281Z",
+          "freshness": "structural",
+          "route_ids": [
+            "specialty_food_beverage_import"
+          ],
+          "account_refs": [
+            "entity:gourmetint.com"
+          ]
+        },
+        {
+          "source_id": "src:71",
+          "url": "https://www.savorimports.com/about-us/",
+          "domain": "savorimports.com",
+          "title": "About Us - Savor Imports",
+          "source_type": "official",
+          "relationship": "PRIMARY_OFFICIAL",
+          "published_at": "2025-12-10T16:18:34",
+          "retrieved_at": "2026-10-01T02:47:13.369Z",
+          "freshness": "current",
+          "route_ids": [
+            "specialty_food_beverage_import"
+          ],
+          "account_refs": [
+            "entity:savorimports.com"
+          ]
+        },
+        {
+          "source_id": "src:72",
+          "url": "https://www.savorimports.com/products/",
+          "domain": "savorimports.com",
+          "title": "Products - Savor Imports",
+          "source_type": "official",
+          "relationship": "PRIMARY_OFFICIAL",
+          "published_at": "2026-02-26T18:42:34",
+          "retrieved_at": "2026-10-01T02:47:13.369Z",
+          "freshness": "current",
+          "route_ids": [
+            "specialty_food_beverage_import"
+          ],
+          "account_refs": [
+            "entity:savorimports.com"
+          ]
         }
       ],
       "claims": [
@@ -5769,13 +6215,13 @@
       "coverage": {
         "routes_researched": 9,
         "routes_supported": 9,
-        "sources": 57,
+        "sources": 72,
         "independent_sources": 4,
         "mechanisms_researched": 9,
-        "mechanisms_found": 0,
-        "mechanisms_verified": 0,
-        "access_identified": 0,
-        "access_verified": 0,
+        "mechanisms_found": 3,
+        "mechanisms_verified": 3,
+        "access_identified": 3,
+        "access_verified": 3,
         "buyer_functions_identified": 24,
         "corroboration_attempted": 9,
         "corroboration_achieved": 3
@@ -5845,14 +6291,591 @@
           "https://ensun.io/search/corporate-gift/united-states",
           "https://www.swagmagic.com/corporate-gifts-supplier"
         ],
-        "fresh_search_count": 13,
-        "fresh_extraction_count": 0,
+        "fresh_search_count": 22,
+        "fresh_extraction_count": 16,
         "reused_evidence_count": 0
       },
       "limitations": [
         "This is bounded route research, not TAM, market share or complete US coverage.",
         "No search result is promoted to verified account evidence by this run.",
         "The selected portfolio remains a separate population."
+      ],
+      "charts": [
+        {
+          "chart_id": "route_research_coverage",
+          "title": "Route research coverage",
+          "question_answered": "Which route hypotheses were researched and what did the evidence support?",
+          "population": {
+            "population_type": "market_research_universe",
+            "population_size": 9,
+            "selection_scope": "Unique public route, ecosystem and commercial-access sources returned by bounded Brave research",
+            "coverage_scope": "Canonical route hypotheses researched",
+            "limitations": [
+              "Search coverage is bounded, not exhaustive market coverage.",
+              "Search results remain discovery evidence until extracted and claim-validated."
+            ]
+          },
+          "denominator": 9,
+          "unknown_count": 0,
+          "not_researched_count": 0,
+          "data": [
+            {
+              "route_id": "natural_specialty_grocery",
+              "lifecycle": "EVIDENCE_SUPPORTED",
+              "queries": 2,
+              "sources": 18,
+              "candidates": 7,
+              "eligible_accounts": 0,
+              "independent_support": 1
+            },
+            {
+              "route_id": "online_natural_retail",
+              "lifecycle": "EVIDENCE_SUPPORTED",
+              "queries": 1,
+              "sources": 3,
+              "candidates": 3,
+              "eligible_accounts": 0,
+              "independent_support": 0
+            },
+            {
+              "route_id": "specialty_beverage_retail",
+              "lifecycle": "EVIDENCE_SUPPORTED",
+              "queries": 1,
+              "sources": 5,
+              "candidates": 5,
+              "eligible_accounts": 0,
+              "independent_support": 0
+            },
+            {
+              "route_id": "wellness_hospitality",
+              "lifecycle": "EVIDENCE_SUPPORTED",
+              "queries": 2,
+              "sources": 10,
+              "candidates": 10,
+              "eligible_accounts": 0,
+              "independent_support": 1
+            },
+            {
+              "route_id": "fitness_wellness_clubs",
+              "lifecycle": "EVIDENCE_SUPPORTED",
+              "queries": 1,
+              "sources": 7,
+              "candidates": 4,
+              "eligible_accounts": 0,
+              "independent_support": 0
+            },
+            {
+              "route_id": "natural_products_distribution",
+              "lifecycle": "EVIDENCE_SUPPORTED",
+              "queries": 2,
+              "sources": 8,
+              "candidates": 5,
+              "eligible_accounts": 0,
+              "independent_support": 0
+            },
+            {
+              "route_id": "specialty_food_beverage_import",
+              "lifecycle": "EVIDENCE_SUPPORTED",
+              "queries": 2,
+              "sources": 13,
+              "candidates": 9,
+              "eligible_accounts": 0,
+              "independent_support": 2
+            },
+            {
+              "route_id": "foodservice_procurement",
+              "lifecycle": "EVIDENCE_SUPPORTED",
+              "queries": 1,
+              "sources": 4,
+              "candidates": 4,
+              "eligible_accounts": 0,
+              "independent_support": 0
+            },
+            {
+              "route_id": "corporate_gifting",
+              "lifecycle": "EVIDENCE_SUPPORTED",
+              "queries": 1,
+              "sources": 5,
+              "candidates": 4,
+              "eligible_accounts": 0,
+              "independent_support": 0
+            }
+          ],
+          "eligible": true,
+          "selected": true,
+          "omission_reason": null
+        },
+        {
+          "chart_id": "commercial_access_depth",
+          "title": "Commercial access depth",
+          "question_answered": "Where does an observable commercial path exist?",
+          "population": {
+            "population_type": "market_research_universe",
+            "population_size": 9,
+            "selection_scope": "Unique public route, ecosystem and commercial-access sources returned by bounded Brave research",
+            "coverage_scope": "Canonical route hypotheses researched",
+            "limitations": [
+              "Search coverage is bounded, not exhaustive market coverage.",
+              "Search results remain discovery evidence until extracted and claim-validated."
+            ]
+          },
+          "denominator": 9,
+          "unknown_count": 8,
+          "not_researched_count": 0,
+          "data": [
+            {
+              "route_id": "natural_specialty_grocery",
+              "mechanism_research": "VERIFIED",
+              "mechanisms_identified": 3,
+              "mechanisms_verified": 3,
+              "access_verified": 3
+            },
+            {
+              "route_id": "online_natural_retail",
+              "mechanism_research": "FOUND_UNVERIFIED",
+              "mechanisms_identified": 0,
+              "mechanisms_verified": 0,
+              "access_verified": 0
+            },
+            {
+              "route_id": "specialty_beverage_retail",
+              "mechanism_research": "FOUND_UNVERIFIED",
+              "mechanisms_identified": 0,
+              "mechanisms_verified": 0,
+              "access_verified": 0
+            },
+            {
+              "route_id": "wellness_hospitality",
+              "mechanism_research": "FOUND_UNVERIFIED",
+              "mechanisms_identified": 0,
+              "mechanisms_verified": 0,
+              "access_verified": 0
+            },
+            {
+              "route_id": "fitness_wellness_clubs",
+              "mechanism_research": "FOUND_UNVERIFIED",
+              "mechanisms_identified": 0,
+              "mechanisms_verified": 0,
+              "access_verified": 0
+            },
+            {
+              "route_id": "natural_products_distribution",
+              "mechanism_research": "FOUND_UNVERIFIED",
+              "mechanisms_identified": 0,
+              "mechanisms_verified": 0,
+              "access_verified": 0
+            },
+            {
+              "route_id": "specialty_food_beverage_import",
+              "mechanism_research": "FOUND_UNVERIFIED",
+              "mechanisms_identified": 0,
+              "mechanisms_verified": 0,
+              "access_verified": 0
+            },
+            {
+              "route_id": "foodservice_procurement",
+              "mechanism_research": "FOUND_UNVERIFIED",
+              "mechanisms_identified": 0,
+              "mechanisms_verified": 0,
+              "access_verified": 0
+            },
+            {
+              "route_id": "corporate_gifting",
+              "mechanism_research": "FOUND_UNVERIFIED",
+              "mechanisms_identified": 0,
+              "mechanisms_verified": 0,
+              "access_verified": 0
+            }
+          ],
+          "eligible": true,
+          "selected": true,
+          "omission_reason": null
+        },
+        {
+          "chart_id": "freshness_coverage",
+          "title": "Evidence freshness",
+          "question_answered": "How much market evidence is current, structural, stale or undated?",
+          "population": {
+            "population_type": "market_research_universe",
+            "population_size": 72,
+            "selection_scope": "Unique public route, ecosystem and commercial-access sources returned by bounded Brave research",
+            "coverage_scope": "13 queries across 9 route hypotheses",
+            "limitations": [
+              "Search coverage is bounded, not exhaustive market coverage.",
+              "Search results remain discovery evidence until extracted and claim-validated."
+            ]
+          },
+          "denominator": 72,
+          "unknown_count": 0,
+          "not_researched_count": 0,
+          "data": [
+            {
+              "freshness": "current",
+              "sources": 30
+            },
+            {
+              "freshness": "event",
+              "sources": 0
+            },
+            {
+              "freshness": "structural",
+              "sources": 42
+            },
+            {
+              "freshness": "stale",
+              "sources": 0
+            },
+            {
+              "freshness": "unknown",
+              "sources": 0
+            }
+          ],
+          "eligible": true,
+          "selected": true,
+          "omission_reason": null
+        },
+        {
+          "chart_id": "customer_dependency_impact",
+          "title": "Customer dependency impact",
+          "question_answered": "Which customer facts block the most routes or decisions?",
+          "population": {
+            "population_type": "market_research_universe",
+            "population_size": 9,
+            "selection_scope": "Unique public route, ecosystem and commercial-access sources returned by bounded Brave research",
+            "coverage_scope": "Canonical route hypotheses researched",
+            "limitations": [
+              "Search coverage is bounded, not exhaustive market coverage.",
+              "Search results remain discovery evidence until extracted and claim-validated."
+            ]
+          },
+          "denominator": 9,
+          "unknown_count": 0,
+          "not_researched_count": 0,
+          "data": [
+            {
+              "dependency_id": "product_classification",
+              "label": "Exact US product classification",
+              "status": "CUSTOMER_INPUT_REQUIRED",
+              "blocking_level": "route",
+              "affected_routes": 9,
+              "affected_accounts": 0
+            },
+            {
+              "dependency_id": "landed_economics",
+              "label": "Landed economics and target margin",
+              "status": "CUSTOMER_INPUT_REQUIRED",
+              "blocking_level": "decision",
+              "affected_routes": 9,
+              "affected_accounts": 0
+            },
+            {
+              "dependency_id": "minimum_order_quantity",
+              "label": "Minimum order quantity compatibility",
+              "status": "CUSTOMER_INPUT_REQUIRED",
+              "blocking_level": "account",
+              "affected_routes": 9,
+              "affected_accounts": 0
+            },
+            {
+              "dependency_id": "importer_of_record",
+              "label": "Importer-of-record model",
+              "status": "CUSTOMER_INPUT_REQUIRED",
+              "blocking_level": "route",
+              "affected_routes": 4,
+              "affected_accounts": 0
+            }
+          ],
+          "eligible": true,
+          "selected": true,
+          "omission_reason": null
+        }
+      ],
+      "commercial_account_research": [
+        {
+          "account_ref": "entity:naturalgrocers.com",
+          "account_name": "Natural Grocers",
+          "domain": "naturalgrocers.com",
+          "route_id": "natural_specialty_grocery",
+          "decision": "prioritize",
+          "research_status": "VERIFIED",
+          "mechanism_status": "VERIFIED",
+          "mechanism_type": "new_item_submission",
+          "mechanism_source_ids": [
+            "src:1"
+          ],
+          "access_status": "VERIFIED",
+          "access_path": "https://www.naturalgrocers.com/vendors",
+          "buyer_function_status": "VERIFIED",
+          "buyer_functions": [
+            "merchandising"
+          ],
+          "corroboration_status": "NOT_ATTEMPTED",
+          "counterevidence": [],
+          "customer_dependency_ids": [
+            "product_classification",
+            "landed_economics",
+            "minimum_order_quantity",
+            "importer_of_record"
+          ],
+          "retrieval_failures": [],
+          "researched_at": "2026-10-01T02:47:00.064Z",
+          "limitations": [
+            "A public access mechanism is not buying intent, product acceptance or evidence of open category capacity."
+          ]
+        },
+        {
+          "account_ref": "entity:sprouts.com",
+          "account_name": "Sprouts Farmers Market",
+          "domain": "sprouts.com",
+          "route_id": "natural_specialty_grocery",
+          "decision": "validate",
+          "research_status": "VERIFIED",
+          "mechanism_status": "VERIFIED",
+          "mechanism_type": "new_item_submission",
+          "mechanism_source_ids": [
+            "src:58",
+            "src:59"
+          ],
+          "access_status": "VERIFIED",
+          "access_path": "https://about.sprouts.com/new-item-submission/",
+          "buyer_function_status": "VERIFIED",
+          "buyer_functions": [
+            "category_management",
+            "merchandising"
+          ],
+          "corroboration_status": "NOT_ATTEMPTED",
+          "counterevidence": [],
+          "customer_dependency_ids": [
+            "product_classification",
+            "landed_economics",
+            "minimum_order_quantity",
+            "importer_of_record"
+          ],
+          "retrieval_failures": [],
+          "researched_at": "2026-10-01T02:47:01.345Z",
+          "limitations": [
+            "A public access mechanism is not buying intent, product acceptance or evidence of open category capacity."
+          ]
+        },
+        {
+          "account_ref": "entity:earthfare.com",
+          "account_name": "Earth Fare",
+          "domain": "earthfare.com",
+          "route_id": "natural_specialty_grocery",
+          "decision": "validate",
+          "research_status": "VERIFIED",
+          "mechanism_status": "RESEARCHED_NOT_FOUND",
+          "mechanism_type": null,
+          "mechanism_source_ids": [],
+          "access_status": "RESEARCHED_NOT_FOUND",
+          "access_path": null,
+          "buyer_function_status": "RESEARCHED_NOT_FOUND",
+          "buyer_functions": [],
+          "corroboration_status": "NOT_ATTEMPTED",
+          "counterevidence": [],
+          "customer_dependency_ids": [
+            "product_classification",
+            "landed_economics",
+            "minimum_order_quantity",
+            "importer_of_record"
+          ],
+          "retrieval_failures": [],
+          "researched_at": "2026-10-01T02:47:02.744Z",
+          "limitations": [
+            "A public access mechanism is not buying intent, product acceptance or evidence of open category capacity.",
+            "No official supplier/product mechanism was verified in the retrieved pages.",
+            "No buyer function was verified from retrieved public text."
+          ]
+        },
+        {
+          "account_ref": "entity:dorothylane.com",
+          "account_name": "Dorothy Lane Market",
+          "domain": "dorothylane.com",
+          "route_id": "natural_specialty_grocery",
+          "decision": "validate",
+          "research_status": "VERIFIED",
+          "mechanism_status": "RESEARCHED_NOT_FOUND",
+          "mechanism_type": null,
+          "mechanism_source_ids": [],
+          "access_status": "RESEARCHED_NOT_FOUND",
+          "access_path": null,
+          "buyer_function_status": "RESEARCHED_NOT_FOUND",
+          "buyer_functions": [],
+          "corroboration_status": "NOT_ATTEMPTED",
+          "counterevidence": [],
+          "customer_dependency_ids": [
+            "product_classification",
+            "landed_economics",
+            "minimum_order_quantity",
+            "importer_of_record"
+          ],
+          "retrieval_failures": [],
+          "researched_at": "2026-10-01T02:47:06.147Z",
+          "limitations": [
+            "A public access mechanism is not buying intent, product acceptance or evidence of open category capacity.",
+            "No official supplier/product mechanism was verified in the retrieved pages.",
+            "No buyer function was verified from retrieved public text."
+          ]
+        },
+        {
+          "account_ref": "entity:wholefoodsmarket.com",
+          "account_name": "Whole Foods Market",
+          "domain": "wholefoodsmarket.com",
+          "route_id": "natural_specialty_grocery",
+          "decision": "monitor",
+          "research_status": "VERIFIED",
+          "mechanism_status": "VERIFIED",
+          "mechanism_type": "local_supplier_program",
+          "mechanism_source_ids": [
+            "src:64"
+          ],
+          "access_status": "VERIFIED",
+          "access_path": "https://www.wholefoodsmarket.com/company-info/information-potential-suppliers",
+          "buyer_function_status": "RESEARCHED_NOT_FOUND",
+          "buyer_functions": [],
+          "corroboration_status": "NOT_ATTEMPTED",
+          "counterevidence": [],
+          "customer_dependency_ids": [
+            "product_classification",
+            "landed_economics",
+            "minimum_order_quantity",
+            "importer_of_record"
+          ],
+          "retrieval_failures": [
+            "https://assets.wholefoodsmarket.com/www/vendors/MW/Produce/20150213-MWProduce-WFM-Responsibly-Grown-Vendor-Manual-V1.pdf: CONTENT_UNUSABLE"
+          ],
+          "researched_at": "2026-10-01T02:47:07.905Z",
+          "limitations": [
+            "A public access mechanism is not buying intent, product acceptance or evidence of open category capacity.",
+            "No buyer function was verified from retrieved public text."
+          ]
+        },
+        {
+          "account_ref": "entity:lifetime.life",
+          "account_name": "Life Time",
+          "domain": "lifetime.life",
+          "route_id": "fitness_wellness_clubs",
+          "decision": "monitor",
+          "research_status": "FOUND_UNVERIFIED",
+          "mechanism_status": "FOUND_UNVERIFIED",
+          "mechanism_type": null,
+          "mechanism_source_ids": [],
+          "access_status": "FOUND_UNVERIFIED",
+          "access_path": null,
+          "buyer_function_status": "FOUND_UNVERIFIED",
+          "buyer_functions": [],
+          "corroboration_status": "NOT_ATTEMPTED",
+          "counterevidence": [],
+          "customer_dependency_ids": [
+            "product_classification",
+            "landed_economics",
+            "minimum_order_quantity"
+          ],
+          "retrieval_failures": [
+            "https://www.lifetime.life/content/dam/ltp/documents/sponsorship-terms-and-conditions-apr-2018.pdf: CONTENT_UNUSABLE",
+            "https://shop.lifetime.life/life-time-water-bottle: PROVIDER_UNAVAILABLE"
+          ],
+          "researched_at": "2026-10-01T02:47:08.905Z",
+          "limitations": [
+            "A public access mechanism is not buying intent, product acceptance or evidence of open category capacity.",
+            "No official supplier/product mechanism was verified in the retrieved pages.",
+            "No buyer function was verified from retrieved public text."
+          ]
+        },
+        {
+          "account_ref": "entity:kehe.com",
+          "account_name": "KeHE Distributors",
+          "domain": "kehe.com",
+          "route_id": "natural_products_distribution",
+          "decision": "not_selected",
+          "research_status": "FOUND_UNVERIFIED",
+          "mechanism_status": "FOUND_UNVERIFIED",
+          "mechanism_type": null,
+          "mechanism_source_ids": [],
+          "access_status": "FOUND_UNVERIFIED",
+          "access_path": null,
+          "buyer_function_status": "FOUND_UNVERIFIED",
+          "buyer_functions": [],
+          "corroboration_status": "NOT_ATTEMPTED",
+          "counterevidence": [],
+          "customer_dependency_ids": [
+            "product_classification",
+            "landed_economics",
+            "minimum_order_quantity",
+            "importer_of_record"
+          ],
+          "retrieval_failures": [
+            "https://www.kehe.com/trend-finder-product-discovery/: ACCESS_RESTRICTED",
+            "https://www.kehe.com/suppliers/: ACCESS_RESTRICTED"
+          ],
+          "researched_at": "2026-10-01T02:47:09.851Z",
+          "limitations": [
+            "A public access mechanism is not buying intent, product acceptance or evidence of open category capacity.",
+            "No official supplier/product mechanism was verified in the retrieved pages.",
+            "No buyer function was verified from retrieved public text."
+          ]
+        },
+        {
+          "account_ref": "entity:gourmetint.com",
+          "account_name": "Gourmet International",
+          "domain": "gourmetint.com",
+          "route_id": "specialty_food_beverage_import",
+          "decision": "not_selected",
+          "research_status": "VERIFIED",
+          "mechanism_status": "RESEARCHED_NOT_FOUND",
+          "mechanism_type": null,
+          "mechanism_source_ids": [],
+          "access_status": "RESEARCHED_NOT_FOUND",
+          "access_path": null,
+          "buyer_function_status": "VERIFIED",
+          "buyer_functions": [
+            "merchandising"
+          ],
+          "corroboration_status": "NOT_ATTEMPTED",
+          "counterevidence": [],
+          "customer_dependency_ids": [
+            "product_classification",
+            "landed_economics",
+            "minimum_order_quantity",
+            "importer_of_record"
+          ],
+          "retrieval_failures": [],
+          "researched_at": "2026-10-01T02:47:13.190Z",
+          "limitations": [
+            "A public access mechanism is not buying intent, product acceptance or evidence of open category capacity.",
+            "No official supplier/product mechanism was verified in the retrieved pages."
+          ]
+        },
+        {
+          "account_ref": "entity:savorimports.com",
+          "account_name": "Savor Imports",
+          "domain": "savorimports.com",
+          "route_id": "specialty_food_beverage_import",
+          "decision": "not_selected",
+          "research_status": "VERIFIED",
+          "mechanism_status": "RESEARCHED_NOT_FOUND",
+          "mechanism_type": null,
+          "mechanism_source_ids": [],
+          "access_status": "RESEARCHED_NOT_FOUND",
+          "access_path": null,
+          "buyer_function_status": "RESEARCHED_NOT_FOUND",
+          "buyer_functions": [],
+          "corroboration_status": "NOT_ATTEMPTED",
+          "counterevidence": [],
+          "customer_dependency_ids": [
+            "product_classification",
+            "landed_economics",
+            "minimum_order_quantity",
+            "importer_of_record"
+          ],
+          "retrieval_failures": [],
+          "researched_at": "2026-10-01T02:47:13.995Z",
+          "limitations": [
+            "A public access mechanism is not buying intent, product acceptance or evidence of open category capacity.",
+            "No official supplier/product mechanism was verified in the retrieved pages.",
+            "No buyer function was verified from retrieved public text."
+          ]
+        }
       ]
     }
   },
@@ -5909,11 +6932,11 @@
   "selection": {
     "selected": [
       "Natural Grocers",
+      "Sprouts Farmers Market",
       "Dorothy Lane Market",
       "Earth Fare",
-      "Sprouts Farmers Market",
-      "Life Time",
       "Whole Foods Market",
+      "Life Time",
       "Canyon Ranch",
       "Miraval Resorts",
       "Auberge Resorts Collection",
@@ -5939,7 +6962,7 @@
       "tier": "preview",
       "label": "Preview",
       "accounts": 2,
-      "bytes": 13486,
+      "bytes": 13623,
       "path": "output/pilot2/2026-09-30-actionability-final/LeadLens_AmorDeGea_Pilot2_Preview.pdf",
       "deliveryReady": true
     },
@@ -5947,7 +6970,7 @@
       "tier": "brief",
       "label": "Brief",
       "accounts": 6,
-      "bytes": 35169,
+      "bytes": 35175,
       "path": "output/pilot2/2026-09-30-actionability-final/LeadLens_AmorDeGea_Pilot2_Brief.pdf",
       "deliveryReady": true
     },
@@ -5955,7 +6978,7 @@
       "tier": "intelligence",
       "label": "Portfolio",
       "accounts": 12,
-      "bytes": 69927,
+      "bytes": 69962,
       "path": "output/pilot2/2026-09-30-actionability-final/LeadLens_AmorDeGea_Pilot2_Portfolio.pdf",
       "deliveryReady": true
     },
@@ -5963,7 +6986,7 @@
       "tier": "premium",
       "label": "Premium",
       "accounts": 17,
-      "bytes": 102468,
+      "bytes": 108334,
       "path": "output/pilot2/2026-09-30-actionability-final/LeadLens_AmorDeGea_Pilot2_Premium.pdf",
       "deliveryReady": false
     }
