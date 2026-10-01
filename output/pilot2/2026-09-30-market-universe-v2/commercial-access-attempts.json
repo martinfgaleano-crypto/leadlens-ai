@@ -1,5 +1,208 @@
 {
-  "generated_at": "2026-10-01T00:48:59.547Z",
-  "attempts": [],
+  "generated_at": "2026-10-01T02:38:19.250Z",
+  "attempts": [
+    {
+      "account": "Natural Grocers",
+      "route": "natural_specialty_grocery",
+      "url": "https://www.naturalgrocers.com/vendors",
+      "extractor": "direct_http",
+      "ok": true,
+      "matched": true,
+      "error": null,
+      "failure": null,
+      "latency_ms": 1013,
+      "extraction_attempts": [
+        {
+          "extractor": "tavily",
+          "ok": false,
+          "error": "HTTP 433",
+          "failure": null,
+          "latency_ms": 1191
+        },
+        {
+          "extractor": "firecrawl",
+          "ok": false,
+          "error": "HTTP 402",
+          "failure": "PAYMENT_EXHAUSTED",
+          "latency_ms": 642
+        },
+        {
+          "extractor": "direct_http",
+          "ok": true,
+          "error": null,
+          "failure": null,
+          "latency_ms": 1013
+        }
+      ],
+      "provenance": {
+        "original_url": "https://www.naturalgrocers.com/vendors",
+        "final_url": "https://www.naturalgrocers.com/vendors",
+        "domain": "www.naturalgrocers.com",
+        "retrieval_method": "direct_http",
+        "retrieved_at": "2026-10-01T02:38:05.910Z",
+        "http_status": 200,
+        "content_type": "text/html",
+        "extractor": "basic_html",
+        "source_title": "New Item Submissions | Natural Grocers",
+        "publication_date": null,
+        "event_date": null,
+        "content_sha256": "a4e8a3bdf399b4c5b5642543901086bd8651eca6a29bb0b0f790f2ddfd59ff3b",
+        "redirects": []
+      },
+      "content_sha256": "a4e8a3bdf399b4c5b5642543901086bd8651eca6a29bb0b0f790f2ddfd59ff3b"
+    },
+    {
+      "account": "KeHE Distributors",
+      "route": "natural_products_distribution",
+      "url": "https://www.kehe.com/suppliers",
+      "extractor": "none",
+      "ok": false,
+      "matched": false,
+      "error": "HTTP 403",
+      "failure": "ACCESS_RESTRICTED",
+      "latency_ms": 583,
+      "extraction_attempts": [
+        {
+          "extractor": "tavily",
+          "ok": false,
+          "error": "HTTP 433",
+          "failure": null,
+          "latency_ms": 146
+        },
+        {
+          "extractor": "firecrawl",
+          "ok": false,
+          "error": "HTTP 402",
+          "failure": "PAYMENT_EXHAUSTED",
+          "latency_ms": 251
+        },
+        {
+          "extractor": "direct_http",
+          "ok": false,
+          "error": "HTTP 403",
+          "failure": "ACCESS_RESTRICTED",
+          "latency_ms": 583
+        }
+      ],
+      "provenance": {
+        "original_url": "https://www.kehe.com/suppliers",
+        "final_url": "https://www.kehe.com/suppliers",
+        "domain": "www.kehe.com",
+        "retrieval_method": "direct_http",
+        "retrieved_at": "2026-10-01T02:38:07.325Z",
+        "http_status": 403,
+        "content_type": "text/html",
+        "extractor": "none",
+        "source_title": null,
+        "publication_date": null,
+        "event_date": null,
+        "content_sha256": null,
+        "redirects": []
+      },
+      "content_sha256": null
+    },
+    {
+      "account": "Gourmet International",
+      "route": "specialty_food_beverage_import",
+      "url": "https://gourmetint.com/",
+      "extractor": "direct_http",
+      "ok": true,
+      "matched": false,
+      "error": null,
+      "failure": null,
+      "latency_ms": 1573,
+      "extraction_attempts": [
+        {
+          "extractor": "tavily",
+          "ok": false,
+          "error": "HTTP 433",
+          "failure": null,
+          "latency_ms": 137
+        },
+        {
+          "extractor": "firecrawl",
+          "ok": false,
+          "error": "HTTP 402",
+          "failure": "PAYMENT_EXHAUSTED",
+          "latency_ms": 300
+        },
+        {
+          "extractor": "direct_http",
+          "ok": true,
+          "error": null,
+          "failure": null,
+          "latency_ms": 1573
+        }
+      ],
+      "provenance": {
+        "original_url": "https://gourmetint.com/",
+        "final_url": "https://gourmetint.com/",
+        "domain": "gourmetint.com",
+        "retrieval_method": "direct_http",
+        "retrieved_at": "2026-10-01T02:38:08.345Z",
+        "http_status": 200,
+        "content_type": "text/html",
+        "extractor": "basic_html",
+        "source_title": "Gourmet International – Importers & Distributors of Specialty Foods",
+        "publication_date": null,
+        "event_date": null,
+        "content_sha256": "263596849ad0d723060ff923a93c1101e78b2583f77d5c0db7563b497166547c",
+        "redirects": []
+      },
+      "content_sha256": "263596849ad0d723060ff923a93c1101e78b2583f77d5c0db7563b497166547c"
+    },
+    {
+      "account": "Savor Imports",
+      "route": "specialty_food_beverage_import",
+      "url": "https://www.savorimports.com/about-us",
+      "extractor": "direct_http",
+      "ok": true,
+      "matched": false,
+      "error": null,
+      "failure": null,
+      "latency_ms": 8893,
+      "extraction_attempts": [
+        {
+          "extractor": "tavily",
+          "ok": false,
+          "error": "HTTP 433",
+          "failure": null,
+          "latency_ms": 184
+        },
+        {
+          "extractor": "firecrawl",
+          "ok": false,
+          "error": "HTTP 402",
+          "failure": "PAYMENT_EXHAUSTED",
+          "latency_ms": 220
+        },
+        {
+          "extractor": "direct_http",
+          "ok": true,
+          "error": null,
+          "failure": null,
+          "latency_ms": 8893
+        }
+      ],
+      "provenance": {
+        "original_url": "https://www.savorimports.com/about-us",
+        "final_url": "https://www.savorimports.com/about-us/",
+        "domain": "www.savorimports.com",
+        "retrieval_method": "direct_http",
+        "retrieved_at": "2026-10-01T02:38:10.323Z",
+        "http_status": 200,
+        "content_type": "text/html",
+        "extractor": "basic_html",
+        "source_title": "About Us - Savor Imports",
+        "publication_date": null,
+        "event_date": null,
+        "content_sha256": "4ba9e27384b30733180edf5f17a12f13d66780011135c8ca50d00e7c529632a5",
+        "redirects": [
+          "https://www.savorimports.com/about-us/"
+        ]
+      },
+      "content_sha256": "4ba9e27384b30733180edf5f17a12f13d66780011135c8ca50d00e7c529632a5"
+    }
+  ],
   "validation_errors": []
 }

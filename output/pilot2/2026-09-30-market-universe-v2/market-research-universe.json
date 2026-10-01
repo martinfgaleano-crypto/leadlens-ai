@@ -274,7 +274,7 @@
       "eligible_account_refs": [],
       "excluded_account_refs": [],
       "exclusion_reasons": [],
-      "mechanism_research": "FOUND_UNVERIFIED",
+      "mechanism_research": "VERIFIED",
       "corroboration_attempted": true,
       "independent_support_count": 1,
       "counterevidence": [],
@@ -854,8 +854,47 @@
       "coverage_state": "FOUND_UNVERIFIED"
     }
   ],
-  "commercial_mechanisms": [],
-  "access_paths": [],
+  "commercial_mechanisms": [
+    {
+      "mechanism_id": "mechanism:natural_specialty_grocery:natural-grocers",
+      "mechanism_type": "new_item_submission",
+      "lifecycle": "VERIFIED",
+      "description": "Official Natural Grocers page exposes a product/supplier submission mechanism.",
+      "official_url": "https://www.naturalgrocers.com/vendors",
+      "source_ids": [
+        "src:1"
+      ],
+      "verified_at": "2026-10-01T02:38:06.927Z",
+      "relevance": "Observable route to submit an external product or brand for commercial evaluation; not evidence of acceptance or buying intent.",
+      "account_ref": "entity:naturalgrocers.com",
+      "route_id": "natural_specialty_grocery",
+      "limitations": [
+        "Portal availability does not establish category fit, buyer interest, economics or approval."
+      ],
+      "required_customer_inputs": [
+        "product_classification",
+        "landed_economics",
+        "minimum_order_quantity",
+        "importer_of_record"
+      ],
+      "coverage_state": "VERIFIED"
+    }
+  ],
+  "access_paths": [
+    {
+      "access_id": "access:mechanism:natural_specialty_grocery:natural-grocers",
+      "mechanism_id": "mechanism:natural_specialty_grocery:natural-grocers",
+      "path_type": "official_product_or_supplier_page",
+      "url": "https://www.naturalgrocers.com/vendors",
+      "coverage_state": "VERIFIED",
+      "source_ids": [
+        "src:1"
+      ],
+      "limitations": [
+        "Public access path only; submission requirements and current intake status may change."
+      ]
+    }
+  ],
   "customer_dependencies": [
     {
       "dependency_id": "product_classification",
@@ -2767,10 +2806,10 @@
     "sources": 57,
     "independent_sources": 4,
     "mechanisms_researched": 9,
-    "mechanisms_found": 0,
-    "mechanisms_verified": 0,
-    "access_identified": 0,
-    "access_verified": 0,
+    "mechanisms_found": 1,
+    "mechanisms_verified": 1,
+    "access_identified": 1,
+    "access_verified": 1,
     "buyer_functions_identified": 24,
     "corroboration_attempted": 9,
     "corroboration_achieved": 3
@@ -2841,7 +2880,7 @@
       "https://www.swagmagic.com/corporate-gifts-supplier"
     ],
     "fresh_search_count": 13,
-    "fresh_extraction_count": 0,
+    "fresh_extraction_count": 3,
     "reused_evidence_count": 0
   },
   "limitations": [
@@ -2969,15 +3008,15 @@
         ]
       },
       "denominator": 9,
-      "unknown_count": 9,
+      "unknown_count": 8,
       "not_researched_count": 0,
       "data": [
         {
           "route_id": "natural_specialty_grocery",
-          "mechanism_research": "FOUND_UNVERIFIED",
-          "mechanisms_identified": 0,
-          "mechanisms_verified": 0,
-          "access_verified": 0
+          "mechanism_research": "VERIFIED",
+          "mechanisms_identified": 1,
+          "mechanisms_verified": 1,
+          "access_verified": 1
         },
         {
           "route_id": "online_natural_retail",
