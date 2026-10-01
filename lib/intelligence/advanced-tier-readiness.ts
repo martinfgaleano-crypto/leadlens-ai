@@ -1,5 +1,6 @@
 import type { QualifiedAccount } from "@/lib/intelligence/customer-job";
 import type { CanonicalIntelligenceDeliveryV1 } from "@/lib/intelligence/canonical-intelligence-delivery";
+import { validateMarketResearchUniverse } from "@/lib/intelligence/market-research-universe";
 
 export type IntelligenceTier = "preview" | "brief" | "portfolio" | "premium";
 export type ReadinessState = "ready" | "partial" | "actionability_research_required";
@@ -70,7 +71,14 @@ export function evaluateCanonicalTierReadiness(
   const base = evaluateAdvancedTierReadiness(tier, accounts);
   const portfolio = tier === "portfolio" || tier === "premium";
   const premium = tier === "premium";
-  const marketIntelligenceReady = !premium || intelligence?.market_intelligence.state === "PRESENT";
+  const marketUniverse = intelligence?.market_research_universe;
+  const marketIntelligenceReady = !premium || Boolean(
+    intelligence?.market_intelligence.state === "PRESENT"
+    && marketUniverse
+    && validateMarketResearchUniverse(marketUniverse).length === 0
+    && marketUniverse.coverage.routes_researched > 0
+    && marketUniverse.provenance.source_data_refs.length > 0,
+  );
   const benchmarkReady = !portfolio || Boolean(intelligence?.benchmark.accounts.length && intelligence?.benchmark.dimensions.length);
   const portfolioIntelligenceReady = !portfolio || Boolean(intelligence?.portfolio_intelligence.leadlens_read.text);
   const visualIntelligenceReady = !portfolio || Boolean(intelligence?.charts.length && intelligence?.charts.every((chart) => chart.denominator === intelligence.scope.selected));

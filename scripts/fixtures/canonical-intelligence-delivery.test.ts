@@ -30,6 +30,6 @@ test("tier scoping recomputes denominator instead of leaking full set", () => as
 test("tier scoping rewrites narrative and benchmark cell denominators", () => assert.ok(scoped.portfolio_intelligence.leadlens_read.text.includes("2-account") && scoped.benchmark.accounts.every((row) => row.cells.every((cell) => cell.denominator === 2))));
 const accounts = Array.from({ length: 18 }, (_, i) => ({ key: `k${i}`, company: `C${i}`, domain: null, route: "r", decision: i === 0 ? "prioritize" as const : "hold" as const, fit: i === 0 ? "Strong" : "Moderate", timing: null, evidenceCount: 1, qualifiedAtPass: 1, hasSource: true, currentActionabilityBasis: i === 0, commercialMechanismVerified: i === 0, counterevidenceMaterial: false }));
 test("Premium readiness requires canonical above-account intelligence", () => assert.equal(evaluateCanonicalTierReadiness("premium", accounts, null, true).deliveryReady, false));
-test("Premium readiness passes only with capacity, actionability, intelligence and render", () => assert.equal(evaluateCanonicalTierReadiness("premium", accounts, intel, true).deliveryReady, true));
+test("Premium readiness fails closed when market intelligence is selected-account aggregation only", () => assert.equal(evaluateCanonicalTierReadiness("premium", accounts, intel, true).deliveryReady, false));
 
 console.log(`\n${passed}/10 canonical intelligence delivery checks passed`);

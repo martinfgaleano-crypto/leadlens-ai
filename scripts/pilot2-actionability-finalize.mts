@@ -18,6 +18,7 @@ const base = JSON.parse(readFileSync("output/pilot2/2026-09-30-final2/pilot2-mer
 const expansion = JSON.parse(readFileSync("output/pilot2/2026-09-30-actionability-v1/pilot2-merged-report.json", "utf8"));
 const trackA = JSON.parse(readFileSync("output/pilot2/2026-09-30-actionability-v1/track-a-validation.json", "utf8"));
 const trackASearch = JSON.parse(readFileSync("output/pilot2/2026-09-30-actionability-v1/track-a-search.json", "utf8"));
+const marketResearchUniverse = JSON.parse(readFileSync("output/pilot2/2026-09-30-market-universe-v2/market-research-universe.json", "utf8"));
 const out = "output/pilot2/2026-09-30-actionability-final";
 mkdirSync(out, { recursive: true });
 const byCompany = new Map<string, any>();
@@ -43,6 +44,7 @@ const ranked = ordered.map((lead: any, i: number) => {
 });
 const reportJson = { ...base.reportJson, delivery_capacity_target: 18, processed_leads: ordered, canonical_cases: cases.filter((c) => order.has(byCompany.get(c.account_id.toLowerCase())?.id)), ranked_opportunities: ranked, executive_summary: "Pilot 2 actionability escalation produced one evidence-qualified Prioritize from a live official supplier-submission mechanism. The accumulated foundation remains one account short of Premium capacity; Premium is therefore not delivery-ready." };
 const institutional = assembleInstitutionalReport(reportJson, base.meta);
+institutional.intelligence!.market_research_universe = marketResearchUniverse;
 const legacyReadiness = tierReadinessFor(qualified, [2, 6, 12, 18]);
 const scopedIntelligence = (target: number) => scopeCanonicalIntelligence(institutional.intelligence!, ordered.slice(0, target).map((lead: any) => lead.candidate.company));
 const readiness = {
@@ -63,7 +65,7 @@ for (const [tier, label, code] of [["preview", "Preview", "preview_launch_v0"], 
   writeFileSync(path, pdf);
   tiers.push({ tier, label, accounts: (pm as any).document?.accounts?.length ?? 0, bytes: pdf.length, path, deliveryReady: label === "Portfolio" ? readiness.Portfolio.deliveryReady : label === "Premium" ? readiness.Premium.deliveryReady : readiness[label].deliveryReady });
 }
-const artifact = { version: "pilot2-actionability-final-v2", created_at: new Date().toISOString(), jobId: base.jobState.jobId, qualified, readiness, legacyReadiness, intelligence: institutional.intelligence, escalation, selection: { selected: selection.selected.map((x: any) => x.company), qualifiedNotSelected: selection.qualifiedNotSelected }, decisions: cases.reduce((a: any, c: any) => { a[c.decision] = (a[c.decision] ?? 0) + 1; return a; }, {}), tiers, provenance: { base: "output/pilot2/2026-09-30-final2", expansion: "output/pilot2/2026-09-30-actionability-v1", trackA: "output/pilot2/2026-09-30-actionability-v1/track-a-validation.json" } };
+const artifact = { version: "pilot2-actionability-final-v3", created_at: new Date().toISOString(), jobId: base.jobState.jobId, qualified, readiness, legacyReadiness, intelligence: institutional.intelligence, escalation, selection: { selected: selection.selected.map((x: any) => x.company), qualifiedNotSelected: selection.qualifiedNotSelected }, decisions: cases.reduce((a: any, c: any) => { a[c.decision] = (a[c.decision] ?? 0) + 1; return a; }, {}), tiers, provenance: { base: "output/pilot2/2026-09-30-final2", expansion: "output/pilot2/2026-09-30-actionability-v1", trackA: "output/pilot2/2026-09-30-actionability-v1/track-a-validation.json", marketResearchUniverse: "output/pilot2/2026-09-30-market-universe-v2/market-research-universe.json" } };
 writeFileSync(`${out}/pilot2-actionability-final.json`, JSON.stringify(artifact, null, 2));
 writeFileSync(`${out}/pilot2-merged-report.json`, JSON.stringify({ reportJson: { ...reportJson, canonical_intelligence: institutional.intelligence }, meta: base.meta, jobState: { ...base.jobState, qualified, tierReadiness: readiness, canonicalIntelligence: institutional.intelligence, actionabilityEscalation: escalation, status: readiness.Premium.deliveryReady ? "complete" : "partial" } }, null, 2));
 console.log(JSON.stringify({ output: out, qualified: qualified.length, decisions: artifact.decisions, readiness, tiers }, null, 2));

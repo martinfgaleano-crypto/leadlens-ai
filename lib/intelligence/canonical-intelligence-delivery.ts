@@ -1,4 +1,5 @@
 import type { AccountDossier, Claim, InstitutionalOpportunityReportV1 } from "@/lib/reports/institutional-report-types";
+import type { MarketResearchUniverseV1 } from "@/lib/intelligence/market-research-universe";
 
 export const CANONICAL_INTELLIGENCE_DELIVERY_VERSION = "canonical-intelligence-delivery-v1" as const;
 export type IntelligenceKnowledgeState = "known" | "inferred" | "unknown" | "contradicted" | "insufficient_evidence";
@@ -53,6 +54,7 @@ export interface CanonicalIntelligenceDeliveryV1 {
     commercial_mechanism: number; access_path: number; verified_access: number; corroborated: number; counterevidence_researched: number;
   };
   charts: IntelligenceChart[];
+  market_research_universe?: MarketResearchUniverseV1;
 }
 
 export const BENCHMARK_DIMENSIONS: BenchmarkDimensionContract[] = [
@@ -87,7 +89,7 @@ function cell(d: AccountDossier, dimension: BenchmarkDimensionContract, denomina
   return { dimension_id: dimension.dimension_id, state, known: state !== "Unknown", source_metric: dimension.source_fields.join(" + "), underlying_state: underlying, transformation: dimension.measurement_basis, denominator };
 }
 
-export function buildCanonicalIntelligenceDelivery(report: InstitutionalOpportunityReportV1, capacityTarget: number | null = null): CanonicalIntelligenceDeliveryV1 {
+export function buildCanonicalIntelligenceDelivery(report: InstitutionalOpportunityReportV1, capacityTarget: number | null = null, marketResearchUniverse?: MarketResearchUniverseV1): CanonicalIntelligenceDeliveryV1 {
   const dossiers = report.account_dossiers;
   const denominator = dossiers.length;
   const grouped = new Map<string, AccountDossier[]>();
@@ -132,7 +134,7 @@ export function buildCanonicalIntelligenceDelivery(report: InstitutionalOpportun
     market_map: { state: denominator && routes.length ? "PRESENT" : "INSUFFICIENT_DATA", nodes, edges, scope_note: `Route → buyer type → account map for ${denominator} selected accounts.` },
     benchmark: { dimensions: BENCHMARK_DIMENSIONS, accounts: accountBenchmark, routes: routes.map((r) => ({ route_id: r.route_id, accounts: r.observed_accounts.length, decisions: r.decisions, mechanism_coverage: `${r.commercial_mechanism_coverage.numerator}/${r.commercial_mechanism_coverage.denominator}`, evidence_coverage: `${r.evidence_coverage.numerator}/${r.evidence_coverage.denominator}` })), scope_note: "Benchmark states explain canonical decisions; they never replace or recompute those decisions." },
     portfolio_intelligence: { leadlens_read: claim("inference", leadlensRead, "decision distribution + evidence coverage"), attention_allocation: (["prioritize", "validate", "monitor", "hold"] as DecisionState[]).map((decision) => ({ decision, accounts: dossiers.filter((d) => decisionOf(d) === decision).map((d) => d.company), guidance: decision === "prioritize" ? "Allocate immediate validation and commercial preparation." : decision === "validate" ? "Resolve decision-critical unknowns before outreach." : decision === "monitor" ? "Watch for a material change or stronger access signal." : "Do not allocate active commercial effort without new evidence." })), opportunity_patterns: routes.filter((r) => r.decisions.prioritize + r.decisions.validate >= 2).map((r) => claim("inference", `${r.label} contains ${r.decisions.prioritize + r.decisions.validate} accounts currently worth prioritizing or validating.`, r.observed_accounts.join(", "))), change_patterns: dossiers.some((d) => d.evidence_chain.some((e) => e.date)) ? [claim("fact", `${evidence.validated_date} of ${denominator} selected accounts have validated dated evidence.`, "account evidence chains")] : [claim("unknown", "No portfolio-level dated change pattern was established.")], coverage_gaps: [`${denominator - evidence.validated_date}/${denominator} accounts lack validated dated evidence.`, `${denominator - evidence.corroborated}/${denominator} accounts lack confirmed independent corroboration.`, `${denominator - evidence.verified_access}/${denominator} accounts lack verified commercial access.`], validation_themes: Array.from(validations.entries()).map(([theme, accounts]) => ({ theme, accounts: Array.from(new Set(accounts)) })), portfolio_tensions: [evidence.usable_source > evidence.validated_date ? claim("inference", "Source coverage is materially stronger than dated-change coverage; fit should not be interpreted as timing.", `${evidence.usable_source}/${denominator} sourced vs ${evidence.validated_date}/${denominator} dated`) : null, evidence.verified_access < decisionCounts.validate + decisionCounts.prioritize ? claim("inference", "Several commercially relevant accounts still lack a verified access path.", `${evidence.verified_access}/${denominator} verified access`) : null].filter((x): x is Claim => Boolean(x)), strategic_guidance: [claim("recommendation", decisionCounts.prioritize ? "Protect the verified access route, resolve category/economics questions, and deepen the strongest Validate accounts without diluting evidence standards." : "Continue bounded actionability research before allocating advanced-tier commercial attention.", "canonical actionability state")] },
-    evidence_coverage: evidence, charts,
+    evidence_coverage: evidence, charts, market_research_universe: marketResearchUniverse,
   };
 }
 

@@ -80,6 +80,7 @@
     "test:advanced-tier-readiness": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/advanced-tier-readiness.test.ts",
     "test:actionability-escalation": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/actionability-escalation.test.ts",
     "test:canonical-intelligence-delivery": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/canonical-intelligence-delivery.test.ts",
+    "test:market-research-universe": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/market-research-universe.test.ts",
     "test:pilot2-natural-grocers-red-team": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/pilot2-natural-grocers-red-team.test.ts",
     "test:report-delivery-gate": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/report-delivery-gate.test.ts",
     "test:report-agent-resilience": "npx -y tsx --tsconfig tsconfig.json scripts/fixtures/report-agent-resilience.test.ts",
