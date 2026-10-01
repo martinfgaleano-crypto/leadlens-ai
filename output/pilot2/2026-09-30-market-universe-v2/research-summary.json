@@ -1,0 +1,73 @@
+{
+  "generated_at": "2026-10-01T00:45:48.365Z",
+  "provider": "brave",
+  "queries": 13,
+  "sources": 57,
+  "ecosystem_entities": 47,
+  "routes": [
+    {
+      "route_id": "natural_specialty_grocery",
+      "lifecycle": "EVIDENCE_SUPPORTED",
+      "sources": 9,
+      "independent_support": 1,
+      "stop_reason": "evidence_obtained"
+    },
+    {
+      "route_id": "online_natural_retail",
+      "lifecycle": "EVIDENCE_SUPPORTED",
+      "sources": 3,
+      "independent_support": 0,
+      "stop_reason": "evidence_obtained"
+    },
+    {
+      "route_id": "specialty_beverage_retail",
+      "lifecycle": "EVIDENCE_SUPPORTED",
+      "sources": 5,
+      "independent_support": 0,
+      "stop_reason": "evidence_obtained"
+    },
+    {
+      "route_id": "wellness_hospitality",
+      "lifecycle": "EVIDENCE_SUPPORTED",
+      "sources": 10,
+      "independent_support": 1,
+      "stop_reason": "evidence_obtained"
+    },
+    {
+      "route_id": "fitness_wellness_clubs",
+      "lifecycle": "EVIDENCE_SUPPORTED",
+      "sources": 5,
+      "independent_support": 0,
+      "stop_reason": "evidence_obtained"
+    },
+    {
+      "route_id": "natural_products_distribution",
+      "lifecycle": "EVIDENCE_SUPPORTED",
+      "sources": 6,
+      "independent_support": 0,
+      "stop_reason": "evidence_obtained"
+    },
+    {
+      "route_id": "specialty_food_beverage_import",
+      "lifecycle": "EVIDENCE_SUPPORTED",
+      "sources": 10,
+      "independent_support": 2,
+      "stop_reason": "evidence_obtained"
+    },
+    {
+      "route_id": "foodservice_procurement",
+      "lifecycle": "EVIDENCE_SUPPORTED",
+      "sources": 4,
+      "independent_support": 0,
+      "stop_reason": "evidence_obtained"
+    },
+    {
+      "route_id": "corporate_gifting",
+      "lifecycle": "EVIDENCE_SUPPORTED",
+      "sources": 5,
+      "independent_support": 0,
+      "stop_reason": "evidence_obtained"
+    }
+  ],
+  "validation_errors": []
+}

@@ -1,0 +1,556 @@
+{
+  "job": {
+    "jobId": "cj_amordegea_pilot2_1790815841047",
+    "customer": "Amor de Gea",
+    "objective": "US export market entry",
+    "contextVersion": 1,
+    "geography": "United States",
+    "requestedTier": "premium",
+    "targetCount": 18,
+    "milestones": [
+      2,
+      6,
+      12,
+      18
+    ],
+    "status": "partial",
+    "passesCompleted": 2,
+    "candidates": [
+      {
+        "key": "d:wholefoodsmarket.com",
+        "company": "Whole Foods Market",
+        "domain": "wholefoodsmarket.com",
+        "country": "United States",
+        "industry": "natural grocery retail",
+        "route": "specialty_importer",
+        "origin": "external",
+        "firstSeenPass": 1,
+        "lastSeenPass": 2,
+        "researched": true,
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "opportunityKind": null,
+        "channelEvidenceGrade": null,
+        "channelProofType": null
+      },
+      {
+        "key": "d:sprouts.com",
+        "company": "Sprouts Farmers Market",
+        "domain": "sprouts.com",
+        "country": "United States",
+        "industry": "natural grocery retail",
+        "route": "specialty_importer",
+        "origin": "external",
+        "firstSeenPass": 1,
+        "lastSeenPass": 2,
+        "researched": true,
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "opportunityKind": null,
+        "channelEvidenceGrade": null,
+        "channelProofType": null
+      },
+      {
+        "key": "d:canyonranch.com",
+        "company": "Canyon Ranch",
+        "domain": "canyonranch.com",
+        "country": "United States",
+        "industry": "wellness resorts and spas",
+        "route": "specialty_importer",
+        "origin": "external",
+        "firstSeenPass": 1,
+        "lastSeenPass": 2,
+        "researched": true,
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "opportunityKind": null,
+        "channelEvidenceGrade": null,
+        "channelProofType": null
+      },
+      {
+        "key": "d:miravalresorts.com",
+        "company": "Miraval Resorts",
+        "domain": "miravalresorts.com",
+        "country": "United States",
+        "industry": "wellness resorts and spas",
+        "route": "specialty_importer",
+        "origin": "external",
+        "firstSeenPass": 1,
+        "lastSeenPass": 2,
+        "researched": true,
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "opportunityKind": null,
+        "channelEvidenceGrade": null,
+        "channelProofType": null
+      },
+      {
+        "key": "d:naturalgrocers.com",
+        "company": "Natural Grocers",
+        "domain": "naturalgrocers.com",
+        "country": "United States",
+        "industry": "natural grocery retail",
+        "route": "specialty_importer",
+        "origin": "external",
+        "firstSeenPass": 1,
+        "lastSeenPass": 2,
+        "researched": true,
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "opportunityKind": null,
+        "channelEvidenceGrade": null,
+        "channelProofType": null
+      },
+      {
+        "key": "d:vitaminshoppe.com",
+        "company": "The Vitamin Shoppe",
+        "domain": "vitaminshoppe.com",
+        "country": "United States",
+        "industry": "wellness retail",
+        "route": "specialty_importer",
+        "origin": "external",
+        "firstSeenPass": 1,
+        "lastSeenPass": 2,
+        "researched": true,
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "opportunityKind": null,
+        "channelEvidenceGrade": null,
+        "channelProofType": null
+      },
+      {
+        "key": "d:thrivemarket.com",
+        "company": "Thrive Market",
+        "domain": "thrivemarket.com",
+        "country": "United States",
+        "industry": "online natural products retail",
+        "route": "specialty_importer",
+        "origin": "external",
+        "firstSeenPass": 1,
+        "lastSeenPass": 2,
+        "researched": false,
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "opportunityKind": null,
+        "channelEvidenceGrade": null,
+        "channelProofType": null
+      },
+      {
+        "key": "d:freshthyme.com",
+        "company": "Fresh Thyme Market",
+        "domain": "freshthyme.com",
+        "country": "United States",
+        "industry": "natural grocery retail",
+        "route": "specialty_importer",
+        "origin": "external",
+        "firstSeenPass": 1,
+        "lastSeenPass": 2,
+        "researched": false,
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "opportunityKind": null,
+        "channelEvidenceGrade": null,
+        "channelProofType": null
+      },
+      {
+        "key": "d:earthfare.com",
+        "company": "Earth Fare",
+        "domain": "earthfare.com",
+        "country": "United States",
+        "industry": "natural grocery retail",
+        "route": "specialty_importer",
+        "origin": "external",
+        "firstSeenPass": 1,
+        "lastSeenPass": 2,
+        "researched": false,
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "opportunityKind": null,
+        "channelEvidenceGrade": null,
+        "channelProofType": null
+      },
+      {
+        "key": "d:aubergeresorts.com",
+        "company": "Auberge Resorts Collection",
+        "domain": "aubergeresorts.com",
+        "country": "United States",
+        "industry": "luxury hospitality and wellness",
+        "route": "specialty_importer",
+        "origin": "external",
+        "firstSeenPass": 1,
+        "lastSeenPass": 2,
+        "researched": false,
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "opportunityKind": null,
+        "channelEvidenceGrade": null,
+        "channelProofType": null
+      },
+      {
+        "key": "d:lifetime.life",
+        "company": "Life Time",
+        "domain": "lifetime.life",
+        "country": "United States",
+        "industry": "health clubs and wellness",
+        "route": "specialty_importer",
+        "origin": "external",
+        "firstSeenPass": 1,
+        "lastSeenPass": 2,
+        "researched": false,
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "opportunityKind": null,
+        "channelEvidenceGrade": null,
+        "channelProofType": null
+      },
+      {
+        "key": "d:equinox.com",
+        "company": "Equinox",
+        "domain": "equinox.com",
+        "country": "United States",
+        "industry": "fitness and wellness clubs",
+        "route": "specialty_importer",
+        "origin": "external",
+        "firstSeenPass": 1,
+        "lastSeenPass": 2,
+        "researched": false,
+        "sourceUrl": null,
+        "signalDate": null,
+        "signalType": null,
+        "opportunityKind": null,
+        "channelEvidenceGrade": null,
+        "channelProofType": null
+      }
+    ],
+    "qualified": [
+      {
+        "key": "d:wholefoodsmarket.com",
+        "company": "Whole Foods Market",
+        "domain": "wholefoodsmarket.com",
+        "route": "specialty_importer",
+        "decision": "monitor",
+        "fit": "Strong",
+        "timing": "Moderate",
+        "evidenceCount": 6,
+        "qualifiedAtPass": 1,
+        "hasSource": true,
+        "hasValidatedDate": true,
+        "currentActionabilityBasis": false,
+        "commercialMechanismVerified": false,
+        "accessPathIdentified": false,
+        "counterevidenceMaterial": false
+      },
+      {
+        "key": "d:sprouts.com",
+        "company": "Sprouts Farmers Market",
+        "domain": "sprouts.com",
+        "route": "specialty_importer",
+        "decision": "validate",
+        "fit": "Strong",
+        "timing": "Limited",
+        "evidenceCount": 6,
+        "qualifiedAtPass": 1,
+        "hasSource": true,
+        "hasValidatedDate": false,
+        "currentActionabilityBasis": false,
+        "commercialMechanismVerified": false,
+        "accessPathIdentified": false,
+        "counterevidenceMaterial": false
+      },
+      {
+        "key": "d:canyonranch.com",
+        "company": "Canyon Ranch",
+        "domain": "canyonranch.com",
+        "route": "specialty_importer",
+        "decision": "hold",
+        "fit": "Strong",
+        "timing": "Limited",
+        "evidenceCount": 6,
+        "qualifiedAtPass": 1,
+        "hasSource": true,
+        "hasValidatedDate": false,
+        "currentActionabilityBasis": false,
+        "commercialMechanismVerified": false,
+        "accessPathIdentified": false,
+        "counterevidenceMaterial": false
+      },
+      {
+        "key": "d:miravalresorts.com",
+        "company": "Miraval Resorts",
+        "domain": "miravalresorts.com",
+        "route": "specialty_importer",
+        "decision": "hold",
+        "fit": "Moderate",
+        "timing": "Limited",
+        "evidenceCount": 6,
+        "qualifiedAtPass": 1,
+        "hasSource": true,
+        "hasValidatedDate": false,
+        "currentActionabilityBasis": false,
+        "commercialMechanismVerified": false,
+        "accessPathIdentified": false,
+        "counterevidenceMaterial": false
+      },
+      {
+        "key": "d:naturalgrocers.com",
+        "company": "Natural Grocers",
+        "domain": "naturalgrocers.com",
+        "route": "specialty_importer",
+        "decision": "validate",
+        "fit": "Strong",
+        "timing": "Limited",
+        "evidenceCount": 6,
+        "qualifiedAtPass": 1,
+        "hasSource": true,
+        "hasValidatedDate": false,
+        "currentActionabilityBasis": false,
+        "commercialMechanismVerified": false,
+        "accessPathIdentified": false,
+        "counterevidenceMaterial": false
+      },
+      {
+        "key": "d:vitaminshoppe.com",
+        "company": "The Vitamin Shoppe",
+        "domain": "vitaminshoppe.com",
+        "route": "specialty_importer",
+        "decision": "hold",
+        "fit": "Moderate",
+        "timing": "Limited",
+        "evidenceCount": 6,
+        "qualifiedAtPass": 1,
+        "hasSource": true,
+        "hasValidatedDate": false,
+        "currentActionabilityBasis": false,
+        "commercialMechanismVerified": false,
+        "accessPathIdentified": false,
+        "counterevidenceMaterial": false
+      }
+    ],
+    "rejectionMemory": [],
+    "queryHistory": [
+      {
+        "route": "specialty_importer",
+        "queryFamilyId": "specialty_importer:United_States",
+        "pass": 1,
+        "rawResults": 0,
+        "newCandidates": 12,
+        "qualifiedAdded": 3,
+        "status": "productive"
+      },
+      {
+        "route": "latin_premium_importer",
+        "queryFamilyId": "latin_premium_importer:United_States",
+        "pass": 2,
+        "rawResults": 0,
+        "newCandidates": 0,
+        "qualifiedAdded": 3,
+        "status": "productive"
+      }
+    ],
+    "passHistory": [
+      {
+        "passId": 1,
+        "route": "specialty_importer",
+        "queryFamilyId": "specialty_importer:United_States",
+        "providersAttempted": [
+          "brave"
+        ],
+        "vaultHits": 0,
+        "newCandidates": 12,
+        "qualifiedAdditions": 3,
+        "costUsd": 0.183507,
+        "startedAt": "2026-10-01T00:50:41.065Z",
+        "completedAt": "2026-10-01T00:53:06.882Z",
+        "yield": 0.25,
+        "nextStrategy": "route 'specialty_importer' productive (+3) — allocate another family"
+      },
+      {
+        "passId": 2,
+        "route": "latin_premium_importer",
+        "queryFamilyId": "latin_premium_importer:United_States",
+        "providersAttempted": [
+          "brave"
+        ],
+        "vaultHits": 0,
+        "newCandidates": 0,
+        "qualifiedAdditions": 3,
+        "costUsd": 0.171516,
+        "startedAt": "2026-10-01T00:53:07.498Z",
+        "completedAt": "2026-10-01T00:55:16.170Z",
+        "yield": 3,
+        "nextStrategy": "route 'latin_premium_importer' productive (+3) — allocate another family"
+      }
+    ],
+    "routeYield": {
+      "specialty_importer": {
+        "route": "specialty_importer",
+        "passes": 1,
+        "rawCandidates": 0,
+        "uniqueCandidates": 12,
+        "qualified": 3
+      },
+      "latin_premium_importer": {
+        "route": "latin_premium_importer",
+        "passes": 1,
+        "rawCandidates": 0,
+        "uniqueCandidates": 0,
+        "qualified": 3
+      }
+    },
+    "providerState": {
+      "brave": "available",
+      "firecrawl": "exhausted"
+    },
+    "spendUsd": 0.355023,
+    "vault": {
+      "discovered": 24,
+      "existingReused": 24,
+      "newInserted": 0,
+      "rejectedNonAccount": 0,
+      "vaultFirstMatches": 0
+    },
+    "tierReadiness": {
+      "Preview": {
+        "target": 2,
+        "actual": 2,
+        "full": true,
+        "capacityReady": true,
+        "actionabilityRequired": false,
+        "actionabilityReady": true,
+        "evidenceQualifiedPrioritize": 0,
+        "deliveryReady": true,
+        "reasonCodes": []
+      },
+      "Brief": {
+        "target": 6,
+        "actual": 6,
+        "full": true,
+        "capacityReady": true,
+        "actionabilityRequired": false,
+        "actionabilityReady": true,
+        "evidenceQualifiedPrioritize": 0,
+        "deliveryReady": true,
+        "reasonCodes": []
+      },
+      "Portfolio": {
+        "target": 12,
+        "actual": 6,
+        "full": false,
+        "capacityReady": false,
+        "actionabilityRequired": true,
+        "actionabilityReady": false,
+        "evidenceQualifiedPrioritize": 0,
+        "deliveryReady": false,
+        "reasonCodes": [
+          "CAPACITY_INSUFFICIENT",
+          "ACTIONABILITY_RESEARCH_REQUIRED"
+        ]
+      },
+      "Premium": {
+        "target": 18,
+        "actual": 6,
+        "full": false,
+        "capacityReady": false,
+        "actionabilityRequired": true,
+        "actionabilityReady": false,
+        "evidenceQualifiedPrioritize": 0,
+        "deliveryReady": false,
+        "reasonCodes": [
+          "CAPACITY_INSUFFICIENT",
+          "ACTIONABILITY_RESEARCH_REQUIRED"
+        ]
+      }
+    },
+    "createdAt": "2026-10-01T00:50:41.047Z",
+    "updatedAt": "2026-10-01T00:55:16.557Z",
+    "selection": {
+      "version": "deterministic-tier-selection-v1",
+      "selected": [
+        "d:naturalgrocers.com",
+        "d:sprouts.com",
+        "d:wholefoodsmarket.com",
+        "d:canyonranch.com",
+        "d:miravalresorts.com",
+        "d:vitaminshoppe.com"
+      ],
+      "selectedReasons": {
+        "d:naturalgrocers.com": "validate; fit=Strong; timing=Limited; evidence=Moderate; source=true; dated=false; access=false; corroborated=false",
+        "d:sprouts.com": "validate; fit=Strong; timing=Limited; evidence=Moderate; source=true; dated=false; access=false; corroborated=false",
+        "d:wholefoodsmarket.com": "monitor; fit=Strong; timing=Moderate; evidence=Moderate; source=true; dated=true; access=false; corroborated=false",
+        "d:canyonranch.com": "hold; fit=Strong; timing=Limited; evidence=Limited; source=true; dated=false; access=false; corroborated=false",
+        "d:miravalresorts.com": "hold; fit=Moderate; timing=Limited; evidence=Moderate; source=true; dated=false; access=false; corroborated=false",
+        "d:vitaminshoppe.com": "hold; fit=Moderate; timing=Limited; evidence=Moderate; source=true; dated=false; access=false; corroborated=false"
+      },
+      "qualifiedNotSelected": []
+    }
+  },
+  "tiers": [
+    {
+      "tier": "preview",
+      "label": "Preview",
+      "accounts": 2,
+      "bytes": 13358,
+      "pdf": "output/pilot2/2026-09-30-account18-market-v2/LeadLens_AmorDeGea_Pilot2_Preview.pdf"
+    },
+    {
+      "tier": "brief",
+      "label": "Brief",
+      "accounts": 6,
+      "bytes": 34991,
+      "pdf": "output/pilot2/2026-09-30-account18-market-v2/LeadLens_AmorDeGea_Pilot2_Brief.pdf"
+    },
+    {
+      "tier": "intelligence",
+      "label": "Portfolio",
+      "accounts": 6,
+      "bytes": 44960,
+      "pdf": "output/pilot2/2026-09-30-account18-market-v2/LeadLens_AmorDeGea_Pilot2_Portfolio.pdf"
+    },
+    {
+      "tier": "premium",
+      "label": "Premium",
+      "accounts": 6,
+      "bytes": 55209,
+      "pdf": "output/pilot2/2026-09-30-account18-market-v2/LeadLens_AmorDeGea_Pilot2_Premium.pdf"
+    }
+  ],
+  "institutional_dossiers": 6,
+  "vaultGrowth": {
+    "starting": 263,
+    "ending": 263,
+    "net_new_persisted": 0,
+    "write_through_new": 0,
+    "write_through_rediscovered": 24,
+    "vault_first_matches_not_selected": 0,
+    "policy": "inventory_only"
+  },
+  "policy": {
+    "mode": "inventory_only",
+    "threshold": 5000,
+    "vaultCount": 263,
+    "vaultAsSelectionSource": false,
+    "reason": "Vault (263) < 5000 milestone → inventory/dedup/memory only; shortlist driven by fresh external discovery"
+  },
+  "premiumContext": {
+    "status": "present",
+    "cost": {
+      "providerCalls": 6,
+      "llmCalls": 1,
+      "estimatedUsd": 0.030357,
+      "measured": false
+    },
+    "latencyMs": 39484,
+    "failClosedReasons": []
+  }
+}

@@ -1,0 +1,3142 @@
+{
+  "version": "market-research-universe-v1",
+  "universe_id": "amor-de-gea-us-2026-10-01",
+  "generated_at": "2026-10-01T00:45:48.365Z",
+  "objective": "Map evidence-supported US commercial routes, buyer functions and observable access mechanisms for Amor de Gea's premium botanical wellness beverages.",
+  "geography": [
+    "United States — national"
+  ],
+  "population": {
+    "population_type": "market_research_universe",
+    "population_size": 57,
+    "selection_scope": "Unique public route, ecosystem and commercial-access sources returned by bounded Brave research",
+    "coverage_scope": "13 queries across 9 route hypotheses",
+    "limitations": [
+      "Search coverage is bounded, not exhaustive market coverage.",
+      "Search results remain discovery evidence until extracted and claim-validated."
+    ]
+  },
+  "account_population": {
+    "population_type": "account_research_universe",
+    "population_size": 47,
+    "selection_scope": "Unique domains observed during market-route research",
+    "coverage_scope": "Includes ecosystem entities and potential accounts; eligibility is not implied",
+    "limitations": [
+      "Domain observation is not account qualification."
+    ]
+  },
+  "selected_population": {
+    "population_type": "selected_portfolio",
+    "population_size": 17,
+    "selection_scope": "Existing canonical Pilot 2 selected portfolio",
+    "coverage_scope": "Kept separate from this market-research run",
+    "limitations": [
+      "The market universe was not generated from these 17 dossiers."
+    ]
+  },
+  "research_questions": [
+    {
+      "question_id": "routes",
+      "question": "Which US commercial route families are observable for this offering?",
+      "decision_supported": "route prioritization",
+      "route_ids": [
+        "natural_specialty_grocery",
+        "online_natural_retail",
+        "specialty_beverage_retail",
+        "wellness_hospitality",
+        "fitness_wellness_clubs",
+        "natural_products_distribution",
+        "specialty_food_beverage_import",
+        "foodservice_procurement",
+        "corporate_gifting"
+      ],
+      "status": "FOUND_UNVERIFIED"
+    },
+    {
+      "question_id": "access",
+      "question": "Which routes expose formal supplier, vendor, product-submission or partner access?",
+      "decision_supported": "commercial-access research",
+      "route_ids": [
+        "natural_specialty_grocery",
+        "online_natural_retail",
+        "specialty_beverage_retail",
+        "wellness_hospitality",
+        "fitness_wellness_clubs",
+        "natural_products_distribution",
+        "specialty_food_beverage_import",
+        "foodservice_procurement",
+        "corporate_gifting"
+      ],
+      "status": "FOUND_UNVERIFIED"
+    },
+    {
+      "question_id": "dependencies",
+      "question": "Which customer-side facts block route or account decisions?",
+      "decision_supported": "customer validation",
+      "route_ids": [
+        "natural_specialty_grocery",
+        "online_natural_retail",
+        "specialty_beverage_retail",
+        "wellness_hospitality",
+        "fitness_wellness_clubs",
+        "natural_products_distribution",
+        "specialty_food_beverage_import",
+        "foodservice_procurement",
+        "corporate_gifting"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "route_definitions": [
+    {
+      "canonical_route_family_id": "specialty_premium_retail",
+      "canonical_route_id": "natural_specialty_grocery",
+      "display_label": "Natural and specialty grocery",
+      "aliases": [
+        "Natural grocery retail",
+        "Natural and organic grocery",
+        "Regional premium grocery chain",
+        "Regional premium grocery"
+      ],
+      "parent_route_id": null,
+      "buyer_types": [
+        "Category management",
+        "Grocery procurement",
+        "New item review"
+      ],
+      "commercial_role": "retailer",
+      "scope": "US natural, organic and premium grocery retailers"
+    },
+    {
+      "canonical_route_family_id": "specialty_premium_retail",
+      "canonical_route_id": "online_natural_retail",
+      "display_label": "Online natural-products retail",
+      "aliases": [
+        "Online natural products retail",
+        "Wellness e-commerce"
+      ],
+      "parent_route_id": null,
+      "buyer_types": [
+        "Marketplace category management",
+        "Merchandising"
+      ],
+      "commercial_role": "retailer",
+      "scope": "US online retailers of natural and wellness products"
+    },
+    {
+      "canonical_route_family_id": "specialty_premium_retail",
+      "canonical_route_id": "specialty_beverage_retail",
+      "display_label": "Specialty beverage retail",
+      "aliases": [
+        "Premium beverage retail",
+        "Specialty drink retail"
+      ],
+      "parent_route_id": null,
+      "buyer_types": [
+        "Beverage category management",
+        "Merchandising"
+      ],
+      "commercial_role": "retailer",
+      "scope": "US specialty beverage retail"
+    },
+    {
+      "canonical_route_family_id": "wellness_hospitality",
+      "canonical_route_id": "wellness_hospitality",
+      "display_label": "Wellness hospitality and spa",
+      "aliases": [
+        "Wellness resorts and spas",
+        "Luxury hospitality and wellness",
+        "Hotel and spa",
+        "Wellness retail"
+      ],
+      "parent_route_id": null,
+      "buyer_types": [
+        "Food and beverage procurement",
+        "Spa retail",
+        "Guest experience"
+      ],
+      "commercial_role": "operator",
+      "scope": "US wellness hospitality, resorts and spas"
+    },
+    {
+      "canonical_route_family_id": "wellness_hospitality",
+      "canonical_route_id": "fitness_wellness_clubs",
+      "display_label": "Fitness and wellness clubs",
+      "aliases": [
+        "Health clubs and wellness",
+        "Fitness and wellness"
+      ],
+      "parent_route_id": null,
+      "buyer_types": [
+        "Retail merchandising",
+        "Procurement",
+        "Member experience"
+      ],
+      "commercial_role": "operator",
+      "scope": "US fitness and wellness club operators"
+    },
+    {
+      "canonical_route_family_id": "distribution_import",
+      "canonical_route_id": "natural_products_distribution",
+      "display_label": "Natural-products distribution",
+      "aliases": [
+        "Natural product distributor",
+        "Natural-products distributor",
+        "Specialty distributor"
+      ],
+      "parent_route_id": null,
+      "buyer_types": [
+        "Supplier development",
+        "Category management",
+        "Purchasing"
+      ],
+      "commercial_role": "distributor",
+      "scope": "US distributors serving natural and wellness channels"
+    },
+    {
+      "canonical_route_family_id": "distribution_import",
+      "canonical_route_id": "specialty_food_beverage_import",
+      "display_label": "Specialty food and beverage import",
+      "aliases": [
+        "Food beverage importer",
+        "Premium beverage distributor",
+        "Latin American specialty importer",
+        "Importer"
+      ],
+      "parent_route_id": null,
+      "buyer_types": [
+        "Import procurement",
+        "Brand portfolio management",
+        "Supplier partnerships"
+      ],
+      "commercial_role": "importer",
+      "scope": "US importers and distributors onboarding external specialty brands"
+    },
+    {
+      "canonical_route_family_id": "foodservice_hospitality",
+      "canonical_route_id": "foodservice_procurement",
+      "display_label": "Foodservice and hospitality procurement",
+      "aliases": [
+        "Foodservice",
+        "Hospitality procurement"
+      ],
+      "parent_route_id": null,
+      "buyer_types": [
+        "Food and beverage procurement",
+        "Strategic sourcing"
+      ],
+      "commercial_role": "buyer",
+      "scope": "US foodservice and hospitality procurement ecosystems"
+    },
+    {
+      "canonical_route_family_id": "corporate_programs",
+      "canonical_route_id": "corporate_gifting",
+      "display_label": "Corporate gifting",
+      "aliases": [
+        "Gifting",
+        "Corporate gift programs"
+      ],
+      "parent_route_id": null,
+      "buyer_types": [
+        "Corporate gifting",
+        "Employee experience",
+        "Client marketing"
+      ],
+      "commercial_role": "buyer",
+      "scope": "US corporate gifting programs and intermediaries"
+    }
+  ],
+  "route_research": [
+    {
+      "route_id": "natural_specialty_grocery",
+      "lifecycle": "EVIDENCE_SUPPORTED",
+      "query_count": 2,
+      "source_ids": [
+        "src:1",
+        "src:2",
+        "src:3",
+        "src:4",
+        "src:5",
+        "src:6",
+        "src:7",
+        "src:8",
+        "src:9"
+      ],
+      "candidate_account_refs": [
+        "entity:naturalgrocers.com",
+        "entity:mrcheckout.net",
+        "entity:gourmetpro.co",
+        "entity:ams.usda.gov",
+        "entity:supplierdiversity.com",
+        "entity:grubbsgrocery.com",
+        "entity:usfoods.com"
+      ],
+      "eligible_account_refs": [],
+      "excluded_account_refs": [],
+      "exclusion_reasons": [],
+      "mechanism_research": "FOUND_UNVERIFIED",
+      "corroboration_attempted": true,
+      "independent_support_count": 1,
+      "counterevidence": [],
+      "customer_dependency_ids": [
+        "product_classification",
+        "landed_economics",
+        "minimum_order_quantity",
+        "importer_of_record"
+      ],
+      "observations": [
+        "9 unique public sources were recovered for this route; account eligibility and commercial mechanisms require deep verification."
+      ],
+      "limitations": [
+        "Search-result discovery is not claim verification; official pages require extraction before a mechanism can be VERIFIED."
+      ],
+      "stop_reason": "evidence_obtained"
+    },
+    {
+      "route_id": "online_natural_retail",
+      "lifecycle": "EVIDENCE_SUPPORTED",
+      "query_count": 1,
+      "source_ids": [
+        "src:10",
+        "src:11",
+        "src:12"
+      ],
+      "candidate_account_refs": [
+        "entity:naturalgrocers.com",
+        "entity:wholesalecentral.com",
+        "entity:sndonline.com"
+      ],
+      "eligible_account_refs": [],
+      "excluded_account_refs": [],
+      "exclusion_reasons": [],
+      "mechanism_research": "FOUND_UNVERIFIED",
+      "corroboration_attempted": true,
+      "independent_support_count": 0,
+      "counterevidence": [],
+      "customer_dependency_ids": [
+        "product_classification",
+        "landed_economics",
+        "minimum_order_quantity",
+        "importer_of_record"
+      ],
+      "observations": [
+        "3 unique public sources were recovered for this route; account eligibility and commercial mechanisms require deep verification."
+      ],
+      "limitations": [
+        "Search-result discovery is not claim verification; official pages require extraction before a mechanism can be VERIFIED."
+      ],
+      "stop_reason": "evidence_obtained"
+    },
+    {
+      "route_id": "specialty_beverage_retail",
+      "lifecycle": "EVIDENCE_SUPPORTED",
+      "query_count": 1,
+      "source_ids": [
+        "src:13",
+        "src:14",
+        "src:15",
+        "src:16",
+        "src:17"
+      ],
+      "candidate_account_refs": [
+        "entity:unitedstatesbeverage.com",
+        "entity:bevnet.com",
+        "entity:bevindustry.com",
+        "entity:powerbrands.us",
+        "entity:specialtybevva.com"
+      ],
+      "eligible_account_refs": [],
+      "excluded_account_refs": [],
+      "exclusion_reasons": [],
+      "mechanism_research": "FOUND_UNVERIFIED",
+      "corroboration_attempted": true,
+      "independent_support_count": 0,
+      "counterevidence": [],
+      "customer_dependency_ids": [
+        "product_classification",
+        "landed_economics",
+        "minimum_order_quantity"
+      ],
+      "observations": [
+        "5 unique public sources were recovered for this route; account eligibility and commercial mechanisms require deep verification."
+      ],
+      "limitations": [
+        "Search-result discovery is not claim verification; official pages require extraction before a mechanism can be VERIFIED."
+      ],
+      "stop_reason": "evidence_obtained"
+    },
+    {
+      "route_id": "wellness_hospitality",
+      "lifecycle": "EVIDENCE_SUPPORTED",
+      "query_count": 2,
+      "source_ids": [
+        "src:18",
+        "src:19",
+        "src:20",
+        "src:21",
+        "src:22",
+        "src:23",
+        "src:24",
+        "src:25",
+        "src:26",
+        "src:27"
+      ],
+      "candidate_account_refs": [
+        "entity:spasupply-solutions.com",
+        "entity:spaequipsolutions.com",
+        "entity:resortssupplies.com",
+        "entity:spavision.com",
+        "entity:spateaminternational.com",
+        "entity:hotelmoteldirectory.com",
+        "entity:hospitalitynet.org",
+        "entity:martinbros.com",
+        "entity:denverbeverage.com",
+        "entity:emersionwellness.com"
+      ],
+      "eligible_account_refs": [],
+      "excluded_account_refs": [],
+      "exclusion_reasons": [],
+      "mechanism_research": "FOUND_UNVERIFIED",
+      "corroboration_attempted": true,
+      "independent_support_count": 1,
+      "counterevidence": [],
+      "customer_dependency_ids": [
+        "product_classification",
+        "landed_economics",
+        "minimum_order_quantity"
+      ],
+      "observations": [
+        "10 unique public sources were recovered for this route; account eligibility and commercial mechanisms require deep verification."
+      ],
+      "limitations": [
+        "Search-result discovery is not claim verification; official pages require extraction before a mechanism can be VERIFIED."
+      ],
+      "stop_reason": "evidence_obtained"
+    },
+    {
+      "route_id": "fitness_wellness_clubs",
+      "lifecycle": "EVIDENCE_SUPPORTED",
+      "query_count": 1,
+      "source_ids": [
+        "src:28",
+        "src:29",
+        "src:30",
+        "src:31",
+        "src:32"
+      ],
+      "candidate_account_refs": [
+        "entity:johnsonfitness.com",
+        "entity:elivatefitness.com",
+        "entity:linkedin.com",
+        "entity:wholesalecentral.com"
+      ],
+      "eligible_account_refs": [],
+      "excluded_account_refs": [],
+      "exclusion_reasons": [],
+      "mechanism_research": "FOUND_UNVERIFIED",
+      "corroboration_attempted": true,
+      "independent_support_count": 0,
+      "counterevidence": [],
+      "customer_dependency_ids": [
+        "product_classification",
+        "landed_economics",
+        "minimum_order_quantity"
+      ],
+      "observations": [
+        "5 unique public sources were recovered for this route; account eligibility and commercial mechanisms require deep verification."
+      ],
+      "limitations": [
+        "Search-result discovery is not claim verification; official pages require extraction before a mechanism can be VERIFIED."
+      ],
+      "stop_reason": "evidence_obtained"
+    },
+    {
+      "route_id": "natural_products_distribution",
+      "lifecycle": "EVIDENCE_SUPPORTED",
+      "query_count": 2,
+      "source_ids": [
+        "src:33",
+        "src:34",
+        "src:35",
+        "src:36",
+        "src:37",
+        "src:38"
+      ],
+      "candidate_account_refs": [
+        "entity:kehe.com",
+        "entity:grovara.com",
+        "entity:naturalproductsbuyersguide.com",
+        "entity:unitedstatesbeverage.com",
+        "entity:dryatlas.com"
+      ],
+      "eligible_account_refs": [],
+      "excluded_account_refs": [],
+      "exclusion_reasons": [],
+      "mechanism_research": "FOUND_UNVERIFIED",
+      "corroboration_attempted": true,
+      "independent_support_count": 0,
+      "counterevidence": [],
+      "customer_dependency_ids": [
+        "product_classification",
+        "landed_economics",
+        "minimum_order_quantity",
+        "importer_of_record"
+      ],
+      "observations": [
+        "6 unique public sources were recovered for this route; account eligibility and commercial mechanisms require deep verification."
+      ],
+      "limitations": [
+        "Search-result discovery is not claim verification; official pages require extraction before a mechanism can be VERIFIED."
+      ],
+      "stop_reason": "evidence_obtained"
+    },
+    {
+      "route_id": "specialty_food_beverage_import",
+      "lifecycle": "EVIDENCE_SUPPORTED",
+      "query_count": 2,
+      "source_ids": [
+        "src:39",
+        "src:40",
+        "src:41",
+        "src:42",
+        "src:43",
+        "src:44",
+        "src:45",
+        "src:46",
+        "src:47",
+        "src:48"
+      ],
+      "candidate_account_refs": [
+        "entity:gourmetint.com",
+        "entity:savorimports.com",
+        "entity:foodcodirectory.com",
+        "entity:familyfooddist.com",
+        "entity:usetorg.com",
+        "entity:diazfoods.com",
+        "entity:latinofooddistributors.com",
+        "entity:tc-specialties.com",
+        "entity:performancefoodservice.com"
+      ],
+      "eligible_account_refs": [],
+      "excluded_account_refs": [],
+      "exclusion_reasons": [],
+      "mechanism_research": "FOUND_UNVERIFIED",
+      "corroboration_attempted": true,
+      "independent_support_count": 2,
+      "counterevidence": [],
+      "customer_dependency_ids": [
+        "product_classification",
+        "landed_economics",
+        "minimum_order_quantity",
+        "importer_of_record"
+      ],
+      "observations": [
+        "10 unique public sources were recovered for this route; account eligibility and commercial mechanisms require deep verification."
+      ],
+      "limitations": [
+        "Search-result discovery is not claim verification; official pages require extraction before a mechanism can be VERIFIED."
+      ],
+      "stop_reason": "evidence_obtained"
+    },
+    {
+      "route_id": "foodservice_procurement",
+      "lifecycle": "EVIDENCE_SUPPORTED",
+      "query_count": 1,
+      "source_ids": [
+        "src:49",
+        "src:50",
+        "src:51",
+        "src:52"
+      ],
+      "candidate_account_refs": [
+        "entity:gourmetpro.co",
+        "entity:supplyve.com",
+        "entity:easterndistributors.us",
+        "entity:blog.gourmetfoodmarketplace.com"
+      ],
+      "eligible_account_refs": [],
+      "excluded_account_refs": [],
+      "exclusion_reasons": [],
+      "mechanism_research": "FOUND_UNVERIFIED",
+      "corroboration_attempted": true,
+      "independent_support_count": 0,
+      "counterevidence": [],
+      "customer_dependency_ids": [
+        "product_classification",
+        "landed_economics",
+        "minimum_order_quantity"
+      ],
+      "observations": [
+        "4 unique public sources were recovered for this route; account eligibility and commercial mechanisms require deep verification."
+      ],
+      "limitations": [
+        "Search-result discovery is not claim verification; official pages require extraction before a mechanism can be VERIFIED."
+      ],
+      "stop_reason": "evidence_obtained"
+    },
+    {
+      "route_id": "corporate_gifting",
+      "lifecycle": "EVIDENCE_SUPPORTED",
+      "query_count": 1,
+      "source_ids": [
+        "src:53",
+        "src:54",
+        "src:55",
+        "src:56",
+        "src:57"
+      ],
+      "candidate_account_refs": [
+        "entity:thomasnet.com",
+        "entity:gift-supplier.com",
+        "entity:ensun.io",
+        "entity:swagmagic.com"
+      ],
+      "eligible_account_refs": [],
+      "excluded_account_refs": [],
+      "exclusion_reasons": [],
+      "mechanism_research": "FOUND_UNVERIFIED",
+      "corroboration_attempted": true,
+      "independent_support_count": 0,
+      "counterevidence": [],
+      "customer_dependency_ids": [
+        "product_classification",
+        "landed_economics",
+        "minimum_order_quantity"
+      ],
+      "observations": [
+        "5 unique public sources were recovered for this route; account eligibility and commercial mechanisms require deep verification."
+      ],
+      "limitations": [
+        "Search-result discovery is not claim verification; official pages require extraction before a mechanism can be VERIFIED."
+      ],
+      "stop_reason": "evidence_obtained"
+    }
+  ],
+  "buyer_types": [
+    {
+      "buyer_type": "Category management",
+      "route_ids": [
+        "natural_specialty_grocery"
+      ],
+      "evidence_source_ids": [
+        "src:1"
+      ],
+      "coverage_state": "FOUND_UNVERIFIED"
+    },
+    {
+      "buyer_type": "Grocery procurement",
+      "route_ids": [
+        "natural_specialty_grocery"
+      ],
+      "evidence_source_ids": [
+        "src:1"
+      ],
+      "coverage_state": "FOUND_UNVERIFIED"
+    },
+    {
+      "buyer_type": "New item review",
+      "route_ids": [
+        "natural_specialty_grocery"
+      ],
+      "evidence_source_ids": [
+        "src:1"
+      ],
+      "coverage_state": "FOUND_UNVERIFIED"
+    },
+    {
+      "buyer_type": "Marketplace category management",
+      "route_ids": [
+        "online_natural_retail"
+      ],
+      "evidence_source_ids": [
+        "src:10"
+      ],
+      "coverage_state": "FOUND_UNVERIFIED"
+    },
+    {
+      "buyer_type": "Merchandising",
+      "route_ids": [
+        "online_natural_retail"
+      ],
+      "evidence_source_ids": [
+        "src:10"
+      ],
+      "coverage_state": "FOUND_UNVERIFIED"
+    },
+    {
+      "buyer_type": "Beverage category management",
+      "route_ids": [
+        "specialty_beverage_retail"
+      ],
+      "evidence_source_ids": [
+        "src:13"
+      ],
+      "coverage_state": "FOUND_UNVERIFIED"
+    },
+    {
+      "buyer_type": "Merchandising",
+      "route_ids": [
+        "specialty_beverage_retail"
+      ],
+      "evidence_source_ids": [
+        "src:13"
+      ],
+      "coverage_state": "FOUND_UNVERIFIED"
+    },
+    {
+      "buyer_type": "Food and beverage procurement",
+      "route_ids": [
+        "wellness_hospitality"
+      ],
+      "evidence_source_ids": [
+        "src:18"
+      ],
+      "coverage_state": "FOUND_UNVERIFIED"
+    },
+    {
+      "buyer_type": "Spa retail",
+      "route_ids": [
+        "wellness_hospitality"
+      ],
+      "evidence_source_ids": [
+        "src:18"
+      ],
+      "coverage_state": "FOUND_UNVERIFIED"
+    },
+    {
+      "buyer_type": "Guest experience",
+      "route_ids": [
+        "wellness_hospitality"
+      ],
+      "evidence_source_ids": [
+        "src:18"
+      ],
+      "coverage_state": "FOUND_UNVERIFIED"
+    },
+    {
+      "buyer_type": "Retail merchandising",
+      "route_ids": [
+        "fitness_wellness_clubs"
+      ],
+      "evidence_source_ids": [
+        "src:28"
+      ],
+      "coverage_state": "FOUND_UNVERIFIED"
+    },
+    {
+      "buyer_type": "Procurement",
+      "route_ids": [
+        "fitness_wellness_clubs"
+      ],
+      "evidence_source_ids": [
+        "src:28"
+      ],
+      "coverage_state": "FOUND_UNVERIFIED"
+    },
+    {
+      "buyer_type": "Member experience",
+      "route_ids": [
+        "fitness_wellness_clubs"
+      ],
+      "evidence_source_ids": [
+        "src:28"
+      ],
+      "coverage_state": "FOUND_UNVERIFIED"
+    },
+    {
+      "buyer_type": "Supplier development",
+      "route_ids": [
+        "natural_products_distribution"
+      ],
+      "evidence_source_ids": [
+        "src:33"
+      ],
+      "coverage_state": "FOUND_UNVERIFIED"
+    },
+    {
+      "buyer_type": "Category management",
+      "route_ids": [
+        "natural_products_distribution"
+      ],
+      "evidence_source_ids": [
+        "src:33"
+      ],
+      "coverage_state": "FOUND_UNVERIFIED"
+    },
+    {
+      "buyer_type": "Purchasing",
+      "route_ids": [
+        "natural_products_distribution"
+      ],
+      "evidence_source_ids": [
+        "src:33"
+      ],
+      "coverage_state": "FOUND_UNVERIFIED"
+    },
+    {
+      "buyer_type": "Import procurement",
+      "route_ids": [
+        "specialty_food_beverage_import"
+      ],
+      "evidence_source_ids": [
+        "src:39"
+      ],
+      "coverage_state": "FOUND_UNVERIFIED"
+    },
+    {
+      "buyer_type": "Brand portfolio management",
+      "route_ids": [
+        "specialty_food_beverage_import"
+      ],
+      "evidence_source_ids": [
+        "src:39"
+      ],
+      "coverage_state": "FOUND_UNVERIFIED"
+    },
+    {
+      "buyer_type": "Supplier partnerships",
+      "route_ids": [
+        "specialty_food_beverage_import"
+      ],
+      "evidence_source_ids": [
+        "src:39"
+      ],
+      "coverage_state": "FOUND_UNVERIFIED"
+    },
+    {
+      "buyer_type": "Food and beverage procurement",
+      "route_ids": [
+        "foodservice_procurement"
+      ],
+      "evidence_source_ids": [
+        "src:49"
+      ],
+      "coverage_state": "FOUND_UNVERIFIED"
+    },
+    {
+      "buyer_type": "Strategic sourcing",
+      "route_ids": [
+        "foodservice_procurement"
+      ],
+      "evidence_source_ids": [
+        "src:49"
+      ],
+      "coverage_state": "FOUND_UNVERIFIED"
+    },
+    {
+      "buyer_type": "Corporate gifting",
+      "route_ids": [
+        "corporate_gifting"
+      ],
+      "evidence_source_ids": [
+        "src:53"
+      ],
+      "coverage_state": "FOUND_UNVERIFIED"
+    },
+    {
+      "buyer_type": "Employee experience",
+      "route_ids": [
+        "corporate_gifting"
+      ],
+      "evidence_source_ids": [
+        "src:53"
+      ],
+      "coverage_state": "FOUND_UNVERIFIED"
+    },
+    {
+      "buyer_type": "Client marketing",
+      "route_ids": [
+        "corporate_gifting"
+      ],
+      "evidence_source_ids": [
+        "src:53"
+      ],
+      "coverage_state": "FOUND_UNVERIFIED"
+    }
+  ],
+  "commercial_mechanisms": [],
+  "access_paths": [],
+  "customer_dependencies": [
+    {
+      "dependency_id": "product_classification",
+      "label": "Exact US product classification",
+      "status": "CUSTOMER_INPUT_REQUIRED",
+      "blocking_level": "route",
+      "source": "customer_context",
+      "route_ids": [
+        "natural_specialty_grocery",
+        "online_natural_retail",
+        "specialty_beverage_retail",
+        "wellness_hospitality",
+        "fitness_wellness_clubs",
+        "natural_products_distribution",
+        "specialty_food_beverage_import",
+        "foodservice_procurement",
+        "corporate_gifting"
+      ],
+      "account_refs": [],
+      "validation_question": "What is the exact product, ingredient and claims classification for US sale?"
+    },
+    {
+      "dependency_id": "landed_economics",
+      "label": "Landed economics and target margin",
+      "status": "CUSTOMER_INPUT_REQUIRED",
+      "blocking_level": "decision",
+      "source": "customer_context",
+      "route_ids": [
+        "natural_specialty_grocery",
+        "online_natural_retail",
+        "specialty_beverage_retail",
+        "wellness_hospitality",
+        "fitness_wellness_clubs",
+        "natural_products_distribution",
+        "specialty_food_beverage_import",
+        "foodservice_procurement",
+        "corporate_gifting"
+      ],
+      "account_refs": [],
+      "validation_question": "What landed unit economics and channel margins are commercially viable?"
+    },
+    {
+      "dependency_id": "minimum_order_quantity",
+      "label": "Minimum order quantity compatibility",
+      "status": "CUSTOMER_INPUT_REQUIRED",
+      "blocking_level": "account",
+      "source": "customer_context",
+      "route_ids": [
+        "natural_specialty_grocery",
+        "online_natural_retail",
+        "specialty_beverage_retail",
+        "wellness_hospitality",
+        "fitness_wellness_clubs",
+        "natural_products_distribution",
+        "specialty_food_beverage_import",
+        "foodservice_procurement",
+        "corporate_gifting"
+      ],
+      "account_refs": [],
+      "validation_question": "Which minimum order quantities and case packs can Amor de Gea support?"
+    },
+    {
+      "dependency_id": "importer_of_record",
+      "label": "Importer-of-record model",
+      "status": "CUSTOMER_INPUT_REQUIRED",
+      "blocking_level": "route",
+      "source": "customer_context",
+      "route_ids": [
+        "specialty_food_beverage_import",
+        "natural_products_distribution",
+        "natural_specialty_grocery",
+        "online_natural_retail"
+      ],
+      "account_refs": [],
+      "validation_question": "Will Amor de Gea appoint an importer of record or require the route partner to provide that role?"
+    }
+  ],
+  "ecosystem_entities": [
+    {
+      "entity_id": "entity:naturalgrocers.com",
+      "name": "New Item Submissions",
+      "role": "retailer",
+      "route_ids": [
+        "natural_specialty_grocery",
+        "online_natural_retail"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:1",
+        "src:3",
+        "src:4",
+        "src:10"
+      ]
+    },
+    {
+      "entity_id": "entity:mrcheckout.net",
+      "name": "How To Get Into Natural Grocers",
+      "role": "retailer",
+      "route_ids": [
+        "natural_specialty_grocery"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:2"
+      ]
+    },
+    {
+      "entity_id": "entity:gourmetpro.co",
+      "name": "Top Food Distributors in the USA: 2026 Comparison",
+      "role": "retailer",
+      "route_ids": [
+        "natural_specialty_grocery",
+        "foodservice_procurement"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:5",
+        "src:49"
+      ]
+    },
+    {
+      "entity_id": "entity:ams.usda.gov",
+      "name": "Become a USDA Vendor",
+      "role": "ecosystem",
+      "route_ids": [
+        "natural_specialty_grocery"
+      ],
+      "account_eligible": false,
+      "source_ids": [
+        "src:6"
+      ]
+    },
+    {
+      "entity_id": "entity:supplierdiversity.com",
+      "name": "How to Become a US Foods Supplier: Portal & Process",
+      "role": "retailer",
+      "route_ids": [
+        "natural_specialty_grocery"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:7"
+      ]
+    },
+    {
+      "entity_id": "entity:grubbsgrocery.com",
+      "name": "Become a Vendor · Grubb's Grocery",
+      "role": "retailer",
+      "route_ids": [
+        "natural_specialty_grocery"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:8"
+      ]
+    },
+    {
+      "entity_id": "entity:usfoods.com",
+      "name": "Supplier Information",
+      "role": "retailer",
+      "route_ids": [
+        "natural_specialty_grocery"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:9"
+      ]
+    },
+    {
+      "entity_id": "entity:wholesalecentral.com",
+      "name": "Best Wholesale Natural & Holistic Suppliers",
+      "role": "retailer",
+      "route_ids": [
+        "online_natural_retail",
+        "fitness_wellness_clubs"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:11",
+        "src:32"
+      ]
+    },
+    {
+      "entity_id": "entity:sndonline.com",
+      "name": "Super Natural Distributors",
+      "role": "retailer",
+      "route_ids": [
+        "online_natural_retail"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:12"
+      ]
+    },
+    {
+      "entity_id": "entity:unitedstatesbeverage.com",
+      "name": "Home",
+      "role": "retailer",
+      "route_ids": [
+        "specialty_beverage_retail",
+        "natural_products_distribution"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:13",
+        "src:36"
+      ]
+    },
+    {
+      "entity_id": "entity:bevnet.com",
+      "name": "U.S. Beverage Establishes Independent Subsidiary",
+      "role": "retailer",
+      "route_ids": [
+        "specialty_beverage_retail"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:14"
+      ]
+    },
+    {
+      "entity_id": "entity:bevindustry.com",
+      "name": "specialty beverages",
+      "role": "retailer",
+      "route_ids": [
+        "specialty_beverage_retail"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:15"
+      ]
+    },
+    {
+      "entity_id": "entity:powerbrands.us",
+      "name": "Beverage Distributors",
+      "role": "retailer",
+      "route_ids": [
+        "specialty_beverage_retail"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:16"
+      ]
+    },
+    {
+      "entity_id": "entity:specialtybevva.com",
+      "name": "Home",
+      "role": "retailer",
+      "route_ids": [
+        "specialty_beverage_retail"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:17"
+      ]
+    },
+    {
+      "entity_id": "entity:spasupply-solutions.com",
+      "name": "Spa Supply Solutions",
+      "role": "operator",
+      "route_ids": [
+        "wellness_hospitality"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:18"
+      ]
+    },
+    {
+      "entity_id": "entity:spaequipsolutions.com",
+      "name": "Spa Consulting",
+      "role": "operator",
+      "route_ids": [
+        "wellness_hospitality"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:19"
+      ]
+    },
+    {
+      "entity_id": "entity:resortssupplies.com",
+      "name": "Elevating Wellness: 2026 Trends in Resort SPA supplies",
+      "role": "operator",
+      "route_ids": [
+        "wellness_hospitality"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:20"
+      ]
+    },
+    {
+      "entity_id": "entity:spavision.com",
+      "name": "Spa Vision",
+      "role": "operator",
+      "route_ids": [
+        "wellness_hospitality"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:21"
+      ]
+    },
+    {
+      "entity_id": "entity:spateaminternational.com",
+      "name": "Luxury Spa Consulting & Wholesale Equipment",
+      "role": "operator",
+      "route_ids": [
+        "wellness_hospitality"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:22"
+      ]
+    },
+    {
+      "entity_id": "entity:hotelmoteldirectory.com",
+      "name": "Top Food and Beverage Providers",
+      "role": "ecosystem",
+      "route_ids": [
+        "wellness_hospitality"
+      ],
+      "account_eligible": false,
+      "source_ids": [
+        "src:23"
+      ]
+    },
+    {
+      "entity_id": "entity:hospitalitynet.org",
+      "name": "Food & Beverage Supplier News",
+      "role": "operator",
+      "route_ids": [
+        "wellness_hospitality"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:24"
+      ]
+    },
+    {
+      "entity_id": "entity:martinbros.com",
+      "name": "Hospitality Supplier: Hotel Supplies & More",
+      "role": "operator",
+      "route_ids": [
+        "wellness_hospitality"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:25"
+      ]
+    },
+    {
+      "entity_id": "entity:denverbeverage.com",
+      "name": "Hotels Supplies, Beverages, and Snacks",
+      "role": "operator",
+      "route_ids": [
+        "wellness_hospitality"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:26"
+      ]
+    },
+    {
+      "entity_id": "entity:emersionwellness.com",
+      "name": "10 Powerful Hotel Wellness Program Ideas To Boost Revenue & Guest Satisfaction (Guaranteed!)",
+      "role": "operator",
+      "route_ids": [
+        "wellness_hospitality"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:27"
+      ]
+    },
+    {
+      "entity_id": "entity:johnsonfitness.com",
+      "name": "Vendor List",
+      "role": "operator",
+      "route_ids": [
+        "fitness_wellness_clubs"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:28",
+        "src:31"
+      ]
+    },
+    {
+      "entity_id": "entity:elivatefitness.com",
+      "name": "Welcome to ELIVATE Fitness",
+      "role": "operator",
+      "route_ids": [
+        "fitness_wellness_clubs"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:29"
+      ]
+    },
+    {
+      "entity_id": "entity:linkedin.com",
+      "name": "US Fitness Products",
+      "role": "operator",
+      "route_ids": [
+        "fitness_wellness_clubs"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:30"
+      ]
+    },
+    {
+      "entity_id": "entity:kehe.com",
+      "name": "KeHE Brands",
+      "role": "distributor",
+      "route_ids": [
+        "natural_products_distribution"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:33"
+      ]
+    },
+    {
+      "entity_id": "entity:grovara.com",
+      "name": "Natural Food Distributors in the USA",
+      "role": "distributor",
+      "route_ids": [
+        "natural_products_distribution"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:34",
+        "src:37"
+      ]
+    },
+    {
+      "entity_id": "entity:naturalproductsbuyersguide.com",
+      "name": "Distributors",
+      "role": "distributor",
+      "route_ids": [
+        "natural_products_distribution"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:35"
+      ]
+    },
+    {
+      "entity_id": "entity:dryatlas.com",
+      "name": "Importing Non",
+      "role": "distributor",
+      "route_ids": [
+        "natural_products_distribution"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:38"
+      ]
+    },
+    {
+      "entity_id": "entity:gourmetint.com",
+      "name": "Gourmet International",
+      "role": "importer",
+      "route_ids": [
+        "specialty_food_beverage_import"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:39"
+      ]
+    },
+    {
+      "entity_id": "entity:savorimports.com",
+      "name": "About Us",
+      "role": "importer",
+      "route_ids": [
+        "specialty_food_beverage_import"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:40"
+      ]
+    },
+    {
+      "entity_id": "entity:foodcodirectory.com",
+      "name": "U.S. Food Distributors: List of Food Importers in United States",
+      "role": "ecosystem",
+      "route_ids": [
+        "specialty_food_beverage_import"
+      ],
+      "account_eligible": false,
+      "source_ids": [
+        "src:41",
+        "src:45"
+      ]
+    },
+    {
+      "entity_id": "entity:familyfooddist.com",
+      "name": "Family Food Distributor",
+      "role": "importer",
+      "route_ids": [
+        "specialty_food_beverage_import"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:42"
+      ]
+    },
+    {
+      "entity_id": "entity:usetorg.com",
+      "name": "Find US Buyers, Importers, Distributors",
+      "role": "importer",
+      "route_ids": [
+        "specialty_food_beverage_import"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:43"
+      ]
+    },
+    {
+      "entity_id": "entity:diazfoods.com",
+      "name": "Diaz Foods",
+      "role": "importer",
+      "route_ids": [
+        "specialty_food_beverage_import"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:44"
+      ]
+    },
+    {
+      "entity_id": "entity:latinofooddistributors.com",
+      "name": "Latino Foods Distributors",
+      "role": "importer",
+      "route_ids": [
+        "specialty_food_beverage_import"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:46"
+      ]
+    },
+    {
+      "entity_id": "entity:tc-specialties.com",
+      "name": "Latin Food Distributor",
+      "role": "importer",
+      "route_ids": [
+        "specialty_food_beverage_import"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:47"
+      ]
+    },
+    {
+      "entity_id": "entity:performancefoodservice.com",
+      "name": "Latin and Hispanic",
+      "role": "importer",
+      "route_ids": [
+        "specialty_food_beverage_import"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:48"
+      ]
+    },
+    {
+      "entity_id": "entity:supplyve.com",
+      "name": "Top Food Distributors for 2024: A Comprehensive Guide",
+      "role": "buyer",
+      "route_ids": [
+        "foodservice_procurement"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:50"
+      ]
+    },
+    {
+      "entity_id": "entity:easterndistributors.us",
+      "name": "Wholesale Food Distributor",
+      "role": "buyer",
+      "route_ids": [
+        "foodservice_procurement"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:51"
+      ]
+    },
+    {
+      "entity_id": "entity:blog.gourmetfoodmarketplace.com",
+      "name": "The Top Food Distributors in the USA (2024)",
+      "role": "buyer",
+      "route_ids": [
+        "foodservice_procurement"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:52"
+      ]
+    },
+    {
+      "entity_id": "entity:thomasnet.com",
+      "name": "Corporate Gifts Manufacturers and Suppliers in the USA and Canada",
+      "role": "buyer",
+      "route_ids": [
+        "corporate_gifting"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:53",
+        "src:55"
+      ]
+    },
+    {
+      "entity_id": "entity:gift-supplier.com",
+      "name": "Custom Promotional Products Supplier",
+      "role": "buyer",
+      "route_ids": [
+        "corporate_gifting"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:54"
+      ]
+    },
+    {
+      "entity_id": "entity:ensun.io",
+      "name": "Top 100 Corporate Gift Suppliers in United States (2026)",
+      "role": "buyer",
+      "route_ids": [
+        "corporate_gifting"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:56"
+      ]
+    },
+    {
+      "entity_id": "entity:swagmagic.com",
+      "name": "Global Corporate Gifting Suppliers and Vendors",
+      "role": "buyer",
+      "route_ids": [
+        "corporate_gifting"
+      ],
+      "account_eligible": true,
+      "source_ids": [
+        "src:57"
+      ]
+    }
+  ],
+  "market_sources": [
+    {
+      "source_id": "src:1",
+      "url": "https://www.naturalgrocers.com/vendors",
+      "domain": "naturalgrocers.com",
+      "title": "New Item Submissions | Natural Grocers",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:35.519Z",
+      "freshness": "structural",
+      "route_ids": [
+        "natural_specialty_grocery"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:2",
+      "url": "https://mrcheckout.net/how-to-get-into-natural-grocers",
+      "domain": "mrcheckout.net",
+      "title": "How To Get Into Natural Grocers",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": "2019-06-25T22:51:41",
+      "retrieved_at": "2026-10-01T00:45:35.519Z",
+      "freshness": "current",
+      "route_ids": [
+        "natural_specialty_grocery"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:3",
+      "url": "https://www.naturalgrocers.com/food-product-submissions",
+      "domain": "naturalgrocers.com",
+      "title": "Food Product Submissions | Natural Grocers",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:35.519Z",
+      "freshness": "structural",
+      "route_ids": [
+        "natural_specialty_grocery"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:4",
+      "url": "https://www.naturalgrocers.com/produce-product-criteria",
+      "domain": "naturalgrocers.com",
+      "title": "Produce Product Criteria | Natural Grocers",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:35.519Z",
+      "freshness": "structural",
+      "route_ids": [
+        "natural_specialty_grocery"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:5",
+      "url": "https://www.gourmetpro.co/blog/top-food-distributors-usa",
+      "domain": "gourmetpro.co",
+      "title": "Top Food Distributors in the USA: 2026 Comparison",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": "2026-09-10T02:04:39",
+      "retrieved_at": "2026-10-01T00:45:35.519Z",
+      "freshness": "current",
+      "route_ids": [
+        "natural_specialty_grocery"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:6",
+      "url": "https://www.ams.usda.gov/selling-food/becoming-approved",
+      "domain": "ams.usda.gov",
+      "title": "Become a USDA Vendor | Agricultural Marketing Service",
+      "source_type": "institutional",
+      "relationship": "INDEPENDENT_CORROBORATION",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:36.149Z",
+      "freshness": "structural",
+      "route_ids": [
+        "natural_specialty_grocery"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:7",
+      "url": "https://www.supplierdiversity.com/blog/how-to-become-a-us-foods-supplier",
+      "domain": "supplierdiversity.com",
+      "title": "How to Become a US Foods Supplier: Portal & Process | SupplierDiversity.com",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": "2026-07-27T02:20:57",
+      "retrieved_at": "2026-10-01T00:45:36.149Z",
+      "freshness": "current",
+      "route_ids": [
+        "natural_specialty_grocery"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:8",
+      "url": "https://www.grubbsgrocery.com/become-a-vendor",
+      "domain": "grubbsgrocery.com",
+      "title": "Become a Vendor · Grubb's Grocery",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:36.149Z",
+      "freshness": "structural",
+      "route_ids": [
+        "natural_specialty_grocery"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:9",
+      "url": "https://www.usfoods.com/supplier-info.html",
+      "domain": "usfoods.com",
+      "title": "Supplier Information | US Foods",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:36.149Z",
+      "freshness": "structural",
+      "route_ids": [
+        "natural_specialty_grocery"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:10",
+      "url": "https://www.naturalgrocers.com/non-food-product-submissions",
+      "domain": "naturalgrocers.com",
+      "title": "Non-Food Product Submissions | Natural Grocers",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:37.304Z",
+      "freshness": "structural",
+      "route_ids": [
+        "online_natural_retail"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:11",
+      "url": "https://www.wholesalecentral.com/Natural-Holistic-Health-Beauty.html",
+      "domain": "wholesalecentral.com",
+      "title": "Best Wholesale Natural & Holistic Suppliers - Wholesale Natural & Holistic",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:37.304Z",
+      "freshness": "structural",
+      "route_ids": [
+        "online_natural_retail"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:12",
+      "url": "https://sndonline.com/",
+      "domain": "sndonline.com",
+      "title": "Super Natural Distributors",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:37.304Z",
+      "freshness": "structural",
+      "route_ids": [
+        "online_natural_retail"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:13",
+      "url": "https://www.unitedstatesbeverage.com/",
+      "domain": "unitedstatesbeverage.com",
+      "title": "Home - USBeverage",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": "2026-07-27T20:49:26",
+      "retrieved_at": "2026-10-01T00:45:38.352Z",
+      "freshness": "current",
+      "route_ids": [
+        "specialty_beverage_retail"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:14",
+      "url": "https://www.bevnet.com/pr/2026/01/21/us-beverage-establishes-independent-subsidiary--gateway-beverage-group",
+      "domain": "bevnet.com",
+      "title": "U.S. Beverage Establishes Independent Subsidiary – Gateway Beverage Group | BevNET.com",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": "2026-01-21T00:00:00",
+      "retrieved_at": "2026-10-01T00:45:38.352Z",
+      "freshness": "current",
+      "route_ids": [
+        "specialty_beverage_retail"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:15",
+      "url": "https://www.bevindustry.com/keywords/6631-specialty-beverages",
+      "domain": "bevindustry.com",
+      "title": "specialty beverages - Page 1 | Beverage Industry",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:38.352Z",
+      "freshness": "structural",
+      "route_ids": [
+        "specialty_beverage_retail"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:16",
+      "url": "https://www.powerbrands.us/beverage-distributors",
+      "domain": "powerbrands.us",
+      "title": "Beverage Distributors - Power Brands",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:38.352Z",
+      "freshness": "structural",
+      "route_ids": [
+        "specialty_beverage_retail"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:17",
+      "url": "https://www.specialtybevva.com/",
+      "domain": "specialtybevva.com",
+      "title": "Home - Specialty Beverage",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": "2026-06-08T01:00:57",
+      "retrieved_at": "2026-10-01T00:45:38.352Z",
+      "freshness": "current",
+      "route_ids": [
+        "specialty_beverage_retail"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:18",
+      "url": "https://www.spasupply-solutions.com/",
+      "domain": "spasupply-solutions.com",
+      "title": "Spa Supply Solutions - Industry Leading Spa & Wellness Supplier",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": "2025-04-10T12:28:54",
+      "retrieved_at": "2026-10-01T00:45:39.557Z",
+      "freshness": "current",
+      "route_ids": [
+        "wellness_hospitality"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:19",
+      "url": "https://www.spaequipsolutions.com/",
+      "domain": "spaequipsolutions.com",
+      "title": "Spa Consulting | Spa Equipment & Wellness Solutions",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:39.557Z",
+      "freshness": "structural",
+      "route_ids": [
+        "wellness_hospitality"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:20",
+      "url": "https://www.resortssupplies.com/resort-spa-supplies-2026-trends",
+      "domain": "resortssupplies.com",
+      "title": "Elevating Wellness: 2026 Trends in Resort SPA supplies - DERBAL",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": "2026-04-21T12:17:28",
+      "retrieved_at": "2026-10-01T00:45:39.557Z",
+      "freshness": "current",
+      "route_ids": [
+        "wellness_hospitality"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:21",
+      "url": "https://www.spavision.com/",
+      "domain": "spavision.com",
+      "title": "Spa Vision | Global Leading Spa Equipment Supplier",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:39.557Z",
+      "freshness": "structural",
+      "route_ids": [
+        "wellness_hospitality"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:22",
+      "url": "https://spateaminternational.com/",
+      "domain": "spateaminternational.com",
+      "title": "Luxury Spa Consulting & Wholesale Equipment | Spa Team International",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:39.557Z",
+      "freshness": "structural",
+      "route_ids": [
+        "wellness_hospitality"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:23",
+      "url": "https://www.hotelmoteldirectory.com/category/food-and-beverage",
+      "domain": "hotelmoteldirectory.com",
+      "title": "Top Food and Beverage Providers | Compare 389 Companies",
+      "source_type": "directory",
+      "relationship": "INDEPENDENT_CORROBORATION",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:40.582Z",
+      "freshness": "structural",
+      "route_ids": [
+        "wellness_hospitality"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:24",
+      "url": "https://www.hospitalitynet.org/food-beverage/supplier",
+      "domain": "hospitalitynet.org",
+      "title": "Food & Beverage Supplier News - Hospitality Net",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": "2026-03-02T10:37:21",
+      "retrieved_at": "2026-10-01T00:45:40.582Z",
+      "freshness": "current",
+      "route_ids": [
+        "wellness_hospitality"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:25",
+      "url": "https://www.martinbros.com/distribution/hotel-casinos",
+      "domain": "martinbros.com",
+      "title": "Hospitality Supplier: Hotel Supplies & More - Martin Bros. Distributing",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:40.582Z",
+      "freshness": "structural",
+      "route_ids": [
+        "wellness_hospitality"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:26",
+      "url": "https://denverbeverage.com/hotels",
+      "domain": "denverbeverage.com",
+      "title": "Hotels Supplies, Beverages, and Snacks - Denver Beverage",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": "2024-08-19T03:46:31",
+      "retrieved_at": "2026-10-01T00:45:40.582Z",
+      "freshness": "current",
+      "route_ids": [
+        "wellness_hospitality"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:27",
+      "url": "https://emersionwellness.com/hotel-wellness-program-ideas",
+      "domain": "emersionwellness.com",
+      "title": "10 Powerful Hotel Wellness Program Ideas To Boost Revenue & Guest Satisfaction (Guaranteed!) - Emersion Wellness",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": "2024-08-06T03:46:51",
+      "retrieved_at": "2026-10-01T00:45:40.582Z",
+      "freshness": "current",
+      "route_ids": [
+        "wellness_hospitality"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:28",
+      "url": "https://www.johnsonfitness.com/Home/Vendors",
+      "domain": "johnsonfitness.com",
+      "title": "Vendor List - Leisure Fitness | The Fitness Equipment Store",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:41.707Z",
+      "freshness": "structural",
+      "route_ids": [
+        "fitness_wellness_clubs"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:29",
+      "url": "https://www.elivatefitness.com/about-us",
+      "domain": "elivatefitness.com",
+      "title": "Welcome to ELIVATE Fitness | Supplier of Fitness Equipment and Health & Wellness Products | Fitness & Equipment Supplies",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:41.707Z",
+      "freshness": "structural",
+      "route_ids": [
+        "fitness_wellness_clubs"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:30",
+      "url": "https://www.linkedin.com/company/us-fitness-products",
+      "domain": "linkedin.com",
+      "title": "US Fitness Products | LinkedIn",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:41.707Z",
+      "freshness": "structural",
+      "route_ids": [
+        "fitness_wellness_clubs"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:31",
+      "url": "https://www.johnsonfitness.com/",
+      "domain": "johnsonfitness.com",
+      "title": "Exercise Equipment & Accessories | Johnson Fitness",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:41.707Z",
+      "freshness": "structural",
+      "route_ids": [
+        "fitness_wellness_clubs"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:32",
+      "url": "https://www.wholesalecentral.com/Fitness-Sporting-Goods.html",
+      "domain": "wholesalecentral.com",
+      "title": "Sporting Goods: Wholesale Fitness Vendor Directory",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:41.707Z",
+      "freshness": "structural",
+      "route_ids": [
+        "fitness_wellness_clubs"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:33",
+      "url": "https://www.kehe.com/suppliers",
+      "domain": "kehe.com",
+      "title": "KeHE Brands - Submit Your Products",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": "2022-07-12T20:51:59",
+      "retrieved_at": "2026-10-01T00:45:42.834Z",
+      "freshness": "current",
+      "route_ids": [
+        "natural_products_distribution"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:34",
+      "url": "https://grovara.com/natural-food-distributors-in-the-usa",
+      "domain": "grovara.com",
+      "title": "Natural Food Distributors in the USA | Grovara Blog",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": "2022-08-31T19:15:13",
+      "retrieved_at": "2026-10-01T00:45:42.834Z",
+      "freshness": "current",
+      "route_ids": [
+        "natural_products_distribution"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:35",
+      "url": "https://naturalproductsbuyersguide.com/Listing/Index/Grocery/Distributors/1593/1101229",
+      "domain": "naturalproductsbuyersguide.com",
+      "title": "Distributors - Natural Products Buyers Guide",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:42.834Z",
+      "freshness": "structural",
+      "route_ids": [
+        "natural_products_distribution"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:36",
+      "url": "https://www.unitedstatesbeverage.com/executive-team",
+      "domain": "unitedstatesbeverage.com",
+      "title": "Executive Team - USBeverage",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": "2026-01-15T21:41:24",
+      "retrieved_at": "2026-10-01T00:45:43.850Z",
+      "freshness": "current",
+      "route_ids": [
+        "natural_products_distribution"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:37",
+      "url": "https://grovara.com/blog/natural-food-distributors-in-the-usa",
+      "domain": "grovara.com",
+      "title": "Natural Food Distributors in the USA | Grovara Blog",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": "2022-08-31T19:15:13",
+      "retrieved_at": "2026-10-01T00:45:43.850Z",
+      "freshness": "current",
+      "route_ids": [
+        "natural_products_distribution"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:38",
+      "url": "https://www.dryatlas.com/articles/non-alc-importing-sales-channels-importer-distributor-types-onboarding-new-brands",
+      "domain": "dryatlas.com",
+      "title": "Importing Non-Alcoholic Drinks: Sales Channels, Importer/Distributor Types, Onboarding New Brands",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": "2025-10-12T01:53:37",
+      "retrieved_at": "2026-10-01T00:45:43.850Z",
+      "freshness": "current",
+      "route_ids": [
+        "natural_products_distribution"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:39",
+      "url": "https://gourmetint.com/",
+      "domain": "gourmetint.com",
+      "title": "Gourmet International – Importers & Distributors of Specialty Foods",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:44.924Z",
+      "freshness": "structural",
+      "route_ids": [
+        "specialty_food_beverage_import"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:40",
+      "url": "https://www.savorimports.com/about-us",
+      "domain": "savorimports.com",
+      "title": "About Us - Savor Imports",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": "2025-12-10T16:18:34",
+      "retrieved_at": "2026-10-01T00:45:44.924Z",
+      "freshness": "current",
+      "route_ids": [
+        "specialty_food_beverage_import"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:41",
+      "url": "https://www.foodcodirectory.com/2021/10/list-of-food-importers-in-united-states.html",
+      "domain": "foodcodirectory.com",
+      "title": "U.S. Food Distributors: List of Food Importers in United States",
+      "source_type": "directory",
+      "relationship": "INDEPENDENT_CORROBORATION",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:44.924Z",
+      "freshness": "structural",
+      "route_ids": [
+        "specialty_food_beverage_import"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:42",
+      "url": "https://www.familyfooddist.com/",
+      "domain": "familyfooddist.com",
+      "title": "Family Food Distributor – Especiality Food Distributor",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:44.924Z",
+      "freshness": "structural",
+      "route_ids": [
+        "specialty_food_beverage_import"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:43",
+      "url": "https://usetorg.com/buyers/usa",
+      "domain": "usetorg.com",
+      "title": "Find US Buyers, Importers, Distributors | List of US Buyers",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:44.924Z",
+      "freshness": "structural",
+      "route_ids": [
+        "specialty_food_beverage_import"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:44",
+      "url": "https://www.diazfoods.com/",
+      "domain": "diazfoods.com",
+      "title": "Diaz Foods - Atlanta",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:46.063Z",
+      "freshness": "structural",
+      "route_ids": [
+        "specialty_food_beverage_import"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:45",
+      "url": "https://www.foodcodirectory.com/2021/08/mexican-latin-hispanic-food-wholesale.html",
+      "domain": "foodcodirectory.com",
+      "title": "U.S. Food Distributors: Mexican / Latin / Hispanic Food Wholesale Distributors in USA",
+      "source_type": "directory",
+      "relationship": "INDEPENDENT_CORROBORATION",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:46.063Z",
+      "freshness": "structural",
+      "route_ids": [
+        "specialty_food_beverage_import"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:46",
+      "url": "https://latinofooddistributors.com/",
+      "domain": "latinofooddistributors.com",
+      "title": "Latino Foods Distributors | Serving the Puerto Rica and Carribbean Markets in the US",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:46.063Z",
+      "freshness": "structural",
+      "route_ids": [
+        "specialty_food_beverage_import"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:47",
+      "url": "https://www.tc-specialties.com/",
+      "domain": "tc-specialties.com",
+      "title": "Latin Food Distributor | T&C Specialties | Los Angeles",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:46.063Z",
+      "freshness": "structural",
+      "route_ids": [
+        "specialty_food_beverage_import"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:48",
+      "url": "https://www.performancefoodservice.com/Products-and-Services/Product-Categories/Latin-and-Hispanic",
+      "domain": "performancefoodservice.com",
+      "title": "Latin and Hispanic | Performance Foodservice",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:46.063Z",
+      "freshness": "structural",
+      "route_ids": [
+        "specialty_food_beverage_import"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:49",
+      "url": "https://www.gourmetpro.co/blog/what-is-food-beverage-distributor",
+      "domain": "gourmetpro.co",
+      "title": "What Is a Food & Beverage Distributor? Types, How They Work, How to Choose One",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": "2026-09-16T00:00:00",
+      "retrieved_at": "2026-10-01T00:45:47.115Z",
+      "freshness": "current",
+      "route_ids": [
+        "foodservice_procurement"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:50",
+      "url": "https://www.supplyve.com/post/top-food-distributors-a-comprehensive-guide",
+      "domain": "supplyve.com",
+      "title": "Top Food Distributors for 2024: A Comprehensive Guide",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": "2024-09-26T00:00:00",
+      "retrieved_at": "2026-10-01T00:45:47.115Z",
+      "freshness": "current",
+      "route_ids": [
+        "foodservice_procurement"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:51",
+      "url": "https://www.easterndistributors.us/",
+      "domain": "easterndistributors.us",
+      "title": "Wholesale Food Distributor | Beverage & Grocery Supplier | Eastern Distributors",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": "2026-05-15T06:38:29",
+      "retrieved_at": "2026-10-01T00:45:47.115Z",
+      "freshness": "current",
+      "route_ids": [
+        "foodservice_procurement"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:52",
+      "url": "https://blog.gourmetfoodmarketplace.com/the-top-food-distributors-in-the-usa-2024",
+      "domain": "blog.gourmetfoodmarketplace.com",
+      "title": "The Top Food Distributors in the USA (2024)",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": "2024-10-16T02:41:47",
+      "retrieved_at": "2026-10-01T00:45:47.115Z",
+      "freshness": "current",
+      "route_ids": [
+        "foodservice_procurement"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:53",
+      "url": "https://www.thomasnet.com/suppliers/usa/corporate-gifts-34651901",
+      "domain": "thomasnet.com",
+      "title": "Corporate Gifts Manufacturers and Suppliers in the USA and Canada",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:48.364Z",
+      "freshness": "structural",
+      "route_ids": [
+        "corporate_gifting"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:54",
+      "url": "https://gift-supplier.com/",
+      "domain": "gift-supplier.com",
+      "title": "Custom Promotional Products Supplier | Gift Supplier",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": "2026-09-04T11:27:37",
+      "retrieved_at": "2026-10-01T00:45:48.364Z",
+      "freshness": "current",
+      "route_ids": [
+        "corporate_gifting"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:55",
+      "url": "https://www.thomasnet.com/suppliers/florida/all-cities/corporate-gifts-34651901",
+      "domain": "thomasnet.com",
+      "title": "Corporate Gifts Suppliers & Manufacturers Serving Florida",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:48.364Z",
+      "freshness": "structural",
+      "route_ids": [
+        "corporate_gifting"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:56",
+      "url": "https://ensun.io/search/corporate-gift/united-states",
+      "domain": "ensun.io",
+      "title": "Top 100 Corporate Gift Suppliers in United States (2026) | ensun",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:48.364Z",
+      "freshness": "structural",
+      "route_ids": [
+        "corporate_gifting"
+      ],
+      "account_refs": []
+    },
+    {
+      "source_id": "src:57",
+      "url": "https://www.swagmagic.com/corporate-gifts-supplier",
+      "domain": "swagmagic.com",
+      "title": "Global Corporate Gifting Suppliers and Vendors | Custom Corporate Gifting Solutions and Services | Branded Corporate Gifting Supplier - SwagMagic",
+      "source_type": "official",
+      "relationship": "PRIMARY_OFFICIAL",
+      "published_at": null,
+      "retrieved_at": "2026-10-01T00:45:48.364Z",
+      "freshness": "structural",
+      "route_ids": [
+        "corporate_gifting"
+      ],
+      "account_refs": []
+    }
+  ],
+  "claims": [
+    {
+      "claim_id": "route-supported:natural_specialty_grocery",
+      "claim": "Natural and specialty grocery has multiple observable public sources, including at least one likely first-party source.",
+      "scope": "multiple_observations",
+      "support_type": "inference",
+      "support_count": 9,
+      "source_ids": [
+        "src:1",
+        "src:2",
+        "src:3",
+        "src:4",
+        "src:5",
+        "src:6",
+        "src:7",
+        "src:8",
+        "src:9"
+      ],
+      "route_ids": [
+        "natural_specialty_grocery"
+      ],
+      "account_refs": [
+        "entity:naturalgrocers.com",
+        "entity:mrcheckout.net",
+        "entity:gourmetpro.co",
+        "entity:ams.usda.gov",
+        "entity:supplierdiversity.com",
+        "entity:grubbsgrocery.com",
+        "entity:usfoods.com"
+      ],
+      "independent_support": true,
+      "counterexamples": [],
+      "confidence": "medium",
+      "limitations": [
+        "Route support does not establish product acceptance, open commercial scope or buyer intent."
+      ]
+    },
+    {
+      "claim_id": "route-supported:online_natural_retail",
+      "claim": "Online natural-products retail has multiple observable public sources, including at least one likely first-party source.",
+      "scope": "single_observation",
+      "support_type": "inference",
+      "support_count": 3,
+      "source_ids": [
+        "src:10",
+        "src:11",
+        "src:12"
+      ],
+      "route_ids": [
+        "online_natural_retail"
+      ],
+      "account_refs": [
+        "entity:naturalgrocers.com",
+        "entity:wholesalecentral.com",
+        "entity:sndonline.com"
+      ],
+      "independent_support": false,
+      "counterexamples": [],
+      "confidence": "low",
+      "limitations": [
+        "Route support does not establish product acceptance, open commercial scope or buyer intent."
+      ]
+    },
+    {
+      "claim_id": "route-supported:specialty_beverage_retail",
+      "claim": "Specialty beverage retail has multiple observable public sources, including at least one likely first-party source.",
+      "scope": "single_observation",
+      "support_type": "inference",
+      "support_count": 5,
+      "source_ids": [
+        "src:13",
+        "src:14",
+        "src:15",
+        "src:16",
+        "src:17"
+      ],
+      "route_ids": [
+        "specialty_beverage_retail"
+      ],
+      "account_refs": [
+        "entity:unitedstatesbeverage.com",
+        "entity:bevnet.com",
+        "entity:bevindustry.com",
+        "entity:powerbrands.us",
+        "entity:specialtybevva.com"
+      ],
+      "independent_support": false,
+      "counterexamples": [],
+      "confidence": "low",
+      "limitations": [
+        "Route support does not establish product acceptance, open commercial scope or buyer intent."
+      ]
+    },
+    {
+      "claim_id": "route-supported:wellness_hospitality",
+      "claim": "Wellness hospitality and spa has multiple observable public sources, including at least one likely first-party source.",
+      "scope": "multiple_observations",
+      "support_type": "inference",
+      "support_count": 10,
+      "source_ids": [
+        "src:18",
+        "src:19",
+        "src:20",
+        "src:21",
+        "src:22",
+        "src:23",
+        "src:24",
+        "src:25",
+        "src:26",
+        "src:27"
+      ],
+      "route_ids": [
+        "wellness_hospitality"
+      ],
+      "account_refs": [
+        "entity:spasupply-solutions.com",
+        "entity:spaequipsolutions.com",
+        "entity:resortssupplies.com",
+        "entity:spavision.com",
+        "entity:spateaminternational.com",
+        "entity:hotelmoteldirectory.com",
+        "entity:hospitalitynet.org",
+        "entity:martinbros.com",
+        "entity:denverbeverage.com",
+        "entity:emersionwellness.com"
+      ],
+      "independent_support": true,
+      "counterexamples": [],
+      "confidence": "medium",
+      "limitations": [
+        "Route support does not establish product acceptance, open commercial scope or buyer intent."
+      ]
+    },
+    {
+      "claim_id": "route-supported:fitness_wellness_clubs",
+      "claim": "Fitness and wellness clubs has multiple observable public sources, including at least one likely first-party source.",
+      "scope": "single_observation",
+      "support_type": "inference",
+      "support_count": 5,
+      "source_ids": [
+        "src:28",
+        "src:29",
+        "src:30",
+        "src:31",
+        "src:32"
+      ],
+      "route_ids": [
+        "fitness_wellness_clubs"
+      ],
+      "account_refs": [
+        "entity:johnsonfitness.com",
+        "entity:elivatefitness.com",
+        "entity:linkedin.com",
+        "entity:wholesalecentral.com"
+      ],
+      "independent_support": false,
+      "counterexamples": [],
+      "confidence": "low",
+      "limitations": [
+        "Route support does not establish product acceptance, open commercial scope or buyer intent."
+      ]
+    },
+    {
+      "claim_id": "route-supported:natural_products_distribution",
+      "claim": "Natural-products distribution has multiple observable public sources, including at least one likely first-party source.",
+      "scope": "single_observation",
+      "support_type": "inference",
+      "support_count": 6,
+      "source_ids": [
+        "src:33",
+        "src:34",
+        "src:35",
+        "src:36",
+        "src:37",
+        "src:38"
+      ],
+      "route_ids": [
+        "natural_products_distribution"
+      ],
+      "account_refs": [
+        "entity:kehe.com",
+        "entity:grovara.com",
+        "entity:naturalproductsbuyersguide.com",
+        "entity:unitedstatesbeverage.com",
+        "entity:dryatlas.com"
+      ],
+      "independent_support": false,
+      "counterexamples": [],
+      "confidence": "low",
+      "limitations": [
+        "Route support does not establish product acceptance, open commercial scope or buyer intent."
+      ]
+    },
+    {
+      "claim_id": "route-supported:specialty_food_beverage_import",
+      "claim": "Specialty food and beverage import has multiple observable public sources, including at least one likely first-party source.",
+      "scope": "multiple_observations",
+      "support_type": "inference",
+      "support_count": 10,
+      "source_ids": [
+        "src:39",
+        "src:40",
+        "src:41",
+        "src:42",
+        "src:43",
+        "src:44",
+        "src:45",
+        "src:46",
+        "src:47",
+        "src:48"
+      ],
+      "route_ids": [
+        "specialty_food_beverage_import"
+      ],
+      "account_refs": [
+        "entity:gourmetint.com",
+        "entity:savorimports.com",
+        "entity:foodcodirectory.com",
+        "entity:familyfooddist.com",
+        "entity:usetorg.com",
+        "entity:diazfoods.com",
+        "entity:latinofooddistributors.com",
+        "entity:tc-specialties.com",
+        "entity:performancefoodservice.com"
+      ],
+      "independent_support": true,
+      "counterexamples": [],
+      "confidence": "medium",
+      "limitations": [
+        "Route support does not establish product acceptance, open commercial scope or buyer intent."
+      ]
+    },
+    {
+      "claim_id": "route-supported:foodservice_procurement",
+      "claim": "Foodservice and hospitality procurement has multiple observable public sources, including at least one likely first-party source.",
+      "scope": "single_observation",
+      "support_type": "inference",
+      "support_count": 4,
+      "source_ids": [
+        "src:49",
+        "src:50",
+        "src:51",
+        "src:52"
+      ],
+      "route_ids": [
+        "foodservice_procurement"
+      ],
+      "account_refs": [
+        "entity:gourmetpro.co",
+        "entity:supplyve.com",
+        "entity:easterndistributors.us",
+        "entity:blog.gourmetfoodmarketplace.com"
+      ],
+      "independent_support": false,
+      "counterexamples": [],
+      "confidence": "low",
+      "limitations": [
+        "Route support does not establish product acceptance, open commercial scope or buyer intent."
+      ]
+    },
+    {
+      "claim_id": "route-supported:corporate_gifting",
+      "claim": "Corporate gifting has multiple observable public sources, including at least one likely first-party source.",
+      "scope": "single_observation",
+      "support_type": "inference",
+      "support_count": 5,
+      "source_ids": [
+        "src:53",
+        "src:54",
+        "src:55",
+        "src:56",
+        "src:57"
+      ],
+      "route_ids": [
+        "corporate_gifting"
+      ],
+      "account_refs": [
+        "entity:thomasnet.com",
+        "entity:gift-supplier.com",
+        "entity:ensun.io",
+        "entity:swagmagic.com"
+      ],
+      "independent_support": false,
+      "counterexamples": [],
+      "confidence": "low",
+      "limitations": [
+        "Route support does not establish product acceptance, open commercial scope or buyer intent."
+      ]
+    }
+  ],
+  "research_passes": [
+    {
+      "pass_id": "route:natural_specialty_grocery",
+      "purpose": "Discover route structure, ecosystem entities and supplier-access evidence for Natural and specialty grocery",
+      "started_at": "2026-10-01T00:45:34.264Z",
+      "completed_at": "2026-10-01T00:45:36.152Z",
+      "queries": 2,
+      "new_sources": 9,
+      "new_entities": 7,
+      "novelty_rate": 0.7777777777777778,
+      "stop_reason": "evidence_obtained"
+    },
+    {
+      "pass_id": "route:online_natural_retail",
+      "purpose": "Discover route structure, ecosystem entities and supplier-access evidence for Online natural-products retail",
+      "started_at": "2026-10-01T00:45:36.152Z",
+      "completed_at": "2026-10-01T00:45:37.306Z",
+      "queries": 1,
+      "new_sources": 3,
+      "new_entities": 3,
+      "novelty_rate": 1,
+      "stop_reason": "evidence_obtained"
+    },
+    {
+      "pass_id": "route:specialty_beverage_retail",
+      "purpose": "Discover route structure, ecosystem entities and supplier-access evidence for Specialty beverage retail",
+      "started_at": "2026-10-01T00:45:37.306Z",
+      "completed_at": "2026-10-01T00:45:38.353Z",
+      "queries": 1,
+      "new_sources": 5,
+      "new_entities": 5,
+      "novelty_rate": 1,
+      "stop_reason": "evidence_obtained"
+    },
+    {
+      "pass_id": "route:wellness_hospitality",
+      "purpose": "Discover route structure, ecosystem entities and supplier-access evidence for Wellness hospitality and spa",
+      "started_at": "2026-10-01T00:45:38.353Z",
+      "completed_at": "2026-10-01T00:45:40.583Z",
+      "queries": 2,
+      "new_sources": 10,
+      "new_entities": 10,
+      "novelty_rate": 1,
+      "stop_reason": "evidence_obtained"
+    },
+    {
+      "pass_id": "route:fitness_wellness_clubs",
+      "purpose": "Discover route structure, ecosystem entities and supplier-access evidence for Fitness and wellness clubs",
+      "started_at": "2026-10-01T00:45:40.584Z",
+      "completed_at": "2026-10-01T00:45:41.709Z",
+      "queries": 1,
+      "new_sources": 5,
+      "new_entities": 4,
+      "novelty_rate": 0.8,
+      "stop_reason": "evidence_obtained"
+    },
+    {
+      "pass_id": "route:natural_products_distribution",
+      "purpose": "Discover route structure, ecosystem entities and supplier-access evidence for Natural-products distribution",
+      "started_at": "2026-10-01T00:45:41.709Z",
+      "completed_at": "2026-10-01T00:45:43.852Z",
+      "queries": 2,
+      "new_sources": 6,
+      "new_entities": 5,
+      "novelty_rate": 0.8333333333333334,
+      "stop_reason": "evidence_obtained"
+    },
+    {
+      "pass_id": "route:specialty_food_beverage_import",
+      "purpose": "Discover route structure, ecosystem entities and supplier-access evidence for Specialty food and beverage import",
+      "started_at": "2026-10-01T00:45:43.852Z",
+      "completed_at": "2026-10-01T00:45:46.064Z",
+      "queries": 2,
+      "new_sources": 10,
+      "new_entities": 9,
+      "novelty_rate": 0.9,
+      "stop_reason": "evidence_obtained"
+    },
+    {
+      "pass_id": "route:foodservice_procurement",
+      "purpose": "Discover route structure, ecosystem entities and supplier-access evidence for Foodservice and hospitality procurement",
+      "started_at": "2026-10-01T00:45:46.064Z",
+      "completed_at": "2026-10-01T00:45:47.117Z",
+      "queries": 1,
+      "new_sources": 4,
+      "new_entities": 4,
+      "novelty_rate": 1,
+      "stop_reason": "evidence_obtained"
+    },
+    {
+      "pass_id": "route:corporate_gifting",
+      "purpose": "Discover route structure, ecosystem entities and supplier-access evidence for Corporate gifting",
+      "started_at": "2026-10-01T00:45:47.117Z",
+      "completed_at": "2026-10-01T00:45:48.365Z",
+      "queries": 1,
+      "new_sources": 5,
+      "new_entities": 4,
+      "novelty_rate": 0.8,
+      "stop_reason": "evidence_obtained"
+    }
+  ],
+  "coverage": {
+    "routes_researched": 9,
+    "routes_supported": 9,
+    "sources": 57,
+    "independent_sources": 4,
+    "mechanisms_researched": 9,
+    "mechanisms_found": 0,
+    "mechanisms_verified": 0,
+    "access_identified": 0,
+    "access_verified": 0,
+    "buyer_functions_identified": 24,
+    "corroboration_attempted": 9,
+    "corroboration_achieved": 3
+  },
+  "gaps": [
+    "Commercial mechanisms remain unverified until official pages are extracted.",
+    "Customer product classification, landed economics, MOQ and importer-of-record model remain unresolved."
+  ],
+  "provenance": {
+    "generated_by": "run-pilot2-market-research-universe-v1",
+    "source_data_refs": [
+      "https://www.naturalgrocers.com/vendors",
+      "https://mrcheckout.net/how-to-get-into-natural-grocers",
+      "https://www.naturalgrocers.com/food-product-submissions",
+      "https://www.naturalgrocers.com/produce-product-criteria",
+      "https://www.gourmetpro.co/blog/top-food-distributors-usa",
+      "https://www.ams.usda.gov/selling-food/becoming-approved",
+      "https://www.supplierdiversity.com/blog/how-to-become-a-us-foods-supplier",
+      "https://www.grubbsgrocery.com/become-a-vendor",
+      "https://www.usfoods.com/supplier-info.html",
+      "https://www.naturalgrocers.com/non-food-product-submissions",
+      "https://www.wholesalecentral.com/Natural-Holistic-Health-Beauty.html",
+      "https://sndonline.com/",
+      "https://www.unitedstatesbeverage.com/",
+      "https://www.bevnet.com/pr/2026/01/21/us-beverage-establishes-independent-subsidiary--gateway-beverage-group",
+      "https://www.bevindustry.com/keywords/6631-specialty-beverages",
+      "https://www.powerbrands.us/beverage-distributors",
+      "https://www.specialtybevva.com/",
+      "https://www.spasupply-solutions.com/",
+      "https://www.spaequipsolutions.com/",
+      "https://www.resortssupplies.com/resort-spa-supplies-2026-trends",
+      "https://www.spavision.com/",
+      "https://spateaminternational.com/",
+      "https://www.hotelmoteldirectory.com/category/food-and-beverage",
+      "https://www.hospitalitynet.org/food-beverage/supplier",
+      "https://www.martinbros.com/distribution/hotel-casinos",
+      "https://denverbeverage.com/hotels",
+      "https://emersionwellness.com/hotel-wellness-program-ideas",
+      "https://www.johnsonfitness.com/Home/Vendors",
+      "https://www.elivatefitness.com/about-us",
+      "https://www.linkedin.com/company/us-fitness-products",
+      "https://www.johnsonfitness.com/",
+      "https://www.wholesalecentral.com/Fitness-Sporting-Goods.html",
+      "https://www.kehe.com/suppliers",
+      "https://grovara.com/natural-food-distributors-in-the-usa",
+      "https://naturalproductsbuyersguide.com/Listing/Index/Grocery/Distributors/1593/1101229",
+      "https://www.unitedstatesbeverage.com/executive-team",
+      "https://grovara.com/blog/natural-food-distributors-in-the-usa",
+      "https://www.dryatlas.com/articles/non-alc-importing-sales-channels-importer-distributor-types-onboarding-new-brands",
+      "https://gourmetint.com/",
+      "https://www.savorimports.com/about-us",
+      "https://www.foodcodirectory.com/2021/10/list-of-food-importers-in-united-states.html",
+      "https://www.familyfooddist.com/",
+      "https://usetorg.com/buyers/usa",
+      "https://www.diazfoods.com/",
+      "https://www.foodcodirectory.com/2021/08/mexican-latin-hispanic-food-wholesale.html",
+      "https://latinofooddistributors.com/",
+      "https://www.tc-specialties.com/",
+      "https://www.performancefoodservice.com/Products-and-Services/Product-Categories/Latin-and-Hispanic",
+      "https://www.gourmetpro.co/blog/what-is-food-beverage-distributor",
+      "https://www.supplyve.com/post/top-food-distributors-a-comprehensive-guide",
+      "https://www.easterndistributors.us/",
+      "https://blog.gourmetfoodmarketplace.com/the-top-food-distributors-in-the-usa-2024",
+      "https://www.thomasnet.com/suppliers/usa/corporate-gifts-34651901",
+      "https://gift-supplier.com/",
+      "https://www.thomasnet.com/suppliers/florida/all-cities/corporate-gifts-34651901",
+      "https://ensun.io/search/corporate-gift/united-states",
+      "https://www.swagmagic.com/corporate-gifts-supplier"
+    ],
+    "fresh_search_count": 13,
+    "fresh_extraction_count": 0,
+    "reused_evidence_count": 0
+  },
+  "limitations": [
+    "This is bounded route research, not TAM, market share or complete US coverage.",
+    "No search result is promoted to verified account evidence by this run.",
+    "The selected portfolio remains a separate population."
+  ],
+  "charts": [
+    {
+      "chart_id": "route_research_coverage",
+      "title": "Route research coverage",
+      "question_answered": "Which route hypotheses were researched and what did the evidence support?",
+      "population": {
+        "population_type": "market_research_universe",
+        "population_size": 9,
+        "selection_scope": "Unique public route, ecosystem and commercial-access sources returned by bounded Brave research",
+        "coverage_scope": "Canonical route hypotheses researched",
+        "limitations": [
+          "Search coverage is bounded, not exhaustive market coverage.",
+          "Search results remain discovery evidence until extracted and claim-validated."
+        ]
+      },
+      "denominator": 9,
+      "unknown_count": 0,
+      "not_researched_count": 0,
+      "data": [
+        {
+          "route_id": "natural_specialty_grocery",
+          "lifecycle": "EVIDENCE_SUPPORTED",
+          "queries": 2,
+          "sources": 9,
+          "candidates": 7,
+          "eligible_accounts": 0,
+          "independent_support": 1
+        },
+        {
+          "route_id": "online_natural_retail",
+          "lifecycle": "EVIDENCE_SUPPORTED",
+          "queries": 1,
+          "sources": 3,
+          "candidates": 3,
+          "eligible_accounts": 0,
+          "independent_support": 0
+        },
+        {
+          "route_id": "specialty_beverage_retail",
+          "lifecycle": "EVIDENCE_SUPPORTED",
+          "queries": 1,
+          "sources": 5,
+          "candidates": 5,
+          "eligible_accounts": 0,
+          "independent_support": 0
+        },
+        {
+          "route_id": "wellness_hospitality",
+          "lifecycle": "EVIDENCE_SUPPORTED",
+          "queries": 2,
+          "sources": 10,
+          "candidates": 10,
+          "eligible_accounts": 0,
+          "independent_support": 1
+        },
+        {
+          "route_id": "fitness_wellness_clubs",
+          "lifecycle": "EVIDENCE_SUPPORTED",
+          "queries": 1,
+          "sources": 5,
+          "candidates": 4,
+          "eligible_accounts": 0,
+          "independent_support": 0
+        },
+        {
+          "route_id": "natural_products_distribution",
+          "lifecycle": "EVIDENCE_SUPPORTED",
+          "queries": 2,
+          "sources": 6,
+          "candidates": 5,
+          "eligible_accounts": 0,
+          "independent_support": 0
+        },
+        {
+          "route_id": "specialty_food_beverage_import",
+          "lifecycle": "EVIDENCE_SUPPORTED",
+          "queries": 2,
+          "sources": 10,
+          "candidates": 9,
+          "eligible_accounts": 0,
+          "independent_support": 2
+        },
+        {
+          "route_id": "foodservice_procurement",
+          "lifecycle": "EVIDENCE_SUPPORTED",
+          "queries": 1,
+          "sources": 4,
+          "candidates": 4,
+          "eligible_accounts": 0,
+          "independent_support": 0
+        },
+        {
+          "route_id": "corporate_gifting",
+          "lifecycle": "EVIDENCE_SUPPORTED",
+          "queries": 1,
+          "sources": 5,
+          "candidates": 4,
+          "eligible_accounts": 0,
+          "independent_support": 0
+        }
+      ],
+      "eligible": true,
+      "selected": true,
+      "omission_reason": null
+    },
+    {
+      "chart_id": "commercial_access_depth",
+      "title": "Commercial access depth",
+      "question_answered": "Where does an observable commercial path exist?",
+      "population": {
+        "population_type": "market_research_universe",
+        "population_size": 9,
+        "selection_scope": "Unique public route, ecosystem and commercial-access sources returned by bounded Brave research",
+        "coverage_scope": "Canonical route hypotheses researched",
+        "limitations": [
+          "Search coverage is bounded, not exhaustive market coverage.",
+          "Search results remain discovery evidence until extracted and claim-validated."
+        ]
+      },
+      "denominator": 9,
+      "unknown_count": 9,
+      "not_researched_count": 0,
+      "data": [
+        {
+          "route_id": "natural_specialty_grocery",
+          "mechanism_research": "FOUND_UNVERIFIED",
+          "mechanisms_identified": 0,
+          "mechanisms_verified": 0,
+          "access_verified": 0
+        },
+        {
+          "route_id": "online_natural_retail",
+          "mechanism_research": "FOUND_UNVERIFIED",
+          "mechanisms_identified": 0,
+          "mechanisms_verified": 0,
+          "access_verified": 0
+        },
+        {
+          "route_id": "specialty_beverage_retail",
+          "mechanism_research": "FOUND_UNVERIFIED",
+          "mechanisms_identified": 0,
+          "mechanisms_verified": 0,
+          "access_verified": 0
+        },
+        {
+          "route_id": "wellness_hospitality",
+          "mechanism_research": "FOUND_UNVERIFIED",
+          "mechanisms_identified": 0,
+          "mechanisms_verified": 0,
+          "access_verified": 0
+        },
+        {
+          "route_id": "fitness_wellness_clubs",
+          "mechanism_research": "FOUND_UNVERIFIED",
+          "mechanisms_identified": 0,
+          "mechanisms_verified": 0,
+          "access_verified": 0
+        },
+        {
+          "route_id": "natural_products_distribution",
+          "mechanism_research": "FOUND_UNVERIFIED",
+          "mechanisms_identified": 0,
+          "mechanisms_verified": 0,
+          "access_verified": 0
+        },
+        {
+          "route_id": "specialty_food_beverage_import",
+          "mechanism_research": "FOUND_UNVERIFIED",
+          "mechanisms_identified": 0,
+          "mechanisms_verified": 0,
+          "access_verified": 0
+        },
+        {
+          "route_id": "foodservice_procurement",
+          "mechanism_research": "FOUND_UNVERIFIED",
+          "mechanisms_identified": 0,
+          "mechanisms_verified": 0,
+          "access_verified": 0
+        },
+        {
+          "route_id": "corporate_gifting",
+          "mechanism_research": "FOUND_UNVERIFIED",
+          "mechanisms_identified": 0,
+          "mechanisms_verified": 0,
+          "access_verified": 0
+        }
+      ],
+      "eligible": true,
+      "selected": true,
+      "omission_reason": null
+    },
+    {
+      "chart_id": "freshness_coverage",
+      "title": "Evidence freshness",
+      "question_answered": "How much market evidence is current, structural, stale or undated?",
+      "population": {
+        "population_type": "market_research_universe",
+        "population_size": 57,
+        "selection_scope": "Unique public route, ecosystem and commercial-access sources returned by bounded Brave research",
+        "coverage_scope": "13 queries across 9 route hypotheses",
+        "limitations": [
+          "Search coverage is bounded, not exhaustive market coverage.",
+          "Search results remain discovery evidence until extracted and claim-validated."
+        ]
+      },
+      "denominator": 57,
+      "unknown_count": 0,
+      "not_researched_count": 0,
+      "data": [
+        {
+          "freshness": "current",
+          "sources": 22
+        },
+        {
+          "freshness": "event",
+          "sources": 0
+        },
+        {
+          "freshness": "structural",
+          "sources": 35
+        },
+        {
+          "freshness": "stale",
+          "sources": 0
+        },
+        {
+          "freshness": "unknown",
+          "sources": 0
+        }
+      ],
+      "eligible": true,
+      "selected": true,
+      "omission_reason": null
+    },
+    {
+      "chart_id": "customer_dependency_impact",
+      "title": "Customer dependency impact",
+      "question_answered": "Which customer facts block the most routes or decisions?",
+      "population": {
+        "population_type": "market_research_universe",
+        "population_size": 9,
+        "selection_scope": "Unique public route, ecosystem and commercial-access sources returned by bounded Brave research",
+        "coverage_scope": "Canonical route hypotheses researched",
+        "limitations": [
+          "Search coverage is bounded, not exhaustive market coverage.",
+          "Search results remain discovery evidence until extracted and claim-validated."
+        ]
+      },
+      "denominator": 9,
+      "unknown_count": 0,
+      "not_researched_count": 0,
+      "data": [
+        {
+          "dependency_id": "product_classification",
+          "label": "Exact US product classification",
+          "status": "CUSTOMER_INPUT_REQUIRED",
+          "blocking_level": "route",
+          "affected_routes": 9,
+          "affected_accounts": 0
+        },
+        {
+          "dependency_id": "landed_economics",
+          "label": "Landed economics and target margin",
+          "status": "CUSTOMER_INPUT_REQUIRED",
+          "blocking_level": "decision",
+          "affected_routes": 9,
+          "affected_accounts": 0
+        },
+        {
+          "dependency_id": "minimum_order_quantity",
+          "label": "Minimum order quantity compatibility",
+          "status": "CUSTOMER_INPUT_REQUIRED",
+          "blocking_level": "account",
+          "affected_routes": 9,
+          "affected_accounts": 0
+        },
+        {
+          "dependency_id": "importer_of_record",
+          "label": "Importer-of-record model",
+          "status": "CUSTOMER_INPUT_REQUIRED",
+          "blocking_level": "route",
+          "affected_routes": 4,
+          "affected_accounts": 0
+        }
+      ],
+      "eligible": true,
+      "selected": true,
+      "omission_reason": null
+    }
+  ]
+}
