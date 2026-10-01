@@ -18,7 +18,7 @@ export function toMarketRows(universe: MarketResearchUniverseV1, scope: MarketMe
     sources: universe.market_sources.map((source) => ({ tenant_user_id: scope.tenant_user_id, client_id: scope.client_id, universe_id: universe.universe_id, source_id: source.source_id, canonical_url: normalizeUrl(source.url), domain: source.domain, source_type: source.source_type, relationship: source.relationship, route_ids: source.route_ids, account_refs: source.account_refs, published_at: source.published_at, retrieved_at: source.retrieved_at, content_sha256: String(provenanceByUrl[source.url]?.content_sha256 ?? "") || null, extraction_provenance: provenanceByUrl[source.url] ?? null, observation: source })),
   };
 }
-export function normalizeUrl(raw: string): string { const url = new URL(raw); url.hash = ""; for (const key of [...url.searchParams.keys()]) if (/^utm_|^(fbclid|gclid)$/i.test(key)) url.searchParams.delete(key); return url.toString(); }
+export function normalizeUrl(raw: string): string { const url = new URL(raw); url.hash = ""; for (const key of Array.from(url.searchParams.keys())) if (/^utm_|^(fbclid|gclid)$/i.test(key)) url.searchParams.delete(key); return url.toString(); }
 export function memoryDecision(row: MarketSnapshotRow | null, now = new Date()): "RESEARCH_AGAIN" | "REFRESH" | "REUSE" {
   if (!row) return "RESEARCH_AGAIN";
   if (!row.freshness_until || new Date(row.freshness_until).getTime() <= now.getTime()) return "REFRESH";

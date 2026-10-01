@@ -28,7 +28,7 @@ const canonical = (raw: string) => { const u = new URL(raw); u.hash = ""; return
 const sourceByUrl = new Map(universe.market_sources.map((source) => [canonical(source.url), source]));
 const telemetry: Array<Record<string, unknown>> = [];
 
-function addSource(target: typeof targets[number], item: { url: string; title: string | null; published_date: string | null; retrieved_at: string; source_type: string }, relationship: MarketSource["relationship"]): MarketSource {
+function addSource(target: typeof targets[number], item: { url: string; title: string | null; published_date: string | null; retrieved_at: string; source_type: string | null }, relationship: MarketSource["relationship"]): MarketSource {
   const url = canonical(item.url); const existing = sourceByUrl.get(url); if (existing) { if (!existing.route_ids.includes(target.route)) existing.route_ids.push(target.route); return existing; }
   const source: MarketSource = { source_id: `src:${universe.market_sources.length + 1}`, url, domain: domainOf(url), title: item.title ?? domainOf(url), source_type: relationship === "PRIMARY_OFFICIAL" ? "official" : "independent_media", relationship, published_at: item.published_date, retrieved_at: item.retrieved_at, freshness: item.published_date ? "current" : "structural", route_ids: [target.route], account_refs: [`entity:${target.domain}`] };
   universe.market_sources.push(source); sourceByUrl.set(url, source); return source;
