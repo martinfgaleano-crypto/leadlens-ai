@@ -1,0 +1,116 @@
+{
+  "generated_at": "2026-10-03T20:44:52.082Z",
+  "source_foundation": "output/pilot2/2026-09-30-account18-market-v2",
+  "mru_source": "output/pilot2/2026-09-30-market-universe-v2/market-research-universe.json",
+  "mru_universe_id": "amor-de-gea-us-2026-10-01",
+  "mru_coverage": {
+    "routes_researched": 9,
+    "routes_supported": 9,
+    "sources": 72,
+    "independent_sources": 4,
+    "mechanisms_researched": 9,
+    "mechanisms_found": 3,
+    "mechanisms_verified": 3,
+    "access_identified": 3,
+    "access_verified": 3,
+    "buyer_functions_identified": 24,
+    "corroboration_attempted": 9,
+    "corroboration_achieved": 3
+  },
+  "selected_portfolio_population": 6,
+  "market_research_universe_population": 72,
+  "tiers": [
+    {
+      "tier": "preview",
+      "label": "Preview",
+      "pdf": "output/pilot2/2026-10-03-mru-closure/LeadLens_AmorDeGea_Pilot2_Preview.pdf",
+      "bytes": 13358,
+      "pages": 3,
+      "selected": 2,
+      "capacity": 2,
+      "decisions": {
+        "prioritize": 0,
+        "validate": 2,
+        "monitor": 0,
+        "hold": 0
+      },
+      "sourced": "n/a",
+      "dated": "n/a",
+      "commercial_mechanism": "n/a",
+      "verified_access": "n/a",
+      "corroborated": "n/a",
+      "mru_in_tier": false,
+      "mru_market_verified_mechanisms": null,
+      "mru_market_verified_access": null
+    },
+    {
+      "tier": "brief",
+      "label": "Brief",
+      "pdf": "output/pilot2/2026-10-03-mru-closure/LeadLens_AmorDeGea_Pilot2_Brief.pdf",
+      "bytes": 34991,
+      "pages": 7,
+      "selected": 6,
+      "capacity": 6,
+      "decisions": {
+        "prioritize": 0,
+        "validate": 2,
+        "monitor": 1,
+        "hold": 3
+      },
+      "sourced": "n/a",
+      "dated": "n/a",
+      "commercial_mechanism": "n/a",
+      "verified_access": "n/a",
+      "corroborated": "n/a",
+      "mru_in_tier": false,
+      "mru_market_verified_mechanisms": null,
+      "mru_market_verified_access": null
+    },
+    {
+      "tier": "intelligence",
+      "label": "Portfolio",
+      "pdf": "output/pilot2/2026-10-03-mru-closure/LeadLens_AmorDeGea_Pilot2_Portfolio.pdf",
+      "bytes": 44962,
+      "pages": 9,
+      "selected": 6,
+      "capacity": 12,
+      "decisions": {
+        "prioritize": 0,
+        "validate": 2,
+        "monitor": 1,
+        "hold": 3
+      },
+      "sourced": "6/6",
+      "dated": "6/6",
+      "commercial_mechanism": "0/6",
+      "verified_access": "0/6",
+      "corroborated": "0/6",
+      "mru_in_tier": true,
+      "mru_market_verified_mechanisms": 3,
+      "mru_market_verified_access": 3
+    },
+    {
+      "tier": "premium",
+      "label": "Premium",
+      "pdf": "output/pilot2/2026-10-03-mru-closure/LeadLens_AmorDeGea_Pilot2_Premium.pdf",
+      "bytes": 61413,
+      "pages": 12,
+      "selected": 6,
+      "capacity": 18,
+      "decisions": {
+        "prioritize": 0,
+        "validate": 2,
+        "monitor": 1,
+        "hold": 3
+      },
+      "sourced": "6/6",
+      "dated": "6/6",
+      "commercial_mechanism": "0/6",
+      "verified_access": "0/6",
+      "corroborated": "0/6",
+      "mru_in_tier": true,
+      "mru_market_verified_mechanisms": 3,
+      "mru_market_verified_access": 3
+    }
+  ]
+}

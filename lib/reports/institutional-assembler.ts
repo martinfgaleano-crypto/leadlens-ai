@@ -13,6 +13,7 @@ import {
 } from "./institutional-report-types";
 import { evaluateInstitutionalOpportunityCase } from "@/lib/intelligence/opportunity-case-intelligence";
 import { buildCanonicalIntelligenceDelivery } from "@/lib/intelligence/canonical-intelligence-delivery";
+import type { MarketResearchUniverseV1 } from "@/lib/intelligence/market-research-universe";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type Json = Record<string, any>;
@@ -348,6 +349,18 @@ export function assembleInstitutionalReport(
     })(),
     versions: reportJson._versions ?? { report_schema: "legacy", institutional_report: INSTITUTIONAL_REPORT_VERSION },
   };
-  assembled.intelligence = buildCanonicalIntelligenceDelivery(assembled, typeof reportJson?.delivery_capacity_target === "number" ? reportJson.delivery_capacity_target : null);
+  // A report may carry an independently-researched Market Research Universe
+  // (routes, buyer functions, verified commercial mechanisms/access paths). It is
+  // a SEPARATE population from the selected portfolio and is only surfaced on the
+  // Premium tier; passing it here preserves it through canonical intelligence,
+  // tier scoping and the presentation model into the renderer. Generic: any report
+  // carrying `market_research_universe` flows it through — no caller-specific path.
+  const marketResearchUniverse =
+    (reportJson as { market_research_universe?: MarketResearchUniverseV1 } | null | undefined)?.market_research_universe ?? undefined;
+  assembled.intelligence = buildCanonicalIntelligenceDelivery(
+    assembled,
+    typeof reportJson?.delivery_capacity_target === "number" ? reportJson.delivery_capacity_target : null,
+    marketResearchUniverse,
+  );
   return assembled;
 }
