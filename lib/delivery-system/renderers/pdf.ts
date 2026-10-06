@@ -16,6 +16,7 @@ import type { PresentationModel } from "@/lib/delivery-system/presentation-model
 import type { AccountBriefVM, DecisionState } from "@/lib/delivery-system/delivery-document";
 import { dimensionValue } from "@/lib/delivery-system/renderers/shared";
 import { deriveCoverageGaps, derivePortfolioRisk, derivePlaybooks, deriveStakeholderFunctions, deepDossierIds } from "@/lib/deliverable/portfolio-analytics";
+import { toCustomerText } from "@/lib/delivery-system/customer-language";
 
 type RGB = [number, number, number];
 // jsPDF's built-in fonts render Latin-1 / WinAnsi (which INCLUDES á é í ó ú ñ ü Á-Ú Ñ ¿ ¡). The old
@@ -213,6 +214,10 @@ export function renderPdfBuffer(pm: PresentationModel, opts?: { compress?: boole
   const { document: doc, policy, tierLabel } = pm;
   const s = policy.sections;
   const es = doc.meta.language === "es";
+  // Customer-language sanitizer bound to this report's output language. Applied to
+  // prose fields that may carry baked analyst/pipeline strings (never to counts,
+  // decisions, or the canonical intelligence block). Fixes presentation only.
+  const cust = (sIn: string | null | undefined): string => toCustomerText(sIn, { es });
   const L = labelsFor(es);
   const DEC_MEANING = DEC_MEANING_L[es ? "es" : "en"];
   const decLabel = (d: DecisionState) => (es ? DECISION_TOKENS[d].labelEs : DECISION_TOKENS[d].label);
@@ -289,7 +294,7 @@ export function renderPdfBuffer(pm: PresentationModel, opts?: { compress?: boole
     for (const src of sources) {
       space(5);
       setFill(SUB); pdf.circle(M + 1.4, y - 1.1, 0.5, "F");
-      const head = `${src.label}${src.date ? ` (${src.date})` : ""}`;
+      const head = `${cust(src.label)}${src.date ? ` (${src.date})` : ""}`;
       pdf.setFont("helvetica", "normal"); pdf.setFontSize(9); setText(SUB);
       pdf.text(latin1(head), M + 4, y);
       let cx = M + 4 + pdf.getTextWidth(latin1(head));
@@ -357,6 +362,27 @@ export function renderPdfBuffer(pm: PresentationModel, opts?: { compress?: boole
   const tierId = TIER_IDENTITY_L[es ? "es" : "en"];
   const identity = tierId[tierLabel] ?? tierId.Intelligence;
   const p = doc.portfolioSynthesis;
+  // Deterministic, TIER-LOCAL executive summary derived from this tier's canonical
+  // decision distribution (§7). It never inherits counts from a broader/stale
+  // population and never carries scores or a second decision system — so it cannot
+  // contradict the decision snapshot (e.g. "three monitor-tier accounts" when the
+  // tier has one). Replaces the baked LLM prose summary for the customer deliverable.
+  const execSummaryText = ((): string => {
+    const total = p.total || doc.accounts.length;
+    const c = p.counts;
+    const focus = [...doc.accounts].filter((a) => a.decision === "prioritize" || a.decision === "validate").slice(0, 3).map((a) => a.company);
+    if (total === 0) return es ? "No se seleccionaron cuentas en este producto." : "No accounts were selected in this product.";
+    const parts = [`${c.prioritize} ${decLabel("prioritize").toLowerCase()}`, `${c.validate} ${decLabel("validate").toLowerCase()}`, `${c.monitor} ${decLabel("monitor").toLowerCase()}`, `${c.hold} ${decLabel("hold").toLowerCase()}`].join(" · ");
+    const lead = es
+      ? `Este ${identity.title} evalúa ${total} cuenta${total === 1 ? "" : "s"}: ${parts}.`
+      : `This ${identity.title} evaluates ${total} account${total === 1 ? "" : "s"}: ${parts}.`;
+    const focusSentence = c.prioritize > 0
+      ? (es ? ` Priorizar primero: ${focus.join(", ")} — base de acceso comercial verificada.` : ` Prioritize first: ${focus.join(", ")} — verified current commercial-access basis.`)
+      : c.validate > 0
+        ? (es ? ` Ninguna cuenta alcanza el umbral de priorización; el siguiente paso es resolver las preguntas de validación de ${focus.join(", ")} antes de cualquier contacto.` : ` No account meets the prioritize bar; the next step is resolving the validation questions on ${focus.join(", ")} before any outreach.`)
+        : (es ? " Ninguna cuenta justifica esfuerzo comercial activo con la evidencia disponible." : " No account currently justifies active commercial effort under the available evidence.");
+    return lead + focusSentence;
+  })();
   {
     // top accent band
     setFill(INK_DK); pdf.rect(0, 0, W, 3, "F");
@@ -416,7 +442,7 @@ export function renderPdfBuffer(pm: PresentationModel, opts?: { compress?: boole
     pdf.setFont("helvetica", "bold"); pdf.setFontSize(9.5); setText(INK);
     pdf.text(latin1(identity.kind), M, H - 22);
     pdf.setFont("helvetica", "normal"); pdf.setFontSize(8.5); setText(MUTE);
-    pdf.text(latin1(doc.summary ? firstSentence(doc.summary, 200) : L.preparedBy), M, H - 16, { maxWidth: CW } as never);
+    pdf.text(latin1(firstSentence(execSummaryText, 200)), M, H - 16, { maxWidth: CW } as never);
   }
 
   // ══════════════════════════════ CONTENT (page 2+) ══════════════════════════════
@@ -425,7 +451,7 @@ export function renderPdfBuffer(pm: PresentationModel, opts?: { compress?: boole
   // ── Executive summary (decision-first) ──
   if (s.header) {
     band(L.execSummary);
-    if (doc.summary) text(doc.summary, M, 10, "normal", SUB);
+    text(execSummaryText, M, 10, "normal", SUB);
     gap(1);
     const total = p.total || doc.accounts.length;
     if (total > 0) {
@@ -469,7 +495,7 @@ export function renderPdfBuffer(pm: PresentationModel, opts?: { compress?: boole
     const c = doc.commercialContext;
     band(L.commercialContext);
     if (c.objective) text(`${L.objective}: ${c.objective}`, M, 9.5, "bold", INK);
-    if (c.summary) text(c.summary, M, 9.5, "normal", SUB);
+    if (c.summary) text(cust(c.summary), M, 9.5, "normal", SUB);
     const facets = [c.regions.length ? `${L.regions}: ${c.regions.join(", ")}` : "", c.industries.length ? `${L.sectors}: ${c.industries.join(", ")}` : ""].filter(Boolean);
     if (facets.length) text(facets.join("     "), M, 8.5, "normal", MUTE);
   }
@@ -594,7 +620,7 @@ export function renderPdfBuffer(pm: PresentationModel, opts?: { compress?: boole
       const tensionLines = Array.from(byNote.entries()).map(([note, cos]) => `${locFrozen(note, es)} (${cos.length}): ${cos.map(latin1).join(", ")}`);
       bullets(L.tensionsToResolve, tensionLines, [217, 119, 6]);
     }
-    if (ep.validationPriorities.length) bullets(L.validationPriorities, ep.validationPriorities.slice(0, 6).map(latin1));
+    if (ep.validationPriorities.length) bullets(L.validationPriorities, ep.validationPriorities.slice(0, 6).map((x) => latin1(cust(x))));
     text(latin1(locFrozen(ep.synthesis.scopeNote, es)), M, 8, "normal", MUTE);
 
     // Commercial context / benchmark — only when the snapshot carries it (zero-result stays professional).
@@ -749,11 +775,11 @@ export function renderPdfBuffer(pm: PresentationModel, opts?: { compress?: boole
     setFill(DEC_RGB[pb.decision]); pdf.roundedRect(W - M - cwid, top, cwid, 6, 1.2, 1.2, "F");
     setText([255, 255, 255]); pdf.text(chip, W - M - cwid + 3, top + 4.2);
     y += 4.5;
-    if (pb.objective) text(`${L.pbObjective}: ${pb.objective}`, M + 4, 9, "bold", SUB, CW - 4);
-    if (pb.why) text(`${L.pbWhy}: ${pb.why}`, M + 4, 9, "normal", SUB, CW - 4);
-    if (pb.validate.length) bullets(L.pbValidate, pb.validate.map(latin1));
-    if (pb.holdWhen) text(`${L.pbHold}: ${pb.holdWhen}`, M + 4, 8.5, "normal", [217, 119, 6], CW - 4);
-    if (pb.nextStep) text(`${L.nextStep}: ${pb.nextStep}`, M + 4, 9, "bold", INK, CW - 4);
+    if (pb.objective) text(`${L.pbObjective}: ${cust(pb.objective)}`, M + 4, 9, "bold", SUB, CW - 4);
+    if (pb.why) text(`${L.pbWhy}: ${cust(pb.why)}`, M + 4, 9, "normal", SUB, CW - 4);
+    if (pb.validate.length) bullets(L.pbValidate, pb.validate.map((x) => latin1(cust(x))));
+    if (pb.holdWhen) text(`${L.pbHold}: ${cust(pb.holdWhen)}`, M + 4, 8.5, "normal", [217, 119, 6], CW - 4);
+    if (pb.nextStep) text(`${L.nextStep}: ${cust(pb.nextStep)}`, M + 4, 9, "bold", INK, CW - 4);
     gap(2.5);
   }
 
@@ -789,9 +815,9 @@ export function renderPdfBuffer(pm: PresentationModel, opts?: { compress?: boole
     setFill(DEC_RGB[b.decision]); pdf.roundedRect(W - M - cwid, top, cwid, 6, 1.2, 1.2, "F");
     setText([255, 255, 255]); pdf.text(chip, W - M - cwid + 3, top + 4.2);
     y += 4.5;
-    if (b.whyMatters) text(b.whyMatters, M + 4, 9, "normal", SUB, CW - 4);
-    if (b.whyNow) { pdf.setFont("helvetica", "bold"); text(`${L.whyNow}: ${b.whyNow}`, M + 4, 9, "bold", INK, CW - 4); }
-    if (b.validationPriority.length) bullets(L.whatToValidateNext, b.validationPriority.map(latin1));
+    if (b.whyMatters) text(cust(b.whyMatters), M + 4, 9, "normal", SUB, CW - 4);
+    if (b.whyNow) { pdf.setFont("helvetica", "bold"); text(`${L.whyNow}: ${cust(b.whyNow)}`, M + 4, 9, "bold", INK, CW - 4); }
+    if (b.validationPriority.length) bullets(L.whatToValidateNext, b.validationPriority.map((x) => latin1(cust(x))));
     if (b.pathway.state === "OPEN" && b.whatCouldChange) text(`${L.whatCouldChange}: ${locFrozen(b.whatCouldChange, es)}`, M + 4, 8.5, "normal", MUTE, CW - 4);
     gap(2.5);
   }
@@ -823,7 +849,7 @@ export function renderPdfBuffer(pm: PresentationModel, opts?: { compress?: boole
     const sub = [a.segment, a.geography, a.accountRole, a.opportunityType].filter(Boolean).map((v) => latin1(String(v))).join("   -   ");
     if (sub) text(sub, M + 4, 8, "normal", MUTE);
     gap(1);
-    if (a.decisionNote) text(`${L.why}: ${a.decisionNote}`, M + 4, 9.5, "normal", SUB, CW - 4);
+    if (a.decisionNote) text(`${L.why}: ${cust(a.decisionNote)}`, M + 4, 9.5, "normal", SUB, CW - 4);
     if (sec.accountDimensions && a.dimensions.length) {
       // Fit / Timing / Evidence inline chips — label + value both localized for display.
       gap(2); space(7); let cx = M + 4;
@@ -838,24 +864,24 @@ export function renderPdfBuffer(pm: PresentationModel, opts?: { compress?: boole
       }
       y += 5;
     }
-    if (sec.accountThesis && a.thesis) text(a.thesis, M + 4, 9.5, "normal", SUB, CW - 4);
+    if (sec.accountThesis && a.thesis) text(cust(a.thesis), M + 4, 9.5, "normal", SUB, CW - 4);
     if (sec.accountEvidence) text(`${L.evidence}: ${L.source(a.evidence.sourceCount)}, ${a.evidence.datedCount} ${L.dated}${a.evidence.latestAge ? `, ${L.latest} ${a.evidence.latestAge}` : ""}${a.evidence.strength ? `, ${locStrength(a.evidence.strength, es)}` : ""}`, M + 4, 8.5, "normal", MUTE, CW - 4);
     if (sec.accountWhatChanged) bullets(L.whatChanged, a.whatChanged.map((c) => `${latin1(c.event)}${c.date ? ` (${c.date})` : ""}`));
-    if (sec.accountCounterSignals) bullets(L.counterSignals, a.counterSignals.map(latin1), [217, 119, 6]);
-    if (sec.accountValidations) bullets(L.validateBeforeActing, a.validations.map(latin1));
+    if (sec.accountCounterSignals) bullets(L.counterSignals, a.counterSignals.map((x) => latin1(cust(x))), [217, 119, 6]);
+    if (sec.accountValidations) bullets(L.validateBeforeActing, a.validations.map((x) => latin1(cust(x))));
     if (sec.accountSources && a.sources.length) { if (deep) deepSources(a.sources); else sourceBullets(a.sources); }
     // Deep-dossier extras — composed from existing fields (§9/§10): what would flip the decision + the
     // likely functional decision-owners (inferred, never a named person).
     if (deep) {
       const flip = a.counterSignals[0] ?? a.validations[0] ?? null;
-      if (flip) text(`${L.whatWouldChange}: ${flip}`, M + 4, 8.5, "normal", SUB, CW - 4);
+      if (flip) text(`${L.whatWouldChange}: ${cust(flip)}`, M + 4, 8.5, "normal", SUB, CW - 4);
       // Stakeholder-function hypotheses are a Premium capability (catalog).
       if (tierLabel === "Premium") {
         const fns = deriveStakeholderFunctions(a);
         if (fns.length) text(`${L.stakeholderFunctions.replace(" (Premium)", "")}: ${fns.map((f) => f.function).join(", ")} — ${L.inferredFunction}`, M + 4, 8, "normal", MUTE, CW - 4);
       }
     }
-    if (sec.accountNextStep && a.nextStep) text(`${L.nextStep}: ${a.nextStep}`, M + 4, 9.5, "bold", INK, CW - 4);
+    if (sec.accountNextStep && a.nextStep) text(`${L.nextStep}: ${cust(a.nextStep)}`, M + 4, 9.5, "bold", INK, CW - 4);
     gap(2.5);
   }
 
@@ -869,7 +895,7 @@ export function renderPdfBuffer(pm: PresentationModel, opts?: { compress?: boole
       setFill(SUB); pdf.circle(M + 1.4, y - 1.1, 0.5, "F");
       const rel = src.relation ? ` [${L.evRelation(src.relation)}]` : "";
       const obs = src.observation ? ` - ${src.observation}` : (src.claim ? ` - ${src.claim}` : "");
-      const head = `${src.label}${src.date ? ` (${src.date})` : ""}${rel}${obs}`;
+      const head = `${cust(src.label)}${src.date ? ` (${src.date})` : ""}${rel}${cust(obs)}`;
       pdf.setFont("helvetica", "normal"); pdf.setFontSize(8.5); setText(SUB);
       for (const ln of pdf.splitTextToSize(latin1(head), CW - 6) as string[]) { space(4.2); pdf.text(ln, M + 4, y); y += 3.9; }
       if (src.url) {

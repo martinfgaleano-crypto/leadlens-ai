@@ -101,18 +101,35 @@ export function deriveMomentum(evidenceDates: (string | null | undefined)[]): { 
 }
 
 /** Factor-based allocation guidance — counts + reasons, never arbitrary
- *  percentages. Derived from the real status distribution. */
-export function deriveAllocation(statuses: StatusVerdict[]): { line: string; detail: string } {
-  const n = (s: PortfolioStatus) => statuses.filter((x) => x.status === s).length;
-  const act = n("act_now"), inv = n("investigate"), mon = n("monitor"), res = n("reserve"), rej = n("reject");
-  return {
-    line: `${act} act now · ${inv} investigate · ${mon} monitor · ${res} reserve · ${rej} reject`,
-    detail: act > 0
-      ? `Concentrate immediate effort on the ${act} account${act > 1 ? "s" : ""} with grounded, open windows; run validation on the ${inv} investigate account${inv === 1 ? "" : "s"} before spending outreach; the rest waits on timing.`
-      : inv > 0
-        ? `No account has an open, grounded window today — the highest-return use of effort is validating the ${inv} investigate account${inv === 1 ? "" : "s"} rather than premature outreach.`
-        : "No account merits active effort right now — revisit after the monitor/reserve revalidation dates.",
-  };
+ *  percentages. Derived from the CANONICAL decision distribution (Prioritize /
+ *  Validate / Monitor / Hold) so it can never present a second decision system
+ *  or imply an "act now" account when no account is prioritized (§6/§7). Counts
+ *  are tier-local — they come from the tier-composed selected population. */
+export function deriveAllocation(
+  counts: { prioritize: number; validate: number; monitor: number; hold: number },
+  es = false,
+): { line: string; detail: string } {
+  const { prioritize: pri, validate: val, monitor: mon, hold: hol } = counts;
+  const L = (esS: string, enS: string) => (es ? esS : enS);
+  const line = L(
+    `${pri} priorizar · ${val} validar · ${mon} monitorear · ${hol} en espera`,
+    `${pri} prioritize · ${val} validate · ${mon} monitor · ${hol} hold`,
+  );
+  const detail = pri > 0
+    ? L(
+        `Concentra el esfuerzo inmediato en ${pri} cuenta${pri > 1 ? "s" : ""} con base de acceso comercial verificada; valida ${val} antes de invertir esfuerzo; el resto espera por evidencia o timing.`,
+        `Concentrate immediate effort on the ${pri} account${pri > 1 ? "s" : ""} with a verified current commercial-access basis; validate the ${val} promising account${val === 1 ? "" : "s"} before committing outreach; the rest waits on evidence or timing.`,
+      )
+    : val > 0
+      ? L(
+          `Ninguna cuenta tiene aún una base verificada para priorizar hoy — el mejor uso del esfuerzo es resolver las preguntas de validación de ${val} cuenta${val === 1 ? "" : "s"} antes de cualquier contacto, no contactar prematuramente.`,
+          `No account has a verified basis to prioritize today — the highest-return use of effort is resolving the validation questions on the ${val} promising account${val === 1 ? "" : "s"} before any outreach, not premature contact.`,
+        )
+      : L(
+          "Ninguna cuenta justifica esfuerzo activo ahora — la evidencia actual no respalda la atención comercial; reevaluar cuando surja una nueva señal.",
+          "No account justifies active effort right now — current evidence does not support commercial attention; revisit when a new signal emerges.",
+        );
+  return { line, detail };
 }
 
 function daysAgo(iso: string | null | undefined): number | null {

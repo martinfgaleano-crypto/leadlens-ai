@@ -203,7 +203,16 @@ export default function BriefView({ report, experience }: { report: Institutiona
   const deepPortfolio = x ? (x.portfolio_depth === "complete" || x.portfolio_depth === "advanced") : false;
   const latestDate = (d: AccountDossier) => d.evidence_chain.map((e) => e.date).filter(Boolean).sort().reverse()[0] ?? null;
   const statuses = deepPortfolio ? r.account_dossiers.map((d) => derivePortfolioStatus({ tier: d.tier, evidence_grounded: d.evidence_grounded, latest_date: latestDate(d) })) : [];
-  const allocation = deepPortfolio && statuses.length ? deriveAllocation(statuses) : null;
+  // Allocation is driven by the CANONICAL decision distribution (Prioritize /
+  // Validate / Monitor / Hold), never a parallel status system (§6).
+  const allocCounts = r.account_dossiers.reduce(
+    (acc, d) => {
+      const k = d.actionability_status === "act_now" ? "prioritize" : d.actionability_status === "validate_first" ? "validate" : d.actionability_status === "exclude" ? "hold" : "monitor";
+      acc[k] += 1; return acc;
+    },
+    { prioritize: 0, validate: 0, monitor: 0, hold: 0 },
+  );
+  const allocation = deepPortfolio && r.account_dossiers.length ? deriveAllocation(allocCounts, es) : null;
   const STATUS_COLOR: Record<string, string> = { act_now: "#15803d", investigate: "#0369a1", monitor: "#b45309", reserve: "#64748b", reject: "#dc2626" };
   const wrap: React.CSSProperties = { maxWidth: 880, margin: "0 auto", padding: "28px 20px 60px", fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif", color: "#0f172a" };
   const sec: React.CSSProperties = { background: "#fff", border: "1px solid #e8edf3", borderRadius: 12, padding: "22px 26px", marginBottom: 18, boxShadow: "0 1px 2px rgba(15,23,42,0.03)" };

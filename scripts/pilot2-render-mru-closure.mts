@@ -17,13 +17,14 @@
  * tier-composer → presentation-model → renderer) carries any report's MRU
  * generically.
  */
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, copyFileSync } from "node:fs";
 import { loadEnv } from "./lib/load-env.mjs";
 Object.assign(process.env, loadEnv(process.cwd()));
 
 const SRC = process.env.PILOT2_MRU_SRC || "output/pilot2/2026-09-30-account18-market-v2";
 const MRU_PATH = process.env.PILOT2_MRU_PATH || "output/pilot2/2026-09-30-market-universe-v2/market-research-universe.json";
 const OUT = process.env.PILOT2_MRU_OUT || "output/pilot2/2026-10-03-mru-closure";
+const SUFFIX = process.env.PILOT2_FILE_SUFFIX || ""; // e.g. "_FINAL" for the closure directory
 mkdirSync(OUT, { recursive: true });
 
 const { assembleInstitutionalReport } = await import("@/lib/reports/institutional-assembler");
@@ -78,7 +79,7 @@ for (const [tier, label, code] of TIERS) {
   const scoped: any = (pm as any).document?.intelligence ?? null;
   const ev = scoped?.evidence_coverage ?? null;
   const pdf = await renderPdfBuffer(pm as any);
-  const pdfPath = `${OUT}/LeadLens_AmorDeGea_Pilot2_${label}.pdf`;
+  const pdfPath = `${OUT}/LeadLens_AmorDeGea_Pilot2_${label}${SUFFIX}.pdf`;
   writeFileSync(pdfPath, pdf);
   const accounts = (pm as any).document?.accounts?.length ?? 0;
   const dist: Record<string, number> = { prioritize: 0, validate: 0, monitor: 0, hold: 0 };
@@ -110,4 +111,12 @@ writeFileSync(`${OUT}/closure-metrics.json`, JSON.stringify({
   tiers: rows,
 }, null, 2));
 console.log(`\nwrote ${OUT}/closure-metrics.json`);
+
+// Reproducibility: copy the canonical report JSON + the Market Research Universe
+// artifact into the closure directory so the four PDFs can be regenerated from it.
+try {
+  copyFileSync(`${SRC}/pilot2-merged-report.json`, `${OUT}/canonical-report.json`);
+  copyFileSync(MRU_PATH, `${OUT}/market-research-universe.json`);
+  console.log(`copied canonical report + MRU into ${OUT}`);
+} catch (e) { console.log("artifact copy skipped:", e instanceof Error ? e.message : e); }
 console.log("done");

@@ -128,7 +128,7 @@ export function fromInstitutionalReport(r: InstitutionalOpportunityReportV1, exp
   const counts: Record<DecisionState, number> = { prioritize: 0, validate: 0, monitor: 0, hold: 0 };
   for (const a of accounts) counts[a.decision] += 1;
 
-  const allocation = deep && statuses.length ? deriveAllocation(statuses) : null;
+  const allocation = deep && statuses.length ? deriveAllocation(counts, es) : null;
   const grade: Strength | null = r.quality?.grade === "strong" ? "Strong" : r.quality?.grade === "moderate" ? "Moderate" : r.quality?.grade === "developing" ? "Limited" : null;
 
   return {

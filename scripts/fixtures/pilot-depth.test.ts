@@ -32,16 +32,15 @@ t("reciente + viejo → positive", deriveMomentum([daysIso(40), daysIso(120)]).s
 t("todo viejo → weakening", deriveMomentum([daysIso(100), daysIso(150)]).state === "weakening");
 t("momentum explica factores", deriveMomentum([daysIso(10)]).factors.includes("single point"));
 
-// Allocation — counts + reasons, no arbitrary percentages
-const alloc = deriveAllocation([
-  { status: "act_now", label: "", because: "" }, { status: "investigate", label: "", because: "" },
-  { status: "monitor", label: "", because: "" }, { status: "reject", label: "", because: "" },
-]);
-t("allocation cuenta estados", alloc.line === "1 act now · 1 investigate · 1 monitor · 0 reserve · 1 reject");
+// Allocation — CANONICAL decision counts + reasons, no arbitrary percentages, no legacy taxonomy
+const alloc = deriveAllocation({ prioritize: 1, validate: 1, monitor: 1, hold: 1 });
+t("allocation cuenta decisiones canónicas", alloc.line === "1 prioritize · 1 validate · 1 monitor · 1 hold");
+t("allocation sin taxonomía heredada", !/\b(act now|investigate|reserve|reject)\b/i.test(alloc.line + alloc.detail));
 t("allocation sin porcentajes arbitrarios", !/%/.test(alloc.line + alloc.detail));
 t("allocation explica factores", alloc.detail.length > 40);
-const noAct = deriveAllocation([{ status: "investigate", label: "", because: "" }]);
-t("sin act_now recomienda validar antes que outreach", noAct.detail.includes("validating"));
+const noAct = deriveAllocation({ prioritize: 0, validate: 1, monitor: 0, hold: 0 });
+t("sin prioritize recomienda validar antes que outreach", noAct.detail.includes("before any outreach"));
+t("sin prioritize no dice act now", !/\bact now\b/i.test(noAct.detail));
 
 console.log(`\n${passed}/${passed + failed} passed`);
 process.exit(failed ? 1 : 0);

@@ -9,12 +9,13 @@
 import { readFileSync } from "node:fs";
 import { inflateSync, inflateRawSync } from "node:zlib";
 
-const DIR = process.env.PILOT2_MRU_OUT || "output/pilot2/2026-10-03-mru-closure";
+const DIR = process.env.PILOT2_MRU_OUT || "output/pilot2/FINAL-CLOSED";
+const SFX = process.env.PILOT2_FILE_SUFFIX ?? "_FINAL";
 const FILES: Array<[string, string]> = [
-  ["Preview", `${DIR}/LeadLens_AmorDeGea_Pilot2_Preview.pdf`],
-  ["Brief", `${DIR}/LeadLens_AmorDeGea_Pilot2_Brief.pdf`],
-  ["Portfolio", `${DIR}/LeadLens_AmorDeGea_Pilot2_Portfolio.pdf`],
-  ["Premium", `${DIR}/LeadLens_AmorDeGea_Pilot2_Premium.pdf`],
+  ["Preview", `${DIR}/LeadLens_AmorDeGea_Pilot2_Preview${SFX}.pdf`],
+  ["Brief", `${DIR}/LeadLens_AmorDeGea_Pilot2_Brief${SFX}.pdf`],
+  ["Portfolio", `${DIR}/LeadLens_AmorDeGea_Pilot2_Portfolio${SFX}.pdf`],
+  ["Premium", `${DIR}/LeadLens_AmorDeGea_Pilot2_Premium${SFX}.pdf`],
 ];
 
 function extractText(path: string): string {
@@ -60,7 +61,22 @@ function extractText(path: string): string {
     .replace(/\\([()\\])/g, "$1");
 }
 
-const BANNED = ["1 act now", "5 accounts worth monitoring", "Average score", "/10", "encaje", "validate_source_first", "monitor_for_new_signal", "Next step: exclude", "Source URL unavailable"];
+// §28 customer-delivery forbidden set, as precise regexes. Legacy decision-SYSTEM
+// tokens are matched with word boundaries / case so legitimate prose ("preserve",
+// "hotel", "snapshot", "cold outreach", "warm introduction") does not false-fail;
+// the uppercase tier labels (WARM/HOT/COLD) are the real legacy artifacts (§6).
+const BANNED: Array<[string, RegExp]> = [
+  ["act now", /\bact now\b/i], ["1 act now", /\b1 act now\b/i],
+  ["WARM", /\bWARM\b/], ["HOT", /\bHOT\b/], ["COLD", /\bCOLD\b/],
+  ["average score", /\baverage score\b/i], ["highest-scoring", /\bhighest[-\s]scoring\b/i],
+  ["/10 score", /\b\d{1,2}(?:\.\d+)?\s*\/\s*10\b/],
+  ["encaje", /\bencaje\b/i], ["sin señal temporal", /sin señal temporal/i],
+  ["sin independencia", /sin independencia/i], ["señal temporal verificada", /señal temporal verificada/i],
+  ["validate_source_first", /validate_source_first/i], ["monitor_for_new_signal", /monitor_for_new_signal/i],
+  ["send_outreach_now", /send_outreach_now/i], ["act_now", /\bact_now\b/i], ["validate_first", /\bvalidate_first\b/i],
+  ["Next step: exclude", /Next step:\s*exclude/i], ["Source URL unavailable", /Source URL unavailable/i],
+  ["5 accounts worth monitoring", /\d+ accounts worth monitoring/i],
+];
 // §4 required surfaces (case-insensitive substrings).
 const PORTFOLIO_REQUIRED = ["Decision distribution", "Evidence coverage", "Commercial routes", "Market map", "Account benchmark"];
 const PREMIUM_ADDS = ["Market research universe", "Route research coverage", "Verified mechanisms", "Verified access", "Commercial depth"];
@@ -69,10 +85,10 @@ const extracted: Record<string, string> = {};
 for (const [label, path] of FILES) extracted[label] = extractText(path);
 
 let fail = 0;
-console.log("=== §5 BANNED STRING SCAN (all four) ===");
+console.log("=== §5/§28 BANNED STRING SCAN (all four) ===");
 for (const [label] of FILES) {
-  const low = extracted[label].toLowerCase();
-  const hits = BANNED.filter((b) => low.includes(b.toLowerCase()));
+  const txt = extracted[label];
+  const hits = BANNED.filter(([, re]) => re.test(txt)).map(([name]) => name);
   if (hits.length) { console.log(`  ✗ ${label}: FOUND ${JSON.stringify(hits)}`); fail++; }
   else console.log(`  ✓ ${label}: clean`);
 }
