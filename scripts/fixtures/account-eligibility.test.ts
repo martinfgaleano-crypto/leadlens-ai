@@ -27,5 +27,15 @@ t("Australian meat processor → exclude (wrong geography)", ex({ company: "Thom
 t("ambiguous commercial role → research_more", ex({ company: "Y", industry: "specialty food", country: "United States", companySummary: "Y operates in the specialty food sector." }) === "research_more");
 t("missing research summary → research_more", ex({ company: "Z", industry: "specialty food", country: "United States", companySummary: null }) === "research_more");
 
+// Offer-aware generalization (§ Intelligence Value Reset): a SERVICES / B2B-direct
+// customer (targetRole "direct_buyer") treats an established in-geo company — including
+// a manufacturer that produces its own product — as a plausible direct buyer, not a
+// role-ambiguous or offer-side exclusion. The default "channel" behavior is unchanged.
+const direct = (summary: string) => assessAccountEligibility({ company: "M", industry: "manufacturer", country: "United States", companySummary: summary }, { geographies: ["United States"], targetRole: "direct_buyer" }).outcome;
+t("direct_buyer: plain manufacturer is eligible (was role-ambiguous under channel model)", direct("A US industrial processing technology manufacturer with global plants.") === "eligible");
+t("direct_buyer: own-product producer is eligible (not offer-side-excluded)", direct("A premium beverage brand that manufactures its own products.") === "eligible");
+t("channel default still excludes an own-product producer", ex({ company: "P", industry: "beverage", country: "United States", companySummary: "A premium beverage brand that manufactures its own products." }) === "exclude");
+t("direct_buyer still excludes wrong geography", assessAccountEligibility({ company: "F", country: "Germany", companySummary: "A manufacturer." }, { geographies: ["United States"], targetRole: "direct_buyer" }).outcome === "exclude");
+
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) process.exit(1);

@@ -17,6 +17,10 @@ import type { AccountBriefVM, DecisionState } from "@/lib/delivery-system/delive
 import { dimensionValue } from "@/lib/delivery-system/renderers/shared";
 import { deriveCoverageGaps, derivePortfolioRisk, derivePlaybooks, deriveStakeholderFunctions, deepDossierIds } from "@/lib/deliverable/portfolio-analytics";
 import { toCustomerText } from "@/lib/delivery-system/customer-language";
+import { deriveTerminalState } from "@/lib/delivery-system/delivery-terminal-state";
+
+// Frozen catalog account capacity by tier label (Preview 2 / Brief 6 / Intelligence 12 / Premium 18).
+const TIER_CAPACITY: Record<string, number> = { Preview: 2, Brief: 6, Intelligence: 12, Premium: 18 };
 
 type RGB = [number, number, number];
 // jsPDF's built-in fonts render Latin-1 / WinAnsi (which INCLUDES á é í ó ú ñ ü Á-Ú Ñ ¿ ¡). The old
@@ -468,6 +472,17 @@ export function renderPdfBuffer(pm: PresentationModel, opts?: { compress?: boole
         .slice(0, 4).map((a) => latin1(a.company));
       if (focusFirst.length) text(`${L.whereAttentionFirst}: ${focusFirst.join(", ")}`, M, 9.5, "bold", INK);
       if (p.allocation?.line) text(latin1(`${p.allocation.line}${p.allocation.detail ? `: ${sanitizeAllocation(p.allocation.detail)}` : ""}`), M, 9, "normal", SUB);
+      // Customer-safe terminal state (§1/§33): when the delivery is legitimately
+      // underfilled or has no actionable (prioritize) account, say so honestly —
+      // a research conclusion, not a product failure. Full+actionable → no note.
+      {
+        const ev = doc.intelligence?.evidence_coverage;
+        const ts = deriveTerminalState({
+          selected: total, capacity: TIER_CAPACITY[tierLabel] ?? null, counts: p.counts,
+          sourcedCount: ev?.usable_source ?? 0, evidenceDenominator: ev?.denominator ?? total,
+        }, { es });
+        if (ts.note) text(ts.note, M, 8.5, "normal", MUTE);
+      }
     }
   }
 

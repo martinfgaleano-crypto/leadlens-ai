@@ -1,0 +1,71 @@
+{
+  "customer": "Meridian Transition Partners",
+  "seeds": 8,
+  "researched": 8,
+  "eligible": 8,
+  "excluded": [],
+  "decisions": {
+    "hold": 7,
+    "monitor": 1
+  },
+  "decidedAccounts": [
+    {
+      "company": "Standex International",
+      "decision": "hold",
+      "fit": "Moderate",
+      "timing": "Limited",
+      "evidence": "Moderate"
+    },
+    {
+      "company": "Kadant Inc",
+      "decision": "hold",
+      "fit": "Strong",
+      "timing": "Limited",
+      "evidence": "Strong"
+    },
+    {
+      "company": "CECO Environmental",
+      "decision": "hold",
+      "fit": "Strong",
+      "timing": "Limited",
+      "evidence": "Strong"
+    },
+    {
+      "company": "Franklin Electric",
+      "decision": "hold",
+      "fit": "Strong",
+      "timing": "Limited",
+      "evidence": "Strong"
+    },
+    {
+      "company": "Mayville Engineering Company",
+      "decision": "hold",
+      "fit": "Moderate",
+      "timing": "Limited",
+      "evidence": "Moderate"
+    },
+    {
+      "company": "Enpro Inc",
+      "decision": "hold",
+      "fit": "Strong",
+      "timing": "Limited",
+      "evidence": "Moderate"
+    },
+    {
+      "company": "Chart Industries",
+      "decision": "hold",
+      "fit": "Moderate",
+      "timing": "Limited",
+      "evidence": "Moderate"
+    },
+    {
+      "company": "Hillman Solutions",
+      "decision": "monitor",
+      "fit": "Strong",
+      "timing": "Moderate",
+      "evidence": "Strong"
+    }
+  ],
+  "spendUsd": 0.4815120000000004,
+  "discovery_note": "Discovery-search unavailable in this environment (BRAVE_API_KEY absent; serper/tavily no yield) — see track-a-diagnostics.json. Seeds substitute for discovery ONLY; research/decision are the real pipeline."
+}

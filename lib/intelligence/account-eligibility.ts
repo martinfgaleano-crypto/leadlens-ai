@@ -31,6 +31,17 @@ export interface EligibilityResult {
   reason: string | null;   // e.g. OFFER_SIDE_PRODUCER_NOT_BUYER, WRONG_GEOGRAPHY
 }
 
+/** The commercial ROLE a target must plausibly hold to be a buyer, which depends on
+ *  the CUSTOMER's offer — not a universal constant:
+ *   • "channel" (default): the customer sells a PRODUCT that needs a resale/placement
+ *     channel, so a target must resell/carry/distribute/host OTHER brands; an offer-side
+ *     producer-only peer is excluded. (The Amor-style product→channel model.)
+ *   • "direct_buyer": the customer sells a SERVICE or sells B2B-direct, so any real
+ *     in-geography company in the ICP segment is a plausible DIRECT buyer — a target that
+ *     manufactures its own product is NOT disqualified (it can still buy the service), and
+ *     a plain established company is eligible rather than role-ambiguous. */
+export type TargetRole = "channel" | "direct_buyer";
+
 // OWN-PRODUCT seller (offer-side, a peer of the customer): describes itself as a
 // singular "<category> brand" or a company that makes/sells ITS OWN product. Note the
 // singular \bbrand\b — a channel "connecting food and beverage BRANDS" (plural) is NOT
@@ -40,7 +51,7 @@ const OWN_PRODUCT_SELLER = /\b(food|beverage|natural|organic|premium|snack|cpg|c
 // retail/hospitality). Presence of any keeps an otherwise offer-side entity eligible.
 const CHANNEL_FOR_OTHERS = /connecting[^.]*brands|distributes?[^.]*brands|carries|stocks|assortment|intermediary between producers|imports?[^.]*brands|platform[^.]*brands|(grocery|specialty|premium|natural|gourmet|regional)\s+(retailer|grocer|store|market|chain)|\bretailer\b|\bimporter\b|operating (multiple |several |\d)[^.]*(stores|locations|properties|resorts|spas)|distributor (whose|of natural|of premium|offering|providing|serving)|natural products distributor|hospitality|\bhotel\b|resort|\bspa\b|wholesaler|vendor (application|onboarding|portal)/i;
 
-export function assessAccountEligibility(a: EligibilityInput, opts: { geographies?: string[] } = {}): EligibilityResult {
+export function assessAccountEligibility(a: EligibilityInput, opts: { geographies?: string[]; targetRole?: TargetRole } = {}): EligibilityResult {
   // Clearly-foreign resolved country (guards homonyms / wrong-market entities).
   const geos = (opts.geographies ?? []).map((g) => g.toLowerCase());
   const country = (a.country ?? "").trim().toLowerCase();
@@ -54,6 +65,14 @@ export function assessAccountEligibility(a: EligibilityInput, opts: { geographie
   // credited ONLY from the summary, so a wrong route label can't rescue a producer.
   const summary = (a.companySummary ?? "").trim();
   if (!summary) return { outcome: "research_more", reason: "ROLE_NOT_ESTABLISHED" };
+
+  // DIRECT-BUYER customers (services / B2B-direct): a target does not need a resale
+  // channel role. Any established in-geo company is a plausible direct buyer, and
+  // producing its own product does not disqualify it (§ offer-aware generalization).
+  if (opts.targetRole === "direct_buyer") {
+    return { outcome: "eligible", reason: null };
+  }
+
   const ownProductSeller = OWN_PRODUCT_SELLER.test(summary);
   const channelForOthers = CHANNEL_FOR_OTHERS.test(summary);
   if (ownProductSeller && !channelForOthers) {
