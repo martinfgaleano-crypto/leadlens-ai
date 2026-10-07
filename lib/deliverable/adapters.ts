@@ -9,6 +9,7 @@
 import type { InstitutionalOpportunityReportV1, AccountDossier } from "@/lib/reports/institutional-report-types";
 import type { ReportExperience } from "@/lib/products/report-experience";
 import type { OpportunityCaseIntelligenceV1 } from "@/lib/intelligence/opportunity-case-intelligence";
+import { derivePathToPrioritize } from "@/lib/intelligence/path-to-prioritize";
 import { caseDecision } from "@/lib/monitor/canonical-case";
 import type { OppStatus } from "@/lib/discovery/opportunity-test";
 import { derivePortfolioStatus, deriveAllocation, type StatusVerdict } from "@/lib/products/report-experience";
@@ -44,7 +45,7 @@ function decisionOf(d: AccountDossier): DecisionState {
   return caseDecision(status).decision;
 }
 
-function dossierToBrief(d: AccountDossier, i: number, status: StatusVerdict | null): AccountBriefVM {
+function dossierToBrief(d: AccountDossier, i: number, status: StatusVerdict | null, es = false): AccountBriefVM {
   const oc = d.opportunity_case ?? null;
   const datedIsos = d.evidence_chain.map((e) => e.date).filter((x): x is string => Boolean(x)).sort().reverse();
   const latestIso = datedIsos[0] ?? null;
@@ -109,6 +110,15 @@ function dossierToBrief(d: AccountDossier, i: number, status: StatusVerdict | nu
     revisitWhen: oc?.revisitWhen?.value ?? null,
     freshness: latestIso ? { label: ageLabel(latestIso) ? `${ageLabel(latestIso)} ago` : "dated", age: ageLabel(latestIso) } : null,
     confidence: evidenceStrength,
+    pathToPrioritize: derivePathToPrioritize({
+      decision: decisionOf(d),
+      fit, timing, evidence: evidenceStrength,
+      openDecisionCritical: validationDetails.filter((v) => v.decisionCritical).map((v) => v.question),
+      hasMaterialCounter: false, // not asserted unless the case carries a material-counter flag
+      commercialMechanismVerified: d.commercial_intelligence?.current_actionability === true,
+      commercialAccessVerified: d.commercial_intelligence?.access_verified === true,
+      independentlyCorroborated: (oc ? oc.independentSupport : d.evidence_grounded) === true || d.commercial_intelligence?.corroborated === true,
+    }, { es }),
   };
 }
 
@@ -123,7 +133,7 @@ export function fromInstitutionalReport(r: InstitutionalOpportunityReportV1, exp
       latest_date: d.evidence_chain.map((e) => e.date).filter(Boolean).sort().reverse()[0] ?? null,
     }),
   );
-  const accounts = r.account_dossiers.map((d, i) => dossierToBrief(d, i, deep ? statuses[i] : null));
+  const accounts = r.account_dossiers.map((d, i) => dossierToBrief(d, i, deep ? statuses[i] : null, es));
 
   const counts: Record<DecisionState, number> = { prioritize: 0, validate: 0, monitor: 0, hold: 0 };
   for (const a of accounts) counts[a.decision] += 1;

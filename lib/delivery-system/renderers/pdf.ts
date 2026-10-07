@@ -175,6 +175,8 @@ function labelsFor(es: boolean) {
     executiveContext: L("Contexto ejecutivo", "Executive context"),
     tensionsToResolve: L("Tensiones por resolver", "Tensions to resolve"),
     validationPriorities: L("Prioridades de validación", "Validation priorities"),
+    pathToPrioritize: L("Camino a priorizar", "Path to Prioritize"),
+    noPathToPrioritize: L("Sin camino realista a priorizar", "No realistic path to Prioritize"),
     portfolioPatterns: L("Patrones del portafolio", "Portfolio patterns"),
     whatContextShows: L("Lo que muestra el contexto comercial", "What the commercial context shows"),
     relevantAlternatives: L("Alternativas relevantes", "Relevant alternatives"),
@@ -875,6 +877,14 @@ export function renderPdfBuffer(pm: PresentationModel, opts?: { compress?: boole
     if (deep) {
       const flip = a.counterSignals[0] ?? a.validations[0] ?? null;
       if (flip) text(`${L.whatWouldChange}: ${cust(flip)}`, M + 4, 8.5, "normal", SUB, CW - 4);
+      // Path to Prioritize (§16): for a non-prioritized account, the legitimate
+      // decision-critical conditions that would cross the bar — or an honest "no
+      // realistic path". Never implies the account can be forced upward.
+      const ptp = a.pathToPrioritize;
+      if (ptp && a.decision !== "prioritize") {
+        if (ptp.reachable && ptp.conditions.length) bullets(L.pathToPrioritize, ptp.conditions.map((c) => latin1(cust(c))), SKY);
+        else if (!ptp.reachable) text(`${L.noPathToPrioritize}: ${cust(ptp.rationale)}`, M + 4, 8.5, "normal", MUTE, CW - 4);
+      }
       // Stakeholder-function hypotheses are a Premium capability (catalog).
       if (tierLabel === "Premium") {
         const fns = deriveStakeholderFunctions(a);

@@ -93,6 +93,10 @@ export interface AccountBriefVM {
   revisitWhen?: string | null;
   freshness: { label: string; age: string | null } | null;
   confidence: Strength | null;   // evidence strength, not a generic AI score
+  /** For a non-prioritized account: the legitimate decision-critical conditions that
+   *  would move it over the Prioritize bar, or an honest statement that none exists.
+   *  Derived from the account's own case signals; never fabricated (§16). */
+  pathToPrioritize?: import("@/lib/intelligence/path-to-prioritize").PathToPrioritize | null;
 }
 
 export interface DeliverableCapabilities {
