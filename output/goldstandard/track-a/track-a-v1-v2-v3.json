@@ -1,0 +1,204 @@
+{
+  "customer": "post-merger integration (PMI) operational execution",
+  "kanebridge": {
+    "grounded": true,
+    "note": "SEC filing references Kanebridge (2026-09-03).",
+    "url": "https://efts.sec.gov/LATEST/search-index?q=%22Kanebridge%22"
+  },
+  "generatedAt": "2026-10-08T19:26:45.945Z",
+  "spendUsd": 0.003509999999999458,
+  "accounts": [
+    {
+      "company": "CECO Environmental",
+      "v1": {
+        "decision": "hold",
+        "whyNow": null,
+        "buyerFunction": "not established",
+        "mechanism": "not established",
+        "access": "unknown",
+        "nextAction": null
+      },
+      "v2": {
+        "decision": "validate",
+        "whyNow": "SEC EDGAR: most recent acquisition-referencing 8-K filed 2026-08-10 (60d ago; current). 279 acquisition-referencing 8-Ks on record.",
+        "buyerFunction": "not established",
+        "mechanism": "No public page could be retrieved to establish mechanism (direct retrieval only; paid search unavailable).",
+        "access": "unknown",
+        "nextAction": "Validate the mechanism/owning function before outreach"
+      },
+      "v3": {
+        "decision": "validate",
+        "commercialProblem": "A current acquisition MAY create post-merger integration operational execution work (inference, not confirmed); whether that work is active and whether external support is used remains unknown.",
+        "whyNow": "SEC EDGAR: most recent acquisition-referencing 8-K filed 2026-08-10 (60d ago; current).",
+        "buyerFunction": "supported: SEC filing (ARS, 2026-04-24) references a Corporate Development function — the plausible owner of post-close integration.",
+        "mechanism": "not_found: No primary-source evidence that CECO Environmental engages EXTERNAL post-merger-integration advisors was established; a recent filing's use of \"integration\"/\"advisor\" reflects the acquisition announcement (integration plan + transaction advisors), not a services mechanism.",
+        "access": "not_found: No commercial access route established. No access route retrievable.",
+        "counterevidence": "No evidence the trigger is stale or handled strictly in-house.",
+        "criticalUnknown": [
+          "Confirm the commercial mechanism: Is there evidence CECO Environmental uses EXTERNAL providers for post-merger integration (PMI) operational execution work (not its own acquisitions, not transaction bankers/lawyers)?",
+          "Confirm the owning function and access route: Is there a legitimate route to VALIDATE or ENTER the commercial process at CECO Environmental (professional-services procurement, corporate development, transformation office, partner program)?"
+        ],
+        "pathToPrioritize": [
+          "confirm: Confirm the commercial mechanism: Is there evidence CECO Environmental uses EXTERNAL providers for post-merger integration (PMI) operational execution work (not its own acquisitions, not transaction bankers/lawyers)?",
+          "confirm: Confirm the owning function and access route: Is there a legitimate route to VALIDATE or ENTER the commercial process at CECO Environmental (professional-services procurement, corporate development, transformation office, partner program)?",
+          "verify a current commercial mechanism (an active buying / onboarding / sourcing route)",
+          "verify commercial access (the route into the buying process)"
+        ],
+        "nextAction": "Validate with corporate development whether post-close integration remains active and whether external PMI support is used, before allocating outbound effort."
+      },
+      "objectives": [
+        {
+          "dimension": "trigger",
+          "status": "resolved",
+          "state": "verified",
+          "dated": "2026-08-10",
+          "result": "SEC EDGAR: most recent acquisition-referencing 8-K filed 2026-08-10 (60d ago; current).",
+          "sources": [
+            {
+              "url": "https://efts.sec.gov/LATEST/search-index?q=%22CECO%20Environmental%22%20acquisition&forms=8-K",
+              "title": "SEC EDGAR 8-K full-text",
+              "date": "2026-08-10"
+            }
+          ]
+        },
+        {
+          "dimension": "counterevidence",
+          "status": "evidence_not_found",
+          "state": "not_found",
+          "dated": null,
+          "result": "No evidence the trigger is stale or handled strictly in-house.",
+          "sources": []
+        },
+        {
+          "dimension": "buyer_function",
+          "status": "resolved",
+          "state": "supported",
+          "dated": null,
+          "result": "SEC filing (ARS, 2026-04-24) references a Corporate Development function — the plausible owner of post-close integration.",
+          "sources": [
+            {
+              "url": "https://efts.sec.gov/LATEST/search-index?q=%22CECO%20Environmental%22%20%22corporate%20development%22",
+              "title": "SEC EDGAR full-text",
+              "date": "2026-04-24"
+            }
+          ]
+        },
+        {
+          "dimension": "mechanism",
+          "status": "evidence_not_found",
+          "state": "not_found",
+          "dated": null,
+          "result": "No primary-source evidence that CECO Environmental engages EXTERNAL post-merger-integration advisors was established; a recent filing's use of \"integration\"/\"advisor\" reflects the acquisition announcement (integration plan + transaction advisors), not a services mechanism.",
+          "sources": []
+        },
+        {
+          "dimension": "access",
+          "status": "evidence_not_found",
+          "state": "not_found",
+          "dated": null,
+          "result": "No commercial access route established. No access route retrievable.",
+          "sources": []
+        }
+      ]
+    },
+    {
+      "company": "Hillman Solutions",
+      "v1": {
+        "decision": "hold",
+        "whyNow": null,
+        "buyerFunction": "not established",
+        "mechanism": "not established",
+        "access": "unknown",
+        "nextAction": null
+      },
+      "v2": {
+        "decision": "validate",
+        "whyNow": "SEC EDGAR: most recent acquisition-referencing 8-K filed 2026-09-03 (36d ago; current). 55 acquisition-referencing 8-Ks on record.",
+        "buyerFunction": "not established",
+        "mechanism": "The page confirms Hillman Solutions is an active acquirer (e.g., 'Hillman Acquires Delaney Hardware') suggesting ongoing integration activity, but it shows no evidence of an integration management office, external-advisor engagement route, or any structural openness to PMI services, leaving the selling route plausible but unverified from this text.",
+        "access": "unknown",
+        "nextAction": "Validate the mechanism/owning function before outreach"
+      },
+      "v3": {
+        "decision": "validate",
+        "commercialProblem": "A current acquisition MAY create post-merger integration operational execution work (inference, not confirmed); whether that work is active and whether external support is used remains unknown.",
+        "whyNow": "SEC EDGAR: most recent acquisition-referencing 8-K filed 2026-09-03 (36d ago; current).",
+        "buyerFunction": "supported: SEC filing (EX-99.1, 2026-09-03) references a Corporate Development function — the plausible owner of post-close integration.",
+        "mechanism": "not_found: No primary-source evidence that Hillman Solutions engages EXTERNAL post-merger-integration advisors was established; a recent filing's use of \"integration\"/\"advisor\" reflects the acquisition announcement (integration plan + transaction advisors), not a services mechanism.",
+        "access": "not_found: No commercial access route established.",
+        "counterevidence": "No evidence the trigger is stale or handled strictly in-house.",
+        "criticalUnknown": [
+          "Confirm the commercial mechanism: Is there evidence Hillman Solutions uses EXTERNAL providers for post-merger integration (PMI) operational execution work (not its own acquisitions, not transaction bankers/lawyers)?",
+          "Confirm the owning function and access route: Is there a legitimate route to VALIDATE or ENTER the commercial process at Hillman Solutions (professional-services procurement, corporate development, transformation office, partner program)?"
+        ],
+        "pathToPrioritize": [
+          "confirm: Confirm the commercial mechanism: Is there evidence Hillman Solutions uses EXTERNAL providers for post-merger integration (PMI) operational execution work (not its own acquisitions, not transaction bankers/lawyers)?",
+          "confirm: Confirm the owning function and access route: Is there a legitimate route to VALIDATE or ENTER the commercial process at Hillman Solutions (professional-services procurement, corporate development, transformation office, partner program)?",
+          "verify a current commercial mechanism (an active buying / onboarding / sourcing route)",
+          "verify commercial access (the route into the buying process)"
+        ],
+        "nextAction": "Validate with corporate development whether post-close integration remains active and whether external PMI support is used, before allocating outbound effort."
+      },
+      "objectives": [
+        {
+          "dimension": "trigger",
+          "status": "resolved",
+          "state": "verified",
+          "dated": "2026-09-03",
+          "result": "SEC EDGAR: most recent acquisition-referencing 8-K filed 2026-09-03 (36d ago; current).",
+          "sources": [
+            {
+              "url": "https://efts.sec.gov/LATEST/search-index?q=%22Hillman%20Solutions%22%20acquisition&forms=8-K",
+              "title": "SEC EDGAR 8-K full-text",
+              "date": "2026-09-03"
+            }
+          ]
+        },
+        {
+          "dimension": "counterevidence",
+          "status": "evidence_not_found",
+          "state": "not_found",
+          "dated": null,
+          "result": "No evidence the trigger is stale or handled strictly in-house.",
+          "sources": []
+        },
+        {
+          "dimension": "buyer_function",
+          "status": "resolved",
+          "state": "supported",
+          "dated": null,
+          "result": "SEC filing (EX-99.1, 2026-09-03) references a Corporate Development function — the plausible owner of post-close integration.",
+          "sources": [
+            {
+              "url": "https://efts.sec.gov/LATEST/search-index?q=%22Hillman%20Solutions%22%20%22corporate%20development%22",
+              "title": "SEC EDGAR full-text",
+              "date": "2026-09-03"
+            }
+          ]
+        },
+        {
+          "dimension": "mechanism",
+          "status": "evidence_not_found",
+          "state": "not_found",
+          "dated": null,
+          "result": "No primary-source evidence that Hillman Solutions engages EXTERNAL post-merger-integration advisors was established; a recent filing's use of \"integration\"/\"advisor\" reflects the acquisition announcement (integration plan + transaction advisors), not a services mechanism.",
+          "sources": []
+        },
+        {
+          "dimension": "access",
+          "status": "evidence_not_found",
+          "state": "not_found",
+          "dated": null,
+          "result": "No commercial access route established.",
+          "sources": [
+            {
+              "url": "https://hillmangroup.com",
+              "title": "Is there a legitimate route to VALIDATE ",
+              "date": null
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

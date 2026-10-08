@@ -3,7 +3,7 @@
 // research is adaptive (trigger-gated), evidence flows into the EXISTING decision authority
 // (synthesizeCase), counterevidence does not inflate, and nothing forces PRIORITIZE.
 import assert from "node:assert/strict";
-import { deriveResearchObjectives, runResearchAgenda, applyFindingsToCaseInput, type ResearchObjective, type ResearchFinding, type ResearchCustomerContext } from "../../lib/intelligence/decision-driven-research";
+import { deriveResearchObjectives, runResearchAgenda, applyFindingsToCaseInput, mechanismStateFromEvidence, accessStateFromEvidence, type ResearchObjective, type ResearchFinding, type ResearchCustomerContext } from "../../lib/intelligence/decision-driven-research";
 import { synthesizeCase, type CanonicalCaseInput } from "../../lib/monitor/canonical-case";
 
 let passed = 0;
@@ -89,6 +89,45 @@ const stub = (map: Record<string, ResearchFinding>) => ({ research: async (o: Re
     assert.equal(o.find((x) => x.dimension === "trigger")!.status, "provider_failure");
   });
 
-  console.log(`\n${passed}/8 decision-driven-research checks passed`);
-  if (passed !== 8) process.exit(1);
+  // ── Commercial Path mandatory guards (§54/§55/§39/§45) ──
+  await test("§54 CRITICAL: active-acquirer / acquisition evidence alone CANNOT support a mechanism", () => {
+    const r = mechanismStateFromEvidence("Hillman Solutions is an active acquirer; it acquired Delaney Hardware and other businesses.", "verified");
+    assert.ok(r.state !== "verified" && r.state !== "supported");
+    assert.equal(r.state, "unknown");
+  });
+  await test("§39: transaction advisors (bank/legal) alone do NOT establish a PMI mechanism", () => {
+    const r = mechanismStateFromEvidence("The company retained an investment bank and legal counsel to advise on the transaction.", "supported");
+    assert.equal(r.state, "unknown");
+  });
+  await test("mechanism SUPPORTED only with external integration-advisory evidence", () => {
+    const r = mechanismStateFromEvidence("The company engaged external integration consultants for post-merger integration and operational transformation.", "supported");
+    assert.ok(r.state === "supported" || r.state === "verified");
+  });
+  await test("§55 CRITICAL: a named executive / contact page alone CANNOT verify access (inferred at most)", () => {
+    const r = accessStateFromEvidence("CEO Jane Doe is on LinkedIn; the site has a contact us form and a switchboard number.", "verified");
+    assert.equal(r.state, "inferred");
+  });
+  await test("access SUPPORTED only with a real commercial/validation route", () => {
+    const r = accessStateFromEvidence("The company runs a professional-services vendor registration portal and names a corporate development function.", "verified");
+    assert.ok(r.state === "supported" || r.state === "verified");
+  });
+  await test("§45: no-evidence (not_found) is NOT counterevidence — decision not lowered", async () => {
+    const o = agenda();
+    await runResearchAgenda(o, stub({
+      trigger: { state: "verified", result: "acquisition 2026-06", sources: [{ url: "https://sec.gov/x", title: "8-K", date: "2026-06-01" }], dated: "2026-06-01" },
+      counterevidence: { state: "not_found", result: "no evidence found", sources: [], failure: "evidence_not_found" },
+    }));
+    const after = applyFindingsToCaseInput(beforeInput, o);
+    assert.equal(after.hasMaterialCounter, false); // absence is not counterevidence
+  });
+  await test("agenda now has distinct buyer_function, mechanism and access objectives", () => {
+    const o = agenda();
+    assert.ok(o.some((x) => x.dimension === "buyer_function"));
+    assert.ok(o.some((x) => x.dimension === "mechanism"));
+    assert.ok(o.some((x) => x.dimension === "access"));
+    assert.ok(o.length <= 5);
+  });
+
+  console.log(`\n${passed}/15 decision-driven-research checks passed`);
+  if (passed !== 15) process.exit(1);
 })();

@@ -17,8 +17,11 @@ import type { CanonicalCaseInput } from "@/lib/monitor/canonical-case";
 
 export const DECISION_DRIVEN_RESEARCH_VERSION = "decision-driven-research-v1";
 
-export type ResearchDimension = "trigger" | "mechanism" | "buyer_function" | "access" | "counterevidence";
-export type EvidenceState = "verified" | "supported" | "plausible" | "unknown" | "not_found";
+export type ResearchDimension = "trigger" | "commercial_problem" | "buyer_function" | "mechanism" | "access" | "counterevidence";
+// §4: VERIFIED > SUPPORTED > INFERRED > PLAUSIBLE > UNKNOWN > NOT_FOUND. "inferred"
+// means organizational logic suggests it but direct evidence is absent — it must NEVER
+// render or be treated as VERIFIED.
+export type EvidenceState = "verified" | "supported" | "inferred" | "plausible" | "unknown" | "not_found";
 export type ObjectiveStatus = "resolved" | "partial" | "evidence_not_found" | "provider_failure" | "skipped_adaptive" | "unattempted";
 
 /** Customer-context inputs that make the research agenda SPECIFIC to this customer's
@@ -100,26 +103,39 @@ export function deriveResearchObjectives(input: ResearchAgendaInput): ResearchOb
       query: `${co} ${customer.triggerFamily[0]} completed integration internal team`,
     }));
   }
-  // B. Commercial mechanism — only meaningful if there is a reason to engage.
+  // C. Buyer / decision FUNCTION — researched BEFORE access (§18: understand who owns
+  //    the problem before researching how to reach them). Distinct from mechanism/access.
+  if (missing.buyerFunction) {
+    objs.push(base({
+      id: `${co}:buyer_function`, dimension: "buyer_function",
+      question: `Which function at ${co} would OWN the ${customer.triggerFamily[0]}-driven problem relevant to ${customer.service} (${customer.buyerFunctionHints.slice(0, 2).join(" / ")})?`,
+      whyItMatters: `The owning function anchors the commercial path; a senior name is not the same as the owning function.`,
+      supportsIf: `A company/primary source assigning the relevant work to a named function (${customer.buyerFunctionHints.slice(0, 2).join(" / ")}).`,
+      weakensIf: `The relevant work appears owned by a function inconsistent with ${customer.service}.`,
+      query: `${co} ${customer.buyerFunctionHints.slice(0, 3).join(" OR ")} leadership proxy`,
+    }));
+  }
+  // B. EXTERNAL commercial mechanism — how an EXTERNAL provider participates. NOT the
+  //    account's own acquisition activity (§1/§54). Only meaningful if a trigger holds.
   if (missing.mechanism) {
     objs.push(base({
       id: `${co}:mechanism`, dimension: "mechanism",
-      question: `How could ${customer.service} actually be sold into ${co} (${customer.mechanismHints.slice(0, 2).join(" / ")})?`,
-      whyItMatters: `Fit without a route to do business is not actionable.`,
-      supportsIf: `Evidence of ${customer.mechanismHints[0]} or an external-advisor engagement route.`,
-      weakensIf: `Evidence the work is kept strictly in-house with no external route.`,
-      query: `${co} ${customer.mechanismHints.slice(0, 3).join(" OR ")}`,
+      question: `Is there evidence ${co} uses EXTERNAL providers for ${customer.service} work (not its own acquisitions, not transaction bankers/lawyers)?`,
+      whyItMatters: `The account having the problem ≠ it buying external help for it; only external-advisor evidence is a mechanism.`,
+      supportsIf: `Disclosures/case studies naming external ${customer.mechanismHints[0]} or professional-services procurement for integration/transformation work.`,
+      weakensIf: `Evidence the work is done strictly in-house, or only transaction (bank/legal) advisors are used.`,
+      query: `${co} external ${customer.mechanismHints.slice(0, 3).join(" OR ")} consultant advisor`,
     }));
   }
-  // C/D. Buyer function + access — combined objective (who owns it + how to enter).
-  if (missing.buyerFunction || missing.access) {
+  // D. Commercial ACCESS / validation route — how to enter/validate. NOT a person (§55).
+  if (missing.access) {
     objs.push(base({
       id: `${co}:access`, dimension: "access",
-      question: `Which function at ${co} would own this (${customer.buyerFunctionHints.slice(0, 2).join(" / ")}), and is there a legitimate route to reach it?`,
-      whyItMatters: `A commercial approach needs the owning function and an entry route, not a generic contact.`,
-      supportsIf: `A named/visible owning function and a public commercial or corporate-development route.`,
-      weakensIf: `No identifiable owning function or route.`,
-      query: `${co} ${customer.buyerFunctionHints.slice(0, 3).join(" OR ")} leadership`,
+      question: `Is there a legitimate route to VALIDATE or ENTER the commercial process at ${co} (professional-services procurement, corporate development, transformation office, partner program)?`,
+      whyItMatters: `A commercial approach needs a route to the owning function, not a generic contact or LinkedIn profile.`,
+      supportsIf: `A professional-services procurement route, corporate-development/transformation office, or partner program relevant to ${customer.service}.`,
+      weakensIf: `Only a generic contact page, switchboard, or a goods-only supplier portal.`,
+      query: `${co} professional services procurement vendor corporate development transformation office`,
     }));
   }
   return objs.slice(0, MAX_OBJECTIVES);
@@ -148,8 +164,9 @@ export async function runResearchAgenda(
   const triggerCurrent = Boolean(trigger && (trigger.state === "verified" || trigger.state === "supported") && Boolean(trigger.dated)
     && !(counter && (counter.state === "verified" || counter.state === "supported")));
 
-  // 2) Mechanism + access ONLY if a current trigger holds (adaptive, §18).
-  for (const o of [...byDim("mechanism"), ...byDim("access"), ...byDim("buyer_function")]) {
+  // 2) Buyer function → mechanism → access, ONLY if a current trigger holds (adaptive,
+  //    §18: understand who owns the problem before how to reach them).
+  for (const o of [...byDim("buyer_function"), ...byDim("mechanism"), ...byDim("access")]) {
     if (!triggerCurrent) { o.status = "skipped_adaptive"; o.state = "unknown"; o.result = "Not researched: no current trigger established, so there is no live opportunity whose route is worth investigating yet."; continue; }
     attempted++; apply(o, await deps.research(o));
   }
@@ -198,4 +215,45 @@ export function applyFindingsToCaseInput(before: CanonicalCaseInput, objectives:
     strategicRouteValidatable: (triggerCurrent && !(mechanismOk && accessOk)) || before.strategicRouteValidatable,
     openDecisionCritical: Array.from(open).filter(Boolean),
   };
+}
+
+// ─── Commercial Path guards (the mandatory semantic corrections §1/§39/§54/§55) ──
+
+/** §54 (MANDATORY): the account's OWN acquisition / M&A activity is a TRIGGER, never
+ *  evidence of an EXTERNAL commercial mechanism. A mechanism is SUPPORTED only by evidence
+ *  the account engages EXTERNAL providers for the relevant (post-merger-integration /
+ *  transformation / operational) work. §39: investment-bank / legal / financial
+ *  TRANSACTION advisors do not establish a PMI mechanism. Pure; downgrades an inflated
+ *  claim. `pmiService` lets the relevance test track the customer's actual service. */
+export function mechanismStateFromEvidence(text: string, claimedState: EvidenceState): { state: EvidenceState; note: string } {
+  const t = (text ?? "").toLowerCase();
+  const externalAdvisor = /(engag|retain|hir(e|ed|ing)|use[sd]?|work(s|ed)? with|selected|appointed|partnered)[^.]{0,50}(consult|advisor|advisory|integration partner|implementation partner|professional[- ]services|system integrator|transformation partner)/.test(t)
+    || /external (consult|advisor|advisory|integration|transformation|professional[- ]services)/.test(t);
+  const pmiRelevant = /(post-?merger|\bintegration\b|transformation|operational|\bpmi\b|carve-?out|synergy)/.test(t);
+  const onlyTransactionAdvisor = /(investment bank|financial advis|legal counsel|law firm|\bm&a advisor|underwrit)/.test(t) && !pmiRelevant;
+  const onlyAcquisitionActivity = /(acquir|acquisition|bought|purchased|is an active acquirer|acquires)/.test(t) && !externalAdvisor;
+  if (onlyAcquisitionActivity) return { state: "unknown", note: "Only the account's own acquisition activity — a trigger, not an external commercial mechanism." };
+  if (onlyTransactionAdvisor) return { state: "unknown", note: "Only transaction advisors (bank/legal/financial) — not a post-merger-integration mechanism." };
+  if (externalAdvisor && pmiRelevant) return { state: claimedState === "verified" ? "verified" : "supported", note: "External integration/transformation advisory evidence." };
+  if (externalAdvisor) return { state: "plausible", note: "External advisory evidence; relevance to the customer's service not confirmed." };
+  return { state: "not_found", note: "No external-mechanism evidence found." };
+}
+
+/** §55 (MANDATORY): a discoverable PERSON / generic contact surface is NOT commercial
+ *  access. Access is SUPPORTED only by a legitimate route to VALIDATE or ENTER the
+ *  relevant process; a named executive or contact page alone is at most INFERRED. Pure. */
+export function accessStateFromEvidence(text: string, claimedState: EvidenceState): { state: EvidenceState; note: string } {
+  const t = (text ?? "").toLowerCase();
+  const route = /(vendor (on-?board|registration|portal|application)|supplier (registration|portal|diversity)|professional[- ]services (procure|vendor|panel)|\brfp\b|request for proposal|procure[^.]{0,25}(consult|advisor|services)|corporate development|transformation office|integration management office|partner (program|ecosystem)|advisor panel|preferred (vendor|supplier) list)/.test(t);
+  const onlyPersonOrContact = /(linkedin|\bemail\b|phone|contact (us|form|page)|home ?page|switchboard|executive profile)/.test(t) && !route;
+  if (route) return { state: claimedState === "verified" ? "verified" : "supported", note: "A legitimate commercial / validation route (procurement, corp-dev, or partner program)." };
+  if (onlyPersonOrContact) return { state: "inferred", note: "Only a person or generic contact surface — not a validated commercial route." };
+  return { state: "not_found", note: "No commercial access route established." };
+}
+
+/** Derive the bounded, customer-specific COMMERCIAL PROBLEM the trigger may create
+ *  (§19). Fact→inference→unknown kept distinct; the inference is never stated as fact. */
+export function deriveCommercialProblem(customer: ResearchCustomerContext, triggerSummary: string | null): string {
+  if (!triggerSummary) return `No current ${customer.triggerFamily[0]} established, so no current commercial problem for ${customer.service} is indicated.`;
+  return `A current ${customer.triggerFamily[0]} MAY create ${customer.service.replace(/ \(.*\)/, "")} work (inference, not confirmed); whether that work is active and whether external support is used remains unknown.`;
 }
