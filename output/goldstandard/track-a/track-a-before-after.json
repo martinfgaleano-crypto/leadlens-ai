@@ -1,0 +1,167 @@
+{
+  "customer": "post-merger integration (PMI) operational execution",
+  "generatedAt": "2026-10-08T15:33:26.125Z",
+  "spendUsd": 0.006978000000000151,
+  "accounts": [
+    {
+      "company": "CECO Environmental",
+      "before": {
+        "decision": "hold",
+        "whyNow": null,
+        "mechanism": "not established",
+        "buyerFunction": "not established",
+        "access": "unknown",
+        "counterevidence": "none",
+        "pathToPrioritize": [
+          "confirm: Is there a current why-now trigger for this account?",
+          "verify a current commercial mechanism (an active buying / onboarding / sourcing route)",
+          "verify commercial access (the route into the buying process)",
+          "a dated, current demand or sourcing signal (not generic company activity)"
+        ],
+        "nextAction": null
+      },
+      "after": {
+        "decision": "validate",
+        "whyNow": "SEC EDGAR: most recent acquisition-referencing 8-K filed 2026-08-10 (60d ago; current). 279 acquisition-referencing 8-Ks on record.",
+        "mechanism": "No public page could be retrieved to establish mechanism (direct retrieval only; paid search unavailable).",
+        "buyerFunction": "No public page could be retrieved to establish access (direct retrieval only; paid search unavailable).",
+        "access": "not_found",
+        "counterevidence": "No evidence the trigger is stale or handled entirely in-house.",
+        "pathToPrioritize": [
+          "confirm: Confirm the commercial mechanism: How could post-merger integration (PMI) operational execution actually be sold into CECO Environmental (integration management office / corporate development)?",
+          "confirm: Confirm the owning function and access route: Which function at CECO Environmental would own this (integration management / operations leadership), and is there a legitimate route to reach it?",
+          "verify a current commercial mechanism (an active buying / onboarding / sourcing route)",
+          "verify commercial access (the route into the buying process)"
+        ],
+        "nextAction": "Validate the mechanism/owning function before outreach"
+      },
+      "objectives": [
+        {
+          "dimension": "trigger",
+          "status": "resolved",
+          "state": "verified",
+          "dated": "2026-08-10",
+          "result": "SEC EDGAR: most recent acquisition-referencing 8-K filed 2026-08-10 (60d ago; current). 279 acquisition-referencing 8-Ks on record.",
+          "sources": [
+            {
+              "url": "https://efts.sec.gov/LATEST/search-index?q=%22CECO%20Environmental%22%20acquisition&forms=8-K",
+              "title": "SEC EDGAR 8-K full-text search",
+              "date": "2026-08-10"
+            }
+          ]
+        },
+        {
+          "dimension": "counterevidence",
+          "status": "evidence_not_found",
+          "state": "not_found",
+          "dated": null,
+          "result": "No evidence the trigger is stale or handled entirely in-house.",
+          "sources": []
+        },
+        {
+          "dimension": "mechanism",
+          "status": "evidence_not_found",
+          "state": "not_found",
+          "dated": null,
+          "result": "No public page could be retrieved to establish mechanism (direct retrieval only; paid search unavailable).",
+          "sources": []
+        },
+        {
+          "dimension": "access",
+          "status": "evidence_not_found",
+          "state": "not_found",
+          "dated": null,
+          "result": "No public page could be retrieved to establish access (direct retrieval only; paid search unavailable).",
+          "sources": []
+        }
+      ],
+      "decisionChanged": true,
+      "triggerCurrent": true
+    },
+    {
+      "company": "Hillman Solutions",
+      "before": {
+        "decision": "hold",
+        "whyNow": null,
+        "mechanism": "not established",
+        "buyerFunction": "not established",
+        "access": "unknown",
+        "counterevidence": "none",
+        "pathToPrioritize": [
+          "confirm: Is there a current why-now trigger for this account?",
+          "verify a current commercial mechanism (an active buying / onboarding / sourcing route)",
+          "verify commercial access (the route into the buying process)",
+          "a dated, current demand or sourcing signal (not generic company activity)"
+        ],
+        "nextAction": null
+      },
+      "after": {
+        "decision": "validate",
+        "whyNow": "SEC EDGAR: most recent acquisition-referencing 8-K filed 2026-09-03 (36d ago; current). 55 acquisition-referencing 8-Ks on record.",
+        "mechanism": "The page confirms Hillman Solutions is an active acquirer (e.g., 'Hillman Acquires Delaney Hardware') suggesting ongoing integration activity, but it shows no evidence of an integration management office, external-advisor engagement route, or any structural openness to PMI services, leaving the selling route plausible but unverified from this text.",
+        "buyerFunction": "not_found",
+        "access": "unknown",
+        "counterevidence": "No evidence the trigger is stale or handled entirely in-house.",
+        "pathToPrioritize": [
+          "confirm: Confirm the commercial mechanism: How could post-merger integration (PMI) operational execution actually be sold into Hillman Solutions (integration management office / corporate development)?",
+          "confirm: Confirm the owning function and access route: Which function at Hillman Solutions would own this (integration management / operations leadership), and is there a legitimate route to reach it?",
+          "verify a current commercial mechanism (an active buying / onboarding / sourcing route)",
+          "verify commercial access (the route into the buying process)"
+        ],
+        "nextAction": "Validate the mechanism/owning function before outreach"
+      },
+      "objectives": [
+        {
+          "dimension": "trigger",
+          "status": "resolved",
+          "state": "verified",
+          "dated": "2026-09-03",
+          "result": "SEC EDGAR: most recent acquisition-referencing 8-K filed 2026-09-03 (36d ago; current). 55 acquisition-referencing 8-Ks on record.",
+          "sources": [
+            {
+              "url": "https://efts.sec.gov/LATEST/search-index?q=%22Hillman%20Solutions%22%20acquisition&forms=8-K",
+              "title": "SEC EDGAR 8-K full-text search",
+              "date": "2026-09-03"
+            }
+          ]
+        },
+        {
+          "dimension": "counterevidence",
+          "status": "evidence_not_found",
+          "state": "not_found",
+          "dated": null,
+          "result": "No evidence the trigger is stale or handled entirely in-house.",
+          "sources": []
+        },
+        {
+          "dimension": "mechanism",
+          "status": "partial",
+          "dated": null,
+          "result": "The page confirms Hillman Solutions is an active acquirer (e.g., 'Hillman Acquires Delaney Hardware') suggesting ongoing integration activity, but it shows no evidence of an integration management office, external-advisor engagement route, or any structural openness to PMI services, leaving the selling route plausible but unverified from this text.",
+          "sources": [
+            {
+              "url": "https://hillmangroup.com",
+              "title": "Hillman Solutions public page",
+              "date": null
+            }
+          ]
+        },
+        {
+          "dimension": "access",
+          "status": "partial",
+          "dated": null,
+          "result": "not_found",
+          "sources": [
+            {
+              "url": "https://hillmangroup.com",
+              "title": "Hillman Solutions public page",
+              "date": null
+            }
+          ]
+        }
+      ],
+      "decisionChanged": true,
+      "triggerCurrent": true
+    }
+  ]
+}
