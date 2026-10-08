@@ -1,0 +1,28 @@
+{
+  "benchmark": "LeadLens vs Claude Deep Research vs Claude+Vibe — decision-layer (TEST 1)",
+  "frozen_at": "2026-10-08",
+  "leadlens_version": { "branch": "intelligence-value-reset-v1", "head": "dd13f9d" },
+  "customer_context": {
+    "company": "Meridian Transition Partners (ASSUMED-FOR-FIXTURE — no real private facts)",
+    "type": "US specialized B2B consultancy / professional services",
+    "service": "post-merger integration (PMI) operational execution — first-120-day integration of operations, supply chain and ERP after an acquisition",
+    "constraints": "boutique, limited BD capacity; choosing the wrong accounts wastes meaningful commercial time",
+    "geography": "United States",
+    "known": "the service and the customer's limited BD capacity",
+    "assumed_for_fixture": "the consultancy identity (plausible, generic)",
+    "unknown": "everything about the candidate accounts' current state — to be researched by each arm"
+  },
+  "commercial_objective": "Determine which companies in this candidate set deserve our commercial attention now for our post-acquisition integration consulting service, why, what evidence supports that conclusion, and what we should do next.",
+  "candidate_universe_selection_method": "Neutral rule, fixed BEFORE any arm ran and WITHOUT pre-checking LeadLens evidence: 7 real, publicly-traded US mid-market industrial manufacturers (plausible structural fit for PMI services), explicitly EXCLUDING the accounts LeadLens already researched in development (CECO, Hillman, and the earlier seed set Standex/Kadant/Franklin/Mayville/Enpro/Chart). Variation in M&A cadence was NOT engineered — it emerges from research.",
+  "candidate_universe": [
+    { "company": "Mueller Industries", "domain": "muellerindustries.com", "sector": "Copper/brass industrial products manufacturer" },
+    { "company": "Watts Water Technologies", "domain": "watts.com", "sector": "Water products manufacturer" },
+    { "company": "Columbus McKinnon", "domain": "cmworks.com", "sector": "Material handling / motion control manufacturer" },
+    { "company": "Helios Technologies", "domain": "heliostechnologies.com", "sector": "Hydraulics and electronics manufacturer" },
+    { "company": "Barnes Group", "domain": "onebarnes.com", "sector": "Industrial and aerospace components manufacturer" },
+    { "company": "Gorman-Rupp", "domain": "gormanrupp.com", "sector": "Industrial pump manufacturer" },
+    { "company": "SPX Technologies", "domain": "spx.com", "sector": "Industrial HVAC / detection & measurement manufacturer" }
+  ],
+  "required_output_question": "For each company: should the consultancy spend effort now, why/why-now, what evidence supports it, what weakens it, what remains unknown, and what to do next — and which companies deserve attention first.",
+  "arms": ["A=LeadLens (frozen pipeline)", "B=Claude Deep Research (independent)", "C=Claude+Vibe (Explorium/Vibe Prospecting)"]
+}

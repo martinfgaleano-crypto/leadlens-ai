@@ -1,0 +1,18 @@
+{
+  "claim_source_audit": {
+    "LeadLens": "Trigger claims SEC-EDGAR-cited + dated (SUPPORTED). Buyer function 'Corporate Development' SUPPORTED by an SEC filing, but one (Watts) cites a stale 2019 filing (PARTIAL). Mechanism/access honestly NOT-ESTABLISHED (no overclaim). One FALSE NEGATIVE: Columbus McKinnon HELD because an EDGAR call 500'd (provider failure mislabeled as no-trigger) — CMCO is in fact acquisitive. Honest overall, but provider-fragile.",
+    "ClaudeVibe": "Event claims sourced (SEC 10-Q / news) + dated + priced (SUPPORTED, strong). Decision-maker names SUPPORTED (Explorium). RISK: presenting acquisition events as commercial opportunity implies demand for external PMI (intent inference not flagged). Named people's RELEVANCE to PMI ownership is UNSUPPORTED (general VPs, not identified integration owners). Two companies UNRESOLVED (free-tier preview cap).",
+    "Claude": "Mostly INFERENCE/UNVERIFIED by its own admission (honest). Few verifiable current claims. Reputation-based ('serial acquirer') is PARTIAL."
+  },
+  "intent_overclaim_red_team": {
+    "most_overclaimed": "Claude+Vibe — treats M&A events as opportunity without distinguishing trigger from demand for external PMI, and surfaces contacts whose PMI relevance is unverified.",
+    "most_calibrated": "LeadLens — explicitly separates trigger from current opportunity, labels mechanism/access not-established, abstains (2 HOLD).",
+    "claude": "Calibrated via honest 'unverified' caveats but low information."
+  },
+  "account_disagreements": {
+    "Columbus McKinnon": "LeadLens HOLD (EDGAR 500 → false negative) vs Vibe would likely show events (unresolved in free tier) vs Claude 'consider'. Best-supported: CMCO is acquisitive → LeadLens's HOLD is the weakest call (provider-caused).",
+    "Barnes Group": "LeadLens VALIDATE (acquisition 8-K) vs Vibe reveals PE-ownership (Apollo) + corporate SEPARATION — a different commercial situation (sponsor route, disentanglement). Vibe's context is more precise; LeadLens's 'acquisition' label is less accurate here.",
+    "SPX": "All three rank highest — convergent. Vibe richest (4 deals, priced); LeadLens most disciplined; Claude by reputation."
+  },
+  "convergent_validity": "LeadLens's FREE EDGAR trigger detection matched Vibe's PROPRIETARY event feed on exactly the 5 recently-acquisitive companies (Mueller, Watts, Helios, Barnes, SPX) — strong cross-source agreement on the trigger dimension."
+}

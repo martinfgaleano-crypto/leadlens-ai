@@ -1,0 +1,16 @@
+{
+  "arm": "Claude Deep Research (independent; no proprietary data; live web search unavailable in this environment — reasoning + public knowledge)",
+  "generated_at": "2026-10-08",
+  "method": "Given only the frozen Customer Context + objective + 7 companies, Claude produced a best-effort professional recommendation from general knowledge and first-principles reasoning, explicitly flagging what it could not verify without live search.",
+  "accounts": [
+    { "company": "SPX Technologies", "assessment": "Known serial acquirer of industrial/HVAC businesses; a mid-market acquirer that routinely integrates bolt-ons — strong structural fit for PMI services. Likely owning function: Corporate Development / integration leadership. CANNOT verify a specific current open integration without live data.", "recommendation": "Pursue — strongest structural fit as a repeat acquirer", "why_now": "Inference only — no verified current deal" },
+    { "company": "Mueller Industries", "assessment": "Large copper/brass manufacturer; acquisitive over time. Fit present. Current deal unverified.", "recommendation": "Consider — likely acquirer", "why_now": "Unverified" },
+    { "company": "Watts Water Technologies", "assessment": "Water-products manufacturer with a known bolt-on acquisition strategy. Fit present. Current deal unverified.", "recommendation": "Consider", "why_now": "Unverified" },
+    { "company": "Barnes Group", "assessment": "Industrial/aerospace; recently taken private (Apollo) per general knowledge — PE ownership can mean either active integration OR an incumbent operating-partner playbook. Ambiguous.", "recommendation": "Investigate the PE angle", "why_now": "Possible (PE-driven), unverified" },
+    { "company": "Helios Technologies", "assessment": "Acquisitive hydraulics/electronics group. Fit present. Current activity unverified.", "recommendation": "Consider", "why_now": "Unverified" },
+    { "company": "Columbus McKinnon", "assessment": "Material-handling manufacturer that has made sizeable acquisitions historically. Fit present. Current activity unverified.", "recommendation": "Consider", "why_now": "Unverified" },
+    { "company": "Gorman-Rupp", "assessment": "Pump manufacturer; made a large acquisition (Fill-Rite) a few years ago; generally less acquisitive since. Weaker current fit.", "recommendation": "Lower priority", "why_now": "Likely none recent" }
+  ],
+  "recommendation_rank": ["SPX Technologies", "Mueller Industries", "Watts Water Technologies", "Helios Technologies", "Barnes Group", "Columbus McKinnon", "Gorman-Rupp"],
+  "character": "Coherent reasoning + honest 'cannot verify without live data' caveats + plausible owning-function hypotheses + a sensible rank. But NO dated/priced current triggers, NO contacts, NO proprietary events; prioritization rests on general reputation ('serial acquirer') rather than current evidence. Would require the user to do the verification research themselves."
+}

@@ -1,0 +1,237 @@
+{
+  "arm": "LeadLens (frozen dd13f9d)",
+  "generated_at": "2026-10-08T20:59:33.869Z",
+  "spend_usd": 0.3499410000000003,
+  "decision_distribution": {
+    "validate": 5,
+    "hold": 2
+  },
+  "accounts": [
+    {
+      "company": "Mueller Industries",
+      "eligible": "eligible",
+      "decision": "validate",
+      "why_now": "SEC EDGAR: most recent acquisition-referencing 8-K filed 2026-07-21 (80d ago; current).",
+      "buyer_function": "supported: SEC filing (filing, 2026-03-26) references a Corporate Development function — plausible owner of post-close integration.",
+      "external_mechanism": "not_found: No primary-source evidence that Mueller Industries engages EXTERNAL post-merger-integration advisors (not disproven).",
+      "commercial_access": "not_found: No commercial access route established from free primary sources.",
+      "counterevidence": "No evidence the trigger is stale or in-house.",
+      "critical_unknowns": [
+        "Confirm the commercial mechanism: Is there evidence Mueller Industries uses EXTERNAL providers for post-merger integration (PMI) operational execution work (not its own acquisitions, not transaction bankers/lawyers)?",
+        "Confirm the owning function and access route: Is there a legitimate route to VALIDATE or ENTER the commercial process at Mueller Industries (professional-services procurement, corporate development, transformation office, partner program)?"
+      ],
+      "path_to_prioritize": [
+        "confirm: Confirm the commercial mechanism: Is there evidence Mueller Industries uses EXTERNAL providers for post-merger integration (PMI) operational execution work (not its own acquisitions, not transaction bankers/lawyers)?",
+        "confirm: Confirm the owning function and access route: Is there a legitimate route to VALIDATE or ENTER the commercial process at Mueller Industries (professional-services procurement, corporate development, transformation office, partner program)?",
+        "verify a current commercial mechanism (an active buying / onboarding / sourcing route)",
+        "verify commercial access (the route into the buying process)"
+      ],
+      "next_action": "Validate with Corporate Development whether post-close integration remains active and whether external PMI specialists are used, before allocating outbound effort.",
+      "trigger_current": true,
+      "fit": "Moderate",
+      "sources": [
+        {
+          "url": "https://efts.sec.gov/LATEST/search-index?q=%22Mueller%20Industries%22%20acquisition&forms=8-K",
+          "title": "SEC EDGAR 8-K",
+          "date": "2026-07-21"
+        },
+        {
+          "url": "https://efts.sec.gov/LATEST/search-index?q=%22Mueller%20Industries%22%20%22corporate%20development%22",
+          "title": "SEC EDGAR",
+          "date": "2026-03-26"
+        }
+      ]
+    },
+    {
+      "company": "Watts Water Technologies",
+      "eligible": "eligible",
+      "decision": "validate",
+      "why_now": "SEC EDGAR: most recent acquisition-referencing 8-K filed 2026-08-05 (65d ago; current).",
+      "buyer_function": "supported: SEC filing (filing, 2019-05-24) references a Corporate Development function — plausible owner of post-close integration.",
+      "external_mechanism": "not_found: No primary-source evidence that Watts Water Technologies engages EXTERNAL post-merger-integration advisors (not disproven).",
+      "commercial_access": "not_found: No commercial access route established from free primary sources.",
+      "counterevidence": "No evidence the trigger is stale or in-house.",
+      "critical_unknowns": [
+        "Confirm the commercial mechanism: Is there evidence Watts Water Technologies uses EXTERNAL providers for post-merger integration (PMI) operational execution work (not its own acquisitions, not transaction bankers/lawyers)?",
+        "Confirm the owning function and access route: Is there a legitimate route to VALIDATE or ENTER the commercial process at Watts Water Technologies (professional-services procurement, corporate development, transformation office, partner program)?"
+      ],
+      "path_to_prioritize": [
+        "confirm: Confirm the commercial mechanism: Is there evidence Watts Water Technologies uses EXTERNAL providers for post-merger integration (PMI) operational execution work (not its own acquisitions, not transaction bankers/lawyers)?",
+        "confirm: Confirm the owning function and access route: Is there a legitimate route to VALIDATE or ENTER the commercial process at Watts Water Technologies (professional-services procurement, corporate development, transformation office, partner program)?",
+        "verify a current commercial mechanism (an active buying / onboarding / sourcing route)",
+        "verify commercial access (the route into the buying process)"
+      ],
+      "next_action": "Validate with Corporate Development whether post-close integration remains active and whether external PMI specialists are used, before allocating outbound effort.",
+      "trigger_current": true,
+      "fit": "Moderate",
+      "sources": [
+        {
+          "url": "https://efts.sec.gov/LATEST/search-index?q=%22Watts%20Water%20Technologies%22%20acquisition&forms=8-K",
+          "title": "SEC EDGAR 8-K",
+          "date": "2026-08-05"
+        },
+        {
+          "url": "https://efts.sec.gov/LATEST/search-index?q=%22Watts%20Water%20Technologies%22%20%22corporate%20development%22",
+          "title": "SEC EDGAR",
+          "date": "2019-05-24"
+        }
+      ]
+    },
+    {
+      "company": "Columbus McKinnon",
+      "eligible": "eligible",
+      "decision": "hold",
+      "why_now": "Research failed: EDGAR 500",
+      "buyer_function": "unknown: Not researched: no current trigger established, so there is no live opportunity whose route is worth investigating yet.",
+      "external_mechanism": "unknown: Not researched: no current trigger established, so there is no live opportunity whose route is worth investigating yet.",
+      "commercial_access": "unknown: Not researched: no current trigger established, so there is no live opportunity whose route is worth investigating yet.",
+      "counterevidence": "Research failed: EDGAR 500",
+      "critical_unknowns": [
+        "Is there a current why-now trigger?",
+        "Confirm the commercial mechanism: Is there evidence Columbus McKinnon uses EXTERNAL providers for post-merger integration (PMI) operational execution work (not its own acquisitions, not transaction bankers/lawyers)?",
+        "Confirm the owning function and access route: Is there a legitimate route to VALIDATE or ENTER the commercial process at Columbus McKinnon (professional-services procurement, corporate development, transformation office, partner program)?"
+      ],
+      "path_to_prioritize": [
+        "confirm: Is there a current why-now trigger?",
+        "confirm: Confirm the commercial mechanism: Is there evidence Columbus McKinnon uses EXTERNAL providers for post-merger integration (PMI) operational execution work (not its own acquisitions, not transaction bankers/lawyers)?",
+        "verify a current commercial mechanism (an active buying / onboarding / sourcing route)",
+        "verify commercial access (the route into the buying process)"
+      ],
+      "next_action": "No active action — reconsider on a new acquisition/transformation trigger.",
+      "trigger_current": false,
+      "fit": "Moderate",
+      "sources": []
+    },
+    {
+      "company": "Helios Technologies",
+      "eligible": "eligible",
+      "decision": "validate",
+      "why_now": "SEC EDGAR: most recent acquisition-referencing 8-K filed 2026-08-10 (60d ago; current).",
+      "buyer_function": "inferred: By organizational logic Corporate Development / Operations would own post-acquisition integration at Helios Technologies. Inference, not verified.",
+      "external_mechanism": "not_found: No primary-source evidence that Helios Technologies engages EXTERNAL post-merger-integration advisors (not disproven).",
+      "commercial_access": "not_found: No commercial access route established from free primary sources.",
+      "counterevidence": "No evidence the trigger is stale or in-house.",
+      "critical_unknowns": [
+        "Confirm the commercial mechanism: Is there evidence Helios Technologies uses EXTERNAL providers for post-merger integration (PMI) operational execution work (not its own acquisitions, not transaction bankers/lawyers)?",
+        "Confirm the owning function and access route: Is there a legitimate route to VALIDATE or ENTER the commercial process at Helios Technologies (professional-services procurement, corporate development, transformation office, partner program)?"
+      ],
+      "path_to_prioritize": [
+        "confirm: Confirm the commercial mechanism: Is there evidence Helios Technologies uses EXTERNAL providers for post-merger integration (PMI) operational execution work (not its own acquisitions, not transaction bankers/lawyers)?",
+        "confirm: Confirm the owning function and access route: Is there a legitimate route to VALIDATE or ENTER the commercial process at Helios Technologies (professional-services procurement, corporate development, transformation office, partner program)?",
+        "verify a current commercial mechanism (an active buying / onboarding / sourcing route)",
+        "verify commercial access (the route into the buying process)"
+      ],
+      "next_action": "Validate with Corporate Development whether post-close integration remains active and whether external PMI specialists are used, before allocating outbound effort.",
+      "trigger_current": true,
+      "fit": "Strong",
+      "sources": [
+        {
+          "url": "https://efts.sec.gov/LATEST/search-index?q=%22Helios%20Technologies%22%20acquisition&forms=8-K",
+          "title": "SEC EDGAR 8-K",
+          "date": "2026-08-10"
+        }
+      ]
+    },
+    {
+      "company": "Barnes Group",
+      "eligible": "eligible",
+      "decision": "validate",
+      "why_now": "SEC EDGAR: most recent acquisition-referencing 8-K filed 2025-01-27 (620d ago; current).",
+      "buyer_function": "supported: SEC filing (filing, 2024-02-12) references a Corporate Development function — plausible owner of post-close integration.",
+      "external_mechanism": "not_found: No primary-source evidence that Barnes Group engages EXTERNAL post-merger-integration advisors (not disproven).",
+      "commercial_access": "not_found: No commercial access route established from free primary sources.",
+      "counterevidence": "No evidence the trigger is stale or in-house.",
+      "critical_unknowns": [
+        "Confirm the commercial mechanism: Is there evidence Barnes Group uses EXTERNAL providers for post-merger integration (PMI) operational execution work (not its own acquisitions, not transaction bankers/lawyers)?",
+        "Confirm the owning function and access route: Is there a legitimate route to VALIDATE or ENTER the commercial process at Barnes Group (professional-services procurement, corporate development, transformation office, partner program)?"
+      ],
+      "path_to_prioritize": [
+        "confirm: Confirm the commercial mechanism: Is there evidence Barnes Group uses EXTERNAL providers for post-merger integration (PMI) operational execution work (not its own acquisitions, not transaction bankers/lawyers)?",
+        "confirm: Confirm the owning function and access route: Is there a legitimate route to VALIDATE or ENTER the commercial process at Barnes Group (professional-services procurement, corporate development, transformation office, partner program)?",
+        "verify a current commercial mechanism (an active buying / onboarding / sourcing route)",
+        "verify commercial access (the route into the buying process)"
+      ],
+      "next_action": "Validate with Corporate Development whether post-close integration remains active and whether external PMI specialists are used, before allocating outbound effort.",
+      "trigger_current": true,
+      "fit": "Moderate",
+      "sources": [
+        {
+          "url": "https://efts.sec.gov/LATEST/search-index?q=%22Barnes%20Group%22%20acquisition&forms=8-K",
+          "title": "SEC EDGAR 8-K",
+          "date": "2025-01-27"
+        },
+        {
+          "url": "https://efts.sec.gov/LATEST/search-index?q=%22Barnes%20Group%22%20%22corporate%20development%22",
+          "title": "SEC EDGAR",
+          "date": "2024-02-12"
+        }
+      ]
+    },
+    {
+      "company": "Gorman-Rupp",
+      "eligible": "eligible",
+      "decision": "hold",
+      "why_now": "No acquisition-referencing 8-K in SEC EDGAR for Gorman-Rupp.",
+      "buyer_function": "unknown: Not researched: no current trigger established, so there is no live opportunity whose route is worth investigating yet.",
+      "external_mechanism": "unknown: Not researched: no current trigger established, so there is no live opportunity whose route is worth investigating yet.",
+      "commercial_access": "unknown: Not researched: no current trigger established, so there is no live opportunity whose route is worth investigating yet.",
+      "counterevidence": "No evidence the trigger is stale or in-house.",
+      "critical_unknowns": [
+        "Is there a current why-now trigger?",
+        "Confirm the commercial mechanism: Is there evidence Gorman-Rupp uses EXTERNAL providers for post-merger integration (PMI) operational execution work (not its own acquisitions, not transaction bankers/lawyers)?",
+        "Confirm the owning function and access route: Is there a legitimate route to VALIDATE or ENTER the commercial process at Gorman-Rupp (professional-services procurement, corporate development, transformation office, partner program)?"
+      ],
+      "path_to_prioritize": [
+        "confirm: Is there a current why-now trigger?",
+        "confirm: Confirm the commercial mechanism: Is there evidence Gorman-Rupp uses EXTERNAL providers for post-merger integration (PMI) operational execution work (not its own acquisitions, not transaction bankers/lawyers)?",
+        "verify a current commercial mechanism (an active buying / onboarding / sourcing route)",
+        "verify commercial access (the route into the buying process)"
+      ],
+      "next_action": "No active action — reconsider on a new acquisition/transformation trigger.",
+      "trigger_current": false,
+      "fit": "Moderate",
+      "sources": [
+        {
+          "url": "https://efts.sec.gov/LATEST/search-index?q=%22Gorman-Rupp%22%20acquisition&forms=8-K",
+          "title": "SEC EDGAR 8-K",
+          "date": null
+        }
+      ]
+    },
+    {
+      "company": "SPX Technologies",
+      "eligible": "eligible",
+      "decision": "validate",
+      "why_now": "SEC EDGAR: most recent acquisition-referencing 8-K filed 2026-07-30 (71d ago; current).",
+      "buyer_function": "supported: SEC filing (filing, 2026-03-31) references a Corporate Development function — plausible owner of post-close integration.",
+      "external_mechanism": "not_found: No primary-source evidence that SPX Technologies engages EXTERNAL post-merger-integration advisors (not disproven).",
+      "commercial_access": "not_found: No commercial access route established from free primary sources.",
+      "counterevidence": "No evidence the trigger is stale or in-house.",
+      "critical_unknowns": [
+        "Confirm the commercial mechanism: Is there evidence SPX Technologies uses EXTERNAL providers for post-merger integration (PMI) operational execution work (not its own acquisitions, not transaction bankers/lawyers)?",
+        "Confirm the owning function and access route: Is there a legitimate route to VALIDATE or ENTER the commercial process at SPX Technologies (professional-services procurement, corporate development, transformation office, partner program)?"
+      ],
+      "path_to_prioritize": [
+        "confirm: Confirm the commercial mechanism: Is there evidence SPX Technologies uses EXTERNAL providers for post-merger integration (PMI) operational execution work (not its own acquisitions, not transaction bankers/lawyers)?",
+        "confirm: Confirm the owning function and access route: Is there a legitimate route to VALIDATE or ENTER the commercial process at SPX Technologies (professional-services procurement, corporate development, transformation office, partner program)?",
+        "verify a current commercial mechanism (an active buying / onboarding / sourcing route)",
+        "verify commercial access (the route into the buying process)"
+      ],
+      "next_action": "Validate with Corporate Development whether post-close integration remains active and whether external PMI specialists are used, before allocating outbound effort.",
+      "trigger_current": true,
+      "fit": "Moderate",
+      "sources": [
+        {
+          "url": "https://efts.sec.gov/LATEST/search-index?q=%22SPX%20Technologies%22%20acquisition&forms=8-K",
+          "title": "SEC EDGAR 8-K",
+          "date": "2026-07-30"
+        },
+        {
+          "url": "https://efts.sec.gov/LATEST/search-index?q=%22SPX%20Technologies%22%20%22corporate%20development%22",
+          "title": "SEC EDGAR",
+          "date": "2026-03-31"
+        }
+      ]
+    }
+  ]
+}

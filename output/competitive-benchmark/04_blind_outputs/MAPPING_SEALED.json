@@ -1,0 +1,2 @@
+{ "note": "Randomized blind mapping (LeadLens is NOT 'A'). Kept separate from the scored evaluation until after scoring.",
+  "mapping": { "OUTPUT_X": "Claude Deep Research (Arm B)", "OUTPUT_Y": "LeadLens (Arm A)", "OUTPUT_Z": "Claude + Vibe (Arm C)" } }

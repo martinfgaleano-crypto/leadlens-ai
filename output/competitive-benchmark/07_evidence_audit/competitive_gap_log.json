@@ -1,0 +1,9 @@
+{
+  "note": "Observed gaps only. DO NOT BUILD YET (§37).",
+  "gaps": [
+    { "gap": "Current-trigger richness (price, acquired entity, strategic rationale) in ONE call", "exposed_by": "Claude+Vibe", "customer_impact": "high", "commodity_or_differentiated": "commodity (Vibe/Explorium events)", "response": "LeadLens EDGAR trigger matched WHICH companies but lacked deal price/target; could enrich display from primary filings", "build": "NOT YET" },
+    { "gap": "Named decision-makers + contact access", "exposed_by": "Claude+Vibe", "customer_impact": "high for BD action", "commodity_or_differentiated": "commodity (Vibe/Apollo/ZoomInfo-class)", "response": "strategic question: native vs provider-powered vs out-of-scope — needs buyer evidence (§38/§39)", "build": "NOT YET" },
+    { "gap": "Provider fragility: a single EDGAR 500 caused a FALSE-NEGATIVE HOLD (Columbus McKinnon)", "exposed_by": "benchmark execution", "customer_impact": "high (missed a real opportunity)", "commodity_or_differentiated": "reliability defect", "response": "retry/fallback on the trigger researcher; do not treat provider failure as absence", "build": "NOT YET (but this is a real reliability bug to log)" },
+    { "gap": "Trigger-situation precision (acquisition vs PE-carve-out/separation)", "exposed_by": "Claude+Vibe (Barnes)", "customer_impact": "medium", "commodity_or_differentiated": "commodity (richer event data)", "response": "classify trigger subtype", "build": "NOT YET" }
+  ]
+}

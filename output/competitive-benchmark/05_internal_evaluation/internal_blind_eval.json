@@ -1,0 +1,13 @@
+{
+  "evaluator": "AI diagnostic judge (SAME model that generated the arms — see limitation). NOT market validation.",
+  "critical_limitation": "This benchmark was generated AND judged by one model. True arm independence (§9) and an unbiased blind judge are NOT achievable in a single-agent run: the model saw all arms. Treat scores as directional diagnostics only. Real human target-buyer evaluation is REQUIRED and is NOT provided here (§28/§51).",
+  "rubric": "Buyer-centered (1=poor..5=exceptional). NOT LeadLens-architecture-based.",
+  "scores": {
+    "OUTPUT_X_ClaudeDeepResearch": { "relevance": 3, "prioritization": 3, "currentness": 2, "evidence_trust": 2, "decision_usefulness": 3, "actionability": 2, "commercial_understanding": 2, "uncertainty_honesty": 4, "counterevidence": 3, "value_density": 3, "total": 27 },
+    "OUTPUT_Y_LeadLens": { "relevance": 4, "prioritization": 4, "currentness": 4, "evidence_trust": 4, "decision_usefulness": 4, "actionability": 4, "commercial_understanding": 3, "uncertainty_honesty": 5, "counterevidence": 4, "value_density": 4, "total": 40 },
+    "OUTPUT_Z_ClaudeVibe": { "relevance": 4, "prioritization": 3, "currentness": 5, "evidence_trust": 4, "decision_usefulness": 4, "actionability": 4, "commercial_understanding": 3, "uncertainty_honesty": 2, "counterevidence": 2, "value_density": 3, "total": 34 }
+  },
+  "forced_choice_ai_judge": "OUTPUT_Y (LeadLens) — on decision discipline, honesty/abstention, counterevidence and a defensible validate-first action. BUT OUTPUT_Z (Claude+Vibe) is close and WINS on currentness + commercial access (dated+priced deals + named contacts).",
+  "honest_caveat": "A real BD leader optimizing for immediacy may PREFER OUTPUT_Z: 'SPX did ~$900M of deals in 2026, here are two names' is act-on-able in a way LeadLens's 'validate whether external PMI is used' is not (§57/§58 tension). The AI judge rewards rigor; buyers may split. Do NOT read Y's higher total as a market result.",
+  "verdict": "ROUGH PARITY (diagnostic), mixed by job: LeadLens ahead on decision discipline/trust; Claude+Vibe ahead on currentness/access. Outcome D + B."
+}
